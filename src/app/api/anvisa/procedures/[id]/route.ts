@@ -16,23 +16,27 @@ export async function GET(
 ) {
   try {
     const supabase = createRouteHandlerClient({ cookies });
-    const { data: { session } } = await supabase.auth.getSession();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
 
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const procedure = await anvisaAPI.getProcedureDetails(params.id);
-    
+
     if (!procedure) {
-      return NextResponse.json({ error: 'Procedure not found' }, { status: 404 });
+      return NextResponse.json(
+        { error: 'Procedure not found' },
+        { status: 404 }
+      );
     }
 
-    return NextResponse.json({ 
-      success: true, 
-      data: procedure 
+    return NextResponse.json({
+      success: true,
+      data: procedure,
     });
-
   } catch (error) {
     console.error('Error fetching procedure details:', error);
     return NextResponse.json(
@@ -48,20 +52,24 @@ export async function PUT(
 ) {
   try {
     const supabase = createRouteHandlerClient({ cookies });
-    const { data: { session } } = await supabase.auth.getSession();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
 
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const updateData = await request.json();
-    const updatedProcedure = await anvisaAPI.updateProcedure(params.id, updateData);
+    const updatedProcedure = await anvisaAPI.updateProcedure(
+      params.id,
+      updateData
+    );
 
-    return NextResponse.json({ 
-      success: true, 
-      data: updatedProcedure 
+    return NextResponse.json({
+      success: true,
+      data: updatedProcedure,
     });
-
   } catch (error) {
     console.error('Error updating procedure:', error);
     return NextResponse.json(
@@ -77,7 +85,9 @@ export async function DELETE(
 ) {
   try {
     const supabase = createRouteHandlerClient({ cookies });
-    const { data: { session } } = await supabase.auth.getSession();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
 
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -85,11 +95,10 @@ export async function DELETE(
 
     await anvisaAPI.deleteProcedure(params.id);
 
-    return NextResponse.json({ 
-      success: true, 
-      message: 'Procedure deleted successfully' 
+    return NextResponse.json({
+      success: true,
+      message: 'Procedure deleted successfully',
     });
-
   } catch (error) {
     console.error('Error deleting procedure:', error);
     return NextResponse.json(

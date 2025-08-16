@@ -123,8 +123,7 @@ export function useSuppliers(
       queryClient.invalidateQueries({ queryKey: ['suppliers'] });
       toast.success(`Fornecedor ${newSupplier.name} criado com sucesso!`);
     },
-    onError: (error) => {
-      console.error('Erro ao criar fornecedor:', error);
+    onError: (_error) => {
       toast.error('Erro ao criar fornecedor. Tente novamente.');
     },
   });
@@ -159,8 +158,7 @@ export function useSuppliers(
         `Fornecedor ${updatedSupplier.name} atualizado com sucesso!`
       );
     },
-    onError: (error) => {
-      console.error('Erro ao atualizar fornecedor:', error);
+    onError: (_error) => {
       toast.error('Erro ao atualizar fornecedor. Tente novamente.');
     },
   });
@@ -182,8 +180,7 @@ export function useSuppliers(
       queryClient.invalidateQueries({ queryKey: ['suppliers'] });
       toast.success('Fornecedor removido com sucesso!');
     },
-    onError: (error) => {
-      console.error('Erro ao remover fornecedor:', error);
+    onError: (_error) => {
       toast.error('Erro ao remover fornecedor. Tente novamente.');
     },
   });
@@ -222,8 +219,7 @@ export function useSuppliers(
         `Fornecedor ${updatedSupplier.name} ${statusText} com sucesso!`
       );
     },
-    onError: (error) => {
-      console.error('Erro ao alterar status do fornecedor:', error);
+    onError: (_error) => {
       toast.error('Erro ao alterar status do fornecedor. Tente novamente.');
     },
   });
@@ -355,8 +351,7 @@ export function useSupplierPerformance(supplierId: string, period?: string) {
       queryClient.invalidateQueries({ queryKey: ['supplier-performance'] });
       toast.success('Avaliação de performance criada com sucesso!');
     },
-    onError: (error) => {
-      console.error('Erro ao criar avaliação:', error);
+    onError: (_error) => {
       toast.error('Erro ao criar avaliação. Tente novamente.');
     },
   });
@@ -533,8 +528,7 @@ export function useProcurementRequests(
       queryClient.invalidateQueries({ queryKey: ['procurement-requests'] });
       toast.success(`Solicitação ${newRequest.title} criada com sucesso!`);
     },
-    onError: (error) => {
-      console.error('Erro ao criar solicitação:', error);
+    onError: (_error) => {
       toast.error('Erro ao criar solicitação. Tente novamente.');
     },
   });
@@ -621,8 +615,7 @@ export function useSupplierBids(procurementRequestId: string) {
       queryClient.invalidateQueries({ queryKey: ['supplier-bids'] });
       toast.success('Avaliação da proposta salva com sucesso!');
     },
-    onError: (error) => {
-      console.error('Erro ao avaliar proposta:', error);
+    onError: (_error) => {
       toast.error('Erro ao avaliar proposta. Tente novamente.');
     },
   });
@@ -730,8 +723,7 @@ export function useQualityIssues(
         `Problema de qualidade #${newIssue.issue_number} registrado com sucesso!`
       );
     },
-    onError: (error) => {
-      console.error('Erro ao registrar problema:', error);
+    onError: (_error) => {
       toast.error('Erro ao registrar problema. Tente novamente.');
     },
   });
@@ -780,8 +772,7 @@ export function useQualityIssues(
         `Status do problema #${updatedIssue.issue_number} atualizado!`
       );
     },
-    onError: (error) => {
-      console.error('Erro ao atualizar status:', error);
+    onError: (_error) => {
       toast.error('Erro ao atualizar status. Tente novamente.');
     },
   });
@@ -943,8 +934,7 @@ export function useSupplierCommunications(supplierId: string) {
       queryClient.invalidateQueries({ queryKey: ['supplier-communications'] });
       toast.success('Comunicação registrada com sucesso!');
     },
-    onError: (error) => {
-      console.error('Erro ao registrar comunicação:', error);
+    onError: (_error) => {
       toast.error('Erro ao registrar comunicação. Tente novamente.');
     },
   });

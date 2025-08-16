@@ -188,9 +188,7 @@ export async function POST(request: NextRequest) {
     };
 
     return NextResponse.json(result);
-  } catch (error) {
-    console.error('Session validation error:', error);
-
+  } catch (_error) {
     return NextResponse.json(
       {
         valid: false,

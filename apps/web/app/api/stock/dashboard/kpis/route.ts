@@ -83,7 +83,6 @@ export async function GET(request: NextRequest) {
       .eq('is_active', true);
 
     if (stockError) {
-      console.error('Stock Error:', stockError);
       return NextResponse.json(
         { error: 'Erro ao buscar dados de estoque' },
         { status: 500 }
@@ -99,7 +98,6 @@ export async function GET(request: NextRequest) {
       .lte('transaction_date', endDate.toISOString());
 
     if (movementError) {
-      console.error('Movement Error:', movementError);
       return NextResponse.json(
         { error: 'Erro ao buscar movimentações' },
         { status: 500 }
@@ -239,8 +237,6 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('Dashboard KPIs API Error:', error);
-
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Parâmetros inválidos', details: error.errors },

@@ -108,7 +108,6 @@ export async function GET(request: NextRequest) {
     const { data: platforms, error } = await query.order('platform_name');
 
     if (error) {
-      console.error('Error fetching marketing platforms:', error);
       return NextResponse.json(
         { error: 'Failed to fetch platforms' },
         { status: 500 }
@@ -141,8 +140,7 @@ export async function GET(request: NextRequest) {
       data: platformsWithStatus,
       total: platforms?.length || 0,
     });
-  } catch (error) {
-    console.error('Marketing platforms GET error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -211,7 +209,6 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (error) {
-      console.error('Error creating marketing platform:', error);
       return NextResponse.json(
         { error: 'Failed to create platform' },
         { status: 500 }
@@ -227,8 +224,6 @@ export async function POST(request: NextRequest) {
       { status: 201 }
     );
   } catch (error) {
-    console.error('Marketing platforms POST error:', error);
-
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Invalid request data', details: error.errors },

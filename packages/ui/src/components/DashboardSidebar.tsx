@@ -16,7 +16,7 @@ import { Badge } from './Badge';
 import { Button } from './Button';
 
 // Types
-export interface SidebarItem {
+export type SidebarItem = {
   id: string;
   label: string;
   icon: React.ElementType;
@@ -25,18 +25,18 @@ export interface SidebarItem {
   active?: boolean;
   children?: SidebarItem[];
   onClick?: () => void;
-}
+};
 
-export interface UserProfile {
+export type UserProfile = {
   id: string;
   name: string;
   email: string;
   avatar?: string;
   role: string;
   clinic?: string;
-}
+};
 
-export interface DashboardSidebarProps {
+export type DashboardSidebarProps = {
   user: UserProfile;
   items: SidebarItem[];
   collapsed?: boolean;
@@ -45,7 +45,7 @@ export interface DashboardSidebarProps {
   onUserMenuSelect?: (action: 'profile' | 'settings' | 'logout') => void;
   notifications?: number;
   className?: string;
-}
+};
 
 export const DashboardSidebar = React.forwardRef<
   HTMLDivElement,

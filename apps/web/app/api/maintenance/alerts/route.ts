@@ -51,8 +51,7 @@ export async function GET(request: NextRequest) {
     );
 
     return NextResponse.json(result);
-  } catch (error) {
-    console.error('Maintenance Alerts API Error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -72,8 +71,6 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(alert, { status: 201 });
   } catch (error) {
-    console.error('Create Maintenance Alert Error:', error);
-
     if (error instanceof Error && error.message.includes('validation')) {
       return NextResponse.json(
         { error: 'Invalid alert data', details: error.message },
@@ -137,8 +134,7 @@ export async function PUT(request: NextRequest) {
     }
 
     return NextResponse.json(result);
-  } catch (error) {
-    console.error('Update Maintenance Alert Error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to update maintenance alert' },
       { status: 500 }

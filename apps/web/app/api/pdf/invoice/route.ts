@@ -84,15 +84,13 @@ export async function GET(request: NextRequest) {
           'Content-Length': pdfBuffer.length.toString(),
         },
       });
-    } catch (pdfError) {
-      console.error('Erro ao gerar PDF:', pdfError);
+    } catch (_pdfError) {
       return NextResponse.json(
         { error: 'Falha ao gerar PDF' },
         { status: 500 }
       );
     }
-  } catch (error) {
-    console.error('Erro no download de PDF:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
       { status: 500 }
@@ -191,15 +189,13 @@ export async function POST(request: NextRequest) {
           'Content-Length': pdfBuffer.length.toString(),
         },
       });
-    } catch (pdfError) {
-      console.error('Erro ao gerar PDF:', pdfError);
+    } catch (_pdfError) {
       return NextResponse.json(
         { error: 'Falha ao gerar PDF' },
         { status: 500 }
       );
     }
-  } catch (error) {
-    console.error('Erro no processo de PDF:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
       { status: 500 }

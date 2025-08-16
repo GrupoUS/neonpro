@@ -4,7 +4,7 @@ import type { LGPDComplianceManager } from '../LGPDComplianceManager';
 
 type SupabaseClient = ReturnType<typeof createClient<Database>>;
 
-export interface ComplianceMetrics {
+export type ComplianceMetrics = {
   overall_score: number;
   consent_compliance: number;
   data_subject_rights_compliance: number;
@@ -13,9 +13,9 @@ export interface ComplianceMetrics {
   documentation_compliance: number;
   third_party_compliance: number;
   last_updated: string;
-}
+};
 
-export interface ComplianceAlert {
+export type ComplianceAlert = {
   id: string;
   type: 'critical' | 'high' | 'medium' | 'low' | 'info';
   category:
@@ -35,9 +35,9 @@ export interface ComplianceAlert {
   created_at: string;
   resolved_at?: string;
   status: 'active' | 'acknowledged' | 'in_progress' | 'resolved' | 'dismissed';
-}
+};
 
-export interface MonitoringConfig {
+export type MonitoringConfig = {
   real_time_monitoring: boolean;
   alert_thresholds: {
     consent_expiry_days: number;
@@ -58,9 +58,9 @@ export interface MonitoringConfig {
     retention_cleanup: boolean;
     compliance_reports: boolean;
   };
-}
+};
 
-export interface ComplianceDashboard {
+export type ComplianceDashboard = {
   metrics: ComplianceMetrics;
   active_alerts: ComplianceAlert[];
   trends: {
@@ -103,7 +103,7 @@ export interface ComplianceDashboard {
     user_id?: string;
     impact_level: 'low' | 'medium' | 'high' | 'critical';
   }>;
-}
+};
 
 export class RealTimeComplianceMonitor {
   private readonly supabase: SupabaseClient;
@@ -140,9 +140,7 @@ export class RealTimeComplianceMonitor {
           async () => {
             try {
               await this.performComplianceCheck();
-            } catch (error) {
-              console.error('Error in compliance monitoring cycle:', error);
-            }
+            } catch (_error) {}
           },
           intervalMinutes * 60 * 1000
         );
@@ -150,12 +148,7 @@ export class RealTimeComplianceMonitor {
         // Set up database change listeners
         await this.setupRealtimeListeners();
       }
-
-      console.log(
-        `Real-time compliance monitoring started (${intervalMinutes}min intervals)`
-      );
     } catch (error) {
-      console.error('Error starting compliance monitoring:', error);
       throw new Error(
         `Failed to start compliance monitoring: ${error.message}`
       );
@@ -170,7 +163,6 @@ export class RealTimeComplianceMonitor {
       clearInterval(this.monitoringInterval);
       this.monitoringInterval = null;
     }
-    console.log('Real-time compliance monitoring stopped');
   }
 
   /**
@@ -210,7 +202,6 @@ export class RealTimeComplianceMonitor {
         recent_activities: recentActivities,
       };
     } catch (error) {
-      console.error('Error getting compliance dashboard:', error);
       throw new Error(`Failed to get compliance dashboard: ${error.message}`);
     }
   }
@@ -316,7 +307,6 @@ export class RealTimeComplianceMonitor {
         resolved_alerts,
       };
     } catch (error) {
-      console.error('Error performing compliance check:', error);
       throw new Error(`Failed to perform compliance check: ${error.message}`);
     }
   }
@@ -370,7 +360,6 @@ export class RealTimeComplianceMonitor {
 
       return { success: true };
     } catch (error) {
-      console.error('Error resolving alert:', error);
       throw new Error(`Failed to resolve alert: ${error.message}`);
     }
   }
@@ -428,37 +417,31 @@ export class RealTimeComplianceMonitor {
         generated_at: new Date().toISOString(),
       };
     } catch (error) {
-      console.error('Error generating compliance report:', error);
       throw new Error(`Failed to generate compliance report: ${error.message}`);
     }
   }
 
   // Private helper methods
   private async calculateComplianceMetrics(): Promise<ComplianceMetrics> {
-    try {
-      const { data: metrics, error } = await this.supabase.rpc(
-        'calculate_compliance_metrics'
-      );
+    const { data: metrics, error } = await this.supabase.rpc(
+      'calculate_compliance_metrics'
+    );
 
-      if (error) {
-        throw error;
-      }
-
-      return {
-        overall_score: metrics.overall_score || 0,
-        consent_compliance: metrics.consent_compliance || 0,
-        data_subject_rights_compliance:
-          metrics.data_subject_rights_compliance || 0,
-        breach_response_compliance: metrics.breach_response_compliance || 0,
-        retention_compliance: metrics.retention_compliance || 0,
-        documentation_compliance: metrics.documentation_compliance || 0,
-        third_party_compliance: metrics.third_party_compliance || 0,
-        last_updated: new Date().toISOString(),
-      };
-    } catch (error) {
-      console.error('Error calculating compliance metrics:', error);
+    if (error) {
       throw error;
     }
+
+    return {
+      overall_score: metrics.overall_score || 0,
+      consent_compliance: metrics.consent_compliance || 0,
+      data_subject_rights_compliance:
+        metrics.data_subject_rights_compliance || 0,
+      breach_response_compliance: metrics.breach_response_compliance || 0,
+      retention_compliance: metrics.retention_compliance || 0,
+      documentation_compliance: metrics.documentation_compliance || 0,
+      third_party_compliance: metrics.third_party_compliance || 0,
+      last_updated: new Date().toISOString(),
+    };
   }
 
   private async checkConsentCompliance(): Promise<ComplianceAlert[]> {
@@ -507,8 +490,7 @@ export class RealTimeComplianceMonitor {
       }
 
       return alerts;
-    } catch (error) {
-      console.error('Error checking consent compliance:', error);
+    } catch (_error) {
       return [];
     }
   }
@@ -550,8 +532,7 @@ export class RealTimeComplianceMonitor {
       }
 
       return alerts;
-    } catch (error) {
-      console.error('Error checking data subject rights compliance:', error);
+    } catch (_error) {
       return [];
     }
   }
@@ -609,8 +590,7 @@ export class RealTimeComplianceMonitor {
       }
 
       return alerts;
-    } catch (error) {
-      console.error('Error checking breach response compliance:', error);
+    } catch (_error) {
       return [];
     }
   }
@@ -649,8 +629,7 @@ export class RealTimeComplianceMonitor {
       }
 
       return alerts;
-    } catch (error) {
-      console.error('Error checking retention compliance:', error);
+    } catch (_error) {
       return [];
     }
   }
@@ -689,8 +668,7 @@ export class RealTimeComplianceMonitor {
       }
 
       return alerts;
-    } catch (error) {
-      console.error('Error checking documentation compliance:', error);
+    } catch (_error) {
       return [];
     }
   }
@@ -729,8 +707,7 @@ export class RealTimeComplianceMonitor {
       }
 
       return alerts;
-    } catch (error) {
-      console.error('Error checking third-party compliance:', error);
+    } catch (_error) {
       return [];
     }
   }
@@ -829,9 +806,7 @@ export class RealTimeComplianceMonitor {
     for (const callback of this.alertCallbacks) {
       try {
         callback(alert);
-      } catch (error) {
-        console.error('Error in alert callback:', error);
-      }
+      } catch (_error) {}
     }
 
     // Send notifications based on configuration
@@ -844,17 +819,11 @@ export class RealTimeComplianceMonitor {
     }
   }
 
-  private async sendEmailNotification(alert: ComplianceAlert): Promise<void> {
-    // Implementation for email notifications
-    // This would integrate with your email service
-    console.log('Email notification sent for alert:', alert.title);
-  }
+  private async sendEmailNotification(_alert: ComplianceAlert): Promise<void> {}
 
-  private async sendWebhookNotification(alert: ComplianceAlert): Promise<void> {
-    // Implementation for webhook notifications
-    // This would send to configured webhook endpoints
-    console.log('Webhook notification sent for alert:', alert.title);
-  }
+  private async sendWebhookNotification(
+    _alert: ComplianceAlert
+  ): Promise<void> {}
 
   private async getComplianceTrends(): Promise<any> {
     const { data: trends, error } = await this.supabase.rpc(

@@ -17,7 +17,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 });
 
 // Types
-interface PaymentPlan {
+type PaymentPlan = {
   id?: string;
   customer_id: string;
   total_amount: number;
@@ -29,9 +29,9 @@ interface PaymentPlan {
   status: 'active' | 'completed' | 'cancelled' | 'defaulted';
   description?: string;
   metadata?: Record<string, any>;
-}
+};
 
-interface Installment {
+type Installment = {
   id?: string;
   payment_plan_id: string;
   installment_number: number;
@@ -43,9 +43,9 @@ interface Installment {
   stripe_payment_intent_id?: string;
   late_fee?: number;
   metadata?: Record<string, any>;
-}
+};
 
-interface CreatePaymentPlanRequest {
+type CreatePaymentPlanRequest = {
   customer_id: string;
   total_amount: number;
   currency?: string;
@@ -57,15 +57,15 @@ interface CreatePaymentPlanRequest {
   late_fee_percentage?: number;
   grace_period_days?: number;
   metadata?: Record<string, any>;
-}
+};
 
-interface ModifyPaymentPlanRequest {
+type ModifyPaymentPlanRequest = {
   installment_count?: number;
   frequency?: 'weekly' | 'biweekly' | 'monthly' | 'quarterly';
   late_fee_percentage?: number;
   grace_period_days?: number;
   metadata?: Record<string, any>;
-}
+};
 
 class InstallmentManager {
   // Create new payment plan

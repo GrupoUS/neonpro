@@ -16,7 +16,7 @@ type SubscriptionPlan =
 type UserSubscription =
   Database['public']['Tables']['user_subscriptions']['Row'];
 
-interface SubscriptionContext {
+type SubscriptionContext = {
   subscription: UserSubscription & {
     plan: SubscriptionPlan;
   };
@@ -29,7 +29,7 @@ interface SubscriptionContext {
     limit?: number;
     remaining?: number;
   };
-}
+};
 
 /**
  * Feature requirements mapping for different endpoints
@@ -218,9 +218,7 @@ export async function subscriptionMiddleware(
     response.headers.set('x-clinic-id', subscription.clinic_id);
 
     return response;
-  } catch (error) {
-    console.error('Subscription middleware error:', error);
-
+  } catch (_error) {
     return NextResponse.json(
       {
         error: 'Internal server error',
@@ -350,8 +348,7 @@ async function checkUsageLimit(
       limit,
       current: currentUsage,
     };
-  } catch (error) {
-    console.error(`Error checking usage limit for ${limitKey}:`, error);
+  } catch (_error) {
     // On error, allow the request to proceed
     return { allowed: true };
   }

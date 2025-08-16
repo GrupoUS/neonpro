@@ -33,8 +33,7 @@ export async function POST(request: NextRequest) {
     );
 
     return NextResponse.json({ recommendations: allRecommendations.flat() });
-  } catch (error) {
-    console.error('Error analyzing budget optimization:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to analyze optimization' },
       { status: 500 }
@@ -71,8 +70,7 @@ export async function GET(request: NextRequest) {
     );
 
     return NextResponse.json({ forecasts });
-  } catch (error) {
-    console.error('Error generating forecast:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to generate forecast' },
       { status: 500 }

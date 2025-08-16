@@ -17,7 +17,7 @@ import { createClient } from '@/lib/supabase/client';
 import { CashFlowEngine } from './cash-flow-engine';
 
 // Alert Types and Interfaces
-export interface FinancialAlert {
+export type FinancialAlert = {
   id: string;
   clinic_id: string;
   alert_type: AlertType;
@@ -35,7 +35,7 @@ export interface FinancialAlert {
   escalation_level: number;
   channels_sent: AlertChannel[];
   metadata: AlertMetadata;
-}
+};
 
 export type AlertType =
   | 'cash_flow_low'
@@ -54,7 +54,7 @@ export type AlertType =
 export type AlertSeverity = 'info' | 'warning' | 'critical' | 'emergency';
 export type AlertChannel = 'email' | 'sms' | 'whatsapp' | 'in_app' | 'slack';
 
-export interface AlertRule {
+export type AlertRule = {
   id: string;
   clinic_id: string;
   name: string;
@@ -69,45 +69,45 @@ export interface AlertRule {
   frequency_limit: FrequencyLimit;
   created_at: string;
   updated_at: string;
-}
+};
 
-export interface AlertCondition {
+export type AlertCondition = {
   field: string;
   operator: 'gt' | 'lt' | 'eq' | 'gte' | 'lte' | 'between' | 'change_percent';
   value: number | number[];
   timeframe?: string; // '1d', '7d', '30d', etc.
-}
+};
 
-export interface AlertRecipient {
+export type AlertRecipient = {
   user_id: string;
   role: string;
   channels: AlertChannel[];
   escalation_level: number;
-}
+};
 
-export interface EscalationRule {
+export type EscalationRule = {
   level: number;
   delay_minutes: number;
   additional_recipients: string[];
   channels: AlertChannel[];
-}
+};
 
-export interface FrequencyLimit {
+export type FrequencyLimit = {
   max_alerts_per_hour: number;
   max_alerts_per_day: number;
   cooldown_minutes: number;
-}
+};
 
-export interface AlertMetadata {
+export type AlertMetadata = {
   source: string;
   correlation_id?: string;
   related_alerts: string[];
   auto_generated: boolean;
   prediction_confidence?: number;
   recommended_actions: string[];
-}
+};
 
-export interface AlertAnalytics {
+export type AlertAnalytics = {
   total_alerts: number;
   alerts_by_type: Record<AlertType, number>;
   alerts_by_severity: Record<AlertSeverity, number>;
@@ -125,7 +125,7 @@ export interface AlertAnalytics {
     monthly_change: number;
     seasonal_patterns: Record<string, number>;
   };
-}
+};
 
 export class AutomatedAlertsEngine {
   private readonly supabase = createClient();
@@ -142,10 +142,7 @@ export class AutomatedAlertsEngine {
 
       // Start monitoring processes
       await this.startRealTimeMonitoring(clinicId);
-
-      console.log(`Alert monitoring initialized for clinic: ${clinicId}`);
-    } catch (error) {
-      console.error('Error initializing alert monitoring:', error);
+    } catch (_error) {
       throw new Error('Failed to initialize alert monitoring');
     }
   }
@@ -184,8 +181,7 @@ export class AutomatedAlertsEngine {
       }
 
       return alerts;
-    } catch (error) {
-      console.error('Error processing financial alerts:', error);
+    } catch (_error) {
       throw new Error('Failed to process financial alerts');
     }
   }
@@ -243,9 +239,7 @@ export class AutomatedAlertsEngine {
 
         alerts.push(alert);
       }
-    } catch (error) {
-      console.error(`Error evaluating alert rule ${rule.id}:`, error);
-    }
+    } catch (_error) {}
 
     return alerts;
   }
@@ -299,9 +293,7 @@ export class AutomatedAlertsEngine {
 
         alerts.push(alert);
       }
-    } catch (error) {
-      console.error('Error detecting financial anomalies:', error);
-    }
+    } catch (_error) {}
 
     return alerts;
   }
@@ -340,11 +332,7 @@ export class AutomatedAlertsEngine {
           await this.scheduleEscalation(alert, alertRule.escalation_rules[0]);
         }
       }
-
-      console.log(`Alert processed and sent: ${alert.id}`);
-    } catch (error) {
-      console.error('Error processing alert:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -370,9 +358,7 @@ export class AutomatedAlertsEngine {
             if (!sentChannels.includes(channel)) {
               sentChannels.push(channel);
             }
-          } catch (error) {
-            console.error(`Failed to send alert via ${channel}:`, error);
-          }
+          } catch (_error) {}
         }
       }
 
@@ -381,9 +367,7 @@ export class AutomatedAlertsEngine {
         .from('financial_alerts')
         .update({ channels_sent: sentChannels })
         .eq('id', alert.id);
-    } catch (error) {
-      console.error('Error sending alert:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -665,10 +649,7 @@ export class AutomatedAlertsEngine {
     // Schedule alert escalation
   }
 
-  private async startRealTimeMonitoring(clinicId: string): Promise<void> {
-    // Start real-time monitoring processes
-    console.log(`Real-time monitoring started for clinic: ${clinicId}`);
-  }
+  private async startRealTimeMonitoring(_clinicId: string): Promise<void> {}
 }
 
 export default AutomatedAlertsEngine;

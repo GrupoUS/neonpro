@@ -53,7 +53,6 @@ export async function GET(request: NextRequest) {
       count: allocations.length,
     });
   } catch (error) {
-    console.error('Error fetching allocations:', error);
     return NextResponse.json(
       {
         error: 'Failed to fetch allocations',
@@ -110,8 +109,6 @@ export async function POST(request: NextRequest) {
       { status: 201 }
     );
   } catch (error) {
-    console.error('Error creating allocation:', error);
-
     // Handle specific conflict errors
     if (error instanceof Error && error.message.includes('conflict')) {
       return NextResponse.json(
@@ -173,7 +170,6 @@ export async function PUT(request: NextRequest) {
       message: 'Allocation status updated successfully',
     });
   } catch (error) {
-    console.error('Error updating allocation:', error);
     return NextResponse.json(
       {
         error: 'Failed to update allocation',
@@ -223,7 +219,6 @@ export async function DELETE(request: NextRequest) {
       message: 'Allocation cancelled successfully',
     });
   } catch (error) {
-    console.error('Error cancelling allocation:', error);
     return NextResponse.json(
       {
         error: 'Failed to cancel allocation',

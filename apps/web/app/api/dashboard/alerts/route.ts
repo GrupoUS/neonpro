@@ -38,7 +38,6 @@ export async function GET(request: NextRequest) {
     const { data, error } = await query;
 
     if (error) {
-      console.error('Error fetching dashboard alerts:', error);
       return NextResponse.json(
         { error: 'Failed to fetch alerts' },
         { status: 500 }
@@ -50,8 +49,7 @@ export async function GET(request: NextRequest) {
     }
 
     return NextResponse.json(alertId && data ? data[0] : data);
-  } catch (error) {
-    console.error('Dashboard alerts GET error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -85,7 +83,6 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (error) {
-      console.error('Error creating alert:', error);
       return NextResponse.json(
         { error: 'Failed to create alert' },
         { status: 500 }
@@ -93,8 +90,7 @@ export async function POST(request: NextRequest) {
     }
 
     return NextResponse.json(data, { status: 201 });
-  } catch (error) {
-    console.error('Dashboard alerts POST error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Invalid request data' },
       { status: 400 }
@@ -135,7 +131,6 @@ export async function PUT(request: NextRequest) {
       .single();
 
     if (error) {
-      console.error('Error updating alert:', error);
       return NextResponse.json(
         { error: 'Failed to update alert' },
         { status: 500 }
@@ -147,8 +142,7 @@ export async function PUT(request: NextRequest) {
     }
 
     return NextResponse.json(data);
-  } catch (error) {
-    console.error('Dashboard alerts PUT error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Invalid request data' },
       { status: 400 }
@@ -184,7 +178,6 @@ export async function DELETE(request: NextRequest) {
       .eq('user_id', user.id);
 
     if (error) {
-      console.error('Error deleting alert:', error);
       return NextResponse.json(
         { error: 'Failed to delete alert' },
         { status: 500 }
@@ -192,8 +185,7 @@ export async function DELETE(request: NextRequest) {
     }
 
     return NextResponse.json({ message: 'Alert deleted successfully' });
-  } catch (error) {
-    console.error('Dashboard alerts DELETE error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

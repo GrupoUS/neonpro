@@ -13,7 +13,9 @@ export const dynamic = 'force-dynamic';
 export async function GET(request: NextRequest) {
   try {
     const supabase = createRouteHandlerClient({ cookies });
-    const { data: { session } } = await supabase.auth.getSession();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
 
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -25,27 +27,29 @@ export async function GET(request: NextRequest) {
     const daysAhead = searchParams.get('days_ahead');
 
     if (!clinicId) {
-      return NextResponse.json({ error: 'Clinic ID is required' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Clinic ID is required' },
+        { status: 400 }
+      );
     }
 
     // Handle different query types
     if (nearingExpiry === 'true') {
       const days = daysAhead ? parseInt(daysAhead) : 30;
       const products = await anvisaAPI.getProductsNearingExpiry(clinicId, days);
-      return NextResponse.json({ 
-        success: true, 
+      return NextResponse.json({
+        success: true,
         data: products,
-        meta: { type: 'nearing_expiry', days_ahead: days }
+        meta: { type: 'nearing_expiry', days_ahead: days },
       });
     }
 
     const products = await anvisaAPI.getProducts(clinicId);
-    return NextResponse.json({ 
-      success: true, 
+    return NextResponse.json({
+      success: true,
       data: products,
-      meta: { total: products.length }
+      meta: { total: products.length },
     });
-
   } catch (error) {
     console.error('Error in ANVISA products GET:', error);
     return NextResponse.json(
@@ -58,7 +62,9 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const supabase = createRouteHandlerClient({ cookies });
-    const { data: { session } } = await supabase.auth.getSession();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
 
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -68,29 +74,37 @@ export async function POST(request: NextRequest) {
     const { clinic_id, ...productData } = body;
 
     if (!clinic_id) {
-      return NextResponse.json({ error: 'Clinic ID is required' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Clinic ID is required' },
+        { status: 400 }
+      );
     }
 
     // Validate product data
     const validationResult = ANVISAProductSchema.safeParse(productData);
     if (!validationResult.success) {
       return NextResponse.json(
-        { 
-          error: 'Validation failed', 
-          details: validationResult.error.errors 
+        {
+          error: 'Validation failed',
+          details: validationResult.error.errors,
         },
         { status: 400 }
       );
     }
 
-    const product = await anvisaAPI.createProduct(clinic_id, validationResult.data);
-    
-    return NextResponse.json({ 
-      success: true, 
-      data: product,
-      message: 'Product registered successfully'
-    }, { status: 201 });
+    const product = await anvisaAPI.createProduct(
+      clinic_id,
+      validationResult.data
+    );
 
+    return NextResponse.json(
+      {
+        success: true,
+        data: product,
+        message: 'Product registered successfully',
+      },
+      { status: 201 }
+    );
   } catch (error) {
     console.error('Error in ANVISA products POST:', error);
     return NextResponse.json(

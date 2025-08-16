@@ -30,23 +30,23 @@ import type { CancellationPolicies } from '@/hooks/patient/usePatientAppointment
  * - Exa: Patient behavior analytics and performance tracking
  */
 
-interface NoShowPattern {
+type NoShowPattern = {
   rate: number;
   commonReasons: string[];
-}
+};
 
-interface CancellationStats {
+type CancellationStats = {
   rate: number;
   reasonBreakdown: Record<string, number>;
-}
+};
 
-interface AppointmentStatusTrackerProps {
+type AppointmentStatusTrackerProps = {
   upcomingCount: number;
   pastCount: number;
   noShowPattern: NoShowPattern;
   cancellationStats: CancellationStats;
   cancellationPolicies: CancellationPolicies | null;
-}
+};
 
 export function AppointmentStatusTracker({
   upcomingCount,

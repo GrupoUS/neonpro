@@ -39,11 +39,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useConsentBanner } from '@/hooks/useLGPD';
 import type { ConsentRecord } from '@/types/lgpd';
 
-interface PrivacyPreferencesProps {
+type PrivacyPreferencesProps = {
   userId?: string;
   showHeader?: boolean;
   className?: string;
-}
+};
 
 export function PrivacyPreferences({
   userId,
@@ -119,9 +119,8 @@ export function PrivacyPreferences({
       setSaveMessage('Preferências salvas com sucesso!');
       setHasChanges(false);
       await refreshData();
-    } catch (error) {
+    } catch (_error) {
       setSaveMessage('Erro ao salvar preferências. Tente novamente.');
-      console.error('Erro ao salvar preferências:', error);
     } finally {
       setIsSaving(false);
       setTimeout(() => setSaveMessage(null), 3000);

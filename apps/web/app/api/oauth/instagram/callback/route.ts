@@ -18,7 +18,6 @@ export async function GET(request: NextRequest) {
 
     // Handle OAuth errors from Instagram
     if (error) {
-      console.error('Instagram OAuth error:', error, errorDescription);
       return NextResponse.redirect(
         new URL(
           `/dashboard/social-media?error=${encodeURIComponent(error)}&error_description=${encodeURIComponent(errorDescription || '')}`,
@@ -83,8 +82,6 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.redirect(redirectUrl);
   } catch (error) {
-    console.error('Instagram OAuth callback error:', error);
-
     // Redirect to error page with details
     const errorUrl = new URL('/dashboard/social-media', request.url);
     errorUrl.searchParams.set('error', 'callback_failed');
@@ -107,8 +104,7 @@ export async function POST(_request: NextRequest) {
     return NextResponse.json({
       message: 'Webhook endpoint - implementation pending',
     });
-  } catch (error) {
-    console.error('Instagram webhook error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Webhook processing failed' },
       { status: 500 }

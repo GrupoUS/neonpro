@@ -1,20 +1,20 @@
 // lib/security/lgpd-manager.ts
-export interface LGPDConsent {
+export type LGPDConsent = {
   userId: string;
   purpose: string;
   granted: boolean;
   timestamp: Date;
   expiresAt?: Date;
-}
+};
 
-export interface DataProcessingLog {
+export type DataProcessingLog = {
   id: string;
   userId: string;
   action: string;
   purpose: string;
   timestamp: Date;
   lawfulBasis: string;
-}
+};
 
 export class LGPDManager {
   static async recordConsent(
@@ -44,9 +44,7 @@ export class LGPDManager {
     return true;
   }
 
-  static async anonymizeUserData(userId: string): Promise<boolean> {
-    // Mock implementation for build
-    console.log(`Anonymizing data for user: ${userId}`);
+  static async anonymizeUserData(_userId: string): Promise<boolean> {
     return true;
   }
 

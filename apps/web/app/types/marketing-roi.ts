@@ -84,7 +84,7 @@ export enum OptimizationArea {
 
 // ===== CAMPAIGN MANAGEMENT =====
 
-export interface MarketingCampaign {
+export type MarketingCampaign = {
   id: string;
   clinic_id: string;
   name: string;
@@ -121,9 +121,9 @@ export interface MarketingCampaign {
   created_at: Date;
   updated_at: Date;
   created_by: string;
-}
+};
 
-export interface CampaignTouchpoint {
+export type CampaignTouchpoint = {
   id: string;
   campaign_id: string;
   patient_id: string;
@@ -134,11 +134,11 @@ export interface CampaignTouchpoint {
   conversion_attributed: boolean;
   revenue_attributed: number;
   created_at: Date;
-}
+};
 
 // ===== TREATMENT PROFITABILITY =====
 
-export interface TreatmentROI {
+export type TreatmentROI = {
   id: string;
   clinic_id: string;
   treatment_id: string;
@@ -184,11 +184,11 @@ export interface TreatmentROI {
   period_end: Date;
   created_at: Date;
   updated_at: Date;
-}
+};
 
 // ===== CAC & LTV ANALYTICS =====
 
-export interface CustomerAcquisitionCost {
+export type CustomerAcquisitionCost = {
   id: string;
   clinic_id: string;
   channel: MarketingChannel;
@@ -218,9 +218,9 @@ export interface CustomerAcquisitionCost {
 
   created_at: Date;
   updated_at: Date;
-}
+};
 
-export interface CustomerLifetimeValue {
+export type CustomerLifetimeValue = {
   id: string;
   clinic_id: string;
   patient_id?: string; // Optional for individual vs aggregate analysis
@@ -263,11 +263,11 @@ export interface CustomerLifetimeValue {
   period_end: Date;
   created_at: Date;
   updated_at: Date;
-}
+};
 
 // ===== ROI MONITORING & ALERTS =====
 
-export interface ROIAlert {
+export type ROIAlert = {
   id: string;
   clinic_id: string;
   type: AlertType;
@@ -299,9 +299,9 @@ export interface ROIAlert {
 
   created_at: Date;
   updated_at: Date;
-}
+};
 
-export interface ROIMonitoringRule {
+export type ROIMonitoringRule = {
   id: string;
   clinic_id: string;
   name: string;
@@ -331,11 +331,11 @@ export interface ROIMonitoringRule {
   created_at: Date;
   updated_at: Date;
   created_by: string;
-}
+};
 
 // ===== OPTIMIZATION RECOMMENDATIONS =====
 
-export interface OptimizationRecommendation {
+export type OptimizationRecommendation = {
   id: string;
   clinic_id: string;
   area: OptimizationArea;
@@ -383,11 +383,11 @@ export interface OptimizationRecommendation {
   created_at: Date;
   updated_at: Date;
   created_by: string;
-}
+};
 
 // ===== DASHBOARD & ANALYTICS =====
 
-export interface ROIDashboardMetrics {
+export type ROIDashboardMetrics = {
   clinic_id: string;
   period_start: Date;
   period_end: Date;
@@ -449,9 +449,9 @@ export interface ROIDashboardMetrics {
   ltv_trend_percentage: number;
 
   generated_at: Date;
-}
+};
 
-export interface ROITrendData {
+export type ROITrendData = {
   date: Date;
   roi_percentage: number;
   revenue: number;
@@ -462,9 +462,9 @@ export interface ROITrendData {
   ltv_cac_ratio: number;
   campaigns_active: number;
   customers_acquired: number;
-}
+};
 
-export interface ROIComparison {
+export type ROIComparison = {
   entity_type: 'campaign' | 'treatment' | 'channel';
   entity_id: string;
   entity_name: string;
@@ -474,11 +474,11 @@ export interface ROIComparison {
   trend: 'improving' | 'declining' | 'stable';
   ranking: number;
   benchmark_comparison: 'above' | 'below' | 'at_benchmark';
-}
+};
 
 // ===== PREDICTIVE ROI =====
 
-export interface ROIForecast {
+export type ROIForecast = {
   id: string;
   clinic_id: string;
   forecast_type: 'campaign' | 'treatment' | 'channel' | 'overall';
@@ -523,7 +523,7 @@ export interface ROIForecast {
   created_at: Date;
   updated_at: Date;
   created_by: string;
-}
+};
 
 // ===== ZOD VALIDATION SCHEMAS =====
 
@@ -781,7 +781,7 @@ export const ROIForecastSchema = z.object({
 
 // ===== API REQUEST/RESPONSE TYPES =====
 
-export interface CreateMarketingCampaignRequest {
+export type CreateMarketingCampaignRequest = {
   name: string;
   description?: string;
   channel: MarketingChannel;
@@ -793,9 +793,9 @@ export interface CreateMarketingCampaignRequest {
   cost_per_impression?: number;
   cost_per_lead?: number;
   cost_per_acquisition?: number;
-}
+};
 
-export interface UpdateCampaignMetricsRequest {
+export type UpdateCampaignMetricsRequest = {
   actual_spend?: number;
   impressions?: number;
   clicks?: number;
@@ -803,9 +803,9 @@ export interface UpdateCampaignMetricsRequest {
   conversions?: number;
   revenue_generated?: number;
   profit_generated?: number;
-}
+};
 
-export interface CreateROIAlertRequest {
+export type CreateROIAlertRequest = {
   type: AlertType;
   severity: 'low' | 'medium' | 'high' | 'critical';
   title: string;
@@ -820,9 +820,9 @@ export interface CreateROIAlertRequest {
   suggested_actions: string[];
   potential_impact: number;
   priority_score: number;
-}
+};
 
-export interface CreateOptimizationRecommendationRequest {
+export type CreateOptimizationRecommendationRequest = {
   area: OptimizationArea;
   title: string;
   description: string;
@@ -847,18 +847,18 @@ export interface CreateOptimizationRecommendationRequest {
     priority: number;
     estimated_impact: number;
   }[];
-}
+};
 
-export interface ROIDashboardRequest {
+export type ROIDashboardRequest = {
   clinic_id: string;
   period_start: string;
   period_end: string;
   include_trends?: boolean;
   include_comparisons?: boolean;
   include_forecasts?: boolean;
-}
+};
 
-export interface ROIDashboardResponse {
+export type ROIDashboardResponse = {
   success: boolean;
   data: ROIDashboardMetrics;
   trends?: ROITrendData[];
@@ -866,9 +866,9 @@ export interface ROIDashboardResponse {
   forecasts?: ROIForecast[];
   alerts?: ROIAlert[];
   recommendations?: OptimizationRecommendation[];
-}
+};
 
-export interface CampaignListResponse {
+export type CampaignListResponse = {
   success: boolean;
   data: MarketingCampaign[];
   pagination?: {
@@ -885,9 +885,9 @@ export interface CampaignListResponse {
       end: string;
     };
   };
-}
+};
 
-export interface TreatmentROIListResponse {
+export type TreatmentROIListResponse = {
   success: boolean;
   data: TreatmentROI[];
   summary?: {
@@ -897,9 +897,9 @@ export interface TreatmentROIListResponse {
     least_profitable_treatment: string;
     total_profit: number;
   };
-}
+};
 
-export interface CACLTVAnalysisResponse {
+export type CACLTVAnalysisResponse = {
   success: boolean;
   data: {
     cac_analysis: CustomerAcquisitionCost[];
@@ -915,7 +915,7 @@ export interface CACLTVAnalysisResponse {
       median_payback_months: number;
     }[];
   };
-}
+};
 
 // ===== UTILITY TYPES =====
 

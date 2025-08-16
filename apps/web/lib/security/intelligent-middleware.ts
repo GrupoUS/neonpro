@@ -7,7 +7,7 @@ import { LRUCache } from 'lru-cache';
  * contra ameaças sem impactar usuários legítimos
  */
 
-interface SecurityEvent {
+type SecurityEvent = {
   ip: string;
   userAgent: string;
   route: string;
@@ -15,14 +15,14 @@ interface SecurityEvent {
   timestamp: number;
   suspicious: boolean;
   reason?: string;
-}
+};
 
-interface RateLimitEntry {
+type RateLimitEntry = {
   count: number;
   firstRequest: number;
   blocked: boolean;
   blockUntil?: number;
-}
+};
 
 // Cache para rate limiting (IP-based)
 const rateLimitCache = new LRUCache<string, RateLimitEntry>({

@@ -47,8 +47,7 @@ export async function GET(request: NextRequest) {
       { error: 'supplier_id é obrigatório quando action não é renewal-alerts' },
       { status: 400 }
     );
-  } catch (error) {
-    console.error('Erro ao buscar contratos:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
       { status: 500 }
@@ -78,8 +77,6 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(contract, { status: 201 });
   } catch (error) {
-    console.error('Erro ao criar contrato:', error);
-
     if (error instanceof Error && error.message.includes('já existe')) {
       return NextResponse.json({ error: error.message }, { status: 409 });
     }

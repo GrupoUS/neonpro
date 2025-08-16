@@ -79,7 +79,6 @@ export function useUpsertSMSProvider() {
       toast.success(`Provedor SMS ${data.provider} configurado com sucesso!`);
     },
     onError: (error) => {
-      console.error('Error upserting SMS provider:', error);
       toast.error(`Erro ao configurar provedor SMS: ${error.message}`);
     },
   });
@@ -107,7 +106,6 @@ export function useTestSMSProvider() {
       }
     },
     onError: (error) => {
-      console.error('Error testing SMS provider:', error);
       toast.error(`Erro no teste SMS: ${error.message}`);
     },
   });
@@ -161,7 +159,6 @@ export function useSendSMS() {
       toast.success(`SMS enviado para ${variables.to} com sucesso!`);
     },
     onError: (error, variables) => {
-      console.error('Error sending SMS:', error);
       toast.error(`Erro ao enviar SMS para ${variables.to}: ${error.message}`);
     },
   });
@@ -193,7 +190,6 @@ export function useSendBulkSMS() {
       }
     },
     onError: (error) => {
-      console.error('Error sending bulk SMS:', error);
       toast.error(`Erro no envio em lote: ${error.message}`);
     },
   });
@@ -230,7 +226,6 @@ export function useUpsertSMSTemplate() {
       toast.success(`Template SMS "${data.name}" salvo com sucesso!`);
     },
     onError: (error) => {
-      console.error('Error upserting SMS template:', error);
       toast.error(`Erro ao salvar template SMS: ${error.message}`);
     },
   });
@@ -261,7 +256,6 @@ export function useDeleteSMSTemplate() {
       toast.success('Template SMS removido com sucesso!');
     },
     onError: (error) => {
-      console.error('Error deleting SMS template:', error);
       toast.error(`Erro ao remover template SMS: ${error.message}`);
     },
   });
@@ -313,7 +307,6 @@ export function useUpdateSMSOptIn() {
       toast.success(`Contato ${variables.phoneNumber} ${statusText} para SMS!`);
     },
     onError: (error, variables) => {
-      console.error('Error updating SMS opt-in:', error);
       toast.error(
         `Erro ao atualizar autorização SMS para ${variables.phoneNumber}: ${error.message}`
       );
@@ -357,7 +350,6 @@ export function useProcessSMSWebhook() {
       queryClient.invalidateQueries({ queryKey: SMS_QUERY_KEYS.messages() });
     },
     onError: (error) => {
-      console.error('Error processing SMS webhook:', error);
       toast.error(`Erro ao processar webhook SMS: ${error.message}`);
     },
   });

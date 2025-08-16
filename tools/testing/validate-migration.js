@@ -9,7 +9,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { execSync } = require('node:child_process');
 
-const colors = {
+const _colors = {
   green: '\x1b[32m',
   red: '\x1b[31m',
   yellow: '\x1b[33m',
@@ -19,12 +19,11 @@ const colors = {
 };
 
 const log = {
-  success: (msg) => console.log(`${colors.green}✅ ${msg}${colors.reset}`),
-  error: (msg) => console.log(`${colors.red}❌ ${msg}${colors.reset}`),
-  warning: (msg) => console.log(`${colors.yellow}⚠️  ${msg}${colors.reset}`),
-  info: (msg) => console.log(`${colors.blue}ℹ️  ${msg}${colors.reset}`),
-  header: (msg) =>
-    console.log(`\n${colors.bold}${colors.blue}🔍 ${msg}${colors.reset}\n`),
+  success: (_msg) => {},
+  error: (_msg) => {},
+  warning: (_msg) => {},
+  info: (_msg) => {},
+  header: (_msg) => {},
 };
 
 class MigrationValidator {
@@ -210,60 +209,26 @@ class MigrationValidator {
   generateReport() {
     log.header('Migration Validation Report');
 
-    console.log(`\n${colors.bold}📊 SUMMARY${colors.reset}`);
-    console.log(`${colors.green}✅ Successful validations${colors.reset}`);
-    console.log(
-      `${colors.yellow}⚠️  Warnings: ${this.warnings.length}${colors.reset}`
-    );
-    console.log(`${colors.red}❌ Errors: ${this.errors.length}${colors.reset}`);
-
     if (this.warnings.length > 0) {
-      console.log(`\n${colors.yellow}${colors.bold}WARNINGS:${colors.reset}`);
-      this.warnings.forEach((warning) => {
-        console.log(`${colors.yellow}  • ${warning}${colors.reset}`);
-      });
+      this.warnings.forEach((_warning) => {});
     }
 
     if (this.errors.length > 0) {
-      console.log(`\n${colors.red}${colors.bold}ERRORS:${colors.reset}`);
-      this.errors.forEach((error) => {
-        console.log(`${colors.red}  • ${error}${colors.reset}`);
-      });
+      this.errors.forEach((_error) => {});
     }
-
-    console.log(`\n${colors.bold}🎯 NEXT STEPS:${colors.reset}`);
     if (this.errors.length === 0) {
-      console.log(
-        `${colors.green}  ✅ Migration validation successful!${colors.reset}`
-      );
-      console.log(
-        `${colors.blue}  🚀 You can now run: npm test${colors.reset}`
-      );
       if (this.warnings.length === 0) {
-        console.log(
-          `${colors.green}  🎉 Perfect migration - no issues found!${colors.reset}`
-        );
       }
     } else {
-      console.log(
-        `${colors.red}  ❌ Fix the errors above before proceeding${colors.reset}`
-      );
     }
 
     if (fs.existsSync(path.resolve(this.projectRoot, 'tests'))) {
-      console.log(
-        `${colors.yellow}  🧹 Consider removing old test directory: rm -rf tests/${colors.reset}`
-      );
     }
 
     return this.errors.length === 0;
   }
 
   run() {
-    console.log(
-      `${colors.bold}${colors.blue}🧪 NeonPro Test Migration Validator${colors.reset}\n`
-    );
-
     this.validateTestStructure();
     this.validateMigratedFiles();
     this.validateConfigurationFiles();

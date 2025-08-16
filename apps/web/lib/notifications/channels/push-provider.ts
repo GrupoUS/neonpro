@@ -23,7 +23,7 @@ export interface PushProvider extends NotificationProvider {
   validateDevice(deviceToken: string): Promise<boolean>;
 }
 
-export interface PushParams {
+export type PushParams = {
   deviceTokens: string | string[];
   title: string;
   body: string;
@@ -42,9 +42,9 @@ export interface PushParams {
     lgpdConsent: LGPDCompliantData;
     deviceInfo?: DeviceInfo;
   };
-}
+};
 
-export interface BulkPushParams {
+export type BulkPushParams = {
   notifications: Array<{
     deviceTokens: string[];
     title: string;
@@ -53,27 +53,27 @@ export interface BulkPushParams {
     metadata: PushParams['metadata'];
   }>;
   batchSize?: number;
-}
+};
 
-export interface DeviceSubscriptionParams {
+export type DeviceSubscriptionParams = {
   deviceToken: string;
   userId: string;
   platform: 'ios' | 'android' | 'web';
   appVersion: string;
   deviceInfo: DeviceInfo;
   lgpdConsent: LGPDCompliantData;
-}
+};
 
-export interface DeviceInfo {
+export type DeviceInfo = {
   platform: 'ios' | 'android' | 'web';
   osVersion?: string;
   appVersion: string;
   deviceModel?: string;
   locale?: string;
   timezone?: string;
-}
+};
 
-export interface PushProviderConfig {
+export type PushProviderConfig = {
   fcm: {
     projectId: string;
     clientEmail: string;
@@ -103,7 +103,7 @@ export interface PushProviderConfig {
     deviceConsentRequired: boolean;
     dataRetentionDays: number;
   };
-}
+};
 
 /**
  * Firebase Cloud Messaging Provider
@@ -128,8 +128,7 @@ class FCMPushProvider implements PushProvider {
     try {
       await this.getAccessToken();
       return true;
-    } catch (error) {
-      console.error(`[${this.id}] Health check failed:`, error);
+    } catch (_error) {
       return false;
     }
   }
@@ -326,8 +325,7 @@ class FCMPushProvider implements PushProvider {
       // For now, we'll return success if validation passes
 
       return true;
-    } catch (error) {
-      console.error(`[${this.id}] Device subscription failed:`, error);
+    } catch (_error) {
       return false;
     }
   }
@@ -338,8 +336,7 @@ class FCMPushProvider implements PushProvider {
       // This would typically involve database cleanup
 
       return true;
-    } catch (error) {
-      console.error(`[${this.id}] Device unsubscription failed:`, error);
+    } catch (_error) {
       return false;
     }
   }
@@ -370,8 +367,7 @@ class FCMPushProvider implements PushProvider {
       );
 
       return response.ok;
-    } catch (error) {
-      console.error(`[${this.id}] Device validation failed:`, error);
+    } catch (_error) {
       return false;
     }
   }
@@ -518,8 +514,7 @@ class PushProviderFactory {
     try {
       const provider = await this.getProvider();
       return await provider.subscribeDevice(params);
-    } catch (error) {
-      console.error('Device subscription failed:', error);
+    } catch (_error) {
       return false;
     }
   }
@@ -528,8 +523,7 @@ class PushProviderFactory {
     try {
       const provider = await this.getProvider();
       return await provider.unsubscribeDevice(deviceToken);
-    } catch (error) {
-      console.error('Device unsubscription failed:', error);
+    } catch (_error) {
       return false;
     }
   }

@@ -107,7 +107,7 @@ const RectificationRequestSchema = z.object({
   requiresApproval: z.boolean().default(false),
 });
 
-interface RectificationResult {
+type RectificationResult = {
   rectificationId: string;
   userId: string;
   requestDate: string;
@@ -123,7 +123,7 @@ interface RectificationResult {
     changedFields: string[];
     timestamp: string;
   };
-}
+};
 
 // Data validation functions
 function validateCPF(cpf: string): boolean {
@@ -372,9 +372,7 @@ async function logRectificationRequest(
         created_at: new Date().toISOString(),
       },
     ]);
-  } catch (error) {
-    console.error('Failed to log rectification request:', error);
-  }
+  } catch (_error) {}
 }
 
 export async function POST(request: NextRequest) {
@@ -504,8 +502,6 @@ export async function POST(request: NextRequest) {
       appliedChanges: changedFields,
     });
   } catch (error) {
-    console.error('LGPD Data Rectification Error:', error);
-
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {
@@ -556,7 +552,6 @@ export async function GET(_request: NextRequest) {
       .order('created_at', { ascending: false });
 
     if (error) {
-      console.error('Error fetching rectification history:', error);
     }
 
     return NextResponse.json({
@@ -635,8 +630,7 @@ export async function GET(_request: NextRequest) {
         },
       },
     });
-  } catch (error) {
-    console.error('LGPD Data Rectification GET Error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

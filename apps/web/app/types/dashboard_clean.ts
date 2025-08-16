@@ -1,5 +1,5 @@
 // Dashboard Configuration Types
-export interface DashboardConfiguration {
+export type DashboardConfiguration = {
   id: string;
   user_id: string;
   clinic_id?: string;
@@ -11,31 +11,31 @@ export interface DashboardConfiguration {
   is_default: boolean;
   created_at: string;
   updated_at: string;
-}
+};
 
-export interface LayoutConfig {
+export type LayoutConfig = {
   grid_size: number;
   responsive_breakpoints: ResponsiveBreakpoints;
   auto_save: boolean;
   snap_to_grid: boolean;
-}
+};
 
-export interface ResponsiveBreakpoints {
+export type ResponsiveBreakpoints = {
   mobile: number;
   tablet: number;
   desktop: number;
   wide: number;
-}
+};
 
-export interface WidgetPreferences {
+export type WidgetPreferences = {
   auto_refresh: boolean;
   show_legends: boolean;
   animate_transitions: boolean;
   default_time_range: TimeRange;
-}
+};
 
 // Widget Types
-export interface DashboardWidget {
+export type DashboardWidget = {
   id: string;
   config_id: string;
   widget_type: WidgetType;
@@ -47,9 +47,9 @@ export interface DashboardWidget {
   is_visible: boolean;
   created_at: string;
   updated_at: string;
-}
+};
 
-export interface WidgetPosition {
+export type WidgetPosition = {
   x: number;
   y: number;
   width: number;
@@ -58,50 +58,50 @@ export interface WidgetPosition {
   min_height?: number;
   max_width?: number;
   max_height?: number;
-}
+};
 
-export interface WidgetConfiguration {
+export type WidgetConfiguration = {
   data_params: Record<string, any>;
   refresh_interval: number;
   cache_duration: number;
   filters: FilterConfig[];
   aggregation: AggregationType;
   time_range: TimeRange;
-}
+};
 
-export interface WidgetDisplayConfig {
+export type WidgetDisplayConfig = {
   chart_type: ChartType;
   color_scheme: string[];
   show_legend: boolean;
   show_grid: boolean;
   animation_enabled: boolean;
   format_config: FormatConfig;
-}
+};
 
-export interface FilterConfig {
+export type FilterConfig = {
   field: string;
   operator: string;
   value: any;
   label: string;
-}
+};
 
-export interface FormatConfig {
+export type FormatConfig = {
   decimal_places?: number;
   prefix?: string;
   suffix?: string;
   format_type?: 'number' | 'currency' | 'percentage' | 'date';
   threshold_config?: ThresholdConfig[];
-}
+};
 
-export interface ThresholdConfig {
+export type ThresholdConfig = {
   value: number;
   color: string;
   operator: '>' | '<' | '>=' | '<=' | '=';
   label?: string;
-}
+};
 
 // KPI and Metrics Types
-export interface KPIMetric {
+export type KPIMetric = {
   id: string;
   name: string;
   value: number;
@@ -113,9 +113,9 @@ export interface KPIMetric {
   target: number;
   category: MetricType;
   calculation_date: string;
-}
+};
 
-export interface RevenueMetrics {
+export type RevenueMetrics = {
   daily_revenue: number;
   weekly_revenue: number;
   monthly_revenue: number;
@@ -124,16 +124,16 @@ export interface RevenueMetrics {
   revenue_by_service: ServiceRevenue[];
   revenue_trend: TrendData[];
   revenue_forecast: ForecastData[];
-}
+};
 
-export interface ServiceRevenue {
+export type ServiceRevenue = {
   service_name: string;
   revenue: number;
   count: number;
   percentage: number;
-}
+};
 
-export interface PatientMetrics {
+export type PatientMetrics = {
   new_patients: number;
   returning_patients: number;
   total_patients: number;
@@ -142,23 +142,23 @@ export interface PatientMetrics {
   lifetime_value: number;
   patient_segmentation: PatientSegment[];
   acquisition_sources: AcquisitionSource[];
-}
+};
 
-export interface PatientSegment {
+export type PatientSegment = {
   segment_name: string;
   count: number;
   percentage: number;
   average_value: number;
-}
+};
 
-export interface AcquisitionSource {
+export type AcquisitionSource = {
   source: string;
   count: number;
   percentage: number;
   cost_per_acquisition: number;
-}
+};
 
-export interface AppointmentMetrics {
+export type AppointmentMetrics = {
   total_appointments: number;
   booking_rate: number;
   cancellation_rate: number;
@@ -167,23 +167,23 @@ export interface AppointmentMetrics {
   average_booking_lead_time: number;
   appointment_types: AppointmentTypeMetric[];
   time_slot_analysis: TimeSlotMetric[];
-}
+};
 
-export interface AppointmentTypeMetric {
+export type AppointmentTypeMetric = {
   type: string;
   count: number;
   percentage: number;
   average_duration: number;
-}
+};
 
-export interface TimeSlotMetric {
+export type TimeSlotMetric = {
   time_slot: string;
   booking_rate: number;
   utilization: number;
   revenue: number;
-}
+};
 
-export interface EfficiencyMetrics {
+export type EfficiencyMetrics = {
   staff_productivity: number;
   resource_utilization: number;
   treatment_efficiency: number;
@@ -192,25 +192,25 @@ export interface EfficiencyMetrics {
   cost_per_patient: number;
   profit_margin: number;
   operational_efficiency: number;
-}
+};
 
-export interface TrendData {
+export type TrendData = {
   date: string;
   value: number;
   label?: string;
-}
+};
 
-export interface ForecastData {
+export type ForecastData = {
   date: string;
   predicted_value: number;
   confidence_interval: {
     lower: number;
     upper: number;
   };
-}
+};
 
 // Alert Types
-export interface DashboardAlert {
+export type DashboardAlert = {
   id: string;
   user_id: string;
   clinic_id?: string;
@@ -225,10 +225,10 @@ export interface DashboardAlert {
   last_triggered?: string;
   created_at: string;
   updated_at: string;
-}
+};
 
 // Performance and Cache Types
-export interface DashboardPerformanceLog {
+export type DashboardPerformanceLog = {
   id: string;
   user_id: string;
   clinic_id?: string;
@@ -237,19 +237,19 @@ export interface DashboardPerformanceLog {
   widget_count: number;
   error_count: number;
   timestamp: string;
-}
+};
 
-export interface DashboardCache {
+export type DashboardCache = {
   id: string;
   cache_key: string;
   cache_data: any;
   expires_at: string;
   clinic_id?: string;
   created_at: string;
-}
+};
 
 // Response Types
-export interface DashboardSummary {
+export type DashboardSummary = {
   total_revenue: number;
   total_patients: number;
   total_appointments: number;
@@ -258,9 +258,9 @@ export interface DashboardSummary {
   alert_count: number;
   last_updated: string;
   performance_score: number;
-}
+};
 
-export interface WidgetDataResponse {
+export type WidgetDataResponse = {
   widget_id: string;
   data: any;
   metadata: {
@@ -268,17 +268,17 @@ export interface WidgetDataResponse {
     data_points: number;
     calculation_time: number;
   };
-}
+};
 
-export interface KPIResponse {
+export type KPIResponse = {
   clinic_id: string;
   metrics: KPIMetric[];
   calculation_date: string;
   summary: DashboardSummary;
   trends: TrendData[];
-}
+};
 
-export interface DashboardConfigurationResponse {
+export type DashboardConfigurationResponse = {
   id: string;
   user_id: string;
   clinic_id?: string;
@@ -291,9 +291,9 @@ export interface DashboardConfigurationResponse {
   created_at: string;
   updated_at: string;
   dashboard_widgets: DashboardWidget[];
-}
+};
 
-export interface WidgetCreateRequest {
+export type WidgetCreateRequest = {
   config_id: string;
   widget_type: WidgetType;
   widget_name: string;
@@ -304,22 +304,22 @@ export interface WidgetCreateRequest {
   height: number;
   configuration: any;
   is_visible?: boolean;
-}
+};
 
-export interface AlertCreateRequest {
+export type AlertCreateRequest = {
   alert_type: AlertType;
   metric_name: string;
   threshold_value: number;
   threshold_operator?: string;
   notification_method?: NotificationMethod;
-}
+};
 
-export interface PerformanceLogRequest {
+export type PerformanceLogRequest = {
   dashboard_load_time: number;
   data_fetch_time: number;
   widget_count: number;
   error_count?: number;
-}
+};
 
 // Type Unions
 export type DashboardTheme = 'light' | 'dark' | 'auto';

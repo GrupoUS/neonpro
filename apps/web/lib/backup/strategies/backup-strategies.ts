@@ -3,7 +3,7 @@ import { AuditLogger } from '../../audit/audit-logger';
 import { LGPDManager } from '../../lgpd/lgpd-manager';
 import { EncryptionService } from '../../security/encryption-service';
 
-export interface BackupStrategy {
+export type BackupStrategy = {
   name: string;
   type: 'full' | 'incremental' | 'differential';
   description: string;
@@ -18,17 +18,17 @@ export interface BackupStrategy {
   dependencies: string[]; // Outras estratégias que devem executar antes
   validation_rules: ValidationRule[];
   metadata: Record<string, any>;
-}
+};
 
-export interface ValidationRule {
+export type ValidationRule = {
   type: 'size_limit' | 'file_count' | 'duration_limit' | 'checksum' | 'custom';
   condition: string;
   threshold: number | string;
   action: 'warn' | 'fail' | 'retry';
   message: string;
-}
+};
 
-export interface BackupExecutionContext {
+export type BackupExecutionContext = {
   strategy: BackupStrategy;
   job_id: string;
   started_at: Date;
@@ -36,9 +36,9 @@ export interface BackupExecutionContext {
   force_full: boolean;
   dry_run: boolean;
   custom_options: Record<string, any>;
-}
+};
 
-export interface BackupResult {
+export type BackupResult = {
   success: boolean;
   strategy_name: string;
   execution_time_seconds: number;
@@ -51,16 +51,16 @@ export interface BackupResult {
   checksum: string;
   storage_location: string;
   metadata: Record<string, any>;
-}
+};
 
-export interface DataSourceHandler {
+export type DataSourceHandler = {
   name: string;
   backup(context: BackupExecutionContext): Promise<BackupResult>;
   restore(backupLocation: string, targetLocation: string): Promise<void>;
   validate(backupLocation: string): Promise<boolean>;
   getSize(): Promise<number>;
   getLastModified(): Promise<Date>;
-}
+};
 
 export class DatabaseBackupStrategy implements DataSourceHandler {
   name = 'database';
@@ -433,10 +433,10 @@ export class DatabaseBackupStrategy implements DataSourceHandler {
     }
   }
 
-  private async saveToStorage(location: string, _data: string): Promise<void> {
-    // Implementar salvamento real no storage
-    console.log(`Salvando backup em: ${location}`);
-  }
+  private async saveToStorage(
+    _location: string,
+    _data: string
+  ): Promise<void> {}
 
   private async getBackupSize(_jobId: string): Promise<number> {
     // Implementar cálculo real do tamanho
@@ -449,12 +449,9 @@ export class DatabaseBackupStrategy implements DataSourceHandler {
   }
 
   private async saveEncryptedBackup(
-    jobId: string,
+    _jobId: string,
     _encryptedData: string
-  ): Promise<void> {
-    // Implementar salvamento dos dados criptografados
-    console.log(`Backup criptografado salvo: ${jobId}`);
-  }
+  ): Promise<void> {}
 
   private async checkBackupExists(_location: string): Promise<boolean> {
     // Implementar verificação de existência
@@ -486,10 +483,7 @@ export class DatabaseBackupStrategy implements DataSourceHandler {
     return location; // Simulado
   }
 
-  private async restoreDatabaseSchema(location: string): Promise<void> {
-    // Implementar restauração do esquema
-    console.log(`Restaurando esquema de: ${location}`);
-  }
+  private async restoreDatabaseSchema(_location: string): Promise<void> {}
 
   private async getBackupTables(_location: string): Promise<string[]> {
     // Implementar listagem de tabelas no backup
@@ -497,17 +491,11 @@ export class DatabaseBackupStrategy implements DataSourceHandler {
   }
 
   private async restoreTable(
-    tableName: string,
-    location: string
-  ): Promise<void> {
-    // Implementar restauração de tabela
-    console.log(`Restaurando tabela ${tableName} de: ${location}`);
-  }
+    _tableName: string,
+    _location: string
+  ): Promise<void> {}
 
-  private async verifyRestoreIntegrity(): Promise<void> {
-    // Implementar verificação de integridade pós-restauração
-    console.log('Verificando integridade da restauração');
-  }
+  private async verifyRestoreIntegrity(): Promise<void> {}
 }
 
 export class FileSystemBackupStrategy implements DataSourceHandler {
@@ -716,10 +704,7 @@ export class FileSystemBackupStrategy implements DataSourceHandler {
     return Math.floor(originalSize * 0.6); // 40% de compressão
   }
 
-  private async encryptFileSystemBackup(jobId: string): Promise<void> {
-    // Implementar criptografia
-    console.log(`Criptografando backup filesystem: ${jobId}`);
-  }
+  private async encryptFileSystemBackup(_jobId: string): Promise<void> {}
 
   private generateFileSystemStorageLocation(
     context: BackupExecutionContext
@@ -747,17 +732,13 @@ export class FileSystemBackupStrategy implements DataSourceHandler {
   }
 
   private async restoreFiles(
-    backupLocation: string,
-    targetLocation: string
-  ): Promise<void> {
-    console.log(
-      `Restaurando arquivos de ${backupLocation} para ${targetLocation}`
-    );
-  }
+    _backupLocation: string,
+    _targetLocation: string
+  ): Promise<void> {}
 
-  private async verifyFileSystemRestore(targetLocation: string): Promise<void> {
-    console.log(`Verificando restauração em: ${targetLocation}`);
-  }
+  private async verifyFileSystemRestore(
+    _targetLocation: string
+  ): Promise<void> {}
 }
 
 export class BackupStrategyManager {

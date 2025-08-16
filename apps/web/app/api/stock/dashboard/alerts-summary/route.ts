@@ -73,7 +73,6 @@ export async function GET(request: NextRequest) {
       .eq('status', 'active');
 
     if (alertsError) {
-      console.error('Alerts Error:', alertsError);
       return NextResponse.json(
         { error: 'Erro ao buscar alertas' },
         { status: 500 }
@@ -90,7 +89,6 @@ export async function GET(request: NextRequest) {
         .lte('created_at', endDate.toISOString());
 
     if (historicalError) {
-      console.error('Historical Alerts Error:', historicalError);
       return NextResponse.json(
         { error: 'Erro ao buscar histórico de alertas' },
         { status: 500 }
@@ -231,8 +229,6 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('Dashboard Alerts Summary API Error:', error);
-
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Parâmetros inválidos', details: error.errors },

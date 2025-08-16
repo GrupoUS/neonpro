@@ -20,8 +20,6 @@ export async function GET(request: Request) {
       const { error } = await supabase.auth.exchangeCodeForSession(code);
 
       if (error) {
-        // Log do erro para debugging
-        console.error('Erro na troca do código OAuth:', error);
         return NextResponse.redirect(
           `${origin}/auth/auth-code-error?error=${encodeURIComponent(
             error.message
@@ -30,9 +28,7 @@ export async function GET(request: Request) {
       }
       // Sucesso: redireciona para o dashboard ou próxima página
       return NextResponse.redirect(`${origin}${next}`);
-    } catch (err) {
-      // Tratamento de erros inesperados
-      console.error('Erro inesperado no callback OAuth:', err);
+    } catch (_err) {
       return NextResponse.redirect(
         `${origin}/auth/auth-code-error?error=unexpected_error`
       );

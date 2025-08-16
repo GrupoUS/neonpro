@@ -2,7 +2,7 @@
 // Story 6.2: Automated Reorder Alerts + Threshold Management
 
 // Base interfaces
-export interface ReorderThreshold {
+export type ReorderThreshold = {
   id: string;
   item_id: string;
   clinic_id: string;
@@ -36,9 +36,9 @@ export interface ReorderThreshold {
   last_calculation_date?: string;
   created_at: string;
   updated_at: string;
-}
+};
 
-export interface ReorderAlert {
+export type ReorderAlert = {
   id: string;
   item_id: string;
   threshold_id: string;
@@ -85,9 +85,9 @@ export interface ReorderAlert {
   expires_at?: string;
   created_at: string;
   updated_at: string;
-}
+};
 
-export interface DemandForecast {
+export type DemandForecast = {
   id: string;
   item_id: string;
   clinic_id: string;
@@ -120,9 +120,9 @@ export interface DemandForecast {
   // Metadata
   calculated_at: string;
   created_at: string;
-}
+};
 
-export interface PurchaseOrder {
+export type PurchaseOrder = {
   id: string;
   clinic_id: string;
   supplier_id: string;
@@ -182,9 +182,9 @@ export interface PurchaseOrder {
   created_by?: string;
   created_at: string;
   updated_at: string;
-}
+};
 
-export interface PurchaseOrderItem {
+export type PurchaseOrderItem = {
   id: string;
   purchase_order_id: string;
   item_id: string;
@@ -212,9 +212,9 @@ export interface PurchaseOrderItem {
   // Metadata
   created_at: string;
   updated_at: string;
-}
+};
 
-export interface ApprovalWorkflow {
+export type ApprovalWorkflow = {
   id: string;
   clinic_id: string;
 
@@ -243,9 +243,9 @@ export interface ApprovalWorkflow {
   created_by?: string;
   created_at: string;
   updated_at: string;
-}
+};
 
-export interface SupplierLeadTime {
+export type SupplierLeadTime = {
   id: string;
   supplier_id: string;
   item_id: string;
@@ -256,10 +256,10 @@ export interface SupplierLeadTime {
   last_updated: string;
   created_at: string;
   updated_at: string;
-}
+};
 
 // Dashboard and analytics interfaces
-export interface AlertDashboard {
+export type AlertDashboard = {
   id: string;
   alert_type: ReorderAlert['alert_type'];
   alert_level: number;
@@ -282,9 +282,9 @@ export interface AlertDashboard {
   maximum_stock?: number;
   is_recent: boolean;
   hours_since_created: number;
-}
+};
 
-export interface AlertsStats {
+export type AlertsStats = {
   total_alerts: number;
   pending_alerts: number;
   critical_alerts: number;
@@ -298,9 +298,9 @@ export interface AlertsStats {
     alerts_created: number;
     alerts_resolved: number;
   }>;
-}
+};
 
-export interface ThresholdOptimization {
+export type ThresholdOptimization = {
   item_id: string;
   item_name: string;
   current_reorder_point: number;
@@ -311,9 +311,9 @@ export interface ThresholdOptimization {
   potential_savings: number;
   confidence_score: number;
   implementation_priority: 'low' | 'medium' | 'high';
-}
+};
 
-export interface InventoryOptimization {
+export type InventoryOptimization = {
   total_items_analyzed: number;
   items_needing_optimization: number;
   potential_cost_savings: number;
@@ -321,10 +321,10 @@ export interface InventoryOptimization {
   service_level_improvement: number;
   recommendations: ThresholdOptimization[];
   last_analysis_date: string;
-}
+};
 
 // Form interfaces for API requests
-export interface CreateReorderThresholdRequest {
+export type CreateReorderThresholdRequest = {
   item_id: string;
   clinic_id: string;
   reorder_point: number;
@@ -335,14 +335,14 @@ export interface CreateReorderThresholdRequest {
   preferred_supplier_id?: string;
   budget_approval_required?: boolean;
   budget_threshold_amount?: number;
-}
+};
 
 export interface UpdateReorderThresholdRequest
   extends Partial<CreateReorderThresholdRequest> {
   id: string;
 }
 
-export interface CreateReorderAlertRequest {
+export type CreateReorderAlertRequest = {
   item_id: string;
   threshold_id: string;
   clinic_id: string;
@@ -355,18 +355,18 @@ export interface CreateReorderAlertRequest {
   recommended_order_quantity?: number;
   estimated_stockout_date?: string;
   context_data?: Record<string, any>;
-}
+};
 
-export interface UpdateReorderAlertRequest {
+export type UpdateReorderAlertRequest = {
   id: string;
   status?: ReorderAlert['status'];
   resolution_notes?: string;
   acknowledged_by?: string;
   resolved_by?: string;
   escalated_to?: string;
-}
+};
 
-export interface CreatePurchaseOrderRequest {
+export type CreatePurchaseOrderRequest = {
   clinic_id: string;
   supplier_id: string;
   order_type: PurchaseOrder['order_type'];
@@ -380,9 +380,9 @@ export interface CreatePurchaseOrderRequest {
   notes?: string;
   auto_generated?: boolean;
   generated_from_alert_id?: string;
-}
+};
 
-export interface UpdatePurchaseOrderRequest {
+export type UpdatePurchaseOrderRequest = {
   id: string;
   status?: PurchaseOrder['status'];
   supplier_confirmation?: string;
@@ -390,36 +390,36 @@ export interface UpdatePurchaseOrderRequest {
   confirmed_delivery_date?: string;
   actual_delivery_date?: string;
   notes?: string;
-}
+};
 
 // API response interfaces
-export interface AlertsResponse {
+export type AlertsResponse = {
   alerts: ReorderAlert[];
   total: number;
   stats: AlertsStats;
-}
+};
 
-export interface ThresholdsResponse {
+export type ThresholdsResponse = {
   thresholds: ReorderThreshold[];
   total: number;
   optimization_recommendations: ThresholdOptimization[];
-}
+};
 
-export interface PurchaseOrdersResponse {
+export type PurchaseOrdersResponse = {
   purchase_orders: PurchaseOrder[];
   total: number;
   pending_approvals: number;
   total_value: number;
-}
+};
 
-export interface DemandForecastResponse {
+export type DemandForecastResponse = {
   forecasts: DemandForecast[];
   accuracy_metrics: {
     overall_accuracy: number;
     accuracy_by_period: Record<string, number>;
     model_performance: Record<string, number>;
   };
-}
+};
 
 // Utility types
 export type AlertFilter = {
@@ -473,7 +473,7 @@ export type NotificationChannel =
   | 'push'
   | 'webhook';
 
-export interface NotificationSettings {
+export type NotificationSettings = {
   clinic_id: string;
   user_id: string;
   channels: NotificationChannel[];
@@ -487,4 +487,4 @@ export interface NotificationSettings {
     max_per_hour: number;
     max_per_day: number;
   };
-}
+};

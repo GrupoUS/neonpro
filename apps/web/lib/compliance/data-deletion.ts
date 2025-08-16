@@ -1,10 +1,10 @@
 // lib/compliance/data-deletion.ts
-export interface DataDeletionRequest {
+export type DataDeletionRequest = {
   userId: string;
   deletePersonalData: boolean;
   deleteMedicalData: boolean;
   retentionPeriod?: number; // days
-}
+};
 
 export class DataDeletionService {
   static async scheduleDataDeletion(
@@ -20,9 +20,7 @@ export class DataDeletionService {
     };
   }
 
-  static async deleteUserData(userId: string): Promise<boolean> {
-    // Mock implementation for build
-    console.log(`Deleting data for user: ${userId}`);
+  static async deleteUserData(_userId: string): Promise<boolean> {
     return true;
   }
 }

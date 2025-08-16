@@ -20,7 +20,7 @@ import type {
 } from '../types/subscription-errors';
 
 // Log entry structure
-interface LogEntry {
+type LogEntry = {
   id: string;
   timestamp: Date;
   level: LogLevel;
@@ -35,7 +35,7 @@ interface LogEntry {
   responseTime?: number;
   memoryUsage?: number;
   systemLoad?: number;
-}
+};
 
 // Log levels
 enum LogLevel {
@@ -47,7 +47,7 @@ enum LogLevel {
 }
 
 // Logger configuration
-interface LoggerConfig {
+type LoggerConfig = {
   enableConsoleLogging: boolean;
   enableFileLogging: boolean;
   enableRemoteLogging: boolean;
@@ -69,7 +69,7 @@ interface LoggerConfig {
     criticalErrors: number;
     responseTime: number;
   };
-}
+};
 
 const defaultConfig: LoggerConfig = {
   enableConsoleLogging: true,
@@ -94,7 +94,7 @@ const defaultConfig: LoggerConfig = {
 };
 
 // Error pattern detection
-interface ErrorPattern {
+type ErrorPattern = {
   id: string;
   name: string;
   description: string;
@@ -105,10 +105,10 @@ interface ErrorPattern {
   severity: ErrorSeverity;
   lastTriggered?: Date;
   count: number;
-}
+};
 
 // Analytics data
-interface ErrorAnalytics {
+type ErrorAnalytics = {
   totalErrors: number;
   errorsByHour: Record<string, number>;
   errorsByCategory: Record<ErrorCategory, number>;
@@ -133,7 +133,7 @@ interface ErrorAnalytics {
     pattern: 'normal' | 'spike' | 'sustained';
     confidence: number;
   };
-}
+};
 
 export class SubscriptionErrorLogger {
   private readonly config: LoggerConfig;
@@ -278,9 +278,7 @@ export class SubscriptionErrorLogger {
     // Flush logs
   }
 
-  private logToConsole(logEntry: LogEntry): void {
-    console.log(logEntry);
-  }
+  private logToConsole(_logEntry: LogEntry): void {}
 
   private shouldTriggerAlert(error: SubscriptionError): boolean {
     return error.severity === 'CRITICAL';

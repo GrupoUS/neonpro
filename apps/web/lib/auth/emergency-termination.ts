@@ -16,7 +16,7 @@ import type { UserRole } from '@/types/auth';
 import { SecurityAuditLogger } from './security-audit-logger';
 import type { SessionPreservation } from './session-preservation';
 
-export interface EmergencyTerminationRequest {
+export type EmergencyTerminationRequest = {
   requestId: string;
   initiatedBy: string;
   initiatorRole: UserRole;
@@ -33,9 +33,9 @@ export interface EmergencyTerminationRequest {
   notifyUsers: boolean;
   timestamp: Date;
   metadata: Record<string, any>;
-}
+};
 
-export interface TerminationResult {
+export type TerminationResult = {
   requestId: string;
   success: boolean;
   terminatedSessions: {
@@ -55,9 +55,9 @@ export interface TerminationResult {
   executionTime: number;
   warnings: string[];
   errors: string[];
-}
+};
 
-export interface EmergencyProtocol {
+export type EmergencyProtocol = {
   protocolId: string;
   name: string;
   description: string;
@@ -81,9 +81,9 @@ export interface EmergencyProtocol {
   isActive: boolean;
   createdAt: Date;
   lastTriggered?: Date;
-}
+};
 
-export interface TerminationAuditLog {
+export type TerminationAuditLog = {
   logId: string;
   requestId: string;
   sessionId: string;
@@ -101,9 +101,9 @@ export interface TerminationAuditLog {
   ipAddress: string;
   userAgent: string;
   metadata: Record<string, any>;
-}
+};
 
-export interface EmergencyConfig {
+export type EmergencyConfig = {
   enabled: boolean;
   requireApproval: {
     singleSession: boolean;
@@ -131,7 +131,7 @@ export interface EmergencyConfig {
     retentionDays: number;
     realTimeAlerts: boolean;
   };
-}
+};
 
 const DEFAULT_CONFIG: EmergencyConfig = {
   enabled: true,
@@ -288,21 +288,14 @@ export class EmergencyTermination {
    * Initialize emergency termination system
    */
   async initialize(): Promise<void> {
-    try {
-      // Load custom protocols
-      await this.loadCustomProtocols();
+    // Load custom protocols
+    await this.loadCustomProtocols();
 
-      // Load active sessions
-      await this.loadActiveSessions();
+    // Load active sessions
+    await this.loadActiveSessions();
 
-      // Set up real-time monitoring
-      await this.setupRealtimeMonitoring();
-
-      console.log('Emergency termination system initialized');
-    } catch (error) {
-      console.error('Failed to initialize emergency termination:', error);
-      throw error;
-    }
+    // Set up real-time monitoring
+    await this.setupRealtimeMonitoring();
   }
 
   /**
@@ -311,41 +304,36 @@ export class EmergencyTermination {
   async requestTermination(
     request: Omit<EmergencyTerminationRequest, 'requestId' | 'timestamp'>
   ): Promise<TerminationResult> {
-    try {
-      const startTime = Date.now();
+    const startTime = Date.now();
 
-      // Create termination request
-      const terminationRequest: EmergencyTerminationRequest = {
-        ...request,
-        requestId: `term_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-        timestamp: new Date(),
-      };
+    // Create termination request
+    const terminationRequest: EmergencyTerminationRequest = {
+      ...request,
+      requestId: `term_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      timestamp: new Date(),
+    };
 
-      // Validate request
-      await this.validateTerminationRequest(terminationRequest);
+    // Validate request
+    await this.validateTerminationRequest(terminationRequest);
 
-      // Check rate limits
-      await this.checkRateLimits(terminationRequest.initiatedBy);
+    // Check rate limits
+    await this.checkRateLimits(terminationRequest.initiatedBy);
 
-      // Check if approval is required
-      if (this.requiresApproval(terminationRequest)) {
-        return await this.requestApproval(terminationRequest);
-      }
-
-      // Execute termination
-      const result = await this.executeTermination(terminationRequest);
-
-      // Calculate execution time
-      result.executionTime = Date.now() - startTime;
-
-      // Log the termination
-      await this.logTermination(terminationRequest, result);
-
-      return result;
-    } catch (error) {
-      console.error('Failed to request termination:', error);
-      throw error;
+    // Check if approval is required
+    if (this.requiresApproval(terminationRequest)) {
+      return await this.requestApproval(terminationRequest);
     }
+
+    // Execute termination
+    const result = await this.executeTermination(terminationRequest);
+
+    // Calculate execution time
+    result.executionTime = Date.now() - startTime;
+
+    // Log the termination
+    await this.logTermination(terminationRequest, result);
+
+    return result;
   }
 
   /**
@@ -357,78 +345,73 @@ export class EmergencyTermination {
     initiatorRole: UserRole,
     context?: Record<string, any>
   ): Promise<TerminationResult> {
-    try {
-      const protocol = this.protocols.get(protocolId);
-      if (!protocol) {
-        throw new Error(`Protocol ${protocolId} not found`);
-      }
-
-      if (!protocol.isActive) {
-        throw new Error(`Protocol ${protocolId} is not active`);
-      }
-
-      // Check cooldown period
-      if (protocol.lastTriggered) {
-        const timeSinceLastTrigger =
-          Date.now() - protocol.lastTriggered.getTime();
-        const cooldownMs = protocol.cooldownPeriod * 60 * 1000;
-
-        if (timeSinceLastTrigger < cooldownMs) {
-          throw new Error(`Protocol ${protocolId} is in cooldown period`);
-        }
-      }
-
-      // Create termination request based on protocol
-      const terminationRequest: EmergencyTerminationRequest = {
-        requestId: `protocol_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-        initiatedBy,
-        initiatorRole,
-        terminationType: protocol.actions.terminateAllSessions
-          ? 'all_sessions'
-          : 'user_sessions',
-        targetIdentifier: protocol.actions.terminateAllSessions
-          ? 'all'
-          : initiatedBy,
-        reason: `Emergency protocol: ${protocol.name}`,
-        severity: protocol.severity,
-        preserveData: protocol.actions.preserveData,
-        notifyUsers: protocol.actions.notifyUsers,
-        timestamp: new Date(),
-        metadata: {
-          protocolId,
-          protocolName: protocol.name,
-          automaticTrigger: protocol.automaticTrigger,
-          context: context || {},
-        },
-      };
-
-      // Execute termination
-      const result = await this.executeTermination(terminationRequest);
-
-      // Update protocol last triggered time
-      protocol.lastTriggered = new Date();
-      await this.updateProtocol(protocol);
-
-      // Execute additional protocol actions
-      if (protocol.actions.lockAccounts) {
-        await this.lockUserAccounts(
-          result.terminatedSessions.map((s) => s.userId)
-        );
-      }
-
-      if (protocol.actions.disableNewLogins) {
-        await this.disableNewLogins();
-      }
-
-      if (protocol.actions.escalateToSecurity) {
-        await this.escalateToSecurity(terminationRequest, result);
-      }
-
-      return result;
-    } catch (error) {
-      console.error('Failed to execute protocol:', error);
-      throw error;
+    const protocol = this.protocols.get(protocolId);
+    if (!protocol) {
+      throw new Error(`Protocol ${protocolId} not found`);
     }
+
+    if (!protocol.isActive) {
+      throw new Error(`Protocol ${protocolId} is not active`);
+    }
+
+    // Check cooldown period
+    if (protocol.lastTriggered) {
+      const timeSinceLastTrigger =
+        Date.now() - protocol.lastTriggered.getTime();
+      const cooldownMs = protocol.cooldownPeriod * 60 * 1000;
+
+      if (timeSinceLastTrigger < cooldownMs) {
+        throw new Error(`Protocol ${protocolId} is in cooldown period`);
+      }
+    }
+
+    // Create termination request based on protocol
+    const terminationRequest: EmergencyTerminationRequest = {
+      requestId: `protocol_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      initiatedBy,
+      initiatorRole,
+      terminationType: protocol.actions.terminateAllSessions
+        ? 'all_sessions'
+        : 'user_sessions',
+      targetIdentifier: protocol.actions.terminateAllSessions
+        ? 'all'
+        : initiatedBy,
+      reason: `Emergency protocol: ${protocol.name}`,
+      severity: protocol.severity,
+      preserveData: protocol.actions.preserveData,
+      notifyUsers: protocol.actions.notifyUsers,
+      timestamp: new Date(),
+      metadata: {
+        protocolId,
+        protocolName: protocol.name,
+        automaticTrigger: protocol.automaticTrigger,
+        context: context || {},
+      },
+    };
+
+    // Execute termination
+    const result = await this.executeTermination(terminationRequest);
+
+    // Update protocol last triggered time
+    protocol.lastTriggered = new Date();
+    await this.updateProtocol(protocol);
+
+    // Execute additional protocol actions
+    if (protocol.actions.lockAccounts) {
+      await this.lockUserAccounts(
+        result.terminatedSessions.map((s) => s.userId)
+      );
+    }
+
+    if (protocol.actions.disableNewLogins) {
+      await this.disableNewLogins();
+    }
+
+    if (protocol.actions.escalateToSecurity) {
+      await this.escalateToSecurity(terminationRequest, result);
+    }
+
+    return result;
   }
 
   /**
@@ -440,31 +423,26 @@ export class EmergencyTermination {
     reason: string,
     preserveData = true
   ): Promise<TerminationResult> {
-    try {
-      const session = this.activeSessions.get(sessionId);
-      if (!session) {
-        throw new Error('Session not found');
-      }
-
-      const terminationRequest: EmergencyTerminationRequest = {
-        requestId: `single_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-        initiatedBy,
-        initiatorRole: 'manager', // Default role for single session termination
-        terminationType: 'single_session',
-        targetIdentifier: sessionId,
-        reason,
-        severity: 'medium',
-        preserveData,
-        notifyUsers: true,
-        timestamp: new Date(),
-        metadata: {},
-      };
-
-      return await this.executeTermination(terminationRequest);
-    } catch (error) {
-      console.error('Failed to terminate session:', error);
-      throw error;
+    const session = this.activeSessions.get(sessionId);
+    if (!session) {
+      throw new Error('Session not found');
     }
+
+    const terminationRequest: EmergencyTerminationRequest = {
+      requestId: `single_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      initiatedBy,
+      initiatorRole: 'manager', // Default role for single session termination
+      terminationType: 'single_session',
+      targetIdentifier: sessionId,
+      reason,
+      severity: 'medium',
+      preserveData,
+      notifyUsers: true,
+      timestamp: new Date(),
+      metadata: {},
+    };
+
+    return await this.executeTermination(terminationRequest);
   }
 
   /**
@@ -476,26 +454,21 @@ export class EmergencyTermination {
     reason: string,
     preserveData = true
   ): Promise<TerminationResult> {
-    try {
-      const terminationRequest: EmergencyTerminationRequest = {
-        requestId: `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-        initiatedBy,
-        initiatorRole: 'manager',
-        terminationType: 'user_sessions',
-        targetIdentifier: userId,
-        reason,
-        severity: 'high',
-        preserveData,
-        notifyUsers: true,
-        timestamp: new Date(),
-        metadata: {},
-      };
+    const terminationRequest: EmergencyTerminationRequest = {
+      requestId: `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      initiatedBy,
+      initiatorRole: 'manager',
+      terminationType: 'user_sessions',
+      targetIdentifier: userId,
+      reason,
+      severity: 'high',
+      preserveData,
+      notifyUsers: true,
+      timestamp: new Date(),
+      metadata: {},
+    };
 
-      return await this.executeTermination(terminationRequest);
-    } catch (error) {
-      console.error('Failed to terminate user sessions:', error);
-      throw error;
-    }
+    return await this.executeTermination(terminationRequest);
   }
 
   /**
@@ -506,26 +479,21 @@ export class EmergencyTermination {
     reason: string,
     preserveData = true
   ): Promise<TerminationResult> {
-    try {
-      const terminationRequest: EmergencyTerminationRequest = {
-        requestId: `all_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-        initiatedBy,
-        initiatorRole: 'owner',
-        terminationType: 'all_sessions',
-        targetIdentifier: 'all',
-        reason,
-        severity: 'critical',
-        preserveData,
-        notifyUsers: true,
-        timestamp: new Date(),
-        metadata: {},
-      };
+    const terminationRequest: EmergencyTerminationRequest = {
+      requestId: `all_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      initiatedBy,
+      initiatorRole: 'owner',
+      terminationType: 'all_sessions',
+      targetIdentifier: 'all',
+      reason,
+      severity: 'critical',
+      preserveData,
+      notifyUsers: true,
+      timestamp: new Date(),
+      metadata: {},
+    };
 
-      return await this.executeTermination(terminationRequest);
-    } catch (error) {
-      console.error('Failed to terminate all sessions:', error);
-      throw error;
-    }
+    return await this.executeTermination(terminationRequest);
   }
 
   /**
@@ -573,8 +541,7 @@ export class EmergencyTermination {
       }
 
       return (data || []).map(this.mapDatabaseToAuditLog);
-    } catch (error) {
-      console.error('Failed to get termination logs:', error);
+    } catch (_error) {
       return [];
     }
   }
@@ -585,64 +552,54 @@ export class EmergencyTermination {
   async addProtocol(
     protocol: Omit<EmergencyProtocol, 'createdAt'>
   ): Promise<void> {
-    try {
-      const newProtocol: EmergencyProtocol = {
-        ...protocol,
-        createdAt: new Date(),
-      };
+    const newProtocol: EmergencyProtocol = {
+      ...protocol,
+      createdAt: new Date(),
+    };
 
-      // Store protocol
-      await this.supabase.from('emergency_protocols').insert({
-        protocol_id: newProtocol.protocolId,
-        name: newProtocol.name,
-        description: newProtocol.description,
-        trigger_conditions: newProtocol.triggerConditions,
-        automatic_trigger: newProtocol.automaticTrigger,
-        severity: newProtocol.severity,
-        actions: newProtocol.actions,
-        approval_required: newProtocol.approvalRequired,
-        approver_roles: newProtocol.approverRoles,
-        cooldown_period: newProtocol.cooldownPeriod,
-        is_active: newProtocol.isActive,
-        created_at: newProtocol.createdAt.toISOString(),
-      });
+    // Store protocol
+    await this.supabase.from('emergency_protocols').insert({
+      protocol_id: newProtocol.protocolId,
+      name: newProtocol.name,
+      description: newProtocol.description,
+      trigger_conditions: newProtocol.triggerConditions,
+      automatic_trigger: newProtocol.automaticTrigger,
+      severity: newProtocol.severity,
+      actions: newProtocol.actions,
+      approval_required: newProtocol.approvalRequired,
+      approver_roles: newProtocol.approverRoles,
+      cooldown_period: newProtocol.cooldownPeriod,
+      is_active: newProtocol.isActive,
+      created_at: newProtocol.createdAt.toISOString(),
+    });
 
-      // Add to protocols map
-      this.protocols.set(newProtocol.protocolId, newProtocol);
-    } catch (error) {
-      console.error('Failed to add protocol:', error);
-      throw error;
-    }
+    // Add to protocols map
+    this.protocols.set(newProtocol.protocolId, newProtocol);
   }
 
   /**
    * Update emergency protocol
    */
   async updateProtocol(protocol: EmergencyProtocol): Promise<void> {
-    try {
-      await this.supabase
-        .from('emergency_protocols')
-        .update({
-          name: protocol.name,
-          description: protocol.description,
-          trigger_conditions: protocol.triggerConditions,
-          automatic_trigger: protocol.automaticTrigger,
-          severity: protocol.severity,
-          actions: protocol.actions,
-          approval_required: protocol.approvalRequired,
-          approver_roles: protocol.approverRoles,
-          cooldown_period: protocol.cooldownPeriod,
-          is_active: protocol.isActive,
-          last_triggered: protocol.lastTriggered?.toISOString(),
-        })
-        .eq('protocol_id', protocol.protocolId);
+    await this.supabase
+      .from('emergency_protocols')
+      .update({
+        name: protocol.name,
+        description: protocol.description,
+        trigger_conditions: protocol.triggerConditions,
+        automatic_trigger: protocol.automaticTrigger,
+        severity: protocol.severity,
+        actions: protocol.actions,
+        approval_required: protocol.approvalRequired,
+        approver_roles: protocol.approverRoles,
+        cooldown_period: protocol.cooldownPeriod,
+        is_active: protocol.isActive,
+        last_triggered: protocol.lastTriggered?.toISOString(),
+      })
+      .eq('protocol_id', protocol.protocolId);
 
-      // Update protocols map
-      this.protocols.set(protocol.protocolId, protocol);
-    } catch (error) {
-      console.error('Failed to update protocol:', error);
-      throw error;
-    }
+    // Update protocols map
+    this.protocols.set(protocol.protocolId, protocol);
   }
 
   /**
@@ -669,7 +626,6 @@ export class EmergencyTermination {
         .eq('is_active', true);
 
       if (error) {
-        console.error('Failed to load custom protocols:', error);
         return;
       }
 
@@ -677,9 +633,7 @@ export class EmergencyTermination {
         const protocol = this.mapDatabaseToProtocol(protocolData);
         this.protocols.set(protocol.protocolId, protocol);
       }
-    } catch (error) {
-      console.error('Failed to load custom protocols:', error);
-    }
+    } catch (_error) {}
   }
 
   private async loadActiveSessions(): Promise<void> {
@@ -690,16 +644,13 @@ export class EmergencyTermination {
         .eq('is_active', true);
 
       if (error) {
-        console.error('Failed to load active sessions:', error);
         return;
       }
 
       for (const sessionData of data || []) {
         this.activeSessions.set(sessionData.session_id, sessionData);
       }
-    } catch (error) {
-      console.error('Failed to load active sessions:', error);
-    }
+    } catch (_error) {}
   }
 
   private async setupRealtimeMonitoring(): Promise<void> {
@@ -719,9 +670,7 @@ export class EmergencyTermination {
           }
         )
         .subscribe();
-    } catch (error) {
-      console.error('Failed to setup realtime monitoring:', error);
-    }
+    } catch (_error) {}
   }
 
   private async validateTerminationRequest(
@@ -944,20 +893,15 @@ export class EmergencyTermination {
   }
 
   private async terminateSessionById(sessionId: string): Promise<void> {
-    try {
-      // Mark session as inactive
-      await this.supabase
-        .from('user_sessions')
-        .update({
-          is_active: false,
-          terminated_at: new Date().toISOString(),
-          termination_reason: 'emergency_termination',
-        })
-        .eq('session_id', sessionId);
-    } catch (error) {
-      console.error(`Failed to terminate session ${sessionId}:`, error);
-      throw error;
-    }
+    // Mark session as inactive
+    await this.supabase
+      .from('user_sessions')
+      .update({
+        is_active: false,
+        terminated_at: new Date().toISOString(),
+        termination_reason: 'emergency_termination',
+      })
+      .eq('session_id', sessionId);
   }
 
   private async logTermination(
@@ -1012,9 +956,7 @@ export class EmergencyTermination {
 
         await this.storeAuditLog(auditLog);
       }
-    } catch (error) {
-      console.error('Failed to log termination:', error);
-    }
+    } catch (_error) {}
   }
 
   private async storeAuditLog(
@@ -1040,49 +982,26 @@ export class EmergencyTermination {
         user_agent: auditLog.userAgent,
         metadata: auditLog.metadata,
       });
-    } catch (error) {
-      console.error('Failed to store audit log:', error);
-    }
+    } catch (_error) {}
   }
 
   private async notifyApprovers(
-    request: EmergencyTerminationRequest
-  ): Promise<void> {
-    // Implementation for notifying approvers
-    console.log(
-      `Notifying approvers for termination request ${request.requestId}`
-    );
-  }
+    _request: EmergencyTerminationRequest
+  ): Promise<void> {}
 
   private async notifyAffectedUsers(
-    terminatedSessions: TerminationResult['terminatedSessions'],
-    reason: string
-  ): Promise<void> {
-    // Implementation for notifying affected users
-    console.log(
-      `Notifying ${terminatedSessions.length} affected users about session termination: ${reason}`
-    );
-  }
+    _terminatedSessions: TerminationResult['terminatedSessions'],
+    _reason: string
+  ): Promise<void> {}
 
-  private async lockUserAccounts(userIds: string[]): Promise<void> {
-    // Implementation for locking user accounts
-    console.log(`Locking ${userIds.length} user accounts`);
-  }
+  private async lockUserAccounts(_userIds: string[]): Promise<void> {}
 
-  private async disableNewLogins(): Promise<void> {
-    // Implementation for disabling new logins
-    console.log('Disabling new logins system-wide');
-  }
+  private async disableNewLogins(): Promise<void> {}
 
   private async escalateToSecurity(
-    request: EmergencyTerminationRequest,
+    _request: EmergencyTerminationRequest,
     _result: TerminationResult
-  ): Promise<void> {
-    // Implementation for escalating to security team
-    console.log(
-      `Escalating emergency termination to security team: ${request.requestId}`
-    );
-  }
+  ): Promise<void> {}
 
   private hasTerminationPermission(
     role: UserRole,

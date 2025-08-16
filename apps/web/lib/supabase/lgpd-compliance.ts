@@ -21,7 +21,7 @@ export type LGPDEventType =
   | 'audit_log_access';
 
 // LGPD Audit Log Entry Interface
-export interface LGPDAuditLog {
+export type LGPDAuditLog = {
   id?: string;
   event_type: LGPDEventType;
   user_id: string;
@@ -44,7 +44,7 @@ export interface LGPDAuditLog {
   anonymization_status?: boolean;
   created_at?: string;
   metadata?: Record<string, any>;
-}
+};
 
 // LGPD Consent Types
 export type LGPDConsentType =
@@ -118,13 +118,11 @@ export class LGPDComplianceManager {
         .insert(enhancedEntry);
 
       if (error) {
-        console.error('LGPD Audit Log Error:', error);
         return { success: false, error: error.message };
       }
 
       return { success: true };
     } catch (error) {
-      console.error('LGPD Audit Log Exception:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
@@ -481,8 +479,7 @@ export class HealthcareLGPDHooks {
       // Check if user has permission to access this patient's data
       // This would integrate with your RLS policies
       return { allowed: true };
-    } catch (error) {
-      console.error('LGPD Patient Access Hook Error:', error);
+    } catch (_error) {
       return {
         allowed: false,
         reason: 'LGPD compliance check failed',
@@ -528,8 +525,7 @@ export class HealthcareLGPDHooks {
       }
 
       return { allowed: true };
-    } catch (error) {
-      console.error('LGPD Sensitive Data Access Hook Error:', error);
+    } catch (_error) {
       return {
         allowed: false,
         reason: 'LGPD compliance check failed for sensitive data',
@@ -563,8 +559,7 @@ export class HealthcareLGPDHooks {
       });
 
       return { valid: true };
-    } catch (error) {
-      console.error('LGPD Consent Validation Error:', error);
+    } catch (_error) {
       return {
         valid: false,
         reason: 'Consent validation failed',

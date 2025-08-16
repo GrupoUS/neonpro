@@ -57,8 +57,7 @@ export async function GET(
       success: true,
       data: comprehensiveInsights,
     });
-  } catch (error) {
-    console.error('Comprehensive insights API error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to generate comprehensive insights' },
       { status: 500 }
@@ -104,8 +103,7 @@ export async function POST(
       data: comprehensiveInsights,
       requestId: insightRequest.requestId,
     });
-  } catch (error) {
-    console.error('Comprehensive insights POST API error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to generate comprehensive insights' },
       { status: 500 }

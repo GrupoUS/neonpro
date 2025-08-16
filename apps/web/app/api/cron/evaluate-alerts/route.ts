@@ -19,7 +19,7 @@ const RETRY_ATTEMPTS = 3;
 // TYPES
 // =====================================================
 
-interface ProcessingResult {
+type ProcessingResult = {
   clinicsProcessed: number;
   alertsGenerated: number;
   errors: Array<{
@@ -28,12 +28,12 @@ interface ProcessingResult {
   }>;
   executionTime: number;
   timestamp: string;
-}
+};
 
-interface ClinicBatch {
+type ClinicBatch = {
   clinicId: string;
   alertConfigs: any[];
-}
+};
 
 // =====================================================
 // UTILITY FUNCTIONS
@@ -94,14 +94,12 @@ async function processBatch(
   for (const clinicId of clinicIds) {
     // Check if we're approaching timeout
     if (Date.now() - startTime > MAX_EXECUTION_TIME) {
-      console.warn('Approaching timeout, stopping batch processing');
       break;
     }
 
     try {
       await processClinicAlerts(clinicId, supabase, result);
     } catch (error) {
-      console.error(`Failed to process clinic ${clinicId}:`, error);
       result.errors.push({
         clinicId,
         error: error instanceof Error ? error.message : 'Unknown error',
@@ -133,11 +131,6 @@ async function processClinicAlerts(
       // Note: This would require modifying the service to accept clinic context
       const alerts = await evaluateClinicAlerts(clinicId, supabase);
       result.alertsGenerated += alerts.length;
-
-      // Log successful processing
-      console.log(
-        `Processed clinic ${clinicId}: ${alerts.length} alerts generated`
-      );
       break;
     } catch (error) {
       attempts++;
@@ -197,8 +190,7 @@ async function evaluateClinicAlerts(
       if (alert) {
         generatedAlerts.push(alert);
       }
-    } catch (error) {
-      console.error(`Failed to evaluate config ${config.id}:`, error);
+    } catch (_error) {
       // Continue processing other configs
     }
   }
@@ -354,8 +346,7 @@ async function recordProcessingStats(
       error_count: result.errors.length,
       errors: result.errors,
     });
-  } catch (error) {
-    console.error('Failed to record processing stats:', error);
+  } catch (_error) {
     // Don't throw - this is not critical
   }
 }
@@ -380,16 +371,11 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    console.log('Starting alert evaluation job...');
-
     // Initialize Supabase client
     const supabase = await createClient();
 
     // Get all active clinics
     const clinicIds = await getActiveClinics(supabase);
-    console.log(
-      `Found ${clinicIds.length} clinics with active alert configurations`
-    );
 
     if (clinicIds.length === 0) {
       return NextResponse.json({
@@ -420,8 +406,6 @@ export async function POST(request: NextRequest) {
 
     // Process each batch
     for (let i = 0; i < batches.length; i++) {
-      console.log(`Processing batch ${i + 1}/${batches.length}`);
-
       const batchResult = await processBatch(batches[i], supabase, startTime);
 
       // Merge results
@@ -431,7 +415,6 @@ export async function POST(request: NextRequest) {
 
       // Check timeout
       if (Date.now() - startTime > MAX_EXECUTION_TIME) {
-        console.warn('Timeout reached, stopping processing');
         break;
       }
     }
@@ -441,25 +424,13 @@ export async function POST(request: NextRequest) {
     // Record processing statistics
     await recordProcessingStats(supabase, totalResult);
 
-    console.log('Alert evaluation job completed:', {
-      clinicsProcessed: totalResult.clinicsProcessed,
-      alertsGenerated: totalResult.alertsGenerated,
-      errorCount: totalResult.errors.length,
-      executionTime: `${totalResult.executionTime}ms`,
-    });
-
     return NextResponse.json({
       success: true,
       message: 'Alert evaluation completed',
       data: totalResult,
     });
   } catch (error) {
-    const executionTime = Date.now() - startTime;
-
-    console.error('Alert evaluation job failed:', {
-      error: error instanceof Error ? error.message : 'Unknown error',
-      executionTime: `${executionTime}ms`,
-    });
+    const _executionTime = Date.now() - startTime;
 
     if (error instanceof StockAlertError) {
       return NextResponse.json(

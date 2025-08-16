@@ -66,7 +66,12 @@ export interface SecurityAlert {
   affected_resource_id?: string;
   alert_data?: Record<string, any>;
   indicators?: Record<string, any>;
-  status: 'new' | 'acknowledged' | 'investigating' | 'resolved' | 'false_positive';
+  status:
+    | 'new'
+    | 'acknowledged'
+    | 'investigating'
+    | 'resolved'
+    | 'false_positive';
   assigned_to?: string;
   escalation_level: number;
   triggered_at: string;
@@ -179,20 +184,25 @@ export class SecurityAPI {
   /**
    * Create audit log entry
    */
-  async createAuditLog(data: z.infer<typeof createAuditLogSchema>): Promise<AuditLog> {
+  async createAuditLog(
+    data: z.infer<typeof createAuditLogSchema>
+  ): Promise<AuditLog> {
     const validated = createAuditLogSchema.parse(data);
-    
-    const { data: auditLog, error } = await this.supabase.rpc('create_enhanced_audit_log', {
-      p_action: validated.action,
-      p_resource_type: validated.resource_type,
-      p_resource_id: validated.resource_id,
-      p_table_name: validated.table_name,
-      p_old_values: validated.old_values,
-      p_new_values: validated.new_values,
-      p_compliance_flags: validated.compliance_flags,
-      p_risk_level: validated.risk_level,
-      p_additional_metadata: validated.metadata,
-    });
+
+    const { data: auditLog, error } = await this.supabase.rpc(
+      'create_enhanced_audit_log',
+      {
+        p_action: validated.action,
+        p_resource_type: validated.resource_type,
+        p_resource_id: validated.resource_id,
+        p_table_name: validated.table_name,
+        p_old_values: validated.old_values,
+        p_new_values: validated.new_values,
+        p_compliance_flags: validated.compliance_flags,
+        p_risk_level: validated.risk_level,
+        p_additional_metadata: validated.metadata,
+      }
+    );
 
     if (error) {
       throw new Error(`Failed to create audit log: ${error.message}`);
@@ -221,17 +231,19 @@ export class SecurityAPI {
   /**
    * Get audit logs with filtering and pagination
    */
-  async getAuditLogs(params: {
-    user_id?: string;
-    action?: string;
-    resource_type?: string;
-    risk_level?: string;
-    compliance_flags?: string[];
-    start_date?: string;
-    end_date?: string;
-    limit?: number;
-    offset?: number;
-  } = {}): Promise<{ data: AuditLog[]; count: number }> {
+  async getAuditLogs(
+    params: {
+      user_id?: string;
+      action?: string;
+      resource_type?: string;
+      risk_level?: string;
+      compliance_flags?: string[];
+      start_date?: string;
+      end_date?: string;
+      limit?: number;
+      offset?: number;
+    } = {}
+  ): Promise<{ data: AuditLog[]; count: number }> {
     let query = this.supabase
       .from('audit_logs')
       .select('*', { count: 'exact' });
@@ -285,17 +297,22 @@ export class SecurityAPI {
   /**
    * Create security event
    */
-  async createSecurityEvent(data: z.infer<typeof createSecurityEventSchema>): Promise<SecurityEvent> {
+  async createSecurityEvent(
+    data: z.infer<typeof createSecurityEventSchema>
+  ): Promise<SecurityEvent> {
     const validated = createSecurityEventSchema.parse(data);
-    
-    const { data: eventId, error } = await this.supabase.rpc('create_security_event', {
-      p_event_type: validated.event_type,
-      p_severity: validated.severity,
-      p_title: validated.title,
-      p_description: validated.description,
-      p_event_data: validated.event_data,
-      p_affected_resources: validated.affected_resources,
-    });
+
+    const { data: eventId, error } = await this.supabase.rpc(
+      'create_security_event',
+      {
+        p_event_type: validated.event_type,
+        p_severity: validated.severity,
+        p_title: validated.title,
+        p_description: validated.description,
+        p_event_data: validated.event_data,
+        p_affected_resources: validated.affected_resources,
+      }
+    );
 
     if (error) {
       throw new Error(`Failed to create security event: ${error.message}`);
@@ -324,15 +341,17 @@ export class SecurityAPI {
   /**
    * Get security events with filtering
    */
-  async getSecurityEvents(params: {
-    event_type?: string;
-    severity?: string;
-    status?: string;
-    start_date?: string;
-    end_date?: string;
-    limit?: number;
-    offset?: number;
-  } = {}): Promise<{ data: SecurityEvent[]; count: number }> {
+  async getSecurityEvents(
+    params: {
+      event_type?: string;
+      severity?: string;
+      status?: string;
+      start_date?: string;
+      end_date?: string;
+      limit?: number;
+      offset?: number;
+    } = {}
+  ): Promise<{ data: SecurityEvent[]; count: number }> {
     let query = this.supabase
       .from('security_events')
       .select('*', { count: 'exact' });
@@ -380,15 +399,20 @@ export class SecurityAPI {
     assignedTo?: string,
     notes?: string
   ): Promise<boolean> {
-    const { data, error } = await this.supabase.rpc('update_security_event_status', {
-      p_event_id: eventId,
-      p_status: status,
-      p_assigned_to: assignedTo,
-      p_notes: notes,
-    });
+    const { data, error } = await this.supabase.rpc(
+      'update_security_event_status',
+      {
+        p_event_id: eventId,
+        p_status: status,
+        p_assigned_to: assignedTo,
+        p_notes: notes,
+      }
+    );
 
     if (error) {
-      throw new Error(`Failed to update security event status: ${error.message}`);
+      throw new Error(
+        `Failed to update security event status: ${error.message}`
+      );
     }
 
     return data;
@@ -401,19 +425,24 @@ export class SecurityAPI {
   /**
    * Create security alert
    */
-  async createSecurityAlert(data: z.infer<typeof createSecurityAlertSchema>): Promise<SecurityAlert> {
+  async createSecurityAlert(
+    data: z.infer<typeof createSecurityAlertSchema>
+  ): Promise<SecurityAlert> {
     const validated = createSecurityAlertSchema.parse(data);
-    
-    const { data: alertId, error } = await this.supabase.rpc('create_security_alert', {
-      p_alert_type: validated.alert_type,
-      p_title: validated.title,
-      p_description: validated.description,
-      p_severity: validated.severity,
-      p_source_type: validated.source_type,
-      p_source_reference: validated.source_reference,
-      p_affected_user_id: validated.affected_user_id,
-      p_alert_data: validated.alert_data,
-    });
+
+    const { data: alertId, error } = await this.supabase.rpc(
+      'create_security_alert',
+      {
+        p_alert_type: validated.alert_type,
+        p_title: validated.title,
+        p_description: validated.description,
+        p_severity: validated.severity,
+        p_source_type: validated.source_type,
+        p_source_reference: validated.source_reference,
+        p_affected_user_id: validated.affected_user_id,
+        p_alert_data: validated.alert_data,
+      }
+    );
 
     if (error) {
       throw new Error(`Failed to create security alert: ${error.message}`);
@@ -442,16 +471,18 @@ export class SecurityAPI {
   /**
    * Get security alerts with filtering
    */
-  async getSecurityAlerts(params: {
-    alert_type?: string;
-    severity?: string;
-    status?: string;
-    assigned_to?: string;
-    start_date?: string;
-    end_date?: string;
-    limit?: number;
-    offset?: number;
-  } = {}): Promise<{ data: SecurityAlert[]; count: number }> {
+  async getSecurityAlerts(
+    params: {
+      alert_type?: string;
+      severity?: string;
+      status?: string;
+      assigned_to?: string;
+      start_date?: string;
+      end_date?: string;
+      limit?: number;
+      offset?: number;
+    } = {}
+  ): Promise<{ data: SecurityAlert[]; count: number }> {
     let query = this.supabase
       .from('security_alerts')
       .select('*', { count: 'exact' });
@@ -497,11 +528,17 @@ export class SecurityAPI {
   /**
    * Acknowledge security alert
    */
-  async acknowledgeSecurityAlert(alertId: string, assignedTo?: string): Promise<boolean> {
-    const { data, error } = await this.supabase.rpc('acknowledge_security_alert', {
-      p_alert_id: alertId,
-      p_assigned_to: assignedTo,
-    });
+  async acknowledgeSecurityAlert(
+    alertId: string,
+    assignedTo?: string
+  ): Promise<boolean> {
+    const { data, error } = await this.supabase.rpc(
+      'acknowledge_security_alert',
+      {
+        p_alert_id: alertId,
+        p_assigned_to: assignedTo,
+      }
+    );
 
     if (error) {
       throw new Error(`Failed to acknowledge security alert: ${error.message}`);
@@ -541,7 +578,10 @@ export class SecurityAPI {
   /**
    * Terminate session
    */
-  async terminateSession(sessionToken: string, reason = 'manual_logout'): Promise<boolean> {
+  async terminateSession(
+    sessionToken: string,
+    reason = 'manual_logout'
+  ): Promise<boolean> {
     const { data, error } = await this.supabase.rpc('terminate_user_session', {
       p_session_token: sessionToken,
       p_reason: reason,
@@ -588,24 +628,30 @@ export class SecurityAPI {
         .from('user_sessions')
         .select('id', { count: 'exact' })
         .eq('is_active', true),
-      
+
       this.supabase
         .from('auth_attempts')
         .select('id', { count: 'exact' })
         .eq('success', false)
-        .gte('attempted_at', new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()),
-      
+        .gte(
+          'attempted_at',
+          new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()
+        ),
+
       this.supabase
         .from('security_events')
         .select('id', { count: 'exact' })
-        .gte('detected_at', new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()),
-      
+        .gte(
+          'detected_at',
+          new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()
+        ),
+
       this.supabase
         .from('user_sessions')
         .select('id', { count: 'exact' })
         .eq('is_active', true)
         .gte('risk_score', 70),
-      
+
       this.supabase
         .from('security_alerts')
         .select('id', { count: 'exact' })
@@ -619,7 +665,10 @@ export class SecurityAPI {
       .not('response_time_minutes', 'is', null);
 
     const avgResponse = avgResponseTime?.length
-      ? avgResponseTime.reduce((sum, alert) => sum + (alert.response_time_minutes || 0), 0) / avgResponseTime.length
+      ? avgResponseTime.reduce(
+          (sum, alert) => sum + (alert.response_time_minutes || 0),
+          0
+        ) / avgResponseTime.length
       : 0;
 
     // Calculate threat level based on metrics
@@ -651,12 +700,11 @@ export class SecurityAPI {
     highRiskSessions: number;
     unresolvedAlerts: number;
   }): 'low' | 'medium' | 'high' | 'critical' {
-    const score = (
+    const score =
       Math.min(metrics.failedAttempts / 50, 1) * 25 +
       Math.min(metrics.securityEvents / 20, 1) * 25 +
       Math.min(metrics.highRiskSessions / 10, 1) * 25 +
-      Math.min(metrics.unresolvedAlerts / 5, 1) * 25
-    );
+      Math.min(metrics.unresolvedAlerts / 5, 1) * 25;
 
     if (score >= 75) return 'critical';
     if (score >= 50) return 'high';
@@ -678,13 +726,16 @@ export class SecurityAPI {
     scheduled_date?: string;
     description?: string;
   }): Promise<ComplianceAudit> {
-    const { data: auditId, error } = await this.supabase.rpc('create_compliance_audit', {
-      p_audit_type: data.audit_type,
-      p_title: data.title,
-      p_scope_areas: data.scope_areas,
-      p_scheduled_date: data.scheduled_date,
-      p_description: data.description,
-    });
+    const { data: auditId, error } = await this.supabase.rpc(
+      'create_compliance_audit',
+      {
+        p_audit_type: data.audit_type,
+        p_title: data.title,
+        p_scope_areas: data.scope_areas,
+        p_scheduled_date: data.scheduled_date,
+        p_description: data.description,
+      }
+    );
 
     if (error) {
       throw new Error(`Failed to create compliance audit: ${error.message}`);
@@ -713,12 +764,14 @@ export class SecurityAPI {
   /**
    * Get compliance audits
    */
-  async getComplianceAudits(params: {
-    audit_type?: string;
-    status?: string;
-    limit?: number;
-    offset?: number;
-  } = {}): Promise<{ data: ComplianceAudit[]; count: number }> {
+  async getComplianceAudits(
+    params: {
+      audit_type?: string;
+      status?: string;
+      limit?: number;
+      offset?: number;
+    } = {}
+  ): Promise<{ data: ComplianceAudit[]; count: number }> {
     let query = this.supabase
       .from('compliance_audits')
       .select('*', { count: 'exact' });
@@ -754,12 +807,15 @@ export class SecurityAPI {
     findings?: Record<string, any>,
     recommendations?: Record<string, any>
   ): Promise<boolean> {
-    const { data, error } = await this.supabase.rpc('complete_compliance_audit', {
-      p_audit_id: auditId,
-      p_compliance_score: complianceScore,
-      p_findings: findings,
-      p_recommendations: recommendations,
-    });
+    const { data, error } = await this.supabase.rpc(
+      'complete_compliance_audit',
+      {
+        p_audit_id: auditId,
+        p_compliance_score: complianceScore,
+        p_findings: findings,
+        p_recommendations: recommendations,
+      }
+    );
 
     if (error) {
       throw new Error(`Failed to complete compliance audit: ${error.message}`);
@@ -808,14 +864,17 @@ export class SecurityAPI {
     ip_address?: string;
     user_agent?: string;
   }): Promise<string> {
-    const { data: attemptId, error } = await this.supabase.rpc('log_auth_attempt', {
-      p_email: data.email,
-      p_attempt_type: data.attempt_type,
-      p_success: data.success,
-      p_failure_reason: data.failure_reason,
-      p_ip_address: data.ip_address,
-      p_user_agent: data.user_agent,
-    });
+    const { data: attemptId, error } = await this.supabase.rpc(
+      'log_auth_attempt',
+      {
+        p_email: data.email,
+        p_attempt_type: data.attempt_type,
+        p_success: data.success,
+        p_failure_reason: data.failure_reason,
+        p_ip_address: data.ip_address,
+        p_user_agent: data.user_agent,
+      }
+    );
 
     if (error) {
       throw new Error(`Failed to log auth attempt: ${error.message}`);

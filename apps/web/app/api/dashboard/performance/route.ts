@@ -30,7 +30,6 @@ export async function GET(request: NextRequest) {
     const { data, error } = await query;
 
     if (error) {
-      console.error('Error fetching performance logs:', error);
       return NextResponse.json(
         { error: 'Failed to fetch performance logs' },
         { status: 500 }
@@ -38,8 +37,7 @@ export async function GET(request: NextRequest) {
     }
 
     return NextResponse.json(data || []);
-  } catch (error) {
-    console.error('Dashboard performance GET error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -83,7 +81,6 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (error) {
-      console.error('Error creating performance log:', error);
       return NextResponse.json(
         { error: 'Failed to create performance log' },
         { status: 500 }
@@ -91,8 +88,7 @@ export async function POST(request: NextRequest) {
     }
 
     return NextResponse.json(data, { status: 201 });
-  } catch (error) {
-    console.error('Dashboard performance POST error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Invalid request data' },
       { status: 400 }
@@ -128,7 +124,6 @@ export async function DELETE(request: NextRequest) {
       .lt('timestamp', olderThan);
 
     if (error) {
-      console.error('Error deleting performance logs:', error);
       return NextResponse.json(
         { error: 'Failed to delete performance logs' },
         { status: 500 }
@@ -138,8 +133,7 @@ export async function DELETE(request: NextRequest) {
     return NextResponse.json({
       message: 'Performance logs deleted successfully',
     });
-  } catch (error) {
-    console.error('Dashboard performance DELETE error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

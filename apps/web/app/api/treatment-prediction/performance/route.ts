@@ -66,8 +66,7 @@ export async function GET(request: NextRequest) {
       performance,
       total: performance.length,
     });
-  } catch (error) {
-    console.error('Error fetching model performance:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to fetch model performance' },
       { status: 500 }

@@ -180,8 +180,7 @@ Seja sempre útil, preciso e contextualmente relevante para a gestão de clínic
     });
 
     return result.toDataStreamResponse();
-  } catch (error) {
-    console.error('Assistant API Error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

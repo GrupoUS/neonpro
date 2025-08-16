@@ -89,7 +89,7 @@ export enum ComplianceStatus {
 /**
  * Compliance Requirement Interface
  */
-export interface ComplianceRequirement {
+export type ComplianceRequirement = {
   id: string;
   category: ComplianceCategory;
   article: LGPDArticle;
@@ -107,12 +107,12 @@ export interface ComplianceRequirement {
   notes?: string;
   createdAt: Date;
   updatedAt: Date;
-}
+};
 
 /**
  * Compliance Violation Interface
  */
-export interface ComplianceViolation {
+export type ComplianceViolation = {
   id: string;
   timestamp: Date;
   category: ComplianceCategory;
@@ -134,12 +134,12 @@ export interface ComplianceViolation {
   };
   relatedViolations?: string[];
   metadata: Record<string, any>;
-}
+};
 
 /**
  * Compliance Audit Interface
  */
-export interface ComplianceAudit {
+export type ComplianceAudit = {
   id: string;
   startDate: Date;
   endDate: Date;
@@ -160,12 +160,12 @@ export interface ComplianceAudit {
   overallScore: number;
   report?: string;
   nextAuditDate?: Date;
-}
+};
 
 /**
  * Compliance Score Interface
  */
-export interface ComplianceScore {
+export type ComplianceScore = {
   overall: number;
   byCategory: Record<ComplianceCategory, number>;
   trend: {
@@ -180,18 +180,18 @@ export interface ComplianceScore {
     recommendations: string[];
   }[];
   lastUpdated: Date;
-}
+};
 
 /**
  * Compliance Events
  */
-export interface ComplianceEvents {
+export type ComplianceEvents = {
   'compliance:violation': { violation: ComplianceViolation };
   'compliance:score_updated': { score: ComplianceScore };
   'compliance:audit_completed': { audit: ComplianceAudit };
   'compliance:requirement_updated': { requirement: ComplianceRequirement };
   'compliance:critical_alert': { alert: string; details: Record<string, any> };
-}
+};
 
 // ============================================================================
 // COMPLIANCE MONITORING SYSTEM
@@ -1360,14 +1360,10 @@ export class ComplianceMonitor extends EventEmitter {
    * Log activity
    */
   private logActivity(
-    actor: string,
-    action: string,
-    details: Record<string, any>
-  ): void {
-    // In a real implementation, this would log to audit trail
-    // For now, we'll just log to console
-    console.log(`[Compliance] ${actor} - ${action}:`, details);
-  }
+    _actor: string,
+    _action: string,
+    _details: Record<string, any>
+  ): void {}
 
   /**
    * Generate ID

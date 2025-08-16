@@ -56,8 +56,6 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('Dashboard analytics error:', error);
-
     return NextResponse.json(
       {
         error: 'Failed to retrieve dashboard data',

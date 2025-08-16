@@ -34,7 +34,7 @@ export enum AuthErrorSeverity {
   CRITICAL = 'critical',
 }
 
-export interface AuthError {
+export type AuthError = {
   type: AuthErrorType;
   code: string;
   message: string;
@@ -45,7 +45,7 @@ export interface AuthError {
   actionable: boolean;
   retryable: boolean;
   fallbackAvailable: boolean;
-}
+};
 
 // Error messages in Portuguese
 const ERROR_MESSAGES = {
@@ -392,7 +392,6 @@ class AuthErrorHandler {
 
     // Log to console in development
     if (process.env.NODE_ENV === 'development') {
-      console.error('Auth Error:', error);
     }
 
     // Send to monitoring service in production
@@ -457,14 +456,9 @@ class AuthErrorHandler {
     }
   }
 
-  private async sendToMonitoring(error: AuthError): Promise<void> {
+  private async sendToMonitoring(_error: AuthError): Promise<void> {
     try {
-      // Send to monitoring service (implement based on your monitoring setup)
-      // Example: Sentry, LogRocket, DataDog, etc.
-      console.log('Sending error to monitoring:', error);
-    } catch (monitoringError) {
-      console.error('Failed to send error to monitoring:', monitoringError);
-    }
+    } catch (_monitoringError) {}
   }
 }
 

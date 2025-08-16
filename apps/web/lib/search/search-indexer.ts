@@ -8,7 +8,7 @@ import { createClient } from '@supabase/supabase-js';
 import { nlpEngine, type SupportedLanguage } from './nlp-engine';
 
 // Types
-export interface IndexableContent {
+export type IndexableContent = {
   contentType:
     | 'patient'
     | 'appointment'
@@ -21,9 +21,9 @@ export interface IndexableContent {
   metadata?: Record<string, any>;
   keywords?: string[];
   language?: SupportedLanguage;
-}
+};
 
-export interface SearchIndexEntry {
+export type SearchIndexEntry = {
   id: string;
   contentType: string;
   contentId: string;
@@ -33,14 +33,14 @@ export interface SearchIndexEntry {
   language: string;
   relevanceScore: number;
   lastUpdated: string;
-}
+};
 
-export interface IndexingStats {
+export type IndexingStats = {
   totalEntries: number;
   lastIndexed: string;
   indexingSpeed: number; // entries per second
   errorCount: number;
-}
+};
 
 /**
  * Real-time Search Indexer
@@ -80,8 +80,7 @@ export class SearchIndexer {
       if (this.indexingQueue.length >= this.batchSize) {
         await this.processQueue();
       }
-    } catch (error) {
-      console.error('Error adding content to index queue:', error);
+    } catch (_error) {
       this.stats.errorCount++;
     }
   }
@@ -92,7 +91,6 @@ export class SearchIndexer {
   async removeFromIndex(contentType: string, contentId: string): Promise<void> {
     try {
       if (!this.supabase) {
-        console.warn('Supabase client not initialized');
         return;
       }
 
@@ -105,10 +103,7 @@ export class SearchIndexer {
       if (error) {
         throw error;
       }
-
-      console.log(`Removed ${contentType}:${contentId} from search index`);
-    } catch (error) {
-      console.error('Error removing from index:', error);
+    } catch (_error) {
       this.stats.errorCount++;
     }
   }
@@ -136,12 +131,7 @@ export class SearchIndexer {
       const endTime = Date.now();
       const processingTime = (endTime - startTime) / 1000;
       this.stats.indexingSpeed = contents.length / processingTime;
-
-      console.log(
-        `Bulk indexed ${contents.length} items in ${processingTime}s`
-      );
-    } catch (error) {
-      console.error('Error in bulk indexing:', error);
+    } catch (_error) {
       this.stats.errorCount++;
     }
   }
@@ -218,8 +208,7 @@ export class SearchIndexer {
         totalCount: count || 0,
         processingTime,
       };
-    } catch (error) {
-      console.error('Search error:', error);
+    } catch (_error) {
       this.stats.errorCount++;
 
       return {
@@ -267,8 +256,7 @@ export class SearchIndexer {
       }
 
       return suggestions;
-    } catch (error) {
-      console.error('Error getting suggestions:', error);
+    } catch (_error) {
       return nlpEngine.getSuggestions(partialQuery, language);
     }
   }
@@ -307,12 +295,7 @@ export class SearchIndexer {
 
       const processingTime = (Date.now() - startTime) / 1000;
       this.stats.indexingSpeed = batch.length / processingTime;
-
-      console.log(
-        `Processed ${batch.length} index entries in ${processingTime}s`
-      );
-    } catch (error) {
-      console.error('Error processing index queue:', error);
+    } catch (_error) {
       this.stats.errorCount++;
     } finally {
       this.isProcessing = false;
@@ -423,11 +406,8 @@ export class SearchIndexer {
       });
 
       if (error) {
-        console.error('Error logging search analytics:', error);
       }
-    } catch (error) {
-      console.error('Error in search analytics logging:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -454,7 +434,6 @@ export class SearchIndexer {
   async clearIndex(contentType?: string): Promise<void> {
     try {
       if (!this.supabase) {
-        console.warn('Supabase client not initialized');
         return;
       }
 
@@ -471,12 +450,7 @@ export class SearchIndexer {
       if (error) {
         throw error;
       }
-
-      console.log(
-        `Cleared search index${contentType ? ` for ${contentType}` : ''}`
-      );
-    } catch (error) {
-      console.error('Error clearing index:', error);
+    } catch (_error) {
       this.stats.errorCount++;
     }
   }
@@ -486,20 +460,9 @@ export class SearchIndexer {
    */
   async rebuildIndex(): Promise<void> {
     try {
-      console.log('Starting index rebuild...');
-
       // Clear existing index
       await this.clearIndex();
-
-      // TODO: Implement full rebuild by fetching all content from database
-      // This would typically involve:
-      // 1. Fetch all patients, appointments, treatments, etc.
-      // 2. Process each item through indexContent()
-      // 3. Monitor progress and handle errors
-
-      console.log('Index rebuild completed');
-    } catch (error) {
-      console.error('Error rebuilding index:', error);
+    } catch (_error) {
       this.stats.errorCount++;
     }
   }

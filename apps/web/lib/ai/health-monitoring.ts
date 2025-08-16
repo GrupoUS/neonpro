@@ -18,7 +18,7 @@ import type { BehaviorAnalysis } from './behavior-analysis';
 import type { RiskAssessment } from './risk-assessment';
 
 // Health Monitoring Types
-export interface HealthTrendAnalysis {
+export type HealthTrendAnalysis = {
   analysis_id: string;
   patient_id: string;
   analysis_date: Date;
@@ -30,17 +30,17 @@ export interface HealthTrendAnalysis {
   recommendations: HealthRecommendation[];
   next_monitoring_date: Date;
   confidence_score: number;
-}
+};
 
-export interface MonitoringPeriod {
+export type MonitoringPeriod = {
   start_date: Date;
   end_date: Date;
   duration_days: number;
   data_points: number;
   monitoring_frequency: 'daily' | 'weekly' | 'monthly' | 'continuous';
-}
+};
 
-export interface HealthTrend {
+export type HealthTrend = {
   trend_id: string;
   metric_name: string;
   metric_type:
@@ -57,18 +57,18 @@ export interface HealthTrend {
   current_value: number;
   change_percentage: number;
   trend_analysis: TrendAnalysis;
-}
+};
 
-export interface VitalTrend {
+export type VitalTrend = {
   vital_type: string;
   measurements: VitalMeasurement[];
   trend_analysis: TrendAnalysis;
   normal_range: NormalRange;
   alerts: VitalAlert[];
   recommendations: string[];
-}
+};
 
-export interface TreatmentEffectiveness {
+export type TreatmentEffectiveness = {
   treatment_id: string;
   treatment_name: string;
   effectiveness_score: number; // 0-1
@@ -77,9 +77,9 @@ export interface TreatmentEffectiveness {
   patient_reported_outcomes: PatientReportedOutcome[];
   objective_measures: ObjectiveMeasure[];
   comparative_analysis: ComparativeAnalysis;
-}
+};
 
-export interface EarlyWarning {
+export type EarlyWarning = {
   warning_id: string;
   warning_type:
     | 'health_decline'
@@ -94,9 +94,9 @@ export interface EarlyWarning {
   intervention_window: string;
   recommended_actions: string[];
   escalation_protocol: EscalationProtocol;
-}
+};
 
-export interface HealthRecommendation {
+export type HealthRecommendation = {
   recommendation_id: string;
   category:
     | 'lifestyle'
@@ -113,17 +113,17 @@ export interface HealthRecommendation {
   timeline: string;
   success_metrics: string[];
   contraindications: string[];
-}
+};
 
-export interface HealthDataPoint {
+export type HealthDataPoint = {
   timestamp: Date;
   value: number;
   source: 'manual' | 'device' | 'clinical' | 'estimated';
   quality_score: number;
   context: DataContext;
-}
+};
 
-export interface TrendAnalysis {
+export type TrendAnalysis = {
   slope: number;
   r_squared: number;
   p_value: number;
@@ -131,27 +131,27 @@ export interface TrendAnalysis {
   seasonal_component: number;
   noise_level: number;
   prediction_accuracy: number;
-}
+};
 
-export interface VitalMeasurement {
+export type VitalMeasurement = {
   timestamp: Date;
   value: number;
   unit: string;
   device_id?: string;
   measurement_context: MeasurementContext;
   quality_indicators: QualityIndicator[];
-}
+};
 
-export interface NormalRange {
+export type NormalRange = {
   min_value: number;
   max_value: number;
   optimal_range: [number, number];
   age_adjusted: boolean;
   gender_specific: boolean;
   condition_specific: boolean;
-}
+};
 
-export interface VitalAlert {
+export type VitalAlert = {
   alert_type:
     | 'out_of_range'
     | 'rapid_change'
@@ -161,80 +161,80 @@ export interface VitalAlert {
   message: string;
   triggered_at: Date;
   auto_resolved: boolean;
-}
+};
 
-export interface ResponseTimeline {
+export type ResponseTimeline = {
   immediate_response: string; // 0-24 hours
   short_term_response: string; // 1-7 days
   medium_term_response: string; // 1-4 weeks
   long_term_response: string; // 1-6 months
   plateau_reached: boolean;
   optimal_response_time: string;
-}
+};
 
-export interface SideEffect {
+export type SideEffect = {
   effect_name: string;
   severity: 'mild' | 'moderate' | 'severe';
   frequency: 'rare' | 'occasional' | 'common' | 'very_common';
   onset_timeline: string;
   duration: string;
   management_strategies: string[];
-}
+};
 
-export interface PatientReportedOutcome {
+export type PatientReportedOutcome = {
   outcome_measure: string;
   baseline_score: number;
   current_score: number;
   change_score: number;
   clinical_significance: boolean;
   patient_satisfaction: number;
-}
+};
 
-export interface ObjectiveMeasure {
+export type ObjectiveMeasure = {
   measure_name: string;
   baseline_value: number;
   current_value: number;
   improvement_percentage: number;
   clinical_target: number;
   target_achieved: boolean;
-}
+};
 
-export interface ComparativeAnalysis {
+export type ComparativeAnalysis = {
   peer_group_comparison: PeerComparison;
   historical_comparison: HistoricalComparison;
   literature_comparison: LiteratureComparison;
-}
+};
 
-export interface EscalationProtocol {
+export type EscalationProtocol = {
   immediate_actions: string[];
   notification_list: string[];
   escalation_timeline: string;
   emergency_contacts: string[];
   documentation_requirements: string[];
-}
+};
 
-export interface DataContext {
+export type DataContext = {
   activity_level: string;
   stress_level: string;
   medication_timing: string;
   environmental_factors: string[];
   notes: string;
-}
+};
 
-export interface MeasurementContext {
+export type MeasurementContext = {
   position: string;
   activity_before: string;
   time_of_day: string;
   environmental_conditions: string[];
-}
+};
 
-export interface QualityIndicator {
+export type QualityIndicator = {
   indicator_type: string;
   score: number;
   description: string;
-}
+};
 
-export interface PeerComparison {
+export type PeerComparison = {
   peer_group_size: number;
   percentile_ranking: number;
   comparison_metrics: string[];
@@ -243,23 +243,23 @@ export interface PeerComparison {
     | 'average'
     | 'above_average'
     | 'exceptional';
-}
+};
 
-export interface HistoricalComparison {
+export type HistoricalComparison = {
   comparison_period: string;
   improvement_rate: number;
   trend_consistency: number;
   milestone_achievements: string[];
-}
+};
 
-export interface LiteratureComparison {
+export type LiteratureComparison = {
   expected_outcomes: string[];
   actual_vs_expected: number;
   evidence_level: string;
   study_references: string[];
-}
+};
 
-export interface HealthPrediction {
+export type HealthPrediction = {
   prediction_id: string;
   prediction_type: string;
   predicted_value: number;
@@ -267,16 +267,16 @@ export interface HealthPrediction {
   confidence_interval: [number, number];
   factors_considered: string[];
   model_accuracy: number;
-}
+};
 
-export interface WearableIntegration {
+export type WearableIntegration = {
   device_type: string;
   device_id: string;
   data_types: string[];
   sync_frequency: string;
   last_sync: Date;
   data_quality: number;
-}
+};
 
 /**
  * AI Health Trend Monitoring Engine
@@ -372,8 +372,7 @@ export class AIHealthMonitoringEngine {
         next_monitoring_date: nextMonitoringDate,
         confidence_score: confidenceScore,
       };
-    } catch (error) {
-      console.error('Health trend analysis failed:', error);
+    } catch (_error) {
       throw new Error('Failed to analyze health trends');
     }
   }
@@ -1071,7 +1070,6 @@ export class AIHealthMonitoringEngine {
 
   // Mock implementations for complex methods
   private initializeMonitoringModels(): void {
-    console.log('Initializing health monitoring models...');
     // Initialize trend analysis models
     this.trendModels.set('linear_regression', {
       type: 'linear',
@@ -1109,11 +1107,9 @@ export class AIHealthMonitoringEngine {
   }
 
   private loadBaselineData(): void {
-    console.log('Loading baseline health data...');
   }
 
   private initializePredictionModels(): void {
-    console.log('Initializing prediction models...');
     // Initialize ML models for health prediction
     this.predictionModels.set('health_decline', {
       accuracy: 0.87,
@@ -1250,7 +1246,7 @@ export class AIHealthMonitoringEngine {
   }
 
   private async createHealthDeclineWarning(
-    patient: Patient,
+    _patient: Patient,
     trend: HealthTrend
   ): Promise<EarlyWarning> {
     return {
@@ -1287,10 +1283,9 @@ export class AIHealthMonitoringEngine {
   private async createVitalSignWarning(
     patient: Patient,
     vitalTrend: VitalTrend,
-    alerts: VitalAlert[]
-  ): Promise<EarlyWarning>
-{
-  return {
+    _alerts: VitalAlert[]
+  ): Promise<EarlyWarning> {
+    return {
         warning_id: `vital_sign_${Date.now()}`,
         warning_type: 'risk_elevation',
         severity: 'high',
@@ -1340,7 +1335,6 @@ export class AIHealthMonitoringEngine {
           documentation_requirements: ['Treatment review report', 'Alternative options analysis']
         }
       };
-  }
 
   private async createTrendBasedRecommendation(
     patient: Patient,
@@ -1372,7 +1366,6 @@ export class AIHealthMonitoringEngine {
       ],
       contraindications: []
     };
-  }
 
   private async createWarningBasedRecommendation(
     patient: Patient,
@@ -1399,7 +1392,6 @@ export class AIHealthMonitoringEngine {
       ],
       contraindications: []
     };
-  }
 
   private async generatePreventiveRecommendations(
     patient: Patient,
@@ -1518,17 +1510,15 @@ export class AIHealthMonitoringEngine {
     return null;
   }
 
-  private async checkRapidChanges(patient: Patient, dataPoint: HealthDataPoint): Promise<VitalAlert | null> {
+  private async checkRapidChanges(patient: Patient, dataPoint: HealthDataPoint): Promise<VitalAlert | null> 
     // Check for rapid changes compared to recent values
     // This would require access to recent historical data
     return null; // Simplified implementation
-  }
 
-  private async checkTrendConcerns(patient: Patient, dataPoint: HealthDataPoint): Promise<VitalAlert | null> {
+  private async checkTrendConcerns(patient: Patient, dataPoint: HealthDataPoint): Promise<VitalAlert | null> 
     // Check if this data point indicates a concerning trend
     // This would require trend analysis of recent data
     return null; // Simplified implementation
-  }
 
   private checkMissingData(patient: Patient, realtimeData: HealthDataPoint[]): VitalAlert[] {
     const alerts: VitalAlert[] = [];
@@ -1572,7 +1562,7 @@ export class AIHealthMonitoringEngine {
       };
   }
 
-  private parseTimeHorizon(timeHorizon: string): number {
+  private parseTimeHorizon(timeHorizon: string): number 
     // Parse time horizon string to days
     if (timeHorizon.includes('week')) {
       return 7;
@@ -1584,13 +1574,12 @@ export class AIHealthMonitoringEngine {
       return 1;
     }
     return 30; // default to 30 days
-  }
 
   private async processWearableDataPoint(
       data: any,
       deviceInfo: WearableIntegration,
       patient: Patient
-    ): Promise<HealthDataPoint | null> {
+    ): Promise<HealthDataPoint | null> 
     // Process wearable device data point
     try {
     return {
@@ -1606,17 +1595,15 @@ export class AIHealthMonitoringEngine {
             notes: `From ${deviceInfo.device_type}`
           }
         };
-  } catch (error) {
-    console.error('Failed to process wearable data point:', error);
+  } catch (_error) {
     return null;
   }
 
-  private validateDataQuality(dataPoint: HealthDataPoint): boolean {
+  private validateDataQuality(dataPoint: HealthDataPoint): boolean 
     return dataPoint.quality_score > 0.7 && 
            dataPoint.value !== null && 
            dataPoint.value !== undefined &&
            !Number.isNaN(dataPoint.value);
-  }
 
   private assessDataQuality(data: any, deviceInfo: WearableIntegration): number {
     let quality = 0.8; // Base quality for device data

@@ -17,21 +17,21 @@ import { z } from 'zod';
 import { createClient } from '@/app/utils/supabase/server';
 
 // Core forecasting types
-export interface TimeSeriesData {
+export type TimeSeriesData = {
   date: string;
   value: number;
   exogenous?: Record<string, number>;
-}
+};
 
-export interface ForecastResult {
+export type ForecastResult = {
   date: string;
   predicted: number;
   lower_bound: number;
   upper_bound: number;
   confidence: number;
-}
+};
 
-export interface ForecastConfig {
+export type ForecastConfig = {
   metric: 'subscriptions' | 'revenue' | 'churn_rate' | 'mrr' | 'arr';
   horizon: number; // forecast periods ahead
   frequency: 'daily' | 'weekly' | 'monthly';
@@ -39,9 +39,9 @@ export interface ForecastConfig {
   includeExogenous: boolean;
   confidenceLevel: number; // 0.90, 0.95, 0.99
   modelType: 'linear' | 'polynomial' | 'exponential' | 'seasonal';
-}
+};
 
-export interface ModelFeatures {
+export type ModelFeatures = {
   lags: number[]; // past values to use as features
   rolling_stats: Array<{
     window: number;
@@ -54,7 +54,7 @@ export interface ModelFeatures {
   };
   trends: boolean;
   exogenous_vars: string[];
-}
+};
 
 // Validation schemas
 const forecastConfigSchema = z.object({
@@ -127,8 +127,7 @@ export class ForecastingEngine {
         const seriesConfig = { ...config, metric: metric as any };
         const forecast = await this.generateForecast(seriesConfig);
         return { metric, forecast };
-      } catch (error) {
-        console.error(`Error forecasting ${metric}:`, error);
+      } catch (_error) {
         return { metric, forecast: [] };
       }
     });

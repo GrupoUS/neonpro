@@ -47,8 +47,7 @@ export async function GET(request: NextRequest) {
     const templates = await emailService.getTemplates(filters);
 
     return NextResponse.json(templates);
-  } catch (error) {
-    console.error('Get email templates error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -107,8 +106,7 @@ export async function POST(request: NextRequest) {
     });
 
     return NextResponse.json(template, { status: 201 });
-  } catch (error) {
-    console.error('Create email template error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

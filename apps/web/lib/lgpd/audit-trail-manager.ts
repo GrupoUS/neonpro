@@ -45,7 +45,7 @@ export enum LGPDAuditSeverity {
 /**
  * LGPD Audit Record Interface
  */
-export interface LGPDAuditRecord {
+export type LGPDAuditRecord = {
   id: string;
   eventType: LGPDAuditEventType;
   userId?: string;
@@ -64,12 +64,12 @@ export interface LGPDAuditRecord {
   retentionPeriod?: number;
   complianceStatus: 'compliant' | 'non_compliant' | 'pending_review';
   metadata?: Record<string, any>;
-}
+};
 
 /**
  * Data Subject Request Interface
  */
-export interface DataSubjectRequest {
+export type DataSubjectRequest = {
   id: string;
   requestType:
     | 'access'
@@ -90,12 +90,12 @@ export interface DataSubjectRequest {
   assignedTo?: string;
   priority: 'low' | 'medium' | 'high' | 'urgent';
   metadata?: Record<string, any>;
-}
+};
 
 /**
  * Audit Trail Analytics
  */
-export interface AuditTrailAnalytics {
+export type AuditTrailAnalytics = {
   totalEvents: number;
   eventsByType: Record<LGPDAuditEventType, number>;
   eventsBySeverity: Record<LGPDAuditSeverity, number>;
@@ -109,7 +109,7 @@ export interface AuditTrailAnalytics {
   };
   topDataTypes: Array<{ dataType: LGPDDataType; count: number }>;
   riskScore: number;
-}
+};
 
 /**
  * LGPD Audit Trail Manager

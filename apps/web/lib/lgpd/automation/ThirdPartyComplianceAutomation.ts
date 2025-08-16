@@ -4,7 +4,7 @@ import type { LGPDComplianceManager } from '../LGPDComplianceManager';
 
 type SupabaseClient = ReturnType<typeof createClient<Database>>;
 
-export interface ThirdPartyProvider {
+export type ThirdPartyProvider = {
   id: string;
   name: string;
   company_name: string;
@@ -24,9 +24,9 @@ export interface ThirdPartyProvider {
   active: boolean;
   created_at: string;
   updated_at: string;
-}
+};
 
-export interface DataSharingAgreement {
+export type DataSharingAgreement = {
   id: string;
   provider_id: string;
   agreement_type: 'processing' | 'joint_control' | 'transfer' | 'service';
@@ -57,9 +57,9 @@ export interface DataSharingAgreement {
   signed_at?: string;
   created_at: string;
   updated_at: string;
-}
+};
 
-export interface DataTransfer {
+export type DataTransfer = {
   id: string;
   agreement_id: string;
   transfer_type: 'one_time' | 'recurring' | 'real_time' | 'batch';
@@ -79,9 +79,9 @@ export interface DataTransfer {
   audit_trail: any[];
   created_at: string;
   updated_at: string;
-}
+};
 
-export interface ComplianceAssessment {
+export type ComplianceAssessment = {
   id: string;
   provider_id: string;
   assessment_type: 'initial' | 'periodic' | 'incident_based' | 'renewal';
@@ -104,9 +104,9 @@ export interface ComplianceAssessment {
   status: 'draft' | 'completed' | 'approved' | 'rejected';
   created_at: string;
   updated_at: string;
-}
+};
 
-export interface ComplianceMonitoring {
+export type ComplianceMonitoring = {
   provider_id: string;
   monitoring_frequency: 'daily' | 'weekly' | 'monthly' | 'quarterly';
   automated_checks: boolean;
@@ -127,9 +127,9 @@ export interface ComplianceMonitoring {
   }>;
   last_monitoring_date: string;
   next_monitoring_date: string;
-}
+};
 
-export interface ThirdPartyConfig {
+export type ThirdPartyConfig = {
   auto_assessment_enabled: boolean;
   continuous_monitoring_enabled: boolean;
   real_time_validation_enabled: boolean;
@@ -153,7 +153,7 @@ export interface ThirdPartyConfig {
     gdpr_certification: boolean;
     lgpd_certification: boolean;
   };
-}
+};
 
 export class ThirdPartyComplianceAutomation {
   private readonly supabase: SupabaseClient;
@@ -194,19 +194,12 @@ export class ThirdPartyComplianceAutomation {
               await this.performComplianceCheck();
               await this.processScheduledAssessments();
               await this.validateActiveTransfers();
-            } catch (error) {
-              console.error('Error in compliance monitoring cycle:', error);
-            }
+            } catch (_error) {}
           },
           this.config.monitoring_frequency_hours * 60 * 60 * 1000
         );
       }
-
-      console.log(
-        `Third-party compliance monitoring started (${this.config.monitoring_frequency_hours}h intervals)`
-      );
     } catch (error) {
-      console.error('Error starting compliance monitoring:', error);
       throw new Error(
         `Failed to start compliance monitoring: ${error.message}`
       );
@@ -221,7 +214,6 @@ export class ThirdPartyComplianceAutomation {
       clearInterval(this.monitoringInterval);
       this.monitoringInterval = null;
     }
-    console.log('Third-party compliance monitoring stopped');
   }
 
   /**
@@ -299,7 +291,6 @@ export class ThirdPartyComplianceAutomation {
         assessment_required: assessmentRequired,
       };
     } catch (error) {
-      console.error('Error registering third-party provider:', error);
       throw new Error(
         `Failed to register third-party provider: ${error.message}`
       );
@@ -378,7 +369,6 @@ export class ThirdPartyComplianceAutomation {
         compliance_validated: providerCompliance.compliant,
       };
     } catch (error) {
-      console.error('Error creating data sharing agreement:', error);
       throw new Error(
         `Failed to create data sharing agreement: ${error.message}`
       );
@@ -495,7 +485,6 @@ export class ThirdPartyComplianceAutomation {
         validation_results: validationResults,
       };
     } catch (error) {
-      console.error('Error initiating data transfer:', error);
       throw new Error(`Failed to initiate data transfer: ${error.message}`);
     }
   }
@@ -572,7 +561,6 @@ export class ThirdPartyComplianceAutomation {
 
       return { success: true };
     } catch (error) {
-      console.error('Error completing data transfer:', error);
       throw new Error(`Failed to complete data transfer: ${error.message}`);
     }
   }
@@ -664,9 +652,7 @@ export class ThirdPartyComplianceAutomation {
       for (const callback of this.complianceCallbacks) {
         try {
           callback({ ...assessment, id: assessment.id });
-        } catch (error) {
-          console.error('Error in compliance callback:', error);
-        }
+        } catch (_error) {}
       }
 
       // Log assessment completion
@@ -692,7 +678,6 @@ export class ThirdPartyComplianceAutomation {
         overall_score: assessmentResults.overall_score,
       };
     } catch (error) {
-      console.error('Error performing compliance assessment:', error);
       throw new Error(
         `Failed to perform compliance assessment: ${error.message}`
       );
@@ -725,7 +710,6 @@ export class ThirdPartyComplianceAutomation {
 
       return dashboard;
     } catch (error) {
-      console.error('Error getting compliance dashboard:', error);
       throw new Error(`Failed to get compliance dashboard: ${error.message}`);
     }
   }
@@ -750,11 +734,7 @@ export class ThirdPartyComplianceAutomation {
 
       // Update compliance scores
       await this.updateComplianceScores();
-
-      console.log('Compliance check completed');
-    } catch (error) {
-      console.error('Error performing compliance check:', error);
-    }
+    } catch (_error) {}
   }
 
   private async processScheduledAssessments(): Promise<void> {
@@ -778,16 +758,9 @@ export class ThirdPartyComplianceAutomation {
       for (const provider of providers) {
         try {
           await this.scheduleComplianceAssessment(provider.id, 'periodic');
-        } catch (assessmentError) {
-          console.error(
-            `Error scheduling assessment for provider ${provider.id}:`,
-            assessmentError
-          );
-        }
+        } catch (_assessmentError) {}
       }
-    } catch (error) {
-      console.error('Error processing scheduled assessments:', error);
-    }
+    } catch (_error) {}
   }
 
   private async validateActiveTransfers(): Promise<void> {
@@ -812,16 +785,9 @@ export class ThirdPartyComplianceAutomation {
       for (const transfer of transfers) {
         try {
           await this.validateTransferCompliance(transfer);
-        } catch (validationError) {
-          console.error(
-            `Error validating transfer ${transfer.id}:`,
-            validationError
-          );
-        }
+        } catch (_validationError) {}
       }
-    } catch (error) {
-      console.error('Error validating active transfers:', error);
-    }
+    } catch (_error) {}
   }
 
   private async validateProviderData(
@@ -1115,14 +1081,9 @@ export class ThirdPartyComplianceAutomation {
   }
 
   private async scheduleComplianceAssessment(
-    providerId: string,
-    assessmentType: string
-  ): Promise<void> {
-    // Implementation would schedule an assessment task
-    console.log(
-      `Scheduling ${assessmentType} assessment for provider ${providerId}`
-    );
-  }
+    _providerId: string,
+    _assessmentType: string
+  ): Promise<void> {}
 
   private async performAutomatedAssessment(
     _provider: any,
@@ -1139,13 +1100,10 @@ export class ThirdPartyComplianceAutomation {
   }
 
   private async sendTransferNotifications(
-    transferId: string,
+    _transferId: string,
     _transferData: any,
     _agreement: any
-  ): Promise<void> {
-    // Implementation would send notifications via configured channels
-    console.log(`Sending transfer notifications for transfer ${transferId}`);
-  }
+  ): Promise<void> {}
 
   private async checkExpiredCertifications(): Promise<void> {
     // Implementation would check for expired certifications

@@ -8,7 +8,7 @@ import { Resend } from 'resend';
 import { createClient } from '@/app/utils/supabase/server';
 import pushNotificationService from '@/lib/push-notification-service';
 
-export interface NotificationTemplate {
+export type NotificationTemplate = {
   id: string;
   clinic_id: string;
   template_name: string;
@@ -22,9 +22,9 @@ export interface NotificationTemplate {
   body_template: string;
   variables: Record<string, any>;
   is_active: boolean;
-}
+};
 
-export interface NotificationDelivery {
+export type NotificationDelivery = {
   id: string;
   clinic_id: string;
   template_id?: string;
@@ -43,9 +43,9 @@ export interface NotificationDelivery {
   failed_at?: Date;
   error_message?: string;
   retry_count: number;
-}
+};
 
-export interface StockAlertNotificationData {
+export type StockAlertNotificationData = {
   alertId: string;
   clinicId: string;
   productId: string;
@@ -62,9 +62,9 @@ export interface StockAlertNotificationData {
   thresholdValue: number;
   message: string;
   metadata?: Record<string, any>;
-}
+};
 
-export interface ResolutionNotificationData {
+export type ResolutionNotificationData = {
   alertId: string;
   clinicId: string;
   productId: string;
@@ -75,7 +75,7 @@ export interface ResolutionNotificationData {
   actionsTaken: string[];
   resolvedAt: Date;
   originalAlert: StockAlertNotificationData;
-}
+};
 
 class StockNotificationsService {
   private readonly supabase = createClient();
@@ -103,13 +103,11 @@ class StockNotificationsService {
         .single();
 
       if (error) {
-        console.error('Error fetching notification template:', error);
         return null;
       }
 
       return data;
-    } catch (error) {
-      console.error('Error in getNotificationTemplate:', error);
+    } catch (_error) {
       return null;
     }
   }
@@ -165,13 +163,11 @@ class StockNotificationsService {
         .single();
 
       if (error) {
-        console.error('Error logging notification delivery:', error);
         return null;
       }
 
       return data.id;
-    } catch (error) {
-      console.error('Error in logNotificationDelivery:', error);
+    } catch (_error) {
       return null;
     }
   }
@@ -197,13 +193,11 @@ class StockNotificationsService {
         .eq('id', id);
 
       if (error) {
-        console.error('Error updating notification delivery:', error);
         return false;
       }
 
       return true;
-    } catch (error) {
-      console.error('Error in updateNotificationDelivery:', error);
+    } catch (_error) {
       return false;
     }
   }
@@ -247,7 +241,6 @@ class StockNotificationsService {
         .in('role', ['admin', 'manager', 'staff']);
 
       if (error) {
-        console.error('Error fetching notification recipients:', error);
         return [];
       }
 
@@ -276,8 +269,7 @@ class StockNotificationsService {
           role: staff.role,
           notification_preferences: staff.users.notification_preferences || {},
         }));
-    } catch (error) {
-      console.error('Error in getNotificationRecipients:', error);
+    } catch (_error) {
       return [];
     }
   }
@@ -394,7 +386,6 @@ class StockNotificationsService {
       results.success = results.sent > 0;
       return results;
     } catch (error) {
-      console.error('Error in sendEmailNotification:', error);
       results.failed = recipients.length;
       results.errors.push(
         error instanceof Error ? error.message : 'Unknown error'
@@ -534,7 +525,6 @@ class StockNotificationsService {
       results.success = results.sent > 0;
       return results;
     } catch (error) {
-      console.error('Error in sendPushNotification:', error);
       results.failed = userIds.length;
       results.errors.push(
         error instanceof Error ? error.message : 'Unknown error'
@@ -665,7 +655,6 @@ class StockNotificationsService {
       results.success = results.sent > 0;
       return results;
     } catch (error) {
-      console.error('Error in sendWebhookNotification:', error);
       results.failed = webhookUrls.length;
       results.errors.push(
         error instanceof Error ? error.message : 'Unknown error'
@@ -710,7 +699,6 @@ class StockNotificationsService {
       );
 
       if (recipients.length === 0) {
-        console.warn(`No recipients found for alert ${alertData.alertId}`);
         return overallResults;
       }
 
@@ -785,8 +773,7 @@ class StockNotificationsService {
       overallResults.success = overallResults.total_sent > 0;
 
       return overallResults;
-    } catch (error) {
-      console.error('Error in sendStockAlertNotifications:', error);
+    } catch (_error) {
       return overallResults;
     }
   }
@@ -862,13 +849,11 @@ class StockNotificationsService {
         .eq('is_active', true);
 
       if (error) {
-        console.error('Error fetching webhook URLs:', error);
         return [];
       }
 
       return data.map((config) => config.webhook_url);
-    } catch (error) {
-      console.error('Error in getClinicWebhookUrls:', error);
+    } catch (_error) {
       return [];
     }
   }
@@ -901,7 +886,6 @@ class StockNotificationsService {
         ); // Within last 24 hours
 
       if (error) {
-        console.error('Error fetching failed notifications:', error);
         return results;
       }
 
@@ -1014,8 +998,7 @@ class StockNotificationsService {
       }
 
       return results;
-    } catch (error) {
-      console.error('Error in retryFailedNotifications:', error);
+    } catch (_error) {
       return results;
     }
   }

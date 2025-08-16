@@ -125,7 +125,6 @@ export async function GET(request: NextRequest) {
     });
 
     if (error) {
-      console.error('Error fetching marketing connections:', error);
       return NextResponse.json(
         { error: 'Failed to fetch connections' },
         { status: 500 }
@@ -153,8 +152,7 @@ export async function GET(request: NextRequest) {
       data: sanitizedConnections,
       total: connections?.length || 0,
     });
-  } catch (error) {
-    console.error('Marketing connections GET error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -273,7 +271,6 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (error) {
-      console.error('Error creating marketing connection:', error);
       return NextResponse.json(
         { error: 'Failed to create connection' },
         { status: 500 }
@@ -289,8 +286,6 @@ export async function POST(request: NextRequest) {
       { status: 201 }
     );
   } catch (error) {
-    console.error('Marketing connections POST error:', error);
-
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Invalid request data', details: error.errors },

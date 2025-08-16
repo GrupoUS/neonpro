@@ -27,8 +27,7 @@ export async function GET(request: NextRequest) {
     const evaluations =
       await supplierService.getSupplierEvaluations(supplierId);
     return NextResponse.json({ evaluations });
-  } catch (error) {
-    console.error('Erro ao buscar avaliações:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
       { status: 500 }
@@ -57,8 +56,7 @@ export async function POST(request: NextRequest) {
     );
 
     return NextResponse.json(evaluation, { status: 201 });
-  } catch (error) {
-    console.error('Erro ao criar avaliação:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
       { status: 500 }

@@ -140,12 +140,12 @@ const backupConfigSchema = z.object({
 
 type BackupConfigFormData = z.infer<typeof backupConfigSchema>;
 
-interface BackupConfigFormProps {
+type BackupConfigFormProps = {
   initialData?: Partial<BackupConfigFormData>;
   onSubmit: (data: BackupConfigFormData) => Promise<void>;
   onCancel: () => void;
   isEditing?: boolean;
-}
+};
 
 const BackupConfigForm: React.FC<BackupConfigFormProps> = ({
   initialData,
@@ -200,8 +200,7 @@ const BackupConfigForm: React.FC<BackupConfigFormProps> = ({
     try {
       setIsSubmitting(true);
       await onSubmit(data);
-    } catch (error) {
-      console.error('Error submitting form:', error);
+    } catch (_error) {
     } finally {
       setIsSubmitting(false);
     }

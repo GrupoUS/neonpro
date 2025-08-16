@@ -11,7 +11,7 @@ import { SessionManager } from './session-manager';
 import { SessionNotificationService } from './session-notification-service';
 
 // Types
-export interface SessionAuthConfig {
+export type SessionAuthConfig = {
   supabaseUrl: string;
   supabaseAnonKey: string;
   jwtSecret: string;
@@ -19,9 +19,9 @@ export interface SessionAuthConfig {
   enableLocationTracking: boolean;
   enableSecurityEvents: boolean;
   enableNotifications: boolean;
-}
+};
 
-export interface AuthenticationResult {
+export type AuthenticationResult = {
   success: boolean;
   session?: SessionData;
   user?: UserData;
@@ -29,9 +29,9 @@ export interface AuthenticationResult {
   requiresMFA?: boolean;
   deviceRegistrationRequired?: boolean;
   securityWarnings?: string[];
-}
+};
 
-export interface SessionData {
+export type SessionData = {
   id: string;
   userId: string;
   deviceFingerprint: string;
@@ -44,9 +44,9 @@ export interface SessionData {
   isActive: boolean;
   securityScore: number;
   metadata?: Record<string, any>;
-}
+};
 
-export interface UserData {
+export type UserData = {
   id: string;
   email: string;
   fullName?: string;
@@ -55,23 +55,23 @@ export interface UserData {
   phoneVerified: boolean;
   mfaEnabled: boolean;
   lastLoginAt?: Date;
-}
+};
 
-export interface LocationData {
+export type LocationData = {
   country?: string;
   city?: string;
   timezone?: string;
   lat?: number;
   lng?: number;
-}
+};
 
-export interface DeviceInfo {
+export type DeviceInfo = {
   fingerprint: string;
   name?: string;
   type?: string;
   browserInfo?: Record<string, any>;
   trusted: boolean;
-}
+};
 
 // Session Authentication Service
 export class SessionAuthService {
@@ -264,8 +264,7 @@ export class SessionAuthService {
         deviceRegistrationRequired: !deviceRegistration.trusted,
         securityWarnings,
       };
-    } catch (error) {
-      console.error('Authentication error:', error);
+    } catch (_error) {
       return {
         success: false,
         error: 'Authentication failed',
@@ -300,8 +299,7 @@ export class SessionAuthService {
       return {
         success: true,
       };
-    } catch (error) {
-      console.error('OAuth authentication error:', error);
+    } catch (_error) {
       return {
         success: false,
         error: 'OAuth authentication failed',
@@ -370,8 +368,7 @@ export class SessionAuthService {
         session,
         user: userData,
       };
-    } catch (error) {
-      console.error('OAuth callback error:', error);
+    } catch (_error) {
       return {
         success: false,
         error: 'OAuth callback processing failed',
@@ -455,8 +452,7 @@ export class SessionAuthService {
         session,
         user: userData,
       };
-    } catch (error) {
-      console.error('MFA verification error:', error);
+    } catch (_error) {
       return {
         success: false,
         error: 'MFA verification failed',
@@ -541,8 +537,7 @@ export class SessionAuthService {
         session,
         user: userData,
       };
-    } catch (error) {
-      console.error('Session validation error:', error);
+    } catch (_error) {
       return {
         success: false,
         error: 'Session validation failed',
@@ -574,8 +569,7 @@ export class SessionAuthService {
         session: extendedSession,
         user: validation.user,
       };
-    } catch (error) {
-      console.error('Session refresh error:', error);
+    } catch (_error) {
       return {
         success: false,
         error: 'Session refresh failed',
@@ -601,8 +595,7 @@ export class SessionAuthService {
       await this.supabase.auth.signOut();
 
       return { success: true };
-    } catch (error) {
-      console.error('Logout error:', error);
+    } catch (_error) {
       return {
         success: false,
         error: 'Logout failed',
@@ -627,8 +620,7 @@ export class SessionAuthService {
       await this.supabase.auth.signOut();
 
       return { success: true };
-    } catch (error) {
-      console.error('Logout all devices error:', error);
+    } catch (_error) {
       return {
         success: false,
         error: 'Logout from all devices failed',
@@ -678,8 +670,7 @@ export class SessionAuthService {
           ? new Date(data.last_login_at)
           : undefined,
       };
-    } catch (error) {
-      console.error('Get user profile error:', error);
+    } catch (_error) {
       return null;
     }
   }
@@ -730,8 +721,7 @@ export class SessionAuthService {
       }
 
       return;
-    } catch (error) {
-      console.error('Location extraction error:', error);
+    } catch (_error) {
       return;
     }
   }
@@ -757,13 +747,11 @@ export class SessionAuthService {
       );
 
       if (error) {
-        console.error('Security score calculation error:', error);
         return 50; // Default medium security score
       }
 
       return data || 50;
-    } catch (error) {
-      console.error('Security score calculation error:', error);
+    } catch (_error) {
       return 50;
     }
   }
@@ -794,9 +782,7 @@ export class SessionAuthService {
         ipAddress: event.ipAddress,
         userAgent: event.userAgent,
       });
-    } catch (error) {
-      console.error('Security event logging error:', error);
-    }
+    } catch (_error) {}
   }
 
   // =====================================================

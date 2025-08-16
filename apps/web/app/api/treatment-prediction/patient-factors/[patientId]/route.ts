@@ -4,9 +4,9 @@ import { type NextRequest, NextResponse } from 'next/server';
 import { TreatmentPredictionService } from '@/app/lib/services/treatment-prediction';
 import { createServerClient } from '@/app/utils/supabase/server';
 
-interface RouteParams {
+type RouteParams = {
   params: { patientId: string };
-}
+};
 
 // GET /api/treatment-prediction/patient-factors/[patientId] - Get patient factors
 export async function GET(_request: NextRequest, { params }: RouteParams) {
@@ -45,8 +45,7 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
     }
 
     return NextResponse.json({ factors });
-  } catch (error) {
-    console.error('Error fetching patient factors:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to fetch patient factors' },
       { status: 500 }
@@ -100,8 +99,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
       factors,
       message: 'Patient factors updated successfully',
     });
-  } catch (error) {
-    console.error('Error updating patient factors:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to update patient factors' },
       { status: 500 }

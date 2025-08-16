@@ -59,7 +59,6 @@ export async function POST(request: NextRequest) {
           message: 'WebAuthn authentication successful',
         });
       } catch (error) {
-        console.error('WebAuthn authentication verification error:', error);
         return NextResponse.json(
           {
             error:

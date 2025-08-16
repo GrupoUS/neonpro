@@ -48,7 +48,6 @@ export async function POST(request: NextRequest) {
       message: 'Performance report generated successfully',
     });
   } catch (error) {
-    console.error('Error generating performance report:', error);
     return NextResponse.json(
       {
         success: false,

@@ -4,7 +4,7 @@ import type { LGPDComplianceManager } from '../LGPDComplianceManager';
 
 type SupabaseClient = ReturnType<typeof createClient<Database>>;
 
-export interface RetentionPolicy {
+export type RetentionPolicy = {
   id: string;
   name: string;
   description: string;
@@ -20,9 +20,9 @@ export interface RetentionPolicy {
   created_at: string;
   updated_at: string;
   active: boolean;
-}
+};
 
-export interface RetentionSchedule {
+export type RetentionSchedule = {
   id: string;
   policy_id: string;
   scheduled_date: string;
@@ -41,9 +41,9 @@ export interface RetentionSchedule {
   approved_at?: string;
   execution_details?: any;
   created_at: string;
-}
+};
 
-export interface RetentionExecution {
+export type RetentionExecution = {
   id: string;
   schedule_id: string;
   policy_id: string;
@@ -57,9 +57,9 @@ export interface RetentionExecution {
   errors: any[];
   execution_log: any[];
   verification_hash: string;
-}
+};
 
-export interface DataArchive {
+export type DataArchive = {
   id: string;
   retention_execution_id: string;
   archive_location: string;
@@ -72,9 +72,9 @@ export interface DataArchive {
   created_at: string;
   expires_at?: string;
   retrieval_possible: boolean;
-}
+};
 
-export interface RetentionConfig {
+export type RetentionConfig = {
   auto_execution_enabled: boolean;
   approval_workflow_enabled: boolean;
   notification_enabled: boolean;
@@ -91,7 +91,7 @@ export interface RetentionConfig {
     webhook: boolean;
     dashboard: boolean;
   };
-}
+};
 
 export class DataRetentionAutomation {
   private readonly supabase: SupabaseClient;
@@ -127,19 +127,12 @@ export class DataRetentionAutomation {
           async () => {
             try {
               await this.processRetentionSchedules();
-            } catch (error) {
-              console.error('Error in retention processing cycle:', error);
-            }
+            } catch (_error) {}
           },
           checkIntervalHours * 60 * 60 * 1000
         );
       }
-
-      console.log(
-        `Automated retention processing started (${checkIntervalHours}h intervals)`
-      );
     } catch (error) {
-      console.error('Error starting automated retention:', error);
       throw new Error(`Failed to start automated retention: ${error.message}`);
     }
   }
@@ -152,7 +145,6 @@ export class DataRetentionAutomation {
       clearInterval(this.executionInterval);
       this.executionInterval = null;
     }
-    console.log('Automated retention processing stopped');
   }
 
   /**
@@ -204,7 +196,6 @@ export class DataRetentionAutomation {
         policy_id: policy.id,
       };
     } catch (error) {
-      console.error('Error creating retention policy:', error);
       throw new Error(`Failed to create retention policy: ${error.message}`);
     }
   }
@@ -294,7 +285,6 @@ export class DataRetentionAutomation {
         affected_records: affectedRecords.count,
       };
     } catch (error) {
-      console.error('Error scheduling retention execution:', error);
       throw new Error(
         `Failed to schedule retention execution: ${error.message}`
       );
@@ -441,7 +431,6 @@ export class DataRetentionAutomation {
         throw executionError;
       }
     } catch (error) {
-      console.error('Error executing retention schedule:', error);
       throw new Error(`Failed to execute retention schedule: ${error.message}`);
     }
   }
@@ -476,13 +465,8 @@ export class DataRetentionAutomation {
       }
 
       if (!pendingSchedules || pendingSchedules.length === 0) {
-        console.log('No pending retention schedules found');
         return results;
       }
-
-      console.log(
-        `Processing ${pendingSchedules.length} pending retention schedules`
-      );
 
       // Process each schedule
       for (const schedule of pendingSchedules) {
@@ -498,16 +482,8 @@ export class DataRetentionAutomation {
           // Execute retention
           await this.executeRetentionSchedule(schedule.id);
           results.executed++;
-
-          console.log(
-            `Successfully executed retention schedule ${schedule.id}`
-          );
         } catch (scheduleError) {
           results.failed++;
-          console.error(
-            `Failed to execute retention schedule ${schedule.id}:`,
-            scheduleError
-          );
 
           // Log failure
           await this.complianceManager.logAuditEvent({
@@ -539,7 +515,6 @@ export class DataRetentionAutomation {
 
       return results;
     } catch (error) {
-      console.error('Error processing retention schedules:', error);
       throw new Error(
         `Failed to process retention schedules: ${error.message}`
       );
@@ -568,7 +543,6 @@ export class DataRetentionAutomation {
 
       return report;
     } catch (error) {
-      console.error('Error getting retention status report:', error);
       throw new Error(
         `Failed to get retention status report: ${error.message}`
       );
@@ -614,7 +588,6 @@ export class DataRetentionAutomation {
 
       return { success: true };
     } catch (error) {
-      console.error('Error approving retention schedule:', error);
       throw new Error(`Failed to approve retention schedule: ${error.message}`);
     }
   }
@@ -677,8 +650,7 @@ export class DataRetentionAutomation {
       }
 
       return result;
-    } catch (error) {
-      console.error('Error calculating affected records:', error);
+    } catch (_error) {
       return { count: 0, sample: [] };
     }
   }
@@ -950,8 +922,5 @@ export class DataRetentionAutomation {
     return hash.digest('hex');
   }
 
-  private async sendRetentionNotification(notification: any): Promise<void> {
-    // Implementation for retention notifications
-    console.log('Retention notification sent:', notification.type);
-  }
+  private async sendRetentionNotification(_notification: any): Promise<void> {}
 }

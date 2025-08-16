@@ -32,7 +32,7 @@ export type TrendDirection = 'up' | 'down' | 'stable' | 'volatile';
 export type AlertSeverity = 'info' | 'warning' | 'critical' | 'emergency';
 
 // Analytics Interfaces
-export interface VisionMetric {
+export type VisionMetric = {
   id: string;
   timestamp: string;
   metricType: MetricType;
@@ -49,9 +49,9 @@ export interface VisionMetric {
   patientId?: string;
   clinicId: string;
   userId?: string;
-}
+};
 
-export interface PerformanceMetrics {
+export type PerformanceMetrics = {
   id: string;
   timestamp: string;
   component: string;
@@ -63,17 +63,17 @@ export interface PerformanceMetrics {
   uptime: number; // percentage
   resourceUsage: ResourceUsage;
   qualityScore: number;
-}
+};
 
-export interface ResourceUsage {
+export type ResourceUsage = {
   cpu: number; // percentage
   memory: number; // MB
   storage: number; // MB
   network: number; // MB/s
   gpu?: number; // percentage
-}
+};
 
-export interface PatientOutcome {
+export type PatientOutcome = {
   id: string;
   patientId: string;
   timestamp: string;
@@ -92,9 +92,9 @@ export interface PatientOutcome {
   treatmentSuccess: boolean;
   followUpRequired: boolean;
   notes?: string;
-}
+};
 
-export interface AnalyticsDashboard {
+export type AnalyticsDashboard = {
   id: string;
   name: string;
   description: string;
@@ -107,9 +107,9 @@ export interface AnalyticsDashboard {
   isPublic: boolean;
   createdAt: string;
   updatedAt: string;
-}
+};
 
-export interface DashboardWidget {
+export type DashboardWidget = {
   id: string;
   type:
     | 'metric'
@@ -128,23 +128,23 @@ export interface DashboardWidget {
   dataSource: DataSource;
   refreshInterval?: number;
   alertRules?: AlertRule[];
-}
+};
 
-export interface WidgetPosition {
+export type WidgetPosition = {
   x: number;
   y: number;
   width: number;
   height: number;
-}
+};
 
-export interface WidgetSize {
+export type WidgetSize = {
   minWidth: number;
   minHeight: number;
   maxWidth?: number;
   maxHeight?: number;
-}
+};
 
-export interface WidgetConfiguration {
+export type WidgetConfiguration = {
   chartType?:
     | 'line'
     | 'bar'
@@ -160,25 +160,25 @@ export interface WidgetConfiguration {
   aggregation?: 'sum' | 'avg' | 'min' | 'max' | 'count';
   groupBy?: string[];
   filterBy?: Record<string, any>;
-}
+};
 
-export interface DataSource {
+export type DataSource = {
   type: 'metric' | 'query' | 'api' | 'realtime';
   source: string;
   parameters: Record<string, any>;
   cacheTTL?: number; // seconds
-}
+};
 
-export interface DashboardLayout {
+export type DashboardLayout = {
   columns: number;
   rowHeight: number;
   margin: [number, number];
   containerPadding: [number, number];
   breakpoints: Record<string, number>;
   layouts: Record<string, WidgetPosition[]>;
-}
+};
 
-export interface AnalyticsFilter {
+export type AnalyticsFilter = {
   id: string;
   name: string;
   type: 'date' | 'clinic' | 'patient' | 'component' | 'metric' | 'custom';
@@ -194,9 +194,9 @@ export interface AnalyticsFilter {
     | 'nin'
     | 'contains';
   required: boolean;
-}
+};
 
-export interface AlertRule {
+export type AlertRule = {
   id: string;
   name: string;
   condition: string;
@@ -205,17 +205,17 @@ export interface AlertRule {
   severity: AlertSeverity;
   enabled: boolean;
   notification: NotificationConfig;
-}
+};
 
-export interface NotificationConfig {
+export type NotificationConfig = {
   email: boolean;
   sms: boolean;
   push: boolean;
   webhook?: string;
   recipients: string[];
-}
+};
 
-export interface AnalyticsInsight {
+export type AnalyticsInsight = {
   id: string;
   timestamp: string;
   type: 'trend' | 'anomaly' | 'correlation' | 'prediction' | 'recommendation';
@@ -228,9 +228,9 @@ export interface AnalyticsInsight {
   recommendations?: string[];
   actionItems?: ActionItem[];
   validUntil?: string;
-}
+};
 
-export interface ActionItem {
+export type ActionItem = {
   id: string;
   title: string;
   description: string;
@@ -239,9 +239,9 @@ export interface ActionItem {
   dueDate?: string;
   status: 'pending' | 'in_progress' | 'completed' | 'cancelled';
   estimatedImpact?: string;
-}
+};
 
-export interface TrendAnalysis {
+export type TrendAnalysis = {
   id: string;
   metricName: string;
   timeframe: AnalyticsTimeframe;
@@ -252,23 +252,23 @@ export interface TrendAnalysis {
   confidence: number;
   seasonality?: SeasonalPattern;
   forecast?: ForecastData[];
-}
+};
 
-export interface SeasonalPattern {
+export type SeasonalPattern = {
   type: 'daily' | 'weekly' | 'monthly' | 'quarterly';
   strength: number;
   peaks: number[];
   troughs: number[];
-}
+};
 
-export interface ForecastData {
+export type ForecastData = {
   timestamp: string;
   value: number;
   confidenceInterval: [number, number];
   factors: Record<string, number>;
-}
+};
 
-export interface CorrelationAnalysis {
+export type CorrelationAnalysis = {
   id: string;
   metric1: string;
   metric2: string;
@@ -283,9 +283,9 @@ export interface CorrelationAnalysis {
   timeframe: AnalyticsTimeframe;
   sampleSize: number;
   confidence: number;
-}
+};
 
-export interface AnomalyDetection {
+export type AnomalyDetection = {
   id: string;
   timestamp: string;
   metricName: string;
@@ -296,9 +296,9 @@ export interface AnomalyDetection {
   anomalyType: 'spike' | 'drop' | 'trend_change' | 'pattern_break';
   confidence: number;
   context: Record<string, any>;
-}
+};
 
-export interface PerformanceBenchmark {
+export type PerformanceBenchmark = {
   id: string;
   component: string;
   metricType: string;
@@ -309,7 +309,7 @@ export interface PerformanceBenchmark {
   industryAverage?: number;
   bestPractice?: number;
   category: 'accuracy' | 'speed' | 'efficiency' | 'quality' | 'cost';
-}
+};
 
 // Main Analytics Engine Class
 export class VisionAnalyticsEngine {
@@ -1106,16 +1106,16 @@ export class VisionAnalyticsEngine {
 }
 
 // Additional interfaces for comprehensive analytics
-export interface DashboardData {
+export type DashboardData = {
   dashboard: AnalyticsDashboard;
   widgets: any[];
   insights: AnalyticsInsight[];
   alerts: any[];
   summary: any;
   lastUpdated: string;
-}
+};
 
-export interface TreatmentEffectivenessAnalysis {
+export type TreatmentEffectivenessAnalysis = {
   treatmentType: string;
   timeRange: AnalyticsTimeframe;
   totalPatients: number;
@@ -1126,9 +1126,9 @@ export interface TreatmentEffectivenessAnalysis {
   outcomesByType: Record<string, number>;
   trends: TrendAnalysis[];
   recommendations: string[];
-}
+};
 
-export interface PredictiveInsights {
+export type PredictiveInsights = {
   patientId: string;
   treatmentType: string;
   predictedOutcome: string;
@@ -1139,9 +1139,9 @@ export interface PredictiveInsights {
   confidence: number;
   factors: Record<string, number>;
   generatedAt: string;
-}
+};
 
-export interface ClinicAnalytics {
+export type ClinicAnalytics = {
   clinicId: string;
   timeRange: AnalyticsTimeframe;
   period: { start: string; end: string };
@@ -1152,7 +1152,7 @@ export interface ClinicAnalytics {
   roi: any;
   trends: any;
   recommendations: string[];
-}
+};
 
 // Validation schemas
 export const VisionMetricSchema = z.object({

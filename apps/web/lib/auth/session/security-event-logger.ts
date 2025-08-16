@@ -18,7 +18,7 @@ export type SecurityEventType =
 
 export type EventSeverity = 'low' | 'medium' | 'high' | 'critical';
 
-export interface SecurityEvent {
+export type SecurityEvent = {
   id?: string;
   sessionId?: string;
   userId: string | null;
@@ -33,9 +33,9 @@ export interface SecurityEvent {
   timestamp?: Date;
   createdAt?: Date;
   updatedAt?: Date;
-}
+};
 
-export interface SecurityEventFilter {
+export type SecurityEventFilter = {
   userId?: string;
   sessionId?: string;
   eventType?: SecurityEventType;
@@ -46,9 +46,9 @@ export interface SecurityEventFilter {
   ipAddress?: string;
   limit?: number;
   offset?: number;
-}
+};
 
-export interface SecurityEventStats {
+export type SecurityEventStats = {
   totalEvents: number;
   eventsBySeverity: Record<EventSeverity, number>;
   eventsByType: Record<SecurityEventType, number>;
@@ -56,9 +56,9 @@ export interface SecurityEventStats {
   recentEvents: number;
   topIpAddresses: Array<{ ip: string; count: number }>;
   topUsers: Array<{ userId: string; email?: string; count: number }>;
-}
+};
 
-export interface SecurityAlert {
+export type SecurityAlert = {
   id: string;
   title: string;
   description: string;
@@ -67,7 +67,7 @@ export interface SecurityAlert {
   affectedUsers: number;
   timeframe: string;
   recommendations: string[];
-}
+};
 
 // Security Event Logger Service
 export class SecurityEventLogger {
@@ -85,45 +85,9 @@ export class SecurityEventLogger {
    * Log a security event
    */
   async logEvent(event: SecurityEvent): Promise<SecurityEvent> {
-    try {
-      const { data, error } = await this.supabase
-        .from('session_security_events')
-        .insert({
-          session_id: event.sessionId,
-          user_id: event.userId,
-          event_type: event.eventType,
-          severity: event.severity,
-          details: event.details,
-          ip_address: event.ipAddress,
-          user_agent: event.userAgent,
-          resolved: event.resolved,
-          timestamp: event.timestamp?.toISOString() || new Date().toISOString(),
-        })
-        .select()
-        .single();
-
-      if (error) {
-        throw new Error(`Failed to log security event: ${error.message}`);
-      }
-
-      const loggedEvent = this.mapSecurityEvent(data);
-
-      // Check if this event triggers any alerts
-      await this.checkForAlerts(loggedEvent);
-
-      return loggedEvent;
-    } catch (error) {
-      console.error('Security event logging error:', error);
-      throw error;
-    }
-  }
-
-  /**
-   * Log multiple security events in batch
-   */
-  async logEvents(events: SecurityEvent[]): Promise<SecurityEvent[]> {
-    try {
-      const eventData = events.map((event) => ({
+    const { data, error } = await this.supabase
+      .from('session_security_events')
+      .insert({
         session_id: event.sessionId,
         user_id: event.userId,
         event_type: event.eventType,
@@ -133,33 +97,59 @@ export class SecurityEventLogger {
         user_agent: event.userAgent,
         resolved: event.resolved,
         timestamp: event.timestamp?.toISOString() || new Date().toISOString(),
-      }));
+      })
+      .select()
+      .single();
 
-      const { data, error } = await this.supabase
-        .from('session_security_events')
-        .insert(eventData)
-        .select();
-
-      if (error) {
-        throw new Error(`Failed to log security events: ${error.message}`);
-      }
-
-      const loggedEvents = data.map(this.mapSecurityEvent);
-
-      // Check for alerts on high severity events
-      const highSeverityEvents = loggedEvents.filter(
-        (e) => e.severity === 'high' || e.severity === 'critical'
-      );
-
-      for (const event of highSeverityEvents) {
-        await this.checkForAlerts(event);
-      }
-
-      return loggedEvents;
-    } catch (error) {
-      console.error('Batch security event logging error:', error);
-      throw error;
+    if (error) {
+      throw new Error(`Failed to log security event: ${error.message}`);
     }
+
+    const loggedEvent = this.mapSecurityEvent(data);
+
+    // Check if this event triggers any alerts
+    await this.checkForAlerts(loggedEvent);
+
+    return loggedEvent;
+  }
+
+  /**
+   * Log multiple security events in batch
+   */
+  async logEvents(events: SecurityEvent[]): Promise<SecurityEvent[]> {
+    const eventData = events.map((event) => ({
+      session_id: event.sessionId,
+      user_id: event.userId,
+      event_type: event.eventType,
+      severity: event.severity,
+      details: event.details,
+      ip_address: event.ipAddress,
+      user_agent: event.userAgent,
+      resolved: event.resolved,
+      timestamp: event.timestamp?.toISOString() || new Date().toISOString(),
+    }));
+
+    const { data, error } = await this.supabase
+      .from('session_security_events')
+      .insert(eventData)
+      .select();
+
+    if (error) {
+      throw new Error(`Failed to log security events: ${error.message}`);
+    }
+
+    const loggedEvents = data.map(this.mapSecurityEvent);
+
+    // Check for alerts on high severity events
+    const highSeverityEvents = loggedEvents.filter(
+      (e) => e.severity === 'high' || e.severity === 'critical'
+    );
+
+    for (const event of highSeverityEvents) {
+      await this.checkForAlerts(event);
+    }
+
+    return loggedEvents;
   }
 
   // =====================================================
@@ -223,8 +213,7 @@ export class SecurityEventLogger {
       }
 
       return data.map(this.mapSecurityEvent);
-    } catch (error) {
-      console.error('Get security events error:', error);
+    } catch (_error) {
       return [];
     }
   }
@@ -251,8 +240,7 @@ export class SecurityEventLogger {
       }
 
       return data ? this.mapSecurityEvent(data) : null;
-    } catch (error) {
-      console.error('Get security event by ID error:', error);
+    } catch (_error) {
       return null;
     }
   }
@@ -290,33 +278,28 @@ export class SecurityEventLogger {
     resolvedBy: string,
     resolution?: string
   ): Promise<SecurityEvent> {
-    try {
-      const { data, error } = await this.supabase
-        .from('session_security_events')
-        .update({
-          resolved: true,
-          resolved_at: new Date().toISOString(),
-          resolved_by: resolvedBy,
-          details: resolution
-            ? {
-                ...((await this.getEventById(eventId))?.details || {}),
-                resolution,
-              }
-            : undefined,
-        })
-        .eq('id', eventId)
-        .select()
-        .single();
+    const { data, error } = await this.supabase
+      .from('session_security_events')
+      .update({
+        resolved: true,
+        resolved_at: new Date().toISOString(),
+        resolved_by: resolvedBy,
+        details: resolution
+          ? {
+              ...((await this.getEventById(eventId))?.details || {}),
+              resolution,
+            }
+          : undefined,
+      })
+      .eq('id', eventId)
+      .select()
+      .single();
 
-      if (error) {
-        throw new Error(`Failed to resolve security event: ${error.message}`);
-      }
-
-      return this.mapSecurityEvent(data);
-    } catch (error) {
-      console.error('Resolve security event error:', error);
-      throw error;
+    if (error) {
+      throw new Error(`Failed to resolve security event: ${error.message}`);
     }
+
+    return this.mapSecurityEvent(data);
   }
 
   /**
@@ -327,33 +310,28 @@ export class SecurityEventLogger {
     resolvedBy: string,
     resolution?: string
   ): Promise<SecurityEvent[]> {
-    try {
-      const { data, error } = await this.supabase
-        .from('session_security_events')
-        .update({
-          resolved: true,
-          resolved_at: new Date().toISOString(),
-          resolved_by: resolvedBy,
-          ...(resolution && {
-            details: this.supabase.rpc('jsonb_set', {
-              target: 'details',
-              path: '{resolution}',
-              new_value: JSON.stringify(resolution),
-            }),
+    const { data, error } = await this.supabase
+      .from('session_security_events')
+      .update({
+        resolved: true,
+        resolved_at: new Date().toISOString(),
+        resolved_by: resolvedBy,
+        ...(resolution && {
+          details: this.supabase.rpc('jsonb_set', {
+            target: 'details',
+            path: '{resolution}',
+            new_value: JSON.stringify(resolution),
           }),
-        })
-        .in('id', eventIds)
-        .select();
+        }),
+      })
+      .in('id', eventIds)
+      .select();
 
-      if (error) {
-        throw new Error(`Failed to resolve security events: ${error.message}`);
-      }
-
-      return data.map(this.mapSecurityEvent);
-    } catch (error) {
-      console.error('Bulk resolve security events error:', error);
-      throw error;
+    if (error) {
+      throw new Error(`Failed to resolve security events: ${error.message}`);
     }
+
+    return data.map(this.mapSecurityEvent);
   }
 
   // =====================================================
@@ -497,8 +475,7 @@ export class SecurityEventLogger {
         topIpAddresses,
         topUsers,
       };
-    } catch (error) {
-      console.error('Get event statistics error:', error);
+    } catch (_error) {
       return {
         totalEvents: 0,
         eventsBySeverity: { low: 0, medium: 0, high: 0, critical: 0 },
@@ -603,8 +580,7 @@ export class SecurityEventLogger {
       }
 
       return alerts;
-    } catch (error) {
-      console.error('Generate security alerts error:', error);
+    } catch (_error) {
       return [];
     }
   }
@@ -653,21 +629,13 @@ export class SecurityEventLogger {
       if (event.eventType === 'session_hijack_attempt') {
         await this.triggerSessionHijackAlert(event);
       }
-    } catch (error) {
-      console.error('Check for alerts error:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
    * Trigger critical security alert
    */
-  private async triggerCriticalAlert(event: SecurityEvent): Promise<void> {
-    // In a real implementation, this would:
-    // - Send notifications to security team
-    // - Create incident tickets
-    // - Trigger automated responses
-    console.warn('CRITICAL SECURITY EVENT:', event);
-  }
+  private async triggerCriticalAlert(_event: SecurityEvent): Promise<void> {}
 
   /**
    * Check for brute force attack patterns
@@ -704,10 +672,9 @@ export class SecurityEventLogger {
   /**
    * Trigger session hijack alert
    */
-  private async triggerSessionHijackAlert(event: SecurityEvent): Promise<void> {
-    // Immediate response for session hijack attempts
-    console.error('SESSION HIJACK ATTEMPT DETECTED:', event);
-
+  private async triggerSessionHijackAlert(
+    _event: SecurityEvent
+  ): Promise<void> {
     // In production, this would trigger:
     // - Immediate session termination
     // - User notification

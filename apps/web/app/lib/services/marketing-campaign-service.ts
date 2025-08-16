@@ -39,7 +39,6 @@ export class MarketingCampaignService {
 
       return { success: true, data: campaign };
     } catch (error) {
-      console.error('Error creating campaign:', error);
       return { success: false, error: error.message };
     }
   }
@@ -115,7 +114,6 @@ export class MarketingCampaignService {
         },
       };
     } catch (error) {
-      console.error('Error fetching campaigns:', error);
       return { success: false, error: error.message };
     }
   }
@@ -152,7 +150,6 @@ export class MarketingCampaignService {
         },
       };
     } catch (error) {
-      console.error('Error fetching campaign:', error);
       return { success: false, error: error.message };
     }
   }
@@ -180,7 +177,6 @@ export class MarketingCampaignService {
 
       return { success: true, data: campaign };
     } catch (error) {
-      console.error('Error updating campaign:', error);
       return { success: false, error: error.message };
     }
   }
@@ -201,7 +197,6 @@ export class MarketingCampaignService {
 
       return { success: true };
     } catch (error) {
-      console.error('Error deleting campaign:', error);
       return { success: false, error: error.message };
     }
   }
@@ -263,7 +258,6 @@ export class MarketingCampaignService {
 
       return { success: true, data: executions };
     } catch (error) {
-      console.error('Error executing campaign:', error);
       return { success: false, error: error.message };
     }
   }
@@ -288,7 +282,6 @@ export class MarketingCampaignService {
 
       return { success: true, data: abTest };
     } catch (error) {
-      console.error('Error creating A/B test:', error);
       return { success: false, error: error.message };
     }
   }
@@ -358,7 +351,6 @@ export class MarketingCampaignService {
 
       return { success: true, data: executions };
     } catch (error) {
-      console.error('Error running A/B test:', error);
       return { success: false, error: error.message };
     }
   }
@@ -378,7 +370,6 @@ export class MarketingCampaignService {
 
       return { success: true, data: profile };
     } catch (error) {
-      console.error('Error fetching personalization profile:', error);
       return { success: false, error: error.message };
     }
   }
@@ -403,7 +394,6 @@ export class MarketingCampaignService {
 
       return { success: true, data: profile };
     } catch (error) {
-      console.error('Error updating personalization profile:', error);
       return { success: false, error: error.message };
     }
   }
@@ -428,7 +418,6 @@ export class MarketingCampaignService {
 
       return { success: true, data: consent };
     } catch (error) {
-      console.error('Error fetching consent:', error);
       return { success: false, error: error.message };
     }
   }
@@ -452,7 +441,6 @@ export class MarketingCampaignService {
 
       return { success: true, data: consent };
     } catch (error) {
-      console.error('Error updating consent:', error);
       return { success: false, error: error.message };
     }
   }
@@ -481,7 +469,6 @@ export class MarketingCampaignService {
 
       return { success: true, data: consent };
     } catch (error) {
-      console.error('Error withdrawing consent:', error);
       return { success: false, error: error.message };
     }
   }
@@ -562,7 +549,6 @@ export class MarketingCampaignService {
 
       return { success: true, data: analytics };
     } catch (error) {
-      console.error('Error calculating campaign analytics:', error);
       return { success: false, error: error.message };
     }
   }
@@ -677,8 +663,6 @@ export class MarketingCampaignService {
           timestamp: new Date().toISOString(),
         },
       ]);
-    } catch (error) {
-      console.error('Error creating audit entry:', error);
-    }
+    } catch (_error) {}
   }
 }

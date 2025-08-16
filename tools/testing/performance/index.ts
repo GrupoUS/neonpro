@@ -145,7 +145,7 @@ export type CacheStrategy = 'static' | 'api' | 'dynamic' | 'private';
 export type DeploymentEnvironment = 'development' | 'staging' | 'production';
 
 // Performance monitoring configuration
-export interface PerformanceConfig {
+export type PerformanceConfig = {
   webVitals: {
     enabled: boolean;
     endpoint?: string;
@@ -166,7 +166,7 @@ export interface PerformanceConfig {
     enableDevTools: boolean;
     memoryMonitoring: boolean;
   };
-}
+};
 
 // Default performance configuration
 export const DEFAULT_PERFORMANCE_CONFIG: PerformanceConfig = {

@@ -3,7 +3,7 @@ import { AuditLogger } from '../../audit/audit-logger';
 import { LGPDManager } from '../../lgpd/lgpd-manager';
 import { EncryptionService } from '../../security/encryption-service';
 
-export interface StorageConfig {
+export type StorageConfig = {
   provider: 'local' | 's3' | 'azure' | 'gcp' | 'ftp' | 'sftp';
   name: string;
   enabled: boolean;
@@ -16,9 +16,9 @@ export interface StorageConfig {
   cost_per_gb: number;
   bandwidth_limit_mbps?: number;
   metadata: Record<string, any>;
-}
+};
 
-export interface StorageLocation {
+export type StorageLocation = {
   id: string;
   provider: string;
   path: string;
@@ -29,18 +29,18 @@ export interface StorageLocation {
   created_at: Date;
   expires_at?: Date;
   metadata: Record<string, any>;
-}
+};
 
-export interface StorageResult {
+export type StorageResult = {
   success: boolean;
   location?: StorageLocation;
   error?: string;
   duration_ms: number;
   bytes_transferred: number;
   transfer_rate_mbps: number;
-}
+};
 
-export interface StorageMetrics {
+export type StorageMetrics = {
   provider: string;
   total_storage_gb: number;
   used_storage_gb: number;
@@ -56,9 +56,9 @@ export interface StorageMetrics {
   error_rate: number;
   last_health_check: Date;
   health_status: 'healthy' | 'warning' | 'error';
-}
+};
 
-export interface StorageOperation {
+export type StorageOperation = {
   id: string;
   type: 'upload' | 'download' | 'delete' | 'list' | 'verify';
   provider: string;
@@ -75,7 +75,7 @@ export interface StorageOperation {
   retry_count: number;
   max_retries: number;
   metadata: Record<string, any>;
-}
+};
 
 export abstract class StorageProvider {
   protected config: StorageConfig;
@@ -177,14 +177,9 @@ export class LocalStorageProvider extends StorageProvider {
     this.basePath = config.connection_config.base_path || './backups';
   }
 
-  async connect(): Promise<void> {
-    // Verificar se o diretório base existe
-    console.log(`Conectando ao armazenamento local: ${this.basePath}`);
-  }
+  async connect(): Promise<void> {}
 
-  async disconnect(): Promise<void> {
-    console.log('Desconectando do armazenamento local');
-  }
+  async disconnect(): Promise<void> {}
 
   async upload(
     localPath: string,
@@ -203,12 +198,9 @@ export class LocalStorageProvider extends StorageProvider {
         processedPath = await this.processFile(processedPath, 'encrypt');
       }
 
-      const targetPath = `${this.basePath}/${remotePath}`;
+      const _targetPath = `${this.basePath}/${remotePath}`;
       const fileSize = await this.getFileSize(processedPath);
       const checksum = await this.calculateChecksum(processedPath);
-
-      // Simular cópia do arquivo
-      console.log(`Copiando ${processedPath} para ${targetPath}`);
 
       const duration = Date.now() - startTime;
       const transferRate = fileSize / 1024 / 1024 / (duration / 1000); // MB/s
@@ -274,9 +266,6 @@ export class LocalStorageProvider extends StorageProvider {
       const sourcePath = `${this.basePath}/${remotePath}`;
       const fileSize = await this.getFileSize(sourcePath);
 
-      // Simular cópia do arquivo
-      console.log(`Copiando ${sourcePath} para ${localPath}`);
-
       let processedPath = localPath;
 
       // Processar arquivo (descriptografia/descompressão)
@@ -323,8 +312,7 @@ export class LocalStorageProvider extends StorageProvider {
 
   async delete(remotePath: string): Promise<boolean> {
     try {
-      const targetPath = `${this.basePath}/${remotePath}`;
-      console.log(`Deletando arquivo: ${targetPath}`);
+      const _targetPath = `${this.basePath}/${remotePath}`;
 
       await this.auditLogger.log({
         action: 'storage_delete',
@@ -337,16 +325,14 @@ export class LocalStorageProvider extends StorageProvider {
       });
 
       return true;
-    } catch (error) {
-      console.error(`Erro ao deletar arquivo: ${error}`);
+    } catch (_error) {
       return false;
     }
   }
 
   async list(remotePath: string): Promise<StorageLocation[]> {
     try {
-      const targetPath = `${this.basePath}/${remotePath}`;
-      console.log(`Listando arquivos em: ${targetPath}`);
+      const _targetPath = `${this.basePath}/${remotePath}`;
 
       // Simular listagem de arquivos
       const files: StorageLocation[] = [
@@ -364,16 +350,14 @@ export class LocalStorageProvider extends StorageProvider {
       ];
 
       return files;
-    } catch (error) {
-      console.error(`Erro ao listar arquivos: ${error}`);
+    } catch (_error) {
       return [];
     }
   }
 
   async exists(remotePath: string): Promise<boolean> {
     try {
-      const targetPath = `${this.basePath}/${remotePath}`;
-      console.log(`Verificando existência: ${targetPath}`);
+      const _targetPath = `${this.basePath}/${remotePath}`;
       return true; // Simulado
     } catch (_error) {
       return false;
@@ -402,7 +386,6 @@ export class LocalStorageProvider extends StorageProvider {
 
   async testConnection(): Promise<boolean> {
     try {
-      console.log(`Testando conexão com armazenamento local: ${this.basePath}`);
       return true;
     } catch (_error) {
       return false;
@@ -413,8 +396,6 @@ export class LocalStorageProvider extends StorageProvider {
     try {
       const cutoffDate = new Date();
       cutoffDate.setDate(cutoffDate.getDate() - olderThanDays);
-
-      console.log(`Limpando arquivos anteriores a: ${cutoffDate}`);
 
       // Simular limpeza
       const deletedCount = Math.floor(Math.random() * 10);
@@ -431,8 +412,7 @@ export class LocalStorageProvider extends StorageProvider {
       });
 
       return deletedCount;
-    } catch (error) {
-      console.error(`Erro na limpeza: ${error}`);
+    } catch (_error) {
       return 0;
     }
   }
@@ -453,13 +433,10 @@ export class S3StorageProvider extends StorageProvider {
   }
 
   async connect(): Promise<void> {
-    console.log(`Conectando ao S3: ${this.bucket}`);
     // Implementar conexão S3
   }
 
-  async disconnect(): Promise<void> {
-    console.log('Desconectando do S3');
-  }
+  async disconnect(): Promise<void> {}
 
   async upload(
     localPath: string,
@@ -480,11 +457,6 @@ export class S3StorageProvider extends StorageProvider {
 
       const fileSize = await this.getFileSize(processedPath);
       const checksum = await this.calculateChecksum(processedPath);
-
-      // Simular upload para S3
-      console.log(
-        `Uploading ${processedPath} to S3: ${this.bucket}/${remotePath}`
-      );
 
       const duration = Date.now() - startTime;
       const transferRate = fileSize / 1024 / 1024 / (duration / 1000);
@@ -532,17 +504,13 @@ export class S3StorageProvider extends StorageProvider {
   }
 
   async download(
-    remotePath: string,
+    _remotePath: string,
     localPath: string,
     _options?: any
   ): Promise<StorageResult> {
     const startTime = Date.now();
 
     try {
-      console.log(
-        `Downloading from S3: ${this.bucket}/${remotePath} to ${localPath}`
-      );
-
       // Simular download
       const fileSize = 1024 * 1024; // 1MB simulado
 
@@ -578,27 +546,24 @@ export class S3StorageProvider extends StorageProvider {
     }
   }
 
-  async delete(remotePath: string): Promise<boolean> {
+  async delete(_remotePath: string): Promise<boolean> {
     try {
-      console.log(`Deletando do S3: ${this.bucket}/${remotePath}`);
       return true;
     } catch (_error) {
       return false;
     }
   }
 
-  async list(remotePath: string): Promise<StorageLocation[]> {
+  async list(_remotePath: string): Promise<StorageLocation[]> {
     try {
-      console.log(`Listando objetos S3 em: ${this.bucket}/${remotePath}`);
       return [];
     } catch (_error) {
       return [];
     }
   }
 
-  async exists(remotePath: string): Promise<boolean> {
+  async exists(_remotePath: string): Promise<boolean> {
     try {
-      console.log(`Verificando existência no S3: ${this.bucket}/${remotePath}`);
       return true;
     } catch (_error) {
       return false;
@@ -627,16 +592,14 @@ export class S3StorageProvider extends StorageProvider {
 
   async testConnection(): Promise<boolean> {
     try {
-      console.log(`Testando conexão S3: ${this.bucket}`);
       return true;
     } catch (_error) {
       return false;
     }
   }
 
-  async cleanup(olderThanDays: number): Promise<number> {
+  async cleanup(_olderThanDays: number): Promise<number> {
     try {
-      console.log(`Limpando objetos S3 anteriores a ${olderThanDays} dias`);
       return Math.floor(Math.random() * 50);
     } catch (_error) {
       return 0;
@@ -888,13 +851,11 @@ export class StorageManager {
   async getAllMetrics(): Promise<StorageMetrics[]> {
     const metrics: StorageMetrics[] = [];
 
-    for (const [name, provider] of this.providers) {
+    for (const [_name, provider] of this.providers) {
       try {
         const providerMetrics = await provider.getMetrics();
         metrics.push(providerMetrics);
-      } catch (error) {
-        console.error(`Erro ao obter métricas do provedor ${name}:`, error);
-      }
+      } catch (_error) {}
     }
 
     return metrics;
@@ -926,9 +887,8 @@ export class StorageManager {
     for (const [name, provider] of this.providers) {
       try {
         results[name] = await provider.cleanup(olderThanDays);
-      } catch (error) {
+      } catch (_error) {
         results[name] = 0;
-        console.error(`Erro na limpeza do provedor ${name}:`, error);
       }
     }
 

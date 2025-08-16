@@ -95,8 +95,6 @@ export async function POST(request: NextRequest) {
       message: 'Patient profile created successfully',
     });
   } catch (error) {
-    console.error('Error creating patient profile:', error);
-
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Invalid request data', details: error.errors },
@@ -151,8 +149,6 @@ export async function GET(request: NextRequest) {
       message: 'Patient profiles retrieved successfully',
     });
   } catch (error) {
-    console.error('Error searching patient profiles:', error);
-
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Invalid search parameters', details: error.errors },

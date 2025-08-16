@@ -8,7 +8,6 @@ import { createClient } from '@/app/utils/supabase/server';
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    console.log('WhatsApp template message request:', body);
 
     // Validate required fields
     const { phoneNumber, templateName, parameters = {}, patientId } = body;
@@ -65,16 +64,12 @@ export async function POST(request: NextRequest) {
       patientId
     );
 
-    console.log('WhatsApp template message sent successfully:', messageId);
-
     return NextResponse.json({
       success: true,
       messageId,
       message: 'Template message sent successfully',
     });
   } catch (error) {
-    console.error('Error sending WhatsApp template message:', error);
-
     return NextResponse.json(
       {
         error: error instanceof Error ? error.message : 'Internal server error',

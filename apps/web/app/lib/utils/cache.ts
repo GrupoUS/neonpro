@@ -61,10 +61,10 @@ function getRedisClient(): Redis | null {
 // IN-MEMORY FALLBACK CACHE
 // =====================================================
 
-interface CacheEntry<T> {
+type CacheEntry<T> = {
   data: T;
   expiry: number;
-}
+};
 
 class InMemoryCache {
   private readonly cache = new Map<string, CacheEntry<any>>();
@@ -143,8 +143,7 @@ export class CacheManager {
         // Fallback to in-memory cache
         inMemoryCache.set(key, value, ttlSeconds);
       }
-    } catch (error) {
-      console.error('Cache set error:', error);
+    } catch (_error) {
       // Don't throw - caching should be transparent
     }
   }
@@ -165,8 +164,7 @@ export class CacheManager {
       }
 
       return null;
-    } catch (error) {
-      console.error('Cache get error:', error);
+    } catch (_error) {
       return null;
     }
   }
@@ -181,9 +179,7 @@ export class CacheManager {
       } else {
         inMemoryCache.delete(key);
       }
-    } catch (error) {
-      console.error('Cache delete error:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -197,12 +193,8 @@ export class CacheManager {
           await this.redis.del(...keys);
         }
       } else {
-        // For in-memory cache, we'd need to implement pattern matching
-        console.warn('Pattern deletion not supported in in-memory cache');
       }
-    } catch (error) {
-      console.error('Cache delete pattern error:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -218,16 +210,9 @@ export class CacheManager {
     if (cached !== null) {
       return cached;
     }
-
-    // Execute function and cache result
-    try {
-      const result = await fetchFunction();
-      await this.set(key, result, ttlSeconds);
-      return result;
-    } catch (error) {
-      console.error('Cache getOrSet error:', error);
-      throw error;
-    }
+    const result = await fetchFunction();
+    await this.set(key, result, ttlSeconds);
+    return result;
   }
 
   /**
@@ -242,8 +227,7 @@ export class CacheManager {
       const newValue = current + amount;
       inMemoryCache.set(key, newValue, CACHE_TTL.LONG);
       return newValue;
-    } catch (error) {
-      console.error('Cache increment error:', error);
+    } catch (_error) {
       return 0;
     }
   }
@@ -260,9 +244,7 @@ export class CacheManager {
         list.unshift(value);
         inMemoryCache.set(key, list, CACHE_TTL.MEDIUM);
       }
-    } catch (error) {
-      console.error('Cache list push error:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -276,8 +258,7 @@ export class CacheManager {
       }
       const list = inMemoryCache.get<any[]>(key) || [];
       return list.slice(start, end === -1 ? undefined : end + 1);
-    } catch (error) {
-      console.error('Cache list get error:', error);
+    } catch (_error) {
       return [];
     }
   }

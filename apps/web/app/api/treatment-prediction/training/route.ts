@@ -69,8 +69,7 @@ export async function POST(request: NextRequest) {
       },
       { status: 201 }
     );
-  } catch (error) {
-    console.error('Error starting model training:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to start model training' },
       { status: 500 }

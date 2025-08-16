@@ -6,11 +6,11 @@ import { noShowPredictionEngine } from '@/app/lib/services/no-show-prediction';
 import { UpdatePredictionInputSchema } from '@/app/lib/validations/no-show-prediction';
 import { createClient } from '@/app/utils/supabase/server';
 
-interface RouteParams {
+type RouteParams = {
   params: {
     id: string;
   };
-}
+};
 
 export async function GET(_request: NextRequest, { params }: RouteParams) {
   try {
@@ -73,8 +73,7 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
       interventions,
       confidence_breakdown: prediction.factors_analyzed,
     });
-  } catch (error) {
-    console.error('API error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to fetch prediction' },
       { status: 500 }
@@ -134,8 +133,6 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       message: 'Prediction updated successfully',
     });
   } catch (error) {
-    console.error('API error:', error);
-
     if (error instanceof Error && error.message.includes('validation')) {
       return NextResponse.json(
         { error: 'Invalid input data', details: error.message },
@@ -179,7 +176,6 @@ export async function DELETE(_request: NextRequest, { params }: RouteParams) {
       .eq('id', params.id);
 
     if (error) {
-      console.error('Database error:', error);
       return NextResponse.json(
         { error: 'Failed to delete prediction' },
         { status: 500 }
@@ -189,8 +185,7 @@ export async function DELETE(_request: NextRequest, { params }: RouteParams) {
     return NextResponse.json({
       message: 'Prediction deleted successfully',
     });
-  } catch (error) {
-    console.error('API error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to delete prediction' },
       { status: 500 }

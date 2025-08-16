@@ -67,7 +67,6 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('Executive dashboard API error:', error);
     return NextResponse.json(
       {
         error: 'Failed to fetch dashboard data',

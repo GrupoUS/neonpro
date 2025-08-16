@@ -73,7 +73,7 @@ const refundSchema = z.object({
 });
 
 // Types
-export interface CardPaymentData {
+export type CardPaymentData = {
   amount: number;
   currency: string;
   description: string;
@@ -105,9 +105,9 @@ export interface CardPaymentData {
   metadata?: Record<string, string>;
   payableId?: string;
   patientId?: string;
-}
+};
 
-export interface CardPaymentResult {
+export type CardPaymentResult = {
   id: string;
   client_secret?: string;
   status: string;
@@ -118,9 +118,9 @@ export interface CardPaymentResult {
   receipt_url?: string;
   created: number;
   metadata: Record<string, string>;
-}
+};
 
-export interface PaymentStatus {
+export type PaymentStatus = {
   id: string;
   status: string;
   amount: number;
@@ -138,9 +138,9 @@ export interface PaymentStatus {
   failure_reason?: string;
   created: number;
   metadata: Record<string, string>;
-}
+};
 
-export interface RefundResult {
+export type RefundResult = {
   id: string;
   amount: number;
   currency: string;
@@ -149,7 +149,7 @@ export interface RefundResult {
   receipt_number?: string;
   created: number;
   metadata: Record<string, string>;
-}
+};
 
 /**
  * Card Payment Service Class
@@ -252,7 +252,6 @@ export class CardPaymentService {
         metadata: paymentIntent.metadata,
       };
     } catch (error) {
-      console.error('Card payment creation error:', error);
       throw new Error(
         `Failed to create card payment: ${error instanceof Error ? error.message : 'Unknown error'}`
       );
@@ -288,7 +287,6 @@ export class CardPaymentService {
         metadata: paymentIntent.metadata,
       };
     } catch (error) {
-      console.error('Payment confirmation error:', error);
       throw new Error(
         `Failed to confirm payment: ${error instanceof Error ? error.message : 'Unknown error'}`
       );
@@ -328,7 +326,6 @@ export class CardPaymentService {
         metadata: paymentIntent.metadata,
       };
     } catch (error) {
-      console.error('Payment capture error:', error);
       throw new Error(
         `Failed to capture payment: ${error instanceof Error ? error.message : 'Unknown error'}`
       );
@@ -380,7 +377,6 @@ export class CardPaymentService {
         metadata: paymentIntent.metadata,
       };
     } catch (error) {
-      console.error('Get payment status error:', error);
       throw new Error(
         `Failed to get payment status: ${error instanceof Error ? error.message : 'Unknown error'}`
       );
@@ -444,7 +440,6 @@ export class CardPaymentService {
         metadata: refund.metadata,
       };
     } catch (error) {
-      console.error('Refund error:', error);
       throw new Error(
         `Failed to process refund: ${error instanceof Error ? error.message : 'Unknown error'}`
       );
@@ -455,43 +450,37 @@ export class CardPaymentService {
    * Handle Stripe webhook events
    */
   static async handleWebhook(event: Stripe.Event): Promise<void> {
-    try {
-      switch (event.type) {
-        case 'payment_intent.succeeded':
-          await CardPaymentService.handlePaymentSucceeded(
-            event.data.object as Stripe.PaymentIntent
-          );
-          break;
-        case 'payment_intent.payment_failed':
-          await CardPaymentService.handlePaymentFailed(
-            event.data.object as Stripe.PaymentIntent
-          );
-          break;
-        case 'payment_intent.canceled':
-          await CardPaymentService.handlePaymentCanceled(
-            event.data.object as Stripe.PaymentIntent
-          );
-          break;
-        case 'charge.dispute.created':
-          await CardPaymentService.handleChargeDispute(
-            event.data.object as Stripe.Dispute
-          );
-          break;
-        default:
-          console.log(`Unhandled event type: ${event.type}`);
-      }
-
-      // Store webhook event
-      await CardPaymentService.storeWebhookEvent({
-        stripe_event_id: event.id,
-        event_type: event.type,
-        event_data: event.data.object,
-        processed_at: new Date(),
-      });
-    } catch (error) {
-      console.error('Webhook handling error:', error);
-      throw error;
+    switch (event.type) {
+      case 'payment_intent.succeeded':
+        await CardPaymentService.handlePaymentSucceeded(
+          event.data.object as Stripe.PaymentIntent
+        );
+        break;
+      case 'payment_intent.payment_failed':
+        await CardPaymentService.handlePaymentFailed(
+          event.data.object as Stripe.PaymentIntent
+        );
+        break;
+      case 'payment_intent.canceled':
+        await CardPaymentService.handlePaymentCanceled(
+          event.data.object as Stripe.PaymentIntent
+        );
+        break;
+      case 'charge.dispute.created':
+        await CardPaymentService.handleChargeDispute(
+          event.data.object as Stripe.Dispute
+        );
+        break;
+      default:
     }
+
+    // Store webhook event
+    await CardPaymentService.storeWebhookEvent({
+      stripe_event_id: event.id,
+      event_type: event.type,
+      event_data: event.data.object,
+      processed_at: new Date(),
+    });
   }
 
   // Private helper methods
@@ -547,7 +536,6 @@ export class CardPaymentService {
     });
 
     if (error) {
-      console.error('Database storage error:', error);
       throw new Error('Failed to store payment in database');
     }
   }
@@ -562,7 +550,6 @@ export class CardPaymentService {
       .eq('stripe_payment_intent_id', paymentIntentId);
 
     if (error) {
-      console.error('Status update error:', error);
     }
   }
 
@@ -570,7 +557,6 @@ export class CardPaymentService {
     const { error } = await supabase.from('card_refunds').insert(data);
 
     if (error) {
-      console.error('Refund storage error:', error);
       throw new Error('Failed to store refund in database');
     }
   }
@@ -579,7 +565,6 @@ export class CardPaymentService {
     const { error } = await supabase.from('card_webhook_events').insert(data);
 
     if (error) {
-      console.error('Webhook event storage error:', error);
     }
   }
 
@@ -617,9 +602,6 @@ export class CardPaymentService {
   private static async handleChargeDispute(
     dispute: Stripe.Dispute
   ): Promise<void> {
-    // Handle charge dispute logic
-    console.log('Charge dispute created:', dispute.id);
-
     // Store dispute information
     const { error } = await supabase.from('card_disputes').insert({
       stripe_dispute_id: dispute.id,
@@ -635,7 +617,6 @@ export class CardPaymentService {
     });
 
     if (error) {
-      console.error('Dispute storage error:', error);
     }
   }
 }

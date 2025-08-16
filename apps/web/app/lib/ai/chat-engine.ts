@@ -84,7 +84,6 @@ export class NeonProAIChatEngine {
         },
       };
     } catch (error) {
-      console.error('Error in processUniversalQuery:', error);
       const errorMessage =
         error instanceof Error ? error.message : 'Unknown error';
       throw new Error(`AI processing failed: ${errorMessage}`);

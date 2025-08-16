@@ -95,9 +95,7 @@ export async function POST(request: NextRequest) {
     });
 
     return response;
-  } catch (error) {
-    console.error('Session termination error:', error);
-
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error during session termination' },
       { status: 500 }
@@ -151,9 +149,7 @@ export async function DELETE(request: NextRequest) {
       message: `${terminatedCount} sessions terminated successfully`,
       terminatedCount,
     });
-  } catch (error) {
-    console.error('Bulk session termination error:', error);
-
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error during bulk session termination' },
       { status: 500 }

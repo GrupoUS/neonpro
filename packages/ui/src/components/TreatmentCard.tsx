@@ -16,7 +16,7 @@ import { Badge } from './Badge';
 import { Button } from './Button';
 import { ProgressBar } from './ProgressBar';
 
-export interface TreatmentCardProps {
+export type TreatmentCardProps = {
   treatment: TreatmentData;
   practitioner?: PractitionerData;
   showProgress?: boolean;
@@ -28,7 +28,7 @@ export interface TreatmentCardProps {
   onCancel?: () => void;
   onClick?: () => void;
   className?: string;
-}
+};
 
 const statusIcons = {
   planned: Calendar,
@@ -65,7 +65,7 @@ const TreatmentCard = React.forwardRef<HTMLDivElement, TreatmentCardProps>(
     ref
   ) => {
     const StatusIcon = statusIcons[treatment.status];
-    const statusColor = statusColors[treatment.status];
+    const _statusColor = statusColors[treatment.status];
 
     const progress =
       treatment.sessions &&

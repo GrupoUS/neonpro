@@ -1,6 +1,6 @@
 // Patient-related types
 
-export interface PatientData {
+export type PatientData = {
   id: string;
   name: string;
   avatar?: string;
@@ -22,9 +22,9 @@ export interface PatientData {
     allowDataSharing: boolean;
     allowAnalytics: boolean;
   };
-}
+};
 
-export interface PatientCardProps {
+export type PatientCardProps = {
   patient: PatientData;
   onViewDetails?: () => void;
   onScheduleAppointment?: () => void;
@@ -33,4 +33,4 @@ export interface PatientCardProps {
   showActions?: boolean;
   compact?: boolean;
   className?: string;
-}
+};

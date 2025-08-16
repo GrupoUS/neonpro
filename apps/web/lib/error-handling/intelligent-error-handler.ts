@@ -10,7 +10,7 @@ import React from 'react';
 import { performanceMonitor } from '@/lib/monitoring/performance-monitor';
 import { KNOWN_ERROR_PATTERNS } from './error-patterns';
 
-interface ErrorContext {
+type ErrorContext = {
   errorId: string;
   message: string;
   stack?: string;
@@ -25,15 +25,15 @@ interface ErrorContext {
   metadata?: Record<string, any>;
   recoveryAction?: string;
   resolved: boolean;
-}
+};
 
-interface ErrorPattern {
+type ErrorPattern = {
   pattern: RegExp;
   category: ErrorContext['category'];
   severity: ErrorContext['severity'];
   recoveryAction: string;
   description: string;
-}
+};
 
 // Cache para evitar spam de erros iguais
 const errorDeduplicationCache = new LRUCache<string, ErrorContext>({
@@ -314,9 +314,6 @@ export class IntelligentErrorHandler {
       const backoffMs = 2 ** retryCount * 1000; // 1s, 2s, 4s
 
       setTimeout(() => {
-        console.log(
-          `🔄 Auto-retry attempt ${retryCount + 1} for error ${errorContext.errorId}`
-        );
         // Mark as recovery attempted
         errorContext.metadata = {
           ...errorContext.metadata,
@@ -332,7 +329,6 @@ export class IntelligentErrorHandler {
    * 📝 Log recovery action taken
    */
   private logRecoveryAction(errorContext: ErrorContext, action: string): void {
-    console.log(`🔧 Recovery action for ${errorContext.errorId}: ${action}`);
     errorContext.metadata = {
       ...errorContext.metadata,
       recoveryAction: action,

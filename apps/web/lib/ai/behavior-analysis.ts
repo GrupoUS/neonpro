@@ -17,7 +17,7 @@ import type { Patient } from '@/types/patient';
 import type { TreatmentHistory } from '@/types/treatment';
 
 // Behavior Analysis Types
-export interface BehaviorAnalysis {
+export type BehaviorAnalysis = {
   analysis_id: string;
   patient_id: string;
   analysis_date: Date;
@@ -27,9 +27,9 @@ export interface BehaviorAnalysis {
   recommendations: BehaviorRecommendation[];
   confidence_score: number;
   next_analysis_date: Date;
-}
+};
 
-export interface BehaviorProfile {
+export type BehaviorProfile = {
   engagement_level: 'low' | 'moderate' | 'high' | 'very_high';
   communication_style: CommunicationStyle;
   appointment_behavior: AppointmentBehavior;
@@ -37,27 +37,27 @@ export interface BehaviorProfile {
   decision_making_pattern: DecisionMakingPattern;
   satisfaction_drivers: SatisfactionDriver[];
   behavioral_triggers: BehaviorTrigger[];
-}
+};
 
-export interface CommunicationStyle {
+export type CommunicationStyle = {
   preferred_channels: string[];
   response_time_pattern: 'immediate' | 'same_day' | 'delayed' | 'inconsistent';
   communication_frequency: 'minimal' | 'moderate' | 'frequent' | 'excessive';
   tone_preference: 'formal' | 'casual' | 'technical' | 'empathetic';
   information_depth: 'brief' | 'detailed' | 'comprehensive';
   question_asking_tendency: 'low' | 'moderate' | 'high';
-}
+};
 
-export interface AppointmentBehavior {
+export type AppointmentBehavior = {
   scheduling_pattern: 'advance_planner' | 'last_minute' | 'flexible' | 'rigid';
   cancellation_tendency: 'rare' | 'occasional' | 'frequent' | 'chronic';
   rescheduling_pattern: 'minimal' | 'moderate' | 'frequent';
   punctuality: 'early' | 'on_time' | 'slightly_late' | 'chronically_late';
   no_show_risk: 'low' | 'moderate' | 'high' | 'critical';
   preferred_times: TimePreference[];
-}
+};
 
-export interface TreatmentCompliance {
+export type TreatmentCompliance = {
   adherence_level: 'poor' | 'fair' | 'good' | 'excellent';
   follow_up_compliance: 'poor' | 'fair' | 'good' | 'excellent';
   aftercare_adherence: 'poor' | 'fair' | 'good' | 'excellent';
@@ -68,36 +68,36 @@ export interface TreatmentCompliance {
     | 'cooperative'
     | 'proactive';
   compliance_barriers: ComplianceBarrier[];
-}
+};
 
-export interface DecisionMakingPattern {
+export type DecisionMakingPattern = {
   decision_speed: 'impulsive' | 'quick' | 'deliberate' | 'prolonged';
   research_tendency: 'minimal' | 'moderate' | 'extensive' | 'obsessive';
   consultation_seeking: 'independent' | 'moderate' | 'dependent';
   price_sensitivity: 'low' | 'moderate' | 'high' | 'extreme';
   risk_tolerance: 'risk_averse' | 'cautious' | 'moderate' | 'risk_taking';
   influence_factors: InfluenceFactor[];
-}
+};
 
-export interface EngagementPattern {
+export type EngagementPattern = {
   pattern_type: string;
   frequency: number;
   trend: 'increasing' | 'stable' | 'decreasing';
   seasonal_variation: boolean;
   trigger_events: string[];
   impact_on_outcomes: number;
-}
+};
 
-export interface BehaviorRiskIndicator {
+export type BehaviorRiskIndicator = {
   risk_type: string;
   severity: 'low' | 'moderate' | 'high' | 'critical';
   probability: number;
   contributing_factors: string[];
   early_warning_signs: string[];
   intervention_strategies: string[];
-}
+};
 
-export interface BehaviorRecommendation {
+export type BehaviorRecommendation = {
   recommendation_type:
     | 'communication'
     | 'scheduling'
@@ -109,57 +109,57 @@ export interface BehaviorRecommendation {
   expected_impact: string;
   success_metrics: string[];
   timeline: string;
-}
+};
 
-export interface TimePreference {
+export type TimePreference = {
   day_of_week: string;
   time_of_day: 'morning' | 'afternoon' | 'evening';
   preference_strength: number;
-}
+};
 
-export interface ComplianceBarrier {
+export type ComplianceBarrier = {
   barrier_type: string;
   impact_level: number;
   mitigation_strategies: string[];
-}
+};
 
-export interface InfluenceFactor {
+export type InfluenceFactor = {
   factor_type: string;
   influence_weight: number;
   factor_description: string;
-}
+};
 
-export interface SatisfactionDriver {
+export type SatisfactionDriver = {
   driver_type: string;
   importance_weight: number;
   current_satisfaction: number;
   improvement_potential: number;
-}
+};
 
-export interface BehaviorTrigger {
+export type BehaviorTrigger = {
   trigger_type: string;
   trigger_description: string;
   behavioral_response: string;
   management_strategy: string;
-}
+};
 
-export interface PatientSegment {
+export type PatientSegment = {
   segment_id: string;
   segment_name: string;
   characteristics: string[];
   typical_behaviors: string[];
   engagement_strategies: string[];
   success_metrics: string[];
-}
+};
 
-export interface BehaviorPrediction {
+export type BehaviorPrediction = {
   prediction_type: string;
   probability: number;
   timeframe: string;
   confidence_level: number;
   influencing_factors: string[];
   prevention_strategies: string[];
-}
+};
 
 /**
  * AI Behavior Pattern Analysis Engine
@@ -243,8 +243,7 @@ export class AIBehaviorAnalysisEngine {
       this.storeBehaviorAnalysis(patient.id, analysis);
 
       return analysis;
-    } catch (error) {
-      console.error('Behavior analysis failed:', error);
+    } catch (_error) {
       throw new Error('Failed to analyze behavior patterns');
     }
   }
@@ -954,9 +953,7 @@ export class AIBehaviorAnalysisEngine {
   }
 
   // Mock implementations for demonstration
-  private initializeBehaviorModels(): void {
-    console.log('Initializing behavior analysis models...');
-  }
+  private initializeBehaviorModels(): void {}
 
   private loadPatientSegments(): void {
     // Load predefined patient segments
@@ -1019,9 +1016,7 @@ export class AIBehaviorAnalysisEngine {
     });
   }
 
-  private setupEngagementStrategies(): void {
-    console.log('Setting up engagement strategies...');
-  }
+  private setupEngagementStrategies(): void {}
 
   // Additional helper methods with simplified implementations
   private getDefaultCommunicationStyle(): CommunicationStyle {

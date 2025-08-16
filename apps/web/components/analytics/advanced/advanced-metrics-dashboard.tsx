@@ -63,7 +63,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 // Types for dashboard data
-interface MetricValue {
+type MetricValue = {
   current: number;
   previous: number;
   change: number;
@@ -71,9 +71,9 @@ interface MetricValue {
   trend: 'up' | 'down' | 'stable';
   target?: number;
   benchmark?: number;
-}
+};
 
-interface KPICard {
+type KPICard = {
   id: string;
   title: string;
   value: MetricValue;
@@ -81,29 +81,29 @@ interface KPICard {
   icon: React.ComponentType<any>;
   color: string;
   description?: string;
-}
+};
 
-interface ChartData {
+type ChartData = {
   date: string;
   [key: string]: any;
-}
+};
 
-interface SegmentData {
+type SegmentData = {
   name: string;
   value: number;
   color: string;
   change?: number;
-}
+};
 
-interface BenchmarkData {
+type BenchmarkData = {
   metric: string;
   value: number;
   benchmark: number;
   industry: number;
   percentile: number;
-}
+};
 
-interface AdvancedMetricsDashboardProps {
+type AdvancedMetricsDashboardProps = {
   kpis: KPICard[];
   timeSeriesData: ChartData[];
   segmentationData: SegmentData[];
@@ -117,7 +117,7 @@ interface AdvancedMetricsDashboardProps {
   onDateRangeChange?: (start: string, end: string) => void;
   onExport?: (format: 'csv' | 'pdf' | 'png') => void;
   onRefresh?: () => void;
-}
+};
 
 // Utility functions
 const formatValue = (value: number, format: string) => {

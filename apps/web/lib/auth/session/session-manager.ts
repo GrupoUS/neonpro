@@ -196,8 +196,7 @@ export class SessionManager {
       });
 
       return fullSession;
-    } catch (error) {
-      console.error('Error creating session:', error);
+    } catch (_error) {
       throw new Error('Failed to create session');
     }
   }
@@ -251,9 +250,7 @@ export class SessionManager {
           expiresAt: newExpiresAt,
         });
       }
-    } catch (error) {
-      console.error('Error updating session activity:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -354,9 +351,7 @@ export class SessionManager {
         minutesRemaining,
         message: `Your session will expire in ${minutesRemaining} minute${minutesRemaining !== 1 ? 's' : ''}. Please save your work.`,
       });
-    } catch (error) {
-      console.error('Error showing session warning:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -388,9 +383,7 @@ export class SessionManager {
         message:
           'Your session has expired due to inactivity. Please log in again.',
       });
-    } catch (error) {
-      console.error('Error expiring session:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -424,8 +417,7 @@ export class SessionManager {
         throw error;
       }
       return profile?.role || 'patient';
-    } catch (error) {
-      console.error('Error getting user role:', error);
+    } catch (_error) {
       return 'patient';
     }
   }
@@ -461,9 +453,7 @@ export class SessionManager {
           await this.terminateSession(session.id, 'concurrent_limit_exceeded');
         }
       }
-    } catch (error) {
-      console.error('Error enforcing concurrent session limits:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -495,9 +485,7 @@ export class SessionManager {
         reason,
         message: `Your session has been terminated: ${reason}`,
       });
-    } catch (error) {
-      console.error('Error terminating session:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -548,8 +536,7 @@ export class SessionManager {
       }
 
       // Additional security checks can be added here
-    } catch (error) {
-      console.error('Error calculating security score:', error);
+    } catch (_error) {
       score = 50; // Default to medium security score on error
     }
 
@@ -571,9 +558,7 @@ export class SessionManager {
         timestamp: new Date().toISOString(),
         details,
       });
-    } catch (error) {
-      console.error('Error logging session activity:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -630,8 +615,7 @@ export class SessionManager {
           warningMinutes: config.warning_minutes || [5, 1],
         });
       });
-    } catch (error) {
-      console.error('Error loading session configs:', error);
+    } catch (_error) {
       // Use default configs on error
     }
   }
@@ -666,9 +650,7 @@ export class SessionManager {
             .delete()
             .eq('is_active', false)
             .lt('created_at', thirtyDaysAgo.toISOString());
-        } catch (error) {
-          console.error('Error during session cleanup:', error);
-        }
+        } catch (_error) {}
       },
       5 * 60 * 1000
     ); // 5 minutes
@@ -704,8 +686,7 @@ export class SessionManager {
         securityScore: session.security_score,
         metadata: session.metadata,
       }));
-    } catch (error) {
-      console.error('Error getting active sessions:', error);
+    } catch (_error) {
       return [];
     }
   }
@@ -741,8 +722,7 @@ export class SessionManager {
         securityScore: session.security_score,
         metadata: session.metadata,
       };
-    } catch (error) {
-      console.error('Error validating session:', error);
+    } catch (_error) {
       return null;
     }
   }

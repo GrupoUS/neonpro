@@ -33,7 +33,6 @@ export async function GET(request: Request) {
     );
 
     if (summaryError) {
-      console.error('Error fetching financial summary:', summaryError);
     }
 
     // Revenue by Period
@@ -47,7 +46,6 @@ export async function GET(request: Request) {
     );
 
     if (revenueError) {
-      console.error('Error fetching revenue by period:', revenueError);
     }
 
     // Revenue by Service
@@ -58,7 +56,6 @@ export async function GET(request: Request) {
       });
 
     if (serviceRevenueError) {
-      console.error('Error fetching revenue by service:', serviceRevenueError);
     }
 
     // Payment Method Statistics
@@ -256,8 +253,7 @@ export async function GET(request: Request) {
         type: period,
       },
     });
-  } catch (error) {
-    console.error('API Error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal Server Error' },
       { status: 500 }

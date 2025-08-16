@@ -97,7 +97,6 @@ export async function GET(request: Request) {
     const { data: payments, error, count } = await query;
 
     if (error) {
-      console.error('Error fetching payments:', error);
       return NextResponse.json(
         { error: 'Failed to fetch payments' },
         { status: 500 }
@@ -137,8 +136,7 @@ export async function GET(request: Request) {
         pages: Math.ceil((count || 0) / limit),
       },
     });
-  } catch (error) {
-    console.error('API Error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal Server Error' },
       { status: 500 }
@@ -180,7 +178,6 @@ export async function POST(request: Request) {
       .eq('status', 'completed');
 
     if (paymentsError) {
-      console.error('Error checking existing payments:', paymentsError);
       return NextResponse.json(
         { error: 'Failed to check existing payments' },
         { status: 500 }
@@ -246,7 +243,6 @@ export async function POST(request: Request) {
       .single();
 
     if (paymentError) {
-      console.error('Error creating payment:', paymentError);
       return NextResponse.json(
         { error: 'Failed to create payment' },
         { status: 500 }
@@ -290,7 +286,6 @@ export async function POST(request: Request) {
           .insert(installments);
 
         if (installmentsError) {
-          console.error('Error creating installments:', installmentsError);
           // Don't fail the payment creation, just log the error
         }
       }
@@ -304,8 +299,6 @@ export async function POST(request: Request) {
         { status: 400 }
       );
     }
-
-    console.error('API Error:', error);
     return NextResponse.json(
       { error: 'Internal Server Error' },
       { status: 500 }

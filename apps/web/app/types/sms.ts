@@ -7,7 +7,7 @@ import { z } from 'zod';
 
 export type SMSProvider = 'twilio' | 'sms_dev' | 'zenvia' | 'movile' | 'custom';
 
-export interface SMSProviderConfig {
+export type SMSProviderConfig = {
   id: string;
   name: string;
   provider: SMSProvider;
@@ -21,53 +21,53 @@ export interface SMSProviderConfig {
   webhook_url?: string;
   created_at: string;
   updated_at: string;
-}
+};
 
 // Twilio Brasil Configuration
-export interface TwilioConfig {
+export type TwilioConfig = {
   account_sid: string;
   auth_token: string;
   from_number: string; // Número Twilio autorizado no Brasil
   webhook_url?: string;
   status_callback?: string;
-}
+};
 
 // SMS Dev (ZENVIA) Configuration
-export interface SMSDevConfig {
+export type SMSDevConfig = {
   api_key: string;
   sender_id: string; // Identificador do remetente
   webhook_url?: string;
   callback_option?: boolean;
-}
+};
 
 // ZENVIA Configuration
-export interface ZenviaConfig {
+export type ZenviaConfig = {
   api_token: string;
   account_id: string;
   from: string; // Canal de envio
   webhook_url?: string;
-}
+};
 
 // Movile Configuration
-export interface MovileConfig {
+export type MovileConfig = {
   username: string;
   auth_token: string;
   sender_id: string;
   webhook_url?: string;
-}
+};
 
 // Custom Provider Configuration
-export interface CustomConfig {
+export type CustomConfig = {
   api_url: string;
   api_key: string;
   headers?: Record<string, string>;
   auth_type: 'bearer' | 'basic' | 'api_key' | 'custom';
   webhook_url?: string;
-}
+};
 
 // ==================== MESSAGE TYPES ====================
 
-export interface SMSMessage {
+export type SMSMessage = {
   id: string;
   provider_id: string;
   provider: SMSProvider;
@@ -88,7 +88,7 @@ export interface SMSMessage {
   created_at: string;
   updated_at: string;
   metadata?: Record<string, any>;
-}
+};
 
 export type SMSStatus =
   | 'queued'
@@ -103,7 +103,7 @@ export type SMSStatus =
 
 // ==================== BULK MESSAGING ====================
 
-export interface BulkSMSRequest {
+export type BulkSMSRequest = {
   provider_id: string;
   messages: {
     to: string;
@@ -114,9 +114,9 @@ export interface BulkSMSRequest {
   scheduled_at?: string;
   batch_size?: number; // Tamanho do lote para rate limiting
   priority?: 'low' | 'normal' | 'high';
-}
+};
 
-export interface BulkSMSResponse {
+export type BulkSMSResponse = {
   batch_id: string;
   total_messages: number;
   queued_messages: number;
@@ -127,11 +127,11 @@ export interface BulkSMSResponse {
     phone: string;
     error: string;
   }>;
-}
+};
 
 // ==================== TEMPLATE SYSTEM ====================
 
-export interface SMSTemplate {
+export type SMSTemplate = {
   id: string;
   name: string;
   body: string;
@@ -142,11 +142,11 @@ export interface SMSTemplate {
   language: string;
   created_at: string;
   updated_at: string;
-}
+};
 
 // ==================== WEBHOOK TYPES ====================
 
-export interface SMSWebhookEvent {
+export type SMSWebhookEvent = {
   provider: SMSProvider;
   event_type: 'message_status' | 'message_received' | 'delivery_report';
   message_id: string;
@@ -154,10 +154,10 @@ export interface SMSWebhookEvent {
   status?: SMSStatus;
   timestamp: string;
   raw_data: Record<string, any>;
-}
+};
 
 // Twilio Webhook
-export interface TwilioWebhook {
+export type TwilioWebhook = {
   MessageSid: string;
   MessageStatus: string;
   To: string;
@@ -166,21 +166,21 @@ export interface TwilioWebhook {
   NumSegments?: string;
   ErrorCode?: string;
   ErrorMessage?: string;
-}
+};
 
 // SMS Dev Webhook
-export interface SMSDevWebhook {
+export type SMSDevWebhook = {
   id: string;
   status: string;
   phone: string;
   message: string;
   date: string;
   cost?: number;
-}
+};
 
 // ==================== ANALYTICS & REPORTING ====================
 
-export interface SMSAnalytics {
+export type SMSAnalytics = {
   period: 'day' | 'week' | 'month' | 'year';
   start_date: string;
   end_date: string;
@@ -194,9 +194,9 @@ export interface SMSAnalytics {
     messages_by_provider: Record<SMSProvider, number>;
     messages_by_status: Record<SMSStatus, number>;
   };
-}
+};
 
-export interface SMSCampaignReport {
+export type SMSCampaignReport = {
   campaign_id: string;
   campaign_name: string;
   total_recipients: number;
@@ -209,11 +209,11 @@ export interface SMSCampaignReport {
   started_at: string;
   completed_at?: string;
   status: 'draft' | 'scheduled' | 'sending' | 'completed' | 'failed';
-}
+};
 
 // ==================== COMPLIANCE & OPT-IN ====================
 
-export interface SMSOptIn {
+export type SMSOptIn = {
   id: string;
   phone_number: string;
   patient_id?: string;
@@ -226,7 +226,7 @@ export interface SMSOptIn {
   user_agent?: string;
   created_at: string;
   updated_at: string;
-}
+};
 
 // ==================== VALIDATION SCHEMAS ====================
 
@@ -277,7 +277,7 @@ const BulkSMSSchema = z.object({
 
 // ==================== API RESPONSE TYPES ====================
 
-export interface SMSAPIResponse<T = any> {
+export type SMSAPIResponse<T = any> = {
   success: boolean;
   data?: T;
   error?: {
@@ -294,9 +294,9 @@ export interface SMSAPIResponse<T = any> {
       reset_at: string;
     };
   };
-}
+};
 
-export interface SendSMSResponse {
+export type SendSMSResponse = {
   message_id: string;
   provider_message_id?: string;
   to: string;
@@ -304,18 +304,18 @@ export interface SendSMSResponse {
   cost?: number;
   parts?: number;
   queued_at: string;
-}
+};
 
 // ==================== ERROR TYPES ====================
 
-export interface SMSError {
+export type SMSError = {
   code: string;
   message: string;
   provider: SMSProvider;
   http_status?: number;
   retryable: boolean;
   details?: Record<string, any>;
-}
+};
 
 export const SMS_ERROR_CODES = {
   INVALID_PHONE: 'invalid_phone_number',
@@ -335,7 +335,7 @@ export type SMSErrorCode =
 
 // ==================== FILTER & PAGINATION ====================
 
-export interface SMSFilters {
+export type SMSFilters = {
   provider?: SMSProvider;
   status?: SMSStatus | SMSStatus[];
   direction?: 'outbound' | 'inbound';
@@ -343,17 +343,17 @@ export interface SMSFilters {
   date_from?: string;
   date_to?: string;
   search?: string; // Busca no corpo da mensagem
-}
+};
 
-export interface SMSListParams {
+export type SMSListParams = {
   page?: number;
   limit?: number;
   sort?: 'created_at' | 'sent_at' | 'delivered_at';
   order?: 'asc' | 'desc';
   filters?: SMSFilters;
-}
+};
 
-export interface SMSListResponse {
+export type SMSListResponse = {
   data: SMSMessage[];
   pagination: {
     page: number;
@@ -369,11 +369,11 @@ export interface SMSListResponse {
     delivery_rate: number;
     total_cost: number;
   };
-}
+};
 
 // ==================== CONFIGURATION UI TYPES ====================
 
-export interface SMSProviderSetupStep {
+export type SMSProviderSetupStep = {
   id: string;
   title: string;
   description: string;
@@ -388,9 +388,9 @@ export interface SMSProviderSetupStep {
     description?: string;
     options?: Array<{ value: string; label: string }>;
   }>;
-}
+};
 
-export interface SMSProviderFeatures {
+export type SMSProviderFeatures = {
   supports_delivery_reports: boolean;
   supports_two_way: boolean;
   supports_bulk: boolean;
@@ -400,11 +400,11 @@ export interface SMSProviderFeatures {
   max_bulk_size: number;
   rate_limit_per_second: number;
   supported_countries: string[];
-}
+};
 
 // ==================== INTEGRATION TYPES ====================
 
-export interface SMSIntegrationStatus {
+export type SMSIntegrationStatus = {
   provider: SMSProvider;
   status: 'connected' | 'disconnected' | 'error' | 'testing';
   last_test: string;
@@ -416,7 +416,7 @@ export interface SMSIntegrationStatus {
     reset_at: string;
   };
   features: SMSProviderFeatures;
-}
+};
 
 // Export all validation schemas
 export {

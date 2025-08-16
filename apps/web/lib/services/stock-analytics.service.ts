@@ -5,7 +5,7 @@
 
 import { createClient } from '@/app/utils/supabase/server';
 
-export interface AlertResolutionMetrics {
+export type AlertResolutionMetrics = {
   id: string;
   clinic_id: string;
   metric_date: Date;
@@ -29,18 +29,18 @@ export interface AlertResolutionMetrics {
   automation_triggered_count: number;
   notification_sent_count: number;
   notification_success_rate?: number;
-}
+};
 
-export interface AnalyticsQuery {
+export type AnalyticsQuery = {
   clinicId: string;
   startDate: Date;
   endDate: Date;
   alertType?: string;
   severityLevel?: string;
   groupBy?: 'day' | 'week' | 'month';
-}
+};
 
-export interface ResolutionTimeAnalysis {
+export type ResolutionTimeAnalysis = {
   alert_id: string;
   created_at: Date;
   acknowledged_at?: Date;
@@ -48,9 +48,9 @@ export interface ResolutionTimeAnalysis {
   acknowledgment_time_hours?: number;
   resolution_time_hours?: number;
   total_time_hours?: number;
-}
+};
 
-export interface RecurrencePattern {
+export type RecurrencePattern = {
   product_id: string;
   product_name: string;
   alert_type: string;
@@ -58,7 +58,7 @@ export interface RecurrencePattern {
   avg_days_between: number;
   last_occurrence: Date;
   trend: 'increasing' | 'decreasing' | 'stable';
-}
+};
 
 class StockAnalyticsService {
   private async getSupabaseClient() {
@@ -103,7 +103,6 @@ class StockAnalyticsService {
       const { data: alerts, error } = await query;
 
       if (error) {
-        console.error('Error fetching alerts for metrics:', error);
         return null;
       }
 
@@ -193,8 +192,7 @@ class StockAnalyticsService {
         notification_sent_count: notificationMetrics.notificationsSent,
         notification_success_rate: notificationMetrics.successRate,
       };
-    } catch (error) {
-      console.error('Error calculating daily metrics:', error);
+    } catch (_error) {
       return null;
     }
   }
@@ -226,7 +224,6 @@ class StockAnalyticsService {
       const { data: alerts, error } = await query;
 
       if (error) {
-        console.error('Error calculating recurrence count:', error);
         return 0;
       }
 
@@ -240,8 +237,7 @@ class StockAnalyticsService {
       );
 
       return Object.values(productCounts).filter((count) => count > 1).length;
-    } catch (error) {
-      console.error('Error in calculateRecurrenceCount:', error);
+    } catch (_error) {
       return 0;
     }
   }
@@ -281,7 +277,6 @@ class StockAnalyticsService {
         .lte('created_at', endOfDay.toISOString());
 
       if (error) {
-        console.error('Error fetching notification metrics:', error);
         return { automationTriggered: 0, notificationsSent: 0, successRate: 0 };
       }
 
@@ -328,8 +323,7 @@ class StockAnalyticsService {
         notificationsSent: totalNotifications,
         successRate,
       };
-    } catch (error) {
-      console.error('Error in calculateNotificationMetrics:', error);
+    } catch (_error) {
       return { automationTriggered: 0, notificationsSent: 0, successRate: 0 };
     }
   }
@@ -387,8 +381,7 @@ class StockAnalyticsService {
       const reorderTriggers = reorderSuggestions?.length || 0;
 
       return purchaseOrderTriggers + configUpdateTriggers + reorderTriggers;
-    } catch (error) {
-      console.error('Error counting automation triggers:', error);
+    } catch (_error) {
       return 0;
     }
   }
@@ -422,13 +415,11 @@ class StockAnalyticsService {
         });
 
       if (error) {
-        console.error('Error saving metrics:', error);
         return false;
       }
 
       return true;
-    } catch (error) {
-      console.error('Error in saveMetrics:', error);
+    } catch (_error) {
       return false;
     }
   }
@@ -460,7 +451,6 @@ class StockAnalyticsService {
       });
 
       if (error) {
-        console.error('Error fetching metrics:', error);
         return [];
       }
 
@@ -468,8 +458,7 @@ class StockAnalyticsService {
         ...row,
         metric_date: new Date(row.metric_date),
       }));
-    } catch (error) {
-      console.error('Error in getMetrics:', error);
+    } catch (_error) {
       return [];
     }
   }
@@ -497,7 +486,6 @@ class StockAnalyticsService {
       const { data: alerts, error } = await query;
 
       if (error) {
-        console.error('Error fetching resolution time analysis:', error);
         return [];
       }
 
@@ -525,8 +513,7 @@ class StockAnalyticsService {
           total_time_hours: resolutionTime,
         };
       });
-    } catch (error) {
-      console.error('Error in getResolutionTimeAnalysis:', error);
+    } catch (_error) {
       return [];
     }
   }
@@ -555,7 +542,6 @@ class StockAnalyticsService {
         .order('created_at', { ascending: true });
 
       if (error) {
-        console.error('Error fetching recurrence patterns:', error);
         return [];
       }
 
@@ -628,8 +614,7 @@ class StockAnalyticsService {
           };
         })
         .sort((a, b) => b.frequency_count - a.frequency_count);
-    } catch (error) {
-      console.error('Error in getRecurrencePatterns:', error);
+    } catch (_error) {
       return [];
     }
   }
@@ -743,8 +728,7 @@ class StockAnalyticsService {
         topAlertTypes,
         resolutionTrend,
       };
-    } catch (error) {
-      console.error('Error in getDashboardSummary:', error);
+    } catch (_error) {
       return {
         totalAlerts: 0,
         resolvedAlerts: 0,
@@ -822,7 +806,6 @@ class StockAnalyticsService {
 
       return results;
     } catch (error) {
-      console.error('Error in processMetricsForDate:', error);
       results.errors.push(
         error instanceof Error ? error.message : 'Unknown error'
       );

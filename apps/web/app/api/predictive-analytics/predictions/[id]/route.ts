@@ -18,8 +18,7 @@ export async function GET(
     }
 
     return NextResponse.json(prediction);
-  } catch (error) {
-    console.error('Erro ao buscar predição:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
       { status: 500 }
@@ -35,8 +34,7 @@ export async function DELETE(
     await service.deletePrediction(params.id);
 
     return NextResponse.json({ success: true });
-  } catch (error) {
-    console.error('Erro ao deletar predição:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Erro ao deletar predição' },
       { status: 400 }

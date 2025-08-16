@@ -151,8 +151,7 @@ export async function GET(request: NextRequest) {
           can_manage_count: info.can_manage.length,
         })),
     });
-  } catch (error) {
-    console.error('Erro no endpoint de permissões:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
       { status: 500 }
@@ -222,7 +221,6 @@ export async function POST(request: NextRequest) {
       });
 
       if (logError) {
-        console.error('Erro ao registrar log de validação:', logError);
       }
 
       return NextResponse.json({
@@ -238,8 +236,7 @@ export async function POST(request: NextRequest) {
       { error: 'Ação não reconhecida' },
       { status: 400 }
     );
-  } catch (error) {
-    console.error('Erro no endpoint de validação de permissões:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
       { status: 500 }

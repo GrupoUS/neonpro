@@ -9,7 +9,7 @@ import {
 } from 'lucide-react';
 
 // Types and Interfaces
-interface Patient {
+type Patient = {
   id: string;
   name: string;
   email: string;
@@ -19,17 +19,17 @@ interface Patient {
   gender: string;
   lastVisit?: Date;
   totalVisits: number;
-}
+};
 
-interface Treatment {
+type Treatment = {
   id: string;
   name: string;
   duration: number;
   price: number;
   category: string;
-}
+};
 
-interface Appointment {
+type Appointment = {
   id: string;
   patientId: string;
   patient: Patient;
@@ -49,16 +49,16 @@ interface Appointment {
   practitioner: string;
   room?: string;
   price: number;
-}
+};
 
-interface AppointmentStats {
+type AppointmentStats = {
   total: number;
   scheduled: number;
   completed: number;
   cancelled: number;
   revenue: number;
   averageRating: number;
-}
+};
 
 // Default Data
 const defaultPatients: Patient[] = [

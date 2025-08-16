@@ -40,8 +40,7 @@ export async function GET(
     }
 
     return NextResponse.json({ service });
-  } catch (error) {
-    console.error('API Error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal Server Error' },
       { status: 500 }
@@ -76,7 +75,6 @@ export async function PUT(
       .single();
 
     if (error) {
-      console.error('Error updating service:', error);
       return NextResponse.json(
         { error: 'Failed to update service' },
         { status: 500 }
@@ -91,8 +89,6 @@ export async function PUT(
         { status: 400 }
       );
     }
-
-    console.error('API Error:', error);
     return NextResponse.json(
       { error: 'Internal Server Error' },
       { status: 500 }
@@ -124,7 +120,6 @@ export async function DELETE(
       .limit(1);
 
     if (invoiceError) {
-      console.error('Error checking service relations:', invoiceError);
       return NextResponse.json(
         { error: 'Failed to check service relations' },
         { status: 500 }
@@ -141,7 +136,6 @@ export async function DELETE(
         .single();
 
       if (error) {
-        console.error('Error deactivating service:', error);
         return NextResponse.json(
           { error: 'Failed to deactivate service' },
           { status: 500 }
@@ -161,7 +155,6 @@ export async function DELETE(
       .eq('id', resolvedParams.id);
 
     if (error) {
-      console.error('Error deleting service:', error);
       return NextResponse.json(
         { error: 'Failed to delete service' },
         { status: 500 }
@@ -169,8 +162,7 @@ export async function DELETE(
     }
 
     return NextResponse.json({ message: 'Service deleted successfully' });
-  } catch (error) {
-    console.error('API Error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal Server Error' },
       { status: 500 }

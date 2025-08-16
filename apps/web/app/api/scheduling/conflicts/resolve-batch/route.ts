@@ -21,7 +21,7 @@ const batchResolutionSchema = z.object({
   timestamp: z.string(),
 });
 
-interface BatchResolutionResponse {
+type BatchResolutionResponse = {
   success: boolean;
   data?: {
     resolvedCount: number;
@@ -36,7 +36,7 @@ interface BatchResolutionResponse {
     batchEfficiency: string;
   };
   error?: string;
-}
+};
 
 export async function POST(request: NextRequest) {
   const startTime = Date.now();
@@ -127,7 +127,6 @@ export async function POST(request: NextRequest) {
       });
 
     if (resolutionError) {
-      console.error('Batch resolution error:', resolutionError);
       return NextResponse.json<BatchResolutionResponse>(
         {
           success: false,
@@ -185,8 +184,6 @@ export async function POST(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('Batch resolution API error:', error);
-
     const processingTime = Date.now() - startTime;
 
     if (error instanceof z.ZodError) {

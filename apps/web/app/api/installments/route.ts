@@ -135,8 +135,6 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('Error fetching installments:', error);
-
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {
@@ -256,8 +254,6 @@ export async function POST(request: NextRequest) {
       message: `Action '${action}' completed successfully`,
     });
   } catch (error) {
-    console.error('Error processing installments:', error);
-
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {
@@ -396,8 +392,6 @@ export async function PUT(request: NextRequest) {
       message: `Bulk ${action} completed: ${successful} successful, ${failed} failed`,
     });
   } catch (error) {
-    console.error('Error in bulk installment operation:', error);
-
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {

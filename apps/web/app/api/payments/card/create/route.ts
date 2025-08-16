@@ -226,7 +226,6 @@ export async function POST(request: NextRequest) {
         });
 
       if (paymentRecordError) {
-        console.error('Error creating payment record:', paymentRecordError);
         // Don't fail the payment creation, just log the error
       }
     }
@@ -315,8 +314,6 @@ export async function POST(request: NextRequest) {
           : totalAmount,
     });
   } catch (error) {
-    console.error('Card payment creation error:', error);
-
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {

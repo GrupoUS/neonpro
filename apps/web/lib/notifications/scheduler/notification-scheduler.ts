@@ -122,7 +122,7 @@ const ScheduleConfigSchema = z.object({
 
 type ScheduleConfig = z.infer<typeof ScheduleConfigSchema>;
 
-interface ScheduledNotification {
+type ScheduledNotification = {
   id: string;
   scheduleId: string;
   userId: string;
@@ -135,9 +135,9 @@ interface ScheduledNotification {
   metadata: Record<string, any>;
   createdAt: Date;
   updatedAt: Date;
-}
+};
 
-interface OptimizationResult {
+type OptimizationResult = {
   originalTime: Date;
   optimizedTime: Date;
   confidence: number;
@@ -147,9 +147,9 @@ interface OptimizationResult {
     weight: number;
     impact: string;
   }>;
-}
+};
 
-interface BatchExecutionResult {
+type BatchExecutionResult = {
   scheduleId: string;
   totalTargeted: number;
   totalQueued: number;
@@ -157,7 +157,7 @@ interface BatchExecutionResult {
   errors: string[];
   executionTime: number;
   nextExecution?: Date;
-}
+};
 
 // ================================================================================
 // NOTIFICATION SCHEDULER
@@ -185,50 +185,40 @@ export class NotificationScheduler {
       id: crypto.randomUUID(),
       ...config,
     });
+    // Inserir configuração de agendamento
+    const { data: schedule, error: scheduleError } = await this.supabase
+      .from('notification_schedules')
+      .insert({
+        id: validatedConfig.id,
+        name: validatedConfig.name,
+        description: validatedConfig.description,
+        clinic_id: validatedConfig.clinicId,
+        created_by: validatedConfig.createdBy,
+        is_active: validatedConfig.isActive,
+        template_config: validatedConfig.template,
+        channels: validatedConfig.channels,
+        priority: validatedConfig.priority,
+        schedule_config: validatedConfig.schedule,
+        audience_config: validatedConfig.audience,
+        options: validatedConfig.options,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      })
+      .select()
+      .single();
 
-    try {
-      // Inserir configuração de agendamento
-      const { data: schedule, error: scheduleError } = await this.supabase
-        .from('notification_schedules')
-        .insert({
-          id: validatedConfig.id,
-          name: validatedConfig.name,
-          description: validatedConfig.description,
-          clinic_id: validatedConfig.clinicId,
-          created_by: validatedConfig.createdBy,
-          is_active: validatedConfig.isActive,
-          template_config: validatedConfig.template,
-          channels: validatedConfig.channels,
-          priority: validatedConfig.priority,
-          schedule_config: validatedConfig.schedule,
-          audience_config: validatedConfig.audience,
-          options: validatedConfig.options,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-        })
-        .select()
-        .single();
-
-      if (scheduleError) {
-        throw new Error(`Erro ao criar agendamento: ${scheduleError.message}`);
-      }
-
-      // Se for agendamento imediato, processar imediatamente
-      if (validatedConfig.schedule.type === 'immediate') {
-        await this.processSchedule(validatedConfig.id!);
-      } else {
-        // Gerar próximas execuções
-        await this.generateUpcomingExecutions(validatedConfig.id!);
-      }
-
-      console.log(
-        `📅 Agendamento criado: ${validatedConfig.id} - ${validatedConfig.name}`
-      );
-      return validatedConfig.id!;
-    } catch (error) {
-      console.error('Erro ao criar agendamento:', error);
-      throw error;
+    if (scheduleError) {
+      throw new Error(`Erro ao criar agendamento: ${scheduleError.message}`);
     }
+
+    // Se for agendamento imediato, processar imediatamente
+    if (validatedConfig.schedule.type === 'immediate') {
+      await this.processSchedule(validatedConfig.id!);
+    } else {
+      // Gerar próximas execuções
+      await this.generateUpcomingExecutions(validatedConfig.id!);
+    }
+    return validatedConfig.id!;
   }
 
   /**
@@ -238,28 +228,21 @@ export class NotificationScheduler {
     scheduleId: string,
     updates: Partial<ScheduleConfig>
   ): Promise<void> {
-    try {
-      const { error } = await this.supabase
-        .from('notification_schedules')
-        .update({
-          ...updates,
-          updated_at: new Date().toISOString(),
-        })
-        .eq('id', scheduleId);
+    const { error } = await this.supabase
+      .from('notification_schedules')
+      .update({
+        ...updates,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', scheduleId);
 
-      if (error) {
-        throw new Error(`Erro ao atualizar agendamento: ${error.message}`);
-      }
+    if (error) {
+      throw new Error(`Erro ao atualizar agendamento: ${error.message}`);
+    }
 
-      // Regenerar execuções se mudou a configuração de agenda
-      if (updates.schedule) {
-        await this.generateUpcomingExecutions(scheduleId);
-      }
-
-      console.log(`📅 Agendamento atualizado: ${scheduleId}`);
-    } catch (error) {
-      console.error('Erro ao atualizar agendamento:', error);
-      throw error;
+    // Regenerar execuções se mudou a configuração de agenda
+    if (updates.schedule) {
+      await this.generateUpcomingExecutions(scheduleId);
     }
   }
 
@@ -267,43 +250,30 @@ export class NotificationScheduler {
    * Cancela um agendamento
    */
   async cancelSchedule(scheduleId: string): Promise<void> {
-    try {
-      // Desativar agendamento
-      const { error: scheduleError } = await this.supabase
-        .from('notification_schedules')
-        .update({
-          is_active: false,
-          updated_at: new Date().toISOString(),
-        })
-        .eq('id', scheduleId);
+    // Desativar agendamento
+    const { error: scheduleError } = await this.supabase
+      .from('notification_schedules')
+      .update({
+        is_active: false,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', scheduleId);
 
-      if (scheduleError) {
-        throw new Error(
-          `Erro ao cancelar agendamento: ${scheduleError.message}`
-        );
-      }
+    if (scheduleError) {
+      throw new Error(`Erro ao cancelar agendamento: ${scheduleError.message}`);
+    }
 
-      // Cancelar notificações pendentes
-      const { error: notificationsError } = await this.supabase
-        .from('scheduled_notifications')
-        .update({
-          status: 'cancelled',
-          updated_at: new Date().toISOString(),
-        })
-        .eq('schedule_id', scheduleId)
-        .eq('status', 'pending');
+    // Cancelar notificações pendentes
+    const { error: notificationsError } = await this.supabase
+      .from('scheduled_notifications')
+      .update({
+        status: 'cancelled',
+        updated_at: new Date().toISOString(),
+      })
+      .eq('schedule_id', scheduleId)
+      .eq('status', 'pending');
 
-      if (notificationsError) {
-        console.error(
-          'Erro ao cancelar notificações pendentes:',
-          notificationsError
-        );
-      }
-
-      console.log(`📅 Agendamento cancelado: ${scheduleId}`);
-    } catch (error) {
-      console.error('Erro ao cancelar agendamento:', error);
-      throw error;
+    if (notificationsError) {
     }
   }
 
@@ -325,8 +295,6 @@ export class NotificationScheduler {
         await this.processScheduledNotifications();
       }
     }, 60 * 1000);
-
-    console.log('📅 Processador de agendamentos iniciado');
   }
 
   /**
@@ -337,7 +305,6 @@ export class NotificationScheduler {
       clearInterval(this.processingInterval);
       this.processingInterval = null;
     }
-    console.log('📅 Processador de agendamentos parado');
   }
 
   /**
@@ -367,17 +334,12 @@ export class NotificationScheduler {
         .limit(100);
 
       if (error) {
-        console.error('Erro ao buscar notificações agendadas:', error);
         return;
       }
 
       if (!notifications || notifications.length === 0) {
         return;
       }
-
-      console.log(
-        `📅 Processando ${notifications.length} notificações agendadas`
-      );
 
       // Agrupar por agendamento para processamento em lote
       const groupedBySchedule = new Map<string, any[]>();
@@ -398,13 +360,11 @@ export class NotificationScheduler {
       );
 
       // Log resultados
-      results.forEach((result, index) => {
+      results.forEach((result, _index) => {
         if (result.status === 'rejected') {
-          console.error(`Erro ao processar lote ${index}:`, result.reason);
         }
       });
-    } catch (error) {
-      console.error('Erro no processamento de agendamentos:', error);
+    } catch (_error) {
     } finally {
       this.isProcessing = false;
     }
@@ -421,132 +381,121 @@ export class NotificationScheduler {
     let totalQueued = 0;
     let totalFailed = 0;
     const errors: string[] = [];
+    for (const notification of notifications) {
+      try {
+        // Marcar como processando
+        await this.supabase
+          .from('scheduled_notifications')
+          .update({
+            status: 'processing',
+            updated_at: new Date().toISOString(),
+          })
+          .eq('id', notification.id);
 
-    try {
-      for (const notification of notifications) {
-        try {
-          // Marcar como processando
+        // Otimizar timing se necessário
+        let finalTime = new Date(notification.scheduled_for);
+        if (notification.notification_schedules.options?.optimizeDeliveryTime) {
+          const optimization = await this.optimizeDeliveryTime(
+            notification.user_id,
+            notification.channel,
+            finalTime
+          );
+          finalTime = optimization.optimizedTime;
+        }
+
+        // Verificar quiet hours
+        if (
+          this.isInQuietHours(
+            finalTime,
+            notification.notification_schedules.options?.quietHours
+          )
+        ) {
+          // Reagendar para fora do quiet hour
+          const nextAvailable = this.findNextAvailableTime(
+            finalTime,
+            notification.notification_schedules.options?.quietHours
+          );
+
           await this.supabase
             .from('scheduled_notifications')
             .update({
-              status: 'processing',
+              scheduled_for: nextAvailable.toISOString(),
+              status: 'pending',
               updated_at: new Date().toISOString(),
             })
             .eq('id', notification.id);
 
-          // Otimizar timing se necessário
-          let finalTime = new Date(notification.scheduled_for);
-          if (
-            notification.notification_schedules.options?.optimizeDeliveryTime
-          ) {
-            const optimization = await this.optimizeDeliveryTime(
-              notification.user_id,
-              notification.channel,
-              finalTime
-            );
-            finalTime = optimization.optimizedTime;
-          }
+          continue;
+        }
 
-          // Verificar quiet hours
-          if (
-            this.isInQuietHours(
-              finalTime,
-              notification.notification_schedules.options?.quietHours
-            )
-          ) {
-            // Reagendar para fora do quiet hour
-            const nextAvailable = this.findNextAvailableTime(
-              finalTime,
-              notification.notification_schedules.options?.quietHours
-            );
+        // Enviar notificação
+        await notificationManager.sendNotification({
+          userId: notification.user_id,
+          channel: notification.channel,
+          type: NotificationType.CUSTOM,
+          content: notification.content,
+          metadata: {
+            scheduleId,
+            scheduledNotificationId: notification.id,
+            ...notification.metadata,
+          },
+        });
 
-            await this.supabase
-              .from('scheduled_notifications')
-              .update({
-                scheduled_for: nextAvailable.toISOString(),
-                status: 'pending',
-                updated_at: new Date().toISOString(),
-              })
-              .eq('id', notification.id);
+        // Marcar como enviada
+        await this.supabase
+          .from('scheduled_notifications')
+          .update({
+            status: 'sent',
+            actual_sent_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          })
+          .eq('id', notification.id);
 
-            continue;
-          }
+        totalQueued++;
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : 'Erro desconhecido';
+        errors.push(`Notification ${notification.id}: ${errorMessage}`);
+        totalFailed++;
 
-          // Enviar notificação
-          await notificationManager.sendNotification({
-            userId: notification.user_id,
-            channel: notification.channel,
-            type: NotificationType.CUSTOM,
-            content: notification.content,
-            metadata: {
-              scheduleId,
-              scheduledNotificationId: notification.id,
-              ...notification.metadata,
-            },
-          });
+        // Marcar como falha e incrementar tentativa
+        await this.supabase
+          .from('scheduled_notifications')
+          .update({
+            status: 'failed',
+            last_error: errorMessage,
+            attempt: notification.attempt + 1,
+            updated_at: new Date().toISOString(),
+          })
+          .eq('id', notification.id);
 
-          // Marcar como enviada
+        // Reagendar se ainda tem tentativas
+        const maxRetries =
+          notification.notification_schedules.options?.maxRetriesPerChannel ||
+          3;
+        if (notification.attempt < maxRetries) {
+          const retryDelay = 2 ** notification.attempt * 5; // Exponential backoff
+          const retryTime = new Date(Date.now() + retryDelay * 60 * 1000);
+
           await this.supabase
             .from('scheduled_notifications')
             .update({
-              status: 'sent',
-              actual_sent_at: new Date().toISOString(),
-              updated_at: new Date().toISOString(),
+              status: 'pending',
+              scheduled_for: retryTime.toISOString(),
             })
             .eq('id', notification.id);
-
-          totalQueued++;
-        } catch (error) {
-          const errorMessage =
-            error instanceof Error ? error.message : 'Erro desconhecido';
-          errors.push(`Notification ${notification.id}: ${errorMessage}`);
-          totalFailed++;
-
-          // Marcar como falha e incrementar tentativa
-          await this.supabase
-            .from('scheduled_notifications')
-            .update({
-              status: 'failed',
-              last_error: errorMessage,
-              attempt: notification.attempt + 1,
-              updated_at: new Date().toISOString(),
-            })
-            .eq('id', notification.id);
-
-          // Reagendar se ainda tem tentativas
-          const maxRetries =
-            notification.notification_schedules.options?.maxRetriesPerChannel ||
-            3;
-          if (notification.attempt < maxRetries) {
-            const retryDelay = 2 ** notification.attempt * 5; // Exponential backoff
-            const retryTime = new Date(Date.now() + retryDelay * 60 * 1000);
-
-            await this.supabase
-              .from('scheduled_notifications')
-              .update({
-                status: 'pending',
-                scheduled_for: retryTime.toISOString(),
-              })
-              .eq('id', notification.id);
-          }
         }
       }
-
-      return {
-        scheduleId,
-        totalTargeted: notifications.length,
-        totalQueued,
-        totalFailed,
-        errors,
-        executionTime: Date.now() - startTime,
-      };
-    } catch (error) {
-      console.error(
-        `Erro ao processar lote do agendamento ${scheduleId}:`,
-        error
-      );
-      throw error;
     }
+
+    return {
+      scheduleId,
+      totalTargeted: notifications.length,
+      totalQueued,
+      totalFailed,
+      errors,
+      executionTime: Date.now() - startTime,
+    };
   }
 
   // ================================================================================
@@ -666,8 +615,7 @@ export class NotificationScheduler {
         reason: `Horário otimizado baseado em ${history.length} interações históricas`,
         factors,
       };
-    } catch (error) {
-      console.error('Erro na otimização de timing:', error);
+    } catch (_error) {
       return {
         originalTime: scheduledTime,
         optimizedTime: scheduledTime,
@@ -742,68 +690,59 @@ export class NotificationScheduler {
    * Gera execuções futuras para agendamentos recorrentes
    */
   private async generateUpcomingExecutions(scheduleId: string): Promise<void> {
-    try {
-      // Buscar configuração do agendamento
-      const { data: schedule, error } = await this.supabase
-        .from('notification_schedules')
-        .select('*')
-        .eq('id', scheduleId)
-        .single();
+    // Buscar configuração do agendamento
+    const { data: schedule, error } = await this.supabase
+      .from('notification_schedules')
+      .select('*')
+      .eq('id', scheduleId)
+      .single();
 
-      if (error || !schedule) {
-        throw new Error(`Agendamento não encontrado: ${scheduleId}`);
+    if (error || !schedule) {
+      throw new Error(`Agendamento não encontrado: ${scheduleId}`);
+    }
+
+    const config = schedule.schedule_config;
+    if (config.type !== 'recurring' || !config.recurrence) {
+      return;
+    }
+
+    // Gerar próximas 10 execuções
+    const executions = this.calculateNextExecutions(config, 10);
+
+    // Buscar audiência
+    const audience = await this.resolveAudience(
+      schedule.audience_config,
+      schedule.clinic_id
+    );
+
+    // Criar notificações agendadas
+    const notifications = executions.flatMap((executionTime) =>
+      audience.map((userId) => ({
+        id: crypto.randomUUID(),
+        schedule_id: scheduleId,
+        user_id: userId,
+        channel: schedule.channels[0], // Para múltiplos canais, criar uma entrada por canal
+        status: 'pending' as const,
+        scheduled_for: executionTime.toISOString(),
+        attempt: 0,
+        content: schedule.template_config.content,
+        metadata: {
+          templateId: schedule.template_config.templateId,
+          variables: schedule.template_config.variables,
+        },
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      }))
+    );
+
+    if (notifications.length > 0) {
+      const { error: insertError } = await this.supabase
+        .from('scheduled_notifications')
+        .insert(notifications);
+
+      if (insertError) {
+      } else {
       }
-
-      const config = schedule.schedule_config;
-      if (config.type !== 'recurring' || !config.recurrence) {
-        return;
-      }
-
-      // Gerar próximas 10 execuções
-      const executions = this.calculateNextExecutions(config, 10);
-
-      // Buscar audiência
-      const audience = await this.resolveAudience(
-        schedule.audience_config,
-        schedule.clinic_id
-      );
-
-      // Criar notificações agendadas
-      const notifications = executions.flatMap((executionTime) =>
-        audience.map((userId) => ({
-          id: crypto.randomUUID(),
-          schedule_id: scheduleId,
-          user_id: userId,
-          channel: schedule.channels[0], // Para múltiplos canais, criar uma entrada por canal
-          status: 'pending' as const,
-          scheduled_for: executionTime.toISOString(),
-          attempt: 0,
-          content: schedule.template_config.content,
-          metadata: {
-            templateId: schedule.template_config.templateId,
-            variables: schedule.template_config.variables,
-          },
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-        }))
-      );
-
-      if (notifications.length > 0) {
-        const { error: insertError } = await this.supabase
-          .from('scheduled_notifications')
-          .insert(notifications);
-
-        if (insertError) {
-          console.error('Erro ao inserir notificações agendadas:', insertError);
-        } else {
-          console.log(
-            `📅 Geradas ${notifications.length} execuções para agendamento ${scheduleId}`
-          );
-        }
-      }
-    } catch (error) {
-      console.error('Erro ao gerar execuções futuras:', error);
-      throw error;
     }
   }
 
@@ -937,8 +876,7 @@ export class NotificationScheduler {
         default:
           return [];
       }
-    } catch (error) {
-      console.error('Erro ao resolver audiência:', error);
+    } catch (_error) {
       return [];
     }
   }
@@ -983,8 +921,7 @@ export class NotificationScheduler {
 
       const { data } = await query;
       return data?.map((u) => u.id) || [];
-    } catch (error) {
-      console.error('Erro ao resolver audiência customizada:', error);
+    } catch (_error) {
       return [];
     }
   }
@@ -993,47 +930,42 @@ export class NotificationScheduler {
    * Processa um agendamento específico manualmente
    */
   async processSchedule(scheduleId: string): Promise<BatchExecutionResult> {
-    try {
-      const { data: schedule, error } = await this.supabase
-        .from('notification_schedules')
-        .select('*')
-        .eq('id', scheduleId)
-        .single();
+    const { data: schedule, error } = await this.supabase
+      .from('notification_schedules')
+      .select('*')
+      .eq('id', scheduleId)
+      .single();
 
-      if (error || !schedule) {
-        throw new Error(`Agendamento não encontrado: ${scheduleId}`);
-      }
-
-      // Resolver audiência
-      const audience = await this.resolveAudience(
-        schedule.audience_config,
-        schedule.clinic_id
-      );
-
-      // Criar notificações para envio imediato
-      const notifications = audience.flatMap((userId) =>
-        schedule.channels.map((channel) => ({
-          id: crypto.randomUUID(),
-          schedule_id: scheduleId,
-          user_id: userId,
-          channel,
-          status: 'pending' as const,
-          scheduled_for: new Date().toISOString(),
-          attempt: 0,
-          content: schedule.template_config.content,
-          metadata: {
-            templateId: schedule.template_config.templateId,
-            variables: schedule.template_config.variables,
-          },
-        }))
-      );
-
-      // Processar em lote
-      return await this.processBatch(scheduleId, notifications);
-    } catch (error) {
-      console.error(`Erro ao processar agendamento ${scheduleId}:`, error);
-      throw error;
+    if (error || !schedule) {
+      throw new Error(`Agendamento não encontrado: ${scheduleId}`);
     }
+
+    // Resolver audiência
+    const audience = await this.resolveAudience(
+      schedule.audience_config,
+      schedule.clinic_id
+    );
+
+    // Criar notificações para envio imediato
+    const notifications = audience.flatMap((userId) =>
+      schedule.channels.map((channel) => ({
+        id: crypto.randomUUID(),
+        schedule_id: scheduleId,
+        user_id: userId,
+        channel,
+        status: 'pending' as const,
+        scheduled_for: new Date().toISOString(),
+        attempt: 0,
+        content: schedule.template_config.content,
+        metadata: {
+          templateId: schedule.template_config.templateId,
+          variables: schedule.template_config.variables,
+        },
+      }))
+    );
+
+    // Processar em lote
+    return await this.processBatch(scheduleId, notifications);
   }
 }
 

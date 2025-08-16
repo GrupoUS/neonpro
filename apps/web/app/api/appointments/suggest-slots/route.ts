@@ -7,7 +7,7 @@ import { createClient } from '@/app/utils/supabase/server';
 // Story 1.2: Intelligent slot recommendation
 // =============================================
 
-interface SlotSuggestionParams {
+type SlotSuggestionParams = {
   professional_id: string;
   service_type_id: string;
   preferred_start_time: string;
@@ -16,9 +16,9 @@ interface SlotSuggestionParams {
   max_suggestions: number;
   search_window_days: number;
   clinic_id: string;
-}
+};
 
-interface AlternativeSlot {
+type AlternativeSlot = {
   start_time: string;
   end_time: string;
   available: boolean;
@@ -29,9 +29,9 @@ interface AlternativeSlot {
   }>;
   score?: number;
   reason?: string;
-}
+};
 
-interface SuggestionResponse {
+type SuggestionResponse = {
   suggestions: AlternativeSlot[];
   search_info: {
     total_slots_checked: number;
@@ -41,7 +41,7 @@ interface SuggestionResponse {
       end_date: string;
     };
   };
-}
+};
 
 export async function GET(request: NextRequest) {
   try {
@@ -132,8 +132,7 @@ export async function GET(request: NextRequest) {
     };
 
     return NextResponse.json(response);
-  } catch (error) {
-    console.error('Error in suggest-slots API:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -154,7 +153,6 @@ async function getProfessionalSchedule(
     .eq('is_available', true);
 
   if (error) {
-    console.error('Error fetching professional schedule:', error);
     return [];
   }
 
@@ -175,8 +173,6 @@ async function getServiceRules(
     .single();
 
   if (error && error.code !== 'PGRST116') {
-    // Not found is OK
-    console.error('Error fetching service rules:', error);
   }
 
   return data || {};
@@ -208,7 +204,6 @@ async function getExistingAppointments(
   const { data, error } = await query;
 
   if (error) {
-    console.error('Error fetching existing appointments:', error);
     return [];
   }
 

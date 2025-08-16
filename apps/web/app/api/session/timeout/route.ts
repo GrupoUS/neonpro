@@ -75,8 +75,7 @@ export async function GET(_request: NextRequest) {
         should_warn: timeRemaining <= 5 * 60 && timeRemaining > 0,
       },
     });
-  } catch (error) {
-    console.error('Erro no endpoint de timeout de sessão:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
       { status: 500 }
@@ -129,8 +128,7 @@ export async function POST(request: NextRequest) {
           new_expires_at: refreshData.session?.expires_at,
           access_token: refreshData.session?.access_token,
         });
-      } catch (refreshError) {
-        console.error('Erro ao renovar sessão:', refreshError);
+      } catch (_refreshError) {
         return NextResponse.json(
           { error: 'Erro ao estender sessão' },
           { status: 500 }
@@ -163,10 +161,6 @@ export async function POST(request: NextRequest) {
         .single();
 
       if (updateError) {
-        console.error(
-          'Erro ao atualizar configurações de timeout:',
-          updateError
-        );
         return NextResponse.json(
           { error: 'Erro ao salvar configurações de timeout' },
           { status: 500 }
@@ -202,8 +196,7 @@ export async function POST(request: NextRequest) {
       { error: 'Ação não reconhecida' },
       { status: 400 }
     );
-  } catch (error) {
-    console.error('Erro no endpoint de controle de timeout:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
       { status: 500 }
@@ -242,15 +235,13 @@ export async function DELETE(_request: NextRequest) {
         success: true,
         message: 'Sessão encerrada por timeout',
       });
-    } catch (signOutError) {
-      console.error('Erro ao encerrar sessão:', signOutError);
+    } catch (_signOutError) {
       return NextResponse.json(
         { error: 'Erro ao encerrar sessão' },
         { status: 500 }
       );
     }
-  } catch (error) {
-    console.error('Erro no endpoint de encerramento de sessão:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
       { status: 500 }

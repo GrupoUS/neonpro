@@ -143,8 +143,7 @@ export async function GET(request: NextRequest) {
     };
 
     return NextResponse.json(overview);
-  } catch (error) {
-    console.error('Error getting revenue optimization overview:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to get revenue optimization overview' },
       { status: 500 }
@@ -293,7 +292,6 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (error) {
-      console.error('Error creating optimization:', error);
       return NextResponse.json(
         { error: 'Failed to create optimization record' },
         { status: 500 }
@@ -305,8 +303,7 @@ export async function POST(request: NextRequest) {
       result,
       message: 'Revenue optimization created successfully',
     });
-  } catch (error) {
-    console.error('Error creating revenue optimization:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to create revenue optimization' },
       { status: 500 }
@@ -363,7 +360,6 @@ export async function PUT(request: NextRequest) {
       .single();
 
     if (error) {
-      console.error('Error updating optimization:', error);
       return NextResponse.json(
         { error: 'Failed to update optimization' },
         { status: 500 }
@@ -374,8 +370,7 @@ export async function PUT(request: NextRequest) {
       optimization,
       message: 'Revenue optimization updated successfully',
     });
-  } catch (error) {
-    console.error('Error updating revenue optimization:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to update revenue optimization' },
       { status: 500 }
@@ -428,7 +423,6 @@ export async function DELETE(request: NextRequest) {
       .eq('clinic_id', clinicId);
 
     if (error) {
-      console.error('Error deleting optimization:', error);
       return NextResponse.json(
         { error: 'Failed to delete optimization' },
         { status: 500 }
@@ -438,8 +432,7 @@ export async function DELETE(request: NextRequest) {
     return NextResponse.json({
       message: 'Revenue optimization deleted successfully',
     });
-  } catch (error) {
-    console.error('Error deleting revenue optimization:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to delete revenue optimization' },
       { status: 500 }

@@ -17,12 +17,12 @@ import {
 // INTERFACES
 // ============================================================================
 
-interface RenderedContent {
+type RenderedContent = {
   subject?: string;
   title: string;
   body: string;
   variables: Record<string, any>;
-}
+};
 
 type TemplateFunction = (context: NotificationContext) => string;
 
@@ -212,8 +212,7 @@ export class TemplateEngine {
       try {
         const value = this.evaluateFunction(funcCall.trim(), context);
         return value !== undefined ? String(value) : match;
-      } catch (error) {
-        console.warn(`Erro ao avaliar função: ${funcCall}`, error);
+      } catch (_error) {
         return match;
       }
     });
@@ -229,8 +228,7 @@ export class TemplateEngine {
             context
           );
           return shouldShow ? content : '';
-        } catch (error) {
-          console.warn(`Erro ao avaliar condição: ${condition}`, error);
+        } catch (_error) {
           return '';
         }
       }

@@ -34,8 +34,6 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(analysis, { status: 201 });
   } catch (error: any) {
-    console.error('Error creating multi-session analysis:', error);
-
     if (error.name === 'ZodError') {
       return NextResponse.json(
         { error: 'Invalid request data', details: error.errors },
@@ -74,8 +72,7 @@ export async function GET(request: NextRequest) {
       await progressTrackingService.getMultiSessionAnalyses(patientId);
 
     return NextResponse.json(analyses);
-  } catch (error: any) {
-    console.error('Error fetching multi-session analyses:', error);
+  } catch (_error: any) {
     return NextResponse.json(
       { error: 'Failed to fetch multi-session analyses' },
       { status: 500 }

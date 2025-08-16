@@ -2,12 +2,12 @@
 
 type LogLevel = 'info' | 'warn' | 'error' | 'debug';
 
-interface LogEntry {
+type LogEntry = {
   level: LogLevel;
   message: string;
   timestamp: Date;
   context?: Record<string, any>;
-}
+};
 
 class Logger {
   private readonly isDevelopment = process.env.NODE_ENV === 'development';
@@ -23,13 +23,11 @@ class Logger {
   }
 
   info(message: string, context?: Record<string, any>): void {
-    const formatted = this.formatMessage('info', message, context);
-    console.log(formatted);
+    const _formatted = this.formatMessage('info', message, context);
   }
 
   warn(message: string, context?: Record<string, any>): void {
-    const formatted = this.formatMessage('warn', message, context);
-    console.warn(formatted);
+    const _formatted = this.formatMessage('warn', message, context);
   }
 
   error(
@@ -42,14 +40,12 @@ class Logger {
         ? { ...context, error: error.message, stack: error.stack }
         : { ...context, error };
 
-    const formatted = this.formatMessage('error', message, errorContext);
-    console.error(formatted);
+    const _formatted = this.formatMessage('error', message, errorContext);
   }
 
   debug(message: string, context?: Record<string, any>): void {
     if (this.isDevelopment) {
-      const formatted = this.formatMessage('debug', message, context);
-      console.debug(formatted);
+      const _formatted = this.formatMessage('debug', message, context);
     }
   }
 

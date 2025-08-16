@@ -50,8 +50,7 @@ export async function GET(request: NextRequest) {
         to: dateTo,
       },
     });
-  } catch (error) {
-    console.error('Error fetching prediction analytics:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to fetch prediction analytics' },
       { status: 500 }

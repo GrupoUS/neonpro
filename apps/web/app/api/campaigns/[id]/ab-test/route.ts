@@ -54,8 +54,7 @@ export async function POST(
       },
       { status: 201 }
     );
-  } catch (error) {
-    console.error('Error in A/B test creation:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

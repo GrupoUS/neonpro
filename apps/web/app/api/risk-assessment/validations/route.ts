@@ -59,7 +59,6 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('Error fetching validations:', error);
     return NextResponse.json(
       {
         success: false,
@@ -107,7 +106,6 @@ export async function POST(request: NextRequest) {
       { status: 201 }
     );
   } catch (error) {
-    console.error('Error creating validation:', error);
     return NextResponse.json(
       {
         success: false,

@@ -17,17 +17,17 @@ type Staff = Tables['staff']['Row'];
 type Treatment = Tables['treatments']['Row'];
 
 // AI Scheduling Configuration
-interface AISchedulingConfig {
+type AISchedulingConfig = {
   maxLookAheadDays: number;
   staffEfficiencyWeight: number;
   patientPreferenceWeight: number;
   revenueOptimizationWeight: number;
   treatmentSequencingWeight: number;
   workloadBalanceWeight: number;
-}
+};
 
 // Scheduling Optimization Criteria
-interface SchedulingCriteria {
+type SchedulingCriteria = {
   patientId: string;
   treatmentId: string;
   preferredTimeSlots: TimeSlot[];
@@ -35,19 +35,19 @@ interface SchedulingCriteria {
   isFollowUp: boolean;
   packageId?: string;
   maxWaitDays: number;
-}
+};
 
 // Time Slot Definition
-interface TimeSlot {
+type TimeSlot = {
   startTime: Date;
   endTime: Date;
   dayOfWeek: number;
   isPreferred: boolean;
   availabilityScore: number;
-}
+};
 
 // Staff Efficiency Pattern
-interface StaffEfficiencyPattern {
+type StaffEfficiencyPattern = {
   staffId: string;
   dayOfWeek: number;
   hourOfDay: number;
@@ -55,10 +55,10 @@ interface StaffEfficiencyPattern {
   fatigueLevel: number;
   productivityTrend: 'increasing' | 'stable' | 'decreasing';
   lastUpdated: Date;
-}
+};
 
 // Patient Preference Learning
-interface PatientPreference {
+type PatientPreference = {
   patientId: string;
   preferredDaysOfWeek: number[];
   preferredTimeRanges: { start: string; end: string }[];
@@ -66,10 +66,10 @@ interface PatientPreference {
   cancellationPattern: number;
   satisfactionScore: number;
   lastLearningUpdate: Date;
-}
+};
 
 // Scheduling Recommendation
-interface SchedulingRecommendation {
+type SchedulingRecommendation = {
   timeSlot: TimeSlot;
   staffId: string;
   optimizationScore: number;
@@ -78,7 +78,7 @@ interface SchedulingRecommendation {
   alternativeSlots: TimeSlot[];
   estimatedRevenue: number;
   patientSatisfactionPrediction: number;
-}
+};
 
 class AISchedulingCore {
   private readonly supabase = createClient();
@@ -143,8 +143,7 @@ class AISchedulingCore {
       await this.logRecommendation(criteria, recommendations);
 
       return recommendations;
-    } catch (error) {
-      console.error('Error generating scheduling recommendations:', error);
+    } catch (_error) {
       throw new Error('Failed to generate AI scheduling recommendations');
     }
   }
@@ -283,8 +282,7 @@ class AISchedulingCore {
       this.patientPreferenceCache.set(patientId, learnedPreferences);
 
       return learnedPreferences;
-    } catch (error) {
-      console.error('Error loading patient preferences:', error);
+    } catch (_error) {
       // Return default preferences
       return this.getDefaultPatientPreferences(patientId);
     }
@@ -334,8 +332,7 @@ class AISchedulingCore {
       await this.supabase.from('patient_preferences').upsert(preferences);
 
       return preferences;
-    } catch (error) {
-      console.error('Error learning patient preferences:', error);
+    } catch (_error) {
       return this.getDefaultPatientPreferences(patientId);
     }
   }
@@ -398,8 +395,7 @@ class AISchedulingCore {
       }
 
       return availableSlots;
-    } catch (error) {
-      console.error('Error getting available time slots:', error);
+    } catch (_error) {
       return [];
     }
   }
@@ -675,9 +671,7 @@ class AISchedulingCore {
         criteria: JSON.stringify(criteria),
         created_at: new Date().toISOString(),
       });
-    } catch (error) {
-      console.error('Error logging recommendation:', error);
-    }
+    } catch (_error) {}
   }
 }
 

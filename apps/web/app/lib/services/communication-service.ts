@@ -130,7 +130,6 @@ export class CommunicationService {
         ),
       };
     } catch (error) {
-      console.error('Error sending message:', error);
       return {
         success: false,
         status: 'failed',
@@ -143,70 +142,65 @@ export class CommunicationService {
    * Get messages with filtering and pagination
    */
   async getMessages(request: GetMessagesRequest): Promise<GetMessagesResponse> {
-    try {
-      let query = this.supabase.from('communication_messages').select(`
+    let query = this.supabase.from('communication_messages').select(`
           *,
           thread:communication_threads(*),
           attachments:communication_attachments(*)
         `);
 
-      // Apply filters
-      if (request.thread_id) {
-        query = query.eq('thread_id', request.thread_id);
-      }
-      if (request.patient_id) {
-        query = query.contains('recipient_ids', [request.patient_id]);
-      }
-      if (request.channel) {
-        query = query.eq('channel', request.channel);
-      }
-      if (request.status) {
-        query = query.eq('status', request.status);
-      }
-      if (request.type) {
-        query = query.eq('type', request.type);
-      }
-      if (request.date_from) {
-        query = query.gte('created_at', request.date_from);
-      }
-      if (request.date_to) {
-        query = query.lte('created_at', request.date_to);
-      }
-      if (request.search) {
-        query = query.or(
-          `content.ilike.%${request.search}%,subject.ilike.%${request.search}%`
-        );
-      }
+    // Apply filters
+    if (request.thread_id) {
+      query = query.eq('thread_id', request.thread_id);
+    }
+    if (request.patient_id) {
+      query = query.contains('recipient_ids', [request.patient_id]);
+    }
+    if (request.channel) {
+      query = query.eq('channel', request.channel);
+    }
+    if (request.status) {
+      query = query.eq('status', request.status);
+    }
+    if (request.type) {
+      query = query.eq('type', request.type);
+    }
+    if (request.date_from) {
+      query = query.gte('created_at', request.date_from);
+    }
+    if (request.date_to) {
+      query = query.lte('created_at', request.date_to);
+    }
+    if (request.search) {
+      query = query.or(
+        `content.ilike.%${request.search}%,subject.ilike.%${request.search}%`
+      );
+    }
 
-      // Apply sorting
-      const sortBy = request.sort_by || 'created_at';
-      const sortOrder = request.sort_order || 'desc';
-      query = query.order(sortBy, { ascending: sortOrder === 'asc' });
+    // Apply sorting
+    const sortBy = request.sort_by || 'created_at';
+    const sortOrder = request.sort_order || 'desc';
+    query = query.order(sortBy, { ascending: sortOrder === 'asc' });
 
-      // Apply pagination
-      const page = request.page || 1;
-      const limit = Math.min(request.limit || 50, 100); // Max 100 items per page
-      const offset = (page - 1) * limit;
+    // Apply pagination
+    const page = request.page || 1;
+    const limit = Math.min(request.limit || 50, 100); // Max 100 items per page
+    const offset = (page - 1) * limit;
 
-      query = query.range(offset, offset + limit - 1);
+    query = query.range(offset, offset + limit - 1);
 
-      const { data: messages, error, count } = await query;
+    const { data: messages, error, count } = await query;
 
-      if (error) {
-        throw error;
-      }
-
-      return {
-        messages: messages || [],
-        total: count || 0,
-        page,
-        limit,
-        has_more: (count || 0) > offset + limit,
-      };
-    } catch (error) {
-      console.error('Error getting messages:', error);
+    if (error) {
       throw error;
     }
+
+    return {
+      messages: messages || [],
+      total: count || 0,
+      page,
+      limit,
+      has_more: (count || 0) > offset + limit,
+    };
   }
 
   /**
@@ -216,11 +210,10 @@ export class CommunicationService {
     patientId?: string,
     includeArchived = false
   ): Promise<MessageThreadWithLastMessage[]> {
-    try {
-      let query = this.supabase
-        .from('communication_threads')
-        .select(
-          `
+    let query = this.supabase
+      .from('communication_threads')
+      .select(
+        `
           *,
           last_message:communication_messages(
             id, content, created_at, sender_type, status, type, channel
@@ -229,39 +222,35 @@ export class CommunicationService {
             user_id, role, name, avatar, joined_at, last_read_at
           )
         `
-        )
-        .order('last_message_at', { ascending: false });
+      )
+      .order('last_message_at', { ascending: false });
 
-      if (patientId) {
-        query = query.eq('patient_id', patientId);
-      }
+    if (patientId) {
+      query = query.eq('patient_id', patientId);
+    }
 
-      if (!includeArchived) {
-        query = query.neq('status', 'archived');
-      }
+    if (!includeArchived) {
+      query = query.neq('status', 'archived');
+    }
 
-      const { data: threads, error } = await query;
+    const { data: threads, error } = await query;
 
-      if (error) {
-        throw error;
-      }
-
-      // Calculate unread count for each thread
-      const threadsWithUnread = await Promise.all(
-        (threads || []).map(async (thread) => {
-          const unreadCount = await this.getUnreadMessageCount(thread.id);
-          return {
-            ...thread,
-            unread_count: unreadCount,
-          };
-        })
-      );
-
-      return threadsWithUnread;
-    } catch (error) {
-      console.error('Error getting message threads:', error);
+    if (error) {
       throw error;
     }
+
+    // Calculate unread count for each thread
+    const threadsWithUnread = await Promise.all(
+      (threads || []).map(async (thread) => {
+        const unreadCount = await this.getUnreadMessageCount(thread.id);
+        return {
+          ...thread,
+          unread_count: unreadCount,
+        };
+      })
+    );
+
+    return threadsWithUnread;
   }
 
   // ============================================================================
@@ -275,32 +264,27 @@ export class CommunicationService {
     category?: TemplateCategory,
     channel?: CommunicationChannel
   ): Promise<MessageTemplate[]> {
-    try {
-      let query = this.supabase
-        .from('communication_templates')
-        .select('*')
-        .eq('is_active', true)
-        .order('name');
+    let query = this.supabase
+      .from('communication_templates')
+      .select('*')
+      .eq('is_active', true)
+      .order('name');
 
-      if (category) {
-        query = query.eq('category', category);
-      }
+    if (category) {
+      query = query.eq('category', category);
+    }
 
-      if (channel) {
-        query = query.contains('channel', [channel]);
-      }
+    if (channel) {
+      query = query.contains('channel', [channel]);
+    }
 
-      const { data: templates, error } = await query;
+    const { data: templates, error } = await query;
 
-      if (error) {
-        throw error;
-      }
-
-      return templates || [];
-    } catch (error) {
-      console.error('Error getting message templates:', error);
+    if (error) {
       throw error;
     }
+
+    return templates || [];
   }
 
   /**
@@ -312,25 +296,20 @@ export class CommunicationService {
       'id' | 'created_at' | 'updated_at' | 'usage_count' | 'last_used_at'
     >
   ): Promise<MessageTemplate> {
-    try {
-      const { data, error } = await this.supabase
-        .from('communication_templates')
-        .insert({
-          ...template,
-          usage_count: 0,
-        })
-        .select()
-        .single();
+    const { data, error } = await this.supabase
+      .from('communication_templates')
+      .insert({
+        ...template,
+        usage_count: 0,
+      })
+      .select()
+      .single();
 
-      if (error) {
-        throw error;
-      }
-
-      return data;
-    } catch (error) {
-      console.error('Error creating message template:', error);
+    if (error) {
       throw error;
     }
+
+    return data;
   }
 
   /**
@@ -340,23 +319,18 @@ export class CommunicationService {
     id: string,
     updates: Partial<MessageTemplate>
   ): Promise<MessageTemplate> {
-    try {
-      const { data, error } = await this.supabase
-        .from('communication_templates')
-        .update(updates)
-        .eq('id', id)
-        .select()
-        .single();
+    const { data, error } = await this.supabase
+      .from('communication_templates')
+      .update(updates)
+      .eq('id', id)
+      .select()
+      .single();
 
-      if (error) {
-        throw error;
-      }
-
-      return data;
-    } catch (error) {
-      console.error('Error updating message template:', error);
+    if (error) {
       throw error;
     }
+
+    return data;
   }
 
   // ============================================================================
@@ -369,32 +343,27 @@ export class CommunicationService {
   async getCommunicationCampaigns(
     status?: CampaignStatus
   ): Promise<CommunicationCampaign[]> {
-    try {
-      let query = this.supabase
-        .from('communication_campaigns')
-        .select(
-          `
+    let query = this.supabase
+      .from('communication_campaigns')
+      .select(
+        `
           *,
           template:communication_templates(name, subject_template, content_template)
         `
-        )
-        .order('created_at', { ascending: false });
+      )
+      .order('created_at', { ascending: false });
 
-      if (status) {
-        query = query.eq('status', status);
-      }
+    if (status) {
+      query = query.eq('status', status);
+    }
 
-      const { data: campaigns, error } = await query;
+    const { data: campaigns, error } = await query;
 
-      if (error) {
-        throw error;
-      }
-
-      return campaigns || [];
-    } catch (error) {
-      console.error('Error getting communication campaigns:', error);
+    if (error) {
       throw error;
     }
+
+    return campaigns || [];
   }
 
   /**
@@ -415,37 +384,32 @@ export class CommunicationService {
       | 'unsubscribe_count'
     >
   ): Promise<CommunicationCampaign> {
-    try {
-      // Estimate audience size
-      const estimatedSize = await this.estimateAudienceSize(
-        campaign.target_audience
-      );
+    // Estimate audience size
+    const estimatedSize = await this.estimateAudienceSize(
+      campaign.target_audience
+    );
 
-      const { data, error } = await this.supabase
-        .from('communication_campaigns')
-        .insert({
-          ...campaign,
-          total_recipients: estimatedSize,
-          sent_count: 0,
-          delivered_count: 0,
-          read_count: 0,
-          failed_count: 0,
-          response_count: 0,
-          unsubscribe_count: 0,
-          metrics: {},
-        })
-        .select()
-        .single();
+    const { data, error } = await this.supabase
+      .from('communication_campaigns')
+      .insert({
+        ...campaign,
+        total_recipients: estimatedSize,
+        sent_count: 0,
+        delivered_count: 0,
+        read_count: 0,
+        failed_count: 0,
+        response_count: 0,
+        unsubscribe_count: 0,
+        metrics: {},
+      })
+      .select()
+      .single();
 
-      if (error) {
-        throw error;
-      }
-
-      return data;
-    } catch (error) {
-      console.error('Error creating communication campaign:', error);
+    if (error) {
       throw error;
     }
+
+    return data;
   }
 
   /**
@@ -491,7 +455,6 @@ export class CommunicationService {
         scheduled_at: campaign.scheduled_at,
       };
     } catch (error) {
-      console.error('Error executing campaign:', error);
       return {
         success: false,
         execution_id: '',
@@ -536,8 +499,7 @@ export class CommunicationService {
       }
 
       return true;
-    } catch (error) {
-      console.error('Error checking patient consent:', error);
+    } catch (_error) {
       return false;
     }
   }
@@ -548,25 +510,20 @@ export class CommunicationService {
   async updatePatientConsent(
     consent: Omit<CommunicationConsent, 'id' | 'created_at' | 'updated_at'>
   ): Promise<CommunicationConsent> {
-    try {
-      const { data, error } = await this.supabase
-        .from('communication_consent')
-        .upsert(consent, {
-          onConflict: 'patient_id,channel',
-          ignoreDuplicates: false,
-        })
-        .select()
-        .single();
+    const { data, error } = await this.supabase
+      .from('communication_consent')
+      .upsert(consent, {
+        onConflict: 'patient_id,channel',
+        ignoreDuplicates: false,
+      })
+      .select()
+      .single();
 
-      if (error) {
-        throw error;
-      }
-
-      return data;
-    } catch (error) {
-      console.error('Error updating patient consent:', error);
+    if (error) {
       throw error;
     }
+
+    return data;
   }
 
   /**
@@ -587,8 +544,7 @@ export class CommunicationService {
       }
 
       return preferences;
-    } catch (error) {
-      console.error('Error getting patient preferences:', error);
+    } catch (_error) {
       return null;
     }
   }
@@ -603,75 +559,64 @@ export class CommunicationService {
   async getCommunicationStats(
     period: 'today' | 'week' | 'month' | 'quarter' | 'year'
   ): Promise<CommunicationStats> {
-    try {
-      const dateRange = this.getDateRange(period);
+    const dateRange = this.getDateRange(period);
 
-      // Get basic message counts
-      const { data: messageStats, error: statsError } = await this.supabase
-        .from('communication_messages')
-        .select('channel, type, status, created_at')
-        .gte('created_at', dateRange.from)
-        .lte('created_at', dateRange.to);
+    // Get basic message counts
+    const { data: messageStats, error: statsError } = await this.supabase
+      .from('communication_messages')
+      .select('channel, type, status, created_at')
+      .gte('created_at', dateRange.from)
+      .lte('created_at', dateRange.to);
 
-      if (statsError) {
-        throw statsError;
-      }
-
-      // Process statistics
-      const stats: CommunicationStats = {
-        period,
-        total_messages: messageStats?.length || 0,
-        messages_by_channel: this.groupByChannel(messageStats || []),
-        messages_by_type: this.groupByType(messageStats || []),
-        average_response_time:
-          await this.calculateAverageResponseTime(dateRange),
-        automation_success_rate:
-          await this.calculateAutomationSuccessRate(dateRange),
-        top_templates: await this.getTopTemplates(dateRange),
-        peak_hours: await this.getPeakHours(dateRange),
-        staff_performance: await this.getStaffPerformance(dateRange),
-      };
-
-      return stats;
-    } catch (error) {
-      console.error('Error getting communication stats:', error);
-      throw error;
+    if (statsError) {
+      throw statsError;
     }
+
+    // Process statistics
+    const stats: CommunicationStats = {
+      period,
+      total_messages: messageStats?.length || 0,
+      messages_by_channel: this.groupByChannel(messageStats || []),
+      messages_by_type: this.groupByType(messageStats || []),
+      average_response_time: await this.calculateAverageResponseTime(dateRange),
+      automation_success_rate:
+        await this.calculateAutomationSuccessRate(dateRange),
+      top_templates: await this.getTopTemplates(dateRange),
+      peak_hours: await this.getPeakHours(dateRange),
+      staff_performance: await this.getStaffPerformance(dateRange),
+    };
+
+    return stats;
   }
 
   /**
    * Get communication dashboard data
    */
   async getCommunicationDashboard(): Promise<CommunicationDashboardData> {
-    try {
-      const [
-        stats,
-        recentMessages,
-        activeCampaigns,
-        pendingApprovals,
-        failedMessages,
-        topPerformers,
-      ] = await Promise.all([
-        this.getCommunicationStats('today'),
-        this.getRecentMessages(10),
-        this.getCommunicationCampaigns('running'),
-        this.getPendingApprovals(),
-        this.getFailedMessages(),
-        this.getTopPerformers(),
-      ]);
+    const [
+      stats,
+      recentMessages,
+      activeCampaigns,
+      pendingApprovals,
+      failedMessages,
+      topPerformers,
+    ] = await Promise.all([
+      this.getCommunicationStats('today'),
+      this.getRecentMessages(10),
+      this.getCommunicationCampaigns('running'),
+      this.getPendingApprovals(),
+      this.getFailedMessages(),
+      this.getTopPerformers(),
+    ]);
 
-      return {
-        stats,
-        recent_messages: recentMessages,
-        active_campaigns: activeCampaigns,
-        pending_approvals: pendingApprovals,
-        failed_messages: failedMessages,
-        top_performers: topPerformers,
-      };
-    } catch (error) {
-      console.error('Error getting communication dashboard:', error);
-      throw error;
-    }
+    return {
+      stats,
+      recent_messages: recentMessages,
+      active_campaigns: activeCampaigns,
+      pending_approvals: pendingApprovals,
+      failed_messages: failedMessages,
+      top_performers: topPerformers,
+    };
   }
 
   // ============================================================================

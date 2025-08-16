@@ -78,7 +78,7 @@ export enum ConsentStatus {
 /**
  * Consent Record Interface
  */
-export interface ConsentRecord {
+export type ConsentRecord = {
   id: string;
   userId: string;
   dataType: LGPDDataType;
@@ -103,12 +103,12 @@ export interface ConsentRecord {
   auditTrail: ConsentAuditEntry[];
   createdAt: Date;
   updatedAt: Date;
-}
+};
 
 /**
  * Consent Audit Entry
  */
-export interface ConsentAuditEntry {
+export type ConsentAuditEntry = {
   id: string;
   action: 'given' | 'withdrawn' | 'renewed' | 'expired' | 'modified';
   timestamp: Date;
@@ -116,12 +116,12 @@ export interface ConsentAuditEntry {
   ipAddress: string;
   userAgent: string;
   metadata?: Record<string, any>;
-}
+};
 
 /**
  * Consent Configuration
  */
-export interface ConsentConfiguration {
+export type ConsentConfiguration = {
   dataType: LGPDDataType;
   purpose: LGPDProcessingPurpose;
   legalBasis: LGPDLegalBasis;
@@ -150,12 +150,12 @@ export interface ConsentConfiguration {
     logic: string;
     significance: string;
   };
-}
+};
 
 /**
  * Consent Request Interface
  */
-export interface ConsentRequest {
+export type ConsentRequest = {
   userId: string;
   consents: {
     dataType: LGPDDataType;
@@ -170,12 +170,12 @@ export interface ConsentRequest {
     interface: string;
     timestamp: Date;
   };
-}
+};
 
 /**
  * Consent Analytics Interface
  */
-export interface ConsentAnalytics {
+export type ConsentAnalytics = {
   totalConsents: number;
   consentsByType: Record<LGPDDataType, number>;
   consentsByPurpose: Record<LGPDProcessingPurpose, number>;
@@ -194,12 +194,12 @@ export interface ConsentAnalytics {
     issues: string[];
     recommendations: string[];
   };
-}
+};
 
 /**
  * Consent Events
  */
-export interface ConsentEvents {
+export type ConsentEvents = {
   'consent:given': { userId: string; consent: ConsentRecord };
   'consent:withdrawn': {
     userId: string;
@@ -219,7 +219,7 @@ export interface ConsentEvents {
     action: string;
     details: Record<string, any>;
   };
-}
+};
 
 // ============================================================================
 // CONSENT MANAGEMENT SYSTEM

@@ -316,20 +316,17 @@ export class CampaignManager {
   }
 
   // Mock delivery methods (in production, integrate with actual services)
-  private async sendEmail(userId: string, content: any): Promise<void> {
-    console.log(`Sending email to user ${userId}:`, content);
-  }
+  private async sendEmail(_userId: string, _content: any): Promise<void> {}
 
-  private async showInAppMessage(userId: string, content: any): Promise<void> {
-    console.log(`Showing in-app message to user ${userId}:`, content);
-  }
+  private async showInAppMessage(
+    _userId: string,
+    _content: any
+  ): Promise<void> {}
 
   private async sendPushNotification(
-    userId: string,
-    content: any
-  ): Promise<void> {
-    console.log(`Sending push notification to user ${userId}:`, content);
-  }
+    _userId: string,
+    _content: any
+  ): Promise<void> {}
 
   private async trackCampaignDelivery(
     campaignId: string,
@@ -356,8 +353,6 @@ export class CampaignManager {
         await this.executeCampaign(campaign.id, trial);
       }
     } else if (campaign.schedule.type === 'trigger_based') {
-      // Set up triggers (in production, use event system)
-      console.log(`Setting up triggers for campaign ${campaign.id}`);
     }
   }
 

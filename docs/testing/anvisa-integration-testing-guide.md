@@ -1,6 +1,7 @@
 # ANVISA Integration Testing Guide
 
 ## Overview
+
 This guide provides comprehensive testing procedures for ANVISA integration and compliance features in the NeonPro aesthetic clinic management system.
 
 ## Test Categories
@@ -8,14 +9,15 @@ This guide provides comprehensive testing procedures for ANVISA integration and 
 ### 1. Database Schema Testing
 
 #### 1.1 ANVISA Products Table
+
 ```sql
 -- Test product registration
 INSERT INTO anvisa_products (
-  clinic_id, 
-  name, 
-  registration_number, 
-  manufacturer, 
-  category, 
+  clinic_id,
+  name,
+  registration_number,
+  manufacturer,
+  category,
   description,
   expiry_date,
   compliance_score
@@ -35,6 +37,7 @@ SELECT * FROM anvisa_products WHERE clinic_id = 'clinic-123';
 ```
 
 #### 1.2 ANVISA Professionals Table
+
 ```sql
 -- Test professional registration
 INSERT INTO anvisa_professionals (
@@ -63,6 +66,7 @@ INSERT INTO anvisa_professionals (
 ### 2. API Route Testing
 
 #### 2.1 Products API Testing
+
 ```bash
 # Test GET products
 curl -X GET "http://localhost:3000/api/anvisa/products?clinic_id=clinic-123" \
@@ -90,6 +94,7 @@ curl -X GET "http://localhost:3000/api/anvisa/products/PRODUCT_ID" \
 ```
 
 #### 2.2 Professionals API Testing
+
 ```bash
 # Test GET professionals
 curl -X GET "http://localhost:3000/api/anvisa/professionals?clinic_id=clinic-123" \
@@ -107,12 +112,14 @@ curl -X GET "http://localhost:3000/api/anvisa/professionals?clinic_id=clinic-123
 ### 3. Frontend Component Testing
 
 #### 3.1 ANVISA Dashboard Testing
+
 1. **Load Dashboard**: Navigate to `/dashboard/anvisa`
 2. **Verify Metrics Display**: Check if compliance score, product count, professional count display correctly
 3. **Test Tab Navigation**: Switch between Overview, Products, Professionals, Procedures, Alerts tabs
 4. **Check Real-time Updates**: Verify data refreshes when clicking "Atualizar Dados"
 
 #### 3.2 Product Registration Testing
+
 1. **Form Validation**: Try submitting empty form, verify required field validation
 2. **Successful Registration**: Fill all fields and submit, verify success message
 3. **Product List Display**: Check if new product appears in the grid
@@ -122,6 +129,7 @@ curl -X GET "http://localhost:3000/api/anvisa/professionals?clinic_id=clinic-123
 ### 4. Security Testing
 
 #### 4.1 Authentication Testing
+
 ```bash
 # Test without authentication
 curl -X GET "http://localhost:3000/api/anvisa/products?clinic_id=clinic-123"

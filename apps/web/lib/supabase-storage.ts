@@ -157,8 +157,7 @@ export class SupabaseStorageManager {
 
       const consents = data?.lgpd_consents as any;
       return consents?.photo_consent === true;
-    } catch (error) {
-      console.error('Erro ao verificar consentimento LGPD:', error);
+    } catch (_error) {
       return false;
     }
   }
@@ -206,7 +205,6 @@ export class SupabaseStorageManager {
           });
 
       if (uploadError) {
-        console.error('Storage upload error:', uploadError);
         return { success: false, error: 'Erro no upload para storage' };
       }
 
@@ -230,8 +228,6 @@ export class SupabaseStorageManager {
         await this.supabase.storage
           .from(this.BUCKET_NAME)
           .remove([uploadData.path]);
-
-        console.error('Database insert error:', dbError);
         return { success: false, error: 'Erro ao salvar metadados' };
       }
 
@@ -249,7 +245,6 @@ export class SupabaseStorageManager {
         },
       };
     } catch (error) {
-      console.error('Upload error:', error);
       return {
         success: false,
         error:
@@ -371,7 +366,6 @@ export class SupabaseStorageManager {
         },
       };
     } catch (error) {
-      console.error('Error fetching photos:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Erro ao buscar fotos',
@@ -403,7 +397,6 @@ export class SupabaseStorageManager {
         .remove([photo.file_path]);
 
       if (storageError) {
-        console.error('Storage deletion error:', storageError);
         // Continue with database deletion even if storage fails
       }
 
@@ -419,7 +412,6 @@ export class SupabaseStorageManager {
 
       return { success: true };
     } catch (error) {
-      console.error('Delete error:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Erro ao deletar foto',
@@ -444,7 +436,6 @@ export class SupabaseStorageManager {
 
       return { success: true, blob: data };
     } catch (error) {
-      console.error('Download error:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Erro ao baixar foto',
@@ -470,7 +461,6 @@ export class SupabaseStorageManager {
 
       return { success: true, url: data.signedUrl };
     } catch (error) {
-      console.error('Signed URL error:', error);
       return {
         success: false,
         error:
@@ -513,7 +503,6 @@ export class SupabaseStorageManager {
         },
       };
     } catch (error) {
-      console.error('Stats error:', error);
       return {
         success: false,
         error:
@@ -576,7 +565,6 @@ export class SupabaseStorageManager {
         .remove(filePaths);
 
       if (storageError) {
-        console.error('Bulk storage deletion error:', storageError);
         // Continue with database deletion
       }
 
@@ -593,7 +581,6 @@ export class SupabaseStorageManager {
 
       return { success: true, deletedCount: photos.length };
     } catch (error) {
-      console.error('Bulk delete error:', error);
       return {
         success: false,
         deletedCount: 0,

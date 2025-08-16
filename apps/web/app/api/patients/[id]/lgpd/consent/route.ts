@@ -49,7 +49,6 @@ export async function POST(
       .single();
 
     if (error) {
-      console.error('Consent recording error:', error);
       return NextResponse.json(
         { error: 'Failed to record consent' },
         { status: 500 }
@@ -76,8 +75,6 @@ export async function POST(
         { status: 400 }
       );
     }
-
-    console.error('Consent POST error:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -126,8 +123,7 @@ export async function PATCH(
       message: 'Consent updated successfully',
       consent,
     });
-  } catch (error) {
-    console.error('Consent PATCH error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

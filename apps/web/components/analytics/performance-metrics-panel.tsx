@@ -62,14 +62,14 @@ import {
 } from '@/lib/analytics';
 
 // Types
-interface PerformanceMetricsPanelProps {
+type PerformanceMetricsPanelProps = {
   data: RealtimePerformanceData | null;
   isLoading: boolean;
   timeframe: AnalyticsTimeframe;
   clinicId: string;
-}
+};
 
-interface MetricCardProps {
+type MetricCardProps = {
   title: string;
   value: number;
   unit: string;
@@ -77,9 +77,9 @@ interface MetricCardProps {
   status: 'optimal' | 'good' | 'warning' | 'critical';
   trend?: number;
   description?: string;
-}
+};
 
-interface PerformanceChartData {
+type PerformanceChartData = {
   timestamp: string;
   cpu: number;
   memory: number;
@@ -88,7 +88,7 @@ interface PerformanceChartData {
   response_time: number;
   throughput: number;
   error_rate: number;
-}
+};
 
 export function PerformanceMetricsPanel({
   data,
@@ -121,8 +121,7 @@ export function PerformanceMetricsPanel({
       );
 
       setHistoricalData(history);
-    } catch (error) {
-      console.error('Failed to load historical performance data:', error);
+    } catch (_error) {
     } finally {
       setIsLoadingHistory(false);
     }

@@ -60,7 +60,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { cn } from '@/lib/utils';
 
 // Types
-interface Patient {
+type Patient = {
   id: string;
   name: string;
   email: string;
@@ -87,9 +87,9 @@ interface Patient {
     communication: 'email' | 'phone' | 'sms';
     language: string;
   };
-}
+};
 
-interface MedicalRecord {
+type MedicalRecord = {
   id: string;
   date: string;
   type: 'consultation' | 'procedure' | 'follow-up' | 'emergency';
@@ -99,9 +99,9 @@ interface MedicalRecord {
   attachments?: string[];
   medications?: string[];
   allergies?: string[];
-}
+};
 
-interface Treatment {
+type Treatment = {
   id: string;
   name: string;
   date: string;
@@ -112,9 +112,9 @@ interface Treatment {
   afterPhotos?: string[];
   notes: string;
   followUpDate?: string;
-}
+};
 
-interface Appointment {
+type Appointment = {
   id: string;
   patientId: string;
   date: string;
@@ -122,7 +122,7 @@ interface Appointment {
   type: string;
   status: 'scheduled' | 'completed' | 'cancelled' | 'no-show';
   notes?: string;
-}
+};
 
 // Sample data
 const samplePatients: Patient[] = [

@@ -2,9 +2,9 @@ import { type NextRequest, NextResponse } from 'next/server';
 import { patientSegmentationService } from '@/app/lib/services/patient-segmentation-service';
 import { createClient } from '@/app/utils/supabase/server';
 
-interface RouteParams {
+type RouteParams = {
   id: string;
-}
+};
 
 export async function GET(
   _request: NextRequest,
@@ -31,8 +31,7 @@ export async function GET(
       data: analysis,
       total: analysis.length,
     });
-  } catch (error) {
-    console.error('Error fetching patient analysis:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to fetch patient analysis' },
       { status: 500 }
@@ -64,8 +63,7 @@ export async function POST(
       success: true,
       message: 'Segment memberships updated successfully',
     });
-  } catch (error) {
-    console.error('Error updating segment memberships:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to update segment memberships' },
       { status: 500 }

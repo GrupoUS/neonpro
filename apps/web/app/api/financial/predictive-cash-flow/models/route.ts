@@ -71,11 +71,7 @@ export async function GET(request: NextRequest) {
     }
 
     return NextResponse.json({ models: models || [] });
-  } catch (error) {
-    console.error(
-      'Error in GET /api/financial/predictive-cash-flow/models:',
-      error
-    );
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

@@ -47,8 +47,7 @@ export async function GET(request: NextRequest) {
       success: true,
       data: { flags: flags || [] },
     });
-  } catch (error) {
-    console.error('Error fetching feature flags:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to fetch feature flags' },
       { status: 500 }
@@ -127,8 +126,7 @@ export async function POST(request: NextRequest) {
       data: { flag },
       message: 'Feature flag created successfully',
     });
-  } catch (error) {
-    console.error('Error creating feature flag:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to create feature flag' },
       { status: 500 }

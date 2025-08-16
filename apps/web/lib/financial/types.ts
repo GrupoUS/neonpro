@@ -11,13 +11,13 @@
  */
 
 // Base Financial Types
-export interface Money {
+export type Money = {
   amount: number;
   currency: 'BRL' | 'USD' | 'EUR';
   formatted?: string;
-}
+};
 
-export interface Address {
+export type Address = {
   street: string;
   number: string;
   complement?: string;
@@ -26,17 +26,17 @@ export interface Address {
   state: string;
   zipCode: string;
   country: string;
-}
+};
 
-export interface TaxDocument {
+export type TaxDocument = {
   type: 'CPF' | 'CNPJ' | 'RG' | 'IE';
   number: string;
   issuingBody?: string;
   issuedAt?: Date;
-}
+};
 
 // Brazilian Tax and Compliance Types
-export interface BrazilianTaxInfo {
+export type BrazilianTaxInfo = {
   municipalTax: {
     rate: number;
     amount: number;
@@ -54,9 +54,9 @@ export interface BrazilianTaxInfo {
   };
   totalTaxes: number;
   taxRegime: 'simples_nacional' | 'lucro_presumido' | 'lucro_real';
-}
+};
 
-export interface NFSeData {
+export type NFSeData = {
   number: string;
   verificationCode: string;
   accessKey: string;
@@ -90,10 +90,10 @@ export interface NFSeData {
   xmlContent?: string;
   pdfUrl?: string;
   errors?: string[];
-}
+};
 
 // Payment Method Types
-export interface PIXPayment {
+export type PIXPayment = {
   type: 'pix';
   pixKey: string;
   pixCode: string;
@@ -103,9 +103,9 @@ export interface PIXPayment {
   description: string;
   txId?: string;
   endToEndId?: string;
-}
+};
 
-export interface BoletoPayment {
+export type BoletoPayment = {
   type: 'boleto';
   boletoCode: string;
   barCode: string;
@@ -117,9 +117,9 @@ export interface BoletoPayment {
   bankCode: string;
   agencyCode: string;
   accountCode: string;
-}
+};
 
-export interface CreditCardPayment {
+export type CreditCardPayment = {
   type: 'credit_card';
   cardToken: string;
   installments: number;
@@ -131,27 +131,27 @@ export interface CreditCardPayment {
   holderName: string;
   expiryMonth: number;
   expiryYear: number;
-}
+};
 
-export interface DebitCardPayment {
+export type DebitCardPayment = {
   type: 'debit_card';
   cardToken: string;
   amount: number;
   brand: 'visa' | 'mastercard' | 'elo';
   lastFourDigits: string;
   holderName: string;
-}
+};
 
-export interface CashPayment {
+export type CashPayment = {
   type: 'cash';
   amount: number;
   receivedAmount?: number;
   changeAmount?: number;
   receivedBy: string;
   receivedAt: Date;
-}
+};
 
-export interface InsurancePayment {
+export type InsurancePayment = {
   type: 'insurance';
   insuranceCompany: string;
   policyNumber: string;
@@ -160,7 +160,7 @@ export interface InsurancePayment {
   coveredAmount: number;
   patientResponsibility: number;
   preAuthRequired: boolean;
-}
+};
 
 export type PaymentMethod =
   | PIXPayment
@@ -171,7 +171,7 @@ export type PaymentMethod =
   | InsurancePayment;
 
 // Payment Gateway Types
-export interface PaymentGatewayConfig {
+export type PaymentGatewayConfig = {
   name: string;
   type: 'mercado_pago' | 'pagseguro' | 'stripe' | 'cielo' | 'rede' | 'getnet';
   credentials: {
@@ -192,9 +192,9 @@ export interface PaymentGatewayConfig {
   };
   webhookUrl?: string;
   isActive: boolean;
-}
+};
 
-export interface PaymentGatewayResponse {
+export type PaymentGatewayResponse = {
   success: boolean;
   transactionId?: string;
   paymentId?: string;
@@ -207,10 +207,10 @@ export interface PaymentGatewayResponse {
   errorCode?: string;
   errorMessage?: string;
   processedAt: Date;
-}
+};
 
 // Invoice Types
-export interface InvoiceItem {
+export type InvoiceItem = {
   id: string;
   type: 'service' | 'product' | 'procedure' | 'consultation' | 'exam';
   code?: string;
@@ -228,18 +228,18 @@ export interface InvoiceItem {
     duration?: number;
     location?: string;
   };
-}
+};
 
-export interface InvoiceDiscount {
+export type InvoiceDiscount = {
   type: 'percentage' | 'fixed';
   value: number;
   reason: string;
   appliedBy: string;
   appliedAt: Date;
   maxAmount?: number;
-}
+};
 
-export interface InvoicePaymentTerms {
+export type InvoicePaymentTerms = {
   dueDate: Date;
   paymentMethods: PaymentMethod['type'][];
   installments?: {
@@ -257,9 +257,9 @@ export interface InvoicePaymentTerms {
     percentage: number;
     validUntil: Date;
   };
-}
+};
 
-export interface InvoiceStatus {
+export type InvoiceStatus = {
   current:
     | 'draft'
     | 'pending'
@@ -282,10 +282,10 @@ export interface InvoiceStatus {
     overdueAmount: number;
     lastPaymentDate?: Date;
   };
-}
+};
 
 // Financial Analytics Types
-export interface RevenueMetrics {
+export type RevenueMetrics = {
   period: {
     startDate: Date;
     endDate: Date;
@@ -300,9 +300,9 @@ export interface RevenueMetrics {
   revenueByProfessional: Record<string, number>;
   monthlyGrowth: number;
   yearOverYearGrowth: number;
-}
+};
 
-export interface PaymentMetrics {
+export type PaymentMetrics = {
   period: {
     startDate: Date;
     endDate: Date;
@@ -335,9 +335,9 @@ export interface PaymentMetrics {
     amount: number;
     rate: number;
   };
-}
+};
 
-export interface CollectionMetrics {
+export type CollectionMetrics = {
   period: {
     startDate: Date;
     endDate: Date;
@@ -356,10 +356,10 @@ export interface CollectionMetrics {
     over90days: number;
   };
   collectionEfficiency: number;
-}
+};
 
 // Compliance and Audit Types
-export interface ComplianceCheck {
+export type ComplianceCheck = {
   id: string;
   type:
     | 'tax_calculation'
@@ -378,9 +378,9 @@ export interface ComplianceCheck {
   }[];
   overallScore: number;
   nextCheckDue: Date;
-}
+};
 
-export interface AuditTrail {
+export type AuditTrail = {
   id: string;
   entityType: 'invoice' | 'payment' | 'refund' | 'adjustment';
   entityId: string;
@@ -396,10 +396,10 @@ export interface AuditTrail {
   ipAddress?: string;
   userAgent?: string;
   sessionId?: string;
-}
+};
 
 // Reporting Types
-export interface FinancialReportConfig {
+export type FinancialReportConfig = {
   id: string;
   name: string;
   description: string;
@@ -444,9 +444,9 @@ export interface FinancialReportConfig {
   createdBy: string;
   createdAt: Date;
   lastGenerated?: Date;
-}
+};
 
-export interface FinancialReportData {
+export type FinancialReportData = {
   id: string;
   configId: string;
   generatedAt: Date;
@@ -473,10 +473,10 @@ export interface FinancialReportData {
   }[];
   downloadUrl?: string;
   expiresAt?: Date;
-}
+};
 
 // Integration Types
-export interface BankIntegration {
+export type BankIntegration = {
   bankCode: string;
   bankName: string;
   accountType: 'checking' | 'savings';
@@ -498,9 +498,9 @@ export interface BankIntegration {
     | 'payments'
     | 'transfers'
   )[];
-}
+};
 
-export interface BankTransaction {
+export type BankTransaction = {
   id: string;
   bankTransactionId: string;
   accountId: string;
@@ -515,10 +515,10 @@ export interface BankTransaction {
   reconciled: boolean;
   reconciledAt?: Date;
   reconciledBy?: string;
-}
+};
 
 // Error and Validation Types
-export interface FinancialError {
+export type FinancialError = {
   code: string;
   message: string;
   field?: string;
@@ -532,18 +532,18 @@ export interface FinancialError {
     userId?: string;
     operation?: string;
   };
-}
+};
 
-export interface ValidationRule {
+export type ValidationRule = {
   field: string;
   type: 'required' | 'format' | 'range' | 'custom';
   message: string;
   validator?: (value: any) => boolean;
   parameters?: any;
-}
+};
 
 // Configuration Types
-export interface FinancialSystemSettings {
+export type FinancialSystemSettings = {
   general: {
     defaultCurrency: 'BRL' | 'USD' | 'EUR';
     timezone: string;
@@ -590,7 +590,7 @@ export interface FinancialSystemSettings {
       daysAfter: number[];
     };
   };
-}
+};
 
 // Export all types for easy importing
 export type {

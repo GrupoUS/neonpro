@@ -29,7 +29,7 @@ import { cn } from '@/lib/utils';
  * - Accessibility compliance (WCAG 2.1 AA)
  */
 
-interface RealTimeAvailabilityProps {
+type RealTimeAvailabilityProps = {
   professionalId?: string;
   serviceId: string;
   dateRange: {
@@ -42,7 +42,7 @@ interface RealTimeAvailabilityProps {
   className?: string;
   showAlternatives?: boolean;
   maxAlternatives?: number;
-}
+};
 
 export function RealTimeAvailability({
   professionalId,
@@ -130,8 +130,7 @@ export function RealTimeAvailability({
           }
           setSelectedSlot(null);
         }
-      } catch (error) {
-        console.error('Error reserving slot:', error);
+      } catch (_error) {
         toast.error('Erro ao reservar horário', {
           description: 'Tente novamente em alguns instantes',
         });

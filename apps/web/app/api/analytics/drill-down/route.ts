@@ -136,8 +136,6 @@ export async function POST(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('Error performing drill-down analysis:', error);
-
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {
@@ -210,7 +208,6 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('Error getting drill-down dimensions:', error);
     return NextResponse.json(
       {
         success: false,

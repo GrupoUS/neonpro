@@ -19,7 +19,7 @@ import type {
   ForecastValidationMetrics,
 } from './demand-forecasting';
 
-export interface ModelTrainingConfig {
+export type ModelTrainingConfig = {
   model_type: ForecastModel['model_type'];
   training_params: {
     training_period_days: number;
@@ -45,9 +45,9 @@ export interface ModelTrainingConfig {
     patience: number;
     min_delta: number;
   };
-}
+};
 
-export interface ModelPerformanceMetrics {
+export type ModelPerformanceMetrics = {
   model_id: string;
   evaluation_date: string;
   training_metrics: ForecastValidationMetrics;
@@ -59,9 +59,9 @@ export interface ModelPerformanceMetrics {
   inference_time_ms: number;
   stability_score: number;
   drift_score: number;
-}
+};
 
-export interface ModelComparisonResult {
+export type ModelComparisonResult = {
   champion_model: string;
   challenger_model: string;
   comparison_metrics: {
@@ -73,9 +73,9 @@ export interface ModelComparisonResult {
   recommendation: 'deploy' | 'retrain' | 'keep_current';
   confidence_level: number;
   test_period: { start: string; end: string };
-}
+};
 
-export interface ModelTrainingJob {
+export type ModelTrainingJob = {
   id: string;
   clinic_id: string;
   model_type: ForecastModel['model_type'];
@@ -88,9 +88,9 @@ export interface ModelTrainingJob {
   error_message?: string;
   result_model_id?: string;
   performance_metrics?: ModelPerformanceMetrics;
-}
+};
 
-export interface HyperparameterSpace {
+export type HyperparameterSpace = {
   model_type: ForecastModel['model_type'];
   parameters: Record<
     string,
@@ -103,7 +103,7 @@ export interface HyperparameterSpace {
       default: any;
     }
   >;
-}
+};
 
 /**
  * Model Training and Management Class
@@ -125,8 +125,7 @@ export class ForecastModelManager {
 
       // Schedule periodic retraining if needed
       await this.schedulePeriodicRetraining(clinicId);
-    } catch (error) {
-      console.error('Failed to initialize model manager:', error);
+    } catch (_error) {
       throw new Error('Model manager initialization failed');
     }
   }
@@ -139,30 +138,25 @@ export class ForecastModelManager {
     config: ModelTrainingConfig,
     serviceId?: string
   ): Promise<string> {
-    try {
-      // Create training job
-      const job: ModelTrainingJob = {
-        id: crypto.randomUUID(),
-        clinic_id: clinicId,
-        model_type: config.model_type,
-        service_id: serviceId,
-        config,
-        status: 'pending',
-        progress: 0,
-      };
+    // Create training job
+    const job: ModelTrainingJob = {
+      id: crypto.randomUUID(),
+      clinic_id: clinicId,
+      model_type: config.model_type,
+      service_id: serviceId,
+      config,
+      status: 'pending',
+      progress: 0,
+    };
 
-      // Store job
-      await this.storeTrainingJob(job);
-      this.trainingJobs.set(job.id, job);
+    // Store job
+    await this.storeTrainingJob(job);
+    this.trainingJobs.set(job.id, job);
 
-      // Start training process
-      this.startTrainingProcess(job);
+    // Start training process
+    this.startTrainingProcess(job);
 
-      return job.id;
-    } catch (error) {
-      console.error('Failed to start model training:', error);
-      throw error;
-    }
+    return job.id;
   }
 
   /**
@@ -188,8 +182,7 @@ export class ForecastModelManager {
       }
 
       return job;
-    } catch (error) {
-      console.error('Failed to get training status:', error);
+    } catch (_error) {
       return null;
     }
   }
@@ -198,15 +191,10 @@ export class ForecastModelManager {
    * Cancel training job
    */
   async cancelTraining(jobId: string): Promise<void> {
-    try {
-      const job = this.trainingJobs.get(jobId);
-      if (job && job.status === 'running') {
-        job.status = 'cancelled';
-        await this.updateTrainingJob(job);
-      }
-    } catch (error) {
-      console.error('Failed to cancel training:', error);
-      throw error;
+    const job = this.trainingJobs.get(jobId);
+    if (job && job.status === 'running') {
+      job.status = 'cancelled';
+      await this.updateTrainingJob(job);
     }
   }
 
@@ -218,127 +206,117 @@ export class ForecastModelManager {
     challengerModelId: string,
     testPeriodDays = 30
   ): Promise<ModelComparisonResult> {
-    try {
-      // Load models
-      const [championModel, challengerModel] = await Promise.all([
-        this.loadModel(championModelId),
-        this.loadModel(challengerModelId),
-      ]);
+    // Load models
+    const [championModel, challengerModel] = await Promise.all([
+      this.loadModel(championModelId),
+      this.loadModel(challengerModelId),
+    ]);
 
-      if (!(championModel && challengerModel)) {
-        throw new Error('Models not found for comparison');
-      }
-
-      // Define test period
-      const endDate = new Date();
-      const startDate = new Date(endDate);
-      startDate.setDate(startDate.getDate() - testPeriodDays);
-
-      // Run comparison tests
-      const [championMetrics, challengerMetrics] = await Promise.all([
-        this.evaluateModelPerformance(championModel, startDate, endDate),
-        this.evaluateModelPerformance(challengerModel, startDate, endDate),
-      ]);
-
-      // Calculate improvements
-      const accuracyImprovement =
-        challengerMetrics.test_metrics.accuracy_percentage -
-        championMetrics.test_metrics.accuracy_percentage;
-
-      const speedImprovement =
-        ((championMetrics.inference_time_ms -
-          challengerMetrics.inference_time_ms) /
-          championMetrics.inference_time_ms) *
-        100;
-
-      const stabilityImprovement =
-        challengerMetrics.stability_score - championMetrics.stability_score;
-
-      // Calculate overall score
-      const overallScore =
-        accuracyImprovement * 0.5 +
-        speedImprovement * 0.3 +
-        stabilityImprovement * 0.2;
-
-      // Make recommendation
-      let recommendation: ModelComparisonResult['recommendation'] =
-        'keep_current';
-      let confidenceLevel = 0.5;
-
-      if (overallScore > 5 && accuracyImprovement > 2) {
-        recommendation = 'deploy';
-        confidenceLevel = 0.8;
-      } else if (overallScore < -5 || accuracyImprovement < -3) {
-        recommendation = 'retrain';
-        confidenceLevel = 0.7;
-      }
-
-      const result: ModelComparisonResult = {
-        champion_model: championModelId,
-        challenger_model: challengerModelId,
-        comparison_metrics: {
-          accuracy_improvement: accuracyImprovement,
-          speed_improvement: speedImprovement,
-          stability_improvement: stabilityImprovement,
-          overall_score: overallScore,
-        },
-        recommendation,
-        confidence_level: confidenceLevel,
-        test_period: {
-          start: startDate.toISOString(),
-          end: endDate.toISOString(),
-        },
-      };
-
-      // Store comparison result
-      await this.storeComparisonResult(result);
-
-      return result;
-    } catch (error) {
-      console.error('Failed to compare models:', error);
-      throw error;
+    if (!(championModel && challengerModel)) {
+      throw new Error('Models not found for comparison');
     }
+
+    // Define test period
+    const endDate = new Date();
+    const startDate = new Date(endDate);
+    startDate.setDate(startDate.getDate() - testPeriodDays);
+
+    // Run comparison tests
+    const [championMetrics, challengerMetrics] = await Promise.all([
+      this.evaluateModelPerformance(championModel, startDate, endDate),
+      this.evaluateModelPerformance(challengerModel, startDate, endDate),
+    ]);
+
+    // Calculate improvements
+    const accuracyImprovement =
+      challengerMetrics.test_metrics.accuracy_percentage -
+      championMetrics.test_metrics.accuracy_percentage;
+
+    const speedImprovement =
+      ((championMetrics.inference_time_ms -
+        challengerMetrics.inference_time_ms) /
+        championMetrics.inference_time_ms) *
+      100;
+
+    const stabilityImprovement =
+      challengerMetrics.stability_score - championMetrics.stability_score;
+
+    // Calculate overall score
+    const overallScore =
+      accuracyImprovement * 0.5 +
+      speedImprovement * 0.3 +
+      stabilityImprovement * 0.2;
+
+    // Make recommendation
+    let recommendation: ModelComparisonResult['recommendation'] =
+      'keep_current';
+    let confidenceLevel = 0.5;
+
+    if (overallScore > 5 && accuracyImprovement > 2) {
+      recommendation = 'deploy';
+      confidenceLevel = 0.8;
+    } else if (overallScore < -5 || accuracyImprovement < -3) {
+      recommendation = 'retrain';
+      confidenceLevel = 0.7;
+    }
+
+    const result: ModelComparisonResult = {
+      champion_model: championModelId,
+      challenger_model: challengerModelId,
+      comparison_metrics: {
+        accuracy_improvement: accuracyImprovement,
+        speed_improvement: speedImprovement,
+        stability_improvement: stabilityImprovement,
+        overall_score: overallScore,
+      },
+      recommendation,
+      confidence_level: confidenceLevel,
+      test_period: {
+        start: startDate.toISOString(),
+        end: endDate.toISOString(),
+      },
+    };
+
+    // Store comparison result
+    await this.storeComparisonResult(result);
+
+    return result;
   }
 
   /**
    * Deploy model to production
    */
   async deployModel(modelId: string, clinicId: string): Promise<void> {
-    try {
-      // Validate model exists and meets criteria
-      const model = await this.loadModel(modelId);
-      if (!model) {
-        throw new Error('Model not found');
-      }
-
-      if (model.accuracy_score < this.ACCURACY_THRESHOLD) {
-        throw new Error(
-          `Model accuracy ${model.accuracy_score} below threshold ${this.ACCURACY_THRESHOLD}`
-        );
-      }
-
-      // Deactivate current models of same type
-      await this.deactivateCurrentModels(
-        clinicId,
-        model.model_type,
-        model.service_type
-      );
-
-      // Activate new model
-      await supabase
-        .from('forecast_models')
-        .update({
-          status: 'active',
-          deployed_at: new Date().toISOString(),
-        })
-        .eq('id', modelId);
-
-      // Log deployment
-      await this.logModelDeployment(modelId, clinicId);
-    } catch (error) {
-      console.error('Failed to deploy model:', error);
-      throw error;
+    // Validate model exists and meets criteria
+    const model = await this.loadModel(modelId);
+    if (!model) {
+      throw new Error('Model not found');
     }
+
+    if (model.accuracy_score < this.ACCURACY_THRESHOLD) {
+      throw new Error(
+        `Model accuracy ${model.accuracy_score} below threshold ${this.ACCURACY_THRESHOLD}`
+      );
+    }
+
+    // Deactivate current models of same type
+    await this.deactivateCurrentModels(
+      clinicId,
+      model.model_type,
+      model.service_type
+    );
+
+    // Activate new model
+    await supabase
+      .from('forecast_models')
+      .update({
+        status: 'active',
+        deployed_at: new Date().toISOString(),
+      })
+      .eq('id', modelId);
+
+    // Log deployment
+    await this.logModelDeployment(modelId, clinicId);
   }
 
   /**
@@ -364,8 +342,7 @@ export class ForecastModelManager {
       }
 
       return metrics || [];
-    } catch (error) {
-      console.error('Failed to get model performance history:', error);
+    } catch (_error) {
       return [];
     }
   }
@@ -379,93 +356,70 @@ export class ForecastModelManager {
     serviceId?: string,
     trials = 50
   ): Promise<ModelTrainingConfig> {
-    try {
-      // Get hyperparameter space for model type
-      const hyperparamSpace = this.getHyperparameterSpace(modelType);
+    // Get hyperparameter space for model type
+    const hyperparamSpace = this.getHyperparameterSpace(modelType);
 
-      // Load historical data for optimization
-      const historicalData = await this.loadOptimizationData(
-        clinicId,
-        serviceId
-      );
+    // Load historical data for optimization
+    const historicalData = await this.loadOptimizationData(clinicId, serviceId);
 
-      let bestConfig: ModelTrainingConfig | null = null;
-      let bestScore = Number.NEGATIVE_INFINITY;
+    let bestConfig: ModelTrainingConfig | null = null;
+    let bestScore = Number.NEGATIVE_INFINITY;
 
-      // Random search optimization (simplified)
-      for (let trial = 0; trial < trials; trial++) {
-        // Generate random configuration
-        const config = this.generateRandomConfig(modelType, hyperparamSpace);
+    // Random search optimization (simplified)
+    for (let trial = 0; trial < trials; trial++) {
+      // Generate random configuration
+      const config = this.generateRandomConfig(modelType, hyperparamSpace);
 
-        // Evaluate configuration with cross-validation
-        const score = await this.evaluateConfigurationCV(
-          config,
-          historicalData
-        );
+      // Evaluate configuration with cross-validation
+      const score = await this.evaluateConfigurationCV(config, historicalData);
 
-        if (score > bestScore) {
-          bestScore = score;
-          bestConfig = config;
-        }
+      if (score > bestScore) {
+        bestScore = score;
+        bestConfig = config;
       }
-
-      if (!bestConfig) {
-        throw new Error('Hyperparameter optimization failed');
-      }
-
-      // Store optimization results
-      await this.storeOptimizationResults(
-        clinicId,
-        modelType,
-        bestConfig,
-        bestScore
-      );
-
-      return bestConfig;
-    } catch (error) {
-      console.error('Failed to optimize hyperparameters:', error);
-      throw error;
     }
+
+    if (!bestConfig) {
+      throw new Error('Hyperparameter optimization failed');
+    }
+
+    // Store optimization results
+    await this.storeOptimizationResults(
+      clinicId,
+      modelType,
+      bestConfig,
+      bestScore
+    );
+
+    return bestConfig;
   }
 
   /**
    * Check for model drift and trigger retraining
    */
   async checkModelDrift(clinicId: string): Promise<void> {
-    try {
-      // Get active models
-      const { data: models, error } = await supabase
-        .from('forecast_models')
-        .select('*')
-        .eq('clinic_id', clinicId)
-        .eq('status', 'active');
+    // Get active models
+    const { data: models, error } = await supabase
+      .from('forecast_models')
+      .select('*')
+      .eq('clinic_id', clinicId)
+      .eq('status', 'active');
 
-      if (error) {
-        throw error;
-      }
-
-      for (const model of models || []) {
-        try {
-          // Calculate drift score
-          const driftScore = await this.calculateDriftScore(model);
-
-          // Check if retraining is needed
-          if (driftScore > 0.1) {
-            // 10% drift threshold
-            console.log(
-              `Model ${model.id} shows drift (${driftScore}), scheduling retraining`
-            );
-
-            // Schedule retraining
-            await this.scheduleModelRetraining(model);
-          }
-        } catch (error) {
-          console.error(`Failed to check drift for model ${model.id}:`, error);
-        }
-      }
-    } catch (error) {
-      console.error('Failed to check model drift:', error);
+    if (error) {
       throw error;
+    }
+
+    for (const model of models || []) {
+      try {
+        // Calculate drift score
+        const driftScore = await this.calculateDriftScore(model);
+
+        // Check if retraining is needed
+        if (driftScore > 0.1) {
+          // Schedule retraining
+          await this.scheduleModelRetraining(model);
+        }
+      } catch (_error) {}
     }
   }
 
@@ -535,8 +489,7 @@ export class ForecastModelManager {
       }
 
       return recommendations;
-    } catch (error) {
-      console.error('Failed to get training recommendations:', error);
+    } catch (_error) {
       return recommendations;
     }
   }
@@ -574,8 +527,6 @@ export class ForecastModelManager {
       job.performance_metrics = performance;
       await this.updateTrainingJob(job);
     } catch (error) {
-      console.error('Training process failed:', error);
-
       // Update job with error
       job.status = 'failed';
       job.end_time = new Date().toISOString();
@@ -636,26 +587,18 @@ export class ForecastModelManager {
       jobs?.forEach((job) => {
         this.trainingJobs.set(job.id, job);
       });
-    } catch (error) {
-      console.error('Failed to load active training jobs:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
    * Check model performance and trigger retraining if needed
    */
-  private async checkModelPerformance(clinicId: string): Promise<void> {
-    // Implementation would check recent performance and trigger retraining
-    console.log(`Checking model performance for clinic ${clinicId}`);
-  }
+  private async checkModelPerformance(_clinicId: string): Promise<void> {}
 
   /**
    * Schedule periodic retraining
    */
-  private async schedulePeriodicRetraining(clinicId: string): Promise<void> {
-    // Implementation would set up periodic retraining schedule
-    console.log(`Scheduling periodic retraining for clinic ${clinicId}`);
-  }
+  private async schedulePeriodicRetraining(_clinicId: string): Promise<void> {}
 
   /**
    * Store training job in database
@@ -664,7 +607,6 @@ export class ForecastModelManager {
     const { error } = await supabase.from('model_training_jobs').insert(job);
 
     if (error) {
-      console.error('Failed to store training job:', error);
       throw error;
     }
   }
@@ -679,7 +621,6 @@ export class ForecastModelManager {
       .eq('id', job.id);
 
     if (error) {
-      console.error('Failed to update training job:', error);
     }
 
     // Update in-memory copy
@@ -701,8 +642,7 @@ export class ForecastModelManager {
         throw error;
       }
       return model;
-    } catch (error) {
-      console.error('Failed to load model:', error);
+    } catch (_error) {
       return null;
     }
   }
@@ -851,8 +791,7 @@ export class ForecastModelManager {
         throw error;
       }
       return models || [];
-    } catch (error) {
-      console.error('Failed to get active models:', error);
+    } catch (_error) {
       return [];
     }
   }

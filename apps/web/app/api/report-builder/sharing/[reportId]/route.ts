@@ -32,7 +32,6 @@ export async function GET(
       data: sharing,
     });
   } catch (error) {
-    console.error('Error fetching report sharing:', error);
     return NextResponse.json(
       {
         success: false,
@@ -91,7 +90,6 @@ export async function POST(
       { status: 201 }
     );
   } catch (error) {
-    console.error('Error creating report sharing:', error);
     return NextResponse.json(
       {
         success: false,

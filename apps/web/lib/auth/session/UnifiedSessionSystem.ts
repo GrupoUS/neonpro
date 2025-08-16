@@ -590,17 +590,13 @@ export class UnifiedSessionSystem {
           },
         });
       }
-    } catch (error) {
-      console.error('Error sending session warning:', error);
-    }
+    } catch (_error) {}
   }
 
   private async handleSessionExpiry(sessionId: string): Promise<void> {
     try {
       await this.terminateSession(sessionId, 'timeout');
-    } catch (error) {
-      console.error('Error handling session expiry:', error);
-    }
+    } catch (_error) {}
   }
 
   private async extendSessionTimeout(sessionId: string): Promise<void> {
@@ -619,9 +615,7 @@ export class UnifiedSessionSystem {
       if (sessionResult.success && sessionResult.data) {
         await this.setupSessionTimeoutTracking(sessionResult.data);
       }
-    } catch (error) {
-      console.error('Error extending session timeout:', error);
-    }
+    } catch (_error) {}
   }
 
   private readonly updateActivityTracking = debounce(
@@ -645,9 +639,7 @@ export class UnifiedSessionSystem {
   private async handleSessionInactivity(sessionId: string): Promise<void> {
     try {
       await this.terminateSession(sessionId, 'inactivity');
-    } catch (error) {
-      console.error('Error handling session inactivity:', error);
-    }
+    } catch (_error) {}
   }
 
   private clearActivityTracking(sessionId: string): void {
@@ -786,9 +778,7 @@ export class UnifiedSessionSystem {
     this.securityMonitor = setInterval(async () => {
       try {
         await this.performSecurityCheck();
-      } catch (error) {
-        console.error('Security monitoring error:', error);
-      }
+      } catch (_error) {}
     }, 30 * 1000);
   }
 
@@ -798,9 +788,7 @@ export class UnifiedSessionSystem {
       async () => {
         try {
           await this.performScheduledCleanup();
-        } catch (error) {
-          console.error('Cleanup scheduler error:', error);
-        }
+        } catch (_error) {}
       },
       60 * 60 * 1000
     );

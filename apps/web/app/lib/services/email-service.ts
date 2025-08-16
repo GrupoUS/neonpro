@@ -52,12 +52,7 @@ export class EmailService {
         if (provider) {
           this.providers.set(config.provider, provider);
         }
-      } catch (error) {
-        console.error(
-          `Failed to initialize email provider ${config.provider}:`,
-          error
-        );
-      }
+      } catch (_error) {}
     }
   }
 
@@ -78,7 +73,6 @@ export class EmailService {
       case 'postmark':
         return new PostmarkEmailProvider(config.settings as PostmarkConfig);
       default:
-        console.warn(`Unknown email provider: ${config.provider}`);
         return null;
     }
   }
@@ -129,7 +123,6 @@ export class EmailService {
 
       return result;
     } catch (error) {
-      console.error('Email sending failed:', error);
       return {
         success: false,
         error:
@@ -185,11 +178,6 @@ export class EmailService {
             });
           }
         } catch (batchError) {
-          console.error(
-            `Batch ${Math.floor(i / batchSize) + 1} failed:`,
-            batchError
-          );
-
           // Mark all emails in batch as failed
           for (const message of batch) {
             results.push({
@@ -212,7 +200,6 @@ export class EmailService {
         totalFailed,
       };
     } catch (error) {
-      console.error('Bulk email sending failed:', error);
       return {
         success: false,
         results: messages.map((msg) => ({
@@ -648,9 +635,7 @@ export class EmailService {
           timestamp: event.timestamp.toISOString(),
         },
       ]);
-    } catch (error) {
-      console.error('Failed to log email event:', error);
-    }
+    } catch (_error) {}
   }
 }
 

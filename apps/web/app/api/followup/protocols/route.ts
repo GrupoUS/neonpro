@@ -34,7 +34,6 @@ export async function GET(request: NextRequest) {
       total: protocols.length,
     });
   } catch (error) {
-    console.error('Error fetching follow-up protocols:', error);
     return NextResponse.json(
       {
         success: false,
@@ -76,8 +75,6 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
-
-    console.error('Error creating follow-up protocol:', error);
     return NextResponse.json(
       {
         success: false,

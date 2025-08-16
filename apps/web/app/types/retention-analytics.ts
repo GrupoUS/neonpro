@@ -10,7 +10,7 @@ import { z } from 'zod';
 // CORE RETENTION METRICS
 // =====================================================================================
 
-export interface PatientRetentionMetrics {
+export type PatientRetentionMetrics = {
   id: string;
   patient_id: string;
   clinic_id: string;
@@ -50,7 +50,7 @@ export interface PatientRetentionMetrics {
   last_calculated: string;
   created_at: string;
   updated_at: string;
-}
+};
 
 export enum ChurnRiskLevel {
   LOW = 'low',
@@ -63,7 +63,7 @@ export enum ChurnRiskLevel {
 // CHURN PREDICTION MODELS
 // =====================================================================================
 
-export interface ChurnPrediction {
+export type ChurnPrediction = {
   id: string;
   patient_id: string;
   clinic_id: string;
@@ -95,7 +95,7 @@ export interface ChurnPrediction {
 
   created_at: string;
   updated_at: string;
-}
+};
 
 export enum ChurnModelType {
   LOGISTIC_REGRESSION = 'logistic_regression',
@@ -105,13 +105,13 @@ export enum ChurnModelType {
   ENSEMBLE = 'ensemble',
 }
 
-export interface RiskFactor {
+export type RiskFactor = {
   factor: string;
   importance: number; // 0-1
   current_value: number;
   threshold_value: number;
   description: string;
-}
+};
 
 export enum InterventionPriority {
   LOW = 'low',
@@ -130,7 +130,7 @@ export enum ChurnOutcome {
 // RETENTION STRATEGIES
 // =====================================================================================
 
-export interface RetentionStrategy {
+export type RetentionStrategy = {
   id: string;
   clinic_id: string;
 
@@ -160,7 +160,7 @@ export interface RetentionStrategy {
   created_by: string;
   created_at: string;
   updated_at: string;
-}
+};
 
 export enum RetentionStrategyType {
   REACTIVE = 'reactive', // After churn risk detected
@@ -170,14 +170,14 @@ export enum RetentionStrategyType {
   AUTOMATED = 'automated', // Fully automated
 }
 
-export interface TriggerCondition {
+export type TriggerCondition = {
   metric: string;
   operator: 'gt' | 'lt' | 'eq' | 'gte' | 'lte' | 'between';
   value: number | string;
   secondary_value?: number; // For 'between' operator
-}
+};
 
-export interface RetentionAction {
+export type RetentionAction = {
   id: string;
   action_type: RetentionActionType;
 
@@ -204,7 +204,7 @@ export interface RetentionAction {
   cost: number;
 
   created_at: string;
-}
+};
 
 export enum RetentionActionType {
   SEND_MESSAGE = 'send_message',
@@ -225,24 +225,24 @@ export enum CommunicationChannel {
   IN_APP = 'in_app',
 }
 
-export interface PersonalizationRule {
+export type PersonalizationRule = {
   field: string;
   value_source: 'patient_data' | 'static' | 'calculated';
   calculation?: string;
   fallback_value: string;
-}
+};
 
-export interface ExclusionRule {
+export type ExclusionRule = {
   condition: string;
   value: string | number;
   reason: string;
-}
+};
 
 // =====================================================================================
 // STRATEGY TIMING
 // =====================================================================================
 
-export interface StrategyTiming {
+export type StrategyTiming = {
   execution_type: ExecutionType;
 
   // Immediate execution
@@ -260,7 +260,7 @@ export interface StrategyTiming {
   // Frequency limits
   max_executions_per_patient?: number;
   cooldown_period_days?: number;
-}
+};
 
 export enum ExecutionType {
   IMMEDIATE = 'immediate',
@@ -269,30 +269,30 @@ export enum ExecutionType {
   TIME_BASED = 'time_based',
 }
 
-export interface ScheduleConfig {
+export type ScheduleConfig = {
   frequency: 'daily' | 'weekly' | 'monthly';
   days_of_week?: number[]; // 0-6 (Sunday-Saturday)
   time_of_day: string; // HH:MM format
   timezone: string;
-}
+};
 
-export interface EventTrigger {
+export type EventTrigger = {
   event_type: string;
   conditions: TriggerCondition[];
   delay_after_event: number; // hours
-}
+};
 
-export interface TimeWindow {
+export type TimeWindow = {
   start_time: string; // HH:MM
   end_time: string; // HH:MM
   days_of_week: number[]; // 0-6
-}
+};
 
 // =====================================================================================
 // RETENTION PERFORMANCE
 // =====================================================================================
 
-export interface RetentionPerformance {
+export type RetentionPerformance = {
   id: string;
   clinic_id: string;
   strategy_id: string;
@@ -323,7 +323,7 @@ export interface RetentionPerformance {
   // Tracking
   created_at: string;
   updated_at: string;
-}
+};
 
 export enum RetentionOutcome {
   SUCCESSFUL = 'successful',
@@ -332,19 +332,19 @@ export enum RetentionOutcome {
   PENDING = 'pending',
 }
 
-export interface PatientResponse {
+export type PatientResponse = {
   response_type: 'positive' | 'negative' | 'neutral' | 'no_response';
   response_time: number; // hours after action
   feedback: string | null;
   satisfaction_rating: number | null; // 1-10
   rebooking_intent: boolean | null;
-}
+};
 
 // =====================================================================================
 // ANALYTICS DASHBOARD
 // =====================================================================================
 
-export interface RetentionAnalyticsDashboard {
+export type RetentionAnalyticsDashboard = {
   clinic_id: string;
   period_start: string;
   period_end: string;
@@ -368,9 +368,9 @@ export interface RetentionAnalyticsDashboard {
   churn_predictions_summary: ChurnPredictionSummary;
 
   generated_at: string;
-}
+};
 
-export interface RetentionOverview {
+export type RetentionOverview = {
   total_patients: number;
   active_patients: number;
   at_risk_patients: number;
@@ -385,37 +385,37 @@ export interface RetentionOverview {
   retention_rate_change: number;
   churn_rate_change: number;
   ltv_change: number;
-}
+};
 
-export interface ChurnAnalysis {
+export type ChurnAnalysis = {
   churn_reasons: ChurnReason[];
   churn_by_risk_level: Record<ChurnRiskLevel, number>;
   churn_patterns: ChurnPattern[];
   seasonal_trends: SeasonalTrend[];
-}
+};
 
-export interface ChurnReason {
+export type ChurnReason = {
   reason: string;
   count: number;
   percentage: number;
   avg_lifetime_value: number;
-}
+};
 
-export interface ChurnPattern {
+export type ChurnPattern = {
   pattern: string;
   description: string;
   frequency: number;
   impact_score: number; // 0-1
-}
+};
 
-export interface SeasonalTrend {
+export type SeasonalTrend = {
   period: string; // month, quarter, etc.
   churn_rate: number;
   retention_rate: number;
   patient_count: number;
-}
+};
 
-export interface StrategyPerformanceMetrics {
+export type StrategyPerformanceMetrics = {
   strategy_id: string;
   strategy_name: string;
 
@@ -430,9 +430,9 @@ export interface StrategyPerformanceMetrics {
 
   avg_response_time: number; // hours
   satisfaction_improvement: number;
-}
+};
 
-export interface RetentionBySegment {
+export type RetentionBySegment = {
   segment_id: string;
   segment_name: string;
   patient_count: number;
@@ -440,18 +440,18 @@ export interface RetentionBySegment {
   churn_rate: number;
   avg_lifetime_value: number;
   at_risk_count: number;
-}
+};
 
-export interface RetentionTrend {
+export type RetentionTrend = {
   date: string;
   retention_rate: number;
   churn_rate: number;
   new_patients: number;
   churned_patients: number;
   at_risk_patients: number;
-}
+};
 
-export interface ChurnPredictionSummary {
+export type ChurnPredictionSummary = {
   total_predictions: number;
   high_risk_patients: number;
   medium_risk_patients: number;
@@ -461,7 +461,7 @@ export interface ChurnPredictionSummary {
   predictions_this_week: number;
   interventions_triggered: number;
   successful_interventions: number;
-}
+};
 
 // =====================================================================================
 // ZOD VALIDATION SCHEMAS
@@ -629,13 +629,13 @@ export type UpdateRetentionStrategy = Partial<CreateRetentionStrategy>;
 // API RESPONSE TYPES
 // =====================================================================================
 
-export interface RetentionAnalyticsResponse {
+export type RetentionAnalyticsResponse = {
   success: boolean;
   data: RetentionAnalyticsDashboard;
   message?: string;
-}
+};
 
-export interface ChurnPredictionsResponse {
+export type ChurnPredictionsResponse = {
   success: boolean;
   data: ChurnPrediction[];
   pagination?: {
@@ -645,16 +645,16 @@ export interface ChurnPredictionsResponse {
     pages: number;
   };
   message?: string;
-}
+};
 
-export interface RetentionStrategiesResponse {
+export type RetentionStrategiesResponse = {
   success: boolean;
   data: RetentionStrategy[];
   message?: string;
-}
+};
 
-export interface RetentionPerformanceResponse {
+export type RetentionPerformanceResponse = {
   success: boolean;
   data: RetentionPerformance[];
   message?: string;
-}
+};

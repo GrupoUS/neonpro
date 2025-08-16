@@ -13,8 +13,7 @@ export async function PUT(
     const alert = await service.updateAlert(params.id, body);
 
     return NextResponse.json(alert);
-  } catch (error) {
-    console.error('Erro ao atualizar alerta:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Erro ao atualizar alerta' },
       { status: 400 }
@@ -30,8 +29,7 @@ export async function DELETE(
     await service.deleteAlert(params.id);
 
     return NextResponse.json({ success: true });
-  } catch (error) {
-    console.error('Erro ao deletar alerta:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Erro ao deletar alerta' },
       { status: 400 }

@@ -168,7 +168,6 @@ export async function GET(request: NextRequest) {
       .range(offset, offset + limit - 1);
 
     if (error) {
-      console.error('Error fetching social media posts:', error);
       return NextResponse.json(
         { error: 'Failed to fetch posts' },
         { status: 500 }
@@ -182,8 +181,7 @@ export async function GET(request: NextRequest) {
       limit,
       offset,
     });
-  } catch (error) {
-    console.error('Social media posts GET error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -320,7 +318,6 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (error) {
-      console.error('Error creating social media post:', error);
       return NextResponse.json(
         { error: 'Failed to create post' },
         { status: 500 }
@@ -342,8 +339,6 @@ export async function POST(request: NextRequest) {
       { status: 201 }
     );
   } catch (error) {
-    console.error('Social media posts POST error:', error);
-
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Invalid request data', details: error.errors },

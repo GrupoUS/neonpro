@@ -70,7 +70,6 @@ export async function POST(request: NextRequest) {
       .lte('transaction_date', params.endDate);
 
     if (movementsError) {
-      console.error('Stock Movements Error:', movementsError);
       return NextResponse.json(
         { error: 'Erro ao buscar movimentações de estoque' },
         { status: 500 }
@@ -96,7 +95,6 @@ export async function POST(request: NextRequest) {
       .eq('is_active', true);
 
     if (inventoryError) {
-      console.error('Inventory Error:', inventoryError);
       return NextResponse.json(
         { error: 'Erro ao buscar inventário atual' },
         { status: 500 }
@@ -345,8 +343,6 @@ export async function POST(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('Financial Integration API Error:', error);
-
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Parâmetros inválidos', details: error.errors },

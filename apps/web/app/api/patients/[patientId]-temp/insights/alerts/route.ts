@@ -42,8 +42,7 @@ export async function GET(
       success: true,
       data: alertSummary,
     });
-  } catch (error) {
-    console.error('Patient alerts API error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to retrieve patient alerts' },
       { status: 500 }
@@ -97,8 +96,7 @@ export async function POST(
         totalFiltered: filteredAlerts.length,
       },
     });
-  } catch (error) {
-    console.error('Patient alerts POST API error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to retrieve filtered alerts' },
       { status: 500 }

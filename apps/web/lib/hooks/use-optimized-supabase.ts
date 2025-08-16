@@ -26,14 +26,14 @@ type HealthcareOperationType =
   | 'analytics'
   | 'administrative';
 
-interface UseOptimizedSupabaseOptions {
+type UseOptimizedSupabaseOptions = {
   clinicId: string;
   operationType?: HealthcareOperationType;
   autoRetry?: boolean;
   healthMonitoring?: boolean;
-}
+};
 
-interface SupabaseHookResult {
+type SupabaseHookResult = {
   client: SupabaseClient<Database>;
   isConnected: boolean;
   isLoading: boolean;
@@ -41,7 +41,7 @@ interface SupabaseHookResult {
   healthStatus: HealthcheckResult | null;
   metrics: ConnectionMetrics | null;
   retry: () => void;
-}
+};
 
 /**
  * Main hook for optimized Supabase connections
@@ -265,44 +265,22 @@ export function useHealthcareCompliantSupabase(
       if (!(baseHook.client && complianceStatus?.overallCompliant)) {
         throw new Error('Healthcare compliance requirements not met');
       }
+      // Add audit headers
+      const auditHeaders = {
+        'X-Audit-Action': auditInfo.action,
+        'X-Audit-Professional': auditInfo.professionalId,
+        'X-Audit-Timestamp': new Date().toISOString(),
+        'X-Clinic-ID': clinicId,
+      };
 
-      try {
-        // Add audit headers
-        const auditHeaders = {
-          'X-Audit-Action': auditInfo.action,
-          'X-Audit-Professional': auditInfo.professionalId,
-          'X-Audit-Timestamp': new Date().toISOString(),
-          'X-Clinic-ID': clinicId,
-        };
-
-        if (auditInfo.patientId) {
-          auditHeaders['X-Audit-Patient'] = auditInfo.patientId;
-        }
-
-        // Execute query with audit trail
-        const result = await queryFn(baseHook.client);
-
-        // Log healthcare operation for LGPD compliance
-        console.log('Healthcare operation executed:', {
-          clinicId,
-          action: auditInfo.action,
-          professionalId: auditInfo.professionalId,
-          patientId: auditInfo.patientId,
-          timestamp: new Date().toISOString(),
-          compliance: complianceStatus,
-        });
-
-        return result;
-      } catch (error) {
-        // Log healthcare operation error
-        console.error('Healthcare operation failed:', {
-          clinicId,
-          action: auditInfo.action,
-          error: error.message,
-          timestamp: new Date().toISOString(),
-        });
-        throw error;
+      if (auditInfo.patientId) {
+        auditHeaders['X-Audit-Patient'] = auditInfo.patientId;
       }
+
+      // Execute query with audit trail
+      const result = await queryFn(baseHook.client);
+
+      return result;
     },
     [baseHook.client, complianceStatus, clinicId]
   );
@@ -328,8 +306,7 @@ export function usePoolAnalytics() {
       setIsLoading(true);
       const data = poolManager.getPoolAnalytics();
       setAnalytics(data);
-    } catch (error) {
-      console.error('Failed to fetch pool analytics:', error);
+    } catch (_error) {
     } finally {
       setIsLoading(false);
     }

@@ -6,7 +6,7 @@
 import { type NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/app/utils/supabase/server';
 
-interface GoogleProfileUpdate {
+type GoogleProfileUpdate = {
   email?: string;
   name?: string;
   given_name?: string;
@@ -14,7 +14,7 @@ interface GoogleProfileUpdate {
   picture?: string;
   email_verified?: boolean;
   locale?: string;
-}
+};
 
 export async function POST(request: NextRequest) {
   try {
@@ -51,7 +51,6 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (profileError) {
-      console.error('Profile lookup error:', profileError);
       return NextResponse.json(
         { error: 'Profile not found', message: profileError.message },
         { status: 404 }
@@ -162,7 +161,6 @@ export async function POST(request: NextRequest) {
         .single();
 
       if (updateError) {
-        console.error('Profile update error:', updateError);
         return NextResponse.json(
           { error: 'Update failed', message: updateError.message },
           { status: 500 }
@@ -210,8 +208,7 @@ export async function POST(request: NextRequest) {
       profile: currentProfile,
       no_changes_needed: true,
     });
-  } catch (error) {
-    console.error('Profile update API error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error', message: 'Profile update failed' },
       { status: 500 }
@@ -267,8 +264,7 @@ export async function GET(_request: NextRequest) {
       recent_updates: updateLogs || [],
       can_force_update: true,
     });
-  } catch (error) {
-    console.error('Profile updates GET error:', error);
+  } catch (_error) {
     return NextResponse.json(
       {
         error: 'Internal server error',

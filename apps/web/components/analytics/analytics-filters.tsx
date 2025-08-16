@@ -52,31 +52,31 @@ import {
 import { type AnalyticsFilter, AnalyticsUtils } from '@/lib/analytics';
 
 // Types
-interface AnalyticsFiltersProps {
+type AnalyticsFiltersProps = {
   filters: AnalyticsFilter[];
   onFiltersChange: (filters: AnalyticsFilter[]) => void;
   clinicId: string;
-}
+};
 
-interface FilterCategory {
+type FilterCategory = {
   id: string;
   label: string;
   icon: React.ReactNode;
   options: FilterOption[];
-}
+};
 
-interface FilterOption {
+type FilterOption = {
   value: string;
   label: string;
   count?: number;
   description?: string;
-}
+};
 
-interface ActiveFilter {
+type ActiveFilter = {
   category: string;
   values: string[];
   label: string;
-}
+};
 
 export function AnalyticsFilters({
   filters,
@@ -283,9 +283,7 @@ export function AnalyticsFilters({
       ];
 
       setFilterOptions(categories);
-    } catch (error) {
-      console.error('Failed to load filter options:', error);
-    }
+    } catch (_error) {}
   }, [clinicId]);
 
   useEffect(() => {

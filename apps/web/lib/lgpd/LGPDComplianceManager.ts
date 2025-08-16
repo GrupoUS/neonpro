@@ -3,7 +3,7 @@ import type { Database } from '@/types/supabase';
 
 type SupabaseClient = ReturnType<typeof createClient<Database>>;
 
-export interface LGPDMetrics {
+export type LGPDMetrics = {
   compliance_percentage: number;
   active_consents: number;
   pending_requests: number;
@@ -12,18 +12,18 @@ export interface LGPDMetrics {
   consent_rate: number;
   avg_response_time: number;
   last_assessment: string | null;
-}
+};
 
-export interface ConsentData {
+export type ConsentData = {
   user_id: string;
   purpose_id: string;
   granted: boolean;
   ip_address?: string;
   user_agent?: string;
   expires_at?: string;
-}
+};
 
-export interface DataSubjectRequestData {
+export type DataSubjectRequestData = {
   user_id: string;
   request_type:
     | 'access'
@@ -33,9 +33,9 @@ export interface DataSubjectRequestData {
     | 'restriction'
     | 'objection';
   description?: string;
-}
+};
 
-export interface BreachIncidentData {
+export type BreachIncidentData = {
   title: string;
   description: string;
   severity: 'low' | 'medium' | 'high' | 'critical';
@@ -43,9 +43,9 @@ export interface BreachIncidentData {
   data_types: string[];
   discovered_at: string;
   reported_by: string;
-}
+};
 
-export interface AuditEventData {
+export type AuditEventData = {
   event_type: string;
   user_id?: string;
   resource_type?: string;
@@ -54,7 +54,7 @@ export interface AuditEventData {
   details?: any;
   ip_address?: string;
   user_agent?: string;
-}
+};
 
 export class LGPDComplianceManager {
   private readonly supabase: SupabaseClient;
@@ -86,8 +86,7 @@ export class LGPDComplianceManager {
           last_assessment: null,
         }
       );
-    } catch (error) {
-      console.error('Error fetching dashboard metrics:', error);
+    } catch (_error) {
       throw new Error('Failed to fetch dashboard metrics');
     }
   }
@@ -146,8 +145,7 @@ export class LGPDComplianceManager {
         page,
         limit,
       };
-    } catch (error) {
-      console.error('Error fetching consents:', error);
+    } catch (_error) {
       throw new Error('Failed to fetch consents');
     }
   }
@@ -224,8 +222,7 @@ export class LGPDComplianceManager {
       });
 
       return result;
-    } catch (error) {
-      console.error('Error creating/updating consent:', error);
+    } catch (_error) {
       throw new Error('Failed to create or update consent');
     }
   }
@@ -261,8 +258,7 @@ export class LGPDComplianceManager {
       });
 
       return data;
-    } catch (error) {
-      console.error('Error withdrawing consent:', error);
+    } catch (_error) {
       throw new Error('Failed to withdraw consent');
     }
   }
@@ -312,8 +308,7 @@ export class LGPDComplianceManager {
         page,
         limit,
       };
-    } catch (error) {
-      console.error('Error fetching data subject requests:', error);
+    } catch (_error) {
       throw new Error('Failed to fetch data subject requests');
     }
   }
@@ -350,8 +345,7 @@ export class LGPDComplianceManager {
       });
 
       return data;
-    } catch (error) {
-      console.error('Error creating data subject request:', error);
+    } catch (_error) {
       throw new Error('Failed to create data subject request');
     }
   }
@@ -403,8 +397,7 @@ export class LGPDComplianceManager {
       });
 
       return data;
-    } catch (error) {
-      console.error('Error updating data subject request:', error);
+    } catch (_error) {
       throw new Error('Failed to update data subject request');
     }
   }
@@ -449,8 +442,7 @@ export class LGPDComplianceManager {
         page,
         limit,
       };
-    } catch (error) {
-      console.error('Error fetching breach incidents:', error);
+    } catch (_error) {
       throw new Error('Failed to fetch breach incidents');
     }
   }
@@ -494,8 +486,7 @@ export class LGPDComplianceManager {
       });
 
       return data;
-    } catch (error) {
-      console.error('Error reporting breach incident:', error);
+    } catch (_error) {
       throw new Error('Failed to report breach incident');
     }
   }
@@ -547,8 +538,7 @@ export class LGPDComplianceManager {
       });
 
       return data;
-    } catch (error) {
-      console.error('Error updating breach incident:', error);
+    } catch (_error) {
       throw new Error('Failed to update breach incident');
     }
   }
@@ -613,8 +603,7 @@ export class LGPDComplianceManager {
         page,
         limit,
       };
-    } catch (error) {
-      console.error('Error fetching audit events:', error);
+    } catch (_error) {
       throw new Error('Failed to fetch audit events');
     }
   }
@@ -636,8 +625,7 @@ export class LGPDComplianceManager {
       if (error) {
         throw error;
       }
-    } catch (error) {
-      console.error('Error logging audit event:', error);
+    } catch (_error) {
       // Don't throw here to avoid breaking the main operation
     }
   }
@@ -682,8 +670,7 @@ export class LGPDComplianceManager {
         page,
         limit,
       };
-    } catch (error) {
-      console.error('Error fetching compliance assessments:', error);
+    } catch (_error) {
       throw new Error('Failed to fetch compliance assessments');
     }
   }
@@ -722,8 +709,7 @@ export class LGPDComplianceManager {
       });
 
       return data;
-    } catch (error) {
-      console.error('Error creating compliance assessment:', error);
+    } catch (_error) {
       throw new Error('Failed to create compliance assessment');
     }
   }
@@ -750,8 +736,7 @@ export class LGPDComplianceManager {
       });
 
       return data;
-    } catch (error) {
-      console.error('Error running automated assessment:', error);
+    } catch (_error) {
       throw new Error('Failed to run automated assessment');
     }
   }
@@ -794,8 +779,7 @@ export class LGPDComplianceManager {
       });
 
       return stats;
-    } catch (error) {
-      console.error('Error fetching audit statistics:', error);
+    } catch (_error) {
       throw new Error('Failed to fetch audit statistics');
     }
   }
@@ -824,8 +808,7 @@ export class LGPDComplianceManager {
       });
 
       return stats;
-    } catch (error) {
-      console.error('Error fetching breach statistics:', error);
+    } catch (_error) {
       throw new Error('Failed to fetch breach statistics');
     }
   }

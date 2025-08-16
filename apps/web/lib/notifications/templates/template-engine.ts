@@ -6,16 +6,16 @@ import type {
   NotificationTypeEnum,
 } from '../core/notification-manager';
 
-export interface TemplateVariable {
+export type TemplateVariable = {
   name: string;
   type: 'string' | 'number' | 'date' | 'boolean' | 'object';
   required: boolean;
   default_value?: any;
   description?: string;
   validation_regex?: string;
-}
+};
 
-export interface TemplateRenderContext {
+export type TemplateRenderContext = {
   user?: {
     id: string;
     name: string;
@@ -46,15 +46,15 @@ export interface TemplateRenderContext {
     website?: string;
   };
   custom?: Record<string, any>;
-}
+};
 
-export interface RenderedTemplate {
+export type RenderedTemplate = {
   subject?: string;
   content: string;
   variables_used: string[];
   render_time_ms: number;
   template_version: number;
-}
+};
 
 export class TemplateEngine {
   private readonly supabase;

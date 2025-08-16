@@ -68,7 +68,7 @@ export const DASHBOARD_REFRESH_INTERVALS = {
 } as const;
 
 // Base financial report interface
-export interface FinancialReport {
+export type FinancialReport = {
   id: string;
   report_type: keyof typeof REPORT_TYPES;
   report_name: string;
@@ -87,10 +87,10 @@ export interface FinancialReport {
   last_downloaded?: string;
   created_at: string;
   updated_at: string;
-}
+};
 
 // Financial KPI tracking interface
-export interface FinancialKPI {
+export type FinancialKPI = {
   id: string;
   clinic_id: string;
   kpi_name: string;
@@ -110,10 +110,10 @@ export interface FinancialKPI {
   last_calculated: string;
   created_at: string;
   updated_at: string;
-}
+};
 
 // Report scheduling interface
-export interface ReportSchedule {
+export type ReportSchedule = {
   id: string;
   schedule_name: string;
   report_type: keyof typeof REPORT_TYPES;
@@ -132,10 +132,10 @@ export interface ReportSchedule {
   created_by?: string;
   created_at: string;
   updated_at: string;
-}
+};
 
 // Financial analytics interface
-export interface FinancialAnalytics {
+export type FinancialAnalytics = {
   id: string;
   clinic_id: string;
   metric_name: string;
@@ -151,10 +151,10 @@ export interface FinancialAnalytics {
   dimension_filters: Record<string, any>;
   calculated_at: string;
   created_at: string;
-}
+};
 
 // Financial benchmarks interface
-export interface FinancialBenchmark {
+export type FinancialBenchmark = {
   id: string;
   benchmark_name: string;
   benchmark_category: string;
@@ -168,10 +168,10 @@ export interface FinancialBenchmark {
   expiry_date?: string;
   created_at: string;
   updated_at: string;
-}
+};
 
 // Budget planning interfaces
-export interface BudgetPlan {
+export type BudgetPlan = {
   id: string;
   clinic_id: string;
   plan_name: string;
@@ -186,9 +186,9 @@ export interface BudgetPlan {
   approved_at?: string;
   created_at: string;
   updated_at: string;
-}
+};
 
-export interface BudgetItem {
+export type BudgetItem = {
   id: string;
   budget_plan_id: string;
   category_name: string;
@@ -201,10 +201,10 @@ export interface BudgetItem {
   notes?: string;
   last_updated: string;
   created_at: string;
-}
+};
 
 // Report templates interface
-export interface ReportTemplate {
+export type ReportTemplate = {
   id: string;
   template_name: string;
   report_type: keyof typeof REPORT_TYPES;
@@ -217,10 +217,10 @@ export interface ReportTemplate {
   usage_count: number;
   created_at: string;
   updated_at: string;
-}
+};
 
 // Report generation parameters
-export interface ReportParameters {
+export type ReportParameters = {
   period_start: string;
   period_end: string;
   comparison_period_start?: string;
@@ -248,10 +248,10 @@ export interface ReportParameters {
     include_charts?: boolean;
     include_trends?: boolean;
   };
-}
+};
 
 // Financial statement data structures
-export interface ProfitLossStatement {
+export type ProfitLossStatement = {
   period_start: string;
   period_end: string;
   clinic_id: string;
@@ -291,9 +291,9 @@ export interface ProfitLossStatement {
   tax_expenses: number;
   net_profit: number;
   net_profit_margin: number;
-}
+};
 
-export interface BalanceSheet {
+export type BalanceSheet = {
   as_of_date: string;
   clinic_id: string;
   assets: {
@@ -337,9 +337,9 @@ export interface BalanceSheet {
     total_equity: number;
   };
   total_liabilities_and_equity: number;
-}
+};
 
-export interface CashFlowStatement {
+export type CashFlowStatement = {
   period_start: string;
   period_end: string;
   clinic_id: string;
@@ -368,10 +368,10 @@ export interface CashFlowStatement {
   net_cash_change: number;
   beginning_cash: number;
   ending_cash: number;
-}
+};
 
 // KPI calculation interfaces
-export interface KPICalculation {
+export type KPICalculation = {
   kpi_name: string;
   display_name: string;
   current_value: number;
@@ -385,10 +385,10 @@ export interface KPICalculation {
   variance_from_previous?: number;
   trend_direction: 'up' | 'down' | 'stable';
   alert_status: keyof typeof ALERT_STATUS;
-}
+};
 
 // Analytics data interfaces
-export interface RevenueAnalytics {
+export type RevenueAnalytics = {
   total_revenue: number;
   revenue_by_service: Array<{
     service_name: string;
@@ -413,9 +413,9 @@ export interface RevenueAnalytics {
     monthly_average: number;
     seasonal_patterns: Record<string, number>;
   };
-}
+};
 
-export interface ExpenseAnalytics {
+export type ExpenseAnalytics = {
   total_expenses: number;
   expense_by_category: Array<{
     category_name: string;
@@ -430,10 +430,10 @@ export interface ExpenseAnalytics {
   };
   cost_per_patient: number;
   cost_per_service: Record<string, number>;
-}
+};
 
 // Dashboard data structures
-export interface FinancialDashboardData {
+export type FinancialDashboardData = {
   summary_kpis: KPICalculation[];
   revenue_analytics: RevenueAnalytics;
   expense_analytics: ExpenseAnalytics;
@@ -457,10 +457,10 @@ export interface FinancialDashboardData {
     variance_percentage: number;
     performance_rating: 'above' | 'at' | 'below';
   }>;
-}
+};
 
 // Report export interfaces
-export interface ReportExportOptions {
+export type ReportExportOptions = {
   format: keyof typeof REPORT_FORMATS;
   include_charts: boolean;
   include_raw_data: boolean;
@@ -472,25 +472,25 @@ export interface ReportExportOptions {
     header_color?: string;
     footer_text?: string;
   };
-}
+};
 
-export interface ReportExportResult {
+export type ReportExportResult = {
   file_path: string;
   file_size: number;
   download_url: string;
   expires_at: string;
-}
+};
 
 // Real-time dashboard interfaces
-export interface DashboardSubscription {
+export type DashboardSubscription = {
   clinic_id: string;
   user_id: string;
   subscribed_kpis: string[];
   update_frequency: number; // seconds
   last_update: string;
-}
+};
 
-export interface DashboardUpdate {
+export type DashboardUpdate = {
   kpi_updates: Partial<KPICalculation>[];
   alert_updates: Array<{
     kpi_name: string;
@@ -498,21 +498,21 @@ export interface DashboardUpdate {
     new_status: keyof typeof ALERT_STATUS;
   }>;
   data_timestamp: string;
-}
+};
 
 // Error handling and validation
-export interface FinancialReportError {
+export type FinancialReportError = {
   code: string;
   message: string;
   details?: Record<string, any>;
   timestamp: string;
-}
+};
 
-export interface ValidationResult {
+export type ValidationResult = {
   is_valid: boolean;
   errors: FinancialReportError[];
   warnings: string[];
-}
+};
 
 // Export utility type for all financial reporting types
 export type FinancialReportingTypes = {

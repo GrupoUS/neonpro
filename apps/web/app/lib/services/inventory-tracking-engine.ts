@@ -168,7 +168,6 @@ export class InventoryTrackingEngine {
         .single();
 
       if (transactionError) {
-        console.error('Failed to create transaction record:', transactionError);
       }
 
       // Check for automatic alerts
@@ -187,7 +186,6 @@ export class InventoryTrackingEngine {
         errors: [],
       };
     } catch (error) {
-      console.error('Stock update failed:', error);
       return {
         success: false,
         newQuantity: 0,
@@ -304,7 +302,6 @@ export class InventoryTrackingEngine {
         errors: [],
       };
     } catch (error) {
-      console.error('Stock transfer failed:', error);
       return {
         success: false,
         errors: [
@@ -389,7 +386,6 @@ export class InventoryTrackingEngine {
         errors: [],
       };
     } catch (error) {
-      console.error('Stock reservation failed:', error);
       return {
         success: false,
         errors: [
@@ -486,7 +482,6 @@ export class InventoryTrackingEngine {
         errors: [],
       };
     } catch (error) {
-      console.error('Stock release failed:', error);
       return {
         success: false,
         errors: [
@@ -622,8 +617,7 @@ export class InventoryTrackingEngine {
       }
 
       return alerts;
-    } catch (error) {
-      console.error('Alert checking failed:', error);
+    } catch (_error) {
       return [];
     }
   }
@@ -662,7 +656,6 @@ export class InventoryTrackingEngine {
         .single();
 
       if (error) {
-        console.error('Failed to create alert:', error);
         return null;
       }
 
@@ -670,8 +663,7 @@ export class InventoryTrackingEngine {
       this.deliverNotification(alert);
 
       return alert;
-    } catch (error) {
-      console.error('Alert creation failed:', error);
+    } catch (_error) {
       return null;
     }
   }
@@ -697,9 +689,7 @@ export class InventoryTrackingEngine {
       // - SMS service (Twilio)
       // - Push notifications
       // - Real-time dashboard updates (WebSocket/Server-Sent Events)
-    } catch (error) {
-      console.error('Notification delivery failed:', error);
-    }
+    } catch (_error) {}
   }
 
   // =====================================================================================
@@ -774,7 +764,6 @@ export class InventoryTrackingEngine {
       .gt('current_quantity', 0);
 
     if (error) {
-      console.error('Failed to get stock levels:', error);
       return [];
     }
 
@@ -794,7 +783,6 @@ export class InventoryTrackingEngine {
       .order('shortage_quantity', { ascending: false });
 
     if (error) {
-      console.error('Failed to get low stock items:', error);
       return [];
     }
 
@@ -815,7 +803,6 @@ export class InventoryTrackingEngine {
       .order('expiration_date', { ascending: true });
 
     if (error) {
-      console.error('Failed to get expiring items:', error);
       return [];
     }
 
@@ -835,7 +822,6 @@ export class InventoryTrackingEngine {
       .order('total_inventory_value', { ascending: false });
 
     if (error) {
-      console.error('Failed to get inventory summary:', error);
       return [];
     }
 

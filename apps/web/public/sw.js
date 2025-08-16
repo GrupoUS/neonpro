@@ -48,12 +48,9 @@ const _offlineQueue = [];
 
 // Install Event - Cache static assets
 self.addEventListener('install', (event) => {
-  console.log(`🚀 NeonPro SW: Installing v${CACHE_VERSION}`);
-
   event.waitUntil(
     Promise.all([
       caches.open(STATIC_CACHE).then((cache) => {
-        console.log('📦 Caching static resources...');
         return cache.addAll(STATIC_CACHE_URLS);
       }),
       self.skipWaiting(),
@@ -63,15 +60,12 @@ self.addEventListener('install', (event) => {
 
 // Activate Event - Clean old caches and take control
 self.addEventListener('activate', (event) => {
-  console.log(`✅ NeonPro SW: Activating v${CACHE_VERSION}`);
-
   event.waitUntil(
     Promise.all([
       caches.keys().then((cacheNames) => {
         return Promise.all(
           cacheNames.map((cacheName) => {
             if (!cacheName.includes(CACHE_VERSION)) {
-              console.log('🗑️ Deleting old cache:', cacheName);
               return caches.delete(cacheName);
             }
           })
@@ -123,8 +117,7 @@ async function handleRequest(request) {
 
     // Pages - Network First with cache fallback
     return await networkFirst(request, DYNAMIC_CACHE);
-  } catch (error) {
-    console.error('🚨 Request failed:', error);
+  } catch (_error) {
     return await handleOfflineRequest(request);
   }
 }
@@ -135,14 +128,11 @@ async function handleOfflineCapableRequest(request) {
     const response = await fetch(request);
 
     if (response.ok) {
-      console.log('✅ Request successful:', request.url);
       return response;
     }
 
     throw new Error(`HTTP ${response.status}`);
   } catch (_error) {
-    console.log('📱 Network failed, queuing for background sync:', request.url);
-
     // Queue the request for background sync
     await queueRequestForSync(request);
 
@@ -183,20 +173,15 @@ async function queueRequestForSync(request) {
     // Register background sync
     if ('serviceWorker' in self && 'sync' in self.registration) {
       await self.registration.sync.register(BACKGROUND_SYNC_TAG);
-      console.log('🔄 Background sync registered');
     }
 
     // Store in IndexedDB for reliability
     await storeInIndexedDB('offlineQueue', requestData);
-  } catch (error) {
-    console.error('❌ Failed to queue request:', error);
-  }
+  } catch (_error) {}
 }
 
 // Background Sync Event
 self.addEventListener('sync', (event) => {
-  console.log('🔄 Background sync triggered:', event.tag);
-
   if (event.tag === BACKGROUND_SYNC_TAG) {
     event.waitUntil(processOfflineQueue());
   } else if (event.tag === APPOINTMENT_SYNC_TAG) {
@@ -207,8 +192,6 @@ self.addEventListener('sync', (event) => {
 // Process offline queue when connection is restored
 async function processOfflineQueue() {
   try {
-    console.log('🔄 Processing offline queue...');
-
     const cache = await caches.open(OFFLINE_QUEUE_CACHE);
     const queuedRequests = await cache.keys();
 
@@ -217,8 +200,6 @@ async function processOfflineQueue() {
         const response = await cache.match(cacheKey);
         const requestData = await response.json();
 
-        console.log('🔄 Syncing queued request:', requestData.url);
-
         const syncResponse = await fetch(requestData.url, {
           method: requestData.method,
           headers: requestData.headers,
@@ -226,8 +207,6 @@ async function processOfflineQueue() {
         });
 
         if (syncResponse.ok) {
-          console.log('✅ Successfully synced:', requestData.url);
-
           // Remove from cache and IndexedDB
           await cache.delete(cacheKey);
           await removeFromIndexedDB('offlineQueue', requestData.id);
@@ -239,12 +218,6 @@ async function processOfflineQueue() {
             timestamp: requestData.timestamp,
           });
         } else {
-          console.error(
-            '❌ Sync failed:',
-            requestData.url,
-            syncResponse.status
-          );
-
           // Keep in queue for retry, but notify client
           await notifyClientOfSync('sync-failed', {
             url: requestData.url,
@@ -252,30 +225,21 @@ async function processOfflineQueue() {
             status: syncResponse.status,
           });
         }
-      } catch (error) {
-        console.error('❌ Error processing queue item:', error);
-      }
+      } catch (_error) {}
     }
-  } catch (error) {
-    console.error('❌ Background sync error:', error);
-  }
+  } catch (_error) {}
 }
 
 // Sync appointment-specific data
 async function syncAppointmentData() {
   try {
-    console.log('📅 Syncing appointment data...');
-
     // Get fresh appointment data
     const response = await fetch('/api/patient/appointments');
     if (response.ok) {
       const cache = await caches.open(API_CACHE);
       await cache.put('/api/patient/appointments', response.clone());
-      console.log('✅ Appointment data synced');
     }
-  } catch (error) {
-    console.error('❌ Appointment sync failed:', error);
-  }
+  } catch (_error) {}
 }
 
 // Notify client of sync events
@@ -342,8 +306,6 @@ async function cacheFirst(request, cacheName) {
   const cachedResponse = await cache.match(request);
 
   if (cachedResponse) {
-    console.log('📦 Cache hit:', request.url);
-
     // Update cache in background for fresh content
     fetch(request)
       .then((response) => {
@@ -355,8 +317,6 @@ async function cacheFirst(request, cacheName) {
 
     return cachedResponse;
   }
-
-  console.log('🌐 Cache miss:', request.url);
   const response = await fetch(request);
 
   if (response.ok) {
@@ -382,7 +342,6 @@ async function networkFirst(request, cacheName) {
     const cachedResponse = await cache.match(request);
 
     if (cachedResponse) {
-      console.log('📦 Offline fallback:', request.url);
       return cachedResponse;
     }
 
@@ -448,8 +407,6 @@ function isCacheableApi(pathname) {
 
 // Push notification event handler
 self.addEventListener('push', (event) => {
-  console.log('[SW] Push received:', event);
-
   let notificationData = {
     title: 'NeonPro',
     body: 'Você tem uma nova notificação',
@@ -479,9 +436,7 @@ self.addEventListener('push', (event) => {
         ...notificationData,
         ...pushData,
       };
-    } catch (error) {
-      console.error('[SW] Error parsing push data:', error);
-    }
+    } catch (_error) {}
   }
 
   const notificationPromise = self.registration.showNotification(
@@ -505,8 +460,6 @@ self.addEventListener('push', (event) => {
 
 // Notification click handler
 self.addEventListener('notificationclick', (event) => {
-  console.log('[SW] Notification clicked:', event);
-
   const notification = event.notification;
   const action = event.action;
   const data = notification.data || {};
@@ -568,22 +521,16 @@ self.addEventListener('notificationclick', (event) => {
 
 // Notification close handler
 self.addEventListener('notificationclose', (event) => {
-  console.log('[SW] Notification closed:', event);
-
   const notification = event.notification;
   const data = notification.data || {};
 
   // Track notification closure analytics if needed
   if (data.trackClose) {
-    // Could send analytics data here
-    console.log('[SW] Tracking notification close for:', data.type);
   }
 });
 
 // Background sync handler (for offline actions)
 self.addEventListener('sync', (event) => {
-  console.log('[SW] Background sync:', event.tag);
-
   if (event.tag === 'sync-notifications') {
     const syncPromise = syncPendingNotifications();
     event.waitUntil(syncPromise);
@@ -593,8 +540,6 @@ self.addEventListener('sync', (event) => {
 // Helper function to sync pending notifications when back online
 async function syncPendingNotifications() {
   try {
-    console.log('[SW] Syncing pending notifications...');
-
     // Get pending notifications from IndexedDB or local storage
     const pendingNotifications = await getPendingNotifications();
 
@@ -613,15 +558,9 @@ async function syncPendingNotifications() {
           // Remove from pending list
           await removePendingNotification(notification.id);
         }
-      } catch (error) {
-        console.error('[SW] Error syncing notification:', error);
-      }
+      } catch (_error) {}
     }
-
-    console.log('[SW] Notification sync completed');
-  } catch (error) {
-    console.error('[SW] Error during notification sync:', error);
-  }
+  } catch (_error) {}
 }
 
 // Helper functions for managing pending notifications
@@ -631,15 +570,10 @@ async function getPendingNotifications() {
   return [];
 }
 
-async function removePendingNotification(notificationId) {
-  // This would typically remove from IndexedDB
-  console.log('[SW] Removing pending notification:', notificationId);
-}
+async function removePendingNotification(_notificationId) {}
 
 // Handle messages from main thread
 self.addEventListener('message', (event) => {
-  console.log('[SW] Message received:', event.data);
-
   const { type, data } = event.data;
 
   switch (type) {
@@ -669,19 +603,13 @@ self.addEventListener('message', (event) => {
       break;
 
     default:
-      console.log('[SW] Unknown message type:', type);
   }
 });
 
 async function updateNotificationPreferences(preferences) {
-  console.log('[SW] Updating notification preferences:', preferences);
   // Store preferences for offline use
   try {
     const cache = await caches.open('preferences');
     await cache.put('/preferences/notifications', Response.json(preferences));
-  } catch (error) {
-    console.error('[SW] Error storing preferences:', error);
-  }
+  } catch (_error) {}
 }
-
-console.log('[SW] Service Worker loaded successfully');

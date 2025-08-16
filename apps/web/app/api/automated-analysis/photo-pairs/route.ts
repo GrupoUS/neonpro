@@ -49,7 +49,6 @@ export async function GET(request: NextRequest) {
       count: photoPairs.length,
     });
   } catch (error) {
-    console.error('Error fetching photo pairs:', error);
     return NextResponse.json(
       {
         error: 'Failed to fetch photo pairs',
@@ -89,7 +88,6 @@ export async function POST(request: NextRequest) {
       { status: 201 }
     );
   } catch (error) {
-    console.error('Error creating photo pair:', error);
     return NextResponse.json(
       {
         error: 'Failed to create photo pair',
@@ -137,7 +135,6 @@ export async function PUT(request: NextRequest) {
       message: 'Photo pair updated successfully',
     });
   } catch (error) {
-    console.error('Error updating photo pair:', error);
     return NextResponse.json(
       {
         error: 'Failed to update photo pair',
@@ -177,7 +174,6 @@ export async function DELETE(request: NextRequest) {
       message: 'Photo pair deleted successfully',
     });
   } catch (error) {
-    console.error('Error deleting photo pair:', error);
     return NextResponse.json(
       {
         error: 'Failed to delete photo pair',

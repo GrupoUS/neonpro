@@ -89,13 +89,11 @@ global.testUtils = {
   }),
 
   // Performance testing utilities
-  measurePerformance: async (fn: () => Promise<any>, label = 'Operation') => {
+  measurePerformance: async (fn: () => Promise<any>, _label = 'Operation') => {
     const start = performance.now();
     const result = await fn();
     const end = performance.now();
     const duration = end - start;
-
-    console.log(`${label} took ${duration.toFixed(2)}ms`);
 
     return { result, duration };
   },
@@ -135,24 +133,18 @@ global.testUtils = {
 // Global type declarations
 declare global {
   namespace NodeJS {
-    interface Global {
+    type Global = {
       testUtils: typeof global.testUtils;
-    }
+    };
   }
 
   var testUtils: typeof global.testUtils;
 }
 
 // Setup and teardown hooks
-beforeAll(async () => {
-  // Global setup before all tests
-  console.log('🧪 Starting NeonPro Test Suite');
-});
+beforeAll(async () => {});
 
-afterAll(async () => {
-  // Global cleanup after all tests
-  console.log('✅ NeonPro Test Suite Completed');
-});
+afterAll(async () => {});
 
 beforeEach(() => {
   // Reset mocks before each test

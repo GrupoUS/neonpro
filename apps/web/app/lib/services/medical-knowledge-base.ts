@@ -300,7 +300,6 @@ export class MedicalKnowledgeBaseService {
         );
 
       if (interactionError) {
-        console.error('Error fetching drug interactions:', interactionError);
       } else {
         interactions = interactionData as DrugInteraction[];
       }

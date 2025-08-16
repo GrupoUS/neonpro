@@ -70,15 +70,8 @@ export class CommunicationSystem {
    * Sets up providers, templates, and background jobs
    */
   async initialize(): Promise<void> {
-    try {
-      // Initialize template engine with default templates
-      await this.templateEngine.initializeDefaultTemplates();
-
-      console.log('Communication system initialized successfully');
-    } catch (error) {
-      console.error('Failed to initialize communication system:', error);
-      throw error;
-    }
+    // Initialize template engine with default templates
+    await this.templateEngine.initializeDefaultTemplates();
   }
 
   /**
@@ -137,7 +130,6 @@ export class CommunicationSystem {
           .map((r) => r.error || 'Unknown error'),
       };
     } catch (error) {
-      console.error('Error processing scheduled communications:', error);
       return {
         processed: 0,
         failed: 1,
@@ -165,7 +157,6 @@ export class CommunicationSystem {
           .map((r) => r.error || 'Unknown error'),
       };
     } catch (error) {
-      console.error('Error processing waitlist notifications:', error);
       return {
         notified: 0,
         failed: 1,
@@ -197,7 +188,6 @@ export class CommunicationSystem {
         errors: [],
       };
     } catch (error) {
-      console.error('Error updating no-show predictions:', error);
       return {
         updated: 0,
         errors: [error.message],

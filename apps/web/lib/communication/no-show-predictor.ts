@@ -3,12 +3,12 @@
  * Story 5.3: Automated Communication for Scheduling
  */
 
-export interface NoShowPrediction {
+export type NoShowPrediction = {
   probability: number;
   factors: string[];
   riskLevel: 'low' | 'medium' | 'high';
   interventionRecommended: boolean;
-}
+};
 
 export class NoShowPredictor {
   async predict(_appointmentId: string): Promise<NoShowPrediction> {

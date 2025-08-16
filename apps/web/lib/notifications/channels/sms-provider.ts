@@ -22,7 +22,7 @@ export interface SMSProvider extends NotificationProvider {
   getDeliveryStatus(messageId: string): Promise<SMSDeliveryStatus>;
 }
 
-export interface SMSParams {
+export type SMSParams = {
   to: string | string[]; // E.164 format (+5511999999999)
   message: string;
   from?: string; // Sender ID or phone number
@@ -37,9 +37,9 @@ export interface SMSParams {
     lgpdConsent: LGPDCompliantData;
     brazilCompliance?: BrazilTelecomCompliance;
   };
-}
+};
 
-export interface BulkSMSParams {
+export type BulkSMSParams = {
   messages: Array<{
     to: string;
     message: string;
@@ -48,18 +48,18 @@ export interface BulkSMSParams {
   }>;
   batchSize?: number;
   rateLimitPerMinute?: number;
-}
+};
 
-export interface SMSDeliveryStatus {
+export type SMSDeliveryStatus = {
   status: 'queued' | 'sent' | 'delivered' | 'failed' | 'undelivered';
   errorCode?: string;
   errorMessage?: string;
   deliveredAt?: Date;
   price?: string;
   priceUnit?: string;
-}
+};
 
-export interface BrazilTelecomCompliance {
+export type BrazilTelecomCompliance = {
   operatorCode?: string; // TIM, Vivo, Claro, Oi
   dddCode: string; // Area code (11, 21, etc.)
   isWhitelisted?: boolean; // For commercial SMS
@@ -69,9 +69,9 @@ export interface BrazilTelecomCompliance {
     allowedDays: string[];
     frequencyLimit?: number;
   };
-}
+};
 
-export interface SMSProviderConfig {
+export type SMSProviderConfig = {
   primary: {
     provider: 'twilio';
     accountSid: string;
@@ -100,7 +100,7 @@ export interface SMSProviderConfig {
     anvisaCompliant: boolean;
     anatelCompliant: boolean; // Brazilian telecom authority
   };
-}
+};
 
 /**
  * Twilio SMS Provider Implementation
@@ -144,8 +144,7 @@ class TwilioSMSProvider implements SMSProvider {
       );
 
       return response.ok;
-    } catch (error) {
-      console.error(`[${this.id}] Health check failed:`, error);
+    } catch (_error) {
       return false;
     }
   }
@@ -331,8 +330,7 @@ class TwilioSMSProvider implements SMSProvider {
       }
 
       return true;
-    } catch (error) {
-      console.error(`[${this.id}] Phone validation failed:`, error);
+    } catch (_error) {
       return false;
     }
   }
@@ -512,8 +510,7 @@ class SMSProviderFactory {
     try {
       const provider = await this.getProvider();
       return await provider.validatePhoneNumber(phoneNumber);
-    } catch (error) {
-      console.error('Phone number validation failed:', error);
+    } catch (_error) {
       return false;
     }
   }

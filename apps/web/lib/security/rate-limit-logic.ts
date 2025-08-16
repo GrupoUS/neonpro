@@ -3,25 +3,25 @@
  * Advanced rate limiting with adaptive thresholds
  */
 
-interface RateLimitEntry {
+type RateLimitEntry = {
   count: number;
   firstRequest: number;
   blocked: boolean;
   blockUntil?: number;
-}
+};
 
-interface RateLimitResult {
+type RateLimitResult = {
   allowed: boolean;
   remaining: number;
   resetTime: number;
   reason?: string;
-}
+};
 
-interface RateLimitConfig {
+type RateLimitConfig = {
   requests: number;
   windowMs: number;
   blockDurationMs?: number;
-}
+};
 
 // In-memory cache for rate limiting
 const rateLimitCache = new Map<string, RateLimitEntry>();

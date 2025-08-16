@@ -7,7 +7,7 @@
 
 import { LRUCache } from 'lru-cache';
 
-interface PerformanceMetric {
+type PerformanceMetric = {
   name: string;
   value: number;
   unit: 'ms' | 'count' | 'bytes' | 'percent';
@@ -16,9 +16,9 @@ interface PerformanceMetric {
   userId?: string;
   clinicId?: string;
   metadata?: Record<string, any>;
-}
+};
 
-interface APIPerformanceData {
+type APIPerformanceData = {
   route: string;
   method: string;
   statusCode: number;
@@ -29,7 +29,7 @@ interface APIPerformanceData {
   clinicId?: string;
   userAgent?: string;
   timestamp: number;
-}
+};
 
 /**
  * Cache inteligente para métricas (máximo 1000 entradas, TTL 5 minutos)

@@ -3,11 +3,11 @@
 // Generated from database schema for Story 1.1
 
 // Base types for database entities
-export interface DatabaseEntity {
+export type DatabaseEntity = {
   id: string;
   created_at: string;
   updated_at: string;
-}
+};
 
 export interface SoftDeletableEntity extends DatabaseEntity {
   deleted_at: string | null;
@@ -27,7 +27,7 @@ export interface Clinic extends DatabaseEntity {
   timezone: string;
 }
 
-export interface BusinessHours {
+export type BusinessHours = {
   monday: DaySchedule;
   tuesday: DaySchedule;
   wednesday: DaySchedule;
@@ -35,13 +35,13 @@ export interface BusinessHours {
   friday: DaySchedule;
   saturday: DaySchedule;
   sunday: DaySchedule;
-}
+};
 
-export interface DaySchedule {
+export type DaySchedule = {
   start: string; // "HH:MM" format
   end: string; // "HH:MM" format
   enabled: boolean;
-} // Patient Types
+}; // Patient Types
 export interface Patient extends SoftDeletableEntity {
   clinic_id: string;
   full_name: string;
@@ -136,7 +136,7 @@ export interface AppointmentWithDetails extends Appointment {
 }
 
 // Form Types for Frontend
-export interface CreateAppointmentFormData {
+export type CreateAppointmentFormData = {
   patient_id: string;
   professional_id: string;
   service_type_id: string;
@@ -144,7 +144,7 @@ export interface CreateAppointmentFormData {
   end_time?: Date;
   notes?: string;
   internal_notes?: string;
-}
+};
 
 export interface UpdateAppointmentFormData
   extends Partial<CreateAppointmentFormData> {
@@ -153,12 +153,12 @@ export interface UpdateAppointmentFormData
 }
 
 // API Response Types
-export interface ApiResponse<T = any> {
+export type ApiResponse<T = any> = {
   success: boolean;
   data?: T;
   error_code?: string;
   error_message?: string;
-}
+};
 
 export interface BookingResponse extends ApiResponse {
   appointment_id?: string;
@@ -173,7 +173,7 @@ export interface CalendarEvent extends Appointment {
 }
 
 // Filter Types
-export interface AppointmentFilters {
+export type AppointmentFilters = {
   professional_id?: string;
   patient_id?: string;
   service_type_id?: string;
@@ -181,10 +181,10 @@ export interface AppointmentFilters {
   date_from?: Date;
   date_to?: Date;
   search_query?: string;
-}
+};
 
 // Enhanced filter types for URL state management
-export interface AppointmentFilterParams {
+export type AppointmentFilterParams = {
   professional?: string;
   service?: string;
   status?: string; // comma-separated for multiple values
@@ -192,30 +192,30 @@ export interface AppointmentFilterParams {
   date_to?: string; // ISO date string
   search?: string;
   view?: 'day' | 'week' | 'month';
-}
+};
 
 // Filter options for dropdowns
-export interface FilterOption {
+export type FilterOption = {
   value: string;
   label: string;
   count?: number;
-}
+};
 
-export interface FilterOptionsData {
+export type FilterOptionsData = {
   professionals: FilterOption[];
   services: FilterOption[];
   statuses: FilterOption[];
-}
+};
 // API Response Types
-export interface BookingResponse {
+export type BookingResponse = {
   success: boolean;
   appointment_id?: string;
   message?: string;
   error_message?: string;
   error_details?: string;
-}
+};
 
-export interface ConflictCheckResponse {
+export type ConflictCheckResponse = {
   has_conflict: boolean;
   conflicting_appointments?: Array<{
     id: string;
@@ -224,43 +224,43 @@ export interface ConflictCheckResponse {
     professional_name: string;
     patient_name: string;
   }>;
-}
+};
 
-export interface AvailableSlot {
+export type AvailableSlot = {
   slot_start: string;
   slot_end: string;
   is_available: boolean;
   duration_minutes: number;
-}
+};
 
-export interface AvailableSlotsResponse {
+export type AvailableSlotsResponse = {
   success: boolean;
   data: AvailableSlot[];
   error_message?: string;
-}
+};
 
-export interface AppointmentListResponse {
+export type AppointmentListResponse = {
   success: boolean;
   data: AppointmentWithRelations[];
   total_count: number;
   error_message?: string;
-}
+};
 
 // Sidebar-specific Response Types
-export interface AppointmentDetailsResponse {
+export type AppointmentDetailsResponse = {
   success: boolean;
   data: AppointmentWithDetails;
   error_message?: string;
-}
+};
 
-export interface AppointmentHistoryResponse {
+export type AppointmentHistoryResponse = {
   success: boolean;
   data: AppointmentHistoryEntry[];
   total_count: number;
   error_message?: string;
-}
+};
 
-export interface UpdateAppointmentResponse {
+export type UpdateAppointmentResponse = {
   success: boolean;
   data?: AppointmentWithDetails;
   conflicts?: Array<{
@@ -272,4 +272,4 @@ export interface UpdateAppointmentResponse {
   }>;
   error_message?: string;
   error_details?: string;
-}
+};

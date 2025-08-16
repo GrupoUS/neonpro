@@ -40,7 +40,6 @@ export async function GET(request: NextRequest) {
       filters,
     });
   } catch (error) {
-    console.error('GET /api/marketing/campaigns error:', error);
     return NextResponse.json(
       {
         success: false,
@@ -161,7 +160,6 @@ export async function POST(request: NextRequest) {
       { status: 201 }
     );
   } catch (error) {
-    console.error('POST /api/marketing/campaigns error:', error);
     return NextResponse.json(
       {
         success: false,

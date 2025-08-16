@@ -60,7 +60,7 @@ export enum DataRetentionPeriod {
   INDEFINITE = -1, // Special cases (anonymized data)
 }
 
-export interface ConsentRecord {
+export type ConsentRecord = {
   id: string;
   userId: string;
   type: ConsentType;
@@ -72,9 +72,9 @@ export interface ConsentRecord {
   ipAddress: string;
   userAgent: string;
   metadata?: Record<string, any>;
-}
+};
 
-export interface DataSubjectRequest {
+export type DataSubjectRequest = {
   id: string;
   userId: string;
   type: LGPDRights;
@@ -88,9 +88,9 @@ export interface DataSubjectRequest {
   attachments?: string[];
   processedBy?: string;
   rejectionReason?: string;
-}
+};
 
-export interface DataInventoryItem {
+export type DataInventoryItem = {
   category: string;
   description: string;
   dataTypes: string[];
@@ -100,9 +100,9 @@ export interface DataInventoryItem {
   thirdPartySharing: boolean;
   encryptionRequired: boolean;
   anonymizationPossible: boolean;
-}
+};
 
-export interface PrivacySettings {
+export type PrivacySettings = {
   userId: string;
   consents: Record<ConsentType, boolean>;
   marketingOptOut: boolean;
@@ -116,7 +116,7 @@ export interface PrivacySettings {
   thirdPartySharing: boolean;
   analyticsOptOut: boolean;
   lastUpdated: number;
-}
+};
 
 // Data inventory for healthcare application
 const DATA_INVENTORY: DataInventoryItem[] = [
@@ -227,8 +227,7 @@ class LGPDComplianceManager {
       );
 
       return consent;
-    } catch (error) {
-      console.error('Error recording consent:', error);
+    } catch (_error) {
       throw new Error('Falha ao registrar consentimento');
     }
   }
@@ -271,8 +270,7 @@ class LGPDComplianceManager {
       await this.executeDataSubjectRequest(request);
 
       return request;
-    } catch (error) {
-      console.error('Error processing data subject request:', error);
+    } catch (_error) {
       throw new Error('Falha ao processar solicitação de direito do titular');
     }
   }
@@ -314,8 +312,7 @@ class LGPDComplianceManager {
 
       await this.updatePrivacySettings(userId, defaultSettings);
       return defaultSettings;
-    } catch (error) {
-      console.error('Error getting privacy settings:', error);
+    } catch (_error) {
       throw new Error('Falha ao obter configurações de privacidade');
     }
   }
@@ -364,8 +361,7 @@ class LGPDComplianceManager {
         },
         userId
       );
-    } catch (error) {
-      console.error('Error updating privacy settings:', error);
+    } catch (_error) {
       throw new Error('Falha ao atualizar configurações de privacidade');
     }
   }
@@ -397,8 +393,7 @@ class LGPDComplianceManager {
       );
 
       return userData;
-    } catch (error) {
-      console.error('Error exporting user data:', error);
+    } catch (_error) {
       throw new Error('Falha ao exportar dados do usuário');
     }
   }
@@ -424,8 +419,7 @@ class LGPDComplianceManager {
         },
         userId
       );
-    } catch (error) {
-      console.error('Error deleting user data:', error);
+    } catch (_error) {
       throw new Error('Falha ao excluir dados do usuário');
     }
   }
@@ -465,8 +459,7 @@ class LGPDComplianceManager {
         dataSubjectRequests,
         retentionCompliance,
       };
-    } catch (error) {
-      console.error('Error generating compliance report:', error);
+    } catch (_error) {
       throw new Error('Falha ao gerar relatório de conformidade');
     }
   }
@@ -625,15 +618,9 @@ class LGPDComplianceManager {
     return { message: 'Log de auditoria seria recuperado do sistema' };
   }
 
-  private async anonymizePersonalData(userId: string): Promise<void> {
-    // Implement data anonymization
-    console.log('Anonymizing personal data for user:', userId);
-  }
+  private async anonymizePersonalData(_userId: string): Promise<void> {}
 
-  private async hardDeleteUserData(userId: string): Promise<void> {
-    // Implement hard deletion
-    console.log('Hard deleting all data for user:', userId);
-  }
+  private async hardDeleteUserData(_userId: string): Promise<void> {}
 
   // Metrics methods
   private async getTotalUsers(): Promise<number> {

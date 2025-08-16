@@ -172,9 +172,7 @@ export class ForecastingSystemAPI {
       ]);
 
       this.initialized = true;
-      console.log(`Forecasting system initialized for clinic ${clinicId}`);
-    } catch (error) {
-      console.error('Failed to initialize forecasting system:', error);
+    } catch (_error) {
       throw new Error('Forecasting system initialization failed');
     }
   }
@@ -212,7 +210,6 @@ export class ForecastingSystemAPI {
         },
       };
     } catch (error) {
-      console.error('Failed to generate forecast:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
@@ -288,7 +285,6 @@ export class ForecastingSystemAPI {
         },
       };
     } catch (error) {
-      console.error('Failed to generate batch forecasts:', error);
       return {
         success: false,
         errors: [
@@ -348,7 +344,6 @@ export class ForecastingSystemAPI {
         },
       };
     } catch (error) {
-      console.error('Failed to generate allocation plan:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
@@ -385,7 +380,6 @@ export class ForecastingSystemAPI {
         },
       };
     } catch (error) {
-      console.error('Failed to start model training:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
@@ -434,8 +428,7 @@ export class ForecastingSystemAPI {
         last_check: new Date().toISOString(),
         next_check: new Date(Date.now() + 60 * 1000).toISOString(), // Next check in 1 minute
       };
-    } catch (error) {
-      console.error('Failed to get system health:', error);
+    } catch (_error) {
       return {
         overall_status: 'critical',
         components: {
@@ -545,8 +538,7 @@ export const ForecastingHelpers = {
       });
 
       return response.success ? response.data || null : null;
-    } catch (error) {
-      console.error('Quick forecast failed:', error);
+    } catch (_error) {
       return null;
     }
   },
@@ -573,8 +565,7 @@ export const ForecastingHelpers = {
       });
 
       return response.success ? response.data || null : null;
-    } catch (error) {
-      console.error('Quick allocation failed:', error);
+    } catch (_error) {
       return null;
     }
   },

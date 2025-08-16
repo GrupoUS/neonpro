@@ -46,7 +46,6 @@ export async function POST(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('Error optimizing follow-up:', error);
     return NextResponse.json(
       {
         success: false,

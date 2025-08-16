@@ -50,7 +50,7 @@ export enum ViolationType {
   RESPONSE_TIME_VIOLATION = 'response_time_violation',
 }
 
-export interface ComplianceMetrics {
+export type ComplianceMetrics = {
   overallScore: number;
   categoryScores: Record<ComplianceCategory, number>;
   complianceLevel: ComplianceLevel;
@@ -63,17 +63,17 @@ export interface ComplianceMetrics {
   lastAssessment: number;
   nextAssessment: number;
   trends: ComplianceTrend[];
-}
+};
 
-export interface ComplianceTrend {
+export type ComplianceTrend = {
   category: ComplianceCategory;
   period: 'daily' | 'weekly' | 'monthly';
   scores: number[];
   dates: number[];
   direction: 'improving' | 'declining' | 'stable';
-}
+};
 
-export interface ComplianceViolation {
+export type ComplianceViolation = {
   id: string;
   type: ViolationType;
   severity: 'low' | 'medium' | 'high' | 'critical';
@@ -88,9 +88,9 @@ export interface ComplianceViolation {
   resolution?: string;
   responsible?: string;
   status: 'open' | 'investigating' | 'resolving' | 'resolved' | 'escalated';
-}
+};
 
-export interface ComplianceAlert {
+export type ComplianceAlert = {
   id: string;
   type:
     | 'violation'
@@ -109,9 +109,9 @@ export interface ComplianceAlert {
   actionRequired: boolean;
   deadline?: number;
   relatedViolationId?: string;
-}
+};
 
-export interface ComplianceRecommendation {
+export type ComplianceRecommendation = {
   id: string;
   category: ComplianceCategory;
   priority: 'low' | 'medium' | 'high' | 'critical';
@@ -123,9 +123,9 @@ export interface ComplianceRecommendation {
   legalBasis: string;
   resources: string[];
   status: 'pending' | 'in_progress' | 'completed' | 'dismissed';
-}
+};
 
-export interface RealTimeComplianceStatus {
+export type RealTimeComplianceStatus = {
   metrics: ComplianceMetrics;
   violations: ComplianceViolation[];
   alerts: ComplianceAlert[];
@@ -133,7 +133,7 @@ export interface RealTimeComplianceStatus {
   isMonitoring: boolean;
   lastUpdate: number;
   monitoringFrequency: number;
-}
+};
 
 // Compliance monitoring configuration
 const MONITORING_CONFIG = {
@@ -194,15 +194,12 @@ class RealTimeComplianceMonitor {
         MONITORING_CONFIG.ALERT_CHECK_FREQUENCY
       );
 
-      console.log('LGPD Real-time compliance monitoring started');
-
       // Log monitoring start
       await securityAuditLogger.logEvent(AuditEventType.PROFILE_UPDATE, {
         action: 'compliance_monitoring_started',
         frequency: MONITORING_CONFIG.ASSESSMENT_FREQUENCY,
       });
-    } catch (error) {
-      console.error('Error starting compliance monitoring:', error);
+    } catch (_error) {
       this.isRunning = false;
       throw new Error('Failed to start compliance monitoring');
     }
@@ -223,7 +220,6 @@ class RealTimeComplianceMonitor {
     }
 
     this.isRunning = false;
-    console.log('LGPD Real-time compliance monitoring stopped');
   }
 
   /**
@@ -248,8 +244,7 @@ class RealTimeComplianceMonitor {
         lastUpdate: Date.now(),
         monitoringFrequency: MONITORING_CONFIG.ASSESSMENT_FREQUENCY,
       };
-    } catch (error) {
-      console.error('Error getting compliance status:', error);
+    } catch (_error) {
       throw new Error('Failed to get compliance status');
     }
   }
@@ -309,8 +304,7 @@ class RealTimeComplianceMonitor {
 
       // Trigger immediate assessment
       await this.performFullAssessment();
-    } catch (error) {
-      console.error('Error reporting violation:', error);
+    } catch (_error) {
       throw new Error('Failed to report violation');
     }
   }
@@ -358,8 +352,7 @@ class RealTimeComplianceMonitor {
 
       // Trigger assessment to update scores
       await this.performFullAssessment();
-    } catch (error) {
-      console.error('Error resolving violation:', error);
+    } catch (_error) {
       throw new Error('Failed to resolve violation');
     }
   }
@@ -384,8 +377,7 @@ class RealTimeComplianceMonitor {
       alert.acknowledgedAt = Date.now();
 
       this.storeAlerts(alerts);
-    } catch (error) {
-      console.error('Error acknowledging alert:', error);
+    } catch (_error) {
       throw new Error('Failed to acknowledge alert');
     }
   }
@@ -393,24 +385,19 @@ class RealTimeComplianceMonitor {
   // Private methods
 
   private async performFullAssessment(): Promise<ComplianceMetrics> {
-    try {
-      const metrics = await this.calculateComplianceMetrics();
+    const metrics = await this.calculateComplianceMetrics();
 
-      // Check for new violations
-      await this.detectViolations();
+    // Check for new violations
+    await this.detectViolations();
 
-      // Update trends
-      await this.updateComplianceTrends(metrics);
+    // Update trends
+    await this.updateComplianceTrends(metrics);
 
-      // Notify listeners
-      const status = await this.getCurrentStatus();
-      this.notifyListeners(status);
+    // Notify listeners
+    const status = await this.getCurrentStatus();
+    this.notifyListeners(status);
 
-      return metrics;
-    } catch (error) {
-      console.error('Error performing compliance assessment:', error);
-      throw error;
-    }
+    return metrics;
   }
 
   private async calculateComplianceMetrics(): Promise<ComplianceMetrics> {
@@ -464,8 +451,7 @@ class RealTimeComplianceMonitor {
       this.storeMetrics(metrics);
 
       return metrics;
-    } catch (error) {
-      console.error('Error calculating compliance metrics:', error);
+    } catch (_error) {
       throw new Error('Failed to calculate compliance metrics');
     }
   }
@@ -516,8 +502,7 @@ class RealTimeComplianceMonitor {
       baseScore *= consentRate;
 
       return Math.max(0, Math.min(100, baseScore));
-    } catch (error) {
-      console.error('Error calculating consent score:', error);
+    } catch (_error) {
       return 50; // Default moderate score on error
     }
   }
@@ -548,8 +533,7 @@ class RealTimeComplianceMonitor {
       }
 
       return Math.max(0, Math.min(100, baseScore));
-    } catch (error) {
-      console.error('Error calculating data rights score:', error);
+    } catch (_error) {
       return 50;
     }
   }
@@ -573,8 +557,7 @@ class RealTimeComplianceMonitor {
       baseScore -= securityMetrics.suspiciousActivities * 5;
 
       return Math.max(0, Math.min(100, baseScore));
-    } catch (error) {
-      console.error('Error calculating data protection score:', error);
+    } catch (_error) {
       return 50;
     }
   }
@@ -600,8 +583,7 @@ class RealTimeComplianceMonitor {
       }
 
       return Math.max(0, Math.min(100, baseScore));
-    } catch (error) {
-      console.error('Error calculating audit score:', error);
+    } catch (_error) {
       return 50;
     }
   }
@@ -624,8 +606,7 @@ class RealTimeComplianceMonitor {
         ];
 
       return Math.max(0, Math.min(100, baseScore));
-    } catch (error) {
-      console.error('Error calculating retention score:', error);
+    } catch (_error) {
       return 50;
     }
   }
@@ -671,9 +652,7 @@ class RealTimeComplianceMonitor {
 
       // Check for excessive failed logins (potential consent violations)
       await this.checkExcessiveFailedLogins();
-    } catch (error) {
-      console.error('Error detecting violations:', error);
-    }
+    } catch (_error) {}
   }
 
   private async checkExpiredDataRequests(): Promise<void> {
@@ -795,9 +774,7 @@ class RealTimeComplianceMonitor {
     this.listeners.forEach((listener) => {
       try {
         listener(status);
-      } catch (error) {
-        console.error('Error notifying compliance status listener:', error);
-      }
+      } catch (_error) {}
     });
   }
 

@@ -6,24 +6,36 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { 
-  Plus, 
-  Package, 
-  CheckCircle, 
-  XCircle, 
-  Clock, 
+import {
+  Plus,
+  Package,
+  CheckCircle,
+  XCircle,
+  Clock,
   AlertTriangle,
   Edit,
   Save,
-  X
+  X,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -54,7 +66,9 @@ interface ANVISAProductRegistrationProps {
   clinicId: string;
 }
 
-export function ANVISAProductRegistration({ clinicId }: ANVISAProductRegistrationProps) {
+export function ANVISAProductRegistration({
+  clinicId,
+}: ANVISAProductRegistrationProps) {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -79,7 +93,9 @@ export function ANVISAProductRegistration({ clinicId }: ANVISAProductRegistratio
   const fetchProducts = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`/api/anvisa/products?clinic_id=${clinicId}`);
+      const response = await fetch(
+        `/api/anvisa/products?clinic_id=${clinicId}`
+      );
       if (response.ok) {
         const data = await response.json();
         setProducts(data.data);
@@ -185,7 +201,9 @@ export function ANVISAProductRegistration({ clinicId }: ANVISAProductRegistratio
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h3 className="text-2xl font-bold tracking-tight">Registro de Produtos ANVISA</h3>
+          <h3 className="text-2xl font-bold tracking-tight">
+            Registro de Produtos ANVISA
+          </h3>
           <p className="text-muted-foreground">
             Gerencie produtos estéticos e sua conformidade regulatória
           </p>
@@ -207,7 +225,9 @@ export function ANVISAProductRegistration({ clinicId }: ANVISAProductRegistratio
       {success && (
         <Alert className="border-green-200 bg-green-50">
           <CheckCircle className="h-4 w-4 text-green-600" />
-          <AlertDescription className="text-green-800">{success}</AlertDescription>
+          <AlertDescription className="text-green-800">
+            {success}
+          </AlertDescription>
         </Alert>
       )}
 
@@ -228,18 +248,27 @@ export function ANVISAProductRegistration({ clinicId }: ANVISAProductRegistratio
                   <Input
                     id="name"
                     value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, name: e.target.value })
+                    }
                     placeholder="Ex: Ácido Hialurônico Restylane"
                     required
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="registration_number">Número de Registro ANVISA</Label>
+                  <Label htmlFor="registration_number">
+                    Número de Registro ANVISA
+                  </Label>
                   <Input
                     id="registration_number"
                     value={formData.registration_number}
-                    onChange={(e) => setFormData({ ...formData, registration_number: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        registration_number: e.target.value,
+                      })
+                    }
                     placeholder="Ex: 12345.678.901-2"
                     required
                   />
@@ -250,7 +279,9 @@ export function ANVISAProductRegistration({ clinicId }: ANVISAProductRegistratio
                   <Input
                     id="manufacturer"
                     value={formData.manufacturer}
-                    onChange={(e) => setFormData({ ...formData, manufacturer: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, manufacturer: e.target.value })
+                    }
                     placeholder="Ex: Galderma"
                     required
                   />
@@ -260,17 +291,29 @@ export function ANVISAProductRegistration({ clinicId }: ANVISAProductRegistratio
                   <Label htmlFor="category">Categoria</Label>
                   <Select
                     value={formData.category}
-                    onValueChange={(value) => setFormData({ ...formData, category: value })}
+                    onValueChange={(value) =>
+                      setFormData({ ...formData, category: value })
+                    }
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Selecione a categoria" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="dermal_filler">Preenchedor Dérmico</SelectItem>
-                      <SelectItem value="botulinum_toxin">Toxina Botulínica</SelectItem>
-                      <SelectItem value="laser_equipment">Equipamento a Laser</SelectItem>
-                      <SelectItem value="topical_treatment">Tratamento Tópico</SelectItem>
-                      <SelectItem value="medical_device">Dispositivo Médico</SelectItem>
+                      <SelectItem value="dermal_filler">
+                        Preenchedor Dérmico
+                      </SelectItem>
+                      <SelectItem value="botulinum_toxin">
+                        Toxina Botulínica
+                      </SelectItem>
+                      <SelectItem value="laser_equipment">
+                        Equipamento a Laser
+                      </SelectItem>
+                      <SelectItem value="topical_treatment">
+                        Tratamento Tópico
+                      </SelectItem>
+                      <SelectItem value="medical_device">
+                        Dispositivo Médico
+                      </SelectItem>
                       <SelectItem value="other">Outros</SelectItem>
                     </SelectContent>
                   </Select>
@@ -281,7 +324,9 @@ export function ANVISAProductRegistration({ clinicId }: ANVISAProductRegistratio
                   <Input
                     id="batch_number"
                     value={formData.batch_number}
-                    onChange={(e) => setFormData({ ...formData, batch_number: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, batch_number: e.target.value })
+                    }
                     placeholder="Ex: LOT123456"
                   />
                 </div>
@@ -292,7 +337,9 @@ export function ANVISAProductRegistration({ clinicId }: ANVISAProductRegistratio
                     id="expiry_date"
                     type="date"
                     value={formData.expiry_date}
-                    onChange={(e) => setFormData({ ...formData, expiry_date: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, expiry_date: e.target.value })
+                    }
                     required
                   />
                 </div>
@@ -303,7 +350,12 @@ export function ANVISAProductRegistration({ clinicId }: ANVISAProductRegistratio
                     id="lot_size"
                     type="number"
                     value={formData.lot_size}
-                    onChange={(e) => setFormData({ ...formData, lot_size: Number(e.target.value) })}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        lot_size: Number(e.target.value),
+                      })
+                    }
                     placeholder="Ex: 50"
                     min="1"
                   />
@@ -315,14 +367,20 @@ export function ANVISAProductRegistration({ clinicId }: ANVISAProductRegistratio
                 <Textarea
                   id="description"
                   value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, description: e.target.value })
+                  }
                   placeholder="Descrição detalhada do produto, indicações e especificações"
                   rows={3}
                 />
               </div>
 
               <div className="flex justify-end space-x-2">
-                <Button type="button" variant="outline" onClick={() => setShowForm(false)}>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setShowForm(false)}
+                >
                   <X className="mr-2 h-4 w-4" />
                   Cancelar
                 </Button>
@@ -361,15 +419,21 @@ export function ANVISAProductRegistration({ clinicId }: ANVISAProductRegistratio
 
               <div className="flex items-center justify-between">
                 <span className="text-sm text-muted-foreground">Registro:</span>
-                <span className="text-sm font-mono">{product.registration_number}</span>
+                <span className="text-sm font-mono">
+                  {product.registration_number}
+                </span>
               </div>
 
               <div className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">Conformidade:</span>
-                <span className={cn(
-                  "text-sm font-semibold",
-                  getComplianceColor(product.compliance_score)
-                )}>
+                <span className="text-sm text-muted-foreground">
+                  Conformidade:
+                </span>
+                <span
+                  className={cn(
+                    'text-sm font-semibold',
+                    getComplianceColor(product.compliance_score)
+                  )}
+                >
                   {product.compliance_score}%
                 </span>
               </div>
@@ -393,7 +457,8 @@ export function ANVISAProductRegistration({ clinicId }: ANVISAProductRegistratio
                     {product.status === 'pending' && (
                       <Clock className="h-4 w-4 text-yellow-500" />
                     )}
-                    {(product.status === 'expired' || product.status === 'suspended') && (
+                    {(product.status === 'expired' ||
+                      product.status === 'suspended') && (
                       <XCircle className="h-4 w-4 text-red-500" />
                     )}
                   </div>
@@ -408,9 +473,12 @@ export function ANVISAProductRegistration({ clinicId }: ANVISAProductRegistratio
         <Card>
           <CardContent className="flex flex-col items-center justify-center py-12">
             <Package className="h-12 w-12 text-muted-foreground mb-4" />
-            <h3 className="text-lg font-semibold mb-2">Nenhum produto registrado</h3>
+            <h3 className="text-lg font-semibold mb-2">
+              Nenhum produto registrado
+            </h3>
             <p className="text-muted-foreground text-center mb-4">
-              Comece registrando seus produtos estéticos para garantir conformidade com a ANVISA
+              Comece registrando seus produtos estéticos para garantir
+              conformidade com a ANVISA
             </p>
             <Button onClick={() => setShowForm(true)}>
               <Plus className="mr-2 h-4 w-4" />

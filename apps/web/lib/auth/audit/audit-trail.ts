@@ -4,7 +4,7 @@
 import { SessionConfig } from '@/lib/auth/config/session-config';
 import { SessionUtils } from '@/lib/auth/utils/session-utils';
 
-export interface AuditEvent {
+export type AuditEvent = {
   id: string;
   timestamp: number;
   type: AuditEventType;
@@ -22,7 +22,7 @@ export interface AuditEvent {
   correlationId?: string;
   parentEventId?: string;
   childEventIds: string[];
-}
+};
 
 export type AuditEventType =
   | 'authentication'
@@ -56,7 +56,7 @@ export type AuditSeverity =
   | 'low' // Normal user actions, successful operations
   | 'info'; // Informational events
 
-export interface AuditActor {
+export type AuditActor = {
   type: ActorType;
   id: string;
   name?: string;
@@ -67,7 +67,7 @@ export interface AuditActor {
   ipAddress?: string;
   userAgent?: string;
   location?: GeoLocation;
-}
+};
 
 export type ActorType =
   | 'user'
@@ -78,13 +78,13 @@ export type ActorType =
   | 'anonymous'
   | 'bot';
 
-export interface AuditTarget {
+export type AuditTarget = {
   type: TargetType;
   id: string;
   name?: string;
   resource?: string;
   attributes?: Record<string, any>;
-}
+};
 
 export type TargetType =
   | 'user'
@@ -97,7 +97,7 @@ export type TargetType =
   | 'api_endpoint'
   | 'configuration';
 
-export interface AuditDetails {
+export type AuditDetails = {
   operation: string;
   parameters?: Record<string, any>;
   previousValues?: Record<string, any>;
@@ -105,28 +105,28 @@ export interface AuditDetails {
   changes?: ChangeRecord[];
   validationErrors?: ValidationError[];
   businessRules?: BusinessRuleResult[];
-}
+};
 
-export interface ChangeRecord {
+export type ChangeRecord = {
   field: string;
   oldValue: any;
   newValue: any;
   changeType: 'create' | 'update' | 'delete';
-}
+};
 
-export interface ValidationError {
+export type ValidationError = {
   field: string;
   error: string;
   code: string;
-}
+};
 
-export interface BusinessRuleResult {
+export type BusinessRuleResult = {
   rule: string;
   passed: boolean;
   message: string;
-}
+};
 
-export interface AuditContext {
+export type AuditContext = {
   sessionId?: string;
   requestId?: string;
   transactionId?: string;
@@ -136,9 +136,9 @@ export interface AuditContext {
   clientInfo?: ClientInfo;
   serverInfo?: ServerInfo;
   networkInfo?: NetworkInfo;
-}
+};
 
-export interface ClientInfo {
+export type ClientInfo = {
   userAgent: string;
   browser: string;
   browserVersion: string;
@@ -148,18 +148,18 @@ export interface ClientInfo {
   screenResolution: string;
   timezone: string;
   language: string;
-}
+};
 
-export interface ServerInfo {
+export type ServerInfo = {
   hostname: string;
   instanceId: string;
   version: string;
   environment: string;
   region: string;
   loadBalancer?: string;
-}
+};
 
-export interface NetworkInfo {
+export type NetworkInfo = {
   ipAddress: string;
   proxyIp?: string;
   country?: string;
@@ -167,18 +167,18 @@ export interface NetworkInfo {
   city?: string;
   isp?: string;
   connectionType?: string;
-}
+};
 
-export interface GeoLocation {
+export type GeoLocation = {
   latitude: number;
   longitude: number;
   accuracy: number;
   country: string;
   region: string;
   city: string;
-}
+};
 
-export interface AuditResult {
+export type AuditResult = {
   status: ResultStatus;
   statusCode?: number;
   message?: string;
@@ -187,7 +187,7 @@ export interface AuditResult {
   duration?: number;
   resourcesAffected?: number;
   dataSize?: number;
-}
+};
 
 export type ResultStatus =
   | 'success'
@@ -198,7 +198,7 @@ export type ResultStatus =
   | 'timeout'
   | 'cancelled';
 
-export interface AuditMetadata {
+export type AuditMetadata = {
   source: string;
   version: string;
   schema: string;
@@ -207,43 +207,43 @@ export interface AuditMetadata {
   compliance: ComplianceInfo;
   encryption: EncryptionInfo;
   integrity: IntegrityInfo;
-}
+};
 
-export interface RetentionPolicy {
+export type RetentionPolicy = {
   period: number; // in milliseconds
   archiveAfter: number;
   deleteAfter: number;
   reason: string;
-}
+};
 
-export interface DataClassification {
+export type DataClassification = {
   level: 'public' | 'internal' | 'confidential' | 'restricted';
   categories: string[];
   handling: string[];
-}
+};
 
-export interface ComplianceInfo {
+export type ComplianceInfo = {
   frameworks: string[]; // LGPD, GDPR, SOX, etc.
   requirements: string[];
   controls: string[];
   evidence: boolean;
-}
+};
 
-export interface EncryptionInfo {
+export type EncryptionInfo = {
   encrypted: boolean;
   algorithm?: string;
   keyId?: string;
   strength?: number;
-}
+};
 
-export interface IntegrityInfo {
+export type IntegrityInfo = {
   hash: string;
   algorithm: string;
   verified: boolean;
   timestamp: number;
-}
+};
 
-export interface AuditQuery {
+export type AuditQuery = {
   startTime?: number;
   endTime?: number;
   types?: AuditEventType[];
@@ -264,9 +264,9 @@ export interface AuditQuery {
   sortOrder?: 'asc' | 'desc';
   includeMetadata?: boolean;
   includeDetails?: boolean;
-}
+};
 
-export interface AuditReport {
+export type AuditReport = {
   id: string;
   title: string;
   description: string;
@@ -280,9 +280,9 @@ export interface AuditReport {
   insights: AuditInsight[];
   recommendations: AuditRecommendation[];
   compliance: ComplianceReport;
-}
+};
 
-export interface AuditSummary {
+export type AuditSummary = {
   totalEvents: number;
   eventsByType: Record<AuditEventType, number>;
   eventsByCategory: Record<AuditCategory, number>;
@@ -291,9 +291,9 @@ export interface AuditSummary {
   uniqueActors: number;
   uniqueTargets: number;
   timeRange: { start: number; end: number };
-}
+};
 
-export interface AuditStatistics {
+export type AuditStatistics = {
   eventsPerHour: number[];
   eventsPerDay: number[];
   topActors: { actor: string; count: number }[];
@@ -302,9 +302,9 @@ export interface AuditStatistics {
   errorRate: number;
   averageDuration: number;
   peakHours: number[];
-}
+};
 
-export interface AuditInsight {
+export type AuditInsight = {
   type: InsightType;
   severity: 'low' | 'medium' | 'high' | 'critical';
   title: string;
@@ -313,7 +313,7 @@ export interface AuditInsight {
   confidence: number;
   impact: string;
   recommendation: string;
-}
+};
 
 export type InsightType =
   | 'anomaly_detected'
@@ -324,7 +324,7 @@ export type InsightType =
   | 'trend_analysis'
   | 'behavioral_change';
 
-export interface AuditRecommendation {
+export type AuditRecommendation = {
   id: string;
   priority: 'low' | 'medium' | 'high' | 'critical';
   category: string;
@@ -335,33 +335,33 @@ export interface AuditRecommendation {
   effort: string;
   timeline: string;
   relatedEvents: string[];
-}
+};
 
-export interface ComplianceReport {
+export type ComplianceReport = {
   frameworks: FrameworkCompliance[];
   violations: ComplianceViolation[];
   gaps: ComplianceGap[];
   score: number;
   status: 'compliant' | 'non_compliant' | 'partial' | 'unknown';
-}
+};
 
-export interface FrameworkCompliance {
+export type FrameworkCompliance = {
   framework: string;
   version: string;
   requirements: RequirementCompliance[];
   score: number;
   status: 'compliant' | 'non_compliant' | 'partial';
-}
+};
 
-export interface RequirementCompliance {
+export type RequirementCompliance = {
   id: string;
   description: string;
   status: 'met' | 'not_met' | 'partial' | 'not_applicable';
   evidence: string[];
   gaps: string[];
-}
+};
 
-export interface ComplianceViolation {
+export type ComplianceViolation = {
   id: string;
   framework: string;
   requirement: string;
@@ -370,9 +370,9 @@ export interface ComplianceViolation {
   events: string[];
   remediation: string;
   deadline?: number;
-}
+};
 
-export interface ComplianceGap {
+export type ComplianceGap = {
   id: string;
   framework: string;
   requirement: string;
@@ -380,7 +380,7 @@ export interface ComplianceGap {
   impact: string;
   recommendation: string;
   priority: 'low' | 'medium' | 'high' | 'critical';
-}
+};
 
 export class AuditTrailManager {
   private readonly utils: SessionUtils;
@@ -413,70 +413,59 @@ export class AuditTrailManager {
     if (this.isInitialized) {
       return;
     }
+    // Initialize storage
+    await this.eventStore.initialize();
 
-    try {
-      // Initialize storage
-      await this.eventStore.initialize();
+    // Initialize encryption
+    await this.encryptionService.initialize();
 
-      // Initialize encryption
-      await this.encryptionService.initialize();
+    // Initialize integrity service
+    await this.integrityService.initialize();
 
-      // Initialize integrity service
-      await this.integrityService.initialize();
+    // Initialize compliance engine
+    await this.complianceEngine.initialize();
 
-      // Initialize compliance engine
-      await this.complianceEngine.initialize();
+    // Initialize analytics engine
+    await this.analyticsEngine.initialize();
 
-      // Initialize analytics engine
-      await this.analyticsEngine.initialize();
+    // Start flush timer
+    this.startFlushTimer();
 
-      // Start flush timer
-      this.startFlushTimer();
+    this.isInitialized = true;
 
-      this.isInitialized = true;
-
-      // Log initialization
-      await this.logEvent({
-        type: 'system_event',
-        category: 'system',
-        severity: 'info',
-        action: 'audit_trail_initialized',
-        description: 'Audit trail system initialized successfully',
-        actor: { type: 'system', id: 'audit_trail' },
-        target: { type: 'system', id: 'audit_trail' },
-      });
-    } catch (error) {
-      console.error('Error initializing audit trail:', error);
-      throw error;
-    }
+    // Log initialization
+    await this.logEvent({
+      type: 'system_event',
+      category: 'system',
+      severity: 'info',
+      action: 'audit_trail_initialized',
+      description: 'Audit trail system initialized successfully',
+      actor: { type: 'system', id: 'audit_trail' },
+      target: { type: 'system', id: 'audit_trail' },
+    });
   }
 
   /**
    * Log audit event
    */
   public async logEvent(eventData: Partial<AuditEvent>): Promise<string> {
-    try {
-      const event = await this.createAuditEvent(eventData);
+    const event = await this.createAuditEvent(eventData);
 
-      // Add to buffer
-      this.eventBuffer.push(event);
+    // Add to buffer
+    this.eventBuffer.push(event);
 
-      // Flush if buffer is full
-      if (this.eventBuffer.length >= this.bufferSize) {
-        await this.flushBuffer();
-      }
-
-      // Emit event
-      this.emit('event_logged', event);
-
-      // Check for real-time alerts
-      await this.checkRealTimeAlerts(event);
-
-      return event.id;
-    } catch (error) {
-      console.error('Error logging audit event:', error);
-      throw error;
+    // Flush if buffer is full
+    if (this.eventBuffer.length >= this.bufferSize) {
+      await this.flushBuffer();
     }
+
+    // Emit event
+    this.emit('event_logged', event);
+
+    // Check for real-time alerts
+    await this.checkRealTimeAlerts(event);
+
+    return event.id;
   }
 
   /**
@@ -611,7 +600,6 @@ export class AuditTrailManager {
 
       this.emit('buffer_flushed', { count: events.length });
     } catch (error) {
-      console.error('Error flushing event buffer:', error);
       // Re-add events to buffer for retry
       this.eventBuffer.unshift(...this.eventBuffer);
       throw error;
@@ -625,9 +613,7 @@ export class AuditTrailManager {
     this.flushTimer = setInterval(async () => {
       try {
         await this.flushBuffer();
-      } catch (error) {
-        console.error('Error in flush timer:', error);
-      }
+      } catch (_error) {}
     }, this.flushInterval);
   }
 
@@ -664,9 +650,7 @@ export class AuditTrailManager {
           message: `Compliance violation detected: ${violations.map((v) => v.requirement).join(', ')}`,
         });
       }
-    } catch (error) {
-      console.error('Error checking real-time alerts:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -682,33 +666,26 @@ export class AuditTrailManager {
       });
 
       this.emit('alert_sent', alert);
-    } catch (error) {
-      console.error('Error sending alert:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
    * Query audit events
    */
   public async queryEvents(query: AuditQuery): Promise<AuditEvent[]> {
-    try {
-      // Flush buffer to ensure latest events are included
-      await this.flushBuffer();
+    // Flush buffer to ensure latest events are included
+    await this.flushBuffer();
 
-      // Query from store
-      const events = await this.eventStore.queryEvents(query);
+    // Query from store
+    const events = await this.eventStore.queryEvents(query);
 
-      // Verify integrity
-      const verifiedEvents = await this.verifyEventIntegrity(events);
+    // Verify integrity
+    const verifiedEvents = await this.verifyEventIntegrity(events);
 
-      // Decrypt if needed
-      const decryptedEvents = await this.decryptEvents(verifiedEvents);
+    // Decrypt if needed
+    const decryptedEvents = await this.decryptEvents(verifiedEvents);
 
-      return decryptedEvents;
-    } catch (error) {
-      console.error('Error querying audit events:', error);
-      throw error;
-    }
+    return decryptedEvents;
   }
 
   /**
@@ -722,60 +699,55 @@ export class AuditTrailManager {
       includeCompliance?: boolean;
     }
   ): Promise<AuditReport> {
-    try {
-      const events = await this.queryEvents(query);
+    const events = await this.queryEvents(query);
 
-      const report: AuditReport = {
-        id: this.utils.generateSessionToken(),
-        title: 'Audit Trail Report',
-        description: 'Comprehensive audit trail analysis',
-        generatedAt: Date.now(),
-        generatedBy: 'audit_trail_system',
-        period: {
-          start: query.startTime || 0,
-          end: query.endTime || Date.now(),
-        },
-        query,
-        summary: this.generateSummary(events),
-        events,
-        statistics: await this.analyticsEngine.generateStatistics(events),
-        insights: options?.includeInsights
-          ? await this.analyticsEngine.generateInsights(events)
-          : [],
-        recommendations: options?.includeRecommendations
-          ? await this.analyticsEngine.generateRecommendations(events)
-          : [],
-        compliance: options?.includeCompliance
-          ? await this.complianceEngine.generateReport(events)
-          : {
-              frameworks: [],
-              violations: [],
-              gaps: [],
-              score: 0,
-              status: 'unknown',
-            },
-      };
+    const report: AuditReport = {
+      id: this.utils.generateSessionToken(),
+      title: 'Audit Trail Report',
+      description: 'Comprehensive audit trail analysis',
+      generatedAt: Date.now(),
+      generatedBy: 'audit_trail_system',
+      period: {
+        start: query.startTime || 0,
+        end: query.endTime || Date.now(),
+      },
+      query,
+      summary: this.generateSummary(events),
+      events,
+      statistics: await this.analyticsEngine.generateStatistics(events),
+      insights: options?.includeInsights
+        ? await this.analyticsEngine.generateInsights(events)
+        : [],
+      recommendations: options?.includeRecommendations
+        ? await this.analyticsEngine.generateRecommendations(events)
+        : [],
+      compliance: options?.includeCompliance
+        ? await this.complianceEngine.generateReport(events)
+        : {
+            frameworks: [],
+            violations: [],
+            gaps: [],
+            score: 0,
+            status: 'unknown',
+          },
+    };
 
-      // Log report generation
-      await this.logEvent({
-        type: 'admin_action',
-        category: 'admin',
-        severity: 'medium',
-        action: 'audit_report_generated',
-        description: `Audit report generated with ${events.length} events`,
-        actor: { type: 'system', id: 'audit_trail' },
-        target: { type: 'system', id: 'audit_report' },
-        details: {
-          operation: 'generate_report',
-          parameters: { reportId: report.id, eventCount: events.length },
-        },
-      });
+    // Log report generation
+    await this.logEvent({
+      type: 'admin_action',
+      category: 'admin',
+      severity: 'medium',
+      action: 'audit_report_generated',
+      description: `Audit report generated with ${events.length} events`,
+      actor: { type: 'system', id: 'audit_trail' },
+      target: { type: 'system', id: 'audit_report' },
+      details: {
+        operation: 'generate_report',
+        parameters: { reportId: report.id, eventCount: events.length },
+      },
+    });
 
-      return report;
-    } catch (error) {
-      console.error('Error generating audit report:', error);
-      throw error;
-    }
+    return report;
   }
 
   /**
@@ -826,7 +798,6 @@ export class AuditTrailManager {
           event.metadata.integrity.verified = true;
           verifiedEvents.push(event);
         } else {
-          console.warn(`Integrity verification failed for event ${event.id}`);
           // Log integrity violation
           await this.logEvent({
             type: 'security_incident',
@@ -838,12 +809,7 @@ export class AuditTrailManager {
             target: { type: 'system', id: event.id },
           });
         }
-      } catch (error) {
-        console.error(
-          `Error verifying integrity for event ${event.id}:`,
-          error
-        );
-      }
+      } catch (_error) {}
     }
 
     return verifiedEvents;
@@ -863,8 +829,7 @@ export class AuditTrailManager {
         } else {
           decryptedEvents.push(event);
         }
-      } catch (error) {
-        console.error(`Error decrypting event ${event.id}:`, error);
+      } catch (_error) {
         // Include encrypted event with error flag
         decryptedEvents.push({
           ...event,
@@ -1045,9 +1010,7 @@ export class AuditTrailManager {
       listeners.forEach((callback) => {
         try {
           callback(data);
-        } catch (error) {
-          console.error(`Error in event listener for ${event}:`, error);
-        }
+        } catch (_error) {}
       });
     }
   }
@@ -1056,32 +1019,25 @@ export class AuditTrailManager {
    * Cleanup and shutdown
    */
   public async shutdown(): Promise<void> {
-    try {
-      // Stop flush timer
-      if (this.flushTimer) {
-        clearInterval(this.flushTimer);
-      }
-
-      // Flush remaining events
-      await this.flushBuffer();
-
-      // Shutdown services
-      await this.eventStore.shutdown();
-      await this.encryptionService.shutdown();
-      await this.integrityService.shutdown();
-      await this.complianceEngine.shutdown();
-      await this.analyticsEngine.shutdown();
-
-      // Clear state
-      this.eventListeners.clear();
-      this.eventBuffer = [];
-      this.isInitialized = false;
-
-      console.log('Audit trail system shutdown completed');
-    } catch (error) {
-      console.error('Error during audit trail shutdown:', error);
-      throw error;
+    // Stop flush timer
+    if (this.flushTimer) {
+      clearInterval(this.flushTimer);
     }
+
+    // Flush remaining events
+    await this.flushBuffer();
+
+    // Shutdown services
+    await this.eventStore.shutdown();
+    await this.encryptionService.shutdown();
+    await this.integrityService.shutdown();
+    await this.complianceEngine.shutdown();
+    await this.analyticsEngine.shutdown();
+
+    // Clear state
+    this.eventListeners.clear();
+    this.eventBuffer = [];
+    this.isInitialized = false;
   }
 
   /**
@@ -1125,10 +1081,7 @@ class AuditEventStore {
     // Initialize database connection
   }
 
-  async storeEvents(events: AuditEvent[]): Promise<void> {
-    // Store events in database
-    console.log(`Storing ${events.length} audit events`);
-  }
+  async storeEvents(_events: AuditEvent[]): Promise<void> {}
 
   async queryEvents(_query: AuditQuery): Promise<AuditEvent[]> {
     // Query events from database
@@ -1208,10 +1161,7 @@ class ComplianceEngine {
     // Initialize compliance rules
   }
 
-  async processEvents(events: AuditEvent[]): Promise<void> {
-    // Process events for compliance
-    console.log(`Processing ${events.length} events for compliance`);
-  }
+  async processEvents(_events: AuditEvent[]): Promise<void> {}
 
   async checkViolations(_event: AuditEvent): Promise<ComplianceViolation[]> {
     // Check for compliance violations
@@ -1243,10 +1193,7 @@ class AnalyticsEngine {
     // Initialize analytics
   }
 
-  async processEvents(events: AuditEvent[]): Promise<void> {
-    // Process events for analytics
-    console.log(`Processing ${events.length} events for analytics`);
-  }
+  async processEvents(_events: AuditEvent[]): Promise<void> {}
 
   async generateStatistics(_events: AuditEvent[]): Promise<AuditStatistics> {
     // Generate statistics

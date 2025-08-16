@@ -78,9 +78,7 @@ export async function GET(request: NextRequest) {
         hasMore: offset + limit < totalCount,
       },
     });
-  } catch (error) {
-    console.error('Get security events error:', error);
-
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error while fetching security events' },
       { status: 500 }
@@ -123,9 +121,7 @@ export async function POST(request: NextRequest) {
     });
 
     return NextResponse.json({ event });
-  } catch (error) {
-    console.error('Create security event error:', error);
-
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error during security event creation' },
       { status: 500 }

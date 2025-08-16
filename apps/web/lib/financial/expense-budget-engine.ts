@@ -6,7 +6,7 @@
 
 import { createClient } from '@/app/utils/supabase/client';
 
-export interface ExpenseCategory {
+export type ExpenseCategory = {
   categoryId: string;
   categoryName: string;
   parentCategoryId?: string;
@@ -16,9 +16,9 @@ export interface ExpenseCategory {
   variancePercent: number;
   alertThreshold: number;
   isOverBudget: boolean;
-}
+};
 
-export interface BudgetVarianceReport {
+export type BudgetVarianceReport = {
   period: string;
   categories: ExpenseCategory[];
   totalBudget: number;
@@ -26,9 +26,9 @@ export interface BudgetVarianceReport {
   totalVariance: number;
   variancePercent: number;
   alerts: BudgetAlert[];
-}
+};
 
-export interface BudgetAlert {
+export type BudgetAlert = {
   alertId: string;
   categoryId: string;
   categoryName: string;
@@ -38,9 +38,9 @@ export interface BudgetAlert {
   message: string;
   createdAt: Date;
   isResolved: boolean;
-}
+};
 
-export interface VendorExpenseData {
+export type VendorExpenseData = {
   vendorId: string;
   vendorName: string;
   category: string;
@@ -51,9 +51,9 @@ export interface VendorExpenseData {
   lastPayment: Date;
   outstandingAmount: number;
   performanceScore: number;
-}
+};
 
-export interface CostCenterAllocation {
+export type CostCenterAllocation = {
   costCenterId: string;
   costCenterName: string;
   department: string;
@@ -62,9 +62,9 @@ export interface CostCenterAllocation {
   utilizationRate: number;
   efficiency: number;
   profitContribution: number;
-}
+};
 
-export interface ExpenseForecast {
+export type ExpenseForecast = {
   period: string;
   forecastedAmount: number;
   confidenceInterval: {
@@ -74,7 +74,7 @@ export interface ExpenseForecast {
   trend: 'increasing' | 'decreasing' | 'stable';
   seasonalFactor: number;
   riskFactors: string[];
-}
+};
 
 export class ExpenseBudgetEngine {
   private readonly supabase = createClient();

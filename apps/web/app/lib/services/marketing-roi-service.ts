@@ -93,8 +93,7 @@ export class MarketingROIService {
       await this.createCampaignMonitoringRules(data.id, clinicId, userId);
 
       return data;
-    } catch (error) {
-      console.error('Error creating marketing campaign:', error);
+    } catch (_error) {
       throw new Error('Failed to create marketing campaign');
     }
   }
@@ -140,8 +139,7 @@ export class MarketingROIService {
       await this.checkROIAlerts(data);
 
       return data;
-    } catch (error) {
-      console.error('Error updating campaign metrics:', error);
+    } catch (_error) {
       throw new Error('Failed to update campaign metrics');
     }
   }
@@ -247,8 +245,7 @@ export class MarketingROIService {
         campaigns: data || [],
         total: count || 0,
       };
-    } catch (error) {
-      console.error('Error fetching campaigns:', error);
+    } catch (_error) {
       throw new Error('Failed to fetch campaigns');
     }
   }
@@ -346,8 +343,7 @@ export class MarketingROIService {
       }
 
       return data;
-    } catch (error) {
-      console.error('Error calculating treatment ROI:', error);
+    } catch (_error) {
       throw new Error('Failed to calculate treatment ROI');
     }
   }
@@ -393,8 +389,7 @@ export class MarketingROIService {
       }
 
       return data || [];
-    } catch (error) {
-      console.error('Error fetching treatment profitability analysis:', error);
+    } catch (_error) {
       throw new Error('Failed to fetch treatment profitability analysis');
     }
   }
@@ -501,8 +496,7 @@ export class MarketingROIService {
       }
 
       return data;
-    } catch (error) {
-      console.error('Error calculating CAC:', error);
+    } catch (_error) {
       throw new Error('Failed to calculate CAC');
     }
   }
@@ -575,8 +569,7 @@ export class MarketingROIService {
       }
 
       return data;
-    } catch (error) {
-      console.error('Error calculating LTV:', error);
+    } catch (_error) {
       throw new Error('Failed to calculate LTV');
     }
   }
@@ -649,8 +642,7 @@ export class MarketingROIService {
         ltv_cac_ratios: ltvCacRatios,
         payback_analysis: paybackAnalysis,
       };
-    } catch (error) {
-      console.error('Error getting CAC/LTV analysis:', error);
+    } catch (_error) {
       throw new Error('Failed to get CAC/LTV analysis');
     }
   }
@@ -681,9 +673,7 @@ export class MarketingROIService {
           await this.createROIAlert(rule, campaign);
         }
       }
-    } catch (error) {
-      console.error('Error checking ROI alerts:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -717,8 +707,7 @@ export class MarketingROIService {
       await this.sendAlertNotifications(data);
 
       return data;
-    } catch (error) {
-      console.error('Error creating ROI alert:', error);
+    } catch (_error) {
       throw new Error('Failed to create ROI alert');
     }
   }
@@ -740,8 +729,7 @@ export class MarketingROIService {
       }
 
       return data || [];
-    } catch (error) {
-      console.error('Error fetching active alerts:', error);
+    } catch (_error) {
       throw new Error('Failed to fetch active alerts');
     }
   }
@@ -794,8 +782,7 @@ export class MarketingROIService {
       });
 
       return recommendations.slice(0, 20); // Return top 20 recommendations
-    } catch (error) {
-      console.error('Error generating optimization recommendations:', error);
+    } catch (_error) {
       throw new Error('Failed to generate optimization recommendations');
     }
   }
@@ -830,8 +817,7 @@ export class MarketingROIService {
       }
 
       return data;
-    } catch (error) {
-      console.error('Error creating optimization recommendation:', error);
+    } catch (_error) {
       throw new Error('Failed to create optimization recommendation');
     }
   }
@@ -961,8 +947,7 @@ export class MarketingROIService {
       };
 
       return dashboardMetrics;
-    } catch (error) {
-      console.error('Error getting ROI dashboard metrics:', error);
+    } catch (_error) {
       throw new Error('Failed to get ROI dashboard metrics');
     }
   }
@@ -992,8 +977,7 @@ export class MarketingROIService {
       }
 
       return data || [];
-    } catch (error) {
-      console.error('Error getting ROI trend data:', error);
+    } catch (_error) {
       throw new Error('Failed to get ROI trend data');
     }
   }
@@ -1064,8 +1048,7 @@ export class MarketingROIService {
       }
 
       return data;
-    } catch (error) {
-      console.error('Error generating ROI forecast:', error);
+    } catch (_error) {
       throw new Error('Failed to generate ROI forecast');
     }
   }
@@ -1135,12 +1118,7 @@ export class MarketingROIService {
   /**
    * Send alert notifications based on severity
    */
-  private async sendAlertNotifications(alert: ROIAlert): Promise<void> {
-    // Implementation would depend on your notification system
-    console.log(
-      `Sending ROI alert notification: ${alert.title} (${alert.severity})`
-    );
-  }
+  private async sendAlertNotifications(_alert: ROIAlert): Promise<void> {}
 
   /**
    * Evaluate if a monitoring rule should trigger an alert

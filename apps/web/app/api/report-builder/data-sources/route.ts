@@ -16,7 +16,6 @@ export async function GET(_request: NextRequest) {
       data: dataSources,
     });
   } catch (error) {
-    console.error('Error fetching data sources:', error);
     return NextResponse.json(
       {
         success: false,

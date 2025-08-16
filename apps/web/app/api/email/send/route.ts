@@ -108,7 +108,6 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(result);
   } catch (error) {
-    console.error('Email send error:', error);
     return NextResponse.json(
       {
         success: false,
@@ -179,8 +178,7 @@ export async function GET(request: NextRequest) {
       log: emailLog,
       events: events || [],
     });
-  } catch (error) {
-    console.error('Email status check error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

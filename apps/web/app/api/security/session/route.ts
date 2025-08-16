@@ -49,8 +49,7 @@ export async function POST(request: NextRequest) {
       fingerprint: result.fingerprint,
       timeoutConfig: result.timeoutConfig,
     });
-  } catch (error) {
-    console.error('Session initialization error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to initialize session security' },
       { status: 500 }
@@ -97,8 +96,7 @@ export async function PUT(request: NextRequest) {
       message: 'Session security validated successfully',
       securityStatus: securityCheck,
     });
-  } catch (error) {
-    console.error('Session validation error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to validate session security' },
       { status: 500 }
@@ -142,8 +140,7 @@ export async function GET(request: NextRequest) {
       userId: authResult.user?.id,
       securityStatus: status,
     });
-  } catch (error) {
-    console.error('Session status error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to get session security status' },
       { status: 500 }
@@ -190,8 +187,7 @@ export async function DELETE(request: NextRequest) {
       message: 'Session terminated successfully',
       sessionId,
     });
-  } catch (error) {
-    console.error('Session termination error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to terminate session' },
       { status: 500 }

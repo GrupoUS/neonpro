@@ -72,8 +72,7 @@ export async function GET(
     }
 
     return NextResponse.json({ profile });
-  } catch (error) {
-    console.error('Error getting patient profile:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -119,7 +118,6 @@ export async function PUT(
       message: 'Profile updated successfully',
     });
   } catch (error) {
-    console.error('Error updating patient profile:', error);
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Invalid data format', details: error.errors },
@@ -162,8 +160,7 @@ export async function DELETE(
     return NextResponse.json({
       message: 'Patient profile archived successfully',
     });
-  } catch (error) {
-    console.error('Error archiving patient profile:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

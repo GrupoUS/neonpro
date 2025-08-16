@@ -77,8 +77,7 @@ export async function GET(
     };
 
     return NextResponse.json(response);
-  } catch (error) {
-    console.error('Error fetching appointment history:', error);
+  } catch (_error) {
     return NextResponse.json(
       { success: false, error_message: 'Internal server error' },
       { status: 500 }

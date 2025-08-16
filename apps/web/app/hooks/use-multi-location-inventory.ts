@@ -42,8 +42,7 @@ export function useCreateInventoryItem() {
       queryClient.invalidateQueries({ queryKey: ['inventory-items'] });
       toast.success(`Item "${data.name}" criado com sucesso!`);
     },
-    onError: (error) => {
-      console.error('Error creating inventory item:', error);
+    onError: (_error) => {
       toast.error('Erro ao criar item do inventário');
     },
   });
@@ -60,8 +59,7 @@ export function useUpdateInventoryItem() {
       queryClient.invalidateQueries({ queryKey: ['inventory-item', data.id] });
       toast.success(`Item "${data.name}" atualizado com sucesso!`);
     },
-    onError: (error) => {
-      console.error('Error updating inventory item:', error);
+    onError: (_error) => {
       toast.error('Erro ao atualizar item do inventário');
     },
   });
@@ -76,8 +74,7 @@ export function useDeleteInventoryItem() {
       queryClient.invalidateQueries({ queryKey: ['inventory-items'] });
       toast.success('Item removido com sucesso!');
     },
-    onError: (error) => {
-      console.error('Error deleting inventory item:', error);
+    onError: (_error) => {
       toast.error('Erro ao remover item do inventário');
     },
   });
@@ -114,8 +111,7 @@ export function useUpdateStock() {
       queryClient.invalidateQueries({ queryKey: ['low-stock-alerts'] });
       toast.success('Estoque atualizado com sucesso!');
     },
-    onError: (error) => {
-      console.error('Error updating stock:', error);
+    onError: (_error) => {
       toast.error('Erro ao atualizar estoque');
     },
   });
@@ -133,8 +129,7 @@ export function useBulkUpdateStock() {
       queryClient.invalidateQueries({ queryKey: ['low-stock-alerts'] });
       toast.success('Estoque atualizado em lote com sucesso!');
     },
-    onError: (error) => {
-      console.error('Error bulk updating stock:', error);
+    onError: (_error) => {
       toast.error('Erro ao atualizar estoque em lote');
     },
   });
@@ -161,8 +156,7 @@ export function useCreateStockTransfer() {
         `Transferência ${data.transfer_number} criada com sucesso!`
       );
     },
-    onError: (error) => {
-      console.error('Error creating stock transfer:', error);
+    onError: (_error) => {
       toast.error('Erro ao criar transferência de estoque');
     },
   });
@@ -191,8 +185,7 @@ export function useUpdateStockTransfer() {
           'Transferência atualizada!'
       );
     },
-    onError: (error) => {
-      console.error('Error updating stock transfer:', error);
+    onError: (_error) => {
       toast.error('Erro ao atualizar transferência');
     },
   });
@@ -225,8 +218,7 @@ export function useTransferStock() {
       queryClient.invalidateQueries({ queryKey: ['inventory-stock'] });
       toast.success(`Transferência ${data.transfer_number} iniciada!`);
     },
-    onError: (error) => {
-      console.error('Error transferring stock:', error);
+    onError: (_error) => {
       toast.error('Erro ao transferir estoque');
     },
   });
@@ -293,8 +285,7 @@ export function useRealtimeInventoryStock(clinic_id?: string) {
           table: 'inventory_stock',
           filter: clinic_id ? `clinic_id=eq.${clinic_id}` : undefined,
         },
-        (payload) => {
-          console.log('Stock change detected:', payload);
+        (_payload) => {
           // Invalidate relevant queries
           queryClient.invalidateQueries({ queryKey: ['inventory-stock'] });
           queryClient.invalidateQueries({ queryKey: ['stock-by-location'] });
@@ -326,7 +317,6 @@ export function useRealtimeStockTransfers(clinic_id?: string) {
             : undefined,
         },
         (payload) => {
-          console.log('Transfer change detected:', payload);
           queryClient.invalidateQueries({ queryKey: ['stock-transfers'] });
 
           // Show real-time notifications for status changes

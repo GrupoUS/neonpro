@@ -133,8 +133,7 @@ export async function POST(request: NextRequest) {
       success: true,
       data: analysis,
     });
-  } catch (error) {
-    console.error('Seasonal analysis error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to perform seasonal analysis' },
       { status: 500 }

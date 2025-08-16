@@ -54,7 +54,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { formatDate } from '@/lib/utils';
 
 // Types
-interface ComplianceReport {
+type ComplianceReport = {
   id: string;
   title: string;
   type: 'LGPD' | 'ANVISA' | 'CFM' | 'ISO27001' | 'CUSTOM';
@@ -80,18 +80,18 @@ interface ComplianceReport {
     data_protection_score: number;
     availability_score: number;
   };
-}
+};
 
-interface ComplianceTemplate {
+type ComplianceTemplate = {
   id: string;
   name: string;
   type: string;
   description: string;
   requirements: string[];
   frequency: 'DAILY' | 'WEEKLY' | 'MONTHLY' | 'QUARTERLY' | 'YEARLY';
-}
+};
 
-interface ComplianceMetrics {
+type ComplianceMetrics = {
   overall_score: number;
   total_reports: number;
   approved_reports: number;
@@ -99,7 +99,7 @@ interface ComplianceMetrics {
   critical_findings: number;
   last_audit_date?: Date;
   next_audit_date?: Date;
-}
+};
 
 const ComplianceReports: React.FC = () => {
   const [reports, setReports] = useState<ComplianceReport[]>([]);
@@ -142,8 +142,7 @@ const ComplianceReports: React.FC = () => {
     try {
       setLoading(true);
       await Promise.all([loadReports(), loadTemplates(), loadMetrics()]);
-    } catch (error) {
-      console.error('Erro ao carregar dados:', error);
+    } catch (_error) {
       toast.error('Erro ao carregar dados de compliance');
     } finally {
       setLoading(false);
@@ -236,8 +235,7 @@ const ComplianceReports: React.FC = () => {
       } else {
         toast.error('Erro ao criar relatório');
       }
-    } catch (error) {
-      console.error('Erro ao criar relatório:', error);
+    } catch (_error) {
       toast.error('Erro ao criar relatório');
     }
   };
@@ -258,8 +256,7 @@ const ComplianceReports: React.FC = () => {
       } else {
         toast.error('Erro ao gerar relatório');
       }
-    } catch (error) {
-      console.error('Erro ao gerar relatório:', error);
+    } catch (_error) {
       toast.error('Erro ao gerar relatório');
     }
   };
@@ -287,8 +284,7 @@ const ComplianceReports: React.FC = () => {
       } else {
         toast.error('Erro ao baixar relatório');
       }
-    } catch (error) {
-      console.error('Erro ao baixar relatório:', error);
+    } catch (_error) {
       toast.error('Erro ao baixar relatório');
     }
   };

@@ -10,7 +10,7 @@ import { createClient } from '@/app/utils/supabase/server';
 import { CacheHeaders } from '@/performance/caching';
 
 // Performance metric interface
-interface PerformanceMetric {
+type PerformanceMetric = {
   name: string;
   value: number;
   rating?: string;
@@ -24,7 +24,7 @@ interface PerformanceMetric {
   grade?: 'good' | 'needs-improvement' | 'poor';
   userId?: string;
   sessionId?: string;
-}
+};
 
 // Supported metric types
 const SUPPORTED_METRICS = [
@@ -108,7 +108,6 @@ export async function POST(request: NextRequest) {
       .select();
 
     if (error) {
-      console.error('Failed to store performance metrics:', error);
       return NextResponse.json(
         { error: 'Failed to store metrics' },
         { status: 500 }
@@ -132,9 +131,7 @@ export async function POST(request: NextRequest) {
     });
 
     return response;
-  } catch (error) {
-    console.error('Performance metrics API error:', error);
-
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -187,7 +184,6 @@ export async function GET(request: NextRequest) {
     const { data, error } = await query;
 
     if (error) {
-      console.error('Failed to fetch performance metrics:', error);
       return NextResponse.json(
         { error: 'Failed to fetch metrics' },
         { status: 500 }
@@ -211,9 +207,7 @@ export async function GET(request: NextRequest) {
     });
 
     return response;
-  } catch (error) {
-    console.error('Performance metrics GET API error:', error);
-
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -322,11 +316,6 @@ async function checkPerformanceAlerts(metrics: any[], supabase: any) {
       PERFORMANCE_ALERTS[metric.name as keyof typeof PERFORMANCE_ALERTS];
 
     if (threshold && metric.grade === 'poor') {
-      // Log critical performance issue
-      console.warn(
-        `🚨 Critical performance issue: ${metric.name} = ${metric.value}ms (threshold: ${threshold.critical}ms)`
-      );
-
       // Store alert (you could extend this to send notifications)
       try {
         await supabase.from('performance_alerts').insert({
@@ -338,9 +327,7 @@ async function checkPerformanceAlerts(metrics: any[], supabase: any) {
           severity: 'critical',
           timestamp: metric.timestamp,
         });
-      } catch (error) {
-        console.error('Failed to store performance alert:', error);
-      }
+      } catch (_error) {}
     }
   }
 }

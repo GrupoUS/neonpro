@@ -61,7 +61,6 @@ export async function POST(request: NextRequest) {
         .eq('user_id', user.id);
 
       if (updateError) {
-        console.error('Error updating invoice:', updateError);
         // Continue anyway - payment intent created successfully
       }
     }
@@ -72,8 +71,6 @@ export async function POST(request: NextRequest) {
       status: paymentIntent.status,
     });
   } catch (error) {
-    console.error('Payment intent creation failed:', error);
-
     return NextResponse.json(
       {
         error: 'Failed to create payment intent',
@@ -127,8 +124,6 @@ export async function GET(request: NextRequest) {
       metadata: paymentIntent.metadata,
     });
   } catch (error) {
-    console.error('Payment intent retrieval failed:', error);
-
     return NextResponse.json(
       {
         error: 'Failed to retrieve payment intent',

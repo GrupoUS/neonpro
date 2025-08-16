@@ -141,8 +141,6 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('LGPD Consent GET Error:', error);
-
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Invalid query parameters', details: error.errors },
@@ -193,8 +191,6 @@ export async function POST(request: NextRequest) {
       { status: 201 }
     );
   } catch (error) {
-    console.error('LGPD Consent POST Error:', error);
-
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Invalid request data', details: error.errors },
@@ -322,8 +318,6 @@ export async function PUT(request: NextRequest) {
       data: updatedConsent,
     });
   } catch (error) {
-    console.error('LGPD Consent PUT Error:', error);
-
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Invalid request data', details: error.errors },
@@ -370,9 +364,7 @@ export async function DELETE(request: NextRequest) {
       success: true,
       data: result,
     });
-  } catch (error) {
-    console.error('LGPD Consent DELETE Error:', error);
-
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

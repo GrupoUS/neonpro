@@ -25,29 +25,29 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 
-interface Service {
+type Service = {
   id: string;
   name: string;
   duration_minutes: number;
   price: number;
   category: string;
-}
+};
 
-interface Professional {
+type Professional = {
   id: string;
   name: string;
   email: string;
   specialties: string[];
   avatar_url: string | null;
-}
+};
 
-interface TimeSlot {
+type TimeSlot = {
   datetime: string;
   professional_id?: string;
   professional_name?: string;
-}
+};
 
-interface BookingConfirmationProps {
+type BookingConfirmationProps = {
   service: Service;
   professional: Professional | null;
   timeSlot: TimeSlot;
@@ -56,14 +56,14 @@ interface BookingConfirmationProps {
   onConfirm: () => Promise<void>;
   onBack: () => void;
   className?: string;
-}
+};
 
-interface NotificationPreferences {
+type NotificationPreferences = {
   emailConfirmation: boolean;
   smsConfirmation: boolean;
   emailReminder: boolean;
   smsReminder: boolean;
-}
+};
 
 export function BookingConfirmation({
   service,
@@ -118,8 +118,7 @@ export function BookingConfirmation({
 
     try {
       await onConfirm();
-    } catch (error) {
-      console.error('Error confirming booking:', error);
+    } catch (_error) {
       setConfirmationError('Erro ao confirmar agendamento. Tente novamente.');
     } finally {
       setIsConfirming(false);

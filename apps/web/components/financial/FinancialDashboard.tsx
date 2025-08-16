@@ -33,7 +33,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 // =================== TYPES ===================
 
-interface FinancialKPI {
+type FinancialKPI = {
   id: string;
   name: string;
   value: number;
@@ -44,9 +44,9 @@ interface FinancialKPI {
   category: 'revenue' | 'costs' | 'profitability' | 'efficiency';
   format: 'currency' | 'percentage' | 'number';
   description: string;
-}
+};
 
-interface TreatmentProfitability {
+type TreatmentProfitability = {
   treatmentType: string;
   totalRevenue: number;
   totalCosts: number;
@@ -58,9 +58,9 @@ interface TreatmentProfitability {
   averageCostPerTreatment: number;
   recommendations: string[];
   trend: 'improving' | 'declining' | 'stable';
-}
+};
 
-interface RevenueAnalytics {
+type RevenueAnalytics = {
   period: string;
   totalRevenue: number;
   revenueBySource: Record<string, number>;
@@ -71,15 +71,15 @@ interface RevenueAnalytics {
     predicted: number;
     confidence: { lower: number; upper: number };
   }>;
-}
+};
 
-interface DashboardData {
+type DashboardData = {
   kpis: FinancialKPI[];
   treatmentProfitability: TreatmentProfitability[];
   revenueAnalytics: RevenueAnalytics;
   lastUpdated: Date;
   isLoading: boolean;
-}
+};
 
 // =================== HOOKS ===================
 
@@ -129,8 +129,7 @@ const useDashboardData = (dateRange: { start: Date; end: Date }) => {
         lastUpdated: new Date(),
         isLoading: false,
       });
-    } catch (error) {
-      console.error('Error fetching dashboard data:', error);
+    } catch (_error) {
       setData((prev) => ({ ...prev, isLoading: false }));
     }
   };
@@ -504,9 +503,7 @@ export const FinancialDashboard: React.FC = () => {
         a.click();
         window.URL.revokeObjectURL(url);
       }
-    } catch (error) {
-      console.error('Error exporting report:', error);
-    }
+    } catch (_error) {}
   };
 
   return (

@@ -5,27 +5,27 @@
 // Advanced caching system with TTL, LRU eviction, and persistence
 // =====================================================================================
 
-interface CacheItem<T> {
+type CacheItem<T> = {
   data: T;
   timestamp: number;
   ttl: number;
   accessCount: number;
   lastAccessed: number;
-}
+};
 
-interface CacheOptions {
+type CacheOptions = {
   ttl?: number; // Time to live in milliseconds
   maxSize?: number; // Maximum number of items
   persistent?: boolean; // Whether to persist to localStorage
   prefix?: string; // Prefix for localStorage keys
-}
+};
 
-interface CacheStats {
+type CacheStats = {
   hits: number;
   misses: number;
   size: number;
   hitRate: number;
-}
+};
 
 class CacheManager<T = any> {
   private readonly cache = new Map<string, CacheItem<T>>();
@@ -257,9 +257,7 @@ class CacheManager<T = any> {
     try {
       const storageKey = `${this.options.prefix}_${key}`;
       localStorage.setItem(storageKey, JSON.stringify(item));
-    } catch (error) {
-      console.warn('Failed to persist cache item:', error);
-    }
+    } catch (_error) {}
   }
 
   private loadFromStorage(): void {
@@ -286,9 +284,7 @@ class CacheManager<T = any> {
           }
         }
       }
-    } catch (error) {
-      console.warn('Failed to load cache from storage:', error);
-    }
+    } catch (_error) {}
   }
 
   private removeFromStorage(key: string): void {
@@ -299,9 +295,7 @@ class CacheManager<T = any> {
     try {
       const storageKey = `${this.options.prefix}_${key}`;
       localStorage.removeItem(storageKey);
-    } catch (error) {
-      console.warn('Failed to remove cache item from storage:', error);
-    }
+    } catch (_error) {}
   }
 
   private clearStorage(): void {
@@ -321,9 +315,7 @@ class CacheManager<T = any> {
       }
 
       keysToRemove.forEach((key) => localStorage.removeItem(key));
-    } catch (error) {
-      console.warn('Failed to clear cache storage:', error);
-    }
+    } catch (_error) {}
   }
 
   // =====================================================================================

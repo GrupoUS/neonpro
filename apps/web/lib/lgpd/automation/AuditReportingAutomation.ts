@@ -4,7 +4,7 @@ import type { LGPDComplianceManager } from '../LGPDComplianceManager';
 
 type SupabaseClient = ReturnType<typeof createClient<Database>>;
 
-export interface AuditReport {
+export type AuditReport = {
   id: string;
   report_type:
     | 'compliance_overview'
@@ -60,9 +60,9 @@ export interface AuditReport {
   next_audit_date: string;
   created_at: string;
   updated_at: string;
-}
+};
 
-export interface AuditSchedule {
+export type AuditSchedule = {
   id: string;
   report_type: string;
   title: string;
@@ -91,9 +91,9 @@ export interface AuditSchedule {
   created_by: string;
   created_at: string;
   updated_at: string;
-}
+};
 
-export interface ComplianceDashboard {
+export type ComplianceDashboard = {
   id: string;
   dashboard_type: 'executive' | 'operational' | 'technical' | 'regulatory';
   title: string;
@@ -123,9 +123,9 @@ export interface ComplianceDashboard {
   created_by: string;
   created_at: string;
   updated_at: string;
-}
+};
 
-export interface AuditTrail {
+export type AuditTrail = {
   id: string;
   entity_type: string;
   entity_id: string;
@@ -145,9 +145,9 @@ export interface AuditTrail {
   risk_level: 'low' | 'medium' | 'high' | 'critical';
   compliance_relevant: boolean;
   retention_date: string;
-}
+};
 
-export interface AuditConfig {
+export type AuditConfig = {
   auto_report_generation: boolean;
   real_time_monitoring: boolean;
   compliance_threshold: number;
@@ -176,7 +176,7 @@ export interface AuditConfig {
     third_party_data: boolean;
     retention_data: boolean;
   };
-}
+};
 
 export class AuditReportingAutomation {
   private readonly supabase: SupabaseClient;
@@ -215,17 +215,12 @@ export class AuditReportingAutomation {
               await this.processScheduledReports();
               await this.performComplianceAudit();
               await this.updateDashboards();
-            } catch (error) {
-              console.error('Error in automated reporting cycle:', error);
-            }
+            } catch (_error) {}
           },
           60 * 60 * 1000
         ); // Check every hour
       }
-
-      console.log('Automated audit reporting started');
     } catch (error) {
-      console.error('Error starting automated reporting:', error);
       throw new Error(`Failed to start automated reporting: ${error.message}`);
     }
   }
@@ -238,7 +233,6 @@ export class AuditReportingAutomation {
       clearInterval(this.reportingInterval);
       this.reportingInterval = null;
     }
-    console.log('Automated audit reporting stopped');
   }
 
   /**
@@ -336,9 +330,7 @@ export class AuditReportingAutomation {
         for (const callback of this.auditCallbacks) {
           try {
             callback({ ...report, id: report.id });
-          } catch (error) {
-            console.error('Error in audit callback:', error);
-          }
+          } catch (_error) {}
         }
 
         // Log report generation
@@ -377,7 +369,6 @@ export class AuditReportingAutomation {
         throw generationError;
       }
     } catch (error) {
-      console.error('Error generating compliance report:', error);
       throw new Error(`Failed to generate compliance report: ${error.message}`);
     }
   }
@@ -434,7 +425,6 @@ export class AuditReportingAutomation {
         schedule_id: schedule.id,
       };
     } catch (error) {
-      console.error('Error scheduling automated report:', error);
       throw new Error(`Failed to schedule automated report: ${error.message}`);
     }
   }
@@ -491,7 +481,6 @@ export class AuditReportingAutomation {
         dashboard_id: dashboard.id,
       };
     } catch (error) {
-      console.error('Error creating compliance dashboard:', error);
       throw new Error(
         `Failed to create compliance dashboard: ${error.message}`
       );
@@ -571,7 +560,6 @@ export class AuditReportingAutomation {
         total_pages: totalPages,
       };
     } catch (error) {
-      console.error('Error getting audit trail:', error);
       throw new Error(`Failed to get audit trail: ${error.message}`);
     }
   }
@@ -598,7 +586,6 @@ export class AuditReportingAutomation {
 
       return dashboard;
     } catch (error) {
-      console.error('Error generating executive dashboard:', error);
       throw new Error(
         `Failed to generate executive dashboard: ${error.message}`
       );
@@ -651,7 +638,6 @@ export class AuditReportingAutomation {
         file_size: fileSize,
       };
     } catch (error) {
-      console.error('Error exporting audit data:', error);
       throw new Error(`Failed to export audit data: ${error.message}`);
     }
   }
@@ -686,16 +672,9 @@ export class AuditReportingAutomation {
       for (const schedule of schedules) {
         try {
           await this.processScheduledReport(schedule);
-        } catch (scheduleError) {
-          console.error(
-            `Error processing scheduled report ${schedule.id}:`,
-            scheduleError
-          );
-        }
+        } catch (_scheduleError) {}
       }
-    } catch (error) {
-      console.error('Error processing scheduled reports:', error);
-    }
+    } catch (_error) {}
   }
 
   private async performComplianceAudit(): Promise<void> {
@@ -710,11 +689,7 @@ export class AuditReportingAutomation {
       ) {
         await this.triggerComplianceAlert(complianceResults);
       }
-
-      console.log('Compliance audit completed');
-    } catch (error) {
-      console.error('Error performing compliance audit:', error);
-    }
+    } catch (_error) {}
   }
 
   private async updateDashboards(): Promise<void> {
@@ -737,16 +712,9 @@ export class AuditReportingAutomation {
       for (const dashboard of dashboards) {
         try {
           await this.refreshDashboardData(dashboard.id);
-        } catch (dashboardError) {
-          console.error(
-            `Error updating dashboard ${dashboard.id}:`,
-            dashboardError
-          );
-        }
+        } catch (_dashboardError) {}
       }
-    } catch (error) {
-      console.error('Error updating dashboards:', error);
-    }
+    } catch (_error) {}
   }
 
   private generateReportTitle(

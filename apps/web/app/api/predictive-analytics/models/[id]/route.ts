@@ -19,8 +19,7 @@ export async function GET(
     }
 
     return NextResponse.json(model);
-  } catch (error) {
-    console.error('Erro ao buscar modelo:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
       { status: 500 }
@@ -42,8 +41,7 @@ export async function PUT(
     );
 
     return NextResponse.json(model);
-  } catch (error) {
-    console.error('Erro ao atualizar modelo:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Erro ao atualizar modelo' },
       { status: 400 }
@@ -59,8 +57,7 @@ export async function DELETE(
     await service.deleteForecastingModel(params.id);
 
     return NextResponse.json({ success: true });
-  } catch (error) {
-    console.error('Erro ao deletar modelo:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Erro ao deletar modelo' },
       { status: 400 }

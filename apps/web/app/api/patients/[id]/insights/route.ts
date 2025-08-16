@@ -54,8 +54,7 @@ export async function GET(
       insights,
       message: 'Patient insights generated successfully',
     });
-  } catch (error) {
-    console.error('Error in GET /api/patients/[id]/insights:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -116,7 +115,6 @@ export async function PUT(
       .single();
 
     if (updateError) {
-      console.error('Error updating risk assessment:', updateError);
       return NextResponse.json(
         { error: 'Failed to update risk assessment' },
         { status: 500 }
@@ -127,8 +125,7 @@ export async function PUT(
       profile: updatedProfile,
       message: 'Risk assessment updated successfully',
     });
-  } catch (error) {
-    console.error('Error in PUT /api/patients/[id]/insights:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

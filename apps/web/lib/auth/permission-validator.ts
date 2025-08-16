@@ -7,14 +7,14 @@ import { createClient } from '@/app/utils/supabase/client';
 import { performanceTracker } from './performance-tracker';
 import { securityAuditLogger } from './security-audit-logger';
 
-export interface Permission {
+export type Permission = {
   id: string;
   name: string;
   resource: string;
   action: PermissionAction;
   conditions?: PermissionCondition[];
   description: string;
-}
+};
 
 export type PermissionAction =
   | 'create'
@@ -30,7 +30,7 @@ export type PermissionAction =
   | 'unassign'
   | 'manage';
 
-export interface PermissionCondition {
+export type PermissionCondition = {
   type: 'time' | 'location' | 'resource_owner' | 'clinic_member' | 'custom';
   operator:
     | 'equals'
@@ -41,26 +41,26 @@ export interface PermissionCondition {
     | 'less_than';
   value: any;
   field?: string;
-}
+};
 
-export interface Role {
+export type Role = {
   id: string;
   name: string;
   description: string;
   permissions: Permission[];
   isSystemRole: boolean;
   clinicId?: string;
-}
+};
 
-export interface UserPermissions {
+export type UserPermissions = {
   userId: string;
   roles: Role[];
   directPermissions: Permission[];
   clinicPermissions: Record<string, Permission[]>;
   effectivePermissions: Permission[];
-}
+};
 
-export interface PermissionContext {
+export type PermissionContext = {
   userId: string;
   sessionId?: string;
   clinicId?: string;
@@ -70,16 +70,16 @@ export interface PermissionContext {
   userAgent?: string;
   timestamp: number;
   additionalContext?: Record<string, any>;
-}
+};
 
-export interface PermissionCheckResult {
+export type PermissionCheckResult = {
   granted: boolean;
   reason: string;
   matchedPermission?: Permission;
   appliedConditions?: PermissionCondition[];
   requiresElevation?: boolean;
   elevationReason?: string;
-}
+};
 
 class PermissionValidator {
   private static instance: PermissionValidator;
@@ -167,9 +167,7 @@ class PermissionValidator {
       );
 
       return result;
-    } catch (error) {
-      console.error('Permission check failed:', error);
-
+    } catch (_error) {
       const result: PermissionCheckResult = {
         granted: false,
         reason: 'Permission check failed due to system error',
@@ -353,9 +351,7 @@ class PermissionValidator {
         Date.now() - startTime
       );
       return userPermissions;
-    } catch (error) {
-      console.error('Failed to load user permissions:', error);
-
+    } catch (_error) {
       // Return empty permissions on error
       return {
         userId,
@@ -389,7 +385,6 @@ class PermissionValidator {
       });
 
       if (error) {
-        console.error('Role assignment failed:', error);
         return false;
       }
 
@@ -413,8 +408,7 @@ class PermissionValidator {
       );
 
       return true;
-    } catch (error) {
-      console.error('Role assignment error:', error);
+    } catch (_error) {
       return false;
     }
   }
@@ -448,7 +442,6 @@ class PermissionValidator {
       const { error } = await query;
 
       if (error) {
-        console.error('Role removal failed:', error);
         return false;
       }
 
@@ -472,8 +465,7 @@ class PermissionValidator {
       );
 
       return true;
-    } catch (error) {
-      console.error('Role removal error:', error);
+    } catch (_error) {
       return false;
     }
   }
@@ -500,7 +492,6 @@ class PermissionValidator {
       });
 
       if (error) {
-        console.error('Permission grant failed:', error);
         return false;
       }
 
@@ -524,8 +515,7 @@ class PermissionValidator {
       );
 
       return true;
-    } catch (error) {
-      console.error('Permission grant error:', error);
+    } catch (_error) {
       return false;
     }
   }
@@ -559,7 +549,6 @@ class PermissionValidator {
       const { error } = await query;
 
       if (error) {
-        console.error('Permission revocation failed:', error);
         return false;
       }
 
@@ -583,8 +572,7 @@ class PermissionValidator {
       );
 
       return true;
-    } catch (error) {
-      console.error('Permission revocation error:', error);
+    } catch (_error) {
       return false;
     }
   }

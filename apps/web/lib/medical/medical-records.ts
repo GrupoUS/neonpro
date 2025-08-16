@@ -20,7 +20,7 @@ import { LGPDManager } from '../auth/lgpd/lgpd-manager';
 // TYPES & INTERFACES
 // ============================================================================
 
-export interface MedicalRecord {
+export type MedicalRecord = {
   id: string;
   patient_id: string;
   clinic_id: string;
@@ -41,9 +41,9 @@ export interface MedicalRecord {
   digital_signature?: DigitalSignature;
   consent_id?: string;
   metadata?: Record<string, any>;
-}
+};
 
-export interface MedicalHistory {
+export type MedicalHistory = {
   id: string;
   patient_id: string;
   clinic_id: string;
@@ -56,9 +56,9 @@ export interface MedicalHistory {
   updated_at: string;
   last_reviewed_at?: string;
   reviewed_by?: string;
-}
+};
 
-export interface MedicalAttachment {
+export type MedicalAttachment = {
   id: string;
   record_id: string;
   file_name: string;
@@ -73,9 +73,9 @@ export interface MedicalAttachment {
   version: number;
   is_before_after?: boolean;
   before_after_pair_id?: string;
-}
+};
 
-export interface DigitalSignature {
+export type DigitalSignature = {
   id: string;
   record_id: string;
   signer_id: string;
@@ -85,7 +85,7 @@ export interface DigitalSignature {
   signature_timestamp: string;
   certificate_info?: string;
   verification_status: 'valid' | 'invalid' | 'pending';
-}
+};
 
 // Enums
 export enum MedicalRecordType {
@@ -116,7 +116,7 @@ export enum AttachmentCategory {
 }
 
 // Supporting interfaces
-export interface Medication {
+export type Medication = {
   name: string;
   dosage: string;
   frequency: string;
@@ -124,17 +124,17 @@ export interface Medication {
   end_date?: string;
   prescriber: string;
   notes?: string;
-}
+};
 
-export interface Allergy {
+export type Allergy = {
   allergen: string;
   reaction: string;
   severity: 'mild' | 'moderate' | 'severe';
   onset_date?: string;
   notes?: string;
-}
+};
 
-export interface VitalSigns {
+export type VitalSigns = {
   blood_pressure_systolic?: number;
   blood_pressure_diastolic?: number;
   heart_rate?: number;
@@ -144,48 +144,48 @@ export interface VitalSigns {
   bmi?: number;
   recorded_at: string;
   recorded_by: string;
-}
+};
 
-export interface MedicalCondition {
+export type MedicalCondition = {
   condition: string;
   icd_code?: string;
   diagnosis_date: string;
   status: 'active' | 'resolved' | 'chronic';
   severity?: 'mild' | 'moderate' | 'severe';
   notes?: string;
-}
+};
 
-export interface Surgery {
+export type Surgery = {
   procedure: string;
   date: string;
   surgeon: string;
   hospital: string;
   complications?: string;
   notes?: string;
-}
+};
 
-export interface FamilyHistory {
+export type FamilyHistory = {
   relationship: string;
   condition: string;
   age_of_onset?: number;
   notes?: string;
-}
+};
 
-export interface SocialHistory {
+export type SocialHistory = {
   smoking_status: 'never' | 'former' | 'current';
   alcohol_use: 'none' | 'occasional' | 'moderate' | 'heavy';
   exercise_frequency: string;
   occupation: string;
   notes?: string;
-}
+};
 
-export interface Immunization {
+export type Immunization = {
   vaccine: string;
   date_administered: string;
   lot_number?: string;
   administered_by: string;
   next_due_date?: string;
-}
+};
 
 // Validation schemas
 const MedicalRecordSchema = z.object({
@@ -319,7 +319,6 @@ export class MedicalRecordsManager {
 
       return { success: true, data };
     } catch (error) {
-      console.error('Error creating medical record:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
@@ -365,7 +364,6 @@ export class MedicalRecordsManager {
 
       return { success: true, data };
     } catch (error) {
-      console.error('Error getting medical record:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
@@ -421,7 +419,6 @@ export class MedicalRecordsManager {
 
       return { success: true, data };
     } catch (error) {
-      console.error('Error updating medical record:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
@@ -491,7 +488,6 @@ export class MedicalRecordsManager {
 
       return { success: true, data: data || [], total: count || 0 };
     } catch (error) {
-      console.error('Error getting patient medical records:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
@@ -554,7 +550,6 @@ export class MedicalRecordsManager {
 
       return { success: true, data };
     } catch (error) {
-      console.error('Error creating medical history:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
@@ -590,7 +585,6 @@ export class MedicalRecordsManager {
 
       return { success: true, data: data || undefined };
     } catch (error) {
-      console.error('Error getting medical history:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
@@ -637,7 +631,6 @@ export class MedicalRecordsManager {
 
       return { success: true, data };
     } catch (error) {
-      console.error('Error updating medical history:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
@@ -729,7 +722,6 @@ export class MedicalRecordsManager {
 
       return { success: true, data };
     } catch (error) {
-      console.error('Error uploading medical attachment:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
@@ -754,7 +746,6 @@ export class MedicalRecordsManager {
 
       return { success: true, data: data || [] };
     } catch (error) {
-      console.error('Error getting record attachments:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
@@ -806,7 +797,6 @@ export class MedicalRecordsManager {
 
       return { success: true };
     } catch (error) {
-      console.error('Error deleting attachment:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
@@ -880,7 +870,6 @@ export class MedicalRecordsManager {
 
       return { success: true, data };
     } catch (error) {
-      console.error('Error signing medical record:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
@@ -917,7 +906,6 @@ export class MedicalRecordsManager {
 
       return { success: true, isValid };
     } catch (error) {
-      console.error('Error verifying signature:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
@@ -943,9 +931,7 @@ export class MedicalRecordsManager {
       };
 
       await this.supabase.from('medical_record_versions').insert(versionData);
-    } catch (error) {
-      console.error('Error creating record version:', error);
-    }
+    } catch (_error) {}
   }
 
   private async generateThumbnail(
@@ -964,8 +950,7 @@ export class MedicalRecordsManager {
         .getPublicUrl(thumbnailPath);
 
       return data.publicUrl;
-    } catch (error) {
-      console.error('Error generating thumbnail:', error);
+    } catch (_error) {
       return;
     }
   }
@@ -1034,7 +1019,6 @@ export class MedicalRecordsManager {
 
       return { success: true, data: data || [] };
     } catch (error) {
-      console.error('Error searching medical records:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
@@ -1085,7 +1069,6 @@ export class MedicalRecordsManager {
 
       return { success: true, data: stats };
     } catch (error) {
-      console.error('Error getting record statistics:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',

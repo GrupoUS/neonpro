@@ -3,7 +3,7 @@ import { AuditLogger } from '../../auth/audit/audit-logger';
 import { LGPDManager } from '../../lgpd/lgpd-manager';
 import { EncryptionService } from '../../security/encryption-service';
 
-export interface SecurityConfig {
+export type SecurityConfig = {
   encryption_enabled: boolean;
   data_retention_days: number;
   anonymization_enabled: boolean;
@@ -25,16 +25,16 @@ export interface SecurityConfig {
     allowed_roles: string[];
     ip_whitelist: string[];
   };
-}
+};
 
-export interface SecurityValidationResult {
+export type SecurityValidationResult = {
   is_valid: boolean;
   violations: SecurityViolation[];
   risk_score: number;
   recommendations: string[];
-}
+};
 
-export interface SecurityViolation {
+export type SecurityViolation = {
   type:
     | 'pii_detected'
     | 'spam_content'
@@ -47,17 +47,17 @@ export interface SecurityViolation {
   field?: string;
   value?: string;
   recommendation: string;
-}
+};
 
-export interface EncryptedNotificationData {
+export type EncryptedNotificationData = {
   encrypted_content: string;
   encrypted_metadata: string;
   encryption_key_id: string;
   encryption_algorithm: string;
   created_at: Date;
-}
+};
 
-export interface SecurityAuditLog {
+export type SecurityAuditLog = {
   id: string;
   event_type: string;
   user_id?: string;
@@ -69,9 +69,9 @@ export interface SecurityAuditLog {
   action_taken: string;
   timestamp: Date;
   metadata: Record<string, any>;
-}
+};
 
-export interface RateLimitStatus {
+export type RateLimitStatus = {
   user_id: string;
   current_minute: number;
   current_hour: number;
@@ -82,9 +82,9 @@ export interface RateLimitStatus {
     hour: Date;
     day: Date;
   };
-}
+};
 
-export interface ContentFilterResult {
+export type ContentFilterResult = {
   is_safe: boolean;
   detected_issues: Array<{
     type: 'pii' | 'spam' | 'malicious_link' | 'sensitive_data';
@@ -93,7 +93,7 @@ export interface ContentFilterResult {
     suggestion: string;
   }>;
   sanitized_content?: string;
-}
+};
 
 export class NotificationSecurity {
   private readonly supabase;
@@ -1009,9 +1009,7 @@ export class NotificationSecurity {
         timestamp: new Date().toISOString(),
         metadata: {},
       });
-    } catch (error) {
-      console.error('Erro ao registrar auditoria de segurança:', error);
-    }
+    } catch (_error) {}
   }
 }
 

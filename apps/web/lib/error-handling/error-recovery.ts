@@ -3,21 +3,21 @@
  * Automatic error recovery and self-healing mechanisms
  */
 
-export interface ErrorContext {
+export type ErrorContext = {
   errorId: string;
   errorType: string;
   severity: 'low' | 'medium' | 'high' | 'critical';
   recoveryAction: string;
   timestamp: number;
   metadata?: Record<string, any>;
-}
+};
 
-export interface RecoveryStrategy {
+export type RecoveryStrategy = {
   name: string;
   condition: (error: ErrorContext) => boolean;
   action: (error: ErrorContext) => Promise<boolean>;
   maxRetries: number;
-}
+};
 
 export class ErrorRecoverySystem {
   private readonly recoveryStrategies: Map<string, RecoveryStrategy> =
@@ -53,7 +53,6 @@ export class ErrorRecoverySystem {
         error.errorType.includes('auth') ||
         error.errorType.includes('unauthorized'),
       action: async (_error) => {
-        console.log('🔑 Attempting token refresh');
         // Token refresh logic would go here
         return true;
       },
@@ -67,7 +66,6 @@ export class ErrorRecoverySystem {
         error.errorType.includes('validation') ||
         error.errorType.includes('invalid'),
       action: async (_error) => {
-        console.log('✅ Attempting data validation recovery');
         // Data validation recovery logic
         return true;
       },
@@ -86,17 +84,12 @@ export class ErrorRecoverySystem {
    * Attempt recovery for an error
    */
   async attemptRecovery(errorContext: ErrorContext): Promise<boolean> {
-    console.log(`🔧 Attempting recovery for error: ${errorContext.errorId}`);
-
     // Find applicable recovery strategies
     const applicableStrategies = Array.from(
       this.recoveryStrategies.values()
     ).filter((strategy) => strategy.condition(errorContext));
 
     if (applicableStrategies.length === 0) {
-      console.log(
-        `❌ No recovery strategy found for error: ${errorContext.errorId}`
-      );
       return false;
     }
 
@@ -105,7 +98,6 @@ export class ErrorRecoverySystem {
       const retryCount = this.getRetryCount(errorContext.errorId);
 
       if (retryCount >= strategy.maxRetries) {
-        console.log(`⚠️ Max retries exceeded for strategy: ${strategy.name}`);
         continue;
       }
 
@@ -114,23 +106,11 @@ export class ErrorRecoverySystem {
         const success = await strategy.action(errorContext);
 
         if (success) {
-          console.log(
-            `✅ Recovery successful using strategy: ${strategy.name}`
-          );
           this.logRecoverySuccess(errorContext, strategy.name);
           return true;
         }
-      } catch (recoveryError) {
-        console.error(
-          `❌ Recovery strategy failed: ${strategy.name}`,
-          recoveryError
-        );
-      }
+      } catch (_recoveryError) {}
     }
-
-    console.log(
-      `❌ All recovery strategies failed for error: ${errorContext.errorId}`
-    );
     return false;
   }
 

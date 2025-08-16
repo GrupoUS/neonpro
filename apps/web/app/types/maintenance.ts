@@ -103,7 +103,7 @@ export type ReportingPeriod = 'daily' | 'weekly' | 'monthly' | 'quarterly';
 // CORE EQUIPMENT INTERFACE
 // =====================================================================================
 
-export interface Equipment {
+export type Equipment = {
   id: string;
   clinic_id: string;
 
@@ -159,13 +159,13 @@ export interface Equipment {
   updated_at: string;
   created_by?: string;
   updated_by?: string;
-}
+};
 
 // =====================================================================================
 // MAINTENANCE SCHEDULE INTERFACE
 // =====================================================================================
 
-export interface MaintenanceSchedule {
+export type MaintenanceSchedule = {
   id: string;
   equipment_id: string;
   clinic_id: string;
@@ -212,13 +212,13 @@ export interface MaintenanceSchedule {
   updated_at: string;
   created_by?: string;
   updated_by?: string;
-}
+};
 
 // =====================================================================================
 // WORK ORDER INTERFACE
 // =====================================================================================
 
-export interface MaintenanceWorkOrder {
+export type MaintenanceWorkOrder = {
   id: string;
   equipment_id: string;
   schedule_id?: string;
@@ -277,13 +277,13 @@ export interface MaintenanceWorkOrder {
   completed_at?: string;
   created_by?: string;
   updated_by?: string;
-}
+};
 
 // =====================================================================================
 // MAINTENANCE ALERT INTERFACE
 // =====================================================================================
 
-export interface MaintenanceAlert {
+export type MaintenanceAlert = {
   id: string;
   equipment_id: string;
   schedule_id?: string;
@@ -322,13 +322,13 @@ export interface MaintenanceAlert {
   // Audit
   created_at: string;
   updated_at: string;
-}
+};
 
 // =====================================================================================
 // EQUIPMENT USAGE LOG INTERFACE
 // =====================================================================================
 
-export interface EquipmentUsageLog {
+export type EquipmentUsageLog = {
   id: string;
   equipment_id: string;
   clinic_id: string;
@@ -366,13 +366,13 @@ export interface EquipmentUsageLog {
 
   // Audit
   created_at: string;
-}
+};
 
 // =====================================================================================
 // MAINTENANCE HISTORY INTERFACE
 // =====================================================================================
 
-export interface MaintenanceHistory {
+export type MaintenanceHistory = {
   id: string;
   equipment_id: string;
   work_order_id?: string;
@@ -423,13 +423,13 @@ export interface MaintenanceHistory {
   // Audit
   created_at: string;
   created_by?: string;
-}
+};
 
 // =====================================================================================
 // EQUIPMENT PERFORMANCE METRICS INTERFACE
 // =====================================================================================
 
-export interface EquipmentPerformanceMetrics {
+export type EquipmentPerformanceMetrics = {
   id: string;
   equipment_id: string;
   clinic_id: string;
@@ -475,13 +475,13 @@ export interface EquipmentPerformanceMetrics {
   // Audit
   created_at: string;
   calculated_at: string;
-}
+};
 
 // =====================================================================================
 // VENDOR SERVICE CONTRACT INTERFACE
 // =====================================================================================
 
-export interface VendorServiceContract {
+export type VendorServiceContract = {
   id: string;
   equipment_id: string;
   vendor_id: string;
@@ -532,13 +532,13 @@ export interface VendorServiceContract {
   updated_at: string;
   created_by?: string;
   updated_by?: string;
-}
+};
 
 // =====================================================================================
 // COMPLIANCE RECORD INTERFACE
 // =====================================================================================
 
-export interface EquipmentComplianceRecord {
+export type EquipmentComplianceRecord = {
   id: string;
   equipment_id: string;
   clinic_id: string;
@@ -576,13 +576,13 @@ export interface EquipmentComplianceRecord {
   updated_at: string;
   created_by?: string;
   updated_by?: string;
-}
+};
 
 // =====================================================================================
 // REQUEST/RESPONSE INTERFACES
 // =====================================================================================
 
-export interface CreateEquipmentRequest {
+export type CreateEquipmentRequest = {
   clinic_id: string;
   name: string;
   model?: string;
@@ -610,9 +610,9 @@ export interface CreateEquipmentRequest {
   manual_url?: string;
   specifications?: Record<string, any>;
   notes?: string;
-}
+};
 
-export interface UpdateEquipmentRequest {
+export type UpdateEquipmentRequest = {
   name?: string;
   model?: string;
   manufacturer?: string;
@@ -641,9 +641,9 @@ export interface UpdateEquipmentRequest {
   manual_url?: string;
   specifications?: Record<string, any>;
   notes?: string;
-}
+};
 
-export interface CreateMaintenanceScheduleRequest {
+export type CreateMaintenanceScheduleRequest = {
   equipment_id: string;
   clinic_id: string;
   maintenance_type: MaintenanceType;
@@ -663,9 +663,9 @@ export interface CreateMaintenanceScheduleRequest {
   alert_days_before?: number;
   critical_alert_days_before?: number;
   notification_recipients?: string[];
-}
+};
 
-export interface CreateWorkOrderRequest {
+export type CreateWorkOrderRequest = {
   equipment_id: string;
   schedule_id?: string;
   clinic_id: string;
@@ -679,9 +679,9 @@ export interface CreateWorkOrderRequest {
   assigned_technician_id?: string;
   assigned_team_ids?: string[];
   external_vendor_id?: string;
-}
+};
 
-export interface CreateUsageLogRequest {
+export type CreateUsageLogRequest = {
   equipment_id: string;
   clinic_id: string;
   session_start: string;
@@ -700,13 +700,13 @@ export interface CreateUsageLogRequest {
   performance_rating?: number;
   issues_reported?: string;
   anomalies_detected?: Record<string, any>;
-}
+};
 
 // =====================================================================================
 // DASHBOARD AND ANALYTICS INTERFACES
 // =====================================================================================
 
-export interface MaintenanceDashboardData {
+export type MaintenanceDashboardData = {
   totalEquipment: number;
   activeEquipment: number;
   equipmentInMaintenance: number;
@@ -742,16 +742,16 @@ export interface MaintenanceDashboardData {
     reliability: number;
     efficiency: number;
   }>;
-}
+};
 
-export interface EquipmentListResponse {
+export type EquipmentListResponse = {
   equipment: Equipment[];
   page: number;
   limit: number;
   total: number;
-}
+};
 
-export interface EquipmentFilters {
+export type EquipmentFilters = {
   equipment_type?: EquipmentType[];
   category?: EquipmentCategory[];
   status?: EquipmentStatus[];
@@ -761,9 +761,9 @@ export interface EquipmentFilters {
   requires_maintenance?: boolean;
   warranty_expiring?: boolean;
   search?: string;
-}
+};
 
-export interface MaintenanceAnalytics {
+export type MaintenanceAnalytics = {
   totalMaintenanceCost: number;
   costTrends: Array<{
     period: string;
@@ -799,4 +799,4 @@ export interface MaintenanceAnalytics {
       complianceRate: number;
     }>;
   };
-}
+};

@@ -21,7 +21,7 @@ export type ProfessionalSpecialty =
   | 'physiotherapist';
 
 // Service interface
-export interface Service {
+export type Service = {
   id: string;
   name: string;
   description?: string;
@@ -34,10 +34,10 @@ export interface Service {
   post_care_instructions?: string;
   created_at: string;
   updated_at: string;
-}
+};
 
 // Professional interface
-export interface Professional {
+export type Professional = {
   id: string;
   user_id?: string;
   name: string;
@@ -51,8 +51,8 @@ export interface Professional {
   working_hours?: Record<string, any>;
   created_at: string;
   updated_at: string;
-} // Time slot interface
-export interface TimeSlot {
+}; // Time slot interface
+export type TimeSlot = {
   id: string;
   professional_id: string;
   start_time: string;
@@ -61,10 +61,10 @@ export interface TimeSlot {
   is_recurring: boolean;
   recurrence_pattern?: Record<string, any>;
   created_at: string;
-}
+};
 
 // Appointment interface
-export interface Appointment {
+export type Appointment = {
   id: string;
   patient_id: string;
   professional_id: string;
@@ -82,17 +82,17 @@ export interface Appointment {
   updated_at: string;
   cancelled_at?: string;
   completed_at?: string;
-}
+};
 
 // Appointment services junction
-export interface AppointmentService {
+export type AppointmentService = {
   id: string;
   appointment_id: string;
   service_id: string;
   order_index: number;
   estimated_duration: number;
   actual_duration?: number;
-}
+};
 
 // Extended interfaces with relations
 export interface AppointmentWithDetails extends Appointment {
@@ -106,7 +106,7 @@ export interface AppointmentWithDetails extends Appointment {
   service_price?: number;
 }
 
-export interface AvailableTimeSlot {
+export type AvailableTimeSlot = {
   id: string;
   professional_id: string;
   professional_name: string;
@@ -114,26 +114,26 @@ export interface AvailableTimeSlot {
   start_time: string;
   end_time: string;
   duration_minutes: number;
-}
+};
 
 // Booking form interfaces
-export interface BookingFormData {
+export type BookingFormData = {
   service_id: string;
   professional_id: string;
   scheduled_at: string;
   patient_notes?: string;
-}
+};
 
-export interface BookingStep {
+export type BookingStep = {
   id: number;
   title: string;
   description: string;
   isCompleted: boolean;
   isActive: boolean;
-}
+};
 
 // Booking wizard context
-export interface BookingWizardState {
+export type BookingWizardState = {
   currentStep: number;
   selectedService?: Service;
   selectedProfessional?: Professional;
@@ -141,31 +141,31 @@ export interface BookingWizardState {
   patientNotes: string;
   isLoading: boolean;
   error?: string;
-}
+};
 
 // API response types
-export interface ServiceCategory {
+export type ServiceCategory = {
   category: string;
   services: Service[];
   icon?: string;
   description?: string;
-}
+};
 
-export interface BookingResponse {
+export type BookingResponse = {
   success: boolean;
   appointment?: Appointment;
   confirmation_code?: string;
   error?: string;
-}
+};
 
 // Availability checking
-export interface AvailabilityRequest {
+export type AvailabilityRequest = {
   professional_id: string;
   service_id: string;
   date: string; // YYYY-MM-DD format
-}
+};
 
-export interface AvailabilityResponse {
+export type AvailabilityResponse = {
   date: string;
   available_slots: AvailableTimeSlot[];
   booked_slots: string[]; // ISO datetime strings
@@ -174,16 +174,16 @@ export interface AvailabilityResponse {
     end: string;
     reason: string;
   }>;
-}
+};
 
 // Form validation types
-export interface BookingValidation {
+export type BookingValidation = {
   service: boolean;
   professional: boolean;
   timeSlot: boolean;
   notes: boolean;
   isValid: boolean;
   errors: Record<string, string>;
-}
+};
 
 export type { Service, Professional, TimeSlot, Appointment };

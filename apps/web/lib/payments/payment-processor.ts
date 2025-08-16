@@ -1,8 +1,8 @@
 // lib/payments/payment-processor.ts
-export interface PaymentProcessorConfig {
+export type PaymentProcessorConfig = {
   stripeSecretKey: string;
   webhookSecret: string;
-}
+};
 
 export class PaymentProcessor {
   async processPayment(

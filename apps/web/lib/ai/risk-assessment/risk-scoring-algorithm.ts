@@ -14,7 +14,7 @@
 import { createClient } from '@/lib/supabase/client';
 
 // Risk Score Components
-interface RiskScoreComponents {
+type RiskScoreComponents = {
   patientFactors: {
     demographic: number; // Age, gender, BMI
     medical: number; // Medical history, conditions
@@ -39,10 +39,10 @@ interface RiskScoreComponents {
     recovery: number; // Recovery patterns
     adherence: number; // Treatment adherence
   };
-}
+};
 
 // Risk Score Result
-interface RiskScoreResult {
+type RiskScoreResult = {
   totalScore: number;
   normalizedScore: number; // 0-100
   riskLevel: 'minimal' | 'low' | 'moderate' | 'high' | 'critical';
@@ -72,10 +72,10 @@ interface RiskScoreResult {
     longTerm: string[];
     monitoring: string[];
   };
-}
+};
 
 // Scoring Configuration
-interface ScoringConfig {
+type ScoringConfig = {
   weights: {
     patientFactors: number;
     treatmentFactors: number;
@@ -98,10 +98,10 @@ interface ScoringConfig {
     anvisaWeight: number;
     ethicsWeight: number;
   };
-}
+};
 
 // Risk Factor Definition
-interface RiskFactorDefinition {
+type RiskFactorDefinition = {
   id: string;
   name: string;
   category: keyof RiskScoreComponents;
@@ -112,17 +112,17 @@ interface RiskFactorDefinition {
   evidenceLevel: 'low' | 'moderate' | 'high' | 'very_high';
   sources: string[];
   lastUpdated: Date;
-}
+};
 
 // Historical Risk Data Point
-interface RiskDataPoint {
+type RiskDataPoint = {
   timestamp: Date;
   score: number;
   riskLevel: string;
   factors: Record<string, number>;
   outcome?: 'success' | 'complication' | 'failure';
   notes?: string;
-}
+};
 
 class RiskScoringAlgorithm {
   private readonly supabase = createClient();
@@ -145,10 +145,6 @@ class RiskScoringAlgorithm {
     inputData: any
   ): Promise<RiskScoreResult> {
     try {
-      console.log(
-        `Calculating risk score for patient ${patientId}, treatment ${treatmentId}`
-      );
-
       // Step 1: Calculate component scores
       const components = await this.calculateComponents(
         patientId,
@@ -204,11 +200,8 @@ class RiskScoringAlgorithm {
 
       // Store for trend analysis
       await this.storeRiskScore(patientId, result);
-
-      console.log(`Risk score calculated: ${normalizedScore} (${riskLevel})`);
       return result;
-    } catch (error) {
-      console.error('Error calculating risk score:', error);
+    } catch (_error) {
       throw new Error('Failed to calculate risk score');
     }
   }
@@ -701,8 +694,7 @@ class RiskScoringAlgorithm {
         .limit(10);
 
       return data || [];
-    } catch (error) {
-      console.error('Error fetching historical data:', error);
+    } catch (_error) {
       return [];
     }
   }
@@ -992,8 +984,7 @@ class RiskScoringAlgorithm {
         velocity: Math.abs(trend),
         prediction: Math.max(0, Math.min(100, currentScore + trend)),
       };
-    } catch (error) {
-      console.error('Error analyzing trends:', error);
+    } catch (_error) {
       return {
         direction: 'stable' as const,
         velocity: 0,
@@ -1046,8 +1037,7 @@ class RiskScoringAlgorithm {
         treatmentTypeAverage,
         facilityAverage,
       };
-    } catch (error) {
-      console.error('Error calculating benchmarks:', error);
+    } catch (_error) {
       return {
         populationAverage: 25,
         ageGroupAverage: 25,
@@ -1162,9 +1152,7 @@ class RiskScoringAlgorithm {
         benchmarks: JSON.stringify(result.benchmarks),
         created_at: new Date().toISOString(),
       });
-    } catch (error) {
-      console.error('Error storing risk score:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -1237,9 +1225,7 @@ class RiskScoringAlgorithm {
           });
         });
       }
-    } catch (error) {
-      console.error('Error loading risk factors:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -1260,9 +1246,7 @@ class RiskScoringAlgorithm {
           facilityTypes: JSON.parse(stats.facility_types || '{}'),
         };
       }
-    } catch (error) {
-      console.error('Error loading population stats:', error);
-    }
+    } catch (_error) {}
   }
 
   /**

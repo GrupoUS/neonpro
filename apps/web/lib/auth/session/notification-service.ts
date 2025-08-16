@@ -20,7 +20,7 @@ export type NotificationChannel = 'email' | 'sms' | 'push' | 'in_app';
 
 export type NotificationPriority = 'low' | 'normal' | 'high' | 'urgent';
 
-export interface NotificationTemplate {
+export type NotificationTemplate = {
   id: string;
   type: NotificationType;
   channel: NotificationChannel;
@@ -28,9 +28,9 @@ export interface NotificationTemplate {
   body: string;
   variables: string[];
   isActive: boolean;
-}
+};
 
-export interface NotificationPreference {
+export type NotificationPreference = {
   userId: string;
   type: NotificationType;
   channels: NotificationChannel[];
@@ -40,9 +40,9 @@ export interface NotificationPreference {
     end: string; // HH:MM format
     timezone: string;
   };
-}
+};
 
-export interface Notification {
+export type Notification = {
   id?: string;
   userId: string;
   type: NotificationType;
@@ -60,9 +60,9 @@ export interface Notification {
   errorMessage?: string;
   createdAt?: Date;
   updatedAt?: Date;
-}
+};
 
-export interface NotificationStats {
+export type NotificationStats = {
   totalSent: number;
   totalDelivered: number;
   totalRead: number;
@@ -72,7 +72,7 @@ export interface NotificationStats {
   byType: Record<NotificationType, number>;
   byChannel: Record<NotificationChannel, number>;
   recentNotifications: Notification[];
-}
+};
 
 // Notification Service
 export class NotificationService {
@@ -101,67 +101,52 @@ export class NotificationService {
       channels?: NotificationChannel[];
     } = {}
   ): Promise<Notification[]> {
-    try {
-      // Get user preferences
-      const preferences = await this.getUserPreferences(userId);
-      const userPreference = preferences.find((p) => p.type === type);
+    // Get user preferences
+    const preferences = await this.getUserPreferences(userId);
+    const userPreference = preferences.find((p) => p.type === type);
 
-      if (!userPreference?.enabled) {
-        console.log(
-          `Notifications disabled for user ${userId} and type ${type}`
-        );
-        return [];
-      }
-
-      // Determine channels to use
-      const channels = options.channels ||
-        userPreference.channels || ['in_app'];
-      const notifications: Notification[] = [];
-
-      // Check quiet hours
-      if (this.isInQuietHours(userPreference.quietHours)) {
-        console.log(
-          `User ${userId} is in quiet hours, scheduling notification`
-        );
-        const scheduledAt = this.getNextAvailableTime(
-          userPreference.quietHours
-        );
-        options.scheduledAt = scheduledAt;
-      }
-
-      // Create notifications for each channel
-      for (const channel of channels) {
-        const template = this.getTemplate(type, channel);
-        if (!template) {
-          console.warn(`No template found for ${type} on ${channel}`);
-          continue;
-        }
-
-        const notification = await this.createNotification({
-          userId,
-          type,
-          channel,
-          priority: options.priority || 'normal',
-          subject: this.renderTemplate(template.subject, data),
-          body: this.renderTemplate(template.body, data),
-          data,
-          scheduledAt: options.scheduledAt,
-          status: options.scheduledAt ? 'pending' : 'pending',
-        });
-
-        notifications.push(notification);
-
-        // Send immediately if not scheduled
-        if (!options.scheduledAt) {
-          await this.deliverNotification(notification);
-        }
-      }
-
-      return notifications;
-    } catch (error) {
-      console.error('Send notification error:', error);
-      throw error;
+    if (!userPreference?.enabled) {
+      return [];
     }
+
+    // Determine channels to use
+    const channels = options.channels || userPreference.channels || ['in_app'];
+    const notifications: Notification[] = [];
+
+    // Check quiet hours
+    if (this.isInQuietHours(userPreference.quietHours)) {
+      const scheduledAt = this.getNextAvailableTime(userPreference.quietHours);
+      options.scheduledAt = scheduledAt;
+    }
+
+    // Create notifications for each channel
+    for (const channel of channels) {
+      const template = this.getTemplate(type, channel);
+      if (!template) {
+        continue;
+      }
+
+      const notification = await this.createNotification({
+        userId,
+        type,
+        channel,
+        priority: options.priority || 'normal',
+        subject: this.renderTemplate(template.subject, data),
+        body: this.renderTemplate(template.body, data),
+        data,
+        scheduledAt: options.scheduledAt,
+        status: options.scheduledAt ? 'pending' : 'pending',
+      });
+
+      notifications.push(notification);
+
+      // Send immediately if not scheduled
+      if (!options.scheduledAt) {
+        await this.deliverNotification(notification);
+      }
+    }
+
+    return notifications;
   }
 
   /**
@@ -177,36 +162,27 @@ export class NotificationService {
       channels?: NotificationChannel[];
     } = {}
   ): Promise<Notification[]> {
-    try {
-      const allNotifications: Notification[] = [];
+    const allNotifications: Notification[] = [];
 
-      // Process in batches to avoid overwhelming the system
-      const batchSize = 50;
-      for (let i = 0; i < userIds.length; i += batchSize) {
-        const batch = userIds.slice(i, i + batchSize);
-        const batchPromises = batch.map((userId) =>
-          this.sendNotification(userId, type, data, options)
-        );
+    // Process in batches to avoid overwhelming the system
+    const batchSize = 50;
+    for (let i = 0; i < userIds.length; i += batchSize) {
+      const batch = userIds.slice(i, i + batchSize);
+      const batchPromises = batch.map((userId) =>
+        this.sendNotification(userId, type, data, options)
+      );
 
-        const batchResults = await Promise.allSettled(batchPromises);
+      const batchResults = await Promise.allSettled(batchPromises);
 
-        batchResults.forEach((result, index) => {
-          if (result.status === 'fulfilled') {
-            allNotifications.push(...result.value);
-          } else {
-            console.error(
-              `Failed to send notification to user ${batch[index]}:`,
-              result.reason
-            );
-          }
-        });
-      }
-
-      return allNotifications;
-    } catch (error) {
-      console.error('Send bulk notifications error:', error);
-      throw error;
+      batchResults.forEach((result, _index) => {
+        if (result.status === 'fulfilled') {
+          allNotifications.push(...result.value);
+        } else {
+        }
+      });
     }
+
+    return allNotifications;
   }
 
   /**
@@ -298,33 +274,28 @@ export class NotificationService {
   async createNotification(
     notification: Omit<Notification, 'id' | 'createdAt' | 'updatedAt'>
   ): Promise<Notification> {
-    try {
-      const { data, error } = await this.supabase
-        .from('session_notifications')
-        .insert({
-          user_id: notification.userId,
-          type: notification.type,
-          channel: notification.channel,
-          priority: notification.priority,
-          subject: notification.subject,
-          body: notification.body,
-          data: notification.data,
-          scheduled_at: notification.scheduledAt?.toISOString(),
-          status: notification.status,
-          retry_count: notification.retryCount || 0,
-        })
-        .select()
-        .single();
+    const { data, error } = await this.supabase
+      .from('session_notifications')
+      .insert({
+        user_id: notification.userId,
+        type: notification.type,
+        channel: notification.channel,
+        priority: notification.priority,
+        subject: notification.subject,
+        body: notification.body,
+        data: notification.data,
+        scheduled_at: notification.scheduledAt?.toISOString(),
+        status: notification.status,
+        retry_count: notification.retryCount || 0,
+      })
+      .select()
+      .single();
 
-      if (error) {
-        throw new Error(`Failed to create notification: ${error.message}`);
-      }
-
-      return this.mapNotification(data);
-    } catch (error) {
-      console.error('Create notification error:', error);
-      throw error;
+    if (error) {
+      throw new Error(`Failed to create notification: ${error.message}`);
     }
+
+    return this.mapNotification(data);
   }
 
   /**
@@ -373,8 +344,7 @@ export class NotificationService {
       }
 
       return data.map(this.mapNotification);
-    } catch (error) {
-      console.error('Get user notifications error:', error);
+    } catch (_error) {
       return [];
     }
   }
@@ -383,73 +353,54 @@ export class NotificationService {
    * Mark notification as read
    */
   async markAsRead(notificationId: string): Promise<Notification> {
-    try {
-      const { data, error } = await this.supabase
-        .from('session_notifications')
-        .update({
-          read_at: new Date().toISOString(),
-          status: 'read',
-        })
-        .eq('id', notificationId)
-        .select()
-        .single();
+    const { data, error } = await this.supabase
+      .from('session_notifications')
+      .update({
+        read_at: new Date().toISOString(),
+        status: 'read',
+      })
+      .eq('id', notificationId)
+      .select()
+      .single();
 
-      if (error) {
-        throw new Error(
-          `Failed to mark notification as read: ${error.message}`
-        );
-      }
-
-      return this.mapNotification(data);
-    } catch (error) {
-      console.error('Mark notification as read error:', error);
-      throw error;
+    if (error) {
+      throw new Error(`Failed to mark notification as read: ${error.message}`);
     }
+
+    return this.mapNotification(data);
   }
 
   /**
    * Mark multiple notifications as read
    */
   async markMultipleAsRead(notificationIds: string[]): Promise<Notification[]> {
-    try {
-      const { data, error } = await this.supabase
-        .from('session_notifications')
-        .update({
-          read_at: new Date().toISOString(),
-          status: 'read',
-        })
-        .in('id', notificationIds)
-        .select();
+    const { data, error } = await this.supabase
+      .from('session_notifications')
+      .update({
+        read_at: new Date().toISOString(),
+        status: 'read',
+      })
+      .in('id', notificationIds)
+      .select();
 
-      if (error) {
-        throw new Error(
-          `Failed to mark notifications as read: ${error.message}`
-        );
-      }
-
-      return data.map(this.mapNotification);
-    } catch (error) {
-      console.error('Mark multiple notifications as read error:', error);
-      throw error;
+    if (error) {
+      throw new Error(`Failed to mark notifications as read: ${error.message}`);
     }
+
+    return data.map(this.mapNotification);
   }
 
   /**
    * Delete notification
    */
   async deleteNotification(notificationId: string): Promise<void> {
-    try {
-      const { error } = await this.supabase
-        .from('session_notifications')
-        .delete()
-        .eq('id', notificationId);
+    const { error } = await this.supabase
+      .from('session_notifications')
+      .delete()
+      .eq('id', notificationId);
 
-      if (error) {
-        throw new Error(`Failed to delete notification: ${error.message}`);
-      }
-    } catch (error) {
-      console.error('Delete notification error:', error);
-      throw error;
+    if (error) {
+      throw new Error(`Failed to delete notification: ${error.message}`);
     }
   }
 
@@ -478,8 +429,7 @@ export class NotificationService {
         enabled: pref.enabled,
         quietHours: pref.quiet_hours,
       }));
-    } catch (error) {
-      console.error('Get user preferences error:', error);
+    } catch (_error) {
       return this.getDefaultPreferences(userId);
     }
   }
@@ -491,35 +441,30 @@ export class NotificationService {
     userId: string,
     preferences: Partial<NotificationPreference>[]
   ): Promise<NotificationPreference[]> {
-    try {
-      const updates = preferences.map((pref) => ({
-        user_id: userId,
-        type: pref.type,
-        channels: pref.channels,
-        enabled: pref.enabled,
-        quiet_hours: pref.quietHours,
-      }));
+    const updates = preferences.map((pref) => ({
+      user_id: userId,
+      type: pref.type,
+      channels: pref.channels,
+      enabled: pref.enabled,
+      quiet_hours: pref.quietHours,
+    }));
 
-      const { data, error } = await this.supabase
-        .from('session_notification_preferences')
-        .upsert(updates, { onConflict: 'user_id,type' })
-        .select();
+    const { data, error } = await this.supabase
+      .from('session_notification_preferences')
+      .upsert(updates, { onConflict: 'user_id,type' })
+      .select();
 
-      if (error) {
-        throw new Error(`Failed to update user preferences: ${error.message}`);
-      }
-
-      return data.map((pref) => ({
-        userId: pref.user_id,
-        type: pref.type,
-        channels: pref.channels,
-        enabled: pref.enabled,
-        quietHours: pref.quiet_hours,
-      }));
-    } catch (error) {
-      console.error('Update user preferences error:', error);
-      throw error;
+    if (error) {
+      throw new Error(`Failed to update user preferences: ${error.message}`);
     }
+
+    return data.map((pref) => ({
+      userId: pref.user_id,
+      type: pref.type,
+      channels: pref.channels,
+      enabled: pref.enabled,
+      quietHours: pref.quiet_hours,
+    }));
   }
 
   // =====================================================
@@ -558,7 +503,6 @@ export class NotificationService {
         errorMessage
       );
     } catch (error) {
-      console.error('Deliver notification error:', error);
       await this.updateNotificationStatus(
         notification.id!,
         'failed',
@@ -570,20 +514,12 @@ export class NotificationService {
   /**
    * Send email notification
    */
-  private async sendEmail(notification: Notification): Promise<boolean> {
+  private async sendEmail(_notification: Notification): Promise<boolean> {
     try {
-      // In a real implementation, integrate with email service (SendGrid, AWS SES, etc.)
-      console.log('Sending email notification:', {
-        to: notification.userId,
-        subject: notification.subject,
-        body: notification.body,
-      });
-
       // Simulate email sending
       await new Promise((resolve) => setTimeout(resolve, 100));
       return true;
-    } catch (error) {
-      console.error('Send email error:', error);
+    } catch (_error) {
       return false;
     }
   }
@@ -591,19 +527,12 @@ export class NotificationService {
   /**
    * Send SMS notification
    */
-  private async sendSMS(notification: Notification): Promise<boolean> {
+  private async sendSMS(_notification: Notification): Promise<boolean> {
     try {
-      // In a real implementation, integrate with SMS service (Twilio, AWS SNS, etc.)
-      console.log('Sending SMS notification:', {
-        to: notification.userId,
-        message: notification.body,
-      });
-
       // Simulate SMS sending
       await new Promise((resolve) => setTimeout(resolve, 100));
       return true;
-    } catch (error) {
-      console.error('Send SMS error:', error);
+    } catch (_error) {
       return false;
     }
   }
@@ -612,22 +541,13 @@ export class NotificationService {
    * Send push notification
    */
   private async sendPushNotification(
-    notification: Notification
+    _notification: Notification
   ): Promise<boolean> {
     try {
-      // In a real implementation, integrate with push service (FCM, APNs, etc.)
-      console.log('Sending push notification:', {
-        to: notification.userId,
-        title: notification.subject,
-        body: notification.body,
-        data: notification.data,
-      });
-
       // Simulate push notification sending
       await new Promise((resolve) => setTimeout(resolve, 100));
       return true;
-    } catch (error) {
-      console.error('Send push notification error:', error);
+    } catch (_error) {
       return false;
     }
   }
@@ -662,11 +582,8 @@ export class NotificationService {
         .eq('id', notificationId);
 
       if (error) {
-        console.error('Update notification status error:', error);
       }
-    } catch (error) {
-      console.error('Update notification status error:', error);
-    }
+    } catch (_error) {}
   }
 
   // =====================================================
@@ -923,8 +840,7 @@ export class NotificationService {
         byChannel,
         recentNotifications: notifications.slice(0, 10),
       };
-    } catch (error) {
-      console.error('Get notification stats error:', error);
+    } catch (_error) {
       return {
         totalSent: 0,
         totalDelivered: 0,

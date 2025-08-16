@@ -11,7 +11,7 @@ const client = new Twilio(
   process.env.TWILIO_AUTH_TOKEN
 );
 
-interface SMSPayload {
+type SMSPayload = {
   recipientId: string;
   recipientPhone: string;
   type: string;
@@ -19,16 +19,16 @@ interface SMSPayload {
   templateData?: any;
   timezone?: string;
   priority?: 'low' | 'normal' | 'high' | 'urgent';
-}
+};
 
-interface SMSResult {
+type SMSResult = {
   success: boolean;
   notificationId?: string;
   channel: 'sms';
   error?: string;
   deliveredAt?: Date;
   messageId?: string;
-}
+};
 
 export class SMSService {
   private readonly config = NOTIFICATION_CONFIG.sms;
@@ -83,7 +83,6 @@ export class SMSService {
         deliveredAt: new Date(),
       };
     } catch (error) {
-      console.error('SMS sending error:', error);
       return {
         success: false,
         channel: 'sms',
@@ -120,8 +119,7 @@ export class SMSService {
       }
 
       return null;
-    } catch (error) {
-      console.error('Phone number validation error:', error);
+    } catch (_error) {
       return null;
     }
   } /**
@@ -169,8 +167,7 @@ export class SMSService {
       return baseContent.length > 320
         ? `${baseContent.substring(0, 317)}...`
         : baseContent;
-    } catch (error) {
-      console.error('Error generating SMS content:', error);
+    } catch (_error) {
       return baseContent.length > 160
         ? `${baseContent.substring(0, 157)}...`
         : baseContent;
@@ -216,8 +213,7 @@ export class SMSService {
           ? `${message.errorCode}: ${message.errorMessage}`
           : undefined,
       };
-    } catch (error) {
-      console.error('Error getting SMS delivery status:', error);
+    } catch (_error) {
       return null;
     }
   }
@@ -243,8 +239,7 @@ export class SMSService {
         if (i + batchSize < payloads.length) {
           await new Promise((resolve) => setTimeout(resolve, 1000)); // 1 second delay
         }
-      } catch (error) {
-        console.error('Bulk SMS batch error:', error);
+      } catch (_error) {
         // Add failed results for this batch
         batch.forEach(() => {
           results.push({

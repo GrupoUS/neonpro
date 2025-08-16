@@ -80,19 +80,6 @@ export async function POST(request: NextRequest) {
       metadata: {},
       confidence: 0,
     };
-    /*
-    const response = await chatEngine.processUniversalQuery(
-      query,
-      chatContext,
-      userId,
-      clinicId
-    );
-    */
-
-    // Log successful interaction
-    console.log(
-      `AI Chat - User: ${userId}, Clinic: ${clinicId}, Query length: ${query.length}`
-    );
 
     return NextResponse.json({
       success: true,
@@ -104,8 +91,6 @@ export async function POST(request: NextRequest) {
       sessionId: sessionId || generateSessionId(),
     });
   } catch (error) {
-    console.error('Error in AI chat endpoint:', error);
-
     const errorMessage =
       error instanceof Error ? error.message : 'Internal server error';
 
@@ -155,8 +140,7 @@ async function buildUniversalContext(
       clinical: clinicalData,
       businessIntelligence: biData,
     };
-  } catch (error) {
-    console.error('Error building universal context:', error);
+  } catch (_error) {
     // Return minimal context on error
     return {
       user: {

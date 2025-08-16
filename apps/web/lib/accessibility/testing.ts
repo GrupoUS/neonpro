@@ -3,15 +3,15 @@
 
 import { ContrastChecker, FocusManager } from './wcag-compliance';
 
-export interface AccessibilityTestResult {
+export type AccessibilityTestResult = {
   passed: boolean;
   level: 'A' | 'AA' | 'AAA';
   message: string;
   element?: HTMLElement;
   suggestion?: string;
-}
+};
 
-export interface AccessibilityAuditReport {
+export type AccessibilityAuditReport = {
   score: number; // 0-100
   totalTests: number;
   passedTests: number;
@@ -24,7 +24,7 @@ export interface AccessibilityAuditReport {
     keyboardNavigation: AccessibilityTestResult[];
     semanticStructure: AccessibilityTestResult[];
   };
-}
+};
 
 export class AccessibilityTester {
   private static instance: AccessibilityTester;

@@ -2,7 +2,7 @@ import { createClient } from '@supabase/supabase-js';
 import cron from 'node-cron';
 import { AuditLogger } from '../../auth/audit/audit-logger';
 
-export interface ScheduledNotification {
+export type ScheduledNotification = {
   id: string;
   notification_id: string;
   user_id?: string;
@@ -31,9 +31,9 @@ export interface ScheduledNotification {
   error_message?: string;
   retry_count: number;
   max_retries: number;
-}
+};
 
-export interface ScheduleConfig {
+export type ScheduleConfig = {
   notification_id: string;
   user_id?: string;
   channel: 'email' | 'sms' | 'push' | 'whatsapp' | 'in_app';
@@ -55,9 +55,9 @@ export interface ScheduleConfig {
   priority?: 'low' | 'normal' | 'high' | 'urgent';
   metadata?: Record<string, any>;
   max_retries?: number;
-}
+};
 
-export interface SchedulerStats {
+export type SchedulerStats = {
   total_scheduled: number;
   pending: number;
   sent: number;
@@ -67,7 +67,7 @@ export interface SchedulerStats {
   next_execution: Date | null;
   channels: Record<string, number>;
   priorities: Record<string, number>;
-}
+};
 
 export class NotificationScheduler {
   private readonly supabase;
@@ -115,8 +115,6 @@ export class NotificationScheduler {
         processing_interval_ms: this.processingIntervalMs,
       },
     });
-
-    console.log('NotificationScheduler iniciado');
   }
 
   /**
@@ -145,8 +143,6 @@ export class NotificationScheduler {
       action: 'scheduler_stopped',
       resource_type: 'notification_scheduler',
     });
-
-    console.log('NotificationScheduler parado');
   }
 
   /**
@@ -437,23 +433,15 @@ export class NotificationScheduler {
         return;
       }
 
-      console.log(`Processando ${notifications.length} notificações agendadas`);
-
       // Processar cada notificação
       for (const notification of notifications) {
         try {
           await this.processNotification(notification);
         } catch (error) {
-          console.error(
-            `Erro ao processar notificação ${notification.id}:`,
-            error
-          );
           await this.handleNotificationError(notification, error as Error);
         }
       }
-    } catch (error) {
-      console.error('Erro no processamento de notificações agendadas:', error);
-    }
+    } catch (_error) {}
   }
 
   private async processNotification(
@@ -495,14 +483,8 @@ export class NotificationScheduler {
   }
 
   private async sendNotification(
-    notification: ScheduledNotification
+    _notification: ScheduledNotification
   ): Promise<void> {
-    // Aqui seria feita a integração com o NotificationManager
-    // Por enquanto, simular o envio
-    console.log(
-      `Enviando notificação ${notification.id} via ${notification.channel} para ${notification.recipient}`
-    );
-
     // Simular delay de envio
     await new Promise((resolve) => setTimeout(resolve, 100));
   }
@@ -616,9 +598,7 @@ export class NotificationScheduler {
         resource_type: 'notification_scheduler',
         details: { expired_before: expiredDate },
       });
-    } catch (error) {
-      console.error('Erro ao limpar notificações expiradas:', error);
-    }
+    } catch (_error) {}
   }
 
   private async createCronJob(
@@ -645,9 +625,7 @@ export class NotificationScheduler {
           // Remover job após execução
           job.stop();
           this.cronJobs.delete(scheduleId);
-        } catch (error) {
-          console.error(`Erro no cron job ${scheduleId}:`, error);
-        }
+        } catch (_error) {}
       },
       {
         scheduled: false,

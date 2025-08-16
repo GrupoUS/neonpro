@@ -1,4 +1,4 @@
-export interface InsightData {
+export type InsightData = {
   patientId: string;
   type: 'clinical' | 'behavioral' | 'predictive' | 'risk';
   priority: 'low' | 'medium' | 'high' | 'critical';
@@ -9,9 +9,9 @@ export interface InsightData {
   recommendations: string[];
   createdAt: Date;
   updatedAt: Date;
-}
+};
 
-export interface PatientRiskAssessment {
+export type PatientRiskAssessment = {
   overall: number;
   cardiovascular: number;
   diabetes: number;
@@ -24,9 +24,9 @@ export interface PatientRiskAssessment {
     genetics: number;
     medication: number;
   };
-}
+};
 
-export interface ClinicalRecommendation {
+export type ClinicalRecommendation = {
   id: string;
   type: 'medication' | 'lifestyle' | 'followup' | 'specialist';
   urgency: 'routine' | 'soon' | 'urgent' | 'immediate';
@@ -35,7 +35,7 @@ export interface ClinicalRecommendation {
   rationale: string;
   expectedOutcome: string;
   timeframe: string;
-}
+};
 
 export class AIInsightsEngine {
   /**
@@ -99,8 +99,7 @@ export class AIInsightsEngine {
       ];
 
       return insights;
-    } catch (error) {
-      console.error('Erro ao gerar insights do paciente:', error);
+    } catch (_error) {
       throw new Error('Falha na geração de insights de IA');
     }
   }
@@ -127,8 +126,7 @@ export class AIInsightsEngine {
       };
 
       return riskAssessment;
-    } catch (error) {
-      console.error('Erro na avaliação de risco:', error);
+    } catch (_error) {
       throw new Error('Falha na avaliação de risco de IA');
     }
   }
@@ -182,8 +180,7 @@ export class AIInsightsEngine {
       ];
 
       return recommendations;
-    } catch (error) {
-      console.error('Erro ao gerar recomendações clínicas:', error);
+    } catch (_error) {
       throw new Error('Falha na geração de recomendações de IA');
     }
   }
@@ -240,8 +237,7 @@ export class AIInsightsEngine {
       };
 
       return trends;
-    } catch (error) {
-      console.error('Erro na análise de tendências:', error);
+    } catch (_error) {
       throw new Error('Falha na análise de tendências de IA');
     }
   }
@@ -273,8 +269,7 @@ export class AIInsightsEngine {
       ];
 
       return anomalies;
-    } catch (error) {
-      console.error('Erro na detecção de anomalias:', error);
+    } catch (_error) {
       throw new Error('Falha na detecção de anomalias de IA');
     }
   }
@@ -318,8 +313,7 @@ export class AIInsightsEngine {
           activeAnomalies: anomalies.filter((a) => a.severity !== 'low').length,
         },
       };
-    } catch (error) {
-      console.error('Erro ao gerar relatório de insights:', error);
+    } catch (_error) {
       throw new Error('Falha na geração do relatório de insights');
     }
   }

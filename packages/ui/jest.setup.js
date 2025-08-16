@@ -2,7 +2,7 @@
 import '@testing-library/jest-dom';
 
 // Mock CSS modules
-const mockCSSModules = new Proxy(
+const _mockCSSModules = new Proxy(
   {},
   {
     get: () => 'mock-css-class',

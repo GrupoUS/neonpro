@@ -56,8 +56,6 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ error: 'Ação não suportada' }, { status: 400 });
   } catch (error) {
-    console.error('Erro no bulk scan:', error);
-
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {
@@ -105,7 +103,6 @@ export async function GET(request: NextRequest) {
         .single();
 
       if (error) {
-        console.error('Erro ao buscar operação:', error);
         return NextResponse.json(
           { error: 'Operação não encontrada' },
           { status: 404 }
@@ -132,7 +129,6 @@ export async function GET(request: NextRequest) {
     const { data: operations, error } = await query;
 
     if (error) {
-      console.error('Erro ao buscar operações:', error);
       return NextResponse.json(
         { error: 'Erro ao buscar operações' },
         { status: 500 }
@@ -143,8 +139,7 @@ export async function GET(request: NextRequest) {
       success: true,
       data: operations,
     });
-  } catch (error) {
-    console.error('Erro na busca de operações bulk:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
       { status: 500 }
@@ -190,7 +185,6 @@ export async function PATCH(request: NextRequest) {
       .single();
 
     if (error) {
-      console.error('Erro ao atualizar operação:', error);
       return NextResponse.json(
         { error: 'Erro ao atualizar operação' },
         { status: 500 }
@@ -202,8 +196,6 @@ export async function PATCH(request: NextRequest) {
       data: operation,
     });
   } catch (error) {
-    console.error('Erro na atualização da operação:', error);
-
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {

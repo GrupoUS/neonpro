@@ -2,12 +2,12 @@ import { type NextRequest, NextResponse } from 'next/server';
 import { BudgetApprovalService } from '@/app/lib/services/budget-approval-service';
 import { createClient } from '@/app/utils/supabase/server';
 
-interface Params {
+type Params = {
   params: {
     id: string;
     action: string;
   };
-}
+};
 
 export async function POST(request: NextRequest, { params }: Params) {
   try {
@@ -53,8 +53,7 @@ export async function POST(request: NextRequest, { params }: Params) {
     }
 
     return NextResponse.json({ approval });
-  } catch (error) {
-    console.error('Error processing approval action:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to process approval' },
       { status: 500 }

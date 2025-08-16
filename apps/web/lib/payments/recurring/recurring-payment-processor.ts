@@ -11,7 +11,7 @@ import { PaymentProcessor } from '../payment-processor';
 import { subscriptionManager } from './subscription-manager';
 
 // Types and Interfaces
-export interface PaymentRetryAttempt {
+export type PaymentRetryAttempt = {
   id: string;
   subscription_id: string;
   payment_intent_id: string;
@@ -20,9 +20,9 @@ export interface PaymentRetryAttempt {
   status: 'scheduled' | 'processing' | 'completed' | 'failed' | 'canceled';
   error_message?: string;
   processed_at?: Date;
-}
+};
 
-export interface RecurringPaymentConfig {
+export type RecurringPaymentConfig = {
   max_retry_attempts: number;
   retry_intervals_hours: number[]; // [24, 72, 168] = 1 day, 3 days, 7 days
   dunning_management: {
@@ -37,23 +37,23 @@ export interface RecurringPaymentConfig {
     subscription_suspended: boolean;
     subscription_canceled: boolean;
   };
-}
+};
 
-export interface BillingCycleResult {
+export type BillingCycleResult = {
   processed_subscriptions: number;
   successful_payments: number;
   failed_payments: number;
   retry_scheduled: number;
   errors: string[];
-}
+};
 
-export interface PaymentAttemptResult {
+export type PaymentAttemptResult = {
   success: boolean;
   payment_intent_id?: string;
   error_message?: string;
   requires_retry: boolean;
   next_retry_date?: Date;
-}
+};
 
 // Main Recurring Payment Processor Class
 export class RecurringPaymentProcessor {

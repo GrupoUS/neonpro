@@ -14,7 +14,6 @@ export async function POST(request: NextRequest) {
 
     // Verify webhook signature for security
     if (!verifyWebhookSignature(body, signature)) {
-      console.error('Invalid webhook signature');
       return NextResponse.json({ error: 'Invalid signature' }, { status: 401 });
     }
 
@@ -24,7 +23,6 @@ export async function POST(request: NextRequest) {
     const result = await pixIntegration.handleWebhook(webhookData);
 
     if (!result.success) {
-      console.error('Webhook processing failed:', result.error);
       return NextResponse.json(
         { error: 'Webhook processing failed' },
         { status: 400 }
@@ -38,8 +36,6 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('PIX webhook error:', error);
-
     return NextResponse.json(
       {
         error: 'Internal server error',
@@ -63,7 +59,6 @@ function verifyWebhookSignature(
 
   const webhookSecret = process.env.PIX_WEBHOOK_SECRET;
   if (!webhookSecret) {
-    console.error('PIX_WEBHOOK_SECRET not configured');
     return false;
   }
 
@@ -93,7 +88,6 @@ async function handlePaymentConfirmation(pixPaymentId: string) {
       .single();
 
     if (!pixPayment) {
-      console.error('PIX payment not found:', pixPaymentId);
       return;
     }
 
@@ -152,9 +146,5 @@ async function handlePaymentConfirmation(pixPaymentId: string) {
       new_values: { status: 'paid' },
       user_id: null, // System action
     });
-
-    console.log('Payment confirmation processed successfully:', pixPaymentId);
-  } catch (error) {
-    console.error('Error handling payment confirmation:', error);
-  }
+  } catch (_error) {}
 }

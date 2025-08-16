@@ -30,7 +30,6 @@ self.addEventListener('install', (event) => {
     caches
       .open(CACHE_NAME)
       .then((cache) => {
-        console.log('Portal SW: Caching static resources');
         return cache.addAll(STATIC_RESOURCES);
       })
       .then(() => {
@@ -49,7 +48,6 @@ self.addEventListener('activate', (event) => {
         return Promise.all(
           cacheNames.map((cacheName) => {
             if (cacheName !== CACHE_NAME) {
-              console.log('Portal SW: Deleting old cache:', cacheName);
               return caches.delete(cacheName);
             }
           })
@@ -120,10 +118,6 @@ async function handlePortalRequest(request) {
 
     return networkResponse;
   } catch (_error) {
-    console.log(
-      'Portal SW: Network failed, serving from cache or offline page'
-    );
-
     // Try to serve from cache
     const cachedResponse = await caches.match(request);
     if (cachedResponse) {
@@ -181,8 +175,6 @@ async function handleAPIRequest(request) {
     // For POST/PUT/DELETE requests, always go to network
     return fetch(request);
   } catch (_error) {
-    console.log('Portal SW: API request failed, trying cache');
-
     // For GET requests, try to serve from cache
     if (request.method === 'GET') {
       const cachedResponse = await caches.match(cacheKey);
@@ -224,8 +216,6 @@ self.addEventListener('sync', (event) => {
 
 async function syncOfflineActions() {
   try {
-    console.log('Portal SW: Syncing offline actions');
-
     // In a real implementation, this would:
     // 1. Get offline actions from IndexedDB
     // 2. Send them to the server
@@ -241,8 +231,6 @@ async function syncOfflineActions() {
       });
     });
   } catch (error) {
-    console.error('Portal SW: Sync failed:', error);
-
     const clients = await self.clients.matchAll();
     clients.forEach((client) => {
       client.postMessage({
@@ -278,9 +266,7 @@ self.addEventListener('push', (event) => {
         options
       )
     );
-  } catch (error) {
-    console.error('Portal SW: Push notification error:', error);
-  }
+  } catch (_error) {}
 });
 
 // Notification click handling
@@ -330,5 +316,3 @@ self.addEventListener('message', (event) => {
     self.skipWaiting();
   }
 });
-
-console.log('Portal Service Worker loaded successfully');

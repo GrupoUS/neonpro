@@ -65,7 +65,7 @@ import {
 import { formatBytes, formatDate, formatDuration } from '@/lib/utils';
 
 // Types
-interface BackupRecord {
+type BackupRecord = {
   id: string;
   config_id: string;
   config_name: string;
@@ -81,9 +81,9 @@ interface BackupRecord {
   error_message?: string;
   storage_location?: string;
   initiated_by?: string;
-}
+};
 
-interface BackupDetails {
+type BackupDetails = {
   id: string;
   config_name: string;
   type: string;
@@ -102,7 +102,7 @@ interface BackupDetails {
     transfer_speed: number;
     verification_status: string;
   };
-}
+};
 
 const BackupHistory: React.FC = () => {
   const [backups, setBackups] = useState<BackupRecord[]>([]);
@@ -148,8 +148,7 @@ const BackupHistory: React.FC = () => {
       } else {
         toast.error('Erro ao carregar histórico de backups');
       }
-    } catch (error) {
-      console.error('Erro ao carregar histórico:', error);
+    } catch (_error) {
       toast.error('Erro ao carregar histórico de backups');
     } finally {
       setLoading(false);
@@ -203,8 +202,7 @@ const BackupHistory: React.FC = () => {
       } else {
         toast.error('Erro ao carregar detalhes do backup');
       }
-    } catch (error) {
-      console.error('Erro ao carregar detalhes:', error);
+    } catch (_error) {
       toast.error('Erro ao carregar detalhes do backup');
     }
   };
@@ -215,8 +213,7 @@ const BackupHistory: React.FC = () => {
       // Implementar download do backup
       // const response = await fetch(`/api/backup/jobs/${backupId}/download`);
       // ... lógica de download
-    } catch (error) {
-      console.error('Erro ao baixar backup:', error);
+    } catch (_error) {
       toast.error('Erro ao baixar backup');
     }
   };
@@ -233,8 +230,7 @@ const BackupHistory: React.FC = () => {
       } else {
         toast.error('Erro ao remover backup');
       }
-    } catch (error) {
-      console.error('Erro ao remover backup:', error);
+    } catch (_error) {
       toast.error('Erro ao remover backup');
     }
   };

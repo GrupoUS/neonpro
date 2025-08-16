@@ -4,7 +4,7 @@ import type React from 'react';
 import { createContext, type ReactNode, useContext, useReducer } from 'react';
 
 // Types
-export interface Customer {
+export type Customer = {
   id: string;
   profile_id: string;
   profile?: {
@@ -23,9 +23,9 @@ export interface Customer {
   status: 'active' | 'inactive' | 'vip' | 'blocked';
   created_at: string;
   updated_at: string;
-}
+};
 
-export interface CustomerSegment {
+export type CustomerSegment = {
   id: string;
   name: string;
   description?: string;
@@ -36,9 +36,9 @@ export interface CustomerSegment {
   created_by: string;
   created_at: string;
   updated_at: string;
-}
+};
 
-export interface MarketingCampaign {
+export type MarketingCampaign = {
   id: string;
   name: string;
   description?: string;
@@ -56,10 +56,10 @@ export interface MarketingCampaign {
   created_by: string;
   created_at: string;
   updated_at: string;
-}
+};
 
 // State interface
-interface CRMState {
+type CRMState = {
   customers: Customer[];
   segments: CustomerSegment[];
   campaigns: MarketingCampaign[];
@@ -78,7 +78,7 @@ interface CRMState {
     customer_status: string;
     customer_segment: string;
   };
-}
+};
 
 // Actions
 type CRMAction =
@@ -234,7 +234,7 @@ function crmReducer(state: CRMState, action: CRMAction): CRMState {
 }
 
 // Context interface
-interface CRMContextType {
+type CRMContextType = {
   state: CRMState;
   dispatch: React.Dispatch<CRMAction>;
   // Helper functions
@@ -247,15 +247,15 @@ interface CRMContextType {
   totalCustomers: number;
   activeCustomers: number;
   vipCustomers: number;
-}
+};
 
 // Create context
 const CRMContext = createContext<CRMContextType | null>(null);
 
 // Provider component
-interface CRMProviderProps {
+type CRMProviderProps = {
   children: ReactNode;
-}
+};
 
 export function CRMProvider({ children }: CRMProviderProps) {
   const [state, dispatch] = useReducer(crmReducer, initialState);

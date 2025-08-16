@@ -1,7 +1,7 @@
 // app/types/automated-before-after-analysis.ts
 // TypeScript types for Story 10.1: Automated Before/After Analysis
 
-export interface AnalysisEngineConfig {
+export type AnalysisEngineConfig = {
   id: string;
   engine_name: string;
   model_version: string;
@@ -12,9 +12,9 @@ export interface AnalysisEngineConfig {
   is_active: boolean;
   created_at: string;
   updated_at: string;
-}
+};
 
-export interface PhotoAnalysisSession {
+export type PhotoAnalysisSession = {
   id: string;
   patient_id: string;
   treatment_type?: string;
@@ -31,9 +31,9 @@ export interface PhotoAnalysisSession {
   created_by?: string;
   created_at: string;
   updated_at: string;
-}
+};
 
-export interface BeforeAfterPhotoPair {
+export type BeforeAfterPhotoPair = {
   id: string;
   session_id: string;
   before_photo_id?: string;
@@ -46,9 +46,9 @@ export interface BeforeAfterPhotoPair {
   comparison_score?: number;
   created_at: string;
   updated_at: string;
-}
+};
 
-export interface ImageAnalysisResult {
+export type ImageAnalysisResult = {
   id: string;
   photo_pair_id: string;
   analysis_engine: string;
@@ -62,9 +62,9 @@ export interface ImageAnalysisResult {
   confidence_scores?: Record<string, any>;
   raw_analysis_data?: Record<string, any>;
   created_at: string;
-}
+};
 
-export interface MeasurementMetric {
+export type MeasurementMetric = {
   id: string;
   metric_name: string;
   metric_type:
@@ -83,9 +83,9 @@ export interface MeasurementMetric {
   validation_rules?: Record<string, any>;
   created_at: string;
   updated_at: string;
-}
+};
 
-export interface TreatmentArea {
+export type TreatmentArea = {
   id: string;
   area_name: string;
   area_category: 'facial' | 'body' | 'specific' | 'surgical' | 'cosmetic';
@@ -96,9 +96,9 @@ export interface TreatmentArea {
   is_active: boolean;
   created_at: string;
   updated_at: string;
-}
+};
 
-export interface VisualAnnotation {
+export type VisualAnnotation = {
   id: string;
   analysis_result_id: string;
   annotation_type:
@@ -113,9 +113,9 @@ export interface VisualAnnotation {
   description?: string;
   is_visible: boolean;
   created_at: string;
-}
+};
 
-export interface AnalysisReport {
+export type AnalysisReport = {
   id: string;
   session_id: string;
   report_type:
@@ -132,9 +132,9 @@ export interface AnalysisReport {
   generated_by?: string;
   is_public: boolean;
   created_at: string;
-}
+};
 
-export interface QualityValidation {
+export type QualityValidation = {
   id: string;
   analysis_result_id: string;
   validation_type: 'automated' | 'manual' | 'peer_review' | 'expert_validation';
@@ -146,9 +146,9 @@ export interface QualityValidation {
   validation_data?: Record<string, any>;
   validated_at?: string;
   created_at: string;
-}
+};
 
-export interface MLModelTraining {
+export type MLModelTraining = {
   id: string;
   model_name: string;
   model_version: string;
@@ -166,32 +166,32 @@ export interface MLModelTraining {
   performance_metrics?: Record<string, any>;
   created_at: string;
   updated_at: string;
-}
+};
 
 // API Request/Response types
-export interface CreateAnalysisSessionRequest {
+export type CreateAnalysisSessionRequest = {
   patient_id: string;
   treatment_type?: string;
   session_name?: string;
   analysis_type: PhotoAnalysisSession['analysis_type'];
-}
+};
 
-export interface CreatePhotoPairRequest {
+export type CreatePhotoPairRequest = {
   session_id: string;
   before_photo_id?: string;
   after_photo_id?: string;
   treatment_area?: string;
   pair_type: BeforeAfterPhotoPair['pair_type'];
   time_between_days?: number;
-}
+};
 
-export interface StartAnalysisRequest {
+export type StartAnalysisRequest = {
   session_id: string;
   engine_config_id?: string;
   analysis_parameters?: Record<string, any>;
-}
+};
 
-export interface AnalysisProgressResponse {
+export type AnalysisProgressResponse = {
   session_id: string;
   status: PhotoAnalysisSession['status'];
   progress_percentage: number;
@@ -199,16 +199,16 @@ export interface AnalysisProgressResponse {
   total_photos: number;
   estimated_completion_time?: string;
   current_processing?: BeforeAfterPhotoPair;
-}
+};
 
-export interface ComparisonAnalysisRequest {
+export type ComparisonAnalysisRequest = {
   photo_pair_id: string;
   measurement_metrics?: string[];
   treatment_areas?: string[];
   quality_threshold?: number;
-}
+};
 
-export interface ComparisonAnalysisResponse {
+export type ComparisonAnalysisResponse = {
   photo_pair_id: string;
   improvement_percentage: number;
   comparison_score: number;
@@ -216,48 +216,48 @@ export interface ComparisonAnalysisResponse {
   visual_annotations: VisualAnnotation[];
   quality_assessment: QualityValidation;
   processing_time_ms: number;
-}
+};
 
-export interface GenerateReportRequest {
+export type GenerateReportRequest = {
   session_id: string;
   report_type: AnalysisReport['report_type'];
   template_options?: Record<string, any>;
   include_sections?: string[];
   export_format?: 'pdf' | 'html' | 'json';
-}
+};
 
-export interface BatchAnalysisRequest {
+export type BatchAnalysisRequest = {
   session_ids: string[];
   analysis_parameters?: Record<string, any>;
   priority_level?: 'low' | 'normal' | 'high';
-}
+};
 
-export interface ModelTrainingRequest {
+export type ModelTrainingRequest = {
   model_name: string;
   training_dataset_path: string;
   validation_dataset_path: string;
   training_parameters: Record<string, any>;
   target_accuracy: number;
-}
+};
 
-export interface AccuracyValidationRequest {
+export type AccuracyValidationRequest = {
   analysis_result_id: string;
   ground_truth_data?: Record<string, any>;
   validation_type: QualityValidation['validation_type'];
   validator_notes?: string;
-}
+};
 
-export interface AnnotationCreateRequest {
+export type AnnotationCreateRequest = {
   analysis_result_id: string;
   annotation_type: VisualAnnotation['annotation_type'];
   coordinates: Record<string, any>;
   annotation_data?: Record<string, any>;
   style_properties?: Record<string, any>;
   description?: string;
-}
+};
 
 // Filter and Search types
-export interface AnalysisSessionFilters {
+export type AnalysisSessionFilters = {
   patient_id?: string;
   treatment_type?: string;
   analysis_type?: PhotoAnalysisSession['analysis_type'];
@@ -266,9 +266,9 @@ export interface AnalysisSessionFilters {
   date_to?: string;
   accuracy_min?: number;
   created_by?: string;
-}
+};
 
-export interface PhotoPairFilters {
+export type PhotoPairFilters = {
   session_id?: string;
   treatment_area?: string;
   pair_type?: BeforeAfterPhotoPair['pair_type'];
@@ -276,28 +276,28 @@ export interface PhotoPairFilters {
   improvement_min?: number;
   time_between_min?: number;
   time_between_max?: number;
-}
+};
 
-export interface AnalysisResultFilters {
+export type AnalysisResultFilters = {
   photo_pair_id?: string;
   analysis_engine?: string;
   processing_time_max?: number;
   confidence_min?: number;
   date_from?: string;
   date_to?: string;
-}
+};
 
-export interface ReportFilters {
+export type ReportFilters = {
   session_id?: string;
   report_type?: AnalysisReport['report_type'];
   generated_by?: string;
   date_from?: string;
   date_to?: string;
   is_public?: boolean;
-}
+};
 
 // Dashboard and Analytics types
-export interface AnalysisDashboardStats {
+export type AnalysisDashboardStats = {
   total_sessions: number;
   completed_sessions: number;
   average_accuracy: number;
@@ -306,17 +306,17 @@ export interface AnalysisDashboardStats {
   analyzed_pairs: number;
   pending_validations: number;
   recent_activity: PhotoAnalysisSession[];
-}
+};
 
-export interface AccuracyMetrics {
+export type AccuracyMetrics = {
   overall_accuracy: number;
   accuracy_by_treatment_area: Record<string, number>;
   accuracy_by_engine: Record<string, number>;
   accuracy_trend: Array<{ date: string; accuracy: number }>;
   confidence_distribution: Record<string, number>;
-}
+};
 
-export interface ProcessingMetrics {
+export type ProcessingMetrics = {
   average_processing_time: number;
   processing_time_by_area: Record<string, number>;
   processing_time_trend: Array<{ date: string; time_ms: number }>;
@@ -325,9 +325,9 @@ export interface ProcessingMetrics {
     processing: number;
     completed_today: number;
   };
-}
+};
 
-export interface QualityMetrics {
+export type QualityMetrics = {
   validation_success_rate: number;
   manual_review_rate: number;
   accuracy_validation_results: Record<string, number>;
@@ -337,7 +337,7 @@ export interface QualityMetrics {
     false_positives: number;
     false_negatives: number;
   };
-}
+};
 
 // Export grouped types
 export type BeforeAfterAnalysisTypes = {

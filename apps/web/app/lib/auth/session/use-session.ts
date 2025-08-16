@@ -10,7 +10,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { type SessionData, sessionManager } from './session-manager';
 
-interface UseSessionReturn {
+type UseSessionReturn = {
   session: SessionData | null;
   isLoading: boolean;
   isAuthenticated: boolean;
@@ -23,7 +23,7 @@ interface UseSessionReturn {
   activeSessions: SessionData[];
   terminateSession: (sessionId: string) => Promise<boolean>;
   shouldRefreshToken: boolean;
-}
+};
 
 export function useSession(): UseSessionReturn {
   const [session, setSession] = useState<SessionData | null>(null);
@@ -50,8 +50,7 @@ export function useSession(): UseSessionReturn {
         setActiveSessions(sessions);
         setShouldRefreshToken(sessionManager.shouldRefreshToken());
       }
-    } catch (error) {
-      console.error('Error initializing session:', error);
+    } catch (_error) {
       setSession(null);
     } finally {
       setIsLoading(false);
@@ -75,9 +74,7 @@ export function useSession(): UseSessionReturn {
 
           const sessions = await sessionManager.getActiveSessions();
           setActiveSessions(sessions);
-        } catch (error) {
-          console.error('Error creating session:', error);
-        }
+        } catch (_error) {}
       } else if (event === 'SIGNED_OUT') {
         // Clear session when user signs out
         setSession(null);
@@ -132,8 +129,7 @@ export function useSession(): UseSessionReturn {
       // Refresh failed, redirect to login
       router.push('/auth/login?reason=token_expired');
       return false;
-    } catch (error) {
-      console.error('Error refreshing session:', error);
+    } catch (_error) {
       return false;
     }
   }, [router]);
@@ -148,9 +144,7 @@ export function useSession(): UseSessionReturn {
       setActiveSessions([]);
       setShouldRefreshToken(false);
       router.push('/auth/login');
-    } catch (error) {
-      console.error('Error destroying session:', error);
-    }
+    } catch (_error) {}
   }, [router]);
 
   /**
@@ -164,9 +158,7 @@ export function useSession(): UseSessionReturn {
         // Update local session state
         const updatedSession = await sessionManager.getCurrentSession();
         setSession(updatedSession);
-      } catch (error) {
-        console.error('Error updating activity:', error);
-      }
+      } catch (_error) {}
     },
     []
   );
@@ -185,8 +177,7 @@ export function useSession(): UseSessionReturn {
         }
 
         return success;
-      } catch (error) {
-        console.error('Error terminating session:', error);
+      } catch (_error) {
         return false;
       }
     },

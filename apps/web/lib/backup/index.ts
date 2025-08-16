@@ -84,8 +84,6 @@ export class BackupRecoverySystem {
           compression_enabled: config?.compression_enabled,
         },
       });
-
-      console.log('✅ Sistema de Backup e Recovery inicializado com sucesso');
     } catch (error) {
       throw new Error(`Erro ao inicializar sistema: ${error}`);
     }
@@ -108,8 +106,6 @@ export class BackupRecoverySystem {
         resource_type: 'backup_system',
         resource_id: 'main',
       });
-
-      console.log('✅ Sistema de Backup e Recovery finalizado');
     } catch (error) {
       throw new Error(`Erro ao finalizar sistema: ${error}`);
     }
@@ -718,14 +714,9 @@ export class BackupRecoverySystem {
         description: 'Provedor de armazenamento local padrão',
       },
     });
-
-    console.log('✅ Provedores de armazenamento padrão configurados');
   }
 
-  private async setupDefaultBackupStrategies(): Promise<void> {
-    // As estratégias são configuradas automaticamente no BackupStrategyManager
-    console.log('✅ Estratégias de backup padrão configuradas');
-  }
+  private async setupDefaultBackupStrategies(): Promise<void> {}
 }
 
 // Instância singleton do sistema

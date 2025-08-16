@@ -35,13 +35,13 @@ import {
 // TYPES E INTERFACES
 // =====================================================
 
-interface UseAuditLogsOptions {
+type UseAuditLogsOptions = {
   autoRefresh?: boolean;
   refreshInterval?: number;
   initialFilters?: AuditQueryFilters;
-}
+};
 
-interface UseAuditLogsReturn {
+type UseAuditLogsReturn = {
   logs: AuditEvent[];
   loading: boolean;
   error: string | null;
@@ -50,9 +50,9 @@ interface UseAuditLogsReturn {
   refresh: () => Promise<void>;
   exportLogs: (format: 'json' | 'csv') => Promise<void>;
   totalCount: number;
-}
+};
 
-interface SecurityAlert {
+type SecurityAlert = {
   id: string;
   event_id: string;
   alert_type: string;
@@ -66,9 +66,9 @@ interface SecurityAlert {
   created_at: Date;
   resolved_at?: Date;
   metadata: Record<string, any>;
-}
+};
 
-interface UseSecurityAlertsReturn {
+type UseSecurityAlertsReturn = {
   alerts: SecurityAlert[];
   loading: boolean;
   error: string | null;
@@ -80,9 +80,9 @@ interface UseSecurityAlertsReturn {
     status: SecurityAlert['status']
   ) => Promise<void>;
   assignAlert: (alertId: string, userId: string) => Promise<void>;
-}
+};
 
-interface UseAuditReportsReturn {
+type UseAuditReportsReturn = {
   reports: AuditReport[];
   loading: boolean;
   error: string | null;
@@ -97,17 +97,17 @@ interface UseAuditReportsReturn {
     format: 'json' | 'csv' | 'pdf'
   ) => Promise<void>;
   refresh: () => Promise<void>;
-}
+};
 
-interface UseAuditStatisticsReturn {
+type UseAuditStatisticsReturn = {
   statistics: AuditStatistics | null;
   loading: boolean;
   error: string | null;
   refresh: () => Promise<void>;
   generateStats: (filters: Partial<AuditQueryFilters>) => Promise<void>;
-}
+};
 
-interface UseAuditLoggerReturn {
+type UseAuditLoggerReturn = {
   logEvent: (
     event: Omit<AuditEvent, 'id' | 'timestamp' | 'checksum'>
   ) => Promise<void>;
@@ -122,7 +122,7 @@ interface UseAuditLoggerReturn {
     description: string,
     severity?: AuditSeverity
   ) => Promise<void>;
-}
+};
 
 // =====================================================
 // HOOK: useAuditLogs
@@ -674,8 +674,7 @@ export function useAuditLogger(): UseAuditLoggerReturn {
           ip_address: event.ip_address || (await getClientIP()),
           user_agent: event.user_agent || navigator.userAgent,
         });
-      } catch (err) {
-        console.error('Erro ao registrar evento de auditoria:', err);
+      } catch (_err) {
         // Não mostra toast para não interferir na UX
       }
     },

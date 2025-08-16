@@ -5,15 +5,15 @@
 
 import { createClient } from '@/app/utils/supabase/client';
 
-export interface SessionTimeoutConfig {
+export type SessionTimeoutConfig = {
   maxInactivityMinutes: number;
   warningIntervals: number[]; // Minutes before timeout to show warnings
   extendOnActivity: boolean;
   requireReauthForSensitive: boolean;
   gracePeriodMinutes: number;
-}
+};
 
-export interface SessionActivity {
+export type SessionActivity = {
   sessionId: string;
   userId: string;
   lastActivity: number;
@@ -25,14 +25,14 @@ export interface SessionActivity {
     | 'keyboard';
   path?: string;
   sensitive?: boolean;
-}
+};
 
-export interface TimeoutWarning {
+export type TimeoutWarning = {
   level: 'info' | 'warning' | 'critical';
   minutesRemaining: number;
   message: string;
   actions: ('extend' | 'logout' | 'continue')[];
-}
+};
 
 /**
  * Session Timeout Manager
@@ -84,9 +84,7 @@ export class SessionTimeoutManager {
         userId,
         fullConfig
       );
-    } catch (error) {
-      console.error('Failed to initialize session timeout:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -143,9 +141,7 @@ export class SessionTimeoutManager {
         SessionTimeoutManager.clearWarningTimers(sessionId);
         SessionTimeoutManager.setupWarningTimers(sessionId, config);
       }
-    } catch (error) {
-      console.error('Failed to update session activity:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -190,8 +186,7 @@ export class SessionTimeoutManager {
         timeRemaining,
         requiresReauth,
       };
-    } catch (error) {
-      console.error('Failed to check session timeout:', error);
+    } catch (_error) {
       return { shouldTimeout: true, timeRemaining: 0, requiresReauth: true };
     }
   }
@@ -237,8 +232,7 @@ export class SessionTimeoutManager {
       }
 
       return !error;
-    } catch (error) {
-      console.error('Failed to extend session:', error);
+    } catch (_error) {
       return false;
     }
   }
@@ -264,8 +258,7 @@ export class SessionTimeoutManager {
       SessionTimeoutManager.clearActivityListener(sessionId);
 
       return !error;
-    } catch (error) {
-      console.error('Failed to force session timeout:', error);
+    } catch (_error) {
       return false;
     }
   }
@@ -392,15 +385,7 @@ export class SessionTimeoutManager {
           .update({ warnings_sent: warningsSent })
           .eq('session_id', sessionId);
       }
-
-      // This would trigger client-side warning display
-      // In a real implementation, you might use WebSockets or Server-Sent Events
-      console.log(
-        `Session ${sessionId}: ${minutesRemaining} minutes remaining`
-      );
-    } catch (error) {
-      console.error('Failed to send timeout warning:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -427,9 +412,7 @@ export class SessionTimeoutManager {
         .from('session_activities')
         .delete()
         .lt('timestamp', thirtyDaysAgo);
-    } catch (error) {
-      console.error('Failed to cleanup expired sessions:', error);
-    }
+    } catch (_error) {}
   }
 }
 

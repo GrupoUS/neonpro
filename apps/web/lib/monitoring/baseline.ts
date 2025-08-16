@@ -8,7 +8,7 @@
 
 import { createClient } from '@/app/utils/supabase/client';
 
-export interface BaselineMetric {
+export type BaselineMetric = {
   metric_name: string;
   metric_value: number;
   metric_unit: string;
@@ -17,9 +17,9 @@ export interface BaselineMetric {
   confidence_level: number;
   sample_size: number;
   metadata?: Record<string, any>;
-}
+};
 
-export interface BaselineComparison {
+export type BaselineComparison = {
   metric_name: string;
   baseline_value: number;
   current_value: number;
@@ -27,9 +27,9 @@ export interface BaselineComparison {
   change_direction: 'improvement' | 'regression' | 'neutral';
   significance_level: 'low' | 'medium' | 'high';
   measurement_date: string;
-}
+};
 
-export interface BaselineReport {
+export type BaselineReport = {
   report_date: string;
   measurement_period: string;
   total_metrics: number;
@@ -39,7 +39,7 @@ export interface BaselineReport {
   neutral_changes: number;
   comparisons: BaselineComparison[];
   recommendations: string[];
-}
+};
 
 class BaselineManager {
   private readonly supabase = createClient();
@@ -91,11 +91,7 @@ class BaselineManager {
 
       // Establish new baselines if needed
       await this.establishMissingBaselines();
-
-      console.log('✅ Baseline system initialized');
-    } catch (error) {
-      console.error('Error initializing baselines:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -110,7 +106,6 @@ class BaselineManager {
         .order('timestamp', { ascending: false });
 
       if (error) {
-        console.error('Error loading baselines:', error);
         return;
       }
 
@@ -139,11 +134,7 @@ class BaselineManager {
 
         this.baselineMetrics.set(metricName, baseline);
       });
-
-      console.log(`Loaded ${this.baselineMetrics.size} existing baselines`);
-    } catch (error) {
-      console.error('Error loading existing baselines:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -166,8 +157,6 @@ class BaselineManager {
     measurementPeriod: 'daily' | 'weekly' | 'monthly' = 'daily'
   ): Promise<BaselineMetric | null> {
     try {
-      console.log(`📊 Establishing baseline for ${metricName}...`);
-
       // Collect current measurements for baseline calculation
       const measurements = await this.collectCurrentMeasurements(
         metricName,
@@ -175,9 +164,6 @@ class BaselineManager {
       );
 
       if (measurements.length === 0) {
-        console.warn(
-          `No measurements available for ${metricName}, using default value`
-        );
         return await this.createDefaultBaseline(
           metricName,
           metricUnit,
@@ -199,13 +185,8 @@ class BaselineManager {
       // Cache baseline
       this.baselineMetrics.set(metricName, baseline);
 
-      console.log(
-        `✅ Baseline established for ${metricName}: ${baseline.metric_value} ${baseline.metric_unit}`
-      );
-
       return baseline;
-    } catch (error) {
-      console.error(`Error establishing baseline for ${metricName}:`, error);
+    } catch (_error) {
       return null;
     }
   }
@@ -237,15 +218,13 @@ class BaselineManager {
         .not('metric_type', 'eq', 'baseline');
 
       if (error || !data) {
-        console.warn(`No existing data for ${metricName}:`, error);
         return [];
       }
 
       return data
         .map((record) => record.metric_value)
         .filter((val) => val !== null);
-    } catch (error) {
-      console.error(`Error collecting measurements for ${metricName}:`, error);
+    } catch (_error) {
       return [];
     }
   }
@@ -376,11 +355,8 @@ class BaselineManager {
       });
 
       if (error) {
-        console.error('Error storing baseline:', error);
       }
-    } catch (error) {
-      console.error('Error storing baseline:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -392,7 +368,6 @@ class BaselineManager {
   ): Promise<BaselineComparison | null> {
     const baseline = this.baselineMetrics.get(metricName);
     if (!baseline) {
-      console.warn(`No baseline found for ${metricName}`);
       return null;
     }
 
@@ -423,10 +398,6 @@ class BaselineManager {
 
     // Log significant changes
     if (significanceLevel === 'high') {
-      console.log(
-        `🚨 Significant ${changeDirection} detected in ${metricName}: ${changePercentage.toFixed(1)}%`
-      );
-
       // Store comparison in database
       await this.storeComparison(comparison);
     }
@@ -510,9 +481,7 @@ class BaselineManager {
           significance_level: comparison.significance_level,
         },
       });
-    } catch (error) {
-      console.error('Error storing comparison:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -521,70 +490,65 @@ class BaselineManager {
   async generateBaselineReport(
     measurementPeriod: 'daily' | 'weekly' | 'monthly' = 'daily'
   ): Promise<BaselineReport> {
-    try {
-      const comparisons: BaselineComparison[] = [];
-      const recommendations: string[] = [];
+    const comparisons: BaselineComparison[] = [];
+    const recommendations: string[] = [];
 
-      // Collect current measurements and compare to baselines
-      for (const [metricName, baseline] of this.baselineMetrics) {
-        if (baseline.measurement_period === measurementPeriod) {
-          // Get latest measurement for this metric
-          const currentValue = await this.getCurrentMetricValue(metricName);
+    // Collect current measurements and compare to baselines
+    for (const [metricName, baseline] of this.baselineMetrics) {
+      if (baseline.measurement_period === measurementPeriod) {
+        // Get latest measurement for this metric
+        const currentValue = await this.getCurrentMetricValue(metricName);
 
-          if (currentValue !== null) {
-            const comparison = await this.compareToBaseline(
-              metricName,
-              currentValue
-            );
-            if (comparison) {
-              comparisons.push(comparison);
+        if (currentValue !== null) {
+          const comparison = await this.compareToBaseline(
+            metricName,
+            currentValue
+          );
+          if (comparison) {
+            comparisons.push(comparison);
 
-              // Generate recommendations for regressions
-              if (
-                comparison.change_direction === 'regression' &&
-                comparison.significance_level === 'high'
-              ) {
-                recommendations.push(this.generateRecommendation(comparison));
-              }
+            // Generate recommendations for regressions
+            if (
+              comparison.change_direction === 'regression' &&
+              comparison.significance_level === 'high'
+            ) {
+              recommendations.push(this.generateRecommendation(comparison));
             }
           }
         }
       }
-
-      // Calculate summary statistics
-      const significantChanges = comparisons.filter(
-        (c) => c.significance_level === 'high'
-      ).length;
-      const regressions = comparisons.filter(
-        (c) => c.change_direction === 'regression'
-      ).length;
-      const improvements = comparisons.filter(
-        (c) => c.change_direction === 'improvement'
-      ).length;
-      const neutralChanges = comparisons.filter(
-        (c) => c.change_direction === 'neutral'
-      ).length;
-
-      const report: BaselineReport = {
-        report_date: new Date().toISOString(),
-        measurement_period: measurementPeriod,
-        total_metrics: comparisons.length,
-        significant_changes: significantChanges,
-        regressions,
-        improvements,
-        neutral_changes: neutralChanges,
-        comparisons,
-        recommendations,
-      };
-
-      // Store report in database
-      await this.storeReport(report);
-
-      return report;
-    } catch (error) {
-      console.error('Error generating baseline report:', error);
-      throw error;
     }
+
+    // Calculate summary statistics
+    const significantChanges = comparisons.filter(
+      (c) => c.significance_level === 'high'
+    ).length;
+    const regressions = comparisons.filter(
+      (c) => c.change_direction === 'regression'
+    ).length;
+    const improvements = comparisons.filter(
+      (c) => c.change_direction === 'improvement'
+    ).length;
+    const neutralChanges = comparisons.filter(
+      (c) => c.change_direction === 'neutral'
+    ).length;
+
+    const report: BaselineReport = {
+      report_date: new Date().toISOString(),
+      measurement_period: measurementPeriod,
+      total_metrics: comparisons.length,
+      significant_changes: significantChanges,
+      regressions,
+      improvements,
+      neutral_changes: neutralChanges,
+      comparisons,
+      recommendations,
+    };
+
+    // Store report in database
+    await this.storeReport(report);
+
+    return report;
   }
 
   /**
@@ -608,8 +572,7 @@ class BaselineManager {
       }
 
       return data[0].metric_value;
-    } catch (error) {
-      console.error(`Error getting current value for ${metricName}:`, error);
+    } catch (_error) {
       return null;
     }
   }
@@ -647,9 +610,7 @@ class BaselineManager {
         metric_unit: 'count',
         metadata: report,
       });
-    } catch (error) {
-      console.error('Error storing report:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -661,9 +622,7 @@ class BaselineManager {
       async () => {
         try {
           await this.runPeriodicMeasurement();
-        } catch (error) {
-          console.error('Error in periodic measurement:', error);
-        }
+        } catch (_error) {}
       },
       60 * 60 * 1000
     ); // Every hour
@@ -673,8 +632,6 @@ class BaselineManager {
    * Run periodic measurement and comparison
    */
   private async runPeriodicMeasurement(): Promise<void> {
-    console.log('🔄 Running periodic baseline measurement...');
-
     // Collect current performance metrics
     const currentMetrics = await this.collectCurrentMetrics();
 
@@ -684,8 +641,6 @@ class BaselineManager {
         await this.compareToBaseline(metricName, currentValue);
       }
     }
-
-    console.log('✅ Periodic baseline measurement completed');
   }
 
   /**
@@ -713,8 +668,7 @@ class BaselineManager {
       metrics.error_rate = 0.5; // This would come from error tracking
 
       return metrics;
-    } catch (error) {
-      console.error('Error collecting current metrics:', error);
+    } catch (_error) {
       return {};
     }
   }
@@ -732,7 +686,6 @@ class BaselineManager {
   async updateBaseline(metricName: string): Promise<BaselineMetric | null> {
     const existingBaseline = this.baselineMetrics.get(metricName);
     if (!existingBaseline) {
-      console.warn(`No existing baseline for ${metricName}`);
       return null;
     }
 

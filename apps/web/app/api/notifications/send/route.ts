@@ -160,8 +160,7 @@ async function applyMLOptimization(
     };
 
     return optimizedRequest;
-  } catch (error) {
-    console.error('Erro na otimização ML:', error);
+  } catch (_error) {
     // Continuar sem otimização em caso de erro
     return request;
   }
@@ -217,8 +216,7 @@ async function validateCompliance(request: SendNotificationRequest) {
         ...medicalCheck.recommendations,
       ],
     };
-  } catch (error) {
-    console.error('Erro na validação de compliance:', error);
+  } catch (_error) {
     return {
       isCompliant: false,
       error: 'Erro interno na validação de compliance',
@@ -327,8 +325,6 @@ export async function POST(request: NextRequest) {
       scheduledFor: optimizedRequest.scheduledFor,
     });
   } catch (error) {
-    console.error('Erro no envio de notificação:', error);
-
     return NextResponse.json(
       {
         error: 'Erro interno do servidor',
@@ -460,8 +456,6 @@ export async function PUT(request: NextRequest) {
       errors: errors.length > 0 ? errors : undefined,
     });
   } catch (error) {
-    console.error('Erro no envio em lote:', error);
-
     return NextResponse.json(
       {
         error: 'Erro interno no envio em lote',

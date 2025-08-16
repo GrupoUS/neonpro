@@ -46,8 +46,6 @@ export async function PATCH(
 
     return NextResponse.json(milestone);
   } catch (error: any) {
-    console.error('Error validating milestone:', error);
-
     if (error.name === 'ZodError') {
       return NextResponse.json(
         { error: 'Invalid request data', details: error.errors },

@@ -52,7 +52,7 @@ export {
 /**
  * API Request/Response Types
  */
-export interface ForecastRequest {
+export type ForecastRequest = {
   clinic_id: string;
   service_id?: string;
   forecast_type:
@@ -63,9 +63,9 @@ export interface ForecastRequest {
   start_date: string;
   end_date: string;
   options?: Partial<ForecastingOptions>;
-}
+};
 
-export interface ForecastResponse {
+export type ForecastResponse = {
   success: boolean;
   data?: DemandForecast;
   error?: string;
@@ -75,9 +75,9 @@ export interface ForecastResponse {
     confidence_level: number;
     data_points_used: number;
   };
-}
+};
 
-export interface BatchForecastRequest {
+export type BatchForecastRequest = {
   clinic_id: string;
   forecasts: Array<{
     service_id?: string;
@@ -92,9 +92,9 @@ export interface BatchForecastRequest {
     end_date: string;
   };
   options?: Partial<ForecastingOptions>;
-}
+};
 
-export interface BatchForecastResponse {
+export type BatchForecastResponse = {
   success: boolean;
   data?: DemandForecast[];
   errors?: Array<{
@@ -108,9 +108,9 @@ export interface BatchForecastResponse {
     failed_forecasts: number;
     processing_time_ms: number;
   };
-}
+};
 
-export interface AllocationPlanRequest {
+export type AllocationPlanRequest = {
   clinic_id: string;
   planning_period: {
     start_date: string;
@@ -119,9 +119,9 @@ export interface AllocationPlanRequest {
   objectives?: OptimizationObjective[];
   constraints?: AllocationConstraint[];
   include_forecasts?: boolean;
-}
+};
 
-export interface AllocationPlanResponse {
+export type AllocationPlanResponse = {
   success: boolean;
   data?: AllocationPlan;
   error?: string;
@@ -131,17 +131,17 @@ export interface AllocationPlanResponse {
     optimization_score: number;
     constraint_violations: number;
   };
-}
+};
 
-export interface ModelTrainingRequest {
+export type ModelTrainingRequest = {
   clinic_id: string;
   model_type: ForecastModel['model_type'];
   service_id?: string;
   config?: Partial<ModelTrainingConfig>;
   auto_deploy?: boolean;
-}
+};
 
-export interface ModelTrainingResponse {
+export type ModelTrainingResponse = {
   success: boolean;
   data?: {
     job_id: string;
@@ -149,12 +149,12 @@ export interface ModelTrainingResponse {
     training_config: ModelTrainingConfig;
   };
   error?: string;
-}
+};
 
 /**
  * Database Schema Types
  */
-export interface DemandForecastsTable {
+export type DemandForecastsTable = {
   id: string;
   clinic_id: string;
   service_id?: string;
@@ -171,9 +171,9 @@ export interface DemandForecastsTable {
   external_factors: ExternalFactor[];
   created_at: string;
   updated_at: string;
-}
+};
 
-export interface ForecastModelsTable {
+export type ForecastModelsTable = {
   id: string;
   clinic_id: string;
   model_type: 'arima' | 'lstm' | 'prophet' | 'ensemble' | 'linear_regression';
@@ -186,9 +186,9 @@ export interface ForecastModelsTable {
   deployed_at?: string;
   created_at: string;
   updated_at: string;
-}
+};
 
-export interface ModelTrainingJobsTable {
+export type ModelTrainingJobsTable = {
   id: string;
   clinic_id: string;
   model_type: ForecastModel['model_type'];
@@ -203,9 +203,9 @@ export interface ModelTrainingJobsTable {
   performance_metrics?: ModelPerformanceMetrics;
   created_at: string;
   updated_at: string;
-}
+};
 
-export interface AllocationPlansTable {
+export type AllocationPlansTable = {
   id: string;
   clinic_id: string;
   plan_name: string;
@@ -224,9 +224,9 @@ export interface AllocationPlansTable {
   status: 'draft' | 'approved' | 'active' | 'completed' | 'cancelled';
   created_at: string;
   updated_at: string;
-}
+};
 
-export interface ForecastAlertsTable {
+export type ForecastAlertsTable = {
   id: string;
   forecast_id: string;
   alert_type:
@@ -246,9 +246,9 @@ export interface ForecastAlertsTable {
   resolved_at?: string;
   created_at: string;
   updated_at: string;
-}
+};
 
-export interface DemandFactorsTable {
+export type DemandFactorsTable = {
   id: string;
   clinic_id: string;
   factor_type:
@@ -266,9 +266,9 @@ export interface DemandFactorsTable {
   is_active: boolean;
   created_at: string;
   updated_at: string;
-}
+};
 
-export interface ModelPerformanceMetricsTable {
+export type ModelPerformanceMetricsTable = {
   id: string;
   model_id: string;
   evaluation_date: string;
@@ -282,12 +282,12 @@ export interface ModelPerformanceMetricsTable {
   stability_score: number;
   drift_score: number;
   created_at: string;
-}
+};
 
 /**
  * Configuration Types
  */
-export interface ForecastingSystemConfig {
+export type ForecastingSystemConfig = {
   accuracy_threshold: number;
   default_forecast_horizon_days: number;
   max_forecast_horizon_days: number;
@@ -301,9 +301,9 @@ export interface ForecastingSystemConfig {
     capacity_shortage_threshold: number;
     accuracy_degradation_threshold: number;
   };
-}
+};
 
-export interface ResourceOptimizationConfig {
+export type ResourceOptimizationConfig = {
   target_utilization_rate: number;
   cost_variance_threshold: number;
   efficiency_threshold: number;
@@ -317,9 +317,9 @@ export interface ResourceOptimizationConfig {
     utilization_optimization: number;
     satisfaction_optimization: number;
   };
-}
+};
 
-export interface ModelTrainingDefaults {
+export type ModelTrainingDefaults = {
   training_period_days: number;
   validation_split: number;
   test_split: number;
@@ -331,19 +331,19 @@ export interface ModelTrainingDefaults {
   batch_size: number;
   learning_rate: number;
   regularization: number;
-}
+};
 
 /**
  * Validation and Error Types
  */
-export interface ValidationError {
+export type ValidationError = {
   field: string;
   message: string;
   code: string;
   value?: any;
-}
+};
 
-export interface ForecastingError {
+export type ForecastingError = {
   type: 'validation' | 'model' | 'data' | 'configuration' | 'system';
   code: string;
   message: string;
@@ -355,9 +355,9 @@ export interface ForecastingError {
     model_id?: string;
     forecast_id?: string;
   };
-}
+};
 
-export interface SystemHealthStatus {
+export type SystemHealthStatus = {
   overall_status: 'healthy' | 'warning' | 'critical' | 'offline';
   components: {
     forecasting_engine: ComponentStatus;
@@ -368,20 +368,20 @@ export interface SystemHealthStatus {
   };
   last_check: string;
   next_check: string;
-}
+};
 
-export interface ComponentStatus {
+export type ComponentStatus = {
   status: 'healthy' | 'warning' | 'critical' | 'offline';
   response_time_ms?: number;
   error_rate?: number;
   last_error?: string;
   uptime_percentage?: number;
-}
+};
 
 /**
  * Analytics and Reporting Types
  */
-export interface ForecastAccuracyReport {
+export type ForecastAccuracyReport = {
   period: { start: string; end: string };
   overall_accuracy: number;
   accuracy_by_service: Record<string, number>;
@@ -398,9 +398,9 @@ export interface ForecastAccuracyReport {
     usage_count: number;
   }>;
   recommendations: string[];
-}
+};
 
-export interface ResourceUtilizationReport {
+export type ResourceUtilizationReport = {
   period: { start: string; end: string };
   overall_utilization: number;
   staff_utilization: {
@@ -427,9 +427,9 @@ export interface ResourceUtilizationReport {
     expired_items_cost: number;
     holding_cost: number;
   };
-}
+};
 
-export interface CostOptimizationReport {
+export type CostOptimizationReport = {
   period: { start: string; end: string };
   total_cost: number;
   cost_breakdown: {
@@ -455,12 +455,12 @@ export interface CostOptimizationReport {
     potential_savings: number;
     implementation_effort: 'low' | 'medium' | 'high';
   }>;
-}
+};
 
 /**
  * Event and Notification Types
  */
-export interface ForecastingEvent {
+export type ForecastingEvent = {
   id: string;
   event_type:
     | 'forecast_generated'
@@ -474,9 +474,9 @@ export interface ForecastingEvent {
   severity: 'info' | 'warning' | 'error' | 'critical';
   timestamp: string;
   user_id?: string;
-}
+};
 
-export interface NotificationSubscription {
+export type NotificationSubscription = {
   id: string;
   user_id: string;
   clinic_id: string;
@@ -486,12 +486,12 @@ export interface NotificationSubscription {
   is_active: boolean;
   created_at: string;
   updated_at: string;
-}
+};
 
 /**
  * Integration Types
  */
-export interface ExternalAPIResponse<T = any> {
+export type ExternalAPIResponse<T = any> = {
   success: boolean;
   data?: T;
   error?: {
@@ -507,32 +507,32 @@ export interface ExternalAPIResponse<T = any> {
       reset_time: string;
     };
   };
-}
+};
 
-export interface WeatherData {
+export type WeatherData = {
   date: string;
   temperature_celsius: number;
   humidity_percentage: number;
   precipitation_mm: number;
   conditions: string;
   impact_score: number;
-}
+};
 
-export interface EconomicIndicators {
+export type EconomicIndicators = {
   date: string;
   unemployment_rate: number;
   inflation_rate: number;
   healthcare_spending_index: number;
   local_economic_health: number;
-}
+};
 
-export interface HealthTrends {
+export type HealthTrends = {
   date: string;
   seasonal_illness_rate: number;
   vaccination_rates: number;
   public_health_alerts: string[];
   demographic_trends: Record<string, number>;
-}
+};
 
 /**
  * Utility Types

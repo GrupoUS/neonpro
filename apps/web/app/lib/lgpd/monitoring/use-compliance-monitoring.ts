@@ -15,7 +15,7 @@ import {
   ViolationType,
 } from './compliance-monitoring';
 
-export interface UseComplianceMonitoringResult {
+export type UseComplianceMonitoringResult = {
   status: RealTimeComplianceStatus | null;
   isLoading: boolean;
   isMonitoring: boolean;
@@ -33,7 +33,7 @@ export interface UseComplianceMonitoringResult {
   ) => Promise<void>;
   acknowledgeAlert: (alertId: string, acknowledgedBy: string) => Promise<void>;
   triggerAssessment: () => Promise<void>;
-}
+};
 
 export function useComplianceMonitoring(): UseComplianceMonitoringResult {
   const [status, setStatus] = useState<RealTimeComplianceStatus | null>(null);
@@ -66,8 +66,7 @@ export function useComplianceMonitoring(): UseComplianceMonitoringResult {
       const initialStatus = await realTimeComplianceMonitor.getCurrentStatus();
       setStatus(initialStatus);
       setIsLoading(false);
-    } catch (err) {
-      console.error('Error starting compliance monitoring:', err);
+    } catch (_err) {
       setError('Falha ao iniciar monitoramento de conformidade');
       setIsLoading(false);
     }
@@ -92,8 +91,7 @@ export function useComplianceMonitoring(): UseComplianceMonitoringResult {
       const currentStatus = await realTimeComplianceMonitor.getCurrentStatus();
       setStatus(currentStatus);
       setIsLoading(false);
-    } catch (err) {
-      console.error('Error refreshing compliance status:', err);
+    } catch (_err) {
       setError('Falha ao atualizar status de conformidade');
       setIsLoading(false);
     }
@@ -106,8 +104,7 @@ export function useComplianceMonitoring(): UseComplianceMonitoringResult {
     ) => {
       try {
         await realTimeComplianceMonitor.reportViolation(violation);
-      } catch (err) {
-        console.error('Error reporting violation:', err);
+      } catch (_err) {
         setError('Falha ao reportar violação');
       }
     },
@@ -123,8 +120,7 @@ export function useComplianceMonitoring(): UseComplianceMonitoringResult {
           resolution,
           responsible
         );
-      } catch (err) {
-        console.error('Error resolving violation:', err);
+      } catch (_err) {
         setError('Falha ao resolver violação');
       }
     },
@@ -139,8 +135,7 @@ export function useComplianceMonitoring(): UseComplianceMonitoringResult {
           alertId,
           acknowledgedBy
         );
-      } catch (err) {
-        console.error('Error acknowledging alert:', err);
+      } catch (_err) {
         setError('Falha ao confirmar alerta');
       }
     },
@@ -151,8 +146,7 @@ export function useComplianceMonitoring(): UseComplianceMonitoringResult {
   const triggerAssessment = useCallback(async () => {
     try {
       await realTimeComplianceMonitor.triggerAssessment();
-    } catch (err) {
-      console.error('Error triggering assessment:', err);
+    } catch (_err) {
       setError('Falha ao executar avaliação');
     }
   }, []);

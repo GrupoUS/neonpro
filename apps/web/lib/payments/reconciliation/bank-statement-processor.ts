@@ -42,7 +42,7 @@ type ProcessingOptions = z.infer<typeof ProcessingOptionsSchema>;
 type BankStatementFile = z.infer<typeof BankStatementFileSchema>;
 type BankTransactionFile = z.infer<typeof BankTransactionFileSchema>;
 
-interface ProcessingResult {
+type ProcessingResult = {
   success: boolean;
   statementId?: string;
   processedTransactions: number;
@@ -54,24 +54,24 @@ interface ProcessingResult {
     totalDebits: number;
     balanceCheck: boolean;
   };
-}
+};
 
-interface FileParsingResult {
+type FileParsingResult = {
   header: BankStatementFile;
   transactions: BankTransactionFile[];
   errors: string[];
   warnings: string[];
-}
+};
 
 // Bank-specific parsers
-interface BankParser {
+type BankParser = {
   name: string;
   patterns: string[];
   parseStatement: (
     content: string,
     options: ProcessingOptions
   ) => FileParsingResult;
-}
+};
 
 class BankStatementProcessor {
   private readonly supabase = createClient();
@@ -155,7 +155,6 @@ class BankStatementProcessor {
         warnings: [...result.warnings, ...parseResult.warnings],
       };
     } catch (error) {
-      console.error('Error processing statement file:', error);
       return {
         success: false,
         processedTransactions: 0,
@@ -634,7 +633,6 @@ class BankStatementProcessor {
         },
       };
     } catch (error) {
-      console.error('Error processing statement:', error);
       return {
         success: false,
         processedTransactions,

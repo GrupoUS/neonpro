@@ -63,8 +63,7 @@ export async function GET(request: NextRequest) {
       default:
         return await getNFEOverview(supabase, clinicId);
     }
-  } catch (error) {
-    console.error('NFE API GET error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -100,8 +99,7 @@ export async function POST(request: NextRequest) {
           { status: 400 }
         );
     }
-  } catch (error) {
-    console.error('NFE API POST error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -211,8 +209,7 @@ async function getNFEStatus(supabase: any, searchParams: URLSearchParams) {
         latest_consultation: updatedStatus,
       },
     });
-  } catch (error) {
-    console.error('NFE status consultation error:', error);
+  } catch (_error) {
     return NextResponse.json({ data });
   }
 }
@@ -258,8 +255,7 @@ async function downloadNFE(supabase: any, searchParams: URLSearchParams) {
     );
 
     return new NextResponse(fileData, { headers });
-  } catch (error) {
-    console.error('NFE download error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to download NFE' },
       { status: 500 }
@@ -305,8 +301,7 @@ async function validateNFE(supabase: any, searchParams: URLSearchParams) {
         validated_at: new Date().toISOString(),
       },
     });
-  } catch (error) {
-    console.error('NFE validation error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'NFE validation failed' },
       { status: 500 }
@@ -402,8 +397,6 @@ async function emitNFE(supabase: any, body: any) {
       },
     });
   } catch (error) {
-    console.error('NFE emission error:', error);
-
     // Update status to error
     await supabase
       .from('nfe_documents')
@@ -475,7 +468,6 @@ async function cancelNFE(supabase: any, body: any) {
       },
     });
   } catch (error) {
-    console.error('NFE cancellation error:', error);
     return NextResponse.json(
       { error: 'NFE cancellation failed', details: error.message },
       { status: 500 }
@@ -518,7 +510,6 @@ async function reprocessNFE(supabase: any, body: any) {
       },
     });
   } catch (error) {
-    console.error('NFE reprocessing error:', error);
     return NextResponse.json(
       { error: 'NFE reprocessing failed', details: error.message },
       { status: 500 }
@@ -567,8 +558,6 @@ async function batchEmitNFE(supabase: any, body: any) {
         chave_nfe: emission.chave_nfe,
       });
     } catch (error) {
-      console.error(`Batch NFE emission error for ${nfeId}:`, error);
-
       // Update status to error
       await supabase
         .from('nfe_documents')

@@ -69,7 +69,7 @@ export type TemplateCategory =
 // CORE CAMPAIGN INTERFACES
 // =====================================================================================
 
-export interface MarketingCampaign {
+export type MarketingCampaign = {
   id: string;
   name: string;
   description?: string;
@@ -118,9 +118,9 @@ export interface MarketingCampaign {
   created_at: string;
   updated_at: string;
   clinic_id: string;
-}
+};
 
-export interface CampaignTemplate {
+export type CampaignTemplate = {
   id: string;
   name: string;
   description?: string;
@@ -154,9 +154,9 @@ export interface CampaignTemplate {
   created_at: string;
   updated_at: string;
   clinic_id: string;
-}
+};
 
-export interface CampaignTrigger {
+export type CampaignTrigger = {
   id: string;
   campaign_id: string;
   trigger_type: TriggerType;
@@ -200,9 +200,9 @@ export interface CampaignTrigger {
   is_active: boolean;
   created_at: string;
   updated_at: string;
-}
+};
 
-export interface CampaignExecution {
+export type CampaignExecution = {
   id: string;
   campaign_id: string;
   execution_date: string;
@@ -234,9 +234,9 @@ export interface CampaignExecution {
 
   created_at: string;
   updated_at: string;
-}
+};
 
-export interface CampaignRecipient {
+export type CampaignRecipient = {
   id: string;
   execution_id: string;
   patient_id: string;
@@ -272,13 +272,13 @@ export interface CampaignRecipient {
 
   created_at: string;
   updated_at: string;
-}
+};
 
 // =====================================================================================
 // PERSONALIZATION & AI INTERFACES
 // =====================================================================================
 
-export interface PersonalizationRule {
+export type PersonalizationRule = {
   id: string;
   name: string;
   description?: string;
@@ -296,9 +296,9 @@ export interface PersonalizationRule {
   is_active: boolean;
   created_at: string;
   updated_at: string;
-}
+};
 
-export interface PersonalizationCondition {
+export type PersonalizationCondition = {
   field: string;
   operator:
     | 'equals'
@@ -310,9 +310,9 @@ export interface PersonalizationCondition {
     | 'not_in';
   value: any;
   data_source: 'patient' | 'segment' | 'behavior' | 'treatment' | 'financial';
-}
+};
 
-export interface PersonalizationAction {
+export type PersonalizationAction = {
   type:
     | 'replace_content'
     | 'add_content'
@@ -322,9 +322,9 @@ export interface PersonalizationAction {
   target: string;
   content: string;
   position?: 'before' | 'after' | 'replace';
-}
+};
 
-export interface TemplateVariant {
+export type TemplateVariant = {
   id: string;
   name: string;
   content_template: string;
@@ -336,13 +336,13 @@ export interface TemplateVariant {
     conversion_rate: number;
     confidence_level: number;
   };
-}
+};
 
 // =====================================================================================
 // METRICS & ANALYTICS INTERFACES
 // =====================================================================================
 
-export interface CampaignMetrics {
+export type CampaignMetrics = {
   campaign_id: string;
 
   // Delivery Metrics
@@ -396,9 +396,9 @@ export interface CampaignMetrics {
 
   calculated_at: string;
   updated_at: string;
-}
+};
 
-export interface CampaignExecutionMetrics {
+export type CampaignExecutionMetrics = {
   execution_id: string;
 
   // Real-time Delivery
@@ -419,13 +419,13 @@ export interface CampaignExecutionMetrics {
   revenue_attributed: number;
 
   updated_at: string;
-}
+};
 
 // =====================================================================================
 // AUTOMATION & AI INTERFACES
 // =====================================================================================
 
-export interface CampaignAutomation {
+export type CampaignAutomation = {
   id: string;
   name: string;
   description?: string;
@@ -447,9 +447,9 @@ export interface CampaignAutomation {
   created_at: string;
   updated_at: string;
   clinic_id: string;
-}
+};
 
-export interface AutomationStep {
+export type AutomationStep = {
   id: string;
   order: number;
   type: 'campaign' | 'wait' | 'condition' | 'action';
@@ -477,20 +477,20 @@ export interface AutomationStep {
       | 'send_notification';
     parameters: Record<string, any>;
   };
-}
+};
 
-export interface AutomationCondition {
+export type AutomationCondition = {
   field: string;
   operator: string;
   value: any;
   logic_operator?: 'AND' | 'OR';
-}
+};
 
 // =====================================================================================
 // ANALYTICS & REPORTING INTERFACES
 // =====================================================================================
 
-export interface CampaignAnalytics {
+export type CampaignAnalytics = {
   // Campaign Performance
   total_campaigns: number;
   active_campaigns: number;
@@ -550,13 +550,13 @@ export interface CampaignAnalytics {
   }[];
 
   calculated_at: string;
-}
+};
 
 // =====================================================================================
 // FORM AND REQUEST INTERFACES
 // =====================================================================================
 
-export interface CreateCampaignRequest {
+export type CreateCampaignRequest = {
   name: string;
   description?: string;
   campaign_type: CampaignType;
@@ -570,9 +570,9 @@ export interface CreateCampaignRequest {
   personalization_level: PersonalizationLevel;
   requires_consent: boolean;
   consent_types: string[];
-}
+};
 
-export interface UpdateCampaignRequest {
+export type UpdateCampaignRequest = {
   name?: string;
   description?: string;
   status?: CampaignStatus;
@@ -580,15 +580,15 @@ export interface UpdateCampaignRequest {
   subject?: string;
   scheduled_start?: string;
   scheduled_end?: string;
-}
+};
 
-export interface ExecutionError {
+export type ExecutionError = {
   type: 'delivery' | 'personalization' | 'consent' | 'template' | 'system';
   message: string;
   recipient_id?: string;
   details?: Record<string, any>;
   timestamp: string;
-}
+};
 
 // Re-export segmentation types for integration
 export type { SegmentCriteria } from './segmentation';

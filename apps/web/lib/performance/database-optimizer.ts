@@ -3,30 +3,30 @@
  * Advanced database optimization for subscription queries
  */
 
-export interface QueryMetrics {
+export type QueryMetrics = {
   query: string;
   executionTime: number;
   rowsAffected: number;
   cached: boolean;
   timestamp: number;
-}
+};
 
-export interface QueryOptimizationSuggestion {
+export type QueryOptimizationSuggestion = {
   type: 'index' | 'query_rewrite' | 'caching' | 'partitioning';
   priority: 'low' | 'medium' | 'high' | 'critical';
   description: string;
   estimatedImprovement: number; // percentage
   implementation: string;
-}
+};
 
-export interface DatabasePerformanceReport {
+export type DatabasePerformanceReport = {
   slowQueries: QueryMetrics[];
   averageResponseTime: number;
   cacheHitRate: number;
   indexUtilization: number;
   optimizationSuggestions: QueryOptimizationSuggestion[];
   performanceScore: number; // 0-100
-}
+};
 
 export class DatabaseOptimizer {
   private queryMetrics: QueryMetrics[] = [];
@@ -55,9 +55,6 @@ export class DatabaseOptimizer {
 
     // Log slow queries
     if (executionTime > this.slowQueryThreshold) {
-      console.warn(
-        `🐌 Slow query detected: ${executionTime}ms - ${query.substring(0, 100)}...`
-      );
     }
 
     // Clean old metrics

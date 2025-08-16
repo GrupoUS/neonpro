@@ -33,8 +33,7 @@ export async function GET(
       campaign: result.data,
       timestamp: new Date().toISOString(),
     });
-  } catch (error) {
-    console.error('Error in campaign GET:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -84,8 +83,7 @@ export async function PUT(
       campaign: result.data,
       timestamp: new Date().toISOString(),
     });
-  } catch (error) {
-    console.error('Error in campaign PUT:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -117,8 +115,7 @@ export async function DELETE(
       message: 'Campaign deleted successfully',
       timestamp: new Date().toISOString(),
     });
-  } catch (error) {
-    console.error('Error in campaign DELETE:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

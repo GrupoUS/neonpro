@@ -119,8 +119,6 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('Error fetching payment plans:', error);
-
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {
@@ -183,8 +181,6 @@ export async function POST(request: NextRequest) {
       { status: 201 }
     );
   } catch (error) {
-    console.error('Error creating payment plan:', error);
-
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {
@@ -286,8 +282,6 @@ export async function PUT(request: NextRequest) {
       message: `Bulk ${action} completed successfully`,
     });
   } catch (error) {
-    console.error('Error in bulk payment plan operation:', error);
-
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {
@@ -367,9 +361,7 @@ export async function DELETE(request: NextRequest) {
       },
       message: `Bulk deletion completed: ${successful} successful, ${failed} failed`,
     });
-  } catch (error) {
-    console.error('Error in bulk payment plan deletion:', error);
-
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

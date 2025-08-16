@@ -23,7 +23,7 @@ export type SubscriptionStatus =
   | 'trialing'
   | 'unpaid';
 
-export interface SubscriptionPlan {
+export type SubscriptionPlan = {
   id: string;
   name: string;
   description: string;
@@ -32,9 +32,9 @@ export interface SubscriptionPlan {
   features: string[];
   max_patients: number | null;
   max_clinics: number | null;
-}
+};
 
-export interface UserSubscription {
+export type UserSubscription = {
   id: string;
   user_id: string;
   stripe_customer_id: string | null;
@@ -48,9 +48,9 @@ export interface UserSubscription {
   canceled_at: string | null;
   cancel_at_period_end: boolean;
   plan: SubscriptionPlan;
-}
+};
 
-export interface SubscriptionValidationResult {
+export type SubscriptionValidationResult = {
   hasAccess: boolean;
   status: SubscriptionStatus | null;
   subscription: UserSubscription | null;
@@ -64,23 +64,23 @@ export interface SubscriptionValidationResult {
     cacheHit: boolean;
     source: 'cache' | 'database' | 'error' | 'config';
   };
-}
+};
 
 // Performance monitoring
-export interface PerformanceMetrics {
+export type PerformanceMetrics = {
   validationTime: number;
   cacheHit: boolean;
   errorCount: number;
   source: 'cache' | 'database' | 'error' | 'config';
   timestamp: number;
-}
+};
 
 // In-memory cache with TTL support
-interface CacheEntry {
+type CacheEntry = {
   data: SubscriptionValidationResult;
   expires: number;
   created: number;
-}
+};
 
 class SubscriptionCache {
   private readonly cache = new Map<string, CacheEntry>();
@@ -239,13 +239,6 @@ export async function validateSubscriptionStatus(
       .maybeSingle();
 
     if (error) {
-      console.error('Subscription validation error:', {
-        error: error.message,
-        userId,
-        code: error.code,
-        timestamp: new Date().toISOString(),
-      });
-
       const result: SubscriptionValidationResult = {
         hasAccess: false,
         status: null,
@@ -393,14 +386,7 @@ export async function validateSubscriptionStatus(
     // Cache the result
     subscriptionCache.set(cacheKey, result);
     return result;
-  } catch (error) {
-    console.error('Subscription validation failed:', {
-      error: error instanceof Error ? error.message : 'Unknown error',
-      userId,
-      stack: error instanceof Error ? error.stack : undefined,
-      timestamp: new Date().toISOString(),
-    });
-
+  } catch (_error) {
     const result: SubscriptionValidationResult = {
       hasAccess: false,
       status: null,

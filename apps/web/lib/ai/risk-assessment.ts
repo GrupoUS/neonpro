@@ -15,7 +15,7 @@ import type { Patient } from '@/types/patient';
 import type { MedicalRecord, TreatmentHistory } from '@/types/treatment';
 
 // Risk Assessment Types
-export interface RiskFactor {
+export type RiskFactor = {
   id: string;
   name: string;
   category: 'medical' | 'lifestyle' | 'behavioral' | 'environmental';
@@ -23,9 +23,9 @@ export interface RiskFactor {
   weight: number;
   description: string;
   evidence_level: 'strong' | 'moderate' | 'weak';
-}
+};
 
-export interface RiskAssessment {
+export type RiskAssessment = {
   patient_id: string;
   assessment_date: Date;
   overall_score: number; // 0-100 scale
@@ -36,17 +36,17 @@ export interface RiskAssessment {
   recommendations: string[];
   confidence_score: number;
   next_assessment_date: Date;
-}
+};
 
-export interface HealthPrediction {
+export type HealthPrediction = {
   condition: string;
   probability: number;
   timeframe: string;
   severity: 'mild' | 'moderate' | 'severe';
   prevention_strategies: string[];
-}
+};
 
-export interface SafetyAlert {
+export type SafetyAlert = {
   id: string;
   type:
     | 'contraindication'
@@ -57,16 +57,16 @@ export interface SafetyAlert {
   message: string;
   affected_treatments: string[];
   action_required: string;
-}
+};
 
-export interface ModelMetrics {
+export type ModelMetrics = {
   accuracy: number;
   precision: number;
   recall: number;
   f1_score: number;
   last_validation: Date;
   training_samples: number;
-}
+};
 
 /**
  * AI Risk Assessment Engine
@@ -152,8 +152,7 @@ export class AIRiskAssessmentEngine {
       await this.storeAssessment(assessment);
 
       return assessment;
-    } catch (error) {
-      console.error('Risk assessment failed:', error);
+    } catch (_error) {
       throw new Error('Failed to perform risk assessment');
     }
   }
@@ -905,11 +904,7 @@ export class AIRiskAssessmentEngine {
     return completeness;
   }
 
-  private async storeAssessment(assessment: RiskAssessment): Promise<void> {
-    // Store assessment in database for continuous learning
-    // This would integrate with the database layer
-    console.log('Storing risk assessment for patient:', assessment.patient_id);
-  }
+  private async storeAssessment(_assessment: RiskAssessment): Promise<void> {}
 
   private initializeRiskWeights(): void {
     // Initialize risk factor weights based on clinical evidence
@@ -927,19 +922,12 @@ export class AIRiskAssessmentEngine {
     this.riskWeights.set('adverse_reactions', 0.45);
   }
 
-  private async loadModels(): Promise<void> {
-    // Load pre-trained ML models for risk assessment
-    // This would load actual ML models in production
-    console.log('Loading AI risk assessment models...');
-  }
+  private async loadModels(): Promise<void> {}
 
   /**
    * Update model weights based on new outcome data
    */
-  async updateModelWeights(_outcomeData: any[]): Promise<void> {
-    // Implement continuous learning from clinic outcomes
-    console.log('Updating model weights with new outcome data');
-  }
+  async updateModelWeights(_outcomeData: any[]): Promise<void> {}
 
   /**
    * Validate model performance

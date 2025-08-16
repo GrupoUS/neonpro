@@ -198,12 +198,7 @@ export class WhatsAppBusinessOAuthHandler extends BaseOAuthHandler {
             }))
           );
         }
-      } catch (error) {
-        console.warn(
-          `Failed to get phone numbers for WABA ${account.id}:`,
-          error
-        );
-      }
+      } catch (_error) {}
     }
 
     return phoneNumbers;

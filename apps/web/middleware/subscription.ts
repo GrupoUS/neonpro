@@ -42,14 +42,9 @@ export async function subscriptionMiddleware(
   req: NextRequest
 ): Promise<NextResponse> {
   const startTime = Date.now();
-  const pathname = req.nextUrl.pathname;
+  const _pathname = req.nextUrl.pathname;
 
   try {
-    console.log(
-      '🔐 Enhanced Subscription Middleware: Processing request for:',
-      pathname
-    );
-
     // Create Supabase client
     const supabase = createServerClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -70,7 +65,6 @@ export async function subscriptionMiddleware(
     } = await supabase.auth.getSession();
 
     if (sessionError) {
-      console.error('❌ Session error:', sessionError.message);
       return NextResponse.redirect(new URL('/login', req.url));
     }
 
@@ -125,13 +119,6 @@ export async function subscriptionMiddleware(
         clinicId: profile?.clinic_id,
         clinicRole: profile?.clinic_role,
       };
-
-      console.log('👤 User context built:', {
-        userId: routeContext.userId,
-        role: routeContext.userRole,
-        tier: routeContext.subscriptionTier,
-        status: routeContext.subscriptionStatus,
-      });
     }
 
     // Apply advanced route protection
@@ -139,13 +126,6 @@ export async function subscriptionMiddleware(
       const accessResult = await routeProtector.checkAccess(req, routeContext);
 
       if (!accessResult.allowed) {
-        console.log(
-          '🚫 Access denied:',
-          accessResult.reason,
-          'Code:',
-          accessResult.errorCode
-        );
-
         // Create appropriate response based on error type
         if (accessResult.redirectTo) {
           const redirectUrl = new URL(accessResult.redirectTo, req.url);
@@ -177,8 +157,6 @@ export async function subscriptionMiddleware(
           }
         );
       }
-
-      console.log('✅ Access granted:', accessResult.reason);
     }
 
     // Continue to next middleware or route handler
@@ -196,12 +174,8 @@ export async function subscriptionMiddleware(
       response.headers.set('x-user-tier', routeContext.subscriptionTier);
       response.headers.set('x-user-role', routeContext.userRole);
     }
-
-    console.log(`⚡ Enhanced middleware completed in ${processingTime}ms`);
     return response;
-  } catch (error) {
-    console.error('💥 Enhanced Subscription Middleware Error:', error);
-
+  } catch (_error) {
     // Performance tracking for errors
     const errorTime = Date.now() - startTime;
 
@@ -258,8 +232,7 @@ async function getUserFeatureFlags(
     }
 
     return flags;
-  } catch (error) {
-    console.error('Error fetching feature flags:', error);
+  } catch (_error) {
     // Return safe defaults on error
     return {
       advanced_treatments: true,
@@ -319,8 +292,7 @@ export async function validateUserAccess(
 
     const result = await routeProtector.checkAccess(req, routeContext);
     return result.allowed;
-  } catch (error) {
-    console.error('Error validating user access:', error);
+  } catch (_error) {
     return false;
   }
 }

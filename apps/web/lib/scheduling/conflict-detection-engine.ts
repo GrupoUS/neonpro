@@ -71,7 +71,6 @@ export class ConflictDetectionEngine {
       await this.initializePerformanceMonitoring();
 
       this.isInitialized = true;
-      console.log('Conflict Detection Engine initialized successfully');
     } catch (error) {
       throw new ConflictDetectionError(
         'Failed to initialize conflict detection engine',
@@ -320,9 +319,7 @@ export class ConflictDetectionEngine {
     // Subscribe to channel
     this.realtimeChannel.subscribe((status: string) => {
       if (status === 'SUBSCRIBED') {
-        console.log('Real-time conflict monitoring active');
       } else if (status === 'CHANNEL_ERROR') {
-        console.error('Real-time monitoring channel error');
       }
     });
 
@@ -499,12 +496,7 @@ export class ConflictDetectionEngine {
 
   private handleAppointmentChange(payload: any): void {
     // Trigger conflict detection for changed appointment
-    this.detectConflicts(payload.new.id).catch((error) => {
-      console.error(
-        'Failed to detect conflicts after appointment change:',
-        error
-      );
-    });
+    this.detectConflicts(payload.new.id).catch((_error) => {});
   }
 
   private handleConflictInsert(payload: any): void {
@@ -521,19 +513,14 @@ export class ConflictDetectionEngine {
     });
   }
 
-  private handleRealtimeConflictEvent(payload: any): void {
-    // Process real-time conflict events
-    console.log('Real-time conflict event:', payload);
-  }
+  private handleRealtimeConflictEvent(_payload: any): void {}
 
   private emitConflictEvent(event: ConflictDetectionEvent): void {
     const listeners = this.eventListeners.get(event.type) || [];
     listeners.forEach((listener) => {
       try {
         listener(event);
-      } catch (error) {
-        console.error('Error in conflict event listener:', error);
-      }
+      } catch (_error) {}
     });
   }
 
@@ -554,10 +541,6 @@ export class ConflictDetectionEngine {
 
   private validatePerformanceThresholds(latency: number): void {
     if (latency > this.config.performanceThresholds.maxDetectionLatencyMs) {
-      console.warn(
-        `Detection latency ${latency}ms exceeds threshold ${this.config.performanceThresholds.maxDetectionLatencyMs}ms`
-      );
-
       // Record performance warning
       this.supabase
         .from('conflict_system_metrics')
@@ -569,9 +552,7 @@ export class ConflictDetectionEngine {
             threshold: this.config.performanceThresholds.maxDetectionLatencyMs,
           },
         })
-        .then(null, (error: any) =>
-          console.error('Failed to record performance warning:', error)
-        );
+        .then(null, (_error: any) => {});
     }
   }
 

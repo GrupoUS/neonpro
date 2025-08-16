@@ -90,9 +90,7 @@ export async function GET(_request: NextRequest, { params }: RouteContext) {
       success: true,
       data: { template },
     });
-  } catch (error) {
-    console.error('Error fetching template:', error);
-
+  } catch (_error) {
     return NextResponse.json(
       {
         error: 'Failed to fetch template',
@@ -193,8 +191,6 @@ export async function PUT(request: NextRequest, { params }: RouteContext) {
       message: 'Template updated successfully',
     });
   } catch (error) {
-    console.error('Error updating template:', error);
-
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {
@@ -292,9 +288,7 @@ export async function DELETE(_request: NextRequest, { params }: RouteContext) {
       success: true,
       message: 'Template deleted successfully',
     });
-  } catch (error) {
-    console.error('Error deleting template:', error);
-
+  } catch (_error) {
     return NextResponse.json(
       {
         error: 'Failed to delete template',
@@ -397,9 +391,7 @@ export async function POST(request: NextRequest, { params }: RouteContext) {
       },
       { status: 201 }
     );
-  } catch (error) {
-    console.error('Error duplicating template:', error);
-
+  } catch (_error) {
     return NextResponse.json(
       {
         error: 'Failed to duplicate template',

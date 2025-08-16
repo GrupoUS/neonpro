@@ -124,7 +124,6 @@ export async function GET(request: NextRequest) {
     });
 
     if (error) {
-      console.error('Error fetching social media accounts:', error);
       return NextResponse.json(
         { error: 'Failed to fetch accounts' },
         { status: 500 }
@@ -145,8 +144,7 @@ export async function GET(request: NextRequest) {
       data: sanitizedAccounts,
       total: accounts?.length || 0,
     });
-  } catch (error) {
-    console.error('Social media accounts GET error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -255,7 +253,6 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (error) {
-      console.error('Error creating social media account:', error);
       return NextResponse.json(
         { error: 'Failed to create account connection' },
         { status: 500 }
@@ -271,8 +268,6 @@ export async function POST(request: NextRequest) {
       { status: 201 }
     );
   } catch (error) {
-    console.error('Social media accounts POST error:', error);
-
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Invalid request data', details: error.errors },

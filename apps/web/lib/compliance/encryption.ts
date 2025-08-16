@@ -14,30 +14,30 @@ import { z } from 'zod';
 // TYPES & INTERFACES
 // ============================================================================
 
-export interface EncryptionConfig {
+export type EncryptionConfig = {
   algorithm: string;
   keyLength: number;
   ivLength: number;
   tagLength: number;
   saltLength: number;
   iterations: number;
-}
+};
 
-export interface EncryptedData {
+export type EncryptedData = {
   data: string;
   iv: string;
   tag: string;
   salt: string;
   algorithm: string;
   version: string;
-}
+};
 
-export interface KeyDerivationOptions {
+export type KeyDerivationOptions = {
   password: string;
   salt: Buffer;
   iterations: number;
   keyLength: number;
-}
+};
 
 export enum DataClassification {
   PUBLIC = 'public',
@@ -47,7 +47,7 @@ export enum DataClassification {
   SENSITIVE = 'sensitive', // LGPD sensitive data
 }
 
-export interface EncryptionMetadata {
+export type EncryptionMetadata = {
   classification: DataClassification;
   purpose: string;
   retention: number; // days
@@ -56,7 +56,7 @@ export interface EncryptionMetadata {
   keyId: string;
   createdAt: Date;
   lastAccessed?: Date;
-}
+};
 
 // ============================================================================
 // VALIDATION SCHEMAS
@@ -319,8 +319,7 @@ export class LGPDEncryption {
           result[field] = this.decrypt(data[field], fieldContext);
           delete result[`${field}_encrypted`];
           delete result[`${field}_classification`];
-        } catch (error) {
-          console.error(`Failed to decrypt field ${field}:`, error);
+        } catch (_error) {
           // Keep encrypted data if decryption fails
         }
       }

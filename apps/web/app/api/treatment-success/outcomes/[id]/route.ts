@@ -18,7 +18,6 @@ export async function GET(
       data: outcome,
     });
   } catch (error) {
-    console.error('Error fetching treatment outcome:', error);
     return NextResponse.json(
       {
         success: false,
@@ -50,8 +49,6 @@ export async function PUT(
       data: outcome,
     });
   } catch (error) {
-    console.error('Error updating treatment outcome:', error);
-
     if (error instanceof Error && error.name === 'ZodError') {
       return NextResponse.json(
         {
@@ -86,7 +83,6 @@ export async function DELETE(
       message: 'Resultado de tratamento deletado com sucesso',
     });
   } catch (error) {
-    console.error('Error deleting treatment outcome:', error);
     return NextResponse.json(
       {
         success: false,

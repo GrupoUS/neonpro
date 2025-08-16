@@ -72,10 +72,6 @@ export function useVisionAnalysis() {
         const resultValidation =
           VisionUtils.Analysis.validateAnalysisResult(analysisResult);
         if (!resultValidation.valid) {
-          console.warn(
-            'Analysis result validation warnings:',
-            resultValidation.warnings
-          );
         }
 
         setResult(analysisResult);
@@ -299,9 +295,7 @@ export function useAnalysisExport() {
         const history: ExportResult[] = await response.json();
         setExportHistory(history);
       }
-    } catch (err) {
-      console.error('Failed to load export history:', err);
-    }
+    } catch (_err) {}
   }, []);
 
   useEffect(() => {
@@ -530,8 +524,7 @@ export function useAnalysisHistory() {
 
           setHasMore(data.hasMore);
         }
-      } catch (err) {
-        console.error('Failed to load analysis history:', err);
+      } catch (_err) {
         toast.error('Erro ao carregar histórico');
       } finally {
         setIsLoading(false);
@@ -596,7 +589,6 @@ export function usePerformanceMonitoring() {
 
       // Log performance if below thresholds
       if (processingTime > VISION_CONFIG.PERFORMANCE.MAX_PROCESSING_TIME_MS) {
-        console.warn('Processing time exceeded threshold:', processingTime);
       }
     }
   }, [isMonitoring]);
@@ -649,8 +641,7 @@ export function useLocalStorage<T>(key: string, initialValue: T) {
     try {
       const item = window.localStorage.getItem(key);
       return item ? JSON.parse(item) : initialValue;
-    } catch (error) {
-      console.error(`Error reading localStorage key "${key}":`, error);
+    } catch (_error) {
       return initialValue;
     }
   });
@@ -662,9 +653,7 @@ export function useLocalStorage<T>(key: string, initialValue: T) {
           value instanceof Function ? value(storedValue) : value;
         setStoredValue(valueToStore);
         window.localStorage.setItem(key, JSON.stringify(valueToStore));
-      } catch (error) {
-        console.error(`Error setting localStorage key "${key}":`, error);
-      }
+      } catch (_error) {}
     },
     [key, storedValue]
   );

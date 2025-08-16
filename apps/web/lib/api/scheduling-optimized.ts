@@ -7,7 +7,7 @@
 import { createClient } from '@supabase/supabase-js';
 
 // Types
-interface ConflictData {
+type ConflictData = {
   id: string;
   type: 'scheduling' | 'resource' | 'professional' | 'patient';
   severity: 'low' | 'medium' | 'high' | 'critical';
@@ -22,32 +22,32 @@ interface ConflictData {
     clinicalPriority: number;
     emergencyFlag: boolean;
   };
-}
+};
 
-interface Resolution {
+type Resolution = {
   id: string;
   type: 'reschedule' | 'reassign' | 'cancel' | 'override';
   description: string;
   impact: string;
   estimatedTime: number;
   complianceImpact: 'none' | 'low' | 'medium' | 'high';
-}
+};
 
-interface CacheEntry<T> {
+type CacheEntry<T> = {
   data: T;
   timestamp: number;
   ttl: number;
   key: string;
-}
+};
 
-interface BatchRequest {
+type BatchRequest = {
   id: string;
   type: string;
   params: any;
   timestamp: number;
-}
+};
 
-interface ApiResponse<T> {
+type ApiResponse<T> = {
   success: boolean;
   data: T;
   error?: string;
@@ -58,7 +58,7 @@ interface ApiResponse<T> {
     cacheHit: boolean;
     apiCallsReduced: number;
   };
-}
+};
 
 // Optimized Cache Manager with TTL and invalidation
 class OptimizedCacheManager {
@@ -628,7 +628,6 @@ export class OptimizedSchedulingAPI {
       )
       .subscribe((status: string) => {
         if (status === 'SUBSCRIBED') {
-          console.log('Conflict stream connected');
         } else if (status === 'CHANNEL_ERROR') {
           onError(new Error('Real-time connection failed'));
         }
@@ -651,7 +650,7 @@ export class OptimizedSchedulingAPI {
           ? `${(
               (this.performanceMetrics.cachedResponses /
                 this.performanceMetrics.totalRequests) *
-                100
+              100
             ).toFixed(2)}%`
           : '0%',
       apiCallReduction:
@@ -659,7 +658,7 @@ export class OptimizedSchedulingAPI {
           ? `${(
               (this.performanceMetrics.apiCallsReduced /
                 this.performanceMetrics.totalRequests) *
-                100
+              100
             ).toFixed(2)}%`
           : '0%',
     };

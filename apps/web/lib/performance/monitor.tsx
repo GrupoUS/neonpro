@@ -60,12 +60,6 @@ function sendMetrics(
 
   // Development logging
   if (process.env.NODE_ENV === 'development') {
-    console.group(`🎯 Web Vital: ${name}`);
-    console.log(`Value: ${value}ms`);
-    console.log(`Delta: ${delta}ms`);
-    console.log(`Rating: ${rating}`);
-    console.log(`URL: ${window.location.href}`);
-    console.groupEnd();
   }
 }
 
@@ -256,8 +250,7 @@ export const PerformanceDebug = {
       performance.measure(measureName, startMark, endMark);
       const measure = performance.getEntriesByName(measureName)[0];
       return measure.duration;
-    } catch (error) {
-      console.warn('Performance measurement failed:', error);
+    } catch (_error) {
       return null;
     }
   },
@@ -281,23 +274,5 @@ export const PerformanceDebug = {
     if (!navigation) {
       return;
     }
-
-    console.group('🚀 NeonPro Performance Summary');
-    console.log(
-      `DNS Lookup: ${navigation.domainLookupEnd - navigation.domainLookupStart}ms`
-    );
-    console.log(
-      `TCP Connection: ${navigation.connectEnd - navigation.connectStart}ms`
-    );
-    console.log(
-      `Server Response: ${navigation.responseEnd - navigation.requestStart}ms`
-    );
-    console.log(
-      `DOM Processing: ${navigation.domContentLoadedEventEnd - navigation.responseEnd}ms`
-    );
-    console.log(
-      `Total Load Time: ${navigation.loadEventEnd - navigation.navigationStart}ms`
-    );
-    console.groupEnd();
   },
 };

@@ -4,7 +4,7 @@ import type { LGPDManager } from '../../lgpd/lgpd-manager';
 import type { SessionManager } from '../auth/session-manager';
 
 // Configuration interface
-export interface AppointmentConfig {
+export type AppointmentConfig = {
   maxAdvanceBookingDays: number;
   minAdvanceBookingHours: number;
   maxReschedulingAttempts: number;
@@ -12,10 +12,10 @@ export interface AppointmentConfig {
   enableWaitingList: boolean;
   autoConfirmationEnabled: boolean;
   reminderIntervals: number[]; // hours before appointment
-}
+};
 
 // Available time slot
-export interface TimeSlot {
+export type TimeSlot = {
   id: string;
   date: Date;
   startTime: string;
@@ -27,10 +27,10 @@ export interface TimeSlot {
   duration: number;
   isAvailable: boolean;
   price: number;
-}
+};
 
 // Booking request
-export interface BookingRequest {
+export type BookingRequest = {
   patientId: string;
   serviceId: string;
   staffId: string;
@@ -43,30 +43,30 @@ export interface BookingRequest {
     sms: boolean;
     push: boolean;
   };
-} // Booking result
-export interface BookingResult {
+}; // Booking result
+export type BookingResult = {
   success: boolean;
   appointmentId?: string;
   message: string;
   conflictingAppointments?: any[];
   suggestedAlternatives?: TimeSlot[];
   waitingListPosition?: number;
-}
+};
 
 // Reschedule request
-export interface RescheduleRequest {
+export type RescheduleRequest = {
   appointmentId: string;
   newDate: Date;
   newTime: string;
   reason: string;
-}
+};
 
 // Cancellation request
-export interface CancellationRequest {
+export type CancellationRequest = {
   appointmentId: string;
   reason: string;
   requestRefund?: boolean;
-}
+};
 
 export class AppointmentManager {
   private readonly supabase: SupabaseClient;

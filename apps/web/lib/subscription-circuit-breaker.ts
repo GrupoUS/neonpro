@@ -26,7 +26,7 @@ export enum CircuitBreakerState {
 }
 
 // Circuit breaker configuration
-export interface CircuitBreakerConfig {
+export type CircuitBreakerConfig = {
   // Failure threshold to open circuit
   failureThreshold: number;
   // Success threshold to close circuit from half-open
@@ -50,7 +50,7 @@ export interface CircuitBreakerConfig {
     logFailures: boolean;
     alertOnOpen: boolean;
   };
-}
+};
 
 const defaultConfig: CircuitBreakerConfig = {
   failureThreshold: 5,
@@ -72,7 +72,7 @@ const defaultConfig: CircuitBreakerConfig = {
 };
 
 // Circuit breaker statistics
-interface CircuitBreakerStats {
+type CircuitBreakerStats = {
   state: CircuitBreakerState;
   failureCount: number;
   successCount: number;
@@ -85,17 +85,17 @@ interface CircuitBreakerStats {
   rejectedRequests: number;
   averageResponseTime: number;
   uptime: number; // percentage
-}
+};
 
 // Result types for circuit breaker operations
-interface CircuitBreakerResult<T> {
+type CircuitBreakerResult<T> = {
   success: boolean;
   data?: T;
   error?: SubscriptionError;
   fromCircuitBreaker: boolean;
   state: CircuitBreakerState;
   executionTime: number;
-}
+};
 
 export class SubscriptionCircuitBreaker {
   private state: CircuitBreakerState = CircuitBreakerState.CLOSED;
@@ -249,9 +249,6 @@ export class SubscriptionCircuitBreaker {
 
     // Log success in monitoring
     if (this.config.monitoring.enabled) {
-      console.log(
-        `Circuit breaker success: ${this.serviceName} - ${responseTime}ms`
-      );
     }
 
     // Reset failure count on success in half-open state
@@ -274,20 +271,13 @@ export class SubscriptionCircuitBreaker {
   /**
    * Handle failed operation
    */
-  private onFailure(error: SubscriptionError): void {
+  private onFailure(_error: SubscriptionError): void {
     this.failedRequests++;
     this.failureCount++;
     this.lastFailureTime = new Date();
 
     // Log failure in monitoring
-    if (this.config.monitoring.enabled) {
-      console.error(`Circuit breaker failure: ${this.serviceName}`, error);
-      if (this.config.monitoring.logFailures) {
-        console.error(
-          `Circuit breaker failure for ${this.serviceName}:`,
-          error
-        );
-      }
+    if (this.config.monitoring.enabled && this.config.monitoring.logFailures) {
     }
 
     // Check if we should open the circuit
@@ -402,10 +392,9 @@ export class SubscriptionCircuitBreaker {
               'Health check passed, attempting reset'
             );
           }
-        } catch (error) {
+        } catch (_error) {
           // Health check failed, stay in open state
           if (this.config.monitoring.logFailures) {
-            console.warn(`Health check failed for ${this.serviceName}:`, error);
           }
         }
       }
@@ -424,24 +413,21 @@ export class SubscriptionCircuitBreaker {
   /**
    * Log state changes
    */
-  private logStateChange(newState: CircuitBreakerState, reason: string): void {
+  private logStateChange(
+    _newState: CircuitBreakerState,
+    _reason: string
+  ): void {
     if (
       this.config.monitoring.enabled &&
       this.config.monitoring.logStateChanges
     ) {
-      console.log(
-        `Circuit breaker ${this.serviceName} changed to ${newState}: ${reason}`
-      );
     }
   }
 
   /**
    * Send alert (override this method for custom alerting)
    */
-  protected sendAlert(message: string): void {
-    // Default implementation - just log
-    console.error(`ALERT: ${message}`);
-  }
+  protected sendAlert(_message: string): void {}
 
   /**
    * Clean up resources

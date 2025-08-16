@@ -71,41 +71,10 @@ export {
 } from './performance';
 
 // Initialize monitoring system
-export function initializeMonitoringSystem(): void {
-  console.log('🚀 Initializing NeonPro Monitoring System...');
-
-  // Performance monitoring is auto-initialized
-  console.log('✅ Performance monitoring active');
-
-  // User analytics is auto-initialized
-  console.log('✅ User analytics active');
-
-  // Feature flags is auto-initialized
-  console.log('✅ Feature flags active');
-
-  // Error tracking is auto-initialized
-  console.log('✅ Error tracking active');
-
-  // Baseline manager is auto-initialized
-  console.log('✅ Baseline monitoring active');
-
-  // Emergency response is auto-initialized
-  console.log('✅ Emergency response active');
-
-  console.log('🎯 NeonPro Monitoring System fully operational');
-}
+export function initializeMonitoringSystem(): void {}
 
 // Cleanup function for proper resource management
-export function destroyMonitoringSystem(): void {
-  console.log('🛑 Shutting down monitoring system...');
-
-  // Cleanup would be called on each system
-  // errorTracker.destroy();
-  // baselineManager.destroy();
-  // emergencyResponse.destroy();
-
-  console.log('✅ Monitoring system shutdown complete');
-}
+export function destroyMonitoringSystem(): void {}
 
 // Health check function
 export function getMonitoringSystemHealth(): {

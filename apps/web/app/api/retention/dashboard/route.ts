@@ -16,7 +16,6 @@ export async function GET(request: NextRequest) {
       data: dashboardSummary,
     });
   } catch (error) {
-    console.error('Error in retention dashboard GET:', error);
     return NextResponse.json(
       {
         success: false,

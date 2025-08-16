@@ -19,7 +19,7 @@ import { Badge } from './Badge';
 import { Button } from './Button';
 
 // Types
-export interface AppointmentData {
+export type AppointmentData = {
   id: string;
   patientId: string;
   patientName: string;
@@ -38,21 +38,21 @@ export interface AppointmentData {
   type: 'consultation' | 'procedure' | 'follow-up' | 'emergency';
   location?: string;
   notes?: string;
-}
+};
 
-export interface CalendarTimeSlot {
+export type CalendarTimeSlot = {
   time: string;
   available: boolean;
   appointments: AppointmentData[];
-}
+};
 
-export interface CalendarView {
+export type CalendarView = {
   month: 'month';
   week: 'week';
   day: 'day';
-}
+};
 
-export interface AppointmentCalendarProps {
+export type AppointmentCalendarProps = {
   appointments: AppointmentData[];
   selectedDate?: Date;
   view?: keyof CalendarView;
@@ -69,7 +69,7 @@ export interface AppointmentCalendarProps {
   showWeekends?: boolean;
   loading?: boolean;
   className?: string;
-}
+};
 
 export const AppointmentCalendar = React.forwardRef<
   HTMLDivElement,
@@ -102,11 +102,11 @@ export const AppointmentCalendar = React.forwardRef<
     }, [selectedDate]);
 
     // Utility functions
-    const formatRelativeTime = (date: Date) => {
+    const _formatRelativeTime = (date: Date) => {
       return format(date, "dd/MM 'às' HH:mm", { locale: ptBR });
     };
 
-    const getInitials = (name: string) => {
+    const _getInitials = (name: string) => {
       return name
         .split(' ')
         .map((word) => word.charAt(0))
@@ -238,7 +238,7 @@ export const AppointmentCalendar = React.forwardRef<
 
       if (!showWeekends) {
         // Filter out weekends
-        const filteredDays = days.filter((day) => {
+        const _filteredDays = days.filter((day) => {
           const dayOfWeek = getDay(day);
           return dayOfWeek !== 0 && dayOfWeek !== 6; // Sunday = 0, Saturday = 6
         });

@@ -7,20 +7,20 @@ import { createHash, randomBytes } from 'node:crypto';
 import { type NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/app/utils/supabase/client';
 
-export interface CSRFTokenData {
+export type CSRFTokenData = {
   token: string;
   sessionId: string;
   createdAt: number;
   expiresAt: number;
   userAgent: string;
   ipAddress: string;
-}
+};
 
-export interface CSRFValidationResult {
+export type CSRFValidationResult = {
   valid: boolean;
   error?: string;
   tokenData?: CSRFTokenData;
-}
+};
 
 /**
  * CSRF Protection Manager
@@ -81,8 +81,7 @@ export class CSRFProtection {
       });
 
       return !error;
-    } catch (error) {
-      console.error('Failed to store CSRF token:', error);
+    } catch (_error) {
       return false;
     }
   }
@@ -159,8 +158,7 @@ export class CSRFProtection {
           ipAddress: data.ip_address,
         },
       };
-    } catch (error) {
-      console.error('CSRF token validation error:', error);
+    } catch (_error) {
       return { valid: false, error: 'Token validation failed' };
     }
   }
@@ -174,9 +172,7 @@ export class CSRFProtection {
       const now = new Date().toISOString();
 
       await supabase.from('csrf_tokens').delete().lt('expires_at', now);
-    } catch (error) {
-      console.error('Failed to cleanup expired CSRF tokens:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -274,8 +270,7 @@ export class CSRFProtection {
         token: tokenData.token,
         expires: tokenData.expiresAt,
       };
-    } catch (error) {
-      console.error('Failed to generate CSRF token for client:', error);
+    } catch (_error) {
       return null;
     }
   }
@@ -317,8 +312,7 @@ export function useCSRFToken() {
           const data = await response.json();
           setCSRFToken(data.token);
         }
-      } catch (error) {
-        console.error('Failed to fetch CSRF token:', error);
+      } catch (_error) {
       } finally {
         setLoading(false);
       }

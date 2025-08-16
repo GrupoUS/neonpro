@@ -42,8 +42,7 @@ export async function GET(request: NextRequest) {
     );
 
     return NextResponse.json(alerts);
-  } catch (error) {
-    console.error('Active Alerts API Error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

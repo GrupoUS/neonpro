@@ -12,7 +12,7 @@ import type {
   GridLayout,
 } from '@/lib/types/kpi-types';
 
-export interface WidgetLibraryItem {
+export type WidgetLibraryItem = {
   id: string;
   type: 'kpi_card' | 'chart' | 'table' | 'alert_panel' | 'summary_stats';
   name: string;
@@ -28,9 +28,9 @@ export interface WidgetLibraryItem {
   minSize: { w: number; h: number };
   maxSize?: { w: number; h: number };
   preview?: string;
-}
+};
 
-export interface DashboardBuilderState {
+export type DashboardBuilderState = {
   layout: DashboardLayout;
   isDirty: boolean;
   isEditing: boolean;
@@ -38,7 +38,7 @@ export interface DashboardBuilderState {
   draggedWidget?: WidgetLibraryItem;
   gridSettings: GridLayout;
   previewMode: boolean;
-}
+};
 
 export class DashboardBuilder {
   private readonly supabase;
@@ -64,88 +64,73 @@ export class DashboardBuilder {
       | 'detailed_analysis' = 'kpi_dashboard',
     templateId?: string
   ): Promise<DashboardLayout> {
-    try {
-      let initialLayout: Partial<DashboardLayout>;
+    let initialLayout: Partial<DashboardLayout>;
 
-      if (templateId) {
-        const template = await this.getTemplate(templateId);
-        if (!template) {
-          throw new Error('Template not found');
-        }
-
-        initialLayout = {
-          layout_name: name,
-          layout_type: layoutType,
-          widget_configuration: template.default_widgets,
-          filters: template.default_filters,
-          grid_layout: this.getDefaultGridLayout(),
-        };
-      } else {
-        initialLayout = {
-          layout_name: name,
-          layout_type: layoutType,
-          widget_configuration: [],
-          filters: this.getDefaultFilters(),
-          grid_layout: this.getDefaultGridLayout(),
-        };
+    if (templateId) {
+      const template = await this.getTemplate(templateId);
+      if (!template) {
+        throw new Error('Template not found');
       }
 
-      const { data, error } = await this.supabase
-        .from('dashboard_layouts')
-        .insert({
-          user_id: userId,
-          ...initialLayout,
-        })
-        .select()
-        .single();
+      initialLayout = {
+        layout_name: name,
+        layout_type: layoutType,
+        widget_configuration: template.default_widgets,
+        filters: template.default_filters,
+        grid_layout: this.getDefaultGridLayout(),
+      };
+    } else {
+      initialLayout = {
+        layout_name: name,
+        layout_type: layoutType,
+        widget_configuration: [],
+        filters: this.getDefaultFilters(),
+        grid_layout: this.getDefaultGridLayout(),
+      };
+    }
 
-      if (error) {
-        throw error;
-      }
-      return data;
-    } catch (error) {
-      console.error('Error creating dashboard:', error);
+    const { data, error } = await this.supabase
+      .from('dashboard_layouts')
+      .insert({
+        user_id: userId,
+        ...initialLayout,
+      })
+      .select()
+      .single();
+
+    if (error) {
       throw error;
     }
+    return data;
   }
 
   async updateDashboard(
     dashboardId: string,
     updates: Partial<DashboardLayout>
   ): Promise<DashboardLayout> {
-    try {
-      const { data, error } = await this.supabase
-        .from('dashboard_layouts')
-        .update({
-          ...updates,
-          updated_at: new Date().toISOString(),
-        })
-        .eq('id', dashboardId)
-        .select()
-        .single();
+    const { data, error } = await this.supabase
+      .from('dashboard_layouts')
+      .update({
+        ...updates,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', dashboardId)
+      .select()
+      .single();
 
-      if (error) {
-        throw error;
-      }
-      return data;
-    } catch (error) {
-      console.error('Error updating dashboard:', error);
+    if (error) {
       throw error;
     }
+    return data;
   }
 
   async deleteDashboard(dashboardId: string): Promise<void> {
-    try {
-      const { error } = await this.supabase
-        .from('dashboard_layouts')
-        .delete()
-        .eq('id', dashboardId);
+    const { error } = await this.supabase
+      .from('dashboard_layouts')
+      .delete()
+      .eq('id', dashboardId);
 
-      if (error) {
-        throw error;
-      }
-    } catch (error) {
-      console.error('Error deleting dashboard:', error);
+    if (error) {
       throw error;
     }
   }
@@ -162,8 +147,7 @@ export class DashboardBuilder {
         return null;
       }
       return data;
-    } catch (error) {
-      console.error('Error fetching dashboard:', error);
+    } catch (_error) {
       return null;
     }
   }
@@ -202,8 +186,7 @@ export class DashboardBuilder {
         throw error;
       }
       return data || [];
-    } catch (error) {
-      console.error('Error fetching user dashboards:', error);
+    } catch (_error) {
       return [];
     }
   }
@@ -477,8 +460,7 @@ export class DashboardBuilder {
       // Check if KPI categories are compatible with widget type
       const categories = kpis?.map((k) => k.kpi_category) || [];
       return this.areKPICategoriesCompatible(categories, widgetType);
-    } catch (error) {
-      console.error('Error validating KPI compatibility:', error);
+    } catch (_error) {
       return false;
     }
   }

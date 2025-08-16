@@ -6,26 +6,26 @@
 
 import type { createClient } from '@supabase/supabase-js';
 
-export interface RLSPerformanceMetrics {
+export type RLSPerformanceMetrics = {
   table_name: string;
   old_avg_time_ms: number;
   new_avg_time_ms: number;
   improvement_percent: number;
-}
+};
 
-export interface HealthCheckResult {
+export type HealthCheckResult = {
   system_name: string;
   status: string;
   avg_response_time_ms: number;
   optimization_status: string;
-}
+};
 
-export interface CacheStats {
+export type CacheStats = {
   current_user_id: string | null;
   cached_user_id: string | null;
   cached_clinic_id: string | null;
   cache_valid: boolean;
-}
+};
 
 export class RLSPerformanceMonitor {
   private readonly supabase: ReturnType<typeof createClient>;
@@ -44,7 +44,6 @@ export class RLSPerformanceMonitor {
     );
 
     if (error) {
-      console.error('RLS Performance Metrics Error:', error);
       throw new Error(`Performance monitoring failed: ${error.message}`);
     }
 
@@ -61,7 +60,6 @@ export class RLSPerformanceMonitor {
     );
 
     if (error) {
-      console.error('RLS Validation Error:', error);
       throw new Error(`Health check failed: ${error.message}`);
     }
 
@@ -76,7 +74,6 @@ export class RLSPerformanceMonitor {
     const { data, error } = await this.supabase.rpc('get_cache_stats');
 
     if (error) {
-      console.error('Cache Stats Error:', error);
       throw new Error(`Cache monitoring failed: ${error.message}`);
     }
 
@@ -91,7 +88,6 @@ export class RLSPerformanceMonitor {
     const { error } = await this.supabase.rpc('clear_clinic_cache');
 
     if (error) {
-      console.error('Cache Clear Error:', error);
       throw new Error(`Cache clear failed: ${error.message}`);
     }
   }
@@ -111,14 +107,8 @@ export class RLSPerformanceMonitor {
     const responseTime = endTime - startTime;
 
     if (error) {
-      console.error('Patient Data Access Error:', error);
       throw new Error(`Patient access monitoring failed: ${error.message}`);
     }
-
-    // Log performance metrics (no patient data exposed)
-    console.log(
-      `Patient Data Access: ${responseTime.toFixed(2)}ms (Target: <100ms)`
-    );
 
     return responseTime;
   }

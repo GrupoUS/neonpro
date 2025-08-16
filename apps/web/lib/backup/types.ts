@@ -84,7 +84,7 @@ export enum DataType {
 /**
  * Configuração base de backup
  */
-export interface BackupConfig {
+export type BackupConfig = {
   id: string;
   name: string;
   description?: string;
@@ -100,12 +100,12 @@ export interface BackupConfig {
   createdAt: Date;
   updatedAt: Date;
   createdBy: string;
-}
+};
 
 /**
  * Agendamento de backup
  */
-export interface BackupSchedule {
+export type BackupSchedule = {
   frequency: 'HOURLY' | 'DAILY' | 'WEEKLY' | 'MONTHLY' | 'CUSTOM';
   interval?: number; // Para frequência customizada
   time?: string; // Horário específico (HH:mm)
@@ -113,12 +113,12 @@ export interface BackupSchedule {
   daysOfMonth?: number[]; // Dias do mês (1-31)
   timezone: string;
   enabled: boolean;
-}
+};
 
 /**
  * Política de retenção
  */
-export interface RetentionPolicy {
+export type RetentionPolicy = {
   keepDaily: number; // Quantos backups diários manter
   keepWeekly: number; // Quantos backups semanais manter
   keepMonthly: number; // Quantos backups mensais manter
@@ -126,24 +126,24 @@ export interface RetentionPolicy {
   maxAge: number; // Idade máxima em dias
   maxSize: number; // Tamanho máximo em bytes
   autoCleanup: boolean; // Limpeza automática
-}
+};
 
 /**
  * Configuração de storage
  */
-export interface StorageConfig {
+export type StorageConfig = {
   type: StorageType;
   path: string;
   credentials?: StorageCredentials;
   options?: Record<string, any>;
   encryption?: boolean;
   compression?: boolean;
-}
+};
 
 /**
  * Credenciais de storage
  */
-export interface StorageCredentials {
+export type StorageCredentials = {
   accessKey?: string;
   secretKey?: string;
   region?: string;
@@ -153,26 +153,26 @@ export interface StorageCredentials {
   password?: string;
   host?: string;
   port?: number;
-}
+};
 
 /**
  * Configuração de compressão
  */
-export interface CompressionConfig {
+export type CompressionConfig = {
   enabled: boolean;
   algorithm: 'gzip' | 'bzip2' | 'lz4' | 'zstd';
   level: number; // Nível de compressão (1-9)
-}
+};
 
 /**
  * Configuração de criptografia
  */
-export interface EncryptionConfig {
+export type EncryptionConfig = {
   enabled: boolean;
   algorithm: 'AES-256' | 'AES-128' | 'ChaCha20';
   keyDerivation: 'PBKDF2' | 'Argon2';
   keySize: number;
-}
+};
 
 // ============================================================================
 // INTERFACES DE EXECUÇÃO
@@ -181,7 +181,7 @@ export interface EncryptionConfig {
 /**
  * Registro de backup
  */
-export interface BackupRecord {
+export type BackupRecord = {
   id: string;
   configId: string;
   type: BackupType;
@@ -199,12 +199,12 @@ export interface BackupRecord {
   warnings: string[];
   createdAt: Date;
   updatedAt: Date;
-}
+};
 
 /**
  * Metadados do backup
  */
-export interface BackupMetadata {
+export type BackupMetadata = {
   version: string;
   source: string;
   dataTypes: DataType[];
@@ -215,12 +215,12 @@ export interface BackupMetadata {
   userId: string;
   clientVersion: string;
   dependencies?: string[];
-}
+};
 
 /**
  * Progresso do backup
  */
-export interface BackupProgress {
+export type BackupProgress = {
   backupId: string;
   status: BackupStatus;
   percentage: number;
@@ -233,7 +233,7 @@ export interface BackupProgress {
   eta: number; // Tempo estimado em segundos
   startTime: Date;
   lastUpdate: Date;
-}
+};
 
 // ============================================================================
 // INTERFACES DE RECOVERY
@@ -242,7 +242,7 @@ export interface BackupProgress {
 /**
  * Solicitação de recuperação
  */
-export interface RecoveryRequest {
+export type RecoveryRequest = {
   id: string;
   backupId: string;
   type: 'FULL' | 'PARTIAL' | 'POINT_IN_TIME';
@@ -254,12 +254,12 @@ export interface RecoveryRequest {
   approvedBy?: string;
   approvedAt?: Date;
   status: RecoveryStatus;
-}
+};
 
 /**
  * Opções de recuperação
  */
-export interface RecoveryOptions {
+export type RecoveryOptions = {
   overwriteExisting: boolean;
   validateIntegrity: boolean;
   restorePermissions: boolean;
@@ -268,12 +268,12 @@ export interface RecoveryOptions {
   includePaths?: string[];
   renameConflicts: boolean;
   dryRun: boolean;
-}
+};
 
 /**
  * Progresso da recuperação
  */
-export interface RecoveryProgress {
+export type RecoveryProgress = {
   recoveryId: string;
   status: RecoveryStatus;
   percentage: number;
@@ -288,7 +288,7 @@ export interface RecoveryProgress {
   lastUpdate: Date;
   errors: string[];
   warnings: string[];
-}
+};
 
 // ============================================================================
 // INTERFACES DE MONITORAMENTO
@@ -297,7 +297,7 @@ export interface RecoveryProgress {
 /**
  * Métricas de backup
  */
-export interface BackupMetrics {
+export type BackupMetrics = {
   totalBackups: number;
   successfulBackups: number;
   failedBackups: number;
@@ -307,36 +307,36 @@ export interface BackupMetrics {
   nextBackupTime?: Date;
   storageUsage: StorageUsage;
   performanceMetrics: PerformanceMetrics;
-}
+};
 
 /**
  * Uso de storage
  */
-export interface StorageUsage {
+export type StorageUsage = {
   total: number;
   used: number;
   available: number;
   percentage: number;
   byType: Record<DataType, number>;
   byAge: Record<string, number>;
-}
+};
 
 /**
  * Métricas de performance
  */
-export interface PerformanceMetrics {
+export type PerformanceMetrics = {
   averageSpeed: number; // MB/s
   compressionRatio: number; // Ratio de compressão
   deduplicationRatio: number; // Ratio de deduplicação
   networkUtilization: number; // % de utilização da rede
   cpuUtilization: number; // % de utilização da CPU
   memoryUtilization: number; // % de utilização da memória
-}
+};
 
 /**
  * Alerta de backup
  */
-export interface BackupAlert {
+export type BackupAlert = {
   id: string;
   type: 'FAILURE' | 'WARNING' | 'INFO' | 'CRITICAL';
   title: string;
@@ -350,7 +350,7 @@ export interface BackupAlert {
   createdAt: Date;
   resolvedAt?: Date;
   metadata?: Record<string, any>;
-}
+};
 
 // ============================================================================
 // INTERFACES DE TESTE
@@ -359,7 +359,7 @@ export interface BackupAlert {
 /**
  * Teste de recuperação
  */
-export interface RecoveryTest {
+export type RecoveryTest = {
   id: string;
   name: string;
   description?: string;
@@ -373,12 +373,12 @@ export interface RecoveryTest {
   enabled: boolean;
   createdAt: Date;
   updatedAt: Date;
-}
+};
 
 /**
  * Resultados do teste
  */
-export interface TestResults {
+export type TestResults = {
   testId: string;
   startTime: Date;
   endTime: Date;
@@ -388,12 +388,12 @@ export interface TestResults {
   details: TestDetail[];
   performance: TestPerformance;
   recommendations: string[];
-}
+};
 
 /**
  * Detalhe do teste
  */
-export interface TestDetail {
+export type TestDetail = {
   category: string;
   test: string;
   status: 'PASSED' | 'FAILED' | 'WARNING' | 'SKIPPED';
@@ -401,18 +401,18 @@ export interface TestDetail {
   expected?: any;
   actual?: any;
   duration: number;
-}
+};
 
 /**
  * Performance do teste
  */
-export interface TestPerformance {
+export type TestPerformance = {
   restoreSpeed: number; // MB/s
   integrityCheckTime: number; // segundos
   memoryUsage: number; // MB
   cpuUsage: number; // %
   networkUsage: number; // MB
-}
+};
 
 // ============================================================================
 // INTERFACES DE CONFIGURAÇÃO
@@ -421,19 +421,19 @@ export interface TestPerformance {
 /**
  * Configuração do sistema de backup
  */
-export interface BackupSystemConfig {
+export type BackupSystemConfig = {
   general: GeneralConfig;
   storage: StorageConfig[];
   notifications: NotificationConfig;
   security: SecurityConfig;
   performance: PerformanceConfig;
   monitoring: MonitoringConfig;
-}
+};
 
 /**
  * Configuração geral
  */
-export interface GeneralConfig {
+export type GeneralConfig = {
   maxConcurrentBackups: number;
   maxConcurrentRestores: number;
   defaultRetention: RetentionPolicy;
@@ -442,12 +442,12 @@ export interface GeneralConfig {
   tempDirectory: string;
   logLevel: 'DEBUG' | 'INFO' | 'WARN' | 'ERROR';
   enableMetrics: boolean;
-}
+};
 
 /**
  * Configuração de notificações
  */
-export interface NotificationConfig {
+export type NotificationConfig = {
   enabled: boolean;
   channels: ('EMAIL' | 'SMS' | 'SLACK' | 'WEBHOOK')[];
   onSuccess: boolean;
@@ -456,12 +456,12 @@ export interface NotificationConfig {
   recipients: string[];
   webhookUrl?: string;
   slackChannel?: string;
-}
+};
 
 /**
  * Configuração de segurança
  */
-export interface SecurityConfig {
+export type SecurityConfig = {
   requireApproval: boolean;
   approvers: string[];
   auditLog: boolean;
@@ -469,12 +469,12 @@ export interface SecurityConfig {
   encryptionRequired: boolean;
   keyRotation: boolean;
   keyRotationInterval: number; // dias
-}
+};
 
 /**
  * Configuração de performance
  */
-export interface PerformanceConfig {
+export type PerformanceConfig = {
   maxBandwidth: number; // MB/s
   compressionThreads: number;
   encryptionThreads: number;
@@ -482,51 +482,51 @@ export interface PerformanceConfig {
   retryAttempts: number;
   retryDelay: number; // segundos
   chunkSize: number; // bytes
-}
+};
 
 /**
  * Configuração de monitoramento
  */
-export interface MonitoringConfig {
+export type MonitoringConfig = {
   enabled: boolean;
   metricsRetention: number; // dias
   alertThresholds: AlertThresholds;
   healthChecks: HealthCheckConfig;
   reporting: ReportingConfig;
-}
+};
 
 /**
  * Limites para alertas
  */
-export interface AlertThresholds {
+export type AlertThresholds = {
   failureRate: number; // %
   storageUsage: number; // %
   backupDuration: number; // horas
   missedBackups: number; // quantidade
   recoveryTime: number; // horas
-}
+};
 
 /**
  * Configuração de health checks
  */
-export interface HealthCheckConfig {
+export type HealthCheckConfig = {
   enabled: boolean;
   interval: number; // minutos
   timeout: number; // segundos
   checks: ('STORAGE' | 'DATABASE' | 'NETWORK' | 'DISK_SPACE')[];
-}
+};
 
 /**
  * Configuração de relatórios
  */
-export interface ReportingConfig {
+export type ReportingConfig = {
   enabled: boolean;
   frequency: 'DAILY' | 'WEEKLY' | 'MONTHLY';
   recipients: string[];
   includeMetrics: boolean;
   includeRecommendations: boolean;
   format: 'PDF' | 'HTML' | 'JSON';
-}
+};
 
 // ============================================================================
 // TIPOS UTILITÁRIOS
@@ -535,7 +535,7 @@ export interface ReportingConfig {
 /**
  * Filtros para busca de backups
  */
-export interface BackupFilter {
+export type BackupFilter = {
   configId?: string;
   type?: BackupType;
   status?: BackupStatus;
@@ -545,22 +545,22 @@ export interface BackupFilter {
   minSize?: number;
   maxSize?: number;
   tags?: string[];
-}
+};
 
 /**
  * Opções de paginação
  */
-export interface PaginationOptions {
+export type PaginationOptions = {
   page: number;
   limit: number;
   sortBy?: string;
   sortOrder?: 'ASC' | 'DESC';
-}
+};
 
 /**
  * Resultado paginado
  */
-export interface PaginatedResult<T> {
+export type PaginatedResult<T> = {
   data: T[];
   total: number;
   page: number;
@@ -568,24 +568,24 @@ export interface PaginatedResult<T> {
   totalPages: number;
   hasNext: boolean;
   hasPrev: boolean;
-}
+};
 
 /**
  * Resposta da API
  */
-export interface ApiResponse<T = any> {
+export type ApiResponse<T = any> = {
   success: boolean;
   data?: T;
   error?: string;
   message?: string;
   timestamp: Date;
   requestId: string;
-}
+};
 
 /**
  * Evento do sistema de backup
  */
-export interface BackupEvent {
+export type BackupEvent = {
   id: string;
   type:
     | 'BACKUP_STARTED'
@@ -602,4 +602,4 @@ export interface BackupEvent {
   userId?: string;
   timestamp: Date;
   source: string;
-}
+};

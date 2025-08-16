@@ -1,7 +1,7 @@
 // Treatment Success Prediction Types
 // Comprehensive AI/ML-powered treatment success prediction system
 
-export interface PredictionModel {
+export type PredictionModel = {
   id: string;
   name: string;
   version: string;
@@ -21,9 +21,9 @@ export interface PredictionModel {
   created_at: string;
   updated_at: string;
   created_by?: string;
-}
+};
 
-export interface ModelPerformanceMetrics {
+export type ModelPerformanceMetrics = {
   precision: number;
   recall: number;
   f1_score: number;
@@ -33,9 +33,9 @@ export interface ModelPerformanceMetrics {
   cross_validation_mean: number;
   cross_validation_std: number;
   feature_importance?: Record<string, number>;
-}
+};
 
-export interface TreatmentPrediction {
+export type TreatmentPrediction = {
   id: string;
   patient_id: string;
   treatment_type: string;
@@ -58,15 +58,15 @@ export interface TreatmentPrediction {
   model?: PredictionModel;
   patient?: any; // Patient interface from main types
   feedback?: PredictionFeedback[];
-}
+};
 
-export interface ConfidenceInterval {
+export type ConfidenceInterval = {
   lower: number; // Lower bound of confidence interval
   upper: number; // Upper bound of confidence interval
   confidence_level: number; // Confidence level (e.g., 0.95 for 95%)
-}
+};
 
-export interface PredictionFeatures {
+export type PredictionFeatures = {
   // Patient demographics
   age: number;
   gender: string;
@@ -103,17 +103,17 @@ export interface PredictionFeatures {
   seasonal_factors?: string;
   geographic_location?: string;
   support_system: 'strong' | 'moderate' | 'weak';
-}
+};
 
-export interface ExplainabilityData {
+export type ExplainabilityData = {
   feature_importance: Record<string, number>; // SHAP values or similar
   top_positive_factors: string[]; // Factors increasing success probability
   top_negative_factors: string[]; // Factors decreasing success probability
   similar_cases: string[]; // IDs of similar historical cases
   confidence_reasoning: string; // Human-readable explanation
-}
+};
 
-export interface PatientFactors {
+export type PatientFactors = {
   id: string;
   patient_id: string;
   age: number;
@@ -131,65 +131,65 @@ export interface PatientFactors {
   geographic_factors?: GeographicFactors;
   updated_at: string;
   created_at: string;
-}
+};
 
-export interface MedicalHistory {
+export type MedicalHistory = {
   conditions: string[];
   medications: string[];
   allergies: string[];
   surgeries: string[];
   chronic_conditions: string[];
   family_history: string[];
-}
+};
 
-export interface LifestyleFactors {
+export type LifestyleFactors = {
   smoking: 'never' | 'former' | 'current';
   alcohol: 'none' | 'light' | 'moderate' | 'heavy';
   exercise: 'none' | 'light' | 'moderate' | 'regular';
   diet: 'poor' | 'average' | 'good' | 'excellent';
   sleep_quality: number; // 1-5
   stress_level: number; // 1-5
-}
+};
 
-export interface TreatmentHistory {
+export type TreatmentHistory = {
   previous_treatments: TreatmentHistoryItem[];
   total_treatments: number;
   success_rate: number; // 0-1
   last_treatment_date?: string;
   complications_history: string[];
-}
+};
 
-export interface TreatmentHistoryItem {
+export type TreatmentHistoryItem = {
   treatment_type: string;
   date: string;
   outcome: 'success' | 'partial_success' | 'failure';
   provider: string;
   notes?: string;
-}
+};
 
-export interface PsychologicalFactors {
+export type PsychologicalFactors = {
   anxiety_level: number; // 1-5
   motivation_level: number; // 1-5
   treatment_expectations: 'realistic' | 'optimistic' | 'unrealistic';
   body_image_satisfaction: number; // 1-5
   perfectionism_tendency: number; // 1-5
-}
+};
 
-export interface SocialFactors {
+export type SocialFactors = {
   support_system: 'strong' | 'moderate' | 'weak';
   socioeconomic_status: 'low' | 'middle' | 'high';
   education_level: 'basic' | 'secondary' | 'higher';
   employment_status: 'employed' | 'unemployed' | 'retired' | 'student';
-}
+};
 
-export interface GeographicFactors {
+export type GeographicFactors = {
   location: string;
   climate: 'tropical' | 'temperate' | 'arid' | 'cold';
   accessibility_score: number; // 1-5
   travel_distance_km: number;
-}
+};
 
-export interface TreatmentCharacteristics {
+export type TreatmentCharacteristics = {
   id: string;
   treatment_type: string;
   complexity_level: number; // 1-5
@@ -205,24 +205,24 @@ export interface TreatmentCharacteristics {
   cost_range?: CostRange;
   created_at: string;
   updated_at: string;
-}
+};
 
-export interface SideEffects {
+export type SideEffects = {
   common?: string[];
   uncommon?: string[];
   rare?: string[];
   severe?: string[];
   expected?: string[]; // Expected side effects (like peeling after chemical peel)
-}
+};
 
-export interface CostRange {
+export type CostRange = {
   min: number;
   max: number;
   currency: string;
   average?: number;
-}
+};
 
-export interface ModelPerformance {
+export type ModelPerformance = {
   id: string;
   model_id: string;
   evaluation_date: string;
@@ -240,24 +240,24 @@ export interface ModelPerformance {
 
   // Relationships
   model?: PredictionModel;
-}
+};
 
-export interface ValidationMetrics {
+export type ValidationMetrics = {
   cross_validation_scores: number[];
   validation_accuracy: number;
   test_accuracy: number;
   confusion_matrix: number[][];
   roc_curve_data?: ROCCurveData;
-}
+};
 
-export interface ROCCurveData {
+export type ROCCurveData = {
   fpr: number[]; // False positive rates
   tpr: number[]; // True positive rates
   thresholds: number[];
   auc: number;
-}
+};
 
-export interface PredictionFeedback {
+export type PredictionFeedback = {
   id: string;
   prediction_id: string;
   provider_id: string;
@@ -272,84 +272,84 @@ export interface PredictionFeedback {
   // Relationships
   prediction?: TreatmentPrediction;
   provider?: any; // User interface from main types
-}
+};
 
 // API Response Types
-export interface PredictionResponse {
+export type PredictionResponse = {
   prediction: TreatmentPrediction;
   recommendations: TreatmentRecommendation[];
   alternative_treatments: AlternativeTreatment[];
   risk_factors: RiskFactor[];
-}
+};
 
-export interface TreatmentRecommendation {
+export type TreatmentRecommendation = {
   type: 'preparation' | 'modification' | 'monitoring' | 'post_care';
   description: string;
   importance: 'low' | 'medium' | 'high' | 'critical';
   evidence_level: 'expert_opinion' | 'case_studies' | 'clinical_trials';
-}
+};
 
-export interface AlternativeTreatment {
+export type AlternativeTreatment = {
   treatment_type: string;
   prediction_score: number;
   advantages: string[];
   disadvantages: string[];
   suitability_score: number; // 0-1
-}
+};
 
-export interface RiskFactor {
+export type RiskFactor = {
   factor: string;
   impact: number; // -1 to 1 (negative impact to positive impact)
   modifiable: boolean;
   recommendation?: string;
-}
+};
 
 // Prediction Request Types
-export interface PredictionRequest {
+export type PredictionRequest = {
   patient_id: string;
   treatment_type: string;
   model_version?: string;
   include_alternatives?: boolean;
   confidence_threshold?: number;
-}
+};
 
-export interface BatchPredictionRequest {
+export type BatchPredictionRequest = {
   predictions: PredictionRequest[];
   model_version?: string;
   include_summary?: boolean;
-}
+};
 
-export interface BatchPredictionResponse {
+export type BatchPredictionResponse = {
   predictions: PredictionResponse[];
   summary: PredictionSummary;
   processing_time: number;
-}
+};
 
-export interface PredictionSummary {
+export type PredictionSummary = {
   total_predictions: number;
   high_success_probability: number;
   medium_success_probability: number;
   low_success_probability: number;
   average_confidence: number;
   recommendations_generated: number;
-}
+};
 
 // Model Training Types
-export interface TrainingRequest {
+export type TrainingRequest = {
   model_name: string;
   algorithm_type: string;
   training_parameters: Record<string, any>;
   validation_split: number; // 0-1
   feature_selection?: string[];
-}
+};
 
-export interface TrainingResponse {
+export type TrainingResponse = {
   model_id: string;
   training_status: 'started' | 'in_progress' | 'completed' | 'failed';
   estimated_completion?: string;
   progress_percentage?: number;
   performance_preview?: ModelPerformanceMetrics;
-}
+};
 
 // Utility Types
 export type PredictionConfidence =
@@ -364,7 +364,7 @@ export type ModelStatus = 'training' | 'active' | 'deprecated';
 export type FeedbackType = 'validation' | 'correction' | 'enhancement';
 
 // Filter and Search Types
-export interface PredictionFilters {
+export type PredictionFilters = {
   patient_id?: string;
   treatment_type?: string;
   prediction_score_min?: number;
@@ -375,21 +375,21 @@ export interface PredictionFilters {
   model_id?: string;
   outcome?: TreatmentOutcome;
   accuracy_validated?: boolean;
-}
+};
 
-export interface ModelFilters {
+export type ModelFilters = {
   status?: ModelStatus;
   algorithm_type?: string;
   accuracy_min?: number;
   version?: string;
   created_from?: string;
   created_to?: string;
-}
+};
 
-export interface PerformanceFilters {
+export type PerformanceFilters = {
   model_id?: string;
   accuracy_min?: number;
   evaluation_date_from?: string;
   evaluation_date_to?: string;
   improvement_percentage_min?: number;
-}
+};

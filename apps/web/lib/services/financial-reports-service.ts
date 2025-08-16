@@ -1,7 +1,7 @@
 import { createClient } from '@/app/utils/supabase/client';
 
 // Tipos para relatórios financeiros
-export interface AgingReportItem {
+export type AgingReportItem = {
   vendor_id: string;
   vendor_name: string;
   vendor_document: string;
@@ -12,9 +12,9 @@ export interface AgingReportItem {
   days_over_90: number;
   overdue_count: number;
   oldest_invoice_date: string;
-}
+};
 
-export interface VendorPerformanceMetrics {
+export type VendorPerformanceMetrics = {
   vendor_id: string;
   vendor_name: string;
   total_invoices: number;
@@ -27,9 +27,9 @@ export interface VendorPerformanceMetrics {
   payment_methods_used: string[];
   last_payment_date: string;
   risk_score: number; // 1-10, onde 10 é maior risco
-}
+};
 
-export interface CategoryExpenseReport {
+export type CategoryExpenseReport = {
   category_id: string;
   category_name: string;
   parent_category_name?: string;
@@ -43,9 +43,9 @@ export interface CategoryExpenseReport {
   invoice_count: number;
   avg_invoice_amount: number;
   trend: 'up' | 'down' | 'stable';
-}
+};
 
-export interface BudgetTrackingReport {
+export type BudgetTrackingReport = {
   period: string; // YYYY-MM
   total_budget: number;
   total_spent: number;
@@ -67,9 +67,9 @@ export interface BudgetTrackingReport {
     message: string;
     amount: number;
   }[];
-}
+};
 
-export interface CashFlowProjection {
+export type CashFlowProjection = {
   date: string;
   period_type: 'daily' | 'weekly' | 'monthly';
   opening_balance: number;
@@ -84,9 +84,9 @@ export interface CashFlowProjection {
     realistic: number;
     pessimistic: number;
   };
-}
+};
 
-export interface FinancialSummaryMetrics {
+export type FinancialSummaryMetrics = {
   total_payables: number;
   total_overdue: number;
   total_current: number;
@@ -97,7 +97,7 @@ export interface FinancialSummaryMetrics {
   discount_opportunities: number;
   cost_savings_ytd: number;
   top_vendor_concentration: number; // % do top vendor no total
-}
+};
 
 export class FinancialReportsService {
   private supabase: any;
@@ -159,8 +159,7 @@ export class FinancialReportsService {
       ];
 
       return mockAgingData.sort((a, b) => b.total_amount - a.total_amount);
-    } catch (error) {
-      console.error('Error generating aging report:', error);
+    } catch (_error) {
       return [];
     }
   }
@@ -221,8 +220,7 @@ export class FinancialReportsService {
       ];
 
       return mockPerformanceData.sort((a, b) => a.risk_score - b.risk_score);
-    } catch (error) {
-      console.error('Error generating vendor performance report:', error);
+    } catch (_error) {
       return [];
     }
   }
@@ -297,8 +295,7 @@ export class FinancialReportsService {
       ];
 
       return mockCategoryData.sort((a, b) => b.current_month - a.current_month);
-    } catch (error) {
-      console.error('Error generating category expense report:', error);
+    } catch (_error) {
       return [];
     }
   }
@@ -308,68 +305,62 @@ export class FinancialReportsService {
     _clinicId: string,
     period: string
   ): Promise<BudgetTrackingReport> {
-    try {
-      const _supabase = await this.getSupabaseClient();
+    const _supabase = await this.getSupabaseClient();
 
-      // Mock implementation
-      const mockBudgetReport: BudgetTrackingReport = {
-        period,
-        total_budget: 600_000,
-        total_spent: 465_000,
-        total_committed: 85_000,
-        remaining_budget: 50_000,
-        budget_utilization_percentage: 91.7,
-        categories: [
-          {
-            category_name: 'Equipamentos Médicos',
-            budgeted: 300_000,
-            spent: 280_000,
-            committed: 15_000,
-            remaining: 5000,
-            variance: -295_000,
-            utilization_percentage: 98.3,
-          },
-          {
-            category_name: 'Material de Consumo',
-            budgeted: 180_000,
-            spent: 145_000,
-            committed: 25_000,
-            remaining: 10_000,
-            variance: -170_000,
-            utilization_percentage: 94.4,
-          },
-          {
-            category_name: 'Serviços Terceirizados',
-            budgeted: 120_000,
-            spent: 84_000,
-            committed: 15_000,
-            remaining: 21_000,
-            variance: -99_000,
-            utilization_percentage: 82.5,
-          },
-        ],
-        alerts: [
-          {
-            type: 'near_limit',
-            category: 'Equipamentos Médicos',
-            message:
-              'Categoria próxima do limite orçamentário (98.3% utilizado)',
-            amount: 295_000,
-          },
-          {
-            type: 'over_budget',
-            category: 'Material de Consumo',
-            message: 'Gastos aprovados excedem orçamento em R$ 5.000',
-            amount: 5000,
-          },
-        ],
-      };
+    // Mock implementation
+    const mockBudgetReport: BudgetTrackingReport = {
+      period,
+      total_budget: 600_000,
+      total_spent: 465_000,
+      total_committed: 85_000,
+      remaining_budget: 50_000,
+      budget_utilization_percentage: 91.7,
+      categories: [
+        {
+          category_name: 'Equipamentos Médicos',
+          budgeted: 300_000,
+          spent: 280_000,
+          committed: 15_000,
+          remaining: 5000,
+          variance: -295_000,
+          utilization_percentage: 98.3,
+        },
+        {
+          category_name: 'Material de Consumo',
+          budgeted: 180_000,
+          spent: 145_000,
+          committed: 25_000,
+          remaining: 10_000,
+          variance: -170_000,
+          utilization_percentage: 94.4,
+        },
+        {
+          category_name: 'Serviços Terceirizados',
+          budgeted: 120_000,
+          spent: 84_000,
+          committed: 15_000,
+          remaining: 21_000,
+          variance: -99_000,
+          utilization_percentage: 82.5,
+        },
+      ],
+      alerts: [
+        {
+          type: 'near_limit',
+          category: 'Equipamentos Médicos',
+          message: 'Categoria próxima do limite orçamentário (98.3% utilizado)',
+          amount: 295_000,
+        },
+        {
+          type: 'over_budget',
+          category: 'Material de Consumo',
+          message: 'Gastos aprovados excedem orçamento em R$ 5.000',
+          amount: 5000,
+        },
+      ],
+    };
 
-      return mockBudgetReport;
-    } catch (error) {
-      console.error('Error generating budget tracking report:', error);
-      throw error;
-    }
+    return mockBudgetReport;
   }
 
   // Projeção de Fluxo de Caixa
@@ -420,8 +411,7 @@ export class FinancialReportsService {
       }
 
       return projections;
-    } catch (error) {
-      console.error('Error generating cash flow projection:', error);
+    } catch (_error) {
       return [];
     }
   }
@@ -430,28 +420,23 @@ export class FinancialReportsService {
   async getFinancialSummary(
     _clinicId: string
   ): Promise<FinancialSummaryMetrics> {
-    try {
-      const _supabase = await this.getSupabaseClient();
+    const _supabase = await this.getSupabaseClient();
 
-      // Mock implementation
-      const summary: FinancialSummaryMetrics = {
-        total_payables: 485_000,
-        total_overdue: 45_000,
-        total_current: 440_000,
-        avg_payment_period: 28.5,
-        vendor_count: 45,
-        active_vendors: 32,
-        payment_velocity: 12.3,
-        discount_opportunities: 8500,
-        cost_savings_ytd: 24_500,
-        top_vendor_concentration: 31.2,
-      };
+    // Mock implementation
+    const summary: FinancialSummaryMetrics = {
+      total_payables: 485_000,
+      total_overdue: 45_000,
+      total_current: 440_000,
+      avg_payment_period: 28.5,
+      vendor_count: 45,
+      active_vendors: 32,
+      payment_velocity: 12.3,
+      discount_opportunities: 8500,
+      cost_savings_ytd: 24_500,
+      top_vendor_concentration: 31.2,
+    };
 
-      return summary;
-    } catch (error) {
-      console.error('Error generating financial summary:', error);
-      throw error;
-    }
+    return summary;
   }
 
   // Utilitários para formatação

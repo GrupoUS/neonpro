@@ -7,7 +7,7 @@ import type {
   InventoryBudget,
 } from '@/app/types/budget-approval';
 
-interface UseBudgetApprovalReturn {
+type UseBudgetApprovalReturn = {
   // Budget Management
   budgets: InventoryBudget[];
   currentBudget: InventoryBudget | null;
@@ -49,7 +49,7 @@ interface UseBudgetApprovalReturn {
   // Refresh
   refreshBudgets: () => Promise<void>;
   refreshApprovals: () => Promise<void>;
-}
+};
 
 export function useBudgetApproval(): UseBudgetApprovalReturn {
   const [budgets, setBudgets] = useState<InventoryBudget[]>([]);
@@ -81,8 +81,7 @@ export function useBudgetApproval(): UseBudgetApprovalReturn {
         const data = await response.json();
         setBudgets(data.budgets || []);
       }
-    } catch (error) {
-      console.error('Error fetching budgets:', error);
+    } catch (_error) {
     } finally {
       setBudgetLoading(false);
     }
@@ -96,27 +95,21 @@ export function useBudgetApproval(): UseBudgetApprovalReturn {
         const data = await response.json();
         setApprovals(data.approvals || []);
       }
-    } catch (error) {
-      console.error('Error fetching approvals:', error);
+    } catch (_error) {
     } finally {
       setApprovalLoading(false);
     }
   };
 
   const createBudget = async (budgetData: Partial<InventoryBudget>) => {
-    try {
-      const response = await fetch('/api/inventory/budget', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(budgetData),
-      });
+    const response = await fetch('/api/inventory/budget', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(budgetData),
+    });
 
-      if (response.ok) {
-        await fetchBudgets();
-      }
-    } catch (error) {
-      console.error('Error creating budget:', error);
-      throw error;
+    if (response.ok) {
+      await fetchBudgets();
     }
   };
 
@@ -124,53 +117,38 @@ export function useBudgetApproval(): UseBudgetApprovalReturn {
     budgetId: string,
     updates: Partial<InventoryBudget>
   ) => {
-    try {
-      const response = await fetch(`/api/inventory/budget/${budgetId}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(updates),
-      });
+    const response = await fetch(`/api/inventory/budget/${budgetId}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(updates),
+    });
 
-      if (response.ok) {
-        await fetchBudgets();
-      }
-    } catch (error) {
-      console.error('Error updating budget:', error);
-      throw error;
+    if (response.ok) {
+      await fetchBudgets();
     }
   };
 
   const deleteBudget = async (budgetId: string) => {
-    try {
-      const response = await fetch(`/api/inventory/budget/${budgetId}`, {
-        method: 'DELETE',
-      });
+    const response = await fetch(`/api/inventory/budget/${budgetId}`, {
+      method: 'DELETE',
+    });
 
-      if (response.ok) {
-        await fetchBudgets();
-      }
-    } catch (error) {
-      console.error('Error deleting budget:', error);
-      throw error;
+    if (response.ok) {
+      await fetchBudgets();
     }
   };
 
   const createApproval = async (
     approvalData: Partial<CreateApprovalRequest>
   ) => {
-    try {
-      const response = await fetch('/api/inventory/approvals', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(approvalData),
-      });
+    const response = await fetch('/api/inventory/approvals', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(approvalData),
+    });
 
-      if (response.ok) {
-        await fetchApprovals();
-      }
-    } catch (error) {
-      console.error('Error creating approval:', error);
-      throw error;
+    if (response.ok) {
+      await fetchApprovals();
     }
   };
 
@@ -179,73 +157,53 @@ export function useBudgetApproval(): UseBudgetApprovalReturn {
     action: 'approve' | 'reject' | 'request_changes',
     comments?: string
   ) => {
-    try {
-      const response = await fetch(
-        `/api/inventory/approvals/${approvalId}/${action}`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ comments }),
-        }
-      );
-
-      if (response.ok) {
-        await fetchApprovals();
+    const response = await fetch(
+      `/api/inventory/approvals/${approvalId}/${action}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ comments }),
       }
-    } catch (error) {
-      console.error('Error processing approval:', error);
-      throw error;
+    );
+
+    if (response.ok) {
+      await fetchApprovals();
     }
   };
 
   const generateOptimizationRecommendations = async (budgetIds: string[]) => {
-    try {
-      const response = await fetch('/api/inventory/budget/optimize', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ budget_ids: budgetIds }),
-      });
+    const response = await fetch('/api/inventory/budget/optimize', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ budget_ids: budgetIds }),
+    });
 
-      if (response.ok) {
-        const data = await response.json();
-        setRecommendations(data.recommendations || []);
-      }
-    } catch (error) {
-      console.error('Error generating recommendations:', error);
-      throw error;
+    if (response.ok) {
+      const data = await response.json();
+      setRecommendations(data.recommendations || []);
     }
   };
 
   const generateForecast = async (budgetId: string, periods = 12) => {
-    try {
-      const response = await fetch(
-        `/api/inventory/budget/optimize?budgetId=${budgetId}&period=${periods}`
-      );
+    const response = await fetch(
+      `/api/inventory/budget/optimize?budgetId=${budgetId}&period=${periods}`
+    );
 
-      if (response.ok) {
-        const data = await response.json();
-        setForecasts(data.forecasts || []);
-      }
-    } catch (error) {
-      console.error('Error generating forecast:', error);
-      throw error;
+    if (response.ok) {
+      const data = await response.json();
+      setForecasts(data.forecasts || []);
     }
   };
 
   const validateBudget = async (_budgetId: string) => {
-    try {
-      // This would need a separate validation endpoint
-      // For now, we'll simulate the validation
-      setValidationResult({
-        is_valid: true,
-        errors: [],
-        warnings: [],
-        recommendations: [],
-      });
-    } catch (error) {
-      console.error('Error validating budget:', error);
-      throw error;
-    }
+    // This would need a separate validation endpoint
+    // For now, we'll simulate the validation
+    setValidationResult({
+      is_valid: true,
+      errors: [],
+      warnings: [],
+      recommendations: [],
+    });
   };
 
   useEffect(() => {

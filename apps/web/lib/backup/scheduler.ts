@@ -21,7 +21,7 @@ import {
 /**
  * Interface para tarefas agendadas
  */
-interface ScheduledBackupTask {
+type ScheduledBackupTask = {
   id: string;
   configId: string;
   cronExpression: string;
@@ -32,7 +32,7 @@ interface ScheduledBackupTask {
   status: TaskStatus;
   retryCount: number;
   maxRetries: number;
-}
+};
 
 /**
  * Serviço de agendamento de backups
@@ -58,39 +58,30 @@ export class SchedulerService {
     if (this.isInitialized) {
       return;
     }
+    // Carregar configurações ativas
+    const { data: configs, error } = await this.supabase
+      .from('backup_configs')
+      .select('*')
+      .eq('enabled', true);
 
-    try {
-      // Carregar configurações ativas
-      const { data: configs, error } = await this.supabase
-        .from('backup_configs')
-        .select('*')
-        .eq('enabled', true);
-
-      if (error) {
-        throw error;
-      }
-
-      // Agendar cada configuração
-      for (const config of configs || []) {
-        await this.scheduleBackup(config as BackupConfig);
-      }
-
-      this.isInitialized = true;
-      console.log(
-        `Scheduler inicializado com ${this.scheduledTasks.size} tarefas`
-      );
-
-      await auditLogger.log({
-        action: 'SCHEDULER_INITIALIZED',
-        entityType: 'SYSTEM',
-        entityId: 'scheduler',
-        details: { tasksCount: this.scheduledTasks.size },
-        userId: 'system',
-      });
-    } catch (error) {
-      console.error('Erro ao inicializar scheduler:', error);
+    if (error) {
       throw error;
     }
+
+    // Agendar cada configuração
+    for (const config of configs || []) {
+      await this.scheduleBackup(config as BackupConfig);
+    }
+
+    this.isInitialized = true;
+
+    await auditLogger.log({
+      action: 'SCHEDULER_INITIALIZED',
+      entityType: 'SYSTEM',
+      entityId: 'scheduler',
+      details: { tasksCount: this.scheduledTasks.size },
+      userId: 'system',
+    });
   }
 
   /**
@@ -238,7 +229,6 @@ export class SchedulerService {
     const scheduledTask = this.scheduledTasks.get(configId);
 
     if (!scheduledTask) {
-      console.error(`Tarefa agendada não encontrada: ${configId}`);
       return;
     }
 
@@ -279,8 +269,6 @@ export class SchedulerService {
       // Falha
       scheduledTask.status = TaskStatus.FAILED;
       scheduledTask.retryCount++;
-
-      console.error(`Erro no backup agendado ${configId}:`, error);
 
       // Verificar se deve tentar novamente
       if (scheduledTask.retryCount < scheduledTask.maxRetries) {
@@ -364,8 +352,7 @@ export class SchedulerService {
       tomorrow.setHours(2, 0, 0, 0); // 2:00 AM
 
       return tomorrow;
-    } catch (error) {
-      console.error('Erro ao calcular próxima execução:', error);
+    } catch (_error) {
       // Fallback: próximo dia às 2:00 AM
       const tomorrow = new Date();
       tomorrow.setDate(tomorrow.getDate() + 1);
@@ -543,11 +530,7 @@ export class SchedulerService {
         details: {},
         userId: 'system',
       });
-
-      console.log('Scheduler finalizado');
-    } catch (error) {
-      console.error('Erro ao finalizar scheduler:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -635,7 +618,6 @@ export class SchedulerService {
   }
 
   private handleError(message: string, error: any): ApiResponse {
-    console.error(message, error);
     return {
       success: false,
       error: error.message || 'Erro interno do servidor',

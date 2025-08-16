@@ -38,7 +38,7 @@ import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 // Interfaces para tipagem
-interface CashFlowData {
+type CashFlowData = {
   id: string;
   date: string;
   clinic_id: string;
@@ -49,9 +49,9 @@ interface CashFlowData {
   prediction_accuracy?: number;
   created_at: string;
   updated_at: string;
-}
+};
 
-interface FinancialMetrics {
+type FinancialMetrics = {
   daily_revenue: number;
   monthly_revenue: number;
   annual_revenue: number;
@@ -62,20 +62,20 @@ interface FinancialMetrics {
   profit_margin: number;
   break_even_point: number;
   growth_rate: number;
-}
+};
 
-interface Alert {
+type Alert = {
   id: string;
   type: 'warning' | 'critical' | 'info';
   message: string;
   timestamp: string;
   resolved: boolean;
-}
+};
 
-interface FinancialAnalyticsDashboardProps {
+type FinancialAnalyticsDashboardProps = {
   clinicId: string;
   className?: string;
-}
+};
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8'];
 
@@ -134,7 +134,6 @@ export function FinancialAnalyticsDashboard({
       setError(
         err instanceof Error ? err.message : 'Failed to load financial data'
       );
-      console.error('Financial data fetch error:', err);
     } finally {
       setLoading(false);
       setRefreshing(false);

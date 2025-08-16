@@ -27,12 +27,10 @@ export async function POST(request: NextRequest) {
 
     // Get webhook payload
     const payload = await request.json();
-    console.log(`Received ${provider} webhook:`, payload);
 
     // Verify webhook authenticity (implementation depends on provider)
     const isValid = await verifyWebhookSignature(provider, request, payload);
     if (!isValid) {
-      console.warn(`Invalid webhook signature for provider: ${provider}`);
       return NextResponse.json(
         {
           success: false,
@@ -62,8 +60,6 @@ export async function POST(request: NextRequest) {
       { status: 200 }
     );
   } catch (error) {
-    console.error('SMS webhook error:', error);
-
     return NextResponse.json(
       {
         success: false,
@@ -108,13 +104,9 @@ async function verifyWebhookSignature(
         return verifyMovileSignature(headersList, payload);
 
       default:
-        console.warn(
-          `Webhook signature verification not implemented for provider: ${provider}`
-        );
         return true; // Allow for custom providers without verification
     }
-  } catch (error) {
-    console.error(`Error verifying ${provider} webhook signature:`, error);
+  } catch (_error) {
     return false;
   }
 }

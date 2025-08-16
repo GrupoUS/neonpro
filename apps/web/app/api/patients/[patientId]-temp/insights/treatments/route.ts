@@ -48,8 +48,7 @@ export async function GET(
       success: true,
       data: treatmentRecommendations,
     });
-  } catch (error) {
-    console.error('Treatment recommendations API error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to generate treatment recommendations' },
       { status: 500 }
@@ -110,8 +109,7 @@ export async function POST(
       success: true,
       data: response,
     });
-  } catch (error) {
-    console.error('Treatment recommendations POST API error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to generate comprehensive treatment recommendations' },
       { status: 500 }

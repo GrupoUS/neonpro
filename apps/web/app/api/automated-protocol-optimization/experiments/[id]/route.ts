@@ -48,7 +48,6 @@ export async function PUT(
       message: 'Protocol experiment updated successfully',
     });
   } catch (error) {
-    console.error('Error updating protocol experiment:', error);
     return NextResponse.json(
       {
         success: false,

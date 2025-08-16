@@ -73,7 +73,7 @@ import { cn } from '@/lib/utils';
 // TYPES AND INTERFACES
 // ============================================================================
 
-interface ExportDashboardProps {
+type ExportDashboardProps = {
   className?: string;
   defaultDateRange?: {
     startDate: Date;
@@ -81,9 +81,9 @@ interface ExportDashboardProps {
   };
   onExportComplete?: (response: ExportResponse) => void;
   onExportError?: (error: any) => void;
-}
+};
 
-interface ActiveExport {
+type ActiveExport = {
   id: string;
   config: ExportConfig;
   status: 'pending' | 'processing' | 'completed' | 'failed' | 'cancelled';
@@ -101,9 +101,9 @@ interface ActiveExport {
     code: string;
     message: string;
   };
-}
+};
 
-interface ExportFormData {
+type ExportFormData = {
   format: ExportFormat;
   reportType: ReportType;
   dateRange: {
@@ -127,7 +127,7 @@ interface ExportFormData {
   csvOptions: CSVExportOptions;
   notifyOnComplete: boolean;
   email?: string;
-}
+};
 
 // ============================================================================
 // MAIN COMPONENT
@@ -276,7 +276,6 @@ export function ExportDashboard({
         description: `Estimated completion time: ${result.estimatedCompletionTime} seconds`,
       });
     } catch (error) {
-      console.error('Export creation failed:', error);
       toast.error('Failed to create export', {
         description:
           error instanceof Error ? error.message : 'Unknown error occurred',
@@ -348,9 +347,7 @@ export function ExportDashboard({
           return exp;
         })
       );
-    } catch (error) {
-      console.error('Failed to poll export status:', error);
-    }
+    } catch (_error) {}
   }, [activeExports, onExportComplete]);
 
   const loadExportHistory = useCallback(async () => {
@@ -370,9 +367,7 @@ export function ExportDashboard({
           }))
         );
       }
-    } catch (error) {
-      console.error('Failed to load export history:', error);
-    }
+    } catch (_error) {}
   }, []);
 
   const cancelExport = useCallback(async (exportId: string) => {
@@ -389,8 +384,7 @@ export function ExportDashboard({
         );
         toast.success('Export cancelled successfully');
       }
-    } catch (error) {
-      console.error('Failed to cancel export:', error);
+    } catch (_error) {
       toast.error('Failed to cancel export');
     }
   }, []);
@@ -409,8 +403,7 @@ export function ExportDashboard({
       document.body.removeChild(link);
 
       toast.success('Download started');
-    } catch (error) {
-      console.error('Download failed:', error);
+    } catch (_error) {
       toast.error('Failed to download file');
     }
   }, []);

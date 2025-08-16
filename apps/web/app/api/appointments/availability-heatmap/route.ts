@@ -7,7 +7,7 @@ import { createClient } from '@/app/utils/supabase/server';
 // Story 1.2: Calendar availability visualization
 // =============================================
 
-interface ProfessionalSchedule {
+type ProfessionalSchedule = {
   day_of_week: number;
   is_available: boolean;
   start_time: string;
@@ -15,9 +15,9 @@ interface ProfessionalSchedule {
   break_start_time?: string;
   break_end_time?: string;
   max_appointments_per_hour?: number;
-}
+};
 
-interface AvailabilitySlot {
+type AvailabilitySlot = {
   time: string;
   available: boolean;
   conflicts: Array<{
@@ -29,9 +29,9 @@ interface AvailabilitySlot {
     used: number;
     maximum: number;
   };
-}
+};
 
-interface DayAvailability {
+type DayAvailability = {
   date: string;
   slots: AvailabilitySlot[];
   summary: {
@@ -40,9 +40,9 @@ interface DayAvailability {
     blocked_slots: number;
     warning_slots: number;
   };
-}
+};
 
-interface HeatMapResponse {
+type HeatMapResponse = {
   days: DayAvailability[];
   period: {
     start_date: string;
@@ -52,7 +52,7 @@ interface HeatMapResponse {
     id: string;
     name: string;
   };
-}
+};
 
 export async function GET(request: NextRequest) {
   try {
@@ -139,8 +139,7 @@ export async function GET(request: NextRequest) {
     };
 
     return NextResponse.json(response);
-  } catch (error) {
-    console.error('Error in availability-heatmap API:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -160,7 +159,6 @@ async function getProfessionalSchedule(
     .eq('clinic_id', clinicId);
 
   if (error) {
-    console.error('Error fetching professional schedule:', error);
     return [];
   }
 
@@ -184,7 +182,6 @@ async function getExistingAppointments(
     .lte('start_time', endDate.toISOString());
 
   if (error) {
-    console.error('Error fetching existing appointments:', error);
     return [];
   }
 
@@ -205,8 +202,6 @@ async function getServiceRules(
     .single();
 
   if (error && error.code !== 'PGRST116') {
-    // Not found is OK
-    console.error('Error fetching service rules:', error);
   }
 
   return data;
@@ -231,7 +226,6 @@ async function getClinicHolidays(
     );
 
   if (error) {
-    console.error('Error fetching clinic holidays:', error);
     return [];
   }
 

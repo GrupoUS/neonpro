@@ -9,11 +9,11 @@ import { SupplierManagementService } from '@/app/lib/services/supplier-managemen
 
 const supplierService = new SupplierManagementService();
 
-interface RouteParams {
+type RouteParams = {
   params: {
     id: string;
   };
-}
+};
 
 // =====================================================================================
 // PUT /api/suppliers/quality-issues/[id] - Update quality issue
@@ -34,8 +34,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     );
 
     return NextResponse.json(issue);
-  } catch (error) {
-    console.error('Erro ao atualizar issue:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
       { status: 500 }

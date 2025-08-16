@@ -29,7 +29,6 @@ export async function GET(request: NextRequest) {
         .single();
 
       if (error) {
-        console.error('Error fetching dashboard config:', error);
         return NextResponse.json(
           { error: 'Failed to fetch dashboard config' },
           { status: 500 }
@@ -53,7 +52,6 @@ export async function GET(request: NextRequest) {
       .order('created_at', { ascending: false });
 
     if (error) {
-      console.error('Error fetching dashboard configs:', error);
       return NextResponse.json(
         { error: 'Failed to fetch dashboard configs' },
         { status: 500 }
@@ -61,8 +59,7 @@ export async function GET(request: NextRequest) {
     }
 
     return NextResponse.json(data || []);
-  } catch (error) {
-    console.error('Dashboard config GET error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -96,7 +93,6 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (error) {
-      console.error('Error creating dashboard config:', error);
       return NextResponse.json(
         { error: 'Failed to create dashboard config' },
         { status: 500 }
@@ -104,8 +100,7 @@ export async function POST(request: NextRequest) {
     }
 
     return NextResponse.json(data, { status: 201 });
-  } catch (error) {
-    console.error('Dashboard config POST error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Invalid request data' },
       { status: 400 }
@@ -137,7 +132,6 @@ export async function PUT(request: NextRequest) {
       .single();
 
     if (error) {
-      console.error('Error updating dashboard config:', error);
       return NextResponse.json(
         { error: 'Failed to update dashboard config' },
         { status: 500 }
@@ -152,8 +146,7 @@ export async function PUT(request: NextRequest) {
     }
 
     return NextResponse.json(data);
-  } catch (error) {
-    console.error('Dashboard config PUT error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Invalid request data' },
       { status: 400 }
@@ -189,7 +182,6 @@ export async function DELETE(request: NextRequest) {
       .eq('user_id', user.id);
 
     if (error) {
-      console.error('Error deleting dashboard config:', error);
       return NextResponse.json(
         { error: 'Failed to delete dashboard config' },
         { status: 500 }
@@ -199,8 +191,7 @@ export async function DELETE(request: NextRequest) {
     return NextResponse.json({
       message: 'Dashboard config deleted successfully',
     });
-  } catch (error) {
-    console.error('Dashboard config DELETE error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

@@ -55,8 +55,7 @@ export async function GET(
     }
 
     return NextResponse.json(result);
-  } catch (error) {
-    console.error('Erro ao buscar configuração de backup:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
       { status: 500 }
@@ -102,8 +101,6 @@ export async function GET(
         { status: 400 }
       );
     }
-
-    console.error('Erro ao atualizar configuração de backup:', error);
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
       { status: 500 }
@@ -134,8 +131,7 @@ export async function DELETE(
     return NextResponse.json(result, {
       status: result.success ? 200 : 400,
     });
-  } catch (error) {
-    console.error('Erro ao remover configuração de backup:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
       { status: 500 }

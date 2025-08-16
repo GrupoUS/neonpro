@@ -8,7 +8,7 @@ import type { Database } from '@/types/database';
 import type { RiskFactor, RiskFactorCategory } from './no-show-prediction';
 
 // Risk scoring configuration
-export interface RiskScoringConfig {
+export type RiskScoringConfig = {
   weights: Record<RiskFactorCategory, number>;
   thresholds: {
     low: number;
@@ -22,10 +22,10 @@ export interface RiskScoringConfig {
     behaviorDecay: number; // Behavior pattern decay
   };
   minimumDataPoints: number; // Minimum appointments needed for reliable scoring
-}
+};
 
 // Comprehensive patient risk profile
-export interface PatientRiskProfile {
+export type PatientRiskProfile = {
   patientId: string;
   overallRiskScore: number;
   riskLevel: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
@@ -60,10 +60,10 @@ export interface PatientRiskProfile {
   // Recommendations
   recommendedInterventions: string[];
   appointmentRecommendations: AppointmentRecommendation[];
-}
+};
 
 // Intervention outcome tracking
-export interface InterventionOutcome {
+export type InterventionOutcome = {
   interventionId: string;
   type: string;
   executedAt: Date;
@@ -72,10 +72,10 @@ export interface InterventionOutcome {
   effectivenessScore: number;
   costImpact: number;
   patientFeedback?: string;
-}
+};
 
 // Appointment recommendations based on risk analysis
-export interface AppointmentRecommendation {
+export type AppointmentRecommendation = {
   type:
     | 'TIME_SLOT'
     | 'DAY_OF_WEEK'
@@ -86,10 +86,10 @@ export interface AppointmentRecommendation {
   expectedImpact: number;
   confidence: number;
   reasoning: string;
-}
+};
 
 // Demographic risk factors
-export interface DemographicRiskFactors {
+export type DemographicRiskFactors = {
   ageGroup: string;
   distanceFromClinic: number;
   socioeconomicIndicators: Record<string, number>;
@@ -98,7 +98,7 @@ export interface DemographicRiskFactors {
   familySupport: 'HIGH' | 'MEDIUM' | 'LOW' | 'UNKNOWN';
   employmentStatus: string;
   insuranceType: string;
-}
+};
 
 // Main risk scoring engine class
 export class RiskScoringEngine {
@@ -224,8 +224,7 @@ export class RiskScoringEngine {
         recommendedInterventions,
         appointmentRecommendations,
       };
-    } catch (error) {
-      console.error('Error generating risk profile:', error);
+    } catch (_error) {
       throw new Error('Failed to generate patient risk profile');
     }
   }
@@ -961,14 +960,9 @@ export class RiskScoringEngine {
    * Update risk profile with new appointment outcome
    */
   async updateRiskProfile(
-    patientId: string,
-    appointmentOutcome: 'ATTENDED' | 'NO_SHOW' | 'CANCELLED' | 'RESCHEDULED'
-  ): Promise<void> {
-    // Implementation for updating risk profile based on new data
-    console.log(
-      `Updating risk profile for patient ${patientId} with outcome: ${appointmentOutcome}`
-    );
-  }
+    _patientId: string,
+    _appointmentOutcome: 'ATTENDED' | 'NO_SHOW' | 'CANCELLED' | 'RESCHEDULED'
+  ): Promise<void> {}
 
   /**
    * Get risk scoring configuration

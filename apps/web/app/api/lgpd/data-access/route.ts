@@ -49,7 +49,7 @@ const DataAccessRequestSchema = z.object({
   anonymizeThirdParty: z.boolean().default(true),
 });
 
-interface UserDataExport {
+type UserDataExport = {
   exportId: string;
   userId: string;
   exportDate: string;
@@ -69,7 +69,7 @@ interface UserDataExport {
       totalRecords: number;
     };
   };
-}
+};
 
 // Rate limiting helper
 function checkRateLimit(userId: string): boolean {
@@ -123,7 +123,6 @@ async function extractUserProfile(supabase: any, userId: string) {
     .single();
 
   if (error) {
-    console.error('Error extracting user profile:', error);
     return null;
   }
 
@@ -171,7 +170,6 @@ async function extractUserAppointments(
   });
 
   if (error) {
-    console.error('Error extracting appointments:', error);
     return [];
   }
 
@@ -221,7 +219,6 @@ async function extractUserTreatments(
   const { data, error } = await query.order('start_date', { ascending: false });
 
   if (error) {
-    console.error('Error extracting treatments:', error);
     return [];
   }
 
@@ -269,7 +266,6 @@ async function extractUserPayments(
   });
 
   if (error) {
-    console.error('Error extracting payments:', error);
     return [];
   }
 
@@ -303,7 +299,6 @@ async function extractUserCommunications(
     .order('sent_at', { ascending: false });
 
   if (error) {
-    console.error('Error extracting communications:', error);
     return [];
   }
 
@@ -343,7 +338,6 @@ async function extractUserPreferences(supabase: any, userId: string) {
     .single();
 
   if (error) {
-    console.error('Error extracting preferences:', error);
     return null;
   }
 
@@ -448,9 +442,7 @@ async function logDataAccessRequest(
         created_at: new Date().toISOString(),
       },
     ]);
-  } catch (error) {
-    console.error('Failed to log data access request:', error);
-  }
+  } catch (_error) {}
 }
 
 export async function POST(request: NextRequest) {
@@ -579,8 +571,6 @@ export async function POST(request: NextRequest) {
         return NextResponse.json(exportData);
     }
   } catch (error) {
-    console.error('LGPD Data Access Error:', error);
-
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {
@@ -624,7 +614,6 @@ export async function GET(_request: NextRequest) {
       .limit(10);
 
     if (error) {
-      console.error('Error fetching access history:', error);
       return NextResponse.json(
         { error: 'Failed to fetch access history' },
         { status: 500 }
@@ -671,8 +660,7 @@ export async function GET(_request: NextRequest) {
         },
       },
     });
-  } catch (error) {
-    console.error('LGPD Data Access GET Error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

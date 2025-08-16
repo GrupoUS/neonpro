@@ -99,7 +99,7 @@ export interface StockAlertWithRelations extends StockAlert {
   config?: StockAlertConfig;
 }
 
-export interface StockPerformanceMetrics {
+export type StockPerformanceMetrics = {
   id: string;
   clinicId: string;
   metricDate: Date;
@@ -110,9 +110,9 @@ export interface StockPerformanceMetrics {
   wasteValue: number;
   wastePercentage: number;
   createdAt: Date;
-}
+};
 
-export interface StockDashboardData {
+export type StockDashboardData = {
   kpis: {
     totalValue: number;
     turnoverRate: number;
@@ -152,7 +152,7 @@ export interface StockDashboardData {
     actionable: boolean;
     productId?: string;
   }>;
-}
+};
 
 // ============================================================================
 // EVENT SOURCING TYPES (QA Recommendation: Event-driven architecture)
@@ -166,7 +166,7 @@ export type StockEventType =
   | 'STOCK_UPDATED'
   | 'REPORT_GENERATED';
 
-export interface StockEvent {
+export type StockEvent = {
   id: string;
   type: StockEventType;
   aggregateId: string;
@@ -176,13 +176,13 @@ export interface StockEvent {
   userId: string;
   clinicId: string;
   metadata?: Record<string, unknown>;
-}
+};
 
 // ============================================================================
 // API REQUEST/RESPONSE TYPES
 // ============================================================================
 
-export interface CreateAlertConfigRequest {
+export type CreateAlertConfigRequest = {
   productId?: string;
   categoryId?: string;
   alertType: 'low_stock' | 'expiring' | 'expired' | 'overstock';
@@ -190,20 +190,20 @@ export interface CreateAlertConfigRequest {
   thresholdUnit: 'quantity' | 'days' | 'percentage';
   severityLevel: 'low' | 'medium' | 'high' | 'critical';
   notificationChannels: ('in_app' | 'email' | 'whatsapp' | 'sms')[];
-}
+};
 
-export interface AcknowledgeAlertRequest {
+export type AcknowledgeAlertRequest = {
   alertId: string;
   note?: string;
-}
+};
 
-export interface ResolveAlertRequest {
+export type ResolveAlertRequest = {
   alertId: string;
   resolutionNote?: string;
   resolutionAction?: string;
-}
+};
 
-export interface GenerateReportRequest {
+export type GenerateReportRequest = {
   reportType: 'consumption' | 'expiration' | 'valuation' | 'performance';
   filters: {
     dateRange?: { start: Date; end: Date };
@@ -213,7 +213,7 @@ export interface GenerateReportRequest {
     costCenterId?: string;
   };
   format: 'json' | 'csv' | 'pdf' | 'excel';
-}
+};
 
 // ============================================================================
 // ERROR TYPES (QA Recommendation: Proper error handling)

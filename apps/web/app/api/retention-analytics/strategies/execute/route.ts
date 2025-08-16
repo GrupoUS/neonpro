@@ -220,7 +220,6 @@ export async function POST(request: NextRequest) {
       });
 
     if (logError) {
-      console.error('Failed to log strategy execution:', logError);
       // Don't fail the request for logging errors
     }
 
@@ -246,8 +245,6 @@ export async function POST(request: NextRequest) {
       timestamp: new Date().toISOString(),
     });
   } catch (error) {
-    console.error('Error executing retention strategy:', error);
-
     return NextResponse.json(
       {
         error: 'Internal server error',

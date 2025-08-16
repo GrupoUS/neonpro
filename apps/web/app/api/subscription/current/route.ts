@@ -94,8 +94,7 @@ export async function GET(_request: NextRequest) {
         },
       },
     });
-  } catch (error) {
-    console.error('Current subscription API error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -151,7 +150,6 @@ export async function PUT(request: NextRequest) {
       .single();
 
     if (error) {
-      console.error('Error updating subscription:', error);
       return NextResponse.json(
         { error: 'Failed to update subscription' },
         { status: 500 }
@@ -165,8 +163,7 @@ export async function PUT(request: NextRequest) {
         ? 'Assinatura será cancelada no final do período atual'
         : 'Configurações de assinatura atualizadas',
     });
-  } catch (error) {
-    console.error('Update subscription API error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -235,9 +232,7 @@ async function calculateUsageStats(supabase: any, subscription: any) {
     });
 
     await Promise.all(usagePromises);
-  } catch (error) {
-    console.error('Error calculating usage stats:', error);
-  }
+  } catch (_error) {}
 
   return stats;
 }

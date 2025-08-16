@@ -3,8 +3,6 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log('🌱 Iniciando seed do banco de dados...');
-
   // Criar tenants de exemplo
   const tenant1 = await prisma.tenant.upsert({
     where: { slug: 'clinica-bella-vita' },
@@ -120,16 +118,10 @@ async function main() {
       },
     ],
   });
-
-  console.log('✅ Seed concluído com sucesso!');
-  console.log(
-    `📊 Criados: ${await prisma.tenant.count()} tenants e ${await prisma.product.count()} produtos`
-  );
 }
 
 main()
-  .catch((e) => {
-    console.error('❌ Erro durante o seed:', e);
+  .catch((_e) => {
     process.exit(1);
   })
   .finally(async () => {

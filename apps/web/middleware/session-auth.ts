@@ -119,8 +119,6 @@ export class SessionAuthMiddleware {
 
       return response;
     } catch (error) {
-      console.error('Session middleware error:', error);
-
       // Log error as security event
       await this.logSecurityEvent('unknown', SecurityEventType.SYSTEM_ERROR, {
         error: error instanceof Error ? error.message : 'Unknown error',
@@ -220,9 +218,7 @@ export class SessionAuthMiddleware {
         details,
         timestamp: new Date().toISOString(),
       });
-    } catch (error) {
-      console.error('Failed to log security event:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -306,9 +302,7 @@ export class SessionAuthMiddleware {
           }
         );
       }
-    } catch (error) {
-      console.error('Error checking suspicious activity:', error);
-    }
+    } catch (_error) {}
   }
 
   /**

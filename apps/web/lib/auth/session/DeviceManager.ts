@@ -1009,9 +1009,7 @@ export class DeviceManager {
           await this.trustDevice(device.id, this.config.trustDuration);
         }
       }
-    } catch (error) {
-      console.error('Error checking auto-trust conditions:', error);
-    }
+    } catch (_error) {}
   }
 
   private isSameNetwork(ip1: string, ip2: string): boolean {

@@ -16,7 +16,7 @@ import type { Database } from '@/types/database';
 import { getConnectionPoolManager } from './connection-pool-manager';
 
 // Healthcare retry configuration
-interface HealthcareRetryConfig {
+type HealthcareRetryConfig = {
   maxAttempts: number;
   baseDelay: number;
   maxDelay: number;
@@ -25,7 +25,7 @@ interface HealthcareRetryConfig {
   circuitBreakerEnabled: boolean;
   healthCheckInterval: number;
   emergencyEscalationThreshold: number;
-}
+};
 
 // Circuit breaker states
 type CircuitBreakerState = 'closed' | 'open' | 'half-open';
@@ -34,7 +34,7 @@ type CircuitBreakerState = 'closed' | 'open' | 'half-open';
 type HealthcarePriority = 'emergency' | 'critical' | 'standard' | 'background';
 
 // Retry result with healthcare metrics
-interface RetryResult<T> {
+type RetryResult<T> = {
   data: T | null;
   success: boolean;
   attempts: number;
@@ -43,10 +43,10 @@ interface RetryResult<T> {
   circuitBreakerTriggered: boolean;
   patientSafetyEnsured: boolean;
   complianceValidated: boolean;
-}
+};
 
 // Healthcare-specific error classifications
-interface HealthcareErrorClassification {
+type HealthcareErrorClassification = {
   type:
     | 'connection'
     | 'authentication'
@@ -60,7 +60,7 @@ interface HealthcareErrorClassification {
   requiresImmediateEscalation: boolean;
   patientSafetyImpact: boolean;
   lgpdImplications: boolean;
-}
+};
 
 class HealthcareConnectionRetryManager {
   private static instance: HealthcareConnectionRetryManager;
@@ -240,15 +240,6 @@ class HealthcareConnectionRetryManager {
 
         // Check if error is retryable
         if (!errorClassification.isRetryable) {
-          console.warn(
-            `Non-retryable healthcare error on attempt ${attempts}:`,
-            {
-              error: error.message,
-              classification: errorClassification,
-              clinicId: options.clinicId,
-              patientId: options.patientId,
-            }
-          );
           break;
         }
 
@@ -258,17 +249,6 @@ class HealthcareConnectionRetryManager {
         // Don't wait after last attempt
         if (attempts < config.maxAttempts) {
           const delay = this.calculateDelay(attempts, config);
-
-          console.warn(
-            `Healthcare operation failed, retrying in ${delay}ms (attempt ${attempts}/${config.maxAttempts}):`,
-            {
-              error: error.message,
-              clinicId: options.clinicId,
-              operationType: options.operationType,
-              priority: options.priority,
-              patientSafetyImpact: errorClassification.patientSafetyImpact,
-            }
-          );
 
           await this.sleep(delay);
         }
@@ -470,7 +450,7 @@ class HealthcareConnectionRetryManager {
     attempt: number,
     classification: HealthcareErrorClassification
   ): Promise<void> {
-    const errorLog = {
+    const _errorLog = {
       timestamp: new Date().toISOString(),
       clinicId: options.clinicId,
       userId: options.userId,
@@ -490,16 +470,8 @@ class HealthcareConnectionRetryManager {
       },
     };
 
-    console.error('🏥 Healthcare Connection Error:', errorLog);
-
     // If LGPD implications, ensure audit trail
     if (classification.lgpdImplications) {
-      console.error('🔒 LGPD Compliance Alert: Patient data access error', {
-        clinicId: options.clinicId,
-        patientId: options.patientId,
-        error: error.message,
-        timestamp: new Date().toISOString(),
-      });
     }
   }
 
@@ -507,19 +479,10 @@ class HealthcareConnectionRetryManager {
    * Escalate emergency for critical errors
    */
   private async escalateEmergency(
-    error: Error,
-    options: any,
-    classification: HealthcareErrorClassification
+    _error: Error,
+    _options: any,
+    _classification: HealthcareErrorClassification
   ): Promise<void> {
-    console.error('🚨 HEALTHCARE EMERGENCY ESCALATION:', {
-      error: error.message,
-      classification,
-      clinicId: options.clinicId,
-      patientId: options.patientId,
-      timestamp: new Date().toISOString(),
-      action: 'IMMEDIATE_INTERVENTION_REQUIRED',
-    });
-
     // Additional escalation logic would go here
     // e.g., alert healthcare administrators, activate backup systems
   }
@@ -530,22 +493,10 @@ class HealthcareConnectionRetryManager {
   private async handleHealthcareFailure(
     error: Error,
     options: any,
-    attempts: number,
-    totalTime: number
+    _attempts: number,
+    _totalTime: number
   ): Promise<boolean> {
     const classification = this.classifyHealthcareError(error);
-
-    console.error('🏥 Healthcare Operation Failed:', {
-      finalError: error.message,
-      clinicId: options.clinicId,
-      patientId: options.patientId,
-      operationType: options.operationType,
-      priority: options.priority,
-      totalAttempts: attempts,
-      totalTime,
-      patientSafetyImpact: classification.patientSafetyImpact,
-      classification,
-    });
 
     // Implement patient safety protocols
     if (classification.patientSafetyImpact) {
@@ -560,19 +511,10 @@ class HealthcareConnectionRetryManager {
    * Activate patient safety protocols
    */
   private async activatePatientSafetyProtocols(
-    error: Error,
-    options: any,
-    classification: HealthcareErrorClassification
+    _error: Error,
+    _options: any,
+    _classification: HealthcareErrorClassification
   ): Promise<void> {
-    console.error('🛡️ PATIENT SAFETY PROTOCOLS ACTIVATED:', {
-      error: error.message,
-      clinicId: options.clinicId,
-      patientId: options.patientId,
-      classification,
-      timestamp: new Date().toISOString(),
-      protocols: ['ISOLATION', 'FALLBACK', 'ALERT'],
-    });
-
     // Implement specific safety protocols
     // 1. Isolate affected connections
     // 2. Activate fallback systems
@@ -590,20 +532,10 @@ class HealthcareConnectionRetryManager {
     try {
       // Implement LGPD compliance validation
       if (options.patientId) {
-        // Validate patient data access permissions
-        // Check consent status
-        // Verify audit trail requirements
-        console.log('🔍 LGPD Compliance Validated:', {
-          clinicId: options.clinicId,
-          patientId: options.patientId,
-          userId: options.userId,
-          timestamp: new Date().toISOString(),
-        });
       }
 
       return true;
-    } catch (error) {
-      console.error('❌ Healthcare compliance validation failed:', error);
+    } catch (_error) {
       return false;
     }
   }
@@ -672,14 +604,8 @@ class HealthcareConnectionRetryManager {
    * Monitor circuit breaker health
    */
   private monitorCircuitBreakers(): void {
-    for (const [key, breaker] of this.circuitBreakers) {
+    for (const [_key, breaker] of this.circuitBreakers) {
       if (breaker.state === 'open') {
-        console.warn('⚡ Healthcare Circuit Breaker Open:', {
-          key,
-          failures: breaker.failures,
-          lastFailure: breaker.lastFailure,
-          nextAttempt: breaker.nextAttempt,
-        });
       }
     }
   }
@@ -717,7 +643,6 @@ class HealthcareConnectionRetryManager {
       breaker.state = 'closed';
       breaker.failures = 0;
       this.circuitBreakers.set(key, breaker);
-      console.log(`🔄 Healthcare circuit breaker reset: ${key}`);
       return true;
     }
     return false;

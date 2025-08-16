@@ -49,9 +49,6 @@ export function withErrorMonitoring<T extends any[]>(
         }
       });
 
-      // Log for debugging
-      console.error('API Route Error:', error, requestInfo);
-
       // Return appropriate error response
       return NextResponse.json(
         {

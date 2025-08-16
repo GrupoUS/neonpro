@@ -113,9 +113,7 @@ export async function POST(request: NextRequest) {
       session: extendedSession,
       message: `Session extended by ${extendMinutes} minutes`,
     });
-  } catch (error) {
-    console.error('Session extension error:', error);
-
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error during session extension' },
       { status: 500 }

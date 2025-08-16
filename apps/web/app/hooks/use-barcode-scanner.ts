@@ -41,7 +41,6 @@ export function useBarcodeGeneration() {
       queryClient.invalidateQueries({ queryKey: ['inventory-items'] });
     },
     onError: (error) => {
-      console.error('Erro ao gerar barcode:', error);
       toast.error(`Falha ao gerar código: ${error.message}`);
     },
   });
@@ -142,7 +141,6 @@ export function useBulkScanning() {
       // You would fetch the operation details here in a real implementation
     },
     onError: (error) => {
-      console.error('Erro ao iniciar operação bulk:', error);
       toast.error(`Falha ao iniciar operação: ${error.message}`);
     },
   });
@@ -153,27 +151,21 @@ export function useBulkScanning() {
       scanValue: string,
       userId: string
     ): Promise<ScanResult> => {
-      try {
-        const result = await barcodeService.processBulkScan(
-          operationId,
-          scanValue,
-          userId
-        );
+      const result = await barcodeService.processBulkScan(
+        operationId,
+        scanValue,
+        userId
+      );
 
-        // Update progress
-        if (activeOperation) {
-          const newProgress =
-            ((activeOperation.scanned_items + 1) /
-              activeOperation.total_items) *
-            100;
-          setOperationProgress(newProgress);
-        }
-
-        return result;
-      } catch (error) {
-        console.error('Erro no bulk scan:', error);
-        throw error;
+      // Update progress
+      if (activeOperation) {
+        const newProgress =
+          ((activeOperation.scanned_items + 1) / activeOperation.total_items) *
+          100;
+        setOperationProgress(newProgress);
       }
+
+      return result;
     },
     [activeOperation]
   );
@@ -337,7 +329,6 @@ export function useQRCodeManager() {
       toast.success('QR Code gerado com sucesso!');
       return qrString;
     } catch (error) {
-      console.error('Erro ao gerar QR:', error);
       toast.error('Falha ao gerar QR Code');
       throw error;
     }
@@ -348,8 +339,7 @@ export function useQRCodeManager() {
       const parsed = JSON.parse(qrString);
       setQrData(parsed);
       return parsed;
-    } catch (error) {
-      console.error('Erro ao parsear QR:', error);
+    } catch (_error) {
       toast.error('QR Code inválido');
       return null;
     }
@@ -408,7 +398,6 @@ export function useLabelPrinting() {
           `Etiqueta enviada para impressão (${options.copies || 1} cópia(s))`
         );
       } catch (error) {
-        console.error('Erro na impressão:', error);
         toast.error(
           `Falha na impressão: ${error instanceof Error ? error.message : 'Erro desconhecido'}`
         );

@@ -71,8 +71,7 @@ export async function GET(request: NextRequest) {
     }
 
     return NextResponse.json({ kpiDefinitions });
-  } catch (error) {
-    console.error('Error fetching KPI definitions:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
       { status: 500 }
@@ -136,8 +135,6 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
-
-    console.error('Error calculating KPIs:', error);
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
       { status: 500 }

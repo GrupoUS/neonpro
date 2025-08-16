@@ -16,14 +16,14 @@ import type {
 /**
  * Tax calculation configuration
  */
-interface TaxCalculationConfig {
+type TaxCalculationConfig = {
   includeSimples: boolean;
   includeISS: boolean;
   includePISCOFINS: boolean;
   includeICMS: boolean;
   roundValues: boolean;
   precision: number;
-}
+};
 
 const DEFAULT_CONFIG: TaxCalculationConfig = {
   includeSimples: true,

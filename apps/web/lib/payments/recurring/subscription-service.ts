@@ -3,7 +3,7 @@ import { stripe } from '@/lib/stripe';
 import { createClient } from '@/lib/supabase/server';
 
 // Types for subscription management
-export interface SubscriptionPlan {
+export type SubscriptionPlan = {
   id: string;
   name: string;
   description: string;
@@ -14,18 +14,18 @@ export interface SubscriptionPlan {
   trialDays?: number;
   features: string[];
   isActive: boolean;
-}
+};
 
-export interface SubscriptionData {
+export type SubscriptionData = {
   patientId: string;
   planId: string;
   startDate: Date;
   trialEndDate?: Date;
   paymentMethodId: string;
   metadata?: Record<string, any>;
-}
+};
 
-export interface SubscriptionStatus {
+export type SubscriptionStatus = {
   id: string;
   status: 'active' | 'trialing' | 'past_due' | 'canceled' | 'unpaid';
   currentPeriodStart: Date;
@@ -38,9 +38,9 @@ export interface SubscriptionStatus {
     last4?: string;
     brand?: string;
   };
-}
+};
 
-export interface BillingCycle {
+export type BillingCycle = {
   subscriptionId: string;
   periodStart: Date;
   periodEnd: Date;
@@ -49,7 +49,7 @@ export interface BillingCycle {
   attemptCount: number;
   nextRetryDate?: Date;
   invoiceId?: string;
-}
+};
 
 /**
  * Subscription Service for managing recurring payments
@@ -63,109 +63,104 @@ export class SubscriptionService {
   async createSubscription(
     data: SubscriptionData
   ): Promise<SubscriptionStatus> {
-    try {
-      // Get subscription plan details
-      const { data: plan } = await this.supabase
-        .from('subscription_plans')
-        .select('*')
-        .eq('id', data.planId)
-        .eq('is_active', true)
-        .single();
+    // Get subscription plan details
+    const { data: plan } = await this.supabase
+      .from('subscription_plans')
+      .select('*')
+      .eq('id', data.planId)
+      .eq('is_active', true)
+      .single();
 
-      if (!plan) {
-        throw new Error('Subscription plan not found or inactive');
-      }
+    if (!plan) {
+      throw new Error('Subscription plan not found or inactive');
+    }
 
-      // Get patient details
-      const { data: patient } = await this.supabase
-        .from('patients')
-        .select('id, email, name')
-        .eq('id', data.patientId)
-        .single();
+    // Get patient details
+    const { data: patient } = await this.supabase
+      .from('patients')
+      .select('id, email, name')
+      .eq('id', data.patientId)
+      .single();
 
-      if (!patient) {
-        throw new Error('Patient not found');
-      }
+    if (!patient) {
+      throw new Error('Patient not found');
+    }
 
-      // Create Stripe customer if not exists
-      const stripeCustomerId = await this.getOrCreateStripeCustomer(patient);
+    // Create Stripe customer if not exists
+    const stripeCustomerId = await this.getOrCreateStripeCustomer(patient);
 
-      // Attach payment method to customer
-      await stripe.paymentMethods.attach(data.paymentMethodId, {
-        customer: stripeCustomerId,
-      });
+    // Attach payment method to customer
+    await stripe.paymentMethods.attach(data.paymentMethodId, {
+      customer: stripeCustomerId,
+    });
 
-      // Set as default payment method
-      await stripe.customers.update(stripeCustomerId, {
-        invoice_settings: {
-          default_payment_method: data.paymentMethodId,
-        },
-      });
+    // Set as default payment method
+    await stripe.customers.update(stripeCustomerId, {
+      invoice_settings: {
+        default_payment_method: data.paymentMethodId,
+      },
+    });
 
-      // Create Stripe subscription
-      const stripeSubscription = await stripe.subscriptions.create({
-        customer: stripeCustomerId,
-        items: [
-          {
-            price_data: {
-              currency: plan.currency,
-              product_data: {
-                name: plan.name,
-                description: plan.description,
-              },
-              unit_amount: plan.amount,
-              recurring: {
-                interval: plan.interval,
-                interval_count: plan.interval_count,
-              },
+    // Create Stripe subscription
+    const stripeSubscription = await stripe.subscriptions.create({
+      customer: stripeCustomerId,
+      items: [
+        {
+          price_data: {
+            currency: plan.currency,
+            product_data: {
+              name: plan.name,
+              description: plan.description,
+            },
+            unit_amount: plan.amount,
+            recurring: {
+              interval: plan.interval,
+              interval_count: plan.interval_count,
             },
           },
-        ],
-        trial_period_days: plan.trial_days || undefined,
-        default_payment_method: data.paymentMethodId,
-        metadata: {
-          patientId: data.patientId,
-          planId: data.planId,
-          ...data.metadata,
         },
-      });
+      ],
+      trial_period_days: plan.trial_days || undefined,
+      default_payment_method: data.paymentMethodId,
+      metadata: {
+        patientId: data.patientId,
+        planId: data.planId,
+        ...data.metadata,
+      },
+    });
 
-      // Save subscription to database
-      const { data: subscription, error } = await this.supabase
-        .from('subscriptions')
-        .insert({
-          id: stripeSubscription.id,
-          patient_id: data.patientId,
-          plan_id: data.planId,
-          stripe_customer_id: stripeCustomerId,
-          stripe_subscription_id: stripeSubscription.id,
-          status: stripeSubscription.status,
-          current_period_start: new Date(
-            stripeSubscription.current_period_start * 1000
-          ),
-          current_period_end: new Date(
-            stripeSubscription.current_period_end * 1000
-          ),
-          trial_end: stripeSubscription.trial_end
-            ? new Date(stripeSubscription.trial_end * 1000)
-            : null,
-          amount: plan.amount,
-          currency: plan.currency,
-          payment_method_id: data.paymentMethodId,
-          metadata: data.metadata,
-        })
-        .select()
-        .single();
+    // Save subscription to database
+    const { data: subscription, error } = await this.supabase
+      .from('subscriptions')
+      .insert({
+        id: stripeSubscription.id,
+        patient_id: data.patientId,
+        plan_id: data.planId,
+        stripe_customer_id: stripeCustomerId,
+        stripe_subscription_id: stripeSubscription.id,
+        status: stripeSubscription.status,
+        current_period_start: new Date(
+          stripeSubscription.current_period_start * 1000
+        ),
+        current_period_end: new Date(
+          stripeSubscription.current_period_end * 1000
+        ),
+        trial_end: stripeSubscription.trial_end
+          ? new Date(stripeSubscription.trial_end * 1000)
+          : null,
+        amount: plan.amount,
+        currency: plan.currency,
+        payment_method_id: data.paymentMethodId,
+        metadata: data.metadata,
+      })
+      .select()
+      .single();
 
-      if (error) {
-        throw new Error(`Failed to save subscription: ${error.message}`);
-      }
-
-      return this.formatSubscriptionStatus(subscription, stripeSubscription);
-    } catch (error) {
-      console.error('Subscription creation error:', error);
-      throw error;
+    if (error) {
+      throw new Error(`Failed to save subscription: ${error.message}`);
     }
+
+    return this.formatSubscriptionStatus(subscription, stripeSubscription);
   }
 
   /**
@@ -197,8 +192,7 @@ export class SubscriptionService {
       );
 
       return this.formatSubscriptionStatus(subscription, stripeSubscription);
-    } catch (error) {
-      console.error('Get subscription status error:', error);
+    } catch (_error) {
       return null;
     }
   }
@@ -242,8 +236,7 @@ export class SubscriptionService {
         .eq('id', subscriptionId);
 
       return true;
-    } catch (error) {
-      console.error('Cancel subscription error:', error);
+    } catch (_error) {
       return false;
     }
   }
@@ -325,8 +318,7 @@ export class SubscriptionService {
         updatedSubscription,
         updatedStripeSubscription
       );
-    } catch (error) {
-      console.error('Update subscription plan error:', error);
+    } catch (_error) {
       return null;
     }
   }
@@ -365,8 +357,7 @@ export class SubscriptionService {
       }
 
       return false;
-    } catch (error) {
-      console.error('Failed payment retry error:', error);
+    } catch (_error) {
       return false;
     }
   }

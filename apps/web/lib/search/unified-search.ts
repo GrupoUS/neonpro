@@ -21,13 +21,13 @@ export type {
   SearchType,
 } from './types';
 
-export interface SearchAction {
+export type SearchAction = {
   id: string;
   label: string;
   icon?: string;
   url?: string;
   handler?: string;
-}
+};
 
 export class UnifiedSearchSystem {
   private readonly duplicateDetection = new DuplicateDetectionSystem();
@@ -126,8 +126,7 @@ export class UnifiedSearchSystem {
         suggestions,
         facets: this.generateSearchFacets(allResults),
       };
-    } catch (error) {
-      console.error('Erro na busca unificada:', error);
+    } catch (_error) {
       throw new Error('Falha na execução da busca');
     }
   }
@@ -389,8 +388,7 @@ export class UnifiedSearchSystem {
       }
 
       return results.sort((a, b) => b.relevanceScore - a.relevanceScore);
-    } catch (error) {
-      console.error('Erro na busca de pacientes:', error);
+    } catch (_error) {
       return [];
     }
   }
@@ -452,8 +450,7 @@ export class UnifiedSearchSystem {
       }
 
       return results;
-    } catch (error) {
-      console.error('Erro na busca de eventos da timeline:', error);
+    } catch (_error) {
       return [];
     }
   }
@@ -502,8 +499,7 @@ export class UnifiedSearchSystem {
       }
 
       return results;
-    } catch (error) {
-      console.error('Erro na busca de insights:', error);
+    } catch (_error) {
       return [];
     }
   }
@@ -538,8 +534,7 @@ export class UnifiedSearchSystem {
       }
 
       return results;
-    } catch (error) {
-      console.error('Erro na busca de duplicatas:', error);
+    } catch (_error) {
       return [];
     }
   }
@@ -584,8 +579,7 @@ export class UnifiedSearchSystem {
       }
 
       return results;
-    } catch (error) {
-      console.error('Erro na busca de fotos:', error);
+    } catch (_error) {
       return [];
     }
   }
@@ -599,8 +593,7 @@ export class UnifiedSearchSystem {
     try {
       // Simular busca de registros médicos
       return [];
-    } catch (error) {
-      console.error('Erro na busca de registros médicos:', error);
+    } catch (_error) {
       return [];
     }
   }
@@ -614,8 +607,7 @@ export class UnifiedSearchSystem {
     try {
       // Simular busca de consultas
       return [];
-    } catch (error) {
-      console.error('Erro na busca de consultas:', error);
+    } catch (_error) {
       return [];
     }
   }
@@ -627,8 +619,7 @@ export class UnifiedSearchSystem {
     try {
       // Simular busca de documentos
       return [];
-    } catch (error) {
-      console.error('Erro na busca de documentos:', error);
+    } catch (_error) {
       return [];
     }
   }
@@ -768,16 +759,6 @@ export class UnifiedSearchSystem {
 
     // Add conversational context to response
     if (response.nlpAnalysis) {
-      // Log the search for future context
-      console.log(
-        `Conversational search by ${userId}: "${naturalLanguageQuery}"`
-      );
-      console.log(
-        `Intent: ${response.nlpAnalysis.intent.action} ${response.nlpAnalysis.intent.target}`
-      );
-      console.log(
-        `Entities: ${response.nlpAnalysis.entities.map((e) => `${e.type}:${e.value}`).join(', ')}`
-      );
     }
 
     return response;
@@ -825,8 +806,7 @@ export class UnifiedSearchSystem {
       };
 
       return await this.search(query);
-    } catch (error) {
-      console.error('Erro na busca avançada:', error);
+    } catch (_error) {
       throw new Error('Falha na busca avançada');
     }
   }
@@ -835,19 +815,15 @@ export class UnifiedSearchSystem {
    * Salva busca para uso futuro
    */
   async saveSearch(
-    name: string,
+    _name: string,
     _query: SearchQuery,
-    userId: string
+    _userId: string
   ): Promise<string> {
     try {
       const savedSearchId = `search_${Date.now()}`;
 
-      // Simular salvamento da busca
-      console.log(`Busca salva: ${name} por ${userId}`);
-
       return savedSearchId;
-    } catch (error) {
-      console.error('Erro ao salvar busca:', error);
+    } catch (_error) {
       throw new Error('Falha ao salvar busca');
     }
   }
@@ -888,8 +864,7 @@ export class UnifiedSearchSystem {
       };
 
       return stats;
-    } catch (error) {
-      console.error('Erro ao gerar estatísticas de busca:', error);
+    } catch (_error) {
       throw new Error('Falha na geração de estatísticas');
     }
   }

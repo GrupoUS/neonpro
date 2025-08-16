@@ -8,7 +8,7 @@ import { Badge } from './Badge';
 import { Button } from './Button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './Tabs';
 
-export interface PatientTab {
+export type PatientTab = {
   id: string;
   label: string;
   icon?: React.ReactNode;
@@ -17,9 +17,9 @@ export interface PatientTab {
     text: string;
     variant?: 'default' | 'confirmed' | 'pending' | 'cancelled' | 'destructive';
   };
-}
+};
 
-export interface PatientDetailLayoutProps {
+export type PatientDetailLayoutProps = {
   patient: PatientData;
   tabs: PatientTab[];
   activeTab?: string;
@@ -33,7 +33,7 @@ export interface PatientDetailLayoutProps {
   sidebarContent?: React.ReactNode;
   showSidebar?: boolean;
   className?: string;
-}
+};
 
 const PatientDetailLayout = React.forwardRef<
   HTMLDivElement,

@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
 
-interface Professional {
+type Professional = {
   id: string;
   name: string;
   email: string;
@@ -21,15 +21,15 @@ interface Professional {
   is_available: boolean;
   rating: number | null;
   location: string | null;
-}
+};
 
-interface ProfessionalSelectionProps {
+type ProfessionalSelectionProps = {
   serviceId: string;
   selectedProfessional: Professional | null;
   onProfessionalSelect: (professional: Professional | null) => void;
   allowAnyProfessional?: boolean;
   className?: string;
-}
+};
 
 export function ProfessionalSelection({
   serviceId,
@@ -65,8 +65,7 @@ export function ProfessionalSelection({
       }
 
       setProfessionals(data || []);
-    } catch (err) {
-      console.error('Error fetching professionals:', err);
+    } catch (_err) {
       setError('Erro ao carregar profissionais. Tente novamente.');
     } finally {
       setLoading(false);

@@ -1,23 +1,23 @@
 // lib/types/communication.ts
-export interface Message {
+export type Message = {
   id: string;
   content: string;
   sender_id: string;
   thread_id: string;
   created_at: string;
   updated_at?: string;
-}
+};
 
-export interface Thread {
+export type Thread = {
   id: string;
   title: string;
   created_at: string;
   updated_at: string;
   participants?: string[];
-}
+};
 
-export interface CommunicationError {
+export type CommunicationError = {
   code: string;
   message: string;
   details?: any;
-}
+};

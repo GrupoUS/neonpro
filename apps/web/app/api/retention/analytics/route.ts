@@ -45,7 +45,6 @@ export async function GET(request: NextRequest) {
       pagination: result.pagination,
     });
   } catch (error) {
-    console.error('Error in retention analytics GET:', error);
     return NextResponse.json(
       {
         success: false,
@@ -75,8 +74,6 @@ export async function POST(request: NextRequest) {
       { status: 201 }
     );
   } catch (error) {
-    console.error('Error in retention analytics POST:', error);
-
     if (error instanceof Error && error.name === 'ZodError') {
       return NextResponse.json(
         {

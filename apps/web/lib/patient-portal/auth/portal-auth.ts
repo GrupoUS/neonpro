@@ -5,7 +5,7 @@ import type { EncryptionService } from '../../security/encryption-service';
 import type { LGPDManager } from '../../security/lgpd-manager';
 
 // Types and Interfaces
-export interface PortalAuthConfig {
+export type PortalAuthConfig = {
   sessionDuration: number; // em minutos
   maxConcurrentSessions: number;
   requireTwoFactor: boolean;
@@ -18,9 +18,9 @@ export interface PortalAuthConfig {
     requireNumbers: boolean;
     requireSpecialChars: boolean;
   };
-}
+};
 
-export interface PortalSession {
+export type PortalSession = {
   id: string;
   patientId: string;
   sessionToken: string;
@@ -30,9 +30,9 @@ export interface PortalSession {
   userAgent: string;
   isActive: boolean;
   deviceFingerprint?: string;
-}
+};
 
-export interface AuthResult {
+export type AuthResult = {
   success: boolean;
   session?: PortalSession;
   patient?: {
@@ -45,16 +45,16 @@ export interface AuthResult {
   error?: string;
   requiresTwoFactor?: boolean;
   twoFactorToken?: string;
-}
+};
 
-export interface TwoFactorConfig {
+export type TwoFactorConfig = {
   method: 'sms' | 'email' | 'app';
   secret?: string;
   backupCodes?: string[];
   isEnabled: boolean;
-}
+};
 
-export interface LoginAttempt {
+export type LoginAttempt = {
   id: string;
   patientId?: string;
   email: string;
@@ -64,9 +64,9 @@ export interface LoginAttempt {
   failureReason?: string;
   timestamp: Date;
   blocked: boolean;
-}
+};
 
-export interface SecurityEvent {
+export type SecurityEvent = {
   type:
     | 'login'
     | 'logout'
@@ -80,7 +80,7 @@ export interface SecurityEvent {
   details: Record<string, any>;
   severity: 'low' | 'medium' | 'high' | 'critical';
   timestamp: Date;
-}
+};
 
 /**
  * Gerenciador de autenticação específico para o portal do paciente
@@ -312,8 +312,6 @@ export class PortalAuthManager {
         },
       };
     } catch (error) {
-      console.error('Erro na autenticação do portal:', error);
-
       await this.auditLogger.log({
         action: 'patient_portal_login_error',
         userId: '',
@@ -389,8 +387,7 @@ export class PortalAuthManager {
           clinicId: patient.clinic_id,
         },
       };
-    } catch (error) {
-      console.error('Erro na verificação 2FA:', error);
+    } catch (_error) {
       return {
         success: false,
         error: 'Erro na verificação',
@@ -492,8 +489,7 @@ export class PortalAuthManager {
           clinicId: patient.clinic_id,
         },
       };
-    } catch (error) {
-      console.error('Erro na validação de sessão:', error);
+    } catch (_error) {
       return {
         success: false,
         error: 'Erro na validação',
@@ -522,8 +518,7 @@ export class PortalAuthManager {
 
       await this.invalidateSession(sessionToken);
       return true;
-    } catch (error) {
-      console.error('Erro no logout:', error);
+    } catch (_error) {
       return false;
     }
   }
@@ -600,10 +595,10 @@ export class PortalAuthManager {
     return code.length === 6 && /^\d{6}$/.test(code);
   }
 
-  private async sendTwoFactorCode(patient: any, _token: string): Promise<void> {
-    // Implementar envio de código 2FA via SMS/Email
-    console.log(`Enviando código 2FA para ${patient.email}`);
-  }
+  private async sendTwoFactorCode(
+    _patient: any,
+    _token: string
+  ): Promise<void> {}
 
   private async getActiveSessionsCount(patientId: string): Promise<number> {
     const { count } = await this.supabase
@@ -849,8 +844,7 @@ export class PortalAuthManager {
       });
 
       return { success: true };
-    } catch (error) {
-      console.error('Erro ao alterar senha:', error);
+    } catch (_error) {
       return { success: false, error: 'Erro interno do servidor' };
     }
   }
@@ -936,8 +930,7 @@ export class PortalAuthManager {
         return true;
       }
       return false;
-    } catch (error) {
-      console.error('Erro ao terminar sessão:', error);
+    } catch (_error) {
       return false;
     }
   }
@@ -958,8 +951,7 @@ export class PortalAuthManager {
 
       const { count } = await query;
       return count || 0;
-    } catch (error) {
-      console.error('Erro ao terminar todas as sessões:', error);
+    } catch (_error) {
       return 0;
     }
   }

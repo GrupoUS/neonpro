@@ -26,8 +26,7 @@ export async function GET(request: NextRequest) {
       analytics,
       success: true,
     });
-  } catch (error) {
-    console.error('Error fetching recommendation analytics:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to fetch recommendation analytics', success: false },
       { status: 500 }
@@ -66,8 +65,7 @@ export async function POST(request: NextRequest) {
       },
       { status: 201 }
     );
-  } catch (error) {
-    console.error('Error recording performance metric:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to record performance metric', success: false },
       { status: 500 }

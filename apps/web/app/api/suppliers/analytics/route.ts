@@ -33,8 +33,7 @@ export async function GET(request: NextRequest) {
     );
 
     return NextResponse.json(analytics);
-  } catch (error) {
-    console.error('Erro ao buscar analytics:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
       { status: 500 }
@@ -63,8 +62,7 @@ export async function POST(request: NextRequest) {
     );
 
     return NextResponse.json(comparison);
-  } catch (error) {
-    console.error('Erro ao comparar fornecedores:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
       { status: 500 }

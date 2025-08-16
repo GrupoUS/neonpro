@@ -146,7 +146,6 @@ export async function createInvoice(
     // Return complete invoice with items
     return await getInvoiceById(invoice.id);
   } catch (error) {
-    console.error('Error creating invoice:', error);
     throw new Error(
       `Failed to create invoice: ${error instanceof Error ? error.message : 'Unknown error'}`
     );
@@ -179,7 +178,6 @@ export async function getInvoiceById(id: string): Promise<Invoice> {
 
     return data as Invoice;
   } catch (error) {
-    console.error('Error fetching invoice:', error);
     throw new Error(
       `Failed to fetch invoice: ${error instanceof Error ? error.message : 'Unknown error'}`
     );
@@ -262,7 +260,6 @@ export async function listInvoices(
       summary,
     };
   } catch (error) {
-    console.error('Error listing invoices:', error);
     throw new Error(
       `Failed to list invoices: ${error instanceof Error ? error.message : 'Unknown error'}`
     );
@@ -297,7 +294,6 @@ export async function updateInvoice(
 
     return await getInvoiceById(id);
   } catch (error) {
-    console.error('Error updating invoice:', error);
     throw new Error(
       `Failed to update invoice: ${error instanceof Error ? error.message : 'Unknown error'}`
     );
@@ -326,7 +322,6 @@ export async function issueInvoice(id: string): Promise<Invoice> {
 
     return await getInvoiceById(id);
   } catch (error) {
-    console.error('Error issuing invoice:', error);
     throw new Error(
       `Failed to issue invoice: ${error instanceof Error ? error.message : 'Unknown error'}`
     );
@@ -356,7 +351,6 @@ export async function cancelInvoice(id: string): Promise<Invoice> {
 
     return await getInvoiceById(id);
   } catch (error) {
-    console.error('Error cancelling invoice:', error);
     throw new Error(
       `Failed to cancel invoice: ${error instanceof Error ? error.message : 'Unknown error'}`
     );
@@ -425,7 +419,6 @@ export async function createPayment(
 
     return await getPaymentById(payment.id);
   } catch (error) {
-    console.error('Error creating payment:', error);
     throw new Error(
       `Failed to create payment: ${error instanceof Error ? error.message : 'Unknown error'}`
     );
@@ -455,7 +448,6 @@ export async function getPaymentById(id: string): Promise<Payment> {
 
     return data as Payment;
   } catch (error) {
-    console.error('Error fetching payment:', error);
     throw new Error(
       `Failed to fetch payment: ${error instanceof Error ? error.message : 'Unknown error'}`
     );
@@ -505,7 +497,6 @@ export async function updatePayment(
 
     return await getPaymentById(id);
   } catch (error) {
-    console.error('Error updating payment:', error);
     throw new Error(
       `Failed to update payment: ${error instanceof Error ? error.message : 'Unknown error'}`
     );
@@ -534,7 +525,6 @@ export async function listPaymentsByInvoice(
 
     return data as Payment[];
   } catch (error) {
-    console.error('Error listing payments:', error);
     throw new Error(
       `Failed to list payments: ${error instanceof Error ? error.message : 'Unknown error'}`
     );
@@ -597,7 +587,6 @@ export async function performShadowValidation(
 
     return data as ShadowValidation;
   } catch (error) {
-    console.error('Error performing shadow validation:', error);
     throw new Error(
       `Shadow validation failed: ${error instanceof Error ? error.message : 'Unknown error'}`
     );
@@ -759,7 +748,6 @@ export async function getFinancialSummary(
 
     return summary;
   } catch (error) {
-    console.error('Error getting financial summary:', error);
     throw new Error(
       `Failed to get financial summary: ${error instanceof Error ? error.message : 'Unknown error'}`
     );
@@ -796,7 +784,6 @@ async function generateNFSe(invoice: Invoice): Promise<NFSeResponse> {
 
     return mockResponse;
   } catch (error) {
-    console.error('Error generating NFSe:', error);
     throw new Error(
       `NFSe generation failed: ${error instanceof Error ? error.message : 'Unknown error'}`
     );
@@ -813,7 +800,6 @@ async function cancelNFSe(invoice: Invoice): Promise<void> {
       })
       .eq('id', invoice.id);
   } catch (error) {
-    console.error('Error cancelling NFSe:', error);
     throw new Error(
       `NFSe cancellation failed: ${error instanceof Error ? error.message : 'Unknown error'}`
     );
@@ -855,7 +841,6 @@ async function processPayment(
 
     return mockResponse;
   } catch (error) {
-    console.error('Error processing payment:', error);
     throw new Error(
       `Payment processing failed: ${error instanceof Error ? error.message : 'Unknown error'}`
     );
@@ -885,7 +870,6 @@ Total: ${formatCurrency(invoice.total_amount)}
     const blob = new Blob([mockPDFContent], { type: 'application/pdf' });
     return blob;
   } catch (error) {
-    console.error('Error generating PDF:', error);
     throw new Error(
       `PDF generation failed: ${error instanceof Error ? error.message : 'Unknown error'}`
     );

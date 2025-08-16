@@ -8,7 +8,7 @@
  * @version 1.0.0
  */
 
-export interface PerformanceMetrics {
+export type PerformanceMetrics = {
   subscriptionChecks: {
     total: number;
     successful: number;
@@ -36,9 +36,9 @@ export interface PerformanceMetrics {
     averageLatency: number;
     reconnectRate: number;
   };
-}
+};
 
-export interface PerformanceAlert {
+export type PerformanceAlert = {
   id: string;
   type: 'warning' | 'critical' | 'info';
   component: 'subscription' | 'cache' | 'database' | 'realtime';
@@ -48,9 +48,9 @@ export interface PerformanceAlert {
   threshold: number;
   timestamp: Date;
   resolved: boolean;
-}
+};
 
-export interface OptimizationRecommendation {
+export type OptimizationRecommendation = {
   id: string;
   priority: 'high' | 'medium' | 'low';
   component: string;
@@ -58,7 +58,7 @@ export interface OptimizationRecommendation {
   recommendation: string;
   estimatedImpact: string;
   implementationEffort: 'low' | 'medium' | 'high';
-}
+};
 
 export class SubscriptionPerformanceMonitor {
   private readonly metrics: PerformanceMetrics;
@@ -138,7 +138,6 @@ export class SubscriptionPerformanceMonitor {
   endTimer(timerId: string, success = true): number {
     const startTime = this.timers.get(timerId);
     if (!startTime) {
-      console.warn(`Timer ${timerId} not found`);
       return 0;
     }
 

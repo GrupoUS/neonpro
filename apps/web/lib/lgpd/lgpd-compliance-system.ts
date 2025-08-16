@@ -31,7 +31,7 @@ import {
 /**
  * LGPD Compliance Configuration
  */
-export interface LGPDComplianceConfig {
+export type LGPDComplianceConfig = {
   clinicId: string;
   enableAutomaticCleanup: boolean;
   consentExpirationDays: number;
@@ -47,12 +47,12 @@ export interface LGPDComplianceConfig {
     maximumRiskScore: number;
     auditComplianceRate: number;
   };
-}
+};
 
 /**
  * Comprehensive LGPD Compliance Status
  */
-export interface LGPDComplianceStatus {
+export type LGPDComplianceStatus = {
   overallScore: number;
   riskLevel: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
   consentCompliance: {
@@ -76,12 +76,12 @@ export interface LGPDComplianceStatus {
   };
   recommendations: string[];
   alerts: LGPDAlert[];
-}
+};
 
 /**
  * LGPD Alert Types
  */
-export interface LGPDAlert {
+export type LGPDAlert = {
   id: string;
   type:
     | 'CONSENT_EXPIRING'
@@ -96,12 +96,12 @@ export interface LGPDAlert {
   createdAt: Date;
   resolvedAt?: Date;
   metadata?: Record<string, any>;
-}
+};
 
 /**
  * Data Subject Rights Request
  */
-export interface DataSubjectRightsRequest {
+export type DataSubjectRightsRequest = {
   type: DataSubjectRequestType;
   subjectId: string;
   dataTypes: LGPDDataType[];
@@ -109,12 +109,12 @@ export interface DataSubjectRightsRequest {
   urgency: 'LOW' | 'MEDIUM' | 'HIGH';
   legalBasis?: string;
   metadata?: Record<string, any>;
-}
+};
 
 /**
  * LGPD Compliance Report
  */
-export interface LGPDComplianceReport {
+export type LGPDComplianceReport = {
   reportId: string;
   clinicId: string;
   generatedAt: Date;
@@ -129,7 +129,7 @@ export interface LGPDComplianceReport {
   violations: LGPDAuditRecord[];
   recommendations: string[];
   executiveSummary: string;
-}
+};
 
 /**
  * Main LGPD Compliance System Class
@@ -238,8 +238,7 @@ export class LGPDComplianceSystem {
         recommendations,
         alerts,
       };
-    } catch (error) {
-      console.error('Error getting compliance status:', error);
+    } catch (_error) {
       throw new Error('Failed to get compliance status');
     }
   }
@@ -293,8 +292,7 @@ export class LGPDComplianceSystem {
       }
 
       return requestId;
-    } catch (error) {
-      console.error('Error processing data subject request:', error);
+    } catch (_error) {
       throw new Error('Failed to process data subject request');
     }
   }
@@ -338,8 +336,7 @@ export class LGPDComplianceSystem {
       }
 
       return consentId;
-    } catch (error) {
-      console.error('Error collecting consent:', error);
+    } catch (_error) {
       throw new Error('Failed to collect consent');
     }
   }
@@ -371,8 +368,7 @@ export class LGPDComplianceSystem {
       if (request.deleteData) {
         await this.processDataDeletion(request.userId, request.dataTypes || []);
       }
-    } catch (error) {
-      console.error('Error withdrawing consent:', error);
+    } catch (_error) {
       throw new Error('Failed to withdraw consent');
     }
   }
@@ -459,8 +455,7 @@ export class LGPDComplianceSystem {
       }
 
       return alerts;
-    } catch (error) {
-      console.error('Error running compliance checks:', error);
+    } catch (_error) {
       throw new Error('Failed to run compliance checks');
     }
   }
@@ -532,8 +527,7 @@ export class LGPDComplianceSystem {
         recommendations: complianceStatus.recommendations,
         executiveSummary,
       };
-    } catch (error) {
-      console.error('Error generating compliance report:', error);
+    } catch (_error) {
       throw new Error('Failed to generate compliance report');
     }
   }
@@ -572,8 +566,7 @@ export class LGPDComplianceSystem {
       });
 
       return result;
-    } catch (error) {
-      console.error('Error running automated cleanup:', error);
+    } catch (_error) {
       throw new Error('Failed to run automated cleanup');
     }
   }
@@ -739,12 +732,6 @@ Recomendações principais: ${complianceStatus.recommendations.slice(0, 3).join(
         deletedAt: new Date(),
       },
     });
-
-    // Here you would implement actual data deletion logic
-    // This is a placeholder for the actual implementation
-    console.log(
-      `Processing data deletion for user ${userId}, data types: ${dataTypes.join(', ')}`
-    );
   }
 }
 

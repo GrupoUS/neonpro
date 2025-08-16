@@ -6,7 +6,7 @@
 import type { AppointmentWithRelations } from './appointments';
 
 // Professional schedule interfaces
-export interface ProfessionalSchedule {
+export type ProfessionalSchedule = {
   id: string;
   professional_id: string;
   clinic_id: string;
@@ -22,10 +22,10 @@ export interface ProfessionalSchedule {
   max_booking_days_ahead: number;
   created_at: string;
   updated_at: string;
-}
+};
 
 // Clinic holiday interfaces
-export interface ClinicHoliday {
+export type ClinicHoliday = {
   id: string;
   clinic_id: string;
   name: string;
@@ -40,10 +40,10 @@ export interface ClinicHoliday {
   created_at: string;
   updated_at: string;
   created_by?: string;
-}
+};
 
 // Service type rules interfaces
-export interface ServiceTypeRules {
+export type ServiceTypeRules = {
   id: string;
   service_type_id: string;
   clinic_id: string;
@@ -57,7 +57,7 @@ export interface ServiceTypeRules {
   cancellation_hours_notice: number;
   created_at: string;
   updated_at: string;
-}
+};
 
 // Conflict detection types
 export type ConflictType =
@@ -76,7 +76,7 @@ export type ConflictType =
 
 export type ConflictSeverity = 'error' | 'warning' | 'info';
 
-export interface AppointmentConflict {
+export type AppointmentConflict = {
   type: ConflictType;
   message: string;
   severity: ConflictSeverity;
@@ -98,28 +98,28 @@ export interface AppointmentConflict {
   buffer_minutes?: number;
   max_per_hour?: number;
   current_count?: number;
-}
+};
 
 // Alternative slot suggestion
-export interface AlternativeSlot {
+export type AlternativeSlot = {
   start_time: string; // ISO datetime
   end_time: string; // ISO datetime
   available: boolean;
   conflicts?: AppointmentConflict[];
   score?: number; // Preference score (higher = better)
   reason?: string; // Why this slot is suggested
-}
+};
 
 // Validation request/response types
-export interface SlotValidationRequest {
+export type SlotValidationRequest = {
   professional_id: string;
   service_type_id: string;
   start_time: string; // ISO datetime
   end_time: string; // ISO datetime
   exclude_appointment_id?: string;
-}
+};
 
-export interface SlotValidationResponse {
+export type SlotValidationResponse = {
   success: boolean;
   available: boolean;
   conflicts: AppointmentConflict[];
@@ -146,10 +146,10 @@ export interface SlotValidationResponse {
   performance?: {
     validation_time_ms: number;
   };
-}
+};
 
 // Enhanced appointment booking result
-export interface BookingResult {
+export type BookingResult = {
   success: boolean;
   appointment_id?: string;
   conflicts?: AppointmentConflict[];
@@ -166,10 +166,10 @@ export interface BookingResult {
   error?: string;
   error_code?: string;
   sql_state?: string;
-}
+};
 
 // Business rules configuration types
-export interface WorkingHoursConfig {
+export type WorkingHoursConfig = {
   professional_id: string;
   schedules: Array<{
     day_of_week: number;
@@ -185,9 +185,9 @@ export interface WorkingHoursConfig {
     min_booking_notice_hours: number;
     max_booking_days_ahead: number;
   };
-}
+};
 
-export interface HolidayConfig {
+export type HolidayConfig = {
   name: string;
   description?: string;
   start_date: string;
@@ -196,28 +196,28 @@ export interface HolidayConfig {
   end_time?: string;
   is_recurring: boolean;
   recurrence_type?: 'yearly' | 'monthly' | 'weekly';
-}
+};
 
 // Availability checking types
-export interface AvailabilityQuery {
+export type AvailabilityQuery = {
   professional_id: string;
   service_type_id: string;
   date: string; // ISO date
   duration_minutes?: number;
   preferred_times?: string[]; // Array of HH:MM times
   exclude_appointment_id?: string;
-}
+};
 
-export interface AvailabilitySlot {
+export type AvailabilitySlot = {
   start_time: string; // ISO datetime
   end_time: string; // ISO datetime
   available: boolean;
   conflicts: number;
   capacity_remaining: number;
   booking_urgency: 'low' | 'medium' | 'high'; // Based on availability
-}
+};
 
-export interface AvailabilityResponse {
+export type AvailabilityResponse = {
   date: string;
   professional_id: string;
   service_type_id: string;
@@ -241,10 +241,10 @@ export interface AvailabilityResponse {
     requires_deposit: boolean;
     cancellation_notice_hours: number;
   };
-}
+};
 
 // Professional availability overview
-export interface ProfessionalAvailability {
+export type ProfessionalAvailability = {
   professional_id: string;
   name: string;
   specialization?: string;
@@ -267,10 +267,10 @@ export interface ProfessionalAvailability {
     max_days_ahead: number;
     buffer_between_minutes: number;
   };
-}
+};
 
 // Conflict prevention settings
-export interface ConflictPreventionSettings {
+export type ConflictPreventionSettings = {
   clinic_id: string;
   global_settings: {
     default_buffer_minutes: number;
@@ -285,10 +285,10 @@ export interface ConflictPreventionSettings {
   holiday_calendar: ClinicHoliday[];
   last_updated: string;
   updated_by: string;
-}
+};
 
 // API response wrapper for conflict prevention
-export interface ConflictPreventionApiResponse<T = any> {
+export type ConflictPreventionApiResponse<T = any> = {
   success: boolean;
   data?: T;
   error?: string;
@@ -297,7 +297,7 @@ export interface ConflictPreventionApiResponse<T = any> {
   warnings?: AppointmentConflict[];
   timestamp: string;
   performance_ms?: number;
-}
+};
 
 // Extended appointment type with conflict prevention data
 export interface AppointmentWithConflictData extends AppointmentWithRelations {
@@ -313,7 +313,7 @@ export interface AppointmentWithConflictData extends AppointmentWithRelations {
   };
 }
 // Professional schedule configuration for forms
-export interface ProfessionalScheduleConfig {
+export type ProfessionalScheduleConfig = {
   professional_id: string;
   day_of_week: number;
   start_time: string;
@@ -325,10 +325,10 @@ export interface ProfessionalScheduleConfig {
   buffer_minutes_between: number;
   min_booking_notice_hours: number;
   max_booking_days_ahead: number;
-}
+};
 
 // Clinic holiday configuration for forms
-export interface HolidayConfig {
+export type HolidayConfig = {
   name: string;
   description?: string;
   start_date: string;
@@ -337,10 +337,10 @@ export interface HolidayConfig {
   end_time?: string;
   is_recurring: boolean;
   recurrence_type?: 'yearly' | 'monthly' | 'weekly';
-}
+};
 
 // Service type rule interface (better naming)
-export interface ServiceTypeRule {
+export type ServiceTypeRule = {
   id: string;
   service_type_id: string;
   clinic_id: string;
@@ -358,10 +358,10 @@ export interface ServiceTypeRule {
   is_active: boolean;
   created_at: string;
   updated_at: string;
-}
+};
 
 // Service type rule configuration for forms
-export interface ServiceTypeRuleConfig {
+export type ServiceTypeRuleConfig = {
   service_type_id: string;
   minimum_duration: number;
   maximum_duration: number;
@@ -374,4 +374,4 @@ export interface ServiceTypeRuleConfig {
   maximum_advance_days: number;
   allow_same_day: boolean;
   description?: string;
-}
+};

@@ -63,15 +63,15 @@ export enum Permission {
   ADMIN = 'admin',
 }
 
-export interface RolePermission {
+export type RolePermission = {
   role: SystemRole;
   resource: ResourceType;
   actions: Permission[];
   conditions?: string[]; // Additional conditions for permission
   scope?: 'own' | 'department' | 'clinic' | 'system'; // Permission scope
-}
+};
 
-export interface UserPermissions {
+export type UserPermissions = {
   userId: string;
   roles: SystemRole[];
   customPermissions: RolePermission[];
@@ -79,23 +79,23 @@ export interface UserPermissions {
   clinicId?: string;
   isActive: boolean;
   lastUpdated: number;
-}
+};
 
-export interface PermissionCheck {
+export type PermissionCheck = {
   userId: string;
   resource: ResourceType;
   action: Permission;
   resourceId?: string;
   context?: Record<string, any>;
-}
+};
 
-export interface PermissionResult {
+export type PermissionResult = {
   allowed: boolean;
   reason: string;
   role?: SystemRole;
   conditions?: string[];
   timestamp: number;
-}
+};
 
 // Role hierarchy (higher roles inherit permissions from lower roles)
 const ROLE_HIERARCHY: Record<SystemRole, number> = {
@@ -386,9 +386,7 @@ class PermissionValidationSystem {
       await this.logPermissionCheck(check, result);
 
       return result;
-    } catch (error) {
-      console.error('Error checking permission:', error);
-
+    } catch (_error) {
       const result: PermissionResult = {
         allowed: false,
         reason: 'Error during permission check',
@@ -441,8 +439,7 @@ class PermissionValidationSystem {
       );
 
       return defaultPermissions;
-    } catch (error) {
-      console.error('Error getting user permissions:', error);
+    } catch (_error) {
       throw new Error('Failed to retrieve user permissions');
     }
   }
@@ -478,8 +475,7 @@ class PermissionValidationSystem {
         },
         userId
       );
-    } catch (error) {
-      console.error('Error updating user roles:', error);
+    } catch (_error) {
       throw new Error('Failed to update user roles');
     }
   }
@@ -518,8 +514,7 @@ class PermissionValidationSystem {
         },
         userId
       );
-    } catch (error) {
-      console.error('Error adding custom permission:', error);
+    } catch (_error) {
       throw new Error('Failed to add custom permission');
     }
   }
@@ -656,7 +651,6 @@ class PermissionValidationSystem {
           break;
 
         default:
-          console.warn('Unknown condition:', condition);
       }
     }
 

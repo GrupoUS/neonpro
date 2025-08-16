@@ -160,9 +160,7 @@ export async function POST(request: NextRequest) {
       },
       { status: 400 }
     );
-  } catch (error) {
-    console.error('Permission check API error:', error);
-
+  } catch (_error) {
     return NextResponse.json(
       {
         error: 'Internal server error',
@@ -215,9 +213,7 @@ export async function GET(request: NextRequest) {
       ...userInfo,
       capabilities: roleCapabilities,
     });
-  } catch (error) {
-    console.error('Permission info API error:', error);
-
+  } catch (_error) {
     return NextResponse.json(
       {
         error: 'Internal server error',

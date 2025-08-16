@@ -447,15 +447,12 @@ export class MultiLocationInventoryService {
   async bulkUpdateStock(
     updates: UpdateInventoryStock[]
   ): Promise<InventoryStock[]> {
-    const { data, error } = await this.supabase
-      .from('inventory_stock')
-      .upsert(
-        updates.map((update) => ({
-          ...update,
-          last_counted_at: new Date().toISOString(),
-        }))
-      )
-      .select(`
+    const { data, error } = await this.supabase.from('inventory_stock').upsert(
+      updates.map((update) => ({
+        ...update,
+        last_counted_at: new Date().toISOString(),
+      }))
+    ).select(`
         *,
         inventory_item:inventory_items(*),
         clinic:clinics(id, clinic_name, clinic_code),

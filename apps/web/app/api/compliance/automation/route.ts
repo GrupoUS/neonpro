@@ -60,7 +60,6 @@ export async function GET(_request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('Erro ao obter status da automação:', error);
     return NextResponse.json(
       {
         error: 'Erro interno do servidor',
@@ -134,7 +133,6 @@ export async function POST(request: NextRequest) {
       timestamp: new Date().toISOString(),
     });
   } catch (error) {
-    console.error('Erro ao executar automação:', error);
     return NextResponse.json(
       {
         error: 'Erro interno do servidor',

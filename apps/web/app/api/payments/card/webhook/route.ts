@@ -34,7 +34,6 @@ export async function POST(request: NextRequest) {
     const signature = headersList.get('stripe-signature');
 
     if (!signature) {
-      console.error('Missing Stripe signature');
       return NextResponse.json({ error: 'Missing signature' }, { status: 400 });
     }
 
@@ -42,8 +41,7 @@ export async function POST(request: NextRequest) {
     let event: Stripe.Event;
     try {
       event = stripe.webhooks.constructEvent(body, signature, webhookSecret);
-    } catch (err) {
-      console.error('Webhook signature verification failed:', err);
+    } catch (_err) {
       return NextResponse.json({ error: 'Invalid signature' }, { status: 400 });
     }
 
@@ -55,8 +53,6 @@ export async function POST(request: NextRequest) {
       data: event.data,
       created_at: new Date(event.created * 1000).toISOString(),
     });
-
-    console.log(`Processing webhook event: ${event.type}`);
 
     // Handle different event types
     switch (event.type) {
@@ -99,7 +95,6 @@ export async function POST(request: NextRequest) {
         break;
 
       default:
-        console.log(`Unhandled event type: ${event.type}`);
     }
 
     // Mark webhook as processed
@@ -109,8 +104,7 @@ export async function POST(request: NextRequest) {
       .eq('stripe_event_id', event.id);
 
     return NextResponse.json({ received: true });
-  } catch (error) {
-    console.error('Webhook processing error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Webhook processing failed' },
       { status: 500 }
@@ -138,7 +132,6 @@ async function handlePaymentIntentSucceeded(
       .single();
 
     if (updateError || !cardPayment) {
-      console.error('Error updating card payment:', updateError);
       return;
     }
 
@@ -194,11 +187,7 @@ async function handlePaymentIntentSucceeded(
       user_id: null, // System action
       metadata: { webhook_event: 'payment_intent.succeeded' },
     });
-
-    console.log(`Payment succeeded: ${paymentIntent.id}`);
-  } catch (error) {
-    console.error('Error handling payment success:', error);
-  }
+  } catch (_error) {}
 }
 
 /**
@@ -220,7 +209,6 @@ async function handlePaymentIntentFailed(paymentIntent: Stripe.PaymentIntent) {
       .single();
 
     if (updateError || !cardPayment) {
-      console.error('Error updating card payment:', updateError);
       return;
     }
 
@@ -267,11 +255,7 @@ async function handlePaymentIntentFailed(paymentIntent: Stripe.PaymentIntent) {
         failure_reason: paymentIntent.last_payment_error?.message,
       },
     });
-
-    console.log(`Payment failed: ${paymentIntent.id}`);
-  } catch (error) {
-    console.error('Error handling payment failure:', error);
-  }
+  } catch (_error) {}
 }
 
 /**
@@ -289,11 +273,7 @@ async function handlePaymentIntentRequiresAction(
         updated_at: new Date().toISOString(),
       })
       .eq('stripe_payment_intent_id', paymentIntent.id);
-
-    console.log(`Payment requires action: ${paymentIntent.id}`);
-  } catch (error) {
-    console.error('Error handling payment requires action:', error);
-  }
+  } catch (_error) {}
 }
 
 /**
@@ -323,11 +303,7 @@ async function handlePaymentIntentCanceled(
         })
         .eq('reference_id', paymentIntent.id);
     }
-
-    console.log(`Payment canceled: ${paymentIntent.id}`);
-  } catch (error) {
-    console.error('Error handling payment cancellation:', error);
-  }
+  } catch (_error) {}
 }
 
 /**
@@ -366,11 +342,7 @@ async function handleChargeDisputeCreated(dispute: Stripe.Dispute) {
         })
         .eq('id', cardPayment.id);
     }
-
-    console.log(`Dispute created: ${dispute.id}`);
-  } catch (error) {
-    console.error('Error handling dispute creation:', error);
-  }
+  } catch (_error) {}
 }
 
 /**
@@ -389,11 +361,7 @@ async function handleInvoicePaymentSucceeded(invoice: Stripe.Invoice) {
         })
         .eq('stripe_invoice_id', invoice.id);
     }
-
-    console.log(`Invoice payment succeeded: ${invoice.id}`);
-  } catch (error) {
-    console.error('Error handling invoice payment success:', error);
-  }
+  } catch (_error) {}
 }
 
 /**
@@ -420,9 +388,5 @@ async function handleInvoicePaymentFailed(invoice: Stripe.Invoice) {
         })
         .eq('stripe_subscription_id', invoice.subscription);
     }
-
-    console.log(`Invoice payment failed: ${invoice.id}`);
-  } catch (error) {
-    console.error('Error handling invoice payment failure:', error);
-  }
+  } catch (_error) {}
 }

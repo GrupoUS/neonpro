@@ -88,8 +88,6 @@ export async function POST(request: NextRequest) {
       metadata: scanResult.metadata,
     });
   } catch (error) {
-    console.error('Erro na API de scan:', error);
-
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {
@@ -146,7 +144,6 @@ export async function GET(request: NextRequest) {
         .limit(limit);
 
       if (error) {
-        console.error('Erro ao buscar histórico:', error);
         return NextResponse.json(
           { error: 'Erro ao buscar histórico de scans' },
           { status: 500 }
@@ -189,7 +186,6 @@ export async function GET(request: NextRequest) {
       .limit(limit);
 
     if (error) {
-      console.error('Erro ao buscar códigos:', error);
       return NextResponse.json(
         { error: 'Erro ao buscar códigos de barras' },
         { status: 500 }
@@ -200,8 +196,7 @@ export async function GET(request: NextRequest) {
       success: true,
       data: allBarcodes,
     });
-  } catch (error) {
-    console.error('Erro na busca de barcodes:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
       { status: 500 }

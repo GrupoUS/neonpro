@@ -8,7 +8,7 @@ const MetricsQuerySchema = z.object({
   time_range: z.enum(['7d', '30d', '90d', '1y']).default('30d'),
 });
 
-interface FinancialMetrics {
+type FinancialMetrics = {
   daily_revenue: number;
   monthly_revenue: number;
   annual_revenue: number;
@@ -19,7 +19,7 @@ interface FinancialMetrics {
   profit_margin: number;
   break_even_point: number;
   growth_rate: number;
-}
+};
 
 // Função para calcular métricas financeiras
 async function calculateFinancialMetrics(
@@ -72,7 +72,6 @@ async function calculateFinancialMetrics(
       .order('date', { ascending: true });
 
     if (currentError) {
-      console.error('Error fetching current period data:', currentError);
       throw new Error('Failed to fetch current period financial data');
     }
 
@@ -86,7 +85,6 @@ async function calculateFinancialMetrics(
       .order('date', { ascending: true });
 
     if (previousError) {
-      console.error('Error fetching previous period data:', previousError);
       throw new Error('Failed to fetch previous period financial data');
     }
 
@@ -109,7 +107,6 @@ async function calculateFinancialMetrics(
       .gte('created_at', startDate.toISOString());
 
     if (patientError) {
-      console.error('Error fetching patient data:', patientError);
       // Continue without patient metrics if this fails
     }
 
@@ -203,8 +200,7 @@ async function calculateFinancialMetrics(
     };
 
     return metrics;
-  } catch (error) {
-    console.error('Error calculating financial metrics:', error);
+  } catch (_error) {
     throw new Error('Failed to calculate financial metrics');
   }
 }
@@ -264,8 +260,6 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('Financial metrics API error:', error);
-
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Invalid parameters', details: error.errors },

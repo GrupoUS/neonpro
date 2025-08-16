@@ -30,13 +30,11 @@ class WhatsAppService {
         .single();
 
       if (error && error.code !== 'PGRST116') {
-        console.error('Error fetching WhatsApp config:', error);
         throw new Error('Failed to fetch WhatsApp configuration');
       }
 
       return data;
-    } catch (error) {
-      console.error('WhatsApp config fetch error:', error);
+    } catch (_error) {
       return null;
     }
   }
@@ -44,26 +42,20 @@ class WhatsAppService {
   async updateConfig(
     config: Omit<WhatsAppConfig, 'id' | 'createdAt' | 'updatedAt'>
   ): Promise<WhatsAppConfig> {
-    try {
-      const { data, error } = await this.supabase
-        .from('whatsapp_config')
-        .upsert({
-          ...config,
-          updated_at: new Date().toISOString(),
-        })
-        .select()
-        .single();
+    const { data, error } = await this.supabase
+      .from('whatsapp_config')
+      .upsert({
+        ...config,
+        updated_at: new Date().toISOString(),
+      })
+      .select()
+      .single();
 
-      if (error) {
-        console.error('Error updating WhatsApp config:', error);
-        throw new Error('Failed to update WhatsApp configuration');
-      }
-
-      return data;
-    } catch (error) {
-      console.error('WhatsApp config update error:', error);
-      throw error;
+    if (error) {
+      throw new Error('Failed to update WhatsApp configuration');
     }
+
+    return data;
   }
 
   // Message Management
@@ -144,8 +136,6 @@ class WhatsAppService {
 
       return messageId;
     } catch (error) {
-      console.error('Error sending WhatsApp message:', error);
-
       // Store failed message
       await this.storeMessage({
         patientId,
@@ -235,8 +225,6 @@ class WhatsAppService {
 
       return messageId;
     } catch (error) {
-      console.error('Error sending template message:', error);
-
       // Store failed message
       await this.storeMessage({
         patientId,
@@ -263,31 +251,22 @@ class WhatsAppService {
       });
 
       if (error) {
-        console.error('Error storing WhatsApp message:', error);
       }
-    } catch (error) {
-      console.error('Database error storing message:', error);
-    }
+    } catch (_error) {}
   }
 
   // Template Management
   async getTemplates(): Promise<WhatsAppTemplate[]> {
-    try {
-      const { data, error } = await this.supabase
-        .from('whatsapp_templates')
-        .select('*')
-        .order('created_at', { ascending: false });
+    const { data, error } = await this.supabase
+      .from('whatsapp_templates')
+      .select('*')
+      .order('created_at', { ascending: false });
 
-      if (error) {
-        console.error('Error fetching templates:', error);
-        throw new Error('Failed to fetch WhatsApp templates');
-      }
-
-      return data || [];
-    } catch (error) {
-      console.error('Templates fetch error:', error);
-      throw error;
+    if (error) {
+      throw new Error('Failed to fetch WhatsApp templates');
     }
+
+    return data || [];
   }
 
   async getTemplate(name: string): Promise<WhatsAppTemplate | null> {
@@ -299,13 +278,11 @@ class WhatsAppService {
         .single();
 
       if (error && error.code !== 'PGRST116') {
-        console.error('Error fetching template:', error);
         throw new Error('Failed to fetch WhatsApp template');
       }
 
       return data;
-    } catch (error) {
-      console.error('Template fetch error:', error);
+    } catch (_error) {
       return null;
     }
   }
@@ -345,9 +322,7 @@ class WhatsAppService {
           }
         }
       }
-    } catch (error) {
-      console.error('Error processing webhook:', error);
-    }
+    } catch (_error) {}
   }
 
   private async processWebhookMessages(value: any): Promise<void> {
@@ -397,11 +372,8 @@ class WhatsAppService {
         .eq('metadata->whatsappMessageId', whatsappMessageId);
 
       if (error) {
-        console.error('Error updating message status:', error);
       }
-    } catch (error) {
-      console.error('Database error updating message status:', error);
-    }
+    } catch (_error) {}
   }
 
   private async handleIncomingMessage(message: any): Promise<void> {
@@ -415,9 +387,7 @@ class WhatsAppService {
         sentAt: new Date(Number.parseInt(message.timestamp, 10) * 1000),
         metadata: { whatsappMessageId: message.id, incoming: true },
       });
-    } catch (error) {
-      console.error('Error handling incoming message:', error);
-    }
+    } catch (_error) {}
   }
 
   // Opt-in Management
@@ -430,13 +400,11 @@ class WhatsAppService {
         .single();
 
       if (error && error.code !== 'PGRST116') {
-        console.error('Error checking opt-in:', error);
         return false;
       }
 
       return data?.is_opted_in;
-    } catch (error) {
-      console.error('Opt-in check error:', error);
+    } catch (_error) {
       return false;
     }
   }
@@ -447,25 +415,19 @@ class WhatsAppService {
     source = 'manual',
     consentMessage?: string
   ): Promise<void> {
-    try {
-      const { error } = await this.supabase.from('whatsapp_opt_ins').upsert({
-        patient_id: patientId,
-        phone_number: phoneNumber,
-        is_opted_in: true,
-        opt_in_source: source,
-        opt_in_date: new Date().toISOString(),
-        consent_message: consentMessage,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      });
+    const { error } = await this.supabase.from('whatsapp_opt_ins').upsert({
+      patient_id: patientId,
+      phone_number: phoneNumber,
+      is_opted_in: true,
+      opt_in_source: source,
+      opt_in_date: new Date().toISOString(),
+      consent_message: consentMessage,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    });
 
-      if (error) {
-        console.error('Error recording opt-in:', error);
-        throw new Error('Failed to record WhatsApp opt-in');
-      }
-    } catch (error) {
-      console.error('Opt-in record error:', error);
-      throw error;
+    if (error) {
+      throw new Error('Failed to record WhatsApp opt-in');
     }
   }
 
@@ -474,24 +436,18 @@ class WhatsAppService {
     startDate: Date,
     endDate: Date
   ): Promise<WhatsAppAnalytics[]> {
-    try {
-      const { data, error } = await this.supabase
-        .from('whatsapp_analytics')
-        .select('*')
-        .gte('date', startDate.toISOString().split('T')[0])
-        .lte('date', endDate.toISOString().split('T')[0])
-        .order('date', { ascending: false });
+    const { data, error } = await this.supabase
+      .from('whatsapp_analytics')
+      .select('*')
+      .gte('date', startDate.toISOString().split('T')[0])
+      .lte('date', endDate.toISOString().split('T')[0])
+      .order('date', { ascending: false });
 
-      if (error) {
-        console.error('Error fetching analytics:', error);
-        throw new Error('Failed to fetch WhatsApp analytics');
-      }
-
-      return data || [];
-    } catch (error) {
-      console.error('Analytics fetch error:', error);
-      throw error;
+    if (error) {
+      throw new Error('Failed to fetch WhatsApp analytics');
     }
+
+    return data || [];
   }
 
   // Bulk messaging

@@ -33,8 +33,7 @@ export async function GET(_request: NextRequest) {
       .order('created_at', { ascending: false });
 
     return NextResponse.json(configs || []);
-  } catch (error) {
-    console.error('Get email config error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -88,8 +87,6 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(config);
   } catch (error) {
-    console.error('Create email config error:', error);
-
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Invalid configuration data', details: error.errors },

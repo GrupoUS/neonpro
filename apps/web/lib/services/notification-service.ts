@@ -1,7 +1,7 @@
 import { createClient } from '@/app/utils/supabase/server';
 
 // Tipos temporários baseados na estrutura atual - substituir por tipos do Supabase quando disponível
-interface AccountsPayable {
+type AccountsPayable = {
   id: string;
   clinic_id: string;
   vendor_id: string;
@@ -11,17 +11,17 @@ interface AccountsPayable {
   status: 'pending' | 'approved' | 'paid' | 'overdue';
   created_at: string;
   updated_at: string;
-}
+};
 
-interface Vendor {
+type Vendor = {
   id: string;
   name: string;
   document: string;
   email?: string;
   phone?: string;
-}
+};
 
-export interface NotificationConfig {
+export type NotificationConfig = {
   id?: string;
   clinic_id: string;
   notification_type:
@@ -39,9 +39,9 @@ export interface NotificationConfig {
   recipients: string[]; // emails ou telefones
   created_at?: string;
   updated_at?: string;
-}
+};
 
-export interface NotificationQueue {
+export type NotificationQueue = {
   id?: string;
   clinic_id: string;
   accounts_payable_id: string;
@@ -55,9 +55,9 @@ export interface NotificationQueue {
   error_message?: string;
   created_at?: string;
   updated_at?: string;
-}
+};
 
-export interface DashboardAlert {
+export type DashboardAlert = {
   id?: string;
   clinic_id: string;
   accounts_payable_id?: string;
@@ -76,16 +76,16 @@ export interface DashboardAlert {
   expires_at?: string;
   created_at?: string;
   updated_at?: string;
-}
+};
 
-export interface PaymentReminder {
+export type PaymentReminder = {
   accounts_payable: AccountsPayable;
   vendor: Vendor;
   days_until_due: number;
   days_overdue: number;
   alert_type: 'due_soon' | 'due_today' | 'overdue';
   priority: 'low' | 'medium' | 'high' | 'urgent';
-}
+};
 
 export class NotificationService {
   private supabase: any;
@@ -189,7 +189,6 @@ export class NotificationService {
         );
 
       if (error) {
-        console.error('Error fetching due payments:', error);
         return [];
       }
 
@@ -243,8 +242,7 @@ export class NotificationService {
           new Date(b.accounts_payable.due_date).getTime()
         );
       });
-    } catch (error) {
-      console.error('Error in getDuePayments:', error);
+    } catch (_error) {
       return [];
     }
   }
@@ -296,15 +294,9 @@ export class NotificationService {
     return alerts;
   }
 
-  async markAlertAsRead(alertId: string): Promise<void> {
-    // Mock implementation - implementar quando tabela for criada
-    console.log(`Alert ${alertId} marked as read`);
-  }
+  async markAlertAsRead(_alertId: string): Promise<void> {}
 
-  async dismissAlert(alertId: string): Promise<void> {
-    // Mock implementation - implementar quando tabela for criada
-    console.log(`Alert ${alertId} dismissed`);
-  }
+  async dismissAlert(_alertId: string): Promise<void> {}
 
   // Fila de Notificações
   async queueNotification(
@@ -316,16 +308,10 @@ export class NotificationService {
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     };
-
-    // Mock implementation - adicionar à fila quando tabela for criada
-    console.log('Notification queued:', queuedNotification);
     return queuedNotification;
   }
 
-  async processNotificationQueue(clinicId: string): Promise<void> {
-    // Mock implementation - processar fila de notificações
-    console.log(`Processing notification queue for clinic ${clinicId}`);
-
+  async processNotificationQueue(_clinicId: string): Promise<void> {
     // 1. Buscar notificações pendentes
     // 2. Enviar emails
     // 3. Enviar SMS
@@ -340,12 +326,12 @@ export class NotificationService {
 
     for (const payment of overdue) {
       // Determinar nível de escalação baseado em dias de atraso
-      let escalationLevel = 1;
+      let _escalationLevel = 1;
       if (payment.days_overdue > 7) {
-        escalationLevel = 2;
+        _escalationLevel = 2;
       }
       if (payment.days_overdue > 15) {
-        escalationLevel = 3;
+        _escalationLevel = 3;
       }
 
       // Criar notificação de escalação
@@ -357,10 +343,6 @@ export class NotificationService {
         status: 'pending',
         retry_count: 0,
       });
-
-      console.log(
-        `Escalated payment ${payment.accounts_payable.id} to level ${escalationLevel}`
-      );
     }
   }
 

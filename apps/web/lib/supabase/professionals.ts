@@ -1095,12 +1095,7 @@ export async function generateExpirationAlerts(daysAhead = 30) {
         action_required: true,
       });
       alerts.push(alert);
-    } catch (error) {
-      console.error(
-        `Failed to create alert for credential ${credential.id}:`,
-        error
-      );
-    }
+    } catch (_error) {}
   }
 
   return alerts;

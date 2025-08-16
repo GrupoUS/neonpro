@@ -63,53 +63,32 @@ function getFileInfo(filePath) {
 
 // Função principal de validação
 function validateMigration() {
-  console.log('🔍 ========================================');
-  console.log('🔍 NeonPro - Validação da Migração');
-  console.log('🔍 ========================================');
-  console.log('');
-
   const results = [];
   let allValid = true;
 
-  console.log('📁 Verificando arquivos obrigatórios...');
-  console.log('');
-
   requiredFiles.forEach((file) => {
     const info = getFileInfo(file);
-    const status = info.exists ? '✅' : '❌';
+    const _status = info.exists ? '✅' : '❌';
 
     if (info.exists) {
-      console.log(
-        `${status} ${file} (${info.lines} linhas, ${(info.size / 1024).toFixed(1)}KB)`
-      );
       results.push({ file, status: 'OK', info });
     } else {
-      console.log(`${status} ${file} - ARQUIVO AUSENTE`);
       results.push({ file, status: 'MISSING', info });
       allValid = false;
     }
   });
 
-  console.log('');
-  console.log('🔧 Verificando configurações específicas...');
-  console.log('');
-
   // Verificar package.json
   try {
     const packageJson = JSON.parse(fs.readFileSync('package.json', 'utf8'));
     if (packageJson.prisma?.seed) {
-      console.log('✅ package.json - Script de seed configurado');
     } else {
-      console.log('⚠️ package.json - Script de seed não encontrado');
     }
 
     if (packageJson.devDependencies?.['ts-node']) {
-      console.log('✅ package.json - ts-node instalado');
     } else {
-      console.log('⚠️ package.json - ts-node não encontrado');
     }
   } catch (_error) {
-    console.log('❌ package.json - Erro ao ler arquivo');
     allValid = false;
   }
 
@@ -121,22 +100,15 @@ function validateMigration() {
     const hasDatabaseUrl = envContent.includes('DATABASE_URL');
 
     if (hasSupabaseUrl && hasSupabaseKey && hasDatabaseUrl) {
-      console.log('✅ .env.local - Todas as variáveis essenciais configuradas');
     } else {
-      console.log('⚠️ .env.local - Algumas variáveis podem estar ausentes');
       if (!hasSupabaseUrl) {
-        console.log('   - NEXT_PUBLIC_SUPABASE_URL ausente');
       }
       if (!hasSupabaseKey) {
-        console.log('   - NEXT_PUBLIC_SUPABASE_ANON_KEY ausente');
       }
       if (!hasDatabaseUrl) {
-        console.log('   - DATABASE_URL ausente');
       }
     }
-  } catch (_error) {
-    console.log('❌ .env.local - Erro ao ler arquivo');
-  }
+  } catch (_error) {}
 
   // Verificar schema Prisma
   try {
@@ -146,49 +118,19 @@ function validateMigration() {
     const hasProductModel = schemaContent.includes('model Product');
 
     if (hasTenantModel && hasProfileModel && hasProductModel) {
-      console.log('✅ schema.prisma - Todos os modelos essenciais presentes');
     } else {
-      console.log('⚠️ schema.prisma - Alguns modelos podem estar ausentes');
       allValid = false;
     }
   } catch (_error) {
-    console.log('❌ schema.prisma - Erro ao ler arquivo');
     allValid = false;
   }
 
-  console.log('');
-  console.log('📊 ========================================');
-  console.log('📊 RESUMO DA VALIDAÇÃO');
-  console.log('📊 ========================================');
-
-  const validFiles = results.filter((r) => r.status === 'OK').length;
-  const totalFiles = results.length;
-
-  console.log(`✅ Arquivos válidos: ${validFiles}/${totalFiles}`);
-  console.log(`❌ Arquivos ausentes: ${totalFiles - validFiles}/${totalFiles}`);
+  const _validFiles = results.filter((r) => r.status === 'OK').length;
+  const _totalFiles = results.length;
 
   if (allValid) {
-    console.log('');
-    console.log('🎉 MIGRAÇÃO VALIDADA COM SUCESSO!');
-    console.log('🎉 Todos os arquivos essenciais estão presentes!');
-    console.log('');
-    console.log('🚀 Próximos passos:');
-    console.log('   1. Execute: setup.bat');
-    console.log('   2. Aguarde a conclusão do setup');
-    console.log('   3. Execute: node test-migration.js');
-    console.log('   4. Acesse: http://localhost:3000/tenants');
-    console.log('');
-    console.log('📖 Para instruções detalhadas, leia: MIGRATION-SETUP.md');
   } else {
-    console.log('');
-    console.log('⚠️ MIGRAÇÃO INCOMPLETA');
-    console.log('⚠️ Alguns arquivos essenciais estão ausentes');
-    console.log('');
-    console.log('🔧 Verifique os arquivos marcados com ❌ acima');
-    console.log('📖 Consulte MIGRATION-SETUP.md para mais detalhes');
   }
-
-  console.log('');
 
   return allValid;
 }

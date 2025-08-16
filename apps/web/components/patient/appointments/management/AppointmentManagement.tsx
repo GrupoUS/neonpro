@@ -42,7 +42,7 @@ import { UpcomingAppointments } from './UpcomingAppointments';
  * - Accessibility-first design patterns
  */
 
-interface AppointmentManagementProps {
+type AppointmentManagementProps = {
   /**
    * Optional callback when appointment actions are performed
    * Useful for parent components to track patient engagement
@@ -51,7 +51,7 @@ interface AppointmentManagementProps {
     action: 'cancel' | 'reschedule' | 'view',
     appointmentId: string
   ) => void;
-}
+};
 
 export function AppointmentManagement({
   onAppointmentAction,

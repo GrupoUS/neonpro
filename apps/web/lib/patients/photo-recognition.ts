@@ -1,4 +1,4 @@
-export interface PhotoData {
+export type PhotoData = {
   id: string;
   patientId: string;
   fileName: string;
@@ -15,9 +15,9 @@ export interface PhotoData {
     faceDetected: boolean;
     faces?: FaceData[];
   };
-}
+};
 
-export interface FaceData {
+export type FaceData = {
   id: string;
   boundingBox: {
     x: number;
@@ -38,9 +38,9 @@ export interface FaceData {
     emotion?: string;
     glasses?: boolean;
   };
-}
+};
 
-export interface VerificationResult {
+export type VerificationResult = {
   success: boolean;
   confidence: number;
   matchedPatientId?: string;
@@ -50,9 +50,9 @@ export interface VerificationResult {
   }>;
   issues?: string[];
   recommendations?: string[];
-}
+};
 
-export interface BiometricTemplate {
+export type BiometricTemplate = {
   id: string;
   patientId: string;
   template: string; // Encoded biometric template
@@ -60,7 +60,7 @@ export interface BiometricTemplate {
   quality: number;
   createdAt: Date;
   lastUsed?: Date;
-}
+};
 
 export class PhotoRecognitionSystem {
   /**
@@ -115,8 +115,7 @@ export class PhotoRecognitionSystem {
       }, 2000);
 
       return photoData;
-    } catch (error) {
-      console.error('Erro no upload da foto:', error);
+    } catch (_error) {
       throw new Error('Falha no upload da foto');
     }
   }
@@ -126,13 +125,9 @@ export class PhotoRecognitionSystem {
    */
   async processPhotoRecognition(photoId: string): Promise<void> {
     try {
-      // Simular processamento de reconhecimento facial
-      console.log(`Processando reconhecimento facial para foto ${photoId}`);
-
       // Atualizar status para verified após processamento
       await this.updatePhotoStatus(photoId, 'verified', 0.92);
-    } catch (error) {
-      console.error('Erro no processamento de reconhecimento:', error);
+    } catch (_error) {
       await this.updatePhotoStatus(photoId, 'rejected');
     }
   }
@@ -141,19 +136,14 @@ export class PhotoRecognitionSystem {
    * Atualiza status da foto
    */
   private async updatePhotoStatus(
-    photoId: string,
-    status: PhotoData['status'],
+    _photoId: string,
+    _status: PhotoData['status'],
     verificationScore?: number
   ): Promise<void> {
     try {
-      // Simular atualização do status no banco
-      console.log(`Foto ${photoId} atualizada para status: ${status}`);
       if (verificationScore) {
-        console.log(`Score de verificação: ${verificationScore}`);
       }
-    } catch (error) {
-      console.error('Erro ao atualizar status da foto:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -188,8 +178,7 @@ export class PhotoRecognitionSystem {
       }
 
       return verification;
-    } catch (error) {
-      console.error('Erro na verificação de identidade:', error);
+    } catch (_error) {
       throw new Error('Falha na verificação de identidade');
     }
   }
@@ -233,8 +222,7 @@ export class PhotoRecognitionSystem {
       return similarPatients.filter(
         (patient) => patient.similarity >= threshold
       );
-    } catch (error) {
-      console.error('Erro na busca de pacientes similares:', error);
+    } catch (_error) {
       throw new Error('Falha na busca de pacientes similares');
     }
   }
@@ -258,8 +246,7 @@ export class PhotoRecognitionSystem {
       };
 
       return template;
-    } catch (error) {
-      console.error('Erro na geração do template biométrico:', error);
+    } catch (_error) {
       throw new Error('Falha na geração do template biométrico');
     }
   }
@@ -296,8 +283,7 @@ export class PhotoRecognitionSystem {
       };
 
       return comparison;
-    } catch (error) {
-      console.error('Erro na comparação de fotos:', error);
+    } catch (_error) {
       throw new Error('Falha na comparação de fotos');
     }
   }
@@ -341,8 +327,7 @@ export class PhotoRecognitionSystem {
       }
 
       return validation;
-    } catch (error) {
-      console.error('Erro na validação de qualidade:', error);
+    } catch (_error) {
       throw new Error('Falha na validação de qualidade');
     }
   }
@@ -374,8 +359,7 @@ export class PhotoRecognitionSystem {
       ];
 
       return photos;
-    } catch (error) {
-      console.error('Erro ao buscar fotos do paciente:', error);
+    } catch (_error) {
       throw new Error('Falha ao buscar fotos do paciente');
     }
   }
@@ -384,15 +368,12 @@ export class PhotoRecognitionSystem {
    * Remove foto do sistema
    */
   async deletePatientPhoto(
-    photoId: string,
-    deletedBy: string
+    _photoId: string,
+    _deletedBy: string
   ): Promise<boolean> {
     try {
-      // Simular remoção da foto
-      console.log(`Foto ${photoId} removida por ${deletedBy}`);
       return true;
-    } catch (error) {
-      console.error('Erro ao remover foto:', error);
+    } catch (_error) {
       throw new Error('Falha ao remover foto');
     }
   }
@@ -434,8 +415,7 @@ export class PhotoRecognitionSystem {
       };
 
       return report;
-    } catch (error) {
-      console.error('Erro ao gerar relatório de reconhecimento:', error);
+    } catch (_error) {
       throw new Error('Falha na geração do relatório');
     }
   }

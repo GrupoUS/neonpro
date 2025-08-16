@@ -11,12 +11,12 @@ import {
 import type { SidebarItem, UserProfile } from './DashboardSidebar';
 import { DashboardSidebar } from './DashboardSidebar';
 
-export interface BreadcrumbItem {
+export type BreadcrumbItem = {
   title: string;
   href?: string;
-}
+};
 
-export interface DashboardLayoutProps {
+export type DashboardLayoutProps = {
   user: UserProfile;
   items: SidebarItem[];
   activeMenuItem?: string;
@@ -32,7 +32,7 @@ export interface DashboardLayoutProps {
   onSidebarToggle?: () => void;
   notifications?: number;
   className?: string;
-}
+};
 
 const DashboardLayout = React.forwardRef<HTMLDivElement, DashboardLayoutProps>(
   (

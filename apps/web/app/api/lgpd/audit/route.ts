@@ -217,8 +217,6 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('LGPD Audit GET Error:', error);
-
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Invalid query parameters', details: error.errors },
@@ -282,8 +280,6 @@ export async function POST(request: NextRequest) {
       { status: 201 }
     );
   } catch (error) {
-    console.error('LGPD Audit POST Error:', error);
-
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Invalid request data', details: error.errors },
@@ -304,11 +300,10 @@ async function handleAuditExport(
   queryParams: z.infer<typeof auditQuerySchema>,
   adminUserId: string
 ) {
-  try {
-    const exportParams = exportSchema.parse(queryParams);
+  const exportParams = exportSchema.parse(queryParams);
 
-    // Build export query (no pagination for export)
-    let query = supabase.from('lgpd_audit_trail').select(`
+  // Build export query (no pagination for export)
+  let query = supabase.from('lgpd_audit_trail').select(`
         id,
         event_type,
         user_id,
@@ -320,88 +315,84 @@ async function handleAuditExport(
         created_at
       `);
 
-    // Apply same filters as GET
-    if (exportParams.userId) {
-      query = query.eq('user_id', exportParams.userId);
-    }
-
-    if (exportParams.eventType) {
-      query = query.eq('event_type', exportParams.eventType);
-    }
-
-    if (exportParams.startDate) {
-      query = query.gte('created_at', exportParams.startDate);
-    }
-
-    if (exportParams.endDate) {
-      query = query.lte('created_at', exportParams.endDate);
-    }
-
-    const { data: auditEvents, error: auditError } = await query
-      .order('created_at', { ascending: false })
-      .limit(10_000); // Reasonable limit for export
-
-    if (auditError) {
-      throw new Error(
-        `Failed to fetch audit events for export: ${auditError.message}`
-      );
-    }
-
-    // Log export action
-    const complianceManager = new LGPDComplianceManager(supabase);
-    await complianceManager.logAuditEvent({
-      eventType: 'admin_action',
-      userId: adminUserId,
-      description: 'Audit trail exported',
-      details: `Admin exported ${auditEvents?.length || 0} audit events in ${exportParams.format} format`,
-      metadata: {
-        export_params: exportParams,
-        export_count: auditEvents?.length || 0,
-        export_time: new Date().toISOString(),
-      },
-    });
-
-    if (exportParams.format === 'csv') {
-      // Convert to CSV
-      const csvHeaders =
-        'ID,Event Type,User ID,Description,Details,IP Address,User Agent,Created At\n';
-      const csvRows =
-        auditEvents
-          ?.map((event) => {
-            const details =
-              typeof event.details === 'string'
-                ? event.details.replace(/"/g, '""')
-                : '';
-            const description = event.description.replace(/"/g, '""');
-            return `"${event.id}","${event.event_type}","${event.user_id}","${description}","${details}","${event.ip_address || ''}","${event.user_agent || ''}","${event.created_at}"`;
-          })
-          .join('\n') || '';
-
-      const csvContent = csvHeaders + csvRows;
-
-      return new NextResponse(csvContent, {
-        headers: {
-          'Content-Type': 'text/csv',
-          'Content-Disposition': `attachment; filename="lgpd_audit_export_${new Date().toISOString().split('T')[0]}.csv"`,
-        },
-      });
-    }
-
-    // Return JSON format
-    return NextResponse.json({
-      success: true,
-      data: {
-        events: auditEvents,
-        exportInfo: {
-          format: exportParams.format,
-          exportedAt: new Date().toISOString(),
-          totalRecords: auditEvents?.length || 0,
-          filters: exportParams,
-        },
-      },
-    });
-  } catch (error) {
-    console.error('Audit Export Error:', error);
-    throw error;
+  // Apply same filters as GET
+  if (exportParams.userId) {
+    query = query.eq('user_id', exportParams.userId);
   }
+
+  if (exportParams.eventType) {
+    query = query.eq('event_type', exportParams.eventType);
+  }
+
+  if (exportParams.startDate) {
+    query = query.gte('created_at', exportParams.startDate);
+  }
+
+  if (exportParams.endDate) {
+    query = query.lte('created_at', exportParams.endDate);
+  }
+
+  const { data: auditEvents, error: auditError } = await query
+    .order('created_at', { ascending: false })
+    .limit(10_000); // Reasonable limit for export
+
+  if (auditError) {
+    throw new Error(
+      `Failed to fetch audit events for export: ${auditError.message}`
+    );
+  }
+
+  // Log export action
+  const complianceManager = new LGPDComplianceManager(supabase);
+  await complianceManager.logAuditEvent({
+    eventType: 'admin_action',
+    userId: adminUserId,
+    description: 'Audit trail exported',
+    details: `Admin exported ${auditEvents?.length || 0} audit events in ${exportParams.format} format`,
+    metadata: {
+      export_params: exportParams,
+      export_count: auditEvents?.length || 0,
+      export_time: new Date().toISOString(),
+    },
+  });
+
+  if (exportParams.format === 'csv') {
+    // Convert to CSV
+    const csvHeaders =
+      'ID,Event Type,User ID,Description,Details,IP Address,User Agent,Created At\n';
+    const csvRows =
+      auditEvents
+        ?.map((event) => {
+          const details =
+            typeof event.details === 'string'
+              ? event.details.replace(/"/g, '""')
+              : '';
+          const description = event.description.replace(/"/g, '""');
+          return `"${event.id}","${event.event_type}","${event.user_id}","${description}","${details}","${event.ip_address || ''}","${event.user_agent || ''}","${event.created_at}"`;
+        })
+        .join('\n') || '';
+
+    const csvContent = csvHeaders + csvRows;
+
+    return new NextResponse(csvContent, {
+      headers: {
+        'Content-Type': 'text/csv',
+        'Content-Disposition': `attachment; filename="lgpd_audit_export_${new Date().toISOString().split('T')[0]}.csv"`,
+      },
+    });
+  }
+
+  // Return JSON format
+  return NextResponse.json({
+    success: true,
+    data: {
+      events: auditEvents,
+      exportInfo: {
+        format: exportParams.format,
+        exportedAt: new Date().toISOString(),
+        totalRecords: auditEvents?.length || 0,
+        filters: exportParams,
+      },
+    },
+  });
 }

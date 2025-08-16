@@ -122,7 +122,6 @@ export const GET = withErrorMonitoring(async (_request: NextRequest) => {
       },
     });
   } catch (error) {
-    console.error('Vision config retrieval error:', error);
     return NextResponse.json(
       {
         error: 'Erro interno do servidor',
@@ -235,7 +234,6 @@ export const PUT = withErrorMonitoring(async (request: NextRequest) => {
       message: 'Configuração atualizada com sucesso',
     });
   } catch (error) {
-    console.error('Vision config update error:', error);
 
     if (error instanceof z.ZodError) {
       return NextResponse.json(
@@ -315,7 +313,6 @@ export const POST = withErrorMonitoring(async (request: NextRequest) => {
 
     return NextResponse.json({ error: 'Ação não suportada' }, { status: 400 });
   } catch (error) {
-    console.error('Vision config reset error:', error);
     return NextResponse.json(
       {
         error: 'Erro interno do servidor',

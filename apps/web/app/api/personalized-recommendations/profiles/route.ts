@@ -34,8 +34,7 @@ export async function GET(request: NextRequest) {
       profiles,
       success: true,
     });
-  } catch (error) {
-    console.error('Error fetching recommendation profiles:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to fetch recommendation profiles', success: false },
       { status: 500 }
@@ -74,8 +73,7 @@ export async function POST(request: NextRequest) {
       },
       { status: 201 }
     );
-  } catch (error) {
-    console.error('Error creating recommendation profile:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to create recommendation profile', success: false },
       { status: 500 }
@@ -120,8 +118,7 @@ export async function PUT(request: NextRequest) {
       profile,
       success: true,
     });
-  } catch (error) {
-    console.error('Error updating recommendation profile:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to update recommendation profile', success: false },
       { status: 500 }

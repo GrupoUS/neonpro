@@ -61,7 +61,6 @@ export class TreatmentRecommendationEngine {
         processingTime: Date.now() - startTime,
       };
     } catch (error) {
-      console.error('Treatment recommendation error:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
@@ -588,7 +587,7 @@ export class TreatmentRecommendationEngine {
   }
 }
 
-interface TreatmentEvidence {
+type TreatmentEvidence = {
   overallEvidenceLevel: TreatmentRecommendation['evidenceLevel'];
   goalSpecificStudies: Record<
     string,
@@ -597,4 +596,4 @@ interface TreatmentEvidence {
       studyCount: number;
     }
   >;
-}
+};

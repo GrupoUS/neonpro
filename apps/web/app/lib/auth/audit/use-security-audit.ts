@@ -14,21 +14,21 @@ import {
   securityAuditLogger,
 } from './security-audit-logger';
 
-export interface SecurityDashboardData {
+export type SecurityDashboardData = {
   metrics: SecurityMetrics;
   suspiciousPatterns: SuspiciousPattern[];
   recentEvents: AuditEvent[];
   recommendations: string[];
   isLoading: boolean;
   error?: string;
-}
+};
 
-export interface UseSecurityAuditOptions {
+export type UseSecurityAuditOptions = {
   refreshInterval?: number; // milliseconds
   hoursBack?: number;
   autoRefresh?: boolean;
   enableRealTimeAlerts?: boolean;
-}
+};
 
 export function useSecurityAudit(options: UseSecurityAuditOptions = {}) {
   const {
@@ -85,7 +85,6 @@ export function useSecurityAudit(options: UseSecurityAuditOptions = {}) {
         }
       }
     } catch (error) {
-      console.error('Error fetching security data:', error);
       setData((prev) => ({
         ...prev,
         isLoading: false,

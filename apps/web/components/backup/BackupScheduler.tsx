@@ -55,7 +55,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { formatDate, formatTime } from '@/lib/utils';
 
 // Types
-interface BackupConfig {
+type BackupConfig = {
   id: string;
   name: string;
   description?: string;
@@ -71,9 +71,9 @@ interface BackupConfig {
   retention_daily: number;
   priority: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
   createdAt: Date;
-}
+};
 
-interface NewBackupConfig {
+type NewBackupConfig = {
   name: string;
   description?: string;
   enabled: boolean;
@@ -85,7 +85,7 @@ interface NewBackupConfig {
   retention_daily: number;
   priority: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
   notification_email?: string;
-}
+};
 
 const BackupScheduler: React.FC = () => {
   const [configs, setConfigs] = useState<BackupConfig[]>([]);
@@ -118,8 +118,7 @@ const BackupScheduler: React.FC = () => {
       } else {
         toast.error('Erro ao carregar configurações de backup');
       }
-    } catch (error) {
-      console.error('Erro ao carregar configurações:', error);
+    } catch (_error) {
       toast.error('Erro ao carregar configurações de backup');
     } finally {
       setLoading(false);
@@ -156,8 +155,7 @@ const BackupScheduler: React.FC = () => {
         const errorData = await response.json();
         toast.error(errorData.error || 'Erro ao criar configuração');
       }
-    } catch (error) {
-      console.error('Erro ao criar configuração:', error);
+    } catch (_error) {
       toast.error('Erro ao criar configuração de backup');
     }
   };
@@ -180,8 +178,7 @@ const BackupScheduler: React.FC = () => {
       } else {
         toast.error('Erro ao atualizar configuração');
       }
-    } catch (error) {
-      console.error('Erro ao atualizar configuração:', error);
+    } catch (_error) {
       toast.error('Erro ao atualizar configuração');
     }
   };

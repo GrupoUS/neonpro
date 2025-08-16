@@ -14,7 +14,6 @@ export async function GET(_request: NextRequest) {
       data: stats,
     });
   } catch (error) {
-    console.error('Error fetching dashboard stats:', error);
     return NextResponse.json(
       {
         success: false,

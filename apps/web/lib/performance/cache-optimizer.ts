@@ -3,30 +3,30 @@
  * Advanced caching optimization for subscription data
  */
 
-export interface CacheMetrics {
+export type CacheMetrics = {
   hits: number;
   misses: number;
   evictions: number;
   memoryUsage: number;
   averageAccessTime: number;
-}
+};
 
-export interface CacheOptimizationStrategy {
+export type CacheOptimizationStrategy = {
   type: 'lru' | 'lfu' | 'ttl' | 'adaptive';
   maxSize: number;
   ttl?: number;
   compressionEnabled?: boolean;
   preloadStrategy?: 'predictive' | 'scheduled' | 'manual';
-}
+};
 
-export interface CachePerformanceReport {
+export type CachePerformanceReport = {
   hitRate: number;
   missRate: number;
   evictionRate: number;
   memoryEfficiency: number;
   responseTimeImprovement: number;
   recommendations: string[];
-}
+};
 
 export class CacheOptimizer {
   private readonly cache: Map<string, any> = new Map();

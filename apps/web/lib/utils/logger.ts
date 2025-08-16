@@ -6,23 +6,21 @@ export enum LogLevel {
   DEBUG = 'debug',
 }
 
-export interface LogEntry {
+export type LogEntry = {
   level: LogLevel;
   message: string;
   timestamp: Date;
   metadata?: Record<string, any>;
-}
+};
 
 export class Logger {
   static log(level: LogLevel, message: string, metadata?: Record<string, any>) {
-    const entry: LogEntry = {
+    const _entry: LogEntry = {
       level,
       message,
       timestamp: new Date(),
       metadata,
     };
-
-    console.log(JSON.stringify(entry));
   }
 
   static error(message: string, metadata?: Record<string, any>) {

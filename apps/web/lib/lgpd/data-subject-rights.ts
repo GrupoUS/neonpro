@@ -72,7 +72,7 @@ export enum ExportFormat {
 /**
  * Data Subject Rights Request Interface
  */
-export interface DataSubjectRightsRequest {
+export type DataSubjectRightsRequest = {
   id: string;
   userId: string;
   requestType: DataSubjectRight;
@@ -129,12 +129,12 @@ export interface DataSubjectRightsRequest {
   };
   createdAt: Date;
   updatedAt: Date;
-}
+};
 
 /**
  * Request Audit Entry
  */
-export interface RequestAuditEntry {
+export type RequestAuditEntry = {
   id: string;
   action: string;
   actor: {
@@ -146,12 +146,12 @@ export interface RequestAuditEntry {
   details: Record<string, any>;
   ipAddress: string;
   userAgent: string;
-}
+};
 
 /**
  * Data Access Response
  */
-export interface DataAccessResponse {
+export type DataAccessResponse = {
   personalData: {
     basic: Record<string, any>;
     authentication: Record<string, any>;
@@ -199,12 +199,12 @@ export interface DataAccessResponse {
     language: 'pt' | 'en';
     requestId: string;
   };
-}
+};
 
 /**
  * Data Portability Package
  */
-export interface DataPortabilityPackage {
+export type DataPortabilityPackage = {
   userData: Record<string, any>;
   metadata: {
     exportDate: Date;
@@ -229,12 +229,12 @@ export interface DataPortabilityPackage {
     dataMinimization: boolean;
     purposeLimitation: boolean;
   };
-}
+};
 
 /**
  * Rights Request Events
  */
-export interface RightsRequestEvents {
+export type RightsRequestEvents = {
   'request:created': { request: DataSubjectRightsRequest };
   'request:verified': { request: DataSubjectRightsRequest };
   'request:processing': { request: DataSubjectRightsRequest };
@@ -249,7 +249,7 @@ export interface RightsRequestEvents {
     violation: string;
     severity: 'low' | 'medium' | 'high' | 'critical';
   };
-}
+};
 
 // ============================================================================
 // DATA SUBJECT RIGHTS MANAGER
@@ -864,9 +864,7 @@ export class DataSubjectRightsManager extends EventEmitter {
             await this.processRestrictionRequest(requestId);
             break;
         }
-      } catch (error) {
-        console.error(`Failed to process request ${requestId}:`, error);
-      }
+      } catch (_error) {}
     }
   }
 

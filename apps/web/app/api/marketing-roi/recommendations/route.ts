@@ -72,8 +72,7 @@ export async function GET(request: NextRequest) {
     };
 
     return NextResponse.json(response);
-  } catch (error) {
-    console.error('Marketing ROI recommendations error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to fetch marketing ROI recommendations' },
       { status: 500 }
@@ -134,8 +133,7 @@ export async function POST(request: NextRequest) {
     };
 
     return NextResponse.json(response);
-  } catch (error) {
-    console.error('Marketing ROI recommendations generation error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to generate marketing ROI recommendations' },
       { status: 500 }
@@ -174,8 +172,7 @@ export async function PUT(request: NextRequest) {
       success: true,
       recommendation: updatedRecommendation,
     });
-  } catch (error) {
-    console.error('Marketing ROI recommendation update error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to update marketing ROI recommendation' },
       { status: 500 }

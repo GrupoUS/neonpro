@@ -206,7 +206,6 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('List documents error:', error);
     return NextResponse.json(
       {
         success: false,
@@ -362,8 +361,6 @@ export async function POST(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('Create document error:', error);
-
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {
@@ -462,8 +459,6 @@ export async function PUT(request: NextRequest) {
       data,
     });
   } catch (error) {
-    console.error('Update document error:', error);
-
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {
@@ -566,7 +561,6 @@ export async function DELETE(request: NextRequest) {
       message: 'Document deleted successfully',
     });
   } catch (error) {
-    console.error('Delete document error:', error);
     return NextResponse.json(
       {
         success: false,

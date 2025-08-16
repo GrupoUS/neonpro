@@ -35,7 +35,7 @@ type RuleSeverity = 'info' | 'warning' | 'error' | 'critical';
 type RuleStatus = 'active' | 'inactive' | 'pending' | 'deprecated';
 
 // Compliance Rule Definition
-interface ComplianceRule {
+type ComplianceRule = {
   id: string;
   name: string;
   type: RuleType;
@@ -50,10 +50,10 @@ interface ComplianceRule {
   createdAt: Date;
   updatedAt: Date;
   createdBy: string;
-}
+};
 
 // Rule Condition
-interface RuleCondition {
+type RuleCondition = {
   id: string;
   field: string;
   operator:
@@ -66,37 +66,37 @@ interface RuleCondition {
     | 'not_in';
   value: any;
   logicalOperator?: 'AND' | 'OR';
-}
+};
 
 // Rule Action
-interface RuleAction {
+type RuleAction = {
   id: string;
   type: 'block' | 'warn' | 'modify' | 'require_approval' | 'log' | 'notify';
   description: string;
   parameters: Record<string, any>;
-}
+};
 
 // Rule Exception
-interface RuleException {
+type RuleException = {
   id: string;
   condition: string;
   description: string;
   approvalRequired: boolean;
   approverRoles: string[];
-}
+};
 
 // Compliance Validation Result
-interface ComplianceValidationResult {
+type ComplianceValidationResult = {
   isCompliant: boolean;
   violations: RuleViolation[];
   warnings: RuleWarning[];
   requiredApprovals: RequiredApproval[];
   suggestedModifications: SuggestedModification[];
   complianceScore: number;
-}
+};
 
 // Rule Violation
-interface RuleViolation {
+type RuleViolation = {
   ruleId: string;
   ruleName: string;
   severity: RuleSeverity;
@@ -107,43 +107,43 @@ interface RuleViolation {
   regulation: string;
   canBeOverridden: boolean;
   overrideRequirements: string[];
-}
+};
 
 // Rule Warning
-interface RuleWarning {
+type RuleWarning = {
   ruleId: string;
   ruleName: string;
   description: string;
   recommendation: string;
   impact: 'low' | 'medium' | 'high';
-}
+};
 
 // Required Approval
-interface RequiredApproval {
+type RequiredApproval = {
   ruleId: string;
   approvalType: string;
   requiredRoles: string[];
   reason: string;
   urgency: 'low' | 'medium' | 'high' | 'urgent';
-}
+};
 
 // Suggested Modification
-interface SuggestedModification {
+type SuggestedModification = {
   field: string;
   currentValue: any;
   suggestedValue: any;
   reason: string;
   impact: string;
-}
+};
 
 // Brazilian Healthcare Regulations
-interface BrazilianHealthcareRegulation {
+type BrazilianHealthcareRegulation = {
   cfmResolution: string;
   anvisaRegulation: string;
   description: string;
   applicableScenarios: string[];
   complianceRequirements: string[];
-}
+};
 
 class ComplianceRulesEngine {
   private readonly supabase = createClient();
@@ -230,8 +230,7 @@ class ComplianceRulesEngine {
       await this.logComplianceValidation(recommendation, criteria, result);
 
       return result;
-    } catch (error) {
-      console.error('Error validating compliance:', error);
+    } catch (_error) {
       throw new Error('Failed to validate compliance');
     }
   }
@@ -451,8 +450,7 @@ class ComplianceRulesEngine {
         isFollowUp: criteria.isFollowUp,
         ...additionalContext,
       };
-    } catch (error) {
-      console.error('Error building validation context:', error);
+    } catch (_error) {
       return {
         recommendation,
         criteria,
@@ -627,8 +625,7 @@ class ComplianceRulesEngine {
       if (this.rules.size === 0) {
         await this.createDefaultRules();
       }
-    } catch (error) {
-      console.error('Error loading compliance rules:', error);
+    } catch (_error) {
       await this.createDefaultRules();
     }
   }
@@ -831,9 +828,7 @@ class ComplianceRulesEngine {
         validation_result: JSON.stringify(result),
         created_at: new Date().toISOString(),
       });
-    } catch (error) {
-      console.error('Error logging compliance validation:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -870,8 +865,7 @@ class ComplianceRulesEngine {
       this.rules.set(ruleId, newRule);
 
       return ruleId;
-    } catch (error) {
-      console.error('Error adding compliance rule:', error);
+    } catch (_error) {
       throw new Error('Failed to add compliance rule');
     }
   }
@@ -912,8 +906,7 @@ class ComplianceRulesEngine {
 
       // Update in memory
       this.rules.set(ruleId, updatedRule);
-    } catch (error) {
-      console.error('Error updating compliance rule:', error);
+    } catch (_error) {
       throw new Error('Failed to update compliance rule');
     }
   }

@@ -98,7 +98,6 @@ export async function GET(request: NextRequest) {
     const { data: predictions, error, count } = await query;
 
     if (error) {
-      console.error('Database error:', error);
       return NextResponse.json(
         { error: 'Failed to fetch predictions' },
         { status: 500 }
@@ -119,8 +118,7 @@ export async function GET(request: NextRequest) {
         pages: Math.ceil((totalCount || 0) / parsedQuery.limit),
       },
     });
-  } catch (error) {
-    console.error('API error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -181,8 +179,6 @@ export async function POST(request: NextRequest) {
       { status: 201 }
     );
   } catch (error) {
-    console.error('API error:', error);
-
     if (error instanceof Error && error.message.includes('validation')) {
       return NextResponse.json(
         { error: 'Invalid input data', details: error.message },

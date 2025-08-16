@@ -280,8 +280,6 @@ export async function GET(
 
     return NextResponse.json(response);
   } catch (error) {
-    console.error('Card payment status error:', error);
-
     return NextResponse.json(
       {
         error: 'Internal Server Error',

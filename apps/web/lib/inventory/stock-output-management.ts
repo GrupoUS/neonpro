@@ -8,7 +8,7 @@ import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import type { Database } from '@/types/database';
 
 // Types and Interfaces
-export interface StockOutput {
+export type StockOutput = {
   id: string;
   numero_saida: string;
   tipo_saida: StockOutputType;
@@ -57,9 +57,9 @@ export interface StockOutput {
   criado_em: Date;
   criado_por: string;
   clinica_id: string;
-}
+};
 
-export interface StockOutputItem {
+export type StockOutputItem = {
   id: string;
   saida_id: string;
   produto_id: string;
@@ -89,9 +89,9 @@ export interface StockOutputItem {
   // Audit
   baixado_em: Date;
   baixado_por: string;
-}
+};
 
-export interface ProcedureMaterial {
+export type ProcedureMaterial = {
   id: string;
   procedimento_id: string;
   produto_id: string;
@@ -118,9 +118,9 @@ export interface ProcedureMaterial {
   criado_em: Date;
   atualizado_em: Date;
   clinica_id: string;
-}
+};
 
-export interface CostCenter {
+export type CostCenter = {
   id: string;
   codigo: string;
   nome: string;
@@ -150,9 +150,9 @@ export interface CostCenter {
   // Audit
   criado_em: Date;
   clinica_id: string;
-}
+};
 
-export interface BatchStock {
+export type BatchStock = {
   id: string;
   produto_id: string;
   numero_lote: string;
@@ -194,9 +194,9 @@ export interface BatchStock {
   // Audit
   criado_em: Date;
   clinica_id: string;
-}
+};
 
-export interface ConsumptionAnalysis {
+export type ConsumptionAnalysis = {
   periodo: AnalysisPeriod;
   centro_custo_id?: string;
   profissional_id?: string;
@@ -229,9 +229,9 @@ export interface ConsumptionAnalysis {
   // Alerts
   alertas_consumo_anormal: ConsumptionAlert[];
   produtos_desperdicio_alto: string[];
-}
+};
 
-export interface InternalTransfer {
+export type InternalTransfer = {
   id: string;
   numero_transferencia: string;
 
@@ -269,9 +269,9 @@ export interface InternalTransfer {
   criado_em: Date;
   criado_por: string;
   clinica_id: string;
-}
+};
 
-export interface FIFOResult {
+export type FIFOResult = {
   lote_id: string;
   produto_id: string;
   numero_lote: string;
@@ -281,50 +281,50 @@ export interface FIFOResult {
   prioridade_uso: number;
   recomendado: boolean;
   motivo_recomendacao: string;
-}
+};
 
 // Additional supporting interfaces
-export interface ProductConsumption {
+export type ProductConsumption = {
   produto_id: string;
   nome_produto: string;
   quantidade_consumida: number;
   valor_consumido: number;
   frequencia_uso: number;
   tendencia: string;
-}
+};
 
-export interface ConsumptionRanking {
+export type ConsumptionRanking = {
   id: string;
   nome: string;
   valor_consumido: number;
   eficiencia: number;
   ranking_posicao: number;
-}
+};
 
-export interface DemandForecast {
+export type DemandForecast = {
   produto_id: string;
   centro_custo_id: string;
   demanda_prevista: number;
   confianca: number;
   periodo: string;
-}
+};
 
-export interface OptimizationRecommendation {
+export type OptimizationRecommendation = {
   tipo: string;
   descricao: string;
   impacto_estimado: number;
   prioridade: string;
-}
+};
 
-export interface ConsumptionAlert {
+export type ConsumptionAlert = {
   tipo: string;
   produto_id?: string;
   centro_custo_id?: string;
   descricao: string;
   severidade: string;
-}
+};
 
-export interface TransferItem {
+export type TransferItem = {
   id: string;
   transferencia_id: string;
   produto_id: string;
@@ -332,12 +332,12 @@ export interface TransferItem {
   quantidade_solicitada: number;
   quantidade_transferida: number;
   status: string;
-}
+};
 
-export interface AnalysisPeriod {
+export type AnalysisPeriod = {
   inicio: Date;
   fim: Date;
-}
+};
 
 // Enum Types
 export type StockOutputType =
@@ -482,8 +482,7 @@ export class StockOutputManager {
         data: { ...output, itens: items } as StockOutput,
         error: null,
       };
-    } catch (error) {
-      console.error('Error creating stock output:', error);
+    } catch (_error) {
       return {
         data: null,
         error: 'Erro ao processar saída de estoque',
@@ -545,8 +544,7 @@ export class StockOutputManager {
         motivo_saida: 'Baixa automática - Procedimento realizado',
         automatico: true,
       });
-    } catch (error) {
-      console.error('Error processing automatic procedure deduction:', error);
+    } catch (_error) {
       return {
         data: null,
         error: 'Erro ao processar baixa automática do procedimento',
@@ -852,8 +850,7 @@ export class StockOutputManager {
 
       // Store for future analytics processing
       await this.supabase.from('logs_consumo').insert(analyticsData);
-    } catch (error) {
-      console.error('Error logging consumption analytics:', error);
+    } catch (_error) {
       // Don't throw - analytics failure shouldn't block the main operation
     }
   }
@@ -876,8 +873,7 @@ export class StockOutputManager {
         data: analysisData,
         error: null,
       };
-    } catch (error) {
-      console.error('Error getting consumption analysis:', error);
+    } catch (_error) {
       return {
         data: null,
         error: 'Erro ao gerar análise de consumo',

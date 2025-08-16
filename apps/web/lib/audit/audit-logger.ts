@@ -1,12 +1,12 @@
 // lib/audit/audit-logger.ts
-export interface AuditEvent {
+export type AuditEvent = {
   id: string;
   timestamp: Date;
   userId?: string;
   action: string;
   resource: string;
   metadata?: Record<string, any>;
-}
+};
 
 export class AuditLogger {
   static async log(event: Omit<AuditEvent, 'id' | 'timestamp'>) {
@@ -15,8 +15,6 @@ export class AuditLogger {
       timestamp: new Date(),
       ...event,
     };
-
-    console.log('Audit Event:', auditEvent);
     return auditEvent;
   }
 

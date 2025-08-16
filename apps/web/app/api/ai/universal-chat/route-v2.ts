@@ -12,8 +12,6 @@ import { createClient } from '@/app/utils/supabase/server';
  */
 export async function POST(request: NextRequest) {
   try {
-    console.log('[AI-API] Universal chat request received');
-
     // Parse request body
     const body = await request.json();
     const { message, context, sessionId } = body;
@@ -62,8 +60,6 @@ export async function POST(request: NextRequest) {
     // Process chat request
     const response = await chatEngine.processChat(aiRequest);
 
-    console.log('[AI-API] Chat processed successfully');
-
     return NextResponse.json({
       success: true,
       data: response,
@@ -74,8 +70,6 @@ export async function POST(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('[AI-API] Error processing chat:', error);
-
     return NextResponse.json(
       {
         error: 'Internal server error',
@@ -136,9 +130,7 @@ async function buildUniversalContext(
       clinical: clinicalData,
       businessIntelligence: biData,
     };
-  } catch (error) {
-    console.error('[AI-API] Error building context:', error);
-
+  } catch (_error) {
     // Return basic context with mock data
     return {
       user: {

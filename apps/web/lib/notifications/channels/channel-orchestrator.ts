@@ -37,7 +37,7 @@ import {
 } from './whatsapp-provider';
 
 // Channel orchestrator types
-export interface ChannelOrchestratorConfig {
+export type ChannelOrchestratorConfig = {
   email: EmailProviderConfig;
   push: PushProviderConfig;
   sms: SMSProviderConfig;
@@ -68,9 +68,9 @@ export interface ChannelOrchestratorConfig {
     trackEngagement: boolean;
     retentionDays: number;
   };
-}
+};
 
-export interface MultiChannelNotificationParams {
+export type MultiChannelNotificationParams = {
   channels: NotificationChannel[];
   fallbackChannels?: NotificationChannel[];
   content: {
@@ -95,9 +95,9 @@ export interface MultiChannelNotificationParams {
     respectQuietHours?: boolean;
     respectFrequencyLimits?: boolean;
   };
-}
+};
 
-export interface InAppNotificationParams {
+export type InAppNotificationParams = {
   title: string;
   message: string;
   icon?: string;
@@ -107,9 +107,9 @@ export interface InAppNotificationParams {
   category: string;
   expiresAt?: Date;
   persistent?: boolean;
-}
+};
 
-export interface MultiChannelResult {
+export type MultiChannelResult = {
   success: boolean;
   results: Array<{
     channel: NotificationChannel;
@@ -121,16 +121,16 @@ export interface MultiChannelResult {
   deliveredChannels: NotificationChannel[];
   failedChannels: NotificationChannel[];
   metadata: NotificationMetadata;
-}
+};
 
-export interface ChannelHealthStatus {
+export type ChannelHealthStatus = {
   channel: NotificationChannel;
   healthy: boolean;
   latency?: number;
   errorRate?: number;
   lastCheck: Date;
   provider: string;
-}
+};
 
 /**
  * Notification Channel Orchestrator
@@ -692,23 +692,13 @@ class NotificationChannelOrchestrator {
   }
 
   private async trackAnalytics(
-    params: MultiChannelNotificationParams,
-    results: MultiChannelResult['results'],
-    duration: number
+    _params: MultiChannelNotificationParams,
+    _results: MultiChannelResult['results'],
+    _duration: number
   ): Promise<void> {
     // This would typically save analytics to database
     // For now, just log the data
     if (this.config.analytics.trackDelivery) {
-      console.log('[Analytics] Notification delivery tracked:', {
-        urgency: params.urgency,
-        channels: params.channels,
-        results: results.map((r) => ({
-          channel: r.channel,
-          success: r.result.success,
-        })),
-        duration,
-        timestamp: new Date(),
-      });
     }
   }
 }

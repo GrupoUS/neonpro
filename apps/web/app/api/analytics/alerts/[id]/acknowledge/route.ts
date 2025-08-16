@@ -6,11 +6,11 @@
 import { type NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/app/utils/supabase/server';
 
-interface RouteParams {
+type RouteParams = {
   params: {
     id: string;
   };
-}
+};
 
 export async function PATCH(_request: NextRequest, { params }: RouteParams) {
   try {
@@ -57,7 +57,6 @@ export async function PATCH(_request: NextRequest, { params }: RouteParams) {
       message: 'Alert acknowledged successfully',
     });
   } catch (error) {
-    console.error('Error acknowledging alert:', error);
     return NextResponse.json(
       {
         success: false,

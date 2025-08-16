@@ -39,7 +39,6 @@ export async function GET(
       data: retentionAnalytics,
     });
   } catch (error) {
-    console.error('Error in retention analytics by patient GET:', error);
     return NextResponse.json(
       {
         success: false,

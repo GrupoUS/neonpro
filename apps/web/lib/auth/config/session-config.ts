@@ -318,24 +318,21 @@ export class SessionConfig {
 
       for (const envVar of requiredEnvVars) {
         if (!process.env[envVar]) {
-          console.error(`Missing required environment variable: ${envVar}`);
           return false;
         }
       }
 
       // Validate policy configurations
-      for (const [name, policy] of Object.entries(
+      for (const [_name, policy] of Object.entries(
         SessionConfig.DEFAULT_POLICIES
       )) {
         if (!SessionConfig.validatePolicy(policy)) {
-          console.error(`Invalid policy configuration: ${name}`);
           return false;
         }
       }
 
       return true;
-    } catch (error) {
-      console.error('Configuration validation failed:', error);
+    } catch (_error) {
       return false;
     }
   }

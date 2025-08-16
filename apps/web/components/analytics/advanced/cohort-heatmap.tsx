@@ -49,7 +49,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 // Types for cohort data
-interface CohortData {
+type CohortData = {
   cohortId: string;
   cohortName: string;
   startDate: string;
@@ -62,15 +62,15 @@ interface CohortData {
     averageRevenuePerUser: number;
     churnRate: number;
   }>;
-}
+};
 
-interface CohortHeatmapProps {
+type CohortHeatmapProps = {
   cohorts: CohortData[];
   loading?: boolean;
   className?: string;
   onCohortSelect?: (cohortId: string) => void;
   onPeriodSelect?: (period: number) => void;
-}
+};
 
 // Color scales for heatmap
 const _getRetentionColor = (rate: number) => {

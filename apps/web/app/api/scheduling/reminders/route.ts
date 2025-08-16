@@ -100,11 +100,7 @@ export async function POST(request: NextRequest) {
           })),
           message: `Scheduled ${reminderWorkflows.length} reminder workflows`,
         });
-      } catch (workflowError) {
-        console.error(
-          'Workflow error, falling back to legacy method:',
-          workflowError
-        );
+      } catch (_workflowError) {
         // Fall through to legacy method
       }
     }
@@ -112,7 +108,6 @@ export async function POST(request: NextRequest) {
     // Legacy reminder scheduling method
     return await handleLegacyReminders(supabase, validatedData, user);
   } catch (error) {
-    console.error('Error in POST /api/scheduling/reminders:', error);
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Invalid request data', details: error.errors },
@@ -344,7 +339,6 @@ async function handleLegacyReminders(
     .select();
 
   if (insertError) {
-    console.error('Error inserting reminders:', insertError);
     return NextResponse.json(
       { error: 'Failed to schedule reminders' },
       { status: 500 }
@@ -438,7 +432,6 @@ export async function GET(request: NextRequest) {
     );
 
     if (queryError) {
-      console.error('Error fetching reminders:', queryError);
       return NextResponse.json(
         { error: 'Failed to fetch reminders' },
         { status: 500 }
@@ -456,9 +449,7 @@ export async function GET(request: NextRequest) {
           .eq('workflow_type', 'reminder');
 
         workflows = workflowData || [];
-      } catch (error) {
-        console.error('Error fetching workflows:', error);
-      }
+      } catch (_error) {}
     }
 
     return NextResponse.json({
@@ -470,8 +461,7 @@ export async function GET(request: NextRequest) {
         workflows: workflows.length,
       },
     });
-  } catch (error) {
-    console.error('Error in GET /api/scheduling/reminders:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -513,7 +503,6 @@ export async function PUT(request: NextRequest) {
       .eq('status', 'scheduled');
 
     if (appointmentsError) {
-      console.error('Error fetching appointments:', appointmentsError);
       return NextResponse.json(
         { error: 'Failed to fetch appointments' },
         { status: 500 }
@@ -578,7 +567,6 @@ export async function PUT(request: NextRequest) {
 
         successCount++;
       } catch (error) {
-        console.error(`Error processing appointment ${appointment.id}:`, error);
         results.push({
           appointmentId: appointment.id,
           success: false,
@@ -597,7 +585,6 @@ export async function PUT(request: NextRequest) {
       message: `Processed ${appointments.length} appointments: ${successCount} successful, ${errorCount} failed`,
     });
   } catch (error) {
-    console.error('Error in PUT /api/scheduling/reminders:', error);
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Invalid request data', details: error.errors },

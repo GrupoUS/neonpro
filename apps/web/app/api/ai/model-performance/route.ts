@@ -13,7 +13,7 @@ import {
 } from '@/lib/ai/duration-prediction';
 
 // Response types
-interface ModelPerformanceResponse {
+type ModelPerformanceResponse = {
   success: boolean;
   models?: Array<{
     version: string;
@@ -33,7 +33,7 @@ interface ModelPerformanceResponse {
     };
   };
   error?: string;
-}
+};
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
   try {
@@ -100,16 +100,13 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       try {
         const abStats = await abTestService.getABTestStats();
         response.abTestStats = abStats;
-      } catch (abError) {
-        console.error('Failed to get A/B test stats:', abError);
+      } catch (_abError) {
         // Don't fail the request for this optional data
       }
     }
 
     return NextResponse.json(response);
-  } catch (error) {
-    console.error('Model Performance API Error:', error);
-
+  } catch (_error) {
     return NextResponse.json(
       {
         success: false,
@@ -229,9 +226,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
           { status: 400 }
         );
     }
-  } catch (error) {
-    console.error('Model Performance POST API Error:', error);
-
+  } catch (_error) {
     return NextResponse.json(
       {
         success: false,

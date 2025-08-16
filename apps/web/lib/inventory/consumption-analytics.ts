@@ -6,7 +6,7 @@
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import type { Database } from '@/types/database';
 
-export interface ConsumptionAnalytics {
+export type ConsumptionAnalytics = {
   periodo: {
     data_inicio: Date;
     data_fim: Date;
@@ -29,9 +29,9 @@ export interface ConsumptionAnalytics {
   tendencias: ConsumptionTrend[];
   eficiencia_custos: CostEfficiency;
   alertas: ConsumptionAlert[];
-}
+};
 
-export interface ProductConsumption {
+export type ProductConsumption = {
   produto_id: string;
   nome_produto: string;
   categoria: string;
@@ -42,26 +42,26 @@ export interface ProductConsumption {
   percentual_consumo_total: number;
   tendencia_mensal: 'crescente' | 'estavel' | 'decrescente';
   variacao_percentual: number;
-}
+};
 
-export interface ConsumptionTrend {
+export type ConsumptionTrend = {
   periodo: string;
   quantidade_consumida: number;
   valor_consumido: number;
   variacao_quantidade: number;
   variacao_valor: number;
   eficiencia_score: number;
-}
+};
 
-export interface CostEfficiency {
+export type CostEfficiency = {
   score_eficiencia: number; // 0-100
   custo_por_unidade_media: number;
   economia_potencial: number;
   desperdicioIdentificado: number;
   oportunidades_melhoria: EfficiencyOpportunity[];
-}
+};
 
-export interface EfficiencyOpportunity {
+export type EfficiencyOpportunity = {
   tipo:
     | 'consolidacao_fornecedor'
     | 'otimizacao_lote'
@@ -72,9 +72,9 @@ export interface EfficiencyOpportunity {
   complexidade: 'baixa' | 'media' | 'alta';
   prazo_implementacao: number; // dias
   impacto_operacional: 'minimo' | 'moderado' | 'significativo';
-}
+};
 
-export interface ConsumptionAlert {
+export type ConsumptionAlert = {
   id: string;
   tipo:
     | 'consumo_anomalo'
@@ -88,9 +88,9 @@ export interface ConsumptionAlert {
   gravidade: 'baixa' | 'media' | 'alta' | 'critica';
   acao_recomendada: string;
   data_detectado: Date;
-}
+};
 
-export interface ConsumptionForecast {
+export type ConsumptionForecast = {
   produto_id: string;
   nome_produto: string;
   previsao_quantidade: number;
@@ -99,17 +99,17 @@ export interface ConsumptionForecast {
   sazonalidade_detectada: boolean;
   fatores_influencia: string[];
   recomendacao_compra: PurchaseRecommendation;
-}
+};
 
-export interface PurchaseRecommendation {
+export type PurchaseRecommendation = {
   quantidade_recomendada: number;
   prazo_compra_ideal: number; // dias
   fornecedor_sugerido?: string;
   justificativa: string;
   economia_esperada: number;
-}
+};
 
-export interface ConsumptionPattern {
+export type ConsumptionPattern = {
   centro_custo_id: string;
   produto_id: string;
   padrao_identificado:
@@ -123,14 +123,14 @@ export interface ConsumptionPattern {
   horarios_pico: string[];
   dias_semana_pico: number[];
   correlacoes: ProductCorrelation[];
-}
+};
 
-export interface ProductCorrelation {
+export type ProductCorrelation = {
   produto_relacionado_id: string;
   nome_produto_relacionado: string;
   correlacao_score: number; // 0-100
   tipo_relacao: 'substituto' | 'complementar' | 'concorrente';
-}
+};
 
 /**
  * Consumption Analytics System
@@ -248,8 +248,7 @@ export class ConsumptionAnalyzer {
         data: analytics,
         error: null,
       };
-    } catch (error) {
-      console.error('Error getting consumption analytics:', error);
+    } catch (_error) {
       return {
         data: null,
         error: 'Erro ao analisar consumo',
@@ -331,8 +330,7 @@ export class ConsumptionAnalyzer {
         data: resolvedForecasts,
         error: null,
       };
-    } catch (error) {
-      console.error('Error getting consumption forecast:', error);
+    } catch (_error) {
       return {
         data: null,
         error: 'Erro ao calcular previsão de consumo',
@@ -407,8 +405,7 @@ export class ConsumptionAnalyzer {
         data: resolvedPatterns,
         error: null,
       };
-    } catch (error) {
-      console.error('Error identifying consumption patterns:', error);
+    } catch (_error) {
       return {
         data: null,
         error: 'Erro ao identificar padrões de consumo',
@@ -477,11 +474,7 @@ export class ConsumptionAnalyzer {
         data: opportunities,
         error: null,
       };
-    } catch (error) {
-      console.error(
-        'Error generating cost optimization recommendations:',
-        error
-      );
+    } catch (_error) {
       return {
         data: null,
         error: 'Erro ao gerar recomendações de otimização',

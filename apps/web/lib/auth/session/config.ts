@@ -10,7 +10,7 @@
 // TIPOS E INTERFACES
 // ============================================================================
 
-export interface SessionConfig {
+export type SessionConfig = {
   timeout: {
     defaultMinutes: number;
     extendThresholdMinutes: number;
@@ -30,9 +30,9 @@ export interface SessionConfig {
     batchSize: number;
     flushIntervalMs: number;
   };
-}
+};
 
-export interface DeviceConfig {
+export type DeviceConfig = {
   fingerprinting: {
     enabled: boolean;
     includeCanvas: boolean;
@@ -59,9 +59,9 @@ export interface DeviceConfig {
       high: number;
     };
   };
-}
+};
 
-export interface SecurityConfig {
+export type SecurityConfig = {
   events: {
     retentionDays: number;
     maxEventsPerUser: number;
@@ -82,9 +82,9 @@ export interface SecurityConfig {
     autoNotify: boolean;
     escalationLevels: string[];
   };
-}
+};
 
-export interface NotificationConfig {
+export type NotificationConfig = {
   channels: {
     email: {
       enabled: boolean;
@@ -141,9 +141,9 @@ export interface NotificationConfig {
       critical: string[];
     };
   };
-}
+};
 
-export interface CleanupConfig {
+export type CleanupConfig = {
   schedule: {
     enabled: boolean;
     frequency: 'daily' | 'weekly' | 'monthly';
@@ -183,9 +183,9 @@ export interface CleanupConfig {
     maxRecordsPerBatch: number;
     batchDelayMs: number;
   };
-}
+};
 
-export interface DatabaseConfig {
+export type DatabaseConfig = {
   supabase: {
     url: string;
     anonKey: string;
@@ -210,7 +210,7 @@ export interface DatabaseConfig {
     queryTimeout: number;
     batchSize: number;
   };
-}
+};
 
 // ============================================================================
 // CONFIGURAÇÕES PADRÃO

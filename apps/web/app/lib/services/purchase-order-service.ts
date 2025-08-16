@@ -3,7 +3,7 @@
 import { createClient } from '@/app/utils/supabase/server';
 
 // Purchase Order Data Types
-interface SupplierInfo {
+type SupplierInfo = {
   id: string;
   name: string;
   email: string;
@@ -13,18 +13,18 @@ interface SupplierInfo {
   preferredPaymentTerms?: string;
   reliability_score?: number;
   cost_rating?: number;
-}
+};
 
-interface PurchaseOrderItem {
+type PurchaseOrderItem = {
   item_id: string;
   item_name: string;
   quantity: number;
   unit_price: number;
   total_price: number;
   supplier_sku?: string;
-}
+};
 
-interface PurchaseOrder {
+type PurchaseOrder = {
   id: string;
   order_number: string;
   supplier_id: string;
@@ -41,24 +41,24 @@ interface PurchaseOrder {
   items: PurchaseOrderItem[];
   created_at: Date;
   created_by: string;
-}
+};
 
 // EOQ Calculation Input
-interface EOQInput {
+type EOQInput = {
   annualDemand: number;
   orderingCost: number;
   holdingCost: number;
   unitCost: number;
-}
+};
 
-interface EOQResult {
+type EOQResult = {
   optimalOrderQuantity: number;
   totalCost: number;
   orderingCostComponent: number;
   holdingCostComponent: number;
   reorderPoint: number;
   timeBetweenOrders: number; // dias
-}
+};
 
 export class PurchaseOrderService {
   private async getSupabase() {

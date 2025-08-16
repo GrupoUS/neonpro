@@ -18,7 +18,7 @@ import { TreatmentReminderEmail } from './templates/treatment-reminder';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-interface EmailPayload {
+type EmailPayload = {
   recipientId: string;
   recipientEmail: string;
   type: string;
@@ -27,16 +27,16 @@ interface EmailPayload {
   templateData?: any;
   timezone?: string;
   priority?: 'low' | 'normal' | 'high' | 'urgent';
-}
+};
 
-interface EmailResult {
+type EmailResult = {
   success: boolean;
   notificationId?: string;
   channel: 'email';
   error?: string;
   deliveredAt?: Date;
   messageId?: string;
-}
+};
 
 export class EmailService {
   private readonly config = NOTIFICATION_CONFIG.email;
@@ -101,7 +101,6 @@ export class EmailService {
         deliveredAt: new Date(),
       };
     } catch (error) {
-      console.error('Email sending error:', error);
       return {
         success: false,
         channel: 'email',
@@ -162,8 +161,7 @@ export class EmailService {
         status: 'delivered',
         deliveredAt: new Date(),
       };
-    } catch (error) {
-      console.error('Error getting email delivery status:', error);
+    } catch (_error) {
       return null;
     }
   }

@@ -16,23 +16,24 @@ export async function GET(
 ) {
   try {
     const supabase = createRouteHandlerClient({ cookies });
-    const { data: { session } } = await supabase.auth.getSession();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
 
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const alert = await anvisaAPI.getAlertDetails(params.id);
-    
+
     if (!alert) {
       return NextResponse.json({ error: 'Alert not found' }, { status: 404 });
     }
 
-    return NextResponse.json({ 
-      success: true, 
-      data: alert 
+    return NextResponse.json({
+      success: true,
+      data: alert,
     });
-
   } catch (error) {
     console.error('Error fetching alert details:', error);
     return NextResponse.json(
@@ -48,7 +49,9 @@ export async function PUT(
 ) {
   try {
     const supabase = createRouteHandlerClient({ cookies });
-    const { data: { session } } = await supabase.auth.getSession();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
 
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -57,11 +60,10 @@ export async function PUT(
     const updateData = await request.json();
     const updatedAlert = await anvisaAPI.updateAlert(params.id, updateData);
 
-    return NextResponse.json({ 
-      success: true, 
-      data: updatedAlert 
+    return NextResponse.json({
+      success: true,
+      data: updatedAlert,
     });
-
   } catch (error) {
     console.error('Error updating alert:', error);
     return NextResponse.json(
@@ -77,7 +79,9 @@ export async function DELETE(
 ) {
   try {
     const supabase = createRouteHandlerClient({ cookies });
-    const { data: { session } } = await supabase.auth.getSession();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
 
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -85,11 +89,10 @@ export async function DELETE(
 
     await anvisaAPI.resolveAlert(params.id);
 
-    return NextResponse.json({ 
-      success: true, 
-      message: 'Alert resolved successfully' 
+    return NextResponse.json({
+      success: true,
+      message: 'Alert resolved successfully',
     });
-
   } catch (error) {
     console.error('Error resolving alert:', error);
     return NextResponse.json(

@@ -1,6 +1,23 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import {
+  Brain,
+  CheckCircle2,
+  Clock,
+  DollarSign,
+  Info,
+  RotateCcw,
+  Save,
+  Shield,
+  Stethoscope,
+  Users,
+  Zap,
+} from 'lucide-react';
+import type React from 'react';
+import { useEffect, useState } from 'react';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import {
   Card,
   CardContent,
@@ -8,43 +25,18 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { Badge } from '@/components/ui/badge';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Switch } from '@/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import {
-  Settings,
-  Brain,
-  Zap,
-  Shield,
-  AlertTriangle,
-  CheckCircle2,
-  Info,
-  Stethoscope,
-  Users,
-  DollarSign,
-  Clock,
-  Save,
-  RotateCcw,
-} from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
 
-interface MatchingAlgorithmsConfigProps {
+type MatchingAlgorithmsConfigProps = {
   'data-testid'?: string;
   className?: string;
-}
+};
 
-interface AlgorithmConfig {
+type AlgorithmConfig = {
   id: string;
   name: string;
   description: string;
@@ -54,9 +46,9 @@ interface AlgorithmConfig {
   healthcareSpecific: boolean;
   lgpdCompliant: boolean;
   anvisaApproved: boolean;
-}
+};
 
-interface MatchingCriteria {
+type MatchingCriteria = {
   exactMatch: boolean;
   fuzzyMatch: boolean;
   amountTolerance: number;
@@ -64,7 +56,7 @@ interface MatchingCriteria {
   patientNameSimilarity: number;
   procedureCodeMatching: boolean;
   professionalValidation: boolean;
-}
+};
 
 /**
  * Matching Algorithms Configuration Component
@@ -102,7 +94,7 @@ export const MatchingAlgorithmsConfig: React.FC<
 
   useEffect(() => {
     loadAlgorithmConfigs();
-  }, []);
+  }, [loadAlgorithmConfigs]);
 
   const loadAlgorithmConfigs = async () => {
     try {
@@ -173,7 +165,7 @@ export const MatchingAlgorithmsConfig: React.FC<
       ];
 
       setAlgorithms(mockAlgorithms);
-    } catch (err) {
+    } catch (_err) {
       toast({
         title: 'Erro',
         description: 'Falha ao carregar configurações dos algoritmos',
@@ -209,7 +201,7 @@ export const MatchingAlgorithmsConfig: React.FC<
       });
 
       setHasChanges(false);
-    } catch (err) {
+    } catch (_err) {
       toast({
         title: 'Erro',
         description: 'Falha ao salvar configurações',
@@ -235,24 +227,24 @@ export const MatchingAlgorithmsConfig: React.FC<
   };
 
   const getComplianceBadges = (algorithm: AlgorithmConfig) => (
-    <div className="flex gap-1 flex-wrap">
+    <div className="flex flex-wrap gap-1">
       {algorithm.lgpdCompliant && (
         <Badge
-          variant="default"
           className="bg-green-100 text-green-800 text-xs"
+          variant="default"
         >
           LGPD
         </Badge>
       )}
       {algorithm.anvisaApproved && (
-        <Badge variant="default" className="bg-blue-100 text-blue-800 text-xs">
+        <Badge className="bg-blue-100 text-blue-800 text-xs" variant="default">
           ANVISA
         </Badge>
       )}
       {algorithm.healthcareSpecific && (
         <Badge
-          variant="default"
           className="bg-purple-100 text-purple-800 text-xs"
+          variant="default"
         >
           Saúde
         </Badge>
@@ -269,7 +261,7 @@ export const MatchingAlgorithmsConfig: React.FC<
         <CardContent>
           <div className="space-y-4">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="h-16 bg-muted animate-pulse rounded" />
+              <div className="h-16 animate-pulse rounded bg-muted" key={i} />
             ))}
           </div>
         </CardContent>
@@ -292,19 +284,19 @@ export const MatchingAlgorithmsConfig: React.FC<
           </div>
           <div className="flex gap-2">
             <Button
-              variant="outline"
-              size="sm"
-              onClick={resetToDefaults}
-              disabled={isSaving}
               data-testid="reset-button"
+              disabled={isSaving}
+              onClick={resetToDefaults}
+              size="sm"
+              variant="outline"
             >
-              <RotateCcw className="h-4 w-4 mr-2" />
+              <RotateCcw className="mr-2 h-4 w-4" />
               Restaurar
             </Button>
             <Button
-              onClick={saveConfiguration}
-              disabled={!hasChanges || isSaving}
               data-testid="save-button"
+              disabled={!hasChanges || isSaving}
+              onClick={saveConfiguration}
             >
               {isSaving ? (
                 <div className="flex items-center gap-2">
@@ -313,7 +305,7 @@ export const MatchingAlgorithmsConfig: React.FC<
                 </div>
               ) : (
                 <>
-                  <Save className="h-4 w-4 mr-2" />
+                  <Save className="mr-2 h-4 w-4" />
                   Salvar
                 </>
               )}
@@ -322,17 +314,17 @@ export const MatchingAlgorithmsConfig: React.FC<
         </div>
       </CardHeader>
       <CardContent>
-        <Tabs defaultValue="algorithms" className="w-full">
+        <Tabs className="w-full" defaultValue="algorithms">
           <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="algorithms" data-testid="algorithms-tab">
+            <TabsTrigger data-testid="algorithms-tab" value="algorithms">
               Algoritmos
             </TabsTrigger>
-            <TabsTrigger value="criteria" data-testid="criteria-tab">
+            <TabsTrigger data-testid="criteria-tab" value="criteria">
               Critérios
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="algorithms" className="space-y-4">
+          <TabsContent className="space-y-4" value="algorithms">
             {/* Healthcare Compliance Alert */}
             <Alert data-testid="compliance-alert">
               <Shield className="h-4 w-4" />
@@ -348,19 +340,19 @@ export const MatchingAlgorithmsConfig: React.FC<
             <div className="space-y-4">
               {algorithms.map((algorithm) => (
                 <Card
-                  key={algorithm.id}
                   data-testid={`algorithm-${algorithm.id}`}
+                  key={algorithm.id}
                 >
                   <CardContent className="pt-6">
                     <div className="flex items-start justify-between">
                       <div className="flex-1 space-y-2">
                         <div className="flex items-center gap-2">
-                          <Label className="text-base font-medium">
+                          <Label className="font-medium text-base">
                             {algorithm.name}
                           </Label>
                           {getComplianceBadges(algorithm)}
                         </div>
-                        <p className="text-sm text-muted-foreground">
+                        <p className="text-muted-foreground text-sm">
                           {algorithm.description}
                         </p>
                         <div className="flex items-center gap-4 text-sm">
@@ -379,10 +371,10 @@ export const MatchingAlgorithmsConfig: React.FC<
                       </div>
                       <Switch
                         checked={algorithm.enabled}
+                        data-testid={`algorithm-${algorithm.id}-toggle`}
                         onCheckedChange={(enabled) =>
                           updateAlgorithm(algorithm.id, { enabled })
                         }
-                        data-testid={`algorithm-${algorithm.id}-toggle`}
                       />
                     </div>
                   </CardContent>
@@ -391,9 +383,9 @@ export const MatchingAlgorithmsConfig: React.FC<
             </div>
           </TabsContent>
 
-          <TabsContent value="criteria" className="space-y-6">
+          <TabsContent className="space-y-6" value="criteria">
             {/* Healthcare Matching Criteria */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
               {/* Patient Matching */}
               <Card data-testid="patient-matching-card">
                 <CardHeader>
@@ -406,12 +398,12 @@ export const MatchingAlgorithmsConfig: React.FC<
                   <div className="flex items-center justify-between">
                     <Label htmlFor="exact-match">Correspondência Exata</Label>
                     <Switch
-                      id="exact-match"
                       checked={criteria.exactMatch}
+                      data-testid="exact-match-toggle"
+                      id="exact-match"
                       onCheckedChange={(exactMatch) =>
                         updateCriteria({ exactMatch })
                       }
-                      data-testid="exact-match-toggle"
                     />
                   </div>
                   <div className="flex items-center justify-between">
@@ -419,12 +411,12 @@ export const MatchingAlgorithmsConfig: React.FC<
                       Correspondência Aproximada
                     </Label>
                     <Switch
-                      id="fuzzy-match"
                       checked={criteria.fuzzyMatch}
+                      data-testid="fuzzy-match-toggle"
+                      id="fuzzy-match"
                       onCheckedChange={(fuzzyMatch) =>
                         updateCriteria({ fuzzyMatch })
                       }
-                      data-testid="fuzzy-match-toggle"
                     />
                   </div>
                   <div className="space-y-2">
@@ -433,14 +425,14 @@ export const MatchingAlgorithmsConfig: React.FC<
                       {(criteria.patientNameSimilarity * 100).toFixed(0)}%
                     </Label>
                     <Slider
-                      value={[criteria.patientNameSimilarity * 100]}
+                      data-testid="name-similarity-slider"
+                      max={100}
+                      min={50}
                       onValueChange={([value]) =>
                         updateCriteria({ patientNameSimilarity: value / 100 })
                       }
-                      max={100}
-                      min={50}
                       step={5}
-                      data-testid="name-similarity-slider"
+                      value={[criteria.patientNameSimilarity * 100]}
                     />
                   </div>
                 </CardContent>
@@ -461,27 +453,27 @@ export const MatchingAlgorithmsConfig: React.FC<
                       {(criteria.amountTolerance * 100).toFixed(1)}%
                     </Label>
                     <Slider
-                      value={[criteria.amountTolerance * 100]}
+                      data-testid="amount-tolerance-slider"
+                      max={20}
+                      min={0}
                       onValueChange={([value]) =>
                         updateCriteria({ amountTolerance: value / 100 })
                       }
-                      max={20}
-                      min={0}
                       step={0.5}
-                      data-testid="amount-tolerance-slider"
+                      value={[criteria.amountTolerance * 100]}
                     />
                   </div>
                   <div className="space-y-2">
                     <Label>Janela de Data: {criteria.dateRange} dias</Label>
                     <Slider
-                      value={[criteria.dateRange]}
+                      data-testid="date-range-slider"
+                      max={30}
+                      min={1}
                       onValueChange={([value]) =>
                         updateCriteria({ dateRange: value })
                       }
-                      max={30}
-                      min={1}
                       step={1}
-                      data-testid="date-range-slider"
+                      value={[criteria.dateRange]}
                     />
                   </div>
                 </CardContent>
@@ -499,12 +491,12 @@ export const MatchingAlgorithmsConfig: React.FC<
                   <div className="flex items-center justify-between">
                     <Label htmlFor="procedure-code">Códigos TUSS/ANVISA</Label>
                     <Switch
-                      id="procedure-code"
                       checked={criteria.procedureCodeMatching}
+                      data-testid="procedure-code-toggle"
+                      id="procedure-code"
                       onCheckedChange={(procedureCodeMatching) =>
                         updateCriteria({ procedureCodeMatching })
                       }
-                      data-testid="procedure-code-toggle"
                     />
                   </div>
                   <div className="flex items-center justify-between">
@@ -512,12 +504,12 @@ export const MatchingAlgorithmsConfig: React.FC<
                       Validação Profissional
                     </Label>
                     <Switch
-                      id="professional-validation"
                       checked={criteria.professionalValidation}
+                      data-testid="professional-validation-toggle"
+                      id="professional-validation"
                       onCheckedChange={(professionalValidation) =>
                         updateCriteria({ professionalValidation })
                       }
-                      data-testid="professional-validation-toggle"
                     />
                   </div>
                 </CardContent>
@@ -532,7 +524,7 @@ export const MatchingAlgorithmsConfig: React.FC<
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <div className="text-sm space-y-2">
+                  <div className="space-y-2 text-sm">
                     <div className="flex justify-between">
                       <span>Taxa de Sucesso:</span>
                       <span className="font-medium">87.6%</span>

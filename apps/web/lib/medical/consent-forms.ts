@@ -24,7 +24,7 @@ import {
 // TYPES & INTERFACES
 // ============================================================================
 
-export interface ConsentForm {
+export type ConsentForm = {
   id: string;
   clinic_id: string;
   form_type: ConsentFormType;
@@ -44,9 +44,9 @@ export interface ConsentForm {
   updated_at: string;
   effective_from: string;
   effective_until?: string;
-}
+};
 
-export interface ConsentResponse {
+export type ConsentResponse = {
   id: string;
   form_id: string;
   patient_id: string;
@@ -67,18 +67,18 @@ export interface ConsentResponse {
   withdrawal_reason?: string;
   created_at: string;
   updated_at: string;
-}
+};
 
-export interface FormContent {
+export type FormContent = {
   introduction: string;
   sections: FormSection[];
   conclusion: string;
   legal_notice: string;
   privacy_policy_link?: string;
   contact_info: ContactInfo;
-}
+};
 
-export interface FormSection {
+export type FormSection = {
   id: string;
   title: string;
   description?: string;
@@ -86,9 +86,9 @@ export interface FormSection {
   order: number;
   is_required: boolean;
   conditional_logic?: ConditionalLogic;
-}
+};
 
-export interface FormField {
+export type FormField = {
   id: string;
   section_id?: string;
   name: string;
@@ -103,47 +103,47 @@ export interface FormField {
   conditional_logic?: ConditionalLogic;
   data_category: DataCategory;
   retention_period?: number;
-}
+};
 
-export interface FieldResponse {
+export type FieldResponse = {
   field_id: string;
   field_name: string;
   value: any;
   data_category: DataCategory;
   consent_given: boolean;
   timestamp: string;
-}
+};
 
-export interface ValidationRule {
+export type ValidationRule = {
   id: string;
   field_id: string;
   rule_type: ValidationType;
   parameters: Record<string, any>;
   error_message: string;
-}
+};
 
-export interface LegalBasis {
+export type LegalBasis = {
   type: LegalBasisType;
   description: string;
   article_reference?: string;
   purpose: string;
   data_categories: DataCategory[];
-}
+};
 
-export interface ConditionalLogic {
+export type ConditionalLogic = {
   condition: LogicCondition;
   action: LogicAction;
   target_fields?: string[];
-}
+};
 
-export interface FieldOption {
+export type FieldOption = {
   value: string;
   label: string;
   description?: string;
   is_default?: boolean;
-}
+};
 
-export interface FieldValidation {
+export type FieldValidation = {
   required?: boolean;
   min_length?: number;
   max_length?: number;
@@ -151,22 +151,22 @@ export interface FieldValidation {
   min_value?: number;
   max_value?: number;
   custom_validator?: string;
-}
+};
 
-export interface GeolocationData {
+export type GeolocationData = {
   latitude: number;
   longitude: number;
   accuracy: number;
   timestamp: string;
-}
+};
 
-export interface ContactInfo {
+export type ContactInfo = {
   clinic_name: string;
   address: string;
   phone: string;
   email: string;
   dpo_contact?: string;
-}
+};
 
 // Enums
 export enum ConsentFormType {
@@ -258,14 +258,14 @@ export enum LogicAction {
   SET_VALUE = 'set_value',
 }
 
-export interface ConsentFormOptions {
+export type ConsentFormOptions = {
   includeSignature?: boolean;
   requireWitness?: boolean;
   enableGeolocation?: boolean;
   customValidation?: boolean;
   autoSave?: boolean;
   multiLanguage?: boolean;
-}
+};
 
 // ============================================================================
 // CONSENT FORMS MANAGER
@@ -341,7 +341,6 @@ export class ConsentFormsManager {
 
       return { success: true, data };
     } catch (error) {
-      console.error('Error creating consent form:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
@@ -369,7 +368,6 @@ export class ConsentFormsManager {
 
       return { success: true, data };
     } catch (error) {
-      console.error('Error getting consent form:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
@@ -406,7 +404,6 @@ export class ConsentFormsManager {
 
       return { success: true, data: data || [] };
     } catch (error) {
-      console.error('Error getting clinic consent forms:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
@@ -461,7 +458,6 @@ export class ConsentFormsManager {
 
       return { success: true, data };
     } catch (error) {
-      console.error('Error updating consent form:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
@@ -592,7 +588,6 @@ export class ConsentFormsManager {
 
       return { success: true, data: consentResponse };
     } catch (error) {
-      console.error('Error submitting consent response:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
@@ -634,7 +629,6 @@ export class ConsentFormsManager {
 
       return { success: true, data: data || [] };
     } catch (error) {
-      console.error('Error getting patient consent responses:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
@@ -682,7 +676,6 @@ export class ConsentFormsManager {
 
       return { success: true };
     } catch (error) {
-      console.error('Error withdrawing consent:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
@@ -706,7 +699,6 @@ export class ConsentFormsManager {
       const template = this.getFormTemplate(templateType, language);
       return { success: true, data: template };
     } catch (error) {
-      console.error('Error creating form template:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
@@ -1266,8 +1258,7 @@ export class ConsentFormsManager {
       }
 
       return true;
-    } catch (error) {
-      console.error('Error checking consent:', error);
+    } catch (_error) {
       return false;
     }
   }
@@ -1294,9 +1285,7 @@ export class ConsentFormsManager {
       };
 
       await this.supabase.from('consent_form_versions').insert(version);
-    } catch (error) {
-      console.error('Error creating form version:', error);
-    }
+    } catch (_error) {}
   }
 
   private async updateLGPDConsent(
@@ -1325,9 +1314,7 @@ export class ConsentFormsManager {
           );
         }
       }
-    } catch (error) {
-      console.error('Error updating LGPD consent:', error);
-    }
+    } catch (_error) {}
   }
 
   // ========================================================================
@@ -1377,7 +1364,6 @@ export class ConsentFormsManager {
 
       return { success: true, data: stats };
     } catch (error) {
-      console.error('Error getting consent statistics:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',

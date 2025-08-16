@@ -81,8 +81,7 @@ async function validateStatisticsAccess(
       profile.permissions?.includes('audit.statistics');
 
     return hasStatsAccess;
-  } catch (error) {
-    console.error('Erro ao validar acesso de estatísticas:', error);
+  } catch (_error) {
     return false;
   }
 }
@@ -483,9 +482,7 @@ export async function GET(request: NextRequest) {
         trends: trendData,
       },
     });
-  } catch (error) {
-    console.error('Erro na consulta de estatísticas:', error);
-
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

@@ -9,15 +9,15 @@ type Room = Tables['rooms']['Row'];
 type Equipment = Tables['equipment']['Row'];
 
 // Tipos para detecção de conflitos
-export interface ConflictDetectionResult {
+export type ConflictDetectionResult = {
   hasConflicts: boolean;
   conflicts: DetectedConflict[];
   severity: 'low' | 'medium' | 'high' | 'critical';
   affectedResources: AffectedResource[];
   suggestedActions: string[];
-}
+};
 
-export interface DetectedConflict {
+export type DetectedConflict = {
   id: string;
   type: ConflictType;
   severity: 'low' | 'medium' | 'high' | 'critical';
@@ -26,22 +26,22 @@ export interface DetectedConflict {
   affectedResources: AffectedResource[];
   detectedAt: Date;
   autoResolvable: boolean;
-}
+};
 
-export interface AffectedResource {
+export type AffectedResource = {
   id: string;
   type: 'staff' | 'room' | 'equipment';
   name: string;
   conflictReason: string;
   availability: ResourceAvailability[];
-}
+};
 
-export interface ResourceAvailability {
+export type ResourceAvailability = {
   start: Date;
   end: Date;
   available: boolean;
   reason?: string;
-}
+};
 
 export enum ConflictType {
   STAFF_DOUBLE_BOOKING = 'staff_double_booking',
@@ -54,7 +54,7 @@ export enum ConflictType {
   OVERTIME_VIOLATION = 'overtime_violation',
 }
 
-export interface ConflictDetectionConfig {
+export type ConflictDetectionConfig = {
   enableRealTimeDetection: boolean;
   checkStaffAvailability: boolean;
   checkRoomAvailability: boolean;
@@ -63,7 +63,7 @@ export interface ConflictDetectionConfig {
   enforceBreakTimes: boolean;
   maxOvertimeHours: number;
   bufferTimeMinutes: number;
-}
+};
 
 /**
  * Core Conflict Detection Engine

@@ -34,7 +34,6 @@ export async function POST(request: NextRequest) {
       message: 'Protocol analytics generated successfully',
     });
   } catch (error) {
-    console.error('Error generating protocol analytics:', error);
     return NextResponse.json(
       {
         success: false,

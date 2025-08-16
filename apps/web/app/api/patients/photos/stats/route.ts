@@ -95,8 +95,6 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('Get photo stats error:', error);
-
     return NextResponse.json(
       {
         error: 'Failed to get statistics',
@@ -214,8 +212,7 @@ async function getSystemPhotoStats(timeframe: string) {
         totalPatientsWithSettings: privacyStats.total,
       },
     };
-  } catch (error) {
-    console.error('Error getting system photo stats:', error);
+  } catch (_error) {
     return {
       uploads: { total: 0, byType: {}, storageUsed: 0 },
       verifications: {

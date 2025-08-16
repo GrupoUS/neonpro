@@ -51,8 +51,7 @@ export async function GET(request: NextRequest) {
     });
 
     return NextResponse.json(result);
-  } catch (error) {
-    console.error('Erro ao buscar jobs de backup:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
       { status: 500 }
@@ -96,8 +95,6 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
-
-    console.error('Erro ao iniciar backup:', error);
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
       { status: 500 }

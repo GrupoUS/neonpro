@@ -9,7 +9,7 @@ import { nlpEngine } from './nlp-engine';
 import { searchIndexer } from './search-indexer';
 
 // Types
-export interface SearchSuggestion {
+export type SearchSuggestion = {
   id: string;
   text: string;
   type: SuggestionType;
@@ -19,16 +19,16 @@ export interface SearchSuggestion {
   lastUsed: Date;
   metadata?: Record<string, any>;
   highlighted?: string;
-}
+};
 
-export interface QueryCompletion {
+export type QueryCompletion = {
   completion: string;
   confidence: number;
   type: CompletionType;
   context?: string;
-}
+};
 
-export interface SuggestionContext {
+export type SuggestionContext = {
   userId: string;
   clinicId: string;
   currentQuery: string;
@@ -36,25 +36,25 @@ export interface SuggestionContext {
   recentSearches: string[];
   userPreferences: UserSearchPreferences;
   sessionContext: SessionContext;
-}
+};
 
-export interface UserSearchPreferences {
+export type UserSearchPreferences = {
   preferredDataTypes: string[];
   frequentFilters: Record<string, any>;
   searchPatterns: string[];
   language: string;
   personalizedSuggestions: boolean;
-}
+};
 
-export interface SessionContext {
+export type SessionContext = {
   currentPage: string;
   previousSearches: string[];
   timeSpent: number;
   clickedResults: string[];
   refinements: string[];
-}
+};
 
-export interface SuggestionOptions {
+export type SuggestionOptions = {
   maxSuggestions: number;
   includeHistory: boolean;
   includePopular: boolean;
@@ -63,16 +63,16 @@ export interface SuggestionOptions {
   minConfidence: number;
   categories?: string[];
   language?: string;
-}
+};
 
-export interface LearningData {
+export type LearningData = {
   query: string;
   selectedSuggestion?: string;
   resultClicked: boolean;
   timeToSelect: number;
   refinements: string[];
   success: boolean;
-}
+};
 
 export type SuggestionType =
   | 'query_completion'
@@ -118,9 +118,7 @@ export class SearchSuggestions {
       ]);
 
       this.lastCacheUpdate = Date.now();
-    } catch (error) {
-      console.error('Error initializing suggestion cache:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -234,8 +232,7 @@ export class SearchSuggestions {
       this.suggestionCache.set(cacheKey, finalSuggestions);
 
       return finalSuggestions;
-    } catch (error) {
-      console.error('Error getting suggestions:', error);
+    } catch (_error) {
       return [];
     }
   }
@@ -277,8 +274,7 @@ export class SearchSuggestions {
       return completions
         .sort((a, b) => b.confidence - a.confidence)
         .slice(0, 5);
-    } catch (error) {
-      console.error('Error getting query completions:', error);
+    } catch (_error) {
       return [];
     }
   }
@@ -367,9 +363,7 @@ export class SearchSuggestions {
           }
         });
       }
-    } catch (error) {
-      console.error('Error getting entity completions:', error);
-    }
+    } catch (_error) {}
 
     return completions;
   }
@@ -463,8 +457,7 @@ export class SearchSuggestions {
       }
 
       return completions;
-    } catch (error) {
-      console.error('Error getting semantic completions:', error);
+    } catch (_error) {
       return [];
     }
   }
@@ -506,9 +499,7 @@ export class SearchSuggestions {
           }
         });
       }
-    } catch (error) {
-      console.error('Error getting historical suggestions:', error);
-    }
+    } catch (_error) {}
 
     return suggestions;
   }
@@ -549,9 +540,7 @@ export class SearchSuggestions {
           }
         });
       }
-    } catch (error) {
-      console.error('Error getting popular suggestions:', error);
-    }
+    } catch (_error) {}
 
     return suggestions;
   }
@@ -607,9 +596,7 @@ export class SearchSuggestions {
           });
         }
       });
-    } catch (error) {
-      console.error('Error getting contextual suggestions:', error);
-    }
+    } catch (_error) {}
 
     return suggestions;
   }
@@ -660,9 +647,7 @@ export class SearchSuggestions {
           });
         }
       });
-    } catch (error) {
-      console.error('Error getting personalized suggestions:', error);
-    }
+    } catch (_error) {}
 
     return suggestions;
   }
@@ -695,9 +680,7 @@ export class SearchSuggestions {
           metadata: { source: 'semantic_search' },
         });
       });
-    } catch (error) {
-      console.error('Error getting semantic suggestions:', error);
-    }
+    } catch (_error) {}
 
     return suggestions;
   }
@@ -838,9 +821,7 @@ export class SearchSuggestions {
 
       // Invalidate relevant caches
       this.invalidateCache(data.query);
-    } catch (error) {
-      console.error('Error learning from interaction:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -863,9 +844,7 @@ export class SearchSuggestions {
           ignoreDuplicates: false,
         }
       );
-    } catch (error) {
-      console.error('Error updating suggestion performance:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -941,9 +920,7 @@ export class SearchSuggestions {
           this.popularQueries.set(item.query, item.frequency);
         });
       }
-    } catch (error) {
-      console.error('Error loading popular queries:', error);
-    }
+    } catch (_error) {}
   }
 
   private async loadEntitySuggestions(): Promise<void> {

@@ -15,25 +15,25 @@ export type NotificationType =
   | 'rejected'
   | 'payment_complete';
 
-export interface EmailNotificationData {
+export type EmailNotificationData = {
   to: string;
   subject: string;
   html: string;
   text?: string;
-}
+};
 
-export interface SMSNotificationData {
+export type SMSNotificationData = {
   to: string; // Número de telefone
   message: string;
-}
+};
 
-export interface NotificationContext {
+export type NotificationContext = {
   vendorName: string;
   invoiceNumber: string;
   amount: number;
   dueDate?: string;
   daysPastDue?: number;
-}
+};
 
 class NotificationService {
   // Templates de email
@@ -189,11 +189,7 @@ class NotificationService {
         !process.env.RESEND_API_KEY ||
         process.env.RESEND_API_KEY === 'your_resend_api_key_here'
       ) {
-        console.log('⚠️ Email não configurado. Template que seria enviado:');
-        const template = this.getEmailTemplate(type, context);
-        console.log(`Para: ${recipientEmail}`);
-        console.log(`Assunto: ${template.subject}`);
-        console.log(`Conteúdo: ${template.text}`);
+        const _template = this.getEmailTemplate(type, context);
         return false;
       }
 
@@ -206,13 +202,8 @@ class NotificationService {
         html: template.html,
         text: template.text,
       });
-
-      console.log(
-        `✅ Email enviado: ${template.subject} para ${recipientEmail}`
-      );
       return true;
-    } catch (error) {
-      console.error('❌ Erro ao enviar email:', error);
+    } catch (_error) {
       return false;
     }
   }
@@ -221,15 +212,10 @@ class NotificationService {
   async sendSMS(
     type: NotificationType,
     context: NotificationContext,
-    phoneNumber: string
+    _phoneNumber: string
   ): Promise<boolean> {
     try {
-      const message = this.getSMSTemplate(type, context);
-
-      // Por enquanto apenas simula o envio
-      console.log('📱 SMS (SIMULADO):');
-      console.log(`Para: ${phoneNumber}`);
-      console.log(`Mensagem: ${message}`);
+      const _message = this.getSMSTemplate(type, context);
 
       // Aqui integraria com Twilio, AWS SNS, ou outro provedor
       // const result = await twilioClient.messages.create({
@@ -239,8 +225,7 @@ class NotificationService {
       // });
 
       return true;
-    } catch (error) {
-      console.error('❌ Erro ao enviar SMS:', error);
+    } catch (_error) {
       return false;
     }
   }

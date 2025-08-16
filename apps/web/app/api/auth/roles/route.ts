@@ -119,7 +119,6 @@ export async function GET(request: NextRequest) {
     const { data: users, error, count } = await query;
 
     if (error) {
-      console.error('Database error fetching users:', error);
       return NextResponse.json(
         { error: 'Failed to fetch users' },
         { status: 500 }
@@ -135,8 +134,7 @@ export async function GET(request: NextRequest) {
       },
       timestamp: new Date().toISOString(),
     });
-  } catch (error) {
-    console.error('Role management GET error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -297,7 +295,6 @@ export async function PUT(request: NextRequest) {
       .eq('id', userId);
 
     if (updateError) {
-      console.error('Database error updating user role:', updateError);
       return NextResponse.json(
         { error: 'Failed to update user role' },
         { status: 500 }
@@ -335,8 +332,7 @@ export async function PUT(request: NextRequest) {
         timestamp: new Date().toISOString(),
       },
     });
-  } catch (error) {
-    console.error('Role management PUT error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

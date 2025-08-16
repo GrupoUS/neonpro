@@ -98,8 +98,6 @@ export async function GET(
       },
     });
   } catch (error) {
-    console.error('Facebook account retrieval error:', error);
-
     return NextResponse.json(
       {
         error: 'Failed to retrieve Facebook account information',
@@ -152,11 +150,7 @@ export async function DELETE(
     try {
       const encryptedAccessToken = JSON.parse(account.encrypted_access_token);
       accessToken = TokenEncryptionService.decryptToken(encryptedAccessToken);
-    } catch (decryptError) {
-      console.warn(
-        'Could not decrypt access token for revocation:',
-        decryptError
-      );
+    } catch (_decryptError) {
       // Continue with disconnection even if token decryption fails
     }
 
@@ -165,9 +159,7 @@ export async function DELETE(
       try {
         const facebookHandler = new FacebookOAuthHandler();
         await facebookHandler.revokeTokens(accessToken);
-        console.log(`Facebook tokens revoked for account ${accountId}`);
-      } catch (revokeError) {
-        console.warn('Failed to revoke Facebook tokens:', revokeError);
+      } catch (_revokeError) {
         // Continue with local disconnection even if remote revocation fails
       }
     }
@@ -187,18 +179,11 @@ export async function DELETE(
       );
     }
 
-    // Log successful disconnection
-    console.log(
-      `Facebook account disconnected: ${accountId} (${account.platform_username})`
-    );
-
     return NextResponse.json({
       success: true,
       message: 'Facebook account disconnected successfully',
     });
   } catch (error) {
-    console.error('Facebook account disconnection error:', error);
-
     return NextResponse.json(
       {
         error: 'Failed to disconnect Facebook account',

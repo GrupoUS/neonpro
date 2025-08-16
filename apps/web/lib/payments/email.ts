@@ -18,7 +18,7 @@ export type EmailTemplate =
   | 'payment-failed';
 
 // Email data interfaces
-export interface InvoiceEmailData {
+export type InvoiceEmailData = {
   recipientEmail: string;
   recipientName: string;
   invoiceNumber: string;
@@ -28,9 +28,9 @@ export interface InvoiceEmailData {
   downloadUrl?: string;
   companyName?: string;
   companyEmail?: string;
-}
+};
 
-export interface PaymentEmailData {
+export type PaymentEmailData = {
   recipientEmail: string;
   recipientName: string;
   amount: number;
@@ -38,7 +38,7 @@ export interface PaymentEmailData {
   transactionId: string;
   invoiceNumber?: string;
   paidAt: string;
-}
+};
 
 // Email sender utility
 export const sendEmail = async ({
@@ -67,7 +67,6 @@ export const sendEmail = async ({
 
     return { success: true, data: result };
   } catch (error) {
-    console.error('Email sending failed:', error);
     return { success: false, error };
   }
 };

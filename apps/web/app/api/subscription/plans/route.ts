@@ -23,7 +23,6 @@ export async function GET(_request: NextRequest) {
       .order('sort_order', { ascending: true });
 
     if (error) {
-      console.error('Error fetching subscription plans:', error);
       return NextResponse.json(
         { error: 'Failed to fetch subscription plans' },
         { status: 500 }
@@ -64,8 +63,7 @@ export async function GET(_request: NextRequest) {
       success: true,
       data: formattedPlans,
     });
-  } catch (error) {
-    console.error('Subscription plans API error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

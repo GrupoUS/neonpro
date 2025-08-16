@@ -31,18 +31,18 @@ import { Card } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 
 // NeonGradientCard Component com cores NEONPROV1
-interface NeonColorsProps {
+type NeonColorsProps = {
   firstColor: string;
   secondColor: string;
-}
+};
 
-interface NeonGradientCardProps {
+type NeonGradientCardProps = {
   className?: string;
   children?: React.ReactNode;
   borderSize?: number;
   borderRadius?: number;
   neonColors?: NeonColorsProps;
-}
+};
 
 const NeonGradientCard: React.FC<NeonGradientCardProps> = ({
   className,
@@ -112,13 +112,13 @@ const NeonGradientCard: React.FC<NeonGradientCardProps> = ({
 };
 
 // CosmicGlowButton Component com cores NEONPROV1
-interface CosmicGlowButtonProps {
+type CosmicGlowButtonProps = {
   className?: string;
   children?: React.ReactNode;
   color?: string;
   speed?: string;
   onClick?: () => void;
-}
+};
 
 const CosmicGlowButton: React.FC<CosmicGlowButtonProps> = ({
   className,

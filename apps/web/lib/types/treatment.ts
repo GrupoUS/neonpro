@@ -36,7 +36,7 @@ export type TreatmentPlanIntent =
   | 'option'
   | 'directive';
 
-export interface TreatmentPlanActivity {
+export type TreatmentPlanActivity = {
   id?: string;
   reference?: FHIRReference; // Reference to Procedure, MedicationRequest, etc.
   detail?: {
@@ -75,9 +75,9 @@ export interface TreatmentPlanActivity {
     };
     description?: string;
   };
-}
+};
 
-export interface TreatmentPlan {
+export type TreatmentPlan = {
   id: string;
   patient_id: string;
   provider_id: string;
@@ -121,7 +121,7 @@ export interface TreatmentPlan {
   updated_at: string;
   created_by: string;
   updated_by: string;
-}
+};
 
 // ===============================================
 // PROCEDURE TYPES (FHIR Procedure Resource)
@@ -137,13 +137,13 @@ export type ProcedureStatus =
   | 'entered-in-error'
   | 'unknown';
 
-export interface ProcedurePerformer {
+export type ProcedurePerformer = {
   function?: FHIRCodeableConcept; // Role in the procedure
   actor: FHIRReference; // Who performed the procedure
   onBehalfOf?: FHIRReference; // Organization on whose behalf
-}
+};
 
-export interface Procedure {
+export type Procedure = {
   id: string;
   patient_id: string;
   provider_id: string;
@@ -198,7 +198,7 @@ export interface Procedure {
   updated_at: string;
   created_by: string;
   updated_by: string;
-}
+};
 
 // ===============================================
 // CLINICAL NOTES TYPES (FHIR DocumentReference/Observation)
@@ -214,12 +214,12 @@ export type ConfidentialityLevel =
   | 'R' // Restricted
   | 'V'; // Very Restricted
 
-export interface ClinicalNoteRelatesTo {
+export type ClinicalNoteRelatesTo = {
   code: 'replaces' | 'transforms' | 'signs' | 'appends';
   target: FHIRReference;
-}
+};
 
-export interface ClinicalNote {
+export type ClinicalNote = {
   id: string;
   patient_id: string;
   provider_id: string;
@@ -270,13 +270,13 @@ export interface ClinicalNote {
   updated_at: string;
   created_by: string;
   updated_by: string;
-}
+};
 
 // ===============================================
 // FORM DATA TYPES (for React components)
 // ===============================================
 
-export interface TreatmentPlanFormData {
+export type TreatmentPlanFormData = {
   title: string;
   description?: string;
   patient_id: string;
@@ -288,9 +288,9 @@ export interface TreatmentPlanFormData {
   goals: string[];
   addresses: string[]; // Condition IDs
   data_consent_given: boolean;
-}
+};
 
-export interface ProcedureFormData {
+export type ProcedureFormData = {
   code: string; // Procedure code
   code_display: string; // Human readable procedure name
   patient_id: string;
@@ -305,9 +305,9 @@ export interface ProcedureFormData {
   notes?: string;
   outcome?: string;
   data_consent_given: boolean;
-}
+};
 
-export interface ClinicalNoteFormData {
+export type ClinicalNoteFormData = {
   title: string;
   content: string;
   content_type: string;
@@ -319,38 +319,38 @@ export interface ClinicalNoteFormData {
   category?: string;
   confidentiality: ConfidentialityLevel;
   data_consent_given: boolean;
-}
+};
 
 // ===============================================
 // API RESPONSE TYPES
 // ===============================================
 
-export interface TreatmentPlanListResponse {
+export type TreatmentPlanListResponse = {
   treatment_plans: TreatmentPlan[];
   total_count: number;
   page: number;
   per_page: number;
-}
+};
 
-export interface ProcedureListResponse {
+export type ProcedureListResponse = {
   procedures: Procedure[];
   total_count: number;
   page: number;
   per_page: number;
-}
+};
 
-export interface ClinicalNoteListResponse {
+export type ClinicalNoteListResponse = {
   clinical_notes: ClinicalNote[];
   total_count: number;
   page: number;
   per_page: number;
-}
+};
 
 // ===============================================
 // SEARCH AND FILTER TYPES
 // ===============================================
 
-export interface TreatmentPlanSearchFilters {
+export type TreatmentPlanSearchFilters = {
   patient_id?: string;
   provider_id?: string;
   status?: TreatmentPlanStatus[];
@@ -358,9 +358,9 @@ export interface TreatmentPlanSearchFilters {
   period_start?: string;
   period_end?: string;
   search_text?: string;
-}
+};
 
-export interface ProcedureSearchFilters {
+export type ProcedureSearchFilters = {
   patient_id?: string;
   provider_id?: string;
   treatment_plan_id?: string;
@@ -369,9 +369,9 @@ export interface ProcedureSearchFilters {
   performed_start?: string;
   performed_end?: string;
   search_text?: string;
-}
+};
 
-export interface ClinicalNoteSearchFilters {
+export type ClinicalNoteSearchFilters = {
   patient_id?: string;
   provider_id?: string;
   treatment_plan_id?: string;
@@ -382,13 +382,13 @@ export interface ClinicalNoteSearchFilters {
   authored_end?: string;
   confidentiality?: ConfidentialityLevel[];
   search_text?: string;
-}
+};
 
 // ===============================================
 // STATISTICS AND DASHBOARD TYPES
 // ===============================================
 
-export interface TreatmentStatistics {
+export type TreatmentStatistics = {
   total_treatment_plans: number;
   active_treatment_plans: number;
   completed_treatment_plans: number;
@@ -405,9 +405,9 @@ export interface TreatmentStatistics {
     partial: number;
     unsuccessful: number;
   };
-}
+};
 
-export interface ProviderTreatmentMetrics {
+export type ProviderTreatmentMetrics = {
   provider_id: string;
   provider_name: string;
   total_treatments: number;
@@ -415,4 +415,4 @@ export interface ProviderTreatmentMetrics {
   average_duration: number;
   patient_satisfaction: number;
   specialties: string[];
-}
+};

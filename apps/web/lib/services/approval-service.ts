@@ -3,7 +3,7 @@
 
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 
-export interface ApprovalLevel {
+export type ApprovalLevel = {
   id: string;
   level_order: number;
   level_name: string;
@@ -17,9 +17,9 @@ export interface ApprovalLevel {
   is_active: boolean;
   created_at: string;
   updated_at: string;
-}
+};
 
-export interface ApprovalUser {
+export type ApprovalUser = {
   id: string;
   user_id: string;
   user_name: string;
@@ -31,9 +31,9 @@ export interface ApprovalUser {
   role: 'approver' | 'admin' | 'super_admin';
   department?: string;
   created_at: string;
-}
+};
 
-export interface ApprovalRequest {
+export type ApprovalRequest = {
   id: string;
   accounts_payable_id: string;
   requester_id: string;
@@ -48,9 +48,9 @@ export interface ApprovalRequest {
   due_date: string;
   created_at: string;
   updated_at: string;
-}
+};
 
-export interface ApprovalStep {
+export type ApprovalStep = {
   id: string;
   approval_request_id: string;
   level_order: number;
@@ -61,9 +61,9 @@ export interface ApprovalStep {
   deadline: string;
   created_at: string;
   completed_at?: string;
-}
+};
 
-export interface ApprovalAction {
+export type ApprovalAction = {
   id: string;
   approval_step_id: string;
   approver_id: string;
@@ -73,7 +73,7 @@ export interface ApprovalAction {
   comments?: string;
   action_date: string;
   can_override?: boolean;
-}
+};
 
 class ApprovalService {
   private readonly supabase = createClientComponentClient();
@@ -91,8 +91,7 @@ class ApprovalService {
         throw error;
       }
       return data || [];
-    } catch (error) {
-      console.error('Error fetching approval levels:', error);
+    } catch (_error) {
       throw new Error('Falha ao carregar níveis de aprovação');
     }
   }
@@ -118,8 +117,7 @@ class ApprovalService {
         throw error;
       }
       return data;
-    } catch (error) {
-      console.error('Error creating approval level:', error);
+    } catch (_error) {
       throw new Error('Falha ao criar nível de aprovação');
     }
   }
@@ -143,8 +141,7 @@ class ApprovalService {
         throw error;
       }
       return data;
-    } catch (error) {
-      console.error('Error updating approval level:', error);
+    } catch (_error) {
       throw new Error('Falha ao atualizar nível de aprovação');
     }
   }
@@ -159,8 +156,7 @@ class ApprovalService {
       if (error) {
         throw error;
       }
-    } catch (error) {
-      console.error('Error deleting approval level:', error);
+    } catch (_error) {
       throw new Error('Falha ao excluir nível de aprovação');
     }
   }
@@ -187,8 +183,7 @@ class ApprovalService {
         throw error;
       }
       return data || [];
-    } catch (error) {
-      console.error('Error fetching approval users:', error);
+    } catch (_error) {
       throw new Error('Falha ao carregar usuários aprovadores');
     }
   }
@@ -213,8 +208,7 @@ class ApprovalService {
         throw error;
       }
       return data;
-    } catch (error) {
-      console.error('Error creating approval user:', error);
+    } catch (_error) {
       throw new Error('Falha ao criar usuário aprovador');
     }
   }
@@ -235,8 +229,7 @@ class ApprovalService {
         throw error;
       }
       return data;
-    } catch (error) {
-      console.error('Error updating approval user:', error);
+    } catch (_error) {
       throw new Error('Falha ao atualizar usuário aprovador');
     }
   }
@@ -251,8 +244,7 @@ class ApprovalService {
       if (error) {
         throw error;
       }
-    } catch (error) {
-      console.error('Error deleting approval user:', error);
+    } catch (_error) {
       throw new Error('Falha ao excluir usuário aprovador');
     }
   }
@@ -348,8 +340,7 @@ class ApprovalService {
       }
 
       return request;
-    } catch (error) {
-      console.error('Error creating approval request:', error);
+    } catch (_error) {
       throw new Error('Falha ao criar solicitação de aprovação');
     }
   }
@@ -416,8 +407,7 @@ class ApprovalService {
         ...request,
         approval_chain: stepsWithActions,
       };
-    } catch (error) {
-      console.error('Error fetching approval request:', error);
+    } catch (_error) {
       throw new Error('Falha ao carregar solicitação de aprovação');
     }
   }
@@ -450,8 +440,7 @@ class ApprovalService {
         throw error;
       }
       return data || [];
-    } catch (error) {
-      console.error('Error fetching my approval requests:', error);
+    } catch (_error) {
       throw new Error('Falha ao carregar minhas solicitações');
     }
   }
@@ -506,8 +495,7 @@ class ApprovalService {
         throw error;
       }
       return data || [];
-    } catch (error) {
-      console.error('Error fetching pending approvals:', error);
+    } catch (_error) {
       throw new Error('Falha ao carregar aprovações pendentes');
     }
   }
@@ -632,8 +620,7 @@ class ApprovalService {
         action,
         userPermission.user_name
       );
-    } catch (error) {
-      console.error('Error processing approval action:', error);
+    } catch (_error) {
       throw new Error('Falha ao processar ação de aprovação');
     }
   }
@@ -683,24 +670,18 @@ class ApprovalService {
       if (error) {
         throw error;
       }
-    } catch (error) {
-      console.error('Error cancelling approval request:', error);
+    } catch (_error) {
       throw new Error('Falha ao cancelar solicitação de aprovação');
     }
   }
 
   // Notifications (placeholder - would integrate with notification service)
   private async sendApprovalNotification(
-    requestId: string,
-    action: string,
-    approverName: string
+    _requestId: string,
+    _action: string,
+    _approverName: string
   ): Promise<void> {
     try {
-      // This would integrate with a notification service
-      console.log(
-        `Notification: Request ${requestId} was ${action} by ${approverName}`
-      );
-
       // Could send email, push notification, etc.
       // await notificationService.send({
       //   type: 'approval_action',
@@ -708,8 +689,7 @@ class ApprovalService {
       //   action,
       //   approverName
       // })
-    } catch (error) {
-      console.error('Error sending notification:', error);
+    } catch (_error) {
       // Don't throw - notification failures shouldn't break approval flow
     }
   }
@@ -738,8 +718,7 @@ class ApprovalService {
           overdue: 0,
         }
       );
-    } catch (error) {
-      console.error('Error fetching approval stats:', error);
+    } catch (_error) {
       return {
         pending: 0,
         approved: 0,
@@ -803,8 +782,7 @@ class ApprovalService {
         isValid: issues.length === 0,
         issues,
       };
-    } catch (error) {
-      console.error('Error validating approval hierarchy:', error);
+    } catch (_error) {
       return {
         isValid: false,
         issues: ['Erro ao validar hierarquia de aprovação'],

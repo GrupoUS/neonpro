@@ -8,25 +8,25 @@ import type { createClient } from '@supabase/supabase-js';
 import type { Database } from '@/types/database';
 
 // Performance monitoring types
-interface RLSHealthCheck {
+type RLSHealthCheck = {
   check_name: string;
   status: 'OK' | 'WARNING' | 'CRITICAL';
   details: string;
-}
+};
 
-interface RLSPerformanceBenchmark {
+type RLSPerformanceBenchmark = {
   table_name: string;
   old_avg_time_ms: number;
   new_avg_time_ms: number;
   improvement_percent: number;
-}
+};
 
-interface CacheStats {
+type CacheStats = {
   current_user_id: string | null;
   cached_user_id: string | null;
   cached_clinic_id: string | null;
   cache_valid: boolean;
-}
+};
 
 export class RLSOptimizationManager {
   private readonly supabase: ReturnType<typeof createClient<Database>>;
@@ -50,20 +50,16 @@ export class RLSOptimizationManager {
 
       // Log performance metric if enabled
       if (process.env.NODE_ENV === 'development') {
-        console.log(`🚀 RLS getUserClinicId: ${responseTime.toFixed(2)}ms`);
-
         // Log to database for monitoring
         await this.logPerformanceMetric('get_user_clinic_id', responseTime);
       }
 
       if (error) {
-        console.error('RLS getUserClinicId error:', error);
         return null;
       }
 
       return data as string;
-    } catch (error) {
-      console.error('RLS optimization error:', error);
+    } catch (_error) {
       return null;
     }
   }
@@ -79,13 +75,11 @@ export class RLSOptimizationManager {
       );
 
       if (error) {
-        console.error('userBelongsToClinic error:', error);
         return false;
       }
 
       return data as boolean;
-    } catch (error) {
-      console.error('RLS userBelongsToClinic error:', error);
+    } catch (_error) {
       return false;
     }
   }
@@ -100,13 +94,11 @@ export class RLSOptimizationManager {
         .single();
 
       if (error) {
-        console.error('getCacheStats error:', error);
         return null;
       }
 
       return data as CacheStats;
-    } catch (error) {
-      console.error('RLS getCacheStats error:', error);
+    } catch (_error) {
       return null;
     }
   }
@@ -119,13 +111,11 @@ export class RLSOptimizationManager {
       const { data, error } = await this.supabase.rpc('rls_health_check');
 
       if (error) {
-        console.error('RLS health check error:', error);
         return [];
       }
 
       return data as RLSHealthCheck[];
-    } catch (error) {
-      console.error('RLS health check error:', error);
+    } catch (_error) {
       return [];
     }
   }
@@ -140,13 +130,11 @@ export class RLSOptimizationManager {
       );
 
       if (error) {
-        console.error('Performance benchmark error:', error);
         return [];
       }
 
       return data as RLSPerformanceBenchmark[];
-    } catch (error) {
-      console.error('RLS benchmark error:', error);
+    } catch (_error) {
       return [];
     }
   }
@@ -159,13 +147,11 @@ export class RLSOptimizationManager {
       const { error } = await this.supabase.rpc('clear_clinic_cache');
 
       if (error) {
-        console.error('Clear cache error:', error);
         return false;
       }
 
       return true;
-    } catch (error) {
-      console.error('RLS clear cache error:', error);
+    } catch (_error) {
       return false;
     }
   }
@@ -182,10 +168,7 @@ export class RLSOptimizationManager {
         p_metric_name: metricName,
         p_metric_value: value,
       });
-    } catch (error) {
-      // Silent fail for performance logging
-      console.debug('Performance logging error:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -236,8 +219,7 @@ export class RLSOptimizationManager {
         cacheValid: cacheStats?.cache_valid,
         healthStatus,
       };
-    } catch (error) {
-      console.error('Validation error:', error);
+    } catch (_error) {
       return {
         isOptimized: false,
         avgResponseTime: 999,

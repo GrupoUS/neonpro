@@ -199,7 +199,6 @@ export async function POST(request: NextRequest) {
         .insert(emailLogs);
 
       if (logError) {
-        console.error('Failed to log email sends:', logError);
       }
     }
 
@@ -231,7 +230,6 @@ export async function POST(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('Bulk email send error:', error);
     return NextResponse.json(
       {
         success: false,
@@ -333,8 +331,7 @@ export async function GET(request: NextRequest) {
           events?.filter((event) => event.event === 'bounced').length || 0,
       },
     });
-  } catch (error) {
-    console.error('Bulk email status check error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

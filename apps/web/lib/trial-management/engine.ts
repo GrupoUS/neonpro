@@ -759,7 +759,7 @@ export class TrialManagementEngine {
   }
 
   private async triggerAutomatedCampaign(
-    trial: any,
+    _trial: any,
     newStage: TrialStage
   ): Promise<void> {
     // Trigger appropriate automated campaigns based on stage
@@ -772,8 +772,6 @@ export class TrialManagementEngine {
 
     const campaignType = campaignTriggers[newStage];
     if (campaignType) {
-      // In production, this would trigger campaign management system
-      console.log(`Triggering ${campaignType} campaign for trial ${trial.id}`);
     }
   }
 

@@ -14,7 +14,7 @@ import {
 } from '@/lib/ai/duration-prediction';
 
 // Request/Response types
-interface PredictDurationRequest {
+type PredictDurationRequest = {
   appointmentId: string;
   treatmentType: string;
   professionalId: string;
@@ -26,9 +26,9 @@ interface PredictDurationRequest {
   dayOfWeek: number; // 0-6
   historicalDuration?: number;
   specialRequirements?: string[];
-}
+};
 
-interface PredictDurationResponse {
+type PredictDurationResponse = {
   success: boolean;
   prediction?: {
     predictedDuration: number;
@@ -43,7 +43,7 @@ interface PredictDurationResponse {
   };
   fallbackDuration?: number;
   error?: string;
-}
+};
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
@@ -132,13 +132,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
             testGroup: 'ai_prediction',
           },
         });
-      } catch (aiError) {
-        // Fallback to baseline if AI prediction fails
-        console.error(
-          'AI prediction failed, falling back to baseline:',
-          aiError
-        );
-
+      } catch (_aiError) {
         const fallbackDuration = getFallbackDuration(body.treatmentType);
 
         return NextResponse.json({
@@ -176,9 +170,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         },
       });
     }
-  } catch (error) {
-    console.error('AI Duration Prediction API Error:', error);
-
+  } catch (_error) {
     return NextResponse.json(
       {
         success: false,

@@ -39,7 +39,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 // =================== TYPES ===================
 
-interface NFSeDocument {
+type NFSeDocument = {
   id: string;
   numeroNFSe: string;
   numeroRPS: string;
@@ -90,9 +90,9 @@ interface NFSeDocument {
   linkNFSe?: string;
   motivoCancelamento?: string;
   observacoes?: string;
-}
+};
 
-interface TaxSummary {
+type TaxSummary = {
   periodo: { inicio: Date; fim: Date };
   totalServicos: number;
   totalImpostos: number;
@@ -115,9 +115,9 @@ interface TaxSummary {
       aliquota: number;
     }
   >;
-}
+};
 
-interface MunicipalConfig {
+type MunicipalConfig = {
   codigo: string;
   nome: string;
   uf: string;
@@ -128,9 +128,9 @@ interface MunicipalConfig {
   isss_retido: boolean;
   status_conexao: 'connected' | 'disconnected' | 'error';
   ultimo_teste: Date;
-}
+};
 
-interface DashboardData {
+type DashboardData = {
   nfseDocuments: NFSeDocument[];
   taxSummary: TaxSummary;
   municipalConfigs: MunicipalConfig[];
@@ -142,7 +142,7 @@ interface DashboardData {
     createdAt: Date;
   }>;
   isLoading: boolean;
-}
+};
 
 // =================== HOOKS ===================
 
@@ -190,30 +190,24 @@ const useNFSeData = (dateRange: { start: Date; end: Date }) => {
         pendingIssues: nfseData.issues || [],
         isLoading: false,
       });
-    } catch (error) {
-      console.error('Error fetching NFSe data:', error);
+    } catch (_error) {
       setData((prev) => ({ ...prev, isLoading: false }));
     }
   };
 
   const generateNFSe = async (tratamentoIds: string[]) => {
-    try {
-      const response = await fetch('/api/tax/nfse/generate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ tratamentoIds }),
-      });
+    const response = await fetch('/api/tax/nfse/generate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ tratamentoIds }),
+    });
 
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-      }
-
-      await fetchNFSeData();
-      return await response.json();
-    } catch (error) {
-      console.error('Error generating NFSe:', error);
-      throw error;
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
     }
+
+    await fetchNFSeData();
+    return await response.json();
   };
 
   useEffect(() => {
@@ -640,10 +634,7 @@ export const NFSeDashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState('overview');
   const { data, refreshData, generateNFSe } = useNFSeData(dateRange);
 
-  const handleViewNFSe = (id: string) => {
-    // Implementation would open NFSe details modal or navigate to detail page
-    console.log('View NFSe:', id);
-  };
+  const handleViewNFSe = (_id: string) => {};
 
   const handleCancelNFSe = async (id: string) => {
     try {
@@ -655,9 +646,7 @@ export const NFSeDashboard: React.FC = () => {
         }),
       });
       await refreshData();
-    } catch (error) {
-      console.error('Error canceling NFSe:', error);
-    }
+    } catch (_error) {}
   };
 
   const handleTestConnection = async (municipalCode: string) => {
@@ -666,9 +655,7 @@ export const NFSeDashboard: React.FC = () => {
         method: 'POST',
       });
       await refreshData();
-    } catch (error) {
-      console.error('Error testing connection:', error);
-    }
+    } catch (_error) {}
   };
 
   const handleGenerateReport = async () => {
@@ -694,9 +681,7 @@ export const NFSeDashboard: React.FC = () => {
         a.click();
         window.URL.revokeObjectURL(url);
       }
-    } catch (error) {
-      console.error('Error generating report:', error);
-    }
+    } catch (_error) {}
   };
 
   const criticalIssues = data.pendingIssues.filter(

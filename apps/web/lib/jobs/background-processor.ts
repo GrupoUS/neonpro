@@ -17,14 +17,14 @@ import { HubSpotOAuthHandler } from '@/lib/oauth/platforms/hubspot-handler';
 import { InstagramOAuthHandler } from '@/lib/oauth/platforms/instagram-handler';
 import { WhatsAppOAuthHandler } from '@/lib/oauth/platforms/whatsapp-handler';
 
-interface JobContext {
+type JobContext = {
   jobId: string;
   profileId: string;
   platform: string;
   connectionId: string;
   retryCount?: number;
   maxRetries?: number;
-}
+};
 
 interface TokenRefreshJob extends JobContext {
   type: 'token_refresh';
@@ -79,37 +79,28 @@ export class JobQueueManager {
     job: BackgroundJob,
     priority: 'high' | 'medium' | 'low' = 'medium'
   ): Promise<string> {
-    try {
-      const { data, error } = await this.supabase
-        .from('background_jobs')
-        .insert({
-          id: job.jobId,
-          type: job.type,
-          profile_id: job.profileId,
-          platform: job.platform,
-          priority,
-          payload: job,
-          status: 'pending',
-          retry_count: 0,
-          max_retries: job.maxRetries || 3,
-          scheduled_at: new Date().toISOString(),
-          created_at: new Date().toISOString(),
-        })
-        .select('id')
-        .single();
+    const { data, error } = await this.supabase
+      .from('background_jobs')
+      .insert({
+        id: job.jobId,
+        type: job.type,
+        profile_id: job.profileId,
+        platform: job.platform,
+        priority,
+        payload: job,
+        status: 'pending',
+        retry_count: 0,
+        max_retries: job.maxRetries || 3,
+        scheduled_at: new Date().toISOString(),
+        created_at: new Date().toISOString(),
+      })
+      .select('id')
+      .single();
 
-      if (error) {
-        throw new Error(`Failed to queue job: ${error.message}`);
-      }
-
-      console.log(
-        `Job ${job.jobId} queued successfully with priority ${priority}`
-      );
-      return data.id;
-    } catch (error) {
-      console.error('Error adding job to queue:', error);
-      throw error;
+    if (error) {
+      throw new Error(`Failed to queue job: ${error.message}`);
     }
+    return data.id;
   }
 
   /**
@@ -153,12 +144,8 @@ export class JobQueueManager {
             completed_at: new Date().toISOString(),
           })
           .eq('id', job.id);
-
-        console.log(`Job ${job.id} completed successfully`);
         return true;
       } catch (processingError) {
-        console.error(`Job ${job.id} processing failed:`, processingError);
-
         // Handle job failure with retry logic
         const newRetryCount = (job.retry_count || 0) + 1;
 
@@ -190,8 +177,7 @@ export class JobQueueManager {
 
         return false;
       }
-    } catch (error) {
-      console.error('Error processing job queue:', error);
+    } catch (_error) {
       return false;
     }
   }
@@ -257,13 +243,7 @@ export class JobQueueManager {
           status: 'active',
         })
         .eq('id', job.accountId);
-
-      console.log(
-        `Token refreshed successfully for ${job.platform} account ${job.accountId}`
-      );
     } catch (error) {
-      console.error(`Token refresh failed for ${job.platform}:`, error);
-
       // Mark connection as needs reauthorization
       await this.supabase
         .from('social_media_accounts')
@@ -282,76 +262,63 @@ export class JobQueueManager {
    * Process data synchronization jobs
    */
   private async processDataSync(job: DataSyncJob): Promise<void> {
-    try {
-      // Get connection details
-      const { data: connection } = await this.supabase
-        .from('social_media_accounts')
-        .select('*')
-        .eq('id', job.connectionId)
-        .single();
+    // Get connection details
+    const { data: connection } = await this.supabase
+      .from('social_media_accounts')
+      .select('*')
+      .eq('id', job.connectionId)
+      .single();
 
-      if (!connection) {
-        throw new Error(`Connection not found: ${job.connectionId}`);
-      }
-
-      switch (job.syncType) {
-        case 'posts':
-          await this.syncSocialMediaPosts(connection, job);
-          break;
-        case 'analytics':
-          await this.syncSocialMediaAnalytics(connection, job);
-          break;
-        case 'contacts':
-          await this.syncMarketingContacts(connection, job);
-          break;
-        case 'deals':
-          await this.syncMarketingDeals(connection, job);
-          break;
-        default:
-          throw new Error(`Unknown sync type: ${job.syncType}`);
-      }
-
-      // Update last sync timestamp
-      await this.supabase
-        .from('social_media_accounts')
-        .update({
-          last_sync_at: new Date().toISOString(),
-        })
-        .eq('id', job.connectionId);
-    } catch (error) {
-      console.error(`Data sync failed for ${job.syncType}:`, error);
-      throw error;
+    if (!connection) {
+      throw new Error(`Connection not found: ${job.connectionId}`);
     }
+
+    switch (job.syncType) {
+      case 'posts':
+        await this.syncSocialMediaPosts(connection, job);
+        break;
+      case 'analytics':
+        await this.syncSocialMediaAnalytics(connection, job);
+        break;
+      case 'contacts':
+        await this.syncMarketingContacts(connection, job);
+        break;
+      case 'deals':
+        await this.syncMarketingDeals(connection, job);
+        break;
+      default:
+        throw new Error(`Unknown sync type: ${job.syncType}`);
+    }
+
+    // Update last sync timestamp
+    await this.supabase
+      .from('social_media_accounts')
+      .update({
+        last_sync_at: new Date().toISOString(),
+      })
+      .eq('id', job.connectionId);
   }
 
   /**
    * Process webhook events asynchronously
    */
   private async processWebhook(job: WebhookProcessingJob): Promise<void> {
-    try {
-      // Process webhook data based on platform and event type
-      switch (job.platform) {
-        case 'instagram':
-          await this.processInstagramWebhookData(
-            job.webhookData,
-            job.eventType
-          );
-          break;
-        case 'facebook':
-          await this.processFacebookWebhookData(job.webhookData, job.eventType);
-          break;
-        case 'whatsapp':
-          await this.processWhatsAppWebhookData(job.webhookData, job.eventType);
-          break;
-        case 'hubspot':
-          await this.processHubSpotWebhookData(job.webhookData, job.eventType);
-          break;
-        default:
-          throw new Error(`Unsupported webhook platform: ${job.platform}`);
-      }
-    } catch (error) {
-      console.error(`Webhook processing failed for ${job.platform}:`, error);
-      throw error;
+    // Process webhook data based on platform and event type
+    switch (job.platform) {
+      case 'instagram':
+        await this.processInstagramWebhookData(job.webhookData, job.eventType);
+        break;
+      case 'facebook':
+        await this.processFacebookWebhookData(job.webhookData, job.eventType);
+        break;
+      case 'whatsapp':
+        await this.processWhatsAppWebhookData(job.webhookData, job.eventType);
+        break;
+      case 'hubspot':
+        await this.processHubSpotWebhookData(job.webhookData, job.eventType);
+        break;
+      default:
+        throw new Error(`Unsupported webhook platform: ${job.platform}`);
     }
   }
 
@@ -361,109 +328,67 @@ export class JobQueueManager {
   private async processAnalyticsAggregation(
     job: AnalyticsAggregationJob
   ): Promise<void> {
-    try {
-      const { startDate, endDate } = job.dateRange;
+    const { startDate, endDate } = job.dateRange;
 
-      for (const metric of job.metrics) {
-        await this.aggregateMetric(
-          job.profileId,
-          job.platform,
-          metric,
-          startDate,
-          endDate
-        );
-      }
-    } catch (error) {
-      console.error('Analytics aggregation failed:', error);
-      throw error;
+    for (const metric of job.metrics) {
+      await this.aggregateMetric(
+        job.profileId,
+        job.platform,
+        metric,
+        startDate,
+        endDate
+      );
     }
   }
 
   // Private helper methods for specific sync operations
   private async syncSocialMediaPosts(
-    connection: any,
+    _connection: any,
     _job: DataSyncJob
-  ): Promise<void> {
-    // Implementation for syncing social media posts
-    console.log(
-      `Syncing posts for ${connection.platform} account ${connection.id}`
-    );
-  }
+  ): Promise<void> {}
 
   private async syncSocialMediaAnalytics(
-    connection: any,
+    _connection: any,
     _job: DataSyncJob
-  ): Promise<void> {
-    // Implementation for syncing analytics data
-    console.log(
-      `Syncing analytics for ${connection.platform} account ${connection.id}`
-    );
-  }
+  ): Promise<void> {}
 
   private async syncMarketingContacts(
-    connection: any,
+    _connection: any,
     _job: DataSyncJob
-  ): Promise<void> {
-    // Implementation for syncing marketing contacts
-    console.log(
-      `Syncing contacts for ${connection.platform} connection ${connection.id}`
-    );
-  }
+  ): Promise<void> {}
 
   private async syncMarketingDeals(
-    connection: any,
+    _connection: any,
     _job: DataSyncJob
-  ): Promise<void> {
-    // Implementation for syncing marketing deals
-    console.log(
-      `Syncing deals for ${connection.platform} connection ${connection.id}`
-    );
-  }
+  ): Promise<void> {}
 
   private async processInstagramWebhookData(
     _webhookData: any,
-    eventType: string
-  ): Promise<void> {
-    // Process Instagram-specific webhook data
-    console.log(`Processing Instagram webhook: ${eventType}`);
-  }
+    _eventType: string
+  ): Promise<void> {}
 
   private async processFacebookWebhookData(
     _webhookData: any,
-    eventType: string
-  ): Promise<void> {
-    // Process Facebook-specific webhook data
-    console.log(`Processing Facebook webhook: ${eventType}`);
-  }
+    _eventType: string
+  ): Promise<void> {}
 
   private async processWhatsAppWebhookData(
     _webhookData: any,
-    eventType: string
-  ): Promise<void> {
-    // Process WhatsApp-specific webhook data
-    console.log(`Processing WhatsApp webhook: ${eventType}`);
-  }
+    _eventType: string
+  ): Promise<void> {}
 
   private async processHubSpotWebhookData(
     _webhookData: any,
-    eventType: string
-  ): Promise<void> {
-    // Process HubSpot-specific webhook data
-    console.log(`Processing HubSpot webhook: ${eventType}`);
-  }
+    _eventType: string
+  ): Promise<void> {}
 
   private async aggregateMetric(
     _profileId: string,
-    platform: string,
-    metric: string,
-    startDate: string,
-    endDate: string
-  ): Promise<void> {
-    // Implementation for aggregating specific metrics
-    console.log(
-      `Aggregating ${metric} for ${platform} from ${startDate} to ${endDate}`
-    );
-  }
+    _platform: string,
+    _metric: string,
+    _startDate: string,
+    _endDate: string
+  ): Promise<void> {}
 }
 
 /**
@@ -562,8 +487,7 @@ export async function processBackgroundJobs(): Promise<{
         break; // No more jobs to process
       }
       processed++;
-    } catch (error) {
-      console.error('Job processing error:', error);
+    } catch (_error) {
       errors++;
     }
   }

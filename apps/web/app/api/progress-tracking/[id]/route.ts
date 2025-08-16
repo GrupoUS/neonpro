@@ -39,8 +39,7 @@ export async function GET(
     }
 
     return NextResponse.json(tracking);
-  } catch (error: any) {
-    console.error('Error fetching progress tracking:', error);
+  } catch (_error: any) {
     return NextResponse.json(
       { error: 'Failed to fetch progress tracking' },
       { status: 500 }
@@ -81,8 +80,6 @@ export async function PATCH(
 
     return NextResponse.json(tracking);
   } catch (error: any) {
-    console.error('Error updating progress tracking:', error);
-
     if (error.name === 'ZodError') {
       return NextResponse.json(
         { error: 'Invalid request data', details: error.errors },
@@ -122,8 +119,7 @@ export async function DELETE(
     await progressTrackingService.deleteProgressTracking(id);
 
     return NextResponse.json({ success: true });
-  } catch (error: any) {
-    console.error('Error deleting progress tracking:', error);
+  } catch (_error: any) {
     return NextResponse.json(
       { error: 'Failed to delete progress tracking' },
       { status: 500 }

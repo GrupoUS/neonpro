@@ -47,11 +47,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import type { AnalyticsInsight, AnalyticsTimeframe } from '@/lib/analytics';
 
 // Types
-interface InsightsPanelProps {
+type InsightsPanelProps = {
   insights: AnalyticsInsight[];
   isLoading: boolean;
   timeframe: AnalyticsTimeframe;
-}
+};
 
 interface ProcessedInsight extends AnalyticsInsight {
   categoryIcon: React.ReactNode;
@@ -60,14 +60,14 @@ interface ProcessedInsight extends AnalyticsInsight {
   estimatedImpact: 'low' | 'medium' | 'high';
 }
 
-interface InsightCategory {
+type InsightCategory = {
   id: string;
   label: string;
   icon: React.ReactNode;
   insights: ProcessedInsight[];
   averageConfidence: number;
   totalImpact: number;
-}
+};
 
 export function InsightsPanel({
   insights,

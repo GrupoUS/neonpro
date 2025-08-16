@@ -6,7 +6,7 @@
 import { createClient } from '@supabase/supabase-js';
 import type { DrillDownResult, FinancialKPI } from '@/lib/types/kpi-types';
 
-export interface DrillDownContext {
+export type DrillDownContext = {
   breadcrumbs: Array<{
     level: number;
     dimension: string;
@@ -17,14 +17,14 @@ export interface DrillDownContext {
   aggregationLevel: string;
   sortBy: string;
   sortOrder: 'asc' | 'desc';
-}
+};
 
-export interface DrillDownPath {
+export type DrillDownPath = {
   currentLevel: number;
   maxLevels: number;
   availableDimensions: string[];
   nextLevelOptions?: string[];
-}
+};
 
 export class DrillDownSystem {
   private readonly supabase;
@@ -59,58 +59,52 @@ export class DrillDownSystem {
     executionTime: number;
   }> {
     const startTime = Date.now();
-
-    try {
-      // Get KPI details
-      const kpi = await this.getKPIDetails(kpiId);
-      if (!kpi) {
-        throw new Error('KPI not found');
-      }
-
-      // Determine drill-down strategy based on KPI category and dimension
-      const _strategy = this.getDrillDownStrategy(kpi, dimension);
-
-      // Execute drill-down analysis
-      const results = await this.performDrillDown(
-        kpi,
-        dimension,
-        filters,
-        options
-      );
-
-      // Generate context and navigation path
-      const context = this.buildDrillDownContext(dimension, filters, options);
-      const path = this.buildDrillDownPath(
-        kpi,
-        dimension,
-        context.breadcrumbs.length
-      );
-
-      // Add sub-dimensions if requested
-      if (options.includeSubDimensions) {
-        for (const result of results) {
-          result.sub_dimensions = await this.getSubDimensions(
-            kpi,
-            dimension,
-            result,
-            filters
-          );
-        }
-      }
-
-      const executionTime = Date.now() - startTime;
-
-      return {
-        results: results.slice(0, options.limit || 50),
-        context,
-        path,
-        totalCount: results.length,
-        executionTime,
-      };
-    } catch (error) {
-      console.error('Drill-down execution error:', error);
-      throw error;
+    // Get KPI details
+    const kpi = await this.getKPIDetails(kpiId);
+    if (!kpi) {
+      throw new Error('KPI not found');
     }
+
+    // Determine drill-down strategy based on KPI category and dimension
+    const _strategy = this.getDrillDownStrategy(kpi, dimension);
+
+    // Execute drill-down analysis
+    const results = await this.performDrillDown(
+      kpi,
+      dimension,
+      filters,
+      options
+    );
+
+    // Generate context and navigation path
+    const context = this.buildDrillDownContext(dimension, filters, options);
+    const path = this.buildDrillDownPath(
+      kpi,
+      dimension,
+      context.breadcrumbs.length
+    );
+
+    // Add sub-dimensions if requested
+    if (options.includeSubDimensions) {
+      for (const result of results) {
+        result.sub_dimensions = await this.getSubDimensions(
+          kpi,
+          dimension,
+          result,
+          filters
+        );
+      }
+    }
+
+    const executionTime = Date.now() - startTime;
+
+    return {
+      results: results.slice(0, options.limit || 50),
+      context,
+      path,
+      totalCount: results.length,
+      executionTime,
+    };
   }
 
   // Time-based drill-down

@@ -110,8 +110,6 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(profitabilityAnalysis);
   } catch (error: any) {
-    console.error('[Marketing ROI API] GET treatment profitability:', error);
-
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Validation error', details: error.errors },
@@ -158,8 +156,6 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(treatmentROI);
   } catch (error: any) {
-    console.error('[Marketing ROI API] POST calculate treatment ROI:', error);
-
     return NextResponse.json(
       { error: 'Internal server error', message: error.message },
       { status: 500 }

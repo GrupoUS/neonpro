@@ -93,7 +93,6 @@ export async function GET(request: NextRequest) {
       await effectivenessQuery;
 
     if (predictionsError) {
-      console.error('Database error:', predictionsError);
       return NextResponse.json(
         { error: 'Failed to fetch effectiveness data' },
         { status: 500 }
@@ -190,8 +189,7 @@ export async function GET(request: NextRequest) {
         total: totalPredictions,
       },
     });
-  } catch (error) {
-    console.error('API error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

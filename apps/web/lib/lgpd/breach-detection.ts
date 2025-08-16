@@ -96,7 +96,7 @@ export enum DetectionSource {
 /**
  * Breach Incident Interface
  */
-export interface BreachIncident {
+export type BreachIncident = {
   id: string;
   title: string;
   description: string;
@@ -218,12 +218,12 @@ export interface BreachIncident {
   priority: number;
   createdAt: Date;
   updatedAt: Date;
-}
+};
 
 /**
  * Detection Rule Interface
  */
-export interface DetectionRule {
+export type DetectionRule = {
   id: string;
   name: string;
   description: string;
@@ -261,12 +261,12 @@ export interface DetectionRule {
   falsePositiveRate: number;
   createdAt: Date;
   updatedAt: Date;
-}
+};
 
 /**
  * Monitoring Alert Interface
  */
-export interface MonitoringAlert {
+export type MonitoringAlert = {
   id: string;
   ruleId: string;
   ruleName: string;
@@ -304,12 +304,12 @@ export interface MonitoringAlert {
 
   createdAt: Date;
   updatedAt: Date;
-}
+};
 
 /**
  * Breach Detection Events
  */
-export interface BreachDetectionEvents {
+export type BreachDetectionEvents = {
   'breach:detected': { incident: BreachIncident };
   'breach:confirmed': { incident: BreachIncident };
   'breach:contained': { incident: BreachIncident };
@@ -326,7 +326,7 @@ export interface BreachDetectionEvents {
     deadline: Date;
     hoursRemaining: number;
   };
-}
+};
 
 // ============================================================================
 // BREACH DETECTION SYSTEM
@@ -1499,13 +1499,10 @@ export class BreachDetectionSystem extends EventEmitter {
    * Log activity
    */
   private logActivity(
-    actor: string,
-    action: string,
-    details: Record<string, any>
-  ): void {
-    // In a real implementation, this would log to audit trail
-    console.log(`[BreachDetection] ${actor} - ${action}:`, details);
-  }
+    _actor: string,
+    _action: string,
+    _details: Record<string, any>
+  ): void {}
 
   /**
    * Generate ID

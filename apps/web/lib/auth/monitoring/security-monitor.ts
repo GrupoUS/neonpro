@@ -5,7 +5,7 @@ import { SessionConfig } from '@/lib/auth/config/session-config';
 import type { AnomalyAlert } from '@/lib/auth/suspicious/suspicious-activity-detector';
 import { SessionUtils } from '@/lib/auth/utils/session-utils';
 
-export interface SecurityThreat {
+export type SecurityThreat = {
   id: string;
   type: ThreatType;
   severity: ThreatSeverity;
@@ -20,7 +20,7 @@ export interface SecurityThreat {
   resolvedAt?: number;
   mitigationActions: MitigationAction[];
   falsePositive: boolean;
-}
+};
 
 export type ThreatType =
   | 'brute_force_attack'
@@ -49,19 +49,19 @@ export type ThreatSource =
   | 'compromised_account'
   | 'malicious_script';
 
-export interface ThreatTarget {
+export type ThreatTarget = {
   type: 'user' | 'session' | 'endpoint' | 'system';
   id: string;
   details: Record<string, any>;
-}
+};
 
-export interface ThreatIndicator {
+export type ThreatIndicator = {
   type: IndicatorType;
   value: string;
   confidence: number;
   source: string;
   timestamp: number;
-}
+};
 
 export type IndicatorType =
   | 'ip_address'
@@ -81,7 +81,7 @@ export type ThreatStatus =
   | 'resolved'
   | 'false_positive';
 
-export interface MitigationAction {
+export type MitigationAction = {
   id: string;
   type: MitigationType;
   description: string;
@@ -89,7 +89,7 @@ export interface MitigationAction {
   executedAt: number;
   result: 'success' | 'failed' | 'pending';
   details: Record<string, any>;
-}
+};
 
 export type MitigationType =
   | 'block_ip'
@@ -103,7 +103,7 @@ export type MitigationType =
   | 'isolate_system'
   | 'force_logout';
 
-export interface SecurityMetrics {
+export type SecurityMetrics = {
   totalThreats: number;
   activeThreats: number;
   resolvedThreats: number;
@@ -113,9 +113,9 @@ export interface SecurityMetrics {
   threatsBySeverity: Record<ThreatSeverity, number>;
   mitigationSuccess: number; // percentage
   lastUpdated: number;
-}
+};
 
-export interface MonitoringRule {
+export type MonitoringRule = {
   id: string;
   name: string;
   description: string;
@@ -126,9 +126,9 @@ export interface MonitoringRule {
   priority: number;
   cooldown: number; // milliseconds
   lastTriggered?: number;
-}
+};
 
-export interface RuleCondition {
+export type RuleCondition = {
   field: string;
   operator:
     | 'equals'
@@ -139,16 +139,16 @@ export interface RuleCondition {
     | 'regex';
   value: any;
   weight: number; // 0-1
-}
+};
 
-export interface AutomatedAction {
+export type AutomatedAction = {
   type: MitigationType;
   parameters: Record<string, any>;
   delay: number; // milliseconds
   condition?: string; // JavaScript expression
-}
+};
 
-export interface SecurityAlert {
+export type SecurityAlert = {
   id: string;
   threatId: string;
   type: AlertType;
@@ -161,7 +161,7 @@ export interface SecurityAlert {
   acknowledged: boolean;
   acknowledgedBy?: string;
   acknowledgedAt?: number;
-}
+};
 
 export type AlertType =
   | 'threat_detected'
@@ -403,8 +403,6 @@ export class SecurityMonitor {
     this.monitoringInterval = setInterval(() => {
       this.performSecurityScan();
     }, 10_000); // Scan every 10 seconds
-
-    console.log('Security monitoring started');
     this.emit('monitoring_started', { timestamp: Date.now() });
   }
 
@@ -421,8 +419,6 @@ export class SecurityMonitor {
       clearInterval(this.monitoringInterval);
       this.monitoringInterval = null;
     }
-
-    console.log('Security monitoring stopped');
     this.emit('monitoring_stopped', { timestamp: Date.now() });
   }
 
@@ -450,9 +446,7 @@ export class SecurityMonitor {
 
       // Send pending alerts
       await this.processPendingAlerts();
-    } catch (error) {
-      console.error('Error in security scan:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -475,9 +469,7 @@ export class SecurityMonitor {
       if (threat) {
         await this.processThreat(threat);
       }
-    } catch (error) {
-      console.error('Error analyzing anomaly for threats:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -509,8 +501,7 @@ export class SecurityMonitor {
       };
 
       return threat;
-    } catch (error) {
-      console.error('Error creating threat from anomaly:', error);
+    } catch (_error) {
       return null;
     }
   }
@@ -542,13 +533,7 @@ export class SecurityMonitor {
 
       // Emit threat detected event
       this.emit('threat_detected', threat);
-
-      console.log(
-        `Security threat detected: ${threat.type} (Risk: ${threat.riskScore})`
-      );
-    } catch (error) {
-      console.error('Error processing threat:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -583,9 +568,7 @@ export class SecurityMonitor {
         if (mitigationAction) {
           threat.mitigationActions.push(mitigationAction);
         }
-      } catch (error) {
-        console.error(`Error executing action ${action.type}:`, error);
-      }
+      } catch (_error) {}
     }
   }
 
@@ -669,7 +652,6 @@ export class SecurityMonitor {
 
       return action;
     } catch (error) {
-      console.error(`Error executing mitigation action ${type}:`, error);
       return {
         id: this.utils.generateSessionToken(),
         type,
@@ -784,8 +766,7 @@ export class SecurityMonitor {
     });
   }
 
-  private async isolateSystem(threat: SecurityThreat): Promise<void> {
-    console.log(`System isolation triggered for threat ${threat.id}`);
+  private async isolateSystem(_threat: SecurityThreat): Promise<void> {
     // Implementation would depend on infrastructure
   }
 
@@ -1012,8 +993,7 @@ export class SecurityMonitor {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(alert),
       });
-    } catch (error) {
-      console.error('Error sending security alert:', error);
+    } catch (_error) {
       // Re-queue alert for retry
       this.alertQueue.push(alert);
     }
@@ -1039,9 +1019,7 @@ export class SecurityMonitor {
           },
         }),
       });
-    } catch (error) {
-      console.error('Error logging security event:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -1070,9 +1048,7 @@ export class SecurityMonitor {
       listeners.forEach((callback) => {
         try {
           callback(data);
-        } catch (error) {
-          console.error(`Error in event listener for ${event}:`, error);
-        }
+        } catch (_error) {}
       });
     }
   }

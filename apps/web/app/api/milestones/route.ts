@@ -37,8 +37,6 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(milestone, { status: 201 });
   } catch (error: any) {
-    console.error('Error creating progress milestone:', error);
-
     if (error.name === 'ZodError') {
       return NextResponse.json(
         { error: 'Invalid request data', details: error.errors },
@@ -99,8 +97,6 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(result);
   } catch (error: any) {
-    console.error('Error fetching progress milestones:', error);
-
     if (error.name === 'ZodError') {
       return NextResponse.json(
         { error: 'Invalid query parameters', details: error.errors },

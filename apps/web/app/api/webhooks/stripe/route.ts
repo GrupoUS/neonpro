@@ -18,7 +18,6 @@ export async function POST(request: NextRequest) {
     const signature = request.headers.get('stripe-signature');
 
     if (!(signature && STRIPE_WEBHOOK_SECRET)) {
-      console.error('Missing Stripe signature or webhook secret');
       return NextResponse.json(
         { error: 'Missing signature or webhook secret' },
         { status: 400 }
@@ -76,12 +75,10 @@ export async function POST(request: NextRequest) {
         break;
 
       default:
-        console.log(`Unhandled Stripe event type: ${event.type}`);
     }
 
     return NextResponse.json({ received: true });
-  } catch (error) {
-    console.error('Stripe webhook error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Webhook processing failed' },
       { status: 500 }
@@ -95,7 +92,6 @@ async function handleCheckoutCompleted(supabase: any, event: any) {
     const metadata = session.metadata;
 
     if (!(metadata?.clinic_id && metadata?.plan_id)) {
-      console.error('Missing required metadata in checkout session');
       return;
     }
 
@@ -129,7 +125,6 @@ async function handleCheckoutCompleted(supabase: any, event: any) {
       });
 
     if (error) {
-      console.error('Error creating/updating subscription:', error);
       return;
     }
 
@@ -148,10 +143,7 @@ async function handleCheckoutCompleted(supabase: any, event: any) {
         checkout_completed_at: new Date(session.created * 1000).toISOString(),
       },
     });
-
-    console.log(`Subscription created for clinic ${metadata.clinic_id}`);
-  } catch (error) {
-    console.error('Error handling checkout completed:', error);
+  } catch (_error) {
   }
 }
 
@@ -167,10 +159,6 @@ async function handlePaymentSucceeded(supabase: any, event: any) {
       .single();
 
     if (!subscription) {
-      console.error(
-        'Subscription not found for invoice:',
-        invoice.subscription
-      );
       return;
     }
 
@@ -203,10 +191,7 @@ async function handlePaymentSucceeded(supabase: any, event: any) {
         period_end: new Date(invoice.period_end * 1000).toISOString(),
       },
     });
-
-    console.log(`Payment succeeded for subscription ${subscription.id}`);
-  } catch (error) {
-    console.error('Error handling payment succeeded:', error);
+  } catch (_error) {
   }
 }
 
@@ -222,10 +207,6 @@ async function handlePaymentFailed(supabase: any, event: any) {
       .single();
 
     if (!subscription) {
-      console.error(
-        'Subscription not found for failed payment:',
-        invoice.subscription
-      );
       return;
     }
 
@@ -252,21 +233,14 @@ async function handlePaymentFailed(supabase: any, event: any) {
         failure_reason: invoice.status,
       },
     });
-
-    console.log(`Payment failed for subscription ${subscription.id}`);
-  } catch (error) {
-    console.error('Error handling payment failed:', error);
+  } catch (_error) {
   }
 }
 
 async function handleSubscriptionCreated(_supabase: any, event: any) {
   try {
-    const subscription = event.data.object;
-
-    // Log subscription creation event
-    console.log(`Stripe subscription created: ${subscription.id}`);
-  } catch (error) {
-    console.error('Error handling subscription created:', error);
+    const _subscription = event.data.object;
+  } catch (_error) {
   }
 }
 
@@ -282,7 +256,6 @@ async function handleSubscriptionUpdated(supabase: any, event: any) {
       .single();
 
     if (!localSub) {
-      console.error('Local subscription not found:', subscription.id);
       return;
     }
 
@@ -313,10 +286,7 @@ async function handleSubscriptionUpdated(supabase: any, event: any) {
           : null,
       })
       .eq('id', localSub.id);
-
-    console.log(`Subscription updated: ${subscription.id} -> ${status}`);
-  } catch (error) {
-    console.error('Error handling subscription updated:', error);
+  } catch (_error) {
   }
 }
 
@@ -334,13 +304,9 @@ async function handleSubscriptionDeleted(supabase: any, event: any) {
       .eq('external_subscription_id', subscription.id);
 
     if (error) {
-      console.error('Error canceling subscription:', error);
       return;
     }
-
-    console.log(`Subscription canceled: ${subscription.id}`);
-  } catch (error) {
-    console.error('Error handling subscription deleted:', error);
+  } catch (_error) {
   }
 }
 
@@ -356,10 +322,6 @@ async function handleInvoiceCreated(supabase: any, event: any) {
       .single();
 
     if (!subscription) {
-      console.error(
-        'Subscription not found for invoice:',
-        invoice.subscription
-      );
       return;
     }
 
@@ -379,10 +341,7 @@ async function handleInvoiceCreated(supabase: any, event: any) {
         period_end: new Date(invoice.period_end * 1000).toISOString(),
       },
     });
-
-    console.log(`Invoice created for subscription ${subscription.id}`);
-  } catch (error) {
-    console.error('Error handling invoice created:', error);
+  } catch (_error) {
   }
 }
 

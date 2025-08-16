@@ -8,7 +8,7 @@ import { CommunicationService } from './communication-service';
 import { NoShowPredictor } from './no-show-predictor';
 import { schedulingTemplateEngine } from './scheduling-templates';
 
-export interface WorkflowConfig {
+export type WorkflowConfig = {
   clinicId: string;
   enabled: boolean;
   reminderSettings: {
@@ -39,9 +39,9 @@ export interface WorkflowConfig {
       responseRate: number;
     };
   };
-}
+};
 
-export interface WorkflowExecution {
+export type WorkflowExecution = {
   id: string;
   appointmentId: string;
   patientId: string;
@@ -54,9 +54,9 @@ export interface WorkflowExecution {
   completedAt?: Date;
   results: WorkflowResults;
   metadata: Record<string, any>;
-}
+};
 
-export interface WorkflowStep {
+export type WorkflowStep = {
   id: string;
   type:
     | 'send_message'
@@ -70,9 +70,9 @@ export interface WorkflowStep {
   input: any;
   output: any;
   error?: string;
-}
+};
 
-export interface WorkflowResults {
+export type WorkflowResults = {
   messagesSent: number;
   messagesDelivered: number;
   responseReceived: boolean;
@@ -81,7 +81,7 @@ export interface WorkflowResults {
   waitlistFilled: boolean;
   cost: number;
   effectiveness: number;
-}
+};
 
 export class SchedulingCommunicationWorkflow {
   private readonly supabase = createClient();
@@ -95,140 +95,135 @@ export class SchedulingCommunicationWorkflow {
     appointmentId: string,
     config?: Partial<WorkflowConfig>
   ): Promise<WorkflowExecution[]> {
-    try {
-      // Get appointment details
-      const { data: appointment, error: appointmentError } = await this.supabase
-        .from('appointments')
-        .select(
-          `
+    // Get appointment details
+    const { data: appointment, error: appointmentError } = await this.supabase
+      .from('appointments')
+      .select(
+        `
           *,
           patients(*),
           professionals(*),
           services(*),
           clinics(*)
         `
-        )
-        .eq('id', appointmentId)
-        .single();
+      )
+      .eq('id', appointmentId)
+      .single();
 
-      if (appointmentError || !appointment) {
-        throw new Error('Appointment not found');
-      }
-
-      // Get clinic workflow configuration
-      const workflowConfig = await this.getWorkflowConfig(
-        appointment.clinic_id,
-        config
-      );
-
-      if (!workflowConfig.enabled) {
-        return [];
-      }
-
-      const workflows: WorkflowExecution[] = [];
-      const appointmentDate = new Date(appointment.date);
-      const now = new Date();
-
-      // 1. Schedule reminder workflows
-      if (workflowConfig.reminderSettings.enabled24h) {
-        const reminderTime24h = new Date(
-          appointmentDate.getTime() - 24 * 60 * 60 * 1000
-        );
-        if (reminderTime24h > now) {
-          workflows.push(
-            await this.createReminderWorkflow(
-              appointment,
-              '24h',
-              reminderTime24h,
-              workflowConfig
-            )
-          );
-        }
-      }
-
-      if (workflowConfig.reminderSettings.enabled2h) {
-        const reminderTime2h = new Date(
-          appointmentDate.getTime() - 2 * 60 * 60 * 1000
-        );
-        if (reminderTime2h > now) {
-          workflows.push(
-            await this.createReminderWorkflow(
-              appointment,
-              '2h',
-              reminderTime2h,
-              workflowConfig
-            )
-          );
-        }
-      }
-
-      if (workflowConfig.reminderSettings.enabled30m) {
-        const reminderTime30m = new Date(
-          appointmentDate.getTime() - 30 * 60 * 1000
-        );
-        if (reminderTime30m > now) {
-          workflows.push(
-            await this.createReminderWorkflow(
-              appointment,
-              '30m',
-              reminderTime30m,
-              workflowConfig
-            )
-          );
-        }
-      }
-
-      // 2. Schedule confirmation workflow
-      if (workflowConfig.confirmationSettings.enableConfirmationRequests) {
-        const confirmationTime = this.calculateConfirmationTime(
-          appointmentDate,
-          workflowConfig.confirmationSettings.sendTime
-        );
-        if (confirmationTime > now) {
-          workflows.push(
-            await this.createConfirmationWorkflow(
-              appointment,
-              confirmationTime,
-              workflowConfig
-            )
-          );
-        }
-      }
-
-      // 3. Schedule no-show prevention workflow if needed
-      if (workflowConfig.noShowPrevention.enabled) {
-        const prediction = await this.noShowPredictor.predict(appointmentId);
-        if (
-          prediction.probability >=
-          workflowConfig.noShowPrevention.probabilityThreshold
-        ) {
-          const interventionTime = this.calculateInterventionTime(
-            appointmentDate,
-            workflowConfig.noShowPrevention.interventionTiming
-          );
-          if (interventionTime > now) {
-            workflows.push(
-              await this.createNoShowPreventionWorkflow(
-                appointment,
-                prediction,
-                interventionTime,
-                workflowConfig
-              )
-            );
-          }
-        }
-      }
-
-      // Save workflows to database
-      for (const workflow of workflows) {
-        await this.saveWorkflow(workflow);
-      }
-
-      return workflows;
-    } catch (error) {
-      console.error('Error initializing workflows:', error);
-      throw error;
+    if (appointmentError || !appointment) {
+      throw new Error('Appointment not found');
     }
+
+    // Get clinic workflow configuration
+    const workflowConfig = await this.getWorkflowConfig(
+      appointment.clinic_id,
+      config
+    );
+
+    if (!workflowConfig.enabled) {
+      return [];
+    }
+
+    const workflows: WorkflowExecution[] = [];
+    const appointmentDate = new Date(appointment.date);
+    const now = new Date();
+
+    // 1. Schedule reminder workflows
+    if (workflowConfig.reminderSettings.enabled24h) {
+      const reminderTime24h = new Date(
+        appointmentDate.getTime() - 24 * 60 * 60 * 1000
+      );
+      if (reminderTime24h > now) {
+        workflows.push(
+          await this.createReminderWorkflow(
+            appointment,
+            '24h',
+            reminderTime24h,
+            workflowConfig
+          )
+        );
+      }
+    }
+
+    if (workflowConfig.reminderSettings.enabled2h) {
+      const reminderTime2h = new Date(
+        appointmentDate.getTime() - 2 * 60 * 60 * 1000
+      );
+      if (reminderTime2h > now) {
+        workflows.push(
+          await this.createReminderWorkflow(
+            appointment,
+            '2h',
+            reminderTime2h,
+            workflowConfig
+          )
+        );
+      }
+    }
+
+    if (workflowConfig.reminderSettings.enabled30m) {
+      const reminderTime30m = new Date(
+        appointmentDate.getTime() - 30 * 60 * 1000
+      );
+      if (reminderTime30m > now) {
+        workflows.push(
+          await this.createReminderWorkflow(
+            appointment,
+            '30m',
+            reminderTime30m,
+            workflowConfig
+          )
+        );
+      }
+    }
+
+    // 2. Schedule confirmation workflow
+    if (workflowConfig.confirmationSettings.enableConfirmationRequests) {
+      const confirmationTime = this.calculateConfirmationTime(
+        appointmentDate,
+        workflowConfig.confirmationSettings.sendTime
+      );
+      if (confirmationTime > now) {
+        workflows.push(
+          await this.createConfirmationWorkflow(
+            appointment,
+            confirmationTime,
+            workflowConfig
+          )
+        );
+      }
+    }
+
+    // 3. Schedule no-show prevention workflow if needed
+    if (workflowConfig.noShowPrevention.enabled) {
+      const prediction = await this.noShowPredictor.predict(appointmentId);
+      if (
+        prediction.probability >=
+        workflowConfig.noShowPrevention.probabilityThreshold
+      ) {
+        const interventionTime = this.calculateInterventionTime(
+          appointmentDate,
+          workflowConfig.noShowPrevention.interventionTiming
+        );
+        if (interventionTime > now) {
+          workflows.push(
+            await this.createNoShowPreventionWorkflow(
+              appointment,
+              prediction,
+              interventionTime,
+              workflowConfig
+            )
+          );
+        }
+      }
+    }
+
+    // Save workflows to database
+    for (const workflow of workflows) {
+      await this.saveWorkflow(workflow);
+    }
+
+    return workflows;
   }
 
   /**
@@ -271,38 +266,32 @@ export class SchedulingCommunicationWorkflow {
    * Execute a scheduled workflow
    */
   async executeWorkflow(workflowId: string): Promise<WorkflowResults> {
-    try {
-      const workflow = await this.getWorkflow(workflowId);
-      if (!workflow || workflow.status !== 'scheduled') {
-        throw new Error('Workflow not found or not schedulable');
-      }
-
-      // Update workflow status
-      workflow.status = 'running';
-      workflow.startedAt = new Date();
-      await this.updateWorkflow(workflow);
-
-      // Execute workflow steps
-      for (const step of workflow.steps) {
-        try {
-          await this.executeWorkflowStep(workflow, step);
-        } catch (stepError) {
-          console.error(`Error executing step ${step.id}:`, stepError);
-          step.status = 'failed';
-          step.error = stepError.message;
-        }
-      }
-
-      // Complete workflow
-      workflow.status = 'completed';
-      workflow.completedAt = new Date();
-      await this.updateWorkflow(workflow);
-
-      return workflow.results;
-    } catch (error) {
-      console.error('Error executing workflow:', error);
-      throw error;
+    const workflow = await this.getWorkflow(workflowId);
+    if (!workflow || workflow.status !== 'scheduled') {
+      throw new Error('Workflow not found or not schedulable');
     }
+
+    // Update workflow status
+    workflow.status = 'running';
+    workflow.startedAt = new Date();
+    await this.updateWorkflow(workflow);
+
+    // Execute workflow steps
+    for (const step of workflow.steps) {
+      try {
+        await this.executeWorkflowStep(workflow, step);
+      } catch (stepError) {
+        step.status = 'failed';
+        step.error = stepError.message;
+      }
+    }
+
+    // Complete workflow
+    workflow.status = 'completed';
+    workflow.completedAt = new Date();
+    await this.updateWorkflow(workflow);
+
+    return workflow.results;
   }
 
   /**

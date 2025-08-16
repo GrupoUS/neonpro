@@ -3,19 +3,19 @@ import 'jspdf-autotable';
 
 // Extend jsPDF interface to include autoTable
 declare module 'jspdf' {
-  interface jsPDF {
+  type jsPDF = {
     autoTable: (options: any) => jsPDF;
-  }
+  };
 }
 
-interface PDFOptions {
+type PDFOptions = {
   title?: string;
   includeCharts?: boolean;
   includeHeader?: boolean;
   includeFooter?: boolean;
   orientation?: 'portrait' | 'landscape';
   format?: string;
-}
+};
 
 export function generateCohortPDF(data: any, options: PDFOptions = {}): jsPDF {
   const doc = new jsPDF({

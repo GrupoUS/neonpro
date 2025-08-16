@@ -4,16 +4,16 @@ import type { LGPDComplianceManager } from '../LGPDComplianceManager';
 
 type SupabaseClient = ReturnType<typeof createClient<Database>>;
 
-export interface ConsentAutomationConfig {
+export type ConsentAutomationConfig = {
   auto_renewal_enabled: boolean;
   renewal_notice_days: number;
   withdrawal_grace_period_hours: number;
   granular_tracking_enabled: boolean;
   consent_analytics_enabled: boolean;
   third_party_sync_enabled: boolean;
-}
+};
 
-export interface ConsentChangeEvent {
+export type ConsentChangeEvent = {
   user_id: string;
   purpose_id: string;
   old_status: boolean | null;
@@ -27,9 +27,9 @@ export interface ConsentChangeEvent {
   ip_address?: string;
   user_agent?: string;
   timestamp: string;
-}
+};
 
-export interface ConsentAnalytics {
+export type ConsentAnalytics = {
   total_consents: number;
   consent_rate: number;
   withdrawal_rate: number;
@@ -45,9 +45,9 @@ export interface ConsentAnalytics {
     consent_score: number;
     last_interaction: string;
   }>;
-}
+};
 
-export interface ConsentRenewalTask {
+export type ConsentRenewalTask = {
   id: string;
   user_id: string;
   purpose_id: string;
@@ -56,7 +56,7 @@ export interface ConsentRenewalTask {
   notification_sent: boolean;
   renewal_completed: boolean;
   created_at: string;
-}
+};
 
 export class ConsentAutomationManager {
   private readonly supabase: SupabaseClient;
@@ -202,7 +202,6 @@ export class ConsentAutomationManager {
         tracking_id: tracking.id,
       };
     } catch (error) {
-      console.error('Error in automated consent collection:', error);
       throw new Error(
         `Failed to collect consent with tracking: ${error.message}`
       );
@@ -245,7 +244,6 @@ export class ConsentAutomationManager {
 
       return renewalTask.id;
     } catch (error) {
-      console.error('Error scheduling consent renewal:', error);
       throw new Error(`Failed to schedule consent renewal: ${error.message}`);
     }
   }
@@ -329,7 +327,6 @@ export class ConsentAutomationManager {
         errors,
       };
     } catch (error) {
-      console.error('Error processing pending renewals:', error);
       throw new Error(`Failed to process pending renewals: ${error.message}`);
     }
   }
@@ -425,7 +422,6 @@ export class ConsentAutomationManager {
           : effectiveDate.toISOString(),
       };
     } catch (error) {
-      console.error('Error processing consent withdrawal:', error);
       throw new Error(`Failed to process consent withdrawal: ${error.message}`);
     }
   }
@@ -452,7 +448,6 @@ export class ConsentAutomationManager {
 
       return analytics;
     } catch (error) {
-      console.error('Error generating consent analytics:', error);
       throw new Error(`Failed to generate consent analytics: ${error.message}`);
     }
   }
@@ -528,7 +523,6 @@ export class ConsentAutomationManager {
         errors,
       };
     } catch (error) {
-      console.error('Error processing consent inheritance:', error);
       throw new Error(
         `Failed to process consent inheritance: ${error.message}`
       );
@@ -554,14 +548,8 @@ export class ConsentAutomationManager {
   }
 
   private async sendConsentRenewalNotification(
-    renewal: ConsentRenewalTask
-  ): Promise<void> {
-    // Implementation for sending renewal notifications
-    // This would integrate with your notification system
-    console.log(
-      `Sending renewal notification for user ${renewal.user_id}, purpose ${renewal.purpose_id}`
-    );
-  }
+    _renewal: ConsentRenewalTask
+  ): Promise<void> {}
 
   private async autoWithdrawExpiredConsent(
     renewal: ConsentRenewalTask
@@ -615,16 +603,11 @@ export class ConsentAutomationManager {
   }
 
   private async syncConsentWithThirdParties(
-    userId: string,
-    purposeId: string,
-    granted: boolean,
+    _userId: string,
+    _purposeId: string,
+    _granted: boolean,
     _metadata: any
-  ): Promise<void> {
-    // Sync consent status with third-party systems
-    console.log(
-      `Syncing consent with third parties for user ${userId}, purpose ${purposeId}: ${granted}`
-    );
-  }
+  ): Promise<void> {}
 
   private shouldInheritConsent(purpose: string, rules: any): boolean {
     const purposeRuleMap = {

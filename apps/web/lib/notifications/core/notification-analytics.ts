@@ -1,7 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 import { AuditLogger } from '../../auth/audit/audit-logger';
 
-export interface NotificationMetrics {
+export type NotificationMetrics = {
   total_sent: number;
   total_delivered: number;
   total_opened: number;
@@ -14,9 +14,9 @@ export interface NotificationMetrics {
   average_delivery_time_minutes: number;
   total_cost: number;
   cost_per_notification: number;
-}
+};
 
-export interface ChannelMetrics {
+export type ChannelMetrics = {
   channel: string;
   metrics: NotificationMetrics;
   volume_trend: Array<{
@@ -28,9 +28,9 @@ export interface ChannelMetrics {
     delivery_rate: number;
     open_rate: number;
   }>;
-}
+};
 
-export interface UserEngagementMetrics {
+export type UserEngagementMetrics = {
   user_id: string;
   total_received: number;
   total_opened: number;
@@ -40,9 +40,9 @@ export interface UserEngagementMetrics {
   preferred_time: string;
   last_interaction: Date;
   opt_out_channels: string[];
-}
+};
 
-export interface TemplateMetrics {
+export type TemplateMetrics = {
   template_id: string;
   template_name: string;
   usage_count: number;
@@ -53,9 +53,9 @@ export interface TemplateMetrics {
     winner: 'a' | 'b' | 'tie';
     confidence_level: number;
   };
-}
+};
 
-export interface CampaignMetrics {
+export type CampaignMetrics = {
   campaign_id: string;
   campaign_name: string;
   start_date: Date;
@@ -65,9 +65,9 @@ export interface CampaignMetrics {
   channel_breakdown: Record<string, NotificationMetrics>;
   geographic_breakdown: Record<string, NotificationMetrics>;
   demographic_breakdown: Record<string, NotificationMetrics>;
-}
+};
 
-export interface RealTimeMetrics {
+export type RealTimeMetrics = {
   current_queue_size: number;
   processing_rate_per_minute: number;
   error_rate_last_hour: number;
@@ -75,9 +75,9 @@ export interface RealTimeMetrics {
   active_channels: string[];
   system_health: 'healthy' | 'warning' | 'critical';
   last_updated: Date;
-}
+};
 
-export interface AnalyticsFilters {
+export type AnalyticsFilters = {
   start_date?: Date;
   end_date?: Date;
   channels?: string[];
@@ -86,7 +86,7 @@ export interface AnalyticsFilters {
   campaign_ids?: string[];
   status?: string[];
   priority?: string[];
-}
+};
 
 export class NotificationAnalytics {
   private readonly supabase;

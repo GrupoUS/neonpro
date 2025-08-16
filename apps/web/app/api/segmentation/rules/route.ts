@@ -20,7 +20,6 @@ export async function GET(_request: NextRequest) {
       .order('created_at', { ascending: false });
 
     if (error) {
-      console.error('Database error:', error);
       // Return empty array if table doesn't exist or no data
       return NextResponse.json({
         success: true,
@@ -34,8 +33,7 @@ export async function GET(_request: NextRequest) {
       data: rules || [],
       total: rules?.length || 0,
     });
-  } catch (error) {
-    console.error('Error fetching segmentation rules:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to fetch segmentation rules' },
       { status: 500 }
@@ -84,8 +82,7 @@ export async function POST(request: NextRequest) {
       },
       { status: 201 }
     );
-  } catch (error) {
-    console.error('Error creating segmentation rule:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to create segmentation rule' },
       { status: 500 }

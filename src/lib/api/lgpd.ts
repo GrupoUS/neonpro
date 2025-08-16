@@ -14,20 +14,27 @@ const ConsentRequestSchema = z.object({
   purposeName: z.string().min(1, 'Purpose name is required'),
   granted: z.boolean(),
   ipAddress: z.string().optional(),
-  userAgent: z.string().optional()
+  userAgent: z.string().optional(),
 });
 
 const DataSubjectRequestSchema = z.object({
-  requestType: z.enum(['access', 'rectification', 'erasure', 'restriction', 'portability', 'objection']),
+  requestType: z.enum([
+    'access',
+    'rectification',
+    'erasure',
+    'restriction',
+    'portability',
+    'objection',
+  ]),
   details: z.record(z.any()).optional(),
-  reason: z.string().optional()
+  reason: z.string().optional(),
 });
 
 const DataRectificationSchema = z.object({
   field: z.string().min(1, 'Field name is required'),
   oldValue: z.string(),
   newValue: z.string(),
-  reason: z.string().min(1, 'Reason for rectification is required')
+  reason: z.string().min(1, 'Reason for rectification is required'),
 });
 
 // ============================================================================
@@ -41,20 +48,26 @@ const DataRectificationSchema = z.object({
 export async function grantConsent(request: NextRequest) {
   try {
     const supabase = createClient();
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
-    
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
     if (authError || !user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const body = await request.json();
     const validation = ConsentRequestSchema.safeParse(body);
-    
+
     if (!validation.success) {
-      return NextResponse.json({ 
-        error: 'Validation failed', 
-        details: validation.error.errors 
-      }, { status: 400 });
+      return NextResponse.json(
+        {
+          error: 'Validation failed',
+          details: validation.error.errors,
+        },
+        { status: 400 }
+      );
     }
 
     const { purposeName, granted, ipAddress, userAgent } = validation.data;
@@ -68,7 +81,10 @@ export async function grantConsent(request: NextRequest) {
       .single();
 
     if (purposeError || !purpose) {
-      return NextResponse.json({ error: 'Invalid consent purpose' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Invalid consent purpose' },
+        { status: 400 }
+      );
     }
 
     // Record consent
@@ -82,14 +98,17 @@ export async function grantConsent(request: NextRequest) {
         consent_version: purpose.version,
         ip_address: ipAddress || request.ip,
         user_agent: userAgent || request.headers.get('user-agent'),
-        proof_hash: generateConsentProofHash(user.id, purpose.id, granted)
+        proof_hash: generateConsentProofHash(user.id, purpose.id, granted),
       })
       .select()
       .single();
 
     if (consentError) {
       console.error('Consent recording error:', consentError);
-      return NextResponse.json({ error: 'Failed to record consent' }, { status: 500 });
+      return NextResponse.json(
+        { error: 'Failed to record consent' },
+        { status: 500 }
+      );
     }
 
     // Log for audit
@@ -98,18 +117,24 @@ export async function grantConsent(request: NextRequest) {
       action: 'consent_granted',
       resource_type: 'consent',
       resource_id: purpose.id,
-      new_values: { purpose: purposeName, granted, timestamp: new Date().toISOString() }
+      new_values: {
+        purpose: purposeName,
+        granted,
+        timestamp: new Date().toISOString(),
+      },
     });
 
-    return NextResponse.json({ 
-      success: true, 
+    return NextResponse.json({
+      success: true,
       consent,
-      message: `Consent ${granted ? 'granted' : 'denied'} for ${purposeName}` 
+      message: `Consent ${granted ? 'granted' : 'denied'} for ${purposeName}`,
     });
-
   } catch (error) {
     console.error('Grant consent error:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
   }
 }
 
@@ -120,8 +145,11 @@ export async function grantConsent(request: NextRequest) {
 export async function withdrawConsent(request: NextRequest) {
   try {
     const supabase = createClient();
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
-    
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
     if (authError || !user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -129,33 +157,44 @@ export async function withdrawConsent(request: NextRequest) {
     const { purposeName, reason } = await request.json();
 
     if (!purposeName) {
-      return NextResponse.json({ error: 'Purpose name is required' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Purpose name is required' },
+        { status: 400 }
+      );
     }
 
     // Call database function to withdraw consent
     const { data, error } = await supabase.rpc('withdraw_consent', {
       p_user_id: user.id,
       p_purpose_name: purposeName,
-      p_reason: reason || 'User withdrawal'
+      p_reason: reason || 'User withdrawal',
     });
 
     if (error) {
       console.error('Withdraw consent error:', error);
-      return NextResponse.json({ error: 'Failed to withdraw consent' }, { status: 500 });
+      return NextResponse.json(
+        { error: 'Failed to withdraw consent' },
+        { status: 500 }
+      );
     }
 
     if (!data) {
-      return NextResponse.json({ error: 'No active consent found to withdraw' }, { status: 404 });
+      return NextResponse.json(
+        { error: 'No active consent found to withdraw' },
+        { status: 404 }
+      );
     }
 
-    return NextResponse.json({ 
-      success: true, 
-      message: `Consent withdrawn for ${purposeName}` 
+    return NextResponse.json({
+      success: true,
+      message: `Consent withdrawn for ${purposeName}`,
     });
-
   } catch (error) {
     console.error('Withdraw consent error:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
   }
 }
 
@@ -166,8 +205,11 @@ export async function withdrawConsent(request: NextRequest) {
 export async function getConsentStatus(request: NextRequest) {
   try {
     const supabase = createClient();
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
-    
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
     if (authError || !user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -175,7 +217,8 @@ export async function getConsentStatus(request: NextRequest) {
     // Get user's current consents with purpose details
     const { data: consents, error } = await supabase
       .from('user_consents')
-      .select(`
+      .select(
+        `
         *,
         consent_purposes (
           name,
@@ -184,14 +227,18 @@ export async function getConsentStatus(request: NextRequest) {
           required,
           processing_purpose
         )
-      `)
+      `
+      )
       .eq('user_id', user.id)
       .is('withdrawn_at', null)
       .order('granted_at', { ascending: false });
 
     if (error) {
       console.error('Get consent status error:', error);
-      return NextResponse.json({ error: 'Failed to get consent status' }, { status: 500 });
+      return NextResponse.json(
+        { error: 'Failed to get consent status' },
+        { status: 500 }
+      );
     }
 
     // Get all available purposes for comparison
@@ -202,12 +249,17 @@ export async function getConsentStatus(request: NextRequest) {
 
     if (purposesError) {
       console.error('Get purposes error:', purposesError);
-      return NextResponse.json({ error: 'Failed to get consent purposes' }, { status: 500 });
+      return NextResponse.json(
+        { error: 'Failed to get consent purposes' },
+        { status: 500 }
+      );
     }
 
     // Build consent status response
-    const consentStatus = allPurposes.map(purpose => {
-      const userConsent = consents?.find(c => c.consent_purposes.name === purpose.name);
+    const consentStatus = allPurposes.map((purpose) => {
+      const userConsent = consents?.find(
+        (c) => c.consent_purposes.name === purpose.name
+      );
       return {
         purpose: purpose.name,
         description: purpose.description,
@@ -215,15 +267,17 @@ export async function getConsentStatus(request: NextRequest) {
         required: purpose.required,
         granted: userConsent?.granted || false,
         grantedAt: userConsent?.granted_at || null,
-        version: userConsent?.consent_version || null
+        version: userConsent?.consent_version || null,
       };
     });
 
     return NextResponse.json({ consents: consentStatus });
-
   } catch (error) {
     console.error('Get consent status error:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
   }
 }
 
@@ -238,34 +292,46 @@ export async function getConsentStatus(request: NextRequest) {
 export async function createDataSubjectRequest(request: NextRequest) {
   try {
     const supabase = createClient();
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
-    
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
     if (authError || !user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const body = await request.json();
     const validation = DataSubjectRequestSchema.safeParse(body);
-    
+
     if (!validation.success) {
-      return NextResponse.json({ 
-        error: 'Validation failed', 
-        details: validation.error.errors 
-      }, { status: 400 });
+      return NextResponse.json(
+        {
+          error: 'Validation failed',
+          details: validation.error.errors,
+        },
+        { status: 400 }
+      );
     }
 
     const { requestType, details, reason } = validation.data;
 
     // Create request using database function
-    const { data: requestId, error } = await supabase.rpc('create_data_subject_request', {
-      p_user_id: user.id,
-      p_request_type: requestType,
-      p_details: details ? JSON.stringify(details) : null
-    });
+    const { data: requestId, error } = await supabase.rpc(
+      'create_data_subject_request',
+      {
+        p_user_id: user.id,
+        p_request_type: requestType,
+        p_details: details ? JSON.stringify(details) : null,
+      }
+    );
 
     if (error) {
       console.error('Create data subject request error:', error);
-      return NextResponse.json({ error: 'Failed to create request' }, { status: 500 });
+      return NextResponse.json(
+        { error: 'Failed to create request' },
+        { status: 500 }
+      );
     }
 
     // Get the created request details
@@ -277,18 +343,23 @@ export async function createDataSubjectRequest(request: NextRequest) {
 
     if (detailsError) {
       console.error('Get request details error:', detailsError);
-      return NextResponse.json({ error: 'Request created but failed to get details' }, { status: 500 });
+      return NextResponse.json(
+        { error: 'Request created but failed to get details' },
+        { status: 500 }
+      );
     }
 
-    return NextResponse.json({ 
-      success: true, 
+    return NextResponse.json({
+      success: true,
       request: requestDetails,
-      message: `${requestType} request created successfully. You will receive a response within 15 days.`
+      message: `${requestType} request created successfully. You will receive a response within 15 days.`,
     });
-
   } catch (error) {
     console.error('Create data subject request error:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
   }
 }
 
@@ -296,7 +367,10 @@ export async function createDataSubjectRequest(request: NextRequest) {
  * GET /api/lgpd/data-rights/export/[token]
  * Download data export package
  */
-export async function downloadDataExport(request: NextRequest, { params }: { params: { token: string } }) {
+export async function downloadDataExport(
+  request: NextRequest,
+  { params }: { params: { token: string } }
+) {
   try {
     const supabase = createClient();
     const { token } = params;
@@ -304,61 +378,80 @@ export async function downloadDataExport(request: NextRequest, { params }: { par
     // Validate export token
     const { data: exportPackage, error } = await supabase
       .from('data_export_packages')
-      .select(`
+      .select(
+        `
         *,
         data_subject_requests (
           user_id,
           status
         )
-      `)
+      `
+      )
       .eq('verification_token', token)
       .gt('expiry_date', new Date().toISOString())
       .single();
 
     if (error || !exportPackage) {
-      return NextResponse.json({ error: 'Invalid or expired export token' }, { status: 404 });
+      return NextResponse.json(
+        { error: 'Invalid or expired export token' },
+        { status: 404 }
+      );
     }
 
     // Check if request is completed
     if (exportPackage.data_subject_requests.status !== 'completed') {
-      return NextResponse.json({ error: 'Export not ready yet' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Export not ready yet' },
+        { status: 400 }
+      );
     }
 
     // Increment download count
     await supabase
       .from('data_export_packages')
-      .update({ 
+      .update({
         download_count: exportPackage.download_count + 1,
-        last_downloaded_at: new Date().toISOString()
+        last_downloaded_at: new Date().toISOString(),
       })
       .eq('id', exportPackage.id);
 
     // Check download limits
     if (exportPackage.download_count >= exportPackage.max_downloads) {
-      return NextResponse.json({ error: 'Maximum download limit reached' }, { status: 403 });
+      return NextResponse.json(
+        { error: 'Maximum download limit reached' },
+        { status: 403 }
+      );
     }
 
     // Generate user data export
-    const { data: exportData, error: exportError } = await supabase.rpc('generate_user_data_export', {
-      p_user_id: exportPackage.data_subject_requests.user_id
-    });
+    const { data: exportData, error: exportError } = await supabase.rpc(
+      'generate_user_data_export',
+      {
+        p_user_id: exportPackage.data_subject_requests.user_id,
+      }
+    );
 
     if (exportError) {
       console.error('Generate export error:', exportError);
-      return NextResponse.json({ error: 'Failed to generate export' }, { status: 500 });
+      return NextResponse.json(
+        { error: 'Failed to generate export' },
+        { status: 500 }
+      );
     }
 
     // Return export data
     return NextResponse.json(exportData, {
       headers: {
         'Content-Type': 'application/json',
-        'Content-Disposition': `attachment; filename="personal_data_export_${Date.now()}.json"`
-      }
+        'Content-Disposition': `attachment; filename="personal_data_export_${Date.now()}.json"`,
+      },
     });
-
   } catch (error) {
     console.error('Download data export error:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
   }
 }
 
@@ -369,50 +462,65 @@ export async function downloadDataExport(request: NextRequest, { params }: { par
 export async function requestDataRectification(request: NextRequest) {
   try {
     const supabase = createClient();
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
-    
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
     if (authError || !user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const body = await request.json();
     const validation = DataRectificationSchema.safeParse(body);
-    
+
     if (!validation.success) {
-      return NextResponse.json({ 
-        error: 'Validation failed', 
-        details: validation.error.errors 
-      }, { status: 400 });
+      return NextResponse.json(
+        {
+          error: 'Validation failed',
+          details: validation.error.errors,
+        },
+        { status: 400 }
+      );
     }
 
     const { field, oldValue, newValue, reason } = validation.data;
 
     // Create rectification request
-    const { data: requestId, error } = await supabase.rpc('create_data_subject_request', {
-      p_user_id: user.id,
-      p_request_type: 'rectification',
-      p_details: JSON.stringify({
-        field,
-        oldValue,
-        newValue,
-        reason
-      })
-    });
+    const { data: requestId, error } = await supabase.rpc(
+      'create_data_subject_request',
+      {
+        p_user_id: user.id,
+        p_request_type: 'rectification',
+        p_details: JSON.stringify({
+          field,
+          oldValue,
+          newValue,
+          reason,
+        }),
+      }
+    );
 
     if (error) {
       console.error('Create rectification request error:', error);
-      return NextResponse.json({ error: 'Failed to create rectification request' }, { status: 500 });
+      return NextResponse.json(
+        { error: 'Failed to create rectification request' },
+        { status: 500 }
+      );
     }
 
-    return NextResponse.json({ 
-      success: true, 
+    return NextResponse.json({
+      success: true,
       requestId,
-      message: 'Data rectification request created. It will be reviewed and processed within 15 days.'
+      message:
+        'Data rectification request created. It will be reviewed and processed within 15 days.',
     });
-
   } catch (error) {
     console.error('Request data rectification error:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
   }
 }
 
@@ -427,8 +535,11 @@ export async function requestDataRectification(request: NextRequest) {
 export async function getComplianceStatus(request: NextRequest) {
   try {
     const supabase = createClient();
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
-    
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
     if (authError || !user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -442,15 +553,20 @@ export async function getComplianceStatus(request: NextRequest) {
 
     if (requestsError) {
       console.error('Get requests error:', requestsError);
-      return NextResponse.json({ error: 'Failed to get requests' }, { status: 500 });
+      return NextResponse.json(
+        { error: 'Failed to get requests' },
+        { status: 500 }
+      );
     }
 
     // Check if user has all required consents
     const { data: hasRequiredConsents, error: consentError } = await supabase
       .from('user_consents')
-      .select(`
+      .select(
+        `
         consent_purposes!inner(required)
-      `)
+      `
+      )
       .eq('user_id', user.id)
       .eq('granted', true)
       .is('withdrawn_at', null)
@@ -458,7 +574,10 @@ export async function getComplianceStatus(request: NextRequest) {
 
     if (consentError) {
       console.error('Get consent check error:', consentError);
-      return NextResponse.json({ error: 'Failed to check consent status' }, { status: 500 });
+      return NextResponse.json(
+        { error: 'Failed to check consent status' },
+        { status: 500 }
+      );
     }
 
     // Get count of required purposes
@@ -475,24 +594,29 @@ export async function getComplianceStatus(request: NextRequest) {
     const complianceStatus = {
       userId: user.id,
       consentCompliance: {
-        hasAllRequiredConsents: (hasRequiredConsents?.length || 0) === (requiredPurposesCount || 0),
+        hasAllRequiredConsents:
+          (hasRequiredConsents?.length || 0) === (requiredPurposesCount || 0),
         requiredConsentsCount: requiredPurposesCount || 0,
-        grantedRequiredConsentsCount: hasRequiredConsents?.length || 0
+        grantedRequiredConsentsCount: hasRequiredConsents?.length || 0,
       },
       dataRequests: {
         totalRequests: requests?.length || 0,
-        pendingRequests: requests?.filter(r => r.status === 'pending').length || 0,
-        completedRequests: requests?.filter(r => r.status === 'completed').length || 0,
-        recentRequests: requests?.slice(0, 5) || []
+        pendingRequests:
+          requests?.filter((r) => r.status === 'pending').length || 0,
+        completedRequests:
+          requests?.filter((r) => r.status === 'completed').length || 0,
+        recentRequests: requests?.slice(0, 5) || [],
       },
-      lastUpdated: new Date().toISOString()
+      lastUpdated: new Date().toISOString(),
     };
 
     return NextResponse.json(complianceStatus);
-
   } catch (error) {
     console.error('Get compliance status error:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
   }
 }
 
@@ -500,18 +624,22 @@ export async function getComplianceStatus(request: NextRequest) {
 // HELPER FUNCTIONS
 // ============================================================================
 
-function generateConsentProofHash(userId: string, purposeId: string, granted: boolean): string {
+function generateConsentProofHash(
+  userId: string,
+  purposeId: string,
+  granted: boolean
+): string {
   const content = `${userId}:${purposeId}:${granted}:${Date.now()}`;
   return Buffer.from(content).toString('base64');
 }
 
 // Export helpers for API routes
-export { 
+export {
   grantConsent,
   withdrawConsent,
   getConsentStatus,
   createDataSubjectRequest,
   downloadDataExport,
   requestDataRectification,
-  getComplianceStatus
+  getComplianceStatus,
 };

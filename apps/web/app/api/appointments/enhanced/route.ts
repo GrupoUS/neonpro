@@ -114,7 +114,6 @@ export async function POST(request: Request) {
       .single();
 
     if (appointmentError) {
-      console.error('Error creating appointment:', appointmentError);
       return NextResponse.json(
         {
           success: false,
@@ -135,8 +134,6 @@ export async function POST(request: Request) {
         serviceResult.data?.name &&
         clinicResult.data?.name
       ) {
-        console.log('🤖 Triggering appointment automation...');
-
         automationResults = await NeonProAutomation.onNewAppointmentCreated({
           appointmentId: appointment.id,
           patientEmail: patientResult.data.email,
@@ -148,23 +145,8 @@ export async function POST(request: Request) {
           professionalName: professionalResult.data.name,
           serviceName: serviceResult.data.name,
         });
-
-        console.log('✅ Appointment automation triggered successfully', {
-          appointmentId: appointment.id,
-          confirmationJobId: automationResults?.confirmation?.jobId,
-          reminderJobId: automationResults?.reminder?.jobId,
-        });
       }
-    } catch (automationError) {
-      // Log error but don't fail the appointment creation
-      console.error('⚠️ Automation failed, but appointment was created', {
-        appointmentId: appointment.id,
-        error:
-          automationError instanceof Error
-            ? automationError.message
-            : automationError,
-      });
-    }
+    } catch (_automationError) {}
 
     // Prepare response (compatível com API original)
     const response: BookingResponse = {
@@ -195,7 +177,6 @@ export async function POST(request: Request) {
 
     return NextResponse.json(response, { status: 201 });
   } catch (error) {
-    console.error('Error in enhanced appointments API:', error);
     return NextResponse.json(
       {
         success: false,
@@ -317,8 +298,7 @@ export async function GET(request: Request) {
       total: enhancedAppointments?.length || 0,
       has_automation: true, // ✨ Flag indicating enhanced API
     });
-  } catch (error) {
-    console.error('Error in enhanced appointments GET:', error);
+  } catch (_error) {
     return NextResponse.json(
       {
         success: false,

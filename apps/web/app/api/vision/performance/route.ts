@@ -247,7 +247,6 @@ export const GET = withErrorMonitoring(async (request: NextRequest) => {
       },
     });
   } catch (error) {
-    console.error('Vision performance monitoring error:', error);
 
     if (error instanceof z.ZodError) {
       return NextResponse.json(
@@ -333,7 +332,6 @@ export const POST = withErrorMonitoring(async (request: NextRequest) => {
       data,
     });
   } catch (error) {
-    console.error('Performance recording error:', error);
     return NextResponse.json(
       {
         error: 'Erro interno do servidor',

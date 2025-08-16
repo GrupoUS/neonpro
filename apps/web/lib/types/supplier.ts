@@ -89,7 +89,7 @@ export enum IssueStatus {
 // CORE INTERFACES
 // ============================================================================
 
-export interface Supplier {
+export type Supplier = {
   id: string;
   name: string;
   legal_name: string;
@@ -144,9 +144,9 @@ export interface Supplier {
   clinic_id: string;
   tags: string[];
   notes?: string;
-}
+};
 
-export interface ContactInfo {
+export type ContactInfo = {
   id: string;
   name: string;
   title?: string;
@@ -156,9 +156,9 @@ export interface ContactInfo {
   department?: string;
   is_primary: boolean;
   preferred_contact_method: 'email' | 'phone' | 'whatsapp';
-}
+};
 
-export interface Address {
+export type Address = {
   street: string;
   number: string;
   complement?: string;
@@ -167,9 +167,9 @@ export interface Address {
   state: string;
   postal_code: string;
   country: string;
-}
+};
 
-export interface Certification {
+export type Certification = {
   id: string;
   name: string;
   issuing_authority: string;
@@ -178,13 +178,13 @@ export interface Certification {
   expiry_date?: string;
   document_url?: string;
   verification_status: 'verified' | 'pending' | 'expired' | 'invalid';
-}
+};
 
 // ============================================================================
 // CONTRACT MANAGEMENT
 // ============================================================================
 
-export interface SupplierContract {
+export type SupplierContract = {
   id: string;
   supplier_id: string;
   contract_number: string;
@@ -228,45 +228,45 @@ export interface SupplierContract {
   updated_at: string;
   signed_date?: string;
   clinic_id: string;
-}
+};
 
-export interface SLARequirement {
+export type SLARequirement = {
   metric: string;
   target_value: number;
   unit: string;
   measurement_period: string;
   penalty_for_breach?: number;
-}
+};
 
-export interface QualityStandard {
+export type QualityStandard = {
   parameter: string;
   specification: string;
   tolerance: string;
   testing_method?: string;
   compliance_required: boolean;
-}
+};
 
-export interface DeliverySchedule {
+export type DeliverySchedule = {
   item_category: string;
   lead_time_days: number;
   delivery_window: string;
   priority_level: 'standard' | 'urgent' | 'emergency';
-}
+};
 
-export interface ContractAmendment {
+export type ContractAmendment = {
   id: string;
   amendment_number: number;
   description: string;
   effective_date: string;
   document_url?: string;
   approved_by: string;
-}
+};
 
 // ============================================================================
 // PERFORMANCE TRACKING
 // ============================================================================
 
-export interface SupplierPerformance {
+export type SupplierPerformance = {
   id: string;
   supplier_id: string;
   evaluation_period: string; // YYYY-MM format
@@ -297,9 +297,9 @@ export interface SupplierPerformance {
   evaluated_by: string;
   next_evaluation_date: string;
   clinic_id: string;
-}
+};
 
-export interface PerformanceDetail {
+export type PerformanceDetail = {
   metric: PerformanceMetric;
   score: number; // 0-100
   weight: number; // Weight in overall calculation
@@ -308,20 +308,20 @@ export interface PerformanceDetail {
   unit: string;
   trend: 'up' | 'down' | 'stable';
   details: PerformanceDataPoint[];
-}
+};
 
-export interface PerformanceDataPoint {
+export type PerformanceDataPoint = {
   date: string;
   value: number;
   notes?: string;
   verified: boolean;
-}
+};
 
 // ============================================================================
 // BIDDING & PROCUREMENT
 // ============================================================================
 
-export interface ProcurementRequest {
+export type ProcurementRequest = {
   id: string;
   request_number: string;
   title: string;
@@ -361,9 +361,9 @@ export interface ProcurementRequest {
   created_at: string;
   created_by: string;
   clinic_id: string;
-}
+};
 
-export interface ProcurementItem {
+export type ProcurementItem = {
   id: string;
   item_name: string;
   description: string;
@@ -372,43 +372,43 @@ export interface ProcurementItem {
   estimated_unit_price?: number;
   total_estimated_value?: number;
   priority: 'low' | 'medium' | 'high' | 'critical';
-}
+};
 
-export interface ItemSpecification {
+export type ItemSpecification = {
   parameter: string;
   requirement: string;
   mandatory: boolean;
   preferred_value?: string;
   testing_required: boolean;
-}
+};
 
-export interface DeliveryRequirement {
+export type DeliveryRequirement = {
   delivery_location: Address;
   required_delivery_date: string;
   preferred_delivery_window: string;
   special_handling?: string[];
   packaging_requirements?: string;
-}
+};
 
-export interface QualityRequirement {
+export type QualityRequirement = {
   standard: string;
   certification_required: boolean;
   testing_protocol?: string;
   acceptance_criteria: string;
-}
+};
 
-export interface EvaluationCriteria {
+export type EvaluationCriteria = {
   criterion: string;
   weight: number; // Percentage weight
   scoring_method: 'price' | 'technical' | 'qualitative' | 'pass_fail';
   max_score: number;
-}
+};
 
 // ============================================================================
 // SUPPLIER BIDS
 // ============================================================================
 
-export interface SupplierBid {
+export type SupplierBid = {
   id: string;
   procurement_request_id: string;
   supplier_id: string;
@@ -450,9 +450,9 @@ export interface SupplierBid {
   // Metadata
   created_at: string;
   clinic_id: string;
-}
+};
 
-export interface BidItem {
+export type BidItem = {
   procurement_item_id: string;
   offered_quantity: number;
   unit_price: number;
@@ -462,29 +462,29 @@ export interface BidItem {
   specification_compliance: boolean;
   alternative_offered: boolean;
   notes?: string;
-}
+};
 
-export interface ComplianceItem {
+export type ComplianceItem = {
   requirement: string;
   status: 'compliant' | 'non_compliant' | 'partially_compliant';
   evidence_provided: boolean;
   notes?: string;
-}
+};
 
-export interface BidDocument {
+export type BidDocument = {
   id: string;
   document_type: string;
   file_name: string;
   file_url: string;
   uploaded_at: string;
   verified: boolean;
-}
+};
 
 // ============================================================================
 // QUALITY MANAGEMENT
 // ============================================================================
 
-export interface QualityIssue {
+export type QualityIssue = {
   id: string;
   supplier_id: string;
   issue_number: string;
@@ -533,9 +533,9 @@ export interface QualityIssue {
   clinic_id: string;
   created_at: string;
   updated_at: string;
-}
+};
 
-export interface CorrectiveAction {
+export type CorrectiveAction = {
   id: string;
   description: string;
   responsible_party: 'supplier' | 'clinic' | 'joint';
@@ -544,18 +544,18 @@ export interface CorrectiveAction {
   status: 'pending' | 'in_progress' | 'completed' | 'overdue';
   verification_method: string;
   effectiveness_verified: boolean;
-}
+};
 
-export interface PreventiveAction {
+export type PreventiveAction = {
   id: string;
   description: string;
   implementation_date: string;
   responsible_party: 'supplier' | 'clinic' | 'joint';
   monitoring_plan: string;
   effectiveness_metrics: string[];
-}
+};
 
-export interface QualityDocument {
+export type QualityDocument = {
   id: string;
   document_type:
     | 'photo'
@@ -568,13 +568,13 @@ export interface QualityDocument {
   description?: string;
   uploaded_at: string;
   uploaded_by: string;
-}
+};
 
 // ============================================================================
 // COMMUNICATION & COLLABORATION
 // ============================================================================
 
-export interface SupplierCommunication {
+export type SupplierCommunication = {
   id: string;
   supplier_id: string;
   subject: string;
@@ -611,22 +611,22 @@ export interface SupplierCommunication {
   timestamp: string;
   clinic_id: string;
   created_by: string;
-}
+};
 
-export interface CommunicationAttachment {
+export type CommunicationAttachment = {
   id: string;
   file_name: string;
   file_url: string;
   file_size: number;
   mime_type: string;
   uploaded_at: string;
-}
+};
 
 // ============================================================================
 // ANALYTICS & REPORTING
 // ============================================================================
 
-export interface SupplierAnalytics {
+export type SupplierAnalytics = {
   supplier_id: string;
   period: string;
 
@@ -660,131 +660,131 @@ export interface SupplierAnalytics {
   // Metadata
   generated_at: string;
   clinic_id: string;
-}
+};
 
-export interface PerformanceSummary {
+export type PerformanceSummary = {
   current_score: number;
   previous_score: number;
   score_change: number;
   percentile_ranking: number;
   grade: 'A+' | 'A' | 'B+' | 'B' | 'C+' | 'C' | 'D' | 'F';
-}
+};
 
-export interface TrendAnalysis {
+export type TrendAnalysis = {
   metric: string;
   trend_direction: 'improving' | 'declining' | 'stable';
   trend_strength: 'strong' | 'moderate' | 'weak';
   data_points: { date: string; value: number }[];
   seasonality_detected: boolean;
-}
+};
 
-export interface ComparativeAnalysis {
+export type ComparativeAnalysis = {
   vs_category_average: number;
   vs_top_performer: number;
   vs_previous_year: number;
   ranking_in_category: number;
   total_suppliers_in_category: number;
-}
+};
 
-export interface SpendAnalysis {
+export type SpendAnalysis = {
   total_spend: number;
   spend_trend: 'increasing' | 'decreasing' | 'stable';
   spend_by_category: { category: string; amount: number; percentage: number }[];
   top_purchase_categories: string[];
   average_order_value: number;
   order_frequency: number;
-}
+};
 
-export interface CostSavingsAnalysis {
+export type CostSavingsAnalysis = {
   total_savings: number;
   savings_sources: { source: string; amount: number }[];
   negotiated_discounts: number;
   volume_discounts: number;
   early_payment_savings: number;
   cost_avoidance: number;
-}
+};
 
-export interface PaymentAnalytics {
+export type PaymentAnalytics = {
   average_payment_time: number;
   early_payment_rate: number;
   on_time_payment_rate: number;
   late_payment_rate: number;
   discount_utilization_rate: number;
   payment_method_distribution: { method: string; percentage: number }[];
-}
+};
 
-export interface DeliveryAnalytics {
+export type DeliveryAnalytics = {
   on_time_delivery_rate: number;
   average_lead_time: number;
   delivery_reliability_score: number;
   delivery_issues_count: number;
   emergency_delivery_rate: number;
   delivery_cost_per_order: number;
-}
+};
 
-export interface QualityAnalytics {
+export type QualityAnalytics = {
   defect_rate: number;
   return_rate: number;
   complaint_rate: number;
   quality_score_trend: TrendAnalysis;
   quality_issues_by_type: { type: string; count: number }[];
   resolution_time_average: number;
-}
+};
 
-export interface OrderAnalytics {
+export type OrderAnalytics = {
   total_orders: number;
   order_fulfillment_rate: number;
   partial_shipment_rate: number;
   order_accuracy_rate: number;
   order_cycle_time: number;
   stockout_incidents: number;
-}
+};
 
-export interface RiskAssessment {
+export type RiskAssessment = {
   overall_risk_score: number;
   risk_factors: { factor: string; score: number; impact: string }[];
   financial_stability: number;
   operational_reliability: number;
   compliance_risk: number;
   geographic_risk: number;
-}
+};
 
-export interface ComplianceStatus {
+export type ComplianceStatus = {
   overall_compliance_rate: number;
   regulatory_compliance: boolean;
   certification_status: 'current' | 'expiring' | 'expired';
   audit_findings: number;
   corrective_actions_pending: number;
-}
+};
 
-export interface IndustryBenchmark {
+export type IndustryBenchmark = {
   metric: string;
   supplier_value: number;
   industry_average: number;
   top_quartile: number;
   bottom_quartile: number;
   percentile_ranking: number;
-}
+};
 
-export interface PeerComparison {
+export type PeerComparison = {
   metric: string;
   supplier_value: number;
   peer_average: number;
   best_peer: number;
   ranking: number;
   total_peers: number;
-}
+};
 
-export interface OptimizationOpportunity {
+export type OptimizationOpportunity = {
   area: string;
   description: string;
   potential_savings: number;
   implementation_effort: 'low' | 'medium' | 'high';
   timeline: string;
   priority: 'low' | 'medium' | 'high';
-}
+};
 
-export interface ActionItem {
+export type ActionItem = {
   id: string;
   description: string;
   responsible_party: 'clinic' | 'supplier' | 'joint';
@@ -792,7 +792,7 @@ export interface ActionItem {
   priority: 'low' | 'medium' | 'high';
   status: 'pending' | 'in_progress' | 'completed';
   impact_area: string;
-}
+};
 
 // ============================================================================
 // ZOD VALIDATION SCHEMAS

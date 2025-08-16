@@ -15,7 +15,7 @@
 import { createClient } from '@/lib/supabase/client';
 
 // Cash Flow Types
-export interface CashFlowData {
+export type CashFlowData = {
   id: string;
   clinic_id: string;
   date: string;
@@ -29,9 +29,9 @@ export interface CashFlowData {
   financing_cash_flow: number;
   created_at: string;
   updated_at: string;
-}
+};
 
-export interface CashFlowSummary {
+export type CashFlowSummary = {
   current_balance: number;
   daily_change: number;
   weekly_change: number;
@@ -42,9 +42,9 @@ export interface CashFlowSummary {
   projected_balance_30d: number;
   cash_burn_rate: number;
   runway_days: number;
-}
+};
 
-export interface CashFlowAlert {
+export type CashFlowAlert = {
   id: string;
   type:
     | 'low_balance'
@@ -57,9 +57,9 @@ export interface CashFlowAlert {
   current_value: number;
   triggered_at: string;
   acknowledged: boolean;
-}
+};
 
-export interface CashFlowMetrics {
+export type CashFlowMetrics = {
   daily_average_inflow: number;
   daily_average_outflow: number;
   weekly_volatility: number;
@@ -68,9 +68,9 @@ export interface CashFlowMetrics {
   working_capital: number;
   quick_ratio: number;
   current_ratio: number;
-}
+};
 
-export interface CashFlowForecast {
+export type CashFlowForecast = {
   date: string;
   predicted_balance: number;
   confidence_interval: {
@@ -79,7 +79,7 @@ export interface CashFlowForecast {
   };
   factors: string[];
   accuracy_score: number;
-}
+};
 
 export class CashFlowEngine {
   private readonly supabase = createClient();
@@ -132,8 +132,7 @@ export class CashFlowEngine {
       await this.supabase.from('cash_flow_daily').upsert(cashFlowData);
 
       return cashFlowData;
-    } catch (error) {
-      console.error('Error calculating real-time cash flow:', error);
+    } catch (_error) {
       throw new Error('Failed to calculate real-time cash flow');
     }
   }
@@ -221,8 +220,7 @@ export class CashFlowEngine {
         cash_burn_rate: avgDailyOutflow,
         runway_days: runwayDays,
       };
-    } catch (error) {
-      console.error('Error getting cash flow summary:', error);
+    } catch (_error) {
       throw new Error('Failed to get cash flow summary');
     }
   }
@@ -311,8 +309,7 @@ export class CashFlowEngine {
       }
 
       return alerts;
-    } catch (error) {
-      console.error('Error generating cash flow alerts:', error);
+    } catch (_error) {
       throw new Error('Failed to generate cash flow alerts');
     }
   }
@@ -419,8 +416,7 @@ export class CashFlowEngine {
       const currentBalance = await this.calculateRealTimeCashFlow(clinicId);
 
       return currentBalance.closing_balance + avgDailyCashFlow * days;
-    } catch (error) {
-      console.error('Error projecting cash flow:', error);
+    } catch (_error) {
       return 0;
     }
   }
@@ -508,8 +504,7 @@ export class CashFlowEngine {
         quick_ratio: quickRatio,
         current_ratio: currentRatio,
       };
-    } catch (error) {
-      console.error('Error calculating cash flow metrics:', error);
+    } catch (_error) {
       throw new Error('Failed to calculate cash flow metrics');
     }
   }

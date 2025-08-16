@@ -3,14 +3,14 @@
 import { createClient } from '@/app/utils/supabase/server';
 
 // Forecasting Data Types
-interface ForecastInput {
+type ForecastInput = {
   itemId: string;
   clinicId: string;
   forecastPeriod: number; // days
   confidenceLevel: number; // 0.80, 0.90, 0.95
-}
+};
 
-interface ForecastResult {
+type ForecastResult = {
   itemId: string;
   itemName: string;
   forecastPeriod: number;
@@ -33,21 +33,21 @@ interface ForecastResult {
     | 'seasonal_decomposition'
     | 'linear_regression'
     | 'moving_average';
-}
+};
 
-interface SeasonalPattern {
+type SeasonalPattern = {
   pattern: 'weekly' | 'monthly' | 'quarterly' | 'annual';
   strength: number; // 0-1, onde 1 = padrão muito forte
   peaks: number[]; // Períodos de pico
   valleys: number[]; // Períodos de baixa
-}
+};
 
-interface ConsumptionData {
+type ConsumptionData = {
   date: Date;
   quantity: number;
   type: 'consumption' | 'appointment_based' | 'emergency' | 'routine';
   context?: string;
-}
+};
 
 export class DemandForecastingService {
   private async getSupabase() {

@@ -105,7 +105,6 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('Erro ao listar alertas:', error);
     return NextResponse.json(
       {
         error: 'Erro interno do servidor',
@@ -196,7 +195,6 @@ export async function POST(request: NextRequest) {
       message: 'Alerta criado com sucesso',
     });
   } catch (error) {
-    console.error('Erro ao criar alerta:', error);
     return NextResponse.json(
       {
         error: 'Erro interno do servidor',
@@ -314,7 +312,6 @@ export async function PUT(request: NextRequest) {
       message: 'Alerta atualizado com sucesso',
     });
   } catch (error) {
-    console.error('Erro ao atualizar alerta:', error);
     return NextResponse.json(
       {
         error: 'Erro interno do servidor',

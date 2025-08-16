@@ -10,7 +10,7 @@ import { useEffect, useState } from 'react';
 import { createClient } from '@/app/utils/supabase/client';
 import { createClient as createServerClient } from '@/app/utils/supabase/server';
 
-export interface FeatureFlag {
+export type FeatureFlag = {
   id: string;
   flag_name: string;
   is_enabled: boolean;
@@ -19,9 +19,9 @@ export interface FeatureFlag {
   description?: string;
   created_at: string;
   updated_at: string;
-}
+};
 
-export interface FeatureFlagEvaluation {
+export type FeatureFlagEvaluation = {
   flagName: string;
   isEnabled: boolean;
   reason:
@@ -31,9 +31,9 @@ export interface FeatureFlagEvaluation {
     | 'target_audience'
     | 'not_found';
   metadata?: Record<string, any>;
-}
+};
 
-export interface RolloutConfig {
+export type RolloutConfig = {
   percentage: number;
   targetAudience?: {
     userIds?: string[];
@@ -41,7 +41,7 @@ export interface RolloutConfig {
     userRoles?: string[];
     conditions?: Record<string, any>;
   };
-}
+};
 
 class FeatureFlagManager {
   private readonly supabase = createClient();
@@ -84,8 +84,7 @@ class FeatureFlagManager {
 
       // Evaluate flag
       return this.evaluateFlag(flag, userId, context);
-    } catch (error) {
-      console.error(`Error evaluating feature flag ${flagName}:`, error);
+    } catch (_error) {
       return {
         flagName,
         isEnabled: false,
@@ -256,7 +255,6 @@ class FeatureFlagManager {
         .single();
 
       if (error) {
-        console.error('Error upserting feature flag:', error);
         return null;
       }
 
@@ -264,8 +262,7 @@ class FeatureFlagManager {
       this.setCachedFlag(flagName, data);
 
       return data;
-    } catch (error) {
-      console.error('Error upserting feature flag:', error);
+    } catch (_error) {
       return null;
     }
   }
@@ -287,7 +284,6 @@ class FeatureFlagManager {
     const currentPercentage = flag.rollout_percentage;
 
     if (currentPercentage >= targetPercentage) {
-      console.log(`Flag ${flagName} already at or above target percentage`);
       return;
     }
 
@@ -297,8 +293,6 @@ class FeatureFlagManager {
     );
 
     await this.updateFeatureFlagPercentage(flagName, nextPercentage);
-
-    console.log(`Rolled out ${flagName} to ${nextPercentage}%`);
 
     // Schedule next increment if not at target
     if (nextPercentage < targetPercentage) {
@@ -319,7 +313,10 @@ class FeatureFlagManager {
   /**
    * Emergency rollback - disable feature flag immediately
    */
-  async emergencyRollback(flagName: string, reason?: string): Promise<boolean> {
+  async emergencyRollback(
+    flagName: string,
+    _reason?: string
+  ): Promise<boolean> {
     try {
       const { error } = await this.supabase
         .from('feature_flags')
@@ -331,21 +328,14 @@ class FeatureFlagManager {
         .eq('flag_name', flagName);
 
       if (error) {
-        console.error(`Emergency rollback failed for ${flagName}:`, error);
         return false;
       }
 
       // Clear cache to force immediate re-fetch
       this.clearCachedFlag(flagName);
 
-      console.log(
-        `Emergency rollback completed for ${flagName}`,
-        reason ? `Reason: ${reason}` : ''
-      );
-
       return true;
-    } catch (error) {
-      console.error(`Emergency rollback error for ${flagName}:`, error);
+    } catch (_error) {
       return false;
     }
   }
@@ -361,13 +351,11 @@ class FeatureFlagManager {
         .order('flag_name');
 
       if (error) {
-        console.error('Error fetching feature flags:', error);
         return [];
       }
 
       return data || [];
-    } catch (error) {
-      console.error('Error fetching feature flags:', error);
+    } catch (_error) {
       return [];
     }
   }
@@ -388,8 +376,7 @@ class FeatureFlagManager {
       }
 
       return data;
-    } catch (error) {
-      console.error(`Error fetching feature flag ${flagName}:`, error);
+    } catch (_error) {
       return null;
     }
   }
@@ -411,7 +398,6 @@ class FeatureFlagManager {
         .eq('flag_name', flagName);
 
       if (error) {
-        console.error(`Error updating percentage for ${flagName}:`, error);
         return false;
       }
 
@@ -419,8 +405,7 @@ class FeatureFlagManager {
       this.clearCachedFlag(flagName);
 
       return true;
-    } catch (error) {
-      console.error(`Error updating percentage for ${flagName}:`, error);
+    } catch (_error) {
       return false;
     }
   }

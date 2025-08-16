@@ -24,14 +24,14 @@ const suggestAlternativesSchema = z.object({
   exclude_appointment_id: z.string().uuid().optional(),
 });
 
-interface AlternativeSlot {
+type AlternativeSlot = {
   start_time: string;
   end_time: string;
   available: boolean;
   score: number;
   reasons: string[];
   distance_from_preferred_minutes: number;
-}
+};
 
 export async function POST(request: NextRequest) {
   const startTime = Date.now();
@@ -88,10 +88,6 @@ export async function POST(request: NextRequest) {
       });
 
     if (suggestionsError) {
-      console.error(
-        'Alternative suggestions procedure error:',
-        suggestionsError
-      );
       return NextResponse.json(
         {
           error: 'Suggestion generation failed',
@@ -164,8 +160,6 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(response, { status: 200 });
   } catch (error) {
-    console.error('Alternative slots API error:', error);
-
     // Handle Zod validation errors
     if (error instanceof z.ZodError) {
       return NextResponse.json(
@@ -314,8 +308,6 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('Alternative suggestions GET error:', error);
-
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {

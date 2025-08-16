@@ -43,7 +43,6 @@ export class StockReportsService {
       }
       return { success: true, data: report };
     } catch (error) {
-      console.error('Error creating custom report:', error);
       return {
         success: false,
         error: String((error as Error)?.message || error),
@@ -89,7 +88,6 @@ export class StockReportsService {
 
       return { success: true, data };
     } catch (error) {
-      console.error('Error fetching clinic reports:', error);
       return {
         success: false,
         error: String((error as Error)?.message || error),
@@ -118,7 +116,6 @@ export class StockReportsService {
       }
       return { success: true, data };
     } catch (error) {
-      console.error('Error updating report config:', error);
       return {
         success: false,
         error: String((error as Error)?.message || error),
@@ -142,7 +139,6 @@ export class StockReportsService {
       }
       return { success: true };
     } catch (error) {
-      console.error('Error deleting report config:', error);
       return {
         success: false,
         error: String((error as Error)?.message || error),
@@ -210,7 +206,6 @@ export class StockReportsService {
 
       return { success: true, data: reportData };
     } catch (error) {
-      console.error('Error generating consumption report:', error);
       return {
         success: false,
         error: String((error as Error)?.message || error),
@@ -251,7 +246,6 @@ export class StockReportsService {
 
       return { success: true, data: reportData };
     } catch (error) {
-      console.error('Error generating valuation report:', error);
       return {
         success: false,
         error: String((error as Error)?.message || error),
@@ -304,7 +298,6 @@ export class StockReportsService {
 
       return { success: true, data: reportData };
     } catch (error) {
-      console.error('Error generating movement report:', error);
       return {
         success: false,
         error: String((error as Error)?.message || error),
@@ -391,7 +384,6 @@ export class StockReportsService {
 
       return { success: true, data: reportData };
     } catch (error) {
-      console.error('Error generating expiration report:', error);
       return {
         success: false,
         error: String((error as Error)?.message || error),
@@ -469,12 +461,10 @@ export class StockReportsService {
         .single();
 
       if (saveError) {
-        console.warn('Could not save metrics to database:', saveError);
       }
 
       return { success: true, data: metrics };
     } catch (error) {
-      console.error('Error calculating performance metrics:', error);
       return {
         success: false,
         error: String((error as Error)?.message || error),
@@ -503,7 +493,6 @@ export class StockReportsService {
       }
       return { success: true, data };
     } catch (error) {
-      console.error('Error fetching metrics history:', error);
       return {
         success: false,
         error: String((error as Error)?.message || error),

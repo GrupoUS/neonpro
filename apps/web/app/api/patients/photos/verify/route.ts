@@ -120,8 +120,6 @@ export async function POST(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('Identity verification error:', error);
-
     return NextResponse.json(
       {
         error: 'Verification failed',
@@ -201,8 +199,6 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('Get verification history error:', error);
-
     return NextResponse.json(
       {
         error: 'Failed to get verification history',

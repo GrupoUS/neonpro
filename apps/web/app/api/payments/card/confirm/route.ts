@@ -121,7 +121,6 @@ export async function POST(request: NextRequest) {
       .eq('id', cardPayment.id);
 
     if (updateError) {
-      console.error('Error updating payment status:', updateError);
     }
 
     // If payment is successful, update related records
@@ -211,8 +210,6 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(response);
   } catch (error) {
-    console.error('Card payment confirmation error:', error);
-
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {

@@ -13,7 +13,7 @@ import { hasAllPermissions, hasAnyPermission } from './permissions';
 /**
  * Authorization configuration for routes
  */
-export interface AuthorizationConfig {
+export type AuthorizationConfig = {
   /** Required role (minimum role level) */
   requiredRole?: UserRole;
   /** Required permissions (user must have ALL) */
@@ -26,17 +26,17 @@ export interface AuthorizationConfig {
   customCheck?: (user: AuthUser, req: NextRequest) => Promise<boolean>;
   /** Skip authorization for specific conditions */
   skipIf?: (req: NextRequest) => boolean;
-}
+};
 
 /**
  * Authorization result
  */
-export interface AuthorizationResult {
+export type AuthorizationResult = {
   authorized: boolean;
   user?: AuthUser;
   reason?: string;
   statusCode?: number;
-}
+};
 
 /**
  * Role hierarchy levels for comparison
@@ -161,8 +161,7 @@ export async function authorize(
       authorized: true,
       user,
     };
-  } catch (error) {
-    console.error('Authorization middleware error:', error);
+  } catch (_error) {
     return {
       authorized: false,
       reason: 'Authorization check failed',

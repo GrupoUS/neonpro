@@ -45,8 +45,6 @@ async function getUserClinicId(_request: NextRequest) {
 }
 
 function handleError(error: unknown, defaultMessage = 'Internal server error') {
-  console.error('Stock Alerts Resolve API Error:', error);
-
   if (error instanceof z.ZodError) {
     return NextResponse.json(
       {
@@ -184,7 +182,6 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (updateError) {
-      console.error('Database update error:', updateError);
       return NextResponse.json(
         { success: false, error: 'Failed to resolve alert' },
         { status: 500 }
@@ -229,11 +226,6 @@ export async function POST(request: NextRequest) {
         : undefined,
     };
 
-    // Log the resolution action for audit trail
-    console.log(
-      `Alert ${resolveData.alertId} resolved by user ${userId} for clinic ${clinicId}`
-    );
-
     // Update alert configurations for recurring issues
     await updateAlertConfigurationsIfRecurring(
       supabase,
@@ -262,9 +254,6 @@ export async function POST(request: NextRequest) {
     if (shouldTriggerReorder) {
       // Integrate with purchasing system to track reorder status
       await integratePurchasingSystem(supabase, alert, resolveData, clinicId);
-      console.log(
-        `Reorder initiated for product ${alert.product_id} as part of alert resolution`
-      );
     }
 
     return NextResponse.json({
@@ -320,7 +309,6 @@ async function updateAlertConfigurationsIfRecurring(
       );
 
     if (error) {
-      console.error('Error checking recurring alerts:', error);
       return;
     }
 
@@ -350,16 +338,10 @@ async function updateAlertConfigurationsIfRecurring(
         );
 
       if (configError) {
-        console.error('Error updating alert configuration:', configError);
       } else {
-        console.log(
-          `Updated alert configuration for recurring issue: Product ${alert.product_id}`
-        );
       }
     }
-  } catch (error) {
-    console.error('Error in updateAlertConfigurationsIfRecurring:', error);
-  }
+  } catch (_error) {}
 }
 
 /**
@@ -391,11 +373,7 @@ async function updateResolutionAnalytics(
     });
 
     if (error) {
-      console.error('Error updating resolution analytics:', error);
     } else {
-      console.log(
-        `Analytics updated for alert ${alert.id}: ${resolutionTimeHours}h resolution time`
-      );
     }
 
     // Update aggregated metrics
@@ -406,11 +384,8 @@ async function updateResolutionAnalytics(
     });
 
     if (metricsError) {
-      console.error('Error updating aggregated metrics:', metricsError);
     }
-  } catch (error) {
-    console.error('Error in updateResolutionAnalytics:', error);
-  }
+  } catch (_error) {}
 }
 
 /**
@@ -459,11 +434,7 @@ async function sendResolutionNotifications(
         clinicId,
       }),
     });
-
-    console.log(`Notifications sent for resolved alert ${alert.id}`);
-  } catch (error) {
-    console.error('Error sending resolution notifications:', error);
-  }
+  } catch (_error) {}
 }
 
 /**
@@ -502,7 +473,6 @@ async function integratePurchasingSystem(
       .single();
 
     if (orderError) {
-      console.error('Error creating purchase order:', orderError);
       return;
     }
 
@@ -529,13 +499,7 @@ async function integratePurchasingSystem(
       },
       created_at: new Date().toISOString(),
     });
-
-    console.log(
-      `Purchase order ${order.id} created and tracking initiated for product ${alert.product_id}`
-    );
-  } catch (error) {
-    console.error('Error in integratePurchasingSystem:', error);
-  }
+  } catch (_error) {}
 }
 
 // =====================================================

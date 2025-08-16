@@ -47,8 +47,6 @@ export async function PATCH(
 
     return NextResponse.json(prediction);
   } catch (error: any) {
-    console.error('Error verifying prediction:', error);
-
     if (error.name === 'ZodError') {
       return NextResponse.json(
         { error: 'Invalid request data', details: error.errors },

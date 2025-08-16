@@ -5,13 +5,13 @@ import { SessionConfig } from '@/lib/auth/config/session-config';
 import { SessionUtils } from '@/lib/auth/utils/session-utils';
 import type { UserRole, UserSession } from '@/types/session';
 
-export interface ActivityEvent {
+export type ActivityEvent = {
   type: ActivityType;
   timestamp: number;
   sessionId: string;
   userId: string;
   metadata?: Record<string, any>;
-}
+};
 
 export type ActivityType =
   | 'mouse_move'
@@ -25,7 +25,7 @@ export type ActivityType =
   | 'data_entry'
   | 'system_interaction';
 
-export interface TimeoutWarning {
+export type TimeoutWarning = {
   id: string;
   sessionId: string;
   warningType: 'initial' | 'final';
@@ -33,9 +33,9 @@ export interface TimeoutWarning {
   scheduledAt: number;
   dismissed: boolean;
   callback?: () => void;
-}
+};
 
-export interface SessionTimeoutConfig {
+export type SessionTimeoutConfig = {
   role: UserRole;
   baseTimeout: number; // minutes
   warningIntervals: number[]; // minutes before expiry
@@ -43,7 +43,7 @@ export interface SessionTimeoutConfig {
   maxExtensions: number;
   activityThreshold: number; // minimum activity events per minute
   inactivityGracePeriod: number; // minutes of grace after inactivity
-}
+};
 
 export class IntelligentTimeoutManager {
   private readonly activityBuffer: Map<string, ActivityEvent[]> = new Map();
@@ -133,10 +133,6 @@ export class IntelligentTimeoutManager {
     }, timeoutDuration);
 
     this.timeoutTimers.set(session.id, timeoutTimer);
-
-    console.log(
-      `Timeout management started for session ${session.id} with ${timeoutConfig.baseTimeout} minute timeout`
-    );
   }
 
   /**
@@ -278,8 +274,6 @@ export class IntelligentTimeoutManager {
         })
       );
     }
-
-    console.warn(`Session timeout warning: ${message}`);
   }
 
   /**
@@ -318,13 +312,9 @@ export class IntelligentTimeoutManager {
 
         // Dismiss active warnings
         this.dismissWarnings(sessionId);
-
-        console.log(`Session ${sessionId} extended successfully`);
         return true;
       }
-    } catch (error) {
-      console.error('Failed to extend session:', error);
-    }
+    } catch (_error) {}
 
     return false;
   }
@@ -407,11 +397,7 @@ export class IntelligentTimeoutManager {
           })
         );
       }
-
-      console.log(`Session ${session.id} timed out and terminated`);
-    } catch (error) {
-      console.error('Error handling session timeout:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -552,9 +538,7 @@ export class IntelligentTimeoutManager {
         const data = await response.json();
         return data.session;
       }
-    } catch (error) {
-      console.error('Failed to get session:', error);
-    }
+    } catch (_error) {}
     return null;
   }
 }

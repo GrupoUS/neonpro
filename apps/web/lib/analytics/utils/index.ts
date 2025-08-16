@@ -7,39 +7,39 @@ import { format } from 'date-fns';
 import { groupBy } from 'lodash';
 
 // Types
-export interface TimeRange {
+export type TimeRange = {
   startDate: Date;
   endDate: Date;
-}
+};
 
-export interface MetricData {
+export type MetricData = {
   value: number;
   date: Date;
   category?: string;
-}
+};
 
-export interface GrowthData {
+export type GrowthData = {
   current: number;
   previous: number;
   period: string;
-}
+};
 
-export interface Subscription {
+export type Subscription = {
   id: string;
   status: 'active' | 'cancelled' | 'past_due';
   amount: number;
   plan_name: string;
   created_at: string;
-}
+};
 
-export interface AnalyticsFilters {
+export type AnalyticsFilters = {
   period: string;
   metric: string;
   startDate?: Date;
   endDate?: Date;
   groupBy?: string;
   filters?: Record<string, any>;
-}
+};
 
 // Formatting Utilities
 export const formatCurrency = (

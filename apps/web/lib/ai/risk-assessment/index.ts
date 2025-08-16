@@ -27,7 +27,7 @@ import type { SafetyAlert } from './safety-alerts';
 import { SafetyAlertsSystem } from './safety-alerts';
 
 // System Configuration
-interface AIRiskAssessmentConfig {
+type AIRiskAssessmentConfig = {
   enabled: boolean;
   realTimeMonitoring: boolean;
   autoAlerts: boolean;
@@ -70,10 +70,10 @@ interface AIRiskAssessmentConfig {
     batchProcessing: boolean;
     parallelProcessing: boolean;
   };
-}
+};
 
 // Assessment Request
-interface AssessmentRequest {
+type AssessmentRequest = {
   patientId: string;
   treatmentId?: string;
   assessmentType: 'comprehensive' | 'focused' | 'emergency' | 'routine';
@@ -92,10 +92,10 @@ interface AssessmentRequest {
     includePopulationComparison?: boolean;
     generateAlerts?: boolean;
   };
-}
+};
 
 // Comprehensive Assessment Result
-interface ComprehensiveAssessmentResult {
+type ComprehensiveAssessmentResult = {
   assessmentId: string;
   patientId: string;
   treatmentId?: string;
@@ -185,10 +185,10 @@ interface ComprehensiveAssessmentResult {
       details: string;
     }[];
   };
-}
+};
 
 // System Status
-interface SystemStatus {
+type SystemStatus = {
   overall: 'healthy' | 'warning' | 'critical' | 'offline';
   components: {
     mlModels: {
@@ -225,10 +225,10 @@ interface SystemStatus {
     lgpdCompliant: boolean;
     lastAudit: Date;
   };
-}
+};
 
 // Analytics and Metrics
-interface SystemAnalytics {
+type SystemAnalytics = {
   usage: {
     totalAssessments: number;
     assessmentsToday: number;
@@ -265,7 +265,7 @@ interface SystemAnalytics {
     implementedRecommendations: number;
     impactScore: number;
   };
-}
+};
 
 class AIRiskAssessmentSystem {
   private readonly supabase = createClient();
@@ -338,45 +338,32 @@ class AIRiskAssessmentSystem {
    */
   async initialize(): Promise<void> {
     try {
-      console.log('Initializing AI Risk Assessment System...');
-
       // Initialize ML models
       if (this.config.mlModels.enabled) {
         await this.mlEngine.initialize();
-        console.log('✅ ML Risk Assessment Engine initialized');
       }
 
       // Initialize risk scoring
       if (this.config.riskScoring.enabled) {
         await this.scoringAlgorithm.initialize();
-        console.log('✅ Risk Scoring Algorithm initialized');
       }
 
       // Initialize safety alerts
       if (this.config.safetyAlerts.enabled) {
         await this.safetyAlerts.initialize();
-        console.log('✅ Safety Alerts System initialized');
       }
 
       // Initialize insights engine
       if (this.config.insights.enabled) {
-        // Insights engine initializes automatically
-        console.log('✅ Predictive Insights Engine initialized');
       }
 
       // Start real-time monitoring if enabled
       if (this.config.realTimeMonitoring) {
         await this.startRealTimeMonitoring();
-        console.log('✅ Real-time monitoring started');
       }
 
       this.isInitialized = true;
-      console.log('🚀 AI Risk Assessment System fully initialized');
-    } catch (error) {
-      console.error(
-        '❌ Failed to initialize AI Risk Assessment System:',
-        error
-      );
+    } catch (_error) {
       throw new Error('System initialization failed');
     }
   }
@@ -391,10 +378,6 @@ class AIRiskAssessmentSystem {
       if (!this.isInitialized) {
         throw new Error('System not initialized. Call initialize() first.');
       }
-
-      console.log(
-        `Starting comprehensive risk assessment for patient ${request.patientId}`
-      );
       const startTime = Date.now();
 
       // Check cache first
@@ -405,7 +388,6 @@ class AIRiskAssessmentSystem {
       ) {
         const cached = this.assessmentCache.get(cacheKey)!;
         if (this.isCacheValid(cached)) {
-          console.log('Returning cached assessment result');
           return cached;
         }
       }
@@ -533,17 +515,8 @@ class AIRiskAssessmentSystem {
         this.assessmentCache.set(cacheKey, result);
       }
 
-      // Log completion
-      console.log(
-        `✅ Risk assessment completed in ${result.metadata.processingTime}ms`
-      );
-      console.log(`📊 Overall risk score: ${riskScore.overallScore.score}`);
-      console.log(`🚨 Safety alerts: ${safetyAlerts.length}`);
-      console.log(`💡 Insights generated: ${insights.length}`);
-
       return result;
     } catch (error) {
-      console.error('❌ Risk assessment failed:', error);
       throw new Error(`Risk assessment failed: ${error.message}`);
     }
   }
@@ -555,10 +528,6 @@ class AIRiskAssessmentSystem {
     requests: AssessmentRequest[]
   ): Promise<ComprehensiveAssessmentResult[]> {
     try {
-      console.log(
-        `Starting batch risk assessment for ${requests.length} patients`
-      );
-
       if (!this.config.performance.batchProcessing) {
         // Process sequentially
         const results: ComprehensiveAssessmentResult[] = [];
@@ -580,13 +549,8 @@ class AIRiskAssessmentSystem {
         );
         results.push(...batchResults);
       }
-
-      console.log(
-        `✅ Batch assessment completed: ${results.length} assessments`
-      );
       return results;
     } catch (error) {
-      console.error('❌ Batch risk assessment failed:', error);
       throw new Error(`Batch assessment failed: ${error.message}`);
     }
   }
@@ -653,8 +617,7 @@ class AIRiskAssessmentSystem {
           lastAudit: new Date(), // Would be actual audit date
         },
       };
-    } catch (error) {
-      console.error('Error getting system status:', error);
+    } catch (_error) {
       return {
         overall: 'critical',
         components: {
@@ -785,8 +748,7 @@ class AIRiskAssessmentSystem {
           impactScore: 8.5, // out of 10
         },
       };
-    } catch (error) {
-      console.error('Error getting system analytics:', error);
+    } catch (_error) {
       throw new Error('Failed to get system analytics');
     }
   }
@@ -798,8 +760,6 @@ class AIRiskAssessmentSystem {
     newConfig: Partial<AIRiskAssessmentConfig>
   ): Promise<void> {
     try {
-      console.log('Updating system configuration...');
-
       this.config = { ...this.config, ...newConfig };
 
       // Update component configurations
@@ -818,10 +778,7 @@ class AIRiskAssessmentSystem {
       if (newConfig.insights) {
         // Update insights engine configuration
       }
-
-      console.log('✅ System configuration updated');
-    } catch (error) {
-      console.error('❌ Failed to update configuration:', error);
+    } catch (_error) {
       throw new Error('Configuration update failed');
     }
   }
@@ -831,8 +788,6 @@ class AIRiskAssessmentSystem {
    */
   async shutdown(): Promise<void> {
     try {
-      console.log('Shutting down AI Risk Assessment System...');
-
       // Stop real-time monitoring
       await this.stopRealTimeMonitoring();
 
@@ -847,10 +802,7 @@ class AIRiskAssessmentSystem {
       this.processingQueue = [];
 
       this.isInitialized = false;
-      console.log('✅ System shutdown complete');
-    } catch (error) {
-      console.error('❌ Error during shutdown:', error);
-    }
+    } catch (_error) {}
   }
 
   // Private helper methods
@@ -1167,20 +1119,12 @@ class AIRiskAssessmentSystem {
         metadata: JSON.stringify(result.metadata),
         created_at: result.timestamp.toISOString(),
       });
-    } catch (error) {
-      console.error('Error storing assessment result:', error);
-    }
+    } catch (_error) {}
   }
 
-  private async startRealTimeMonitoring(): Promise<void> {
-    // Implementation for real-time monitoring
-    console.log('Real-time monitoring started');
-  }
+  private async startRealTimeMonitoring(): Promise<void> {}
 
-  private async stopRealTimeMonitoring(): Promise<void> {
-    // Implementation for stopping real-time monitoring
-    console.log('Real-time monitoring stopped');
-  }
+  private async stopRealTimeMonitoring(): Promise<void> {}
 
   // Performance calculation methods
   private async calculateAverageResponseTime(): Promise<number> {

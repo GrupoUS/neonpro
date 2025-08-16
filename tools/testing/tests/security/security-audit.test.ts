@@ -18,7 +18,6 @@ describe('🔐 NeonPro Security Audit Tests', () => {
   beforeAll(async () => {
     testClinicId = `test-clinic-${Date.now()}`;
     _testUserId = `test-user-${Date.now()}`;
-    console.log('🛡️ Starting Security Audit Test Suite');
   });
 
   describe('🔐 Authentication & Authorization', () => {
@@ -488,7 +487,5 @@ describe('🔐 NeonPro Security Audit Tests', () => {
     });
   });
 
-  afterAll(async () => {
-    console.log('🧹 Security audit tests cleanup completed');
-  });
+  afterAll(async () => {});
 });

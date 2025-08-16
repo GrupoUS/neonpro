@@ -4,7 +4,7 @@ import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { useEffect, useState } from 'react';
 import { usePatientAuth } from './use-patient-auth';
 
-interface Appointment {
+type Appointment = {
   id: string;
   patient_id: string;
   service_id: string;
@@ -32,9 +32,9 @@ interface Appointment {
   };
   created_at: string;
   updated_at: string;
-}
+};
 
-interface TreatmentHistory {
+type TreatmentHistory = {
   id: string;
   patient_id: string;
   appointment_id: string;
@@ -49,9 +49,9 @@ interface TreatmentHistory {
   follow_up_date?: string;
   created_at: string;
   updated_at: string;
-}
+};
 
-interface Document {
+type Document = {
   id: string;
   patient_id: string;
   type:
@@ -68,9 +68,9 @@ interface Document {
   mime_type: string;
   created_at: string;
   appointment_id?: string;
-}
+};
 
-interface PatientDataContextType {
+type PatientDataContextType = {
   appointments: Appointment[];
   treatmentHistory: TreatmentHistory[];
   documents: Document[];
@@ -80,7 +80,7 @@ interface PatientDataContextType {
   refreshTreatmentHistory: () => Promise<void>;
   refreshDocuments: () => Promise<void>;
   refreshAll: () => Promise<void>;
-}
+};
 
 export function usePatientData(): PatientDataContextType {
   const { patient } = usePatientAuth();
@@ -129,8 +129,7 @@ export function usePatientData(): PatientDataContextType {
       }
 
       setAppointments(data || []);
-    } catch (error: any) {
-      console.error('Error fetching appointments:', error);
+    } catch (_error: any) {
       setError('Erro ao carregar agendamentos');
     }
   };
@@ -152,8 +151,7 @@ export function usePatientData(): PatientDataContextType {
       }
 
       setTreatmentHistory(data || []);
-    } catch (error: any) {
-      console.error('Error fetching treatment history:', error);
+    } catch (_error: any) {
       setError('Erro ao carregar histórico de tratamentos');
     }
   };
@@ -175,8 +173,7 @@ export function usePatientData(): PatientDataContextType {
       }
 
       setDocuments(data || []);
-    } catch (error: any) {
-      console.error('Error fetching documents:', error);
+    } catch (_error: any) {
       setError('Erro ao carregar documentos');
     }
   };
@@ -195,8 +192,7 @@ export function usePatientData(): PatientDataContextType {
         refreshTreatmentHistory(),
         refreshDocuments(),
       ]);
-    } catch (error: any) {
-      console.error('Error refreshing patient data:', error);
+    } catch (_error: any) {
       setError('Erro ao carregar dados do paciente');
     } finally {
       setIsLoading(false);

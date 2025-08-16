@@ -7,7 +7,7 @@
 import * as tf from '@tensorflow/tfjs';
 
 // Performance monitoring interfaces
-export interface ProcessingMetrics {
+export type ProcessingMetrics = {
   totalTime: number;
   preprocessingTime: number;
   analysisTime: number;
@@ -16,9 +16,9 @@ export interface ProcessingMetrics {
   gpuUtilization?: number;
   cacheHits: number;
   parallelTasks: number;
-}
+};
 
-export interface OptimizationConfig {
+export type OptimizationConfig = {
   enableGPU: boolean;
   useWebWorkers: boolean;
   enableCaching: boolean;
@@ -26,21 +26,21 @@ export interface OptimizationConfig {
   compressionLevel: number;
   targetProcessingTime: number; // milliseconds
   memoryLimit: number; // MB
-}
+};
 
-export interface ImageProcessingResult {
+export type ImageProcessingResult = {
   processedImage: tf.Tensor3D;
   metrics: ProcessingMetrics;
   cacheKey: string;
   optimizations: string[];
-}
+};
 
-export interface CacheEntry {
+export type CacheEntry = {
   tensor: tf.Tensor3D;
   timestamp: number;
   accessCount: number;
   size: number;
-}
+};
 
 /**
  * High-Performance Image Processor
@@ -154,9 +154,6 @@ export class HighPerformanceImageProcessor {
 
       // Performance validation
       if (totalTime > this.config.targetProcessingTime) {
-        console.warn(
-          `Processing time ${totalTime}ms exceeded target ${this.config.targetProcessingTime}ms`
-        );
         await this.optimizeForNextRun(metrics);
       }
 
@@ -167,7 +164,6 @@ export class HighPerformanceImageProcessor {
         optimizations: this.getAppliedOptimizations(),
       };
     } catch (error) {
-      console.error('Image processing failed:', error);
       throw new Error(
         `Processing failed: ${error instanceof Error ? error.message : 'Unknown error'}`
       );
@@ -240,8 +236,7 @@ export class HighPerformanceImageProcessor {
         featureExtraction: options.extractFeatures,
         textureAnalysis: options.analyzeTexture,
       });
-    } catch (error) {
-      console.warn('GPU processing failed, falling back to CPU:', error);
+    } catch (_error) {
       return this.cpuFallbackAnalysis(image, options);
     }
   }
@@ -590,9 +585,7 @@ export class HighPerformanceImageProcessor {
       try {
         const worker = new Worker('/workers/image-processing-worker.js');
         this.workerPool.push(worker);
-      } catch (error) {
-        console.warn('Failed to create worker:', error);
-      }
+      } catch (_error) {}
     }
   }
 
@@ -721,12 +714,9 @@ class GPUAccelerator {
       this.isGPUAvailable = backend === 'webgl';
 
       if (this.isGPUAvailable) {
-        console.log('GPU acceleration enabled');
       } else {
-        console.warn('GPU acceleration not available, using CPU');
       }
-    } catch (error) {
-      console.error('GPU initialization failed:', error);
+    } catch (_error) {
       this.isGPUAvailable = false;
     }
   }
@@ -817,7 +807,7 @@ class MemoryManager {
 }
 
 // Image processing options interface
-export interface ImageProcessingOptions {
+export type ImageProcessingOptions = {
   targetSize?: { width: number; height: number };
   enhanceContrast?: boolean;
   normalizeColors?: boolean;
@@ -827,7 +817,7 @@ export interface ImageProcessingOptions {
   analyzeTexture?: boolean;
   finalSmoothing?: boolean;
   sharpenEdges?: boolean;
-}
+};
 
 // Export singleton instance
 export const highPerformanceProcessor = new HighPerformanceImageProcessor();

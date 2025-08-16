@@ -11,20 +11,20 @@ import {
 } from '@/app/api/roles/permissions/route';
 import { createClient } from '@/app/utils/supabase/server';
 
-export interface RoleValidationOptions {
+export type RoleValidationOptions = {
   requiredRole?: string[];
   requiredPermission?: string[];
   allowSelfAccess?: boolean;
   resourceOwnerField?: string;
-}
+};
 
-export interface RoleValidationResult {
+export type RoleValidationResult = {
   success: boolean;
   user: any;
   profile: any;
   error?: string;
   statusCode?: number;
-}
+};
 
 /**
  * Middleware para validação de roles e permissões
@@ -123,8 +123,7 @@ export async function validateRole(
       user,
       profile,
     };
-  } catch (error) {
-    console.error('Erro na validação de role:', error);
+  } catch (_error) {
     return {
       success: false,
       user: null,
@@ -201,8 +200,7 @@ export async function canManageUser(
         ? undefined
         : `Role ${managerProfile.role} não pode gerenciar role ${targetProfile.role}`,
     };
-  } catch (error) {
-    console.error('Erro na verificação de gerenciamento de usuário:', error);
+  } catch (_error) {
     return { canManage: false, reason: 'Erro interno na verificação' };
   }
 }
@@ -227,8 +225,7 @@ export async function logRoleAction(
         user_agent: metadata.user_agent || 'unknown',
       },
     });
-  } catch (error) {
-    console.error('Erro ao registrar log de auditoria de role:', error);
+  } catch (_error) {
     // Não propagar o erro para não afetar a operação principal
   }
 }

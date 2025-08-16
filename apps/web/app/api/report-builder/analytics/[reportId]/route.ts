@@ -41,7 +41,6 @@ export async function GET(
       data: analytics,
     });
   } catch (error) {
-    console.error('Error fetching report analytics:', error);
     return NextResponse.json(
       {
         success: false,

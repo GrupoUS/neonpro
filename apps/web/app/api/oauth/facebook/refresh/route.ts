@@ -89,11 +89,6 @@ export async function POST(request: NextRequest) {
       throw new Error(`Failed to update tokens: ${updateError.message}`);
     }
 
-    // Log successful token refresh
-    console.log(
-      `Facebook tokens refreshed successfully for account ${accountId}, user ${session.user.id}`
-    );
-
     // Update platform last activity
     await supabase.from('social_media_platforms').upsert(
       {
@@ -110,8 +105,6 @@ export async function POST(request: NextRequest) {
       expiresIn: newTokens.expiresIn,
     });
   } catch (error) {
-    console.error('Facebook token refresh error:', error);
-
     // Log error for debugging
     try {
       const supabase = await createClient();
@@ -128,9 +121,7 @@ export async function POST(request: NextRequest) {
           occurred_at: new Date().toISOString(),
         });
       }
-    } catch (logError) {
-      console.error('Failed to log token refresh error:', logError);
-    }
+    } catch (_logError) {}
 
     return NextResponse.json(
       {

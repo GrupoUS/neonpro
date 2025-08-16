@@ -27,7 +27,7 @@ const SESSION_CONFIG = {
   ENCRYPTION_KEY: 'neonpro_secure_session_2024',
 };
 
-interface SessionData {
+type SessionData = {
   sessionId: string;
   userId: string;
   email: string;
@@ -37,14 +37,14 @@ interface SessionData {
   expiresAt: number;
   deviceInfo: string;
   ipAddress?: string;
-}
+};
 
-interface SessionActivity {
+type SessionActivity = {
   action: string;
   timestamp: number;
   route?: string;
   metadata?: Record<string, any>;
-}
+};
 
 class SessionManager {
   private sessionId: string | null = null;
@@ -147,8 +147,7 @@ class SessionManager {
       }
 
       return sessionData;
-    } catch (error) {
-      console.error('Error getting current session:', error);
+    } catch (_error) {
       return null;
     }
   }
@@ -176,8 +175,7 @@ class SessionManager {
 
       await this.logActivity('session_refreshed');
       return true;
-    } catch (error) {
-      console.error('Error refreshing session:', error);
+    } catch (_error) {
       await this.destroySession();
       return false;
     }
@@ -208,9 +206,7 @@ class SessionManager {
             (session.expiresAt - SESSION_CONFIG.TIMEOUT_MINUTES * 60 * 1000),
         });
       }
-    } catch (error) {
-      console.error('Error destroying session:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -260,8 +256,7 @@ class SessionManager {
       }
 
       return sessions;
-    } catch (error) {
-      console.error('Error getting active sessions:', error);
+    } catch (_error) {
       return [];
     }
   }
@@ -278,8 +273,7 @@ class SessionManager {
         terminatedSessionId: sessionId,
       });
       return true;
-    } catch (error) {
-      console.error('Error terminating session:', error);
+    } catch (_error) {
       return false;
     }
   }
@@ -369,9 +363,7 @@ class SessionManager {
         `${SESSION_CONFIG.STORAGE_KEY_PREFIX}${session.sessionId}`,
         encryptedData
       );
-    } catch (error) {
-      console.error('Error storing session:', error);
-    }
+    } catch (_error) {}
   }
 
   private clearSessionStorage(): void {
@@ -442,9 +434,7 @@ class SessionManager {
       }
 
       localStorage.setItem('session_activities', JSON.stringify(activities));
-    } catch (error) {
-      console.error('Error logging activity:', error);
-    }
+    } catch (_error) {}
   }
 }
 

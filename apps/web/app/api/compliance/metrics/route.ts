@@ -70,11 +70,6 @@ export async function GET(request: NextRequest) {
     }
 
     const params = validationResult.data;
-
-    // 🎯 Get compliance metrics
-    console.log(
-      `📊 Calculating compliance metrics for user ${authResult.user.email}`
-    );
     const metrics = await getCurrentComplianceMetrics();
 
     // 🔍 Filter by category if specified
@@ -156,8 +151,6 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('❌ Compliance metrics API error:', error);
-
     return NextResponse.json(
       {
         success: false,
@@ -202,8 +195,7 @@ async function calculateComplianceTrends(period: string, _userId: string) {
       data_points: trendPoints.length,
       trends: trendPoints,
     };
-  } catch (error) {
-    console.error('Error calculating trends:', error);
+  } catch (_error) {
     return {
       period,
       data_points: 0,
@@ -317,8 +309,7 @@ async function logComplianceAccess(
       },
       severity: action.includes('admin') ? 'high' : 'medium',
     });
-  } catch (error) {
-    console.error('Failed to log compliance access:', error);
+  } catch (_error) {
     // Don't throw - logging failure shouldn't break the API
   }
 }

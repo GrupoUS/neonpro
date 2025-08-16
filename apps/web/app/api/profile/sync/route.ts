@@ -67,8 +67,6 @@ export async function POST(_request: NextRequest) {
       .single();
 
     if (updateError) {
-      console.error('Profile sync error:', updateError);
-
       // Try to insert if update failed (profile doesn't exist)
       if (updateError.code === 'PGRST116') {
         const { data: newProfile, error: insertError } = await supabase
@@ -84,7 +82,6 @@ export async function POST(_request: NextRequest) {
           .single();
 
         if (insertError) {
-          console.error('Profile creation error:', insertError);
           return NextResponse.json(
             {
               error: 'Sync failed',
@@ -124,8 +121,7 @@ export async function POST(_request: NextRequest) {
       profile,
       sync_timestamp: new Date().toISOString(),
     });
-  } catch (error) {
-    console.error('Profile sync API error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error', message: 'Profile sync failed' },
       { status: 500 }
@@ -177,8 +173,7 @@ export async function GET(_request: NextRequest) {
         (identity: any) => identity.provider === 'google'
       ),
     });
-  } catch (error) {
-    console.error('Profile sync GET error:', error);
+  } catch (_error) {
     return NextResponse.json(
       {
         error: 'Internal server error',

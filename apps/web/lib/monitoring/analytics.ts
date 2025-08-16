@@ -8,29 +8,29 @@
 
 import { createClient } from '@/app/utils/supabase/client';
 
-export interface AnalyticsEvent {
+export type AnalyticsEvent = {
   event_type: string;
   event_data?: Record<string, any>;
   page_url?: string;
   user_agent?: string;
   session_id?: string;
-}
+};
 
-export interface UserSession {
+export type UserSession = {
   sessionId: string;
   startTime: number;
   lastActivity: number;
   pageViews: number;
   events: string[];
-}
+};
 
-export interface FeatureAdoptionMetric {
+export type FeatureAdoptionMetric = {
   feature_name: string;
   epic_name: string;
   adoption_rate: number;
   usage_frequency: number;
   task_completion_rate: number;
-}
+};
 
 class UserAnalytics {
   private readonly supabase = createClient();
@@ -235,7 +235,6 @@ class UserAnalytics {
       const { data, error } = await query;
 
       if (error || !data) {
-        console.error('Error fetching feature adoption metrics:', error);
         return [];
       }
 
@@ -280,8 +279,7 @@ class UserAnalytics {
         task_completion_rate:
           stat.completions / (stat.completions + stat.errors) || 0,
       }));
-    } catch (error) {
-      console.error('Error calculating feature adoption metrics:', error);
+    } catch (_error) {
       return [];
     }
   }
@@ -303,12 +301,10 @@ class UserAnalytics {
         .insert(eventsToFlush);
 
       if (error) {
-        console.error('Failed to flush analytics events:', error);
         // Re-queue events on failure
         this.eventQueue.unshift(...eventsToFlush);
       }
-    } catch (error) {
-      console.error('Error flushing analytics events:', error);
+    } catch (_error) {
       this.eventQueue.unshift(...eventsToFlush);
     }
   }

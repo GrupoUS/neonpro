@@ -26,7 +26,7 @@ export type AnalyticsNotificationType =
   | 'conversion_alert'
   | 'churn_alert';
 
-export interface AnalyticsNotificationData {
+export type AnalyticsNotificationData = {
   id?: string;
   type: AnalyticsNotificationType;
   title: string;
@@ -39,16 +39,16 @@ export interface AnalyticsNotificationData {
   expiresAt?: Date;
   metadata?: Record<string, any>;
   clinicId?: string;
-}
+};
 
-export interface AnalyticsNotificationTemplate {
+export type AnalyticsNotificationTemplate = {
   type: AnalyticsNotificationType;
   title: string;
   message: string;
   priority: 'low' | 'medium' | 'high' | 'urgent';
   channels: ('database' | 'websocket' | 'email' | 'push')[];
   variables?: string[];
-}
+};
 
 // Analytics notification templates
 const ANALYTICS_NOTIFICATION_TEMPLATES: Record<
@@ -238,8 +238,7 @@ export class AnalyticsNotificationService {
       return await AnalyticsNotificationService.processNotification(
         notificationData
       );
-    } catch (error) {
-      console.error('Error sending analytics notification:', error);
+    } catch (_error) {
       return null;
     }
   }
@@ -252,8 +251,7 @@ export class AnalyticsNotificationService {
   ): Promise<string | null> {
     try {
       return await AnalyticsNotificationService.processNotification(data);
-    } catch (error) {
-      console.error('Error sending custom analytics notification:', error);
+    } catch (_error) {
       return null;
     }
   }
@@ -318,13 +316,11 @@ export class AnalyticsNotificationService {
         .single();
 
       if (error) {
-        console.error('Database save error:', error);
         return null;
       }
 
       return notification.id;
-    } catch (error) {
-      console.error('Error saving analytics notification to database:', error);
+    } catch (_error) {
       return null;
     }
   }
@@ -361,9 +357,7 @@ export class AnalyticsNotificationService {
           notification: wsMessage.notification,
         });
       }
-    } catch (error) {
-      console.error('WebSocket analytics notification error:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -381,19 +375,12 @@ export class AnalyticsNotificationService {
         .single();
 
       if (error || !user) {
-        console.error(
-          'User not found for analytics email notification:',
-          error
-        );
         return;
       }
 
       // Check analytics email preferences
       const analyticsEmailPrefs = user.analytics_email_preferences || {};
       if (analyticsEmailPrefs[data.type] === false) {
-        console.log(
-          `Analytics email notifications disabled for ${data.type} by user ${data.userId}`
-        );
         return;
       }
 
@@ -409,9 +396,7 @@ export class AnalyticsNotificationService {
         scheduled_for:
           data.scheduledFor?.toISOString() || new Date().toISOString(),
       });
-    } catch (error) {
-      console.error('Analytics email notification error:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -429,7 +414,6 @@ export class AnalyticsNotificationService {
         .eq('active', true);
 
       if (error || !tokens || tokens.length === 0) {
-        console.log(`No push tokens found for user ${data.userId}`);
         return;
       }
 
@@ -447,9 +431,7 @@ export class AnalyticsNotificationService {
       }));
 
       await supabase.from('push_queue').insert(pushJobs);
-    } catch (error) {
-      console.error('Analytics push notification error:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -482,8 +464,7 @@ export class AnalyticsNotificationService {
         .eq('user_id', userId);
 
       return !error;
-    } catch (error) {
-      console.error('Error marking analytics notification as read:', error);
+    } catch (_error) {
       return false;
     }
   }
@@ -534,13 +515,11 @@ export class AnalyticsNotificationService {
       const { data, error } = await query;
 
       if (error) {
-        console.error('Error fetching analytics notifications:', error);
         return null;
       }
 
       return data;
-    } catch (error) {
-      console.error('Error in getUserNotifications:', error);
+    } catch (_error) {
       return null;
     }
   }
@@ -566,13 +545,11 @@ export class AnalyticsNotificationService {
       const { count, error } = await query;
 
       if (error) {
-        console.error('Error getting unread analytics count:', error);
         return 0;
       }
 
       return count || 0;
-    } catch (error) {
-      console.error('Error in getUnreadCount:', error);
+    } catch (_error) {
       return 0;
     }
   }
@@ -611,9 +588,7 @@ export class AnalyticsNotificationService {
         },
         { clinicId }
       );
-    } catch (error) {
-      console.error('Error sending trial milestone notification:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -698,9 +673,7 @@ export class AnalyticsNotificationService {
         variables,
         { clinicId }
       );
-    } catch (error) {
-      console.error('Error sending analytics milestone notification:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -717,11 +690,8 @@ export class AnalyticsNotificationService {
         .lt('created_at', cutoffDate.toISOString());
 
       if (error) {
-        console.error('Error cleaning up old analytics notifications:', error);
       }
-    } catch (error) {
-      console.error('Error in cleanupOldNotifications:', error);
-    }
+    } catch (_error) {}
   }
 }
 

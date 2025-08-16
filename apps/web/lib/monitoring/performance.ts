@@ -8,21 +8,21 @@
 
 import { createClient } from '@/app/utils/supabase/client';
 
-export interface PerformanceMetric {
+export type PerformanceMetric = {
   route_path: string;
   metric_type: 'page_load' | 'api_response' | 'db_query' | 'component_render';
   duration_ms: number;
   status_code?: number;
   error_message?: string;
   metadata?: Record<string, any>;
-}
+};
 
-export interface PerformanceBudget {
+export type PerformanceBudget = {
   api_max_ms: number;
   page_max_ms: number;
   db_max_ms: number;
   component_max_ms: number;
-}
+};
 
 // Performance budgets as defined in TASK-001
 export const PERFORMANCE_BUDGETS: PerformanceBudget = {
@@ -52,7 +52,6 @@ class PerformanceMonitor {
   ): Promise<void> {
     const startTime = this.measurements.get(operationId);
     if (!startTime) {
-      console.warn(`No start measurement found for operation: ${operationId}`);
       return;
     }
 
@@ -82,11 +81,8 @@ class PerformanceMonitor {
         .insert(metric);
 
       if (error) {
-        console.error('Failed to log performance metric:', error);
       }
-    } catch (error) {
-      console.error('Error logging performance metric:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -117,10 +113,6 @@ class PerformanceMonitor {
     }
 
     if (duration > budget) {
-      console.warn(
-        `Performance budget exceeded for ${metricType} on ${routePath}: ${duration}ms > ${budget}ms`
-      );
-
       // Log budget violation as system metric
       this.logSystemMetric(
         'performance_budget_violation',
@@ -152,11 +144,8 @@ class PerformanceMonitor {
       });
 
       if (error) {
-        console.error('Failed to log system metric:', error);
       }
-    } catch (error) {
-      console.error('Error logging system metric:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -204,8 +193,7 @@ class PerformanceMonitor {
         p99: durations[Math.floor(count * 0.99)],
         count,
       };
-    } catch (error) {
-      console.error('Error getting performance baseline:', error);
+    } catch (_error) {
       return null;
     }
   }
@@ -265,8 +253,7 @@ class PerformanceMonitor {
       });
 
       return report;
-    } catch (error) {
-      console.error('Error generating performance report:', error);
+    } catch (_error) {
       return {};
     }
   }

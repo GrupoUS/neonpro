@@ -383,10 +383,6 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error(
-      'GET /api/retention-analytics/campaigns/analytics error:',
-      error
-    );
     return NextResponse.json(
       {
         success: false,
@@ -549,10 +545,6 @@ export async function POST(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error(
-      'POST /api/retention-analytics/campaigns/analytics error:',
-      error
-    );
     return NextResponse.json(
       {
         success: false,

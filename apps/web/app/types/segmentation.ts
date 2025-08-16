@@ -59,7 +59,7 @@ export type PeriodType =
 // CORE SEGMENTATION INTERFACES
 // =====================================================================================
 
-export interface PatientSegment {
+export type PatientSegment = {
   id: string;
   clinic_id: string;
 
@@ -87,13 +87,13 @@ export interface PatientSegment {
   created_at: string;
   updated_at: string;
   created_by?: string;
-}
+};
 
-export interface SegmentCriteria {
+export type SegmentCriteria = {
   [key: string]: CriteriaRule;
-}
+};
 
-export interface CriteriaRule {
+export type CriteriaRule = {
   operator:
     | 'eq'
     | 'ne'
@@ -107,9 +107,9 @@ export interface CriteriaRule {
     | 'between';
   value: any;
   field_type?: 'string' | 'number' | 'date' | 'boolean' | 'array';
-}
+};
 
-export interface PatientSegmentMembership {
+export type PatientSegmentMembership = {
   id: string;
   segment_id: string;
   patient_id: string;
@@ -129,30 +129,30 @@ export interface PatientSegmentMembership {
   last_validated: string;
   is_active: boolean;
   auto_assigned: boolean;
-}
+};
 
-export interface MembershipReason {
+export type MembershipReason = {
   criteria_matched: string[];
   ai_explanation?: string;
   confidence_factors: {
     [factor: string]: number;
   };
-}
+};
 
-export interface TreatmentPropensity {
+export type TreatmentPropensity = {
   [treatment_type: string]: {
     probability: number; // 0-1
     confidence: number; // 0-1
     recommended_timing?: string;
     factors: string[];
   };
-}
+};
 
 // =====================================================================================
 // PATIENT ANALYTICS INTERFACES
 // =====================================================================================
 
-export interface PatientAnalytics {
+export type PatientAnalytics = {
   id: string;
   patient_id: string;
   clinic_id: string;
@@ -193,51 +193,51 @@ export interface PatientAnalytics {
   // Tracking
   last_calculated: string;
   calculation_version: number;
-}
+};
 
-export interface CommunicationPreference {
+export type CommunicationPreference = {
   preferred_time?: string;
   preferred_day?: string;
   frequency_preference?: 'high' | 'medium' | 'low';
   channel_preference?: string[];
   language?: string;
-}
+};
 
-export interface AIInsights {
+export type AIInsights = {
   key_insights: string[];
   recommendations: Recommendation[];
   risk_factors: string[];
   opportunities: string[];
   next_best_actions: NextBestAction[];
-}
+};
 
-export interface Recommendation {
+export type Recommendation = {
   type: string;
   description: string;
   confidence: number; // 0-1
   priority: 'high' | 'medium' | 'low';
   estimated_impact?: string;
   timeline?: string;
-}
+};
 
-export interface NextBestAction {
+export type NextBestAction = {
   action_type: string;
   description: string;
   urgency: 'high' | 'medium' | 'low';
   expected_outcome: string;
   confidence: number; // 0-1
-}
+};
 
-export interface PersonalityProfile {
+export type PersonalityProfile = {
   traits: {
     [trait: string]: number; // 0-1 scale
   };
   communication_style: string;
   decision_making_style: string;
   motivation_factors: string[];
-}
+};
 
-export interface PreferencePredictions {
+export type PreferencePredictions = {
   appointment_preferences: {
     preferred_times: string[];
     preferred_days: string[];
@@ -249,13 +249,13 @@ export interface PreferencePredictions {
   communication_preferences: {
     [channel: string]: number; // preference score 0-1
   };
-}
+};
 
 // =====================================================================================
 // SEGMENT PERFORMANCE TRACKING
 // =====================================================================================
 
-export interface SegmentPerformance {
+export type SegmentPerformance = {
   id: string;
   segment_id: string;
 
@@ -304,13 +304,13 @@ export interface SegmentPerformance {
 
   // Metadata
   calculated_at: string;
-}
+};
 
 // =====================================================================================
 // AI MODEL INTERFACES
 // =====================================================================================
 
-export interface AIModel {
+export type AIModel = {
   id: string;
   clinic_id: string;
 
@@ -339,13 +339,13 @@ export interface AIModel {
   // Metadata
   created_at: string;
   trained_by?: string;
-}
+};
 
-export interface ModelParameters {
+export type ModelParameters = {
   [parameter: string]: any;
-}
+};
 
-export interface TrainingDataInfo {
+export type TrainingDataInfo = {
   dataset_size: number;
   training_period: {
     start: string;
@@ -354,13 +354,13 @@ export interface TrainingDataInfo {
   data_quality_score?: number; // 0-1
   feature_count: number;
   class_distribution?: Record<string, number>;
-}
+};
 
 // =====================================================================================
 // SEGMENTATION RULES
 // =====================================================================================
 
-export interface SegmentationRule {
+export type SegmentationRule = {
   id: string;
   segment_id: string;
 
@@ -383,15 +383,15 @@ export interface SegmentationRule {
   created_at: string;
   updated_at: string;
   created_by?: string;
-}
+};
 
-export interface RuleLogic {
+export type RuleLogic = {
   conditions: RuleCondition[];
   operator: 'AND' | 'OR';
   nested_rules?: RuleLogic[];
-}
+};
 
-export interface RuleCondition {
+export type RuleCondition = {
   field: string;
   operator:
     | 'eq'
@@ -406,27 +406,27 @@ export interface RuleCondition {
     | 'between';
   value: any;
   weight?: number; // For weighted conditions
-}
+};
 
 // =====================================================================================
 // API RESPONSE INTERFACES
 // =====================================================================================
 
-export interface SegmentationResponse {
+export type SegmentationResponse = {
   segments: PatientSegment[];
   total: number;
   page: number;
   limit: number;
-}
+};
 
-export interface SegmentMembersResponse {
+export type SegmentMembersResponse = {
   members: PatientSegmentMembership[];
   total: number;
   segment: PatientSegment;
   analytics: SegmentAnalytics;
-}
+};
 
-export interface SegmentAnalytics {
+export type SegmentAnalytics = {
   segment_id: string;
   total_members: number;
   active_members: number;
@@ -439,69 +439,69 @@ export interface SegmentAnalytics {
   performance_summary: SegmentPerformanceSummary;
   trends: any;
   last_updated: string;
-}
+};
 
-export interface SegmentPerformanceSummary {
+export type SegmentPerformanceSummary = {
   retention_rate: number;
   engagement_score: number;
   revenue_per_member: number;
   conversion_rate: number;
   growth_rate: number;
-}
+};
 
-export interface PatientInsightsResponse {
+export type PatientInsightsResponse = {
   patient_id: string;
   analytics: PatientAnalytics;
   segments: PatientSegmentMembership[];
   recommendations: Recommendation[];
   predicted_behaviors: PredictedBehavior[];
-}
+};
 
-export interface PredictedBehavior {
+export type PredictedBehavior = {
   behavior_type: string;
   probability: number; // 0-1
   confidence: number; // 0-1
   factors: string[];
   timeline?: string;
-}
+};
 
 // =====================================================================================
 // FORM INTERFACES FOR CREATING/EDITING
 // =====================================================================================
 
-export interface CreateSegmentData {
+export type CreateSegmentData = {
   name: string;
   description?: string;
   segment_type: SegmentType;
   criteria: SegmentCriteria;
   auto_update: boolean;
   update_frequency: UpdateFrequency;
-}
+};
 
 export interface UpdateSegmentData extends Partial<CreateSegmentData> {
   is_active?: boolean;
 }
 
-export interface CreateRuleData {
+export type CreateRuleData = {
   rule_name: string;
   rule_description?: string;
   rule_logic: RuleLogic;
   priority: number;
   requires_ai: boolean;
-}
+};
 
-export interface BulkSegmentUpdate {
+export type BulkSegmentUpdate = {
   segment_id: string;
   patient_ids: string[];
   action: 'add' | 'remove';
   membership_reason?: MembershipReason;
-}
+};
 
 // =====================================================================================
 // DASHBOARD INTERFACES
 // =====================================================================================
 
-export interface SegmentationDashboardData {
+export type SegmentationDashboardData = {
   total_segments: number;
   active_segments: number;
   total_patients_segmented: number;
@@ -509,72 +509,72 @@ export interface SegmentationDashboardData {
   top_performing_segments: SegmentPerformance[];
   recent_insights: AIInsights[];
   model_performance: AIModel[];
-}
+};
 
-export interface SegmentBuilderConfig {
+export type SegmentBuilderConfig = {
   available_fields: FieldDefinition[];
   operators: OperatorDefinition[];
   ai_suggestions?: AISuggestion[];
-}
+};
 
-export interface FieldDefinition {
+export type FieldDefinition = {
   field_name: string;
   display_name: string;
   field_type: 'string' | 'number' | 'date' | 'boolean' | 'select';
   options?: string[]; // For select fields
   min?: number; // For number fields
   max?: number; // For number fields
-}
+};
 
-export interface OperatorDefinition {
+export type OperatorDefinition = {
   operator: string;
   display_name: string;
   compatible_types: string[];
-}
+};
 
-export interface AISuggestion {
+export type AISuggestion = {
   suggested_criteria: SegmentCriteria;
   confidence: number;
   reasoning: string;
   expected_members: number;
-}
+};
 
 // =====================================================================================
 // VALIDATION SCHEMAS TYPES
 // =====================================================================================
 
-export interface SegmentValidationResult {
+export type SegmentValidationResult = {
   is_valid: boolean;
   errors: ValidationError[];
   warnings: ValidationWarning[];
   estimated_members?: number;
   performance_prediction?: PerformancePrediction;
-}
+};
 
-export interface ValidationError {
+export type ValidationError = {
   field: string;
   message: string;
   code: string;
-}
+};
 
-export interface ValidationWarning {
+export type ValidationWarning = {
   field: string;
   message: string;
   suggestion?: string;
-}
+};
 
-export interface PerformancePrediction {
+export type PerformancePrediction = {
   expected_engagement: number;
   expected_retention: number;
   expected_revenue_impact: number;
   confidence: number;
-}
+};
 
 // =====================================================================================
 // ADDITIONAL SERVICE INTERFACES
 // =====================================================================================
 
-export interface SegmentMembership {
+export type SegmentMembership = {
   id: string;
   patient_id: string;
   segment_id: string;
@@ -583,9 +583,9 @@ export interface SegmentMembership {
   last_updated: string;
   engagement_level: EngagementLevel;
   lifetime_value_prediction?: number;
-}
+};
 
-export interface PatientBehaviorAnalysis {
+export type PatientBehaviorAnalysis = {
   patient_id: string;
   demographic_profile: {
     age_group: string;
@@ -610,35 +610,35 @@ export interface PatientBehaviorAnalysis {
     engagement_score: number;
   };
   last_analyzed: string;
-}
+};
 
-export interface CreateSegmentRequest {
+export type CreateSegmentRequest = {
   segment_name: string;
   description?: string;
   criteria?: SegmentCriteria;
   segment_type: SegmentType;
   ai_model?: string;
   expected_accuracy?: number;
-}
+};
 
 export interface UpdateSegmentRequest extends Partial<CreateSegmentRequest> {
   id: string;
   is_active?: boolean;
 }
 
-export interface CreateSegmentationRuleRequest {
+export type CreateSegmentationRuleRequest = {
   rule_name: string;
   description?: string;
   conditions: any;
   auto_execute?: boolean;
   execution_schedule?: string;
-}
+};
 
-export interface SegmentMembershipUpdate {
+export type SegmentMembershipUpdate = {
   patient_id: string;
   segment_id: string;
   membership_score: number;
   join_date?: string;
   engagement_level: EngagementLevel;
   lifetime_value_prediction?: number;
-}
+};

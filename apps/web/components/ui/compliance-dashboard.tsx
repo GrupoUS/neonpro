@@ -44,7 +44,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 // TYPES & INTERFACES
 // =====================================================
 
-interface ComplianceMetrics {
+type ComplianceMetrics = {
   overall_score: number;
   lgpd_compliance: LGPDMetrics;
   anvisa_compliance: ANVISAMetrics;
@@ -52,9 +52,9 @@ interface ComplianceMetrics {
   audit_trail: AuditTrailMetrics;
   alerts: ComplianceAlert[];
   last_updated: string;
-}
+};
 
-interface LGPDMetrics {
+type LGPDMetrics = {
   consent_rate: number;
   data_requests_fulfilled: number;
   data_requests_pending: number;
@@ -62,9 +62,9 @@ interface LGPDMetrics {
   privacy_policy_acceptance: number;
   breach_incidents: number;
   compliance_score: number;
-}
+};
 
-interface ANVISAMetrics {
+type ANVISAMetrics = {
   product_registrations: number;
   adverse_events_reported: number;
   procedure_classifications: number;
@@ -72,9 +72,9 @@ interface ANVISAMetrics {
   compliance_audits_passed: number;
   regulatory_submissions: number;
   compliance_score: number;
-}
+};
 
-interface DataRetentionMetrics {
+type DataRetentionMetrics = {
   total_records: number;
   records_scheduled_deletion: number;
   records_deleted_today: number;
@@ -82,9 +82,9 @@ interface DataRetentionMetrics {
   cleanup_jobs_successful: number;
   cleanup_jobs_failed: number;
   compliance_percentage: number;
-}
+};
 
-interface AuditTrailMetrics {
+type AuditTrailMetrics = {
   total_audit_entries: number;
   entries_today: number;
   critical_events: number;
@@ -92,9 +92,9 @@ interface AuditTrailMetrics {
   data_modification_events: number;
   compliance_events: number;
   system_integrity_score: number;
-}
+};
 
-interface ComplianceAlert {
+type ComplianceAlert = {
   id: string;
   type: 'critical' | 'warning' | 'info';
   category: 'lgpd' | 'anvisa' | 'data_retention' | 'audit' | 'system';
@@ -105,7 +105,7 @@ interface ComplianceAlert {
   resolved_at?: string;
   action_required: boolean;
   responsible_team: string;
-}
+};
 
 // =====================================================
 // COMPLIANCE DASHBOARD COMPONENT
@@ -139,7 +139,6 @@ export default function ComplianceDashboard() {
       setMetrics(result.data.metrics);
       setError(null);
     } catch (err) {
-      console.error('❌ Error fetching compliance metrics:', err);
       setError(err instanceof Error ? err.message : 'Unknown error occurred');
     } finally {
       setLoading(false);
@@ -195,9 +194,7 @@ export default function ComplianceDashboard() {
       a.download = `compliance-metrics-${new Date().toISOString().split('T')[0]}.csv`;
       a.click();
       window.URL.revokeObjectURL(url);
-    } catch (error) {
-      console.error('Export failed:', error);
-    }
+    } catch (_error) {}
   };
 
   // 🔄 Loading state

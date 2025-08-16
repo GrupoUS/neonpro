@@ -22,7 +22,7 @@ import { type UploadConfig, UploadManager } from './uploads/upload-manager';
 /**
  * Main patient portal configuration
  */
-export interface PatientPortalConfig {
+export type PatientPortalConfig = {
   session: SessionConfig;
   dashboard: DashboardConfig;
   appointments: AppointmentConfig;
@@ -48,23 +48,23 @@ export interface PatientPortalConfig {
     accessibility: boolean;
     mobileOptimized: boolean;
   };
-}
+};
 
 /**
  * Patient portal initialization result
  */
-export interface PortalInitResult {
+export type PortalInitResult = {
   success: boolean;
   portalId: string;
   message: string;
   availableFeatures: string[];
   maintenanceMode?: boolean;
-}
+};
 
 /**
  * Patient portal health check
  */
-export interface PortalHealthCheck {
+export type PortalHealthCheck = {
   status: 'healthy' | 'degraded' | 'unhealthy';
   components: {
     database: 'up' | 'down';
@@ -74,7 +74,7 @@ export interface PortalHealthCheck {
   };
   responseTime: number;
   lastCheck: Date;
-}
+};
 
 /**
  * Main Patient Portal class that orchestrates all portal functionality

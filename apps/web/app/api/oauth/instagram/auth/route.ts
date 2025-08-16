@@ -67,8 +67,6 @@ export async function GET(request: NextRequest) {
       state: state.nonce,
     });
   } catch (error) {
-    console.error('Instagram OAuth initiation error:', error);
-
     return NextResponse.json(
       {
         error: 'Failed to initiate Instagram authentication',

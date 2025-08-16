@@ -54,8 +54,7 @@ export async function GET(request: NextRequest) {
         total_count: metrics.length,
       },
     });
-  } catch (error) {
-    console.error('Error fetching metrics:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to fetch metrics' },
       { status: 500 }
@@ -110,8 +109,7 @@ export async function POST(request: NextRequest) {
       data: { metric },
       message: 'Metric recorded successfully',
     });
-  } catch (error) {
-    console.error('Error recording metric:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to record metric' },
       { status: 500 }

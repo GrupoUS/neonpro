@@ -66,26 +66,20 @@ export const POST = withErrorMonitoring(async (request: NextRequest) => {
 // Example of manual Sentry usage in an API route
 export const GET = async (_request: NextRequest) => {
   return Sentry.withServerSideSentry(async () => {
-    try {
-      // Add breadcrumb for debugging
-      Sentry.addBreadcrumb({
-        message: 'Processing GET request to sentry-integration',
-        level: 'info',
-        category: 'api',
-      });
+    // Add breadcrumb for debugging
+    Sentry.addBreadcrumb({
+      message: 'Processing GET request to sentry-integration',
+      level: 'info',
+      category: 'api',
+    });
 
-      // Simulate some work
-      const data = {
-        status: 'ok',
-        timestamp: new Date().toISOString(),
-        sentryTraceId: Sentry.getCurrentScope().getTransaction()?.traceId,
-      };
+    // Simulate some work
+    const data = {
+      status: 'ok',
+      timestamp: new Date().toISOString(),
+      sentryTraceId: Sentry.getCurrentScope().getTransaction()?.traceId,
+    };
 
-      return NextResponse.json(data);
-    } catch (error) {
-      // This error will be automatically captured by Sentry
-      console.error('Error in GET /api/example/sentry-integration:', error);
-      throw error;
-    }
+    return NextResponse.json(data);
   });
 };

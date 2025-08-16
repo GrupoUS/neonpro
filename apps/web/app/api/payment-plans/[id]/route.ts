@@ -79,8 +79,6 @@ export async function GET(
       },
     });
   } catch (error) {
-    console.error('Error fetching payment plan:', error);
-
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {
@@ -143,8 +141,6 @@ export async function PUT(
       message: 'Payment plan updated successfully',
     });
   } catch (error) {
-    console.error('Error updating payment plan:', error);
-
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {
@@ -232,8 +228,6 @@ export async function DELETE(
       message: 'Payment plan cancelled successfully',
     });
   } catch (error) {
-    console.error('Error cancelling payment plan:', error);
-
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {
@@ -357,8 +351,6 @@ export async function PATCH(
       message: `Action '${action}' completed successfully`,
     });
   } catch (error) {
-    console.error('Error performing payment plan action:', error);
-
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {

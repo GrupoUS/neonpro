@@ -4,9 +4,9 @@ import { type NextRequest, NextResponse } from 'next/server';
 import { TreatmentPredictionService } from '@/app/lib/services/treatment-prediction';
 import { createServerClient } from '@/app/utils/supabase/server';
 
-interface RouteParams {
+type RouteParams = {
   params: { id: string };
-}
+};
 
 // PUT /api/treatment-prediction/models/[id] - Update model
 export async function PUT(request: NextRequest, { params }: RouteParams) {
@@ -43,8 +43,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       model,
       message: 'Prediction model updated successfully',
     });
-  } catch (error) {
-    console.error('Error updating prediction model:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to update prediction model' },
       { status: 500 }
@@ -108,8 +107,7 @@ export async function DELETE(_request: NextRequest, { params }: RouteParams) {
     return NextResponse.json({
       message: 'Prediction model deleted successfully',
     });
-  } catch (error) {
-    console.error('Error deleting prediction model:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to delete prediction model' },
       { status: 500 }

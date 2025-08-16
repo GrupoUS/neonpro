@@ -85,8 +85,6 @@ export async function GET(request: NextRequest) {
       data: privacyControls,
     });
   } catch (error) {
-    console.error('Get privacy controls error:', error);
-
     return NextResponse.json(
       {
         error: 'Failed to get privacy controls',
@@ -171,8 +169,6 @@ export async function PUT(request: NextRequest) {
       data: updatedControls,
     });
   } catch (error) {
-    console.error('Update privacy controls error:', error);
-
     return NextResponse.json(
       {
         error: 'Failed to update privacy controls',
@@ -235,8 +231,6 @@ export async function DELETE(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('Delete photo error:', error);
-
     return NextResponse.json(
       {
         error: 'Failed to delete photo',

@@ -28,8 +28,7 @@ export async function GET(request: NextRequest) {
       customizations,
       success: true,
     });
-  } catch (error) {
-    console.error('Error fetching protocol customizations:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to fetch protocol customizations', success: false },
       { status: 500 }
@@ -70,8 +69,7 @@ export async function POST(request: NextRequest) {
       },
       { status: 201 }
     );
-  } catch (error) {
-    console.error('Error creating protocol customization:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to create protocol customization', success: false },
       { status: 500 }

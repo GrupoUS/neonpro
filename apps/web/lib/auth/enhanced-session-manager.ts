@@ -7,23 +7,23 @@ import { createClient } from '@/app/utils/supabase/client';
 import { performanceTracker } from './performance-tracker';
 import { sessionManager } from './session-manager';
 
-export interface SecureTokenStorage {
+export type SecureTokenStorage = {
   accessToken: string;
   refreshToken: string;
   expiresAt: number;
   tokenType: 'bearer';
   scope: string;
   provider: 'google' | 'email';
-}
+};
 
-export interface SessionTimeout {
+export type SessionTimeout = {
   idleTimeout: number; // Minutes of inactivity before logout
   absoluteTimeout: number; // Maximum session duration in minutes
   warningThreshold: number; // Minutes before timeout to show warning
   lastActivity: number; // Timestamp of last user activity
-}
+};
 
-export interface SessionActivity {
+export type SessionActivity = {
   sessionId: string;
   userId: string;
   action: string;
@@ -32,7 +32,7 @@ export interface SessionActivity {
   ipAddress: string;
   userAgent: string;
   riskScore: number;
-}
+};
 
 class EnhancedSessionManager {
   private static instance: EnhancedSessionManager;
@@ -74,7 +74,6 @@ class EnhancedSessionManager {
       });
 
       if (error) {
-        console.error('Token storage error:', error);
         return false;
       }
 
@@ -89,8 +88,7 @@ class EnhancedSessionManager {
         Date.now() - startTime
       );
       return true;
-    } catch (error) {
-      console.error('Secure token storage failed:', error);
+    } catch (_error) {
       return false;
     }
   }
@@ -125,8 +123,7 @@ class EnhancedSessionManager {
         Date.now() - startTime
       );
       return tokens;
-    } catch (error) {
-      console.error('Token retrieval failed:', error);
+    } catch (_error) {
       return null;
     }
   }
@@ -223,9 +220,7 @@ class EnhancedSessionManager {
 
       // Notify session manager
       await sessionManager.manageConcurrentSessions('', sessionId);
-    } catch (error) {
-      console.error('Force session timeout failed:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -264,8 +259,7 @@ class EnhancedSessionManager {
 
       performanceTracker.recordMetric('secure_logout', Date.now() - startTime);
       return true;
-    } catch (error) {
-      console.error('Secure logout failed:', error);
+    } catch (_error) {
       return false;
     }
   }
@@ -306,9 +300,7 @@ class EnhancedSessionManager {
 
       // Use existing session manager for general concurrent session management
       await sessionManager.manageConcurrentSessions(userId, '');
-    } catch (error) {
-      console.error('Concurrent session monitoring failed:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -382,9 +374,7 @@ class EnhancedSessionManager {
       const supabase = await createClient();
 
       await supabase.from('secure_tokens').delete().eq('session_id', sessionId);
-    } catch (error) {
-      console.error('Token invalidation failed:', error);
-    }
+    } catch (_error) {}
   }
 
   private async revokeOAuthTokens(sessionId: string): Promise<void> {
@@ -404,11 +394,8 @@ class EnhancedSessionManager {
       });
 
       if (!response.ok) {
-        console.warn('OAuth token revocation failed:', response.status);
       }
-    } catch (error) {
-      console.error('OAuth token revocation error:', error);
-    }
+    } catch (_error) {}
   }
 
   private detectSuspiciousActivity(_deviceInfo: any): boolean {
@@ -431,9 +418,7 @@ class EnhancedSessionManager {
         user_agent: activity.userAgent,
         risk_score: activity.riskScore,
       });
-    } catch (error) {
-      console.error('Session activity logging failed:', error);
-    }
+    } catch (_error) {}
   }
 
   private async logSecurityEvent(
@@ -450,9 +435,7 @@ class EnhancedSessionManager {
         metadata,
         timestamp: new Date().toISOString(),
       });
-    } catch (error) {
-      console.error('Security event logging failed:', error);
-    }
+    } catch (_error) {}
   }
 }
 

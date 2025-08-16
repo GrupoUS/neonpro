@@ -22,8 +22,7 @@ export async function POST(request: NextRequest) {
         });
 
         return NextResponse.json(options);
-      } catch (error) {
-        console.error('WebAuthn authentication options error:', error);
+      } catch (_error) {
         return NextResponse.json(
           { error: 'Failed to generate authentication options' },
           { status: 500 }

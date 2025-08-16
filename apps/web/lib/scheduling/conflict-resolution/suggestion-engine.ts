@@ -14,7 +14,7 @@ type Room = Tables['rooms']['Row'];
 type Equipment = Tables['equipment']['Row'];
 
 // Tipos para sugestões
-export interface ResolutionSuggestion {
+export type ResolutionSuggestion = {
   id: string;
   type: SuggestionType;
   priority: 'low' | 'medium' | 'high' | 'critical';
@@ -26,49 +26,49 @@ export interface ResolutionSuggestion {
   confidence: number; // 0-100
   autoApplicable: boolean;
   conflictIds: string[];
-}
+};
 
-export interface SuggestionImpact {
+export type SuggestionImpact = {
   resolvedConflicts: number;
   affectedAppointments: string[];
   resourceChanges: ResourceChange[];
   timeChanges: TimeChange[];
   costImpact: number; // em reais
-}
+};
 
-export interface ResourceChange {
+export type ResourceChange = {
   resourceId: string;
   resourceType: 'staff' | 'room' | 'equipment';
   changeType: 'reassign' | 'substitute' | 'add' | 'remove';
   from?: string;
   to?: string;
   reason: string;
-}
+};
 
-export interface TimeChange {
+export type TimeChange = {
   appointmentId: string;
   originalStart: Date;
   originalEnd: Date;
   suggestedStart: Date;
   suggestedEnd: Date;
   reason: string;
-}
+};
 
-export interface SuggestionImplementation {
+export type SuggestionImplementation = {
   steps: ImplementationStep[];
   requiredApprovals: string[];
   automationLevel: 'manual' | 'semi-auto' | 'full-auto';
   rollbackPlan: string[];
-}
+};
 
-export interface ImplementationStep {
+export type ImplementationStep = {
   order: number;
   action: string;
   description: string;
   automated: boolean;
   estimatedDuration: number;
   dependencies: string[];
-}
+};
 
 export enum SuggestionType {
   RESCHEDULE_APPOINTMENT = 'reschedule_appointment',
@@ -82,7 +82,7 @@ export enum SuggestionType {
   OPTIMIZE_SCHEDULE = 'optimize_schedule',
 }
 
-export interface SuggestionConfig {
+export type SuggestionConfig = {
   enableAutoSuggestions: boolean;
   maxSuggestionsPerConflict: number;
   prioritizePatientPreference: boolean;
@@ -91,7 +91,7 @@ export interface SuggestionConfig {
   maxRescheduleDistance: number; // dias
   minConfidenceThreshold: number; // 0-100
   enableCostOptimization: boolean;
-}
+};
 
 /**
  * Engine de Sugestões Automatizadas

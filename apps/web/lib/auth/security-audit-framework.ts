@@ -2,7 +2,7 @@ import { createClient } from '@/app/utils/supabase/client';
 import { createClient as createServerClient } from '@/app/utils/supabase/server';
 import { performanceTracker } from './performance-tracker';
 
-export interface SecurityEvent {
+export type SecurityEvent = {
   id: string;
   eventType:
     | 'authentication'
@@ -20,9 +20,9 @@ export interface SecurityEvent {
   timestamp: Date;
   ipAddress: string;
   userAgent: string;
-}
+};
 
-export interface ComplianceReport {
+export type ComplianceReport = {
   period: { start: Date; end: Date };
   lgpdCompliance: {
     dataAccessRequests: number;
@@ -42,9 +42,9 @@ export interface ComplianceReport {
     highRiskEvents: SecurityEvent[];
     recommendations: string[];
   };
-}
+};
 
-export interface AuditConfig {
+export type AuditConfig = {
   enableRealTimeAlerts: boolean;
   alertThresholds: {
     failedLoginAttempts: number;
@@ -54,7 +54,7 @@ export interface AuditConfig {
   retentionPeriodDays: number;
   complianceReportingEnabled: boolean;
   anonymizePII: boolean;
-}
+};
 
 class SecurityAuditFramework {
   private static instance: SecurityAuditFramework;
@@ -115,7 +115,6 @@ class SecurityAuditFramework {
       });
 
       if (error) {
-        console.error('Security event logging error:', error);
         return;
       }
 
@@ -131,9 +130,7 @@ class SecurityAuditFramework {
         'security_event_logging',
         Date.now() - startTime
       );
-    } catch (error) {
-      console.error('Security audit framework error:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -164,9 +161,7 @@ class SecurityAuditFramework {
       if (event.eventType === 'configuration') {
         await this.alertConfigurationChange(event);
       }
-    } catch (error) {
-      console.error('Threat detection error:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -204,9 +199,7 @@ class SecurityAuditFramework {
           metadata: { ipAddress, userId, failedAttempts },
         });
       }
-    } catch (error) {
-      console.error('Failed login threshold check error:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -242,9 +235,7 @@ class SecurityAuditFramework {
           metadata: { ipAddress, suspiciousEvents },
         });
       }
-    } catch (error) {
-      console.error('Suspicious IP activity check error:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -285,9 +276,7 @@ class SecurityAuditFramework {
           metadata: { userId, ipAddress, dataAccessCount },
         });
       }
-    } catch (error) {
-      console.error('Data access pattern check error:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -329,14 +318,7 @@ class SecurityAuditFramework {
         timestamp: new Date().toISOString(),
         status: 'open',
       });
-
-      // Send real-time notification (placeholder for integration with notification system)
-      console.warn(
-        `SECURITY ALERT [${alert.severity.toUpperCase()}]: ${alert.message}`
-      );
-    } catch (error) {
-      console.error('Security alert trigger error:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -378,9 +360,7 @@ class SecurityAuditFramework {
           description: 'Access to data beyond retention period',
         });
       }
-    } catch (error) {
-      console.error('Compliance violation check error:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -416,9 +396,7 @@ class SecurityAuditFramework {
           userId: violation.event.userId,
         },
       });
-    } catch (error) {
-      console.error('Compliance violation logging error:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -428,56 +406,51 @@ class SecurityAuditFramework {
     start: Date;
     end: Date;
   }): Promise<ComplianceReport> {
-    try {
-      const supabase = await createServerClient();
+    const supabase = await createServerClient();
 
-      // Get LGPD-related metrics
-      const lgpdMetrics = await this.getLGPDMetrics(period);
+    // Get LGPD-related metrics
+    const lgpdMetrics = await this.getLGPDMetrics(period);
 
-      // Get security metrics
-      const securityMetrics = await this.getSecurityMetrics(period);
+    // Get security metrics
+    const securityMetrics = await this.getSecurityMetrics(period);
 
-      // Get high-risk events
-      const { data: highRiskEvents, error } = await supabase
-        .from('security_audit_log')
-        .select('*')
-        .in('severity', ['high', 'critical'])
-        .gte('timestamp', period.start.toISOString())
-        .lte('timestamp', period.end.toISOString())
-        .order('timestamp', { ascending: false });
+    // Get high-risk events
+    const { data: highRiskEvents, error } = await supabase
+      .from('security_audit_log')
+      .select('*')
+      .in('severity', ['high', 'critical'])
+      .gte('timestamp', period.start.toISOString())
+      .lte('timestamp', period.end.toISOString())
+      .order('timestamp', { ascending: false });
 
-      if (error) {
-        throw error;
-      }
-
-      // Calculate overall risk score
-      const overallRiskScore = this.calculateRiskScore(
-        securityMetrics,
-        highRiskEvents || []
-      );
-
-      // Generate recommendations
-      const recommendations = this.generateRecommendations(
-        securityMetrics,
-        highRiskEvents || []
-      );
-
-      return {
-        period,
-        lgpdCompliance: lgpdMetrics,
-        securityMetrics,
-        riskAssessment: {
-          overallRiskScore,
-          highRiskEvents: (highRiskEvents || []).map(
-            this.mapDatabaseEventToSecurityEvent
-          ),
-          recommendations,
-        },
-      };
-    } catch (error) {
-      console.error('Compliance report generation error:', error);
+    if (error) {
       throw error;
     }
+
+    // Calculate overall risk score
+    const overallRiskScore = this.calculateRiskScore(
+      securityMetrics,
+      highRiskEvents || []
+    );
+
+    // Generate recommendations
+    const recommendations = this.generateRecommendations(
+      securityMetrics,
+      highRiskEvents || []
+    );
+
+    return {
+      period,
+      lgpdCompliance: lgpdMetrics,
+      securityMetrics,
+      riskAssessment: {
+        overallRiskScore,
+        highRiskEvents: (highRiskEvents || []).map(
+          this.mapDatabaseEventToSecurityEvent
+        ),
+        recommendations,
+      },
+    };
   }
 
   /**
@@ -513,8 +486,7 @@ class SecurityAuditFramework {
           (e) => e.action === 'breach_notification'
         ).length,
       };
-    } catch (error) {
-      console.error('LGPD metrics error:', error);
+    } catch (_error) {
       return {
         dataAccessRequests: 0,
         dataExportRequests: 0,
@@ -556,8 +528,7 @@ class SecurityAuditFramework {
           (e) => e.event_type === 'security_scan'
         ).length,
       };
-    } catch (error) {
-      console.error('Security metrics error:', error);
+    } catch (_error) {
       return {
         failedLoginAttempts: 0,
         suspiciousActivities: 0,

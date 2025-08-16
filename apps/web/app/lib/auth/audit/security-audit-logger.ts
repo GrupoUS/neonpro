@@ -48,7 +48,7 @@ export enum RiskLevel {
   CRITICAL = 'critical',
 }
 
-export interface AuditEvent {
+export type AuditEvent = {
   id: string;
   type: AuditEventType;
   severity: AuditSeverity;
@@ -68,9 +68,9 @@ export interface AuditEvent {
     coordinates?: [number, number];
   };
   metadata?: Record<string, any>;
-}
+};
 
-export interface SecurityMetrics {
+export type SecurityMetrics = {
   totalEvents: number;
   successfulLogins: number;
   failedLogins: number;
@@ -80,9 +80,9 @@ export interface SecurityMetrics {
   uniqueIPs: number;
   riskDistribution: Record<RiskLevel, number>;
   timeRangeHours: number;
-}
+};
 
-export interface SuspiciousPattern {
+export type SuspiciousPattern = {
   pattern: string;
   description: string;
   riskLevel: RiskLevel;
@@ -92,7 +92,7 @@ export interface SuspiciousPattern {
     start: number;
     end: number;
   };
-}
+};
 
 // Suspicious activity patterns
 const SUSPICIOUS_PATTERNS = {
@@ -173,9 +173,7 @@ class SecurityAuditLogger {
 
       // Detect suspicious patterns in real-time
       await this.detectSuspiciousActivity(event);
-    } catch (error) {
-      console.error('Error logging audit event:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -319,8 +317,7 @@ class SecurityAuditLogger {
       };
 
       return metrics;
-    } catch (error) {
-      console.error('Error getting security metrics:', error);
+    } catch (_error) {
       return this.getEmptyMetrics(hoursBack);
     }
   }
@@ -414,9 +411,7 @@ class SecurityAuditLogger {
           await this.sendSecurityAlert(pattern);
         }
       }
-    } catch (error) {
-      console.error('Error detecting suspicious activity:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -471,8 +466,7 @@ class SecurityAuditLogger {
       if (process.env.NODE_ENV === 'production') {
         await this.sendToMonitoringService(eventsToProcess);
       }
-    } catch (error) {
-      console.error('Error processing event queue:', error);
+    } catch (_error) {
       // Re-queue events if processing failed
       this.eventQueue.unshift(...eventsToProcess);
     } finally {
@@ -709,22 +703,16 @@ class SecurityAuditLogger {
     return recommendations;
   }
 
-  private async sendSecurityAlert(pattern: SuspiciousPattern): Promise<void> {
-    console.warn('ALERTA DE SEGURANÇA:', pattern);
-
+  private async sendSecurityAlert(_pattern: SuspiciousPattern): Promise<void> {
     // In production, send to security team
     // - Email alerts
     // - Slack notifications
     // - Security dashboard
   }
 
-  private async sendToMonitoringService(events: AuditEvent[]): Promise<void> {
+  private async sendToMonitoringService(_events: AuditEvent[]): Promise<void> {
     try {
-      // Send to monitoring service (Sentry, DataDog, etc.)
-      console.log('Sending events to monitoring:', events.length);
-    } catch (error) {
-      console.error('Failed to send events to monitoring:', error);
-    }
+    } catch (_error) {}
   }
 }
 

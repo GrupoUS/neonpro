@@ -1,7 +1,7 @@
 // lib/types/accounts-payable.ts
 // TypeScript interfaces for Accounts Payable system
 
-export interface Vendor {
+export type Vendor = {
   id: string;
   vendor_code: string;
   company_name: string;
@@ -62,9 +62,9 @@ export interface Vendor {
   deleted_at?: string;
   deleted_by?: string;
   deleted_reason?: string;
-}
+};
 
-export interface ExpenseCategory {
+export type ExpenseCategory = {
   id: string;
   category_code: string;
   category_name: string;
@@ -76,9 +76,9 @@ export interface ExpenseCategory {
   updated_at: string;
   created_by?: string;
   updated_by?: string;
-}
+};
 
-export interface AccountsPayable {
+export type AccountsPayable = {
   id: string;
   ap_number: string;
 
@@ -144,9 +144,9 @@ export interface AccountsPayable {
   deleted_at?: string;
   deleted_by?: string;
   deleted_reason?: string;
-}
+};
 
-export interface PaymentSchedule {
+export type PaymentSchedule = {
   id: string;
   vendor_id?: string;
   vendor?: Vendor;
@@ -175,9 +175,9 @@ export interface PaymentSchedule {
   updated_at: string;
   created_by?: string;
   updated_by?: string;
-}
+};
 
-export interface APPayment {
+export type APPayment = {
   id: string;
   payment_number: string;
 
@@ -214,9 +214,9 @@ export interface APPayment {
   updated_at: string;
   created_by?: string;
   updated_by?: string;
-}
+};
 
-export interface APDocument {
+export type APDocument = {
   id: string;
 
   // Links to related records
@@ -243,10 +243,10 @@ export interface APDocument {
   // Audit fields
   created_at: string;
   uploaded_by: string;
-}
+};
 
 // Form interfaces
-export interface VendorFormData {
+export type VendorFormData = {
   vendor_code: string;
   company_name: string;
   legal_name?: string;
@@ -274,9 +274,9 @@ export interface VendorFormData {
   is_active: boolean;
   requires_approval: boolean;
   tax_exempt: boolean;
-}
+};
 
-export interface AccountsPayableFormData {
+export type AccountsPayableFormData = {
   vendor_id: string;
   expense_category_id: string;
   invoice_number?: string;
@@ -292,29 +292,29 @@ export interface AccountsPayableFormData {
   priority: string;
   description?: string;
   notes?: string;
-}
+};
 
 // API Response types
-export interface VendorsResponse {
+export type VendorsResponse = {
   vendors: Vendor[];
   total: number;
-}
+};
 
-export interface AccountsPayableResponse {
+export type AccountsPayableResponse = {
   accounts_payable: AccountsPayable[];
   total: number;
-}
+};
 
 // Filter types
-export interface VendorFilters {
+export type VendorFilters = {
   search?: string;
   vendor_type?: string;
   is_active?: boolean;
   payment_method?: string;
   requires_approval?: boolean;
-}
+};
 
-export interface AccountsPayableFilters {
+export type AccountsPayableFilters = {
   search?: string;
   vendor_id?: string;
   status?: string;
@@ -323,4 +323,4 @@ export interface AccountsPayableFilters {
   due_date_from?: string;
   due_date_to?: string;
   overdue_only?: boolean;
-}
+};

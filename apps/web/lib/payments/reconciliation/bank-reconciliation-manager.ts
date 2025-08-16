@@ -89,7 +89,7 @@ export type BankTransaction = z.infer<typeof BankTransactionSchema>;
 export type ReconciliationRule = z.infer<typeof ReconciliationRuleSchema>;
 export type Discrepancy = z.infer<typeof DiscrepancySchema>;
 
-export interface ReconciliationSummary {
+export type ReconciliationSummary = {
   statement_id: string;
   total_transactions: number;
   matched_transactions: number;
@@ -99,24 +99,24 @@ export interface ReconciliationSummary {
   reconciliation_percentage: number;
   balance_difference: number;
   last_reconciled_at: string;
-}
+};
 
-export interface MatchingResult {
+export type MatchingResult = {
   transaction_id: string;
   payment_id: string | null;
   confidence_score: number;
   matching_criteria: string[];
   auto_matched: boolean;
-}
+};
 
-export interface ImportResult {
+export type ImportResult = {
   statement_id: string;
   total_transactions: number;
   imported_transactions: number;
   failed_transactions: number;
   errors: string[];
   warnings: string[];
-}
+};
 
 /**
  * Bank Reconciliation Manager
@@ -322,8 +322,7 @@ export class BankReconciliationManager {
       }
 
       return bestMatch;
-    } catch (error) {
-      console.error('Error finding matching payment:', error);
+    } catch (_error) {
       return null;
     }
   }
@@ -516,7 +515,6 @@ export class BankReconciliationManager {
           .insert(discrepancies);
 
         if (discError) {
-          console.error('Failed to save discrepancies:', discError);
         }
       }
 

@@ -123,8 +123,7 @@ export async function GET(request: NextRequest) {
       data: stats,
       movements: includeHistory ? generalStats : [],
     });
-  } catch (error) {
-    console.error('Patient Integration Error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -223,8 +222,7 @@ export async function POST(request: NextRequest) {
       newQuantity,
       alertGenerated: newQuantity <= stockItem.min_threshold,
     });
-  } catch (error) {
-    console.error('Patient Stock Usage Error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

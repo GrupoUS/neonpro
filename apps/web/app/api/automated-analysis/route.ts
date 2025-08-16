@@ -48,7 +48,6 @@ export async function GET(request: NextRequest) {
       count: sessions.length,
     });
   } catch (error) {
-    console.error('Error fetching analysis sessions:', error);
     return NextResponse.json(
       {
         error: 'Failed to fetch analysis sessions',
@@ -90,7 +89,6 @@ export async function POST(request: NextRequest) {
       { status: 201 }
     );
   } catch (error) {
-    console.error('Error creating analysis session:', error);
     return NextResponse.json(
       {
         error: 'Failed to create analysis session',
@@ -139,7 +137,6 @@ export async function PUT(request: NextRequest) {
       message: 'Analysis session updated successfully',
     });
   } catch (error) {
-    console.error('Error updating analysis session:', error);
     return NextResponse.json(
       {
         error: 'Failed to update analysis session',
@@ -179,7 +176,6 @@ export async function DELETE(request: NextRequest) {
       message: 'Analysis session deleted successfully',
     });
   } catch (error) {
-    console.error('Error deleting analysis session:', error);
     return NextResponse.json(
       {
         error: 'Failed to delete analysis session',

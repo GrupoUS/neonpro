@@ -90,7 +90,6 @@ export async function GET(request: NextRequest) {
     const { data: alerts, error } = await query;
 
     if (error) {
-      console.error('Error fetching alerts:', error);
       return NextResponse.json(
         { error: 'Failed to fetch alerts' },
         { status: 500 }
@@ -117,8 +116,6 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(transformedAlerts);
   } catch (error) {
-    console.error('Error in alerts API:', error);
-
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Invalid parameters', details: error.errors },
@@ -187,7 +184,6 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (error) {
-      console.error('Error creating alert:', error);
       return NextResponse.json(
         { error: 'Failed to create alert' },
         { status: 500 }
@@ -213,8 +209,6 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(transformedAlert, { status: 201 });
   } catch (error) {
-    console.error('Error in create alert API:', error);
-
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Invalid alert data', details: error.errors },
@@ -255,7 +249,6 @@ export async function PATCH(request: NextRequest) {
         .eq('is_read', false);
 
       if (error) {
-        console.error('Error marking all alerts as read:', error);
         return NextResponse.json(
           { error: 'Failed to mark alerts as read' },
           { status: 500 }
@@ -266,8 +259,7 @@ export async function PATCH(request: NextRequest) {
     }
 
     return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
-  } catch (error) {
-    console.error('Error in alerts PATCH API:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

@@ -61,8 +61,7 @@ export async function GET(request: NextRequest) {
       filters,
       timestamp: new Date().toISOString(),
     });
-  } catch (error) {
-    console.error('Error in campaigns GET:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -120,8 +119,7 @@ export async function POST(request: NextRequest) {
       },
       { status: 201 }
     );
-  } catch (error) {
-    console.error('Error in campaigns POST:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

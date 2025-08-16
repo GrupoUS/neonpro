@@ -6,12 +6,12 @@
 import { type NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/app/utils/supabase/server';
 
-interface EmailDomainMapping {
+type EmailDomainMapping = {
   domain: string;
   default_role: 'admin' | 'doctor' | 'nurse' | 'staff' | 'professional';
   department?: string;
   auto_approve: boolean;
-}
+};
 
 // Configuration for email domain to professional role mapping
 const EMAIL_DOMAIN_MAPPINGS: EmailDomainMapping[] = [
@@ -99,7 +99,6 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (profileError && profileError.code !== 'PGRST116') {
-      console.error('Profile lookup error:', profileError);
       return NextResponse.json(
         { error: 'Profile lookup failed', message: profileError.message },
         { status: 500 }
@@ -141,7 +140,6 @@ export async function POST(request: NextRequest) {
         .single();
 
       if (updateError) {
-        console.error('Profile update error:', updateError);
         return NextResponse.json(
           { error: 'Mapping failed', message: updateError.message },
           { status: 500 }
@@ -163,7 +161,6 @@ export async function POST(request: NextRequest) {
         .single();
 
       if (createError) {
-        console.error('Profile creation error:', createError);
         return NextResponse.json(
           { error: 'Mapping failed', message: createError.message },
           { status: 500 }
@@ -200,8 +197,7 @@ export async function POST(request: NextRequest) {
       },
       profile,
     });
-  } catch (error) {
-    console.error('Profile mapping API error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error', message: 'Profile mapping failed' },
       { status: 500 }
@@ -250,8 +246,7 @@ export async function GET(request: NextRequest) {
       existing_profile: existingProfile || null,
       available_roles: ['admin', 'doctor', 'nurse', 'staff', 'professional'],
     });
-  } catch (error) {
-    console.error('Profile mapping GET error:', error);
+  } catch (_error) {
     return NextResponse.json(
       {
         error: 'Internal server error',

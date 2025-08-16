@@ -31,7 +31,6 @@ export async function GET(
       data: followup,
     });
   } catch (error) {
-    console.error('Error fetching patient follow-up:', error);
     return NextResponse.json(
       {
         success: false,
@@ -75,8 +74,6 @@ export async function PUT(
         { status: 400 }
       );
     }
-
-    console.error('Error updating patient follow-up:', error);
     return NextResponse.json(
       {
         success: false,

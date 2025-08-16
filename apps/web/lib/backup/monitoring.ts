@@ -26,7 +26,7 @@ import {
 /**
  * Interface para métricas em tempo real
  */
-interface RealTimeMetrics {
+type RealTimeMetrics = {
   activeBackups: number;
   queuedBackups: number;
   failedBackups: number;
@@ -34,7 +34,7 @@ interface RealTimeMetrics {
   averageBackupTime: number;
   successRate: number;
   lastUpdate: Date;
-}
+};
 
 /**
  * Serviço de monitoramento de backups
@@ -99,8 +99,6 @@ export class MonitoringService {
       this.monitoringInterval = setInterval(() => {
         this.performHealthCheck();
       }, this.config.checkInterval);
-
-      console.log('Monitoramento de backup iniciado');
     }
   }
 
@@ -111,7 +109,6 @@ export class MonitoringService {
     if (this.monitoringInterval) {
       clearInterval(this.monitoringInterval);
       this.monitoringInterval = undefined;
-      console.log('Monitoramento de backup parado');
     }
   }
 
@@ -126,104 +123,98 @@ export class MonitoringService {
     startDate?: Date,
     endDate?: Date
   ): Promise<BackupMetrics> {
-    try {
-      const start =
-        startDate || new Date(Date.now() - 30 * 24 * 60 * 60 * 1000); // 30 dias
-      const end = endDate || new Date();
+    const start = startDate || new Date(Date.now() - 30 * 24 * 60 * 60 * 1000); // 30 dias
+    const end = endDate || new Date();
 
-      // Buscar backups no período
-      const { data: backups, error } = await this.supabase
-        .from('backup_records')
-        .select('*')
-        .gte('startTime', start.toISOString())
-        .lte('startTime', end.toISOString())
-        .order('startTime', { ascending: false });
+    // Buscar backups no período
+    const { data: backups, error } = await this.supabase
+      .from('backup_records')
+      .select('*')
+      .gte('startTime', start.toISOString())
+      .lte('startTime', end.toISOString())
+      .order('startTime', { ascending: false });
 
-      if (error) {
-        throw error;
-      }
-
-      const records = backups || [];
-      const totalBackups = records.length;
-      const successfulBackups = records.filter(
-        (b) => b.status === BackupStatus.COMPLETED
-      ).length;
-      const failedBackups = records.filter(
-        (b) => b.status === BackupStatus.FAILED
-      ).length;
-      const totalSize = records.reduce((sum, b) => sum + (b.size || 0), 0);
-      const totalDuration = records
-        .filter((b) => b.duration)
-        .reduce((sum, b) => sum + b.duration, 0);
-
-      // Calcular métricas
-      const successRate =
-        totalBackups > 0 ? (successfulBackups / totalBackups) * 100 : 100;
-      const averageSize = totalBackups > 0 ? totalSize / totalBackups : 0;
-      const averageDuration =
-        records.filter((b) => b.duration).length > 0
-          ? totalDuration / records.filter((b) => b.duration).length
-          : 0;
-
-      // Backup mais recente
-      const lastBackup =
-        records.length > 0 ? new Date(records[0].startTime) : null;
-
-      // Próximo backup agendado
-      const { data: nextScheduled } = await this.supabase
-        .from('scheduled_tasks')
-        .select('nextRun')
-        .eq('status', 'SCHEDULED')
-        .order('nextRun', { ascending: true })
-        .limit(1)
-        .single();
-
-      const nextBackup = nextScheduled ? new Date(nextScheduled.nextRun) : null;
-
-      // Tendências (comparar com período anterior)
-      const previousPeriod = new Date(
-        start.getTime() - (end.getTime() - start.getTime())
-      );
-      const { data: previousBackups } = await this.supabase
-        .from('backup_records')
-        .select('*')
-        .gte('startTime', previousPeriod.toISOString())
-        .lt('startTime', start.toISOString());
-
-      const previousTotal = previousBackups?.length || 0;
-      const previousSuccessful =
-        previousBackups?.filter((b) => b.status === BackupStatus.COMPLETED)
-          .length || 0;
-      const previousSuccessRate =
-        previousTotal > 0 ? (previousSuccessful / previousTotal) * 100 : 100;
-
-      const trends = {
-        backupCount: totalBackups - previousTotal,
-        successRate: successRate - previousSuccessRate,
-        averageSize: 0, // Calcular se necessário
-        averageDuration: 0, // Calcular se necessário
-      };
-
-      return {
-        totalBackups,
-        successfulBackups,
-        failedBackups,
-        successRate,
-        totalSize,
-        averageSize,
-        averageDuration,
-        lastBackup,
-        nextBackup,
-        trends,
-        period: {
-          start,
-          end,
-        },
-      };
-    } catch (error) {
-      console.error('Erro ao calcular métricas:', error);
+    if (error) {
       throw error;
     }
+
+    const records = backups || [];
+    const totalBackups = records.length;
+    const successfulBackups = records.filter(
+      (b) => b.status === BackupStatus.COMPLETED
+    ).length;
+    const failedBackups = records.filter(
+      (b) => b.status === BackupStatus.FAILED
+    ).length;
+    const totalSize = records.reduce((sum, b) => sum + (b.size || 0), 0);
+    const totalDuration = records
+      .filter((b) => b.duration)
+      .reduce((sum, b) => sum + b.duration, 0);
+
+    // Calcular métricas
+    const successRate =
+      totalBackups > 0 ? (successfulBackups / totalBackups) * 100 : 100;
+    const averageSize = totalBackups > 0 ? totalSize / totalBackups : 0;
+    const averageDuration =
+      records.filter((b) => b.duration).length > 0
+        ? totalDuration / records.filter((b) => b.duration).length
+        : 0;
+
+    // Backup mais recente
+    const lastBackup =
+      records.length > 0 ? new Date(records[0].startTime) : null;
+
+    // Próximo backup agendado
+    const { data: nextScheduled } = await this.supabase
+      .from('scheduled_tasks')
+      .select('nextRun')
+      .eq('status', 'SCHEDULED')
+      .order('nextRun', { ascending: true })
+      .limit(1)
+      .single();
+
+    const nextBackup = nextScheduled ? new Date(nextScheduled.nextRun) : null;
+
+    // Tendências (comparar com período anterior)
+    const previousPeriod = new Date(
+      start.getTime() - (end.getTime() - start.getTime())
+    );
+    const { data: previousBackups } = await this.supabase
+      .from('backup_records')
+      .select('*')
+      .gte('startTime', previousPeriod.toISOString())
+      .lt('startTime', start.toISOString());
+
+    const previousTotal = previousBackups?.length || 0;
+    const previousSuccessful =
+      previousBackups?.filter((b) => b.status === BackupStatus.COMPLETED)
+        .length || 0;
+    const previousSuccessRate =
+      previousTotal > 0 ? (previousSuccessful / previousTotal) * 100 : 100;
+
+    const trends = {
+      backupCount: totalBackups - previousTotal,
+      successRate: successRate - previousSuccessRate,
+      averageSize: 0, // Calcular se necessário
+      averageDuration: 0, // Calcular se necessário
+    };
+
+    return {
+      totalBackups,
+      successfulBackups,
+      failedBackups,
+      successRate,
+      totalSize,
+      averageSize,
+      averageDuration,
+      lastBackup,
+      nextBackup,
+      trends,
+      period: {
+        start,
+        end,
+      },
+    };
   }
 
   /**
@@ -316,9 +307,7 @@ export class MonitoringService {
         successRate,
         lastUpdate: new Date(),
       };
-    } catch (error) {
-      console.error('Erro ao atualizar métricas em tempo real:', error);
-    }
+    } catch (_error) {}
   }
 
   // ============================================================================
@@ -404,9 +393,7 @@ export class MonitoringService {
       };
 
       await notificationManager.send(notification);
-    } catch (error) {
-      console.error('Erro ao enviar notificação de alerta:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -450,9 +437,7 @@ export class MonitoringService {
 
       // Verificar backups antigos
       await this.checkStaleBackups();
-    } catch (error) {
-      console.error('Erro ao verificar condições de alerta:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -513,9 +498,7 @@ export class MonitoringService {
           }
         }
       }
-    } catch (error) {
-      console.error('Erro ao verificar backups antigos:', error);
-    }
+    } catch (_error) {}
   }
 
   // ============================================================================
@@ -593,7 +576,6 @@ export class MonitoringService {
         this.performanceHistory = this.performanceHistory.slice(-1000);
       }
     } catch (error) {
-      console.error('Erro no health check:', error);
       healthCheck.overall = 'UNHEALTHY';
       healthCheck.issues.push(`Erro interno: ${error.message}`);
     }
@@ -628,9 +610,7 @@ export class MonitoringService {
 
         await notificationManager.send(notification);
       }
-    } catch (error) {
-      console.error('Erro ao notificar sucesso de backup:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -665,9 +645,7 @@ export class MonitoringService {
         { backupId, configId: config.id, error: errorMessage },
         config.id
       );
-    } catch (error) {
-      console.error('Erro ao notificar falha de backup:', error);
-    }
+    } catch (_error) {}
   }
 
   // ============================================================================
@@ -791,7 +769,6 @@ export class MonitoringService {
   }
 
   private handleError(message: string, error: any): ApiResponse {
-    console.error(message, error);
     return {
       success: false,
       error: error.message || 'Erro interno do servidor',

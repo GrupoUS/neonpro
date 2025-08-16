@@ -14,7 +14,7 @@
 import { createClient } from '@supabase/supabase-js';
 import { SecurityAuditLogger } from './security-audit-logger';
 
-export interface DeviceSession {
+export type DeviceSession = {
   sessionId: string;
   userId: string;
   deviceId: string;
@@ -46,9 +46,9 @@ export interface DeviceSession {
     conflictResolution: 'manual' | 'latest_wins' | 'primary_wins';
   };
   metadata: Record<string, any>;
-}
+};
 
-export interface SyncEvent {
+export type SyncEvent = {
   eventId: string;
   sessionId: string;
   userId: string;
@@ -67,9 +67,9 @@ export interface SyncEvent {
   checksum: string;
   isProcessed: boolean;
   processingErrors?: string[];
-}
+};
 
-export interface SyncConflict {
+export type SyncConflict = {
   conflictId: string;
   sessionId: string;
   userId: string;
@@ -87,9 +87,9 @@ export interface SyncConflict {
   remoteData: Record<string, any>;
   resolvedData?: Record<string, any>;
   isResolved: boolean;
-}
+};
 
-export interface SyncStatistics {
+export type SyncStatistics = {
   totalSessions: number;
   activeSessions: number;
   devicesOnline: number;
@@ -100,9 +100,9 @@ export interface SyncStatistics {
   dataTransferred: number;
   lastSyncAt: Date;
   syncHealth: 'excellent' | 'good' | 'fair' | 'poor';
-}
+};
 
-export interface CrossDeviceSyncConfig {
+export type CrossDeviceSyncConfig = {
   enabled: boolean;
   syncInterval: number; // seconds
   maxRetries: number;
@@ -115,7 +115,7 @@ export interface CrossDeviceSyncConfig {
   batchSize: number;
   heartbeatInterval: number; // seconds
   timeoutThreshold: number; // seconds
-}
+};
 
 const DEFAULT_CONFIG: CrossDeviceSyncConfig = {
   enabled: true,
@@ -176,25 +176,18 @@ export class CrossDeviceSync {
    * Initialize cross-device synchronization
    */
   async initialize(): Promise<void> {
-    try {
-      // Load existing sessions
-      await this.loadActiveSessions();
+    // Load existing sessions
+    await this.loadActiveSessions();
 
-      // Set up real-time subscriptions
-      await this.setupRealtimeSubscriptions();
+    // Set up real-time subscriptions
+    await this.setupRealtimeSubscriptions();
 
-      // Start sync intervals
-      this.startSyncInterval();
-      this.startHeartbeatInterval();
+    // Start sync intervals
+    this.startSyncInterval();
+    this.startHeartbeatInterval();
 
-      // Process any pending sync events
-      await this.processPendingSyncEvents();
-
-      console.log('Cross-device synchronization initialized');
-    } catch (error) {
-      console.error('Failed to initialize cross-device sync:', error);
-      throw error;
-    }
+    // Process any pending sync events
+    await this.processPendingSyncEvents();
   }
 
   /**
@@ -206,58 +199,53 @@ export class CrossDeviceSync {
     deviceInfo: DeviceSession['deviceInfo'],
     preferences?: Partial<DeviceSession['preferences']>
   ): Promise<DeviceSession> {
-    try {
-      const deviceId = this.generateDeviceId(deviceInfo);
+    const deviceId = this.generateDeviceId(deviceInfo);
 
-      const session: DeviceSession = {
-        sessionId,
-        userId,
-        deviceId,
-        deviceInfo,
-        isActive: true,
-        isPrimary: await this.shouldBePrimaryDevice(userId, deviceId),
-        lastActivity: new Date(),
-        createdAt: new Date(),
-        expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000), // 24 hours
-        syncState: {
-          lastSyncAt: new Date(),
-          pendingChanges: 0,
-          conflictCount: 0,
-          isOnline: true,
-        },
-        preferences: {
-          notifications: true,
-          autoSync: true,
-          syncFrequency: this.config.syncInterval,
-          conflictResolution: this.config.conflictResolution,
-          ...preferences,
-        },
-        metadata: {},
-      };
+    const session: DeviceSession = {
+      sessionId,
+      userId,
+      deviceId,
+      deviceInfo,
+      isActive: true,
+      isPrimary: await this.shouldBePrimaryDevice(userId, deviceId),
+      lastActivity: new Date(),
+      createdAt: new Date(),
+      expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000), // 24 hours
+      syncState: {
+        lastSyncAt: new Date(),
+        pendingChanges: 0,
+        conflictCount: 0,
+        isOnline: true,
+      },
+      preferences: {
+        notifications: true,
+        autoSync: true,
+        syncFrequency: this.config.syncInterval,
+        conflictResolution: this.config.conflictResolution,
+        ...preferences,
+      },
+      metadata: {},
+    };
 
-      // Store session
-      await this.storeDeviceSession(session);
+    // Store session
+    await this.storeDeviceSession(session);
 
-      // Add to active sessions
-      this.activeSessions.set(sessionId, session);
+    // Add to active sessions
+    this.activeSessions.set(sessionId, session);
 
-      // Create sync event
-      await this.createSyncEvent({
-        sessionId,
-        userId,
-        deviceId,
-        eventType: 'session_created',
-        data: { session },
-      });
+    // Create sync event
+    await this.createSyncEvent({
+      sessionId,
+      userId,
+      deviceId,
+      eventType: 'session_created',
+      data: { session },
+    });
 
-      // Update statistics
-      this.updateStatistics();
+    // Update statistics
+    this.updateStatistics();
 
-      return session;
-    } catch (error) {
-      console.error('Failed to register device session:', error);
-      throw error;
-    }
+    return session;
   }
 
   /**
@@ -267,82 +255,72 @@ export class CrossDeviceSync {
     sessionId: string,
     updates: Partial<DeviceSession>
   ): Promise<DeviceSession> {
-    try {
-      const existingSession = this.activeSessions.get(sessionId);
-      if (!existingSession) {
-        throw new Error('Session not found');
-      }
-
-      const updatedSession: DeviceSession = {
-        ...existingSession,
-        ...updates,
-        lastActivity: new Date(),
-        syncState: {
-          ...existingSession.syncState,
-          pendingChanges: existingSession.syncState.pendingChanges + 1,
-        },
-      };
-
-      // Store updated session
-      await this.storeDeviceSession(updatedSession);
-
-      // Update active sessions
-      this.activeSessions.set(sessionId, updatedSession);
-
-      // Create sync event
-      await this.createSyncEvent({
-        sessionId,
-        userId: updatedSession.userId,
-        deviceId: updatedSession.deviceId,
-        eventType: 'session_updated',
-        data: { updates },
-      });
-
-      return updatedSession;
-    } catch (error) {
-      console.error('Failed to update device session:', error);
-      throw error;
+    const existingSession = this.activeSessions.get(sessionId);
+    if (!existingSession) {
+      throw new Error('Session not found');
     }
+
+    const updatedSession: DeviceSession = {
+      ...existingSession,
+      ...updates,
+      lastActivity: new Date(),
+      syncState: {
+        ...existingSession.syncState,
+        pendingChanges: existingSession.syncState.pendingChanges + 1,
+      },
+    };
+
+    // Store updated session
+    await this.storeDeviceSession(updatedSession);
+
+    // Update active sessions
+    this.activeSessions.set(sessionId, updatedSession);
+
+    // Create sync event
+    await this.createSyncEvent({
+      sessionId,
+      userId: updatedSession.userId,
+      deviceId: updatedSession.deviceId,
+      eventType: 'session_updated',
+      data: { updates },
+    });
+
+    return updatedSession;
   }
 
   /**
    * Terminate device session
    */
   async terminateDeviceSession(sessionId: string): Promise<void> {
-    try {
-      const session = this.activeSessions.get(sessionId);
-      if (!session) {
-        return;
-      }
-
-      // Mark session as inactive
-      const terminatedSession = {
-        ...session,
-        isActive: false,
-        lastActivity: new Date(),
-      };
-
-      // Store terminated session
-      await this.storeDeviceSession(terminatedSession);
-
-      // Remove from active sessions
-      this.activeSessions.delete(sessionId);
-
-      // Create sync event
-      await this.createSyncEvent({
-        sessionId,
-        userId: session.userId,
-        deviceId: session.deviceId,
-        eventType: 'session_terminated',
-        data: { terminatedAt: new Date() },
-      });
-
-      // Update statistics
-      this.updateStatistics();
-    } catch (error) {
-      console.error('Failed to terminate device session:', error);
-      throw error;
+    const session = this.activeSessions.get(sessionId);
+    if (!session) {
+      return;
     }
+
+    // Mark session as inactive
+    const terminatedSession = {
+      ...session,
+      isActive: false,
+      lastActivity: new Date(),
+    };
+
+    // Store terminated session
+    await this.storeDeviceSession(terminatedSession);
+
+    // Remove from active sessions
+    this.activeSessions.delete(sessionId);
+
+    // Create sync event
+    await this.createSyncEvent({
+      sessionId,
+      userId: session.userId,
+      deviceId: session.deviceId,
+      eventType: 'session_terminated',
+      data: { terminatedAt: new Date() },
+    });
+
+    // Update statistics
+    this.updateStatistics();
   }
 
   /**
@@ -352,31 +330,26 @@ export class CrossDeviceSync {
     sessionId: string,
     data: Record<string, any>
   ): Promise<void> {
-    try {
-      const session = this.activeSessions.get(sessionId);
-      if (!session) {
-        throw new Error('Session not found');
-      }
+    const session = this.activeSessions.get(sessionId);
+    if (!session) {
+      throw new Error('Session not found');
+    }
 
-      // Create sync event
-      const syncEvent = await this.createSyncEvent({
-        sessionId,
-        userId: session.userId,
-        deviceId: session.deviceId,
-        eventType: 'data_changed',
-        data,
-      });
+    // Create sync event
+    const syncEvent = await this.createSyncEvent({
+      sessionId,
+      userId: session.userId,
+      deviceId: session.deviceId,
+      eventType: 'data_changed',
+      data,
+    });
 
-      // Process sync event immediately if online
-      if (this.isOnline) {
-        await this.processSyncEvent(syncEvent);
-      } else {
-        // Queue for later processing
-        this.queueSyncEvent(sessionId, syncEvent);
-      }
-    } catch (error) {
-      console.error('Failed to sync session data:', error);
-      throw error;
+    // Process sync event immediately if online
+    if (this.isOnline) {
+      await this.processSyncEvent(syncEvent);
+    } else {
+      // Queue for later processing
+      this.queueSyncEvent(sessionId, syncEvent);
     }
   }
 
@@ -384,63 +357,53 @@ export class CrossDeviceSync {
    * Get user sessions across all devices
    */
   async getUserSessions(userId: string): Promise<DeviceSession[]> {
-    try {
-      const { data, error } = await this.supabase
-        .from('device_sessions')
-        .select('*')
-        .eq('user_id', userId)
-        .eq('is_active', true)
-        .order('last_activity', { ascending: false });
+    const { data, error } = await this.supabase
+      .from('device_sessions')
+      .select('*')
+      .eq('user_id', userId)
+      .eq('is_active', true)
+      .order('last_activity', { ascending: false });
 
-      if (error) {
-        throw new Error(`Failed to get user sessions: ${error.message}`);
-      }
-
-      return (data || []).map(this.mapDatabaseToSession);
-    } catch (error) {
-      console.error('Failed to get user sessions:', error);
-      throw error;
+    if (error) {
+      throw new Error(`Failed to get user sessions: ${error.message}`);
     }
+
+    return (data || []).map(this.mapDatabaseToSession);
   }
 
   /**
    * Set primary device for user
    */
   async setPrimaryDevice(userId: string, deviceId: string): Promise<void> {
-    try {
-      // Remove primary flag from all user devices
-      await this.supabase
-        .from('device_sessions')
-        .update({ is_primary: false })
-        .eq('user_id', userId);
+    // Remove primary flag from all user devices
+    await this.supabase
+      .from('device_sessions')
+      .update({ is_primary: false })
+      .eq('user_id', userId);
 
-      // Set new primary device
-      await this.supabase
-        .from('device_sessions')
-        .update({ is_primary: true })
-        .eq('user_id', userId)
-        .eq('device_id', deviceId);
+    // Set new primary device
+    await this.supabase
+      .from('device_sessions')
+      .update({ is_primary: true })
+      .eq('user_id', userId)
+      .eq('device_id', deviceId);
 
-      // Update active sessions
-      for (const [sessionId, session] of this.activeSessions) {
-        if (session.userId === userId) {
-          session.isPrimary = session.deviceId === deviceId;
-          this.activeSessions.set(sessionId, session);
-        }
+    // Update active sessions
+    for (const [sessionId, session] of this.activeSessions) {
+      if (session.userId === userId) {
+        session.isPrimary = session.deviceId === deviceId;
+        this.activeSessions.set(sessionId, session);
       }
-
-      // Log the change
-      await this.auditLogger.logSecurityEvent({
-        eventType: 'primary_device_changed',
-        userId,
-        metadata: {
-          newPrimaryDevice: deviceId,
-        },
-      });
-    } catch (error) {
-      console.error('Failed to set primary device:', error);
-      throw error;
     }
+
+    // Log the change
+    await this.auditLogger.logSecurityEvent({
+      eventType: 'primary_device_changed',
+      userId,
+      metadata: {
+        newPrimaryDevice: deviceId,
+      },
+    });
   }
 
   /**
@@ -451,63 +414,58 @@ export class CrossDeviceSync {
     toDeviceId: string,
     preserveState = true
   ): Promise<string> {
-    try {
-      const fromSession = this.activeSessions.get(fromSessionId);
-      if (!fromSession) {
-        throw new Error('Source session not found');
-      }
-
-      // Create new session on target device
-      const newSessionId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-
-      const handoffSession: DeviceSession = {
-        ...fromSession,
-        sessionId: newSessionId,
-        deviceId: toDeviceId,
-        createdAt: new Date(),
-        lastActivity: new Date(),
-        syncState: {
-          lastSyncAt: new Date(),
-          pendingChanges: 0,
-          conflictCount: 0,
-          isOnline: true,
-        },
-        metadata: {
-          ...fromSession.metadata,
-          handoffFrom: fromSessionId,
-          handoffAt: new Date().toISOString(),
-          statePreserved: preserveState,
-        },
-      };
-
-      // Store new session
-      await this.storeDeviceSession(handoffSession);
-
-      // Add to active sessions
-      this.activeSessions.set(newSessionId, handoffSession);
-
-      // Terminate old session if requested
-      if (!preserveState) {
-        await this.terminateDeviceSession(fromSessionId);
-      }
-
-      // Create sync event
-      await this.createSyncEvent({
-        sessionId: newSessionId,
-        userId: fromSession.userId,
-        deviceId: toDeviceId,
-        eventType: 'session_created',
-        data: {
-          handoffFrom: fromSessionId,
-          preserveState,
-        },
-      });
-
-      return newSessionId;
-    } catch (error) {
-      console.error('Failed to handoff session:', error);
-      throw error;
+    const fromSession = this.activeSessions.get(fromSessionId);
+    if (!fromSession) {
+      throw new Error('Source session not found');
     }
+
+    // Create new session on target device
+    const newSessionId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+
+    const handoffSession: DeviceSession = {
+      ...fromSession,
+      sessionId: newSessionId,
+      deviceId: toDeviceId,
+      createdAt: new Date(),
+      lastActivity: new Date(),
+      syncState: {
+        lastSyncAt: new Date(),
+        pendingChanges: 0,
+        conflictCount: 0,
+        isOnline: true,
+      },
+      metadata: {
+        ...fromSession.metadata,
+        handoffFrom: fromSessionId,
+        handoffAt: new Date().toISOString(),
+        statePreserved: preserveState,
+      },
+    };
+
+    // Store new session
+    await this.storeDeviceSession(handoffSession);
+
+    // Add to active sessions
+    this.activeSessions.set(newSessionId, handoffSession);
+
+    // Terminate old session if requested
+    if (!preserveState) {
+      await this.terminateDeviceSession(fromSessionId);
+    }
+
+    // Create sync event
+    await this.createSyncEvent({
+      sessionId: newSessionId,
+      userId: fromSession.userId,
+      deviceId: toDeviceId,
+      eventType: 'session_created',
+      data: {
+        handoffFrom: fromSessionId,
+        preserveState,
+      },
+    });
+
+    return newSessionId;
   }
 
   /**
@@ -518,84 +476,74 @@ export class CrossDeviceSync {
     resolution: 'use_local' | 'use_remote' | 'merge' | 'manual',
     resolvedData?: Record<string, any>
   ): Promise<void> {
-    try {
-      const { data: conflictData, error } = await this.supabase
-        .from('sync_conflicts')
-        .select('*')
-        .eq('conflict_id', conflictId)
-        .single();
+    const { data: conflictData, error } = await this.supabase
+      .from('sync_conflicts')
+      .select('*')
+      .eq('conflict_id', conflictId)
+      .single();
 
-      if (error) {
-        throw new Error(`Failed to get conflict: ${error.message}`);
-      }
-
-      const conflict = this.mapDatabaseToConflict(conflictData);
-      let finalData: Record<string, any>;
-
-      switch (resolution) {
-        case 'use_local':
-          finalData = conflict.localData;
-          break;
-        case 'use_remote':
-          finalData = conflict.remoteData;
-          break;
-        case 'merge':
-          finalData = { ...conflict.remoteData, ...conflict.localData };
-          break;
-        case 'manual':
-          if (!resolvedData) {
-            throw new Error('Resolved data required for manual resolution');
-          }
-          finalData = resolvedData;
-          break;
-        default:
-          throw new Error('Invalid resolution type');
-      }
-
-      // Update conflict as resolved
-      await this.supabase
-        .from('sync_conflicts')
-        .update({
-          is_resolved: true,
-          resolved_at: new Date().toISOString(),
-          resolution: 'manual',
-          resolution_strategy: resolution,
-          resolved_data: finalData,
-        })
-        .eq('conflict_id', conflictId);
-
-      // Apply resolved data
-      await this.syncSessionData(conflict.sessionId, finalData);
-
-      // Update statistics
-      this.syncStatistics.conflictsResolved++;
-    } catch (error) {
-      console.error('Failed to resolve sync conflict:', error);
-      throw error;
+    if (error) {
+      throw new Error(`Failed to get conflict: ${error.message}`);
     }
+
+    const conflict = this.mapDatabaseToConflict(conflictData);
+    let finalData: Record<string, any>;
+
+    switch (resolution) {
+      case 'use_local':
+        finalData = conflict.localData;
+        break;
+      case 'use_remote':
+        finalData = conflict.remoteData;
+        break;
+      case 'merge':
+        finalData = { ...conflict.remoteData, ...conflict.localData };
+        break;
+      case 'manual':
+        if (!resolvedData) {
+          throw new Error('Resolved data required for manual resolution');
+        }
+        finalData = resolvedData;
+        break;
+      default:
+        throw new Error('Invalid resolution type');
+    }
+
+    // Update conflict as resolved
+    await this.supabase
+      .from('sync_conflicts')
+      .update({
+        is_resolved: true,
+        resolved_at: new Date().toISOString(),
+        resolution: 'manual',
+        resolution_strategy: resolution,
+        resolved_data: finalData,
+      })
+      .eq('conflict_id', conflictId);
+
+    // Apply resolved data
+    await this.syncSessionData(conflict.sessionId, finalData);
+
+    // Update statistics
+    this.syncStatistics.conflictsResolved++;
   }
 
   /**
    * Get sync conflicts for user
    */
   async getSyncConflicts(userId: string): Promise<SyncConflict[]> {
-    try {
-      const { data, error } = await this.supabase
-        .from('sync_conflicts')
-        .select('*')
-        .eq('user_id', userId)
-        .eq('is_resolved', false)
-        .order('detected_at', { ascending: false });
+    const { data, error } = await this.supabase
+      .from('sync_conflicts')
+      .select('*')
+      .eq('user_id', userId)
+      .eq('is_resolved', false)
+      .order('detected_at', { ascending: false });
 
-      if (error) {
-        throw new Error(`Failed to get sync conflicts: ${error.message}`);
-      }
-
-      return (data || []).map(this.mapDatabaseToConflict);
-    } catch (error) {
-      console.error('Failed to get sync conflicts:', error);
-      throw error;
+    if (error) {
+      throw new Error(`Failed to get sync conflicts: ${error.message}`);
     }
+
+    return (data || []).map(this.mapDatabaseToConflict);
   }
 
   /**
@@ -638,8 +586,6 @@ export class CrossDeviceSync {
       this.websocketConnection.close();
       this.websocketConnection = undefined;
     }
-
-    console.log('Cross-device synchronization stopped');
   }
 
   // Private methods
@@ -652,7 +598,6 @@ export class CrossDeviceSync {
         .eq('is_active', true);
 
       if (error) {
-        console.error('Failed to load active sessions:', error);
         return;
       }
 
@@ -662,9 +607,7 @@ export class CrossDeviceSync {
       }
 
       this.updateStatistics();
-    } catch (error) {
-      console.error('Failed to load active sessions:', error);
-    }
+    } catch (_error) {}
   }
 
   private async setupRealtimeSubscriptions(): Promise<void> {
@@ -700,9 +643,7 @@ export class CrossDeviceSync {
           }
         )
         .subscribe();
-    } catch (error) {
-      console.error('Failed to setup realtime subscriptions:', error);
-    }
+    } catch (_error) {}
   }
 
   private startSyncInterval(): void {
@@ -711,9 +652,7 @@ export class CrossDeviceSync {
         await this.processPendingSyncEvents();
         await this.detectAndResolveConflicts();
         this.updateStatistics();
-      } catch (error) {
-        console.error('Sync interval processing failed:', error);
-      }
+      } catch (_error) {}
     }, this.config.syncInterval * 1000);
   }
 
@@ -722,9 +661,7 @@ export class CrossDeviceSync {
       try {
         await this.sendHeartbeat();
         await this.checkSessionTimeouts();
-      } catch (error) {
-        console.error('Heartbeat processing failed:', error);
-      }
+      } catch (_error) {}
     }, this.config.heartbeatInterval * 1000);
   }
 
@@ -738,7 +675,6 @@ export class CrossDeviceSync {
         .limit(this.config.batchSize);
 
       if (error) {
-        console.error('Failed to get pending sync events:', error);
         return;
       }
 
@@ -746,9 +682,7 @@ export class CrossDeviceSync {
         const syncEvent = this.mapDatabaseToSyncEvent(eventData);
         await this.processSyncEvent(syncEvent);
       }
-    } catch (error) {
-      console.error('Failed to process pending sync events:', error);
-    }
+    } catch (_error) {}
   }
 
   private async processSyncEvent(syncEvent: SyncEvent): Promise<void> {
@@ -783,8 +717,6 @@ export class CrossDeviceSync {
       this.updateSyncLatency(processingTime);
       this.syncStatistics.syncEventsProcessed++;
     } catch (error) {
-      console.error('Failed to process sync event:', error);
-
       // Mark as failed
       await this.supabase
         .from('sync_events')
@@ -912,9 +844,7 @@ export class CrossDeviceSync {
       if (this.config.conflictResolution !== 'manual') {
         await this.attemptAutomaticResolution(conflict);
       }
-    } catch (error) {
-      console.error('Failed to handle sync conflict:', error);
-    }
+    } catch (_error) {}
   }
 
   private async attemptAutomaticResolution(
@@ -939,9 +869,7 @@ export class CrossDeviceSync {
       }
 
       await this.resolveSyncConflict(conflict.conflictId, resolution);
-    } catch (error) {
-      console.error('Failed to automatically resolve conflict:', error);
-    }
+    } catch (_error) {}
   }
 
   private async detectAndResolveConflicts(): Promise<void> {
@@ -960,9 +888,7 @@ export class CrossDeviceSync {
           data: { heartbeat: true },
         });
       }
-    } catch (error) {
-      console.error('Failed to send heartbeat:', error);
-    }
+    } catch (_error) {}
   }
 
   private async checkSessionTimeouts(): Promise<void> {
@@ -978,19 +904,13 @@ export class CrossDeviceSync {
           await this.terminateDeviceSession(sessionId);
         }
       }
-    } catch (error) {
-      console.error('Failed to check session timeouts:', error);
-    }
+    } catch (_error) {}
   }
 
   private async broadcastToUserDevices(
-    userId: string,
-    message: any
-  ): Promise<void> {
-    // This would broadcast messages to all user devices via WebSocket
-    // For now, it's a placeholder
-    console.log(`Broadcasting to user ${userId}:`, message);
-  }
+    _userId: string,
+    _message: any
+  ): Promise<void> {}
 
   private async getRecentSyncEvents(
     sessionId: string,
@@ -1007,13 +927,11 @@ export class CrossDeviceSync {
         .order('timestamp', { ascending: false });
 
       if (error) {
-        console.error('Failed to get recent sync events:', error);
         return [];
       }
 
       return (data || []).map(this.mapDatabaseToSyncEvent);
-    } catch (error) {
-      console.error('Failed to get recent sync events:', error);
+    } catch (_error) {
       return [];
     }
   }
@@ -1047,14 +965,12 @@ export class CrossDeviceSync {
         .eq('is_active', true);
 
       if (error) {
-        console.error('Failed to check existing devices:', error);
         return true; // Default to primary if check fails
       }
 
       // First device becomes primary
       return (count || 0) === 0;
-    } catch (error) {
-      console.error('Failed to determine primary device:', error);
+    } catch (_error) {
       return true;
     }
   }
@@ -1065,35 +981,30 @@ export class CrossDeviceSync {
       'eventId' | 'timestamp' | 'version' | 'checksum' | 'isProcessed'
     >
   ): Promise<SyncEvent> {
-    try {
-      const syncEvent: SyncEvent = {
-        ...eventData,
-        eventId: `event_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-        timestamp: new Date(),
-        version: 1,
-        checksum: this.calculateChecksum(eventData.data),
-        isProcessed: false,
-      };
+    const syncEvent: SyncEvent = {
+      ...eventData,
+      eventId: `event_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      timestamp: new Date(),
+      version: 1,
+      checksum: this.calculateChecksum(eventData.data),
+      isProcessed: false,
+    };
 
-      // Store sync event
-      await this.supabase.from('sync_events').insert({
-        event_id: syncEvent.eventId,
-        session_id: syncEvent.sessionId,
-        user_id: syncEvent.userId,
-        device_id: syncEvent.deviceId,
-        event_type: syncEvent.eventType,
-        timestamp: syncEvent.timestamp.toISOString(),
-        data: syncEvent.data,
-        version: syncEvent.version,
-        checksum: syncEvent.checksum,
-        is_processed: syncEvent.isProcessed,
-      });
+    // Store sync event
+    await this.supabase.from('sync_events').insert({
+      event_id: syncEvent.eventId,
+      session_id: syncEvent.sessionId,
+      user_id: syncEvent.userId,
+      device_id: syncEvent.deviceId,
+      event_type: syncEvent.eventType,
+      timestamp: syncEvent.timestamp.toISOString(),
+      data: syncEvent.data,
+      version: syncEvent.version,
+      checksum: syncEvent.checksum,
+      is_processed: syncEvent.isProcessed,
+    });
 
-      return syncEvent;
-    } catch (error) {
-      console.error('Failed to create sync event:', error);
-      throw error;
-    }
+    return syncEvent;
   }
 
   private queueSyncEvent(sessionId: string, syncEvent: SyncEvent): void {
@@ -1164,9 +1075,7 @@ export class CrossDeviceSync {
         preferences: session.preferences,
         metadata: session.metadata,
       });
-    } catch (error) {
-      console.error('Failed to store device session:', error);
-    }
+    } catch (_error) {}
   }
 
   private handleRealtimeSyncEvent(eventData: any): void {

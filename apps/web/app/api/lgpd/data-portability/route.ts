@@ -51,7 +51,7 @@ const PortabilityRequestSchema = z.object({
   encryption: z.boolean().default(false),
 });
 
-interface PortabilityExport {
+type PortabilityExport = {
   exportId: string;
   userId: string;
   exportDate: string;
@@ -69,7 +69,7 @@ interface PortabilityExport {
     checksum: string;
   };
   data?: any; // Only included for direct API responses
-}
+};
 
 // FHIR R4 mapping functions
 function mapToFHIRPatient(userProfile: any) {
@@ -552,9 +552,7 @@ async function logPortabilityRequest(
         created_at: new Date().toISOString(),
       },
     ]);
-  } catch (error) {
-    console.error('Failed to log portability request:', error);
-  }
+  } catch (_error) {}
 }
 
 export async function POST(request: NextRequest) {
@@ -692,8 +690,6 @@ export async function POST(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('LGPD Data Portability Error:', error);
-
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {
@@ -736,7 +732,6 @@ export async function GET(_request: NextRequest) {
       .limit(10);
 
     if (error) {
-      console.error('Error fetching portability history:', error);
     }
 
     return NextResponse.json({
@@ -812,8 +807,7 @@ export async function GET(_request: NextRequest) {
         },
       },
     });
-  } catch (error) {
-    console.error('LGPD Data Portability GET Error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

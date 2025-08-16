@@ -52,7 +52,6 @@ export async function GET(request: NextRequest) {
     const { data: interventions, error } = await query;
 
     if (error) {
-      console.error('Database error:', error);
       return NextResponse.json(
         { error: 'Failed to fetch interventions' },
         { status: 500 }
@@ -67,8 +66,7 @@ export async function GET(request: NextRequest) {
         total: interventions?.length || 0,
       },
     });
-  } catch (error) {
-    console.error('API error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -101,7 +99,6 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (error) {
-      console.error('Database error:', error);
       return NextResponse.json(
         { error: 'Failed to create intervention' },
         { status: 500 }
@@ -109,8 +106,7 @@ export async function POST(request: NextRequest) {
     }
 
     return NextResponse.json(intervention, { status: 201 });
-  } catch (error) {
-    console.error('API error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

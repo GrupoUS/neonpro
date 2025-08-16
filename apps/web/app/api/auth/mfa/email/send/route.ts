@@ -89,12 +89,7 @@ export async function POST(request: NextRequest) {
         messageId: result.id,
         message: 'Email sent successfully',
       });
-    } catch (emailError) {
-      console.error('Email sending error:', emailError);
-
-      // Fallback: Log the code for development
-      console.log(`Email MFA Code for ${email}: ${code}`);
-
+    } catch (_emailError) {
       return NextResponse.json({
         success: true,
         messageId: `mock-${Date.now()}`,
@@ -102,8 +97,7 @@ export async function POST(request: NextRequest) {
         warning: 'Email service unavailable, check console for code',
       });
     }
-  } catch (error) {
-    console.error('Email MFA error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { success: false, error: 'Failed to send email' },
       { status: 500 }
@@ -128,7 +122,6 @@ async function checkEmailRateLimit(
       .gte('created_at', fiveMinutesAgo.toISOString());
 
     if (error) {
-      console.error('Rate limit check error:', error);
       return { allowed: true }; // Allow on error
     }
 
@@ -142,8 +135,7 @@ async function checkEmailRateLimit(
     }
 
     return { allowed: true };
-  } catch (error) {
-    console.error('Rate limit check error:', error);
+  } catch (_error) {
     return { allowed: true }; // Allow on error
   }
 }

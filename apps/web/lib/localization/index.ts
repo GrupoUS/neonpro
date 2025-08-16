@@ -6,22 +6,22 @@ import {
   ptBRStrings,
 } from './pt-br';
 
-interface LocalizationContextValue {
+type LocalizationContextValue = {
   strings: LocalizationStrings;
   locale: string;
   formatHealthcareMessage: typeof formatHealthcareMessage;
   healthcareAriaLabels: typeof healthcareAriaLabels;
   t: (key: string, params?: Record<string, any>) => string;
-}
+};
 
 const LocalizationContext = createContext<LocalizationContextValue | undefined>(
   undefined
 );
 
-interface LocalizationProviderProps {
+type LocalizationProviderProps = {
   children: React.ReactNode;
   locale?: string;
-}
+};
 
 export function LocalizationProvider({
   children,
@@ -40,7 +40,6 @@ export function LocalizationProvider({
       if (value && typeof value === 'object' && k in value) {
         value = value[k];
       } else {
-        console.warn(`Translation key not found: ${key}`);
         return key; // Return key if translation not found
       }
     }
@@ -94,8 +93,6 @@ export function LocalizationProvider({
     if (typeof value === 'string') {
       return value;
     }
-
-    console.warn(`Translation value is not a string or function: ${key}`);
     return key;
   };
 

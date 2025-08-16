@@ -2,7 +2,7 @@ import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import type { Database } from '@/types/supabase';
 
 // Types for patient profile management
-export interface PatientProfile {
+export type PatientProfile = {
   id: string;
   patient_id: string;
 
@@ -36,60 +36,60 @@ export interface PatientProfile {
   updated_at: string;
   created_by?: string;
   updated_by?: string;
-}
+};
 
-export interface EmergencyContact {
+export type EmergencyContact = {
   name?: string;
   relationship?: string;
   phone?: string;
   email?: string;
   address?: string;
-}
+};
 
-export interface AIInsights {
+export type AIInsights = {
   health_score?: number;
   predicted_risks?: string[];
   treatment_success_probability?: number;
   recommended_frequency?: string;
   behavioral_patterns?: any[];
   last_analysis?: string;
-}
+};
 
-export interface TreatmentRecommendation {
+export type TreatmentRecommendation = {
   type: string;
   description: string;
   priority: 'low' | 'medium' | 'high';
   estimated_duration?: string;
   success_probability?: number;
   contraindications?: string[];
-}
+};
 
-export interface PatientPreferences {
+export type PatientPreferences = {
   communication_method?: 'email' | 'sms' | 'phone' | 'app';
   appointment_reminders?: boolean;
   marketing_communications?: boolean;
   preferred_staff?: string[];
   preferred_times?: string[];
   accessibility_needs?: string[];
-}
+};
 
-export interface ConsentStatus {
+export type ConsentStatus = {
   data_processing?: boolean;
   marketing?: boolean;
   research?: boolean;
   photo_usage?: boolean;
   data_sharing?: boolean;
   last_updated?: string;
-}
+};
 
-export interface PrivacySettings {
+export type PrivacySettings = {
   profile_visibility?: 'private' | 'staff_only' | 'limited';
   photo_access?: 'none' | 'medical_only' | 'full';
   data_retention_period?: number;
   anonymize_data?: boolean;
-}
+};
 
-export interface PatientPhoto {
+export type PatientPhoto = {
   id: string;
   patient_id: string;
   photo_url: string;
@@ -117,9 +117,9 @@ export interface PatientPhoto {
   uploaded_by?: string;
   approved_at?: string;
   approved_by?: string;
-}
+};
 
-export interface MedicalTimelineEvent {
+export type MedicalTimelineEvent = {
   id: string;
   patient_id: string;
   event_type:
@@ -148,9 +148,9 @@ export interface MedicalTimelineEvent {
   created_by?: string;
   updated_at: string;
   updated_by?: string;
-}
+};
 
-export interface DuplicateCandidate {
+export type DuplicateCandidate = {
   id: string;
   patient_id_1: string;
   patient_id_2: string;
@@ -167,9 +167,9 @@ export interface DuplicateCandidate {
   detection_algorithm?: string;
   detection_version?: string;
   created_at: string;
-}
+};
 
-export interface PatientSearchResult {
+export type PatientSearchResult = {
   patient_id: string;
   full_name: string;
   email?: string;
@@ -179,7 +179,7 @@ export interface PatientSearchResult {
   profile_completeness: number;
   photo_url?: string;
   search_score?: number;
-}
+};
 
 /**
  * Patient Profile Manager
@@ -207,8 +207,7 @@ export class PatientProfileManager {
         throw error;
       }
       return data as PatientProfile;
-    } catch (error) {
-      console.error('Error fetching patient profile:', error);
+    } catch (_error) {
       return null;
     }
   }
@@ -239,8 +238,7 @@ export class PatientProfileManager {
       await this.updateSearchIndex(patientId);
 
       return data as PatientProfile;
-    } catch (error) {
-      console.error('Error upserting patient profile:', error);
+    } catch (_error) {
       return null;
     }
   }
@@ -266,8 +264,7 @@ export class PatientProfileManager {
         .eq('patient_id', patientId);
 
       return data;
-    } catch (error) {
-      console.error('Error updating profile completeness:', error);
+    } catch (_error) {
       return 0;
     }
   }
@@ -297,8 +294,7 @@ export class PatientProfileManager {
       }
 
       return data as PatientPhoto[];
-    } catch (error) {
-      console.error('Error fetching patient photos:', error);
+    } catch (_error) {
       return [];
     }
   }
@@ -351,8 +347,7 @@ export class PatientProfileManager {
         throw error;
       }
       return data as PatientPhoto;
-    } catch (error) {
-      console.error('Error uploading patient photo:', error);
+    } catch (_error) {
       return null;
     }
   }
@@ -381,8 +376,7 @@ export class PatientProfileManager {
       }
 
       return data as MedicalTimelineEvent[];
-    } catch (error) {
-      console.error('Error fetching medical timeline:', error);
+    } catch (_error) {
       return [];
     }
   }
@@ -411,8 +405,7 @@ export class PatientProfileManager {
         throw error;
       }
       return data as MedicalTimelineEvent;
-    } catch (error) {
-      console.error('Error adding timeline event:', error);
+    } catch (_error) {
       return null;
     }
   }
@@ -492,8 +485,7 @@ export class PatientProfileManager {
       });
 
       return this.applySearchFilters(results, filters);
-    } catch (error) {
-      console.error('Error searching patients:', error);
+    } catch (_error) {
       return [];
     }
   }
@@ -521,8 +513,7 @@ export class PatientProfileManager {
         throw error;
       }
       return data as DuplicateCandidate[];
-    } catch (error) {
-      console.error('Error detecting duplicates:', error);
+    } catch (_error) {
       return [];
     }
   }
@@ -535,9 +526,7 @@ export class PatientProfileManager {
       await this.supabase.rpc('update_patient_search_index', {
         patient_uuid: patientId,
       });
-    } catch (error) {
-      console.error('Error updating search index:', error);
-    }
+    } catch (_error) {}
   }
 
   /**

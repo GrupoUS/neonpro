@@ -43,7 +43,6 @@ export async function GET(request: NextRequest) {
       .range(offset, offset + limit - 1);
 
     if (error) {
-      console.error('Error fetching conversations:', error);
       return NextResponse.json(
         { error: 'Failed to fetch conversations' },
         { status: 500 }
@@ -70,8 +69,7 @@ export async function GET(request: NextRequest) {
         total: formattedConversations.length,
       },
     });
-  } catch (error) {
-    console.error('Conversations API Error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -111,7 +109,6 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (error) {
-      console.error('Error creating conversation:', error);
       return NextResponse.json(
         { error: 'Failed to create conversation' },
         { status: 500 }
@@ -119,8 +116,7 @@ export async function POST(request: NextRequest) {
     }
 
     return NextResponse.json({ conversation });
-  } catch (error) {
-    console.error('Create Conversation API Error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

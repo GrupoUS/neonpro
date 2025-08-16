@@ -40,7 +40,6 @@ export async function PATCH(
       .single();
 
     if (error) {
-      console.error('Error marking alert as read:', error);
       return NextResponse.json(
         { error: 'Failed to mark alert as read' },
         { status: 500 }
@@ -59,8 +58,7 @@ export async function PATCH(
         read_at: alert.read_at,
       },
     });
-  } catch (error) {
-    console.error('Error in alert PATCH API:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -95,7 +93,6 @@ export async function DELETE(
       .eq('id', alertId);
 
     if (error) {
-      console.error('Error deleting alert:', error);
       return NextResponse.json(
         { error: 'Failed to delete alert' },
         { status: 500 }
@@ -105,8 +102,7 @@ export async function DELETE(
     return NextResponse.json({
       message: 'Alert deleted successfully',
     });
-  } catch (error) {
-    console.error('Error in alert DELETE API:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

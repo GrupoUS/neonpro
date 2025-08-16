@@ -75,7 +75,7 @@ export enum LegalFramework {
 /**
  * Document Template
  */
-export interface DocumentTemplate {
+export type DocumentTemplate = {
   id: string;
   name: string;
   type: DocumentType;
@@ -137,12 +137,12 @@ export interface DocumentTemplate {
   updatedAt: Date;
   approvedBy?: string;
   approvedAt?: Date;
-}
+};
 
 /**
  * Legal Document
  */
-export interface LegalDocument {
+export type LegalDocument = {
   id: string;
   name: string;
   type: DocumentType;
@@ -231,12 +231,12 @@ export interface LegalDocument {
   createdAt: Date;
   updatedAt: Date;
   archivedAt?: Date;
-}
+};
 
 /**
  * Document Generation Request
  */
-export interface DocumentGenerationRequest {
+export type DocumentGenerationRequest = {
   templateId: string;
   name: string;
   language: DocumentLanguage;
@@ -251,12 +251,12 @@ export interface DocumentGenerationRequest {
     includeSignature: boolean;
     watermark?: string;
   };
-}
+};
 
 /**
  * Compliance Report
  */
-export interface ComplianceReport {
+export type ComplianceReport = {
   id: string;
   name: string;
   type: 'periodic' | 'audit' | 'incident' | 'assessment';
@@ -307,12 +307,12 @@ export interface ComplianceReport {
   generatedAt: Date;
   approvedBy?: string;
   approvedAt?: Date;
-}
+};
 
 /**
  * Documentation Events
  */
-export interface DocumentationEvents {
+export type DocumentationEvents = {
   'document:created': { document: LegalDocument };
   'document:updated': { document: LegalDocument };
   'document:approved': { document: LegalDocument };
@@ -322,7 +322,7 @@ export interface DocumentationEvents {
   'template:updated': { template: DocumentTemplate };
   'report:generated': { report: ComplianceReport };
   'review:due': { document: LegalDocument };
-}
+};
 
 // ============================================================================
 // LEGAL DOCUMENTATION SYSTEM
@@ -771,8 +771,7 @@ export class LegalDocumentationManager extends EventEmitter {
         `return ${condition}`
       );
       return func(...Object.values(evalContext));
-    } catch (error) {
-      console.warn(`Failed to evaluate condition: ${condition}`, error);
+    } catch (_error) {
       return false;
     }
   }
@@ -1445,13 +1444,10 @@ ${orgInfo.dpo ? `<p><strong>Encarregado de Dados:</strong> ${orgInfo.dpo.name}</
    * Log activity
    */
   private logActivity(
-    actor: string,
-    action: string,
-    details: Record<string, any>
-  ): void {
-    // In a real implementation, this would log to audit trail
-    console.log(`[LegalDocumentation] ${actor} - ${action}:`, details);
-  }
+    _actor: string,
+    _action: string,
+    _details: Record<string, any>
+  ): void {}
 
   /**
    * Shutdown the system

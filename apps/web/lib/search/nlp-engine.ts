@@ -9,7 +9,7 @@
  */
 
 // Types for search entities and intents
-export interface SearchEntity {
+export type SearchEntity = {
   type:
     | 'person'
     | 'condition'
@@ -22,31 +22,31 @@ export interface SearchEntity {
   confidence: number;
   startIndex: number;
   endIndex: number;
-}
+};
 
-export interface SearchIntent {
+export type SearchIntent = {
   action: 'find' | 'list' | 'show' | 'search' | 'filter' | 'count';
   target: 'patient' | 'appointment' | 'treatment' | 'procedure' | 'record';
   confidence: number;
   modifiers: string[];
-}
+};
 
-export interface NLPSearchQuery {
+export type NLPSearchQuery = {
   originalQuery: string;
   normalizedQuery: string;
   intent: SearchIntent;
   entities: SearchEntity[];
   filters: Record<string, any>;
   suggestions: string[];
-}
+};
 
-export interface SearchContext {
+export type SearchContext = {
   userId: string;
   userRole: string;
   recentSearches: string[];
   currentPage?: string;
   contextualFilters?: Record<string, any>;
-}
+};
 
 /**
  * Natural Language Processing Search Engine

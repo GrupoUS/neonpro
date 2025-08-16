@@ -65,7 +65,6 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('Reports API error:', error);
     return NextResponse.json(
       {
         error: 'Failed to fetch reports',
@@ -146,7 +145,6 @@ export async function POST(request: NextRequest) {
       message: 'Report generation requested successfully',
     });
   } catch (error) {
-    console.error('Report request API error:', error);
     return NextResponse.json(
       {
         error: 'Failed to request report generation',

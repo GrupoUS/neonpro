@@ -101,8 +101,6 @@ export async function POST(request: Request) {
       },
     });
   } catch (error) {
-    console.error('Bulk tax calculation error:', error);
-
     if (error instanceof Error && error.name === 'ZodError') {
       return NextResponse.json(
         { error: 'Invalid request data', details: error.message },

@@ -8,7 +8,7 @@ import { createClient } from '@supabase/supabase-js';
 import * as tf from '@tensorflow/tfjs';
 
 // Measurement interfaces
-export interface MeasurementResult {
+export type MeasurementResult = {
   id: string;
   patientId: string;
   analysisId: string;
@@ -19,9 +19,9 @@ export interface MeasurementResult {
   qualityAssurance: QualityAssurance;
   timestamp: Date;
   validationStatus: 'pending' | 'validated' | 'rejected';
-}
+};
 
-export interface ObjectiveMeasurement {
+export type ObjectiveMeasurement = {
   id: string;
   type: MeasurementType;
   category: MeasurementCategory;
@@ -34,17 +34,17 @@ export interface ObjectiveMeasurement {
   coordinates: MeasurementCoordinates;
   methodology: string;
   clinicalRelevance: number; // 0-1 scale
-}
+};
 
-export interface ClinicalSignificance {
+export type ClinicalSignificance = {
   overallSignificance: number; // 0-1 scale
   treatmentEfficacy: number;
   progressIndicators: ProgressIndicator[];
   clinicalNotes: string[];
   recommendedActions: string[];
-}
+};
 
-export interface StandardizedMetrics {
+export type StandardizedMetrics = {
   // Dermatological measurements
   skinQualityIndex?: number;
   textureUniformity?: number;
@@ -67,59 +67,59 @@ export interface StandardizedMetrics {
   overallImprovement: number;
   treatmentResponse: number;
   patientSatisfactionPrediction: number;
-}
+};
 
-export interface QualityAssurance {
+export type QualityAssurance = {
   measurementAccuracy: number;
   interRaterReliability: number;
   testRetestReliability: number;
   calibrationStatus: 'calibrated' | 'needs_calibration';
   validationChecks: ValidationCheck[];
-}
+};
 
-export interface MeasurementCoordinates {
+export type MeasurementCoordinates = {
   region: BoundingBox;
   landmarks: Landmark[];
   referencePoints: ReferencePoint[];
-}
+};
 
-export interface ProgressIndicator {
+export type ProgressIndicator = {
   metric: string;
   currentValue: number;
   targetValue: number;
   progressPercentage: number;
   timeToTarget?: number; // days
   trend: 'improving' | 'stable' | 'declining';
-}
+};
 
-export interface ValidationCheck {
+export type ValidationCheck = {
   checkType: string;
   passed: boolean;
   confidence: number;
   details: string;
-}
+};
 
-export interface Landmark {
+export type Landmark = {
   id: string;
   type: string;
   x: number;
   y: number;
   confidence: number;
-}
+};
 
-export interface ReferencePoint {
+export type ReferencePoint = {
   id: string;
   x: number;
   y: number;
   description: string;
-}
+};
 
-export interface BoundingBox {
+export type BoundingBox = {
   x: number;
   y: number;
   width: number;
   height: number;
-}
+};
 
 // Enums
 export enum MeasurementType {
@@ -253,7 +253,6 @@ export class ObjectiveMeasurementSystem {
 
       return result;
     } catch (error) {
-      console.error('Measurement analysis failed:', error);
       throw new Error(
         `Measurement failed: ${error instanceof Error ? error.message : 'Unknown error'}`
       );
@@ -277,12 +276,7 @@ export class ObjectiveMeasurementSystem {
           measurementSpec
         );
         measurements.push(measurement);
-      } catch (error) {
-        console.warn(
-          `Failed to extract ${measurementSpec.type} measurement:`,
-          error
-        );
-      }
+      } catch (_error) {}
     }
 
     return measurements;
@@ -1229,7 +1223,6 @@ export class ObjectiveMeasurementSystem {
         .select('*');
 
       if (error) {
-        console.warn('Failed to load calibration data:', error);
         this.useDefaultCalibration();
         return;
       }
@@ -1242,8 +1235,7 @@ export class ObjectiveMeasurementSystem {
           accuracy: calibration.accuracy,
         });
       });
-    } catch (error) {
-      console.error('Calibration data loading failed:', error);
+    } catch (_error) {
       this.useDefaultCalibration();
     }
   }
@@ -1272,36 +1264,27 @@ export class ObjectiveMeasurementSystem {
       (Date.now() - calibration.calibrationDate.getTime()) /
       (1000 * 60 * 60 * 24);
     if (daysSinceCalibration > 30) {
-      console.warn(
-        'Calibration data is outdated, measurements may be less accurate'
-      );
     }
   }
 
   private async saveMeasurementResult(
     result: MeasurementResult
   ): Promise<void> {
-    try {
-      const { error } = await this.supabase.from('measurement_results').insert({
-        id: result.id,
-        patient_id: result.patientId,
-        analysis_id: result.analysisId,
-        measurements: result.measurements,
-        comparison_score: result.comparisonScore,
-        clinical_significance: result.clinicalSignificance,
-        standardized_metrics: result.standardizedMetrics,
-        quality_assurance: result.qualityAssurance,
-        validation_status: result.validationStatus,
-        created_at: result.timestamp.toISOString(),
-      });
+    const { error } = await this.supabase.from('measurement_results').insert({
+      id: result.id,
+      patient_id: result.patientId,
+      analysis_id: result.analysisId,
+      measurements: result.measurements,
+      comparison_score: result.comparisonScore,
+      clinical_significance: result.clinicalSignificance,
+      standardized_metrics: result.standardizedMetrics,
+      quality_assurance: result.qualityAssurance,
+      validation_status: result.validationStatus,
+      created_at: result.timestamp.toISOString(),
+    });
 
-      if (error) {
-        console.error('Failed to save measurement result:', error);
-        throw new Error('Database save failed');
-      }
-    } catch (error) {
-      console.error('Save measurement result failed:', error);
-      throw error;
+    if (error) {
+      throw new Error('Database save failed');
     }
   }
 
@@ -1334,8 +1317,7 @@ export class ObjectiveMeasurementSystem {
           validationStatus: row.validation_status,
         })) || []
       );
-    } catch (error) {
-      console.error('Failed to get measurement history:', error);
+    } catch (_error) {
       return [];
     }
   }
@@ -1500,48 +1482,48 @@ class ClinicalValidator {
 }
 
 // Additional interfaces
-interface MeasurementOptions {
+type MeasurementOptions = {
   protocol?: string;
   calibration?: string;
   qualityChecks?: boolean;
-}
+};
 
-interface RawMeasurement {
+type RawMeasurement = {
   type: MeasurementType;
   value: number;
   unit: string;
   confidence: number;
   coordinates: BoundingBox;
   metadata: Record<string, any>;
-}
+};
 
-interface MeasurementProtocol {
+type MeasurementProtocol = {
   id: string;
   name: string;
   category: string;
   methodology: string;
   measurements: MeasurementSpec[];
-}
+};
 
-interface MeasurementSpec {
+type MeasurementSpec = {
   type: MeasurementType;
   region: BoundingBox;
   parameters: Record<string, any>;
-}
+};
 
-interface CalibrationData {
+type CalibrationData = {
   pixelSize: number;
   referenceObject: string;
   calibrationDate: Date;
   accuracy: number;
-}
+};
 
-interface ValidationResult {
+type ValidationResult = {
   isValid: boolean;
   accuracy: number;
   errors: string[];
   recommendations: string[];
-}
+};
 
 // Export singleton instance
 export const objectiveMeasurementSystem = new ObjectiveMeasurementSystem();

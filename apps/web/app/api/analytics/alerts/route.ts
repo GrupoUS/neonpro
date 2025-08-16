@@ -7,7 +7,7 @@ import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { createClient } from '@/app/utils/supabase/server';
 
-interface AlertFilters {
+type AlertFilters = {
   alert_type?: string;
   is_acknowledged?: boolean;
   kpi_category?: string;
@@ -15,7 +15,7 @@ interface AlertFilters {
   created_before?: string;
   limit?: number;
   offset?: number;
-}
+};
 
 const alertFiltersSchema = z.object({
   alert_type: z.enum(['critical', 'warning', 'info']).optional(),
@@ -169,8 +169,6 @@ export async function GET(request: NextRequest) {
       filters: validatedFilters,
     });
   } catch (error) {
-    console.error('Error retrieving alerts:', error);
-
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {
@@ -252,8 +250,6 @@ export async function POST(request: NextRequest) {
       message: 'Alert created successfully',
     });
   } catch (error) {
-    console.error('Error creating alert:', error);
-
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {

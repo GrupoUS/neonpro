@@ -47,8 +47,7 @@ export async function GET(_request: Request) {
     }
 
     return NextResponse.json(professionals);
-  } catch (error) {
-    console.error('API Error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal Server Error' },
       { status: 500 }

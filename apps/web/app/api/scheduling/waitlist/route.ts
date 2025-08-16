@@ -16,7 +16,7 @@ import {
   WaitlistService,
 } from '@/lib/scheduling/conflict-resolution';
 
-interface WaitlistRequest {
+type WaitlistRequest = {
   action: 'add' | 'process' | 'notify';
   patientId: string;
   treatmentType: string;
@@ -34,7 +34,7 @@ interface WaitlistRequest {
   // For notify action
   waitlistEntryId?: string;
   availableSlots?: any[];
-}
+};
 
 export async function POST(request: NextRequest) {
   const auditLogger = new AuditLogger();
@@ -180,8 +180,6 @@ export async function POST(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('Waitlist management error:', error);
-
     await auditLogger.logError('Waitlist management API failed', error);
 
     return NextResponse.json(
@@ -256,8 +254,6 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('Waitlist retrieval error:', error);
-
     await auditLogger.logError('Waitlist retrieval API failed', error);
 
     return NextResponse.json(

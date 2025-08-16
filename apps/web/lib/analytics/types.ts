@@ -19,13 +19,13 @@ export type TrialStatus = 'active' | 'converted' | 'expired' | 'cancelled';
 export type SubscriptionTier = 'free' | 'basic' | 'professional' | 'enterprise';
 
 // Base metric interface
-export interface BaseMetric {
+export type BaseMetric = {
   id: string;
   timestamp: Date;
   value: number;
   category: MetricCategory;
   metadata: Record<string, any>;
-}
+};
 
 // Revenue metrics
 export interface RevenueMetric extends BaseMetric {
@@ -60,7 +60,7 @@ export interface TrialMetric extends BaseMetric {
 // AGGREGATED DATA TYPES
 // ============================================================================
 
-export interface MetricAggregation {
+export type MetricAggregation = {
   period: MetricPeriod;
   startDate: Date;
   endDate: Date;
@@ -70,46 +70,46 @@ export interface MetricAggregation {
   percentile95: number;
   growth: number;
   periodOverPeriod: number;
-}
+};
 
-export interface RevenueAnalytics {
+export type RevenueAnalytics = {
   mrr: MetricAggregation;
   arr: MetricAggregation;
   churn: MetricAggregation;
   ltv: MetricAggregation;
   byTier: Record<SubscriptionTier, MetricAggregation>;
   forecast: ForecastData;
-}
+};
 
-export interface ConversionAnalytics {
+export type ConversionAnalytics = {
   trialToPayment: MetricAggregation;
   signupToTrial: MetricAggregation;
   visitorToSignup: MetricAggregation;
   funnelAnalysis: FunnelStage[];
   cohortAnalysis: CohortData[];
-}
-export interface FunnelStage {
+};
+export type FunnelStage = {
   stage: string;
   visitors: number;
   conversions: number;
   conversionRate: number;
   dropoffRate: number;
-}
+};
 
-export interface CohortData {
+export type CohortData = {
   cohortId: string;
   period: string;
   size: number;
   retentionRates: number[];
   revenuePerUser: number[];
   churnRate: number;
-}
+};
 
 // ============================================================================
 // FORECASTING & PREDICTION
 // ============================================================================
 
-export interface ForecastData {
+export type ForecastData = {
   predicted: number[];
   confidence: number[];
   scenarios: {
@@ -119,9 +119,9 @@ export interface ForecastData {
   };
   accuracy: number;
   period: MetricPeriod;
-}
+};
 
-export interface TrialConversionPrediction {
+export type TrialConversionPrediction = {
   userId: string;
   trialId: string;
   probability: number;
@@ -130,20 +130,20 @@ export interface TrialConversionPrediction {
   recommendations: string[];
   predictedValue: number;
   daysToDecision: number;
-} // ============================================================================
+}; // ============================================================================
 // REAL-TIME DATA STREAMING
 // ============================================================================
 
-export interface RealTimeMetric {
+export type RealTimeMetric = {
   id: string;
   type: 'revenue' | 'conversion' | 'trial' | 'user';
   value: number;
   delta: number;
   timestamp: Date;
   trend: 'up' | 'down' | 'stable';
-}
+};
 
-export interface MetricAlert {
+export type MetricAlert = {
   id: string;
   metric: string;
   threshold: number;
@@ -152,13 +152,13 @@ export interface MetricAlert {
   message: string;
   timestamp: Date;
   resolved: boolean;
-}
+};
 
 // ============================================================================
 // SERVICE LAYER INTERFACES
 // ============================================================================
 
-export interface AnalyticsQuery {
+export type AnalyticsQuery = {
   metrics: MetricCategory[];
   period: MetricPeriod;
   startDate: Date;
@@ -166,8 +166,8 @@ export interface AnalyticsQuery {
   filters?: Record<string, any>;
   groupBy?: string[];
   aggregation?: 'sum' | 'avg' | 'count' | 'max' | 'min';
-}
-export interface AnalyticsResponse<T = any> {
+};
+export type AnalyticsResponse<T = any> = {
   data: T;
   metadata: {
     query: AnalyticsQuery;
@@ -176,7 +176,7 @@ export interface AnalyticsResponse<T = any> {
     dataFreshness: Date;
     totalRecords: number;
   };
-}
+};
 
 // ============================================================================
 // ZOD VALIDATION SCHEMAS

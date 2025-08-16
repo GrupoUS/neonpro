@@ -4,7 +4,7 @@
 import { logger } from '@/lib/logger';
 import type { SSOProvider, SSOTokenResponse, SSOUserInfo } from '@/types/sso';
 
-export interface GoogleOAuthConfig {
+export type GoogleOAuthConfig = {
   clientId: string;
   clientSecret: string;
   redirectUri: string;
@@ -13,9 +13,9 @@ export interface GoogleOAuthConfig {
   accessType?: 'online' | 'offline';
   approvalPrompt?: 'force' | 'auto';
   includeGrantedScopes?: boolean;
-}
+};
 
-export interface GoogleUserInfo {
+export type GoogleUserInfo = {
   id: string;
   email: string;
   verified_email: boolean;
@@ -25,16 +25,16 @@ export interface GoogleUserInfo {
   picture: string;
   locale: string;
   hd?: string; // Hosted domain for Google Workspace
-}
+};
 
-export interface GoogleTokenInfo {
+export type GoogleTokenInfo = {
   access_token: string;
   expires_in: number;
   refresh_token?: string;
   scope: string;
   token_type: string;
   id_token?: string;
-}
+};
 
 export class GoogleOAuthProvider {
   private config: GoogleOAuthConfig;

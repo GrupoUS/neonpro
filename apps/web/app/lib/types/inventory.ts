@@ -1,5 +1,5 @@
 // Multi-location Inventory System Types
-export interface InventoryItem {
+export type InventoryItem = {
   id: string;
   clinic_id: string;
   name: string;
@@ -26,9 +26,9 @@ export interface InventoryItem {
   updated_at: string;
   created_by?: string;
   updated_by?: string;
-}
+};
 
-export interface InventoryStock {
+export type InventoryStock = {
   id: string;
   inventory_item_id: string;
   clinic_id: string;
@@ -56,9 +56,9 @@ export interface InventoryStock {
     name: string;
     description?: string;
   };
-}
+};
 
-export interface StockTransfer {
+export type StockTransfer = {
   id: string;
   transfer_number: string;
   inventory_item_id: string;
@@ -90,9 +90,9 @@ export interface StockTransfer {
   to_clinic?: { id: string; clinic_name: string; clinic_code: string };
   to_room?: { id: string; name: string };
   requester?: { id: string; full_name: string };
-}
+};
 
-export interface StockTransaction {
+export type StockTransaction = {
   id: string;
   inventory_item_id: string;
   clinic_id: string;
@@ -123,7 +123,7 @@ export interface StockTransaction {
   clinic?: { id: string; clinic_name: string; clinic_code: string };
   room?: { id: string; name: string };
   performer?: { id: string; full_name: string };
-}
+};
 
 // Create/Update types
 export type CreateInventoryItem = Omit<
@@ -159,7 +159,7 @@ export type CreateStockTransaction = Omit<
 >;
 
 // Query filters
-export interface InventoryFilters {
+export type InventoryFilters = {
   clinic_id?: string;
   room_id?: string;
   category?: string;
@@ -167,27 +167,27 @@ export interface InventoryFilters {
   expiring_soon?: boolean;
   batch_number?: string;
   active_only?: boolean;
-}
+};
 
-export interface StockTransferFilters {
+export type StockTransferFilters = {
   clinic_id?: string;
   status?: string;
   transfer_type?: string;
   date_from?: string;
   date_to?: string;
-}
+};
 
-export interface StockTransactionFilters {
+export type StockTransactionFilters = {
   clinic_id?: string;
   room_id?: string;
   transaction_type?: string;
   date_from?: string;
   date_to?: string;
   inventory_item_id?: string;
-}
+};
 
 // Dashboard aggregates
-export interface LocationStockSummary {
+export type LocationStockSummary = {
   clinic_id: string;
   clinic_name: string;
   room_id?: string;
@@ -197,13 +197,13 @@ export interface LocationStockSummary {
   low_stock_count: number;
   expiring_soon_count: number;
   last_updated: string;
-}
+};
 
-export interface InventoryMovementSummary {
+export type InventoryMovementSummary = {
   date: string;
   transfers_in: number;
   transfers_out: number;
   adjustments: number;
   consumption: number;
   total_value_change: number;
-}
+};

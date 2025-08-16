@@ -39,8 +39,7 @@ export async function GET(request: NextRequest) {
     });
 
     return NextResponse.json(analytics);
-  } catch (error) {
-    console.error('Get email analytics error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

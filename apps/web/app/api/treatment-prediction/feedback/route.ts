@@ -30,8 +30,7 @@ export async function GET(request: NextRequest) {
       feedback,
       total: feedback.length,
     });
-  } catch (error) {
-    console.error('Error fetching prediction feedback:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to fetch prediction feedback' },
       { status: 500 }
@@ -105,8 +104,7 @@ export async function POST(request: NextRequest) {
       },
       { status: 201 }
     );
-  } catch (error) {
-    console.error('Error creating prediction feedback:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to create prediction feedback' },
       { status: 500 }

@@ -4,7 +4,7 @@ import type { LGPDComplianceManager } from '../LGPDComplianceManager';
 
 type SupabaseClient = ReturnType<typeof createClient<Database>>;
 
-export interface DataMinimizationRule {
+export type DataMinimizationRule = {
   id: string;
   name: string;
   description: string;
@@ -34,9 +34,9 @@ export interface DataMinimizationRule {
   active: boolean;
   created_at: string;
   updated_at: string;
-}
+};
 
-export interface MinimizationTask {
+export type MinimizationTask = {
   id: string;
   rule_id: string;
   task_type: 'scheduled' | 'triggered' | 'manual';
@@ -62,9 +62,9 @@ export interface MinimizationTask {
   rollback_plan: any;
   created_at: string;
   updated_at: string;
-}
+};
 
-export interface DataInventory {
+export type DataInventory = {
   table_name: string;
   column_name: string;
   data_type: string;
@@ -81,9 +81,9 @@ export interface DataInventory {
   minimization_candidate: boolean;
   minimization_priority: 'low' | 'medium' | 'high' | 'critical';
   last_analyzed: string;
-}
+};
 
-export interface MinimizationAnalysis {
+export type MinimizationAnalysis = {
   table_name: string;
   total_records: number;
   personal_data_columns: string[];
@@ -100,9 +100,9 @@ export interface MinimizationAnalysis {
   recommendations: string[];
   estimated_storage_reduction: string;
   estimated_risk_reduction: string;
-}
+};
 
-export interface MinimizationConfig {
+export type MinimizationConfig = {
   auto_discovery_enabled: boolean;
   auto_execution_enabled: boolean;
   approval_required_for_sensitive: boolean;
@@ -123,7 +123,7 @@ export interface MinimizationConfig {
     tokenization: boolean;
     format_preserving: boolean;
   };
-}
+};
 
 export class DataMinimizationAutomation {
   private readonly supabase: SupabaseClient;
@@ -165,19 +165,12 @@ export class DataMinimizationAutomation {
               await this.performDataDiscovery();
               await this.analyzeMinimizationOpportunities();
               await this.processScheduledMinimization();
-            } catch (error) {
-              console.error('Error in data minimization cycle:', error);
-            }
+            } catch (_error) {}
           },
           analysisIntervalHours * 60 * 60 * 1000
         );
       }
-
-      console.log(
-        `Data minimization automation started (${analysisIntervalHours}h intervals)`
-      );
     } catch (error) {
-      console.error('Error starting data minimization:', error);
       throw new Error(`Failed to start data minimization: ${error.message}`);
     }
   }
@@ -190,7 +183,6 @@ export class DataMinimizationAutomation {
       clearInterval(this.analysisInterval);
       this.analysisInterval = null;
     }
-    console.log('Data minimization automation stopped');
   }
 
   /**
@@ -243,7 +235,6 @@ export class DataMinimizationAutomation {
         rule_id: rule.id,
       };
     } catch (error) {
-      console.error('Error creating minimization rule:', error);
       throw new Error(`Failed to create minimization rule: ${error.message}`);
     }
   }
@@ -339,7 +330,6 @@ export class DataMinimizationAutomation {
         task_id: task.id,
       };
     } catch (error) {
-      console.error('Error scheduling minimization task:', error);
       throw new Error(`Failed to schedule minimization task: ${error.message}`);
     }
   }
@@ -433,9 +423,7 @@ export class DataMinimizationAutomation {
               status: 'completed',
               completed_at: new Date().toISOString(),
             });
-          } catch (error) {
-            console.error('Error in minimization callback:', error);
-          }
+          } catch (_error) {}
         }
 
         // Log successful execution
@@ -471,7 +459,6 @@ export class DataMinimizationAutomation {
         throw executionError;
       }
     } catch (error) {
-      console.error('Error executing minimization task:', error);
       throw new Error(`Failed to execute minimization task: ${error.message}`);
     }
   }
@@ -515,7 +502,6 @@ export class DataMinimizationAutomation {
 
       return { success: true };
     } catch (error) {
-      console.error('Error approving minimization task:', error);
       throw new Error(`Failed to approve minimization task: ${error.message}`);
     }
   }
@@ -538,7 +524,6 @@ export class DataMinimizationAutomation {
 
       return inventory || [];
     } catch (error) {
-      console.error('Error getting data inventory:', error);
       throw new Error(`Failed to get data inventory: ${error.message}`);
     }
   }
@@ -563,7 +548,6 @@ export class DataMinimizationAutomation {
 
       return analysis || [];
     } catch (error) {
-      console.error('Error analyzing minimization opportunities:', error);
       throw new Error(
         `Failed to analyze minimization opportunities: ${error.message}`
       );
@@ -594,7 +578,6 @@ export class DataMinimizationAutomation {
 
       return dashboard;
     } catch (error) {
-      console.error('Error getting minimization dashboard:', error);
       throw new Error(`Failed to get minimization dashboard: ${error.message}`);
     }
   }
@@ -615,11 +598,7 @@ export class DataMinimizationAutomation {
       if (error) {
         throw error;
       }
-
-      console.log('Data discovery completed');
-    } catch (error) {
-      console.error('Error performing data discovery:', error);
-    }
+    } catch (_error) {}
   }
 
   private async processScheduledMinimization(): Promise<void> {
@@ -643,16 +622,9 @@ export class DataMinimizationAutomation {
       for (const task of tasks) {
         try {
           await this.executeMinimizationTask(task.id, 'system');
-        } catch (taskError) {
-          console.error(
-            `Error executing scheduled task ${task.id}:`,
-            taskError
-          );
-        }
+        } catch (_taskError) {}
       }
-    } catch (error) {
-      console.error('Error processing scheduled minimization:', error);
-    }
+    } catch (_error) {}
   }
 
   private async validateMinimizationRule(

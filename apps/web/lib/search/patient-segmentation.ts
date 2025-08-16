@@ -8,7 +8,7 @@ import { createClient } from '@supabase/supabase-js';
 import { nlpEngine, type SupportedLanguage } from './nlp-engine';
 
 // Types
-export interface SegmentCriteria {
+export type SegmentCriteria = {
   id?: string;
   name: string;
   description: string;
@@ -46,9 +46,9 @@ export interface SegmentCriteria {
   createdBy: string;
   isActive: boolean;
   tags?: string[];
-}
+};
 
-export interface PatientSegment {
+export type PatientSegment = {
   id: string;
   criteria: SegmentCriteria;
   patientCount: number;
@@ -64,9 +64,9 @@ export interface PatientSegment {
     trends: string[];
     recommendations: string[];
   };
-}
+};
 
-export interface PatientSegmentMember {
+export type PatientSegmentMember = {
   patientId: string;
   patientName: string;
   matchScore: number;
@@ -86,18 +86,18 @@ export interface PatientSegmentMember {
     appointmentTypes: string[];
     adherenceScore: number;
   };
-}
+};
 
-export interface SegmentationOptions {
+export type SegmentationOptions = {
   includeInactive?: boolean;
   maxPatients?: number;
   minMatchScore?: number;
   sortBy?: 'matchScore' | 'lastVisit' | 'name';
   sortOrder?: 'asc' | 'desc';
   refreshData?: boolean;
-}
+};
 
-export interface SegmentationAnalytics {
+export type SegmentationAnalytics = {
   totalSegments: number;
   totalPatients: number;
   averageSegmentSize: number;
@@ -112,7 +112,7 @@ export interface SegmentationAnalytics {
     shrinkingSegments: string[];
     stableSegments: string[];
   };
-}
+};
 
 /**
  * AI-Driven Patient Segmentation System
@@ -140,68 +140,63 @@ export class PatientSegmentation {
     createdBy: string,
     description?: string
   ): Promise<PatientSegment> {
-    try {
-      // Process natural language query with NLP
-      const nlpResult = await nlpEngine.processQuery(
-        naturalLanguageQuery,
-        language
+    // Process natural language query with NLP
+    const nlpResult = await nlpEngine.processQuery(
+      naturalLanguageQuery,
+      language
+    );
+
+    // Convert NLP result to structured criteria
+    const structuredCriteria = await this.convertNLPToStructuredCriteria(
+      nlpResult,
+      language
+    );
+
+    // Create segment criteria
+    const criteria: SegmentCriteria = {
+      name,
+      description:
+        description ||
+        `Segmento criado a partir da consulta: "${naturalLanguageQuery}"`,
+      naturalLanguageQuery,
+      structuredCriteria,
+      language,
+      createdBy,
+      isActive: true,
+      tags: this.extractTagsFromNLP(nlpResult),
+    };
+
+    // Save criteria to database
+    const { data: savedCriteria, error: criteriaError } = await this.supabase
+      .from('patient_segments')
+      .insert({
+        segment_name: criteria.name,
+        description: criteria.description,
+        natural_language_query: criteria.naturalLanguageQuery,
+        criteria_json: criteria.structuredCriteria,
+        language: criteria.language,
+        created_by: criteria.createdBy,
+        is_active: criteria.isActive,
+        tags: criteria.tags,
+      })
+      .select()
+      .single();
+
+    if (criteriaError) {
+      throw new Error(
+        `Failed to save segment criteria: ${criteriaError.message}`
       );
-
-      // Convert NLP result to structured criteria
-      const structuredCriteria = await this.convertNLPToStructuredCriteria(
-        nlpResult,
-        language
-      );
-
-      // Create segment criteria
-      const criteria: SegmentCriteria = {
-        name,
-        description:
-          description ||
-          `Segmento criado a partir da consulta: "${naturalLanguageQuery}"`,
-        naturalLanguageQuery,
-        structuredCriteria,
-        language,
-        createdBy,
-        isActive: true,
-        tags: this.extractTagsFromNLP(nlpResult),
-      };
-
-      // Save criteria to database
-      const { data: savedCriteria, error: criteriaError } = await this.supabase
-        .from('patient_segments')
-        .insert({
-          segment_name: criteria.name,
-          description: criteria.description,
-          natural_language_query: criteria.naturalLanguageQuery,
-          criteria_json: criteria.structuredCriteria,
-          language: criteria.language,
-          created_by: criteria.createdBy,
-          is_active: criteria.isActive,
-          tags: criteria.tags,
-        })
-        .select()
-        .single();
-
-      if (criteriaError) {
-        throw new Error(
-          `Failed to save segment criteria: ${criteriaError.message}`
-        );
-      }
-
-      criteria.id = savedCriteria.id;
-
-      // Generate segment
-      const segment = await this.generateSegment(criteria);
-
-      // Cache the segment
-      this.cacheSegment(segment);
-
-      return segment;
-    } catch (error) {
-      console.error('Error creating segment:', error);
-      throw error;
     }
+
+    criteria.id = savedCriteria.id;
+
+    // Generate segment
+    const segment = await this.generateSegment(criteria);
+
+    // Cache the segment
+    this.cacheSegment(segment);
+
+    return segment;
   }
 
   /**
@@ -558,96 +553,91 @@ export class PatientSegmentation {
     criteria: SegmentCriteria,
     options: SegmentationOptions = {}
   ): Promise<PatientSegment> {
-    try {
-      const {
-        includeInactive = false,
-        maxPatients = 1000,
-        minMatchScore = 0.5,
-        sortBy = 'matchScore',
-        sortOrder = 'desc',
-        refreshData = false,
-      } = options;
+    const {
+      includeInactive = false,
+      maxPatients = 1000,
+      minMatchScore = 0.5,
+      sortBy = 'matchScore',
+      sortOrder = 'desc',
+      refreshData = false,
+    } = options;
 
-      // Check cache first
-      if (!refreshData && criteria.id) {
-        const cached = this.getCachedSegment(criteria.id);
-        if (cached) {
-          return cached;
-        }
+    // Check cache first
+    if (!refreshData && criteria.id) {
+      const cached = this.getCachedSegment(criteria.id);
+      if (cached) {
+        return cached;
       }
-
-      // Build SQL query based on criteria
-      const _query = this.buildSegmentQuery(criteria, includeInactive);
-
-      // Execute query
-      const { data: patients, error } = await this.supabase.rpc(
-        'search_patients_by_criteria',
-        {
-          criteria_json: criteria.structuredCriteria,
-          include_inactive: includeInactive,
-          max_results: maxPatients,
-        }
-      );
-
-      if (error) {
-        throw new Error(`Failed to generate segment: ${error.message}`);
-      }
-
-      // Calculate match scores and filter
-      const segmentMembers = await this.calculateMatchScores(
-        patients || [],
-        criteria,
-        minMatchScore
-      );
-
-      // Sort results
-      const sortedMembers = this.sortSegmentMembers(
-        segmentMembers,
-        sortBy,
-        sortOrder
-      );
-
-      // Generate insights
-      const insights = await this.generateSegmentInsights(
-        sortedMembers,
-        criteria
-      );
-
-      // Calculate performance metrics
-      const performance = this.calculateSegmentPerformance(
-        sortedMembers,
-        criteria
-      );
-
-      const segment: PatientSegment = {
-        id: criteria.id || `temp_${Date.now()}`,
-        criteria,
-        patientCount: sortedMembers.length,
-        patients: sortedMembers,
-        lastUpdated: new Date().toISOString(),
-        performance,
-        insights,
-      };
-
-      // Update database with patient count
-      if (criteria.id) {
-        await this.supabase
-          .from('patient_segments')
-          .update({
-            patient_count: segment.patientCount,
-            last_updated: segment.lastUpdated,
-          })
-          .eq('id', criteria.id);
-      }
-
-      // Cache the segment
-      this.cacheSegment(segment);
-
-      return segment;
-    } catch (error) {
-      console.error('Error generating segment:', error);
-      throw error;
     }
+
+    // Build SQL query based on criteria
+    const _query = this.buildSegmentQuery(criteria, includeInactive);
+
+    // Execute query
+    const { data: patients, error } = await this.supabase.rpc(
+      'search_patients_by_criteria',
+      {
+        criteria_json: criteria.structuredCriteria,
+        include_inactive: includeInactive,
+        max_results: maxPatients,
+      }
+    );
+
+    if (error) {
+      throw new Error(`Failed to generate segment: ${error.message}`);
+    }
+
+    // Calculate match scores and filter
+    const segmentMembers = await this.calculateMatchScores(
+      patients || [],
+      criteria,
+      minMatchScore
+    );
+
+    // Sort results
+    const sortedMembers = this.sortSegmentMembers(
+      segmentMembers,
+      sortBy,
+      sortOrder
+    );
+
+    // Generate insights
+    const insights = await this.generateSegmentInsights(
+      sortedMembers,
+      criteria
+    );
+
+    // Calculate performance metrics
+    const performance = this.calculateSegmentPerformance(
+      sortedMembers,
+      criteria
+    );
+
+    const segment: PatientSegment = {
+      id: criteria.id || `temp_${Date.now()}`,
+      criteria,
+      patientCount: sortedMembers.length,
+      patients: sortedMembers,
+      lastUpdated: new Date().toISOString(),
+      performance,
+      insights,
+    };
+
+    // Update database with patient count
+    if (criteria.id) {
+      await this.supabase
+        .from('patient_segments')
+        .update({
+          patient_count: segment.patientCount,
+          last_updated: segment.lastUpdated,
+        })
+        .eq('id', criteria.id);
+    }
+
+    // Cache the segment
+    this.cacheSegment(segment);
+
+    return segment;
   }
 
   /**
@@ -1312,43 +1302,38 @@ export class PatientSegmentation {
    * Get all segments
    */
   async getAllSegments(includeInactive = false): Promise<PatientSegment[]> {
-    try {
-      const { data, error } = await this.supabase
-        .from('patient_segments')
-        .select('*')
-        .eq('is_active', includeInactive ? undefined : true)
-        .order('created_at', { ascending: false });
+    const { data, error } = await this.supabase
+      .from('patient_segments')
+      .select('*')
+      .eq('is_active', includeInactive ? undefined : true)
+      .order('created_at', { ascending: false });
 
-      if (error) {
-        throw new Error(`Failed to get segments: ${error.message}`);
-      }
-
-      const segments: PatientSegment[] = [];
-
-      for (const segmentData of data || []) {
-        const criteria: SegmentCriteria = {
-          id: segmentData.id,
-          name: segmentData.segment_name,
-          description: segmentData.description,
-          naturalLanguageQuery: segmentData.natural_language_query,
-          structuredCriteria: segmentData.criteria_json,
-          language: segmentData.language,
-          createdBy: segmentData.created_by,
-          isActive: segmentData.is_active,
-          tags: segmentData.tags,
-        };
-
-        const segment = await this.generateSegment(criteria, {
-          refreshData: false,
-        });
-        segments.push(segment);
-      }
-
-      return segments;
-    } catch (error) {
-      console.error('Error getting all segments:', error);
-      throw error;
+    if (error) {
+      throw new Error(`Failed to get segments: ${error.message}`);
     }
+
+    const segments: PatientSegment[] = [];
+
+    for (const segmentData of data || []) {
+      const criteria: SegmentCriteria = {
+        id: segmentData.id,
+        name: segmentData.segment_name,
+        description: segmentData.description,
+        naturalLanguageQuery: segmentData.natural_language_query,
+        structuredCriteria: segmentData.criteria_json,
+        language: segmentData.language,
+        createdBy: segmentData.created_by,
+        isActive: segmentData.is_active,
+        tags: segmentData.tags,
+      };
+
+      const segment = await this.generateSegment(criteria, {
+        refreshData: false,
+      });
+      segments.push(segment);
+    }
+
+    return segments;
   }
 
   /**
@@ -1358,140 +1343,125 @@ export class PatientSegmentation {
     segmentId: string,
     updates: Partial<SegmentCriteria>
   ): Promise<PatientSegment> {
-    try {
-      const { data, error } = await this.supabase
-        .from('patient_segments')
-        .update({
-          segment_name: updates.name,
-          description: updates.description,
-          natural_language_query: updates.naturalLanguageQuery,
-          criteria_json: updates.structuredCriteria,
-          language: updates.language,
-          is_active: updates.isActive,
-          tags: updates.tags,
-        })
-        .eq('id', segmentId)
-        .select()
-        .single();
+    const { data, error } = await this.supabase
+      .from('patient_segments')
+      .update({
+        segment_name: updates.name,
+        description: updates.description,
+        natural_language_query: updates.naturalLanguageQuery,
+        criteria_json: updates.structuredCriteria,
+        language: updates.language,
+        is_active: updates.isActive,
+        tags: updates.tags,
+      })
+      .eq('id', segmentId)
+      .select()
+      .single();
 
-      if (error) {
-        throw new Error(`Failed to update segment: ${error.message}`);
-      }
-
-      const criteria: SegmentCriteria = {
-        id: data.id,
-        name: data.segment_name,
-        description: data.description,
-        naturalLanguageQuery: data.natural_language_query,
-        structuredCriteria: data.criteria_json,
-        language: data.language,
-        createdBy: data.created_by,
-        isActive: data.is_active,
-        tags: data.tags,
-      };
-
-      // Clear cache and regenerate
-      this.segmentCache.delete(segmentId);
-      this.cacheExpiry.delete(segmentId);
-
-      return await this.generateSegment(criteria, { refreshData: true });
-    } catch (error) {
-      console.error('Error updating segment:', error);
-      throw error;
+    if (error) {
+      throw new Error(`Failed to update segment: ${error.message}`);
     }
+
+    const criteria: SegmentCriteria = {
+      id: data.id,
+      name: data.segment_name,
+      description: data.description,
+      naturalLanguageQuery: data.natural_language_query,
+      structuredCriteria: data.criteria_json,
+      language: data.language,
+      createdBy: data.created_by,
+      isActive: data.is_active,
+      tags: data.tags,
+    };
+
+    // Clear cache and regenerate
+    this.segmentCache.delete(segmentId);
+    this.cacheExpiry.delete(segmentId);
+
+    return await this.generateSegment(criteria, { refreshData: true });
   }
 
   /**
    * Delete segment
    */
   async deleteSegment(segmentId: string): Promise<void> {
-    try {
-      const { error } = await this.supabase
-        .from('patient_segments')
-        .delete()
-        .eq('id', segmentId);
+    const { error } = await this.supabase
+      .from('patient_segments')
+      .delete()
+      .eq('id', segmentId);
 
-      if (error) {
-        throw new Error(`Failed to delete segment: ${error.message}`);
-      }
-
-      // Clear cache
-      this.segmentCache.delete(segmentId);
-      this.cacheExpiry.delete(segmentId);
-    } catch (error) {
-      console.error('Error deleting segment:', error);
-      throw error;
+    if (error) {
+      throw new Error(`Failed to delete segment: ${error.message}`);
     }
+
+    // Clear cache
+    this.segmentCache.delete(segmentId);
+    this.cacheExpiry.delete(segmentId);
   }
 
   /**
    * Get segmentation analytics
    */
   async getAnalytics(): Promise<SegmentationAnalytics> {
-    try {
-      const segments = await this.getAllSegments();
+    const segments = await this.getAllSegments();
 
-      const totalSegments = segments.length;
-      const totalPatients = segments.reduce(
-        (sum, segment) => sum + segment.patientCount,
-        0
-      );
-      const averageSegmentSize =
-        totalSegments > 0 ? totalPatients / totalSegments : 0;
+    const totalSegments = segments.length;
+    const totalPatients = segments.reduce(
+      (sum, segment) => sum + segment.patientCount,
+      0
+    );
+    const averageSegmentSize =
+      totalSegments > 0 ? totalPatients / totalSegments : 0;
 
-      // Analyze common criteria
-      const criteriaFrequency: Record<string, number> = {};
-      segments.forEach((segment) => {
-        segment.criteria.tags?.forEach((tag) => {
-          criteriaFrequency[tag] = (criteriaFrequency[tag] || 0) + 1;
-        });
+    // Analyze common criteria
+    const criteriaFrequency: Record<string, number> = {};
+    segments.forEach((segment) => {
+      segment.criteria.tags?.forEach((tag) => {
+        criteriaFrequency[tag] = (criteriaFrequency[tag] || 0) + 1;
       });
+    });
 
-      const mostCommonCriteria = Object.entries(criteriaFrequency)
-        .sort(([, a], [, b]) => b - a)
-        .slice(0, 5)
-        .map(([criteria]) => criteria);
+    const mostCommonCriteria = Object.entries(criteriaFrequency)
+      .sort(([, a], [, b]) => b - a)
+      .slice(0, 5)
+      .map(([criteria]) => criteria);
 
-      // Analyze performance
-      const segmentPerformance = {
-        highPerforming: segments.filter((s) => s.performance.accuracy >= 0.8)
-          .length,
-        mediumPerforming: segments.filter(
-          (s) => s.performance.accuracy >= 0.6 && s.performance.accuracy < 0.8
-        ).length,
-        lowPerforming: segments.filter((s) => s.performance.accuracy < 0.6)
-          .length,
-      };
+    // Analyze performance
+    const segmentPerformance = {
+      highPerforming: segments.filter((s) => s.performance.accuracy >= 0.8)
+        .length,
+      mediumPerforming: segments.filter(
+        (s) => s.performance.accuracy >= 0.6 && s.performance.accuracy < 0.8
+      ).length,
+      lowPerforming: segments.filter((s) => s.performance.accuracy < 0.6)
+        .length,
+    };
 
-      // Analyze trends (simplified)
-      const trends = {
-        growingSegments: segments
-          .filter((s) => s.patientCount > averageSegmentSize)
-          .map((s) => s.criteria.name),
-        shrinkingSegments: segments
-          .filter((s) => s.patientCount < averageSegmentSize * 0.5)
-          .map((s) => s.criteria.name),
-        stableSegments: segments
-          .filter(
-            (s) =>
-              s.patientCount >= averageSegmentSize * 0.5 &&
-              s.patientCount <= averageSegmentSize
-          )
-          .map((s) => s.criteria.name),
-      };
+    // Analyze trends (simplified)
+    const trends = {
+      growingSegments: segments
+        .filter((s) => s.patientCount > averageSegmentSize)
+        .map((s) => s.criteria.name),
+      shrinkingSegments: segments
+        .filter((s) => s.patientCount < averageSegmentSize * 0.5)
+        .map((s) => s.criteria.name),
+      stableSegments: segments
+        .filter(
+          (s) =>
+            s.patientCount >= averageSegmentSize * 0.5 &&
+            s.patientCount <= averageSegmentSize
+        )
+        .map((s) => s.criteria.name),
+    };
 
-      return {
-        totalSegments,
-        totalPatients,
-        averageSegmentSize: Math.round(averageSegmentSize),
-        mostCommonCriteria,
-        segmentPerformance,
-        trends,
-      };
-    } catch (error) {
-      console.error('Error getting analytics:', error);
-      throw error;
-    }
+    return {
+      totalSegments,
+      totalPatients,
+      averageSegmentSize: Math.round(averageSegmentSize),
+      mostCommonCriteria,
+      segmentPerformance,
+      trends,
+    };
   }
 }
 

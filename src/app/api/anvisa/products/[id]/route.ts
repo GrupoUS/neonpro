@@ -16,23 +16,24 @@ export async function GET(
 ) {
   try {
     const supabase = createRouteHandlerClient({ cookies });
-    const { data: { session } } = await supabase.auth.getSession();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
 
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const product = await anvisaAPI.getProduct(params.id);
-    
+
     if (!product) {
       return NextResponse.json({ error: 'Product not found' }, { status: 404 });
     }
 
-    return NextResponse.json({ 
-      success: true, 
-      data: product 
+    return NextResponse.json({
+      success: true,
+      data: product,
     });
-
   } catch (error) {
     console.error('Error in ANVISA product GET:', error);
     return NextResponse.json(
@@ -48,7 +49,9 @@ export async function PUT(
 ) {
   try {
     const supabase = createRouteHandlerClient({ cookies });
-    const { data: { session } } = await supabase.auth.getSession();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
 
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -56,13 +59,12 @@ export async function PUT(
 
     const updates = await request.json();
     const product = await anvisaAPI.updateProduct(params.id, updates);
-    
-    return NextResponse.json({ 
-      success: true, 
-      data: product,
-      message: 'Product updated successfully'
-    });
 
+    return NextResponse.json({
+      success: true,
+      data: product,
+      message: 'Product updated successfully',
+    });
   } catch (error) {
     console.error('Error in ANVISA product PUT:', error);
     return NextResponse.json(
@@ -78,19 +80,20 @@ export async function DELETE(
 ) {
   try {
     const supabase = createRouteHandlerClient({ cookies });
-    const { data: { session } } = await supabase.auth.getSession();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
 
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     await anvisaAPI.deleteProduct(params.id);
-    
-    return NextResponse.json({ 
-      success: true,
-      message: 'Product deleted successfully'
-    });
 
+    return NextResponse.json({
+      success: true,
+      message: 'Product deleted successfully',
+    });
   } catch (error) {
     console.error('Error in ANVISA product DELETE:', error);
     return NextResponse.json(

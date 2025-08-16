@@ -1,4 +1,4 @@
-export interface TimelineEvent {
+export type TimelineEvent = {
   id: string;
   patientId: string;
   type:
@@ -27,9 +27,9 @@ export interface TimelineEvent {
   metadata?: Record<string, any>;
   createdAt: Date;
   updatedAt: Date;
-}
+};
 
-export interface MedicalCondition {
+export type MedicalCondition = {
   id: string;
   name: string;
   icd10Code?: string;
@@ -38,9 +38,9 @@ export interface MedicalCondition {
   severity: 'mild' | 'moderate' | 'severe';
   description?: string;
   treatmentPlan?: string;
-}
+};
 
-export interface TimelineFilter {
+export type TimelineFilter = {
   dateRange?: {
     start: Date;
     end: Date;
@@ -50,9 +50,9 @@ export interface TimelineFilter {
   providers?: string[];
   severity?: TimelineEvent['severity'][];
   status?: TimelineEvent['status'][];
-}
+};
 
-export interface TimelineAnalytics {
+export type TimelineAnalytics = {
   totalEvents: number;
   eventsByType: Record<string, number>;
   eventsByCategory: Record<string, number>;
@@ -61,7 +61,7 @@ export interface TimelineAnalytics {
   chronicConditions: MedicalCondition[];
   upcomingEvents: TimelineEvent[];
   recentSignificantEvents: TimelineEvent[];
-}
+};
 
 export class MedicalTimelineManager {
   /**
@@ -80,8 +80,7 @@ export class MedicalTimelineManager {
 
       // Simular salvamento no banco de dados
       return newEvent;
-    } catch (error) {
-      console.error('Erro ao adicionar evento à timeline:', error);
+    } catch (_error) {
       throw new Error('Falha ao adicionar evento médico');
     }
   }
@@ -259,8 +258,7 @@ export class MedicalTimelineManager {
 
       // Ordenar por data (mais recente primeiro)
       return filteredEvents.sort((a, b) => b.date.getTime() - a.date.getTime());
-    } catch (error) {
-      console.error('Erro ao recuperar timeline do paciente:', error);
+    } catch (_error) {
       throw new Error('Falha ao carregar timeline médica');
     }
   }
@@ -294,8 +292,7 @@ export class MedicalTimelineManager {
       };
 
       return updatedEvent;
-    } catch (error) {
-      console.error('Erro ao atualizar evento da timeline:', error);
+    } catch (_error) {
       throw new Error('Falha ao atualizar evento médico');
     }
   }
@@ -307,8 +304,7 @@ export class MedicalTimelineManager {
     try {
       // Simular remoção do evento
       return true;
-    } catch (error) {
-      console.error('Erro ao remover evento da timeline:', error);
+    } catch (_error) {
       throw new Error('Falha ao remover evento médico');
     }
   }
@@ -365,8 +361,7 @@ export class MedicalTimelineManager {
       };
 
       return analytics;
-    } catch (error) {
-      console.error('Erro ao gerar análise da timeline:', error);
+    } catch (_error) {
       throw new Error('Falha na análise da timeline médica');
     }
   }
@@ -389,8 +384,7 @@ export class MedicalTimelineManager {
       );
 
       return searchResults;
-    } catch (error) {
-      console.error('Erro na busca de eventos:', error);
+    } catch (_error) {
       throw new Error('Falha na busca de eventos médicos');
     }
   }
@@ -438,8 +432,7 @@ export class MedicalTimelineManager {
         default:
           return timeline;
       }
-    } catch (error) {
-      console.error('Erro ao exportar timeline:', error);
+    } catch (_error) {
       throw new Error('Falha na exportação da timeline');
     }
   }

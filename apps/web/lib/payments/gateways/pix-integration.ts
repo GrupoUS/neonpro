@@ -7,7 +7,7 @@ import crypto from 'node:crypto';
 import { createClient } from '@/lib/supabase/client';
 
 // PIX Payment Types
-export interface PixPaymentData {
+export type PixPaymentData = {
   amount: number;
   currency: string;
   description: string;
@@ -16,9 +16,9 @@ export interface PixPaymentData {
   payerEmail: string;
   expirationMinutes?: number;
   additionalInfo?: string;
-}
+};
 
-export interface PixPaymentResponse {
+export type PixPaymentResponse = {
   id: string;
   qrCode: string;
   qrCodeImage: string;
@@ -27,7 +27,7 @@ export interface PixPaymentResponse {
   status: PixPaymentStatus;
   expiresAt: Date;
   createdAt: Date;
-}
+};
 
 export enum PixPaymentStatus {
   PENDING = 'pending',
@@ -37,7 +37,7 @@ export enum PixPaymentStatus {
   FAILED = 'failed',
 }
 
-export interface PixWebhookData {
+export type PixWebhookData = {
   paymentId: string;
   status: PixPaymentStatus;
   paidAt?: Date;
@@ -47,10 +47,10 @@ export interface PixWebhookData {
     document: string;
     bank: string;
   };
-}
+};
 
 // PIX Configuration
-interface PixConfig {
+type PixConfig = {
   apiKey: string;
   apiSecret: string;
   environment: 'sandbox' | 'production';
@@ -58,7 +58,7 @@ interface PixConfig {
   pixKey: string; // Clinic's PIX key
   merchantName: string;
   merchantCity: string;
-}
+};
 
 /**
  * PIX Payment Integration Service
@@ -138,7 +138,6 @@ export class PixIntegration {
         createdAt: new Date(),
       };
     } catch (error) {
-      console.error('PIX payment creation failed:', error);
       throw new Error(
         `PIX payment creation failed: ${error instanceof Error ? error.message : 'Unknown error'}`
       );
@@ -149,71 +148,61 @@ export class PixIntegration {
    * Get PIX payment status
    */
   async getPaymentStatus(paymentId: string): Promise<PixPaymentStatus> {
-    try {
-      const { data: payment, error } = await this.supabase
-        .from('pix_payments')
-        .select('status, expires_at')
-        .eq('id', paymentId)
-        .single();
+    const { data: payment, error } = await this.supabase
+      .from('pix_payments')
+      .select('status, expires_at')
+      .eq('id', paymentId)
+      .single();
 
-      if (error || !payment) {
-        throw new Error('Payment not found');
-      }
-
-      // Check if payment expired
-      if (
-        payment.status === PixPaymentStatus.PENDING &&
-        new Date() > new Date(payment.expires_at)
-      ) {
-        await this.updatePaymentStatus(paymentId, PixPaymentStatus.EXPIRED);
-        return PixPaymentStatus.EXPIRED;
-      }
-
-      return payment.status as PixPaymentStatus;
-    } catch (error) {
-      console.error('Failed to get PIX payment status:', error);
-      throw error;
+    if (error || !payment) {
+      throw new Error('Payment not found');
     }
+
+    // Check if payment expired
+    if (
+      payment.status === PixPaymentStatus.PENDING &&
+      new Date() > new Date(payment.expires_at)
+    ) {
+      await this.updatePaymentStatus(paymentId, PixPaymentStatus.EXPIRED);
+      return PixPaymentStatus.EXPIRED;
+    }
+
+    return payment.status as PixPaymentStatus;
   }
 
   /**
    * Handle PIX webhook notifications
    */
   async handleWebhook(webhookData: PixWebhookData): Promise<void> {
-    try {
-      const { paymentId, status, paidAt, payerInfo } = webhookData;
+    const { paymentId, status, paidAt, payerInfo } = webhookData;
 
-      // Update payment status
-      const updateData: any = {
-        status,
-        updated_at: new Date().toISOString(),
-      };
+    // Update payment status
+    const updateData: any = {
+      status,
+      updated_at: new Date().toISOString(),
+    };
 
-      if (paidAt) {
-        updateData.paid_at = paidAt.toISOString();
-      }
+    if (paidAt) {
+      updateData.paid_at = paidAt.toISOString();
+    }
 
-      if (payerInfo) {
-        updateData.payer_bank = payerInfo.bank;
-        updateData.payer_info = payerInfo;
-      }
+    if (payerInfo) {
+      updateData.payer_bank = payerInfo.bank;
+      updateData.payer_info = payerInfo;
+    }
 
-      const { error } = await this.supabase
-        .from('pix_payments')
-        .update(updateData)
-        .eq('id', paymentId);
+    const { error } = await this.supabase
+      .from('pix_payments')
+      .update(updateData)
+      .eq('id', paymentId);
 
-      if (error) {
-        throw new Error(`Failed to update payment status: ${error.message}`);
-      }
+    if (error) {
+      throw new Error(`Failed to update payment status: ${error.message}`);
+    }
 
-      // If payment is confirmed, update related records
-      if (status === PixPaymentStatus.PAID) {
-        await this.processSuccessfulPayment(paymentId);
-      }
-    } catch (error) {
-      console.error('PIX webhook processing failed:', error);
-      throw error;
+    // If payment is confirmed, update related records
+    if (status === PixPaymentStatus.PAID) {
+      await this.processSuccessfulPayment(paymentId);
     }
   }
 
@@ -221,12 +210,7 @@ export class PixIntegration {
    * Cancel a PIX payment
    */
   async cancelPayment(paymentId: string): Promise<void> {
-    try {
-      await this.updatePaymentStatus(paymentId, PixPaymentStatus.CANCELLED);
-    } catch (error) {
-      console.error('Failed to cancel PIX payment:', error);
-      throw error;
-    }
+    await this.updatePaymentStatus(paymentId, PixPaymentStatus.CANCELLED);
   }
 
   /**
@@ -323,10 +307,7 @@ export class PixIntegration {
   /**
    * Register webhook for payment status updates
    */
-  private async registerWebhook(paymentId: string): Promise<void> {
-    // In production, register webhook with PIX provider
-    console.log(`Webhook registered for payment ${paymentId}`);
-  }
+  private async registerWebhook(_paymentId: string): Promise<void> {}
 
   /**
    * Update payment status in database
@@ -376,23 +357,17 @@ export class PixIntegration {
         .eq('pix_payment_id', paymentId);
 
       if (updateError) {
-        console.error('Failed to update main payment record:', updateError);
       }
 
       // Send confirmation email
       await this.sendPaymentConfirmation(payment);
-    } catch (error) {
-      console.error('Failed to process successful payment:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
    * Send payment confirmation email
    */
-  private async sendPaymentConfirmation(payment: any): Promise<void> {
-    // Implementation would use the existing email service
-    console.log(`Payment confirmation sent for ${payment.id}`);
-  }
+  private async sendPaymentConfirmation(_payment: any): Promise<void> {}
 }
 
 /**

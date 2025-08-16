@@ -80,7 +80,6 @@ export async function POST(request: NextRequest) {
         });
 
       if (paymentError) {
-        console.error('Failed to create main payment record:', paymentError);
         // Continue anyway - PIX payment was created successfully
       }
     }
@@ -101,8 +100,6 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(pixPayment, { status: 201 });
   } catch (error) {
-    console.error('PIX payment creation error:', error);
-
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {

@@ -30,8 +30,7 @@ export async function POST(request: NextRequest) {
       return handleBulkForecast(body);
     }
     return handleSingleForecast(body);
-  } catch (error) {
-    console.error('Demand forecasting error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to generate demand forecast' },
       { status: 500 }
@@ -154,8 +153,7 @@ export async function GET(request: NextRequest) {
       success: true,
       data: capabilities,
     });
-  } catch (error) {
-    console.error('Failed to get forecasting capabilities:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to retrieve forecasting information' },
       { status: 500 }

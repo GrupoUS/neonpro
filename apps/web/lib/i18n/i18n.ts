@@ -17,7 +17,7 @@ export const locales: Locale[] = ['pt-BR', 'en-US'];
 export const defaultLocale: Locale = 'pt-BR';
 
 // Dictionary type definitions for type safety
-export interface Dictionary {
+export type Dictionary = {
   // Common UI elements
   common: {
     loading: string;
@@ -484,7 +484,7 @@ export interface Dictionary {
     optionalData: string;
     mandatoryData: string;
   };
-}
+};
 
 // Brazilian Portuguese dictionary
 const ptBRDictionary: Dictionary = {

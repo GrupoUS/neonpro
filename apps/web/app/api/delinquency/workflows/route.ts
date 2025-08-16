@@ -149,7 +149,6 @@ export async function GET(request: NextRequest) {
     );
 
     if (statsError) {
-      console.warn('Failed to get workflow statistics:', statsError);
     }
 
     return NextResponse.json({
@@ -168,8 +167,7 @@ export async function GET(request: NextRequest) {
         totalCollected: 0,
       },
     });
-  } catch (error) {
-    console.error('Error fetching collection workflows:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to fetch collection workflows' },
       { status: 500 }
@@ -383,8 +381,6 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
     }
   } catch (error) {
-    console.error('Error processing workflow action:', error);
-
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Validation error', details: error.errors },
@@ -566,8 +562,6 @@ export async function PUT(request: NextRequest) {
         return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
     }
   } catch (error) {
-    console.error('Error updating workflow:', error);
-
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Validation error', details: error.errors },
@@ -649,8 +643,7 @@ export async function DELETE(request: NextRequest) {
       message: `Workflow ${newStatus} successfully`,
       data: updatedWorkflow,
     });
-  } catch (error) {
-    console.error('Error completing workflow:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to complete workflow' },
       { status: 500 }

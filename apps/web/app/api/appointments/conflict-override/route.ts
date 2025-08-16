@@ -6,7 +6,7 @@ import { createClient } from '@/app/utils/supabase/server';
 // Story 1.2: Manager conflict override system
 // =============================================
 
-interface ConflictOverrideRequest {
+type ConflictOverrideRequest = {
   appointment_id?: string;
   professional_id: string;
   clinic_id: string;
@@ -20,15 +20,15 @@ interface ConflictOverrideRequest {
     message: string;
     severity: string;
   }>;
-}
+};
 
-interface ConflictOverrideResponse {
+type ConflictOverrideResponse = {
   success: boolean;
   appointment_id?: string;
   override_id?: string;
   warnings?: string[];
   errors?: string[];
-}
+};
 
 export async function POST(request: NextRequest) {
   try {
@@ -106,7 +106,6 @@ export async function POST(request: NextRequest) {
       });
 
     if (transactionError) {
-      console.error('Error handling conflict override:', transactionError);
       return NextResponse.json(
         { error: 'Failed to process override request' },
         { status: 500 }
@@ -132,8 +131,7 @@ export async function POST(request: NextRequest) {
     };
 
     return NextResponse.json(response);
-  } catch (error) {
-    console.error('Error in conflict-override API:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -192,7 +190,6 @@ export async function GET(request: NextRequest) {
       .order('override_timestamp', { ascending: false });
 
     if (error) {
-      console.error('Error fetching override history:', error);
       return NextResponse.json(
         { error: 'Failed to fetch override history' },
         { status: 500 }
@@ -200,8 +197,7 @@ export async function GET(request: NextRequest) {
     }
 
     return NextResponse.json({ overrides: overrides || [] });
-  } catch (error) {
-    console.error('Error in conflict-override GET API:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -311,8 +307,7 @@ async function sendOverrideNotifications(
 
     // Insert notifications
     await supabase.from('notifications').insert(notifications);
-  } catch (error) {
-    console.error('Error sending override notifications:', error);
+  } catch (_error) {
     // Don't throw error - notifications are not critical
   }
 }

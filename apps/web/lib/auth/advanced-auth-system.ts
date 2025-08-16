@@ -15,7 +15,7 @@ import { SessionSyncManager } from './sync/session-sync';
 import { IntelligentTimeoutManager } from './timeout/intelligent-timeout';
 import { SessionUtils } from './utils/session-utils';
 
-export interface AdvancedAuthConfig {
+export type AdvancedAuthConfig = {
   // Core configuration
   sessionTimeout: number;
   maxConcurrentSessions: number;
@@ -46,24 +46,24 @@ export interface AdvancedAuthConfig {
   websocketUrl?: string;
   encryptionKey?: string;
   notificationEndpoints?: string[];
-}
+};
 
-export interface AuthSystemStatus {
+export type AuthSystemStatus = {
   initialized: boolean;
   components: ComponentStatus[];
   metrics: SystemMetrics;
   health: HealthStatus;
   alerts: SystemAlert[];
-}
+};
 
-export interface ComponentStatus {
+export type ComponentStatus = {
   name: string;
   status: 'healthy' | 'warning' | 'error' | 'disabled';
   lastCheck: number;
   details: any;
-}
+};
 
-export interface SystemMetrics {
+export type SystemMetrics = {
   activeSessions: number;
   totalSessions: number;
   suspiciousActivities: number;
@@ -71,32 +71,32 @@ export interface SystemMetrics {
   cleanupOperations: number;
   auditEvents: number;
   performance: PerformanceMetrics;
-}
+};
 
-export interface PerformanceMetrics {
+export type PerformanceMetrics = {
   averageResponseTime: number;
   memoryUsage: number;
   cpuUsage: number;
   errorRate: number;
   throughput: number;
-}
+};
 
-export interface HealthStatus {
+export type HealthStatus = {
   overall: 'healthy' | 'degraded' | 'critical';
   score: number;
   issues: HealthIssue[];
   recommendations: string[];
-}
+};
 
-export interface HealthIssue {
+export type HealthIssue = {
   component: string;
   severity: 'low' | 'medium' | 'high' | 'critical';
   description: string;
   impact: string;
   resolution: string;
-}
+};
 
-export interface SystemAlert {
+export type SystemAlert = {
   id: string;
   type: 'security' | 'performance' | 'compliance' | 'system';
   severity: 'info' | 'warning' | 'error' | 'critical';
@@ -105,9 +105,9 @@ export interface SystemAlert {
   timestamp: number;
   acknowledged: boolean;
   resolvedAt?: number;
-}
+};
 
-export interface AuthSystemEvent {
+export type AuthSystemEvent = {
   id: string;
   type: string;
   category: string;
@@ -115,7 +115,7 @@ export interface AuthSystemEvent {
   timestamp: number;
   source: string;
   data: any;
-}
+};
 
 export class AdvancedAuthSystem {
   private config: AdvancedAuthConfig;
@@ -194,46 +194,39 @@ export class AdvancedAuthSystem {
    * Initialize all components
    */
   private initializeComponents(): void {
-    try {
-      // Core session management
-      this.timeoutManager = new IntelligentTimeoutManager();
-      this.concurrentManager = new ConcurrentSessionManager();
+    // Core session management
+    this.timeoutManager = new IntelligentTimeoutManager();
+    this.concurrentManager = new ConcurrentSessionManager();
 
-      // Security components
-      if (this.config.enableSuspiciousDetection) {
-        this.suspiciousDetector = new SuspiciousActivityDetector();
-      }
+    // Security components
+    if (this.config.enableSuspiciousDetection) {
+      this.suspiciousDetector = new SuspiciousActivityDetector();
+    }
 
-      if (this.config.enableSecurityMonitoring) {
-        this.securityMonitor = new SecurityMonitor();
-      }
+    if (this.config.enableSecurityMonitoring) {
+      this.securityMonitor = new SecurityMonitor();
+    }
 
-      // Sync and preservation
-      if (this.config.enableSessionSync) {
-        this.syncManager = new SessionSyncManager();
-      }
+    // Sync and preservation
+    if (this.config.enableSessionSync) {
+      this.syncManager = new SessionSyncManager();
+    }
 
-      if (this.config.enableSessionPreservation) {
-        this.preservationManager = new SessionPreservationManager();
-      }
+    if (this.config.enableSessionPreservation) {
+      this.preservationManager = new SessionPreservationManager();
+    }
 
-      // Emergency and compliance
-      if (this.config.enableEmergencyShutdown) {
-        this.emergencyManager = new EmergencyShutdownManager();
-      }
+    // Emergency and compliance
+    if (this.config.enableEmergencyShutdown) {
+      this.emergencyManager = new EmergencyShutdownManager();
+    }
 
-      if (this.config.enableAuditTrail) {
-        this.auditManager = new AuditTrailManager();
-      }
+    if (this.config.enableAuditTrail) {
+      this.auditManager = new AuditTrailManager();
+    }
 
-      if (this.config.enableDataCleanup) {
-        this.cleanupManager = new DataCleanupManager();
-      }
-
-      console.log('Advanced auth system components initialized');
-    } catch (error) {
-      console.error('Error initializing auth system components:', error);
-      throw error;
+    if (this.config.enableDataCleanup) {
+      this.cleanupManager = new DataCleanupManager();
     }
   }
 
@@ -242,13 +235,10 @@ export class AdvancedAuthSystem {
    */
   public async initialize(): Promise<void> {
     if (this.isInitialized) {
-      console.warn('Advanced auth system already initialized');
       return;
     }
 
     try {
-      console.log('Initializing advanced authentication system...');
-
       // Initialize core components in order
       await this.initializeCore();
       await this.initializeSecurity();
@@ -278,10 +268,7 @@ export class AdvancedAuthSystem {
       }
 
       this.emit('system_initialized', { config: this.config });
-      console.log('Advanced authentication system initialized successfully');
     } catch (error) {
-      console.error('Error initializing advanced auth system:', error);
-
       // Log initialization failure
       if (this.auditManager) {
         await this.auditManager.logSystemEvent({
@@ -300,8 +287,6 @@ export class AdvancedAuthSystem {
    * Initialize core components
    */
   private async initializeCore(): Promise<void> {
-    console.log('Initializing core components...');
-
     // Initialize timeout manager
     await this.timeoutManager.initialize();
     this.updateComponentStatus(
@@ -317,16 +302,12 @@ export class AdvancedAuthSystem {
       'healthy',
       'Concurrent session manager initialized'
     );
-
-    console.log('Core components initialized');
   }
 
   /**
    * Initialize security components
    */
   private async initializeSecurity(): Promise<void> {
-    console.log('Initializing security components...');
-
     if (this.suspiciousDetector) {
       await this.suspiciousDetector.initialize();
       this.updateComponentStatus(
@@ -344,16 +325,12 @@ export class AdvancedAuthSystem {
         'Security monitor initialized'
       );
     }
-
-    console.log('Security components initialized');
   }
 
   /**
    * Initialize sync components
    */
   private async initializeSync(): Promise<void> {
-    console.log('Initializing sync components...');
-
     if (this.syncManager) {
       await this.syncManager.initialize({
         websocketUrl: this.config.websocketUrl || 'ws://localhost:8080/sync',
@@ -373,16 +350,12 @@ export class AdvancedAuthSystem {
         'Session preservation manager initialized'
       );
     }
-
-    console.log('Sync components initialized');
   }
 
   /**
    * Initialize compliance components
    */
   private async initializeCompliance(): Promise<void> {
-    console.log('Initializing compliance components...');
-
     if (this.emergencyManager) {
       await this.emergencyManager.initialize();
       this.updateComponentStatus(
@@ -409,16 +382,12 @@ export class AdvancedAuthSystem {
         'Data cleanup manager initialized'
       );
     }
-
-    console.log('Compliance components initialized');
   }
 
   /**
    * Setup component integration
    */
   private async setupComponentIntegration(): Promise<void> {
-    console.log('Setting up component integration...');
-
     // Integrate suspicious activity detector with security monitor
     if (this.suspiciousDetector && this.securityMonitor) {
       this.suspiciousDetector.on('anomaly_detected', async (event) => {
@@ -485,8 +454,6 @@ export class AdvancedAuthSystem {
         }
       });
     }
-
-    console.log('Component integration setup completed');
   }
 
   /**
@@ -497,21 +464,15 @@ export class AdvancedAuthSystem {
     this.healthCheckInterval = setInterval(async () => {
       try {
         await this.performHealthCheck();
-      } catch (error) {
-        console.error('Error during health check:', error);
-      }
+      } catch (_error) {}
     }, this.config.monitoringInterval);
 
     // Metrics collection interval
     this.metricsInterval = setInterval(async () => {
       try {
         await this.collectMetrics();
-      } catch (error) {
-        console.error('Error collecting metrics:', error);
-      }
+      } catch (_error) {}
     }, this.config.monitoringInterval / 2);
-
-    console.log('System monitoring started');
   }
 
   /**
@@ -607,9 +568,7 @@ export class AdvancedAuthSystem {
 
       // Emit metrics update
       this.emit('metrics_updated', metrics);
-    } catch (error) {
-      console.error('Error collecting metrics:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -748,8 +707,7 @@ export class AdvancedAuthSystem {
       }
 
       return session;
-    } catch (error) {
-      console.error('Error validating session:', error);
+    } catch (_error) {
       return null;
     }
   }
@@ -758,51 +716,46 @@ export class AdvancedAuthSystem {
     sessionId: string,
     reason: string
   ): Promise<void> {
-    try {
-      const session = await this.sessionConfig.getSession(sessionId);
+    const session = await this.sessionConfig.getSession(sessionId);
 
-      // Create final preservation snapshot
-      if (this.preservationManager && session) {
-        await this.preservationManager.createSnapshot(sessionId, {
-          reason: `session_terminated_${reason}`,
-          preserveAll: true,
-        });
-      }
-
-      // Stop monitoring
-      if (this.suspiciousDetector) {
-        await this.suspiciousDetector.stopMonitoring(sessionId);
-      }
-
-      // Remove from timeout manager
-      if (this.timeoutManager) {
-        await this.timeoutManager.removeSession(sessionId);
-      }
-
-      // Remove from concurrent manager
-      if (this.concurrentManager) {
-        await this.concurrentManager.removeSession(sessionId);
-      }
-
-      // Terminate session
-      await this.sessionConfig.terminateSession(sessionId);
-
-      // Log session termination
-      if (this.auditManager && session) {
-        await this.auditManager.logSessionEvent({
-          action: 'session_terminated',
-          sessionId,
-          userId: session.userId,
-          reason,
-          duration: Date.now() - session.createdAt,
-        });
-      }
-
-      this.emit('session_terminated', { sessionId, reason });
-    } catch (error) {
-      console.error('Error terminating session:', error);
-      throw error;
+    // Create final preservation snapshot
+    if (this.preservationManager && session) {
+      await this.preservationManager.createSnapshot(sessionId, {
+        reason: `session_terminated_${reason}`,
+        preserveAll: true,
+      });
     }
+
+    // Stop monitoring
+    if (this.suspiciousDetector) {
+      await this.suspiciousDetector.stopMonitoring(sessionId);
+    }
+
+    // Remove from timeout manager
+    if (this.timeoutManager) {
+      await this.timeoutManager.removeSession(sessionId);
+    }
+
+    // Remove from concurrent manager
+    if (this.concurrentManager) {
+      await this.concurrentManager.removeSession(sessionId);
+    }
+
+    // Terminate session
+    await this.sessionConfig.terminateSession(sessionId);
+
+    // Log session termination
+    if (this.auditManager && session) {
+      await this.auditManager.logSessionEvent({
+        action: 'session_terminated',
+        sessionId,
+        userId: session.userId,
+        reason,
+        duration: Date.now() - session.createdAt,
+      });
+    }
+
+    this.emit('session_terminated', { sessionId, reason });
   }
 
   /**
@@ -971,9 +924,7 @@ export class AdvancedAuthSystem {
       listeners.forEach((callback) => {
         try {
           callback(data);
-        } catch (error) {
-          console.error(`Error in event listener for ${event}:`, error);
-        }
+        } catch (_error) {}
       });
     }
   }
@@ -982,61 +933,52 @@ export class AdvancedAuthSystem {
    * Shutdown system
    */
   public async shutdown(): Promise<void> {
-    try {
-      console.log('Shutting down advanced authentication system...');
-
-      // Stop monitoring
-      if (this.healthCheckInterval) {
-        clearInterval(this.healthCheckInterval);
-      }
-      if (this.metricsInterval) {
-        clearInterval(this.metricsInterval);
-      }
-
-      // Shutdown components in reverse order
-      const shutdownPromises = [];
-
-      if (this.cleanupManager) {
-        shutdownPromises.push(this.cleanupManager.shutdown());
-      }
-      if (this.auditManager) {
-        shutdownPromises.push(this.auditManager.shutdown());
-      }
-      if (this.emergencyManager) {
-        shutdownPromises.push(this.emergencyManager.shutdown());
-      }
-      if (this.preservationManager) {
-        shutdownPromises.push(this.preservationManager.shutdown());
-      }
-      if (this.syncManager) {
-        shutdownPromises.push(this.syncManager.shutdown());
-      }
-      if (this.securityMonitor) {
-        shutdownPromises.push(this.securityMonitor.shutdown());
-      }
-      if (this.suspiciousDetector) {
-        shutdownPromises.push(this.suspiciousDetector.shutdown());
-      }
-      if (this.concurrentManager) {
-        shutdownPromises.push(this.concurrentManager.shutdown());
-      }
-      if (this.timeoutManager) {
-        shutdownPromises.push(this.timeoutManager.shutdown());
-      }
-
-      await Promise.allSettled(shutdownPromises);
-
-      // Clear state
-      this.componentStatuses.clear();
-      this.systemAlerts = [];
-      this.eventListeners.clear();
-      this.isInitialized = false;
-
-      console.log('Advanced authentication system shutdown completed');
-    } catch (error) {
-      console.error('Error during system shutdown:', error);
-      throw error;
+    // Stop monitoring
+    if (this.healthCheckInterval) {
+      clearInterval(this.healthCheckInterval);
     }
+    if (this.metricsInterval) {
+      clearInterval(this.metricsInterval);
+    }
+
+    // Shutdown components in reverse order
+    const shutdownPromises = [];
+
+    if (this.cleanupManager) {
+      shutdownPromises.push(this.cleanupManager.shutdown());
+    }
+    if (this.auditManager) {
+      shutdownPromises.push(this.auditManager.shutdown());
+    }
+    if (this.emergencyManager) {
+      shutdownPromises.push(this.emergencyManager.shutdown());
+    }
+    if (this.preservationManager) {
+      shutdownPromises.push(this.preservationManager.shutdown());
+    }
+    if (this.syncManager) {
+      shutdownPromises.push(this.syncManager.shutdown());
+    }
+    if (this.securityMonitor) {
+      shutdownPromises.push(this.securityMonitor.shutdown());
+    }
+    if (this.suspiciousDetector) {
+      shutdownPromises.push(this.suspiciousDetector.shutdown());
+    }
+    if (this.concurrentManager) {
+      shutdownPromises.push(this.concurrentManager.shutdown());
+    }
+    if (this.timeoutManager) {
+      shutdownPromises.push(this.timeoutManager.shutdown());
+    }
+
+    await Promise.allSettled(shutdownPromises);
+
+    // Clear state
+    this.componentStatuses.clear();
+    this.systemAlerts = [];
+    this.eventListeners.clear();
+    this.isInitialized = false;
   }
 }
 

@@ -2,7 +2,7 @@
 // Epic 7.3: Treatment Follow-up Automation
 // Author: VoidBeast Agent
 
-export interface TreatmentFollowupProtocol {
+export type TreatmentFollowupProtocol = {
   id: string;
   name: string;
   description: string;
@@ -40,9 +40,9 @@ export interface TreatmentFollowupProtocol {
   updated_at: string;
   created_by?: string;
   updated_by?: string;
-}
+};
 
-export interface PatientTreatmentFollowup {
+export type PatientTreatmentFollowup = {
   id: string;
   patient_id: string;
   treatment_id?: string;
@@ -94,9 +94,9 @@ export interface PatientTreatmentFollowup {
   updated_at: string;
   created_by?: string;
   updated_by?: string;
-}
+};
 
-export interface FollowupCommunication {
+export type FollowupCommunication = {
   id: string;
   followup_id: string;
 
@@ -122,9 +122,9 @@ export interface FollowupCommunication {
   cost_cents?: number;
 
   created_at: string;
-}
+};
 
-export interface TreatmentOutcome {
+export type TreatmentOutcome = {
   id: string;
   patient_id: string;
   treatment_id?: string;
@@ -167,9 +167,9 @@ export interface TreatmentOutcome {
   created_at: string;
   updated_at: string;
   recorded_by?: string;
-}
+};
 
-export interface FollowupEscalationRule {
+export type FollowupEscalationRule = {
   id: string;
   protocol_id: string;
 
@@ -196,9 +196,9 @@ export interface FollowupEscalationRule {
   is_active: boolean;
   created_at: string;
   updated_at: string;
-}
+};
 
-export interface FollowupPerformanceAnalytics {
+export type FollowupPerformanceAnalytics = {
   id: string;
 
   // Time period
@@ -236,10 +236,10 @@ export interface FollowupPerformanceAnalytics {
   automation_success_rate: number;
 
   created_at: string;
-}
+};
 
 // API Request/Response types
-export interface CreateFollowupProtocolRequest {
+export type CreateFollowupProtocolRequest = {
   name: string;
   description: string;
   treatment_type: string;
@@ -261,9 +261,9 @@ export interface CreateFollowupProtocolRequest {
   lgpd_compliant: boolean;
   consent_required: boolean;
   data_retention_days: number;
-}
+};
 
-export interface CreatePatientFollowupRequest {
+export type CreatePatientFollowupRequest = {
   patient_id: string;
   treatment_id?: string;
   protocol_id: string;
@@ -274,9 +274,9 @@ export interface CreatePatientFollowupRequest {
   backup_channels: string[];
   language_preference: string;
   shadow_test_variant?: string;
-}
+};
 
-export interface UpdateFollowupStatusRequest {
+export type UpdateFollowupStatusRequest = {
   status:
     | 'scheduled'
     | 'sent'
@@ -293,9 +293,9 @@ export interface UpdateFollowupStatusRequest {
   side_effects_reported?: boolean;
   additional_care_needed?: boolean;
   notes?: string;
-}
+};
 
-export interface CreateTreatmentOutcomeRequest {
+export type CreateTreatmentOutcomeRequest = {
   patient_id: string;
   treatment_id?: string;
   followup_id?: string;
@@ -318,9 +318,9 @@ export interface CreateTreatmentOutcomeRequest {
   specialist_type?: string;
   data_source: 'patient_report' | 'clinical_exam' | 'automated_assessment';
   reliability_score: number;
-}
+};
 
-export interface FollowupFilters {
+export type FollowupFilters = {
   page: number;
   limit: number;
   search?: string;
@@ -336,9 +336,9 @@ export interface FollowupFilters {
   pending_only?: boolean;
   overdue_only?: boolean;
   order?: string;
-}
+};
 
-export interface FollowupDashboardStats {
+export type FollowupDashboardStats = {
   total_followups: number;
   pending_followups: number;
   completed_today: number;
@@ -354,10 +354,10 @@ export interface FollowupDashboardStats {
     email: number;
     phone: number;
   };
-}
+};
 
 // Communication template variables
-export interface TemplateVariables {
+export type TemplateVariables = {
   patient_name: string;
   days_since_treatment: number;
   treatment_type: string;
@@ -369,10 +369,10 @@ export interface TemplateVariables {
   satisfaction_scale?: string;
   pain_scale?: string;
   [key: string]: string | number | undefined;
-}
+};
 
 // AI optimization types
-export interface AITimingOptimization {
+export type AITimingOptimization = {
   patient_id: string;
   historical_response_times: number[];
   preferred_time_slots: string[];
@@ -381,13 +381,13 @@ export interface AITimingOptimization {
   optimal_hour: number;
   confidence_score: number;
   factors_analyzed: string[];
-}
+};
 
-export interface AIPersonalizationSuggestions {
+export type AIPersonalizationSuggestions = {
   message_tone: 'formal' | 'casual' | 'empathetic' | 'urgent';
   content_focus: string[];
   channel_preference: 'sms' | 'whatsapp' | 'email' | 'phone';
   frequency_adjustment: 'increase' | 'decrease' | 'maintain';
   escalation_threshold: number;
   personalization_confidence: number;
-}
+};

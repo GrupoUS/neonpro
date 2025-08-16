@@ -43,10 +43,6 @@ export async function GET(request: NextRequest) {
       generated_at: new Date().toISOString(),
     });
   } catch (error) {
-    console.error(
-      'API error in GET /api/followups/analytics/dashboard:',
-      error
-    );
     return NextResponse.json(
       {
         error: 'Internal server error',

@@ -72,7 +72,9 @@ export default function CadastrarPage() {
         {/* Healthcare compliance and LGPD notice */}
         <div className="space-y-3 text-center text-slate-500 text-xs">
           <div className="rounded-lg border border-amber-200 bg-amber-50 p-3 text-amber-800">
-            <p className="font-medium">⚠️ Importante - Profissionais de Saúde</p>
+            <p className="font-medium">
+              ⚠️ Importante - Profissionais de Saúde
+            </p>
             <p className="mt-1">
               Este sistema é destinado exclusivamente a profissionais de saúde
               licenciados. Ao criar sua conta, você confirma possuir registro

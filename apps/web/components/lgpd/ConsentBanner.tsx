@@ -36,14 +36,14 @@ import {
 } from '@/components/ui/dialog';
 import { useConsentBanner } from '@/hooks/useLGPD';
 
-interface ConsentBannerProps {
+type ConsentBannerProps = {
   position?: 'top' | 'bottom';
   theme?: 'light' | 'dark';
   showLogo?: boolean;
   companyName?: string;
   privacyPolicyUrl?: string;
   termsOfServiceUrl?: string;
-}
+};
 
 export function ConsentBanner({
   position = 'bottom',
@@ -99,27 +99,21 @@ export function ConsentBanner({
         }
       }
       hideConsentBanner();
-    } catch (error) {
-      console.error('Erro ao salvar preferências:', error);
-    }
+    } catch (_error) {}
   };
 
   const handleAcceptAll = async () => {
     try {
       await acceptAll();
       hideConsentBanner();
-    } catch (error) {
-      console.error('Erro ao aceitar todos:', error);
-    }
+    } catch (_error) {}
   };
 
   const handleRejectAll = async () => {
     try {
       await rejectAll();
       hideConsentBanner();
-    } catch (error) {
-      console.error('Erro ao rejeitar todos:', error);
-    }
+    } catch (_error) {}
   };
 
   const getPurposeIcon = (category: string) => {

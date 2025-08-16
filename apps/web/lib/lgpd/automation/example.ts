@@ -41,39 +41,27 @@ export class LGPDAutomationService {
    * Inicializar o sistema de automação LGPD
    */
   async initialize(): Promise<void> {
-    try {
-      console.log('🚀 Inicializando sistema de automação LGPD...');
+    // Obter configuração baseada no ambiente
+    const config = this.getEnvironmentConfig();
 
-      // Obter configuração baseada no ambiente
-      const config = this.getEnvironmentConfig();
+    // Criar orquestrador
+    this.orchestrator = new LGPDAutomationOrchestrator(
+      this.supabase,
+      this.complianceManager,
+      config
+    );
 
-      // Criar orquestrador
-      this.orchestrator = new LGPDAutomationOrchestrator(
-        this.supabase,
-        this.complianceManager,
-        config
-      );
+    // Configurar callbacks de monitoramento
+    this.setupMonitoringCallbacks();
 
-      // Configurar callbacks de monitoramento
-      this.setupMonitoringCallbacks();
+    // Iniciar todos os módulos de automação
+    const result = await this.orchestrator.startAllAutomation();
 
-      // Iniciar todos os módulos de automação
-      const result = await this.orchestrator.startAllAutomation();
-
-      if (result.success) {
-        console.log('✅ Sistema de automação LGPD iniciado com sucesso!');
-        console.log('📊 Módulos iniciados:', result.started_modules);
-      } else {
-        console.warn('⚠️ Alguns módulos falharam ao iniciar:');
-        console.log('✅ Iniciados:', result.started_modules);
-        console.log('❌ Falharam:', result.failed_modules);
-      }
-
-      this.isInitialized = true;
-    } catch (error) {
-      console.error('❌ Erro ao inicializar sistema de automação LGPD:', error);
-      throw error;
+    if (result.success) {
+    } else {
     }
+
+    this.isInitialized = true;
   }
 
   /**
@@ -84,19 +72,9 @@ export class LGPDAutomationService {
       return;
     }
 
-    try {
-      console.log('🛑 Parando sistema de automação LGPD...');
+    const _result = await this.orchestrator.stopAllAutomation();
 
-      const result = await this.orchestrator.stopAllAutomation();
-
-      console.log('✅ Sistema parado com sucesso!');
-      console.log('📊 Módulos parados:', result.stopped_modules);
-
-      this.isInitialized = false;
-    } catch (error) {
-      console.error('❌ Erro ao parar sistema de automação LGPD:', error);
-      throw error;
-    }
+    this.isInitialized = false;
   }
 
   /**
@@ -129,12 +107,6 @@ export class LGPDAutomationService {
   private setupMonitoringCallbacks(): void {
     // Callback para alertas
     this.orchestrator.onAlert((alert) => {
-      console.log(
-        `🚨 Alerta ${alert.alert_type.toUpperCase()}: ${alert.title}`
-      );
-      console.log(`📍 Módulo: ${alert.module}`);
-      console.log(`📝 Mensagem: ${alert.message}`);
-
       // Enviar para sistema de monitoramento externo se necessário
       if (alert.alert_type === 'critical') {
         this.sendCriticalAlert(alert);
@@ -145,10 +117,6 @@ export class LGPDAutomationService {
     this.orchestrator.onStatusChange((statuses) => {
       const errorModules = statuses.filter((s) => s.status === 'error');
       if (errorModules.length > 0) {
-        console.warn(
-          '⚠️ Módulos com erro:',
-          errorModules.map((m) => m.module)
-        );
       }
     });
   }
@@ -156,11 +124,7 @@ export class LGPDAutomationService {
   /**
    * Enviar alerta crítico para sistema de monitoramento
    */
-  private async sendCriticalAlert(alert: any): Promise<void> {
-    // Implementar integração com sistema de monitoramento
-    // (ex: Slack, Discord, email, etc.)
-    console.log('🚨 ALERTA CRÍTICO - Enviando notificação...', alert);
-  }
+  private async sendCriticalAlert(_alert: any): Promise<void> {}
 
   /**
    * Obter dashboard de conformidade
@@ -229,29 +193,20 @@ export class LGPDUsageExamples {
     userAgent: string
   ) {
     const modules = this.service.getModules();
-
-    try {
-      const consent =
-        await modules.consentAutomation.collectConsentWithTracking({
-          user_id: userId,
-          purpose: purpose as any,
-          consent_given: true,
-          collection_method: 'web_form',
-          ip_address: ipAddress,
-          user_agent: userAgent,
-          consent_text: `Eu concordo com o uso dos meus dados para ${purpose}`,
-          legal_basis: 'consent',
-          data_categories: ['personal', 'contact'],
-          retention_period_months: 24,
-          third_party_sharing: false,
-        });
-
-      console.log('✅ Consentimento coletado:', consent.consent_id);
-      return consent;
-    } catch (error) {
-      console.error('❌ Erro ao coletar consentimento:', error);
-      throw error;
-    }
+    const consent = await modules.consentAutomation.collectConsentWithTracking({
+      user_id: userId,
+      purpose: purpose as any,
+      consent_given: true,
+      collection_method: 'web_form',
+      ip_address: ipAddress,
+      user_agent: userAgent,
+      consent_text: `Eu concordo com o uso dos meus dados para ${purpose}`,
+      legal_basis: 'consent',
+      data_categories: ['personal', 'contact'],
+      retention_period_months: 24,
+      third_party_sharing: false,
+    });
+    return consent;
   }
 
   /**
@@ -259,23 +214,15 @@ export class LGPDUsageExamples {
    */
   async processDataAccessRequest(userId: string, email: string) {
     const modules = this.service.getModules();
-
-    try {
-      const request = await modules.dataSubjectRights.processAccessRequest({
-        user_id: userId,
-        request_type: 'access',
-        contact_email: email,
-        identity_verified: true,
-        requested_data_categories: ['personal', 'usage', 'preferences'],
-        delivery_method: 'secure_download',
-      });
-
-      console.log('✅ Solicitação de acesso processada:', request.request_id);
-      return request;
-    } catch (error) {
-      console.error('❌ Erro ao processar solicitação de acesso:', error);
-      throw error;
-    }
+    const request = await modules.dataSubjectRights.processAccessRequest({
+      user_id: userId,
+      request_type: 'access',
+      contact_email: email,
+      identity_verified: true,
+      requested_data_categories: ['personal', 'usage', 'preferences'],
+      delivery_method: 'secure_download',
+    });
+    return request;
   }
 
   /**
@@ -283,23 +230,15 @@ export class LGPDUsageExamples {
    */
   async processDataDeletionRequest(userId: string, email: string) {
     const modules = this.service.getModules();
-
-    try {
-      const request = await modules.dataSubjectRights.processDeletionRequest({
-        user_id: userId,
-        request_type: 'deletion',
-        contact_email: email,
-        identity_verified: true,
-        deletion_scope: 'all_data',
-        reason: 'user_request',
-      });
-
-      console.log('✅ Solicitação de exclusão processada:', request.request_id);
-      return request;
-    } catch (error) {
-      console.error('❌ Erro ao processar solicitação de exclusão:', error);
-      throw error;
-    }
+    const request = await modules.dataSubjectRights.processDeletionRequest({
+      user_id: userId,
+      request_type: 'deletion',
+      contact_email: email,
+      identity_verified: true,
+      deletion_scope: 'all_data',
+      reason: 'user_request',
+    });
+    return request;
   }
 
   /**
@@ -307,29 +246,21 @@ export class LGPDUsageExamples {
    */
   async createRetentionPolicy(tableName: string, retentionMonths: number) {
     const modules = this.service.getModules();
-
-    try {
-      const policy = await modules.dataRetention.createRetentionPolicy({
-        name: `Política ${tableName}`,
-        description: `Retenção automática para tabela ${tableName}`,
-        table_name: tableName,
-        retention_period_months: retentionMonths,
-        retention_type: 'soft_delete',
-        conditions: {
-          date_column: 'created_at',
-          additional_conditions: [],
-        },
-        approval_required: true,
-        backup_before_deletion: true,
-        notification_before_days: 7,
-      });
-
-      console.log('✅ Política de retenção criada:', policy.policy_id);
-      return policy;
-    } catch (error) {
-      console.error('❌ Erro ao criar política de retenção:', error);
-      throw error;
-    }
+    const policy = await modules.dataRetention.createRetentionPolicy({
+      name: `Política ${tableName}`,
+      description: `Retenção automática para tabela ${tableName}`,
+      table_name: tableName,
+      retention_period_months: retentionMonths,
+      retention_type: 'soft_delete',
+      conditions: {
+        date_column: 'created_at',
+        additional_conditions: [],
+      },
+      approval_required: true,
+      backup_before_deletion: true,
+      notification_before_days: 7,
+    });
+    return policy;
   }
 
   /**
@@ -337,27 +268,19 @@ export class LGPDUsageExamples {
    */
   async registerThirdPartyProvider(providerData: any) {
     const modules = this.service.getModules();
-
-    try {
-      const provider = await modules.thirdPartyCompliance.registerProvider({
-        name: providerData.name,
-        contact_email: providerData.email,
-        data_processing_agreement_url: providerData.agreementUrl,
-        data_categories_shared: providerData.dataCategories,
-        processing_purposes: providerData.purposes,
-        data_retention_period_months: providerData.retentionMonths,
-        international_transfer: providerData.internationalTransfer,
-        adequacy_decision: providerData.adequacyDecision,
-        safeguards_implemented: providerData.safeguards || [],
-        compliance_certifications: providerData.certifications || [],
-      });
-
-      console.log('✅ Fornecedor registrado:', provider.provider_id);
-      return provider;
-    } catch (error) {
-      console.error('❌ Erro ao registrar fornecedor:', error);
-      throw error;
-    }
+    const provider = await modules.thirdPartyCompliance.registerProvider({
+      name: providerData.name,
+      contact_email: providerData.email,
+      data_processing_agreement_url: providerData.agreementUrl,
+      data_categories_shared: providerData.dataCategories,
+      processing_purposes: providerData.purposes,
+      data_retention_period_months: providerData.retentionMonths,
+      international_transfer: providerData.internationalTransfer,
+      adequacy_decision: providerData.adequacyDecision,
+      safeguards_implemented: providerData.safeguards || [],
+      compliance_certifications: providerData.certifications || [],
+    });
+    return provider;
   }
 
   /**
@@ -367,24 +290,16 @@ export class LGPDUsageExamples {
     reportType: 'daily' | 'weekly' | 'monthly' | 'quarterly'
   ) {
     const modules = this.service.getModules();
-
-    try {
-      const report = await modules.auditReporting.generateComplianceReport({
-        report_type: reportType,
-        include_metrics: true,
-        include_incidents: true,
-        include_requests: true,
-        include_consents: true,
-        format: 'pdf',
-        language: 'pt-BR',
-      });
-
-      console.log('✅ Relatório gerado:', report.report_id);
-      return report;
-    } catch (error) {
-      console.error('❌ Erro ao gerar relatório:', error);
-      throw error;
-    }
+    const report = await modules.auditReporting.generateComplianceReport({
+      report_type: reportType,
+      include_metrics: true,
+      include_incidents: true,
+      include_requests: true,
+      include_consents: true,
+      format: 'pdf',
+      language: 'pt-BR',
+    });
+    return report;
   }
 }
 
@@ -393,28 +308,20 @@ export class LGPDUsageExamples {
  */
 export async function initializeLGPDInNextJS() {
   const service = getLGPDService();
+  await service.initialize();
 
-  try {
-    await service.initialize();
+  // Configurar shutdown graceful
+  process.on('SIGTERM', async () => {
+    await service.shutdown();
+    process.exit(0);
+  });
 
-    // Configurar shutdown graceful
-    process.on('SIGTERM', async () => {
-      console.log('📡 Recebido SIGTERM, parando sistema LGPD...');
-      await service.shutdown();
-      process.exit(0);
-    });
+  process.on('SIGINT', async () => {
+    await service.shutdown();
+    process.exit(0);
+  });
 
-    process.on('SIGINT', async () => {
-      console.log('📡 Recebido SIGINT, parando sistema LGPD...');
-      await service.shutdown();
-      process.exit(0);
-    });
-
-    return service;
-  } catch (error) {
-    console.error('❌ Falha ao inicializar LGPD:', error);
-    throw error;
-  }
+  return service;
 }
 
 /**
@@ -524,8 +431,7 @@ export function lgpdConsentMiddleware(requiredPurpose: string) {
       };
 
       next();
-    } catch (error) {
-      console.error('Erro no middleware LGPD:', error);
+    } catch (_error) {
       res.status(500).json({ error: 'Erro interno do servidor' });
     }
   };

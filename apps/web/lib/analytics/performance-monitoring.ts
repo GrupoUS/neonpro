@@ -37,7 +37,7 @@ export type PerformanceStatus =
   | 'failed';
 
 // Core Interfaces
-export interface SystemMetrics {
+export type SystemMetrics = {
   id: string;
   timestamp: string;
   category: PerformanceCategory;
@@ -55,9 +55,9 @@ export interface SystemMetrics {
   alerts: PerformanceAlert[];
   clinicId: string;
   environment: 'development' | 'staging' | 'production';
-}
+};
 
-export interface CPUMetrics {
+export type CPUMetrics = {
   usage: number; // percentage 0-100
   cores: number;
   loadAverage: number[];
@@ -65,9 +65,9 @@ export interface CPUMetrics {
   temperature?: number; // celsius
   frequency?: number; // MHz
   throttling: boolean;
-}
+};
 
-export interface ProcessMetrics {
+export type ProcessMetrics = {
   pid: number;
   name: string;
   cpuUsage: number;
@@ -75,9 +75,9 @@ export interface ProcessMetrics {
   status: 'running' | 'sleeping' | 'stopped' | 'zombie';
   priority: number;
   threads: number;
-}
+};
 
-export interface MemoryMetrics {
+export type MemoryMetrics = {
   total: number; // bytes
   used: number; // bytes
   free: number; // bytes
@@ -90,9 +90,9 @@ export interface MemoryMetrics {
   };
   fragmentation: number; // percentage
   pressure: number; // 0-100
-}
+};
 
-export interface StorageMetrics {
+export type StorageMetrics = {
   devices: StorageDevice[];
   totalSpace: number; // bytes
   usedSpace: number; // bytes
@@ -109,9 +109,9 @@ export interface StorageMetrics {
     read: number; // MB/s
     write: number; // MB/s
   };
-}
+};
 
-export interface StorageDevice {
+export type StorageDevice = {
   name: string;
   type: 'ssd' | 'hdd' | 'nvme' | 'cloud';
   size: number; // bytes
@@ -119,9 +119,9 @@ export interface StorageDevice {
   health: number; // 0-100
   temperature?: number; // celsius
   wearLevel?: number; // 0-100 for SSDs
-}
+};
 
-export interface NetworkMetrics {
+export type NetworkMetrics = {
   interfaces: NetworkInterface[];
   totalBandwidth: number; // Mbps
   usedBandwidth: number; // Mbps
@@ -138,9 +138,9 @@ export interface NetworkMetrics {
     failed: number;
     avgResponseTime: number; // ms
   };
-}
+};
 
-export interface NetworkInterface {
+export type NetworkInterface = {
   name: string;
   type: 'ethernet' | 'wifi' | 'loopback';
   speed: number; // Mbps
@@ -150,9 +150,9 @@ export interface NetworkInterface {
   packetsSent: number;
   errors: number;
   drops: number;
-}
+};
 
-export interface DatabaseMetrics {
+export type DatabaseMetrics = {
   connections: {
     active: number;
     idle: number;
@@ -185,9 +185,9 @@ export interface DatabaseMetrics {
     growth: number; // bytes per day
     fragmentation: number; // percentage
   };
-}
+};
 
-export interface ApplicationMetrics {
+export type ApplicationMetrics = {
   requests: {
     total: number;
     successful: number;
@@ -216,9 +216,9 @@ export interface ApplicationMetrics {
     size: number; // bytes
     evictions: number;
   };
-}
+};
 
-export interface FeatureMetrics {
+export type FeatureMetrics = {
   usage: number; // requests per hour
   accuracy: number; // percentage
   avgProcessingTime: number; // ms
@@ -226,9 +226,9 @@ export interface FeatureMetrics {
   errorRate: number; // percentage
   confidence: number; // average confidence score
   throughput: number; // operations per hour
-}
+};
 
-export interface PerformanceAlert {
+export type PerformanceAlert = {
   id: string;
   timestamp: string;
   severity: MetricSeverity;
@@ -244,9 +244,9 @@ export interface PerformanceAlert {
   resolved: boolean;
   resolvedAt?: string;
   resolvedBy?: string;
-}
+};
 
-export interface PerformanceThreshold {
+export type PerformanceThreshold = {
   id: string;
   category: PerformanceCategory;
   component: string;
@@ -259,9 +259,9 @@ export interface PerformanceThreshold {
   enabled: boolean;
   autoResolve: boolean;
   cooldown: number; // minutes
-}
+};
 
-export interface OptimizationSuggestion {
+export type OptimizationSuggestion = {
   id: string;
   timestamp: string;
   category: PerformanceCategory;
@@ -279,9 +279,9 @@ export interface OptimizationSuggestion {
   risk: 'low' | 'medium' | 'high';
   dependencies: string[];
   tags: string[];
-}
+};
 
-export interface OptimizationStep {
+export type OptimizationStep = {
   id: string;
   order: number;
   title: string;
@@ -290,9 +290,9 @@ export interface OptimizationStep {
   parameters: Record<string, any>;
   validation: string;
   rollback?: string;
-}
+};
 
-export interface PerformanceBenchmark {
+export type PerformanceBenchmark = {
   id: string;
   name: string;
   category: PerformanceCategory;
@@ -308,9 +308,9 @@ export interface PerformanceBenchmark {
   variance: number;
   confidence: number;
   lastUpdated: string;
-}
+};
 
-export interface PerformanceReport {
+export type PerformanceReport = {
   id: string;
   timestamp: string;
   period: {
@@ -325,9 +325,9 @@ export interface PerformanceReport {
   benchmarks: PerformanceBenchmark[];
   recommendations: string[];
   score: number; // overall performance score 0-100
-}
+};
 
-export interface PerformanceSummary {
+export type PerformanceSummary = {
   overallHealth: number; // 0-100
   availability: number; // percentage
   reliability: number; // percentage
@@ -337,9 +337,9 @@ export interface PerformanceSummary {
   securityScore: number; // 0-100
   improvementAreas: string[];
   achievements: string[];
-}
+};
 
-export interface CategoryReport {
+export type CategoryReport = {
   category: PerformanceCategory;
   score: number; // 0-100
   status: PerformanceStatus;
@@ -348,9 +348,9 @@ export interface CategoryReport {
   alerts: number;
   recommendations: number;
   improvement: number; // percentage change
-}
+};
 
-export interface TrendReport {
+export type TrendReport = {
   metric: string;
   category: PerformanceCategory;
   component: string;
@@ -359,9 +359,9 @@ export interface TrendReport {
   period: string;
   significance: 'low' | 'medium' | 'high';
   forecast: ForecastPoint[];
-}
+};
 
-export interface ForecastPoint {
+export type ForecastPoint = {
   timestamp: string;
   value: number;
   confidence: number;
@@ -369,9 +369,9 @@ export interface ForecastPoint {
     lower: number;
     upper: number;
   };
-}
+};
 
-export interface PerformanceBaseline {
+export type PerformanceBaseline = {
   id: string;
   category: PerformanceCategory;
   component: string;
@@ -381,9 +381,9 @@ export interface PerformanceBaseline {
   version: string;
   load: string;
   notes?: string;
-}
+};
 
-export interface ResourceOptimization {
+export type ResourceOptimization = {
   id: string;
   resourceType: ResourceType;
   currentUsage: number;
@@ -392,7 +392,7 @@ export interface ResourceOptimization {
   impact: string;
   implementation: string[];
   monitoring: string[];
-}
+};
 
 // Main Performance Monitoring Engine
 export class PerformanceMonitoringEngine {
@@ -1378,7 +1378,7 @@ export class PerformanceMonitoringEngine {
 }
 
 // Additional interfaces for comprehensive monitoring
-export interface RealtimePerformanceData {
+export type RealtimePerformanceData = {
   timestamp: string;
   clinicId: string;
   categories: Record<PerformanceCategory, any>;
@@ -1386,9 +1386,9 @@ export interface RealtimePerformanceData {
   optimizations: OptimizationSuggestion[];
   summary: PerformanceSummary;
   healthScore: number;
-}
+};
 
-export interface AIModelPerformance {
+export type AIModelPerformance = {
   timestamp: string;
   clinicId: string;
   models: {
@@ -1399,9 +1399,9 @@ export interface AIModelPerformance {
   };
   overallHealth: number;
   recommendations: string[];
-}
+};
 
-export interface ModelMetrics {
+export type ModelMetrics = {
   accuracy: number;
   processingTime: number;
   throughput: number;
@@ -1409,15 +1409,15 @@ export interface ModelMetrics {
   confidence: number;
   healthScore: number;
   lastUpdated: string;
-}
+};
 
-export interface HistoricalMetrics {
+export type HistoricalMetrics = {
   timestamp: string;
   value: number;
   category: PerformanceCategory;
   component: string;
   metric: string;
-}
+};
 
 // Validation schemas
 export const SystemMetricsSchema = z.object({

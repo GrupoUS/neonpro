@@ -21,13 +21,13 @@ import type {
 import { createClient } from '@/app/utils/supabase/server';
 
 // Configuration interface
-interface NoShowPredictionConfig {
+type NoShowPredictionConfig = {
   minimumAccuracy: number;
   confidenceThreshold: number;
   interventionThreshold: number;
   modelVersion: string;
   factorWeights: Record<RiskFactorTypeValue, number>;
-}
+};
 
 export class NoShowPredictionEngine {
   private readonly supabase;
@@ -683,9 +683,7 @@ export class NoShowPredictionEngine {
       try {
         const created = await this.createRiskFactor(factor);
         createdFactors.push(created);
-      } catch (error) {
-        console.error('Error creating risk factor:', error);
-      }
+      } catch (_error) {}
     }
 
     return createdFactors;
@@ -813,9 +811,7 @@ export class NoShowPredictionEngine {
       try {
         const intervention = await this.createIntervention(rec);
         created.push(intervention);
-      } catch (error) {
-        console.error('Error creating intervention:', error);
-      }
+      } catch (_error) {}
     }
 
     return created;

@@ -161,7 +161,6 @@ export async function GET(request: NextRequest) {
         );
     }
   } catch (error) {
-    console.error('Medical Knowledge Base API Error:', error);
     return NextResponse.json(
       {
         error: 'Internal server error',
@@ -236,7 +235,6 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
     }
   } catch (error) {
-    console.error('Medical Knowledge Base API Error:', error);
     return NextResponse.json(
       {
         error: 'Internal server error',
@@ -283,7 +281,6 @@ export async function PUT(request: NextRequest) {
         return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
     }
   } catch (error) {
-    console.error('Medical Knowledge Base API Error:', error);
     return NextResponse.json(
       {
         error: 'Internal server error',
@@ -328,7 +325,6 @@ export async function DELETE(request: NextRequest) {
         return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
     }
   } catch (error) {
-    console.error('Medical Knowledge Base API Error:', error);
     return NextResponse.json(
       {
         error: 'Internal server error',

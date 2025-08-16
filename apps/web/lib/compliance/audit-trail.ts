@@ -39,7 +39,7 @@ export type AuditCategory =
   | 'data_processing';
 
 // Core Audit Interfaces
-export interface AuditTrailEntry {
+export type AuditTrailEntry = {
   id: string;
   timestamp: string;
   eventType: AuditEventType;
@@ -60,9 +60,9 @@ export interface AuditTrailEntry {
   complianceContext: ComplianceContext;
   riskAssessment: RiskAssessment;
   retention: RetentionInfo;
-}
+};
 
-export interface AuditMetadata {
+export type AuditMetadata = {
   applicationName: string;
   applicationVersion: string;
   moduleId: string;
@@ -73,9 +73,9 @@ export interface AuditMetadata {
   childEventIds: string[];
   tags: string[];
   customData: Record<string, any>;
-}
+};
 
-export interface ComplianceContext {
+export type ComplianceContext = {
   applicableRegulations: string[];
   complianceStatus: ComplianceStatus;
   complianceRules: string[];
@@ -85,9 +85,9 @@ export interface ComplianceContext {
   reviewRequired: boolean;
   automaticValidation: boolean;
   validationResults: ComplianceValidationResult[];
-}
+};
 
-export interface ComplianceValidationResult {
+export type ComplianceValidationResult = {
   ruleId: string;
   ruleName: string;
   ruleDescription: string;
@@ -95,9 +95,9 @@ export interface ComplianceValidationResult {
   validationMessage: string;
   severity: AuditSeverity;
   recommendedAction?: string;
-}
+};
 
-export interface RiskAssessment {
+export type RiskAssessment = {
   riskLevel: 'low' | 'medium' | 'high' | 'critical';
   riskFactors: string[];
   riskScore: number; // 0-100
@@ -109,27 +109,27 @@ export interface RiskAssessment {
     | 'safety';
   mitigation: RiskMitigation;
   impactAssessment: ImpactAssessment;
-}
+};
 
-export interface RiskMitigation {
+export type RiskMitigation = {
   immediateActions: string[];
   longTermActions: string[];
   responsibleParty: string;
   mitigationStatus: 'pending' | 'in_progress' | 'completed' | 'deferred';
   mitigationDeadline?: string;
   mitigationEvidence?: string;
-}
+};
 
-export interface ImpactAssessment {
+export type ImpactAssessment = {
   patientSafety: 'none' | 'low' | 'medium' | 'high';
   dataPrivacy: 'none' | 'low' | 'medium' | 'high';
   systemSecurity: 'none' | 'low' | 'medium' | 'high';
   regulatoryCompliance: 'none' | 'low' | 'medium' | 'high';
   businessContinuity: 'none' | 'low' | 'medium' | 'high';
   reputationalRisk: 'none' | 'low' | 'medium' | 'high';
-}
+};
 
-export interface RetentionInfo {
+export type RetentionInfo = {
   retentionPeriod: number; // in days
   legalBasis: string;
   retentionReason: string;
@@ -137,9 +137,9 @@ export interface RetentionInfo {
   archiveRequired: boolean;
   archiveLocation?: string;
   immutableRecord: boolean;
-}
+};
 
-export interface AuditQuery {
+export type AuditQuery = {
   startDate?: string;
   endDate?: string;
   eventTypes?: AuditEventType[];
@@ -154,9 +154,9 @@ export interface AuditQuery {
   offset?: number;
   sortBy?: string;
   sortOrder?: 'asc' | 'desc';
-}
+};
 
-export interface AuditReport {
+export type AuditReport = {
   id: string;
   generatedDate: string;
   reportType: 'compliance' | 'security' | 'operational' | 'risk' | 'custom';
@@ -172,17 +172,17 @@ export interface AuditReport {
   riskMetrics: RiskMetrics;
   trends: AuditTrend[];
   attachments: ReportAttachment[];
-}
+};
 
-export interface AuditReportScope {
+export type AuditReportScope = {
   includedCategories: AuditCategory[];
   includedUsers: string[];
   includedResources: string[];
   excludedPatterns: string[];
   filterCriteria: Record<string, any>;
-}
+};
 
-export interface AuditSummary {
+export type AuditSummary = {
   totalEvents: number;
   eventsByType: Record<AuditEventType, number>;
   eventsByCategory: Record<AuditCategory, number>;
@@ -191,27 +191,27 @@ export interface AuditSummary {
   riskDistribution: Record<string, number>;
   topUsers: UserActivity[];
   topResources: ResourceActivity[];
-}
+};
 
-export interface UserActivity {
+export type UserActivity = {
   userId: string;
   userName: string;
   eventCount: number;
   riskScore: number;
   complianceRate: number;
   lastActivity: string;
-}
+};
 
-export interface ResourceActivity {
+export type ResourceActivity = {
   resourceId: string;
   resourceType: string;
   accessCount: number;
   modificationCount: number;
   riskScore: number;
   lastAccessed: string;
-}
+};
 
-export interface AuditFinding {
+export type AuditFinding = {
   id: string;
   type:
     | 'compliance_violation'
@@ -229,9 +229,9 @@ export interface AuditFinding {
   assignedTo?: string;
   dueDate?: string;
   status: 'open' | 'investigating' | 'resolved' | 'closed';
-}
+};
 
-export interface AuditRecommendation {
+export type AuditRecommendation = {
   id: string;
   category: 'compliance' | 'security' | 'operational' | 'risk_management';
   priority: 'low' | 'medium' | 'high' | 'critical';
@@ -241,42 +241,42 @@ export interface AuditRecommendation {
   implementation: RecommendationImplementation;
   expectedBenefit: string;
   riskReduction: number; // 0-100
-}
+};
 
-export interface RecommendationImplementation {
+export type RecommendationImplementation = {
   estimatedEffort: 'low' | 'medium' | 'high';
   timeline: string;
   resources: string[];
   dependencies: string[];
   successCriteria: string[];
-}
+};
 
-export interface ComplianceMetrics {
+export type ComplianceMetrics = {
   overallComplianceRate: number;
   complianceByRegulation: Record<string, number>;
   complianceByCategory: Record<AuditCategory, number>;
   complianceByUser: Record<string, number>;
   complianceTrends: ComplianceTrend[];
   violationsSummary: ViolationsSummary;
-}
+};
 
-export interface ComplianceTrend {
+export type ComplianceTrend = {
   date: string;
   complianceRate: number;
   violationCount: number;
   category: AuditCategory;
-}
+};
 
-export interface ViolationsSummary {
+export type ViolationsSummary = {
   totalViolations: number;
   violationsByType: Record<string, number>;
   violationsBySeverity: Record<AuditSeverity, number>;
   resolvedViolations: number;
   pendingViolations: number;
   avgResolutionTime: number; // in days
-}
+};
 
-export interface RiskMetrics {
+export type RiskMetrics = {
   overallRiskScore: number;
   riskByCategory: Record<string, number>;
   riskByUser: Record<string, number>;
@@ -285,45 +285,45 @@ export interface RiskMetrics {
   criticalRiskEvents: number;
   riskTrends: RiskTrend[];
   riskMitigationStatus: RiskMitigationStatus;
-}
+};
 
-export interface RiskTrend {
+export type RiskTrend = {
   date: string;
   riskScore: number;
   eventCount: number;
   category: string;
-}
+};
 
-export interface RiskMitigationStatus {
+export type RiskMitigationStatus = {
   totalMitigations: number;
   completedMitigations: number;
   pendingMitigations: number;
   overdueMitigations: number;
   avgMitigationTime: number; // in days
-}
+};
 
-export interface AuditTrend {
+export type AuditTrend = {
   metric: string;
   timePeriod: string;
   values: TrendValue[];
   trend: 'increasing' | 'decreasing' | 'stable';
   significance: 'low' | 'medium' | 'high';
-}
+};
 
-export interface TrendValue {
+export type TrendValue = {
   timestamp: string;
   value: number;
   label?: string;
-}
+};
 
-export interface ReportAttachment {
+export type ReportAttachment = {
   id: string;
   name: string;
   type: 'chart' | 'table' | 'document' | 'export';
   description: string;
   size: number;
   generatedDate: string;
-}
+};
 
 // Main Audit Trail Manager Class
 export class AuditTrailManager extends EventEmitter {
@@ -1518,7 +1518,7 @@ export class AuditTrailManager extends EventEmitter {
 }
 
 // Additional interfaces
-export interface ComplianceRule {
+export type ComplianceRule = {
   id: string;
   name: string;
   description: string;
@@ -1527,9 +1527,9 @@ export interface ComplianceRule {
   applicableEventTypes: AuditEventType[];
   requiresReview: boolean;
   recommendedAction: string;
-}
+};
 
-export interface ComplianceValidationSummary {
+export type ComplianceValidationSummary = {
   totalValidations: number;
   passedValidations: number;
   failedValidations: number;
@@ -1538,7 +1538,7 @@ export interface ComplianceValidationSummary {
   validationsByRegulation: Record<string, number>;
   criticalFailures: number;
   recommendations: string[];
-}
+};
 
 // Validation schemas
 export const AuditEventValidationSchema = z.object({

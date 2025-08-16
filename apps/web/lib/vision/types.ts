@@ -16,7 +16,7 @@ export type AnalysisStatus =
 export type ErrorCode = (typeof ERROR_CODES)[keyof typeof ERROR_CODES];
 
 // Image Processing Types
-export interface ImageData {
+export type ImageData = {
   id: string;
   url: string;
   filename: string;
@@ -26,17 +26,17 @@ export interface ImageData {
   format: string;
   uploadedAt: string;
   metadata?: ImageMetadata;
-}
+};
 
-export interface ImageMetadata {
+export type ImageMetadata = {
   exif?: Record<string, any>;
   colorProfile?: string;
   dpi?: number;
   compression?: string;
   quality?: number;
-}
+};
 
-export interface ImageProcessingOptions {
+export type ImageProcessingOptions = {
   resize?: {
     width: number;
     height: number;
@@ -58,10 +58,10 @@ export interface ImageProcessingOptions {
   };
   rotation?: number;
   flip?: 'horizontal' | 'vertical' | 'both';
-}
+};
 
 // Analysis Result Types
-export interface AnalysisResult {
+export type AnalysisResult = {
   id: string;
   patientId: string;
   userId: string;
@@ -78,18 +78,18 @@ export interface AnalysisResult {
   updatedAt: string;
   completedAt?: string;
   notes?: string;
-}
+};
 
-export interface VisionAnalysisData {
+export type VisionAnalysisData = {
   improvementPercentage: number;
   accuracyScore: number;
   confidence: number;
   changeMetrics: ChangeMetrics;
   overallAssessment: OverallAssessment;
   treatmentSpecificMetrics: TreatmentSpecificMetrics;
-}
+};
 
-export interface ChangeMetrics {
+export type ChangeMetrics = {
   skinTexture?: number;
   wrinkleReduction?: number;
   pigmentationImprovement?: number;
@@ -100,9 +100,9 @@ export interface ChangeMetrics {
   colorUniformity?: number;
   surfaceRoughness?: number;
   poreSize?: number;
-}
+};
 
-export interface OverallAssessment {
+export type OverallAssessment = {
   improvementScore: number; // 0-10 scale
   confidenceLevel: number; // 0-1 scale
   clinicalSignificance:
@@ -113,9 +113,9 @@ export interface OverallAssessment {
     | 'dramatic';
   recommendedFollowUp?: string;
   concerns?: string[];
-}
+};
 
-export interface TreatmentSpecificMetrics {
+export type TreatmentSpecificMetrics = {
   [key: string]: {
     beforeValue: number;
     afterValue: number;
@@ -124,17 +124,17 @@ export interface TreatmentSpecificMetrics {
     confidence: number;
     clinicalRelevance: number;
   };
-}
+};
 
 // Measurement Types
-export interface MeasurementData {
+export type MeasurementData = {
   measurements: ObjectiveMeasurement[];
   calibration: CalibrationData;
   standardizedMetrics: StandardizedMetrics;
   qualityAssurance: MeasurementQualityAssurance;
-}
+};
 
-export interface ObjectiveMeasurement {
+export type ObjectiveMeasurement = {
   id: string;
   type: MeasurementType;
   beforeValue: number;
@@ -148,7 +148,7 @@ export interface ObjectiveMeasurement {
   clinicalSignificance: ClinicalSignificance;
   methodology: string;
   timestamp: string;
-}
+};
 
 export type MeasurementType =
   | 'area'
@@ -164,22 +164,22 @@ export type MeasurementType =
   | 'depth'
   | 'curvature';
 
-export interface CalibrationData {
+export type CalibrationData = {
   pixelToMmRatio: number;
   referenceObject?: string;
   calibrationAccuracy: number;
   calibrationMethod: 'automatic' | 'manual' | 'reference_object';
   calibrationTimestamp: string;
-}
+};
 
-export interface StandardizedMetrics {
+export type StandardizedMetrics = {
   beforeMetrics: MetricSet;
   afterMetrics: MetricSet;
   changeMetrics: MetricSet;
   normalizedScores: NormalizedScores;
-}
+};
 
-export interface MetricSet {
+export type MetricSet = {
   area: number;
   perimeter: number;
   volume?: number;
@@ -188,16 +188,16 @@ export interface MetricSet {
   colorUniformity: number;
   symmetryScore: number;
   roughnessIndex: number;
-}
+};
 
-export interface NormalizedScores {
+export type NormalizedScores = {
   improvementScore: number; // 0-100
   severityScore: number; // 0-100
   qualityScore: number; // 0-100
   confidenceScore: number; // 0-100
-}
+};
 
-export interface MeasurementQualityAssurance {
+export type MeasurementQualityAssurance = {
   accuracy: number;
   precision: number;
   repeatability: number;
@@ -205,7 +205,7 @@ export interface MeasurementQualityAssurance {
   uncertainty: number;
   validationStatus: 'passed' | 'failed' | 'warning';
   qualityFlags: string[];
-}
+};
 
 export type ClinicalSignificance =
   | 'not_significant'
@@ -215,7 +215,7 @@ export type ClinicalSignificance =
   | 'highly_significant';
 
 // Annotation Types
-export interface AnnotationData {
+export type AnnotationData = {
   id: string;
   type: AnnotationType;
   description: string;
@@ -228,7 +228,7 @@ export interface AnnotationData {
   createdBy: 'system' | 'user';
   timestamp: string;
   metadata?: Record<string, any>;
-}
+};
 
 export type AnnotationType =
   | 'measurement'
@@ -240,25 +240,25 @@ export type AnnotationType =
   | 'roi'
   | 'landmark';
 
-export interface Coordinates {
+export type Coordinates = {
   x: number;
   y: number;
   width?: number;
   height?: number;
   radius?: number;
-}
+};
 
-export interface RegionOfInterest {
+export type RegionOfInterest = {
   id: string;
   name: string;
   coordinates: Coordinates[];
   type: 'polygon' | 'rectangle' | 'circle' | 'freeform';
   area: number;
   confidence: number;
-}
+};
 
 // Performance and Quality Types
-export interface ProcessingMetrics {
+export type ProcessingMetrics = {
   processingTimeMs: number;
   memoryUsageMB: number;
   cpuUsagePercent: number;
@@ -271,17 +271,17 @@ export interface ProcessingMetrics {
   cacheHitRate: number;
   errorCount: number;
   warningCount: number;
-}
+};
 
-export interface QualityMetrics {
+export type QualityMetrics = {
   overallQuality: number; // 0-10 scale (VOIDBEAST standard)
   imageQuality: ImageQualityMetrics;
   analysisQuality: AnalysisQualityMetrics;
   measurementQuality: MeasurementQualityMetrics;
   voidbeastCompliance: VoidBeastCompliance;
-}
+};
 
-export interface ImageQualityMetrics {
+export type ImageQualityMetrics = {
   sharpness: number;
   contrast: number;
   brightness: number;
@@ -290,9 +290,9 @@ export interface ImageQualityMetrics {
   resolution: number;
   compression: number;
   overallScore: number;
-}
+};
 
-export interface AnalysisQualityMetrics {
+export type AnalysisQualityMetrics = {
   accuracy: number;
   precision: number;
   recall: number;
@@ -301,9 +301,9 @@ export interface AnalysisQualityMetrics {
   consistency: number;
   robustness: number;
   overallScore: number;
-}
+};
 
-export interface MeasurementQualityMetrics {
+export type MeasurementQualityMetrics = {
   accuracy: number;
   precision: number;
   repeatability: number;
@@ -311,18 +311,18 @@ export interface MeasurementQualityMetrics {
   uncertaintyLevel: number;
   validationScore: number;
   overallScore: number;
-}
+};
 
-export interface VoidBeastCompliance {
+export type VoidBeastCompliance = {
   compliant: boolean;
   score: number;
   violations: string[];
   recommendations: string[];
   qualityGate: 'passed' | 'failed' | 'warning';
-}
+};
 
 // Model and AI Types
-export interface ModelConfiguration {
+export type ModelConfiguration = {
   name: string;
   version: string;
   type: 'primary' | 'fallback' | 'specialized';
@@ -332,9 +332,9 @@ export interface ModelConfiguration {
   modelUrl: string;
   weightsUrl: string;
   metadata: ModelMetadata;
-}
+};
 
-export interface ModelMetadata {
+export type ModelMetadata = {
   trainedOn: string[];
   accuracy: number;
   precision: number;
@@ -345,27 +345,27 @@ export interface ModelMetadata {
   supportedTreatments: TreatmentType[];
   modelSize: number;
   inferenceTime: number;
-}
+};
 
-export interface ModelPrediction {
+export type ModelPrediction = {
   class: string;
   confidence: number;
   probability: number;
   boundingBox?: BoundingBox;
   features: number[];
   activations?: number[];
-}
+};
 
-export interface BoundingBox {
+export type BoundingBox = {
   x: number;
   y: number;
   width: number;
   height: number;
   confidence: number;
-}
+};
 
 // Export and Import Types
-export interface ExportOptions {
+export type ExportOptions = {
   format: ExportFormat;
   includeImages: boolean;
   includeAnnotations: boolean;
@@ -377,12 +377,12 @@ export interface ExportOptions {
   reportNotes?: string;
   watermark?: boolean;
   compression?: CompressionLevel;
-}
+};
 
 export type ExportFormat = 'pdf' | 'excel' | 'json' | 'csv' | 'png' | 'jpeg';
 export type CompressionLevel = 'none' | 'low' | 'medium' | 'high';
 
-export interface ExportResult {
+export type ExportResult = {
   success: boolean;
   data?: Buffer | string;
   filename: string;
@@ -390,9 +390,9 @@ export interface ExportResult {
   size: number;
   processingTime: number;
   error?: string;
-}
+};
 
-export interface ExportMetadata {
+export type ExportMetadata = {
   exportId: string;
   userId: string;
   analysisIds: string[];
@@ -403,10 +403,10 @@ export interface ExportMetadata {
   createdAt: string;
   downloadCount: number;
   expiresAt?: string;
-}
+};
 
 // API Request/Response Types
-export interface AnalysisRequest {
+export type AnalysisRequest = {
   patientId: string;
   treatmentType: TreatmentType;
   beforeImageFile: File;
@@ -414,9 +414,9 @@ export interface AnalysisRequest {
   processingOptions?: ImageProcessingOptions;
   analysisOptions?: AnalysisOptions;
   notes?: string;
-}
+};
 
-export interface AnalysisOptions {
+export type AnalysisOptions = {
   enabledMetrics: string[];
   customThresholds?: Record<string, number>;
   roiSelection?: RegionOfInterest[];
@@ -424,9 +424,9 @@ export interface AnalysisOptions {
   qualityLevel: 'fast' | 'standard' | 'high' | 'maximum';
   includeAnnotations: boolean;
   generateReport: boolean;
-}
+};
 
-export interface AnalysisResponse {
+export type AnalysisResponse = {
   success: boolean;
   analysisId: string;
   status: AnalysisStatus;
@@ -434,15 +434,15 @@ export interface AnalysisResponse {
   progress?: AnalysisProgress;
   error?: AnalysisError;
   estimatedCompletionTime?: number;
-}
+};
 
-export interface AnalysisProgress {
+export type AnalysisProgress = {
   stage: AnalysisStage;
   percentage: number;
   currentOperation: string;
   estimatedTimeRemaining: number;
   processingMetrics: Partial<ProcessingMetrics>;
-}
+};
 
 export type AnalysisStage =
   | 'initializing'
@@ -456,17 +456,17 @@ export type AnalysisStage =
   | 'finalizing'
   | 'completed';
 
-export interface AnalysisError {
+export type AnalysisError = {
   code: ErrorCode;
   message: string;
   details?: string;
   timestamp: string;
   recoverable: boolean;
   suggestions?: string[];
-}
+};
 
 // Database Schema Types
-export interface VisionAnalysisTable {
+export type VisionAnalysisTable = {
   id: string;
   user_id: string;
   patient_id: string;
@@ -485,9 +485,9 @@ export interface VisionAnalysisTable {
   created_at: string;
   updated_at: string;
   completed_at?: string;
-}
+};
 
-export interface VisionExportLogsTable {
+export type VisionExportLogsTable = {
   id: string;
   user_id: string;
   analysis_id: string;
@@ -500,9 +500,9 @@ export interface VisionExportLogsTable {
   download_count: number;
   created_at: string;
   expires_at?: string;
-}
+};
 
-export interface VisionPerformanceLogsTable {
+export type VisionPerformanceLogsTable = {
   id: string;
   analysis_id: string;
   user_id: string;
@@ -517,17 +517,17 @@ export interface VisionPerformanceLogsTable {
   error_count: number;
   warning_count: number;
   created_at: string;
-}
+};
 
 // Utility Types
-export interface PaginationOptions {
+export type PaginationOptions = {
   page: number;
   limit: number;
   sortBy?: string;
   sortOrder?: 'asc' | 'desc';
-}
+};
 
-export interface PaginatedResponse<T> {
+export type PaginatedResponse<T> = {
   data: T[];
   pagination: {
     page: number;
@@ -537,9 +537,9 @@ export interface PaginatedResponse<T> {
     hasNext: boolean;
     hasPrev: boolean;
   };
-}
+};
 
-export interface FilterOptions {
+export type FilterOptions = {
   treatmentType?: TreatmentType[];
   status?: AnalysisStatus[];
   dateRange?: {
@@ -549,21 +549,21 @@ export interface FilterOptions {
   qualityThreshold?: number;
   accuracyThreshold?: number;
   patientId?: string;
-}
+};
 
-export interface SortOptions {
+export type SortOptions = {
   field: string;
   direction: 'asc' | 'desc';
-}
+};
 
 // Event Types for Real-time Updates
-export interface AnalysisEvent {
+export type AnalysisEvent = {
   type: AnalysisEventType;
   analysisId: string;
   userId: string;
   data: any;
   timestamp: string;
-}
+};
 
 export type AnalysisEventType =
   | 'analysis_started'
@@ -576,37 +576,37 @@ export type AnalysisEventType =
   | 'export_failed';
 
 // Validation Types
-export interface ValidationResult {
+export type ValidationResult = {
   valid: boolean;
   errors: ValidationError[];
   warnings: ValidationWarning[];
-}
+};
 
-export interface ValidationError {
+export type ValidationError = {
   field: string;
   code: string;
   message: string;
   value?: any;
-}
+};
 
-export interface ValidationWarning {
+export type ValidationWarning = {
   field: string;
   code: string;
   message: string;
   value?: any;
-}
+};
 
 // Configuration Types
-export interface SystemConfiguration {
+export type SystemConfiguration = {
   performance: PerformanceConfig;
   imageProcessing: ImageProcessingConfig;
   models: ModelConfig;
   storage: StorageConfig;
   security: SecurityConfig;
   monitoring: MonitoringConfig;
-}
+};
 
-export interface PerformanceConfig {
+export type PerformanceConfig = {
   maxProcessingTimeMs: number;
   targetProcessingTimeMs: number;
   minAccuracyThreshold: number;
@@ -618,9 +618,9 @@ export interface PerformanceConfig {
   parallelProcessingEnabled: boolean;
   cacheEnabled: boolean;
   cacheTtlMs: number;
-}
+};
 
-export interface ImageProcessingConfig {
+export type ImageProcessingConfig = {
   maxImageSizeMB: number;
   supportedFormats: string[];
   targetResolution: { width: number; height: number };
@@ -629,17 +629,17 @@ export interface ImageProcessingConfig {
   compressionQuality: number;
   normalization: { mean: number[]; std: number[] };
   enhancement: Record<string, boolean>;
-}
+};
 
-export interface ModelConfig {
+export type ModelConfig = {
   primaryModel: ModelConfiguration;
   fallbackModel: ModelConfiguration;
   preloadModels: boolean;
   modelCacheSize: number;
   autoModelSelection: boolean;
-}
+};
 
-export interface StorageConfig {
+export type StorageConfig = {
   imageBucket: string;
   resultsBucket: string;
   tempBucket: string;
@@ -648,9 +648,9 @@ export interface StorageConfig {
   tempFileTtlHours: number;
   backupEnabled: boolean;
   compressionEnabled: boolean;
-}
+};
 
-export interface SecurityConfig {
+export type SecurityConfig = {
   encryptionEnabled: boolean;
   anonymizationEnabled: boolean;
   auditLogging: boolean;
@@ -658,16 +658,16 @@ export interface SecurityConfig {
   dataRetentionDays: number;
   gdprCompliance: boolean;
   hipaaCompliance: boolean;
-}
+};
 
-export interface MonitoringConfig {
+export type MonitoringConfig = {
   performanceTracking: boolean;
   errorTracking: boolean;
   usageAnalytics: boolean;
   qualityMetrics: boolean;
   realTimeMonitoring: boolean;
   alertThresholds: Record<string, number>;
-}
+};
 
 // Type Guards
 export function isAnalysisResult(obj: any): obj is AnalysisResult {

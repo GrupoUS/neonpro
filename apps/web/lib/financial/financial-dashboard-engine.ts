@@ -24,7 +24,7 @@ import {
 } from './predictive-analytics-engine';
 
 // Dashboard Types and Interfaces
-export interface FinancialDashboardData {
+export type FinancialDashboardData = {
   clinic_id: string;
   timestamp: string;
   cash_flow: CashFlowSummary;
@@ -36,9 +36,9 @@ export interface FinancialDashboardData {
   trends: TrendAnalysis;
   comparisons: ComparisonData;
   recommendations: Recommendation[];
-}
+};
 
-export interface FinancialMetrics {
+export type FinancialMetrics = {
   // Revenue Metrics
   total_revenue: number;
   revenue_growth: {
@@ -86,25 +86,25 @@ export interface FinancialMetrics {
   inventory_turnover: number;
   asset_turnover: number;
   days_sales_outstanding: number;
-}
+};
 
-export interface ServiceRevenue {
+export type ServiceRevenue = {
   service_name: string;
   revenue: number;
   percentage: number;
   growth_rate: number;
   patient_count: number;
-}
+};
 
-export interface CategoryExpense {
+export type CategoryExpense = {
   category: string;
   amount: number;
   percentage: number;
   budget_variance: number;
   trend: 'up' | 'down' | 'stable';
-}
+};
 
-export interface DashboardForecast {
+export type DashboardForecast = {
   type: 'revenue' | 'expenses' | 'cash_flow' | 'profit';
   period: '7d' | '30d' | '90d' | '1y';
   current_value: number;
@@ -112,9 +112,9 @@ export interface DashboardForecast {
   confidence: number;
   trend: 'up' | 'down' | 'stable';
   change_percentage: number;
-}
+};
 
-export interface PerformanceIndicators {
+export type PerformanceIndicators = {
   financial_health_score: number; // 0-100
   growth_score: number; // 0-100
   efficiency_score: number; // 0-100
@@ -129,66 +129,66 @@ export interface PerformanceIndicators {
 
   key_strengths: string[];
   improvement_areas: string[];
-}
+};
 
-export interface TrendAnalysis {
+export type TrendAnalysis = {
   revenue_trend: TrendData;
   expense_trend: TrendData;
   profit_trend: TrendData;
   cash_flow_trend: TrendData;
   patient_volume_trend: TrendData;
-}
+};
 
-export interface TrendData {
+export type TrendData = {
   direction: 'up' | 'down' | 'stable';
   strength: number; // 0-1
   duration_days: number;
   projected_continuation: number; // 0-1 probability
   seasonal_factor: number;
   anomalies: TrendAnomaly[];
-}
+};
 
-export interface TrendAnomaly {
+export type TrendAnomaly = {
   date: string;
   value: number;
   expected_value: number;
   deviation_percentage: number;
   possible_causes: string[];
-}
+};
 
-export interface ComparisonData {
+export type ComparisonData = {
   previous_period: PeriodComparison;
   same_period_last_year: PeriodComparison;
   budget_comparison: BudgetComparison;
   industry_benchmarks: IndustryBenchmarks;
-}
+};
 
-export interface PeriodComparison {
+export type PeriodComparison = {
   revenue_change: number;
   expense_change: number;
   profit_change: number;
   cash_flow_change: number;
   patient_volume_change: number;
   key_drivers: string[];
-}
+};
 
-export interface BudgetComparison {
+export type BudgetComparison = {
   revenue_vs_budget: number;
   expense_vs_budget: number;
   profit_vs_budget: number;
   variance_analysis: VarianceAnalysis[];
-}
+};
 
-export interface VarianceAnalysis {
+export type VarianceAnalysis = {
   category: string;
   budgeted: number;
   actual: number;
   variance: number;
   variance_percentage: number;
   explanation: string;
-}
+};
 
-export interface IndustryBenchmarks {
+export type IndustryBenchmarks = {
   revenue_per_patient: {
     clinic_value: number;
     industry_average: number;
@@ -204,9 +204,9 @@ export interface IndustryBenchmarks {
     industry_average: number;
     percentile_ranking: number;
   };
-}
+};
 
-export interface Recommendation {
+export type Recommendation = {
   id: string;
   category: 'revenue' | 'expense' | 'cash_flow' | 'efficiency' | 'risk';
   priority: 'low' | 'medium' | 'high' | 'critical';
@@ -221,9 +221,9 @@ export interface Recommendation {
   resources_needed: string[];
   success_metrics: string[];
   deadline: string;
-}
+};
 
-export interface DashboardConfig {
+export type DashboardConfig = {
   refresh_interval: number; // seconds
   cache_duration: number; // seconds
   alert_thresholds: Record<string, number>;
@@ -235,16 +235,16 @@ export interface DashboardConfig {
   };
   widgets_enabled: string[];
   custom_metrics: CustomMetric[];
-}
+};
 
-export interface CustomMetric {
+export type CustomMetric = {
   id: string;
   name: string;
   formula: string;
   description: string;
   target_value?: number;
   format: 'currency' | 'percentage' | 'number' | 'ratio';
-}
+};
 
 export class FinancialDashboardEngine {
   private readonly supabase = createClient();
@@ -319,8 +319,7 @@ export class FinancialDashboardEngine {
       this.setCache(cacheKey, dashboardData, config?.cache_duration || 300); // 5 minutes default
 
       return dashboardData;
-    } catch (error) {
-      console.error('Error getting dashboard data:', error);
+    } catch (_error) {
       throw new Error('Failed to get dashboard data');
     }
   }
@@ -396,8 +395,7 @@ export class FinancialDashboardEngine {
         asset_turnover: activityMetrics.asset_turnover,
         days_sales_outstanding: activityMetrics.days_sales_outstanding,
       };
-    } catch (error) {
-      console.error('Error calculating financial metrics:', error);
+    } catch (_error) {
       throw new Error('Failed to calculate financial metrics');
     }
   }
@@ -474,8 +472,7 @@ export class FinancialDashboardEngine {
       });
 
       return forecasts;
-    } catch (error) {
-      console.error('Error generating dashboard forecasts:', error);
+    } catch (_error) {
       return [];
     }
   }
@@ -525,8 +522,7 @@ export class FinancialDashboardEngine {
         key_strengths: analysis.strengths,
         improvement_areas: analysis.improvements,
       };
-    } catch (error) {
-      console.error('Error calculating performance indicators:', error);
+    } catch (_error) {
       throw new Error('Failed to calculate performance indicators');
     }
   }
@@ -581,8 +577,7 @@ export class FinancialDashboardEngine {
         cash_flow_trend: cashFlowTrend,
         patient_volume_trend: patientVolumeTrend,
       };
-    } catch (error) {
-      console.error('Error analyzing trends:', error);
+    } catch (_error) {
       throw new Error('Failed to analyze trends');
     }
   }
@@ -736,8 +731,7 @@ export class FinancialDashboardEngine {
       }
 
       return recommendations.slice(0, 10); // Limit to top 10 recommendations
-    } catch (error) {
-      console.error('Error generating recommendations:', error);
+    } catch (_error) {
       return [];
     }
   }

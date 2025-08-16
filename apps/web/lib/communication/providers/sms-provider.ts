@@ -3,12 +3,12 @@
  * Story 2.3: Automated Communication System
  */
 
-export interface SMSResult {
+export type SMSResult = {
   success: boolean;
   messageId?: string;
   error?: string;
   cost?: number;
-}
+};
 
 export class SMSProvider {
   async sendSMS(

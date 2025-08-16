@@ -1,10 +1,10 @@
 // lib/compliance/data-export.ts
-export interface DataExportRequest {
+export type DataExportRequest = {
   userId: string;
   format: 'json' | 'csv' | 'pdf';
   includePersonalData: boolean;
   includeMedicalData: boolean;
-}
+};
 
 export class DataExportService {
   static async exportUserData(

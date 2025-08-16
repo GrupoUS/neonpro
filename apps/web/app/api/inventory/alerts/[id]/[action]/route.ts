@@ -84,8 +84,6 @@ export async function POST(
       message,
     });
   } catch (error: any) {
-    console.error(`Error performing alert action ${params.action}:`, error);
-
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {

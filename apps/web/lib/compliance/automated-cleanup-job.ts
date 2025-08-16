@@ -14,7 +14,7 @@ import { createClient } from '@/lib/supabase/client';
 
 // ==================== JOB CONFIGURATION ====================
 
-export interface CleanupJobConfig {
+export type CleanupJobConfig = {
   enabled: boolean;
   schedule_cron: string; // Cron expression
   max_runtime_minutes: number;
@@ -22,9 +22,9 @@ export interface CleanupJobConfig {
   notify_on_completion: boolean;
   notification_emails: string[];
   dry_run: boolean; // Para testes sem modificar dados
-}
+};
 
-export interface CleanupJobResult {
+export type CleanupJobResult = {
   job_id: string;
   started_at: string;
   completed_at?: string;
@@ -35,7 +35,7 @@ export interface CleanupJobResult {
   errors: string[];
   execution_time_ms: number;
   next_scheduled_run?: string;
-}
+};
 
 // ==================== DEFAULT CONFIGURATION ====================
 
@@ -81,15 +81,8 @@ export class AutomatedCleanupJob {
     };
 
     try {
-      console.log(`🚀 Iniciando job de limpeza automática: ${jobId}`);
-      console.log(`📅 Scheduled: ${this.config.schedule_cron}`);
-      console.log(
-        `⚙️ Config: batch_size=${this.config.batch_size}, dry_run=${this.config.dry_run}`
-      );
-
       // Verificar se job está habilitado
       if (!this.config.enabled) {
-        console.log('⚠️ Job desabilitado via configuração');
         result.status = 'completed';
         result.completed_at = new Date().toISOString();
         return result;
@@ -119,11 +112,6 @@ export class AutomatedCleanupJob {
 
       result.status = 'completed';
       result.completed_at = new Date().toISOString();
-
-      console.log(`✅ Job concluído com sucesso: ${jobId}`);
-      console.log(
-        `📊 Processados: ${result.total_processed}, Anonimizados: ${result.anonymized_count}, Deletados: ${result.deleted_count}`
-      );
     } catch (error) {
       result.status =
         error instanceof Error && error.message.includes('timeout')
@@ -132,8 +120,6 @@ export class AutomatedCleanupJob {
       result.errors.push(
         error instanceof Error ? error.message : 'Unknown error'
       );
-
-      console.error(`❌ Job falhou: ${jobId}`, error);
     } finally {
       const endTime = new Date();
       result.execution_time_ms = endTime.getTime() - startTime.getTime();
@@ -161,17 +147,10 @@ export class AutomatedCleanupJob {
    * Executa o processo de limpeza
    */
   private async performCleanup(result: CleanupJobResult): Promise<void> {
-    try {
-      if (this.config.dry_run) {
-        console.log('🧪 Modo DRY RUN - Nenhum dado será modificado');
-        await this.performDryRun(result);
-      } else {
-        console.log('🔄 Executando limpeza real de dados');
-        await this.performRealCleanup(result);
-      }
-    } catch (error) {
-      console.error('❌ Erro durante limpeza:', error);
-      throw error;
+    if (this.config.dry_run) {
+      await this.performDryRun(result);
+    } else {
+      await this.performRealCleanup(result);
     }
   }
 
@@ -179,8 +158,6 @@ export class AutomatedCleanupJob {
    * Executa dry run para teste
    */
   private async performDryRun(result: CleanupJobResult): Promise<void> {
-    console.log('🔍 Simulando limpeza de dados...');
-
     // Simular análise de compliance para cada tabela
     const tables = [
       'patients',
@@ -195,31 +172,20 @@ export class AutomatedCleanupJob {
         const complianceStatus =
           await this.retentionEngine.checkComplianceStatus(table);
 
-        console.log(
-          `📊 ${table}: ${complianceStatus.total_records} registros, ${complianceStatus.records_need_anonymization} precisam anonimização, ${complianceStatus.records_need_deletion} precisam deleção`
-        );
-
         result.total_processed += complianceStatus.total_records;
         result.anonymized_count += complianceStatus.records_need_anonymization;
         result.deleted_count += complianceStatus.records_need_deletion;
       } catch (error) {
         const errorMsg = `Erro ao analisar tabela ${table}: ${error}`;
         result.errors.push(errorMsg);
-        console.error(errorMsg);
       }
     }
-
-    console.log('✅ Dry run concluído - Nenhum dado foi modificado');
   }
 
   /**
    * Executa limpeza real de dados
    */
   private async performRealCleanup(result: CleanupJobResult): Promise<void> {
-    console.log(
-      '⚠️ Executando limpeza REAL - Dados serão modificados permanentemente'
-    );
-
     try {
       // Executar políticas de retenção
       const complianceRecords =
@@ -233,14 +199,9 @@ export class AutomatedCleanupJob {
       result.deleted_count = complianceRecords.filter(
         (r) => r.action === 'deleted'
       ).length;
-
-      console.log(
-        `📊 Limpeza concluída: ${result.total_processed} ações executadas`
-      );
     } catch (error) {
       const errorMsg = `Erro durante limpeza real: ${error}`;
       result.errors.push(errorMsg);
-      console.error(errorMsg);
       throw error;
     }
   }
@@ -265,11 +226,8 @@ export class AutomatedCleanupJob {
       });
 
       if (error) {
-        console.error('❌ Erro ao registrar execução do job:', error);
       }
-    } catch (error) {
-      console.error('❌ Erro ao fazer log do job:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -294,18 +252,11 @@ export class AutomatedCleanupJob {
     try {
       const isSuccess =
         result.status === 'completed' && result.errors.length === 0;
-      const subject = isSuccess
+      const _subject = isSuccess
         ? `✅ Job de Limpeza Concluído - ${result.job_id}`
         : `⚠️ Job de Limpeza com Problemas - ${result.job_id}`;
 
-      const body = this.generateNotificationBody(result, isSuccess);
-
-      // Em produção, implementar envio via email service (SendGrid, etc.)
-      console.log(
-        `📧 Enviando notificação para: ${this.config.notification_emails.join(', ')}`
-      );
-      console.log(`📄 Assunto: ${subject}`);
-      console.log(`📝 Corpo:\n${body}`);
+      const _body = this.generateNotificationBody(result, isSuccess);
 
       // TODO: Implementar envio real de email
       // await emailService.send({
@@ -313,9 +264,7 @@ export class AutomatedCleanupJob {
       //   subject,
       //   body
       // });
-    } catch (error) {
-      console.error('❌ Erro ao enviar notificação:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -370,13 +319,11 @@ Para mais detalhes, acesse o dashboard de compliance.
         .limit(limit);
 
       if (error) {
-        console.error('❌ Erro ao obter histórico:', error);
         return [];
       }
 
       return data || [];
-    } catch (error) {
-      console.error('❌ Erro ao buscar histórico:', error);
+    } catch (_error) {
       return [];
     }
   }
@@ -386,7 +333,6 @@ Para mais detalhes, acesse o dashboard de compliance.
    */
   updateConfig(newConfig: Partial<CleanupJobConfig>): void {
     this.config = { ...this.config, ...newConfig };
-    console.log('⚙️ Configuração do job atualizada:', this.config);
   }
 }
 
@@ -412,8 +358,6 @@ export async function handleCleanupRequest(
       });
     }
 
-    console.log('🚀 Iniciando cleanup job via Edge Function');
-
     const cleanupJob = new AutomatedCleanupJob({
       dry_run: isDryRun,
       notify_on_completion: false, // Não notificar via edge function
@@ -426,8 +370,6 @@ export async function handleCleanupRequest(
       headers: { 'Content-Type': 'application/json' },
     });
   } catch (error) {
-    console.error('❌ Erro no handler da edge function:', error);
-
     return new Response(
       JSON.stringify({
         error: 'Internal server error',
@@ -448,11 +390,6 @@ export async function runCleanupCLI(): Promise<void> {
   const args = process.argv.slice(2);
   const isDryRun = args.includes('--dry-run');
 
-  console.log('🛡️ NEONPRO AUTOMATED CLEANUP JOB');
-  console.log('================================');
-  console.log(`Modo: ${isDryRun ? 'DRY RUN (simulação)' : 'PRODUÇÃO'}`);
-  console.log('');
-
   try {
     const cleanupJob = new AutomatedCleanupJob({
       dry_run: isDryRun,
@@ -461,23 +398,12 @@ export async function runCleanupCLI(): Promise<void> {
 
     const result = await cleanupJob.execute();
 
-    console.log('');
-    console.log('📊 RESULTADO FINAL:');
-    console.log(`Status: ${result.status}`);
-    console.log(`Processados: ${result.total_processed}`);
-    console.log(`Anonimizados: ${result.anonymized_count}`);
-    console.log(`Deletados: ${result.deleted_count}`);
-    console.log(`Duração: ${Math.round(result.execution_time_ms / 1000)}s`);
-
     if (result.errors.length > 0) {
-      console.log('');
-      console.log('❌ ERROS:');
-      result.errors.forEach((error) => console.log(`• ${error}`));
+      result.errors.forEach((_error) => {});
     }
 
     process.exit(result.status === 'completed' ? 0 : 1);
-  } catch (error) {
-    console.error('❌ Erro fatal:', error);
+  } catch (_error) {
     process.exit(1);
   }
 }

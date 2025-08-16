@@ -52,7 +52,6 @@ export async function GET(request: NextRequest) {
     });
 
     if (error) {
-      console.error('Error fetching budgets:', error);
       return NextResponse.json(
         { error: 'Failed to fetch budgets' },
         { status: 500 }
@@ -60,8 +59,7 @@ export async function GET(request: NextRequest) {
     }
 
     return NextResponse.json({ budgets });
-  } catch (error) {
-    console.error('Error in budget GET:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -110,8 +108,6 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ budget });
   } catch (error) {
-    console.error('Error creating budget:', error);
-
     if (error instanceof Error && error.name === 'ZodError') {
       return NextResponse.json(
         { error: 'Invalid budget data' },
@@ -148,8 +144,6 @@ export async function PATCH(request: NextRequest) {
 
     return NextResponse.json({ budget: updated });
   } catch (error) {
-    console.error('Error updating budget:', error);
-
     if (error instanceof Error && error.name === 'ZodError') {
       return NextResponse.json(
         { error: 'Invalid update data' },

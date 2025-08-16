@@ -28,8 +28,7 @@ export async function GET(request: NextRequest) {
       factors,
       success: true,
     });
-  } catch (error) {
-    console.error('Error fetching personalization factors:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to fetch personalization factors', success: false },
       { status: 500 }
@@ -70,8 +69,7 @@ export async function POST(request: NextRequest) {
       },
       { status: 201 }
     );
-  } catch (error) {
-    console.error('Error creating personalization factor:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to create personalization factor', success: false },
       { status: 500 }

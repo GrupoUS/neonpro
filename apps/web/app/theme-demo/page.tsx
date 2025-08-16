@@ -27,18 +27,18 @@ import {
 import { cn } from '@/lib/utils';
 
 // NeonGradientCard Component
-interface NeonColorsProps {
+type NeonColorsProps = {
   firstColor: string;
   secondColor: string;
-}
+};
 
-interface NeonGradientCardProps {
+type NeonGradientCardProps = {
   className?: string;
   children?: React.ReactNode;
   borderSize?: number;
   borderRadius?: number;
   neonColors?: NeonColorsProps;
-}
+};
 
 const NeonGradientCard: React.FC<NeonGradientCardProps> = ({
   className,

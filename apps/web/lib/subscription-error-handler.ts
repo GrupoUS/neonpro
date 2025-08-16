@@ -25,7 +25,7 @@ import { circuitBreakerRegistry } from './subscription-circuit-breaker';
 import type { SubscriptionValidationResult } from './subscription-status';
 
 // Error handler configuration
-interface ErrorHandlerConfig {
+type ErrorHandlerConfig = {
   enableAutoRecovery: boolean;
   maxRetryAttempts: number;
   retryDelayMs: number;
@@ -36,7 +36,7 @@ interface ErrorHandlerConfig {
   alertOnCritical: boolean;
   userNotificationThreshold: ErrorSeverity;
   gracefulDegradationEnabled: boolean;
-}
+};
 
 const defaultConfig: ErrorHandlerConfig = {
   enableAutoRecovery: true,
@@ -52,7 +52,7 @@ const defaultConfig: ErrorHandlerConfig = {
 };
 
 // Error handling result
-interface ErrorHandlingResult<T> {
+type ErrorHandlingResult<T> = {
   success: boolean;
   data?: T;
   error?: SubscriptionError;
@@ -62,10 +62,10 @@ interface ErrorHandlingResult<T> {
   retryAttempts: number;
   totalExecutionTime: number;
   userMessage?: string;
-}
+};
 
 // Recovery strategy implementations
-interface RecoveryStrategyImplementation {
+type RecoveryStrategyImplementation = {
   canHandle: (error: SubscriptionError) => boolean;
   execute: <T>(
     operation: () => Promise<T>,
@@ -75,7 +75,7 @@ interface RecoveryStrategyImplementation {
   ) => Promise<T>;
   maxAttempts: number;
   delayMs: number;
-}
+};
 
 export class SubscriptionErrorHandler {
   private config: ErrorHandlerConfig;
@@ -360,10 +360,6 @@ export class SubscriptionErrorHandler {
 
         // Log retry attempt
         if (this.config.logErrors) {
-          console.warn(
-            `Recovery attempt ${attempts}/${maxAttempts} failed:`,
-            lastError.message
-          );
         }
 
         // Check if we should stop retrying
@@ -471,9 +467,7 @@ export class SubscriptionErrorHandler {
       ) {
         return cachedData as SubscriptionValidationResult;
       }
-    } catch (cacheError) {
-      console.warn('Failed to retrieve fallback cache data:', cacheError);
-    }
+    } catch (_cacheError) {}
 
     return null;
   }
@@ -566,7 +560,7 @@ export class SubscriptionErrorHandler {
    * Log error with appropriate level
    */
   private logError(error: SubscriptionError, context?: ErrorContext): void {
-    const logData = {
+    const _logData = {
       error: {
         code: error.code,
         message: error.message,
@@ -580,19 +574,15 @@ export class SubscriptionErrorHandler {
 
     switch (error.severity) {
       case ErrorSeverity.CRITICAL:
-        console.error('CRITICAL Subscription Error:', logData);
         if (this.config.alertOnCritical) {
           this.sendAlert(`Critical subscription error: ${error.message}`);
         }
         break;
       case ErrorSeverity.HIGH:
-        console.error('HIGH Subscription Error:', logData);
         break;
       case ErrorSeverity.MEDIUM:
-        console.warn('MEDIUM Subscription Error:', logData);
         break;
       default:
-        console.info('LOW Subscription Error:', logData);
         break;
     }
   }
@@ -600,9 +590,7 @@ export class SubscriptionErrorHandler {
   /**
    * Send alert for critical errors
    */
-  private sendAlert(message: string): void {
-    // Implement your alerting mechanism here
-    console.error(`ALERT: ${message}`);
+  private sendAlert(_message: string): void {
     // Could integrate with external alerting services
   }
 

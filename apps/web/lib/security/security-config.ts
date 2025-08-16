@@ -5,7 +5,7 @@
  * It provides type-safe configuration options with sensible defaults and validation.
  */
 
-export interface CSRFConfig {
+export type CSRFConfig = {
   /** Length of CSRF tokens in bytes (will be hex encoded, so actual length is double) */
   tokenLength: number;
   /** Token expiration time in hours */
@@ -18,9 +18,9 @@ export interface CSRFConfig {
   allowRefresh: boolean;
   /** Minimum time before token can be refreshed (in minutes) */
   refreshCooldownMinutes: number;
-}
+};
 
-export interface SessionHijackingConfig {
+export type SessionHijackingConfig = {
   /** Risk score threshold for different actions (0-10 scale) */
   riskThresholds: {
     /** Allow access (0-2) */
@@ -49,9 +49,9 @@ export interface SessionHijackingConfig {
   maxFingerprintsPerSession: number;
   /** Whether to automatically adapt thresholds based on user behavior */
   adaptiveThresholds: boolean;
-}
+};
 
-export interface SessionTimeoutConfig {
+export type SessionTimeoutConfig = {
   /** Default session timeout in minutes */
   defaultTimeoutMinutes: number;
   /** Warning intervals before timeout (in minutes) */
@@ -66,9 +66,9 @@ export interface SessionTimeoutConfig {
   extensionMinutes: number;
   /** Maximum total session duration (in hours) */
   maxSessionDurationHours: number;
-}
+};
 
-export interface ConcurrentSessionConfig {
+export type ConcurrentSessionConfig = {
   /** Default maximum concurrent sessions per user */
   defaultMaxSessions: number;
   /** Strategy when limit is exceeded */
@@ -77,9 +77,9 @@ export interface ConcurrentSessionConfig {
   notifyOnTermination: boolean;
   /** Grace period before terminating sessions (in minutes) */
   terminationGraceMinutes: number;
-}
+};
 
-export interface RateLimitConfig {
+export type RateLimitConfig = {
   /** Default rate limit windows and limits */
   defaultLimits: {
     /** Requests per minute for authenticated users */
@@ -104,9 +104,9 @@ export interface RateLimitConfig {
   windowType: 'sliding' | 'fixed';
   /** Whether to apply stricter limits for suspicious IPs */
   strictModeForSuspiciousIPs: boolean;
-}
+};
 
-export interface SecurityEventConfig {
+export type SecurityEventConfig = {
   /** Types of events to log */
   loggedEvents: SecurityEventType[];
   /** How long to retain security events (in days) */
@@ -117,9 +117,9 @@ export interface SecurityEventConfig {
   criticalEvents: SecurityEventType[];
   /** Maximum events to store per user per day */
   maxEventsPerUserPerDay: number;
-}
+};
 
-export interface CleanupConfig {
+export type CleanupConfig = {
   /** How often to run cleanup tasks (in hours) */
   cleanupIntervalHours: number;
   /** Retention periods for different data types */
@@ -139,9 +139,9 @@ export interface CleanupConfig {
   autoCleanup: boolean;
   /** Maximum records to delete in a single cleanup operation */
   maxDeleteBatchSize: number;
-}
+};
 
-export interface SecurityHeadersConfig {
+export type SecurityHeadersConfig = {
   /** Content Security Policy */
   contentSecurityPolicy: string;
   /** X-Frame-Options */
@@ -156,7 +156,7 @@ export interface SecurityHeadersConfig {
   permissionsPolicy: string;
   /** Strict-Transport-Security */
   strictTransportSecurity: string;
-}
+};
 
 export type SecurityEventType =
   | 'csrf_validation_failed'
@@ -171,7 +171,7 @@ export type SecurityEventType =
   | 'trusted_ip_added'
   | 'session_blacklisted';
 
-export interface IntegratedSecurityConfig {
+export type IntegratedSecurityConfig = {
   csrf: CSRFConfig;
   sessionHijacking: SessionHijackingConfig;
   sessionTimeout: SessionTimeoutConfig;
@@ -191,7 +191,7 @@ export interface IntegratedSecurityConfig {
     /** Whether to use strict mode (more aggressive security) */
     strictMode: boolean;
   };
-}
+};
 
 /**
  * Default security configuration

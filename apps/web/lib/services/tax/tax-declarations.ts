@@ -1,5 +1,5 @@
 // lib/services/tax/tax-declarations.ts
-export interface TaxDeclaration {
+export type TaxDeclaration = {
   id: string;
   year: number;
   type: string;
@@ -7,7 +7,7 @@ export interface TaxDeclaration {
   data: Record<string, any>;
   createdAt: Date;
   submittedAt?: Date;
-}
+};
 
 export class TaxDeclarationService {
   static async createDeclaration(
@@ -24,8 +24,7 @@ export class TaxDeclarationService {
     return [];
   }
 
-  static async submitDeclaration(id: string): Promise<boolean> {
-    console.log(`Submitting tax declaration: ${id}`);
+  static async submitDeclaration(_id: string): Promise<boolean> {
     return true;
   }
 }

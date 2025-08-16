@@ -11,8 +11,7 @@ export async function GET(
     const trainingData = await service.getTrainingData(params.id);
 
     return NextResponse.json(trainingData);
-  } catch (error) {
-    console.error('Erro ao buscar dados de treinamento:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
       { status: 500 }
@@ -38,8 +37,7 @@ export async function POST(
     await service.uploadTrainingData(params.id, data);
 
     return NextResponse.json({ success: true });
-  } catch (error) {
-    console.error('Erro ao fazer upload dos dados:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Erro ao fazer upload dos dados' },
       { status: 400 }

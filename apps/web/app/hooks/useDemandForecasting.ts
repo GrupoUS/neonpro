@@ -2,23 +2,23 @@ import { useCallback, useState } from 'react';
 import { toast } from 'sonner';
 
 // Types for demand forecasting
-interface ForecastRequest {
+type ForecastRequest = {
   itemId: string;
   clinicId: string;
   forecastPeriod: number;
   confidenceLevel: number;
-}
+};
 
-interface BulkForecastRequest {
+type BulkForecastRequest = {
   items: Array<{
     itemId: string;
     forecastPeriod: number;
   }>;
   clinicId: string;
   confidenceLevel: number;
-}
+};
 
-interface ForecastResult {
+type ForecastResult = {
   itemId: string;
   itemName: string;
   forecastPeriod: number;
@@ -41,9 +41,9 @@ interface ForecastResult {
     | 'seasonal_decomposition'
     | 'linear_regression'
     | 'moving_average';
-}
+};
 
-interface SeasonalAnalysis {
+type SeasonalAnalysis = {
   itemId: string;
   analysisPeriod: number;
   dataPoints: number;
@@ -72,9 +72,9 @@ interface SeasonalAnalysis {
     appointmentBasedConsumption: number;
     averageConsumptionPerAppointment: number;
   };
-}
+};
 
-interface AccuracyAnalysis {
+type AccuracyAnalysis = {
   period: string;
   totalForecasts: number;
   overallStatistics: {
@@ -102,7 +102,7 @@ interface AccuracyAnalysis {
     };
   };
   recommendations: string[];
-}
+};
 
 export function useDemandForecasting() {
   const [isLoading, setIsLoading] = useState(false);
@@ -276,46 +276,36 @@ export function useDemandForecasting() {
       confidenceLevel: number;
       withinConfidenceInterval: boolean;
     }) => {
-      try {
-        const response = await fetch('/api/inventory/forecasting/accuracy', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(accuracyData),
-        });
+      const response = await fetch('/api/inventory/forecasting/accuracy', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(accuracyData),
+      });
 
-        const result = await response.json();
+      const result = await response.json();
 
-        if (!response.ok) {
-          throw new Error(result.error || 'Failed to log accuracy data');
-        }
-
-        return result.data;
-      } catch (error) {
-        console.error('Failed to log forecast accuracy:', error);
-        throw error;
+      if (!response.ok) {
+        throw new Error(result.error || 'Failed to log accuracy data');
       }
+
+      return result.data;
     },
     []
   );
 
   // Get forecasting capabilities
   const getCapabilities = useCallback(async (clinicId: string) => {
-    try {
-      const response = await fetch(
-        `/api/inventory/forecasting/demand?clinicId=${clinicId}`
-      );
-      const result = await response.json();
+    const response = await fetch(
+      `/api/inventory/forecasting/demand?clinicId=${clinicId}`
+    );
+    const result = await response.json();
 
-      if (!response.ok) {
-        throw new Error(result.error || 'Failed to get capabilities');
-      }
-
-      setCapabilities(result.data);
-      return result.data;
-    } catch (error) {
-      console.error('Failed to get forecasting capabilities:', error);
-      throw error;
+    if (!response.ok) {
+      throw new Error(result.error || 'Failed to get capabilities');
     }
+
+    setCapabilities(result.data);
+    return result.data;
   }, []);
 
   // Clear current forecast

@@ -12,7 +12,7 @@ export type EmailProvider =
   | 'resend'
   | 'postmark';
 
-export interface EmailProviderConfig {
+export type EmailProviderConfig = {
   provider: EmailProvider;
   name: string;
   settings: Record<string, any>;
@@ -24,10 +24,10 @@ export interface EmailProviderConfig {
     requestsPerSecond: number;
     requestsPerMinute: number;
   };
-}
+};
 
 // Provider-specific configurations
-export interface SMTPConfig {
+export type SMTPConfig = {
   host: string;
   port: number;
   secure: boolean;
@@ -38,54 +38,54 @@ export interface SMTPConfig {
   pool?: boolean;
   maxConnections?: number;
   maxMessages?: number;
-}
+};
 
-export interface SESConfig {
+export type SESConfig = {
   region: string;
   accessKeyId: string;
   secretAccessKey: string;
   configurationSet?: string;
-}
+};
 
-export interface SendGridConfig {
+export type SendGridConfig = {
   apiKey: string;
   ipPoolName?: string;
-}
+};
 
-export interface MailgunConfig {
+export type MailgunConfig = {
   apiKey: string;
   domain: string;
   region: 'us' | 'eu';
-}
+};
 
-export interface ResendConfig {
+export type ResendConfig = {
   apiKey: string;
-}
+};
 
-export interface PostmarkConfig {
+export type PostmarkConfig = {
   serverToken: string;
   messageStream?: string;
-}
+};
 
 // =======================================
 // EMAIL MESSAGE TYPES
 // =======================================
 
-export interface EmailRecipient {
+export type EmailRecipient = {
   email: string;
   name?: string;
   type: 'to' | 'cc' | 'bcc';
-}
+};
 
-export interface EmailAttachment {
+export type EmailAttachment = {
   filename: string;
   content: string | Buffer;
   contentType?: string;
   cid?: string; // Content-ID for inline attachments
   size?: number;
-}
+};
 
-export interface EmailTemplate {
+export type EmailTemplate = {
   id: string;
   name: string;
   subject: string;
@@ -98,9 +98,9 @@ export interface EmailTemplate {
   createdBy: string;
   createdAt: Date;
   updatedAt: Date;
-}
+};
 
-export interface EmailMessage {
+export type EmailMessage = {
   id?: string;
   to: EmailRecipient[];
   cc?: EmailRecipient[];
@@ -123,7 +123,7 @@ export interface EmailMessage {
   scheduledAt?: Date;
   tags?: string[];
   metadata?: Record<string, any>;
-}
+};
 
 // =======================================
 // EMAIL TRACKING & ANALYTICS
@@ -141,7 +141,7 @@ export type EmailStatus =
   | 'complained'
   | 'failed';
 
-export interface EmailEvent {
+export type EmailEvent = {
   id: string;
   emailId: string;
   messageId: string;
@@ -153,9 +153,9 @@ export interface EmailEvent {
   userAgent?: string; // For opens, clicks
   ipAddress?: string;
   linkUrl?: string; // For click events
-}
+};
 
-export interface EmailAnalytics {
+export type EmailAnalytics = {
   totalSent: number;
   delivered: number;
   bounced: number;
@@ -183,13 +183,13 @@ export interface EmailAnalytics {
     reason: string;
     count: number;
   }>;
-}
+};
 
 // =======================================
 // EMAIL CAMPAIGN TYPES
 // =======================================
 
-export interface EmailCampaign {
+export type EmailCampaign = {
   id: string;
   name: string;
   templateId: string;
@@ -214,13 +214,13 @@ export interface EmailCampaign {
   updatedAt: Date;
   sentAt?: Date;
   completedAt?: Date;
-}
+};
 
 // =======================================
 // EMAIL SETTINGS & PREFERENCES
 // =======================================
 
-export interface EmailSettings {
+export type EmailSettings = {
   id: string;
   clinicId: string;
 
@@ -280,7 +280,7 @@ export interface EmailSettings {
 
   webhookUrl?: string;
   webhookSecret?: string;
-}
+};
 
 // =======================================
 // ZOD SCHEMAS FOR VALIDATION
@@ -439,15 +439,15 @@ export const EmailSettingsSchema = z.object({
 // EMAIL SERVICE INTERFACES
 // =======================================
 
-export interface EmailServiceResponse {
+export type EmailServiceResponse = {
   success: boolean;
   messageId?: string;
   providerMessageId?: string;
   error?: string;
   metadata?: Record<string, any>;
-}
+};
 
-export interface BulkEmailResponse {
+export type BulkEmailResponse = {
   success: boolean;
   results: Array<{
     email: string;
@@ -457,9 +457,9 @@ export interface BulkEmailResponse {
   }>;
   totalSent: number;
   totalFailed: number;
-}
+};
 
-export interface EmailServiceInterface {
+export type EmailServiceInterface = {
   sendEmail(message: EmailMessage): Promise<EmailServiceResponse>;
   sendBulkEmail(messages: EmailMessage[]): Promise<BulkEmailResponse>;
   getDeliveryStatus(messageId: string): Promise<EmailStatus>;
@@ -469,27 +469,27 @@ export interface EmailServiceInterface {
     limit: number;
     resetDate?: Date;
   }>;
-}
+};
 
 // =======================================
 // UTILITY TYPES
 // =======================================
 
-export interface EmailValidationResult {
+export type EmailValidationResult = {
   isValid: boolean;
   email: string;
   reason?: string;
   suggestions?: string[];
-}
+};
 
-export interface EmailPreview {
+export type EmailPreview = {
   subject: string;
   htmlContent: string;
   textContent?: string;
   variables: Record<string, any>;
-}
+};
 
-export interface EmailDeliveryReport {
+export type EmailDeliveryReport = {
   messageId: string;
   recipient: string;
   status: EmailStatus;
@@ -500,7 +500,7 @@ export interface EmailDeliveryReport {
   bounceReason?: string;
   provider: EmailProvider;
   cost?: number;
-}
+};
 
 // =======================================
 // EXPORT ALL TYPES

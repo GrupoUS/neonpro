@@ -604,7 +604,6 @@ class NotificationManager {
       .eq('id', notificationId);
 
     if (error) {
-      console.error('Erro ao atualizar status:', error);
     }
   }
 
@@ -629,7 +628,6 @@ class NotificationManager {
       .insert(notificationEvent);
 
     if (error) {
-      console.error('Erro ao registrar evento:', error);
     }
   }
 

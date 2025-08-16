@@ -4,7 +4,7 @@
 import { logger } from '@/lib/logger';
 import type { SSOProvider, SSOTokenResponse, SSOUserInfo } from '@/types/sso';
 
-export interface MicrosoftOAuthConfig {
+export type MicrosoftOAuthConfig = {
   clientId: string;
   clientSecret: string;
   redirectUri: string;
@@ -13,9 +13,9 @@ export interface MicrosoftOAuthConfig {
   prompt?: 'login' | 'none' | 'consent' | 'select_account';
   domainHint?: string;
   responseMode?: 'query' | 'fragment' | 'form_post';
-}
+};
 
-export interface MicrosoftUserInfo {
+export type MicrosoftUserInfo = {
   id: string;
   displayName: string;
   givenName: string;
@@ -28,9 +28,9 @@ export interface MicrosoftUserInfo {
   jobTitle?: string;
   businessPhones?: string[];
   '@odata.context'?: string;
-}
+};
 
-export interface MicrosoftTokenInfo {
+export type MicrosoftTokenInfo = {
   access_token: string;
   token_type: string;
   expires_in: number;
@@ -38,7 +38,7 @@ export interface MicrosoftTokenInfo {
   refresh_token?: string;
   id_token?: string;
   ext_expires_in?: number;
-}
+};
 
 export interface AzureADUserInfo extends MicrosoftUserInfo {
   onPremisesSamAccountName?: string;

@@ -1,11 +1,25 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Progress } from '@/components/ui/progress';
-import { Shield, CheckCircle, AlertTriangle, Clock, FileText, Users, Lock } from 'lucide-react';
+import {
+  Shield,
+  CheckCircle,
+  AlertTriangle,
+  Clock,
+  FileText,
+  Users,
+  Lock,
+} from 'lucide-react';
 
 // ============================================================================
 // TYPES
@@ -32,7 +46,8 @@ interface ComplianceStatus {
 // ============================================================================
 
 export function ComplianceDashboard() {
-  const [complianceStatus, setComplianceStatus] = useState<ComplianceStatus | null>(null);
+  const [complianceStatus, setComplianceStatus] =
+    useState<ComplianceStatus | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -45,7 +60,7 @@ export function ComplianceDashboard() {
       if (!response.ok) {
         throw new Error('Failed to load compliance status');
       }
-      
+
       const data: ComplianceStatus = await response.json();
       setComplianceStatus(data);
     } catch (error) {
@@ -91,7 +106,8 @@ export function ComplianceDashboard() {
           <Alert>
             <AlertTriangle className="h-4 w-4" />
             <AlertDescription>
-              Erro ao carregar status de conformidade. Tente novamente mais tarde.
+              Erro ao carregar status de conformidade. Tente novamente mais
+              tarde.
             </AlertDescription>
           </Alert>
         </CardContent>
@@ -99,16 +115,26 @@ export function ComplianceDashboard() {
     );
   }
 
-  const consentProgress = complianceStatus.consentCompliance.requiredConsentsCount > 0 
-    ? (complianceStatus.consentCompliance.grantedRequiredConsentsCount / complianceStatus.consentCompliance.requiredConsentsCount) * 100
-    : 100;
+  const consentProgress =
+    complianceStatus.consentCompliance.requiredConsentsCount > 0
+      ? (complianceStatus.consentCompliance.grantedRequiredConsentsCount /
+          complianceStatus.consentCompliance.requiredConsentsCount) *
+        100
+      : 100;
 
-  const isFullyCompliant = complianceStatus.consentCompliance.hasAllRequiredConsents;
+  const isFullyCompliant =
+    complianceStatus.consentCompliance.hasAllRequiredConsents;
 
   return (
     <div className="space-y-6">
       {/* Overall Status Card */}
-      <Card className={isFullyCompliant ? 'border-green-200 bg-green-50' : 'border-yellow-200 bg-yellow-50'}>
+      <Card
+        className={
+          isFullyCompliant
+            ? 'border-green-200 bg-green-50'
+            : 'border-yellow-200 bg-yellow-50'
+        }
+      >
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Shield className="w-5 h-5" />
@@ -126,7 +152,8 @@ export function ComplianceDashboard() {
             )}
           </CardTitle>
           <CardDescription>
-            Última atualização: {new Date(complianceStatus.lastUpdated).toLocaleString('pt-BR')}
+            Última atualização:{' '}
+            {new Date(complianceStatus.lastUpdated).toLocaleString('pt-BR')}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -134,16 +161,16 @@ export function ComplianceDashboard() {
             <Alert className="border-green-200 bg-green-50">
               <CheckCircle className="h-4 w-4 text-green-600" />
               <AlertDescription className="text-green-800">
-                Parabéns! Você está em total conformidade com a LGPD. 
-                Todos os consentimentos obrigatórios foram concedidos.
+                Parabéns! Você está em total conformidade com a LGPD. Todos os
+                consentimentos obrigatórios foram concedidos.
               </AlertDescription>
             </Alert>
           ) : (
             <Alert className="border-yellow-200 bg-yellow-50">
               <AlertTriangle className="h-4 w-4 text-yellow-600" />
               <AlertDescription className="text-yellow-800">
-                Alguns consentimentos obrigatórios estão pendentes. 
-                Revise suas preferências de privacidade para garantir conformidade total.
+                Alguns consentimentos obrigatórios estão pendentes. Revise suas
+                preferências de privacidade para garantir conformidade total.
               </AlertDescription>
             </Alert>
           )}
@@ -163,9 +190,15 @@ export function ComplianceDashboard() {
           <CardContent>
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <span className="text-2xl font-bold">{consentProgress.toFixed(0)}%</span>
-                <Badge variant={isFullyCompliant ? "default" : "secondary"}>
-                  {complianceStatus.consentCompliance.grantedRequiredConsentsCount} / {complianceStatus.consentCompliance.requiredConsentsCount}
+                <span className="text-2xl font-bold">
+                  {consentProgress.toFixed(0)}%
+                </span>
+                <Badge variant={isFullyCompliant ? 'default' : 'secondary'}>
+                  {
+                    complianceStatus.consentCompliance
+                      .grantedRequiredConsentsCount
+                  }{' '}
+                  / {complianceStatus.consentCompliance.requiredConsentsCount}
                 </Badge>
               </div>
               <Progress value={consentProgress} className="h-2" />
@@ -192,11 +225,15 @@ export function ComplianceDashboard() {
               <div className="flex items-center gap-4 text-xs">
                 <div className="flex items-center gap-1">
                   <Clock className="w-3 h-3 text-yellow-500" />
-                  <span>{complianceStatus.dataRequests.pendingRequests} pendentes</span>
+                  <span>
+                    {complianceStatus.dataRequests.pendingRequests} pendentes
+                  </span>
                 </div>
                 <div className="flex items-center gap-1">
                   <CheckCircle className="w-3 h-3 text-green-500" />
-                  <span>{complianceStatus.dataRequests.completedRequests} concluídas</span>
+                  <span>
+                    {complianceStatus.dataRequests.completedRequests} concluídas
+                  </span>
                 </div>
               </div>
               <p className="text-xs text-muted-foreground">
@@ -221,13 +258,19 @@ export function ComplianceDashboard() {
               </div>
               <div className="flex items-center gap-1">
                 {isFullyCompliant ? (
-                  <Badge className="bg-green-100 text-green-800">Excelente</Badge>
+                  <Badge className="bg-green-100 text-green-800">
+                    Excelente
+                  </Badge>
                 ) : consentProgress >= 75 ? (
                   <Badge className="bg-blue-100 text-blue-800">Bom</Badge>
                 ) : consentProgress >= 50 ? (
-                  <Badge className="bg-yellow-100 text-yellow-800">Regular</Badge>
+                  <Badge className="bg-yellow-100 text-yellow-800">
+                    Regular
+                  </Badge>
                 ) : (
-                  <Badge className="bg-red-100 text-red-800">Precisa Melhorar</Badge>
+                  <Badge className="bg-red-100 text-red-800">
+                    Precisa Melhorar
+                  </Badge>
                 )}
               </div>
               <p className="text-xs text-muted-foreground">
@@ -249,28 +292,39 @@ export function ComplianceDashboard() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {complianceStatus.dataRequests.recentRequests.map((request, index) => (
-                <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                  <div className="flex items-center gap-3">
-                    <FileText className="w-4 h-4 text-gray-500" />
-                    <div>
-                      <p className="font-medium">{request.requestType}</p>
-                      <p className="text-sm text-gray-600">
-                        {new Date(request.requestedAt).toLocaleDateString('pt-BR')}
-                      </p>
-                    </div>
-                  </div>
-                  <Badge 
-                    variant={
-                      request.status === 'completed' ? 'default' :
-                      request.status === 'processing' ? 'secondary' :
-                      request.status === 'denied' ? 'destructive' : 'outline'
-                    }
+              {complianceStatus.dataRequests.recentRequests.map(
+                (request, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
                   >
-                    {request.status}
-                  </Badge>
-                </div>
-              ))}
+                    <div className="flex items-center gap-3">
+                      <FileText className="w-4 h-4 text-gray-500" />
+                      <div>
+                        <p className="font-medium">{request.requestType}</p>
+                        <p className="text-sm text-gray-600">
+                          {new Date(request.requestedAt).toLocaleDateString(
+                            'pt-BR'
+                          )}
+                        </p>
+                      </div>
+                    </div>
+                    <Badge
+                      variant={
+                        request.status === 'completed'
+                          ? 'default'
+                          : request.status === 'processing'
+                            ? 'secondary'
+                            : request.status === 'denied'
+                              ? 'destructive'
+                              : 'outline'
+                      }
+                    >
+                      {request.status}
+                    </Badge>
+                  </div>
+                )
+              )}
             </div>
           </CardContent>
         </Card>
@@ -291,7 +345,9 @@ export function ComplianceDashboard() {
               <ul className="text-sm text-gray-600 space-y-1">
                 <li>• Confirmação da existência de tratamento</li>
                 <li>• Acesso aos dados</li>
-                <li>• Correção de dados incompletos, inexatos ou desatualizados</li>
+                <li>
+                  • Correção de dados incompletos, inexatos ou desatualizados
+                </li>
                 <li>• Anonimização, bloqueio ou eliminação</li>
                 <li>• Portabilidade dos dados</li>
                 <li>• Informação sobre compartilhamento</li>

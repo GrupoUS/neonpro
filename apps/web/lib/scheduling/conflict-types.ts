@@ -7,7 +7,7 @@
  */
 
 // Core conflict detection types
-export interface SchedulingConflict {
+export type SchedulingConflict = {
   id: string;
   appointmentAId: string;
   appointmentBId: string;
@@ -19,7 +19,7 @@ export interface SchedulingConflict {
   resolutionDetails: Record<string, any>;
   createdBy?: string;
   updatedAt: Date;
-}
+};
 
 export type ConflictType =
   | 'time_overlap'
@@ -40,7 +40,7 @@ export type ResolutionMethod =
   | 'escalation';
 
 // Resolution strategy types
-export interface ConflictResolutionStrategy {
+export type ConflictResolutionStrategy = {
   id: string;
   conflictId: string;
   strategyType: StrategyType;
@@ -50,7 +50,7 @@ export interface ConflictResolutionStrategy {
   stakeholderSatisfaction: Record<string, number>;
   appliedAt: Date;
   createdBy?: string;
-}
+};
 
 export type StrategyType =
   | 'mip_optimization'
@@ -61,7 +61,7 @@ export type StrategyType =
   | 'hybrid';
 
 // Professional availability types
-export interface ProfessionalAvailabilityPattern {
+export type ProfessionalAvailabilityPattern = {
   id: string;
   professionalId: string;
   dayOfWeek: number; // 0-6 (Sunday-Saturday)
@@ -74,7 +74,7 @@ export interface ProfessionalAvailabilityPattern {
   validUntil?: Date;
   createdAt: Date;
   updatedAt: Date;
-}
+};
 
 export type AvailabilityType =
   | 'available'
@@ -83,7 +83,7 @@ export type AvailabilityType =
   | 'unavailable';
 
 // ML prediction types
-export interface SchedulingMLPrediction {
+export type SchedulingMLPrediction = {
   id: string;
   predictionType: PredictionType;
   targetAppointmentId: string;
@@ -95,7 +95,7 @@ export interface SchedulingMLPrediction {
   actualOutcome?: number;
   outcomeRecordedAt?: Date;
   feedbackScore?: number;
-}
+};
 
 export type PredictionType =
   | 'no_show_probability'
@@ -105,14 +105,14 @@ export type PredictionType =
   | 'resource_demand_forecast';
 
 // System metrics types
-export interface ConflictSystemMetric {
+export type ConflictSystemMetric = {
   id: string;
   metricType: MetricType;
   metricValue: number;
   measurementUnit: string;
   recordedAt: Date;
   contextData: Record<string, any>;
-}
+};
 
 export type MetricType =
   | 'detection_latency'
@@ -123,7 +123,7 @@ export type MetricType =
   | 'conflict_prevention_rate';
 
 // Enhanced appointment type with conflict resolution data
-export interface EnhancedAppointment {
+export type EnhancedAppointment = {
   id: string;
   clientId: string;
   professionalId: string;
@@ -138,7 +138,7 @@ export interface EnhancedAppointment {
   autoReschedulable: boolean;
   createdAt: Date;
   updatedAt: Date;
-}
+};
 
 export type ConflictStatus = 'none' | 'detected' | 'resolving' | 'resolved';
 export type AppointmentStatus =
@@ -148,30 +148,30 @@ export type AppointmentStatus =
   | 'cancelled';
 
 // Conflict detection engine configuration
-export interface ConflictDetectionConfig {
+export type ConflictDetectionConfig = {
   enableRealTimeDetection: boolean;
   detectionIntervalMs: number;
   autoResolutionEnabled: boolean;
   maxAutoResolutionSeverity: SeverityLevel;
   notificationChannels: NotificationChannel[];
   performanceThresholds: PerformanceThresholds;
-}
+};
 
-export interface NotificationChannel {
+export type NotificationChannel = {
   type: 'email' | 'sms' | 'push' | 'realtime';
   enabled: boolean;
   configuration: Record<string, any>;
-}
+};
 
-export interface PerformanceThresholds {
+export type PerformanceThresholds = {
   maxDetectionLatencyMs: number;
   maxResolutionTimeMs: number;
   minAccuracyRate: number;
   minUserSatisfactionScore: number;
-}
+};
 
 // Resolution algorithm interfaces
-export interface ResolutionAlgorithm {
+export type ResolutionAlgorithm = {
   name: string;
   type: StrategyType;
   parameters: Record<string, any>;
@@ -184,17 +184,17 @@ export interface ResolutionAlgorithm {
     conflict: SchedulingConflict,
     context: ResolutionContext
   ): number;
-}
+};
 
-export interface ResolutionContext {
+export type ResolutionContext = {
   availableAppointments: EnhancedAppointment[];
   professionalAvailability: ProfessionalAvailabilityPattern[];
   systemConstraints: SystemConstraints;
   stakeholderPreferences: StakeholderPreferences;
   historicalData: HistoricalResolutionData;
-}
+};
 
-export interface ResolutionResult {
+export type ResolutionResult = {
   success: boolean;
   resolutionMethod: ResolutionMethod;
   proposedChanges: AppointmentChange[];
@@ -203,114 +203,114 @@ export interface ResolutionResult {
   executionTimeMs: number;
   explanation: string;
   alternatives?: ResolutionResult[];
-}
+};
 
-export interface AppointmentChange {
+export type AppointmentChange = {
   appointmentId: string;
   changeType: 'reschedule' | 'reassign' | 'cancel' | 'modify';
   originalValue: any;
   proposedValue: any;
   impact: ChangeImpact;
-}
+};
 
-export interface ChangeImpact {
+export type ChangeImpact = {
   stakeholder: 'patient' | 'professional' | 'clinic';
   severity: SeverityLevel;
   description: string;
   compensationRequired?: string;
-}
+};
 
-export interface StakeholderSatisfaction {
+export type StakeholderSatisfaction = {
   patient: number; // 0-1
   professional: number; // 0-1
   clinic: number; // 0-1
   overall: number; // 0-1
-}
+};
 
-export interface SystemConstraints {
+export type SystemConstraints = {
   businessHours: TimeRange[];
   minimumNoticeHours: number;
   maximumReschedulingAttempts: number;
   resourceCapacityLimits: ResourceCapacity[];
   professionalWorkingHours: Map<string, TimeRange[]>;
-}
+};
 
-export interface TimeRange {
+export type TimeRange = {
   start: string; // HH:MM format
   end: string; // HH:MM format
   dayOfWeek?: number; // 0-6, optional for recurring patterns
-}
+};
 
-export interface ResourceCapacity {
+export type ResourceCapacity = {
   resourceId: string;
   resourceType: 'room' | 'equipment' | 'professional';
   maxConcurrentUsage: number;
   availabilitySchedule: TimeRange[];
-}
+};
 
-export interface StakeholderPreferences {
+export type StakeholderPreferences = {
   patientPreferences: Map<string, PatientPreference>;
   professionalPreferences: Map<string, ProfessionalPreference>;
   clinicPolicies: ClinicPolicy[];
-}
+};
 
-export interface PatientPreference {
+export type PatientPreference = {
   patientId: string;
   preferredTimeSlots: TimeRange[];
   avoidedTimeSlots: TimeRange[];
   maxReschedulingTolerance: number; // hours
   communicationPreferences: string[];
   flexibilityScore: number; // 0-1
-}
+};
 
-export interface ProfessionalPreference {
+export type ProfessionalPreference = {
   professionalId: string;
   preferredWorkingHours: TimeRange[];
   minimumBreakTime: number; // minutes
   maxConsecutiveAppointments: number;
   specialtyPreferences: string[];
   workloadBalancingWeight: number; // 0-1
-}
+};
 
-export interface ClinicPolicy {
+export type ClinicPolicy = {
   policyType: string;
   rules: PolicyRule[];
   priority: number;
   enforcement: 'strict' | 'flexible' | 'advisory';
-}
+};
 
-export interface PolicyRule {
+export type PolicyRule = {
   condition: string;
   action: string;
   parameters: Record<string, any>;
-}
+};
 
-export interface HistoricalResolutionData {
+export type HistoricalResolutionData = {
   previousResolutions: ConflictResolutionStrategy[];
   successRates: Map<StrategyType, number>;
   averageExecutionTimes: Map<StrategyType, number>;
   stakeholderFeedback: ResolutionFeedback[];
-}
+};
 
-export interface ResolutionFeedback {
+export type ResolutionFeedback = {
   resolutionId: string;
   stakeholder: string;
   satisfactionScore: number; // 0-1
   feedback: string;
   suggestions: string[];
   recordedAt: Date;
-}
+};
 
 // Real-time event types
-export interface ConflictDetectionEvent {
+export type ConflictDetectionEvent = {
   type: 'conflict_detected' | 'conflict_resolved' | 'resolution_failed';
   conflictId: string;
   appointmentIds: string[];
   timestamp: Date;
   metadata: Record<string, any>;
-}
+};
 
-export interface RealtimeNotification {
+export type RealtimeNotification = {
   id: string;
   type: NotificationType;
   title: string;
@@ -321,7 +321,7 @@ export interface RealtimeNotification {
   actions?: NotificationAction[];
   createdAt: Date;
   expiresAt?: Date;
-}
+};
 
 export type NotificationType =
   | 'conflict_alert'
@@ -330,39 +330,39 @@ export type NotificationType =
   | 'system_performance'
   | 'maintenance_notice';
 
-export interface NotificationAction {
+export type NotificationAction = {
   id: string;
   label: string;
   actionType: 'approve' | 'reject' | 'modify' | 'escalate' | 'view_details';
   parameters?: Record<string, any>;
-}
+};
 
 // API response types
-export interface ConflictDetectionResponse {
+export type ConflictDetectionResponse = {
   conflicts: SchedulingConflict[];
   totalCount: number;
   detectionLatencyMs: number;
   systemStatus: SystemStatus;
   recommendations: ResolutionRecommendation[];
-}
+};
 
-export interface ResolutionRecommendation {
+export type ResolutionRecommendation = {
   conflictId: string;
   recommendedStrategy: StrategyType;
   confidenceScore: number;
   estimatedExecutionTime: number;
   expectedSatisfaction: StakeholderSatisfaction;
   reasoning: string;
-}
+};
 
-export interface SystemStatus {
+export type SystemStatus = {
   isHealthy: boolean;
   activeConflicts: number;
   averageDetectionLatency: number;
   averageResolutionTime: number;
   systemLoad: number; // 0-1
   lastMaintenanceAt: Date;
-}
+};
 
 // Error types
 export class ConflictDetectionError extends Error {

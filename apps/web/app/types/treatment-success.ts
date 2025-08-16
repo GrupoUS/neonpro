@@ -1,6 +1,6 @@
 // Treatment Success Rate Tracking & Optimization Types
 
-export interface TreatmentOutcome {
+export type TreatmentOutcome = {
   id: string;
   patient_id: string;
   treatment_id: string;
@@ -20,9 +20,9 @@ export interface TreatmentOutcome {
   status: 'active' | 'completed' | 'cancelled';
   created_at: string;
   updated_at: string;
-}
+};
 
-export interface SuccessMetrics {
+export type SuccessMetrics = {
   id: string;
   treatment_type: string;
   provider_id?: string;
@@ -38,9 +38,9 @@ export interface SuccessMetrics {
   industry_comparison?: Record<string, any>;
   created_at: string;
   updated_at: string;
-}
+};
 
-export interface ProviderPerformance {
+export type ProviderPerformance = {
   id: string;
   provider_id: string;
   evaluation_period: string;
@@ -57,9 +57,9 @@ export interface ProviderPerformance {
   certification_status?: Record<string, any>;
   created_at: string;
   updated_at: string;
-}
+};
 
-export interface ProtocolOptimization {
+export type ProtocolOptimization = {
   id: string;
   treatment_type: string;
   current_protocol: Record<string, any>;
@@ -75,9 +75,9 @@ export interface ProtocolOptimization {
   results_tracking?: Record<string, any>;
   created_at: string;
   updated_at: string;
-}
+};
 
-export interface QualityBenchmark {
+export type QualityBenchmark = {
   id: string;
   treatment_type: string;
   benchmark_type: 'industry_standard' | 'clinic_target' | 'best_practice';
@@ -91,9 +91,9 @@ export interface QualityBenchmark {
   status: 'active' | 'inactive' | 'deprecated';
   created_at: string;
   updated_at: string;
-}
+};
 
-export interface SuccessPrediction {
+export type SuccessPrediction = {
   id: string;
   patient_id: string;
   treatment_type: string;
@@ -104,9 +104,9 @@ export interface SuccessPrediction {
   recommendations?: Record<string, any>;
   created_at: string;
   updated_at: string;
-}
+};
 
-export interface ComplianceReport {
+export type ComplianceReport = {
   id: string;
   report_type: string;
   reporting_period: string;
@@ -122,69 +122,69 @@ export interface ComplianceReport {
   reviewed_by?: string;
   created_at: string;
   updated_at: string;
-}
+};
 
 // API Response Types
-export interface TreatmentSuccessApiResponse {
+export type TreatmentSuccessApiResponse = {
   data: TreatmentOutcome[];
   total: number;
   page: number;
   limit: number;
-}
+};
 
-export interface SuccessMetricsApiResponse {
+export type SuccessMetricsApiResponse = {
   data: SuccessMetrics[];
   total: number;
   page: number;
   limit: number;
-}
+};
 
-export interface ProviderPerformanceApiResponse {
+export type ProviderPerformanceApiResponse = {
   data: ProviderPerformance[];
   total: number;
   page: number;
   limit: number;
-}
+};
 
-export interface ProtocolOptimizationApiResponse {
+export type ProtocolOptimizationApiResponse = {
   data: ProtocolOptimization[];
   total: number;
   page: number;
   limit: number;
-}
+};
 
-export interface QualityBenchmarkApiResponse {
+export type QualityBenchmarkApiResponse = {
   data: QualityBenchmark[];
   total: number;
   page: number;
   limit: number;
-}
+};
 
-export interface SuccessPredictionApiResponse {
+export type SuccessPredictionApiResponse = {
   data: SuccessPrediction[];
   total: number;
   page: number;
   limit: number;
-}
+};
 
-export interface ComplianceReportApiResponse {
+export type ComplianceReportApiResponse = {
   data: ComplianceReport[];
   total: number;
   page: number;
   limit: number;
-}
+};
 
 // Dashboard Statistics Types
-export interface SuccessRateStats {
+export type SuccessRateStats = {
   overall_success_rate: number;
   total_treatments: number;
   average_satisfaction: number;
   benchmark_comparison: number;
   trend_direction: 'up' | 'down' | 'stable';
   improvement_opportunities: number;
-}
+};
 
-export interface ProviderStats {
+export type ProviderStats = {
   total_providers: number;
   top_performer: {
     provider_id: string;
@@ -192,25 +192,25 @@ export interface ProviderStats {
   };
   average_performance: number;
   improvement_needed: number;
-}
+};
 
-export interface TreatmentTypeStats {
+export type TreatmentTypeStats = {
   treatment_type: string;
   success_rate: number;
   total_treatments: number;
   satisfaction_score: number;
   benchmark_status: 'above' | 'at' | 'below';
-}
+};
 
-export interface ComplianceStats {
+export type ComplianceStats = {
   overall_compliance: number;
   pending_reports: number;
   overdue_items: number;
   certification_status: 'current' | 'expiring' | 'expired';
-}
+};
 
 // Filter and Search Types
-export interface TreatmentSuccessFilters {
+export type TreatmentSuccessFilters = {
   treatment_type?: string;
   provider_id?: string;
   date_from?: string;
@@ -220,34 +220,34 @@ export interface TreatmentSuccessFilters {
   satisfaction_min?: number;
   status?: string;
   has_complications?: boolean;
-}
+};
 
-export interface SuccessMetricsFilters {
+export type SuccessMetricsFilters = {
   treatment_type?: string;
   provider_id?: string;
   time_period?: string;
   success_rate_min?: number;
   period_start?: string;
   period_end?: string;
-}
+};
 
-export interface ProviderPerformanceFilters {
+export type ProviderPerformanceFilters = {
   provider_id?: string;
   evaluation_period?: string;
   success_rate_min?: number;
   period_start?: string;
   period_end?: string;
-}
+};
 
-export interface ProtocolOptimizationFilters {
+export type ProtocolOptimizationFilters = {
   treatment_type?: string;
   implementation_priority?: string;
   approval_status?: string;
   success_improvement_min?: number;
-}
+};
 
 // Form Types
-export interface CreateTreatmentOutcomeData {
+export type CreateTreatmentOutcomeData = {
   patient_id: string;
   treatment_id: string;
   provider_id: string;
@@ -255,9 +255,9 @@ export interface CreateTreatmentOutcomeData {
   treatment_date: string;
   success_criteria: Record<string, any>;
   notes?: string;
-}
+};
 
-export interface UpdateTreatmentOutcomeData {
+export type UpdateTreatmentOutcomeData = {
   outcome_date?: string;
   success_score?: number;
   actual_outcomes?: Record<string, any>;
@@ -268,9 +268,9 @@ export interface UpdateTreatmentOutcomeData {
   follow_up_required?: boolean;
   notes?: string;
   status?: 'active' | 'completed' | 'cancelled';
-}
+};
 
-export interface CreateProtocolOptimizationData {
+export type CreateProtocolOptimizationData = {
   treatment_type: string;
   current_protocol: Record<string, any>;
   recommended_changes: Record<string, any>;
@@ -279,27 +279,27 @@ export interface CreateProtocolOptimizationData {
   implementation_priority: 'low' | 'medium' | 'high' | 'critical';
   cost_impact?: number;
   timeline_estimate?: string;
-}
+};
 
-export interface CreateQualityBenchmarkData {
+export type CreateQualityBenchmarkData = {
   treatment_type: string;
   benchmark_type: 'industry_standard' | 'clinic_target' | 'best_practice';
   metric_name: string;
   target_value: number;
   benchmark_source?: string;
   update_frequency?: string;
-}
+};
 
-export interface CreateSuccessPredictionData {
+export type CreateSuccessPredictionData = {
   patient_id: string;
   treatment_type: string;
   prediction_factors: Record<string, any>;
   confidence_score?: number;
   risk_factors?: Record<string, any>;
   recommendations?: Record<string, any>;
-}
+};
 
-export interface CreateComplianceReportData {
+export type CreateComplianceReportData = {
   report_type: string;
   reporting_period: string;
   period_start: string;
@@ -309,4 +309,4 @@ export interface CreateComplianceReportData {
   findings?: Record<string, any>;
   recommendations?: Record<string, any>;
   action_items?: Record<string, any>;
-}
+};

@@ -9,11 +9,11 @@ import { SupplierManagementService } from '@/app/lib/services/supplier-managemen
 
 const supplierService = new SupplierManagementService();
 
-interface RouteParams {
+type RouteParams = {
   params: {
     id: string;
   };
-}
+};
 
 // =====================================================================================
 // PUT /api/suppliers/contacts/[id] - Update contact
@@ -34,8 +34,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     );
 
     return NextResponse.json(contact);
-  } catch (error) {
-    console.error('Erro ao atualizar contato:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
       { status: 500 }

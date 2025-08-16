@@ -1,7 +1,7 @@
 // Story 10.2: Progress Tracking through Computer Vision Types
 // TypeScript type definitions for progress tracking system
 
-export interface ProgressTracking {
+export type ProgressTracking = {
   id: string;
   patient_id: string;
   session_id?: string;
@@ -21,9 +21,9 @@ export interface ProgressTracking {
   updated_at: string;
   created_by: string;
   updated_by: string;
-}
+};
 
-export interface ProgressMilestone {
+export type ProgressMilestone = {
   id: string;
   patient_id: string;
   tracking_id?: string;
@@ -50,9 +50,9 @@ export interface ProgressMilestone {
   updated_at: string;
   created_by: string;
   updated_by: string;
-}
+};
 
-export interface ProgressPrediction {
+export type ProgressPrediction = {
   id: string;
   patient_id: string;
   tracking_id?: string;
@@ -74,9 +74,9 @@ export interface ProgressPrediction {
   updated_at: string;
   created_by: string;
   updated_by: string;
-}
+};
 
-export interface TrackingMetric {
+export type TrackingMetric = {
   id: string;
   treatment_type: string;
   metric_name: string;
@@ -92,9 +92,9 @@ export interface TrackingMetric {
   updated_at: string;
   created_by: string;
   updated_by: string;
-}
+};
 
-export interface MultiSessionAnalysis {
+export type MultiSessionAnalysis = {
   id: string;
   patient_id: string;
   analysis_name: string;
@@ -114,9 +114,9 @@ export interface MultiSessionAnalysis {
   updated_at: string;
   created_by: string;
   updated_by: string;
-}
+};
 
-export interface ProgressAlert {
+export type ProgressAlert = {
   id: string;
   patient_id: string;
   tracking_id?: string;
@@ -142,10 +142,10 @@ export interface ProgressAlert {
   updated_at: string;
   created_by: string;
   updated_by: string;
-}
+};
 
 // Analytics and dashboard types
-export interface ProgressTrackingAnalytics {
+export type ProgressTrackingAnalytics = {
   id: string;
   patient_id: string;
   tracking_type: string;
@@ -160,9 +160,9 @@ export interface ProgressTrackingAnalytics {
   time_since_last?: string;
   total_milestones: number;
   latest_prediction?: Record<string, any>;
-}
+};
 
-export interface ProgressDashboardStats {
+export type ProgressDashboardStats = {
   total_trackings: number;
   active_treatments: number;
   average_progress: number;
@@ -171,9 +171,9 @@ export interface ProgressDashboardStats {
   urgent_alerts: number;
   predictions_accuracy: number;
   treatment_completion_rate: number;
-}
+};
 
-export interface ProgressTrendData {
+export type ProgressTrendData = {
   treatment_type: string;
   treatment_area: string;
   progress_points: {
@@ -187,17 +187,17 @@ export interface ProgressTrendData {
     target_date: string;
     confidence: number;
   };
-}
+};
 
-export interface MilestoneAchievement {
+export type MilestoneAchievement = {
   milestone: ProgressMilestone;
   tracking: ProgressTracking;
   alert?: ProgressAlert;
   validation_required: boolean;
-}
+};
 
 // API request/response types
-export interface CreateProgressTrackingRequest {
+export type CreateProgressTrackingRequest = {
   patient_id: string;
   session_id?: string;
   tracking_type: ProgressTracking['tracking_type'];
@@ -208,18 +208,18 @@ export interface CreateProgressTrackingRequest {
   treatment_type: string;
   visual_annotations?: Record<string, any>;
   confidence_score: number;
-}
+};
 
-export interface UpdateProgressTrackingRequest {
+export type UpdateProgressTrackingRequest = {
   progress_score?: number;
   measurement_data?: Record<string, any>;
   visual_annotations?: Record<string, any>;
   confidence_score?: number;
   validation_status?: ProgressTracking['validation_status'];
   validation_notes?: string;
-}
+};
 
-export interface CreateProgressMilestoneRequest {
+export type CreateProgressMilestoneRequest = {
   patient_id: string;
   tracking_id?: string;
   milestone_type: ProgressMilestone['milestone_type'];
@@ -227,9 +227,9 @@ export interface CreateProgressMilestoneRequest {
   progress_data: Record<string, any>;
   threshold_criteria: Record<string, any>;
   achievement_score: number;
-}
+};
 
-export interface CreateProgressPredictionRequest {
+export type CreateProgressPredictionRequest = {
   patient_id: string;
   tracking_id?: string;
   prediction_type: ProgressPrediction['prediction_type'];
@@ -238,18 +238,18 @@ export interface CreateProgressPredictionRequest {
   target_date?: string;
   model_version: string;
   input_features: Record<string, any>;
-}
+};
 
-export interface CreateMultiSessionAnalysisRequest {
+export type CreateMultiSessionAnalysisRequest = {
   patient_id: string;
   analysis_name: string;
   session_ids: string[];
   tracking_ids: string[];
   comparison_type: MultiSessionAnalysis['comparison_type'];
   analysis_period: string;
-}
+};
 
-export interface CreateProgressAlertRequest {
+export type CreateProgressAlertRequest = {
   patient_id: string;
   tracking_id?: string;
   milestone_id?: string;
@@ -261,9 +261,9 @@ export interface CreateProgressAlertRequest {
   recipient_type: ProgressAlert['recipient_type'];
   action_required?: boolean;
   expires_at?: string;
-}
+};
 
-export interface TrackingMetricRequest {
+export type TrackingMetricRequest = {
   treatment_type: string;
   metric_name: string;
   metric_category: TrackingMetric['metric_category'];
@@ -273,10 +273,10 @@ export interface TrackingMetricRequest {
   calculation_formula?: string;
   unit_of_measurement?: string;
   display_order?: number;
-}
+};
 
 // Progress tracking filter and query types
-export interface ProgressTrackingFilters {
+export type ProgressTrackingFilters = {
   patient_id?: string;
   tracking_type?: ProgressTracking['tracking_type'];
   treatment_type?: string;
@@ -291,9 +291,9 @@ export interface ProgressTrackingFilters {
   has_predictions?: boolean;
   page?: number;
   limit?: number;
-}
+};
 
-export interface ProgressMilestoneFilters {
+export type ProgressMilestoneFilters = {
   patient_id?: string;
   milestone_type?: ProgressMilestone['milestone_type'];
   validation_status?: ProgressMilestone['validation_status'];
@@ -303,9 +303,9 @@ export interface ProgressMilestoneFilters {
   min_achievement_score?: number;
   page?: number;
   limit?: number;
-}
+};
 
-export interface ProgressAlertFilters {
+export type ProgressAlertFilters = {
   patient_id?: string;
   alert_type?: ProgressAlert['alert_type'];
   alert_priority?: ProgressAlert['alert_priority'];
@@ -317,10 +317,10 @@ export interface ProgressAlertFilters {
   expires_after?: string;
   page?: number;
   limit?: number;
-}
+};
 
 // Computer vision analysis types
-export interface CVProgressAnalysis {
+export type CVProgressAnalysis = {
   measurement_id: string;
   analysis_type: 'healing' | 'aesthetic' | 'treatment_response' | 'maintenance';
   regions_of_interest: {
@@ -347,9 +347,9 @@ export interface CVProgressAnalysis {
     coordinates: { x: number; y: number };
     data: Record<string, any>;
   }[];
-}
+};
 
-export interface ProgressVisualizationConfig {
+export type ProgressVisualizationConfig = {
   chart_type: 'line' | 'bar' | 'area' | 'scatter' | 'heatmap';
   time_range: 'week' | 'month' | 'quarter' | 'year' | 'all';
   metrics: string[];
@@ -358,27 +358,27 @@ export interface ProgressVisualizationConfig {
   show_confidence_intervals: boolean;
   group_by?: 'treatment_type' | 'treatment_area' | 'tracking_type';
   colors?: Record<string, string>;
-}
+};
 
 // API response types
-export interface ProgressTrackingResponse {
+export type ProgressTrackingResponse = {
   data: ProgressTracking[];
   total: number;
   page: number;
   limit: number;
   analytics?: ProgressTrackingAnalytics[];
-}
+};
 
-export interface ProgressDashboardResponse {
+export type ProgressDashboardResponse = {
   stats: ProgressDashboardStats;
   recent_trackings: ProgressTracking[];
   active_alerts: ProgressAlert[];
   milestone_achievements: MilestoneAchievement[];
   trend_data: ProgressTrendData[];
   predictions: ProgressPrediction[];
-}
+};
 
-export interface MultiSessionAnalysisResponse {
+export type MultiSessionAnalysisResponse = {
   analysis: MultiSessionAnalysis;
   tracking_data: ProgressTracking[];
   trend_analysis: {
@@ -388,10 +388,10 @@ export interface MultiSessionAnalysisResponse {
     prediction_accuracy: number;
   };
   visualization_data: Record<string, any>;
-}
+};
 
 // Error types
-export interface ProgressTrackingError {
+export type ProgressTrackingError = {
   code:
     | 'INVALID_PROGRESS_SCORE'
     | 'INVALID_CONFIDENCE'
@@ -402,4 +402,4 @@ export interface ProgressTrackingError {
   message: string;
   field?: string;
   details?: Record<string, any>;
-}
+};

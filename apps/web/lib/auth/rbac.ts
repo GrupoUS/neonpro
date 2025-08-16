@@ -1096,8 +1096,7 @@ export class HealthcareRBACEngine {
       this.setCache(cacheKey, result);
       await this.logAuditTrail(result, context);
       return result;
-    } catch (error) {
-      console.error('Permission check error:', error);
+    } catch (_error) {
       return this.createPermissionResult(
         false,
         permission,
@@ -1194,8 +1193,7 @@ export class HealthcareRBACEngine {
       this.clearUserCache(userId);
 
       return true;
-    } catch (error) {
-      console.error('Grant temporary access error:', error);
+    } catch (_error) {
       return false;
     }
   }
@@ -1247,8 +1245,7 @@ export class HealthcareRBACEngine {
       this.clearUserCache(userId);
 
       return true;
-    } catch (error) {
-      console.error('Revoke access error:', error);
+    } catch (_error) {
       return false;
     }
   }
@@ -1277,8 +1274,7 @@ export class HealthcareRBACEngine {
       }
 
       return UserRoleContextSchema.parse(data);
-    } catch (error) {
-      console.error('Get user role context error:', error);
+    } catch (_error) {
       return null;
     }
   }
@@ -1483,9 +1479,7 @@ export class HealthcareRBACEngine {
         emergency_override: result.emergency_override,
         timestamp: result.checked_at,
       });
-    } catch (error) {
-      console.error('Audit trail logging error:', error);
-    }
+    } catch (_error) {}
   }
 
   private getFromCache(key: string): PermissionCheckResult | null {

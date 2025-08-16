@@ -50,8 +50,7 @@ export async function GET(request: NextRequest) {
       models,
       total: models.length,
     });
-  } catch (error) {
-    console.error('Error fetching prediction models:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to fetch prediction models' },
       { status: 500 }
@@ -105,8 +104,7 @@ export async function POST(request: NextRequest) {
       },
       { status: 201 }
     );
-  } catch (error) {
-    console.error('Error creating prediction model:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to create prediction model' },
       { status: 500 }

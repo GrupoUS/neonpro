@@ -88,7 +88,6 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (updateError) {
-      console.error('Erro ao atualizar perfil:', updateError);
       return NextResponse.json(
         { error: 'Erro ao resolver conflito de perfil' },
         { status: 500 }
@@ -112,7 +111,6 @@ export async function POST(request: NextRequest) {
       });
 
     if (logError) {
-      console.error('Erro ao registrar log de auditoria:', logError);
       // Não falhar a operação por erro de log
     }
 
@@ -125,8 +123,7 @@ export async function POST(request: NextRequest) {
         resolvedAt: new Date().toISOString(),
       },
     });
-  } catch (error) {
-    console.error('Erro no endpoint de resolução de conflitos:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
       { status: 500 }
@@ -225,8 +222,7 @@ export async function GET(_request: NextRequest) {
         },
       ],
     });
-  } catch (error) {
-    console.error('Erro no endpoint de detecção de conflitos:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
       { status: 500 }

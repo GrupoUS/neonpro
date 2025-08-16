@@ -7,7 +7,7 @@
 import { logger } from '@/lib/logger';
 import { supabase } from '@/lib/supabase/client';
 
-export interface TreatmentHistory {
+export type TreatmentHistory = {
   id: string;
   patient_id: string;
   treatment_type: string;
@@ -28,9 +28,9 @@ export interface TreatmentHistory {
   outcome_rating?: number;
   side_effects?: string[];
   medications?: string[];
-}
+};
 
-export interface TreatmentInsights {
+export type TreatmentInsights = {
   patient_id: string;
   total_treatments: number;
   active_treatments: number;
@@ -49,9 +49,9 @@ export interface TreatmentInsights {
   risk_factors: string[];
   recommendations: string[];
   next_recommended_treatments: string[];
-}
+};
 
-export interface MedicalRecord {
+export type MedicalRecord = {
   id: string;
   patient_id: string;
   record_type:
@@ -71,7 +71,7 @@ export interface MedicalRecord {
   follow_up_required: boolean;
   follow_up_date?: string;
   tags: string[];
-}
+};
 
 export class PatientTreatmentIntegration {
   /**

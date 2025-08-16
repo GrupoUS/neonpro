@@ -57,7 +57,6 @@ export async function POST(
       message: 'Follow-up escalated successfully',
     });
   } catch (error) {
-    console.error('Error escalating follow-up:', error);
     return NextResponse.json(
       {
         success: false,

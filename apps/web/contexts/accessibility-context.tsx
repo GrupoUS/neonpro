@@ -1,7 +1,7 @@
 import type React from 'react';
 import { createContext, useContext, useEffect, useRef, useState } from 'react';
 
-interface AccessibilityContextValue {
+type AccessibilityContextValue = {
   announceToScreenReader: (
     message: string,
     priority?: 'polite' | 'assertive'
@@ -12,7 +12,7 @@ interface AccessibilityContextValue {
   reduceMotion: boolean;
   fontSize: 'normal' | 'large' | 'extra-large';
   setFontSize: (size: 'normal' | 'large' | 'extra-large') => void;
-}
+};
 
 const AccessibilityContext = createContext<
   AccessibilityContextValue | undefined

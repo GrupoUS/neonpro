@@ -6,12 +6,12 @@
 import { type NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/app/utils/supabase/server';
 
-interface AvatarSyncData {
+type AvatarSyncData = {
   google_picture_url?: string;
   sync_to_local_storage?: boolean;
   force_update?: boolean;
   custom_avatar_url?: string;
-}
+};
 
 export async function POST(request: NextRequest) {
   try {
@@ -46,7 +46,6 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (profileError) {
-      console.error('Profile lookup error:', profileError);
       return NextResponse.json(
         { error: 'Profile not found', message: profileError.message },
         { status: 404 }
@@ -84,7 +83,6 @@ export async function POST(request: NextRequest) {
               });
 
           if (uploadError) {
-            console.error('Avatar upload error:', uploadError);
             // Fallback to direct Google URL
             finalAvatarUrl = google_picture_url;
             syncMethod = 'google_direct_fallback';
@@ -97,8 +95,7 @@ export async function POST(request: NextRequest) {
             finalAvatarUrl = publicUrlData.publicUrl;
             syncMethod = 'local_storage';
           }
-        } catch (error) {
-          console.error('Local storage sync error:', error);
+        } catch (_error) {
           // Fallback to direct Google URL
           finalAvatarUrl = google_picture_url;
           syncMethod = 'google_direct_fallback';
@@ -147,7 +144,6 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (updateError) {
-      console.error('Profile avatar update error:', updateError);
       return NextResponse.json(
         { error: 'Update failed', message: updateError.message },
         { status: 500 }
@@ -181,8 +177,7 @@ export async function POST(request: NextRequest) {
         previous_avatar: currentProfile.avatar_url,
       },
     });
-  } catch (error) {
-    console.error('Avatar sync API error:', error);
+  } catch (_error) {
     return NextResponse.json(
       {
         error: 'Internal server error',
@@ -260,8 +255,7 @@ export async function GET(_request: NextRequest) {
         can_sync_to_local_storage: true,
       },
     });
-  } catch (error) {
-    console.error('Avatar info GET error:', error);
+  } catch (_error) {
     return NextResponse.json(
       {
         error: 'Internal server error',

@@ -15,7 +15,7 @@ import { createClient } from '@supabase/supabase-js';
 import type { UserRole } from '@/types/auth';
 import { SecurityAuditLogger } from './security-audit-logger';
 
-export interface ActivityPattern {
+export type ActivityPattern = {
   userId: string;
   sessionId: string;
   deviceId: string;
@@ -57,9 +57,9 @@ export interface ActivityPattern {
     timeOnPage?: number;
     [key: string]: any;
   };
-}
+};
 
-export interface SuspiciousActivityAlert {
+export type SuspiciousActivityAlert = {
   alertId: string;
   userId: string;
   sessionId: string;
@@ -97,9 +97,9 @@ export interface SuspiciousActivityAlert {
     executedAt?: Date;
     result?: string;
   };
-}
+};
 
-export interface UserBehaviorBaseline {
+export type UserBehaviorBaseline = {
   userId: string;
   userRole: UserRole;
   establishedAt: Date;
@@ -132,9 +132,9 @@ export interface UserBehaviorBaseline {
     dataVolumeMultiplier: number;
     velocityThreshold: number;
   };
-}
+};
 
-export interface DetectionRule {
+export type DetectionRule = {
   ruleId: string;
   name: string;
   description: string;
@@ -155,7 +155,7 @@ export interface DetectionRule {
   }[];
   applicableRoles: UserRole[];
   metadata?: Record<string, any>;
-}
+};
 
 const DEFAULT_DETECTION_RULES: DetectionRule[] = [
   {
@@ -345,7 +345,6 @@ export class SuspiciousActivityDetector {
         });
 
       if (error) {
-        console.error('Failed to record activity:', error);
         return;
       }
 
@@ -364,9 +363,7 @@ export class SuspiciousActivityDetector {
       if (this.isCriticalActivity(activity.activityType)) {
         await this.analyzeUserActivity(activity.userId);
       }
-    } catch (error) {
-      console.error('Failed to record activity:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -407,8 +404,7 @@ export class SuspiciousActivityDetector {
       }
 
       return alerts;
-    } catch (error) {
-      console.error('Failed to analyze user activity:', error);
+    } catch (_error) {
       return [];
     }
   }
@@ -417,46 +413,41 @@ export class SuspiciousActivityDetector {
    * Establish behavioral baseline for a user
    */
   async establishUserBaseline(userId: string): Promise<UserBehaviorBaseline> {
-    try {
-      // Get historical activity data (last 30 days)
-      const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+    // Get historical activity data (last 30 days)
+    const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
 
-      const { data: activities, error } = await this.supabase
-        .from('user_activity_patterns')
-        .select('*')
-        .eq('user_id', userId)
-        .gte('timestamp', thirtyDaysAgo.toISOString())
-        .order('timestamp', { ascending: true });
+    const { data: activities, error } = await this.supabase
+      .from('user_activity_patterns')
+      .select('*')
+      .eq('user_id', userId)
+      .gte('timestamp', thirtyDaysAgo.toISOString())
+      .order('timestamp', { ascending: true });
 
-      if (error) {
-        throw new Error(`Failed to get user activities: ${error.message}`);
-      }
-
-      // Get user role
-      const userRole = await this.getUserRole(userId);
-
-      // Calculate baseline patterns
-      const baseline: UserBehaviorBaseline = {
-        userId,
-        userRole,
-        establishedAt: new Date(),
-        lastUpdated: new Date(),
-        patterns: this.calculateBaselinePatterns(activities || []),
-        anomalyThresholds: this.calculateAnomalyThresholds(
-          userRole,
-          activities || []
-        ),
-      };
-
-      // Store baseline
-      await this.storeUserBaseline(baseline);
-      this.userBaselines.set(userId, baseline);
-
-      return baseline;
-    } catch (error) {
-      console.error('Failed to establish user baseline:', error);
-      throw error;
+    if (error) {
+      throw new Error(`Failed to get user activities: ${error.message}`);
     }
+
+    // Get user role
+    const userRole = await this.getUserRole(userId);
+
+    // Calculate baseline patterns
+    const baseline: UserBehaviorBaseline = {
+      userId,
+      userRole,
+      establishedAt: new Date(),
+      lastUpdated: new Date(),
+      patterns: this.calculateBaselinePatterns(activities || []),
+      anomalyThresholds: this.calculateAnomalyThresholds(
+        userRole,
+        activities || []
+      ),
+    };
+
+    // Store baseline
+    await this.storeUserBaseline(baseline);
+    this.userBaselines.set(userId, baseline);
+
+    return baseline;
   }
 
   /**
@@ -499,9 +490,7 @@ export class SuspiciousActivityDetector {
       // Store updated baseline
       await this.storeUserBaseline(updatedBaseline);
       this.userBaselines.set(userId, updatedBaseline);
-    } catch (error) {
-      console.error('Failed to update user baseline:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -517,47 +506,42 @@ export class SuspiciousActivityDetector {
       offset?: number;
     }
   ): Promise<SuspiciousActivityAlert[]> {
-    try {
-      let query = this.supabase
-        .from('suspicious_activity_alerts')
-        .select('*')
-        .eq('user_id', userId)
-        .order('detected_at', { ascending: false });
+    let query = this.supabase
+      .from('suspicious_activity_alerts')
+      .select('*')
+      .eq('user_id', userId)
+      .order('detected_at', { ascending: false });
 
-      if (options?.severity) {
-        query = query.in('severity', options.severity);
-      }
-
-      if (options?.alertType) {
-        query = query.in('alert_type', options.alertType);
-      }
-
-      if (options?.resolved !== undefined) {
-        query = query.eq('is_resolved', options.resolved);
-      }
-
-      if (options?.limit) {
-        query = query.limit(options.limit);
-      }
-
-      if (options?.offset) {
-        query = query.range(
-          options.offset,
-          options.offset + (options.limit || 50) - 1
-        );
-      }
-
-      const { data, error } = await query;
-
-      if (error) {
-        throw new Error(`Failed to get user alerts: ${error.message}`);
-      }
-
-      return (data || []).map(this.mapDatabaseToAlert);
-    } catch (error) {
-      console.error('Failed to get user alerts:', error);
-      throw error;
+    if (options?.severity) {
+      query = query.in('severity', options.severity);
     }
+
+    if (options?.alertType) {
+      query = query.in('alert_type', options.alertType);
+    }
+
+    if (options?.resolved !== undefined) {
+      query = query.eq('is_resolved', options.resolved);
+    }
+
+    if (options?.limit) {
+      query = query.limit(options.limit);
+    }
+
+    if (options?.offset) {
+      query = query.range(
+        options.offset,
+        options.offset + (options.limit || 50) - 1
+      );
+    }
+
+    const { data, error } = await query;
+
+    if (error) {
+      throw new Error(`Failed to get user alerts: ${error.message}`);
+    }
+
+    return (data || []).map(this.mapDatabaseToAlert);
   }
 
   /**
@@ -569,36 +553,31 @@ export class SuspiciousActivityDetector {
     resolvedBy: string,
     falsePositive = false
   ): Promise<void> {
-    try {
-      const { error } = await this.supabase
-        .from('suspicious_activity_alerts')
-        .update({
-          is_resolved: true,
-          resolved_at: new Date().toISOString(),
-          resolved_by: resolvedBy,
-          resolution,
-          false_positive: falsePositive,
-        })
-        .eq('alert_id', alertId);
+    const { error } = await this.supabase
+      .from('suspicious_activity_alerts')
+      .update({
+        is_resolved: true,
+        resolved_at: new Date().toISOString(),
+        resolved_by: resolvedBy,
+        resolution,
+        false_positive: falsePositive,
+      })
+      .eq('alert_id', alertId);
 
-      if (error) {
-        throw new Error(`Failed to resolve alert: ${error.message}`);
-      }
-
-      // Log resolution
-      await this.auditLogger.logSecurityEvent({
-        eventType: 'alert_resolved',
-        metadata: {
-          alertId,
-          resolution,
-          resolvedBy,
-          falsePositive,
-        },
-      });
-    } catch (error) {
-      console.error('Failed to resolve alert:', error);
-      throw error;
+    if (error) {
+      throw new Error(`Failed to resolve alert: ${error.message}`);
     }
+
+    // Log resolution
+    await this.auditLogger.logSecurityEvent({
+      eventType: 'alert_resolved',
+      metadata: {
+        alertId,
+        resolution,
+        resolvedBy,
+        falsePositive,
+      },
+    });
   }
 
   /**
@@ -635,92 +614,82 @@ export class SuspiciousActivityDetector {
     averageResolutionTime: number;
     topUsers: { userId: string; alertCount: number }[];
   }> {
-    try {
-      const { data: alerts, error } = await this.supabase
-        .from('suspicious_activity_alerts')
-        .select('*')
-        .gte('detected_at', timeRange.start.toISOString())
-        .lte('detected_at', timeRange.end.toISOString());
+    const { data: alerts, error } = await this.supabase
+      .from('suspicious_activity_alerts')
+      .select('*')
+      .gte('detected_at', timeRange.start.toISOString())
+      .lte('detected_at', timeRange.end.toISOString());
 
-      if (error) {
-        throw new Error(`Failed to get detection statistics: ${error.message}`);
-      }
-
-      const alertData = alerts || [];
-
-      // Calculate statistics
-      const alertsBySeverity: Record<
-        SuspiciousActivityAlert['severity'],
-        number
-      > = {
-        low: 0,
-        medium: 0,
-        high: 0,
-        critical: 0,
-      };
-
-      const alertsByType: Record<SuspiciousActivityAlert['alertType'], number> =
-        {
-          velocity_anomaly: 0,
-          location_anomaly: 0,
-          behavior_anomaly: 0,
-          access_pattern_anomaly: 0,
-          data_exfiltration: 0,
-          privilege_escalation: 0,
-          brute_force: 0,
-          session_hijacking: 0,
-          bot_activity: 0,
-          impossible_travel: 0,
-        };
-
-      const userAlertCounts: Record<string, number> = {};
-      let falsePositives = 0;
-      let totalResolutionTime = 0;
-      let resolvedAlerts = 0;
-
-      for (const alert of alertData) {
-        alertsBySeverity[
-          alert.severity as SuspiciousActivityAlert['severity']
-        ]++;
-        alertsByType[
-          alert.alert_type as SuspiciousActivityAlert['alertType']
-        ]++;
-
-        userAlertCounts[alert.user_id] =
-          (userAlertCounts[alert.user_id] || 0) + 1;
-
-        if (alert.false_positive) {
-          falsePositives++;
-        }
-
-        if (alert.is_resolved && alert.resolved_at) {
-          const resolutionTime =
-            new Date(alert.resolved_at).getTime() -
-            new Date(alert.detected_at).getTime();
-          totalResolutionTime += resolutionTime;
-          resolvedAlerts++;
-        }
-      }
-
-      const topUsers = Object.entries(userAlertCounts)
-        .sort(([, a], [, b]) => b - a)
-        .slice(0, 10)
-        .map(([userId, alertCount]) => ({ userId, alertCount }));
-
-      return {
-        totalAlerts: alertData.length,
-        alertsBySeverity,
-        alertsByType,
-        falsePositiveRate:
-          alertData.length > 0 ? falsePositives / alertData.length : 0,
-        averageResolutionTime:
-          resolvedAlerts > 0 ? totalResolutionTime / resolvedAlerts : 0,
-        topUsers,
-      };
-    } catch (error) {
-      console.error('Failed to get detection statistics:', error);
-      throw error;
+    if (error) {
+      throw new Error(`Failed to get detection statistics: ${error.message}`);
     }
+
+    const alertData = alerts || [];
+
+    // Calculate statistics
+    const alertsBySeverity: Record<
+      SuspiciousActivityAlert['severity'],
+      number
+    > = {
+      low: 0,
+      medium: 0,
+      high: 0,
+      critical: 0,
+    };
+
+    const alertsByType: Record<SuspiciousActivityAlert['alertType'], number> = {
+      velocity_anomaly: 0,
+      location_anomaly: 0,
+      behavior_anomaly: 0,
+      access_pattern_anomaly: 0,
+      data_exfiltration: 0,
+      privilege_escalation: 0,
+      brute_force: 0,
+      session_hijacking: 0,
+      bot_activity: 0,
+      impossible_travel: 0,
+    };
+
+    const userAlertCounts: Record<string, number> = {};
+    let falsePositives = 0;
+    let totalResolutionTime = 0;
+    let resolvedAlerts = 0;
+
+    for (const alert of alertData) {
+      alertsBySeverity[alert.severity as SuspiciousActivityAlert['severity']]++;
+      alertsByType[alert.alert_type as SuspiciousActivityAlert['alertType']]++;
+
+      userAlertCounts[alert.user_id] =
+        (userAlertCounts[alert.user_id] || 0) + 1;
+
+      if (alert.false_positive) {
+        falsePositives++;
+      }
+
+      if (alert.is_resolved && alert.resolved_at) {
+        const resolutionTime =
+          new Date(alert.resolved_at).getTime() -
+          new Date(alert.detected_at).getTime();
+        totalResolutionTime += resolutionTime;
+        resolvedAlerts++;
+      }
+    }
+
+    const topUsers = Object.entries(userAlertCounts)
+      .sort(([, a], [, b]) => b - a)
+      .slice(0, 10)
+      .map(([userId, alertCount]) => ({ userId, alertCount }));
+
+    return {
+      totalAlerts: alertData.length,
+      alertsBySeverity,
+      alertsByType,
+      falsePositiveRate:
+        alertData.length > 0 ? falsePositives / alertData.length : 0,
+      averageResolutionTime:
+        resolvedAlerts > 0 ? totalResolutionTime / resolvedAlerts : 0,
+      topUsers,
+    };
   }
 
   /**
@@ -1093,11 +1062,8 @@ export class SuspiciousActivityDetector {
         });
 
       if (error) {
-        console.error('Failed to store alert:', error);
       }
-    } catch (error) {
-      console.error('Failed to store alert:', error);
-    }
+    } catch (_error) {}
   }
 
   private async executeAutomatedResponse(
@@ -1122,9 +1088,7 @@ export class SuspiciousActivityDetector {
           await this.executeAction(alert, action.action);
         }
       }
-    } catch (error) {
-      console.error('Failed to execute automated response:', error);
-    }
+    } catch (_error) {}
   }
 
   private async executeAction(
@@ -1160,9 +1124,7 @@ export class SuspiciousActivityDetector {
 
       // Note: Actual action execution would integrate with your session management,
       // notification, and user management systems
-    } catch (error) {
-      console.error('Failed to execute action:', error);
-    }
+    } catch (_error) {}
   }
 
   private async storeUserBaseline(
@@ -1181,11 +1143,8 @@ export class SuspiciousActivityDetector {
         });
 
       if (error) {
-        console.error('Failed to store user baseline:', error);
       }
-    } catch (error) {
-      console.error('Failed to store user baseline:', error);
-    }
+    } catch (_error) {}
   }
 
   private async loadUserBaselines(): Promise<void> {
@@ -1195,7 +1154,6 @@ export class SuspiciousActivityDetector {
         .select('*');
 
       if (error) {
-        console.error('Failed to load user baselines:', error);
         return;
       }
 
@@ -1209,9 +1167,7 @@ export class SuspiciousActivityDetector {
           anomalyThresholds: baseline.anomaly_thresholds,
         });
       }
-    } catch (error) {
-      console.error('Failed to load user baselines:', error);
-    }
+    } catch (_error) {}
   }
 
   private async getUserRole(_userId: string): Promise<UserRole> {
@@ -1249,9 +1205,7 @@ export class SuspiciousActivityDetector {
         for (const userId of this.activityBuffer.keys()) {
           await this.analyzeUserActivity(userId);
         }
-      } catch (error) {
-        console.error('Activity processing failed:', error);
-      }
+      } catch (_error) {}
     }, 60 * 1000); // Every minute
   }
 
@@ -1263,9 +1217,7 @@ export class SuspiciousActivityDetector {
           for (const userId of this.userBaselines.keys()) {
             await this.updateUserBaseline(userId);
           }
-        } catch (error) {
-          console.error('Baseline update failed:', error);
-        }
+        } catch (_error) {}
       },
       24 * 60 * 60 * 1000
     ); // Daily

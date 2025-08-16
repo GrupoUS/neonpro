@@ -45,7 +45,6 @@ export async function POST(request: NextRequest) {
         .single();
 
       if (storeError) {
-        console.error('Erro ao armazenar token:', storeError);
         return NextResponse.json(
           { error: 'Erro ao armazenar token de forma segura' },
           { status: 500 }
@@ -131,7 +130,6 @@ export async function POST(request: NextRequest) {
       const { error: revokeError } = await query;
 
       if (revokeError) {
-        console.error('Erro ao revogar token:', revokeError);
         return NextResponse.json(
           { error: 'Erro ao revogar token' },
           { status: 500 }
@@ -148,8 +146,7 @@ export async function POST(request: NextRequest) {
       { error: 'Ação não reconhecida' },
       { status: 400 }
     );
-  } catch (error) {
-    console.error('Erro no endpoint de armazenamento de token:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
       { status: 500 }
@@ -196,7 +193,6 @@ export async function GET(request: NextRequest) {
     );
 
     if (tokensError) {
-      console.error('Erro ao buscar tokens:', tokensError);
       return NextResponse.json(
         { error: 'Erro ao buscar tokens' },
         { status: 500 }
@@ -221,8 +217,7 @@ export async function GET(request: NextRequest) {
         revoked: revoked_tokens,
       },
     });
-  } catch (error) {
-    console.error('Erro no endpoint de listagem de tokens:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
       { status: 500 }
@@ -258,7 +253,6 @@ export async function DELETE(request: NextRequest) {
         .eq('is_active', true);
 
       if (revokeError) {
-        console.error('Erro ao revogar todos os tokens:', revokeError);
         return NextResponse.json(
           { error: 'Erro ao revogar tokens' },
           { status: 500 }
@@ -284,7 +278,6 @@ export async function DELETE(request: NextRequest) {
         .eq('is_active', true);
 
       if (cleanupError) {
-        console.error('Erro ao limpar tokens expirados:', cleanupError);
         return NextResponse.json(
           { error: 'Erro ao limpar tokens expirados' },
           { status: 500 }
@@ -301,8 +294,7 @@ export async function DELETE(request: NextRequest) {
       { error: 'Ação de exclusão não reconhecida' },
       { status: 400 }
     );
-  } catch (error) {
-    console.error('Erro no endpoint de exclusão de tokens:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
       { status: 500 }

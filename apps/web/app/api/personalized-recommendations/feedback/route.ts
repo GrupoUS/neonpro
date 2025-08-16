@@ -29,8 +29,7 @@ export async function GET(request: NextRequest) {
       feedback,
       success: true,
     });
-  } catch (error) {
-    console.error('Error fetching recommendation feedback:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to fetch recommendation feedback', success: false },
       { status: 500 }
@@ -69,8 +68,7 @@ export async function POST(request: NextRequest) {
       },
       { status: 201 }
     );
-  } catch (error) {
-    console.error('Error creating recommendation feedback:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to create recommendation feedback', success: false },
       { status: 500 }

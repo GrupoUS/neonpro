@@ -72,7 +72,6 @@ export async function GET(request: NextRequest) {
       filters,
     });
   } catch (error) {
-    console.error('API error in GET /api/followups/templates:', error);
     return NextResponse.json(
       {
         error: 'Internal server error',
@@ -137,7 +136,6 @@ export async function POST(request: NextRequest) {
       { status: 201 }
     );
   } catch (error) {
-    console.error('API error in POST /api/followups/templates:', error);
     return NextResponse.json(
       {
         error: 'Internal server error',

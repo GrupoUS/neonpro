@@ -37,7 +37,6 @@ export async function GET(
       data: protocolVersion,
     });
   } catch (error) {
-    console.error('Error fetching protocol version:', error);
     return NextResponse.json(
       {
         success: false,
@@ -89,7 +88,6 @@ export async function PUT(
       message: 'Protocol version updated successfully',
     });
   } catch (error) {
-    console.error('Error updating protocol version:', error);
     return NextResponse.json(
       {
         success: false,
@@ -123,7 +121,6 @@ export async function DELETE(
       message: 'Protocol version deleted successfully',
     });
   } catch (error) {
-    console.error('Error deleting protocol version:', error);
     return NextResponse.json(
       {
         success: false,

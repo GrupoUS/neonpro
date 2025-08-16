@@ -17,7 +17,7 @@ import { subscriptionPerformanceMonitor } from './subscription-performance-monit
 import type { SubscriptionValidationResult } from './subscription-status';
 
 // Enhanced cache configuration
-export interface EnhancedCacheConfig {
+export type EnhancedCacheConfig = {
   defaultTTL: number;
   gracePeriodTTL: number;
   errorTTL: number;
@@ -53,7 +53,7 @@ export interface EnhancedCacheConfig {
     sampleRate: number;
     trackOperations: boolean;
   };
-}
+};
 
 export interface EnhancedCacheEntry extends CacheEntry {
   compressed: boolean;
@@ -64,16 +64,16 @@ export interface EnhancedCacheEntry extends CacheEntry {
   memorySize: number;
 }
 
-export interface CacheEntry {
+export type CacheEntry = {
   data: SubscriptionValidationResult;
   expires: number;
   created: number;
   accessCount: number;
   lastAccessed: number;
   priority: number;
-}
+};
 
-export interface CacheStats {
+export type CacheStats = {
   totalEntries: number;
   validEntries: number;
   expiredEntries: number;
@@ -87,9 +87,9 @@ export interface CacheStats {
   compressionSavings: number;
   prefetchHits: number;
   circuitBreakerState: 'closed' | 'open' | 'half-open';
-}
+};
 
-export interface CacheOperation {
+export type CacheOperation = {
   type: 'get' | 'set' | 'delete' | 'cleanup' | 'prefetch' | 'compress';
   key?: string;
   hit?: boolean;
@@ -97,14 +97,14 @@ export interface CacheOperation {
   timestamp: number;
   cacheLayer: 'memory' | 'redis' | 'database';
   memorySize?: number;
-}
+};
 
-export interface PrefetchStrategy {
+export type PrefetchStrategy = {
   strategy: 'recent' | 'popular' | 'predictive' | 'time-based';
   priority: number;
   enabled: boolean;
   config: Record<string, any>;
-}
+};
 
 /**
  * Enhanced subscription cache with advanced features
@@ -302,12 +302,7 @@ export class EnhancedSubscriptionCache {
             compressionRatio = compressedSize / dataSize;
             this.compressionSavings += dataSize - compressedSize;
           }
-        } catch (compressionError) {
-          console.warn(
-            'Compression failed, storing uncompressed:',
-            compressionError
-          );
-        }
+        } catch (_compressionError) {}
       }
 
       // Create enhanced entry
@@ -447,7 +442,7 @@ export class EnhancedSubscriptionCache {
   cleanup(): void {
     const startTime = performance.now();
     const now = Date.now();
-    let removedCount = 0;
+    let _removedCount = 0;
     let reclaimedMemory = 0;
 
     // Remove expired entries
@@ -457,7 +452,7 @@ export class EnhancedSubscriptionCache {
         this.accessPatterns.delete(key);
         this.popularKeys.delete(key);
         reclaimedMemory += entry.memorySize;
-        removedCount++;
+        _removedCount++;
       }
     }
 
@@ -468,10 +463,6 @@ export class EnhancedSubscriptionCache {
     if (this.config.monitoring.trackOperations) {
       this.recordOperation('cleanup', undefined, true, duration, 'memory');
     }
-
-    console.debug(
-      `Cache cleanup: removed ${removedCount} entries, reclaimed ${reclaimedMemory} bytes`
-    );
   }
 
   /**
@@ -854,14 +845,13 @@ export class EnhancedSubscriptionCache {
   /**
    * Handle cache errors
    */
-  private handleCacheError(error: any, operation: string, key?: string): void {
+  private handleCacheError(
+    _error: any,
+    _operation: string,
+    _key?: string
+  ): void {
     this.failureCount++;
     this.lastFailureTime = Date.now();
-
-    console.error(
-      `Cache ${operation} error${key ? ` for key ${key}` : ''}:`,
-      error
-    );
 
     // Circuit breaker logic
     if (this.failureCount > 10) {
@@ -892,9 +882,7 @@ export class EnhancedSubscriptionCache {
 
     this.prefetchTimer = setInterval(
       () => {
-        this.prefetch().catch((error) => {
-          console.error('Prefetch error:', error);
-        });
+        this.prefetch().catch((_error) => {});
       },
       5 * 60 * 1000
     ); // Every 5 minutes

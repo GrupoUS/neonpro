@@ -7,7 +7,7 @@ import type { SessionManager } from '../auth/session-manager';
 /**
  * Configuration for upload manager
  */
-export interface UploadConfig {
+export type UploadConfig = {
   maxFileSize: number; // in bytes
   allowedFileTypes: string[];
   maxFilesPerUpload: number;
@@ -17,12 +17,12 @@ export interface UploadConfig {
   encryptionEnabled: boolean;
   compressionEnabled: boolean;
   thumbnailGeneration: boolean;
-}
+};
 
 /**
  * File upload request
  */
-export interface UploadRequest {
+export type UploadRequest = {
   patientId: string;
   files: File[];
   category:
@@ -35,23 +35,23 @@ export interface UploadRequest {
   isPrivate: boolean;
   tags?: string[];
   expirationDate?: Date;
-}
+};
 
 /**
  * Upload result
  */
-export interface UploadResult {
+export type UploadResult = {
   success: boolean;
   uploadId?: string;
   files?: UploadedFile[];
   message: string;
   errors?: UploadError[];
-}
+};
 
 /**
  * Uploaded file information
  */
-export interface UploadedFile {
+export type UploadedFile = {
   id: string;
   originalName: string;
   storedName: string;
@@ -64,21 +64,21 @@ export interface UploadedFile {
   thumbnailUrl?: string;
   downloadUrl?: string;
   metadata?: Record<string, any>;
-}
+};
 
 /**
  * Upload error
  */
-export interface UploadError {
+export type UploadError = {
   fileName: string;
   error: string;
   code: string;
-}
+};
 
 /**
  * File processing status
  */
-export interface ProcessingStatus {
+export type ProcessingStatus = {
   uploadId: string;
   totalFiles: number;
   processedFiles: number;
@@ -86,30 +86,30 @@ export interface ProcessingStatus {
   status: 'pending' | 'processing' | 'completed' | 'failed';
   progress: number;
   estimatedTimeRemaining?: number;
-}
+};
 
 /**
  * Upload statistics
  */
-export interface UploadStats {
+export type UploadStats = {
   totalUploads: number;
   totalSize: number;
   byCategory: Record<string, number>;
   byStatus: Record<string, number>;
   recentActivity: UploadActivity[];
-}
+};
 
 /**
  * Upload activity
  */
-export interface UploadActivity {
+export type UploadActivity = {
   id: string;
   action: 'uploaded' | 'downloaded' | 'deleted' | 'shared';
   fileName: string;
   timestamp: Date;
   userAgent?: string;
   ipAddress?: string;
-}
+};
 
 /**
  * Patient upload manager

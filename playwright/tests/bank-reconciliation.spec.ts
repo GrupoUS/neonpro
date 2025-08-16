@@ -39,7 +39,7 @@ test.describe('Bank Reconciliation System E2E', () => {
 
     // Upload CSV file
     const fileInput = page.getByTestId('file-upload-input');
-    await fileInput.setInputFiles('cypress/fixtures/bank-statement-sample.csv');
+    await fileInput.setInputFiles('playwright/fixtures/bank-statement-sample.csv');
 
     // Configure import settings
     await page.getByLabel('Date Format').selectOption('DD/MM/YYYY');
@@ -72,7 +72,7 @@ test.describe('Bank Reconciliation System E2E', () => {
     await page.getByTestId('import-statement-button').click();
     await page
       .getByTestId('file-upload-input')
-      .setInputFiles('cypress/fixtures/bank-statement-sample.csv');
+      .setInputFiles('playwright/fixtures/bank-statement-sample.csv');
     await page.getByTestId('start-import-button').click();
     await expect(page.getByText('Import completed successfully')).toBeVisible({
       timeout: 30_000,
@@ -144,7 +144,7 @@ test.describe('Bank Reconciliation System E2E', () => {
     await page.getByTestId('import-statement-button').click();
     await page
       .getByTestId('file-upload-input')
-      .setInputFiles('cypress/fixtures/bank-statement-sample.csv');
+      .setInputFiles('playwright/fixtures/bank-statement-sample.csv');
     await page.getByTestId('start-import-button').click();
     await expect(page.getByText('Import completed successfully')).toBeVisible({
       timeout: 30_000,
@@ -182,7 +182,7 @@ test.describe('Bank Reconciliation System E2E', () => {
     await page.getByTestId('import-statement-button').click();
     await page
       .getByTestId('file-upload-input')
-      .setInputFiles('cypress/fixtures/large-bank-statement.csv');
+      .setInputFiles('playwright/fixtures/large-bank-statement.csv');
 
     // Start timer
     const startTime = Date.now();
@@ -220,7 +220,7 @@ test.describe('Bank Reconciliation System E2E', () => {
     await page.getByTestId('import-statement-button').click();
     await page
       .getByTestId('file-upload-input')
-      .setInputFiles('cypress/fixtures/bank-statement-sample.csv');
+      .setInputFiles('playwright/fixtures/bank-statement-sample.csv');
     await page.getByTestId('start-import-button').click();
     await expect(page.getByText('Import completed successfully')).toBeVisible({
       timeout: 30_000,
@@ -255,7 +255,7 @@ test.describe('Bank Reconciliation System E2E', () => {
     await page.getByTestId('import-statement-button').click();
     await page
       .getByTestId('file-upload-input')
-      .setInputFiles('cypress/fixtures/invalid-format.txt');
+      .setInputFiles('playwright/fixtures/invalid-format.txt');
     await page.getByTestId('start-import-button').click();
 
     await expect(page.getByText('Invalid file format')).toBeVisible();
@@ -270,7 +270,7 @@ test.describe('Bank Reconciliation System E2E', () => {
 
     await page
       .getByTestId('file-upload-input')
-      .setInputFiles('cypress/fixtures/bank-statement-sample.csv');
+      .setInputFiles('playwright/fixtures/bank-statement-sample.csv');
     await page.getByTestId('start-import-button').click();
 
     await expect(page.getByText('Network error')).toBeVisible();

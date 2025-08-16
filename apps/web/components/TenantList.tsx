@@ -20,7 +20,7 @@ import {
 } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 
-interface Product {
+type Product = {
   id: string;
   name: string;
   description?: string;
@@ -28,9 +28,9 @@ interface Product {
   currency: string;
   category?: string;
   sku?: string;
-}
+};
 
-interface Tenant {
+type Tenant = {
   id: string;
   name: string;
   slug: string;
@@ -48,9 +48,9 @@ interface Tenant {
     total_products: number;
     total_users: number;
   };
-}
+};
 
-interface ApiResponse {
+type ApiResponse = {
   success: boolean;
   data: Tenant[];
   pagination: {
@@ -60,12 +60,12 @@ interface ApiResponse {
   };
   error?: string;
   message?: string;
-}
+};
 
-interface TenantListProps {
+type TenantListProps = {
   includeProducts?: boolean;
   limit?: number;
-}
+};
 
 export default function TenantList({
   includeProducts = false,
@@ -100,7 +100,6 @@ export default function TenantList({
       setTenants(data.data);
       setRetryCount(0);
     } catch (err) {
-      console.error('Erro ao carregar tenants:', err);
       setError(err instanceof Error ? err.message : 'Erro desconhecido');
     } finally {
       setLoading(false);

@@ -139,7 +139,6 @@ export async function GET(request: NextRequest) {
     const { data: alerts, error, count } = await query;
 
     if (error) {
-      console.error('Error fetching compliance alerts:', error);
       return NextResponse.json(
         { error: 'Failed to fetch alerts' },
         { status: 500 }
@@ -163,7 +162,6 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('API Error:', error);
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Invalid query parameters', details: error.errors },
@@ -214,7 +212,6 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (error) {
-      console.error('Error acknowledging alert:', error);
       if (error.code === 'PGRST116') {
         return NextResponse.json({ error: 'Alert not found' }, { status: 404 });
       }
@@ -229,7 +226,6 @@ export async function POST(request: NextRequest) {
       alert,
     });
   } catch (error) {
-    console.error('API Error:', error);
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Invalid request data', details: error.errors },

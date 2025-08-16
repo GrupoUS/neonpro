@@ -11,7 +11,7 @@ import { z } from 'zod';
 // TYPE DEFINITIONS
 // ============================================================================
 
-export type ANVISAProductCategory = 
+export type ANVISAProductCategory =
   | 'medical_device_class_i'
   | 'medical_device_class_ii'
   | 'medical_device_class_iii'
@@ -23,9 +23,13 @@ export type ANVISAProductCategory =
   | 'surgical_instruments'
   | 'diagnostic_equipment';
 
-export type ANVISARiskClass = 'low_risk' | 'moderate_risk' | 'high_risk' | 'critical_risk';
+export type ANVISARiskClass =
+  | 'low_risk'
+  | 'moderate_risk'
+  | 'high_risk'
+  | 'critical_risk';
 
-export type ANVISARegulatoryStatus = 
+export type ANVISARegulatoryStatus =
   | 'active'
   | 'pending_renewal'
   | 'expired'
@@ -33,7 +37,7 @@ export type ANVISARegulatoryStatus =
   | 'revoked'
   | 'under_review';
 
-export type ANVISAProcedureCategory = 
+export type ANVISAProcedureCategory =
   | 'aesthetic_minimally_invasive'
   | 'aesthetic_surgical'
   | 'cosmetic_treatment'
@@ -43,9 +47,14 @@ export type ANVISAProcedureCategory =
   | 'radiofrequency_treatment'
   | 'surgical_procedure';
 
-export type ANVISARiskLevel = 'minimal' | 'low' | 'moderate' | 'high' | 'critical';
+export type ANVISARiskLevel =
+  | 'minimal'
+  | 'low'
+  | 'moderate'
+  | 'high'
+  | 'critical';
 
-export type ANVISAProfessionalLevel = 
+export type ANVISAProfessionalLevel =
   | 'technician'
   | 'nurse'
   | 'specialist_nurse'
@@ -53,7 +62,7 @@ export type ANVISAProfessionalLevel =
   | 'specialist_physician'
   | 'certified_specialist';
 
-export type ANVISAEventType = 
+export type ANVISAEventType =
   | 'adverse_reaction'
   | 'device_malfunction'
   | 'product_quality_issue'
@@ -62,9 +71,14 @@ export type ANVISAEventType =
   | 'allergic_reaction'
   | 'unexpected_outcome';
 
-export type ANVISASeverityLevel = 'mild' | 'moderate' | 'severe' | 'critical' | 'fatal';
+export type ANVISASeverityLevel =
+  | 'mild'
+  | 'moderate'
+  | 'severe'
+  | 'critical'
+  | 'fatal';
 
-export type ANVISAEventCategory = 
+export type ANVISAEventCategory =
   | 'product_related'
   | 'procedure_related'
   | 'professional_error'
@@ -72,7 +86,7 @@ export type ANVISAEventCategory =
   | 'patient_factor'
   | 'environmental_factor';
 
-export type ANVISAEventOutcome = 
+export type ANVISAEventOutcome =
   | 'recovered_completely'
   | 'recovered_with_sequelae'
   | 'ongoing_treatment'
@@ -80,7 +94,7 @@ export type ANVISAEventOutcome =
   | 'permanent_disability'
   | 'death';
 
-export type ANVISAEventStatus = 
+export type ANVISAEventStatus =
   | 'reported'
   | 'under_investigation'
   | 'investigation_completed'
@@ -257,7 +271,7 @@ export interface ANVISAProfessional {
   updated_by?: string;
 }
 
-export type ANVISALicenseStatus = 
+export type ANVISALicenseStatus =
   | 'active'
   | 'pending_renewal'
   | 'expired'
@@ -270,7 +284,9 @@ export type ANVISALicenseStatus =
 // ============================================================================
 
 export const ANVISAProductSchema = z.object({
-  anvisa_registration_number: z.string().min(1, 'ANVISA registration number is required'),
+  anvisa_registration_number: z
+    .string()
+    .min(1, 'ANVISA registration number is required'),
   product_name: z.string().min(1, 'Product name is required'),
   manufacturer_name: z.string().min(1, 'Manufacturer name is required'),
   manufacturer_country: z.string().min(1, 'Manufacturer country is required'),
@@ -286,9 +302,14 @@ export const ANVISAProductSchema = z.object({
     'injectables',
     'implants',
     'surgical_instruments',
-    'diagnostic_equipment'
+    'diagnostic_equipment',
   ]),
-  risk_classification: z.enum(['low_risk', 'moderate_risk', 'high_risk', 'critical_risk']),
+  risk_classification: z.enum([
+    'low_risk',
+    'moderate_risk',
+    'high_risk',
+    'critical_risk',
+  ]),
   is_medical_device: z.boolean().default(false),
   is_cosmetic_product: z.boolean().default(false),
   is_pharmaceutical: z.boolean().default(false),
@@ -296,9 +317,15 @@ export const ANVISAProductSchema = z.object({
   registration_expiry_date: z.string().optional(),
   composition: z.string().optional(),
   concentration: z.string().optional(),
-  current_stock_quantity: z.number().min(0, 'Stock quantity must be non-negative'),
-  minimum_stock_level: z.number().min(0, 'Minimum stock level must be non-negative'),
-  maximum_stock_level: z.number().min(0, 'Maximum stock level must be non-negative'),
+  current_stock_quantity: z
+    .number()
+    .min(0, 'Stock quantity must be non-negative'),
+  minimum_stock_level: z
+    .number()
+    .min(0, 'Minimum stock level must be non-negative'),
+  maximum_stock_level: z
+    .number()
+    .min(0, 'Maximum stock level must be non-negative'),
   unit_cost: z.number().min(0, 'Unit cost must be non-negative').optional(),
   contraindications: z.string().optional(),
   usage_warnings: z.string().optional(),
@@ -322,7 +349,7 @@ export const ANVISAAdverseEventSchema = z.object({
     'procedure_complication',
     'infection',
     'allergic_reaction',
-    'unexpected_outcome'
+    'unexpected_outcome',
   ]),
   severity_level: z.enum(['mild', 'moderate', 'severe', 'critical', 'fatal']),
   event_category: z.enum([
@@ -331,9 +358,11 @@ export const ANVISAAdverseEventSchema = z.object({
     'professional_error',
     'system_failure',
     'patient_factor',
-    'environmental_factor'
+    'environmental_factor',
   ]),
-  event_description: z.string().min(10, 'Event description must be at least 10 characters'),
+  event_description: z
+    .string()
+    .min(10, 'Event description must be at least 10 characters'),
   symptoms_observed: z.string().optional(),
   onset_date_time: z.string(),
   patient_age: z.number().min(0).max(150).optional(),
@@ -391,10 +420,13 @@ export class ANVISAComplianceAPI {
     }
   }
 
-  async createProduct(clinicId: string, productData: z.infer<typeof ANVISAProductSchema>): Promise<ANVISAProduct> {
+  async createProduct(
+    clinicId: string,
+    productData: z.infer<typeof ANVISAProductSchema>
+  ): Promise<ANVISAProduct> {
     try {
       const validatedData = ANVISAProductSchema.parse(productData);
-      
+
       const { data, error } = await this.supabase
         .from('anvisa_products')
         .insert({
@@ -413,7 +445,10 @@ export class ANVISAComplianceAPI {
     }
   }
 
-  async updateProduct(productId: string, updates: Partial<z.infer<typeof ANVISAProductSchema>>): Promise<ANVISAProduct> {
+  async updateProduct(
+    productId: string,
+    updates: Partial<z.infer<typeof ANVISAProductSchema>>
+  ): Promise<ANVISAProduct> {
     try {
       const { data, error } = await this.supabase
         .from('anvisa_products')
@@ -445,13 +480,18 @@ export class ANVISAComplianceAPI {
     }
   }
 
-  async getProductsNearingExpiry(clinicId: string, daysAhead: number = 30): Promise<any[]> {
+  async getProductsNearingExpiry(
+    clinicId: string,
+    daysAhead: number = 30
+  ): Promise<any[]> {
     try {
-      const { data, error } = await this.supabase
-        .rpc('get_products_nearing_expiry', {
+      const { data, error } = await this.supabase.rpc(
+        'get_products_nearing_expiry',
+        {
           p_clinic_id: clinicId,
-          p_days_ahead: daysAhead
-        });
+          p_days_ahead: daysAhead,
+        }
+      );
 
       if (error) throw error;
       return data || [];
@@ -461,14 +501,17 @@ export class ANVISAComplianceAPI {
     }
   }
 
-  async updateProductStock(productId: string, quantityChange: number, operationType: string = 'usage'): Promise<boolean> {
+  async updateProductStock(
+    productId: string,
+    quantityChange: number,
+    operationType: string = 'usage'
+  ): Promise<boolean> {
     try {
-      const { data, error } = await this.supabase
-        .rpc('update_product_stock', {
-          p_product_id: productId,
-          p_quantity_change: quantityChange,
-          p_operation_type: operationType
-        });
+      const { data, error } = await this.supabase.rpc('update_product_stock', {
+        p_product_id: productId,
+        p_quantity_change: quantityChange,
+        p_operation_type: operationType,
+      });
 
       if (error) throw error;
       return data;
@@ -518,13 +561,18 @@ export class ANVISAComplianceAPI {
     }
   }
 
-  async verifyProfessionalAuthorization(professionalId: string, procedureCode: string): Promise<boolean> {
+  async verifyProfessionalAuthorization(
+    professionalId: string,
+    procedureCode: string
+  ): Promise<boolean> {
     try {
-      const { data, error } = await this.supabase
-        .rpc('verify_professional_authorization', {
+      const { data, error } = await this.supabase.rpc(
+        'verify_professional_authorization',
+        {
           p_professional_id: professionalId,
-          p_procedure_code: procedureCode
-        });
+          p_procedure_code: procedureCode,
+        }
+      );
 
       if (error) throw error;
       return data;
@@ -542,13 +590,15 @@ export class ANVISAComplianceAPI {
     try {
       const { data, error } = await this.supabase
         .from('anvisa_adverse_events')
-        .select(`
+        .select(
+          `
           *,
           patient:patients(id, full_name),
           procedure:anvisa_procedures(procedure_name),
           product:anvisa_products(product_name),
           professional:users(id, full_name)
-        `)
+        `
+        )
         .eq('clinic_id', clinicId)
         .order('onset_date_time', { ascending: false });
 
@@ -564,13 +614,15 @@ export class ANVISAComplianceAPI {
     try {
       const { data, error } = await this.supabase
         .from('anvisa_adverse_events')
-        .select(`
+        .select(
+          `
           *,
           patient:patients(id, full_name, date_of_birth, gender),
           procedure:anvisa_procedures(procedure_name, procedure_category),
           product:anvisa_products(product_name, manufacturer_name),
           professional:users(id, full_name)
-        `)
+        `
+        )
         .eq('id', eventId)
         .single();
 
@@ -586,25 +638,24 @@ export class ANVISAComplianceAPI {
   }
 
   async createAdverseEvent(
-    clinicId: string, 
+    clinicId: string,
     eventData: z.infer<typeof ANVISAAdverseEventSchema>
   ): Promise<ANVISAAdverseEvent> {
     try {
       const validatedData = ANVISAAdverseEventSchema.parse(eventData);
-      
-      const { data, error } = await this.supabase
-        .rpc('create_adverse_event', {
-          p_clinic_id: clinicId,
-          p_patient_id: validatedData.patient_id,
-          p_procedure_id: validatedData.procedure_id,
-          p_product_id: validatedData.product_id,
-          p_event_description: validatedData.event_description,
-          p_severity_level: validatedData.severity_level,
-          p_onset_date_time: validatedData.onset_date_time
-        });
+
+      const { data, error } = await this.supabase.rpc('create_adverse_event', {
+        p_clinic_id: clinicId,
+        p_patient_id: validatedData.patient_id,
+        p_procedure_id: validatedData.procedure_id,
+        p_product_id: validatedData.product_id,
+        p_event_description: validatedData.event_description,
+        p_severity_level: validatedData.severity_level,
+        p_onset_date_time: validatedData.onset_date_time,
+      });
 
       if (error) throw error;
-      
+
       // Return the created event
       return await this.getAdverseEvent(data);
     } catch (error) {
@@ -613,14 +664,20 @@ export class ANVISAComplianceAPI {
     }
   }
 
-  async updateAdverseEventStatus(eventId: string, status: ANVISAEventStatus, notes?: string): Promise<boolean> {
+  async updateAdverseEventStatus(
+    eventId: string,
+    status: ANVISAEventStatus,
+    notes?: string
+  ): Promise<boolean> {
     try {
-      const { data, error } = await this.supabase
-        .rpc('update_adverse_event_status', {
+      const { data, error } = await this.supabase.rpc(
+        'update_adverse_event_status',
+        {
           p_event_id: eventId,
           p_new_status: status,
-          p_notes: notes
-        });
+          p_notes: notes,
+        }
+      );
 
       if (error) throw error;
       return data;
@@ -632,10 +689,12 @@ export class ANVISAComplianceAPI {
 
   async getPendingANVISANotifications(clinicId: string): Promise<any[]> {
     try {
-      const { data, error } = await this.supabase
-        .rpc('get_pending_anvisa_notifications', {
-          p_clinic_id: clinicId
-        });
+      const { data, error } = await this.supabase.rpc(
+        'get_pending_anvisa_notifications',
+        {
+          p_clinic_id: clinicId,
+        }
+      );
 
       if (error) throw error;
       return data || [];
@@ -653,10 +712,12 @@ export class ANVISAComplianceAPI {
     try {
       const { data, error } = await this.supabase
         .from('anvisa_professionals')
-        .select(`
+        .select(
+          `
           *,
           user:users(id, full_name, email)
-        `)
+        `
+        )
         .eq('clinic_id', clinicId)
         .eq('is_active', true)
         .order('created_at', { ascending: false });
@@ -669,12 +730,16 @@ export class ANVISAComplianceAPI {
     }
   }
 
-  async updateProfessionalComplianceScore(professionalId: string): Promise<number> {
+  async updateProfessionalComplianceScore(
+    professionalId: string
+  ): Promise<number> {
     try {
-      const { data, error } = await this.supabase
-        .rpc('update_professional_compliance_score', {
-          p_professional_id: professionalId
-        });
+      const { data, error } = await this.supabase.rpc(
+        'update_professional_compliance_score',
+        {
+          p_professional_id: professionalId,
+        }
+      );
 
       if (error) throw error;
       return data;
@@ -690,10 +755,12 @@ export class ANVISAComplianceAPI {
 
   async calculateClinicComplianceScore(clinicId: string): Promise<any> {
     try {
-      const { data, error } = await this.supabase
-        .rpc('calculate_clinic_compliance_score', {
-          p_clinic_id: clinicId
-        });
+      const { data, error } = await this.supabase.rpc(
+        'calculate_clinic_compliance_score',
+        {
+          p_clinic_id: clinicId,
+        }
+      );
 
       if (error) throw error;
       return data;
@@ -704,17 +771,19 @@ export class ANVISAComplianceAPI {
   }
 
   async generateComplianceReport(
-    clinicId: string, 
-    startDate?: string, 
+    clinicId: string,
+    startDate?: string,
     endDate?: string
   ): Promise<any> {
     try {
-      const { data, error } = await this.supabase
-        .rpc('generate_compliance_report', {
+      const { data, error } = await this.supabase.rpc(
+        'generate_compliance_report',
+        {
           p_clinic_id: clinicId,
           p_start_date: startDate,
-          p_end_date: endDate
-        });
+          p_end_date: endDate,
+        }
+      );
 
       if (error) throw error;
       return data;
@@ -728,13 +797,18 @@ export class ANVISAComplianceAPI {
   // BATCH MANAGEMENT
   // ========================================================================
 
-  async getBatchesNearingExpiry(clinicId: string, daysAhead: number = 30): Promise<any[]> {
+  async getBatchesNearingExpiry(
+    clinicId: string,
+    daysAhead: number = 30
+  ): Promise<any[]> {
     try {
-      const { data, error } = await this.supabase
-        .rpc('get_batches_nearing_expiry', {
+      const { data, error } = await this.supabase.rpc(
+        'get_batches_nearing_expiry',
+        {
           p_clinic_id: clinicId,
-          p_days_ahead: daysAhead
-        });
+          p_days_ahead: daysAhead,
+        }
+      );
 
       if (error) throw error;
       return data || [];
@@ -744,14 +818,20 @@ export class ANVISAComplianceAPI {
     }
   }
 
-  async useProductFromBatch(batchId: string, quantity: number, procedureId?: string): Promise<boolean> {
+  async useProductFromBatch(
+    batchId: string,
+    quantity: number,
+    procedureId?: string
+  ): Promise<boolean> {
     try {
-      const { data, error } = await this.supabase
-        .rpc('use_product_from_batch', {
+      const { data, error } = await this.supabase.rpc(
+        'use_product_from_batch',
+        {
           p_batch_id: batchId,
           p_quantity: quantity,
-          p_procedure_id: procedureId
-        });
+          p_procedure_id: procedureId,
+        }
+      );
 
       if (error) throw error;
       return data;
@@ -788,7 +868,7 @@ export class ANVISAComplianceAPI {
         .from('anvisa_alerts')
         .update({
           is_resolved: true,
-          resolved_at: new Date().toISOString()
+          resolved_at: new Date().toISOString(),
         })
         .eq('id', alertId);
 
@@ -802,8 +882,7 @@ export class ANVISAComplianceAPI {
 
   async sendPendingAlerts(): Promise<number> {
     try {
-      const { data, error } = await this.supabase
-        .rpc('send_pending_alerts');
+      const { data, error } = await this.supabase.rpc('send_pending_alerts');
 
       if (error) throw error;
       return data;

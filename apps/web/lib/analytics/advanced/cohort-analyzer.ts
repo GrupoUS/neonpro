@@ -16,16 +16,16 @@ import { z } from 'zod';
 import { createClient } from '@/app/utils/supabase/server';
 
 // Types for cohort analysis
-export interface CohortDefinition {
+export type CohortDefinition = {
   id: string;
   name: string;
   startDate: string;
   endDate: string;
   userCount: number;
   dimension: 'subscription_start' | 'trial_start' | 'first_login';
-}
+};
 
-export interface CohortMetrics {
+export type CohortMetrics = {
   cohortId: string;
   period: number;
   activeUsers: number;
@@ -35,9 +35,9 @@ export interface CohortMetrics {
   averageRevenuePerUser: number;
   churnedUsers: number;
   churnRate: number;
-}
+};
 
-export interface CohortAnalysisConfig {
+export type CohortAnalysisConfig = {
   cohortType: 'subscription' | 'trial' | 'revenue' | 'custom';
   granularity: 'daily' | 'weekly' | 'monthly';
   periods: number;
@@ -45,7 +45,7 @@ export interface CohortAnalysisConfig {
   endDate: string;
   includeRevenue: boolean;
   includeChurn: boolean;
-}
+};
 
 // Validation schemas
 const cohortConfigSchema = z.object({

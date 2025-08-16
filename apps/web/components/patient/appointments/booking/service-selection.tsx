@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
 
-interface Service {
+type Service = {
   id: string;
   name: string;
   description: string;
@@ -17,13 +17,13 @@ interface Service {
   price: number;
   category: string;
   is_active: boolean;
-}
+};
 
-interface ServiceSelectionProps {
+type ServiceSelectionProps = {
   selectedService: Service | null;
   onServiceSelect: (service: Service) => void;
   className?: string;
-}
+};
 
 export function ServiceSelection({
   selectedService,
@@ -53,8 +53,7 @@ export function ServiceSelection({
         throw fetchError;
       }
       setServices(data || []);
-    } catch (err) {
-      console.error('Error fetching services:', err);
+    } catch (_err) {
       setError('Erro ao carregar serviços. Tente novamente.');
     } finally {
       setLoading(false);

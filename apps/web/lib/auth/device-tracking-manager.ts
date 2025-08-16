@@ -15,7 +15,7 @@ import { createClient } from '@supabase/supabase-js';
 import type { UserRole } from '@/types/auth';
 import { SecurityAuditLogger } from './security-audit-logger';
 
-export interface DeviceFingerprint {
+export type DeviceFingerprint = {
   userAgent: string;
   screenResolution: string;
   timezone: string;
@@ -28,9 +28,9 @@ export interface DeviceFingerprint {
   webgl?: string;
   fonts?: string[];
   audioContext?: string;
-}
+};
 
-export interface DeviceInfo {
+export type DeviceInfo = {
   deviceId: string;
   userId: string;
   deviceName: string;
@@ -54,9 +54,9 @@ export interface DeviceInfo {
   sessionCount: number;
   riskScore: number;
   metadata?: Record<string, any>;
-}
+};
 
-export interface DeviceVerificationChallenge {
+export type DeviceVerificationChallenge = {
   challengeId: string;
   deviceId: string;
   userId: string;
@@ -67,9 +67,9 @@ export interface DeviceVerificationChallenge {
   maxAttempts: number;
   isCompleted: boolean;
   metadata?: Record<string, any>;
-}
+};
 
-export interface DeviceSecurityPolicy {
+export type DeviceSecurityPolicy = {
   role: UserRole;
   requireVerification: boolean;
   autoTrustAfterVerification: boolean;
@@ -78,9 +78,9 @@ export interface DeviceSecurityPolicy {
   riskThreshold: number;
   notifyOnNewDevice: boolean;
   deviceRetentionDays: number;
-}
+};
 
-export interface DeviceRiskFactors {
+export type DeviceRiskFactors = {
   isNewDevice: boolean;
   locationChange: boolean;
   fingerprintMismatch: boolean;
@@ -90,7 +90,7 @@ export interface DeviceRiskFactors {
   knownMaliciousIP: boolean;
   rapidLocationChanges: boolean;
   unusualAccessPatterns: boolean;
-}
+};
 
 const DEFAULT_DEVICE_POLICIES: Record<UserRole, DeviceSecurityPolicy> = {
   owner: {
@@ -230,215 +230,195 @@ export class DeviceTrackingManager {
     isNewDevice: boolean;
     requiresVerification: boolean;
   }> {
-    try {
-      const deviceId = this.generateDeviceId(fingerprint);
-      const now = new Date();
+    const deviceId = this.generateDeviceId(fingerprint);
+    const now = new Date();
 
-      // Check if device already exists
-      const existingDevice = await this.getDeviceInfo(deviceId);
-      const isNewDevice = !existingDevice;
+    // Check if device already exists
+    const existingDevice = await this.getDeviceInfo(deviceId);
+    const isNewDevice = !existingDevice;
 
-      // Determine device type from user agent
-      const deviceType = this.detectDeviceType(fingerprint.userAgent);
+    // Determine device type from user agent
+    const deviceType = this.detectDeviceType(fingerprint.userAgent);
 
-      // Calculate risk score
-      const riskFactors = await this.assessDeviceRisk(
-        userId,
-        deviceId,
-        fingerprint,
-        deviceInfo.ipAddress,
-        deviceInfo.location,
-        isNewDevice
-      );
-      const riskScore = this.calculateRiskScore(riskFactors);
+    // Calculate risk score
+    const riskFactors = await this.assessDeviceRisk(
+      userId,
+      deviceId,
+      fingerprint,
+      deviceInfo.ipAddress,
+      deviceInfo.location,
+      isNewDevice
+    );
+    const riskScore = this.calculateRiskScore(riskFactors);
 
-      // Get device policy for user role
-      const policy = this.devicePolicies[userRole];
+    // Get device policy for user role
+    const policy = this.devicePolicies[userRole];
 
-      // Determine if verification is required
-      const requiresVerification =
-        isNewDevice &&
-        (policy.requireVerification ||
-          riskScore >= policy.riskThreshold ||
-          (policy.blockSuspiciousDevices && riskScore > 0.8));
+    // Determine if verification is required
+    const requiresVerification =
+      isNewDevice &&
+      (policy.requireVerification ||
+        riskScore >= policy.riskThreshold ||
+        (policy.blockSuspiciousDevices && riskScore > 0.8));
 
-      // Block device if risk is too high
-      const isBlocked = policy.blockSuspiciousDevices && riskScore >= 0.9;
+    // Block device if risk is too high
+    const isBlocked = policy.blockSuspiciousDevices && riskScore >= 0.9;
 
-      if (isNewDevice) {
-        // Create new device record
-        const { error } = await this.supabase
-          .from('device_registrations')
-          .insert({
-            device_id: deviceId,
-            user_id: userId,
-            device_name:
-              deviceInfo.deviceName || this.generateDeviceName(fingerprint),
-            device_type: deviceType,
-            fingerprint,
-            ip_address: deviceInfo.ipAddress,
-            location: deviceInfo.location,
-            is_trusted:
-              !requiresVerification && policy.autoTrustAfterVerification,
-            is_blocked: isBlocked,
-            first_seen: now.toISOString(),
-            last_seen: now.toISOString(),
-            session_count: 1,
-            risk_score: riskScore,
-            metadata: {
-              ...metadata,
-              riskFactors,
-              userRole,
-              registrationPolicy: policy,
-            },
-          });
-
-        if (error) {
-          throw new Error(`Failed to register device: ${error.message}`);
-        }
-
-        // Log device registration
-        await this.auditLogger.logSecurityEvent({
-          eventType: 'device_registered',
-          userId,
-          deviceId,
-          ipAddress: deviceInfo.ipAddress,
-          userAgent: fingerprint.userAgent,
+    if (isNewDevice) {
+      // Create new device record
+      const { error } = await this.supabase
+        .from('device_registrations')
+        .insert({
+          device_id: deviceId,
+          user_id: userId,
+          device_name:
+            deviceInfo.deviceName || this.generateDeviceName(fingerprint),
+          device_type: deviceType,
+          fingerprint,
+          ip_address: deviceInfo.ipAddress,
+          location: deviceInfo.location,
+          is_trusted:
+            !requiresVerification && policy.autoTrustAfterVerification,
+          is_blocked: isBlocked,
+          first_seen: now.toISOString(),
+          last_seen: now.toISOString(),
+          session_count: 1,
+          risk_score: riskScore,
           metadata: {
-            deviceType,
-            riskScore,
+            ...metadata,
             riskFactors,
-            requiresVerification,
-            isBlocked,
-            location: deviceInfo.location,
+            userRole,
+            registrationPolicy: policy,
           },
         });
 
-        // Notify user if configured
-        if (policy.notifyOnNewDevice && !isBlocked) {
-          await this.notifyNewDevice(userId, deviceId, deviceInfo);
-        }
-      } else {
-        // Update existing device
-        const { error } = await this.supabase
-          .from('device_registrations')
-          .update({
-            last_seen: now.toISOString(),
-            session_count: (existingDevice?.sessionCount || 0) + 1,
-            risk_score: riskScore,
-            ip_address: deviceInfo.ipAddress,
-            location: deviceInfo.location,
-            metadata: {
-              ...existingDevice?.metadata,
-              ...metadata,
-              lastRiskFactors: riskFactors,
-              lastUpdate: now.toISOString(),
-            },
-          })
-          .eq('device_id', deviceId);
-
-        if (error) {
-          throw new Error(`Failed to update device: ${error.message}`);
-        }
+      if (error) {
+        throw new Error(`Failed to register device: ${error.message}`);
       }
 
-      return {
+      // Log device registration
+      await this.auditLogger.logSecurityEvent({
+        eventType: 'device_registered',
+        userId,
         deviceId,
-        isNewDevice,
-        requiresVerification: requiresVerification && !isBlocked,
-      };
-    } catch (error) {
-      console.error('Failed to register device:', error);
-      throw error;
+        ipAddress: deviceInfo.ipAddress,
+        userAgent: fingerprint.userAgent,
+        metadata: {
+          deviceType,
+          riskScore,
+          riskFactors,
+          requiresVerification,
+          isBlocked,
+          location: deviceInfo.location,
+        },
+      });
+
+      // Notify user if configured
+      if (policy.notifyOnNewDevice && !isBlocked) {
+        await this.notifyNewDevice(userId, deviceId, deviceInfo);
+      }
+    } else {
+      // Update existing device
+      const { error } = await this.supabase
+        .from('device_registrations')
+        .update({
+          last_seen: now.toISOString(),
+          session_count: (existingDevice?.sessionCount || 0) + 1,
+          risk_score: riskScore,
+          ip_address: deviceInfo.ipAddress,
+          location: deviceInfo.location,
+          metadata: {
+            ...existingDevice?.metadata,
+            ...metadata,
+            lastRiskFactors: riskFactors,
+            lastUpdate: now.toISOString(),
+          },
+        })
+        .eq('device_id', deviceId);
+
+      if (error) {
+        throw new Error(`Failed to update device: ${error.message}`);
+      }
     }
+
+    return {
+      deviceId,
+      isNewDevice,
+      requiresVerification: requiresVerification && !isBlocked,
+    };
   }
 
   /**
    * Get device information
    */
   async getDeviceInfo(deviceId: string): Promise<DeviceInfo | null> {
-    try {
-      const { data, error } = await this.supabase
-        .from('device_registrations')
-        .select('*')
-        .eq('device_id', deviceId)
-        .single();
+    const { data, error } = await this.supabase
+      .from('device_registrations')
+      .select('*')
+      .eq('device_id', deviceId)
+      .single();
 
-      if (error) {
-        if (error.code === 'PGRST116') {
-          return null; // Device not found
-        }
-        throw new Error(`Failed to get device info: ${error.message}`);
+    if (error) {
+      if (error.code === 'PGRST116') {
+        return null; // Device not found
       }
-
-      return this.mapDatabaseToDeviceInfo(data);
-    } catch (error) {
-      console.error('Failed to get device info:', error);
-      throw error;
+      throw new Error(`Failed to get device info: ${error.message}`);
     }
+
+    return this.mapDatabaseToDeviceInfo(data);
   }
 
   /**
    * Get all devices for a user
    */
   async getUserDevices(userId: string): Promise<DeviceInfo[]> {
-    try {
-      const { data, error } = await this.supabase
-        .from('device_registrations')
-        .select('*')
-        .eq('user_id', userId)
-        .order('last_seen', { ascending: false });
+    const { data, error } = await this.supabase
+      .from('device_registrations')
+      .select('*')
+      .eq('user_id', userId)
+      .order('last_seen', { ascending: false });
 
-      if (error) {
-        throw new Error(`Failed to get user devices: ${error.message}`);
-      }
-
-      return (data || []).map(this.mapDatabaseToDeviceInfo);
-    } catch (error) {
-      console.error('Failed to get user devices:', error);
-      throw error;
+    if (error) {
+      throw new Error(`Failed to get user devices: ${error.message}`);
     }
+
+    return (data || []).map(this.mapDatabaseToDeviceInfo);
   }
 
   /**
    * Trust a device
    */
   async trustDevice(deviceId: string, trustedBy: string): Promise<void> {
-    try {
-      const device = await this.getDeviceInfo(deviceId);
-      if (!device) {
-        throw new Error('Device not found');
-      }
-
-      const { error } = await this.supabase
-        .from('device_registrations')
-        .update({
-          is_trusted: true,
-          trusted_at: new Date().toISOString(),
-          trusted_by: trustedBy,
-        })
-        .eq('device_id', deviceId);
-
-      if (error) {
-        throw new Error(`Failed to trust device: ${error.message}`);
-      }
-
-      // Log device trust event
-      await this.auditLogger.logSecurityEvent({
-        eventType: 'device_trusted',
-        userId: device.userId,
-        deviceId,
-        ipAddress: device.ipAddress,
-        metadata: {
-          trustedBy,
-          deviceName: device.deviceName,
-          previousRiskScore: device.riskScore,
-        },
-      });
-    } catch (error) {
-      console.error('Failed to trust device:', error);
-      throw error;
+    const device = await this.getDeviceInfo(deviceId);
+    if (!device) {
+      throw new Error('Device not found');
     }
+
+    const { error } = await this.supabase
+      .from('device_registrations')
+      .update({
+        is_trusted: true,
+        trusted_at: new Date().toISOString(),
+        trusted_by: trustedBy,
+      })
+      .eq('device_id', deviceId);
+
+    if (error) {
+      throw new Error(`Failed to trust device: ${error.message}`);
+    }
+
+    // Log device trust event
+    await this.auditLogger.logSecurityEvent({
+      eventType: 'device_trusted',
+      userId: device.userId,
+      deviceId,
+      ipAddress: device.ipAddress,
+      metadata: {
+        trustedBy,
+        deviceName: device.deviceName,
+        previousRiskScore: device.riskScore,
+      },
+    });
   }
 
   /**
@@ -449,49 +429,44 @@ export class DeviceTrackingManager {
     reason: string,
     blockedBy: string
   ): Promise<void> {
-    try {
-      const device = await this.getDeviceInfo(deviceId);
-      if (!device) {
-        throw new Error('Device not found');
-      }
-
-      const { error } = await this.supabase
-        .from('device_registrations')
-        .update({
-          is_blocked: true,
-          blocked_at: new Date().toISOString(),
-          blocked_by: blockedBy,
-          block_reason: reason,
-        })
-        .eq('device_id', deviceId);
-
-      if (error) {
-        throw new Error(`Failed to block device: ${error.message}`);
-      }
-
-      // Log device block event
-      await this.auditLogger.logSecurityEvent({
-        eventType: 'device_blocked',
-        userId: device.userId,
-        deviceId,
-        ipAddress: device.ipAddress,
-        metadata: {
-          reason,
-          blockedBy,
-          deviceName: device.deviceName,
-          riskScore: device.riskScore,
-        },
-      });
-
-      // Terminate all active sessions for this device
-      await this.terminateDeviceSessions(deviceId, {
-        type: 'security_violation',
-        message: `Device blocked: ${reason}`,
-      });
-    } catch (error) {
-      console.error('Failed to block device:', error);
-      throw error;
+    const device = await this.getDeviceInfo(deviceId);
+    if (!device) {
+      throw new Error('Device not found');
     }
+
+    const { error } = await this.supabase
+      .from('device_registrations')
+      .update({
+        is_blocked: true,
+        blocked_at: new Date().toISOString(),
+        blocked_by: blockedBy,
+        block_reason: reason,
+      })
+      .eq('device_id', deviceId);
+
+    if (error) {
+      throw new Error(`Failed to block device: ${error.message}`);
+    }
+
+    // Log device block event
+    await this.auditLogger.logSecurityEvent({
+      eventType: 'device_blocked',
+      userId: device.userId,
+      deviceId,
+      ipAddress: device.ipAddress,
+      metadata: {
+        reason,
+        blockedBy,
+        deviceName: device.deviceName,
+        riskScore: device.riskScore,
+      },
+    });
+
+    // Terminate all active sessions for this device
+    await this.terminateDeviceSessions(deviceId, {
+      type: 'security_violation',
+      message: `Device blocked: ${reason}`,
+    });
   }
 
   /**
@@ -502,39 +477,34 @@ export class DeviceTrackingManager {
     userId: string,
     challengeType: DeviceVerificationChallenge['challengeType']
   ): Promise<string> {
-    try {
-      const challengeId = `challenge_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-      const code = this.generateVerificationCode(challengeType);
-      const expiresAt = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes
+    const challengeId = `challenge_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    const code = this.generateVerificationCode(challengeType);
+    const expiresAt = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes
 
-      const { error } = await this.supabase
-        .from('device_verification_challenges')
-        .insert({
-          challenge_id: challengeId,
-          device_id: deviceId,
-          user_id: userId,
-          challenge_type: challengeType,
-          code,
-          expires_at: expiresAt.toISOString(),
-          attempts: 0,
-          max_attempts: 3,
-          is_completed: false,
-        });
+    const { error } = await this.supabase
+      .from('device_verification_challenges')
+      .insert({
+        challenge_id: challengeId,
+        device_id: deviceId,
+        user_id: userId,
+        challenge_type: challengeType,
+        code,
+        expires_at: expiresAt.toISOString(),
+        attempts: 0,
+        max_attempts: 3,
+        is_completed: false,
+      });
 
-      if (error) {
-        throw new Error(
-          `Failed to create verification challenge: ${error.message}`
-        );
-      }
-
-      // Send verification code (implementation depends on challenge type)
-      await this.sendVerificationCode(userId, challengeType, code);
-
-      return challengeId;
-    } catch (error) {
-      console.error('Failed to create verification challenge:', error);
-      throw error;
+    if (error) {
+      throw new Error(
+        `Failed to create verification challenge: ${error.message}`
+      );
     }
+
+    // Send verification code (implementation depends on challenge type)
+    await this.sendVerificationCode(userId, challengeType, code);
+
+    return challengeId;
   }
 
   /**
@@ -548,96 +518,88 @@ export class DeviceTrackingManager {
     deviceId?: string;
     attemptsRemaining?: number;
   }> {
-    try {
-      // Get challenge
-      const { data: challenge, error: selectError } = await this.supabase
-        .from('device_verification_challenges')
-        .select('*')
-        .eq('challenge_id', challengeId)
-        .single();
+    // Get challenge
+    const { data: challenge, error: selectError } = await this.supabase
+      .from('device_verification_challenges')
+      .select('*')
+      .eq('challenge_id', challengeId)
+      .single();
 
-      if (selectError || !challenge) {
-        return { success: false };
-      }
+    if (selectError || !challenge) {
+      return { success: false };
+    }
 
-      // Check if challenge is expired or completed
-      if (
-        new Date() > new Date(challenge.expires_at) ||
-        challenge.is_completed
-      ) {
-        return { success: false };
-      }
+    // Check if challenge is expired or completed
+    if (new Date() > new Date(challenge.expires_at) || challenge.is_completed) {
+      return { success: false };
+    }
 
-      // Check if max attempts exceeded
-      if (challenge.attempts >= challenge.max_attempts) {
-        return { success: false, attemptsRemaining: 0 };
-      }
+    // Check if max attempts exceeded
+    if (challenge.attempts >= challenge.max_attempts) {
+      return { success: false, attemptsRemaining: 0 };
+    }
 
-      // Verify code
-      const isValidCode = challenge.code === code;
-      const newAttempts = challenge.attempts + 1;
+    // Verify code
+    const isValidCode = challenge.code === code;
+    const newAttempts = challenge.attempts + 1;
 
-      if (isValidCode) {
-        // Mark challenge as completed
-        await this.supabase
-          .from('device_verification_challenges')
-          .update({
-            is_completed: true,
-            completed_at: new Date().toISOString(),
-            attempts: newAttempts,
-          })
-          .eq('challenge_id', challengeId);
-
-        // Trust the device if policy allows
-        const device = await this.getDeviceInfo(challenge.device_id);
-        if (device) {
-          const userRole = await this.getUserRole(device.userId);
-          const policy = this.devicePolicies[userRole];
-
-          if (policy.autoTrustAfterVerification) {
-            await this.trustDevice(challenge.device_id, 'system_verification');
-          }
-        }
-
-        // Log successful verification
-        await this.auditLogger.logSecurityEvent({
-          eventType: 'device_verification_success',
-          userId: challenge.user_id,
-          deviceId: challenge.device_id,
-          metadata: {
-            challengeType: challenge.challenge_type,
-            attempts: newAttempts,
-          },
-        });
-
-        return { success: true, deviceId: challenge.device_id };
-      }
-      // Update attempt count
+    if (isValidCode) {
+      // Mark challenge as completed
       await this.supabase
         .from('device_verification_challenges')
-        .update({ attempts: newAttempts })
+        .update({
+          is_completed: true,
+          completed_at: new Date().toISOString(),
+          attempts: newAttempts,
+        })
         .eq('challenge_id', challengeId);
 
-      // Log failed verification
+      // Trust the device if policy allows
+      const device = await this.getDeviceInfo(challenge.device_id);
+      if (device) {
+        const userRole = await this.getUserRole(device.userId);
+        const policy = this.devicePolicies[userRole];
+
+        if (policy.autoTrustAfterVerification) {
+          await this.trustDevice(challenge.device_id, 'system_verification');
+        }
+      }
+
+      // Log successful verification
       await this.auditLogger.logSecurityEvent({
-        eventType: 'device_verification_failed',
+        eventType: 'device_verification_success',
         userId: challenge.user_id,
         deviceId: challenge.device_id,
         metadata: {
           challengeType: challenge.challenge_type,
           attempts: newAttempts,
-          maxAttempts: challenge.max_attempts,
         },
       });
 
-      return {
-        success: false,
-        attemptsRemaining: challenge.max_attempts - newAttempts,
-      };
-    } catch (error) {
-      console.error('Failed to verify device challenge:', error);
-      throw error;
+      return { success: true, deviceId: challenge.device_id };
     }
+    // Update attempt count
+    await this.supabase
+      .from('device_verification_challenges')
+      .update({ attempts: newAttempts })
+      .eq('challenge_id', challengeId);
+
+    // Log failed verification
+    await this.auditLogger.logSecurityEvent({
+      eventType: 'device_verification_failed',
+      userId: challenge.user_id,
+      deviceId: challenge.device_id,
+      metadata: {
+        challengeType: challenge.challenge_type,
+        attempts: newAttempts,
+        maxAttempts: challenge.max_attempts,
+      },
+    });
+
+    return {
+      success: false,
+      attemptsRemaining: challenge.max_attempts - newAttempts,
+    };
   }
 
   /**
@@ -647,83 +609,74 @@ export class DeviceTrackingManager {
     devicesRemoved: number;
     challengesRemoved: number;
   }> {
-    try {
-      let devicesRemoved = 0;
-      let challengesRemoved = 0;
+    let devicesRemoved = 0;
+    let challengesRemoved = 0;
 
-      // Clean up devices based on retention policies
-      for (const [role, policy] of Object.entries(this.devicePolicies)) {
-        const retentionDate = new Date(
-          Date.now() - policy.deviceRetentionDays * 24 * 60 * 60 * 1000
-        );
+    // Clean up devices based on retention policies
+    for (const [_role, policy] of Object.entries(this.devicePolicies)) {
+      const retentionDate = new Date(
+        Date.now() - policy.deviceRetentionDays * 24 * 60 * 60 * 1000
+      );
 
-        const { data: oldDevices, error: selectError } = await this.supabase
-          .from('device_registrations')
-          .select('device_id')
-          .lt('last_seen', retentionDate.toISOString());
+      const { data: oldDevices, error: selectError } = await this.supabase
+        .from('device_registrations')
+        .select('device_id')
+        .lt('last_seen', retentionDate.toISOString());
 
-        if (selectError) {
-          console.error(
-            `Failed to find old devices for role ${role}:`,
-            selectError
-          );
-          continue;
-        }
-
-        if (oldDevices && oldDevices.length > 0) {
-          const { error: deleteError } = await this.supabase
-            .from('device_registrations')
-            .delete()
-            .in(
-              'device_id',
-              oldDevices.map((d) => d.device_id)
-            );
-
-          if (!deleteError) {
-            devicesRemoved += oldDevices.length;
-          }
-        }
+      if (selectError) {
+        continue;
       }
 
-      // Clean up expired challenges
-      const { data: expiredChallenges, error: challengeSelectError } =
-        await this.supabase
-          .from('device_verification_challenges')
-          .select('challenge_id')
-          .lt('expires_at', new Date().toISOString());
-
-      if (
-        !challengeSelectError &&
-        expiredChallenges &&
-        expiredChallenges.length > 0
-      ) {
-        const { error: challengeDeleteError } = await this.supabase
-          .from('device_verification_challenges')
+      if (oldDevices && oldDevices.length > 0) {
+        const { error: deleteError } = await this.supabase
+          .from('device_registrations')
           .delete()
           .in(
-            'challenge_id',
-            expiredChallenges.map((c) => c.challenge_id)
+            'device_id',
+            oldDevices.map((d) => d.device_id)
           );
 
-        if (!challengeDeleteError) {
-          challengesRemoved = expiredChallenges.length;
+        if (!deleteError) {
+          devicesRemoved += oldDevices.length;
         }
       }
-
-      // Log cleanup event
-      await this.auditLogger.logSecurityEvent({
-        eventType: 'device_cleanup',
-        metadata: {
-          devicesRemoved,
-          challengesRemoved,
-        },
-      });
-
-      return { devicesRemoved, challengesRemoved };
-    } catch (error) {
-      console.error('Failed to cleanup old devices:', error);
-      throw error;
     }
+
+    // Clean up expired challenges
+    const { data: expiredChallenges, error: challengeSelectError } =
+      await this.supabase
+        .from('device_verification_challenges')
+        .select('challenge_id')
+        .lt('expires_at', new Date().toISOString());
+
+    if (
+      !challengeSelectError &&
+      expiredChallenges &&
+      expiredChallenges.length > 0
+    ) {
+      const { error: challengeDeleteError } = await this.supabase
+        .from('device_verification_challenges')
+        .delete()
+        .in(
+          'challenge_id',
+          expiredChallenges.map((c) => c.challenge_id)
+        );
+
+      if (!challengeDeleteError) {
+        challengesRemoved = expiredChallenges.length;
+      }
+    }
+
+    // Log cleanup event
+    await this.auditLogger.logSecurityEvent({
+      eventType: 'device_cleanup',
+      metadata: {
+        devicesRemoved,
+        challengesRemoved,
+      },
+    });
+
+    return { devicesRemoved, challengesRemoved };
   }
 
   /**
@@ -1040,9 +993,7 @@ export class DeviceTrackingManager {
       async () => {
         try {
           await this.cleanupOldDevices();
-        } catch (error) {
-          console.error('Device cleanup failed:', error);
-        }
+        } catch (_error) {}
       },
       24 * 60 * 60 * 1000
     ); // Daily cleanup

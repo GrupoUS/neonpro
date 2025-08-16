@@ -2,7 +2,7 @@ import { createClient } from '@supabase/supabase-js';
 import * as tf from '@tensorflow/tfjs';
 
 // Types for computer vision analysis
-export interface AnalysisResult {
+export type AnalysisResult = {
   id: string;
   patientId: string;
   beforeImageId: string;
@@ -14,9 +14,9 @@ export interface AnalysisResult {
   annotations: AnnotationData[];
   confidence: number;
   analysisDate: Date;
-}
+};
 
-export interface ChangeMetrics {
+export type ChangeMetrics = {
   skinTexture?: number;
   wrinkleReduction?: number;
   pigmentationImprovement?: number;
@@ -25,9 +25,9 @@ export interface ChangeMetrics {
   volumeChange?: number;
   symmetryImprovement?: number;
   overallImprovement: number;
-}
+};
 
-export interface AnnotationData {
+export type AnnotationData = {
   id: string;
   type: 'measurement' | 'highlight' | 'comparison' | 'annotation';
   coordinates: { x: number; y: number; width?: number; height?: number }[];
@@ -35,15 +35,15 @@ export interface AnnotationData {
   unit?: string;
   description: string;
   confidence: number;
-}
+};
 
-export interface ImageProcessingOptions {
+export type ImageProcessingOptions = {
   enhanceContrast?: boolean;
   normalizeColors?: boolean;
   removeNoise?: boolean;
   standardizeSize?: boolean;
   targetSize?: { width: number; height: number };
-}
+};
 
 /**
  * Advanced Computer Vision Analysis Engine for Medical Images
@@ -73,9 +73,7 @@ export class VisionAnalysisEngine {
         '/models/medical-analysis-model.json'
       );
       this.isModelLoaded = true;
-      console.log('Vision analysis model loaded successfully');
-    } catch (error) {
-      console.error('Failed to load vision analysis model:', error);
+    } catch (_error) {
       // Fallback to basic analysis without ML model
       this.isModelLoaded = false;
     }
@@ -127,7 +125,6 @@ export class VisionAnalysisEngine {
 
       // Ensure processing time is under 30 seconds
       if (processingTime > 30_000) {
-        console.warn(`Processing time exceeded 30s: ${processingTime}ms`);
       }
 
       const result: AnalysisResult = {
@@ -149,7 +146,6 @@ export class VisionAnalysisEngine {
 
       return result;
     } catch (error) {
-      console.error('Vision analysis failed:', error);
       throw new Error(
         `Analysis failed: ${error instanceof Error ? error.message : 'Unknown error'}`
       );
@@ -195,8 +191,7 @@ export class VisionAnalysisEngine {
       image.dispose();
 
       return processedImage as tf.Tensor3D;
-    } catch (error) {
-      console.error('Image preprocessing failed:', error);
+    } catch (_error) {
       throw new Error('Failed to preprocess image');
     }
   }
@@ -271,8 +266,7 @@ export class VisionAnalysisEngine {
       absoluteDifference.dispose();
 
       return metrics;
-    } catch (error) {
-      console.error('Change metrics calculation failed:', error);
+    } catch (_error) {
       throw new Error('Failed to calculate change metrics');
     }
   }
@@ -325,8 +319,7 @@ export class VisionAnalysisEngine {
       });
 
       return annotations;
-    } catch (error) {
-      console.error('Annotation generation failed:', error);
+    } catch (_error) {
       return [];
     }
   }
@@ -377,8 +370,7 @@ export class VisionAnalysisEngine {
       const confidenceBonus = metricsCount > 3 ? 0.02 : 0.01;
 
       return Math.min(0.99, baseAccuracy + confidenceBonus);
-    } catch (error) {
-      console.error('Accuracy calculation failed:', error);
+    } catch (_error) {
       return 0.95; // Default to minimum required accuracy
     }
   }
@@ -478,28 +470,22 @@ export class VisionAnalysisEngine {
    * Save analysis result to database
    */
   private async saveAnalysisResult(result: AnalysisResult): Promise<void> {
-    try {
-      const { error } = await this.supabase.from('image_analysis').insert({
-        id: result.id,
-        patient_id: result.patientId,
-        before_image_id: result.beforeImageId,
-        after_image_id: result.afterImageId,
-        accuracy_score: result.accuracyScore,
-        processing_time: result.processingTime,
-        improvement_percentage: result.improvementPercentage,
-        change_metrics: result.changeMetrics,
-        annotations: result.annotations,
-        confidence: result.confidence,
-        analysis_date: result.analysisDate.toISOString(),
-      });
+    const { error } = await this.supabase.from('image_analysis').insert({
+      id: result.id,
+      patient_id: result.patientId,
+      before_image_id: result.beforeImageId,
+      after_image_id: result.afterImageId,
+      accuracy_score: result.accuracyScore,
+      processing_time: result.processingTime,
+      improvement_percentage: result.improvementPercentage,
+      change_metrics: result.changeMetrics,
+      annotations: result.annotations,
+      confidence: result.confidence,
+      analysis_date: result.analysisDate.toISOString(),
+    });
 
-      if (error) {
-        console.error('Failed to save analysis result:', error);
-        throw new Error('Database save failed');
-      }
-    } catch (error) {
-      console.error('Save analysis result failed:', error);
-      throw error;
+    if (error) {
+      throw new Error('Database save failed');
     }
   }
 
@@ -509,35 +495,29 @@ export class VisionAnalysisEngine {
   async getPatientAnalysisHistory(
     patientId: string
   ): Promise<AnalysisResult[]> {
-    try {
-      const { data, error } = await this.supabase
-        .from('image_analysis')
-        .select('*')
-        .eq('patient_id', patientId)
-        .order('analysis_date', { ascending: false });
+    const { data, error } = await this.supabase
+      .from('image_analysis')
+      .select('*')
+      .eq('patient_id', patientId)
+      .order('analysis_date', { ascending: false });
 
-      if (error) {
-        console.error('Failed to fetch analysis history:', error);
-        throw new Error('Database fetch failed');
-      }
-
-      return data.map((row) => ({
-        id: row.id,
-        patientId: row.patient_id,
-        beforeImageId: row.before_image_id,
-        afterImageId: row.after_image_id,
-        accuracyScore: row.accuracy_score,
-        processingTime: row.processing_time,
-        improvementPercentage: row.improvement_percentage,
-        changeMetrics: row.change_metrics,
-        annotations: row.annotations,
-        confidence: row.confidence,
-        analysisDate: new Date(row.analysis_date),
-      }));
-    } catch (error) {
-      console.error('Get analysis history failed:', error);
-      throw error;
+    if (error) {
+      throw new Error('Database fetch failed');
     }
+
+    return data.map((row) => ({
+      id: row.id,
+      patientId: row.patient_id,
+      beforeImageId: row.before_image_id,
+      afterImageId: row.after_image_id,
+      accuracyScore: row.accuracy_score,
+      processingTime: row.processing_time,
+      improvementPercentage: row.improvement_percentage,
+      changeMetrics: row.change_metrics,
+      annotations: row.annotations,
+      confidence: row.confidence,
+      analysisDate: new Date(row.analysis_date),
+    }));
   }
 }
 

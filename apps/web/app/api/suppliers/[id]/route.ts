@@ -9,11 +9,11 @@ import { updateSupplierSchema } from '@/app/lib/validations/suppliers';
 
 const supplierService = new SupplierManagementService();
 
-interface RouteParams {
+type RouteParams = {
   params: {
     id: string;
   };
-}
+};
 
 // =====================================================================================
 // GET /api/suppliers/[id] - Get supplier by ID
@@ -40,8 +40,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     }
 
     return NextResponse.json(supplier);
-  } catch (error) {
-    console.error('Erro ao buscar fornecedor:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
       { status: 500 }
@@ -81,8 +80,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     );
 
     return NextResponse.json(supplier);
-  } catch (error) {
-    console.error('Erro ao atualizar fornecedor:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
       { status: 500 }
@@ -109,8 +107,6 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('Erro ao excluir fornecedor:', error);
-
     if (error instanceof Error && error.message.includes('contratos ativos')) {
       return NextResponse.json({ error: error.message }, { status: 409 });
     }

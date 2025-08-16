@@ -24,7 +24,7 @@ export type SubscriptionEvent =
   | 'payment_failed'
   | 'payment_succeeded';
 
-export interface SubscriptionRealtimeUpdate {
+export type SubscriptionRealtimeUpdate = {
   event: SubscriptionEvent;
   userId: string;
   subscriptionId: string;
@@ -38,17 +38,17 @@ export interface SubscriptionRealtimeUpdate {
     nextBilling?: string;
     reason?: string;
   };
-}
+};
 
-export interface RealtimeConfig {
+export type RealtimeConfig = {
   channel?: string;
   heartbeatInterval?: number;
   reconnectInterval?: number;
   maxReconnectAttempts?: number;
   enableLogging?: boolean;
-}
+};
 
-export interface RealtimeMetrics {
+export type RealtimeMetrics = {
   connectionsActive: number;
   messagesReceived: number;
   messagesSent: number;
@@ -56,7 +56,7 @@ export interface RealtimeMetrics {
   lastConnected: string;
   uptime: number;
   latency: number;
-}
+};
 
 export class SubscriptionRealtimeManager {
   private readonly supabase = createClient();
@@ -489,22 +489,19 @@ export class SubscriptionRealtimeManager {
    * Internal logging utility
    */
   private log(
-    message: string,
+    _message: string,
     level: 'info' | 'warning' | 'error' = 'info'
   ): void {
     if (this.config.enableLogging) {
-      const timestamp = new Date().toISOString();
-      const prefix = `[SubscriptionRealtime:${level.toUpperCase()}]`;
+      const _timestamp = new Date().toISOString();
+      const _prefix = `[SubscriptionRealtime:${level.toUpperCase()}]`;
 
       switch (level) {
         case 'error':
-          console.error(`${prefix} ${timestamp} - ${message}`);
           break;
         case 'warning':
-          console.warn(`${prefix} ${timestamp} - ${message}`);
           break;
         default:
-          console.log(`${prefix} ${timestamp} - ${message}`);
       }
     }
   }

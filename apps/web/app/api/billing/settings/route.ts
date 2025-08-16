@@ -89,7 +89,6 @@ export async function GET(_request: Request) {
     }
 
     if (error) {
-      console.error('Error fetching financial settings:', error);
       return NextResponse.json(
         { error: 'Failed to fetch financial settings' },
         { status: 500 }
@@ -97,8 +96,7 @@ export async function GET(_request: Request) {
     }
 
     return NextResponse.json({ settings });
-  } catch (error) {
-    console.error('API Error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal Server Error' },
       { status: 500 }
@@ -129,7 +127,6 @@ export async function PUT(request: Request) {
       .single();
 
     if (checkError && checkError.code !== 'PGRST116') {
-      console.error('Error checking financial settings:', checkError);
       return NextResponse.json(
         { error: 'Failed to check existing settings' },
         { status: 500 }
@@ -184,7 +181,6 @@ export async function PUT(request: Request) {
     }
 
     if (error) {
-      console.error('Error updating financial settings:', error);
       return NextResponse.json(
         { error: 'Failed to update financial settings' },
         { status: 500 }
@@ -199,8 +195,6 @@ export async function PUT(request: Request) {
         { status: 400 }
       );
     }
-
-    console.error('API Error:', error);
     return NextResponse.json(
       { error: 'Internal Server Error' },
       { status: 500 }
@@ -236,7 +230,6 @@ export async function POST(request: Request) {
       .single();
 
     if (settingsError) {
-      console.error('Error fetching financial settings:', settingsError);
       return NextResponse.json(
         { error: 'Failed to fetch financial settings' },
         { status: 500 }
@@ -261,7 +254,6 @@ export async function POST(request: Request) {
       .single();
 
     if (updateError) {
-      console.error('Error updating financial settings:', updateError);
       return NextResponse.json(
         { error: 'Failed to update settings' },
         { status: 500 }
@@ -272,8 +264,7 @@ export async function POST(request: Request) {
       settings: updatedSettings,
       message: `${action} incremented successfully`,
     });
-  } catch (error) {
-    console.error('API Error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal Server Error' },
       { status: 500 }

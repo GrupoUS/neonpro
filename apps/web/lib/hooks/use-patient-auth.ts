@@ -5,7 +5,7 @@ import { createContext, useContext, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { createClient } from '@/app/utils/supabase/client';
 
-interface Patient {
+type Patient = {
   id: string;
   user_id: string;
   name: string;
@@ -21,9 +21,9 @@ interface Patient {
   emergency_contact_name: string;
   created_at: string;
   updated_at: string;
-}
+};
 
-interface PatientAuthContextType {
+type PatientAuthContextType = {
   user: User | null;
   patient: Patient | null;
   isLoading: boolean;
@@ -31,7 +31,7 @@ interface PatientAuthContextType {
   signOut: () => Promise<void>;
   updatePatient: (updates: Partial<Patient>) => Promise<void>;
   refreshPatient: () => Promise<void>;
-}
+};
 
 const PatientAuthContext = createContext<PatientAuthContextType | undefined>(
   undefined
@@ -62,8 +62,7 @@ export function PatientAuthProvider({
         if (user) {
           await fetchPatientData(user.id);
         }
-      } catch (error) {
-        console.error('Error fetching user:', error);
+      } catch (_error) {
         toast.error('Erro ao carregar dados do usuário');
       } finally {
         setIsLoading(false);
@@ -102,9 +101,7 @@ export function PatientAuthProvider({
       }
 
       setPatient(data);
-    } catch (error) {
-      console.error('Error fetching patient data:', error);
-    }
+    } catch (_error) {}
   };
 
   const signIn = async (email: string, password: string) => {
@@ -121,7 +118,6 @@ export function PatientAuthProvider({
 
       toast.success('Login realizado com sucesso!');
     } catch (error: any) {
-      console.error('Error signing in:', error);
       toast.error(error.message || 'Erro ao fazer login');
       throw error;
     } finally {
@@ -142,7 +138,6 @@ export function PatientAuthProvider({
       setPatient(null);
       toast.success('Logout realizado com sucesso!');
     } catch (error: any) {
-      console.error('Error signing out:', error);
       toast.error(error.message || 'Erro ao fazer logout');
       throw error;
     } finally {
@@ -170,7 +165,6 @@ export function PatientAuthProvider({
       setPatient(data);
       toast.success('Perfil atualizado com sucesso!');
     } catch (error: any) {
-      console.error('Error updating patient:', error);
       toast.error(error.message || 'Erro ao atualizar perfil');
       throw error;
     }

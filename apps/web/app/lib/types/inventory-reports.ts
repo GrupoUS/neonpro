@@ -43,7 +43,7 @@ export type ReportStatus =
 // REPORT FILTERS & PARAMETERS
 // =============================================================================
 
-export interface ReportFilters {
+export type ReportFilters = {
   start_date?: string;
   end_date?: string;
   clinic_id?: string;
@@ -56,9 +56,9 @@ export interface ReportFilters {
   max_value?: number;
   include_zero_stock?: boolean;
   only_active_items?: boolean;
-}
+};
 
-export interface ReportParameters {
+export type ReportParameters = {
   type: ReportType;
   filters: ReportFilters;
   format: ReportFormat;
@@ -68,13 +68,13 @@ export interface ReportParameters {
   includeCharts?: boolean;
   includeSummary?: boolean;
   customFields?: string[];
-}
+};
 
 // =============================================================================
 // STOCK MOVEMENT REPORT
 // =============================================================================
 
-export interface StockMovementReportData {
+export type StockMovementReportData = {
   movement_id: string;
   item_id: string;
   item_name: string;
@@ -92,9 +92,9 @@ export interface StockMovementReportData {
   notes?: string;
   batch_number?: string;
   expiry_date?: string;
-}
+};
 
-export interface StockMovementSummary {
+export type StockMovementSummary = {
   total_movements: number;
   total_in: number;
   total_out: number;
@@ -126,13 +126,13 @@ export interface StockMovementSummary {
       value: number;
     }
   >;
-}
+};
 
 // =============================================================================
 // STOCK VALUATION REPORT
 // =============================================================================
 
-export interface StockValuationReportData {
+export type StockValuationReportData = {
   item_id: string;
   item_name: string;
   item_sku: string;
@@ -147,9 +147,9 @@ export interface StockValuationReportData {
   turnover_rate?: number;
   safety_stock?: number;
   stock_status: 'adequate' | 'low' | 'critical' | 'overstock';
-}
+};
 
-export interface StockValuationSummary {
+export type StockValuationSummary = {
   total_items: number;
   total_quantity: number;
   total_value: number;
@@ -181,13 +181,13 @@ export interface StockValuationSummary {
       percentage: number;
     }
   >;
-}
+};
 
 // =============================================================================
 // EXPIRING ITEMS REPORT
 // =============================================================================
 
-export interface ExpiringItemsReportData {
+export type ExpiringItemsReportData = {
   item_id: string;
   item_name: string;
   item_sku: string;
@@ -202,9 +202,9 @@ export interface ExpiringItemsReportData {
   total_value: number;
   urgency_level: 'immediate' | 'urgent' | 'warning' | 'watch';
   suggested_action: 'use_immediately' | 'transfer' | 'discount' | 'dispose';
-}
+};
 
-export interface ExpiringItemsSummary {
+export type ExpiringItemsSummary = {
   total_expiring_items: number;
   total_expiring_value: number;
   by_urgency: Record<
@@ -234,13 +234,13 @@ export interface ExpiringItemsSummary {
   upcoming_expirations_30_days: number;
   upcoming_expirations_60_days: number;
   upcoming_expirations_90_days: number;
-}
+};
 
 // =============================================================================
 // TRANSFER REPORT
 // =============================================================================
 
-export interface TransferReportData {
+export type TransferReportData = {
   transfer_id: string;
   item_id: string;
   item_name: string;
@@ -259,9 +259,9 @@ export interface TransferReportData {
   initiated_by?: string;
   completed_by?: string;
   notes?: string;
-}
+};
 
-export interface TransferReportSummary {
+export type TransferReportSummary = {
   total_transfers: number;
   completed_transfers: number;
   pending_transfers: number;
@@ -294,13 +294,13 @@ export interface TransferReportSummary {
     count: number;
     total_quantity: number;
   }>;
-}
+};
 
 // =============================================================================
 // LOCATION PERFORMANCE REPORT
 // =============================================================================
 
-export interface LocationPerformanceData {
+export type LocationPerformanceData = {
   clinic_id: string;
   clinic_name: string;
   room_id?: string;
@@ -319,9 +319,9 @@ export interface LocationPerformanceData {
   transfer_requests: number;
   utilization_rate: number;
   performance_score: number;
-}
+};
 
-export interface LocationPerformanceSummary {
+export type LocationPerformanceSummary = {
   total_locations: number;
   average_performance_score: number;
   best_performing_location: string;
@@ -330,13 +330,13 @@ export interface LocationPerformanceSummary {
   total_system_movements: number;
   average_turnover_rate: number;
   locations_needing_attention: number;
-}
+};
 
 // =============================================================================
 // REPORT GENERATION & SCHEDULING
 // =============================================================================
 
-export interface ReportDefinition {
+export type ReportDefinition = {
   id: string;
   name: string;
   description?: string;
@@ -351,9 +351,9 @@ export interface ReportDefinition {
   created_at: string;
   updated_at: string;
   is_active: boolean;
-}
+};
 
-export interface ReportExecution {
+export type ReportExecution = {
   id: string;
   report_definition_id: string;
   status: ReportStatus;
@@ -368,9 +368,9 @@ export interface ReportExecution {
   expires_at?: string;
   download_count: number;
   parameters_used: ReportParameters;
-}
+};
 
-export interface ReportTemplate {
+export type ReportTemplate = {
   id: string;
   name: string;
   type: ReportType;
@@ -387,49 +387,49 @@ export interface ReportTemplate {
   is_default: boolean;
   created_by: string;
   created_at: string;
-}
+};
 
 // =============================================================================
 // API CONTRACTS
 // =============================================================================
 
-export interface GenerateReportRequest {
+export type GenerateReportRequest = {
   parameters: ReportParameters;
   template_id?: string;
   save_as_definition?: boolean;
   definition_name?: string;
-}
+};
 
-export interface GenerateReportResponse {
+export type GenerateReportResponse = {
   execution_id: string;
   status: ReportStatus;
   estimated_completion?: string;
   file_url?: string;
-}
+};
 
-export interface ScheduleReportRequest {
+export type ScheduleReportRequest = {
   name: string;
   description?: string;
   parameters: ReportParameters;
   schedule_cron: string;
   timezone?: string;
   template_id?: string;
-}
+};
 
-export interface ReportListFilters {
+export type ReportListFilters = {
   type?: ReportType;
   status?: ReportStatus;
   created_by?: string;
   date_from?: string;
   date_to?: string;
   search?: string;
-}
+};
 
 // =============================================================================
 // DASHBOARD INTERFACES
 // =============================================================================
 
-export interface ReportDashboardStats {
+export type ReportDashboardStats = {
   total_reports_generated: number;
   scheduled_reports: number;
   active_executions: number;
@@ -437,9 +437,9 @@ export interface ReportDashboardStats {
   storage_used: number;
   most_generated_type: ReportType;
   average_generation_time: number;
-}
+};
 
-export interface ReportChartData {
+export type ReportChartData = {
   labels: string[];
   datasets: Array<{
     label: string;
@@ -448,7 +448,7 @@ export interface ReportChartData {
     borderColor?: string;
     borderWidth?: number;
   }>;
-}
+};
 
 // =============================================================================
 // ZOD VALIDATION SCHEMAS

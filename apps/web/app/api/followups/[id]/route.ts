@@ -10,9 +10,9 @@ import { type NextRequest, NextResponse } from 'next/server';
 import { treatmentFollowupService } from '@/app/lib/services/treatment-followup-service';
 import { createClient } from '@/app/utils/supabase/server';
 
-interface RouteParams {
+type RouteParams = {
   params: { id: string };
-}
+};
 
 export async function GET(_request: NextRequest, { params }: RouteParams) {
   try {
@@ -48,7 +48,6 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
 
     return NextResponse.json({ data: followup });
   } catch (error) {
-    console.error('API error in GET /api/followups/[id]:', error);
     return NextResponse.json(
       {
         error: 'Internal server error',
@@ -103,7 +102,6 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
       message: 'Follow-up updated successfully',
     });
   } catch (error) {
-    console.error('API error in PATCH /api/followups/[id]:', error);
     return NextResponse.json(
       {
         error: 'Internal server error',
@@ -143,7 +141,6 @@ export async function DELETE(_request: NextRequest, { params }: RouteParams) {
       message: 'Follow-up deleted successfully',
     });
   } catch (error) {
-    console.error('API error in DELETE /api/followups/[id]:', error);
     return NextResponse.json(
       {
         error: 'Internal server error',

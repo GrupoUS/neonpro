@@ -15,21 +15,21 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 
-interface AppointmentNote {
+type AppointmentNote = {
   id: string;
   text: string;
   type: 'general' | 'medical' | 'preference' | 'accessibility';
   icon: React.ComponentType<any>;
   color: string;
-}
+};
 
-interface AppointmentNotesProps {
+type AppointmentNotesProps = {
   notes: string;
   onNotesChange: (notes: string) => void;
   specialRequests: string[];
   onSpecialRequestsChange: (requests: string[]) => void;
   className?: string;
-}
+};
 
 const SUGGESTED_NOTES: AppointmentNote[] = [
   {

@@ -83,7 +83,6 @@ export class MarketingCampaignsService {
     const { data, error } = await query;
 
     if (error) {
-      console.error('Error fetching campaigns:', error);
       throw new Error('Failed to fetch campaigns');
     }
 
@@ -121,7 +120,6 @@ export class MarketingCampaignsService {
       .single();
 
     if (error) {
-      console.error('Error fetching campaign:', error);
       return null;
     }
 
@@ -168,7 +166,6 @@ export class MarketingCampaignsService {
       .single();
 
     if (error) {
-      console.error('Error creating campaign:', error);
       throw new Error('Failed to create campaign');
     }
 
@@ -190,7 +187,6 @@ export class MarketingCampaignsService {
       .single();
 
     if (error) {
-      console.error('Error updating campaign:', error);
       throw new Error('Failed to update campaign');
     }
 
@@ -207,7 +203,6 @@ export class MarketingCampaignsService {
       .eq('id', id);
 
     if (error) {
-      console.error('Error deleting campaign:', error);
       throw new Error('Failed to delete campaign');
     }
   }
@@ -249,7 +244,6 @@ export class MarketingCampaignsService {
     const { data, error } = await query;
 
     if (error) {
-      console.error('Error fetching templates:', error);
       throw new Error('Failed to fetch templates');
     }
 
@@ -269,7 +263,6 @@ export class MarketingCampaignsService {
       .single();
 
     if (error) {
-      console.error('Error creating template:', error);
       throw new Error('Failed to create template');
     }
 
@@ -331,7 +324,6 @@ export class MarketingCampaignsService {
       .single();
 
     if (error) {
-      console.error('Error creating execution:', error);
       throw new Error('Failed to create execution');
     }
 
@@ -360,7 +352,6 @@ export class MarketingCampaignsService {
       .insert(recipientRecords);
 
     if (recipientsError) {
-      console.error('Error creating recipients:', recipientsError);
       throw new Error('Failed to create recipients');
     }
 
@@ -467,7 +458,7 @@ export class MarketingCampaignsService {
    */
   private async startDelivery(
     executionId: string,
-    campaignType: string
+    _campaignType: string
   ): Promise<void> {
     // Update execution status
     await this.supabase
@@ -477,16 +468,6 @@ export class MarketingCampaignsService {
         delivery_started_at: new Date().toISOString(),
       })
       .eq('id', executionId);
-
-    // Here would integrate with actual delivery services:
-    // - Email: SendGrid, AWS SES, etc.
-    // - SMS: Twilio, AWS SNS, etc.
-    // - WhatsApp: Twilio WhatsApp, Facebook API, etc.
-    // - Push: Firebase, OneSignal, etc.
-
-    console.log(
-      `Starting delivery for execution ${executionId} of type ${campaignType}`
-    );
   }
 
   // =====================================================================================
@@ -567,7 +548,6 @@ export class MarketingCampaignsService {
       .order('execution_date', { ascending: false });
 
     if (error) {
-      console.error('Error fetching executions:', error);
       return [];
     }
 
@@ -587,7 +567,6 @@ export class MarketingCampaignsService {
       .single();
 
     if (error) {
-      console.error('Error fetching metrics:', error);
       return null;
     }
 
@@ -658,7 +637,6 @@ export class MarketingCampaignsService {
     const { data, error } = await query;
 
     if (error) {
-      console.error('Error fetching automations:', error);
       throw new Error('Failed to fetch automations');
     }
 
@@ -678,7 +656,6 @@ export class MarketingCampaignsService {
       .single();
 
     if (error) {
-      console.error('Error creating automation:', error);
       throw new Error('Failed to create automation');
     }
 
@@ -699,10 +676,6 @@ export class MarketingCampaignsService {
       .eq('is_active', true);
 
     if (error) {
-      console.error(
-        'Error fetching automations for trigger processing:',
-        error
-      );
       return;
     }
 
@@ -753,10 +726,6 @@ export class MarketingCampaignsService {
     for (const step of steps) {
       // Schedule or execute step based on delay
       if (step.delayHours && step.delayHours > 0) {
-        // Schedule for later execution
-        console.log(
-          `Scheduling step ${step.step} for ${step.delayHours} hours from now`
-        );
       } else {
         // Execute immediately
         await this.executeAutomationStep(step, eventData);
@@ -775,21 +744,12 @@ export class MarketingCampaignsService {
       case 'send_email':
       case 'send_sms':
       case 'send_whatsapp':
-        // Execute send action
-        console.log(
-          `Executing ${step.type} step with template ${step.template}`
-        );
         break;
       case 'add_to_segment':
-        // Add patient to segment
-        console.log(`Adding patient to segment: ${step.segment}`);
         break;
       case 'remove_from_segment':
-        // Remove patient from segment
-        console.log(`Removing patient from segment: ${step.segment}`);
         break;
       default:
-        console.log(`Unknown step type: ${step.type}`);
     }
   }
 }

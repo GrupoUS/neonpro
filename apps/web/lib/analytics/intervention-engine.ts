@@ -20,7 +20,7 @@ export enum InterventionStatus {
 }
 
 // Intervention types with detailed configurations
-export interface InterventionType {
+export type InterventionType = {
   id: string;
   name: string;
   category: 'REMINDER' | 'CONFIRMATION' | 'INCENTIVE' | 'CONTACT' | 'EDUCATION';
@@ -32,10 +32,10 @@ export interface InterventionType {
   targetRiskLevel: ('LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL')[];
   prerequisites: string[];
   contraindications: string[];
-}
+};
 
 // Intervention campaign for systematic intervention deployment
-export interface InterventionCampaign {
+export type InterventionCampaign = {
   id: string;
   name: string;
   description: string;
@@ -57,10 +57,10 @@ export interface InterventionCampaign {
   startDate: Date;
   endDate?: Date;
   results?: CampaignResults;
-}
+};
 
 // Individual step in an intervention sequence
-export interface InterventionStep {
+export type InterventionStep = {
   order: number;
   interventionTypeId: string;
   delayFromPrevious: number; // hours
@@ -75,10 +75,10 @@ export interface InterventionStep {
     customizeByPreference: boolean;
   };
   successCriteria: string[];
-}
+};
 
 // Campaign performance results
-export interface CampaignResults {
+export type CampaignResults = {
   totalParticipants: number;
   interventionsExecuted: number;
   costIncurred: number;
@@ -89,10 +89,10 @@ export interface CampaignResults {
   responseRate: number; // percentage of patients who responded
   effectivenessByRiskLevel: Record<string, number>;
   effectivenessByInterventionType: Record<string, number>;
-}
+};
 
 // Intervention execution record
-export interface InterventionExecution {
+export type InterventionExecution = {
   id: string;
   patientId: string;
   appointmentId: string;
@@ -118,10 +118,10 @@ export interface InterventionExecution {
     effectivenessScore: number;
   };
   metadata: Record<string, any>;
-}
+};
 
 // Intelligent intervention recommendation
-export interface SmartInterventionRecommendation {
+export type SmartInterventionRecommendation = {
   interventionTypeId: string;
   priority: number;
   executionTime: Date;
@@ -132,10 +132,10 @@ export interface SmartInterventionRecommendation {
   reasoning: string[];
   alternatives: string[];
   contraindications: string[];
-}
+};
 
 // Real-time intervention analytics
-export interface InterventionAnalytics {
+export type InterventionAnalytics = {
   period: {
     start: Date;
     end: Date;
@@ -151,7 +151,7 @@ export interface InterventionAnalytics {
   riskLevelEffectiveness: Record<string, number>;
   patientSatisfactionTrend: number[];
   predictedOptimizations: string[];
-}
+};
 
 // Main intervention engine class
 export class InterventionEngine {
@@ -296,8 +296,7 @@ export class InterventionEngine {
       });
 
       return recommendations.slice(0, 5); // Return top 5 recommendations
-    } catch (error) {
-      console.error('Error generating smart recommendations:', error);
+    } catch (_error) {
       throw new Error('Failed to generate intervention recommendations');
     }
   }
@@ -320,14 +319,10 @@ export class InterventionEngine {
 
       const batchResults = await Promise.allSettled(batchPromises);
 
-      batchResults.forEach((result, index) => {
+      batchResults.forEach((result, _index) => {
         if (result.status === 'fulfilled') {
           executions.push(...result.value);
         } else {
-          console.error(
-            `Failed to execute interventions for prediction ${batch[index].appointmentId}:`,
-            result.reason
-          );
         }
       });
     }
@@ -365,12 +360,7 @@ export class InterventionEngine {
           campaignId
         );
         executions.push(execution);
-      } catch (error) {
-        console.error(
-          `Failed to schedule intervention ${recommendation.interventionTypeId}:`,
-          error
-        );
-      }
+      } catch (_error) {}
     }
 
     return executions;

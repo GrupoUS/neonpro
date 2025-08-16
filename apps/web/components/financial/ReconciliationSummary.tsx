@@ -1,6 +1,20 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import {
+  Activity,
+  AlertTriangle,
+  CheckCircle2,
+  Clock,
+  DollarSign,
+  FileText,
+  Shield,
+  TrendingUp,
+  Users,
+} from 'lucide-react';
+import type React from 'react';
+import { useEffect, useState } from 'react';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Badge } from '@/components/ui/badge';
 import {
   Card,
   CardContent,
@@ -8,29 +22,15 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import {
-  DollarSign,
-  TrendingUp,
-  TrendingDown,
-  AlertTriangle,
-  CheckCircle2,
-  Clock,
-  Users,
-  Activity,
-  Shield,
-  FileText,
-} from 'lucide-react';
 import { formatCurrency } from '@/lib/utils';
 
-interface ReconciliationSummaryProps {
+type ReconciliationSummaryProps = {
   'data-testid'?: string;
   className?: string;
-}
+};
 
-interface SummaryMetrics {
+type SummaryMetrics = {
   totalTransactions: number;
   reconciledAmount: number;
   pendingAmount: number;
@@ -46,7 +46,7 @@ interface SummaryMetrics {
     cash: number;
     insurance: number;
   };
-}
+};
 
 /**
  * Reconciliation Summary Component
@@ -70,7 +70,7 @@ export const ReconciliationSummary: React.FC<ReconciliationSummaryProps> = ({
 
   useEffect(() => {
     loadSummaryMetrics();
-  }, []);
+  }, [loadSummaryMetrics]);
 
   const loadSummaryMetrics = async () => {
     try {
@@ -81,8 +81,8 @@ export const ReconciliationSummary: React.FC<ReconciliationSummaryProps> = ({
       // Mock healthcare financial data
       const mockMetrics: SummaryMetrics = {
         totalTransactions: 1247,
-        reconciledAmount: 89420.5,
-        pendingAmount: 12630.75,
+        reconciledAmount: 89_420.5,
+        pendingAmount: 12_630.75,
         discrepanciesAmount: 890.25,
         reconciliationRate: 87.6,
         patientsAffected: 156,
@@ -98,7 +98,7 @@ export const ReconciliationSummary: React.FC<ReconciliationSummaryProps> = ({
       };
 
       setMetrics(mockMetrics);
-    } catch (err) {
+    } catch (_err) {
       setError('Erro ao carregar métricas de reconciliação');
     } finally {
       setIsLoading(false);
@@ -117,7 +117,7 @@ export const ReconciliationSummary: React.FC<ReconciliationSummaryProps> = ({
         <CardContent>
           <div className="space-y-4">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="h-4 bg-muted animate-pulse rounded" />
+              <div className="h-4 animate-pulse rounded bg-muted" key={i} />
             ))}
           </div>
         </CardContent>
@@ -127,7 +127,7 @@ export const ReconciliationSummary: React.FC<ReconciliationSummaryProps> = ({
 
   if (error || !metrics) {
     return (
-      <Alert variant="destructive" data-testid={`${testId}-error`}>
+      <Alert data-testid={`${testId}-error`} variant="destructive">
         <AlertTriangle className="h-4 w-4" />
         <AlertDescription>{error || 'Dados indisponíveis'}</AlertDescription>
       </Alert>
@@ -135,34 +135,38 @@ export const ReconciliationSummary: React.FC<ReconciliationSummaryProps> = ({
   }
 
   const getStatusBadge = (rate: number) => {
-    if (rate >= 95)
+    if (rate >= 95) {
       return (
-        <Badge variant="default" className="bg-green-100 text-green-800">
+        <Badge className="bg-green-100 text-green-800" variant="default">
           Excelente
         </Badge>
       );
-    if (rate >= 85)
+    }
+    if (rate >= 85) {
       return (
-        <Badge variant="default" className="bg-yellow-100 text-yellow-800">
+        <Badge className="bg-yellow-100 text-yellow-800" variant="default">
           Bom
         </Badge>
       );
+    }
     return <Badge variant="destructive">Atenção</Badge>;
   };
 
   const getComplianceBadge = (score: number) => {
-    if (score >= 90)
+    if (score >= 90) {
       return (
-        <Badge variant="default" className="bg-green-100 text-green-800">
+        <Badge className="bg-green-100 text-green-800" variant="default">
           Conforme
         </Badge>
       );
-    if (score >= 75)
+    }
+    if (score >= 75) {
       return (
-        <Badge variant="default" className="bg-yellow-100 text-yellow-800">
+        <Badge className="bg-yellow-100 text-yellow-800" variant="default">
           Atenção
         </Badge>
       );
+    }
     return <Badge variant="destructive">Não Conforme</Badge>;
   };
 
@@ -185,14 +189,14 @@ export const ReconciliationSummary: React.FC<ReconciliationSummaryProps> = ({
           </div>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
             {/* Reconciled Amount */}
             <div className="space-y-2" data-testid="reconciled-amount">
               <div className="flex items-center gap-2">
                 <CheckCircle2 className="h-4 w-4 text-green-600" />
-                <span className="text-sm font-medium">Reconciliado</span>
+                <span className="font-medium text-sm">Reconciliado</span>
               </div>
-              <p className="text-2xl font-bold text-green-600">
+              <p className="font-bold text-2xl text-green-600">
                 {formatCurrency(metrics.reconciledAmount)}
               </p>
             </div>
@@ -201,9 +205,9 @@ export const ReconciliationSummary: React.FC<ReconciliationSummaryProps> = ({
             <div className="space-y-2" data-testid="pending-amount">
               <div className="flex items-center gap-2">
                 <Clock className="h-4 w-4 text-yellow-600" />
-                <span className="text-sm font-medium">Pendente</span>
+                <span className="font-medium text-sm">Pendente</span>
               </div>
-              <p className="text-2xl font-bold text-yellow-600">
+              <p className="font-bold text-2xl text-yellow-600">
                 {formatCurrency(metrics.pendingAmount)}
               </p>
             </div>
@@ -212,9 +216,9 @@ export const ReconciliationSummary: React.FC<ReconciliationSummaryProps> = ({
             <div className="space-y-2" data-testid="discrepancies-amount">
               <div className="flex items-center gap-2">
                 <AlertTriangle className="h-4 w-4 text-red-600" />
-                <span className="text-sm font-medium">Divergências</span>
+                <span className="font-medium text-sm">Divergências</span>
               </div>
-              <p className="text-2xl font-bold text-red-600">
+              <p className="font-bold text-2xl text-red-600">
                 {formatCurrency(metrics.discrepanciesAmount)}
               </p>
             </div>
@@ -229,16 +233,16 @@ export const ReconciliationSummary: React.FC<ReconciliationSummaryProps> = ({
               </span>
             </div>
             <Progress
-              value={metrics.reconciliationRate}
               className="w-full"
               data-testid="reconciliation-progress"
+              value={metrics.reconciliationRate}
             />
           </div>
         </CardContent>
       </Card>
 
       {/* Healthcare Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         {/* Patient Impact */}
         <Card data-testid="patient-metrics">
           <CardHeader>
@@ -287,11 +291,11 @@ export const ReconciliationSummary: React.FC<ReconciliationSummaryProps> = ({
                 </div>
               </div>
               <Progress
-                value={metrics.complianceScore}
                 className="w-full"
                 data-testid="compliance-progress"
+                value={metrics.complianceScore}
               />
-              <div className="flex items-center gap-2 text-xs text-muted-foreground">
+              <div className="flex items-center gap-2 text-muted-foreground text-xs">
                 <FileText className="h-3 w-3" />
                 <span>
                   Última auditoria:{' '}
@@ -315,7 +319,7 @@ export const ReconciliationSummary: React.FC<ReconciliationSummaryProps> = ({
           <div className="space-y-3">
             {Object.entries(metrics.paymentMethods).map(
               ([method, percentage]) => (
-                <div key={method} className="space-y-1">
+                <div className="space-y-1" key={method}>
                   <div className="flex items-center justify-between text-sm">
                     <span className="capitalize">
                       {method === 'pix'
@@ -328,7 +332,7 @@ export const ReconciliationSummary: React.FC<ReconciliationSummaryProps> = ({
                     </span>
                     <span className="font-medium">{percentage}%</span>
                   </div>
-                  <Progress value={percentage} className="h-2" />
+                  <Progress className="h-2" value={percentage} />
                 </div>
               )
             )}

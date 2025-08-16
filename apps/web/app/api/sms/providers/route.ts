@@ -68,8 +68,6 @@ export async function GET(request: NextRequest) {
       { status: 200 }
     );
   } catch (error) {
-    console.error('SMS providers fetch error:', error);
-
     return NextResponse.json(
       {
         success: false,
@@ -128,8 +126,6 @@ export async function POST(request: NextRequest) {
       { status: 200 }
     );
   } catch (error) {
-    console.error('SMS provider upsert error:', error);
-
     // Handle validation errors
     if (error instanceof z.ZodError) {
       return NextResponse.json(
@@ -237,8 +233,6 @@ export async function PUT(request: NextRequest) {
       { status: 200 }
     );
   } catch (error) {
-    console.error('SMS provider test error:', error);
-
     return NextResponse.json(
       {
         success: false,
@@ -341,8 +335,6 @@ export async function DELETE(request: NextRequest) {
       { status: 200 }
     );
   } catch (error) {
-    console.error('SMS provider delete error:', error);
-
     return NextResponse.json(
       {
         success: false,

@@ -45,10 +45,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import type { AnalyticsAlert } from '@/lib/analytics';
 
 // Types
-interface AlertsPanelProps {
+type AlertsPanelProps = {
   alerts: AnalyticsAlert[];
   isLoading: boolean;
-}
+};
 
 interface ProcessedAlert extends AnalyticsAlert {
   categoryIcon: React.ReactNode;
@@ -57,13 +57,13 @@ interface ProcessedAlert extends AnalyticsAlert {
   isRecent: boolean;
 }
 
-interface AlertSummary {
+type AlertSummary = {
   total: number;
   critical: number;
   warning: number;
   info: number;
   acknowledged: number;
-}
+};
 
 export function AlertsPanel({ alerts, isLoading }: AlertsPanelProps) {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
@@ -211,10 +211,7 @@ export function AlertsPanel({ alerts, isLoading }: AlertsPanelProps) {
   /**
    * Handle alert acknowledgment
    */
-  const handleAcknowledge = (alertId: string) => {
-    // In a real implementation, this would call an API
-    console.log('Acknowledging alert:', alertId);
-  };
+  const handleAcknowledge = (_alertId: string) => {};
 
   /**
    * Alert card component

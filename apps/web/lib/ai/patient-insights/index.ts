@@ -118,7 +118,6 @@ export class PatientInsightsIntegration {
 
       return comprehensiveInsights;
     } catch (error) {
-      console.error('Comprehensive insights generation error:', error);
       throw new Error(
         `Failed to generate insights: ${error instanceof Error ? error.message : 'Unknown error'}`
       );
@@ -135,7 +134,6 @@ export class PatientInsightsIntegration {
 
       return await this.riskEngine.assessPatientRisk(patientId);
     } catch (error) {
-      console.error('Quick risk assessment error:', error);
       throw new Error(
         `Failed to assess risk: ${error instanceof Error ? error.message : 'Unknown error'}`
       );
@@ -158,7 +156,6 @@ export class PatientInsightsIntegration {
         treatmentContext
       );
     } catch (error) {
-      console.error('Treatment guidance error:', error);
       throw new Error(
         `Failed to generate treatment guidance: ${error instanceof Error ? error.message : 'Unknown error'}`
       );
@@ -207,7 +204,6 @@ export class PatientInsightsIntegration {
         nextCheckRecommended: this.calculateNextCheckTime(prioritizedAlerts),
       };
     } catch (error) {
-      console.error('Patient alert monitoring error:', error);
       throw new Error(
         `Failed to monitor alerts: ${error instanceof Error ? error.message : 'Unknown error'}`
       );
@@ -230,7 +226,6 @@ export class PatientInsightsIntegration {
         outcome
       );
     } catch (error) {
-      console.error('Outcome update error:', error);
       throw new Error(
         `Failed to update outcome: ${error instanceof Error ? error.message : 'Unknown error'}`
       );
@@ -257,8 +252,7 @@ export class PatientInsightsIntegration {
         uptime: this.calculateUptime(),
         performance: await this.getPerformanceMetrics(),
       };
-    } catch (error) {
-      console.error('System health check error:', error);
+    } catch (_error) {
       return {
         overall: 'degraded',
         engines: [],
@@ -355,8 +349,7 @@ export class PatientInsightsIntegration {
           request.patientId
         );
       }
-    } catch (error) {
-      console.error('Sequential insight generation error:', error);
+    } catch (_error) {
       // Continue with partial results
     }
 
@@ -553,8 +546,7 @@ export class PatientInsightsIntegration {
       // Initialize all engines if needed
       // Most engines are initialized in their constructors
       this.isInitialized = true;
-    } catch (error) {
-      console.error('Initialization error:', error);
+    } catch (_error) {
       throw new Error('Failed to initialize patient insights system');
     }
   }
@@ -596,10 +588,6 @@ export class PatientInsightsIntegration {
             break;
         }
       } else {
-        console.warn(
-          `Insight generation failed for index ${index}:`,
-          result.reason
-        );
       }
     });
 
@@ -820,60 +808,60 @@ export class PatientInsightsIntegration {
 }
 
 // Supporting type definitions
-interface InsightResults {
+type InsightResults = {
   riskAssessment: PatientRiskAssessment | null;
   treatmentRecommendations: TreatmentRecommendations | null;
   predictiveAnalytics: any | null;
   behaviorAnalysis: BehaviorAnalysis | null;
   healthTrends: HealthTrendAnalysis | null;
   learningInsights: LearningInsight[];
-}
+};
 
-interface AggregatedInsights {
+type AggregatedInsights = {
   riskAssessment: PatientRiskAssessment | null;
   treatmentRecommendations: TreatmentRecommendations | null;
   predictiveAnalytics: any | null;
   behaviorAnalysis: BehaviorAnalysis | null;
   healthTrends: HealthTrendAnalysis | null;
   learningInsights: LearningInsight[];
-}
+};
 
-interface InsightScores {
+type InsightScores = {
   riskScore: number;
   confidenceScore: number;
   completenessScore: number;
   reliabilityScore: number;
   actionabilityScore: number;
-}
+};
 
-interface InsightCorrelation {
+type InsightCorrelation = {
   type: string;
   strength: number;
   description: string;
   significance: string;
-}
+};
 
-interface SystemHealthStatus {
+type SystemHealthStatus = {
   overall: 'healthy' | 'degraded' | 'critical';
   engines: EngineHealthStatus[];
   lastChecked: Date;
   uptime: number;
   performance: PerformanceMetrics;
-}
+};
 
-interface EngineHealthStatus {
+type EngineHealthStatus = {
   name: string;
   status: 'healthy' | 'degraded' | 'critical';
   lastChecked: Date;
   responseTime: number;
   errorRate: number;
-}
+};
 
-interface PerformanceMetrics {
+type PerformanceMetrics = {
   averageResponseTime: number;
   successRate: number;
   errorRate: number;
-}
+};
 
 // Export all engine classes for direct use if needed
 export {

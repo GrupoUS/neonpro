@@ -63,7 +63,7 @@ export type FHIRResourceType =
   | 'Procedure';
 
 // Core Interoperability Interfaces
-export interface InteroperabilityProfile {
+export type InteroperabilityProfile = {
   id: string;
   name: string;
   version: string;
@@ -77,9 +77,9 @@ export interface InteroperabilityProfile {
   endpoints: InteroperabilityEndpoint[];
   mappings: DataMapping[];
   validationRules: ValidationRule[];
-}
+};
 
-export interface InteroperabilityConfiguration {
+export type InteroperabilityConfiguration = {
   baseUrl: string;
   apiVersion: string;
   authenticationMethod: 'oauth2' | 'basic' | 'api_key' | 'certificate' | 'none';
@@ -91,43 +91,43 @@ export interface InteroperabilityConfiguration {
   rateLimiting: RateLimitingConfig;
   errorHandling: ErrorHandlingConfig;
   logging: LoggingConfig;
-}
+};
 
-export interface RateLimitingConfig {
+export type RateLimitingConfig = {
   enabled: boolean;
   requestsPerMinute: number;
   requestsPerHour: number;
   burstLimit: number;
   backoffStrategy: 'linear' | 'exponential' | 'fixed';
-}
+};
 
-export interface ErrorHandlingConfig {
+export type ErrorHandlingConfig = {
   retryableErrors: string[];
   fatalErrors: string[];
   defaultTimeout: number;
   circuitBreakerEnabled: boolean;
   circuitBreakerThreshold: number;
   fallbackStrategy: 'queue' | 'discard' | 'retry_later';
-}
+};
 
-export interface LoggingConfig {
+export type LoggingConfig = {
   logLevel: 'debug' | 'info' | 'warn' | 'error';
   logRequests: boolean;
   logResponses: boolean;
   logErrors: boolean;
   logPerformance: boolean;
   sanitizeData: boolean;
-}
+};
 
-export interface InteroperabilityCompliance {
+export type InteroperabilityCompliance = {
   hl7FhirCompliance: HL7FHIRCompliance;
   dicomCompliance: DICOMCompliance;
   iheCompliance: IHECompliance;
   securityCompliance: SecurityCompliance;
   privacyCompliance: PrivacyCompliance;
-}
+};
 
-export interface HL7FHIRCompliance {
+export type HL7FHIRCompliance = {
   fhirVersion: '4.0.1' | '4.3.0' | '5.0.0';
   conformanceStatement: string;
   capabilityStatement: FHIRCapabilityStatement;
@@ -136,9 +136,9 @@ export interface HL7FHIRCompliance {
   supportedSearchParameters: FHIRSearchParameter[];
   supportedOperations: FHIROperation[];
   implementationGuides: ImplementationGuide[];
-}
+};
 
-export interface FHIRCapabilityStatement {
+export type FHIRCapabilityStatement = {
   id: string;
   url: string;
   version: string;
@@ -151,48 +151,48 @@ export interface FHIRCapabilityStatement {
   software: FHIRSoftwareInfo;
   implementation: FHIRImplementationInfo;
   rest: FHIRRestCapability[];
-}
+};
 
-export interface FHIRSoftwareInfo {
+export type FHIRSoftwareInfo = {
   name: string;
   version: string;
   releaseDate?: string;
-}
+};
 
-export interface FHIRImplementationInfo {
+export type FHIRImplementationInfo = {
   description: string;
   url?: string;
-}
+};
 
-export interface FHIRRestCapability {
+export type FHIRRestCapability = {
   mode: 'client' | 'server';
   documentation?: string;
   security: FHIRSecurityInfo;
   resource: FHIRResourceCapability[];
   interaction?: FHIRSystemInteraction[];
   operation?: FHIROperation[];
-}
+};
 
-export interface FHIRSecurityInfo {
+export type FHIRSecurityInfo = {
   cors: boolean;
   service: FHIRCodeableConcept[];
   description?: string;
-}
+};
 
-export interface FHIRCodeableConcept {
+export type FHIRCodeableConcept = {
   coding: FHIRCoding[];
   text?: string;
-}
+};
 
-export interface FHIRCoding {
+export type FHIRCoding = {
   system?: string;
   version?: string;
   code?: string;
   display?: string;
   userSelected?: boolean;
-}
+};
 
-export interface FHIRResourceCapability {
+export type FHIRResourceCapability = {
   type: FHIRResourceType;
   profile?: string;
   supportedProfile?: string[];
@@ -220,9 +220,9 @@ export interface FHIRResourceCapability {
   searchRevInclude?: string[];
   searchParam?: FHIRSearchParameter[];
   operation?: FHIROperation[];
-}
+};
 
-export interface FHIRInteraction {
+export type FHIRInteraction = {
   code:
     | 'read'
     | 'vread'
@@ -234,14 +234,14 @@ export interface FHIRInteraction {
     | 'create'
     | 'search-type';
   documentation?: string;
-}
+};
 
-export interface FHIRSystemInteraction {
+export type FHIRSystemInteraction = {
   code: 'transaction' | 'batch' | 'search-system' | 'history-system';
   documentation?: string;
-}
+};
 
-export interface FHIRSearchParameter {
+export type FHIRSearchParameter = {
   name: string;
   definition?: string;
   type:
@@ -271,15 +271,15 @@ export interface FHIRSearchParameter {
     | 'of-type'
   )[];
   chain?: string[];
-}
+};
 
-export interface FHIROperation {
+export type FHIROperation = {
   name: string;
   definition: string;
   documentation?: string;
-}
+};
 
-export interface ImplementationGuide {
+export type ImplementationGuide = {
   name: string;
   version: string;
   url: string;
@@ -288,18 +288,18 @@ export interface ImplementationGuide {
   extensions: string[];
   valuesets: string[];
   codesystems: string[];
-}
+};
 
-export interface DICOMCompliance {
+export type DICOMCompliance = {
   dicomVersion: string;
   applicationEntity: DICOMApplicationEntity;
   sopClasses: DICOMSOPClass[];
   transferSyntaxes: string[];
   characterSets: string[];
   conformanceStatement: string;
-}
+};
 
-export interface DICOMApplicationEntity {
+export type DICOMApplicationEntity = {
   aeTitle: string;
   hostname: string;
   port: number;
@@ -308,24 +308,24 @@ export interface DICOMApplicationEntity {
   maxPDULength: number;
   supportedSCUServices: string[];
   supportedSCPServices: string[];
-}
+};
 
-export interface DICOMSOPClass {
+export type DICOMSOPClass = {
   uid: string;
   name: string;
   scuSupport: boolean;
   scpSupport: boolean;
   transferSyntaxes: string[];
-}
+};
 
-export interface IHECompliance {
+export type IHECompliance = {
   profiles: IHEProfile[];
   actors: IHEActor[];
   transactions: IHETransaction[];
   contentProfiles: IHEContentProfile[];
-}
+};
 
-export interface IHEProfile {
+export type IHEProfile = {
   name: string;
   domain:
     | 'ITI'
@@ -341,16 +341,16 @@ export interface IHEProfile {
   description: string;
   actors: string[];
   transactions: string[];
-}
+};
 
-export interface IHEActor {
+export type IHEActor = {
   name: string;
   description: string;
   requiredTransactions: string[];
   optionalTransactions: string[];
-}
+};
 
-export interface IHETransaction {
+export type IHETransaction = {
   id: string;
   name: string;
   description: string;
@@ -358,68 +358,68 @@ export interface IHETransaction {
   responder: string;
   standard: string;
   profile: string;
-}
+};
 
-export interface IHEContentProfile {
+export type IHEContentProfile = {
   name: string;
   description: string;
   templateId: string;
   formatCode: string;
   classCode: string;
   typeCode: string;
-}
+};
 
-export interface SecurityCompliance {
+export type SecurityCompliance = {
   authenticationMethods: AuthenticationMethod[];
   authorizationMethods: AuthorizationMethod[];
   encryptionMethods: EncryptionMethod[];
   auditingRequired: boolean;
   accessControlPolicies: AccessControlPolicy[];
   securityLabels: SecurityLabel[];
-}
+};
 
-export interface AuthenticationMethod {
+export type AuthenticationMethod = {
   type: 'oauth2' | 'saml' | 'openid_connect' | 'basic' | 'certificate' | 'jwt';
   configuration: Record<string, any>;
   required: boolean;
-}
+};
 
-export interface AuthorizationMethod {
+export type AuthorizationMethod = {
   type: 'rbac' | 'abac' | 'oauth2_scopes' | 'smart_on_fhir';
   configuration: Record<string, any>;
   required: boolean;
-}
+};
 
-export interface EncryptionMethod {
+export type EncryptionMethod = {
   type: 'tls' | 'aes' | 'rsa' | 'ecdsa';
   version: string;
   keyLength: number;
   required: boolean;
-}
+};
 
-export interface AccessControlPolicy {
+export type AccessControlPolicy = {
   id: string;
   name: string;
   description: string;
   rules: AccessRule[];
   enforcement: 'permit' | 'deny' | 'indeterminate';
-}
+};
 
-export interface AccessRule {
+export type AccessRule = {
   resource: string;
   action: string;
   condition: string;
   effect: 'permit' | 'deny';
-}
+};
 
-export interface SecurityLabel {
+export type SecurityLabel = {
   system: string;
   code: string;
   display: string;
   definition: string;
-}
+};
 
-export interface PrivacyCompliance {
+export type PrivacyCompliance = {
   consentRequired: boolean;
   consentManagement: ConsentManagement;
   dataMinimization: boolean;
@@ -428,23 +428,23 @@ export interface PrivacyCompliance {
   anonymizationSupported: boolean;
   rightToErasure: boolean;
   dataPortability: boolean;
-}
+};
 
-export interface ConsentManagement {
+export type ConsentManagement = {
   consentFormats: string[];
   granularitySupported: boolean;
   withdrawalSupported: boolean;
   auditingEnabled: boolean;
-}
+};
 
-export interface RetentionPolicy {
+export type RetentionPolicy = {
   dataType: string;
   retentionPeriod: number; // days
   legalBasis: string;
   deletionMethod: string;
-}
+};
 
-export interface InteroperabilityEndpoint {
+export type InteroperabilityEndpoint = {
   id: string;
   name: string;
   url: string;
@@ -457,41 +457,41 @@ export interface InteroperabilityEndpoint {
   status: 'active' | 'inactive' | 'testing';
   healthCheck: HealthCheckConfig;
   monitoring: MonitoringConfig;
-}
+};
 
-export interface EndpointAuthentication {
+export type EndpointAuthentication = {
   required: boolean;
   methods: string[];
   tokenEndpoint?: string;
   scopes?: string[];
   clientCredentials?: boolean;
-}
+};
 
-export interface HealthCheckConfig {
+export type HealthCheckConfig = {
   enabled: boolean;
   interval: number; // seconds
   timeout: number; // seconds
   healthCheckUrl?: string;
   expectedStatus: number;
   retryCount: number;
-}
+};
 
-export interface MonitoringConfig {
+export type MonitoringConfig = {
   enabled: boolean;
   metricsCollection: boolean;
   alerting: boolean;
   dashboardUrl?: string;
   alertThresholds: AlertThreshold[];
-}
+};
 
-export interface AlertThreshold {
+export type AlertThreshold = {
   metric: string;
   threshold: number;
   operator: 'gt' | 'lt' | 'eq' | 'ne';
   severity: 'info' | 'warning' | 'critical';
-}
+};
 
-export interface DataMapping {
+export type DataMapping = {
   id: string;
   name: string;
   sourceStandard: InteroperabilityStandard;
@@ -501,9 +501,9 @@ export interface DataMapping {
   mappingRules: MappingRule[];
   transformations: DataTransformation[];
   validationRules: ValidationRule[];
-}
+};
 
-export interface MappingRule {
+export type MappingRule = {
   id: string;
   sourcePath: string;
   targetPath: string;
@@ -512,18 +512,18 @@ export interface MappingRule {
   required: boolean;
   defaultValue?: any;
   description: string;
-}
+};
 
-export interface DataTransformation {
+export type DataTransformation = {
   id: string;
   name: string;
   type: 'format' | 'value' | 'structure' | 'terminology';
   function: string;
   parameters: Record<string, any>;
   description: string;
-}
+};
 
-export interface ValidationRule {
+export type ValidationRule = {
   id: string;
   name: string;
   type: 'schema' | 'business' | 'terminology' | 'constraint';
@@ -531,9 +531,9 @@ export interface ValidationRule {
   severity: 'error' | 'warning' | 'info';
   message: string;
   description: string;
-}
+};
 
-export interface DataExchangeRequest {
+export type DataExchangeRequest = {
   id: string;
   timestamp: string;
   sourceSystem: string;
@@ -545,9 +545,9 @@ export interface DataExchangeRequest {
   metadata: ExchangeMetadata;
   status: ExchangeStatus;
   processing: ProcessingInfo;
-}
+};
 
-export interface ExchangeMetadata {
+export type ExchangeMetadata = {
   correlationId: string;
   messageId: string;
   sendingApplication: string;
@@ -560,9 +560,9 @@ export interface ExchangeMetadata {
   versionId: string;
   characterSet?: string;
   principalLanguageOfMessage?: string;
-}
+};
 
-export interface ExchangeStatus {
+export type ExchangeStatus = {
   status: 'pending' | 'processing' | 'completed' | 'failed' | 'cancelled';
   statusDate: string;
   statusReason?: string;
@@ -570,17 +570,17 @@ export interface ExchangeStatus {
   ackCode?: string;
   ackText?: string;
   errorDetails?: ErrorDetails[];
-}
+};
 
-export interface ErrorDetails {
+export type ErrorDetails = {
   code: string;
   severity: 'error' | 'warning' | 'info';
   description: string;
   location?: string;
   suggestedAction?: string;
-}
+};
 
-export interface ProcessingInfo {
+export type ProcessingInfo = {
   startTime: string;
   endTime?: string;
   duration?: number; // milliseconds
@@ -588,33 +588,33 @@ export interface ProcessingInfo {
   validationResults: ValidationResult[];
   transformationResults: TransformationResult[];
   deliveryResults: DeliveryResult[];
-}
+};
 
-export interface ValidationResult {
+export type ValidationResult = {
   ruleId: string;
   status: 'passed' | 'failed' | 'warning';
   message: string;
   location?: string;
   value?: any;
-}
+};
 
-export interface TransformationResult {
+export type TransformationResult = {
   transformationId: string;
   status: 'success' | 'failed' | 'partial';
   message: string;
   inputData?: any;
   outputData?: any;
   duration: number; // milliseconds
-}
+};
 
-export interface DeliveryResult {
+export type DeliveryResult = {
   endpointId: string;
   status: 'delivered' | 'failed' | 'pending';
   deliveryTime?: string;
   responseCode?: number;
   responseMessage?: string;
   retryCount: number;
-}
+};
 
 // Main Interoperability Manager Class
 export class InteroperabilityManager {
@@ -1589,7 +1589,7 @@ export class InteroperabilityManager {
 }
 
 // Additional interfaces
-export interface FHIRResource {
+export type FHIRResource = {
   resourceType: FHIRResourceType;
   id: string;
   meta?: {
@@ -1598,9 +1598,9 @@ export interface FHIRResource {
     profile?: string[];
   };
   [key: string]: any;
-}
+};
 
-export interface InteroperabilityMetrics {
+export type InteroperabilityMetrics = {
   totalExchanges: number;
   successfulExchanges: number;
   failedExchanges: number;
@@ -1612,7 +1612,7 @@ export interface InteroperabilityMetrics {
   errorSummary: Record<string, number>;
   performanceMetrics: any;
   complianceMetrics: any;
-}
+};
 
 // Validation schemas
 export const InteroperabilityValidationSchema = z.object({

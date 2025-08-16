@@ -4,7 +4,7 @@
  * Meta Developer documentation, and OAuth 2.0 security standards.
  */
 
-export interface OAuthConfig {
+export type OAuthConfig = {
   clientId: string;
   clientSecret: string;
   redirectUri: string;
@@ -13,18 +13,18 @@ export interface OAuthConfig {
   tokenUrl: string;
   refreshUrl?: string;
   apiBaseUrl: string;
-}
+};
 
-export interface OAuthTokens {
+export type OAuthTokens = {
   accessToken: string;
   refreshToken?: string;
   expiresIn: number;
   tokenType: string;
   scope?: string;
   expiresAt: Date;
-}
+};
 
-export interface OAuthUserProfile {
+export type OAuthUserProfile = {
   id: string;
   name: string;
   username?: string;
@@ -33,41 +33,41 @@ export interface OAuthUserProfile {
   isVerified?: boolean;
   followerCount?: number;
   mediaCount?: number;
-}
+};
 
-export interface OAuthState {
+export type OAuthState = {
   userId: string;
   clinicId: string;
   platform: string;
   nonce: string;
   createdAt: Date;
   redirectTo?: string;
-}
+};
 
-export interface OAuthError {
+export type OAuthError = {
   error: string;
   errorDescription?: string;
   errorUri?: string;
   state?: string;
-}
+};
 
-export interface OAuthAuthorizationCodeRequest {
+export type OAuthAuthorizationCodeRequest = {
   code: string;
   state: string;
   error?: string;
   errorDescription?: string;
-}
+};
 
-export interface TokenRefreshRequest {
+export type TokenRefreshRequest = {
   accountId: string;
   platform: string;
-}
+};
 
-export interface TokenRefreshResponse {
+export type TokenRefreshResponse = {
   success: boolean;
   tokens?: OAuthTokens;
   error?: string;
-}
+};
 
 export type SocialMediaPlatform =
   | 'instagram'
@@ -77,16 +77,16 @@ export type SocialMediaPlatform =
   | 'twitter'
   | 'linkedin';
 
-export interface PlatformCredentials {
+export type PlatformCredentials = {
   platform: SocialMediaPlatform;
   clientId: string;
   clientSecret: string;
   webhookSecret?: string;
   isEnabled: boolean;
   testMode: boolean;
-}
+};
 
-export interface EncryptedTokenData {
+export type EncryptedTokenData = {
   encryptedAccessToken: string;
   encryptedRefreshToken?: string;
   tokenMetadata: {
@@ -95,7 +95,7 @@ export interface EncryptedTokenData {
     tokenType: string;
     issuedAt: string;
   };
-}
+};
 
 export abstract class IOAuthHandler {
   abstract getAuthorizationUrl(state: OAuthState): string;

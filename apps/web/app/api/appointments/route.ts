@@ -77,8 +77,6 @@ export async function POST(request: Request) {
     );
 
     if (bookingError) {
-      console.error('Booking error:', bookingError);
-
       // Check for specific errors
       if (bookingError.message.includes('conflict')) {
         return NextResponse.json(
@@ -120,8 +118,7 @@ export async function POST(request: Request) {
     };
 
     return NextResponse.json(response, { status: 201 });
-  } catch (error) {
-    console.error('API Error:', error);
+  } catch (_error) {
     return NextResponse.json(
       {
         success: false,
@@ -258,8 +255,7 @@ export async function GET(request: Request) {
     }
 
     return NextResponse.json(appointments);
-  } catch (error) {
-    console.error('API Error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal Server Error' },
       { status: 500 }

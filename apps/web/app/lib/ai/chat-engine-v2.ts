@@ -35,8 +35,6 @@ export class NeonProAIChatEngine {
    */
   async processChat(request: AIRequest): Promise<AIResponse> {
     try {
-      console.log('[NeonProAI] Processing chat request:', request.query);
-
       // Step 1: Security validation
       const securityCheck = await this.validateSecurity(request);
       if (!securityCheck.isValid) {
@@ -61,11 +59,8 @@ export class NeonProAIChatEngine {
         enrichedContext,
         classification
       );
-
-      console.log('[NeonProAI] Chat processed successfully');
       return response;
     } catch (error) {
-      console.error('[NeonProAI] Error processing chat:', error);
       return this.createErrorResponse(error as Error);
     }
   }
@@ -139,8 +134,7 @@ export class NeonProAIChatEngine {
         suggestedActions: result.actions || [],
         affectedSystems: result.systems || ['general'],
       };
-    } catch (error) {
-      console.error('[NeonProAI] Query classification error:', error);
+    } catch (_error) {
       // Fallback classification
       return {
         epic: 'epic4' as const,
@@ -205,8 +199,7 @@ export class NeonProAIChatEngine {
       }
 
       return enriched;
-    } catch (error) {
-      console.error('[NeonProAI] Context enrichment error:', error);
+    } catch (_error) {
       return enriched;
     }
   }
@@ -243,7 +236,6 @@ export class NeonProAIChatEngine {
         actions: classification.suggestedActions,
       };
     } catch (error) {
-      console.error('[NeonProAI] Response generation error:', error);
       return this.createErrorResponse(error as Error);
     }
   }

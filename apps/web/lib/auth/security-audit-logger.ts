@@ -6,7 +6,7 @@
 import { createClient } from '@/app/utils/supabase/client';
 import { performanceTracker } from './performance-tracker';
 
-export interface SecurityEvent {
+export type SecurityEvent = {
   eventId: string;
   eventType: SecurityEventType;
   severity: SecuritySeverity;
@@ -18,7 +18,7 @@ export interface SecurityEvent {
   description: string;
   metadata: Record<string, any>;
   complianceFlags: ComplianceFlag[];
-}
+};
 
 export type SecurityEventType =
   | 'authentication_success'
@@ -54,7 +54,7 @@ export type ComplianceFlag =
   | 'retention_policy'
   | 'anonymization_required';
 
-export interface LGPDComplianceData {
+export type LGPDComplianceData = {
   dataSubject: string; // User ID
   dataController: string; // Clinic/Organization
   processingPurpose: string;
@@ -65,7 +65,7 @@ export interface LGPDComplianceData {
   consentTimestamp?: number;
   dataSharing: boolean;
   thirdParties?: string[];
-}
+};
 
 export type LGPDLegalBasis =
   | 'consent'
@@ -75,7 +75,7 @@ export type LGPDLegalBasis =
   | 'public_task'
   | 'legitimate_interests';
 
-export interface AuditLogQuery {
+export type AuditLogQuery = {
   startDate?: Date;
   endDate?: Date;
   userId?: string;
@@ -85,7 +85,7 @@ export interface AuditLogQuery {
   complianceFlags?: ComplianceFlag[];
   limit?: number;
   offset?: number;
-}
+};
 
 class SecurityAuditLogger {
   private static instance: SecurityAuditLogger;
@@ -371,7 +371,6 @@ class SecurityAuditLogger {
       const { data, error } = await queryBuilder;
 
       if (error) {
-        console.error('Audit log query failed:', error);
         return [];
       }
 
@@ -380,8 +379,7 @@ class SecurityAuditLogger {
         Date.now() - startTime
       );
       return data || [];
-    } catch (error) {
-      console.error('Audit log query error:', error);
+    } catch (_error) {
       return [];
     }
   }
@@ -528,12 +526,10 @@ class SecurityAuditLogger {
       );
 
       if (error) {
-        console.error('Audit log batch insert failed:', error);
         // Re-add events to queue for retry
         this.eventQueue.unshift(...eventsToFlush);
       }
-    } catch (error) {
-      console.error('Audit log flush error:', error);
+    } catch (_error) {
       // Re-add events to queue for retry
       this.eventQueue.unshift(...eventsToFlush);
     }

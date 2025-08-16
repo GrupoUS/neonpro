@@ -93,7 +93,6 @@ export class HealthTrendMonitor {
         analysisVersion: '1.0.0',
       };
     } catch (error) {
-      console.error('Health trend monitoring error:', error);
       throw new Error(
         `Failed to monitor health trends: ${error instanceof Error ? error.message : 'Unknown error'}`
       );
@@ -127,8 +126,7 @@ export class HealthTrendMonitor {
       this.updateTrendCache(patientId, newHealthData);
 
       return alerts;
-    } catch (error) {
-      console.error('Real-time anomaly detection error:', error);
+    } catch (_error) {
       return [];
     }
   }
@@ -171,7 +169,6 @@ export class HealthTrendMonitor {
 
       return report;
     } catch (error) {
-      console.error('Health report generation error:', error);
       throw new Error(
         `Failed to generate health report: ${error instanceof Error ? error.message : 'Unknown error'}`
       );
@@ -228,7 +225,6 @@ export class HealthTrendMonitor {
         predictionDate: new Date(),
       };
     } catch (error) {
-      console.error('Health outcome prediction error:', error);
       throw new Error(
         `Failed to predict health outcomes: ${error instanceof Error ? error.message : 'Unknown error'}`
       );
@@ -1042,32 +1038,32 @@ export class HealthTrendMonitor {
 }
 
 // Supporting types
-interface LinearTrendResult {
+type LinearTrendResult = {
   slope: number;
   intercept: number;
   rSquared: number;
-}
+};
 
-interface TrendAnomaly {
+type TrendAnomaly = {
   type: string;
   severity: number;
   description: string;
   significance: string;
-}
+};
 
-interface Anomaly {
+type Anomaly = {
   severity: number;
   description: string;
-}
+};
 
-interface HealthDataPoint {
+type HealthDataPoint = {
   type: string;
   value: number;
   timestamp: Date;
   metadata?: Record<string, any>;
-}
+};
 
-interface TrendAlertThresholds {
+type TrendAlertThresholds = {
   minimumSeverity: number;
   vitalSigns: {
     bloodPressure: {
@@ -1086,23 +1082,23 @@ interface TrendAlertThresholds {
     effectivenessThreshold: number;
     sideEffectThreshold: number;
   };
-}
+};
 
-interface TrendInsight {
+type TrendInsight = {
   type: string;
   description: string;
   confidence: number;
   recommendation: string;
-}
+};
 
-interface FutureTrendPrediction {
+type FutureTrendPrediction = {
   metric: string;
   predictedValue: number;
   confidence: number;
   timeHorizon: number;
-}
+};
 
-interface HealthTrendReport {
+type HealthTrendReport = {
   patientId: string;
   timeframe: string;
   reportPeriod: { start: Date; end: Date };
@@ -1117,9 +1113,9 @@ interface HealthTrendReport {
   recommendations: string[];
   nextReviewDate: Date;
   reportGeneratedDate: Date;
-}
+};
 
-interface HealthOutcomePrediction {
+type HealthOutcomePrediction = {
   patientId: string;
   treatmentPlanId: string;
   timeHorizon: number;
@@ -1130,32 +1126,32 @@ interface HealthOutcomePrediction {
   recommendedInterventions: string[];
   monitoringPriorities: string[];
   predictionDate: Date;
-}
+};
 
-interface HealthPrediction {
+type HealthPrediction = {
   metric: string;
   currentValue: number;
   predictedValue: number;
   confidence: number;
   trend: string;
-}
+};
 
-interface ConfidenceInterval {
+type ConfidenceInterval = {
   metric: string;
   lower: number;
   upper: number;
   confidence: number;
-}
+};
 
-interface InfluencingFactor {
+type InfluencingFactor = {
   factor: string;
   impact: number;
   description: string;
-}
+};
 
-interface Scenario {
+type Scenario = {
   name: string;
   probability: number;
   outcomes: HealthPrediction[];
   description: string;
-}
+};

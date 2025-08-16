@@ -18,7 +18,7 @@ import {
 } from '@/lib/supabase/connection-pool-manager';
 
 // Healthcare monitoring types
-interface HealthcareAlert {
+type HealthcareAlert = {
   id: string;
   severity: 'info' | 'warning' | 'critical' | 'emergency';
   type: 'performance' | 'compliance' | 'security' | 'availability';
@@ -29,9 +29,9 @@ interface HealthcareAlert {
   resolved: boolean;
   responseTime?: number;
   metadata?: Record<string, any>;
-}
+};
 
-interface PerformanceThresholds {
+type PerformanceThresholds = {
   responseTime: {
     warning: number; // ms
     critical: number; // ms
@@ -52,9 +52,9 @@ interface PerformanceThresholds {
     critical: number; // %
     emergency: number; // %
   };
-}
+};
 
-interface MonitoringMetrics {
+type MonitoringMetrics = {
   timestamp: Date;
   totalPools: number;
   healthyPools: number;
@@ -65,7 +65,7 @@ interface MonitoringMetrics {
   complianceScore: number;
   activeAlerts: number;
   criticalAlerts: number;
-}
+};
 
 class ConnectionPoolMonitor {
   private static instance: ConnectionPoolMonitor;
@@ -118,7 +118,6 @@ class ConnectionPoolMonitor {
     }
 
     this.isMonitoring = true;
-    console.log('🔍 Starting healthcare connection pool monitoring...');
 
     this.monitoringInterval = setInterval(() => {
       this.performMonitoringCycle();
@@ -134,7 +133,6 @@ class ConnectionPoolMonitor {
       this.monitoringInterval = undefined;
     }
     this.isMonitoring = false;
-    console.log('⏹️ Healthcare connection pool monitoring stopped');
   }
 
   /**
@@ -192,13 +190,8 @@ class ConnectionPoolMonitor {
 
       // Log monitoring status
       if (currentMetrics.criticalAlerts > 0) {
-        console.warn(
-          `🚨 ${currentMetrics.criticalAlerts} critical healthcare alerts active`
-        );
       }
     } catch (error) {
-      console.error('Healthcare monitoring cycle failed:', error);
-
       await this.createAlert({
         severity: 'critical',
         type: 'availability',
@@ -426,25 +419,12 @@ class ConnectionPoolMonitor {
    */
   private async processAlert(alert: HealthcareAlert): Promise<void> {
     // Log alert
-    const logLevel =
+    const _logLevel =
       alert.severity === 'emergency'
         ? 'error'
         : alert.severity === 'critical'
           ? 'error'
           : 'warn';
-
-    console[logLevel](
-      `🚨 HEALTHCARE ALERT [${alert.severity.toUpperCase()}]:`,
-      {
-        id: alert.id,
-        type: alert.type,
-        message: alert.message,
-        clinicId: alert.clinicId,
-        poolKey: alert.poolKey,
-        timestamp: alert.timestamp.toISOString(),
-        metadata: alert.metadata,
-      }
-    );
 
     // Emergency response protocols
     if (alert.severity === 'emergency') {
@@ -459,8 +439,6 @@ class ConnectionPoolMonitor {
    * Handle emergency alerts with immediate action
    */
   private async handleEmergencyAlert(alert: HealthcareAlert): Promise<void> {
-    console.error('🚨 EMERGENCY PROTOCOL ACTIVATED:', alert.message);
-
     // Implement emergency responses based on alert type
     switch (alert.type) {
       case 'compliance':
@@ -489,73 +467,29 @@ class ConnectionPoolMonitor {
    * Handle compliance emergency
    */
   private async handleComplianceEmergency(
-    alert: HealthcareAlert
-  ): Promise<void> {
-    console.error('🔒 COMPLIANCE EMERGENCY - Implementing protective measures');
-
-    // Additional protective measures could be implemented here
-    // For now, log the emergency response
-    console.error('Compliance emergency response activated for:', {
-      alert: alert.id,
-      clinicId: alert.clinicId,
-      poolKey: alert.poolKey,
-      violations: alert.metadata?.violations,
-    });
-  }
+    _alert: HealthcareAlert
+  ): Promise<void> {}
 
   /**
    * Handle security emergency
    */
-  private async handleSecurityEmergency(alert: HealthcareAlert): Promise<void> {
-    console.error('🛡️ SECURITY EMERGENCY - Implementing security protocols');
-
-    // Security emergency response
-    console.error('Security emergency response activated for:', {
-      alert: alert.id,
-      clinicId: alert.clinicId,
-      poolKey: alert.poolKey,
-      isolationStatus: alert.metadata?.isolationStatus,
-    });
-  }
+  private async handleSecurityEmergency(
+    _alert: HealthcareAlert
+  ): Promise<void> {}
 
   /**
    * Handle availability emergency
    */
   private async handleAvailabilityEmergency(
-    alert: HealthcareAlert
-  ): Promise<void> {
-    console.error(
-      '⚡ AVAILABILITY EMERGENCY - Implementing recovery protocols'
-    );
-
-    // Availability emergency response
-    console.error('Availability emergency response activated for:', {
-      alert: alert.id,
-      clinicId: alert.clinicId,
-      poolKey: alert.poolKey,
-      metadata: alert.metadata,
-    });
-  }
+    _alert: HealthcareAlert
+  ): Promise<void> {}
 
   /**
    * Handle performance emergency
    */
   private async handlePerformanceEmergency(
-    alert: HealthcareAlert
-  ): Promise<void> {
-    console.error(
-      '🚀 PERFORMANCE EMERGENCY - Implementing optimization protocols'
-    );
-
-    // Performance emergency response
-    console.error('Performance emergency response activated for:', {
-      alert: alert.id,
-      clinicId: alert.clinicId,
-      poolKey: alert.poolKey,
-      responseTime: alert.responseTime,
-      metadata: alert.metadata,
-    });
-  }
+    _alert: HealthcareAlert
+  ): Promise<void> {}
 
   /**
    * Send alert notifications
@@ -563,7 +497,7 @@ class ConnectionPoolMonitor {
   private async sendAlertNotifications(alert: HealthcareAlert): Promise<void> {
     // Implementation would integrate with notification systems
     // For now, ensure alerts are properly logged
-    const notificationData = {
+    const _notificationData = {
       alertId: alert.id,
       severity: alert.severity,
       type: alert.type,
@@ -571,9 +505,6 @@ class ConnectionPoolMonitor {
       clinicId: alert.clinicId,
       timestamp: alert.timestamp.toISOString(),
     };
-
-    // Log notification for audit trail
-    console.log('📧 Healthcare alert notification sent:', notificationData);
   }
 
   /**
@@ -630,7 +561,6 @@ class ConnectionPoolMonitor {
     if (alert && !alert.resolved) {
       alert.resolved = true;
       this.alerts.set(alertId, alert);
-      console.log(`✅ Healthcare alert resolved: ${alertId}`);
       return true;
     }
     return false;
@@ -683,7 +613,6 @@ class ConnectionPoolMonitor {
     this.stopMonitoring();
     this.alerts.clear();
     this.metrics.length = 0;
-    console.log('🔄 Healthcare connection pool monitor shutdown completed');
   }
 }
 

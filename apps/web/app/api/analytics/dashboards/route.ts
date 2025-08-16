@@ -108,7 +108,6 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('Error retrieving dashboards:', error);
     return NextResponse.json(
       {
         success: false,
@@ -199,8 +198,6 @@ export async function POST(request: NextRequest) {
       message: 'Dashboard created successfully',
     });
   } catch (error) {
-    console.error('Error creating dashboard:', error);
-
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {

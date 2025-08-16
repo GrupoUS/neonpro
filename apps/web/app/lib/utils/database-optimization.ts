@@ -31,13 +31,13 @@ const DB_CONFIG = {
 // PERFORMANCE MONITORING
 // =====================================================
 
-interface QueryMetrics {
+type QueryMetrics = {
   query: string;
   duration: number;
   rows: number;
   cached: boolean;
   timestamp: Date;
-}
+};
 
 class QueryPerformanceMonitor {
   private metrics: QueryMetrics[] = [];
@@ -53,21 +53,10 @@ class QueryPerformanceMonitor {
 
     // Log slow queries
     if (metrics.duration > DB_CONFIG.slowQueryThreshold) {
-      console.warn('Slow query detected:', {
-        query: metrics.query.substring(0, 100),
-        duration: `${metrics.duration}ms`,
-        rows: metrics.rows,
-      });
     }
 
     // Log all queries in development
     if (DB_CONFIG.enableQueryLogging) {
-      console.log('Query executed:', {
-        query: metrics.query.substring(0, 100),
-        duration: `${metrics.duration}ms`,
-        rows: metrics.rows,
-        cached: metrics.cached,
-      });
     }
   }
 
@@ -528,9 +517,7 @@ export class StockAlertQueries {
         if (alert) {
           alerts.push(alert);
         }
-      } catch (error) {
-        console.error(`Failed to evaluate config ${config.id}:`, error);
-      }
+      } catch (_error) {}
     }
 
     return alerts;

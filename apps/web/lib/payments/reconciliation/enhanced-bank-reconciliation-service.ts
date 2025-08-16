@@ -122,7 +122,7 @@ export const ReconciliationMatchSchema = z.object({
 
 export type ReconciliationMatch = z.infer<typeof ReconciliationMatchSchema>;
 
-export interface EnhancedReconciliationResult {
+export type EnhancedReconciliationResult = {
   total_imported: number;
   total_matched: number;
   total_unmatched: number;
@@ -145,7 +145,7 @@ export interface EnhancedReconciliationResult {
     treatment_matches: number;
     insurance_matches: number;
   };
-}
+};
 
 // Enhanced CSV mapping with FEBRABAN bank codes support
 const enhancedCsvMappingSchema = z.object({
@@ -333,7 +333,6 @@ export class EnhancedBankReconciliationService {
 
       return result;
     } catch (error) {
-      console.error('Enhanced reconciliation error:', error);
       throw new Error(
         `Failed to perform enhanced bank reconciliation: ${error.message}`
       );
@@ -359,7 +358,6 @@ export class EnhancedBankReconciliationService {
         );
 
         if (!(date && isValid(date))) {
-          console.warn(`Invalid date: ${dateStr}`);
           continue;
         }
 
@@ -447,9 +445,7 @@ export class EnhancedBankReconciliationService {
         // Validate transaction
         EnhancedBankTransactionSchema.parse(transaction);
         transactions.push(transaction);
-      } catch (error) {
-        console.warn('Failed to process record:', record, error);
-      }
+      } catch (_error) {}
     }
 
     return transactions;
@@ -503,8 +499,7 @@ export class EnhancedBankReconciliationService {
         ...payment,
         reconciliation_status: 'pending' as const,
       }));
-    } catch (error) {
-      console.error('Error fetching payments for matching:', error);
+    } catch (_error) {
       return [];
     }
   }
@@ -934,57 +929,50 @@ export class EnhancedBankReconciliationService {
     _bankAccountId: string,
     userId: string
   ): Promise<void> {
-    try {
-      // Save bank transactions
-      const { error: txError } = await supabase
-        .from('bank_transactions')
+    // Save bank transactions
+    const { error: txError } = await supabase.from('bank_transactions').upsert(
+      transactions.map((tx) => ({
+        ...tx,
+        created_by: userId,
+        updated_at: new Date().toISOString(),
+      })),
+      { onConflict: 'external_id,bank_account_id' }
+    );
+
+    if (txError) {
+      throw txError;
+    }
+
+    // Save reconciliation matches
+    if (matches.length > 0) {
+      const { error: matchError } = await supabase
+        .from('reconciliation_matches')
         .upsert(
-          transactions.map((tx) => ({
-            ...tx,
+          matches.map((match) => ({
+            ...match,
             created_by: userId,
-            updated_at: new Date().toISOString(),
+            created_at: new Date().toISOString(),
           })),
-          { onConflict: 'external_id,bank_account_id' }
+          { onConflict: 'bank_transaction_id,payment_id' }
         );
 
-      if (txError) {
-        throw txError;
+      if (matchError) {
+        throw matchError;
       }
+    }
 
-      // Save reconciliation matches
-      if (matches.length > 0) {
-        const { error: matchError } = await supabase
-          .from('reconciliation_matches')
-          .upsert(
-            matches.map((match) => ({
-              ...match,
-              created_by: userId,
-              created_at: new Date().toISOString(),
-            })),
-            { onConflict: 'bank_transaction_id,payment_id' }
-          );
-
-        if (matchError) {
-          throw matchError;
-        }
-      }
-
-      // Update payment reconciliation status
-      for (const match of matches.filter(
-        (m) => m.validation_status === 'approved'
-      )) {
-        await supabase
-          .from('payments')
-          .update({
-            reconciliation_status: 'matched',
-            bank_transaction_id: match.bank_transaction_id,
-            updated_at: new Date().toISOString(),
-          })
-          .eq('id', match.payment_id);
-      }
-    } catch (error) {
-      console.error('Error saving transactions and matches:', error);
-      throw error;
+    // Update payment reconciliation status
+    for (const match of matches.filter(
+      (m) => m.validation_status === 'approved'
+    )) {
+      await supabase
+        .from('payments')
+        .update({
+          reconciliation_status: 'matched',
+          bank_transaction_id: match.bank_transaction_id,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', match.payment_id);
     }
   }
 

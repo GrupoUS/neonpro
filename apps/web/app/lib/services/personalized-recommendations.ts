@@ -27,7 +27,7 @@ import type {
 import { createClient } from '../../utils/supabase/server';
 
 // Query interfaces for this service
-interface RecommendationQuery {
+type RecommendationQuery = {
   patient_id?: string;
   provider_id?: string;
   status?: string;
@@ -36,9 +36,9 @@ interface RecommendationQuery {
   offset: number;
   sort_by: string;
   sort_order: 'asc' | 'desc';
-}
+};
 
-interface FeedbackQuery {
+type FeedbackQuery = {
   recommendation_id?: string;
   provider_id?: string;
   feedback_type?: string;
@@ -47,9 +47,9 @@ interface FeedbackQuery {
   offset: number;
   sort_by: string;
   sort_order: 'asc' | 'desc';
-}
+};
 
-interface PerformanceQuery {
+type PerformanceQuery = {
   recommendation_id?: string;
   patient_id?: string;
   date_from?: string;
@@ -58,7 +58,7 @@ interface PerformanceQuery {
   min_effectiveness?: number;
   limit: number;
   offset: number;
-}
+};
 
 export class PersonalizedRecommendationService {
   // Recommendation Profile Management

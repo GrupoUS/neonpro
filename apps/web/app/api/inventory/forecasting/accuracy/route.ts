@@ -106,8 +106,7 @@ export async function GET(request: NextRequest) {
         ),
       },
     });
-  } catch (error) {
-    console.error('Accuracy analysis error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to analyze forecast accuracy' },
       { status: 500 }
@@ -148,8 +147,7 @@ export async function POST(request: NextRequest) {
       success: true,
       data,
     });
-  } catch (error) {
-    console.error('Failed to log forecast accuracy:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to log accuracy data' },
       { status: 500 }

@@ -81,7 +81,7 @@ type DelinquencyRule = z.infer<typeof DelinquencyRuleSchema>;
 type PaymentPlan = z.infer<typeof PaymentPlanSchema>;
 type NotificationRecord = z.infer<typeof NotificationSchema>;
 
-interface OverduePayment {
+type OverduePayment = {
   id: string;
   customerId: string;
   customerName: string;
@@ -92,18 +92,18 @@ interface OverduePayment {
   type: 'invoice' | 'installment';
   status: string;
   riskLevel: 'low' | 'medium' | 'high' | 'critical';
-}
+};
 
-interface DelinquencyStats {
+type DelinquencyStats = {
   totalOverdue: number;
   totalAmount: number;
   averageDaysOverdue: number;
   riskDistribution: Record<string, number>;
   recoveryRate: number;
   collectionEfficiency: number;
-}
+};
 
-interface CollectionWorkflow {
+type CollectionWorkflow = {
   customerId: string;
   currentStage: string;
   nextAction: {
@@ -116,7 +116,7 @@ interface CollectionWorkflow {
     date: Date;
     result: string;
   }>;
-}
+};
 
 /**
  * Delinquency Management System
@@ -150,33 +150,32 @@ export class DelinquencyManager {
    * Detect and process overdue payments
    */
   async detectOverduePayments(): Promise<OverduePayment[]> {
-    try {
-      // Get overdue invoices
-      const { data: overdueInvoices, error: invoiceError } = await this.supabase
-        .from('receipts_invoices')
-        .select(
-          `
+    // Get overdue invoices
+    const { data: overdueInvoices, error: invoiceError } = await this.supabase
+      .from('receipts_invoices')
+      .select(
+        `
           id,
           number,
           data,
           customer_id,
           customers!inner(name, email, risk_profile)
         `
-        )
-        .eq('type', 'invoice')
-        .in('status', ['sent', 'overdue'])
-        .lt('data->>dueDate', new Date().toISOString());
+      )
+      .eq('type', 'invoice')
+      .in('status', ['sent', 'overdue'])
+      .lt('data->>dueDate', new Date().toISOString());
 
-      if (invoiceError) {
-        throw invoiceError;
-      }
+    if (invoiceError) {
+      throw invoiceError;
+    }
 
-      // Get overdue installments
-      const { data: overdueInstallments, error: installmentError } =
-        await this.supabase
-          .from('payment_installments')
-          .select(
-            `
+    // Get overdue installments
+    const { data: overdueInstallments, error: installmentError } =
+      await this.supabase
+        .from('payment_installments')
+        .select(
+          `
           id,
           amount,
           due_date,
@@ -186,90 +185,81 @@ export class DelinquencyManager {
             customers!inner(name, email, risk_profile)
           )
         `
-          )
-          .eq('status', 'pending')
-          .lt('due_date', new Date().toISOString());
+        )
+        .eq('status', 'pending')
+        .lt('due_date', new Date().toISOString());
 
-      if (installmentError) {
-        throw installmentError;
-      }
-
-      const overduePayments: OverduePayment[] = [];
-
-      // Process overdue invoices
-      overdueInvoices?.forEach((invoice: any) => {
-        const dueDate = new Date(invoice.data.dueDate);
-        const daysOverdue = differenceInDays(new Date(), dueDate);
-
-        overduePayments.push({
-          id: invoice.id,
-          customerId: invoice.customer_id,
-          customerName: invoice.customers.name,
-          customerEmail: invoice.customers.email,
-          amount: Number.parseFloat(invoice.data.total),
-          dueDate,
-          daysOverdue,
-          type: 'invoice',
-          status: 'overdue',
-          riskLevel: this.calculateRiskLevel(
-            invoice.customers.risk_profile,
-            daysOverdue
-          ),
-        });
-      });
-
-      // Process overdue installments
-      overdueInstallments?.forEach((installment: any) => {
-        const dueDate = new Date(installment.due_date);
-        const daysOverdue = differenceInDays(new Date(), dueDate);
-
-        overduePayments.push({
-          id: installment.id,
-          customerId: installment.payment_plans.customer_id,
-          customerName: installment.payment_plans.customers.name,
-          customerEmail: installment.payment_plans.customers.email,
-          amount: installment.amount,
-          dueDate,
-          daysOverdue,
-          type: 'installment',
-          status: 'overdue',
-          riskLevel: this.calculateRiskLevel(
-            installment.payment_plans.customers.risk_profile,
-            daysOverdue
-          ),
-        });
-      });
-
-      // Update overdue status in database
-      await this.updateOverdueStatus(overduePayments);
-
-      return overduePayments;
-    } catch (error) {
-      console.error('Error detecting overdue payments:', error);
-      throw error;
+    if (installmentError) {
+      throw installmentError;
     }
+
+    const overduePayments: OverduePayment[] = [];
+
+    // Process overdue invoices
+    overdueInvoices?.forEach((invoice: any) => {
+      const dueDate = new Date(invoice.data.dueDate);
+      const daysOverdue = differenceInDays(new Date(), dueDate);
+
+      overduePayments.push({
+        id: invoice.id,
+        customerId: invoice.customer_id,
+        customerName: invoice.customers.name,
+        customerEmail: invoice.customers.email,
+        amount: Number.parseFloat(invoice.data.total),
+        dueDate,
+        daysOverdue,
+        type: 'invoice',
+        status: 'overdue',
+        riskLevel: this.calculateRiskLevel(
+          invoice.customers.risk_profile,
+          daysOverdue
+        ),
+      });
+    });
+
+    // Process overdue installments
+    overdueInstallments?.forEach((installment: any) => {
+      const dueDate = new Date(installment.due_date);
+      const daysOverdue = differenceInDays(new Date(), dueDate);
+
+      overduePayments.push({
+        id: installment.id,
+        customerId: installment.payment_plans.customer_id,
+        customerName: installment.payment_plans.customers.name,
+        customerEmail: installment.payment_plans.customers.email,
+        amount: installment.amount,
+        dueDate,
+        daysOverdue,
+        type: 'installment',
+        status: 'overdue',
+        riskLevel: this.calculateRiskLevel(
+          installment.payment_plans.customers.risk_profile,
+          daysOverdue
+        ),
+      });
+    });
+
+    // Update overdue status in database
+    await this.updateOverdueStatus(overduePayments);
+
+    return overduePayments;
   }
 
   /**
    * Process collection workflows for overdue payments
    */
   async processCollectionWorkflows(): Promise<void> {
-    try {
-      const overduePayments = await this.detectOverduePayments();
-      const rules = await this.getActiveDelinquencyRules();
+    const overduePayments = await this.detectOverduePayments();
+    const rules = await this.getActiveDelinquencyRules();
 
-      for (const payment of overduePayments) {
-        const applicableRules = rules.filter((rule) =>
-          this.isRuleApplicable(rule, payment)
-        );
+    for (const payment of overduePayments) {
+      const applicableRules = rules.filter((rule) =>
+        this.isRuleApplicable(rule, payment)
+      );
 
-        for (const rule of applicableRules) {
-          await this.executeRule(rule, payment);
-        }
+      for (const rule of applicableRules) {
+        await this.executeRule(rule, payment);
       }
-    } catch (error) {
-      console.error('Error processing collection workflows:', error);
-      throw error;
     }
   }
 
@@ -277,91 +267,86 @@ export class DelinquencyManager {
    * Calculate customer risk score
    */
   async calculateRiskScore(customerId: string): Promise<CustomerRiskProfile> {
-    try {
-      // Get payment history
-      const { data: paymentHistory, error } = await this.supabase.rpc(
-        'get_customer_payment_history',
-        { customer_id: customerId }
-      );
+    // Get payment history
+    const { data: paymentHistory, error } = await this.supabase.rpc(
+      'get_customer_payment_history',
+      { customer_id: customerId }
+    );
 
-      if (error) {
-        throw error;
-      }
-
-      const totalPayments = paymentHistory?.total_payments || 0;
-      const onTimePayments = paymentHistory?.on_time_payments || 0;
-      const latePayments = paymentHistory?.late_payments || 0;
-      const averageDelayDays = paymentHistory?.average_delay_days || 0;
-
-      // Calculate risk score (0-1000)
-      let riskScore = 0;
-
-      // Payment punctuality (40% weight)
-      const punctualityScore =
-        totalPayments > 0 ? (onTimePayments / totalPayments) * 400 : 200;
-      riskScore += 400 - punctualityScore;
-
-      // Average delay (30% weight)
-      const delayScore = Math.min(averageDelayDays * 10, 300);
-      riskScore += delayScore;
-
-      // Payment frequency (20% weight)
-      const frequencyScore =
-        totalPayments < 5 ? 200 : Math.max(0, 200 - totalPayments * 5);
-      riskScore += frequencyScore;
-
-      // Recent activity (10% weight)
-      const lastPaymentDate = paymentHistory?.last_payment_date
-        ? new Date(paymentHistory.last_payment_date)
-        : null;
-
-      const daysSinceLastPayment = lastPaymentDate
-        ? differenceInDays(new Date(), lastPaymentDate)
-        : 365;
-
-      const activityScore = Math.min(daysSinceLastPayment * 0.3, 100);
-      riskScore += activityScore;
-
-      // Determine risk level
-      let riskLevel: 'low' | 'medium' | 'high' | 'critical';
-      if (riskScore <= 250) {
-        riskLevel = 'low';
-      } else if (riskScore <= 500) {
-        riskLevel = 'medium';
-      } else if (riskScore <= 750) {
-        riskLevel = 'high';
-      } else {
-        riskLevel = 'critical';
-      }
-
-      const riskProfile: CustomerRiskProfile = {
-        customerId,
-        riskScore: Math.round(riskScore),
-        riskLevel,
-        paymentHistory: {
-          totalPayments,
-          onTimePayments,
-          latePayments,
-          averageDelayDays,
-          lastPaymentDate,
-        },
-        lastUpdated: new Date(),
-      };
-
-      // Save risk profile
-      await this.supabase.from('customer_risk_profiles').upsert({
-        customer_id: customerId,
-        risk_score: riskProfile.riskScore,
-        risk_level: riskProfile.riskLevel,
-        payment_history: riskProfile.paymentHistory,
-        last_updated: riskProfile.lastUpdated.toISOString(),
-      });
-
-      return riskProfile;
-    } catch (error) {
-      console.error('Error calculating risk score:', error);
+    if (error) {
       throw error;
     }
+
+    const totalPayments = paymentHistory?.total_payments || 0;
+    const onTimePayments = paymentHistory?.on_time_payments || 0;
+    const latePayments = paymentHistory?.late_payments || 0;
+    const averageDelayDays = paymentHistory?.average_delay_days || 0;
+
+    // Calculate risk score (0-1000)
+    let riskScore = 0;
+
+    // Payment punctuality (40% weight)
+    const punctualityScore =
+      totalPayments > 0 ? (onTimePayments / totalPayments) * 400 : 200;
+    riskScore += 400 - punctualityScore;
+
+    // Average delay (30% weight)
+    const delayScore = Math.min(averageDelayDays * 10, 300);
+    riskScore += delayScore;
+
+    // Payment frequency (20% weight)
+    const frequencyScore =
+      totalPayments < 5 ? 200 : Math.max(0, 200 - totalPayments * 5);
+    riskScore += frequencyScore;
+
+    // Recent activity (10% weight)
+    const lastPaymentDate = paymentHistory?.last_payment_date
+      ? new Date(paymentHistory.last_payment_date)
+      : null;
+
+    const daysSinceLastPayment = lastPaymentDate
+      ? differenceInDays(new Date(), lastPaymentDate)
+      : 365;
+
+    const activityScore = Math.min(daysSinceLastPayment * 0.3, 100);
+    riskScore += activityScore;
+
+    // Determine risk level
+    let riskLevel: 'low' | 'medium' | 'high' | 'critical';
+    if (riskScore <= 250) {
+      riskLevel = 'low';
+    } else if (riskScore <= 500) {
+      riskLevel = 'medium';
+    } else if (riskScore <= 750) {
+      riskLevel = 'high';
+    } else {
+      riskLevel = 'critical';
+    }
+
+    const riskProfile: CustomerRiskProfile = {
+      customerId,
+      riskScore: Math.round(riskScore),
+      riskLevel,
+      paymentHistory: {
+        totalPayments,
+        onTimePayments,
+        latePayments,
+        averageDelayDays,
+        lastPaymentDate,
+      },
+      lastUpdated: new Date(),
+    };
+
+    // Save risk profile
+    await this.supabase.from('customer_risk_profiles').upsert({
+      customer_id: customerId,
+      risk_score: riskProfile.riskScore,
+      risk_level: riskProfile.riskLevel,
+      payment_history: riskProfile.paymentHistory,
+      last_updated: riskProfile.lastUpdated.toISOString(),
+    });
+
+    return riskProfile;
   }
 
   /**
@@ -370,43 +355,38 @@ export class DelinquencyManager {
   async createPaymentPlan(
     planData: Omit<PaymentPlan, 'status'>
   ): Promise<PaymentPlan> {
-    try {
-      const validatedData = PaymentPlanSchema.omit({ status: true }).parse(
-        planData
-      );
+    const validatedData = PaymentPlanSchema.omit({ status: true }).parse(
+      planData
+    );
 
-      const paymentPlan: PaymentPlan = {
-        ...validatedData,
-        status: 'pending',
-      };
+    const paymentPlan: PaymentPlan = {
+      ...validatedData,
+      status: 'pending',
+    };
 
-      const { data, error } = await this.supabase
-        .from('delinquency_payment_plans')
-        .insert({
-          customer_id: paymentPlan.customerId,
-          original_amount: paymentPlan.originalAmount,
-          negotiated_amount: paymentPlan.negotiatedAmount,
-          installments: paymentPlan.installments,
-          installment_amount: paymentPlan.installmentAmount,
-          start_date: paymentPlan.startDate.toISOString(),
-          end_date: paymentPlan.endDate.toISOString(),
-          interest_rate: paymentPlan.interestRate,
-          discount_amount: paymentPlan.discountAmount,
-          terms: paymentPlan.terms,
-          status: paymentPlan.status,
-        })
-        .select()
-        .single();
+    const { data, error } = await this.supabase
+      .from('delinquency_payment_plans')
+      .insert({
+        customer_id: paymentPlan.customerId,
+        original_amount: paymentPlan.originalAmount,
+        negotiated_amount: paymentPlan.negotiatedAmount,
+        installments: paymentPlan.installments,
+        installment_amount: paymentPlan.installmentAmount,
+        start_date: paymentPlan.startDate.toISOString(),
+        end_date: paymentPlan.endDate.toISOString(),
+        interest_rate: paymentPlan.interestRate,
+        discount_amount: paymentPlan.discountAmount,
+        terms: paymentPlan.terms,
+        status: paymentPlan.status,
+      })
+      .select()
+      .single();
 
-      if (error) {
-        throw error;
-      }
-
-      return paymentPlan;
-    } catch (error) {
-      console.error('Error creating payment plan:', error);
+    if (error) {
       throw error;
     }
+
+    return paymentPlan;
   }
 
   /**
@@ -466,8 +446,7 @@ export class DelinquencyManager {
       });
 
       return success;
-    } catch (error) {
-      console.error('Error sending notification:', error);
+    } catch (_error) {
       return false;
     }
   }
@@ -479,31 +458,26 @@ export class DelinquencyManager {
     from: Date;
     to: Date;
   }): Promise<DelinquencyStats> {
-    try {
-      const { data, error } = await this.supabase.rpc(
-        'get_delinquency_statistics',
-        {
-          start_date: dateRange?.from?.toISOString(),
-          end_date: dateRange?.to?.toISOString(),
-        }
-      );
-
-      if (error) {
-        throw error;
+    const { data, error } = await this.supabase.rpc(
+      'get_delinquency_statistics',
+      {
+        start_date: dateRange?.from?.toISOString(),
+        end_date: dateRange?.to?.toISOString(),
       }
+    );
 
-      return {
-        totalOverdue: data?.total_overdue || 0,
-        totalAmount: data?.total_amount || 0,
-        averageDaysOverdue: data?.average_days_overdue || 0,
-        riskDistribution: data?.risk_distribution || {},
-        recoveryRate: data?.recovery_rate || 0,
-        collectionEfficiency: data?.collection_efficiency || 0,
-      };
-    } catch (error) {
-      console.error('Error getting delinquency stats:', error);
+    if (error) {
       throw error;
     }
+
+    return {
+      totalOverdue: data?.total_overdue || 0,
+      totalAmount: data?.total_amount || 0,
+      averageDaysOverdue: data?.average_days_overdue || 0,
+      riskDistribution: data?.risk_distribution || {},
+      recoveryRate: data?.recovery_rate || 0,
+      collectionEfficiency: data?.collection_efficiency || 0,
+    };
   }
 
   /**
@@ -538,8 +512,7 @@ export class DelinquencyManager {
         },
         history: data.action_history || [],
       };
-    } catch (error) {
-      console.error('Error getting collection workflow:', error);
+    } catch (_error) {
       return null;
     }
   }
@@ -699,20 +672,16 @@ export class DelinquencyManager {
       });
 
       return true;
-    } catch (error) {
-      console.error('Error sending email notification:', error);
+    } catch (_error) {
       return false;
     }
   }
 
   private async sendSMSNotification(
-    customer: any,
+    _customer: any,
     _template: any,
     _metadata?: Record<string, any>
   ): Promise<boolean> {
-    // Placeholder for SMS integration
-    // Would integrate with services like Twilio, AWS SNS, etc.
-    console.log('SMS notification would be sent to:', customer.phone);
     return true;
   }
 

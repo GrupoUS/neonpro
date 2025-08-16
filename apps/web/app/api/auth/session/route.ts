@@ -104,8 +104,7 @@ export async function GET(request: NextRequest) {
       securityScore,
       timestamp: new Date().toISOString(),
     });
-  } catch (error) {
-    console.error('Session GET error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -226,8 +225,7 @@ export async function POST(request: NextRequest) {
       default:
         return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
     }
-  } catch (error) {
-    console.error('Session POST error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -287,8 +285,7 @@ export async function PUT(request: NextRequest) {
       message: 'Session updated successfully',
       timestamp: new Date().toISOString(),
     });
-  } catch (error) {
-    console.error('Session PUT error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -348,8 +345,7 @@ export async function DELETE(request: NextRequest) {
       message: 'Session terminated successfully',
       timestamp: new Date().toISOString(),
     });
-  } catch (error) {
-    console.error('Session DELETE error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

@@ -27,11 +27,11 @@ const UpdateLayoutSchema = z.object({
     .optional(),
 });
 
-interface RouteParams {
+type RouteParams = {
   params: {
     id: string;
   };
-}
+};
 
 // GET /api/dashboard/executive/layouts/[id]
 export async function GET(_request: NextRequest, { params }: RouteParams) {
@@ -75,8 +75,7 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
     }
 
     return NextResponse.json({ layout });
-  } catch (error) {
-    console.error('Error fetching layout:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
       { status: 500 }
@@ -140,8 +139,6 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
         { status: 400 }
       );
     }
-
-    console.error('Error updating layout:', error);
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
       { status: 500 }
@@ -202,8 +199,7 @@ export async function DELETE(_request: NextRequest, { params }: RouteParams) {
     await layoutEngine.deleteLayout(params.id);
 
     return NextResponse.json({ success: true });
-  } catch (error) {
-    console.error('Error deleting layout:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
       { status: 500 }

@@ -7,7 +7,7 @@ export type ExportType =
   | 'dashboard'
   | 'realtime';
 
-export interface ExportOptions {
+export type ExportOptions = {
   format: ExportFormat;
   type: ExportType;
   title?: string;
@@ -22,9 +22,9 @@ export interface ExportOptions {
   filters?: Record<string, any>;
   compression?: boolean;
   password?: string;
-}
+};
 
-export interface ExportResponse {
+export type ExportResponse = {
   success: boolean;
   data?: any;
   filename?: string;
@@ -32,10 +32,10 @@ export interface ExportResponse {
   size?: number;
   downloadUrl?: string;
   error?: string;
-}
+};
 
 // Cohort Data Structures
-export interface CohortMetric {
+export type CohortMetric = {
   cohortId: string;
   period: string | number;
   totalUsers: number;
@@ -43,9 +43,9 @@ export interface CohortMetric {
   revenue: number;
   churnRate: number;
   timestamp?: string;
-}
+};
 
-export interface CohortData {
+export type CohortData = {
   metrics: CohortMetric[];
   insights?: string[];
   statistics?: {
@@ -55,18 +55,18 @@ export interface CohortData {
     trend: string;
   };
   heatmapData?: any[];
-}
+};
 
 // Forecast Data Structures
-export interface ForecastPrediction {
+export type ForecastPrediction = {
   date: string;
   value: number;
   lowerBound?: number;
   upperBound?: number;
   confidence?: number;
-}
+};
 
-export interface ForecastData {
+export type ForecastData = {
   model: string;
   predictions: ForecastPrediction[];
   evaluation?: {
@@ -83,19 +83,19 @@ export interface ForecastData {
       probability: number;
     }
   >;
-}
+};
 
 // Insights Data Structures
-export interface Correlation {
+export type Correlation = {
   metric1: string;
   metric2: string;
   correlation: number;
   significance: string;
   strength: string;
   interpretation?: string;
-}
+};
 
-export interface Anomaly {
+export type Anomaly = {
   metric: string;
   timestamp: string;
   value: number;
@@ -103,18 +103,18 @@ export interface Anomaly {
   deviation: number;
   severity: 'Low' | 'Medium' | 'High' | 'Critical';
   explanation?: string;
-}
+};
 
-export interface Prediction {
+export type Prediction = {
   metric: string;
   prediction: string;
   confidence: number;
   timeframe: string;
   factors?: string[];
   reasoning?: string;
-}
+};
 
-export interface InsightsData {
+export type InsightsData = {
   correlations?: Correlation[];
   anomalies?: Anomaly[];
   predictions?: Prediction[];
@@ -126,10 +126,10 @@ export interface InsightsData {
         effort: string;
       }
   >;
-}
+};
 
 // Dashboard Data Structures
-export interface DashboardKPIs {
+export type DashboardKPIs = {
   activeSubscriptions?: number;
   monthlyRecurringRevenue?: number;
   trialConversions?: number;
@@ -139,27 +139,27 @@ export interface DashboardKPIs {
   averageRevenuePerUser?: number;
   customerLifetimeValue?: number;
   [key: string]: any;
-}
+};
 
-export interface DashboardData {
+export type DashboardData = {
   kpis: DashboardKPIs;
   cohorts?: CohortData[];
   forecasts?: ForecastData[];
   insights?: string[];
   lastUpdated?: string;
-}
+};
 
 // Realtime Data Structures
-export interface RealtimeMetrics {
+export type RealtimeMetrics = {
   activeSubscriptions: number;
   monthlyRecurringRevenue: number;
   trialConversions: number;
   churnRate: number;
   newSignups: number;
   timestamp: string;
-}
+};
 
-export interface RealtimeData {
+export type RealtimeData = {
   metrics: RealtimeMetrics;
   alerts?: Array<{
     type: string;
@@ -172,24 +172,24 @@ export interface RealtimeData {
     timestamp: string;
     metadata?: Record<string, any>;
   }>;
-}
+};
 
 // API Request/Response Types
-export interface ExportRequest {
+export type ExportRequest = {
   format: ExportFormat;
   type: ExportType;
   options?: Partial<ExportOptions>;
   data?: any; // Optional override data
-}
+};
 
-export interface ExportErrorResponse {
+export type ExportErrorResponse = {
   success: false;
   error: string;
   code?: string;
   details?: any;
-}
+};
 
-export interface ExportSuccessResponse {
+export type ExportSuccessResponse = {
   success: true;
   filename: string;
   contentType: string;
@@ -202,7 +202,7 @@ export interface ExportSuccessResponse {
     recordCount?: number;
     compression?: boolean;
   };
-}
+};
 
 // Validation Schemas (for runtime validation)
 export const SUPPORTED_FORMATS: ExportFormat[] = [
@@ -263,7 +263,7 @@ export type ValidationResult =
   | { valid: false; errors: string[] };
 
 // Function Type Definitions
-export interface ExportGenerators {
+export type ExportGenerators = {
   csv: {
     cohort: (data: CohortData) => string;
     forecast: (data: ForecastData) => string;
@@ -292,25 +292,25 @@ export interface ExportGenerators {
     dashboard: (data: DashboardData) => string;
     realtime: (data: RealtimeData) => string;
   };
-}
+};
 
 // Validation Functions Type
-export interface ExportValidators {
+export type ExportValidators = {
   validateFormat: (format: string) => ValidationResult;
   validateType: (type: string) => ValidationResult;
   validateOptions: (options: any) => ValidationResult;
   validateData: (data: any, type: ExportType) => ValidationResult;
-}
+};
 
 // Service Layer Types
-export interface ExportService {
+export type ExportService = {
   generateExport: (request: ExportRequest) => Promise<ExportSuccessResponse>;
   validateRequest: (request: ExportRequest) => ValidationResult;
   getExportHistory: (userId: string) => Promise<ExportHistory[]>;
   cleanupExpiredExports: () => Promise<number>;
-}
+};
 
-export interface ExportHistory {
+export type ExportHistory = {
   id: string;
   userId: string;
   format: ExportFormat;
@@ -321,19 +321,19 @@ export interface ExportHistory {
   expiresAt: string;
   downloadCount: number;
   status: 'pending' | 'completed' | 'failed' | 'expired';
-}
+};
 
 // Analytics Data Source Types
-export interface AnalyticsDataSource {
+export type AnalyticsDataSource = {
   getCohortData: (options?: any) => Promise<CohortData>;
   getForecastData: (options?: any) => Promise<ForecastData>;
   getInsightsData: (options?: any) => Promise<InsightsData>;
   getDashboardData: (options?: any) => Promise<DashboardData>;
   getRealtimeData: (options?: any) => Promise<RealtimeData>;
-}
+};
 
 // Configuration Types
-export interface ExportConfig {
+export type ExportConfig = {
   maxFileSize: number; // in bytes
   allowedFormats: ExportFormat[];
   allowedTypes: ExportType[];
@@ -351,4 +351,4 @@ export interface ExportConfig {
     allowedRoles: string[];
     encryptionEnabled: boolean;
   };
-}
+};

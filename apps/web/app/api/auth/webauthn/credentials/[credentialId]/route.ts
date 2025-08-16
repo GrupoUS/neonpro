@@ -47,7 +47,6 @@ export async function DELETE(
       message: 'Credential removed successfully',
     });
   } catch (error) {
-    console.error('Failed to remove WebAuthn credential:', error);
     return NextResponse.json(
       {
         error:

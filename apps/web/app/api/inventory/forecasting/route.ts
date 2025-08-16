@@ -56,8 +56,6 @@ export async function POST(request: NextRequest) {
       message: 'Demand forecast generated successfully',
     });
   } catch (error: any) {
-    console.error('Error generating demand forecast:', error);
-
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {
@@ -119,8 +117,6 @@ async function handleBulkForecast(body: any) {
       message: `Bulk forecast completed: ${successful.length}/${validatedData.items.length} successful`,
     });
   } catch (error: any) {
-    console.error('Error in bulk forecast:', error);
-
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {

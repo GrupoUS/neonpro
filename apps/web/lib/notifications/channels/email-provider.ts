@@ -22,7 +22,7 @@ export interface EmailProvider extends NotificationProvider {
   validateTemplate(templateId: string): Promise<boolean>;
 }
 
-export interface EmailParams {
+export type EmailParams = {
   to: string | string[];
   cc?: string[];
   bcc?: string[];
@@ -38,9 +38,9 @@ export interface EmailParams {
     medicalContext?: HealthcareNotificationContext;
     lgpdConsent: LGPDCompliantData;
   };
-}
+};
 
-export interface BulkEmailParams {
+export type BulkEmailParams = {
   recipients: Array<{
     email: string;
     templateData?: Record<string, any>;
@@ -49,16 +49,16 @@ export interface BulkEmailParams {
   subject: string;
   templateId: string;
   batchSize?: number;
-}
+};
 
-export interface EmailAttachment {
+export type EmailAttachment = {
   filename: string;
   content: Buffer | string;
   contentType: string;
   encoding?: string;
-}
+};
 
-export interface EmailProviderConfig {
+export type EmailProviderConfig = {
   primary: {
     provider: 'resend';
     apiKey: string;
@@ -83,7 +83,7 @@ export interface EmailProviderConfig {
     cfmCompliant: boolean;
     encryptionRequired: boolean;
   };
-}
+};
 
 /**
  * Resend Provider Implementation
@@ -119,8 +119,7 @@ class ResendEmailProvider implements EmailProvider {
       });
 
       return response.ok;
-    } catch (error) {
-      console.error(`[${this.id}] Health check failed:`, error);
+    } catch (_error) {
       return false;
     }
   }
@@ -249,8 +248,7 @@ class ResendEmailProvider implements EmailProvider {
       // Validate template exists and is valid
       // This would typically check against your template storage
       return true; // Simplified for now
-    } catch (error) {
-      console.error(`[${this.id}] Template validation failed:`, error);
+    } catch (_error) {
       return false;
     }
   }
@@ -317,8 +315,7 @@ class SendGridEmailProvider implements EmailProvider {
       });
 
       return response.ok;
-    } catch (error) {
-      console.error(`[${this.id}] Health check failed:`, error);
+    } catch (_error) {
       return false;
     }
   }
@@ -454,8 +451,7 @@ class SendGridEmailProvider implements EmailProvider {
       );
 
       return response.ok;
-    } catch (error) {
-      console.error(`[${this.id}] Template validation failed:`, error);
+    } catch (_error) {
       return false;
     }
   }
@@ -502,7 +498,6 @@ class EmailProviderFactory {
 
     // Fallback to secondary provider
     if (await this.fallbackProvider.isHealthy()) {
-      console.warn('[EmailFactory] Primary provider unhealthy, using fallback');
       return this.fallbackProvider;
     }
 

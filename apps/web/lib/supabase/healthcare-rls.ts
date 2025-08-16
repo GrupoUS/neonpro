@@ -54,11 +54,8 @@ export async function validateHealthcareRLS() {
       .from('information_schema.tables')
       .select('table_name, row_security')
       .in('table_name', ['patients', 'medical_records', 'audit_logs']);
-
-    console.log('🏥 Healthcare RLS Status:', rlsStatus);
     return rlsStatus;
-  } catch (error) {
-    console.error('❌ RLS validation failed:', error);
+  } catch (_error) {
     throw new Error(
       'Healthcare RLS validation failed - patient safety at risk'
     );

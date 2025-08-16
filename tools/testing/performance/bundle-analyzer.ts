@@ -18,7 +18,7 @@ export const BUNDLE_THRESHOLDS = {
 } as const;
 
 // Bundle analysis result interface
-export interface BundleAnalysis {
+export type BundleAnalysis = {
   totalSize: number;
   gzippedSize: number;
   chunks: Array<{
@@ -39,7 +39,7 @@ export interface BundleAnalysis {
     chunk: string;
   }>;
   recommendations: string[];
-}
+};
 
 // Analyze webpack bundle stats
 export async function analyzeBundleStats(
@@ -85,8 +85,7 @@ export async function analyzeBundleStats(
     analysis.recommendations = generateRecommendations(analysis);
 
     return analysis;
-  } catch (error) {
-    console.error('Bundle analysis failed:', error);
+  } catch (_error) {
     throw new Error('Failed to analyze bundle stats');
   }
 }
@@ -312,19 +311,14 @@ export async function runBundleAnalysis(statsPath?: string) {
   const finalStatsPath = statsPath || defaultStatsPath;
 
   try {
-    console.log('🔍 Analyzing bundle...');
     const analysis = await analyzeBundleStats(finalStatsPath);
-
-    console.log(`\n${generateBundleReport(analysis)}`);
 
     // Write report to file
     const reportPath = path.join(process.cwd(), 'bundle-analysis-report.md');
     await fs.writeFile(reportPath, generateBundleReport(analysis));
-    console.log(`📄 Report saved to: ${reportPath}`);
 
     return analysis;
-  } catch (error) {
-    console.error('❌ Bundle analysis failed:', error);
+  } catch (_error) {
     process.exit(1);
   }
 }

@@ -70,7 +70,6 @@ export class RiskAssessmentEngine {
         processingTime: Date.now() - startTime,
       };
     } catch (error) {
-      console.error('Risk assessment error:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
@@ -616,11 +615,8 @@ export class RiskAssessmentEngine {
       });
 
       if (error) {
-        console.error('Error storing risk assessment:', error);
       }
-    } catch (error) {
-      console.error('Failed to store assessment:', error);
-    }
+    } catch (_error) {}
   }
 
   async getModelPerformance(): Promise<AIModelPerformance> {

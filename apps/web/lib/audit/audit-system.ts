@@ -94,7 +94,7 @@ export enum AuditSeverity {
 }
 
 // Interface para evento de auditoria
-export interface AuditEvent {
+export type AuditEvent = {
   id?: string;
   event_type: AuditEventType;
   severity: AuditSeverity;
@@ -111,10 +111,10 @@ export interface AuditEvent {
   description: string;
   timestamp: Date;
   checksum?: string;
-}
+};
 
 // Interface para filtros de consulta
-export interface AuditQueryFilters {
+export type AuditQueryFilters = {
   event_types?: AuditEventType[];
   severity?: AuditSeverity[];
   user_id?: string;
@@ -126,10 +126,10 @@ export interface AuditQueryFilters {
   ip_address?: string;
   limit?: number;
   offset?: number;
-}
+};
 
 // Interface para relatório de auditoria
-export interface AuditReport {
+export type AuditReport = {
   id: string;
   title: string;
   description: string;
@@ -138,10 +138,10 @@ export interface AuditReport {
   generated_at: Date;
   generated_by: string;
   total_events: number;
-}
+};
 
 // Interface para estatísticas de auditoria
-export interface AuditStatistics {
+export type AuditStatistics = {
   total_events: number;
   events_by_type: Record<AuditEventType, number>;
   events_by_severity: Record<AuditSeverity, number>;
@@ -152,7 +152,7 @@ export interface AuditStatistics {
     start: Date;
     end: Date;
   };
-}
+};
 
 /**
  * Sistema principal de auditoria
@@ -197,7 +197,6 @@ export class AuditSystem {
         .insert(auditEvent);
 
       if (error) {
-        console.error('Erro ao salvar evento de auditoria:', error);
         // Fallback: salva em arquivo local
         await this.saveToLocalFile(auditEvent);
       }
@@ -206,8 +205,7 @@ export class AuditSystem {
       if (this.isSuspiciousActivity(auditEvent)) {
         await this.handleSuspiciousActivity(auditEvent);
       }
-    } catch (error) {
-      console.error('Erro no sistema de auditoria:', error);
+    } catch (_error) {
       // Não deve falhar silenciosamente
       throw new Error('Falha crítica no sistema de auditoria');
     }
@@ -217,74 +215,69 @@ export class AuditSystem {
    * Consulta eventos de auditoria
    */
   async queryEvents(filters: AuditQueryFilters): Promise<AuditEvent[]> {
-    try {
-      let query = this.supabase
-        .from('audit_logs')
-        .select('*')
-        .order('timestamp', { ascending: false });
+    let query = this.supabase
+      .from('audit_logs')
+      .select('*')
+      .order('timestamp', { ascending: false });
 
-      // Aplica filtros
-      if (filters.event_types?.length) {
-        query = query.in('event_type', filters.event_types);
-      }
-      if (filters.severity?.length) {
-        query = query.in('severity', filters.severity);
-      }
-      if (filters.user_id) {
-        query = query.eq('user_id', filters.user_id);
-      }
-      if (filters.clinic_id) {
-        query = query.eq('clinic_id', filters.clinic_id);
-      }
-      if (filters.resource_type) {
-        query = query.eq('resource_type', filters.resource_type);
-      }
-      if (filters.resource_id) {
-        query = query.eq('resource_id', filters.resource_id);
-      }
-      if (filters.start_date) {
-        query = query.gte('timestamp', filters.start_date.toISOString());
-      }
-      if (filters.end_date) {
-        query = query.lte('timestamp', filters.end_date.toISOString());
-      }
-      if (filters.ip_address) {
-        query = query.eq('ip_address', filters.ip_address);
-      }
-
-      // Paginação
-      if (filters.limit) {
-        query = query.limit(filters.limit);
-      }
-      if (filters.offset) {
-        query = query.range(
-          filters.offset,
-          filters.offset + (filters.limit || 50) - 1
-        );
-      }
-
-      const { data, error } = await query;
-
-      if (error) {
-        throw new Error(`Erro ao consultar eventos: ${error.message}`);
-      }
-
-      // Descriptografa dados sensíveis
-      return (
-        data?.map((event) => ({
-          ...event,
-          old_values: event.old_values
-            ? this.decryptSensitiveData(event.old_values)
-            : undefined,
-          new_values: event.new_values
-            ? this.decryptSensitiveData(event.new_values)
-            : undefined,
-        })) || []
-      );
-    } catch (error) {
-      console.error('Erro ao consultar eventos de auditoria:', error);
-      throw error;
+    // Aplica filtros
+    if (filters.event_types?.length) {
+      query = query.in('event_type', filters.event_types);
     }
+    if (filters.severity?.length) {
+      query = query.in('severity', filters.severity);
+    }
+    if (filters.user_id) {
+      query = query.eq('user_id', filters.user_id);
+    }
+    if (filters.clinic_id) {
+      query = query.eq('clinic_id', filters.clinic_id);
+    }
+    if (filters.resource_type) {
+      query = query.eq('resource_type', filters.resource_type);
+    }
+    if (filters.resource_id) {
+      query = query.eq('resource_id', filters.resource_id);
+    }
+    if (filters.start_date) {
+      query = query.gte('timestamp', filters.start_date.toISOString());
+    }
+    if (filters.end_date) {
+      query = query.lte('timestamp', filters.end_date.toISOString());
+    }
+    if (filters.ip_address) {
+      query = query.eq('ip_address', filters.ip_address);
+    }
+
+    // Paginação
+    if (filters.limit) {
+      query = query.limit(filters.limit);
+    }
+    if (filters.offset) {
+      query = query.range(
+        filters.offset,
+        filters.offset + (filters.limit || 50) - 1
+      );
+    }
+
+    const { data, error } = await query;
+
+    if (error) {
+      throw new Error(`Erro ao consultar eventos: ${error.message}`);
+    }
+
+    // Descriptografa dados sensíveis
+    return (
+      data?.map((event) => ({
+        ...event,
+        old_values: event.old_values
+          ? this.decryptSensitiveData(event.old_values)
+          : undefined,
+        new_values: event.new_values
+          ? this.decryptSensitiveData(event.new_values)
+          : undefined,
+      })) || []
+    );
   }
 
   /**
@@ -296,40 +289,34 @@ export class AuditSystem {
     filters: AuditQueryFilters,
     generatedBy: string
   ): Promise<AuditReport> {
-    try {
-      const events = await this.queryEvents(filters);
+    const events = await this.queryEvents(filters);
 
-      const report: AuditReport = {
-        id: crypto.randomUUID(),
-        title,
-        description,
-        filters,
-        events,
-        generated_at: new Date(),
-        generated_by: generatedBy,
-        total_events: events.length,
-      };
+    const report: AuditReport = {
+      id: crypto.randomUUID(),
+      title,
+      description,
+      filters,
+      events,
+      generated_at: new Date(),
+      generated_by: generatedBy,
+      total_events: events.length,
+    };
 
-      // Salva o relatório
-      const { error } = await this.supabase.from('audit_reports').insert({
-        id: report.id,
-        title: report.title,
-        description: report.description,
-        filters: report.filters,
-        generated_at: report.generated_at,
-        generated_by: report.generated_by,
-        total_events: report.total_events,
-      });
+    // Salva o relatório
+    const { error } = await this.supabase.from('audit_reports').insert({
+      id: report.id,
+      title: report.title,
+      description: report.description,
+      filters: report.filters,
+      generated_at: report.generated_at,
+      generated_by: report.generated_by,
+      total_events: report.total_events,
+    });
 
-      if (error) {
-        console.error('Erro ao salvar relatório:', error);
-      }
-
-      return report;
-    } catch (error) {
-      console.error('Erro ao gerar relatório:', error);
-      throw error;
+    if (error) {
     }
+
+    return report;
   }
 
   /**
@@ -338,115 +325,104 @@ export class AuditSystem {
   async getStatistics(
     filters: Partial<AuditQueryFilters>
   ): Promise<AuditStatistics> {
-    try {
-      const events = await this.queryEvents(filters as AuditQueryFilters);
+    const events = await this.queryEvents(filters as AuditQueryFilters);
 
-      const stats: AuditStatistics = {
-        total_events: events.length,
-        events_by_type: {} as Record<AuditEventType, number>,
-        events_by_severity: {} as Record<AuditSeverity, number>,
-        events_by_user: {},
-        suspicious_activities: 0,
-        failed_access_attempts: 0,
-        date_range: {
-          start:
-            filters.start_date ||
-            new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
-          end: filters.end_date || new Date(),
-        },
-      };
+    const stats: AuditStatistics = {
+      total_events: events.length,
+      events_by_type: {} as Record<AuditEventType, number>,
+      events_by_severity: {} as Record<AuditSeverity, number>,
+      events_by_user: {},
+      suspicious_activities: 0,
+      failed_access_attempts: 0,
+      date_range: {
+        start:
+          filters.start_date || new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
+        end: filters.end_date || new Date(),
+      },
+    };
 
-      // Processa estatísticas
-      events.forEach((event) => {
-        // Por tipo
-        stats.events_by_type[event.event_type] =
-          (stats.events_by_type[event.event_type] || 0) + 1;
+    // Processa estatísticas
+    events.forEach((event) => {
+      // Por tipo
+      stats.events_by_type[event.event_type] =
+        (stats.events_by_type[event.event_type] || 0) + 1;
 
-        // Por severidade
-        stats.events_by_severity[event.severity] =
-          (stats.events_by_severity[event.severity] || 0) + 1;
+      // Por severidade
+      stats.events_by_severity[event.severity] =
+        (stats.events_by_severity[event.severity] || 0) + 1;
 
-        // Por usuário
-        if (event.user_id) {
-          stats.events_by_user[event.user_id] =
-            (stats.events_by_user[event.user_id] || 0) + 1;
-        }
+      // Por usuário
+      if (event.user_id) {
+        stats.events_by_user[event.user_id] =
+          (stats.events_by_user[event.user_id] || 0) + 1;
+      }
 
-        // Atividades suspeitas
-        if (
-          event.event_type.includes('security.suspicious') ||
-          event.event_type.includes('security.violation')
-        ) {
-          stats.suspicious_activities++;
-        }
+      // Atividades suspeitas
+      if (
+        event.event_type.includes('security.suspicious') ||
+        event.event_type.includes('security.violation')
+      ) {
+        stats.suspicious_activities++;
+      }
 
-        // Tentativas de acesso falhadas
-        if (
-          event.event_type.includes('failed_access') ||
-          event.event_type === AuditEventType.LOGIN_FAILED
-        ) {
-          stats.failed_access_attempts++;
-        }
-      });
+      // Tentativas de acesso falhadas
+      if (
+        event.event_type.includes('failed_access') ||
+        event.event_type === AuditEventType.LOGIN_FAILED
+      ) {
+        stats.failed_access_attempts++;
+      }
+    });
 
-      return stats;
-    } catch (error) {
-      console.error('Erro ao obter estatísticas:', error);
-      throw error;
-    }
+    return stats;
   }
 
   /**
    * Arquiva logs antigos
    */
   async archiveOldLogs(retentionDays = 365): Promise<number> {
-    try {
-      const cutoffDate = new Date(
-        Date.now() - retentionDays * 24 * 60 * 60 * 1000
+    const cutoffDate = new Date(
+      Date.now() - retentionDays * 24 * 60 * 60 * 1000
+    );
+
+    // Move logs antigos para tabela de arquivo
+    const { data: oldLogs, error: selectError } = await this.supabase
+      .from('audit_logs')
+      .select('*')
+      .lt('timestamp', cutoffDate.toISOString());
+
+    if (selectError) {
+      throw new Error(
+        `Erro ao selecionar logs antigos: ${selectError.message}`
       );
-
-      // Move logs antigos para tabela de arquivo
-      const { data: oldLogs, error: selectError } = await this.supabase
-        .from('audit_logs')
-        .select('*')
-        .lt('timestamp', cutoffDate.toISOString());
-
-      if (selectError) {
-        throw new Error(
-          `Erro ao selecionar logs antigos: ${selectError.message}`
-        );
-      }
-
-      if (!oldLogs || oldLogs.length === 0) {
-        return 0;
-      }
-
-      // Insere na tabela de arquivo
-      const { error: insertError } = await this.supabase
-        .from('audit_logs_archive')
-        .insert(oldLogs);
-
-      if (insertError) {
-        throw new Error(`Erro ao arquivar logs: ${insertError.message}`);
-      }
-
-      // Remove da tabela principal
-      const { error: deleteError } = await this.supabase
-        .from('audit_logs')
-        .delete()
-        .lt('timestamp', cutoffDate.toISOString());
-
-      if (deleteError) {
-        throw new Error(
-          `Erro ao deletar logs arquivados: ${deleteError.message}`
-        );
-      }
-
-      return oldLogs.length;
-    } catch (error) {
-      console.error('Erro ao arquivar logs:', error);
-      throw error;
     }
+
+    if (!oldLogs || oldLogs.length === 0) {
+      return 0;
+    }
+
+    // Insere na tabela de arquivo
+    const { error: insertError } = await this.supabase
+      .from('audit_logs_archive')
+      .insert(oldLogs);
+
+    if (insertError) {
+      throw new Error(`Erro ao arquivar logs: ${insertError.message}`);
+    }
+
+    // Remove da tabela principal
+    const { error: deleteError } = await this.supabase
+      .from('audit_logs')
+      .delete()
+      .lt('timestamp', cutoffDate.toISOString());
+
+    if (deleteError) {
+      throw new Error(
+        `Erro ao deletar logs arquivados: ${deleteError.message}`
+      );
+    }
+
+    return oldLogs.length;
   }
 
   /**
@@ -457,51 +433,46 @@ export class AuditSystem {
     invalid: number;
     errors: string[];
   }> {
-    try {
-      const { data: logs, error } = await this.supabase
-        .from('audit_logs')
-        .select('*')
-        .order('timestamp', { ascending: false })
-        .limit(1000);
+    const { data: logs, error } = await this.supabase
+      .from('audit_logs')
+      .select('*')
+      .order('timestamp', { ascending: false })
+      .limit(1000);
 
-      if (error) {
-        throw new Error(`Erro ao verificar integridade: ${error.message}`);
-      }
+    if (error) {
+      throw new Error(`Erro ao verificar integridade: ${error.message}`);
+    }
 
-      let valid = 0;
-      let invalid = 0;
-      const errors: string[] = [];
+    let valid = 0;
+    let invalid = 0;
+    const errors: string[] = [];
 
-      logs?.forEach((log) => {
-        const expectedChecksum = this.generateChecksum({
-          event_type: log.event_type,
-          severity: log.severity,
-          user_id: log.user_id,
-          clinic_id: log.clinic_id,
-          session_id: log.session_id,
-          ip_address: log.ip_address,
-          user_agent: log.user_agent,
-          resource_type: log.resource_type,
-          resource_id: log.resource_id,
-          old_values: log.old_values,
-          new_values: log.new_values,
-          metadata: log.metadata,
-          description: log.description,
-        });
-
-        if (log.checksum === expectedChecksum) {
-          valid++;
-        } else {
-          invalid++;
-          errors.push(`Log ${log.id}: checksum inválido`);
-        }
+    logs?.forEach((log) => {
+      const expectedChecksum = this.generateChecksum({
+        event_type: log.event_type,
+        severity: log.severity,
+        user_id: log.user_id,
+        clinic_id: log.clinic_id,
+        session_id: log.session_id,
+        ip_address: log.ip_address,
+        user_agent: log.user_agent,
+        resource_type: log.resource_type,
+        resource_id: log.resource_id,
+        old_values: log.old_values,
+        new_values: log.new_values,
+        metadata: log.metadata,
+        description: log.description,
       });
 
-      return { valid, invalid, errors };
-    } catch (error) {
-      console.error('Erro ao verificar integridade:', error);
-      throw error;
-    }
+      if (log.checksum === expectedChecksum) {
+        valid++;
+      } else {
+        invalid++;
+        errors.push(`Log ${log.id}: checksum inválido`);
+      }
+    });
+
+    return { valid, invalid, errors };
   }
 
   /**
@@ -564,8 +535,7 @@ export class AuditSystem {
           let decryptedValue = decipher.update(encryptedValue, 'hex', 'utf8');
           decryptedValue += decipher.final('utf8');
           decrypted[key] = JSON.parse(decryptedValue);
-        } catch (error) {
-          console.error('Erro ao descriptografar:', error);
+        } catch (_error) {
           decrypted[key] = '[ERRO_DESCRIPTOGRAFIA]';
         }
       }
@@ -609,9 +579,7 @@ export class AuditSystem {
 
       // TODO: Implementar notificações em tempo real
       // TODO: Implementar bloqueio automático se necessário
-    } catch (error) {
-      console.error('Erro ao tratar atividade suspeita:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -634,9 +602,7 @@ export class AuditSystem {
       // Adiciona ao arquivo
       const logEntry = `${new Date().toISOString()} - ${JSON.stringify(event)}\n`;
       await fs.appendFile(logFile, logEntry);
-    } catch (error) {
-      console.error('Erro ao salvar em arquivo local:', error);
-    }
+    } catch (_error) {}
   }
 }
 

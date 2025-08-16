@@ -8,7 +8,7 @@ import { AnalyticsService } from '@/lib/analytics/service';
 import { getCurrentUser } from '@/lib/auth/server';
 import { logger } from '@/lib/logger';
 
-export interface DashboardKPI {
+export type DashboardKPI = {
   id: string;
   name: string;
   value: number;
@@ -17,9 +17,9 @@ export interface DashboardKPI {
   trend: 'up' | 'down' | 'stable';
   format: 'currency' | 'number' | 'percentage';
   category: 'financial' | 'operational' | 'patient' | 'staff';
-}
+};
 
-export interface DashboardMetrics {
+export type DashboardMetrics = {
   kpis: DashboardKPI[];
   charts: {
     revenue: {
@@ -40,9 +40,9 @@ export interface DashboardMetrics {
   };
   alerts: DashboardAlert[];
   lastUpdated: string;
-}
+};
 
-export interface DashboardAlert {
+export type DashboardAlert = {
   id: string;
   type: 'warning' | 'error' | 'info' | 'success';
   title: string;
@@ -52,9 +52,9 @@ export interface DashboardAlert {
   isRead: boolean;
   actionRequired: boolean;
   category: string;
-}
+};
 
-export interface PeriodComparison {
+export type PeriodComparison = {
   current: {
     start: string;
     end: string;
@@ -73,9 +73,9 @@ export interface PeriodComparison {
       trend: 'up' | 'down' | 'stable';
     }
   >;
-}
+};
 
-export interface ExecutiveDashboardFilters {
+export type ExecutiveDashboardFilters = {
   dateRange: {
     start: string;
     end: string;
@@ -84,7 +84,7 @@ export interface ExecutiveDashboardFilters {
   departmentIds?: string[];
   categories?: string[];
   comparison?: 'previous_period' | 'previous_year' | 'custom';
-}
+};
 
 export class ExecutiveDashboardService {
   private readonly supabase;

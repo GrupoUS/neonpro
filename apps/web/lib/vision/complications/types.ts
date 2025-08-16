@@ -31,7 +31,7 @@ export type DetectionConfidence = number; // 0.0 to 1.0
 export type EmergencyProtocolLevel = 'routine' | 'urgent' | 'emergency';
 
 // Request/Response Interfaces
-export interface ComplicationDetectionRequest {
+export type ComplicationDetectionRequest = {
   imageId: string;
   patientId: string;
   treatmentType: TreatmentType;
@@ -45,9 +45,9 @@ export interface ComplicationDetectionRequest {
     angle?: string;
     distance?: string;
   };
-}
+};
 
-export interface ComplicationDetectionResult {
+export type ComplicationDetectionResult = {
   id: string;
   imageId: string;
   patientId: string;
@@ -62,9 +62,9 @@ export interface ComplicationDetectionResult {
   recommendations: string[];
   requiresManualReview: boolean;
   metadata: DetectionMetadata;
-}
+};
 
-export interface DetectedComplication {
+export type DetectedComplication = {
   type: ComplicationCategory;
   severity: ComplicationSeverity;
   confidence: DetectionConfidence;
@@ -76,17 +76,17 @@ export interface DetectedComplication {
   recommendedAction?: string;
   timeToResolution?: string;
   followUpRequired?: boolean;
-}
+};
 
-export interface BoundingBox {
+export type BoundingBox = {
   x: number;
   y: number;
   width: number;
   height: number;
   confidence: number;
-}
+};
 
-export interface EmergencyProtocol {
+export type EmergencyProtocol = {
   level: EmergencyProtocolLevel;
   immediateActions: string[];
   notificationTargets: NotificationTarget[];
@@ -94,7 +94,7 @@ export interface EmergencyProtocol {
   escalationPath: string;
   documentation: string;
   contactInformation?: EmergencyContact[];
-}
+};
 
 export type NotificationTarget =
   | 'attending_physician'
@@ -105,30 +105,30 @@ export type NotificationTarget =
   | 'emergency_services'
   | 'specialist_consultant';
 
-export interface EmergencyContact {
+export type EmergencyContact = {
   role: string;
   name: string;
   phone: string;
   email?: string;
   availability: string;
-}
+};
 
-export interface DetectionMetadata {
+export type DetectionMetadata = {
   modelVersions: ModelVersion[];
   qualityMetrics: QualityMetrics;
   processingMetadata: ProcessingMetadata;
   validationResults?: ValidationResult[];
-}
+};
 
-export interface ModelVersion {
+export type ModelVersion = {
   type: string;
   version: string;
   accuracy: number;
   confidenceThreshold: number;
   lastTrained?: string;
-}
+};
 
-export interface QualityMetrics {
+export type QualityMetrics = {
   accuracy: number;
   confidence: number;
   processing_quality: number;
@@ -137,9 +137,9 @@ export interface QualityMetrics {
   false_negative_rate?: number;
   sensitivity?: number;
   specificity?: number;
-}
+};
 
-export interface ProcessingMetadata {
+export type ProcessingMetadata = {
   processingTime: number;
   imageQuality: number;
   detectionAccuracy: number;
@@ -147,18 +147,18 @@ export interface ProcessingMetadata {
   cpuUsage?: number;
   gpuUsage?: number;
   cacheHits?: number;
-}
+};
 
-export interface ValidationResult {
+export type ValidationResult = {
   validator: string;
   validated_at: string;
   result: 'confirmed' | 'rejected' | 'uncertain';
   confidence: number;
   notes?: string;
-}
+};
 
 // Alert System Types
-export interface ComplicationAlert {
+export type ComplicationAlert = {
   id: string;
   detectionResultId: string;
   patientId: string;
@@ -174,7 +174,7 @@ export interface ComplicationAlert {
   escalatedTo?: string;
   notificationsSent: AlertNotification[];
   status: AlertStatus;
-}
+};
 
 export type AlertStatus =
   | 'pending'
@@ -184,7 +184,7 @@ export type AlertStatus =
   | 'escalated'
   | 'dismissed';
 
-export interface AlertNotification {
+export type AlertNotification = {
   id: string;
   target: NotificationTarget;
   method: 'email' | 'sms' | 'push' | 'call' | 'pager';
@@ -193,10 +193,10 @@ export interface AlertNotification {
   readAt?: string;
   status: 'sent' | 'delivered' | 'read' | 'failed';
   retryCount: number;
-}
+};
 
 // Validation and False Positive Management
-export interface ValidationRequest {
+export type ValidationRequest = {
   detectionResultId: string;
   validatorId: string;
   validationType: 'expert_review' | 'automated_check' | 'peer_review';
@@ -207,9 +207,9 @@ export interface ValidationRequest {
     treatmentOutcome?: string;
     followUpResults?: string;
   };
-}
+};
 
-export interface ValidationResponse {
+export type ValidationResponse = {
   validationId: string;
   detectionResultId: string;
   validator: {
@@ -225,10 +225,10 @@ export interface ValidationResponse {
   falsPositiveFlag?: boolean;
   falseNegativeFlag?: boolean;
   qualityScore: number;
-}
+};
 
 // Quality Assurance Types
-export interface QualityAssuranceMetrics {
+export type QualityAssuranceMetrics = {
   period: string; // e.g., 'daily', 'weekly', 'monthly'
   totalDetections: number;
   complicationsDetected: number;
@@ -240,9 +240,9 @@ export interface QualityAssuranceMetrics {
   alertLevelDistribution: Record<AlertLevel, number>;
   modelPerformance: ModelPerformanceMetrics[];
   qualityTrends: QualityTrend[];
-}
+};
 
-export interface ModelPerformanceMetrics {
+export type ModelPerformanceMetrics = {
   modelType: string;
   accuracy: number;
   precision: number;
@@ -252,19 +252,19 @@ export interface ModelPerformanceMetrics {
   totalPredictions: number;
   correctPredictions: number;
   lastEvaluated: string;
-}
+};
 
-export interface QualityTrend {
+export type QualityTrend = {
   date: string;
   accuracy: number;
   falsePositiveRate: number;
   falseNegativeRate: number;
   averageConfidence: number;
   totalDetections: number;
-}
+};
 
 // Configuration Types
-export interface ComplicationDetectionConfig {
+export type ComplicationDetectionConfig = {
   models: {
     [key: string]: ModelConfig;
   };
@@ -294,9 +294,9 @@ export interface ComplicationDetectionConfig {
     expertValidationThreshold: number;
     validationTimeout: number;
   };
-}
+};
 
-export interface ModelConfig {
+export type ModelConfig = {
   name: string;
   version: string;
   url: string;
@@ -309,10 +309,10 @@ export interface ModelConfig {
   trainingDataSize: number;
   validationAccuracy: number;
   enabled: boolean;
-}
+};
 
 // Analytics and Reporting Types
-export interface ComplicationStatistics {
+export type ComplicationStatistics = {
   timeframe: string;
   totalDetections: number;
   complicationsDetected: number;
@@ -326,9 +326,9 @@ export interface ComplicationStatistics {
   falsePositiveRate: number;
   falseNegativeRate: number;
   modelPerformanceComparison: ModelPerformanceComparison[];
-}
+};
 
-export interface ModelPerformanceComparison {
+export type ModelPerformanceComparison = {
   modelType: string;
   detections: number;
   accuracy: number;
@@ -336,10 +336,10 @@ export interface ModelPerformanceComparison {
   processingTime: number;
   falsePositives: number;
   falseNegatives: number;
-}
+};
 
 // Patient-Specific Types
-export interface PatientComplicationHistory {
+export type PatientComplicationHistory = {
   patientId: string;
   totalDetections: number;
   complicationsDetected: DetectedComplication[];
@@ -349,19 +349,19 @@ export interface PatientComplicationHistory {
   medications: string[];
   lastAssessment: string;
   riskProfile: 'low' | 'medium' | 'high';
-}
+};
 
-export interface TreatmentRecord {
+export type TreatmentRecord = {
   treatmentId: string;
   treatmentType: TreatmentType;
   date: string;
   complications: DetectedComplication[];
   outcome: 'successful' | 'complications' | 'adverse_reaction';
   notes: string;
-}
+};
 
 // Real-time Monitoring Types
-export interface RealtimeDetectionEvent {
+export type RealtimeDetectionEvent = {
   type:
     | 'detection_started'
     | 'detection_completed'
@@ -372,9 +372,9 @@ export interface RealtimeDetectionEvent {
   detectionId?: string;
   alertId?: string;
   data: any;
-}
+};
 
-export interface SystemHealthMetrics {
+export type SystemHealthMetrics = {
   timestamp: string;
   systemStatus: 'healthy' | 'degraded' | 'critical';
   modelStatus: Record<string, 'online' | 'offline' | 'degraded'>;
@@ -396,10 +396,10 @@ export interface SystemHealthMetrics {
     gpuUsage: number;
     diskUsage: number;
   };
-}
+};
 
 // API Response Types
-export interface ApiResponse<T> {
+export type ApiResponse<T> = {
   success: boolean;
   data?: T;
   error?: {
@@ -413,7 +413,7 @@ export interface ApiResponse<T> {
     processingTime: number;
     version: string;
   };
-}
+};
 
 export type ComplicationDetectionResponse =
   ApiResponse<ComplicationDetectionResult>;

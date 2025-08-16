@@ -147,8 +147,6 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('Analytics API error:', error);
-
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {
@@ -205,7 +203,6 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (error) {
-      console.error('Event tracking error:', error);
       return NextResponse.json(
         { error: 'Failed to track event' },
         { status: 500 }
@@ -218,8 +215,6 @@ export async function POST(request: NextRequest) {
       message: 'Event tracked successfully',
     });
   } catch (error) {
-    console.error('Event tracking API error:', error);
-
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {

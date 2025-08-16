@@ -151,8 +151,7 @@ export class RevenueOptimizationEngine {
         projectedIncrease,
         competitiveAnalysis,
       };
-    } catch (error) {
-      console.error('Error optimizing pricing:', error);
+    } catch (_error) {
       throw new Error('Failed to optimize pricing strategy');
     }
   }
@@ -198,8 +197,7 @@ export class RevenueOptimizationEngine {
         profitabilityGain,
         recommendations,
       };
-    } catch (error) {
-      console.error('Error optimizing service mix:', error);
+    } catch (_error) {
       throw new Error('Failed to optimize service mix');
     }
   }
@@ -249,8 +247,7 @@ export class RevenueOptimizationEngine {
         projectedIncrease,
         riskSegmentation,
       };
-    } catch (error) {
-      console.error('Error enhancing CLV:', error);
+    } catch (_error) {
       throw new Error('Failed to enhance customer lifetime value');
     }
   }
@@ -340,8 +337,7 @@ export class RevenueOptimizationEngine {
         totalProjectedIncrease,
         implementationPlan,
       };
-    } catch (error) {
-      console.error('Error generating automated recommendations:', error);
+    } catch (_error) {
       throw new Error('Failed to generate automated recommendations');
     }
   }
@@ -390,8 +386,7 @@ export class RevenueOptimizationEngine {
         opportunityAreas,
         benchmarkMetrics,
       };
-    } catch (error) {
-      console.error('Error getting competitive analysis:', error);
+    } catch (_error) {
       throw new Error('Failed to get competitive analysis');
     }
   }
@@ -449,8 +444,7 @@ export class RevenueOptimizationEngine {
         trendAnalysis,
         recommendations,
       };
-    } catch (error) {
-      console.error('Error tracking ROI:', error);
+    } catch (_error) {
       throw new Error('Failed to track ROI performance');
     }
   }

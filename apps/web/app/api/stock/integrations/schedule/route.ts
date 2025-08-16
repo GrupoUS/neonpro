@@ -67,7 +67,6 @@ export async function POST(request: NextRequest) {
       .in('status', ['scheduled', 'confirmed']);
 
     if (appointmentsError) {
-      console.error('Appointments Error:', appointmentsError);
       return NextResponse.json(
         { error: 'Erro ao buscar agendamentos' },
         { status: 500 }
@@ -94,7 +93,6 @@ export async function POST(request: NextRequest) {
       .eq('is_active', true);
 
     if (templatesError) {
-      console.error('Material Templates Error:', templatesError);
       return NextResponse.json(
         { error: 'Erro ao buscar templates de materiais' },
         { status: 500 }
@@ -164,7 +162,6 @@ export async function POST(request: NextRequest) {
       .eq('is_active', true);
 
     if (stockError) {
-      console.error('Stock Error:', stockError);
       return NextResponse.json(
         { error: 'Erro ao buscar estoque atual' },
         { status: 500 }
@@ -261,8 +258,6 @@ export async function POST(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('Schedule Integration API Error:', error);
-
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Parâmetros inválidos', details: error.errors },

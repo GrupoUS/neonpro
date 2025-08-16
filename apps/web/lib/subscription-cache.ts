@@ -11,24 +11,24 @@
 import type { SubscriptionValidationResult } from './subscription-status';
 
 // Cache configuration
-export interface CacheConfig {
+export type CacheConfig = {
   defaultTTL: number; // Default time-to-live in milliseconds
   gracePeriodTTL: number; // TTL for grace period subscriptions
   errorTTL: number; // TTL for error states
   maxSize: number; // Maximum cache entries
   cleanupInterval: number; // Cache cleanup interval in milliseconds
-}
+};
 
-export interface CacheEntry {
+export type CacheEntry = {
   data: SubscriptionValidationResult;
   expires: number;
   created: number;
   accessCount: number;
   lastAccessed: number;
   priority: number; // Higher = more important to keep
-}
+};
 
-export interface CacheStats {
+export type CacheStats = {
   totalEntries: number;
   validEntries: number;
   expiredEntries: number;
@@ -39,15 +39,15 @@ export interface CacheStats {
   newestEntry: number | null;
   averageAccessCount: number;
   memoryUsage: number; // Estimated in bytes
-}
+};
 
-export interface CacheOperation {
+export type CacheOperation = {
   type: 'get' | 'set' | 'delete' | 'cleanup';
   key?: string;
   hit?: boolean;
   duration: number;
   timestamp: number;
-}
+};
 
 /**
  * Intelligent subscription cache with LRU eviction and automatic cleanup
@@ -238,7 +238,7 @@ export class SubscriptionCache {
    */
   clear(): void {
     const startTime = Date.now();
-    const entriesCleared = this.cache.size;
+    const _entriesCleared = this.cache.size;
 
     this.cache.clear();
     this.hitCount = 0;
@@ -250,10 +250,6 @@ export class SubscriptionCache {
       duration: Date.now() - startTime,
       timestamp: Date.now(),
     });
-
-    console.log(
-      `Subscription cache cleared: ${entriesCleared} entries removed`
-    );
   }
 
   /**

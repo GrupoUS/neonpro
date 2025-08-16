@@ -13,7 +13,9 @@ export const dynamic = 'force-dynamic';
 export async function GET(request: NextRequest) {
   try {
     const supabase = createRouteHandlerClient({ cookies });
-    const { data: { session } } = await supabase.auth.getSession();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
 
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -26,46 +28,49 @@ export async function GET(request: NextRequest) {
     const action = searchParams.get('action');
 
     if (!clinicId) {
-      return NextResponse.json({ error: 'Clinic ID is required' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Clinic ID is required' },
+        { status: 400 }
+      );
     }
 
     // Handle specific actions
     if (action === 'verify_authorization' && professionalId && procedureCode) {
       const isAuthorized = await anvisaAPI.verifyProfessionalAuthorization(
-        professionalId, 
+        professionalId,
         procedureCode
       );
-      return NextResponse.json({ 
-        success: true, 
-        data: { 
+      return NextResponse.json({
+        success: true,
+        data: {
           professional_id: professionalId,
           procedure_code: procedureCode,
-          is_authorized: isAuthorized 
+          is_authorized: isAuthorized,
         },
-        meta: { type: 'authorization_verification' }
+        meta: { type: 'authorization_verification' },
       });
     }
 
     if (action === 'update_compliance_score' && professionalId) {
-      const complianceScore = await anvisaAPI.updateProfessionalComplianceScore(professionalId);
-      return NextResponse.json({ 
-        success: true, 
-        data: { 
+      const complianceScore =
+        await anvisaAPI.updateProfessionalComplianceScore(professionalId);
+      return NextResponse.json({
+        success: true,
+        data: {
           professional_id: professionalId,
-          compliance_score: complianceScore 
+          compliance_score: complianceScore,
         },
-        meta: { type: 'compliance_score_update' }
+        meta: { type: 'compliance_score_update' },
       });
     }
 
     // Default: get all professionals
     const professionals = await anvisaAPI.getProfessionals(clinicId);
-    return NextResponse.json({ 
-      success: true, 
+    return NextResponse.json({
+      success: true,
       data: professionals,
-      meta: { total: professionals.length }
+      meta: { total: professionals.length },
     });
-
   } catch (error) {
     console.error('Error in ANVISA professionals GET:', error);
     return NextResponse.json(

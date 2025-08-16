@@ -12,7 +12,7 @@ type SupabaseClient = ReturnType<typeof createClient>;
 // CORE INTERFACES & TYPES
 // =====================================================
 
-export interface ComplianceMetrics {
+export type ComplianceMetrics = {
   overall_score: number;
   lgpd_compliance: LGPDMetrics;
   anvisa_compliance: ANVISAMetrics;
@@ -20,9 +20,9 @@ export interface ComplianceMetrics {
   audit_trail: AuditTrailMetrics;
   alerts: ComplianceAlert[];
   last_updated: string;
-}
+};
 
-export interface LGPDMetrics {
+export type LGPDMetrics = {
   consent_rate: number;
   data_requests_fulfilled: number;
   data_requests_pending: number;
@@ -30,9 +30,9 @@ export interface LGPDMetrics {
   privacy_policy_acceptance: number;
   breach_incidents: number;
   compliance_score: number;
-}
+};
 
-export interface ANVISAMetrics {
+export type ANVISAMetrics = {
   product_registrations: number;
   adverse_events_reported: number;
   procedure_classifications: number;
@@ -40,9 +40,9 @@ export interface ANVISAMetrics {
   compliance_audits_passed: number;
   regulatory_submissions: number;
   compliance_score: number;
-}
+};
 
-export interface DataRetentionMetrics {
+export type DataRetentionMetrics = {
   total_records: number;
   records_scheduled_deletion: number;
   records_deleted_today: number;
@@ -50,9 +50,9 @@ export interface DataRetentionMetrics {
   cleanup_jobs_successful: number;
   cleanup_jobs_failed: number;
   compliance_percentage: number;
-}
+};
 
-export interface AuditTrailMetrics {
+export type AuditTrailMetrics = {
   total_audit_entries: number;
   entries_today: number;
   critical_events: number;
@@ -60,9 +60,9 @@ export interface AuditTrailMetrics {
   data_modification_events: number;
   compliance_events: number;
   system_integrity_score: number;
-}
+};
 
-export interface ComplianceAlert {
+export type ComplianceAlert = {
   id: string;
   type: 'critical' | 'warning' | 'info';
   category: 'lgpd' | 'anvisa' | 'data_retention' | 'audit' | 'system';
@@ -73,7 +73,7 @@ export interface ComplianceAlert {
   resolved_at?: string;
   action_required: boolean;
   responsible_team: string;
-}
+};
 
 // =====================================================
 // COMPLIANCE METRICS CALCULATOR
@@ -122,8 +122,7 @@ export class ComplianceMetricsEngine {
         alerts: activeAlerts,
         last_updated: new Date().toISOString(),
       };
-    } catch (error) {
-      console.error('❌ Error calculating compliance metrics:', error);
+    } catch (_error) {
       throw new Error('Failed to calculate compliance metrics');
     }
   }
@@ -221,8 +220,7 @@ export class ComplianceMetricsEngine {
         breach_incidents: breachIncidents,
         compliance_score: Math.round(complianceScore),
       };
-    } catch (error) {
-      console.error('❌ Error calculating LGPD metrics:', error);
+    } catch (_error) {
       // Return safe defaults
       return {
         consent_rate: 0,
@@ -260,16 +258,12 @@ export class ComplianceMetricsEngine {
         .eq('result', 'passed');
 
       if (productError) {
-        console.warn('Product data unavailable:', productError);
       }
       if (eventError) {
-        console.warn('Event data unavailable:', eventError);
       }
       if (procedureError) {
-        console.warn('Procedure data unavailable:', procedureError);
       }
       if (auditError) {
-        console.warn('Audit data unavailable:', auditError);
       }
 
       // Calculate ANVISA metrics with fallbacks
@@ -313,8 +307,7 @@ export class ComplianceMetricsEngine {
         regulatory_submissions: totalSubmissions,
         compliance_score: Math.round(anvisaComplianceScore),
       };
-    } catch (error) {
-      console.error('❌ Error calculating ANVISA metrics:', error);
+    } catch (_error) {
       // Return reasonable defaults for aesthetic clinic
       return {
         product_registrations: 5, // Reasonable for aesthetic clinic
@@ -341,7 +334,6 @@ export class ComplianceMetricsEngine {
         );
 
       if (retentionError) {
-        console.warn('Retention data unavailable:', retentionError);
       }
 
       // Query cleanup job status
@@ -354,7 +346,6 @@ export class ComplianceMetricsEngine {
         ); // Last 30 days
 
       if (cleanupError) {
-        console.warn('Cleanup job data unavailable:', cleanupError);
       }
 
       // Calculate retention metrics
@@ -401,8 +392,7 @@ export class ComplianceMetricsEngine {
         cleanup_jobs_failed: failedJobs,
         compliance_percentage: Math.round(compliancePercentage),
       };
-    } catch (error) {
-      console.error('❌ Error calculating data retention metrics:', error);
+    } catch (_error) {
       // Return safe defaults
       return {
         total_records: 1000,
@@ -433,7 +423,6 @@ export class ComplianceMetricsEngine {
         .gte('created_at', thirtyDaysAgo);
 
       if (auditError) {
-        console.warn('Audit data unavailable:', auditError);
       }
 
       // Calculate audit metrics
@@ -487,8 +476,7 @@ export class ComplianceMetricsEngine {
         compliance_events: complianceEvents,
         system_integrity_score: Math.round(integrityScore),
       };
-    } catch (error) {
-      console.error('❌ Error calculating audit trail metrics:', error);
+    } catch (_error) {
       // Return safe defaults
       return {
         total_audit_entries: 150,
@@ -515,7 +503,6 @@ export class ComplianceMetricsEngine {
         .limit(10);
 
       if (alertError) {
-        console.warn('Alert data unavailable:', alertError);
       }
 
       // Return alerts or generate sample alerts for demo
@@ -569,8 +556,7 @@ export class ComplianceMetricsEngine {
           responsible_team: 'Regulatory Affairs',
         },
       ];
-    } catch (error) {
-      console.error('❌ Error fetching compliance alerts:', error);
+    } catch (_error) {
       return [];
     }
   }

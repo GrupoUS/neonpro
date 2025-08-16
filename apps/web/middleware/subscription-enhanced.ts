@@ -24,7 +24,7 @@ import type {
 } from '../lib/subscription-status';
 
 // Performance optimization configuration
-interface MiddlewareConfig {
+type MiddlewareConfig = {
   enableCaching: boolean;
   cacheStrategy: 'aggressive' | 'conservative' | 'adaptive';
   enableBatching: boolean;
@@ -44,7 +44,7 @@ interface MiddlewareConfig {
     enableRegexCaching: boolean;
     maxCacheSize: number;
   };
-}
+};
 
 const defaultConfig: MiddlewareConfig = {
   enableCaching: true,
@@ -92,7 +92,7 @@ const requestBatches = new Map<
 >();
 
 // Performance metrics
-interface RequestMetrics {
+type RequestMetrics = {
   path: string;
   method: string;
   duration: number;
@@ -100,7 +100,7 @@ interface RequestMetrics {
   status: number;
   timestamp: number;
   userId?: string;
-}
+};
 
 const requestMetrics: RequestMetrics[] = [];
 
@@ -220,8 +220,6 @@ export async function enhancedSubscriptionMiddleware(
 
     // Performance monitoring end with error
     subscriptionPerformanceMonitor.endTimer(timerId, false);
-
-    console.error('Enhanced subscription middleware error:', error);
     return createErrorResponse('Authentication error', 500);
   }
 }
@@ -608,9 +606,6 @@ function handleCircuitBreakerFailure(
 
   if (circuitBreakerFailures >= config.circuitBreaker.failureThreshold) {
     circuitBreakerState = 'open';
-    console.warn(
-      `Circuit breaker opened after ${circuitBreakerFailures} failures`
-    );
   }
 }
 
@@ -634,9 +629,6 @@ function recordRequestMetrics(
 
   // Alert on slow requests
   if (metrics.duration > config.monitoring.slowRequestThreshold) {
-    console.warn(
-      `Slow request detected: ${metrics.path} took ${metrics.duration}ms`
-    );
   }
 
   // Keep only recent metrics
@@ -791,7 +783,6 @@ export function resetCircuitBreaker(): void {
   circuitBreakerState = 'closed';
   circuitBreakerFailures = 0;
   lastFailureTime = 0;
-  console.log('Circuit breaker manually reset');
 }
 
 // Default export

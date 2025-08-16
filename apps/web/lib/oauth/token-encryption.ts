@@ -12,12 +12,12 @@ const SALT_LENGTH = 64; // 64 bytes salt for key derivation
 const _TAG_LENGTH = 16; // GCM authentication tag length
 const KEY_LENGTH = 32; // 256 bits key
 
-interface EncryptionResult {
+type EncryptionResult = {
   encrypted: string;
   iv: string;
   salt: string;
   tag: string;
-}
+};
 
 export class TokenEncryptionService {
   private static getEncryptionKey(): string {

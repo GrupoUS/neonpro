@@ -1,7 +1,7 @@
 // Types for compliance and documentation features
 // Generated from Supabase schema
 
-export interface ConsentForm {
+export type ConsentForm = {
   id: string;
   clinic_id: string;
   form_name: string;
@@ -34,9 +34,9 @@ export interface ConsentForm {
   updated_at: string;
   created_by?: string;
   updated_by?: string;
-}
+};
 
-export interface PatientConsent {
+export type PatientConsent = {
   id: string;
   patient_id: string;
   clinic_id: string;
@@ -61,9 +61,9 @@ export interface PatientConsent {
   // Relations
   consent_form?: ConsentForm;
   patient?: any; // From existing patient type
-}
+};
 
-export interface LegalDocument {
+export type LegalDocument = {
   id: string;
   clinic_id: string;
   document_type:
@@ -102,9 +102,9 @@ export interface LegalDocument {
   updated_at: string;
   created_by?: string;
   updated_by?: string;
-}
+};
 
-export interface ComplianceMetric {
+export type ComplianceMetric = {
   id: string;
   clinic_id: string;
   metric_name: string;
@@ -132,9 +132,9 @@ export interface ComplianceMetric {
   created_at: string;
   updated_at: string;
   created_by?: string;
-}
+};
 
-export interface ComplianceTraining {
+export type ComplianceTraining = {
   id: string;
   clinic_id: string;
   training_name: string;
@@ -169,9 +169,9 @@ export interface ComplianceTraining {
   updated_at: string;
   created_by?: string;
   updated_by?: string;
-}
+};
 
-export interface TrainingCompletion {
+export type TrainingCompletion = {
   id: string;
   training_id: string;
   profile_id: string;
@@ -193,9 +193,9 @@ export interface TrainingCompletion {
   // Relations
   training?: ComplianceTraining;
   profile?: any; // From existing profile type
-}
+};
 
-export interface AuditEvent {
+export type AuditEvent = {
   id: string;
   clinic_id: string;
   table_name: string;
@@ -211,10 +211,10 @@ export interface AuditEvent {
   risk_level: 'low' | 'medium' | 'high' | 'critical';
   compliance_impact: boolean;
   created_at: string;
-}
+};
 
 // Forms and validation schemas
-export interface ConsentFormData {
+export type ConsentFormData = {
   patient_name: string;
   cpf?: string;
   email?: string;
@@ -226,9 +226,9 @@ export interface ConsentFormData {
   date: string;
   ip_address?: string;
   user_agent?: string;
-}
+};
 
-export interface DigitalSignature {
+export type DigitalSignature = {
   signature_type: 'drawn' | 'typed' | 'uploaded';
   signature_data: string; // Base64 or SVG data
   timestamp: string;
@@ -239,10 +239,10 @@ export interface DigitalSignature {
     longitude: number;
   };
   device_info?: Record<string, any>;
-}
+};
 
 // API Response types
-export interface ComplianceStats {
+export type ComplianceStats = {
   consent_rate: number;
   active_consents: number;
   expired_consents: number;
@@ -251,13 +251,13 @@ export interface ComplianceStats {
   compliance_score: number;
   last_audit_date?: string;
   next_audit_date?: string;
-}
+};
 
-export interface ComplianceDashboard {
+export type ComplianceDashboard = {
   clinic_id: string;
   stats: ComplianceStats;
   recent_activities: AuditEvent[];
   pending_trainings: ComplianceTraining[];
   expiring_documents: LegalDocument[];
   metrics: ComplianceMetric[];
-}
+};

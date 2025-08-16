@@ -8,7 +8,7 @@ import { logger } from '@/lib/logger';
 import { supabase } from '@/lib/supabase/client';
 import type { Appointment } from '@/types/appointment';
 
-export interface PatientAppointmentHistory {
+export type PatientAppointmentHistory = {
   patient_id: string;
   appointments: Appointment[];
   total_appointments: number;
@@ -20,16 +20,16 @@ export interface PatientAppointmentHistory {
   next_appointment_date: string | null;
   preferred_times: string[];
   preferred_services: string[];
-}
+};
 
-export interface AppointmentInsights {
+export type AppointmentInsights = {
   attendance_rate: number;
   punctuality_score: number;
   satisfaction_score: number;
   loyalty_index: number;
   risk_factors: string[];
   recommendations: string[];
-}
+};
 
 export class PatientAppointmentIntegration {
   /**

@@ -67,9 +67,9 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
 
-interface ComplianceMonitoringDashboardProps {
+type ComplianceMonitoringDashboardProps = {
   className?: string;
-}
+};
 
 export function ComplianceMonitoringDashboard({
   className,

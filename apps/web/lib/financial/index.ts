@@ -24,7 +24,7 @@ import {
 } from './payment-tracker';
 
 // Financial System Types
-interface FinancialSystemConfig {
+type FinancialSystemConfig = {
   invoiceGeneration: Partial<InvoiceGenerationConfig>;
   paymentTracking: Partial<PaymentTrackerConfig>;
   integration: {
@@ -45,9 +45,9 @@ interface FinancialSystemConfig {
     dataEncryption: boolean;
     accessControl: boolean;
   };
-}
+};
 
-interface FinancialTransaction {
+type FinancialTransaction = {
   id: string;
   type: 'invoice' | 'payment' | 'refund' | 'adjustment';
   invoiceId?: string;
@@ -66,9 +66,9 @@ interface FinancialTransaction {
     updatedAt: Date;
     notes?: string;
   };
-}
+};
 
-interface FinancialSummary {
+type FinancialSummary = {
   period: {
     startDate: Date;
     endDate: Date;
@@ -104,9 +104,9 @@ interface FinancialSummary {
     collectionRateChange: number;
     averageTransactionValue: number;
   };
-}
+};
 
-interface FinancialAlert {
+type FinancialAlert = {
   id: string;
   type:
     | 'overdue_payment'
@@ -128,9 +128,9 @@ interface FinancialAlert {
   createdAt: Date;
   resolvedAt?: Date;
   resolvedBy?: string;
-}
+};
 
-interface FinancialReport {
+type FinancialReport = {
   id: string;
   type:
     | 'revenue'
@@ -156,7 +156,7 @@ interface FinancialReport {
   generatedBy: string;
   format: 'pdf' | 'excel' | 'csv' | 'json';
   downloadUrl?: string;
-}
+};
 
 class FinancialManagementSystem {
   private readonly invoiceGenerator: AutomatedInvoiceGenerator;
@@ -179,8 +179,6 @@ class FinancialManagementSystem {
    */
   async initialize(): Promise<void> {
     try {
-      console.log('Initializing Financial Management System...');
-
       // Initialize subsystems
       await this.invoiceGenerator.initialize();
       await this.paymentTracker.initialize();
@@ -199,12 +197,7 @@ class FinancialManagementSystem {
       }
 
       this.isInitialized = true;
-      console.log('✅ Financial Management System initialized successfully');
-    } catch (error) {
-      console.error(
-        '❌ Failed to initialize financial management system:',
-        error
-      );
+    } catch (_error) {
       throw new Error('Financial management system initialization failed');
     }
   }
@@ -234,8 +227,6 @@ class FinancialManagementSystem {
       if (!this.isInitialized) {
         throw new Error('Financial management system not initialized');
       }
-
-      console.log('Creating invoice with payment tracking...');
 
       // Generate invoice
       let invoice: InvoiceData;
@@ -304,11 +295,8 @@ class FinancialManagementSystem {
           updatedAt: new Date(),
         },
       });
-
-      console.log(`✅ Invoice ${invoice.number} created with payment tracking`);
       return { invoice, paymentSetup };
     } catch (error) {
-      console.error('❌ Invoice creation with payment tracking failed:', error);
       throw new Error(`Invoice creation failed: ${error.message}`);
     }
   }
@@ -329,8 +317,6 @@ class FinancialManagementSystem {
     fullyPaid: boolean;
   }> {
     try {
-      console.log(`Processing payment for invoice ${paymentData.invoiceId}`);
-
       // Track payment
       await this.paymentTracker.trackPayment(paymentData.invoiceId, {
         amount: paymentData.amount,
@@ -393,11 +379,8 @@ class FinancialManagementSystem {
           ],
         });
       }
-
-      console.log(`✅ Payment processed for invoice ${paymentData.invoiceId}`);
       return { payment, invoice, fullyPaid };
     } catch (error) {
-      console.error('❌ Payment processing failed:', error);
       throw new Error(`Payment processing failed: ${error.message}`);
     }
   }
@@ -412,8 +395,6 @@ class FinancialManagementSystem {
     patientId?: string;
   }): Promise<FinancialSummary> {
     try {
-      console.log('Generating financial summary...');
-
       const period = {
         startDate:
           filters?.startDate ||
@@ -506,11 +487,8 @@ class FinancialManagementSystem {
         profitability,
         trends,
       };
-
-      console.log('✅ Financial summary generated successfully');
       return summary;
     } catch (error) {
-      console.error('❌ Financial summary generation failed:', error);
       throw new Error(`Financial summary generation failed: ${error.message}`);
     }
   }
@@ -536,8 +514,6 @@ class FinancialManagementSystem {
     includeCharts?: boolean;
   }): Promise<FinancialReport> {
     try {
-      console.log(`Generating ${reportConfig.type} financial report...`);
-
       const reportId = `report_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
       // Gather report data based on type
@@ -588,11 +564,8 @@ class FinancialManagementSystem {
           reportConfig.includeCharts
         );
       }
-
-      console.log(`✅ Financial report ${reportId} generated successfully`);
       return report;
     } catch (error) {
-      console.error('❌ Financial report generation failed:', error);
       throw new Error(`Financial report generation failed: ${error.message}`);
     }
   }
@@ -632,7 +605,6 @@ class FinancialManagementSystem {
 
       return alerts?.map(this.convertDbRecordToAlert) || [];
     } catch (error) {
-      console.error('❌ Failed to get financial alerts:', error);
       throw new Error(`Failed to get financial alerts: ${error.message}`);
     }
   }
@@ -654,10 +626,7 @@ class FinancialManagementSystem {
           resolution_notes: notes,
         })
         .eq('id', alertId);
-
-      console.log(`✅ Alert ${alertId} resolved successfully`);
     } catch (error) {
-      console.error('❌ Failed to resolve alert:', error);
       throw new Error(`Failed to resolve alert: ${error.message}`);
     }
   }
@@ -735,8 +704,7 @@ class FinancialManagementSystem {
         metrics,
         lastUpdated: new Date(),
       };
-    } catch (error) {
-      console.error('❌ Failed to get system status:', error);
+    } catch (_error) {
       return {
         status: 'error',
         components: {
@@ -789,8 +757,6 @@ class FinancialManagementSystem {
   }
 
   private async setupIntegrationWorkflows(): Promise<void> {
-    console.log('Setting up integration workflows...');
-
     if (this.config.integration.autoLinkPayments) {
       // Setup automatic payment-invoice linking
     }
@@ -801,8 +767,6 @@ class FinancialManagementSystem {
   }
 
   private async setupRealTimeMonitoring(): Promise<void> {
-    console.log('Setting up real-time monitoring...');
-
     // Setup real-time subscriptions for invoice and payment updates
     this.supabase
       .channel('financial_updates')
@@ -820,8 +784,6 @@ class FinancialManagementSystem {
   }
 
   private async setupComplianceMonitoring(): Promise<void> {
-    console.log('Setting up compliance monitoring...');
-
     // Setup monitoring for Brazilian tax compliance
     // Monitor NFSe generation, tax calculations, etc.
   }
@@ -967,17 +929,13 @@ class FinancialManagementSystem {
   }
 
   // Event handlers
-  private async handleInvoiceUpdate(payload: any): Promise<void> {
-    console.log('Invoice update received:', payload);
-
+  private async handleInvoiceUpdate(_payload: any): Promise<void> {
     if (this.config.integration.realTimeUpdates) {
       // Handle real-time invoice updates
     }
   }
 
-  private async handlePaymentUpdate(payload: any): Promise<void> {
-    console.log('Payment update received:', payload);
-
+  private async handlePaymentUpdate(_payload: any): Promise<void> {
     if (this.config.integration.realTimeUpdates) {
       // Handle real-time payment updates
     }

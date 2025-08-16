@@ -4,13 +4,13 @@
  * Compliant with Brazilian fiscal regulations 2025
  */
 
-export interface CNPJValidationResult {
+export type CNPJValidationResult = {
   valid: boolean;
   formatted?: string;
   errors?: string[];
-}
+};
 
-export interface CNPJCompanyData {
+export type CNPJCompanyData = {
   cnpj: string;
   razao_social: string;
   nome_fantasia?: string;
@@ -47,9 +47,9 @@ export interface CNPJCompanyData {
     nome_rep_legal?: string;
     qual_rep_legal?: string;
   }>;
-}
+};
 
-export interface CNPJConsultationResult {
+export type CNPJConsultationResult = {
   success: boolean;
   data?: CNPJCompanyData;
   cached: boolean;
@@ -59,7 +59,7 @@ export interface CNPJConsultationResult {
     remaining: number;
     reset_time: string;
   };
-}
+};
 
 /**
  * Validates CNPJ format and check digits

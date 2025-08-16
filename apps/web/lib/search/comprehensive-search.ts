@@ -9,7 +9,7 @@ import { nlpEngine, type SupportedLanguage } from './nlp-engine';
 import { searchIndexer } from './search-indexer';
 
 // Types
-export interface SearchableDataType {
+export type SearchableDataType = {
   type:
     | 'patient'
     | 'appointment'
@@ -29,9 +29,9 @@ export interface SearchableDataType {
   }>;
   filters?: Record<string, any>;
   weight: number; // Relevance weight for this data type
-}
+};
 
-export interface ComprehensiveSearchOptions {
+export type ComprehensiveSearchOptions = {
   query: string;
   language?: SupportedLanguage;
   dataTypes?: string[];
@@ -48,9 +48,9 @@ export interface ComprehensiveSearchOptions {
   includeArchived?: boolean;
   fuzzySearch?: boolean;
   exactMatch?: boolean;
-}
+};
 
-export interface SearchResult {
+export type SearchResult = {
   id: string;
   type: string;
   title: string;
@@ -62,9 +62,9 @@ export interface SearchResult {
   relatedData?: SearchResult[];
   lastModified: string;
   url?: string;
-}
+};
 
-export interface ComprehensiveSearchResponse {
+export type ComprehensiveSearchResponse = {
   results: SearchResult[];
   totalCount: number;
   processingTime: number;
@@ -75,7 +75,7 @@ export interface ComprehensiveSearchResponse {
   };
   suggestions?: string[];
   relatedSearches?: string[];
-}
+};
 
 /**
  * Comprehensive Data Search System
@@ -318,9 +318,7 @@ export class ComprehensiveSearch {
         suggestions,
         relatedSearches,
       };
-    } catch (error) {
-      console.error('Comprehensive search error:', error);
-
+    } catch (_error) {
       return {
         results: [],
         totalCount: 0,
@@ -391,7 +389,6 @@ export class ComprehensiveSearch {
       const { data, error } = await query.limit(options.limit);
 
       if (error) {
-        console.error(`Search error for ${dataType}:`, error);
         return [];
       }
 
@@ -399,8 +396,7 @@ export class ComprehensiveSearch {
       return (data || []).map((item) =>
         this.transformResult(item, config, options.nlpResult)
       );
-    } catch (error) {
-      console.error(`Error searching ${dataType}:`, error);
+    } catch (_error) {
       return [];
     }
   }
@@ -845,13 +841,11 @@ export class ComprehensiveSearch {
         .limit(5);
 
       if (error) {
-        console.error('Error getting related searches:', error);
         return [];
       }
 
       return data?.map((item) => item.query) || [];
-    } catch (error) {
-      console.error('Error in getRelatedSearches:', error);
+    } catch (_error) {
       return [];
     }
   }

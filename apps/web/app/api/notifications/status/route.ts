@@ -169,7 +169,6 @@ export async function GET(request: NextRequest) {
     const { data: notifications, error, count } = await dbQuery;
 
     if (error) {
-      console.error('Erro ao buscar notificações:', error);
       return NextResponse.json(
         { error: 'Erro ao buscar notificações' },
         { status: 500 }
@@ -189,8 +188,7 @@ export async function GET(request: NextRequest) {
         hasPrevious: query.offset > 0,
       },
     });
-  } catch (error) {
-    console.error('Erro na consulta de status:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
       { status: 500 }

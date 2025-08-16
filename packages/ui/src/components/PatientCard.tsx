@@ -6,7 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage } from './Avatar';
 import { Badge } from './Badge';
 import { Button } from './Button';
 
-export interface PatientData {
+export type PatientData = {
   id: string;
   name: string;
   avatar?: string;
@@ -20,9 +20,9 @@ export interface PatientData {
   urgentAlerts?: number;
   totalAppointments?: number;
   registrationDate?: string;
-}
+};
 
-export interface PatientCardProps {
+export type PatientCardProps = {
   patient: PatientData;
   onViewDetails?: () => void;
   onScheduleAppointment?: () => void;
@@ -32,7 +32,7 @@ export interface PatientCardProps {
   compact?: boolean;
   className?: string;
   onClick?: () => void;
-}
+};
 
 // Helper function to get initials from name
 const getInitials = (name: string): string => {

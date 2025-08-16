@@ -42,8 +42,7 @@ export async function GET(request: NextRequest) {
       await equipmentMaintenanceService.getEquipmentSchedules(equipmentId);
 
     return NextResponse.json(schedules);
-  } catch (error) {
-    console.error('Maintenance Schedules API Error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -65,8 +64,6 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(schedule, { status: 201 });
   } catch (error) {
-    console.error('Create Maintenance Schedule Error:', error);
-
     if (error instanceof Error && error.message.includes('validation')) {
       return NextResponse.json(
         { error: 'Invalid schedule data', details: error.message },
@@ -107,8 +104,6 @@ export async function PUT(request: NextRequest) {
 
     return NextResponse.json(schedule);
   } catch (error) {
-    console.error('Update Maintenance Schedule Error:', error);
-
     if (error instanceof Error && error.message.includes('validation')) {
       return NextResponse.json(
         { error: 'Invalid schedule data', details: error.message },

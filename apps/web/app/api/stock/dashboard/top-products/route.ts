@@ -89,7 +89,6 @@ export async function GET(request: NextRequest) {
       .lte('transaction_date', endDate.toISOString());
 
     if (topProductsError) {
-      console.error('Top Products Error:', topProductsError);
       return NextResponse.json(
         { error: 'Erro ao buscar produtos mais consumidos' },
         { status: 500 }
@@ -170,8 +169,6 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('Dashboard Top Products API Error:', error);
-
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Parâmetros inválidos', details: error.errors },

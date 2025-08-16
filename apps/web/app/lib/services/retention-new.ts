@@ -96,7 +96,6 @@ export class RetentionService {
     const { data, error } = await query;
 
     if (error) {
-      console.error('Error fetching patient retention analytics:', error);
       throw new Error('Failed to fetch patient retention analytics');
     }
 
@@ -128,7 +127,6 @@ export class RetentionService {
       .single();
 
     if (error) {
-      console.error('Error creating patient retention analytics:', error);
       throw new Error('Failed to create patient retention analytics');
     }
 
@@ -152,7 +150,6 @@ export class RetentionService {
       .single();
 
     if (error) {
-      console.error('Error updating patient retention analytics:', error);
       throw new Error('Failed to update patient retention analytics');
     }
 
@@ -231,7 +228,6 @@ export class RetentionService {
     const { data, error } = await query;
 
     if (error) {
-      console.error('Error fetching churn predictions:', error);
       throw new Error('Failed to fetch churn predictions');
     }
 
@@ -269,7 +265,6 @@ export class RetentionService {
       .single();
 
     if (error) {
-      console.error('Error creating churn prediction:', error);
       throw new Error('Failed to create churn prediction');
     }
 
@@ -305,7 +300,6 @@ export class RetentionService {
       .single();
 
     if (error) {
-      console.error('Error updating churn prediction validation:', error);
       throw new Error('Failed to update churn prediction validation');
     }
 
@@ -381,7 +375,6 @@ export class RetentionService {
     const { data, error } = await query;
 
     if (error) {
-      console.error('Error fetching retention interventions:', error);
       throw new Error('Failed to fetch retention interventions');
     }
 
@@ -413,7 +406,6 @@ export class RetentionService {
       .single();
 
     if (error) {
-      console.error('Error creating retention intervention:', error);
       throw new Error('Failed to create retention intervention');
     }
 
@@ -463,7 +455,6 @@ export class RetentionService {
       .single();
 
     if (error) {
-      console.error('Error updating retention intervention status:', error);
       throw new Error('Failed to update retention intervention status');
     }
 
@@ -495,9 +486,9 @@ export class RetentionService {
         .eq('churn_risk_level', 'critical');
 
       // Get churn rate and other analytics from aggregated view
-      const { data: churnSummary } = await supabase
-        .from('patient_retention_analytics')
-        .select(`
+      const { data: churnSummary } = await supabase.from(
+        'patient_retention_analytics'
+      ).select(`
           churn_probability,
           lifetime_value,
           predicted_ltv,
@@ -545,8 +536,7 @@ export class RetentionService {
           new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
         period_end: params.date_range?.end_date || new Date().toISOString(),
       } as RetentionMetrics;
-    } catch (error) {
-      console.error('Error calculating retention metrics:', error);
+    } catch (_error) {
       throw new Error('Failed to calculate retention metrics');
     }
   }
@@ -560,8 +550,7 @@ export class RetentionService {
   }) {
     const supabase = RetentionService.getClient();
 
-    const { data, error } = await supabase
-      .from('patient_retention_analytics')
+    const { data, error } = await supabase.from('patient_retention_analytics')
       .select(`
         churn_risk_level,
         retention_segment,
@@ -571,7 +560,6 @@ export class RetentionService {
       `);
 
     if (error) {
-      console.error('Error fetching dashboard summary:', error);
       throw new Error('Failed to fetch dashboard summary');
     }
 

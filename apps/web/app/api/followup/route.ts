@@ -35,7 +35,6 @@ export async function GET(request: NextRequest) {
       total: followups.length,
     });
   } catch (error) {
-    console.error('Error fetching patient follow-ups:', error);
     return NextResponse.json(
       {
         success: false,
@@ -77,8 +76,6 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
-
-    console.error('Error creating patient follow-up:', error);
     return NextResponse.json(
       {
         success: false,

@@ -444,9 +444,5 @@ describe('TASK-002 Performance Benchmarks', () => {
     // Performance targets from TASK-002 requirements
     expect(averageTime).toBeLessThan(350); // Average should be under 350ms
     expect(maxTime).toBeLessThan(1000); // Max should be under 1 second
-
-    console.log(
-      `TASK-002 Performance Results:\n      Average: ${averageTime.toFixed(2)}ms\n      Maximum: ${maxTime}ms\n      Target: <350ms average, <1000ms maximum\n      Status: ${averageTime < 350 && maxTime < 1000 ? '✅ PASSED' : '❌ FAILED'}`
-    );
   });
 });

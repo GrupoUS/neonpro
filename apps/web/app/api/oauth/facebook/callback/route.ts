@@ -27,17 +27,12 @@ export async function GET(request: NextRequest) {
 
     // Handle OAuth errors from Facebook
     if (error) {
-      console.error('Facebook OAuth error:', { error, errorDescription });
       const redirectUrl = `/dashboard/social-media?error=${encodeURIComponent(error)}&message=${encodeURIComponent(errorDescription || 'Facebook authorization failed')}`;
       return redirect(redirectUrl);
     }
 
     // Validate required parameters
     if (!(code && state)) {
-      console.error('Missing required OAuth parameters:', {
-        code: Boolean(code),
-        state: Boolean(state),
-      });
       return redirect(
         '/dashboard/social-media?error=invalid_request&message=Missing authorization code or state'
       );
@@ -57,7 +52,6 @@ export async function GET(request: NextRequest) {
       data: { session },
     } = await supabase.auth.getSession();
     if (!session?.user) {
-      console.error('User session expired during OAuth callback');
       return redirect(
         '/login?error=session_expired&message=Please log in again'
       );
@@ -71,23 +65,17 @@ export async function GET(request: NextRequest) {
       .single();
 
     if (!userProfile?.clinic_id) {
-      console.error('User clinic not found during Facebook OAuth callback');
       return redirect(
         '/dashboard/social-media?error=clinic_not_found&message=Clinic configuration missing'
       );
     }
 
     // Store encrypted tokens and account information
-    const accountId = await facebookHandler.storeTokens(
+    const _accountId = await facebookHandler.storeTokens(
       session.user.id,
       userProfile.clinic_id,
       tokens,
       profile
-    );
-
-    // Log successful connection for audit trail
-    console.log(
-      `Facebook account connected successfully for user ${session.user.id}, clinic ${userProfile.clinic_id}, account ${accountId}`
     );
 
     // Update social media platform status
@@ -106,8 +94,6 @@ export async function GET(request: NextRequest) {
       '/dashboard/social-media?success=true&platform=facebook&message=Facebook account connected successfully'
     );
   } catch (error) {
-    console.error('Facebook OAuth callback error:', error);
-
     // Store error for debugging
     try {
       const {
@@ -123,9 +109,7 @@ export async function GET(request: NextRequest) {
           occurred_at: new Date().toISOString(),
         });
       }
-    } catch (logError) {
-      console.error('Failed to log OAuth error:', logError);
-    }
+    } catch (_logError) {}
 
     const errorMessage =
       error instanceof Error ? error.message : 'Unknown error occurred';

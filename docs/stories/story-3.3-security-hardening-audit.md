@@ -78,6 +78,7 @@ Implement comprehensive security hardening measures and audit trail system for t
 ### Phase 1: Security Infrastructure (2-3 hours)
 
 #### 1.1 Security Headers & Middleware
+
 ```typescript
 // Security headers configuration
 const securityHeaders = [
@@ -85,23 +86,25 @@ const securityHeaders = [
   'Strict-Transport-Security',
   'X-Frame-Options',
   'X-Content-Type-Options',
-  'Referrer-Policy'
+  'Referrer-Policy',
 ];
 ```
 
 #### 1.2 Rate Limiting & DDoS Protection
+
 ```typescript
 // Rate limiting configuration
 const rateLimits = {
   api: '100 requests per 15 minutes',
   auth: '5 attempts per 15 minutes',
-  upload: '10 uploads per hour'
+  upload: '10 uploads per hour',
 };
 ```
 
 ### Phase 2: Authentication & Authorization (3-4 hours)
 
 #### 2.1 Multi-Factor Authentication
+
 ```typescript
 // MFA implementation
 interface MFAConfig {
@@ -113,20 +116,22 @@ interface MFAConfig {
 ```
 
 #### 2.2 Advanced RBAC System
+
 ```typescript
 // Healthcare-specific roles
 const healthcareRoles = {
   ADMIN: 'clinic_admin',
-  DOCTOR: 'medical_professional', 
+  DOCTOR: 'medical_professional',
   NURSE: 'nursing_professional',
   RECEPTIONIST: 'front_desk',
-  PATIENT: 'patient_access'
+  PATIENT: 'patient_access',
 };
 ```
 
 ### Phase 3: Data Protection & Encryption (2-3 hours)
 
 #### 3.1 Encryption Implementation
+
 ```typescript
 // Encryption configuration
 interface EncryptionConfig {
@@ -138,19 +143,21 @@ interface EncryptionConfig {
 ```
 
 #### 3.2 Secure File Upload
+
 ```typescript
 // File upload security
 const uploadSecurity = {
   virus_scanning: true,
   file_type_validation: true,
   size_limits: { image: '10MB', document: '25MB' },
-  quarantine_suspicious: true
+  quarantine_suspicious: true,
 };
 ```
 
 ### Phase 4: Audit Trail System (3-4 hours)
 
 #### 4.1 Comprehensive Audit Logging
+
 ```typescript
 // Audit log structure
 interface AuditLog {
@@ -168,6 +175,7 @@ interface AuditLog {
 ```
 
 #### 4.2 Security Event Monitoring
+
 ```typescript
 // Security event types
 const securityEvents = [
@@ -175,13 +183,14 @@ const securityEvents = [
   'privilege_escalation',
   'data_export',
   'unauthorized_access',
-  'suspicious_activity'
+  'suspicious_activity',
 ];
 ```
 
 ### Phase 5: Monitoring & Alerting (2-3 hours)
 
 #### 5.1 Security Dashboard
+
 ```typescript
 // Security metrics
 interface SecurityMetrics {
@@ -194,12 +203,13 @@ interface SecurityMetrics {
 ```
 
 #### 5.2 Automated Alerting
+
 ```typescript
 // Alert configuration
 const alertConfig = {
   channels: ['email', 'slack', 'sms'],
   severity_levels: ['info', 'warning', 'error', 'critical'],
-  response_times: { critical: '5 minutes', error: '30 minutes' }
+  response_times: { critical: '5 minutes', error: '30 minutes' },
 };
 ```
 
@@ -286,6 +296,7 @@ const alertConfig = {
 ## 🧪 Testing Strategy
 
 ### Security Testing
+
 1. **Penetration Testing**
    - Authentication bypass attempts
    - Authorization escalation tests
@@ -305,6 +316,7 @@ const alertConfig = {
    - Monitoring system load
 
 ### Automated Security Scans
+
 1. **Vulnerability Scanning**
    - OWASP dependency check
    - Container security scanning
@@ -347,18 +359,21 @@ const alertConfig = {
 ## 🔐 Security Considerations
 
 ### Risk Assessment
+
 - **High**: Patient data exposure without proper encryption
 - **High**: Unauthorized access to medical records
 - **Medium**: DDoS attacks affecting clinic operations
 - **Medium**: Privilege escalation vulnerabilities
 
 ### Mitigation Strategies
+
 - End-to-end encryption for all sensitive data
 - Multi-layered authentication and authorization
 - Comprehensive audit trails for accountability
 - Real-time monitoring and alerting systems
 
 ### Compliance Alignment
+
 - **LGPD**: Data protection and breach notification
 - **ANVISA**: Product integrity and adverse event security
 - **CFM**: Medical professional authentication and record integrity

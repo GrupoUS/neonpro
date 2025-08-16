@@ -13,9 +13,9 @@ const approvalActionSchema = z.object({
   approval_level: z.number().min(1).max(3).optional().default(1), // Support multi-level approval
 });
 
-interface RouteParams {
+type RouteParams = {
   params: { id: string; action: string };
-}
+};
 
 export async function POST(request: NextRequest, { params }: RouteParams) {
   try {
@@ -120,7 +120,6 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
       .single();
 
     if (updateError) {
-      console.error('Error updating purchase order:', updateError);
       return NextResponse.json(
         { error: 'Failed to update purchase order' },
         { status: 500 }
@@ -140,7 +139,6 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
       });
 
     if (logError) {
-      console.error('Error logging approval action:', logError);
       // Don't fail the request, just log the error
     }
 
@@ -172,8 +170,6 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
         { status: 400 }
       );
     }
-
-    console.error('Error in purchase order approval:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -256,8 +252,7 @@ async function checkApprovalPermissions(
     }
 
     return { allowed: true };
-  } catch (error) {
-    console.error('Error checking approval permissions:', error);
+  } catch (_error) {
     return { allowed: false, reason: 'Error checking permissions' };
   }
 }
@@ -310,7 +305,5 @@ async function sendApprovalNotification(
     };
 
     await supabase.from('notifications').insert(notification);
-  } catch (error) {
-    console.error('Error sending approval notification:', error);
-  }
+  } catch (_error) {}
 }

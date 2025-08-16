@@ -1,7 +1,7 @@
 // PT-BR Localization for NeonPro Healthcare System
 // WCAG 2.1 AA compliant translations for accessibility
 
-export interface LocalizationStrings {
+export type LocalizationStrings = {
   // Navigation
   navigation: {
     skipToMain: string;
@@ -165,7 +165,7 @@ export interface LocalizationStrings {
     viewDetails: string;
     viewAll: string;
   };
-}
+};
 
 export const ptBRStrings: LocalizationStrings = {
   navigation: {

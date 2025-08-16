@@ -3,9 +3,9 @@ import { patientSegmentationService } from '@/app/lib/services/patient-segmentat
 import { UpdateSegmentSchema } from '@/app/lib/validations/segmentation';
 import { createClient } from '@/app/utils/supabase/server';
 
-interface RouteParams {
+type RouteParams = {
   id: string;
-}
+};
 
 export async function GET(
   _request: NextRequest,
@@ -30,8 +30,7 @@ export async function GET(
       success: true,
       data: analytics,
     });
-  } catch (error) {
-    console.error('Error fetching segment analytics:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to fetch segment analytics' },
       { status: 500 }
@@ -82,8 +81,7 @@ export async function PUT(
       success: true,
       message: 'Segment updated successfully',
     });
-  } catch (error) {
-    console.error('Error updating segment:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to update segment' },
       { status: 500 }
@@ -124,8 +122,7 @@ export async function DELETE(
       success: true,
       message: 'Segment deactivated successfully',
     });
-  } catch (error) {
-    console.error('Error deactivating segment:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to deactivate segment' },
       { status: 500 }

@@ -71,8 +71,6 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(alerts);
   } catch (error: any) {
-    console.error('[Marketing ROI API] GET ROI alerts:', error);
-
     return NextResponse.json(
       { error: 'Internal server error', message: error.message },
       { status: 500 }
@@ -105,8 +103,6 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(alert, { status: 201 });
   } catch (error: any) {
-    console.error('[Marketing ROI API] POST ROI alert:', error);
-
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Validation error', details: error.errors },

@@ -11,8 +11,7 @@ export async function GET(request: NextRequest) {
     const stats = await service.getAccuracyStats(model_id);
 
     return NextResponse.json(stats);
-  } catch (error) {
-    console.error('Erro ao calcular estatísticas de precisão:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
       { status: 500 }

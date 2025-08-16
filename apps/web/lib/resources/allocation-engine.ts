@@ -14,7 +14,7 @@ import {
 // Types for Allocation Engine
 // =====================================================
 
-export interface AllocationCriteria {
+export type AllocationCriteria = {
   resourceType: ResourceType;
   startTime: string;
   endTime: string;
@@ -39,9 +39,9 @@ export interface AllocationCriteria {
     maxDailyHours?: number;
     holidayRestrictions?: boolean;
   };
-}
+};
 
-export interface AllocationSuggestion {
+export type AllocationSuggestion = {
   resource: Resource;
   confidence: number; // 0-100
   score: number; // Optimization score
@@ -49,9 +49,9 @@ export interface AllocationSuggestion {
   alternatives?: Resource[];
   estimatedCost?: number;
   utilizationImpact?: number;
-}
+};
 
-export interface AllocationOptimization {
+export type AllocationOptimization = {
   suggestions: AllocationSuggestion[];
   conflicts: Array<{
     resource_id: string;
@@ -64,9 +64,9 @@ export interface AllocationOptimization {
     cost_efficiency: number;
     utilization_balance: number;
   };
-}
+};
 
-export interface StaffWorkload {
+export type StaffWorkload = {
   staff_id: string;
   name: string;
   total_hours: number;
@@ -75,7 +75,7 @@ export interface StaffWorkload {
   fatigue_score: number;
   efficiency_rating: number;
   available_skills: string[];
-}
+};
 
 // =====================================================
 // Intelligent Allocation Engine
@@ -97,8 +97,6 @@ export class AllocationEngine {
     criteria: AllocationCriteria
   ): Promise<AllocationOptimization> {
     try {
-      console.log('Starting optimal allocation suggestion for:', criteria);
-
       // Step 1: Get available resources
       const availableResources =
         await this.resourceManager.getAvailableResources(
@@ -108,8 +106,6 @@ export class AllocationEngine {
           criteria.resourceType,
           criteria.requirements
         );
-
-      console.log(`Found ${availableResources.length} available resources`);
 
       // Step 2: Score and rank resources
       const suggestions = await this.scoreResources(
@@ -135,8 +131,7 @@ export class AllocationEngine {
         conflicts,
         optimization_metrics: optimizationMetrics,
       };
-    } catch (error) {
-      console.error('Error in optimal allocation suggestion:', error);
+    } catch (_error) {
       throw new Error('Failed to suggest optimal allocation');
     }
   }
@@ -376,8 +371,7 @@ export class AllocationEngine {
       const utilizationIncrease = (hours / dailyHours) * 100;
 
       return currentUtilization + utilizationIncrease;
-    } catch (error) {
-      console.error('Error calculating utilization impact:', error);
+    } catch (_error) {
       return 0;
     }
   }
@@ -467,8 +461,7 @@ export class AllocationEngine {
       }
 
       return { valid: violations.length === 0, violations };
-    } catch (error) {
-      console.error('Error validating business rules:', error);
+    } catch (_error) {
       violations.push('Error validating business rules');
       return { valid: false, violations };
     }
@@ -517,8 +510,7 @@ export class AllocationEngine {
       }
 
       return conflicts;
-    } catch (error) {
-      console.error('Error analyzing system conflicts:', error);
+    } catch (_error) {
       return [];
     }
   }
@@ -555,8 +547,7 @@ export class AllocationEngine {
           100 - Math.abs(50 - totalUtilization / count)
         ), // Closer to 50% = better balance
       };
-    } catch (error) {
-      console.error('Error calculating optimization metrics:', error);
+    } catch (_error) {
       return {
         overall_efficiency: 0,
         cost_efficiency: 0,
@@ -587,8 +578,7 @@ export class AllocationEngine {
       }, 0);
 
       return (allocatedMinutes / totalMinutes) * 100;
-    } catch (error) {
-      console.error('Error getting current utilization:', error);
+    } catch (_error) {
       return 0;
     }
   }
@@ -643,8 +633,7 @@ export class AllocationEngine {
         efficiency_rating: Math.max(0, 100 - fatigueScore),
         available_skills: staff?.skills || [],
       };
-    } catch (error) {
-      console.error('Error getting staff workload:', error);
+    } catch (_error) {
       return {
         staff_id: staffId,
         name: 'Unknown Staff',
@@ -723,8 +712,7 @@ export class AllocationEngine {
           totalImprovement / staffResources.length
         ),
       };
-    } catch (error) {
-      console.error('Error optimizing staff workload:', error);
+    } catch (_error) {
       throw new Error('Failed to optimize staff workload');
     }
   }

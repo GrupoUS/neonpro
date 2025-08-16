@@ -39,7 +39,7 @@ type AdaptiveResponse =
   | 'patient_notification';
 
 // Real-time Schedule Event
-interface ScheduleEventData {
+type ScheduleEventData = {
   id: string;
   type: ScheduleEvent;
   timestamp: Date;
@@ -50,10 +50,10 @@ interface ScheduleEventData {
   severity: 'low' | 'medium' | 'high' | 'critical';
   description: string;
   metadata: Record<string, any>;
-}
+};
 
 // Adaptive Action
-interface AdaptiveAction {
+type AdaptiveAction = {
   id: string;
   eventId: string;
   type: AdaptiveResponse;
@@ -63,10 +63,10 @@ interface AdaptiveAction {
   parameters: Record<string, any>;
   status: 'pending' | 'executing' | 'completed' | 'failed';
   result?: any;
-}
+};
 
 // Schedule Conflict
-interface ScheduleConflict {
+type ScheduleConflict = {
   id: string;
   type:
     | 'time_overlap'
@@ -78,10 +78,10 @@ interface ScheduleConflict {
   detectedAt: Date;
   autoResolvable: boolean;
   suggestedResolution: string;
-}
+};
 
 // Monitoring Metrics
-interface MonitoringMetrics {
+type MonitoringMetrics = {
   totalAppointments: number;
   activeConflicts: number;
   autoResolutions: number;
@@ -90,10 +90,10 @@ interface MonitoringMetrics {
   systemEfficiency: number;
   patientSatisfactionImpact: number;
   lastUpdated: Date;
-}
+};
 
 // Predictive Adjustment
-interface PredictiveAdjustment {
+type PredictiveAdjustment = {
   id: string;
   type:
     | 'capacity_optimization'
@@ -105,7 +105,7 @@ interface PredictiveAdjustment {
   recommendedActions: string[];
   timeframe: 'immediate' | 'short_term' | 'medium_term' | 'long_term';
   impact: 'low' | 'medium' | 'high';
-}
+};
 
 class RealTimeAdaptiveScheduling {
   private readonly supabase = createClient();
@@ -132,7 +132,6 @@ class RealTimeAdaptiveScheduling {
    */
   async startMonitoring(): Promise<void> {
     if (this.isMonitoring) {
-      console.log('Real-time monitoring already active');
       return;
     }
 
@@ -176,9 +175,7 @@ class RealTimeAdaptiveScheduling {
       this.startPredictiveAnalysis();
 
       this.isMonitoring = true;
-      console.log('Real-time adaptive scheduling monitoring started');
-    } catch (error) {
-      console.error('Error starting real-time monitoring:', error);
+    } catch (_error) {
       throw new Error('Failed to start real-time monitoring');
     }
   }
@@ -198,10 +195,7 @@ class RealTimeAdaptiveScheduling {
       }
 
       this.isMonitoring = false;
-      console.log('Real-time adaptive scheduling monitoring stopped');
-    } catch (error) {
-      console.error('Error stopping real-time monitoring:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -325,9 +319,7 @@ class RealTimeAdaptiveScheduling {
         metadata: event.metadata,
         created_at: event.timestamp.toISOString(),
       });
-    } catch (error) {
-      console.error('Error logging schedule event:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -346,9 +338,7 @@ class RealTimeAdaptiveScheduling {
       }
     };
 
-    processEvents().catch((error) => {
-      console.error('Error in event processing loop:', error);
-    });
+    processEvents().catch((_error) => {});
   }
 
   /**
@@ -356,8 +346,6 @@ class RealTimeAdaptiveScheduling {
    */
   private async processEvent(event: ScheduleEventData): Promise<void> {
     try {
-      console.log(`Processing event: ${event.type} - ${event.description}`);
-
       // Determine appropriate response based on event type and severity
       const actions = await this.determineAdaptiveActions(event);
 
@@ -368,9 +356,7 @@ class RealTimeAdaptiveScheduling {
 
       // Check for conflicts after processing
       await this.detectAndResolveConflicts(event);
-    } catch (error) {
-      console.error(`Error processing event ${event.id}:`, error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -466,8 +452,6 @@ class RealTimeAdaptiveScheduling {
       action.status = 'executing';
       this.activeActions.set(action.id, action);
 
-      console.log(`Executing action: ${action.type} - ${action.description}`);
-
       let result: any = null;
 
       switch (action.type) {
@@ -502,7 +486,6 @@ class RealTimeAdaptiveScheduling {
       // Log action completion
       await this.logActionExecution(action);
     } catch (error) {
-      console.error(`Error executing action ${action.id}:`, error);
       action.status = 'failed';
       action.result = { error: error.message };
     } finally {
@@ -514,9 +497,6 @@ class RealTimeAdaptiveScheduling {
    * Execute automatic rescheduling
    */
   private async executeAutoReschedule(parameters: any): Promise<any> {
-    // Implementation for automatic rescheduling logic
-    console.log('Executing auto reschedule with parameters:', parameters);
-
     if (parameters.staffId) {
       // Reschedule appointments for unavailable staff
       const { data: affectedAppointments } = await this.supabase
@@ -564,10 +544,7 @@ class RealTimeAdaptiveScheduling {
   /**
    * Execute patient notification
    */
-  private async executePatientNotification(parameters: any): Promise<any> {
-    // Implementation for patient notification
-    console.log('Executing patient notification with parameters:', parameters);
-
+  private async executePatientNotification(_parameters: any): Promise<any> {
     // This would integrate with notification service
     return { notificationSent: true, method: 'email_sms' };
   }
@@ -575,40 +552,28 @@ class RealTimeAdaptiveScheduling {
   /**
    * Execute resource reallocation
    */
-  private async executeResourceReallocation(parameters: any): Promise<any> {
-    // Implementation for resource reallocation
-    console.log('Executing resource reallocation with parameters:', parameters);
-
+  private async executeResourceReallocation(_parameters: any): Promise<any> {
     return { reallocated: true, alternativeResources: [] };
   }
 
   /**
    * Execute emergency protocol
    */
-  private async executeEmergencyProtocol(parameters: any): Promise<any> {
-    // Implementation for emergency scheduling protocol
-    console.log('Executing emergency protocol with parameters:', parameters);
-
+  private async executeEmergencyProtocol(_parameters: any): Promise<any> {
     return { emergencySlotCreated: true, timeSlot: new Date() };
   }
 
   /**
    * Execute staff notification
    */
-  private async executeStaffNotification(parameters: any): Promise<any> {
-    // Implementation for staff notification
-    console.log('Executing staff notification with parameters:', parameters);
-
+  private async executeStaffNotification(_parameters: any): Promise<any> {
     return { notificationSent: true };
   }
 
   /**
    * Execute management alert
    */
-  private async executeManagementAlert(parameters: any): Promise<any> {
-    // Implementation for management alert
-    console.log('Executing management alert with parameters:', parameters);
-
+  private async executeManagementAlert(_parameters: any): Promise<any> {
     return { alertSent: true };
   }
 
@@ -650,30 +615,22 @@ class RealTimeAdaptiveScheduling {
               await this.executePredictiveAdjustment(adjustment);
             }
           }
-        } catch (error) {
-          console.error('Error in predictive analysis:', error);
-        }
+        } catch (_error) {}
 
         // Run every 5 minutes
         await new Promise((resolve) => setTimeout(resolve, 5 * 60 * 1000));
       }
     };
 
-    runPredictiveAnalysis().catch((error) => {
-      console.error('Error in predictive analysis loop:', error);
-    });
+    runPredictiveAnalysis().catch((_error) => {});
   }
 
   /**
    * Execute predictive adjustment
    */
   private async executePredictiveAdjustment(
-    adjustment: PredictiveAdjustment
+    _adjustment: PredictiveAdjustment
   ): Promise<void> {
-    console.log(
-      `Executing predictive adjustment: ${adjustment.type} - ${adjustment.prediction}`
-    );
-
     // Implementation for executing predictive adjustments
     // This would involve proactive scheduling changes based on predictions
   }
@@ -714,9 +671,7 @@ class RealTimeAdaptiveScheduling {
         result: action.result,
         executed_at: action.executionTime.toISOString(),
       });
-    } catch (error) {
-      console.error('Error logging action execution:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -760,8 +715,7 @@ class RealTimeAdaptiveScheduling {
         patientSatisfactionImpact: 0.95,
         lastUpdated: new Date(),
       };
-    } catch (error) {
-      console.error('Error getting monitoring metrics:', error);
+    } catch (_error) {
       return {
         totalAppointments: 0,
         activeConflicts: 0,

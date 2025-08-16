@@ -25,7 +25,7 @@ import {
 // TYPE DEFINITIONS
 // ============================================================================
 
-interface RBACMiddlewareOptions {
+type RBACMiddlewareOptions = {
   /** Required permissions (all must be satisfied) */
   permissions: string[];
 
@@ -59,9 +59,9 @@ interface RBACMiddlewareOptions {
 
   /** Audit log additional data */
   auditMetadata?: Record<string, any>;
-}
+};
 
-interface RBACError {
+type RBACError = {
   code: string;
   message: string;
   statusCode: number;
@@ -69,9 +69,9 @@ interface RBACError {
   userRole?: HealthcareRole;
   requiredPermissions?: string[];
   failedChecks?: string[];
-}
+};
 
-interface RBACContext {
+type RBACContext = {
   user: any;
   userContext: UserRoleContext;
   permissions: PermissionCheckResult[];
@@ -79,7 +79,7 @@ interface RBACContext {
   patientId?: string;
   resourceId?: string;
   emergencyOverride?: boolean;
-}
+};
 
 // ============================================================================
 // RBAC MIDDLEWARE CLASS
@@ -235,8 +235,6 @@ export class HealthcareRBACMiddleware {
 
         return;
       } catch (error) {
-        console.error('RBAC Middleware error:', error);
-
         return this.createErrorResponse(
           {
             code: 'RBAC_MIDDLEWARE_ERROR',
@@ -391,8 +389,7 @@ export class HealthcareRBACMiddleware {
         created_at: new Date(data.created_at),
         updated_at: new Date(data.updated_at),
       };
-    } catch (error) {
-      console.error('Get user role context error:', error);
+    } catch (_error) {
       return null;
     }
   }
@@ -620,9 +617,7 @@ export class HealthcareRBACMiddleware {
         emergency_override: true,
         timestamp: new Date().toISOString(),
       });
-    } catch (error) {
-      console.error('Emergency override logging error:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -654,9 +649,7 @@ export class HealthcareRBACMiddleware {
         reason: 'Permission validation successful',
         timestamp: new Date().toISOString(),
       });
-    } catch (error) {
-      console.error('Successful access logging error:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -685,9 +678,7 @@ export class HealthcareRBACMiddleware {
         reason: error.message,
         timestamp: new Date().toISOString(),
       });
-    } catch (logError) {
-      console.error('Access denial logging error:', logError);
-    }
+    } catch (_logError) {}
 
     return NextResponse.json(
       {
@@ -789,8 +780,7 @@ export function extractRBACContext(request: NextRequest): RBACContext | null {
       Buffer.from(contextHeader, 'base64').toString()
     );
     return contextData as RBACContext;
-  } catch (error) {
-    console.error('Extract RBAC context error:', error);
+  } catch (_error) {
     return null;
   }
 }

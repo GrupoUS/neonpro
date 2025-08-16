@@ -13,7 +13,7 @@ import { toast } from 'sonner';
 // TYPES & INTERFACES
 // =====================================================================================
 
-interface InventoryAlert {
+type InventoryAlert = {
   id: string;
   type:
     | 'low_stock'
@@ -32,18 +32,18 @@ interface InventoryAlert {
   severity: 'low' | 'medium' | 'high' | 'critical';
   is_read: boolean;
   created_at: string;
-}
+};
 
-interface AlertFilters {
+type AlertFilters = {
   type?: string;
   severity?: string;
   is_read?: boolean;
   location_id?: string;
   limit?: number;
   offset?: number;
-}
+};
 
-interface UseAlertsResult {
+type UseAlertsResult = {
   alerts: InventoryAlert[];
   loading: boolean;
   error: string | null;
@@ -55,7 +55,7 @@ interface UseAlertsResult {
   markAllAsRead: () => Promise<void>;
   createAlert: (alertData: Partial<InventoryAlert>) => Promise<void>;
   refreshAlerts: () => Promise<void>;
-}
+};
 
 // =====================================================================================
 // CUSTOM HOOK
@@ -117,7 +117,6 @@ export function useInventoryAlerts(): UseAlertsResult {
       const data = await response.json();
       setAlerts(data);
     } catch (err) {
-      console.error('Error loading alerts:', err);
       setError(err instanceof Error ? err.message : 'Failed to load alerts');
       toast.error('Failed to load inventory alerts');
     } finally {
@@ -146,8 +145,7 @@ export function useInventoryAlerts(): UseAlertsResult {
       );
 
       toast.success('Alert marked as read');
-    } catch (err) {
-      console.error('Error marking alert as read:', err);
+    } catch (_err) {
       toast.error('Failed to mark alert as read');
     }
   }, []);
@@ -168,8 +166,7 @@ export function useInventoryAlerts(): UseAlertsResult {
 
       setAlerts((prev) => prev.filter((alert) => alert.id !== alertId));
       toast.success('Alert dismissed');
-    } catch (err) {
-      console.error('Error dismissing alert:', err);
+    } catch (_err) {
       toast.error('Failed to dismiss alert');
     }
   }, []);
@@ -190,8 +187,7 @@ export function useInventoryAlerts(): UseAlertsResult {
 
       setAlerts((prev) => prev.map((alert) => ({ ...alert, is_read: true })));
       toast.success('All alerts marked as read');
-    } catch (err) {
-      console.error('Error marking all alerts as read:', err);
+    } catch (_err) {
       toast.error('Failed to mark all alerts as read');
     }
   }, []);
@@ -224,8 +220,7 @@ export function useInventoryAlerts(): UseAlertsResult {
         } else {
           toast.warning(`New Alert: ${newAlert.title}`);
         }
-      } catch (err) {
-        console.error('Error creating alert:', err);
+      } catch (_err) {
         toast.error('Failed to create alert');
       }
     },

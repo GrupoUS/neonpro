@@ -26,8 +26,7 @@ export async function GET(request: NextRequest) {
 
     const contacts = await supplierService.getSupplierContacts(supplierId);
     return NextResponse.json({ contacts });
-  } catch (error) {
-    console.error('Erro ao buscar contatos:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
       { status: 500 }
@@ -54,8 +53,7 @@ export async function POST(request: NextRequest) {
     const contact = await supplierService.createContact(validationResult.data);
 
     return NextResponse.json(contact, { status: 201 });
-  } catch (error) {
-    console.error('Erro ao criar contato:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
       { status: 500 }

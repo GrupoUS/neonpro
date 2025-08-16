@@ -2,7 +2,13 @@
 
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -46,7 +52,7 @@ export function ConsentManager() {
       if (!response.ok) {
         throw new Error('Failed to load consent status');
       }
-      
+
       const data: ConsentData = await response.json();
       setConsents(data.consents);
     } catch (error) {
@@ -59,7 +65,7 @@ export function ConsentManager() {
 
   const updateConsent = async (purposeName: string, granted: boolean) => {
     setUpdating(purposeName);
-    
+
     try {
       const response = await fetch('/api/lgpd/consent/grant', {
         method: 'POST',
@@ -68,8 +74,8 @@ export function ConsentManager() {
         },
         body: JSON.stringify({
           purposeName,
-          granted
-        })
+          granted,
+        }),
       });
 
       if (!response.ok) {
@@ -79,10 +85,10 @@ export function ConsentManager() {
 
       // Reload consent status
       await loadConsentStatus();
-      
+
       toast.success(
-        granted 
-          ? `Consentimento concedido para ${purposeName}` 
+        granted
+          ? `Consentimento concedido para ${purposeName}`
           : `Consentimento negado para ${purposeName}`
       );
     } catch (error) {
@@ -102,8 +108,8 @@ export function ConsentManager() {
         },
         body: JSON.stringify({
           purposeName,
-          reason: 'User withdrawal via interface'
-        })
+          reason: 'User withdrawal via interface',
+        }),
       });
 
       if (!response.ok) {
@@ -172,9 +178,9 @@ export function ConsentManager() {
     );
   }
 
-  const requiredConsents = consents.filter(c => c.required);
-  const optionalConsents = consents.filter(c => !c.required);
-  const allRequiredGranted = requiredConsents.every(c => c.granted);
+  const requiredConsents = consents.filter((c) => c.required);
+  const optionalConsents = consents.filter((c) => !c.required);
+  const allRequiredGranted = requiredConsents.every((c) => c.granted);
 
   return (
     <div className="space-y-6">
@@ -185,7 +191,8 @@ export function ConsentManager() {
             Gerenciamento de Consentimento - LGPD
           </CardTitle>
           <CardDescription>
-            Gerencie suas preferências de privacidade e consentimentos de acordo com a LGPD
+            Gerencie suas preferências de privacidade e consentimentos de acordo
+            com a LGPD
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -193,8 +200,8 @@ export function ConsentManager() {
             <Alert className="mb-6">
               <AlertTriangle className="h-4 w-4" />
               <AlertDescription>
-                Alguns consentimentos obrigatórios não foram concedidos. 
-                Isso pode afetar o funcionamento completo da plataforma.
+                Alguns consentimentos obrigatórios não foram concedidos. Isso
+                pode afetar o funcionamento completo da plataforma.
               </AlertDescription>
             </Alert>
           )}
@@ -255,11 +262,18 @@ interface ConsentCardProps {
   onWithdraw: (purposeName: string) => Promise<void>;
 }
 
-function ConsentCard({ consent, updating, onUpdate, onWithdraw }: ConsentCardProps) {
+function ConsentCard({
+  consent,
+  updating,
+  onUpdate,
+  onWithdraw,
+}: ConsentCardProps) {
   return (
-    <Card className={`transition-all duration-200 ${
-      consent.granted ? 'border-green-200 bg-green-50' : 'border-gray-200'
-    }`}>
+    <Card
+      className={`transition-all duration-200 ${
+        consent.granted ? 'border-green-200 bg-green-50' : 'border-gray-200'
+      }`}
+    >
       <CardContent className="p-4">
         <div className="flex items-start justify-between">
           <div className="flex-1">
@@ -281,26 +295,25 @@ function ConsentCard({ consent, updating, onUpdate, onWithdraw }: ConsentCardPro
                 </Badge>
               )}
             </div>
-            
-            <p className="text-sm text-gray-600 mb-3">
-              {consent.description}
-            </p>
-            
+
+            <p className="text-sm text-gray-600 mb-3">{consent.description}</p>
+
             {consent.granted && consent.grantedAt && (
               <p className="text-xs text-gray-500">
-                Consentido em: {new Date(consent.grantedAt).toLocaleString('pt-BR')}
+                Consentido em:{' '}
+                {new Date(consent.grantedAt).toLocaleString('pt-BR')}
                 {consent.version && ` (v${consent.version})`}
               </p>
             )}
           </div>
-          
+
           <div className="flex items-center gap-2 ml-4">
             <Switch
               checked={consent.granted}
               onCheckedChange={(checked) => onUpdate(consent.purpose, checked)}
               disabled={updating}
             />
-            
+
             {consent.granted && !consent.required && (
               <Button
                 variant="outline"

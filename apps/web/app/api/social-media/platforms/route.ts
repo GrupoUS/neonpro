@@ -85,7 +85,6 @@ export async function GET(_request: NextRequest) {
       .order('platform_display_name');
 
     if (error) {
-      console.error('Error fetching social media platforms:', error);
       return NextResponse.json(
         { error: 'Failed to fetch platforms' },
         { status: 500 }
@@ -118,8 +117,7 @@ export async function GET(_request: NextRequest) {
       data: platformsWithStatus,
       total: platforms?.length || 0,
     });
-  } catch (error) {
-    console.error('Social media platforms API error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -188,7 +186,6 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (error) {
-      console.error('Error creating social media platform:', error);
       return NextResponse.json(
         { error: 'Failed to create platform' },
         { status: 500 }
@@ -204,8 +201,6 @@ export async function POST(request: NextRequest) {
       { status: 201 }
     );
   } catch (error) {
-    console.error('Social media platforms POST error:', error);
-
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Invalid request data', details: error.errors },

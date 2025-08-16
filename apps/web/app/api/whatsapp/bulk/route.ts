@@ -8,7 +8,6 @@ import { createClient } from '@/app/utils/supabase/server';
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    console.log('WhatsApp bulk message request:', body);
 
     // Validate required fields
     const {
@@ -73,7 +72,6 @@ export async function POST(request: NextRequest) {
         .eq('is_opted_in', true);
 
       if (error) {
-        console.error('Error fetching opt-ins:', error);
         throw new Error('Failed to fetch patient opt-ins');
       }
 
@@ -96,7 +94,6 @@ export async function POST(request: NextRequest) {
         .eq('is_opted_in', true);
 
       if (error) {
-        console.error('Error fetching selected patient opt-ins:', error);
         throw new Error('Failed to fetch selected patient opt-ins');
       }
 
@@ -137,16 +134,12 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    console.log(`Starting bulk send to ${phoneNumbers.length} recipients`);
-
     // Send bulk messages
     const results = await whatsAppService.sendBulkMessages(
       phoneNumbers,
       templateName,
       parameters
     );
-
-    console.log('Bulk send completed:', results);
 
     return NextResponse.json({
       success: true,
@@ -159,8 +152,6 @@ export async function POST(request: NextRequest) {
       message: `Bulk sending completed: ${results.sent} sent, ${results.failed} failed`,
     });
   } catch (error) {
-    console.error('Error sending bulk WhatsApp messages:', error);
-
     return NextResponse.json(
       {
         error: error instanceof Error ? error.message : 'Internal server error',

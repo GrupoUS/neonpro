@@ -39,7 +39,6 @@ export function useTranslation() {
       // Fallback to key itself if translation not found
       return key;
     } catch (_error) {
-      console.warn(`Translation not found for key: ${key}`);
       return fallback || key;
     }
   };
@@ -63,7 +62,6 @@ export function translate(key: TranslationPath, fallback?: string): string {
 
     return fallback || key;
   } catch (_error) {
-    console.warn(`Translation not found for key: ${key}`);
     return fallback || key;
   }
 }

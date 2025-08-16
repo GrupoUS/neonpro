@@ -31,14 +31,14 @@ import type {
  * - Exa: Industry-standard cancellation policies (24-48h rules, fee structures)
  */
 
-interface AppointmentCancellationProps {
+type AppointmentCancellationProps = {
   appointmentId: string;
   appointment: PatientAppointment | undefined;
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onConfirm: (appointmentId: string, reason: string) => Promise<void>;
   cancellationPolicies: CancellationPolicies | null;
-}
+};
 
 const CANCELLATION_REASONS = [
   { value: 'illness', label: 'Doença/Mal-estar', emergency: false },
@@ -116,8 +116,7 @@ export function AppointmentCancellation({
       // Reset form
       setSelectedReason('');
       setCustomReason('');
-    } catch (error) {
-      console.error('Error confirming cancellation:', error);
+    } catch (_error) {
     } finally {
       setIsSubmitting(false);
     }

@@ -13,7 +13,7 @@ import { AuditLogger } from '@/lib/auth/audit/audit-logger';
 // Types and Interfaces
 // ===============================================
 
-export interface PredictionFeatures {
+export type PredictionFeatures = {
   treatmentType: string;
   professionalId: string;
   patientAge?: number;
@@ -27,9 +27,9 @@ export interface PredictionFeatures {
   requiresSpecialEquipment?: boolean;
   patientMobilityLevel?: 'normal' | 'limited' | 'wheelchair';
   specialRequirements?: string[];
-}
+};
 
-export interface DurationPrediction {
+export type DurationPrediction = {
   appointmentId: string;
   predictedDuration: number; // in minutes
   confidenceScore: number; // 0-1
@@ -39,14 +39,14 @@ export interface DurationPrediction {
     min: number;
     max: number;
   };
-}
+};
 
-export interface PredictionFeedback {
+export type PredictionFeedback = {
   appointmentId: string;
   actualDuration: number;
   accuracyScore: number;
   predictionError: number;
-}
+};
 
 // ===============================================
 // AI Duration Prediction Service

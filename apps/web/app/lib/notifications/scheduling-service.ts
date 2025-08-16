@@ -10,7 +10,7 @@ import type {
   NotificationType,
 } from './config';
 
-interface ScheduleNotificationPayload {
+type ScheduleNotificationPayload = {
   recipientId: string;
   type: NotificationType;
   channel: NotificationChannel;
@@ -18,9 +18,9 @@ interface ScheduleNotificationPayload {
   scheduledFor: Date;
   preferences: NotificationPreferences;
   metadata?: Record<string, any>;
-}
+};
 
-interface ScheduledNotification {
+type ScheduledNotification = {
   id: string;
   recipientId: string;
   type: NotificationType;
@@ -33,7 +33,7 @@ interface ScheduledNotification {
   lastError?: string;
   createdAt: Date;
   updatedAt: Date;
-}
+};
 
 export class SchedulingService {
   private readonly maxRetries = 3;
@@ -49,37 +49,32 @@ export class SchedulingService {
   async scheduleNotification(
     payload: ScheduleNotificationPayload
   ): Promise<string> {
-    try {
-      const { data, error } = await supabase
-        .from('scheduled_notifications')
-        .insert({
-          recipient_id: payload.recipientId,
-          notification_type: payload.type,
-          channel: payload.channel,
-          payload: payload.payload,
-          scheduled_for: payload.scheduledFor.toISOString(),
-          status: 'pending',
-          retry_count: 0,
-          max_retries: this.maxRetries,
-          metadata: {
-            preferences: payload.preferences,
-            ...payload.metadata,
-          },
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-        })
-        .select('id')
-        .single();
+    const { data, error } = await supabase
+      .from('scheduled_notifications')
+      .insert({
+        recipient_id: payload.recipientId,
+        notification_type: payload.type,
+        channel: payload.channel,
+        payload: payload.payload,
+        scheduled_for: payload.scheduledFor.toISOString(),
+        status: 'pending',
+        retry_count: 0,
+        max_retries: this.maxRetries,
+        metadata: {
+          preferences: payload.preferences,
+          ...payload.metadata,
+        },
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      })
+      .select('id')
+      .single();
 
-      if (error) {
-        throw new Error(`Failed to schedule notification: ${error.message}`);
-      }
-
-      return data.id;
-    } catch (error) {
-      console.error('Error scheduling notification:', error);
-      throw error;
+    if (error) {
+      throw new Error(`Failed to schedule notification: ${error.message}`);
     }
+
+    return data.id;
   }
 
   /**
@@ -102,8 +97,7 @@ export class SchedulingService {
       }
 
       return data.map(this.mapDatabaseToModel);
-    } catch (error) {
-      console.error('Error getting due notifications:', error);
+    } catch (_error) {
       return [];
     }
   }
@@ -127,13 +121,11 @@ export class SchedulingService {
         .eq('id', notificationId);
 
       if (error) {
-        console.error(`Failed to mark notification as sent: ${error.message}`);
         return false;
       }
 
       return true;
-    } catch (error) {
-      console.error('Error marking notification as sent:', error);
+    } catch (_error) {
       return false;
     }
   }
@@ -154,9 +146,6 @@ export class SchedulingService {
         .single();
 
       if (fetchError) {
-        console.error(
-          `Failed to fetch notification for retry: ${fetchError.message}`
-        );
         return false;
       }
 
@@ -192,15 +181,11 @@ export class SchedulingService {
         .eq('id', notificationId);
 
       if (error) {
-        console.error(
-          `Failed to mark notification as failed: ${error.message}`
-        );
         return false;
       }
 
       return true;
-    } catch (error) {
-      console.error('Error marking notification as failed:', error);
+    } catch (_error) {
       return false;
     }
   } /**
@@ -219,13 +204,11 @@ export class SchedulingService {
         .eq('status', 'pending'); // Only allow cancelling pending notifications
 
       if (error) {
-        console.error(`Failed to cancel notification: ${error.message}`);
         return false;
       }
 
       return true;
-    } catch (error) {
-      console.error('Error cancelling notification:', error);
+    } catch (_error) {
       return false;
     }
   }
@@ -246,7 +229,6 @@ export class SchedulingService {
         .single();
 
       if (error) {
-        console.error(`Failed to get notification status: ${error.message}`);
         return null;
       }
 
@@ -273,8 +255,7 @@ export class SchedulingService {
         deliveredAt,
         error: data.last_error || undefined,
       };
-    } catch (error) {
-      console.error('Error getting notification status:', error);
+    } catch (_error) {
       return null;
     }
   }
@@ -297,13 +278,11 @@ export class SchedulingService {
         .eq('status', 'pending'); // Only allow rescheduling pending notifications
 
       if (error) {
-        console.error(`Failed to reschedule notification: ${error.message}`);
         return false;
       }
 
       return true;
-    } catch (error) {
-      console.error('Error rescheduling notification:', error);
+    } catch (_error) {
       return false;
     }
   }
@@ -325,7 +304,6 @@ export class SchedulingService {
         .single();
 
       if (prefError || !preferences) {
-        console.error('Failed to get patient preferences:', prefError);
         return [];
       }
 
@@ -367,17 +345,14 @@ export class SchedulingService {
                 });
 
                 scheduledIds.push(scheduledId);
-              } catch (error) {
-                console.error(`Failed to schedule ${channel} reminder:`, error);
-              }
+              } catch (_error) {}
             }
           }
         }
       }
 
       return scheduledIds;
-    } catch (error) {
-      console.error('Error scheduling appointment reminders:', error);
+    } catch (_error) {
       return [];
     }
   }
@@ -400,15 +375,11 @@ export class SchedulingService {
         .contains('metadata', { appointmentId });
 
       if (error) {
-        console.error(
-          `Failed to cancel appointment notifications: ${error.message}`
-        );
         return false;
       }
 
       return true;
-    } catch (error) {
-      console.error('Error cancelling appointment notifications:', error);
+    } catch (_error) {
       return false;
     }
   }
@@ -449,13 +420,11 @@ export class SchedulingService {
         .select('id');
 
       if (error) {
-        console.error(`Failed to cleanup old notifications: ${error.message}`);
         return 0;
       }
 
       return data?.length || 0;
-    } catch (error) {
-      console.error('Error cleaning up old notifications:', error);
+    } catch (_error) {
       return 0;
     }
   }

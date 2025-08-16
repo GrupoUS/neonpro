@@ -1,16 +1,16 @@
 'use client';
 
-import React, { Suspense } from 'react';
-import { ReconciliationDashboard } from '@/components/financial/ReconciliationDashboard';
+import { AlertTriangle, Shield } from 'lucide-react';
+import { Suspense } from 'react';
 import { ImportStatementButton } from '@/components/financial/ImportStatementButton';
+import { MatchingAlgorithmsConfig } from '@/components/financial/MatchingAlgorithmsConfig';
+import { ReconciliationDashboard } from '@/components/financial/ReconciliationDashboard';
 import { ReconciliationSummary } from '@/components/financial/ReconciliationSummary';
 import { TransactionsList } from '@/components/financial/TransactionsList';
-import { MatchingAlgorithmsConfig } from '@/components/financial/MatchingAlgorithmsConfig';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
 import { useAuth } from '@/hooks/useAuth';
 import { usePermissions } from '@/hooks/usePermissions';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Shield, AlertTriangle } from 'lucide-react';
 
 /**
  * Healthcare Financial Reconciliation Page
@@ -48,7 +48,7 @@ export default function ReconciliationPage() {
   if (!user) {
     return (
       <div className="flex h-screen items-center justify-center">
-        <Alert variant="destructive" data-testid="unauthorized-alert">
+        <Alert data-testid="unauthorized-alert" variant="destructive">
           <AlertTriangle className="h-4 w-4" />
           <AlertDescription>
             Acesso não autorizado. Faça login para continuar.
@@ -61,7 +61,7 @@ export default function ReconciliationPage() {
   if (!canAccessFinancial) {
     return (
       <div className="flex h-screen items-center justify-center">
-        <Alert variant="destructive" data-testid="permission-denied-alert">
+        <Alert data-testid="permission-denied-alert" variant="destructive">
           <Shield className="h-4 w-4" />
           <AlertDescription>
             Permissão insuficiente para acessar dados financeiros. Entre em
@@ -74,13 +74,13 @@ export default function ReconciliationPage() {
 
   return (
     <div
-      className="container mx-auto p-6 space-y-6"
+      className="container mx-auto space-y-6 p-6"
       data-testid="reconciliation-page"
     >
       {/* Page Header with Healthcare Context */}
       <div className="flex flex-col space-y-2">
         <h1
-          className="text-3xl font-bold tracking-tight"
+          className="font-bold text-3xl tracking-tight"
           data-testid="page-title"
         >
           Reconciliação Financeira
@@ -92,24 +92,24 @@ export default function ReconciliationPage() {
       </div>
 
       {/* Import Controls */}
-      <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+      <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
         <div className="flex gap-2">
           <ImportStatementButton
-            data-testid="import-statement-button"
             canImport={canManageReconciliation}
+            data-testid="import-statement-button"
           />
         </div>
       </div>
 
       {/* Main Dashboard */}
       <Suspense
-        fallback={<LoadingSpinner size="lg" data-testid="dashboard-loading" />}
+        fallback={<LoadingSpinner data-testid="dashboard-loading" size="lg" />}
       >
         <ReconciliationDashboard data-testid="reconciliation-dashboard" />
       </Suspense>
 
       {/* Summary and Transactions */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <div className="space-y-4">
           <Suspense fallback={<LoadingSpinner data-testid="summary-loading" />}>
             <ReconciliationSummary data-testid="reconciliation-summary" />

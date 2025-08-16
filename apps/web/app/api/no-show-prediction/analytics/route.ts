@@ -61,7 +61,6 @@ export async function GET(request: NextRequest) {
     const { data: analytics, error } = await query;
 
     if (error) {
-      console.error('Database error:', error);
       return NextResponse.json(
         { error: 'Failed to fetch analytics' },
         { status: 500 }
@@ -99,8 +98,7 @@ export async function GET(request: NextRequest) {
         total: summary.total_records,
       },
     });
-  } catch (error) {
-    console.error('API error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

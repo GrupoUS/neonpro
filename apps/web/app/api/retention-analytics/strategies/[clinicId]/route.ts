@@ -247,8 +247,6 @@ export async function GET(
       timestamp: new Date().toISOString(),
     });
   } catch (error) {
-    console.error('Error getting retention strategies:', error);
-
     return NextResponse.json(
       {
         error: 'Internal server error',
@@ -359,8 +357,6 @@ export async function POST(
       timestamp: new Date().toISOString(),
     });
   } catch (error) {
-    console.error('Error creating retention strategy:', error);
-
     return NextResponse.json(
       {
         error: 'Internal server error',

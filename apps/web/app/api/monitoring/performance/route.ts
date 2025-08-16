@@ -56,8 +56,7 @@ export async function GET(request: Request) {
       metricsCount: performanceMonitor.getMetricsCount(),
       timestamp: Date.now(),
     });
-  } catch (error) {
-    console.error('Performance API error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -95,8 +94,7 @@ export async function POST(request: Request) {
     });
 
     return NextResponse.json({ success: true });
-  } catch (error) {
-    console.error('Performance recording error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to record metric' },
       { status: 500 }

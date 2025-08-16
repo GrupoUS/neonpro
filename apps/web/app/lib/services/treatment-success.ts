@@ -128,7 +128,9 @@ export class TreatmentSuccessService {
     id: string,
     updateData: UpdateTreatmentOutcomeData
   ) {
-    const { data, error } = await (await this.supabase)
+    const { data, error } = await (
+      await this.supabase
+    )
       .from('treatment_outcomes')
       .update({ ...updateData, updated_at: new Date().toISOString() })
       .eq('id', id)
@@ -416,7 +418,9 @@ export class TreatmentSuccessService {
   async getQualityBenchmarks(page = 1, limit = 10) {
     const offset = (page - 1) * limit;
 
-    const { data, error, count } = await (await this.supabase)
+    const { data, error, count } = await (
+      await this.supabase
+    )
       .from('quality_benchmarks')
       .select('*', { count: 'exact' })
       .range(offset, offset + limit - 1)
@@ -494,7 +498,9 @@ export class TreatmentSuccessService {
   async getComplianceReports(page = 1, limit = 10) {
     const offset = (page - 1) * limit;
 
-    const { data, error, count } = await (await this.supabase)
+    const { data, error, count } = await (
+      await this.supabase
+    )
       .from('compliance_reports')
       .select('*', { count: 'exact' })
       .range(offset, offset + limit - 1)

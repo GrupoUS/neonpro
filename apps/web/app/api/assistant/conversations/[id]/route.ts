@@ -1,11 +1,11 @@
 import { type NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/app/utils/supabase/server';
 
-interface RouteParams {
+type RouteParams = {
   params: Promise<{
     id: string;
   }>;
-}
+};
 
 export async function GET(_request: NextRequest, { params }: RouteParams) {
   try {
@@ -47,7 +47,6 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
       .order('created_at', { ascending: true });
 
     if (messagesError) {
-      console.error('Error fetching messages:', messagesError);
       return NextResponse.json(
         { error: 'Failed to fetch messages' },
         { status: 500 }
@@ -58,8 +57,7 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
       conversation,
       messages: messages || [],
     });
-  } catch (error) {
-    console.error('Conversation Messages API Error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -125,7 +123,6 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
       .single();
 
     if (error) {
-      console.error('Error updating conversation:', error);
       return NextResponse.json(
         { error: 'Failed to update conversation' },
         { status: 500 }
@@ -133,8 +130,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     }
 
     return NextResponse.json({ conversation });
-  } catch (error) {
-    console.error('Update Conversation API Error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -181,7 +177,6 @@ export async function DELETE(_request: NextRequest, { params }: RouteParams) {
       .eq('user_id', user.id);
 
     if (error) {
-      console.error('Error deleting conversation:', error);
       return NextResponse.json(
         { error: 'Failed to delete conversation' },
         { status: 500 }
@@ -189,8 +184,7 @@ export async function DELETE(_request: NextRequest, { params }: RouteParams) {
     }
 
     return NextResponse.json({ success: true });
-  } catch (error) {
-    console.error('Delete Conversation API Error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

@@ -61,8 +61,7 @@ export async function GET(request: NextRequest) {
       default:
         return await getDeclarationsOverview(supabase, clinicId);
     }
-  } catch (error) {
-    console.error('Declarations API GET error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -98,8 +97,7 @@ export async function POST(request: NextRequest) {
           { status: 400 }
         );
     }
-  } catch (error) {
-    console.error('Declarations API POST error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -214,9 +212,7 @@ async function getDeclarationStatus(
         data.status = updatedStatus.status;
         data.processing_result = updatedStatus.result;
       }
-    } catch (error) {
-      console.error('Declaration status check error:', error);
-    }
+    } catch (_error) {}
   }
 
   return NextResponse.json({
@@ -276,8 +272,7 @@ async function downloadDeclaration(
     );
 
     return new NextResponse(fileData, { headers });
-  } catch (error) {
-    console.error('Declaration download error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to download declaration' },
       { status: 500 }
@@ -323,8 +318,7 @@ async function getDeclarationCalendar(supabase: any, clinicId: string) {
         generated_at: new Date().toISOString(),
       },
     });
-  } catch (error) {
-    console.error('Declaration calendar error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to generate declaration calendar' },
       { status: 500 }
@@ -384,8 +378,7 @@ async function getComplianceStatus(supabase: any, clinicId: string) {
         assessed_at: new Date().toISOString(),
       },
     });
-  } catch (error) {
-    console.error('Compliance assessment error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to assess compliance' },
       { status: 500 }
@@ -489,8 +482,7 @@ async function generateDeclaration(supabase: any, body: any) {
 
         data.status = 'submitted';
         data.protocol_number = submission.protocol;
-      } catch (submissionError) {
-        console.error('Auto-submission failed:', submissionError);
+      } catch (_submissionError) {
         // Continue with generated status
       }
     }
@@ -510,7 +502,6 @@ async function generateDeclaration(supabase: any, body: any) {
       },
     });
   } catch (error) {
-    console.error('Declaration generation error:', error);
     return NextResponse.json(
       { error: 'Declaration generation failed', details: error.message },
       { status: 500 }
@@ -571,7 +562,6 @@ async function validateDeclaration(supabase: any, body: any) {
       },
     });
   } catch (error) {
-    console.error('Declaration validation error:', error);
     return NextResponse.json(
       { error: 'Declaration validation failed', details: error.message },
       { status: 500 }
@@ -640,8 +630,6 @@ async function submitDeclaration(supabase: any, body: any) {
       },
     });
   } catch (error) {
-    console.error('Declaration submission error:', error);
-
     // Update status to error
     await supabase
       .from('tax_declarations')
@@ -707,7 +695,6 @@ async function scheduleDeclaration(supabase: any, body: any) {
       },
     });
   } catch (error) {
-    console.error('Declaration scheduling error:', error);
     return NextResponse.json(
       { error: 'Declaration scheduling failed', details: error.message },
       { status: 500 }

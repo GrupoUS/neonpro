@@ -45,10 +45,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // TODO: Replace with actual SMS provider integration
-    // For development, we'll log the code
-    console.log(`SMS MFA Code for ${phoneNumber}: ${code}`);
-
     // In production, implement Twilio or AWS SNS:
     /*
     const twilioClient = require('twilio')(
@@ -74,8 +70,7 @@ export async function POST(request: NextRequest) {
       messageId: `mock-${Date.now()}`,
       message: 'SMS sent successfully (development mode)',
     });
-  } catch (error) {
-    console.error('SMS sending error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { success: false, error: 'Failed to send SMS' },
       { status: 500 }
@@ -100,7 +95,6 @@ async function checkSMSRateLimit(
       .gte('created_at', fiveMinutesAgo.toISOString());
 
     if (error) {
-      console.error('Rate limit check error:', error);
       return { allowed: true }; // Allow on error
     }
 
@@ -114,8 +108,7 @@ async function checkSMSRateLimit(
     }
 
     return { allowed: true };
-  } catch (error) {
-    console.error('Rate limit check error:', error);
+  } catch (_error) {
     return { allowed: true }; // Allow on error
   }
 }

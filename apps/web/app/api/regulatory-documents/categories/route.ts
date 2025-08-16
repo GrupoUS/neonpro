@@ -50,7 +50,6 @@ export async function GET(request: NextRequest) {
     const { data: categories, error } = await query;
 
     if (error) {
-      console.error('Error fetching regulation categories:', error);
       return NextResponse.json(
         { error: 'Failed to fetch categories' },
         { status: 500 }
@@ -75,7 +74,6 @@ export async function GET(request: NextRequest) {
       groupedCategories: groupedCategories || {},
     });
   } catch (error) {
-    console.error('API Error:', error);
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Invalid query parameters', details: error.errors },
@@ -110,7 +108,6 @@ export async function POST(_request: NextRequest) {
       .order('authority_name');
 
     if (error) {
-      console.error('Error fetching authorities:', error);
       return NextResponse.json(
         { error: 'Failed to fetch authorities' },
         { status: 500 }
@@ -137,8 +134,7 @@ export async function POST(_request: NextRequest) {
     return NextResponse.json({
       authorities: uniqueAuthorities || [],
     });
-  } catch (error) {
-    console.error('API Error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

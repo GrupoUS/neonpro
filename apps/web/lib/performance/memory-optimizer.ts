@@ -3,30 +3,30 @@
  * Advanced memory optimization for subscription middleware
  */
 
-export interface MemorySnapshot {
+export type MemorySnapshot = {
   timestamp: number;
   heapUsed: number;
   heapTotal: number;
   external: number;
   arrayBuffers: number;
   rss?: number; // Node.js only
-}
+};
 
-export interface MemoryLeak {
+export type MemoryLeak = {
   type: 'growing_heap' | 'retained_objects' | 'event_listeners';
   severity: 'low' | 'medium' | 'high' | 'critical';
   description: string;
   recommendations: string[];
-}
+};
 
-export interface MemoryOptimizationReport {
+export type MemoryOptimizationReport = {
   baseline: MemorySnapshot;
   peak: MemorySnapshot;
   current: MemorySnapshot;
   leaks: MemoryLeak[];
   optimizationOpportunities: string[];
   memoryEfficiency: number; // 0-100 score
-}
+};
 
 export class MemoryOptimizer {
   private snapshots: MemorySnapshot[] = [];
@@ -42,8 +42,6 @@ export class MemoryOptimizer {
       this.takeSnapshot();
       this.detectLeaks();
     }, intervalMs);
-
-    console.log('🧠 Memory monitoring started');
   } /**
    * Stop memory monitoring
    */
@@ -51,7 +49,6 @@ export class MemoryOptimizer {
     if (this.monitoringInterval) {
       clearInterval(this.monitoringInterval);
       this.monitoringInterval = undefined;
-      console.log('🧠 Memory monitoring stopped');
     }
   }
 
@@ -160,9 +157,7 @@ export class MemoryOptimizer {
   forceGC(): void {
     if (typeof global !== 'undefined' && global.gc) {
       global.gc();
-      console.log('🗑️ Forced garbage collection');
     } else {
-      console.warn('⚠️ Garbage collection not available');
     }
   }
 

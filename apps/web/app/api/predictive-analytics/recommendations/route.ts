@@ -12,8 +12,7 @@ export async function GET(request: NextRequest) {
       await service.getOptimizationRecommendations(model_id);
 
     return NextResponse.json(recommendations);
-  } catch (error) {
-    console.error('Erro ao buscar recomendações:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
       { status: 500 }

@@ -8,7 +8,7 @@
 
 import { createClient } from '@/app/utils/supabase/client';
 
-export interface ErrorEvent {
+export type ErrorEvent = {
   error_type:
     | 'javascript'
     | 'api'
@@ -25,23 +25,23 @@ export interface ErrorEvent {
   severity: 'low' | 'medium' | 'high' | 'critical';
   metadata?: Record<string, any>;
   timestamp: string;
-}
+};
 
-export interface ErrorSummary {
+export type ErrorSummary = {
   error_type: string;
   count: number;
   first_occurrence: string;
   last_occurrence: string;
   affected_users: number;
   error_rate: number;
-}
+};
 
-export interface ErrorThreshold {
+export type ErrorThreshold = {
   error_type: string;
   max_count_per_hour: number;
   max_rate_percentage: number;
   alert_enabled: boolean;
-}
+};
 
 class ErrorTracker {
   private readonly supabase = createClient();
@@ -278,7 +278,6 @@ class ErrorTracker {
         .gte('timestamp', oneHourAgo.toISOString());
 
       if (error) {
-        console.error('Error checking thresholds:', error);
         return;
       }
 
@@ -295,9 +294,7 @@ class ErrorTracker {
 
       // Log error count metric
       await this.logErrorMetric(errorEvent.error_type, hourlyCount + 1);
-    } catch (error) {
-      console.error('Error in threshold checking:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -308,10 +305,6 @@ class ErrorTracker {
     count: number,
     threshold: ErrorThreshold
   ): Promise<void> {
-    console.error(
-      `🚨 ERROR THRESHOLD EXCEEDED: ${errorType} - ${count} errors in the last hour (threshold: ${threshold.max_count_per_hour})`
-    );
-
     // Log alert as system metric
     await this.supabase.from('system_metrics').insert({
       metric_type: 'error_alert',
@@ -343,9 +336,7 @@ class ErrorTracker {
         metric_value: count,
         metric_unit: 'count',
       });
-    } catch (error) {
-      console.error('Error logging error metric:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -372,7 +363,6 @@ class ErrorTracker {
       const { data, error } = await query;
 
       if (error || !data) {
-        console.error('Error fetching error summary:', error);
         return [];
       }
 
@@ -404,8 +394,7 @@ class ErrorTracker {
       });
 
       return Object.values(summaryMap);
-    } catch (error) {
-      console.error('Error generating error summary:', error);
+    } catch (_error) {
       return [];
     }
   }
@@ -426,7 +415,6 @@ class ErrorTracker {
         .order('timestamp');
 
       if (error || !data) {
-        console.error('Error fetching error baseline:', error);
         return {};
       }
 
@@ -449,8 +437,7 @@ class ErrorTracker {
       });
 
       return baseline;
-    } catch (error) {
-      console.error('Error calculating error baseline:', error);
+    } catch (_error) {
       return {};
     }
   }
@@ -491,12 +478,10 @@ class ErrorTracker {
         .insert(metrics);
 
       if (error) {
-        console.error('Failed to flush errors:', error);
         // Re-queue errors on failure
         this.errorQueue.unshift(...errorsToFlush);
       }
-    } catch (error) {
-      console.error('Error flushing errors:', error);
+    } catch (_error) {
       this.errorQueue.unshift(...errorsToFlush);
     }
   }

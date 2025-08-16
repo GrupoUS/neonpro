@@ -3,7 +3,7 @@
 // Author: Dev Agent
 // Date: 2025-01-26
 
-export interface FinancialKPI {
+export type FinancialKPI = {
   id: string;
   kpi_name: string;
   kpi_category:
@@ -21,9 +21,9 @@ export interface FinancialKPI {
   last_updated: string;
   created_at: string;
   updated_at: string;
-}
+};
 
-export interface KPIThreshold {
+export type KPIThreshold = {
   id: string;
   kpi_id: string;
   threshold_type: 'warning' | 'critical' | 'target';
@@ -39,9 +39,9 @@ export interface KPIThreshold {
   };
   created_at: string;
   updated_at: string;
-}
+};
 
-export interface DashboardLayout {
+export type DashboardLayout = {
   id: string;
   user_id: string;
   layout_name: string;
@@ -53,9 +53,9 @@ export interface DashboardLayout {
   is_shared: boolean;
   created_at: string;
   updated_at: string;
-}
+};
 
-export interface DashboardWidget {
+export type DashboardWidget = {
   id: string;
   type: 'kpi_card' | 'chart' | 'table' | 'alert_panel' | 'summary_stats';
   kpi_ids?: string[];
@@ -74,9 +74,9 @@ export interface DashboardWidget {
     border_color?: string;
     text_color?: string;
   };
-}
+};
 
-export interface GridLayout {
+export type GridLayout = {
   cols: number;
   rows: number;
   row_height: number;
@@ -84,9 +84,9 @@ export interface GridLayout {
   container_padding: [number, number];
   breakpoints: Record<string, number>;
   layouts: Record<string, any[]>;
-}
+};
 
-export interface DashboardFilters {
+export type DashboardFilters = {
   time_period?: {
     start_date: string;
     end_date: string;
@@ -101,9 +101,9 @@ export interface DashboardFilters {
     start_date?: string;
     end_date?: string;
   };
-}
+};
 
-export interface KPIDrillPath {
+export type KPIDrillPath = {
   id: string;
   kpi_id: string;
   drill_level: number;
@@ -122,18 +122,18 @@ export interface KPIDrillPath {
   };
   created_at: string;
   updated_at: string;
-}
+};
 
-export interface KPIHistory {
+export type KPIHistory = {
   id: string;
   kpi_id: string;
   value: number;
   recorded_at: string;
   calculation_metadata?: Record<string, any>;
   created_at: string;
-}
+};
 
-export interface KPIAlert {
+export type KPIAlert = {
   id: string;
   kpi_id: string;
   threshold_id?: string;
@@ -145,9 +145,9 @@ export interface KPIAlert {
   acknowledged_by?: string;
   acknowledged_at?: string;
   created_at: string;
-}
+};
 
-export interface DashboardPerformance {
+export type DashboardPerformance = {
   id: string;
   dashboard_id: string;
   load_time_ms: number;
@@ -156,10 +156,10 @@ export interface DashboardPerformance {
   user_id: string;
   session_id?: string;
   recorded_at: string;
-}
+};
 
 // KPI Calculation Types
-export interface KPICalculationRequest {
+export type KPICalculationRequest = {
   kpi_ids?: string[];
   time_period: {
     start_date: string;
@@ -169,9 +169,9 @@ export interface KPICalculationRequest {
   include_history?: boolean;
   include_variance?: boolean;
   force_recalculation?: boolean;
-}
+};
 
-export interface KPICalculationResult {
+export type KPICalculationResult = {
   kpi_id: string;
   kpi_name: string;
   calculated_value: number;
@@ -186,10 +186,10 @@ export interface KPICalculationResult {
     value: number;
     percentage: number;
   }>;
-}
+};
 
 // Drill-down Analysis Types
-export interface DrillDownRequest {
+export type DrillDownRequest = {
   kpi_id: string;
   dimension: string;
   filters?: Record<string, any>;
@@ -197,9 +197,9 @@ export interface DrillDownRequest {
   limit?: number;
   sort_by?: string;
   sort_order?: 'asc' | 'desc';
-}
+};
 
-export interface DrillDownResult {
+export type DrillDownResult = {
   dimension_value: string;
   value: number;
   percentage_of_total: number;
@@ -208,10 +208,10 @@ export interface DrillDownResult {
   sub_dimensions?: DrillDownResult[];
   transaction_count?: number;
   metadata?: Record<string, any>;
-}
+};
 
 // Dashboard Builder Types
-export interface DashboardTemplate {
+export type DashboardTemplate = {
   id: string;
   name: string;
   description: string;
@@ -219,9 +219,9 @@ export interface DashboardTemplate {
   default_widgets: DashboardWidget[];
   default_filters: DashboardFilters;
   recommended_for: string[];
-}
+};
 
-export interface KPIBenchmark {
+export type KPIBenchmark = {
   kpi_name: string;
   industry_average: number;
   top_quartile: number;
@@ -229,10 +229,10 @@ export interface KPIBenchmark {
   bottom_quartile: number;
   benchmark_source: string;
   last_updated: string;
-}
+};
 
 // Real-time Updates
-export interface KPIUpdateEvent {
+export type KPIUpdateEvent = {
   type:
     | 'kpi_update'
     | 'alert_triggered'
@@ -243,19 +243,19 @@ export interface KPIUpdateEvent {
   alert_id?: string;
   data: any;
   timestamp: string;
-}
+};
 
 // Mobile and Offline Types
-export interface OfflineKPIData {
+export type OfflineKPIData = {
   kpis: FinancialKPI[];
   alerts: KPIAlert[];
   last_sync: string;
   sync_status: 'synced' | 'pending' | 'error';
   offline_capability: boolean;
-}
+};
 
 // Analytics and Insights
-export interface KPIInsight {
+export type KPIInsight = {
   id: string;
   kpi_id: string;
   insight_type:
@@ -269,9 +269,9 @@ export interface KPIInsight {
   confidence_score: number;
   recommended_actions?: string[];
   created_at: string;
-}
+};
 
-export interface ExecutiveSummary {
+export type ExecutiveSummary = {
   period: {
     start_date: string;
     end_date: string;
@@ -306,10 +306,10 @@ export interface ExecutiveSummary {
     action: string;
     estimated_impact: string;
   }>;
-}
+};
 
 // API Response Types
-export interface KPIAPIResponse<T = any> {
+export type KPIAPIResponse<T = any> = {
   data: T;
   success: boolean;
   message?: string;
@@ -325,4 +325,4 @@ export interface KPIAPIResponse<T = any> {
     message: string;
     code?: string;
   }>;
-}
+};

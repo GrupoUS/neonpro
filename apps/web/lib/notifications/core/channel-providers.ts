@@ -9,7 +9,7 @@ import {
   type NotificationResult,
 } from './notification-manager';
 
-export interface ChannelConfig {
+export type ChannelConfig = {
   enabled: boolean;
   priority: number;
   fallback_channels?: NotificationChannelEnum[];
@@ -25,9 +25,9 @@ export interface ChannelConfig {
   };
   cost_per_message?: number;
   provider_config?: Record<string, any>;
-}
+};
 
-export interface ChannelMetrics {
+export type ChannelMetrics = {
   channel: NotificationChannelEnum;
   total_sent: number;
   total_delivered: number;
@@ -36,7 +36,7 @@ export interface ChannelMetrics {
   average_delivery_time_ms: number;
   total_cost: number;
   last_updated: Date;
-}
+};
 
 export class ChannelProvider {
   private readonly emailProvider: EmailProvider;

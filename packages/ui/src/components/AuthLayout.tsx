@@ -2,7 +2,7 @@ import { Heart } from 'lucide-react';
 import * as React from 'react';
 import { cn } from '../utils/cn';
 
-export interface AuthLayoutProps {
+export type AuthLayoutProps = {
   children: React.ReactNode;
   title?: string;
   subtitle?: string;
@@ -12,7 +12,7 @@ export interface AuthLayoutProps {
   formWidth?: 'sm' | 'md' | 'lg';
   showLogo?: boolean;
   showBackground?: boolean;
-}
+};
 
 const AuthLayout = React.forwardRef<HTMLDivElement, AuthLayoutProps>(
   (

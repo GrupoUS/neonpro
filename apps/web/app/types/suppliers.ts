@@ -116,7 +116,7 @@ export type IssueStatus =
 // CORE INTERFACES
 // =====================================================================================
 
-export interface Supplier {
+export type Supplier = {
   id: string;
   clinic_id: string;
 
@@ -160,9 +160,9 @@ export interface Supplier {
   created_by?: string;
   created_at: string;
   updated_at: string;
-}
+};
 
-export interface SupplierContract {
+export type SupplierContract = {
   id: string;
   supplier_id: string;
 
@@ -204,9 +204,9 @@ export interface SupplierContract {
 
   // Relations
   supplier?: Supplier;
-}
+};
 
-export interface SupplierContact {
+export type SupplierContact = {
   id: string;
   supplier_id: string;
 
@@ -241,9 +241,9 @@ export interface SupplierContact {
 
   // Relations
   supplier?: Supplier;
-}
+};
 
-export interface SupplierPerformance {
+export type SupplierPerformance = {
   id: string;
   supplier_id: string;
 
@@ -287,9 +287,9 @@ export interface SupplierPerformance {
 
   // Relations
   supplier?: Supplier;
-}
+};
 
-export interface SupplierEvaluation {
+export type SupplierEvaluation = {
   id: string;
   supplier_id: string;
 
@@ -333,9 +333,9 @@ export interface SupplierEvaluation {
 
   // Relations
   supplier?: Supplier;
-}
+};
 
-export interface SupplierCommunication {
+export type SupplierCommunication = {
   id: string;
   supplier_id: string;
   contact_id?: string;
@@ -366,9 +366,9 @@ export interface SupplierCommunication {
   // Relations
   supplier?: Supplier;
   contact?: SupplierContact;
-}
+};
 
-export interface SupplierQualityIssue {
+export type SupplierQualityIssue = {
   id: string;
   supplier_id: string;
 
@@ -408,32 +408,32 @@ export interface SupplierQualityIssue {
 
   // Relations
   supplier?: Supplier;
-}
+};
 
 // =====================================================================================
 // SUPPORTING TYPES
 // =====================================================================================
 
-export interface VolumeDiscountTier {
+export type VolumeDiscountTier = {
   min_quantity: number;
   max_quantity?: number;
   discount_percentage: number;
   description?: string;
-}
+};
 
-export interface PerformancePenalty {
+export type PerformancePenalty = {
   metric: string;
   threshold: number;
   penalty_type: 'percentage' | 'fixed_amount' | 'contract_termination';
   penalty_value?: number;
   description?: string;
-}
+};
 
 // =====================================================================================
 // VIEW TYPES
 // =====================================================================================
 
-export interface SupplierPerformanceSummary {
+export type SupplierPerformanceSummary = {
   id: string;
   supplier_name: string;
   supplier_code: string;
@@ -458,9 +458,9 @@ export interface SupplierPerformanceSummary {
 
   // Recent communication
   last_communication?: string;
-}
+};
 
-export interface ContractRenewalAlert {
+export type ContractRenewalAlert = {
   id: string;
   supplier_name: string;
   supplier_code: string;
@@ -474,9 +474,9 @@ export interface ContractRenewalAlert {
 
   // Alert status
   alert_status?: 'urgent' | 'warning' | 'normal';
-}
+};
 
-export interface QualityIssuesSummary {
+export type QualityIssuesSummary = {
   supplier_id: string;
   supplier_name: string;
 
@@ -494,13 +494,13 @@ export interface QualityIssuesSummary {
   // Financial impact
   open_financial_impact?: number;
   total_financial_impact?: number;
-}
+};
 
 // =====================================================================================
 // FORM AND UI TYPES
 // =====================================================================================
 
-export interface CreateSupplierRequest {
+export type CreateSupplierRequest = {
   supplier_name: string;
   supplier_code: string;
   business_registration?: string;
@@ -528,7 +528,7 @@ export interface CreateSupplierRequest {
   // Status and Flags
   is_preferred?: boolean;
   is_critical?: boolean;
-}
+};
 
 export interface UpdateSupplierRequest extends Partial<CreateSupplierRequest> {
   performance_score?: number;
@@ -538,7 +538,7 @@ export interface UpdateSupplierRequest extends Partial<CreateSupplierRequest> {
   status?: SupplierStatus;
 }
 
-export interface CreateContractRequest {
+export type CreateContractRequest = {
   supplier_id: string;
   contract_number: string;
   contract_type: ContractType;
@@ -557,9 +557,9 @@ export interface CreateContractRequest {
   currency?: string;
   contract_document_url?: string;
   signed_date?: string;
-}
+};
 
-export interface CreateEvaluationRequest {
+export type CreateEvaluationRequest = {
   supplier_id: string;
   evaluation_period_start: string;
   evaluation_period_end: string;
@@ -577,9 +577,9 @@ export interface CreateEvaluationRequest {
   renewal_recommendation?: boolean;
   preferred_supplier_status?: boolean;
   risk_level?: RiskLevel;
-}
+};
 
-export interface CreateQualityIssueRequest {
+export type CreateQualityIssueRequest = {
   supplier_id: string;
   issue_type: QualityIssueType;
   severity: SeverityLevel;
@@ -590,21 +590,21 @@ export interface CreateQualityIssueRequest {
   customer_impact?: boolean;
   regulatory_impact?: boolean;
   financial_impact?: number;
-}
+};
 
 // =====================================================================================
 // API RESPONSE TYPES
 // =====================================================================================
 
-export interface SupplierListResponse {
+export type SupplierListResponse = {
   suppliers: Supplier[];
   total: number;
   page: number;
   limit: number;
   filters?: SupplierFilters;
-}
+};
 
-export interface SupplierFilters {
+export type SupplierFilters = {
   supplier_type?: SupplierType[];
   status?: SupplierStatus[];
   is_preferred?: boolean;
@@ -612,9 +612,9 @@ export interface SupplierFilters {
   performance_score_min?: number;
   performance_score_max?: number;
   search?: string;
-}
+};
 
-export interface SupplierDashboardData {
+export type SupplierDashboardData = {
   total_suppliers: number;
   active_suppliers: number;
   preferred_suppliers: number;
@@ -627,20 +627,20 @@ export interface SupplierDashboardData {
   recent_communications: SupplierCommunication[];
   top_performing_suppliers: SupplierPerformanceSummary[];
   contract_alerts: ContractRenewalAlert[];
-}
+};
 
 // =====================================================================================
 // COMPARISON AND ANALYSIS TYPES
 // =====================================================================================
 
-export interface SupplierComparison {
+export type SupplierComparison = {
   suppliers: Supplier[];
   comparison_criteria: string[];
   performance_metrics: Record<string, Record<string, number>>;
   recommendations: string[];
-}
+};
 
-export interface CompetitiveBidding {
+export type CompetitiveBidding = {
   id: string;
   title: string;
   description: string;
@@ -651,15 +651,15 @@ export interface CompetitiveBidding {
   status: 'draft' | 'open' | 'closed' | 'awarded';
   winning_supplier_id?: string;
   created_at: string;
-}
+};
 
-export interface BidEvaluationCriteria {
+export type BidEvaluationCriteria = {
   criteria: string;
   weight: number; // Percentage
   description?: string;
-}
+};
 
-export interface SupplierRiskAssessment {
+export type SupplierRiskAssessment = {
   supplier_id: string;
   assessment_date: string;
   overall_risk_level: RiskLevel;
@@ -670,13 +670,13 @@ export interface SupplierRiskAssessment {
   mitigation_strategies: string[];
   contingency_plans: string[];
   next_review_date: string;
-}
+};
 
 // =====================================================================================
 // ANALYTICS AND REPORTING TYPES
 // =====================================================================================
 
-export interface SupplierAnalytics {
+export type SupplierAnalytics = {
   period_start: string;
   period_end: string;
   total_spend: number;
@@ -703,22 +703,22 @@ export interface SupplierAnalytics {
       severity_breakdown: Record<SeverityLevel, number>;
     }>;
   };
-}
+};
 
-export interface SupplierKPI {
+export type SupplierKPI = {
   delivery_performance: number; // Percentage
   quality_performance: number; // Percentage
   cost_performance: number; // Variance from budget
   service_performance: number; // Rating 1-10
   compliance_performance: number; // Percentage
   overall_performance: number; // Weighted average
-}
+};
 
 // =====================================================================================
 // INTEGRATION TYPES
 // =====================================================================================
 
-export interface SupplierIntegration {
+export type SupplierIntegration = {
   supplier_id: string;
   integration_type: 'edi' | 'api' | 'portal' | 'email';
   connection_status: 'connected' | 'disconnected' | 'error';
@@ -726,13 +726,13 @@ export interface SupplierIntegration {
   sync_frequency: 'real_time' | 'hourly' | 'daily' | 'weekly';
   supported_operations: string[];
   configuration: Record<string, any>;
-}
+};
 
-export interface SupplierPortalAccess {
+export type SupplierPortalAccess = {
   supplier_id: string;
   portal_url: string;
   username: string;
   access_level: 'read_only' | 'order_management' | 'full_access';
   last_login: string;
   features_enabled: string[];
-}
+};

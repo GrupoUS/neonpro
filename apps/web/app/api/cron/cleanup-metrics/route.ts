@@ -11,16 +11,12 @@ import { performanceMonitor } from '@/lib/monitoring/performance-monitor';
 
 export async function GET() {
   try {
-    console.log('🧹 Starting metrics cleanup...');
-
     // Clear old metrics from performance monitor
     const initialMetricsCount = performanceMonitor.getMetricsCount();
     performanceMonitor.clearMetrics();
 
     // Clear old error data from error handler
     intelligentErrorHandler.clearMetrics();
-
-    console.log(`✅ Cleanup complete: ${initialMetricsCount} metrics cleaned`);
 
     return NextResponse.json({
       success: true,
@@ -29,8 +25,6 @@ export async function GET() {
       message: 'Metrics cleanup completed successfully',
     });
   } catch (error) {
-    console.error('❌ Metrics cleanup failed:', error);
-
     // Report the cleanup failure
     intelligentErrorHandler.captureError(error as Error, {
       route: '/api/cron/cleanup-metrics',

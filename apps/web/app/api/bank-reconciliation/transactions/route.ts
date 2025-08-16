@@ -238,8 +238,6 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('Error fetching bank transactions:', error);
-
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {
@@ -383,8 +381,6 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
     }
   } catch (error) {
-    console.error('Error in bank transactions POST:', error);
-
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {
@@ -480,8 +476,6 @@ export async function PUT(request: NextRequest) {
       message: 'Transaction updated successfully',
     });
   } catch (error) {
-    console.error('Error updating bank transaction:', error);
-
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {
@@ -577,7 +571,6 @@ export async function DELETE(request: NextRequest) {
       message: `Successfully marked ${transactions?.length || 0} transactions as ignored`,
     });
   } catch (error) {
-    console.error('Error deleting bank transactions:', error);
     return NextResponse.json(
       {
         success: false,

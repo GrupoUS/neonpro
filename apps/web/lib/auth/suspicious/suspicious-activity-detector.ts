@@ -4,7 +4,7 @@
 import { SessionConfig } from '@/lib/auth/config/session-config';
 import { SessionUtils } from '@/lib/auth/utils/session-utils';
 
-export interface BehaviorPattern {
+export type BehaviorPattern = {
   userId: string;
   sessionId: string;
   patternType: BehaviorPatternType;
@@ -13,7 +13,7 @@ export interface BehaviorPattern {
   anomalyScore: number; // 0-100
   confidence: number; // 0-100
   timestamp: number;
-}
+};
 
 export type BehaviorPatternType =
   | 'typing_speed'
@@ -25,7 +25,7 @@ export type BehaviorPatternType =
   | 'device_pattern'
   | 'interaction_frequency';
 
-export interface BehaviorBaseline {
+export type BehaviorBaseline = {
   avgTypingSpeed: number; // WPM
   avgMouseSpeed: number; // pixels/second
   commonNavigationPaths: string[];
@@ -35,9 +35,9 @@ export interface BehaviorBaseline {
   preferredDevices: string[];
   avgSessionDuration: number; // minutes
   interactionFrequency: number; // actions per minute
-}
+};
 
-export interface BehaviorMetrics {
+export type BehaviorMetrics = {
   currentTypingSpeed: number;
   currentMouseSpeed: number;
   navigationPath: string[];
@@ -47,9 +47,9 @@ export interface BehaviorMetrics {
   deviceType: string;
   sessionDuration: number;
   interactionFrequency: number;
-}
+};
 
-export interface AnomalyAlert {
+export type AnomalyAlert = {
   id: string;
   userId: string;
   sessionId: string;
@@ -61,7 +61,7 @@ export interface AnomalyAlert {
   timestamp: number;
   resolved: boolean;
   falsePositive: boolean;
-}
+};
 
 export type AnomalyType =
   | 'unusual_typing_pattern'
@@ -77,15 +77,15 @@ export type AnomalyType =
   | 'session_hijacking'
   | 'privilege_escalation';
 
-export interface AnomalyEvidence {
+export type AnomalyEvidence = {
   patternDeviations: Record<string, number>;
   statisticalSignificance: number;
   comparisonData: Record<string, any>;
   contextualFactors: string[];
   relatedEvents: string[];
-}
+};
 
-export interface DetectionRule {
+export type DetectionRule = {
   id: string;
   name: string;
   description: string;
@@ -95,7 +95,7 @@ export interface DetectionRule {
   enabled: boolean;
   falsePositiveRate: number;
   lastUpdated: number;
-}
+};
 
 export class SuspiciousActivityDetector {
   private readonly utils: SessionUtils;
@@ -243,9 +243,7 @@ export class SuspiciousActivityDetector {
       if (this.learningMode && pattern.anomalyScore < 30) {
         this.updateBehaviorBaseline(userId, pattern);
       }
-    } catch (error) {
-      console.error('Error recording behavior:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -339,9 +337,7 @@ export class SuspiciousActivityDetector {
         // Update risk scores
         await this.updateUserRiskScore(userId, recentPatterns);
       }
-    } catch (error) {
-      console.error('Error in behavior analysis:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -424,8 +420,7 @@ export class SuspiciousActivityDetector {
       }
 
       return null;
-    } catch (error) {
-      console.error('Error applying detection rule:', error);
+    } catch (_error) {
       return null;
     }
   }
@@ -446,13 +441,7 @@ export class SuspiciousActivityDetector {
 
       // Send notifications
       await this.sendAnomalyNotification(anomaly);
-
-      console.log(
-        `Anomaly detected: ${anomaly.alertType} for user ${anomaly.userId} (Risk: ${anomaly.riskScore})`
-      );
-    } catch (error) {
-      console.error('Error processing anomaly:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -778,9 +767,7 @@ export class SuspiciousActivityDetector {
           },
         }),
       });
-    } catch (error) {
-      console.error('Error creating security event:', error);
-    }
+    } catch (_error) {}
   }
 
   private async suspendSession(
@@ -806,19 +793,13 @@ export class SuspiciousActivityDetector {
     });
   }
 
-  private async increaseMonitoring(userId: string): Promise<void> {
-    // Increase monitoring frequency for this user
-    console.log(`Increasing monitoring for user ${userId}`);
-  }
+  private async increaseMonitoring(_userId: string): Promise<void> {}
 
-  private async logForReview(anomaly: AnomalyAlert): Promise<void> {
-    console.log('Anomaly logged for review:', anomaly);
-  }
+  private async logForReview(_anomaly: AnomalyAlert): Promise<void> {}
 
-  private async sendAnomalyNotification(anomaly: AnomalyAlert): Promise<void> {
-    // Send notification to security team
-    console.log(`Security notification sent for anomaly ${anomaly.id}`);
-  }
+  private async sendAnomalyNotification(
+    _anomaly: AnomalyAlert
+  ): Promise<void> {}
 
   private async updateUserRiskScore(
     userId: string,

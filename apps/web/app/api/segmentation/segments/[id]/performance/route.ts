@@ -1,9 +1,9 @@
 import { type NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/app/utils/supabase/server';
 
-interface RouteParams {
+type RouteParams = {
   id: string;
-}
+};
 
 export async function GET(
   _request: NextRequest,
@@ -29,7 +29,6 @@ export async function GET(
       .limit(1);
 
     if (error) {
-      console.error('Database error:', error);
       throw error;
     }
 
@@ -72,7 +71,6 @@ export async function GET(
       data: performance[0],
     });
   } catch (error) {
-    console.error('Error fetching segment performance:', error);
     return NextResponse.json(
       {
         error: 'Failed to fetch segment performance',

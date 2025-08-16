@@ -135,8 +135,6 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('Error fetching templates:', error);
-
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {
@@ -228,8 +226,6 @@ export async function POST(request: NextRequest) {
       { status: 201 }
     );
   } catch (error) {
-    console.error('Error creating template:', error);
-
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {
@@ -316,9 +312,7 @@ export async function PUT(request: NextRequest) {
       data: { templates: updatedTemplates },
       message: `${updatedTemplates.length} template(s) updated successfully`,
     });
-  } catch (error) {
-    console.error('Error bulk updating templates:', error);
-
+  } catch (_error) {
     return NextResponse.json(
       {
         error: 'Failed to update templates',
@@ -397,9 +391,7 @@ export async function DELETE(request: NextRequest) {
       success: true,
       message: `${template_ids.length} template(s) deleted successfully`,
     });
-  } catch (error) {
-    console.error('Error deleting templates:', error);
-
+  } catch (_error) {
     return NextResponse.json(
       {
         error: 'Failed to delete templates',

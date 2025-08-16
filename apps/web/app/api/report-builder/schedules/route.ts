@@ -30,7 +30,6 @@ export async function GET(request: NextRequest) {
       data: result,
     });
   } catch (error) {
-    console.error('Error fetching report schedules:', error);
     return NextResponse.json(
       {
         success: false,
@@ -72,7 +71,6 @@ export async function POST(request: NextRequest) {
       { status: 201 }
     );
   } catch (error) {
-    console.error('Error creating report schedule:', error);
     return NextResponse.json(
       {
         success: false,

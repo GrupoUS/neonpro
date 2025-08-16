@@ -3,41 +3,41 @@ import type { Database } from '@/types/supabase';
 import type { PatientProfile } from '../patients/profile-manager';
 
 // Types for AI analysis
-export interface RiskAssessment {
+export type RiskAssessment = {
   overall_score: number;
   risk_level: 'low' | 'medium' | 'high' | 'critical';
   risk_factors: RiskFactor[];
   recommendations: string[];
   confidence: number;
   last_updated: string;
-}
+};
 
-export interface RiskFactor {
+export type RiskFactor = {
   factor: string;
   severity: 'low' | 'medium' | 'high';
   impact_score: number;
   description: string;
   mitigation_strategies: string[];
-}
+};
 
-export interface PatientInsights {
+export type PatientInsights = {
   health_trends: HealthTrend[];
   behavioral_patterns: BehavioralPattern[];
   treatment_predictions: TreatmentPrediction[];
   optimization_suggestions: OptimizationSuggestion[];
   risk_assessment: RiskAssessment;
-}
+};
 
-export interface HealthTrend {
+export type HealthTrend = {
   metric: string;
   trend: 'improving' | 'stable' | 'declining';
   change_rate: number;
   period_months: number;
   confidence: number;
   data_points: { date: string; value: number }[];
-}
+};
 
-export interface BehavioralPattern {
+export type BehavioralPattern = {
   pattern_type:
     | 'appointment_adherence'
     | 'treatment_compliance'
@@ -47,24 +47,24 @@ export interface BehavioralPattern {
   frequency: number;
   strength: number;
   actionable_insights: string[];
-}
+};
 
-export interface TreatmentPrediction {
+export type TreatmentPrediction = {
   treatment_type: string;
   success_probability: number;
   expected_duration: string;
   optimal_frequency: string;
   contraindications: string[];
   supporting_factors: string[];
-}
+};
 
-export interface OptimizationSuggestion {
+export type OptimizationSuggestion = {
   category: 'scheduling' | 'treatment' | 'communication' | 'preventive';
   suggestion: string;
   impact_score: number;
   implementation_effort: 'low' | 'medium' | 'high';
   expected_outcome: string;
-}
+};
 
 /**
  * AI Patient Insights Engine
@@ -119,8 +119,7 @@ export class PatientInsightsEngine {
       await this.updatePatientAIInsights(patientId, insights);
 
       return insights;
-    } catch (error) {
-      console.error('Error generating patient insights:', error);
+    } catch (_error) {
       return null;
     }
   }
@@ -217,8 +216,7 @@ export class PatientInsightsEngine {
         confidence: this.calculateConfidence(profile, timeline),
         last_updated: new Date().toISOString(),
       };
-    } catch (error) {
-      console.error('Error assessing patient risk:', error);
+    } catch (_error) {
       return this.getDefaultRiskAssessment();
     }
   }

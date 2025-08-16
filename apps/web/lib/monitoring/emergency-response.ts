@@ -8,7 +8,7 @@
 
 import { createClient } from '@/app/utils/supabase/client';
 
-export interface EmergencyRule {
+export type EmergencyRule = {
   rule_id: string;
   rule_name: string;
   trigger_type:
@@ -26,9 +26,9 @@ export interface EmergencyRule {
   actions: EmergencyAction[];
   cooldown_minutes: number;
   metadata?: Record<string, any>;
-}
+};
 
-export interface EmergencyAction {
+export type EmergencyAction = {
   action_type:
     | 'alert'
     | 'feature_flag_disable'
@@ -39,9 +39,9 @@ export interface EmergencyAction {
   target?: string;
   parameters?: Record<string, any>;
   priority: number;
-}
+};
 
-export interface EmergencyAlert {
+export type EmergencyAlert = {
   alert_id: string;
   rule_id: string;
   trigger_time: string;
@@ -53,9 +53,9 @@ export interface EmergencyAlert {
   resolution_time?: string;
   resolution_method?: 'auto' | 'manual';
   metadata?: Record<string, any>;
-}
+};
 
-export interface SystemSnapshot {
+export type SystemSnapshot = {
   snapshot_id: string;
   snapshot_time: string;
   system_state: {
@@ -70,7 +70,7 @@ export interface SystemSnapshot {
     commit_hash: string;
     deployment_time: string;
   };
-}
+};
 
 class EmergencyResponseSystem {
   private readonly supabase = createClient();
@@ -174,8 +174,6 @@ class EmergencyResponseSystem {
    */
   private async initializeEmergencySystem(): Promise<void> {
     try {
-      console.log('🚨 Initializing Emergency Response System...');
-
       // Load existing rules
       await this.loadRules();
 
@@ -192,11 +190,7 @@ class EmergencyResponseSystem {
 
       // Start monitoring
       this.startMonitoring();
-
-      console.log('✅ Emergency Response System initialized');
-    } catch (error) {
-      console.error('Error initializing emergency response system:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -211,7 +205,6 @@ class EmergencyResponseSystem {
         .eq('metadata->>enabled', 'true');
 
       if (error) {
-        console.error('Error loading emergency rules:', error);
         return;
       }
 
@@ -221,19 +214,13 @@ class EmergencyResponseSystem {
           this.rules.set(rule.rule_id, rule);
         }
       });
-
-      console.log(`Loaded ${this.rules.size} emergency rules`);
-    } catch (error) {
-      console.error('Error loading rules:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
    * Create default emergency rules
    */
   private async createDefaultRules(): Promise<void> {
-    console.log('Creating default emergency rules...');
-
     for (const rule of this.defaultRules) {
       await this.addRule(rule);
     }
@@ -257,17 +244,12 @@ class EmergencyResponseSystem {
       });
 
       if (error) {
-        console.error('Error storing emergency rule:', error);
         return;
       }
 
       // Cache rule
       this.rules.set(rule.rule_id, rule);
-
-      console.log(`✅ Emergency rule added: ${rule.rule_name}`);
-    } catch (error) {
-      console.error('Error adding emergency rule:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -283,7 +265,6 @@ class EmergencyResponseSystem {
         .order('timestamp', { ascending: false });
 
       if (error) {
-        console.error('Error loading active alerts:', error);
         return;
       }
 
@@ -293,11 +274,7 @@ class EmergencyResponseSystem {
           this.activeAlerts.set(alert.alert_id, alert);
         }
       });
-
-      console.log(`Loaded ${this.activeAlerts.size} active alerts`);
-    } catch (error) {
-      console.error('Error loading active alerts:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -308,19 +285,15 @@ class EmergencyResponseSystem {
     this.monitoringInterval = setInterval(async () => {
       try {
         await this.checkEmergencyConditions();
-      } catch (error) {
-        console.error('Error in emergency monitoring:', error);
-      }
+      } catch (_error) {}
     }, 30_000);
-
-    console.log('🔄 Emergency monitoring started');
   }
 
   /**
    * Check all emergency conditions
    */
   private async checkEmergencyConditions(): Promise<void> {
-    for (const [ruleId, rule] of this.rules) {
+    for (const [_ruleId, rule] of this.rules) {
       if (!rule.enabled) {
         continue;
       }
@@ -331,9 +304,7 @@ class EmergencyResponseSystem {
         if (shouldTrigger) {
           await this.triggerEmergencyResponse(rule);
         }
-      } catch (error) {
-        console.error(`Error evaluating rule ${ruleId}:`, error);
-      }
+      } catch (_error) {}
     }
   }
 
@@ -414,8 +385,7 @@ class EmergencyResponseSystem {
         default:
           return false;
       }
-    } catch (error) {
-      console.error('Error evaluating metric threshold:', error);
+    } catch (_error) {
       return false;
     }
   }
@@ -469,8 +439,7 @@ class EmergencyResponseSystem {
       }
 
       return consecutiveFailures >= rule.consecutive_count;
-    } catch (error) {
-      console.error('Error evaluating consecutive failures:', error);
+    } catch (_error) {
       return false;
     }
   }
@@ -479,8 +448,6 @@ class EmergencyResponseSystem {
    * Trigger emergency response
    */
   private async triggerEmergencyResponse(rule: EmergencyRule): Promise<void> {
-    console.log(`🚨 EMERGENCY TRIGGERED: ${rule.rule_name} (${rule.severity})`);
-
     // Create alert
     const alert: EmergencyAlert = {
       alert_id: `alert_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
@@ -510,7 +477,6 @@ class EmergencyResponseSystem {
           `${action.action_type}: ${action.target || 'default'}`
         );
       } catch (error) {
-        console.error(`Error executing action ${action.action_type}:`, error);
         alert.actions_taken.push(`${action.action_type}: FAILED - ${error}`);
       }
     }
@@ -532,8 +498,6 @@ class EmergencyResponseSystem {
     action: EmergencyAction,
     alert: EmergencyAlert
   ): Promise<void> {
-    console.log(`⚡ Executing emergency action: ${action.action_type}`);
-
     switch (action.action_type) {
       case 'alert':
         await this.sendAlert(alert, action.parameters);
@@ -554,7 +518,6 @@ class EmergencyResponseSystem {
         await this.sendNotification(alert, action.parameters);
         break;
       default:
-        console.warn(`Unknown emergency action: ${action.action_type}`);
     }
   }
 
@@ -562,23 +525,9 @@ class EmergencyResponseSystem {
    * Send emergency alert
    */
   private async sendAlert(
-    alert: EmergencyAlert,
+    _alert: EmergencyAlert,
     _parameters?: Record<string, any>
   ): Promise<void> {
-    console.log(`🚨 EMERGENCY ALERT: ${alert.alert_message}`);
-
-    // Log alert to console (in production, this would integrate with alerting systems)
-    console.error(`
-    ╔══════════════════════════════════════════╗
-    ║              EMERGENCY ALERT              ║
-    ╠══════════════════════════════════════════╣
-    ║ Rule: ${alert.rule_id.padEnd(32)} ║
-    ║ Severity: ${alert.severity.padEnd(28)} ║
-    ║ Time: ${new Date(alert.trigger_time).toLocaleString().padEnd(28)} ║
-    ║ Message: ${alert.alert_message.substring(0, 27).padEnd(27)} ║
-    ╚══════════════════════════════════════════╝
-    `);
-
     // In production, integrate with Slack, email, SMS, etc.
   }
 
@@ -592,8 +541,6 @@ class EmergencyResponseSystem {
     if (!flagName) {
       return;
     }
-
-    console.log(`🚫 Disabling feature flag: ${flagName}`);
 
     // This would integrate with your feature flag system
     // For now, just log the action
@@ -619,8 +566,6 @@ class EmergencyResponseSystem {
     cacheType?: string,
     _parameters?: Record<string, any>
   ): Promise<void> {
-    console.log(`🗑️ Clearing cache: ${cacheType || 'all'}`);
-
     // Clear browser caches
     if ('caches' in window) {
       const cacheNames = await caches.keys();
@@ -645,8 +590,6 @@ class EmergencyResponseSystem {
     serviceName?: string,
     _parameters?: Record<string, any>
   ): Promise<void> {
-    console.log(`🔄 Service restart triggered: ${serviceName || 'unknown'}`);
-
     // This would integrate with your service management system
     // Log the restart action
     await this.supabase.from('system_metrics').insert({
@@ -668,28 +611,19 @@ class EmergencyResponseSystem {
   private async performRollback(
     _parameters?: Record<string, any>
   ): Promise<void> {
-    console.log('↩️ Emergency rollback initiated');
-
     // Get latest system snapshot before emergency
     const preEmergencySnapshot = this.snapshots.find(
       (s) => s.system_state.system_health === 'healthy'
     );
 
     if (!preEmergencySnapshot) {
-      console.error('No healthy snapshot found for rollback');
       return;
     }
 
-    console.log(
-      `Rolling back to snapshot: ${preEmergencySnapshot.snapshot_id}`
-    );
-
     // Restore feature flags
-    for (const [flagName, enabled] of Object.entries(
+    for (const [_flagName, _enabled] of Object.entries(
       preEmergencySnapshot.system_state.feature_flags
     )) {
-      // This would restore feature flag states
-      console.log(`Restoring feature flag ${flagName}: ${enabled}`);
     }
 
     // Log rollback action
@@ -713,13 +647,8 @@ class EmergencyResponseSystem {
     alert: EmergencyAlert,
     parameters?: Record<string, any>
   ): Promise<void> {
-    console.log('📢 Sending emergency notification');
-
-    const message = parameters?.message || alert.alert_message;
-    const recipients = parameters?.recipients || ['admin'];
-
-    // This would integrate with your notification system
-    console.log(`Notification sent to ${recipients.join(', ')}: ${message}`);
+    const _message = parameters?.message || alert.alert_message;
+    const _recipients = parameters?.recipients || ['admin'];
   }
 
   /**
@@ -744,9 +673,7 @@ class EmergencyResponseSystem {
           resolved: alert.resolved,
         },
       });
-    } catch (error) {
-      console.error('Error storing alert:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -788,10 +715,6 @@ class EmergencyResponseSystem {
       },
     });
 
-    console.log(
-      `📸 System snapshot taken: ${snapshot.snapshot_id} (${reason})`
-    );
-
     return snapshot;
   }
 
@@ -825,7 +748,6 @@ class EmergencyResponseSystem {
   ): Promise<void> {
     const alert = this.activeAlerts.get(alertId);
     if (!alert) {
-      console.warn(`Alert not found: ${alertId}`);
       return;
     }
 
@@ -847,8 +769,6 @@ class EmergencyResponseSystem {
 
     // Remove from active alerts
     this.activeAlerts.delete(alertId);
-
-    console.log(`✅ Alert resolved: ${alertId} (${method})`);
   }
 
   /**

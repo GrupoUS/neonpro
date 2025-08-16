@@ -30,7 +30,7 @@ type RiskCategory =
 type RiskSeverity = 'minimal' | 'low' | 'moderate' | 'high' | 'critical';
 
 // Risk Assessment Input
-interface RiskAssessmentInput {
+type RiskAssessmentInput = {
   patientId: string;
   treatmentId: string;
   patientData: {
@@ -75,10 +75,10 @@ interface RiskAssessmentInput {
     staffExperience: 'junior' | 'experienced' | 'expert';
     equipmentQuality: 'basic' | 'standard' | 'advanced';
   };
-}
+};
 
 // Risk Assessment Result
-interface RiskAssessmentResult {
+type RiskAssessmentResult = {
   overallRisk: {
     severity: RiskSeverity;
     score: number; // 0-100
@@ -116,10 +116,10 @@ interface RiskAssessmentResult {
     anvisaRequirements: string[];
     ethicalConsiderations: string[];
   };
-}
+};
 
 // ML Model Configuration
-interface MLModelConfig {
+type MLModelConfig = {
   modelType:
     | 'logistic_regression'
     | 'random_forest'
@@ -136,10 +136,10 @@ interface MLModelConfig {
   accuracy: number;
   lastTrained: Date;
   trainingDataSize: number;
-}
+};
 
 // Risk Factor
-interface RiskFactor {
+type RiskFactor = {
   id: string;
   name: string;
   category: RiskCategory;
@@ -147,10 +147,10 @@ interface RiskFactor {
   description: string;
   evidenceLevel: 'low' | 'moderate' | 'high' | 'very_high';
   sources: string[];
-}
+};
 
 // Historical Risk Data
-interface HistoricalRiskData {
+type HistoricalRiskData = {
   patientId: string;
   treatmentId: string;
   predictedRisk: number;
@@ -158,7 +158,7 @@ interface HistoricalRiskData {
   complications: string[];
   accuracy: number;
   timestamp: Date;
-}
+};
 
 class MLRiskAssessmentEngine {
   private readonly supabase = createClient();
@@ -178,10 +178,6 @@ class MLRiskAssessmentEngine {
    */
   async assessRisk(input: RiskAssessmentInput): Promise<RiskAssessmentResult> {
     try {
-      console.log(
-        `Starting risk assessment for patient ${input.patientId}, treatment ${input.treatmentId}`
-      );
-
       // Step 1: Validate input data
       this.validateInput(input);
 
@@ -221,14 +217,8 @@ class MLRiskAssessmentEngine {
       // Store assessment for learning
       await this.storeAssessment(input, result);
 
-      // Log assessment
-      console.log(
-        `Risk assessment completed. Overall risk: ${overallRisk.severity} (${overallRisk.score})`
-      );
-
       return result;
-    } catch (error) {
-      console.error('Error in risk assessment:', error);
+    } catch (_error) {
       throw new Error('Failed to perform risk assessment');
     }
   }
@@ -635,8 +625,7 @@ class MLRiskAssessmentEngine {
           recommendations.push('Review previous treatment outcomes');
         }
       }
-    } catch (error) {
-      console.error('Error calculating treatment-specific risk:', error);
+    } catch (_error) {
       score += 5; // Default minimal risk if data unavailable
       factors.push('Treatment risk data unavailable');
     }
@@ -1064,9 +1053,7 @@ class MLRiskAssessmentEngine {
         model_version: '1.0',
         created_at: new Date().toISOString(),
       });
-    } catch (error) {
-      console.error('Error storing risk assessment:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -1165,9 +1152,7 @@ class MLRiskAssessmentEngine {
           });
         });
       }
-    } catch (error) {
-      console.error('Error loading risk factors:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -1192,9 +1177,7 @@ class MLRiskAssessmentEngine {
           timestamp: new Date(record.created_at),
         }));
       }
-    } catch (error) {
-      console.error('Error loading historical data:', error);
-    }
+    } catch (_error) {}
   }
 
   /**

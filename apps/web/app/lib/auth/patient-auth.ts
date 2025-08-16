@@ -5,7 +5,7 @@
 import { createClient } from '@/app/utils/supabase/client';
 import { createServerClient } from '@/app/utils/supabase/server';
 
-export interface PatientProfile {
+export type PatientProfile = {
   id: string;
   user_id: string;
   full_name: string;
@@ -30,9 +30,9 @@ export interface PatientProfile {
   account_status: 'active' | 'inactive' | 'suspended' | 'pending_verification';
   profile_visibility: 'private' | 'staff_only';
   data_retention_until?: string;
-}
+};
 
-export interface PatientRegistrationData {
+export type PatientRegistrationData = {
   email: string;
   password: string;
   full_name: string;
@@ -47,14 +47,14 @@ export interface PatientRegistrationData {
     phone: string;
     relationship: string;
   };
-}
+};
 
-export interface AuthResult {
+export type AuthResult = {
   success: boolean;
   data?: any;
   error?: string;
   code?: string;
-}
+};
 
 // Server-side patient authentication utilities
 export class PatientAuthServer {
@@ -88,8 +88,7 @@ export class PatientAuthServer {
       });
 
       return profile as PatientProfile;
-    } catch (error) {
-      console.error('Error getting current patient:', error);
+    } catch (_error) {
       return null;
     }
   }
@@ -108,11 +107,8 @@ export class PatientAuthServer {
       });
 
       if (error) {
-        console.error('Error recording data access:', error);
       }
-    } catch (error) {
-      console.error('Error in recordDataAccess:', error);
-    }
+    } catch (_error) {}
   }
 
   static async checkPatientConsent(
@@ -133,13 +129,11 @@ export class PatientAuthServer {
       });
 
       if (error) {
-        console.error('Error checking consent:', error);
         return false;
       }
 
       return data as boolean;
-    } catch (error) {
-      console.error('Error in checkPatientConsent:', error);
+    } catch (_error) {
       return false;
     }
   }
@@ -243,7 +237,6 @@ export class PatientAuthClient {
         },
       };
     } catch (error: any) {
-      console.error('Registration error:', error);
       return {
         success: false,
         error: error.message || 'Registration failed',
@@ -286,7 +279,6 @@ export class PatientAuthClient {
         .eq('user_id', data.user.id);
 
       if (updateError) {
-        console.error('Error updating last login:', updateError);
       }
 
       return {
@@ -297,7 +289,6 @@ export class PatientAuthClient {
         },
       };
     } catch (error: any) {
-      console.error('Login error:', error);
       return {
         success: false,
         error: error.message || 'Login failed',

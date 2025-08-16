@@ -19,9 +19,9 @@ import { z } from 'zod';
 
 // Extend jsPDF type for autoTable
 declare module 'jspdf' {
-  interface jsPDF {
+  type jsPDF = {
     autoTable: (options: any) => jsPDF;
-  }
+  };
 }
 
 // Export request validation schema
@@ -131,8 +131,6 @@ export async function POST(request: NextRequest) {
 
     return response;
   } catch (error) {
-    console.error('Export error:', error);
-
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Invalid request format', details: error.errors },

@@ -7,15 +7,15 @@ import { IntegratedSessionSecurity } from './integrated-session-security';
  * Integrates all session security features into a single middleware
  */
 
-interface SecurityCheckResult {
+type SecurityCheckResult = {
   allowed: boolean;
   action: 'allow' | 'challenge' | 'block' | 'terminate';
   riskScore: number;
   reason?: string;
   headers?: Record<string, string>;
-}
+};
 
-interface MiddlewareConfig {
+type MiddlewareConfig = {
   enableCSRF: boolean;
   enableSessionHijackingProtection: boolean;
   enableSessionTimeout: boolean;
@@ -23,7 +23,7 @@ interface MiddlewareConfig {
   skipPaths?: string[];
   trustedIPs?: string[];
   maxConcurrentSessions?: number;
-}
+};
 
 const DEFAULT_CONFIG: MiddlewareConfig = {
   enableCSRF: true,
@@ -84,8 +84,6 @@ export class SessionSecurityMiddleware {
       // Handle security check result
       return this.handleSecurityResult(request, securityResult);
     } catch (error) {
-      console.error('Session security middleware error:', error);
-
       // Log security event
       await this.logSecurityEvent({
         eventType: 'middleware_error',
@@ -446,9 +444,7 @@ export class SessionSecurityMiddleware {
         user_agent: request.headers.get('user-agent'),
         timestamp: new Date().toISOString(),
       });
-    } catch (error) {
-      console.error('Failed to log security event:', error);
-    }
+    } catch (_error) {}
   }
 
   private getClientIP(request: NextRequest): string {

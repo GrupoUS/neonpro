@@ -27,8 +27,7 @@ export async function GET(request: NextRequest) {
     const communications =
       await supplierService.getSupplierCommunications(supplierId);
     return NextResponse.json({ communications });
-  } catch (error) {
-    console.error('Erro ao buscar comunicações:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
       { status: 500 }
@@ -57,8 +56,7 @@ export async function POST(request: NextRequest) {
     );
 
     return NextResponse.json(communication, { status: 201 });
-  } catch (error) {
-    console.error('Erro ao criar comunicação:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
       { status: 500 }

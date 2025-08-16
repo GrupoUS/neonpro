@@ -12,15 +12,12 @@ const supabase = createClient(
 );
 
 describe('Bank Reconciliation API Integration Tests', () => {
-  let testSessionId: string;
+  let _testSessionId: string;
   const testTransactionIds: string[] = [];
 
   beforeAll(async () => {
     // Setup test session
-    testSessionId = `test-session-${Date.now()}`;
-    console.log(
-      `Starting API integration tests with session: ${testSessionId}`
-    );
+    _testSessionId = `test-session-${Date.now()}`;
   });
 
   afterAll(async () => {
@@ -28,7 +25,6 @@ describe('Bank Reconciliation API Integration Tests', () => {
     for (const id of testTransactionIds) {
       await supabase.from('financial_transactions').delete().eq('id', id);
     }
-    console.log(`Test cleanup completed for session: ${testSessionId}`);
   });
 
   describe('🏦 Bank Transaction Processing', () => {

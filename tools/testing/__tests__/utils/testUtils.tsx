@@ -87,10 +87,10 @@ export const createTestQueryClient = (): QueryClient => {
 /**
  * Test wrapper component that provides all necessary contexts
  */
-interface AllTheProvidersProps {
+type AllTheProvidersProps = {
   children: React.ReactNode;
   queryClient?: QueryClient;
-}
+};
 
 export const AllTheProviders: React.FC<AllTheProvidersProps> = ({
   children,

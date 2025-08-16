@@ -27,7 +27,7 @@ const PERFORMANCE_THRESHOLDS = {
 export function useOptimizedCallback<T extends (...args: any[]) => any>(
   callback: T,
   deps: DependencyList,
-  debugName?: string
+  _debugName?: string
 ): T {
   const performanceRef = useRef<{
     callCount: number;
@@ -41,31 +41,22 @@ export function useOptimizedCallback<T extends (...args: any[]) => any>(
 
   return useCallback((...args: Parameters<T>) => {
     const start = performance.now();
+    const result = callback(...args);
 
-    try {
-      const result = callback(...args);
+    // Track performance metrics
+    const duration = performance.now() - start;
+    performanceRef.current.callCount++;
+    performanceRef.current.totalTime += duration;
+    performanceRef.current.lastCall = duration;
 
-      // Track performance metrics
-      const duration = performance.now() - start;
-      performanceRef.current.callCount++;
-      performanceRef.current.totalTime += duration;
-      performanceRef.current.lastCall = duration;
-
-      // Warn about slow callbacks in development
-      if (
-        process.env.NODE_ENV === 'development' &&
-        duration > PERFORMANCE_THRESHOLDS.INTERACTION_TIME_WARNING
-      ) {
-        console.warn(
-          `🐌 Slow callback ${debugName || 'unknown'}: ${duration.toFixed(2)}ms`
-        );
-      }
-
-      return result;
-    } catch (error) {
-      console.error(`❌ Callback error in ${debugName || 'unknown'}:`, error);
-      throw error;
+    // Warn about slow callbacks in development
+    if (
+      process.env.NODE_ENV === 'development' &&
+      duration > PERFORMANCE_THRESHOLDS.INTERACTION_TIME_WARNING
+    ) {
     }
+
+    return result;
   }, deps) as T;
 }
 
@@ -73,7 +64,7 @@ export function useOptimizedCallback<T extends (...args: any[]) => any>(
 export function useOptimizedMemo<T>(
   factory: () => T,
   deps: DependencyList,
-  debugName?: string
+  _debugName?: string
 ): T {
   const performanceRef = useRef<{
     computeCount: number;
@@ -87,39 +78,27 @@ export function useOptimizedMemo<T>(
 
   return useMemo(() => {
     const start = performance.now();
+    const result = factory();
 
-    try {
-      const result = factory();
+    // Track performance metrics
+    const duration = performance.now() - start;
+    performanceRef.current.computeCount++;
+    performanceRef.current.totalTime += duration;
+    performanceRef.current.lastCompute = duration;
 
-      // Track performance metrics
-      const duration = performance.now() - start;
-      performanceRef.current.computeCount++;
-      performanceRef.current.totalTime += duration;
-      performanceRef.current.lastCompute = duration;
-
-      // Warn about expensive computations in development
-      if (
-        process.env.NODE_ENV === 'development' &&
-        duration > PERFORMANCE_THRESHOLDS.RENDER_TIME_WARNING
-      ) {
-        console.warn(
-          `🧮 Expensive computation ${debugName || 'unknown'}: ${duration.toFixed(2)}ms`
-        );
-      }
-
-      return result;
-    } catch (error) {
-      console.error(
-        `❌ Memo computation error in ${debugName || 'unknown'}:`,
-        error
-      );
-      throw error;
+    // Warn about expensive computations in development
+    if (
+      process.env.NODE_ENV === 'development' &&
+      duration > PERFORMANCE_THRESHOLDS.RENDER_TIME_WARNING
+    ) {
     }
+
+    return result;
   }, deps);
 }
 
 // Component render performance monitor
-export function useRenderPerformance(componentName: string) {
+export function useRenderPerformance(_componentName: string) {
   const renderStartRef = useRef<number>(0);
   const renderCountRef = useRef<number>(0);
   const totalRenderTimeRef = useRef<number>(0);
@@ -135,16 +114,11 @@ export function useRenderPerformance(componentName: string) {
 
     // Log performance in development
     if (process.env.NODE_ENV === 'development') {
-      const avgRenderTime = totalRenderTimeRef.current / renderCountRef.current;
+      const _avgRenderTime =
+        totalRenderTimeRef.current / renderCountRef.current;
 
       if (renderTime > PERFORMANCE_THRESHOLDS.RENDER_TIME_ERROR) {
-        console.error(
-          `🚨 Slow render ${componentName}: ${renderTime.toFixed(2)}ms (avg: ${avgRenderTime.toFixed(2)}ms)`
-        );
       } else if (renderTime > PERFORMANCE_THRESHOLDS.RENDER_TIME_WARNING) {
-        console.warn(
-          `⚠️ Render warning ${componentName}: ${renderTime.toFixed(2)}ms (avg: ${avgRenderTime.toFixed(2)}ms)`
-        );
       }
     }
   });
@@ -278,7 +252,7 @@ export function useIntersectionObserver(
 }
 
 // Memory usage monitor hook
-export function useMemoryMonitor(componentName: string) {
+export function useMemoryMonitor(_componentName: string) {
   useEffect(() => {
     if (process.env.NODE_ENV === 'development' && 'memory' in performance) {
       const checkMemory = () => {
@@ -287,9 +261,6 @@ export function useMemoryMonitor(componentName: string) {
         const total = memory.totalJSHeapSize;
 
         if (used > PERFORMANCE_THRESHOLDS.MEMORY_USAGE_WARNING) {
-          console.warn(
-            `🧠 High memory usage in ${componentName}: ${(used / 1024 / 1024).toFixed(2)}MB`
-          );
         }
 
         return { used, total, percentage: (used / total) * 100 };
@@ -299,7 +270,7 @@ export function useMemoryMonitor(componentName: string) {
 
       return () => clearInterval(interval);
     }
-  }, [componentName]);
+  }, []);
 }
 
 // Optimized chart data processor for analytics
@@ -409,14 +380,9 @@ export function usePerformanceProfiler(
 
         const duration =
           marksRef.current[endMark] - marksRef.current[startMark];
-        console.log(
-          `⏱️ ${name}: ${startMark} → ${endMark} took ${duration.toFixed(2)}ms`
-        );
 
         return duration;
-      } catch (error) {
-        console.warn(`Failed to measure ${name}:`, error);
-      }
+      } catch (_error) {}
     },
     [name, enabled]
   );

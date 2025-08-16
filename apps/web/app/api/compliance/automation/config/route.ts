@@ -101,7 +101,6 @@ export async function GET(_request: NextRequest) {
       data: config.config,
     });
   } catch (error) {
-    console.error('Erro ao obter configuração:', error);
     return NextResponse.json(
       {
         error: 'Erro interno do servidor',
@@ -177,7 +176,6 @@ export async function PUT(request: NextRequest) {
       message: 'Configuração atualizada com sucesso',
     });
   } catch (error) {
-    console.error('Erro ao atualizar configuração:', error);
     return NextResponse.json(
       {
         error: 'Erro interno do servidor',

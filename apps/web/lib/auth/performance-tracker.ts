@@ -3,14 +3,14 @@
  * Monitors and tracks performance metrics for optimization
  */
 
-export interface PerformanceMetric {
+export type PerformanceMetric = {
   name: string;
   value: number;
   timestamp: number;
   tags?: Record<string, string>;
-}
+};
 
-export interface PerformanceStats {
+export type PerformanceStats = {
   count: number;
   min: number;
   max: number;
@@ -18,7 +18,7 @@ export interface PerformanceStats {
   p50: number;
   p95: number;
   p99: number;
-}
+};
 
 class PerformanceTracker {
   private static instance: PerformanceTracker;
@@ -75,9 +75,7 @@ class PerformanceTracker {
           tagArray.shift();
         }
       }
-    } catch (error) {
-      console.error('Failed to record metric:', error);
-    }
+    } catch (_error) {}
   }
 
   /**

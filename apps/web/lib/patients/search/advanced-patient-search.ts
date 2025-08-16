@@ -8,7 +8,7 @@ import { logger } from '@/lib/logger';
 import { supabase } from '@/lib/supabase/client';
 import type { Patient } from '@/types/patient';
 
-export interface SearchFilters {
+export type SearchFilters = {
   name?: string;
   email?: string;
   phone?: string;
@@ -24,17 +24,17 @@ export interface SearchFilters {
   tags?: string[];
   has_photo?: boolean;
   insurance_provider?: string;
-}
+};
 
-export interface SearchSuggestion {
+export type SearchSuggestion = {
   type: 'patient' | 'service' | 'condition' | 'location';
   value: string;
   label: string;
   count: number;
   relevance_score: number;
-}
+};
 
-export interface PatientSegment {
+export type PatientSegment = {
   id: string;
   name: string;
   description: string;
@@ -43,9 +43,9 @@ export interface PatientSegment {
   avg_satisfaction: number;
   avg_risk_score: number;
   last_updated: string;
-}
+};
 
-export interface SearchResult {
+export type SearchResult = {
   patients: Patient[];
   total_count: number;
   page: number;
@@ -54,7 +54,7 @@ export interface SearchResult {
   search_time_ms: number;
   suggestions: SearchSuggestion[];
   applied_filters: SearchFilters;
-}
+};
 
 export class AdvancedPatientSearch {
   /**

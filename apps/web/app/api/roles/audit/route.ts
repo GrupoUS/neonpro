@@ -58,7 +58,6 @@ export const GET = withRoleValidation(
         .range(offset, offset + limit - 1);
 
       if (logsError) {
-        console.error('Erro ao buscar logs de auditoria:', logsError);
         return NextResponse.json(
           { error: 'Erro ao buscar logs de auditoria' },
           { status: 500 }
@@ -104,8 +103,7 @@ export const GET = withRoleValidation(
           ],
         },
       });
-    } catch (error) {
-      console.error('Erro no endpoint de logs de auditoria:', error);
+    } catch (_error) {
       return NextResponse.json(
         { error: 'Erro interno do servidor' },
         { status: 500 }
@@ -172,7 +170,6 @@ export const POST = withRoleValidation(
         .single();
 
       if (logError) {
-        console.error('Erro ao criar log de auditoria:', logError);
         return NextResponse.json(
           { error: 'Erro ao criar entrada de log' },
           { status: 500 }
@@ -184,8 +181,7 @@ export const POST = withRoleValidation(
         audit_log: createdLog,
         message: 'Log de auditoria criado com sucesso',
       });
-    } catch (error) {
-      console.error('Erro no endpoint de criação de log:', error);
+    } catch (_error) {
       return NextResponse.json(
         { error: 'Erro interno do servidor' },
         { status: 500 }

@@ -28,8 +28,7 @@ export async function GET(request: NextRequest) {
     const items = await inventoryService.getInventoryItems(filters);
 
     return NextResponse.json({ data: items });
-  } catch (error) {
-    console.error('Error fetching inventory items:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to fetch inventory items' },
       { status: 500 }
@@ -59,8 +58,7 @@ export async function POST(request: NextRequest) {
     const item = await inventoryService.createInventoryItem(itemData);
 
     return NextResponse.json({ data: item }, { status: 201 });
-  } catch (error) {
-    console.error('Error creating inventory item:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to create inventory item' },
       { status: 500 }

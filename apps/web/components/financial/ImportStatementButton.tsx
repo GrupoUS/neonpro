@@ -1,29 +1,30 @@
 'use client';
 
-import React, { useState, useRef } from 'react';
-import { Button } from '@/components/ui/button';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Progress } from '@/components/ui/progress';
 import {
-  Upload,
-  FileText,
-  CheckCircle,
   AlertCircle,
+  CheckCircle,
+  FileText,
   Loader2,
+  Upload,
 } from 'lucide-react';
+import type React from 'react';
+import { useRef, useState } from 'react';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Button } from '@/components/ui/button';
+import { Progress } from '@/components/ui/progress';
 import { useToast } from '@/components/ui/use-toast';
 
-interface ImportStatementButtonProps {
+type ImportStatementButtonProps = {
   canImport?: boolean;
   'data-testid'?: string;
   className?: string;
-}
+};
 
-interface ImportProgress {
+type ImportProgress = {
   stage: 'uploading' | 'parsing' | 'validating' | 'processing' | 'complete';
   progress: number;
   message: string;
-}
+};
 
 /**
  * Import Statement Button Component
@@ -53,7 +54,9 @@ export const ImportStatementButton: React.FC<ImportStatementButtonProps> = ({
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     const file = event.target.files?.[0];
-    if (!file) return;
+    if (!file) {
+      return;
+    }
 
     // Healthcare file validation
     const allowedTypes = [
@@ -142,7 +145,7 @@ export const ImportStatementButton: React.FC<ImportStatementButtonProps> = ({
           fileInputRef.current.value = '';
         }
       }, 2000);
-    } catch (err) {
+    } catch (_err) {
       setError('Erro na importação. Verifique o formato dos dados.');
       setIsImporting(false);
       setImportProgress(null);
@@ -162,7 +165,9 @@ export const ImportStatementButton: React.FC<ImportStatementButtonProps> = ({
   };
 
   const getProgressIcon = () => {
-    if (!importProgress) return <Upload className="h-4 w-4" />;
+    if (!importProgress) {
+      return <Upload className="h-4 w-4" />;
+    }
 
     switch (importProgress.stage) {
       case 'complete':
@@ -179,41 +184,41 @@ export const ImportStatementButton: React.FC<ImportStatementButtonProps> = ({
 
   return (
     <div className={`space-y-4 ${className}`} data-testid={testId}>
-      <div className="flex flex-col sm:flex-row gap-2">
+      <div className="flex flex-col gap-2 sm:flex-row">
         <Button
-          onClick={triggerFileSelect}
-          disabled={isImporting || !canImport}
-          variant={canImport ? 'default' : 'secondary'}
           className="flex items-center gap-2"
           data-testid="import-trigger-button"
+          disabled={isImporting || !canImport}
+          onClick={triggerFileSelect}
+          variant={canImport ? 'default' : 'secondary'}
         >
           {getProgressIcon()}
           {isImporting ? 'Importando...' : 'Importar Extrato'}
         </Button>
 
         <input
-          ref={fileInputRef}
-          type="file"
           accept=".csv,.xlsx,.xls,.txt"
-          onChange={handleFileSelect}
           className="hidden"
           data-testid="file-input"
+          onChange={handleFileSelect}
+          ref={fileInputRef}
+          type="file"
         />
       </div>
 
       {/* Import Progress */}
       {importProgress && (
         <div className="space-y-2" data-testid="import-progress">
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <div className="flex items-center gap-2 text-muted-foreground text-sm">
             <FileText className="h-4 w-4" />
             <span>{importProgress.message}</span>
           </div>
           <Progress
-            value={importProgress.progress}
             className="w-full"
             data-testid="progress-bar"
+            value={importProgress.progress}
           />
-          <p className="text-xs text-muted-foreground text-right">
+          <p className="text-right text-muted-foreground text-xs">
             {importProgress.progress}% concluído
           </p>
         </div>
@@ -221,7 +226,7 @@ export const ImportStatementButton: React.FC<ImportStatementButtonProps> = ({
 
       {/* Error Display */}
       {error && (
-        <Alert variant="destructive" data-testid="import-error">
+        <Alert data-testid="import-error" variant="destructive">
           <AlertCircle className="h-4 w-4" />
           <AlertDescription>{error}</AlertDescription>
         </Alert>
@@ -230,7 +235,7 @@ export const ImportStatementButton: React.FC<ImportStatementButtonProps> = ({
       {/* Healthcare Compliance Notice */}
       {!isImporting && (
         <div
-          className="text-xs text-muted-foreground space-y-1"
+          className="space-y-1 text-muted-foreground text-xs"
           data-testid="compliance-notice"
         >
           <p>• Formatos aceitos: CSV, Excel, TXT (máx. 10MB)</p>

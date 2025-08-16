@@ -19,7 +19,7 @@ import { LGPDManager } from '../auth/lgpd/lgpd-manager';
 // TYPES & INTERFACES
 // ============================================================================
 
-export interface MedicalDocument {
+export type MedicalDocument = {
   id: string;
   patient_id: string;
   clinic_id: string;
@@ -45,9 +45,9 @@ export interface MedicalDocument {
   updated_at: string;
   expires_at?: string;
   access_level: AccessLevel;
-}
+};
 
-export interface BeforeAfterPair {
+export type BeforeAfterPair = {
   id: string;
   patient_id: string;
   clinic_id: string;
@@ -59,9 +59,9 @@ export interface BeforeAfterPair {
   created_by: string;
   created_at: string;
   updated_at: string;
-}
+};
 
-export interface DocumentVersion {
+export type DocumentVersion = {
   id: string;
   document_id: string;
   version_number: number;
@@ -72,9 +72,9 @@ export interface DocumentVersion {
   changes_description?: string;
   created_by: string;
   created_at: string;
-}
+};
 
-export interface DocumentMetadata {
+export type DocumentMetadata = {
   width?: number;
   height?: number;
   duration?: number;
@@ -85,7 +85,7 @@ export interface DocumentMetadata {
   keywords?: string[];
   subject?: string;
   custom_fields?: Record<string, any>;
-}
+};
 
 // Enums
 export enum DocumentType {
@@ -122,7 +122,7 @@ export enum AccessLevel {
   RESTRICTED = 'restricted',
 }
 
-export interface UploadOptions {
+export type UploadOptions = {
   category: DocumentCategory;
   title: string;
   description?: string;
@@ -133,9 +133,9 @@ export interface UploadOptions {
   generateThumbnail?: boolean;
   processImage?: boolean;
   beforeAfterPairId?: string;
-}
+};
 
-export interface SearchFilters {
+export type SearchFilters = {
   documentType?: DocumentType;
   category?: DocumentCategory;
   tags?: string[];
@@ -143,7 +143,7 @@ export interface SearchFilters {
   dateTo?: string;
   accessLevel?: AccessLevel;
   hasExpiration?: boolean;
-}
+};
 
 // ============================================================================
 // MEDICAL DOCUMENT MANAGER
@@ -332,7 +332,6 @@ export class MedicalDocumentManager {
 
       return { success: true, data };
     } catch (error) {
-      console.error('Error uploading document:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
@@ -379,7 +378,6 @@ export class MedicalDocumentManager {
 
       return { success: true, data };
     } catch (error) {
-      console.error('Error getting document:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
@@ -477,7 +475,6 @@ export class MedicalDocumentManager {
         total: count || 0,
       };
     } catch (error) {
-      console.error('Error getting patient documents:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
@@ -532,7 +529,6 @@ export class MedicalDocumentManager {
 
       return { success: true, data };
     } catch (error) {
-      console.error('Error updating document:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
@@ -612,7 +608,6 @@ export class MedicalDocumentManager {
 
       return { success: true };
     } catch (error) {
-      console.error('Error deleting document:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
@@ -684,7 +679,6 @@ export class MedicalDocumentManager {
 
       return { success: true, data };
     } catch (error) {
-      console.error('Error creating before/after pair:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
@@ -715,7 +709,6 @@ export class MedicalDocumentManager {
 
       return { success: true, data: data || [] };
     } catch (error) {
-      console.error('Error getting before/after pairs:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
@@ -816,7 +809,6 @@ export class MedicalDocumentManager {
 
       return { success: true, data };
     } catch (error) {
-      console.error('Error creating document version:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
@@ -841,7 +833,6 @@ export class MedicalDocumentManager {
 
       return { success: true, data: data || [] };
     } catch (error) {
-      console.error('Error getting document versions:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
@@ -903,8 +894,7 @@ export class MedicalDocumentManager {
         isDuplicate: Boolean(data),
         originalDate: data?.uploaded_at,
       };
-    } catch (error) {
-      console.error('Error checking duplicate:', error);
+    } catch (_error) {
       return { isDuplicate: false };
     }
   }
@@ -959,28 +949,17 @@ export class MedicalDocumentManager {
         .getPublicUrl(thumbnailPath);
 
       return data.publicUrl;
-    } catch (error) {
-      console.error('Error generating thumbnail:', error);
+    } catch (_error) {
       return;
     }
   }
 
   private async processImage(
-    documentId: string,
-    filePath: string
+    _documentId: string,
+    _filePath: string
   ): Promise<void> {
     try {
-      // Image processing tasks:
-      // - Resize for web display
-      // - Optimize compression
-      // - Extract EXIF data
-      // - Generate multiple sizes
-
-      // TODO: Implement image processing pipeline
-      console.log(`Processing image for document ${documentId} at ${filePath}`);
-    } catch (error) {
-      console.error('Error processing image:', error);
-    }
+    } catch (_error) {}
   }
 
   private async handleBeforeAfterPairing(
@@ -997,9 +976,7 @@ export class MedicalDocumentManager {
           updated_at: new Date().toISOString(),
         })
         .eq('id', documentId);
-    } catch (error) {
-      console.error('Error handling before/after pairing:', error);
-    }
+    } catch (_error) {}
   }
 
   private async checkDocumentAccess(
@@ -1028,8 +1005,7 @@ export class MedicalDocumentManager {
         default:
           return false;
       }
-    } catch (error) {
-      console.error('Error checking document access:', error);
+    } catch (_error) {
       return false;
     }
   }
@@ -1106,7 +1082,6 @@ export class MedicalDocumentManager {
 
       return { success: true, data: accessibleDocuments };
     } catch (error) {
-      console.error('Error searching documents:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
@@ -1171,7 +1146,6 @@ export class MedicalDocumentManager {
 
       return { success: true, data: stats };
     } catch (error) {
-      console.error('Error getting document statistics:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',

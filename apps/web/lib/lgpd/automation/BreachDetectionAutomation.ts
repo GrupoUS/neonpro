@@ -4,7 +4,7 @@ import type { LGPDComplianceManager } from '../LGPDComplianceManager';
 
 type SupabaseClient = ReturnType<typeof createClient<Database>>;
 
-export interface BreachDetectionRule {
+export type BreachDetectionRule = {
   id: string;
   name: string;
   description: string;
@@ -25,9 +25,9 @@ export interface BreachDetectionRule {
   active: boolean;
   created_at: string;
   updated_at: string;
-}
+};
 
-export interface BreachIncident {
+export type BreachIncident = {
   id: string;
   detection_rule_id?: string;
   incident_type:
@@ -63,9 +63,9 @@ export interface BreachIncident {
   lessons_learned?: string;
   created_at: string;
   updated_at: string;
-}
+};
 
-export interface BreachNotification {
+export type BreachNotification = {
   id: string;
   incident_id: string;
   notification_type: 'anpd' | 'user' | 'internal' | 'third_party';
@@ -76,9 +76,9 @@ export interface BreachNotification {
   delivery_status: 'pending' | 'sent' | 'delivered' | 'failed' | 'bounced';
   delivery_confirmation?: string;
   legal_compliance: boolean;
-}
+};
 
-export interface BreachResponse {
+export type BreachResponse = {
   incident_id: string;
   response_timeline: Array<{
     timestamp: string;
@@ -106,9 +106,9 @@ export interface BreachResponse {
     status: 'planned' | 'in_progress' | 'completed' | 'overdue';
     completion_date?: string;
   }>;
-}
+};
 
-export interface DetectionConfig {
+export type DetectionConfig = {
   real_time_monitoring: boolean;
   anomaly_detection_enabled: boolean;
   threshold_monitoring_enabled: boolean;
@@ -130,7 +130,7 @@ export interface DetectionConfig {
     slack: boolean;
     dashboard: boolean;
   };
-}
+};
 
 export class BreachDetectionAutomation {
   private readonly supabase: SupabaseClient;
@@ -169,9 +169,7 @@ export class BreachDetectionAutomation {
           async () => {
             try {
               await this.performDetectionScan();
-            } catch (error) {
-              console.error('Error in breach detection cycle:', error);
-            }
+            } catch (_error) {}
           },
           intervalMinutes * 60 * 1000
         );
@@ -179,12 +177,7 @@ export class BreachDetectionAutomation {
         // Set up database change listeners for critical events
         await this.setupRealtimeDetectionListeners();
       }
-
-      console.log(
-        `Real-time breach detection started (${intervalMinutes}min intervals)`
-      );
     } catch (error) {
-      console.error('Error starting breach detection:', error);
       throw new Error(`Failed to start breach detection: ${error.message}`);
     }
   }
@@ -197,7 +190,6 @@ export class BreachDetectionAutomation {
       clearInterval(this.monitoringInterval);
       this.monitoringInterval = null;
     }
-    console.log('Real-time breach detection stopped');
   }
 
   /**
@@ -249,7 +241,6 @@ export class BreachDetectionAutomation {
         rule_id: rule.id,
       };
     } catch (error) {
-      console.error('Error creating detection rule:', error);
       throw new Error(`Failed to create detection rule: ${error.message}`);
     }
   }
@@ -314,9 +305,7 @@ export class BreachDetectionAutomation {
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString(),
           });
-        } catch (error) {
-          console.error('Error in detection callback:', error);
-        }
+        } catch (_error) {}
       }
 
       // Log incident creation
@@ -340,7 +329,6 @@ export class BreachDetectionAutomation {
         response_timeline: response,
       };
     } catch (error) {
-      console.error('Error reporting breach incident:', error);
       throw new Error(`Failed to report breach incident: ${error.message}`);
     }
   }
@@ -418,7 +406,6 @@ export class BreachDetectionAutomation {
 
       return { success: true };
     } catch (error) {
-      console.error('Error updating incident status:', error);
       throw new Error(`Failed to update incident status: ${error.message}`);
     }
   }
@@ -520,7 +507,6 @@ export class BreachDetectionAutomation {
         notification_id: notification.id,
       };
     } catch (error) {
-      console.error('Error sending ANPD notification:', error);
       throw new Error(`Failed to send ANPD notification: ${error.message}`);
     }
   }
@@ -587,19 +573,11 @@ export class BreachDetectionAutomation {
 
           if (notificationError) {
             failedNotifications++;
-            console.error(
-              `Failed to send notification to user ${user.id}:`,
-              notificationError
-            );
           } else {
             notificationsSent++;
           }
-        } catch (userError) {
+        } catch (_userError) {
           failedNotifications++;
-          console.error(
-            `Error sending notification to user ${user.id}:`,
-            userError
-          );
         }
       }
 
@@ -646,7 +624,6 @@ export class BreachDetectionAutomation {
         failed_notifications: failedNotifications,
       };
     } catch (error) {
-      console.error('Error sending user notifications:', error);
       throw new Error(`Failed to send user notifications: ${error.message}`);
     }
   }
@@ -673,7 +650,6 @@ export class BreachDetectionAutomation {
 
       return dashboard;
     } catch (error) {
-      console.error('Error getting breach dashboard:', error);
       throw new Error(`Failed to get breach dashboard: ${error.message}`);
     }
   }
@@ -707,16 +683,9 @@ export class BreachDetectionAutomation {
       for (const rule of rules) {
         try {
           await this.executeDetectionRule(rule);
-        } catch (ruleError) {
-          console.error(
-            `Error executing detection rule ${rule.id}:`,
-            ruleError
-          );
-        }
+        } catch (_ruleError) {}
       }
-    } catch (error) {
-      console.error('Error performing detection scan:', error);
-    }
+    } catch (_error) {}
   }
 
   private async executeDetectionRule(rule: BreachDetectionRule): Promise<void> {
@@ -740,9 +709,7 @@ export class BreachDetectionAutomation {
       if (detectionResult?.breach_detected) {
         await this.handleDetectedBreach(rule, detectionResult);
       }
-    } catch (error) {
-      console.error(`Error executing detection rule ${rule.id}:`, error);
-    }
+    } catch (_error) {}
   }
 
   private async handleDetectedBreach(
@@ -779,9 +746,7 @@ export class BreachDetectionAutomation {
       };
 
       await this.reportBreachIncident(incidentData);
-    } catch (error) {
-      console.error('Error handling detected breach:', error);
-    }
+    } catch (_error) {}
   }
 
   private async validateDetectionRule(
@@ -863,12 +828,7 @@ export class BreachDetectionAutomation {
     for (const action of containmentActions) {
       try {
         await this.executeContainmentAction(incidentId, action);
-      } catch (error) {
-        console.error(
-          `Failed to execute containment action ${action.type}:`,
-          error
-        );
-      }
+      } catch (_error) {}
     }
   }
 
@@ -1090,27 +1050,17 @@ Equipe de Segurança
   }
 
   private async executeContainmentAction(
-    incidentId: string,
-    action: any
+    _incidentId: string,
+    _action: any
   ): Promise<void> {
-    // Execute specific containment action
-    console.log(
-      `Executing containment action: ${action.type} for incident ${incidentId}`
-    );
-
     // Implementation would depend on the specific action type
     // This is a placeholder for the actual containment logic
   }
 
   private async sendInternalNotification(
-    incidentId: string,
-    channel: string
-  ): Promise<void> {
-    // Send internal notifications via specified channel
-    console.log(
-      `Sending internal notification via ${channel} for incident ${incidentId}`
-    );
-  }
+    _incidentId: string,
+    _channel: string
+  ): Promise<void> {}
 
   private async analyzeLoginPattern(_authEvent: any): Promise<void> {
     // Analyze login patterns for suspicious activity

@@ -37,8 +37,6 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(tracking, { status: 201 });
   } catch (error: any) {
-    console.error('Error creating progress tracking:', error);
-
     if (error.name === 'ZodError') {
       return NextResponse.json(
         { error: 'Invalid request data', details: error.errors },
@@ -108,8 +106,6 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(result);
   } catch (error: any) {
-    console.error('Error fetching progress trackings:', error);
-
     if (error.name === 'ZodError') {
       return NextResponse.json(
         { error: 'Invalid query parameters', details: error.errors },

@@ -85,8 +85,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(result, { status: 200 });
     }
     return NextResponse.json(result, { status: 500 });
-  } catch (error) {
-    console.error('Cleanup API error:', error);
+  } catch (_error) {
     return NextResponse.json(
       {
         success: false,
@@ -124,8 +123,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json(result, { status: 200 });
     }
     return NextResponse.json(result, { status: 500 });
-  } catch (error) {
-    console.error('Cleanup status API error:', error);
+  } catch (_error) {
     return NextResponse.json(
       {
         success: false,
@@ -167,8 +165,7 @@ export async function DELETE(request: NextRequest) {
       },
       { status: 200 }
     );
-  } catch (error) {
-    console.error('Stop cleanup API error:', error);
+  } catch (_error) {
     return NextResponse.json(
       {
         success: false,
@@ -268,8 +265,7 @@ async function verifyCleanupPermissions(
       success: true,
       userId: user.id,
     };
-  } catch (error) {
-    console.error('Permission verification error:', error);
+  } catch (_error) {
     return {
       success: false,
       error: {

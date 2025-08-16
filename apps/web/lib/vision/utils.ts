@@ -159,8 +159,7 @@ export class ImageUtils {
 
       // Normalize to 0-1 scale (this is a simplified estimation)
       return Math.min(1, averageVariance / 50);
-    } catch (error) {
-      console.warn('Failed to estimate image quality:', error);
+    } catch (_error) {
       return 0.5; // Default quality estimate
     }
   }

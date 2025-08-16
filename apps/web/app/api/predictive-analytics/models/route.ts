@@ -22,8 +22,7 @@ export async function GET(request: NextRequest) {
     });
 
     return NextResponse.json(result);
-  } catch (error) {
-    console.error('Erro ao buscar modelos de forecasting:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
       { status: 500 }
@@ -39,8 +38,7 @@ export async function POST(request: NextRequest) {
     const model = await service.createForecastingModel(validatedData);
 
     return NextResponse.json(model, { status: 201 });
-  } catch (error) {
-    console.error('Erro ao criar modelo de forecasting:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Erro ao criar modelo' },
       { status: 400 }

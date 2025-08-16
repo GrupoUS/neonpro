@@ -63,8 +63,7 @@ export async function GET(request: NextRequest) {
       { message: 'WebSocket server ready' },
       { status: 200 }
     );
-  } catch (error) {
-    console.error('WebSocket setup error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to setup WebSocket server' },
       { status: 500 }
@@ -81,7 +80,6 @@ function setupWebSocketHandlers() {
   }
 
   wss.on('connection', async (ws: any, request: IncomingMessage) => {
-    console.log('New WebSocket connection established');
 
     // Parse query parameters for authentication
     const { query } = parse(request.url || '', true);
@@ -121,8 +119,7 @@ function setupWebSocketHandlers() {
       try {
         const message: WSMessage = JSON.parse(data.toString());
         await handleWebSocketMessage(clientId, message);
-      } catch (error) {
-        console.error('WebSocket message error:', error);
+      } catch (_error) {
         ws.send(
           JSON.stringify({
             type: 'error',
@@ -134,13 +131,11 @@ function setupWebSocketHandlers() {
 
     // Handle connection close
     ws.on('close', () => {
-      console.log(`WebSocket connection closed for client ${clientId}`);
       clients.delete(clientId);
     });
 
     // Handle errors
-    ws.on('error', (error: Error) => {
-      console.error(`WebSocket error for client ${clientId}:`, error);
+    ws.on('error', (_error: Error) => {
       clients.delete(clientId);
     });
 
@@ -243,8 +238,7 @@ async function verifyWebSocketAuth(token: string): Promise<string | null> {
     }
 
     return user.id;
-  } catch (error) {
-    console.error('WebSocket auth verification error:', error);
+  } catch (_error) {
     return null;
   }
 }

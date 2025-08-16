@@ -5,7 +5,7 @@
 
 import { createClient } from '@/app/utils/supabase/server';
 
-export interface TimelineEvent {
+export type TimelineEvent = {
   id: string;
   patientId: string;
   eventType:
@@ -30,9 +30,9 @@ export interface TimelineEvent {
   notes?: ProgressNote[];
   relatedEventIds?: string[];
   metadata?: Record<string, any>;
-}
+};
 
-export interface TimelineAttachment {
+export type TimelineAttachment = {
   id: string;
   name: string;
   type: 'document' | 'image' | 'report' | 'prescription' | 'lab_result';
@@ -40,9 +40,9 @@ export interface TimelineAttachment {
   size: number;
   uploadedAt: Date;
   uploadedBy: string;
-}
+};
 
-export interface BeforeAfterPhoto {
+export type BeforeAfterPhoto = {
   id: string;
   eventId: string;
   beforePhoto?: PhotoData;
@@ -50,9 +50,9 @@ export interface BeforeAfterPhoto {
   comparisonType: 'treatment' | 'procedure' | 'healing' | 'progress';
   notes?: string;
   quality: number; // 0-100
-}
+};
 
-export interface PhotoData {
+export type PhotoData = {
   id: string;
   url: string;
   thumbnailUrl: string;
@@ -64,9 +64,9 @@ export interface PhotoData {
     angle?: string;
     lighting?: string;
   };
-}
+};
 
-export interface TreatmentOutcome {
+export type TreatmentOutcome = {
   id: string;
   success: boolean;
   satisfactionScore: number; // 1-10
@@ -76,18 +76,18 @@ export interface TreatmentOutcome {
   patientFeedback?: string;
   professionalAssessment?: string;
   healingProgress: 'excellent' | 'good' | 'fair' | 'poor';
-}
+};
 
-export interface ProgressNote {
+export type ProgressNote = {
   id: string;
   note: string;
   date: Date;
   author: string;
   type: 'observation' | 'instruction' | 'warning' | 'milestone';
   visibility: 'patient' | 'staff' | 'professional' | 'internal';
-}
+};
 
-export interface MilestoneTracking {
+export type MilestoneTracking = {
   id: string;
   patientId: string;
   treatmentPlan: string;
@@ -95,9 +95,9 @@ export interface MilestoneTracking {
   overallProgress: number; // 0-100
   estimatedCompletion: Date;
   actualCompletion?: Date;
-}
+};
 
-export interface Milestone {
+export type Milestone = {
   id: string;
   title: string;
   description: string;
@@ -108,9 +108,9 @@ export interface Milestone {
   completedCriteria: string[];
   progress: number; // 0-100
   notes?: string;
-}
+};
 
-export interface TimelineFilter {
+export type TimelineFilter = {
   eventTypes?: string[];
   categories?: string[];
   dateRange?: {
@@ -121,7 +121,7 @@ export interface TimelineFilter {
   severity?: string[];
   includePhotos?: boolean;
   includeAttachments?: boolean;
-}
+};
 
 export class MedicalTimelineService {
   private async getSupabase() {
@@ -177,13 +177,11 @@ export class MedicalTimelineService {
       const { data, error } = await query;
 
       if (error) {
-        console.error('Error fetching timeline:', error);
         throw new Error('Failed to fetch patient timeline');
       }
 
       return this.transformTimelineData(data || []);
-    } catch (error) {
-      console.error('Error in getPatientTimeline:', error);
+    } catch (_error) {
       // Return mock data for development
       return this.getMockTimelineData(patientId);
     }
@@ -214,13 +212,11 @@ export class MedicalTimelineService {
         .single();
 
       if (error) {
-        console.error('Error adding timeline event:', error);
         throw new Error('Failed to add timeline event');
       }
 
       return this.transformTimelineEvent(data);
-    } catch (error) {
-      console.error('Error in addTimelineEvent:', error);
+    } catch (_error) {
       // Return mock event for development
       return {
         id: `mock_${Date.now()}`,
@@ -236,32 +232,26 @@ export class MedicalTimelineService {
     eventId: string,
     updates: Partial<TimelineEvent>
   ): Promise<TimelineEvent> {
-    try {
-      const supabase = await this.getSupabase();
-      const { data, error } = await supabase
-        .from('patient_timeline_events')
-        .update({
-          ...(updates.title && { title: updates.title }),
-          ...(updates.description && { description: updates.description }),
-          ...(updates.date && { date: updates.date.toISOString() }),
-          ...(updates.category && { category: updates.category }),
-          ...(updates.severity && { severity: updates.severity }),
-          ...(updates.metadata && { metadata: updates.metadata }),
-        })
-        .eq('id', eventId)
-        .select()
-        .single();
+    const supabase = await this.getSupabase();
+    const { data, error } = await supabase
+      .from('patient_timeline_events')
+      .update({
+        ...(updates.title && { title: updates.title }),
+        ...(updates.description && { description: updates.description }),
+        ...(updates.date && { date: updates.date.toISOString() }),
+        ...(updates.category && { category: updates.category }),
+        ...(updates.severity && { severity: updates.severity }),
+        ...(updates.metadata && { metadata: updates.metadata }),
+      })
+      .eq('id', eventId)
+      .select()
+      .single();
 
-      if (error) {
-        console.error('Error updating timeline event:', error);
-        throw new Error('Failed to update timeline event');
-      }
-
-      return this.transformTimelineEvent(data);
-    } catch (error) {
-      console.error('Error in updateTimelineEvent:', error);
-      throw error;
+    if (error) {
+      throw new Error('Failed to update timeline event');
     }
+
+    return this.transformTimelineEvent(data);
   }
 
   /**
@@ -285,7 +275,6 @@ export class MedicalTimelineService {
         .single();
 
       if (error) {
-        console.error('Error adding before/after photos:', error);
         throw new Error('Failed to add before/after photos');
       }
 
@@ -294,8 +283,7 @@ export class MedicalTimelineService {
         eventId,
         ...photos,
       };
-    } catch (error) {
-      console.error('Error in addBeforeAfterPhotos:', error);
+    } catch (_error) {
       // Return mock photo for development
       return {
         id: `photo_${Date.now()}`,
@@ -328,7 +316,6 @@ export class MedicalTimelineService {
         .single();
 
       if (error) {
-        console.error('Error adding progress note:', error);
         throw new Error('Failed to add progress note');
       }
 
@@ -336,8 +323,7 @@ export class MedicalTimelineService {
         id: data.id,
         ...note,
       };
-    } catch (error) {
-      console.error('Error in addProgressNote:', error);
+    } catch (_error) {
       // Return mock note for development
       return {
         id: `note_${Date.now()}`,
@@ -365,13 +351,11 @@ export class MedicalTimelineService {
         .eq('patient_id', patientId);
 
       if (error) {
-        console.error('Error fetching milestones:', error);
         throw new Error('Failed to fetch treatment milestones');
       }
 
       return data || [];
-    } catch (error) {
-      console.error('Error in getTreatmentMilestones:', error);
+    } catch (_error) {
       // Return mock milestones for development
       return this.getMockMilestones(patientId);
     }
@@ -385,34 +369,28 @@ export class MedicalTimelineService {
     progress: number,
     notes?: string
   ): Promise<Milestone> {
-    try {
-      const updates: any = { progress };
-      if (progress === 100) {
-        updates.status = 'completed';
-        updates.completed_date = new Date().toISOString();
-      }
-      if (notes) {
-        updates.notes = notes;
-      }
-
-      const supabase = await this.getSupabase();
-      const { data, error } = await supabase
-        .from('milestones')
-        .update(updates)
-        .eq('id', milestoneId)
-        .select()
-        .single();
-
-      if (error) {
-        console.error('Error updating milestone:', error);
-        throw new Error('Failed to update milestone progress');
-      }
-
-      return this.transformMilestone(data);
-    } catch (error) {
-      console.error('Error in updateMilestoneProgress:', error);
-      throw error;
+    const updates: any = { progress };
+    if (progress === 100) {
+      updates.status = 'completed';
+      updates.completed_date = new Date().toISOString();
     }
+    if (notes) {
+      updates.notes = notes;
+    }
+
+    const supabase = await this.getSupabase();
+    const { data, error } = await supabase
+      .from('milestones')
+      .update(updates)
+      .eq('id', milestoneId)
+      .select()
+      .single();
+
+    if (error) {
+      throw new Error('Failed to update milestone progress');
+    }
+
+    return this.transformMilestone(data);
   }
 
   /**

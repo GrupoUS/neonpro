@@ -37,7 +37,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { type ConsentFormData, consentSchema } from '@/lib/healthcare/schemas';
 import { formatCpf } from '@/lib/utils';
 
-interface ConsentRecord {
+type ConsentRecord = {
   id: string;
   patient_cpf: string;
   patient_name: string;
@@ -49,16 +49,16 @@ interface ConsentRecord {
   created_at: Date;
   updated_at: Date;
   status: 'active' | 'revoked' | 'expired';
-}
+};
 
-interface ConsentManagerProps {
+type ConsentManagerProps = {
   patientCpf?: string;
   patientName?: string;
   existingConsents?: ConsentRecord[];
   onSubmit: (data: ConsentFormData) => Promise<void>;
   onRevoke: (consentId: string) => Promise<void>;
   isLoading?: boolean;
-}
+};
 
 export function ConsentManager({
   patientCpf = '',

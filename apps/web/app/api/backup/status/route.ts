@@ -55,8 +55,7 @@ export async function GET(request: NextRequest) {
       message: 'Status do sistema obtido com sucesso',
       timestamp: new Date(),
     });
-  } catch (error) {
-    console.error('Erro ao obter status do sistema:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
       { status: 500 }

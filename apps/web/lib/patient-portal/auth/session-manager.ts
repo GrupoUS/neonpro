@@ -5,7 +5,7 @@ import type { LGPDManager } from '../../lgpd/lgpd-manager';
 import type { EncryptionService } from '../../security/encryption-service';
 
 // Session configuration interface
-export interface SessionConfig {
+export type SessionConfig = {
   sessionTimeout: number; // in minutes
   maxConcurrentSessions: number;
   sessionCleanupInterval: number; // in minutes
@@ -16,10 +16,10 @@ export interface SessionConfig {
   maxLoginAttempts: number;
   lockoutDuration: number; // in minutes
   enableTwoFactor: boolean;
-}
+};
 
 // Session data interface
-export interface SessionData {
+export type SessionData = {
   id: string;
   patientId: string;
   sessionToken: string;
@@ -30,18 +30,18 @@ export interface SessionData {
   deviceFingerprint?: string;
   isActive: boolean;
   createdAt: Date;
-}
+};
 
 // Session validation result
-export interface SessionValidationResult {
+export type SessionValidationResult = {
   isValid: boolean;
   session?: SessionData;
   reason?: string;
   requiresRefresh?: boolean;
-}
+};
 
 // Device fingerprint data
-export interface DeviceFingerprint {
+export type DeviceFingerprint = {
   userAgent: string;
   screenResolution: string;
   timezone: string;
@@ -49,17 +49,17 @@ export interface DeviceFingerprint {
   platform: string;
   cookiesEnabled: boolean;
   hash: string;
-}
+};
 
 // Session activity data
-export interface SessionActivity {
+export type SessionActivity = {
   sessionId: string;
   activityType: string;
   timestamp: Date;
   ipAddress: string;
   userAgent: string;
   details?: Record<string, any>;
-}
+};
 
 export class SessionManager {
   private readonly supabase: SupabaseClient;
@@ -304,8 +304,7 @@ export class SessionManager {
         isActive: data.is_active,
         createdAt: new Date(data.created_at),
       };
-    } catch (error) {
-      console.error('Error refreshing session:', error);
+    } catch (_error) {
       return null;
     }
   }
@@ -360,8 +359,7 @@ export class SessionManager {
       }
 
       return true;
-    } catch (error) {
-      console.error('Error terminating session:', error);
+    } catch (_error) {
       return false;
     }
   }
@@ -403,8 +401,7 @@ export class SessionManager {
       });
 
       return count || 0;
-    } catch (error) {
-      console.error('Error terminating all sessions:', error);
+    } catch (_error) {
       return 0;
     }
   }
@@ -448,8 +445,7 @@ export class SessionManager {
       }
 
       return sessions;
-    } catch (error) {
-      console.error('Error getting active sessions:', error);
+    } catch (_error) {
       return [];
     }
   }
@@ -484,9 +480,7 @@ export class SessionManager {
         user_agent: activity.userAgent,
         timestamp: activity.timestamp.toISOString(),
       });
-    } catch (error) {
-      console.error('Error logging session activity:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -502,7 +496,6 @@ export class SessionManager {
         );
 
       if (error) {
-        console.error('Error cleaning up expired sessions:', error);
         return 0;
       }
 
@@ -520,8 +513,7 @@ export class SessionManager {
       }
 
       return count || 0;
-    } catch (error) {
-      console.error('Error during session cleanup:', error);
+    } catch (_error) {
       return 0;
     }
   }
@@ -574,8 +566,7 @@ export class SessionManager {
         averageSessionDuration: Math.round(averageSessionDuration),
         recentLogins,
       };
-    } catch (error) {
-      console.error('Error getting session statistics:', error);
+    } catch (_error) {
       return {
         totalActiveSessions: 0,
         sessionsByPatient: {},
@@ -624,9 +615,7 @@ export class SessionManager {
         .from('patient_portal_sessions')
         .update({ last_activity: new Date().toISOString() })
         .eq('id', sessionId);
-    } catch (error) {
-      console.error('Error updating session activity:', error);
-    }
+    } catch (_error) {}
   }
 
   private startCleanupInterval(): void {
@@ -658,8 +647,6 @@ export class SessionManager {
         severity: event.severity,
         timestamp: new Date().toISOString(),
       });
-    } catch (error) {
-      console.error('Error logging security event:', error);
-    }
+    } catch (_error) {}
   }
 }

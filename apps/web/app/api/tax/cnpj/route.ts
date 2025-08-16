@@ -57,8 +57,7 @@ export async function GET(request: NextRequest) {
           { status: 400 }
         );
     }
-  } catch (error) {
-    console.error('CNPJ API GET error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -94,8 +93,7 @@ export async function POST(request: NextRequest) {
           { status: 400 }
         );
     }
-  } catch (error) {
-    console.error('CNPJ API POST error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -147,7 +145,6 @@ async function validateSingleCNPJ(
       },
     });
   } catch (error) {
-    console.error('CNPJ validation error:', error);
     return NextResponse.json(
       { error: 'CNPJ validation failed', details: error.message },
       { status: 500 }
@@ -195,7 +192,6 @@ async function searchCompanies(_supabase: any, searchParams: URLSearchParams) {
       },
     });
   } catch (error) {
-    console.error('Company search error:', error);
     return NextResponse.json(
       { error: 'Company search failed', details: error.message },
       { status: 500 }
@@ -300,8 +296,7 @@ async function getCNPJStatus(supabase: any, searchParams: URLSearchParams) {
 
         currentStatus = updated;
       }
-    } catch (error) {
-      console.error('CNPJ status update error:', error);
+    } catch (_error) {
       // Continue with cached data
     }
   }
@@ -357,7 +352,6 @@ async function validateCNPJ(supabase: any, body: any) {
       },
     });
   } catch (error) {
-    console.error('CNPJ validation error:', error);
     return NextResponse.json(
       { error: 'CNPJ validation failed', details: error.message },
       { status: 500 }
@@ -401,7 +395,6 @@ async function batchValidateCNPJ(supabase: any, body: any) {
         errors: validation.errors || [],
       };
     } catch (error) {
-      console.error(`Batch CNPJ validation error for ${cnpj}:`, error);
       return {
         cnpj,
         valid: false,
@@ -428,7 +421,6 @@ async function batchValidateCNPJ(supabase: any, body: any) {
       },
     });
   } catch (error) {
-    console.error('Batch CNPJ validation error:', error);
     return NextResponse.json(
       { error: 'Batch validation failed', details: error.message },
       { status: 500 }
@@ -474,7 +466,6 @@ async function searchCompaniesByData(supabase: any, body: any) {
       },
     });
   } catch (error) {
-    console.error('Company search error:', error);
     return NextResponse.json(
       { error: 'Company search failed', details: error.message },
       { status: 500 }
@@ -556,7 +547,6 @@ async function updateCNPJStatus(supabase: any, body: any) {
       { status: 400 }
     );
   } catch (error) {
-    console.error('CNPJ status update error:', error);
     return NextResponse.json(
       { error: 'CNPJ status update failed', details: error.message },
       { status: 500 }

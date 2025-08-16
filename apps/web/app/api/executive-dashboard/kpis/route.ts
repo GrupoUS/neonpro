@@ -77,7 +77,6 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('KPI API error:', error);
     return NextResponse.json(
       {
         error: 'Failed to fetch KPI data',
@@ -149,7 +148,6 @@ export async function POST(request: NextRequest) {
       message: 'KPI value saved successfully',
     });
   } catch (error) {
-    console.error('KPI create/update API error:', error);
     return NextResponse.json(
       {
         error: 'Failed to save KPI data',

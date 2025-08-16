@@ -86,8 +86,7 @@ async function validateSecurityAccess(
       profile.permissions?.includes('security.manage');
 
     return hasSecurityAccess;
-  } catch (error) {
-    console.error('Erro ao validar acesso de segurança:', error);
+  } catch (_error) {
     return false;
   }
 }
@@ -252,9 +251,7 @@ export async function GET(request: NextRequest) {
         total: count || 0,
       },
     });
-  } catch (error) {
-    console.error('Erro na consulta de alertas:', error);
-
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -395,9 +392,7 @@ export async function PATCH(request: NextRequest) {
       success: true,
       data: updatedAlert,
     });
-  } catch (error) {
-    console.error('Erro na atualização de alerta:', error);
-
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

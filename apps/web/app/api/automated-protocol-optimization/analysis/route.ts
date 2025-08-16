@@ -41,7 +41,6 @@ export async function POST(request: NextRequest) {
       message: 'Optimization analysis completed successfully',
     });
   } catch (error) {
-    console.error('Error triggering optimization analysis:', error);
     return NextResponse.json(
       {
         success: false,
@@ -66,7 +65,6 @@ export async function GET(request: NextRequest) {
       data: optimizationQueue,
     });
   } catch (error) {
-    console.error('Error fetching optimization results:', error);
     return NextResponse.json(
       {
         success: false,

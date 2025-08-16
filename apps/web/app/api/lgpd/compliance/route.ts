@@ -125,8 +125,6 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('LGPD Compliance API Error:', error);
-
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Invalid query parameters', details: error.errors },
@@ -204,8 +202,6 @@ export async function POST(request: NextRequest) {
       { status: 201 }
     );
   } catch (error) {
-    console.error('LGPD Assessment Creation Error:', error);
-
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Invalid request data', details: error.errors },
@@ -295,9 +291,7 @@ export async function PUT(_request: NextRequest) {
       success: true,
       data: assessment,
     });
-  } catch (error) {
-    console.error('Automated Assessment Error:', error);
-
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to run automated assessment' },
       { status: 500 }

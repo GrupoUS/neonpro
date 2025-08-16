@@ -71,8 +71,7 @@ export async function GET(
     }
 
     return NextResponse.json({ payment });
-  } catch (error) {
-    console.error('API Error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal Server Error' },
       { status: 500 }
@@ -144,7 +143,6 @@ export async function PUT(
       .single();
 
     if (error) {
-      console.error('Error updating payment:', error);
       return NextResponse.json(
         { error: 'Failed to update payment' },
         { status: 500 }
@@ -186,8 +184,6 @@ export async function PUT(
         { status: 400 }
       );
     }
-
-    console.error('API Error:', error);
     return NextResponse.json(
       { error: 'Internal Server Error' },
       { status: 500 }
@@ -237,7 +233,6 @@ export async function DELETE(
       .eq('payment_id', resolvedParams.id);
 
     if (installmentsError) {
-      console.error('Error deleting installments:', installmentsError);
       return NextResponse.json(
         { error: 'Failed to delete payment installments' },
         { status: 500 }
@@ -251,7 +246,6 @@ export async function DELETE(
       .eq('id', resolvedParams.id);
 
     if (error) {
-      console.error('Error deleting payment:', error);
       return NextResponse.json(
         { error: 'Failed to delete payment' },
         { status: 500 }
@@ -278,8 +272,7 @@ export async function DELETE(
     }
 
     return NextResponse.json({ message: 'Payment deleted successfully' });
-  } catch (error) {
-    console.error('API Error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal Server Error' },
       { status: 500 }
@@ -363,7 +356,6 @@ export async function POST(
         .single();
 
       if (refundError) {
-        console.error('Error creating refund:', refundError);
         return NextResponse.json(
           { error: 'Failed to create refund' },
           { status: 500 }
@@ -404,8 +396,7 @@ export async function POST(
     }
 
     return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
-  } catch (error) {
-    console.error('API Error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal Server Error' },
       { status: 500 }

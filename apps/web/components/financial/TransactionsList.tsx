@@ -1,6 +1,22 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import {
+  AlertCircle,
+  Calendar,
+  CheckCircle2,
+  Clock,
+  DollarSign,
+  Download,
+  Eye,
+  Search,
+  Shield,
+  Stethoscope,
+  User,
+} from 'lucide-react';
+import type React from 'react';
+import { useEffect, useState } from 'react';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import {
   Card,
   CardContent,
@@ -8,8 +24,6 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import {
   Select,
@@ -26,28 +40,14 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import {
-  Search,
-  Filter,
-  Eye,
-  Download,
-  Calendar,
-  User,
-  Stethoscope,
-  DollarSign,
-  AlertCircle,
-  CheckCircle2,
-  Clock,
-  Shield,
-} from 'lucide-react';
 import { formatCurrency, formatDate } from '@/lib/utils';
 
-interface TransactionsListProps {
+type TransactionsListProps = {
   'data-testid'?: string;
   className?: string;
-}
+};
 
-interface Transaction {
+type Transaction = {
   id: string;
   date: string;
   patientId: string;
@@ -60,7 +60,7 @@ interface Transaction {
   reconciliationDate?: string;
   notes?: string;
   complianceFlags: string[];
-}
+};
 
 type FilterType =
   | 'all'
@@ -100,11 +100,11 @@ export const TransactionsList: React.FC<TransactionsListProps> = ({
 
   useEffect(() => {
     loadTransactions();
-  }, []);
+  }, [loadTransactions]);
 
   useEffect(() => {
     filterTransactions();
-  }, [transactions, searchTerm, statusFilter, paymentFilter]);
+  }, [filterTransactions]);
 
   const loadTransactions = async () => {
     try {
@@ -167,8 +167,7 @@ export const TransactionsList: React.FC<TransactionsListProps> = ({
       ];
 
       setTransactions(mockTransactions);
-    } catch (err) {
-      console.error('Error loading transactions:', err);
+    } catch (_err) {
     } finally {
       setIsLoading(false);
     }
@@ -244,8 +243,8 @@ export const TransactionsList: React.FC<TransactionsListProps> = ({
     const Icon = config.icon;
 
     return (
-      <Badge variant={config.variant} className={config.className}>
-        <Icon className="h-3 w-3 mr-1" />
+      <Badge className={config.className} variant={config.variant}>
+        <Icon className="mr-1 h-3 w-3" />
         {config.label}
       </Badge>
     );
@@ -261,10 +260,7 @@ export const TransactionsList: React.FC<TransactionsListProps> = ({
     return labels[method];
   };
 
-  const exportTransactions = () => {
-    // Healthcare-compliant export with LGPD anonymization
-    console.log('Exporting transactions with LGPD compliance...');
-  };
+  const exportTransactions = () => {};
 
   const paginatedTransactions = filteredTransactions.slice(
     (currentPage - 1) * itemsPerPage,
@@ -282,7 +278,7 @@ export const TransactionsList: React.FC<TransactionsListProps> = ({
         <CardContent>
           <div className="space-y-4">
             {[1, 2, 3, 4].map((i) => (
-              <div key={i} className="h-16 bg-muted animate-pulse rounded" />
+              <div className="h-16 animate-pulse rounded bg-muted" key={i} />
             ))}
           </div>
         </CardContent>
@@ -304,34 +300,34 @@ export const TransactionsList: React.FC<TransactionsListProps> = ({
             </CardDescription>
           </div>
           <Button
-            variant="outline"
-            size="sm"
-            onClick={exportTransactions}
             data-testid="export-button"
+            onClick={exportTransactions}
+            size="sm"
+            variant="outline"
           >
-            <Download className="h-4 w-4 mr-2" />
+            <Download className="mr-2 h-4 w-4" />
             Exportar
           </Button>
         </div>
       </CardHeader>
       <CardContent>
         {/* Filters */}
-        <div className="flex flex-col sm:flex-row gap-4 mb-6">
+        <div className="mb-6 flex flex-col gap-4 sm:flex-row">
           <div className="flex-1">
             <div className="relative">
-              <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+              <Search className="absolute top-3 left-3 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder="Buscar por paciente, procedimento ou profissional..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10"
                 data-testid="search-input"
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="Buscar por paciente, procedimento ou profissional..."
+                value={searchTerm}
               />
             </div>
           </div>
           <Select
-            value={statusFilter}
             onValueChange={(value) => setStatusFilter(value as FilterType)}
+            value={statusFilter}
           >
             <SelectTrigger className="w-48" data-testid="status-filter">
               <SelectValue placeholder="Status" />
@@ -345,10 +341,10 @@ export const TransactionsList: React.FC<TransactionsListProps> = ({
             </SelectContent>
           </Select>
           <Select
-            value={paymentFilter}
             onValueChange={(value) =>
               setPaymentFilter(value as PaymentMethodFilter)
             }
+            value={paymentFilter}
           >
             <SelectTrigger className="w-48" data-testid="payment-filter">
               <SelectValue placeholder="Pagamento" />
@@ -364,14 +360,14 @@ export const TransactionsList: React.FC<TransactionsListProps> = ({
         </div>
 
         {/* Results Count */}
-        <div className="flex items-center justify-between mb-4">
+        <div className="mb-4 flex items-center justify-between">
           <p
-            className="text-sm text-muted-foreground"
+            className="text-muted-foreground text-sm"
             data-testid="results-count"
           >
             {filteredTransactions.length} transação(ões) encontrada(s)
           </p>
-          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+          <div className="flex items-center gap-2 text-muted-foreground text-xs">
             <Shield className="h-3 w-3" />
             <span>Dados protegidos por LGPD</span>
           </div>
@@ -396,8 +392,8 @@ export const TransactionsList: React.FC<TransactionsListProps> = ({
             <TableBody>
               {paginatedTransactions.map((transaction) => (
                 <TableRow
-                  key={transaction.id}
                   data-testid={`transaction-row-${transaction.id}`}
+                  key={transaction.id}
                 >
                   <TableCell className="font-mono text-xs">
                     {transaction.id}
@@ -432,9 +428,9 @@ export const TransactionsList: React.FC<TransactionsListProps> = ({
                   <TableCell>{getStatusBadge(transaction.status)}</TableCell>
                   <TableCell>
                     <Button
-                      variant="ghost"
-                      size="sm"
                       data-testid={`view-${transaction.id}`}
+                      size="sm"
+                      variant="ghost"
                     >
                       <Eye className="h-3 w-3" />
                     </Button>
@@ -447,28 +443,28 @@ export const TransactionsList: React.FC<TransactionsListProps> = ({
 
         {/* Pagination */}
         {totalPages > 1 && (
-          <div className="flex items-center justify-between mt-4">
-            <p className="text-sm text-muted-foreground">
+          <div className="mt-4 flex items-center justify-between">
+            <p className="text-muted-foreground text-sm">
               Página {currentPage} de {totalPages}
             </p>
             <div className="flex gap-2">
               <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-                disabled={currentPage === 1}
                 data-testid="prev-page"
+                disabled={currentPage === 1}
+                onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+                size="sm"
+                variant="outline"
               >
                 Anterior
               </Button>
               <Button
-                variant="outline"
-                size="sm"
+                data-testid="next-page"
+                disabled={currentPage === totalPages}
                 onClick={() =>
                   setCurrentPage(Math.min(totalPages, currentPage + 1))
                 }
-                disabled={currentPage === totalPages}
-                data-testid="next-page"
+                size="sm"
+                variant="outline"
               >
                 Próxima
               </Button>

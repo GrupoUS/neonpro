@@ -49,7 +49,7 @@ export type DataSubjectRight =
   | 'objection';
 
 // Core Privacy Interfaces
-export interface PatientPrivacyProfile {
+export type PatientPrivacyProfile = {
   patientId: string;
   consentRecords: ConsentRecord[];
   dataProcessingLog: DataProcessingEntry[];
@@ -58,9 +58,9 @@ export interface PatientPrivacyProfile {
   privacyNotices: PrivacyNotice[];
   anonymizationStatus: AnonymizationStatus;
   retentionSchedule: DataRetentionSchedule;
-}
+};
 
-export interface ConsentRecord {
+export type ConsentRecord = {
   id: string;
   patientId: string;
   consentType: ConsentType;
@@ -75,43 +75,43 @@ export interface ConsentRecord {
   consentMethod: 'electronic' | 'written' | 'verbal' | 'implied';
   witnessInfo?: WitnessInfo;
   parentalConsent?: ParentalConsent;
-}
+};
 
-export interface ConsentGranularity {
+export type ConsentGranularity = {
   overallConsent: boolean;
   specificPurposes: Record<ProcessingPurpose, boolean>;
   dataCategories: Record<DataCategory, boolean>;
   sharingPermissions: SharingPermissions;
   retentionPeriods: Record<DataCategory, number>; // in days
-}
+};
 
-export interface SharingPermissions {
+export type SharingPermissions = {
   internalSharing: boolean;
   thirdPartySharing: boolean;
   researchSharing: boolean;
   anonymizedSharing: boolean;
   internationalTransfer: boolean;
   commercialUse: boolean;
-}
+};
 
-export interface WitnessInfo {
+export type WitnessInfo = {
   witnessId: string;
   witnessName: string;
   witnessRole: string;
   witnessSignature: string;
   witnessDate: string;
-}
+};
 
-export interface ParentalConsent {
+export type ParentalConsent = {
   parentId: string;
   parentName: string;
   relationship: 'parent' | 'guardian' | 'legal_representative';
   parentSignature: string;
   parentIdVerification: string;
   minorAge: number;
-}
+};
 
-export interface DataProcessingEntry {
+export type DataProcessingEntry = {
   id: string;
   timestamp: string;
   dataCategory: DataCategory;
@@ -123,9 +123,9 @@ export interface DataProcessingEntry {
   accessLog: AccessLogEntry[];
   retentionPeriod: number;
   deletionScheduled: string;
-}
+};
 
-export interface AccessLogEntry {
+export type AccessLogEntry = {
   userId: string;
   accessTime: string;
   accessPurpose: string;
@@ -134,35 +134,35 @@ export interface AccessLogEntry {
   ipAddress: string;
   userAgent: string;
   authenticationMethod: string;
-}
+};
 
-export interface PrivacyPreferences {
+export type PrivacyPreferences = {
   patientId: string;
   communicationPreferences: CommunicationPreferences;
   dataUsagePreferences: DataUsagePreferences;
   sharingRestrictions: SharingRestrictions;
   accessControls: AccessControls;
   notificationSettings: NotificationSettings;
-}
+};
 
-export interface CommunicationPreferences {
+export type CommunicationPreferences = {
   preferredLanguage: string;
   preferredContactMethod: 'email' | 'sms' | 'phone' | 'mail' | 'portal';
   consentReminderFrequency: 'never' | 'yearly' | 'biannually' | 'quarterly';
   privacyNoticeUpdates: boolean;
   marketingCommunications: boolean;
-}
+};
 
-export interface DataUsagePreferences {
+export type DataUsagePreferences = {
   allowResearch: boolean;
   allowQualityImprovement: boolean;
   allowPublicHealth: boolean;
   allowCommercialUse: boolean;
   allowInnovation: boolean;
   anonymizedDataSharing: boolean;
-}
+};
 
-export interface SharingRestrictions {
+export type SharingRestrictions = {
   restrictFamilyAccess: boolean;
   restrictInsuranceAccess: boolean;
   restrictEmployerAccess: boolean;
@@ -170,27 +170,27 @@ export interface SharingRestrictions {
   restrictInternationalTransfer: boolean;
   allowedRecipients: string[];
   blockedRecipients: string[];
-}
+};
 
-export interface AccessControls {
+export type AccessControls = {
   requireExplicitConsent: boolean;
   requirePurposeSpecification: boolean;
   enableDataMinimization: boolean;
   enableAutomaticDeletion: boolean;
   enableAccessNotifications: boolean;
   allowDataPortability: boolean;
-}
+};
 
-export interface NotificationSettings {
+export type NotificationSettings = {
   consentExpirationWarning: number; // days before
   unauthorizedAccessAlert: boolean;
   dataBreachNotification: boolean;
   privacyPolicyUpdates: boolean;
   dataProcessingNotification: boolean;
   deletionConfirmation: boolean;
-}
+};
 
-export interface DataSubjectRightRequest {
+export type DataSubjectRightRequest = {
   id: string;
   patientId: string;
   requestType: DataSubjectRight;
@@ -208,18 +208,18 @@ export interface DataSubjectRightRequest {
   appealProcess?: AppealProcess;
   legalBasis?: string;
   processingTime: number; // in days
-}
+};
 
-export interface AppealProcess {
+export type AppealProcess = {
   appealDate: string;
   appealReason: string;
   appealStatus: 'pending' | 'reviewed' | 'upheld' | 'overturned';
   reviewDate?: string;
   reviewOutcome?: string;
   supervisoryAuthorityContact?: string;
-}
+};
 
-export interface PrivacyNotice {
+export type PrivacyNotice = {
   id: string;
   version: string;
   effectiveDate: string;
@@ -229,9 +229,9 @@ export interface PrivacyNotice {
   content: PrivacyNoticeContent;
   acknowledgmentRequired: boolean;
   acknowledgmentDate?: string;
-}
+};
 
-export interface PrivacyNoticeContent {
+export type PrivacyNoticeContent = {
   dataController: string;
   contactInformation: string;
   purposesOfProcessing: ProcessingPurpose[];
@@ -243,9 +243,9 @@ export interface PrivacyNoticeContent {
   dataSubjectRights: DataSubjectRight[];
   complaintProcess: string;
   supervisoryAuthority: string;
-}
+};
 
-export interface AnonymizationStatus {
+export type AnonymizationStatus = {
   patientId: string;
   anonymizationLevel: AnonymizationLevel;
   anonymizationDate?: string;
@@ -253,9 +253,9 @@ export interface AnonymizationStatus {
   reversibilityStatus: 'reversible' | 'irreversible' | 'partially_reversible';
   anonymizationLog: AnonymizationLogEntry[];
   riskAssessment: AnonymizationRiskAssessment;
-}
+};
 
-export interface AnonymizationLogEntry {
+export type AnonymizationLogEntry = {
   timestamp: string;
   dataCategory: DataCategory;
   originalValues: string[];
@@ -263,25 +263,25 @@ export interface AnonymizationLogEntry {
   method: string;
   reversibilityKey?: string;
   qualityMetrics: AnonymizationQualityMetrics;
-}
+};
 
-export interface AnonymizationQualityMetrics {
+export type AnonymizationQualityMetrics = {
   dataUtility: number; // 0-1 scale
   privacyLevel: number; // 0-1 scale
   reidentificationRisk: number; // 0-1 scale
   informationLoss: number; // 0-1 scale
-}
+};
 
-export interface AnonymizationRiskAssessment {
+export type AnonymizationRiskAssessment = {
   overallRisk: 'low' | 'medium' | 'high' | 'very_high';
   riskFactors: string[];
   mitigationMeasures: string[];
   assessmentDate: string;
   assessor: string;
   nextAssessmentDate: string;
-}
+};
 
-export interface DataRetentionSchedule {
+export type DataRetentionSchedule = {
   patientId: string;
   dataCategories: DataCategoryRetention[];
   overallRetentionPeriod: number; // in days
@@ -290,9 +290,9 @@ export interface DataRetentionSchedule {
   legalHoldStatus: boolean;
   deletionScheduledDate?: string;
   deletionApprovedBy?: string;
-}
+};
 
-export interface DataCategoryRetention {
+export type DataCategoryRetention = {
   category: DataCategory;
   retentionPeriod: number; // in days
   legalBasis: string;
@@ -302,7 +302,7 @@ export interface DataCategoryRetention {
     | 'cryptographic_erasure'
     | 'physical_destruction';
   approvalRequired: boolean;
-}
+};
 
 // Main Privacy Protection Manager
 export class PrivacyProtectionManager {
@@ -1119,7 +1119,7 @@ export class PrivacyProtectionManager {
 }
 
 // Additional interfaces for reporting
-export interface PrivacyComplianceReport {
+export type PrivacyComplianceReport = {
   id: string;
   generatedDate: string;
   reportType: 'individual' | 'system' | 'regulation';
@@ -1131,15 +1131,15 @@ export interface PrivacyComplianceReport {
   details: PatientPrivacyComplianceData[];
   recommendations: string[];
   nextActions: string[];
-}
+};
 
-export interface PatientPrivacyComplianceData {
+export type PatientPrivacyComplianceData = {
   patientId: string;
   profile: PatientPrivacyProfile;
   complianceAssessment: PrivacyComplianceAssessment;
-}
+};
 
-export interface PrivacyComplianceAssessment {
+export type PrivacyComplianceAssessment = {
   overallCompliance: 'compliant' | 'non_compliant' | 'partial';
   regulationCompliance: Record<PrivacyRegulation, boolean>;
   consentValidation: boolean;
@@ -1148,23 +1148,23 @@ export interface PrivacyComplianceAssessment {
   securityCompliance: boolean;
   issues: PrivacyComplianceIssue[];
   recommendations: string[];
-}
+};
 
-export interface PrivacyComplianceIssue {
+export type PrivacyComplianceIssue = {
   type: string;
   severity: 'low' | 'medium' | 'high' | 'critical';
   description: string;
   regulation: PrivacyRegulation;
   dueDate: string;
-}
+};
 
-export interface PrivacyComplianceSummary {
+export type PrivacyComplianceSummary = {
   totalPatients: number;
   compliantPatients: number;
   nonCompliantPatients: number;
   complianceRate: number;
   criticalIssues: number;
-}
+};
 
 // Validation schemas
 export const ConsentValidationSchema = z.object({

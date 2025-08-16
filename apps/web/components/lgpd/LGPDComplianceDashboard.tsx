@@ -93,12 +93,12 @@ import {
   type RetentionAnalytics,
 } from '@/lib/lgpd/data-retention-manager';
 
-interface LGPDComplianceDashboardProps {
+type LGPDComplianceDashboardProps = {
   clinicId: string;
   userRole: string;
-}
+};
 
-interface ComplianceOverview {
+type ComplianceOverview = {
   complianceScore: number;
   totalConsents: number;
   activeConsents: number;
@@ -106,7 +106,7 @@ interface ComplianceOverview {
   recentViolations: number;
   dataRetentionCompliance: number;
   riskScore: number;
-}
+};
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8'];
 
@@ -206,8 +206,7 @@ export default function LGPDComplianceDashboard({
         50
       );
       setAuditTrail(auditRecords);
-    } catch (err) {
-      console.error('Error loading dashboard data:', err);
+    } catch (_err) {
       setError('Erro ao carregar dados do dashboard');
     } finally {
       setLoading(false);

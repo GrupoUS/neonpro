@@ -48,7 +48,6 @@ export async function GET(request: Request) {
     const { data: services, error } = await query;
 
     if (error) {
-      console.error('Error fetching services:', error);
       return NextResponse.json(
         { error: 'Failed to fetch services' },
         { status: 500 }
@@ -56,8 +55,7 @@ export async function GET(request: Request) {
     }
 
     return NextResponse.json({ services });
-  } catch (error) {
-    console.error('API Error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal Server Error' },
       { status: 500 }
@@ -90,7 +88,6 @@ export async function POST(request: Request) {
       .single();
 
     if (error) {
-      console.error('Error creating service:', error);
       return NextResponse.json(
         { error: 'Failed to create service' },
         { status: 500 }
@@ -105,8 +102,6 @@ export async function POST(request: Request) {
         { status: 400 }
       );
     }
-
-    console.error('API Error:', error);
     return NextResponse.json(
       { error: 'Internal Server Error' },
       { status: 500 }

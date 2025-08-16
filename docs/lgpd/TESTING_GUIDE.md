@@ -5,6 +5,7 @@
 ### **API Endpoints Testing**
 
 #### 1. **Consent Management**
+
 ```bash
 # Grant consent
 curl -X POST http://localhost:3000/api/lgpd/consent/grant \
@@ -27,6 +28,7 @@ curl -X GET http://localhost:3000/api/lgpd/consent/status
 ```
 
 #### 2. **Data Subject Rights**
+
 ```bash
 # Request data access
 curl -X POST http://localhost:3000/api/lgpd/data-rights/request \
@@ -48,6 +50,7 @@ curl -X POST http://localhost:3000/api/lgpd/data-rights/rectification \
 ```
 
 #### 3. **Compliance Status**
+
 ```bash
 # Get compliance dashboard data
 curl -X GET http://localhost:3000/api/lgpd/compliance/status
@@ -56,20 +59,24 @@ curl -X GET http://localhost:3000/api/lgpd/compliance/status
 ### **Frontend Components Testing**
 
 #### 1. **Navigate to Privacy Page**
+
 - Go to `/privacy` in your application
 - Should see three tabs: Dashboard, Consentimentos, Direitos LGPD
 
 #### 2. **Test Consent Manager**
+
 - Switch consents on/off
 - Verify required vs optional consents
 - Test consent withdrawal for optional consents
 
 #### 3. **Test Data Subject Rights**
+
 - Try different request types
 - Test rectification form with all fields
 - Submit requests and verify success messages
 
 #### 4. **Test Compliance Dashboard**
+
 - Verify progress calculations
 - Check status badges
 - Review compliance metrics
@@ -77,23 +84,25 @@ curl -X GET http://localhost:3000/api/lgpd/compliance/status
 ### **Database Verification**
 
 #### 1. **Check Tables Created**
+
 ```sql
 -- Verify LGPD tables exist
-SELECT table_name 
-FROM information_schema.tables 
-WHERE table_schema = 'public' 
+SELECT table_name
+FROM information_schema.tables
+WHERE table_schema = 'public'
 AND table_name LIKE '%consent%' OR table_name LIKE '%lgpd%';
 
 -- Check initial consent purposes
 SELECT * FROM consent_purposes;
 
 -- Check RLS policies
-SELECT schemaname, tablename, policyname, permissive, roles, cmd, qual 
-FROM pg_policies 
+SELECT schemaname, tablename, policyname, permissive, roles, cmd, qual
+FROM pg_policies
 WHERE tablename IN ('user_consents', 'data_subject_requests', 'lgpd_audit_logs');
 ```
 
 #### 2. **Test Database Functions**
+
 ```sql
 -- Test consent withdrawal function
 SELECT withdraw_consent('user-id', 'Marketing Communications', 'Testing');
@@ -108,14 +117,17 @@ SELECT check_retention_policies();
 ### **Security Testing**
 
 #### 1. **Authentication Testing**
+
 - Try accessing API endpoints without authentication
 - Should receive 401 Unauthorized responses
 
 #### 2. **Authorization Testing**
+
 - Try accessing other users' data
 - RLS should prevent unauthorized access
 
 #### 3. **Input Validation**
+
 - Send invalid request types
 - Send empty required fields
 - Verify proper error responses
@@ -123,6 +135,7 @@ SELECT check_retention_policies();
 ### **Performance Testing**
 
 #### 1. **Load Testing**
+
 ```bash
 # Install Apache Bench for testing
 sudo apt-get install apache2-utils
@@ -134,19 +147,21 @@ ab -n 100 -c 10 -H "Content-Type: application/json" \
 ```
 
 #### 2. **Database Performance**
+
 ```sql
 -- Check query performance
 EXPLAIN ANALYZE SELECT * FROM user_consents WHERE user_id = 'test-user';
 
 -- Check index usage
-SELECT schemaname, tablename, indexname, idx_scan, idx_tup_read, idx_tup_fetch 
-FROM pg_stat_user_indexes 
+SELECT schemaname, tablename, indexname, idx_scan, idx_tup_read, idx_tup_fetch
+FROM pg_stat_user_indexes
 WHERE tablename IN ('user_consents', 'data_subject_requests');
 ```
 
 ### **Compliance Verification**
 
 #### 1. **LGPD Requirements Checklist**
+
 - ✅ Consent management with granular purposes
 - ✅ Data subject rights implementation
 - ✅ Audit logging for all operations
@@ -157,6 +172,7 @@ WHERE tablename IN ('user_consents', 'data_subject_requests');
 - ✅ DPO workflow integration
 
 #### 2. **Data Protection Verification**
+
 - ✅ Row Level Security enabled
 - ✅ Encryption for sensitive fields
 - ✅ Audit trails for all data operations
@@ -166,6 +182,7 @@ WHERE tablename IN ('user_consents', 'data_subject_requests');
 ### **Integration Testing**
 
 #### 1. **End-to-End Flow**
+
 1. User grants consent for essential services
 2. User requests data access
 3. System processes request within 15 days
@@ -176,6 +193,7 @@ WHERE tablename IN ('user_consents', 'data_subject_requests');
 8. System updates compliance status
 
 #### 2. **Error Handling**
+
 - Test network failures
 - Test database connection issues
 - Test invalid input scenarios
@@ -184,19 +202,21 @@ WHERE tablename IN ('user_consents', 'data_subject_requests');
 ### **Monitoring and Alerts**
 
 #### 1. **Setup Monitoring**
+
 ```sql
 -- Monitor failed consent operations
-SELECT COUNT(*) FROM lgpd_audit_logs 
-WHERE action LIKE '%_failed' 
+SELECT COUNT(*) FROM lgpd_audit_logs
+WHERE action LIKE '%_failed'
 AND created_at >= NOW() - INTERVAL '1 hour';
 
 -- Monitor pending data requests
-SELECT COUNT(*) FROM data_subject_requests 
-WHERE status = 'pending' 
+SELECT COUNT(*) FROM data_subject_requests
+WHERE status = 'pending'
 AND requested_at < NOW() - INTERVAL '10 days';
 ```
 
 #### 2. **Alert Configuration**
+
 - Setup alerts for compliance violations
 - Monitor request processing times
 - Track consent withdrawal rates

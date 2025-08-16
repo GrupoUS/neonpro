@@ -3,16 +3,16 @@
  * Configures rate limits for different API endpoints and user types
  */
 
-export interface RateLimitConfig {
+export type RateLimitConfig = {
   windowMs: number; // Time window in milliseconds
   maxRequests: number; // Maximum requests per window
   skipSuccessfulRequests?: boolean;
   skipFailedRequests?: boolean;
-}
+};
 
-export interface RateLimitConfigs {
+export type RateLimitConfigs = {
   [key: string]: RateLimitConfig;
-}
+};
 
 /**
  * Rate limiting configurations for different endpoints
@@ -64,12 +64,12 @@ export const RATE_LIMIT_CONFIGS: RateLimitConfigs = {
 /**
  * Rate limiting configurations by user role
  */
-export interface UserRoleLimits {
+export type UserRoleLimits = {
   [role: string]: {
     multiplier: number; // Multiplier for base limits
     additionalEndpoints?: string[]; // Additional endpoints this role can access
   };
-}
+};
 
 export const USER_ROLE_LIMITS: UserRoleLimits = {
   admin: {

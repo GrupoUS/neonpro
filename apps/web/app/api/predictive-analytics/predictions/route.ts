@@ -24,8 +24,7 @@ export async function GET(request: NextRequest) {
     });
 
     return NextResponse.json(result);
-  } catch (error) {
-    console.error('Erro ao buscar predições:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
       { status: 500 }
@@ -41,8 +40,7 @@ export async function POST(request: NextRequest) {
     const prediction = await service.createPrediction(validatedData);
 
     return NextResponse.json(prediction, { status: 201 });
-  } catch (error) {
-    console.error('Erro ao criar predição:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Erro ao criar predição' },
       { status: 400 }

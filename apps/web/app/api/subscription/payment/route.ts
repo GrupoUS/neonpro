@@ -171,8 +171,7 @@ export async function POST(request: NextRequest) {
         },
       },
     });
-  } catch (error) {
-    console.error('Payment creation API error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

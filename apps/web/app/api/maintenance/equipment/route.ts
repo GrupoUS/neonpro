@@ -62,8 +62,7 @@ export async function GET(request: NextRequest) {
     );
 
     return NextResponse.json(result);
-  } catch (error) {
-    console.error('Equipment API Error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -96,8 +95,6 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(equipment, { status: 201 });
   } catch (error) {
-    console.error('Create Equipment Error:', error);
-
     if (error instanceof Error && error.message.includes('validation')) {
       return NextResponse.json(
         { error: 'Invalid equipment data', details: error.message },

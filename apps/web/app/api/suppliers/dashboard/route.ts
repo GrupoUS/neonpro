@@ -25,8 +25,7 @@ export async function GET(request: NextRequest) {
 
     const dashboardData = await supplierService.getDashboardData(clinicId);
     return NextResponse.json(dashboardData);
-  } catch (error) {
-    console.error('Erro ao buscar dados do dashboard:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
       { status: 500 }

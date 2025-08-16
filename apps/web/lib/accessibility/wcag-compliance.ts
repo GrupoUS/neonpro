@@ -1,20 +1,20 @@
 // WCAG 2.1 AA Compliance utilities for NeonPro
 // Healthcare accessibility standards implementation
 
-export interface WCAGLevel {
+export type WCAGLevel = {
   A: boolean;
   AA: boolean;
   AAA: boolean;
-}
+};
 
-export interface AccessibilityConfig {
+export type AccessibilityConfig = {
   level: WCAGLevel;
   announcements: boolean;
   highContrast: boolean;
   reducedMotion: boolean;
   focusIndicators: boolean;
   keyboardNavigation: boolean;
-}
+};
 
 // Color contrast ratios for WCAG AA compliance
 export const CONTRAST_RATIOS = {

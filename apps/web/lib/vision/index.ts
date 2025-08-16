@@ -143,19 +143,9 @@ export class VisionSystem {
    * Initialize the vision system
    */
   public async initialize(): Promise<void> {
-    try {
-      // Validate environment
-      const compliance = validateVoidBeastCompliance();
-      if (!compliance.isCompliant) {
-        console.warn('VoidBeast compliance issues:', compliance.issues);
-      }
-
-      // Log initialization
-      console.log('NeonPro Vision System initialized successfully');
-      console.log('Configuration:', this.config);
-    } catch (error) {
-      console.error('Failed to initialize Vision System:', error);
-      throw error;
+    // Validate environment
+    const compliance = validateVoidBeastCompliance();
+    if (!compliance.isCompliant) {
     }
   }
 
@@ -342,13 +332,13 @@ export type SystemEventType =
 /**
  * System event interface
  */
-export interface SystemEvent {
+export type SystemEvent = {
   type: SystemEventType;
   timestamp: string;
   data?: any;
   userId?: string;
   sessionId?: string;
-}
+};
 
 /**
  * Global error handler for vision system
@@ -356,13 +346,6 @@ export interface SystemEvent {
 export const handleVisionSystemError = (error: any, context?: string) => {
   const errorMessage = VisionUtils.Error.getUserFriendlyMessage(error);
   const isRecoverable = VisionUtils.Error.isRecoverableError(error);
-
-  console.error(`Vision System Error${context ? ` (${context})` : ''}:`, {
-    message: errorMessage,
-    recoverable: isRecoverable,
-    error,
-    timestamp: new Date().toISOString(),
-  });
 
   // Emit system event
   if (typeof window !== 'undefined' && window.dispatchEvent) {
@@ -409,8 +392,6 @@ export const monitorVisionPerformance = (operation: string) => {
 
       // Log performance warning if needed
       if (duration > VISION_CONFIG.PERFORMANCE.MAX_PROCESSING_TIME_MS) {
-        console.warn(`Performance warning: ${operation} took ${duration}ms`);
-
         // Emit performance warning event
         if (typeof window !== 'undefined' && window.dispatchEvent) {
           const event = new CustomEvent(SYSTEM_EVENTS.PERFORMANCE_WARNING, {

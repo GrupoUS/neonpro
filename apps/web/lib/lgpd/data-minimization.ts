@@ -81,7 +81,7 @@ export enum MinimizationAction {
 /**
  * Data Field Definition
  */
-export interface DataField {
+export type DataField = {
   name: string;
   category: DataCategory;
   necessity: DataNecessity;
@@ -96,12 +96,12 @@ export interface DataField {
     conditions?: Record<string, any>;
     parameters?: Record<string, any>;
   }[];
-}
+};
 
 /**
  * Data Collection Schema
  */
-export interface DataCollectionSchema {
+export type DataCollectionSchema = {
   id: string;
   name: string;
   description: string;
@@ -133,12 +133,12 @@ export interface DataCollectionSchema {
   createdBy: string;
   createdAt: Date;
   updatedAt: Date;
-}
+};
 
 /**
  * Data Collection Request
  */
-export interface DataCollectionRequest {
+export type DataCollectionRequest = {
   id: string;
   schemaId: string;
   purpose: ProcessingPurpose;
@@ -174,12 +174,12 @@ export interface DataCollectionRequest {
   };
 
   createdAt: Date;
-}
+};
 
 /**
  * Minimization Rule
  */
-export interface MinimizationRule {
+export type MinimizationRule = {
   id: string;
   name: string;
   description: string;
@@ -218,12 +218,12 @@ export interface MinimizationRule {
   createdBy: string;
   createdAt: Date;
   updatedAt: Date;
-}
+};
 
 /**
  * Minimization Report
  */
-export interface MinimizationReport {
+export type MinimizationReport = {
   id: string;
   period: {
     start: Date;
@@ -286,12 +286,12 @@ export interface MinimizationReport {
 
   generatedAt: Date;
   generatedBy: string;
-}
+};
 
 /**
  * Data Minimization Events
  */
-export interface DataMinimizationEvents {
+export type DataMinimizationEvents = {
   'collection:processed': { request: DataCollectionRequest };
   'collection:rejected': { request: DataCollectionRequest; reason: string };
   'data:minimized': {
@@ -301,7 +301,7 @@ export interface DataMinimizationEvents {
   'rule:triggered': { rule: MinimizationRule; request: DataCollectionRequest };
   'compliance:violation': { violation: string; request: DataCollectionRequest };
   'schema:updated': { schema: DataCollectionSchema };
-}
+};
 
 // ============================================================================
 // DATA MINIMIZATION SYSTEM
@@ -1364,13 +1364,10 @@ export class DataMinimizationManager extends EventEmitter {
    * Log activity
    */
   private logActivity(
-    actor: string,
-    action: string,
-    details: Record<string, any>
-  ): void {
-    // In a real implementation, this would log to audit trail
-    console.log(`[DataMinimization] ${actor} - ${action}:`, details);
-  }
+    _actor: string,
+    _action: string,
+    _details: Record<string, any>
+  ): void {}
 
   /**
    * Shutdown the system

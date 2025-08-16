@@ -16,7 +16,7 @@ export enum RiskFactorCategory {
 }
 
 // No-show prediction result interface
-export interface NoShowPrediction {
+export type NoShowPrediction = {
   appointmentId: string;
   patientId: string;
   riskScore: number; // 0-100 scale
@@ -26,20 +26,20 @@ export interface NoShowPrediction {
   interventionRecommendations: InterventionRecommendation[];
   predictedAt: Date;
   modelVersion: string;
-}
+};
 
 // Individual risk factor analysis
-export interface RiskFactor {
+export type RiskFactor = {
   category: RiskFactorCategory;
   factorName: string;
   value: number | string | boolean;
   weight: number; // Impact weight on final score
   contribution: number; // Contribution to final risk score
   description: string;
-}
+};
 
 // Intervention recommendation based on risk analysis
-export interface InterventionRecommendation {
+export type InterventionRecommendation = {
   type: 'REMINDER' | 'CONFIRMATION' | 'INCENTIVE' | 'RESCHEDULE' | 'CONTACT';
   priority: 'LOW' | 'MEDIUM' | 'HIGH' | 'URGENT';
   timing: string; // When to execute (e.g., "24h before", "same day")
@@ -47,10 +47,10 @@ export interface InterventionRecommendation {
   message: string;
   effectiveness: number; // Historical effectiveness score
   estimatedImpact: number; // Expected reduction in no-show probability
-}
+};
 
 // Historical no-show pattern for trend analysis
-export interface NoShowPattern {
+export type NoShowPattern = {
   patientId: string;
   totalAppointments: number;
   noShowCount: number;
@@ -60,10 +60,10 @@ export interface NoShowPattern {
   seasonalPatterns: Record<string, number>;
   lastNoShowDate?: Date;
   improvementTrend: 'IMPROVING' | 'STABLE' | 'DECLINING';
-}
+};
 
 // Model performance tracking
-export interface ModelPerformance {
+export type ModelPerformance = {
   modelVersion: string;
   accuracy: number;
   precision: number;
@@ -74,7 +74,7 @@ export interface ModelPerformance {
   lastTrainingDate: Date;
   trainingDataSize: number;
   featureImportance: Record<string, number>;
-}
+};
 
 // Main no-show prediction engine class
 export class NoShowPredictionEngine {
@@ -131,8 +131,7 @@ export class NoShowPredictionEngine {
         predictedAt: new Date(),
         modelVersion: this.modelVersion,
       };
-    } catch (error) {
-      console.error('Error in no-show prediction:', error);
+    } catch (_error) {
       throw new Error('Failed to generate no-show prediction');
     }
   }
@@ -149,14 +148,10 @@ export class NoShowPredictionEngine {
       const batchPromises = batch.map((apt) => this.predictNoShow(apt.id, apt));
       const batchResults = await Promise.allSettled(batchPromises);
 
-      batchResults.forEach((result, index) => {
+      batchResults.forEach((result, _index) => {
         if (result.status === 'fulfilled') {
           results.push(result.value);
         } else {
-          console.error(
-            `Failed to predict for appointment ${batch[index].id}:`,
-            result.reason
-          );
         }
       });
     }

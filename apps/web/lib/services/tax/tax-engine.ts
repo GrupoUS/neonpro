@@ -27,13 +27,11 @@ export class BrazilianTaxEngine {
         .single();
 
       if (error || !data) {
-        console.error('Error fetching tax configuration:', error);
         return null;
       }
 
       return data as TaxConfiguration;
-    } catch (error) {
-      console.error('Tax configuration fetch error:', error);
+    } catch (_error) {
       return null;
     }
   }
@@ -49,13 +47,11 @@ export class BrazilianTaxEngine {
         .single();
 
       if (error || !data) {
-        console.error('Error fetching service tax code:', error);
         return null;
       }
 
       return data as ServiceTaxCode;
-    } catch (error) {
-      console.error('Service tax code fetch error:', error);
+    } catch (_error) {
       return null;
     }
   }
@@ -69,84 +65,79 @@ export class BrazilianTaxEngine {
     customer_info?: any;
     regime_tributario?: string;
   }): Promise<TaxCalculation> {
-    try {
-      // Validate request
-      const validatedRequest = taxCalculationRequestSchema.parse(request);
+    // Validate request
+    const validatedRequest = taxCalculationRequestSchema.parse(request);
 
-      // Get tax configuration
-      const taxConfig = await this.getTaxConfiguration(
-        validatedRequest.clinic_id
-      );
-      if (!taxConfig) {
-        throw new Error('Tax configuration not found for clinic');
-      }
-
-      // Get service tax code information if provided
-      let serviceTaxCode: ServiceTaxCode | null = null;
-      if (validatedRequest.codigo_servico) {
-        serviceTaxCode = await this.getServiceTaxCode(
-          validatedRequest.codigo_servico
-        );
-      }
-
-      // Calculate taxes based on regime
-      const regime =
-        validatedRequest.regime_tributario || taxConfig.regime_tributario;
-      let taxBreakdown: TaxBreakdown;
-
-      switch (regime) {
-        case 'simples_nacional':
-          taxBreakdown = this.calculateSimplesNacional(
-            validatedRequest.valor_base,
-            taxConfig,
-            serviceTaxCode
-          );
-          break;
-
-        case 'lucro_presumido':
-          taxBreakdown = this.calculateLucroPresumido(
-            validatedRequest.valor_base,
-            taxConfig,
-            serviceTaxCode
-          );
-          break;
-
-        case 'lucro_real':
-          taxBreakdown = this.calculateLucroReal(
-            validatedRequest.valor_base,
-            taxConfig,
-            serviceTaxCode
-          );
-          break;
-
-        default:
-          throw new Error(`Unknown tax regime: ${regime}`);
-      }
-
-      // Calculate totals
-      const totalTaxes = Object.values(taxBreakdown).reduce(
-        (sum, value) => sum + value,
-        0
-      );
-      const netValue = validatedRequest.valor_base - totalTaxes;
-
-      const calculation: TaxCalculation = {
-        valor_base: validatedRequest.valor_base,
-        regime_tributario: regime,
-        tax_breakdown: taxBreakdown,
-        total_taxes: totalTaxes,
-        valor_liquido: netValue,
-        effective_rate: (totalTaxes / validatedRequest.valor_base) * 100,
-        calculated_at: new Date().toISOString(),
-        service_code: validatedRequest.codigo_servico,
-        service_type: validatedRequest.tipo_servico,
-      };
-
-      return calculation;
-    } catch (error) {
-      console.error('Tax calculation error:', error);
-      throw error;
+    // Get tax configuration
+    const taxConfig = await this.getTaxConfiguration(
+      validatedRequest.clinic_id
+    );
+    if (!taxConfig) {
+      throw new Error('Tax configuration not found for clinic');
     }
+
+    // Get service tax code information if provided
+    let serviceTaxCode: ServiceTaxCode | null = null;
+    if (validatedRequest.codigo_servico) {
+      serviceTaxCode = await this.getServiceTaxCode(
+        validatedRequest.codigo_servico
+      );
+    }
+
+    // Calculate taxes based on regime
+    const regime =
+      validatedRequest.regime_tributario || taxConfig.regime_tributario;
+    let taxBreakdown: TaxBreakdown;
+
+    switch (regime) {
+      case 'simples_nacional':
+        taxBreakdown = this.calculateSimplesNacional(
+          validatedRequest.valor_base,
+          taxConfig,
+          serviceTaxCode
+        );
+        break;
+
+      case 'lucro_presumido':
+        taxBreakdown = this.calculateLucroPresumido(
+          validatedRequest.valor_base,
+          taxConfig,
+          serviceTaxCode
+        );
+        break;
+
+      case 'lucro_real':
+        taxBreakdown = this.calculateLucroReal(
+          validatedRequest.valor_base,
+          taxConfig,
+          serviceTaxCode
+        );
+        break;
+
+      default:
+        throw new Error(`Unknown tax regime: ${regime}`);
+    }
+
+    // Calculate totals
+    const totalTaxes = Object.values(taxBreakdown).reduce(
+      (sum, value) => sum + value,
+      0
+    );
+    const netValue = validatedRequest.valor_base - totalTaxes;
+
+    const calculation: TaxCalculation = {
+      valor_base: validatedRequest.valor_base,
+      regime_tributario: regime,
+      tax_breakdown: taxBreakdown,
+      total_taxes: totalTaxes,
+      valor_liquido: netValue,
+      effective_rate: (totalTaxes / validatedRequest.valor_base) * 100,
+      calculated_at: new Date().toISOString(),
+      service_code: validatedRequest.codigo_servico,
+      service_type: validatedRequest.tipo_servico,
+    };
+
+    return calculation;
   }
 
   // Calculate taxes under Simples Nacional regime
@@ -280,8 +271,7 @@ export class BrazilianTaxEngine {
       });
 
       return calculation.effective_rate;
-    } catch (error) {
-      console.error('Effective tax rate calculation error:', error);
+    } catch (_error) {
       return 0;
     }
   }
@@ -301,12 +291,7 @@ export class BrazilianTaxEngine {
       try {
         const calculation = await this.calculateTaxes(request);
         calculations.push(calculation);
-      } catch (error) {
-        console.error(
-          'Bulk tax calculation error for request:',
-          request,
-          error
-        );
+      } catch (_error) {
         // Continue with other calculations
       }
     }
@@ -373,8 +358,7 @@ export class BrazilianTaxEngine {
         errors,
         warnings,
       };
-    } catch (error) {
-      console.error('Tax setup validation error:', error);
+    } catch (_error) {
       return {
         isValid: false,
         errors: ['Failed to validate tax setup'],
@@ -395,42 +379,37 @@ export class BrazilianTaxEngine {
     breakdown: TaxBreakdown;
     period: { start: string; end: string };
   }> {
-    try {
-      // This would typically query invoice/payment data
-      // For now, we'll return a mock structure
-      const summary = {
-        total_revenue: 0,
-        total_taxes: 0,
-        effective_rate: 0,
-        breakdown: {
-          icms: 0,
-          iss: 0,
-          pis: 0,
-          cofins: 0,
-          irpj: 0,
-          csll: 0,
-          simples_nacional: 0,
-          inss: 0,
-          outros: 0,
-        },
-        period: {
-          start: startDate,
-          end: endDate,
-        },
-      };
+    // This would typically query invoice/payment data
+    // For now, we'll return a mock structure
+    const summary = {
+      total_revenue: 0,
+      total_taxes: 0,
+      effective_rate: 0,
+      breakdown: {
+        icms: 0,
+        iss: 0,
+        pis: 0,
+        cofins: 0,
+        irpj: 0,
+        csll: 0,
+        simples_nacional: 0,
+        inss: 0,
+        outros: 0,
+      },
+      period: {
+        start: startDate,
+        end: endDate,
+      },
+    };
 
-      // TODO: Implement actual data aggregation from invoices/payments
-      // This would involve:
-      // 1. Query all invoices in date range
-      // 2. Calculate taxes for each invoice
-      // 3. Aggregate totals
-      // 4. Calculate effective rates
+    // TODO: Implement actual data aggregation from invoices/payments
+    // This would involve:
+    // 1. Query all invoices in date range
+    // 2. Calculate taxes for each invoice
+    // 3. Aggregate totals
+    // 4. Calculate effective rates
 
-      return summary;
-    } catch (error) {
-      console.error('Tax summary calculation error:', error);
-      throw error;
-    }
+    return summary;
   }
 
   /**

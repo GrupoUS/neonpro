@@ -18,8 +18,7 @@ export async function GET(request: NextRequest) {
       await equipmentMaintenanceService.getMaintenanceSummary(clinicId);
 
     return NextResponse.json(summary);
-  } catch (error) {
-    console.error('Maintenance Summary API Error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

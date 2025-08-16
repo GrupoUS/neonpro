@@ -40,13 +40,13 @@ const NotificationPayloadSchema = z.object({
 
 export type NotificationPayload = z.infer<typeof NotificationPayloadSchema>;
 
-export interface NotificationResult {
+export type NotificationResult = {
   success: boolean;
   notificationId?: string;
   channel: NotificationChannel;
   error?: string;
   deliveredAt?: Date;
-}
+};
 export class NotificationService {
   private readonly emailService: EmailService;
   private readonly smsService: SMSService;
@@ -270,13 +270,11 @@ export class NotificationService {
         .single();
 
       if (error) {
-        console.error('Error fetching user preferences:', error);
         return null;
       }
 
       return data;
-    } catch (error) {
-      console.error('Error in getUserPreferences:', error);
+    } catch (_error) {
       return null;
     }
   }
@@ -438,8 +436,7 @@ export class NotificationService {
       }
 
       return success;
-    } catch (error) {
-      console.error('Error cancelling scheduled notification:', error);
+    } catch (_error) {
       return false;
     }
   }
@@ -473,8 +470,7 @@ export class NotificationService {
       }
 
       return null;
-    } catch (error) {
-      console.error('Error getting notification status:', error);
+    } catch (_error) {
       return null;
     }
   }
@@ -504,8 +500,7 @@ export class NotificationService {
       });
 
       return true;
-    } catch (error) {
-      console.error('Error updating user preferences:', error);
+    } catch (_error) {
       return false;
     }
   }

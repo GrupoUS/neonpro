@@ -34,8 +34,7 @@ export async function POST(_request: NextRequest) {
       sent: result.sent,
       message: `Test notification sent to ${result.sent} device(s)`,
     });
-  } catch (error) {
-    console.error('Error sending test notification:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

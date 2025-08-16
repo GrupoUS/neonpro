@@ -8,7 +8,7 @@
 // BUDGET MANAGEMENT TYPES
 // =====================================================================================
 
-export interface InventoryBudget {
+export type InventoryBudget = {
   id: string;
   clinic_id: string;
   name: string;
@@ -30,9 +30,9 @@ export interface InventoryBudget {
   metadata?: Record<string, any>;
   created_at?: string;
   updated_at?: string;
-}
+};
 
-export interface BudgetAllocation {
+export type BudgetAllocation = {
   id: string;
   budget_id: string;
   category: string;
@@ -44,9 +44,9 @@ export interface BudgetAllocation {
   description?: string;
   created_at?: string;
   updated_at?: string;
-}
+};
 
-export interface BudgetVariance {
+export type BudgetVariance = {
   id: string;
   budget_id: string;
   allocation_id?: string;
@@ -66,9 +66,9 @@ export interface BudgetVariance {
   metadata?: Record<string, any>;
   created_at?: string;
   updated_at?: string;
-}
+};
 
-export interface CostCenter {
+export type CostCenter = {
   id: string;
   clinic_id: string;
   code: string;
@@ -82,13 +82,13 @@ export interface CostCenter {
   metadata?: Record<string, any>;
   created_at?: string;
   updated_at?: string;
-}
+};
 
 // =====================================================================================
 // APPROVAL WORKFLOW TYPES
 // =====================================================================================
 
-export interface PurchaseOrderApproval {
+export type PurchaseOrderApproval = {
   id: string;
   purchase_order_id: string;
   budget_id?: string;
@@ -108,9 +108,9 @@ export interface PurchaseOrderApproval {
   metadata?: Record<string, any>;
   created_at?: string;
   updated_at?: string;
-}
+};
 
-export interface ApprovalWorkflowRule {
+export type ApprovalWorkflowRule = {
   id: string;
   clinic_id: string;
   rule_name: string;
@@ -130,22 +130,22 @@ export interface ApprovalWorkflowRule {
   metadata?: Record<string, any>;
   created_at?: string;
   updated_at?: string;
-}
+};
 
-export interface ApprovalLevel {
+export type ApprovalLevel = {
   level: number;
   role: string;
   amount_threshold?: number;
   required_approvers?: number;
   escalation_hours?: number;
   conditions?: Record<string, any>;
-}
+};
 
 // =====================================================================================
 // VIEW AND SUMMARY TYPES
 // =====================================================================================
 
-export interface BudgetUtilizationSummary {
+export type BudgetUtilizationSummary = {
   id: string;
   clinic_id: string;
   name: string;
@@ -160,9 +160,9 @@ export interface BudgetUtilizationSummary {
   period_status: string; // 'expired', 'future', 'active'
   status: string;
   variance_count: number;
-}
+};
 
-export interface ApprovalWorkflowPerformance {
+export type ApprovalWorkflowPerformance = {
   budget_id?: string;
   approval_type: string;
   total_approvals: number;
@@ -171,13 +171,13 @@ export interface ApprovalWorkflowPerformance {
   pending_count: number;
   avg_approval_time_hours: number;
   auto_approved_count: number;
-}
+};
 
 // =====================================================================================
 // REQUEST AND RESPONSE TYPES
 // =====================================================================================
 
-export interface CreateBudgetRequest {
+export type CreateBudgetRequest = {
   name: string;
   budget_type: string;
   total_amount: number;
@@ -190,41 +190,41 @@ export interface CreateBudgetRequest {
   department?: string;
   responsible_user_id?: string;
   allocations?: BudgetAllocationRequest[];
-}
+};
 
-export interface BudgetAllocationRequest {
+export type BudgetAllocationRequest = {
   category: string;
   subcategory?: string;
   allocated_amount: number;
   allocation_percentage?: number;
   description?: string;
-}
+};
 
-export interface UpdateBudgetRequest {
+export type UpdateBudgetRequest = {
   name?: string;
   total_amount?: number;
   status?: string;
   auto_approval_limit?: number;
   approval_required_above?: number;
   responsible_user_id?: string;
-}
+};
 
-export interface CreateApprovalRequest {
+export type CreateApprovalRequest = {
   purchase_order_id: string;
   budget_id?: string;
   approval_type: string;
   required_amount_threshold?: number;
   approver_user_id?: string;
   approval_deadline?: string;
-}
+};
 
-export interface ProcessApprovalRequest {
+export type ProcessApprovalRequest = {
   action: 'approve' | 'reject' | 'escalate';
   reason?: string;
   escalation_reason?: string;
-}
+};
 
-export interface CreateWorkflowRuleRequest {
+export type CreateWorkflowRuleRequest = {
   rule_name: string;
   rule_type: string;
   category?: string;
@@ -237,9 +237,9 @@ export interface CreateWorkflowRuleRequest {
   auto_approval_enabled?: boolean;
   auto_approval_conditions?: Record<string, any>;
   escalation_hours?: number;
-}
+};
 
-export interface BudgetAnalyticsRequest {
+export type BudgetAnalyticsRequest = {
   period_start?: string;
   period_end?: string;
   budget_types?: string[];
@@ -247,13 +247,13 @@ export interface BudgetAnalyticsRequest {
   cost_centers?: string[];
   include_variances?: boolean;
   include_forecasts?: boolean;
-}
+};
 
 // =====================================================================================
 // ANALYTICS AND REPORTING TYPES
 // =====================================================================================
 
-export interface BudgetAnalytics {
+export type BudgetAnalytics = {
   summary: {
     total_budgets: number;
     total_allocated: number;
@@ -294,9 +294,9 @@ export interface BudgetAnalytics {
       total_variance_amount: number;
     }>;
   };
-}
+};
 
-export interface ApprovalWorkflowAnalytics {
+export type ApprovalWorkflowAnalytics = {
   workflow_efficiency: {
     total_workflows: number;
     average_approval_time: number;
@@ -322,13 +322,13 @@ export interface ApprovalWorkflowAnalytics {
     avg_processing_time: number;
     approval_rate: number;
   }>;
-}
+};
 
 // =====================================================================================
 // BUDGET OPTIMIZATION TYPES
 // =====================================================================================
 
-export interface BudgetOptimizationRecommendation {
+export type BudgetOptimizationRecommendation = {
   type: 'reallocation' | 'increase' | 'decrease' | 'consolidation';
   priority: 'high' | 'medium' | 'low';
   budget_id: string;
@@ -341,9 +341,9 @@ export interface BudgetOptimizationRecommendation {
   implementation_effort: 'low' | 'medium' | 'high';
   risk_level: 'low' | 'medium' | 'high';
   confidence_score: number; // 0-1
-}
+};
 
-export interface BudgetForecast {
+export type BudgetForecast = {
   budget_id: string;
   forecast_period: number; // days
   predicted_spend: number;
@@ -356,13 +356,13 @@ export interface BudgetForecast {
   risk_factors: string[];
   recommendations: string[];
   forecast_accuracy?: number;
-}
+};
 
 // =====================================================================================
 // NOTIFICATION TYPES
 // =====================================================================================
 
-export interface BudgetNotification {
+export type BudgetNotification = {
   id: string;
   type:
     | 'budget_alert'
@@ -380,20 +380,20 @@ export interface BudgetNotification {
   created_at: string;
   read_at?: string;
   metadata?: Record<string, any>;
-}
+};
 
 // =====================================================================================
 // UTILITY TYPES
 // =====================================================================================
 
-export interface BudgetValidationResult {
+export type BudgetValidationResult = {
   is_valid: boolean;
   errors: string[];
   warnings: string[];
   recommendations: string[];
-}
+};
 
-export interface ApprovalEligibility {
+export type ApprovalEligibility = {
   is_eligible: boolean;
   required_approvals: number;
   current_approvals: number;
@@ -401,4 +401,4 @@ export interface ApprovalEligibility {
   auto_approval_possible: boolean;
   escalation_required: boolean;
   blocking_factors: string[];
-}
+};

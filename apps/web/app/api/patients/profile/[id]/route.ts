@@ -89,13 +89,11 @@ export async function GET(
       };
 
       return NextResponse.json(profileWithInsights);
-    } catch (insightsError) {
-      console.error('Error generating AI insights:', insightsError);
+    } catch (_insightsError) {
       // Return profile without insights if AI fails
       return NextResponse.json(profile);
     }
-  } catch (error) {
-    console.error('Error fetching patient profile:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to fetch patient profile' },
       { status: 500 }
@@ -162,13 +160,11 @@ export async function PUT(
       };
 
       return NextResponse.json(profileWithInsights);
-    } catch (insightsError) {
-      console.error('Error generating updated AI insights:', insightsError);
+    } catch (_insightsError) {
       // Return updated profile without insights if AI fails
       return NextResponse.json(updatedProfile);
     }
-  } catch (error) {
-    console.error('Error updating patient profile:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to update patient profile' },
       { status: 500 }
@@ -208,8 +204,7 @@ export async function DELETE(
       message: 'Patient profile archived successfully',
       archived_at: new Date().toISOString(),
     });
-  } catch (error) {
-    console.error('Error archiving patient profile:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to archive patient profile' },
       { status: 500 }

@@ -42,8 +42,7 @@ export async function GET(
       success: true,
       data: riskAssessment,
     });
-  } catch (error) {
-    console.error('Risk assessment API error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to generate risk assessment' },
       { status: 500 }
@@ -89,8 +88,7 @@ export async function POST(
         recommendations,
       },
     });
-  } catch (error) {
-    console.error('Risk assessment POST API error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to generate comprehensive risk assessment' },
       { status: 500 }

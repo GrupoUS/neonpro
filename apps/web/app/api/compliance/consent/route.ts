@@ -188,8 +188,6 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('GET /api/compliance/consent error:', error);
-
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {
@@ -314,8 +312,6 @@ export async function POST(request: NextRequest) {
       data: { consent },
     });
   } catch (error) {
-    console.error('POST /api/compliance/consent error:', error);
-
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {
@@ -422,8 +418,6 @@ export async function DELETE(request: NextRequest) {
       data: { consent: withdrawnConsent },
     });
   } catch (error) {
-    console.error('DELETE /api/compliance/consent error:', error);
-
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {

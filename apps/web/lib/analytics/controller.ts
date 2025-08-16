@@ -227,8 +227,6 @@ export class AnalyticsController {
   // ========================================================================
 
   private handleError(error: unknown) {
-    console.error('Analytics API Error:', error);
-
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {

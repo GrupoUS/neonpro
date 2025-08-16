@@ -99,18 +99,14 @@ export async function GET(request: NextRequest) {
       query.term,
       'traditional',
       response.totalCount
-    ).catch((error: any) =>
-      console.error('Failed to log search analytics:', error)
-    );
+    ).catch((_error: any) => {});
 
     return NextResponse.json({
       success: true,
       data: response,
       type: 'traditional',
     });
-  } catch (error) {
-    console.error('Erro na API de busca:', error);
-
+  } catch (_error) {
     return NextResponse.json(
       {
         success: false,
@@ -169,9 +165,7 @@ export async function POST(request: NextRequest) {
           { status: 400 }
         );
     }
-  } catch (error) {
-    console.error('Erro na API de busca (POST):', error);
-
+  } catch (_error) {
     return NextResponse.json(
       {
         success: false,
@@ -205,8 +199,5 @@ async function logSearchAnalytics(
         execution_time: 0, // Could be passed from search execution
       },
     });
-  } catch (error) {
-    // Don't throw - analytics shouldn't break the search functionality
-    console.error('Search analytics logging failed:', error);
-  }
+  } catch (_error) {}
 }

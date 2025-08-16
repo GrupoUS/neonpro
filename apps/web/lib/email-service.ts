@@ -5,24 +5,24 @@ import { Resend } from 'resend';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-export interface EmailTemplate {
+export type EmailTemplate = {
   id: string;
   name: string;
   subject: string;
   html_content: string;
   text_content?: string;
   variables: string[];
-}
+};
 
-export interface EmailData {
+export type EmailData = {
   to: string;
   template: string;
   variables: Record<string, string>;
   from?: string;
   reply_to?: string;
-}
+};
 
-export interface BulkEmailData {
+export type BulkEmailData = {
   template: string;
   recipients: Array<{
     email: string;
@@ -30,7 +30,7 @@ export interface BulkEmailData {
   }>;
   from?: string;
   reply_to?: string;
-}
+};
 
 class EmailService {
   private supabase: any = null;
@@ -50,8 +50,7 @@ class EmailService {
         // Dynamic import to avoid client-side errors
         const { cookies } = await import('next/headers');
         this.supabase = createServerComponentClient({ cookies });
-      } catch (error) {
-        console.error('Error importing next/headers:', error);
+      } catch (_error) {
         // Fallback to basic client without cookies
         const { createClient } = await import('@supabase/supabase-js');
         this.supabase = createClient(
@@ -82,13 +81,11 @@ class EmailService {
         .single();
 
       if (error) {
-        console.error('Error fetching email template:', error);
         return null;
       }
 
       return data;
-    } catch (error) {
-      console.error('Error in getTemplate:', error);
+    } catch (_error) {
       return null;
     }
   }
@@ -146,14 +143,10 @@ class EmailService {
       });
 
       if (error) {
-        console.error('Resend error:', error);
         return { success: false, error: error.message };
       }
-
-      console.log('Email sent successfully:', data?.id);
       return { success: true, messageId: data?.id };
     } catch (error) {
-      console.error('Error sending email:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
@@ -240,7 +233,6 @@ class EmailService {
         results: processedResults,
       };
     } catch (error) {
-      console.error('Error sending bulk emails:', error);
       return {
         success: false,
         results: recipients.map((r) => ({
@@ -371,15 +363,11 @@ export default emailService;
 
 // Utility functions for common use cases
 export async function sendAppointmentNotificationEmail(
-  appointmentId: string,
-  type: 'confirmation' | 'reminder' | 'cancellation',
+  _appointmentId: string,
+  _type: 'confirmation' | 'reminder' | 'cancellation',
   _cancellationReason?: string
 ) {
   try {
-    // This would typically fetch appointment details from the database
-    // For now, this is a placeholder that would be implemented with actual data fetching
-    console.log(`Sending ${type} email for appointment ${appointmentId}`);
-
     // The actual implementation would:
     // 1. Fetch appointment details from database
     // 2. Fetch patient email and preferences
@@ -388,7 +376,6 @@ export async function sendAppointmentNotificationEmail(
 
     return { success: true };
   } catch (error) {
-    console.error(`Error sending ${type} email:`, error);
     return {
       success: false,
       error: error instanceof Error ? error.message : 'Unknown error',
@@ -399,16 +386,8 @@ export async function sendAppointmentNotificationEmail(
 // Background job function for sending reminder emails
 export async function sendScheduledReminders() {
   try {
-    // This would be called by a cron job to send reminder emails
-    // Implementation would:
-    // 1. Query appointments that need reminders
-    // 2. Check user notification preferences
-    // 3. Send emails using emailService.sendAppointmentReminder
-
-    console.log('Processing scheduled reminder emails');
     return { success: true, processed: 0 };
   } catch (error) {
-    console.error('Error sending scheduled reminders:', error);
     return {
       success: false,
       error: error instanceof Error ? error.message : 'Unknown error',

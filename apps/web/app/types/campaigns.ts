@@ -2,7 +2,7 @@
 // Epic 7.2: Automated Marketing Campaigns + Personalization
 // Author: VoidBeast Agent
 
-export interface CampaignTemplate {
+export type CampaignTemplate = {
   id: string;
   name: string;
   description?: string;
@@ -16,9 +16,9 @@ export interface CampaignTemplate {
   created_by?: string;
   created_at: string;
   updated_at: string;
-}
+};
 
-export interface MarketingCampaign {
+export type MarketingCampaign = {
   id: string;
   name: string;
   description?: string;
@@ -44,9 +44,9 @@ export interface MarketingCampaign {
   created_by?: string;
   created_at: string;
   updated_at: string;
-}
+};
 
-export interface CampaignExecution {
+export type CampaignExecution = {
   id: string;
   campaign_id: string;
   execution_type: 'scheduled' | 'triggered' | 'manual' | 'test';
@@ -60,9 +60,9 @@ export interface CampaignExecution {
   metrics?: Record<string, any>;
   error_details?: Record<string, any>;
   created_at: string;
-}
+};
 
-export interface CampaignABTest {
+export type CampaignABTest = {
   id: string;
   campaign_id: string;
   test_name: string;
@@ -82,9 +82,9 @@ export interface CampaignABTest {
   completed_at?: string;
   created_by?: string;
   created_at: string;
-}
+};
 
-export interface CampaignTrigger {
+export type CampaignTrigger = {
   id: string;
   campaign_id: string;
   trigger_name: string;
@@ -101,9 +101,9 @@ export interface CampaignTrigger {
   is_active: boolean;
   priority: number;
   created_at: string;
-}
+};
 
-export interface PatientPersonalizationProfile {
+export type PatientPersonalizationProfile = {
   id: string;
   patient_id: string;
   preferences?: Record<string, any>;
@@ -117,9 +117,9 @@ export interface PatientPersonalizationProfile {
   ai_insights?: Record<string, any>;
   last_updated: string;
   created_at: string;
-}
+};
 
-export interface CampaignPerformanceMetrics {
+export type CampaignPerformanceMetrics = {
   id: string;
   campaign_id: string;
   execution_id?: string;
@@ -145,9 +145,9 @@ export interface CampaignPerformanceMetrics {
   cost_per_acquisition?: number;
   engagement_score?: number;
   created_at: string;
-}
+};
 
-export interface MarketingConsent {
+export type MarketingConsent = {
   id: string;
   patient_id: string;
   consent_type: 'email' | 'sms' | 'whatsapp' | 'push' | 'all';
@@ -161,9 +161,9 @@ export interface MarketingConsent {
   legal_basis?: string;
   consent_text?: string;
   created_at: string;
-}
+};
 
-export interface CampaignAuditTrail {
+export type CampaignAuditTrail = {
   id: string;
   campaign_id: string;
   action: string;
@@ -172,46 +172,46 @@ export interface CampaignAuditTrail {
   ip_address?: string;
   user_agent?: string;
   timestamp: string;
-}
+};
 
 // Campaign Builder Types
-export interface CampaignStep {
+export type CampaignStep = {
   id: string;
   type: 'trigger' | 'condition' | 'action' | 'delay' | 'split';
   config: Record<string, any>;
   position: { x: number; y: number };
   connections: string[];
-}
+};
 
-export interface CampaignWorkflow {
+export type CampaignWorkflow = {
   id: string;
   name: string;
   steps: CampaignStep[];
   automation_level: number;
   estimated_reach: number;
   created_at: string;
-}
+};
 
 // Personalization Types
-export interface PersonalizationRule {
+export type PersonalizationRule = {
   id: string;
   name: string;
   condition: Record<string, any>;
   action: Record<string, any>;
   priority: number;
   is_active: boolean;
-}
+};
 
-export interface ContentVariation {
+export type ContentVariation = {
   id: string;
   name: string;
   content: Record<string, any>;
   target_criteria: Record<string, any>;
   performance_data?: Record<string, any>;
-}
+};
 
 // Analytics Types
-export interface CampaignAnalytics {
+export type CampaignAnalytics = {
   campaign_id: string;
   total_recipients: number;
   automation_rate: number;
@@ -233,10 +233,10 @@ export interface CampaignAnalytics {
     lgpd_compliant: boolean;
     audit_score: number;
   };
-}
+};
 
 // Form Types for Campaign Creation
-export interface CreateCampaignRequest {
+export type CreateCampaignRequest = {
   name: string;
   description?: string;
   campaign_type: MarketingCampaign['campaign_type'];
@@ -251,19 +251,19 @@ export interface CreateCampaignRequest {
   automation_level?: number;
   start_date?: string;
   end_date?: string;
-}
+};
 
 export interface UpdateCampaignRequest extends Partial<CreateCampaignRequest> {
   id: string;
 }
 
 // API Response Types
-export interface CampaignListResponse {
+export type CampaignListResponse = {
   campaigns: MarketingCampaign[];
   total: number;
   page: number;
   limit: number;
-}
+};
 
 export interface CampaignDetailsResponse extends MarketingCampaign {
   template?: CampaignTemplate;
@@ -275,7 +275,7 @@ export interface CampaignDetailsResponse extends MarketingCampaign {
 }
 
 // Dashboard Filter Types
-export interface CampaignFilters {
+export type CampaignFilters = {
   status?: MarketingCampaign['status'][];
   campaign_type?: MarketingCampaign['campaign_type'][];
   delivery_channels?: string[];
@@ -288,9 +288,9 @@ export interface CampaignFilters {
     max: number;
   };
   search?: string;
-}
+};
 
-export interface PersonalizationFilters {
+export type PersonalizationFilters = {
   engagement_score?: {
     min: number;
     max: number;
@@ -300,4 +300,4 @@ export interface PersonalizationFilters {
   last_activity?: {
     days: number;
   };
-}
+};

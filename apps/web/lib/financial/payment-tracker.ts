@@ -40,7 +40,7 @@ type PaymentGateway =
   | 'rede'
   | 'manual';
 
-interface PaymentRecord {
+type PaymentRecord = {
   id: string;
   invoiceId: string;
   amount: number;
@@ -98,9 +98,9 @@ interface PaymentRecord {
       interestRate: number;
     };
   };
-}
+};
 
-interface PaymentWebhook {
+type PaymentWebhook = {
   id: string;
   gateway: PaymentGateway;
   eventType: string;
@@ -113,9 +113,9 @@ interface PaymentWebhook {
   processed: boolean;
   processedAt?: Date;
   error?: string;
-}
+};
 
-interface PaymentReconciliation {
+type PaymentReconciliation = {
   id: string;
   date: Date;
   gateway: PaymentGateway;
@@ -135,9 +135,9 @@ interface PaymentReconciliation {
   status: 'pending' | 'completed' | 'failed';
   processedBy: string;
   processedAt: Date;
-}
+};
 
-interface PaymentAnalytics {
+type PaymentAnalytics = {
   period: {
     startDate: Date;
     endDate: Date;
@@ -177,9 +177,9 @@ interface PaymentAnalytics {
     count: number;
     percentage: number;
   }[];
-}
+};
 
-interface DunningConfig {
+type DunningConfig = {
   enabled: boolean;
   stages: {
     daysAfterDue: number;
@@ -190,9 +190,9 @@ interface DunningConfig {
   maxAttempts: number;
   finalAction: 'collection_agency' | 'legal' | 'write_off';
   gracePeriod: number; // days
-}
+};
 
-interface PaymentTrackerConfig {
+type PaymentTrackerConfig = {
   gateways: {
     stripe?: {
       publicKey: string;
@@ -232,7 +232,7 @@ interface PaymentTrackerConfig {
     auditTrail: boolean;
   };
   dunning: DunningConfig;
-}
+};
 
 class PaymentTracker {
   private readonly supabase = createClient();
@@ -249,8 +249,6 @@ class PaymentTracker {
    */
   async initialize(): Promise<void> {
     try {
-      console.log('Initializing Payment Tracker...');
-
       // Setup gateway integrations
       await this.setupGatewayIntegrations();
 
@@ -268,9 +266,7 @@ class PaymentTracker {
       }
 
       this.isInitialized = true;
-      console.log('✅ Payment Tracker initialized successfully');
-    } catch (error) {
-      console.error('❌ Failed to initialize payment tracker:', error);
+    } catch (_error) {
       throw new Error('Payment tracker initialization failed');
     }
   }
@@ -294,8 +290,6 @@ class PaymentTracker {
       if (!this.isInitialized) {
         throw new Error('Payment tracker not initialized');
       }
-
-      console.log(`Creating payment for invoice ${paymentData.invoiceId}`);
 
       // Generate payment ID
       const paymentId = `payment_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
@@ -335,11 +329,8 @@ class PaymentTracker {
 
       // Store payment record
       await this.storePaymentRecord(payment);
-
-      console.log(`✅ Payment ${paymentId} created successfully`);
       return payment;
     } catch (error) {
-      console.error('❌ Payment creation failed:', error);
       throw new Error(`Payment creation failed: ${error.message}`);
     }
   }
@@ -360,8 +351,6 @@ class PaymentTracker {
     }
   ): Promise<void> {
     try {
-      console.log(`Updating payment ${paymentId} status to ${status}`);
-
       const payment = await this.getPaymentRecord(paymentId);
       if (!payment) {
         throw new Error('Payment not found');
@@ -401,10 +390,7 @@ class PaymentTracker {
 
       // Handle status-specific actions
       await this.handlePaymentStatusChange(payment, status);
-
-      console.log(`✅ Payment ${paymentId} status updated to ${status}`);
     } catch (error) {
-      console.error('❌ Payment status update failed:', error);
       throw new Error(`Payment status update failed: ${error.message}`);
     }
   }
@@ -418,8 +404,6 @@ class PaymentTracker {
     signature?: string
   ): Promise<void> {
     try {
-      console.log(`Processing ${gateway} webhook`);
-
       // Verify webhook signature
       if (
         signature &&
@@ -452,18 +436,13 @@ class PaymentTracker {
       if (handler) {
         await handler(webhook);
       } else {
-        console.warn(`No webhook handler for gateway: ${gateway}`);
       }
 
       // Mark webhook as processed
       webhook.processed = true;
       webhook.processedAt = new Date();
       await this.updateWebhookRecord(webhook);
-
-      console.log(`✅ ${gateway} webhook processed successfully`);
     } catch (error) {
-      console.error('❌ Webhook processing failed:', error);
-
       // Store error in webhook record
       await this.updateWebhookRecord({
         ...webhookData,
@@ -483,10 +462,6 @@ class PaymentTracker {
     date: Date
   ): Promise<PaymentReconciliation> {
     try {
-      console.log(
-        `Starting payment reconciliation for ${gateway} on ${date.toDateString()}`
-      );
-
       const reconciliationId = `reconciliation_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
       // Get payments from our database
@@ -531,11 +506,8 @@ class PaymentTracker {
       if (reconciliation.status === 'failed') {
         await this.handleReconciliationDiscrepancies(reconciliation);
       }
-
-      console.log(`✅ Payment reconciliation completed for ${gateway}`);
       return reconciliation;
     } catch (error) {
-      console.error('❌ Payment reconciliation failed:', error);
       throw new Error(`Payment reconciliation failed: ${error.message}`);
     }
   }
@@ -552,8 +524,6 @@ class PaymentTracker {
     status?: PaymentStatus;
   }): Promise<PaymentAnalytics> {
     try {
-      console.log('Generating payment analytics...');
-
       // Build query with filters
       let query = this.supabase.from('payment_records').select('*');
 
@@ -589,11 +559,8 @@ class PaymentTracker {
 
       // Calculate analytics
       const analytics = this.calculatePaymentAnalytics(payments, filters);
-
-      console.log('✅ Payment analytics generated successfully');
       return analytics;
     } catch (error) {
-      console.error('❌ Payment analytics generation failed:', error);
       throw new Error(`Payment analytics generation failed: ${error.message}`);
     }
   }
@@ -607,20 +574,13 @@ class PaymentTracker {
         return;
       }
 
-      console.log('Processing dunning for overdue payments...');
-
       // Get overdue invoices
       const overdueInvoices = await this.getOverdueInvoices();
 
       for (const invoice of overdueInvoices) {
         await this.processDunningForInvoice(invoice);
       }
-
-      console.log(
-        `✅ Dunning processed for ${overdueInvoices.length} invoices`
-      );
     } catch (error) {
-      console.error('❌ Dunning processing failed:', error);
       throw new Error(`Dunning processing failed: ${error.message}`);
     }
   }
@@ -648,7 +608,6 @@ class PaymentTracker {
 
       return { payment, invoice, history };
     } catch (error) {
-      console.error('❌ Failed to get payment status:', error);
       throw new Error(`Failed to get payment status: ${error.message}`);
     }
   }
@@ -728,8 +687,6 @@ class PaymentTracker {
   }
 
   private async setupGatewayIntegrations(): Promise<void> {
-    console.log('Setting up gateway integrations...');
-
     // Initialize enabled gateways
     for (const [gateway, config] of Object.entries(this.config.gateways)) {
       if (config?.enabled) {
@@ -749,12 +706,10 @@ class PaymentTracker {
   }
 
   private async setupReconciliationScheduler(): Promise<void> {
-    console.log('Setting up reconciliation scheduler...');
     // Implementation would setup cron jobs or scheduled tasks
   }
 
   private async setupDunningWorkflows(): Promise<void> {
-    console.log('Setting up dunning workflows...');
     // Implementation would setup automated dunning processes
   }
 
@@ -1000,10 +955,9 @@ class PaymentTracker {
 
   // Gateway-specific implementations
   private async initializeGateway(
-    gateway: PaymentGateway,
+    _gateway: PaymentGateway,
     _config: any
   ): Promise<void> {
-    console.log(`Initializing ${gateway} gateway...`);
     // Gateway-specific initialization
   }
 
@@ -1175,12 +1129,6 @@ class PaymentTracker {
     if (this.config.reconciliation.notifyDiscrepancies) {
       await this.sendReconciliationAlert(reconciliation);
     }
-
-    // Log discrepancies for manual review
-    console.warn(
-      `Reconciliation discrepancies found for ${reconciliation.gateway}:`,
-      reconciliation.discrepancies
-    );
   }
 
   private calculatePaymentAnalytics(
@@ -1340,10 +1288,6 @@ class PaymentTracker {
     invoice: any,
     stage: DunningConfig['stages'][0]
   ): Promise<void> {
-    console.log(
-      `Executing dunning action: ${stage.action} for invoice ${invoice.number}`
-    );
-
     switch (stage.action) {
       case 'email':
         await this.sendDunningEmail(invoice, stage.template);
@@ -1406,54 +1350,35 @@ class PaymentTracker {
 
   // Notification methods (simplified implementations)
   private async sendPaymentConfirmationNotification(
-    payment: PaymentRecord
-  ): Promise<void> {
-    console.log(`Sending payment confirmation for ${payment.id}`);
-  }
+    _payment: PaymentRecord
+  ): Promise<void> {}
 
   private async sendPaymentFailureNotification(
-    payment: PaymentRecord
-  ): Promise<void> {
-    console.log(`Sending payment failure notification for ${payment.id}`);
-  }
+    _payment: PaymentRecord
+  ): Promise<void> {}
 
   private async sendReconciliationAlert(
-    reconciliation: PaymentReconciliation
-  ): Promise<void> {
-    console.log(`Sending reconciliation alert for ${reconciliation.gateway}`);
-  }
+    _reconciliation: PaymentReconciliation
+  ): Promise<void> {}
 
   private async sendDunningEmail(
-    invoice: any,
-    template: string
-  ): Promise<void> {
-    console.log(
-      `Sending dunning email for invoice ${invoice.number} using template ${template}`
-    );
-  }
+    _invoice: any,
+    _template: string
+  ): Promise<void> {}
 
-  private async sendDunningSMS(invoice: any, template: string): Promise<void> {
-    console.log(
-      `Sending dunning SMS for invoice ${invoice.number} using template ${template}`
-    );
-  }
+  private async sendDunningSMS(
+    _invoice: any,
+    _template: string
+  ): Promise<void> {}
 
   private async sendDunningWhatsApp(
-    invoice: any,
-    template: string
-  ): Promise<void> {
-    console.log(
-      `Sending dunning WhatsApp for invoice ${invoice.number} using template ${template}`
-    );
-  }
+    _invoice: any,
+    _template: string
+  ): Promise<void> {}
 
-  private async scheduleDunningCall(invoice: any): Promise<void> {
-    console.log(`Scheduling dunning call for invoice ${invoice.number}`);
-  }
+  private async scheduleDunningCall(_invoice: any): Promise<void> {}
 
-  private async generateDunningLetter(invoice: any): Promise<void> {
-    console.log(`Generating dunning letter for invoice ${invoice.number}`);
-  }
+  private async generateDunningLetter(_invoice: any): Promise<void> {}
 
   // Audit and logging methods
   private async logPaymentAudit(

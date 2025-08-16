@@ -100,10 +100,7 @@ export async function sendToAnalytics(metric: Metric) {
         // Silently fail - don't impact user experience
       });
     }
-  } catch (error) {
-    // Silently fail - don't impact user experience
-    console.debug('Performance metric send failed:', error);
-  }
+  } catch (_error) {}
 }
 
 // Enhanced metric reporting with additional context
@@ -135,7 +132,7 @@ export function reportWebVitals() {
 
       try {
         longTaskObserver.observe({ entryTypes: ['longtask'] });
-      } catch (e) {
+      } catch (_e) {
         // Long Tasks API not supported
       }
 
@@ -176,13 +173,11 @@ export function reportWebVitals() {
 
       try {
         navigationObserver.observe({ entryTypes: ['navigation'] });
-      } catch (e) {
+      } catch (_e) {
         // Navigation Timing API not supported
       }
     }
-  } catch (error) {
-    console.debug('Web Vitals initialization failed:', error);
-  }
+  } catch (_error) {}
 }
 
 // Performance monitoring hook for React components
@@ -271,7 +266,7 @@ export const PerformanceUtils = {
 
       try {
         resourceObserver.observe({ entryTypes: ['resource'] });
-      } catch (e) {
+      } catch (_e) {
         // Resource Timing API not supported
       }
     }

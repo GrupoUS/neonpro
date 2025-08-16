@@ -52,8 +52,7 @@ export async function POST(request: NextRequest) {
       success: true,
       report,
     });
-  } catch (error) {
-    console.error('Compliance report generation error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

@@ -4,7 +4,7 @@
 import { type NextRequest, NextResponse } from 'next/server';
 import { createHealthcareServerClient } from '@/lib/supabase/healthcare-client';
 
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   try {
     const startTime = Date.now();
 
@@ -53,7 +53,7 @@ export async function GET(request: NextRequest) {
         'X-Response-Time': `${responseTime}ms`,
       },
     });
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json(
       {
         status: 'error',

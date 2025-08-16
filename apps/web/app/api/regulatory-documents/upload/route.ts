@@ -115,7 +115,6 @@ export async function POST(request: NextRequest) {
       });
 
     if (uploadError) {
-      console.error('Error uploading file to Supabase Storage:', uploadError);
       return NextResponse.json(
         { error: 'Failed to upload file' },
         { status: 500 }
@@ -141,7 +140,6 @@ export async function POST(request: NextRequest) {
         .eq('id', documentId);
 
       if (updateError) {
-        console.error('Error updating document record:', updateError);
         // File was uploaded but document record wasn't updated
         // Should we delete the file? For now, we'll return success with warning
       }
@@ -158,8 +156,7 @@ export async function POST(request: NextRequest) {
       },
       message: 'File uploaded successfully',
     });
-  } catch (error) {
-    console.error('API Error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -197,7 +194,6 @@ export async function DELETE(request: NextRequest) {
       .remove([filePath]);
 
     if (deleteError) {
-      console.error('Error deleting file from Supabase Storage:', deleteError);
       return NextResponse.json(
         { error: 'Failed to delete file' },
         { status: 500 }
@@ -218,7 +214,6 @@ export async function DELETE(request: NextRequest) {
         .eq('id', documentId);
 
       if (updateError) {
-        console.error('Error updating document record:', updateError);
         // File was deleted but document record wasn't updated
       }
     }
@@ -227,8 +222,7 @@ export async function DELETE(request: NextRequest) {
       success: true,
       message: 'File deleted successfully',
     });
-  } catch (error) {
-    console.error('API Error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

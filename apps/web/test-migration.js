@@ -59,59 +59,40 @@ function makeRequest(url, method = 'GET', data = null) {
 }
 
 // Função para testar uma URL
-async function testEndpoint(name, url, expectedStatus = 200) {
+async function testEndpoint(_name, url, expectedStatus = 200) {
   try {
-    console.log(`🧪 Testando ${name}...`);
     const response = await makeRequest(url);
 
     if (response.statusCode === expectedStatus) {
-      console.log(`✅ ${name} - OK (${response.statusCode})`);
       return true;
     }
-    console.log(`❌ ${name} - FALHOU (${response.statusCode})`);
     return false;
-  } catch (error) {
-    console.log(`❌ ${name} - ERRO: ${error.message}`);
+  } catch (_error) {
     return false;
   }
 }
 
 // Função para testar API com dados
-async function testApiWithData(name, url, method, data, expectedStatus = 200) {
+async function testApiWithData(_name, url, method, data, expectedStatus = 200) {
   try {
-    console.log(`🧪 Testando ${name}...`);
     const response = await makeRequest(url, method, data);
 
     if (response.statusCode === expectedStatus) {
-      console.log(`✅ ${name} - OK (${response.statusCode})`);
       if (response.body) {
         try {
-          const jsonData = JSON.parse(response.body);
-          console.log(
-            `📊 Dados retornados: ${JSON.stringify(jsonData, null, 2).substring(0, 200)}...`
-          );
-        } catch (_e) {
-          console.log('📄 Resposta HTML/texto recebida');
-        }
+          const _jsonData = JSON.parse(response.body);
+        } catch (_e) {}
       }
       return true;
     }
-    console.log(`❌ ${name} - FALHOU (${response.statusCode})`);
-    console.log(`📄 Resposta: ${response.body.substring(0, 200)}...`);
     return false;
-  } catch (error) {
-    console.log(`❌ ${name} - ERRO: ${error.message}`);
+  } catch (_error) {
     return false;
   }
 }
 
 // Função principal de teste
 async function runTests() {
-  console.log('🚀 ========================================');
-  console.log('🚀 NeonPro - Teste de Migração');
-  console.log('🚀 ========================================');
-  console.log('');
-
   const results = [];
 
   // Teste 1: Página inicial
@@ -155,36 +136,12 @@ async function runTests() {
     )
   );
 
-  // Resumo dos testes
-  console.log('');
-  console.log('📊 ========================================');
-  console.log('📊 RESUMO DOS TESTES');
-  console.log('📊 ========================================');
-
   const passed = results.filter((r) => r).length;
   const total = results.length;
 
-  console.log(`✅ Testes aprovados: ${passed}/${total}`);
-  console.log(`❌ Testes falharam: ${total - passed}/${total}`);
-
   if (passed === total) {
-    console.log('');
-    console.log('🎉 TODOS OS TESTES PASSARAM!');
-    console.log('🎉 A migração foi bem-sucedida!');
-    console.log('');
-    console.log('🔗 URLs para testar manualmente:');
-    console.log(`   📱 Aplicação: ${BASE_URL}`);
-    console.log(`   🏢 Tenants: ${BASE_URL}/tenants`);
-    console.log(`   🔌 API Tenants: ${BASE_URL}/api/tenants`);
   } else {
-    console.log('');
-    console.log('⚠️ ALGUNS TESTES FALHARAM');
-    console.log(
-      '⚠️ Verifique se o servidor está rodando e as configurações estão corretas'
-    );
   }
-
-  console.log('');
 }
 
 // Executar testes

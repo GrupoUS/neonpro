@@ -70,7 +70,6 @@ export async function POST(request: Request) {
       .overlaps('time_range', `[${start_time},${end_time})`);
 
     if (error) {
-      console.error('Error checking conflicts:', error);
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
@@ -92,8 +91,7 @@ export async function POST(request: Request) {
     };
 
     return NextResponse.json(response);
-  } catch (error) {
-    console.error('API Error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal Server Error' },
       { status: 500 }

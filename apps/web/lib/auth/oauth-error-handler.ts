@@ -7,7 +7,7 @@ import { AuthError } from '@supabase/supabase-js';
 import { enhancedSessionManager } from './enhanced-session-manager';
 import { performanceTracker } from './performance-tracker';
 
-export interface OAuthErrorContext {
+export type OAuthErrorContext = {
   provider: 'google' | 'email';
   operation: 'signin' | 'signup' | 'refresh' | 'revoke';
   sessionId?: string;
@@ -15,17 +15,17 @@ export interface OAuthErrorContext {
   userAgent: string;
   ipAddress: string;
   timestamp: number;
-}
+};
 
-export interface ErrorRecoveryAction {
+export type ErrorRecoveryAction = {
   type: 'retry' | 'redirect' | 'manual' | 'contact_support';
   message: string;
   action?: () => void;
   retryDelay?: number;
   maxRetries?: number;
-}
+};
 
-export interface OAuthErrorDetails {
+export type OAuthErrorDetails = {
   code: string;
   message: string;
   userMessage: string;
@@ -33,7 +33,7 @@ export interface OAuthErrorDetails {
   recoveryAction: ErrorRecoveryAction;
   shouldLog: boolean;
   shouldNotifyUser: boolean;
-}
+};
 
 class OAuthErrorHandler {
   private static instance: OAuthErrorHandler;
@@ -78,8 +78,7 @@ class OAuthErrorHandler {
         Date.now() - startTime
       );
       return errorDetails;
-    } catch (handlingError) {
-      console.error('Error handler failed:', handlingError);
+    } catch (_handlingError) {
       return this.getFallbackErrorDetails();
     }
   }
@@ -590,9 +589,7 @@ class OAuthErrorHandler {
 
       // Use existing security audit framework
       await this.logToSecurityAudit(logEntry);
-    } catch (logError) {
-      console.error('Error logging failed:', logError);
-    }
+    } catch (_logError) {}
   }
 
   /**
@@ -612,18 +609,13 @@ class OAuthErrorHandler {
       };
 
       await this.logToSecurityAudit(criticalLogEntry);
-    } catch (logError) {
-      console.error('Critical error logging failed:', logError);
-    }
+    } catch (_logError) {}
   }
 
   /**
    * Log to security audit system
    */
-  private async logToSecurityAudit(logEntry: any): Promise<void> {
-    // Implementation would integrate with existing security audit framework
-    console.error('OAuth Error:', logEntry);
-  }
+  private async logToSecurityAudit(_logEntry: any): Promise<void> {}
 
   /**
    * Clear retry attempts for successful operations

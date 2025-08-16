@@ -17,7 +17,7 @@ const supabase = createClient(
 );
 
 // Types
-interface BankTransaction {
+type BankTransaction = {
   id?: string;
   date: string;
   description: string;
@@ -28,9 +28,9 @@ interface BankTransaction {
   category?: string;
   matched_payment_id?: string;
   reconciliation_status: 'pending' | 'matched' | 'manual' | 'ignored';
-}
+};
 
-interface PaymentRecord {
+type PaymentRecord = {
   id: string;
   amount: number;
   payment_date: string;
@@ -39,9 +39,9 @@ interface PaymentRecord {
   customer_name?: string;
   description?: string;
   status: string;
-}
+};
 
-interface ReconciliationResult {
+type ReconciliationResult = {
   total_imported: number;
   total_matched: number;
   total_unmatched: number;
@@ -52,7 +52,7 @@ interface ReconciliationResult {
   }>;
   unmatched_transactions: BankTransaction[];
   errors: string[];
-}
+};
 
 // Validation schemas
 const bankTransactionSchema = z.object({
@@ -86,139 +86,131 @@ export class BankReconciliationService {
     mapping: z.infer<typeof csvMappingSchema>,
     userId: string
   ): Promise<ReconciliationResult> {
-    try {
-      // Validate mapping
-      const validatedMapping = csvMappingSchema.parse(mapping);
+    // Validate mapping
+    const validatedMapping = csvMappingSchema.parse(mapping);
 
-      // Parse CSV content
-      const records = parse(csvContent, {
-        columns: true,
-        skip_empty_lines: true,
-        trim: true,
-      });
+    // Parse CSV content
+    const records = parse(csvContent, {
+      columns: true,
+      skip_empty_lines: true,
+      trim: true,
+    });
 
-      const transactions: BankTransaction[] = [];
-      const errors: string[] = [];
+    const transactions: BankTransaction[] = [];
+    const errors: string[] = [];
 
-      // Process each record
-      for (let i = 0; i < records.length; i++) {
-        try {
-          const record = records[i];
+    // Process each record
+    for (let i = 0; i < records.length; i++) {
+      try {
+        const record = records[i];
 
-          // Extract and validate date
-          const dateStr = record[validatedMapping.date_column];
-          const parsedDate = BankReconciliationService.parseDate(
-            dateStr,
-            validatedMapping.date_format
-          );
-
-          if (!parsedDate) {
-            errors.push(`Row ${i + 1}: Invalid date format: ${dateStr}`);
-            continue;
-          }
-
-          // Extract and validate amount
-          const amountStr = record[validatedMapping.amount_column];
-          const amount = BankReconciliationService.parseAmount(
-            amountStr,
-            validatedMapping.amount_format
-          );
-
-          if (Number.isNaN(amount)) {
-            errors.push(`Row ${i + 1}: Invalid amount format: ${amountStr}`);
-            continue;
-          }
-
-          // Determine transaction type
-          let type: 'credit' | 'debit' = 'credit';
-          if (
-            validatedMapping.type_column &&
-            record[validatedMapping.type_column]
-          ) {
-            const typeValue =
-              record[validatedMapping.type_column].toLowerCase();
-            if (
-              validatedMapping.debit_indicator &&
-              typeValue.includes(validatedMapping.debit_indicator.toLowerCase())
-            ) {
-              type = 'debit';
-            } else if (
-              validatedMapping.credit_indicator &&
-              typeValue.includes(
-                validatedMapping.credit_indicator.toLowerCase()
-              )
-            ) {
-              type = 'credit';
-            }
-          } else {
-            // Determine by amount sign
-            type = amount < 0 ? 'debit' : 'credit';
-          }
-
-          const transaction: BankTransaction = {
-            date: format(parsedDate, 'yyyy-MM-dd'),
-            description: record[validatedMapping.description_column] || '',
-            amount: Math.abs(amount),
-            type,
-            reference: validatedMapping.reference_column
-              ? record[validatedMapping.reference_column]
-              : undefined,
-            bank_account_id: bankAccountId,
-            reconciliation_status: 'pending',
-          };
-
-          // Validate transaction
-          bankTransactionSchema.parse(transaction);
-          transactions.push(transaction);
-        } catch (error) {
-          errors.push(
-            `Row ${i + 1}: ${error instanceof Error ? error.message : 'Unknown error'}`
-          );
-        }
-      }
-
-      // Insert transactions into database
-      const { data: insertedTransactions, error: insertError } = await supabase
-        .from('bank_transactions')
-        .insert(transactions)
-        .select('*');
-
-      if (insertError) {
-        throw new Error(`Database insert error: ${insertError.message}`);
-      }
-
-      // Perform automatic matching
-      const matchingResult =
-        await BankReconciliationService.performAutomaticMatching(
-          insertedTransactions || [],
-          userId
+        // Extract and validate date
+        const dateStr = record[validatedMapping.date_column];
+        const parsedDate = BankReconciliationService.parseDate(
+          dateStr,
+          validatedMapping.date_format
         );
 
-      // Log import activity
-      await supabase.from('audit_logs').insert({
-        table_name: 'bank_transactions',
-        record_id: bankAccountId,
-        action: 'IMPORT',
-        old_values: null,
-        new_values: {
-          total_imported: transactions.length,
-          bank_account_id: bankAccountId,
-        },
-        user_id: userId,
-      });
+        if (!parsedDate) {
+          errors.push(`Row ${i + 1}: Invalid date format: ${dateStr}`);
+          continue;
+        }
 
-      return {
-        total_imported: transactions.length,
-        total_matched: matchingResult.matched_transactions.length,
-        total_unmatched: matchingResult.unmatched_transactions.length,
-        matched_transactions: matchingResult.matched_transactions,
-        unmatched_transactions: matchingResult.unmatched_transactions,
-        errors,
-      };
-    } catch (error) {
-      console.error('Bank statement import error:', error);
-      throw error;
+        // Extract and validate amount
+        const amountStr = record[validatedMapping.amount_column];
+        const amount = BankReconciliationService.parseAmount(
+          amountStr,
+          validatedMapping.amount_format
+        );
+
+        if (Number.isNaN(amount)) {
+          errors.push(`Row ${i + 1}: Invalid amount format: ${amountStr}`);
+          continue;
+        }
+
+        // Determine transaction type
+        let type: 'credit' | 'debit' = 'credit';
+        if (
+          validatedMapping.type_column &&
+          record[validatedMapping.type_column]
+        ) {
+          const typeValue = record[validatedMapping.type_column].toLowerCase();
+          if (
+            validatedMapping.debit_indicator &&
+            typeValue.includes(validatedMapping.debit_indicator.toLowerCase())
+          ) {
+            type = 'debit';
+          } else if (
+            validatedMapping.credit_indicator &&
+            typeValue.includes(validatedMapping.credit_indicator.toLowerCase())
+          ) {
+            type = 'credit';
+          }
+        } else {
+          // Determine by amount sign
+          type = amount < 0 ? 'debit' : 'credit';
+        }
+
+        const transaction: BankTransaction = {
+          date: format(parsedDate, 'yyyy-MM-dd'),
+          description: record[validatedMapping.description_column] || '',
+          amount: Math.abs(amount),
+          type,
+          reference: validatedMapping.reference_column
+            ? record[validatedMapping.reference_column]
+            : undefined,
+          bank_account_id: bankAccountId,
+          reconciliation_status: 'pending',
+        };
+
+        // Validate transaction
+        bankTransactionSchema.parse(transaction);
+        transactions.push(transaction);
+      } catch (error) {
+        errors.push(
+          `Row ${i + 1}: ${error instanceof Error ? error.message : 'Unknown error'}`
+        );
+      }
     }
+
+    // Insert transactions into database
+    const { data: insertedTransactions, error: insertError } = await supabase
+      .from('bank_transactions')
+      .insert(transactions)
+      .select('*');
+
+    if (insertError) {
+      throw new Error(`Database insert error: ${insertError.message}`);
+    }
+
+    // Perform automatic matching
+    const matchingResult =
+      await BankReconciliationService.performAutomaticMatching(
+        insertedTransactions || [],
+        userId
+      );
+
+    // Log import activity
+    await supabase.from('audit_logs').insert({
+      table_name: 'bank_transactions',
+      record_id: bankAccountId,
+      action: 'IMPORT',
+      old_values: null,
+      new_values: {
+        total_imported: transactions.length,
+        bank_account_id: bankAccountId,
+      },
+      user_id: userId,
+    });
+
+    return {
+      total_imported: transactions.length,
+      total_matched: matchingResult.matched_transactions.length,
+      total_unmatched: matchingResult.unmatched_transactions.length,
+      matched_transactions: matchingResult.matched_transactions,
+      unmatched_transactions: matchingResult.unmatched_transactions,
+      errors,
+    };
   }
 
   /**
@@ -266,7 +258,6 @@ export class BankReconciliationService {
       .in('status', ['completed', 'pending']);
 
     if (paymentsError) {
-      console.error('Error fetching payments:', paymentsError);
       return { matched_transactions, unmatched_transactions: transactions };
     }
 
@@ -459,37 +450,32 @@ export class BankReconciliationService {
     paymentId: string,
     userId: string
   ): Promise<void> {
-    try {
-      // Update transaction
-      const { error: updateError } = await supabase
-        .from('bank_transactions')
-        .update({
-          matched_payment_id: paymentId,
-          reconciliation_status: 'manual',
-          updated_at: new Date().toISOString(),
-        })
-        .eq('id', transactionId);
+    // Update transaction
+    const { error: updateError } = await supabase
+      .from('bank_transactions')
+      .update({
+        matched_payment_id: paymentId,
+        reconciliation_status: 'manual',
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', transactionId);
 
-      if (updateError) {
-        throw new Error(`Error updating transaction: ${updateError.message}`);
-      }
-
-      // Log manual matching
-      await supabase.from('audit_logs').insert({
-        table_name: 'bank_transactions',
-        record_id: transactionId,
-        action: 'MANUAL_MATCH',
-        old_values: { reconciliation_status: 'pending' },
-        new_values: {
-          reconciliation_status: 'manual',
-          matched_payment_id: paymentId,
-        },
-        user_id: userId,
-      });
-    } catch (error) {
-      console.error('Manual matching error:', error);
-      throw error;
+    if (updateError) {
+      throw new Error(`Error updating transaction: ${updateError.message}`);
     }
+
+    // Log manual matching
+    await supabase.from('audit_logs').insert({
+      table_name: 'bank_transactions',
+      record_id: transactionId,
+      action: 'MANUAL_MATCH',
+      old_values: { reconciliation_status: 'pending' },
+      new_values: {
+        reconciliation_status: 'manual',
+        matched_payment_id: paymentId,
+      },
+      user_id: userId,
+    });
   }
 
   /**
@@ -500,27 +486,20 @@ export class BankReconciliationService {
     startDate: string,
     endDate: string
   ) {
-    try {
-      const { data: summary, error } = await supabase.rpc(
-        'get_reconciliation_summary',
-        {
-          p_bank_account_id: bankAccountId,
-          p_start_date: startDate,
-          p_end_date: endDate,
-        }
-      );
-
-      if (error) {
-        throw new Error(
-          `Error getting reconciliation summary: ${error.message}`
-        );
+    const { data: summary, error } = await supabase.rpc(
+      'get_reconciliation_summary',
+      {
+        p_bank_account_id: bankAccountId,
+        p_start_date: startDate,
+        p_end_date: endDate,
       }
+    );
 
-      return summary;
-    } catch (error) {
-      console.error('Reconciliation summary error:', error);
-      throw error;
+    if (error) {
+      throw new Error(`Error getting reconciliation summary: ${error.message}`);
     }
+
+    return summary;
   }
 
   // Utility methods

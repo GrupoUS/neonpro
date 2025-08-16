@@ -13,7 +13,9 @@ export const dynamic = 'force-dynamic';
 export async function GET(request: NextRequest) {
   try {
     const supabase = createRouteHandlerClient({ cookies });
-    const { data: { session } } = await supabase.auth.getSession();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
 
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -27,7 +29,10 @@ export async function GET(request: NextRequest) {
     const resolved = searchParams.get('resolved');
 
     if (!clinicId) {
-      return NextResponse.json({ error: 'Clinic ID is required' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Clinic ID is required' },
+        { status: 400 }
+      );
     }
 
     const filters = {
@@ -35,16 +40,16 @@ export async function GET(request: NextRequest) {
       alertType: alertType || undefined,
       severity: severity || undefined,
       status: status || undefined,
-      resolved: resolved === 'true' ? true : resolved === 'false' ? false : undefined,
+      resolved:
+        resolved === 'true' ? true : resolved === 'false' ? false : undefined,
     };
 
     const alerts = await anvisaAPI.getComplianceAlerts(filters);
-    return NextResponse.json({ 
-      success: true, 
+    return NextResponse.json({
+      success: true,
       data: alerts,
-      meta: { total: alerts.length, filters }
+      meta: { total: alerts.length, filters },
     });
-
   } catch (error) {
     console.error('Error in ANVISA alerts GET:', error);
     return NextResponse.json(
@@ -57,30 +62,37 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const supabase = createRouteHandlerClient({ cookies });
-    const { data: { session } } = await supabase.auth.getSession();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
 
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const alertData = await request.json();
-    
+
     // Validate required fields
     const requiredFields = ['clinic_id', 'alert_type', 'severity', 'message'];
-    const missingFields = requiredFields.filter(field => !alertData[field]);
-    
+    const missingFields = requiredFields.filter((field) => !alertData[field]);
+
     if (missingFields.length > 0) {
-      return NextResponse.json({ 
-        error: `Missing required fields: ${missingFields.join(', ')}` 
-      }, { status: 400 });
+      return NextResponse.json(
+        {
+          error: `Missing required fields: ${missingFields.join(', ')}`,
+        },
+        { status: 400 }
+      );
     }
 
     const newAlert = await anvisaAPI.createComplianceAlert(alertData);
-    return NextResponse.json({ 
-      success: true, 
-      data: newAlert 
-    }, { status: 201 });
-
+    return NextResponse.json(
+      {
+        success: true,
+        data: newAlert,
+      },
+      { status: 201 }
+    );
   } catch (error) {
     console.error('Error in ANVISA alerts POST:', error);
     return NextResponse.json(

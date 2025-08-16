@@ -136,7 +136,6 @@ export async function GET(request: NextRequest) {
     const { data: predictions, error } = await query;
 
     if (error) {
-      console.error('Error fetching predictions:', error);
       return NextResponse.json(
         { error: 'Failed to fetch predictions' },
         { status: 500 }
@@ -173,11 +172,7 @@ export async function GET(request: NextRequest) {
         hasMore: (count || 0) > offset + limit,
       },
     });
-  } catch (error) {
-    console.error(
-      'Error in GET /api/financial/predictive-cash-flow/predictions:',
-      error
-    );
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -258,7 +253,6 @@ export async function POST(request: NextRequest) {
       );
 
     if (predictionError || !prediction) {
-      console.error('Error generating prediction:', predictionError);
       return NextResponse.json(
         { error: predictionError || 'Failed to generate prediction' },
         { status: 500 }
@@ -279,7 +273,6 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (fetchError) {
-      console.error('Error fetching complete prediction:', fetchError);
       return NextResponse.json(
         { prediction }, // Return basic prediction if fetch fails
         { status: 201 }
@@ -307,11 +300,7 @@ export async function POST(request: NextRequest) {
       },
       { status: 201 }
     );
-  } catch (error) {
-    console.error(
-      'Error in POST /api/financial/predictive-cash-flow/predictions:',
-      error
-    );
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -387,7 +376,6 @@ export async function PUT(request: NextRequest) {
       );
 
     if (validationError) {
-      console.error('Error validating prediction:', validationError);
       return NextResponse.json({ error: validationError }, { status: 500 });
     }
 
@@ -425,11 +413,7 @@ export async function PUT(request: NextRequest) {
         confidence: prediction.confidence_score,
       },
     });
-  } catch (error) {
-    console.error(
-      'Error in PUT /api/financial/predictive-cash-flow/predictions:',
-      error
-    );
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -492,7 +476,6 @@ export async function DELETE(request: NextRequest) {
       .eq('id', predictionId);
 
     if (deleteError) {
-      console.error('Error deleting prediction:', deleteError);
       return NextResponse.json(
         { error: 'Failed to delete prediction' },
         { status: 500 }
@@ -512,11 +495,7 @@ export async function DELETE(request: NextRequest) {
     return NextResponse.json({
       message: 'Prediction deleted successfully',
     });
-  } catch (error) {
-    console.error(
-      'Error in DELETE /api/financial/predictive-cash-flow/predictions:',
-      error
-    );
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

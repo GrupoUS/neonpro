@@ -36,10 +36,10 @@ import type { PatientAppointment } from '@/hooks/patient/usePatientAppointments'
  * - Exa: Patient engagement analytics patterns
  */
 
-interface AppointmentHistoryProps {
+type AppointmentHistoryProps = {
   appointments: PatientAppointment[];
   onView: (appointmentId: string) => void;
-}
+};
 
 type FilterStatus = 'all' | 'completed' | 'cancelled' | 'no_show';
 

@@ -138,7 +138,6 @@ export const POST = withErrorMonitoring(async (request: NextRequest) => {
       },
     });
   } catch (error) {
-    console.error('Vision share creation error:', error);
 
     if (error instanceof z.ZodError) {
       return NextResponse.json(
@@ -310,7 +309,6 @@ export const GET = withErrorMonitoring(async (request: NextRequest) => {
       data: responseData,
     });
   } catch (error) {
-    console.error('Vision share retrieval error:', error);
     return NextResponse.json(
       {
         error: 'Erro interno do servidor',
@@ -378,7 +376,6 @@ export const DELETE = withErrorMonitoring(async (request: NextRequest) => {
       message: 'Compartilhamento revogado com sucesso',
     });
   } catch (error) {
-    console.error('Vision share revocation error:', error);
     return NextResponse.json(
       {
         error: 'Erro interno do servidor',

@@ -52,8 +52,7 @@ export async function POST(request: NextRequest) {
       activityType,
       timestamp: new Date().toISOString(),
     });
-  } catch (error) {
-    console.error('Session activity update error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to update session activity' },
       { status: 500 }
@@ -104,8 +103,7 @@ export async function GET(request: NextRequest) {
       warning,
       timestamp: new Date().toISOString(),
     });
-  } catch (error) {
-    console.error('Session timeout check error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to check session timeout' },
       { status: 500 }
@@ -152,8 +150,7 @@ export async function PUT(request: NextRequest) {
       newExpiresAt: result.expiresAt,
       timestamp: new Date().toISOString(),
     });
-  } catch (error) {
-    console.error('Session extension error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to extend session timeout' },
       { status: 500 }

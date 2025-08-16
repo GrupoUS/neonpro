@@ -138,7 +138,7 @@ import { LegalDocumentationManager } from './legal-documentation';
 /**
  * LGPD System Configuration
  */
-export interface LGPDSystemConfiguration {
+export type LGPDSystemConfiguration = {
   // Organization info
   organization: {
     name: string;
@@ -225,12 +225,12 @@ export interface LGPDSystemConfiguration {
       multiLanguage: boolean;
     };
   };
-}
+};
 
 /**
  * LGPD System Events
  */
-export interface LGPDSystemEvents {
+export type LGPDSystemEvents = {
   'system:initialized': { timestamp: Date };
   'system:shutdown': { timestamp: Date };
   'system:error': { error: Error; module: string };
@@ -241,7 +241,7 @@ export interface LGPDSystemEvents {
   'compliance:violation': { violation: any; severity: string };
   'data:processed': { operation: string; dataType: string; purpose: string };
   'audit:entry': { actor: string; action: string; details: any };
-}
+};
 
 /**
  * Unified LGPD Compliance System
@@ -646,9 +646,6 @@ export class LGPDComplianceSystem extends EventEmitter {
     };
 
     this.emit('audit:entry', entry);
-
-    // In a real implementation, this would be persisted
-    console.log(`[LGPD System] ${actor} - ${action}:`, details);
   }
 
   /**

@@ -79,7 +79,6 @@ export class BehaviorAnalysisEngine {
         analysisVersion: '1.0.0',
       };
     } catch (error) {
-      console.error('Behavior analysis error:', error);
       throw new Error(
         `Failed to analyze behavior patterns: ${error instanceof Error ? error.message : 'Unknown error'}`
       );
@@ -123,8 +122,7 @@ export class BehaviorAnalysisEngine {
       anomalies.push(...satisfactionAnomalies);
 
       return anomalies.sort((a, b) => b.severity - a.severity);
-    } catch (error) {
-      console.error('Anomaly detection error:', error);
+    } catch (_error) {
       return [];
     }
   }
@@ -187,7 +185,6 @@ export class BehaviorAnalysisEngine {
         predictionDate: new Date(),
       };
     } catch (error) {
-      console.error('Behavior prediction error:', error);
       throw new Error(
         `Failed to predict behavioral changes: ${error instanceof Error ? error.message : 'Unknown error'}`
       );
@@ -245,7 +242,6 @@ export class BehaviorAnalysisEngine {
         lastUpdated: new Date(),
       };
     } catch (error) {
-      console.error('Communication strategy error:', error);
       throw new Error(
         `Failed to generate communication strategy: ${error instanceof Error ? error.message : 'Unknown error'}`
       );
@@ -960,7 +956,7 @@ export class BehaviorAnalysisEngine {
 }
 
 // Supporting type definitions
-interface AppointmentBehaviorPattern {
+type AppointmentBehaviorPattern = {
   cancellationRate: number;
   rescheduleRate: number;
   noShowRate: number;
@@ -969,82 +965,82 @@ interface AppointmentBehaviorPattern {
   averageAdvanceBooking: number;
   preferredTimeSlots: string[];
   seasonalPatterns: string[];
-}
+};
 
-interface ComplianceBehaviorPattern {
+type ComplianceBehaviorPattern = {
   adherenceRate: number;
   followUpCompliance: number;
   instructionCompliance: number;
   paymentPunctuality: number;
   documentationCompliance: number;
   medicationCompliance: number;
-}
+};
 
-interface CommunicationBehaviorPattern {
+type CommunicationBehaviorPattern = {
   responseRate: number;
   preferredChannels: string[];
   averageResponseTime: number;
   communicationFrequency: number;
   initiationRate: number;
   satisfactionWithCommunication: number;
-}
+};
 
-interface TreatmentPreferencePattern {
+type TreatmentPreferencePattern = {
   preferredTreatmentTypes: string[];
   pricePreferences: string;
   timingPreferences: string[];
   providerPreferences: string[];
   facilityPreferences: string[];
   serviceAddOns: string[];
-}
+};
 
-interface SatisfactionBehaviorPattern {
+type SatisfactionBehaviorPattern = {
   averageSatisfaction: number;
   satisfactionTrend: string;
   satisfactionVolatility: number;
   keyDrivers: string[];
   improvementAreas: string[];
   loyaltyIndicators: LoyaltyIndicator[];
-}
+};
 
-interface BehaviorRiskFactor {
+type BehaviorRiskFactor = {
   type: string;
   severity: string;
   description: string;
   recommendation: string;
-}
+};
 
-interface BehaviorInsight {
+type BehaviorInsight = {
   type: string;
   description: string;
   confidence: number;
   actionable: boolean;
   recommendation: string;
-}
+};
 
-interface PersonalizedRecommendation {
+type PersonalizedRecommendation = {
   type: string;
   priority: string;
   description: string;
   expectedImpact: string;
   implementationEffort: string;
-}
+};
 
-interface BehaviorScore {
+type BehaviorScore = {
   overall: number;
   appointment: number;
   compliance: number;
   communication: number;
   satisfaction: number;
-}
+};
 
-interface LoyaltyIndicator {
+type LoyaltyIndicator = {
   indicator: string;
   value: number;
   status: string;
-}
+};
 
-interface BehaviorChangePrediction {
+type BehaviorChangePrediction = {
   patientId: string;
   treatmentPlanId: string;
   appointmentCompliance: number;
@@ -1054,9 +1050,9 @@ interface BehaviorChangePrediction {
   interventions: string[];
   confidenceScore: number;
   predictionDate: Date;
-}
+};
 
-interface CommunicationStrategy {
+type CommunicationStrategy = {
   patientId: string;
   preferences: CommunicationPreferences;
   optimalTiming: OptimalTiming;
@@ -1066,23 +1062,23 @@ interface CommunicationStrategy {
   expectedResponseRate: number;
   strategyVersion: string;
   lastUpdated: Date;
-}
+};
 
-interface CommunicationPreferences {
+type CommunicationPreferences = {
   channels: string[];
   frequency: string;
   style: string;
   language: string;
-}
+};
 
-interface OptimalTiming {
+type OptimalTiming = {
   dayOfWeek: string[];
   timeOfDay: string[];
   frequency: string;
-}
+};
 
-interface EngagementStrategy {
+type EngagementStrategy = {
   approach: string;
   touchpoints: string[];
   escalationPath: string[];
-}
+};

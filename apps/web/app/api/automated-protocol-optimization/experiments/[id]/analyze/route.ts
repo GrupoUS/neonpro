@@ -30,7 +30,6 @@ export async function POST(
       message: 'Experiment analysis completed successfully',
     });
   } catch (error) {
-    console.error('Error analyzing experiment results:', error);
     return NextResponse.json(
       {
         success: false,

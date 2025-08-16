@@ -19,7 +19,6 @@ export class ConsentService {
       .order('created_at', { ascending: false });
 
     if (error) {
-      console.error('Error fetching consent forms:', error);
       throw new Error('Failed to fetch consent forms');
     }
 
@@ -34,7 +33,6 @@ export class ConsentService {
       .single();
 
     if (error) {
-      console.error('Error fetching consent form:', error);
       throw new Error('Failed to fetch consent form');
     }
 
@@ -48,7 +46,6 @@ export class ConsentService {
       .select();
 
     if (error) {
-      console.error('Error creating consent form:', error);
       throw new Error('Failed to create consent form');
     }
 
@@ -67,7 +64,6 @@ export class ConsentService {
       .single();
 
     if (error) {
-      console.error('Error updating consent form:', error);
       throw new Error('Failed to update consent form');
     }
 
@@ -81,7 +77,6 @@ export class ConsentService {
       .eq('id', id);
 
     if (error) {
-      console.error('Error deactivating consent form:', error);
       throw new Error('Failed to deactivate consent form');
     }
   }
@@ -100,7 +95,6 @@ export class ConsentService {
       .order('created_at', { ascending: false });
 
     if (error) {
-      console.error('Error fetching patient consents:', error);
       throw new Error('Failed to fetch patient consents');
     }
 
@@ -122,7 +116,6 @@ export class ConsentService {
       .order('created_at', { ascending: false });
 
     if (error) {
-      console.error('Error fetching active consents:', error);
       throw new Error('Failed to fetch active consents');
     }
 
@@ -166,7 +159,6 @@ export class ConsentService {
       .single();
 
     if (error) {
-      console.error('Error creating patient consent:', error);
       throw new Error('Failed to create patient consent');
     }
 
@@ -189,7 +181,6 @@ export class ConsentService {
       .single();
 
     if (error) {
-      console.error('Error withdrawing consent:', error);
       throw new Error('Failed to withdraw consent');
     }
 
@@ -208,7 +199,6 @@ export class ConsentService {
       .single();
 
     if (error) {
-      console.error('Error updating consent expiry:', error);
       throw new Error('Failed to update consent expiry');
     }
 
@@ -225,7 +215,6 @@ export class ConsentService {
       .select();
 
     if (error) {
-      console.error('Error recording patient consent:', error);
       throw new Error('Failed to record patient consent');
     }
 
@@ -251,7 +240,6 @@ export class ConsentService {
       .select();
 
     if (error) {
-      console.error('Error granting patient consent:', error);
       throw new Error('Failed to grant patient consent');
     }
 
@@ -273,7 +261,6 @@ export class ConsentService {
       .select();
 
     if (error) {
-      console.error('Error revoking patient consent:', error);
       throw new Error('Failed to revoke patient consent');
     }
 
@@ -339,7 +326,6 @@ export class ConsentService {
       .order('expires_at', { ascending: true });
 
     if (error) {
-      console.error('Error fetching expiring consents:', error);
       throw new Error('Failed to fetch expiring consents');
     }
 
@@ -359,7 +345,6 @@ export class ConsentService {
       .eq('clinic_id', clinicId);
 
     if (error) {
-      console.error('Error fetching consent stats:', error);
       throw new Error('Failed to fetch consent stats');
     }
 
@@ -414,16 +399,8 @@ export class ConsentService {
 
   // Audit Trail for Consent Operations
   async logConsentOperation(
-    operation: string,
-    consentId: string,
-    details: Record<string, any>
-  ): Promise<void> {
-    // This would integrate with the audit system
-    console.log('Consent operation logged:', {
-      operation,
-      consent_id: consentId,
-      timestamp: new Date().toISOString(),
-      details,
-    });
-  }
+    _operation: string,
+    _consentId: string,
+    _details: Record<string, any>
+  ): Promise<void> {}
 }

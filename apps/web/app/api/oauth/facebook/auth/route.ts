@@ -62,11 +62,6 @@ export async function GET(request: NextRequest) {
     const facebookHandler = new FacebookOAuthHandler();
     const authUrl = facebookHandler.getAuthorizationUrl(state);
 
-    // Log OAuth initiation for audit trail
-    console.log(
-      `Facebook OAuth initiated for user ${session.user.id}, clinic ${profile.clinic_id}`
-    );
-
     return NextResponse.json({
       success: true,
       authUrl,
@@ -74,8 +69,6 @@ export async function GET(request: NextRequest) {
       platform: 'facebook',
     });
   } catch (error) {
-    console.error('Facebook OAuth authorization error:', error);
-
     return NextResponse.json(
       {
         error: 'Failed to initiate Facebook authorization',

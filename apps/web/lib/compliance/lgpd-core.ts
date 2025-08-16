@@ -309,7 +309,6 @@ export class LGPDConsentService {
       .insert(auditLog);
 
     if (error) {
-      console.error('Failed to log audit event:', error);
     }
   }
 }

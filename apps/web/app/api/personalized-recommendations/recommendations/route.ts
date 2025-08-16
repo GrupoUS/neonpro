@@ -35,8 +35,7 @@ export async function GET(request: NextRequest) {
       recommendations,
       success: true,
     });
-  } catch (error) {
-    console.error('Error fetching treatment recommendations:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to fetch treatment recommendations', success: false },
       { status: 500 }
@@ -77,8 +76,7 @@ export async function POST(request: NextRequest) {
       },
       { status: 201 }
     );
-  } catch (error) {
-    console.error('Error creating treatment recommendation:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to create treatment recommendation', success: false },
       { status: 500 }
@@ -122,8 +120,7 @@ export async function PATCH(request: NextRequest) {
       recommendation,
       success: true,
     });
-  } catch (error) {
-    console.error('Error approving treatment recommendation:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to approve treatment recommendation', success: false },
       { status: 500 }

@@ -64,8 +64,7 @@ export async function GET(_request: NextRequest) {
     const layouts = await layoutEngine.getLayouts(user.id);
 
     return NextResponse.json({ layouts });
-  } catch (error) {
-    console.error('Error fetching layouts:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
       { status: 500 }
@@ -122,8 +121,6 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
-
-    console.error('Error creating layout:', error);
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
       { status: 500 }

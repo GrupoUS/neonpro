@@ -38,7 +38,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 // =================== TYPES ===================
 
-interface BankAccount {
+type BankAccount = {
   id: string;
   bankName: string;
   accountNumber: string;
@@ -47,9 +47,9 @@ interface BankAccount {
   lastSyncDate: Date;
   isConnected: boolean;
   syncStatus: 'success' | 'error' | 'pending';
-}
+};
 
-interface ReconciliationTransaction {
+type ReconciliationTransaction = {
   id: string;
   date: Date;
   description: string;
@@ -67,9 +67,9 @@ interface ReconciliationTransaction {
     date: Date;
   };
   notes?: string;
-}
+};
 
-interface ReconciliationSummary {
+type ReconciliationSummary = {
   totalTransactions: number;
   matchedTransactions: number;
   unmatchedTransactions: number;
@@ -78,9 +78,9 @@ interface ReconciliationSummary {
   totalAmount: number;
   discrepancies: number;
   period: { start: Date; end: Date };
-}
+};
 
-interface DiscrepancyItem {
+type DiscrepancyItem = {
   id: string;
   type:
     | 'amount_mismatch'
@@ -96,9 +96,9 @@ interface DiscrepancyItem {
   createdAt: Date;
   resolvedAt?: Date;
   resolvedBy?: string;
-}
+};
 
-interface ReconciliationData {
+type ReconciliationData = {
   accounts: BankAccount[];
   transactions: ReconciliationTransaction[];
   summary: ReconciliationSummary;
@@ -106,7 +106,7 @@ interface ReconciliationData {
   lastReconciliation: Date;
   isLoading: boolean;
   autoReconciliationEnabled: boolean;
-}
+};
 
 // =================== HOOKS ===================
 
@@ -151,30 +151,24 @@ const useReconciliationData = () => {
         isLoading: false,
         autoReconciliationEnabled: reconciliationData.autoReconciliationEnabled,
       });
-    } catch (error) {
-      console.error('Error fetching reconciliation data:', error);
+    } catch (_error) {
       setData((prev) => ({ ...prev, isLoading: false }));
     }
   };
 
   const runReconciliation = async (accountId?: string) => {
-    try {
-      const response = await fetch('/api/financial/reconciliation/run', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ accountId }),
-      });
+    const response = await fetch('/api/financial/reconciliation/run', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ accountId }),
+    });
 
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-      }
-
-      await fetchReconciliationData();
-      return await response.json();
-    } catch (error) {
-      console.error('Error running reconciliation:', error);
-      throw error;
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
     }
+
+    await fetchReconciliationData();
+    return await response.json();
   };
 
   useEffect(() => {
@@ -536,9 +530,7 @@ export const ReconciliationDashboard: React.FC = () => {
         method: 'POST',
       });
       await refreshData();
-    } catch (error) {
-      console.error('Error syncing account:', error);
-    }
+    } catch (_error) {}
   };
 
   const handleApproveTransaction = async (transactionId: string) => {
@@ -547,9 +539,7 @@ export const ReconciliationDashboard: React.FC = () => {
         method: 'POST',
       });
       await refreshData();
-    } catch (error) {
-      console.error('Error approving transaction:', error);
-    }
+    } catch (_error) {}
   };
 
   const handleDisputeTransaction = async (transactionId: string) => {
@@ -558,9 +548,7 @@ export const ReconciliationDashboard: React.FC = () => {
         method: 'POST',
       });
       await refreshData();
-    } catch (error) {
-      console.error('Error disputing transaction:', error);
-    }
+    } catch (_error) {}
   };
 
   const handleResolveDiscrepancy = async (discrepancyId: string) => {
@@ -569,17 +557,13 @@ export const ReconciliationDashboard: React.FC = () => {
         method: 'POST',
       });
       await refreshData();
-    } catch (error) {
-      console.error('Error resolving discrepancy:', error);
-    }
+    } catch (_error) {}
   };
 
   const handleRunReconciliation = async () => {
     try {
       await runReconciliation();
-    } catch (error) {
-      console.error('Error running reconciliation:', error);
-    }
+    } catch (_error) {}
   };
 
   const unmatchedTransactions = data.transactions.filter(

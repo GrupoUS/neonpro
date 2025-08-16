@@ -16,7 +16,7 @@
 import { createClient } from '@/lib/supabase/client';
 
 // Prediction Types and Interfaces
-export interface PredictionModel {
+export type PredictionModel = {
   id: string;
   name: string;
   type: ModelType;
@@ -27,7 +27,7 @@ export interface PredictionModel {
   features: string[];
   hyperparameters: Record<string, any>;
   validation_metrics: ValidationMetrics;
-}
+};
 
 export type ModelType =
   | 'revenue_forecast'
@@ -48,7 +48,7 @@ export type AlgorithmType =
   | 'prophet'
   | 'ensemble';
 
-export interface ValidationMetrics {
+export type ValidationMetrics = {
   mape: number; // Mean Absolute Percentage Error
   rmse: number; // Root Mean Square Error
   mae: number; // Mean Absolute Error
@@ -56,9 +56,9 @@ export interface ValidationMetrics {
   accuracy_score?: number;
   precision?: number;
   recall?: number;
-}
+};
 
-export interface FinancialForecast {
+export type FinancialForecast = {
   id: string;
   clinic_id: string;
   forecast_type: ModelType;
@@ -72,9 +72,9 @@ export interface FinancialForecast {
   assumptions: string[];
   created_at: string;
   updated_at: string;
-}
+};
 
-export interface PredictionPoint {
+export type PredictionPoint = {
   date: string;
   predicted_value: number;
   confidence_interval: {
@@ -85,36 +85,36 @@ export interface PredictionPoint {
   seasonal_component?: number;
   trend_component?: number;
   residual?: number;
-}
+};
 
-export interface SeasonalPattern {
+export type SeasonalPattern = {
   pattern_type: 'daily' | 'weekly' | 'monthly' | 'quarterly' | 'yearly';
   strength: number; // 0-1, how strong the pattern is
   peak_periods: string[];
   low_periods: string[];
   average_variation: number;
   confidence: number;
-}
+};
 
-export interface RiskAssessment {
+export type RiskAssessment = {
   overall_risk_score: number; // 0-100
   risk_factors: RiskFactor[];
   probability_scenarios: ScenarioAnalysis[];
   recommended_actions: string[];
   monitoring_metrics: string[];
   assessment_date: string;
-}
+};
 
-export interface RiskFactor {
+export type RiskFactor = {
   factor: string;
   impact_score: number; // 0-10
   probability: number; // 0-1
   risk_level: 'low' | 'medium' | 'high' | 'critical';
   description: string;
   mitigation_strategies: string[];
-}
+};
 
-export interface ScenarioAnalysis {
+export type ScenarioAnalysis = {
   scenario_name: string;
   probability: number;
   financial_impact: {
@@ -125,9 +125,9 @@ export interface ScenarioAnalysis {
   };
   triggers: string[];
   early_warning_signs: string[];
-}
+};
 
-export interface PatientLTVPrediction {
+export type PatientLTVPrediction = {
   patient_id: string;
   predicted_ltv: number;
   confidence_score: number;
@@ -142,7 +142,7 @@ export interface PatientLTVPrediction {
   risk_factors: string[];
   retention_probability: number;
   next_visit_probability: number;
-}
+};
 
 export class PredictiveAnalyticsEngine {
   private readonly supabase = createClient();
@@ -158,10 +158,7 @@ export class PredictiveAnalyticsEngine {
 
       // Train models with historical data
       await this.trainModels(clinicId);
-
-      console.log(`Predictive analytics initialized for clinic: ${clinicId}`);
-    } catch (error) {
-      console.error('Error initializing predictive analytics:', error);
+    } catch (_error) {
       throw new Error('Failed to initialize predictive analytics');
     }
   }
@@ -229,8 +226,7 @@ export class PredictiveAnalyticsEngine {
       await this.supabase.from('financial_forecasts').insert(forecast);
 
       return forecast;
-    } catch (error) {
-      console.error('Error generating financial forecast:', error);
+    } catch (_error) {
       throw new Error('Failed to generate financial forecast');
     }
   }
@@ -289,8 +285,7 @@ export class PredictiveAnalyticsEngine {
       );
 
       return patterns;
-    } catch (error) {
-      console.error('Error analyzing seasonal patterns:', error);
+    } catch (_error) {
       throw new Error('Failed to analyze seasonal patterns');
     }
   }
@@ -332,8 +327,7 @@ export class PredictiveAnalyticsEngine {
       });
 
       return riskAssessment;
-    } catch (error) {
-      console.error('Error performing risk assessment:', error);
+    } catch (_error) {
       throw new Error('Failed to perform risk assessment');
     }
   }
@@ -383,8 +377,7 @@ export class PredictiveAnalyticsEngine {
       };
 
       return prediction;
-    } catch (error) {
-      console.error('Error predicting patient LTV:', error);
+    } catch (_error) {
       throw new Error('Failed to predict patient LTV');
     }
   }
@@ -405,10 +398,7 @@ export class PredictiveAnalyticsEngine {
       for (const modelType of modelTypes) {
         await this.trainModel(clinicId, modelType);
       }
-
-      console.log(`All models trained for clinic: ${clinicId}`);
-    } catch (error) {
-      console.error('Error training models:', error);
+    } catch (_error) {
       throw new Error('Failed to train models');
     }
   }
@@ -425,9 +415,6 @@ export class PredictiveAnalyticsEngine {
       const trainingData = await this.getTrainingData(clinicId, modelType);
 
       if (trainingData.length < 30) {
-        console.warn(
-          `Insufficient training data for ${modelType} (${trainingData.length} points)`
-        );
         return;
       }
 
@@ -461,13 +448,7 @@ export class PredictiveAnalyticsEngine {
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       });
-
-      console.log(
-        `Model ${modelType} trained with accuracy: ${validationMetrics.r_squared.toFixed(3)}`
-      );
-    } catch (error) {
-      console.error(`Error training model ${modelType}:`, error);
-    }
+    } catch (_error) {}
   }
 
   /**

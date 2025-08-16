@@ -3,12 +3,12 @@
  * Story 2.3: Automated Communication System
  */
 
-export interface WhatsAppResult {
+export type WhatsAppResult = {
   success: boolean;
   messageId?: string;
   error?: string;
   cost?: number;
-}
+};
 
 export class WhatsAppProvider {
   async sendMessage(

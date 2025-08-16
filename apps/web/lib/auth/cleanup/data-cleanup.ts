@@ -5,7 +5,7 @@
 import { SessionConfig } from '@/lib/auth/config/session-config';
 import { SessionUtils } from '@/lib/auth/utils/session-utils';
 
-export interface CleanupTask {
+export type CleanupTask = {
   id: string;
   name: string;
   description: string;
@@ -23,7 +23,7 @@ export interface CleanupTask {
   statistics: TaskStatistics;
   compliance: ComplianceInfo;
   metadata: TaskMetadata;
-}
+};
 
 export type CleanupType =
   | 'session_cleanup'
@@ -52,7 +52,7 @@ export type CleanupPriority =
   | 'low' // Cleanup when convenient
   | 'background'; // Continuous background cleanup
 
-export interface CleanupSchedule {
+export type CleanupSchedule = {
   type: ScheduleType;
   interval?: number; // milliseconds
   cron?: string; // cron expression
@@ -62,7 +62,7 @@ export interface CleanupSchedule {
   maxDuration?: number; // max execution time
   retryAttempts?: number;
   retryDelay?: number;
-}
+};
 
 export type ScheduleType =
   | 'interval' // Fixed interval
@@ -81,7 +81,7 @@ export type TriggerType =
   | 'system_shutdown'
   | 'data_request';
 
-export interface RetentionPolicy {
+export type RetentionPolicy = {
   maxAge: number; // milliseconds
   maxCount?: number; // maximum number of items
   maxSize?: number; // maximum size in bytes
@@ -91,9 +91,9 @@ export interface RetentionPolicy {
   archiveLocation?: string;
   complianceFramework: string[];
   legalHold?: boolean;
-}
+};
 
-export interface RetentionCondition {
+export type RetentionCondition = {
   field: string;
   operator:
     | 'eq'
@@ -108,9 +108,9 @@ export interface RetentionCondition {
     | 'regex';
   value: any;
   logicalOperator?: 'and' | 'or';
-}
+};
 
-export interface RetentionException {
+export type RetentionException = {
   id: string;
   description: string;
   conditions: RetentionCondition[];
@@ -118,16 +118,16 @@ export interface RetentionException {
   reason: string;
   approvedBy?: string;
   expiresAt?: number;
-}
+};
 
-export interface CleanupTarget {
+export type CleanupTarget = {
   type: TargetType;
   source: DataSource;
   filters: DataFilter[];
   batchSize: number;
   estimatedCount?: number;
   estimatedSize?: number;
-}
+};
 
 export type TargetType =
   | 'sessions'
@@ -141,30 +141,30 @@ export type TargetType =
   | 'expired_data'
   | 'orphaned_data';
 
-export interface DataSource {
+export type DataSource = {
   type: 'database' | 'cache' | 'filesystem' | 'storage' | 'api';
   connection: string;
   table?: string;
   collection?: string;
   path?: string;
   query?: string;
-}
+};
 
-export interface DataFilter {
+export type DataFilter = {
   field: string;
   operator: string;
   value: any;
   type?: 'string' | 'number' | 'date' | 'boolean' | 'array';
-}
+};
 
-export interface CleanupCondition {
+export type CleanupCondition = {
   id: string;
   description: string;
   type: ConditionType;
   expression: string;
   parameters: Record<string, any>;
   required: boolean;
-}
+};
 
 export type ConditionType =
   | 'age_based' // Based on creation/modification time
@@ -175,7 +175,7 @@ export type ConditionType =
   | 'compliance_based' // Based on compliance requirements
   | 'custom'; // Custom condition
 
-export interface CleanupAction {
+export type CleanupAction = {
   id: string;
   type: ActionType;
   description: string;
@@ -183,7 +183,7 @@ export interface CleanupAction {
   order: number;
   required: boolean;
   rollbackable: boolean;
-}
+};
 
 export type ActionType =
   | 'delete' // Permanently delete
@@ -206,7 +206,7 @@ export type TaskStatus =
   | 'paused'
   | 'disabled';
 
-export interface TaskStatistics {
+export type TaskStatistics = {
   totalRuns: number;
   successfulRuns: number;
   failedRuns: number;
@@ -218,18 +218,18 @@ export interface TaskStatistics {
   totalSizeFreed: number;
   lastError?: string;
   performance: PerformanceMetrics;
-}
+};
 
-export interface PerformanceMetrics {
+export type PerformanceMetrics = {
   itemsPerSecond: number;
   bytesPerSecond: number;
   cpuUsage: number;
   memoryUsage: number;
   diskIO: number;
   networkIO: number;
-}
+};
 
-export interface ComplianceInfo {
+export type ComplianceInfo = {
   frameworks: string[]; // LGPD, GDPR, etc.
   requirements: string[]; // Specific requirements
   dataCategories: string[]; // Types of data being cleaned
@@ -239,9 +239,9 @@ export interface ComplianceInfo {
   auditRequired: boolean;
   approvalRequired: boolean;
   notificationRequired: boolean;
-}
+};
 
-export interface TaskMetadata {
+export type TaskMetadata = {
   createdAt: number;
   createdBy: string;
   modifiedAt: number;
@@ -252,9 +252,9 @@ export interface TaskMetadata {
   conflicts: string[]; // Tasks that conflict with this
   environment: string;
   region: string;
-}
+};
 
-export interface CleanupResult {
+export type CleanupResult = {
   taskId: string;
   executionId: string;
   startTime: number;
@@ -267,9 +267,9 @@ export interface CleanupResult {
   warnings: CleanupWarning[];
   compliance: ComplianceResult;
   performance: PerformanceMetrics;
-}
+};
 
-export interface CleanupSummary {
+export type CleanupSummary = {
   itemsProcessed: number;
   itemsDeleted: number;
   itemsArchived: number;
@@ -277,16 +277,16 @@ export interface CleanupSummary {
   sizeFreed: number;
   errorsEncountered: number;
   warningsGenerated: number;
-}
+};
 
-export interface CleanupDetails {
+export type CleanupDetails = {
   targetResults: TargetResult[];
   actionResults: ActionResult[];
   conditionResults: ConditionResult[];
   batchResults: BatchResult[];
-}
+};
 
-export interface TargetResult {
+export type TargetResult = {
   target: CleanupTarget;
   itemsFound: number;
   itemsProcessed: number;
@@ -294,35 +294,35 @@ export interface TargetResult {
   duration: number;
   status: 'success' | 'failure' | 'partial';
   error?: string;
-}
+};
 
-export interface ActionResult {
+export type ActionResult = {
   action: CleanupAction;
   itemsAffected: number;
   duration: number;
   status: 'success' | 'failure' | 'skipped';
   result?: any;
   error?: string;
-}
+};
 
-export interface ConditionResult {
+export type ConditionResult = {
   condition: CleanupCondition;
   evaluated: boolean;
   result: boolean;
   duration: number;
   error?: string;
-}
+};
 
-export interface BatchResult {
+export type BatchResult = {
   batchId: string;
   batchSize: number;
   itemsProcessed: number;
   duration: number;
   status: 'success' | 'failure' | 'partial';
   errors: string[];
-}
+};
 
-export interface CleanupError {
+export type CleanupError = {
   id: string;
   type: 'validation' | 'execution' | 'rollback' | 'system';
   severity: 'low' | 'medium' | 'high' | 'critical';
@@ -331,76 +331,76 @@ export interface CleanupError {
   timestamp: number;
   context: Record<string, any>;
   recoverable: boolean;
-}
+};
 
-export interface CleanupWarning {
+export type CleanupWarning = {
   id: string;
   type: 'performance' | 'compliance' | 'data' | 'system';
   message: string;
   details: string;
   timestamp: number;
   context: Record<string, any>;
-}
+};
 
-export interface ComplianceResult {
+export type ComplianceResult = {
   frameworkResults: FrameworkResult[];
   dataSubjectRights: DataSubjectRightResult[];
   auditTrail: AuditEntry[];
   notifications: NotificationResult[];
   approvals: ApprovalResult[];
-}
+};
 
-export interface FrameworkResult {
+export type FrameworkResult = {
   framework: string;
   compliant: boolean;
   requirements: RequirementResult[];
   violations: ComplianceViolation[];
   score: number;
-}
+};
 
-export interface RequirementResult {
+export type RequirementResult = {
   requirement: string;
   met: boolean;
   evidence: string[];
   gaps: string[];
-}
+};
 
-export interface ComplianceViolation {
+export type ComplianceViolation = {
   requirement: string;
   description: string;
   severity: 'low' | 'medium' | 'high' | 'critical';
   remediation: string;
-}
+};
 
-export interface DataSubjectRightResult {
+export type DataSubjectRightResult = {
   right: string;
   respected: boolean;
   actions: string[];
   evidence: string[];
-}
+};
 
-export interface AuditEntry {
+export type AuditEntry = {
   timestamp: number;
   action: string;
   actor: string;
   target: string;
   details: Record<string, any>;
-}
+};
 
-export interface NotificationResult {
+export type NotificationResult = {
   recipient: string;
   channel: string;
   sent: boolean;
   timestamp: number;
   error?: string;
-}
+};
 
-export interface ApprovalResult {
+export type ApprovalResult = {
   approver: string;
   approved: boolean;
   timestamp: number;
   reason?: string;
-}
+};
 
 export class DataCleanupManager {
   private readonly utils: SessionUtils;
@@ -431,35 +431,29 @@ export class DataCleanupManager {
     if (this.isInitialized) {
       return;
     }
+    // Initialize services
+    await this.auditLogger.initialize();
+    await this.complianceEngine.initialize();
+    await this.notificationService.initialize();
 
-    try {
-      // Initialize services
-      await this.auditLogger.initialize();
-      await this.complianceEngine.initialize();
-      await this.notificationService.initialize();
+    // Load default cleanup tasks
+    await this.loadDefaultTasks();
 
-      // Load default cleanup tasks
-      await this.loadDefaultTasks();
+    // Schedule tasks
+    await this.scheduleAllTasks();
 
-      // Schedule tasks
-      await this.scheduleAllTasks();
+    this.isInitialized = true;
 
-      this.isInitialized = true;
-
-      // Log initialization
-      await this.auditLogger.logEvent({
-        type: 'system_event',
-        category: 'system',
-        severity: 'info',
-        action: 'cleanup_manager_initialized',
-        description: 'Data cleanup manager initialized successfully',
-        actor: { type: 'system', id: 'cleanup_manager' },
-        target: { type: 'system', id: 'cleanup_system' },
-      });
-    } catch (error) {
-      console.error('Error initializing cleanup manager:', error);
-      throw error;
-    }
+    // Log initialization
+    await this.auditLogger.logEvent({
+      type: 'system_event',
+      category: 'system',
+      severity: 'info',
+      action: 'cleanup_manager_initialized',
+      description: 'Data cleanup manager initialized successfully',
+      actor: { type: 'system', id: 'cleanup_manager' },
+      target: { type: 'system', id: 'cleanup_system' },
+    });
   }
 
   /**
@@ -1001,47 +995,35 @@ export class DataCleanupManager {
     if (!task.schedule.enabled) {
       return;
     }
+    switch (task.schedule.type) {
+      case 'interval':
+        if (task.schedule.interval) {
+          const timer = setInterval(async () => {
+            try {
+              await this.executeTask(taskId);
+            } catch (_error) {}
+          }, task.schedule.interval);
+          this.scheduledTasks.set(taskId, timer);
+        }
+        break;
 
-    try {
-      switch (task.schedule.type) {
-        case 'interval':
-          if (task.schedule.interval) {
-            const timer = setInterval(async () => {
-              try {
-                await this.executeTask(taskId);
-              } catch (error) {
-                console.error(
-                  `Error executing scheduled task ${taskId}:`,
-                  error
-                );
-              }
-            }, task.schedule.interval);
-            this.scheduledTasks.set(taskId, timer);
-          }
-          break;
+      case 'cron':
+        // For cron scheduling, you would typically use a library like node-cron
+        // This is a simplified implementation
+        if (task.schedule.cron) {
+        }
+        break;
 
-        case 'cron':
-          // For cron scheduling, you would typically use a library like node-cron
-          // This is a simplified implementation
-          if (task.schedule.cron) {
-            console.log(`Cron scheduling not implemented for task ${taskId}`);
-          }
-          break;
-
-        case 'continuous':
-          // Start continuous background task
-          this.startContinuousTask(taskId);
-          break;
-      }
-
-      // Update next run time
-      task.nextRun = this.calculateNextRun(task);
-
-      this.emit('task_scheduled', { taskId, task });
-    } catch (error) {
-      console.error(`Error scheduling task ${taskId}:`, error);
-      throw error;
+      case 'continuous':
+        // Start continuous background task
+        this.startContinuousTask(taskId);
+        break;
     }
+
+    // Update next run time
+    task.nextRun = this.calculateNextRun(task);
+
+    this.emit('task_scheduled', { taskId, task });
   }
 
   /**
@@ -1392,14 +1374,9 @@ export class DataCleanupManager {
    * Get target items
    */
   private async getTargetItems(
-    target: CleanupTarget,
+    _target: CleanupTarget,
     _task: CleanupTask
   ): Promise<any[]> {
-    // This would implement the actual data retrieval logic
-    // For now, return mock data
-    console.log(
-      `Getting items for target ${target.type} from ${target.source.type}`
-    );
     return [];
   }
 
@@ -1412,8 +1389,6 @@ export class DataCleanupManager {
     _task: CleanupTask,
     _options?: any
   ): Promise<{ itemsProcessed: number; sizeProcessed?: number }> {
-    // This would implement the actual batch processing logic
-    console.log(`Processing batch of ${batch.length} items`);
     return { itemsProcessed: batch.length, sizeProcessed: batch.length * 1024 };
   }
 
@@ -1606,10 +1581,7 @@ export class DataCleanupManager {
   /**
    * Start continuous task
    */
-  private async startContinuousTask(taskId: string): Promise<void> {
-    // Implementation for continuous background tasks
-    console.log(`Starting continuous task ${taskId}`);
-  }
+  private async startContinuousTask(_taskId: string): Promise<void> {}
 
   /**
    * Check approval
@@ -1701,9 +1673,7 @@ export class DataCleanupManager {
       listeners.forEach((callback) => {
         try {
           callback(data);
-        } catch (error) {
-          console.error(`Error in event listener for ${event}:`, error);
-        }
+        } catch (_error) {}
       });
     }
   }
@@ -1712,34 +1682,27 @@ export class DataCleanupManager {
    * Shutdown
    */
   public async shutdown(): Promise<void> {
-    try {
-      // Unschedule all tasks
-      for (const taskId of this.scheduledTasks.keys()) {
-        this.unscheduleTask(taskId);
-      }
-
-      // Wait for running tasks to complete
-      const runningPromises = Array.from(this.runningTasks.values());
-      await Promise.allSettled(runningPromises);
-
-      // Shutdown services
-      await this.auditLogger.shutdown();
-      await this.complianceEngine.shutdown();
-      await this.notificationService.shutdown();
-
-      // Clear state
-      this.tasks.clear();
-      this.scheduledTasks.clear();
-      this.runningTasks.clear();
-      this.eventListeners.clear();
-      this.cleanupHistory = [];
-      this.isInitialized = false;
-
-      console.log('Data cleanup manager shutdown completed');
-    } catch (error) {
-      console.error('Error during cleanup manager shutdown:', error);
-      throw error;
+    // Unschedule all tasks
+    for (const taskId of this.scheduledTasks.keys()) {
+      this.unscheduleTask(taskId);
     }
+
+    // Wait for running tasks to complete
+    const runningPromises = Array.from(this.runningTasks.values());
+    await Promise.allSettled(runningPromises);
+
+    // Shutdown services
+    await this.auditLogger.shutdown();
+    await this.complianceEngine.shutdown();
+    await this.notificationService.shutdown();
+
+    // Clear state
+    this.tasks.clear();
+    this.scheduledTasks.clear();
+    this.runningTasks.clear();
+    this.eventListeners.clear();
+    this.cleanupHistory = [];
+    this.isInitialized = false;
   }
 
   /**
@@ -1782,9 +1745,7 @@ export class DataCleanupManager {
  */
 class AuditLogger {
   async initialize(): Promise<void> {}
-  async logEvent(event: any): Promise<void> {
-    console.log('Audit log:', event.action);
-  }
+  async logEvent(_event: any): Promise<void> {}
   async healthCheck(): Promise<{ status: string }> {
     return { status: 'healthy' };
   }
@@ -1801,9 +1762,7 @@ class ComplianceEngine {
 
 class NotificationService {
   async initialize(): Promise<void> {}
-  async sendNotification(notification: any): Promise<void> {
-    console.log('Notification sent:', notification.type);
-  }
+  async sendNotification(_notification: any): Promise<void> {}
   async healthCheck(): Promise<{ status: string }> {
     return { status: 'healthy' };
   }

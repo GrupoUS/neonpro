@@ -11,17 +11,17 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 // Catches JavaScript errors anywhere in the child component tree
 // =====================================================================================
 
-interface Props {
+type Props = {
   children: ReactNode;
   fallback?: ReactNode;
   onError?: (error: Error, errorInfo: ErrorInfo) => void;
-}
+};
 
-interface State {
+type State = {
   hasError: boolean;
   error: Error | null;
   errorInfo: ErrorInfo | null;
-}
+};
 
 export class ErrorBoundary extends Component<Props, State> {
   constructor(props: Props) {
@@ -43,9 +43,6 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    // Log error details
-    console.error('ErrorBoundary caught an error:', error, errorInfo);
-
     // Update state with error info
     this.setState({
       error,
@@ -148,12 +145,9 @@ export class ErrorBoundary extends Component<Props, State> {
 // =====================================================================================
 
 export function useErrorHandler() {
-  return (error: Error, errorInfo?: ErrorInfo) => {
-    console.error('Error caught by useErrorHandler:', error, errorInfo);
-
+  return (_error: Error, _errorInfo?: ErrorInfo) => {
     // Report to error tracking service
     // reportError(error, errorInfo);
-
     // You could also trigger a toast notification here
     // toast.error('Ocorreu um erro inesperado');
   };
@@ -177,9 +171,7 @@ export function DashboardErrorBoundary({ children }: { children: ReactNode }) {
           </Alert>
         </div>
       }
-      onError={(error, errorInfo) => {
-        console.error('Dashboard Error:', error, errorInfo);
-      }}
+      onError={(_error, _errorInfo) => {}}
     >
       {children}
     </ErrorBoundary>
@@ -198,9 +190,7 @@ export function FormErrorBoundary({ children }: { children: ReactNode }) {
           </AlertDescription>
         </Alert>
       }
-      onError={(error, errorInfo) => {
-        console.error('Form Error:', error, errorInfo);
-      }}
+      onError={(_error, _errorInfo) => {}}
     >
       {children}
     </ErrorBoundary>
@@ -219,9 +209,7 @@ export function APIErrorBoundary({ children }: { children: ReactNode }) {
           </AlertDescription>
         </Alert>
       }
-      onError={(error, errorInfo) => {
-        console.error('API Error:', error, errorInfo);
-      }}
+      onError={(_error, _errorInfo) => {}}
     >
       {children}
     </ErrorBoundary>

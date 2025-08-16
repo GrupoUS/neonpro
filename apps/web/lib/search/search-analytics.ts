@@ -7,7 +7,7 @@
 import { createClient } from '@/lib/supabase/client';
 
 // Types
-export interface SearchMetrics {
+export type SearchMetrics = {
   totalSearches: number;
   averageResponseTime: number;
   successRate: number;
@@ -33,9 +33,9 @@ export interface SearchMetrics {
     resultProcessing: number;
     total: number;
   };
-}
+};
 
-export interface SearchEvent {
+export type SearchEvent = {
   id?: string;
   userId?: string;
   sessionId: string;
@@ -57,9 +57,9 @@ export interface SearchEvent {
   timestamp: number;
   userAgent?: string;
   ipAddress?: string;
-}
+};
 
-export interface UserSearchBehavior {
+export type UserSearchBehavior = {
   userId: string;
   totalSearches: number;
   averageSessionDuration: number;
@@ -76,9 +76,9 @@ export interface UserSearchBehavior {
     prefersFilters: boolean;
     averageResultsViewed: number;
   };
-}
+};
 
-export interface PerformanceAlert {
+export type PerformanceAlert = {
   id: string;
   type:
     | 'slow_response'
@@ -93,9 +93,9 @@ export interface PerformanceAlert {
   timestamp: number;
   resolved: boolean;
   resolvedAt?: number;
-}
+};
 
-export interface SearchOptimization {
+export type SearchOptimization = {
   queryPattern: string;
   optimization: {
     type: 'index' | 'cache' | 'query_rewrite' | 'result_ranking';
@@ -108,9 +108,9 @@ export interface SearchOptimization {
     potentialSpeedup: number;
     confidenceScore: number;
   };
-}
+};
 
-export interface AnalyticsOptions {
+export type AnalyticsOptions = {
   timeRange?: {
     start: Date;
     end: Date;
@@ -119,7 +119,7 @@ export interface AnalyticsOptions {
   searchType?: string;
   includeAnonymous?: boolean;
   aggregationLevel?: 'hour' | 'day' | 'week' | 'month';
-}
+};
 
 /**
  * Search Analytics Class
@@ -174,7 +174,6 @@ export class SearchAnalytics {
       });
 
       if (error) {
-        console.error('Failed to track search event:', error);
         return;
       }
 
@@ -183,9 +182,7 @@ export class SearchAnalytics {
 
       // Update real-time metrics
       this.updateRealTimeMetrics(searchEvent);
-    } catch (error) {
-      console.error('Error tracking search event:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -211,11 +208,8 @@ export class SearchAnalytics {
         });
 
       if (error) {
-        console.error('Failed to track result interaction:', error);
       }
-    } catch (error) {
-      console.error('Error tracking result interaction:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -230,52 +224,46 @@ export class SearchAnalytics {
     if (cached && Date.now() - cached.timestamp < this.cacheTimeout) {
       return cached.data;
     }
+    const timeRange = options.timeRange || {
+      start: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), // 30 days ago
+      end: new Date(),
+    };
 
-    try {
-      const timeRange = options.timeRange || {
-        start: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), // 30 days ago
-        end: new Date(),
-      };
+    // Build base query
+    let query = this.supabase
+      .from('search_analytics')
+      .select('*')
+      .gte('created_at', timeRange.start.toISOString())
+      .lte('created_at', timeRange.end.toISOString());
 
-      // Build base query
-      let query = this.supabase
-        .from('search_analytics')
-        .select('*')
-        .gte('created_at', timeRange.start.toISOString())
-        .lte('created_at', timeRange.end.toISOString());
+    if (options.userId) {
+      query = query.eq('user_id', options.userId);
+    }
 
-      if (options.userId) {
-        query = query.eq('user_id', options.userId);
-      }
+    if (options.searchType) {
+      query = query.eq('search_type', options.searchType);
+    }
 
-      if (options.searchType) {
-        query = query.eq('search_type', options.searchType);
-      }
+    if (!options.includeAnonymous) {
+      query = query.not('user_id', 'is', null);
+    }
 
-      if (!options.includeAnonymous) {
-        query = query.not('user_id', 'is', null);
-      }
+    const { data: searchEvents, error } = await query;
 
-      const { data: searchEvents, error } = await query;
-
-      if (error) {
-        throw error;
-      }
-
-      // Calculate metrics
-      const metrics = this.calculateMetrics(searchEvents || []);
-
-      // Cache results
-      this.metricsCache.set(cacheKey, {
-        data: metrics,
-        timestamp: Date.now(),
-      });
-
-      return metrics;
-    } catch (error) {
-      console.error('Error getting search metrics:', error);
+    if (error) {
       throw error;
     }
+
+    // Calculate metrics
+    const metrics = this.calculateMetrics(searchEvents || []);
+
+    // Cache results
+    this.metricsCache.set(cacheKey, {
+      data: metrics,
+      timestamp: Date.now(),
+    });
+
+    return metrics;
   }
 
   /**
@@ -285,36 +273,30 @@ export class SearchAnalytics {
     userId: string,
     days = 30
   ): Promise<UserSearchBehavior> {
-    try {
-      const startDate = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
+    const startDate = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
 
-      const { data: searchEvents, error } = await this.supabase
-        .from('search_analytics')
-        .select('*')
-        .eq('user_id', userId)
-        .gte('created_at', startDate.toISOString())
-        .order('created_at', { ascending: false });
+    const { data: searchEvents, error } = await this.supabase
+      .from('search_analytics')
+      .select('*')
+      .eq('user_id', userId)
+      .gte('created_at', startDate.toISOString())
+      .order('created_at', { ascending: false });
 
-      if (error) {
-        throw error;
-      }
-
-      const { data: interactions, error: interactionError } =
-        await this.supabase
-          .from('search_result_interactions')
-          .select('*')
-          .in('session_id', searchEvents?.map((e) => e.session_id) || [])
-          .gte('created_at', startDate.toISOString());
-
-      if (interactionError) {
-        throw interactionError;
-      }
-
-      return this.analyzeBehavior(searchEvents || [], interactions || []);
-    } catch (error) {
-      console.error('Error getting user search behavior:', error);
+    if (error) {
       throw error;
     }
+
+    const { data: interactions, error: interactionError } = await this.supabase
+      .from('search_result_interactions')
+      .select('*')
+      .in('session_id', searchEvents?.map((e) => e.session_id) || [])
+      .gte('created_at', startDate.toISOString());
+
+    if (interactionError) {
+      throw interactionError;
+    }
+
+    return this.analyzeBehavior(searchEvents || [], interactions || []);
   }
 
   /**
@@ -349,8 +331,7 @@ export class SearchAnalytics {
             : undefined,
         })) || []
       );
-    } catch (error) {
-      console.error('Error getting performance alerts:', error);
+    } catch (_error) {
       return [];
     }
   }
@@ -377,8 +358,7 @@ export class SearchAnalytics {
       }
 
       return this.generateOptimizations(slowQueries || []);
-    } catch (error) {
-      console.error('Error getting optimization suggestions:', error);
+    } catch (_error) {
       return [];
     }
   }
@@ -393,34 +373,29 @@ export class SearchAnalytics {
     optimizations: SearchOptimization[];
     recommendations: string[];
   }> {
-    try {
-      const [summary, alerts, optimizations] = await Promise.all([
-        this.getSearchMetrics(options),
-        this.getPerformanceAlerts(false),
-        this.getOptimizationSuggestions(),
-      ]);
+    const [summary, alerts, optimizations] = await Promise.all([
+      this.getSearchMetrics(options),
+      this.getPerformanceAlerts(false),
+      this.getOptimizationSuggestions(),
+    ]);
 
-      // Generate trends (simplified for now)
-      const trends = await this.generateTrends(options);
+    // Generate trends (simplified for now)
+    const trends = await this.generateTrends(options);
 
-      // Generate recommendations
-      const recommendations = this.generateRecommendations(
-        summary,
-        alerts,
-        optimizations
-      );
+    // Generate recommendations
+    const recommendations = this.generateRecommendations(
+      summary,
+      alerts,
+      optimizations
+    );
 
-      return {
-        summary,
-        trends,
-        alerts,
-        optimizations,
-        recommendations,
-      };
-    } catch (error) {
-      console.error('Error generating performance report:', error);
-      throw error;
-    }
+    return {
+      summary,
+      trends,
+      alerts,
+      optimizations,
+      recommendations,
+    };
   }
 
   /**
@@ -711,11 +686,8 @@ export class SearchAnalytics {
       });
 
       if (error) {
-        console.error('Failed to store performance alert:', error);
       }
-    } catch (error) {
-      console.error('Error storing performance alert:', error);
-    }
+    } catch (_error) {}
   }
 
   private updateRealTimeMetrics(event: SearchEvent): void {

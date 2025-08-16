@@ -148,9 +148,7 @@ async function validatePermission(
       hierarchyLevel: roleDefinition.hierarchy,
       auditId: await generateAuditId(),
     };
-  } catch (error) {
-    console.error('Permission validation error:', error);
-
+  } catch (_error) {
     // Log failed permission check
     await logPermissionCheck(check, user, false);
 
@@ -225,8 +223,7 @@ async function checkPatientAccess(
     }
 
     return { granted: true, roleUsed: user.role as UserRole };
-  } catch (error) {
-    console.error('Patient access check failed:', error);
+  } catch (_error) {
     return {
       granted: false,
       reason: 'Patient access validation failed',
@@ -278,8 +275,7 @@ async function checkAppointmentAccess(
     }
 
     return { granted: true, roleUsed: user.role as UserRole };
-  } catch (error) {
-    console.error('Appointment access check failed:', error);
+  } catch (_error) {
     return {
       granted: false,
       reason: 'Appointment access validation failed',
@@ -330,9 +326,7 @@ async function logPermissionCheck(
       timestamp: new Date().toISOString(),
       metadata: check.context,
     });
-  } catch (error) {
-    console.error('Failed to log permission check:', error);
-  }
+  } catch (_error) {}
 }
 
 /**

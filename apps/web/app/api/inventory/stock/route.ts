@@ -30,8 +30,7 @@ export async function GET(request: NextRequest) {
     const stock = await inventoryService.getInventoryStock(filters);
 
     return NextResponse.json({ data: stock });
-  } catch (error) {
-    console.error('Error fetching inventory stock:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to fetch inventory stock' },
       { status: 500 }
@@ -75,8 +74,7 @@ export async function PUT(request: NextRequest) {
     const stock = await inventoryService.updateStock(updateData);
 
     return NextResponse.json({ data: stock });
-  } catch (error) {
-    console.error('Error updating inventory stock:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to update inventory stock' },
       { status: 500 }

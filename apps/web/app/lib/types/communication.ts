@@ -30,7 +30,7 @@ export type ConversationStatus = 'active' | 'archived' | 'blocked';
 // MESSAGE THREAD & CONVERSATION SYSTEM
 // ============================================================================
 
-export interface MessageThread {
+export type MessageThread = {
   id: string;
   patient_id: string;
   subject: string;
@@ -43,18 +43,18 @@ export interface MessageThread {
   updated_at: string;
   archived_at?: string;
   archived_by?: string;
-}
+};
 
-export interface ThreadParticipant {
+export type ThreadParticipant = {
   user_id: string;
   role: 'patient' | 'doctor' | 'nurse' | 'receptionist' | 'admin';
   name: string;
   avatar?: string;
   joined_at: string;
   last_read_at?: string;
-}
+};
 
-export interface Message {
+export type Message = {
   id: string;
   thread_id: string;
   sender_id: string;
@@ -77,9 +77,9 @@ export interface Message {
   template_id?: string;
   created_at: string;
   updated_at: string;
-}
+};
 
-export interface MessageAttachment {
+export type MessageAttachment = {
   id: string;
   message_id: string;
   filename: string;
@@ -94,9 +94,9 @@ export interface MessageAttachment {
   encryption_key?: string;
   uploaded_at: string;
   downloaded_at?: string;
-}
+};
 
-export interface MessageMetadata {
+export type MessageMetadata = {
   ip_address?: string;
   user_agent?: string;
   device_type?: 'mobile' | 'desktop' | 'tablet';
@@ -110,13 +110,13 @@ export interface MessageMetadata {
   read_receipt_requested?: boolean;
   auto_response?: boolean;
   external_message_id?: string; // For SMS/email providers
-}
+};
 
 // ============================================================================
 // HIPAA COMPLIANCE & CONSENT MANAGEMENT
 // ============================================================================
 
-export interface CommunicationConsent {
+export type CommunicationConsent = {
   id: string;
   patient_id: string;
   channel: CommunicationChannel;
@@ -136,22 +136,22 @@ export interface CommunicationConsent {
   notes?: string;
   created_at: string;
   updated_at: string;
-}
+};
 
-export interface EncryptionInfo {
+export type EncryptionInfo = {
   algorithm: string;
   key_id: string;
   iv?: string;
   salt?: string;
   encrypted_at: string;
   expires_at?: string;
-}
+};
 
 // ============================================================================
 // COMMUNICATION TEMPLATES & AUTOMATION
 // ============================================================================
 
-export interface MessageTemplate {
+export type MessageTemplate = {
   id: string;
   name: string;
   description?: string;
@@ -168,7 +168,7 @@ export interface MessageTemplate {
   created_by: string;
   created_at: string;
   updated_at: string;
-}
+};
 
 export type TemplateCategory =
   | 'appointment'
@@ -183,7 +183,7 @@ export type TemplateCategory =
   | 'emergency'
   | 'general';
 
-export interface TemplateVariable {
+export type TemplateVariable = {
   name: string;
   description: string;
   type: 'text' | 'number' | 'date' | 'boolean' | 'list';
@@ -191,9 +191,9 @@ export interface TemplateVariable {
   default_value?: string;
   validation_pattern?: string;
   options?: string[]; // For list type
-}
+};
 
-export interface AutomationRule {
+export type AutomationRule = {
   id: string;
   name: string;
   description?: string;
@@ -208,9 +208,9 @@ export interface AutomationRule {
   created_by: string;
   created_at: string;
   updated_at: string;
-}
+};
 
-export interface AutomationTrigger {
+export type AutomationTrigger = {
   type:
     | 'appointment_created'
     | 'appointment_reminder'
@@ -220,9 +220,9 @@ export interface AutomationTrigger {
     | 'manual'
     | 'time_based';
   config: Record<string, any>;
-}
+};
 
-export interface AutomationCondition {
+export type AutomationCondition = {
   field: string;
   operator:
     | 'equals'
@@ -233,9 +233,9 @@ export interface AutomationCondition {
     | 'in'
     | 'not_in';
   value: string | number | boolean | string[];
-}
+};
 
-export interface AutomationAction {
+export type AutomationAction = {
   type:
     | 'send_message'
     | 'create_task'
@@ -247,22 +247,22 @@ export interface AutomationAction {
   channel?: CommunicationChannel;
   delay_minutes?: number;
   config: Record<string, any>;
-}
+};
 
-export interface AutomationSchedule {
+export type AutomationSchedule = {
   frequency: 'once' | 'daily' | 'weekly' | 'monthly' | 'yearly';
   interval?: number;
   days_of_week?: number[];
   day_of_month?: number;
   time?: string;
   timezone?: string;
-}
+};
 
 // ============================================================================
 // CAMPAIGN MANAGEMENT
 // ============================================================================
 
-export interface CommunicationCampaign {
+export type CommunicationCampaign = {
   id: string;
   name: string;
   description?: string;
@@ -287,7 +287,7 @@ export interface CommunicationCampaign {
   created_by: string;
   created_at: string;
   updated_at: string;
-}
+};
 
 export type CampaignType = 'one_time' | 'recurring' | 'triggered' | 'drip';
 export type CampaignStatus =
@@ -298,20 +298,20 @@ export type CampaignStatus =
   | 'cancelled'
   | 'paused';
 
-export interface CampaignAudience {
+export type CampaignAudience = {
   include_criteria: AudienceCriteria[];
   exclude_criteria: AudienceCriteria[];
   patient_ids?: string[];
   estimated_size?: number;
-}
+};
 
-export interface AudienceCriteria {
+export type AudienceCriteria = {
   field: string;
   operator: string;
   value: any;
-}
+};
 
-export interface CampaignMetrics {
+export type CampaignMetrics = {
   open_rate?: number;
   click_rate?: number;
   response_rate?: number;
@@ -320,13 +320,13 @@ export interface CampaignMetrics {
   bounce_rate?: number;
   cost_per_message?: number;
   roi?: number;
-}
+};
 
 // ============================================================================
 // QUICK RESPONSES & CANNED MESSAGES
 // ============================================================================
 
-export interface QuickResponse {
+export type QuickResponse = {
   id: string;
   name: string;
   shortcut: string; // e.g., "/appointment", "/thanks"
@@ -339,13 +339,13 @@ export interface QuickResponse {
   last_used_at?: string;
   created_at: string;
   updated_at: string;
-}
+};
 
 // ============================================================================
 // COMMUNICATION ANALYTICS & REPORTING
 // ============================================================================
 
-export interface CommunicationStats {
+export type CommunicationStats = {
   period: 'today' | 'week' | 'month' | 'quarter' | 'year';
   total_messages: number;
   messages_by_channel: Record<CommunicationChannel, number>;
@@ -356,35 +356,35 @@ export interface CommunicationStats {
   top_templates: TemplateUsage[];
   peak_hours: HourlyUsage[];
   staff_performance: StaffCommunicationStats[];
-}
+};
 
-export interface TemplateUsage {
+export type TemplateUsage = {
   template_id: string;
   template_name: string;
   usage_count: number;
   success_rate: number;
-}
+};
 
-export interface HourlyUsage {
+export type HourlyUsage = {
   hour: number;
   message_count: number;
   response_rate: number;
-}
+};
 
-export interface StaffCommunicationStats {
+export type StaffCommunicationStats = {
   user_id: string;
   user_name: string;
   messages_sent: number;
   average_response_time: number;
   patient_satisfaction: number;
   templates_used: number;
-}
+};
 
 // ============================================================================
 // COMMUNICATION PREFERENCES
 // ============================================================================
 
-export interface CommunicationPreferences {
+export type CommunicationPreferences = {
   id: string;
   patient_id: string;
   preferred_channel: CommunicationChannel;
@@ -409,13 +409,13 @@ export interface CommunicationPreferences {
   custom_settings: Record<string, any>;
   created_at: string;
   updated_at: string;
-}
+};
 
 // ============================================================================
 // EXTERNAL INTEGRATIONS
 // ============================================================================
 
-export interface ExternalProvider {
+export type ExternalProvider = {
   id: string;
   name: string;
   type: 'sms' | 'email' | 'whatsapp' | 'voice';
@@ -427,22 +427,22 @@ export interface ExternalProvider {
   success_rate: number;
   created_at: string;
   updated_at: string;
-}
+};
 
-export interface ProviderConfiguration {
+export type ProviderConfiguration = {
   api_key?: string;
   api_secret?: string;
   sender_id?: string;
   webhook_url?: string;
   custom_settings: Record<string, any>;
-}
+};
 
-export interface RateLimit {
+export type RateLimit = {
   messages_per_minute: number;
   messages_per_hour: number;
   messages_per_day: number;
   burst_limit: number;
-}
+};
 
 // ============================================================================
 // ZOD VALIDATION SCHEMAS
@@ -601,7 +601,7 @@ export const CommunicationPreferencesSchema = z.object({
 // API REQUEST/RESPONSE TYPES
 // ============================================================================
 
-export interface SendMessageRequest {
+export type SendMessageRequest = {
   thread_id?: string; // Optional for new conversations
   patient_id: string;
   type: MessageType;
@@ -613,9 +613,9 @@ export interface SendMessageRequest {
   template_variables?: Record<string, any>;
   attachments?: File[];
   scheduled_at?: string;
-}
+};
 
-export interface SendMessageResponse {
+export type SendMessageResponse = {
   success: boolean;
   message_id?: string;
   thread_id?: string;
@@ -624,9 +624,9 @@ export interface SendMessageResponse {
   estimated_delivery?: string;
   cost?: number;
   error?: string;
-}
+};
 
-export interface GetMessagesRequest {
+export type GetMessagesRequest = {
   thread_id?: string;
   patient_id?: string;
   channel?: CommunicationChannel;
@@ -639,31 +639,31 @@ export interface GetMessagesRequest {
   limit?: number;
   sort_by?: 'created_at' | 'sent_at' | 'priority';
   sort_order?: 'asc' | 'desc';
-}
+};
 
-export interface GetMessagesResponse {
+export type GetMessagesResponse = {
   messages: Message[];
   threads?: MessageThread[];
   total: number;
   page: number;
   limit: number;
   has_more: boolean;
-}
+};
 
-export interface CampaignExecutionRequest {
+export type CampaignExecutionRequest = {
   campaign_id: string;
   test_mode?: boolean;
   test_recipients?: string[];
-}
+};
 
-export interface CampaignExecutionResponse {
+export type CampaignExecutionResponse = {
   success: boolean;
   execution_id: string;
   estimated_recipients: number;
   estimated_cost: number;
   scheduled_at?: string;
   error?: string;
-}
+};
 
 // ============================================================================
 // UTILITY TYPES
@@ -698,13 +698,13 @@ export type CommunicationDashboardData = {
 // ERROR TYPES
 // ============================================================================
 
-export interface CommunicationError {
+export type CommunicationError = {
   code: string;
   message: string;
   details?: Record<string, any>;
   retry_after?: number;
   permanent?: boolean;
-}
+};
 
 export type CommunicationErrorCode =
   | 'INVALID_RECIPIENT'

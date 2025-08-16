@@ -160,7 +160,6 @@ if (typeof window === 'undefined') {
   setInterval(() => {
     const cleaned = cacheManager.cleanup();
     if (cleaned > 0) {
-      console.log(`🧹 Cleaned ${cleaned} expired cache entries`);
     }
   }, 300_000); // 5 minutes
 }
@@ -234,30 +233,24 @@ export class CacheInvalidation {
       `analytics:${userId}`,
       `subscription:${userId}`,
     ];
-    const invalidated = cacheManager.invalidateByTags(tags);
-    console.log(
-      `🗑️ Invalidated ${invalidated} cache entries for user ${userId}`
-    );
+    const _invalidated = cacheManager.invalidateByTags(tags);
   }
 
   // Invalidate analytics caches
   static async invalidateAnalytics(userId?: string): Promise<void> {
     const tags = userId ? [`analytics:${userId}`] : ['analytics'];
-    const invalidated = cacheManager.invalidateByTags(tags);
-    console.log(`📊 Invalidated ${invalidated} analytics cache entries`);
+    const _invalidated = cacheManager.invalidateByTags(tags);
   }
 
   // Invalidate subscription caches
   static async invalidateSubscriptions(): Promise<void> {
-    const invalidated = cacheManager.invalidateByTags(['subscription']);
-    console.log(`💳 Invalidated ${invalidated} subscription cache entries`);
+    const _invalidated = cacheManager.invalidateByTags(['subscription']);
   }
 
   // Time-based invalidation
   static async scheduleInvalidation(key: string, delay: number): Promise<void> {
     setTimeout(() => {
       cacheManager.delete(key);
-      console.log(`⏰ Scheduled invalidation executed for key: ${key}`);
     }, delay);
   }
 }
@@ -354,7 +347,6 @@ export function withCache(
     // Try to get from cache
     const cached = cacheManager.get(cacheKey);
     if (cached) {
-      console.log(`💨 Cache hit for key: ${cacheKey}`);
       return new NextResponse(JSON.stringify(cached), {
         status: 200,
         headers: CacheHeaders.apiResponse().set('X-Cache', 'HIT'),
@@ -368,7 +360,6 @@ export function withCache(
     if (response.ok) {
       const data = await response.json();
       cacheManager.set(cacheKey, data, ttl, tags);
-      console.log(`💾 Cached response for key: ${cacheKey}`);
     }
 
     return response;

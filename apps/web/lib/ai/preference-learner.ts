@@ -3,7 +3,7 @@ import { createClient } from '@supabase/supabase-js';
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
 
-interface AppointmentData {
+type AppointmentData = {
   id: string;
   patient_id: string;
   staff_id: string;
@@ -14,21 +14,21 @@ interface AppointmentData {
   no_show: boolean;
   rescheduled_count: number;
   wait_time_minutes?: number;
-}
+};
 
-interface LearningPattern {
+type LearningPattern = {
   pattern_type: string;
   confidence: number;
   data_points: number;
   last_updated: string;
-}
+};
 
-interface PreferenceLearningResult {
+type PreferenceLearningResult = {
   updated_preferences: any;
   confidence_improvement: number;
   new_patterns_discovered: LearningPattern[];
   recommendations: string[];
-}
+};
 
 export class PatientPreferenceLearner {
   private readonly supabase: any;
@@ -88,8 +88,7 @@ export class PatientPreferenceLearner {
         new_patterns_discovered: newPatterns,
         recommendations,
       };
-    } catch (error) {
-      console.error('Preference learning error:', error);
+    } catch (_error) {
       throw new Error('Failed to learn from appointment history');
     }
   }
@@ -595,12 +594,7 @@ export class PatientPreferenceLearner {
   }
 
   private async saveUpdatedPreferences(preferences: any): Promise<void> {
-    try {
-      await this.supabase.from('patient_preferences').upsert(preferences);
-    } catch (error) {
-      console.error('Failed to save updated preferences:', error);
-      throw error;
-    }
+    await this.supabase.from('patient_preferences').upsert(preferences);
   }
 
   async analyzeAllPatients(): Promise<any> {
@@ -634,8 +628,7 @@ export class PatientPreferenceLearner {
       }
 
       return results;
-    } catch (error) {
-      console.error('Batch preference learning error:', error);
+    } catch (_error) {
       throw new Error('Failed to analyze all patients');
     }
   }
@@ -657,7 +650,6 @@ export class PatientPreferenceLearner {
       }
       return { success: true, data };
     } catch (error) {
-      console.error('Error updating preferences:', error);
       return { success: false, error: error.message };
     }
   }
@@ -674,8 +666,7 @@ export class PatientPreferenceLearner {
         throw error;
       }
       return data || {};
-    } catch (error) {
-      console.error('Error fetching patient preferences:', error);
+    } catch (_error) {
       return {};
     }
   }
@@ -704,8 +695,7 @@ export class PatientPreferenceLearner {
       };
 
       return patterns;
-    } catch (error) {
-      console.error('Error analyzing scheduling patterns:', error);
+    } catch (_error) {
       return {};
     }
   }

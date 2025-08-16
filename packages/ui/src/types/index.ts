@@ -1,5 +1,5 @@
 // Core Patient Type
-export interface PatientData {
+export type PatientData = {
   id: string;
   name: string;
   email?: string;
@@ -31,10 +31,10 @@ export interface PatientData {
   tags?: string[];
   createdAt: Date | string;
   updatedAt: Date | string;
-}
+};
 
 // Appointment Types
-export interface AppointmentData {
+export type AppointmentData = {
   id: string;
   patientId: string;
   patientName: string;
@@ -60,10 +60,10 @@ export interface AppointmentData {
   }[];
   createdAt: Date;
   updatedAt: Date;
-}
+};
 
 // User and Profile Types
-export interface UserProfile {
+export type UserProfile = {
   id: string;
   name: string;
   email: string;
@@ -83,25 +83,25 @@ export interface UserProfile {
   lastLogin?: Date;
   createdAt: Date;
   updatedAt: Date;
-}
+};
 
 // Common UI Types
-export interface SelectOption {
+export type SelectOption = {
   value: string;
   label: string;
   disabled?: boolean;
   icon?: React.ReactNode;
-}
+};
 
-export interface FilterOption {
+export type FilterOption = {
   key: string;
   label: string;
   type: 'select' | 'date' | 'text' | 'boolean';
   options?: SelectOption[];
   defaultValue?: any;
-}
+};
 
-export interface TableColumn<T = any> {
+export type TableColumn<T = any> = {
   key: string;
   label: string;
   sortable?: boolean;
@@ -109,21 +109,21 @@ export interface TableColumn<T = any> {
   width?: string;
   align?: 'left' | 'center' | 'right';
   render?: (item: T) => React.ReactNode;
-}
+};
 
-export interface PaginationConfig {
+export type PaginationConfig = {
   page: number;
   pageSize: number;
   total?: number;
-}
+};
 
-export interface SortConfig {
+export type SortConfig = {
   key: string;
   direction: 'asc' | 'desc';
-}
+};
 
 // Layout Types
-export interface MenuItem {
+export type MenuItem = {
   id: string;
   label: string;
   icon: React.ElementType;
@@ -132,15 +132,15 @@ export interface MenuItem {
   active?: boolean;
   children?: MenuItem[];
   onClick?: () => void;
-}
+};
 
-export interface BreadcrumbItem {
+export type BreadcrumbItem = {
   title: string;
   href?: string;
-}
+};
 
 // Healthcare-specific Types
-export interface MedicalRecord {
+export type MedicalRecord = {
   id: string;
   patientId: string;
   date: Date;
@@ -167,9 +167,9 @@ export interface MedicalRecord {
     date?: Date;
     instructions?: string;
   };
-}
+};
 
-export interface Treatment {
+export type Treatment = {
   id: string;
   patientId: string;
   name: string;
@@ -189,13 +189,13 @@ export interface Treatment {
     pending: number;
   };
   notes?: string;
-}
+};
 
 // Component Props Base Types
-export interface BaseComponentProps {
+export type BaseComponentProps = {
   className?: string;
   children?: React.ReactNode;
-}
+};
 
 export interface ClickableComponentProps extends BaseComponentProps {
   onClick?: () => void;
@@ -228,18 +228,18 @@ export type ButtonVariant =
 
 // Export aliases removed to avoid conflicts
 // Basic Types
-export interface BaseEntity {
+export type BaseEntity = {
   id: string;
   createdAt: Date | string;
   updatedAt: Date | string;
-}
+};
 
-export interface EmergencyContact {
+export type EmergencyContact = {
   name: string;
   relationship: string;
   phone: string;
   email?: string;
-}
+};
 
 // Removed duplicate AppointmentData interface
 
@@ -255,12 +255,12 @@ export interface PractitionerData extends BaseEntity {
   schedule?: WorkingHours[];
 }
 
-export interface WorkingHours {
+export type WorkingHours = {
   dayOfWeek: number; // 0-6 (Sunday-Saturday)
   startTime: string;
   endTime: string;
   isAvailable: boolean;
-}
+};
 
 // Treatment Data Types
 export interface TreatmentData extends BaseEntity {
@@ -322,14 +322,14 @@ export interface HealthRecordData extends BaseEntity {
   lastUpdated?: Date;
 }
 
-export interface MedicalHistory {
+export type MedicalHistory = {
   conditions?: string[];
   surgeries?: string[];
   familyHistory?: string[];
   chronicConditions?: string[];
-}
+};
 
-export interface ProcedureRecord {
+export type ProcedureRecord = {
   id: string;
   name: string;
   date: Date;
@@ -338,17 +338,17 @@ export interface ProcedureRecord {
   status: 'scheduled' | 'completed' | 'cancelled';
   notes?: string;
   outcome?: string;
-}
+};
 
-export interface PreviousProcedure {
+export type PreviousProcedure = {
   name: string;
   date: Date;
   practitioner: string;
   status: string;
   notes?: string;
-}
+};
 
-export interface HealthDocument {
+export type HealthDocument = {
   id: string;
   name: string;
   type: string;
@@ -356,10 +356,10 @@ export interface HealthDocument {
   uploadDate: Date;
   url?: string;
   onDownload?: (id: string) => void;
-}
+};
 
 // Layout Data Types
-export interface LayoutConfig {
+export type LayoutConfig = {
   sidebar: {
     collapsed: boolean;
     width: number;
@@ -369,28 +369,28 @@ export interface LayoutConfig {
     enabled: boolean;
     position: 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left';
   };
-}
+};
 
 // Navigation Types
-export interface NavItem {
+export type NavItem = {
   id: string;
   label: string;
   href: string;
   icon?: React.ComponentType<{ className?: string }>;
   isActive?: boolean;
   children?: NavItem[];
-}
+};
 
 // Form Types
-export interface FormValidation {
+export type FormValidation = {
   required?: boolean;
   minLength?: number;
   maxLength?: number;
   pattern?: RegExp;
   custom?: (value: any) => string | null;
-}
+};
 
-export interface FormField {
+export type FormField = {
   name: string;
   label: string;
   type:
@@ -406,7 +406,7 @@ export interface FormField {
   options?: { value: string; label: string }[];
   placeholder?: string;
   description?: string;
-}
+};
 
 // Component Variant Types
 export type ComponentVariant =

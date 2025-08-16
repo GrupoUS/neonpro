@@ -165,7 +165,6 @@ export async function GET(request: NextRequest) {
       data: monitoringData,
     });
   } catch (error) {
-    console.error('Erro ao obter dados de monitoramento:', error);
     return NextResponse.json(
       {
         error: 'Erro interno do servidor',
@@ -245,8 +244,7 @@ async function calculateComplianceScore(
     );
 
     return Math.round(finalScore * 100) / 100;
-  } catch (error) {
-    console.error('Erro ao calcular pontuação de conformidade:', error);
+  } catch (_error) {
     return 0;
   }
 }

@@ -19,7 +19,7 @@ import { LGPDManager } from '../auth/lgpd/lgpd-manager';
 // TYPES & INTERFACES
 // ============================================================================
 
-export interface DigitalSignature {
+export type DigitalSignature = {
   id: string;
   document_id: string;
   signer_id: string;
@@ -41,9 +41,9 @@ export interface DigitalSignature {
   validated_at?: string;
   revoked_at?: string;
   revocation_reason?: string;
-}
+};
 
-export interface SignatureRequest {
+export type SignatureRequest = {
   id: string;
   document_id: string;
   requester_id: string;
@@ -56,9 +56,9 @@ export interface SignatureRequest {
   completed_at?: string;
   cancelled_at?: string;
   cancellation_reason?: string;
-}
+};
 
-export interface RequiredSigner {
+export type RequiredSigner = {
   id: string;
   user_id: string;
   name: string;
@@ -70,9 +70,9 @@ export interface RequiredSigner {
   signature_id?: string;
   declined_at?: string;
   decline_reason?: string;
-}
+};
 
-export interface ValidationDetails {
+export type ValidationDetails = {
   certificate_valid: boolean;
   certificate_trusted: boolean;
   certificate_expired: boolean;
@@ -81,9 +81,9 @@ export interface ValidationDetails {
   timestamp_valid: boolean;
   validation_errors: string[];
   validation_warnings: string[];
-}
+};
 
-export interface SignatureMetadata {
+export type SignatureMetadata = {
   ip_address?: string;
   user_agent?: string;
   geolocation?: {
@@ -102,7 +102,7 @@ export interface SignatureMetadata {
     os: string;
     browser: string;
   };
-}
+};
 
 // Enums
 export enum SignerRole {
@@ -144,7 +144,7 @@ export enum RequestStatus {
   EXPIRED = 'expired',
 }
 
-export interface SignatureOptions {
+export type SignatureOptions = {
   signatureType: SignatureType;
   includeTimestamp?: boolean;
   includeBiometric?: boolean;
@@ -153,14 +153,14 @@ export interface SignatureOptions {
   privateKeyPath?: string;
   pin?: string;
   biometricData?: any;
-}
+};
 
-export interface VerificationOptions {
+export type VerificationOptions = {
   checkCertificate?: boolean;
   checkTimestamp?: boolean;
   checkRevocation?: boolean;
   trustAnchors?: string[];
-}
+};
 
 // ============================================================================
 // DIGITAL SIGNATURE MANAGER
@@ -336,7 +336,6 @@ export class DigitalSignatureManager {
 
       return { success: true, data };
     } catch (error) {
-      console.error('Error signing document:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
@@ -456,7 +455,6 @@ export class DigitalSignatureManager {
 
       return { success: true, data: validationDetails };
     } catch (error) {
-      console.error('Error verifying signature:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
@@ -530,7 +528,6 @@ export class DigitalSignatureManager {
 
       return { success: true, data };
     } catch (error) {
-      console.error('Error creating signature request:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
@@ -557,7 +554,6 @@ export class DigitalSignatureManager {
 
       return { success: true, data };
     } catch (error) {
-      console.error('Error getting signature request:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
@@ -653,7 +649,6 @@ export class DigitalSignatureManager {
 
       return { success: true };
     } catch (error) {
-      console.error('Error updating signature request status:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
@@ -833,8 +828,7 @@ export class DigitalSignatureManager {
         throw error;
       }
       return data?.checksum || null;
-    } catch (error) {
-      console.error('Error getting document hash:', error);
+    } catch (_error) {
       return null;
     }
   }
@@ -868,9 +862,7 @@ export class DigitalSignatureManager {
           updated_at: new Date().toISOString(),
         })
         .eq('id', documentId);
-    } catch (error) {
-      console.error('Error updating document signature status:', error);
-    }
+    } catch (_error) {}
   }
 
   private async sendSignatureNotifications(
@@ -880,20 +872,14 @@ export class DigitalSignatureManager {
       // In a real implementation, send email/SMS notifications
       // to required signers about the signature request
 
-      for (const signer of request.required_signers) {
-        console.log(
-          `Sending signature notification to ${signer.email} for request ${request.id}`
-        );
-
+      for (const _signer of request.required_signers) {
         // TODO: Implement actual notification sending
         // - Email notification
         // - SMS notification
         // - In-app notification
         // - Push notification
       }
-    } catch (error) {
-      console.error('Error sending signature notifications:', error);
-    }
+    } catch (_error) {}
   }
 
   // ========================================================================
@@ -916,7 +902,6 @@ export class DigitalSignatureManager {
 
       return { success: true, data: data || [] };
     } catch (error) {
-      console.error('Error getting document signatures:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
@@ -947,7 +932,6 @@ export class DigitalSignatureManager {
 
       return { success: true, data: data || [] };
     } catch (error) {
-      console.error('Error getting user signatures:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
@@ -980,7 +964,6 @@ export class DigitalSignatureManager {
 
       return { success: true, data: pendingRequests };
     } catch (error) {
-      console.error('Error getting pending signature requests:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
@@ -1025,7 +1008,6 @@ export class DigitalSignatureManager {
 
       return { success: true };
     } catch (error) {
-      console.error('Error revoking signature:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
@@ -1079,7 +1061,6 @@ export class DigitalSignatureManager {
 
       return { success: true, data: stats };
     } catch (error) {
-      console.error('Error getting signature statistics:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',

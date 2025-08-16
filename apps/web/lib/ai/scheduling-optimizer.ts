@@ -3,7 +3,7 @@ import { createClient } from '@supabase/supabase-js';
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
 
-interface SchedulingRequest {
+type SchedulingRequest = {
   patient_id: string;
   treatment_type: string;
   preferred_date_range: {
@@ -13,9 +13,9 @@ interface SchedulingRequest {
   staff_preference?: string;
   priority?: 'low' | 'normal' | 'high' | 'urgent';
   duration_minutes: number;
-}
+};
 
-interface OptimizedSlot {
+type OptimizedSlot = {
   slot_time: string;
   staff_id: string;
   confidence_score: number;
@@ -30,9 +30,9 @@ interface OptimizedSlot {
     staff_id: string;
     confidence_score: number;
   }>;
-}
+};
 
-interface PatientPreferences {
+type PatientPreferences = {
   time_preferences: {
     preferred_days: number[];
     preferred_hours: number[];
@@ -47,7 +47,7 @@ interface PatientPreferences {
     max_duration_minutes?: number;
     preferred_room_types?: string[];
   };
-}
+};
 
 export class AISchedulingOptimizer {
   private readonly supabase: any;
@@ -86,8 +86,7 @@ export class AISchedulingOptimizer {
       await this.logSchedulingDecision(request, optimizedSlots);
 
       return optimizedSlots.slice(0, 5); // Return top 5 suggestions
-    } catch (error) {
-      console.error('AI scheduling optimization error:', error);
+    } catch (_error) {
       throw new Error('Failed to generate optimal slot suggestions');
     }
   }
@@ -350,9 +349,7 @@ export class AISchedulingOptimizer {
       };
 
       await this.supabase.from('ai_scheduling_decisions').insert(logData);
-    } catch (error) {
-      console.error('Failed to log scheduling decision:', error);
-    }
+    } catch (_error) {}
   }
 
   async updatePatientPreferences(
@@ -385,9 +382,7 @@ export class AISchedulingOptimizer {
       }
 
       await this.supabase.from('patient_preferences').upsert(updatedPrefs);
-    } catch (error) {
-      console.error('Failed to update patient preferences:', error);
-    }
+    } catch (_error) {}
   }
 
   private mergePreferenceData(currentPrefs: any, outcome: any): any {
@@ -451,8 +446,7 @@ export class AISchedulingOptimizer {
         ai_impact: this.calculateAIImpact(data),
         recommendations: this.generateRecommendations(data),
       };
-    } catch (error) {
-      console.error('Failed to get scheduling analytics:', error);
+    } catch (_error) {
       throw new Error('Failed to retrieve scheduling analytics');
     }
   }
@@ -505,8 +499,7 @@ export class AISchedulingOptimizer {
         throw error;
       }
       return data || {};
-    } catch (error) {
-      console.error('Error fetching patient preference data:', error);
+    } catch (_error) {
       return {};
     }
   }
@@ -530,7 +523,6 @@ export class AISchedulingOptimizer {
       }
       return { success: true, data };
     } catch (error) {
-      console.error('Error processing feedback:', error);
       return { success: false, error: error.message };
     }
   }
@@ -551,8 +543,7 @@ export class AISchedulingOptimizer {
         throw error;
       }
       return data || [];
-    } catch (error) {
-      console.error('Error fetching feedback history:', error);
+    } catch (_error) {
       return [];
     }
   }

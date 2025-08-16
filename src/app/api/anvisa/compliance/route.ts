@@ -13,7 +13,9 @@ export const dynamic = 'force-dynamic';
 export async function GET(request: NextRequest) {
   try {
     const supabase = createRouteHandlerClient({ cookies });
-    const { data: { session } } = await supabase.auth.getSession();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
 
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -26,51 +28,55 @@ export async function GET(request: NextRequest) {
     const endDate = searchParams.get('end_date');
 
     if (!clinicId) {
-      return NextResponse.json({ error: 'Clinic ID is required' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Clinic ID is required' },
+        { status: 400 }
+      );
     }
 
     switch (reportType) {
       case 'score':
-        const complianceScore = await anvisaAPI.calculateClinicComplianceScore(clinicId);
-        return NextResponse.json({ 
-          success: true, 
+        const complianceScore =
+          await anvisaAPI.calculateClinicComplianceScore(clinicId);
+        return NextResponse.json({
+          success: true,
           data: complianceScore,
-          meta: { type: 'compliance_score' }
+          meta: { type: 'compliance_score' },
         });
 
       case 'report':
         const complianceReport = await anvisaAPI.generateComplianceReport(
-          clinicId, 
-          startDate || undefined, 
+          clinicId,
+          startDate || undefined,
           endDate || undefined
         );
-        return NextResponse.json({ 
-          success: true, 
+        return NextResponse.json({
+          success: true,
           data: complianceReport,
-          meta: { type: 'compliance_report' }
+          meta: { type: 'compliance_report' },
         });
 
       default:
         // Return both score and basic compliance data
         const [score, alerts] = await Promise.all([
           anvisaAPI.calculateClinicComplianceScore(clinicId),
-          anvisaAPI.getAlerts(clinicId)
+          anvisaAPI.getAlerts(clinicId),
         ]);
-        
-        return NextResponse.json({ 
-          success: true, 
+
+        return NextResponse.json({
+          success: true,
           data: {
             compliance_score: score,
             active_alerts: alerts,
             summary: {
               total_alerts: alerts.length,
-              high_priority_alerts: alerts.filter(a => a.priority === 'high').length
-            }
+              high_priority_alerts: alerts.filter((a) => a.priority === 'high')
+                .length,
+            },
           },
-          meta: { type: 'compliance_overview' }
+          meta: { type: 'compliance_overview' },
         });
     }
-
   } catch (error) {
     console.error('Error in ANVISA compliance GET:', error);
     return NextResponse.json(

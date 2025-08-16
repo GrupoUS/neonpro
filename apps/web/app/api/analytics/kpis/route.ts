@@ -8,7 +8,7 @@ import { z } from 'zod';
 import { createClient } from '@/app/utils/supabase/server';
 import { KPIEngine } from '@/lib/analytics/kpi-engine';
 
-interface KPICalculationRequest {
+type KPICalculationRequest = {
   kpi_ids?: string[];
   categories?: string[];
   time_period: {
@@ -25,7 +25,7 @@ interface KPICalculationRequest {
   include_variance?: boolean;
   include_targets?: boolean;
   calculation_method?: 'real_time' | 'cached' | 'force_refresh';
-}
+};
 
 const requestSchema = z.object({
   kpi_ids: z.array(z.string()).optional(),
@@ -124,8 +124,6 @@ export async function POST(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('Error calculating KPIs:', error);
-
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {
@@ -222,7 +220,6 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('Error retrieving KPIs:', error);
     return NextResponse.json(
       {
         success: false,

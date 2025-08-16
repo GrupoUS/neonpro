@@ -75,7 +75,6 @@ export async function POST(request: NextRequest) {
         );
     }
   } catch (error) {
-    console.error('Error processing analysis request:', error);
     return NextResponse.json(
       {
         error: 'Failed to process analysis request',
@@ -116,7 +115,6 @@ export async function GET(request: NextRequest) {
       data: progress,
     });
   } catch (error) {
-    console.error('Error fetching analysis progress:', error);
     return NextResponse.json(
       {
         error: 'Failed to fetch analysis progress',

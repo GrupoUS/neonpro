@@ -49,7 +49,7 @@ import {
 import { formatBytes, formatDate } from '@/lib/utils';
 
 // Types
-interface BackupRecord {
+type BackupRecord = {
   id: string;
   config_name: string;
   type: 'FULL' | 'INCREMENTAL' | 'DIFFERENTIAL' | 'DATABASE' | 'FILES';
@@ -59,9 +59,9 @@ interface BackupRecord {
   size?: number;
   file_count?: number;
   storage_location: string;
-}
+};
 
-interface RecoveryOptions {
+type RecoveryOptions = {
   backup_id: string;
   type: 'FULL_RESTORE' | 'PARTIAL_RESTORE' | 'POINT_IN_TIME' | 'VERIFICATION';
   target_location?: string;
@@ -70,13 +70,13 @@ interface RecoveryOptions {
   overwrite_existing: boolean;
   verify_integrity: boolean;
   notification_email?: string;
-}
+};
 
-interface RecoveryWizardProps {
+type RecoveryWizardProps = {
   isOpen: boolean;
   onClose: () => void;
   onSuccess?: () => void;
-}
+};
 
 const RecoveryWizard: React.FC<RecoveryWizardProps> = ({
   isOpen,
@@ -140,8 +140,7 @@ const RecoveryWizard: React.FC<RecoveryWizardProps> = ({
       } else {
         toast.error('Erro ao carregar backups disponíveis');
       }
-    } catch (error) {
-      console.error('Erro ao carregar backups:', error);
+    } catch (_error) {
       toast.error('Erro ao carregar backups disponíveis');
     } finally {
       setLoading(false);
@@ -155,9 +154,7 @@ const RecoveryWizard: React.FC<RecoveryWizardProps> = ({
         const data = await response.json();
         setAvailableFiles(data.files || []);
       }
-    } catch (error) {
-      console.error('Erro ao carregar arquivos do backup:', error);
-    }
+    } catch (_error) {}
   };
 
   const handleBackupSelect = (backup: BackupRecord) => {
@@ -220,8 +217,7 @@ const RecoveryWizard: React.FC<RecoveryWizardProps> = ({
         toast.error(errorData.error || 'Erro ao iniciar recuperação');
         setRecoveryInProgress(false);
       }
-    } catch (error) {
-      console.error('Erro ao iniciar recuperação:', error);
+    } catch (_error) {
       toast.error('Erro ao iniciar operação de recuperação');
       setRecoveryInProgress(false);
     }

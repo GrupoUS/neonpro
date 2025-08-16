@@ -4,7 +4,7 @@
 import type { Database } from '@/types/supabase';
 
 // Core AI System Types
-export interface AISystemArchitecture {
+export type AISystemArchitecture = {
   chatEngine: {
     provider: 'OpenAI GPT-4' | 'Anthropic Claude' | 'Custom LLM';
     fallbackProviders: string[];
@@ -30,10 +30,10 @@ export interface AISystemArchitecture {
     realTimeUpdates: 'Supabase Realtime';
     eventStreaming: 'Supabase Edge Functions';
   };
-}
+};
 
 // Universal Chat Context (Story 4.1)
-export interface UniversalChatContext {
+export type UniversalChatContext = {
   // User and clinic information
   user: {
     id: string;
@@ -80,20 +80,20 @@ export interface UniversalChatContext {
     opportunities: BusinessOpportunities;
     alerts: SystemAlerts;
   };
-}
+};
 
 // Query Classification Types
-export interface QueryClassification {
+export type QueryClassification = {
   epic: 'epic1' | 'epic2' | 'epic3' | 'epic4' | 'cross_functional';
   category: string;
   confidence: number;
   requiredPermissions: string[];
   suggestedActions: string[];
   affectedSystems: string[];
-}
+};
 
 // AI Response Types
-export interface AIResponse {
+export type AIResponse = {
   message: string;
   sources: string[];
   visualizations: string[];
@@ -115,10 +115,10 @@ export interface AIResponse {
     dataSourcesUsed: string[];
     nextActions: string[];
   };
-}
+};
 
 // Cross-Functional Suggestions (Story 4.2)
-export interface CrossFunctionalSuggestion {
+export type CrossFunctionalSuggestion = {
   id: string;
   category:
     | 'financial_optimization'
@@ -138,18 +138,18 @@ export interface CrossFunctionalSuggestion {
   status: 'pending' | 'accepted' | 'rejected' | 'implemented';
   confidence: number;
   requiredResources: string[];
-}
+};
 
-export interface ImplementationStep {
+export type ImplementationStep = {
   step: number;
   description: string;
   estimatedTime: string;
   requiredPermissions: string[];
   dependencies: string[];
-}
+};
 
 // Predictive Analytics Types (Story 4.3)
-export interface PredictiveInsight {
+export type PredictiveInsight = {
   type:
     | 'outcome_prediction'
     | 'financial_forecast'
@@ -162,9 +162,9 @@ export interface PredictiveInsight {
   affectedMetrics: string[];
   recommendedActions: string[];
   supportingData: any;
-}
+};
 
-export interface ForecastingResult {
+export type ForecastingResult = {
   metric: string;
   currentValue: number;
   predictedValue: number;
@@ -172,10 +172,10 @@ export interface ForecastingResult {
   trend: 'increasing' | 'decreasing' | 'stable';
   factors: string[];
   accuracy?: number;
-}
+};
 
 // Process Automation Types (Story 4.4)
-export interface AutomationRecommendation {
+export type AutomationRecommendation = {
   id: string;
   name: string;
   description: string;
@@ -189,30 +189,30 @@ export interface AutomationRecommendation {
     risks: string[];
   };
   status: 'suggested' | 'approved' | 'in_progress' | 'completed';
-}
+};
 
 // Data Access Types
-export interface FinancialContext {
+export type FinancialContext = {
   cashFlow: RealTimeCashPosition;
   receivables: ReceivablesAging;
   payables: PayablesStatus;
   profitability: TreatmentProfitability;
   insights: FinancialInsight[];
-}
+};
 
-export interface ClinicalContext {
+export type ClinicalContext = {
   patients: ComprehensivePatientData[];
   treatmentProtocols: ProtocolLibrary;
   professionalMetrics: ProfessionalMetrics;
   complianceStatus: RegulatoryCompliance;
-}
+};
 
-export interface OperationalContext {
+export type OperationalContext = {
   appointments: AppointmentAnalytics;
   utilization: ProfessionalUtilization;
   conflicts: ScheduleConflict[];
   optimization: OptimizationOpportunity[];
-}
+};
 
 // Epic Integration Types
 export type Appointment = Database['public']['Tables']['appointments']['Row'];
@@ -222,66 +222,66 @@ export type TreatmentSession =
   Database['public']['Tables']['treatment_sessions']['Row'];
 
 // Supporting Types
-export interface ConflictAnalysis {
+export type ConflictAnalysis = {
   totalConflicts: number;
   conflictTypes: Record<string, number>;
   resolutionSuggestions: string[];
-}
+};
 
-export interface ProfessionalUtilization {
+export type ProfessionalUtilization = {
   professionalId: string;
   utilizationRate: number;
   appointmentsCount: number;
   availableSlots: number;
   efficiency: number;
-}
+};
 
-export interface PatientFlowMetrics {
+export type PatientFlowMetrics = {
   averageWaitTime: number;
   appointmentDuration: number;
   noShowRate: number;
   cancellationRate: number;
-}
+};
 
-export interface RealTimeCashPosition {
+export type RealTimeCashPosition = {
   currentBalance: number;
   projectedBalance: number;
   inflow: number;
   outflow: number;
   burnRate: number;
-}
+};
 
-export interface ReceivablesAging {
+export type ReceivablesAging = {
   current: number;
   thirtyDays: number;
   sixtyDays: number;
   ninetyDaysPlus: number;
   totalReceivables: number;
-}
+};
 
-export interface PayablesStatus {
+export type PayablesStatus = {
   currentPayables: number;
   overduePayables: number;
   upcomingPayments: number;
   averagePaymentDays: number;
-}
+};
 
-export interface TreatmentProfitability {
+export type TreatmentProfitability = {
   treatmentType: string;
   revenue: number;
   costs: number;
   margin: number;
   profitabilityRate: number;
-}
+};
 
-export interface FinancialForecasting {
+export type FinancialForecasting = {
   revenue: ForecastingResult;
   expenses: ForecastingResult;
   cashFlow: ForecastingResult;
   profitability: ForecastingResult;
-}
+};
 
-export interface ComprehensivePatientData {
+export type ComprehensivePatientData = {
   patientId: string;
   personalInfo: Patient;
   medicalHistory: any[];
@@ -289,16 +289,16 @@ export interface ComprehensivePatientData {
   progressTracking: any[];
   satisfactionScores: number[];
   riskFactors: string[];
-}
+};
 
-export interface ProtocolLibrary {
+export type ProtocolLibrary = {
   protocols: TreatmentProtocol[];
   successRates: Record<string, number>;
   averageDuration: Record<string, number>;
   contraindications: Record<string, string[]>;
-}
+};
 
-export interface TreatmentProtocol {
+export type TreatmentProtocol = {
   id: string;
   name: string;
   description: string;
@@ -307,18 +307,18 @@ export interface TreatmentProtocol {
   requiredEquipment: string[];
   contraindications: string[];
   expectedOutcomes: string[];
-}
+};
 
-export interface ProfessionalMetrics {
+export type ProfessionalMetrics = {
   professionalId: string;
   performanceScore: number;
   patientSatisfaction: number;
   treatmentSuccessRate: number;
   efficiency: number;
   specialties: string[];
-}
+};
 
-export interface RegulatoryCompliance {
+export type RegulatoryCompliance = {
   cfmCompliance: boolean;
   anvisaCompliance: boolean;
   lgpdCompliance: boolean;
@@ -326,47 +326,47 @@ export interface RegulatoryCompliance {
   complianceScore: number;
   violations: string[];
   recommendations: string[];
-}
+};
 
-export interface BusinessKPIs {
+export type BusinessKPIs = {
   revenue: number;
   profitMargin: number;
   customerSatisfaction: number;
   appointmentUtilization: number;
   professionalEfficiency: number;
   complianceScore: number;
-}
+};
 
-export interface DataTrends {
+export type DataTrends = {
   revenueGrowth: number;
   patientRetention: number;
   servicePopularity: Record<string, number>;
   seasonalPatterns: any[];
   competitivePosition: string;
-}
+};
 
-export interface BusinessOpportunities {
+export type BusinessOpportunities = {
   revenueOpportunities: OpportunityItem[];
   costReductionOpportunities: OpportunityItem[];
   operationalImprovements: OpportunityItem[];
   marketExpansion: OpportunityItem[];
-}
+};
 
-export interface OpportunityItem {
+export type OpportunityItem = {
   title: string;
   description: string;
   estimatedValue: number;
   implementation: string;
   probability: number;
-}
+};
 
-export interface SystemAlerts {
+export type SystemAlerts = {
   critical: AlertItem[];
   warning: AlertItem[];
   info: AlertItem[];
-}
+};
 
-export interface AlertItem {
+export type AlertItem = {
   id: string;
   type: 'critical' | 'warning' | 'info';
   title: string;
@@ -374,32 +374,32 @@ export interface AlertItem {
   timestamp: string;
   source: string;
   resolved: boolean;
-}
+};
 
-export interface ChartData {
+export type ChartData = {
   type: 'line' | 'bar' | 'pie' | 'scatter';
   data: any;
   options: any;
   title: string;
-}
+};
 
-export interface SuggestedAction {
+export type SuggestedAction = {
   id: string;
   title: string;
   description: string;
   actionType: 'navigation' | 'function' | 'external';
   target: string;
   parameters?: Record<string, any>;
-}
+};
 
 // API Types
-export interface AIRequest {
+export type AIRequest = {
   query: string;
   context: UniversalChatContext;
   sessionId?: string;
   userId: string;
   clinicId: string;
-}
+};
 
 export interface EnrichedContext extends UniversalChatContext {
   enrichedData: any;
@@ -411,12 +411,12 @@ export interface EnrichedContext extends UniversalChatContext {
 }
 
 // Security Types
-export interface SecurityValidation {
+export type SecurityValidation = {
   isValid: boolean;
   reason: string;
-}
+};
 
-export interface AISecurityFramework {
+export type AISecurityFramework = {
   dataAccess: {
     rls: string;
     encryption: string;
@@ -437,4 +437,4 @@ export interface AISecurityFramework {
     contextualAccess: string;
     emergencyOverrides: string;
   };
-}
+};

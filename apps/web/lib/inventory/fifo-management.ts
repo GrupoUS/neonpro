@@ -7,7 +7,7 @@ import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import type { Database } from '@/types/database';
 import type { BatchStock, FIFOResult } from './stock-output-management';
 
-export interface FIFOAnalysis {
+export type FIFOAnalysis = {
   produto_id: string;
   nome_produto: string;
   lotes_disponiveis: BatchStock[];
@@ -16,9 +16,9 @@ export interface FIFOAnalysis {
   economia_fifo: number;
   desperdicioEvitado: number;
   recomendacoes: FIFORecommendation[];
-}
+};
 
-export interface FIFORecommendation {
+export type FIFORecommendation = {
   tipo:
     | 'usar_prioritario'
     | 'transferir_lote'
@@ -31,9 +31,9 @@ export interface FIFORecommendation {
   acao_recomendada: string;
   urgencia: 'baixa' | 'media' | 'alta' | 'critica';
   impacto_financeiro: number;
-}
+};
 
-export interface ExpiryAlert {
+export type ExpiryAlert = {
   id: string;
   produto_id: string;
   nome_produto: string;
@@ -46,9 +46,9 @@ export interface ExpiryAlert {
   centro_custo_principal: string;
   acoes_disponiveis: ExpiryAction[];
   prioridade: 'baixa' | 'media' | 'alta' | 'critica';
-}
+};
 
-export interface ExpiryAction {
+export type ExpiryAction = {
   tipo:
     | 'uso_prioritario'
     | 'transferencia'
@@ -59,9 +59,9 @@ export interface ExpiryAction {
   impacto_financeiro: number;
   prazo_execucao: number; // dias
   probabilidade_sucesso: number; // 0-100
-}
+};
 
-export interface BatchMovement {
+export type BatchMovement = {
   id: string;
   lote_id: string;
   tipo_movimento: 'entrada' | 'saida' | 'transferencia' | 'ajuste' | 'bloqueio';
@@ -73,16 +73,16 @@ export interface BatchMovement {
   motivo: string;
   documento_origem?: string;
   auditoria_completa: boolean;
-}
+};
 
-export interface FIFOOptimizationConfig {
+export type FIFOOptimizationConfig = {
   margem_seguranca_dias: number; // Dias antes do vencimento para alertar
   percentual_uso_automatico: number; // % para uso automático em procedimentos
   priorizar_por_valor: boolean; // Priorizar lotes de maior valor
   permitir_quebra_fifo: boolean; // Permitir quebra de FIFO por motivos específicos
   notificacoes_ativas: boolean;
   integrar_com_compras: boolean; // Integrar com sistema de compras
-}
+};
 
 /**
  * FIFO Management System
@@ -149,8 +149,7 @@ export class FIFOManager {
         data: resolvedAnalyses,
         error: null,
       };
-    } catch (error) {
-      console.error('Error getting FIFO analysis:', error);
+    } catch (_error) {
       return {
         data: null,
         error: 'Erro ao analisar FIFO',
@@ -215,8 +214,7 @@ export class FIFOManager {
         data: alerts,
         error: null,
       };
-    } catch (error) {
-      console.error('Error getting expiry alerts:', error);
+    } catch (_error) {
       return {
         data: null,
         error: 'Erro ao buscar alertas de vencimento',
@@ -250,8 +248,7 @@ export class FIFOManager {
         data: optimizedSelections,
         error: null,
       };
-    } catch (error) {
-      console.error('Error optimizing FIFO selection:', error);
+    } catch (_error) {
       return {
         data: null,
         error: 'Erro ao otimizar seleção FIFO',
@@ -344,8 +341,7 @@ export class FIFOManager {
       });
 
       return { success: true, error: null };
-    } catch (error) {
-      console.error('Error executing batch transfer:', error);
+    } catch (_error) {
       return { success: false, error: 'Erro ao executar transferência' };
     }
   }
@@ -405,8 +401,7 @@ export class FIFOManager {
       }
 
       return { blocked: expiringBatches.length, error: null };
-    } catch (error) {
-      console.error('Error blocking expiring batches:', error);
+    } catch (_error) {
       return { blocked: 0, error: 'Erro ao bloquear lotes vencidos' };
     }
   }
@@ -438,8 +433,7 @@ export class FIFOManager {
         data: movements as BatchMovement[],
         error: null,
       };
-    } catch (error) {
-      console.error('Error getting batch movement history:', error);
+    } catch (_error) {
       return {
         data: null,
         error: 'Erro ao buscar histórico de movimentações',
@@ -706,9 +700,7 @@ export class FIFOManager {
         data_movimento: new Date().toISOString(),
         auditoria_completa: true,
       });
-    } catch (error) {
-      console.error('Error logging batch movement:', error);
-    }
+    } catch (_error) {}
   }
 
   /**

@@ -20,16 +20,16 @@ import type {
   UserSubscription,
 } from './subscription-status';
 
-export interface QueryStats {
+export type QueryStats = {
   queryType: string;
   executionTime: number;
   resultCount: number;
   fromCache: boolean;
   indexesUsed: string[];
   queryPlan?: any;
-}
+};
 
-export interface OptimizedQueryOptions {
+export type OptimizedQueryOptions = {
   useCache?: boolean;
   cacheTTL?: number;
   forceRefresh?: boolean;
@@ -37,15 +37,15 @@ export interface OptimizedQueryOptions {
   priority?: 'high' | 'medium' | 'low';
   timeout?: number;
   batch?: boolean;
-}
+};
 
-export interface BatchQuery {
+export type BatchQuery = {
   id: string;
   query: string;
   params: any[];
   options: OptimizedQueryOptions;
   callback?: (result: any) => void;
-}
+};
 
 export class SubscriptionQueryOptimizer {
   private readonly pendingBatches = new Map<string, BatchQuery[]>();
@@ -755,12 +755,11 @@ export class SubscriptionQueryOptimizer {
    * Handle query errors
    */
   private handleQueryError(
-    error: any,
-    queryId: string,
+    _error: any,
+    _queryId: string,
     startTime: number
   ): void {
     const duration = performance.now() - startTime;
-    console.error(`Query error for ${queryId}:`, error);
 
     subscriptionPerformanceMonitor.recordDatabaseOperation(duration);
   }
@@ -816,7 +815,7 @@ export class SubscriptionQueryOptimizer {
    * Execute pending batch
    */
   private async executePendingBatch(
-    batchType: string,
+    _batchType: string,
     queries: BatchQuery[]
   ): Promise<void> {
     try {
@@ -829,9 +828,7 @@ export class SubscriptionQueryOptimizer {
           query.callback(results[index]);
         }
       });
-    } catch (error) {
-      console.error(`Batch execution error for ${batchType}:`, error);
-    }
+    } catch (_error) {}
   }
 
   /**

@@ -13,7 +13,7 @@ type SubscriptionPlan =
 type UserSubscription =
   Database['public']['Tables']['user_subscriptions']['Row'];
 
-export interface SubscriptionContext {
+export type SubscriptionContext = {
   subscription: UserSubscription & {
     plan: SubscriptionPlan;
   };
@@ -28,7 +28,7 @@ export interface SubscriptionContext {
     remaining?: number;
   }>;
   incrementUsage: (feature: string, amount?: number) => Promise<boolean>;
-}
+};
 
 /**
  * Get subscription context for API routes
@@ -127,8 +127,7 @@ export async function getSubscriptionContext(
         );
       },
     };
-  } catch (error) {
-    console.error('Error getting subscription context:', error);
+  } catch (_error) {
     return null;
   }
 }
@@ -204,8 +203,7 @@ async function getCurrentUsage(
       default:
         return 0;
     }
-  } catch (error) {
-    console.error(`Error getting current usage for ${feature}:`, error);
+  } catch (_error) {
     return 0;
   }
 }
@@ -236,13 +234,11 @@ async function incrementFeatureUsage(
     );
 
     if (error) {
-      console.error('Error incrementing usage:', error);
       return false;
     }
 
     return true;
-  } catch (error) {
-    console.error('Error incrementing feature usage:', error);
+  } catch (_error) {
     return false;
   }
 }

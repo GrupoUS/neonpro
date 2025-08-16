@@ -42,7 +42,6 @@ export async function GET(_request: NextRequest) {
       .order('domain', { ascending: true });
 
     if (mappingsError) {
-      console.error('Erro ao buscar mapeamentos de domínio:', mappingsError);
       return NextResponse.json(
         { error: 'Erro ao buscar mapeamentos de domínio' },
         { status: 500 }
@@ -54,8 +53,7 @@ export async function GET(_request: NextRequest) {
       mappings: mappings || [],
       total: mappings?.length || 0,
     });
-  } catch (error) {
-    console.error('Erro no endpoint de mapeamentos de domínio:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
       { status: 500 }
@@ -123,7 +121,6 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (checkError && checkError.code !== 'PGRST116') {
-      console.error('Erro ao verificar domínio existente:', checkError);
       return NextResponse.json(
         { error: 'Erro ao verificar domínio' },
         { status: 500 }
@@ -155,7 +152,6 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (createError) {
-      console.error('Erro ao criar mapeamento:', createError);
       return NextResponse.json(
         { error: 'Erro ao criar mapeamento de domínio' },
         { status: 500 }
@@ -176,7 +172,6 @@ export async function POST(request: NextRequest) {
     });
 
     if (logError) {
-      console.error('Erro ao registrar log de auditoria:', logError);
       // Não falhar a operação por erro de log
     }
 
@@ -185,8 +180,7 @@ export async function POST(request: NextRequest) {
       mapping: createdMapping,
       message: 'Mapeamento de domínio criado com sucesso',
     });
-  } catch (error) {
-    console.error('Erro no endpoint de criação de mapeamento:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
       { status: 500 }

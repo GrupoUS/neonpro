@@ -5,13 +5,13 @@ import { formatters } from '../utils/formatters';
 import { Button } from './Button';
 import { Popover, PopoverContent, PopoverTrigger } from './Popover';
 
-export interface DatePickerProps {
+export type DatePickerProps = {
   date?: Date | null;
   onDateChange: (date: Date | null) => void;
   placeholder?: string;
   disabled?: boolean;
   className?: string;
-}
+};
 
 const DatePicker = React.forwardRef<HTMLButtonElement, DatePickerProps>(
   (

@@ -6,7 +6,7 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 
 // Types
-export interface DeviceRegistration {
+export type DeviceRegistration = {
   id: string;
   userId: string;
   deviceFingerprint: string;
@@ -18,9 +18,9 @@ export interface DeviceRegistration {
   registeredAt: Date;
   createdAt: Date;
   updatedAt: Date;
-}
+};
 
-export interface BrowserInfo {
+export type BrowserInfo = {
   name?: string;
   version?: string;
   os?: string;
@@ -32,30 +32,30 @@ export interface BrowserInfo {
   cookieEnabled?: boolean;
   javaEnabled?: boolean;
   plugins?: string[];
-}
+};
 
-export interface DeviceInfo {
+export type DeviceInfo = {
   fingerprint: string;
   name?: string;
   type?: string;
   browserInfo?: BrowserInfo;
   trusted?: boolean;
-}
+};
 
-export interface DeviceValidationResult {
+export type DeviceValidationResult = {
   isValid: boolean;
   isKnown: boolean;
   isTrusted: boolean;
   registration?: DeviceRegistration;
   riskScore: number;
   riskFactors: string[];
-}
+};
 
-export interface DeviceTrustUpdate {
+export type DeviceTrustUpdate = {
   deviceId: string;
   trusted: boolean;
   reason?: string;
-}
+};
 
 // Device Manager Service
 export class DeviceManager {
@@ -77,59 +77,54 @@ export class DeviceManager {
     deviceInfo: DeviceInfo,
     _ipAddress: string
   ): Promise<DeviceRegistration> {
-    try {
-      // Check if device already exists
-      const existingDevice = await this.getDeviceByFingerprint(
-        userId,
-        deviceInfo.fingerprint
-      );
+    // Check if device already exists
+    const existingDevice = await this.getDeviceByFingerprint(
+      userId,
+      deviceInfo.fingerprint
+    );
 
-      if (existingDevice) {
-        // Update existing device
-        const { data, error } = await this.supabase
-          .from('device_registrations')
-          .update({
-            device_name: deviceInfo.name || existingDevice.deviceName,
-            device_type: deviceInfo.type || existingDevice.deviceType,
-            browser_info: deviceInfo.browserInfo || existingDevice.browserInfo,
-            last_used_at: new Date().toISOString(),
-            updated_at: new Date().toISOString(),
-          })
-          .eq('id', existingDevice.id)
-          .select()
-          .single();
-
-        if (error) {
-          throw new Error(`Failed to update device: ${error.message}`);
-        }
-
-        return this.mapDeviceRegistration(data);
-      }
-      // Register new device
+    if (existingDevice) {
+      // Update existing device
       const { data, error } = await this.supabase
         .from('device_registrations')
-        .insert({
-          user_id: userId,
-          device_fingerprint: deviceInfo.fingerprint,
-          device_name: deviceInfo.name,
-          device_type: deviceInfo.type,
-          browser_info: deviceInfo.browserInfo,
-          trusted: deviceInfo.trusted,
+        .update({
+          device_name: deviceInfo.name || existingDevice.deviceName,
+          device_type: deviceInfo.type || existingDevice.deviceType,
+          browser_info: deviceInfo.browserInfo || existingDevice.browserInfo,
           last_used_at: new Date().toISOString(),
-          registered_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
         })
+        .eq('id', existingDevice.id)
         .select()
         .single();
 
       if (error) {
-        throw new Error(`Failed to register device: ${error.message}`);
+        throw new Error(`Failed to update device: ${error.message}`);
       }
 
       return this.mapDeviceRegistration(data);
-    } catch (error) {
-      console.error('Device registration error:', error);
-      throw error;
     }
+    // Register new device
+    const { data, error } = await this.supabase
+      .from('device_registrations')
+      .insert({
+        user_id: userId,
+        device_fingerprint: deviceInfo.fingerprint,
+        device_name: deviceInfo.name,
+        device_type: deviceInfo.type,
+        browser_info: deviceInfo.browserInfo,
+        trusted: deviceInfo.trusted,
+        last_used_at: new Date().toISOString(),
+        registered_at: new Date().toISOString(),
+      })
+      .select()
+      .single();
+
+    if (error) {
+      throw new Error(`Failed to register device: ${error.message}`);
+    }
+
+    return this.mapDeviceRegistration(data);
   }
 
   /**
@@ -152,8 +147,7 @@ export class DeviceManager {
       }
 
       return data ? this.mapDeviceRegistration(data) : null;
-    } catch (error) {
-      console.error('Get device error:', error);
+    } catch (_error) {
       return null;
     }
   }
@@ -174,8 +168,7 @@ export class DeviceManager {
       }
 
       return data.map(this.mapDeviceRegistration);
-    } catch (error) {
-      console.error('Get user devices error:', error);
+    } catch (_error) {
       return [];
     }
   }
@@ -224,8 +217,7 @@ export class DeviceManager {
         riskScore,
         riskFactors,
       };
-    } catch (error) {
-      console.error('Device validation error:', error);
+    } catch (_error) {
       return {
         isValid: false,
         isKnown: false,
@@ -355,30 +347,25 @@ export class DeviceManager {
     trusted: boolean,
     reason?: string
   ): Promise<DeviceRegistration> {
-    try {
-      const { data, error } = await this.supabase
-        .from('device_registrations')
-        .update({
-          trusted,
-          updated_at: new Date().toISOString(),
-        })
-        .eq('id', deviceId)
-        .eq('user_id', userId)
-        .select()
-        .single();
+    const { data, error } = await this.supabase
+      .from('device_registrations')
+      .update({
+        trusted,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', deviceId)
+      .eq('user_id', userId)
+      .select()
+      .single();
 
-      if (error) {
-        throw new Error(`Failed to update device trust: ${error.message}`);
-      }
-
-      // Log the trust change
-      await this.logDeviceTrustChange(userId, deviceId, trusted, reason);
-
-      return this.mapDeviceRegistration(data);
-    } catch (error) {
-      console.error('Update device trust error:', error);
-      throw error;
+    if (error) {
+      throw new Error(`Failed to update device trust: ${error.message}`);
     }
+
+    // Log the trust change
+    await this.logDeviceTrustChange(userId, deviceId, trusted, reason);
+
+    return this.mapDeviceRegistration(data);
   }
 
   /**
@@ -388,24 +375,19 @@ export class DeviceManager {
     userId: string,
     updates: DeviceTrustUpdate[]
   ): Promise<DeviceRegistration[]> {
-    try {
-      const results: DeviceRegistration[] = [];
+    const results: DeviceRegistration[] = [];
 
-      for (const update of updates) {
-        const result = await this.updateDeviceTrust(
-          userId,
-          update.deviceId,
-          update.trusted,
-          update.reason
-        );
-        results.push(result);
-      }
-
-      return results;
-    } catch (error) {
-      console.error('Bulk update device trust error:', error);
-      throw error;
+    for (const update of updates) {
+      const result = await this.updateDeviceTrust(
+        userId,
+        update.deviceId,
+        update.trusted,
+        update.reason
+      );
+      results.push(result);
     }
+
+    return results;
   }
 
   /**
@@ -427,8 +409,7 @@ export class DeviceManager {
       await this.logDeviceRemoval(userId, deviceId);
 
       return true;
-    } catch (error) {
-      console.error('Remove device error:', error);
+    } catch (_error) {
       return false;
     }
   }
@@ -485,8 +466,7 @@ export class DeviceManager {
         deviceTypes,
         browserTypes,
       };
-    } catch (error) {
-      console.error('Get device statistics error:', error);
+    } catch (_error) {
       return {
         totalDevices: 0,
         trustedDevices: 0,
@@ -781,9 +761,7 @@ export class DeviceManager {
           reason,
         },
       });
-    } catch (error) {
-      console.error('Log device trust change error:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -801,9 +779,7 @@ export class DeviceManager {
           device_id: deviceId,
         },
       });
-    } catch (error) {
-      console.error('Log device removal error:', error);
-    }
+    } catch (_error) {}
   }
 }
 

@@ -26,7 +26,6 @@ export async function GET(request: NextRequest) {
       data: analytics,
     });
   } catch (error) {
-    console.error('Error fetching follow-up analytics:', error);
     return NextResponse.json(
       {
         success: false,

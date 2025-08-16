@@ -9,18 +9,18 @@ import type {
   ThresholdOptimization,
 } from '@/app/types/reorder-alerts';
 
-interface ThresholdFilters {
+type ThresholdFilters = {
   item_category?: string[];
   auto_reorder_enabled?: boolean;
   needs_optimization?: boolean;
-}
+};
 
-interface UseIntelligentThresholdsProps {
+type UseIntelligentThresholdsProps = {
   clinicId: string;
   filters?: ThresholdFilters;
   autoRefresh?: boolean;
   refreshInterval?: number;
-}
+};
 
 export function useIntelligentThresholds({
   clinicId,

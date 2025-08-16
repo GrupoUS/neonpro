@@ -27,7 +27,6 @@ export async function GET(
       data: threshold,
     });
   } catch (error: any) {
-    console.error('Error fetching threshold:', error);
     return NextResponse.json(
       {
         success: false,
@@ -58,8 +57,6 @@ export async function PATCH(
       message: 'Threshold updated successfully with intelligent recalculations',
     });
   } catch (error: any) {
-    console.error('Error updating threshold:', error);
-
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {
@@ -99,7 +96,6 @@ export async function DELETE(
       message: 'Threshold deactivated successfully',
     });
   } catch (error: any) {
-    console.error('Error deactivating threshold:', error);
     return NextResponse.json(
       {
         success: false,

@@ -45,7 +45,7 @@ export type AttachmentType =
   | 'report';
 
 // Follow-up Template Interface
-export interface FollowupTemplate {
+export type FollowupTemplate = {
   id: string;
   name: string;
   description?: string;
@@ -62,10 +62,10 @@ export interface FollowupTemplate {
   created_by: string;
   created_at: string;
   updated_at: string;
-}
+};
 
 // Treatment Protocol Interface
-export interface TreatmentProtocol {
+export type TreatmentProtocol = {
   id: string;
   treatment_type: string;
   protocol_name: string;
@@ -80,20 +80,20 @@ export interface TreatmentProtocol {
   created_by: string;
   created_at: string;
   updated_at: string;
-}
+};
 
 // Follow-up Schedule Item
-export interface FollowupScheduleItem {
+export type FollowupScheduleItem = {
   type: FollowupType;
   days: number;
   hours: number;
   priority: Priority;
   required?: boolean;
   conditions?: string[]; // Optional conditions for triggering
-}
+};
 
 // Treatment Follow-up Interface
-export interface TreatmentFollowup {
+export type TreatmentFollowup = {
   id: string;
   treatment_id: string;
   patient_id: string;
@@ -123,10 +123,10 @@ export interface TreatmentFollowup {
   };
   responses?: FollowupResponse[];
   attachments?: FollowupAttachment[];
-}
+};
 
 // Follow-up Response Interface
-export interface FollowupResponse {
+export type FollowupResponse = {
   id: string;
   followup_id: string;
   response_type: ResponseType;
@@ -136,10 +136,10 @@ export interface FollowupResponse {
   received_at: string;
   processed: boolean;
   created_at: string;
-}
+};
 
 // Follow-up Attachment Interface
-export interface FollowupAttachment {
+export type FollowupAttachment = {
   id: string;
   followup_id: string;
   response_id?: string;
@@ -150,10 +150,10 @@ export interface FollowupAttachment {
   mime_type?: string;
   uploaded_by?: string;
   created_at: string;
-}
+};
 
 // Create Follow-up Template Data
-export interface CreateFollowupTemplateData {
+export type CreateFollowupTemplateData = {
   name: string;
   description?: string;
   treatment_type: string;
@@ -167,10 +167,10 @@ export interface CreateFollowupTemplateData {
   active?: boolean;
   clinic_id: string;
   created_by: string;
-}
+};
 
 // Create Treatment Protocol Data
-export interface CreateTreatmentProtocolData {
+export type CreateTreatmentProtocolData = {
   treatment_type: string;
   protocol_name: string;
   description?: string;
@@ -182,10 +182,10 @@ export interface CreateTreatmentProtocolData {
   active?: boolean;
   clinic_id: string;
   created_by: string;
-}
+};
 
 // Create Follow-up Data
-export interface CreateFollowupData {
+export type CreateFollowupData = {
   treatment_id: string;
   patient_id: string;
   clinic_id: string;
@@ -198,10 +198,10 @@ export interface CreateFollowupData {
   priority?: Priority;
   assigned_to?: string;
   notes?: string;
-}
+};
 
 // Follow-up Filters
-export interface FollowupFilters {
+export type FollowupFilters = {
   status?: FollowupStatus[];
   followup_type?: FollowupType[];
   communication_method?: CommunicationMethod[];
@@ -214,10 +214,10 @@ export interface FollowupFilters {
   automated?: boolean;
   limit?: number;
   offset?: number;
-}
+};
 
 // Template Filters
-export interface TemplateFilters {
+export type TemplateFilters = {
   treatment_type?: string[];
   followup_type?: FollowupType[];
   communication_method?: CommunicationMethod[];
@@ -226,20 +226,20 @@ export interface TemplateFilters {
   created_by?: string;
   limit?: number;
   offset?: number;
-}
+};
 
 // Protocol Filters
-export interface ProtocolFilters {
+export type ProtocolFilters = {
   treatment_type?: string[];
   active?: boolean;
   clinic_id?: string;
   created_by?: string;
   limit?: number;
   offset?: number;
-}
+};
 
 // Follow-up Analytics
-export interface FollowupAnalytics {
+export type FollowupAnalytics = {
   total_followups: number;
   completed_followups: number;
   pending_followups: number;
@@ -253,10 +253,10 @@ export interface FollowupAnalytics {
     completed: number;
     response_rate: number;
   }>;
-}
+};
 
 // Treatment Outcome Tracking
-export interface TreatmentOutcome {
+export type TreatmentOutcome = {
   treatment_id: string;
   patient_id: string;
   treatment_type: string;
@@ -268,10 +268,10 @@ export interface TreatmentOutcome {
   concerns_reported: string[];
   photos_uploaded: number;
   overall_success_rating: number;
-}
+};
 
 // Automation Rules
-export interface AutomationRule {
+export type AutomationRule = {
   id: string;
   name: string;
   description?: string;
@@ -287,18 +287,18 @@ export interface AutomationRule {
   created_by: string;
   created_at: string;
   updated_at: string;
-}
+};
 
 // Bulk Operations
-export interface BulkFollowupOperation {
+export type BulkFollowupOperation = {
   operation: 'create' | 'update' | 'delete' | 'reschedule';
   filters: FollowupFilters;
   data?: Partial<TreatmentFollowup>;
   scheduled_date?: string;
-}
+};
 
 // Communication Preferences
-export interface PatientCommunicationPreferences {
+export type PatientCommunicationPreferences = {
   patient_id: string;
   preferred_method: CommunicationMethod;
   alternative_methods: CommunicationMethod[];
@@ -310,10 +310,10 @@ export interface PatientCommunicationPreferences {
   language_preference: string;
   created_at: string;
   updated_at: string;
-}
+};
 
 // API Response Types
-export interface FollowupApiResponse<T = any> {
+export type FollowupApiResponse<T = any> = {
   success: boolean;
   data?: T;
   error?: string;
@@ -324,35 +324,35 @@ export interface FollowupApiResponse<T = any> {
     offset: number;
     has_more: boolean;
   };
-}
+};
 
-export interface FollowupListResponse {
+export type FollowupListResponse = {
   followups: TreatmentFollowup[];
   total: number;
   filters: FollowupFilters;
-}
+};
 
-export interface TemplateListResponse {
+export type TemplateListResponse = {
   templates: FollowupTemplate[];
   total: number;
   filters: TemplateFilters;
-}
+};
 
-export interface ProtocolListResponse {
+export type ProtocolListResponse = {
   protocols: TreatmentProtocol[];
   total: number;
   filters: ProtocolFilters;
-}
+};
 
 // Form Validation Types
-export interface FollowupFormData {
+export type FollowupFormData = {
   template: CreateFollowupTemplateData;
   protocol: CreateTreatmentProtocolData;
   followup: CreateFollowupData;
-}
+};
 
 // Dashboard Summary
-export interface FollowupDashboardSummary {
+export type FollowupDashboardSummary = {
   today_followups: number;
   pending_responses: number;
   overdue_followups: number;
@@ -365,4 +365,4 @@ export interface FollowupDashboardSummary {
     description: string;
     timestamp: string;
   }>;
-}
+};

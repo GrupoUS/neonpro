@@ -58,7 +58,6 @@ export async function POST(request: Request) {
       .single();
 
     if (insertError) {
-      console.error('Error storing tax calculation:', insertError);
       return NextResponse.json(
         { error: 'Failed to store calculation result' },
         { status: 500 }
@@ -73,8 +72,6 @@ export async function POST(request: Request) {
       },
     });
   } catch (error) {
-    console.error('Tax calculation error:', error);
-
     if (error instanceof Error && error.name === 'ZodError') {
       return NextResponse.json(
         { error: 'Invalid request data', details: error.message },

@@ -23,7 +23,7 @@ const rl = readline.createInterface({
 });
 
 // Colors for console output
-const colors = {
+const _colors = {
   reset: '\x1b[0m',
   bright: '\x1b[1m',
   red: '\x1b[31m',
@@ -34,9 +34,7 @@ const colors = {
   cyan: '\x1b[36m',
 };
 
-function log(message, color = 'reset') {
-  console.log(`${colors[color]}${message}${colors.reset}`);
-}
+function log(_message, _color = 'reset') {}
 
 function question(prompt) {
   return new Promise((resolve) => {

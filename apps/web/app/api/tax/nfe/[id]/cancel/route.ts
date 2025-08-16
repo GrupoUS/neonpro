@@ -101,7 +101,6 @@ export async function POST(
       .single();
 
     if (updateError) {
-      console.error('Error updating NFe document:', updateError);
       return NextResponse.json(
         { error: 'Failed to update NFe document' },
         { status: 500 }
@@ -126,8 +125,6 @@ export async function POST(
       },
     });
   } catch (error) {
-    console.error('NFe cancellation error:', error);
-
     if (error instanceof Error && error.name === 'ZodError') {
       return NextResponse.json(
         { error: 'Invalid request data', details: error.message },

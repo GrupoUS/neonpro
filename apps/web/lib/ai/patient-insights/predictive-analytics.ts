@@ -64,7 +64,6 @@ export class PredictiveAnalyticsEngine {
         modelVersions: this.getCurrentModelVersions(),
       };
     } catch (error) {
-      console.error('Prediction error:', error);
       throw new Error(
         `Failed to predict treatment outcome: ${error instanceof Error ? error.message : 'Unknown error'}`
       );
@@ -118,7 +117,6 @@ export class PredictiveAnalyticsEngine {
         predictionDate: new Date(),
       };
     } catch (error) {
-      console.error('Complication prediction error:', error);
       throw new Error(
         `Failed to predict complications: ${error instanceof Error ? error.message : 'Unknown error'}`
       );
@@ -173,7 +171,6 @@ export class PredictiveAnalyticsEngine {
         predictionDate: new Date(),
       };
     } catch (error) {
-      console.error('Recovery prediction error:', error);
       throw new Error(
         `Failed to predict recovery: ${error instanceof Error ? error.message : 'Unknown error'}`
       );
@@ -239,7 +236,6 @@ export class PredictiveAnalyticsEngine {
         predictionDate: new Date(),
       };
     } catch (error) {
-      console.error('Satisfaction prediction error:', error);
       throw new Error(
         `Failed to predict satisfaction: ${error instanceof Error ? error.message : 'Unknown error'}`
       );
@@ -777,7 +773,7 @@ class MockPredictionModel {
 }
 
 // Type definitions for internal use
-interface PredictionFeatures {
+type PredictionFeatures = {
   age: number;
   gender: string;
   bmi: number;
@@ -794,16 +790,16 @@ interface PredictionFeatures {
   previousTreatmentCount: number;
   previousSuccessRate: number;
   averageSatisfaction: number;
-}
+};
 
-interface ModelPredictions {
+type ModelPredictions = {
   successProbability: number;
   complicationRisk: number;
   recoveryTime: number;
   satisfactionScore: number;
-}
+};
 
-interface CompositePrediction {
+type CompositePrediction = {
   successProbability: number;
   complicationRisk: number;
   expectedRecoveryDays: number;
@@ -812,23 +808,23 @@ interface CompositePrediction {
     lower: number;
     upper: number;
   };
-}
+};
 
-interface UncertaintyAnalysis {
+type UncertaintyAnalysis = {
   confidence: number;
   factors: string[];
   recommendedValidation: string;
-}
+};
 
-interface PredictiveModel {
+type PredictiveModel = {
   successModel: MockPredictionModel;
   complicationModel: MockPredictionModel;
   recoveryModel: MockPredictionModel;
   satisfactionModel: MockPredictionModel;
-}
+};
 
 // Export types
-export interface TreatmentOutcomePrediction {
+export type TreatmentOutcomePrediction = {
   patientId: string;
   treatmentId: string;
   predictions: CompositePrediction;
@@ -838,9 +834,9 @@ export interface TreatmentOutcomePrediction {
   recommendedMonitoring: string[];
   predictionDate: Date;
   modelVersions: Record<string, string>;
-}
+};
 
-export interface ComplicationRiskPrediction {
+export type ComplicationRiskPrediction = {
   patientId: string;
   treatmentId: string;
   overallRisk: number;
@@ -850,9 +846,9 @@ export interface ComplicationRiskPrediction {
   recommendedPrecautions: string[];
   monitoringSchedule: string[];
   predictionDate: Date;
-}
+};
 
-export interface RecoveryTrajectoryPrediction {
+export type RecoveryTrajectoryPrediction = {
   patientId: string;
   treatmentId: string;
   expectedDuration: number;
@@ -863,9 +859,9 @@ export interface RecoveryTrajectoryPrediction {
   followUpSchedule: string[];
   redFlags: string[];
   predictionDate: Date;
-}
+};
 
-export interface SatisfactionPrediction {
+export type SatisfactionPrediction = {
   patientId: string;
   treatmentId: string;
   overallSatisfaction: number;
@@ -875,53 +871,53 @@ export interface SatisfactionPrediction {
   communicationRecommendations: string[];
   expectationManagement: string[];
   predictionDate: Date;
-}
+};
 
 // Additional supporting types
-interface BaselineComparison {
+type BaselineComparison = {
   betterThanAverage: boolean;
   percentilRank: number;
   comparison: string;
-}
+};
 
-interface SpecificComplication {
+type SpecificComplication = {
   type: string;
   probability: number;
   severity: string;
   description: string;
-}
+};
 
-interface RecoveryPhases {
+type RecoveryPhases = {
   immediate: { expectedDays: number; description: string };
   shortTerm: { expectedDays: number; description: string };
   longTerm: { expectedDays: number; description: string };
   total: { expectedDays: number; description: string };
-}
+};
 
-interface RecoveryMilestone {
+type RecoveryMilestone = {
   day: number;
   milestone: string;
   expectedStatus: string;
-}
+};
 
-interface TrajectoryVariation {
+type TrajectoryVariation = {
   scenario: string;
   probability: number;
   impactDays: number;
   description: string;
-}
+};
 
-interface SatisfactionDimensions {
+type SatisfactionDimensions = {
   procedureExperience: number;
   resultQuality: number;
   staffCommunication: number;
   facilityEnvironment: number;
   costValue: number;
   overallExperience: number;
-}
+};
 
-interface SatisfactionRisk {
+type SatisfactionRisk = {
   factor: string;
   impact: number;
   mitigation: string;
-}
+};

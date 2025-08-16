@@ -30,7 +30,7 @@ export type ReportType =
 // EXPORT CONFIGURATION
 // ============================================================================
 
-export interface ExportConfig {
+export type ExportConfig = {
   format: ExportFormat;
   reportType: ReportType;
   includeCharts: boolean;
@@ -50,13 +50,13 @@ export interface ExportConfig {
   };
   compression?: boolean;
   password?: string;
-}
+};
 
 // ============================================================================
 // EXPORT DATA STRUCTURES
 // ============================================================================
 
-export interface ExportableData {
+export type ExportableData = {
   revenue?: RevenueAnalytics;
   conversion?: ConversionAnalytics;
   cohorts?: CohortData[];
@@ -70,13 +70,13 @@ export interface ExportableData {
     dataFreshness: Date;
     queryExecutionTime: number;
   };
-}
+};
 
 // ============================================================================
 // PDF EXPORT TYPES
 // ============================================================================
 
-export interface PDFExportOptions {
+export type PDFExportOptions = {
   pageSize: 'A4' | 'A3' | 'Letter' | 'Legal';
   orientation: 'portrait' | 'landscape';
   margins: {
@@ -106,13 +106,13 @@ export interface PDFExportOptions {
     chartFormat: 'png' | 'svg';
     chartQuality: 'low' | 'medium' | 'high';
   };
-}
+};
 
 // ============================================================================
 // EXCEL EXPORT TYPES
 // ============================================================================
 
-export interface ExcelExportOptions {
+export type ExcelExportOptions = {
   worksheets: {
     summary: boolean;
     revenue: boolean;
@@ -132,13 +132,13 @@ export interface ExcelExportOptions {
     allowEditing: boolean;
     allowFormatting: boolean;
   };
-}
+};
 
 // ============================================================================
 // CSV EXPORT TYPES
 // ============================================================================
 
-export interface CSVExportOptions {
+export type CSVExportOptions = {
   delimiter: ',' | ';' | '\t' | '|';
   encoding: 'utf-8' | 'utf-16' | 'ascii';
   includeHeaders: boolean;
@@ -149,13 +149,13 @@ export interface CSVExportOptions {
     thousandsSeparator: ',' | '.' | ' ' | '';
   };
   compression: 'none' | 'gzip' | 'zip';
-}
+};
 
 // ============================================================================
 // EXPORT REQUEST & RESPONSE
 // ============================================================================
 
-export interface ExportRequest {
+export type ExportRequest = {
   id: string;
   userId: string;
   config: ExportConfig;
@@ -166,9 +166,9 @@ export interface ExportRequest {
   priority: 'low' | 'normal' | 'high';
   notifyOnComplete: boolean;
   email?: string;
-}
+};
 
-export interface ExportResponse {
+export type ExportResponse = {
   id: string;
   status: ExportStatus;
   downloadUrl?: string;
@@ -187,13 +187,13 @@ export interface ExportResponse {
     currentStep: string;
     estimatedTimeRemaining?: number;
   };
-}
+};
 
 // ============================================================================
 // SCHEDULED EXPORTS
 // ============================================================================
 
-export interface ScheduledExport {
+export type ScheduledExport = {
   id: string;
   userId: string;
   name: string;
@@ -212,13 +212,13 @@ export interface ScheduledExport {
   recipients: string[];
   createdAt: Date;
   updatedAt: Date;
-}
+};
 
 // ============================================================================
 // EXPORT ANALYTICS & MONITORING
 // ============================================================================
 
-export interface ExportMetrics {
+export type ExportMetrics = {
   totalExports: number;
   exportsByFormat: Record<ExportFormat, number>;
   exportsByType: Record<ReportType, number>;
@@ -231,7 +231,7 @@ export interface ExportMetrics {
     avgSize: number;
   }>;
   peakUsageHours: number[];
-}
+};
 
 // ============================================================================
 // VALIDATION SCHEMAS

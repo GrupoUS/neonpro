@@ -39,7 +39,6 @@ export async function GET(request: NextRequest) {
       pagination: result.pagination,
     });
   } catch (error) {
-    console.error('Error in churn predictions GET:', error);
     return NextResponse.json(
       {
         success: false,
@@ -69,8 +68,6 @@ export async function POST(request: NextRequest) {
       { status: 201 }
     );
   } catch (error) {
-    console.error('Error in churn predictions POST:', error);
-
     if (error instanceof Error && error.name === 'ZodError') {
       return NextResponse.json(
         {

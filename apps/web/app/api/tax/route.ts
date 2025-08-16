@@ -73,8 +73,7 @@ export async function GET(request: NextRequest) {
       default:
         return await getTaxOverview(supabase, clinicId);
     }
-  } catch (error) {
-    console.error('Tax API GET error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -107,8 +106,7 @@ export async function POST(request: NextRequest) {
           { status: 400 }
         );
     }
-  } catch (error) {
-    console.error('Tax API POST error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -330,8 +328,7 @@ async function generateNFE(supabase: any, body: any) {
         emitted: validatedData.emit_immediately && !validatedData.test_mode,
       },
     });
-  } catch (error) {
-    console.error('NFE generation error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'NFE generation failed' },
       { status: 500 }
@@ -368,8 +365,7 @@ async function validateCNPJ(supabase: any, body: any) {
     return NextResponse.json({
       data: validation,
     });
-  } catch (error) {
-    console.error('CNPJ validation error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'CNPJ validation failed' },
       { status: 500 }

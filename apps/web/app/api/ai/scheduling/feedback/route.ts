@@ -67,8 +67,6 @@ export async function POST(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('AI scheduling feedback error:', error);
-
     return NextResponse.json(
       {
         error: 'Failed to process scheduling feedback',
@@ -122,8 +120,6 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('Get feedback history error:', error);
-
     return NextResponse.json(
       {
         error: 'Failed to retrieve feedback history',

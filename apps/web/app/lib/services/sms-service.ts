@@ -45,7 +45,6 @@ export class SMSService {
       }
       return data || [];
     } catch (error) {
-      console.error('Error fetching SMS providers:', error);
       throw this.createSMSError(
         'PROVIDER_ERROR',
         'Failed to fetch providers',
@@ -70,7 +69,6 @@ export class SMSService {
       }
       return data || null;
     } catch (error) {
-      console.error('Error fetching active SMS provider:', error);
       throw this.createSMSError(
         'PROVIDER_ERROR',
         'Failed to fetch active provider',
@@ -111,7 +109,6 @@ export class SMSService {
       }
       return data;
     } catch (error) {
-      console.error('Error upserting SMS provider:', error);
       throw this.createSMSError(
         'PROVIDER_ERROR',
         'Failed to save provider configuration',
@@ -132,8 +129,7 @@ export class SMSService {
       });
 
       return response.status === 'queued' || response.status === 'sent';
-    } catch (error) {
-      console.error('Error testing SMS provider:', error);
+    } catch (_error) {
       return false;
     }
   }
@@ -212,7 +208,6 @@ export class SMSService {
         queued_at: new Date().toISOString(),
       };
     } catch (error) {
-      console.error('Error sending SMS:', error);
       throw error instanceof Error && 'code' in error
         ? error
         : this.createSMSError(
@@ -278,7 +273,6 @@ export class SMSService {
         results.failed_messages === 0 ? 'completed' : 'completed';
       return results;
     } catch (error) {
-      console.error('Error sending bulk SMS:', error);
       throw this.createSMSError(
         'PROVIDER_ERROR',
         'Failed to send bulk SMS messages',
@@ -577,7 +571,6 @@ export class SMSService {
         },
       };
     } catch (error) {
-      console.error('Error fetching SMS messages:', error);
       throw this.createSMSError(
         'PROVIDER_ERROR',
         'Failed to fetch messages',
@@ -602,7 +595,6 @@ export class SMSService {
       }
       return data || null;
     } catch (error) {
-      console.error('Error fetching SMS message:', error);
       throw this.createSMSError(
         'PROVIDER_ERROR',
         'Failed to fetch message',
@@ -628,7 +620,6 @@ export class SMSService {
       }
       return data || [];
     } catch (error) {
-      console.error('Error fetching SMS templates:', error);
       throw this.createSMSError(
         'PROVIDER_ERROR',
         'Failed to fetch templates',
@@ -658,7 +649,6 @@ export class SMSService {
       }
       return data;
     } catch (error) {
-      console.error('Error upserting SMS template:', error);
       throw this.createSMSError(
         'PROVIDER_ERROR',
         'Failed to save template',
@@ -686,8 +676,7 @@ export class SMSService {
         throw error;
       }
       return data?.status || 'pending';
-    } catch (error) {
-      console.error('Error checking opt-in status:', error);
+    } catch (_error) {
       return 'pending';
     }
   }
@@ -721,7 +710,6 @@ export class SMSService {
       }
       return data;
     } catch (error) {
-      console.error('Error updating opt-in status:', error);
       throw this.createSMSError(
         'PROVIDER_ERROR',
         'Failed to update opt-in status',
@@ -745,12 +733,8 @@ export class SMSService {
           await this.processSMSDevWebhook(payload as SMSDevWebhook);
           break;
         default:
-          console.warn(
-            `Webhook processing not implemented for provider: ${provider}`
-          );
       }
     } catch (error) {
-      console.error('Error processing SMS webhook:', error);
       throw this.createSMSError(
         'WEBHOOK_ERROR',
         'Failed to process webhook',
@@ -781,7 +765,6 @@ export class SMSService {
       }
       return data;
     } catch (error) {
-      console.error('Error fetching SMS analytics:', error);
       throw this.createSMSError(
         'PROVIDER_ERROR',
         'Failed to fetch analytics',

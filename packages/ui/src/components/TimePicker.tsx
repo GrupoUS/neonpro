@@ -4,13 +4,13 @@ import { cn } from '../utils/cn';
 import { Button } from './Button';
 import { Popover, PopoverContent, PopoverTrigger } from './Popover';
 
-export interface TimePickerProps {
+export type TimePickerProps = {
   value: string;
   onChange: (time: string) => void;
   placeholder?: string;
   disabled?: boolean;
   className?: string;
-}
+};
 
 const TimePicker = React.forwardRef<HTMLButtonElement, TimePickerProps>(
   (

@@ -660,7 +660,6 @@ window.PR_SHOULD_USE_CONTINUATION = true;
       const T = V[S];
       if (Object.hasOwn(t, T)) {
         if (window.console) {
-          console.warn('cannot override language handler %s', T);
         }
       } else {
         t[T] = U;
@@ -789,9 +788,8 @@ window.PR_SHOULD_USE_CONTINUATION = true;
       V.basePos = 0;
       q(U, T)(V);
       D(V);
-    } catch (W) {
+    } catch (_W) {
       if ('console' in window) {
-        console.log(W?.stack ? W.stack : W);
       }
     }
   }

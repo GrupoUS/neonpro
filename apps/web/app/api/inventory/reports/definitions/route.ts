@@ -33,7 +33,6 @@ export async function GET(request: NextRequest) {
       definitions,
     });
   } catch (error) {
-    console.error('Error fetching report definitions:', error);
     return NextResponse.json(
       {
         error: 'Failed to fetch report definitions',
@@ -98,7 +97,6 @@ export async function POST(request: NextRequest) {
       definition: savedDefinition,
     });
   } catch (error) {
-    console.error('Error creating report definition:', error);
     return NextResponse.json(
       {
         error: 'Failed to create report definition',
@@ -113,10 +111,10 @@ export async function POST(request: NextRequest) {
 // VALIDATION HELPERS
 // =============================================================================
 
-interface ValidationResult {
+type ValidationResult = {
   isValid: boolean;
   errors: string[];
-}
+};
 
 function validateReportDefinition(body: any): ValidationResult {
   const errors: string[] = [];

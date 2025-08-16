@@ -11,7 +11,7 @@ import { toast } from 'sonner';
 import { createClient } from '@/app/utils/supabase/client';
 
 // Types
-export interface Customer {
+export type Customer = {
   id: string;
   profile_id: string;
   profile?: {
@@ -31,9 +31,9 @@ export interface Customer {
   status: 'active' | 'inactive' | 'blocked';
   created_at: string;
   updated_at: string;
-}
+};
 
-export interface CustomerSegment {
+export type CustomerSegment = {
   id: string;
   name: string;
   description?: string;
@@ -44,9 +44,9 @@ export interface CustomerSegment {
   created_by: string;
   created_at: string;
   updated_at: string;
-}
+};
 
-export interface MarketingCampaign {
+export type MarketingCampaign = {
   id: string;
   name: string;
   description?: string;
@@ -64,10 +64,10 @@ export interface MarketingCampaign {
   created_by: string;
   created_at: string;
   updated_at: string;
-}
+};
 
 // State interface
-interface CRMState {
+type CRMState = {
   customers: Customer[];
   segments: CustomerSegment[];
   campaigns: MarketingCampaign[];
@@ -86,7 +86,7 @@ interface CRMState {
     customer_status: string;
     customer_segment: string;
   };
-}
+};
 
 // Actions
 type CRMAction =
@@ -217,7 +217,7 @@ const initialState: CRMState = {
 };
 
 // Context interface
-interface CRMContextType {
+type CRMContextType = {
   state: CRMState;
 
   // Customer actions
@@ -250,7 +250,7 @@ interface CRMContextType {
 
   // Computed properties
   filteredCustomers: Customer[];
-}
+};
 
 // Create context
 const CRMContext = createContext<CRMContextType | undefined>(undefined);
@@ -291,8 +291,7 @@ export function CRMProvider({ children }: { children: ReactNode }) {
       }
 
       dispatch({ type: 'SET_CUSTOMERS', payload: data || [] });
-    } catch (error) {
-      console.error('Error loading customers:', error);
+    } catch (_error) {
       dispatch({
         type: 'SET_ERROR',
         payload: { key: 'customers', value: 'Erro ao carregar clientes' },
@@ -323,7 +322,6 @@ export function CRMProvider({ children }: { children: ReactNode }) {
       dispatch({ type: 'ADD_CUSTOMER', payload: data });
       toast.success('Cliente criado com sucesso');
     } catch (error) {
-      console.error('Error creating customer:', error);
       toast.error('Erro ao criar cliente');
       throw error;
     }
@@ -345,7 +343,6 @@ export function CRMProvider({ children }: { children: ReactNode }) {
       dispatch({ type: 'UPDATE_CUSTOMER', payload: data });
       toast.success('Cliente atualizado com sucesso');
     } catch (error) {
-      console.error('Error updating customer:', error);
       toast.error('Erro ao atualizar cliente');
       throw error;
     }
@@ -365,7 +362,6 @@ export function CRMProvider({ children }: { children: ReactNode }) {
       dispatch({ type: 'DELETE_CUSTOMER', payload: customerId });
       toast.success('Cliente excluído com sucesso');
     } catch (error) {
-      console.error('Error deleting customer:', error);
       toast.error('Erro ao excluir cliente');
       throw error;
     }
@@ -393,8 +389,7 @@ export function CRMProvider({ children }: { children: ReactNode }) {
       }
 
       dispatch({ type: 'SET_SEGMENTS', payload: data || [] });
-    } catch (error) {
-      console.error('Error loading segments:', error);
+    } catch (_error) {
       dispatch({
         type: 'SET_ERROR',
         payload: { key: 'segments', value: 'Erro ao carregar segmentos' },
@@ -425,7 +420,6 @@ export function CRMProvider({ children }: { children: ReactNode }) {
       dispatch({ type: 'ADD_SEGMENT', payload: data });
       toast.success('Segmento criado com sucesso');
     } catch (error) {
-      console.error('Error creating segment:', error);
       toast.error('Erro ao criar segmento');
       throw error;
     }
@@ -447,7 +441,6 @@ export function CRMProvider({ children }: { children: ReactNode }) {
       dispatch({ type: 'UPDATE_SEGMENT', payload: data });
       toast.success('Segmento atualizado com sucesso');
     } catch (error) {
-      console.error('Error updating segment:', error);
       toast.error('Erro ao atualizar segmento');
       throw error;
     }
@@ -467,7 +460,6 @@ export function CRMProvider({ children }: { children: ReactNode }) {
       dispatch({ type: 'DELETE_SEGMENT', payload: segmentId });
       toast.success('Segmento excluído com sucesso');
     } catch (error) {
-      console.error('Error deleting segment:', error);
       toast.error('Erro ao excluir segmento');
       throw error;
     }
@@ -495,8 +487,7 @@ export function CRMProvider({ children }: { children: ReactNode }) {
       }
 
       dispatch({ type: 'SET_CAMPAIGNS', payload: data || [] });
-    } catch (error) {
-      console.error('Error loading campaigns:', error);
+    } catch (_error) {
       dispatch({
         type: 'SET_ERROR',
         payload: { key: 'campaigns', value: 'Erro ao carregar campanhas' },
@@ -527,7 +518,6 @@ export function CRMProvider({ children }: { children: ReactNode }) {
       dispatch({ type: 'ADD_CAMPAIGN', payload: data });
       toast.success('Campanha criada com sucesso');
     } catch (error) {
-      console.error('Error creating campaign:', error);
       toast.error('Erro ao criar campanha');
       throw error;
     }
@@ -549,7 +539,6 @@ export function CRMProvider({ children }: { children: ReactNode }) {
       dispatch({ type: 'UPDATE_CAMPAIGN', payload: data });
       toast.success('Campanha atualizada com sucesso');
     } catch (error) {
-      console.error('Error updating campaign:', error);
       toast.error('Erro ao atualizar campanha');
       throw error;
     }
@@ -569,7 +558,6 @@ export function CRMProvider({ children }: { children: ReactNode }) {
       dispatch({ type: 'DELETE_CAMPAIGN', payload: campaignId });
       toast.success('Campanha excluída com sucesso');
     } catch (error) {
-      console.error('Error deleting campaign:', error);
       toast.error('Erro ao excluir campanha');
       throw error;
     }

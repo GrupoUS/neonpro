@@ -87,8 +87,6 @@ export async function POST(request: NextRequest) {
       events: trackedEvents,
     });
   } catch (error) {
-    console.error('Event tracking error:', error);
-
     return NextResponse.json(
       {
         error: 'Failed to track events',
@@ -162,8 +160,6 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('Event retrieval error:', error);
-
     return NextResponse.json(
       {
         error: 'Failed to retrieve events',

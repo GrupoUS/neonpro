@@ -65,7 +65,6 @@ export async function GET(request: Request) {
     const { data: taxCalculations, error: taxError } = await taxQuery;
 
     if (taxError) {
-      console.error('Error fetching tax calculations:', taxError);
       return NextResponse.json(
         { error: 'Failed to fetch tax calculations' },
         { status: 500 }
@@ -85,7 +84,6 @@ export async function GET(request: Request) {
     const { data: nfeDocuments, error: nfeError } = await nfeQuery;
 
     if (nfeError) {
-      console.error('Error fetching NFe documents:', nfeError);
       return NextResponse.json(
         { error: 'Failed to fetch NFe documents' },
         { status: 500 }
@@ -186,8 +184,7 @@ export async function GET(request: Request) {
         statistics: stats,
       },
     });
-  } catch (error) {
-    console.error('Tax statistics error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

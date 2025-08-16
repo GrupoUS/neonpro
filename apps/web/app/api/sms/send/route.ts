@@ -54,8 +54,6 @@ export async function POST(request: NextRequest) {
       { status: 200 }
     );
   } catch (error) {
-    console.error('SMS send error:', error);
-
     // Handle validation errors
     if (error instanceof z.ZodError) {
       return NextResponse.json(

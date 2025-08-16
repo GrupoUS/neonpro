@@ -18,12 +18,12 @@ import {
  * Based on serverless job processing patterns and Next.js best practices
  */
 
-interface JobProcessingStats {
+type JobProcessingStats = {
   processed: number;
   errors: number;
   duration: number;
   timestamp: string;
-}
+};
 
 /**
  * Verify API key for job processing endpoints
@@ -33,7 +33,6 @@ function verifyApiKey(request: NextRequest): boolean {
   const validApiKey = process.env.JOBS_API_KEY;
 
   if (!validApiKey) {
-    console.error('JOBS_API_KEY not configured');
     return false;
   }
 
@@ -58,9 +57,7 @@ async function logJobActivity(
       details: details || {},
       created_at: stats.timestamp,
     });
-  } catch (error) {
-    console.error('Failed to log job activity:', error);
-  }
+  } catch (_error) {}
 }
 
 /**
@@ -136,8 +133,7 @@ export async function GET(request: NextRequest) {
           { status: 400 }
         );
     }
-  } catch (error) {
-    console.error('Jobs API GET error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -161,8 +157,6 @@ export async function POST(request: NextRequest) {
 
     switch (action) {
       case 'process': {
-        // Manual job processing trigger
-        console.log('Starting manual job processing...');
         const stats = await processBackgroundJobs();
         const duration = Date.now() - startTime;
 
@@ -304,7 +298,6 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
     }
   } catch (error) {
-    console.error('Jobs API POST error:', error);
     return NextResponse.json(
       { error: error.message || 'Internal server error' },
       { status: 500 }
@@ -378,7 +371,6 @@ export async function PUT(request: NextRequest) {
         return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
     }
   } catch (error) {
-    console.error('Jobs API PUT error:', error);
     return NextResponse.json(
       { error: error.message || 'Internal server error' },
       { status: 500 }
@@ -418,7 +410,6 @@ export async function DELETE(request: NextRequest) {
       message: `Job ${jobId} deleted`,
     });
   } catch (error) {
-    console.error('Jobs API DELETE error:', error);
     return NextResponse.json(
       { error: error.message || 'Internal server error' },
       { status: 500 }

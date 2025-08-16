@@ -49,8 +49,7 @@ export async function POST(request: NextRequest) {
       expiresAt: new Date(Date.now() + 60 * 60 * 1000).toISOString(), // 1 hour
       sessionId,
     });
-  } catch (error) {
-    console.error('CSRF token generation error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to generate CSRF token' },
       { status: 500 }
@@ -88,8 +87,7 @@ export async function PUT(request: NextRequest) {
       valid: true,
       message: 'CSRF token is valid',
     });
-  } catch (error) {
-    console.error('CSRF token validation error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to validate CSRF token' },
       { status: 500 }
@@ -128,8 +126,7 @@ export async function DELETE(request: NextRequest) {
     return NextResponse.json({
       message: 'CSRF tokens invalidated successfully',
     });
-  } catch (error) {
-    console.error('CSRF token invalidation error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to invalidate CSRF tokens' },
       { status: 500 }

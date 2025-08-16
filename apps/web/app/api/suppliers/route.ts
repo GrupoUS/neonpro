@@ -84,8 +84,7 @@ export async function GET(request: NextRequest) {
     );
 
     return NextResponse.json(result);
-  } catch (error) {
-    console.error('Erro ao listar fornecedores:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
       { status: 500 }
@@ -125,8 +124,6 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(supplier, { status: 201 });
   } catch (error) {
-    console.error('Erro ao criar fornecedor:', error);
-
     if (error instanceof Error && error.message.includes('já existe')) {
       return NextResponse.json({ error: error.message }, { status: 409 });
     }

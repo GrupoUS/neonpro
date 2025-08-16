@@ -16,7 +16,7 @@ import type { Treatment, TreatmentHistory } from '@/types/treatment';
 import type { RiskAssessment } from './risk-assessment';
 
 // Predictive Analytics Types
-export interface OutcomePrediction {
+export type OutcomePrediction = {
   prediction_id: string;
   patient_id: string;
   treatment_id: string;
@@ -26,113 +26,113 @@ export interface OutcomePrediction {
   contributing_factors: PredictionFactor[];
   alternative_scenarios: AlternativeScenario[];
   monitoring_recommendations: string[];
-}
+};
 
-export interface PredictedOutcome {
+export type PredictedOutcome = {
   success_probability: number;
   satisfaction_score: number; // 1-10 scale
   recovery_timeline: RecoveryTimeline;
   potential_complications: ComplicationPrediction[];
   expected_results: ExpectedResult[];
   long_term_prognosis: LongTermPrognosis;
-}
+};
 
-export interface RecoveryTimeline {
+export type RecoveryTimeline = {
   immediate_recovery: string; // 0-24 hours
   short_term_recovery: string; // 1-7 days
   medium_term_recovery: string; // 1-4 weeks
   long_term_recovery: string; // 1-6 months
   full_result_timeline: string; // Final results
-}
+};
 
-export interface ComplicationPrediction {
+export type ComplicationPrediction = {
   complication_type: string;
   probability: number;
   severity: 'mild' | 'moderate' | 'severe';
   onset_timeframe: string;
   prevention_strategies: string[];
   early_warning_signs: string[];
-}
+};
 
-export interface ExpectedResult {
+export type ExpectedResult = {
   result_category: 'aesthetic' | 'functional' | 'psychological';
   description: string;
   probability: number;
   measurement_criteria: string[];
   timeline_to_achieve: string;
-}
+};
 
-export interface LongTermPrognosis {
+export type LongTermPrognosis = {
   durability_months: number;
   maintenance_requirements: string[];
   potential_future_treatments: string[];
   aging_considerations: string[];
-}
+};
 
-export interface PredictionFactor {
+export type PredictionFactor = {
   factor_name: string;
   factor_type: 'demographic' | 'medical' | 'lifestyle' | 'treatment_specific';
   impact_weight: number;
   impact_direction: 'positive' | 'negative' | 'neutral';
   confidence_level: number;
-}
+};
 
-export interface AlternativeScenario {
+export type AlternativeScenario = {
   scenario_name: string;
   probability: number;
   outcome_changes: OutcomeChange[];
   trigger_conditions: string[];
-}
+};
 
-export interface OutcomeChange {
+export type OutcomeChange = {
   parameter: string;
   original_value: number;
   alternative_value: number;
   change_reason: string;
-}
+};
 
-export interface PatientResponseModel {
+export type PatientResponseModel = {
   patient_id: string;
   response_profile: ResponseProfile;
   historical_patterns: HistoricalPattern[];
   predictive_indicators: PredictiveIndicator[];
   personalization_factors: PersonalizationFactor[];
-}
+};
 
-export interface ResponseProfile {
+export type ResponseProfile = {
   healing_rate: 'slow' | 'average' | 'fast';
   pain_tolerance: 'low' | 'moderate' | 'high';
   compliance_tendency: 'poor' | 'average' | 'excellent';
   satisfaction_tendency: 'critical' | 'moderate' | 'easily_satisfied';
   complication_susceptibility: 'low' | 'moderate' | 'high';
-}
+};
 
-export interface HistoricalPattern {
+export type HistoricalPattern = {
   pattern_type: string;
   occurrences: number;
   average_outcome: number;
   trend_direction: 'improving' | 'stable' | 'declining';
-}
+};
 
-export interface PredictiveIndicator {
+export type PredictiveIndicator = {
   indicator_name: string;
   current_value: number;
   predictive_power: number;
   threshold_values: ThresholdValue[];
-}
+};
 
-export interface ThresholdValue {
+export type ThresholdValue = {
   threshold: number;
   predicted_outcome: string;
   confidence: number;
-}
+};
 
-export interface PersonalizationFactor {
+export type PersonalizationFactor = {
   factor_name: string;
   factor_value: any;
   impact_on_outcomes: number;
   personalization_weight: number;
-}
+};
 
 /**
  * AI Predictive Analytics Engine
@@ -216,8 +216,7 @@ export class AIPredictiveAnalyticsEngine {
         alternative_scenarios: alternativeScenarios,
         monitoring_recommendations: monitoringRecommendations,
       };
-    } catch (error) {
-      console.error('Outcome prediction failed:', error);
+    } catch (_error) {
       throw new Error('Failed to predict treatment outcome');
     }
   }
@@ -693,17 +692,11 @@ export class AIPredictiveAnalyticsEngine {
   }
 
   // Mock implementations for demonstration
-  private initializePredictionModels(): void {
-    console.log('Initializing prediction models...');
-  }
+  private initializePredictionModels(): void {}
 
-  private loadHistoricalData(): void {
-    console.log('Loading historical outcome data...');
-  }
+  private loadHistoricalData(): void {}
 
-  private buildPatientResponseModels(): void {
-    console.log('Building patient response models...');
-  }
+  private buildPatientResponseModels(): void {}
 
   // Additional helper methods would be implemented here...
   private analyzeHealingRate(

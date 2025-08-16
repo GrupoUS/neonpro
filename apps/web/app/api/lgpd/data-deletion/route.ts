@@ -51,7 +51,7 @@ const DataDeletionRequestSchema = z.object({
   retainLegalData: z.boolean().default(true), // Keep data required by law
 });
 
-interface DeletionResult {
+type DeletionResult = {
   deletionId: string;
   userId: string;
   deletionDate: string;
@@ -69,7 +69,7 @@ interface DeletionResult {
     recordsAnonymized: number;
     recordsRetained: number;
   };
-}
+};
 
 // Legal retention requirements
 const RETENTION_REQUIREMENTS = {
@@ -485,9 +485,7 @@ async function logDeletionRequest(
         created_at: new Date().toISOString(),
       },
     ]);
-  } catch (error) {
-    console.error('Failed to log deletion request:', error);
-  }
+  } catch (_error) {}
 }
 
 export async function POST(request: NextRequest) {
@@ -607,8 +605,6 @@ export async function POST(request: NextRequest) {
         'This action is irreversible. Your data has been permanently deleted.',
     });
   } catch (error) {
-    console.error('LGPD Data Deletion Error:', error);
-
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {
@@ -659,7 +655,6 @@ export async function GET(_request: NextRequest) {
       .order('scheduled_for', { ascending: true });
 
     if (error) {
-      console.error('Error fetching deletion history:', error);
     }
 
     return NextResponse.json({
@@ -707,8 +702,7 @@ export async function GET(_request: NextRequest) {
         },
       },
     });
-  } catch (error) {
-    console.error('LGPD Data Deletion GET Error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

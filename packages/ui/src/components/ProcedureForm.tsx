@@ -17,7 +17,7 @@ import {
 import { Textarea } from './Textarea';
 import { TimePicker } from './TimePicker';
 
-export interface ProcedureFormProps {
+export type ProcedureFormProps = {
   procedure?: Partial<ProcedureData>;
   availablePractitioners: PractitionerData[];
   availableTreatments: TreatmentData[];
@@ -26,9 +26,9 @@ export interface ProcedureFormProps {
   mode?: 'create' | 'edit';
   loading?: boolean;
   className?: string;
-}
+};
 
-interface FormData {
+type FormData = {
   name: string;
   description: string;
   category: string;
@@ -44,7 +44,7 @@ interface FormData {
   risks: string[];
   consentRequired: boolean;
   lgpdConsent: boolean;
-}
+};
 
 const categories = [
   { value: 'facial', label: 'Facial' },
@@ -461,14 +461,14 @@ const ProcedureForm = React.forwardRef<HTMLFormElement, ProcedureFormProps>(
 );
 
 // Helper component for list fields
-interface ListFieldProps {
+type ListFieldProps = {
   title: string;
   icon: React.ReactNode;
   items: string[];
   onAdd: (item: string) => void;
   onRemove: (index: number) => void;
   placeholder: string;
-}
+};
 
 const ListField: React.FC<ListFieldProps> = ({
   title,

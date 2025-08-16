@@ -70,7 +70,7 @@ import { BackupSystem } from '@/lib/backup';
 import { formatBytes, formatDate, formatDuration } from '@/lib/utils';
 
 // Types
-interface BackupConfig {
+type BackupConfig = {
   id: string;
   name: string;
   description?: string;
@@ -82,9 +82,9 @@ interface BackupConfig {
   status: 'ACTIVE' | 'PAUSED' | 'ERROR';
   storage_provider: 'LOCAL' | 'S3' | 'GCS' | 'AZURE';
   retention_daily: number;
-}
+};
 
-interface BackupRecord {
+type BackupRecord = {
   id: string;
   config_id: string;
   config_name: string;
@@ -98,9 +98,9 @@ interface BackupRecord {
   file_count?: number;
   progress?: number;
   error_message?: string;
-}
+};
 
-interface SystemMetrics {
+type SystemMetrics = {
   total_backups_today: number;
   successful_backups_today: number;
   failed_backups_today: number;
@@ -109,16 +109,16 @@ interface SystemMetrics {
   active_configs: number;
   pending_recoveries: number;
   system_health: 'HEALTHY' | 'DEGRADED' | 'UNHEALTHY';
-}
+};
 
-interface Alert {
+type Alert = {
   id: string;
   type: 'BACKUP_FAILURE' | 'BACKUP_SUCCESS' | 'STORAGE_FULL' | 'SYSTEM_ERROR';
   severity: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
   message: string;
   timestamp: Date;
   acknowledged: boolean;
-}
+};
 
 const BackupDashboard: React.FC = () => {
   // State
@@ -156,8 +156,7 @@ const BackupDashboard: React.FC = () => {
       setRecords(recordsData);
       setMetrics(metricsData);
       setAlerts(alertsData);
-    } catch (error) {
-      console.error('Error loading dashboard data:', error);
+    } catch (_error) {
     } finally {
       setLoading(false);
     }
@@ -257,9 +256,7 @@ const BackupDashboard: React.FC = () => {
     try {
       await backupSystem.runManualBackup(configId);
       await loadDashboardData();
-    } catch (error) {
-      console.error('Error running backup:', error);
-    }
+    } catch (_error) {}
   };
 
   const toggleConfig = async (configId: string, enabled: boolean) => {
@@ -271,9 +268,7 @@ const BackupDashboard: React.FC = () => {
         )
       );
       await loadDashboardData();
-    } catch (error) {
-      console.error('Error toggling config:', error);
-    }
+    } catch (_error) {}
   };
 
   const acknowledgeAlert = async (alertId: string) => {
@@ -283,9 +278,7 @@ const BackupDashboard: React.FC = () => {
           alert.id === alertId ? { ...alert, acknowledged: true } : alert
         )
       );
-    } catch (error) {
-      console.error('Error acknowledging alert:', error);
-    }
+    } catch (_error) {}
   };
 
   // Utility functions

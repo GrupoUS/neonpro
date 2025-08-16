@@ -119,8 +119,6 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('Error in quick access patients:', error);
-
     await auditLogger.log({
       action: 'quick_access_patients_error',
       userId: 'system',
@@ -249,8 +247,6 @@ export async function POST(request: NextRequest) {
       data: result,
     });
   } catch (error) {
-    console.error('Error managing patient favorites:', error);
-
     await auditLogger.log({
       action: 'patient_favorite_error',
       userId: 'system',

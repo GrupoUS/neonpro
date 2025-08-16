@@ -383,8 +383,7 @@ export function encryptData(data: string): string {
     const authTag = cipher.getAuthTag();
 
     return `${iv.toString('hex')}:${authTag.toString('hex')}:${encrypted}`;
-  } catch (error) {
-    console.error('Erro ao criptografar dados:', error);
+  } catch (_error) {
     return data; // Fallback para dados não criptografados
   }
 }
@@ -411,8 +410,7 @@ export function decryptData(encryptedData: string): string {
     decrypted += decipher.final('utf8');
 
     return decrypted;
-  } catch (error) {
-    console.error('Erro ao descriptografar dados:', error);
+  } catch (_error) {
     return encryptedData; // Fallback para dados originais
   }
 }
@@ -607,8 +605,7 @@ export async function getLocationByIP(ipAddress: IPAddress): Promise<{
       city: 'Desconhecido',
       timezone: 'America/Sao_Paulo',
     };
-  } catch (error) {
-    console.error('Erro ao obter localização por IP:', error);
+  } catch (_error) {
     return {};
   }
 }
@@ -698,8 +695,7 @@ export function isInQuietHours(
     }
     // Atravessa meia-noite (ex: 22:00 - 08:00)
     return currentTime >= startTime || currentTime <= endTime;
-  } catch (error) {
-    console.error('Erro ao verificar horário de silêncio:', error);
+  } catch (_error) {
     return false;
   }
 }

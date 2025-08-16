@@ -51,9 +51,7 @@ export async function GET(request: NextRequest) {
     const devices = await manager.getUserDevices(userId);
 
     return NextResponse.json({ devices });
-  } catch (error) {
-    console.error('Get devices error:', error);
-
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error while fetching devices' },
       { status: 500 }
@@ -115,9 +113,7 @@ export async function POST(request: NextRequest) {
     });
 
     return NextResponse.json({ device });
-  } catch (error) {
-    console.error('Device registration error:', error);
-
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error during device registration' },
       { status: 500 }
@@ -174,9 +170,7 @@ export async function PUT(request: NextRequest) {
     });
 
     return NextResponse.json({ device: updatedDevice });
-  } catch (error) {
-    console.error('Device update error:', error);
-
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error during device update' },
       { status: 500 }
@@ -236,9 +230,7 @@ export async function DELETE(request: NextRequest) {
       success: true,
       message: 'Device removed successfully',
     });
-  } catch (error) {
-    console.error('Device removal error:', error);
-
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error during device removal' },
       { status: 500 }

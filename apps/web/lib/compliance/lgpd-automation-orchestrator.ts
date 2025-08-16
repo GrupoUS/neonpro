@@ -18,7 +18,7 @@ import {
 } from './lgpd-automation';
 import { LGPDComplianceService } from './lgpd-core';
 
-export interface AutomationSchedule {
+export type AutomationSchedule = {
   id: string;
   clinicId: string;
   automationType:
@@ -32,9 +32,9 @@ export interface AutomationSchedule {
   lastRun?: Date;
   nextRun: Date;
   config: any;
-}
+};
 
-export interface AutomationResult {
+export type AutomationResult = {
   id: string;
   automationType: string;
   status: 'success' | 'partial' | 'failed';
@@ -44,9 +44,9 @@ export interface AutomationResult {
   itemsSuccessful: number;
   errors: string[];
   details: any;
-}
+};
 
-export interface LGPDDashboardMetrics {
+export type LGPDDashboardMetrics = {
   complianceScore: number;
   activeConsents: number;
   pendingRequests: number;
@@ -54,7 +54,7 @@ export interface LGPDDashboardMetrics {
   lastAuditDate: Date;
   nextScheduledTasks: AutomationSchedule[];
   recentAlerts: string[];
-}
+};
 
 /**
  * Orquestrador principal da automação LGPD
@@ -121,8 +121,6 @@ export class LGPDAutomationOrchestrator {
 
       return results;
     } catch (error) {
-      console.error('Full automation failed:', error);
-
       const errorResult: AutomationResult = {
         id: crypto.randomUUID(),
         automationType: 'full_automation',
@@ -385,49 +383,42 @@ export class LGPDAutomationOrchestrator {
    * Obtém métricas do dashboard LGPD
    */
   async getDashboardMetrics(clinicId: string): Promise<LGPDDashboardMetrics> {
-    try {
-      // Buscar dados básicos
-      const [consents, requests, schedules, auditLogs] = await Promise.all([
-        this.getActiveConsents(clinicId),
-        this.getPendingRequests(clinicId),
-        this.getScheduledTasks(clinicId),
-        this.getRecentAuditLogs(clinicId),
-      ]);
+    // Buscar dados básicos
+    const [consents, requests, schedules, auditLogs] = await Promise.all([
+      this.getActiveConsents(clinicId),
+      this.getPendingRequests(clinicId),
+      this.getScheduledTasks(clinicId),
+      this.getRecentAuditLogs(clinicId),
+    ]);
 
-      // Calcular score de compliance
-      const healthCheck =
-        await this.auditService.performComplianceHealthCheck(clinicId);
+    // Calcular score de compliance
+    const healthCheck =
+      await this.auditService.performComplianceHealthCheck(clinicId);
 
-      // Identificar issues críticos
-      const criticalIssues = healthCheck.criticalIssues.length;
+    // Identificar issues críticos
+    const criticalIssues = healthCheck.criticalIssues.length;
 
-      // Próximas tarefas agendadas
-      const nextScheduledTasks = schedules
-        .filter((s) => s.enabled)
-        .sort((a, b) => a.nextRun.getTime() - b.nextRun.getTime())
-        .slice(0, 5);
+    // Próximas tarefas agendadas
+    const nextScheduledTasks = schedules
+      .filter((s) => s.enabled)
+      .sort((a, b) => a.nextRun.getTime() - b.nextRun.getTime())
+      .slice(0, 5);
 
-      // Alertas recentes
-      const recentAlerts = auditLogs
-        .filter(
-          (log) => log.riskLevel === 'high' || log.riskLevel === 'critical'
-        )
-        .slice(0, 5)
-        .map((log) => `${log.eventType}: ${log.action}`);
+    // Alertas recentes
+    const recentAlerts = auditLogs
+      .filter((log) => log.riskLevel === 'high' || log.riskLevel === 'critical')
+      .slice(0, 5)
+      .map((log) => `${log.eventType}: ${log.action}`);
 
-      return {
-        complianceScore: healthCheck.overallScore,
-        activeConsents: consents.length,
-        pendingRequests: requests.length,
-        criticalIssues,
-        lastAuditDate: healthCheck.lastAuditDate,
-        nextScheduledTasks,
-        recentAlerts,
-      };
-    } catch (error) {
-      console.error('Error getting dashboard metrics:', error);
-      throw error;
-    }
+    return {
+      complianceScore: healthCheck.overallScore,
+      activeConsents: consents.length,
+      pendingRequests: requests.length,
+      criticalIssues,
+      lastAuditDate: healthCheck.lastAuditDate,
+      nextScheduledTasks,
+      recentAlerts,
+    };
   }
 
   /**
@@ -437,19 +428,14 @@ export class LGPDAutomationOrchestrator {
     clinicId: string,
     config: AutomationConfig
   ): Promise<void> {
-    try {
-      await this.supabase.from('lgpd_automation_config').upsert({
-        clinic_id: clinicId,
-        config,
-        updated_at: new Date().toISOString(),
-      });
+    await this.supabase.from('lgpd_automation_config').upsert({
+      clinic_id: clinicId,
+      config,
+      updated_at: new Date().toISOString(),
+    });
 
-      // Criar/atualizar agendamentos
-      await this.updateAutomationSchedules(clinicId, config);
-    } catch (error) {
-      console.error('Error configuring automation:', error);
-      throw error;
-    }
+    // Criar/atualizar agendamentos
+    await this.updateAutomationSchedules(clinicId, config);
   }
 
   /**
@@ -478,13 +464,9 @@ export class LGPDAutomationOrchestrator {
               next_run: nextRun.toISOString(),
             })
             .eq('id', task.id);
-        } catch (error) {
-          console.error(`Failed to execute scheduled task ${task.id}:`, error);
-        }
+        } catch (_error) {}
       }
-    } catch (error) {
-      console.error('Error executing scheduled tasks:', error);
-    }
+    } catch (_error) {}
   }
 
   // Métodos auxiliares privados

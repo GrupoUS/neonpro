@@ -14,23 +14,23 @@ import { Button } from './Button';
 import { PatientCard, type PatientData } from './PatientCard';
 import type { FilterOption } from './SearchBox';
 
-export interface PaginationProps {
+export type PaginationProps = {
   currentPage: number;
   totalPages: number;
   totalItems: number;
   itemsPerPage: number;
   onPageChange: (page: number) => void;
-}
+};
 
-export interface PatientTableColumn {
+export type PatientTableColumn = {
   key: keyof PatientData | 'actions';
   label: string;
   sortable?: boolean;
   width?: string;
   render?: (patient: PatientData) => React.ReactNode;
-}
+};
 
-export interface PatientTableProps {
+export type PatientTableProps = {
   patients: PatientData[];
   loading?: boolean;
   searchValue?: string;
@@ -50,7 +50,7 @@ export interface PatientTableProps {
   viewMode?: 'table' | 'cards';
   onViewModeChange?: (mode: 'table' | 'cards') => void;
   className?: string;
-}
+};
 
 // Helper function to get initials from name
 const getInitials = (name: string): string => {
@@ -122,7 +122,7 @@ const PatientTable = React.forwardRef<HTMLDivElement, PatientTableProps>(
     },
     _ref
   ) => {
-    const handleSort = (column: string) => {
+    const _handleSort = (column: string) => {
       if (!onSort) {
         return;
       }
@@ -132,7 +132,7 @@ const PatientTable = React.forwardRef<HTMLDivElement, PatientTableProps>(
       onSort(column, newDirection);
     };
 
-    const handleSelectAll = () => {
+    const _handleSelectAll = () => {
       if (!onSelectionChange) {
         return;
       }
@@ -144,7 +144,7 @@ const PatientTable = React.forwardRef<HTMLDivElement, PatientTableProps>(
       }
     };
 
-    const handleSelectPatient = (patientId: string) => {
+    const _handleSelectPatient = (patientId: string) => {
       if (!onSelectionChange) {
         return;
       }

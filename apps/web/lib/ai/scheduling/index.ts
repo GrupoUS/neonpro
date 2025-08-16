@@ -34,7 +34,7 @@ import {
 import { RealTimeAdaptiveScheduling } from './real-time-adaptive';
 
 // Main AI Scheduling System Configuration
-interface AISchedulingConfig {
+type AISchedulingConfig = {
   enableRealTimeAdaptive: boolean;
   enableComplianceValidation: boolean;
   enableOptimization: boolean;
@@ -54,10 +54,10 @@ interface AISchedulingConfig {
     allowOverrides: boolean;
     requireApprovals: boolean;
   };
-}
+};
 
 // Scheduling Request
-interface SchedulingRequest {
+type SchedulingRequest = {
   criteria: SchedulingCriteria;
   preferences?: {
     preferredTimes?: Date[];
@@ -72,10 +72,10 @@ interface SchedulingRequest {
     urgencyReason?: string;
     specialRequirements?: string[];
   };
-}
+};
 
 // Scheduling Response
-interface SchedulingResponse {
+type SchedulingResponse = {
   success: boolean;
   recommendations: SchedulingRecommendation[];
   optimizationResult?: OptimizationResult;
@@ -89,7 +89,7 @@ interface SchedulingResponse {
     confidenceScore: number;
     nextAvailableSlot?: Date;
   };
-}
+};
 
 // Scheduling Status
 type SchedulingStatus =
@@ -102,14 +102,14 @@ type SchedulingStatus =
   | 'requires_approval';
 
 // Scheduling Event
-interface SchedulingEvent {
+type SchedulingEvent = {
   id: string;
   type: 'request' | 'recommendation' | 'conflict' | 'approval' | 'completion';
   status: SchedulingStatus;
   timestamp: Date;
   data: any;
   userId?: string;
-}
+};
 
 class AISchedulingSystem {
   private readonly supabase = createClient();
@@ -307,7 +307,6 @@ class AISchedulingSystem {
 
       return response;
     } catch (error) {
-      console.error('Error in AI scheduling system:', error);
       errors.push(
         `System error: ${error instanceof Error ? error.message : 'Unknown error'}`
       );
@@ -387,8 +386,7 @@ class AISchedulingSystem {
       }
 
       return response;
-    } catch (error) {
-      console.error('Error rescheduling appointment:', error);
+    } catch (_error) {
       throw new Error('Failed to reschedule appointment');
     }
   }
@@ -443,8 +441,7 @@ class AISchedulingSystem {
           reason
         );
       }
-    } catch (error) {
-      console.error('Error cancelling appointment:', error);
+    } catch (_error) {
       throw new Error('Failed to cancel appointment');
     }
   }
@@ -521,8 +518,7 @@ class AISchedulingSystem {
         topViolations: [], // Placeholder - would be calculated from compliance data
         recommendations,
       };
-    } catch (error) {
-      console.error('Error getting scheduling analytics:', error);
+    } catch (_error) {
       throw new Error('Failed to get scheduling analytics');
     }
   }
@@ -568,8 +564,7 @@ class AISchedulingSystem {
       );
 
       return alternatives.slice(0, 5); // Return top 5 alternatives
-    } catch (error) {
-      console.error('Error generating alternatives:', error);
+    } catch (_error) {
       return [];
     }
   }
@@ -623,9 +618,7 @@ class AISchedulingSystem {
         patientId: request.criteria.patientId,
         treatmentId: request.criteria.treatmentId,
       });
-    } catch (error) {
-      console.error('Error setting up real-time monitoring:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -662,9 +655,7 @@ class AISchedulingSystem {
     listeners.forEach((listener) => {
       try {
         listener(event);
-      } catch (error) {
-        console.error('Error in event listener:', error);
-      }
+      } catch (_error) {}
     });
   }
 
@@ -695,21 +686,14 @@ class AISchedulingSystem {
    * Notify patient of cancellation
    */
   private async notifyPatientCancellation(
-    patientId: string,
-    appointmentId: string,
-    reason: string
+    _patientId: string,
+    _appointmentId: string,
+    _reason: string
   ): Promise<void> {
     try {
-      // This would integrate with notification system
-      console.log(
-        `Notifying patient ${patientId} of appointment ${appointmentId} cancellation: ${reason}`
-      );
-
       // Could send email, SMS, push notification, etc.
       // await notificationService.sendCancellationNotification(patientId, appointmentId, reason)
-    } catch (error) {
-      console.error('Error notifying patient:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -768,17 +752,11 @@ class AISchedulingSystem {
    */
   async start(): Promise<void> {
     try {
-      console.log('Starting AI Scheduling System...');
-
       // Start real-time monitoring if enabled
       if (this.config.enableRealTimeAdaptive) {
         await this.realTimeAdaptive.startMonitoring();
-        console.log('Real-time adaptive scheduling started');
       }
-
-      console.log('AI Scheduling System started successfully');
-    } catch (error) {
-      console.error('Error starting AI Scheduling System:', error);
+    } catch (_error) {
       throw new Error('Failed to start AI Scheduling System');
     }
   }
@@ -788,17 +766,11 @@ class AISchedulingSystem {
    */
   async stop(): Promise<void> {
     try {
-      console.log('Stopping AI Scheduling System...');
-
       // Stop real-time monitoring
       if (this.config.enableRealTimeAdaptive) {
         await this.realTimeAdaptive.stopMonitoring();
-        console.log('Real-time adaptive scheduling stopped');
       }
-
-      console.log('AI Scheduling System stopped successfully');
-    } catch (error) {
-      console.error('Error stopping AI Scheduling System:', error);
+    } catch (_error) {
       throw new Error('Failed to stop AI Scheduling System');
     }
   }

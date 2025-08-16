@@ -9,7 +9,7 @@ import type {
 } from '@/hooks/use-notifications';
 import { useNotifications } from '@/hooks/use-notifications';
 
-interface NotificationContextValue {
+type NotificationContextValue = {
   // State from hook
   notifications: Notification[];
   unreadCount: number;
@@ -35,17 +35,17 @@ interface NotificationContextValue {
   showNotificationToast: (notification: Notification) => void;
   requestPermission: () => Promise<NotificationPermission>;
   sendPushNotification: (title: string, options?: NotificationOptions) => void;
-}
+};
 
 const NotificationContext = createContext<NotificationContextValue | undefined>(
   undefined
 );
 
-interface NotificationProviderProps {
+type NotificationProviderProps = {
   children: React.ReactNode;
   userId: string;
   disabled?: boolean;
-}
+};
 
 export function NotificationProvider({
   children,
@@ -142,7 +142,6 @@ export function NotificationProvider({
   // Request notification permission
   const requestPermission = async (): Promise<NotificationPermission> => {
     if (!('Notification' in window)) {
-      console.warn('This browser does not support notifications');
       return 'denied';
     }
 
@@ -184,9 +183,7 @@ export function NotificationProvider({
 
     try {
       new Notification(title, defaultOptions);
-    } catch (error) {
-      console.error('Error sending push notification:', error);
-    }
+    } catch (_error) {}
   };
 
   // Handle new notifications with toast

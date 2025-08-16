@@ -1,12 +1,12 @@
 import * as React from 'react';
 
-interface LayoutState {
+type LayoutState = {
   sidebarCollapsed: boolean;
   activeMenuItem: string | null;
   breadcrumbs: Array<{ title: string; href?: string }>;
-}
+};
 
-interface LayoutActions {
+type LayoutActions = {
   setSidebarCollapsed: (collapsed: boolean) => void;
   toggleSidebar: () => void;
   setActiveMenuItem: (itemId: string | null) => void;
@@ -15,7 +15,7 @@ interface LayoutActions {
   ) => void;
   addBreadcrumb: (breadcrumb: { title: string; href?: string }) => void;
   clearBreadcrumbs: () => void;
-}
+};
 
 export function useLayout(): LayoutState & LayoutActions {
   const [state, setState] = React.useState<LayoutState>({

@@ -59,7 +59,6 @@ export async function GET(request: NextRequest) {
       count: thresholds.length,
     });
   } catch (error: any) {
-    console.error('Error fetching thresholds:', error);
     return NextResponse.json(
       {
         success: false,
@@ -87,8 +86,6 @@ export async function POST(request: NextRequest) {
       { status: 201 }
     );
   } catch (error: any) {
-    console.error('Error creating threshold:', error);
-
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {
@@ -135,8 +132,6 @@ export async function PATCH(request: NextRequest) {
       message: 'Threshold updated successfully with recalculations',
     });
   } catch (error: any) {
-    console.error('Error updating threshold:', error);
-
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {

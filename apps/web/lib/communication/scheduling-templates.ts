@@ -3,7 +3,7 @@
  * Story 5.3: Automated Communication for Scheduling
  */
 
-export interface SchedulingTemplate {
+export type SchedulingTemplate = {
   id: string;
   name: string;
   type:
@@ -24,9 +24,9 @@ export interface SchedulingTemplate {
   clinicId?: string;
   createdAt: Date;
   updatedAt: Date;
-}
+};
 
-export interface TemplateCondition {
+export type TemplateCondition = {
   field: string; // e.g., 'service_type', 'patient_age', 'no_show_history', 'time_of_day'
   operator:
     | 'equals'
@@ -37,9 +37,9 @@ export interface TemplateCondition {
     | 'in_range';
   value: any;
   logic?: 'AND' | 'OR';
-}
+};
 
-export interface TemplateContent {
+export type TemplateContent = {
   sms?: {
     text: string;
     maxLength: number;
@@ -64,9 +64,9 @@ export interface TemplateContent {
       caption?: string;
     };
   };
-}
+};
 
-export interface PersonalizationRules {
+export type PersonalizationRules = {
   usePatientName: boolean;
   useProfessionalName: boolean;
   useServiceName: boolean;
@@ -78,9 +78,9 @@ export interface PersonalizationRules {
     condition: string;
     replacement: string;
   }>;
-}
+};
 
-export interface TemplateAnalytics {
+export type TemplateAnalytics = {
   totalSent: number;
   deliveryRate: number;
   openRate: number;
@@ -91,7 +91,7 @@ export interface TemplateAnalytics {
   costPerMessage: number;
   roi: number;
   lastUpdated: Date;
-}
+};
 
 export class SchedulingTemplateEngine {
   private readonly templates: Map<string, SchedulingTemplate> = new Map();

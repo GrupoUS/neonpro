@@ -29,7 +29,6 @@ export function useUpdateWhatsAppConfig() {
       toast.success('Configuração do WhatsApp atualizada com sucesso!');
     },
     onError: (error: Error) => {
-      console.error('Error updating WhatsApp config:', error);
       toast.error(`Erro ao atualizar configuração: ${error.message}`);
     },
   });
@@ -81,7 +80,6 @@ export function useSendWhatsAppMessage() {
       toast.success('Mensagem WhatsApp enviada com sucesso!');
     },
     onError: (error: Error) => {
-      console.error('Error sending WhatsApp message:', error);
       toast.error(`Erro ao enviar mensagem: ${error.message}`);
     },
   });
@@ -111,7 +109,6 @@ export function useSendWhatsAppTemplate() {
       toast.success('Template WhatsApp enviado com sucesso!');
     },
     onError: (error: Error) => {
-      console.error('Error sending WhatsApp template:', error);
       toast.error(`Erro ao enviar template: ${error.message}`);
     },
   });
@@ -140,7 +137,6 @@ export function useSendBulkWhatsAppMessages() {
       );
     },
     onError: (error: Error) => {
-      console.error('Error sending bulk WhatsApp messages:', error);
       toast.error(`Erro no envio em massa: ${error.message}`);
     },
   });
@@ -186,7 +182,6 @@ export function useRecordWhatsAppOptIn() {
       toast.success('Consentimento WhatsApp registrado com sucesso!');
     },
     onError: (error: Error) => {
-      console.error('Error recording WhatsApp opt-in:', error);
       toast.error(`Erro ao registrar consentimento: ${error.message}`);
     },
   });
@@ -311,26 +306,21 @@ export function useWhatsAppNotifications() {
     appointmentTime: string,
     doctorName: string
   ) => {
-    try {
-      const isOptedIn = await whatsAppService.checkOptIn(phoneNumber);
-      if (!isOptedIn) {
-        throw new Error('Paciente não autorizou mensagens WhatsApp');
-      }
-
-      await sendTemplate.mutateAsync({
-        phoneNumber,
-        templateName: 'appointment_reminder',
-        parameters: {
-          appointment_date: appointmentDate,
-          appointment_time: appointmentTime,
-          doctor_name: doctorName,
-        },
-        patientId,
-      });
-    } catch (error) {
-      console.error('Error sending appointment reminder:', error);
-      throw error;
+    const isOptedIn = await whatsAppService.checkOptIn(phoneNumber);
+    if (!isOptedIn) {
+      throw new Error('Paciente não autorizou mensagens WhatsApp');
     }
+
+    await sendTemplate.mutateAsync({
+      phoneNumber,
+      templateName: 'appointment_reminder',
+      parameters: {
+        appointment_date: appointmentDate,
+        appointment_time: appointmentTime,
+        doctor_name: doctorName,
+      },
+      patientId,
+    });
   };
 
   const sendTreatmentFollowup = async (
@@ -340,26 +330,21 @@ export function useWhatsAppNotifications() {
     doctorName: string,
     daysAfterTreatment: number
   ) => {
-    try {
-      const isOptedIn = await whatsAppService.checkOptIn(phoneNumber);
-      if (!isOptedIn) {
-        throw new Error('Paciente não autorizou mensagens WhatsApp');
-      }
-
-      await sendTemplate.mutateAsync({
-        phoneNumber,
-        templateName: 'treatment_followup',
-        parameters: {
-          treatment_name: treatmentName,
-          doctor_name: doctorName,
-          days_after: daysAfterTreatment.toString(),
-        },
-        patientId,
-      });
-    } catch (error) {
-      console.error('Error sending treatment followup:', error);
-      throw error;
+    const isOptedIn = await whatsAppService.checkOptIn(phoneNumber);
+    if (!isOptedIn) {
+      throw new Error('Paciente não autorizou mensagens WhatsApp');
     }
+
+    await sendTemplate.mutateAsync({
+      phoneNumber,
+      templateName: 'treatment_followup',
+      parameters: {
+        treatment_name: treatmentName,
+        doctor_name: doctorName,
+        days_after: daysAfterTreatment.toString(),
+      },
+      patientId,
+    });
   };
 
   return {

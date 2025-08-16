@@ -8,13 +8,13 @@
 import { useEffect } from 'react';
 import { onCLS, onFCP, onFID, onLCP, onTTFB } from 'web-vitals';
 
-interface PerformanceMetrics {
+type PerformanceMetrics = {
   lcp: number;
   fid: number;
   cls: number;
   fcp: number;
   ttfb: number;
-}
+};
 
 /**
  * Custom hook for automatic performance monitoring
@@ -57,11 +57,7 @@ export function usePerformanceMonitoring() {
           },
           body: JSON.stringify(performanceData),
         });
-
-        console.log('✅ Performance metrics sent:', performanceData);
-      } catch (error) {
-        console.error('❌ Failed to send performance metrics:', error);
-      }
+      } catch (_error) {}
     };
 
     /**

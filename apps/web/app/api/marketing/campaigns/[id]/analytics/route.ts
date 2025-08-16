@@ -83,10 +83,6 @@ export async function GET(
       },
     });
   } catch (error) {
-    console.error(
-      `GET /api/marketing/campaigns/${params.id}/analytics error:`,
-      error
-    );
     return NextResponse.json(
       {
         success: false,

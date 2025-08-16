@@ -83,7 +83,6 @@ export async function PUT(
       message: `Alert ${action}d successfully`,
     });
   } catch (error) {
-    console.error('Alert action API error:', error);
     return NextResponse.json(
       {
         error: `Failed to ${(await request.json()).action} alert`,

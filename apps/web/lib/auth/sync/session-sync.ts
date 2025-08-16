@@ -4,7 +4,7 @@
 import { SessionConfig } from '@/lib/auth/config/session-config';
 import { SessionUtils } from '@/lib/auth/utils/session-utils';
 
-export interface SyncEvent {
+export type SyncEvent = {
   id: string;
   type: SyncEventType;
   userId: string;
@@ -14,7 +14,7 @@ export interface SyncEvent {
   timestamp: number;
   version: number;
   checksum: string;
-}
+};
 
 export type SyncEventType =
   | 'session_created'
@@ -30,7 +30,7 @@ export type SyncEventType =
   | 'conflict_detected'
   | 'conflict_resolved';
 
-export interface SyncConflict {
+export type SyncConflict = {
   id: string;
   type: ConflictType;
   userId: string;
@@ -42,7 +42,7 @@ export interface SyncConflict {
   resolvedAt?: number;
   resolvedBy?: string;
   resolution?: SyncEvent;
-}
+};
 
 export type ConflictType =
   | 'concurrent_update'
@@ -60,7 +60,7 @@ export type ConflictResolutionStrategy =
   | 'rollback_changes'
   | 'device_priority';
 
-export interface SyncState {
+export type SyncState = {
   userId: string;
   lastSyncTimestamp: number;
   deviceStates: Map<string, DeviceSyncState>;
@@ -68,25 +68,25 @@ export interface SyncState {
   conflictQueue: SyncConflict[];
   syncVersion: number;
   isOnline: boolean;
-}
+};
 
-export interface DeviceSyncState {
+export type DeviceSyncState = {
   deviceId: string;
   lastSeen: number;
   version: number;
   isOnline: boolean;
   pendingAcks: string[];
   syncOffset: number; // Time offset for synchronization
-}
+};
 
-export interface SyncMessage {
+export type SyncMessage = {
   type: SyncMessageType;
   payload: any;
   timestamp: number;
   messageId: string;
   senderId: string;
   targetId?: string;
-}
+};
 
 export type SyncMessageType =
   | 'sync_event'
@@ -122,27 +122,20 @@ export class SessionSyncManager {
    * Initialize sync manager for user
    */
   public async initialize(userId: string): Promise<void> {
-    try {
-      this.userId = userId;
+    this.userId = userId;
 
-      // Initialize sync state
-      await this.initializeSyncState(userId);
+    // Initialize sync state
+    await this.initializeSyncState(userId);
 
-      // Connect to sync server
-      await this.connectToSyncServer();
+    // Connect to sync server
+    await this.connectToSyncServer();
 
-      // Start periodic sync
-      this.startPeriodicSync();
+    // Start periodic sync
+    this.startPeriodicSync();
 
-      // Start heartbeat
-      this.startHeartbeat();
-
-      console.log(`Session sync initialized for user ${userId}`);
-      this.emit('sync_initialized', { userId, deviceId: this.deviceId });
-    } catch (error) {
-      console.error('Error initializing session sync:', error);
-      throw error;
-    }
+    // Start heartbeat
+    this.startHeartbeat();
+    this.emit('sync_initialized', { userId, deviceId: this.deviceId });
   }
 
   /**
@@ -179,7 +172,6 @@ export class SessionSyncManager {
         this.webSocket = new WebSocket(wsUrl);
 
         this.webSocket.onopen = () => {
-          console.log('Connected to sync server');
           this.isConnected = true;
           this.reconnectAttempts = 0;
 
@@ -201,7 +193,6 @@ export class SessionSyncManager {
         };
 
         this.webSocket.onclose = () => {
-          console.log('Disconnected from sync server');
           this.isConnected = false;
 
           // Update sync state
@@ -217,7 +208,6 @@ export class SessionSyncManager {
         };
 
         this.webSocket.onerror = (error) => {
-          console.error('WebSocket error:', error);
           this.emit('sync_error', { error, deviceId: this.deviceId });
           reject(error);
         };
@@ -288,11 +278,8 @@ export class SessionSyncManager {
           break;
 
         default:
-          console.warn('Unknown sync message type:', message.type);
       }
-    } catch (error) {
-      console.error('Error handling sync message:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -475,8 +462,7 @@ export class SessionSyncManager {
       };
 
       return mergedEvent;
-    } catch (error) {
-      console.error('Error merging changes:', error);
+    } catch (_error) {
       return null;
     }
   }
@@ -512,46 +498,40 @@ export class SessionSyncManager {
    * Apply sync event to local state
    */
   private async applySyncEvent(event: SyncEvent): Promise<void> {
-    try {
-      switch (event.type) {
-        case 'session_created':
-          await this.applySessionCreated(event);
-          break;
+    switch (event.type) {
+      case 'session_created':
+        await this.applySessionCreated(event);
+        break;
 
-        case 'session_updated':
-          await this.applySessionUpdated(event);
-          break;
+      case 'session_updated':
+        await this.applySessionUpdated(event);
+        break;
 
-        case 'session_terminated':
-          await this.applySessionTerminated(event);
-          break;
+      case 'session_terminated':
+        await this.applySessionTerminated(event);
+        break;
 
-        case 'device_registered':
-          await this.applyDeviceRegistered(event);
-          break;
+      case 'device_registered':
+        await this.applyDeviceRegistered(event);
+        break;
 
-        case 'device_updated':
-          await this.applyDeviceUpdated(event);
-          break;
+      case 'device_updated':
+        await this.applyDeviceUpdated(event);
+        break;
 
-        case 'device_removed':
-          await this.applyDeviceRemoved(event);
-          break;
+      case 'device_removed':
+        await this.applyDeviceRemoved(event);
+        break;
 
-        case 'preferences_updated':
-          await this.applyPreferencesUpdated(event);
-          break;
+      case 'preferences_updated':
+        await this.applyPreferencesUpdated(event);
+        break;
 
-        case 'security_event':
-          await this.applySecurityEvent(event);
-          break;
+      case 'security_event':
+        await this.applySecurityEvent(event);
+        break;
 
-        default:
-          console.warn('Unknown sync event type:', event.type);
-      }
-    } catch (error) {
-      console.error('Error applying sync event:', error);
-      throw error;
+      default:
     }
   }
 
@@ -762,9 +742,7 @@ export class SessionSyncManager {
         // Load sync state from storage
         // Implementation depends on storage format
       }
-    } catch (error) {
-      console.error('Error loading sync data from storage:', error);
-    }
+    } catch (_error) {}
   }
 
   private startPeriodicSync(): void {
@@ -796,7 +774,6 @@ export class SessionSyncManager {
 
   private attemptReconnection(): void {
     if (this.reconnectAttempts >= this.maxReconnectAttempts) {
-      console.error('Max reconnection attempts reached');
       return;
     }
 
@@ -804,24 +781,13 @@ export class SessionSyncManager {
     const delay = 2 ** this.reconnectAttempts * 1000; // Exponential backoff
 
     setTimeout(() => {
-      console.log(
-        `Attempting reconnection ${this.reconnectAttempts}/${this.maxReconnectAttempts}`
-      );
-      this.connectToSyncServer().catch((error) => {
-        console.error('Reconnection failed:', error);
-      });
+      this.connectToSyncServer().catch((_error) => {});
     }, delay);
   }
 
-  private handleSyncRequest(message: SyncMessage): void {
-    // Handle sync requests from other devices
-    console.log('Received sync request:', message);
-  }
+  private handleSyncRequest(_message: SyncMessage): void {}
 
-  private handleSyncResponse(message: SyncMessage): void {
-    // Handle sync responses
-    console.log('Received sync response:', message);
-  }
+  private handleSyncResponse(_message: SyncMessage): void {}
 
   private handleHeartbeat(message: SyncMessage): void {
     // Update device state
@@ -857,10 +823,7 @@ export class SessionSyncManager {
     }
   }
 
-  private handleNegativeAcknowledgment(message: SyncMessage): void {
-    // Handle failed sync events
-    console.error('Sync event failed:', message.payload);
-  }
+  private handleNegativeAcknowledgment(_message: SyncMessage): void {}
 
   private sendAcknowledgment(eventId: string): void {
     if (this.webSocket) {
@@ -900,9 +863,7 @@ export class SessionSyncManager {
       }
 
       this.emit('conflict_resolved', conflict);
-    } catch (error) {
-      console.error('Error applying conflict resolution:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -931,9 +892,7 @@ export class SessionSyncManager {
       listeners.forEach((callback) => {
         try {
           callback(data);
-        } catch (error) {
-          console.error(`Error in event listener for ${event}:`, error);
-        }
+        } catch (_error) {}
       });
     }
   }

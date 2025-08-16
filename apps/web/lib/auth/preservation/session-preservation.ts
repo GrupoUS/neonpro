@@ -4,7 +4,7 @@
 import { SessionConfig } from '@/lib/auth/config/session-config';
 import { SessionUtils } from '@/lib/auth/utils/session-utils';
 
-export interface SessionSnapshot {
+export type SessionSnapshot = {
   id: string;
   sessionId: string;
   userId: string;
@@ -14,9 +14,9 @@ export interface SessionSnapshot {
   metadata: SessionMetadata;
   checksum: string;
   version: number;
-}
+};
 
-export interface SessionState {
+export type SessionState = {
   authentication: AuthenticationState;
   preferences: UserPreferences;
   navigation: NavigationState;
@@ -24,9 +24,9 @@ export interface SessionState {
   cache: CacheState;
   permissions: PermissionState;
   activity: ActivityState;
-}
+};
 
-export interface AuthenticationState {
+export type AuthenticationState = {
   isAuthenticated: boolean;
   tokenExpiry: number;
   refreshTokenExpiry: number;
@@ -34,69 +34,69 @@ export interface AuthenticationState {
   mfaStatus: MFAStatus;
   roles: string[];
   permissions: string[];
-}
+};
 
-export interface UserPreferences {
+export type UserPreferences = {
   theme: string;
   language: string;
   timezone: string;
   notifications: NotificationSettings;
   privacy: PrivacySettings;
   accessibility: AccessibilitySettings;
-}
+};
 
-export interface NavigationState {
+export type NavigationState = {
   currentPath: string;
   history: string[];
   breadcrumbs: Breadcrumb[];
   tabs: TabState[];
   modals: ModalState[];
-}
+};
 
-export interface FormState {
+export type FormState = {
   formId: string;
   fields: Record<string, any>;
   isDirty: boolean;
   isValid: boolean;
   errors: Record<string, string>;
   lastModified: number;
-}
+};
 
-export interface CacheState {
+export type CacheState = {
   data: Record<string, CachedItem>;
   size: number;
   lastCleanup: number;
-}
+};
 
-export interface CachedItem {
+export type CachedItem = {
   key: string;
   value: any;
   timestamp: number;
   expiry: number;
   size: number;
-}
+};
 
-export interface PermissionState {
+export type PermissionState = {
   granted: string[];
   denied: string[];
   pending: string[];
   lastUpdated: number;
-}
+};
 
-export interface ActivityState {
+export type ActivityState = {
   actions: UserAction[];
   metrics: ActivityMetrics;
   patterns: BehaviorPattern[];
-}
+};
 
-export interface UserAction {
+export type UserAction = {
   id: string;
   type: ActionType;
   target: string;
   data: any;
   timestamp: number;
   duration?: number;
-}
+};
 
 export type ActionType =
   | 'click'
@@ -110,21 +110,21 @@ export type ActionType =
   | 'sort'
   | 'export';
 
-export interface ActivityMetrics {
+export type ActivityMetrics = {
   totalActions: number;
   sessionDuration: number;
   idleTime: number;
   activeTime: number;
   pageViews: number;
   apiCalls: number;
-}
+};
 
-export interface BehaviorPattern {
+export type BehaviorPattern = {
   type: PatternType;
   frequency: number;
   lastOccurrence: number;
   confidence: number;
-}
+};
 
 export type PatternType =
   | 'frequent_navigation'
@@ -134,122 +134,122 @@ export type PatternType =
   | 'api_heavy_usage'
   | 'error_prone';
 
-export interface SessionMetadata {
+export type SessionMetadata = {
   device: DeviceInfo;
   network: NetworkInfo;
   browser: BrowserInfo;
   location: LocationInfo;
   performance: PerformanceInfo;
-}
+};
 
-export interface DeviceInfo {
+export type DeviceInfo = {
   type: string;
   os: string;
   screen: ScreenInfo;
   memory: number;
   storage: StorageInfo;
-}
+};
 
-export interface NetworkInfo {
+export type NetworkInfo = {
   type: string;
   speed: number;
   latency: number;
   isOnline: boolean;
   lastOnline: number;
-}
+};
 
-export interface BrowserInfo {
+export type BrowserInfo = {
   name: string;
   version: string;
   userAgent: string;
   language: string;
   cookiesEnabled: boolean;
   localStorageEnabled: boolean;
-}
+};
 
-export interface LocationInfo {
+export type LocationInfo = {
   country: string;
   region: string;
   city: string;
   timezone: string;
   coordinates?: GeolocationCoordinates;
-}
+};
 
-export interface PerformanceInfo {
+export type PerformanceInfo = {
   loadTime: number;
   renderTime: number;
   memoryUsage: number;
   cpuUsage: number;
   networkUsage: number;
-}
+};
 
-export interface ScreenInfo {
+export type ScreenInfo = {
   width: number;
   height: number;
   pixelRatio: number;
   orientation: string;
-}
+};
 
-export interface StorageInfo {
+export type StorageInfo = {
   available: number;
   used: number;
   quota: number;
-}
+};
 
-export interface NotificationSettings {
+export type NotificationSettings = {
   email: boolean;
   push: boolean;
   sms: boolean;
   inApp: boolean;
   frequency: string;
-}
+};
 
-export interface PrivacySettings {
+export type PrivacySettings = {
   analytics: boolean;
   cookies: boolean;
   tracking: boolean;
   dataSharing: boolean;
-}
+};
 
-export interface AccessibilitySettings {
+export type AccessibilitySettings = {
   fontSize: number;
   contrast: string;
   animations: boolean;
   screenReader: boolean;
   keyboardNavigation: boolean;
-}
+};
 
-export interface MFAStatus {
+export type MFAStatus = {
   enabled: boolean;
   methods: string[];
   lastVerified: number;
   required: boolean;
-}
+};
 
-export interface Breadcrumb {
+export type Breadcrumb = {
   label: string;
   path: string;
   timestamp: number;
-}
+};
 
-export interface TabState {
+export type TabState = {
   id: string;
   title: string;
   path: string;
   isActive: boolean;
   isDirty: boolean;
   data: any;
-}
+};
 
-export interface ModalState {
+export type ModalState = {
   id: string;
   type: string;
   isOpen: boolean;
   data: any;
   zIndex: number;
-}
+};
 
-export interface PreservationConfig {
+export type PreservationConfig = {
   snapshotInterval: number;
   maxSnapshots: number;
   compressionEnabled: boolean;
@@ -258,7 +258,7 @@ export interface PreservationConfig {
   retentionPeriod: number;
   autoRestore: boolean;
   conflictResolution: ConflictResolution;
-}
+};
 
 export type StorageType =
   | 'localStorage'
@@ -298,28 +298,21 @@ export class SessionPreservationManager {
    * Initialize preservation manager
    */
   public async initialize(): Promise<void> {
-    try {
-      // Initialize storage
-      await this.initializeStorage();
+    // Initialize storage
+    await this.initializeStorage();
 
-      // Load existing snapshots
-      await this.loadSnapshots();
+    // Load existing snapshots
+    await this.loadSnapshots();
 
-      // Start automatic snapshots
-      this.startAutomaticSnapshots();
+    // Start automatic snapshots
+    this.startAutomaticSnapshots();
 
-      // Setup event listeners
-      this.setupEventListeners();
+    // Setup event listeners
+    this.setupEventListeners();
 
-      // Cleanup old snapshots
-      await this.cleanupOldSnapshots();
-
-      console.log('Session preservation manager initialized');
-      this.emit('preservation_initialized', {});
-    } catch (error) {
-      console.error('Error initializing session preservation:', error);
-      throw error;
-    }
+    // Cleanup old snapshots
+    await this.cleanupOldSnapshots();
+    this.emit('preservation_initialized', {});
   }
 
   /**
@@ -330,34 +323,29 @@ export class SessionPreservationManager {
     userId: string,
     deviceId: string
   ): Promise<SessionSnapshot> {
-    try {
-      const state = await this.captureSessionState(sessionId);
-      const metadata = await this.captureSessionMetadata();
+    const state = await this.captureSessionState(sessionId);
+    const metadata = await this.captureSessionMetadata();
 
-      const snapshot: SessionSnapshot = {
-        id: this.utils.generateSessionToken(),
-        sessionId,
-        userId,
-        deviceId,
-        timestamp: Date.now(),
-        state,
-        metadata,
-        checksum: this.calculateChecksum(state),
-        version: this.getNextVersion(sessionId),
-      };
+    const snapshot: SessionSnapshot = {
+      id: this.utils.generateSessionToken(),
+      sessionId,
+      userId,
+      deviceId,
+      timestamp: Date.now(),
+      state,
+      metadata,
+      checksum: this.calculateChecksum(state),
+      version: this.getNextVersion(sessionId),
+    };
 
-      // Store snapshot
-      await this.storeSnapshot(snapshot);
+    // Store snapshot
+    await this.storeSnapshot(snapshot);
 
-      // Update current state
-      this.currentState.set(sessionId, state);
+    // Update current state
+    this.currentState.set(sessionId, state);
 
-      this.emit('snapshot_created', snapshot);
-      return snapshot;
-    } catch (error) {
-      console.error('Error creating session snapshot:', error);
-      throw error;
-    }
+    this.emit('snapshot_created', snapshot);
+    return snapshot;
   }
 
   /**
@@ -373,13 +361,11 @@ export class SessionPreservationManager {
         : await this.getLatestSnapshot(sessionId);
 
       if (!snapshot) {
-        console.warn(`No snapshot found for session ${sessionId}`);
         return null;
       }
 
       // Verify snapshot integrity
       if (!this.verifySnapshot(snapshot)) {
-        console.error('Snapshot integrity check failed');
         return null;
       }
 
@@ -391,8 +377,7 @@ export class SessionPreservationManager {
 
       this.emit('session_restored', { sessionId, snapshot });
       return snapshot.state;
-    } catch (error) {
-      console.error('Error restoring session:', error);
+    } catch (_error) {
       return null;
     }
   }
@@ -435,9 +420,7 @@ export class SessionPreservationManager {
       if (response.ok) {
         return await response.json();
       }
-    } catch (error) {
-      console.error('Error capturing auth state:', error);
-    }
+    } catch (_error) {}
 
     return {
       isAuthenticated: false,
@@ -466,9 +449,7 @@ export class SessionPreservationManager {
       if (response.ok) {
         return await response.json();
       }
-    } catch (error) {
-      console.error('Error capturing preferences:', error);
-    }
+    } catch (_error) {}
 
     return {
       theme: 'light',
@@ -556,9 +537,7 @@ export class SessionPreservationManager {
           const item = JSON.parse(localStorage.getItem(key) || '{}');
           cache[key] = item;
           totalSize += JSON.stringify(item).length;
-        } catch (error) {
-          console.warn(`Error parsing cached item ${key}:`, error);
-        }
+        } catch (_error) {}
       }
     }
 
@@ -580,9 +559,7 @@ export class SessionPreservationManager {
       if (response.ok) {
         return await response.json();
       }
-    } catch (error) {
-      console.error('Error capturing permissions:', error);
-    }
+    } catch (_error) {}
 
     return {
       granted: [],
@@ -603,9 +580,7 @@ export class SessionPreservationManager {
       if (response.ok) {
         return await response.json();
       }
-    } catch (error) {
-      console.error('Error capturing activity:', error);
-    }
+    } catch (_error) {}
 
     return {
       actions: [],
@@ -641,86 +616,74 @@ export class SessionPreservationManager {
     sessionId: string,
     state: SessionState
   ): Promise<void> {
-    try {
-      // Apply authentication state
-      await this.applyAuthenticationState(sessionId, state.authentication);
+    // Apply authentication state
+    await this.applyAuthenticationState(sessionId, state.authentication);
 
-      // Apply preferences
-      await this.applyUserPreferences(sessionId, state.preferences);
+    // Apply preferences
+    await this.applyUserPreferences(sessionId, state.preferences);
 
-      // Apply navigation state
-      this.applyNavigationState(state.navigation);
+    // Apply navigation state
+    this.applyNavigationState(state.navigation);
 
-      // Apply form states
-      this.applyFormStates(state.forms);
+    // Apply form states
+    this.applyFormStates(state.forms);
 
-      // Apply cache state
-      this.applyCacheState(state.cache);
+    // Apply cache state
+    this.applyCacheState(state.cache);
 
-      // Apply permission state
-      await this.applyPermissionState(sessionId, state.permissions);
-
-      console.log(`Session state applied for ${sessionId}`);
-    } catch (error) {
-      console.error('Error applying session state:', error);
-      throw error;
-    }
+    // Apply permission state
+    await this.applyPermissionState(sessionId, state.permissions);
   }
 
   /**
    * Store snapshot
    */
   private async storeSnapshot(snapshot: SessionSnapshot): Promise<void> {
-    try {
-      let data = snapshot;
+    let data = snapshot;
 
-      // Compress if enabled
-      if (this.preservationConfig.compressionEnabled) {
-        data = await this.compressSnapshot(snapshot);
+    // Compress if enabled
+    if (this.preservationConfig.compressionEnabled) {
+      data = await this.compressSnapshot(snapshot);
+    }
+
+    // Encrypt if enabled
+    if (this.preservationConfig.encryptionEnabled) {
+      data = await this.encryptSnapshot(data);
+    }
+
+    // Store based on storage type
+    switch (this.preservationConfig.storageType) {
+      case 'localStorage':
+        await this.storeInLocalStorage(snapshot.sessionId, data);
+        break;
+
+      case 'indexedDB':
+        await this.storeInIndexedDB(snapshot.sessionId, data);
+        break;
+
+      case 'sessionStorage':
+        await this.storeInSessionStorage(snapshot.sessionId, data);
+        break;
+
+      case 'memory':
+        this.storeInMemory(snapshot.sessionId, data);
+        break;
+    }
+
+    // Update snapshots map
+    if (!this.snapshots.has(snapshot.sessionId)) {
+      this.snapshots.set(snapshot.sessionId, []);
+    }
+
+    const sessionSnapshots = this.snapshots.get(snapshot.sessionId)!;
+    sessionSnapshots.push(snapshot);
+
+    // Limit number of snapshots
+    if (sessionSnapshots.length > this.preservationConfig.maxSnapshots) {
+      const removed = sessionSnapshots.shift();
+      if (removed) {
+        await this.removeSnapshot(removed.id);
       }
-
-      // Encrypt if enabled
-      if (this.preservationConfig.encryptionEnabled) {
-        data = await this.encryptSnapshot(data);
-      }
-
-      // Store based on storage type
-      switch (this.preservationConfig.storageType) {
-        case 'localStorage':
-          await this.storeInLocalStorage(snapshot.sessionId, data);
-          break;
-
-        case 'indexedDB':
-          await this.storeInIndexedDB(snapshot.sessionId, data);
-          break;
-
-        case 'sessionStorage':
-          await this.storeInSessionStorage(snapshot.sessionId, data);
-          break;
-
-        case 'memory':
-          this.storeInMemory(snapshot.sessionId, data);
-          break;
-      }
-
-      // Update snapshots map
-      if (!this.snapshots.has(snapshot.sessionId)) {
-        this.snapshots.set(snapshot.sessionId, []);
-      }
-
-      const sessionSnapshots = this.snapshots.get(snapshot.sessionId)!;
-      sessionSnapshots.push(snapshot);
-
-      // Limit number of snapshots
-      if (sessionSnapshots.length > this.preservationConfig.maxSnapshots) {
-        const removed = sessionSnapshots.shift();
-        if (removed) {
-          await this.removeSnapshot(removed.id);
-        }
-      }
-    } catch (error) {
-      console.error('Error storing snapshot:', error);
-      throw error;
     }
   }
 
@@ -1197,12 +1160,7 @@ export class SessionPreservationManager {
             this.snapshots.set(sessionId, []);
           }
           this.snapshots.get(sessionId)?.push(data);
-        } catch (error) {
-          console.warn(
-            `Error loading snapshot from localStorage: ${key}`,
-            error
-          );
-        }
+        } catch (_error) {}
       }
     }
   }
@@ -1245,12 +1203,7 @@ export class SessionPreservationManager {
             this.snapshots.set(sessionId, []);
           }
           this.snapshots.get(sessionId)?.push(data);
-        } catch (error) {
-          console.warn(
-            `Error loading snapshot from sessionStorage: ${key}`,
-            error
-          );
-        }
+        } catch (_error) {}
       }
     }
   }
@@ -1270,12 +1223,7 @@ export class SessionPreservationManager {
               session.deviceId
             );
           }
-        } catch (error) {
-          console.error(
-            `Error creating automatic snapshot for ${sessionId}:`,
-            error
-          );
-        }
+        } catch (_error) {}
       });
     }, this.preservationConfig.snapshotInterval);
   }
@@ -1294,12 +1242,7 @@ export class SessionPreservationManager {
               session.deviceId
             );
           }
-        } catch (error) {
-          console.error(
-            `Error creating final snapshot for ${sessionId}:`,
-            error
-          );
-        }
+        } catch (_error) {}
       });
     });
 
@@ -1339,9 +1282,7 @@ export class SessionPreservationManager {
       listeners.forEach((callback) => {
         try {
           callback(data);
-        } catch (error) {
-          console.error(`Error in event listener for ${event}:`, error);
-        }
+        } catch (_error) {}
       });
     }
   }
@@ -1362,9 +1303,7 @@ export class SessionPreservationManager {
           session.deviceId
         );
       }
-    } catch (error) {
-      console.error('Error creating manual snapshot:', error);
-    }
+    } catch (_error) {}
     return null;
   }
 

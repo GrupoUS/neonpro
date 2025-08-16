@@ -1,38 +1,38 @@
 // Common types used across components
 
-export interface BaseComponentProps {
+export type BaseComponentProps = {
   className?: string;
   children?: React.ReactNode;
-}
+};
 
-export interface VariantProps {
+export type VariantProps = {
   variant?: string;
   size?: string;
-}
+};
 
-export interface LoadingState {
+export type LoadingState = {
   loading?: boolean;
   loadingText?: string;
-}
+};
 
-export interface PaginationProps {
+export type PaginationProps = {
   currentPage: number;
   totalPages: number;
   totalItems: number;
   itemsPerPage: number;
   onPageChange: (page: number) => void;
   onItemsPerPageChange?: (items: number) => void;
-}
+};
 
-export interface FilterOption {
+export type FilterOption = {
   id: string;
   label: string;
   value: string;
   color?: string;
   count?: number;
-}
+};
 
-export interface SortConfig {
+export type SortConfig = {
   field: string;
   direction: 'asc' | 'desc';
-}
+};

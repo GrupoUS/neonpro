@@ -52,7 +52,6 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('API error in GET /api/followups/analytics:', error);
     return NextResponse.json(
       {
         error: 'Internal server error',

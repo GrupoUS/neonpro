@@ -19,7 +19,7 @@ import type {
 } from '../types/subscription-errors';
 
 // Recovery attempt result
-interface RecoveryResult<T> {
+type RecoveryResult<T> = {
   success: boolean;
   data?: T;
   strategy: RecoveryStrategy;
@@ -28,10 +28,10 @@ interface RecoveryResult<T> {
   fallbackUsed: boolean;
   error?: SubscriptionError;
   metadata: Record<string, any>;
-}
+};
 
 // Recovery configuration
-interface RecoveryConfig {
+type RecoveryConfig = {
   maxRetryAttempts: number;
   baseRetryDelay: number;
   maxRetryDelay: number;
@@ -42,7 +42,7 @@ interface RecoveryConfig {
   enableUserNotification: boolean;
   circuitBreakerEnabled: boolean;
   timeoutMs: number;
-}
+};
 
 const defaultRecoveryConfig: RecoveryConfig = {
   maxRetryAttempts: 3,

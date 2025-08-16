@@ -1,4 +1,4 @@
-export interface DuplicateMatch {
+export type DuplicateMatch = {
   id: string;
   primaryPatientId: string;
   duplicatePatientId: string;
@@ -9,25 +9,25 @@ export interface DuplicateMatch {
   reviewedBy?: string;
   reviewedAt?: Date;
   createdAt: Date;
-}
+};
 
-export interface FieldComparison {
+export type FieldComparison = {
   field: string;
   primaryValue: any;
   duplicateValue: any;
   similarity: number;
   action: 'keep_primary' | 'keep_duplicate' | 'merge' | 'manual_review';
-}
+};
 
-export interface MergeStrategy {
+export type MergeStrategy = {
   patientData: 'keep_primary' | 'keep_duplicate' | 'merge_intelligent';
   medicalHistory: 'combine' | 'keep_primary' | 'keep_duplicate';
   appointments: 'combine' | 'transfer_to_primary';
   documents: 'combine' | 'keep_primary' | 'keep_duplicate';
   financialData: 'combine' | 'keep_primary' | 'manual_review';
-}
+};
 
-export interface MergeResult {
+export type MergeResult = {
   success: boolean;
   mergedPatientId: string;
   archivedPatientId: string;
@@ -39,7 +39,7 @@ export interface MergeResult {
     financialRecords: number;
   };
   issues?: string[];
-}
+};
 
 export class DuplicateDetectionSystem {
   /**
@@ -80,8 +80,7 @@ export class DuplicateDetectionSystem {
       }
 
       return mockDuplicates;
-    } catch (error) {
-      console.error('Erro na detecção de duplicatas:', error);
+    } catch (_error) {
       throw new Error('Falha na detecção de duplicatas');
     }
   }
@@ -141,8 +140,7 @@ export class DuplicateDetectionSystem {
       ];
 
       return comparisons;
-    } catch (error) {
-      console.error('Erro na comparação de pacientes:', error);
+    } catch (_error) {
       throw new Error('Falha na comparação de pacientes');
     }
   }
@@ -151,15 +149,12 @@ export class DuplicateDetectionSystem {
    * Confirma uma duplicata identificada
    */
   async confirmDuplicate(
-    duplicateId: string,
-    reviewedBy: string
+    _duplicateId: string,
+    _reviewedBy: string
   ): Promise<boolean> {
     try {
-      // Simular confirmação de duplicata
-      console.log(`Duplicata ${duplicateId} confirmada por ${reviewedBy}`);
       return true;
-    } catch (error) {
-      console.error('Erro ao confirmar duplicata:', error);
+    } catch (_error) {
       throw new Error('Falha ao confirmar duplicata');
     }
   }
@@ -168,18 +163,13 @@ export class DuplicateDetectionSystem {
    * Rejeita uma possível duplicata
    */
   async rejectDuplicate(
-    duplicateId: string,
-    reviewedBy: string,
-    reason: string
+    _duplicateId: string,
+    _reviewedBy: string,
+    _reason: string
   ): Promise<boolean> {
     try {
-      // Simular rejeição de duplicata
-      console.log(
-        `Duplicata ${duplicateId} rejeitada por ${reviewedBy}: ${reason}`
-      );
       return true;
-    } catch (error) {
-      console.error('Erro ao rejeitar duplicata:', error);
+    } catch (_error) {
       throw new Error('Falha ao rejeitar duplicata');
     }
   }
@@ -191,7 +181,7 @@ export class DuplicateDetectionSystem {
     primaryPatientId: string,
     duplicatePatientId: string,
     strategy: MergeStrategy,
-    performedBy: string
+    _performedBy: string
   ): Promise<MergeResult> {
     try {
       // Simular processo de merge
@@ -213,13 +203,8 @@ export class DuplicateDetectionSystem {
         mergeResult.issues = ['Dados financiais requerem revisão manual'];
       }
 
-      console.log(
-        `Merge executado por ${performedBy}: ${duplicatePatientId} -> ${primaryPatientId}`
-      );
-
       return mergeResult;
-    } catch (error) {
-      console.error('Erro no merge de pacientes:', error);
+    } catch (_error) {
       throw new Error('Falha no merge de pacientes');
     }
   }
@@ -258,8 +243,7 @@ export class DuplicateDetectionSystem {
       };
 
       return preview;
-    } catch (error) {
-      console.error('Erro no preview de merge:', error);
+    } catch (_error) {
       throw new Error('Falha no preview de merge');
     }
   }
@@ -283,8 +267,7 @@ export class DuplicateDetectionSystem {
       return potentialDuplicates.filter(
         (dup) => dup.confidenceScore >= threshold
       );
-    } catch (error) {
-      console.error('Erro na busca de duplicatas:', error);
+    } catch (_error) {
       throw new Error('Falha na busca de duplicatas');
     }
   }
@@ -323,8 +306,7 @@ export class DuplicateDetectionSystem {
       };
 
       return report;
-    } catch (error) {
-      console.error('Erro ao gerar relatório de duplicatas:', error);
+    } catch (_error) {
       throw new Error('Falha na geração do relatório');
     }
   }

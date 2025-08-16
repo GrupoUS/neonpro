@@ -45,7 +45,6 @@ export async function GET(request: NextRequest) {
       count: reports.length,
     });
   } catch (error) {
-    console.error('Error fetching analysis reports:', error);
     return NextResponse.json(
       {
         error: 'Failed to fetch analysis reports',
@@ -85,7 +84,6 @@ export async function POST(request: NextRequest) {
       { status: 201 }
     );
   } catch (error) {
-    console.error('Error generating analysis report:', error);
     return NextResponse.json(
       {
         error: 'Failed to generate analysis report',

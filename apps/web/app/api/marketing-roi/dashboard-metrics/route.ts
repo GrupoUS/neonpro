@@ -99,8 +99,6 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(dashboardMetrics);
   } catch (error: any) {
-    console.error('[Marketing ROI API] GET dashboard metrics:', error);
-
     return NextResponse.json(
       { error: 'Internal server error', message: error.message },
       { status: 500 }

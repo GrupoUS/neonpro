@@ -7,16 +7,16 @@
 import { createClient } from '@/app/utils/supabase/client';
 import type { UserRole } from '@/types/auth';
 
-export interface SessionTimeoutConfig {
+export type SessionTimeoutConfig = {
   role: UserRole;
   defaultTimeoutMinutes: number;
   maxTimeoutMinutes: number;
   warningThresholds: number[]; // Minutes before expiry to show warnings
   activityExtensionMinutes: number;
   gracePeriodMinutes: number;
-}
+};
 
-export interface SessionActivity {
+export type SessionActivity = {
   sessionId: string;
   userId: string;
   lastActivity: Date;
@@ -27,23 +27,23 @@ export interface SessionActivity {
     | 'page_navigation'
     | 'form_interaction';
   metadata?: Record<string, any>;
-}
+};
 
-export interface SessionTimeoutWarning {
+export type SessionTimeoutWarning = {
   sessionId: string;
   warningType: '5min' | '1min' | 'final';
   expiresAt: Date;
   canExtend: boolean;
   extensionMinutes?: number;
-}
+};
 
-export interface SessionPreservationData {
+export type SessionPreservationData = {
   formData: Record<string, any>;
   currentPage: string;
   scrollPosition: number;
   unsavedChanges: boolean;
   temporaryData: Record<string, any>;
-}
+};
 
 // Default timeout configurations per role
 const DEFAULT_TIMEOUT_CONFIGS: Record<UserRole, SessionTimeoutConfig> = {
@@ -135,8 +135,7 @@ class IntelligentSessionTimeout {
           Date.now() + config.defaultTimeoutMinutes * 60 * 1000
         ),
       });
-    } catch (error) {
-      console.error('Failed to initialize session timeout:', error);
+    } catch (_error) {
       throw new Error('Session timeout initialization failed');
     }
   }
@@ -182,8 +181,7 @@ class IntelligentSessionTimeout {
       await this.updateLastActivity(sessionId, now);
 
       return false;
-    } catch (error) {
-      console.error('Failed to record activity:', error);
+    } catch (_error) {
       return false;
     }
   }
@@ -243,8 +241,7 @@ class IntelligentSessionTimeout {
       });
 
       return true;
-    } catch (error) {
-      console.error('Failed to extend session:', error);
+    } catch (_error) {
       return false;
     }
   }
@@ -284,9 +281,7 @@ class IntelligentSessionTimeout {
         expiresAt: warning.expiresAt,
         canExtend: warning.canExtend,
       });
-    } catch (error) {
-      console.error('Failed to show timeout warning:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -324,9 +319,7 @@ class IntelligentSessionTimeout {
 
       // Emit session expired event
       this.emitSessionExpiredEvent(sessionId, preserveData);
-    } catch (error) {
-      console.error('Failed to expire session gracefully:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -391,8 +384,7 @@ class IntelligentSessionTimeout {
         lastActivity,
         activityPattern,
       };
-    } catch (error) {
-      console.error('Failed to get session analytics:', error);
+    } catch (_error) {
       return null;
     }
   }

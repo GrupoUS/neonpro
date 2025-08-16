@@ -47,35 +47,35 @@ import type {
   KPIAlert,
 } from '@/lib/types/kpi-types';
 
-interface KPIDashboardProps {
+type KPIDashboardProps = {
   userId: string;
   dashboardId?: string;
   isEditable?: boolean;
   refreshInterval?: number;
-}
+};
 
-interface KPICardProps {
+type KPICardProps = {
   kpi: FinancialKPI;
   isEditing?: boolean;
   onDrillDown?: (kpiId: string, dimension: string) => void;
   onEdit?: () => void;
   onRemove?: () => void;
-}
+};
 
-interface DrillDownModalProps {
+type DrillDownModalProps = {
   kpi: FinancialKPI | null;
   dimension: string;
   results: DrillDownResult[];
   isOpen: boolean;
   onClose: () => void;
   onDrillDeeper?: (dimension: string, value: string) => void;
-}
+};
 
-interface AlertsPanelProps {
+type AlertsPanelProps = {
   alerts: KPIAlert[];
   onAcknowledge: (alertId: string) => void;
   onViewDetails: (alert: KPIAlert) => void;
-}
+};
 
 const KPICard: React.FC<KPICardProps> = ({
   kpi,
@@ -471,8 +471,7 @@ export const KPIDashboard: React.FC<KPIDashboardProps> = ({
         loadAlerts(),
         dashboardId ? loadDashboard() : Promise.resolve(),
       ]);
-    } catch (error) {
-      console.error('Error loading dashboard data:', error);
+    } catch (_error) {
     } finally {
       setLoading(false);
     }
@@ -494,9 +493,7 @@ export const KPIDashboard: React.FC<KPIDashboardProps> = ({
       if (data.success) {
         setKpis(data.data);
       }
-    } catch (error) {
-      console.error('Error loading KPIs:', error);
-    }
+    } catch (_error) {}
   };
 
   const loadAlerts = async () => {
@@ -508,9 +505,7 @@ export const KPIDashboard: React.FC<KPIDashboardProps> = ({
       if (data.success) {
         setAlerts(data.data);
       }
-    } catch (error) {
-      console.error('Error loading alerts:', error);
-    }
+    } catch (_error) {}
   };
 
   const loadDashboard = async () => {
@@ -525,9 +520,7 @@ export const KPIDashboard: React.FC<KPIDashboardProps> = ({
         setDashboard(data.data);
         setFilters(data.data.filters);
       }
-    } catch (error) {
-      console.error('Error loading dashboard:', error);
-    }
+    } catch (_error) {}
   };
 
   const handleDrillDown = async (kpiId: string, dimension: string) => {
@@ -556,9 +549,7 @@ export const KPIDashboard: React.FC<KPIDashboardProps> = ({
         setDrillDownResults(data.data.results || []);
         setShowDrillDown(true);
       }
-    } catch (error) {
-      console.error('Error performing drill-down:', error);
-    }
+    } catch (_error) {}
   };
 
   const handleAcknowledgeAlert = async (alertId: string) => {
@@ -573,9 +564,7 @@ export const KPIDashboard: React.FC<KPIDashboardProps> = ({
       if (response.ok) {
         setAlerts(alerts.filter((alert) => alert.id !== alertId));
       }
-    } catch (error) {
-      console.error('Error acknowledging alert:', error);
-    }
+    } catch (_error) {}
   };
 
   const handleFilterChange = (newFilters: Partial<DashboardFilters>) => {
@@ -790,7 +779,7 @@ export const KPIDashboard: React.FC<KPIDashboardProps> = ({
           <AlertsPanel
             alerts={alerts}
             onAcknowledge={handleAcknowledgeAlert}
-            onViewDetails={(alert) => console.log('View alert details:', alert)}
+            onViewDetails={(_alert) => {}}
           />
         </div>
       </div>
@@ -801,9 +790,7 @@ export const KPIDashboard: React.FC<KPIDashboardProps> = ({
         isOpen={showDrillDown}
         kpi={selectedKpi}
         onClose={() => setShowDrillDown(false)}
-        onDrillDeeper={(dimension, value) => {
-          console.log('Drill deeper:', dimension, value);
-        }}
+        onDrillDeeper={(_dimension, _value) => {}}
         results={drillDownResults}
       />
     </div>

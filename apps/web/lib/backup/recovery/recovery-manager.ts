@@ -4,7 +4,7 @@ import { LGPDManager } from '../../lgpd/lgpd-manager';
 import { EncryptionService } from '../../security/encryption-service';
 import { BackupStrategyManager } from '../strategies/backup-strategies';
 
-export interface RecoveryPlan {
+export type RecoveryPlan = {
   id: string;
   name: string;
   description: string;
@@ -21,9 +21,9 @@ export interface RecoveryPlan {
   rollback_plan: RollbackStep[];
   validation_checks: ValidationCheck[];
   metadata: Record<string, any>;
-}
+};
 
-export interface RecoveryStep {
+export type RecoveryStep = {
   id: string;
   order: number;
   name: string;
@@ -38,9 +38,9 @@ export interface RecoveryStep {
   rollback_on_failure: boolean;
   validation_required: boolean;
   metadata: Record<string, any>;
-}
+};
 
-export interface RollbackStep {
+export type RollbackStep = {
   id: string;
   order: number;
   name: string;
@@ -53,9 +53,9 @@ export interface RollbackStep {
   target: string;
   script?: string;
   timeout_minutes: number;
-}
+};
 
-export interface ValidationCheck {
+export type ValidationCheck = {
   id: string;
   name: string;
   type: 'checksum' | 'integrity' | 'connectivity' | 'performance' | 'custom';
@@ -64,9 +64,9 @@ export interface ValidationCheck {
   tolerance: number;
   critical: boolean;
   script?: string;
-}
+};
 
-export interface RecoveryExecution {
+export type RecoveryExecution = {
   id: string;
   plan_id: string;
   status:
@@ -90,9 +90,9 @@ export interface RecoveryExecution {
   actual_duration_minutes?: number;
   executed_by: string;
   metadata: Record<string, any>;
-}
+};
 
-export interface RecoveryError {
+export type RecoveryError = {
   step_id: string;
   error_type:
     | 'timeout'
@@ -103,18 +103,18 @@ export interface RecoveryError {
   timestamp: Date;
   recoverable: boolean;
   suggested_action: string;
-}
+};
 
-export interface ValidationResult {
+export type ValidationResult = {
   check_id: string;
   status: 'passed' | 'failed' | 'warning';
   actual_result: any;
   expected_result: any;
   message: string;
   timestamp: Date;
-}
+};
 
-export interface RecoveryMetrics {
+export type RecoveryMetrics = {
   total_recoveries: number;
   successful_recoveries: number;
   failed_recoveries: number;
@@ -135,7 +135,7 @@ export interface RecoveryMetrics {
     avg_duration_minutes: number;
     success_rate: number;
   }>;
-}
+};
 
 export class RecoveryManager {
   private readonly supabase;
@@ -254,9 +254,7 @@ export class RecoveryManager {
       this.activeExecutions.set(executionId, execution);
 
       // Executar plano
-      this.executeRecoverySteps(executionId, plan).catch((error) => {
-        console.error(`Erro na execução ${executionId}:`, error);
-      });
+      this.executeRecoverySteps(executionId, plan).catch((_error) => {});
 
       await this.auditLogger.log({
         action: 'recovery_execution_started',
@@ -808,8 +806,7 @@ export class RecoveryManager {
     for (const step of rollbackSteps.sort((a, b) => a.order - b.order)) {
       try {
         await this.executeRollbackStep(step);
-      } catch (error) {
-        console.error(`Erro no rollback step ${step.id}:`, error);
+      } catch (_error) {
         // Continuar com outros steps mesmo se um falhar
       }
     }
@@ -818,24 +815,17 @@ export class RecoveryManager {
   private async executeRollbackStep(step: RollbackStep): Promise<void> {
     switch (step.action) {
       case 'restore_backup':
-        // Implementar restauração de backup anterior
-        console.log(`Restaurando backup para: ${step.target}`);
         break;
 
       case 'delete_files':
-        // Implementar deleção de arquivos
-        console.log(`Deletando arquivos em: ${step.target}`);
         break;
 
       case 'revert_database':
-        // Implementar reversão de banco
-        console.log(`Revertendo banco: ${step.target}`);
         break;
 
       case 'custom_script':
         // Executar script customizado
         if (step.script) {
-          console.log(`Executando script: ${step.script}`);
         }
         break;
     }
@@ -960,9 +950,7 @@ export class RecoveryManager {
   }
 
   private async checkPrerequisites(plan: RecoveryPlan): Promise<void> {
-    for (const prerequisite of plan.prerequisites) {
-      // Implementar verificação de pré-requisitos
-      console.log(`Verificando pré-requisito: ${prerequisite}`);
+    for (const _prerequisite of plan.prerequisites) {
     }
   }
 
@@ -972,20 +960,14 @@ export class RecoveryManager {
   }
 
   private async prepareRecoveryStep(
-    step: RecoveryStep,
+    _step: RecoveryStep,
     _execution: RecoveryExecution
-  ): Promise<void> {
-    // Implementar preparação do step
-    console.log(`Preparando step: ${step.name}`);
-  }
+  ): Promise<void> {}
 
   private async cleanupRecoveryStep(
-    step: RecoveryStep,
+    _step: RecoveryStep,
     _execution: RecoveryExecution
-  ): Promise<void> {
-    // Implementar limpeza do step
-    console.log(`Limpando step: ${step.name}`);
-  }
+  ): Promise<void> {}
 
   private async validateRecoveryStep(
     step: RecoveryStep

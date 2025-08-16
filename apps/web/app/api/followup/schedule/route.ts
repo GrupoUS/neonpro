@@ -44,7 +44,6 @@ export async function POST(request: NextRequest) {
       message: `${scheduledFollowups.length} follow-ups scheduled successfully`,
     });
   } catch (error) {
-    console.error('Error scheduling follow-ups:', error);
     return NextResponse.json(
       {
         success: false,

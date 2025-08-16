@@ -17,15 +17,15 @@ import type {
 } from './ai-scheduling-core';
 
 // Optimization Constraints
-interface OptimizationConstraints {
+type OptimizationConstraints = {
   hardConstraints: HardConstraint[];
   softConstraints: SoftConstraint[];
   businessRules: BusinessRule[];
   resourceLimits: ResourceLimit[];
-}
+};
 
 // Hard Constraints (must be satisfied)
-interface HardConstraint {
+type HardConstraint = {
   id: string;
   type:
     | 'staff_availability'
@@ -35,10 +35,10 @@ interface HardConstraint {
   description: string;
   validator: (slot: any, context: any) => boolean;
   priority: number;
-}
+};
 
 // Soft Constraints (preferred but can be violated)
-interface SoftConstraint {
+type SoftConstraint = {
   id: string;
   type:
     | 'patient_preference'
@@ -48,47 +48,47 @@ interface SoftConstraint {
   description: string;
   weight: number;
   scorer: (slot: any, context: any) => number;
-}
+};
 
 // Business Rules
-interface BusinessRule {
+type BusinessRule = {
   id: string;
   name: string;
   condition: string;
   action: string;
   isActive: boolean;
   priority: number;
-}
+};
 
 // Resource Limits
-interface ResourceLimit {
+type ResourceLimit = {
   resourceType: 'staff' | 'equipment' | 'room';
   resourceId: string;
   maxConcurrentUsage: number;
   utilizationTarget: number;
   overBookingAllowed: boolean;
-}
+};
 
 // Optimization Result
-interface OptimizationResult {
+type OptimizationResult = {
   recommendations: SchedulingRecommendation[];
   constraintViolations: ConstraintViolation[];
   optimizationMetrics: OptimizationMetrics;
   alternativeScenarios: AlternativeScenario[];
   confidenceScore: number;
-}
+};
 
 // Constraint Violation
-interface ConstraintViolation {
+type ConstraintViolation = {
   constraintId: string;
   severity: 'low' | 'medium' | 'high' | 'critical';
   description: string;
   suggestedResolution: string;
   impactScore: number;
-}
+};
 
 // Optimization Metrics
-interface OptimizationMetrics {
+type OptimizationMetrics = {
   totalScore: number;
   revenueOptimization: number;
   patientSatisfaction: number;
@@ -96,16 +96,16 @@ interface OptimizationMetrics {
   resourceUtilization: number;
   constraintCompliance: number;
   processingTime: number;
-}
+};
 
 // Alternative Scenario
-interface AlternativeScenario {
+type AlternativeScenario = {
   id: string;
   description: string;
   recommendations: SchedulingRecommendation[];
   tradeOffs: string[];
   score: number;
-}
+};
 
 class OptimizationEngine {
   private readonly supabase = createClient();
@@ -181,8 +181,7 @@ class OptimizationEngine {
       await this.storeOptimizationHistory(criteria, result);
 
       return result;
-    } catch (error) {
-      console.error('Error in optimization engine:', error);
+    } catch (_error) {
       throw new Error('Failed to optimize scheduling');
     }
   }
@@ -598,9 +597,7 @@ class OptimizationEngine {
         result: JSON.stringify(result),
         created_at: new Date().toISOString(),
       });
-    } catch (error) {
-      console.error('Error storing optimization history:', error);
-    }
+    } catch (_error) {}
   }
 }
 

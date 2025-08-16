@@ -96,8 +96,6 @@ export async function POST(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('AI scheduling optimization error:', error);
-
     return NextResponse.json(
       {
         error: 'Failed to generate optimal scheduling suggestions',
@@ -141,8 +139,6 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('Get patient preferences error:', error);
-
     return NextResponse.json(
       {
         error: 'Failed to retrieve patient scheduling preferences',

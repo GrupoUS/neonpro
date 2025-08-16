@@ -51,16 +51,16 @@ import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 // Types for statistical data
-interface CorrelationData {
+type CorrelationData = {
   variable1: string;
   variable2: string;
   correlation: number;
   pValue: number;
   significance: 'high' | 'medium' | 'low' | 'none';
   sampleSize: number;
-}
+};
 
-interface RegressionResult {
+type RegressionResult = {
   equation: string;
   rSquared: number;
   coefficients: Array<{
@@ -75,9 +75,9 @@ interface RegressionResult {
     predicted: number;
     residual: number;
   }>;
-}
+};
 
-interface StatisticalTest {
+type StatisticalTest = {
   testName: string;
   hypothesis: string;
   testStatistic: number;
@@ -86,9 +86,9 @@ interface StatisticalTest {
   result: 'reject' | 'fail_to_reject';
   interpretation: string;
   confidenceLevel: number;
-}
+};
 
-interface DataQualityMetrics {
+type DataQualityMetrics = {
   completeness: number;
   accuracy: number;
   consistency: number;
@@ -100,9 +100,9 @@ interface DataQualityMetrics {
     zScore: number;
     isOutlier: boolean;
   }>;
-}
+};
 
-interface PredictiveModel {
+type PredictiveModel = {
   modelType: 'linear' | 'polynomial' | 'exponential' | 'seasonal';
   accuracy: number;
   features: string[];
@@ -116,9 +116,9 @@ interface PredictiveModel {
     predicted: number;
     confidence: number;
   }>;
-}
+};
 
-interface StatisticalInsightsProps {
+type StatisticalInsightsProps = {
   correlations: CorrelationData[];
   regressionResults?: RegressionResult;
   statisticalTests: StatisticalTest[];
@@ -130,7 +130,7 @@ interface StatisticalInsightsProps {
   onModelRetrain?: (modelType: string) => void;
   onDataRefresh?: () => void;
   onExportResults?: (format: 'csv' | 'pdf') => void;
-}
+};
 
 // Utility functions
 const getCorrelationStrength = (correlation: number) => {

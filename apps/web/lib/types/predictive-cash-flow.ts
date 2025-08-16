@@ -66,7 +66,7 @@ export type ErrorMagnitude = 'low' | 'medium' | 'high' | 'critical';
 // PREDICTION MODEL INTERFACES
 // =====================================================================================
 
-export interface PredictionModel {
+export type PredictionModel = {
   id: string;
   model_name: string;
   model_type: ModelType;
@@ -96,9 +96,9 @@ export interface PredictionModel {
   created_at: string;
   updated_at: string;
   created_by?: string;
-}
+};
 
-export interface CreatePredictionModelInput {
+export type CreatePredictionModelInput = {
   model_name: string;
   model_type: ModelType;
   algorithm_type: AlgorithmType;
@@ -108,9 +108,9 @@ export interface CreatePredictionModelInput {
   training_data_size?: number;
   training_period_start?: string;
   training_period_end?: string;
-}
+};
 
-export interface UpdatePredictionModelInput {
+export type UpdatePredictionModelInput = {
   model_name?: string;
   accuracy_rate?: number;
   confidence_score?: number;
@@ -123,13 +123,13 @@ export interface UpdatePredictionModelInput {
   is_active?: boolean;
   is_production_ready?: boolean;
   next_training_due?: string;
-}
+};
 
 // =====================================================================================
 // CASH FLOW PREDICTION INTERFACES
 // =====================================================================================
 
-export interface CashFlowPrediction {
+export type CashFlowPrediction = {
   id: string;
   model_id: string;
   clinic_id: string;
@@ -171,9 +171,9 @@ export interface CashFlowPrediction {
   model?: PredictionModel;
   scenario?: ForecastingScenario;
   accuracy?: PredictionAccuracy;
-}
+};
 
-export interface CreateCashFlowPredictionInput {
+export type CreateCashFlowPredictionInput = {
   model_id: string;
   clinic_id: string;
   period_type: PredictionPeriodType;
@@ -190,9 +190,9 @@ export interface CreateCashFlowPredictionInput {
   trend_adjustment?: number;
   input_features?: Record<string, any>;
   scenario_id?: string;
-}
+};
 
-export interface UpdateCashFlowPredictionInput {
+export type UpdateCashFlowPredictionInput = {
   predicted_inflow_amount?: number;
   predicted_outflow_amount?: number;
   predicted_net_amount?: number;
@@ -202,13 +202,13 @@ export interface UpdateCashFlowPredictionInput {
   prediction_variance?: number;
   is_validated?: boolean;
   validation_date?: string;
-}
+};
 
 // =====================================================================================
 // FORECASTING SCENARIO INTERFACES
 // =====================================================================================
 
-export interface ForecastingScenario {
+export type ForecastingScenario = {
   id: string;
   scenario_name: string;
   scenario_type: ScenarioType;
@@ -243,9 +243,9 @@ export interface ForecastingScenario {
 
   // Related Data
   predictions?: CashFlowPrediction[];
-}
+};
 
-export interface CreateForecastingScenarioInput {
+export type CreateForecastingScenarioInput = {
   scenario_name: string;
   scenario_type: ScenarioType;
   description?: string;
@@ -256,9 +256,9 @@ export interface CreateForecastingScenarioInput {
   forecast_end_date: string;
   clinic_id: string;
   is_baseline?: boolean;
-}
+};
 
-export interface UpdateForecastingScenarioInput {
+export type UpdateForecastingScenarioInput = {
   scenario_name?: string;
   scenario_type?: ScenarioType;
   description?: string;
@@ -273,13 +273,13 @@ export interface UpdateForecastingScenarioInput {
   cash_flow_variance?: number;
   is_active?: boolean;
   is_baseline?: boolean;
-}
+};
 
 // =====================================================================================
 // PREDICTION ACCURACY INTERFACES
 // =====================================================================================
 
-export interface PredictionAccuracy {
+export type PredictionAccuracy = {
   id: string;
   prediction_id: string;
   model_id: string;
@@ -312,9 +312,9 @@ export interface PredictionAccuracy {
   // Related Data
   prediction?: CashFlowPrediction;
   model?: PredictionModel;
-}
+};
 
-export interface CreatePredictionAccuracyInput {
+export type CreatePredictionAccuracyInput = {
   prediction_id: string;
   model_id: string;
   actual_inflow_amount: number;
@@ -330,13 +330,13 @@ export interface CreatePredictionAccuracyInput {
   validation_period_type: PredictionPeriodType;
   validation_date: string;
   is_outlier?: boolean;
-}
+};
 
 // =====================================================================================
 // PREDICTION ALERT INTERFACES
 // =====================================================================================
 
-export interface PredictionAlert {
+export type PredictionAlert = {
   id: string;
   prediction_id?: string;
   clinic_id: string;
@@ -373,9 +373,9 @@ export interface PredictionAlert {
 
   // Related Data
   prediction?: CashFlowPrediction;
-}
+};
 
-export interface CreatePredictionAlertInput {
+export type CreatePredictionAlertInput = {
   prediction_id?: string;
   clinic_id: string;
   alert_type: AlertType;
@@ -388,30 +388,30 @@ export interface CreatePredictionAlertInput {
   recommended_actions?: string[];
   assigned_to?: string;
   notification_channels?: string[];
-}
+};
 
-export interface UpdatePredictionAlertInput {
+export type UpdatePredictionAlertInput = {
   status?: AlertStatus;
   acknowledged_at?: string;
   resolved_at?: string;
   assigned_to?: string;
   notification_sent?: boolean;
   recommended_actions?: string[];
-}
+};
 
 // =====================================================================================
 // ANALYSIS AND REPORTING INTERFACES
 // =====================================================================================
 
-export interface ModelAccuracySummary {
+export type ModelAccuracySummary = {
   accuracy_avg: number;
   accuracy_min: number;
   accuracy_max: number;
   total_predictions: number;
   validated_predictions: number;
-}
+};
 
-export interface PredictionAnalytics {
+export type PredictionAnalytics = {
   model_performance: {
     overall_accuracy: number;
     accuracy_trend: Array<{ date: string; accuracy: number }>;
@@ -441,9 +441,9 @@ export interface PredictionAnalytics {
       prediction_count: number;
     }>;
   };
-}
+};
 
-export interface CashFlowForecast {
+export type CashFlowForecast = {
   periods: Array<{
     period: string;
     period_type: PredictionPeriodType;
@@ -470,9 +470,9 @@ export interface CashFlowForecast {
     potential_shortfalls: string[];
     recommended_actions: string[];
   };
-}
+};
 
-export interface ScenarioComparison {
+export type ScenarioComparison = {
   scenarios: Array<{
     id: string;
     name: string;
@@ -503,13 +503,13 @@ export interface ScenarioComparison {
     downside_risk: number;
     upside_potential: number;
   };
-}
+};
 
 // =====================================================================================
 // FILTERING AND QUERY INTERFACES
 // =====================================================================================
 
-export interface PredictionFilters {
+export type PredictionFilters = {
   clinic_id?: string;
   model_id?: string;
   period_type?: PredictionPeriodType;
@@ -518,17 +518,17 @@ export interface PredictionFilters {
   min_confidence?: number;
   is_validated?: boolean;
   scenario_id?: string;
-}
+};
 
-export interface ModelFilters {
+export type ModelFilters = {
   model_type?: ModelType;
   algorithm_type?: AlgorithmType;
   min_accuracy?: number;
   is_active?: boolean;
   is_production_ready?: boolean;
-}
+};
 
-export interface ScenarioFilters {
+export type ScenarioFilters = {
   clinic_id?: string;
   scenario_type?: ScenarioType;
   is_active?: boolean;
@@ -538,9 +538,9 @@ export interface ScenarioFilters {
     start: string;
     end: string;
   };
-}
+};
 
-export interface AlertFilters {
+export type AlertFilters = {
   clinic_id?: string;
   alert_type?: AlertType;
   severity_level?: SeverityLevel;
@@ -550,54 +550,54 @@ export interface AlertFilters {
     start: string;
     end: string;
   };
-}
+};
 
 // =====================================================================================
 // API RESPONSE INTERFACES
 // =====================================================================================
 
-export interface PredictionsResponse {
+export type PredictionsResponse = {
   predictions: CashFlowPrediction[];
   total: number;
   page: number;
   per_page: number;
   has_more: boolean;
-}
+};
 
-export interface ModelsResponse {
+export type ModelsResponse = {
   models: PredictionModel[];
   total: number;
   page: number;
   per_page: number;
   has_more: boolean;
-}
+};
 
-export interface ScenariosResponse {
+export type ScenariosResponse = {
   scenarios: ForecastingScenario[];
   total: number;
   page: number;
   per_page: number;
   has_more: boolean;
-}
+};
 
-export interface AlertsResponse {
+export type AlertsResponse = {
   alerts: PredictionAlert[];
   total: number;
   page: number;
   per_page: number;
   has_more: boolean;
-}
+};
 
 // =====================================================================================
 // ERROR HANDLING INTERFACES
 // =====================================================================================
 
-export interface PredictionError {
+export type PredictionError = {
   code: string;
   message: string;
   details?: Record<string, any>;
   timestamp: string;
-}
+};
 
 export interface ValidationError extends PredictionError {
   field: string;
@@ -621,27 +621,27 @@ export interface ForecastingError extends PredictionError {
 // UTILITY AND HELPER TYPES
 // =====================================================================================
 
-export interface PaginationParams {
+export type PaginationParams = {
   page?: number;
   per_page?: number;
   sort_by?: string;
   sort_order?: 'asc' | 'desc';
-}
+};
 
-export interface DateRange {
+export type DateRange = {
   start_date: string;
   end_date: string;
-}
+};
 
-export interface AmountRange {
+export type AmountRange = {
   min_amount: number;
   max_amount: number;
-}
+};
 
-export interface ConfidenceRange {
+export type ConfidenceRange = {
   min_confidence: number;
   max_confidence: number;
-}
+};
 
 // Export all types for external use
 export type {

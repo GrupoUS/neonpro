@@ -84,7 +84,7 @@ const OptimizationConfigSchema = z.object({
 type UserProfile = z.infer<typeof UserProfileSchema>;
 type OptimizationConfig = z.infer<typeof OptimizationConfigSchema>;
 
-interface OptimizationResult {
+type OptimizationResult = {
   userId: string;
   optimizations: {
     channel: {
@@ -109,9 +109,9 @@ interface OptimizationResult {
   };
   modelVersions: Record<string, string>;
   generatedAt: Date;
-}
+};
 
-interface SegmentationResult {
+type SegmentationResult = {
   segments: Array<{
     id: string;
     name: string;
@@ -128,9 +128,9 @@ interface SegmentationResult {
   confidence: number;
   totalUsers: number;
   generatedAt: Date;
-}
+};
 
-interface ABTestResult {
+type ABTestResult = {
   testId: string;
   variants: Array<{
     id: string;
@@ -153,7 +153,7 @@ interface ABTestResult {
   confidence: number;
   significance: number;
   recommendation: string;
-}
+};
 
 // ================================================================================
 // ML OPTIMIZATION ENGINE
@@ -203,8 +203,6 @@ export class NotificationMLEngine {
       segments: new Map<string, any>(),
       version: '1.0.0',
     });
-
-    console.log('🤖 Modelos de ML inicializados');
   }
 
   // ================================================================================
@@ -218,190 +216,182 @@ export class NotificationMLEngine {
     userId: string,
     clinicId: string
   ): Promise<UserProfile> {
-    try {
-      // Buscar dados básicos do usuário
-      const { data: user, error: userError } = await this.supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', userId)
-        .single();
+    // Buscar dados básicos do usuário
+    const { data: user, error: userError } = await this.supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', userId)
+      .single();
 
-      if (userError) {
-        throw new Error(`Erro ao buscar usuário: ${userError.message}`);
-      }
-
-      // Buscar histórico de notificações
-      const { data: notifications, error: notificationError } =
-        await this.supabase
-          .from('notifications')
-          .select('*')
-          .eq('user_id', userId)
-          .order('sent_at', { ascending: false })
-          .limit(500);
-
-      if (notificationError) {
-        console.error('Erro ao buscar histórico:', notificationError);
-      }
-
-      const notificationHistory = notifications || [];
-
-      // Calcular métricas comportamentais
-      const totalNotifications = notificationHistory.length;
-      const totalOpened = notificationHistory.filter((n) => n.opened_at).length;
-      const totalClicked = notificationHistory.filter(
-        (n) => n.clicked_at
-      ).length;
-
-      const engagementScore =
-        totalNotifications > 0 ? totalOpened / totalNotifications : 0.5;
-
-      // Análise de canais preferidos
-      const channelStats = new Map<
-        NotificationChannel,
-        { sent: number; opened: number }
-      >();
-      notificationHistory.forEach((n) => {
-        const current = channelStats.get(n.channel) || { sent: 0, opened: 0 };
-        current.sent++;
-        if (n.opened_at) {
-          current.opened++;
-        }
-        channelStats.set(n.channel, current);
-      });
-
-      const preferredChannels = Array.from(channelStats.entries())
-        .map(([channel, stats]) => ({
-          channel,
-          rate: stats.sent > 0 ? stats.opened / stats.sent : 0,
-        }))
-        .sort((a, b) => b.rate - a.rate)
-        .slice(0, 3)
-        .map((c) => c.channel);
-
-      // Análise de horários preferenciais
-      const hourlyEngagement = new Array(24)
-        .fill(0)
-        .map(() => ({ sent: 0, opened: 0 }));
-      notificationHistory.forEach((n) => {
-        const hour = new Date(n.sent_at).getHours();
-        hourlyEngagement[hour].sent++;
-        if (n.opened_at) {
-          hourlyEngagement[hour].opened++;
-        }
-      });
-
-      const bestHours = hourlyEngagement
-        .map((stats, hour) => ({
-          hour,
-          rate: stats.sent > 0 ? stats.opened / stats.sent : 0,
-          count: stats.sent,
-        }))
-        .filter((h) => h.count >= 3) // Mínimo de dados
-        .sort((a, b) => b.rate - a.rate)
-        .slice(0, 5)
-        .map((h) => h.hour);
-
-      // Padrão de resposta
-      const responseTimes = notificationHistory
-        .filter((n) => n.opened_at)
-        .map((n) => {
-          const sent = new Date(n.sent_at).getTime();
-          const opened = new Date(n.opened_at!).getTime();
-          return (opened - sent) / (1000 * 60); // minutos
-        });
-
-      const avgResponseTime =
-        responseTimes.length > 0
-          ? responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length
-          : 60;
-
-      let responsePattern: 'immediate' | 'delayed' | 'weekend' | 'weekday' =
-        'immediate';
-      if (avgResponseTime > 60) {
-        responsePattern = 'delayed';
-      }
-
-      // Análise de fim de semana vs dias úteis
-      const weekendEngagement = notificationHistory.filter((n) => {
-        const day = new Date(n.sent_at).getDay();
-        return (day === 0 || day === 6) && n.opened_at;
-      }).length;
-
-      const weekdayEngagement = totalOpened - weekendEngagement;
-      const weekendSent = notificationHistory.filter((n) => {
-        const day = new Date(n.sent_at).getDay();
-        return day === 0 || day === 6;
-      }).length;
-
-      const weekdayRate =
-        totalNotifications - weekendSent > 0
-          ? weekdayEngagement / (totalNotifications - weekendSent)
-          : 0;
-      const weekendRate = weekendSent > 0 ? weekendEngagement / weekendSent : 0;
-
-      if (weekendRate > weekdayRate * 1.2) {
-        responsePattern = 'weekend';
-      } else if (weekdayRate > weekendRate * 1.2) {
-        responsePattern = 'weekday';
-      }
-
-      // Risco de churn
-      const lastEngagement = notificationHistory.find(
-        (n) => n.opened_at || n.clicked_at
-      );
-      const daysSinceLastEngagement = lastEngagement
-        ? (Date.now() - new Date(lastEngagement.sent_at).getTime()) /
-          (1000 * 60 * 60 * 24)
-        : 30;
-
-      const churnRisk = Math.min(daysSinceLastEngagement / 30, 1); // Normalizar para 30 dias
-
-      const profile: UserProfile = {
-        userId,
-        clinicId,
-        demographics: {
-          age: user.age,
-          gender: user.gender,
-          location: user.city,
-          timezone: user.timezone || 'America/Sao_Paulo',
-        },
-        behavior: {
-          engagementScore,
-          preferredChannels:
-            preferredChannels.length > 0
-              ? preferredChannels
-              : [NotificationChannel.EMAIL],
-          bestHours: bestHours.length > 0 ? bestHours : [10, 14, 16],
-          responsePattern,
-          churnRisk,
-        },
-        preferences: {
-          frequency:
-            engagementScore > 0.7
-              ? 'high'
-              : engagementScore > 0.3
-                ? 'medium'
-                : 'low',
-          contentTypes: ['appointment', 'reminder', 'promotion'],
-          languages: ['pt-BR'],
-        },
-        history: {
-          totalNotifications,
-          totalOpened,
-          totalClicked,
-          avgResponseTime,
-          lastEngagement: lastEngagement?.sent_at,
-        },
-      };
-
-      // Salvar perfil atualizado
-      await this.saveUserProfile(profile);
-
-      return profile;
-    } catch (error) {
-      console.error('Erro ao construir perfil do usuário:', error);
-      throw error;
+    if (userError) {
+      throw new Error(`Erro ao buscar usuário: ${userError.message}`);
     }
+
+    // Buscar histórico de notificações
+    const { data: notifications, error: notificationError } =
+      await this.supabase
+        .from('notifications')
+        .select('*')
+        .eq('user_id', userId)
+        .order('sent_at', { ascending: false })
+        .limit(500);
+
+    if (notificationError) {
+    }
+
+    const notificationHistory = notifications || [];
+
+    // Calcular métricas comportamentais
+    const totalNotifications = notificationHistory.length;
+    const totalOpened = notificationHistory.filter((n) => n.opened_at).length;
+    const totalClicked = notificationHistory.filter((n) => n.clicked_at).length;
+
+    const engagementScore =
+      totalNotifications > 0 ? totalOpened / totalNotifications : 0.5;
+
+    // Análise de canais preferidos
+    const channelStats = new Map<
+      NotificationChannel,
+      { sent: number; opened: number }
+    >();
+    notificationHistory.forEach((n) => {
+      const current = channelStats.get(n.channel) || { sent: 0, opened: 0 };
+      current.sent++;
+      if (n.opened_at) {
+        current.opened++;
+      }
+      channelStats.set(n.channel, current);
+    });
+
+    const preferredChannels = Array.from(channelStats.entries())
+      .map(([channel, stats]) => ({
+        channel,
+        rate: stats.sent > 0 ? stats.opened / stats.sent : 0,
+      }))
+      .sort((a, b) => b.rate - a.rate)
+      .slice(0, 3)
+      .map((c) => c.channel);
+
+    // Análise de horários preferenciais
+    const hourlyEngagement = new Array(24)
+      .fill(0)
+      .map(() => ({ sent: 0, opened: 0 }));
+    notificationHistory.forEach((n) => {
+      const hour = new Date(n.sent_at).getHours();
+      hourlyEngagement[hour].sent++;
+      if (n.opened_at) {
+        hourlyEngagement[hour].opened++;
+      }
+    });
+
+    const bestHours = hourlyEngagement
+      .map((stats, hour) => ({
+        hour,
+        rate: stats.sent > 0 ? stats.opened / stats.sent : 0,
+        count: stats.sent,
+      }))
+      .filter((h) => h.count >= 3) // Mínimo de dados
+      .sort((a, b) => b.rate - a.rate)
+      .slice(0, 5)
+      .map((h) => h.hour);
+
+    // Padrão de resposta
+    const responseTimes = notificationHistory
+      .filter((n) => n.opened_at)
+      .map((n) => {
+        const sent = new Date(n.sent_at).getTime();
+        const opened = new Date(n.opened_at!).getTime();
+        return (opened - sent) / (1000 * 60); // minutos
+      });
+
+    const avgResponseTime =
+      responseTimes.length > 0
+        ? responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length
+        : 60;
+
+    let responsePattern: 'immediate' | 'delayed' | 'weekend' | 'weekday' =
+      'immediate';
+    if (avgResponseTime > 60) {
+      responsePattern = 'delayed';
+    }
+
+    // Análise de fim de semana vs dias úteis
+    const weekendEngagement = notificationHistory.filter((n) => {
+      const day = new Date(n.sent_at).getDay();
+      return (day === 0 || day === 6) && n.opened_at;
+    }).length;
+
+    const weekdayEngagement = totalOpened - weekendEngagement;
+    const weekendSent = notificationHistory.filter((n) => {
+      const day = new Date(n.sent_at).getDay();
+      return day === 0 || day === 6;
+    }).length;
+
+    const weekdayRate =
+      totalNotifications - weekendSent > 0
+        ? weekdayEngagement / (totalNotifications - weekendSent)
+        : 0;
+    const weekendRate = weekendSent > 0 ? weekendEngagement / weekendSent : 0;
+
+    if (weekendRate > weekdayRate * 1.2) {
+      responsePattern = 'weekend';
+    } else if (weekdayRate > weekendRate * 1.2) {
+      responsePattern = 'weekday';
+    }
+
+    // Risco de churn
+    const lastEngagement = notificationHistory.find(
+      (n) => n.opened_at || n.clicked_at
+    );
+    const daysSinceLastEngagement = lastEngagement
+      ? (Date.now() - new Date(lastEngagement.sent_at).getTime()) /
+        (1000 * 60 * 60 * 24)
+      : 30;
+
+    const churnRisk = Math.min(daysSinceLastEngagement / 30, 1); // Normalizar para 30 dias
+
+    const profile: UserProfile = {
+      userId,
+      clinicId,
+      demographics: {
+        age: user.age,
+        gender: user.gender,
+        location: user.city,
+        timezone: user.timezone || 'America/Sao_Paulo',
+      },
+      behavior: {
+        engagementScore,
+        preferredChannels:
+          preferredChannels.length > 0
+            ? preferredChannels
+            : [NotificationChannel.EMAIL],
+        bestHours: bestHours.length > 0 ? bestHours : [10, 14, 16],
+        responsePattern,
+        churnRisk,
+      },
+      preferences: {
+        frequency:
+          engagementScore > 0.7
+            ? 'high'
+            : engagementScore > 0.3
+              ? 'medium'
+              : 'low',
+        contentTypes: ['appointment', 'reminder', 'promotion'],
+        languages: ['pt-BR'],
+      },
+      history: {
+        totalNotifications,
+        totalOpened,
+        totalClicked,
+        avgResponseTime,
+        lastEngagement: lastEngagement?.sent_at,
+      },
+    };
+
+    // Salvar perfil atualizado
+    await this.saveUserProfile(profile);
+
+    return profile;
   }
 
   /**
@@ -420,11 +410,8 @@ export class NotificationMLEngine {
       });
 
       if (error) {
-        console.error('Erro ao salvar perfil:', error);
       }
-    } catch (error) {
-      console.error('Erro ao salvar perfil:', error);
-    }
+    } catch (_error) {}
   }
 
   // ================================================================================
@@ -444,50 +431,45 @@ export class NotificationMLEngine {
       channels?: NotificationChannel[];
     }
   ): Promise<OptimizationResult> {
-    try {
-      // Obter perfil do usuário
-      const profile = await this.buildUserProfile(userId, clinicId);
+    // Obter perfil do usuário
+    const profile = await this.buildUserProfile(userId, clinicId);
 
-      // Otimização de canal
-      const channelOptimization = await this.optimizeChannel(
-        profile,
-        baseNotification.channels
-      );
+    // Otimização de canal
+    const channelOptimization = await this.optimizeChannel(
+      profile,
+      baseNotification.channels
+    );
 
-      // Otimização de timing
-      const timingOptimization = await this.optimizeTiming(
-        profile,
-        baseNotification.scheduledFor || new Date()
-      );
+    // Otimização de timing
+    const timingOptimization = await this.optimizeTiming(
+      profile,
+      baseNotification.scheduledFor || new Date()
+    );
 
-      // Personalização de conteúdo
-      const contentOptimization = await this.personalizeContent(
-        profile,
-        baseNotification.content
-      );
+    // Personalização de conteúdo
+    const contentOptimization = await this.personalizeContent(
+      profile,
+      baseNotification.content
+    );
 
-      // Otimização de frequência
-      const frequencyOptimization = await this.optimizeFrequency(profile);
+    // Otimização de frequência
+    const frequencyOptimization = await this.optimizeFrequency(profile);
 
-      return {
-        userId,
-        optimizations: {
-          channel: channelOptimization,
-          timing: timingOptimization,
-          content: contentOptimization,
-          frequency: frequencyOptimization,
-        },
-        modelVersions: {
-          engagement: this.models.get('engagement')?.version || '1.0.0',
-          timing: this.models.get('timing')?.version || '1.0.0',
-          content: '1.0.0',
-        },
-        generatedAt: new Date(),
-      };
-    } catch (error) {
-      console.error('Erro na otimização:', error);
-      throw error;
-    }
+    return {
+      userId,
+      optimizations: {
+        channel: channelOptimization,
+        timing: timingOptimization,
+        content: contentOptimization,
+        frequency: frequencyOptimization,
+      },
+      modelVersions: {
+        engagement: this.models.get('engagement')?.version || '1.0.0',
+        timing: this.models.get('timing')?.version || '1.0.0',
+        content: '1.0.0',
+      },
+      generatedAt: new Date(),
+    };
   }
 
   /**
@@ -699,39 +681,34 @@ export class NotificationMLEngine {
    * Executa segmentação automática de usuários
    */
   async performSegmentation(clinicId: string): Promise<SegmentationResult> {
-    try {
-      // Buscar todos os perfis da clínica
-      const { data: profiles, error } = await this.supabase
-        .from('user_ml_profiles')
-        .select('*')
-        .eq('clinic_id', clinicId);
+    // Buscar todos os perfis da clínica
+    const { data: profiles, error } = await this.supabase
+      .from('user_ml_profiles')
+      .select('*')
+      .eq('clinic_id', clinicId);
 
-      if (error || !profiles || profiles.length < 10) {
-        throw new Error('Dados insuficientes para segmentação');
-      }
-
-      // Extrair features para clustering
-      const features = profiles.map((profile) => [
-        profile.behavior.engagementScore,
-        profile.behavior.churnRisk,
-        profile.history.avgResponseTime / 1440, // Normalizar para dias
-        profile.behavior.preferredChannels.length,
-        profile.demographics.age || 35, // Valor padrão
-      ]);
-
-      // Aplicar K-means simplificado (k=4)
-      const segments = this.performKMeans(features, profiles, 4);
-
-      return {
-        segments,
-        confidence: 0.75,
-        totalUsers: profiles.length,
-        generatedAt: new Date(),
-      };
-    } catch (error) {
-      console.error('Erro na segmentação:', error);
-      throw error;
+    if (error || !profiles || profiles.length < 10) {
+      throw new Error('Dados insuficientes para segmentação');
     }
+
+    // Extrair features para clustering
+    const features = profiles.map((profile) => [
+      profile.behavior.engagementScore,
+      profile.behavior.churnRisk,
+      profile.history.avgResponseTime / 1440, // Normalizar para dias
+      profile.behavior.preferredChannels.length,
+      profile.demographics.age || 35, // Valor padrão
+    ]);
+
+    // Aplicar K-means simplificado (k=4)
+    const segments = this.performKMeans(features, profiles, 4);
+
+    return {
+      segments,
+      confidence: 0.75,
+      totalUsers: profiles.length,
+      generatedAt: new Date(),
+    };
   }
 
   /**
@@ -887,8 +864,6 @@ export class NotificationMLEngine {
     }
 
     try {
-      console.log('🤖 Iniciando treinamento de modelos...');
-
       // Buscar dados de treinamento
       const { data: trainingData, error } = await this.supabase
         .from('notifications')
@@ -908,7 +883,6 @@ export class NotificationMLEngine {
         !trainingData ||
         trainingData.length < this.config.minDataPoints
       ) {
-        console.log('Dados insuficientes para treinamento');
         return;
       }
 
@@ -917,11 +891,7 @@ export class NotificationMLEngine {
 
       // Treinar modelo de timing
       await this.trainTimingModel(trainingData);
-
-      console.log('🤖 Modelos treinados com sucesso');
-    } catch (error) {
-      console.error('Erro no treinamento:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -966,7 +936,6 @@ export class NotificationMLEngine {
     }
 
     model.version = `1.${Date.now().toString().slice(-6)}`;
-    console.log('📊 Modelo de engajamento atualizado');
   }
 
   /**
@@ -1014,7 +983,6 @@ export class NotificationMLEngine {
     });
 
     model.version = `1.${Date.now().toString().slice(-6)}`;
-    console.log('⏰ Modelo de timing atualizado');
   }
 }
 

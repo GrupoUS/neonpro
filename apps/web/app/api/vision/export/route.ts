@@ -117,7 +117,6 @@ export const POST = withErrorMonitoring(async (request: NextRequest) => {
       headers,
     });
   } catch (error) {
-    console.error('Vision export error:', error);
 
     if (error instanceof z.ZodError) {
       return NextResponse.json(
@@ -328,7 +327,6 @@ export const GET = withErrorMonitoring(async (request: NextRequest) => {
       },
     });
   } catch (error) {
-    console.error('Export history error:', error);
     return NextResponse.json(
       {
         error: 'Erro interno do servidor',

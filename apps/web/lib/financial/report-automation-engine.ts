@@ -6,7 +6,7 @@
 
 import { createClient } from '@/app/utils/supabase/client';
 
-export interface ReportSchedule {
+export type ReportSchedule = {
   scheduleId: string;
   reportType: string;
   reportName: string;
@@ -18,9 +18,9 @@ export interface ReportSchedule {
   isActive: boolean;
   createdBy: string;
   format: 'pdf' | 'excel' | 'csv' | 'json';
-}
+};
 
-export interface ReportTemplate {
+export type ReportTemplate = {
   templateId: string;
   templateName: string;
   reportType: string;
@@ -31,9 +31,9 @@ export interface ReportTemplate {
   isDefault: boolean;
   createdBy: string;
   createdAt: Date;
-}
+};
 
-export interface ExportOptions {
+export type ExportOptions = {
   format: 'pdf' | 'excel' | 'csv' | 'json';
   includeCharts: boolean;
   includeRawData: boolean;
@@ -41,9 +41,9 @@ export interface ExportOptions {
   password?: string;
   watermark?: string;
   branding: boolean;
-}
+};
 
-export interface ReportDelivery {
+export type ReportDelivery = {
   deliveryId: string;
   reportType: string;
   recipients: string[];
@@ -54,9 +54,9 @@ export interface ReportDelivery {
   deliveredAt?: Date;
   errorMessage?: string;
   retryCount: number;
-}
+};
 
-export interface ReportArchive {
+export type ReportArchive = {
   archiveId: string;
   reportType: string;
   reportName: string;
@@ -68,7 +68,7 @@ export interface ReportArchive {
   retentionPeriod: number;
   downloadCount: number;
   lastAccessedAt?: Date;
-}
+};
 
 export class ReportAutomationEngine {
   private readonly supabase = createClient();
@@ -164,11 +164,7 @@ export class ReportAutomationEngine {
         await this.generateAndDeliverReport(schedule);
         await this.updateNextRunDate(schedule.id, schedule.frequency);
         processed++;
-      } catch (error) {
-        console.error(
-          `Failed to process scheduled report ${schedule.id}:`,
-          error
-        );
+      } catch (_error) {
         failed++;
       }
     }

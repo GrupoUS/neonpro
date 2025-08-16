@@ -32,39 +32,31 @@ export class KPIEngine {
   async calculateKPIs(
     request: KPICalculationRequest
   ): Promise<KPICalculationResult[]> {
-    const startTime = Date.now();
+    const _startTime = Date.now();
+    // Get KPIs to calculate
+    const kpisToCalculate = request.kpi_ids
+      ? await this.getKPIsByIds(request.kpi_ids)
+      : await this.getAllKPIs();
 
-    try {
-      // Get KPIs to calculate
-      const kpisToCalculate = request.kpi_ids
-        ? await this.getKPIsByIds(request.kpi_ids)
-        : await this.getAllKPIs();
+    const results: KPICalculationResult[] = [];
 
-      const results: KPICalculationResult[] = [];
+    // Calculate each KPI in parallel for performance
+    const calculations = kpisToCalculate.map((kpi) =>
+      this.calculateSingleKPI(kpi, request)
+    );
 
-      // Calculate each KPI in parallel for performance
-      const calculations = kpisToCalculate.map((kpi) =>
-        this.calculateSingleKPI(kpi, request)
-      );
+    const calculationResults = await Promise.all(calculations);
+    results.push(...calculationResults);
 
-      const calculationResults = await Promise.all(calculations);
-      results.push(...calculationResults);
-
-      // Update KPI values and history
-      if (!request.force_recalculation) {
-        await this.updateKPIValues(results);
-        await this.recordKPIHistory(results);
-      }
-
-      // Check thresholds and generate alerts
-      await this.checkThresholds(results);
-
-      console.log(`KPI calculation completed in ${Date.now() - startTime}ms`);
-      return results;
-    } catch (error) {
-      console.error('KPI calculation error:', error);
-      throw error;
+    // Update KPI values and history
+    if (!request.force_recalculation) {
+      await this.updateKPIValues(results);
+      await this.recordKPIHistory(results);
     }
+
+    // Check thresholds and generate alerts
+    await this.checkThresholds(results);
+    return results;
   }
 
   private async calculateSingleKPI(
@@ -164,8 +156,7 @@ export class KPIEngine {
         ),
         breakdown,
       };
-    } catch (error) {
-      console.error(`Error calculating KPI ${kpi.kpi_name}:`, error);
+    } catch (_error) {
       return {
         kpi_id: kpi.id,
         kpi_name: kpi.kpi_name,
@@ -484,43 +475,33 @@ export class KPIEngine {
   async performDrillDown(
     request: DrillDownRequest
   ): Promise<DrillDownResult[]> {
-    const startTime = Date.now();
-
-    try {
-      const kpi = await this.getKPIById(request.kpi_id);
-      if (!kpi) {
-        throw new Error('KPI not found');
-      }
-
-      let results: DrillDownResult[] = [];
-
-      switch (request.dimension) {
-        case 'time':
-          results = await this.drillDownByTime(kpi, request);
-          break;
-        case 'service_type':
-          results = await this.drillDownByServiceType(kpi, request);
-          break;
-        case 'provider':
-          results = await this.drillDownByProvider(kpi, request);
-          break;
-        case 'patient_segment':
-          results = await this.drillDownByPatientSegment(kpi, request);
-          break;
-        default:
-          throw new Error(
-            `Unsupported drill-down dimension: ${request.dimension}`
-          );
-      }
-
-      console.log(
-        `Drill-down analysis completed in ${Date.now() - startTime}ms`
-      );
-      return results.slice(0, request.limit || 50);
-    } catch (error) {
-      console.error('Drill-down analysis error:', error);
-      throw error;
+    const _startTime = Date.now();
+    const kpi = await this.getKPIById(request.kpi_id);
+    if (!kpi) {
+      throw new Error('KPI not found');
     }
+
+    let results: DrillDownResult[] = [];
+
+    switch (request.dimension) {
+      case 'time':
+        results = await this.drillDownByTime(kpi, request);
+        break;
+      case 'service_type':
+        results = await this.drillDownByServiceType(kpi, request);
+        break;
+      case 'provider':
+        results = await this.drillDownByProvider(kpi, request);
+        break;
+      case 'patient_segment':
+        results = await this.drillDownByPatientSegment(kpi, request);
+        break;
+      default:
+        throw new Error(
+          `Unsupported drill-down dimension: ${request.dimension}`
+        );
+    }
+    return results.slice(0, request.limit || 50);
   }
 
   // Helper Methods

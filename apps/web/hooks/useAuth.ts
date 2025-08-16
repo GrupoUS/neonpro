@@ -1,14 +1,14 @@
 'use client';
 
-import {
-  useState,
-  useEffect,
-  useContext,
-  createContext,
-  ReactNode,
-} from 'react';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-import type { User, Session } from '@supabase/supabase-js';
+import type { Session, User } from '@supabase/supabase-js';
+import {
+  createContext,
+  type ReactNode,
+  useContext,
+  useEffect,
+  useState,
+} from 'react';
 
 interface AuthUser extends User {
   // Healthcare-specific user properties
@@ -27,7 +27,7 @@ interface AuthUser extends User {
   };
 }
 
-interface AuthContextType {
+type AuthContextType = {
   user: AuthUser | null;
   session: Session | null;
   isLoading: boolean;
@@ -43,7 +43,7 @@ interface AuthContextType {
   requireMFA: () => boolean;
   hasRole: (role: string) => boolean;
   hasTenantAccess: (tenantId: string) => boolean;
-}
+};
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -72,7 +72,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         } = await supabase.auth.getSession();
 
         if (error) {
-          console.error('Error getting initial session:', error);
           setUser(null);
           setSession(null);
         } else {
@@ -81,8 +80,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             await loadUserProfile(initialSession.user);
           }
         }
-      } catch (err) {
-        console.error('Session initialization error:', err);
+      } catch (_err) {
       } finally {
         setIsLoading(false);
       }
@@ -93,7 +91,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // Listen for auth changes
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (event, session) => {
+    } = supabase.auth.onAuthStateChange(async (_event, session) => {
       setSession(session);
 
       if (session?.user) {
@@ -106,7 +104,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     });
 
     return () => subscription.unsubscribe();
-  }, [supabase.auth]);
+  }, [supabase.auth, loadUserProfile]);
 
   const loadUserProfile = async (authUser: User) => {
     try {
@@ -138,7 +136,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         .single();
 
       if (error) {
-        console.error('Error loading user profile:', error);
         setUser(authUser as AuthUser);
         return;
       }
@@ -151,7 +148,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         clinicId: profile.user_tenants?.[0]?.tenants?.id,
         permissions: profile.user_tenants?.[0]?.permissions || [],
         cfmRegistration: profile.professional_registrations?.[0]?.cfm_number,
-        mfaEnabled: profile.mfa_enabled || false,
+        mfaEnabled: profile.mfa_enabled,
         lastLoginAt: profile.last_login_at,
         healthcareProfile: {
           specialization: profile.professional_registrations?.[0]?.specialty,
@@ -175,8 +172,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           timestamp: new Date().toISOString(),
         },
       });
-    } catch (err) {
-      console.error('Profile loading error:', err);
+    } catch (_err) {
       setUser(authUser as AuthUser);
     }
   };
@@ -266,10 +262,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       const { data, error } = await supabase.auth.refreshSession();
       if (error) {
-        console.error('Session refresh error:', error);
       }
-    } catch (err) {
-      console.error('Session refresh error:', err);
+    } catch (_err) {
     }
   };
 
@@ -290,7 +284,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     user,
     session,
     isLoading,
-    isAuthenticated: !!user,
+    isAuthenticated: Boolean(user),
     signIn,
     signOut,
     signUp,

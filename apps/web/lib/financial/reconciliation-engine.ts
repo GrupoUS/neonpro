@@ -111,7 +111,7 @@ export const ReconciliationMatchSchema = z.object({
 
 export type ReconciliationMatch = z.infer<typeof ReconciliationMatchSchema>;
 
-export interface ReconciliationReport {
+export type ReconciliationReport = {
   period: { startDate: Date; endDate: Date };
   totalBankTransactions: number;
   totalClinicTransactions: number;
@@ -133,7 +133,7 @@ export interface ReconciliationReport {
     failedMatches: number;
     processingTime: number; // milliseconds
   };
-}
+};
 
 // =================== RECONCILIATION ENGINE CLASS ===================
 
@@ -224,8 +224,7 @@ export class AutomatedReconciliationEngine {
         unmatchedBank,
         unmatchedClinic,
       };
-    } catch (error) {
-      console.error('Error performing reconciliation:', error);
+    } catch (_error) {
       throw new Error('Failed to perform automated reconciliation');
     }
   }

@@ -1,7 +1,7 @@
 import { createClient } from '@/app/utils/supabase/client';
 
 // Define types directly since we don't have the database types file
-export interface Payment {
+export type Payment = {
   id: string;
   accounts_payable_id: string;
   payment_date: string;
@@ -20,9 +20,9 @@ export interface Payment {
   created_by: string;
   created_at: string;
   updated_at: string;
-}
+};
 
-export interface PaymentInsert {
+export type PaymentInsert = {
   accounts_payable_id: string;
   payment_date: string;
   amount_paid: number;
@@ -40,9 +40,9 @@ export interface PaymentInsert {
   created_by: string;
   created_at: string;
   updated_at: string;
-}
+};
 
-export interface PaymentUpdate {
+export type PaymentUpdate = {
   payment_date?: string;
   amount_paid?: number;
   payment_method?:
@@ -57,7 +57,7 @@ export interface PaymentUpdate {
   notes?: string;
   status?: 'pending' | 'completed' | 'cancelled' | 'failed';
   updated_at: string;
-}
+};
 
 export interface PaymentWithDetails extends Payment {
   accounts_payable?: {
@@ -70,7 +70,7 @@ export interface PaymentWithDetails extends Payment {
   invoice_number?: string;
 }
 
-export interface PaymentFormData {
+export type PaymentFormData = {
   accounts_payable_id: string;
   payment_date: string;
   amount_paid: number;
@@ -85,9 +85,9 @@ export interface PaymentFormData {
   bank_account?: string;
   notes?: string;
   status: 'pending' | 'completed' | 'cancelled' | 'failed';
-}
+};
 
-export interface BulkPaymentData {
+export type BulkPaymentData = {
   accounts_payable_ids: string[];
   payment_date: string;
   payment_method: string;
@@ -97,9 +97,9 @@ export interface BulkPaymentData {
     amount_paid: number;
   }>;
   notes?: string;
-}
+};
 
-export interface PaymentSummary {
+export type PaymentSummary = {
   total_payments: number;
   total_amount: number;
   completed_payments: number;
@@ -107,7 +107,7 @@ export interface PaymentSummary {
   failed_payments: number;
   average_payment_amount: number;
   payment_methods: Record<string, number>;
-}
+};
 
 export class PaymentsService {
   private readonly supabase = createClient();
@@ -140,8 +140,7 @@ export class PaymentsService {
           invoice_number: payment.accounts_payable?.invoice_number,
         })) || []
       );
-    } catch (error) {
-      console.error('Error fetching payments:', error);
+    } catch (_error) {
       throw new Error('Falha ao carregar pagamentos');
     }
   }
@@ -177,8 +176,7 @@ export class PaymentsService {
         vendor_name: data.accounts_payable?.vendor_name,
         invoice_number: data.accounts_payable?.invoice_number,
       };
-    } catch (error) {
-      console.error('Error fetching payment:', error);
+    } catch (_error) {
       throw new Error('Falha ao carregar pagamento');
     }
   }
@@ -195,8 +193,7 @@ export class PaymentsService {
         throw error;
       }
       return data || [];
-    } catch (error) {
-      console.error('Error fetching payments for payable:', error);
+    } catch (_error) {
       throw new Error('Falha ao carregar histórico de pagamentos');
     }
   }
@@ -231,8 +228,7 @@ export class PaymentsService {
       }
 
       return data;
-    } catch (error) {
-      console.error('Error creating payment:', error);
+    } catch (_error) {
       throw new Error('Falha ao criar pagamento');
     }
   }
@@ -272,8 +268,7 @@ export class PaymentsService {
       }
 
       return data || [];
-    } catch (error) {
-      console.error('Error processing bulk payments:', error);
+    } catch (_error) {
       throw new Error('Falha ao processar pagamentos em lote');
     }
   }
@@ -300,8 +295,7 @@ export class PaymentsService {
       }
 
       return data;
-    } catch (error) {
-      console.error('Error updating payment:', error);
+    } catch (_error) {
       throw new Error('Falha ao atualizar pagamento');
     }
   }
@@ -327,8 +321,7 @@ export class PaymentsService {
       if (payment.accounts_payable_id) {
         await this.updatePayablePaidAmount(payment.accounts_payable_id);
       }
-    } catch (error) {
-      console.error('Error deleting payment:', error);
+    } catch (_error) {
       throw new Error('Falha ao deletar pagamento');
     }
   }
@@ -385,8 +378,7 @@ export class PaymentsService {
         average_payment_amount: averageAmount,
         payment_methods: paymentMethods,
       };
-    } catch (error) {
-      console.error('Error getting payment summary:', error);
+    } catch (_error) {
       throw new Error('Falha ao carregar resumo de pagamentos');
     }
   }
@@ -420,8 +412,7 @@ export class PaymentsService {
           invoice_number: payment.accounts_payable?.invoice_number,
         })) || []
       );
-    } catch (error) {
-      console.error('Error searching payments:', error);
+    } catch (_error) {
       throw new Error('Falha ao pesquisar pagamentos');
     }
   }
@@ -441,8 +432,7 @@ export class PaymentsService {
         throw error;
       }
       return data || [];
-    } catch (error) {
-      console.error('Error fetching overdue payables:', error);
+    } catch (_error) {
       throw new Error('Falha ao carregar contas em atraso');
     }
   }
@@ -480,8 +470,7 @@ export class PaymentsService {
           invoice_number: payment.accounts_payable?.invoice_number,
         })) || []
       );
-    } catch (error) {
-      console.error('Error fetching payments by date range:', error);
+    } catch (_error) {
       throw new Error('Falha ao carregar pagamentos por período');
     }
   }
@@ -507,8 +496,7 @@ export class PaymentsService {
           updated_at: new Date().toISOString(),
         })
         .eq('id', payableId);
-    } catch (error) {
-      console.error('Error updating payable paid amount:', error);
+    } catch (_error) {
       // Don't throw here to avoid breaking the main operation
     }
   }

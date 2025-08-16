@@ -16,7 +16,7 @@ import {
 /**
  * Brasil API Response Interface
  */
-interface BrasilAPIResponse {
+type BrasilAPIResponse = {
   cnpj: string;
   identificador_matriz_filial: number;
   descricao_matriz_filial: string;
@@ -67,7 +67,7 @@ interface BrasilAPIResponse {
     nome_representante_legal?: string;
     codigo_qualificacao_representante_legal?: string;
   }>;
-}
+};
 
 /**
  * Error types for API consultation
@@ -84,13 +84,13 @@ export enum CNPJConsultationError {
 /**
  * Configuration for CNPJ consultation
  */
-interface CNPJConsultationConfig {
+type CNPJConsultationConfig = {
   useCache: boolean;
   forceRefresh: boolean;
   timeout: number;
   retryAttempts: number;
   retryDelay: number;
-}
+};
 
 const DEFAULT_CONFIG: CNPJConsultationConfig = {
   useCache: true,

@@ -7,11 +7,11 @@ export enum Permission {
   ADMIN_ACCESS = 'admin:access',
 }
 
-export interface Role {
+export type Role = {
   id: string;
   name: string;
   permissions: Permission[];
-}
+};
 
 export class PermissionsService {
   static checkPermission(

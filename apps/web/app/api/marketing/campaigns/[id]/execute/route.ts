@@ -59,10 +59,6 @@ export async function POST(
       { status: 201 }
     );
   } catch (error) {
-    console.error(
-      `POST /api/marketing/campaigns/${params.id}/execute error:`,
-      error
-    );
     return NextResponse.json(
       {
         success: false,

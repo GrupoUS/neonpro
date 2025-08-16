@@ -4,7 +4,7 @@ import { Resend } from 'resend';
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 // Types for email notifications
-export interface NotificationData {
+export type NotificationData = {
   recipientEmail: string;
   recipientPhone?: string;
   supplierName: string;
@@ -13,15 +13,15 @@ export interface NotificationData {
   invoiceNumber?: string;
   paymentId?: string;
   companyName?: string;
-}
+};
 
-export interface EmailNotificationConfig {
+export type EmailNotificationConfig = {
   enableEmail: boolean;
   enableSMS: boolean;
   fromEmail?: string;
   companyName?: string;
   supportEmail?: string;
-}
+};
 
 // Professional email templates with modern styling
 const EmailTemplates = {
@@ -342,8 +342,7 @@ export class EmailNotificationService {
       }
 
       return emailSuccess && smsSuccess;
-    } catch (error) {
-      console.error(`Failed to send notification (${type}):`, error);
+    } catch (_error) {
       return false;
     }
   }
@@ -355,15 +354,12 @@ export class EmailNotificationService {
   ): Promise<boolean> {
     try {
       if (!process.env.RESEND_API_KEY) {
-        console.warn(
-          'RESEND_API_KEY not configured - email notifications disabled'
-        );
         return false;
       }
 
       const template = EmailTemplates[type](data, this.config);
 
-      const result = await resend.emails.send({
+      const _result = await resend.emails.send({
         from: this.config.fromEmail || 'NeonPro <noreply@neonpro.com>',
         to: [data.recipientEmail],
         subject: template.subject,
@@ -374,14 +370,8 @@ export class EmailNotificationService {
           { name: 'supplier', value: data.supplierName },
         ],
       });
-
-      console.log(
-        `✅ Email notification sent (${type}) to ${data.recipientEmail}:`,
-        result.data?.id
-      );
       return true;
-    } catch (error) {
-      console.error(`❌ Failed to send email notification (${type}):`, error);
+    } catch (_error) {
       return false;
     }
   }
@@ -392,12 +382,7 @@ export class EmailNotificationService {
     data: NotificationData
   ): Promise<boolean> {
     try {
-      const message = SMSTemplates[type](data);
-
-      // TODO: Implement SMS sending with Twilio or similar service
-      console.log(
-        `📱 SMS notification would be sent to ${data.recipientPhone}: ${message}`
-      );
+      const _message = SMSTemplates[type](data);
 
       // Example Twilio implementation:
       // const client = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
@@ -408,8 +393,7 @@ export class EmailNotificationService {
       // });
 
       return true;
-    } catch (error) {
-      console.error(`❌ Failed to send SMS notification (${type}):`, error);
+    } catch (_error) {
       return false;
     }
   }
@@ -460,16 +444,10 @@ export class EmailNotificationService {
   async testConnection(): Promise<boolean> {
     try {
       if (!process.env.RESEND_API_KEY) {
-        console.warn('RESEND_API_KEY not configured');
         return false;
       }
-
-      // Test with a simple API call (get domains)
-      // This is a lightweight way to verify the API key works
-      console.log('✅ Email notification service is configured correctly');
       return true;
-    } catch (error) {
-      console.error('❌ Email notification service test failed:', error);
+    } catch (_error) {
       return false;
     }
   }

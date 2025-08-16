@@ -44,8 +44,7 @@ export async function GET(
     }
 
     return NextResponse.json(config);
-  } catch (error) {
-    console.error('Get email config error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -109,8 +108,6 @@ export async function PATCH(
 
     return NextResponse.json(config);
   } catch (error) {
-    console.error('Update email config error:', error);
-
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Invalid configuration data', details: error.errors },
@@ -162,8 +159,7 @@ export async function DELETE(
     }
 
     return NextResponse.json({ success: true });
-  } catch (error) {
-    console.error('Delete email config error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

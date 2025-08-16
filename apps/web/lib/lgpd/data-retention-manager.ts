@@ -18,7 +18,7 @@ import { LGPDDataType, type LGPDPurpose } from './consent-automation-manager';
 /**
  * Data Retention Policy Interface
  */
-export interface DataRetentionPolicy {
+export type DataRetentionPolicy = {
   id: string;
   clinicId: string;
   dataType: LGPDDataType;
@@ -33,12 +33,12 @@ export interface DataRetentionPolicy {
   createdAt: Date;
   updatedAt: Date;
   metadata?: Record<string, any>;
-}
+};
 
 /**
  * Data Retention Record Interface
  */
-export interface DataRetentionRecord {
+export type DataRetentionRecord = {
   id: string;
   policyId: string;
   dataSubjectId: string;
@@ -51,12 +51,12 @@ export interface DataRetentionRecord {
   deletedAt?: Date;
   anonymizedAt?: Date;
   metadata?: Record<string, any>;
-}
+};
 
 /**
  * Retention Analytics Interface
  */
-export interface RetentionAnalytics {
+export type RetentionAnalytics = {
   totalRecords: number;
   activeRecords: number;
   expiringSoonRecords: number;
@@ -73,12 +73,12 @@ export interface RetentionAnalytics {
   >;
   upcomingExpirations: DataRetentionRecord[];
   retentionCompliance: number;
-}
+};
 
 /**
  * Data Anonymization Configuration
  */
-export interface AnonymizationConfig {
+export type AnonymizationConfig = {
   dataType: LGPDDataType;
   fields: {
     fieldName: string;
@@ -91,7 +91,7 @@ export interface AnonymizationConfig {
     preserveFormat?: boolean;
     substitutionValue?: string;
   }[];
-}
+};
 
 /**
  * LGPD Data Retention Manager

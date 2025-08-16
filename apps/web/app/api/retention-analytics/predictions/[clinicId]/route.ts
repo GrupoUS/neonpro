@@ -244,8 +244,6 @@ export async function GET(
       timestamp: new Date().toISOString(),
     });
   } catch (error) {
-    console.error('Error getting churn predictions:', error);
-
     return NextResponse.json(
       {
         error: 'Internal server error',
@@ -389,10 +387,6 @@ export async function POST(
           );
           return { patientId, prediction, success: true };
         } catch (error) {
-          console.error(
-            `Failed to generate prediction for patient ${patientId}:`,
-            error
-          );
           return {
             patientId,
             error: error instanceof Error ? error.message : 'Unknown error',
@@ -443,8 +437,6 @@ export async function POST(
       timestamp: new Date().toISOString(),
     });
   } catch (error) {
-    console.error('Error generating churn predictions:', error);
-
     return NextResponse.json(
       {
         error: 'Internal server error',

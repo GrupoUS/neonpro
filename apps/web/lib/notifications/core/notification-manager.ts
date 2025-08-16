@@ -6,7 +6,7 @@ import { ChannelProvider } from './channel-providers';
 import { NotificationAnalytics } from './notification-analytics';
 import { NotificationScheduler } from './notification-scheduler';
 
-export interface NotificationConfig {
+export type NotificationConfig = {
   id: string;
   type: NotificationTypeEnum;
   channel: NotificationChannelEnum;
@@ -18,9 +18,9 @@ export interface NotificationConfig {
   scheduled_at?: Date;
   expires_at?: Date;
   metadata?: Record<string, any>;
-}
+};
 
-export interface NotificationTemplate {
+export type NotificationTemplate = {
   id: string;
   name: string;
   type: NotificationTypeEnum;
@@ -33,9 +33,9 @@ export interface NotificationTemplate {
   created_by: string;
   created_at: Date;
   updated_at: Date;
-}
+};
 
-export interface NotificationPreferences {
+export type NotificationPreferences = {
   user_id: string;
   email_enabled: boolean;
   sms_enabled: boolean;
@@ -48,9 +48,9 @@ export interface NotificationPreferences {
   frequency_limit: number;
   created_at: Date;
   updated_at: Date;
-}
+};
 
-export interface NotificationResult {
+export type NotificationResult = {
   id: string;
   status: 'sent' | 'failed' | 'pending' | 'scheduled';
   channel: NotificationChannelEnum;
@@ -67,7 +67,7 @@ export interface NotificationResult {
     clicked_at?: Date;
     replied_at?: Date;
   };
-}
+};
 
 export enum NotificationTypeEnum {
   APPOINTMENT_REMINDER = 'appointment_reminder',

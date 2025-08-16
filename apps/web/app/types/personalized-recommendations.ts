@@ -1,7 +1,7 @@
 // Story 9.2: Personalized Treatment Recommendations - TypeScript Types
 // Comprehensive type definitions for AI-powered personalized treatment recommendations
 
-export interface RecommendationProfile {
+export type RecommendationProfile = {
   id: string;
   patient_id: string;
   profile_data: Record<string, any>;
@@ -12,9 +12,9 @@ export interface RecommendationProfile {
   last_updated: string;
   created_at: string;
   updated_at: string;
-}
+};
 
-export interface TreatmentRecommendation {
+export type TreatmentRecommendation = {
   id: string;
   patient_id: string;
   provider_id: string;
@@ -32,9 +32,9 @@ export interface TreatmentRecommendation {
   expires_at?: string;
   created_at: string;
   updated_at: string;
-}
+};
 
-export interface RecommendationFeedback {
+export type RecommendationFeedback = {
   id: string;
   recommendation_id: string;
   provider_id: string;
@@ -47,9 +47,9 @@ export interface RecommendationFeedback {
   improvement_suggestions?: string;
   would_recommend: boolean;
   created_at: string;
-}
+};
 
-export interface PersonalizationFactor {
+export type PersonalizationFactor = {
   id: string;
   patient_id: string;
   factor_type: FactorType;
@@ -61,9 +61,9 @@ export interface PersonalizationFactor {
   last_verified: string;
   created_at: string;
   updated_at: string;
-}
+};
 
-export interface SafetyProfile {
+export type SafetyProfile = {
   id: string;
   patient_id: string;
   allergies: Allergy[];
@@ -76,9 +76,9 @@ export interface SafetyProfile {
   reviewed_by?: string;
   created_at: string;
   updated_at: string;
-}
+};
 
-export interface ProtocolCustomization {
+export type ProtocolCustomization = {
   id: string;
   patient_id: string;
   protocol_id: string;
@@ -91,9 +91,9 @@ export interface ProtocolCustomization {
   effective_date: string;
   created_at: string;
   updated_at: string;
-}
+};
 
-export interface RecommendationPerformance {
+export type RecommendationPerformance = {
   id: string;
   recommendation_id: string;
   patient_id: string;
@@ -106,10 +106,10 @@ export interface RecommendationPerformance {
   success_indicators: Record<string, any>;
   measured_at: string;
   created_at: string;
-}
+};
 
 // Supporting Types
-export interface TreatmentOption {
+export type TreatmentOption = {
   id: string;
   name: string;
   type: TreatmentType;
@@ -122,35 +122,35 @@ export interface TreatmentOption {
   contraindications: string[];
   requirements: string[];
   alternatives: string[];
-}
+};
 
-export interface TreatmentAlternative {
+export type TreatmentAlternative = {
   option: TreatmentOption;
   ranking_score: number;
   comparison_rationale: string;
   pros: string[];
   cons: string[];
   suitability_score: number;
-}
+};
 
-export interface RiskAssessment {
+export type RiskAssessment = {
   risk_level: RiskLevel;
   risk_factors: RiskFactor[];
   mitigation_strategies: string[];
   monitoring_requirements: string[];
   safety_precautions: string[];
-}
+};
 
-export interface Contraindication {
+export type Contraindication = {
   id: string;
   type: ContraindicationType;
   severity: SeverityLevel;
   description: string;
   reason: string;
   alternatives: string[];
-}
+};
 
-export interface Allergy {
+export type Allergy = {
   id: string;
   allergen: string;
   type: AllergyType;
@@ -158,9 +158,9 @@ export interface Allergy {
   symptoms: string[];
   cross_reactions: string[];
   avoidance_instructions: string[];
-}
+};
 
-export interface DrugInteraction {
+export type DrugInteraction = {
   id: string;
   drug_a: string;
   drug_b: string;
@@ -168,9 +168,9 @@ export interface DrugInteraction {
   severity: SeverityLevel;
   description: string;
   management: string;
-}
+};
 
-export interface MedicalCondition {
+export type MedicalCondition = {
   id: string;
   condition: string;
   icd_code?: string;
@@ -179,33 +179,33 @@ export interface MedicalCondition {
   onset_date?: string;
   notes?: string;
   relevant_factors: string[];
-}
+};
 
-export interface RiskFactor {
+export type RiskFactor = {
   id: string;
   factor_name: string;
   factor_type: RiskFactorType;
   risk_level: RiskLevel;
   description: string;
   mitigation_strategies: string[];
-}
+};
 
-export interface SafetyAlert {
+export type SafetyAlert = {
   id: string;
   alert_type: AlertType;
   severity: SeverityLevel;
   message: string;
   recommendations: string[];
   expires_at?: string;
-}
+};
 
-export interface ProtocolModification {
+export type ProtocolModification = {
   modification_type: ModificationType;
   original_value: any;
   modified_value: any;
   rationale: string;
   approval_required: boolean;
-}
+};
 
 // Enums and Unions
 export type RecommendationType =
@@ -347,37 +347,37 @@ export type ModificationType =
   | 'intensity_modification';
 
 // Request/Response Types
-export interface CreateRecommendationProfileRequest {
+export type CreateRecommendationProfileRequest = {
   patient_id: string;
   profile_data: Record<string, any>;
   preference_weights?: Record<string, number>;
   lifestyle_factors?: Record<string, any>;
   medical_preferences?: Record<string, any>;
   communication_preferences?: Record<string, any>;
-}
+};
 
-export interface UpdateRecommendationProfileRequest {
+export type UpdateRecommendationProfileRequest = {
   profile_data?: Record<string, any>;
   preference_weights?: Record<string, number>;
   lifestyle_factors?: Record<string, any>;
   medical_preferences?: Record<string, any>;
   communication_preferences?: Record<string, any>;
-}
+};
 
-export interface CreateTreatmentRecommendationRequest {
+export type CreateTreatmentRecommendationRequest = {
   patient_id: string;
   recommendation_type: RecommendationType;
   treatment_options: TreatmentOption[];
   rationale?: string;
-}
+};
 
-export interface ApproveRecommendationRequest {
+export type ApproveRecommendationRequest = {
   approved_by: string;
   approval_notes?: string;
   modifications?: Record<string, any>;
-}
+};
 
-export interface CreateRecommendationFeedbackRequest {
+export type CreateRecommendationFeedbackRequest = {
   recommendation_id: string;
   feedback_type: FeedbackType;
   adoption_status: AdoptionStatus;
@@ -387,9 +387,9 @@ export interface CreateRecommendationFeedbackRequest {
   comments?: string;
   improvement_suggestions?: string;
   would_recommend: boolean;
-}
+};
 
-export interface CreatePersonalizationFactorRequest {
+export type CreatePersonalizationFactorRequest = {
   patient_id: string;
   factor_type: FactorType;
   factor_category: FactorCategory;
@@ -397,26 +397,26 @@ export interface CreatePersonalizationFactorRequest {
   weight?: number;
   source: DataSource;
   confidence_score?: number;
-}
+};
 
-export interface UpdateSafetyProfileRequest {
+export type UpdateSafetyProfileRequest = {
   allergies?: Allergy[];
   contraindications?: Contraindication[];
   drug_interactions?: DrugInteraction[];
   medical_conditions?: MedicalCondition[];
   risk_factors?: RiskFactor[];
   safety_alerts?: SafetyAlert[];
-}
+};
 
-export interface CreateProtocolCustomizationRequest {
+export type CreateProtocolCustomizationRequest = {
   patient_id: string;
   protocol_id: string;
   customizations: Record<string, any>;
   personalization_rules: Record<string, any>;
   modifications: ProtocolModification[];
-}
+};
 
-export interface RecordPerformanceRequest {
+export type RecordPerformanceRequest = {
   recommendation_id: string;
   patient_id: string;
   adoption_rate: number;
@@ -426,10 +426,10 @@ export interface RecordPerformanceRequest {
   outcome_quality: number;
   time_to_adoption?: string;
   success_indicators: Record<string, any>;
-}
+};
 
 // Analytics and Reporting Types
-export interface RecommendationAnalytics {
+export type RecommendationAnalytics = {
   total_recommendations: number;
   adoption_rate: number;
   average_quality_rating: number;
@@ -439,21 +439,21 @@ export interface RecommendationAnalytics {
   highest_success_rates: TreatmentOption[];
   user_acceptance_rate: number;
   performance_trends: PerformanceTrend[];
-}
+};
 
-export interface PerformanceTrend {
+export type PerformanceTrend = {
   period: string;
   metric: string;
   value: number;
   change_percentage: number;
-}
+};
 
-export interface PersonalizationInsights {
+export type PersonalizationInsights = {
   most_influential_factors: PersonalizationFactor[];
   patient_preferences_distribution: Record<string, number>;
   safety_profile_statistics: Record<string, number>;
   customization_patterns: Record<string, number>;
-}
+};
 
 // Utility Types
 export type RecommendationWithDetails = TreatmentRecommendation & {

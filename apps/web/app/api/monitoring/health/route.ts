@@ -59,9 +59,7 @@ export async function GET(_request: NextRequest) {
       success: true,
       health: healthData,
     });
-  } catch (error) {
-    console.error('Error checking system health:', error);
-
+  } catch (_error) {
     return NextResponse.json(
       {
         success: false,

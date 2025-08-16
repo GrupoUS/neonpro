@@ -71,7 +71,7 @@ export type NotificationStatus =
 /**
  * Interface principal da sessão do usuário
  */
-export interface UserSession {
+export type UserSession = {
   id: UUID;
   userId: UUID;
   deviceId?: UUID;
@@ -84,12 +84,12 @@ export interface UserSession {
   userAgent?: UserAgent;
   isActive: boolean;
   metadata?: SessionMetadata;
-}
+};
 
 /**
  * Metadados adicionais da sessão
  */
-export interface SessionMetadata {
+export type SessionMetadata = {
   location?: {
     country?: string;
     region?: string;
@@ -114,33 +114,33 @@ export interface SessionMetadata {
   extensions?: number;
   warningsShown?: number;
   lastExtension?: Timestamp;
-}
+};
 
 /**
  * Dados para criação de sessão
  */
-export interface CreateSessionData {
+export type CreateSessionData = {
   userId: UUID;
   deviceInfo?: DeviceInfo;
   ipAddress?: IPAddress;
   userAgent?: UserAgent;
   metadata?: Partial<SessionMetadata>;
-}
+};
 
 /**
  * Dados para atualização de sessão
  */
-export interface UpdateSessionData {
+export type UpdateSessionData = {
   expiresAt?: Timestamp;
   lastActivity?: Timestamp;
   metadata?: Partial<SessionMetadata>;
   isActive?: boolean;
-}
+};
 
 /**
  * Estatísticas de sessão
  */
-export interface SessionStatistics {
+export type SessionStatistics = {
   totalSessions: number;
   activeSessions: number;
   expiredSessions: number;
@@ -149,7 +149,7 @@ export interface SessionStatistics {
   concurrentPeak: number;
   deviceBreakdown: Record<DeviceType, number>;
   locationBreakdown: Record<string, number>;
-}
+};
 
 // ============================================================================
 // INTERFACES DE DISPOSITIVO
@@ -158,7 +158,7 @@ export interface SessionStatistics {
 /**
  * Interface principal do dispositivo
  */
-export interface UserDevice {
+export type UserDevice = {
   id: UUID;
   userId: UUID;
   name: string;
@@ -172,12 +172,12 @@ export interface UserDevice {
   lastUsed: Timestamp;
   createdAt: Timestamp;
   metadata?: DeviceMetadata;
-}
+};
 
 /**
  * Informações do dispositivo
  */
-export interface DeviceInfo {
+export type DeviceInfo = {
   name?: string;
   type?: DeviceType;
   fingerprint: DeviceFingerprint;
@@ -185,12 +185,12 @@ export interface DeviceInfo {
   ipAddress?: IPAddress;
   location?: string;
   metadata?: Partial<DeviceMetadata>;
-}
+};
 
 /**
  * Metadados do dispositivo
  */
-export interface DeviceMetadata {
+export type DeviceMetadata = {
   browser?: {
     name?: string;
     version?: string;
@@ -230,12 +230,12 @@ export interface DeviceMetadata {
   lastLocation?: string;
   loginCount?: number;
   suspiciousActivity?: boolean;
-}
+};
 
 /**
  * Dados para registro de dispositivo
  */
-export interface RegisterDeviceData {
+export type RegisterDeviceData = {
   name: string;
   type: DeviceType;
   fingerprint: DeviceFingerprint;
@@ -243,23 +243,23 @@ export interface RegisterDeviceData {
   ipAddress?: IPAddress;
   location?: string;
   metadata?: Partial<DeviceMetadata>;
-}
+};
 
 /**
  * Dados para atualização de dispositivo
  */
-export interface UpdateDeviceData {
+export type UpdateDeviceData = {
   name?: string;
   isTrusted?: boolean;
   riskLevel?: RiskLevel;
   lastUsed?: Timestamp;
   metadata?: Partial<DeviceMetadata>;
-}
+};
 
 /**
  * Avaliação de risco do dispositivo
  */
-export interface DeviceRiskAssessment {
+export type DeviceRiskAssessment = {
   deviceId: UUID;
   riskLevel: RiskLevel;
   riskScore: number;
@@ -272,7 +272,7 @@ export interface DeviceRiskAssessment {
   };
   recommendations: string[];
   timestamp: Timestamp;
-}
+};
 
 // ============================================================================
 // INTERFACES DE ATIVIDADE
@@ -281,7 +281,7 @@ export interface DeviceRiskAssessment {
 /**
  * Interface de atividade da sessão
  */
-export interface SessionActivity {
+export type SessionActivity = {
   id: UUID;
   sessionId: UUID;
   userId: UUID;
@@ -292,7 +292,7 @@ export interface SessionActivity {
   userAgent?: UserAgent;
   createdAt: Timestamp;
   metadata?: ActivityMetadata;
-}
+};
 
 /**
  * Tipos de atividade
@@ -313,7 +313,7 @@ export type ActivityType =
 /**
  * Metadados da atividade
  */
-export interface ActivityMetadata {
+export type ActivityMetadata = {
   element?: string;
   formData?: Record<string, any>;
   apiEndpoint?: string;
@@ -324,29 +324,29 @@ export interface ActivityMetadata {
   success?: boolean;
   errorMessage?: string;
   customData?: Record<string, any>;
-}
+};
 
 /**
  * Dados para registro de atividade
  */
-export interface RecordActivityData {
+export type RecordActivityData = {
   type: ActivityType;
   description?: string;
   pageUrl?: string;
   metadata?: ActivityMetadata;
-}
+};
 
 /**
  * Estatísticas de atividade
  */
-export interface ActivityStatistics {
+export type ActivityStatistics = {
   totalActivities: number;
   activitiesByType: Record<ActivityType, number>;
   averageActivitiesPerSession: number;
   mostActivePages: Array<{ url: string; count: number }>;
   peakActivityHours: number[];
   activityTrends: Array<{ date: string; count: number }>;
-}
+};
 
 // ============================================================================
 // INTERFACES DE EVENTOS DE SEGURANÇA
@@ -355,7 +355,7 @@ export interface ActivityStatistics {
 /**
  * Interface de evento de segurança
  */
-export interface SecurityEvent {
+export type SecurityEvent = {
   id: UUID;
   userId: UUID;
   deviceId?: UUID;
@@ -370,7 +370,7 @@ export interface SecurityEvent {
   createdAt: Timestamp;
   resolvedAt?: Timestamp;
   metadata?: SecurityEventMetadata;
-}
+};
 
 /**
  * Tipos de evento de segurança
@@ -398,7 +398,7 @@ export type SecurityEventType =
 /**
  * Metadados do evento de segurança
  */
-export interface SecurityEventMetadata {
+export type SecurityEventMetadata = {
   attemptCount?: number;
   blockedReason?: string;
   riskScore?: number;
@@ -417,12 +417,12 @@ export interface SecurityEventMetadata {
     threatType?: string;
     confidence?: number;
   };
-}
+};
 
 /**
  * Dados para criação de evento de segurança
  */
-export interface CreateSecurityEventData {
+export type CreateSecurityEventData = {
   type: SecurityEventType;
   severity: SeverityLevel;
   description: string;
@@ -431,21 +431,21 @@ export interface CreateSecurityEventData {
   ipAddress?: IPAddress;
   userAgent?: UserAgent;
   metadata?: SecurityEventMetadata;
-}
+};
 
 /**
  * Dados para resolução de evento
  */
-export interface ResolveSecurityEventData {
+export type ResolveSecurityEventData = {
   eventId: UUID;
   resolution: string;
   resolvedBy?: UUID;
-}
+};
 
 /**
  * Estatísticas de segurança
  */
-export interface SecurityStatistics {
+export type SecurityStatistics = {
   totalEvents: number;
   eventsBySeverity: Record<SeverityLevel, number>;
   eventsByType: Record<SecurityEventType, number>;
@@ -454,7 +454,7 @@ export interface SecurityStatistics {
   threatTrends: Array<{ date: string; count: number; severity: SeverityLevel }>;
   topThreats: Array<{ type: SecurityEventType; count: number }>;
   riskScore: number;
-}
+};
 
 // ============================================================================
 // INTERFACES DE NOTIFICAÇÃO
@@ -463,7 +463,7 @@ export interface SecurityStatistics {
 /**
  * Interface de notificação
  */
-export interface UserNotification {
+export type UserNotification = {
   id: UUID;
   userId: UUID;
   type: NotificationType;
@@ -477,7 +477,7 @@ export interface UserNotification {
   readAt?: Timestamp;
   createdAt: Timestamp;
   metadata?: NotificationMetadata;
-}
+};
 
 /**
  * Tipos de notificação
@@ -500,7 +500,7 @@ export type NotificationType =
 /**
  * Metadados da notificação
  */
-export interface NotificationMetadata {
+export type NotificationMetadata = {
   templateId?: string;
   templateData?: Record<string, any>;
   deliveryAttempts?: number;
@@ -515,24 +515,24 @@ export interface NotificationMetadata {
   }>;
   relatedEventId?: UUID;
   campaignId?: string;
-}
+};
 
 /**
  * Dados para criação de notificação
  */
-export interface CreateNotificationData {
+export type CreateNotificationData = {
   type: NotificationType;
   priority: NotificationPriority;
   title: string;
   message: string;
   channels: NotificationChannel[];
   metadata?: NotificationMetadata;
-}
+};
 
 /**
  * Preferências de notificação do usuário
  */
-export interface NotificationPreferences {
+export type NotificationPreferences = {
   userId: UUID;
   emailNotifications: boolean;
   smsNotifications: boolean;
@@ -561,7 +561,7 @@ export interface NotificationPreferences {
     disabled: NotificationType[];
   };
   updatedAt: Timestamp;
-}
+};
 
 // ============================================================================
 // INTERFACES DE AUDITORIA
@@ -570,7 +570,7 @@ export interface NotificationPreferences {
 /**
  * Interface de log de auditoria
  */
-export interface AuditLog {
+export type AuditLog = {
   id: UUID;
   userId?: UUID;
   sessionId?: UUID;
@@ -585,7 +585,7 @@ export interface AuditLog {
   errorMessage?: string;
   createdAt: Timestamp;
   metadata?: AuditMetadata;
-}
+};
 
 /**
  * Tipos de ação de auditoria
@@ -613,7 +613,7 @@ export type AuditAction =
 /**
  * Metadados de auditoria
  */
-export interface AuditMetadata {
+export type AuditMetadata = {
   adminUserId?: UUID;
   reason?: string;
   automated?: boolean;
@@ -622,7 +622,7 @@ export interface AuditMetadata {
   requestId?: string;
   duration?: number;
   affectedRecords?: number;
-}
+};
 
 // ============================================================================
 // INTERFACES DE RESPOSTA DA API
@@ -631,7 +631,7 @@ export interface AuditMetadata {
 /**
  * Resposta padrão da API
  */
-export interface ApiResponse<T = any> {
+export type ApiResponse<T = any> = {
   success: boolean;
   data?: T;
   error?: {
@@ -644,7 +644,7 @@ export interface ApiResponse<T = any> {
     requestId: string;
     version: string;
   };
-}
+};
 
 /**
  * Resposta paginada
@@ -663,7 +663,7 @@ export interface PaginatedResponse<T> extends ApiResponse<T[]> {
 /**
  * Parâmetros de consulta
  */
-export interface QueryParams {
+export type QueryParams = {
   page?: number;
   limit?: number;
   offset?: number;
@@ -673,7 +673,7 @@ export interface QueryParams {
   search?: string;
   dateFrom?: Timestamp;
   dateTo?: Timestamp;
-}
+};
 
 // ============================================================================
 // INTERFACES DE CONTEXTO
@@ -682,7 +682,7 @@ export interface QueryParams {
 /**
  * Contexto da sessão para React
  */
-export interface SessionContextValue {
+export type SessionContextValue = {
   session: UserSession | null;
   user: any | null;
   isAuthenticated: boolean;
@@ -691,12 +691,12 @@ export interface SessionContextValue {
   extendSession: () => Promise<boolean>;
   logout: () => Promise<void>;
   refreshSession: () => Promise<void>;
-}
+};
 
 /**
  * Contexto de dispositivos
  */
-export interface DeviceContextValue {
+export type DeviceContextValue = {
   devices: UserDevice[];
   currentDevice: UserDevice | null;
   isLoading: boolean;
@@ -706,19 +706,19 @@ export interface DeviceContextValue {
   removeDevice: (deviceId: UUID) => Promise<void>;
   reportSuspicious: (deviceId: UUID, reason: string) => Promise<void>;
   refreshDevices: () => Promise<void>;
-}
+};
 
 /**
  * Contexto de segurança
  */
-export interface SecurityContextValue {
+export type SecurityContextValue = {
   events: SecurityEvent[];
   statistics: SecurityStatistics | null;
   isLoading: boolean;
   refreshEvents: () => Promise<void>;
   resolveEvent: (eventId: UUID, resolution: string) => Promise<void>;
   createEvent: (data: CreateSecurityEventData) => Promise<void>;
-}
+};
 
 // ============================================================================
 // TIPOS UTILITÁRIOS

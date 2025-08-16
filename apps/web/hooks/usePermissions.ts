@@ -1,10 +1,10 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { useEffect, useState } from 'react';
 import { useAuth } from './useAuth';
 
-interface HealthcarePermission {
+type HealthcarePermission = {
   id: string;
   resource: string;
   action: string;
@@ -12,9 +12,9 @@ interface HealthcarePermission {
   lgpdCompliant: boolean;
   anvisaRequired: boolean;
   cfmRequired: boolean;
-}
+};
 
-interface PermissionSet {
+type PermissionSet = {
   // Financial Operations
   'financial.reconciliation.view': boolean;
   'financial.reconciliation.manage': boolean;
@@ -57,9 +57,9 @@ interface PermissionSet {
   'compliance.lgpd.manage': boolean;
   'compliance.anvisa.manage': boolean;
   'compliance.audit.execute': boolean;
-}
+};
 
-interface UsePermissionsReturn {
+type UsePermissionsReturn = {
   permissions: PermissionSet;
   isLoading: boolean;
   hasPermission: (permission: keyof PermissionSet) => boolean;
@@ -70,7 +70,7 @@ interface UsePermissionsReturn {
   canPerformMedicalAction: (action: string) => boolean;
   requiresMFA: (permission: keyof PermissionSet) => boolean;
   refreshPermissions: () => Promise<void>;
-}
+};
 
 /**
  * Healthcare Permissions Hook
@@ -97,7 +97,7 @@ export function usePermissions(): UsePermissionsReturn {
       setPermissions({} as PermissionSet);
       setIsLoading(false);
     }
-  }, [user, isAuthenticated]);
+  }, [user, isAuthenticated, loadUserPermissions]);
 
   const loadUserPermissions = async () => {
     if (!user) {
@@ -111,30 +111,33 @@ export function usePermissions(): UsePermissionsReturn {
       // Load role-based permissions with healthcare compliance
       const { data: rolePermissions, error } = await supabase
         .from('role_permissions')
-        .select(`
+        .select(
+          `
           permission,
           conditions,
           lgpd_compliant,
           anvisa_required,
           cfm_required
-        `)
+        `
+        )
         .eq('role', user.role)
         .eq('tenant_id', user.tenantId);
 
       if (error) {
-        console.error('Error loading role permissions:', error);
         return;
       }
 
       // Load user-specific permissions
       const { data: userPermissions } = await supabase
         .from('user_permissions')
-        .select(`
+        .select(
+          `
           permission,
           granted,
           conditions,
           expires_at
-        `)
+        `
+        )
         .eq('user_id', user.id)
         .eq('tenant_id', user.tenantId);
 
@@ -158,8 +161,7 @@ export function usePermissions(): UsePermissionsReturn {
           timestamp: new Date().toISOString(),
         },
       });
-    } catch (err) {
-      console.error('Permissions loading error:', err);
+    } catch (_err) {
     } finally {
       setIsLoading(false);
     }
@@ -299,7 +301,9 @@ export function usePermissions(): UsePermissionsReturn {
   };
 
   const canAccessPatientData = (patientId?: string): boolean => {
-    if (!user) return false;
+    if (!user) {
+      return false;
+    }
 
     // Patients can only access their own data
     if (user.role === 'patient') {
@@ -307,11 +311,13 @@ export function usePermissions(): UsePermissionsReturn {
     }
 
     // Healthcare professionals can access patients in their clinic/tenant
-    return hasPermission('patients.view') && !!user.tenantId;
+    return hasPermission('patients.view') && Boolean(user.tenantId);
   };
 
   const canAccessFinancialData = (): boolean => {
-    if (!user) return false;
+    if (!user) {
+      return false;
+    }
 
     // Only non-patient roles can access financial data
     return (
@@ -319,12 +325,14 @@ export function usePermissions(): UsePermissionsReturn {
     );
   };
 
-  const canPerformMedicalAction = (action: string): boolean => {
-    if (!user) return false;
+  const canPerformMedicalAction = (_action: string): boolean => {
+    if (!user) {
+      return false;
+    }
 
     // Only licensed medical professionals can perform medical actions
     const medicalRoles = ['doctor', 'nurse'];
-    return medicalRoles.includes(user.role!) && !!user.cfmRegistration;
+    return medicalRoles.includes(user.role!) && Boolean(user.cfmRegistration);
   };
 
   const requiresMFA = (permission: keyof PermissionSet): boolean => {

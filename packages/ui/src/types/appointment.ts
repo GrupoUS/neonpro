@@ -1,6 +1,6 @@
 // Appointment-related types
 
-export interface AppointmentData {
+export type AppointmentData = {
   id: string;
   patientId: string;
   patientName: string;
@@ -21,9 +21,9 @@ export interface AppointmentData {
   room?: string;
   notes?: string;
   urgency?: 'low' | 'medium' | 'high' | 'urgent';
-}
+};
 
-export interface AppointmentCardProps {
+export type AppointmentCardProps = {
   appointment: AppointmentData;
   onView?: () => void;
   onEdit?: () => void;
@@ -33,4 +33,4 @@ export interface AppointmentCardProps {
   showPatientInfo?: boolean;
   compact?: boolean;
   className?: string;
-}
+};

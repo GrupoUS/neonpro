@@ -11,18 +11,17 @@ if (process.env.VAPID_PUBLIC_KEY && process.env.VAPID_PRIVATE_KEY) {
     process.env.VAPID_PRIVATE_KEY
   );
 } else {
-  console.warn('VAPID keys not configured for push notifications');
 }
 
-export interface PushSubscription {
+export type PushSubscription = {
   endpoint: string;
   keys: {
     p256dh: string;
     auth: string;
   };
-}
+};
 
-export interface PushNotificationPayload {
+export type PushNotificationPayload = {
   title: string;
   body: string;
   icon?: string;
@@ -45,7 +44,7 @@ export interface PushNotificationPayload {
   requireInteraction?: boolean;
   silent?: boolean;
   vibrate?: number[];
-}
+};
 
 class PushNotificationService {
   private supabase: any = null;
@@ -62,8 +61,7 @@ class PushNotificationService {
         // Dynamic import to avoid client-side errors
         const { cookies } = await import('next/headers');
         this.supabase = createServerComponentClient({ cookies });
-      } catch (error) {
-        console.error('Error importing next/headers:', error);
+      } catch (_error) {
         // Fallback to basic client without cookies
         const { createClient } = await import('@supabase/supabase-js');
         this.supabase = createClient(
@@ -100,13 +98,11 @@ class PushNotificationService {
       });
 
       if (error) {
-        console.error('Error saving push subscription:', error);
         return { success: false, error: error.message };
       }
 
       return { success: true };
     } catch (error) {
-      console.error('Error in saveSubscription:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
@@ -128,13 +124,11 @@ class PushNotificationService {
         .eq('endpoint', endpoint);
 
       if (error) {
-        console.error('Error removing push subscription:', error);
         return { success: false, error: error.message };
       }
 
       return { success: true };
     } catch (error) {
-      console.error('Error in removeSubscription:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
@@ -153,7 +147,6 @@ class PushNotificationService {
         .eq('is_active', true);
 
       if (error) {
-        console.error('Error fetching user subscriptions:', error);
         return [];
       }
 
@@ -164,8 +157,7 @@ class PushNotificationService {
           auth: sub.auth_key,
         },
       }));
-    } catch (error) {
-      console.error('Error in getUserSubscriptions:', error);
+    } catch (_error) {
       return [];
     }
   }
@@ -226,7 +218,6 @@ class PushNotificationService {
         errors,
       };
     } catch (error) {
-      console.error('Error sending push notification to user:', error);
       return {
         success: false,
         sent: 0,
@@ -286,7 +277,6 @@ class PushNotificationService {
         results: processedResults,
       };
     } catch (error) {
-      console.error('Error sending bulk push notifications:', error);
       return {
         success: false,
         totalSent: 0,
@@ -469,8 +459,7 @@ class PushNotificationService {
 
       await webpush.sendNotification(subscription, JSON.stringify(testPayload));
       return true;
-    } catch (error) {
-      console.error('Subscription validation failed:', error);
+    } catch (_error) {
       return false;
     }
   }

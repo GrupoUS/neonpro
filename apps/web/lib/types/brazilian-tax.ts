@@ -19,7 +19,7 @@ export type EntryOrigin = 'system' | 'manual' | 'imported';
 export type TaxationPIS = 'cumulativo' | 'nao_cumulativo';
 
 // Address Interface for Brazilian Standards
-export interface BrazilianAddress {
+export type BrazilianAddress = {
   logradouro: string; // Street name
   numero: string; // Street number
   complemento?: string; // Additional address info
@@ -27,10 +27,10 @@ export interface BrazilianAddress {
   cidade: string; // City
   uf: string; // State (2 letters)
   cep: string; // Postal code (XXXXX-XXX)
-}
+};
 
 // Tax Configuration Interface
-export interface TaxConfiguration {
+export type TaxConfiguration = {
   id: string;
   clinic_id: string;
 
@@ -66,20 +66,20 @@ export interface TaxConfiguration {
   updated_at: string;
   created_by?: string;
   updated_by?: string;
-}
+};
 
 // Tax Calculation Details
-export interface TaxCalculationDetail {
+export type TaxCalculationDetail = {
   base_calculo: number; // Calculation base
   aliquota: number; // Tax rate
   valor: number; // Tax amount
   situacao_tributaria?: string; // Tax situation code
   codigo_municipio?: string; // Municipal code (for ISS)
   anexo?: SimplesNacionalAnexo; // Simples Nacional annex
-}
+};
 
 // Service Item for NFe
-export interface ServiceItem {
+export type ServiceItem = {
   codigo: string; // Service code
   descricao: string; // Service description
   quantidade: number; // Quantity
@@ -88,20 +88,20 @@ export interface ServiceItem {
   codigo_servico?: string; // Tax service code
   iss_retido?: boolean; // ISS withheld
   discriminacao?: string; // Detailed description
-}
+};
 
 // Customer Information for NFe
-export interface CustomerInfo {
+export type CustomerInfo = {
   cnpj_cpf: string; // CNPJ or CPF
   nome: string; // Name
   endereco: BrazilianAddress;
   inscricao_estadual?: string;
   email?: string;
   telefone?: string;
-}
+};
 
 // NFe Document Interface
-export interface NFEDocument {
+export type NFEDocument = {
   id: string;
   clinic_id: string;
   invoice_id?: string;
@@ -146,10 +146,10 @@ export interface NFEDocument {
   created_at: string;
   updated_at: string;
   created_by?: string;
-}
+};
 
 // Tax Calculation Interface
-export interface TaxCalculation {
+export type TaxCalculation = {
   id: string;
   clinic_id: string;
   invoice_id?: string;
@@ -177,10 +177,10 @@ export interface TaxCalculation {
   // Audit
   created_at: string;
   updated_at: string;
-}
+};
 
 // SPED Entry Interface
-export interface SPEDEntry {
+export type SPEDEntry = {
   id: string;
   clinic_id: string;
 
@@ -215,10 +215,10 @@ export interface SPEDEntry {
   // Audit
   created_at: string;
   updated_at: string;
-}
+};
 
 // Compliance Report Interface
-export interface TaxComplianceReport {
+export type TaxComplianceReport = {
   id: string;
   clinic_id: string;
 
@@ -245,10 +245,10 @@ export interface TaxComplianceReport {
   created_at: string;
   updated_at: string;
   created_by?: string;
-}
+};
 
 // Service Tax Code Interface
-export interface ServiceTaxCode {
+export type ServiceTaxCode = {
   codigo_servico: string; // Format: XX.XX
   descricao_servico: string;
   categoria?: string;
@@ -268,20 +268,20 @@ export interface ServiceTaxCode {
   // Audit
   created_at: string;
   updated_at: string;
-}
+};
 
 // Tax Calculation Request
-export interface TaxCalculationRequest {
+export type TaxCalculationRequest = {
   clinic_id: string;
   valor_base: number;
   tipo_servico: string;
   codigo_servico?: string;
   customer_info?: CustomerInfo;
   regime_tributario?: TaxRegime;
-}
+};
 
 // Tax Calculation Response
-export interface TaxCalculationResponse {
+export type TaxCalculationResponse = {
   calculation: TaxCalculation;
   breakdown: {
     icms: TaxCalculationDetail;
@@ -292,29 +292,29 @@ export interface TaxCalculationResponse {
   };
   total_impostos: number;
   aliquota_efetiva: number; // Effective tax rate
-}
+};
 
 // NFe Generation Request
-export interface NFEGenerationRequest {
+export type NFEGenerationRequest = {
   clinic_id: string;
   invoice_id?: string;
   customer: CustomerInfo;
   services: ServiceItem[];
   natureza_operacao?: string;
   observacoes?: string;
-}
+};
 
 // NFe Generation Response
-export interface NFEGenerationResponse {
+export type NFEGenerationResponse = {
   nfe: NFEDocument;
   xml_content: string;
   chave_acesso: string;
   qr_code?: string;
   validation_errors?: string[];
-}
+};
 
 // Tax Dashboard Data
-export interface TaxDashboardData {
+export type TaxDashboardData = {
   periodo: string;
   total_faturamento: number;
   total_impostos: number;
@@ -348,7 +348,7 @@ export interface TaxDashboardData {
     variacao_faturamento: number;
     variacao_impostos: number;
   };
-}
+};
 
 // Export all types
 export type {

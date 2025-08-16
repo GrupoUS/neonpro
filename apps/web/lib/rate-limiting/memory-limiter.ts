@@ -10,16 +10,16 @@ import {
   USER_ROLE_LIMITS,
 } from './config';
 
-interface RateLimitEntry {
+type RateLimitEntry = {
   count: number;
   resetTime: number;
   blocked?: boolean;
   blockUntil?: number;
-}
+};
 
-interface RateLimitStore {
+type RateLimitStore = {
   [key: string]: RateLimitEntry;
-}
+};
 
 /**
  * In-memory rate limit store

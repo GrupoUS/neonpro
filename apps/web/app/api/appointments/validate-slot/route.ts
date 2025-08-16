@@ -69,7 +69,6 @@ export async function POST(request: NextRequest) {
       });
 
     if (validationError) {
-      console.error('Validation procedure error:', validationError);
       return NextResponse.json(
         {
           error: 'Validation failed',
@@ -104,8 +103,6 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(response, { status });
   } catch (error) {
-    console.error('Slot validation API error:', error);
-
     // Handle Zod validation errors
     if (error instanceof z.ZodError) {
       return NextResponse.json(
@@ -242,8 +239,6 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('Availability check error:', error);
-
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {

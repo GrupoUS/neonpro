@@ -8,14 +8,14 @@ const AlertsQuerySchema = z.object({
   include_resolved: z.boolean().default(false),
 });
 
-interface Alert {
+type Alert = {
   id: string;
   type: 'warning' | 'critical' | 'info';
   message: string;
   timestamp: string;
   resolved: boolean;
   metadata?: Record<string, any>;
-}
+};
 
 // Função para gerar alertas baseados em métricas financeiras
 async function generateFinancialAlerts(
@@ -37,7 +37,6 @@ async function generateFinancialAlerts(
       .limit(30);
 
     if (error) {
-      console.error('Error fetching cash flow data for alerts:', error);
       return alerts;
     }
 
@@ -208,8 +207,7 @@ async function generateFinancialAlerts(
         }
       }
     }
-  } catch (error) {
-    console.error('Error generating financial alerts:', error);
+  } catch (_error) {
     alerts.push({
       id: `system-error-${Date.now()}`,
       type: 'warning',
@@ -288,8 +286,6 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('Financial alerts API error:', error);
-
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Invalid parameters', details: error.errors },
@@ -310,8 +306,7 @@ export async function POST(_request: NextRequest) {
     return NextResponse.json({
       message: 'Alert resolution feature coming soon',
     });
-  } catch (error) {
-    console.error('Alert resolution API error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

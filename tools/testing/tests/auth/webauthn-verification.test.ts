@@ -155,8 +155,3 @@ describe('WebAuthn Security Features', () => {
     expect(content).toContain('RLS');
   });
 });
-
-console.log('✅ TASK-002 WebAuthn/FIDO2 Implementation Verification Complete');
-console.log('🔐 Multi-factor authentication foundation ready');
-console.log('📊 Performance monitoring integrated');
-console.log('🛡️ Security audit framework prepared');

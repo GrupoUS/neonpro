@@ -2,7 +2,7 @@
 // Based on Meta's WhatsApp Cloud API documentation
 // For NeonPro clinic management system
 
-export interface WhatsAppConfig {
+export type WhatsAppConfig = {
   id?: string;
   phoneNumberId: string;
   accessToken: string;
@@ -12,9 +12,9 @@ export interface WhatsAppConfig {
   isActive: boolean;
   createdAt: Date;
   updatedAt: Date;
-}
+};
 
-export interface WhatsAppMessage {
+export type WhatsAppMessage = {
   id?: string;
   patientId?: string;
   phoneNumber: string;
@@ -30,7 +30,7 @@ export interface WhatsAppMessage {
   metadata?: Record<string, any>;
   createdAt: Date;
   updatedAt: Date;
-}
+};
 
 export enum WhatsAppMessageType {
   TEXT = 'text',
@@ -52,7 +52,7 @@ export enum WhatsAppMessageStatus {
   FAILED = 'failed',
 }
 
-export interface WhatsAppTemplate {
+export type WhatsAppTemplate = {
   id?: string;
   name: string;
   category: WhatsAppTemplateCategory;
@@ -63,7 +63,7 @@ export interface WhatsAppTemplate {
   isActive: boolean;
   createdAt: Date;
   updatedAt: Date;
-}
+};
 
 export enum WhatsAppTemplateCategory {
   AUTHENTICATION = 'authentication',
@@ -78,7 +78,7 @@ export enum WhatsAppTemplateStatus {
   PAUSED = 'PAUSED',
 }
 
-export interface WhatsAppTemplateComponent {
+export type WhatsAppTemplateComponent = {
   type: 'HEADER' | 'BODY' | 'FOOTER' | 'BUTTONS';
   format?: 'TEXT' | 'IMAGE' | 'DOCUMENT' | 'VIDEO';
   text?: string;
@@ -87,17 +87,17 @@ export interface WhatsAppTemplateComponent {
     header_text?: string[];
     body_text?: string[][];
   };
-}
+};
 
-export interface WhatsAppTemplateButton {
+export type WhatsAppTemplateButton = {
   type: 'QUICK_REPLY' | 'URL' | 'PHONE_NUMBER';
   text: string;
   url?: string;
   phone_number?: string;
-}
+};
 
 // WhatsApp API Request/Response Types
-export interface SendMessageRequest {
+export type SendMessageRequest = {
   messaging_product: 'whatsapp';
   recipient_type: 'individual';
   to: string;
@@ -124,9 +124,9 @@ export interface SendMessageRequest {
     caption?: string;
     filename?: string;
   };
-}
+};
 
-export interface SendMessageResponse {
+export type SendMessageResponse = {
   messaging_product: string;
   contacts: Array<{
     input: string;
@@ -135,9 +135,9 @@ export interface SendMessageResponse {
   messages: Array<{
     id: string;
   }>;
-}
+};
 
-export interface WhatsAppWebhookPayload {
+export type WhatsAppWebhookPayload = {
   object: string;
   entry: Array<{
     id: string;
@@ -173,10 +173,10 @@ export interface WhatsAppWebhookPayload {
       field: string;
     }>;
   }>;
-}
+};
 
 // NeonPro specific integration types
-export interface PatientWhatsAppNotification {
+export type PatientWhatsAppNotification = {
   patientId: string;
   notificationType:
     | 'appointment_reminder'
@@ -188,9 +188,9 @@ export interface PatientWhatsAppNotification {
   templateName: string;
   templateParams: Record<string, string>;
   priority: 'low' | 'medium' | 'high';
-}
+};
 
-export interface WhatsAppAnalytics {
+export type WhatsAppAnalytics = {
   id?: string;
   date: Date;
   messagesSent: number;
@@ -200,9 +200,9 @@ export interface WhatsAppAnalytics {
   templatesByCategory: Record<WhatsAppTemplateCategory, number>;
   costBRL: number;
   createdAt: Date;
-}
+};
 
-export interface WhatsAppOptIn {
+export type WhatsAppOptIn = {
   id?: string;
   patientId: string;
   phoneNumber: string;
@@ -213,19 +213,19 @@ export interface WhatsAppOptIn {
   consentMessage?: string;
   createdAt: Date;
   updatedAt: Date;
-}
+};
 
 // Form schemas for configuration
-export interface WhatsAppConfigForm {
+export type WhatsAppConfigForm = {
   phoneNumberId: string;
   accessToken: string;
   webhookVerifyToken: string;
   businessName: string;
   businessDescription?: string;
   isActive: boolean;
-}
+};
 
-export interface WhatsAppTemplateForm {
+export type WhatsAppTemplateForm = {
   name: string;
   category: WhatsAppTemplateCategory;
   language: string;
@@ -239,13 +239,13 @@ export interface WhatsAppTemplateForm {
     phone_number?: string;
   }>;
   isActive: boolean;
-}
+};
 
-export interface SendBulkMessageForm {
+export type SendBulkMessageForm = {
   templateId: string;
   recipientType: 'all_patients' | 'selected_patients' | 'custom_list';
   selectedPatients?: string[];
   customPhoneNumbers?: string[];
   templateParams?: Record<string, string>;
   scheduleTime?: Date;
-}
+};

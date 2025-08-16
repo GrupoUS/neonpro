@@ -6,20 +6,26 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
-import { 
-  Shield, 
-  AlertTriangle, 
-  CheckCircle, 
-  Clock, 
-  Package, 
-  Users, 
+import {
+  Shield,
+  AlertTriangle,
+  CheckCircle,
+  Clock,
+  Package,
+  Users,
   FileText,
-  TrendingUp 
+  TrendingUp,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -51,7 +57,9 @@ export function ANVISADashboard({ clinicId }: ANVISADashboardProps) {
   const fetchComplianceMetrics = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`/api/anvisa/compliance?clinic_id=${clinicId}&action=metrics`);
+      const response = await fetch(
+        `/api/anvisa/compliance?clinic_id=${clinicId}&action=metrics`
+      );
       if (response.ok) {
         const data = await response.json();
         setMetrics(data.data);
@@ -64,9 +72,12 @@ export function ANVISADashboard({ clinicId }: ANVISADashboardProps) {
   };
 
   const getComplianceStatus = (score: number) => {
-    if (score >= 90) return { status: 'excellent', color: 'bg-green-500', text: 'Excelente' };
-    if (score >= 75) return { status: 'good', color: 'bg-blue-500', text: 'Bom' };
-    if (score >= 60) return { status: 'warning', color: 'bg-yellow-500', text: 'Atenção' };
+    if (score >= 90)
+      return { status: 'excellent', color: 'bg-green-500', text: 'Excelente' };
+    if (score >= 75)
+      return { status: 'good', color: 'bg-blue-500', text: 'Bom' };
+    if (score >= 60)
+      return { status: 'warning', color: 'bg-yellow-500', text: 'Atenção' };
     return { status: 'critical', color: 'bg-red-500', text: 'Crítico' };
   };
 
@@ -97,25 +108,36 @@ export function ANVISADashboard({ clinicId }: ANVISADashboardProps) {
       {/* Header with Overall Compliance Score */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-3xl font-bold tracking-tight">ANVISA Compliance</h2>
+          <h2 className="text-3xl font-bold tracking-tight">
+            ANVISA Compliance
+          </h2>
           <p className="text-muted-foreground">
             Monitoramento e gestão de conformidade regulatória
           </p>
         </div>
         <div className="flex items-center space-x-4">
           <div className="text-right">
-            <div className="text-sm text-muted-foreground">Score de Conformidade</div>
+            <div className="text-sm text-muted-foreground">
+              Score de Conformidade
+            </div>
             <div className="flex items-center space-x-2">
-              <div className={cn(
-                "h-3 w-3 rounded-full",
-                complianceStatus.color
-              )}></div>
-              <span className="text-2xl font-bold">{metrics.overall_score}%</span>
-              <Badge variant={
-                complianceStatus.status === 'excellent' ? 'default' :
-                complianceStatus.status === 'good' ? 'secondary' :
-                complianceStatus.status === 'warning' ? 'outline' : 'destructive'
-              }>
+              <div
+                className={cn('h-3 w-3 rounded-full', complianceStatus.color)}
+              ></div>
+              <span className="text-2xl font-bold">
+                {metrics.overall_score}%
+              </span>
+              <Badge
+                variant={
+                  complianceStatus.status === 'excellent'
+                    ? 'default'
+                    : complianceStatus.status === 'good'
+                      ? 'secondary'
+                      : complianceStatus.status === 'warning'
+                        ? 'outline'
+                        : 'destructive'
+                }
+              >
                 {complianceStatus.text}
               </Badge>
             </div>
@@ -134,9 +156,15 @@ export function ANVISADashboard({ clinicId }: ANVISADashboardProps) {
             <Package className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{metrics.compliant_products}/{metrics.total_products}</div>
+            <div className="text-2xl font-bold">
+              {metrics.compliant_products}/{metrics.total_products}
+            </div>
             <p className="text-xs text-muted-foreground">
-              {((metrics.compliant_products / metrics.total_products) * 100).toFixed(1)}% em conformidade
+              {(
+                (metrics.compliant_products / metrics.total_products) *
+                100
+              ).toFixed(1)}
+              % em conformidade
             </p>
           </CardContent>
         </Card>
@@ -147,9 +175,16 @@ export function ANVISADashboard({ clinicId }: ANVISADashboardProps) {
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{metrics.certified_professionals}/{metrics.total_professionals}</div>
+            <div className="text-2xl font-bold">
+              {metrics.certified_professionals}/{metrics.total_professionals}
+            </div>
             <p className="text-xs text-muted-foreground">
-              {((metrics.certified_professionals / metrics.total_professionals) * 100).toFixed(1)}% certificados
+              {(
+                (metrics.certified_professionals /
+                  metrics.total_professionals) *
+                100
+              ).toFixed(1)}
+              % certificados
             </p>
           </CardContent>
         </Card>
@@ -173,7 +208,9 @@ export function ANVISADashboard({ clinicId }: ANVISADashboardProps) {
             <FileText className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{metrics.pending_procedures}</div>
+            <div className="text-2xl font-bold">
+              {metrics.pending_procedures}
+            </div>
             <p className="text-xs text-muted-foreground">
               {metrics.completed_procedures} concluídos
             </p>
@@ -187,7 +224,8 @@ export function ANVISADashboard({ clinicId }: ANVISADashboardProps) {
           <AlertTriangle className="h-4 w-4" />
           <AlertTitle>Alertas de Conformidade Ativos</AlertTitle>
           <AlertDescription>
-            Existem {metrics.active_alerts} alertas de conformidade que requerem atenção imediata.
+            Existem {metrics.active_alerts} alertas de conformidade que requerem
+            atenção imediata.
             <Button variant="outline" size="sm" className="ml-2">
               Ver Alertas
             </Button>
@@ -196,7 +234,11 @@ export function ANVISADashboard({ clinicId }: ANVISADashboardProps) {
       )}
 
       {/* Detailed Tabs */}
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
+      <Tabs
+        value={activeTab}
+        onValueChange={setActiveTab}
+        className="space-y-4"
+      >
         <TabsList>
           <TabsTrigger value="overview">Visão Geral</TabsTrigger>
           <TabsTrigger value="products">Produtos</TabsTrigger>
@@ -219,13 +261,19 @@ export function ANVISADashboard({ clinicId }: ANVISADashboardProps) {
                   <span>Registro de Produtos</span>
                   <div className="flex items-center space-x-2">
                     <div className="w-24 bg-gray-200 rounded-full h-2">
-                      <div 
-                        className="bg-green-500 h-2 rounded-full" 
-                        style={{ width: `${(metrics.compliant_products / metrics.total_products) * 100}%` }}
+                      <div
+                        className="bg-green-500 h-2 rounded-full"
+                        style={{
+                          width: `${(metrics.compliant_products / metrics.total_products) * 100}%`,
+                        }}
                       ></div>
                     </div>
                     <span className="text-sm font-medium">
-                      {((metrics.compliant_products / metrics.total_products) * 100).toFixed(0)}%
+                      {(
+                        (metrics.compliant_products / metrics.total_products) *
+                        100
+                      ).toFixed(0)}
+                      %
                     </span>
                   </div>
                 </div>
@@ -233,13 +281,20 @@ export function ANVISADashboard({ clinicId }: ANVISADashboardProps) {
                   <span>Certificação Profissional</span>
                   <div className="flex items-center space-x-2">
                     <div className="w-24 bg-gray-200 rounded-full h-2">
-                      <div 
-                        className="bg-blue-500 h-2 rounded-full" 
-                        style={{ width: `${(metrics.certified_professionals / metrics.total_professionals) * 100}%` }}
+                      <div
+                        className="bg-blue-500 h-2 rounded-full"
+                        style={{
+                          width: `${(metrics.certified_professionals / metrics.total_professionals) * 100}%`,
+                        }}
                       ></div>
                     </div>
                     <span className="text-sm font-medium">
-                      {((metrics.certified_professionals / metrics.total_professionals) * 100).toFixed(0)}%
+                      {(
+                        (metrics.certified_professionals /
+                          metrics.total_professionals) *
+                        100
+                      ).toFixed(0)}
+                      %
                     </span>
                   </div>
                 </div>
@@ -269,9 +324,12 @@ export function ANVISADashboard({ clinicId }: ANVISADashboardProps) {
                   <div className="flex items-start space-x-2 p-3 border rounded-lg">
                     <Package className="h-4 w-4 text-yellow-500 mt-0.5" />
                     <div className="flex-1">
-                      <div className="font-medium">Atualizar registro de produtos</div>
+                      <div className="font-medium">
+                        Atualizar registro de produtos
+                      </div>
                       <div className="text-sm text-muted-foreground">
-                        {metrics.total_products - metrics.compliant_products} produtos pendentes
+                        {metrics.total_products - metrics.compliant_products}{' '}
+                        produtos pendentes
                       </div>
                     </div>
                   </div>

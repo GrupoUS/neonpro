@@ -15,7 +15,7 @@ export type SubscriptionTier = 'free' | 'basic' | 'premium' | 'enterprise';
 export type UserRole = 'patient' | 'staff' | 'doctor' | 'admin' | 'owner';
 export type AccessLevel = 'read' | 'write' | 'admin' | 'owner';
 
-export interface RoutePermission {
+export type RoutePermission = {
   pattern: string;
   name: string;
   description: string;
@@ -33,9 +33,9 @@ export interface RoutePermission {
     req: NextRequest,
     context: UserRouteContext
   ) => Promise<ValidationResult>;
-}
+};
 
-export interface UserRouteContext {
+export type UserRouteContext = {
   userId: string;
   userRole: UserRole;
   subscriptionTier: SubscriptionTier;
@@ -46,17 +46,17 @@ export interface UserRouteContext {
   featureFlags: Record<string, boolean>;
   clinicId?: string;
   clinicRole?: string;
-}
+};
 
-export interface ValidationResult {
+export type ValidationResult = {
   allowed: boolean;
   reason?: string;
   redirectTo?: string;
   errorCode?: string;
   metadata?: Record<string, any>;
-}
+};
 
-export interface AccessLog {
+export type AccessLog = {
   userId: string;
   route: string;
   method: string;
@@ -67,7 +67,7 @@ export interface AccessLog {
   ip?: string;
   duration?: number;
   metadata?: Record<string, any>;
-}
+};
 
 // Advanced route configuration
 const ROUTE_PERMISSIONS: RoutePermission[] = [

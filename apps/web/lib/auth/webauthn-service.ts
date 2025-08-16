@@ -20,7 +20,7 @@ import { logAnalyticsEvent } from '@/lib/monitoring/analytics';
 import { createClient } from '../../app/utils/supabase/server';
 import { trackMFAVerification } from './performance-tracker';
 
-export interface WebAuthnCredential {
+export type WebAuthnCredential = {
   id: string;
   user_id: string;
   credential_id: string;
@@ -35,19 +35,19 @@ export interface WebAuthnCredential {
   backup_state: boolean;
   transports: string[];
   aaguid?: string;
-}
+};
 
-export interface WebAuthnRegistrationOptions {
+export type WebAuthnRegistrationOptions = {
   userId: string;
   userName: string;
   userDisplayName: string;
   deviceName?: string;
-}
+};
 
-export interface WebAuthnAuthenticationOptions {
+export type WebAuthnAuthenticationOptions = {
   userId?: string;
   allowCredentials?: boolean;
-}
+};
 
 class WebAuthnService {
   private readonly rpName = 'NeonPro';

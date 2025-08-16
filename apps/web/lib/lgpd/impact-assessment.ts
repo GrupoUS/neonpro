@@ -79,7 +79,7 @@ export enum AssessmentStatus {
 /**
  * Data Processing Context
  */
-export interface ProcessingContext {
+export type ProcessingContext = {
   id: string;
   name: string;
   description: string;
@@ -147,12 +147,12 @@ export interface ProcessingContext {
     vendorManagement: boolean;
     dataGovernance: boolean;
   };
-}
+};
 
 /**
  * Risk Assessment
  */
-export interface RiskAssessment {
+export type RiskAssessment = {
   id: string;
   category: RiskCategory;
   description: string;
@@ -194,12 +194,12 @@ export interface RiskAssessment {
   assessedBy: string;
   assessedAt: Date;
   reviewDate: Date;
-}
+};
 
 /**
  * Compliance Gap
  */
-export interface ComplianceGap {
+export type ComplianceGap = {
   id: string;
   article: string;
   requirement: string;
@@ -226,12 +226,12 @@ export interface ComplianceGap {
 
   identifiedBy: string;
   identifiedAt: Date;
-}
+};
 
 /**
  * Stakeholder Consultation
  */
-export interface StakeholderConsultation {
+export type StakeholderConsultation = {
   id: string;
   stakeholder: {
     name: string;
@@ -273,12 +273,12 @@ export interface StakeholderConsultation {
 
   conductedBy: string;
   createdAt: Date;
-}
+};
 
 /**
  * Impact Assessment
  */
-export interface ImpactAssessment {
+export type ImpactAssessment = {
   id: string;
   name: string;
   description: string;
@@ -355,12 +355,12 @@ export interface ImpactAssessment {
   createdAt: Date;
   updatedAt: Date;
   archivedAt?: Date;
-}
+};
 
 /**
  * Assessment Template
  */
-export interface AssessmentTemplate {
+export type AssessmentTemplate = {
   id: string;
   name: string;
   description: string;
@@ -393,12 +393,12 @@ export interface AssessmentTemplate {
   createdBy: string;
   createdAt: Date;
   updatedAt: Date;
-}
+};
 
 /**
  * Assessment Events
  */
-export interface AssessmentEvents {
+export type AssessmentEvents = {
   'assessment:created': { assessment: ImpactAssessment };
   'assessment:updated': { assessment: ImpactAssessment };
   'assessment:approved': { assessment: ImpactAssessment };
@@ -410,7 +410,7 @@ export interface AssessmentEvents {
     consultation: StakeholderConsultation;
   };
   'review:due': { assessment: ImpactAssessment };
-}
+};
 
 // ============================================================================
 // IMPACT ASSESSMENT SYSTEM
@@ -1518,13 +1518,10 @@ export class ImpactAssessmentManager extends EventEmitter {
    * Log activity
    */
   private logActivity(
-    actor: string,
-    action: string,
-    details: Record<string, any>
-  ): void {
-    // In a real implementation, this would log to audit trail
-    console.log(`[ImpactAssessment] ${actor} - ${action}:`, details);
-  }
+    _actor: string,
+    _action: string,
+    _details: Record<string, any>
+  ): void {}
 
   /**
    * Shutdown the system

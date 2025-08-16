@@ -163,7 +163,7 @@ const styles = StyleSheet.create({
 });
 
 // Invoice data interface
-export interface InvoicePDFData {
+export type InvoicePDFData = {
   invoiceNumber: string;
   invoiceDate: string;
   dueDate: string;
@@ -204,7 +204,7 @@ export interface InvoicePDFData {
   paymentMethod?: string;
   paymentTerms?: string;
   notes?: string;
-} // Invoice PDF Document Component
+}; // Invoice PDF Document Component
 export const InvoicePDFDocument: React.FC<{ data: InvoicePDFData }> = ({
   data,
 }) => (

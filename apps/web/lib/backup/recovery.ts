@@ -27,13 +27,13 @@ import {
 /**
  * Interface para validação de recovery
  */
-interface RecoveryValidation {
+type RecoveryValidation = {
   isValid: boolean;
   errors: string[];
   warnings: string[];
   estimatedTime: number;
   estimatedSize: number;
-}
+};
 
 /**
  * Serviço de recuperação
@@ -210,8 +210,7 @@ export class RecoveryService {
       // Implementar verificação de checksum
       // Por enquanto, retorna true
       return true;
-    } catch (error) {
-      console.error('Erro ao verificar integridade:', error);
+    } catch (_error) {
       return false;
     }
   }
@@ -549,8 +548,6 @@ export class RecoveryService {
 
     // Notificação
     await this.notifyRecoveryCompletion(request, result);
-
-    console.log(`Recovery ${request.id} completado com sucesso`);
   }
 
   /**
@@ -594,8 +591,6 @@ export class RecoveryService {
         { requestId: request.id, error: errorMessage }
       );
     }
-
-    console.error(`Recovery ${request.id} falhou: ${errorMessage}`);
   }
 
   // ============================================================================
@@ -623,9 +618,7 @@ export class RecoveryService {
       };
 
       await notificationManager.send(notification);
-    } catch (error) {
-      console.error('Erro ao notificar conclusão de recovery:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -649,9 +642,7 @@ export class RecoveryService {
       };
 
       await notificationManager.send(notification);
-    } catch (error) {
-      console.error('Erro ao notificar falha de recovery:', error);
-    }
+    } catch (_error) {}
   }
 
   // ============================================================================
@@ -879,7 +870,6 @@ export class RecoveryService {
   }
 
   private handleError(message: string, error: any): ApiResponse {
-    console.error(message, error);
     return {
       success: false,
       error: error?.message || 'Erro interno do servidor',

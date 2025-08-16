@@ -1,17 +1,17 @@
 // Common shared types
-export interface BaseEntity {
+export type BaseEntity = {
   id: string;
   created_at: string;
   updated_at: string;
-}
+};
 
-export interface PaginationParams {
+export type PaginationParams = {
   page?: number;
   limit?: number;
-}
+};
 
-export interface ApiResponse<T> {
+export type ApiResponse<T> = {
   data: T;
   message?: string;
   success: boolean;
-}
+};

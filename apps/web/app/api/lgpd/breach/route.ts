@@ -242,8 +242,6 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('LGPD Breach GET Error:', error);
-
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Invalid query parameters', details: error.errors },
@@ -315,8 +313,6 @@ export async function POST(request: NextRequest) {
       { status: 201 }
     );
   } catch (error) {
-    console.error('LGPD Breach POST Error:', error);
-
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Invalid request data', details: error.errors },
@@ -468,8 +464,6 @@ export async function PUT(request: NextRequest) {
       data: updatedBreach,
     });
   } catch (error) {
-    console.error('LGPD Breach PUT Error:', error);
-
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Invalid request data', details: error.errors },

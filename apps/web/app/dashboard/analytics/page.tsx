@@ -1,6 +1,23 @@
 'use client';
 
-import React, { Suspense, useState } from 'react';
+import {
+  Activity,
+  AlertTriangle,
+  BarChart3,
+  Calendar,
+  DollarSign,
+  Download,
+  FileText,
+  Filter,
+  RefreshCw,
+  Shield,
+  Stethoscope,
+  TrendingUp,
+  Users,
+} from 'lucide-react';
+import { useState } from 'react';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Button } from '@/components/ui/button';
 import {
   Card,
   CardContent,
@@ -8,10 +25,8 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { DatePickerWithRange } from '@/components/ui/date-range-picker';
+import { LoadingSpinner } from '@/components/ui/loading-spinner';
 import {
   Select,
   SelectContent,
@@ -19,28 +34,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Input } from '@/components/ui/input';
-import { DatePickerWithRange } from '@/components/ui/date-range-picker';
-import { LoadingSpinner } from '@/components/ui/loading-spinner';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/hooks/useAuth';
 import { usePermissions } from '@/hooks/usePermissions';
-import {
-  BarChart3,
-  TrendingUp,
-  Users,
-  Calendar,
-  DollarSign,
-  Download,
-  Filter,
-  RefreshCw,
-  AlertTriangle,
-  Shield,
-  FileText,
-  Activity,
-  Stethoscope,
-  Clock,
-  Target,
-} from 'lucide-react';
 
 /**
  * Healthcare Analytics Dashboard Page
@@ -64,7 +60,7 @@ export default function AnalyticsDashboardPage() {
 
   // Healthcare role-based access control
   const canViewAnalytics = hasPermission('analytics.dashboard.view');
-  const canGenerateReports = hasPermission('analytics.reports.generate');
+  const _canGenerateReports = hasPermission('analytics.reports.generate');
   const canExportData = hasPermission('analytics.export.execute');
 
   if (authLoading || permissionsLoading) {
@@ -81,7 +77,7 @@ export default function AnalyticsDashboardPage() {
   if (!user) {
     return (
       <div className="flex h-screen items-center justify-center">
-        <Alert variant="destructive" data-testid="unauthorized-alert">
+        <Alert data-testid="unauthorized-alert" variant="destructive">
           <AlertTriangle className="h-4 w-4" />
           <AlertDescription>
             Acesso não autorizado. Faça login para continuar.
@@ -94,7 +90,7 @@ export default function AnalyticsDashboardPage() {
   if (!canViewAnalytics) {
     return (
       <div className="flex h-screen items-center justify-center">
-        <Alert variant="destructive" data-testid="permission-denied-alert">
+        <Alert data-testid="permission-denied-alert" variant="destructive">
           <Shield className="h-4 w-4" />
           <AlertDescription>
             Permissão insuficiente para acessar analytics. Entre em contato com
@@ -112,7 +108,7 @@ export default function AnalyticsDashboardPage() {
     setIsRefreshing(false);
   };
 
-  const handleExportData = async (format: 'pdf' | 'excel') => {
+  const handleExportData = async (_format: 'pdf' | 'excel') => {
     if (!canExportData) {
       return;
     }
@@ -125,7 +121,7 @@ export default function AnalyticsDashboardPage() {
 
   return (
     <div
-      className="container mx-auto p-6 space-y-6"
+      className="container mx-auto space-y-6 p-6"
       data-testid="analytics-dashboard"
     >
       {/* Page Header */}
@@ -133,7 +129,7 @@ export default function AnalyticsDashboardPage() {
         <div className="flex items-center justify-between">
           <div>
             <h1
-              className="text-3xl font-bold tracking-tight"
+              className="font-bold text-3xl tracking-tight"
               data-testid="analytics-title"
             >
               Analytics Dashboard
@@ -147,37 +143,37 @@ export default function AnalyticsDashboardPage() {
           </div>
           <div className="flex gap-2">
             <Button
-              variant="outline"
-              size="sm"
-              onClick={handleRefreshData}
-              disabled={isRefreshing}
               data-testid="refresh-button"
+              disabled={isRefreshing}
+              onClick={handleRefreshData}
+              size="sm"
+              variant="outline"
             >
               <RefreshCw
-                className={`h-4 w-4 mr-2 ${isRefreshing ? 'animate-spin' : ''}`}
+                className={`mr-2 h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`}
               />
               {isRefreshing ? 'Atualizando...' : 'Atualizar'}
             </Button>
             {canExportData && (
               <>
                 <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handleExportData('excel')}
-                  disabled={isExporting}
                   data-testid="export-excel-button"
+                  disabled={isExporting}
+                  onClick={() => handleExportData('excel')}
+                  size="sm"
+                  variant="outline"
                 >
-                  <Download className="h-4 w-4 mr-2" />
+                  <Download className="mr-2 h-4 w-4" />
                   Excel
                 </Button>
                 <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handleExportData('pdf')}
-                  disabled={isExporting}
                   data-testid="export-pdf-button"
+                  disabled={isExporting}
+                  onClick={() => handleExportData('pdf')}
+                  size="sm"
+                  variant="outline"
                 >
-                  <FileText className="h-4 w-4 mr-2" />
+                  <FileText className="mr-2 h-4 w-4" />
                   PDF
                 </Button>
               </>
@@ -195,18 +191,18 @@ export default function AnalyticsDashboardPage() {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
             <div className="space-y-2">
-              <label className="text-sm font-medium">Período</label>
+              <label className="font-medium text-sm">Período</label>
               <DatePickerWithRange
+                data-testid="date-range-picker"
                 date={selectedDateRange}
                 onDateChange={setSelectedDateRange}
-                data-testid="date-range-picker"
               />
             </div>
             <div className="space-y-2">
-              <label className="text-sm font-medium">Tipo de Dados</label>
-              <Select value={selectedFilter} onValueChange={setSelectedFilter}>
+              <label className="font-medium text-sm">Tipo de Dados</label>
+              <Select onValueChange={setSelectedFilter} value={selectedFilter}>
                 <SelectTrigger data-testid="data-type-filter">
                   <SelectValue placeholder="Selecione o tipo" />
                 </SelectTrigger>
@@ -220,7 +216,7 @@ export default function AnalyticsDashboardPage() {
               </Select>
             </div>
             <div className="space-y-2">
-              <label className="text-sm font-medium">Profissional</label>
+              <label className="font-medium text-sm">Profissional</label>
               <Select>
                 <SelectTrigger data-testid="professional-filter">
                   <SelectValue placeholder="Todos os profissionais" />
@@ -250,42 +246,42 @@ export default function AnalyticsDashboardPage() {
 
       {/* Analytics Content */}
       <Tabs
-        defaultValue="overview"
         className="w-full"
         data-testid="analytics-tabs"
+        defaultValue="overview"
       >
         <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="overview" data-testid="overview-tab">
+          <TabsTrigger data-testid="overview-tab" value="overview">
             Visão Geral
           </TabsTrigger>
-          <TabsTrigger value="patients" data-testid="patients-tab">
+          <TabsTrigger data-testid="patients-tab" value="patients">
             Pacientes
           </TabsTrigger>
-          <TabsTrigger value="procedures" data-testid="procedures-tab">
+          <TabsTrigger data-testid="procedures-tab" value="procedures">
             Procedimentos
           </TabsTrigger>
-          <TabsTrigger value="financial" data-testid="financial-tab">
+          <TabsTrigger data-testid="financial-tab" value="financial">
             Financeiro
           </TabsTrigger>
         </TabsList>
 
         {/* Overview Tab */}
         <TabsContent
-          value="overview"
           className="space-y-6"
           data-testid="overview-content"
+          value="overview"
         >
           {/* KPI Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
             <Card data-testid="kpi-patients">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-muted-foreground">
+                    <p className="font-medium text-muted-foreground text-sm">
                       Pacientes Ativos
                     </p>
-                    <p className="text-2xl font-bold">1,247</p>
-                    <div className="flex items-center gap-1 text-xs text-green-600">
+                    <p className="font-bold text-2xl">1,247</p>
+                    <div className="flex items-center gap-1 text-green-600 text-xs">
                       <TrendingUp className="h-3 w-3" />
                       <span>+12% vs mês anterior</span>
                     </div>
@@ -299,11 +295,11 @@ export default function AnalyticsDashboardPage() {
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-muted-foreground">
+                    <p className="font-medium text-muted-foreground text-sm">
                       Agendamentos
                     </p>
-                    <p className="text-2xl font-bold">89</p>
-                    <div className="flex items-center gap-1 text-xs text-green-600">
+                    <p className="font-bold text-2xl">89</p>
+                    <div className="flex items-center gap-1 text-green-600 text-xs">
                       <TrendingUp className="h-3 w-3" />
                       <span>+8% vs semana anterior</span>
                     </div>
@@ -317,11 +313,11 @@ export default function AnalyticsDashboardPage() {
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-muted-foreground">
+                    <p className="font-medium text-muted-foreground text-sm">
                       Procedimentos
                     </p>
-                    <p className="text-2xl font-bold">156</p>
-                    <div className="flex items-center gap-1 text-xs text-green-600">
+                    <p className="font-bold text-2xl">156</p>
+                    <div className="flex items-center gap-1 text-green-600 text-xs">
                       <TrendingUp className="h-3 w-3" />
                       <span>+15% vs mês anterior</span>
                     </div>
@@ -335,11 +331,11 @@ export default function AnalyticsDashboardPage() {
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-muted-foreground">
+                    <p className="font-medium text-muted-foreground text-sm">
                       Receita
                     </p>
-                    <p className="text-2xl font-bold">R$ 89.4k</p>
-                    <div className="flex items-center gap-1 text-xs text-green-600">
+                    <p className="font-bold text-2xl">R$ 89.4k</p>
+                    <div className="flex items-center gap-1 text-green-600 text-xs">
                       <TrendingUp className="h-3 w-3" />
                       <span>+22% vs mês anterior</span>
                     </div>
@@ -351,7 +347,7 @@ export default function AnalyticsDashboardPage() {
           </div>
 
           {/* Charts Section */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
             <Card data-testid="revenue-chart">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -363,7 +359,7 @@ export default function AnalyticsDashboardPage() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="h-64 flex items-center justify-center bg-muted rounded">
+                <div className="flex h-64 items-center justify-center rounded bg-muted">
                   <p className="text-muted-foreground">
                     Gráfico de receita (simulado)
                   </p>
@@ -395,21 +391,21 @@ export default function AnalyticsDashboardPage() {
                     { name: 'Peeling Químico', count: 18, percentage: 11.5 },
                   ].map((procedure, index) => (
                     <div
-                      key={index}
                       className="flex items-center justify-between"
+                      key={index}
                     >
                       <div className="flex-1">
-                        <p className="text-sm font-medium">{procedure.name}</p>
-                        <div className="w-full bg-muted rounded-full h-2 mt-1">
+                        <p className="font-medium text-sm">{procedure.name}</p>
+                        <div className="mt-1 h-2 w-full rounded-full bg-muted">
                           <div
-                            className="bg-primary h-2 rounded-full"
+                            className="h-2 rounded-full bg-primary"
                             style={{ width: `${procedure.percentage}%` }}
                           />
                         </div>
                       </div>
                       <div className="ml-4 text-right">
-                        <p className="text-sm font-medium">{procedure.count}</p>
-                        <p className="text-xs text-muted-foreground">
+                        <p className="font-medium text-sm">{procedure.count}</p>
+                        <p className="text-muted-foreground text-xs">
                           {procedure.percentage}%
                         </p>
                       </div>
@@ -423,9 +419,9 @@ export default function AnalyticsDashboardPage() {
 
         {/* Patients Tab */}
         <TabsContent
-          value="patients"
           className="space-y-6"
           data-testid="patients-content"
+          value="patients"
         >
           <Card data-testid="patients-analytics">
             <CardHeader>
@@ -443,7 +439,7 @@ export default function AnalyticsDashboardPage() {
                     para garantir conformidade LGPD.
                   </AlertDescription>
                 </Alert>
-                <div className="h-64 flex items-center justify-center bg-muted rounded">
+                <div className="flex h-64 items-center justify-center rounded bg-muted">
                   <p className="text-muted-foreground">
                     Analytics de pacientes (dados protegidos)
                   </p>
@@ -455,9 +451,9 @@ export default function AnalyticsDashboardPage() {
 
         {/* Procedures Tab */}
         <TabsContent
-          value="procedures"
           className="space-y-6"
           data-testid="procedures-content"
+          value="procedures"
         >
           <Card data-testid="procedures-analytics">
             <CardHeader>
@@ -467,7 +463,7 @@ export default function AnalyticsDashboardPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="h-64 flex items-center justify-center bg-muted rounded">
+              <div className="flex h-64 items-center justify-center rounded bg-muted">
                 <p className="text-muted-foreground">
                   Analytics de procedimentos
                 </p>
@@ -478,9 +474,9 @@ export default function AnalyticsDashboardPage() {
 
         {/* Financial Tab */}
         <TabsContent
-          value="financial"
           className="space-y-6"
           data-testid="financial-content"
+          value="financial"
         >
           <Card data-testid="financial-analytics">
             <CardHeader>
@@ -490,7 +486,7 @@ export default function AnalyticsDashboardPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="h-64 flex items-center justify-center bg-muted rounded">
+              <div className="flex h-64 items-center justify-center rounded bg-muted">
                 <p className="text-muted-foreground">Analytics financeiros</p>
               </div>
             </CardContent>

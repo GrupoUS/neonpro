@@ -98,8 +98,6 @@ export async function POST(request: NextRequest) {
       expiresAt: newTokens.expiresAt.toISOString(),
     });
   } catch (error) {
-    console.error('Instagram token refresh error:', error);
-
     return NextResponse.json(
       {
         error: 'Failed to refresh Instagram tokens',
@@ -167,8 +165,6 @@ export async function GET(request: NextRequest) {
       timeUntilExpiry: expiresAt.getTime() - now.getTime(),
     });
   } catch (error) {
-    console.error('Instagram token check error:', error);
-
     return NextResponse.json(
       {
         error: 'Failed to check Instagram token status',

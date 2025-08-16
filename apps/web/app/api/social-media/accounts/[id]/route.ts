@@ -20,11 +20,11 @@ const updateAccountSchema = z.object({
   status: z.enum(['active', 'inactive', 'suspended', 'deleted']).optional(),
 });
 
-interface RouteParams {
+type RouteParams = {
   params: Promise<{
     id: string;
   }>;
-}
+};
 
 /**
  * GET /api/social-media/accounts/[id]
@@ -112,8 +112,7 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
       success: true,
       data: accountWithTokenStatus,
     });
-  } catch (error) {
-    console.error('Social media account GET error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -196,7 +195,6 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       .single();
 
     if (error) {
-      console.error('Error updating social media account:', error);
       return NextResponse.json(
         { error: 'Failed to update account' },
         { status: 500 }
@@ -209,8 +207,6 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       message: 'Account updated successfully',
     });
   } catch (error) {
-    console.error('Social media account PUT error:', error);
-
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Invalid request data', details: error.errors },
@@ -300,7 +296,6 @@ export async function DELETE(_request: NextRequest, { params }: RouteParams) {
         .eq('clinic_id', profile.clinic_id);
 
       if (error) {
-        console.error('Error soft deleting social media account:', error);
         return NextResponse.json(
           { error: 'Failed to disconnect account' },
           { status: 500 }
@@ -320,7 +315,6 @@ export async function DELETE(_request: NextRequest, { params }: RouteParams) {
       .eq('clinic_id', profile.clinic_id);
 
     if (error) {
-      console.error('Error deleting social media account:', error);
       return NextResponse.json(
         { error: 'Failed to delete account' },
         { status: 500 }
@@ -331,8 +325,7 @@ export async function DELETE(_request: NextRequest, { params }: RouteParams) {
       success: true,
       message: 'Account deleted successfully',
     });
-  } catch (error) {
-    console.error('Social media account DELETE error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -431,8 +424,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
       default:
         return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
     }
-  } catch (error) {
-    console.error('Social media account POST error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

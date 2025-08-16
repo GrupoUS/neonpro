@@ -9,7 +9,7 @@ import { comprehensiveSearch } from './comprehensive-search';
 import { nlpEngine } from './nlp-engine';
 
 // Voice search types
-export interface VoiceSearchOptions {
+export type VoiceSearchOptions = {
   language?: string;
   continuous?: boolean;
   interimResults?: boolean;
@@ -18,9 +18,9 @@ export interface VoiceSearchOptions {
   autoStop?: boolean;
   timeout?: number;
   confidenceThreshold?: number;
-}
+};
 
-export interface VoiceRecognitionResult {
+export type VoiceRecognitionResult = {
   transcript: string;
   confidence: number;
   alternatives: Array<{
@@ -29,9 +29,9 @@ export interface VoiceRecognitionResult {
   }>;
   isFinal: boolean;
   timestamp: number;
-}
+};
 
-export interface VoiceCommand {
+export type VoiceCommand = {
   id: string;
   patterns: string[];
   action: string;
@@ -39,9 +39,9 @@ export interface VoiceCommand {
   description: string;
   examples: string[];
   category: 'search' | 'navigation' | 'action' | 'filter' | 'system';
-}
+};
 
-export interface VoiceSearchSession {
+export type VoiceSearchSession = {
   id: string;
   userId?: string;
   startTime: number;
@@ -52,9 +52,9 @@ export interface VoiceSearchSession {
   averageConfidence: number;
   commandsUsed: string[];
   errors: VoiceError[];
-}
+};
 
-export interface VoiceQuery {
+export type VoiceQuery = {
   id: string;
   sessionId: string;
   originalAudio?: Blob;
@@ -69,16 +69,16 @@ export interface VoiceQuery {
   duration: number;
   success: boolean;
   errorMessage?: string;
-}
+};
 
-export interface VoiceError {
+export type VoiceError = {
   type: 'recognition' | 'processing' | 'network' | 'permission' | 'timeout';
   message: string;
   timestamp: number;
   context?: Record<string, any>;
-}
+};
 
-export interface VoiceSearchAnalytics {
+export type VoiceSearchAnalytics = {
   totalSessions: number;
   totalQueries: number;
   averageSessionDuration: number;
@@ -91,9 +91,9 @@ export interface VoiceSearchAnalytics {
     medium: number; // 0.5-0.8
     low: number; // <0.5
   };
-}
+};
 
-export interface AudioProcessingOptions {
+export type AudioProcessingOptions = {
   sampleRate?: number;
   channels?: number;
   bitDepth?: number;
@@ -101,7 +101,7 @@ export interface AudioProcessingOptions {
   echoCancellation?: boolean;
   autoGainControl?: boolean;
   noiseSuppression?: boolean;
-}
+};
 
 /**
  * Voice Search Engine Class
@@ -142,7 +142,6 @@ export class VoiceSearch {
     if (
       !('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)
     ) {
-      console.warn('Speech recognition not supported in this browser');
       return;
     }
 
@@ -715,14 +714,9 @@ export class VoiceSearch {
   /**
    * Save session to database
    */
-  private async saveSession(session: VoiceSearchSession): Promise<void> {
+  private async saveSession(_session: VoiceSearchSession): Promise<void> {
     try {
-      // This would typically save to Supabase
-      // Implementation depends on your database schema
-      console.log('Saving voice search session:', session.id);
-    } catch (error) {
-      console.error('Failed to save voice search session:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -801,10 +795,10 @@ export const voiceSearch = new VoiceSearch();
 
 // Type declarations for browser APIs
 declare global {
-  interface Window {
+  type Window = {
     SpeechRecognition: typeof SpeechRecognition;
     webkitSpeechRecognition: typeof SpeechRecognition;
-  }
+  };
 }
 
 interface SpeechRecognition extends EventTarget {
@@ -835,23 +829,23 @@ interface SpeechRecognitionErrorEvent extends Event {
   message: string;
 }
 
-interface SpeechRecognitionResultList {
+type SpeechRecognitionResultList = {
   readonly length: number;
   item(index: number): SpeechRecognitionResult;
   [index: number]: SpeechRecognitionResult;
-}
+};
 
-interface SpeechRecognitionResult {
+type SpeechRecognitionResult = {
   readonly length: number;
   item(index: number): SpeechRecognitionAlternative;
   [index: number]: SpeechRecognitionAlternative;
   isFinal: boolean;
-}
+};
 
-interface SpeechRecognitionAlternative {
+type SpeechRecognitionAlternative = {
   transcript: string;
   confidence: number;
-}
+};
 
 declare let SpeechRecognition: {
   prototype: SpeechRecognition;

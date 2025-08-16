@@ -38,7 +38,6 @@ export async function GET(
       .single();
 
     if (error) {
-      console.error('Database error:', error);
       return NextResponse.json({ error: 'Patient not found' }, { status: 404 });
     }
 
@@ -54,8 +53,7 @@ export async function GET(
     });
 
     return NextResponse.json({ data: patient });
-  } catch (error) {
-    console.error('Profile GET error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -111,7 +109,6 @@ export async function PUT(
     );
 
     if (updateError) {
-      console.error('Update error:', updateError);
       return NextResponse.json(
         { error: 'Failed to update patient profile' },
         { status: 500 }
@@ -129,8 +126,6 @@ export async function PUT(
         { status: 400 }
       );
     }
-
-    console.error('Profile PUT error:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -194,7 +189,6 @@ export async function PATCH(
       .single();
 
     if (updateError) {
-      console.error('Update error:', updateError);
       return NextResponse.json(
         { error: 'Failed to update patient profile' },
         { status: 500 }
@@ -205,8 +199,7 @@ export async function PATCH(
       message: 'Patient profile updated successfully',
       data: updatedPatient,
     });
-  } catch (error) {
-    console.error('Profile PATCH error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

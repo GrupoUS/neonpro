@@ -31,13 +31,9 @@ import {
 import { Separator } from '@/components/ui/separator';
 
 export default function SubscriptionUIDemo() {
-  const handleUpgrade = () => {
-    console.log('Navigate to upgrade page');
-  };
+  const handleUpgrade = () => {};
 
-  const handleManage = () => {
-    console.log('Navigate to billing management');
-  };
+  const handleManage = () => {};
 
   return (
     <div className="container mx-auto space-y-8 p-6">

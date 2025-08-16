@@ -106,7 +106,7 @@ export enum NotificationCategory {
 /**
  * Interface base para notificação
  */
-export interface BaseNotification {
+export type BaseNotification = {
   id: string;
   type: NotificationType;
   category: NotificationCategory;
@@ -117,12 +117,12 @@ export interface BaseNotification {
   metadata?: NotificationMetadata;
   createdAt: Date;
   updatedAt: Date;
-}
+};
 
 /**
  * Metadados da notificação
  */
-export interface NotificationMetadata {
+export type NotificationMetadata = {
   source: string;
   version: string;
   tags?: string[];
@@ -131,12 +131,12 @@ export interface NotificationMetadata {
   expiresAt?: Date;
   retryCount?: number;
   maxRetries?: number;
-}
+};
 
 /**
  * Destinatário da notificação
  */
-export interface NotificationRecipient {
+export type NotificationRecipient = {
   id: string;
   type: 'user' | 'patient' | 'staff' | 'admin';
   email?: string;
@@ -145,12 +145,12 @@ export interface NotificationRecipient {
   preferences: NotificationPreferences;
   timezone?: string;
   language?: string;
-}
+};
 
 /**
  * Preferências de notificação do usuário
  */
-export interface NotificationPreferences {
+export type NotificationPreferences = {
   channels: {
     [key in NotificationChannel]: boolean;
   };
@@ -169,12 +169,12 @@ export interface NotificationPreferences {
     reminders: boolean;
     marketing: boolean;
   };
-}
+};
 
 /**
  * Template de notificação
  */
-export interface NotificationTemplate {
+export type NotificationTemplate = {
   id: string;
   name: string;
   type: NotificationType;
@@ -187,12 +187,12 @@ export interface NotificationTemplate {
   version: number;
   createdAt: Date;
   updatedAt: Date;
-}
+};
 
 /**
  * Configuração de canal de notificação
  */
-export interface ChannelConfig {
+export type ChannelConfig = {
   channel: NotificationChannel;
   isEnabled: boolean;
   config: {
@@ -239,7 +239,7 @@ export interface ChannelConfig {
       };
     };
   };
-}
+};
 
 // ============================================================================
 // INTERFACES DE ENTREGA
@@ -260,7 +260,7 @@ export interface DeliveryNotification extends BaseNotification {
 /**
  * Tentativa de entrega
  */
-export interface DeliveryAttempt {
+export type DeliveryAttempt = {
   id: string;
   attemptNumber: number;
   channel: NotificationChannel;
@@ -270,19 +270,19 @@ export interface DeliveryAttempt {
   attemptedAt: Date;
   deliveredAt?: Date;
   readAt?: Date;
-}
+};
 
 /**
  * Resultado de entrega
  */
-export interface DeliveryResult {
+export type DeliveryResult = {
   success: boolean;
   messageId?: string;
   status: NotificationStatus;
   response?: any;
   error?: string;
   retryAfter?: number; // segundos
-}
+};
 
 // ============================================================================
 // INTERFACES DE AUTOMAÇÃO
@@ -291,7 +291,7 @@ export interface DeliveryResult {
 /**
  * Regra de automação de notificação
  */
-export interface NotificationRule {
+export type NotificationRule = {
   id: string;
   name: string;
   description: string;
@@ -302,22 +302,22 @@ export interface NotificationRule {
   schedule?: NotificationSchedule;
   createdAt: Date;
   updatedAt: Date;
-}
+};
 
 /**
  * Gatilho de notificação
  */
-export interface NotificationTrigger {
+export type NotificationTrigger = {
   type: 'event' | 'schedule' | 'condition';
   event?: string; // Nome do evento
   schedule?: string; // Cron expression
   condition?: string; // Condição SQL ou lógica
-}
+};
 
 /**
  * Condição para execução da regra
  */
-export interface NotificationCondition {
+export type NotificationCondition = {
   field: string;
   operator:
     | 'equals'
@@ -329,12 +329,12 @@ export interface NotificationCondition {
     | 'not_in';
   value: any;
   logicalOperator?: 'AND' | 'OR';
-}
+};
 
 /**
  * Ação a ser executada
  */
-export interface NotificationAction {
+export type NotificationAction = {
   type: 'send_notification' | 'update_field' | 'call_webhook' | 'create_task';
   config: {
     notificationType?: NotificationType;
@@ -343,12 +343,12 @@ export interface NotificationAction {
     delay?: number; // minutos
     data?: Record<string, any>;
   };
-}
+};
 
 /**
  * Agendamento de notificação
  */
-export interface NotificationSchedule {
+export type NotificationSchedule = {
   type: 'immediate' | 'delayed' | 'recurring';
   delay?: number; // minutos
   recurringPattern?: {
@@ -358,7 +358,7 @@ export interface NotificationSchedule {
     dayOfMonth?: number;
     endDate?: Date;
   };
-}
+};
 
 // ============================================================================
 // INTERFACES DE ANALYTICS
@@ -367,7 +367,7 @@ export interface NotificationSchedule {
 /**
  * Métricas de notificação
  */
-export interface NotificationMetrics {
+export type NotificationMetrics = {
   period: {
     start: Date;
     end: Date;
@@ -402,12 +402,12 @@ export interface NotificationMetrics {
     peakHours: number[];
     failureReasons: Record<string, number>;
   };
-}
+};
 
 /**
  * Relatório de engajamento
  */
-export interface EngagementReport {
+export type EngagementReport = {
   recipient: {
     id: string;
     type: string;
@@ -435,7 +435,7 @@ export interface EngagementReport {
       usage: number;
     }>;
   };
-}
+};
 
 // ============================================================================
 // INTERFACES DE CONFIGURAÇÃO
@@ -444,7 +444,7 @@ export interface EngagementReport {
 /**
  * Configuração global do sistema de notificações
  */
-export interface NotificationSystemConfig {
+export type NotificationSystemConfig = {
   isEnabled: boolean;
   defaultChannel: NotificationChannel;
   retryPolicy: {
@@ -485,7 +485,7 @@ export interface NotificationSystemConfig {
       categoryOptOut: boolean;
     };
   };
-}
+};
 
 // ============================================================================
 // TIPOS UTILITÁRIOS
@@ -494,7 +494,7 @@ export interface NotificationSystemConfig {
 /**
  * Contexto de notificação para templates
  */
-export interface NotificationContext {
+export type NotificationContext = {
   recipient: NotificationRecipient;
   clinic: {
     id: string;
@@ -509,12 +509,12 @@ export interface NotificationContext {
   data: Record<string, any>;
   timestamp: Date;
   locale: string;
-}
+};
 
 /**
  * Filtros para consulta de notificações
  */
-export interface NotificationFilters {
+export type NotificationFilters = {
   types?: NotificationType[];
   categories?: NotificationCategory[];
   channels?: NotificationChannel[];
@@ -528,22 +528,22 @@ export interface NotificationFilters {
   };
   search?: string;
   tags?: string[];
-}
+};
 
 /**
  * Opções de paginação
  */
-export interface PaginationOptions {
+export type PaginationOptions = {
   page: number;
   limit: number;
   sortBy?: string;
   sortOrder?: 'asc' | 'desc';
-}
+};
 
 /**
  * Resultado paginado
  */
-export interface PaginatedResult<T> {
+export type PaginatedResult<T> = {
   data: T[];
   pagination: {
     page: number;
@@ -553,12 +553,12 @@ export interface PaginatedResult<T> {
     hasNext: boolean;
     hasPrev: boolean;
   };
-}
+};
 
 /**
  * Evento de notificação para auditoria
  */
-export interface NotificationEvent {
+export type NotificationEvent = {
   id: string;
   notificationId: string;
   event: 'created' | 'sent' | 'delivered' | 'read' | 'failed' | 'cancelled';
@@ -567,7 +567,7 @@ export interface NotificationEvent {
   userId?: string;
   ipAddress?: string;
   userAgent?: string;
-}
+};
 
 // ============================================================================
 // EXPORTS
@@ -583,9 +583,9 @@ export type NotificationCallback = (
 /**
  * Configuração de inicialização do sistema
  */
-export interface NotificationSystemInit {
+export type NotificationSystemInit = {
   config: NotificationSystemConfig;
   channels: ChannelConfig[];
   templates?: NotificationTemplate[];
   rules?: NotificationRule[];
-}
+};

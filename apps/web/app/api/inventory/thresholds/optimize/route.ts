@@ -43,8 +43,6 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error: any) {
-    console.error('Error analyzing threshold optimization:', error);
-
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {

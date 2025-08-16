@@ -27,7 +27,7 @@ export type HealthcareQueryType =
   | 'realtime_monitoring'; // Real-time health monitoring
 
 // Query execution context
-interface QueryContext {
+type QueryContext = {
   clinicId: string;
   userId: string;
   userRole: 'admin' | 'professional' | 'assistant' | 'patient';
@@ -36,10 +36,10 @@ interface QueryContext {
   priority: 'emergency' | 'high' | 'normal' | 'low';
   requiresAudit: boolean;
   lgpdSensitive: boolean;
-}
+};
 
 // Query execution result with metrics
-interface QueryResult<T = any> {
+type QueryResult<T = any> = {
   data: T;
   error: Error | null;
   executionTime: number;
@@ -47,10 +47,10 @@ interface QueryResult<T = any> {
   strategy: QueryStrategy;
   complianceVerified: boolean;
   auditTrail?: AuditEntry;
-}
+};
 
 // Audit trail entry
-interface AuditEntry {
+type AuditEntry = {
   timestamp: Date;
   clinicId: string;
   userId: string;
@@ -60,10 +60,10 @@ interface AuditEntry {
   success: boolean;
   ipAddress?: string;
   userAgent?: string;
-}
+};
 
 // Query optimization strategies
-interface QueryStrategy {
+type QueryStrategy = {
   name: string;
   poolType: 'critical' | 'standard' | 'analytics' | 'administrative';
   connectionMode: 'transaction' | 'session' | 'pooled';
@@ -71,7 +71,7 @@ interface QueryStrategy {
   retryAttempts: number;
   cacheEnabled: boolean;
   auditRequired: boolean;
-}
+};
 
 class HealthcareQueryStrategies {
   private static instance: HealthcareQueryStrategies;
@@ -233,14 +233,6 @@ class HealthcareQueryStrategies {
         auditTrail = await this.createAuditTrail(context, false, executionTime);
       }
 
-      console.error(`Healthcare query failed [${context.queryType}]:`, {
-        error: error.message,
-        clinicId: context.clinicId,
-        userId: context.userId,
-        executionTime,
-        strategy: strategy.name,
-      });
-
       return {
         data: null,
         error: error as Error,
@@ -260,7 +252,7 @@ class HealthcareQueryStrategies {
     queryFn: (client: SupabaseClient<Database>) => Promise<T>,
     client: SupabaseClient<Database>,
     maxRetries: number,
-    context: QueryContext
+    _context: QueryContext
   ): Promise<T> {
     let lastError: Error | null = null;
 
@@ -269,12 +261,6 @@ class HealthcareQueryStrategies {
         return await queryFn(client);
       } catch (error) {
         lastError = error as Error;
-
-        console.warn(`Query attempt ${attempt}/${maxRetries} failed:`, {
-          error: error.message,
-          queryType: context.queryType,
-          clinicId: context.clinicId,
-        });
 
         // Don't retry on certain errors
         if (this.isNonRetryableError(error as Error)) {
@@ -396,7 +382,7 @@ class HealthcareQueryStrategies {
   private async createAuditTrail(
     context: QueryContext,
     success: boolean,
-    executionTime: number
+    _executionTime: number
   ): Promise<AuditEntry> {
     const auditEntry: AuditEntry = {
       timestamp: new Date(),
@@ -407,13 +393,6 @@ class HealthcareQueryStrategies {
       action: `${context.queryType}_query`,
       success,
     };
-
-    // Log audit entry for LGPD compliance
-    console.log('🔍 Healthcare audit trail:', {
-      ...auditEntry,
-      executionTime,
-      priority: context.priority,
-    });
 
     return auditEntry;
   }

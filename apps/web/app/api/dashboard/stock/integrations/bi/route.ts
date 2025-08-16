@@ -88,8 +88,7 @@ export async function GET() {
       data: analytics,
       items: biMetrics,
     });
-  } catch (error) {
-    console.error('BI Integration Error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -158,8 +157,7 @@ export async function POST(request: NextRequest) {
       success: true,
       export: processedData,
     });
-  } catch (error) {
-    console.error('BI Export Error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

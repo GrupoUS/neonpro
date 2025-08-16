@@ -25,9 +25,9 @@ const updatePurchaseOrderSchema = z.object({
   template_type: z.enum(['standard', 'medical', 'urgent']).optional(),
 });
 
-interface RouteParams {
+type RouteParams = {
   params: { id: string };
-}
+};
 
 export async function GET(_request: NextRequest, { params }: RouteParams) {
   try {
@@ -79,7 +79,6 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
           { status: 404 }
         );
       }
-      console.error('Error fetching purchase order:', error);
       return NextResponse.json(
         { error: 'Failed to fetch purchase order' },
         { status: 500 }
@@ -126,8 +125,7 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
     };
 
     return NextResponse.json({ purchase_order: transformedOrder });
-  } catch (error) {
-    console.error('Error in purchase order GET:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -218,7 +216,6 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
       .single();
 
     if (updateError) {
-      console.error('Error updating purchase order:', updateError);
       return NextResponse.json(
         { error: 'Failed to update purchase order' },
         { status: 500 }
@@ -289,8 +286,6 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
         { status: 400 }
       );
     }
-
-    console.error('Error in purchase order PATCH:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -360,7 +355,6 @@ export async function DELETE(_request: NextRequest, { params }: RouteParams) {
       .single();
 
     if (cancelError) {
-      console.error('Error cancelling purchase order:', cancelError);
       return NextResponse.json(
         { error: 'Failed to cancel purchase order' },
         { status: 500 }
@@ -371,8 +365,7 @@ export async function DELETE(_request: NextRequest, { params }: RouteParams) {
       purchase_order: cancelledPO,
       message: 'Purchase order cancelled successfully',
     });
-  } catch (error) {
-    console.error('Error in purchase order DELETE:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

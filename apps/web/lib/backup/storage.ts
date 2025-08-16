@@ -21,7 +21,7 @@ import {
 /**
  * Interface para provedores de storage
  */
-interface IStorageProvider {
+type IStorageProvider = {
   upload(
     localPath: string,
     remotePath: string,
@@ -36,7 +36,7 @@ interface IStorageProvider {
   exists(remotePath: string): Promise<boolean>;
   list(prefix?: string): Promise<string[]>;
   getMetrics(): Promise<StorageMetrics>;
-}
+};
 
 /**
  * Provider para armazenamento local
@@ -52,9 +52,7 @@ class LocalStorageProvider implements IStorageProvider {
   private async ensureDirectory(): Promise<void> {
     try {
       await fs.mkdir(this.basePath, { recursive: true });
-    } catch (error) {
-      console.error('Erro ao criar diretório de backup:', error);
-    }
+    } catch (_error) {}
   }
 
   async upload(

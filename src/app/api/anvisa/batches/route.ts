@@ -13,7 +13,9 @@ export const dynamic = 'force-dynamic';
 export async function GET(request: NextRequest) {
   try {
     const supabase = createRouteHandlerClient({ cookies });
-    const { data: { session } } = await supabase.auth.getSession();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
 
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -27,7 +29,10 @@ export async function GET(request: NextRequest) {
     const expiryStatus = searchParams.get('expiry_status');
 
     if (!clinicId) {
-      return NextResponse.json({ error: 'Clinic ID is required' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Clinic ID is required' },
+        { status: 400 }
+      );
     }
 
     const filters = {
@@ -39,12 +44,11 @@ export async function GET(request: NextRequest) {
     };
 
     const batches = await anvisaAPI.getProductBatches(filters);
-    return NextResponse.json({ 
-      success: true, 
+    return NextResponse.json({
+      success: true,
       data: batches,
-      meta: { total: batches.length, filters }
+      meta: { total: batches.length, filters },
     });
-
   } catch (error) {
     console.error('Error in ANVISA batches GET:', error);
     return NextResponse.json(
@@ -57,30 +61,42 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const supabase = createRouteHandlerClient({ cookies });
-    const { data: { session } } = await supabase.auth.getSession();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
 
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const batchData = await request.json();
-    
+
     // Validate required fields
-    const requiredFields = ['clinic_id', 'product_id', 'batch_number', 'expiry_date'];
-    const missingFields = requiredFields.filter(field => !batchData[field]);
-    
+    const requiredFields = [
+      'clinic_id',
+      'product_id',
+      'batch_number',
+      'expiry_date',
+    ];
+    const missingFields = requiredFields.filter((field) => !batchData[field]);
+
     if (missingFields.length > 0) {
-      return NextResponse.json({ 
-        error: `Missing required fields: ${missingFields.join(', ')}` 
-      }, { status: 400 });
+      return NextResponse.json(
+        {
+          error: `Missing required fields: ${missingFields.join(', ')}`,
+        },
+        { status: 400 }
+      );
     }
 
     const newBatch = await anvisaAPI.registerProductBatch(batchData);
-    return NextResponse.json({ 
-      success: true, 
-      data: newBatch 
-    }, { status: 201 });
-
+    return NextResponse.json(
+      {
+        success: true,
+        data: newBatch,
+      },
+      { status: 201 }
+    );
   } catch (error) {
     console.error('Error in ANVISA batches POST:', error);
     return NextResponse.json(

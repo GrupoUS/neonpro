@@ -163,8 +163,7 @@ export async function POST(request: NextRequest) {
       messageId: result.messageId,
       message: 'Email sent successfully',
     });
-  } catch (error) {
-    console.error('Error sending email:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -195,8 +194,7 @@ export async function GET(_request: NextRequest) {
         ? 'Email service is working correctly'
         : 'Email service connection failed',
     });
-  } catch (error) {
-    console.error('Error testing email service:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

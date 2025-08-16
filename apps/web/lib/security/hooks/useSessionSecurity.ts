@@ -8,7 +8,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
  * Provides client-side session security functionality
  */
 
-interface SessionSecurityState {
+type SessionSecurityState = {
   isSecure: boolean;
   riskScore: number;
   warnings: string[];
@@ -16,16 +16,16 @@ interface SessionSecurityState {
   csrfToken?: string;
   sessionId?: string;
   lastActivity: Date;
-}
+};
 
-interface SessionTimeoutConfig {
+type SessionTimeoutConfig = {
   timeoutMinutes: number;
   warningMinutes: number[];
   extendOnActivity: boolean;
   showWarnings: boolean;
-}
+};
 
-interface UseSessionSecurityOptions {
+type UseSessionSecurityOptions = {
   enableCSRF?: boolean;
   enableTimeout?: boolean;
   enableActivityTracking?: boolean;
@@ -33,7 +33,7 @@ interface UseSessionSecurityOptions {
   onSecurityWarning?: (warning: string) => void;
   onSessionTimeout?: () => void;
   onCSRFError?: () => void;
-}
+};
 
 const DEFAULT_TIMEOUT_CONFIG: SessionTimeoutConfig = {
   timeoutMinutes: 30,
@@ -109,8 +109,7 @@ export function useSessionSecurity(options: UseSessionSecurityOptions = {}) {
         csrfToken,
         lastActivity: new Date(),
       }));
-    } catch (error) {
-      console.error('Failed to initialize session security:', error);
+    } catch (_error) {
       setSecurityState((prev) => ({
         ...prev,
         isSecure: false,
@@ -148,7 +147,6 @@ export function useSessionSecurity(options: UseSessionSecurityOptions = {}) {
       const data = await response.json();
       return data.token;
     } catch (error) {
-      console.error('CSRF token fetch error:', error);
       onCSRFError?.();
       throw error;
     }
@@ -177,9 +175,7 @@ export function useSessionSecurity(options: UseSessionSecurityOptions = {}) {
 
       // Setup timeout monitoring
       setupTimeoutMonitoring(sessionId);
-    } catch (error) {
-      console.error('Failed to initialize session timeout:', error);
-    }
+    } catch (_error) {}
   };
 
   /**
@@ -248,9 +244,7 @@ export function useSessionSecurity(options: UseSessionSecurityOptions = {}) {
       }));
 
       onSessionTimeout?.();
-    } catch (error) {
-      console.error('Failed to handle session timeout:', error);
-    }
+    } catch (_error) {}
   };
 
   /**
@@ -305,9 +299,7 @@ export function useSessionSecurity(options: UseSessionSecurityOptions = {}) {
         if (config.extendOnActivity && enableTimeout) {
           setupTimeoutMonitoring(sessionId);
         }
-      } catch (error) {
-        console.error('Failed to update activity:', error);
-      }
+      } catch (_error) {}
     };
 
     // Add event listeners
@@ -355,9 +347,7 @@ export function useSessionSecurity(options: UseSessionSecurityOptions = {}) {
           timeoutWarning: undefined,
           warnings: prev.warnings.filter((w) => !w.includes('expire')),
         }));
-      } catch (error) {
-        console.error('Failed to extend session:', error);
-      }
+      } catch (_error) {}
     },
     [
       securityState.sessionId,
@@ -382,8 +372,7 @@ export function useSessionSecurity(options: UseSessionSecurityOptions = {}) {
         csrfToken: newToken,
       }));
       return newToken;
-    } catch (error) {
-      console.error('Failed to refresh CSRF token:', error);
+    } catch (_error) {
       return null;
     }
   }, [enableCSRF, securityState.sessionId, fetchCSRFToken]);
@@ -515,9 +504,7 @@ export function useSessionTimeout(sessionId?: string, onTimeout?: () => void) {
             onTimeout?.();
           }
         }
-      } catch (error) {
-        console.error('Failed to check session timeout:', error);
-      }
+      } catch (_error) {}
     };
 
     // Check immediately

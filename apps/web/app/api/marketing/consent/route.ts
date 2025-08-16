@@ -45,8 +45,7 @@ export async function GET(request: NextRequest) {
       consent: result.data,
       timestamp: new Date().toISOString(),
     });
-  } catch (error) {
-    console.error('Error in consent GET:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -90,8 +89,7 @@ export async function POST(request: NextRequest) {
       consent: result.data,
       timestamp: new Date().toISOString(),
     });
-  } catch (error) {
-    console.error('Error in consent POST:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -140,8 +138,7 @@ export async function DELETE(request: NextRequest) {
       consent: result.data,
       timestamp: new Date().toISOString(),
     });
-  } catch (error) {
-    console.error('Error in consent DELETE:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

@@ -8,7 +8,7 @@ type Patient = Database['public']['Tables']['patients']['Row'];
 type Appointment = Database['public']['Tables']['appointments']['Row'];
 type Treatment = Database['public']['Tables']['treatments']['Row'];
 
-export interface PatientSearchFilters {
+export type PatientSearchFilters = {
   name?: string;
   email?: string;
   phone?: string;
@@ -22,9 +22,9 @@ export interface PatientSearchFilters {
   hasPhotos?: boolean;
   consentStatus?: boolean;
   tags?: string[];
-}
+};
 
-export interface PatientSegment {
+export type PatientSegment = {
   id: string;
   name: string;
   description: string;
@@ -32,9 +32,9 @@ export interface PatientSegment {
   patientCount: number;
   createdAt: Date;
   updatedAt: Date;
-}
+};
 
-export interface IntegratedPatientData {
+export type IntegratedPatientData = {
   patient: Patient;
   appointments: Appointment[];
   treatments: Treatment[];
@@ -44,24 +44,24 @@ export interface IntegratedPatientData {
   lastActivity: Date;
   totalSpent: number;
   loyaltyScore: number;
-}
+};
 
-export interface SearchSuggestion {
+export type SearchSuggestion = {
   type: 'patient' | 'appointment' | 'treatment';
   id: string;
   title: string;
   subtitle: string;
   relevanceScore: number;
   matchedFields: string[];
-}
+};
 
-export interface QuickAccessItem {
+export type QuickAccessItem = {
   patientId: string;
   patientName: string;
   lastAccessed: Date;
   accessCount: number;
   context: 'search' | 'appointment' | 'treatment' | 'emergency';
-}
+};
 
 export class SystemIntegrationManager {
   private readonly supabase = createClient();
@@ -84,103 +84,97 @@ export class SystemIntegrationManager {
     searchTime: number;
   }> {
     const startTime = Date.now();
+    // Log search activity
+    await this.auditLogger.log({
+      action: 'patient_search',
+      userId,
+      details: { query, filters },
+      timestamp: new Date(),
+    });
 
-    try {
-      // Log search activity
-      await this.auditLogger.log({
-        action: 'patient_search',
-        userId,
-        details: { query, filters },
-        timestamp: new Date(),
-      });
-
-      // Build search query
-      let searchQuery = this.supabase.from('patients').select(`
+    // Build search query
+    let searchQuery = this.supabase.from('patients').select(`
           *,
           appointments!inner(*),
           treatments(*),
           patient_photos(count)
         `);
 
-      // Apply text search
-      if (query) {
-        searchQuery = searchQuery.or(
-          `name.ilike.%${query}%,email.ilike.%${query}%,phone.ilike.%${query}%,cpf.ilike.%${query}%`
-        );
-      }
-
-      // Apply filters
-      if (filters.ageRange) {
-        const currentYear = new Date().getFullYear();
-        const maxBirthYear = currentYear - filters.ageRange.min;
-        const minBirthYear = currentYear - filters.ageRange.max;
-        searchQuery = searchQuery
-          .gte('birth_date', `${minBirthYear}-01-01`)
-          .lte('birth_date', `${maxBirthYear}-12-31`);
-      }
-
-      if (filters.gender) {
-        searchQuery = searchQuery.eq('gender', filters.gender);
-      }
-
-      if (filters.lastVisit) {
-        searchQuery = searchQuery
-          .gte(
-            'appointments.appointment_date',
-            filters.lastVisit.from.toISOString()
-          )
-          .lte(
-            'appointments.appointment_date',
-            filters.lastVisit.to.toISOString()
-          );
-      }
-
-      if (filters.appointmentStatus) {
-        searchQuery = searchQuery.eq(
-          'appointments.status',
-          filters.appointmentStatus
-        );
-      }
-
-      if (filters.consentStatus !== undefined) {
-        searchQuery = searchQuery.eq('lgpd_consent', filters.consentStatus);
-      }
-
-      // Execute search
-      const {
-        data: patients,
-        error,
-        count,
-      } = await searchQuery
-        .limit(limit)
-        .order('updated_at', { ascending: false });
-
-      if (error) {
-        throw error;
-      }
-
-      // Enrich patient data
-      const enrichedPatients = await Promise.all(
-        (patients || []).map(async (patient) => {
-          return await this.getIntegratedPatientData(patient.id, userId);
-        })
+    // Apply text search
+    if (query) {
+      searchQuery = searchQuery.or(
+        `name.ilike.%${query}%,email.ilike.%${query}%,phone.ilike.%${query}%,cpf.ilike.%${query}%`
       );
+    }
 
-      // Generate AI suggestions
-      const suggestions = await this.generateSearchSuggestions(query, filters);
+    // Apply filters
+    if (filters.ageRange) {
+      const currentYear = new Date().getFullYear();
+      const maxBirthYear = currentYear - filters.ageRange.min;
+      const minBirthYear = currentYear - filters.ageRange.max;
+      searchQuery = searchQuery
+        .gte('birth_date', `${minBirthYear}-01-01`)
+        .lte('birth_date', `${maxBirthYear}-12-31`);
+    }
 
-      const searchTime = Date.now() - startTime;
+    if (filters.gender) {
+      searchQuery = searchQuery.eq('gender', filters.gender);
+    }
 
-      return {
-        patients: enrichedPatients,
-        suggestions,
-        totalCount: count || 0,
-        searchTime,
-      };
-    } catch (error) {
-      console.error('Error searching patients:', error);
+    if (filters.lastVisit) {
+      searchQuery = searchQuery
+        .gte(
+          'appointments.appointment_date',
+          filters.lastVisit.from.toISOString()
+        )
+        .lte(
+          'appointments.appointment_date',
+          filters.lastVisit.to.toISOString()
+        );
+    }
+
+    if (filters.appointmentStatus) {
+      searchQuery = searchQuery.eq(
+        'appointments.status',
+        filters.appointmentStatus
+      );
+    }
+
+    if (filters.consentStatus !== undefined) {
+      searchQuery = searchQuery.eq('lgpd_consent', filters.consentStatus);
+    }
+
+    // Execute search
+    const {
+      data: patients,
+      error,
+      count,
+    } = await searchQuery
+      .limit(limit)
+      .order('updated_at', { ascending: false });
+
+    if (error) {
       throw error;
     }
+
+    // Enrich patient data
+    const enrichedPatients = await Promise.all(
+      (patients || []).map(async (patient) => {
+        return await this.getIntegratedPatientData(patient.id, userId);
+      })
+    );
+
+    // Generate AI suggestions
+    const suggestions = await this.generateSearchSuggestions(query, filters);
+
+    const searchTime = Date.now() - startTime;
+
+    return {
+      patients: enrichedPatients,
+      suggestions,
+      totalCount: count || 0,
+      searchTime,
+    };
   }
 
   /**
@@ -190,96 +184,91 @@ export class SystemIntegrationManager {
     patientId: string,
     userId: string
   ): Promise<IntegratedPatientData> {
-    try {
-      // Check LGPD permissions
-      const hasPermission = await this.lgpdManager.checkDataAccess(
-        userId,
-        patientId,
-        'patient_profile'
+    // Check LGPD permissions
+    const hasPermission = await this.lgpdManager.checkDataAccess(
+      userId,
+      patientId,
+      'patient_profile'
+    );
+
+    if (!hasPermission) {
+      throw new Error(
+        'Acesso negado: sem permissão LGPD para visualizar dados do paciente'
       );
-
-      if (!hasPermission) {
-        throw new Error(
-          'Acesso negado: sem permissão LGPD para visualizar dados do paciente'
-        );
-      }
-
-      // Get patient data
-      const { data: patient, error: patientError } = await this.supabase
-        .from('patients')
-        .select('*')
-        .eq('id', patientId)
-        .single();
-
-      if (patientError) {
-        throw patientError;
-      }
-
-      // Get appointments
-      const { data: appointments } = await this.supabase
-        .from('appointments')
-        .select('*')
-        .eq('patient_id', patientId)
-        .order('appointment_date', { ascending: false });
-
-      // Get treatments
-      const { data: treatments } = await this.supabase
-        .from('treatments')
-        .select('*')
-        .eq('patient_id', patientId)
-        .order('created_at', { ascending: false });
-
-      // Get photo count
-      const { count: photoCount } = await this.supabase
-        .from('patient_photos')
-        .select('*', { count: 'exact', head: true })
-        .eq('patient_id', patientId);
-
-      // Get risk assessment
-      const riskAssessment =
-        await this.patientInsights.assessPatientRisk(patientId);
-
-      // Calculate metrics
-      const totalSpent =
-        treatments?.reduce((sum, treatment) => {
-          return sum + (treatment.cost || 0);
-        }, 0) || 0;
-
-      const lastActivity = this.getLastActivity(
-        appointments || [],
-        treatments || []
-      );
-      const loyaltyScore = this.calculateLoyaltyScore(
-        appointments || [],
-        treatments || []
-      );
-
-      // Get communication history (placeholder)
-      const communicationHistory: any[] = [];
-
-      // Log access
-      await this.auditLogger.log({
-        action: 'patient_data_access',
-        userId,
-        details: { patientId, accessType: 'integrated_view' },
-        timestamp: new Date(),
-      });
-
-      return {
-        patient,
-        appointments: appointments || [],
-        treatments: treatments || [],
-        riskAssessment,
-        communicationHistory,
-        photoCount: photoCount || 0,
-        lastActivity,
-        totalSpent,
-        loyaltyScore,
-      };
-    } catch (error) {
-      console.error('Error getting integrated patient data:', error);
-      throw error;
     }
+
+    // Get patient data
+    const { data: patient, error: patientError } = await this.supabase
+      .from('patients')
+      .select('*')
+      .eq('id', patientId)
+      .single();
+
+    if (patientError) {
+      throw patientError;
+    }
+
+    // Get appointments
+    const { data: appointments } = await this.supabase
+      .from('appointments')
+      .select('*')
+      .eq('patient_id', patientId)
+      .order('appointment_date', { ascending: false });
+
+    // Get treatments
+    const { data: treatments } = await this.supabase
+      .from('treatments')
+      .select('*')
+      .eq('patient_id', patientId)
+      .order('created_at', { ascending: false });
+
+    // Get photo count
+    const { count: photoCount } = await this.supabase
+      .from('patient_photos')
+      .select('*', { count: 'exact', head: true })
+      .eq('patient_id', patientId);
+
+    // Get risk assessment
+    const riskAssessment =
+      await this.patientInsights.assessPatientRisk(patientId);
+
+    // Calculate metrics
+    const totalSpent =
+      treatments?.reduce((sum, treatment) => {
+        return sum + (treatment.cost || 0);
+      }, 0) || 0;
+
+    const lastActivity = this.getLastActivity(
+      appointments || [],
+      treatments || []
+    );
+    const loyaltyScore = this.calculateLoyaltyScore(
+      appointments || [],
+      treatments || []
+    );
+
+    // Get communication history (placeholder)
+    const communicationHistory: any[] = [];
+
+    // Log access
+    await this.auditLogger.log({
+      action: 'patient_data_access',
+      userId,
+      details: { patientId, accessType: 'integrated_view' },
+      timestamp: new Date(),
+    });
+
+    return {
+      patient,
+      appointments: appointments || [],
+      treatments: treatments || [],
+      riskAssessment,
+      communicationHistory,
+      photoCount: photoCount || 0,
+      lastActivity,
+      totalSpent,
+      loyaltyScore,
+    };
   }
 
   /**
@@ -336,8 +325,7 @@ export class SystemIntegrationManager {
       suggestions.sort((a, b) => b.relevanceScore - a.relevanceScore);
 
       return suggestions.slice(0, 8);
-    } catch (error) {
-      console.error('Error generating search suggestions:', error);
+    } catch (_error) {
       return [];
     }
   }
@@ -351,33 +339,28 @@ export class SystemIntegrationManager {
     criteria: PatientSearchFilters,
     userId: string
   ): Promise<PatientSegment> {
-    try {
-      // Count patients matching criteria
-      const { count } = await this.searchPatients('', criteria, userId, 1);
+    // Count patients matching criteria
+    const { count } = await this.searchPatients('', criteria, userId, 1);
 
-      const segment: PatientSegment = {
-        id: crypto.randomUUID(),
-        name,
-        description,
-        criteria,
-        patientCount: count,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      };
+    const segment: PatientSegment = {
+      id: crypto.randomUUID(),
+      name,
+      description,
+      criteria,
+      patientCount: count,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
 
-      // Save segment (would be stored in database)
-      await this.auditLogger.log({
-        action: 'patient_segment_created',
-        userId,
-        details: { segmentId: segment.id, name, patientCount: count },
-        timestamp: new Date(),
-      });
+    // Save segment (would be stored in database)
+    await this.auditLogger.log({
+      action: 'patient_segment_created',
+      userId,
+      details: { segmentId: segment.id, name, patientCount: count },
+      timestamp: new Date(),
+    });
 
-      return segment;
-    } catch (error) {
-      console.error('Error creating patient segment:', error);
-      throw error;
-    }
+    return segment;
   }
 
   /**
@@ -423,8 +406,7 @@ export class SystemIntegrationManager {
       });
 
       return quickAccess;
-    } catch (error) {
-      console.error('Error getting quick access patients:', error);
+    } catch (_error) {
       return [];
     }
   }
@@ -436,43 +418,38 @@ export class SystemIntegrationManager {
     patientId: string,
     userId: string
   ): Promise<any[]> {
-    try {
-      // Check permissions
-      const hasPermission = await this.lgpdManager.checkDataAccess(
-        userId,
-        patientId,
-        'communication_history'
+    // Check permissions
+    const hasPermission = await this.lgpdManager.checkDataAccess(
+      userId,
+      patientId,
+      'communication_history'
+    );
+
+    if (!hasPermission) {
+      throw new Error(
+        'Acesso negado: sem permissão para histórico de comunicação'
       );
-
-      if (!hasPermission) {
-        throw new Error(
-          'Acesso negado: sem permissão para histórico de comunicação'
-        );
-      }
-
-      // This would integrate with communication systems
-      // For now, return appointment-based communication
-      const { data: appointments } = await this.supabase
-        .from('appointments')
-        .select('*')
-        .eq('patient_id', patientId)
-        .order('appointment_date', { ascending: false });
-
-      const communicationHistory =
-        appointments?.map((appointment) => ({
-          id: appointment.id,
-          type: 'appointment',
-          date: appointment.appointment_date,
-          subject: `Consulta - ${appointment.service_type}`,
-          status: appointment.status,
-          notes: appointment.notes,
-        })) || [];
-
-      return communicationHistory;
-    } catch (error) {
-      console.error('Error getting communication history:', error);
-      throw error;
     }
+
+    // This would integrate with communication systems
+    // For now, return appointment-based communication
+    const { data: appointments } = await this.supabase
+      .from('appointments')
+      .select('*')
+      .eq('patient_id', patientId)
+      .order('appointment_date', { ascending: false });
+
+    const communicationHistory =
+      appointments?.map((appointment) => ({
+        id: appointment.id,
+        type: 'appointment',
+        date: appointment.appointment_date,
+        subject: `Consulta - ${appointment.service_type}`,
+        status: appointment.status,
+        notes: appointment.notes,
+      })) || [];
+
+    return communicationHistory;
   }
 
   /**

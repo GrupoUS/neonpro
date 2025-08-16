@@ -13,16 +13,16 @@ import {
 } from '@/lib/ai/duration-prediction';
 
 // Request/Response types
-interface SubmitFeedbackRequest {
+type SubmitFeedbackRequest = {
   appointmentId: string;
   actualDuration: number;
   feedbackNotes?: string;
   manualOverride?: boolean;
   overrideReason?: string;
   completionStatus: 'scheduled' | 'in_progress' | 'completed' | 'cancelled';
-}
+};
 
-interface SubmitFeedbackResponse {
+type SubmitFeedbackResponse = {
   success: boolean;
   feedback?: {
     accuracyScore: number;
@@ -30,7 +30,7 @@ interface SubmitFeedbackResponse {
     modelVersion: string;
   };
   error?: string;
-}
+};
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
@@ -142,7 +142,6 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         .eq('appointment_id', body.appointmentId);
 
       if (updateError) {
-        console.error('Failed to update additional feedback:', updateError);
         // Don't fail the request for this non-critical update
       }
     }
@@ -150,8 +149,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     // Trigger model performance update (async)
     try {
       await performanceService.updateModelPerformance(prediction.modelVersion);
-    } catch (performanceError) {
-      console.error('Failed to update model performance:', performanceError);
+    } catch (_performanceError) {
       // Don't fail the request for this background task
     }
 
@@ -163,9 +161,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         modelVersion: prediction.modelVersion,
       },
     });
-  } catch (error) {
-    console.error('AI Feedback API Error:', error);
-
+  } catch (_error) {
     return NextResponse.json(
       {
         success: false,
@@ -272,9 +268,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
         updatedAt: data.updated_at,
       },
     });
-  } catch (error) {
-    console.error('AI Feedback GET API Error:', error);
-
+  } catch (_error) {
     return NextResponse.json(
       {
         success: false,

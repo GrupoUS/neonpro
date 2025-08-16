@@ -4,7 +4,7 @@
 import { SessionConfig } from '@/lib/auth/config/session-config';
 import { SessionUtils } from '@/lib/auth/utils/session-utils';
 
-export interface EmergencyEvent {
+export type EmergencyEvent = {
   id: string;
   type: EmergencyType;
   severity: EmergencySeverity;
@@ -19,7 +19,7 @@ export interface EmergencyEvent {
   resolvedAt?: number;
   resolvedBy?: string;
   metadata: EmergencyMetadata;
-}
+};
 
 export type EmergencyType =
   | 'security_breach'
@@ -49,7 +49,7 @@ export type EmergencyStatus =
   | 'cancelled'
   | 'resolved';
 
-export interface EmergencyAction {
+export type EmergencyAction = {
   id: string;
   type: ActionType;
   target: ActionTarget;
@@ -59,7 +59,7 @@ export interface EmergencyAction {
   status: ActionStatus;
   result?: ActionResult;
   error?: string;
-}
+};
 
 export type ActionType =
   | 'terminate_session'
@@ -96,15 +96,15 @@ export type ActionStatus =
   | 'failed'
   | 'skipped';
 
-export interface ActionResult {
+export type ActionResult = {
   success: boolean;
   message: string;
   data?: any;
   affectedCount?: number;
   duration?: number;
-}
+};
 
-export interface EmergencyMetadata {
+export type EmergencyMetadata = {
   source: string;
   detector: string;
   confidence: number;
@@ -112,15 +112,15 @@ export interface EmergencyMetadata {
   impact: ImpactAssessment;
   timeline: TimelineEvent[];
   notifications: NotificationRecord[];
-}
+};
 
-export interface Evidence {
+export type Evidence = {
   type: EvidenceType;
   source: string;
   data: any;
   timestamp: number;
   reliability: number;
-}
+};
 
 export type EvidenceType =
   | 'log_entry'
@@ -131,31 +131,31 @@ export type EvidenceType =
   | 'external_threat_intel'
   | 'compliance_check';
 
-export interface ImpactAssessment {
+export type ImpactAssessment = {
   usersAffected: number;
   sessionsAffected: number;
   dataAtRisk: string[];
   systemsAffected: string[];
   businessImpact: BusinessImpact;
   estimatedDowntime: number;
-}
+};
 
-export interface BusinessImpact {
+export type BusinessImpact = {
   severity: 'low' | 'medium' | 'high' | 'critical';
   revenue: number;
   reputation: number;
   compliance: number;
   operations: number;
-}
+};
 
-export interface TimelineEvent {
+export type TimelineEvent = {
   timestamp: number;
   event: string;
   actor: string;
   details: string;
-}
+};
 
-export interface NotificationRecord {
+export type NotificationRecord = {
   id: string;
   type: NotificationType;
   recipient: string;
@@ -163,7 +163,7 @@ export interface NotificationRecord {
   sentAt: number;
   status: NotificationStatus;
   content: string;
-}
+};
 
 export type NotificationType =
   | 'emergency_alert'
@@ -189,7 +189,7 @@ export type NotificationStatus =
   | 'failed'
   | 'bounced';
 
-export interface EmergencyConfig {
+export type EmergencyConfig = {
   autoShutdownEnabled: boolean;
   severityThresholds: Record<EmergencySeverity, number>;
   actionTimeouts: Record<ActionType, number>;
@@ -199,15 +199,15 @@ export interface EmergencyConfig {
   maxConcurrentActions: number;
   retryAttempts: number;
   escalationRules: EscalationRule[];
-}
+};
 
-export interface EscalationRule {
+export type EscalationRule = {
   condition: string;
   delay: number;
   action: ActionType;
   target: ActionTarget;
   parameters: Record<string, any>;
-}
+};
 
 export class EmergencyShutdownManager {
   private readonly utils: SessionUtils;
@@ -276,32 +276,27 @@ export class EmergencyShutdownManager {
       immediateShutdown?: boolean;
     }
   ): Promise<EmergencyEvent> {
-    try {
-      const emergency = await this.createEmergencyEvent(
-        type,
-        severity,
-        reason,
-        triggeredBy,
-        options
-      );
+    const emergency = await this.createEmergencyEvent(
+      type,
+      severity,
+      reason,
+      triggeredBy,
+      options
+    );
 
-      // Store emergency event
-      this.activeEmergencies.set(emergency.id, emergency);
+    // Store emergency event
+    this.activeEmergencies.set(emergency.id, emergency);
 
-      // Log emergency
-      await this.auditLogger.logEmergency(emergency);
+    // Log emergency
+    await this.auditLogger.logEmergency(emergency);
 
-      // Emit emergency triggered event
-      this.emit('emergency_triggered', emergency);
+    // Emit emergency triggered event
+    this.emit('emergency_triggered', emergency);
 
-      // Execute emergency response
-      await this.executeEmergencyResponse(emergency);
+    // Execute emergency response
+    await this.executeEmergencyResponse(emergency);
 
-      return emergency;
-    } catch (error) {
-      console.error('Error triggering emergency:', error);
-      throw error;
-    }
+    return emergency;
   }
 
   /**
@@ -398,8 +393,6 @@ export class EmergencyShutdownManager {
         actor: 'emergency_system',
         details: `Emergency response failed: ${error.message}`,
       });
-
-      console.error('Error executing emergency response:', error);
       this.emit('emergency_failed', { emergency, error });
       throw error;
     }
@@ -414,10 +407,6 @@ export class EmergencyShutdownManager {
     this.isShuttingDown = true;
     this.shutdownStartTime = Date.now();
 
-    console.log(
-      `EMERGENCY SHUTDOWN INITIATED: ${emergency.type} - ${emergency.reason}`
-    );
-
     // Send immediate notifications
     await this.sendEmergencyNotifications(emergency, 'immediate');
 
@@ -431,8 +420,6 @@ export class EmergencyShutdownManager {
 
     // Force terminate all remaining sessions
     await this.forceTerminateAllSessions(emergency);
-
-    console.log('EMERGENCY SHUTDOWN COMPLETED');
   }
 
   /**
@@ -444,18 +431,11 @@ export class EmergencyShutdownManager {
     this.isShuttingDown = true;
     this.shutdownStartTime = Date.now();
 
-    console.log(
-      `CONTROLLED SHUTDOWN INITIATED: ${emergency.type} - ${emergency.reason}`
-    );
-
     // Send warning notifications
     await this.sendEmergencyNotifications(emergency, 'warning');
 
     // Wait for grace period if configured
     if (this.emergencyConfig.gracePeriod > 0) {
-      console.log(
-        `Grace period: ${this.emergencyConfig.gracePeriod / 1000} seconds`
-      );
       await this.waitWithProgress(this.emergencyConfig.gracePeriod);
     }
 
@@ -471,8 +451,6 @@ export class EmergencyShutdownManager {
       // Small delay between actions
       await new Promise((resolve) => setTimeout(resolve, 1000));
     }
-
-    console.log('CONTROLLED SHUTDOWN COMPLETED');
   }
 
   /**
@@ -486,7 +464,6 @@ export class EmergencyShutdownManager {
 
     // Prevent concurrent execution of same action type
     if (this.executionLocks.has(lockKey)) {
-      console.warn(`Action ${action.type} already executing, skipping`);
       action.status = 'skipped';
       return;
     }
@@ -520,8 +497,6 @@ export class EmergencyShutdownManager {
     } catch (error) {
       action.status = 'failed';
       action.error = error.message;
-
-      console.error(`Action ${action.type} failed:`, error);
       this.emit('action_failed', { action, emergencyId, error });
     } finally {
       this.executionLocks.delete(lockKey);
@@ -959,11 +934,7 @@ export class EmergencyShutdownManager {
       );
 
       await Promise.allSettled(terminationPromises);
-
-      console.log(`Force terminated ${sessions.length} sessions`);
-    } catch (error) {
-      console.error('Error force terminating sessions:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -1004,9 +975,7 @@ export class EmergencyShutdownManager {
         status: 'sent',
         content: message,
       });
-    } catch (error) {
-      console.error('Error sending emergency notifications:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -1131,9 +1100,7 @@ export class EmergencyShutdownManager {
         const sessions = await response.json();
         return sessions.map((s: any) => s.id);
       }
-    } catch (error) {
-      console.error('Error getting active sessions:', error);
-    }
+    } catch (_error) {}
     return [];
   }
 
@@ -1144,9 +1111,7 @@ export class EmergencyShutdownManager {
         const users = await response.json();
         return users.map((u: any) => u.id);
       }
-    } catch (error) {
-      console.error('Error getting active users:', error);
-    }
+    } catch (_error) {}
     return [];
   }
 
@@ -1172,8 +1137,6 @@ export class EmergencyShutdownManager {
 
   private async executeDataBackup(emergency: EmergencyEvent): Promise<void> {
     try {
-      console.log('Executing emergency data backup...');
-
       const backupAction: EmergencyAction = {
         id: this.utils.generateSessionToken(),
         type: 'backup_data',
@@ -1185,13 +1148,9 @@ export class EmergencyShutdownManager {
       await this.executeAction(backupAction, emergency.id);
 
       if (backupAction.status === 'completed') {
-        console.log('Emergency data backup completed successfully');
       } else {
-        console.warn('Emergency data backup failed or incomplete');
       }
-    } catch (error) {
-      console.error('Error executing data backup:', error);
-    }
+    } catch (_error) {}
   }
 
   private async waitWithProgress(duration: number): Promise<void> {
@@ -1200,7 +1159,6 @@ export class EmergencyShutdownManager {
 
     for (let i = 0; i < steps; i++) {
       const remaining = duration - i * interval;
-      console.log(`Shutdown in ${Math.ceil(remaining / 1000)} seconds...`);
 
       await new Promise((resolve) =>
         setTimeout(resolve, Math.min(interval, remaining))
@@ -1234,9 +1192,7 @@ export class EmergencyShutdownManager {
       listeners.forEach((callback) => {
         try {
           callback(data);
-        } catch (error) {
-          console.error(`Error in event listener for ${event}:`, error);
-        }
+        } catch (_error) {}
       });
     }
   }
@@ -1314,8 +1270,7 @@ export class EmergencyShutdownManager {
       const testResponse = await fetch('/api/emergency/test');
 
       return testResponse.ok;
-    } catch (error) {
-      console.error('Emergency system test failed:', error);
+    } catch (_error) {
       return false;
     }
   }
@@ -1334,15 +1289,9 @@ export class EmergencyShutdownManager {
  * Helper classes
  */
 class NotificationService {
-  async sendEmergencyAlert(params: any): Promise<void> {
-    // Implementation for sending emergency alerts
-    console.log('Sending emergency alert:', params);
-  }
+  async sendEmergencyAlert(_params: any): Promise<void> {}
 
-  async sendUserAlert(params: any): Promise<void> {
-    // Implementation for sending user alerts
-    console.log('Sending user alert:', params);
-  }
+  async sendUserAlert(_params: any): Promise<void> {}
 
   async testConnection(): Promise<boolean> {
     // Test notification service connection
@@ -1351,20 +1300,11 @@ class NotificationService {
 }
 
 class AuditLogger {
-  async logEmergency(emergency: EmergencyEvent): Promise<void> {
-    // Implementation for logging emergency events
-    console.log('Logging emergency:', emergency.id);
-  }
+  async logEmergency(_emergency: EmergencyEvent): Promise<void> {}
 
-  async logSecurityEvent(event: any): Promise<void> {
-    // Implementation for logging security events
-    console.log('Logging security event:', event);
-  }
+  async logSecurityEvent(_event: any): Promise<void> {}
 
-  async logIncident(incident: any): Promise<void> {
-    // Implementation for logging incidents
-    console.log('Logging incident:', incident);
-  }
+  async logIncident(_incident: any): Promise<void> {}
 
   async testConnection(): Promise<boolean> {
     // Test audit logger connection

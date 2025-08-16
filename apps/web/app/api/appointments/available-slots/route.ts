@@ -90,7 +90,6 @@ export async function GET(request: NextRequest) {
         .lte('start_time', endOfDay.toISOString());
 
     if (appointmentsError) {
-      console.error('Error fetching appointments:', appointmentsError);
       return NextResponse.json(
         {
           success: false,
@@ -130,8 +129,7 @@ export async function GET(request: NextRequest) {
     };
 
     return NextResponse.json(response);
-  } catch (error) {
-    console.error('API Error:', error);
+  } catch (_error) {
     return NextResponse.json(
       {
         success: false,

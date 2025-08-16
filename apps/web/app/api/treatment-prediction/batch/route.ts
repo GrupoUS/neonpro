@@ -94,8 +94,7 @@ export async function POST(request: NextRequest) {
       },
       { status: 201 }
     );
-  } catch (error) {
-    console.error('Error generating batch predictions:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to generate batch predictions' },
       { status: 500 }

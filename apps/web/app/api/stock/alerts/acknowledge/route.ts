@@ -57,12 +57,6 @@ async function getClinicIdFromSession(): Promise<{
 }
 
 function handleError(error: unknown): NextResponse {
-  console.error('Stock Alerts Acknowledge API Error:', {
-    error: error instanceof Error ? error.message : 'Unknown error',
-    stack: error instanceof Error ? error.stack : undefined,
-    timestamp: new Date().toISOString(),
-  });
-
   if (error instanceof StockAlertError) {
     const statusCode = getStatusCodeForError(error.code);
     return NextResponse.json(
@@ -150,14 +144,6 @@ export async function POST(request: NextRequest) {
 
     // Performance monitoring
     const duration = Date.now() - startTime;
-    console.log(
-      `POST /api/stock/alerts/acknowledge completed in ${duration}ms`,
-      {
-        alertId: validatedRequest.alertId,
-        userId,
-        clinicId,
-      }
-    );
 
     return NextResponse.json({
       success: true,

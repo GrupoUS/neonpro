@@ -69,8 +69,6 @@ export async function POST(request: NextRequest) {
       { status: 200 }
     );
   } catch (error) {
-    console.error('SMS bulk send error:', error);
-
     // Handle validation errors
     if (error instanceof z.ZodError) {
       return NextResponse.json(
@@ -253,8 +251,6 @@ export async function GET(request: NextRequest) {
       { status: 200 }
     );
   } catch (error) {
-    console.error('SMS bulk status error:', error);
-
     return NextResponse.json(
       {
         success: false,

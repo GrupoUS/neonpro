@@ -374,11 +374,7 @@ export class TreatmentPredictionService {
       try {
         const prediction = await this.generatePrediction(predictionRequest);
         predictions.push(prediction);
-      } catch (error) {
-        console.error(
-          `Error generating prediction for patient ${predictionRequest.patient_id}:`,
-          error
-        );
+      } catch (_error) {
         // Continue with next prediction
       }
     }
@@ -702,12 +698,7 @@ export class TreatmentPredictionService {
           disadvantages: this.getTreatmentDisadvantages(treatment),
           suitability_score: altPrediction.prediction.prediction_score,
         });
-      } catch (error) {
-        console.error(
-          `Error generating alternative prediction for ${treatment.treatment_type}:`,
-          error
-        );
-      }
+      } catch (_error) {}
     }
 
     return alternativeTreatments.sort(
@@ -1015,9 +1006,7 @@ export class TreatmentPredictionService {
             cross_validation_std: 0.02,
           },
         });
-      } catch (error) {
-        console.error('Error updating model after training:', error);
-      }
+      } catch (_error) {}
     }, 60_000); // Simulate 1 minute training time
 
     return {

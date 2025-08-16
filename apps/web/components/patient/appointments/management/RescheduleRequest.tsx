@@ -41,7 +41,7 @@ import { cn } from '@/lib/utils';
  * - Exa: Advanced rescheduling workflows and availability checking
  */
 
-interface RescheduleRequestProps {
+type RescheduleRequestProps = {
   appointmentId: string;
   appointment: PatientAppointment | undefined;
   open: boolean;
@@ -52,7 +52,7 @@ interface RescheduleRequestProps {
     newTime: string,
     reason: string
   ) => Promise<void>;
-}
+};
 
 // Common rescheduling reasons based on Exa research
 const RESCHEDULE_REASONS = [
@@ -160,8 +160,7 @@ export function RescheduleRequest({
       setSelectedTime('');
       setSelectedReason('');
       setCustomReason('');
-    } catch (error) {
-      console.error('Error confirming reschedule:', error);
+    } catch (_error) {
     } finally {
       setIsSubmitting(false);
     }

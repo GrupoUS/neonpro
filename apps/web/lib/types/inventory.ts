@@ -4,7 +4,7 @@
  * Story 6.1: Real-time Stock Tracking + Barcode/QR Integration
  */
 
-export interface InventoryItem {
+export type InventoryItem = {
   id: string;
   name: string;
   description?: string;
@@ -39,9 +39,9 @@ export interface InventoryItem {
   updated_at: string;
   created_by: string;
   last_updated_by: string;
-}
+};
 
-export interface InventoryLocation {
+export type InventoryLocation = {
   id: string;
   name: string;
   description?: string;
@@ -51,9 +51,9 @@ export interface InventoryLocation {
   is_active: boolean;
   created_at: string;
   updated_at: string;
-}
+};
 
-export interface InventoryCategory {
+export type InventoryCategory = {
   id: string;
   name: string;
   description?: string;
@@ -61,9 +61,9 @@ export interface InventoryCategory {
   is_active: boolean;
   created_at: string;
   updated_at: string;
-}
+};
 
-export interface StockMovement {
+export type StockMovement = {
   id: string;
   inventory_item_id: string;
   location_id: string;
@@ -85,9 +85,9 @@ export interface StockMovement {
   // Related Data
   inventory_item?: InventoryItem;
   location?: InventoryLocation;
-}
+};
 
-export interface StockAlert {
+export type StockAlert = {
   id: string;
   inventory_item_id: string;
   alert_type: AlertType;
@@ -108,9 +108,9 @@ export interface StockAlert {
 
   created_at: string;
   updated_at: string;
-}
+};
 
-export interface BarcodeSession {
+export type BarcodeSession = {
   id: string;
   user_id: string;
   session_type: SessionType;
@@ -125,9 +125,9 @@ export interface BarcodeSession {
   started_at: string;
   ended_at?: string;
   notes?: string;
-}
+};
 
-export interface ScannedItem {
+export type ScannedItem = {
   id: string;
   session_id: string;
   inventory_item_id?: string;
@@ -142,7 +142,7 @@ export interface ScannedItem {
   // Error Handling
   error_message?: string;
   needs_manual_review: boolean;
-}
+};
 
 // Enums
 export enum InventoryStatus {
@@ -235,7 +235,7 @@ export enum ScanResult {
 }
 
 // Real-time Inventory State
-export interface InventoryState {
+export type InventoryState = {
   items: InventoryItem[];
   locations: InventoryLocation[];
   categories: InventoryCategory[];
@@ -254,7 +254,7 @@ export interface InventoryState {
   lastUpdated: string;
   isRealTimeEnabled: boolean;
   connectionStatus: ConnectionStatus;
-}
+};
 
 export enum ConnectionStatus {
   CONNECTED = 'connected',
@@ -264,7 +264,7 @@ export enum ConnectionStatus {
 }
 
 // API Response Types
-export interface InventoryApiResponse<T> {
+export type InventoryApiResponse<T> = {
   success: boolean;
   data: T;
   message?: string;
@@ -272,25 +272,25 @@ export interface InventoryApiResponse<T> {
   total_count?: number;
   page?: number;
   per_page?: number;
-}
+};
 
-export interface StockLevelUpdate {
+export type StockLevelUpdate = {
   inventory_item_id: string;
   location_id: string;
   new_quantity: number;
   previous_quantity: number;
   change_reason: MovementType;
   timestamp: string;
-}
+};
 
 // Barcode Scanner Types
-export interface BarcodeResult {
+export type BarcodeResult = {
   data: string;
   format: BarcodeFormat;
   timestamp: string;
   confidence?: number;
   sessionId?: string;
-}
+};
 
 export type BarcodeFormat =
   | 'qr_code'
@@ -305,17 +305,17 @@ export type BarcodeFormat =
   | 'aztec'
   | 'unknown';
 
-export interface ScannerConfig {
+export type ScannerConfig = {
   formats?: BarcodeFormat[];
   continuous?: boolean;
   audio?: boolean;
   vibration?: boolean;
   flashlight?: boolean;
   constraints?: MediaTrackConstraints;
-}
+};
 
 // Scanner State and Error Types
-export interface ScannerError {
+export type ScannerError = {
   type:
     | 'PERMISSION_DENIED'
     | 'INITIALIZATION_ERROR'
@@ -327,9 +327,9 @@ export interface ScannerError {
     | 'SCAN_ERROR';
   message: string;
   timestamp: string;
-}
+};
 
-export interface ScannerState {
+export type ScannerState = {
   isScanning: boolean;
   isInitialized: boolean;
   hasPermission: boolean;
@@ -338,9 +338,9 @@ export interface ScannerState {
   scanHistory: BarcodeResult[];
   availableCameras: MediaDeviceInfo[];
   currentCamera: MediaDeviceInfo | null;
-}
+};
 
-export interface ScanConfiguration {
+export type ScanConfiguration = {
   enableContinuous: boolean;
   beepOnScan: boolean;
   vibrationOnScan: boolean;
@@ -349,27 +349,27 @@ export interface ScanConfiguration {
   preferredCameraFacing: 'user' | 'environment';
   scanDelay: number;
   maxHistorySize: number;
-}
+};
 
 // Component Props
-export interface InventoryItemProps {
+export type InventoryItemProps = {
   item: InventoryItem;
   onUpdate?: (item: InventoryItem) => void;
   onDelete?: (id: string) => void;
   showActions?: boolean;
   compact?: boolean;
-}
+};
 
-export interface BarcodeSessionProps {
+export type BarcodeSessionProps = {
   session: BarcodeSession;
   onComplete?: (session: BarcodeSession) => void;
   onCancel?: (sessionId: string) => void;
   onItemScanned?: (item: ScannedItem) => void;
-}
+};
 
-export interface StockAlertProps {
+export type StockAlertProps = {
   alert: StockAlert;
   onResolve?: (alertId: string, notes?: string) => void;
   onDismiss?: (alertId: string) => void;
   compact?: boolean;
-}
+};

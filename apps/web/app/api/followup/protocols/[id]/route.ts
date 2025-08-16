@@ -31,7 +31,6 @@ export async function GET(
       data: protocol,
     });
   } catch (error) {
-    console.error('Error fetching follow-up protocol:', error);
     return NextResponse.json(
       {
         success: false,
@@ -76,8 +75,6 @@ export async function PUT(
         { status: 400 }
       );
     }
-
-    console.error('Error updating follow-up protocol:', error);
     return NextResponse.json(
       {
         success: false,
@@ -101,7 +98,6 @@ export async function DELETE(
       message: 'Follow-up protocol deleted successfully',
     });
   } catch (error) {
-    console.error('Error deleting follow-up protocol:', error);
     return NextResponse.json(
       {
         success: false,

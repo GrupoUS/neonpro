@@ -5,12 +5,12 @@
  * Ativa apenas se ENABLE_OTEL=true no ambiente
  */
 
-interface TelemetryConfig {
+type TelemetryConfig = {
   enabled: boolean;
   serviceName: string;
   environment: string;
   exporterEndpoint?: string;
-}
+};
 
 let telemetryInitialized = false;
 
@@ -59,10 +59,7 @@ export class SimpleTelemetry {
 
       sdk.start();
       telemetryInitialized = true;
-
-      console.log('📡 OpenTelemetry initialized successfully');
-    } catch (error) {
-      console.warn('⚠️ OpenTelemetry initialization failed:', error);
+    } catch (_error) {
       // Don't fail the app if telemetry fails
     }
   }
@@ -70,7 +67,7 @@ export class SimpleTelemetry {
   /**
    * 📊 Simple trace creation (fallback to console if not enabled)
    */
-  static createTrace(name: string, fn: () => Promise<any>): Promise<any> {
+  static createTrace(_name: string, fn: () => Promise<any>): Promise<any> {
     if (!SimpleTelemetry.config.enabled) {
       // Fallback: just execute function
       return fn();
@@ -80,13 +77,11 @@ export class SimpleTelemetry {
 
     return fn()
       .then((result) => {
-        const duration = Date.now() - startTime;
-        console.log(`🔍 Trace: ${name} completed in ${duration}ms`);
+        const _duration = Date.now() - startTime;
         return result;
       })
       .catch((error) => {
-        const duration = Date.now() - startTime;
-        console.error(`🔍 Trace: ${name} failed in ${duration}ms:`, error);
+        const _duration = Date.now() - startTime;
         throw error;
       });
   }
@@ -94,13 +89,10 @@ export class SimpleTelemetry {
   /**
    * 📈 Add custom attribute (no-op if disabled)
    */
-  static addAttribute(key: string, value: string | number | boolean): void {
+  static addAttribute(_key: string, _value: string | number | boolean): void {
     if (!SimpleTelemetry.config.enabled) {
       return;
     }
-
-    // Simple logging fallback
-    console.log(`📋 Attribute: ${key} = ${value}`);
   }
 
   /**

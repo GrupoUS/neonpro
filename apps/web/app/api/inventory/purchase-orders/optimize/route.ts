@@ -56,7 +56,6 @@ export async function POST(request: NextRequest) {
       .in('id', validatedData.item_ids);
 
     if (itemsError) {
-      console.error('Error fetching item details:', itemsError);
       return NextResponse.json(
         { error: 'Failed to fetch item details' },
         { status: 500 }
@@ -135,8 +134,6 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
-
-    console.error('Error in bulk order optimization:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -203,8 +200,7 @@ async function analyzeBulkOpportunities(
     return bulkOpportunities.sort(
       (a: any, b: any) => b.potential_savings - a.potential_savings
     );
-  } catch (error) {
-    console.error('Error analyzing bulk opportunities:', error);
+  } catch (_error) {
     return [];
   }
 }
@@ -298,8 +294,7 @@ async function generateSeasonalRecommendations(
     return seasonalRecommendations.sort(
       (a, b) => b.seasonality_factor - a.seasonality_factor
     );
-  } catch (error) {
-    console.error('Error generating seasonal recommendations:', error);
+  } catch (_error) {
     return [];
   }
 }

@@ -77,7 +77,6 @@ export async function POST(
       .single();
 
     if (updateError) {
-      console.error('Error updating NFe document:', updateError);
       return NextResponse.json(
         { error: 'Failed to update NFe document' },
         { status: 500 }
@@ -101,8 +100,7 @@ export async function POST(
         authorization: authResult,
       },
     });
-  } catch (error) {
-    console.error('NFe authorization error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

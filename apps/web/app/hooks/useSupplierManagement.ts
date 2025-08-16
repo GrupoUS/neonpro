@@ -25,13 +25,13 @@ import type {
   UpdateSupplierRequest,
 } from '@/app/types/suppliers';
 
-interface UseSupplierManagementProps {
+type UseSupplierManagementProps = {
   clinicId: string;
   autoRefresh?: boolean;
   refreshInterval?: number;
-}
+};
 
-interface UseSupplierManagementReturn {
+type UseSupplierManagementReturn = {
   // State
   suppliers: Supplier[];
   supplierDetails: Supplier | null;
@@ -129,7 +129,7 @@ interface UseSupplierManagementReturn {
   refreshData: () => Promise<void>;
   clearError: () => void;
   resetState: () => void;
-}
+};
 
 export function useSupplierManagement({
   clinicId,
@@ -202,7 +202,6 @@ export function useSupplierManagement({
       const errorMessage =
         err instanceof Error ? err.message : 'Erro desconhecido';
       setError(errorMessage);
-      console.error('API call error:', err);
       return null;
     } finally {
       setIsLoading(false);

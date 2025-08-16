@@ -16,23 +16,27 @@ export async function GET(
 ) {
   try {
     const supabase = createRouteHandlerClient({ cookies });
-    const { data: { session } } = await supabase.auth.getSession();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
 
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const professional = await anvisaAPI.getProfessionalDetails(params.id);
-    
+
     if (!professional) {
-      return NextResponse.json({ error: 'Professional not found' }, { status: 404 });
+      return NextResponse.json(
+        { error: 'Professional not found' },
+        { status: 404 }
+      );
     }
 
-    return NextResponse.json({ 
-      success: true, 
-      data: professional 
+    return NextResponse.json({
+      success: true,
+      data: professional,
     });
-
   } catch (error) {
     console.error('Error fetching professional details:', error);
     return NextResponse.json(
@@ -48,7 +52,9 @@ export async function PUT(
 ) {
   try {
     const supabase = createRouteHandlerClient({ cookies });
-    const { data: { session } } = await supabase.auth.getSession();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
 
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -56,15 +62,14 @@ export async function PUT(
 
     const updateData = await request.json();
     const updatedProfessional = await anvisaAPI.updateProfessionalCompliance(
-      params.id, 
+      params.id,
       updateData
     );
 
-    return NextResponse.json({ 
-      success: true, 
-      data: updatedProfessional 
+    return NextResponse.json({
+      success: true,
+      data: updatedProfessional,
     });
-
   } catch (error) {
     console.error('Error updating professional:', error);
     return NextResponse.json(

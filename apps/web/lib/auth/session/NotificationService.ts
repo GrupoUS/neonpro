@@ -304,8 +304,7 @@ export class NotificationService {
         enabledChannels: JSON.parse(data.enabled_channels || '[]'),
         preferences: JSON.parse(data.preferences || '{}'),
       };
-    } catch (error) {
-      console.error('Error getting user notification preferences:', error);
+    } catch (_error) {
       return {
         enabledChannels: ['in_app', 'email'],
         preferences: {},
@@ -618,8 +617,7 @@ export class NotificationService {
       await Promise.all(
         batch.map((notification) => this.processNotification(notification))
       );
-    } catch (error) {
-      console.error('Error processing notification queue:', error);
+    } catch (_error) {
     } finally {
       this.isProcessingQueue = false;
     }
@@ -634,16 +632,12 @@ export class NotificationService {
       for (const channel of notification.channels) {
         try {
           await this.deliverToChannel(notification, channel, template);
-        } catch (error) {
-          console.error(`Error delivering to ${channel}:`, error);
-        }
+        } catch (_error) {}
       }
 
       // Update notification status
       await this.updateNotificationStatus(notification.id, 'delivered');
-    } catch (error) {
-      console.error('Error processing notification:', error);
-
+    } catch (_error) {
       // Increment attempts and retry if under limit
       notification.attempts++;
 
@@ -731,39 +725,19 @@ export class NotificationService {
   }
 
   private async deliverEmail(
-    notification: NotificationData,
-    content: { subject: string; body: string }
-  ): Promise<void> {
-    // TODO: Integrate with email service (SendGrid, AWS SES, etc.)
-    console.log('Email delivery:', {
-      to: notification.userId,
-      subject: content.subject,
-      body: content.body,
-    });
-  }
+    _notification: NotificationData,
+    _content: { subject: string; body: string }
+  ): Promise<void> {}
 
   private async deliverPush(
-    notification: NotificationData,
-    content: { subject: string; body: string }
-  ): Promise<void> {
-    // TODO: Integrate with push notification service (FCM, APNs, etc.)
-    console.log('Push notification delivery:', {
-      to: notification.userId,
-      title: content.subject,
-      body: content.body,
-    });
-  }
+    _notification: NotificationData,
+    _content: { subject: string; body: string }
+  ): Promise<void> {}
 
   private async deliverSMS(
-    notification: NotificationData,
-    content: { subject: string; body: string }
-  ): Promise<void> {
-    // TODO: Integrate with SMS service (Twilio, AWS SNS, etc.)
-    console.log('SMS delivery:', {
-      to: notification.userId,
-      message: content.body,
-    });
-  }
+    _notification: NotificationData,
+    _content: { subject: string; body: string }
+  ): Promise<void> {}
 
   private async updateNotificationStatus(
     notificationId: string,
@@ -777,9 +751,7 @@ export class NotificationService {
           updated_at: new Date().toISOString(),
         })
         .eq('id', notificationId);
-    } catch (error) {
-      console.error('Error updating notification status:', error);
-    }
+    } catch (_error) {}
   }
 
   private convertToNotificationData(row: any): NotificationData {

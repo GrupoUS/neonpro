@@ -97,7 +97,6 @@ export async function GET(request: Request) {
     const { data: invoices, error, count } = await query;
 
     if (error) {
-      console.error('Error fetching invoices:', error);
       return NextResponse.json(
         { error: 'Failed to fetch invoices' },
         { status: 500 }
@@ -113,8 +112,7 @@ export async function GET(request: Request) {
         pages: Math.ceil((count || 0) / limit),
       },
     });
-  } catch (error) {
-    console.error('API Error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal Server Error' },
       { status: 500 }
@@ -160,7 +158,6 @@ export async function POST(request: Request) {
       .single();
 
     if (invoiceError) {
-      console.error('Error creating invoice:', invoiceError);
       return NextResponse.json(
         { error: 'Failed to create invoice' },
         { status: 500 }
@@ -186,7 +183,6 @@ export async function POST(request: Request) {
       .insert(items);
 
     if (itemsError) {
-      console.error('Error creating invoice items:', itemsError);
       // Rollback - delete the invoice
       await supabase.from('invoices').delete().eq('id', invoice.id);
       return NextResponse.json(
@@ -224,7 +220,6 @@ export async function POST(request: Request) {
       .single();
 
     if (fetchError) {
-      console.error('Error fetching complete invoice:', fetchError);
       return NextResponse.json(
         { error: 'Invoice created but failed to fetch complete data' },
         { status: 500 }
@@ -239,8 +234,6 @@ export async function POST(request: Request) {
         { status: 400 }
       );
     }
-
-    console.error('API Error:', error);
     return NextResponse.json(
       { error: 'Internal Server Error' },
       { status: 500 }

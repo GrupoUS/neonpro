@@ -22,8 +22,6 @@ export async function POST(request: NextRequest) {
       { status: 201 }
     );
   } catch (error) {
-    console.error('Error creating success prediction:', error);
-
     if (error instanceof Error && error.name === 'ZodError') {
       return NextResponse.json(
         {

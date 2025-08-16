@@ -8,7 +8,7 @@ import { Badge } from './Badge';
 import { Button } from './Button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './Tabs';
 
-export interface HealthRecordViewerProps {
+export type HealthRecordViewerProps = {
   record: HealthRecordData;
   practitioner?: PractitionerData;
   canEdit?: boolean;
@@ -19,7 +19,7 @@ export interface HealthRecordViewerProps {
   onToggleSensitive?: () => void;
   onViewDetails?: (section: string) => void;
   className?: string;
-}
+};
 
 const HealthRecordViewer = React.forwardRef<
   HTMLDivElement,

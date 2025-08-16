@@ -7,7 +7,7 @@ import type { SessionManager } from '../auth/session-manager';
 /**
  * Configuration for communication manager
  */
-export interface CommunicationConfig {
+export type CommunicationConfig = {
   maxMessageLength: number;
   allowAttachments: boolean;
   maxAttachmentSize: number;
@@ -16,12 +16,12 @@ export interface CommunicationConfig {
   encryptMessages: boolean;
   retentionDays: number;
   allowedFileTypes: string[];
-}
+};
 
 /**
  * Message interface
  */
-export interface Message {
+export type Message = {
   id: string;
   conversationId: string;
   senderId: string;
@@ -43,24 +43,24 @@ export interface Message {
   createdAt: Date;
   readAt?: Date;
   isEncrypted: boolean;
-}
+};
 
 /**
  * Message attachment
  */
-export interface MessageAttachment {
+export type MessageAttachment = {
   id: string;
   fileName: string;
   fileSize: number;
   mimeType: string;
   downloadUrl: string;
   isEncrypted: boolean;
-}
+};
 
 /**
  * Conversation interface
  */
-export interface Conversation {
+export type Conversation = {
   id: string;
   patientId: string;
   staffId?: string;
@@ -73,12 +73,12 @@ export interface Conversation {
   tags?: string[];
   metadata?: Record<string, any>;
   createdAt: Date;
-}
+};
 
 /**
  * Send message request
  */
-export interface SendMessageRequest {
+export type SendMessageRequest = {
   patientId: string;
   recipientId?: string;
   recipientType: 'staff' | 'department';
@@ -93,23 +93,23 @@ export interface SendMessageRequest {
   priority: 'low' | 'normal' | 'high' | 'urgent';
   attachments?: File[];
   conversationId?: string;
-}
+};
 
 /**
  * Send message result
  */
-export interface SendMessageResult {
+export type SendMessageResult = {
   success: boolean;
   messageId?: string;
   conversationId?: string;
   message: string;
   estimatedResponseTime?: string;
-}
+};
 
 /**
  * Notification preferences
  */
-export interface NotificationPreferences {
+export type NotificationPreferences = {
   email: boolean;
   sms: boolean;
   push: boolean;
@@ -118,30 +118,30 @@ export interface NotificationPreferences {
   messageNotifications: boolean;
   treatmentUpdates: boolean;
   promotionalMessages: boolean;
-}
+};
 
 /**
  * Communication statistics
  */
-export interface CommunicationStats {
+export type CommunicationStats = {
   totalMessages: number;
   unreadMessages: number;
   activeConversations: number;
   averageResponseTime: number;
   messagesByType: Record<string, number>;
   recentActivity: MessageActivity[];
-}
+};
 
 /**
  * Message activity
  */
-export interface MessageActivity {
+export type MessageActivity = {
   id: string;
   action: 'sent' | 'received' | 'read' | 'archived';
   messageId: string;
   timestamp: Date;
   details?: Record<string, any>;
-}
+};
 
 /**
  * Patient communication manager

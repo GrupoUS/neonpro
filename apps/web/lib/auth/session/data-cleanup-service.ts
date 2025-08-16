@@ -6,7 +6,7 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 
 // Types
-export interface CleanupConfig {
+export type CleanupConfig = {
   // Session cleanup settings
   expiredSessionRetentionDays: number;
   inactiveSessionRetentionDays: number;
@@ -31,18 +31,18 @@ export interface CleanupConfig {
   // Batch processing settings
   batchSize: number;
   maxExecutionTimeMs: number;
-}
+};
 
-export interface CleanupResult {
+export type CleanupResult = {
   operation: string;
   recordsProcessed: number;
   recordsDeleted: number;
   executionTimeMs: number;
   success: boolean;
   error?: string;
-}
+};
 
-export interface CleanupSummary {
+export type CleanupSummary = {
   totalOperations: number;
   totalRecordsProcessed: number;
   totalRecordsDeleted: number;
@@ -52,16 +52,16 @@ export interface CleanupSummary {
   results: CleanupResult[];
   startTime: Date;
   endTime: Date;
-}
+};
 
-export interface CleanupStats {
+export type CleanupStats = {
   lastCleanupRun: Date | null;
   nextScheduledRun: Date | null;
   totalCleanupRuns: number;
   averageExecutionTimeMs: number;
   totalRecordsDeleted: number;
   cleanupHistory: CleanupSummary[];
-}
+};
 
 // Data Cleanup Service
 export class DataCleanupService {
@@ -97,62 +97,52 @@ export class DataCleanupService {
   async runFullCleanup(): Promise<CleanupSummary> {
     const startTime = new Date();
     const results: CleanupResult[] = [];
+    // 1. Clean expired sessions
+    results.push(await this.cleanExpiredSessions());
 
-    console.log('Starting full data cleanup process...');
+    // 2. Clean inactive sessions
+    results.push(await this.cleanInactiveSessions());
 
-    try {
-      // 1. Clean expired sessions
-      results.push(await this.cleanExpiredSessions());
+    // 3. Clean old activity logs
+    results.push(await this.cleanActivityLogs());
 
-      // 2. Clean inactive sessions
-      results.push(await this.cleanInactiveSessions());
+    // 4. Clean old security events
+    results.push(await this.cleanSecurityEvents());
 
-      // 3. Clean old activity logs
-      results.push(await this.cleanActivityLogs());
+    // 5. Clean old audit logs
+    results.push(await this.cleanAuditLogs());
 
-      // 4. Clean old security events
-      results.push(await this.cleanSecurityEvents());
+    // 6. Clean old notifications
+    results.push(await this.cleanNotifications());
 
-      // 5. Clean old audit logs
-      results.push(await this.cleanAuditLogs());
+    // 7. Clean inactive devices
+    results.push(await this.cleanInactiveDevices());
 
-      // 6. Clean old notifications
-      results.push(await this.cleanNotifications());
+    // 8. Optimize database
+    results.push(await this.optimizeDatabase());
 
-      // 7. Clean inactive devices
-      results.push(await this.cleanInactiveDevices());
+    const endTime = new Date();
+    const summary: CleanupSummary = {
+      totalOperations: results.length,
+      totalRecordsProcessed: results.reduce(
+        (sum, r) => sum + r.recordsProcessed,
+        0
+      ),
+      totalRecordsDeleted: results.reduce(
+        (sum, r) => sum + r.recordsDeleted,
+        0
+      ),
+      totalExecutionTimeMs: endTime.getTime() - startTime.getTime(),
+      successfulOperations: results.filter((r) => r.success).length,
+      failedOperations: results.filter((r) => !r.success).length,
+      results,
+      startTime,
+      endTime,
+    };
 
-      // 8. Optimize database
-      results.push(await this.optimizeDatabase());
-
-      const endTime = new Date();
-      const summary: CleanupSummary = {
-        totalOperations: results.length,
-        totalRecordsProcessed: results.reduce(
-          (sum, r) => sum + r.recordsProcessed,
-          0
-        ),
-        totalRecordsDeleted: results.reduce(
-          (sum, r) => sum + r.recordsDeleted,
-          0
-        ),
-        totalExecutionTimeMs: endTime.getTime() - startTime.getTime(),
-        successfulOperations: results.filter((r) => r.success).length,
-        failedOperations: results.filter((r) => !r.success).length,
-        results,
-        startTime,
-        endTime,
-      };
-
-      // Log cleanup summary
-      await this.logCleanupSummary(summary);
-
-      console.log('Full data cleanup completed:', summary);
-      return summary;
-    } catch (error) {
-      console.error('Full cleanup error:', error);
-      throw error;
-    }
+    // Log cleanup summary
+    await this.logCleanupSummary(summary);
+    return summary;
   }
 
   /**
@@ -161,66 +151,55 @@ export class DataCleanupService {
   async runTargetedCleanup(operations: string[]): Promise<CleanupSummary> {
     const startTime = new Date();
     const results: CleanupResult[] = [];
-
-    console.log('Starting targeted cleanup for:', operations);
-
-    try {
-      for (const operation of operations) {
-        switch (operation) {
-          case 'expired_sessions':
-            results.push(await this.cleanExpiredSessions());
-            break;
-          case 'inactive_sessions':
-            results.push(await this.cleanInactiveSessions());
-            break;
-          case 'activity_logs':
-            results.push(await this.cleanActivityLogs());
-            break;
-          case 'security_events':
-            results.push(await this.cleanSecurityEvents());
-            break;
-          case 'audit_logs':
-            results.push(await this.cleanAuditLogs());
-            break;
-          case 'notifications':
-            results.push(await this.cleanNotifications());
-            break;
-          case 'inactive_devices':
-            results.push(await this.cleanInactiveDevices());
-            break;
-          case 'optimize_database':
-            results.push(await this.optimizeDatabase());
-            break;
-          default:
-            console.warn(`Unknown cleanup operation: ${operation}`);
-        }
+    for (const operation of operations) {
+      switch (operation) {
+        case 'expired_sessions':
+          results.push(await this.cleanExpiredSessions());
+          break;
+        case 'inactive_sessions':
+          results.push(await this.cleanInactiveSessions());
+          break;
+        case 'activity_logs':
+          results.push(await this.cleanActivityLogs());
+          break;
+        case 'security_events':
+          results.push(await this.cleanSecurityEvents());
+          break;
+        case 'audit_logs':
+          results.push(await this.cleanAuditLogs());
+          break;
+        case 'notifications':
+          results.push(await this.cleanNotifications());
+          break;
+        case 'inactive_devices':
+          results.push(await this.cleanInactiveDevices());
+          break;
+        case 'optimize_database':
+          results.push(await this.optimizeDatabase());
+          break;
+        default:
       }
-
-      const endTime = new Date();
-      const summary: CleanupSummary = {
-        totalOperations: results.length,
-        totalRecordsProcessed: results.reduce(
-          (sum, r) => sum + r.recordsProcessed,
-          0
-        ),
-        totalRecordsDeleted: results.reduce(
-          (sum, r) => sum + r.recordsDeleted,
-          0
-        ),
-        totalExecutionTimeMs: endTime.getTime() - startTime.getTime(),
-        successfulOperations: results.filter((r) => r.success).length,
-        failedOperations: results.filter((r) => !r.success).length,
-        results,
-        startTime,
-        endTime,
-      };
-
-      console.log('Targeted cleanup completed:', summary);
-      return summary;
-    } catch (error) {
-      console.error('Targeted cleanup error:', error);
-      throw error;
     }
+
+    const endTime = new Date();
+    const summary: CleanupSummary = {
+      totalOperations: results.length,
+      totalRecordsProcessed: results.reduce(
+        (sum, r) => sum + r.recordsProcessed,
+        0
+      ),
+      totalRecordsDeleted: results.reduce(
+        (sum, r) => sum + r.recordsDeleted,
+        0
+      ),
+      totalExecutionTimeMs: endTime.getTime() - startTime.getTime(),
+      successfulOperations: results.filter((r) => r.success).length,
+      failedOperations: results.filter((r) => !r.success).length,
+      results,
+      startTime,
+      endTime,
+    };
+    return summary;
   }
 
   // =====================================================
@@ -235,8 +214,6 @@ export class DataCleanupService {
     const operation = 'expired_sessions';
 
     try {
-      console.log('Cleaning expired sessions...');
-
       const cutoffDate = new Date(
         Date.now() -
           this.config.expiredSessionRetentionDays * 24 * 60 * 60 * 1000
@@ -286,10 +263,6 @@ export class DataCleanupService {
 
           totalDeleted += sessionsToDelete.length;
           processed += sessionsToDelete.length;
-
-          console.log(
-            `Deleted ${totalDeleted}/${recordsToDelete} expired sessions`
-          );
         }
       }
 
@@ -303,7 +276,6 @@ export class DataCleanupService {
         success: true,
       };
     } catch (error) {
-      console.error('Clean expired sessions error:', error);
       return {
         operation,
         recordsProcessed: 0,
@@ -323,8 +295,6 @@ export class DataCleanupService {
     const operation = 'inactive_sessions';
 
     try {
-      console.log('Cleaning inactive sessions...');
-
       const cutoffDate = new Date(
         Date.now() -
           this.config.inactiveSessionRetentionDays * 24 * 60 * 60 * 1000
@@ -375,10 +345,6 @@ export class DataCleanupService {
 
           totalDeleted += sessionsToDelete.length;
           processed += sessionsToDelete.length;
-
-          console.log(
-            `Deleted ${totalDeleted}/${recordsToDelete} inactive sessions`
-          );
         }
       }
 
@@ -392,7 +358,6 @@ export class DataCleanupService {
         success: true,
       };
     } catch (error) {
-      console.error('Clean inactive sessions error:', error);
       return {
         operation,
         recordsProcessed: 0,
@@ -412,8 +377,6 @@ export class DataCleanupService {
     const operation = 'activity_logs';
 
     try {
-      console.log('Cleaning old activity logs...');
-
       const cutoffDate = new Date(
         Date.now() - this.config.activityLogRetentionDays * 24 * 60 * 60 * 1000
       );
@@ -445,10 +408,6 @@ export class DataCleanupService {
           if (deletedCount === 0) {
             break;
           }
-
-          console.log(
-            `Deleted ${totalDeleted}/${recordsToDelete} activity logs`
-          );
         }
       }
 
@@ -462,7 +421,6 @@ export class DataCleanupService {
         success: true,
       };
     } catch (error) {
-      console.error('Clean activity logs error:', error);
       return {
         operation,
         recordsProcessed: 0,
@@ -482,8 +440,6 @@ export class DataCleanupService {
     const operation = 'security_events';
 
     try {
-      console.log('Cleaning old security events...');
-
       const resolvedCutoffDate = new Date(
         Date.now() -
           this.config.resolvedEventRetentionDays * 24 * 60 * 60 * 1000
@@ -519,7 +475,6 @@ export class DataCleanupService {
         success: true,
       };
     } catch (error) {
-      console.error('Clean security events error:', error);
       return {
         operation,
         recordsProcessed: 0,
@@ -539,8 +494,6 @@ export class DataCleanupService {
     const operation = 'audit_logs';
 
     try {
-      console.log('Cleaning old audit logs...');
-
       const cutoffDate = new Date(
         Date.now() - this.config.auditLogRetentionDays * 24 * 60 * 60 * 1000
       );
@@ -560,7 +513,6 @@ export class DataCleanupService {
         success: true,
       };
     } catch (error) {
-      console.error('Clean audit logs error:', error);
       return {
         operation,
         recordsProcessed: 0,
@@ -580,8 +532,6 @@ export class DataCleanupService {
     const operation = 'notifications';
 
     try {
-      console.log('Cleaning old notifications...');
-
       const readCutoffDate = new Date(
         Date.now() -
           this.config.readNotificationRetentionDays * 24 * 60 * 60 * 1000
@@ -616,7 +566,6 @@ export class DataCleanupService {
         success: true,
       };
     } catch (error) {
-      console.error('Clean notifications error:', error);
       return {
         operation,
         recordsProcessed: 0,
@@ -636,8 +585,6 @@ export class DataCleanupService {
     const operation = 'inactive_devices';
 
     try {
-      console.log('Cleaning inactive devices...');
-
       const cutoffDate = new Date(
         Date.now() -
           this.config.inactiveDeviceRetentionDays * 24 * 60 * 60 * 1000
@@ -659,7 +606,6 @@ export class DataCleanupService {
         success: true,
       };
     } catch (error) {
-      console.error('Clean inactive devices error:', error);
       return {
         operation,
         recordsProcessed: 0,
@@ -679,8 +625,6 @@ export class DataCleanupService {
     const operation = 'optimize_database';
 
     try {
-      console.log('Optimizing database...');
-
       // In a real implementation, this would run database optimization commands
       // For PostgreSQL: VACUUM, REINDEX, ANALYZE
       // This is a placeholder as Supabase handles most optimization automatically
@@ -697,7 +641,6 @@ export class DataCleanupService {
         success: true,
       };
     } catch (error) {
-      console.error('Optimize database error:', error);
       return {
         operation,
         recordsProcessed: 0,
@@ -718,7 +661,6 @@ export class DataCleanupService {
    */
   updateConfig(newConfig: Partial<CleanupConfig>): void {
     this.config = { ...this.config, ...newConfig };
-    console.log('Cleanup configuration updated:', this.config);
   }
 
   /**
@@ -783,8 +725,7 @@ export class DataCleanupService {
         totalRecordsDeleted,
         cleanupHistory,
       };
-    } catch (error) {
-      console.error('Get cleanup stats error:', error);
+    } catch (_error) {
       return {
         lastCleanupRun: null,
         nextScheduledRun: null,
@@ -893,8 +834,7 @@ export class DataCleanupService {
         counts.totalRecordsToDelete;
 
       return counts;
-    } catch (error) {
-      console.error('Estimate cleanup impact error:', error);
+    } catch (_error) {
       return {
         expiredSessions: 0,
         inactiveSessions: 0,
@@ -934,9 +874,7 @@ export class DataCleanupService {
         ip_address: null,
         user_agent: 'DataCleanupService',
       });
-    } catch (error) {
-      console.error('Log cleanup summary error:', error);
-    }
+    } catch (_error) {}
   }
 }
 

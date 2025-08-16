@@ -21,7 +21,7 @@ import {
 } from 'date-fns';
 import { supabase } from '@/lib/supabase/client';
 
-export interface CashFlowData {
+export type CashFlowData = {
   id: string;
   date: Date;
   type: 'income' | 'expense';
@@ -34,9 +34,9 @@ export interface CashFlowData {
   status: 'pending' | 'completed' | 'cancelled';
   created_at: Date;
   updated_at: Date;
-}
+};
 
-export interface CashFlowSummary {
+export type CashFlowSummary = {
   period: string;
   total_income: number;
   total_expense: number;
@@ -44,16 +44,16 @@ export interface CashFlowSummary {
   transaction_count: number;
   average_transaction: number;
   growth_rate: number;
-}
+};
 
-export interface CashFlowPrediction {
+export type CashFlowPrediction = {
   date: Date;
   predicted_income: number;
   predicted_expense: number;
   predicted_net_flow: number;
   confidence_level: number;
   factors: string[];
-}
+};
 
 export class CashFlowMonitoringEngine {
   private readonly clinicId: string;
@@ -436,9 +436,6 @@ export class CashFlowMonitoringEngine {
       status: 'active',
       created_at: new Date().toISOString(),
     });
-
-    // TODO: Implement notification sending (email, SMS, push)
-    console.log(`FINANCIAL ALERT [${type}]: ${message}`);
   }
 
   private getAlertSeverity(

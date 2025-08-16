@@ -34,7 +34,7 @@ export type ValidationStatus =
   | 'requires_retest';
 
 // Compliance Interfaces
-export interface MedicalDeviceCompliance {
+export type MedicalDeviceCompliance = {
   id: string;
   deviceComponent: string;
   regulatoryStandards: RegulatoryStandardCompliance[];
@@ -45,9 +45,9 @@ export interface MedicalDeviceCompliance {
   complianceOfficer: string;
   certificationStatus: CertificationStatus;
   auditTrail: ComplianceAuditEntry[];
-}
+};
 
-export interface RegulatoryStandardCompliance {
+export type RegulatoryStandardCompliance = {
   standard: RegulatoryStandard;
   status: ComplianceStatus;
   requirements: ComplianceRequirement[];
@@ -56,9 +56,9 @@ export interface RegulatoryStandardCompliance {
   auditor: string;
   evidence: ComplianceEvidence[];
   nonComplianceIssues: NonComplianceIssue[];
-}
+};
 
-export interface ComplianceRequirement {
+export type ComplianceRequirement = {
   id: string;
   standard: RegulatoryStandard;
   section: string;
@@ -69,9 +69,9 @@ export interface ComplianceRequirement {
   lastValidated: string;
   evidence: string[];
   comments?: string;
-}
+};
 
-export interface ComplianceEvidence {
+export type ComplianceEvidence = {
   id: string;
   type:
     | 'documentation'
@@ -86,9 +86,9 @@ export interface ComplianceEvidence {
   validUntil?: string;
   reviewer: string;
   approved: boolean;
-}
+};
 
-export interface NonComplianceIssue {
+export type NonComplianceIssue = {
   id: string;
   standard: RegulatoryStandard;
   severity: RiskLevel;
@@ -99,9 +99,9 @@ export interface NonComplianceIssue {
   status: 'open' | 'in_progress' | 'resolved' | 'verified';
   dueDate: string;
   assignedTo: string;
-}
+};
 
-export interface CorrectiveAction {
+export type CorrectiveAction = {
   id: string;
   description: string;
   priority: RiskLevel;
@@ -110,16 +110,16 @@ export interface CorrectiveAction {
   status: 'planned' | 'in_progress' | 'completed' | 'verified';
   completedDate?: string;
   verification: string;
-}
+};
 
-export interface CertificationStatus {
+export type CertificationStatus = {
   fdaCertification?: FDACertification;
   ceCertification?: CECertification;
   anvisaCertification?: ANVISACertification;
   isoCertifications: ISOCertification[];
-}
+};
 
-export interface FDACertification {
+export type FDACertification = {
   classification: 'Class_I' | 'Class_II' | 'Class_III';
   preMarketSubmission?: '510k' | 'PMA' | 'De_Novo';
   fdaNumber?: string;
@@ -127,35 +127,35 @@ export interface FDACertification {
   expirationDate?: string;
   qsrCompliance: boolean;
   mdcCompliance: boolean;
-}
+};
 
-export interface CECertification {
+export type CECertification = {
   conformityAssessment: 'Annex_II' | 'Annex_III' | 'Annex_IV';
   notifiedBody?: string;
   ceMarkingDate?: string;
   declarationOfConformity: string;
   technicalDocumentation: string[];
   postMarketSurveillance: boolean;
-}
+};
 
-export interface ANVISACertification {
+export type ANVISACertification = {
   registrationNumber?: string;
   registrationDate?: string;
   validUntil?: string;
   productClassification: 'I' | 'II' | 'III' | 'IV';
   gmpCompliance: boolean;
   anvisaInspections: ANVISAInspection[];
-}
+};
 
-export interface ANVISAInspection {
+export type ANVISAInspection = {
   date: string;
   type: 'routine' | 'special' | 'follow_up';
   result: 'satisfactory' | 'unsatisfactory' | 'conditional';
   findings: string[];
   correctiveActionsRequired: boolean;
-}
+};
 
-export interface ISOCertification {
+export type ISOCertification = {
   standard: 'ISO_14971' | 'ISO_13485' | 'IEC_62304';
   certificationBody: string;
   certificateNumber: string;
@@ -163,9 +163,9 @@ export interface ISOCertification {
   expirationDate: string;
   scope: string;
   surveillanceAudits: SurveillanceAudit[];
-}
+};
 
-export interface SurveillanceAudit {
+export type SurveillanceAudit = {
   date: string;
   auditor: string;
   findings: AuditFinding[];
@@ -174,18 +174,18 @@ export interface SurveillanceAudit {
     | 'minor_nonconformities'
     | 'major_nonconformities';
   nextAuditDate: string;
-}
+};
 
-export interface AuditFinding {
+export type AuditFinding = {
   type: 'observation' | 'minor_nonconformity' | 'major_nonconformity';
   clause: string;
   description: string;
   evidence: string;
   correctiveActionRequired: boolean;
   dueDate?: string;
-}
+};
 
-export interface ComplianceAuditEntry {
+export type ComplianceAuditEntry = {
   id: string;
   timestamp: string;
   action: string;
@@ -194,7 +194,7 @@ export interface ComplianceAuditEntry {
   systemComponent: string;
   standard: RegulatoryStandard;
   complianceImpact: 'none' | 'low' | 'medium' | 'high';
-}
+};
 
 // Main Compliance Manager Class
 export class HealthcareComplianceManager {
@@ -905,7 +905,7 @@ export class HealthcareComplianceManager {
 }
 
 // Additional interfaces for reporting
-export interface ComplianceReport {
+export type ComplianceReport = {
   id: string;
   generatedDate: string;
   reportType: 'component' | 'system' | 'standard';
@@ -917,20 +917,20 @@ export interface ComplianceReport {
   details: ComplianceReportData[];
   recommendations: string[];
   nextActions: string[];
-}
+};
 
-export interface ComplianceReportData {
+export type ComplianceReportData = {
   componentId: string;
   compliance: MedicalDeviceCompliance;
-}
+};
 
-export interface ComplianceSummary {
+export type ComplianceSummary = {
   totalComponents: number;
   compliantComponents: number;
   nonCompliantComponents: number;
   complianceRate: number;
   criticalIssues: number;
-}
+};
 
 // Validation schemas
 export const ComplianceValidationSchema = z.object({

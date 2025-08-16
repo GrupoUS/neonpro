@@ -42,8 +42,6 @@ export async function POST(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('Patient preference learning error:', error);
-
     return NextResponse.json(
       {
         error: 'Failed to update patient preferences',
@@ -98,8 +96,6 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('Get patient preferences error:', error);
-
     return NextResponse.json(
       {
         error: 'Failed to retrieve patient preferences',

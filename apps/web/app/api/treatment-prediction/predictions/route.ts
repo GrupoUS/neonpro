@@ -82,8 +82,7 @@ export async function GET(request: NextRequest) {
         total_pages: Math.ceil(predictions.length / limit),
       },
     });
-  } catch (error) {
-    console.error('Error fetching predictions:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to fetch predictions' },
       { status: 500 }
@@ -135,8 +134,6 @@ export async function POST(request: NextRequest) {
       { status: 201 }
     );
   } catch (error) {
-    console.error('Error generating prediction:', error);
-
     if (error instanceof Error) {
       return NextResponse.json({ error: error.message }, { status: 400 });
     }

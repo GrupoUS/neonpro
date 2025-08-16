@@ -3,7 +3,7 @@ import { AuditLogger } from '../../audit/audit-logger';
 import { LGPDManager } from '../../lgpd/lgpd-manager';
 import { EncryptionService } from '../../security/encryption-service';
 
-export interface BackupConfig {
+export type BackupConfig = {
   enabled: boolean;
   schedule: {
     full_backup_cron: string; // Ex: '0 2 * * 0' (domingo às 2h)
@@ -36,9 +36,9 @@ export interface BackupConfig {
     warning_notifications: boolean;
     notification_channels: string[];
   };
-}
+};
 
-export interface BackupJob {
+export type BackupJob = {
   id: string;
   type: 'full' | 'incremental' | 'differential' | 'manual';
   status: 'pending' | 'running' | 'completed' | 'failed' | 'cancelled';
@@ -56,9 +56,9 @@ export interface BackupJob {
   metadata: Record<string, any>;
   created_by: string;
   created_at: Date;
-}
+};
 
-export interface BackupMetrics {
+export type BackupMetrics = {
   total_backups: number;
   successful_backups: number;
   failed_backups: number;
@@ -71,9 +71,9 @@ export interface BackupMetrics {
     date: string;
     size_gb: number;
   }>;
-}
+};
 
-export interface RecoveryPoint {
+export type RecoveryPoint = {
   id: string;
   backup_job_id: string;
   type: 'full' | 'incremental' | 'differential';
@@ -84,9 +84,9 @@ export interface RecoveryPoint {
   is_verified: boolean;
   retention_until: Date;
   metadata: Record<string, any>;
-}
+};
 
-export interface RecoveryRequest {
+export type RecoveryRequest = {
   id: string;
   recovery_point_id: string;
   target_timestamp: Date;
@@ -99,15 +99,15 @@ export interface RecoveryRequest {
   error_message?: string;
   requested_by: string;
   created_at: Date;
-}
+};
 
-export interface BackupVerification {
+export type BackupVerification = {
   backup_job_id: string;
   verification_type: 'checksum' | 'restore_test' | 'integrity_check';
   status: 'passed' | 'failed' | 'warning';
   details: string;
   verified_at: Date;
-}
+};
 
 export class BackupManager {
   private readonly supabase;
@@ -190,8 +190,6 @@ export class BackupManager {
         resource_type: 'backup_system',
         details: { config: this.config },
       });
-
-      console.log('Sistema de backup iniciado com sucesso');
     } catch (error) {
       throw new Error(`Erro ao iniciar sistema de backup: ${error}`);
     }
@@ -219,8 +217,6 @@ export class BackupManager {
         resource_type: 'backup_system',
         details: { active_jobs_cancelled: activeJobIds.length },
       });
-
-      console.log('Sistema de backup parado com sucesso');
     } catch (error) {
       throw new Error(`Erro ao parar sistema de backup: ${error}`);
     }
@@ -269,9 +265,7 @@ export class BackupManager {
       this.activeJobs.set(jobId, job);
 
       // Executar backup
-      this.executeBackupJob(jobId).catch((error) => {
-        console.error(`Erro no backup ${jobId}:`, error);
-      });
+      this.executeBackupJob(jobId).catch((_error) => {});
 
       await this.auditLogger.log({
         action: 'backup_job_created',
@@ -539,9 +533,7 @@ export class BackupManager {
       }
 
       // Executar recuperação
-      this.executeRecovery(requestId).catch((error) => {
-        console.error(`Erro na recuperação ${requestId}:`, error);
-      });
+      this.executeRecovery(requestId).catch((_error) => {});
 
       await this.auditLogger.log({
         action: 'recovery_started',
@@ -737,9 +729,7 @@ export class BackupManager {
       this.activeJobs.set(backupJob.id, backupJob);
 
       // Retomar execução
-      this.executeBackupJob(backupJob.id).catch((error) => {
-        console.error(`Erro ao retomar backup ${backupJob.id}:`, error);
-      });
+      this.executeBackupJob(backupJob.id).catch((_error) => {});
     }
   }
 

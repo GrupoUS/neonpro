@@ -716,9 +716,7 @@ export class SecurityEventLogger {
       // - Terminate sessions
       // - Send security alerts
       // - Escalate to security team
-    } catch (error) {
-      console.error('Error triggering automated response:', error);
-    }
+    } catch (_error) {}
   }
 
   private async updatePatternAnalysis(
@@ -747,9 +745,7 @@ export class SecurityEventLogger {
         },
         24 * 60 * 60 * 1000
       ); // 24 hours
-    } catch (error) {
-      console.error('Error updating pattern analysis:', error);
-    }
+    } catch (_error) {}
   }
 
   private detectPatterns(events: any[]): SecurityPattern[] {
@@ -853,13 +849,11 @@ export class SecurityEventLogger {
         .gte('created_at', since);
 
       if (error) {
-        console.error('Error getting recent event count:', error);
         return 0;
       }
 
       return data?.length || 0;
-    } catch (error) {
-      console.error('Error getting recent event count:', error);
+    } catch (_error) {
       return 0;
     }
   }

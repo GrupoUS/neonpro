@@ -59,7 +59,7 @@ const ReportListQuerySchema = z.object({
 // TYPES
 // ============================================================================
 
-interface ComplianceReport {
+type ComplianceReport = {
   id: string;
   clinicId: string;
   type: string;
@@ -79,7 +79,7 @@ interface ComplianceReport {
   createdAt: Date;
   completedAt?: Date;
   generatedBy: string;
-}
+};
 
 // ============================================================================
 // UTILITY FUNCTIONS
@@ -151,8 +151,7 @@ async function generateComplianceReport(
     const formattedReport = await formatReport(reportData, request.format);
 
     return formattedReport;
-  } catch (error) {
-    console.error('Failed to generate compliance report:', error);
+  } catch (_error) {
     throw new Error('Falha ao gerar relatório de compliance');
   }
 }
@@ -438,8 +437,7 @@ export async function GET(request: NextRequest) {
         totalPages: Math.ceil((count || 0) / query.limit),
       },
     });
-  } catch (error) {
-    console.error('GET /api/compliance/reports error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -594,8 +592,6 @@ export async function POST(request: NextRequest) {
       throw generateError;
     }
   } catch (error) {
-    console.error('POST /api/compliance/reports error:', error);
-
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Invalid request data', details: error.errors },

@@ -96,9 +96,9 @@ jest.mock('next/navigation', () => ({
 // Extend global environment for tests
 declare global {
   namespace jest {
-    interface Matchers<R> {
+    type Matchers<R> = {
       toHaveErrorMessage(message: string): R;
-    }
+    };
   }
 }
 

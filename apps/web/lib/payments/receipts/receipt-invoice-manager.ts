@@ -100,21 +100,21 @@ type ReceiptData = z.infer<typeof ReceiptDataSchema>;
 type NFSeConfig = z.infer<typeof NFSeConfigSchema>;
 type EmailConfig = z.infer<typeof EmailConfigSchema>;
 
-interface GenerationResult {
+type GenerationResult = {
   success: boolean;
   documentId: string;
   pdfBuffer?: Buffer;
   nfseNumber?: string;
   error?: string;
-}
+};
 
-interface EmailResult {
+type EmailResult = {
   success: boolean;
   messageId?: string;
   error?: string;
-}
+};
 
-interface TemplateOptions {
+type TemplateOptions = {
   template: 'modern' | 'classic' | 'minimal' | 'corporate';
   colors: {
     primary: string;
@@ -125,7 +125,7 @@ interface TemplateOptions {
     header: string;
     body: string;
   };
-}
+};
 
 /**
  * Receipt and Invoice Management System
@@ -224,7 +224,6 @@ export class ReceiptInvoiceManager {
         pdfBuffer,
       };
     } catch (error) {
-      console.error('PDF generation error:', error);
       return {
         success: false,
         documentId: data.id,
@@ -267,7 +266,6 @@ export class ReceiptInvoiceManager {
         nfseNumber: nfseResult.nfseNumber,
       };
     } catch (error) {
-      console.error('NFSe generation error:', error);
       return {
         success: false,
         documentId: data.id,
@@ -352,7 +350,6 @@ export class ReceiptInvoiceManager {
         messageId: result.messageId,
       };
     } catch (error) {
-      console.error('Email sending error:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',

@@ -51,8 +51,7 @@ export async function GET(
       success: true,
       data: nfeDocument,
     });
-  } catch (error) {
-    console.error('NFe fetch error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -116,7 +115,6 @@ export async function PATCH(
       .single();
 
     if (updateError) {
-      console.error('Error updating NFe document:', updateError);
       return NextResponse.json(
         { error: 'Failed to update NFe document' },
         { status: 500 }
@@ -127,8 +125,7 @@ export async function PATCH(
       success: true,
       data: updatedNfe,
     });
-  } catch (error) {
-    console.error('NFe update error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -194,7 +191,6 @@ export async function DELETE(
       .eq('id', id);
 
     if (deleteError) {
-      console.error('Error deleting NFe document:', deleteError);
       return NextResponse.json(
         { error: 'Failed to delete NFe document' },
         { status: 500 }
@@ -205,8 +201,7 @@ export async function DELETE(
       success: true,
       message: 'NFe document deleted successfully',
     });
-  } catch (error) {
-    console.error('NFe delete error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

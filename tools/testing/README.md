@@ -127,7 +127,7 @@ open tools/testing/coverage/lcov-report/index.html
 ### 🔧 Configuração
 
 - **jest.config.ts**: Configuração principal do Jest
-- ****tests**/setup.ts**: Configurações globais de teste
+- \***\*tests**/setup.ts\*\*: Configurações globais de teste
 - Mapeamento de módulos para aliases `@/`
 - Timeout de 30 segundos para testes
 

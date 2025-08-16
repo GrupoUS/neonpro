@@ -69,8 +69,6 @@ export async function POST(request: NextRequest) {
       data: result,
     });
   } catch (error) {
-    console.error('Error in send message API:', error);
-
     return NextResponse.json(
       {
         error: 'Internal server error',
@@ -119,8 +117,6 @@ export async function GET(request: NextRequest) {
       data: result,
     });
   } catch (error) {
-    console.error('Error in get messages API:', error);
-
     return NextResponse.json(
       {
         error: 'Internal server error',

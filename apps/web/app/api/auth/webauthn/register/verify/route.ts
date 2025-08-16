@@ -58,7 +58,6 @@ export async function POST(request: NextRequest) {
           message: 'WebAuthn credential registered successfully',
         });
       } catch (error) {
-        console.error('WebAuthn registration verification error:', error);
         return NextResponse.json(
           {
             error:

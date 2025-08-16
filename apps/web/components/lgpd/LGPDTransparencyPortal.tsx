@@ -39,10 +39,10 @@ import {
   RequestStatus,
 } from '@/types/lgpd';
 
-interface LGPDTransparencyPortalProps {
+type LGPDTransparencyPortalProps = {
   userId: string;
   clinicId: string;
-}
+};
 
 export default function LGPDTransparencyPortal({
   userId,
@@ -76,8 +76,7 @@ export default function LGPDTransparencyPortal({
       setRequests(requestsData);
       setReports(reportsData);
       setConfig(configData);
-    } catch (error) {
-      console.error('Error loading portal data:', error);
+    } catch (_error) {
     } finally {
       setLoading(false);
     }
@@ -121,35 +120,23 @@ export default function LGPDTransparencyPortal({
   };
 
   const handleConsentAction = async (
-    consentId: string,
-    action: 'grant' | 'withdraw'
+    _consentId: string,
+    _action: 'grant' | 'withdraw'
   ) => {
     try {
-      // Implementar ação de consentimento
-      console.log(`${action} consent:`, consentId);
       await loadPortalData(); // Recarregar dados
-    } catch (error) {
-      console.error('Error handling consent action:', error);
-    }
+    } catch (_error) {}
   };
 
-  const handleDataRequest = async (requestType: DataSubjectRight) => {
+  const handleDataRequest = async (_requestType: DataSubjectRight) => {
     try {
-      // Implementar solicitação de direito do titular
-      console.log('Data request:', requestType);
       await loadPortalData(); // Recarregar dados
-    } catch (error) {
-      console.error('Error handling data request:', error);
-    }
+    } catch (_error) {}
   };
 
-  const downloadData = async (format: 'json' | 'csv' | 'pdf') => {
+  const downloadData = async (_format: 'json' | 'csv' | 'pdf') => {
     try {
-      // Implementar download de dados
-      console.log('Download data:', format);
-    } catch (error) {
-      console.error('Error downloading data:', error);
-    }
+    } catch (_error) {}
   };
 
   const getConsentStatusIcon = (status: ConsentStatus) => {

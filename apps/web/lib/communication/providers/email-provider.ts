@@ -3,12 +3,12 @@
  * Story 2.3: Automated Communication System
  */
 
-export interface EmailResult {
+export type EmailResult = {
   success: boolean;
   messageId?: string;
   error?: string;
   cost?: number;
-}
+};
 
 export class EmailProvider {
   async sendEmail(

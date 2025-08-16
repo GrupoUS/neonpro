@@ -38,8 +38,7 @@ export async function GET(
     }
 
     return NextResponse.json(template);
-  } catch (error) {
-    console.error('Get email template error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -79,8 +78,6 @@ export async function PATCH(
 
     return NextResponse.json(template);
   } catch (error) {
-    console.error('Update email template error:', error);
-
     if (error instanceof Error && error.message.includes('not found')) {
       return NextResponse.json(
         { error: 'Template not found' },
@@ -125,8 +122,6 @@ export async function DELETE(
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('Delete email template error:', error);
-
     if (error instanceof Error && error.message.includes('not found')) {
       return NextResponse.json(
         { error: 'Template not found' },

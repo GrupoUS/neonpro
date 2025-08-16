@@ -82,7 +82,7 @@ export type SpecialtyCategory =
 // CORE PROFESSIONAL ENTITY (FHIR Practitioner)
 // ============================================
 
-export interface Professional {
+export type Professional = {
   id: string;
   created_at: string;
   updated_at: string;
@@ -126,13 +126,13 @@ export interface Professional {
   // Metadata
   notes?: string;
   tags?: string[];
-}
+};
 
 // ============================================
 // MEDICAL SPECIALTIES
 // ============================================
 
-export interface MedicalSpecialty {
+export type MedicalSpecialty = {
   id: string;
   created_at: string;
   updated_at: string;
@@ -150,10 +150,10 @@ export interface MedicalSpecialty {
 
   // Metadata
   external_codes?: Record<string, string>; // Additional coding systems
-}
+};
 
 // Professional-Specialty Association
-export interface ProfessionalSpecialty {
+export type ProfessionalSpecialty = {
   id: string;
   created_at: string;
   updated_at: string;
@@ -169,13 +169,13 @@ export interface ProfessionalSpecialty {
   // References
   professional: Professional;
   specialty: MedicalSpecialty;
-}
+};
 
 // ============================================
 // CREDENTIALS MANAGEMENT (FHIR Practitioner.qualification)
 // ============================================
 
-export interface ProfessionalCredential {
+export type ProfessionalCredential = {
   id: string;
   created_at: string;
   updated_at: string;
@@ -214,13 +214,13 @@ export interface ProfessionalCredential {
 
   // References
   professional: Professional;
-}
+};
 
 // ============================================
 // PROFESSIONAL SERVICES (FHIR PractitionerRole)
 // ============================================
 
-export interface ProfessionalService {
+export type ProfessionalService = {
   id: string;
   created_at: string;
   updated_at: string;
@@ -260,13 +260,13 @@ export interface ProfessionalService {
   // References
   professional: Professional;
   specialty?: MedicalSpecialty;
-}
+};
 
 // ============================================
 // PERFORMANCE METRICS & ANALYTICS
 // ============================================
 
-export interface PerformanceMetric {
+export type PerformanceMetric = {
   id: string;
   created_at: string;
   updated_at: string;
@@ -302,13 +302,13 @@ export interface PerformanceMetric {
 
   // References
   professional: Professional;
-}
+};
 
 // ============================================
 // PROFESSIONAL DEVELOPMENT & TRAINING
 // ============================================
 
-export interface ProfessionalDevelopment {
+export type ProfessionalDevelopment = {
   id: string;
   created_at: string;
   updated_at: string;
@@ -357,13 +357,13 @@ export interface ProfessionalDevelopment {
 
   // References
   professional: Professional;
-}
+};
 
 // ============================================
 // CREDENTIALING WORKFLOW AUTOMATION
 // ============================================
 
-export interface CredentialingWorkflow {
+export type CredentialingWorkflow = {
   id: string;
   created_at: string;
   updated_at: string;
@@ -416,13 +416,13 @@ export interface CredentialingWorkflow {
 
   // References
   professional: Professional;
-}
+};
 
 // ============================================
 // AUTOMATED ALERTS & NOTIFICATIONS
 // ============================================
 
-export interface CredentialingAlert {
+export type CredentialingAlert = {
   id: string;
   created_at: string;
   updated_at: string;
@@ -467,6 +467,6 @@ export interface CredentialingAlert {
   professional: Professional;
   related_credential?: ProfessionalCredential;
   related_workflow?: CredentialingWorkflow;
-}
+};
 
 export { z };

@@ -42,7 +42,6 @@ export async function GET(
       data: report,
     });
   } catch (error) {
-    console.error('Error fetching report:', error);
     return NextResponse.json(
       {
         success: false,
@@ -106,7 +105,6 @@ export async function PUT(
       data: report,
     });
   } catch (error) {
-    console.error('Error updating report:', error);
     return NextResponse.json(
       {
         success: false,
@@ -153,7 +151,6 @@ export async function DELETE(
       message: 'Report deleted successfully',
     });
   } catch (error) {
-    console.error('Error deleting report:', error);
     return NextResponse.json(
       {
         success: false,

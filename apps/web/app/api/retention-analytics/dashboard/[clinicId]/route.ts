@@ -354,8 +354,6 @@ export async function GET(
 
     return NextResponse.json(response);
   } catch (error) {
-    console.error('Error generating retention analytics dashboard:', error);
-
     return NextResponse.json(
       {
         error: 'Internal server error',

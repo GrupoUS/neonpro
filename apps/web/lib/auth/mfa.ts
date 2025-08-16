@@ -22,32 +22,32 @@ import * as OTPAuth from 'otpauth';
 import { z } from 'zod';
 
 // Types and Interfaces
-export interface MFAConfig {
+export type MFAConfig = {
   issuer: string;
   label: string;
   algorithm: 'SHA1' | 'SHA256' | 'SHA512';
   digits: number;
   period: number;
   window: number;
-}
+};
 
-export interface MFASetupResult {
+export type MFASetupResult = {
   secret: string;
   qrCodeUri: string;
   backupCodes: string[];
   recoveryToken: string;
-}
+};
 
-export interface MFAVerificationResult {
+export type MFAVerificationResult = {
   isValid: boolean;
   delta?: number;
   remainingAttempts: number;
   lockedUntil?: Date;
   isEmergencyBypass?: boolean;
   auditLogId: string;
-}
+};
 
-export interface MFAUserSettings {
+export type MFAUserSettings = {
   userId: string;
   isEnabled: boolean;
   methods: MFAMethod[];
@@ -57,9 +57,9 @@ export interface MFAUserSettings {
   lastVerified: Date;
   createdAt: Date;
   updatedAt: Date;
-}
+};
 
-export interface MFAMethod {
+export type MFAMethod = {
   id: string;
   type: 'totp' | 'sms' | 'backup';
   name: string;
@@ -68,9 +68,9 @@ export interface MFAMethod {
   phoneNumber?: string;
   createdAt: Date;
   lastUsed?: Date;
-}
+};
 
-export interface TrustedDevice {
+export type TrustedDevice = {
   id: string;
   name: string;
   fingerprint: string;
@@ -80,9 +80,9 @@ export interface TrustedDevice {
   issuedAt: Date;
   expiresAt: Date;
   lastSeen: Date;
-}
+};
 
-export interface EmergencyContact {
+export type EmergencyContact = {
   id: string;
   name: string;
   relationship: string;
@@ -90,7 +90,7 @@ export interface EmergencyContact {
   email: string;
   canAuthorizeBypass: boolean;
   createdAt: Date;
-}
+};
 
 export interface MFAAuditLog {
   id: string;
@@ -980,7 +980,6 @@ createAuditLog(log: Omit<MFAAuditLog, 'id' | 'timestamp'>)
     .single();
 
   if (error) {
-    console.error('Failed to create audit log:', error);
     return '';
   }
 
@@ -1047,10 +1046,7 @@ sendSMS(phoneNumber: string, otp: string)
   // This would integrate with your SMS service (Twilio, AWS SNS, etc.)
   // For now, we'll use Supabase's built-in SMS functionality
 
-  const message = `Seu código de verificação NeonPro é: ${otp}. Válido por 5 minutos. Não compartilhe este código.`;
-
-  // In production, implement actual SMS sending
-  console.log(`SMS to ${phoneNumber}: ${message}`);
+  const _message = `Seu código de verificação NeonPro é: ${otp}. Válido por 5 minutos. Não compartilhe este código.`;
 
   // Supabase SMS integration would go here
   // await this.supabase.auth.sendOtp({ phone: phoneNumber, options: { message } });
@@ -1082,7 +1078,7 @@ ipAddress: string;
   }
 
   // Send notification to user and security team
-  const notification = {
+  const _notification = {
     to: user.email,
     subject: 'Alerta de Segurança: Bypass de MFA Utilizado',
     body: `
@@ -1101,9 +1097,6 @@ ipAddress: string;
         Equipe NeonPro Security
       `,
   };
-
-  // In production, send actual email notification
-  console.log('Emergency bypass notification:', notification);
 }
 
 /**

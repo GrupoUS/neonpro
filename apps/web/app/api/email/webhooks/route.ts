@@ -60,8 +60,7 @@ export async function POST(request: NextRequest) {
     await emailService.handleWebhook(provider, data);
 
     return NextResponse.json({ success: true });
-  } catch (error) {
-    console.error('Email webhook error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -130,8 +129,7 @@ async function verifyWebhookSignature(
       default:
         return false;
     }
-  } catch (error) {
-    console.error('Webhook signature verification error:', error);
+  } catch (_error) {
     return false;
   }
 }

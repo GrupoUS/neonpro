@@ -58,7 +58,6 @@ export async function GET(
     const { data: timeline, error: timelineError } = await query;
 
     if (timelineError) {
-      console.error('Error fetching medical timeline:', timelineError);
       return NextResponse.json(
         { error: 'Failed to fetch medical timeline' },
         { status: 500 }
@@ -87,8 +86,7 @@ export async function GET(
       },
       message: 'Medical timeline retrieved successfully',
     });
-  } catch (error) {
-    console.error('Error in GET /api/patients/[id]/timeline:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -169,7 +167,6 @@ export async function POST(
       .single();
 
     if (insertError) {
-      console.error('Error adding timeline event:', insertError);
       return NextResponse.json(
         { error: 'Failed to add timeline event' },
         { status: 500 }
@@ -180,8 +177,7 @@ export async function POST(
       event: newEvent,
       message: 'Timeline event added successfully',
     });
-  } catch (error) {
-    console.error('Error in POST /api/patients/[id]/timeline:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

@@ -50,8 +50,6 @@ const StatisticalAnalysisRequestSchema = z.object({
 
 // Error handling utility
 function handleAPIError(error: any, context: string) {
-  console.error(`Advanced Analytics API Error (${context}):`, error);
-
   if (error.code === 'PGRST301') {
     return NextResponse.json(
       { error: 'Database query failed', details: 'Invalid query parameters' },

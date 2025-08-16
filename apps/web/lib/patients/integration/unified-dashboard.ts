@@ -10,7 +10,7 @@ import type { Patient } from '@/types/patient';
 import { PatientAppointmentIntegration } from './appointment-integration';
 import { PatientTreatmentIntegration } from './treatment-integration';
 
-export interface UnifiedPatientProfile {
+export type UnifiedPatientProfile = {
   // Core patient data
   patient: Patient;
 
@@ -91,9 +91,9 @@ export interface UnifiedPatientProfile {
     progress_photos: any[];
     facial_recognition_data?: any;
   };
-}
+};
 
-export interface DashboardMetrics {
+export type DashboardMetrics = {
   patient_count: number;
   active_patients: number;
   new_patients_this_month: number;
@@ -104,7 +104,7 @@ export interface DashboardMetrics {
   appointment_utilization: number;
   treatment_completion_rate: number;
   patient_retention_rate: number;
-}
+};
 
 export class UnifiedPatientDashboard {
   /**

@@ -15,7 +15,7 @@ import { createClient } from '@supabase/supabase-js';
 import type { UserRole } from '@/types/auth';
 import { SecurityAuditLogger } from './security-audit-logger';
 
-export interface SessionState {
+export type SessionState = {
   sessionId: string;
   userId: string;
   userRole: UserRole;
@@ -52,9 +52,9 @@ export interface SessionState {
     encryptionEnabled: boolean;
     backupCount: number;
   };
-}
+};
 
-export interface SessionBackup {
+export type SessionBackup = {
   backupId: string;
   sessionId: string;
   userId: string;
@@ -69,9 +69,9 @@ export interface SessionBackup {
   checksum: string;
   recoveryPriority: 'low' | 'medium' | 'high' | 'critical';
   metadata: Record<string, any>;
-}
+};
 
-export interface RecoveryResult {
+export type RecoveryResult = {
   success: boolean;
   sessionState?: SessionState;
   recoveredData: {
@@ -94,9 +94,9 @@ export interface RecoveryResult {
   };
   warnings: string[];
   errors: string[];
-}
+};
 
-export interface PreservationConfig {
+export type PreservationConfig = {
   enabled: boolean;
   autoBackupInterval: number; // seconds
   maxBackupsPerSession: number;
@@ -121,7 +121,7 @@ export interface PreservationConfig {
     frequency: number; // hours
     maxAge: number; // days
   };
-}
+};
 
 const DEFAULT_CONFIG: PreservationConfig = {
   enabled: true,
@@ -179,26 +179,19 @@ export class SessionPreservation {
    * Initialize session preservation system
    */
   async initialize(): Promise<void> {
-    try {
-      // Load existing backups
-      await this.loadActiveBackups();
+    // Load existing backups
+    await this.loadActiveBackups();
 
-      // Start backup interval
-      this.startBackupInterval();
+    // Start backup interval
+    this.startBackupInterval();
 
-      // Start cleanup interval
-      if (this.config.cleanupSchedule.enabled) {
-        this.startCleanupInterval();
-      }
-
-      // Set up event listeners
-      this.setupEventListeners();
-
-      console.log('Session preservation system initialized');
-    } catch (error) {
-      console.error('Failed to initialize session preservation:', error);
-      throw error;
+    // Start cleanup interval
+    if (this.config.cleanupSchedule.enabled) {
+      this.startCleanupInterval();
     }
+
+    // Set up event listeners
+    this.setupEventListeners();
   }
 
   /**
@@ -208,36 +201,30 @@ export class SessionPreservation {
     sessionId: string,
     stateUpdates: Partial<SessionState['applicationState']>
   ): Promise<void> {
-    try {
-      if (
-        !this.currentSessionState ||
-        this.currentSessionState.sessionId !== sessionId
-      ) {
-        // Load or create session state
-        this.currentSessionState =
-          await this.getOrCreateSessionState(sessionId);
-      }
+    if (
+      !this.currentSessionState ||
+      this.currentSessionState.sessionId !== sessionId
+    ) {
+      // Load or create session state
+      this.currentSessionState = await this.getOrCreateSessionState(sessionId);
+    }
 
-      // Update application state
-      this.currentSessionState.applicationState = {
-        ...this.currentSessionState.applicationState,
-        ...stateUpdates,
-      };
+    // Update application state
+    this.currentSessionState.applicationState = {
+      ...this.currentSessionState.applicationState,
+      ...stateUpdates,
+    };
 
-      // Update metadata
-      this.currentSessionState.metadata.lastUpdatedAt = new Date();
-      this.currentSessionState.metadata.version++;
-      this.currentSessionState.metadata.checksum = this.calculateChecksum(
-        this.currentSessionState
-      );
+    // Update metadata
+    this.currentSessionState.metadata.lastUpdatedAt = new Date();
+    this.currentSessionState.metadata.version++;
+    this.currentSessionState.metadata.checksum = this.calculateChecksum(
+      this.currentSessionState
+    );
 
-      // Trigger backup if significant changes
-      if (this.shouldTriggerBackup(stateUpdates)) {
-        await this.createBackup(sessionId, 'automatic', 'activity');
-      }
-    } catch (error) {
-      console.error('Failed to update session state:', error);
-      throw error;
+    // Trigger backup if significant changes
+    if (this.shouldTriggerBackup(stateUpdates)) {
+      await this.createBackup(sessionId, 'automatic', 'activity');
     }
   }
 
@@ -251,7 +238,6 @@ export class SessionPreservation {
   ): Promise<SessionBackup> {
     try {
       if (this.isBackupInProgress) {
-        console.log('Backup already in progress, skipping');
         return null;
       }
 
@@ -331,9 +317,6 @@ export class SessionPreservation {
       });
 
       return backup;
-    } catch (error) {
-      console.error('Failed to create backup:', error);
-      throw error;
     } finally {
       this.isBackupInProgress = false;
     }
@@ -433,8 +416,6 @@ export class SessionPreservation {
 
       return recoveryResult;
     } catch (error) {
-      console.error('Failed to recover session:', error);
-
       return {
         success: false,
         recoveredData: {
@@ -464,26 +445,17 @@ export class SessionPreservation {
     sessionId: string,
     reason: string
   ): Promise<SessionBackup> {
-    try {
-      const backup = await this.createBackup(sessionId, 'emergency', 'error');
+    const backup = await this.createBackup(sessionId, 'emergency', 'error');
 
-      // Mark as high priority
-      backup.recoveryPriority = 'critical';
-      backup.metadata.emergencyReason = reason;
-      backup.metadata.emergencyTimestamp = new Date().toISOString();
+    // Mark as high priority
+    backup.recoveryPriority = 'critical';
+    backup.metadata.emergencyReason = reason;
+    backup.metadata.emergencyTimestamp = new Date().toISOString();
 
-      // Update stored backup
-      await this.updateBackupMetadata(backup.backupId, backup.metadata);
+    // Update stored backup
+    await this.updateBackupMetadata(backup.backupId, backup.metadata);
 
-      console.log(
-        `Emergency backup created for session ${sessionId}: ${reason}`
-      );
-
-      return backup;
-    } catch (error) {
-      console.error('Failed to create emergency backup:', error);
-      throw error;
-    }
+    return backup;
   }
 
   /**
@@ -503,8 +475,7 @@ export class SessionPreservation {
       }
 
       return (data || []).map(this.mapDatabaseToBackup);
-    } catch (error) {
-      console.error('Failed to get session backups:', error);
+    } catch (_error) {
       return [];
     }
   }
@@ -528,9 +499,7 @@ export class SessionPreservation {
           break;
         }
       }
-    } catch (error) {
-      console.error('Failed to delete backup:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -547,7 +516,6 @@ export class SessionPreservation {
         .lt('expires_at', now.toISOString());
 
       if (error) {
-        console.error('Failed to get expired backups:', error);
         return 0;
       }
 
@@ -559,11 +527,8 @@ export class SessionPreservation {
         deletedCount++;
       }
 
-      console.log(`Cleaned up ${deletedCount} expired backups`);
-
       return deletedCount;
-    } catch (error) {
-      console.error('Failed to cleanup expired backups:', error);
+    } catch (_error) {
       return 0;
     }
   }
@@ -595,8 +560,6 @@ export class SessionPreservation {
       clearInterval(this.cleanupInterval);
       this.cleanupInterval = undefined;
     }
-
-    console.log('Session preservation stopped');
   }
 
   // Private methods
@@ -610,7 +573,6 @@ export class SessionPreservation {
         .order('created_at', { ascending: false });
 
       if (error) {
-        console.error('Failed to load active backups:', error);
         return;
       }
 
@@ -621,9 +583,7 @@ export class SessionPreservation {
         sessionBackups.push(backup);
         this.activeBackups.set(backup.sessionId, sessionBackups);
       }
-    } catch (error) {
-      console.error('Failed to load active backups:', error);
-    }
+    } catch (_error) {}
   }
 
   private startBackupInterval(): void {
@@ -636,9 +596,7 @@ export class SessionPreservation {
             'interval'
           );
         }
-      } catch (error) {
-        console.error('Backup interval processing failed:', error);
-      }
+      } catch (_error) {}
     }, this.config.autoBackupInterval * 1000);
   }
 
@@ -647,9 +605,7 @@ export class SessionPreservation {
       async () => {
         try {
           await this.cleanupExpiredBackups();
-        } catch (error) {
-          console.error('Cleanup interval processing failed:', error);
-        }
+        } catch (_error) {}
       },
       this.config.cleanupSchedule.frequency * 60 * 60 * 1000
     ); // Convert hours to milliseconds
@@ -682,66 +638,60 @@ export class SessionPreservation {
   private async getOrCreateSessionState(
     sessionId: string
   ): Promise<SessionState> {
-    try {
-      // Try to load existing session state
-      const { data, error } = await this.supabase
-        .from('session_states')
-        .select('*')
-        .eq('session_id', sessionId)
-        .single();
+    // Try to load existing session state
+    const { data, error } = await this.supabase
+      .from('session_states')
+      .select('*')
+      .eq('session_id', sessionId)
+      .single();
 
-      if (data && !error) {
-        return this.mapDatabaseToSessionState(data);
-      }
-
-      // Create new session state
-      const newSessionState: SessionState = {
-        sessionId,
-        userId: '', // Will be set when user logs in
-        userRole: 'patient',
-        deviceId: '',
-        applicationState: {
-          currentRoute: '/',
-          formData: {},
-          unsavedChanges: {},
-          temporaryData: {},
-          userPreferences: {},
-          uiState: {},
-        },
-        authenticationState: {
-          accessToken: '',
-          refreshToken: '',
-          tokenExpiresAt: new Date(),
-          permissions: [],
-          lastAuthAt: new Date(),
-        },
-        securityContext: {
-          ipAddress: '',
-          userAgent: '',
-          deviceFingerprint: '',
-          securityLevel: 'medium',
-          riskScore: 0,
-          lastSecurityCheck: new Date(),
-        },
-        metadata: {
-          createdAt: new Date(),
-          lastUpdatedAt: new Date(),
-          version: 1,
-          checksum: '',
-          compressionEnabled: this.config.compressionEnabled,
-          encryptionEnabled: this.config.encryptionEnabled,
-          backupCount: 0,
-        },
-      };
-
-      newSessionState.metadata.checksum =
-        this.calculateChecksum(newSessionState);
-
-      return newSessionState;
-    } catch (error) {
-      console.error('Failed to get or create session state:', error);
-      throw error;
+    if (data && !error) {
+      return this.mapDatabaseToSessionState(data);
     }
+
+    // Create new session state
+    const newSessionState: SessionState = {
+      sessionId,
+      userId: '', // Will be set when user logs in
+      userRole: 'patient',
+      deviceId: '',
+      applicationState: {
+        currentRoute: '/',
+        formData: {},
+        unsavedChanges: {},
+        temporaryData: {},
+        userPreferences: {},
+        uiState: {},
+      },
+      authenticationState: {
+        accessToken: '',
+        refreshToken: '',
+        tokenExpiresAt: new Date(),
+        permissions: [],
+        lastAuthAt: new Date(),
+      },
+      securityContext: {
+        ipAddress: '',
+        userAgent: '',
+        deviceFingerprint: '',
+        securityLevel: 'medium',
+        riskScore: 0,
+        lastSecurityCheck: new Date(),
+      },
+      metadata: {
+        createdAt: new Date(),
+        lastUpdatedAt: new Date(),
+        version: 1,
+        checksum: '',
+        compressionEnabled: this.config.compressionEnabled,
+        encryptionEnabled: this.config.encryptionEnabled,
+        backupCount: 0,
+      },
+    };
+
+    newSessionState.metadata.checksum = this.calculateChecksum(newSessionState);
+
+    return newSessionState;
   }
 
   private shouldTriggerBackup(
@@ -797,27 +747,22 @@ export class SessionPreservation {
     backup: SessionBackup,
     backupData: string
   ): Promise<void> {
-    try {
-      await this.supabase.from('session_backups').insert({
-        backup_id: backup.backupId,
-        session_id: backup.sessionId,
-        user_id: backup.userId,
-        backup_type: backup.backupType,
-        backup_trigger: backup.backupTrigger,
-        backup_data: backupData,
-        created_at: backup.createdAt.toISOString(),
-        expires_at: backup.expiresAt.toISOString(),
-        is_compressed: backup.isCompressed,
-        is_encrypted: backup.isEncrypted,
-        size: backup.size,
-        checksum: backup.checksum,
-        recovery_priority: backup.recoveryPriority,
-        metadata: backup.metadata,
-      });
-    } catch (error) {
-      console.error('Failed to store backup:', error);
-      throw error;
-    }
+    await this.supabase.from('session_backups').insert({
+      backup_id: backup.backupId,
+      session_id: backup.sessionId,
+      user_id: backup.userId,
+      backup_type: backup.backupType,
+      backup_trigger: backup.backupTrigger,
+      backup_data: backupData,
+      created_at: backup.createdAt.toISOString(),
+      expires_at: backup.expiresAt.toISOString(),
+      is_compressed: backup.isCompressed,
+      is_encrypted: backup.isEncrypted,
+      size: backup.size,
+      checksum: backup.checksum,
+      recovery_priority: backup.recoveryPriority,
+      metadata: backup.metadata,
+    });
   }
 
   private async updateBackupMetadata(
@@ -829,9 +774,7 @@ export class SessionPreservation {
         .from('session_backups')
         .update({ metadata })
         .eq('backup_id', backupId);
-    } catch (error) {
-      console.error('Failed to update backup metadata:', error);
-    }
+    } catch (_error) {}
   }
 
   private sortBackupsByPriority(backups: SessionBackup[]): SessionBackup[] {
@@ -953,9 +896,7 @@ export class SessionPreservation {
           const parsedData = JSON.parse(localData);
           Object.assign(recoveredData, parsedData);
         }
-      } catch (error) {
-        console.error('Failed to recover from local storage:', error);
-      }
+      } catch (_error) {}
     }
 
     return {

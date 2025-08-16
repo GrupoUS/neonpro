@@ -34,7 +34,6 @@ export async function GET(request: NextRequest) {
       total: outcomes.length,
     });
   } catch (error) {
-    console.error('Error fetching treatment outcomes:', error);
     return NextResponse.json(
       {
         success: false,
@@ -76,8 +75,6 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
-
-    console.error('Error creating treatment outcome:', error);
     return NextResponse.json(
       {
         success: false,

@@ -65,7 +65,6 @@ export class ContinuousLearningSystem {
 
       return insights;
     } catch (error) {
-      console.error('Outcome processing error:', error);
       throw new Error(
         `Failed to process outcome: ${error instanceof Error ? error.message : 'Unknown error'}`
       );
@@ -125,7 +124,6 @@ export class ContinuousLearningSystem {
         ),
       };
     } catch (error) {
-      console.error('Model retraining error:', error);
       throw new Error(
         `Failed to retrain model: ${error instanceof Error ? error.message : 'Unknown error'}`
       );
@@ -174,7 +172,6 @@ export class ContinuousLearningSystem {
         generatedDate: new Date(),
       };
     } catch (error) {
-      console.error('Learning report generation error:', error);
       throw new Error(
         `Failed to generate learning report: ${error instanceof Error ? error.message : 'Unknown error'}`
       );
@@ -235,7 +232,6 @@ export class ContinuousLearningSystem {
         testResults: optimizationResults,
       };
     } catch (error) {
-      console.error('Parameter optimization error:', error);
       throw new Error(
         `Failed to optimize parameters: ${error instanceof Error ? error.message : 'Unknown error'}`
       );
@@ -306,7 +302,6 @@ export class ContinuousLearningSystem {
         dataSize: analysisData.length,
       };
     } catch (error) {
-      console.error('Feature importance analysis error:', error);
       throw new Error(
         `Failed to analyze feature importance: ${error instanceof Error ? error.message : 'Unknown error'}`
       );
@@ -368,7 +363,6 @@ export class ContinuousLearningSystem {
         analysisDate: new Date(),
       };
     } catch (error) {
-      console.error('Data drift detection error:', error);
       throw new Error(
         `Failed to detect data drift: ${error instanceof Error ? error.message : 'Unknown error'}`
       );
@@ -810,9 +804,8 @@ export class ContinuousLearningSystem {
           await this.performModelRetraining(task.modelId);
         }
         task.status = 'completed';
-      } catch (error) {
+      } catch (_error) {
         task.status = 'failed';
-        console.error('Learning task failed:', error);
       }
     }
   }
@@ -1062,7 +1055,7 @@ export class ContinuousLearningSystem {
 }
 
 // Supporting type definitions
-interface LearningTask {
+type LearningTask = {
   id: string;
   type: string;
   modelId: string;
@@ -1070,55 +1063,55 @@ interface LearningTask {
   data: any;
   createdAt: Date;
   status: string;
-}
+};
 
-interface PredictionAccuracy {
+type PredictionAccuracy = {
   hasPrediction: boolean;
   accuracyScore: number;
   predictionError: number;
   predictionBias: number;
   predictedOutcome?: any;
   actualOutcome?: PatientOutcome;
-}
+};
 
-interface LearningOpportunity {
+type LearningOpportunity = {
   type: string;
   description: string;
   priority: string;
   recommendedAction: string;
-}
+};
 
-interface PerformanceImprovement {
+type PerformanceImprovement = {
   accuracy: number;
   precision: number;
   recall: number;
   f1Score: number;
   isSignificant: boolean;
   overallImprovement: number;
-}
+};
 
-interface TrainingDataPoint {
+type TrainingDataPoint = {
   id: string;
   features: any;
   target: any;
   weight: number;
-}
+};
 
-interface FeatureDataPoint {
+type FeatureDataPoint = {
   id: string;
   features: any;
   target: any;
-}
+};
 
-interface DriftDataPoint {
+type DriftDataPoint = {
   id: string;
   features: any;
   target: any;
   timestamp: Date;
-}
+};
 
 // Additional interfaces for comprehensive system
-interface LearningReport {
+type LearningReport = {
   timeframe: string;
   reportPeriod: { start: Date; end: Date };
   performanceTrends: PerformanceTrend[];
@@ -1129,9 +1122,9 @@ interface LearningReport {
   modelUpdates: ModelUpdate[];
   dataQualityInsights: DataQualityInsight[];
   generatedDate: Date;
-}
+};
 
-interface ParameterOptimization {
+type ParameterOptimization = {
   modelId: string;
   currentParameters: ModelParameters;
   optimizedParameters: ModelParameters;
@@ -1140,9 +1133,9 @@ interface ParameterOptimization {
   updateStatus: string;
   optimizationDate: Date;
   testResults: ParameterTestResult[];
-}
+};
 
-interface FeatureImportanceAnalysis {
+type FeatureImportanceAnalysis = {
   modelId: string;
   treatmentType?: string;
   featureImportance: FeatureImportance;
@@ -1151,9 +1144,9 @@ interface FeatureImportanceAnalysis {
   recommendations: string[];
   analysisDate: Date;
   dataSize: number;
-}
+};
 
-interface DataDriftAnalysis {
+type DataDriftAnalysis = {
   modelId: string;
   overallDriftScore: number;
   featureDrift: FeatureDriftScore[];
@@ -1164,74 +1157,74 @@ interface DataDriftAnalysis {
   baselineDataSize: number;
   recentDataSize: number;
   analysisDate: Date;
-}
+};
 
 // Simple type definitions for supporting interfaces
-interface PerformanceTrend {
+type PerformanceTrend = {
   trend: string;
-}
-interface LearnedPattern {
+};
+type LearnedPattern = {
   pattern: string;
-}
-interface LearningMetrics {
+};
+type LearningMetrics = {
   modelsUpdated: number;
   accuracyImprovement: number;
   dataPointsProcessed: number;
   newPatternsIdentified: number;
-}
-interface ImprovementArea {
+};
+type ImprovementArea = {
   area: string;
-}
-interface DataQualityInsight {
+};
+type DataQualityInsight = {
   insight: string;
-}
-interface ModelParameters {
+};
+type ModelParameters = {
   [key: string]: any;
-}
-interface ParameterSearchSpace {
+};
+type ParameterSearchSpace = {
   [key: string]: any;
-}
-interface ParameterTestResult {
+};
+type ParameterTestResult = {
   parameters: ModelParameters;
   performance: number;
   validationScore: number;
-}
-interface ParameterValidationResult {
+};
+type ParameterValidationResult = {
   crossValidationScore: number;
   improvementOverBaseline: number;
-}
-interface FeatureImportance {
+};
+type FeatureImportance = {
   [key: string]: number;
-}
-interface FeatureCorrelation {
+};
+type FeatureCorrelation = {
   [key: string]: number;
-}
-interface TopFeature {
+};
+type TopFeature = {
   name: string;
   importance: number;
-}
-interface FeatureInteraction {
+};
+type FeatureInteraction = {
   feature1: string;
   feature2: string;
   interaction: number;
-}
-interface FeatureDriftScore {
+};
+type FeatureDriftScore = {
   feature: string;
   score: number;
   threshold: number;
   isDrifted: boolean;
-}
-interface TargetDriftScore {
+};
+type TargetDriftScore = {
   score: number;
   threshold: number;
   isDrifted: boolean;
-}
-interface DriftedFeature {
+};
+type DriftedFeature = {
   name: string;
   driftScore: number;
-}
-interface DriftAlert {
+};
+type DriftAlert = {
   type: string;
   severity: string;
   message: string;
-}
+};

@@ -33,7 +33,7 @@ export type AllocationType =
   | 'personal_use';
 export type ConflictSeverity = 'low' | 'medium' | 'high' | 'critical';
 
-export interface Resource {
+export type Resource = {
   id: string;
   clinic_id: string;
   name: string;
@@ -72,9 +72,9 @@ export interface Resource {
   updated_at: string;
   created_by?: string;
   updated_by?: string;
-}
+};
 
-export interface ResourceAllocation {
+export type ResourceAllocation = {
   id: string;
   resource_id: string;
   appointment_id?: string;
@@ -90,9 +90,9 @@ export interface ResourceAllocation {
   total_cost?: number;
   created_at: string;
   updated_at: string;
-}
+};
 
-export interface ResourceConflict {
+export type ResourceConflict = {
   id: string;
   resource_id: string;
   conflict_type: string;
@@ -111,9 +111,9 @@ export interface ResourceConflict {
   created_at: string;
   updated_at: string;
   created_by?: string;
-}
+};
 
-export interface AllocationRequest {
+export type AllocationRequest = {
   resource_id: string;
   appointment_id?: string;
   start_time: string;
@@ -122,9 +122,9 @@ export interface AllocationRequest {
   notes?: string;
   preparation_time?: number;
   cleanup_time?: number;
-}
+};
 
-export interface ConflictResolution {
+export type ConflictResolution = {
   strategy: string;
   alternative_resources?: string[];
   suggested_times?: { start_time: string; end_time: string }[];
@@ -133,7 +133,7 @@ export interface ConflictResolution {
     affected_appointments: string[];
     revenue_impact: number;
   };
-}
+};
 
 // =====================================================
 // Resource Manager Service
@@ -164,8 +164,7 @@ export class ResourceManager {
         throw error;
       }
       return data;
-    } catch (error) {
-      console.error('Error creating resource:', error);
+    } catch (_error) {
       throw new Error('Failed to create resource');
     }
   }
@@ -201,8 +200,7 @@ export class ResourceManager {
         throw error;
       }
       return data || [];
-    } catch (error) {
-      console.error('Error fetching resources:', error);
+    } catch (_error) {
       throw new Error('Failed to fetch resources');
     }
   }
@@ -219,8 +217,7 @@ export class ResourceManager {
         throw error;
       }
       return data;
-    } catch (error) {
-      console.error('Error fetching resource:', error);
+    } catch (_error) {
       return null;
     }
   }
@@ -241,8 +238,7 @@ export class ResourceManager {
         throw error;
       }
       return data;
-    } catch (error) {
-      console.error('Error updating resource:', error);
+    } catch (_error) {
       throw new Error('Failed to update resource');
     }
   }
@@ -263,8 +259,7 @@ export class ResourceManager {
       if (error) {
         throw error;
       }
-    } catch (error) {
-      console.error('Error updating resource status:', error);
+    } catch (_error) {
       throw new Error('Failed to update resource status');
     }
   }
@@ -279,8 +274,7 @@ export class ResourceManager {
       if (error) {
         throw error;
       }
-    } catch (error) {
-      console.error('Error deleting resource:', error);
+    } catch (_error) {
       throw new Error('Failed to delete resource');
     }
   }
@@ -293,42 +287,37 @@ export class ResourceManager {
     allocationData: AllocationRequest,
     userId: string
   ): Promise<ResourceAllocation> {
-    try {
-      // Check for conflicts first
-      const conflicts = await this.detectConflicts(
-        allocationData.resource_id,
-        allocationData.start_time,
-        allocationData.end_time
+    // Check for conflicts first
+    const conflicts = await this.detectConflicts(
+      allocationData.resource_id,
+      allocationData.start_time,
+      allocationData.end_time
+    );
+
+    if (conflicts.length > 0) {
+      throw new Error(
+        `Resource conflict detected. ${conflicts.length} overlapping allocations found.`
       );
+    }
 
-      if (conflicts.length > 0) {
-        throw new Error(
-          `Resource conflict detected. ${conflicts.length} overlapping allocations found.`
-        );
-      }
+    const { data, error } = await this.supabase
+      .from('resource_allocations')
+      .insert([
+        {
+          ...allocationData,
+          allocated_by: userId,
+          status: 'pending',
+          preparation_time: allocationData.preparation_time || 0,
+          cleanup_time: allocationData.cleanup_time || 0,
+        },
+      ])
+      .select()
+      .single();
 
-      const { data, error } = await this.supabase
-        .from('resource_allocations')
-        .insert([
-          {
-            ...allocationData,
-            allocated_by: userId,
-            status: 'pending',
-            preparation_time: allocationData.preparation_time || 0,
-            cleanup_time: allocationData.cleanup_time || 0,
-          },
-        ])
-        .select()
-        .single();
-
-      if (error) {
-        throw error;
-      }
-      return data;
-    } catch (error) {
-      console.error('Error creating allocation:', error);
+    if (error) {
       throw error;
     }
+    return data;
   }
 
   async getAllocations(
@@ -355,8 +344,7 @@ export class ResourceManager {
         throw error;
       }
       return data || [];
-    } catch (error) {
-      console.error('Error fetching allocations:', error);
+    } catch (_error) {
       throw new Error('Failed to fetch allocations');
     }
   }
@@ -377,8 +365,7 @@ export class ResourceManager {
       if (error) {
         throw error;
       }
-    } catch (error) {
-      console.error('Error updating allocation status:', error);
+    } catch (_error) {
       throw new Error('Failed to update allocation status');
     }
   }
@@ -386,8 +373,7 @@ export class ResourceManager {
   async cancelAllocation(allocationId: string): Promise<void> {
     try {
       await this.updateAllocationStatus(allocationId, 'cancelled');
-    } catch (error) {
-      console.error('Error cancelling allocation:', error);
+    } catch (_error) {
       throw new Error('Failed to cancel allocation');
     }
   }
@@ -421,8 +407,7 @@ export class ResourceManager {
         throw error;
       }
       return data || [];
-    } catch (error) {
-      console.error('Error detecting conflicts:', error);
+    } catch (_error) {
       throw new Error('Failed to detect conflicts');
     }
   }
@@ -459,8 +444,7 @@ export class ResourceManager {
         throw error;
       }
       return data;
-    } catch (error) {
-      console.error('Error creating conflict:', error);
+    } catch (_error) {
       throw new Error('Failed to create conflict record');
     }
   }
@@ -489,8 +473,7 @@ export class ResourceManager {
       if (error) {
         throw error;
       }
-    } catch (error) {
-      console.error('Error resolving conflict:', error);
+    } catch (_error) {
       throw new Error('Failed to resolve conflict');
     }
   }
@@ -531,8 +514,7 @@ export class ResourceManager {
       }
 
       return availableResources;
-    } catch (error) {
-      console.error('Error finding available resources:', error);
+    } catch (_error) {
       throw new Error('Failed to find available resources');
     }
   }
@@ -584,8 +566,7 @@ export class ResourceManager {
       return alternatives.filter(
         (resource) => resource.id !== originalResourceId
       );
-    } catch (error) {
-      console.error('Error suggesting alternatives:', error);
+    } catch (_error) {
       throw new Error('Failed to suggest alternative resources');
     }
   }
@@ -665,8 +646,7 @@ export class ResourceManager {
         recommendations,
         overall_efficiency: Math.round(totalUtilization / resources.length),
       };
-    } catch (error) {
-      console.error('Error optimizing resource allocation:', error);
+    } catch (_error) {
       throw new Error('Failed to optimize resource allocation');
     }
   }
@@ -709,8 +689,7 @@ export class ResourceManager {
           appointment_count: item.appointment_count,
         })) || []
       );
-    } catch (error) {
-      console.error('Error fetching utilization data:', error);
+    } catch (_error) {
       throw new Error('Failed to fetch utilization data');
     }
   }
@@ -731,8 +710,7 @@ export class ResourceManager {
         throw error;
       }
       return data || [];
-    } catch (error) {
-      console.error('Error fetching conflict history:', error);
+    } catch (_error) {
       throw new Error('Failed to fetch conflict history');
     }
   }

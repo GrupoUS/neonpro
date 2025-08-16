@@ -13,7 +13,7 @@ import { createClient } from '@/lib/supabase/client';
 
 // ==================== TYPES & INTERFACES ====================
 
-export interface RetentionPolicy {
+export type RetentionPolicy = {
   table: string;
   retention_period_days: number;
   anonymize_after_days?: number;
@@ -24,9 +24,9 @@ export interface RetentionPolicy {
     | 'financial_data'
     | 'operational_data'
     | 'audit_logs';
-}
+};
 
-export interface ComplianceRecord {
+export type ComplianceRecord = {
   id: string;
   table_name: string;
   record_id: string;
@@ -35,14 +35,14 @@ export interface ComplianceRecord {
   reason: string;
   compliance_basis: string;
   operator_id?: string;
-}
+};
 
-export interface AnonymizationRule {
+export type AnonymizationRule = {
   field_name: string;
   anonymization_type: 'hash' | 'mask' | 'remove' | 'generalize';
   mask_pattern?: string;
   generalization_level?: 'city' | 'state' | 'country' | 'age_range';
-}
+};
 
 // ==================== RETENTION POLICIES CONFIGURATION ====================
 
@@ -168,10 +168,6 @@ export class DataRetentionEngine {
 
     try {
       for (const policy of RETENTION_POLICIES) {
-        console.log(
-          `🔄 Processando política de retenção para tabela: ${policy.table}`
-        );
-
         // Anonimizar dados que passaram do período de anonimização
         if (policy.anonymize_after_days) {
           const anonymizedRecords = await this.anonymizeExpiredData(policy);
@@ -181,10 +177,6 @@ export class DataRetentionEngine {
         // Deletar dados que passaram do período de retenção
         const deletedRecords = await this.deleteExpiredData(policy);
         complianceRecords.push(...deletedRecords);
-
-        console.log(
-          `✅ Política aplicada para ${policy.table}: ${anonymizedRecords?.length || 0} anonimizados, ${deletedRecords.length} deletados`
-        );
       }
 
       // Registrar compliance records no audit log
@@ -192,7 +184,6 @@ export class DataRetentionEngine {
 
       return complianceRecords;
     } catch (error) {
-      console.error('❌ Erro ao executar políticas de retenção:', error);
       throw new Error(`Data retention execution failed: ${error}`);
     }
   }
@@ -209,68 +200,55 @@ export class DataRetentionEngine {
 
     const cutoffDate = new Date();
     cutoffDate.setDate(cutoffDate.getDate() - policy.anonymize_after_days);
+    // Buscar registros que precisam ser anonimizados
+    const { data: records, error } = await this.supabase
+      .from(policy.table as any)
+      .select('*')
+      .lt('created_at', cutoffDate.toISOString())
+      .is('anonymized_at', null);
 
-    try {
-      // Buscar registros que precisam ser anonimizados
-      const { data: records, error } = await this.supabase
-        .from(policy.table as any)
-        .select('*')
-        .lt('created_at', cutoffDate.toISOString())
-        .is('anonymized_at', null);
-
-      if (error) {
-        throw error;
-      }
-      if (!records || records.length === 0) {
-        return [];
-      }
-
-      const complianceRecords: ComplianceRecord[] = [];
-      const anonymizationRules = ANONYMIZATION_RULES[policy.table] || [];
-
-      for (const record of records) {
-        const anonymizedData = this.applyAnonymization(
-          record,
-          anonymizationRules
-        );
-
-        // Atualizar registro com dados anonimizados
-        const { error: updateError } = await this.supabase
-          .from(policy.table as any)
-          .update({
-            ...anonymizedData,
-            anonymized_at: new Date().toISOString(),
-            anonymization_reason: `Automatic anonymization after ${policy.anonymize_after_days} days`,
-          })
-          .eq('id', record.id);
-
-        if (updateError) {
-          console.error(
-            `❌ Erro ao anonimizar registro ${record.id}:`,
-            updateError
-          );
-          continue;
-        }
-
-        complianceRecords.push({
-          id: crypto.randomUUID(),
-          table_name: policy.table,
-          record_id: record.id,
-          action: 'anonymized',
-          timestamp: new Date().toISOString(),
-          reason: `Automatic anonymization after ${policy.anonymize_after_days} days`,
-          compliance_basis: 'LGPD Art. 16 - Data minimization principle',
-        });
-      }
-
-      return complianceRecords;
-    } catch (error) {
-      console.error(
-        `❌ Erro ao anonimizar dados da tabela ${policy.table}:`,
-        error
-      );
+    if (error) {
       throw error;
     }
+    if (!records || records.length === 0) {
+      return [];
+    }
+
+    const complianceRecords: ComplianceRecord[] = [];
+    const anonymizationRules = ANONYMIZATION_RULES[policy.table] || [];
+
+    for (const record of records) {
+      const anonymizedData = this.applyAnonymization(
+        record,
+        anonymizationRules
+      );
+
+      // Atualizar registro com dados anonimizados
+      const { error: updateError } = await this.supabase
+        .from(policy.table as any)
+        .update({
+          ...anonymizedData,
+          anonymized_at: new Date().toISOString(),
+          anonymization_reason: `Automatic anonymization after ${policy.anonymize_after_days} days`,
+        })
+        .eq('id', record.id);
+
+      if (updateError) {
+        continue;
+      }
+
+      complianceRecords.push({
+        id: crypto.randomUUID(),
+        table_name: policy.table,
+        record_id: record.id,
+        action: 'anonymized',
+        timestamp: new Date().toISOString(),
+        reason: `Automatic anonymization after ${policy.anonymize_after_days} days`,
+        compliance_basis: 'LGPD Art. 16 - Data minimization principle',
+      });
+    }
+
+    return complianceRecords;
   }
 
   /**
@@ -281,54 +259,45 @@ export class DataRetentionEngine {
   ): Promise<ComplianceRecord[]> {
     const cutoffDate = new Date();
     cutoffDate.setDate(cutoffDate.getDate() - policy.delete_after_days);
-
-    try {
-      // Para audit logs, nunca deletar completamente
-      if (policy.compliance_category === 'audit_logs') {
-        return [];
-      }
-
-      // Buscar registros que precisam ser deletados
-      const { data: records, error: selectError } = await this.supabase
-        .from(policy.table as any)
-        .select('id')
-        .lt('created_at', cutoffDate.toISOString());
-
-      if (selectError) {
-        throw selectError;
-      }
-      if (!records || records.length === 0) {
-        return [];
-      }
-
-      // Deletar registros expirados
-      const { error: deleteError } = await this.supabase
-        .from(policy.table as any)
-        .delete()
-        .lt('created_at', cutoffDate.toISOString());
-
-      if (deleteError) {
-        throw deleteError;
-      }
-
-      const complianceRecords: ComplianceRecord[] = records.map((record) => ({
-        id: crypto.randomUUID(),
-        table_name: policy.table,
-        record_id: record.id,
-        action: 'deleted',
-        timestamp: new Date().toISOString(),
-        reason: `Automatic deletion after ${policy.delete_after_days} days retention period`,
-        compliance_basis: 'LGPD Art. 16 - Storage limitation principle',
-      }));
-
-      return complianceRecords;
-    } catch (error) {
-      console.error(
-        `❌ Erro ao deletar dados expirados da tabela ${policy.table}:`,
-        error
-      );
-      throw error;
+    // Para audit logs, nunca deletar completamente
+    if (policy.compliance_category === 'audit_logs') {
+      return [];
     }
+
+    // Buscar registros que precisam ser deletados
+    const { data: records, error: selectError } = await this.supabase
+      .from(policy.table as any)
+      .select('id')
+      .lt('created_at', cutoffDate.toISOString());
+
+    if (selectError) {
+      throw selectError;
+    }
+    if (!records || records.length === 0) {
+      return [];
+    }
+
+    // Deletar registros expirados
+    const { error: deleteError } = await this.supabase
+      .from(policy.table as any)
+      .delete()
+      .lt('created_at', cutoffDate.toISOString());
+
+    if (deleteError) {
+      throw deleteError;
+    }
+
+    const complianceRecords: ComplianceRecord[] = records.map((record) => ({
+      id: crypto.randomUUID(),
+      table_name: policy.table,
+      record_id: record.id,
+      action: 'deleted',
+      timestamp: new Date().toISOString(),
+      reason: `Automatic deletion after ${policy.delete_after_days} days retention period`,
+      compliance_basis: 'LGPD Art. 16 - Storage limitation principle',
+    }));
+
+    return complianceRecords;
   }
 
   /**
@@ -419,12 +388,9 @@ export class DataRetentionEngine {
         .insert(complianceRecords);
 
       if (error) {
-        console.error('❌ Erro ao registrar compliance actions:', error);
         // Não throw error aqui para não interromper o processo de retenção
       }
-    } catch (error) {
-      console.error('❌ Erro ao fazer log de compliance actions:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -443,64 +409,53 @@ export class DataRetentionEngine {
         `Política de retenção não encontrada para tabela: ${tableName}`
       );
     }
+    // Contar total de registros
+    const { count: totalRecords } = await this.supabase
+      .from(policy.table as any)
+      .select('*', { count: 'exact', head: true });
 
-    try {
-      // Contar total de registros
-      const { count: totalRecords } = await this.supabase
-        .from(policy.table as any)
-        .select('*', { count: 'exact', head: true });
-
-      // Contar registros que precisam ser anonimizados
-      let recordsNeedAnonymization = 0;
-      if (policy.anonymize_after_days) {
-        const anonymizationCutoff = new Date();
-        anonymizationCutoff.setDate(
-          anonymizationCutoff.getDate() - policy.anonymize_after_days
-        );
-
-        const { count } = await this.supabase
-          .from(policy.table as any)
-          .select('*', { count: 'exact', head: true })
-          .lt('created_at', anonymizationCutoff.toISOString())
-          .is('anonymized_at', null);
-
-        recordsNeedAnonymization = count || 0;
-      }
-
-      // Contar registros que precisam ser deletados
-      const deletionCutoff = new Date();
-      deletionCutoff.setDate(
-        deletionCutoff.getDate() - policy.delete_after_days
+    // Contar registros que precisam ser anonimizados
+    let recordsNeedAnonymization = 0;
+    if (policy.anonymize_after_days) {
+      const anonymizationCutoff = new Date();
+      anonymizationCutoff.setDate(
+        anonymizationCutoff.getDate() - policy.anonymize_after_days
       );
 
-      const { count: recordsNeedDeletion } = await this.supabase
+      const { count } = await this.supabase
         .from(policy.table as any)
         .select('*', { count: 'exact', head: true })
-        .lt('created_at', deletionCutoff.toISOString());
+        .lt('created_at', anonymizationCutoff.toISOString())
+        .is('anonymized_at', null);
 
-      const compliancePercentage = totalRecords
-        ? Math.round(
-            (1 -
-              (recordsNeedAnonymization + (recordsNeedDeletion || 0)) /
-                totalRecords) *
-              100
-          )
-        : 100;
-
-      return {
-        table: tableName,
-        total_records: totalRecords || 0,
-        records_need_anonymization: recordsNeedAnonymization,
-        records_need_deletion: recordsNeedDeletion || 0,
-        compliance_percentage: compliancePercentage,
-      };
-    } catch (error) {
-      console.error(
-        `❌ Erro ao verificar compliance status para ${tableName}:`,
-        error
-      );
-      throw error;
+      recordsNeedAnonymization = count || 0;
     }
+
+    // Contar registros que precisam ser deletados
+    const deletionCutoff = new Date();
+    deletionCutoff.setDate(deletionCutoff.getDate() - policy.delete_after_days);
+
+    const { count: recordsNeedDeletion } = await this.supabase
+      .from(policy.table as any)
+      .select('*', { count: 'exact', head: true })
+      .lt('created_at', deletionCutoff.toISOString());
+
+    const compliancePercentage = totalRecords
+      ? Math.round(
+          (1 -
+            (recordsNeedAnonymization + (recordsNeedDeletion || 0)) /
+              totalRecords) *
+            100
+        )
+      : 100;
+
+    return {
+      table: tableName,
+      total_records: totalRecords || 0,
+      records_need_anonymization: recordsNeedAnonymization,
+      records_need_deletion: recordsNeedDeletion || 0,
+      compliance_percentage: compliancePercentage,
+    };
   }
 }
 
@@ -521,16 +476,11 @@ export async function executeAutomatedCleanup(): Promise<{
   const errors: string[] = [];
 
   try {
-    console.log('🚀 Iniciando limpeza automática de dados...');
-
     const retentionEngine = new DataRetentionEngine();
     const complianceRecords = await retentionEngine.executeRetentionPolicies();
 
     const endTime = new Date();
     const executionTime = `${endTime.getTime() - startTime.getTime()}ms`;
-
-    console.log(`✅ Limpeza automática concluída em ${executionTime}`);
-    console.log(`📊 Total de ações de compliance: ${complianceRecords.length}`);
 
     return {
       success: true,
@@ -543,8 +493,6 @@ export async function executeAutomatedCleanup(): Promise<{
     const errorMessage =
       error instanceof Error ? error.message : 'Unknown error';
     errors.push(errorMessage);
-
-    console.error('❌ Erro na limpeza automática:', error);
 
     return {
       success: false,

@@ -53,7 +53,6 @@ export async function GET(
       .single();
 
     if (profileError) {
-      console.error('Error fetching patient profile:', profileError);
       return NextResponse.json(
         { error: 'Failed to fetch patient profile' },
         { status: 500 }
@@ -64,8 +63,7 @@ export async function GET(
       profile,
       message: 'Patient profile retrieved successfully',
     });
-  } catch (error) {
-    console.error('Error in GET /api/patients/[id]/profile:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -141,7 +139,6 @@ export async function PUT(
       .single();
 
     if (updateError) {
-      console.error('Error updating patient profile:', updateError);
       return NextResponse.json(
         { error: 'Failed to update patient profile' },
         { status: 500 }
@@ -167,7 +164,6 @@ export async function PUT(
         );
 
       if (contactsError) {
-        console.error('Error updating emergency contacts:', contactsError);
       }
     }
 
@@ -175,8 +171,7 @@ export async function PUT(
       profile: updatedProfile,
       message: 'Patient profile updated successfully',
     });
-  } catch (error) {
-    console.error('Error in PUT /api/patients/[id]/profile:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

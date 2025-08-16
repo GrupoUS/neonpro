@@ -35,7 +35,6 @@ export async function GET(
       data: campaign,
     });
   } catch (error) {
-    console.error(`GET /api/marketing/campaigns/${params.id} error:`, error);
     return NextResponse.json(
       {
         success: false,
@@ -97,7 +96,6 @@ export async function PUT(
       message: 'Campaign updated successfully',
     });
   } catch (error) {
-    console.error(`PUT /api/marketing/campaigns/${params.id} error:`, error);
     return NextResponse.json(
       {
         success: false,
@@ -153,7 +151,6 @@ export async function DELETE(
       message: 'Campaign deleted successfully',
     });
   } catch (error) {
-    console.error(`DELETE /api/marketing/campaigns/${params.id} error:`, error);
     return NextResponse.json(
       {
         success: false,

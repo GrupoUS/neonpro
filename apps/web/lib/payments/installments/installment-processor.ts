@@ -7,7 +7,7 @@ import { addDays, format, isBefore } from 'date-fns';
 import Stripe from 'stripe';
 
 // Types
-interface InstallmentProcessorConfig {
+type InstallmentProcessorConfig = {
   supabaseUrl: string;
   supabaseKey: string;
   stripeSecretKey: string;
@@ -15,18 +15,18 @@ interface InstallmentProcessorConfig {
   retryAttempts?: number;
   lateFeePercentage?: number;
   gracePeriodDays?: number;
-}
+};
 
-interface ProcessingResult {
+type ProcessingResult = {
   success: boolean;
   installmentId: string;
   paymentIntentId?: string;
   error?: string;
   amount?: number;
   lateFee?: number;
-}
+};
 
-interface BulkProcessingResult {
+type BulkProcessingResult = {
   totalProcessed: number;
   successful: number;
   failed: number;
@@ -36,9 +36,9 @@ interface BulkProcessingResult {
     totalLateFees: number;
     errors: string[];
   };
-}
+};
 
-interface OverdueInstallment {
+type OverdueInstallment = {
   id: string;
   payment_plan_id: string;
   customer_id: string;
@@ -50,9 +50,9 @@ interface OverdueInstallment {
   days_overdue: number;
   late_fee: number;
   escalation_level?: number;
-}
+};
 
-interface PaymentMethodInfo {
+type PaymentMethodInfo = {
   id: string;
   type: string;
   card?: {
@@ -61,7 +61,7 @@ interface PaymentMethodInfo {
     exp_month: number;
     exp_year: number;
   };
-}
+};
 
 export class InstallmentProcessor {
   private readonly supabase;
@@ -213,8 +213,6 @@ export class InstallmentProcessor {
       }
       throw new Error(`Payment failed with status: ${paymentIntent.status}`);
     } catch (error) {
-      console.error('Error processing installment payment:', error);
-
       return {
         success: false,
         installmentId,
@@ -366,8 +364,6 @@ export class InstallmentProcessor {
       const installmentIds = overdueInstallments.map((i) => i.id);
       return await this.processBulkInstallments(installmentIds);
     } catch (error) {
-      console.error('Error processing overdue installments:', error);
-
       return {
         totalProcessed: 0,
         successful: 0,
@@ -463,8 +459,7 @@ export class InstallmentProcessor {
             }
           : undefined,
       };
-    } catch (error) {
-      console.error('Error getting default payment method:', error);
+    } catch (_error) {
       return null;
     }
   }
@@ -487,8 +482,6 @@ export class InstallmentProcessor {
         errors: [],
       };
     } catch (error) {
-      console.error('Error updating overdue status:', error);
-
       return {
         updated: 0,
         errors: [error instanceof Error ? error.message : 'Unknown error'],
@@ -500,29 +493,24 @@ export class InstallmentProcessor {
    * Get processing statistics
    */
   async getProcessingStats(dateRange?: { from: Date; to: Date }) {
-    try {
-      let query = this.supabase
-        .from('payment_performance_metrics')
-        .select('*')
-        .order('month', { ascending: false });
+    let query = this.supabase
+      .from('payment_performance_metrics')
+      .select('*')
+      .order('month', { ascending: false });
 
-      if (dateRange) {
-        query = query
-          .gte('month', format(dateRange.from, 'yyyy-MM-dd'))
-          .lte('month', format(dateRange.to, 'yyyy-MM-dd'));
-      }
-
-      const { data, error } = await query.limit(12);
-
-      if (error) {
-        throw new Error(`Failed to get processing stats: ${error.message}`);
-      }
-
-      return data || [];
-    } catch (error) {
-      console.error('Error getting processing stats:', error);
-      throw error;
+    if (dateRange) {
+      query = query
+        .gte('month', format(dateRange.from, 'yyyy-MM-dd'))
+        .lte('month', format(dateRange.to, 'yyyy-MM-dd'));
     }
+
+    const { data, error } = await query.limit(12);
+
+    if (error) {
+      throw new Error(`Failed to get processing stats: ${error.message}`);
+    }
+
+    return data || [];
   }
 
   /**
@@ -558,12 +546,7 @@ export class InstallmentProcessor {
           await this.stripe.paymentIntents.cancel(
             installment.stripe_payment_intent_id
           );
-        } catch (cancelError) {
-          console.warn(
-            'Could not cancel previous payment intent:',
-            cancelError
-          );
-        }
+        } catch (_cancelError) {}
       }
 
       // Process the payment again
@@ -573,8 +556,6 @@ export class InstallmentProcessor {
         installment.payment_plans.customers.stripe_customer_id
       );
     } catch (error) {
-      console.error('Error retrying failed payment:', error);
-
       return {
         success: false,
         installmentId,
@@ -587,32 +568,26 @@ export class InstallmentProcessor {
    * Handle Stripe webhook events
    */
   async handleWebhookEvent(event: Stripe.Event): Promise<void> {
-    try {
-      switch (event.type) {
-        case 'payment_intent.succeeded':
-          await this.handlePaymentIntentSucceeded(
-            event.data.object as Stripe.PaymentIntent
-          );
-          break;
+    switch (event.type) {
+      case 'payment_intent.succeeded':
+        await this.handlePaymentIntentSucceeded(
+          event.data.object as Stripe.PaymentIntent
+        );
+        break;
 
-        case 'payment_intent.payment_failed':
-          await this.handlePaymentIntentFailed(
-            event.data.object as Stripe.PaymentIntent
-          );
-          break;
+      case 'payment_intent.payment_failed':
+        await this.handlePaymentIntentFailed(
+          event.data.object as Stripe.PaymentIntent
+        );
+        break;
 
-        case 'payment_intent.canceled':
-          await this.handlePaymentIntentCanceled(
-            event.data.object as Stripe.PaymentIntent
-          );
-          break;
+      case 'payment_intent.canceled':
+        await this.handlePaymentIntentCanceled(
+          event.data.object as Stripe.PaymentIntent
+        );
+        break;
 
-        default:
-          console.log(`Unhandled event type: ${event.type}`);
-      }
-    } catch (error) {
-      console.error('Error handling webhook event:', error);
-      throw error;
+      default:
     }
   }
 
@@ -651,7 +626,6 @@ export class InstallmentProcessor {
         .eq('id', installmentId);
 
       if (error) {
-        console.error('Error updating failed installment:', error);
       }
     }
   }
@@ -676,7 +650,6 @@ export class InstallmentProcessor {
         .eq('id', installmentId);
 
       if (error) {
-        console.error('Error updating canceled installment:', error);
       }
     }
   }

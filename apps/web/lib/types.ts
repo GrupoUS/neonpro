@@ -44,15 +44,15 @@ export interface ProductWithTenant extends Product {
 // =============================================================================================
 
 // Standard API response wrapper
-export interface ApiResponse<T = any> {
+export type ApiResponse<T = any> = {
   success: boolean;
   data?: T;
   error?: string;
   message?: string;
-}
+};
 
 // Paginated response
-export interface PaginatedResponse<T = any> {
+export type PaginatedResponse<T = any> = {
   success: boolean;
   data: T[];
   pagination: {
@@ -63,7 +63,7 @@ export interface PaginatedResponse<T = any> {
     hasNext: boolean;
     hasPrev: boolean;
   };
-}
+};
 
 // Tenant list response
 export interface TenantsResponse
@@ -74,13 +74,13 @@ export interface TenantsResponse
 // =============================================================================================
 
 // Tenant creation form
-export interface CreateTenantForm {
+export type CreateTenantForm = {
   name: string;
   slug: string;
   description?: string;
   subscriptionPlan: SubscriptionPlan;
   subscriptionStatus: SubscriptionStatus;
-}
+};
 
 // Tenant update form
 export interface UpdateTenantForm extends Partial<CreateTenantForm> {
@@ -88,13 +88,13 @@ export interface UpdateTenantForm extends Partial<CreateTenantForm> {
 }
 
 // Product creation form
-export interface CreateProductForm {
+export type CreateProductForm = {
   name: string;
   description?: string;
   price: number;
   category: string;
   tenantId: string;
-}
+};
 
 // Product update form
 export interface UpdateProductForm extends Partial<CreateProductForm> {
@@ -102,12 +102,12 @@ export interface UpdateProductForm extends Partial<CreateProductForm> {
 }
 
 // Profile creation form
-export interface CreateProfileForm {
+export type CreateProfileForm = {
   name: string;
   email: string;
   role: string;
   tenantId: string;
-}
+};
 
 // Profile update form
 export interface UpdateProfileForm extends Partial<CreateProfileForm> {
@@ -122,62 +122,62 @@ export interface UpdateProfileForm extends Partial<CreateProfileForm> {
 export type LoadingState = 'idle' | 'loading' | 'success' | 'error';
 
 // Filter options for tenant list
-export interface TenantFilters {
+export type TenantFilters = {
   search?: string;
   subscriptionPlan?: SubscriptionPlan;
   subscriptionStatus?: SubscriptionStatus;
   sortBy?: 'name' | 'createdAt' | 'updatedAt';
   sortOrder?: 'asc' | 'desc';
-}
+};
 
 // Component props for TenantList
-export interface TenantListProps {
+export type TenantListProps = {
   initialTenants?: TenantWithProducts[];
   filters?: TenantFilters;
   onTenantSelect?: (tenant: TenantWithProducts) => void;
-}
+};
 
 // =============================================================================================
 // 🔐 AUTH TYPES
 // =============================================================================================
 
 // User session
-export interface UserSession {
+export type UserSession = {
   id: string;
   email: string;
   name: string;
   role: string;
   tenantId?: string;
   tenant?: Tenant;
-}
+};
 
 // Auth context
-export interface AuthContextType {
+export type AuthContextType = {
   user: UserSession | null;
   loading: boolean;
   signIn: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
   signUp: (email: string, password: string, name: string) => Promise<void>;
-}
+};
 
 // =============================================================================================
 // 📊 ANALYTICS TYPES
 // =============================================================================================
 
 // Tenant statistics
-export interface TenantStats {
+export type TenantStats = {
   totalProducts: number;
   totalProfiles: number;
   revenue: number;
   growth: number;
-}
+};
 
 // Dashboard data
-export interface DashboardData {
+export type DashboardData = {
   tenantStats: TenantStats;
   recentProducts: Product[];
   recentProfiles: Profile[];
-}
+};
 
 // =============================================================================================
 // 🛠️ UTILITY TYPES
@@ -193,26 +193,26 @@ export type Timestamp = Date | string;
 export type Status = 'active' | 'inactive' | 'pending' | 'suspended';
 
 // Generic error type
-export interface AppError {
+export type AppError = {
   code: string;
   message: string;
   details?: any;
-}
+};
 
 // Generic success response
-export interface SuccessResponse<T = any> {
+export type SuccessResponse<T = any> = {
   success: true;
   data: T;
   message?: string;
-}
+};
 
 // Generic error response
-export interface ErrorResponse {
+export type ErrorResponse = {
   success: false;
   error: string;
   code?: string;
   details?: any;
-}
+};
 
 // Union type for API responses
 export type APIResponse<T = any> = SuccessResponse<T> | ErrorResponse;

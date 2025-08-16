@@ -84,7 +84,6 @@ export async function getInventoryItems(filters?: {
       total_count: count || data?.length || 0,
     };
   } catch (error) {
-    console.error('Error fetching inventory items:', error);
     return {
       success: false,
       data: [],
@@ -120,7 +119,6 @@ export async function getInventoryItemById(
       timestamp: new Date().toISOString(),
     };
   } catch (error) {
-    console.error('Error fetching inventory item:', error);
     return {
       success: false,
       data: null,
@@ -158,7 +156,6 @@ export async function getInventoryItemByBarcode(
       timestamp: new Date().toISOString(),
     };
   } catch (error) {
-    console.error('Error fetching inventory item by barcode:', error);
     return {
       success: false,
       data: null,
@@ -200,7 +197,6 @@ export async function createInventoryItem(
       timestamp: new Date().toISOString(),
     };
   } catch (error) {
-    console.error('Error creating inventory item:', error);
     return {
       success: false,
       data: null,
@@ -243,7 +239,6 @@ export async function updateInventoryItem(
       timestamp: new Date().toISOString(),
     };
   } catch (error) {
-    console.error('Error updating inventory item:', error);
     return {
       success: false,
       data: null,
@@ -298,7 +293,6 @@ export async function updateStockLevel(
       timestamp: new Date().toISOString(),
     };
   } catch (error) {
-    console.error('Error updating stock level:', error);
     return {
       success: false,
       data: false,
@@ -367,7 +361,6 @@ export async function getStockMovements(filters?: {
       timestamp: new Date().toISOString(),
     };
   } catch (error) {
-    console.error('Error fetching stock movements:', error);
     return {
       success: false,
       data: [],
@@ -424,7 +417,6 @@ export async function getStockAlerts(filters?: {
       timestamp: new Date().toISOString(),
     };
   } catch (error) {
-    console.error('Error fetching stock alerts:', error);
     return {
       success: false,
       data: [],
@@ -461,7 +453,6 @@ export async function resolveStockAlert(
       timestamp: new Date().toISOString(),
     };
   } catch (error) {
-    console.error('Error resolving stock alert:', error);
     return {
       success: false,
       data: false,
@@ -507,7 +498,6 @@ export async function createBarcodeSession(
       timestamp: new Date().toISOString(),
     };
   } catch (error) {
-    console.error('Error creating barcode session:', error);
     return {
       success: false,
       data: null,
@@ -561,7 +551,6 @@ export async function addScannedItem(
       timestamp: new Date().toISOString(),
     };
   } catch (error) {
-    console.error('Error adding scanned item:', error);
     return {
       success: false,
       data: null,
@@ -604,7 +593,6 @@ export async function completeBarcodeSession(
       timestamp: new Date().toISOString(),
     };
   } catch (error) {
-    console.error('Error completing barcode session:', error);
     return {
       success: false,
       data: false,
@@ -638,7 +626,6 @@ export async function getInventoryCategories(): Promise<
       timestamp: new Date().toISOString(),
     };
   } catch (error) {
-    console.error('Error fetching inventory categories:', error);
     return {
       success: false,
       data: [],
@@ -668,7 +655,6 @@ export async function getInventoryLocations(): Promise<
       timestamp: new Date().toISOString(),
     };
   } catch (error) {
-    console.error('Error fetching inventory locations:', error);
     return {
       success: false,
       data: [],

@@ -12,7 +12,6 @@ export async function GET(_request: NextRequest) {
       data: stats,
     });
   } catch (error) {
-    console.error('Error fetching provider stats:', error);
     return NextResponse.json(
       {
         success: false,

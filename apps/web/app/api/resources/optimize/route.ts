@@ -53,7 +53,6 @@ export async function POST(request: NextRequest) {
       message: 'Allocation suggestions generated successfully',
     });
   } catch (error) {
-    console.error('Error generating allocation suggestions:', error);
     return NextResponse.json(
       {
         error: 'Failed to generate allocation suggestions',
@@ -108,7 +107,6 @@ export async function GET(request: NextRequest) {
       message: 'Staff workload optimization completed',
     });
   } catch (error) {
-    console.error('Error optimizing staff workload:', error);
     return NextResponse.json(
       {
         error: 'Failed to optimize staff workload',

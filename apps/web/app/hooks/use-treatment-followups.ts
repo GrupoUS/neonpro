@@ -94,7 +94,6 @@ export function useCreateFollowup() {
       toast.success('Follow-up criado com sucesso!');
     },
     onError: (error: Error) => {
-      console.error('Error creating follow-up:', error);
       toast.error(`Erro ao criar follow-up: ${error.message}`);
     },
   });
@@ -128,7 +127,6 @@ export function useUpdateFollowup() {
       toast.success('Follow-up atualizado com sucesso!');
     },
     onError: (error: Error) => {
-      console.error('Error updating follow-up:', error);
       toast.error(`Erro ao atualizar follow-up: ${error.message}`);
     },
   });
@@ -153,7 +151,6 @@ export function useDeleteFollowup() {
       toast.success('Follow-up excluído com sucesso!');
     },
     onError: (error: Error) => {
-      console.error('Error deleting follow-up:', error);
       toast.error(`Erro ao excluir follow-up: ${error.message}`);
     },
   });
@@ -182,7 +179,6 @@ export function useCompleteFollowup() {
       toast.success('Follow-up marcado como concluído!');
     },
     onError: (error: Error) => {
-      console.error('Error completing follow-up:', error);
       toast.error(`Erro ao concluir follow-up: ${error.message}`);
     },
   });
@@ -228,7 +224,6 @@ export function useCreateFollowupTemplate() {
       toast.success('Template de follow-up criado com sucesso!');
     },
     onError: (error: Error) => {
-      console.error('Error creating follow-up template:', error);
       toast.error(`Erro ao criar template: ${error.message}`);
     },
   });
@@ -261,7 +256,6 @@ export function useUpdateFollowupTemplate() {
       toast.success('Template atualizado com sucesso!');
     },
     onError: (error: Error) => {
-      console.error('Error updating follow-up template:', error);
       toast.error(`Erro ao atualizar template: ${error.message}`);
     },
   });
@@ -307,7 +301,6 @@ export function useCreateTreatmentProtocol() {
       toast.success('Protocolo de tratamento criado com sucesso!');
     },
     onError: (error: Error) => {
-      console.error('Error creating treatment protocol:', error);
       toast.error(`Erro ao criar protocolo: ${error.message}`);
     },
   });

@@ -69,8 +69,6 @@ export async function GET(
 
     return NextResponse.json(paymentStatus);
   } catch (error) {
-    console.error('PIX payment status error:', error);
-
     return NextResponse.json(
       {
         error: 'Internal server error',

@@ -8,7 +8,7 @@ import { z } from 'zod';
 import { createClient } from '@/app/utils/supabase/client';
 
 // Core Barcode/QR Types
-export interface BarcodeData {
+export type BarcodeData = {
   id: string;
   item_id: string;
   barcode: string;
@@ -20,9 +20,9 @@ export interface BarcodeData {
   location_id?: string;
   created_at: string;
   updated_at: string;
-}
+};
 
-export interface ScanResult {
+export type ScanResult = {
   success: boolean;
   data?: {
     value: string;
@@ -40,9 +40,9 @@ export interface ScanResult {
     confidence: number;
     device_info: string;
   };
-}
+};
 
-export interface BarcodeGenerationOptions {
+export type BarcodeGenerationOptions = {
   item_id: string;
   barcode_type: 'EAN13' | 'CODE128' | 'CODE39';
   include_qr: boolean;
@@ -50,9 +50,9 @@ export interface BarcodeGenerationOptions {
   expiration_date?: string;
   location_id?: string;
   custom_data?: Record<string, any>;
-}
+};
 
-export interface QRCodeData {
+export type QRCodeData = {
   item_id: string;
   item_name: string;
   sku: string;
@@ -65,9 +65,9 @@ export interface QRCodeData {
     name: string;
     id: string;
   };
-}
+};
 
-export interface BulkScanOperation {
+export type BulkScanOperation = {
   id: string;
   operation_type:
     | 'stock_count'
@@ -83,7 +83,7 @@ export interface BulkScanOperation {
   started_at: string;
   completed_at?: string;
   results: ScanResult[];
-}
+};
 
 // Validation Schemas
 export const barcodeDataSchema = z.object({
@@ -175,7 +175,6 @@ export class BarcodeService {
         .single();
 
       if (error) {
-        console.error('Erro ao salvar barcode:', error);
         return { success: false, error: 'Falha ao salvar código de barras' };
       }
 
@@ -185,7 +184,6 @@ export class BarcodeService {
         qr_code: qr_code || undefined,
       };
     } catch (error) {
-      console.error('Erro ao gerar barcode:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Erro desconhecido',
@@ -230,7 +228,6 @@ export class BarcodeService {
         .single();
 
       if (barcodeError && barcodeError.code !== 'PGRST116') {
-        console.error('Erro ao buscar barcode:', barcodeError);
         return {
           success: false,
           error: 'Erro interno ao processar scan',
@@ -290,7 +287,6 @@ export class BarcodeService {
         },
       };
     } catch (error) {
-      console.error('Erro no scan:', error);
       await this.logScanActivity(
         request.user_id,
         '',
@@ -345,13 +341,11 @@ export class BarcodeService {
         .single();
 
       if (error) {
-        console.error('Erro ao criar operação bulk:', error);
         return { success: false, error: 'Falha ao iniciar operação em lote' };
       }
 
       return { success: true, operation_id: data.id };
     } catch (error) {
-      console.error('Erro no bulk scan:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Erro desconhecido',
@@ -411,7 +405,6 @@ export class BarcodeService {
 
       return scanResult;
     } catch (error) {
-      console.error('Erro no processo bulk scan:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Erro no processamento',
@@ -423,22 +416,16 @@ export class BarcodeService {
    * Get barcode data for item
    */
   async getBarcodeData(itemId: string): Promise<BarcodeData[]> {
-    try {
-      const { data, error } = await this.supabase
-        .from('inventory_barcodes')
-        .select('*')
-        .eq('item_id', itemId);
+    const { data, error } = await this.supabase
+      .from('inventory_barcodes')
+      .select('*')
+      .eq('item_id', itemId);
 
-      if (error) {
-        console.error('Erro ao buscar dados barcode:', error);
-        throw new Error('Falha ao buscar dados do código de barras');
-      }
-
-      return data || [];
-    } catch (error) {
-      console.error('Erro no getBarcodeData:', error);
-      throw error;
+    if (error) {
+      throw new Error('Falha ao buscar dados do código de barras');
     }
+
+    return data || [];
   }
 
   /**
@@ -622,8 +609,7 @@ export class BarcodeService {
         error_message: errorMessage,
         scanned_at: new Date().toISOString(),
       });
-    } catch (error) {
-      console.error('Erro ao registrar atividade de scan:', error);
+    } catch (_error) {
       // Don't throw - logging failures shouldn't break scan operations
     }
   }

@@ -10,7 +10,7 @@ export type Currency = 'BRL';
 export type AmountInCentavos = number; // Always store amounts in centavos for precision
 
 // Invoice Types
-export interface Invoice {
+export type Invoice = {
   id: string;
   invoice_number: string;
   patient_id: string;
@@ -71,9 +71,9 @@ export interface Invoice {
     cnpj: string;
     address: string;
   };
-}
+};
 
-export interface InvoiceItem {
+export type InvoiceItem = {
   id: string;
   invoice_id: string;
 
@@ -94,9 +94,9 @@ export interface InvoiceItem {
   tax_amount: AmountInCentavos;
 
   created_at: string;
-}
+};
 
-export interface Payment {
+export type Payment = {
   id: string;
   invoice_id: string;
 
@@ -132,9 +132,9 @@ export interface Payment {
 
   // Relations
   installments?: PaymentInstallment[];
-}
+};
 
-export interface PaymentInstallment {
+export type PaymentInstallment = {
   id: string;
   payment_id: string;
   invoice_id: string;
@@ -162,9 +162,9 @@ export interface PaymentInstallment {
 
   created_at: string;
   updated_at: string;
-}
+};
 
-export interface ShadowValidation {
+export type ShadowValidation = {
   id: string;
   operation_type: ShadowOperationType;
   reference_id: string;
@@ -187,9 +187,9 @@ export interface ShadowValidation {
   validated_at: string;
   validated_by?: string;
   metadata: Record<string, any>;
-}
+};
 
-export interface PaymentReminder {
+export type PaymentReminder = {
   id: string;
   invoice_id: string;
   installment_id?: string;
@@ -218,7 +218,7 @@ export interface PaymentReminder {
 
   created_at: string;
   updated_at: string;
-}
+};
 
 // Enums
 export type InvoiceStatus =
@@ -267,7 +267,7 @@ export type ReminderStatus =
   | 'cancelled';
 
 // Input Types for API
-export interface CreateInvoiceInput {
+export type CreateInvoiceInput = {
   patient_id: string;
   clinic_id: string;
   professional_id?: string;
@@ -276,9 +276,9 @@ export interface CreateInvoiceInput {
   due_date?: string;
   items: CreateInvoiceItemInput[];
   metadata?: Record<string, any>;
-}
+};
 
-export interface CreateInvoiceItemInput {
+export type CreateInvoiceItemInput = {
   description: string;
   quantity: number;
   unit_price: number; // In reais, will be converted to centavos
@@ -287,9 +287,9 @@ export interface CreateInvoiceItemInput {
   procedure_id?: string;
   service_code?: string;
   tax_rate?: number;
-}
+};
 
-export interface CreatePaymentInput {
+export type CreatePaymentInput = {
   invoice_id: string;
   payment_method: PaymentMethod;
   amount: number; // In reais, will be converted to centavos
@@ -299,50 +299,50 @@ export interface CreatePaymentInput {
   pix_key?: string;
   installments?: CreateInstallmentInput[];
   metadata?: Record<string, any>;
-}
+};
 
-export interface CreateInstallmentInput {
+export type CreateInstallmentInput = {
   installment_number: number;
   total_installments: number;
   amount: number; // In reais
   due_date: string;
-}
+};
 
-export interface UpdateInvoiceInput {
+export type UpdateInvoiceInput = {
   description?: string;
   service_list_code?: string;
   due_date?: string;
   status?: InvoiceStatus;
   metadata?: Record<string, any>;
-}
+};
 
-export interface UpdatePaymentInput {
+export type UpdatePaymentInput = {
   status?: PaymentProcessingStatus;
   external_transaction_id?: string;
   authorization_code?: string;
   processing_fee?: number;
   metadata?: Record<string, any>;
-}
+};
 
 // Calculation Types
-export interface InvoiceCalculation {
+export type InvoiceCalculation = {
   subtotal: AmountInCentavos;
   discount: AmountInCentavos;
   tax: AmountInCentavos;
   total: AmountInCentavos;
-}
+};
 
-export interface ShadowCalculationResult {
+export type ShadowCalculationResult = {
   original: InvoiceCalculation;
   shadow: InvoiceCalculation;
   variance: number;
   variance_percentage: number;
   is_valid: boolean;
   tolerance_exceeded: boolean;
-}
+};
 
 // NFSe Integration Types
-export interface NFSeRequest {
+export type NFSeRequest = {
   invoice_id: string;
   service_code: string;
   service_description: string;
@@ -352,9 +352,9 @@ export interface NFSeRequest {
   taker_cpf_cnpj: string;
   taker_name: string;
   taker_address: NFSeAddress;
-}
+};
 
-export interface NFSeAddress {
+export type NFSeAddress = {
   street: string;
   number: string;
   complement?: string;
@@ -362,9 +362,9 @@ export interface NFSeAddress {
   city: string;
   state: string;
   zip_code: string;
-}
+};
 
-export interface NFSeResponse {
+export type NFSeResponse = {
   success: boolean;
   nfse_number?: string;
   verification_code?: string;
@@ -372,26 +372,26 @@ export interface NFSeResponse {
   issue_date?: string;
   error_message?: string;
   error_code?: string;
-}
+};
 
 // Payment Processing Types
-export interface PaymentProcessingRequest {
+export type PaymentProcessingRequest = {
   payment_method: PaymentMethod;
   amount: AmountInCentavos;
   currency: Currency;
   customer: PaymentCustomer;
   metadata?: Record<string, any>;
-}
+};
 
-export interface PaymentCustomer {
+export type PaymentCustomer = {
   name: string;
   email?: string;
   phone?: string;
   cpf?: string;
   address?: NFSeAddress;
-}
+};
 
-export interface PaymentProcessingResponse {
+export type PaymentProcessingResponse = {
   success: boolean;
   transaction_id?: string;
   authorization_code?: string;
@@ -402,10 +402,10 @@ export interface PaymentProcessingResponse {
   status: PaymentProcessingStatus;
   error_message?: string;
   error_code?: string;
-}
+};
 
 // Report Types
-export interface InvoiceReportFilters {
+export type InvoiceReportFilters = {
   clinic_id?: string;
   patient_id?: string;
   professional_id?: string;
@@ -416,9 +416,9 @@ export interface InvoiceReportFilters {
   amount_min?: number;
   amount_max?: number;
   nfse_status?: NFSeStatus[];
-}
+};
 
-export interface PaymentReportFilters {
+export type PaymentReportFilters = {
   clinic_id?: string;
   invoice_id?: string;
   payment_method?: PaymentMethod[];
@@ -427,9 +427,9 @@ export interface PaymentReportFilters {
   date_to?: string;
   amount_min?: number;
   amount_max?: number;
-}
+};
 
-export interface FinancialSummary {
+export type FinancialSummary = {
   total_invoices: number;
   total_amount: AmountInCentavos;
   total_paid: AmountInCentavos;
@@ -449,28 +449,28 @@ export interface FinancialSummary {
       amount: AmountInCentavos;
     }
   >;
-}
+};
 
 // Utility Functions Types
-export interface AmountFormatter {
+export type AmountFormatter = {
   formatCentavos(amount: AmountInCentavos): string;
   parseToCentavos(amount: string | number): AmountInCentavos;
   formatCurrency(amount: AmountInCentavos, currency?: Currency): string;
-}
+};
 
-export interface InvoiceNumberGenerator {
+export type InvoiceNumberGenerator = {
   generateNumber(clinic_id: string): Promise<string>;
   validateNumber(number: string): boolean;
-}
+};
 
-export interface TaxCalculator {
+export type TaxCalculator = {
   calculateServiceTax(
     amount: AmountInCentavos,
     service_code: string
   ): AmountInCentavos;
   calculateTotalTax(items: InvoiceItem[]): AmountInCentavos;
   getServiceTaxRate(service_code: string): number;
-}
+};
 
 // Error Types
 export class FinancialError extends Error {
@@ -521,7 +521,7 @@ export class NFSeError extends FinancialError {
 }
 
 // API Response Types
-export interface InvoiceListResponse {
+export type InvoiceListResponse = {
   invoices: Invoice[];
   pagination: {
     page: number;
@@ -530,9 +530,9 @@ export interface InvoiceListResponse {
     pages: number;
   };
   summary: FinancialSummary;
-}
+};
 
-export interface PaymentListResponse {
+export type PaymentListResponse = {
   payments: Payment[];
   pagination: {
     page: number;
@@ -540,17 +540,17 @@ export interface PaymentListResponse {
     total: number;
     pages: number;
   };
-}
+};
 
-export interface InvoiceDetailsResponse {
+export type InvoiceDetailsResponse = {
   invoice: Invoice;
   calculations: ShadowCalculationResult;
   payment_history: Payment[];
   reminders: PaymentReminder[];
-}
+};
 
 // Hook Types for React components
-export interface UseInvoicesHook {
+export type UseInvoicesHook = {
   invoices: Invoice[];
   loading: boolean;
   error: string | null;
@@ -562,9 +562,9 @@ export interface UseInvoicesHook {
   issueInvoice: (id: string) => Promise<Invoice>;
   cancelInvoice: (id: string) => Promise<Invoice>;
   refresh: () => Promise<void>;
-}
+};
 
-export interface UsePaymentsHook {
+export type UsePaymentsHook = {
   payments: Payment[];
   loading: boolean;
   error: string | null;
@@ -573,13 +573,13 @@ export interface UsePaymentsHook {
   updatePayment: (id: string, data: UpdatePaymentInput) => Promise<Payment>;
   refundPayment: (id: string, amount?: number) => Promise<Payment>;
   refresh: () => Promise<void>;
-}
+};
 
-export interface UseFinancialReportsHook {
+export type UseFinancialReportsHook = {
   generateInvoiceReport: (filters: InvoiceReportFilters) => Promise<Blob>;
   generatePaymentReport: (filters: PaymentReportFilters) => Promise<Blob>;
   getSummary: (filters: InvoiceReportFilters) => Promise<FinancialSummary>;
   exportToExcel: (data: any[], filename: string) => Promise<void>;
-}
+};
 
 // All types are already exported individually above

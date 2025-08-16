@@ -47,8 +47,7 @@ export async function GET(request: Request) {
       summary,
       timestamp: Date.now(),
     });
-  } catch (error) {
-    console.error('Error monitoring API failed:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -95,8 +94,7 @@ export async function POST(request: Request) {
       errorId: errorContext.errorId,
       recoveryAction: errorContext.recoveryAction,
     });
-  } catch (error) {
-    console.error('Error reporting failed:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to report error' },
       { status: 500 }
@@ -133,8 +131,7 @@ export async function PATCH(request: Request) {
     }
 
     return NextResponse.json({ success: true, resolved: true });
-  } catch (error) {
-    console.error('Error resolution failed:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to resolve error' },
       { status: 500 }

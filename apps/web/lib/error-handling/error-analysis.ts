@@ -3,7 +3,7 @@
  * Advanced error pattern recognition and categorization
  */
 
-export interface ErrorContext {
+export type ErrorContext = {
   errorId: string;
   category: 'auth' | 'database' | 'api' | 'validation' | 'network' | 'unknown';
   severity: 'low' | 'medium' | 'high' | 'critical';
@@ -12,15 +12,15 @@ export interface ErrorContext {
   route?: string;
   timestamp: number;
   metadata?: Record<string, any>;
-}
+};
 
-export interface ErrorPattern {
+export type ErrorPattern = {
   pattern: RegExp;
   category: ErrorContext['category'];
   severity: ErrorContext['severity'];
   recoveryAction: string;
   description: string;
-}
+};
 
 // Known error patterns for intelligent categorization
 const KNOWN_ERROR_PATTERNS: ErrorPattern[] = [

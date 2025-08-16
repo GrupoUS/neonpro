@@ -90,7 +90,7 @@ export enum LegalHoldStatus {
 /**
  * Data Retention Policy Interface
  */
-export interface DataRetentionPolicy {
+export type DataRetentionPolicy = {
   id: string;
   name: string;
   description: {
@@ -125,12 +125,12 @@ export interface DataRetentionPolicy {
   updatedAt: Date;
   effectiveDate: Date;
   expirationDate?: Date;
-}
+};
 
 /**
  * Data Retention Schedule Interface
  */
-export interface DataRetentionSchedule {
+export type DataRetentionSchedule = {
   id: string;
   policyId: string;
   dataIdentifier: string;
@@ -163,12 +163,12 @@ export interface DataRetentionSchedule {
   }[];
   createdAt: Date;
   updatedAt: Date;
-}
+};
 
 /**
  * Legal Hold Interface
  */
-export interface LegalHold {
+export type LegalHold = {
   id: string;
   name: string;
   description: string;
@@ -195,12 +195,12 @@ export interface LegalHold {
   createdBy: string;
   createdAt: Date;
   updatedAt: Date;
-}
+};
 
 /**
  * Retention Report Interface
  */
-export interface RetentionReport {
+export type RetentionReport = {
   id: string;
   reportType: 'summary' | 'detailed' | 'compliance' | 'exceptions';
   period: {
@@ -242,12 +242,12 @@ export interface RetentionReport {
   recommendations: string[];
   generatedAt: Date;
   generatedBy: string;
-}
+};
 
 /**
  * Retention Events
  */
-export interface RetentionEvents {
+export type RetentionEvents = {
   'retention:policy_created': { policy: DataRetentionPolicy };
   'retention:policy_updated': { policy: DataRetentionPolicy };
   'retention:schedule_created': { schedule: DataRetentionSchedule };
@@ -259,7 +259,7 @@ export interface RetentionEvents {
   'retention:legal_hold_created': { hold: LegalHold };
   'retention:legal_hold_released': { hold: LegalHold };
   'retention:compliance_alert': { alert: string; details: Record<string, any> };
-}
+};
 
 // ============================================================================
 // DATA RETENTION MANAGEMENT SYSTEM
@@ -1480,13 +1480,10 @@ export class DataRetentionManager extends EventEmitter {
    * Log activity
    */
   private logActivity(
-    actor: string,
-    action: string,
-    details: Record<string, any>
-  ): void {
-    // In a real implementation, this would log to audit trail
-    console.log(`[Retention] ${actor} - ${action}:`, details);
-  }
+    _actor: string,
+    _action: string,
+    _details: Record<string, any>
+  ): void {}
 
   /**
    * Generate ID

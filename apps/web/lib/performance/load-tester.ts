@@ -5,15 +5,15 @@
 
 import { performanceMonitor } from './monitor';
 
-export interface LoadTestConfig {
+export type LoadTestConfig = {
   concurrent: number;
   duration: number; // in seconds
   rampUpTime: number; // in seconds
   operation: string;
   payload?: any;
-}
+};
 
-export interface LoadTestResult {
+export type LoadTestResult = {
   totalRequests: number;
   successfulRequests: number;
   failedRequests: number;
@@ -23,7 +23,7 @@ export interface LoadTestResult {
   throughput: number; // requests per second
   errorRate: number;
   memoryPeak: number;
-}
+};
 
 export class LoadTester {
   private results: LoadTestResult[] = [];
@@ -42,10 +42,6 @@ export class LoadTester {
     // Calculate requests per interval
     const _totalRequests = config.concurrent * config.duration;
     const batchSize = Math.max(1, Math.floor(config.concurrent / 10));
-
-    console.log(
-      `🚀 Starting load test: ${config.concurrent} concurrent users for ${config.duration}s`
-    );
 
     // Execute test in batches with ramp-up
     const batches = Math.ceil(config.concurrent / batchSize);

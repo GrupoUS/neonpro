@@ -67,7 +67,6 @@ export async function GET(request: NextRequest) {
     const { data: riskFactors, error } = await query;
 
     if (error) {
-      console.error('Database error:', error);
       return NextResponse.json(
         { error: 'Failed to fetch risk factors' },
         { status: 500 }
@@ -103,8 +102,7 @@ export async function GET(request: NextRequest) {
         total: riskFactors?.length || 0,
       },
     });
-  } catch (error) {
-    console.error('API error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

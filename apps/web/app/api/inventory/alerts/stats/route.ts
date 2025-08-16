@@ -42,8 +42,6 @@ export async function GET(request: NextRequest) {
       message: 'Alert statistics retrieved successfully',
     });
   } catch (error: any) {
-    console.error('Error fetching alert stats:', error);
-
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {

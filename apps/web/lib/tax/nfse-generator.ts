@@ -76,7 +76,7 @@ export const NFSeRequestSchema = z.object({
 
 export type NFSeRequest = z.infer<typeof NFSeRequestSchema>;
 
-export interface NFSeResponse {
+export type NFSeResponse = {
   success: boolean;
   nfseNumber: string | null;
   verificationCode: string | null;
@@ -94,16 +94,16 @@ export interface NFSeResponse {
     | 'rejected'
     | 'cancelled'
     | 'error';
-}
+};
 
-export interface NFSeBatchRequest {
+export type NFSeBatchRequest = {
   batchId: string;
   requests: NFSeRequest[];
   priority: 'high' | 'normal' | 'low';
   callbackUrl?: string;
-}
+};
 
-export interface NFSeBatchResponse {
+export type NFSeBatchResponse = {
   batchId: string;
   totalRequests: number;
   processedRequests: number;
@@ -113,7 +113,7 @@ export interface NFSeBatchResponse {
   results: NFSeResponse[];
   processingStartTime: Date;
   processingEndTime?: Date;
-}
+};
 
 // =================== NFSe GENERATOR CLASS ===================
 
@@ -159,7 +159,6 @@ export class NFSeGenerator {
 
       return response;
     } catch (error) {
-      console.error('Error generating NFSe:', error);
       return this.createErrorResponse(error, request.externalId);
     }
   }
@@ -223,8 +222,7 @@ export class NFSeGenerator {
       }
 
       return response;
-    } catch (error) {
-      console.error('Error processing NFSe batch:', error);
+    } catch (_error) {
       throw new Error('Failed to process NFSe batch');
     }
   }
@@ -272,7 +270,6 @@ export class NFSeGenerator {
         errors: [],
       };
     } catch (error) {
-      console.error('Error cancelling NFSe:', error);
       return {
         success: false,
         errors: [error instanceof Error ? error.message : 'Unknown error'],
@@ -300,7 +297,6 @@ export class NFSeGenerator {
 
       return queryResult;
     } catch (error) {
-      console.error('Error querying NFSe status:', error);
       return {
         status: 'error',
         errors: [error instanceof Error ? error.message : 'Unknown error'],
@@ -435,29 +431,21 @@ export class NFSeGenerator {
     signedXML: string,
     _request: NFSeRequest
   ): Promise<any> {
-    // HTTP/SOAP request to municipality webservice
-    // Implementation varies by municipality but follows standard patterns
+    const response = await fetch(this.config.webserviceUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'text/xml; charset=utf-8',
+        SOAPAction: 'GerarNfse',
+      },
+      body: this.wrapInSOAPEnvelope(signedXML),
+    });
 
-    try {
-      const response = await fetch(this.config.webserviceUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'text/xml; charset=utf-8',
-          SOAPAction: 'GerarNfse',
-        },
-        body: this.wrapInSOAPEnvelope(signedXML),
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-      }
-
-      const responseText = await response.text();
-      return this.parseSOAPResponse(responseText);
-    } catch (error) {
-      console.error('Error submitting to municipality:', error);
-      throw error;
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
     }
+
+    const responseText = await response.text();
+    return this.parseSOAPResponse(responseText);
   }
 
   private async processSubmissionResponse(
@@ -628,9 +616,7 @@ export class NFSeGenerator {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(response),
       });
-    } catch (error) {
-      console.error('Failed to send batch callback:', error);
-    }
+    } catch (_error) {}
   }
 
   private async generateCancellationXML(

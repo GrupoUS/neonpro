@@ -92,9 +92,7 @@ export async function POST(request: NextRequest) {
     });
 
     return NextResponse.json(refreshedSession);
-  } catch (error) {
-    console.error('Session refresh error:', error);
-
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error during session refresh' },
       { status: 500 }

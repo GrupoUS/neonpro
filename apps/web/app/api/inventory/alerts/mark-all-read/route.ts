@@ -34,7 +34,6 @@ export async function PATCH(_request: NextRequest) {
       .select('id');
 
     if (error) {
-      console.error('Error marking all alerts as read:', error);
       return NextResponse.json(
         { error: 'Failed to mark alerts as read' },
         { status: 500 }
@@ -45,8 +44,7 @@ export async function PATCH(_request: NextRequest) {
       message: 'All alerts marked as read',
       updated_count: alerts?.length || 0,
     });
-  } catch (error) {
-    console.error('Error in mark-all-read API:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

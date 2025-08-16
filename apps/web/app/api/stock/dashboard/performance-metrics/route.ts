@@ -77,7 +77,6 @@ export async function GET(request: NextRequest) {
       .order('metric_date', { ascending: true });
 
     if (metricsError) {
-      console.error('Performance Metrics Error:', metricsError);
       return NextResponse.json(
         { error: 'Erro ao buscar métricas de performance' },
         { status: 500 }
@@ -103,7 +102,6 @@ export async function GET(request: NextRequest) {
         .lte('transaction_date', endDate.toISOString());
 
       if (stockError || movementError) {
-        console.error('Data Error:', { stockError, movementError });
         return NextResponse.json(
           { error: 'Erro ao buscar dados para cálculo' },
           { status: 500 }
@@ -273,8 +271,6 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('Dashboard Performance Metrics API Error:', error);
-
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Parâmetros inválidos', details: error.errors },

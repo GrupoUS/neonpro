@@ -90,7 +90,7 @@ export type NotificationChannel = 'email' | 'sms' | 'in_app';
 export type NotificationPriority = 'low' | 'normal' | 'high' | 'urgent';
 
 // User preference interface
-export interface NotificationPreferences {
+export type NotificationPreferences = {
   userId: string;
   channels: {
     email: boolean;
@@ -106,7 +106,7 @@ export interface NotificationPreferences {
   };
   language: string;
   timezone: string;
-}
+};
 
 // Environment validation
 export function validateNotificationConfig() {

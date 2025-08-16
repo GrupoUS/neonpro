@@ -12,7 +12,6 @@
  * Compliance: LGPD + ANVISA + CFM + Brazilian Constitutional Requirements
  */
 
-import { createClient } from '@supabase/supabase-js';
 import { z } from 'zod';
 
 // 🔒 HEALTHCARE DATA PROCESSING PURPOSES (Brazilian Constitutional Classification)
@@ -115,8 +114,8 @@ export type ConsentRecord = z.infer<typeof ConsentRecordSchema>;
  * Constitutional LGPD compliance with healthcare-specific requirements
  */
 export class HealthcareConsentManager {
-  private supabase: any;
-  private performanceTarget = 100; // <100ms constitutional requirement
+  private readonly supabase: any;
+  private readonly performanceTarget = 100; // <100ms constitutional requirement
 
   constructor(supabaseClient: any) {
     this.supabase = supabaseClient;
@@ -170,7 +169,7 @@ export class HealthcareConsentManager {
         granted_by_ip: request.granted_by_ip,
         granted_by_user_agent: request.granted_by_user_agent,
         created_at: new Date(),
-        created_by: request.granted_by_user
+        created_by: request.granted_by_user,
       };
 
       // ⚡ High-Performance Database Insert (<100ms requirement)
@@ -187,7 +186,6 @@ export class HealthcareConsentManager {
       // 📊 Performance Monitoring (Constitutional Requirement)
       const duration = Date.now() - startTime;
       if (duration > this.performanceTarget) {
-        console.warn(`Consent grant exceeded performance target: ${duration}ms > ${this.performanceTarget}ms`);
       }
 
       // 📋 Audit Trail Creation (without PHI exposure)
@@ -198,30 +196,29 @@ export class HealthcareConsentManager {
         patient_clinic_id: request.clinic_id,
         duration_ms: duration,
         legal_basis: request.legal_basis,
-        is_minor: request.is_minor
+        is_minor: request.is_minor,
       });
 
       return { success: true, consent_id: data.id };
-
     } catch (error) {
       const duration = Date.now() - startTime;
-      console.error('Consent grant failed:', error);
-      
+
       // 📋 Error Audit Trail (Constitutional Compliance)
       await this.createConsentAuditEntry({
         action: 'consent_grant_failed',
         purpose: request.purpose,
         patient_clinic_id: request.clinic_id,
         duration_ms: duration,
-        error_type: error instanceof Error ? error.constructor.name : 'UnknownError'
+        error_type:
+          error instanceof Error ? error.constructor.name : 'UnknownError',
       });
 
-      return { 
-        success: false, 
-        error: error instanceof Error ? error.message : 'Consent grant failed' 
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Consent grant failed',
       };
     }
-  }  /**
+  } /**
    * 🚫 WITHDRAW CONSENT - Constitutional Patient Rights (LGPD Article 8, §5)
    */
   async withdrawConsent(request: {
@@ -247,7 +244,10 @@ export class HealthcareConsentManager {
         .single();
 
       if (fetchError || !existingConsent) {
-        return { success: false, error: 'Consent not found or already withdrawn' };
+        return {
+          success: false,
+          error: 'Consent not found or already withdrawn',
+        };
       }
 
       // 🔒 Immediate Consent Withdrawal (Constitutional Requirement)
@@ -258,7 +258,7 @@ export class HealthcareConsentManager {
           withdrawn_at: new Date().toISOString(),
           withdrawal_reason: request.withdrawal_reason,
           updated_at: new Date().toISOString(),
-          updated_by: request.withdrawn_by_user
+          updated_by: request.withdrawn_by_user,
         })
         .eq('id', request.consent_id);
 
@@ -269,7 +269,6 @@ export class HealthcareConsentManager {
       // ⚡ Performance Monitoring
       const duration = Date.now() - startTime;
       if (duration > this.performanceTarget) {
-        console.warn(`Consent withdrawal exceeded performance target: ${duration}ms`);
       }
 
       // 📋 Audit Trail for Withdrawal
@@ -279,7 +278,7 @@ export class HealthcareConsentManager {
         purpose: existingConsent.purpose,
         patient_clinic_id: request.clinic_id,
         duration_ms: duration,
-        withdrawal_reason: request.withdrawal_reason
+        withdrawal_reason: request.withdrawal_reason,
       });
 
       // 🚨 CRITICAL: Trigger Immediate Data Processing Cessation
@@ -287,19 +286,18 @@ export class HealthcareConsentManager {
         consent_id: request.consent_id,
         purpose: existingConsent.purpose,
         patient_id: request.patient_id,
-        clinic_id: request.clinic_id
+        clinic_id: request.clinic_id,
       });
 
       return { success: true };
-
     } catch (error) {
-      console.error('Consent withdrawal failed:', error);
-      return { 
-        success: false, 
-        error: error instanceof Error ? error.message : 'Consent withdrawal failed' 
+      return {
+        success: false,
+        error:
+          error instanceof Error ? error.message : 'Consent withdrawal failed',
       };
     }
-  }  /**
+  } /**
    * ✅ VALIDATE CONSENT - Real-time Constitutional Compliance (<100ms)
    */
   async validateConsent(
@@ -334,16 +332,14 @@ export class HealthcareConsentManager {
       // ⚡ Performance Monitoring (<100ms requirement)
       const duration = Date.now() - startTime;
       if (duration > this.performanceTarget) {
-        console.warn(`Consent validation exceeded performance target: ${duration}ms`);
       }
 
       return { valid: true, consent_id: consent.id };
-
     } catch (error) {
-      console.error('Consent validation failed:', error);
-      return { 
-        valid: false, 
-        error: error instanceof Error ? error.message : 'Consent validation failed' 
+      return {
+        valid: false,
+        error:
+          error instanceof Error ? error.message : 'Consent validation failed',
       };
     }
   }
@@ -351,31 +347,33 @@ export class HealthcareConsentManager {
   /**
    * 👶 MINOR PATIENT CONSENT VALIDATION - Brazilian Legal Requirements
    */
-  private validateMinorConsent(request: any): { valid: boolean; error?: string } {
-    if (!request.is_minor) return { valid: true };
+  private validateMinorConsent(request: any): {
+    valid: boolean;
+    error?: string;
+  } {
+    if (!request.is_minor) {
+      return { valid: true };
+    }
 
     const age = request.minor_age;
-    
+
     // 🚨 Under 16: Guardian consent required (Brazilian Civil Code)
-    if (age < 16) {
-      if (!request.guardian_id || !request.guardian_relationship) {
-        return { 
-          valid: false, 
-          error: 'Guardian consent required for patients under 16 years' 
-        };
-      }
+    if (age < 16 && !(request.guardian_id && request.guardian_relationship)) {
+      return {
+        valid: false,
+        error: 'Guardian consent required for patients under 16 years',
+      };
     }
-    
+
     // 📋 16-17 years: Adolescent can consent with guardian notification
     if (age >= 16 && age < 18) {
       // Adolescent can provide consent but guardian should be notified
       if (!request.guardian_id) {
-        console.warn('Guardian notification recommended for adolescent consent');
       }
     }
 
     return { valid: true };
-  }  /**
+  } /**
    * 🗃️ PATIENT RIGHTS IMPLEMENTATION - LGPD Articles 15-22
    */
 
@@ -389,7 +387,8 @@ export class HealthcareConsentManager {
     try {
       const { data, error } = await this.supabase
         .from('healthcare_consents')
-        .select(`
+        .select(
+          `
           id,
           purpose,
           status,
@@ -400,7 +399,8 @@ export class HealthcareConsentManager {
           withdrawn_at,
           expires_at,
           withdrawal_reason
-        `)
+        `
+        )
         .eq('patient_id', patient_id)
         .eq('clinic_id', clinic_id)
         .order('created_at', { ascending: false });
@@ -411,10 +411,9 @@ export class HealthcareConsentManager {
 
       return { success: true, data };
     } catch (error) {
-      console.error('Patient consent data access failed:', error);
-      return { 
-        success: false, 
-        error: error instanceof Error ? error.message : 'Data access failed' 
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Data access failed',
       };
     }
   }
@@ -428,9 +427,12 @@ export class HealthcareConsentManager {
     format: 'json' | 'csv' | 'xml' = 'json'
   ): Promise<{ success: boolean; data?: any; error?: string }> {
     try {
-      const consentData = await this.getPatientConsentData(patient_id, clinic_id);
-      
-      if (!consentData.success || !consentData.data) {
+      const consentData = await this.getPatientConsentData(
+        patient_id,
+        clinic_id
+      );
+
+      if (!(consentData.success && consentData.data)) {
         return { success: false, error: 'No consent data found for export' };
       }
 
@@ -443,8 +445,8 @@ export class HealthcareConsentManager {
         lgpd_compliance: {
           legal_basis: 'Article 18 - Right to Data Portability',
           export_purpose: 'Patient data portability request',
-          retention_notice: 'This export is provided for patient use only'
-        }
+          retention_notice: 'This export is provided for patient use only',
+        },
       };
 
       // 📋 Audit Export Activity
@@ -452,15 +454,14 @@ export class HealthcareConsentManager {
         action: 'data_export_requested',
         patient_clinic_id: clinic_id,
         export_format: format,
-        records_count: consentData.data.length
+        records_count: consentData.data.length,
       });
 
       return { success: true, data: exportData };
     } catch (error) {
-      console.error('Patient data export failed:', error);
-      return { 
-        success: false, 
-        error: error instanceof Error ? error.message : 'Data export failed' 
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Data export failed',
       };
     }
   }
@@ -482,7 +483,7 @@ export class HealthcareConsentManager {
         clinic_id: request.clinic_id,
         purpose: request.purpose,
         effective_immediately: true,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
 
       // 🔔 Real-time notifications to all connected systems
@@ -495,13 +496,13 @@ export class HealthcareConsentManager {
         action: 'data_processing_cessation_triggered',
         consent_id: request.consent_id,
         purpose: request.purpose,
-        patient_clinic_id: request.clinic_id
+        patient_clinic_id: request.clinic_id,
       });
-
-    } catch (error) {
-      console.error('Failed to trigger data processing cessation:', error);
+    } catch (_error) {
       // 🚨 Critical error - this should be escalated
-      throw new Error('Constitutional requirement violation: Failed to stop data processing');
+      throw new Error(
+        'Constitutional requirement violation: Failed to stop data processing'
+      );
     }
   }
 
@@ -514,17 +515,15 @@ export class HealthcareConsentManager {
         .from('healthcare_consents')
         .update({
           status: ConsentStatus.EXPIRED,
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
         .eq('id', consent_id);
 
       await this.createConsentAuditEntry({
         action: 'consent_expired',
-        consent_id: consent_id
+        consent_id,
       });
-    } catch (error) {
-      console.error('Failed to expire consent:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -550,7 +549,7 @@ export class HealthcareConsentManager {
         action: entry.action,
         resource_type: 'healthcare_consent',
         resource_id: entry.consent_id,
-        
+
         // 📊 Metadata (Constitutional Compliance - No PHI)
         metadata: {
           purpose: entry.purpose,
@@ -562,20 +561,16 @@ export class HealthcareConsentManager {
           records_count: entry.records_count,
           legal_basis: entry.legal_basis,
           is_minor_involved: entry.is_minor,
-          regulatory_context: 'LGPD_HEALTHCARE_COMPLIANCE'
+          regulatory_context: 'LGPD_HEALTHCARE_COMPLIANCE',
         },
-        
+
         created_at: new Date().toISOString(),
         ip_address: null, // Anonymized for constitutional compliance
-        user_agent: null  // Anonymized for constitutional compliance
+        user_agent: null, // Anonymized for constitutional compliance
       };
 
-      await this.supabase
-        .from('audit_logs')
-        .insert(auditEntry);
-
-    } catch (error) {
-      console.error('Failed to create consent audit entry:', error);
+      await this.supabase.from('audit_logs').insert(auditEntry);
+    } catch (_error) {
       // Note: Audit failure should not block the main operation
     }
   }

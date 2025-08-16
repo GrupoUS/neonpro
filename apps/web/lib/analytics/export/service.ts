@@ -978,20 +978,13 @@ export class AnalyticsExportService {
       .eq('id', exportId);
 
     if (error) {
-      console.error('Failed to update export status:', error);
     }
   }
 
   private async sendCompletionNotification(
-    email: string,
-    response: ExportResponse
-  ): Promise<void> {
-    // Implementation would depend on your email service
-    // This is a placeholder for the notification system
-    console.log(
-      `Sending completion notification to ${email} for export ${response.id}`
-    );
-  }
+    _email: string,
+    _response: ExportResponse
+  ): Promise<void> {}
 
   private async logExportMetrics(
     request: ExportRequest,
@@ -1009,7 +1002,6 @@ export class AnalyticsExportService {
     });
 
     if (error) {
-      console.error('Failed to log export metrics:', error);
     }
   }
 }

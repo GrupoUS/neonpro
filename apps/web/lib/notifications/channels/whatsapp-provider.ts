@@ -23,7 +23,7 @@ export interface WhatsAppProvider extends NotificationProvider {
   getMessageStatus(messageId: string): Promise<WhatsAppMessageStatus>;
 }
 
-export interface WhatsAppParams {
+export type WhatsAppParams = {
   to: string | string[]; // E.164 format (+5511999999999)
   message?: string; // For session messages only
   templateName?: string;
@@ -39,9 +39,9 @@ export interface WhatsAppParams {
     lgpdConsent: LGPDCompliantData;
     whatsappContext?: WhatsAppBusinessContext;
   };
-}
+};
 
-export interface BulkWhatsAppParams {
+export type BulkWhatsAppParams = {
   messages: Array<{
     to: string;
     templateName: string;
@@ -50,17 +50,17 @@ export interface BulkWhatsAppParams {
     metadata: WhatsAppParams['metadata'];
   }>;
   batchSize?: number;
-}
+};
 
-export interface WhatsAppTemplateParams {
+export type WhatsAppTemplateParams = {
   to: string | string[];
   templateName: string;
   templateLanguage: string;
   templateParams?: WhatsAppTemplateParameter[];
   metadata: WhatsAppParams['metadata'];
-}
+};
 
-export interface WhatsAppTemplateParameter {
+export type WhatsAppTemplateParameter = {
   type: 'text' | 'currency' | 'date_time' | 'image' | 'document' | 'video';
   text?: string;
   currency?: {
@@ -87,18 +87,18 @@ export interface WhatsAppTemplateParameter {
     link: string;
     caption?: string;
   };
-}
+};
 
-export interface WhatsAppBusinessContext {
+export type WhatsAppBusinessContext = {
   businessPhone: string;
   businessName: string;
   isSession: boolean; // 24h session window
   sessionExpiresAt?: Date;
   messageType: 'template' | 'session' | 'hsm';
   category?: 'authentication' | 'marketing' | 'utility';
-}
+};
 
-export interface WhatsAppMessageStatus {
+export type WhatsAppMessageStatus = {
   status: 'queued' | 'sent' | 'delivered' | 'read' | 'failed';
   timestamp?: Date;
   errorCode?: string;
@@ -108,9 +108,9 @@ export interface WhatsAppMessageStatus {
     price: string;
     currency: string;
   };
-}
+};
 
-export interface WhatsAppProviderConfig {
+export type WhatsAppProviderConfig = {
   twilio: {
     accountSid: string;
     authToken: string;
@@ -144,7 +144,7 @@ export interface WhatsAppProviderConfig {
       cooldownHours: number;
     };
   };
-}
+};
 
 /**
  * Twilio WhatsApp Business API Provider
@@ -182,8 +182,7 @@ class TwilioWhatsAppProvider implements WhatsAppProvider {
       );
 
       return response.ok;
-    } catch (error) {
-      console.error(`[${this.id}] Health check failed:`, error);
+    } catch (_error) {
       return false;
     }
   }
@@ -440,8 +439,7 @@ class TwilioWhatsAppProvider implements WhatsAppProvider {
       }
 
       return true;
-    } catch (error) {
-      console.error(`[${this.id}] Phone validation failed:`, error);
+    } catch (_error) {
       return false;
     }
   }

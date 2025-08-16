@@ -43,7 +43,7 @@ const MetricsConfigSchema = z.object({
 type AnalyticsQuery = z.infer<typeof AnalyticsQuerySchema>;
 type MetricsConfig = z.infer<typeof MetricsConfigSchema>;
 
-interface NotificationMetrics {
+type NotificationMetrics = {
   // Core Metrics
   totalSent: number;
   delivered: number;
@@ -74,26 +74,26 @@ interface NotificationMetrics {
   totalCost: number;
   costPerDelivery: number;
   roi: number;
-}
+};
 
-interface ChannelMetrics {
+type ChannelMetrics = {
   sent: number;
   delivered: number;
   failed: number;
   engagementRate: number;
   avgCost: number;
   reliability: number;
-}
+};
 
-interface PredictiveInsights {
+type PredictiveInsights = {
   bestSendTime: string;
   preferredChannel: NotificationChannel;
   engagementProbability: number;
   churnRisk: number;
   nextBestAction: string;
-}
+};
 
-interface AnalyticsReport {
+type AnalyticsReport = {
   summary: NotificationMetrics;
   trends: TimeSeriesData[];
   insights: PredictiveInsights;
@@ -103,14 +103,14 @@ interface AnalyticsReport {
     start: Date;
     end: Date;
   };
-}
+};
 
-interface TimeSeriesData {
+type TimeSeriesData = {
   timestamp: Date;
   value: number;
   metric: string;
   channel?: NotificationChannel;
-}
+};
 
 // ================================================================================
 // NOTIFICATION ANALYTICS ENGINE
@@ -139,16 +139,14 @@ export class NotificationAnalytics {
     if (cached) {
       return cached;
     }
+    const now = new Date();
+    const last24h = new Date(now.getTime() - 24 * 60 * 60 * 1000);
 
-    try {
-      const now = new Date();
-      const last24h = new Date(now.getTime() - 24 * 60 * 60 * 1000);
-
-      // Query principal para métricas base
-      const { data: baseMetrics, error } = await this.supabase
-        .from('notifications')
-        .select(
-          `
+    // Query principal para métricas base
+    const { data: baseMetrics, error } = await this.supabase
+      .from('notifications')
+      .select(
+        `
           status,
           channel,
           type,
@@ -159,24 +157,20 @@ export class NotificationAnalytics {
           cost,
           metadata
         `
-        )
-        .eq('clinic_id', clinicId)
-        .gte('sent_at', last24h.toISOString());
+      )
+      .eq('clinic_id', clinicId)
+      .gte('sent_at', last24h.toISOString());
 
-      if (error) {
-        throw new Error(`Erro ao buscar métricas: ${error.message}`);
-      }
-
-      const metrics = this.calculateMetrics(baseMetrics || []);
-
-      // Cache por 5 minutos
-      this.setCache(cacheKey, metrics, 5 * 60 * 1000);
-
-      return metrics;
-    } catch (error) {
-      console.error('Erro ao obter métricas em tempo real:', error);
-      throw error;
+    if (error) {
+      throw new Error(`Erro ao buscar métricas: ${error.message}`);
     }
+
+    const metrics = this.calculateMetrics(baseMetrics || []);
+
+    // Cache por 5 minutos
+    this.setCache(cacheKey, metrics, 5 * 60 * 1000);
+
+    return metrics;
   }
 
   /**
@@ -309,54 +303,48 @@ export class NotificationAnalytics {
     clinicId: string
   ): Promise<AnalyticsReport> {
     const validatedQuery = AnalyticsQuerySchema.parse(query);
+    // Buscar dados históricos
+    const { data: historicalData, error } = await this.supabase
+      .from('notifications')
+      .select('*')
+      .eq('clinic_id', clinicId)
+      .gte('sent_at', validatedQuery.startDate)
+      .lte('sent_at', validatedQuery.endDate)
+      .order('sent_at', { ascending: true });
 
-    try {
-      // Buscar dados históricos
-      const { data: historicalData, error } = await this.supabase
-        .from('notifications')
-        .select('*')
-        .eq('clinic_id', clinicId)
-        .gte('sent_at', validatedQuery.startDate)
-        .lte('sent_at', validatedQuery.endDate)
-        .order('sent_at', { ascending: true });
-
-      if (error) {
-        throw new Error(`Erro ao buscar dados históricos: ${error.message}`);
-      }
-
-      // Calcular métricas do período
-      const summary = this.calculateMetrics(historicalData || []);
-
-      // Gerar dados de time series
-      const trends = this.generateTimeSeriesData(
-        historicalData || [],
-        validatedQuery.groupBy || 'day'
-      );
-
-      // Gerar insights preditivos
-      const insights = await this.generatePredictiveInsights(
-        historicalData || [],
-        clinicId
-      );
-
-      // Gerar recomendações
-      const recommendations = this.generateRecommendations(summary, trends);
-
-      return {
-        summary,
-        trends,
-        insights,
-        recommendations,
-        generatedAt: new Date(),
-        period: {
-          start: new Date(validatedQuery.startDate),
-          end: new Date(validatedQuery.endDate),
-        },
-      };
-    } catch (error) {
-      console.error('Erro ao gerar relatório:', error);
-      throw error;
+    if (error) {
+      throw new Error(`Erro ao buscar dados históricos: ${error.message}`);
     }
+
+    // Calcular métricas do período
+    const summary = this.calculateMetrics(historicalData || []);
+
+    // Gerar dados de time series
+    const trends = this.generateTimeSeriesData(
+      historicalData || [],
+      validatedQuery.groupBy || 'day'
+    );
+
+    // Gerar insights preditivos
+    const insights = await this.generatePredictiveInsights(
+      historicalData || [],
+      clinicId
+    );
+
+    // Gerar recomendações
+    const recommendations = this.generateRecommendations(summary, trends);
+
+    return {
+      summary,
+      trends,
+      insights,
+      recommendations,
+      generatedAt: new Date(),
+      period: {
+        start: new Date(validatedQuery.startDate),
+        end: new Date(validatedQuery.endDate),
+      },
+    };
   }
 
   /**

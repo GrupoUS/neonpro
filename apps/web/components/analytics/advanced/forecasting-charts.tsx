@@ -49,22 +49,22 @@ import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 // Types for forecasting data
-interface ForecastData {
+type ForecastData = {
   date: string;
   actual?: number;
   predicted: number;
   lower_bound: number;
   upper_bound: number;
   confidence: number;
-}
+};
 
-interface ScenarioForecast {
+type ScenarioForecast = {
   name: string;
   data: ForecastData[];
   color: string;
-}
+};
 
-interface AccuracyMetrics {
+type AccuracyMetrics = {
   mae: number;
   mape: number;
   rmse: number;
@@ -74,9 +74,9 @@ interface AccuracyMetrics {
     predicted: number;
     date: string;
   }>;
-}
+};
 
-interface ForecastingChartsProps {
+type ForecastingChartsProps = {
   metric: 'subscriptions' | 'revenue' | 'churn_rate' | 'mrr' | 'arr';
   historicalData: Array<{ date: string; value: number }>;
   forecastData: ForecastData[];
@@ -86,7 +86,7 @@ interface ForecastingChartsProps {
   className?: string;
   onDateRangeChange?: (start: string, end: string) => void;
   onScenarioToggle?: (scenario: string, enabled: boolean) => void;
-}
+};
 
 // Utility functions
 const formatValue = (value: number, metric: string) => {

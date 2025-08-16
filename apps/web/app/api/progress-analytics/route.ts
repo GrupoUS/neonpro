@@ -63,8 +63,7 @@ export async function GET(request: NextRequest) {
           { status: 400 }
         );
     }
-  } catch (error: any) {
-    console.error('Error fetching analytics:', error);
+  } catch (_error: any) {
     return NextResponse.json(
       { error: 'Failed to fetch analytics data' },
       { status: 500 }

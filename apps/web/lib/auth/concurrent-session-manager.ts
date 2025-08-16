@@ -15,7 +15,7 @@ import { createClient } from '@supabase/supabase-js';
 import type { UserRole } from '@/types/auth';
 import { SecurityAuditLogger } from './security-audit-logger';
 
-export interface SessionInfo {
+export type SessionInfo = {
   sessionId: string;
   userId: string;
   deviceId: string;
@@ -32,18 +32,18 @@ export interface SessionInfo {
   lastActivity: Date;
   isActive: boolean;
   metadata?: Record<string, any>;
-}
+};
 
-export interface ConcurrentSessionLimits {
+export type ConcurrentSessionLimits = {
   role: UserRole;
   maxSessions: number;
   maxSessionsPerDevice: number;
   allowMultipleDevices: boolean;
   forceLogoutOldest: boolean;
   notifyOnNewSession: boolean;
-}
+};
 
-export interface SessionTerminationReason {
+export type SessionTerminationReason = {
   type:
     | 'limit_exceeded'
     | 'security_violation'
@@ -53,7 +53,7 @@ export interface SessionTerminationReason {
     | 'device_change';
   message: string;
   metadata?: Record<string, any>;
-}
+};
 
 const DEFAULT_SESSION_LIMITS: Record<UserRole, ConcurrentSessionLimits> = {
   owner: {
@@ -125,87 +125,82 @@ export class ConcurrentSessionManager {
     },
     metadata?: Record<string, any>
   ): Promise<{ sessionId: string; terminatedSessions?: string[] }> {
-    try {
-      const sessionId = this.generateSessionId();
-      const now = new Date();
+    const sessionId = this.generateSessionId();
+    const now = new Date();
 
-      // Get current active sessions
-      const activeSessions = await this.getActiveSessions(userId);
-      const limits = this.sessionLimits[userRole];
+    // Get current active sessions
+    const activeSessions = await this.getActiveSessions(userId);
+    const limits = this.sessionLimits[userRole];
 
-      // Check session limits and handle violations
-      const terminatedSessions = await this.enforceSessionLimits(
-        userId,
-        userRole,
-        deviceInfo.deviceId,
-        activeSessions,
-        limits
-      );
+    // Check session limits and handle violations
+    const terminatedSessions = await this.enforceSessionLimits(
+      userId,
+      userRole,
+      deviceInfo.deviceId,
+      activeSessions,
+      limits
+    );
 
-      // Create new session record
-      const sessionInfo: Omit<SessionInfo, 'sessionId'> = {
-        userId,
-        deviceId: deviceInfo.deviceId,
-        deviceName: deviceInfo.deviceName,
-        deviceType: deviceInfo.deviceType,
-        ipAddress: deviceInfo.ipAddress,
-        userAgent: deviceInfo.userAgent,
-        location: deviceInfo.location,
-        createdAt: now,
-        lastActivity: now,
-        isActive: true,
-        metadata,
-      };
+    // Create new session record
+    const sessionInfo: Omit<SessionInfo, 'sessionId'> = {
+      userId,
+      deviceId: deviceInfo.deviceId,
+      deviceName: deviceInfo.deviceName,
+      deviceType: deviceInfo.deviceType,
+      ipAddress: deviceInfo.ipAddress,
+      userAgent: deviceInfo.userAgent,
+      location: deviceInfo.location,
+      createdAt: now,
+      lastActivity: now,
+      isActive: true,
+      metadata,
+    };
 
-      const { error } = await this.supabase.from('user_sessions').insert({
-        session_id: sessionId,
-        user_id: userId,
-        device_id: deviceInfo.deviceId,
-        device_name: deviceInfo.deviceName,
-        device_type: deviceInfo.deviceType,
-        ip_address: deviceInfo.ipAddress,
-        user_agent: deviceInfo.userAgent,
-        location: deviceInfo.location,
-        created_at: now.toISOString(),
-        last_activity: now.toISOString(),
-        is_active: true,
-        metadata,
-      });
+    const { error } = await this.supabase.from('user_sessions').insert({
+      session_id: sessionId,
+      user_id: userId,
+      device_id: deviceInfo.deviceId,
+      device_name: deviceInfo.deviceName,
+      device_type: deviceInfo.deviceType,
+      ip_address: deviceInfo.ipAddress,
+      user_agent: deviceInfo.userAgent,
+      location: deviceInfo.location,
+      created_at: now.toISOString(),
+      last_activity: now.toISOString(),
+      is_active: true,
+      metadata,
+    });
 
-      if (error) {
-        throw new Error(`Failed to create session: ${error.message}`);
-      }
-
-      // Log session creation
-      await this.auditLogger.logSecurityEvent({
-        eventType: 'session_created',
-        userId,
-        sessionId,
-        deviceId: deviceInfo.deviceId,
-        ipAddress: deviceInfo.ipAddress,
-        userAgent: deviceInfo.userAgent,
-        metadata: {
-          userRole,
-          deviceInfo,
-          terminatedSessionsCount: terminatedSessions.length,
-          activeSessions: activeSessions.length + 1 - terminatedSessions.length,
-        },
-      });
-
-      // Notify user if configured
-      if (limits.notifyOnNewSession && terminatedSessions.length === 0) {
-        await this.notifyNewSession(userId, sessionInfo as SessionInfo);
-      }
-
-      return {
-        sessionId,
-        terminatedSessions:
-          terminatedSessions.length > 0 ? terminatedSessions : undefined,
-      };
-    } catch (error) {
-      console.error('Failed to create session:', error);
-      throw error;
+    if (error) {
+      throw new Error(`Failed to create session: ${error.message}`);
     }
+
+    // Log session creation
+    await this.auditLogger.logSecurityEvent({
+      eventType: 'session_created',
+      userId,
+      sessionId,
+      deviceId: deviceInfo.deviceId,
+      ipAddress: deviceInfo.ipAddress,
+      userAgent: deviceInfo.userAgent,
+      metadata: {
+        userRole,
+        deviceInfo,
+        terminatedSessionsCount: terminatedSessions.length,
+        activeSessions: activeSessions.length + 1 - terminatedSessions.length,
+      },
+    });
+
+    // Notify user if configured
+    if (limits.notifyOnNewSession && terminatedSessions.length === 0) {
+      await this.notifyNewSession(userId, sessionInfo as SessionInfo);
+    }
+
+    return {
+      sessionId,
+      terminatedSessions:
+        terminatedSessions.length > 0 ? terminatedSessions : undefined,
+    };
   }
 
   /**
@@ -215,24 +210,19 @@ export class ConcurrentSessionManager {
     sessionId: string,
     metadata?: Record<string, any>
   ): Promise<void> {
-    try {
-      const now = new Date();
+    const now = new Date();
 
-      const { error } = await this.supabase
-        .from('user_sessions')
-        .update({
-          last_activity: now.toISOString(),
-          metadata,
-        })
-        .eq('session_id', sessionId)
-        .eq('is_active', true);
+    const { error } = await this.supabase
+      .from('user_sessions')
+      .update({
+        last_activity: now.toISOString(),
+        metadata,
+      })
+      .eq('session_id', sessionId)
+      .eq('is_active', true);
 
-      if (error) {
-        throw new Error(`Failed to update session activity: ${error.message}`);
-      }
-    } catch (error) {
-      console.error('Failed to update session activity:', error);
-      throw error;
+    if (error) {
+      throw new Error(`Failed to update session activity: ${error.message}`);
     }
   }
 
@@ -244,51 +234,46 @@ export class ConcurrentSessionManager {
     reason: SessionTerminationReason,
     terminatedBy?: string
   ): Promise<void> {
-    try {
-      // Get session info before termination
-      const session = await this.getSessionInfo(sessionId);
-      if (!session) {
-        throw new Error('Session not found');
-      }
-
-      // Mark session as inactive
-      const { error } = await this.supabase
-        .from('user_sessions')
-        .update({
-          is_active: false,
-          terminated_at: new Date().toISOString(),
-          termination_reason: reason.type,
-          termination_message: reason.message,
-          terminated_by: terminatedBy,
-        })
-        .eq('session_id', sessionId);
-
-      if (error) {
-        throw new Error(`Failed to terminate session: ${error.message}`);
-      }
-
-      // Log session termination
-      await this.auditLogger.logSecurityEvent({
-        eventType: 'session_terminated',
-        userId: session.userId,
-        sessionId,
-        deviceId: session.deviceId,
-        ipAddress: session.ipAddress,
-        metadata: {
-          reason: reason.type,
-          message: reason.message,
-          terminatedBy,
-          sessionDuration: Date.now() - session.createdAt.getTime(),
-          ...reason.metadata,
-        },
-      });
-
-      // Notify user about session termination
-      await this.notifySessionTermination(session, reason);
-    } catch (error) {
-      console.error('Failed to terminate session:', error);
-      throw error;
+    // Get session info before termination
+    const session = await this.getSessionInfo(sessionId);
+    if (!session) {
+      throw new Error('Session not found');
     }
+
+    // Mark session as inactive
+    const { error } = await this.supabase
+      .from('user_sessions')
+      .update({
+        is_active: false,
+        terminated_at: new Date().toISOString(),
+        termination_reason: reason.type,
+        termination_message: reason.message,
+        terminated_by: terminatedBy,
+      })
+      .eq('session_id', sessionId);
+
+    if (error) {
+      throw new Error(`Failed to terminate session: ${error.message}`);
+    }
+
+    // Log session termination
+    await this.auditLogger.logSecurityEvent({
+      eventType: 'session_terminated',
+      userId: session.userId,
+      sessionId,
+      deviceId: session.deviceId,
+      ipAddress: session.ipAddress,
+      metadata: {
+        reason: reason.type,
+        message: reason.message,
+        terminatedBy,
+        sessionDuration: Date.now() - session.createdAt.getTime(),
+        ...reason.metadata,
+      },
+    });
+
+    // Notify user about session termination
+    await this.notifySessionTermination(session, reason);
   }
 
   /**
@@ -300,72 +285,57 @@ export class ConcurrentSessionManager {
     excludeSessionId?: string,
     terminatedBy?: string
   ): Promise<string[]> {
-    try {
-      const activeSessions = await this.getActiveSessions(userId);
-      const sessionsToTerminate = excludeSessionId
-        ? activeSessions.filter((s) => s.sessionId !== excludeSessionId)
-        : activeSessions;
+    const activeSessions = await this.getActiveSessions(userId);
+    const sessionsToTerminate = excludeSessionId
+      ? activeSessions.filter((s) => s.sessionId !== excludeSessionId)
+      : activeSessions;
 
-      const terminatedSessionIds: string[] = [];
+    const terminatedSessionIds: string[] = [];
 
-      for (const session of sessionsToTerminate) {
-        await this.terminateSession(session.sessionId, reason, terminatedBy);
-        terminatedSessionIds.push(session.sessionId);
-      }
-
-      return terminatedSessionIds;
-    } catch (error) {
-      console.error('Failed to terminate all user sessions:', error);
-      throw error;
+    for (const session of sessionsToTerminate) {
+      await this.terminateSession(session.sessionId, reason, terminatedBy);
+      terminatedSessionIds.push(session.sessionId);
     }
+
+    return terminatedSessionIds;
   }
 
   /**
    * Get active sessions for a user
    */
   async getActiveSessions(userId: string): Promise<SessionInfo[]> {
-    try {
-      const { data, error } = await this.supabase
-        .from('user_sessions')
-        .select('*')
-        .eq('user_id', userId)
-        .eq('is_active', true)
-        .order('last_activity', { ascending: false });
+    const { data, error } = await this.supabase
+      .from('user_sessions')
+      .select('*')
+      .eq('user_id', userId)
+      .eq('is_active', true)
+      .order('last_activity', { ascending: false });
 
-      if (error) {
-        throw new Error(`Failed to get active sessions: ${error.message}`);
-      }
-
-      return (data || []).map(this.mapDatabaseToSessionInfo);
-    } catch (error) {
-      console.error('Failed to get active sessions:', error);
-      throw error;
+    if (error) {
+      throw new Error(`Failed to get active sessions: ${error.message}`);
     }
+
+    return (data || []).map(this.mapDatabaseToSessionInfo);
   }
 
   /**
    * Get session information by session ID
    */
   async getSessionInfo(sessionId: string): Promise<SessionInfo | null> {
-    try {
-      const { data, error } = await this.supabase
-        .from('user_sessions')
-        .select('*')
-        .eq('session_id', sessionId)
-        .single();
+    const { data, error } = await this.supabase
+      .from('user_sessions')
+      .select('*')
+      .eq('session_id', sessionId)
+      .single();
 
-      if (error) {
-        if (error.code === 'PGRST116') {
-          return null; // Session not found
-        }
-        throw new Error(`Failed to get session info: ${error.message}`);
+    if (error) {
+      if (error.code === 'PGRST116') {
+        return null; // Session not found
       }
-
-      return this.mapDatabaseToSessionInfo(data);
-    } catch (error) {
-      console.error('Failed to get session info:', error);
-      throw error;
+      throw new Error(`Failed to get session info: ${error.message}`);
     }
+
+    return this.mapDatabaseToSessionInfo(data);
   }
 
   /**
@@ -378,82 +348,75 @@ export class ConcurrentSessionManager {
     averageSessionDuration: number;
     recentTerminations: number;
   }> {
-    try {
-      // Get active sessions
-      let query = this.supabase
-        .from('user_sessions')
-        .select('*')
-        .eq('is_active', true);
+    // Get active sessions
+    let query = this.supabase
+      .from('user_sessions')
+      .select('*')
+      .eq('is_active', true);
 
-      if (userId) {
-        query = query.eq('user_id', userId);
-      }
-
-      const { data: activeSessions, error: activeError } = await query;
-
-      if (activeError) {
-        throw new Error(
-          `Failed to get active sessions: ${activeError.message}`
-        );
-      }
-
-      // Get recent terminations (last 24 hours)
-      const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000);
-      let terminationQuery = this.supabase
-        .from('user_sessions')
-        .select('terminated_at')
-        .eq('is_active', false)
-        .gte('terminated_at', yesterday.toISOString());
-
-      if (userId) {
-        terminationQuery = terminationQuery.eq('user_id', userId);
-      }
-
-      const { data: recentTerminations, error: terminationError } =
-        await terminationQuery;
-
-      if (terminationError) {
-        throw new Error(
-          `Failed to get recent terminations: ${terminationError.message}`
-        );
-      }
-
-      // Calculate statistics
-      const sessionsByRole: Record<UserRole, number> = {
-        owner: 0,
-        manager: 0,
-        staff: 0,
-        patient: 0,
-      };
-
-      const sessionsByDevice: Record<string, number> = {};
-      let totalDuration = 0;
-
-      for (const session of activeSessions || []) {
-        // Note: We'd need to join with user table to get role
-        // For now, we'll estimate based on session patterns
-        const deviceType = session.device_type || 'unknown';
-        sessionsByDevice[deviceType] = (sessionsByDevice[deviceType] || 0) + 1;
-
-        const duration = Date.now() - new Date(session.created_at).getTime();
-        totalDuration += duration;
-      }
-
-      const averageSessionDuration = activeSessions?.length
-        ? totalDuration / activeSessions.length
-        : 0;
-
-      return {
-        totalActiveSessions: activeSessions?.length || 0,
-        sessionsByRole,
-        sessionsByDevice,
-        averageSessionDuration,
-        recentTerminations: recentTerminations?.length || 0,
-      };
-    } catch (error) {
-      console.error('Failed to get session statistics:', error);
-      throw error;
+    if (userId) {
+      query = query.eq('user_id', userId);
     }
+
+    const { data: activeSessions, error: activeError } = await query;
+
+    if (activeError) {
+      throw new Error(`Failed to get active sessions: ${activeError.message}`);
+    }
+
+    // Get recent terminations (last 24 hours)
+    const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000);
+    let terminationQuery = this.supabase
+      .from('user_sessions')
+      .select('terminated_at')
+      .eq('is_active', false)
+      .gte('terminated_at', yesterday.toISOString());
+
+    if (userId) {
+      terminationQuery = terminationQuery.eq('user_id', userId);
+    }
+
+    const { data: recentTerminations, error: terminationError } =
+      await terminationQuery;
+
+    if (terminationError) {
+      throw new Error(
+        `Failed to get recent terminations: ${terminationError.message}`
+      );
+    }
+
+    // Calculate statistics
+    const sessionsByRole: Record<UserRole, number> = {
+      owner: 0,
+      manager: 0,
+      staff: 0,
+      patient: 0,
+    };
+
+    const sessionsByDevice: Record<string, number> = {};
+    let totalDuration = 0;
+
+    for (const session of activeSessions || []) {
+      // Note: We'd need to join with user table to get role
+      // For now, we'll estimate based on session patterns
+      const deviceType = session.device_type || 'unknown';
+      sessionsByDevice[deviceType] = (sessionsByDevice[deviceType] || 0) + 1;
+
+      const duration = Date.now() - new Date(session.created_at).getTime();
+      totalDuration += duration;
+    }
+
+    const averageSessionDuration = activeSessions?.length
+      ? totalDuration / activeSessions.length
+      : 0;
+
+    return {
+      totalActiveSessions: activeSessions?.length || 0,
+      sessionsByRole,
+      sessionsByDevice,
+      averageSessionDuration,
+      recentTerminations: recentTerminations?.length || 0,
+    };
   }
 
   /**
@@ -481,60 +444,55 @@ export class ConcurrentSessionManager {
    * Clean up expired sessions
    */
   async cleanupExpiredSessions(): Promise<number> {
-    try {
-      // Sessions inactive for more than 24 hours are considered expired
-      const expiredThreshold = new Date(Date.now() - 24 * 60 * 60 * 1000);
+    // Sessions inactive for more than 24 hours are considered expired
+    const expiredThreshold = new Date(Date.now() - 24 * 60 * 60 * 1000);
 
-      const { data: expiredSessions, error: selectError } = await this.supabase
-        .from('user_sessions')
-        .select('session_id, user_id, device_id')
-        .eq('is_active', true)
-        .lt('last_activity', expiredThreshold.toISOString());
+    const { data: expiredSessions, error: selectError } = await this.supabase
+      .from('user_sessions')
+      .select('session_id, user_id, device_id')
+      .eq('is_active', true)
+      .lt('last_activity', expiredThreshold.toISOString());
 
-      if (selectError) {
-        throw new Error(
-          `Failed to find expired sessions: ${selectError.message}`
-        );
-      }
-
-      if (!expiredSessions || expiredSessions.length === 0) {
-        return 0;
-      }
-
-      // Mark expired sessions as inactive
-      const { error: updateError } = await this.supabase
-        .from('user_sessions')
-        .update({
-          is_active: false,
-          terminated_at: new Date().toISOString(),
-          termination_reason: 'timeout',
-          termination_message: 'Session expired due to inactivity',
-        })
-        .in(
-          'session_id',
-          expiredSessions.map((s) => s.session_id)
-        );
-
-      if (updateError) {
-        throw new Error(
-          `Failed to cleanup expired sessions: ${updateError.message}`
-        );
-      }
-
-      // Log cleanup event
-      await this.auditLogger.logSecurityEvent({
-        eventType: 'session_cleanup',
-        metadata: {
-          expiredSessionsCount: expiredSessions.length,
-          expiredThreshold: expiredThreshold.toISOString(),
-        },
-      });
-
-      return expiredSessions.length;
-    } catch (error) {
-      console.error('Failed to cleanup expired sessions:', error);
-      throw error;
+    if (selectError) {
+      throw new Error(
+        `Failed to find expired sessions: ${selectError.message}`
+      );
     }
+
+    if (!expiredSessions || expiredSessions.length === 0) {
+      return 0;
+    }
+
+    // Mark expired sessions as inactive
+    const { error: updateError } = await this.supabase
+      .from('user_sessions')
+      .update({
+        is_active: false,
+        terminated_at: new Date().toISOString(),
+        termination_reason: 'timeout',
+        termination_message: 'Session expired due to inactivity',
+      })
+      .in(
+        'session_id',
+        expiredSessions.map((s) => s.session_id)
+      );
+
+    if (updateError) {
+      throw new Error(
+        `Failed to cleanup expired sessions: ${updateError.message}`
+      );
+    }
+
+    // Log cleanup event
+    await this.auditLogger.logSecurityEvent({
+      eventType: 'session_cleanup',
+      metadata: {
+        expiredSessionsCount: expiredSessions.length,
+        expiredThreshold: expiredThreshold.toISOString(),
+      },
+    });
+
+    return expiredSessions.length;
   }
 
   /**
@@ -640,9 +598,7 @@ export class ConcurrentSessionManager {
       async () => {
         try {
           await this.cleanupExpiredSessions();
-        } catch (error) {
-          console.error('Session cleanup failed:', error);
-        }
+        } catch (_error) {}
       },
       5 * 60 * 1000
     ); // Every 5 minutes
@@ -667,9 +623,7 @@ export class ConcurrentSessionManager {
           location: session.location,
         },
       });
-    } catch (error) {
-      console.error('Failed to notify new session:', error);
-    }
+    } catch (_error) {}
   }
 
   private async notifySessionTermination(
@@ -691,8 +645,6 @@ export class ConcurrentSessionManager {
           sessionDuration: Date.now() - session.createdAt.getTime(),
         },
       });
-    } catch (error) {
-      console.error('Failed to notify session termination:', error);
-    }
+    } catch (_error) {}
   }
 }

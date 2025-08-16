@@ -70,7 +70,7 @@ ChartJS.register(
 */
 
 // Types
-interface ComplianceMetric {
+type ComplianceMetric = {
   id: string;
   name: string;
   value: number;
@@ -80,9 +80,9 @@ interface ComplianceMetric {
   lastUpdated: string;
   trend: 'up' | 'down' | 'stable';
   description: string;
-}
+};
 
-interface VisionAlert {
+type VisionAlert = {
   id: string;
   timestamp: string;
   level: 'info' | 'warning' | 'error' | 'critical';
@@ -92,9 +92,9 @@ interface VisionAlert {
   source: string;
   resolved: boolean;
   actionRequired: boolean;
-}
+};
 
-interface PerformanceMetric {
+type PerformanceMetric = {
   id: string;
   name: string;
   value: number;
@@ -103,7 +103,7 @@ interface PerformanceMetric {
   category: 'detection' | 'processing' | 'storage' | 'network';
   trend: number[];
   lastUpdated: string;
-}
+};
 
 // Mock data (in real implementation, this would come from API)
 const mockComplianceMetrics: ComplianceMetric[] = [
@@ -298,8 +298,7 @@ export default function MonitoringDashboard() {
       // In real implementation, fetch from API
       await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate API call
       setLastRefresh(new Date());
-    } catch (error) {
-      console.error('Failed to refresh data:', error);
+    } catch (_error) {
     } finally {
       setIsLoading(false);
     }

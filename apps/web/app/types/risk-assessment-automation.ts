@@ -67,7 +67,7 @@ export type AlertStatus = 'active' | 'acknowledged' | 'resolved' | 'escalated';
 export type ThresholdType = 'score' | 'factor' | 'combination';
 
 // Risk Factors Structure
-export interface RiskFactors {
+export type RiskFactors = {
   medical: {
     chronic_conditions?: string[];
     allergies?: string[];
@@ -95,10 +95,10 @@ export interface RiskFactors {
     staff_experience?: number;
     emergency_preparedness?: number;
   };
-}
+};
 
 // Risk Categories Structure
-export interface RiskCategories {
+export type RiskCategories = {
   medical: {
     score: number;
     factors: string[];
@@ -119,20 +119,20 @@ export interface RiskCategories {
     factors: string[];
     severity: RiskLevel;
   };
-}
+};
 
 // Assessment Context Structure
-export interface AssessmentContext {
+export type AssessmentContext = {
   procedure_id?: string;
   treatment_type?: string;
   consultation_reason?: string;
   emergency_type?: string;
   referring_condition?: string;
   assessment_triggers?: string[];
-}
+};
 
 // Risk Assessment Interface
-export interface RiskAssessment {
+export type RiskAssessment = {
   id: string;
   patient_id: string;
 
@@ -163,10 +163,10 @@ export interface RiskAssessment {
   created_by?: string;
   created_at: string;
   updated_at: string;
-}
+};
 
 // Risk Validation Interface
-export interface RiskValidation {
+export type RiskValidation = {
   id: string;
   assessment_id: string;
   validator_id: string;
@@ -189,10 +189,10 @@ export interface RiskValidation {
   // Timestamps
   created_at: string;
   updated_at: string;
-}
+};
 
 // Risk Mitigation Interface
-export interface RiskMitigation {
+export type RiskMitigation = {
   id: string;
   risk_assessment_id: string;
 
@@ -214,10 +214,10 @@ export interface RiskMitigation {
   // Timestamps
   created_at: string;
   updated_at: string;
-}
+};
 
 // Risk Alert Interface
-export interface RiskAlert {
+export type RiskAlert = {
   id: string;
   patient_id: string;
   assessment_id?: string;
@@ -252,10 +252,10 @@ export interface RiskAlert {
   // Timestamps
   created_at: string;
   updated_at: string;
-}
+};
 
 // Risk Threshold Interface
-export interface RiskThreshold {
+export type RiskThreshold = {
   id: string;
   clinic_id?: string; // NULL for global thresholds
 
@@ -281,10 +281,10 @@ export interface RiskThreshold {
   // Timestamps
   created_at: string;
   updated_at: string;
-}
+};
 
 // Request/Response Types for API
-export interface CreateRiskAssessmentRequest {
+export type CreateRiskAssessmentRequest = {
   patient_id: string;
   assessment_type: AssessmentType;
   assessment_method?: AssessmentMethod;
@@ -292,17 +292,17 @@ export interface CreateRiskAssessmentRequest {
   risk_factors?: Partial<RiskFactors>;
   medical_history_factors?: Record<string, any>;
   current_conditions?: Record<string, any>;
-}
+};
 
-export interface UpdateRiskAssessmentRequest {
+export type UpdateRiskAssessmentRequest = {
   risk_factors?: Partial<RiskFactors>;
   risk_score?: number;
   risk_level?: RiskLevel;
   assessment_context?: AssessmentContext;
   validation_status?: ValidationStatus;
-}
+};
 
-export interface CreateValidationRequest {
+export type CreateValidationRequest = {
   assessment_id: string;
   validation_decision: ValidationDecision;
   validation_notes?: string;
@@ -311,18 +311,18 @@ export interface CreateValidationRequest {
   validator_credentials?: Record<string, any>;
   validation_confidence?: number;
   requires_second_opinion?: boolean;
-}
+};
 
-export interface CreateMitigationRequest {
+export type CreateMitigationRequest = {
   risk_assessment_id: string;
   mitigation_type: MitigationType;
   mitigation_strategy: string;
   mitigation_details?: Record<string, any>;
   responsible_staff_id?: string;
   monitoring_frequency?: MonitoringFrequency;
-}
+};
 
-export interface CreateAlertRequest {
+export type CreateAlertRequest = {
   patient_id: string;
   assessment_id?: string;
   alert_type: AlertType;
@@ -332,43 +332,43 @@ export interface CreateAlertRequest {
   alert_message: string;
   alert_details?: Record<string, any>;
   recommended_actions?: Record<string, any>;
-}
+};
 
-export interface UpdateAlertRequest {
+export type UpdateAlertRequest = {
   alert_status?: AlertStatus;
   escalation_level?: number;
   resolution_notes?: string;
   emergency_protocol_triggered?: boolean;
-}
+};
 
 // Assessment Engine Types
-export interface RiskAssessmentEngine {
+export type RiskAssessmentEngine = {
   calculateRiskScore(factors: RiskFactors, context: AssessmentContext): number;
   determineRiskLevel(score: number): RiskLevel;
   identifyRiskFactors(patientData: any, procedureData: any): RiskFactors;
   generateRecommendations(assessment: RiskAssessment): RiskMitigation[];
   requiresValidation(assessment: RiskAssessment): boolean;
-}
+};
 
 // Medical Validation Types
-export interface MedicalValidator {
+export type MedicalValidator = {
   validateAssessment(assessment: RiskAssessment): Promise<RiskValidation>;
   requiresSecondOpinion(assessment: RiskAssessment): boolean;
   escalateToSpecialist(assessment: RiskAssessment): Promise<void>;
   generateAuditTrail(validation: RiskValidation): void;
-}
+};
 
 // Alert System Types
-export interface AlertManager {
+export type AlertManager = {
   createAlert(alert: CreateAlertRequest): Promise<RiskAlert>;
   escalateAlert(alertId: string): Promise<void>;
   acknowledgeAlert(alertId: string, userId: string): Promise<void>;
   resolveAlert(alertId: string, userId: string, notes?: string): Promise<void>;
   triggerEmergencyProtocol(alertId: string): Promise<void>;
-}
+};
 
 // Dashboard and Analytics Types
-export interface RiskDashboardData {
+export type RiskDashboardData = {
   totalAssessments: number;
   highRiskPatients: number;
   pendingValidations: number;
@@ -385,9 +385,9 @@ export interface RiskDashboardData {
     averageValidationTime: number;
     validationAccuracy: number;
   };
-}
+};
 
-export interface RiskAnalytics {
+export type RiskAnalytics = {
   patientRiskProfile: {
     patient_id: string;
     riskHistory: RiskAssessment[];
@@ -405,6 +405,6 @@ export interface RiskAnalytics {
     documentationCompleteness: number;
     protocolAdherence: number;
   };
-}
+};
 
 // All types are already exported individually above

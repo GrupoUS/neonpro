@@ -74,8 +74,7 @@ export async function GET(
     }
 
     return NextResponse.json({ invoice });
-  } catch (error) {
-    console.error('API Error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal Server Error' },
       { status: 500 }
@@ -131,7 +130,6 @@ export async function PUT(
       .single();
 
     if (error) {
-      console.error('Error updating invoice:', error);
       return NextResponse.json(
         { error: 'Failed to update invoice' },
         { status: 500 }
@@ -146,8 +144,6 @@ export async function PUT(
         { status: 400 }
       );
     }
-
-    console.error('API Error:', error);
     return NextResponse.json(
       { error: 'Internal Server Error' },
       { status: 500 }
@@ -179,7 +175,6 @@ export async function DELETE(
       .limit(1);
 
     if (paymentError) {
-      console.error('Error checking invoice payments:', paymentError);
       return NextResponse.json(
         { error: 'Failed to check invoice payments' },
         { status: 500 }
@@ -196,7 +191,6 @@ export async function DELETE(
         .single();
 
       if (error) {
-        console.error('Error cancelling invoice:', error);
         return NextResponse.json(
           { error: 'Failed to cancel invoice' },
           { status: 500 }
@@ -216,7 +210,6 @@ export async function DELETE(
       .eq('invoice_id', resolvedParams.id);
 
     if (itemsError) {
-      console.error('Error deleting invoice items:', itemsError);
       return NextResponse.json(
         { error: 'Failed to delete invoice items' },
         { status: 500 }
@@ -230,7 +223,6 @@ export async function DELETE(
       .eq('id', resolvedParams.id);
 
     if (error) {
-      console.error('Error deleting invoice:', error);
       return NextResponse.json(
         { error: 'Failed to delete invoice' },
         { status: 500 }
@@ -238,8 +230,7 @@ export async function DELETE(
     }
 
     return NextResponse.json({ message: 'Invoice deleted successfully' });
-  } catch (error) {
-    console.error('API Error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal Server Error' },
       { status: 500 }

@@ -20,8 +20,7 @@ export async function GET(request: NextRequest) {
     });
 
     return NextResponse.json(result);
-  } catch (error) {
-    console.error('Erro ao buscar alertas:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
       { status: 500 }
@@ -37,8 +36,7 @@ export async function POST(request: NextRequest) {
     const alert = await service.createAlert(validatedData);
 
     return NextResponse.json(alert, { status: 201 });
-  } catch (error) {
-    console.error('Erro ao criar alerta:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Erro ao criar alerta' },
       { status: 400 }

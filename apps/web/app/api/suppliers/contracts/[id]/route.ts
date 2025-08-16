@@ -9,11 +9,11 @@ import { SupplierManagementService } from '@/app/lib/services/supplier-managemen
 
 const supplierService = new SupplierManagementService();
 
-interface RouteParams {
+type RouteParams = {
   params: {
     id: string;
   };
-}
+};
 
 // =====================================================================================
 // GET /api/suppliers/contracts/[id] - Get contract by ID
@@ -30,8 +30,7 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
     }
 
     return NextResponse.json(contract);
-  } catch (error) {
-    console.error('Erro ao buscar contrato:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
       { status: 500 }
@@ -61,8 +60,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     );
 
     return NextResponse.json(contract);
-  } catch (error) {
-    console.error('Erro ao atualizar contrato:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
       { status: 500 }

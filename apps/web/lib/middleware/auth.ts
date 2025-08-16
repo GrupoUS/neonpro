@@ -7,19 +7,19 @@ import { jwtVerify } from 'jose';
 import type { NextRequest } from 'next/server';
 import { createClient } from '@/app/utils/supabase/client';
 
-export interface AuthUser {
+export type AuthUser = {
   id: string;
   email: string;
   role: string;
   clinicId?: string;
   permissions?: string[];
-}
+};
 
-export interface AuthResult {
+export type AuthResult = {
   success: boolean;
   user?: AuthUser;
   error?: string;
-}
+};
 
 /**
  * JWT secret key for token verification
@@ -66,8 +66,7 @@ export async function verifyAuthToken(token: string): Promise<AuthUser | null> {
       clinicId: payload.clinicId as string | undefined,
       permissions: (payload.permissions as string[]) || [],
     };
-  } catch (error) {
-    console.error('JWT verification failed:', error);
+  } catch (_error) {
     return null;
   }
 }
@@ -102,8 +101,7 @@ export async function getSupabaseUser(
       clinicId: profile?.clinic_id,
       permissions: profile?.permissions || [],
     };
-  } catch (error) {
-    console.error('Supabase user verification failed:', error);
+  } catch (_error) {
     return null;
   }
 }

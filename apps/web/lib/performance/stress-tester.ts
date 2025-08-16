@@ -6,21 +6,21 @@
 import { type LoadTestConfig, LoadTester } from './load-tester';
 import { performanceMonitor } from './monitor';
 
-export interface StressTestScenario {
+export type StressTestScenario = {
   name: string;
   description: string;
   config: LoadTestConfig;
   chaosActions?: ChaosAction[];
-}
+};
 
-export interface ChaosAction {
+export type ChaosAction = {
   type: 'network_delay' | 'memory_pressure' | 'cpu_spike' | 'connection_drop';
   delay: number; // when to execute (in ms)
   duration: number; // how long to maintain (in ms)
   intensity: number; // 1-10 scale
-}
+};
 
-export interface StressTestReport {
+export type StressTestReport = {
   scenario: string;
   startTime: number;
   endTime: number;
@@ -29,7 +29,7 @@ export interface StressTestReport {
   recoveryTime: number; // time to recover after stress
   criticalFailures: number;
   performanceDegradation: number; // percentage
-}
+};
 
 export class StressTester {
   private readonly activeTests: Map<string, NodeJS.Timeout> = new Map();
@@ -45,8 +45,6 @@ export class StressTester {
     scenario: StressTestScenario,
     testFn: () => Promise<boolean>
   ): Promise<StressTestReport> {
-    console.log(`🔥 Starting stress test: ${scenario.name}`);
-
     const startTime = Date.now();
     const baselineMetrics = performanceMonitor.generateReport();
 
@@ -91,10 +89,6 @@ export class StressTester {
 
     this.reports.push(report);
 
-    console.log(`✅ Stress test completed: ${scenario.name}`);
-    console.log(`📊 System stability: ${report.systemStability}%`);
-    console.log(`⏱️ Recovery time: ${report.recoveryTime}ms`);
-
     return report;
   } /**
    * Schedule chaos action
@@ -116,10 +110,6 @@ export class StressTester {
    * Execute specific chaos action
    */
   private executeChaosAction(action: ChaosAction): void {
-    console.log(
-      `💥 Executing chaos action: ${action.type} (intensity: ${action.intensity})`
-    );
-
     switch (action.type) {
       case 'network_delay':
         this.simulateNetworkDelay(action.intensity * 100);
@@ -137,10 +127,7 @@ export class StressTester {
   } /**
    * Simulate network delay
    */
-  private simulateNetworkDelay(delayMs: number): void {
-    // Implementation would depend on testing environment
-    console.log(`🌐 Simulating ${delayMs}ms network delay`);
-  }
+  private simulateNetworkDelay(_delayMs: number): void {}
 
   /**
    * Simulate memory pressure
@@ -154,8 +141,6 @@ export class StressTester {
       arrays.push(new Array(100_000).fill(Math.random()));
     }
 
-    console.log(`🧠 Created memory pressure with ${arrayCount} large arrays`);
-
     // Keep reference to prevent GC
     setTimeout(() => {
       arrays.length = 0; // Release memory
@@ -168,8 +153,6 @@ export class StressTester {
   private simulateCpuSpike(intensity: number): void {
     const duration = intensity * 1000; // ms
     const startTime = Date.now();
-
-    console.log(`⚡ Simulating CPU spike for ${duration}ms`);
 
     const cpuBurn = () => {
       const elapsed = Date.now() - startTime;
@@ -186,16 +169,14 @@ export class StressTester {
   /**
    * Simulate connection drop
    */
-  private simulateConnectionDrop(intensity: number): void {
-    console.log(`🔌 Simulating connection drops (intensity: ${intensity})`);
+  private simulateConnectionDrop(_intensity: number): void {
     // Implementation would mock network failures
   }
 
   /**
    * Cleanup chaos action
    */
-  private cleanupChaosAction(action: ChaosAction): void {
-    console.log(`🧹 Cleaning up chaos action: ${action.type}`);
+  private cleanupChaosAction(_action: ChaosAction): void {
     // Cleanup implementation would depend on action type
   }
 
@@ -213,7 +194,6 @@ export class StressTester {
       try {
         const isHealthy = await testFn();
         if (isHealthy) {
-          console.log('✅ System recovered');
           return;
         }
       } catch (_error) {
@@ -222,8 +202,6 @@ export class StressTester {
 
       await new Promise((resolve) => setTimeout(resolve, checkInterval));
     }
-
-    console.warn('⚠️ System recovery timeout');
   }
 
   /**

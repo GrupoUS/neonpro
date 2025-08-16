@@ -69,7 +69,6 @@ export async function GET(
       .single();
 
     if (error) {
-      console.error('Error fetching regulatory document:', error);
       if (error.code === 'PGRST116') {
         return NextResponse.json(
           { error: 'Document not found' },
@@ -83,8 +82,7 @@ export async function GET(
     }
 
     return NextResponse.json({ document });
-  } catch (error) {
-    console.error('API Error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -153,7 +151,6 @@ export async function PUT(
       .single();
 
     if (error) {
-      console.error('Error updating regulatory document:', error);
       return NextResponse.json(
         { error: 'Failed to update document' },
         { status: 500 }
@@ -176,7 +173,6 @@ export async function PUT(
 
     return NextResponse.json({ document });
   } catch (error) {
-    console.error('API Error:', error);
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Invalid document data', details: error.errors },
@@ -236,7 +232,6 @@ export async function DELETE(
       .eq('id', id);
 
     if (error) {
-      console.error('Error deleting regulatory document:', error);
       return NextResponse.json(
         { error: 'Failed to delete document' },
         { status: 500 }
@@ -244,8 +239,7 @@ export async function DELETE(
     }
 
     return NextResponse.json({ message: 'Document deleted successfully' });
-  } catch (error) {
-    console.error('API Error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

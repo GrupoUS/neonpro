@@ -427,9 +427,7 @@ export class SessionStorage {
   static setSession(session: Partial<SessionInfo>): void {
     try {
       localStorage.setItem(SessionStorage.SESSION_KEY, JSON.stringify(session));
-    } catch (error) {
-      console.warn('Failed to store session data:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -439,8 +437,7 @@ export class SessionStorage {
     try {
       const data = localStorage.getItem(SessionStorage.SESSION_KEY);
       return data ? JSON.parse(data) : null;
-    } catch (error) {
-      console.warn('Failed to retrieve session data:', error);
+    } catch (_error) {
       return null;
     }
   }
@@ -452,9 +449,7 @@ export class SessionStorage {
     try {
       localStorage.removeItem(SessionStorage.SESSION_KEY);
       localStorage.removeItem(SessionStorage.DEVICE_KEY);
-    } catch (error) {
-      console.warn('Failed to clear session data:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -463,9 +458,7 @@ export class SessionStorage {
   static setDevice(device: Partial<DeviceInfo>): void {
     try {
       localStorage.setItem(SessionStorage.DEVICE_KEY, JSON.stringify(device));
-    } catch (error) {
-      console.warn('Failed to store device data:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -475,8 +468,7 @@ export class SessionStorage {
     try {
       const data = localStorage.getItem(SessionStorage.DEVICE_KEY);
       return data ? JSON.parse(data) : null;
-    } catch (error) {
-      console.warn('Failed to retrieve device data:', error);
+    } catch (_error) {
       return null;
     }
   }

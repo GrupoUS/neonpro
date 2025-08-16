@@ -53,18 +53,12 @@ export class NeonProAutomation {
         payload,
       });
 
-      console.log('✅ Appointment confirmation job triggered', {
-        jobId: handle.id,
-        appointmentId: params.appointmentId,
-      });
-
       return {
         success: true,
         jobId: handle.id,
         appointmentId: params.appointmentId,
       };
     } catch (error) {
-      console.error('❌ Failed to trigger appointment confirmation', error);
       throw new Error(
         `Failed to send appointment confirmation: ${error instanceof Error ? error.message : error}`
       );
@@ -119,12 +113,6 @@ export class NeonProAutomation {
         },
       });
 
-      console.log('✅ Appointment reminder scheduled', {
-        jobId: handle.id,
-        appointmentId: params.appointmentId,
-        scheduledFor: scheduleFor,
-      });
-
       return {
         success: true,
         jobId: handle.id,
@@ -132,7 +120,6 @@ export class NeonProAutomation {
         scheduledFor: scheduleFor,
       };
     } catch (error) {
-      console.error('❌ Failed to schedule appointment reminder', error);
       throw new Error(
         `Failed to schedule reminder: ${error instanceof Error ? error.message : error}`
       );
@@ -170,12 +157,6 @@ export class NeonProAutomation {
         payload,
       });
 
-      console.log('✅ Invoice email job triggered', {
-        jobId: handle.id,
-        invoiceId: params.invoiceId,
-        amount: params.amount,
-      });
-
       return {
         success: true,
         jobId: handle.id,
@@ -183,7 +164,6 @@ export class NeonProAutomation {
         amount: params.amount,
       };
     } catch (error) {
-      console.error('❌ Failed to trigger invoice email', error);
       throw new Error(
         `Failed to send invoice: ${error instanceof Error ? error.message : error}`
       );
@@ -230,12 +210,6 @@ export class NeonProAutomation {
         options: scheduleOptions,
       });
 
-      console.log('✅ Payment reminder job triggered', {
-        jobId: handle.id,
-        invoiceId: params.invoiceId,
-        delayDays: params.delayDays,
-      });
-
       return {
         success: true,
         jobId: handle.id,
@@ -243,7 +217,6 @@ export class NeonProAutomation {
         scheduledFor: params.delayDays ? `+${params.delayDays} days` : 'now',
       };
     } catch (error) {
-      console.error('❌ Failed to trigger payment reminder', error);
       throw new Error(
         `Failed to send payment reminder: ${error instanceof Error ? error.message : error}`
       );
@@ -279,15 +252,8 @@ export class NeonProAutomation {
       results.reminder =
         await NeonProAutomation.scheduleAppointmentReminder(appointmentData);
 
-      console.log('✅ New appointment automation completed', {
-        appointmentId: appointmentData.appointmentId,
-        confirmationJobId: results.confirmation.jobId,
-        reminderJobId: results.reminder.jobId,
-      });
-
       return results;
-    } catch (error) {
-      console.error('❌ Failed to complete appointment automation', error);
+    } catch (_error) {
       return results;
     }
   }
@@ -327,16 +293,8 @@ export class NeonProAutomation {
         ),
       });
 
-      console.log('✅ New invoice automation completed', {
-        invoiceId: invoiceData.invoiceId,
-        amount: invoiceData.amount,
-        invoiceJobId: results.invoiceEmail.jobId,
-        reminderJobId: results.paymentReminder.jobId,
-      });
-
       return results;
-    } catch (error) {
-      console.error('❌ Failed to complete invoice automation', error);
+    } catch (_error) {
       return results;
     }
   }

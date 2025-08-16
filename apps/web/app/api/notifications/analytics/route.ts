@@ -241,7 +241,6 @@ export async function GET(request: NextRequest) {
       generatedAt: new Date().toISOString(),
     });
   } catch (error) {
-    console.error('Erro nas analytics de notificações:', error);
     return NextResponse.json(
       {
         error: 'Erro interno do servidor',

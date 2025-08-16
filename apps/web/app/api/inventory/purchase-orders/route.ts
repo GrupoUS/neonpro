@@ -116,7 +116,6 @@ export async function GET(request: NextRequest) {
     const { data: purchaseOrders, error } = await query;
 
     if (error) {
-      console.error('Error fetching purchase orders:', error);
       return NextResponse.json(
         { error: 'Failed to fetch purchase orders' },
         { status: 500 }
@@ -160,8 +159,7 @@ export async function GET(request: NextRequest) {
       limit: filters.limit,
       offset: filters.offset,
     });
-  } catch (error) {
-    console.error('Error in purchase orders GET:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -209,7 +207,6 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (poError) {
-      console.error('Error saving purchase order:', poError);
       return NextResponse.json(
         { error: 'Failed to save purchase order' },
         { status: 500 }
@@ -231,7 +228,6 @@ export async function POST(request: NextRequest) {
       .insert(itemsToInsert);
 
     if (itemsError) {
-      console.error('Error saving purchase order items:', itemsError);
       return NextResponse.json(
         { error: 'Failed to save purchase order items' },
         { status: 500 }
@@ -270,8 +266,6 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
-
-    console.error('Error in purchase orders POST:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

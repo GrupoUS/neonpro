@@ -61,7 +61,7 @@ export type ConflictResolution =
 // CORE INVENTORY INTERFACES
 // =====================================================================================
 
-export interface InventoryItem {
+export type InventoryItem = {
   id: string;
   clinic_id: string;
 
@@ -99,9 +99,9 @@ export interface InventoryItem {
   created_at: string;
   updated_at: string;
   created_by?: string;
-}
+};
 
-export interface InventoryLocation {
+export type InventoryLocation = {
   id: string;
   clinic_id: string;
 
@@ -127,9 +127,9 @@ export interface InventoryLocation {
   is_active: boolean;
   created_at: string;
   updated_at: string;
-}
+};
 
-export interface StockLevel {
+export type StockLevel = {
   id: string;
   item_id: string;
   location_id: string;
@@ -160,9 +160,9 @@ export interface StockLevel {
   // Relations (populated when needed)
   item?: InventoryItem;
   location?: InventoryLocation;
-}
+};
 
-export interface InventoryTransaction {
+export type InventoryTransaction = {
   id: string;
   item_id: string;
   location_id: string;
@@ -208,13 +208,13 @@ export interface InventoryTransaction {
   source_location?: InventoryLocation;
   destination_location?: InventoryLocation;
   created_by_user?: any; // User profile
-}
+};
 
 // =====================================================================================
 // ALERTS AND NOTIFICATIONS
 // =====================================================================================
 
-export interface StockAlert {
+export type StockAlert = {
   id: string;
   clinic_id: string;
   item_id: string;
@@ -246,13 +246,13 @@ export interface StockAlert {
   // Relations (populated when needed)
   item?: InventoryItem;
   location?: InventoryLocation;
-}
+};
 
 // =====================================================================================
 // BARCODE/QR CODE INTEGRATION
 // =====================================================================================
 
-export interface BarcodeScan {
+export type BarcodeScan = {
   id: string;
   clinic_id: string;
 
@@ -283,13 +283,13 @@ export interface BarcodeScan {
   item?: InventoryItem;
   location?: InventoryLocation;
   transaction?: InventoryTransaction;
-}
+};
 
 // =====================================================================================
 // MOBILE & OFFLINE SUPPORT
 // =====================================================================================
 
-export interface MobileSyncQueue {
+export type MobileSyncQueue = {
   id: string;
   clinic_id: string;
 
@@ -315,14 +315,14 @@ export interface MobileSyncQueue {
   // Processing
   processed_at?: string;
   retry_count: number;
-}
+};
 
 // =====================================================================================
 // API REQUEST/RESPONSE TYPES
 // =====================================================================================
 
 // Stock Level Updates
-export interface StockUpdateRequest {
+export type StockUpdateRequest = {
   item_id: string;
   location_id: string;
   quantity_change: number;
@@ -332,43 +332,43 @@ export interface StockUpdateRequest {
   expiration_date?: string;
   reference_type?: ReferenceType;
   reference_id?: string;
-}
+};
 
-export interface StockUpdateResponse {
+export type StockUpdateResponse = {
   success: boolean;
   transaction_id?: string;
   new_quantity: number;
   available_quantity: number;
   alerts_created?: StockAlert[];
   errors?: string[];
-}
+};
 
 // Barcode Scanning
-export interface BarcodeScanRequest {
+export type BarcodeScanRequest = {
   barcode_value: string;
   scan_type: ScanType;
   scan_purpose: ScanPurpose;
   location_id?: string;
   device_id?: string;
   device_type?: DeviceType;
-}
+};
 
-export interface BarcodeScanResponse {
+export type BarcodeScanResponse = {
   success: boolean;
   scan_id: string;
   item?: InventoryItem;
   stock_level?: StockLevel;
   suggestions?: InventoryItem[];
   error_message?: string;
-}
+};
 
 // Batch Operations
-export interface BatchTransactionRequest {
+export type BatchTransactionRequest = {
   transactions: StockUpdateRequest[];
   validate_only?: boolean;
-}
+};
 
-export interface BatchTransactionResponse {
+export type BatchTransactionResponse = {
   success: boolean;
   successful_transactions: string[];
   failed_transactions: {
@@ -376,10 +376,10 @@ export interface BatchTransactionResponse {
     error: string;
   }[];
   total_processed: number;
-}
+};
 
 // Search and Filtering
-export interface InventorySearchParams {
+export type InventorySearchParams = {
   query?: string;
   category?: string;
   location_id?: string;
@@ -390,9 +390,9 @@ export interface InventorySearchParams {
   limit?: number;
   sort_by?: 'name' | 'sku' | 'quantity' | 'expiry_date' | 'last_updated';
   sort_order?: 'asc' | 'desc';
-}
+};
 
-export interface InventorySearchResponse {
+export type InventorySearchResponse = {
   items: (InventoryItem & {
     stock_levels: StockLevel[];
     total_quantity: number;
@@ -415,13 +415,13 @@ export interface InventorySearchResponse {
     out_of_stock_items: number;
     total_value: number;
   };
-}
+};
 
 // =====================================================================================
 // DASHBOARD AND ANALYTICS TYPES
 // =====================================================================================
 
-export interface InventoryAnalytics {
+export type InventoryAnalytics = {
   clinic_id: string;
   period: string;
 
@@ -481,9 +481,9 @@ export interface InventoryAnalytics {
     total_value: number;
     current_quantity: number;
   }[];
-}
+};
 
-export interface InventoryKPIs {
+export type InventoryKPIs = {
   // Stock Performance
   stock_accuracy: number; // percentage
   inventory_turnover: number;
@@ -504,13 +504,13 @@ export interface InventoryKPIs {
   alert_response_time: number; // average in minutes
   alerts_resolved_percentage: number;
   escalated_alerts: number;
-}
+};
 
 // =====================================================================================
 // FORM AND VALIDATION TYPES
 // =====================================================================================
 
-export interface CreateInventoryItemForm {
+export type CreateInventoryItemForm = {
   name: string;
   description?: string;
   sku: string;
@@ -529,9 +529,9 @@ export interface CreateInventoryItemForm {
   controlled_substance?: boolean;
   anvisa_code?: string;
   therapeutic_class?: string;
-}
+};
 
-export interface CreateLocationForm {
+export type CreateLocationForm = {
   location_name: string;
   location_code: string;
   address?: string;
@@ -543,9 +543,9 @@ export interface CreateLocationForm {
   humidity_controlled?: boolean;
   requires_authorization?: boolean;
   responsible_user_id?: string;
-}
+};
 
-export interface StockAdjustmentForm {
+export type StockAdjustmentForm = {
   item_id: string;
   location_id: string;
   adjustment_type: 'set' | 'increase' | 'decrease';
@@ -554,9 +554,9 @@ export interface StockAdjustmentForm {
   batch_number?: string;
   expiration_date?: string;
   notes?: string;
-}
+};
 
-export interface TransferStockForm {
+export type TransferStockForm = {
   item_id: string;
   source_location_id: string;
   destination_location_id: string;
@@ -564,13 +564,13 @@ export interface TransferStockForm {
   reason: string;
   batch_number?: string;
   notes?: string;
-}
+};
 
 // =====================================================================================
 // VIEW AND COMPUTED TYPES
 // =====================================================================================
 
-export interface LowStockItem {
+export type LowStockItem = {
   id: string;
   clinic_id: string;
   name: string;
@@ -583,9 +583,9 @@ export interface LowStockItem {
   min_stock: number;
   shortage_quantity: number;
   stock_status: 'Out of Stock' | 'Critical' | 'Low' | 'OK';
-}
+};
 
-export interface ExpiringItem {
+export type ExpiringItem = {
   id: string;
   clinic_id: string;
   name: string;
@@ -597,9 +597,9 @@ export interface ExpiringItem {
   current_quantity: number;
   days_to_expiry: number;
   expiry_status: 'Expired' | 'Expires This Week' | 'Expires This Month' | 'OK';
-}
+};
 
-export interface InventorySummary {
+export type InventorySummary = {
   clinic_id: string;
   category: string;
   total_items: number;
@@ -610,39 +610,39 @@ export interface InventorySummary {
   low_stock_items: number;
   out_of_stock_items: number;
   total_inventory_value: number;
-}
+};
 
 // =====================================================================================
 // ERROR AND VALIDATION TYPES
 // =====================================================================================
 
-export interface InventoryError {
+export type InventoryError = {
   code: string;
   message: string;
   field?: string;
   details?: Record<string, any>;
-}
+};
 
-export interface ValidationResult {
+export type ValidationResult = {
   valid: boolean;
   errors: InventoryError[];
   warnings: InventoryError[];
-}
+};
 
 // =====================================================================================
 // REAL-TIME UPDATES AND SUBSCRIPTIONS
 // =====================================================================================
 
-export interface InventoryUpdate {
+export type InventoryUpdate = {
   type: 'stock_change' | 'new_alert' | 'alert_resolved' | 'new_transaction';
   clinic_id: string;
   item_id?: string;
   location_id?: string;
   data: any;
   timestamp: string;
-}
+};
 
-export interface RealtimeSubscription {
+export type RealtimeSubscription = {
   clinic_id: string;
   filters?: {
     item_ids?: string[];
@@ -650,13 +650,13 @@ export interface RealtimeSubscription {
     alert_levels?: AlertLevel[];
   };
   callback: (update: InventoryUpdate) => void;
-}
+};
 
 // =====================================================================================
 // INTEGRATION TYPES
 // =====================================================================================
 
-export interface PurchaseOrderIntegration {
+export type PurchaseOrderIntegration = {
   po_number: string;
   supplier_id: string;
   expected_items: {
@@ -666,9 +666,9 @@ export interface PurchaseOrderIntegration {
     batch_number?: string;
     expiration_date?: string;
   }[];
-}
+};
 
-export interface TreatmentIntegration {
+export type TreatmentIntegration = {
   treatment_id: string;
   patient_id: string;
   required_items: {
@@ -676,7 +676,7 @@ export interface TreatmentIntegration {
     quantity: number;
     is_consumed: boolean;
   }[];
-}
+};
 
 // =====================================================================================
 // EXPORT ALL TYPES

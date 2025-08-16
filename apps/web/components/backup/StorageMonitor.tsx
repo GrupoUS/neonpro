@@ -40,7 +40,7 @@ import {
 import { formatBytes, formatDate } from '@/lib/utils';
 
 // Types
-interface StorageProvider {
+type StorageProvider = {
   id: string;
   name: string;
   type: 'LOCAL' | 'S3' | 'AZURE' | 'GCS' | 'FTP';
@@ -51,9 +51,9 @@ interface StorageProvider {
   connection_status: 'CONNECTED' | 'DISCONNECTED' | 'ERROR';
   last_sync?: Date;
   config?: Record<string, any>;
-}
+};
 
-interface StorageMetrics {
+type StorageMetrics = {
   total_backups: number;
   total_size: number;
   used_percentage: number;
@@ -62,9 +62,9 @@ interface StorageMetrics {
   newest_backup?: Date;
   compression_ratio: number;
   redundancy_level: number;
-}
+};
 
-interface StorageHealth {
+type StorageHealth = {
   overall_status: 'HEALTHY' | 'WARNING' | 'CRITICAL';
   issues: Array<{
     type: 'CAPACITY' | 'CONNECTION' | 'PERFORMANCE' | 'SECURITY';
@@ -73,15 +73,15 @@ interface StorageHealth {
     recommendation?: string;
   }>;
   last_check: Date;
-}
+};
 
-interface BackupDistribution {
+type BackupDistribution = {
   provider_id: string;
   provider_name: string;
   backup_count: number;
   total_size: number;
   percentage: number;
-}
+};
 
 const StorageMonitor: React.FC = () => {
   const [providers, setProviders] = useState<StorageProvider[]>([]);
@@ -105,8 +105,7 @@ const StorageMonitor: React.FC = () => {
         loadHealth(),
         loadDistribution(),
       ]);
-    } catch (error) {
-      console.error('Erro ao carregar dados de armazenamento:', error);
+    } catch (_error) {
       toast.error('Erro ao carregar dados de armazenamento');
     } finally {
       setLoading(false);
@@ -167,8 +166,7 @@ const StorageMonitor: React.FC = () => {
       } else {
         toast.error('Falha no teste de conexão');
       }
-    } catch (error) {
-      console.error('Erro ao testar conexão:', error);
+    } catch (_error) {
       toast.error('Erro ao testar conexão');
     }
   };

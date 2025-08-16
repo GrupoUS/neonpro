@@ -2,20 +2,45 @@
 
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { toast } from 'sonner';
-import { Download, FileText, Settings, Trash2, Edit, AlertCircle } from 'lucide-react';
+import {
+  Download,
+  FileText,
+  Settings,
+  Trash2,
+  Edit,
+  AlertCircle,
+} from 'lucide-react';
 
 // ============================================================================
 // TYPES
 // ============================================================================
 
-type RequestType = 'access' | 'rectification' | 'erasure' | 'restriction' | 'portability' | 'objection';
+type RequestType =
+  | 'access'
+  | 'rectification'
+  | 'erasure'
+  | 'restriction'
+  | 'portability'
+  | 'objection';
 
 interface DataSubjectRequest {
   id: string;
@@ -31,7 +56,9 @@ interface DataSubjectRequest {
 // ============================================================================
 
 export function DataSubjectRights() {
-  const [selectedRequestType, setSelectedRequestType] = useState<RequestType | ''>('');
+  const [selectedRequestType, setSelectedRequestType] = useState<
+    RequestType | ''
+  >('');
   const [requestDetails, setRequestDetails] = useState('');
   const [rectificationField, setRectificationField] = useState('');
   const [rectificationOldValue, setRectificationOldValue] = useState('');
@@ -41,42 +68,43 @@ export function DataSubjectRights() {
   const [requests, setRequests] = useState<DataSubjectRequest[]>([]);
 
   const requestTypes = [
-    { 
-      value: 'access', 
-      label: 'Acesso aos Dados', 
+    {
+      value: 'access',
+      label: 'Acesso aos Dados',
       description: 'Solicitar acesso a todos os seus dados pessoais',
-      icon: <FileText className="w-4 h-4" />
+      icon: <FileText className="w-4 h-4" />,
     },
-    { 
-      value: 'rectification', 
-      label: 'Retificação de Dados', 
+    {
+      value: 'rectification',
+      label: 'Retificação de Dados',
       description: 'Solicitar correção de dados incorretos ou incompletos',
-      icon: <Edit className="w-4 h-4" />
+      icon: <Edit className="w-4 h-4" />,
     },
-    { 
-      value: 'erasure', 
-      label: 'Eliminação de Dados', 
+    {
+      value: 'erasure',
+      label: 'Eliminação de Dados',
       description: 'Solicitar a eliminação dos seus dados pessoais',
-      icon: <Trash2 className="w-4 h-4" />
+      icon: <Trash2 className="w-4 h-4" />,
     },
-    { 
-      value: 'restriction', 
-      label: 'Limitação do Tratamento', 
+    {
+      value: 'restriction',
+      label: 'Limitação do Tratamento',
       description: 'Solicitar limitação do processamento dos seus dados',
-      icon: <Settings className="w-4 h-4" />
+      icon: <Settings className="w-4 h-4" />,
     },
-    { 
-      value: 'portability', 
-      label: 'Portabilidade de Dados', 
-      description: 'Solicitar seus dados em formato estruturado e interoperável',
-      icon: <Download className="w-4 h-4" />
+    {
+      value: 'portability',
+      label: 'Portabilidade de Dados',
+      description:
+        'Solicitar seus dados em formato estruturado e interoperável',
+      icon: <Download className="w-4 h-4" />,
     },
-    { 
-      value: 'objection', 
-      label: 'Oposição ao Tratamento', 
+    {
+      value: 'objection',
+      label: 'Oposição ao Tratamento',
       description: 'Opor-se ao tratamento dos seus dados pessoais',
-      icon: <AlertCircle className="w-4 h-4" />
-    }
+      icon: <AlertCircle className="w-4 h-4" />,
+    },
   ];
 
   const submitRequest = async () => {
@@ -90,12 +118,16 @@ export function DataSubjectRights() {
     try {
       let requestData: any = {
         requestType: selectedRequestType,
-        reason: requestDetails
+        reason: requestDetails,
       };
 
       // Special handling for rectification requests
       if (selectedRequestType === 'rectification') {
-        if (!rectificationField || !rectificationNewValue || !rectificationReason) {
+        if (
+          !rectificationField ||
+          !rectificationNewValue ||
+          !rectificationReason
+        ) {
           toast.error('Preencha todos os campos obrigatórios para retificação');
           setLoading(false);
           return;
@@ -105,7 +137,7 @@ export function DataSubjectRights() {
           field: rectificationField,
           oldValue: rectificationOldValue,
           newValue: rectificationNewValue,
-          reason: rectificationReason
+          reason: rectificationReason,
         };
       }
 
@@ -114,7 +146,7 @@ export function DataSubjectRights() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(requestData)
+        body: JSON.stringify(requestData),
       });
 
       if (!response.ok) {
@@ -123,9 +155,9 @@ export function DataSubjectRights() {
       }
 
       const result = await response.json();
-      
+
       toast.success(result.message || 'Solicitação criada com sucesso');
-      
+
       // Reset form
       setSelectedRequestType('');
       setRequestDetails('');
@@ -133,10 +165,9 @@ export function DataSubjectRights() {
       setRectificationOldValue('');
       setRectificationNewValue('');
       setRectificationReason('');
-      
+
       // Refresh requests list (would need to implement this)
       // loadUserRequests();
-      
     } catch (error) {
       console.error('Submit request error:', error);
       toast.error('Erro ao criar solicitação');
@@ -145,7 +176,9 @@ export function DataSubjectRights() {
     }
   };
 
-  const selectedRequest = requestTypes.find(rt => rt.value === selectedRequestType);
+  const selectedRequest = requestTypes.find(
+    (rt) => rt.value === selectedRequestType
+  );
 
   return (
     <div className="space-y-6">
@@ -156,14 +189,20 @@ export function DataSubjectRights() {
             Direitos do Titular dos Dados - LGPD
           </CardTitle>
           <CardDescription>
-            Exerça seus direitos previstos na Lei Geral de Proteção de Dados (LGPD)
+            Exerça seus direitos previstos na Lei Geral de Proteção de Dados
+            (LGPD)
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           {/* Request Type Selection */}
           <div>
             <Label htmlFor="request-type">Tipo de Solicitação</Label>
-            <Select value={selectedRequestType} onValueChange={(value: RequestType) => setSelectedRequestType(value)}>
+            <Select
+              value={selectedRequestType}
+              onValueChange={(value: RequestType) =>
+                setSelectedRequestType(value)
+              }
+            >
               <SelectTrigger>
                 <SelectValue placeholder="Selecione o tipo de solicitação" />
               </SelectTrigger>
@@ -174,7 +213,9 @@ export function DataSubjectRights() {
                       {type.icon}
                       <div>
                         <div className="font-medium">{type.label}</div>
-                        <div className="text-xs text-gray-500">{type.description}</div>
+                        <div className="text-xs text-gray-500">
+                          {type.description}
+                        </div>
                       </div>
                     </div>
                   </SelectItem>
@@ -188,7 +229,8 @@ export function DataSubjectRights() {
             <Alert>
               <AlertCircle className="h-4 w-4" />
               <AlertDescription>
-                <strong>{selectedRequest.label}:</strong> {selectedRequest.description}
+                <strong>{selectedRequest.label}:</strong>{' '}
+                {selectedRequest.description}
               </AlertDescription>
             </Alert>
           )}
@@ -196,10 +238,14 @@ export function DataSubjectRights() {
           {/* Rectification Specific Fields */}
           {selectedRequestType === 'rectification' && (
             <div className="space-y-4 p-4 bg-blue-50 rounded-lg">
-              <h4 className="font-medium text-blue-900">Detalhes da Retificação</h4>
-              
+              <h4 className="font-medium text-blue-900">
+                Detalhes da Retificação
+              </h4>
+
               <div>
-                <Label htmlFor="rectification-field">Campo a ser Corrigido *</Label>
+                <Label htmlFor="rectification-field">
+                  Campo a ser Corrigido *
+                </Label>
                 <Input
                   id="rectification-field"
                   value={rectificationField}
@@ -229,7 +275,9 @@ export function DataSubjectRights() {
               </div>
 
               <div>
-                <Label htmlFor="rectification-reason">Motivo da Correção *</Label>
+                <Label htmlFor="rectification-reason">
+                  Motivo da Correção *
+                </Label>
                 <Textarea
                   id="rectification-reason"
                   value={rectificationReason}
@@ -244,7 +292,9 @@ export function DataSubjectRights() {
           {/* General Request Details */}
           {selectedRequestType && selectedRequestType !== 'rectification' && (
             <div>
-              <Label htmlFor="request-details">Detalhes Adicionais (Opcional)</Label>
+              <Label htmlFor="request-details">
+                Detalhes Adicionais (Opcional)
+              </Label>
               <Textarea
                 id="request-details"
                 value={requestDetails}
@@ -256,8 +306,8 @@ export function DataSubjectRights() {
           )}
 
           {/* Submit Button */}
-          <Button 
-            onClick={submitRequest} 
+          <Button
+            onClick={submitRequest}
             disabled={loading || !selectedRequestType}
             className="w-full"
           >
@@ -268,8 +318,9 @@ export function DataSubjectRights() {
           <Alert>
             <AlertCircle className="h-4 w-4" />
             <AlertDescription>
-              <strong>Importante:</strong> Suas solicitações serão processadas em até 15 dias úteis, 
-              conforme previsto na LGPD. Você receberá atualizações sobre o status por email.
+              <strong>Importante:</strong> Suas solicitações serão processadas
+              em até 15 dias úteis, conforme previsto na LGPD. Você receberá
+              atualizações sobre o status por email.
             </AlertDescription>
           </Alert>
         </CardContent>
@@ -288,7 +339,9 @@ export function DataSubjectRights() {
             <div className="text-center py-8 text-gray-500">
               <FileText className="w-12 h-12 mx-auto mb-4 opacity-50" />
               <p>Nenhuma solicitação encontrada</p>
-              <p className="text-sm">Suas solicitações aparecerão aqui após serem criadas</p>
+              <p className="text-sm">
+                Suas solicitações aparecerão aqui após serem criadas
+              </p>
             </div>
           ) : (
             <div className="space-y-4">
@@ -349,15 +402,19 @@ function RequestHistoryCard({ request }: RequestHistoryCardProps) {
           <div>
             <h4 className="font-medium">{request.requestType}</h4>
             <p className="text-sm text-gray-600">
-              Solicitado em: {new Date(request.requestedAt).toLocaleString('pt-BR')}
+              Solicitado em:{' '}
+              {new Date(request.requestedAt).toLocaleString('pt-BR')}
             </p>
             {request.completedAt && (
               <p className="text-sm text-gray-600">
-                Concluído em: {new Date(request.completedAt).toLocaleString('pt-BR')}
+                Concluído em:{' '}
+                {new Date(request.completedAt).toLocaleString('pt-BR')}
               </p>
             )}
           </div>
-          <div className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(request.status)}`}>
+          <div
+            className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(request.status)}`}
+          >
             {getStatusLabel(request.status)}
           </div>
         </div>

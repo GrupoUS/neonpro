@@ -25,8 +25,7 @@ export async function GET(
     }
 
     return NextResponse.json({ data: item });
-  } catch (error) {
-    console.error('Error fetching inventory item:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to fetch inventory item' },
       { status: 500 }
@@ -59,8 +58,7 @@ export async function PUT(
     const item = await inventoryService.updateInventoryItem(updateData);
 
     return NextResponse.json({ data: item });
-  } catch (error) {
-    console.error('Error updating inventory item:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to update inventory item' },
       { status: 500 }
@@ -86,8 +84,7 @@ export async function DELETE(
     await inventoryService.deleteInventoryItem(params.id);
 
     return NextResponse.json({ success: true });
-  } catch (error) {
-    console.error('Error deleting inventory item:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to delete inventory item' },
       { status: 500 }

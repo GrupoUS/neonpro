@@ -72,8 +72,7 @@ export async function GET(
       generated_at: new Date().toISOString(),
       message: 'Patient insights retrieved successfully',
     });
-  } catch (error) {
-    console.error('Error retrieving patient insights:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -125,8 +124,7 @@ export async function POST(
       regenerated_at: new Date().toISOString(),
       message: 'Patient insights regenerated successfully',
     });
-  } catch (error) {
-    console.error('Error regenerating patient insights:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

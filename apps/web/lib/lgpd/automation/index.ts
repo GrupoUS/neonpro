@@ -37,7 +37,7 @@ import {
 
 type SupabaseClient = ReturnType<typeof createClient<Database>>;
 
-export interface LGPDAutomationConfig {
+export type LGPDAutomationConfig = {
   consent_automation: ConsentAutomationConfig;
   data_subject_rights: DataSubjectRightsConfig;
   compliance_monitoring: ComplianceMonitorConfig;
@@ -55,9 +55,9 @@ export interface LGPDAutomationConfig {
     backup_enabled: boolean;
     maintenance_mode: boolean;
   };
-}
+};
 
-export interface AutomationStatus {
+export type AutomationStatus = {
   module: string;
   status: 'running' | 'stopped' | 'error' | 'maintenance';
   last_activity: string;
@@ -69,9 +69,9 @@ export interface AutomationStatus {
     successful_operations: number;
     failed_operations: number;
   };
-}
+};
 
-export interface AutomationMetrics {
+export type AutomationMetrics = {
   consent_automation: {
     total_consents_processed: number;
     automated_renewals: number;
@@ -123,9 +123,9 @@ export interface AutomationMetrics {
     dashboard_updates: number;
     export_operations: number;
   };
-}
+};
 
-export interface AutomationAlert {
+export type AutomationAlert = {
   id: string;
   module: string;
   alert_type: 'error' | 'warning' | 'info' | 'critical';
@@ -137,7 +137,7 @@ export interface AutomationAlert {
   resolved_at?: string;
   resolved_by?: string;
   resolution_notes?: string;
-}
+};
 
 /**
  * LGPD Automation Orchestrator
@@ -246,8 +246,6 @@ export class LGPDAutomationOrchestrator {
     const failedModules: string[] = [];
 
     try {
-      console.log('Starting LGPD Automation Orchestrator...');
-
       // Start each module
       const modules = [
         {
@@ -296,10 +294,8 @@ export class LGPDAutomationOrchestrator {
         try {
           await (module.instance as any)[module.method]();
           startedModules.push(module.name);
-          console.log(`✅ ${module.name} started successfully`);
         } catch (error) {
           failedModules.push(module.name);
-          console.error(`❌ Failed to start ${module.name}:`, error);
 
           await this.createAlert({
             module: module.name,
@@ -336,7 +332,6 @@ export class LGPDAutomationOrchestrator {
         failed_modules: failedModules,
       };
     } catch (error) {
-      console.error('Error starting automation orchestrator:', error);
       throw new Error(
         `Failed to start automation orchestrator: ${error.message}`
       );
@@ -353,8 +348,6 @@ export class LGPDAutomationOrchestrator {
     const stoppedModules: string[] = [];
 
     try {
-      console.log('Stopping LGPD Automation Orchestrator...');
-
       // Stop orchestrator monitoring
       this.stopOrchestatorMonitoring();
 
@@ -406,10 +399,7 @@ export class LGPDAutomationOrchestrator {
         try {
           (module.instance as any)[module.method]();
           stoppedModules.push(module.name);
-          console.log(`✅ ${module.name} stopped successfully`);
-        } catch (error) {
-          console.error(`❌ Error stopping ${module.name}:`, error);
-        }
+        } catch (_error) {}
       }
 
       this.isRunning = false;
@@ -431,7 +421,6 @@ export class LGPDAutomationOrchestrator {
         stopped_modules: stoppedModules,
       };
     } catch (error) {
-      console.error('Error stopping automation orchestrator:', error);
       throw new Error(
         `Failed to stop automation orchestrator: ${error.message}`
       );
@@ -453,7 +442,6 @@ export class LGPDAutomationOrchestrator {
 
       return statusData || [];
     } catch (error) {
-      console.error('Error getting automation status:', error);
       throw new Error(`Failed to get automation status: ${error.message}`);
     }
   }
@@ -473,7 +461,6 @@ export class LGPDAutomationOrchestrator {
 
       return metrics;
     } catch (error) {
-      console.error('Error getting automation metrics:', error);
       throw new Error(`Failed to get automation metrics: ${error.message}`);
     }
   }
@@ -539,7 +526,6 @@ export class LGPDAutomationOrchestrator {
         total_pages: totalPages,
       };
     } catch (error) {
-      console.error('Error getting automation alerts:', error);
       throw new Error(`Failed to get automation alerts: ${error.message}`);
     }
   }
@@ -581,7 +567,6 @@ export class LGPDAutomationOrchestrator {
 
       return { success: true };
     } catch (error) {
-      console.error('Error resolving alert:', error);
       throw new Error(`Failed to resolve alert: ${error.message}`);
     }
   }
@@ -609,7 +594,6 @@ export class LGPDAutomationOrchestrator {
 
       return dashboard;
     } catch (error) {
-      console.error('Error getting unified dashboard:', error);
       throw new Error(`Failed to get unified dashboard: ${error.message}`);
     }
   }
@@ -700,12 +684,8 @@ export class LGPDAutomationOrchestrator {
         await this.performHealthCheck();
         await this.updatePerformanceMetrics();
         await this.checkForCriticalAlerts();
-      } catch (error) {
-        console.error('Error in orchestrator monitoring cycle:', error);
-      }
+      } catch (_error) {}
     }, 60_000); // Check every minute
-
-    console.log('Orchestrator monitoring started');
   }
 
   private stopOrchestatorMonitoring(): void {
@@ -713,7 +693,6 @@ export class LGPDAutomationOrchestrator {
       clearInterval(this.monitoringInterval);
       this.monitoringInterval = null;
     }
-    console.log('Orchestrator monitoring stopped');
   }
 
   private async createAlert(
@@ -738,13 +717,9 @@ export class LGPDAutomationOrchestrator {
       for (const callback of this.alertCallbacks) {
         try {
           callback(alert);
-        } catch (error) {
-          console.error('Error in alert callback:', error);
-        }
+        } catch (_error) {}
       }
-    } catch (error) {
-      console.error('Error creating alert:', error);
-    }
+    } catch (_error) {}
   }
 
   private async performHealthCheck(): Promise<void> {

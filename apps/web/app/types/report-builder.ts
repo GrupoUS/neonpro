@@ -2,7 +2,7 @@
 // Story 8.2: Custom Report Builder (Drag-Drop Interface)
 
 // Core Report Types
-export interface CustomReport {
+export type CustomReport = {
   id: string;
   report_name: string;
   report_description?: string;
@@ -19,9 +19,9 @@ export interface CustomReport {
   updated_at: string;
   last_generated?: string;
   generation_count: number;
-}
+};
 
-export interface ReportTemplate {
+export type ReportTemplate = {
   id: string;
   template_name: string;
   template_description?: string;
@@ -37,9 +37,9 @@ export interface ReportTemplate {
   clinic_id: string;
   created_at: string;
   updated_at: string;
-}
+};
 
-export interface ReportUsageAnalytics {
+export type ReportUsageAnalytics = {
   id: string;
   report_id: string;
   user_id: string;
@@ -49,9 +49,9 @@ export interface ReportUsageAnalytics {
   action_type: UsageActionType;
   session_data: Record<string, any>;
   created_at: string;
-}
+};
 
-export interface ReportSchedule {
+export type ReportSchedule = {
   id: string;
   report_id: string;
   schedule_name: string;
@@ -67,9 +67,9 @@ export interface ReportSchedule {
   created_by: string;
   created_at: string;
   updated_at: string;
-}
+};
 
-export interface ReportCollaborator {
+export type ReportCollaborator = {
   id: string;
   report_id: string;
   user_id: string;
@@ -78,9 +78,9 @@ export interface ReportCollaborator {
   invited_at: string;
   accepted_at?: string;
   last_activity?: string;
-}
+};
 
-export interface ReportComment {
+export type ReportComment = {
   id: string;
   report_id: string;
   user_id: string;
@@ -89,9 +89,9 @@ export interface ReportComment {
   is_resolved: boolean;
   created_at: string;
   updated_at: string;
-}
+};
 
-export interface DataSourceConnector {
+export type DataSourceConnector = {
   id: string;
   connector_name: string;
   connector_type: ConnectorType;
@@ -103,19 +103,19 @@ export interface DataSourceConnector {
   clinic_id: string;
   created_at: string;
   updated_at: string;
-}
+};
 
 // Configuration Types
-export interface ReportConfig {
+export type ReportConfig = {
   charts: ChartConfig[];
   filters: FilterConfig[];
   layout: LayoutSettings;
   styling: StylingConfig;
   interactivity: InteractivityConfig;
   performance: PerformanceConfig;
-}
+};
 
-export interface ChartConfig {
+export type ChartConfig = {
   id: string;
   type: ChartType;
   title: string;
@@ -127,9 +127,9 @@ export interface ChartConfig {
   size: Size;
   styling: ChartStyling;
   filters: ChartFilter[];
-}
+};
 
-export interface DataSource {
+export type DataSource = {
   id: string;
   name: string;
   type: DataSourceType;
@@ -137,26 +137,26 @@ export interface DataSource {
   schema: DataSchema;
   refresh_rate: RefreshRate;
   cache_config: CacheConfig;
-}
+};
 
-export interface ReportFilters {
+export type ReportFilters = {
   global_filters: GlobalFilter[];
   chart_filters: ChartFilterGroup[];
   user_filters: UserFilter[];
   dynamic_filters: DynamicFilter[];
-}
+};
 
-export interface LayoutConfig {
+export type LayoutConfig = {
   grid_size: GridSize;
   responsive_breakpoints: ResponsiveBreakpoints;
   component_spacing: ComponentSpacing;
   theme: ThemeConfig;
   header_config: HeaderConfig;
   footer_config: FooterConfig;
-}
+};
 
 // Drag & Drop Types
-export interface DragDropItem {
+export type DragDropItem = {
   id: string;
   type: ComponentType;
   content: ComponentContent;
@@ -164,23 +164,23 @@ export interface DragDropItem {
   size: Size;
   constraints: DragConstraints;
   metadata: ComponentMetadata;
-}
+};
 
-export interface DropZone {
+export type DropZone = {
   id: string;
   accepts: ComponentType[];
   position: Position;
   size: Size;
   is_occupied: boolean;
   validation_rules: ValidationRule[];
-}
+};
 
-export interface ComponentLibrary {
+export type ComponentLibrary = {
   categories: ComponentCategory[];
   components: LibraryComponent[];
   custom_components: CustomComponent[];
   favorites: string[];
-}
+};
 
 // Enum Types
 export type VisualizationType =
@@ -266,49 +266,49 @@ export type RefreshRate =
   | 'manual';
 
 // Supporting Interface Types
-export interface Position {
+export type Position = {
   x: number;
   y: number;
   z?: number;
-}
+};
 
-export interface Size {
+export type Size = {
   width: number;
   height: number;
   min_width?: number;
   min_height?: number;
   max_width?: number;
   max_height?: number;
-}
+};
 
-export interface GridSize {
+export type GridSize = {
   columns: number;
   rows: number;
   cell_width: number;
   cell_height: number;
-}
+};
 
-export interface ResponsiveBreakpoints {
+export type ResponsiveBreakpoints = {
   mobile: number;
   tablet: number;
   desktop: number;
   large_desktop: number;
-}
+};
 
-export interface ComponentSpacing {
+export type ComponentSpacing = {
   margin: Spacing;
   padding: Spacing;
   gap: number;
-}
+};
 
-export interface Spacing {
+export type Spacing = {
   top: number;
   right: number;
   bottom: number;
   left: number;
-}
+};
 
-export interface ThemeConfig {
+export type ThemeConfig = {
   primary_color: string;
   secondary_color: string;
   background_color: string;
@@ -317,33 +317,33 @@ export interface ThemeConfig {
   accent_color: string;
   font_family: string;
   font_sizes: FontSizes;
-}
+};
 
-export interface FontSizes {
+export type FontSizes = {
   xs: string;
   sm: string;
   md: string;
   lg: string;
   xl: string;
   xxl: string;
-}
+};
 
-export interface HeaderConfig {
+export type HeaderConfig = {
   show_header: boolean;
   title: string;
   subtitle?: string;
   logo?: string;
   actions: HeaderAction[];
-}
+};
 
-export interface FooterConfig {
+export type FooterConfig = {
   show_footer: boolean;
   content: string;
   links: FooterLink[];
   generated_info: boolean;
-}
+};
 
-export interface ChartStyling {
+export type ChartStyling = {
   colors: string[];
   opacity: number;
   border_width: number;
@@ -351,47 +351,47 @@ export interface ChartStyling {
   background_color: string;
   font_size: number;
   font_weight: string;
-}
+};
 
-export interface ChartFilter {
+export type ChartFilter = {
   field: string;
   operator: FilterOperator;
   value: any;
   is_required: boolean;
-}
+};
 
-export interface GlobalFilter {
+export type GlobalFilter = {
   id: string;
   name: string;
   type: FilterType;
   options: FilterOption[];
   default_value: any;
   affects_charts: string[];
-}
+};
 
-export interface ChartFilterGroup {
+export type ChartFilterGroup = {
   chart_id: string;
   filters: ChartFilter[];
   logic: FilterLogic;
-}
+};
 
-export interface UserFilter {
+export type UserFilter = {
   id: string;
   user_id: string;
   filter_config: FilterConfig;
   is_saved: boolean;
   name?: string;
-}
+};
 
-export interface DynamicFilter {
+export type DynamicFilter = {
   id: string;
   source_field: string;
   target_charts: string[];
   update_trigger: UpdateTrigger;
   transformation: FilterTransformation;
-}
+};
 
-export interface ConnectionInfo {
+export type ConnectionInfo = {
   host?: string;
   port?: number;
   database?: string;
@@ -400,47 +400,47 @@ export interface ConnectionInfo {
   api_key?: string;
   endpoint?: string;
   headers?: Record<string, string>;
-}
+};
 
-export interface DataSchema {
+export type DataSchema = {
   tables: TableSchema[];
   relationships: Relationship[];
   custom_fields: CustomField[];
-}
+};
 
-export interface CacheConfig {
+export type CacheConfig = {
   enabled: boolean;
   ttl: number;
   strategy: CacheStrategy;
   invalidation_rules: InvalidationRule[];
-}
+};
 
-export interface DragConstraints {
+export type DragConstraints = {
   can_resize: boolean;
   can_move: boolean;
   snap_to_grid: boolean;
   collision_detection: boolean;
   boundary_limits: BoundaryLimits;
-}
+};
 
-export interface ComponentMetadata {
+export type ComponentMetadata = {
   created_by: string;
   created_at: string;
   modified_at: string;
   version: number;
   description?: string;
   tags: string[];
-}
+};
 
-export interface ComponentCategory {
+export type ComponentCategory = {
   id: string;
   name: string;
   description: string;
   icon: string;
   components: string[];
-}
+};
 
-export interface LibraryComponent {
+export type LibraryComponent = {
   id: string;
   name: string;
   description: string;
@@ -448,83 +448,83 @@ export interface LibraryComponent {
   category: string;
   config_template: ComponentConfig;
   preview_image?: string;
-}
+};
 
-export interface CustomComponent {
+export type CustomComponent = {
   id: string;
   name: string;
   description: string;
   config: ComponentConfig;
   created_by: string;
   is_public: boolean;
-}
+};
 
 // Additional Supporting Types
-export interface ScheduleConfig {
+export type ScheduleConfig = {
   frequency: ScheduleFrequency;
   time: string;
   timezone: string;
   days_of_week?: number[];
   days_of_month?: number[];
   custom_cron?: string;
-}
+};
 
-export interface Recipient {
+export type Recipient = {
   email: string;
   name?: string;
   type: RecipientType;
-}
+};
 
-export interface ConnectionConfig {
+export type ConnectionConfig = {
   [key: string]: any;
-}
+};
 
-export interface SchemaDefinition {
+export type SchemaDefinition = {
   fields: SchemaField[];
   primary_keys: string[];
   foreign_keys: ForeignKey[];
   indexes: Index[];
-}
+};
 
-export interface LayoutSettings {
+export type LayoutSettings = {
   auto_layout: boolean;
   grid_snap: boolean;
   alignment_guides: boolean;
   responsive_mode: boolean;
-}
+};
 
-export interface StylingConfig {
+export type StylingConfig = {
   theme: string;
   custom_css?: string;
   brand_colors: string[];
   typography: TypographyConfig;
-}
+};
 
-export interface InteractivityConfig {
+export type InteractivityConfig = {
   drill_down: boolean;
   cross_filtering: boolean;
   hover_effects: boolean;
   click_actions: ClickAction[];
-}
+};
 
-export interface PerformanceConfig {
+export type PerformanceConfig = {
   lazy_loading: boolean;
   virtualization: boolean;
   data_sampling: boolean;
   cache_strategy: string;
-}
+};
 
-export interface ComponentContent {
+export type ComponentContent = {
   config: ComponentConfig;
   data?: any;
   styling?: ComponentStyling;
-}
+};
 
-export interface ValidationRule {
+export type ValidationRule = {
   type: ValidationType;
   constraint: any;
   message: string;
-}
+};
 
 // Enum String Literals
 export type FilterOperator =
@@ -563,113 +563,113 @@ export type ValidationType =
   | 'custom';
 
 // Additional Interface Types (continued)
-export interface FilterOption {
+export type FilterOption = {
   label: string;
   value: any;
   group?: string;
-}
+};
 
-export interface FilterConfig {
+export type FilterConfig = {
   type: FilterType;
   field: string;
   operator: FilterOperator;
   value: any;
   label: string;
-}
+};
 
-export interface FilterTransformation {
+export type FilterTransformation = {
   type: TransformationType;
   config: Record<string, any>;
-}
+};
 
-export interface TableSchema {
+export type TableSchema = {
   name: string;
   fields: SchemaField[];
   display_name?: string;
   description?: string;
-}
+};
 
-export interface Relationship {
+export type Relationship = {
   from_table: string;
   from_field: string;
   to_table: string;
   to_field: string;
   type: RelationshipType;
-}
+};
 
-export interface CustomField {
+export type CustomField = {
   name: string;
   type: string;
   formula: string;
   description?: string;
-}
+};
 
-export interface InvalidationRule {
+export type InvalidationRule = {
   trigger: InvalidationTrigger;
   condition: string;
   action: InvalidationAction;
-}
+};
 
-export interface BoundaryLimits {
+export type BoundaryLimits = {
   min_x: number;
   max_x: number;
   min_y: number;
   max_y: number;
-}
+};
 
-export interface ComponentConfig {
+export type ComponentConfig = {
   [key: string]: any;
-}
+};
 
-export interface ComponentStyling {
+export type ComponentStyling = {
   [key: string]: any;
-}
+};
 
-export interface HeaderAction {
+export type HeaderAction = {
   type: ActionType;
   label: string;
   icon?: string;
   handler: string;
-}
+};
 
-export interface FooterLink {
+export type FooterLink = {
   label: string;
   url: string;
   target?: string;
-}
+};
 
-export interface TypographyConfig {
+export type TypographyConfig = {
   font_family: string;
   font_sizes: FontSizes;
   line_heights: Record<string, number>;
   font_weights: Record<string, string>;
-}
+};
 
-export interface ClickAction {
+export type ClickAction = {
   type: ClickActionType;
   target: string;
   config: Record<string, any>;
-}
+};
 
-export interface SchemaField {
+export type SchemaField = {
   name: string;
   type: FieldType;
   nullable: boolean;
   default_value?: any;
   description?: string;
-}
+};
 
-export interface ForeignKey {
+export type ForeignKey = {
   field: string;
   references_table: string;
   references_field: string;
-}
+};
 
-export interface Index {
+export type Index = {
   name: string;
   fields: string[];
   unique: boolean;
-}
+};
 
 // Final Enum Types
 export type TransformationType =
@@ -702,7 +702,7 @@ export type FieldType =
   | 'array';
 
 // API Request/Response Types
-export interface CreateReportRequest {
+export type CreateReportRequest = {
   report_name: string;
   report_description?: string;
   template_id?: string;
@@ -710,9 +710,9 @@ export interface CreateReportRequest {
   data_sources?: DataSource[];
   visualization_type?: VisualizationType;
   is_public?: boolean;
-}
+};
 
-export interface UpdateReportRequest {
+export type UpdateReportRequest = {
   report_name?: string;
   report_description?: string;
   report_config?: Partial<ReportConfig>;
@@ -721,52 +721,52 @@ export interface UpdateReportRequest {
   filters?: Partial<ReportFilters>;
   layout_config?: Partial<LayoutConfig>;
   is_public?: boolean;
-}
+};
 
-export interface GenerateReportRequest {
+export type GenerateReportRequest = {
   report_id: string;
   format?: ReportFormat;
   filters?: Record<string, any>;
   parameters?: Record<string, any>;
-}
+};
 
-export interface ReportListResponse {
+export type ReportListResponse = {
   reports: CustomReport[];
   total_count: number;
   page: number;
   per_page: number;
   has_more: boolean;
-}
+};
 
-export interface TemplateListResponse {
+export type TemplateListResponse = {
   templates: ReportTemplate[];
   categories: string[];
   featured: ReportTemplate[];
   total_count: number;
-}
+};
 
-export interface ReportAnalyticsResponse {
+export type ReportAnalyticsResponse = {
   usage_stats: ReportUsageAnalytics[];
   performance_metrics: PerformanceMetrics;
   user_engagement: EngagementMetrics;
-}
+};
 
-export interface PerformanceMetrics {
+export type PerformanceMetrics = {
   average_generation_time: number;
   cache_hit_rate: number;
   error_rate: number;
   data_freshness: number;
-}
+};
 
-export interface EngagementMetrics {
+export type EngagementMetrics = {
   total_views: number;
   unique_users: number;
   average_session_duration: number;
   bounce_rate: number;
-}
+};
 
 // Report Builder UI State Types
-export interface ReportBuilderState {
+export type ReportBuilderState = {
   current_report?: CustomReport;
   selected_template?: ReportTemplate;
   drag_mode: boolean;
@@ -777,20 +777,20 @@ export interface ReportBuilderState {
   preview_mode: boolean;
   is_saving: boolean;
   validation_errors: ValidationError[];
-}
+};
 
-export interface ReportBuilderAction {
+export type ReportBuilderAction = {
   type: ActionType;
   timestamp: string;
   data: any;
   user_id: string;
-}
+};
 
-export interface ValidationError {
+export type ValidationError = {
   component_id?: string;
   field: string;
   message: string;
   severity: ErrorSeverity;
-}
+};
 
 export type ErrorSeverity = 'error' | 'warning' | 'info';

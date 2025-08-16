@@ -49,7 +49,6 @@ export class StockAlertsService {
       }
       return { success: true, data: config };
     } catch (error) {
-      console.error('Error creating alert config:', error);
       return {
         success: false,
         error: String((error as Error)?.message || error),
@@ -90,7 +89,6 @@ export class StockAlertsService {
 
       return { success: true, data };
     } catch (error) {
-      console.error('Error fetching alert configs:', error);
       return {
         success: false,
         error: String((error as Error)?.message || error),
@@ -124,7 +122,6 @@ export class StockAlertsService {
       }
       return { success: true, data };
     } catch (error) {
-      console.error('Error updating alert config:', error);
       return {
         success: false,
         error: String((error as Error)?.message || error),
@@ -148,7 +145,6 @@ export class StockAlertsService {
       }
       return { success: true };
     } catch (error) {
-      console.error('Error deleting alert config:', error);
       return {
         success: false,
         error: String((error as Error)?.message || error),
@@ -206,7 +202,6 @@ export class StockAlertsService {
 
       return { success: true, data };
     } catch (error) {
-      console.error('Error fetching alerts:', error);
       return {
         success: false,
         error: String((error as Error)?.message || error),
@@ -231,7 +226,6 @@ export class StockAlertsService {
       }
       return { success: true, data };
     } catch (error) {
-      console.error('Error fetching alert:', error);
       return {
         success: false,
         error: String((error as Error)?.message || error),
@@ -263,7 +257,6 @@ export class StockAlertsService {
       }
       return { success: true, data: alert };
     } catch (error) {
-      console.error('Error acknowledging alert:', error);
       return {
         success: false,
         error: String((error as Error)?.message || error),
@@ -295,7 +288,6 @@ export class StockAlertsService {
       }
       return { success: true, data: alert };
     } catch (error) {
-      console.error('Error resolving alert:', error);
       return {
         success: false,
         error: String((error as Error)?.message || error),
@@ -327,7 +319,6 @@ export class StockAlertsService {
       }
       return { success: true, data: alert };
     } catch (error) {
-      console.error('Error dismissing alert:', error);
       return {
         success: false,
         error: String((error as Error)?.message || error),
@@ -390,7 +381,6 @@ export class StockAlertsService {
 
       return { success: true, data: results };
     } catch (error) {
-      console.error('Error generating alerts:', error);
       return {
         success: false,
         error: String((error as Error)?.message || error),
@@ -453,7 +443,6 @@ export class StockAlertsService {
 
       return { config_id: config.id, alerts_created: 0 };
     } catch (error) {
-      console.error('Error generating low stock alerts:', error);
       return {
         config_id: config.id,
         error: String((error as Error)?.message || error),
@@ -514,7 +503,6 @@ export class StockAlertsService {
 
       return { config_id: config.id, alerts_created: 0 };
     } catch (error) {
-      console.error('Error generating expiry alerts:', error);
       return {
         config_id: config.id,
         error: String((error as Error)?.message || error),
@@ -582,7 +570,6 @@ export class StockAlertsService {
 
       return { success: true, data: summary };
     } catch (error) {
-      console.error('Error fetching alerts summary:', error);
       return {
         success: false,
         error: String((error as Error)?.message || error),
@@ -610,7 +597,6 @@ export class StockAlertsService {
       }
       return { success: true, data };
     } catch (error) {
-      console.error('Error fetching critical alerts:', error);
       return {
         success: false,
         error: String((error as Error)?.message || error),

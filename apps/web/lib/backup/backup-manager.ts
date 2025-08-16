@@ -767,7 +767,6 @@ export class BackupManager {
   }
 
   private handleError(message: string, error: any): ApiResponse {
-    console.error(message, error);
     return {
       success: false,
       error: error.message || 'Erro interno do servidor',

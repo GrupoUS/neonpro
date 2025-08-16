@@ -184,8 +184,7 @@ export class StockAlertService {
       try {
         const alerts = await this.evaluateConfigAndGenerateAlerts(config);
         generatedAlerts.push(...alerts);
-      } catch (error) {
-        console.error(`Failed to evaluate config ${config.id}:`, error);
+      } catch (_error) {
         // Continue with other configurations
       }
     }
@@ -624,7 +623,6 @@ export class StockAlertService {
       .maybeSingle();
 
     if (error) {
-      console.error('Error fetching active alert:', error);
       return null;
     }
 
@@ -681,10 +679,7 @@ export class StockAlertService {
           metadata: event.metadata,
         },
       ]);
-    } catch (error) {
-      // Log events are not critical, don't throw
-      console.error('Failed to log stock event:', error);
-    }
+    } catch (_error) {}
   }
 
   // ========================================================================

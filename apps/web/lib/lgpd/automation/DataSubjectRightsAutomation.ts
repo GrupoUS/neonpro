@@ -4,7 +4,7 @@ import type { LGPDComplianceManager } from '../LGPDComplianceManager';
 
 type SupabaseClient = ReturnType<typeof createClient<Database>>;
 
-export interface DataSubjectRequest {
+export type DataSubjectRequest = {
   id: string;
   user_id: string;
   request_type:
@@ -21,9 +21,9 @@ export interface DataSubjectRequest {
   completed_at?: string;
   verification_status: 'pending' | 'verified' | 'failed';
   automation_enabled: boolean;
-}
+};
 
-export interface AutomationConfig {
+export type AutomationConfig = {
   auto_verification_enabled: boolean;
   auto_fulfillment_enabled: boolean;
   legal_timeline_enforcement: boolean;
@@ -31,9 +31,9 @@ export interface AutomationConfig {
   secure_delivery_methods: string[];
   identity_verification_required: boolean;
   approval_workflow_enabled: boolean;
-}
+};
 
-export interface DataAccessReport {
+export type DataAccessReport = {
   user_id: string;
   request_id: string;
   data_categories: Array<{
@@ -64,9 +64,9 @@ export interface DataAccessReport {
   }>;
   generated_at: string;
   expires_at: string;
-}
+};
 
-export interface DataPortabilityPackage {
+export type DataPortabilityPackage = {
   user_id: string;
   request_id: string;
   format: 'json' | 'csv' | 'xml' | 'pdf';
@@ -84,7 +84,7 @@ export interface DataPortabilityPackage {
   verification_hash: string;
   download_url: string;
   expires_at: string;
-}
+};
 
 export class DataSubjectRightsAutomation {
   private readonly supabase: SupabaseClient;
@@ -205,8 +205,6 @@ export class DataSubjectRightsAutomation {
         timeline_status,
       };
     } catch (error) {
-      console.error('Error processing data access request:', error);
-
       // Update request status to failed
       await this.supabase
         .from('lgpd_data_subject_requests')
@@ -373,7 +371,6 @@ export class DataSubjectRightsAutomation {
         timeline_status,
       };
     } catch (error) {
-      console.error('Error processing rectification request:', error);
       throw new Error(
         `Failed to process rectification request: ${error.message}`
       );
@@ -480,7 +477,6 @@ export class DataSubjectRightsAutomation {
         timeline_status,
       };
     } catch (error) {
-      console.error('Error processing erasure request:', error);
       throw new Error(`Failed to process erasure request: ${error.message}`);
     }
   }
@@ -595,7 +591,6 @@ export class DataSubjectRightsAutomation {
         timeline_status,
       };
     } catch (error) {
-      console.error('Error processing portability request:', error);
       throw new Error(
         `Failed to process portability request: ${error.message}`
       );
@@ -622,7 +617,6 @@ export class DataSubjectRightsAutomation {
 
       return timelineStats;
     } catch (error) {
-      console.error('Error monitoring timeline compliance:', error);
       throw new Error(
         `Failed to monitor timeline compliance: ${error.message}`
       );

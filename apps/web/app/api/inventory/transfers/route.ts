@@ -30,8 +30,7 @@ export async function GET(request: NextRequest) {
     const transfers = await inventoryService.getStockTransfers(filters);
 
     return NextResponse.json({ data: transfers });
-  } catch (error) {
-    console.error('Error fetching stock transfers:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to fetch stock transfers' },
       { status: 500 }
@@ -60,8 +59,7 @@ export async function POST(request: NextRequest) {
     const transfer = await inventoryService.createStockTransfer(transferData);
 
     return NextResponse.json({ data: transfer }, { status: 201 });
-  } catch (error) {
-    console.error('Error creating stock transfer:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to create stock transfer' },
       { status: 500 }

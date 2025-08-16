@@ -11,7 +11,7 @@ import { addDays, differenceInDays } from 'date-fns';
 import Stripe from 'stripe';
 
 // Types and Interfaces
-export interface SubscriptionPlan {
+export type SubscriptionPlan = {
   id: string;
   name: string;
   description: string;
@@ -23,9 +23,9 @@ export interface SubscriptionPlan {
   is_active: boolean;
   created_at: string;
   updated_at: string;
-}
+};
 
-export interface Subscription {
+export type Subscription = {
   id: string;
   customer_id: string;
   plan_id: string;
@@ -39,31 +39,31 @@ export interface Subscription {
   metadata?: Record<string, any>;
   created_at: string;
   updated_at: string;
-}
+};
 
-export interface BillingCycle {
+export type BillingCycle = {
   type: 'monthly' | 'quarterly' | 'annual';
   interval: number;
   interval_count: number;
-}
+};
 
-export interface PaymentRetryConfig {
+export type PaymentRetryConfig = {
   max_attempts: number;
   retry_intervals: number[]; // in days
   escalation_enabled: boolean;
   notification_schedule: number[]; // in days
-}
+};
 
-export interface ProratedBilling {
+export type ProratedBilling = {
   original_amount: number;
   prorated_amount: number;
   days_used: number;
   days_total: number;
   proration_factor: number;
   effective_date: string;
-}
+};
 
-export interface SubscriptionMetrics {
+export type SubscriptionMetrics = {
   total_subscriptions: number;
   active_subscriptions: number;
   churned_subscriptions: number;
@@ -71,7 +71,7 @@ export interface SubscriptionMetrics {
   arr: number; // Annual Recurring Revenue
   churn_rate: number;
   ltv: number; // Lifetime Value
-}
+};
 
 // Main Subscription Billing Service
 export class SubscriptionBillingService {
@@ -138,8 +138,7 @@ export class SubscriptionBillingService {
         throw error;
       }
       return data;
-    } catch (error) {
-      console.error('Error creating subscription plan:', error);
+    } catch (_error) {
       throw new Error('Failed to create subscription plan');
     }
   }
@@ -230,8 +229,7 @@ export class SubscriptionBillingService {
         throw error;
       }
       return data;
-    } catch (error) {
-      console.error('Error creating subscription:', error);
+    } catch (_error) {
       throw new Error('Failed to create subscription');
     }
   }
@@ -262,7 +260,6 @@ export class SubscriptionBillingService {
       const periodEnd = new Date(subscription.current_period_end);
 
       if (now < periodEnd) {
-        console.log('Billing not due yet for subscription:', subscriptionId);
         return;
       }
 
@@ -286,7 +283,6 @@ export class SubscriptionBillingService {
         amount: subscription.subscription_plans.price,
       });
     } catch (error) {
-      console.error('Error processing billing cycle:', error);
       await this.handleBillingError(subscriptionId, error as Error);
     }
   }
@@ -338,9 +334,7 @@ export class SubscriptionBillingService {
         .from('subscriptions')
         .update({ status: 'past_due' })
         .eq('id', subscriptionId);
-    } catch (error) {
-      console.error('Error handling failed payment:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -399,8 +393,7 @@ export class SubscriptionBillingService {
         proration_factor: daysRemaining / daysTotal,
         effective_date: effectiveDate.toISOString(),
       };
-    } catch (error) {
-      console.error('Error calculating prorated billing:', error);
+    } catch (_error) {
       throw new Error('Failed to calculate prorated billing');
     }
   }
@@ -496,8 +489,7 @@ export class SubscriptionBillingService {
       });
 
       return updatedSubscription;
-    } catch (error) {
-      console.error('Error changing subscription plan:', error);
+    } catch (_error) {
       throw new Error('Failed to change subscription plan');
     }
   }
@@ -570,8 +562,7 @@ export class SubscriptionBillingService {
       });
 
       return updatedSubscription;
-    } catch (error) {
-      console.error('Error canceling subscription:', error);
+    } catch (_error) {
       throw new Error('Failed to cancel subscription');
     }
   }
@@ -661,22 +652,13 @@ export class SubscriptionBillingService {
   }
 
   private async sendPaymentFailureNotification(
-    subscriptionId: string,
-    attemptCount: number
-  ): Promise<void> {
-    // Implementation for sending payment failure notifications
-    // This would integrate with your notification system
-    console.log(
-      `Sending payment failure notification for subscription ${subscriptionId}, attempt ${attemptCount}`
-    );
-  }
+    _subscriptionId: string,
+    _attemptCount: number
+  ): Promise<void> {}
 
-  private async sendFinalPaymentNotice(subscriptionId: string): Promise<void> {
-    // Implementation for sending final payment notice
-    console.log(
-      `Sending final payment notice for subscription ${subscriptionId}`
-    );
-  }
+  private async sendFinalPaymentNotice(
+    _subscriptionId: string
+  ): Promise<void> {}
 }
 
 export default SubscriptionBillingService;

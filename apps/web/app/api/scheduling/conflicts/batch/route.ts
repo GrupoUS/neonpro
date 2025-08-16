@@ -22,7 +22,7 @@ const batchConflictCheckSchema = z.object({
   batchSize: z.number().max(50).optional(),
 });
 
-interface BatchConflictResponse {
+type BatchConflictResponse = {
   success: boolean;
   results: any[];
   performance: {
@@ -32,7 +32,7 @@ interface BatchConflictResponse {
     batchEfficiency: string;
   };
   error?: string;
-}
+};
 
 export async function POST(request: NextRequest) {
   const startTime = Date.now();
@@ -170,7 +170,6 @@ export async function POST(request: NextRequest) {
     const { data: conflicts, error: conflictsError } = await conflictsQuery;
 
     if (conflictsError) {
-      console.error('Batch conflict query error:', conflictsError);
       return NextResponse.json<BatchConflictResponse>(
         {
           success: false,
@@ -283,8 +282,6 @@ export async function POST(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('Batch conflict check error:', error);
-
     const processingTime = Date.now() - startTime;
 
     if (error instanceof z.ZodError) {

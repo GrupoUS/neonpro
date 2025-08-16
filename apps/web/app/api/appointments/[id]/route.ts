@@ -78,8 +78,7 @@ export async function GET(
     };
 
     return NextResponse.json(response);
-  } catch (error) {
-    console.error('Error fetching appointment details:', error);
+  } catch (_error) {
     return NextResponse.json(
       { success: false, error_message: 'Internal server error' },
       { status: 500 }
@@ -202,8 +201,7 @@ export async function PATCH(
     };
 
     return NextResponse.json(response);
-  } catch (error) {
-    console.error('Error updating appointment:', error);
+  } catch (_error) {
     return NextResponse.json(
       { success: false, error_message: 'Internal server error' },
       { status: 500 }
@@ -252,8 +250,7 @@ export async function DELETE(
       success: true,
       message: 'Appointment cancelled successfully',
     });
-  } catch (error) {
-    console.error('Error deleting appointment:', error);
+  } catch (_error) {
     return NextResponse.json(
       { success: false, error_message: 'Internal server error' },
       { status: 500 }

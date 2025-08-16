@@ -90,8 +90,7 @@ export async function POST(request: NextRequest) {
         });
 
         pdfBuffer = await renderToBuffer(pdfDocument);
-      } catch (pdfError) {
-        console.error('Erro ao gerar PDF:', pdfError);
+      } catch (_pdfError) {
         // Continuar sem anexo em caso de erro
         pdfBuffer = null;
       }
@@ -125,7 +124,6 @@ export async function POST(request: NextRequest) {
       .eq('id', invoiceId);
 
     if (updateError) {
-      console.error('Erro ao atualizar fatura:', updateError);
       // Não falhar a requisição por isso
     }
 
@@ -134,8 +132,7 @@ export async function POST(request: NextRequest) {
       message: 'Email enviado com sucesso',
       emailId: emailResult.id,
     });
-  } catch (error) {
-    console.error('Erro ao enviar email de fatura:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
       { status: 500 }
@@ -188,8 +185,7 @@ export async function GET(request: NextRequest) {
       emailSentAt: invoice.email_sent_at,
       hasBeenSent: Boolean(invoice.email_sent_at),
     });
-  } catch (error) {
-    console.error('Erro ao buscar histórico de email:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
       { status: 500 }

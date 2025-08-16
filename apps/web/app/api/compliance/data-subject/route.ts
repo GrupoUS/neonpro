@@ -210,8 +210,6 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('GET /api/compliance/data-subject error:', error);
-
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {
@@ -393,8 +391,6 @@ export async function POST(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('POST /api/compliance/data-subject error:', error);
-
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {
@@ -541,8 +537,6 @@ export async function PUT(request: NextRequest) {
       data: { results },
     });
   } catch (error) {
-    console.error('PUT /api/compliance/data-subject error:', error);
-
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {

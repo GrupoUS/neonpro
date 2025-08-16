@@ -1,7 +1,7 @@
 // AI-Powered Risk Assessment & Patient Insights Types
 // Story 3.2: AI-powered Risk Assessment + Insights
 
-export interface RiskFactor {
+export type RiskFactor = {
   id: string;
   name: string;
   category:
@@ -15,9 +15,9 @@ export interface RiskFactor {
   confidence: number; // 0.0 to 1.0
   description: string;
   evidenceLevel: 'low' | 'moderate' | 'high' | 'strong';
-}
+};
 
-export interface PatientRiskAssessment {
+export type PatientRiskAssessment = {
   patientId: string;
   assessmentDate: Date;
   overallRiskScore: number; // 0-100
@@ -27,9 +27,9 @@ export interface PatientRiskAssessment {
   alerts: SafetyAlert[];
   confidenceScore: number;
   nextAssessmentDate: Date;
-}
+};
 
-export interface HealthPrediction {
+export type HealthPrediction = {
   type:
     | 'complication_risk'
     | 'treatment_success'
@@ -40,9 +40,9 @@ export interface HealthPrediction {
   timeframe: string; // '1_week' | '1_month' | '3_months' | '6_months' | '1_year'
   factors: string[];
   evidenceBased: boolean;
-}
+};
 
-export interface TreatmentRecommendation {
+export type TreatmentRecommendation = {
   treatmentId: string;
   treatmentName: string;
   category: 'primary' | 'alternative' | 'contraindicated';
@@ -55,9 +55,9 @@ export interface TreatmentRecommendation {
   estimatedDuration: string;
   estimatedCost: number;
   reasoning: string;
-}
+};
 
-export interface SafetyAlert {
+export type SafetyAlert = {
   id: string;
   severity: 'info' | 'warning' | 'critical' | 'emergency';
   type:
@@ -71,9 +71,9 @@ export interface SafetyAlert {
   recommendedActions: string[];
   autoResolvable: boolean;
   requiresImmediate: boolean;
-}
+};
 
-export interface PatientBehaviorPattern {
+export type PatientBehaviorPattern = {
   patientId: string;
   patterns: {
     appointmentAdherence: number; // 0.0 to 1.0
@@ -105,9 +105,9 @@ export interface PatientBehaviorPattern {
   };
   lastAnalyzed: Date;
   confidence: number;
-}
+};
 
-export interface HealthTrend {
+export type HealthTrend = {
   patientId: string;
   metric: string;
   values: {
@@ -129,9 +129,9 @@ export interface HealthTrend {
     message: string;
     triggeredAt: Date;
   }[];
-}
+};
 
-export interface AIModelPerformance {
+export type AIModelPerformance = {
   modelId: string;
   modelType:
     | 'risk_assessment'
@@ -153,9 +153,9 @@ export interface AIModelPerformance {
   };
   lastUpdated: Date;
   isActive: boolean;
-}
+};
 
-export interface PatientOutcome {
+export type PatientOutcome = {
   patientId: string;
   treatmentId: string;
   predictedOutcome: {
@@ -178,9 +178,9 @@ export interface PatientOutcome {
   };
   feedbackDate: Date;
   notes: string;
-}
+};
 
-export interface CarePathway {
+export type CarePathway = {
   id: string;
   patientId: string;
   name: string;
@@ -192,9 +192,9 @@ export interface CarePathway {
   personalizationFactors: string[];
   successProbability: number;
   alternatives: AlternativePathway[];
-}
+};
 
-export interface CarePathwayStep {
+export type CarePathwayStep = {
   stepNumber: number;
   name: string;
   description: string;
@@ -206,9 +206,9 @@ export interface CarePathwayStep {
   isCompleted: boolean;
   completedDate?: Date;
   notes?: string;
-}
+};
 
-export interface AlternativePathway {
+export type AlternativePathway = {
   id: string;
   name: string;
   reason: string;
@@ -216,9 +216,9 @@ export interface AlternativePathway {
   riskDifference: number;
   costDifference: number;
   timeDifference: string;
-}
+};
 
-export interface AIInsightDashboard {
+export type AIInsightDashboard = {
   patientId: string;
   lastUpdated: Date;
   riskAssessment: PatientRiskAssessment;
@@ -238,39 +238,39 @@ export interface AIInsightDashboard {
     confidence: number;
     impact: 'low' | 'medium' | 'high';
   }[];
-}
+};
 
 // API Response Types
-export interface RiskAssessmentResponse {
+export type RiskAssessmentResponse = {
   success: boolean;
   data?: PatientRiskAssessment;
   error?: string;
   processingTime: number;
-}
+};
 
-export interface TreatmentRecommendationResponse {
+export type TreatmentRecommendationResponse = {
   success: boolean;
   data?: TreatmentRecommendation[];
   error?: string;
   processingTime: number;
-}
+};
 
-export interface BehaviorAnalysisResponse {
+export type BehaviorAnalysisResponse = {
   success: boolean;
   data?: PatientBehaviorPattern;
   error?: string;
   processingTime: number;
-}
+};
 
-export interface HealthTrendResponse {
+export type HealthTrendResponse = {
   success: boolean;
   data?: HealthTrend[];
   error?: string;
   processingTime: number;
-}
+};
 
 // Configuration Types
-export interface AIConfig {
+export type AIConfig = {
   riskAssessment: {
     enabled: boolean;
     threshold: number;
@@ -303,4 +303,4 @@ export interface AIConfig {
     minOutcomes: number;
     autoValidation: boolean;
   };
-}
+};

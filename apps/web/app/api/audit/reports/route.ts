@@ -95,8 +95,7 @@ async function validateReportAccess(
       profile.permissions?.includes('audit.reports');
 
     return hasReportAccess;
-  } catch (error) {
-    console.error('Erro ao validar acesso de relatórios:', error);
+  } catch (_error) {
     return false;
   }
 }
@@ -128,43 +127,38 @@ function parseReportFilters(searchParams: URLSearchParams) {
 }
 
 async function generateReportData(supabase: any, filters: any) {
-  try {
-    // Construir query base
-    let query = supabase
-      .from('audit_logs')
-      .select('*')
-      .gte('created_at', filters.start_date)
-      .lte('created_at', filters.end_date)
-      .order('created_at', { ascending: false });
+  // Construir query base
+  let query = supabase
+    .from('audit_logs')
+    .select('*')
+    .gte('created_at', filters.start_date)
+    .lte('created_at', filters.end_date)
+    .order('created_at', { ascending: false });
 
-    // Aplicar filtros opcionais
-    if (filters.event_types?.length > 0) {
-      query = query.in('event_type', filters.event_types);
-    }
+  // Aplicar filtros opcionais
+  if (filters.event_types?.length > 0) {
+    query = query.in('event_type', filters.event_types);
+  }
 
-    if (filters.severity_levels?.length > 0) {
-      query = query.in('severity', filters.severity_levels);
-    }
+  if (filters.severity_levels?.length > 0) {
+    query = query.in('severity', filters.severity_levels);
+  }
 
-    if (filters.user_ids?.length > 0) {
-      query = query.in('user_id', filters.user_ids);
-    }
+  if (filters.user_ids?.length > 0) {
+    query = query.in('user_id', filters.user_ids);
+  }
 
-    if (filters.resource_types?.length > 0) {
-      query = query.in('resource_type', filters.resource_types);
-    }
+  if (filters.resource_types?.length > 0) {
+    query = query.in('resource_type', filters.resource_types);
+  }
 
-    const { data: logs, error } = await query;
+  const { data: logs, error } = await query;
 
-    if (error) {
-      throw error;
-    }
-
-    return logs || [];
-  } catch (error) {
-    console.error('Erro ao gerar dados do relatório:', error);
+  if (error) {
     throw error;
   }
+
+  return logs || [];
 }
 
 async function createReportRecord(
@@ -329,9 +323,7 @@ export async function GET(request: NextRequest) {
         total: count || 0,
       },
     });
-  } catch (error) {
-    console.error('Erro na consulta de relatórios:', error);
-
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -453,8 +445,6 @@ export async function POST(request: NextRequest) {
         })
         .eq('id', report.id);
     } catch (generateError) {
-      console.error('Erro na geração do relatório:', generateError);
-
       // Atualizar status para failed
       await supabase
         .from('audit_reports')
@@ -486,9 +476,7 @@ export async function POST(request: NextRequest) {
       success: true,
       data: report,
     });
-  } catch (error) {
-    console.error('Erro na criação de relatório:', error);
-
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

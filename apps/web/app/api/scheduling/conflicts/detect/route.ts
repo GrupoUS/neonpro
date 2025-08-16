@@ -12,7 +12,7 @@ import { type NextRequest, NextResponse } from 'next/server';
 import { AuditLogger } from '@/lib/auth/audit/audit-logger';
 import { ConflictDetectionService } from '@/lib/scheduling/conflict-resolution';
 
-interface ConflictDetectionRequest {
+type ConflictDetectionRequest = {
   appointmentStart: string; // ISO string
   appointmentEnd: string; // ISO string
   professionalId: string;
@@ -20,7 +20,7 @@ interface ConflictDetectionRequest {
   roomId?: string;
   equipmentIds?: string[];
   patientId?: string;
-}
+};
 
 export async function POST(request: NextRequest) {
   const auditLogger = new AuditLogger();
@@ -114,8 +114,6 @@ export async function POST(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('Conflict detection error:', error);
-
     await auditLogger.logError('Conflict detection API failed', error);
 
     return NextResponse.json(

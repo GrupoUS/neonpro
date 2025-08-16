@@ -1,10 +1,15 @@
 import { Metadata } from 'next';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ConsentManager, DataSubjectRights, ComplianceDashboard } from '@/components/lgpd';
+import {
+  ConsentManager,
+  DataSubjectRights,
+  ComplianceDashboard,
+} from '@/components/lgpd';
 
 export const metadata: Metadata = {
   title: 'Privacidade e LGPD | NeonPro',
-  description: 'Gerencie suas preferências de privacidade e exercite seus direitos conforme a LGPD',
+  description:
+    'Gerencie suas preferências de privacidade e exercite seus direitos conforme a LGPD',
 };
 
 export default function PrivacyPage() {
@@ -13,7 +18,8 @@ export default function PrivacyPage() {
       <div>
         <h1 className="text-3xl font-bold">Privacidade e LGPD</h1>
         <p className="text-gray-600 mt-2">
-          Gerencie suas preferências de privacidade e exercite seus direitos conforme a Lei Geral de Proteção de Dados
+          Gerencie suas preferências de privacidade e exercite seus direitos
+          conforme a Lei Geral de Proteção de Dados
         </p>
       </div>
 

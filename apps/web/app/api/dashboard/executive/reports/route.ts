@@ -155,8 +155,7 @@ export async function GET(request: NextRequest) {
       offset
     );
     return NextResponse.json({ instances });
-  } catch (error) {
-    console.error('Error fetching reports:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
       { status: 500 }
@@ -228,8 +227,6 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
-
-    console.error('Error processing report request:', error);
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
       { status: 500 }

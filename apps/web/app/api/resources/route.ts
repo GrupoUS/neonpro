@@ -63,7 +63,6 @@ export async function GET(request: NextRequest) {
       filters,
     });
   } catch (error) {
-    console.error('Error fetching resources:', error);
     return NextResponse.json(
       {
         error: 'Failed to fetch resources',
@@ -124,7 +123,6 @@ export async function POST(request: NextRequest) {
       { status: 201 }
     );
   } catch (error) {
-    console.error('Error creating resource:', error);
     return NextResponse.json(
       {
         error: 'Failed to create resource',
@@ -178,7 +176,6 @@ export async function PUT(request: NextRequest) {
       message: 'Resource updated successfully',
     });
   } catch (error) {
-    console.error('Error updating resource:', error);
     return NextResponse.json(
       {
         error: 'Failed to update resource',
@@ -228,7 +225,6 @@ export async function DELETE(request: NextRequest) {
       message: 'Resource deleted successfully',
     });
   } catch (error) {
-    console.error('Error deleting resource:', error);
     return NextResponse.json(
       {
         error: 'Failed to delete resource',

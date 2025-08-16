@@ -32,8 +32,7 @@ export async function GET(
       analytics: result.data,
       timestamp: new Date().toISOString(),
     });
-  } catch (error) {
-    console.error('Error in campaign analytics:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

@@ -15,7 +15,7 @@ export type FHIRCode = string;
 export type FHIRURI = string;
 
 // FHIR Identifier for medical record numbers, national IDs, etc.
-export interface FHIRIdentifier {
+export type FHIRIdentifier = {
   use?: 'usual' | 'official' | 'temp' | 'secondary' | 'old';
   type?: {
     coding?: {
@@ -35,10 +35,10 @@ export interface FHIRIdentifier {
     reference?: string;
     display?: string;
   };
-}
+};
 
 // FHIR HumanName for patient names
-export interface FHIRHumanName {
+export type FHIRHumanName = {
   use?:
     | 'usual'
     | 'official'
@@ -56,10 +56,10 @@ export interface FHIRHumanName {
     start?: FHIRDateTime;
     end?: FHIRDateTime;
   };
-}
+};
 
 // FHIR ContactPoint for phone, email, etc.
-export interface FHIRContactPoint {
+export type FHIRContactPoint = {
   system?: 'phone' | 'fax' | 'email' | 'pager' | 'url' | 'sms' | 'other';
   value?: string;
   use?: 'home' | 'work' | 'temp' | 'old' | 'mobile';
@@ -68,10 +68,10 @@ export interface FHIRContactPoint {
     start?: FHIRDateTime;
     end?: FHIRDateTime;
   };
-}
+};
 
 // FHIR Address
-export interface FHIRAddress {
+export type FHIRAddress = {
   use?: 'home' | 'work' | 'temp' | 'old' | 'billing';
   type?: 'postal' | 'physical' | 'both';
   text?: string;
@@ -85,10 +85,10 @@ export interface FHIRAddress {
     start?: FHIRDateTime;
     end?: FHIRDateTime;
   };
-}
+};
 
 // FHIR Patient Contact (emergency contacts, next of kin)
-export interface FHIRPatientContact {
+export type FHIRPatientContact = {
   relationship?: {
     coding?: {
       system?: FHIRURI;
@@ -109,10 +109,10 @@ export interface FHIRPatientContact {
     start?: FHIRDateTime;
     end?: FHIRDateTime;
   };
-}
+};
 
 // Main FHIR Patient Resource
-export interface FHIRPatient {
+export type FHIRPatient = {
   resourceType: 'Patient';
   id?: string;
   meta?: {
@@ -178,10 +178,10 @@ export interface FHIRPatient {
     };
     type: 'replaced-by' | 'replaces' | 'refer' | 'seealso';
   }[];
-}
+};
 
 // FHIR Condition Resource for medical conditions
-export interface FHIRCondition {
+export type FHIRCondition = {
   resourceType: 'Condition';
   id?: string;
   meta?: {
@@ -319,10 +319,10 @@ export interface FHIRCondition {
     time?: FHIRDateTime;
     text: string;
   }[];
-}
+};
 
 // FHIR AllergyIntolerance Resource
-export interface FHIRAllergyIntolerance {
+export type FHIRAllergyIntolerance = {
   resourceType: 'AllergyIntolerance';
   id?: string;
   meta?: {
@@ -434,10 +434,10 @@ export interface FHIRAllergyIntolerance {
       text: string;
     }[];
   }[];
-}
+};
 
 // LGPD Consent Types for patient data processing
-export interface LGPDConsent {
+export type LGPDConsent = {
   id?: string;
   patient_id: string;
   consent_type:
@@ -465,7 +465,7 @@ export interface LGPDConsent {
   witness_signature?: string;
   created_at: FHIRDateTime;
   updated_at: FHIRDateTime;
-}
+};
 
 // NeonPro-specific extensions to FHIR Patient
 export interface NeonProPatient extends Omit<FHIRPatient, 'id'> {
@@ -493,7 +493,7 @@ export interface NeonProPatient extends Omit<FHIRPatient, 'id'> {
 }
 
 // Database table interfaces matching our Supabase schema
-export interface PatientDB {
+export type PatientDB = {
   id: string;
   clinic_id: string;
   medical_record_number: string;
@@ -503,9 +503,9 @@ export interface PatientDB {
   updated_at: string;
   created_by: string;
   updated_by: string;
-}
+};
 
-export interface PatientConsentDB {
+export type PatientConsentDB = {
   id: string;
   patient_id: string;
   consent_type: string;
@@ -522,9 +522,9 @@ export interface PatientConsentDB {
   witness_signature?: string;
   created_at: string;
   updated_at: string;
-}
+};
 
-export interface MedicalConditionDB {
+export type MedicalConditionDB = {
   id: string;
   patient_id: string;
   fhir_data: FHIRCondition;
@@ -533,9 +533,9 @@ export interface MedicalConditionDB {
   updated_at: string;
   created_by: string;
   updated_by: string;
-}
+};
 
-export interface AllergyIntoleranceDB {
+export type AllergyIntoleranceDB = {
   id: string;
   patient_id: string;
   fhir_data: FHIRAllergyIntolerance;
@@ -544,4 +544,4 @@ export interface AllergyIntoleranceDB {
   updated_at: string;
   created_by: string;
   updated_by: string;
-}
+};

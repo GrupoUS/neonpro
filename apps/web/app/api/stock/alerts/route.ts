@@ -68,8 +68,7 @@ export async function GET(request: NextRequest) {
         filters: validatedQuery,
       },
     });
-  } catch (error) {
-    console.error('Error in GET /api/stock/alerts:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -159,8 +158,7 @@ export async function POST(request: NextRequest) {
       default:
         return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
     }
-  } catch (error) {
-    console.error('Error in POST /api/stock/alerts:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

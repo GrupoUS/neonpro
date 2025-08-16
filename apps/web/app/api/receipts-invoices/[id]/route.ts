@@ -148,7 +148,6 @@ export async function GET(
       data: document,
     });
   } catch (error) {
-    console.error('Get document error:', error);
     return NextResponse.json(
       {
         success: false,
@@ -357,8 +356,6 @@ export async function POST(
         return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
     }
   } catch (error) {
-    console.error('Document action error:', error);
-
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {
@@ -435,7 +432,6 @@ export async function PUT(
       data,
     });
   } catch (error) {
-    console.error('Update document error:', error);
     return NextResponse.json(
       {
         success: false,
@@ -522,7 +518,6 @@ export async function DELETE(
       message: 'Document deleted successfully',
     });
   } catch (error) {
-    console.error('Delete document error:', error);
     return NextResponse.json(
       {
         success: false,

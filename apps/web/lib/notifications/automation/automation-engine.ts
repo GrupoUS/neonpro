@@ -24,7 +24,7 @@ import {
 // INTERFACES
 // ============================================================================
 
-interface EventData {
+type EventData = {
   type: string;
   entityId: string;
   entityType: string;
@@ -33,9 +33,9 @@ interface EventData {
   timestamp: Date;
   data: Record<string, any>;
   metadata?: Record<string, any>;
-}
+};
 
-interface RuleExecution {
+type RuleExecution = {
   ruleId: string;
   eventId: string;
   triggered: boolean;
@@ -44,16 +44,16 @@ interface RuleExecution {
   errors: string[];
   executedAt: Date;
   duration: number;
-}
+};
 
-interface AutomationStats {
+type AutomationStats = {
   totalRules: number;
   activeRules: number;
   totalExecutions: number;
   successfulExecutions: number;
   failedExecutions: number;
   averageExecutionTime: number;
-}
+};
 
 // ============================================================================
 // AUTOMATION ENGINE
@@ -82,7 +82,6 @@ export class AutomationEngine {
   addRule(rule: AutomationRule): void {
     this.validateRule(rule);
     this.rules.set(rule.id, rule);
-    console.log(`📋 Regra de automação adicionada: ${rule.name}`);
   }
 
   /**
@@ -91,7 +90,6 @@ export class AutomationEngine {
   removeRule(ruleId: string): boolean {
     const removed = this.rules.delete(ruleId);
     if (removed) {
-      console.log(`🗑️ Regra de automação removida: ${ruleId}`);
     }
     return removed;
   }
@@ -108,8 +106,6 @@ export class AutomationEngine {
     const updatedRule = { ...rule, ...updates, id: ruleId };
     this.validateRule(updatedRule);
     this.rules.set(ruleId, updatedRule);
-
-    console.log(`✏️ Regra de automação atualizada: ${rule.name}`);
     return true;
   }
 
@@ -143,16 +139,11 @@ export class AutomationEngine {
    */
   async processEvent(event: EventData): Promise<RuleExecution[]> {
     if (!this.isRunning) {
-      console.warn('⚠️ Motor de automação não está rodando');
       return [];
     }
 
     const executions: RuleExecution[] = [];
     const applicableRules = this.findApplicableRules(event);
-
-    console.log(
-      `🔄 Processando evento ${event.type} - ${applicableRules.length} regras aplicáveis`
-    );
 
     for (const rule of applicableRules) {
       const execution = await this.executeRule(rule, event);
@@ -252,7 +243,6 @@ export class AutomationEngine {
             const errorMsg =
               error instanceof Error ? error.message : 'Erro desconhecido';
             execution.errors.push(`Ação ${action.type}: ${errorMsg}`);
-            console.error(`❌ Erro ao executar ação ${action.type}:`, error);
           }
         }
       }
@@ -260,15 +250,9 @@ export class AutomationEngine {
       const errorMsg =
         error instanceof Error ? error.message : 'Erro desconhecido';
       execution.errors.push(`Execução da regra: ${errorMsg}`);
-      console.error(`❌ Erro ao executar regra ${rule.name}:`, error);
     }
 
     execution.duration = Date.now() - startTime;
-
-    console.log(
-      `✅ Regra ${rule.name} executada em ${execution.duration}ms - ` +
-        `${execution.actionsExecuted} ações, ${execution.errors.length} erros`
-    );
 
     return execution;
   }
@@ -328,7 +312,6 @@ export class AutomationEngine {
       case 'not_exists':
         return value === undefined || value === null;
       default:
-        console.warn(`⚠️ Operador desconhecido: ${condition.operator}`);
         return false;
     }
   }
@@ -467,16 +450,9 @@ export class AutomationEngine {
    * Executa ação de atualização de entidade
    */
   private async executeUpdateEntityAction(
-    action: AutomationAction,
-    event: EventData
-  ): Promise<void> {
-    // Implementar atualização de entidade
-    console.log('🔄 Atualizando entidade:', {
-      entityId: event.entityId,
-      entityType: event.entityType,
-      updates: action.config.updates,
-    });
-  }
+    _action: AutomationAction,
+    _event: EventData
+  ): Promise<void> {}
 
   // ============================================================================
   // UTILITÁRIOS
@@ -592,7 +568,6 @@ export class AutomationEngine {
    */
   start(): void {
     this.isRunning = true;
-    console.log('🚀 Motor de automação iniciado');
   }
 
   /**
@@ -600,7 +575,6 @@ export class AutomationEngine {
    */
   stop(): void {
     this.isRunning = false;
-    console.log('⏹️ Motor de automação parado');
   }
 
   /**
@@ -653,7 +627,6 @@ export class AutomationEngine {
    */
   clearExecutionHistory(): void {
     this.executionHistory = [];
-    console.log('🧹 Histórico de execuções limpo');
   }
 }
 

@@ -38,7 +38,7 @@ export type EngagementLevel =
   | 'very_low';
 
 // Core trial interface
-export interface Trial {
+export type Trial = {
   id: string;
   userId: string;
   status: TrialStage;
@@ -50,9 +50,9 @@ export interface Trial {
   userSegment: UserSegment;
   currentStrategy: ConversionStrategy;
   metadata: TrialMetadata;
-}
+};
 
-export interface TrialMetadata {
+export type TrialMetadata = {
   signupSource: string;
   referralCode?: string;
   utmParams?: Record<string, string>;
@@ -64,21 +64,21 @@ export interface TrialMetadata {
   featuresUsed: string[];
   supportInteractions: number;
   emailEngagement: EmailEngagementData;
-}
+};
 
-export interface EmailEngagementData {
+export type EmailEngagementData = {
   emailsReceived: number;
   emailsOpened: number;
   emailsClicked: number;
   lastEmailEngagement: Date;
   engagementRate: number;
-}
+};
 
 // ============================================================================
 // AI CONVERSION OPTIMIZATION
 // ============================================================================
 
-export interface ConversionPrediction {
+export type ConversionPrediction = {
   trialId: string;
   userId: string;
   probability: number;
@@ -89,30 +89,30 @@ export interface ConversionPrediction {
   timeToConversion: number; // days
   predictedRevenue: number;
   riskLevel: 'low' | 'medium' | 'high';
-}
+};
 
-export interface ConversionFactor {
+export type ConversionFactor = {
   name: string;
   weight: number;
   value: number;
   impact: 'positive' | 'negative' | 'neutral';
   description: string;
-}
+};
 
-export interface ConversionRecommendation {
+export type ConversionRecommendation = {
   action: string;
   priority: 'high' | 'medium' | 'low';
   expectedImpact: number;
   effort: 'low' | 'medium' | 'high';
   timeline: string;
   reasoning: string;
-}
+};
 
 // ============================================================================
 // USER JOURNEY & BEHAVIOR TRACKING
 // ============================================================================
 
-export interface UserJourney {
+export type UserJourney = {
   userId: string;
   trialId: string;
   events: JourneyEvent[];
@@ -120,9 +120,9 @@ export interface UserJourney {
   currentStage: TrialStage;
   progressScore: number;
   stageHistory: StageTransition[];
-}
+};
 
-export interface JourneyEvent {
+export type JourneyEvent = {
   id: string;
   type:
     | 'feature_usage'
@@ -134,9 +134,9 @@ export interface JourneyEvent {
   data: Record<string, any>;
   score: number; // engagement impact
   source: string;
-}
+};
 
-export interface JourneyMilestone {
+export type JourneyMilestone = {
   name: string;
   description: string;
   completed: boolean;
@@ -147,22 +147,22 @@ export interface JourneyMilestone {
     | 'engagement'
     | 'value_realization'
     | 'conversion_readiness';
-}
+};
 
-export interface StageTransition {
+export type StageTransition = {
   fromStage: TrialStage;
   toStage: TrialStage;
   timestamp: Date;
   trigger: string;
   automated: boolean;
   conversionProbabilityChange: number;
-} // Campaign Management & A/B Testing Types - STORY-SUB-002 Task 3 (Part 2)
+}; // Campaign Management & A/B Testing Types - STORY-SUB-002 Task 3 (Part 2)
 
 // ============================================================================
 // CAMPAIGN MANAGEMENT
 // ============================================================================
 
-export interface TrialCampaign {
+export type TrialCampaign = {
   id: string;
   name: string;
   type: 'email' | 'in_app' | 'push' | 'sms' | 'retargeting';
@@ -173,27 +173,27 @@ export interface TrialCampaign {
   triggers: CampaignTrigger[];
   metrics: CampaignMetrics;
   abTest?: ABTestConfig;
-}
+};
 
-export interface CampaignTarget {
+export type CampaignTarget = {
   segments: UserSegment[];
   trialStages: TrialStage[];
   conversionProbabilityRange: [number, number];
   engagementLevelRange: EngagementLevel[];
   customFilters: Record<string, any>;
   estimatedAudience: number;
-}
+};
 
-export interface CampaignContent {
+export type CampaignContent = {
   subject?: string;
   title: string;
   message: string;
   cta: CallToAction;
   personalization: PersonalizationRules;
   assets: CampaignAsset[];
-}
+};
 
-export interface CallToAction {
+export type CallToAction = {
   text: string;
   action:
     | 'upgrade'
@@ -203,46 +203,46 @@ export interface CallToAction {
     | 'feature_tour';
   url?: string;
   style: 'primary' | 'secondary' | 'urgent';
-}
+};
 
-export interface PersonalizationRules {
+export type PersonalizationRules = {
   useUserName: boolean;
   useDaysRemaining: boolean;
   useTopFeatures: boolean;
   useCompanyName: boolean;
   customTokens: Record<string, string>;
-}
+};
 
-export interface CampaignAsset {
+export type CampaignAsset = {
   type: 'image' | 'video' | 'document' | 'gif';
   url: string;
   alt?: string;
   title?: string;
-}
+};
 
-export interface CampaignSchedule {
+export type CampaignSchedule = {
   type: 'immediate' | 'scheduled' | 'trigger_based' | 'recurring';
   startDate?: Date;
   endDate?: Date;
   timezone: string;
   frequency?: 'daily' | 'weekly' | 'monthly';
   deliveryWindows: TimeWindow[];
-}
+};
 
-export interface TimeWindow {
+export type TimeWindow = {
   start: string; // HH:MM format
   end: string; // HH:MM format
   days: number[]; // 0-6, Sunday=0
-}
+};
 
-export interface CampaignTrigger {
+export type CampaignTrigger = {
   type: 'time_based' | 'behavior_based' | 'score_based' | 'stage_change';
   condition: string;
   delay: number; // minutes
   maxTriggers: number;
-}
+};
 
-export interface CampaignMetrics {
+export type CampaignMetrics = {
   sent: number;
   delivered: number;
   opened: number;
@@ -253,11 +253,11 @@ export interface CampaignMetrics {
   revenue: number;
   conversionRate: number;
   roi: number;
-} // ============================================================================
+}; // ============================================================================
 // A/B TESTING FRAMEWORK
 // ============================================================================
 
-export interface ABTestConfig {
+export type ABTestConfig = {
   id: string;
   name: string;
   hypothesis: string;
@@ -270,9 +270,9 @@ export interface ABTestConfig {
   confidenceLevel: number;
   statisticalSignificance?: number;
   winner?: string;
-}
+};
 
-export interface ABTestVariant {
+export type ABTestVariant = {
   id: string;
   name: string;
   description: string;
@@ -282,16 +282,16 @@ export interface ABTestVariant {
   conversions: number;
   conversionRate: number;
   revenue: number;
-}
+};
 
-export interface VariantChange {
+export type VariantChange = {
   element: string;
   property: string;
   value: any;
   previousValue?: any;
-}
+};
 
-export interface ABTestMetric {
+export type ABTestMetric = {
   name: string;
   type: 'conversion' | 'engagement' | 'revenue' | 'custom';
   primary: boolean;
@@ -299,22 +299,22 @@ export interface ABTestMetric {
   currentValue?: number;
   improvement?: number;
   significance?: number;
-}
+};
 
 // ============================================================================
 // FEATURE RECOMMENDATION SYSTEM
 // ============================================================================
 
-export interface FeatureRecommendation {
+export type FeatureRecommendation = {
   userId: string;
   trialId: string;
   recommendations: RecommendedFeature[];
   strategy: 'collaborative' | 'content_based' | 'hybrid';
   generatedAt: Date;
   validUntil: Date;
-}
+};
 
-export interface RecommendedFeature {
+export type RecommendedFeature = {
   featureId: string;
   featureName: string;
   score: number;
@@ -324,7 +324,7 @@ export interface RecommendedFeature {
   usageComplexity: 'low' | 'medium' | 'high';
   timeToValue: number; // minutes
   similarUsers: string[];
-}
+};
 
 // ============================================================================
 // VALIDATION SCHEMAS
@@ -386,12 +386,12 @@ export type CampaignType = TrialCampaign['type'];
 export type CampaignStatus = TrialCampaign['status'];
 
 // Factory interfaces
-export interface TrialFactory {
+export type TrialFactory = {
   createTrial(userId: string, metadata: Partial<TrialMetadata>): Trial;
   updateTrialStage(trialId: string, newStage: TrialStage): Promise<Trial>;
   calculateEngagementScore(events: JourneyEvent[]): number;
   predictConversion(trial: Trial, journey: UserJourney): ConversionPrediction;
-}
+};
 
 // Export main types for convenience
 export type {

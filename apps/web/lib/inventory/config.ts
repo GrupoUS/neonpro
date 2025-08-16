@@ -33,14 +33,12 @@ export class InventoryConfigManager {
         .single();
 
       if (error || !configData) {
-        console.warn('Using default inventory configuration');
         return DEFAULT_INVENTORY_CONFIG;
       }
 
       this.config = { ...DEFAULT_INVENTORY_CONFIG, ...configData.configuracao };
       return this.config;
-    } catch (error) {
-      console.error('Error loading inventory configuration:', error);
+    } catch (_error) {
       return DEFAULT_INVENTORY_CONFIG;
     }
   }
@@ -69,8 +67,7 @@ export class InventoryConfigManager {
 
       this.config = updatedConfig;
       return { success: true, error: null };
-    } catch (error) {
-      console.error('Error saving inventory configuration:', error);
+    } catch (_error) {
       return { success: false, error: 'Erro ao salvar configuração' };
     }
   }
@@ -132,8 +129,7 @@ export class InventoryDashboardProvider {
       };
 
       return { data: summary, error: null };
-    } catch (error) {
-      console.error('Error getting dashboard summary:', error);
+    } catch (_error) {
       return { data: null, error: 'Erro ao carregar resumo do dashboard' };
     }
   }
@@ -142,8 +138,7 @@ export class InventoryDashboardProvider {
    * Get stock levels summary
    */
   private async getStockLevels() {
-    const { data: stockData } = await this.supabase
-      .from('produtos_estoque')
+    const { data: stockData } = await this.supabase.from('produtos_estoque')
       .select(`
         id,
         preco_custo,
@@ -328,8 +323,7 @@ export class InventoryDashboardProvider {
       };
 
       return { data: metrics, error: null };
-    } catch (error) {
-      console.error('Error getting inventory metrics:', error);
+    } catch (_error) {
       return { data: null, error: 'Erro ao calcular métricas de estoque' };
     }
   }
@@ -397,8 +391,7 @@ export class InventoryIntegrationManager {
       };
 
       return { data: systemIntegration, error: null };
-    } catch (error) {
-      console.error('Error getting integration status:', error);
+    } catch (_error) {
       return { data: null, error: 'Erro ao verificar status das integrações' };
     }
   }
@@ -424,8 +417,7 @@ export class InventoryIntegrationManager {
       }
 
       return { success: true, error: null };
-    } catch (error) {
-      console.error('Error updating integration:', error);
+    } catch (_error) {
       return { success: false, error: 'Erro ao atualizar integração' };
     }
   }
@@ -461,8 +453,6 @@ export class InventoryIntegrationManager {
         response_time: responseTime,
       };
     } catch (error) {
-      console.error('Error testing integration:', error);
-
       // Log error
       await this.supabase.from('logs_integracao').insert({
         sistema: system,

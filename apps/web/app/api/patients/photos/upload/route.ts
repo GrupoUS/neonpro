@@ -117,8 +117,6 @@ export async function POST(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('Photo upload error:', error);
-
     return NextResponse.json(
       {
         error: 'Upload failed',
@@ -177,8 +175,6 @@ export async function GET(request: NextRequest) {
       data: photos,
     });
   } catch (error) {
-    console.error('Get photos error:', error);
-
     return NextResponse.json(
       {
         error: 'Failed to get photos',

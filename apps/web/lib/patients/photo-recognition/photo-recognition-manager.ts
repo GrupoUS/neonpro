@@ -17,7 +17,7 @@ import type { AuditLogger } from '../../audit/audit-logger';
 import type { LGPDManager } from '../../security/lgpd-manager';
 
 // Types and Interfaces
-export interface PhotoRecognitionConfig {
+export type PhotoRecognitionConfig = {
   enabled: boolean;
   confidenceThreshold: number; // 0.0 to 1.0
   maxPhotosPerPatient: number;
@@ -26,9 +26,9 @@ export interface PhotoRecognitionConfig {
   qualityThreshold: number; // 0.0 to 1.0
   privacyMode: 'strict' | 'standard' | 'minimal';
   retentionDays: number;
-}
+};
 
-export interface PhotoMetadata {
+export type PhotoMetadata = {
   id: string;
   patientId: string;
   filename: string;
@@ -40,9 +40,9 @@ export interface PhotoMetadata {
   quality: number;
   uploadDate: Date;
   lastAccessed?: Date;
-}
+};
 
-export interface FacialFeatures {
+export type FacialFeatures = {
   landmarks: number[][];
   encoding: number[];
   confidence: number;
@@ -52,57 +52,57 @@ export interface FacialFeatures {
     width: number;
     height: number;
   };
-}
+};
 
-export interface RecognitionResult {
+export type RecognitionResult = {
   success: boolean;
   patientId?: string;
   confidence: number;
   matches: PatientMatch[];
   features?: FacialFeatures;
   error?: string;
-}
+};
 
-export interface PatientMatch {
+export type PatientMatch = {
   patientId: string;
   patientName: string;
   confidence: number;
   lastSeen: Date;
   photoId: string;
-}
+};
 
-export interface VerificationRequest {
+export type VerificationRequest = {
   photoFile: File | Buffer;
   patientId: string;
   verificationContext: 'check_in' | 'appointment' | 'security' | 'registration';
   metadata?: Record<string, any>;
-}
+};
 
-export interface VerificationResult {
+export type VerificationResult = {
   verified: boolean;
   confidence: number;
   patientMatch?: PatientMatch;
   securityFlags: string[];
   recommendations: string[];
   processingTime: number;
-}
+};
 
-export interface PhotoQualityAssessment {
+export type PhotoQualityAssessment = {
   overall: number; // 0.0 to 1.0
   sharpness: number;
   lighting: number;
   faceVisibility: number;
   resolution: number;
   recommendations: string[];
-}
+};
 
-export interface PrivacyControls {
+export type PrivacyControls = {
   allowFacialRecognition: boolean;
   allowBiometricStorage: boolean;
   allowPhotoSharing: boolean;
   dataRetentionDays: number;
   anonymizeAfterDays?: number;
-}
+};
 
 export class PhotoRecognitionManager {
   private readonly supabase: any;
@@ -461,8 +461,7 @@ export class PhotoRecognitionManager {
       };
 
       return mockFeatures;
-    } catch (error) {
-      console.error('Feature extraction failed:', error);
+    } catch (_error) {
       return null;
     }
   }
@@ -526,8 +525,7 @@ export class PhotoRecognitionManager {
 
       // Sort by confidence (highest first)
       return matches.sort((a, b) => b.confidence - a.confidence);
-    } catch (error) {
-      console.error('Facial match search failed:', error);
+    } catch (_error) {
       return [];
     }
   }
@@ -739,8 +737,7 @@ export class PhotoRecognitionManager {
           ? new Date(photo.last_accessed)
           : undefined,
       }));
-    } catch (error) {
-      console.error('Failed to get patient photos:', error);
+    } catch (_error) {
       return [];
     }
   }
@@ -773,8 +770,7 @@ export class PhotoRecognitionManager {
         dataRetentionDays: controls.data_retention_days,
         anonymizeAfterDays: controls.anonymize_after_days,
       };
-    } catch (error) {
-      console.error('Failed to get privacy controls:', error);
+    } catch (_error) {
       // Return restrictive defaults
       return {
         allowFacialRecognition: false,
@@ -793,36 +789,31 @@ export class PhotoRecognitionManager {
     controls: Partial<PrivacyControls>,
     userId: string
   ): Promise<void> {
-    try {
-      const { error } = await this.supabase
-        .from('patient_privacy_controls')
-        .upsert({
-          patient_id: patientId,
-          allow_facial_recognition: controls.allowFacialRecognition,
-          allow_biometric_storage: controls.allowBiometricStorage,
-          allow_photo_sharing: controls.allowPhotoSharing,
-          data_retention_days: controls.dataRetentionDays,
-          anonymize_after_days: controls.anonymizeAfterDays,
-          updated_by: userId,
-          updated_at: new Date().toISOString(),
-        });
-
-      if (error) {
-        throw new Error(`Failed to update privacy controls: ${error.message}`);
-      }
-
-      // Log privacy update
-      await this.auditLogger.log({
-        action: 'privacy_controls_updated',
-        userId,
-        resourceType: 'patient_privacy',
-        resourceId: patientId,
-        details: { controls },
+    const { error } = await this.supabase
+      .from('patient_privacy_controls')
+      .upsert({
+        patient_id: patientId,
+        allow_facial_recognition: controls.allowFacialRecognition,
+        allow_biometric_storage: controls.allowBiometricStorage,
+        allow_photo_sharing: controls.allowPhotoSharing,
+        data_retention_days: controls.dataRetentionDays,
+        anonymize_after_days: controls.anonymizeAfterDays,
+        updated_by: userId,
+        updated_at: new Date().toISOString(),
       });
-    } catch (error) {
-      console.error('Failed to update privacy controls:', error);
-      throw error;
+
+    if (error) {
+      throw new Error(`Failed to update privacy controls: ${error.message}`);
     }
+
+    // Log privacy update
+    await this.auditLogger.log({
+      action: 'privacy_controls_updated',
+      userId,
+      resourceType: 'patient_privacy',
+      resourceId: patientId,
+      details: { controls },
+    });
   }
 
   /**
@@ -833,53 +824,47 @@ export class PhotoRecognitionManager {
     userId: string,
     reason: string
   ): Promise<void> {
-    try {
-      // Get photo details
-      const { data: photo, error: fetchError } = await this.supabase
-        .from('patient_photos')
-        .select('*')
-        .eq('id', photoId)
-        .single();
+    // Get photo details
+    const { data: photo, error: fetchError } = await this.supabase
+      .from('patient_photos')
+      .select('*')
+      .eq('id', photoId)
+      .single();
 
-      if (fetchError || !photo) {
-        throw new Error('Photo not found');
-      }
-
-      // Delete from storage
-      const { error: storageError } = await this.supabase.storage
-        .from('patient-photos')
-        .remove([photo.filename]);
-
-      if (storageError) {
-        console.warn('Storage deletion failed:', storageError);
-      }
-
-      // Delete from database
-      const { error: dbError } = await this.supabase
-        .from('patient_photos')
-        .delete()
-        .eq('id', photoId);
-
-      if (dbError) {
-        throw new Error(`Database deletion failed: ${dbError.message}`);
-      }
-
-      // Log deletion
-      await this.auditLogger.log({
-        action: 'photo_deleted',
-        userId,
-        resourceType: 'patient_photo',
-        resourceId: photoId,
-        details: {
-          patientId: photo.patient_id,
-          reason,
-          filename: photo.filename,
-        },
-      });
-    } catch (error) {
-      console.error('Failed to delete photo:', error);
-      throw error;
+    if (fetchError || !photo) {
+      throw new Error('Photo not found');
     }
+
+    // Delete from storage
+    const { error: storageError } = await this.supabase.storage
+      .from('patient-photos')
+      .remove([photo.filename]);
+
+    if (storageError) {
+    }
+
+    // Delete from database
+    const { error: dbError } = await this.supabase
+      .from('patient_photos')
+      .delete()
+      .eq('id', photoId);
+
+    if (dbError) {
+      throw new Error(`Database deletion failed: ${dbError.message}`);
+    }
+
+    // Log deletion
+    await this.auditLogger.log({
+      action: 'photo_deleted',
+      userId,
+      resourceType: 'patient_photo',
+      resourceId: photoId,
+      details: {
+        patientId: photo.patient_id,
+        reason,
+        filename: photo.filename,
+      },
+    });
   }
 
   /**
@@ -935,8 +920,7 @@ export class PhotoRecognitionManager {
         averageConfidence,
         lastRecognition: lastRecognition ? new Date(lastRecognition) : null,
       };
-    } catch (error) {
-      console.error('Failed to get recognition stats:', error);
+    } catch (_error) {
       return {
         totalPhotos: 0,
         recognizedPhotos: 0,

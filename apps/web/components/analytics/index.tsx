@@ -28,12 +28,12 @@ import {
 } from '@/components/ui/card';
 
 // Types for props
-interface BasePanelProps {
+type BasePanelProps = {
   data?: any;
   isLoading: boolean;
   timeframe: string;
   clinicId: string;
-}
+};
 
 /**
  * Outcome Analytics Panel - Patient outcomes and clinical results

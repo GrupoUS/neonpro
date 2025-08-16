@@ -623,20 +623,11 @@ export function useRetentionAnalyticsFormatters() {
  * Hook for retention analytics export functionality
  */
 export function useRetentionAnalyticsExport() {
-  const exportToCsv = (data: any[], filename: string) => {
-    // Implementation would generate CSV from data
-    console.log('Exporting to CSV:', filename, data);
-  };
+  const exportToCsv = (_data: any[], _filename: string) => {};
 
-  const exportToPdf = (data: any[], filename: string) => {
-    // Implementation would generate PDF report
-    console.log('Exporting to PDF:', filename, data);
-  };
+  const exportToPdf = (_data: any[], _filename: string) => {};
 
-  const exportToExcel = (data: any[], filename: string) => {
-    // Implementation would generate Excel file
-    console.log('Exporting to Excel:', filename, data);
-  };
+  const exportToExcel = (_data: any[], _filename: string) => {};
 
   return {
     exportToCsv,

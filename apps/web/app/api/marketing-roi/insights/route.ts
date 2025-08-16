@@ -63,8 +63,7 @@ export async function GET(request: NextRequest) {
     };
 
     return NextResponse.json(response);
-  } catch (error) {
-    console.error('Marketing insights error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to generate marketing insights' },
       { status: 500 }
@@ -132,8 +131,7 @@ export async function POST(request: NextRequest) {
     };
 
     return NextResponse.json(response);
-  } catch (error) {
-    console.error('Marketing insights generation error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to generate comprehensive marketing insights' },
       { status: 500 }
@@ -183,8 +181,7 @@ export async function PUT(request: NextRequest) {
       updatedInsight,
       learningResult,
     });
-  } catch (error) {
-    console.error('Marketing insight update error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to update marketing insight' },
       { status: 500 }
@@ -220,8 +217,7 @@ export async function DELETE(request: NextRequest) {
       deletedInsightId: insightId,
       result,
     });
-  } catch (error) {
-    console.error('Marketing insight deletion error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to delete marketing insight' },
       { status: 500 }

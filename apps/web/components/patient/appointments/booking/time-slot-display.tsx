@@ -17,25 +17,25 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
 
-interface TimeSlot {
+type TimeSlot = {
   datetime: string;
   is_available: boolean;
   professional_id?: string;
   professional_name?: string;
-}
+};
 
-interface AvailableSlot {
+type AvailableSlot = {
   date: string;
   slots: TimeSlot[];
-}
+};
 
-interface TimeSlotDisplayProps {
+type TimeSlotDisplayProps = {
   serviceId: string;
   selectedSlot: TimeSlot | null;
   onSlotSelect: (slot: TimeSlot) => void;
   professionalId?: string;
   className?: string;
-}
+};
 
 export function TimeSlotDisplay({
   serviceId,
@@ -108,8 +108,7 @@ export function TimeSlotDisplay({
       setAvailableSlots(
         slotsArray.sort((a, b) => a.date.localeCompare(b.date))
       );
-    } catch (err) {
-      console.error('Error fetching available slots:', err);
+    } catch (_err) {
       setError('Erro ao carregar horários disponíveis. Tente novamente.');
     } finally {
       setLoading(false);

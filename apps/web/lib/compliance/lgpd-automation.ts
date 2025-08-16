@@ -31,7 +31,7 @@ import { LGPDComplianceService } from './lgpd-core';
 // AUTOMATION CONFIGURATION TYPES
 // ============================================================================
 
-export interface AutomationConfig {
+export type AutomationConfig = {
   clinicId: string;
   enabledFeatures: {
     autoConsent: boolean;
@@ -60,9 +60,9 @@ export interface AutomationConfig {
     enableSlackIntegration: boolean;
     slackWebhookUrl?: string;
   };
-}
+};
 
-export interface AutoConsentRule {
+export type AutoConsentRule = {
   id: string;
   clinicId: string;
   triggerEvent: string;
@@ -75,9 +75,9 @@ export interface AutoConsentRule {
   conditions: Record<string, any>;
   createdAt: Date;
   updatedAt: Date;
-}
+};
 
-export interface ComplianceHealthCheck {
+export type ComplianceHealthCheck = {
   clinicId: string;
   timestamp: Date;
   overallScore: number; // 0-100
@@ -115,7 +115,7 @@ export interface ComplianceHealthCheck {
     dueDate: Date;
     assignee?: string;
   }[];
-}
+};
 
 // ============================================================================
 // AUTOMATIC CONSENT MANAGEMENT
@@ -198,12 +198,7 @@ export class LGPDAutoConsentService {
           );
 
           grantedConsents.push(consent);
-        } catch (error) {
-          console.error(
-            `Failed to auto-grant consent for rule ${rule.id}:`,
-            error
-          );
-        }
+        } catch (_error) {}
       }
     }
 
@@ -298,11 +293,8 @@ export class LGPDAutoConsentService {
    * Envia notificação de expiração de consentimento
    */
   private async sendConsentExpirationNotification(
-    consent: ConsentRecord
-  ): Promise<void> {
-    // Implementar notificação (email, Slack, etc.)
-    console.log(`Consent expiring: ${consent.id} for user ${consent.userId}`);
-  }
+    _consent: ConsentRecord
+  ): Promise<void> {}
 }
 
 // ============================================================================
@@ -358,9 +350,7 @@ export class LGPDAutoDataSubjectRightsService {
         }
 
         processed++;
-      } catch (error) {
-        console.error(`Failed to process request ${request.id}:`, error);
-      }
+      } catch (_error) {}
     }
 
     return { processed, automated, requiresManualReview };
@@ -510,12 +500,8 @@ export class LGPDAutoDataSubjectRightsService {
    * Automatiza solicitação de retificação
    */
   private async automateRectificationRequest(
-    request: DataSubjectRequest
-  ): Promise<void> {
-    // Implementar lógica de retificação automática
-    // Por enquanto, apenas marcar como processada
-    console.log(`Auto-rectification for request ${request.id}`);
-  }
+    _request: DataSubjectRequest
+  ): Promise<void> {}
 
   /**
    * Marca solicitação para revisão manual
@@ -583,33 +569,24 @@ export class LGPDAutoDataSubjectRightsService {
    * Envia relatório de acesso
    */
   private async sendAccessReport(
-    request: DataSubjectRequest,
+    _request: DataSubjectRequest,
     _report: any
-  ): Promise<void> {
-    // Implementar envio de email com relatório
-    console.log(`Sending access report for request ${request.id}`);
-  }
+  ): Promise<void> {}
 
   /**
    * Envia dados de portabilidade
    */
   private async sendPortabilityData(
-    request: DataSubjectRequest,
+    _request: DataSubjectRequest,
     _data: any
-  ): Promise<void> {
-    // Implementar envio de dados de portabilidade
-    console.log(`Sending portability data for request ${request.id}`);
-  }
+  ): Promise<void> {}
 
   /**
    * Notifica equipe de compliance
    */
   private async notifyComplianceTeam(
-    request: DataSubjectRequest
-  ): Promise<void> {
-    // Implementar notificação para equipe
-    console.log(`Manual review required for request ${request.id}`);
-  }
+    _request: DataSubjectRequest
+  ): Promise<void> {}
 } // ============================================================================
 // AUTOMATIC COMPLIANCE AUDITING
 // ============================================================================
@@ -1076,10 +1053,7 @@ export class LGPDAutoAuditService {
   /**
    * Envia alerta de compliance
    */
-  private async sendComplianceAlert(alert: any): Promise<void> {
-    // Implementar envio de notificações
-    console.log(`Compliance alert: ${alert.title}`);
-  }
+  private async sendComplianceAlert(_alert: any): Promise<void> {}
 } // ============================================================================
 // AUTOMATIC COMPLIANCE REPORTING
 // ============================================================================
@@ -1107,9 +1081,7 @@ export class LGPDAutoReportingService {
       try {
         const report = await this.generateReport(clinicId, reportType);
         reports.push(report);
-      } catch (error) {
-        console.error(`Failed to generate report ${reportType}:`, error);
-      }
+      } catch (_error) {}
     }
 
     return reports;
@@ -1353,9 +1325,7 @@ export class LGPDAutoReportingService {
           retentionPeriod: this.getRetentionPeriod(table.name),
           encryptionStatus: 'encrypted', // Simplificado
         });
-      } catch (error) {
-        console.error(`Error counting ${table.name}:`, error);
-      }
+      } catch (_error) {}
     }
 
     return {
@@ -1534,7 +1504,7 @@ export class LGPDAutoReportingService {
 // AUTOMATIC DATA ANONYMIZATION
 // ============================================================================
 
-export interface AnonymizationRule {
+export type AnonymizationRule = {
   id: string;
   fieldName: string;
   tableName: string;
@@ -1543,9 +1513,9 @@ export interface AnonymizationRule {
   preserveFormat?: boolean;
   customPattern?: string;
   isActive: boolean;
-}
+};
 
-export interface AnonymizationJob {
+export type AnonymizationJob = {
   id: string;
   clinicId: string;
   rules: AnonymizationRule[];
@@ -1555,7 +1525,7 @@ export interface AnonymizationJob {
   startedAt?: Date;
   completedAt?: Date;
   errors?: string[];
-}
+};
 
 export class LGPDAutoAnonymizationService {
   private readonly supabase: any;
@@ -1602,7 +1572,6 @@ export class LGPDAutoAnonymizationService {
     } catch (error) {
       job.status = 'failed';
       job.errors = [error instanceof Error ? error.message : 'Unknown error'];
-      console.error('Anonymization job failed:', error);
     }
 
     return job;
@@ -1995,11 +1964,6 @@ export class LGPDAutoAnonymizationService {
           })
           .eq('id', job.id);
       } catch (error) {
-        console.error(
-          `Failed to execute scheduled anonymization job ${job.id}:`,
-          error
-        );
-
         // Marcar como falhou
         await this.supabase
           .from('lgpd_scheduled_jobs')

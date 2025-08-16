@@ -7,7 +7,7 @@ import { createHash } from 'node:crypto';
 import type { NextRequest } from 'next/server';
 import { createClient } from '@/app/utils/supabase/client';
 
-export interface SessionFingerprint {
+export type SessionFingerprint = {
   userAgent: string;
   ipAddress: string;
   acceptLanguage: string;
@@ -15,9 +15,9 @@ export interface SessionFingerprint {
   screenResolution?: string;
   timezone?: string;
   platform?: string;
-}
+};
 
-export interface SessionSecurityEvent {
+export type SessionSecurityEvent = {
   sessionId: string;
   userId: string;
   eventType:
@@ -29,15 +29,15 @@ export interface SessionSecurityEvent {
   fingerprint: SessionFingerprint;
   timestamp: number;
   details: Record<string, any>;
-}
+};
 
-export interface SessionValidationResult {
+export type SessionValidationResult = {
   valid: boolean;
   riskScore: number;
   action: 'allow' | 'challenge' | 'block' | 'terminate';
   reason?: string;
   requiresReauth?: boolean;
-}
+};
 
 /**
  * Session Hijacking Protection Manager
@@ -92,8 +92,7 @@ export class SessionHijackingProtection {
       });
 
       return !error;
-    } catch (error) {
-      console.error('Failed to store session fingerprint:', error);
+    } catch (_error) {
       return false;
     }
   }
@@ -202,8 +201,7 @@ export class SessionHijackingProtection {
         reason: reasons.join(', '),
         requiresReauth,
       };
-    } catch (error) {
-      console.error('Session fingerprint validation error:', error);
+    } catch (_error) {
       return {
         valid: false,
         riskScore: 10,
@@ -286,8 +284,7 @@ export class SessionHijackingProtection {
         activeSessions,
         sessionsToTerminate,
       };
-    } catch (error) {
-      console.error('Concurrent session detection error:', error);
+    } catch (_error) {
       return { hasExcess: false, activeSessions: 0, sessionsToTerminate: [] };
     }
   }
@@ -311,14 +308,11 @@ export class SessionHijackingProtection {
           // This would integrate with your session management system
           // For Supabase, you might need to call their admin API
           await SessionHijackingProtection.invalidateSession(sessionId);
-        } catch (error) {
-          console.error(`Failed to invalidate session ${sessionId}:`, error);
-        }
+        } catch (_error) {}
       }
 
       return !fingerprintError;
-    } catch (error) {
-      console.error('Failed to terminate sessions:', error);
+    } catch (_error) {
       return false;
     }
   }
@@ -339,9 +333,7 @@ export class SessionHijackingProtection {
         event_details: event.details,
         timestamp: new Date(event.timestamp).toISOString(),
       });
-    } catch (error) {
-      console.error('Failed to log security event:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -368,11 +360,7 @@ export class SessionHijackingProtection {
   /**
    * Invalidate session (integrate with your auth system)
    */
-  private static async invalidateSession(sessionId: string): Promise<void> {
-    // This should integrate with your session management system
-    // For Supabase, you might use the admin API or custom function
-    console.log(`Invalidating session: ${sessionId}`);
-  }
+  private static async invalidateSession(_sessionId: string): Promise<void> {}
 }
 
 export default SessionHijackingProtection;

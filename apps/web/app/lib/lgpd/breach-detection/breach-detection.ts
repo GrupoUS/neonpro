@@ -51,7 +51,7 @@ export enum NotificationRecipient {
 }
 
 // Data breach interface
-export interface DataBreach {
+export type DataBreach = {
   id: string;
   type: BreachType;
   severity: BreachSeverity;
@@ -105,10 +105,10 @@ export interface DataBreach {
   createdBy: string;
   updatedAt: Date;
   metadata: Record<string, any>;
-}
+};
 
 // Notification record
-export interface NotificationRecord {
+export type NotificationRecord = {
   id: string;
   recipient: NotificationRecipient;
   recipientDetails: string;
@@ -119,20 +119,20 @@ export interface NotificationRecord {
   acknowledgmentRequired: boolean;
   acknowledgedAt?: Date;
   acknowledgedBy?: string;
-}
+};
 
 // Regulatory deadline
-export interface RegulatoryDeadline {
+export type RegulatoryDeadline = {
   authority: 'anpd' | 'anvisa' | 'other';
   requirement: string;
   deadline: Date;
   status: 'pending' | 'completed' | 'overdue';
   completedAt?: Date;
   notes?: string;
-}
+};
 
 // Risk assessment
-export interface BreachRiskAssessment {
+export type BreachRiskAssessment = {
   overallRiskScore: number; // 0-100
   confidentialityImpact: number; // 1-5
   integrityImpact: number; // 1-5
@@ -157,10 +157,10 @@ export interface BreachRiskAssessment {
   assessmentDate: Date;
   assessedBy: string;
   reviewDate: Date;
-}
+};
 
 // Breach detection rules
-export interface BreachDetectionRule {
+export type BreachDetectionRule = {
   id: string;
   name: string;
   description: string;
@@ -181,7 +181,7 @@ export interface BreachDetectionRule {
   updatedAt: Date;
   lastTriggered?: Date;
   triggerCount: number;
-}
+};
 
 class BreachDetectionSystem {
   private readonly supabase = createClient();
@@ -210,9 +210,7 @@ class BreachDetectionSystem {
       rules?.forEach((rule) => {
         this.detectionRules.set(rule.id, rule);
       });
-    } catch (error) {
-      console.error('Error loading breach detection rules:', error);
-    }
+    } catch (_error) {}
   }
 
   // Setup default detection rules
@@ -359,9 +357,7 @@ class BreachDetectionSystem {
           await this.handleDetection(rule, detected);
         }
       }
-    } catch (error) {
-      console.error('Error in breach detection cycle:', error);
-    }
+    } catch (_error) {}
   }
 
   // Evaluate detection rule
@@ -385,8 +381,7 @@ class BreachDetectionSystem {
 
       // Apply rule logic
       return this.applyRuleLogic(rule, events);
-    } catch (error) {
-      console.error(`Error evaluating rule ${rule.id}:`, error);
+    } catch (_error) {
       return null;
     }
   }

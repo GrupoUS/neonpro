@@ -76,13 +76,11 @@ async function _createPredictionModel(
       .single();
 
     if (error) {
-      console.error('Error creating prediction model:', error);
       return { data: null, error: error.message };
     }
 
     return { data, error: null };
-  } catch (err) {
-    console.error('Error in createPredictionModel:', err);
+  } catch (_err) {
     return { data: null, error: 'Failed to create prediction model' };
   }
 }
@@ -109,13 +107,11 @@ async function _updatePredictionModel(
       .single();
 
     if (error) {
-      console.error('Error updating prediction model:', error);
       return { data: null, error: error.message };
     }
 
     return { data, error: null };
-  } catch (err) {
-    console.error('Error in updatePredictionModel:', err);
+  } catch (_err) {
     return { data: null, error: 'Failed to update prediction model' };
   }
 }
@@ -165,13 +161,11 @@ async function _getPredictionModels(
     const { data, error, count } = await query;
 
     if (error) {
-      console.error('Error fetching prediction models:', error);
       return { data: [], total: 0, error: error.message };
     }
 
     return { data: data || [], total: count || 0, error: null };
-  } catch (err) {
-    console.error('Error in getPredictionModels:', err);
+  } catch (_err) {
     return { data: [], total: 0, error: 'Failed to fetch prediction models' };
   }
 }
@@ -191,13 +185,11 @@ export async function getPredictionModel(
       .single();
 
     if (error) {
-      console.error('Error fetching prediction model:', error);
       return { data: null, error: error.message };
     }
 
     return { data, error: null };
-  } catch (err) {
-    console.error('Error in getPredictionModel:', err);
+  } catch (_err) {
     return { data: null, error: 'Failed to fetch prediction model' };
   }
 }
@@ -216,13 +208,11 @@ export async function deletePredictionModel(
       .eq('id', id);
 
     if (error) {
-      console.error('Error deleting prediction model:', error);
       return { error: error.message };
     }
 
     return { error: null };
-  } catch (err) {
-    console.error('Error in deletePredictionModel:', err);
+  } catch (_err) {
     return { error: 'Failed to delete prediction model' };
   }
 }
@@ -271,13 +261,11 @@ export async function createCashFlowPrediction(
       .single();
 
     if (error) {
-      console.error('Error creating cash flow prediction:', error);
       return { data: null, error: error.message };
     }
 
     return { data, error: null };
-  } catch (err) {
-    console.error('Error in createCashFlowPrediction:', err);
+  } catch (_err) {
     return { data: null, error: 'Failed to create cash flow prediction' };
   }
 }
@@ -310,13 +298,11 @@ export async function updateCashFlowPrediction(
       .single();
 
     if (error) {
-      console.error('Error updating cash flow prediction:', error);
       return { data: null, error: error.message };
     }
 
     return { data, error: null };
-  } catch (err) {
-    console.error('Error in updateCashFlowPrediction:', err);
+  } catch (_err) {
     return { data: null, error: 'Failed to update cash flow prediction' };
   }
 }
@@ -385,13 +371,11 @@ export async function getCashFlowPredictions(
     const { data, error, count } = await query;
 
     if (error) {
-      console.error('Error fetching cash flow predictions:', error);
       return { data: [], total: 0, error: error.message };
     }
 
     return { data: data || [], total: count || 0, error: null };
-  } catch (err) {
-    console.error('Error in getCashFlowPredictions:', err);
+  } catch (_err) {
     return {
       data: [],
       total: 0,
@@ -441,13 +425,11 @@ export async function createForecastingScenario(
       .single();
 
     if (error) {
-      console.error('Error creating forecasting scenario:', error);
       return { data: null, error: error.message };
     }
 
     return { data, error: null };
-  } catch (err) {
-    console.error('Error in createForecastingScenario:', err);
+  } catch (_err) {
     return { data: null, error: 'Failed to create forecasting scenario' };
   }
 }
@@ -492,13 +474,11 @@ export async function updateForecastingScenario(
       .single();
 
     if (error) {
-      console.error('Error updating forecasting scenario:', error);
       return { data: null, error: error.message };
     }
 
     return { data, error: null };
-  } catch (err) {
-    console.error('Error in updateForecastingScenario:', err);
+  } catch (_err) {
     return { data: null, error: 'Failed to update forecasting scenario' };
   }
 }
@@ -557,13 +537,11 @@ export async function getForecastingScenarios(
     const { data, error, count } = await query;
 
     if (error) {
-      console.error('Error fetching forecasting scenarios:', error);
       return { data: [], total: 0, error: error.message };
     }
 
     return { data: data || [], total: count || 0, error: null };
-  } catch (err) {
-    console.error('Error in getForecastingScenarios:', err);
+  } catch (_err) {
     return {
       data: [],
       total: 0,
@@ -615,7 +593,6 @@ export async function createPredictionAccuracy(
       .single();
 
     if (error) {
-      console.error('Error creating prediction accuracy:', error);
       return { data: null, error: error.message };
     }
 
@@ -629,8 +606,7 @@ export async function createPredictionAccuracy(
       .eq('id', input.prediction_id);
 
     return { data, error: null };
-  } catch (err) {
-    console.error('Error in createPredictionAccuracy:', err);
+  } catch (_err) {
     return { data: null, error: 'Failed to create prediction accuracy' };
   }
 }
@@ -674,13 +650,11 @@ export async function createPredictionAlert(
       .single();
 
     if (error) {
-      console.error('Error creating prediction alert:', error);
       return { data: null, error: error.message };
     }
 
     return { data, error: null };
-  } catch (err) {
-    console.error('Error in createPredictionAlert:', err);
+  } catch (_err) {
     return { data: null, error: 'Failed to create prediction alert' };
   }
 }
@@ -712,13 +686,11 @@ export async function updatePredictionAlert(
       .single();
 
     if (error) {
-      console.error('Error updating prediction alert:', error);
       return { data: null, error: error.message };
     }
 
     return { data, error: null };
-  } catch (err) {
-    console.error('Error in updatePredictionAlert:', err);
+  } catch (_err) {
     return { data: null, error: 'Failed to update prediction alert' };
   }
 }
@@ -777,13 +749,11 @@ export async function getPredictionAlerts(
     const { data, error, count } = await query;
 
     if (error) {
-      console.error('Error fetching prediction alerts:', error);
       return { data: [], total: 0, error: error.message };
     }
 
     return { data: data || [], total: count || 0, error: null };
-  } catch (err) {
-    console.error('Error in getPredictionAlerts:', err);
+  } catch (_err) {
     return { data: [], total: 0, error: 'Failed to fetch prediction alerts' };
   }
 }
@@ -805,13 +775,11 @@ export async function getModelAccuracySummary(
     });
 
     if (error) {
-      console.error('Error fetching model accuracy summary:', error);
       return { data: null, error: error.message };
     }
 
     return { data: data[0] || null, error: null };
-  } catch (err) {
-    console.error('Error in getModelAccuracySummary:', err);
+  } catch (_err) {
     return { data: null, error: 'Failed to fetch model accuracy summary' };
   }
 }
@@ -932,8 +900,7 @@ export async function generateCashFlowForecast(
     };
 
     return { data: forecast, error: null };
-  } catch (err) {
-    console.error('Error in generateCashFlowForecast:', err);
+  } catch (_err) {
     return { data: null, error: 'Failed to generate cash flow forecast' };
   }
 }

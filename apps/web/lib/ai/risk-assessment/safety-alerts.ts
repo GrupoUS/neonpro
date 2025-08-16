@@ -51,7 +51,7 @@ type AlertChannel =
   | 'emergency';
 
 // Safety Alert
-interface SafetyAlert {
+type SafetyAlert = {
   id: string;
   type: AlertType;
   severity: AlertSeverity;
@@ -99,10 +99,10 @@ interface SafetyAlert {
     documentationRequired: boolean;
     reportingRequired: boolean;
   };
-}
+};
 
 // Alert Rule
-interface AlertRule {
+type AlertRule = {
   id: string;
   name: string;
   description: string;
@@ -140,10 +140,10 @@ interface AlertRule {
     anvisaRequirement?: string;
     ethicsCode?: string;
   };
-}
+};
 
 // Alert Configuration
-interface AlertConfig {
+type AlertConfig = {
   enabled: boolean;
   channels: {
     dashboard: { enabled: boolean };
@@ -168,10 +168,10 @@ interface AlertConfig {
     batchProcessing: boolean;
     intervalMinutes: number;
   };
-}
+};
 
 // Alert Statistics
-interface AlertStatistics {
+type AlertStatistics = {
   total: number;
   byType: Record<AlertType, number>;
   bySeverity: Record<AlertSeverity, number>;
@@ -184,7 +184,7 @@ interface AlertStatistics {
   escalationRate: number;
   resolutionRate: number;
   falsePositiveRate: number;
-}
+};
 
 class SafetyAlertsSystem {
   private readonly supabase = createClient();
@@ -260,11 +260,8 @@ class SafetyAlertsSystem {
 
       // Process alert
       await this.processAlert(alert);
-
-      console.log(`Safety alert created: ${alertId} - ${title} (${severity})`);
       return alert;
-    } catch (error) {
-      console.error('Error creating safety alert:', error);
+    } catch (_error) {
       throw new Error('Failed to create safety alert');
     }
   }
@@ -377,8 +374,7 @@ class SafetyAlertsSystem {
       }
 
       return alerts;
-    } catch (error) {
-      console.error('Error processing risk assessment alerts:', error);
+    } catch (_error) {
       return alerts;
     }
   }
@@ -480,8 +476,7 @@ class SafetyAlertsSystem {
       }
 
       return alerts;
-    } catch (error) {
-      console.error('Error monitoring patient vitals:', error);
+    } catch (_error) {
       return alerts;
     }
   }
@@ -528,8 +523,7 @@ class SafetyAlertsSystem {
       }
 
       return alerts;
-    } catch (error) {
-      console.error('Error checking drug interactions:', error);
+    } catch (_error) {
       return alerts;
     }
   }
@@ -612,8 +606,7 @@ class SafetyAlertsSystem {
       }
 
       return alerts;
-    } catch (error) {
-      console.error('Error monitoring equipment status:', error);
+    } catch (_error) {
       return alerts;
     }
   }
@@ -647,11 +640,8 @@ class SafetyAlertsSystem {
 
       // Update in database
       await this.updateAlert(alert);
-
-      console.log(`Alert ${alertId} acknowledged by ${userId}`);
       return true;
-    } catch (error) {
-      console.error('Error acknowledging alert:', error);
+    } catch (_error) {
       return false;
     }
   }
@@ -662,7 +652,7 @@ class SafetyAlertsSystem {
   async resolveAlert(
     alertId: string,
     userId: string,
-    resolution: string,
+    _resolution: string,
     _notes?: string
   ): Promise<boolean> {
     try {
@@ -682,11 +672,8 @@ class SafetyAlertsSystem {
 
       // Update in database
       await this.updateAlert(alert);
-
-      console.log(`Alert ${alertId} resolved by ${userId}: ${resolution}`);
       return true;
-    } catch (error) {
-      console.error('Error resolving alert:', error);
+    } catch (_error) {
       return false;
     }
   }
@@ -735,11 +722,8 @@ class SafetyAlertsSystem {
 
       // Update in database
       await this.updateAlert(alert);
-
-      console.log(`Alert ${alertId} escalated to level ${escalationLevel}`);
       return true;
-    } catch (error) {
-      console.error('Error escalating alert:', error);
+    } catch (_error) {
       return false;
     }
   }
@@ -865,8 +849,7 @@ class SafetyAlertsSystem {
       }
 
       return stats;
-    } catch (error) {
-      console.error('Error getting alert statistics:', error);
+    } catch (_error) {
       return this.getEmptyStatistics();
     }
   }
@@ -880,7 +863,6 @@ class SafetyAlertsSystem {
     }
 
     this.isMonitoring = true;
-    console.log('Starting real-time safety monitoring');
 
     // Set up Supabase real-time subscriptions
     this.setupRealtimeSubscriptions();
@@ -904,8 +886,6 @@ class SafetyAlertsSystem {
       clearInterval(this.monitoringInterval);
       this.monitoringInterval = undefined;
     }
-
-    console.log('Stopped real-time safety monitoring');
   }
 
   /**
@@ -957,9 +937,7 @@ class SafetyAlertsSystem {
         temperature: vitals.temperature,
         respiratoryRate: vitals.respiratory_rate,
       });
-    } catch (error) {
-      console.error('Error handling vitals update:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -980,9 +958,7 @@ class SafetyAlertsSystem {
           : undefined,
         calibrationStatus: equipment.calibration_status,
       });
-    } catch (error) {
-      console.error('Error handling equipment update:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -1011,9 +987,7 @@ class SafetyAlertsSystem {
           { priority: 'critical', escalateIn: 0 }
         );
       }
-    } catch (error) {
-      console.error('Error handling treatment update:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -1021,8 +995,6 @@ class SafetyAlertsSystem {
    */
   private async performPeriodicChecks(): Promise<void> {
     try {
-      console.log('Performing periodic safety checks');
-
       // Check for expired alerts
       await this.checkExpiredAlerts();
 
@@ -1034,9 +1006,7 @@ class SafetyAlertsSystem {
 
       // Update alert statistics
       await this.updateAlertStatistics();
-    } catch (error) {
-      console.error('Error in periodic safety checks:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -1107,11 +1077,7 @@ class SafetyAlertsSystem {
       };
 
       await this.supabase.from('compliance_reports').insert(report);
-
-      console.log(`Compliance report generated for alert ${alert.id}`);
-    } catch (error) {
-      console.error('Error generating compliance report:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -1214,20 +1180,12 @@ class SafetyAlertsSystem {
 
     // Apply alert rules
     await this.applyAlertRules(alert);
-
-    // Log alert
-    console.log(`Processing alert: ${alert.id} - ${alert.title}`);
   }
 
   private async sendAlertNotifications(
-    alert: SafetyAlert,
-    channels: AlertChannel[]
-  ): Promise<void> {
-    // Implementation would send notifications via various channels
-    console.log(
-      `Sending alert notifications for ${alert.id} via channels: ${channels.join(', ')}`
-    );
-  }
+    _alert: SafetyAlert,
+    _channels: AlertChannel[]
+  ): Promise<void> {}
 
   private async applyAlertRules(alert: SafetyAlert): Promise<void> {
     const rule = this.alertRules.get(alert.type);
@@ -1249,8 +1207,6 @@ class SafetyAlertsSystem {
           await this.escalateAlert(alert.id, 0, 'Rule-based escalation');
           break;
         case 'log':
-          // Additional logging
-          console.log(`Rule action: ${action.type} for alert ${alert.id}`);
           break;
       }
     }
@@ -1273,9 +1229,7 @@ class SafetyAlertsSystem {
         compliance: JSON.stringify(alert.compliance),
         created_at: alert.metadata.timestamp.toISOString(),
       });
-    } catch (error) {
-      console.error('Error storing alert:', error);
-    }
+    } catch (_error) {}
   }
 
   private async updateAlert(alert: SafetyAlert): Promise<void> {
@@ -1289,9 +1243,7 @@ class SafetyAlertsSystem {
           updated_at: new Date().toISOString(),
         })
         .eq('id', alert.id);
-    } catch (error) {
-      console.error('Error updating alert:', error);
-    }
+    } catch (_error) {}
   }
 
   private async loadAlertRules(): Promise<void> {
@@ -1320,9 +1272,7 @@ class SafetyAlertsSystem {
           });
         });
       }
-    } catch (error) {
-      console.error('Error loading alert rules:', error);
-    }
+    } catch (_error) {}
   }
 
   private async loadActiveAlerts(): Promise<void> {
@@ -1351,9 +1301,7 @@ class SafetyAlertsSystem {
           this.activeAlerts.set(alert.id, alert);
         });
       }
-    } catch (error) {
-      console.error('Error loading active alerts:', error);
-    }
+    } catch (_error) {}
   }
 
   private initializeConfig(config?: Partial<AlertConfig>): AlertConfig {

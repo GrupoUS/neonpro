@@ -5,7 +5,7 @@ import { SessionConfig } from '@/lib/auth/config/session-config';
 import { SessionUtils } from '@/lib/auth/utils/session-utils';
 import type { UserRole, UserSession } from '@/types/session';
 
-export interface ConcurrentSessionConfig {
+export type ConcurrentSessionConfig = {
   maxConcurrentSessions: number;
   allowMultipleDevices: boolean;
   conflictResolution:
@@ -16,9 +16,9 @@ export interface ConcurrentSessionConfig {
   devicePriorityOrder: string[]; // device types in priority order
   gracePeriodMinutes: number;
   notificationEnabled: boolean;
-}
+};
 
-export interface SessionConflict {
+export type SessionConflict = {
   id: string;
   userId: string;
   conflictType:
@@ -30,9 +30,9 @@ export interface SessionConflict {
   resolution: ConflictResolution;
   timestamp: number;
   resolved: boolean;
-}
+};
 
-export interface ConflictResolution {
+export type ConflictResolution = {
   action:
     | 'terminate_oldest'
     | 'terminate_newest'
@@ -42,9 +42,9 @@ export interface ConflictResolution {
   targetSessionIds?: string[];
   reason: string;
   userNotified: boolean;
-}
+};
 
-export interface SessionTransfer {
+export type SessionTransfer = {
   fromSessionId: string;
   toSessionId: string;
   transferData: {
@@ -54,7 +54,7 @@ export interface SessionTransfer {
   };
   timestamp: number;
   completed: boolean;
-}
+};
 
 export class ConcurrentSessionManager {
   private readonly config: SessionConfig;
@@ -146,8 +146,7 @@ export class ConcurrentSessionManager {
       }
 
       return { allowed: true };
-    } catch (error) {
-      console.error('Error checking session creation:', error);
+    } catch (_error) {
       return {
         allowed: false,
         reason: 'Internal error checking session permissions',
@@ -202,8 +201,7 @@ export class ConcurrentSessionManager {
       );
 
       return resolution;
-    } catch (error) {
-      console.error('Error handling session creation:', error);
+    } catch (_error) {
       return { success: false };
     }
   }
@@ -301,8 +299,7 @@ export class ConcurrentSessionManager {
         terminatedSessions,
         transferId,
       };
-    } catch (error) {
-      console.error('Error resolving session conflict:', error);
+    } catch (_error) {
       return { success: false };
     }
   }
@@ -382,26 +379,21 @@ export class ConcurrentSessionManager {
     _userId: string,
     _deviceId: string
   ): Promise<string> {
-    try {
-      // Get session data to transfer
-      const sessionData = await this.getSessionTransferData(fromSessionId);
+    // Get session data to transfer
+    const sessionData = await this.getSessionTransferData(fromSessionId);
 
-      const transfer: SessionTransfer = {
-        fromSessionId,
-        toSessionId: '', // Will be set when new session is created
-        transferData: sessionData,
-        timestamp: Date.now(),
-        completed: false,
-      };
+    const transfer: SessionTransfer = {
+      fromSessionId,
+      toSessionId: '', // Will be set when new session is created
+      transferData: sessionData,
+      timestamp: Date.now(),
+      completed: false,
+    };
 
-      const transferId = this.utils.generateSessionToken();
-      this.sessionTransfers.set(transferId, transfer);
+    const transferId = this.utils.generateSessionToken();
+    this.sessionTransfers.set(transferId, transfer);
 
-      return transferId;
-    } catch (error) {
-      console.error('Error initiating session transfer:', error);
-      throw error;
-    }
+    return transferId;
   }
 
   /**
@@ -433,8 +425,7 @@ export class ConcurrentSessionManager {
       );
 
       return true;
-    } catch (error) {
-      console.error('Error completing session transfer:', error);
+    } catch (_error) {
       return false;
     }
   }
@@ -530,8 +521,7 @@ export class ConcurrentSessionManager {
       }
 
       return false;
-    } catch (error) {
-      console.error('Error detecting suspicious login:', error);
+    } catch (_error) {
       return false;
     }
   }
@@ -572,9 +562,7 @@ export class ConcurrentSessionManager {
         const data = await response.json();
         return data.sessions || [];
       }
-    } catch (error) {
-      console.error('Error getting user sessions:', error);
-    }
+    } catch (_error) {}
     return [];
   }
 
@@ -666,15 +654,9 @@ export class ConcurrentSessionManager {
   }
 
   private async notifySessionTerminations(
-    userId: string,
-    sessionIds: string[]
-  ): Promise<void> {
-    // Send notifications about terminated sessions
-    console.log(
-      `Notifying user ${userId} about terminated sessions:`,
-      sessionIds
-    );
-  }
+    _userId: string,
+    _sessionIds: string[]
+  ): Promise<void> {}
 
   /**
    * Get active conflicts for user

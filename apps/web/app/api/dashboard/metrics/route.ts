@@ -28,8 +28,7 @@ export async function GET(request: NextRequest) {
     // Get specific metric
     const metricData = await dashboardService.getMetricData(metric, period);
     return NextResponse.json(metricData);
-  } catch (error) {
-    console.error('Dashboard metrics GET error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to fetch metrics' },
       { status: 500 }
@@ -66,8 +65,7 @@ export async function POST(request: NextRequest) {
       metadata
     );
     return NextResponse.json(result, { status: 201 });
-  } catch (error) {
-    console.error('Dashboard metrics POST error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to record metric' },
       { status: 500 }

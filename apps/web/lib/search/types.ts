@@ -1,6 +1,6 @@
 // lib/search/types.ts - Search type definitions (client-safe)
 
-export interface SearchQuery {
+export type SearchQuery = {
   term: string;
   nlpAnalysis?: NLPSearchQuery;
   context?: SearchContext;
@@ -23,7 +23,7 @@ export interface SearchQuery {
     highlight?: boolean;
     useNLP?: boolean;
   };
-}
+};
 
 export type SearchType =
   | 'patients'
@@ -37,7 +37,7 @@ export type SearchType =
   | 'duplicates'
   | 'photos';
 
-export interface SearchResult {
+export type SearchResult = {
   id: string;
   type: SearchType;
   title: string;
@@ -48,9 +48,9 @@ export interface SearchResult {
   url?: string;
   createdAt: Date;
   updatedAt?: Date;
-}
+};
 
-export interface SearchResponse {
+export type SearchResponse = {
   results: SearchResult[];
   totalCount: number;
   query: SearchQuery;
@@ -59,9 +59,9 @@ export interface SearchResponse {
   nlpInsights?: NLPInsights;
   facets?: SearchFacets;
   stats?: SearchStats;
-}
+};
 
-export interface NLPSearchQuery {
+export type NLPSearchQuery = {
   intent: string;
   entities: {
     type: string;
@@ -70,37 +70,37 @@ export interface NLPSearchQuery {
   }[];
   sentiment: 'positive' | 'negative' | 'neutral';
   confidence: number;
-}
+};
 
-export interface SearchContext {
+export type SearchContext = {
   userId: string;
   clinicId: string;
   userRole: string;
   previousQueries: string[];
   sessionId: string;
-}
+};
 
-export interface NLPInsights {
+export type NLPInsights = {
   queryComplexity: 'simple' | 'moderate' | 'complex';
   suggestedFilters: string[];
   relatedQueries: string[];
   confidence: number;
-}
+};
 
-export interface SearchFacets {
+export type SearchFacets = {
   types: Array<{ type: SearchType; count: number }>;
   dateRanges: Array<{ range: string; count: number }>;
   statuses: Array<{ status: string; count: number }>;
-}
+};
 
-export interface SearchStats {
+export type SearchStats = {
   totalIndexedItems: number;
   lastIndexUpdate: Date;
   avgResponseTime: number;
   popularQueries: string[];
-}
+};
 
-export interface GlobalSearchStats {
+export type GlobalSearchStats = {
   totalSearches: number;
   popularQueries: Array<{ query: string; count: number }>;
   avgResponseTime: number;
@@ -110,9 +110,9 @@ export interface GlobalSearchStats {
     trend: 'up' | 'down' | 'stable';
     changePercent: number;
   }>;
-}
+};
 
-export interface SavedSearch {
+export type SavedSearch = {
   id: string;
   name: string;
   query: SearchQuery;
@@ -120,13 +120,13 @@ export interface SavedSearch {
   createdAt: Date;
   lastUsed: Date;
   useCount: number;
-}
+};
 
-export interface SearchHistory {
+export type SearchHistory = {
   id: string;
   query: string;
   userId: string;
   resultCount: number;
   executionTime: number;
   timestamp: Date;
-}
+};

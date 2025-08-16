@@ -53,8 +53,7 @@ export async function POST(
       executions: result.data,
       timestamp: new Date().toISOString(),
     });
-  } catch (error) {
-    console.error('Error in campaign execution:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

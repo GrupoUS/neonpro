@@ -33,8 +33,7 @@ export async function GET(
     }
 
     return NextResponse.json(equipment);
-  } catch (error) {
-    console.error('Get Equipment Error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -81,8 +80,6 @@ export async function PUT(
 
     return NextResponse.json(equipment);
   } catch (error) {
-    console.error('Update Equipment Error:', error);
-
     if (error instanceof Error && error.message.includes('validation')) {
       return NextResponse.json(
         { error: 'Invalid equipment data', details: error.message },
@@ -130,8 +127,7 @@ export async function DELETE(
     });
 
     return NextResponse.json({ success: true });
-  } catch (error) {
-    console.error('Delete Equipment Error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to delete equipment' },
       { status: 500 }

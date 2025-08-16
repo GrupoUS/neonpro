@@ -18,7 +18,7 @@ import {
 // INTERFACES
 // ============================================================================
 
-export interface ChannelProvider {
+export type ChannelProvider = {
   readonly name: string;
   readonly channel: NotificationChannel;
   readonly isEnabled: boolean;
@@ -30,9 +30,9 @@ export interface ChannelProvider {
   ): Promise<NotificationDelivery>;
   validateConfig(config: ChannelConfig): string[];
   getStatus(): Promise<{ healthy: boolean; message?: string }>;
-}
+};
 
-export interface ChannelManager {
+export type ChannelManager = {
   registerProvider(provider: ChannelProvider): void;
   getProvider(channel: NotificationChannel): ChannelProvider | undefined;
   send(
@@ -45,7 +45,7 @@ export interface ChannelManager {
     channel: NotificationChannel,
     config: ChannelConfig
   ): string[];
-}
+};
 
 // ============================================================================
 // CHANNEL MANAGER IMPLEMENTATION
@@ -76,9 +76,7 @@ export class NotificationChannelManager implements ChannelManager {
         if (config) {
           await provider.initialize(config);
         }
-      } catch (error) {
-        console.error(`Erro ao inicializar provedor ${provider.name}:`, error);
-      }
+      } catch (_error) {}
     }
 
     this.isInitialized = true;
@@ -174,8 +172,6 @@ export class NotificationChannelManager implements ChannelManager {
     try {
       return await provider.send(context, content);
     } catch (error) {
-      console.error(`Erro ao enviar notificação via ${channel}:`, error);
-
       return {
         id: this.generateDeliveryId(),
         notificationId: context.notificationId || '',

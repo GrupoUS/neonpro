@@ -5,7 +5,7 @@
 
 import type { CommunicationChannel, MessageType } from './types';
 
-export interface CommunicationMetrics {
+export type CommunicationMetrics = {
   total_sent: number;
   total_delivered: number;
   total_failed: number;
@@ -18,9 +18,9 @@ export interface CommunicationMetrics {
   response_rate?: number;
   cost_total: number;
   cost_per_message: number;
-}
+};
 
-export interface ChannelPerformance {
+export type ChannelPerformance = {
   channel: CommunicationChannel;
   metrics: CommunicationMetrics;
   trend: 'up' | 'down' | 'stable';
@@ -29,9 +29,9 @@ export interface ChannelPerformance {
     previous_period: CommunicationMetrics;
     change_percentage: number;
   };
-}
+};
 
-export interface CampaignAnalytics {
+export type CampaignAnalytics = {
   campaign_id: string;
   campaign_name: string;
   start_date: Date;
@@ -47,9 +47,9 @@ export interface CampaignAnalytics {
     cancelled_appointments: number;
     no_shows_prevented: number;
   };
-}
+};
 
-export interface PatientEngagementScore {
+export type PatientEngagementScore = {
   patient_id: string;
   score: number; // 0-100
   factors: {
@@ -60,7 +60,7 @@ export interface PatientEngagementScore {
   };
   recommendations: string[];
   last_calculated: Date;
-}
+};
 
 export class CommunicationAnalytics {
   /**
@@ -83,33 +83,28 @@ export class CommunicationAnalytics {
       | 'unsubscribed';
     metadata?: Record<string, any>;
   }): Promise<void> {
-    try {
-      await supabase.from('communication_events').insert({
-        communication_log_id: logId,
-        event_type: event,
-        metadata,
-        created_at: new Date(),
-      });
+    await supabase.from('communication_events').insert({
+      communication_log_id: logId,
+      event_type: event,
+      metadata,
+      created_at: new Date(),
+    });
 
-      // Update the communication log with latest status
-      await supabase
-        .from('communication_logs')
-        .update({
-          status:
-            event === 'failed' || event === 'bounced'
-              ? 'failed'
-              : event === 'delivered'
-                ? 'delivered'
-                : event === 'sent'
-                  ? 'sent'
-                  : 'delivered',
-          updated_at: new Date(),
-        })
-        .eq('id', logId);
-    } catch (error) {
-      console.error('Error tracking communication event:', error);
-      throw error;
-    }
+    // Update the communication log with latest status
+    await supabase
+      .from('communication_logs')
+      .update({
+        status:
+          event === 'failed' || event === 'bounced'
+            ? 'failed'
+            : event === 'delivered'
+              ? 'delivered'
+              : event === 'sent'
+                ? 'sent'
+                : 'delivered',
+        updated_at: new Date(),
+      })
+      .eq('id', logId);
   }
 
   /**
@@ -128,37 +123,32 @@ export class CommunicationAnalytics {
     channel?: CommunicationChannel;
     messageType?: MessageType;
   }): Promise<CommunicationMetrics> {
-    try {
-      let query = supabase
-        .from('communication_logs')
-        .select(
-          `
+    let query = supabase
+      .from('communication_logs')
+      .select(
+        `
           *,
           communication_events(*)
         `
-        )
-        .eq('clinic_id', clinicId)
-        .gte('created_at', startDate.toISOString())
-        .lte('created_at', endDate.toISOString());
+      )
+      .eq('clinic_id', clinicId)
+      .gte('created_at', startDate.toISOString())
+      .lte('created_at', endDate.toISOString());
 
-      if (channel) {
-        query = query.eq('channel', channel);
-      }
+    if (channel) {
+      query = query.eq('channel', channel);
+    }
 
-      if (messageType) {
-        query = query.eq('message_type', messageType);
-      }
+    if (messageType) {
+      query = query.eq('message_type', messageType);
+    }
 
-      const { data: logs, error } = await query;
-      if (error) {
-        throw error;
-      }
-
-      return this.calculateMetrics(logs || []);
-    } catch (error) {
-      console.error('Error getting communication metrics:', error);
+    const { data: logs, error } = await query;
+    if (error) {
       throw error;
     }
+
+    return this.calculateMetrics(logs || []);
   }
 
   /**
@@ -177,145 +167,127 @@ export class CommunicationAnalytics {
     previousPeriodStart: Date;
     previousPeriodEnd: Date;
   }): Promise<ChannelPerformance[]> {
-    try {
-      const channels: CommunicationChannel[] = ['sms', 'email', 'whatsapp'];
-      const performance: ChannelPerformance[] = [];
+    const channels: CommunicationChannel[] = ['sms', 'email', 'whatsapp'];
+    const performance: ChannelPerformance[] = [];
 
-      for (const channel of channels) {
-        const currentMetrics = await this.getMetrics({
-          clinicId,
-          startDate: currentPeriodStart,
-          endDate: currentPeriodEnd,
-          channel,
-        });
+    for (const channel of channels) {
+      const currentMetrics = await this.getMetrics({
+        clinicId,
+        startDate: currentPeriodStart,
+        endDate: currentPeriodEnd,
+        channel,
+      });
 
-        const previousMetrics = await this.getMetrics({
-          clinicId,
-          startDate: previousPeriodStart,
-          endDate: previousPeriodEnd,
-          channel,
-        });
+      const previousMetrics = await this.getMetrics({
+        clinicId,
+        startDate: previousPeriodStart,
+        endDate: previousPeriodEnd,
+        channel,
+      });
 
-        const changePercentage = this.calculateChangePercentage(
-          currentMetrics.delivery_rate,
-          previousMetrics.delivery_rate
-        );
+      const changePercentage = this.calculateChangePercentage(
+        currentMetrics.delivery_rate,
+        previousMetrics.delivery_rate
+      );
 
-        const trend =
-          changePercentage > 5
-            ? 'up'
-            : changePercentage < -5
-              ? 'down'
-              : 'stable';
+      const trend =
+        changePercentage > 5 ? 'up' : changePercentage < -5 ? 'down' : 'stable';
 
-        performance.push({
-          channel,
-          metrics: currentMetrics,
-          trend,
-          period_comparison: {
-            current_period: currentMetrics,
-            previous_period: previousMetrics,
-            change_percentage: changePercentage,
-          },
-        });
-      }
-
-      return performance;
-    } catch (error) {
-      console.error('Error getting channel performance:', error);
-      throw error;
+      performance.push({
+        channel,
+        metrics: currentMetrics,
+        trend,
+        period_comparison: {
+          current_period: currentMetrics,
+          previous_period: previousMetrics,
+          change_percentage: changePercentage,
+        },
+      });
     }
+
+    return performance;
   }
 
   /**
    * Get campaign analytics
    */
   async getCampaignAnalytics(campaignId: string): Promise<CampaignAnalytics> {
-    try {
-      // Get campaign details
-      const { data: campaign, error: campaignError } = await supabase
-        .from('communication_campaigns')
-        .select('*')
-        .eq('id', campaignId)
-        .single();
+    // Get campaign details
+    const { data: campaign, error: campaignError } = await supabase
+      .from('communication_campaigns')
+      .select('*')
+      .eq('id', campaignId)
+      .single();
 
-      if (campaignError) {
-        throw campaignError;
-      }
+    if (campaignError) {
+      throw campaignError;
+    }
 
-      // Get campaign communications
-      const { data: logs, error: logsError } = await supabase
-        .from('communication_logs')
-        .select(
-          `
+    // Get campaign communications
+    const { data: logs, error: logsError } = await supabase
+      .from('communication_logs')
+      .select(
+        `
           *,
           communication_events(*)
         `
-        )
-        .eq('campaign_id', campaignId);
+      )
+      .eq('campaign_id', campaignId);
 
-      if (logsError) {
-        throw logsError;
-      }
-
-      const overallMetrics = this.calculateMetrics(logs || []);
-
-      // Get channel breakdown
-      const channels: CommunicationChannel[] = ['sms', 'email', 'whatsapp'];
-      const channelBreakdown: ChannelPerformance[] = [];
-
-      for (const channel of channels) {
-        const channelLogs = (logs || []).filter(
-          (log) => log.channel === channel
-        );
-        if (channelLogs.length > 0) {
-          const metrics = this.calculateMetrics(channelLogs);
-          channelBreakdown.push({
-            channel,
-            metrics,
-            trend: 'stable', // Would need historical data for trend
-            period_comparison: {
-              current_period: metrics,
-              previous_period: metrics, // Placeholder
-              change_percentage: 0,
-            },
-          });
-        }
-      }
-
-      // Calculate patient engagement metrics
-      const patientEngagement =
-        await this.calculatePatientEngagement(campaignId);
-
-      // Calculate ROI (simplified)
-      const roi = this.calculateROI(
-        overallMetrics.cost_total,
-        patientEngagement.new_appointments
-      );
-
-      // Calculate conversion rate
-      const conversionRate =
-        overallMetrics.total_sent > 0
-          ? (patientEngagement.new_appointments / overallMetrics.total_sent) *
-            100
-          : 0;
-
-      return {
-        campaign_id: campaignId,
-        campaign_name: campaign.name,
-        start_date: new Date(campaign.start_date),
-        end_date: campaign.end_date ? new Date(campaign.end_date) : undefined,
-        status: campaign.status,
-        metrics: overallMetrics,
-        channel_breakdown: channelBreakdown,
-        roi,
-        conversion_rate: conversionRate,
-        patient_engagement: patientEngagement,
-      };
-    } catch (error) {
-      console.error('Error getting campaign analytics:', error);
-      throw error;
+    if (logsError) {
+      throw logsError;
     }
+
+    const overallMetrics = this.calculateMetrics(logs || []);
+
+    // Get channel breakdown
+    const channels: CommunicationChannel[] = ['sms', 'email', 'whatsapp'];
+    const channelBreakdown: ChannelPerformance[] = [];
+
+    for (const channel of channels) {
+      const channelLogs = (logs || []).filter((log) => log.channel === channel);
+      if (channelLogs.length > 0) {
+        const metrics = this.calculateMetrics(channelLogs);
+        channelBreakdown.push({
+          channel,
+          metrics,
+          trend: 'stable', // Would need historical data for trend
+          period_comparison: {
+            current_period: metrics,
+            previous_period: metrics, // Placeholder
+            change_percentage: 0,
+          },
+        });
+      }
+    }
+
+    // Calculate patient engagement metrics
+    const patientEngagement = await this.calculatePatientEngagement(campaignId);
+
+    // Calculate ROI (simplified)
+    const roi = this.calculateROI(
+      overallMetrics.cost_total,
+      patientEngagement.new_appointments
+    );
+
+    // Calculate conversion rate
+    const conversionRate =
+      overallMetrics.total_sent > 0
+        ? (patientEngagement.new_appointments / overallMetrics.total_sent) * 100
+        : 0;
+
+    return {
+      campaign_id: campaignId,
+      campaign_name: campaign.name,
+      start_date: new Date(campaign.start_date),
+      end_date: campaign.end_date ? new Date(campaign.end_date) : undefined,
+      status: campaign.status,
+      metrics: overallMetrics,
+      channel_breakdown: channelBreakdown,
+      roi,
+      conversion_rate: conversionRate,
+      patient_engagement: patientEngagement,
+    };
   }
 
   /**
@@ -325,82 +297,77 @@ export class CommunicationAnalytics {
     patientId: string,
     clinicId: string
   ): Promise<PatientEngagementScore> {
-    try {
-      const thirtyDaysAgo = new Date();
-      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
-      // Get communication history
-      const { data: communications } = await supabase
-        .from('communication_logs')
-        .select(
-          `
+    // Get communication history
+    const { data: communications } = await supabase
+      .from('communication_logs')
+      .select(
+        `
           *,
           communication_events(*)
         `
-        )
-        .eq('patient_id', patientId)
-        .eq('clinic_id', clinicId)
-        .gte('created_at', thirtyDaysAgo.toISOString());
+      )
+      .eq('patient_id', patientId)
+      .eq('clinic_id', clinicId)
+      .gte('created_at', thirtyDaysAgo.toISOString());
 
-      // Get appointment history
-      const { data: appointments } = await supabase
-        .from('appointments')
-        .select('*')
-        .eq('patient_id', patientId)
-        .eq('clinic_id', clinicId)
-        .gte('created_at', thirtyDaysAgo.toISOString());
+    // Get appointment history
+    const { data: appointments } = await supabase
+      .from('appointments')
+      .select('*')
+      .eq('patient_id', patientId)
+      .eq('clinic_id', clinicId)
+      .gte('created_at', thirtyDaysAgo.toISOString());
 
-      // Get patient preferences
-      const { data: preferences } = await supabase
-        .from('patient_communication_preferences')
-        .select('*')
-        .eq('patient_id', patientId)
-        .eq('clinic_id', clinicId)
-        .single();
+    // Get patient preferences
+    const { data: preferences } = await supabase
+      .from('patient_communication_preferences')
+      .select('*')
+      .eq('patient_id', patientId)
+      .eq('clinic_id', clinicId)
+      .single();
 
-      // Calculate factors
-      const responseRate = this.calculateResponseRate(communications || []);
-      const appointmentAdherence = this.calculateAppointmentAdherence(
-        appointments || []
-      );
-      const preferenceAlignment = this.calculatePreferenceAlignment(
-        communications || [],
-        preferences
-      );
-      const recency = this.calculateRecencyScore(communications || []);
+    // Calculate factors
+    const responseRate = this.calculateResponseRate(communications || []);
+    const appointmentAdherence = this.calculateAppointmentAdherence(
+      appointments || []
+    );
+    const preferenceAlignment = this.calculatePreferenceAlignment(
+      communications || [],
+      preferences
+    );
+    const recency = this.calculateRecencyScore(communications || []);
 
-      // Calculate overall score (weighted average)
-      const score = Math.round(
-        responseRate * 0.3 +
-          appointmentAdherence * 0.4 +
-          preferenceAlignment * 0.2 +
-          recency * 0.1
-      );
+    // Calculate overall score (weighted average)
+    const score = Math.round(
+      responseRate * 0.3 +
+        appointmentAdherence * 0.4 +
+        preferenceAlignment * 0.2 +
+        recency * 0.1
+    );
 
-      // Generate recommendations
-      const recommendations = this.generateEngagementRecommendations({
-        responseRate,
-        appointmentAdherence,
-        preferenceAlignment,
+    // Generate recommendations
+    const recommendations = this.generateEngagementRecommendations({
+      responseRate,
+      appointmentAdherence,
+      preferenceAlignment,
+      recency,
+    });
+
+    return {
+      patient_id: patientId,
+      score,
+      factors: {
+        response_rate: responseRate,
+        appointment_adherence: appointmentAdherence,
+        communication_preference_alignment: preferenceAlignment,
         recency,
-      });
-
-      return {
-        patient_id: patientId,
-        score,
-        factors: {
-          response_rate: responseRate,
-          appointment_adherence: appointmentAdherence,
-          communication_preference_alignment: preferenceAlignment,
-          recency,
-        },
-        recommendations,
-        last_calculated: new Date(),
-      };
-    } catch (error) {
-      console.error('Error calculating patient engagement score:', error);
-      throw error;
-    }
+      },
+      recommendations,
+      last_calculated: new Date(),
+    };
   }
 
   /**
@@ -426,11 +393,10 @@ export class CommunicationAnalytics {
       usage_count: number;
     }>
   > {
-    try {
-      const { data: logs } = await supabase
-        .from('communication_logs')
-        .select(
-          `
+    const { data: logs } = await supabase
+      .from('communication_logs')
+      .select(
+        `
           template_id,
           message_type,
           channel,
@@ -438,57 +404,52 @@ export class CommunicationAnalytics {
           communication_events(*),
           message_templates(name)
         `
-        )
-        .eq('clinic_id', clinicId)
-        .gte('created_at', startDate.toISOString())
-        .lte('created_at', endDate.toISOString())
-        .not('template_id', 'is', null);
+      )
+      .eq('clinic_id', clinicId)
+      .gte('created_at', startDate.toISOString())
+      .lte('created_at', endDate.toISOString())
+      .not('template_id', 'is', null);
 
-      // Group by template
-      const templateGroups = (logs || []).reduce(
-        (acc, log) => {
-          const key = log.template_id;
-          if (!acc[key]) {
-            acc[key] = [];
-          }
-          acc[key].push(log);
-          return acc;
-        },
-        {} as Record<string, any[]>
-      );
-
-      // Calculate metrics for each template
-      const templatePerformance = Object.entries(templateGroups).map(
-        ([templateId, templateLogs]) => {
-          const firstLog = templateLogs[0];
-          const metrics = this.calculateMetrics(templateLogs);
-
-          return {
-            template_id: templateId,
-            template_name:
-              firstLog.message_templates?.name || 'Unknown Template',
-            message_type: firstLog.message_type,
-            channel: firstLog.channel,
-            metrics,
-            usage_count: templateLogs.length,
-          };
+    // Group by template
+    const templateGroups = (logs || []).reduce(
+      (acc, log) => {
+        const key = log.template_id;
+        if (!acc[key]) {
+          acc[key] = [];
         }
-      );
+        acc[key].push(log);
+        return acc;
+      },
+      {} as Record<string, any[]>
+    );
 
-      // Sort by delivery rate and usage count
-      return templatePerformance
-        .sort((a, b) => {
-          const scoreA =
-            a.metrics.delivery_rate * 0.7 + (a.usage_count / 100) * 0.3;
-          const scoreB =
-            b.metrics.delivery_rate * 0.7 + (b.usage_count / 100) * 0.3;
-          return scoreB - scoreA;
-        })
-        .slice(0, limit);
-    } catch (error) {
-      console.error('Error getting top performing templates:', error);
-      throw error;
-    }
+    // Calculate metrics for each template
+    const templatePerformance = Object.entries(templateGroups).map(
+      ([templateId, templateLogs]) => {
+        const firstLog = templateLogs[0];
+        const metrics = this.calculateMetrics(templateLogs);
+
+        return {
+          template_id: templateId,
+          template_name: firstLog.message_templates?.name || 'Unknown Template',
+          message_type: firstLog.message_type,
+          channel: firstLog.channel,
+          metrics,
+          usage_count: templateLogs.length,
+        };
+      }
+    );
+
+    // Sort by delivery rate and usage count
+    return templatePerformance
+      .sort((a, b) => {
+        const scoreA =
+          a.metrics.delivery_rate * 0.7 + (a.usage_count / 100) * 0.3;
+        const scoreB =
+          b.metrics.delivery_rate * 0.7 + (b.usage_count / 100) * 0.3;
+        return scoreB - scoreA;
+      })
+      .slice(0, limit);
   }
 
   /**
@@ -590,8 +551,7 @@ export class CommunicationAnalytics {
       }
 
       return { insights, recommendations, alerts };
-    } catch (error) {
-      console.error('Error generating insights:', error);
+    } catch (_error) {
       return { insights: [], recommendations: [], alerts: [] };
     }
   }
@@ -666,8 +626,7 @@ export class CommunicationAnalytics {
         cancelled_appointments: 0,
         no_shows_prevented: 0,
       };
-    } catch (error) {
-      console.error('Error calculating patient engagement:', error);
+    } catch (_error) {
       return {
         new_appointments: 0,
         confirmed_appointments: 0,

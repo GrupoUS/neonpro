@@ -41,7 +41,6 @@ export async function GET(request: NextRequest) {
 
     const { data: segments, error } = await query;
     if (error) {
-      console.error('Database error:', error);
       throw error;
     }
 
@@ -51,7 +50,6 @@ export async function GET(request: NextRequest) {
       total: segments?.length || 0,
     });
   } catch (error) {
-    console.error('Error fetching patient segments:', error);
     return NextResponse.json(
       {
         error: 'Failed to fetch patient segments',
@@ -104,8 +102,7 @@ export async function POST(request: NextRequest) {
       },
       { status: 201 }
     );
-  } catch (error) {
-    console.error('Error creating patient segment:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to create patient segment' },
       { status: 500 }

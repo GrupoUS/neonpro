@@ -38,7 +38,7 @@ type InsightConfidence = 'low' | 'medium' | 'high' | 'very_high';
 type TimeHorizon = 'immediate' | 'short_term' | 'medium_term' | 'long_term';
 
 // Predictive Insight
-interface PredictiveInsight {
+type PredictiveInsight = {
   id: string;
   type: InsightType;
   priority: InsightPriority;
@@ -125,10 +125,10 @@ interface PredictiveInsight {
     algorithm: string;
     dataVersion: string;
   };
-}
+};
 
 // Trend Analysis
-interface TrendAnalysis {
+type TrendAnalysis = {
   metric: string;
   timeframe: string;
   dataPoints: {
@@ -172,10 +172,10 @@ interface TrendAnalysis {
     risks: string[];
     opportunities: string[];
   };
-}
+};
 
 // Pattern Recognition
-interface PatternRecognition {
+type PatternRecognition = {
   patternId: string;
   type: 'temporal' | 'demographic' | 'clinical' | 'behavioral' | 'operational';
   name: string;
@@ -207,10 +207,10 @@ interface PatternRecognition {
     operational: string;
     financial: string;
   };
-}
+};
 
 // Anomaly Detection
-interface AnomalyDetection {
+type AnomalyDetection = {
   anomalyId: string;
   type: 'statistical' | 'temporal' | 'contextual' | 'collective';
   severity: 'low' | 'medium' | 'high' | 'critical';
@@ -242,10 +242,10 @@ interface AnomalyDetection {
     prevention: string[];
     monitoring: string[];
   };
-}
+};
 
 // Population Health Insights
-interface PopulationHealthInsight {
+type PopulationHealthInsight = {
   populationId: string;
   segment: {
     criteria: string[];
@@ -319,10 +319,10 @@ interface PopulationHealthInsight {
       ranking: number;
     }[];
   };
-}
+};
 
 // Insights Configuration
-interface InsightsConfig {
+type InsightsConfig = {
   enabled: boolean;
   updateFrequency: {
     realTime: boolean;
@@ -370,7 +370,7 @@ interface InsightsConfig {
     dataRetention: number;
     anonymization: boolean;
   };
-}
+};
 
 class PredictiveInsightsEngine {
   private readonly supabase = createClient();
@@ -405,7 +405,6 @@ class PredictiveInsightsEngine {
     }
   ): Promise<PredictiveInsight[]> {
     try {
-      console.log(`Generating insights for patient ${patientId}`);
       const insights: PredictiveInsight[] = [];
 
       // Get patient data
@@ -485,13 +484,8 @@ class PredictiveInsightsEngine {
         this.insights.set(insight.id, insight);
         await this.storeInsight(insight);
       }
-
-      console.log(
-        `Generated ${insights.length} insights for patient ${patientId}`
-      );
       return insights;
-    } catch (error) {
-      console.error('Error generating patient insights:', error);
+    } catch (_error) {
       throw new Error('Failed to generate patient insights');
     }
   }
@@ -507,8 +501,6 @@ class PredictiveInsightsEngine {
     timeframe?: { start: Date; end: Date };
   }): Promise<PopulationHealthInsight> {
     try {
-      console.log('Generating population health insights');
-
       // Get population data
       const populationData = await this.getPopulationData(criteria);
 
@@ -555,13 +547,8 @@ class PredictiveInsightsEngine {
       // Store insight
       this.populationInsights.set(populationId, insight);
       await this.storePopulationInsight(insight);
-
-      console.log(
-        `Generated population insight for ${populationData.length} patients`
-      );
       return insight;
-    } catch (error) {
-      console.error('Error generating population insights:', error);
+    } catch (_error) {
       throw new Error('Failed to generate population insights');
     }
   }
@@ -575,8 +562,6 @@ class PredictiveInsightsEngine {
     filters?: any
   ): Promise<TrendAnalysis> {
     try {
-      console.log(`Performing trend analysis for ${metric}`);
-
       // Get historical data
       const historicalData = await this.getHistoricalData(
         metric,
@@ -606,11 +591,8 @@ class PredictiveInsightsEngine {
       const trendId = `${metric}_${timeframe}_${Date.now()}`;
       this.trends.set(trendId, analysis);
       await this.storeTrendAnalysis(trendId, analysis);
-
-      console.log(`Completed trend analysis for ${metric}`);
       return analysis;
-    } catch (error) {
-      console.error('Error performing trend analysis:', error);
+    } catch (_error) {
       throw new Error('Failed to perform trend analysis');
     }
   }
@@ -624,7 +606,6 @@ class PredictiveInsightsEngine {
     filters?: any
   ): Promise<PatternRecognition[]> {
     try {
-      console.log(`Detecting patterns in ${dataType}`);
       const patterns: PatternRecognition[] = [];
 
       // Get data for pattern analysis
@@ -665,11 +646,8 @@ class PredictiveInsightsEngine {
           await this.storePattern(patternRecognition);
         }
       }
-
-      console.log(`Detected ${patterns.length} significant patterns`);
       return patterns;
-    } catch (error) {
-      console.error('Error detecting patterns:', error);
+    } catch (_error) {
       throw new Error('Failed to detect patterns');
     }
   }
@@ -732,8 +710,7 @@ class PredictiveInsightsEngine {
       }
 
       return anomalies;
-    } catch (error) {
-      console.error('Error detecting anomalies:', error);
+    } catch (_error) {
       return [];
     }
   }
@@ -867,8 +844,7 @@ class PredictiveInsightsEngine {
           dataVersion: 'v1.0',
         },
       };
-    } catch (error) {
-      console.error('Error generating risk trend insight:', error);
+    } catch (_error) {
       return null;
     }
   }
@@ -973,8 +949,7 @@ class PredictiveInsightsEngine {
           dataVersion: 'v1.0',
         },
       };
-    } catch (error) {
-      console.error('Error generating outcome prediction insight:', error);
+    } catch (_error) {
       return null;
     }
   }
@@ -1070,11 +1045,7 @@ class PredictiveInsightsEngine {
           dataVersion: 'v1.0',
         },
       };
-    } catch (error) {
-      console.error(
-        'Error generating treatment recommendation insight:',
-        error
-      );
+    } catch (_error) {
       return null;
     }
   }
@@ -1179,8 +1150,7 @@ class PredictiveInsightsEngine {
           dataVersion: 'v1.0',
         },
       };
-    } catch (error) {
-      console.error('Error generating preventive care insight:', error);
+    } catch (_error) {
       return null;
     }
   }
@@ -1296,7 +1266,6 @@ class PredictiveInsightsEngine {
     }
 
     this.isProcessing = true;
-    console.log('Starting predictive insights processing');
 
     // Set up periodic processing
     this.processingInterval = setInterval(
@@ -1315,8 +1284,6 @@ class PredictiveInsightsEngine {
       clearInterval(this.processingInterval);
       this.processingInterval = undefined;
     }
-
-    console.log('Stopped predictive insights processing');
   }
 
   /**
@@ -1324,8 +1291,6 @@ class PredictiveInsightsEngine {
    */
   private async performPeriodicProcessing(): Promise<void> {
     try {
-      console.log('Performing periodic insights processing');
-
       // Update trend analyses
       if (this.config.algorithms.trendAnalysis.enabled) {
         await this.updateTrendAnalyses();
@@ -1343,9 +1308,7 @@ class PredictiveInsightsEngine {
 
       // Clean up expired insights
       await this.cleanupExpiredInsights();
-    } catch (error) {
-      console.error('Error in periodic insights processing:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -1481,9 +1444,7 @@ class PredictiveInsightsEngine {
         created_at: insight.metadata.generatedAt.toISOString(),
         valid_until: insight.metadata.validUntil.toISOString(),
       });
-    } catch (error) {
-      console.error('Error storing insight:', error);
-    }
+    } catch (_error) {}
   }
 
   private async loadExistingInsights(): Promise<void> {
@@ -1513,9 +1474,7 @@ class PredictiveInsightsEngine {
           this.insights.set(insight.id, insight);
         });
       }
-    } catch (error) {
-      console.error('Error loading existing insights:', error);
-    }
+    } catch (_error) {}
   }
 
   private initializeConfig(config?: Partial<InsightsConfig>): InsightsConfig {

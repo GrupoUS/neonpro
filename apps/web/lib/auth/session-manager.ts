@@ -725,17 +725,11 @@ export class SessionManager extends EventEmitter {
   }
 
   private setupEventHandlers(): void {
-    this.on('sessionCreated', (session: UserSession) => {
-      console.log(`Session created for user ${session.user_id}: ${session.id}`);
-    });
+    this.on('sessionCreated', (_session: UserSession) => {});
 
-    this.on('sessionExpired', (session: UserSession) => {
-      console.log(`Session expired for user ${session.user_id}: ${session.id}`);
-    });
+    this.on('sessionExpired', (_session: UserSession) => {});
 
-    this.on('securityEvent', (event: SessionSecurityEvent) => {
-      console.log(`Security event: ${event.event_type} - ${event.severity}`);
-    });
+    this.on('securityEvent', (_event: SessionSecurityEvent) => {});
   }
 
   // Mapping functions

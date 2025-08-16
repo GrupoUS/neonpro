@@ -87,9 +87,9 @@ import {
 // TYPES E INTERFACES
 // =====================================================
 
-interface AuditDashboardProps {
+type AuditDashboardProps = {
   className?: string;
-}
+};
 
 // =====================================================
 // COMPONENTE PRINCIPAL

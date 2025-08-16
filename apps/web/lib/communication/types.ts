@@ -21,7 +21,7 @@ export type ReminderTiming = 24 | 2 | 0.5; // hours before appointment
 /**
  * Communication Log - tracks all communication attempts
  */
-export interface CommunicationLog {
+export type CommunicationLog = {
   id: string;
   appointment_id: string;
   patient_id: string;
@@ -40,12 +40,12 @@ export interface CommunicationLog {
   external_id?: string; // Provider message ID
   created_at: Date;
   updated_at: Date;
-}
+};
 
 /**
  * Message Template - reusable communication templates
  */
-export interface MessageTemplate {
+export type MessageTemplate = {
   id: string;
   clinic_id: string;
   name: string;
@@ -58,12 +58,12 @@ export interface MessageTemplate {
   language: string;
   created_at: Date;
   updated_at: Date;
-}
+};
 
 /**
  * Patient Communication Preferences
  */
-export interface PatientCommPreferences {
+export type PatientCommPreferences = {
   id: string;
   patient_id: string;
   clinic_id: string;
@@ -83,12 +83,12 @@ export interface PatientCommPreferences {
   opt_out_date?: Date;
   created_at: Date;
   updated_at: Date;
-}
+};
 
 /**
  * No-Show Prediction Model Data
  */
-export interface NoShowPrediction {
+export type NoShowPrediction = {
   id: string;
   appointment_id: string;
   patient_id: string;
@@ -106,12 +106,12 @@ export interface NoShowPrediction {
   prediction_confidence: number;
   recommended_actions: string[];
   created_at: Date;
-}
+};
 
 /**
  * Waitlist Entry
  */
-export interface WaitlistEntry {
+export type WaitlistEntry = {
   id: string;
   patient_id: string;
   clinic_id: string;
@@ -127,12 +127,12 @@ export interface WaitlistEntry {
   status: 'active' | 'notified' | 'booked' | 'expired' | 'cancelled';
   created_at: Date;
   updated_at: Date;
-}
+};
 
 /**
  * Communication Campaign - for bulk communications
  */
-export interface CommunicationCampaign {
+export type CommunicationCampaign = {
   id: string;
   clinic_id: string;
   name: string;
@@ -159,12 +159,12 @@ export interface CommunicationCampaign {
   total_cost: number;
   created_at: Date;
   updated_at: Date;
-}
+};
 
 /**
  * Communication Analytics
  */
-export interface CommunicationAnalytics {
+export type CommunicationAnalytics = {
   clinic_id: string;
   period_start: Date;
   period_end: Date;
@@ -191,12 +191,12 @@ export interface CommunicationAnalytics {
       effectiveness_score: number;
     }[];
   };
-}
+};
 
 /**
  * Template Variables - dynamic content for messages
  */
-export interface TemplateVariables {
+export type TemplateVariables = {
   patient_name: string;
   patient_first_name: string;
   clinic_name: string;
@@ -210,12 +210,12 @@ export interface TemplateVariables {
   clinic_phone: string;
   clinic_address: string;
   custom_message?: string;
-}
+};
 
 /**
  * Communication Provider Configuration
  */
-export interface ProviderConfig {
+export type ProviderConfig = {
   whatsapp: {
     account_sid: string;
     auth_token: string;
@@ -233,12 +233,12 @@ export interface ProviderConfig {
     from_name: string;
     webhook_url: string;
   };
-}
+};
 
 /**
  * Communication Queue Job
  */
-export interface CommunicationJob {
+export type CommunicationJob = {
   id: string;
   type:
     | 'send_reminder'
@@ -258,4 +258,4 @@ export interface CommunicationJob {
   created_at: Date;
   processed_at?: Date;
   error?: string;
-}
+};

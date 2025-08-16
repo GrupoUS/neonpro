@@ -60,7 +60,6 @@ export class CommunicationService {
         cost: 0.05,
       };
     } catch (error) {
-      console.error('Error sending message:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
@@ -106,11 +105,8 @@ export class CommunicationService {
       });
 
       if (error) {
-        console.error('Error logging communication:', error);
       }
-    } catch (error) {
-      console.error('Error logging communication:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -162,18 +158,13 @@ export class CommunicationService {
           await this.processJob(job);
         }
       }
-    } catch (error) {
-      console.error('Error processing communication queue:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
    * Process individual communication job
    */
-  private async processJob(job: any): Promise<void> {
-    // Mock implementation for testing
-    console.log('Processing job:', job.id);
-  }
+  private async processJob(_job: any): Promise<void> {}
 
   /**
    * Static method to send reminders

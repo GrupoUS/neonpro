@@ -54,8 +54,7 @@ export default function PricingPage() {
       } else {
         throw new Error('No checkout URL received');
       }
-    } catch (error) {
-      console.error('Error creating checkout session:', error);
+    } catch (_error) {
       toast.error('Erro ao processar pagamento. Tente novamente.');
     } finally {
       setLoading(null);

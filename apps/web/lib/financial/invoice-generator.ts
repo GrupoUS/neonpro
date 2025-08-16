@@ -15,7 +15,7 @@
 import { createClient } from '@/lib/supabase/client';
 
 // Brazilian Tax and Invoice Types
-interface BrazilianTaxInfo {
+type BrazilianTaxInfo = {
   cnpj?: string;
   cpf?: string;
   inscricaoMunicipal?: string;
@@ -30,9 +30,9 @@ interface BrazilianTaxInfo {
   aliquotaCOFINS?: number;
   aliquotaIR?: number;
   aliquotaCSLL?: number;
-}
+};
 
-interface ServiceItem {
+type ServiceItem = {
   id: string;
   description: string;
   serviceCode: string; // CNAE code for the service
@@ -42,9 +42,9 @@ interface ServiceItem {
   taxable: boolean;
   issRetention: boolean; // ISS retention by client
   cfop?: string; // Código Fiscal de Operações e Prestações
-}
+};
 
-interface PaymentMethod {
+type PaymentMethod = {
   type:
     | 'pix'
     | 'credit_card'
@@ -59,9 +59,9 @@ interface PaymentMethod {
   bankCode?: string;
   agency?: string;
   account?: string;
-}
+};
 
-interface InvoiceRecipient {
+type InvoiceRecipient = {
   id: string;
   name: string;
   email: string;
@@ -79,9 +79,9 @@ interface InvoiceRecipient {
     country: string;
   };
   taxInfo?: BrazilianTaxInfo;
-}
+};
 
-interface InvoiceData {
+type InvoiceData = {
   id: string;
   number: string;
   series: string;
@@ -114,9 +114,9 @@ interface InvoiceData {
     updatedAt: Date;
     notes?: string;
   };
-}
+};
 
-interface TaxCalculation {
+type TaxCalculation = {
   subtotal: number;
   issAmount: number;
   pisAmount: number;
@@ -132,9 +132,9 @@ interface TaxCalculation {
     cofinsRetention: number;
     csllRetention: number;
   };
-}
+};
 
-interface NFSeRequest {
+type NFSeRequest = {
   prestador: {
     cnpj: string;
     inscricaoMunicipal: string;
@@ -175,9 +175,9 @@ interface NFSeRequest {
     outrasRetencoes: number;
     valorLiquido: number;
   };
-}
+};
 
-interface NFSeResponse {
+type NFSeResponse = {
   success: boolean;
   nfseNumber?: string;
   verificationCode?: string;
@@ -190,9 +190,9 @@ interface NFSeResponse {
     message: string;
     details?: any;
   };
-}
+};
 
-interface InvoiceTemplate {
+type InvoiceTemplate = {
   id: string;
   name: string;
   type: 'consultation' | 'procedure' | 'treatment' | 'custom';
@@ -214,9 +214,9 @@ interface InvoiceTemplate {
   active: boolean;
   createdAt: Date;
   updatedAt: Date;
-}
+};
 
-interface InvoiceGenerationConfig {
+type InvoiceGenerationConfig = {
   autoGeneration: {
     enabled: boolean;
     triggers: ('appointment_completed' | 'treatment_finished' | 'manual')[];
@@ -250,7 +250,7 @@ interface InvoiceGenerationConfig {
     whatsappEnabled: boolean;
     reminderDays: number[];
   };
-}
+};
 
 class AutomatedInvoiceGenerator {
   private readonly supabase = createClient();
@@ -267,8 +267,6 @@ class AutomatedInvoiceGenerator {
    */
   async initialize(): Promise<void> {
     try {
-      console.log('Initializing Automated Invoice Generator...');
-
       // Load invoice templates
       await this.loadInvoiceTemplates();
 
@@ -292,9 +290,7 @@ class AutomatedInvoiceGenerator {
       }
 
       this.isInitialized = true;
-      console.log('✅ Automated Invoice Generator initialized successfully');
-    } catch (error) {
-      console.error('❌ Failed to initialize invoice generator:', error);
+    } catch (_error) {
       throw new Error('Invoice generator initialization failed');
     }
   }
@@ -316,8 +312,6 @@ class AutomatedInvoiceGenerator {
       if (!this.isInitialized) {
         throw new Error('Invoice generator not initialized');
       }
-
-      console.log(`Generating invoice for appointment ${appointmentId}`);
 
       // Get appointment data
       const appointment = await this.getAppointmentData(appointmentId);
@@ -428,16 +422,12 @@ class AutomatedInvoiceGenerator {
             invoice.status = 'issued';
             await this.updateInvoice(invoice);
           }
-        } catch (nfseError) {
-          console.error('NFSe generation failed:', nfseError);
+        } catch (_nfseError) {
           // Continue without NFSe - invoice is still valid
         }
       }
-
-      console.log(`✅ Invoice ${invoice.number} generated successfully`);
       return invoice;
     } catch (error) {
-      console.error('❌ Invoice generation failed:', error);
       throw new Error(`Invoice generation failed: ${error.message}`);
     }
   }
@@ -454,8 +444,6 @@ class AutomatedInvoiceGenerator {
     }
   ): Promise<InvoiceData[]> {
     try {
-      console.log(`Generating invoice(s) for treatment ${treatmentId}`);
-
       // Get treatment data
       const treatment = await this.getTreatmentData(treatmentId);
       if (!treatment) {
@@ -491,13 +479,8 @@ class AutomatedInvoiceGenerator {
         );
         invoices.push(singleInvoice);
       }
-
-      console.log(
-        `✅ Generated ${invoices.length} invoice(s) for treatment ${treatmentId}`
-      );
       return invoices;
     } catch (error) {
-      console.error('❌ Treatment invoice generation failed:', error);
       throw new Error(`Treatment invoice generation failed: ${error.message}`);
     }
   }
@@ -585,8 +568,6 @@ class AutomatedInvoiceGenerator {
    */
   private async generateNFSe(invoice: InvoiceData): Promise<NFSeResponse> {
     try {
-      console.log(`Generating NFSe for invoice ${invoice.number}`);
-
       // Get clinic data for NFSe
       const clinic = await this.getClinicData(invoice.metadata.clinicId);
       if (!clinic?.taxInfo?.cnpj) {
@@ -643,15 +624,12 @@ class AutomatedInvoiceGenerator {
       const nfseResponse = await this.callNFSeWebservice(nfseRequest);
 
       if (nfseResponse.success) {
-        console.log(`✅ NFSe generated: ${nfseResponse.nfseNumber}`);
-
         // Store NFSe data
         await this.storeNFSeData(invoice.id, nfseResponse);
       }
 
       return nfseResponse;
     } catch (error) {
-      console.error('❌ NFSe generation failed:', error);
       return {
         success: false,
         error: {
@@ -677,8 +655,6 @@ class AutomatedInvoiceGenerator {
     }
   ): Promise<void> {
     try {
-      console.log(`Tracking payment for invoice ${invoiceId}`);
-
       // Get invoice
       const invoice = await this.getInvoice(invoiceId);
       if (!invoice) {
@@ -720,10 +696,7 @@ class AutomatedInvoiceGenerator {
       if (this.config.notifications.emailEnabled) {
         await this.sendPaymentConfirmation(invoice, payment);
       }
-
-      console.log(`✅ Payment tracked for invoice ${invoiceId}`);
     } catch (error) {
-      console.error('❌ Payment tracking failed:', error);
       throw new Error(`Payment tracking failed: ${error.message}`);
     }
   }
@@ -770,7 +743,6 @@ class AutomatedInvoiceGenerator {
           throw new Error('Unsupported payment method');
       }
     } catch (error) {
-      console.error('❌ Payment link generation failed:', error);
       throw new Error(`Payment link generation failed: ${error.message}`);
     }
   }
@@ -915,7 +887,6 @@ class AutomatedInvoiceGenerator {
         monthlyTrends,
       };
     } catch (error) {
-      console.error('❌ Failed to get invoice analytics:', error);
       throw new Error(`Analytics generation failed: ${error.message}`);
     }
   }
@@ -972,20 +943,11 @@ class AutomatedInvoiceGenerator {
     }
   }
 
-  private async validateNFSeIntegration(): Promise<void> {
-    // Validate NFSe configuration and connectivity
-    console.log('Validating NFSe integration...');
-  }
+  private async validateNFSeIntegration(): Promise<void> {}
 
-  private async setupPaymentIntegration(): Promise<void> {
-    // Setup payment gateway integration
-    console.log('Setting up payment integration...');
-  }
+  private async setupPaymentIntegration(): Promise<void> {}
 
-  private async setupAutoGenerationTriggers(): Promise<void> {
-    // Setup database triggers for auto-generation
-    console.log('Setting up auto-generation triggers...');
-  }
+  private async setupAutoGenerationTriggers(): Promise<void> {}
 
   private async getAppointmentData(appointmentId: string): Promise<any> {
     const { data } = await this.supabase
@@ -1254,12 +1216,9 @@ class AutomatedInvoiceGenerator {
   }
 
   private async sendPaymentConfirmation(
-    invoice: InvoiceData,
+    _invoice: InvoiceData,
     _payment: any
-  ): Promise<void> {
-    // Implementation for payment confirmation email/SMS
-    console.log(`Sending payment confirmation for invoice ${invoice.number}`);
-  }
+  ): Promise<void> {}
 
   private async generatePixCode(invoice: InvoiceData): Promise<string> {
     // Generate PIX payment code

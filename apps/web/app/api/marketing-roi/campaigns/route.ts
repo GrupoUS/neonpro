@@ -123,8 +123,6 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(campaigns);
   } catch (error: any) {
-    console.error('[Marketing ROI API] GET campaigns:', error);
-
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Validation error', details: error.errors },
@@ -164,8 +162,6 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(campaign, { status: 201 });
   } catch (error: any) {
-    console.error('[Marketing ROI API] POST campaigns:', error);
-
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Validation error', details: error.errors },

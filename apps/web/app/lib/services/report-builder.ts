@@ -723,10 +723,7 @@ export class ReportBuilderService {
           },
         ]);
       }
-    } catch (error) {
-      // Silently fail usage tracking to not affect main functionality
-      console.error('Failed to track usage:', error);
-    }
+    } catch (_error) {}
   }
 
   async getReportAnalytics(reportId: string): Promise<ReportAnalyticsResponse> {

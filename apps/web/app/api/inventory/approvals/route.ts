@@ -43,7 +43,6 @@ export async function GET(request: NextRequest) {
     });
 
     if (error) {
-      console.error('Error fetching approvals:', error);
       return NextResponse.json(
         { error: 'Failed to fetch approvals' },
         { status: 500 }
@@ -51,8 +50,7 @@ export async function GET(request: NextRequest) {
     }
 
     return NextResponse.json({ approvals });
-  } catch (error) {
-    console.error('Error in approvals GET:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -82,8 +80,6 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ approval });
   } catch (error) {
-    console.error('Error creating approval:', error);
-
     if (error instanceof Error && error.name === 'ZodError') {
       return NextResponse.json(
         { error: 'Invalid approval data' },

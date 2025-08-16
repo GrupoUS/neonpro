@@ -119,8 +119,7 @@ export async function GET(request: NextRequest) {
           { status: 400 }
         );
     }
-  } catch (error) {
-    console.error('Trial management GET error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -175,7 +174,6 @@ export async function POST(request: NextRequest) {
         );
     }
   } catch (error) {
-    console.error('Trial management POST error:', error);
 
     if (error instanceof z.ZodError) {
       return NextResponse.json(
@@ -272,7 +270,6 @@ export async function PUT(request: NextRequest) {
       .single();
 
     if (error) {
-      console.error('Trial update error:', error);
       return NextResponse.json(
         { error: 'Failed to update trial' },
         { status: 500 }
@@ -295,7 +292,6 @@ export async function PUT(request: NextRequest) {
       message: 'Trial updated successfully',
     });
   } catch (error) {
-    console.error('Trial update API error:', error);
 
     if (error instanceof z.ZodError) {
       return NextResponse.json(
@@ -459,7 +455,6 @@ async function createTrial(body: any, userId: string, userRole: string | null) {
     .single();
 
   if (error) {
-    console.error('Trial creation error:', error);
     return NextResponse.json(
       { error: 'Failed to create trial' },
       { status: 500 }
@@ -499,7 +494,6 @@ async function createCampaign(body: any, userId: string) {
     .single();
 
   if (error) {
-    console.error('Campaign creation error:', error);
     return NextResponse.json(
       { error: 'Failed to create campaign' },
       { status: 500 }
@@ -531,7 +525,6 @@ async function triggerAIOptimization(body: any, userId: string) {
     .single();
 
   if (error) {
-    console.error('AI optimization trigger error:', error);
     return NextResponse.json(
       { error: 'Failed to trigger AI optimization' },
       { status: 500 }

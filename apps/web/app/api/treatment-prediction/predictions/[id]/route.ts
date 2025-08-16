@@ -4,9 +4,9 @@ import { type NextRequest, NextResponse } from 'next/server';
 import { TreatmentPredictionService } from '@/app/lib/services/treatment-prediction';
 import { createServerClient } from '@/app/utils/supabase/server';
 
-interface RouteParams {
+type RouteParams = {
   params: { id: string };
-}
+};
 
 // PUT /api/treatment-prediction/predictions/[id] - Update prediction outcome
 export async function PUT(request: NextRequest, { params }: RouteParams) {
@@ -67,8 +67,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       prediction: updatedPrediction,
       message: 'Prediction outcome updated successfully',
     });
-  } catch (error) {
-    console.error('Error updating prediction outcome:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to update prediction outcome' },
       { status: 500 }

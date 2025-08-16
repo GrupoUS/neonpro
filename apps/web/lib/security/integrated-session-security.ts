@@ -12,7 +12,7 @@ import {
 } from './session-hijacking-protection';
 import { SessionTimeoutManager } from './session-timeout-manager';
 
-export interface SecurityConfig {
+export type SecurityConfig = {
   csrf: {
     enabled: boolean;
     strictMode: boolean;
@@ -38,9 +38,9 @@ export interface SecurityConfig {
     requestsPerMinute: number;
     burstLimit: number;
   };
-}
+};
 
-export interface SecurityCheckResult {
+export type SecurityCheckResult = {
   allowed: boolean;
   action: 'allow' | 'challenge' | 'block' | 'terminate';
   reason?: string;
@@ -48,9 +48,9 @@ export interface SecurityCheckResult {
   csrfToken?: string;
   warnings?: string[];
   riskScore: number;
-}
+};
 
-export interface SessionSecurityContext {
+export type SessionSecurityContext = {
   sessionId: string;
   userId: string;
   fingerprint: SessionFingerprint;
@@ -58,7 +58,7 @@ export interface SessionSecurityContext {
   lastActivity: number;
   riskScore: number;
   requiresReauth: boolean;
-}
+};
 
 /**
  * Integrated Session Security Manager
@@ -159,8 +159,7 @@ export class IntegratedSessionSecurity {
       );
 
       return true;
-    } catch (error) {
-      console.error('Failed to initialize session security:', error);
+    } catch (_error) {
       return false;
     }
   }
@@ -298,8 +297,7 @@ export class IntegratedSessionSecurity {
         csrfToken,
         warnings: warnings.length > 0 ? warnings : undefined,
       };
-    } catch (error) {
-      console.error('Security check failed:', error);
+    } catch (_error) {
       return {
         allowed: false,
         action: 'block',
@@ -420,8 +418,7 @@ export class IntegratedSessionSecurity {
         riskScore: requiresReauth ? 10 : 0,
         requiresReauth,
       };
-    } catch (error) {
-      console.error('Failed to get session security context:', error);
+    } catch (_error) {
       return null;
     }
   }
@@ -441,9 +438,7 @@ export class IntegratedSessionSecurity {
         config,
         created_at: new Date().toISOString(),
       });
-    } catch (error) {
-      console.error('Failed to store security config:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -462,8 +457,7 @@ export class IntegratedSessionSecurity {
         .single();
 
       return data?.config || IntegratedSessionSecurity.DEFAULT_CONFIG;
-    } catch (error) {
-      console.error('Failed to get security config:', error);
+    } catch (_error) {
       return IntegratedSessionSecurity.DEFAULT_CONFIG;
     }
   }
@@ -486,9 +480,7 @@ export class IntegratedSessionSecurity {
         .from('security_events')
         .delete()
         .lt('timestamp', ninetyDaysAgo);
-    } catch (error) {
-      console.error('Failed to cleanup security data:', error);
-    }
+    } catch (_error) {}
   }
 }
 

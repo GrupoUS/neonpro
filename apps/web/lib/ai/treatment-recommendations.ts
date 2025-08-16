@@ -20,7 +20,7 @@ import type {
 import type { RiskAssessment } from './risk-assessment';
 
 // Treatment Recommendation Types
-export interface TreatmentRecommendation {
+export type TreatmentRecommendation = {
   id: string;
   treatment_name: string;
   treatment_type: 'aesthetic' | 'wellness' | 'medical' | 'preventive';
@@ -35,17 +35,17 @@ export interface TreatmentRecommendation {
   estimated_duration: string;
   recovery_time: string;
   alternative_treatments: string[];
-}
+};
 
-export interface ExpectedOutcome {
+export type ExpectedOutcome = {
   outcome_type: 'improvement' | 'maintenance' | 'prevention';
   description: string;
   probability: number;
   timeframe: string;
   measurable_metrics: string[];
-}
+};
 
-export interface TreatmentProtocol {
+export type TreatmentProtocol = {
   id: string;
   name: string;
   steps: ProtocolStep[];
@@ -53,34 +53,34 @@ export interface TreatmentProtocol {
   success_rate: number;
   patient_suitability_score: number;
   customizations: ProtocolCustomization[];
-}
+};
 
-export interface ProtocolStep {
+export type ProtocolStep = {
   step_number: number;
   description: string;
   duration: string;
   required_equipment: string[];
   precautions: string[];
   expected_results: string;
-}
+};
 
-export interface ProtocolCustomization {
+export type ProtocolCustomization = {
   parameter: string;
   standard_value: any;
   recommended_value: any;
   reason: string;
-}
+};
 
-export interface TreatmentCombination {
+export type TreatmentCombination = {
   primary_treatment: string;
   complementary_treatments: string[];
   synergy_score: number;
   combined_success_rate: number;
   interaction_warnings: string[];
   optimal_sequencing: string[];
-}
+};
 
-export interface EvidenceSource {
+export type EvidenceSource = {
   source_type: 'clinical_trial' | 'meta_analysis' | 'case_study' | 'guideline';
   title: string;
   authors: string;
@@ -88,7 +88,7 @@ export interface EvidenceSource {
   sample_size?: number;
   confidence_level: number;
   relevance_score: number;
-}
+};
 
 /**
  * AI Treatment Recommendation Engine
@@ -150,8 +150,7 @@ export class AITreatmentRecommendationEngine {
       return recommendations.sort(
         (a, b) => b.recommendation_score - a.recommendation_score
       );
-    } catch (error) {
-      console.error('Treatment recommendation generation failed:', error);
+    } catch (_error) {
       throw new Error('Failed to generate treatment recommendations');
     }
   }
@@ -590,20 +589,11 @@ export class AITreatmentRecommendationEngine {
     });
   }
 
-  private initializeProtocolDatabase(): void {
-    // Initialize with sample protocols
-    console.log('Initializing treatment protocols...');
-  }
+  private initializeProtocolDatabase(): void {}
 
-  private loadEvidenceDatabase(): void {
-    // Load evidence sources
-    console.log('Loading evidence database...');
-  }
+  private loadEvidenceDatabase(): void {}
 
-  private loadSuccessRateModels(): void {
-    // Load ML models for success rate prediction
-    console.log('Loading success rate prediction models...');
-  }
+  private loadSuccessRateModels(): void {}
 
   // Additional utility methods would be implemented here...
   private getBaselineSuccessRate(treatmentId: string): number {

@@ -10,7 +10,7 @@ import { logger } from '@/lib/utils/logger';
 import { PaymentProcessor } from '../payment-processor';
 
 // Types and Interfaces
-export interface SubscriptionPlan {
+export type SubscriptionPlan = {
   id: string;
   name: string;
   description: string;
@@ -23,9 +23,9 @@ export interface SubscriptionPlan {
   stripe_product_id?: string;
   stripe_price_id?: string;
   metadata?: Record<string, any>;
-}
+};
 
-export interface Subscription {
+export type Subscription = {
   id: string;
   customer_id: string;
   plan_id: string;
@@ -44,9 +44,9 @@ export interface Subscription {
   canceled_at?: Date;
   stripe_subscription_id?: string;
   metadata?: Record<string, any>;
-}
+};
 
-export interface SubscriptionUsage {
+export type SubscriptionUsage = {
   id: string;
   subscription_id: string;
   usage_type: string;
@@ -54,17 +54,17 @@ export interface SubscriptionUsage {
   usage_limit?: number;
   period_start: Date;
   period_end: Date;
-}
+};
 
-export interface BillingEvent {
+export type BillingEvent = {
   id: string;
   subscription_id: string;
   event_type: string;
   event_data: Record<string, any>;
   created_at: Date;
-}
+};
 
-export interface ProrationCalculation {
+export type ProrationCalculation = {
   id: string;
   subscription_id: string;
   old_plan_id?: string;
@@ -75,9 +75,9 @@ export interface ProrationCalculation {
   days_total: number;
   proration_factor: number;
   effective_date: Date;
-}
+};
 
-export interface SubscriptionMetrics {
+export type SubscriptionMetrics = {
   total_subscriptions: number;
   active_subscriptions: number;
   churned_subscriptions: number;
@@ -86,29 +86,29 @@ export interface SubscriptionMetrics {
   mrr: number; // Monthly Recurring Revenue
   arr: number; // Annual Recurring Revenue
   churn_rate_30d: number;
-}
+};
 
-export interface CreateSubscriptionParams {
+export type CreateSubscriptionParams = {
   customer_id: string;
   plan_id: string;
   payment_method_id?: string;
   trial_days?: number;
   metadata?: Record<string, any>;
   proration_behavior?: 'create_prorations' | 'none';
-}
+};
 
-export interface UpdateSubscriptionParams {
+export type UpdateSubscriptionParams = {
   plan_id?: string;
   cancel_at_period_end?: boolean;
   metadata?: Record<string, any>;
   proration_behavior?: 'create_prorations' | 'none' | 'always_invoice';
-}
+};
 
-export interface PaymentRetryConfig {
+export type PaymentRetryConfig = {
   max_attempts: number;
   retry_intervals: number[]; // in hours
   notification_triggers: number[]; // attempt numbers to send notifications
-}
+};
 
 // Main Subscription Manager Class
 export class SubscriptionManager {

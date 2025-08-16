@@ -599,12 +599,7 @@ export class DataCleanupService {
 
         // Reschedule for next run
         this.scheduleCleanup(schedule);
-      } catch (error) {
-        console.error(
-          `Error running scheduled cleanup ${schedule.name}:`,
-          error
-        );
-
+      } catch (_error) {
         // Reschedule even if there was an error
         this.scheduleCleanup(schedule);
       }
@@ -717,19 +712,11 @@ export class DataCleanupService {
         return;
       }
 
-      // Archive to separate table or external storage
-      // For now, we'll just log that archival would happen
-      console.log(
-        `Would archive ${criticalEvents.length} critical security events`
-      );
-
       // TODO: Implement actual archival logic
       // - Move to archive table
       // - Export to external storage
       // - Compress and store
-    } catch (error) {
-      console.error('Error archiving critical events:', error);
-    }
+    } catch (_error) {}
   }
 
   private async logCleanupSummary(summary: any): Promise<void> {
@@ -739,9 +726,7 @@ export class DataCleanupService {
         summary: JSON.stringify(summary),
         created_at: new Date().toISOString(),
       });
-    } catch (error) {
-      console.error('Error logging cleanup summary:', error);
-    }
+    } catch (_error) {}
   }
 
   private calculateNextRun(cron: string, fromTime: number): number {

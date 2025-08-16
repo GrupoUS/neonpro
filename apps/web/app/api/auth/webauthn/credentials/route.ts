@@ -35,8 +35,7 @@ export async function GET(_request: NextRequest) {
       success: true,
       credentials,
     });
-  } catch (error) {
-    console.error('Failed to fetch WebAuthn credentials:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to fetch credentials' },
       { status: 500 }

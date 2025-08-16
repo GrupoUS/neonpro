@@ -12,7 +12,7 @@ import type {
   TimeSeriesData,
 } from '@/lib/types/financial-reporting';
 
-export interface RevenueAnalysisFilters {
+export type RevenueAnalysisFilters = {
   clinicId: string;
   dateRange: {
     start: Date;
@@ -22,9 +22,9 @@ export interface RevenueAnalysisFilters {
   providerIds?: string[];
   locationIds?: string[];
   includeForecasting?: boolean;
-}
+};
 
-export interface ServiceRevenueData {
+export type ServiceRevenueData = {
   serviceId: string;
   serviceName: string;
   category: string;
@@ -35,9 +35,9 @@ export interface ServiceRevenueData {
   profitMargin: number;
   growthRate: number;
   seasonalIndex: number;
-}
+};
 
-export interface ProviderRevenueData {
+export type ProviderRevenueData = {
   providerId: string;
   providerName: string;
   specialization: string;
@@ -47,9 +47,9 @@ export interface ProviderRevenueData {
   utilizationRate: number;
   conversionRate: number;
   growthTrend: number;
-}
+};
 
-export interface PatientLTVData {
+export type PatientLTVData = {
   patientId: string;
   totalLifetimeValue: number;
   averageVisitValue: number;
@@ -58,7 +58,7 @@ export interface PatientLTVData {
   churnRisk: number;
   nextVisitProbability: number;
   recommendedActions: string[];
-}
+};
 
 export class RevenueAnalyticsEngine {
   private readonly supabase = createClient();

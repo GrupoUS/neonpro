@@ -6,13 +6,13 @@
 import { type NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/app/utils/supabase/server';
 
-interface HealthCheck {
+type HealthCheck = {
   service: string;
   status: 'healthy' | 'unhealthy' | 'degraded';
   responseTime?: number;
   error?: string;
   details?: any;
-}
+};
 
 /**
  * Check database connectivity
@@ -239,8 +239,6 @@ export async function GET(_request: NextRequest) {
 
     return NextResponse.json(response, { status: statusCode });
   } catch (error) {
-    console.error('Health check error:', error);
-
     return NextResponse.json(
       {
         status: 'unhealthy',

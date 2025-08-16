@@ -3,26 +3,26 @@
  * Utility functions for performance monitoring and analysis
  */
 
-export interface PerformanceMetric {
+export type PerformanceMetric = {
   name: string;
   value: number;
   timestamp: number;
   tags?: Record<string, string>;
-}
+};
 
-export interface PerformanceThreshold {
+export type PerformanceThreshold = {
   metric: string;
   warning: number;
   critical: number;
-}
+};
 
-export interface PerformanceAlert {
+export type PerformanceAlert = {
   metric: string;
   value: number;
   threshold: number;
   severity: 'warning' | 'critical';
   timestamp: number;
-}
+};
 
 export class PerformanceMonitorUtils {
   private readonly thresholds: Map<string, PerformanceThreshold> = new Map();

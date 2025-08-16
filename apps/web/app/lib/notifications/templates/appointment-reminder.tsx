@@ -18,7 +18,7 @@ import {
   Text,
 } from '@react-email/components';
 
-interface AppointmentReminderEmailProps {
+type AppointmentReminderEmailProps = {
   patientName: string;
   appointmentDate: string;
   appointmentTime: string;
@@ -31,7 +31,7 @@ interface AppointmentReminderEmailProps {
   rescheduleLink?: string;
   confirmationLink?: string;
   timezone: string;
-}
+};
 
 export const AppointmentReminderEmail = ({
   patientName = 'Patient',

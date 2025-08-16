@@ -20,16 +20,16 @@ import type { ChannelProvider } from './index';
 // INTERFACES
 // ============================================================================
 
-interface InAppConfig {
+type InAppConfig = {
   websocketUrl?: string;
   enableRealTime: boolean;
   maxNotifications: number;
   autoMarkAsRead: boolean;
   soundEnabled: boolean;
   persistNotifications: boolean;
-}
+};
 
-interface InAppContent {
+type InAppContent = {
   title: string;
   message: string;
   icon?: string;
@@ -38,9 +38,9 @@ interface InAppContent {
   actionText?: string;
   category?: string;
   metadata?: Record<string, any>;
-}
+};
 
-interface InAppNotification {
+type InAppNotification = {
   id: string;
   userId: string;
   title: string;
@@ -57,13 +57,13 @@ interface InAppNotification {
   createdAt: Date;
   readAt?: Date;
   expiresAt?: Date;
-}
+};
 
-interface WebSocketMessage {
+type WebSocketMessage = {
   type: 'notification' | 'read' | 'archive' | 'delete';
   data: any;
   timestamp: Date;
-}
+};
 
 // ============================================================================
 // IN-APP PROVIDER
@@ -132,30 +132,21 @@ export class InAppProvider implements ChannelProvider {
     try {
       this.websocket = new WebSocket(this.config.websocketUrl);
 
-      this.websocket.onopen = () => {
-        console.log('🔗 WebSocket conectado para notificações in-app');
-      };
+      this.websocket.onopen = () => {};
 
       this.websocket.onmessage = (event) => {
         try {
           const message: WebSocketMessage = JSON.parse(event.data);
           this.handleWebSocketMessage(message);
-        } catch (error) {
-          console.error('Erro ao processar mensagem WebSocket:', error);
-        }
+        } catch (_error) {}
       };
 
       this.websocket.onclose = () => {
-        console.log('🔌 WebSocket desconectado. Tentando reconectar...');
         setTimeout(() => this.initializeWebSocket(), 5000);
       };
 
-      this.websocket.onerror = (error) => {
-        console.error('Erro no WebSocket:', error);
-      };
-    } catch (_error) {
-      console.warn('WebSocket não disponível. Usando modo local.');
-    }
+      this.websocket.onerror = (_error) => {};
+    } catch (_error) {}
   }
 
   /**
@@ -178,9 +169,7 @@ export class InAppProvider implements ChannelProvider {
           ])
         );
       }
-    } catch (error) {
-      console.warn('Erro ao carregar notificações persistidas:', error);
-    }
+    } catch (_error) {}
   }
 
   // ============================================================================
@@ -269,8 +258,6 @@ export class InAppProvider implements ChannelProvider {
         updatedAt: new Date(),
       };
     } catch (error) {
-      console.error('Erro ao enviar notificação in-app:', error);
-
       return {
         id: deliveryId,
         notificationId: context.notificationId || '',
@@ -512,9 +499,7 @@ export class InAppProvider implements ChannelProvider {
       userListeners.forEach((callback) => {
         try {
           callback(notification);
-        } catch (error) {
-          console.error('Erro ao executar listener de notificação:', error);
-        }
+        } catch (_error) {}
       });
     }
   }
@@ -619,9 +604,7 @@ export class InAppProvider implements ChannelProvider {
     try {
       const data = Object.fromEntries(this.notifications.entries());
       localStorage.setItem('neonpro_notifications', JSON.stringify(data));
-    } catch (error) {
-      console.warn('Erro ao persistir notificações:', error);
-    }
+    } catch (_error) {}
   }
 
   /**

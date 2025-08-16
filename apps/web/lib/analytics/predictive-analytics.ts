@@ -41,7 +41,7 @@ export type SeasonalityType =
   | 'none';
 
 // Core Interfaces
-export interface PredictiveModel {
+export type PredictiveModel = {
   id: string;
   name: string;
   type: PredictionType;
@@ -64,30 +64,30 @@ export interface PredictiveModel {
   isActive: boolean;
   parameters: ModelParameters;
   validationResults: ValidationResults;
-}
+};
 
-export interface ModelFeature {
+export type ModelFeature = {
   name: string;
   type: 'numeric' | 'categorical' | 'boolean' | 'date' | 'text';
   importance: number; // 0-1
   description: string;
   preprocessing: PreprocessingStep[];
   validationRules: ValidationRule[];
-}
+};
 
-export interface PreprocessingStep {
+export type PreprocessingStep = {
   type: 'normalize' | 'standardize' | 'encode' | 'impute' | 'transform';
   parameters: Record<string, any>;
   order: number;
-}
+};
 
-export interface ValidationRule {
+export type ValidationRule = {
   type: 'range' | 'required' | 'format' | 'custom';
   parameters: Record<string, any>;
   message: string;
-}
+};
 
-export interface ModelParameters {
+export type ModelParameters = {
   learningRate?: number;
   maxDepth?: number;
   nEstimators?: number;
@@ -96,9 +96,9 @@ export interface ModelParameters {
   testSize: number;
   randomState: number;
   customParameters: Record<string, any>;
-}
+};
 
-export interface TrainingDataInfo {
+export type TrainingDataInfo = {
   totalSamples: number;
   trainingSamples: number;
   validationSamples: number;
@@ -109,9 +109,9 @@ export interface TrainingDataInfo {
   };
   dataQuality: DataQualityMetrics;
   featureDistribution: Record<string, FeatureStats>;
-}
+};
 
-export interface DataQualityMetrics {
+export type DataQualityMetrics = {
   completeness: number; // percentage
   consistency: number; // percentage
   accuracy: number; // percentage
@@ -121,9 +121,9 @@ export interface DataQualityMetrics {
   missingValues: number;
   outliers: number;
   duplicates: number;
-}
+};
 
-export interface FeatureStats {
+export type FeatureStats = {
   name: string;
   type: string;
   count: number;
@@ -136,17 +136,17 @@ export interface FeatureStats {
   median?: number;
   mode?: any;
   distribution: DistributionStats;
-}
+};
 
-export interface DistributionStats {
+export type DistributionStats = {
   type: 'normal' | 'skewed' | 'uniform' | 'bimodal' | 'unknown';
   skewness: number;
   kurtosis: number;
   quartiles: [number, number, number];
   percentiles: Record<number, number>;
-}
+};
 
-export interface ValidationResults {
+export type ValidationResults = {
   accuracy: number;
   precision: number;
   recall: number;
@@ -158,30 +158,30 @@ export interface ValidationResults {
   featureImportance: Record<string, number>;
   crossValidationScores: number[];
   validationDate: string;
-}
+};
 
-export interface ROCPoint {
+export type ROCPoint = {
   fpr: number; // false positive rate
   tpr: number; // true positive rate
   threshold: number;
-}
+};
 
-export interface PRPoint {
+export type PRPoint = {
   precision: number;
   recall: number;
   threshold: number;
-}
+};
 
-export interface PredictionRequest {
+export type PredictionRequest = {
   modelId: string;
   features: Record<string, any>;
   patientId?: string;
   clinicId: string;
   userId?: string;
   context?: Record<string, any>;
-}
+};
 
-export interface PredictionResult {
+export type PredictionResult = {
   id: string;
   timestamp: string;
   modelId: string;
@@ -192,9 +192,9 @@ export interface PredictionResult {
   explanations: PredictionExplanation[];
   recommendations: Recommendation[];
   metadata: PredictionMetadata;
-}
+};
 
-export interface PredictionValue {
+export type PredictionValue = {
   type: PredictionType;
   value: any;
   unit?: string;
@@ -204,26 +204,26 @@ export interface PredictionValue {
   };
   classification?: string;
   score?: number;
-}
+};
 
-export interface RiskAssessment {
+export type RiskAssessment = {
   level: RiskLevel;
   score: number; // 0-1
   factors: RiskFactor[];
   mitigation: MitigationStrategy[];
   monitoring: MonitoringPlan[];
-}
+};
 
-export interface RiskFactor {
+export type RiskFactor = {
   name: string;
   impact: number; // 0-1
   confidence: number; // 0-1
   description: string;
   category: 'patient' | 'procedure' | 'environment' | 'provider' | 'equipment';
   modifiable: boolean;
-}
+};
 
-export interface MitigationStrategy {
+export type MitigationStrategy = {
   id: string;
   title: string;
   description: string;
@@ -232,9 +232,9 @@ export interface MitigationStrategy {
   timeline: string;
   resources: string[];
   expectedImpact: string;
-}
+};
 
-export interface Action {
+export type Action = {
   id: string;
   title: string;
   description: string;
@@ -242,25 +242,25 @@ export interface Action {
   responsible: string;
   deadline?: string;
   completed: boolean;
-}
+};
 
-export interface MonitoringPlan {
+export type MonitoringPlan = {
   metric: string;
   frequency: 'continuous' | 'hourly' | 'daily' | 'weekly' | 'monthly';
   threshold: number;
   action: string;
   automated: boolean;
-}
+};
 
-export interface PredictionExplanation {
+export type PredictionExplanation = {
   feature: string;
   contribution: number; // -1 to 1
   value: any;
   interpretation: string;
   confidence: number;
-}
+};
 
-export interface Recommendation {
+export type Recommendation = {
   id: string;
   type: 'preventive' | 'corrective' | 'optimization' | 'monitoring';
   title: string;
@@ -272,9 +272,9 @@ export interface Recommendation {
   expectedOutcome: string;
   evidence: Evidence[];
   applicability: number; // 0-1
-}
+};
 
-export interface Evidence {
+export type Evidence = {
   type:
     | 'research'
     | 'clinical_trial'
@@ -286,9 +286,9 @@ export interface Evidence {
   relevance: number; // 0-1
   description: string;
   url?: string;
-}
+};
 
-export interface PredictionMetadata {
+export type PredictionMetadata = {
   patientId?: string;
   clinicId: string;
   userId?: string;
@@ -298,27 +298,27 @@ export interface PredictionMetadata {
   dataVersion: string;
   validUntil?: string;
   feedback?: PredictionFeedback;
-}
+};
 
-export interface PredictionFeedback {
+export type PredictionFeedback = {
   actualOutcome?: any;
   accuracy: number;
   useful: boolean;
   comments?: string;
   providedBy: string;
   timestamp: string;
-}
+};
 
-export interface ForecastRequest {
+export type ForecastRequest = {
   type: PredictionType;
   horizon: number; // days
   granularity: 'hour' | 'day' | 'week' | 'month';
   features: Record<string, any>;
   clinicId: string;
   confidence?: number;
-}
+};
 
-export interface ForecastResult {
+export type ForecastResult = {
   id: string;
   timestamp: string;
   request: ForecastRequest;
@@ -328,9 +328,9 @@ export interface ForecastResult {
   confidence: ModelConfidence;
   accuracy: number;
   metadata: ForecastMetadata;
-}
+};
 
-export interface ForecastPoint {
+export type ForecastPoint = {
   timestamp: string;
   value: number;
   lower: number; // confidence interval
@@ -338,64 +338,64 @@ export interface ForecastPoint {
   trend: number;
   seasonal: number;
   residual: number;
-}
+};
 
-export interface TrendAnalysis {
+export type TrendAnalysis = {
   direction: TrendDirection;
   strength: number; // 0-1
   changeRate: number;
   significance: number; // 0-1
   inflectionPoints: InflectionPoint[];
   projections: TrendProjection[];
-}
+};
 
-export interface InflectionPoint {
+export type InflectionPoint = {
   timestamp: string;
   value: number;
   type: 'peak' | 'trough' | 'change';
   significance: number;
   description: string;
-}
+};
 
-export interface TrendProjection {
+export type TrendProjection = {
   horizon: number; // days
   value: number;
   confidence: number;
   scenario: 'optimistic' | 'realistic' | 'pessimistic';
-}
+};
 
-export interface SeasonalityAnalysis {
+export type SeasonalityAnalysis = {
   type: SeasonalityType;
   strength: number; // 0-1
   period: number; // days
   patterns: SeasonalPattern[];
   peaks: SeasonalPeak[];
   troughs: SeasonalTrough[];
-}
+};
 
-export interface SeasonalPattern {
+export type SeasonalPattern = {
   type: SeasonalityType;
   amplitude: number;
   phase: number;
   frequency: number;
   strength: number;
-}
+};
 
-export interface SeasonalPeak {
+export type SeasonalPeak = {
   period: string;
   value: number;
   confidence: number;
   historical: boolean;
-}
+};
 
-export interface SeasonalTrough {
+export type SeasonalTrough = {
   period: string;
   value: number;
   confidence: number;
   historical: boolean;
-}
+};
 
-export interface ForecastMetadata {
+export type ForecastMetadata = {
   modelUsed: string;
   dataPoints: number;
   trainingPeriod: {
@@ -405,9 +405,9 @@ export interface ForecastMetadata {
   processingTime: number;
   qualityScore: number;
   warnings: string[];
-}
+};
 
-export interface ModelTrainingRequest {
+export type ModelTrainingRequest = {
   modelType: PredictionType;
   algorithm: string;
   features: string[];
@@ -417,9 +417,9 @@ export interface ModelTrainingRequest {
   validation: ValidationConfig;
   clinicId: string;
   userId: string;
-}
+};
 
-export interface TrainingDataRequest {
+export type TrainingDataRequest = {
   source: 'database' | 'file' | 'api';
   query?: string;
   filters: Record<string, any>;
@@ -429,17 +429,17 @@ export interface TrainingDataRequest {
   };
   sampleSize?: number;
   stratify?: string;
-}
+};
 
-export interface ValidationConfig {
+export type ValidationConfig = {
   method: 'holdout' | 'cross_validation' | 'time_series_split';
   testSize: number;
   folds?: number;
   metrics: string[];
   thresholds: Record<string, number>;
-}
+};
 
-export interface ModelTrainingResult {
+export type ModelTrainingResult = {
   id: string;
   timestamp: string;
   request: ModelTrainingRequest;
@@ -448,17 +448,17 @@ export interface ModelTrainingResult {
   artifacts: TrainingArtifacts;
   status: 'training' | 'completed' | 'failed' | 'cancelled';
   error?: string;
-}
+};
 
-export interface ModelPerformance {
+export type ModelPerformance = {
   training: PerformanceMetrics;
   validation: PerformanceMetrics;
   test: PerformanceMetrics;
   comparison: ModelComparison[];
   benchmarks: BenchmarkResult[];
-}
+};
 
-export interface PerformanceMetrics {
+export type PerformanceMetrics = {
   accuracy: number;
   precision: number;
   recall: number;
@@ -469,34 +469,34 @@ export interface PerformanceMetrics {
   rmse?: number; // root mean squared error
   r2?: number; // r-squared
   customMetrics: Record<string, number>;
-}
+};
 
-export interface ModelComparison {
+export type ModelComparison = {
   modelId: string;
   algorithm: string;
   performance: PerformanceMetrics;
   rank: number;
   improvement: number; // percentage
-}
+};
 
-export interface BenchmarkResult {
+export type BenchmarkResult = {
   name: string;
   value: number;
   target: number;
   status: 'above' | 'at' | 'below';
   percentile: number;
-}
+};
 
-export interface TrainingArtifacts {
+export type TrainingArtifacts = {
   modelFile: string;
   featuresFile: string;
   preprocessorFile: string;
   validationReport: string;
   plots: PlotArtifact[];
   logs: string[];
-}
+};
 
-export interface PlotArtifact {
+export type PlotArtifact = {
   type:
     | 'roc_curve'
     | 'precision_recall'
@@ -505,7 +505,7 @@ export interface PlotArtifact {
     | 'learning_curve';
   path: string;
   description: string;
-}
+};
 
 // Main Predictive Analytics Engine
 export class PredictiveAnalyticsEngine {
@@ -1505,7 +1505,7 @@ export class PredictiveAnalyticsEngine {
 }
 
 // Additional interfaces for comprehensive analytics
-export interface PredictionInsights {
+export type PredictionInsights = {
   totalPredictions: number;
   accuracyMetrics: Record<string, number>;
   modelPerformance: Record<string, number>;
@@ -1515,7 +1515,7 @@ export interface PredictionInsights {
   topFeatures: string[];
   modelDrift: Record<string, number>;
   businessImpact: Record<string, number>;
-}
+};
 
 // Validation schemas
 export const PredictionRequestSchema = z.object({

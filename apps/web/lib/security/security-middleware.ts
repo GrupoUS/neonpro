@@ -137,9 +137,7 @@ export async function intelligentSecurityMiddleware(
     }
 
     return response;
-  } catch (error) {
-    console.error('Security middleware error:', error);
-
+  } catch (_error) {
     // Fail-safe: allow request but log error
     const response = NextResponse.next();
     performanceMonitor.recordAPIPerformance({

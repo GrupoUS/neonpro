@@ -28,13 +28,13 @@ import type {
  * - Exa: Policy enforcement UI patterns (24-48h rules)
  */
 
-interface UpcomingAppointmentsProps {
+type UpcomingAppointmentsProps = {
   appointments: PatientAppointment[];
   onCancel: (appointmentId: string) => void;
   onReschedule: (appointmentId: string) => void;
   onView: (appointmentId: string) => void;
   cancellationPolicies: CancellationPolicies | null;
-}
+};
 
 export function UpcomingAppointments({
   appointments,

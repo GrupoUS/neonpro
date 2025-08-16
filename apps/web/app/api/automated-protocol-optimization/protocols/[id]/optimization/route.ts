@@ -30,7 +30,6 @@ export async function GET(
       data: optimizationAnalysis,
     });
   } catch (error) {
-    console.error('Error fetching protocol optimization analysis:', error);
     return NextResponse.json(
       {
         success: false,

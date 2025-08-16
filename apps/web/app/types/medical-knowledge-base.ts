@@ -2,7 +2,7 @@
 // Story 9.5: Comprehensive medical knowledge management system
 
 // Base medical knowledge interfaces
-export interface KnowledgeSource {
+export type KnowledgeSource = {
   id: string;
   source_name: string;
   source_type:
@@ -21,9 +21,9 @@ export interface KnowledgeSource {
   created_at: string;
   updated_at: string;
   created_by?: string;
-}
+};
 
-export interface MedicalKnowledge {
+export type MedicalKnowledge = {
   id: string;
   knowledge_type:
     | 'guideline'
@@ -45,9 +45,9 @@ export interface MedicalKnowledge {
   language: string;
   created_at: string;
   updated_at: string;
-}
+};
 
-export interface ResearchCache {
+export type ResearchCache = {
   id: string;
   search_query: string;
   search_parameters?: Record<string, any>;
@@ -58,9 +58,9 @@ export interface ResearchCache {
   relevance_score?: number;
   result_count?: number;
   search_user_id?: string;
-}
+};
 
-export interface ValidationResult {
+export type ValidationResult = {
   id: string;
   recommendation_id?: string;
   recommendation_type?: string;
@@ -78,9 +78,9 @@ export interface ValidationResult {
   validation_date: string;
   validator_id?: string;
   automated: boolean;
-}
+};
 
-export interface DrugInformation {
+export type DrugInformation = {
   id: string;
   drug_name: string;
   generic_name?: string;
@@ -97,9 +97,9 @@ export interface DrugInformation {
   controlled_substance_schedule?: string;
   source_id?: string;
   last_updated: string;
-}
+};
 
-export interface DrugInteraction {
+export type DrugInteraction = {
   id: string;
   drug_1_id: string;
   drug_2_id: string;
@@ -110,9 +110,9 @@ export interface DrugInteraction {
   management_strategy?: string;
   evidence_level?: string;
   source_id?: string;
-}
+};
 
-export interface MedicalGuideline {
+export type MedicalGuideline = {
   id: string;
   guideline_title: string;
   organization?: string;
@@ -127,9 +127,9 @@ export interface MedicalGuideline {
   implementation_notes?: string;
   source_id?: string;
   status: 'current' | 'superseded' | 'withdrawn' | 'draft';
-}
+};
 
-export interface KnowledgeSearchIndex {
+export type KnowledgeSearchIndex = {
   id: string;
   content_id: string;
   content_type: 'knowledge' | 'drug' | 'guideline';
@@ -137,9 +137,9 @@ export interface KnowledgeSearchIndex {
   medical_terms?: string[];
   concepts?: string[];
   last_indexed: string;
-}
+};
 
-export interface KnowledgeAuditLog {
+export type KnowledgeAuditLog = {
   id: string;
   table_name: string;
   record_id: string;
@@ -148,10 +148,10 @@ export interface KnowledgeAuditLog {
   new_values?: Record<string, any>;
   changed_by?: string;
   changed_at: string;
-}
+};
 
 // Search and query interfaces
-export interface MedicalSearchQuery {
+export type MedicalSearchQuery = {
   query: string;
   filters?: {
     knowledge_type?: string[];
@@ -171,9 +171,9 @@ export interface MedicalSearchQuery {
     field: string;
     direction: 'asc' | 'desc';
   };
-}
+};
 
-export interface MedicalSearchResult {
+export type MedicalSearchResult = {
   results: MedicalKnowledge[];
   total_count: number;
   page: number;
@@ -184,24 +184,24 @@ export interface MedicalSearchResult {
     relevance_scores: number[];
     filters_applied: Record<string, any>;
   };
-}
+};
 
-export interface DrugSearchQuery {
+export type DrugSearchQuery = {
   drug_name?: string;
   generic_name?: string;
   drug_class?: string;
   indication?: string;
   interaction_check?: string[]; // Drug IDs to check interactions
-}
+};
 
-export interface DrugSearchResult {
+export type DrugSearchResult = {
   drugs: DrugInformation[];
   interactions?: DrugInteraction[];
   total_count: number;
-}
+};
 
 // Evidence validation interfaces
-export interface EvidenceValidationRequest {
+export type EvidenceValidationRequest = {
   recommendation_id: string;
   recommendation_type: string;
   recommendation_content: Record<string, any>;
@@ -211,9 +211,9 @@ export interface EvidenceValidationRequest {
     recent_only?: boolean;
     max_age_months?: number;
   };
-}
+};
 
-export interface EvidenceValidationResponse {
+export type EvidenceValidationResponse = {
   validation_id: string;
   overall_status:
     | 'validated'
@@ -235,10 +235,10 @@ export interface EvidenceValidationResponse {
     suggested_modifications?: string[];
   };
   human_review_required: boolean;
-}
+};
 
 // Knowledge base integration interfaces
-export interface KnowledgeIntegrationConfig {
+export type KnowledgeIntegrationConfig = {
   source_id: string;
   api_settings: {
     base_url: string;
@@ -262,9 +262,9 @@ export interface KnowledgeIntegrationConfig {
     date_field?: string;
     evidence_field?: string;
   };
-}
+};
 
-export interface SyncStatus {
+export type SyncStatus = {
   source_id: string;
   status: 'idle' | 'syncing' | 'error' | 'completed';
   last_sync: string;
@@ -273,10 +273,10 @@ export interface SyncStatus {
   errors_encountered: number;
   sync_duration_ms: number;
   error_details?: string[];
-}
+};
 
 // Dashboard and UI interfaces
-export interface KnowledgeBaseDashboard {
+export type KnowledgeBaseDashboard = {
   overview: {
     total_sources: number;
     active_sources: number;
@@ -304,9 +304,9 @@ export interface KnowledgeBaseDashboard {
     priority: 'high' | 'medium' | 'low';
     created_at: string;
   }[];
-}
+};
 
-export interface KnowledgeBaseSettings {
+export type KnowledgeBaseSettings = {
   search_settings: {
     default_result_limit: number;
     relevance_threshold: number;
@@ -325,25 +325,25 @@ export interface KnowledgeBaseSettings {
     retry_failed_syncs: boolean;
     notification_preferences: string[];
   };
-}
+};
 
 // API request/response types
-export interface CreateKnowledgeSourceRequest {
+export type CreateKnowledgeSourceRequest = {
   source_name: string;
   source_type: KnowledgeSource['source_type'];
   api_endpoint?: string;
   configuration?: Record<string, any>;
-}
+};
 
-export interface UpdateKnowledgeSourceRequest {
+export type UpdateKnowledgeSourceRequest = {
   source_name?: string;
   api_endpoint?: string;
   sync_frequency?: number;
   status?: KnowledgeSource['status'];
   configuration?: Record<string, any>;
-}
+};
 
-export interface CreateMedicalKnowledgeRequest {
+export type CreateMedicalKnowledgeRequest = {
   knowledge_type: MedicalKnowledge['knowledge_type'];
   title: string;
   content_data: Record<string, any>;
@@ -354,9 +354,9 @@ export interface CreateMedicalKnowledgeRequest {
   quality_score?: number;
   medical_categories?: string[];
   keywords?: string[];
-}
+};
 
-export interface ValidateRecommendationRequest {
+export type ValidateRecommendationRequest = {
   recommendation: {
     type: string;
     content: Record<string, any>;
@@ -367,15 +367,15 @@ export interface ValidateRecommendationRequest {
     require_guidelines?: boolean;
     max_age_months?: number;
   };
-}
+};
 
 // Error types
-export interface KnowledgeBaseError {
+export type KnowledgeBaseError = {
   code: string;
   message: string;
   details?: Record<string, any>;
   source?: string;
-}
+};
 
 // Export types for external use
 export type KnowledgeSourceType = KnowledgeSource['source_type'];

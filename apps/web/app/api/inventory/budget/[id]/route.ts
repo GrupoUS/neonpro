@@ -3,11 +3,11 @@ import { BudgetApprovalService } from '@/app/lib/services/budget-approval-servic
 import { budgetSchema } from '@/app/lib/validations/budget-approval';
 import { createClient } from '@/app/utils/supabase/server';
 
-interface Params {
+type Params = {
   params: {
     id: string;
   };
-}
+};
 
 export async function GET(_request: NextRequest, { params }: Params) {
   try {
@@ -28,8 +28,7 @@ export async function GET(_request: NextRequest, { params }: Params) {
     }
 
     return NextResponse.json({ budget });
-  } catch (error) {
-    console.error('Error fetching budget:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to fetch budget' },
       { status: 500 }
@@ -71,8 +70,6 @@ export async function PATCH(request: NextRequest, { params }: Params) {
 
     return NextResponse.json({ budget });
   } catch (error) {
-    console.error('Error updating budget:', error);
-
     if (error instanceof Error && error.name === 'ZodError') {
       return NextResponse.json(
         { error: 'Invalid update data' },
@@ -112,8 +109,7 @@ export async function DELETE(_request: NextRequest, { params }: Params) {
     }
 
     return NextResponse.json({ success: true });
-  } catch (error) {
-    console.error('Error deleting budget:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to delete budget' },
       { status: 500 }

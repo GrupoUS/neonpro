@@ -26,8 +26,7 @@ export async function GET(request: NextRequest) {
       safetyProfile,
       success: true,
     });
-  } catch (error) {
-    console.error('Error fetching safety profile:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to fetch safety profile', success: false },
       { status: 500 }
@@ -72,8 +71,7 @@ export async function PUT(request: NextRequest) {
       safetyProfile,
       success: true,
     });
-  } catch (error) {
-    console.error('Error updating safety profile:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to update safety profile', success: false },
       { status: 500 }

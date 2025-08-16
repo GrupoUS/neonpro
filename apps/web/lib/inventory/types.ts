@@ -45,7 +45,7 @@ export type {
 } from './stock-output-management';
 
 // Main inventory management configuration
-export interface InventoryConfig {
+export type InventoryConfig = {
   stock_output: {
     auto_approval_enabled: boolean;
     auto_approval_limit: number;
@@ -89,10 +89,10 @@ export interface InventoryConfig {
     enable_regulatory_reporting: boolean;
     audit_retention_days: number;
   };
-}
+};
 
 // Dashboard summary types
-export interface InventoryDashboardSummary {
+export type InventoryDashboardSummary = {
   stock_levels: {
     total_products: number;
     low_stock_products: number;
@@ -121,10 +121,10 @@ export interface InventoryDashboardSummary {
     efficiency_score: number;
     potential_savings: number;
   };
-}
+};
 
 // Integrated workflow types
-export interface InventoryWorkflow {
+export type InventoryWorkflow = {
   id: string;
   type: 'stock_request' | 'transfer' | 'fifo_optimization' | 'cost_analysis';
   status: 'pending' | 'in_progress' | 'completed' | 'cancelled';
@@ -135,9 +135,9 @@ export interface InventoryWorkflow {
   completed_at?: Date;
   data: any; // Workflow-specific data
   steps: WorkflowStep[];
-}
+};
 
-export interface WorkflowStep {
+export type WorkflowStep = {
   id: string;
   name: string;
   status: 'pending' | 'in_progress' | 'completed' | 'skipped' | 'failed';
@@ -146,10 +146,10 @@ export interface WorkflowStep {
   completed_at?: Date;
   notes?: string;
   required_approvals?: string[];
-}
+};
 
 // Integration with other systems
-export interface SystemIntegration {
+export type SystemIntegration = {
   erp: {
     enabled: boolean;
     sync_interval_minutes: number;
@@ -177,10 +177,10 @@ export interface SystemIntegration {
     supplier_quality_scores: boolean;
     deviation_tracking: boolean;
   };
-}
+};
 
 // Performance metrics
-export interface InventoryMetrics {
+export type InventoryMetrics = {
   turnover_ratio: number;
   days_sales_outstanding: number;
   fill_rate_percentage: number;
@@ -189,10 +189,10 @@ export interface InventoryMetrics {
   waste_percentage: number;
   fifo_compliance_percentage: number;
   cost_variance_percentage: number;
-}
+};
 
 // Audit and compliance
-export interface InventoryAuditLog {
+export type InventoryAuditLog = {
   id: string;
   table_name: string;
   record_id: string;
@@ -206,7 +206,7 @@ export interface InventoryAuditLog {
   user_agent: string;
   session_id: string;
   compliance_flags: string[];
-}
+};
 
 // Default configuration
 export const DEFAULT_INVENTORY_CONFIG: InventoryConfig = {

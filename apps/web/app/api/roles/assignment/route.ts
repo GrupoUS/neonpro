@@ -91,7 +91,6 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (updateError) {
-      console.error('Erro ao atualizar role:', updateError);
       return NextResponse.json(
         { error: 'Erro ao atribuir nova role' },
         { status: 500 }
@@ -114,7 +113,6 @@ export async function POST(request: NextRequest) {
     });
 
     if (logError) {
-      console.error('Erro ao registrar log de auditoria:', logError);
       // Não falhar a operação por erro de log
     }
 
@@ -128,8 +126,7 @@ export async function POST(request: NextRequest) {
         is_read: false,
         created_at: new Date().toISOString(),
       });
-    } catch (notificationError) {
-      console.error('Erro ao enviar notificação:', notificationError);
+    } catch (_notificationError) {
       // Não falhar a operação por erro de notificação
     }
 
@@ -145,8 +142,7 @@ export async function POST(request: NextRequest) {
       },
       message: `Role alterada de "${old_role}" para "${new_role}" com sucesso`,
     });
-  } catch (error) {
-    console.error('Erro no endpoint de atribuição de role:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
       { status: 500 }
@@ -218,7 +214,6 @@ export async function GET(request: NextRequest) {
       .range(offset, offset + limit - 1);
 
     if (profilesError) {
-      console.error('Erro ao buscar perfis:', profilesError);
       return NextResponse.json(
         { error: 'Erro ao buscar perfis de usuários' },
         { status: 500 }
@@ -251,8 +246,7 @@ export async function GET(request: NextRequest) {
         roles_distribution: stats,
       },
     });
-  } catch (error) {
-    console.error('Erro no endpoint de listagem de roles:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
       { status: 500 }

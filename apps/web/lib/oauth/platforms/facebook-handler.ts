@@ -202,10 +202,7 @@ export class FacebookOAuthHandler extends BaseOAuthHandler {
           }
         );
         pageCount = pagesResponse.data.data?.length || 0;
-      } catch (error) {
-        // Pages access is optional, continue without it
-        console.warn('Could not fetch Facebook pages:', error);
-      }
+      } catch (_error) {}
 
       return {
         id: userData.id,
@@ -270,8 +267,7 @@ export class FacebookOAuthHandler extends BaseOAuthHandler {
       );
 
       return revokeResponse.status === 200;
-    } catch (error) {
-      console.error('Failed to revoke Facebook tokens:', error);
+    } catch (_error) {
       return false;
     }
   }

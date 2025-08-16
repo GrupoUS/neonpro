@@ -16,7 +16,7 @@ import {
   type PrivacySettings,
 } from './lgpd-compliance-manager';
 
-export interface UsePrivacyControlsResult {
+export type UsePrivacyControlsResult = {
   settings: PrivacySettings | null;
   isLoading: boolean;
   error?: string;
@@ -27,7 +27,7 @@ export interface UsePrivacyControlsResult {
   requestDataAccess: () => Promise<void>;
   getDataInventory: () => any[];
   refresh: () => Promise<void>;
-}
+};
 
 export function usePrivacyControls(userId: string): UsePrivacyControlsResult {
   const [settings, setSettings] = useState<PrivacySettings | null>(null);
@@ -47,8 +47,7 @@ export function usePrivacyControls(userId: string): UsePrivacyControlsResult {
       const privacySettings =
         await lgpdComplianceManager.getPrivacySettings(userId);
       setSettings(privacySettings);
-    } catch (err) {
-      console.error('Error loading privacy settings:', err);
+    } catch (_err) {
       setError('Falha ao carregar configurações de privacidade');
     } finally {
       setIsLoading(false);
@@ -76,8 +75,7 @@ export function usePrivacyControls(userId: string): UsePrivacyControlsResult {
           updatedSettings
         );
         setSettings(updatedSettings);
-      } catch (err) {
-        console.error('Error updating consent:', err);
+      } catch (_err) {
         setError('Falha ao atualizar consentimento');
       }
     },
@@ -105,8 +103,7 @@ export function usePrivacyControls(userId: string): UsePrivacyControlsResult {
           updatedSettings
         );
         setSettings(updatedSettings);
-      } catch (err) {
-        console.error('Error updating communication preferences:', err);
+      } catch (_err) {
         setError('Falha ao atualizar preferências de comunicação');
       }
     },
@@ -128,8 +125,7 @@ export function usePrivacyControls(userId: string): UsePrivacyControlsResult {
       alert(
         'Solicitação de exportação de dados enviada. Você receberá um email com os dados em até 30 dias.'
       );
-    } catch (err) {
-      console.error('Error requesting data export:', err);
+    } catch (_err) {
       setError('Falha ao solicitar exportação de dados');
     }
   }, [userId]);
@@ -158,8 +154,7 @@ export function usePrivacyControls(userId: string): UsePrivacyControlsResult {
       alert(
         'Solicitação de exclusão de dados enviada. Entraremos em contato em até 30 dias.'
       );
-    } catch (err) {
-      console.error('Error requesting data deletion:', err);
+    } catch (_err) {
       setError('Falha ao solicitar exclusão de dados');
     }
   }, [userId]);
@@ -178,8 +173,7 @@ export function usePrivacyControls(userId: string): UsePrivacyControlsResult {
       alert(
         'Solicitação de acesso aos dados enviada. Você receberá um relatório em até 30 dias.'
       );
-    } catch (err) {
-      console.error('Error requesting data access:', err);
+    } catch (_err) {
       setError('Falha ao solicitar acesso aos dados');
     }
   }, [userId]);
@@ -232,8 +226,7 @@ export function useConsentManagement(userId: string) {
       const userConsents = allConsents.filter((c) => c.userId === userId);
 
       setConsents(userConsents);
-    } catch (err) {
-      console.error('Error loading consents:', err);
+    } catch (_err) {
     } finally {
       setIsLoading(false);
     }
@@ -253,9 +246,7 @@ export function useConsentManagement(userId: string) {
           true
         );
         setConsents((prev) => [...prev, consent]);
-      } catch (err) {
-        console.error('Error granting consent:', err);
-      }
+      } catch (_err) {}
     },
     [userId]
   );
@@ -274,9 +265,7 @@ export function useConsentManagement(userId: string) {
           false
         );
         setConsents((prev) => [...prev, consent]);
-      } catch (err) {
-        console.error('Error withdrawing consent:', err);
-      }
+      } catch (_err) {}
     },
     [userId]
   );
@@ -315,8 +304,7 @@ export function useDataSubjectRequests(userId: string) {
       const userRequests = allRequests.filter((r) => r.userId === userId);
 
       setRequests(userRequests);
-    } catch (err) {
-      console.error('Error loading data subject requests:', err);
+    } catch (_err) {
     } finally {
       setIsLoading(false);
     }
@@ -327,19 +315,13 @@ export function useDataSubjectRequests(userId: string) {
       if (!userId) {
         return;
       }
-
-      try {
-        const request = await lgpdComplianceManager.processDataSubjectRequest(
-          userId,
-          type,
-          description
-        );
-        setRequests((prev) => [...prev, request]);
-        return request;
-      } catch (err) {
-        console.error('Error submitting data subject request:', err);
-        throw err;
-      }
+      const request = await lgpdComplianceManager.processDataSubjectRequest(
+        userId,
+        type,
+        description
+      );
+      setRequests((prev) => [...prev, request]);
+      return request;
     },
     [userId]
   );

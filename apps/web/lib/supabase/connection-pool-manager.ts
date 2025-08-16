@@ -18,7 +18,7 @@ import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import type { Database } from '@/types/database';
 
 // Healthcare-specific connection pool types
-interface PoolConfiguration {
+type PoolConfiguration = {
   poolSize: number;
   maxConnections: number;
   maxClients: number;
@@ -26,9 +26,9 @@ interface PoolConfiguration {
   connectionTimeout: number;
   queryTimeout: number;
   healthCheckInterval: number;
-}
+};
 
-interface HealthcheckResult {
+type HealthcheckResult = {
   status: 'healthy' | 'degraded' | 'unhealthy';
   connectionCount: number;
   poolUtilization: number;
@@ -39,9 +39,9 @@ interface HealthcheckResult {
     anvisaCompliant: boolean;
     cfmCompliant: boolean;
   };
-}
+};
 
-interface ConnectionMetrics {
+type ConnectionMetrics = {
   totalConnections: number;
   activeConnections: number;
   idleConnections: number;
@@ -49,7 +49,7 @@ interface ConnectionMetrics {
   avgConnectionTime: number;
   peakUsage: number;
   clinicIsolationStatus: 'compliant' | 'violation';
-}
+};
 
 /**
  * Healthcare-optimized pool configurations by clinic size
@@ -164,19 +164,12 @@ export class NeonProConnectionPoolManager {
                 set(name: string, value: string, options: any) {
                   try {
                     cookieStore.set({ name, value, ...options });
-                  } catch (error) {
-                    console.warn('Cookie set error in server pooling:', error);
-                  }
+                  } catch (_error) {}
                 },
                 remove(name: string, options: any) {
                   try {
                     cookieStore.set({ name, value: '', ...options });
-                  } catch (error) {
-                    console.warn(
-                      'Cookie remove error in server pooling:',
-                      error
-                    );
-                  }
+                  } catch (_error) {}
                 },
               },
             }
@@ -184,8 +177,7 @@ export class NeonProConnectionPoolManager {
 
           this.pools.set(poolKey, client);
           this.initializeMetrics(poolKey);
-        } catch (error) {
-          console.error('Error creating server client with cookies:', error);
+        } catch (_error) {
           // Fallback para cliente básico sem cookies
           const fallbackClient = createClient<Database>(
             process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -370,8 +362,6 @@ export class NeonProConnectionPoolManager {
           await this.handlePerformanceDegradation(poolKey, healthCheck);
         }
       } catch (error) {
-        console.error(`Health check failed for pool ${poolKey}:`, error);
-
         const failedHealthCheck: HealthcheckResult = {
           status: 'unhealthy',
           connectionCount: 0,
@@ -428,16 +418,6 @@ export class NeonProConnectionPoolManager {
     poolKey: string,
     healthCheck: HealthcheckResult
   ): Promise<void> {
-    console.error(
-      `🚨 HEALTHCARE COMPLIANCE VIOLATION detected in pool: ${poolKey}`,
-      {
-        lgpd: healthCheck.compliance.lgpdCompliant,
-        anvisa: healthCheck.compliance.anvisaCompliant,
-        cfm: healthCheck.compliance.cfmCompliant,
-        timestamp: new Date().toISOString(),
-      }
-    );
-
     // Immediate isolation for patient safety
     this.isolatePool(poolKey);
 
@@ -450,14 +430,8 @@ export class NeonProConnectionPoolManager {
    */
   private async handlePerformanceDegradation(
     poolKey: string,
-    healthCheck: HealthcheckResult
+    _healthCheck: HealthcheckResult
   ): Promise<void> {
-    console.warn(`⚠️ Performance degradation detected in pool: ${poolKey}`, {
-      responseTime: healthCheck.avgResponseTime,
-      utilization: healthCheck.poolUtilization,
-      status: healthCheck.status,
-    });
-
     // Try to recover the pool
     await this.attemptPoolRecovery(poolKey);
   }
@@ -467,10 +441,8 @@ export class NeonProConnectionPoolManager {
    */
   private async handleConnectionFailure(
     poolKey: string,
-    error: Error
+    _error: Error
   ): Promise<void> {
-    console.error(`❌ Connection failure in pool: ${poolKey}`, error);
-
     const metrics = this.metrics.get(poolKey);
     if (metrics) {
       metrics.failedConnections++;
@@ -504,15 +476,8 @@ export class NeonProConnectionPoolManager {
           clinicId
         );
         this.pools.set(poolKey, newClient);
-
-        console.log(`✅ Pool ${poolKey} recovered after ${attempt} attempts`);
         return;
-      } catch (error) {
-        console.error(
-          `Retry attempt ${attempt} failed for pool ${poolKey}:`,
-          error
-        );
-
+      } catch (_error) {
         if (attempt === maxRetries) {
           // Final failure - isolate the pool
           this.isolatePool(poolKey);
@@ -533,8 +498,6 @@ export class NeonProConnectionPoolManager {
       metrics.clinicIsolationStatus = 'violation';
       this.metrics.set(poolKey, metrics);
     }
-
-    console.warn(`🔒 Pool ${poolKey} isolated for safety compliance`);
   }
 
   /**
@@ -556,10 +519,7 @@ export class NeonProConnectionPoolManager {
         clinicId
       );
       this.pools.set(poolKey, recoveredClient);
-
-      console.log(`🔄 Pool ${poolKey} recovered successfully`);
-    } catch (error) {
-      console.error(`Failed to recover pool ${poolKey}:`, error);
+    } catch (_error) {
       this.isolatePool(poolKey);
     }
   }
@@ -568,22 +528,9 @@ export class NeonProConnectionPoolManager {
    * Send compliance alert to healthcare administrators
    */
   private async sendComplianceAlert(
-    poolKey: string,
-    healthCheck: HealthcheckResult
-  ): Promise<void> {
-    // Implementation would integrate with alerting system
-    // For now, log the alert
-    console.error('🚨 HEALTHCARE COMPLIANCE ALERT', {
-      pool: poolKey,
-      violations: {
-        lgpd: !healthCheck.compliance.lgpdCompliant,
-        anvisa: !healthCheck.compliance.anvisaCompliant,
-        cfm: !healthCheck.compliance.cfmCompliant,
-      },
-      timestamp: new Date().toISOString(),
-      action: 'POOL_ISOLATED',
-    });
-  }
+    _poolKey: string,
+    _healthCheck: HealthcheckResult
+  ): Promise<void> {}
 
   /**
    * Get comprehensive pool analytics for healthcare dashboard
@@ -674,8 +621,6 @@ export class NeonProConnectionPoolManager {
     this.pools.clear();
     this.healthChecks.clear();
     this.metrics.clear();
-
-    console.log('🔄 NeonPro Connection Pool Manager shutdown completed');
   }
 }
 

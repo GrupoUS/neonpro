@@ -89,8 +89,6 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(analysis);
   } catch (error: any) {
-    console.error('[Marketing ROI API] GET CAC LTV analysis:', error);
-
     return NextResponse.json(
       { error: 'Internal server error', message: error.message },
       { status: 500 }

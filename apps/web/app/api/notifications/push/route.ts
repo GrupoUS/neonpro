@@ -47,8 +47,7 @@ export async function POST(request: NextRequest) {
     }
 
     return NextResponse.json({ success: true });
-  } catch (error) {
-    console.error('Error subscribing to push notifications:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -89,8 +88,7 @@ export async function DELETE(request: NextRequest) {
     }
 
     return NextResponse.json({ success: true });
-  } catch (error) {
-    console.error('Error unsubscribing from push notifications:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -131,8 +129,7 @@ export async function GET(_request: NextRequest) {
       hasSubscriptions: subscriptions.length > 0,
       subscriptionCount: subscriptions.length,
     });
-  } catch (error) {
-    console.error('Error getting push notification info:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

@@ -25,7 +25,7 @@ import { ServiceSelection } from './service-selection';
  * - Exa: Optimistic UI patterns and race condition prevention
  */
 
-interface Service {
+type Service = {
   id: string;
   name: string;
   description: string;
@@ -33,9 +33,9 @@ interface Service {
   price: number;
   category: string;
   is_active: boolean;
-}
+};
 
-interface Professional {
+type Professional = {
   id: string;
   name: string;
   email: string;
@@ -46,18 +46,18 @@ interface Professional {
   is_available: boolean;
   rating: number | null;
   location: string | null;
-}
+};
 
-interface TimeSlot {
+type TimeSlot = {
   datetime: string;
   is_available: boolean;
   professional_id?: string;
   professional_name?: string;
-}
+};
 
-interface BookingFlowProps {
+type BookingFlowProps = {
   className?: string;
-}
+};
 
 type BookingStep =
   | 'service'
@@ -215,17 +215,15 @@ export default function AppointmentBookingFlow({
       }
 
       // Track booking completion time
-      const bookingDuration = bookingStartTime
+      const _bookingDuration = bookingStartTime
         ? (Date.now() - bookingStartTime) / 1000
         : 0;
-      console.log(`Booking completed in ${bookingDuration.toFixed(1)} seconds`);
 
       // Redirect to success page
       router.push(
         `/patient/appointments/booking/success?appointment_id=${appointment.id}`
       );
-    } catch (err) {
-      console.error('Error creating appointment:', err);
+    } catch (_err) {
       setError('Erro ao confirmar agendamento. Tente novamente.');
     } finally {
       setIsSubmitting(false);
@@ -294,7 +292,6 @@ export default function AppointmentBookingFlow({
                 );
 
                 if (error) {
-                  console.error('Error confirming booking:', error);
                   toast.error('Erro ao confirmar reserva');
                   return false;
                 }
@@ -302,8 +299,7 @@ export default function AppointmentBookingFlow({
                 toast.success('Horário reservado com sucesso!');
                 setCurrentStep('notes'); // Advance to next step
                 return true;
-              } catch (error) {
-                console.error('Error in slot reservation:', error);
+              } catch (_error) {
                 return false;
               }
             }}

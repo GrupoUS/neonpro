@@ -32,44 +32,37 @@ export class RBACPermissionManager {
     userId: string,
     clinicId: string
   ): Promise<UserRoleAssignment | null> {
-    try {
-      const cacheKey = `getUserRole:${userId}:${clinicId}`;
-      const cached = this.permissionCache.get(cacheKey);
+    const cacheKey = `getUserRole:${userId}:${clinicId}`;
+    const cached = this.permissionCache.get(cacheKey);
 
-      if (cached && Date.now() - cached.timestamp < this.cacheTimeout) {
-        return cached.data;
-      }
+    if (cached && Date.now() - cached.timestamp < this.cacheTimeout) {
+      return cached.data;
+    }
 
-      const { data: userRole, error } = await this.supabase
-        .from('user_roles')
-        .select(
-          `
+    const { data: userRole, error } = await this.supabase
+      .from('user_roles')
+      .select(
+        `
           *,
           role:roles(*)
         `
-        )
-        .eq('user_id', userId)
-        .eq('clinic_id', clinicId)
-        .eq('is_active', true)
-        .single();
+      )
+      .eq('user_id', userId)
+      .eq('clinic_id', clinicId)
+      .eq('is_active', true)
+      .single();
 
-      if (error) {
-        console.error('Error fetching user role:', error);
-        // Throw error to propagate it up to hasPermission
-        throw error;
-      }
-
-      const result = userRole || null;
-      this.permissionCache.set(cacheKey, {
-        data: result,
-        timestamp: Date.now(),
-      });
-      return result;
-    } catch (error) {
-      console.error('Error in getUserRole:', error);
-      // Re-throw the error to be handled by calling function
+    if (error) {
+      // Throw error to propagate it up to hasPermission
       throw error;
     }
+
+    const result = userRole || null;
+    this.permissionCache.set(cacheKey, {
+      data: result,
+      timestamp: Date.now(),
+    });
+    return result;
   }
 
   /**
@@ -131,7 +124,6 @@ export class RBACPermissionManager {
       });
       return result;
     } catch (error) {
-      console.error('Error in hasPermission:', error);
       return { granted: false, error: error.message };
     }
   }
@@ -157,8 +149,7 @@ export class RBACPermissionManager {
 
       // Lower hierarchy number = higher privilege (1 = owner, 2 = manager, 3 = staff)
       return managerHierarchy < targetHierarchy;
-    } catch (error) {
-      console.error('Error in canManageUser:', error);
+    } catch (_error) {
       return false;
     }
   }
@@ -184,8 +175,7 @@ export class RBACPermissionManager {
       });
 
       return !error;
-    } catch (error) {
-      console.error('Error in assignRole:', error);
+    } catch (_error) {
       return false;
     }
   }
@@ -211,8 +201,7 @@ export class RBACPermissionManager {
         .eq('is_active', true);
 
       return !error;
-    } catch (error) {
-      console.error('Error in removeRole:', error);
+    } catch (_error) {
       return false;
     }
   }
@@ -220,16 +209,10 @@ export class RBACPermissionManager {
   /**
    * Clear permission cache for user
    */
-  clearUserCache(userId: string): void {
-    // Implementation depends on caching strategy
-    console.log(`Clearing cache for user: ${userId}`);
-  }
+  clearUserCache(_userId: string): void {}
 
   /**
    * Clear all permission caches
    */
-  clearAllCaches(): void {
-    // Implementation depends on caching strategy
-    console.log('Clearing all permission caches');
-  }
+  clearAllCaches(): void {}
 }

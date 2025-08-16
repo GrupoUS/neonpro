@@ -6,7 +6,7 @@
 import { supabase } from '@/app/utils/supabase/client';
 import type { NotificationChannel, NotificationType } from './config';
 
-interface AuditLogEntry {
+type AuditLogEntry = {
   action:
     | 'notification_sent'
     | 'notification_scheduled'
@@ -30,7 +30,7 @@ interface AuditLogEntry {
   ipAddress?: string;
   userAgent?: string;
   sessionId?: string;
-}
+};
 
 export class AuditService {
   /**
@@ -63,14 +63,12 @@ export class AuditService {
         .insert(auditData);
 
       if (error) {
-        console.error('Failed to write audit log:', error);
         // Don't throw error - logging failure shouldn't break notification flow
         return false;
       }
 
       return true;
-    } catch (error) {
-      console.error('Audit service error:', error);
+    } catch (_error) {
       return false;
     }
   }
@@ -192,13 +190,11 @@ export class AuditService {
         .order('timestamp', { ascending: true });
 
       if (error) {
-        console.error('Failed to get audit trail:', error);
         return [];
       }
 
       return data || [];
-    } catch (error) {
-      console.error('Error getting audit trail:', error);
+    } catch (_error) {
       return [];
     }
   }
@@ -231,13 +227,11 @@ export class AuditService {
         .limit(limit);
 
       if (error) {
-        console.error('Failed to get recipient audit trail:', error);
         return [];
       }
 
       return data || [];
-    } catch (error) {
-      console.error('Error getting recipient audit trail:', error);
+    } catch (_error) {
       return [];
     }
   }
@@ -266,7 +260,6 @@ export class AuditService {
         .lte('timestamp', endDate.toISOString());
 
       if (error) {
-        console.error('Failed to generate compliance report:', error);
         return this.getEmptyReport();
       }
 
@@ -311,8 +304,7 @@ export class AuditService {
         channelBreakdown,
         typeBreakdown,
       };
-    } catch (error) {
-      console.error('Error generating compliance report:', error);
+    } catch (_error) {
       return this.getEmptyReport();
     }
   }
@@ -338,13 +330,11 @@ export class AuditService {
         .select('id');
 
       if (error) {
-        console.error('Failed to archive old logs:', error);
         return 0;
       }
 
       return data?.length || 0;
-    } catch (error) {
-      console.error('Error archiving old logs:', error);
+    } catch (_error) {
       return 0;
     }
   }
@@ -380,7 +370,6 @@ export class AuditService {
         .order('timestamp', { ascending: true });
 
       if (error) {
-        console.error('Failed to get delivery statistics:', error);
         return { dailyStats: [], channelStats: {} };
       }
 
@@ -428,8 +417,7 @@ export class AuditService {
       });
 
       return { dailyStats, channelStats };
-    } catch (error) {
-      console.error('Error getting delivery statistics:', error);
+    } catch (_error) {
       return { dailyStats: [], channelStats: {} };
     }
   }

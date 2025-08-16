@@ -114,8 +114,6 @@ export async function GET(
       timestamp: new Date().toISOString(),
     });
   } catch (error) {
-    console.error('Error getting patient retention metrics:', error);
-
     return NextResponse.json(
       {
         error: 'Internal server error',
@@ -226,8 +224,6 @@ export async function POST(
       timestamp: new Date().toISOString(),
     });
   } catch (error) {
-    console.error('Error calculating patient retention metrics:', error);
-
     return NextResponse.json(
       {
         error: 'Internal server error',

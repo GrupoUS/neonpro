@@ -4,17 +4,17 @@ import type { LGPDManager } from '../../lgpd/lgpd-manager';
 import type { SessionManager } from '../auth/session-manager';
 
 // Dashboard configuration
-export interface DashboardConfig {
+export type DashboardConfig = {
   refreshInterval: number; // in seconds
   maxRecentItems: number;
   enableRealTimeUpdates: boolean;
   cacheTimeout: number; // in minutes
   defaultLanguage: string;
   defaultTheme: 'light' | 'dark' | 'auto';
-}
+};
 
 // Patient dashboard data
-export interface PatientDashboardData {
+export type PatientDashboardData = {
   patient: PatientInfo;
   upcomingAppointments: AppointmentSummary[];
   recentAppointments: AppointmentSummary[];
@@ -24,10 +24,10 @@ export interface PatientDashboardData {
   notifications: NotificationSummary[];
   quickStats: DashboardStats;
   preferences: PatientPreferences;
-}
+};
 
 // Patient information
-export interface PatientInfo {
+export type PatientInfo = {
   id: string;
   name: string;
   email: string;
@@ -37,8 +37,8 @@ export interface PatientInfo {
   memberSince: Date;
   lastLogin: Date;
   clinicName: string;
-} // Appointment summary
-export interface AppointmentSummary {
+}; // Appointment summary
+export type AppointmentSummary = {
   id: string;
   date: Date;
   time: string;
@@ -49,10 +49,10 @@ export interface AppointmentSummary {
   canReschedule: boolean;
   canCancel: boolean;
   estimatedDuration: number;
-}
+};
 
 // Treatment progress summary
-export interface TreatmentProgressSummary {
+export type TreatmentProgressSummary = {
   id: string;
   treatmentName: string;
   progressPercentage: number;
@@ -61,10 +61,10 @@ export interface TreatmentProgressSummary {
   nextSessionDate?: Date;
   lastUpdate: Date;
   status: 'active' | 'completed' | 'paused';
-}
+};
 
 // Upload summary
-export interface UploadSummary {
+export type UploadSummary = {
   id: string;
   filename: string;
   category: string;
@@ -72,8 +72,8 @@ export interface UploadSummary {
   isProcessed: boolean;
   isVerified: boolean;
   fileSize: number;
-} // Task summary
-export interface TaskSummary {
+}; // Task summary
+export type TaskSummary = {
   id: string;
   title: string;
   description: string;
@@ -81,10 +81,10 @@ export interface TaskSummary {
   priority: 'low' | 'medium' | 'high';
   type: 'form' | 'upload' | 'payment' | 'appointment' | 'evaluation';
   completed: boolean;
-}
+};
 
 // Notification summary
-export interface NotificationSummary {
+export type NotificationSummary = {
   id: string;
   title: string;
   message: string;
@@ -93,20 +93,20 @@ export interface NotificationSummary {
   createdAt: Date;
   actionUrl?: string;
   actionText?: string;
-}
+};
 
 // Dashboard statistics
-export interface DashboardStats {
+export type DashboardStats = {
   totalAppointments: number;
   completedTreatments: number;
   uploadedDocuments: number;
   pendingTasks: number;
   averageRating: number;
   membershipDays: number;
-}
+};
 
 // Patient preferences
-export interface PatientPreferences {
+export type PatientPreferences = {
   language: string;
   timezone: string;
   theme: 'light' | 'dark' | 'auto';
@@ -130,8 +130,8 @@ export interface PatientPreferences {
     marketingConsent: boolean;
     dataSharing: boolean;
   };
-} // Dashboard widget data
-export interface DashboardWidget {
+}; // Dashboard widget data
+export type DashboardWidget = {
   id: string;
   type:
     | 'appointments'
@@ -145,7 +145,7 @@ export interface DashboardWidget {
   isVisible: boolean;
   order: number;
   size: 'small' | 'medium' | 'large';
-}
+};
 
 export class PortalDashboard {
   private readonly supabase: SupabaseClient;

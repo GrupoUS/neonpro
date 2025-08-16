@@ -37,8 +37,6 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('Error in get threads API:', error);
-
     return NextResponse.json(
       {
         error: 'Internal server error',
@@ -96,8 +94,6 @@ export async function POST(request: NextRequest) {
       data: thread,
     });
   } catch (error) {
-    console.error('Error in create thread API:', error);
-
     return NextResponse.json(
       {
         error: 'Internal server error',

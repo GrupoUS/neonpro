@@ -40,7 +40,7 @@ export enum LGPDPurpose {
 /**
  * Consent Record Interface
  */
-export interface ConsentRecord {
+export type ConsentRecord = {
   id: string;
   userId: string;
   clinicId: string;
@@ -57,12 +57,12 @@ export interface ConsentRecord {
   ipAddress: string;
   userAgent: string;
   metadata?: Record<string, any>;
-}
+};
 
 /**
  * Consent Collection Request
  */
-export interface ConsentCollectionRequest {
+export type ConsentCollectionRequest = {
   userId: string;
   clinicId: string;
   dataTypes: LGPDDataType[];
@@ -71,12 +71,12 @@ export interface ConsentCollectionRequest {
   version: string;
   expirationDays?: number;
   metadata?: Record<string, any>;
-}
+};
 
 /**
  * Consent Analytics
  */
-export interface ConsentAnalytics {
+export type ConsentAnalytics = {
   totalConsents: number;
   activeConsents: number;
   withdrawnConsents: number;
@@ -85,7 +85,7 @@ export interface ConsentAnalytics {
   consentsByPurpose: Record<LGPDPurpose, number>;
   recentWithdrawals: ConsentRecord[];
   expiringConsents: ConsentRecord[];
-}
+};
 
 /**
  * LGPD Consent Automation Manager

@@ -12,7 +12,7 @@ import { NotificationChannel, NotificationPriority } from './types';
 // INTERFACES DE CONFIGURAÇÃO
 // ============================================================================
 
-export interface EmailConfig {
+export type EmailConfig = {
   provider: 'resend' | 'sendgrid' | 'ses';
   apiKey: string;
   fromEmail: string;
@@ -22,9 +22,9 @@ export interface EmailConfig {
   templates?: {
     [key: string]: string; // template IDs do provedor
   };
-}
+};
 
-export interface SMSConfig {
+export type SMSConfig = {
   provider: 'twilio' | 'vonage' | 'aws-sns';
   accountSid?: string; // Twilio
   authToken?: string; // Twilio
@@ -32,9 +32,9 @@ export interface SMSConfig {
   apiSecret?: string; // Vonage
   fromNumber: string;
   webhookSecret?: string;
-}
+};
 
-export interface PushConfig {
+export type PushConfig = {
   provider: 'fcm' | 'apns' | 'expo';
   projectId?: string; // FCM
   privateKey?: string; // FCM
@@ -43,22 +43,22 @@ export interface PushConfig {
   teamId?: string; // APNS
   bundleId?: string; // APNS
   accessToken?: string; // Expo
-}
+};
 
-export interface InAppConfig {
+export type InAppConfig = {
   websocketEnabled: boolean;
   persistenceEnabled: boolean;
   maxNotifications: number;
   retentionDays: number;
-}
+};
 
-export interface DatabaseConfig {
+export type DatabaseConfig = {
   url: string;
   apiKey: string;
   schema?: string;
-}
+};
 
-export interface QueueConfig {
+export type QueueConfig = {
   provider: 'redis' | 'sqs' | 'memory';
   url?: string;
   region?: string;
@@ -66,9 +66,9 @@ export interface QueueConfig {
   secretAccessKey?: string;
   maxRetries: number;
   retryDelay: number;
-}
+};
 
-export interface NotificationSystemConfig {
+export type NotificationSystemConfig = {
   // Configurações dos canais
   email: EmailConfig;
   sms: SMSConfig;
@@ -107,7 +107,7 @@ export interface NotificationSystemConfig {
     logLevel: 'debug' | 'info' | 'warn' | 'error';
     enableTestMode: boolean;
   };
-}
+};
 
 // ============================================================================
 // CONFIGURAÇÕES PADRÃO
@@ -388,13 +388,13 @@ export const TEMPLATE_DEFAULTS = {
 // CONFIGURAÇÕES DE WEBHOOK
 // ============================================================================
 
-export interface WebhookConfig {
+export type WebhookConfig = {
   url: string;
   secret: string;
   events: string[];
   retries: number;
   timeout: number;
-}
+};
 
 export const WEBHOOK_EVENTS = {
   NOTIFICATION_SENT: 'notification.sent',

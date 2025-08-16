@@ -98,9 +98,7 @@ export async function GET(request: NextRequest) {
     }
 
     return NextResponse.json(analytics);
-  } catch (error) {
-    console.error('Get session analytics error:', error);
-
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error while fetching session analytics' },
       { status: 500 }
@@ -159,9 +157,7 @@ export async function POST(request: NextRequest) {
     };
 
     return NextResponse.json(realTimeData);
-  } catch (error) {
-    console.error('Get real-time session status error:', error);
-
+  } catch (_error) {
     return NextResponse.json(
       {
         error: 'Internal server error while fetching real-time session status',

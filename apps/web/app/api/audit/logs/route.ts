@@ -99,8 +99,7 @@ async function validateAuditAccess(
       profile.permissions?.includes('audit.read');
 
     return hasAuditPermission;
-  } catch (error) {
-    console.error('Erro ao validar acesso de auditoria:', error);
+  } catch (_error) {
     return false;
   }
 }
@@ -266,8 +265,7 @@ export async function GET(request: NextRequest) {
         total: events.length,
       },
     });
-  } catch (error) {
-    console.error('Erro na consulta de logs de auditoria:', error);
+  } catch (_error) {
 
     return NextResponse.json(
       { error: 'Internal server error' },
@@ -368,8 +366,7 @@ export async function POST(request: NextRequest) {
       },
       { status: 201 }
     );
-  } catch (error) {
-    console.error('Erro na criação de evento de auditoria:', error);
+  } catch (_error) {
 
     return NextResponse.json(
       { error: 'Internal server error' },

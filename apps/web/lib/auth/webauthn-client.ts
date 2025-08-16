@@ -17,23 +17,23 @@ import {
   startRegistration,
 } from '@simplewebauthn/browser';
 
-export interface WebAuthnRegistrationResult {
+export type WebAuthnRegistrationResult = {
   success: boolean;
   response?: RegistrationResponseJSON;
   error?: string;
-}
+};
 
-export interface WebAuthnAuthenticationResult {
+export type WebAuthnAuthenticationResult = {
   success: boolean;
   response?: AuthenticationResponseJSON;
   error?: string;
-}
+};
 
-export interface WebAuthnCapabilities {
+export type WebAuthnCapabilities = {
   supported: boolean;
   platformAuthenticatorAvailable: boolean;
   userAgent: string;
-}
+};
 
 class WebAuthnClient {
   /**
@@ -47,12 +47,7 @@ class WebAuthnClient {
       try {
         platformAuthenticatorAvailable =
           await platformAuthenticatorIsAvailable();
-      } catch (error) {
-        console.warn(
-          'Could not check platform authenticator availability:',
-          error
-        );
-      }
+      } catch (_error) {}
     }
 
     return {
@@ -131,8 +126,6 @@ class WebAuthnClient {
         response: registrationResponse,
       };
     } catch (error) {
-      console.error('WebAuthn registration error:', error);
-
       let errorMessage = 'Unknown error occurred';
 
       if (error instanceof Error) {
@@ -227,8 +220,6 @@ class WebAuthnClient {
         response: authenticationResponse,
       };
     } catch (error) {
-      console.error('WebAuthn authentication error:', error);
-
       let errorMessage = 'Unknown error occurred';
 
       if (error instanceof Error) {

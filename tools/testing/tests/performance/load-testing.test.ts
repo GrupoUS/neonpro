@@ -17,14 +17,9 @@ describe('NeonPro Performance Load Tests', () => {
     TIMEOUT: 10_000, // Maximum allowed
   };
 
-  beforeAll(async () => {
-    console.log('🚀 Starting comprehensive performance load testing...');
-    console.log(`Base URL: ${BASE_URL}`);
-  });
+  beforeAll(async () => {});
 
-  afterAll(async () => {
-    console.log('✅ Performance load testing completed');
-  });
+  afterAll(async () => {});
 
   describe('API Response Time Performance', () => {
     it('should respond to authentication requests within performance thresholds', async () => {
@@ -39,10 +34,6 @@ describe('NeonPro Performance Load Tests', () => {
 
       const endTime = performance.now();
       const responseTime = endTime - startTime;
-
-      console.log(
-        `Auth validation response time: ${responseTime.toFixed(2)}ms`
-      );
       expect(responseTime).toBeLessThan(PERFORMANCE_THRESHOLDS.FAST_RESPONSE);
       expect([200, 401, 403]).toContain(response.status);
     });
@@ -61,10 +52,6 @@ describe('NeonPro Performance Load Tests', () => {
 
       const endTime = performance.now();
       const responseTime = endTime - startTime;
-
-      console.log(
-        `Reconciliation data load time: ${responseTime.toFixed(2)}ms`
-      );
       expect(responseTime).toBeLessThan(PERFORMANCE_THRESHOLDS.ACCEPTABLE);
 
       if (response.ok) {
@@ -97,8 +84,6 @@ describe('NeonPro Performance Load Tests', () => {
 
       const endTime = performance.now();
       const responseTime = endTime - startTime;
-
-      console.log(`File import processing time: ${responseTime.toFixed(2)}ms`);
       expect(responseTime).toBeLessThan(PERFORMANCE_THRESHOLDS.SLOW_ACCEPTABLE);
     });
 
@@ -126,8 +111,6 @@ describe('NeonPro Performance Load Tests', () => {
 
       const endTime = performance.now();
       const responseTime = endTime - startTime;
-
-      console.log(`Report generation time: ${responseTime.toFixed(2)}ms`);
       expect(responseTime).toBeLessThan(PERFORMANCE_THRESHOLDS.SLOW_ACCEPTABLE);
     });
   });
@@ -149,10 +132,6 @@ describe('NeonPro Performance Load Tests', () => {
 
       const totalTime = endTime - startTime;
       const averageTime = totalTime / concurrentRequests;
-
-      console.log(
-        `${concurrentRequests} concurrent reads - Total: ${totalTime.toFixed(2)}ms, Average: ${averageTime.toFixed(2)}ms`
-      );
 
       expect(averageTime).toBeLessThan(PERFORMANCE_THRESHOLDS.ACCEPTABLE);
 
@@ -194,10 +173,6 @@ describe('NeonPro Performance Load Tests', () => {
 
       const totalTime = endTime - startTime;
       const averageTime = totalTime / concurrentUploads;
-
-      console.log(
-        `${concurrentUploads} concurrent uploads - Total: ${totalTime.toFixed(2)}ms, Average: ${averageTime.toFixed(2)}ms`
-      );
 
       expect(averageTime).toBeLessThan(PERFORMANCE_THRESHOLDS.SLOW_ACCEPTABLE);
 
@@ -250,10 +225,6 @@ describe('NeonPro Performance Load Tests', () => {
 
       const endTime = performance.now();
       const responseTime = endTime - startTime;
-
-      console.log(
-        `Large file (1000 transactions) processing time: ${responseTime.toFixed(2)}ms`
-      );
       expect(responseTime).toBeLessThan(PERFORMANCE_THRESHOLDS.TIMEOUT);
 
       // Should either succeed or properly reject large files
@@ -275,10 +246,6 @@ describe('NeonPro Performance Load Tests', () => {
 
       const endTime = performance.now();
       const responseTime = endTime - startTime;
-
-      console.log(
-        `Large dataset pagination (${pageSize} items) time: ${responseTime.toFixed(2)}ms`
-      );
       expect(responseTime).toBeLessThan(PERFORMANCE_THRESHOLDS.ACCEPTABLE);
 
       if (response.ok) {
@@ -316,8 +283,6 @@ describe('NeonPro Performance Load Tests', () => {
 
       const endTime = performance.now();
       const responseTime = endTime - startTime;
-
-      console.log(`Complex analytics query time: ${responseTime.toFixed(2)}ms`);
       expect(responseTime).toBeLessThan(PERFORMANCE_THRESHOLDS.SLOW_ACCEPTABLE);
     });
 
@@ -343,7 +308,6 @@ describe('NeonPro Performance Load Tests', () => {
       const endTime = performance.now();
 
       const totalTime = endTime - startTime;
-      console.log(`Multiple DB operations time: ${totalTime.toFixed(2)}ms`);
 
       expect(totalTime).toBeLessThan(PERFORMANCE_THRESHOLDS.SLOW_ACCEPTABLE);
 
@@ -375,11 +339,7 @@ describe('NeonPro Performance Load Tests', () => {
       const endTime = performance.now();
 
       const totalTime = endTime - startTime;
-      const averageTime = totalTime / highConcurrency;
-
-      console.log(
-        `High load stress test (${highConcurrency} requests) - Total: ${totalTime.toFixed(2)}ms, Average: ${averageTime.toFixed(2)}ms`
-      );
+      const _averageTime = totalTime / highConcurrency;
 
       // System should remain stable (not crash) under high load
       const completedRequests = responses.filter(

@@ -42,7 +42,7 @@ export const RevenueAnalyticsSchema = z.object({
 
 export type RevenueAnalytics = z.infer<typeof RevenueAnalyticsSchema>;
 
-export interface FinancialKPI {
+export type FinancialKPI = {
   name: string;
   value: number;
   target: number;
@@ -50,9 +50,9 @@ export interface FinancialKPI {
   changePercentage: number;
   period: string;
   category: 'revenue' | 'costs' | 'profitability' | 'efficiency';
-}
+};
 
-export interface ProfitabilityAnalysis {
+export type ProfitabilityAnalysis = {
   treatmentType: string;
   totalRevenue: number;
   totalCosts: number;
@@ -63,7 +63,7 @@ export interface ProfitabilityAnalysis {
   averageRevenuePerTreatment: number;
   averageCostPerTreatment: number;
   recommendations: string[];
-}
+};
 
 // =================== ANALYTICS CALCULATOR CLASS ===================
 
@@ -97,8 +97,7 @@ export class FinancialAnalyticsCalculator {
       }
 
       return analyses.sort((a, b) => b.profitMargin - a.profitMargin);
-    } catch (error) {
-      console.error('Error calculating treatment profitability:', error);
+    } catch (_error) {
       throw new Error('Failed to calculate treatment profitability');
     }
   }
@@ -170,8 +169,7 @@ export class FinancialAnalyticsCalculator {
       }
 
       return kpis;
-    } catch (error) {
-      console.error('Error calculating financial KPIs:', error);
+    } catch (_error) {
       throw new Error('Failed to calculate financial KPIs');
     }
   }
@@ -227,8 +225,7 @@ export class FinancialAnalyticsCalculator {
           seasonality: seasonalFactors,
         },
       };
-    } catch (error) {
-      console.error('Error calculating revenue forecasting:', error);
+    } catch (_error) {
       throw new Error('Failed to calculate revenue forecasting');
     }
   }
@@ -275,8 +272,7 @@ export class FinancialAnalyticsCalculator {
         optimizationOpportunities,
         benchmarkComparison,
       };
-    } catch (error) {
-      console.error('Error calculating cost optimization:', error);
+    } catch (_error) {
       throw new Error('Failed to calculate cost optimization');
     }
   }

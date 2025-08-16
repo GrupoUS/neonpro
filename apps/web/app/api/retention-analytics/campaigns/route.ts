@@ -154,7 +154,6 @@ export async function GET(request: NextRequest) {
       total: enrichedCampaigns.length,
     });
   } catch (error) {
-    console.error('GET /api/retention-analytics/campaigns error:', error);
     return NextResponse.json(
       {
         success: false,
@@ -243,7 +242,6 @@ export async function POST(request: NextRequest) {
       });
 
     if (metricsError) {
-      console.error('Failed to initialize campaign metrics:', metricsError);
     }
 
     return NextResponse.json(
@@ -255,7 +253,6 @@ export async function POST(request: NextRequest) {
       { status: 201 }
     );
   } catch (error) {
-    console.error('POST /api/retention-analytics/campaigns error:', error);
     return NextResponse.json(
       {
         success: false,
@@ -310,7 +307,6 @@ export async function PATCH(request: NextRequest) {
       message: 'Campaign metrics updated successfully',
     });
   } catch (error) {
-    console.error('PATCH /api/retention-analytics/campaigns error:', error);
     return NextResponse.json(
       {
         success: false,

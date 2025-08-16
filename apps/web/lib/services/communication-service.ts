@@ -1,18 +1,18 @@
 // lib/services/communication-service.ts
-export interface Message {
+export type Message = {
   id: string;
   content: string;
   sender_id: string;
   thread_id: string;
   created_at: string;
-}
+};
 
-export interface Thread {
+export type Thread = {
   id: string;
   title: string;
   created_at: string;
   updated_at: string;
-}
+};
 
 export class CommunicationService {
   static async getMessages(_threadId: string): Promise<Message[]> {

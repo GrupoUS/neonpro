@@ -3,22 +3,22 @@
  * Comprehensive performance monitoring for subscription middleware
  */
 
-export interface PerformanceMetrics {
+export type PerformanceMetrics = {
   timestamp: number;
   operation: string;
   duration: number;
   memory: number;
   errors: number;
   success: boolean;
-}
+};
 
-export interface PerformanceBenchmark {
+export type PerformanceBenchmark = {
   responseTime: number;
   throughput: number;
   memoryUsage: number;
   errorRate: number;
   cacheHitRate: number;
-}
+};
 
 export class PerformanceMonitor {
   private static instance: PerformanceMonitor;

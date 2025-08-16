@@ -146,7 +146,6 @@ export async function GET(
       },
     });
   } catch (error) {
-    console.error('GET /api/retention-analytics/campaigns/[id] error:', error);
     return NextResponse.json(
       {
         success: false,
@@ -205,10 +204,6 @@ export async function PATCH(
       message: 'Campaign updated successfully',
     });
   } catch (error) {
-    console.error(
-      'PATCH /api/retention-analytics/campaigns/[id] error:',
-      error
-    );
     return NextResponse.json(
       {
         success: false,
@@ -366,7 +361,6 @@ export async function POST(
         .eq('campaign_id', campaignId);
 
       if (metricsError) {
-        console.error('Failed to update campaign metrics:', metricsError);
       }
 
       // Update campaign status
@@ -393,7 +387,6 @@ export async function POST(
       },
     });
   } catch (error) {
-    console.error('POST /api/retention-analytics/campaigns/[id] error:', error);
     return NextResponse.json(
       {
         success: false,
@@ -456,10 +449,6 @@ export async function DELETE(
       message: 'Campaign deleted successfully',
     });
   } catch (error) {
-    console.error(
-      'DELETE /api/retention-analytics/campaigns/[id] error:',
-      error
-    );
     return NextResponse.json(
       {
         success: false,

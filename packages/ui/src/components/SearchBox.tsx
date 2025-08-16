@@ -4,15 +4,15 @@ import { cn } from '../utils/cn';
 import { Badge } from './Badge';
 import { Button } from './Button';
 
-export interface FilterOption {
+export type FilterOption = {
   id: string;
   label: string;
   value: string;
   color?: string;
   count?: number;
-}
+};
 
-export interface SearchBoxProps {
+export type SearchBoxProps = {
   placeholder?: string;
   value?: string;
   onValueChange?: (value: string) => void;
@@ -23,7 +23,7 @@ export interface SearchBoxProps {
   loading?: boolean;
   debounceMs?: number;
   className?: string;
-}
+};
 
 const SearchBox = React.forwardRef<HTMLDivElement, SearchBoxProps>(
   (

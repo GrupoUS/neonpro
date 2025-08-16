@@ -95,7 +95,6 @@ export async function GET(request: NextRequest) {
     const { data: documents, error, count } = await query;
 
     if (error) {
-      console.error('Error fetching regulatory documents:', error);
       return NextResponse.json(
         { error: 'Failed to fetch documents' },
         { status: 500 }
@@ -119,7 +118,6 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('API Error:', error);
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Invalid query parameters', details: error.errors },
@@ -183,7 +181,6 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (error) {
-      console.error('Error creating regulatory document:', error);
       return NextResponse.json(
         { error: 'Failed to create document' },
         { status: 500 }
@@ -203,7 +200,6 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ document }, { status: 201 });
   } catch (error) {
-    console.error('API Error:', error);
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Invalid document data', details: error.errors },

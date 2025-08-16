@@ -132,8 +132,6 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('Error in advanced patient search:', error);
-
     await auditLogger.log({
       action: 'advanced_patient_search_error',
       userId: 'system',
@@ -222,8 +220,6 @@ export async function POST(request: NextRequest) {
       data: segment,
     });
   } catch (error) {
-    console.error('Error creating patient segment:', error);
-
     await auditLogger.log({
       action: 'patient_segment_creation_error',
       userId: 'system',

@@ -19,7 +19,7 @@ export type InterventionStatus =
   | 'responded'
   | 'failed';
 
-export interface PatientRetentionAnalytics {
+export type PatientRetentionAnalytics = {
   id: string;
   patient_id: string;
   retention_score: number;
@@ -40,9 +40,9 @@ export interface PatientRetentionAnalytics {
   confidence_level: number;
   created_at: string;
   updated_at: string;
-}
+};
 
-export interface RetentionMetrics {
+export type RetentionMetrics = {
   total_patients: number;
   high_risk_patients: number;
   critical_risk_patients: number;
@@ -53,9 +53,9 @@ export interface RetentionMetrics {
   average_retention_score: number;
   period_start: string;
   period_end: string;
-}
+};
 
-export interface RetentionMetricsDetailed {
+export type RetentionMetricsDetailed = {
   id: string;
   clinic_id: string;
   period_start: string;
@@ -77,9 +77,9 @@ export interface RetentionMetricsDetailed {
   target_retention_rate: number;
   created_at: string;
   updated_at: string;
-}
+};
 
-export interface PatientChurnPrediction {
+export type PatientChurnPrediction = {
   id: string;
   patient_id: string;
   prediction_date: string;
@@ -99,9 +99,9 @@ export interface PatientChurnPrediction {
   prediction_accuracy?: number;
   created_at: string;
   updated_at: string;
-}
+};
 
-export interface RetentionIntervention {
+export type RetentionIntervention = {
   id: string;
   patient_id: string;
   prediction_id?: string;
@@ -129,9 +129,9 @@ export interface RetentionIntervention {
   created_by?: string;
   created_at: string;
   updated_at: string;
-}
+};
 
-export interface RetentionCampaignAnalytics {
+export type RetentionCampaignAnalytics = {
   id: string;
   campaign_id: string;
   campaign_name: string;
@@ -157,9 +157,9 @@ export interface RetentionCampaignAnalytics {
   performance_metrics: Record<string, any>;
   created_at: string;
   updated_at: string;
-}
+};
 
-export interface PatientLifetimeValue {
+export type PatientLifetimeValue = {
   id: string;
   patient_id: string;
   calculation_date: string;
@@ -181,9 +181,9 @@ export interface PatientLifetimeValue {
   calculation_method: string;
   created_at: string;
   updated_at: string;
-}
+};
 
-export interface RetentionModelPerformance {
+export type RetentionModelPerformance = {
   id: string;
   model_name: string;
   model_version: string;
@@ -207,9 +207,9 @@ export interface RetentionModelPerformance {
   monitoring_alerts: Alert[];
   created_at: string;
   updated_at: string;
-}
+};
 
-export interface RetentionBenchmark {
+export type RetentionBenchmark = {
   id: string;
   industry_segment: string;
   benchmark_type:
@@ -230,10 +230,10 @@ export interface RetentionBenchmark {
   last_updated: string;
   is_active: boolean;
   created_at: string;
-}
+};
 
 // Supporting types
-export interface ChurnFactor {
+export type ChurnFactor = {
   factor_name: string;
   factor_value: number;
   weight: number;
@@ -244,9 +244,9 @@ export interface ChurnFactor {
     | 'satisfaction'
     | 'demographic';
   description: string;
-}
+};
 
-export interface InterventionRecommendation {
+export type InterventionRecommendation = {
   intervention_type: string;
   priority: 'low' | 'medium' | 'high' | 'urgent';
   expected_effectiveness: number;
@@ -255,27 +255,27 @@ export interface InterventionRecommendation {
   personalization_suggestions: Record<string, any>;
   timing_recommendation: string;
   success_metrics: string[];
-}
+};
 
-export interface InterventionRecord {
+export type InterventionRecord = {
   intervention_id: string;
   intervention_type: string;
   executed_date: string;
   effectiveness_score?: number;
   roi?: number;
   outcome: 'positive' | 'neutral' | 'negative' | 'unknown';
-}
+};
 
-export interface Alert {
+export type Alert = {
   alert_type: string;
   severity: 'low' | 'medium' | 'high' | 'critical';
   message: string;
   created_at: string;
   resolved: boolean;
-}
+};
 
 // API Request/Response types
-export interface RetentionAnalyticsRequest {
+export type RetentionAnalyticsRequest = {
   patient_id?: string;
   date_range?: {
     start_date: string;
@@ -285,49 +285,49 @@ export interface RetentionAnalyticsRequest {
   segments?: string[];
   include_predictions?: boolean;
   include_interventions?: boolean;
-}
+};
 
-export interface ChurnPredictionRequest {
+export type ChurnPredictionRequest = {
   patient_ids?: string[];
   force_recalculation?: boolean;
   model_version?: string;
   include_recommendations?: boolean;
-}
+};
 
-export interface RetentionInterventionRequest {
+export type RetentionInterventionRequest = {
   patient_id: string;
   intervention_type: string;
   channel: string;
   personalization_data?: Record<string, any>;
   scheduled_date?: string;
   campaign_id?: string;
-}
+};
 
-export interface RetentionMetricsRequest {
+export type RetentionMetricsRequest = {
   clinic_id?: string;
   period_type: 'monthly' | 'quarterly' | 'yearly';
   start_date: string;
   end_date: string;
   include_benchmarks?: boolean;
   segment_by?: string[];
-}
+};
 
-export interface LTVCalculationRequest {
+export type LTVCalculationRequest = {
   patient_ids?: string[];
   calculation_method?: 'historical' | 'predictive' | 'hybrid';
   force_recalculation?: boolean;
   include_risk_adjustment?: boolean;
-}
+};
 
-export interface ModelPerformanceRequest {
+export type ModelPerformanceRequest = {
   model_type?: string;
   include_inactive?: boolean;
   performance_threshold?: number;
   include_trends?: boolean;
-}
+};
 
 // Dashboard types
-export interface RetentionDashboardData {
+export type RetentionDashboardData = {
   overview_metrics: {
     total_patients: number;
     retention_rate: number;
@@ -357,47 +357,47 @@ export interface RetentionDashboardData {
     benchmark_value: number;
     percentile: number;
   }[];
-}
+};
 
-export interface RetentionTrends {
+export type RetentionTrends = {
   period: string;
   retention_rate: number;
   churn_rate: number;
   ltv_avg: number;
   intervention_count: number;
   intervention_effectiveness: number;
-}
+};
 
-export interface PredictionAnalytics {
+export type PredictionAnalytics = {
   total_predictions: number;
   accuracy_rate: number;
   intervention_success_rate: number;
   cost_per_retention: number;
   roi: number;
   model_drift_score: number;
-}
+};
 
 // Form types
-export interface RetentionInterventionForm {
+export type RetentionInterventionForm = {
   patient_id: string;
   intervention_type: string;
   channel: string;
   personalization_data: Record<string, any>;
   scheduled_date?: string;
-}
+};
 
-export interface ModelConfigurationForm {
+export type ModelConfigurationForm = {
   model_name: string;
   model_type: string;
   parameters: Record<string, any>;
   performance_threshold: number;
   retraining_frequency: number;
-}
+};
 
-export interface BenchmarkConfigurationForm {
+export type BenchmarkConfigurationForm = {
   industry_segment: string;
   benchmark_type: string;
   data_source: string;
   geographic_region: string;
   clinic_size_category?: string;
-}
+};

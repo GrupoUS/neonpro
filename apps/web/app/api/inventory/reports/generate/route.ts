@@ -68,7 +68,6 @@ export async function POST(request: NextRequest) {
       report: reportResult,
     });
   } catch (error) {
-    console.error('Error generating inventory report:', error);
     return NextResponse.json(
       {
         error: 'Failed to generate report',
@@ -145,7 +144,6 @@ export async function GET(request: NextRequest) {
       report: reportResult,
     });
   } catch (error) {
-    console.error('Error fetching inventory report:', error);
     return NextResponse.json(
       {
         error: 'Failed to fetch report',
@@ -160,10 +158,10 @@ export async function GET(request: NextRequest) {
 // VALIDATION HELPERS
 // =============================================================================
 
-interface ValidationResult {
+type ValidationResult = {
   isValid: boolean;
   errors: string[];
-}
+};
 
 function validateGenerateReportRequest(body: any): ValidationResult {
   const errors: string[] = [];

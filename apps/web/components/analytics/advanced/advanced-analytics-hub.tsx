@@ -53,15 +53,15 @@ import { ForecastingCharts } from './forecasting-charts';
 import { StatisticalInsights } from './statistical-insights';
 
 // Types
-interface AnalyticsConfig {
+type AnalyticsConfig = {
   dateRange: { start: string; end: string };
   refreshInterval: number;
   autoRefresh: boolean;
   selectedMetrics: string[];
   confidenceLevel: number;
-}
+};
 
-interface AnalyticsData {
+type AnalyticsData = {
   cohortData: any[];
   forecastData: any[];
   kpis: any[];
@@ -72,14 +72,14 @@ interface AnalyticsData {
   statisticalTests: any[];
   dataQuality: any;
   predictiveModels: any[];
-}
+};
 
-interface AdvancedAnalyticsHubProps {
+type AdvancedAnalyticsHubProps = {
   initialConfig?: Partial<AnalyticsConfig>;
   className?: string;
   onConfigChange?: (config: AnalyticsConfig) => void;
   onDataExport?: (data: any, format: 'csv' | 'pdf' | 'json') => void;
-}
+};
 
 export function AdvancedAnalyticsHub({
   initialConfig = {},
@@ -218,8 +218,7 @@ export function AdvancedAnalyticsHub({
         });
 
         setLastRefresh(new Date());
-      } catch (err) {
-        console.error('Analytics data fetch error:', err);
+      } catch (_err) {
         setError('Failed to load analytics data. Please try again.');
       } finally {
         if (showLoading) {

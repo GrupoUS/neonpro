@@ -76,8 +76,7 @@ export async function GET(request: NextRequest) {
           { status: 400 }
         );
     }
-  } catch (error) {
-    console.error('GET /api/financial/reporting error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
       { status: 500 }
@@ -137,8 +136,7 @@ export async function POST(request: NextRequest) {
           { status: 400 }
         );
     }
-  } catch (error) {
-    console.error('POST /api/financial/reporting error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
       { status: 500 }
@@ -162,8 +160,7 @@ async function handleDashboardRequest(clinicId: string) {
       data: dashboardData,
       timestamp: new Date().toISOString(),
     });
-  } catch (error) {
-    console.error('Dashboard request error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Erro ao gerar dados do dashboard' },
       { status: 500 }
@@ -224,8 +221,7 @@ async function handleKPIRequest(
       data: kpis,
       parameters,
     });
-  } catch (error) {
-    console.error('KPI request error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Erro ao calcular KPIs' },
       { status: 500 }
@@ -268,8 +264,7 @@ async function handleReportsListRequest(
         pages: Math.ceil(reports.total / limit),
       },
     });
-  } catch (error) {
-    console.error('Reports list request error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Erro ao buscar relatórios' },
       { status: 500 }
@@ -362,8 +357,7 @@ async function handleReportGenerationRequest(
         content: reportData,
       },
     });
-  } catch (error) {
-    console.error('Report generation error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Erro ao gerar relatório' },
       { status: 500 }
@@ -409,8 +403,7 @@ async function handlePerformanceRequest(
       data: performance,
       parameters,
     });
-  } catch (error) {
-    console.error('Performance request error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Erro ao calcular métricas de performance' },
       { status: 500 }
@@ -455,8 +448,7 @@ async function handleProfitLossGeneration(clinicId: string, parameters: any) {
         content: profitLoss,
       },
     });
-  } catch (error) {
-    console.error('P&L generation error:', error);
+  } catch (_error) {
     return NextResponse.json({ error: 'Erro ao gerar DRE' }, { status: 500 });
   }
 }
@@ -496,8 +488,7 @@ async function handleBalanceSheetGeneration(clinicId: string, parameters: any) {
         content: balanceSheet,
       },
     });
-  } catch (error) {
-    console.error('Balance sheet generation error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Erro ao gerar balanço patrimonial' },
       { status: 500 }
@@ -542,8 +533,7 @@ async function handleCashFlowGeneration(clinicId: string, parameters: any) {
         content: cashFlow,
       },
     });
-  } catch (error) {
-    console.error('Cash flow generation error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Erro ao gerar fluxo de caixa' },
       { status: 500 }
@@ -570,8 +560,7 @@ async function handleReportExport(
         options,
       },
     });
-  } catch (error) {
-    console.error('Report export error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Erro ao exportar relatório' },
       { status: 500 }
@@ -598,8 +587,7 @@ async function handleReportScheduling(
         options,
       },
     });
-  } catch (error) {
-    console.error('Report scheduling error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Erro ao agendar relatório' },
       { status: 500 }

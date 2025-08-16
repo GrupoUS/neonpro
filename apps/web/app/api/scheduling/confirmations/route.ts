@@ -143,11 +143,7 @@ export async function POST(request: NextRequest) {
             message: 'Confirmation workflow scheduled',
           });
         }
-      } catch (workflowError) {
-        console.error(
-          'Workflow error, falling back to legacy method:',
-          workflowError
-        );
+      } catch (_workflowError) {
         // Fall through to legacy method
       }
     }
@@ -160,7 +156,6 @@ export async function POST(request: NextRequest) {
       user
     );
   } catch (error) {
-    console.error('Error in POST /api/scheduling/confirmations:', error);
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Invalid request data', details: error.errors },
@@ -204,9 +199,7 @@ async function handleLegacyConfirmation(
     try {
       const predictor = new NoShowPredictor();
       noShowPrediction = await predictor.predict(data.appointmentId);
-    } catch (error) {
-      console.error('Error getting no-show prediction:', error);
-    }
+    } catch (_error) {}
   }
 
   // Create confirmation record
@@ -233,7 +226,6 @@ async function handleLegacyConfirmation(
     .single();
 
   if (insertError) {
-    console.error('Error creating confirmation:', insertError);
     throw new Error('Failed to create confirmation request');
   }
 
@@ -321,7 +313,6 @@ export async function PUT(request: NextRequest) {
       .eq('id', confirmation.id);
 
     if (updateError) {
-      console.error('Error updating confirmation:', updateError);
       return NextResponse.json(
         { error: 'Failed to update confirmation' },
         { status: 500 }
@@ -371,8 +362,7 @@ export async function PUT(request: NextRequest) {
 
       // Send to clinic notification channels (implementation depends on clinic preferences)
       // This could be integrated with clinic staff notification system
-    } catch (notificationError) {
-      console.error('Error sending clinic notification:', notificationError);
+    } catch (_notificationError) {
       // Don't fail the response for notification errors
     }
 
@@ -384,7 +374,6 @@ export async function PUT(request: NextRequest) {
       nextSteps: getNextSteps(validatedData.response),
     });
   } catch (error) {
-    console.error('Error in PUT /api/scheduling/confirmations:', error);
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Invalid request data', details: error.errors },
@@ -494,7 +483,6 @@ export async function GET(request: NextRequest) {
     );
 
     if (queryError) {
-      console.error('Error fetching confirmations:', queryError);
       return NextResponse.json(
         { error: 'Failed to fetch confirmations' },
         { status: 500 }
@@ -532,8 +520,7 @@ export async function GET(request: NextRequest) {
         expired: confirmationsWithStatus.filter((c) => c.expired).length,
       },
     });
-  } catch (error) {
-    console.error('Error in GET /api/scheduling/confirmations:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -584,7 +571,6 @@ export async function DELETE(request: NextRequest) {
     const { data: updated, error: updateError } = await query.select();
 
     if (updateError) {
-      console.error('Error expiring confirmations:', updateError);
       return NextResponse.json(
         { error: 'Failed to expire confirmations' },
         { status: 500 }
@@ -596,8 +582,7 @@ export async function DELETE(request: NextRequest) {
       expired: updated?.length || 0,
       message: `Expired ${updated?.length || 0} confirmation(s)`,
     });
-  } catch (error) {
-    console.error('Error in DELETE /api/scheduling/confirmations:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

@@ -4,12 +4,12 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
 
 // Add missing types
-export interface TimeSlot {
+export type TimeSlot = {
   start: string;
   end: string;
   provider_id: string;
   available: boolean;
-}
+};
 
 export type UrgencyLevel = 'low' | 'medium' | 'high' | 'critical';
 

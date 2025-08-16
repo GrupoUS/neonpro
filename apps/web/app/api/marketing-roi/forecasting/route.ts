@@ -60,8 +60,7 @@ export async function GET(request: NextRequest) {
     };
 
     return NextResponse.json(response);
-  } catch (error) {
-    console.error('Marketing forecast error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to generate marketing forecast' },
       { status: 500 }
@@ -114,8 +113,7 @@ export async function POST(request: NextRequest) {
     };
 
     return NextResponse.json(response);
-  } catch (error) {
-    console.error('Marketing forecast generation error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to generate detailed marketing forecast' },
       { status: 500 }
@@ -162,8 +160,7 @@ export async function PUT(request: NextRequest) {
       updatedForecast,
       recalibrationResult,
     });
-  } catch (error) {
-    console.error('Marketing forecast update error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to update marketing forecast' },
       { status: 500 }

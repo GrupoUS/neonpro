@@ -120,8 +120,6 @@ export async function GET(
         );
     }
   } catch (error) {
-    console.error('Instagram account API error:', error);
-
     return NextResponse.json(
       {
         error: 'Failed to process Instagram account request',
@@ -208,8 +206,6 @@ export async function PATCH(
       account: data,
     });
   } catch (error) {
-    console.error('Instagram account update error:', error);
-
     return NextResponse.json(
       {
         error: 'Failed to update Instagram account',
@@ -287,8 +283,6 @@ export async function DELETE(
       message: 'Instagram account disconnected successfully',
     });
   } catch (error) {
-    console.error('Instagram account deletion error:', error);
-
     return NextResponse.json(
       {
         error: 'Failed to disconnect Instagram account',
