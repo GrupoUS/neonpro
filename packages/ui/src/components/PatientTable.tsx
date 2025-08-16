@@ -413,7 +413,7 @@ const PatientTable = React.forwardRef<HTMLDivElement, PatientTableProps>(
                     {columns.map((column) => (
                       <th
                         className={cn(
-                          'px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider',
+                          'px-4 py-3 text-left font-medium text-muted-foreground text-xs uppercase tracking-wider',
                           column.sortable && 'cursor-pointer hover:text-foreground',
                           column.width && `w-[${column.width}]`
                         )}

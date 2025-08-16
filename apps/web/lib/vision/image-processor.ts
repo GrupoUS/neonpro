@@ -363,12 +363,12 @@ export class HighPerformanceImageProcessor {
     return tf.tidy(() => {
       const gray = tf.mean(image, 2, true);
       const sobelX = tf.conv2d(
-        gray.expandDims(0),
+        gray.expandDims(0) as tf.Tensor4D,
         tf.tensor4d(
           [
-            [-1, 0, 1],
-            [-2, 0, 2],
-            [-1, 0, 1],
+            [[[-1]], [[0]], [[1]]],
+            [[[-2]], [[0]], [[2]]],
+            [[[-1]], [[0]], [[1]]],
           ],
           [3, 3, 1, 1],
         ),
@@ -376,12 +376,12 @@ export class HighPerformanceImageProcessor {
         'same',
       );
       const sobelY = tf.conv2d(
-        gray.expandDims(0),
+        gray.expandDims(0) as tf.Tensor4D,
         tf.tensor4d(
           [
-            [-1, -2, -1],
-            [0, 0, 0],
-            [1, 2, 1],
+            [[[-1]], [[-2]], [[-1]]],
+            [[[0]], [[0]], [[0]]],
+            [[[1]], [[2]], [[1]]],
           ],
           [3, 3, 1, 1],
         ),
@@ -403,16 +403,19 @@ export class HighPerformanceImageProcessor {
     return tf.tidy(() => {
       const kernel = tf.tensor4d(
         [
-          [0, -1, 0],
-          [-1, 5, -1],
-          [0, -1, 0],
+          [[[0]], [[-1]], [[0]]],
+          [[[-1]], [[5]], [[-1]]],
+          [[[0]], [[-1]], [[0]]],
         ],
         [3, 3, 1, 1],
       );
 
       const channels = tf.split(image, 3, 2);
-      const sharpened = channels.map((channel) =>
-        tf.conv2d(channel.expandDims(0) as tf.Tensor4D, kernel, 1, 'same').squeeze([0]) as tf.Tensor3D,
+      const sharpened = channels.map(
+        (channel) =>
+          tf
+            .conv2d(channel.expandDims(0) as tf.Tensor4D, kernel, 1, 'same')
+            .squeeze([0]) as tf.Tensor3D,
       );
 
       return tf.concat(sharpened, 2);
@@ -762,28 +765,37 @@ class GPUAccelerator {
   private gpuEdgeDetection(image: tf.Tensor3D): tf.Tensor3D {
     // GPU-optimized edge detection using Sobel operator
     const grayscale = image.mean(2, true);
-    
-    // Sobel X kernel
-    const sobelXData = tf.tensor2d([[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]]);
-    const sobelX = sobelXData.expandDims(2).expandDims(3) as tf.Tensor4D;
-    // Sobel Y kernel  
-    const sobelYData = tf.tensor2d([[-1, -2, -1], [0, 0, 0], [1, 2, 1]]);
-    const sobelY = sobelYData.expandDims(2).expandDims(3) as tf.Tensor4D;
-    
-    const input4d = grayscale.expandDims(0).expandDims(3) as tf.Tensor4D;
+
+    // Create Sobel kernels with correct 4D shape [height, width, inChannels, outChannels]
+    const sobelX = tf.tensor4d(
+      [
+        [[[-1]], [[0]], [[1]]],
+        [[[-2]], [[0]], [[2]]],
+        [[[-1]], [[0]], [[1]]],
+      ],
+      [3, 3, 1, 1],
+    );
+
+    const sobelY = tf.tensor4d(
+      [
+        [[[-1]], [[-2]], [[-1]]],
+        [[[0]], [[0]], [[0]]],
+        [[[1]], [[2]], [[1]]],
+      ],
+      [3, 3, 1, 1],
+    );
+
+    const input4d = grayscale.expandDims(0) as tf.Tensor4D;
     const gradX = tf.conv2d(input4d, sobelX, 1, 'same');
     const gradY = tf.conv2d(input4d, sobelY, 1, 'same');
-    
+
     const magnitude = tf.sqrt(tf.add(tf.square(gradX), tf.square(gradY)));
-    
-    sobelXData.dispose();
-    sobelX.dispose();
-    sobelYData.dispose();
+
     sobelY.dispose();
     gradX.dispose();
     gradY.dispose();
-    
-    return magnitude.squeeze([0, 3]).expandDims(2) as tf.Tensor3D;
+
+    return magnitude.squeeze([0]).squeeze([2]) as tf.Tensor3D;
   }
 
   private gpuFeatureExtraction(image: tf.Tensor3D): tf.Tensor3D {

@@ -1,235 +1,344 @@
-/**
- * NEONPROV1 - Dashboard Principal
- * Página principal com KPIs e visão geral do sistema
- */
+'use client';
 
+import { motion } from 'framer-motion';
 import {
   Activity,
-  AlertTriangle,
   Calendar,
-  CheckCircle,
   Clock,
   DollarSign,
-  Eye,
   Plus,
+  TrendingUp,
   Users,
 } from 'lucide-react';
-import type { Metadata } from 'next';
-import {
-  ActionButton,
-  AppLayout,
-  MetricCard,
-  NeonCard,
-  StatusBadge,
-} from '@/components/neonpro';
+import { Badge } from '@/components/ui/badge';
 
-export const metadata: Metadata = {
-  title: 'Dashboard - NEONPROV1',
-  description: 'Visão geral do sistema de gestão healthcare',
+// NeonGradientCard Component
+const NeonGradientCard = ({ children, className = '', ...props }: any) => (
+  <motion.div
+    className={`relative overflow-hidden rounded-xl border border-blue-500/20 bg-gradient-to-br from-slate-900/90 via-blue-900/20 to-slate-800/90 backdrop-blur-xl ${className}`}
+    transition={{ duration: 0.2 }}
+    whileHover={{
+      scale: 1.02,
+      borderColor: 'rgb(59 130 246 / 0.5)',
+      boxShadow:
+        '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 10px 10px -5px rgb(0 0 0 / 0.04), 0 0 0 1px rgb(59 130 246 / 0.1)',
+    }}
+    {...props}
+  >
+    <motion.div
+      animate={{
+        backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'],
+      }}
+      className="absolute inset-0 bg-gradient-to-r from-blue-600/0 via-blue-400/5 to-purple-600/0"
+      transition={{
+        duration: 8,
+        repeat: Number.POSITIVE_INFINITY,
+        ease: 'linear',
+      }}
+    />
+    <div className="relative z-10 p-6">{children}</div>
+  </motion.div>
+);
+
+// CosmicGlowButton Component
+const CosmicGlowButton = ({
+  children,
+  className = '',
+  variant = 'primary',
+  size = 'default',
+  icon: Icon,
+  ...props
+}: any) => {
+  const variants = {
+    primary:
+      'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700',
+    secondary:
+      'bg-gradient-to-r from-slate-600 to-slate-700 hover:from-slate-700 hover:to-slate-800',
+    success:
+      'bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700',
+    warning:
+      'bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700',
+    danger:
+      'bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700',
+  };
+
+  const sizes = {
+    sm: 'px-3 py-1.5 text-sm',
+    default: 'px-4 py-2',
+    lg: 'px-6 py-3 text-lg',
+  };
+
+  return (
+    <motion.button
+      className={`relative overflow-hidden rounded-lg font-medium text-white transition-all duration-200 ${variants[variant]} ${sizes[size]} ${className}`}
+      whileHover={{ scale: 1.05 }}
+      whileTap={{ scale: 0.95 }}
+      {...props}
+    >
+      <motion.div
+        animate={{
+          backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'],
+        }}
+        className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0"
+        transition={{
+          duration: 2,
+          repeat: Number.POSITIVE_INFINITY,
+          ease: 'linear',
+        }}
+      />
+      <span className="relative z-10 flex items-center justify-center gap-2">
+        {Icon && <Icon className="h-4 w-4" />}
+        {children}
+      </span>
+    </motion.button>
+  );
 };
 
-export default function DashboardPage() {
+const DashboardPage = () => {
+  const stats = [
+    {
+      title: 'Total de Pacientes',
+      value: '1,234',
+      change: '+12%',
+      icon: Users,
+      color: 'text-blue-400',
+    },
+    {
+      title: 'Consultas Hoje',
+      value: '23',
+      change: '+5%',
+      icon: Calendar,
+      color: 'text-emerald-400',
+    },
+    {
+      title: 'Receita Mensal',
+      value: 'R$ 45.2K',
+      change: '+18%',
+      icon: DollarSign,
+      color: 'text-amber-400',
+    },
+    {
+      title: 'Taxa de Ocupação',
+      value: '87%',
+      change: '+3%',
+      icon: TrendingUp,
+      color: 'text-purple-400',
+    },
+  ];
+
+  const recentPatients = [
+    {
+      name: 'Maria Silva',
+      email: 'maria@email.com',
+      lastVisit: '2 dias atrás',
+      status: 'Ativo',
+    },
+    {
+      name: 'João Santos',
+      email: 'joao@email.com',
+      lastVisit: '1 semana atrás',
+      status: 'Ativo',
+    },
+    {
+      name: 'Ana Costa',
+      email: 'ana@email.com',
+      lastVisit: '3 dias atrás',
+      status: 'Pendente',
+    },
+  ];
+
+  const quickActions = [
+    { label: 'Nova Consulta', icon: Plus, variant: 'primary' },
+    { label: 'Ver Agenda', icon: Calendar, variant: 'secondary' },
+    { label: 'Relatórios', icon: Activity, variant: 'success' },
+  ];
+
   return (
-    <AppLayout>
-      <div className="space-y-6">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900">
+      <div className="container mx-auto p-6">
         {/* Header */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="font-bold text-3xl text-slate-900 dark:text-slate-100">
-              Dashboard
-            </h1>
-            <p className="mt-1 text-slate-600 dark:text-slate-400">
-              Visão geral das atividades do sistema
-            </p>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <ActionButton icon={Eye} variant="outline">
-              Relatórios
-            </ActionButton>
-            <ActionButton icon={Plus} variant="primary">
-              Nova Consulta
-            </ActionButton>
-          </div>
-        </div>
-
-        {/* KPI Cards */}
-        <div className="healthcare-grid">
-          <MetricCard
-            icon={Users}
-            subtitle="pacientes ativos"
-            title="Total de Pacientes"
-            trend="up"
-            trendLabel="vs. mês anterior"
-            trendValue="+12%"
-            value="1,247"
-            variant="default"
-          />
-
-          <MetricCard
-            icon={Calendar}
-            subtitle="agendamentos"
-            title="Consultas Hoje"
-            trend="up"
-            trendLabel="vs. ontem"
-            trendValue="+3"
-            value="24"
-            variant="success"
-          />
-
-          <MetricCard
-            icon={DollarSign}
-            subtitle="faturamento"
-            title="Receita Mensal"
-            trend="up"
-            trendLabel="vs. mês anterior"
-            trendValue="+8%"
-            value="R$ 45.2k"
-            variant="default"
-          />
-
-          <MetricCard
-            icon={Activity}
-            subtitle="utilização"
-            title="Taxa de Ocupação"
-            trend="neutral"
-            trendLabel="estável"
-            trendValue="0%"
-            value="87%"
-            status="warning"
-          />
-        </div>
-
-        {/* Content Grid */}
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-          {/* Próximas Consultas */}
-          <NeonCard
-            description="Agendamentos para hoje"
-            title="Próximas Consultas"
-            variant="default"
-          >
-            <div className="space-y-4">
-              <div className="flex items-center justify-between rounded-lg bg-slate-50 p-3 dark:bg-slate-800">
-                <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-neon-primary">
-                    <Users className="h-5 w-5 text-white" />
-                  </div>
-                  <div>
-                    <p className="font-medium text-slate-900 dark:text-slate-100">
-                      Maria Silva
-                    </p>
-                    <p className="text-slate-600 text-sm dark:text-slate-400">
-                      09:00 - Consulta Rotina
-                    </p>
-                  </div>
-                </div>
-                <StatusBadge size="sm" status="scheduled" />
-              </div>
-
-              <div className="flex items-center justify-between rounded-lg bg-slate-50 p-3 dark:bg-slate-800">
-                <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-healthcare-urgent">
-                    <Users className="h-5 w-5 text-white" />
-                  </div>
-                  <div>
-                    <p className="font-medium text-slate-900 dark:text-slate-100">
-                      João Santos
-                    </p>
-                    <p className="text-slate-600 text-sm dark:text-slate-400">
-                      10:30 - Retorno
-                    </p>
-                  </div>
-                </div>
-                <StatusBadge size="sm" status="urgent" />
-              </div>
-
-              <div className="flex items-center justify-between rounded-lg bg-slate-50 p-3 dark:bg-slate-800">
-                <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-healthcare-critical">
-                    <Users className="h-5 w-5 text-white" />
-                  </div>
-                  <div>
-                    <p className="font-medium text-slate-900 dark:text-slate-100">
-                      Ana Costa
-                    </p>
-                    <p className="text-slate-600 text-sm dark:text-slate-400">
-                      14:00 - Emergência
-                    </p>
-                  </div>
-                </div>
-                <StatusBadge pulse size="sm" status="critical" />
-              </div>
-            </div>
-          </NeonCard>
-
-          {/* Status do Sistema */}
-          <NeonCard
-            description="Indicadores de performance"
-            title="Status do Sistema"
-            variant="default"
-          >
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <CheckCircle className="h-5 w-5 text-healthcare-completed" />
-                  <span className="font-medium text-sm">Sistema Online</span>
-                </div>
-                <StatusBadge size="sm" status="normal" />
-              </div>
-
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Clock className="h-5 w-5 text-healthcare-pending" />
-                  <span className="font-medium text-sm">Backup Programado</span>
-                </div>
-                <StatusBadge size="sm" status="pending" />
-              </div>
-
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <AlertTriangle className="h-5 w-5 text-healthcare-urgent" />
-                  <span className="font-medium text-sm">
-                    Atualizações Disponíveis
-                  </span>
-                </div>
-                <StatusBadge size="sm" status="urgent" />
-              </div>
-
-              <div className="border-slate-200 border-t pt-4 dark:border-slate-700">
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-slate-600 dark:text-slate-400">
-                    Uptime
-                  </span>
-                  <span className="font-medium text-healthcare-completed">
-                    99.9%
-                  </span>
-                </div>
-              </div>
-            </div>
-          </NeonCard>
-        </div>
-
-        {/* Quick Actions */}
-        <NeonCard
-          description="Acesso rápido às funcionalidades principais"
-          title="Ações Rápidas"
+        <motion.div
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-8"
+          initial={{ opacity: 0, y: -20 }}
+          transition={{ duration: 0.6 }}
         >
-          <div className="flex flex-wrap gap-3">
-            <ActionButton icon={Plus} variant="primary">
-              Nova Consulta
-            </ActionButton>
-            <ActionButton icon={Users} variant="secondary">
-              Cadastrar Paciente
-            </ActionButton>
-            <ActionButton icon={Calendar} variant="outline">
-              Ver Agenda
-            </ActionButton>
-            <ActionButton icon={DollarSign} variant="outline">
-              Relatório Financeiro
-            </ActionButton>
+          <h1 className="mb-2 font-bold text-3xl text-white">
+            Dashboard - Clínica Estética
+          </h1>
+          <p className="text-slate-300">
+            Visão geral do sistema e métricas principais
+          </p>
+        </motion.div>
+
+        {/* Stats Grid */}
+        <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
+          {stats.map((stat, index) => {
+            const Icon = stat.icon;
+            return (
+              <motion.div
+                animate={{ opacity: 1, y: 0 }}
+                initial={{ opacity: 0, y: 20 }}
+                key={stat.title}
+                transition={{ delay: index * 0.1 }}
+              >
+                <NeonGradientCard>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="font-medium text-slate-300 text-sm">
+                        {stat.title}
+                      </p>
+                      <p className="font-bold text-2xl text-white">
+                        {stat.value}
+                      </p>
+                      <p className="text-emerald-400 text-sm">
+                        {stat.change} vs mês anterior
+                      </p>
+                    </div>
+                    <div
+                      className={`rounded-full bg-white/10 p-3 ${stat.color}`}
+                    >
+                      <Icon className="h-6 w-6" />
+                    </div>
+                  </div>
+                </NeonGradientCard>
+              </motion.div>
+            );
+          })}
+        </div>
+
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+          {/* Recent Patients */}
+          <motion.div
+            animate={{ opacity: 1, x: 0 }}
+            className="lg:col-span-2"
+            initial={{ opacity: 0, x: -20 }}
+            transition={{ delay: 0.4 }}
+          >
+            <NeonGradientCard>
+              <div className="mb-6 flex items-center justify-between">
+                <h2 className="font-bold text-white text-xl">
+                  Pacientes Recentes
+                </h2>
+                <CosmicGlowButton size="sm" variant="secondary">
+                  Ver Todos
+                </CosmicGlowButton>
+              </div>
+
+              <div className="space-y-4">
+                {recentPatients.map((patient, index) => (
+                  <motion.div
+                    animate={{ opacity: 1, x: 0 }}
+                    className="flex items-center justify-between rounded-lg border border-white/10 bg-white/5 p-4 transition-colors hover:bg-white/10"
+                    initial={{ opacity: 0, x: -10 }}
+                    key={patient.name}
+                    transition={{ delay: 0.5 + index * 0.1 }}
+                  >
+                    <div className="flex items-center gap-4">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-pink-500 to-purple-500">
+                        <span className="font-semibold text-white text-sm">
+                          {patient.name.charAt(0)}
+                        </span>
+                      </div>
+                      <div>
+                        <p className="font-medium text-white">{patient.name}</p>
+                        <p className="text-slate-400 text-sm">
+                          {patient.email}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-slate-300 text-sm">
+                        {patient.lastVisit}
+                      </p>
+                      <Badge
+                        variant={
+                          patient.status === 'Ativo' ? 'default' : 'secondary'
+                        }
+                      >
+                        {patient.status}
+                      </Badge>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            </NeonGradientCard>
+          </motion.div>
+
+          {/* Quick Actions & System Status */}
+          <div className="space-y-6">
+            {/* Quick Actions */}
+            <motion.div
+              animate={{ opacity: 1, x: 0 }}
+              initial={{ opacity: 0, x: 20 }}
+              transition={{ delay: 0.6 }}
+            >
+              <NeonGradientCard>
+                <h2 className="mb-6 font-bold text-white text-xl">
+                  Ações Rápidas
+                </h2>
+                <div className="space-y-3">
+                  {quickActions.map((action, index) => (
+                    <motion.div
+                      animate={{ opacity: 1, y: 0 }}
+                      initial={{ opacity: 0, y: 10 }}
+                      key={action.label}
+                      transition={{ delay: 0.7 + index * 0.1 }}
+                    >
+                      <CosmicGlowButton
+                        className="w-full justify-start"
+                        icon={action.icon}
+                        variant={action.variant}
+                      >
+                        {action.label}
+                      </CosmicGlowButton>
+                    </motion.div>
+                  ))}
+                </div>
+              </NeonGradientCard>
+            </motion.div>
+
+            {/* System Status */}
+            <motion.div
+              animate={{ opacity: 1, x: 0 }}
+              initial={{ opacity: 0, x: 20 }}
+              transition={{ delay: 0.8 }}
+            >
+              <NeonGradientCard>
+                <h2 className="mb-6 font-bold text-white text-xl">
+                  Status do Sistema
+                </h2>
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <span className="text-gray-300">Servidor Principal</span>
+                    <div className="flex items-center gap-2">
+                      <div className="h-2 w-2 animate-pulse rounded-full bg-emerald-400" />
+                      <span className="text-emerald-400 text-sm">Online</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-gray-300">Backup Automático</span>
+                    <div className="flex items-center gap-2">
+                      <div className="h-2 w-2 animate-pulse rounded-full bg-emerald-400" />
+                      <span className="text-emerald-400 text-sm">Ativo</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-gray-300">Última Atualização</span>
+                    <span className="text-gray-400 text-sm">Há 2 minutos</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-gray-300">Uptime</span>
+                    <span className="text-gray-400 text-sm">99.9%</span>
+                  </div>
+                </div>
+              </NeonGradientCard>
+            </motion.div>
           </div>
-        </NeonCard>
+        </div>
       </div>
-    </AppLayout>
+    </div>
   );
-}
+};
+
+export default DashboardPage;

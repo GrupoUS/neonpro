@@ -195,11 +195,7 @@ cd neonpro
 ### 2. Instale as dependências
 
 \`\`\`bash
-npm install
-
-# ou
-
-yarn install
+pnpm install
 \`\`\`
 
 ### 3. Configure as variáveis de ambiente
@@ -221,13 +217,13 @@ SUPABASE_SERVICE_ROLE_KEY=sua_chave_de_servico
 Execute as migrações do Supabase:
 
 \`\`\`bash
-npm run db:migrate
+pnpm run db:migrate
 \`\`\`
 
 ### 5. Execute o projeto
 
 \`\`\`bash
-npm run dev
+pnpm run dev
 \`\`\`
 
 Acesse [http://localhost:3000](http://localhost:3000) no seu navegador.
@@ -240,15 +236,15 @@ Acesse [http://localhost:3000](http://localhost:3000) no seu navegador.
 
 # Executar todos os testes
 
-npm run test
+pnpm run test
 
 # Executar em modo watch
 
-npm run test:watch
+pnpm run test:watch
 
 # Executar com cobertura
 
-npm run test:coverage
+pnpm run test:coverage
 \`\`\`
 
 ### Testes E2E
@@ -257,11 +253,11 @@ npm run test:coverage
 
 # Executar testes E2E
 
-npm run test:e2e
+pnpm run test:e2e
 
 # Executar com interface gráfica
 
-npm run test:e2e:ui
+pnpm run test:e2e:ui
 \`\`\`
 
 ## 📱 PWA - Progressive Web App

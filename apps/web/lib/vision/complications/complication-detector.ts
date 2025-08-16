@@ -13,6 +13,7 @@ import { z } from 'zod';
 import { logger } from '@/lib/monitoring';
 import { supabase } from '@/lib/supabase/client';
 import { TREATMENT_TYPES } from '../config';
+import type { TreatmentType } from '../types';
 import type {
   AlertLevel,
   ComplicationCategory,
@@ -26,7 +27,7 @@ const ComplicationDetectionRequestSchema = z.object({
   imageId: z.string().uuid(),
   patientId: z.string().uuid(),
   treatmentType: z.enum(
-    Object.values(TREATMENT_TYPES) as [string, ...string[]],
+    Object.values(TREATMENT_TYPES) as [TreatmentType, ...TreatmentType[]],
   ),
   previousAnalysisId: z.string().uuid().optional(),
   clinicianId: z.string().uuid(),
@@ -229,6 +230,7 @@ export class ComplicationDetector {
               type,
               version: model.version,
               accuracy: model.accuracy,
+              confidenceThreshold: model.confidenceThreshold || 0.8,
             }),
           ),
           qualityMetrics: analysis.qualityMetrics,

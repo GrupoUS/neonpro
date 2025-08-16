@@ -85,10 +85,10 @@ const SearchBox = React.forwardRef<HTMLDivElement, SearchBoxProps>(
       <div {...props} className={cn('space-y-3', className)} ref={ref}>
         {/* Search Input */}
         <div className="relative">
-          <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+          <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
             <svg
               aria-hidden="true"
-              className="w-4 h-4 text-muted-foreground"
+              className="h-4 w-4 text-muted-foreground"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -103,7 +103,7 @@ const SearchBox = React.forwardRef<HTMLDivElement, SearchBoxProps>(
           </div>
 
           <input
-            className="block w-full p-2 pl-10 pr-8 text-sm border border-input rounded-md bg-background placeholder:text-muted-foreground focus:ring-2 focus:ring-ring focus:border-ring disabled:cursor-not-allowed disabled:opacity-50"
+            className="block w-full rounded-md border border-input bg-background p-2 pr-8 pl-10 text-sm placeholder:text-muted-foreground focus:border-ring focus:ring-2 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
             onChange={handleSearchChange}
             placeholder={placeholder}
             type="search"
@@ -117,7 +117,7 @@ const SearchBox = React.forwardRef<HTMLDivElement, SearchBoxProps>(
               type="button"
             >
               <svg
-                className="w-4 h-4"
+                className="h-4 w-4"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -134,7 +134,7 @@ const SearchBox = React.forwardRef<HTMLDivElement, SearchBoxProps>(
 
           {loading && (
             <div className="absolute inset-y-0 right-0 flex items-center pr-3">
-              <div className="w-4 h-4 border-2 border-muted-foreground border-t-transparent rounded-full animate-spin" />
+              <div className="h-4 w-4 animate-spin rounded-full border-2 border-muted-foreground border-t-transparent" />
             </div>
           )}
         </div>
@@ -165,7 +165,7 @@ const SearchBox = React.forwardRef<HTMLDivElement, SearchBoxProps>(
 
         {/* Filter Options */}
         {hasFilters && showFilters && (
-          <div className="flex flex-wrap gap-2 p-3 border rounded-md bg-muted/30">
+          <div className="flex flex-wrap gap-2 rounded-md border bg-muted/30 p-3">
             {filters.map((filter) => {
               const isActive = activeFilters?.includes(filter.id);
               return (
@@ -209,7 +209,7 @@ const SearchBox = React.forwardRef<HTMLDivElement, SearchBoxProps>(
                 >
                   {filter.label}
                   <svg
-                    className="w-3 h-3 ml-1"
+                    className="ml-1 h-3 w-3"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"

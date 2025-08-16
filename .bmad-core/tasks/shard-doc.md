@@ -14,7 +14,7 @@ If the command succeeds, inform the user that the document has been sharded succ
 
 If the command fails (especially with an error indicating the command is not found or not available), inform the user: "The markdownExploder setting is enabled but the md-tree command is not available. Please either:
 
-1. Install @kayvan/markdown-tree-parser globally with: `npm install -g @kayvan/markdown-tree-parser`
+1. Install @kayvan/markdown-tree-parser globally with: `pnpm add -g @kayvan/markdown-tree-parser`
 2. Or set markdownExploder to false in .bmad-core/core-config.yaml
 
 **IMPORTANT: STOP HERE - do not proceed with manual sharding until one of the above actions is taken.**"
@@ -22,7 +22,7 @@ If the command fails (especially with an error indicating the command is not fou
 If markdownExploder is set to false, inform the user: "The markdownExploder setting is currently false. For better performance and reliability, you should:
 
 1. Set markdownExploder to true in .bmad-core/core-config.yaml
-2. Install @kayvan/markdown-tree-parser globally with: `npm install -g @kayvan/markdown-tree-parser`
+2. Install @kayvan/markdown-tree-parser globally with: `pnpm add -g @kayvan/markdown-tree-parser`
 
 I will now proceed with the manual sharding process."
 
@@ -33,7 +33,7 @@ Then proceed with the manual method below ONLY if markdownExploder is false.]]
 1. **Install globally**:
 
    ```bash
-   npm install -g @kayvan/markdown-tree-parser
+   pnpm add -g @kayvan/markdown-tree-parser
    ```
 
 2. **Use the explode command**:

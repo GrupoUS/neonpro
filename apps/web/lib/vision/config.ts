@@ -367,21 +367,21 @@ export function validateVoidBeastCompliance(metrics: {
 
 // Environment-specific configuration override
 export function getEnvironmentConfig() {
-  const baseConfig = { ...VISION_CONFIG };
+  const config = JSON.parse(JSON.stringify(VISION_CONFIG));
 
   if (process.env.NODE_ENV === 'development') {
-    baseConfig.PERFORMANCE.MAX_PROCESSING_TIME_MS = 60_000; // More lenient in dev
-    baseConfig.MODELS.PRELOAD_MODELS = false; // Don't preload in dev
-    baseConfig.API.RATE_LIMITING.requests_per_minute = 1000; // Higher limits in dev
+    config.PERFORMANCE.MAX_PROCESSING_TIME_MS = 60_000; // More lenient in dev
+    config.MODELS.PRELOAD_MODELS = false; // Don't preload in dev
+    config.API.RATE_LIMITING.requests_per_minute = 1000; // Higher limits in dev
   }
 
   if (process.env.NODE_ENV === 'test') {
-    baseConfig.DEVELOPMENT.MOCK_MODELS = true;
-    baseConfig.STORAGE.AUTO_CLEANUP_TEMP_FILES = false;
-    baseConfig.MONITORING.REAL_TIME_MONITORING = false;
+    config.DEVELOPMENT.MOCK_MODELS = true;
+    config.STORAGE.AUTO_CLEANUP_TEMP_FILES = false;
+    config.MONITORING.REAL_TIME_MONITORING = false;
   }
 
-  return baseConfig;
+  return config;
 }
 
 export type VisionConfig = typeof VISION_CONFIG;

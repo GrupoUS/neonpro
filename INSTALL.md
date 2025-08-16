@@ -63,7 +63,7 @@ git branch
 
 ```bash
 # Instalar dependências do projeto
-npm install
+pnpm install
 
 # Verificar se todas as dependências foram instaladas
 npm ls --depth=0
@@ -214,7 +214,7 @@ npx prisma studio
 
 ```bash
 # Se existir arquivo de seed
-npm run db:seed
+pnpm run db:seed
 ```
 
 ## 🚀 Instalação Local
@@ -222,7 +222,7 @@ npm run db:seed
 ### 1. Iniciar Servidor de Desenvolvimento
 
 ```bash
-npm run dev
+pnpm run dev
 ```
 
 ### 2. Verificar Instalação
@@ -236,13 +236,13 @@ Abra o navegador e acesse:
 
 ```bash
 # Testes unitários
-npm run test
+pnpm run test
 
 # Verificação de tipos
-npm run type-check
+pnpm run type-check
 
 # Lint e formatação
-npm run check
+pnpm run check
 ```
 
 ## 🌐 Deploy em Produção
@@ -284,20 +284,20 @@ No painel da Vercel, adicione todas as variáveis do `.env.local`
 #### 1. Build do Projeto
 
 ```bash
-npm run build
+pnpm run build
 ```
 
 #### 2. Iniciar em Produção
 
 ```bash
-npm run start
+pnpm run start
 ```
 
 #### 3. Usar PM2 (Recomendado para VPS)
 
 ```bash
 # Instalar PM2 globalmente
-npm install -g pm2
+pnpm install -g pm2
 
 # Iniciar aplicação
 pm2 start npm --name "neonpro" -- start
@@ -313,7 +313,7 @@ pm2 save
 
 ```bash
 # Para desenvolvimento (certificado self-signed)
-npm install -g mkcert
+pnpm install -g mkcert
 mkcert -install
 mkcert localhost 127.0.0.1 ::1
 ```
@@ -359,7 +359,7 @@ module.exports = {
 ```bash
 # Limpar cache e reinstalar
 rm -rf node_modules package-lock.json
-npm install
+pnpm install
 ```
 
 #### 2. Erro de conexão com banco
@@ -399,10 +399,10 @@ npx prisma generate
 
 ```bash
 # Verificar tipos
-npm run type-check
+pnpm run type-check
 
 # Reinstalar tipos
-npm install --save-dev @types/node @types/react @types/react-dom
+pnpm install --save-dev @types/node @types/react @types/react-dom
 ```
 
 ### Logs e Debugging
@@ -416,10 +416,10 @@ npm install --save-dev @types/node @types/react @types/react-dom
 
 ```bash
 # Modo verbose
-DEBUG=* npm run dev
+DEBUG=* pnpm run dev
 
 # Apenas logs do Next.js
-DEBUG=next:* npm run dev
+DEBUG=next:* pnpm run dev
 ```
 
 #### 3. Prisma debugging
