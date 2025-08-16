@@ -307,7 +307,7 @@ export class ComplicationDetector {
   ): Promise<any[]> {
     const results = [];
 
-    for (const [modelType, model] of this.models.entries()) {
+    for (const [modelType, model] of Array.from(this.models.entries())) {
       try {
         // Simulate model inference
         const prediction = await this.runModelInference(

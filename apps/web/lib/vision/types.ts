@@ -700,16 +700,4 @@ export type RequiredFields<T, K extends keyof T> = T & Required<Pick<T, K>>;
 export type OptionalFields<T, K extends keyof T> = Omit<T, K> &
   Partial<Pick<T, K>>;
 
-// Re-export commonly used types
-export type {
-  TreatmentType,
-  AnalysisStatus,
-  ErrorCode,
-  ExportFormat,
-  CompressionLevel,
-  AnnotationType,
-  MeasurementType,
-  ClinicalSignificance,
-  AnalysisStage,
-  AnalysisEventType,
-};
+// Note: Types are already exported above, no need to re-export

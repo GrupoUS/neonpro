@@ -412,7 +412,7 @@ export class HighPerformanceImageProcessor {
 
       const channels = tf.split(image, 3, 2);
       const sharpened = channels.map((channel) =>
-        tf.conv2d(channel.expandDims(0), kernel, 1, 'same').squeeze([0]),
+        tf.conv2d(channel.expandDims(0) as tf.Tensor4D, kernel, 1, 'same').squeeze([0]) as tf.Tensor3D,
       );
 
       return tf.concat(sharpened, 2);
@@ -487,7 +487,7 @@ export class HighPerformanceImageProcessor {
     let leastUsed: string | null = null;
     let minAccess = Number.POSITIVE_INFINITY;
 
-    for (const [key, entry] of this.cache.entries()) {
+    for (const [key, entry] of Array.from(this.cache.entries())) {
       if (entry.accessCount < minAccess) {
         minAccess = entry.accessCount;
         leastUsed = key;
@@ -760,11 +760,30 @@ class GPUAccelerator {
   }
 
   private gpuEdgeDetection(image: tf.Tensor3D): tf.Tensor3D {
-    // GPU-optimized edge detection
-    return tf.image
-      .sobel(image.mean(2, true).expandDims(0))
-      .squeeze([0, 3])
-      .expandDims(2) as tf.Tensor3D;
+    // GPU-optimized edge detection using Sobel operator
+    const grayscale = image.mean(2, true);
+    
+    // Sobel X kernel
+    const sobelXData = tf.tensor2d([[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]]);
+    const sobelX = sobelXData.expandDims(2).expandDims(3) as tf.Tensor4D;
+    // Sobel Y kernel  
+    const sobelYData = tf.tensor2d([[-1, -2, -1], [0, 0, 0], [1, 2, 1]]);
+    const sobelY = sobelYData.expandDims(2).expandDims(3) as tf.Tensor4D;
+    
+    const input4d = grayscale.expandDims(0).expandDims(3) as tf.Tensor4D;
+    const gradX = tf.conv2d(input4d, sobelX, 1, 'same');
+    const gradY = tf.conv2d(input4d, sobelY, 1, 'same');
+    
+    const magnitude = tf.sqrt(tf.add(tf.square(gradX), tf.square(gradY)));
+    
+    sobelXData.dispose();
+    sobelX.dispose();
+    sobelYData.dispose();
+    sobelY.dispose();
+    gradX.dispose();
+    gradY.dispose();
+    
+    return magnitude.squeeze([0, 3]).expandDims(2) as tf.Tensor3D;
   }
 
   private gpuFeatureExtraction(image: tf.Tensor3D): tf.Tensor3D {
