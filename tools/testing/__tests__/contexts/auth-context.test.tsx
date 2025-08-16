@@ -1,36 +1,41 @@
 import {
   act,
+  act,
+  fireEvent,
   fireEvent,
   render,
+  render,
+  screen,
   screen,
   waitFor,
+  waitFor,
 } from '@testing-library/react';
+import { vi } from 'vitest';
 import '@testing-library/jest-dom';
 import { AuthProvider, useAuth } from '@/contexts/auth-context';
 
 // Mock Supabase
 const mockSupabase = {
   auth: {
-    getSession: jest.fn(),
-    getUser: jest.fn(),
-    signInWithPassword: jest.fn(),
-    signUp: jest.fn(),
-    signOut: jest.fn(),
-    signInWithOAuth: jest.fn(),
+    getSession: vi.fn(),
+    getUser: vi.fn(),
+    signInWithPassword: vi.fn(),
+    signUp: vi.fn(),
+    signOut: vi.fn(),
+    signInWithOAuth: vi.fn(),
     onAuthStateChange: jest.fn(() => ({
-      data: { subscription: { unsubscribe: jest.fn() } },
+      data: { subscription: { unsubscribe: vi.fn() } },
     })),
   },
 };
 
-jest.mock('@/app/utils/supabase/client', () => ({
+vi.Mock('@/app/utils/supabase/client', () => ({
   createClient: () => mockSupabase,
 }));
 
 // Test component to access auth context
 const TestComponent = () => {
-  const { user, session, loading, signIn, signUp, signOut, signInWithGoogle } =
-    useAuth();
+  const { user, session, loading, signIn, signUp, signOut, signInWithGoogle } = useAuth();
 
   return (
     <div>
@@ -38,10 +43,7 @@ const TestComponent = () => {
       <div data-testid="user">{user ? user.email : 'no-user'}</div>
       <div data-testid="session">{session ? 'has-session' : 'no-session'}</div>
 
-      <button
-        data-testid="signin-btn"
-        onClick={() => signIn('test@example.com', 'password')}
-      >
+      <button data-testid="signin-btn" onClick={() => signIn('test@example.com', 'password')}>
         Sign In
       </button>
 
@@ -56,10 +58,7 @@ const TestComponent = () => {
         Sign Out
       </button>
 
-      <button
-        data-testid="google-signin-btn"
-        onClick={() => signInWithGoogle()}
-      >
+      <button data-testid="google-signin-btn" onClick={() => signInWithGoogle()}>
         Sign In with Google
       </button>
     </div>
@@ -68,7 +67,7 @@ const TestComponent = () => {
 
 describe('AuthProvider', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
 
     // Default mock implementations
     mockSupabase.auth.getSession.mockResolvedValue({
@@ -277,9 +276,9 @@ describe('AuthProvider', () => {
     });
 
     // Mock window.open and window.screen
-    const mockOpen = jest.fn().mockReturnValue({
+    const mockOpen = vi.fn().mockReturnValue({
       closed: false,
-      close: jest.fn(),
+      close: vi.fn(),
     });
 
     Object.defineProperty(window, 'open', {
@@ -343,7 +342,7 @@ describe('AuthProvider', () => {
     mockSupabase.auth.onAuthStateChange.mockImplementation((callback) => {
       authStateCallback = callback;
       return {
-        data: { subscription: { unsubscribe: jest.fn() } },
+        data: { subscription: { unsubscribe: vi.fn() } },
       };
     });
 
@@ -375,7 +374,7 @@ describe('AuthProvider', () => {
   });
 
   it('cleans up subscription on unmount', () => {
-    const mockUnsubscribe = jest.fn();
+    const mockUnsubscribe = vi.fn();
 
     mockSupabase.auth.onAuthStateChange.mockReturnValue({
       data: { subscription: { unsubscribe: mockUnsubscribe } },
@@ -396,7 +395,7 @@ describe('AuthProvider', () => {
 describe('useAuth hook', () => {
   it('throws error when used outside AuthProvider', () => {
     // Suppress error boundary output for this test
-    const spy = jest.spyOn(console, 'error').mockImplementation(() => {});
+    const spy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
     expect(() => {
       render(<TestComponent />);

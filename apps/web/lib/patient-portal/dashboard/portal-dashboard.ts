@@ -161,7 +161,7 @@ export class PortalDashboard {
     auditLogger: AuditLogger,
     lgpdManager: LGPDManager,
     sessionManager: SessionManager,
-    config?: Partial<DashboardConfig>
+    config?: Partial<DashboardConfig>,
   ) {
     this.supabase = createClient(supabaseUrl, supabaseKey);
     this.auditLogger = auditLogger;
@@ -183,7 +183,7 @@ export class PortalDashboard {
    */
   async getDashboardData(
     patientId: string,
-    sessionToken: string
+    sessionToken: string,
   ): Promise<PatientDashboardData> {
     try {
       // Validate session
@@ -279,7 +279,7 @@ export class PortalDashboard {
         id, name, email, phone, birth_date, gender,
         profile_photo_url, membership_start_date,
         emergency_contact_name, emergency_contact_phone
-      `
+      `,
       )
       .eq('id', patientId)
       .single();
@@ -308,7 +308,7 @@ export class PortalDashboard {
         estimated_duration, location,
         services(name, category),
         staff(name, specialization)
-      `
+      `,
       )
       .eq('patient_id', patientId)
       .gte('appointment_date', now.toISOString().split('T')[0])
@@ -327,7 +327,7 @@ export class PortalDashboard {
         estimated_duration, location,
         services(name, category),
         staff(name, specialization)
-      `
+      `,
       )
       .eq('patient_id', patientId)
       .lt('appointment_date', now.toISOString().split('T')[0])
@@ -353,7 +353,7 @@ export class PortalDashboard {
    */
   private transformAppointment(apt: any): AppointmentSummary {
     const appointmentDate = new Date(
-      `${apt.appointment_date}T${apt.appointment_time}`
+      `${apt.appointment_date}T${apt.appointment_time}`,
     );
     const now = new Date();
     const hoursUntilAppointment =
@@ -377,7 +377,7 @@ export class PortalDashboard {
    * Get treatment progress for patient
    */
   private async getTreatmentProgress(
-    patientId: string
+    patientId: string,
   ): Promise<TreatmentProgressSummary[]> {
     const { data, error } = await this.supabase
       .from('treatment_progress')
@@ -386,7 +386,7 @@ export class PortalDashboard {
         id, treatment_name, progress_percentage,
         current_session, total_sessions, next_session_date,
         last_update, status
-      `
+      `,
       )
       .eq('patient_id', patientId)
       .eq('status', 'active')
@@ -422,7 +422,7 @@ export class PortalDashboard {
         `
         id, filename, category, upload_date,
         is_processed, is_verified, file_size
-      `
+      `,
       )
       .eq('patient_id', patientId)
       .order('upload_date', { ascending: false })
@@ -460,9 +460,9 @@ export class PortalDashboard {
       .eq('patient_id', patientId)
       .eq('completed', false);
 
-    evaluations?.forEach((eval) => {
+    evaluations?.forEach((evaluation) => {
       tasks.push({
-        id: `eval_${eval.id}`,
+        id: `eval_${evaluation.id}`,
         title: `Avaliação: ${eval.evaluation_type}`,
         description: 'Complete sua avaliação pendente',
         dueDate: eval.due_date ? new Date(eval.due_date) : undefined,
@@ -479,7 +479,7 @@ export class PortalDashboard {
    * Get notifications for patient
    */
   private async getNotifications(
-    patientId: string
+    patientId: string,
   ): Promise<NotificationSummary[]> {
     const { data, error } = await this.supabase
       .from('notifications')
@@ -487,7 +487,7 @@ export class PortalDashboard {
         `
         id, title, message, type, is_read,
         created_at, action_url, action_text
-      `
+      `,
       )
       .eq('patient_id', patientId)
       .order('created_at', { ascending: false })
@@ -559,7 +559,7 @@ export class PortalDashboard {
     const membershipDays = patient?.membership_start_date
       ? Math.floor(
           (Date.now() - new Date(patient.membership_start_date).getTime()) /
-            (1000 * 60 * 60 * 24)
+            (1000 * 60 * 60 * 24),
         )
       : 0;
 
@@ -577,7 +577,7 @@ export class PortalDashboard {
    * Get patient preferences
    */
   private async getPatientPreferences(
-    patientId: string
+    patientId: string,
   ): Promise<PatientPreferences> {
     const { data, error } = await this.supabase
       .from('patient_portal_preferences')
@@ -657,7 +657,7 @@ export class PortalDashboard {
   public clearCache(patientId?: string): void {
     if (patientId) {
       const keysToDelete = Array.from(this.cache.keys()).filter((key) =>
-        key.includes(patientId)
+        key.includes(patientId),
       );
       keysToDelete.forEach((key) => this.cache.delete(key));
     } else {

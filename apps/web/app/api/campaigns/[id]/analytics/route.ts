@@ -10,9 +10,10 @@ const campaignService = new MarketingCampaignService();
 
 export async function GET(
   _request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
+    const { id } = await params;
     // Authentication check
     const supabase = await createClient();
     const {
@@ -22,7 +23,7 @@ export async function GET(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const result = await campaignService.getCampaignAnalytics(params.id);
+    const result = await campaignService.getCampaignAnalytics(id);
 
     if (!result.success) {
       return NextResponse.json({ error: result.error }, { status: 500 });

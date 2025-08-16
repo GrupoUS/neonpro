@@ -8,17 +8,13 @@
  * @created 2025-07-22
  */
 
-import { beforeEach, describe, expect, it, jest } from '@jest/globals';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { beforeEach, describe, expect, it, jest, vi } from 'vitest';
 import { renderWithProviders } from '../utils/testUtils';
 
 // Mock subscription components (to be imported when they exist)
-const MockSubscriptionStatusCard = ({
-  variant = 'default',
-}: {
-  variant?: string;
-}) => (
+const MockSubscriptionStatusCard = ({ variant = 'default' }: { variant?: string }) => (
   <div data-testid="subscription-status-card" data-variant={variant}>
     <h3>Subscription Status</h3>
     <p>Premium Plan - Active</p>
@@ -49,7 +45,7 @@ describe('Subscription Components', () => {
   const user = userEvent.setup();
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   // ============================================================================
@@ -60,14 +56,10 @@ describe('Subscription Components', () => {
     it('should render status card with correct information', () => {
       renderWithProviders(<MockSubscriptionStatusCard />);
 
-      expect(
-        screen.getByTestId('subscription-status-card')
-      ).toBeInTheDocument();
+      expect(screen.getByTestId('subscription-status-card')).toBeInTheDocument();
       expect(screen.getByText('Subscription Status')).toBeInTheDocument();
       expect(screen.getByText('Premium Plan - Active')).toBeInTheDocument();
-      expect(
-        screen.getByRole('button', { name: 'Upgrade' })
-      ).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: 'Upgrade' })).toBeInTheDocument();
     });
 
     it('should handle different variants correctly', () => {
@@ -78,7 +70,7 @@ describe('Subscription Components', () => {
     });
 
     it('should handle click events on upgrade button', async () => {
-      const mockClick = jest.fn();
+      const mockClick = vi.fn();
 
       renderWithProviders(
         <div>
@@ -109,19 +101,13 @@ describe('Subscription Components', () => {
 
       expect(screen.getByTestId('feature-gate')).toBeInTheDocument();
       expect(screen.getByTestId('premium-content')).toBeInTheDocument();
-      expect(
-        screen.getByText('Premium Analytics Dashboard')
-      ).toBeInTheDocument();
+      expect(screen.getByText('Premium Analytics Dashboard')).toBeInTheDocument();
     });
 
     it('should render fallback for restricted features', () => {
       renderWithProviders(
         <MockFeatureGate
-          fallback={
-            <div data-testid="upgrade-prompt">
-              Upgrade to access this feature
-            </div>
-          }
+          fallback={<div data-testid="upgrade-prompt">Upgrade to access this feature</div>}
           feature="enterprise-only"
         >
           <div data-testid="restricted-content">Enterprise Feature</div>
@@ -158,13 +144,9 @@ describe('Subscription Components', () => {
 
       renderWithProviders(mockNotification);
 
-      expect(
-        screen.getByTestId('subscription-notification')
-      ).toBeInTheDocument();
+      expect(screen.getByTestId('subscription-notification')).toBeInTheDocument();
       expect(screen.getByRole('alert')).toBeInTheDocument();
-      expect(
-        screen.getByText('Your subscription expires in 7 days')
-      ).toBeInTheDocument();
+      expect(screen.getByText('Your subscription expires in 7 days')).toBeInTheDocument();
     });
   });
 });

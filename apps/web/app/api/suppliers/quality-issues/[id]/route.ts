@@ -10,9 +10,9 @@ import { SupplierManagementService } from '@/app/lib/services/supplier-managemen
 const supplierService = new SupplierManagementService();
 
 type RouteParams = {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 };
 
 // =====================================================================================
@@ -20,6 +20,7 @@ type RouteParams = {
 // =====================================================================================
 export async function PUT(request: NextRequest, { params }: RouteParams) {
   try {
+    const { id } = await params;
     const body = await request.json();
 
     // Basic validation for update
@@ -29,7 +30,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     }
 
     const issue = await supplierService.updateQualityIssue(
-      params.id,
+      id,
       validationResult.data,
     );
 

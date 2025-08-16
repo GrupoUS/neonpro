@@ -2,6 +2,7 @@
 // TDD Implementation following QA Best Practices
 // Test Strategy: Unit → Integration → E2E
 
+import { vi } from 'vitest';
 import {
   type AcknowledgeAlertRequest,
   type CreateAlertConfigRequest,
@@ -16,17 +17,17 @@ import { StockAlertService } from '../stock-alert.service';
 
 // Mock Supabase client
 const mockSupabaseClient = {
-  from: jest.fn(() => ({
-    insert: jest.fn(() => ({
-      select: jest.fn(() => ({
-        single: jest.fn(),
+  from: vi.fn(() => ({
+    insert: vi.fn(() => ({
+      select: vi.fn(() => ({
+        single: vi.fn(),
       })),
     })),
-    update: jest.fn(() => ({
-      eq: jest.fn(() => ({
-        eq: jest.fn(() => ({
+    update: vi.fn(() => ({
+      eq: vi.fn(() => ({
+        eq: vi.fn(() => ({
           select: jest.fn(() => ({
-            single: jest.fn(),
+            single: vi.fn(),
           })),
         })),
       })),
@@ -92,7 +93,7 @@ describe('StockAlertService', () => {
   let mockSupabase: any;
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     mockSupabase = mockSupabaseClient;
     stockAlertService = new StockAlertService(mockSupabase, mockClinicId);
   });
@@ -113,8 +114,8 @@ describe('StockAlertService', () => {
 
     it('should create alert configuration successfully', async () => {
       // Arrange
-      const mockSelect = jest.fn().mockResolvedValue({ data: [], error: null });
-      const mockSingle = jest.fn().mockResolvedValue({
+      const mockSelect = vi.fn().mockResolvedValue({ data: [], error: null });
+      const mockSingle = vi.fn().mockResolvedValue({
         data: mockDbAlertConfig,
         error: null,
       });
@@ -130,7 +131,7 @@ describe('StockAlertService', () => {
         }
         if (table === 'stock_events') {
           return {
-            insert: jest.fn().mockResolvedValue({ data: {}, error: null }),
+            insert: vi.fn().mockResolvedValue({ data: {}, error: null }),
           };
         }
         return {};
@@ -163,7 +164,7 @@ describe('StockAlertService', () => {
 
     it('should throw error for duplicate configuration', async () => {
       // Arrange
-      const mockSelect = jest.fn().mockResolvedValue({
+      const mockSelect = vi.fn().mockResolvedValue({
         data: [{ id: 'existing-id' }],
         error: null,
       });
@@ -188,8 +189,8 @@ describe('StockAlertService', () => {
 
     it('should throw error when database insert fails', async () => {
       // Arrange
-      const mockSelect = jest.fn().mockResolvedValue({ data: [], error: null });
-      const mockSingle = jest.fn().mockResolvedValue({
+      const mockSelect = vi.fn().mockResolvedValue({ data: [], error: null });
+      const mockSingle = vi.fn().mockResolvedValue({
         data: null,
         error: { message: 'Database error' },
       });
@@ -225,7 +226,7 @@ describe('StockAlertService', () => {
     it('should update alert configuration successfully', async () => {
       // Arrange
       const updatedConfig = { ...mockDbAlertConfig, ...updates };
-      const mockSingle = jest.fn().mockResolvedValue({
+      const mockSingle = vi.fn().mockResolvedValue({
         data: updatedConfig,
         error: null,
       });
@@ -242,7 +243,7 @@ describe('StockAlertService', () => {
         }
         if (table === 'stock_events') {
           return {
-            insert: jest.fn().mockResolvedValue({ data: {}, error: null }),
+            insert: vi.fn().mockResolvedValue({ data: {}, error: null }),
           };
         }
         return {};
@@ -267,7 +268,7 @@ describe('StockAlertService', () => {
 
     it('should throw error when update fails', async () => {
       // Arrange
-      const mockSingle = jest.fn().mockResolvedValue({
+      const mockSingle = vi.fn().mockResolvedValue({
         data: null,
         error: { message: 'Update failed' },
       });
@@ -297,7 +298,7 @@ describe('StockAlertService', () => {
 
     it('should soft delete alert configuration', async () => {
       // Arrange
-      const mockEq = jest.fn().mockResolvedValue({ error: null });
+      const mockEq = vi.fn().mockResolvedValue({ error: null });
 
       mockSupabase.from.mockImplementation((table: string) => {
         if (table === 'stock_alert_configs') {
@@ -307,7 +308,7 @@ describe('StockAlertService', () => {
         }
         if (table === 'stock_events') {
           return {
-            insert: jest.fn().mockResolvedValue({ data: {}, error: null }),
+            insert: vi.fn().mockResolvedValue({ data: {}, error: null }),
           };
         }
         return {};
@@ -363,7 +364,7 @@ describe('StockAlertService', () => {
             }),
             insert: () => ({
               select: () => ({
-                single: jest.fn().mockResolvedValue({
+                single: vi.fn().mockResolvedValue({
                   data: { id: 'new-alert-id', ...mockDbAlertConfig },
                   error: null,
                 }),
@@ -376,7 +377,7 @@ describe('StockAlertService', () => {
             select: () => ({
               eq: () => ({
                 eq: () => ({
-                  gte: jest.fn().mockResolvedValue({ data: [], error: null }),
+                  gte: vi.fn().mockResolvedValue({ data: [], error: null }),
                 }),
               }),
             }),
@@ -384,7 +385,7 @@ describe('StockAlertService', () => {
         }
         if (table === 'stock_events') {
           return {
-            insert: jest.fn().mockResolvedValue({ data: {}, error: null }),
+            insert: vi.fn().mockResolvedValue({ data: {}, error: null }),
           };
         }
         return {};
@@ -449,7 +450,7 @@ describe('StockAlertService', () => {
         acknowledged_at: new Date().toISOString(),
       };
 
-      const mockSingle = jest.fn().mockResolvedValue({
+      const mockSingle = vi.fn().mockResolvedValue({
         data: acknowledgedAlert,
         error: null,
       });
@@ -466,7 +467,7 @@ describe('StockAlertService', () => {
         }
         if (table === 'stock_events') {
           return {
-            insert: jest.fn().mockResolvedValue({ data: {}, error: null }),
+            insert: vi.fn().mockResolvedValue({ data: {}, error: null }),
           };
         }
         return {};
@@ -500,7 +501,7 @@ describe('StockAlertService', () => {
         resolved_at: new Date().toISOString(),
       };
 
-      const mockSingle = jest.fn().mockResolvedValue({
+      const mockSingle = vi.fn().mockResolvedValue({
         data: resolvedAlert,
         error: null,
       });
@@ -517,7 +518,7 @@ describe('StockAlertService', () => {
         }
         if (table === 'stock_events') {
           return {
-            insert: jest.fn().mockResolvedValue({ data: {}, error: null }),
+            insert: vi.fn().mockResolvedValue({ data: {}, error: null }),
           };
         }
         return {};

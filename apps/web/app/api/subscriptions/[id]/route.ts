@@ -29,9 +29,10 @@ const _pauseSubscriptionSchema = z.object({
 // GET /api/subscriptions/[id] - Get subscription details
 export async function GET(
   _request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
+    const { id } = await params;
     const supabase = createRouteHandlerClient({ cookies });
     const {
       data: { user },
@@ -42,7 +43,7 @@ export async function GET(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const subscriptionId = params.id;
+    const subscriptionId = id;
 
     if (!subscriptionId) {
       return NextResponse.json(
@@ -112,9 +113,10 @@ export async function GET(
 // PUT /api/subscriptions/[id] - Update subscription
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
+    const { id } = await params;
     const supabase = createRouteHandlerClient({ cookies });
     const {
       data: { user },
@@ -125,7 +127,7 @@ export async function PUT(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const subscriptionId = params.id;
+    const subscriptionId = id;
     const body = await request.json();
 
     // Validate request body
@@ -208,9 +210,10 @@ export async function PUT(
 // DELETE /api/subscriptions/[id] - Cancel subscription
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
+    const { id } = await params;
     const supabase = createRouteHandlerClient({ cookies });
     const {
       data: { user },
@@ -221,7 +224,7 @@ export async function DELETE(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const subscriptionId = params.id;
+    const subscriptionId = id;
     const { searchParams } = new URL(request.url);
     const immediate = searchParams.get('immediate') === 'true';
 

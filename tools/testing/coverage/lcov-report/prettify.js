@@ -24,10 +24,7 @@ window.PR_SHOULD_USE_CONTINUATION = true;
   ];
   const r =
     'all,and,by,catch,class,else,extends,false,finally,for,if,in,is,isnt,loop,new,no,not,null,of,off,on,or,return,super,then,true,try,unless,until,when,while,yes';
-  const w = [
-    p,
-    'debugger,eval,export,function,get,null,set,undefined,var,with,Infinity,NaN',
-  ];
+  const w = [p, 'debugger,eval,export,function,get,null,set,undefined,var,with,Infinity,NaN'];
   const s =
     'caller,delete,die,do,dump,elsif,eval,exit,foreach,for,goto,if,import,last,local,my,next,no,our,print,package,redo,require,sub,undef,unless,until,use,wantarray,while,BEGIN,END';
   const I = [
@@ -65,11 +62,7 @@ window.PR_SHOULD_USE_CONTINUATION = true;
       const ae = Z[V];
       if (ae.ignoreCase) {
         ac = true;
-      } else if (
-        /[a-z]/i.test(
-          ae.source.replace(/\\u[0-9a-f]{4}|\\x[0-9a-f]{2}|\\[^ux]/gi, '')
-        )
-      ) {
+      } else if (/[a-z]/i.test(ae.source.replace(/\\u[0-9a-f]{4}|\\x[0-9a-f]{2}|\\[^ux]/gi, ''))) {
         S = true;
         ac = false;
         break;
@@ -243,9 +236,7 @@ window.PR_SHOULD_USE_CONTINUATION = true;
     if (V.currentStyle) {
       S = V.currentStyle.whiteSpace;
     } else if (window.getComputedStyle) {
-      S = document.defaultView
-        .getComputedStyle(V, null)
-        .getPropertyValue('white-space');
+      S = document.defaultView.getComputedStyle(V, null).getPropertyValue('white-space');
     }
     const Y = S && S.substring(0, 3) === 'pre';
     function aa(ab) {
@@ -410,12 +401,7 @@ window.PR_SHOULD_USE_CONTINUATION = true;
         '\'"`',
       ]);
     } else {
-      W.push([
-        C,
-        /^(?:'(?:[^\\'\r\n]|\\.)*(?:'|$)|"(?:[^\\"\r\n]|\\.)*(?:"|$))/,
-        null,
-        '"\'',
-      ]);
+      W.push([C, /^(?:'(?:[^\\'\r\n]|\\.)*(?:'|$)|"(?:[^\\"\r\n]|\\.)*(?:"|$))/, null, '"\'']);
     }
     if (T.verbatimStrings) {
       S.push([C, /^@"(?:[^"]|"")*(?:"|$)/, null]);
@@ -433,11 +419,7 @@ window.PR_SHOULD_USE_CONTINUATION = true;
             '#',
           ]);
         }
-        S.push([
-          C,
-          /^<(?:(?:(?:\.\.\/)*|\/?)(?:[\w-]+(?:\/[\w-]+)+)?[\w-]+\.h|[a-z]\w*)>/,
-          null,
-        ]);
+        S.push([C, /^<(?:(?:(?:\.\.\/)*|\/?)(?:[\w-]+(?:\/[\w-]+)+)?[\w-]+\.h|[a-z]\w*)>/, null]);
       } else {
         W.push([j, /^#[^\r\n]*/, null, '#']);
       }
@@ -490,9 +472,7 @@ window.PR_SHOULD_USE_CONTINUATION = true;
     if (V.currentStyle) {
       S = V.currentStyle.whiteSpace;
     } else if (window.getComputedStyle) {
-      S = ac.defaultView
-        .getComputedStyle(V, null)
-        .getPropertyValue('white-space');
+      S = ac.defaultView.getComputedStyle(V, null).getPropertyValue('white-space');
     }
     const Z = S && S.substring(0, 3) === 'pre';
     let af = ac.createElement('LI');
@@ -733,11 +713,7 @@ window.PR_SHOULD_USE_CONTINUATION = true;
     ['cs']
   );
   c(i({ keywords: x, cStyleComments: true }), ['java']);
-  c(i({ keywords: H, hashComments: true, multiLineStrings: true }), [
-    'bsh',
-    'csh',
-    'sh',
-  ]);
+  c(i({ keywords: H, hashComments: true, multiLineStrings: true }), ['bsh', 'csh', 'sh']);
   c(
     i({
       keywords: I,
@@ -824,9 +800,7 @@ window.PR_SHOULD_USE_CONTINUATION = true;
     const ab = /\blang(?:uage)?-([\w.]+)(?!\S)/;
     const _ae = /\bprettyprint\b/;
     function U() {
-      const ag = window.PR_SHOULD_USE_CONTINUATION
-        ? W.now() + 250
-        : Number.POSITIVE_INFINITY;
+      const ag = window.PR_SHOULD_USE_CONTINUATION ? W.now() + 250 : Number.POSITIVE_INFINITY;
       for (; X < T.length && W.now() < ag; X++) {
         const aj = T[X];
         const ai = aj.className;
@@ -842,9 +816,7 @@ window.PR_SHOULD_USE_CONTINUATION = true;
           let al = false;
           for (let ak = aj.parentNode; ak; ak = ak.parentNode) {
             if (
-              (ak.tagName === 'pre' ||
-                ak.tagName === 'code' ||
-                ak.tagName === 'xmp') &&
+              (ak.tagName === 'pre' || ak.tagName === 'code' || ak.tagName === 'xmp') &&
               ak.className &&
               ak.className.indexOf('prettyprint') >= 0
             ) {
@@ -929,18 +901,12 @@ PR.registerLangHandler(
         /^(?:url|rgb|!important|@import|@page|@media|@charset|inherit)(?=[^\-\w]|$)/i,
         null,
       ],
-      [
-        'lang-css-kw',
-        /^(-?(?:[_a-z]|(?:\\[0-9a-f]+ ?))(?:[_a-z0-9-]|\\(?:\\[0-9a-f]+ ?))*)\s*:/i,
-      ],
+      ['lang-css-kw', /^(-?(?:[_a-z]|(?:\\[0-9a-f]+ ?))(?:[_a-z0-9-]|\\(?:\\[0-9a-f]+ ?))*)\s*:/i],
       [PR.PR_COMMENT, /^\/\*[^*]*\*+(?:[^/*][^*]*\*+)*\//],
       [PR.PR_COMMENT, /^(?:<!--|-->)/],
       [PR.PR_LITERAL, /^(?:\d+|\d*\.\d+)(?:%|[a-z]+)?/i],
       [PR.PR_LITERAL, /^#(?:[0-9a-f]{3}){1,2}/i],
-      [
-        PR.PR_PLAIN,
-        /^-?(?:[_a-z]|(?:\\[\da-f]+ ?))(?:[_a-z\d-]|\\(?:\\[\da-f]+ ?))*/i,
-      ],
+      [PR.PR_PLAIN, /^-?(?:[_a-z]|(?:\\[\da-f]+ ?))(?:[_a-z\d-]|\\(?:\\[\da-f]+ ?))*/i],
       [PR.PR_PUNCTUATION, /^[^\s\w'"]+/],
     ]
   ),
@@ -949,15 +915,8 @@ PR.registerLangHandler(
 PR.registerLangHandler(
   PR.createSimpleLexer(
     [],
-    [
-      [
-        PR.PR_KEYWORD,
-        /^-?(?:[_a-z]|(?:\\[\da-f]+ ?))(?:[_a-z\d-]|\\(?:\\[\da-f]+ ?))*/i,
-      ],
-    ]
+    [[PR.PR_KEYWORD, /^-?(?:[_a-z]|(?:\\[\da-f]+ ?))(?:[_a-z\d-]|\\(?:\\[\da-f]+ ?))*/i]]
   ),
   ['css-kw']
 );
-PR.registerLangHandler(PR.createSimpleLexer([], [[PR.PR_STRING, /^[^)"']+/]]), [
-  'css-str',
-]);
+PR.registerLangHandler(PR.createSimpleLexer([], [[PR.PR_STRING, /^[^)"']+/]]), ['css-str']);

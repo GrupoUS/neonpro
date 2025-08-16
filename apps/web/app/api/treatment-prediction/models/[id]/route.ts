@@ -5,12 +5,13 @@ import { TreatmentPredictionService } from '@/app/lib/services/treatment-predict
 import { createServerClient } from '@/app/utils/supabase/server';
 
 type RouteParams = {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 };
 
 // PUT /api/treatment-prediction/models/[id] - Update model
 export async function PUT(request: NextRequest, { params }: RouteParams) {
   try {
+    const { id } = await params;
     const supabase = await createServerClient();
     const {
       data: { session },
@@ -54,6 +55,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
 // DELETE /api/treatment-prediction/models/[id] - Delete model
 export async function DELETE(_request: NextRequest, { params }: RouteParams) {
   try {
+    const { id } = await params;
     const supabase = await createServerClient();
     const {
       data: { session },
@@ -81,7 +83,7 @@ export async function DELETE(_request: NextRequest, { params }: RouteParams) {
     const { data: predictions } = await supabase
       .from('treatment_predictions')
       .select('id')
-      .eq('model_id', params.id)
+      .eq('model_id', id)
       .limit(1);
 
     if (predictions && predictions.length > 0) {
@@ -98,7 +100,7 @@ export async function DELETE(_request: NextRequest, { params }: RouteParams) {
     const { error } = await supabase
       .from('prediction_models')
       .delete()
-      .eq('id', params.id);
+      .eq('id', id);
 
     if (error) {
       throw error;

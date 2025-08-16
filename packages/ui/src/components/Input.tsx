@@ -4,7 +4,7 @@ import { cn } from '../utils/cn';
 
 // Healthcare-optimized regex patterns for Brazilian formats (performance optimization)
 const CPF_REGEX_1 = /(\d{3})(\d)/;
-const CPF_REGEX_2 = /(\d{3})(\d)/;  
+const CPF_REGEX_2 = /(\d{3})(\d)/;
 const CPF_REGEX_3 = /(\d{3})(\d{1,2})/;
 const PHONE_REGEX_1 = /(\d{2})(\d)/;
 const PHONE_REGEX_2 = /(\d{4})(\d)/;
@@ -69,7 +69,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     ref
   ) => {
     const [internalValue, setInternalValue] = React.useState(value || '');
-    const generatedId = React.useId(); // Generate unique ID for accessibility  
+    const generatedId = React.useId(); // Generate unique ID for accessibility
     const inputId = id || generatedId;
 
     React.useEffect(() => {
@@ -93,9 +93,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 
         case 'phone':
           if (cleaned.length <= 10) {
-            return cleaned
-              .replace(PHONE_REGEX_1, '($1) $2')
-              .replace(PHONE_REGEX_2, '$1-$2');
+            return cleaned.replace(PHONE_REGEX_1, '($1) $2').replace(PHONE_REGEX_2, '$1-$2');
           }
           return cleaned
             .slice(0, 11)
@@ -110,10 +108,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         }
 
         case 'date':
-          return cleaned
-            .slice(0, 8)
-            .replace(DATE_REGEX_1, '$1/$2')
-            .replace(DATE_REGEX_2, '$1/$2');
+          return cleaned.slice(0, 8).replace(DATE_REGEX_1, '$1/$2').replace(DATE_REGEX_2, '$1/$2');
 
         default:
           return inputValue;
@@ -136,7 +131,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     return (
       <div className="space-y-2">
         {label && (
-          <label 
+          <label
             className="font-medium text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             htmlFor={inputId}
           >
@@ -181,9 +176,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 
         {error && <p className="text-destructive text-sm">{error}</p>}
 
-        {helperText && !error && (
-          <p className="text-muted-foreground text-sm">{helperText}</p>
-        )}
+        {helperText && !error && <p className="text-muted-foreground text-sm">{helperText}</p>}
       </div>
     );
   }

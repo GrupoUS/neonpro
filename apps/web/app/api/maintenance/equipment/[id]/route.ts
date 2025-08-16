@@ -4,9 +4,10 @@ import { updateEquipmentSchema } from '@/app/lib/validations/maintenance';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
+    const { id } = await params;
     const { searchParams } = new URL(request.url);
 
     // Extract clinic_id from query params
@@ -18,7 +19,7 @@ export async function GET(
       );
     }
 
-    const equipment = await equipmentMaintenanceService.getEquipment(params.id);
+    const equipment = await equipmentMaintenanceService.getEquipment(id);
 
     if (!equipment) {
       return NextResponse.json(
@@ -43,9 +44,10 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
+    const { id } = await params;
     const { searchParams } = new URL(request.url);
 
     // Extract clinic_id from query params
@@ -58,9 +60,8 @@ export async function PUT(
     }
 
     // First verify equipment exists and belongs to clinic
-    const existingEquipment = await equipmentMaintenanceService.getEquipment(
-      params.id,
-    );
+    const existingEquipment =
+      await equipmentMaintenanceService.getEquipment(id);
     if (!existingEquipment || existingEquipment.clinic_id !== clinicId) {
       return NextResponse.json(
         { error: 'Equipment not found' },
@@ -74,7 +75,7 @@ export async function PUT(
     const validatedData = updateEquipmentSchema.parse(body);
 
     const equipment = await equipmentMaintenanceService.updateEquipment(
-      params.id,
+      id,
       validatedData,
     );
 
@@ -96,9 +97,10 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
+    const { id } = await params;
     const { searchParams } = new URL(request.url);
 
     // Extract clinic_id from query params
@@ -111,9 +113,8 @@ export async function DELETE(
     }
 
     // First verify equipment exists and belongs to clinic
-    const existingEquipment = await equipmentMaintenanceService.getEquipment(
-      params.id,
-    );
+    const existingEquipment =
+      await equipmentMaintenanceService.getEquipment(id);
     if (!existingEquipment || existingEquipment.clinic_id !== clinicId) {
       return NextResponse.json(
         { error: 'Equipment not found' },
@@ -122,7 +123,7 @@ export async function DELETE(
     }
 
     // Soft delete by setting status to out_of_service
-    await equipmentMaintenanceService.updateEquipment(params.id, {
+    await equipmentMaintenanceService.updateEquipment(id, {
       status: 'out_of_service',
     });
 

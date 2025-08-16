@@ -2,15 +2,8 @@
 // Story 11.4: Alertas e Relatórios de Estoque
 // Integration tests for stock alerts API endpoints
 
-import {
-  afterEach,
-  beforeEach,
-  describe,
-  expect,
-  it,
-  jest,
-} from '@jest/globals';
 import { NextRequest } from 'next/server';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { POST as AcknowledgePost } from '../acknowledge/route';
 import { DELETE, GET, POST, PUT } from '../route';
 
@@ -19,18 +12,18 @@ import { DELETE, GET, POST, PUT } from '../route';
 // =====================================================
 
 // Mock Supabase
-jest.mock('@supabase/auth-helpers-nextjs', () => ({
-  createRouteHandlerClient: jest.fn(() => ({
+vi.mock('@supabase/auth-helpers-nextjs', () => ({
+  createRouteHandlerClient: vi.fn(() => ({
     auth: {
-      getSession: jest.fn(),
+      getSession: vi.fn(),
     },
-    from: jest.fn(),
+    from: vi.fn(),
   })),
 }));
 
 // Mock cookies
-jest.mock('next/headers', () => ({
-  cookies: jest.fn(),
+vi.mock('next/headers', () => ({
+  cookies: vi.fn(),
 }));
 
 // Mock console to avoid noise in tests
@@ -38,14 +31,14 @@ const originalConsoleError = console.error;
 const originalConsoleLog = console.log;
 
 beforeEach(() => {
-  console.error = jest.fn();
-  console.log = jest.fn();
+  console.error = vi.fn();
+  console.log = vi.fn();
 });
 
 afterEach(() => {
   console.error = originalConsoleError;
   console.log = originalConsoleLog;
-  jest.clearAllMocks();
+  vi.clearAllMocks();
 });
 
 // Test data
@@ -101,28 +94,28 @@ function createMockRequest(
 // Helper function to create mock Supabase client
 function createMockSupabaseClient(mockData: any = {}) {
   const mockQuery = {
-    select: jest.fn().mockReturnThis(),
-    insert: jest.fn().mockReturnThis(),
-    update: jest.fn().mockReturnThis(),
-    delete: jest.fn().mockReturnThis(),
-    eq: jest.fn().mockReturnThis(),
-    in: jest.fn().mockReturnThis(),
-    gte: jest.fn().mockReturnThis(),
-    lte: jest.fn().mockReturnThis(),
-    order: jest.fn().mockReturnThis(),
-    range: jest.fn().mockReturnThis(),
-    single: jest.fn(),
-    count: jest.fn(),
+    select: vi.fn().mockReturnThis(),
+    insert: vi.fn().mockReturnThis(),
+    update: vi.fn().mockReturnThis(),
+    delete: vi.fn().mockReturnThis(),
+    eq: vi.fn().mockReturnThis(),
+    in: vi.fn().mockReturnThis(),
+    gte: vi.fn().mockReturnThis(),
+    lte: vi.fn().mockReturnThis(),
+    order: vi.fn().mockReturnThis(),
+    range: vi.fn().mockReturnThis(),
+    single: vi.fn(),
+    count: vi.fn(),
   };
 
   const mockSupabase = {
     auth: {
-      getSession: jest.fn().mockResolvedValue({
+      getSession: vi.fn().mockResolvedValue({
         data: { session: mockSession },
         error: null,
       }),
     },
-    from: jest.fn().mockReturnValue(mockQuery),
+    from: vi.fn().mockReturnValue(mockQuery),
   };
 
   // Configure mock responses
@@ -158,7 +151,7 @@ describe('GET /api/stock/alerts', () => {
     // Mock user clinic
     mockSupabase.from.mockReturnValueOnce({
       ...mockQuery,
-      single: jest.fn().mockResolvedValue({
+      single: vi.fn().mockResolvedValue({
         data: { clinic_id: mockClinicId },
         error: null,
       }),
@@ -167,7 +160,7 @@ describe('GET /api/stock/alerts', () => {
     // Mock alert configs
     mockSupabase.from.mockReturnValueOnce({
       ...mockQuery,
-      count: jest.fn().mockResolvedValue({
+      count: vi.fn().mockResolvedValue({
         data: [mockAlertConfig],
         error: null,
         count: 1,
@@ -205,12 +198,12 @@ describe('GET /api/stock/alerts', () => {
     } = require('@supabase/auth-helpers-nextjs');
     createRouteHandlerClient.mockReturnValue({
       auth: {
-        getSession: jest.fn().mockResolvedValue({
+        getSession: vi.fn().mockResolvedValue({
           data: { session: null },
           error: new Error('Auth error'),
         }),
       },
-      from: jest.fn(),
+      from: vi.fn(),
     });
 
     const request = createMockRequest('http://localhost:3000/api/stock/alerts');
@@ -264,7 +257,7 @@ describe('POST /api/stock/alerts', () => {
     // Mock user clinic
     mockSupabase.from.mockReturnValueOnce({
       ...mockQuery,
-      single: jest.fn().mockResolvedValue({
+      single: vi.fn().mockResolvedValue({
         data: { clinic_id: mockClinicId },
         error: null,
       }),
@@ -273,7 +266,7 @@ describe('POST /api/stock/alerts', () => {
     // Mock config creation
     mockSupabase.from.mockReturnValueOnce({
       ...mockQuery,
-      single: jest.fn().mockResolvedValue({
+      single: vi.fn().mockResolvedValue({
         data: mockAlertConfig,
         error: null,
       }),
@@ -356,7 +349,7 @@ describe('POST /api/stock/alerts', () => {
     // Mock user clinic
     mockSupabase.from.mockReturnValueOnce({
       ...mockQuery,
-      single: jest.fn().mockResolvedValue({
+      single: vi.fn().mockResolvedValue({
         data: { clinic_id: mockClinicId },
         error: null,
       }),
@@ -365,7 +358,7 @@ describe('POST /api/stock/alerts', () => {
     // Mock database error
     mockSupabase.from.mockReturnValueOnce({
       ...mockQuery,
-      single: jest.fn().mockResolvedValue({
+      single: vi.fn().mockResolvedValue({
         data: null,
         error: { message: 'Database error', code: '23505' },
       }),
@@ -416,7 +409,7 @@ describe('PUT /api/stock/alerts/[id]', () => {
     // Mock user clinic
     mockSupabase.from.mockReturnValueOnce({
       ...mockQuery,
-      single: jest.fn().mockResolvedValue({
+      single: vi.fn().mockResolvedValue({
         data: { clinic_id: mockClinicId },
         error: null,
       }),
@@ -426,7 +419,7 @@ describe('PUT /api/stock/alerts/[id]', () => {
     const updatedConfig = { ...mockAlertConfig, is_active: false };
     mockSupabase.from.mockReturnValueOnce({
       ...mockQuery,
-      single: jest.fn().mockResolvedValue({
+      single: vi.fn().mockResolvedValue({
         data: updatedConfig,
         error: null,
       }),
@@ -472,7 +465,7 @@ describe('DELETE /api/stock/alerts/[id]', () => {
     // Mock user clinic
     mockSupabase.from.mockReturnValueOnce({
       ...mockQuery,
-      single: jest.fn().mockResolvedValue({
+      single: vi.fn().mockResolvedValue({
         data: { clinic_id: mockClinicId },
         error: null,
       }),
@@ -481,7 +474,7 @@ describe('DELETE /api/stock/alerts/[id]', () => {
     // Mock config deletion
     mockSupabase.from.mockReturnValueOnce({
       ...mockQuery,
-      single: jest.fn().mockResolvedValue({
+      single: vi.fn().mockResolvedValue({
         data: { id: mockAlertConfig.id },
         error: null,
       }),
@@ -521,7 +514,7 @@ describe('POST /api/stock/alerts/acknowledge', () => {
     // Mock user clinic
     mockSupabase.from.mockReturnValueOnce({
       ...mockQuery,
-      single: jest.fn().mockResolvedValue({
+      single: vi.fn().mockResolvedValue({
         data: { clinic_id: mockClinicId },
         error: null,
       }),
@@ -536,7 +529,7 @@ describe('POST /api/stock/alerts/acknowledge', () => {
 
     mockSupabase.from.mockReturnValueOnce({
       ...mockQuery,
-      single: jest.fn().mockResolvedValue({
+      single: vi.fn().mockResolvedValue({
         data: acknowledgedAlert,
         error: null,
       }),
@@ -617,7 +610,7 @@ describe('End-to-End Alert Workflow', () => {
     // Step 1: Create configuration
     mockSupabase.from.mockReturnValueOnce({
       ...mockQuery,
-      single: jest.fn().mockResolvedValue({
+      single: vi.fn().mockResolvedValue({
         data: { clinic_id: mockClinicId },
         error: null,
       }),
@@ -625,7 +618,7 @@ describe('End-to-End Alert Workflow', () => {
 
     mockSupabase.from.mockReturnValueOnce({
       ...mockQuery,
-      single: jest.fn().mockResolvedValue({
+      single: vi.fn().mockResolvedValue({
         data: mockAlertConfig,
         error: null,
       }),
@@ -656,7 +649,7 @@ describe('End-to-End Alert Workflow', () => {
     // Step 2: Acknowledge alert (simulating that an alert was generated)
     mockSupabase.from.mockReturnValueOnce({
       ...mockQuery,
-      single: jest.fn().mockResolvedValue({
+      single: vi.fn().mockResolvedValue({
         data: { clinic_id: mockClinicId },
         error: null,
       }),
@@ -669,7 +662,7 @@ describe('End-to-End Alert Workflow', () => {
 
     mockSupabase.from.mockReturnValueOnce({
       ...mockQuery,
-      single: jest.fn().mockResolvedValue({
+      single: vi.fn().mockResolvedValue({
         data: acknowledgedAlert,
         error: null,
       }),

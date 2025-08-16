@@ -141,25 +141,34 @@ export const stockAlertConfigSchema = z
   );
 
 // Create alert config schema (for API requests)
-export const createStockAlertConfigSchema = stockAlertConfigSchema.omit({
-  id: true,
-  createdAt: true,
-  updatedAt: true,
-  createdBy: true,
-  updatedBy: true,
+export const createStockAlertConfigSchema = z.object({
+  clinicId: uuidSchema,
+  productId: uuidSchema.optional(),
+  categoryId: uuidSchema.optional(),
+  alertType: alertTypeSchema,
+  thresholdValue: positiveNumberSchema,
+  thresholdUnit: thresholdUnitSchema.default('quantity'),
+  severityLevel: severityLevelSchema.default('medium'),
+  isActive: z.boolean().default(true),
+  notificationChannels: z
+    .array(notificationChannelSchema)
+    .min(1, 'At least one notification channel required'),
 });
 
 // Update alert config schema (for API requests)
-export const updateStockAlertConfigSchema = stockAlertConfigSchema
-  .partial()
-  .omit({
-    id: true,
-    clinicId: true,
-    createdAt: true,
-    updatedAt: true,
-    createdBy: true,
-    updatedBy: true,
-  });
+export const updateStockAlertConfigSchema = z.object({
+  productId: uuidSchema.optional(),
+  categoryId: uuidSchema.optional(),
+  alertType: alertTypeSchema.optional(),
+  thresholdValue: positiveNumberSchema.optional(),
+  thresholdUnit: thresholdUnitSchema.optional(),
+  severityLevel: severityLevelSchema.optional(),
+  isActive: z.boolean().optional(),
+  notificationChannels: z
+    .array(notificationChannelSchema)
+    .min(1, 'At least one notification channel required')
+    .optional(),
+});
 
 // =====================================================
 // STOCK ALERT SCHEMAS

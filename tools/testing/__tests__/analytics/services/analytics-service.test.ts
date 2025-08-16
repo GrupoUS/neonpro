@@ -1,42 +1,42 @@
 import {
   afterEach,
+  afterEach,
+  beforeEach,
   beforeEach,
   describe,
+  describe,
+  expect,
   expect,
   jest,
+  jest,
   test,
-} from '@jest/globals';
+  test,
+  vi,
+} from 'vitest';
 import { AnalyticsRepository } from '@/lib/analytics/repository';
 import { AnalyticsService } from '@/lib/analytics/service';
-import type {
-  CohortAnalysis,
-  SubscriptionMetrics,
-  TrialMetrics,
-} from '@/lib/analytics/types';
+import type { CohortAnalysis, SubscriptionMetrics, TrialMetrics } from '@/lib/analytics/types';
 
 // Mock the repository
-jest.mock('@/lib/analytics/repository');
+vi.Mock('@/lib/analytics/repository');
 
-const MockedAnalyticsRepository = AnalyticsRepository as jest.MockedClass<
-  typeof AnalyticsRepository
->;
+const MockedAnalyticsRepository = AnalyticsRepository as vi.MockedClass<typeof AnalyticsRepository>;
 
 describe('AnalyticsService', () => {
   let analyticsService: AnalyticsService;
-  let mockRepository: jest.Mocked<AnalyticsRepository>;
+  let mockRepository: vi.Mocked<AnalyticsRepository>;
 
   beforeEach(() => {
     // Clear all mocks before each test
-    jest.clearAllMocks();
+    vi.clearAllMocks();
 
     // Create a new instance of the mocked repository
-    mockRepository =
-      new MockedAnalyticsRepository() as jest.Mocked<AnalyticsRepository>;
+    mockRepository = new MockedAnalyticsRepository() as vi.Mocked<AnalyticsRepository>;
     analyticsService = new AnalyticsService(mockRepository);
   });
 
   afterEach(() => {
-    jest.resetAllMocks();
+    vi.resetAllMocks();
   });
 
   describe('getSubscriptionMetrics', () => {
@@ -61,30 +61,26 @@ describe('AnalyticsService', () => {
 
       // Assert
       expect(result).toEqual(mockMetrics);
-      expect(mockRepository.getSubscriptionMetrics).toHaveBeenCalledWith(
-        'monthly'
-      );
+      expect(mockRepository.getSubscriptionMetrics).toHaveBeenCalledWith('monthly');
       expect(mockRepository.getSubscriptionMetrics).toHaveBeenCalledTimes(1);
     });
 
     test('should handle repository errors gracefully', async () => {
       // Arrange
       const errorMessage = 'Database connection failed';
-      mockRepository.getSubscriptionMetrics.mockRejectedValue(
-        new Error(errorMessage)
-      );
+      mockRepository.getSubscriptionMetrics.mockRejectedValue(new Error(errorMessage));
 
       // Act & Assert
-      await expect(
-        analyticsService.getSubscriptionMetrics('monthly')
-      ).rejects.toThrow(errorMessage);
+      await expect(analyticsService.getSubscriptionMetrics('monthly')).rejects.toThrow(
+        errorMessage
+      );
     });
 
     test('should validate period parameter', async () => {
       // Act & Assert
-      await expect(
-        analyticsService.getSubscriptionMetrics('invalid' as any)
-      ).rejects.toThrow('Invalid period specified');
+      await expect(analyticsService.getSubscriptionMetrics('invalid' as any)).rejects.toThrow(
+        'Invalid period specified'
+      );
     });
   });
 
@@ -188,20 +184,14 @@ describe('AnalyticsService', () => {
       mockRepository.getCohortAnalysis.mockResolvedValue(mockCohortData);
 
       // Act
-      const result = await analyticsService.getCohortAnalysis(
-        startDate,
-        endDate
-      );
+      const result = await analyticsService.getCohortAnalysis(startDate, endDate);
 
       // Assert
       expect(result).toEqual(mockCohortData);
       expect(result.cohorts).toHaveLength(1);
       expect(result.cohorts[0].retentionByPeriod).toHaveLength(3);
       expect(result.averageRetentionRate).toBeCloseTo(0.86);
-      expect(mockRepository.getCohortAnalysis).toHaveBeenCalledWith(
-        startDate,
-        endDate
-      );
+      expect(mockRepository.getCohortAnalysis).toHaveBeenCalledWith(startDate, endDate);
     });
 
     test('should validate date range parameters', async () => {
@@ -210,9 +200,9 @@ describe('AnalyticsService', () => {
       const endDate = new Date('2024-01-01'); // End date before start date
 
       // Act & Assert
-      await expect(
-        analyticsService.getCohortAnalysis(startDate, endDate)
-      ).rejects.toThrow('End date must be after start date');
+      await expect(analyticsService.getCohortAnalysis(startDate, endDate)).rejects.toThrow(
+        'End date must be after start date'
+      );
     });
   });
 
@@ -247,12 +237,8 @@ describe('AnalyticsService', () => {
       expect(result).toEqual(mockForecast);
       expect(result.predictions).toHaveLength(2);
       expect(result.accuracy).toBeGreaterThan(0.9);
-      expect(result.predictions[0].confidence.lower).toBeLessThan(
-        result.predictions[0].value
-      );
-      expect(result.predictions[0].confidence.upper).toBeGreaterThan(
-        result.predictions[0].value
-      );
+      expect(result.predictions[0].confidence.lower).toBeLessThan(result.predictions[0].value);
+      expect(result.predictions[0].confidence.upper).toBeGreaterThan(result.predictions[0].value);
     });
 
     test('should validate periods parameter', async () => {
@@ -303,14 +289,12 @@ describe('AnalyticsService', () => {
   describe('error handling', () => {
     test('should handle network errors gracefully', async () => {
       // Arrange
-      mockRepository.getSubscriptionMetrics.mockRejectedValue(
-        new Error('Network timeout')
-      );
+      mockRepository.getSubscriptionMetrics.mockRejectedValue(new Error('Network timeout'));
 
       // Act & Assert
-      await expect(
-        analyticsService.getSubscriptionMetrics('monthly')
-      ).rejects.toThrow('Network timeout');
+      await expect(analyticsService.getSubscriptionMetrics('monthly')).rejects.toThrow(
+        'Network timeout'
+      );
     });
 
     test('should handle malformed data gracefully', async () => {
@@ -318,9 +302,9 @@ describe('AnalyticsService', () => {
       mockRepository.getSubscriptionMetrics.mockResolvedValue(null as any);
 
       // Act & Assert
-      await expect(
-        analyticsService.getSubscriptionMetrics('monthly')
-      ).rejects.toThrow('Invalid analytics data received');
+      await expect(analyticsService.getSubscriptionMetrics('monthly')).rejects.toThrow(
+        'Invalid analytics data received'
+      );
     });
   });
 

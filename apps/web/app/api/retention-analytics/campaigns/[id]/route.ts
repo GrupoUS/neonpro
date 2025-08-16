@@ -75,10 +75,11 @@ const UpdateCampaignSchema = z.object({
 
 export async function GET(
   _request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-    const campaignId = params.id;
+    const { id } = await params;
+    const campaignId = id;
 
     const supabase = await createClient();
 
@@ -163,10 +164,11 @@ export async function GET(
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-    const campaignId = params.id;
+    const { id } = await params;
+    const campaignId = id;
     const body = await request.json();
     const validation = UpdateCampaignSchema.safeParse(body);
 
@@ -221,10 +223,11 @@ export async function PATCH(
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-    const campaignId = params.id;
+    const { id } = await params;
+    const campaignId = id;
     const body = await request.json();
     const validation = ExecuteCampaignSchema.safeParse(body);
 
@@ -404,10 +407,11 @@ export async function POST(
 
 export async function DELETE(
   _request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-    const campaignId = params.id;
+    const { id } = await params;
+    const campaignId = id;
     const supabase = await createClient();
 
     // Check if campaign has active executions

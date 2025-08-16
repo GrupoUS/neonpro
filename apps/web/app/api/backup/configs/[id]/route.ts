@@ -36,9 +36,10 @@ const updateConfigSchema = z.object({
  */
 export async function GET(
   _request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
+    const { id } = await params;
     const supabase = await createClient();
     const {
       data: { user },
@@ -48,7 +49,7 @@ export async function GET(
       return NextResponse.json({ error: 'Não autorizado' }, { status: 401 });
     }
 
-    const result = await backupManager.getBackupConfig(params.id);
+    const result = await backupManager.getBackupConfig(id);
 
     if (!result.success) {
       return NextResponse.json(result, { status: 404 });
@@ -68,9 +69,10 @@ export async function GET(
  * Atualiza configuração de backup
  */ export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
+    const { id } = await params;
     const supabase = await createClient();
     const {
       data: { user },
@@ -83,7 +85,7 @@ export async function GET(
     const body = await request.json();
     const validatedData = updateConfigSchema.parse(body);
 
-    const result = await backupManager.updateBackupConfig(params.id, {
+    const result = await backupManager.updateBackupConfig(id, {
       ...validatedData,
       updatedBy: user.id,
     });
@@ -114,9 +116,10 @@ export async function GET(
  */
 export async function DELETE(
   _request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
+    const { id } = await params;
     const supabase = await createClient();
     const {
       data: { user },
@@ -126,7 +129,7 @@ export async function DELETE(
       return NextResponse.json({ error: 'Não autorizado' }, { status: 401 });
     }
 
-    const result = await backupManager.deleteBackupConfig(params.id);
+    const result = await backupManager.deleteBackupConfig(id);
 
     return NextResponse.json(result, {
       status: result.success ? 200 : 400,

@@ -3,24 +3,18 @@
  * Comprehensive testing for performance monitoring system
  */
 
-import {
-  act,
-  cleanup,
-  fireEvent,
-  render,
-  screen,
-  waitFor,
-} from '@testing-library/react';
+import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { vi } from 'vitest';
 import '@testing-library/jest-dom';
 
 // Mock web-vitals with proper function references
-jest.mock('web-vitals', () => ({
-  getCLS: jest.fn(),
-  getFID: jest.fn(),
-  getFCP: jest.fn(),
-  getLCP: jest.fn(),
-  getTTFB: jest.fn(),
-  getINP: jest.fn(),
+vi.Mock('web-vitals', () => ({
+  getCLS: vi.fn(),
+  getFID: vi.fn(),
+  getFCP: vi.fn(),
+  getLCP: vi.fn(),
+  getTTFB: vi.fn(),
+  getINP: vi.fn(),
 }));
 
 import { getCLS, getFCP, getFID, getINP, getLCP, getTTFB } from 'web-vitals';
@@ -29,7 +23,7 @@ import PerformanceDashboard from '@/components/dashboard/performance-dashboard';
 import { PerformanceMonitor } from '@/lib/performance/integration';
 
 // Mock fetch globally
-const mockFetch = jest.fn();
+const mockFetch = vi.fn();
 global.fetch = mockFetch;
 
 // Mock performance API
@@ -42,8 +36,8 @@ Object.defineProperty(global, 'performance', {
       jsHeapSizeLimit: 50_000_000,
     },
     getEntriesByType: jest.fn(() => []),
-    mark: jest.fn(),
-    measure: jest.fn(),
+    mark: vi.fn(),
+    measure: vi.fn(),
   },
   writable: true,
 });
@@ -64,7 +58,7 @@ Object.defineProperty(global, 'navigator', {
 
 describe('Performance Monitoring Integration', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
 
     // Set environment variable to enable performance tracking in tests
     process.env.NEXT_PUBLIC_ENABLE_PERFORMANCE_TRACKING = 'true';
@@ -103,22 +97,22 @@ describe('Performance Monitoring Integration', () => {
     });
 
     // Setup web-vitals mocks to call callbacks
-    (getCLS as jest.Mock).mockImplementation((callback) => {
+    (getCLS as vi.Mock).mockImplementation((callback) => {
       setTimeout(() => callback({ value: 0.1 }), 0);
     });
-    (getFID as jest.Mock).mockImplementation((callback) => {
+    (getFID as vi.Mock).mockImplementation((callback) => {
       setTimeout(() => callback({ value: 100 }), 0);
     });
-    (getFCP as jest.Mock).mockImplementation((callback) => {
+    (getFCP as vi.Mock).mockImplementation((callback) => {
       setTimeout(() => callback({ value: 1500 }), 0);
     });
-    (getLCP as jest.Mock).mockImplementation((callback) => {
+    (getLCP as vi.Mock).mockImplementation((callback) => {
       setTimeout(() => callback({ value: 2500 }), 0);
     });
-    (getTTFB as jest.Mock).mockImplementation((callback) => {
+    (getTTFB as vi.Mock).mockImplementation((callback) => {
       setTimeout(() => callback({ value: 200 }), 0);
     });
-    (getINP as jest.Mock).mockImplementation((callback) => {
+    (getINP as vi.Mock).mockImplementation((callback) => {
       setTimeout(() => callback({ value: 150 }), 0);
     });
   });
@@ -264,9 +258,7 @@ describe('Performance Monitoring Integration', () => {
 
       await waitFor(() => {
         // Check for performance badges - look for specific metric labels
-        expect(
-          screen.getByText('Largest Contentful Paint')
-        ).toBeInTheDocument();
+        expect(screen.getByText('Largest Contentful Paint')).toBeInTheDocument();
         expect(screen.getByText('First Input Delay')).toBeInTheDocument();
         expect(screen.getByText('Cumulative Layout Shift')).toBeInTheDocument();
       });
@@ -276,9 +268,7 @@ describe('Performance Monitoring Integration', () => {
       render(<PerformanceDashboard />);
 
       // Initially should show loading
-      expect(
-        screen.getByText('Loading performance metrics...')
-      ).toBeInTheDocument();
+      expect(screen.getByText('Loading performance metrics...')).toBeInTheDocument();
     });
 
     it('should refresh metrics when button is clicked', async () => {
@@ -288,9 +278,7 @@ describe('Performance Monitoring Integration', () => {
 
       // Wait for initial load
       await waitFor(() => {
-        expect(
-          screen.queryByText('Loading performance data...')
-        ).not.toBeInTheDocument();
+        expect(screen.queryByText('Loading performance data...')).not.toBeInTheDocument();
       });
 
       // Find and click refresh button
@@ -311,7 +299,7 @@ describe('Performance Monitoring Integration', () => {
       // Mock API error
       mockFetch.mockRejectedValueOnce(new Error('API Error'));
 
-      const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
+      const consoleSpy = vi.spyOn(console, 'error').mockImplementation();
 
       const TestComponent = () => {
         return (
@@ -397,8 +385,7 @@ describe('Performance Monitoring Integration', () => {
           score -= 5;
         }
 
-        const category =
-          score >= 90 ? 'good' : score >= 70 ? 'needs-improvement' : 'poor';
+        const category = score >= 90 ? 'good' : score >= 70 ? 'needs-improvement' : 'poor';
         expect(category).toBe(expected);
       });
     });

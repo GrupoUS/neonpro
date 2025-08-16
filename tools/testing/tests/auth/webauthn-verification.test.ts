@@ -5,7 +5,7 @@
  * Tests for WebAuthn/FIDO2 authentication implementation
  */
 
-import { describe, expect, it } from '@jest/globals';
+import { describe, expect, it } from 'vitest';
 
 describe('WebAuthn Implementation Verification', () => {
   it('should have WebAuthn service utilities', () => {
@@ -47,10 +47,7 @@ describe('WebAuthn Implementation Verification', () => {
     const fs = require('node:fs');
     const path = require('node:path');
 
-    const componentPath = path.join(
-      process.cwd(),
-      'components/auth/webauthn-manager.tsx'
-    );
+    const componentPath = path.join(process.cwd(), 'components/auth/webauthn-manager.tsx');
     expect(fs.existsSync(componentPath)).toBe(true);
   });
 
@@ -66,15 +63,11 @@ describe('WebAuthn Implementation Verification', () => {
   });
 
   it('should have performance tracking integration', () => {
-    const {
-      authPerformanceTracker,
-    } = require('../../lib/auth/performance-tracker');
+    const { authPerformanceTracker } = require('../../lib/auth/performance-tracker');
 
     // Test that performance tracker is properly initialized
     expected(authPerformanceTracker).toBeDefined();
-    expect(typeof authPerformanceTracker.getPerformanceThresholds).toBe(
-      'function'
-    );
+    expect(typeof authPerformanceTracker.getPerformanceThresholds).toBe('function');
 
     // Test that performance thresholds match TASK-002 requirements
     const thresholds = authPerformanceTracker.getPerformanceThresholds();
@@ -92,9 +85,7 @@ describe('WebAuthn Implementation Verification', () => {
 
 describe('TASK-002 Authentication Performance Requirements', () => {
   it('should meet performance targets', () => {
-    const {
-      authPerformanceTracker,
-    } = require('../../lib/auth/performance-tracker');
+    const { authPerformanceTracker } = require('../../lib/auth/performance-tracker');
     const thresholds = authPerformanceTracker.getPerformanceThresholds();
 
     // TASK-002 Story 1.1 Performance Requirements

@@ -1,9 +1,21 @@
-import { beforeEach, describe, expect, jest, test } from '@jest/globals';
+import {
+  beforeEach,
+  beforeEach,
+  describe,
+  describe,
+  expect,
+  expect,
+  jest,
+  jest,
+  test,
+  test,
+  vi,
+} from 'vitest';
 import { securityAuditFramework } from '@/lib/auth/security-audit-framework';
 import { sessionManager } from '@/lib/auth/session-manager';
 
 // Mock Supabase client
-jest.mock('@/app/utils/supabase/server', () => ({
+vi.Mock('@/app/utils/supabase/server', () => ({
   createServerClient: jest.fn(() => ({
     auth: {
       getSession: jest.fn(() => ({
@@ -58,32 +70,28 @@ jest.mock('@/app/utils/supabase/server', () => ({
 }));
 
 // Mock performance tracker
-jest.mock('@/lib/auth/performance-tracker', () => ({
+vi.Mock('@/lib/auth/performance-tracker', () => ({
   performanceTracker: {
-    recordMetric: jest.fn(),
+    recordMetric: vi.fn(),
   },
 }));
 
 describe('TASK-002 Final Integration Tests - Advanced Authentication Features', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe('Advanced Session Management', () => {
     test('should extend session when within threshold', async () => {
-      const result =
-        await sessionManager.extendSessionIfNeeded('test-session-id');
+      const result = await sessionManager.extendSessionIfNeeded('test-session-id');
       expect(typeof result).toBe('boolean');
     });
 
     test('should validate session security and detect risks', async () => {
-      const validation = await sessionManager.validateSessionSecurity(
-        'test-session-id',
-        {
-          userAgent: 'test-agent',
-          ip: '127.0.0.1',
-        }
-      );
+      const validation = await sessionManager.validateSessionSecurity('test-session-id', {
+        userAgent: 'test-agent',
+        ip: '127.0.0.1',
+      });
 
       expect(validation).toHaveProperty('isValid');
       expect(validation).toHaveProperty('riskLevel');
@@ -92,10 +100,7 @@ describe('TASK-002 Final Integration Tests - Advanced Authentication Features', 
 
     test('should manage concurrent sessions', async () => {
       await expect(
-        sessionManager.manageConcurrentSessions(
-          'test-user-id',
-          'current-session-id'
-        )
+        sessionManager.manageConcurrentSessions('test-user-id', 'current-session-id')
       ).resolves.not.toThrow();
     });
 
@@ -142,8 +147,7 @@ describe('TASK-002 Final Integration Tests - Advanced Authentication Features', 
         end: new Date(),
       };
 
-      const report =
-        await securityAuditFramework.generateComplianceReport(period);
+      const report = await securityAuditFramework.generateComplianceReport(period);
 
       expect(report).toHaveProperty('period');
       expect(report).toHaveProperty('lgpdCompliance');
@@ -198,13 +202,10 @@ describe('TASK-002 Final Integration Tests - Advanced Authentication Features', 
   describe('Integration Between Session Management and Security Audit', () => {
     test('should integrate session validation with security logging', async () => {
       // Test session validation
-      const validation = await sessionManager.validateSessionSecurity(
-        'test-session-id',
-        {
-          userAgent: 'suspicious-agent',
-          ip: '192.168.1.100',
-        }
-      );
+      const validation = await sessionManager.validateSessionSecurity('test-session-id', {
+        userAgent: 'suspicious-agent',
+        ip: '192.168.1.100',
+      });
 
       // Validate that security event would be logged appropriately
       expect(validation).toHaveProperty('isValid');
@@ -229,8 +230,7 @@ describe('TASK-002 Final Integration Tests - Advanced Authentication Features', 
 
     test('should integrate session extension with audit logging', async () => {
       // Test session extension
-      const extended =
-        await sessionManager.extendSessionIfNeeded('test-session-id');
+      const extended = await sessionManager.extendSessionIfNeeded('test-session-id');
 
       // Test corresponding audit log
       await expect(
@@ -285,21 +285,16 @@ describe('TASK-002 Final Integration Tests - Advanced Authentication Features', 
 
     test('should handle error scenarios gracefully', async () => {
       // Test with invalid session ID
-      const validation = await sessionManager.validateSessionSecurity(
-        'invalid-session',
-        {
-          userAgent: 'test-agent',
-          ip: '127.0.0.1',
-        }
-      );
+      const validation = await sessionManager.validateSessionSecurity('invalid-session', {
+        userAgent: 'test-agent',
+        ip: '127.0.0.1',
+      });
 
       expect(validation.isValid).toBe(false);
       expect(validation.riskLevel).toBe('high');
 
       // Test with missing data
-      await expect(sessionManager.extendSessionIfNeeded('')).resolves.toBe(
-        false
-      );
+      await expect(sessionManager.extendSessionIfNeeded('')).resolves.toBe(false);
     });
   });
 
@@ -350,8 +345,7 @@ describe('TASK-002 Final Integration Tests - Advanced Authentication Features', 
         end: new Date(),
       };
 
-      const report =
-        await securityAuditFramework.generateComplianceReport(period);
+      const report = await securityAuditFramework.generateComplianceReport(period);
 
       expect(report.lgpdCompliance).toBeDefined();
       expect(typeof report.lgpdCompliance.dataAccessRequests).toBe('number');
@@ -382,9 +376,7 @@ describe('TASK-002 Completion Validation', () => {
     expect(typeof sessionManager.updateSessionActivity).toBe('function');
 
     expect(typeof securityAuditFramework.logSecurityEvent).toBe('function');
-    expect(typeof securityAuditFramework.generateComplianceReport).toBe(
-      'function'
-    );
+    expect(typeof securityAuditFramework.generateComplianceReport).toBe('function');
   });
 
   test('should validate TASK-002 quality standards', async () => {
@@ -402,8 +394,7 @@ describe('TASK-002 Completion Validation', () => {
       end: new Date('2025-01-24'),
     };
 
-    const report =
-      await securityAuditFramework.generateComplianceReport(period);
+    const report = await securityAuditFramework.generateComplianceReport(period);
     expect(report.period.start).toEqual(period.start);
     expect(report.period.end).toEqual(period.end);
   });

@@ -10,10 +10,11 @@ const thresholdService = new IntelligentThresholdService();
 
 export async function GET(
   _request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-    const threshold = await thresholdService.getThreshold(params.id);
+    const { id } = await params;
+    const threshold = await thresholdService.getThreshold(id);
 
     if (!threshold) {
       return NextResponse.json(
@@ -40,14 +41,15 @@ export async function GET(
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
+    const { id } = await params;
     const body = await request.json();
     const validatedUpdates = updateReorderThresholdSchema.parse(body);
 
     const threshold = await thresholdService.updateThreshold(
-      params.id,
+      id,
       validatedUpdates,
     );
 
@@ -81,11 +83,12 @@ export async function PATCH(
 
 export async function DELETE(
   _request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
+    const { id } = await params;
     // Soft delete by marking as inactive
-    const threshold = await thresholdService.updateThreshold(params.id, {
+    const threshold = await thresholdService.updateThreshold(id, {
       is_active: false,
       updated_at: new Date().toISOString(),
     });

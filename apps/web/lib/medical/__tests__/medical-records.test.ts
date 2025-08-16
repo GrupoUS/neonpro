@@ -1,3 +1,20 @@
+﻿import { vi } from 'vitest';
+// Mock environment variables for Supabase
+process.env.NEXT_PUBLIC_SUPABASE_URL = 'https://test.supabase.co';
+process.env.SUPABASE_SERVICE_ROLE_KEY = 'test-service-role-key';
+
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+
+// Mock Supabase client before any imports
+vi.mock('@supabase/supabase-js', () => ({
+  createClient: vi.fn(() => ({
+    from: vi.fn(),
+    auth: { getUser: vi.fn() },
+    storage: { from: vi.fn() },
+    rpc: vi.fn(),
+  })),
+}));
+
 import type {
   CreateMedicalHistoryData,
   CreateMedicalRecordData,
@@ -10,51 +27,51 @@ import { MedicalRecordsManager } from '../medical-records';
 
 // Mock Supabase
 const mockSupabase = {
-  from: jest.fn(() => ({
-    select: jest.fn(() => ({
-      eq: jest.fn(() => ({
-        order: jest.fn(() => ({
+  from: vi.fn(() => ({
+    select: vi.fn(() => ({
+      eq: vi.fn(() => ({
+        order: vi.fn(() => ({
           data: [],
           error: null,
         })),
       })),
     })),
-    insert: jest.fn(() => ({
-      select: jest.fn(() => ({
-        single: jest.fn(() => ({
+    insert: vi.fn(() => ({
+      select: vi.fn(() => ({
+        single: vi.fn(() => ({
           data: null,
           error: null,
         })),
       })),
     })),
-    update: jest.fn(() => ({
-      eq: jest.fn(() => ({
-        select: jest.fn(() => ({
-          single: jest.fn(() => ({
+    update: vi.fn(() => ({
+      eq: vi.fn(() => ({
+        select: vi.fn(() => ({
+          single: vi.fn(() => ({
             data: null,
             error: null,
           })),
         })),
       })),
     })),
-    delete: jest.fn(() => ({
-      eq: jest.fn(() => ({
+    delete: vi.fn(() => ({
+      eq: vi.fn(() => ({
         data: null,
         error: null,
       })),
     })),
   })),
   storage: {
-    from: jest.fn(() => ({
-      upload: jest.fn(() => ({
+    from: vi.fn(() => ({
+      upload: vi.fn(() => ({
         data: { path: 'test-path' },
         error: null,
       })),
-      download: jest.fn(() => ({
+      download: vi.fn(() => ({
         data: new Blob(['test']),
         error: null,
       })),
-      remove: jest.fn(() => ({
+      remove: vi.fn(() => ({
         data: null,
         error: null,
       })),
@@ -63,20 +80,20 @@ const mockSupabase = {
 };
 
 // Mock dependencies
-jest.mock('@/lib/supabase', () => ({
+vi.mock('@/lib/supabase', () => ({
   supabase: mockSupabase,
 }));
 
-jest.mock('@/lib/audit/audit-logger', () => ({
+vi.Mock('@/lib/audit/audit-logger', () => ({
   AuditLogger: {
-    log: jest.fn(),
+    log: vi.fn(),
   },
 }));
 
-jest.mock('@/lib/lgpd/lgpd-manager', () => ({
+vi.Mock('@/lib/lgpd/lgpd-manager', () => ({
   LGPDManager: {
-    logDataProcessing: jest.fn(),
-    checkDataRetention: jest.fn(),
+    logDataProcessing: vi.fn(),
+    checkDataRetention: vi.fn(),
   },
 }));
 
@@ -88,11 +105,11 @@ describe('MedicalRecordsManager', () => {
 
   beforeEach(() => {
     manager = new MedicalRecordsManager();
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   afterEach(() => {
-    jest.resetAllMocks();
+    vi.resetAllMocks();
   });
 
   describe('Medical Records', () => {
@@ -122,7 +139,7 @@ describe('MedicalRecordsManager', () => {
           clinicId: mockClinicId,
           type: 'consultation',
           title: 'Nova Consulta',
-          content: 'Conteúdo da consulta',
+          content: 'ConteÃºdo da consulta',
           priority: 'normal',
           tags: ['consulta'],
           metadata: {},
@@ -149,7 +166,7 @@ describe('MedicalRecordsManager', () => {
           clinicId: mockClinicId,
           type: 'consultation',
           title: 'Nova Consulta',
-          content: 'Conteúdo da consulta',
+          content: 'ConteÃºdo da consulta',
           priority: 'normal',
           tags: [],
           metadata: {},
@@ -179,7 +196,7 @@ describe('MedicalRecordsManager', () => {
           clinicId: mockClinicId,
           type: 'consultation',
           title: '',
-          content: 'Conteúdo',
+          content: 'ConteÃºdo',
           priority: 'normal',
           tags: [],
           metadata: {},
@@ -191,7 +208,7 @@ describe('MedicalRecordsManager', () => {
         );
 
         expect(result.success).toBe(false);
-        expect(result.error).toContain('obrigatório');
+        expect(result.error).toContain('obrigatÃ³rio');
       });
     });
 
@@ -221,15 +238,15 @@ describe('MedicalRecordsManager', () => {
         const result = await manager.getMedicalRecord('nonexistent');
 
         expect(result.success).toBe(false);
-        expect(result.error).toBe('Registro médico não encontrado');
+        expect(result.error).toBe('Registro mÃ©dico nÃ£o encontrado');
       });
     });
 
     describe('updateMedicalRecord', () => {
       it('should update a medical record successfully', async () => {
         const updateData: UpdateMedicalRecordData = {
-          title: 'Título Atualizado',
-          content: 'Conteúdo atualizado',
+          title: 'TÃ­tulo Atualizado',
+          content: 'ConteÃºdo atualizado',
           tags: ['atualizado'],
         };
 
@@ -256,13 +273,13 @@ describe('MedicalRecordsManager', () => {
         );
 
         expect(result.success).toBe(true);
-        expect(result.data?.title).toBe('Título Atualizado');
+        expect(result.data?.title).toBe('TÃ­tulo Atualizado');
         expect(result.data?.version).toBe(2);
       });
 
       it('should handle update errors', async () => {
         const updateData: UpdateMedicalRecordData = {
-          title: 'Título Atualizado',
+          title: 'TÃ­tulo Atualizado',
         };
 
         mockSupabase
@@ -355,7 +372,7 @@ describe('MedicalRecordsManager', () => {
       category: 'allergy',
       subcategory: 'medication',
       title: 'Alergia a Penicilina',
-      description: 'Paciente apresenta alergia severa à penicilina',
+      description: 'Paciente apresenta alergia severa Ã  penicilina',
       severity: 'high',
       status: 'active',
       startDate: new Date('2020-01-01'),
@@ -376,7 +393,7 @@ describe('MedicalRecordsManager', () => {
           category: 'allergy',
           subcategory: 'medication',
           title: 'Nova Alergia',
-          description: 'Descrição da alergia',
+          description: 'DescriÃ§Ã£o da alergia',
           severity: 'medium',
           status: 'active',
           startDate: new Date(),
@@ -405,7 +422,7 @@ describe('MedicalRecordsManager', () => {
           clinicId: mockClinicId,
           category: 'allergy',
           title: '',
-          description: 'Descrição',
+          description: 'DescriÃ§Ã£o',
           severity: 'medium',
           status: 'active',
           startDate: new Date(),
@@ -419,7 +436,7 @@ describe('MedicalRecordsManager', () => {
         );
 
         expect(result.success).toBe(false);
-        expect(result.error).toContain('obrigatório');
+        expect(result.error).toContain('obrigatÃ³rio');
       });
     });
 
@@ -589,7 +606,7 @@ describe('MedicalRecordsManager', () => {
         );
 
         expect(result.success).toBe(false);
-        expect(result.error).toContain('não permitido');
+        expect(result.error).toContain('nÃ£o permitido');
       });
     });
 
@@ -794,10 +811,10 @@ describe('MedicalRecordsManager', () => {
 
         // Mock canvas and context
         const mockCanvas = {
-          getContext: jest.fn(() => ({
-            drawImage: jest.fn(),
+          getContext: vi.fn(() => ({
+            drawImage: vi.fn(),
             canvas: {
-              toBlob: jest.fn((callback) =>
+              toBlob: vi.fn((callback) =>
                 callback(new Blob(['thumbnail'], { type: 'image/jpeg' })),
               ),
             },
@@ -806,8 +823,8 @@ describe('MedicalRecordsManager', () => {
           height: 0,
         };
 
-        global.HTMLCanvasElement = jest.fn(() => mockCanvas) as any;
-        global.Image = jest.fn(() => ({
+        global.HTMLCanvasElement = vi.fn(() => mockCanvas) as any;
+        global.Image = vi.fn(() => ({
           onload: null,
           onerror: null,
           src: '',
@@ -871,7 +888,7 @@ describe('MedicalRecordsManager', () => {
       const result = await manager.createMedicalRecord(invalidData, mockUserId);
 
       expect(result.success).toBe(false);
-      expect(result.error).toContain('Dados inválidos');
+      expect(result.error).toContain('Dados invÃ¡lidos');
     });
 
     it('should handle missing user ID', async () => {
@@ -889,7 +906,7 @@ describe('MedicalRecordsManager', () => {
       const result = await manager.createMedicalRecord(createData, '');
 
       expect(result.success).toBe(false);
-      expect(result.error).toContain('obrigatório');
+      expect(result.error).toContain('obrigatÃ³rio');
     });
   });
 
@@ -901,7 +918,7 @@ describe('MedicalRecordsManager', () => {
         clinicId: mockClinicId,
         type: 'consultation',
         title: 'Consulta com Anexo',
-        content: 'Consulta que terá anexo',
+        content: 'Consulta que terÃ¡ anexo',
         priority: 'normal',
         tags: [],
         metadata: {},
@@ -991,3 +1008,4 @@ describe('MedicalRecordsManager', () => {
     });
   });
 });
+

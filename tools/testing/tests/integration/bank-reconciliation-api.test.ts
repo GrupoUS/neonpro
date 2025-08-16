@@ -3,8 +3,8 @@
  * Testes de Integração das APIs de Reconciliação Bancária
  */
 
-import { afterAll, beforeAll, describe, expect, it } from '@jest/globals';
 import { createClient } from '@supabase/supabase-js';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,

@@ -33,7 +33,7 @@ const paramsSchema = z.object({
  */
 export async function GET(
   _request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const supabase = createRouteHandlerClient({ cookies });
@@ -48,7 +48,8 @@ export async function GET(
     }
 
     // Validate parameters
-    const validatedParams = paramsSchema.parse(params);
+    const resolvedParams = await params;
+    const validatedParams = paramsSchema.parse(resolvedParams);
     const { id } = validatedParams;
 
     // Get installment manager
@@ -102,7 +103,7 @@ export async function GET(
  */
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const supabase = createRouteHandlerClient({ cookies });
@@ -117,7 +118,8 @@ export async function PUT(
     }
 
     // Validate parameters
-    const validatedParams = paramsSchema.parse(params);
+    const resolvedParams = await params;
+    const validatedParams = paramsSchema.parse(resolvedParams);
     const { id } = validatedParams;
 
     // Parse and validate request body
@@ -188,7 +190,7 @@ export async function PUT(
  */
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const supabase = createRouteHandlerClient({ cookies });
@@ -203,7 +205,8 @@ export async function DELETE(
     }
 
     // Validate parameters
-    const validatedParams = paramsSchema.parse(params);
+    const resolvedParams = await params;
+    const validatedParams = paramsSchema.parse(resolvedParams);
     const { id } = validatedParams;
 
     // Parse request body for cancellation reason
@@ -275,7 +278,7 @@ export async function DELETE(
  */
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const supabase = createRouteHandlerClient({ cookies });
@@ -290,7 +293,8 @@ export async function PATCH(
     }
 
     // Validate parameters
-    const validatedParams = paramsSchema.parse(params);
+    const resolvedParams = await params;
+    const validatedParams = paramsSchema.parse(resolvedParams);
     const { id } = validatedParams;
 
     // Parse request body

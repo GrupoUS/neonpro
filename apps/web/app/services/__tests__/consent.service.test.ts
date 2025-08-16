@@ -1,9 +1,10 @@
+import { vi } from 'vitest';
 import { createClient } from '@/app/utils/supabase/client';
 import { ConsentService } from '../consent.service';
 
 // Mock do createClient - usando definição simples
-jest.mock('@/app/utils/supabase/client', () => ({
-  createClient: jest.fn(),
+vi.mock('@/app/utils/supabase/client', () => ({
+  createClient: vi.fn(),
 }));
 
 describe('ConsentService', () => {
@@ -13,22 +14,22 @@ describe('ConsentService', () => {
   beforeEach(() => {
     // Configurar mock do supabase com métodos chainable
     mockSupabase = {
-      from: jest.fn().mockReturnThis(),
-      select: jest.fn().mockReturnThis(),
-      insert: jest.fn().mockReturnThis(),
-      update: jest.fn().mockReturnThis(),
-      eq: jest.fn().mockReturnThis(),
-      order: jest.fn().mockReturnThis(),
+      from: vi.fn().mockReturnThis(),
+      select: vi.fn().mockReturnThis(),
+      insert: vi.fn().mockReturnThis(),
+      update: vi.fn().mockReturnThis(),
+      eq: vi.fn().mockReturnThis(),
+      order: vi.fn().mockReturnThis(),
     };
 
     // Mock do createClient para retornar nosso mock
-    (createClient as jest.Mock).mockReturnValue(mockSupabase);
+    (createClient as vi.Mock).mockReturnValue(mockSupabase);
 
     consentService = new ConsentService();
   });
 
   afterEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe('createConsentForm', () => {
@@ -41,14 +42,14 @@ describe('ConsentService', () => {
 
       // Configurar o mock para retornar uma Promise
       const chainMock = {
-        from: jest.fn().mockReturnValue({
-          insert: jest.fn().mockReturnValue({
-            select: jest.fn().mockResolvedValue(mockResult),
+        from: vi.fn().mockReturnValue({
+          insert: vi.fn().mockReturnValue({
+            select: vi.fn().mockResolvedValue(mockResult),
           }),
         }),
       };
 
-      (createClient as jest.Mock).mockReturnValue(chainMock);
+      (createClient as vi.Mock).mockReturnValue(chainMock);
       consentService = new ConsentService();
 
       const mockFormData = {
@@ -66,9 +67,9 @@ describe('ConsentService', () => {
     it('should throw error when creation fails', async () => {
       const mockError = { message: 'Database error' };
       const chainMock = {
-        from: jest.fn().mockReturnValue({
-          insert: jest.fn().mockReturnValue({
-            select: jest.fn().mockResolvedValue({
+        from: vi.fn().mockReturnValue({
+          insert: vi.fn().mockReturnValue({
+            select: vi.fn().mockResolvedValue({
               data: null,
               error: mockError,
             }),
@@ -76,7 +77,7 @@ describe('ConsentService', () => {
         }),
       };
 
-      (createClient as jest.Mock).mockReturnValue(chainMock);
+      (createClient as vi.Mock).mockReturnValue(chainMock);
       consentService = new ConsentService();
 
       const mockFormData = {
@@ -101,18 +102,18 @@ describe('ConsentService', () => {
       };
 
       const chainMock = {
-        from: jest.fn().mockReturnValue({
-          select: jest.fn().mockReturnValue({
-            eq: jest.fn().mockReturnValue({
-              eq: jest.fn().mockReturnValue({
-                order: jest.fn().mockResolvedValue(mockResult),
+        from: vi.fn().mockReturnValue({
+          select: vi.fn().mockReturnValue({
+            eq: vi.fn().mockReturnValue({
+              eq: vi.fn().mockReturnValue({
+                order: vi.fn().mockResolvedValue(mockResult),
               }),
             }),
           }),
         }),
       };
 
-      (createClient as jest.Mock).mockReturnValue(chainMock);
+      (createClient as vi.Mock).mockReturnValue(chainMock);
       consentService = new ConsentService();
 
       const result = await consentService.getConsentForms('clinic-1');
@@ -130,14 +131,14 @@ describe('ConsentService', () => {
       };
 
       const chainMock = {
-        from: jest.fn().mockReturnValue({
-          insert: jest.fn().mockReturnValue({
-            select: jest.fn().mockResolvedValue(mockResult),
+        from: vi.fn().mockReturnValue({
+          insert: vi.fn().mockReturnValue({
+            select: vi.fn().mockResolvedValue(mockResult),
           }),
         }),
       };
 
-      (createClient as jest.Mock).mockReturnValue(chainMock);
+      (createClient as vi.Mock).mockReturnValue(chainMock);
       consentService = new ConsentService();
 
       const mockConsentData = {
@@ -161,14 +162,14 @@ describe('ConsentService', () => {
       };
 
       const chainMock = {
-        from: jest.fn().mockReturnValue({
-          insert: jest.fn().mockReturnValue({
-            select: jest.fn().mockResolvedValue(mockResult),
+        from: vi.fn().mockReturnValue({
+          insert: vi.fn().mockReturnValue({
+            select: vi.fn().mockResolvedValue(mockResult),
           }),
         }),
       };
 
-      (createClient as jest.Mock).mockReturnValue(chainMock);
+      (createClient as vi.Mock).mockReturnValue(chainMock);
       consentService = new ConsentService();
 
       const result = await consentService.grantPatientConsent(
@@ -189,16 +190,16 @@ describe('ConsentService', () => {
       };
 
       const chainMock = {
-        from: jest.fn().mockReturnValue({
-          update: jest.fn().mockReturnValue({
-            eq: jest.fn().mockReturnValue({
-              select: jest.fn().mockResolvedValue(mockResult),
+        from: vi.fn().mockReturnValue({
+          update: vi.fn().mockReturnValue({
+            eq: vi.fn().mockReturnValue({
+              select: vi.fn().mockResolvedValue(mockResult),
             }),
           }),
         }),
       };
 
-      (createClient as jest.Mock).mockReturnValue(chainMock);
+      (createClient as vi.Mock).mockReturnValue(chainMock);
       consentService = new ConsentService();
 
       const result = await consentService.revokePatientConsent(

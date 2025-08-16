@@ -4,23 +4,24 @@
  * Constitutional Healthcare Compliance Testing
  */
 
-import { jest } from '@jest/globals';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import React from 'react';
-import '@testing-library/jest-dom';
-import { PatientDashboard } from '@/components/patient/PatientDashboard';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { vi } from 'vitest';
+import '@testing-library/jest-dom/vitest';
+// TODO: Component not found - create PatientDashboard component
+// import { PatientDashboard } from '@/components/patient/PatientDashboard';
 import { HealthcareDataAnonymizer } from '../../../../playwright/utils/healthcare-testing-utils';
 
 // Mock healthcare services with patient data protection
-jest.mock('@/lib/services/patient-service', () => ({
-  getPatientData: jest.fn(),
-  updatePatientConsent: jest.fn(),
-  getPatientTreatments: jest.fn(),
+vi.Mock('@/lib/services/patient-service', () => ({
+  getPatientData: vi.fn(),
+  updatePatientConsent: vi.fn(),
+  getPatientTreatments: vi.fn(),
 }));
 
-jest.mock('@/lib/auth/patient-auth', () => ({
-  validatePatientAccess: jest.fn(),
-  auditPatientDataAccess: jest.fn(),
+vi.Mock('@/lib/auth/patient-auth', () => ({
+  validatePatientAccess: vi.fn(),
+  auditPatientDataAccess: vi.fn(),
 }));
 
 describe('🏥 PatientDashboard Component - Healthcare Testing', () => {
@@ -28,7 +29,7 @@ describe('🏥 PatientDashboard Component - Healthcare Testing', () => {
 
   beforeEach(() => {
     // Reset mocks and ensure patient data protection
-    jest.clearAllMocks();
+    vi.clearAllMocks();
 
     // Mock authenticated patient session
     const mockAuth = {

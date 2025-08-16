@@ -1,4 +1,16 @@
-import { beforeEach, describe, expect, jest, test } from '@jest/globals';
+import {
+  beforeEach,
+  beforeEach,
+  describe,
+  describe,
+  expect,
+  expect,
+  jest,
+  jest,
+  test,
+  test,
+  vi,
+} from 'vitest';
 import {
   aggregateMetricsByPeriod,
   calculateARR,
@@ -17,7 +29,7 @@ import {
 } from '@/lib/analytics/utils';
 
 // Mock date-fns
-jest.mock('date-fns', () => ({
+vi.Mock('date-fns', () => ({
   format: jest.fn((date, formatStr) => {
     const d = new Date(date);
     if (formatStr === 'yyyy-MM-dd') {
@@ -42,20 +54,14 @@ jest.mock('date-fns', () => ({
     }
     return d.toISOString().split('T')[0];
   }),
-  subDays: jest.fn(
-    (date, days) => new Date(date.getTime() - days * 24 * 60 * 60 * 1000)
-  ),
+  subDays: jest.fn((date, days) => new Date(date.getTime() - days * 24 * 60 * 60 * 1000)),
   subMonths: jest.fn((date, months) => {
     const newDate = new Date(date);
     newDate.setMonth(newDate.getMonth() - months);
     return newDate;
   }),
-  startOfMonth: jest.fn(
-    (date) => new Date(date.getFullYear(), date.getMonth(), 1)
-  ),
-  endOfMonth: jest.fn(
-    (date) => new Date(date.getFullYear(), date.getMonth() + 1, 0)
-  ),
+  startOfMonth: jest.fn((date) => new Date(date.getFullYear(), date.getMonth(), 1)),
+  endOfMonth: jest.fn((date) => new Date(date.getFullYear(), date.getMonth() + 1, 0)),
   isValid: jest.fn(() => true),
   parseISO: jest.fn((dateStr) => new Date(dateStr)),
   differenceInDays: jest.fn(() => 30),
@@ -63,7 +69,7 @@ jest.mock('date-fns', () => ({
 }));
 
 // Mock lodash groupBy
-jest.mock('lodash', () => ({
+vi.Mock('lodash', () => ({
   groupBy: jest.fn((collection, keyFn) => {
     const result: Record<string, any[]> = {};
     for (const item of collection) {
@@ -79,30 +85,30 @@ jest.mock('lodash', () => ({
 
 // Mock jsPDF and xlsx
 const mockPDFInstance = {
-  text: jest.fn(),
-  addPage: jest.fn(),
-  save: jest.fn(),
-  output: jest.fn().mockReturnValue('mock-pdf-data'),
+  text: vi.fn(),
+  addPage: vi.fn(),
+  save: vi.fn(),
+  output: vi.fn().mockReturnValue('mock-pdf-data'),
 };
 
-jest.mock('jspdf', () => ({
+vi.Mock('jspdf', () => ({
   __esModule: true,
   default: jest.fn(() => mockPDFInstance),
 }));
 
-jest.mock('xlsx', () => ({
+vi.Mock('xlsx', () => ({
   utils: {
-    json_to_sheet: jest.fn().mockReturnValue({}),
-    book_new: jest.fn().mockReturnValue({}),
-    book_append_sheet: jest.fn(),
-    sheet_to_csv: jest.fn().mockReturnValue('mock,csv,data'),
+    json_to_sheet: vi.fn().mockReturnValue({}),
+    book_new: vi.fn().mockReturnValue({}),
+    book_append_sheet: vi.fn(),
+    sheet_to_csv: vi.fn().mockReturnValue('mock,csv,data'),
   },
-  write: jest.fn().mockReturnValue('mock-xlsx-data'),
+  write: vi.fn().mockReturnValue('mock-xlsx-data'),
 }));
 
 describe('Analytics Utils', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe('formatCurrency', () => {
@@ -420,9 +426,7 @@ describe('Analytics Utils', () => {
         start_date: 'invalid_date',
       });
 
-      expect(() => parseAnalyticsFilters(params)).toThrow(
-        'Invalid filter parameters'
-      );
+      expect(() => parseAnalyticsFilters(params)).toThrow('Invalid filter parameters');
     });
 
     test('should handle complex filters', () => {

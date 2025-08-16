@@ -1,12 +1,19 @@
+import { type NextRequest, NextResponse } from 'next/server';
 import {
   afterEach,
+  afterEach,
+  beforeEach,
   beforeEach,
   describe,
+  describe,
+  expect,
   expect,
   it,
+  it,
   jest,
-} from '@jest/globals';
-import { type NextRequest, NextResponse } from 'next/server';
+  jest,
+  vi,
+} from 'vitest';
 
 // Import the modules we're testing
 import { POST as sessionExtendHandler } from '../../app/api/auth/session/extend/route';
@@ -21,26 +28,26 @@ describe('TASK-002: Core Foundation Enhancement Integration Test', () => {
 
   beforeEach(() => {
     // Reset all mocks
-    jest.clearAllMocks();
+    vi.clearAllMocks();
 
     // Initialize components
     performanceTracker = PerformanceTracker.getInstance();
   });
 
   afterEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe('Advanced Session Management', () => {
     it('should extend session successfully with proper validation', async () => {
       // Mock request with session token
       const mockRequest = {
-        json: jest.fn().mockResolvedValue({
+        json: vi.fn().mockResolvedValue({
           sessionToken: 'valid-session-token',
           extensionMinutes: 30,
         }),
         headers: {
-          get: jest.fn().mockImplementation((header) => {
+          get: vi.fn().mockImplementation((header) => {
             const headers: Record<string, string> = {
               authorization: 'Bearer valid-session-token',
               'user-agent': 'Mozilla/5.0 (Test Browser)',
@@ -64,11 +71,11 @@ describe('TASK-002: Core Foundation Enhancement Integration Test', () => {
 
     it('should validate sessions with comprehensive security checks', async () => {
       const mockRequest = {
-        json: jest.fn().mockResolvedValue({
+        json: vi.fn().mockResolvedValue({
           sessionToken: 'valid-session-token',
         }),
         headers: {
-          get: jest.fn().mockImplementation((header) => {
+          get: vi.fn().mockImplementation((header) => {
             const headers: Record<string, string> = {
               authorization: 'Bearer valid-session-token',
               'user-agent': 'Mozilla/5.0 (Test Browser)',
@@ -84,9 +91,7 @@ describe('TASK-002: Core Foundation Enhancement Integration Test', () => {
       expect(response).toBeInstanceOf(NextResponse);
 
       // Verify session validation logic
-      const validation = await sessionManager.validateSession(
-        'valid-session-token'
-      );
+      const validation = await sessionManager.validateSession('valid-session-token');
       expect(validation.isValid).toBe(true);
       expect(validation.user).toBeDefined();
       expect(validation.securityFlags).toBeDefined();
@@ -99,15 +104,11 @@ describe('TASK-002: Core Foundation Enhancement Integration Test', () => {
       expect(cleanupResult.totalProcessed).toBeGreaterThanOrEqual(0);
 
       // Test security event monitoring
-      const securityEvent = await sessionManager.logSecurityEvent(
-        'user-123',
-        'SUSPICIOUS_LOGIN',
-        {
-          ipAddress: '192.168.1.100',
-          userAgent: 'Mozilla/5.0 (Test Browser)',
-          timestamp: new Date().toISOString(),
-        }
-      );
+      const securityEvent = await sessionManager.logSecurityEvent('user-123', 'SUSPICIOUS_LOGIN', {
+        ipAddress: '192.168.1.100',
+        userAgent: 'Mozilla/5.0 (Test Browser)',
+        timestamp: new Date().toISOString(),
+      });
 
       expect(securityEvent.success).toBe(true);
       expect(securityEvent.eventId).toBeDefined();
@@ -117,12 +118,12 @@ describe('TASK-002: Core Foundation Enhancement Integration Test', () => {
   describe('Security Audit Framework', () => {
     it('should perform comprehensive security audit', async () => {
       const mockRequest = {
-        json: jest.fn().mockResolvedValue({
+        json: vi.fn().mockResolvedValue({
           auditType: 'full',
           includeCompliance: true,
         }),
         headers: {
-          get: jest.fn().mockImplementation((header) => {
+          get: vi.fn().mockImplementation((header) => {
             const headers: Record<string, string> = {
               authorization: 'Bearer admin-token',
               'content-type': 'application/json',
@@ -245,14 +246,11 @@ describe('TASK-002: Core Foundation Enhancement Integration Test', () => {
     it('should provide accessible error handling and feedback', () => {
       // Test accessible error messages
       const errorStates = {
-        authenticationFailed:
-          'Authentication failed. Please check your credentials and try again.',
-        sessionExpired:
-          'Your session has expired. Please log in again to continue.',
+        authenticationFailed: 'Authentication failed. Please check your credentials and try again.',
+        sessionExpired: 'Your session has expired. Please log in again to continue.',
         securityAlert:
           'Security alert detected. Please contact support if you believe this is an error.',
-        networkError:
-          'Network connection error. Please check your connection and try again.',
+        networkError: 'Network connection error. Please check your connection and try again.',
       };
 
       // Verify error messages are descriptive and accessible
@@ -270,8 +268,7 @@ describe('TASK-002: Core Foundation Enhancement Integration Test', () => {
       performanceTracker.startTracking('full-auth-flow');
 
       // 2. Validate initial session
-      const initialValidation =
-        await sessionManager.validateSession('initial-token');
+      const initialValidation = await sessionManager.validateSession('initial-token');
       expect(initialValidation).toBeDefined();
 
       // 3. Extend session
@@ -279,15 +276,11 @@ describe('TASK-002: Core Foundation Enhancement Integration Test', () => {
       expect(extension.success).toBe(true);
 
       // 4. Log security event
-      const securityLog = await sessionManager.logSecurityEvent(
-        'user-123',
-        'LOGIN_SUCCESS',
-        {
-          ipAddress: '192.168.1.100',
-          userAgent: 'Mozilla/5.0 (Test Browser)',
-          timestamp: new Date().toISOString(),
-        }
-      );
+      const securityLog = await sessionManager.logSecurityEvent('user-123', 'LOGIN_SUCCESS', {
+        ipAddress: '192.168.1.100',
+        userAgent: 'Mozilla/5.0 (Test Browser)',
+        timestamp: new Date().toISOString(),
+      });
       expect(securityLog.success).toBe(true);
 
       // 5. Perform security audit
@@ -333,17 +326,14 @@ describe('TASK-002: Core Foundation Enhancement Integration Test', () => {
 
   describe('Error Handling and Edge Cases', () => {
     it('should handle invalid session tokens gracefully', async () => {
-      const invalidTokenValidation =
-        await sessionManager.validateSession('invalid-token');
+      const invalidTokenValidation = await sessionManager.validateSession('invalid-token');
       expect(invalidTokenValidation.isValid).toBe(false);
       expect(invalidTokenValidation.error).toBeDefined();
     });
 
     it('should handle security audit failures with proper fallbacks', async () => {
       // Test audit with invalid parameters
-      const invalidAudit = await securityAuditFramework.performAudit(
-        'invalid-type' as any
-      );
+      const invalidAudit = await securityAuditFramework.performAudit('invalid-type' as any);
       expect(invalidAudit.success).toBe(false);
       expect(invalidAudit.error).toBeDefined();
     });

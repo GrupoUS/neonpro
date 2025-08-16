@@ -28,14 +28,15 @@ const UpdateLayoutSchema = z.object({
 });
 
 type RouteParams = {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 };
 
 // GET /api/dashboard/executive/layouts/[id]
 export async function GET(_request: NextRequest, { params }: RouteParams) {
   try {
+    const { id } = await params;
     const supabase = createRouteHandlerClient({ cookies });
 
     // Verify authentication
@@ -65,7 +66,7 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
       supabase,
       clinicUser.clinic_id,
     );
-    const layout = await layoutEngine.getLayout(params.id);
+    const layout = await layoutEngine.getLayout(id);
 
     if (!layout) {
       return NextResponse.json(
@@ -86,6 +87,7 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
 // PUT /api/dashboard/executive/layouts/[id]
 export async function PUT(request: NextRequest, { params }: RouteParams) {
   try {
+    const { id } = await params;
     const supabase = createRouteHandlerClient({ cookies });
 
     // Verify authentication
@@ -121,7 +123,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     );
 
     // Check if layout exists
-    const existingLayout = await layoutEngine.getLayout(params.id);
+    const existingLayout = await layoutEngine.getLayout(id);
     if (!existingLayout) {
       return NextResponse.json(
         { error: 'Layout não encontrado' },
@@ -129,7 +131,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       );
     }
 
-    const layout = await layoutEngine.updateLayout(params.id, validatedData);
+    const layout = await layoutEngine.updateLayout(id, validatedData);
 
     return NextResponse.json({ layout });
   } catch (error) {
@@ -149,6 +151,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
 // DELETE /api/dashboard/executive/layouts/[id]
 export async function DELETE(_request: NextRequest, { params }: RouteParams) {
   try {
+    const { id } = await params;
     const supabase = createRouteHandlerClient({ cookies });
 
     // Verify authentication
@@ -180,7 +183,7 @@ export async function DELETE(_request: NextRequest, { params }: RouteParams) {
     );
 
     // Check if layout exists
-    const existingLayout = await layoutEngine.getLayout(params.id);
+    const existingLayout = await layoutEngine.getLayout(id);
     if (!existingLayout) {
       return NextResponse.json(
         { error: 'Layout não encontrado' },
@@ -196,7 +199,7 @@ export async function DELETE(_request: NextRequest, { params }: RouteParams) {
       );
     }
 
-    await layoutEngine.deleteLayout(params.id);
+    await layoutEngine.deleteLayout(id);
 
     return NextResponse.json({ success: true });
   } catch (_error) {

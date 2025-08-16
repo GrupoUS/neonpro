@@ -9,7 +9,7 @@ const patientInsights = new PatientInsightsIntegration();
 
 export async function GET(
   _request: NextRequest,
-  { params }: { params: { patientId: string } },
+  { params }: { params: Promise<{ patientId: string }> },
 ) {
   try {
     const supabase = createRouteHandlerClient({ cookies });
@@ -22,11 +22,13 @@ export async function GET(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    const { patientId } = await params;
+
     // Validate patient access
     const { data: patient } = await supabase
       .from('patients')
       .select('id')
-      .eq('id', params.patientId)
+      .eq('id', patientId)
       .single();
 
     if (!patient) {
@@ -35,7 +37,7 @@ export async function GET(
 
     // Monitor patient alerts
     const alertSummary = await patientInsights.monitorPatientAlerts(
-      params.patientId,
+      patientId,
     );
 
     return NextResponse.json({
@@ -52,7 +54,7 @@ export async function GET(
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { patientId: string } },
+  { params }: { params: Promise<{ patientId: string }> },
 ) {
   try {
     const supabase = createRouteHandlerClient({ cookies });
@@ -65,12 +67,13 @@ export async function POST(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    const { patientId } = await params;
     const body = await request.json();
     const { alertTypes = [], severityFilter = null } = body;
 
     // Get detailed alerts with filters
     const alertSummary = await patientInsights.monitorPatientAlerts(
-      params.patientId,
+      patientId,
     );
 
     // Apply filters

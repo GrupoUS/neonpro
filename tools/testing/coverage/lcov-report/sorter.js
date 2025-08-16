@@ -135,9 +135,7 @@ const addSorting = (() => {
   }
   // adds sort indicators for current column being sorted
   function addSortIndicators() {
-    getNthColumn(currentSort.index).className += currentSort.desc
-      ? ' sorted-desc'
-      : ' sorted';
+    getNthColumn(currentSort.index).className += currentSort.desc ? ' sorted-desc' : ' sorted';
   }
   // adds event listeners for all sorter widgets
   function enableUI() {

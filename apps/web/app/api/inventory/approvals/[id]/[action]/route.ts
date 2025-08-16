@@ -3,10 +3,10 @@ import { BudgetApprovalService } from '@/app/lib/services/budget-approval-servic
 import { createClient } from '@/app/utils/supabase/server';
 
 type Params = {
-  params: {
+  params: Promise<{
     id: string;
     action: string;
-  };
+  }>;
 };
 
 export async function POST(request: NextRequest, { params }: Params) {
@@ -20,7 +20,7 @@ export async function POST(request: NextRequest, { params }: Params) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { action } = params;
+    const { id, action } = await params;
     const body = await request.json();
     const { comments } = body;
 
@@ -44,7 +44,7 @@ export async function POST(request: NextRequest, { params }: Params) {
         comments: comments || '',
         approver_id: user.id,
       })
-      .eq('id', params.id)
+      .eq('id', id)
       .select()
       .single();
 

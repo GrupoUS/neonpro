@@ -5,9 +5,10 @@ import { createClient } from '@/app/utils/supabase/server';
 
 export async function GET(
   _request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
+    const { id } = await params;
     const supabase = await createClient();
     const {
       data: { session },
@@ -32,7 +33,7 @@ export async function GET(
     const { data: config } = await supabase
       .from('email_provider_configs')
       .select('*')
-      .eq('id', params.id)
+      .eq('id', id)
       .eq('clinic_id', profile.clinic_id)
       .single();
 
@@ -54,9 +55,10 @@ export async function GET(
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
+    const { id } = await params;
     const supabase = await createClient();
     const {
       data: { session },
@@ -90,7 +92,7 @@ export async function PATCH(
         ...validatedConfig,
         updated_at: new Date().toISOString(),
       })
-      .eq('id', params.id)
+      .eq('id', id)
       .eq('clinic_id', profile.clinic_id)
       .select()
       .single();
@@ -124,9 +126,10 @@ export async function PATCH(
 
 export async function DELETE(
   _request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
+    const { id } = await params;
     const supabase = await createClient();
     const {
       data: { session },
@@ -151,7 +154,7 @@ export async function DELETE(
     const { error } = await supabase
       .from('email_provider_configs')
       .delete()
-      .eq('id', params.id)
+      .eq('id', id)
       .eq('clinic_id', profile.clinic_id);
 
     if (error) {

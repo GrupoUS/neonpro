@@ -1,11 +1,17 @@
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import {
+  QueryClient,
+  QueryClient,
+  QueryClientProvider,
+  QueryClientProvider,
+} from '@tanstack/react-query';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import React from 'react';
+import { vi } from 'vitest';
 import { mockExportData } from '@/../../__tests__/utils/mockData';
 import { useExportData } from '@/hooks/analytics/useExportData';
 
 // Mock fetch for API calls
-global.fetch = jest.fn();
+global.fetch = vi.fn();
 
 const createWrapper = () => {
   const queryClient = new QueryClient({
@@ -22,15 +28,14 @@ const createWrapper = () => {
 
 describe('useExportData', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('should export data to PDF successfully', async () => {
-    const mockFetch = fetch as jest.MockedFunction<typeof fetch>;
+    const mockFetch = fetch as vi.MockedFunction<typeof fetch>;
     mockFetch.mockResolvedValueOnce({
       ok: true,
-      blob: () =>
-        Promise.resolve(new Blob(['PDF content'], { type: 'application/pdf' })),
+      blob: () => Promise.resolve(new Blob(['PDF content'], { type: 'application/pdf' })),
     } as Response);
 
     const { result } = renderHook(() => useExportData(), {
@@ -57,7 +62,7 @@ describe('useExportData', () => {
   });
 
   it('should export data to Excel successfully', async () => {
-    const mockFetch = fetch as jest.MockedFunction<typeof fetch>;
+    const mockFetch = fetch as vi.MockedFunction<typeof fetch>;
     mockFetch.mockResolvedValueOnce({
       ok: true,
       blob: () =>
@@ -92,7 +97,7 @@ describe('useExportData', () => {
   });
 
   it('should handle export errors gracefully', async () => {
-    const mockFetch = fetch as jest.MockedFunction<typeof fetch>;
+    const mockFetch = fetch as vi.MockedFunction<typeof fetch>;
     mockFetch.mockRejectedValueOnce(new Error('Export failed'));
 
     const { result } = renderHook(() => useExportData(), {
@@ -109,7 +114,7 @@ describe('useExportData', () => {
   });
 
   it('should show loading state during export', async () => {
-    const mockFetch = fetch as jest.MockedFunction<typeof fetch>;
+    const mockFetch = fetch as vi.MockedFunction<typeof fetch>;
     let resolvePromise: (value: any) => void;
     const promise = new Promise((resolve) => {
       resolvePromise = resolve;
@@ -134,10 +139,7 @@ describe('useExportData', () => {
     act(() => {
       resolvePromise?.({
         ok: true,
-        blob: () =>
-          Promise.resolve(
-            new Blob(['PDF content'], { type: 'application/pdf' })
-          ),
+        blob: () => Promise.resolve(new Blob(['PDF content'], { type: 'application/pdf' })),
       });
     });
 
@@ -147,11 +149,10 @@ describe('useExportData', () => {
   });
 
   it('should handle multiple simultaneous exports', async () => {
-    const mockFetch = fetch as jest.MockedFunction<typeof fetch>;
+    const mockFetch = fetch as vi.MockedFunction<typeof fetch>;
     mockFetch.mockResolvedValue({
       ok: true,
-      blob: () =>
-        Promise.resolve(new Blob(['content'], { type: 'application/pdf' })),
+      blob: () => Promise.resolve(new Blob(['content'], { type: 'application/pdf' })),
     } as Response);
 
     const { result } = renderHook(() => useExportData(), {

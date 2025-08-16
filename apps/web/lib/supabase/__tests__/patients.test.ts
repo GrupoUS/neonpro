@@ -1,4 +1,5 @@
-import type { FHIR } from '@/lib/types/fhir';
+import { vi } from 'vitest';
+import type { FHIR, FHIR } from '@/lib/types/fhir';
 import {
   createPatient,
   deletePatient,
@@ -10,18 +11,18 @@ import {
 } from '../patients';
 
 // Mock the Supabase client
-jest.mock('@/app/utils/supabase/client', () => ({
-  createClient: jest.fn(),
+vi.mock('@/app/utils/supabase/client', () => ({
+  createClient: vi.fn(),
 }));
 
 import { createClient } from '@/app/utils/supabase/client';
 
 const mockSupabase = {
-  from: jest.fn(),
-  rpc: jest.fn(),
+  from: vi.fn(),
+  rpc: vi.fn(),
 };
 
-(createClient as jest.Mock).mockReturnValue(mockSupabase);
+(createClient as vi.Mock).mockReturnValue(mockSupabase);
 
 const mockPatientData: PatientFormData = {
   name: 'João Silva Santos',
@@ -100,7 +101,7 @@ const mockFHIRPatient: FHIR.Patient = {
 
 describe('Patient Supabase Functions', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe('createPatient', () => {
@@ -110,10 +111,10 @@ describe('Patient Supabase Functions', () => {
         error: null,
       };
 
-      const insertMock = jest.fn().mockResolvedValue(mockInsertResult);
+      const insertMock = vi.fn().mockResolvedValue(mockInsertResult);
       mockSupabase.from.mockReturnValue({
         insert: insertMock,
-        select: jest.fn().mockReturnThis(),
+        select: vi.fn().mockReturnThis(),
       });
 
       const result = await createPatient(mockPatientData);
@@ -128,14 +129,14 @@ describe('Patient Supabase Functions', () => {
     it('handles database errors gracefully', async () => {
       const mockError = { message: 'Duplicate CPF', code: '23505' };
 
-      const insertMock = jest.fn().mockResolvedValue({
+      const insertMock = vi.fn().mockResolvedValue({
         data: null,
         error: mockError,
       });
 
       mockSupabase.from.mockReturnValue({
         insert: insertMock,
-        select: jest.fn().mockReturnThis(),
+        select: vi.fn().mockReturnThis(),
       });
 
       const result = await createPatient(mockPatientData);
@@ -152,10 +153,10 @@ describe('Patient Supabase Functions', () => {
         error: null,
       };
 
-      const insertMock = jest.fn().mockResolvedValue(mockInsertResult);
+      const insertMock = vi.fn().mockResolvedValue(mockInsertResult);
       mockSupabase.from.mockReturnValue({
         insert: insertMock,
-        select: jest.fn().mockReturnThis(),
+        select: vi.fn().mockReturnThis(),
       });
 
       await createPatient(mockPatientData);
@@ -174,10 +175,10 @@ describe('Patient Supabase Functions', () => {
         error: null,
       };
 
-      const insertMock = jest.fn().mockResolvedValue(mockInsertResult);
+      const insertMock = vi.fn().mockResolvedValue(mockInsertResult);
       mockSupabase.from.mockReturnValue({
         insert: insertMock,
-        select: jest.fn().mockReturnThis(),
+        select: vi.fn().mockReturnThis(),
       });
 
       await createPatient(mockPatientData);
@@ -207,10 +208,10 @@ describe('Patient Supabase Functions', () => {
         error: null,
       };
 
-      const insertMock = jest.fn().mockResolvedValue(mockInsertResult);
+      const insertMock = vi.fn().mockResolvedValue(mockInsertResult);
       mockSupabase.from.mockReturnValue({
         insert: insertMock,
-        select: jest.fn().mockReturnThis(),
+        select: vi.fn().mockReturnThis(),
       });
 
       await createPatient(mockPatientData);
@@ -241,9 +242,9 @@ describe('Patient Supabase Functions', () => {
       };
 
       mockSupabase.from.mockReturnValue({
-        select: jest.fn().mockReturnThis(),
-        eq: jest.fn().mockReturnThis(),
-        single: jest.fn().mockResolvedValue({
+        select: vi.fn().mockReturnThis(),
+        eq: vi.fn().mockReturnThis(),
+        single: vi.fn().mockResolvedValue({
           data: mockPatientRecord,
           error: null,
         }),
@@ -260,9 +261,9 @@ describe('Patient Supabase Functions', () => {
 
     it('handles patient not found', async () => {
       mockSupabase.from.mockReturnValue({
-        select: jest.fn().mockReturnThis(),
-        eq: jest.fn().mockReturnThis(),
-        single: jest.fn().mockResolvedValue({
+        select: vi.fn().mockReturnThis(),
+        eq: vi.fn().mockReturnThis(),
+        single: vi.fn().mockResolvedValue({
           data: null,
           error: { code: 'PGRST116', message: 'The result contains 0 rows' },
         }),
@@ -282,9 +283,9 @@ describe('Patient Supabase Functions', () => {
       const updatedData = { ...mockPatientData, name: 'João Silva Santos Jr.' };
 
       mockSupabase.from.mockReturnValue({
-        update: jest.fn().mockReturnThis(),
-        eq: jest.fn().mockReturnThis(),
-        select: jest.fn().mockResolvedValue({
+        update: vi.fn().mockReturnThis(),
+        eq: vi.fn().mockReturnThis(),
+        select: vi.fn().mockResolvedValue({
           data: [{ id: 123, medical_record_number: 'MR001' }],
           error: null,
         }),
@@ -298,9 +299,9 @@ describe('Patient Supabase Functions', () => {
 
     it('handles update errors', async () => {
       mockSupabase.from.mockReturnValue({
-        update: jest.fn().mockReturnThis(),
-        eq: jest.fn().mockReturnThis(),
-        select: jest.fn().mockResolvedValue({
+        update: vi.fn().mockReturnThis(),
+        eq: vi.fn().mockReturnThis(),
+        select: vi.fn().mockResolvedValue({
           data: null,
           error: { message: 'Update failed' },
         }),
@@ -318,8 +319,8 @@ describe('Patient Supabase Functions', () => {
   describe('deletePatient', () => {
     it('soft deletes patient successfully', async () => {
       mockSupabase.from.mockReturnValue({
-        update: jest.fn().mockReturnThis(),
-        eq: jest.fn().mockResolvedValue({
+        update: vi.fn().mockReturnThis(),
+        eq: vi.fn().mockResolvedValue({
           data: [{ id: 123 }],
           error: null,
         }),
@@ -332,8 +333,8 @@ describe('Patient Supabase Functions', () => {
 
     it('handles deletion errors', async () => {
       mockSupabase.from.mockReturnValue({
-        update: jest.fn().mockReturnThis(),
-        eq: jest.fn().mockResolvedValue({
+        update: vi.fn().mockReturnThis(),
+        eq: vi.fn().mockResolvedValue({
           data: null,
           error: { message: 'Patient not found' },
         }),
@@ -364,12 +365,12 @@ describe('Patient Supabase Functions', () => {
       ];
 
       mockSupabase.from.mockReturnValue({
-        select: jest.fn().mockReturnThis(),
-        or: jest.fn().mockReturnThis(),
-        ilike: jest.fn().mockReturnThis(),
-        eq: jest.fn().mockReturnThis(),
-        order: jest.fn().mockReturnThis(),
-        range: jest.fn().mockResolvedValue({
+        select: vi.fn().mockReturnThis(),
+        or: vi.fn().mockReturnThis(),
+        ilike: vi.fn().mockReturnThis(),
+        eq: vi.fn().mockReturnThis(),
+        order: vi.fn().mockReturnThis(),
+        range: vi.fn().mockResolvedValue({
           data: mockResults,
           error: null,
           count: 2,
@@ -389,12 +390,12 @@ describe('Patient Supabase Functions', () => {
 
     it('filters by status correctly', async () => {
       mockSupabase.from.mockReturnValue({
-        select: jest.fn().mockReturnThis(),
-        or: jest.fn().mockReturnThis(),
-        ilike: jest.fn().mockReturnThis(),
-        eq: jest.fn().mockReturnThis(),
-        order: jest.fn().mockReturnThis(),
-        range: jest.fn().mockResolvedValue({
+        select: vi.fn().mockReturnThis(),
+        or: vi.fn().mockReturnThis(),
+        ilike: vi.fn().mockReturnThis(),
+        eq: vi.fn().mockReturnThis(),
+        order: vi.fn().mockReturnThis(),
+        range: vi.fn().mockResolvedValue({
           data: [],
           error: null,
           count: 0,
@@ -455,14 +456,14 @@ describe('Patient Supabase Functions', () => {
 
   describe('FHIR Data Transformation', () => {
     it('correctly transforms Brazilian address to FHIR format', async () => {
-      const insertMock = jest.fn().mockResolvedValue({
+      const insertMock = vi.fn().mockResolvedValue({
         data: [{ id: 123 }],
         error: null,
       });
 
       mockSupabase.from.mockReturnValue({
         insert: insertMock,
-        select: jest.fn().mockReturnThis(),
+        select: vi.fn().mockReturnThis(),
       });
 
       await createPatient(mockPatientData);
@@ -480,14 +481,14 @@ describe('Patient Supabase Functions', () => {
     });
 
     it('correctly transforms emergency contact to FHIR RelatedPerson', async () => {
-      const insertMock = jest.fn().mockResolvedValue({
+      const insertMock = vi.fn().mockResolvedValue({
         data: [{ id: 123 }],
         error: null,
       });
 
       mockSupabase.from.mockReturnValue({
         insert: insertMock,
-        select: jest.fn().mockReturnThis(),
+        select: vi.fn().mockReturnThis(),
       });
 
       await createPatient(mockPatientData);

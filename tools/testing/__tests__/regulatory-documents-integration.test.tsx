@@ -1,18 +1,22 @@
 import '@testing-library/jest-dom';
+
+import { vi } from 'vitest';
+import '@testing-library/jest-dom';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { RegulatoryDocumentsList } from '@/components/regulatory-documents/regulatory-documents-list';
 import { useRegulatoryDocuments } from '@/hooks/use-regulatory-documents';
 
 // Mock the custom hook
-jest.mock('@/hooks/use-regulatory-documents');
-const mockUseRegulatoryDocuments =
-  useRegulatoryDocuments as jest.MockedFunction<typeof useRegulatoryDocuments>;
+vi.Mock('@/hooks/use-regulatory-documents');
+const mockUseRegulatoryDocuments = useRegulatoryDocuments as vi.MockedFunction<
+  typeof useRegulatoryDocuments
+>;
 
 // Mock next/navigation
-jest.mock('next/navigation', () => ({
+vi.Mock('next/navigation', () => ({
   useRouter: () => ({
-    push: jest.fn(),
-    refresh: jest.fn(),
+    push: vi.fn(),
+    refresh: vi.fn(),
   }),
 }));
 
@@ -45,15 +49,15 @@ describe('RegulatoryDocumentsList Integration', () => {
       documents: mockDocuments,
       loading: false,
       error: null,
-      refetch: jest.fn(),
-      createDocument: jest.fn(),
-      updateDocument: jest.fn(),
-      deleteDocument: jest.fn(),
+      refetch: vi.fn(),
+      createDocument: vi.fn(),
+      updateDocument: vi.fn(),
+      deleteDocument: vi.fn(),
     });
   });
 
   afterEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('renders documents list with proper data', () => {
@@ -70,10 +74,10 @@ describe('RegulatoryDocumentsList Integration', () => {
       documents: [],
       loading: true,
       error: null,
-      refetch: jest.fn(),
-      createDocument: jest.fn(),
-      updateDocument: jest.fn(),
-      deleteDocument: jest.fn(),
+      refetch: vi.fn(),
+      createDocument: vi.fn(),
+      updateDocument: vi.fn(),
+      deleteDocument: vi.fn(),
     });
 
     render(<RegulatoryDocumentsList />);
@@ -86,10 +90,10 @@ describe('RegulatoryDocumentsList Integration', () => {
       documents: [],
       loading: false,
       error: 'Failed to fetch documents',
-      refetch: jest.fn(),
-      createDocument: jest.fn(),
-      updateDocument: jest.fn(),
-      deleteDocument: jest.fn(),
+      refetch: vi.fn(),
+      createDocument: vi.fn(),
+      updateDocument: vi.fn(),
+      deleteDocument: vi.fn(),
     });
 
     render(<RegulatoryDocumentsList />);
@@ -99,14 +103,14 @@ describe('RegulatoryDocumentsList Integration', () => {
   });
 
   it('handles document deletion', async () => {
-    const mockDeleteDocument = jest.fn().mockResolvedValue(undefined);
+    const mockDeleteDocument = vi.fn().mockResolvedValue(undefined);
     mockUseRegulatoryDocuments.mockReturnValue({
       documents: mockDocuments,
       loading: false,
       error: null,
-      refetch: jest.fn(),
-      createDocument: jest.fn(),
-      updateDocument: jest.fn(),
+      refetch: vi.fn(),
+      createDocument: vi.fn(),
+      updateDocument: vi.fn(),
       deleteDocument: mockDeleteDocument,
     });
 

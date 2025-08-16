@@ -23,9 +23,10 @@ const supabase = createClient(
  */
 export async function GET(
   _request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
+    const { id } = await params;
     // Get user session
     const session = await getServerSession(authOptions);
     if (!session?.user?.id) {
@@ -35,7 +36,7 @@ export async function GET(
       );
     }
 
-    const paymentIntentId = params.id;
+    const paymentIntentId = id;
 
     // Validate payment intent ID format
     if (!paymentIntentId?.startsWith('pi_')) {

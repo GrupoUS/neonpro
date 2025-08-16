@@ -9,7 +9,7 @@ const patientInsights = new PatientInsightsIntegration();
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { patientId: string } },
+  { params }: { params: Promise<{ patientId: string }> },
 ) {
   try {
     const supabase = createRouteHandlerClient({ cookies });
@@ -22,11 +22,13 @@ export async function GET(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    const { patientId } = await params;
+
     // Validate patient access
     const { data: patient } = await supabase
       .from('patients')
       .select('id')
-      .eq('id', params.patientId)
+      .eq('id', patientId)
       .single();
 
     if (!patient) {
@@ -40,7 +42,7 @@ export async function GET(
     // Generate treatment guidance
     const treatmentRecommendations =
       await patientInsights.generateTreatmentGuidance(
-        params.patientId,
+        patientId,
         treatmentContext,
       );
 
@@ -58,7 +60,7 @@ export async function GET(
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { patientId: string } },
+  { params }: { params: Promise<{ patientId: string }> },
 ) {
   try {
     const supabase = createRouteHandlerClient({ cookies });
@@ -71,6 +73,7 @@ export async function POST(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    const { patientId } = await params;
     const body = await request.json();
     const {
       treatmentContext,
@@ -82,7 +85,7 @@ export async function POST(
     // Generate comprehensive treatment recommendations
     const treatmentRecommendations =
       await patientInsights.generateTreatmentGuidance(
-        params.patientId,
+        patientId,
         treatmentContext,
       );
 
@@ -90,7 +93,7 @@ export async function POST(
 
     if (includeRiskAssessment) {
       const riskAssessment = await patientInsights.generateQuickRiskAssessment(
-        params.patientId,
+        patientId,
       );
       response.riskAssessment = riskAssessment;
     }
@@ -98,7 +101,7 @@ export async function POST(
     // Process outcome data for learning if provided
     if (outcomeData?.treatmentId) {
       const learningInsights = await patientInsights.updatePatientOutcome(
-        params.patientId,
+        patientId,
         outcomeData.treatmentId,
         outcomeData,
       );

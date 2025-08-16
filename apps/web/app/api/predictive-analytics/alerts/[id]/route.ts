@@ -5,12 +5,13 @@ const service = new PredictiveAnalyticsService();
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
+    const { id } = await params;
     const body = await request.json();
 
-    const alert = await service.updateAlert(params.id, body);
+    const alert = await service.updateAlert(id, body);
 
     return NextResponse.json(alert);
   } catch (_error) {
@@ -23,10 +24,11 @@ export async function PUT(
 
 export async function DELETE(
   _request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-    await service.deleteAlert(params.id);
+    const { id } = await params;
+    await service.deleteAlert(id);
 
     return NextResponse.json({ success: true });
   } catch (_error) {

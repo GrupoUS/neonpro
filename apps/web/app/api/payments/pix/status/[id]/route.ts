@@ -8,9 +8,10 @@ import { createClient } from '@/lib/supabase/server';
  */
 export async function GET(
   _request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
+    const { id } = await params;
     const supabase = createClient();
 
     // Check authentication
@@ -22,7 +23,7 @@ export async function GET(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const paymentId = params.id;
+    const paymentId = id;
 
     if (!paymentId) {
       return NextResponse.json(

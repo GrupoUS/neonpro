@@ -114,8 +114,7 @@ export function useRenderPerformance(_componentName: string) {
 
     // Log performance in development
     if (process.env.NODE_ENV === 'development') {
-      const _avgRenderTime =
-        totalRenderTimeRef.current / renderCountRef.current;
+      const _avgRenderTime = totalRenderTimeRef.current / renderCountRef.current;
 
       if (renderTime > PERFORMANCE_THRESHOLDS.RENDER_TIME_ERROR) {
       } else if (renderTime > PERFORMANCE_THRESHOLDS.RENDER_TIME_WARNING) {
@@ -130,10 +129,7 @@ export function useRenderPerformance(_componentName: string) {
 }
 
 // Debounced state with startTransition for better UX
-export function useDebouncedState<T>(
-  initialValue: T,
-  delay = 300
-): [T, T, (value: T) => void] {
+export function useDebouncedState<T>(initialValue: T, delay = 300): [T, T, (value: T) => void] {
   const [immediateValue, setImmediateValue] = useState<T>(initialValue);
   const [debouncedValue, setDebouncedValue] = useState<T>(initialValue);
   const timeoutRef = useRef<NodeJS.Timeout>();
@@ -170,11 +166,7 @@ export function useDebouncedState<T>(
 }
 
 // Virtual scrolling hook for large lists
-export function useVirtualScrolling<T>(
-  items: T[],
-  itemHeight: number,
-  containerHeight: number
-) {
+export function useVirtualScrolling<T>(items: T[], itemHeight: number, containerHeight: number) {
   const [scrollTop, setScrollTop] = useState(0);
 
   const visibleRange = useMemo(() => {
@@ -186,18 +178,16 @@ export function useVirtualScrolling<T>(
   }, [scrollTop, itemHeight, containerHeight, items.length]);
 
   const visibleItems = useMemo(() => {
-    return items
-      .slice(visibleRange.start, visibleRange.end)
-      .map((item, index) => ({
-        item,
-        index: visibleRange.start + index,
-        style: {
-          position: 'absolute' as const,
-          top: (visibleRange.start + index) * itemHeight,
-          height: itemHeight,
-          width: '100%',
-        },
-      }));
+    return items.slice(visibleRange.start, visibleRange.end).map((item, index) => ({
+      item,
+      index: visibleRange.start + index,
+      style: {
+        position: 'absolute' as const,
+        top: (visibleRange.start + index) * itemHeight,
+        height: itemHeight,
+        width: '100%',
+      },
+    }));
   }, [items, visibleRange, itemHeight]);
 
   const totalHeight = items.length * itemHeight;
@@ -219,9 +209,7 @@ export function useVirtualScrolling<T>(
 }
 
 // Intersection observer hook for lazy loading
-export function useIntersectionObserver(
-  options: IntersectionObserverInit = {}
-) {
+export function useIntersectionObserver(options: IntersectionObserverInit = {}) {
   const [isIntersecting, setIsIntersecting] = useState(false);
   const [hasIntersected, setHasIntersected] = useState(false);
   const ref = useRef<HTMLElement>(null);
@@ -372,14 +360,9 @@ export function usePerformanceProfiler(
       const endName = `${name}-${endMark}`;
 
       try {
-        performance.measure(
-          `${name}-${startMark}-to-${endMark}`,
-          startName,
-          endName
-        );
+        performance.measure(`${name}-${startMark}-to-${endMark}`, startName, endName);
 
-        const duration =
-          marksRef.current[endMark] - marksRef.current[startMark];
+        const duration = marksRef.current[endMark] - marksRef.current[startMark];
 
         return duration;
       } catch (_error) {}

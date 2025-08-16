@@ -3,8 +3,8 @@
  * Comprehensive Security Testing for NeonPro Financial System
  */
 
-import { afterAll, beforeAll, describe, expect, it } from '@jest/globals';
 import { createClient } from '@supabase/supabase-js';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -39,10 +39,7 @@ describe('🔐 NeonPro Security Audit Tests', () => {
 
     it('should validate user permissions for clinic data access', async () => {
       // Test access to clinic data with proper authentication
-      const { data: clinics, error } = await supabase
-        .from('clinics')
-        .select('id, name')
-        .limit(1);
+      const { data: clinics, error } = await supabase.from('clinics').select('id, name').limit(1);
 
       expect(error).toBeNull();
       expect(Array.isArray(clinics)).toBe(true);
@@ -200,9 +197,7 @@ describe('🔐 NeonPro Security Audit Tests', () => {
       expect(Array.isArray(allTransactions)).toBe(true);
 
       // All returned transactions should belong to authorized clinics only
-      const uniqueClinicIds = [
-        ...new Set(allTransactions?.map((t) => t.clinic_id)),
-      ];
+      const uniqueClinicIds = [...new Set(allTransactions?.map((t) => t.clinic_id))];
       expect(uniqueClinicIds).toBeDefined();
     });
   });
@@ -251,10 +246,7 @@ describe('🔐 NeonPro Security Audit Tests', () => {
       expect(auditError).toBeNull();
 
       // Cleanup
-      await supabase
-        .from('financial_transactions')
-        .delete()
-        .eq('id', created.id);
+      await supabase.from('financial_transactions').delete().eq('id', created.id);
     });
 
     it('should validate LGPD compliance data retention', async () => {
@@ -367,20 +359,14 @@ describe('🔐 NeonPro Security Audit Tests', () => {
         // In a real system, you'd verify XSS prevention
 
         // Cleanup
-        await supabase
-          .from('financial_transactions')
-          .delete()
-          .eq('id', data.id);
+        await supabase.from('financial_transactions').delete().eq('id', data.id);
       }
     });
 
     it('should validate rate limiting protection', async () => {
       // Test rate limiting (this is more of an integration test)
       const rapidRequests = Array.from({ length: 10 }, () =>
-        supabase
-          .from('financial_transactions')
-          .select('count(*)')
-          .eq('clinic_id', testClinicId)
+        supabase.from('financial_transactions').select('count(*)').eq('clinic_id', testClinicId)
       );
 
       const startTime = Date.now();

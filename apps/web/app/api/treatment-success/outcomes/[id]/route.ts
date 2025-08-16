@@ -6,11 +6,12 @@ const treatmentSuccessService = new TreatmentSuccessService();
 
 export async function GET(
   _request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
+    const { id } = await params;
     const outcome = await treatmentSuccessService.getTreatmentOutcomeById(
-      params.id,
+      id,
     );
 
     return NextResponse.json({
@@ -31,16 +32,17 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
+    const { id } = await params;
     const body = await request.json();
 
     // Validate request body
     const validatedData = updateTreatmentOutcomeSchema.parse(body);
 
     const outcome = await treatmentSuccessService.updateTreatmentOutcome(
-      params.id,
+      id,
       validatedData,
     );
 

@@ -1,32 +1,37 @@
+import type { SupabaseClient } from '@supabase/supabase-js';
 import {
   afterEach,
+  afterEach,
+  beforeEach,
   beforeEach,
   describe,
+  describe,
+  expect,
   expect,
   jest,
+  jest,
   test,
-} from '@jest/globals';
-import type { SupabaseClient } from '@supabase/supabase-js';
+  test,
+  vi,
+} from 'vitest';
 import { AnalyticsRepository } from '@/lib/analytics/repository';
 import { createClient } from '@/utils/supabase/server';
 
 // Mock Supabase client
-jest.mock('@/utils/supabase/server');
-const mockCreateClient = createClient as jest.MockedFunction<
-  typeof createClient
->;
+vi.Mock('@/utils/supabase/server');
+const mockCreateClient = createClient as vi.MockedFunction<typeof createClient>;
 
 describe('AnalyticsRepository', () => {
   let repository: AnalyticsRepository;
-  let mockSupabase: jest.Mocked<SupabaseClient>;
+  let mockSupabase: vi.Mocked<SupabaseClient>;
 
   beforeEach(() => {
     // Create mock Supabase client with typed methods
     mockSupabase = {
-      from: jest.fn(),
-      rpc: jest.fn(),
+      from: vi.fn(),
+      rpc: vi.fn(),
       auth: {
-        getUser: jest.fn(),
+        getUser: vi.fn(),
       },
     } as any;
 
@@ -37,7 +42,7 @@ describe('AnalyticsRepository', () => {
   });
 
   afterEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe('getSubscriptionMetrics', () => {
@@ -57,9 +62,9 @@ describe('AnalyticsRepository', () => {
       };
 
       const mockFrom = {
-        select: jest.fn().mockReturnThis(),
-        eq: jest.fn().mockReturnThis(),
-        single: jest.fn().mockResolvedValue(mockData),
+        select: vi.fn().mockReturnThis(),
+        eq: vi.fn().mockReturnThis(),
+        single: vi.fn().mockResolvedValue(mockData),
       };
 
       mockSupabase.from.mockReturnValue(mockFrom as any);
@@ -89,33 +94,33 @@ describe('AnalyticsRepository', () => {
       // Arrange
       const mockError = { message: 'Database connection failed' };
       const mockFrom = {
-        select: jest.fn().mockReturnThis(),
-        eq: jest.fn().mockReturnThis(),
-        single: jest.fn().mockResolvedValue({ data: null, error: mockError }),
+        select: vi.fn().mockReturnThis(),
+        eq: vi.fn().mockReturnThis(),
+        single: vi.fn().mockResolvedValue({ data: null, error: mockError }),
       };
 
       mockSupabase.from.mockReturnValue(mockFrom as any);
 
       // Act & Assert
-      await expect(
-        repository.getSubscriptionMetrics('monthly')
-      ).rejects.toThrow('Database connection failed');
+      await expect(repository.getSubscriptionMetrics('monthly')).rejects.toThrow(
+        'Database connection failed'
+      );
     });
 
     test('should handle missing data gracefully', async () => {
       // Arrange
       const mockFrom = {
-        select: jest.fn().mockReturnThis(),
-        eq: jest.fn().mockReturnThis(),
-        single: jest.fn().mockResolvedValue({ data: null, error: null }),
+        select: vi.fn().mockReturnThis(),
+        eq: vi.fn().mockReturnThis(),
+        single: vi.fn().mockResolvedValue({ data: null, error: null }),
       };
 
       mockSupabase.from.mockReturnValue(mockFrom as any);
 
       // Act & Assert
-      await expect(
-        repository.getSubscriptionMetrics('monthly')
-      ).rejects.toThrow('No subscription metrics found for period: monthly');
+      await expect(repository.getSubscriptionMetrics('monthly')).rejects.toThrow(
+        'No subscription metrics found for period: monthly'
+      );
     });
   });
 
@@ -153,12 +158,12 @@ describe('AnalyticsRepository', () => {
       };
 
       const mockFrom = {
-        select: jest.fn().mockReturnThis(),
-        eq: jest.fn().mockReturnThis(),
-        gte: jest.fn().mockReturnThis(),
-        lt: jest.fn().mockReturnThis(),
-        single: jest.fn().mockResolvedValue(mockTrialData),
-        limit: jest.fn().mockResolvedValue(mockPredictionData),
+        select: vi.fn().mockReturnThis(),
+        eq: vi.fn().mockReturnThis(),
+        gte: vi.fn().mockReturnThis(),
+        lt: vi.fn().mockReturnThis(),
+        single: vi.fn().mockResolvedValue(mockTrialData),
+        limit: vi.fn().mockResolvedValue(mockPredictionData),
       };
 
       mockSupabase.from.mockReturnValue(mockFrom as any);
@@ -188,17 +193,13 @@ describe('AnalyticsRepository', () => {
       mockSupabase.rpc.mockResolvedValue(mockRpcResult);
 
       // Act
-      const result =
-        await repository.calculateTrialConversionProbability('user123');
+      const result = await repository.calculateTrialConversionProbability('user123');
 
       // Assert
       expect(result).toEqual(mockRpcResult.data);
-      expect(mockSupabase.rpc).toHaveBeenCalledWith(
-        'calculate_trial_conversion_ai',
-        {
-          user_id: 'user123',
-        }
-      );
+      expect(mockSupabase.rpc).toHaveBeenCalledWith('calculate_trial_conversion_ai', {
+        user_id: 'user123',
+      });
     });
   });
 
@@ -229,10 +230,10 @@ describe('AnalyticsRepository', () => {
       };
 
       const mockFrom = {
-        select: jest.fn().mockReturnThis(),
-        gte: jest.fn().mockReturnThis(),
-        lte: jest.fn().mockReturnThis(),
-        order: jest.fn().mockResolvedValue(mockCohortData),
+        select: vi.fn().mockReturnThis(),
+        gte: vi.fn().mockReturnThis(),
+        lte: vi.fn().mockReturnThis(),
+        order: vi.fn().mockResolvedValue(mockCohortData),
       };
 
       mockSupabase.from.mockReturnValue(mockFrom as any);
@@ -266,11 +267,11 @@ describe('AnalyticsRepository', () => {
       };
 
       const mockFrom = {
-        select: jest.fn().mockReturnThis(),
-        eq: jest.fn().mockReturnThis(),
-        gte: jest.fn().mockReturnThis(),
-        limit: jest.fn().mockReturnThis(),
-        order: jest.fn().mockResolvedValue(mockForecastData),
+        select: vi.fn().mockReturnThis(),
+        eq: vi.fn().mockReturnThis(),
+        gte: vi.fn().mockReturnThis(),
+        limit: vi.fn().mockReturnThis(),
+        order: vi.fn().mockResolvedValue(mockForecastData),
       };
 
       mockSupabase.from.mockReturnValue(mockFrom as any);
@@ -282,9 +283,7 @@ describe('AnalyticsRepository', () => {
       expect(result.predictions).toBeDefined();
       expect(result.predictions).toHaveLength(1);
       expect(result.predictions[0].value).toBe(16_000);
-      expect(result.predictions[0].confidence.lower).toBeLessThan(
-        result.predictions[0].value
-      );
+      expect(result.predictions[0].confidence.lower).toBeLessThan(result.predictions[0].value);
       expect(result.modelVersion).toBe('v2.1');
     });
   });
@@ -292,13 +291,13 @@ describe('AnalyticsRepository', () => {
   describe('real-time subscriptions', () => {
     test('should set up real-time listener for metrics updates', async () => {
       // Arrange
-      const mockCallback = jest.fn();
+      const mockCallback = vi.fn();
       const mockChannel = {
-        on: jest.fn().mockReturnThis(),
-        subscribe: jest.fn(),
+        on: vi.fn().mockReturnThis(),
+        subscribe: vi.fn(),
       };
 
-      mockSupabase.channel = jest.fn().mockReturnValue(mockChannel);
+      mockSupabase.channel = vi.fn().mockReturnValue(mockChannel);
 
       // Act
       await repository.subscribeToMetricsUpdates(mockCallback);
@@ -331,17 +330,17 @@ describe('AnalyticsRepository', () => {
       };
 
       const mockFrom = {
-        select: jest.fn().mockReturnThis(),
-        eq: jest.fn().mockReturnThis(),
-        single: jest.fn().mockResolvedValue(invalidData),
+        select: vi.fn().mockReturnThis(),
+        eq: vi.fn().mockReturnThis(),
+        single: vi.fn().mockResolvedValue(invalidData),
       };
 
       mockSupabase.from.mockReturnValue(mockFrom as any);
 
       // Act & Assert
-      await expect(
-        repository.getSubscriptionMetrics('monthly')
-      ).rejects.toThrow('Invalid subscription metrics data format');
+      await expect(repository.getSubscriptionMetrics('monthly')).rejects.toThrow(
+        'Invalid subscription metrics data format'
+      );
     });
 
     test('should validate date ranges for cohort analysis', async () => {
@@ -350,9 +349,9 @@ describe('AnalyticsRepository', () => {
       const endDate = new Date('2024-01-31');
 
       // Act & Assert
-      await expect(
-        repository.getCohortAnalysis(startDate, endDate)
-      ).rejects.toThrow('Invalid date range provided');
+      await expect(repository.getCohortAnalysis(startDate, endDate)).rejects.toThrow(
+        'Invalid date range provided'
+      );
     });
   });
 
@@ -365,9 +364,9 @@ describe('AnalyticsRepository', () => {
       };
 
       const mockFrom = {
-        select: jest.fn().mockReturnThis(),
-        eq: jest.fn().mockReturnThis(),
-        single: jest.fn().mockResolvedValue(mockMetrics),
+        select: vi.fn().mockReturnThis(),
+        eq: vi.fn().mockReturnThis(),
+        single: vi.fn().mockResolvedValue(mockMetrics),
       };
 
       mockSupabase.from.mockReturnValue(mockFrom as any);
@@ -391,9 +390,9 @@ describe('AnalyticsRepository', () => {
       };
 
       const mockFrom = {
-        select: jest.fn().mockReturnThis(),
-        eq: jest.fn().mockReturnThis(),
-        single: jest.fn().mockResolvedValue(mockData),
+        select: vi.fn().mockReturnThis(),
+        eq: vi.fn().mockReturnThis(),
+        single: vi.fn().mockResolvedValue(mockData),
       };
 
       mockSupabase.from.mockReturnValue(mockFrom as any);

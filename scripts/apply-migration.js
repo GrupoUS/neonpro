@@ -37,14 +37,14 @@ function execPromise(command, args = [], options = {}) {
 
 async function checkSupabaseCLI() {
   try {
-    await execPromise('npx', ['supabase', '--version']);
+    await execPromise('pnpx', ['supabase', '--version']);
     log('✅ Supabase CLI disponível', COLORS.GREEN);
     return true;
   } catch (_error) {
     log('❌ Supabase CLI não encontrado', COLORS.RED);
     log('🔧 Instalando Supabase CLI...', COLORS.YELLOW);
     try {
-      await execPromise('npm', ['install', '-g', 'supabase']);
+      await execPromise('pnpm', ['install', '-g', 'supabase']);
       log('✅ Supabase CLI instalado com sucesso', COLORS.GREEN);
       return true;
     } catch (_installError) {
@@ -98,12 +98,12 @@ async function applyMigration() {
   } catch (_error) {
     log('⚠️  Não conectado ao Supabase, tentando conectar...', COLORS.YELLOW);
     try {
-      await execPromise('npx', ['supabase', 'login']);
-      await execPromise('npx', ['supabase', 'link']);
+      await execPromise('pnpx', ['supabase', 'login']);
+      await execPromise('pnpx', ['supabase', 'link']);
     } catch (_linkError) {
       log('❌ Falha ao conectar com Supabase', COLORS.RED);
       log(
-        '💡 Execute manualmente: npx supabase login && npx supabase link',
+        '💡 Execute manualmente: pnpx supabase login && pnpx supabase link',
         COLORS.YELLOW
       );
       return false;
@@ -112,7 +112,7 @@ async function applyMigration() {
 
   try {
     // Apply migrations
-    const result = await execPromise('npx', ['supabase', 'db', 'push']);
+    const result = await execPromise('pnpx', ['supabase', 'db', 'push']);
     log('✅ Migration aplicada com sucesso!', COLORS.GREEN);
     log(result.stdout, COLORS.GREEN);
     return true;
@@ -138,7 +138,7 @@ async function validateMigration() {
 
   try {
     // Run our existing test script
-    const result = await execPromise('npm', ['run', 'test:middleware']);
+    const result = await execPromise('pnpm', ['run', 'test:middleware']);
 
     if (result.stdout.includes('✅ Todos os testes passaram!')) {
       log('✅ Migration validada com sucesso!', COLORS.GREEN);

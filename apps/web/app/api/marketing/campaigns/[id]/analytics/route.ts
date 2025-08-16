@@ -9,10 +9,10 @@ import { marketingCampaignsService } from '@/app/lib/services/marketing-campaign
 // GET /api/marketing/campaigns/[id]/analytics - Get campaign analytics
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-    const { id } = params;
+    const { id } = await params;
     const { searchParams } = new URL(request.url);
 
     if (!id) {

@@ -1,17 +1,18 @@
-import { act, renderHook } from '@testing-library/react';
+import { act, act, renderHook, renderHook } from '@testing-library/react';
+import { vi } from 'vitest';
 import { useErrorHandling } from '@/hooks/use-error-handling';
 
 describe('useErrorHandling', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
 
     // Mock console methods to avoid noise in tests
-    jest.spyOn(console, 'error').mockImplementation(() => {});
-    jest.spyOn(console, 'warn').mockImplementation(() => {});
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+    vi.spyOn(console, 'warn').mockImplementation(() => {});
   });
 
   afterEach(() => {
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
   });
 
   it('initializes with empty errors array', () => {
@@ -161,7 +162,7 @@ describe('useErrorHandling', () => {
   it('handles error with actions', () => {
     const { result } = renderHook(() => useErrorHandling());
 
-    const mockAction = jest.fn();
+    const mockAction = vi.fn();
     const actions = [
       {
         label: 'Retry',
@@ -262,9 +263,7 @@ describe('useErrorHandling', () => {
 
     const ids = result.current.errors.map((e) => e.id);
     expect(new Set(ids).size).toBe(2); // All IDs should be unique
-    expect(ids.every((id) => typeof id === 'string' && id.length > 0)).toBe(
-      true
-    );
+    expect(ids.every((id) => typeof id === 'string' && id.length > 0)).toBe(true);
   });
 
   it('handles dismissible errors', () => {
@@ -334,17 +333,14 @@ describe('useErrorHandling', () => {
   });
 
   it('handles configuration changes', () => {
-    const { result, rerender } = renderHook(
-      ({ config }) => useErrorHandling(config),
-      {
-        initialProps: {
-          config: {
-            showTechnicalDetails: false,
-            maxRetryAttempts: 3,
-          },
+    const { result, rerender } = renderHook(({ config }) => useErrorHandling(config), {
+      initialProps: {
+        config: {
+          showTechnicalDetails: false,
+          maxRetryAttempts: 3,
         },
-      }
-    );
+      },
+    });
 
     // Test with initial config
     act(() => {

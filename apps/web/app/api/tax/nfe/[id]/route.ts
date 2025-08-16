@@ -6,9 +6,10 @@ import { createClient } from '@/app/utils/supabase/server';
 
 export async function GET(
   _request: Request,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
+    const { id } = await params;
     const supabase = createClient();
 
     // Check authentication
@@ -19,8 +20,6 @@ export async function GET(
     if (authError || !session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
-
-    const { id } = params;
 
     // Fetch NFe document
     const { data: nfeDocument, error: fetchError } = await supabase
@@ -61,9 +60,10 @@ export async function GET(
 
 export async function PATCH(
   request: Request,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
+    const { id } = await params;
     const supabase = createClient();
 
     // Check authentication
@@ -74,8 +74,6 @@ export async function PATCH(
     if (authError || !session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
-
-    const { id } = params;
     const body = await request.json();
 
     // Fetch existing NFe document
@@ -135,9 +133,10 @@ export async function PATCH(
 
 export async function DELETE(
   _request: Request,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
+    const { id } = await params;
     const supabase = createClient();
 
     // Check authentication
@@ -148,8 +147,6 @@ export async function DELETE(
     if (authError || !session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
-
-    const { id } = params;
 
     // Fetch existing NFe document
     const { data: existingNfe, error: fetchError } = await supabase

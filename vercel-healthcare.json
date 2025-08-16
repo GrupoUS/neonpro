@@ -1,12 +1,12 @@
 {
   "// NEONPRO HEALTHCARE - Vercel Edge Configuration for LGPD Compliance": "",
   "// ≥9.9/10 Quality Standard for Patient Data Sovereignty": "",
-  
+
   "regions": ["gru1"],
   "github": {
     "silent": false
   },
-  
+
   "headers": [
     {
       "source": "/(.*)",
@@ -62,3 +62,5 @@
         }
       ]
     }
+  ]
+}

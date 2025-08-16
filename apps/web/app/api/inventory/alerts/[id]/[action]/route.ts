@@ -24,11 +24,11 @@ const escalateSchema = z.object({
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string; action: string } },
+  { params }: { params: Promise<{ id: string; action: string }> },
 ) {
   try {
     const body = await request.json();
-    const { id, action } = params;
+    const { id, action } = await params;
 
     let result;
     let message;
@@ -98,7 +98,7 @@ export async function POST(
     return NextResponse.json(
       {
         success: false,
-        error: `Failed to ${params.action} alert`,
+        error: `Failed to ${action} alert`,
         details: error.message,
       },
       { status: 500 },

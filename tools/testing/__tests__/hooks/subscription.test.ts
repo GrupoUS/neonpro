@@ -8,9 +8,9 @@
  * @created 2025-07-22
  */
 
-import { beforeEach, describe, expect, it, jest } from '@jest/globals';
 import type { QueryClient } from '@tanstack/react-query';
 import { act, renderHook } from '@testing-library/react';
+import { beforeEach, describe, expect, it, jest, vi } from 'vitest';
 import {
   AllTheProviders,
   createMockSubscription,
@@ -30,7 +30,7 @@ describe('Subscription Hooks', () => {
 
   beforeEach(() => {
     queryClient = createTestQueryClient();
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   // ============================================================================
@@ -68,7 +68,7 @@ describe('Subscription Hooks', () => {
     });
 
     it('should support refetching subscription data', async () => {
-      const mockRefetch = jest.fn().mockResolvedValue({
+      const mockRefetch = vi.fn().mockResolvedValue({
         data: createMockSubscription(),
       });
 
@@ -88,7 +88,7 @@ describe('Subscription Hooks', () => {
 
   describe('useSubscriptionEvents', () => {
     it('should handle subscription change events', () => {
-      const mockEventHandler = jest.fn();
+      const mockEventHandler = vi.fn();
       const mockEvent = {
         type: 'subscription_updated',
         data: createMockSubscription(),

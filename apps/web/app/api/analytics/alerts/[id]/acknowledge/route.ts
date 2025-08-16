@@ -7,12 +7,13 @@ import { type NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/app/utils/supabase/server';
 
 type RouteParams = {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 };
 
 export async function PATCH(_request: NextRequest, { params }: RouteParams) {
+  const { id } = await params;
   try {
     const supabase = createClient();
 
@@ -37,7 +38,7 @@ export async function PATCH(_request: NextRequest, { params }: RouteParams) {
         acknowledged_at: new Date().toISOString(),
         acknowledged_by: user.id,
       })
-      .eq('id', params.id)
+      .eq('id', id)
       .select()
       .single();
 

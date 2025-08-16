@@ -19,7 +19,7 @@
     "test:ci:healthcare": "npm run test:healthcare:coverage && npm run test:e2e:healthcare --reporter=junit",
     "test:report:healthcare": "npx playwright show-report && open coverage/healthcare/healthcare-test-report.html",
     "lint:tests": "eslint 'apps/web/__tests__/**/*.{ts,tsx}' 'playwright/**/*.{ts,tsx}'",
-    "format:tests": "prettier --write 'apps/web/__tests__/**/*.{ts,tsx}' 'playwright/**/*.{ts,tsx}'",
+    "format:tests": "cd ../.. && biome format --write 'apps/web/__tests__/**/*.{ts,tsx}' 'tools/testing/**/*.{ts,tsx}'",
     "test:validate:lgpd": "playwright test security-healthcare.spec.ts --grep='LGPD'",
     "test:validate:anvisa": "playwright test regulatory-documents-fixed.spec.ts --grep='ANVISA'",
     "test:validate:cfm": "playwright test regulatory-documents-fixed.spec.ts --grep='CFM'",
@@ -62,11 +62,15 @@
     "projects": [
       {
         "displayName": "Healthcare Unit Tests",
-        "testMatch": ["<rootDir>/apps/web/__tests__/healthcare/**/*.test.{js,jsx,ts,tsx}"]
+        "testMatch": [
+          "<rootDir>/apps/web/__tests__/healthcare/**/*.test.{js,jsx,ts,tsx}"
+        ]
       },
       {
-        "displayName": "Healthcare Component Tests", 
-        "testMatch": ["<rootDir>/apps/web/components/**/*.healthcare.test.{js,jsx,ts,tsx}"]
+        "displayName": "Healthcare Component Tests",
+        "testMatch": [
+          "<rootDir>/apps/web/components/**/*.healthcare.test.{js,jsx,ts,tsx}"
+        ]
       }
     ]
   },
@@ -79,7 +83,7 @@
         "use": { "browserName": "chromium" }
       },
       {
-        "name": "Healthcare Firefox", 
+        "name": "Healthcare Firefox",
         "use": { "browserName": "firefox" }
       },
       {

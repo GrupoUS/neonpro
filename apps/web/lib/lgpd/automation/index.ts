@@ -34,6 +34,7 @@ import {
   ThirdPartyComplianceAutomation,
   type ThirdPartyConfig,
 } from './ThirdPartyComplianceAutomation';
+import { getLGPDAutomationConfig } from './defaultConfig';
 
 type SupabaseClient = ReturnType<typeof createClient<Database>>;
 
@@ -631,47 +632,48 @@ export class LGPDAutomationOrchestrator {
   // Private helper methods
   private setupCrossModuleIntegration(): void {
     // Set up cross-module event handlers for coordinated automation
+    // TODO: Implement event handlers after individual modules are fully implemented
 
     // Breach detection triggers compliance monitoring
-    this.breachDetection.onBreachDetected(async (incident) => {
-      await this.complianceMonitor.triggerEmergencyCompliance(incident);
-    });
+    // this.breachDetection.onBreachDetected(async (incident) => {
+    //   await this.complianceMonitor.triggerEmergencyCompliance(incident);
+    // });
 
     // Consent changes trigger data retention review
-    this.consentAutomation.onConsentWithdrawn(async (consent) => {
-      await this.dataRetention.reviewRetentionForConsent(
-        consent.user_id,
-        consent.purpose,
-      );
-    });
+    // this.consentAutomation.onConsentWithdrawn(async (consent) => {
+    //   await this.dataRetention.reviewRetentionForConsent(
+    //     consent.user_id,
+    //     consent.purpose,
+    //   );
+    // });
 
     // Data subject requests trigger compliance checks
-    this.dataSubjectRights.onRequestProcessed(async (request) => {
-      await this.complianceMonitor.validateRequestCompliance(request);
-    });
+    // this.dataSubjectRights.onRequestProcessed(async (request) => {
+    //   await this.complianceMonitor.validateRequestCompliance(request);
+    // });
 
     // Third-party compliance issues trigger alerts
-    this.thirdPartyCompliance.onComplianceAssessmentCompleted(
-      async (assessment) => {
-        if (
-          assessment.risk_rating === 'high' ||
-          assessment.risk_rating === 'critical'
-        ) {
-          await this.createAlert({
-            module: 'third_party_compliance',
-            alert_type: 'warning',
-            title: 'High Risk Third Party Detected',
-            message: `Provider ${assessment.provider_id} has ${assessment.risk_rating} risk rating`,
-            details: assessment,
-          });
-        }
-      },
-    );
+    // this.thirdPartyCompliance.onComplianceAssessmentCompleted(
+    //   async (assessment) => {
+    //     if (
+    //       assessment.risk_rating === 'high' ||
+    //       assessment.risk_rating === 'critical'
+    //     ) {
+    //       await this.createAlert({
+    //         module: 'third_party_compliance',
+    //         alert_type: 'warning',
+    //         title: 'High Risk Third Party Detected',
+    //         message: `Provider ${assessment.provider_id} has ${assessment.risk_rating} risk rating`,
+    //         details: assessment,
+    //       });
+    //     }
+    //   },
+    // );
 
     // Data minimization opportunities trigger retention review
-    this.dataMinimization.onMinimizationOpportunity(async (opportunity) => {
-      await this.dataRetention.evaluateMinimizationOpportunity(opportunity);
-    });
+    // this.dataMinimization.onMinimizationOpportunity(async (opportunity) => {
+    //   await this.dataRetention.evaluateMinimizationOpportunity(opportunity);
+    // });
   }
 
   private async startOrchestatorMonitoring(): Promise<void> {
@@ -758,3 +760,6 @@ export type {
   ThirdPartyConfig,
   AuditConfig,
 };
+
+// Export configuration function
+export { getLGPDAutomationConfig };

@@ -51,7 +51,7 @@ if (allFilesExist) {
     '3. Configure o Supabase e Google Cloud Console conforme documentado'
   );
   console.log(
-    '4. Execute npm run dev e teste o login em http://localhost:3000/login'
+    '4. Execute pnpm run dev e teste o login em http://localhost:3000/login'
   );
 } else {
   console.log('\n❌ Alguns arquivos estão faltando!');

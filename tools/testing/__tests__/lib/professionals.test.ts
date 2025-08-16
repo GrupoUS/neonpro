@@ -1,4 +1,5 @@
-import { createClient } from '@/app/utils/supabase/server';
+import { vi } from 'vitest';
+import { createClient, createClient } from '@/app/utils/supabase/server';
 import {
   addPerformanceMetric,
   createProfessional,
@@ -22,23 +23,23 @@ import {
 // Mock Supabase client
 const mockSupabaseClient = {
   from: jest.fn(() => ({
-    select: jest.fn().mockReturnThis(),
-    insert: jest.fn().mockReturnThis(),
-    update: jest.fn().mockReturnThis(),
-    delete: jest.fn().mockReturnThis(),
-    eq: jest.fn().mockReturnThis(),
-    neq: jest.fn().mockReturnThis(),
-    in: jest.fn().mockReturnThis(),
-    gte: jest.fn().mockReturnThis(),
-    lte: jest.fn().mockReturnThis(),
-    order: jest.fn().mockReturnThis(),
-    limit: jest.fn().mockReturnThis(),
-    single: jest.fn(),
-    then: jest.fn(),
+    select: vi.fn().mockReturnThis(),
+    insert: vi.fn().mockReturnThis(),
+    update: vi.fn().mockReturnThis(),
+    delete: vi.fn().mockReturnThis(),
+    eq: vi.fn().mockReturnThis(),
+    neq: vi.fn().mockReturnThis(),
+    in: vi.fn().mockReturnThis(),
+    gte: vi.fn().mockReturnThis(),
+    lte: vi.fn().mockReturnThis(),
+    order: vi.fn().mockReturnThis(),
+    limit: vi.fn().mockReturnThis(),
+    single: vi.fn(),
+    then: vi.fn(),
   })),
 };
 
-jest.mock('@/app/utils/supabase/server', () => ({
+vi.Mock('@/app/utils/supabase/server', () => ({
   createClient: jest.fn(() => mockSupabaseClient),
 }));
 
@@ -108,17 +109,14 @@ const mockPerformanceMetric = {
 
 describe('Professional Supabase Functions', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe('Professional Management', () => {
     describe('createProfessional', () => {
       it('should create a new professional successfully', async () => {
         const mockInsertResponse = { data: [mockProfessional], error: null };
-        mockSupabaseClient
-          .from()
-          .insert()
-          .single.mockResolvedValue(mockInsertResponse);
+        mockSupabaseClient.from().insert().single.mockResolvedValue(mockInsertResponse);
 
         const professionalData = {
           given_name: 'Dr. Ana',
@@ -131,19 +129,14 @@ describe('Professional Supabase Functions', () => {
         const result = await createProfessional(professionalData);
 
         expect(mockSupabaseClient.from).toHaveBeenCalledWith('professionals');
-        expect(mockSupabaseClient.from().insert).toHaveBeenCalledWith(
-          professionalData
-        );
+        expect(mockSupabaseClient.from().insert).toHaveBeenCalledWith(professionalData);
         expect(result).toEqual(mockProfessional);
       });
 
       it('should throw error when creation fails', async () => {
         const mockError = new Error('Database error');
         const mockInsertResponse = { data: null, error: mockError };
-        mockSupabaseClient
-          .from()
-          .insert()
-          .single.mockResolvedValue(mockInsertResponse);
+        mockSupabaseClient.from().insert().single.mockResolvedValue(mockInsertResponse);
 
         const professionalData = {
           given_name: 'Dr. Ana',
@@ -151,9 +144,7 @@ describe('Professional Supabase Functions', () => {
           email: 'ana.silva@email.com',
         };
 
-        await expect(createProfessional(professionalData)).rejects.toThrow(
-          'Database error'
-        );
+        await expect(createProfessional(professionalData)).rejects.toThrow('Database error');
       });
 
       it('should validate required fields', async () => {
@@ -162,20 +153,14 @@ describe('Professional Supabase Functions', () => {
           // Missing required fields
         };
 
-        await expect(
-          createProfessional(incompleteProfessionalData)
-        ).rejects.toThrow();
+        await expect(createProfessional(incompleteProfessionalData)).rejects.toThrow();
       });
     });
 
     describe('updateProfessional', () => {
       it('should update professional successfully', async () => {
         const mockUpdateResponse = { data: [mockProfessional], error: null };
-        mockSupabaseClient
-          .from()
-          .update()
-          .eq()
-          .single.mockResolvedValue(mockUpdateResponse);
+        mockSupabaseClient.from().update().eq().single.mockResolvedValue(mockUpdateResponse);
 
         const updateData = {
           given_name: 'Dr. Ana Luiza',
@@ -184,82 +169,51 @@ describe('Professional Supabase Functions', () => {
         const result = await updateProfessional('1', updateData);
 
         expect(mockSupabaseClient.from).toHaveBeenCalledWith('professionals');
-        expect(mockSupabaseClient.from().update).toHaveBeenCalledWith(
-          updateData
-        );
-        expect(mockSupabaseClient.from().update().eq).toHaveBeenCalledWith(
-          'id',
-          '1'
-        );
+        expect(mockSupabaseClient.from().update).toHaveBeenCalledWith(updateData);
+        expect(mockSupabaseClient.from().update().eq).toHaveBeenCalledWith('id', '1');
         expect(result).toEqual(mockProfessional);
       });
 
       it('should throw error when update fails', async () => {
         const mockError = new Error('Update failed');
         const mockUpdateResponse = { data: null, error: mockError };
-        mockSupabaseClient
-          .from()
-          .update()
-          .eq()
-          .single.mockResolvedValue(mockUpdateResponse);
+        mockSupabaseClient.from().update().eq().single.mockResolvedValue(mockUpdateResponse);
 
-        await expect(updateProfessional('1', {})).rejects.toThrow(
-          'Update failed'
-        );
+        await expect(updateProfessional('1', {})).rejects.toThrow('Update failed');
       });
 
       it('should throw error when professional not found', async () => {
         const mockUpdateResponse = { data: null, error: null };
-        mockSupabaseClient
-          .from()
-          .update()
-          .eq()
-          .single.mockResolvedValue(mockUpdateResponse);
+        mockSupabaseClient.from().update().eq().single.mockResolvedValue(mockUpdateResponse);
 
-        await expect(updateProfessional('999', {})).rejects.toThrow(
-          'Professional not found'
-        );
+        await expect(updateProfessional('999', {})).rejects.toThrow('Professional not found');
       });
     });
 
     describe('deleteProfessional', () => {
       it('should delete professional successfully', async () => {
         const mockDeleteResponse = { data: null, error: null };
-        mockSupabaseClient
-          .from()
-          .delete()
-          .eq.mockResolvedValue(mockDeleteResponse);
+        mockSupabaseClient.from().delete().eq.mockResolvedValue(mockDeleteResponse);
 
         await deleteProfessional('1');
 
         expect(mockSupabaseClient.from).toHaveBeenCalledWith('professionals');
-        expect(mockSupabaseClient.from().delete().eq).toHaveBeenCalledWith(
-          'id',
-          '1'
-        );
+        expect(mockSupabaseClient.from().delete().eq).toHaveBeenCalledWith('id', '1');
       });
 
       it('should throw error when deletion fails', async () => {
         const mockError = new Error('Deletion failed');
         const mockDeleteResponse = { data: null, error: mockError };
-        mockSupabaseClient
-          .from()
-          .delete()
-          .eq.mockResolvedValue(mockDeleteResponse);
+        mockSupabaseClient.from().delete().eq.mockResolvedValue(mockDeleteResponse);
 
-        await expect(deleteProfessional('1')).rejects.toThrow(
-          'Deletion failed'
-        );
+        await expect(deleteProfessional('1')).rejects.toThrow('Deletion failed');
       });
     });
 
     describe('getProfessionals', () => {
       it('should fetch all professionals successfully', async () => {
         const mockSelectResponse = { data: [mockProfessional], error: null };
-        mockSupabaseClient
-          .from()
-          .select()
-          .order.mockResolvedValue(mockSelectResponse);
+        mockSupabaseClient.from().select().order.mockResolvedValue(mockSelectResponse);
 
         const result = await getProfessionals();
 
@@ -270,28 +224,18 @@ describe('Professional Supabase Functions', () => {
 
       it('should filter professionals by status', async () => {
         const mockSelectResponse = { data: [mockProfessional], error: null };
-        mockSupabaseClient
-          .from()
-          .select()
-          .eq()
-          .order.mockResolvedValue(mockSelectResponse);
+        mockSupabaseClient.from().select().eq().order.mockResolvedValue(mockSelectResponse);
 
         const result = await getProfessionals({ status: 'active' });
 
-        expect(mockSupabaseClient.from().select().eq).toHaveBeenCalledWith(
-          'status',
-          'active'
-        );
+        expect(mockSupabaseClient.from().select().eq).toHaveBeenCalledWith('status', 'active');
         expect(result).toEqual([mockProfessional]);
       });
 
       it('should throw error when fetch fails', async () => {
         const mockError = new Error('Fetch failed');
         const mockSelectResponse = { data: null, error: mockError };
-        mockSupabaseClient
-          .from()
-          .select()
-          .order.mockResolvedValue(mockSelectResponse);
+        mockSupabaseClient.from().select().order.mockResolvedValue(mockSelectResponse);
 
         await expect(getProfessionals()).rejects.toThrow('Fetch failed');
       });
@@ -300,29 +244,18 @@ describe('Professional Supabase Functions', () => {
     describe('getProfessionalById', () => {
       it('should fetch professional by ID successfully', async () => {
         const mockSelectResponse = { data: mockProfessional, error: null };
-        mockSupabaseClient
-          .from()
-          .select()
-          .eq()
-          .single.mockResolvedValue(mockSelectResponse);
+        mockSupabaseClient.from().select().eq().single.mockResolvedValue(mockSelectResponse);
 
         const result = await getProfessionalById('1');
 
         expect(mockSupabaseClient.from).toHaveBeenCalledWith('professionals');
-        expect(mockSupabaseClient.from().select().eq).toHaveBeenCalledWith(
-          'id',
-          '1'
-        );
+        expect(mockSupabaseClient.from().select().eq).toHaveBeenCalledWith('id', '1');
         expect(result).toEqual(mockProfessional);
       });
 
       it('should return null when professional not found', async () => {
         const mockSelectResponse = { data: null, error: null };
-        mockSupabaseClient
-          .from()
-          .select()
-          .eq()
-          .single.mockResolvedValue(mockSelectResponse);
+        mockSupabaseClient.from().select().eq().single.mockResolvedValue(mockSelectResponse);
 
         const result = await getProfessionalById('999');
 
@@ -332,11 +265,7 @@ describe('Professional Supabase Functions', () => {
       it('should throw error when fetch fails', async () => {
         const mockError = new Error('Fetch failed');
         const mockSelectResponse = { data: null, error: mockError };
-        mockSupabaseClient
-          .from()
-          .select()
-          .eq()
-          .single.mockResolvedValue(mockSelectResponse);
+        mockSupabaseClient.from().select().eq().single.mockResolvedValue(mockSelectResponse);
 
         await expect(getProfessionalById('1')).rejects.toThrow('Fetch failed');
       });
@@ -347,46 +276,28 @@ describe('Professional Supabase Functions', () => {
     describe('getProfessionalCredentials', () => {
       it('should fetch credentials for professional', async () => {
         const mockSelectResponse = { data: [mockCredential], error: null };
-        mockSupabaseClient
-          .from()
-          .select()
-          .eq()
-          .order.mockResolvedValue(mockSelectResponse);
+        mockSupabaseClient.from().select().eq().order.mockResolvedValue(mockSelectResponse);
 
         const result = await getProfessionalCredentials('1');
 
-        expect(mockSupabaseClient.from).toHaveBeenCalledWith(
-          'professional_credentials'
-        );
-        expect(mockSupabaseClient.from().select().eq).toHaveBeenCalledWith(
-          'professional_id',
-          '1'
-        );
+        expect(mockSupabaseClient.from).toHaveBeenCalledWith('professional_credentials');
+        expect(mockSupabaseClient.from().select().eq).toHaveBeenCalledWith('professional_id', '1');
         expect(result).toEqual([mockCredential]);
       });
 
       it('should throw error when fetch fails', async () => {
         const mockError = new Error('Fetch failed');
         const mockSelectResponse = { data: null, error: mockError };
-        mockSupabaseClient
-          .from()
-          .select()
-          .eq()
-          .order.mockResolvedValue(mockSelectResponse);
+        mockSupabaseClient.from().select().eq().order.mockResolvedValue(mockSelectResponse);
 
-        await expect(getProfessionalCredentials('1')).rejects.toThrow(
-          'Fetch failed'
-        );
+        await expect(getProfessionalCredentials('1')).rejects.toThrow('Fetch failed');
       });
     });
 
     describe('createProfessionalCredential', () => {
       it('should create credential successfully', async () => {
         const mockInsertResponse = { data: [mockCredential], error: null };
-        mockSupabaseClient
-          .from()
-          .insert()
-          .single.mockResolvedValue(mockInsertResponse);
+        mockSupabaseClient.from().insert().single.mockResolvedValue(mockInsertResponse);
 
         const credentialData = {
           professional_id: '1',
@@ -397,34 +308,23 @@ describe('Professional Supabase Functions', () => {
 
         const result = await createProfessionalCredential(credentialData);
 
-        expect(mockSupabaseClient.from).toHaveBeenCalledWith(
-          'professional_credentials'
-        );
+        expect(mockSupabaseClient.from).toHaveBeenCalledWith('professional_credentials');
         expect(result).toEqual(mockCredential);
       });
 
       it('should throw error when creation fails', async () => {
         const mockError = new Error('Creation failed');
         const mockInsertResponse = { data: null, error: mockError };
-        mockSupabaseClient
-          .from()
-          .insert()
-          .single.mockResolvedValue(mockInsertResponse);
+        mockSupabaseClient.from().insert().single.mockResolvedValue(mockInsertResponse);
 
-        await expect(createProfessionalCredential({})).rejects.toThrow(
-          'Creation failed'
-        );
+        await expect(createProfessionalCredential({})).rejects.toThrow('Creation failed');
       });
     });
 
     describe('updateProfessionalCredential', () => {
       it('should update credential successfully', async () => {
         const mockUpdateResponse = { data: [mockCredential], error: null };
-        mockSupabaseClient
-          .from()
-          .update()
-          .eq()
-          .single.mockResolvedValue(mockUpdateResponse);
+        mockSupabaseClient.from().update().eq().single.mockResolvedValue(mockUpdateResponse);
 
         const updateData = {
           verification_status: 'verified',
@@ -432,57 +332,36 @@ describe('Professional Supabase Functions', () => {
 
         const result = await updateProfessionalCredential('cred-1', updateData);
 
-        expect(mockSupabaseClient.from).toHaveBeenCalledWith(
-          'professional_credentials'
-        );
+        expect(mockSupabaseClient.from).toHaveBeenCalledWith('professional_credentials');
         expect(result).toEqual(mockCredential);
       });
 
       it('should throw error when update fails', async () => {
         const mockError = new Error('Update failed');
         const mockUpdateResponse = { data: null, error: mockError };
-        mockSupabaseClient
-          .from()
-          .update()
-          .eq()
-          .single.mockResolvedValue(mockUpdateResponse);
+        mockSupabaseClient.from().update().eq().single.mockResolvedValue(mockUpdateResponse);
 
-        await expect(
-          updateProfessionalCredential('cred-1', {})
-        ).rejects.toThrow('Update failed');
+        await expect(updateProfessionalCredential('cred-1', {})).rejects.toThrow('Update failed');
       });
     });
 
     describe('deleteProfessionalCredential', () => {
       it('should delete credential successfully', async () => {
         const mockDeleteResponse = { data: null, error: null };
-        mockSupabaseClient
-          .from()
-          .delete()
-          .eq.mockResolvedValue(mockDeleteResponse);
+        mockSupabaseClient.from().delete().eq.mockResolvedValue(mockDeleteResponse);
 
         await deleteProfessionalCredential('cred-1');
 
-        expect(mockSupabaseClient.from).toHaveBeenCalledWith(
-          'professional_credentials'
-        );
-        expect(mockSupabaseClient.from().delete().eq).toHaveBeenCalledWith(
-          'id',
-          'cred-1'
-        );
+        expect(mockSupabaseClient.from).toHaveBeenCalledWith('professional_credentials');
+        expect(mockSupabaseClient.from().delete().eq).toHaveBeenCalledWith('id', 'cred-1');
       });
 
       it('should throw error when deletion fails', async () => {
         const mockError = new Error('Deletion failed');
         const mockDeleteResponse = { data: null, error: mockError };
-        mockSupabaseClient
-          .from()
-          .delete()
-          .eq.mockResolvedValue(mockDeleteResponse);
+        mockSupabaseClient.from().delete().eq.mockResolvedValue(mockDeleteResponse);
 
-        await expect(deleteProfessionalCredential('cred-1')).rejects.toThrow(
-          'Deletion failed'
-        );
+        await expect(deleteProfessionalCredential('cred-1')).rejects.toThrow('Deletion failed');
       });
     });
 
@@ -492,17 +371,11 @@ describe('Professional Supabase Functions', () => {
           data: [{ ...mockCredential, verification_status: 'verified' }],
           error: null,
         };
-        mockSupabaseClient
-          .from()
-          .update()
-          .eq()
-          .single.mockResolvedValue(mockUpdateResponse);
+        mockSupabaseClient.from().update().eq().single.mockResolvedValue(mockUpdateResponse);
 
         const result = await verifyCredential('cred-1');
 
-        expect(mockSupabaseClient.from).toHaveBeenCalledWith(
-          'professional_credentials'
-        );
+        expect(mockSupabaseClient.from).toHaveBeenCalledWith('professional_credentials');
         expect(mockSupabaseClient.from().update).toHaveBeenCalledWith({
           verification_status: 'verified',
           verified_at: expect.any(String),
@@ -513,15 +386,9 @@ describe('Professional Supabase Functions', () => {
       it('should throw error when verification fails', async () => {
         const mockError = new Error('Verification failed');
         const mockUpdateResponse = { data: null, error: mockError };
-        mockSupabaseClient
-          .from()
-          .update()
-          .eq()
-          .single.mockResolvedValue(mockUpdateResponse);
+        mockSupabaseClient.from().update().eq().single.mockResolvedValue(mockUpdateResponse);
 
-        await expect(verifyCredential('cred-1')).rejects.toThrow(
-          'Verification failed'
-        );
+        await expect(verifyCredential('cred-1')).rejects.toThrow('Verification failed');
       });
     });
   });
@@ -530,46 +397,28 @@ describe('Professional Supabase Functions', () => {
     describe('getProfessionalServices', () => {
       it('should fetch services for professional', async () => {
         const mockSelectResponse = { data: [mockService], error: null };
-        mockSupabaseClient
-          .from()
-          .select()
-          .eq()
-          .order.mockResolvedValue(mockSelectResponse);
+        mockSupabaseClient.from().select().eq().order.mockResolvedValue(mockSelectResponse);
 
         const result = await getProfessionalServices('1');
 
-        expect(mockSupabaseClient.from).toHaveBeenCalledWith(
-          'professional_services'
-        );
-        expect(mockSupabaseClient.from().select().eq).toHaveBeenCalledWith(
-          'professional_id',
-          '1'
-        );
+        expect(mockSupabaseClient.from).toHaveBeenCalledWith('professional_services');
+        expect(mockSupabaseClient.from().select().eq).toHaveBeenCalledWith('professional_id', '1');
         expect(result).toEqual([mockService]);
       });
 
       it('should throw error when fetch fails', async () => {
         const mockError = new Error('Fetch failed');
         const mockSelectResponse = { data: null, error: mockError };
-        mockSupabaseClient
-          .from()
-          .select()
-          .eq()
-          .order.mockResolvedValue(mockSelectResponse);
+        mockSupabaseClient.from().select().eq().order.mockResolvedValue(mockSelectResponse);
 
-        await expect(getProfessionalServices('1')).rejects.toThrow(
-          'Fetch failed'
-        );
+        await expect(getProfessionalServices('1')).rejects.toThrow('Fetch failed');
       });
     });
 
     describe('createProfessionalService', () => {
       it('should create service successfully', async () => {
         const mockInsertResponse = { data: [mockService], error: null };
-        mockSupabaseClient
-          .from()
-          .insert()
-          .single.mockResolvedValue(mockInsertResponse);
+        mockSupabaseClient.from().insert().single.mockResolvedValue(mockInsertResponse);
 
         const serviceData = {
           professional_id: '1',
@@ -581,34 +430,23 @@ describe('Professional Supabase Functions', () => {
 
         const result = await createProfessionalService(serviceData);
 
-        expect(mockSupabaseClient.from).toHaveBeenCalledWith(
-          'professional_services'
-        );
+        expect(mockSupabaseClient.from).toHaveBeenCalledWith('professional_services');
         expect(result).toEqual(mockService);
       });
 
       it('should throw error when creation fails', async () => {
         const mockError = new Error('Creation failed');
         const mockInsertResponse = { data: null, error: mockError };
-        mockSupabaseClient
-          .from()
-          .insert()
-          .single.mockResolvedValue(mockInsertResponse);
+        mockSupabaseClient.from().insert().single.mockResolvedValue(mockInsertResponse);
 
-        await expect(createProfessionalService({})).rejects.toThrow(
-          'Creation failed'
-        );
+        await expect(createProfessionalService({})).rejects.toThrow('Creation failed');
       });
     });
 
     describe('updateProfessionalService', () => {
       it('should update service successfully', async () => {
         const mockUpdateResponse = { data: [mockService], error: null };
-        mockSupabaseClient
-          .from()
-          .update()
-          .eq()
-          .single.mockResolvedValue(mockUpdateResponse);
+        mockSupabaseClient.from().update().eq().single.mockResolvedValue(mockUpdateResponse);
 
         const updateData = {
           base_price: 250.0,
@@ -616,57 +454,36 @@ describe('Professional Supabase Functions', () => {
 
         const result = await updateProfessionalService('service-1', updateData);
 
-        expect(mockSupabaseClient.from).toHaveBeenCalledWith(
-          'professional_services'
-        );
+        expect(mockSupabaseClient.from).toHaveBeenCalledWith('professional_services');
         expect(result).toEqual(mockService);
       });
 
       it('should throw error when update fails', async () => {
         const mockError = new Error('Update failed');
         const mockUpdateResponse = { data: null, error: mockError };
-        mockSupabaseClient
-          .from()
-          .update()
-          .eq()
-          .single.mockResolvedValue(mockUpdateResponse);
+        mockSupabaseClient.from().update().eq().single.mockResolvedValue(mockUpdateResponse);
 
-        await expect(
-          updateProfessionalService('service-1', {})
-        ).rejects.toThrow('Update failed');
+        await expect(updateProfessionalService('service-1', {})).rejects.toThrow('Update failed');
       });
     });
 
     describe('deleteProfessionalService', () => {
       it('should delete service successfully', async () => {
         const mockDeleteResponse = { data: null, error: null };
-        mockSupabaseClient
-          .from()
-          .delete()
-          .eq.mockResolvedValue(mockDeleteResponse);
+        mockSupabaseClient.from().delete().eq.mockResolvedValue(mockDeleteResponse);
 
         await deleteProfessionalService('service-1');
 
-        expect(mockSupabaseClient.from).toHaveBeenCalledWith(
-          'professional_services'
-        );
-        expect(mockSupabaseClient.from().delete().eq).toHaveBeenCalledWith(
-          'id',
-          'service-1'
-        );
+        expect(mockSupabaseClient.from).toHaveBeenCalledWith('professional_services');
+        expect(mockSupabaseClient.from().delete().eq).toHaveBeenCalledWith('id', 'service-1');
       });
 
       it('should throw error when deletion fails', async () => {
         const mockError = new Error('Deletion failed');
         const mockDeleteResponse = { data: null, error: mockError };
-        mockSupabaseClient
-          .from()
-          .delete()
-          .eq.mockResolvedValue(mockDeleteResponse);
+        mockSupabaseClient.from().delete().eq.mockResolvedValue(mockDeleteResponse);
 
-        await expect(deleteProfessionalService('service-1')).rejects.toThrow(
-          'Deletion failed'
-        );
+        await expect(deleteProfessionalService('service-1')).rejects.toThrow('Deletion failed');
       });
     });
   });
@@ -678,21 +495,12 @@ describe('Professional Supabase Functions', () => {
           data: [mockPerformanceMetric],
           error: null,
         };
-        mockSupabaseClient
-          .from()
-          .select()
-          .eq()
-          .order.mockResolvedValue(mockSelectResponse);
+        mockSupabaseClient.from().select().eq().order.mockResolvedValue(mockSelectResponse);
 
         const result = await getProfessionalPerformanceMetrics('1');
 
-        expect(mockSupabaseClient.from).toHaveBeenCalledWith(
-          'performance_metrics'
-        );
-        expect(mockSupabaseClient.from().select().eq).toHaveBeenCalledWith(
-          'professional_id',
-          '1'
-        );
+        expect(mockSupabaseClient.from).toHaveBeenCalledWith('performance_metrics');
+        expect(mockSupabaseClient.from().select().eq).toHaveBeenCalledWith('professional_id', '1');
         expect(result).toEqual([mockPerformanceMetric]);
       });
 
@@ -716,27 +524,23 @@ describe('Professional Supabase Functions', () => {
 
         const result = await getProfessionalPerformanceMetrics('1', options);
 
-        expect(
-          mockSupabaseClient.from().select().eq().gte
-        ).toHaveBeenCalledWith('period_start', '2024-01-01');
-        expect(
-          mockSupabaseClient.from().select().eq().gte().lte
-        ).toHaveBeenCalledWith('period_end', '2024-01-31');
+        expect(mockSupabaseClient.from().select().eq().gte).toHaveBeenCalledWith(
+          'period_start',
+          '2024-01-01'
+        );
+        expect(mockSupabaseClient.from().select().eq().gte().lte).toHaveBeenCalledWith(
+          'period_end',
+          '2024-01-31'
+        );
         expect(result).toEqual([mockPerformanceMetric]);
       });
 
       it('should throw error when fetch fails', async () => {
         const mockError = new Error('Fetch failed');
         const mockSelectResponse = { data: null, error: mockError };
-        mockSupabaseClient
-          .from()
-          .select()
-          .eq()
-          .order.mockResolvedValue(mockSelectResponse);
+        mockSupabaseClient.from().select().eq().order.mockResolvedValue(mockSelectResponse);
 
-        await expect(getProfessionalPerformanceMetrics('1')).rejects.toThrow(
-          'Fetch failed'
-        );
+        await expect(getProfessionalPerformanceMetrics('1')).rejects.toThrow('Fetch failed');
       });
     });
 
@@ -746,10 +550,7 @@ describe('Professional Supabase Functions', () => {
           data: [mockPerformanceMetric],
           error: null,
         };
-        mockSupabaseClient
-          .from()
-          .insert()
-          .single.mockResolvedValue(mockInsertResponse);
+        mockSupabaseClient.from().insert().single.mockResolvedValue(mockInsertResponse);
 
         const metricData = {
           professional_id: '1',
@@ -762,23 +563,16 @@ describe('Professional Supabase Functions', () => {
 
         const result = await addPerformanceMetric(metricData);
 
-        expect(mockSupabaseClient.from).toHaveBeenCalledWith(
-          'performance_metrics'
-        );
+        expect(mockSupabaseClient.from).toHaveBeenCalledWith('performance_metrics');
         expect(result).toEqual(mockPerformanceMetric);
       });
 
       it('should throw error when creation fails', async () => {
         const mockError = new Error('Creation failed');
         const mockInsertResponse = { data: null, error: mockError };
-        mockSupabaseClient
-          .from()
-          .insert()
-          .single.mockResolvedValue(mockInsertResponse);
+        mockSupabaseClient.from().insert().single.mockResolvedValue(mockInsertResponse);
 
-        await expect(addPerformanceMetric({})).rejects.toThrow(
-          'Creation failed'
-        );
+        await expect(addPerformanceMetric({})).rejects.toThrow('Creation failed');
       });
     });
 
@@ -788,11 +582,7 @@ describe('Professional Supabase Functions', () => {
           data: [mockPerformanceMetric],
           error: null,
         };
-        mockSupabaseClient
-          .from()
-          .update()
-          .eq()
-          .single.mockResolvedValue(mockUpdateResponse);
+        mockSupabaseClient.from().update().eq().single.mockResolvedValue(mockUpdateResponse);
 
         const updateData = {
           metric_value: 4.9,
@@ -800,24 +590,16 @@ describe('Professional Supabase Functions', () => {
 
         const result = await updatePerformanceMetric('metric-1', updateData);
 
-        expect(mockSupabaseClient.from).toHaveBeenCalledWith(
-          'performance_metrics'
-        );
+        expect(mockSupabaseClient.from).toHaveBeenCalledWith('performance_metrics');
         expect(result).toEqual(mockPerformanceMetric);
       });
 
       it('should throw error when update fails', async () => {
         const mockError = new Error('Update failed');
         const mockUpdateResponse = { data: null, error: mockError };
-        mockSupabaseClient
-          .from()
-          .update()
-          .eq()
-          .single.mockResolvedValue(mockUpdateResponse);
+        mockSupabaseClient.from().update().eq().single.mockResolvedValue(mockUpdateResponse);
 
-        await expect(updatePerformanceMetric('metric-1', {})).rejects.toThrow(
-          'Update failed'
-        );
+        await expect(updatePerformanceMetric('metric-1', {})).rejects.toThrow('Update failed');
       });
     });
   });
@@ -863,7 +645,7 @@ describe('Professional Supabase Functions', () => {
   describe('Error Handling', () => {
     it('should handle database connection errors', async () => {
       const mockError = new Error('Connection failed');
-      (createClient as jest.Mock).mockImplementation(() => {
+      (createClient as vi.Mock).mockImplementation(() => {
         throw mockError;
       });
 
@@ -883,15 +665,9 @@ describe('Professional Supabase Functions', () => {
     it('should handle concurrent update conflicts', async () => {
       const mockError = new Error('Conflict: Resource was modified');
       const mockUpdateResponse = { data: null, error: mockError };
-      mockSupabaseClient
-        .from()
-        .update()
-        .eq()
-        .single.mockResolvedValue(mockUpdateResponse);
+      mockSupabaseClient.from().update().eq().single.mockResolvedValue(mockUpdateResponse);
 
-      await expect(updateProfessional('1', {})).rejects.toThrow(
-        'Conflict: Resource was modified'
-      );
+      await expect(updateProfessional('1', {})).rejects.toThrow('Conflict: Resource was modified');
     });
   });
 
@@ -904,10 +680,7 @@ describe('Professional Supabase Functions', () => {
       }));
 
       const mockSelectResponse = { data: largeProfessionalSet, error: null };
-      mockSupabaseClient
-        .from()
-        .select()
-        .order.mockResolvedValue(mockSelectResponse);
+      mockSupabaseClient.from().select().order.mockResolvedValue(mockSelectResponse);
 
       const result = await getProfessionals();
 
@@ -917,11 +690,7 @@ describe('Professional Supabase Functions', () => {
 
     it('should implement pagination for large result sets', async () => {
       const mockSelectResponse = { data: [mockProfessional], error: null };
-      mockSupabaseClient
-        .from()
-        .select()
-        .order()
-        .limit.mockResolvedValue(mockSelectResponse);
+      mockSupabaseClient.from().select().order().limit.mockResolvedValue(mockSelectResponse);
 
       const options = {
         limit: 50,
@@ -930,17 +699,12 @@ describe('Professional Supabase Functions', () => {
 
       await getProfessionals(options);
 
-      expect(
-        mockSupabaseClient.from().select().order().limit
-      ).toHaveBeenCalledWith(50);
+      expect(mockSupabaseClient.from().select().order().limit).toHaveBeenCalledWith(50);
     });
 
     it('should optimize queries with selective field retrieval', async () => {
       const mockSelectResponse = { data: [mockProfessional], error: null };
-      mockSupabaseClient
-        .from()
-        .select()
-        .order.mockResolvedValue(mockSelectResponse);
+      mockSupabaseClient.from().select().order.mockResolvedValue(mockSelectResponse);
 
       const options = {
         fields: 'id,given_name,family_name,email,status',

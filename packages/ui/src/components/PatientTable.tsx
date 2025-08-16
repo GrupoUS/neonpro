@@ -109,7 +109,7 @@ const formatRelativeTime = (dateString?: string): string => {
     const weeks = Math.floor(diffDays / 7);
     return `${weeks} semana${weeks > 1 ? 's' : ''} atrás`;
   }
-  
+
   return formatDate(dateString);
 };
 
@@ -150,28 +150,32 @@ const PatientTable = React.forwardRef<HTMLDivElement, PatientTableProps>(
     ref
   ) => {
     // Internal state management
-    const [sort, setSort] = React.useState<{ column: string; direction: 'asc' | 'desc' } | null>(null);
+    const [sort, setSort] = React.useState<{ column: string; direction: 'asc' | 'desc' } | null>(
+      null
+    );
     const [searchTerm, setSearchTerm] = React.useState(searchValue);
-    const [internalSelectedPatients, setSelectedPatients] = React.useState<string[]>(selectedPatients);
+    const [internalSelectedPatients, setSelectedPatients] =
+      React.useState<string[]>(selectedPatients);
     const [internalPagination, setPagination] = React.useState(pagination);
     const [internalViewMode, setViewMode] = React.useState(viewMode);
-    
+
     // Computed values
     const enableSelection = !!onSelectionChange;
-    
+
     // Filter and sort data
     const filteredData = React.useMemo(() => {
       let result = [...patients];
-      
+
       // Apply search filter
       if (searchTerm) {
-        result = result.filter((patient) =>
-          patient.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          patient.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          patient.phone?.includes(searchTerm)
+        result = result.filter(
+          (patient) =>
+            patient.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            patient.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            patient.phone?.includes(searchTerm)
         );
       }
-      
+
       return result;
     }, [patients, searchTerm]);
 
@@ -211,7 +215,7 @@ const PatientTable = React.forwardRef<HTMLDivElement, PatientTableProps>(
         }
         return { column, direction: 'asc' };
       });
-      
+
       if (onSort) {
         const newDirection = sort?.column === column && sort?.direction === 'asc' ? 'desc' : 'asc';
         onSort(column, newDirection);
@@ -219,9 +223,10 @@ const PatientTable = React.forwardRef<HTMLDivElement, PatientTableProps>(
     };
 
     const handleSelectAll = () => {
-      const newSelected = internalSelectedPatients.length === patients.length ? [] : patients.map((p) => p.id);
+      const newSelected =
+        internalSelectedPatients.length === patients.length ? [] : patients.map((p) => p.id);
       setSelectedPatients(newSelected);
-      
+
       if (onSelectionChange) {
         onSelectionChange(newSelected);
       }
@@ -229,10 +234,10 @@ const PatientTable = React.forwardRef<HTMLDivElement, PatientTableProps>(
 
     const handleSelectPatient = (patientId: string) => {
       setSelectedPatients((prev) => {
-        const newSelected = prev.includes(patientId) 
+        const newSelected = prev.includes(patientId)
           ? prev.filter((id) => id !== patientId)
           : [...prev, patientId];
-        
+
         if (onSelectionChange) {
           onSelectionChange(newSelected);
         }
@@ -247,7 +252,7 @@ const PatientTable = React.forwardRef<HTMLDivElement, PatientTableProps>(
     };
 
     const handlePaginationChange = (page: number) => {
-      setPagination((prev) => prev ? { ...prev, page } : undefined);
+      setPagination((prev) => (prev ? { ...prev, page } : undefined));
     };
 
     const handleViewModeChange = (mode: PatientTableViewMode) => {
@@ -356,19 +361,15 @@ const PatientTable = React.forwardRef<HTMLDivElement, PatientTableProps>(
             <h3 className="font-semibold text-lg">Pacientes</h3>
             {internalSelectedPatients.length > 0 && (
               <span className="text-muted-foreground text-sm">
-                {internalSelectedPatients.length} selecionado{internalSelectedPatients.length > 1 ? 's' : ''}
+                {internalSelectedPatients.length} selecionado
+                {internalSelectedPatients.length > 1 ? 's' : ''}
               </span>
             )}
           </div>
 
           <div className="flex items-center gap-2">
             {onRefresh && (
-              <Button
-                disabled={loading}
-                onClick={onRefresh}
-                size="sm"
-                variant="outline"
-              >
+              <Button disabled={loading} onClick={onRefresh} size="sm" variant="outline">
                 <RefreshCw className={cn('h-4 w-4', loading && 'animate-spin')} />
               </Button>
             )}
@@ -484,8 +485,11 @@ const PatientTable = React.forwardRef<HTMLDivElement, PatientTableProps>(
           <div className="flex items-center justify-between">
             <div className="text-muted-foreground text-sm">
               Mostrando {((internalPagination.page || 1) - 1) * internalPagination.pageSize + 1} a{' '}
-              {Math.min((internalPagination.page || 1) * internalPagination.pageSize, internalPagination.totalItems)} de{' '}
-              {internalPagination.totalItems} pacientes
+              {Math.min(
+                (internalPagination.page || 1) * internalPagination.pageSize,
+                internalPagination.totalItems
+              )}{' '}
+              de {internalPagination.totalItems} pacientes
             </div>
 
             <div className="flex items-center gap-2">
@@ -522,7 +526,9 @@ const PatientTable = React.forwardRef<HTMLDivElement, PatientTableProps>(
             <Users className="mb-4 h-12 w-12 text-muted-foreground" />
             <h3 className="mb-2 font-semibold text-lg">Nenhum paciente encontrado</h3>
             <p className="text-muted-foreground text-sm">
-              {searchTerm ? 'Tente ajustar os filtros de busca.' : 'Comece adicionando seu primeiro paciente.'}
+              {searchTerm
+                ? 'Tente ajustar os filtros de busca.'
+                : 'Comece adicionando seu primeiro paciente.'}
             </p>
           </div>
         )}

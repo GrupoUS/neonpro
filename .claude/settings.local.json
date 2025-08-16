@@ -53,7 +53,8 @@
       "mcp__tavily__tavily-search",
       "mcp__shadcn-ui__get_component",
       "mcp__context7__resolve-library-id",
-      "mcp__context7__resolve-library-id"
+      "mcp__context7__resolve-library-id",
+      "mcp__serena__find_symbol"
     ],
     "deny": [
       "Edit",

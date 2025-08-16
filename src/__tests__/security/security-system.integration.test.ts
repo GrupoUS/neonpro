@@ -3,45 +3,46 @@
  * Story 3.3: Security Hardening & Audit
  */
 
-import { describe, it, expect, beforeEach, afterEach } from '@jest/globals';
+import { vi } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { createClient } from '@supabase/supabase-js';
 import { SecurityAPI } from '@/lib/security';
 
 // Mock Supabase client
 const mockSupabase = {
-  from: jest.fn(),
-  rpc: jest.fn(),
+  from: vi.fn(),
+  rpc: vi.fn(),
   auth: {
-    getUser: jest.fn(),
-    getSession: jest.fn(),
+    getUser: vi.fn(),
+    getSession: vi.fn(),
   },
 };
 
 // Mock SecurityAPI
-jest.mock('@/lib/security', () => ({
+vi.Mock('@/lib/security', () => ({
   SecurityAPI: {
-    createSecurityEvent: jest.fn(),
-    getSecurityEvents: jest.fn(),
-    createSecurityAlert: jest.fn(),
-    getSecurityAlerts: jest.fn(),
-    updateAlert: jest.fn(),
-    createAuditLog: jest.fn(),
-    getAuditLogs: jest.fn(),
-    getActiveSessions: jest.fn(),
-    terminateSession: jest.fn(),
-    getSecurityMetrics: jest.fn(),
-    createComplianceAudit: jest.fn(),
-    getComplianceAudits: jest.fn(),
+    createSecurityEvent: vi.fn(),
+    getSecurityEvents: vi.fn(),
+    createSecurityAlert: vi.fn(),
+    getSecurityAlerts: vi.fn(),
+    updateAlert: vi.fn(),
+    createAuditLog: vi.fn(),
+    getAuditLogs: vi.fn(),
+    getActiveSessions: vi.fn(),
+    terminateSession: vi.fn(),
+    getSecurityMetrics: vi.fn(),
+    createComplianceAudit: vi.fn(),
+    getComplianceAudits: vi.fn(),
   },
 }));
 
 describe('Security System Integration Tests', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   afterEach(() => {
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
   });
 
   describe('Security Events', () => {
@@ -59,7 +60,7 @@ describe('Security System Integration Tests', () => {
         error: null,
       };
 
-      (SecurityAPI.createSecurityEvent as jest.Mock).mockResolvedValue(mockResponse);
+      (SecurityAPI.createSecurityEvent as vi.Mock).mockResolvedValue(mockResponse);
 
       const result = await SecurityAPI.createSecurityEvent(mockEvent);
 
@@ -90,7 +91,7 @@ describe('Security System Integration Tests', () => {
         count: 2,
       };
 
-      (SecurityAPI.getSecurityEvents as jest.Mock).mockResolvedValue(mockResponse);
+      (SecurityAPI.getSecurityEvents as vi.Mock).mockResolvedValue(mockResponse);
 
       const result = await SecurityAPI.getSecurityEvents({
         severity: 'high',
@@ -118,7 +119,7 @@ describe('Security System Integration Tests', () => {
         error: { message: 'Invalid event type' },
       };
 
-      (SecurityAPI.createSecurityEvent as jest.Mock).mockResolvedValue(mockResponse);
+      (SecurityAPI.createSecurityEvent as vi.Mock).mockResolvedValue(mockResponse);
 
       const result = await SecurityAPI.createSecurityEvent(mockEvent);
 
@@ -144,7 +145,7 @@ describe('Security System Integration Tests', () => {
         error: null,
       };
 
-      (SecurityAPI.createSecurityAlert as jest.Mock).mockResolvedValue(mockResponse);
+      (SecurityAPI.createSecurityAlert as vi.Mock).mockResolvedValue(mockResponse);
 
       const result = await SecurityAPI.createSecurityAlert(mockAlert);
 
@@ -165,7 +166,7 @@ describe('Security System Integration Tests', () => {
         error: null,
       };
 
-      (SecurityAPI.updateAlert as jest.Mock).mockResolvedValue(mockResponse);
+      (SecurityAPI.updateAlert as vi.Mock).mockResolvedValue(mockResponse);
 
       const result = await SecurityAPI.updateAlert(alertId, updateData);
 
@@ -187,7 +188,7 @@ describe('Security System Integration Tests', () => {
         error: null,
       };
 
-      (SecurityAPI.updateAlert as jest.Mock).mockResolvedValue(mockResponse);
+      (SecurityAPI.updateAlert as vi.Mock).mockResolvedValue(mockResponse);
 
       const result = await SecurityAPI.updateAlert(alertId, updateData);
 
@@ -214,7 +215,7 @@ describe('Security System Integration Tests', () => {
         error: null,
       };
 
-      (SecurityAPI.createAuditLog as jest.Mock).mockResolvedValue(mockResponse);
+      (SecurityAPI.createAuditLog as vi.Mock).mockResolvedValue(mockResponse);
 
       const result = await SecurityAPI.createAuditLog(mockAuditLog);
 
@@ -247,7 +248,7 @@ describe('Security System Integration Tests', () => {
         count: 1,
       };
 
-      (SecurityAPI.getAuditLogs as jest.Mock).mockResolvedValue(mockResponse);
+      (SecurityAPI.getAuditLogs as vi.Mock).mockResolvedValue(mockResponse);
 
       const result = await SecurityAPI.getAuditLogs(filters);
 
@@ -284,7 +285,7 @@ describe('Security System Integration Tests', () => {
         count: 2,
       };
 
-      (SecurityAPI.getActiveSessions as jest.Mock).mockResolvedValue(mockResponse);
+      (SecurityAPI.getActiveSessions as vi.Mock).mockResolvedValue(mockResponse);
 
       const result = await SecurityAPI.getActiveSessions();
 
@@ -301,7 +302,7 @@ describe('Security System Integration Tests', () => {
         error: null,
       };
 
-      (SecurityAPI.terminateSession as jest.Mock).mockResolvedValue(mockResponse);
+      (SecurityAPI.terminateSession as vi.Mock).mockResolvedValue(mockResponse);
 
       const result = await SecurityAPI.terminateSession(sessionId);
 
@@ -329,7 +330,7 @@ describe('Security System Integration Tests', () => {
         error: null,
       };
 
-      (SecurityAPI.getSecurityMetrics as jest.Mock).mockResolvedValue(mockResponse);
+      (SecurityAPI.getSecurityMetrics as vi.Mock).mockResolvedValue(mockResponse);
 
       const result = await SecurityAPI.getSecurityMetrics();
 
@@ -351,7 +352,7 @@ describe('Security System Integration Tests', () => {
         error: null,
       };
 
-      (SecurityAPI.getSecurityMetrics as jest.Mock).mockResolvedValue(mockResponse);
+      (SecurityAPI.getSecurityMetrics as vi.Mock).mockResolvedValue(mockResponse);
 
       const result = await SecurityAPI.getSecurityMetrics();
 
@@ -379,7 +380,7 @@ describe('Security System Integration Tests', () => {
         error: null,
       };
 
-      (SecurityAPI.createComplianceAudit as jest.Mock).mockResolvedValue(mockResponse);
+      (SecurityAPI.createComplianceAudit as vi.Mock).mockResolvedValue(mockResponse);
 
       const result = await SecurityAPI.createComplianceAudit(mockAudit);
 
@@ -413,7 +414,7 @@ describe('Security System Integration Tests', () => {
         count: 1,
       };
 
-      (SecurityAPI.getComplianceAudits as jest.Mock).mockResolvedValue(mockResponse);
+      (SecurityAPI.getComplianceAudits as vi.Mock).mockResolvedValue(mockResponse);
 
       const result = await SecurityAPI.getComplianceAudits(filters);
 
@@ -430,7 +431,7 @@ describe('Security System Integration Tests', () => {
         error: { message: 'Database connection failed' },
       };
 
-      (SecurityAPI.getSecurityEvents as jest.Mock).mockResolvedValue(mockError);
+      (SecurityAPI.getSecurityEvents as vi.Mock).mockResolvedValue(mockError);
 
       const result = await SecurityAPI.getSecurityEvents();
 
@@ -449,7 +450,7 @@ describe('Security System Integration Tests', () => {
         error: { message: 'Validation failed: invalid event_type' },
       };
 
-      (SecurityAPI.createSecurityEvent as jest.Mock).mockResolvedValue(mockError);
+      (SecurityAPI.createSecurityEvent as vi.Mock).mockResolvedValue(mockError);
 
       const result = await SecurityAPI.createSecurityEvent(invalidEvent);
 
@@ -472,7 +473,7 @@ describe('Security System Integration Tests', () => {
         count: 1000,
       };
 
-      (SecurityAPI.getSecurityEvents as jest.Mock).mockResolvedValue(mockResponse);
+      (SecurityAPI.getSecurityEvents as vi.Mock).mockResolvedValue(mockResponse);
 
       const startTime = Date.now();
       const result = await SecurityAPI.getSecurityEvents({ limit: 1000 });
@@ -488,7 +489,7 @@ describe('Security System Integration Tests', () => {
         error: null,
       };
 
-      (SecurityAPI.createSecurityEvent as jest.Mock).mockResolvedValue(mockResponse);
+      (SecurityAPI.createSecurityEvent as vi.Mock).mockResolvedValue(mockResponse);
 
       const concurrentRequests = Array.from({ length: 10 }, () =>
         SecurityAPI.createSecurityEvent({
@@ -507,3 +508,4 @@ describe('Security System Integration Tests', () => {
     });
   });
 });
+

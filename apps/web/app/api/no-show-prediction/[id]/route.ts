@@ -7,13 +7,14 @@ import { UpdatePredictionInputSchema } from '@/app/lib/validations/no-show-predi
 import { createClient } from '@/app/utils/supabase/server';
 
 type RouteParams = {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 };
 
 export async function GET(_request: NextRequest, { params }: RouteParams) {
   try {
+    const { id } = await params;
     const supabase = await createClient();
     const {
       data: { session },
@@ -23,7 +24,7 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const prediction = await noShowPredictionEngine.getPrediction(params.id);
+    const prediction = await noShowPredictionEngine.getPrediction(id);
 
     if (!prediction) {
       return NextResponse.json(
@@ -83,6 +84,7 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
 
 export async function PUT(request: NextRequest, { params }: RouteParams) {
   try {
+    const { id } = await params;
     const supabase = await createClient();
     const {
       data: { session },
@@ -97,7 +99,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
 
     // Check if prediction exists
     const existingPrediction = await noShowPredictionEngine.getPrediction(
-      params.id,
+      id,
     );
     if (!existingPrediction) {
       return NextResponse.json(
@@ -108,7 +110,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
 
     // Update the prediction
     const updatedPrediction = await noShowPredictionEngine.updatePrediction(
-      params.id,
+      id,
       validatedInput,
     );
 
@@ -149,6 +151,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
 
 export async function DELETE(_request: NextRequest, { params }: RouteParams) {
   try {
+    const { id } = await params;
     const supabase = await createClient();
     const {
       data: { session },
@@ -160,7 +163,7 @@ export async function DELETE(_request: NextRequest, { params }: RouteParams) {
 
     // Check if prediction exists
     const existingPrediction = await noShowPredictionEngine.getPrediction(
-      params.id,
+      id,
     );
     if (!existingPrediction) {
       return NextResponse.json(
@@ -173,7 +176,7 @@ export async function DELETE(_request: NextRequest, { params }: RouteParams) {
     const { error } = await supabase
       .from('no_show_predictions')
       .delete()
-      .eq('id', params.id);
+      .eq('id', id);
 
     if (error) {
       return NextResponse.json(

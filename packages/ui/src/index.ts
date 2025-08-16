@@ -57,7 +57,6 @@ export { PatientDetailLayout } from './components/PatientDetailLayout';
 export type {
   PatientTableAction,
   PatientTableColumn,
-
   PatientTableProps,
   PatientTableSort,
   PatientTableViewMode,
@@ -65,7 +64,6 @@ export type {
 // Complex Components
 export { PatientTable } from './components/PatientTable';
 export { Popover, PopoverContent, PopoverTrigger } from './components/Popover';
-
 
 export { ProcedureForm } from './components/ProcedureForm';
 export type { ProgressBarProps } from './components/ProgressBar';

@@ -1,11 +1,17 @@
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import {
+  QueryClient,
+  QueryClient,
+  QueryClientProvider,
+  QueryClientProvider,
+} from '@tanstack/react-query';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { mockAnalyticsData } from '@/../../__tests__/utils/mockData';
 import AnalyticsDashboard from '@/components/dashboard/AnalyticsDashboard';
 
 // Mock Recharts components
-jest.mock('recharts', () => ({
+vi.Mock('recharts', () => ({
   LineChart: ({ children }: { children: React.ReactNode }) => (
     <div data-testid="line-chart">{children}</div>
   ),
@@ -29,12 +35,12 @@ jest.mock('recharts', () => ({
 }));
 
 // Mock hooks
-jest.mock('@/hooks/analytics/useAnalyticsData', () => ({
-  useAnalyticsData: jest.fn(),
+vi.Mock('@/hooks/analytics/useAnalyticsData', () => ({
+  useAnalyticsData: vi.fn(),
 }));
 
-jest.mock('@/hooks/analytics/useExportData', () => ({
-  useExportData: jest.fn(),
+vi.Mock('@/hooks/analytics/useExportData', () => ({
+  useExportData: vi.fn(),
 }));
 
 const createWrapper = () => {
@@ -52,10 +58,8 @@ const createWrapper = () => {
 };
 
 describe('AnalyticsDashboard', () => {
-  const mockUseAnalyticsData =
-    require('@/hooks/analytics/useAnalyticsData').useAnalyticsData;
-  const mockUseExportData =
-    require('@/hooks/analytics/useExportData').useExportData;
+  const mockUseAnalyticsData = require('@/hooks/analytics/useAnalyticsData').useAnalyticsData;
+  const mockUseExportData = require('@/hooks/analytics/useExportData').useExportData;
 
   beforeEach(() => {
     mockUseAnalyticsData.mockReturnValue({
@@ -66,16 +70,16 @@ describe('AnalyticsDashboard', () => {
     });
 
     mockUseExportData.mockReturnValue({
-      exportToPDF: jest.fn(),
-      exportToExcel: jest.fn(),
-      exportToCSV: jest.fn(),
+      exportToPDF: vi.fn(),
+      exportToExcel: vi.fn(),
+      exportToCSV: vi.fn(),
       isExporting: false,
       exportError: null,
     });
   });
 
   afterEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('should render dashboard with analytics data', async () => {
@@ -122,11 +126,11 @@ describe('AnalyticsDashboard', () => {
   });
 
   it('should handle export to PDF', async () => {
-    const mockExportToPDF = jest.fn();
+    const mockExportToPDF = vi.fn();
     mockUseExportData.mockReturnValue({
       exportToPDF: mockExportToPDF,
-      exportToExcel: jest.fn(),
-      exportToCSV: jest.fn(),
+      exportToExcel: vi.fn(),
+      exportToCSV: vi.fn(),
       isExporting: false,
       exportError: null,
     });
@@ -204,9 +208,9 @@ describe('AnalyticsDashboard', () => {
 
   it('should show export loading state', () => {
     mockUseExportData.mockReturnValue({
-      exportToPDF: jest.fn(),
-      exportToExcel: jest.fn(),
-      exportToCSV: jest.fn(),
+      exportToPDF: vi.fn(),
+      exportToExcel: vi.fn(),
+      exportToCSV: vi.fn(),
       isExporting: true,
       exportError: null,
     });
@@ -219,9 +223,9 @@ describe('AnalyticsDashboard', () => {
 
   it('should display export error', () => {
     mockUseExportData.mockReturnValue({
-      exportToPDF: jest.fn(),
-      exportToExcel: jest.fn(),
-      exportToCSV: jest.fn(),
+      exportToPDF: vi.fn(),
+      exportToExcel: vi.fn(),
+      exportToCSV: vi.fn(),
       isExporting: false,
       exportError: new Error('Export failed'),
     });
@@ -253,15 +257,15 @@ describe('AnalyticsDashboard', () => {
     // Mock window.matchMedia for mobile viewport
     Object.defineProperty(window, 'matchMedia', {
       writable: true,
-      value: jest.fn().mockImplementation((query) => ({
+      value: vi.fn().mockImplementation((query) => ({
         matches: query === '(max-width: 768px)',
         media: query,
         onchange: null,
-        addListener: jest.fn(),
-        removeListener: jest.fn(),
-        addEventListener: jest.fn(),
-        removeEventListener: jest.fn(),
-        dispatchEvent: jest.fn(),
+        addListener: vi.fn(),
+        removeListener: vi.fn(),
+        addEventListener: vi.fn(),
+        removeEventListener: vi.fn(),
+        dispatchEvent: vi.fn(),
       })),
     });
 

@@ -5,7 +5,7 @@ import { createClient } from '@/app/utils/supabase/server';
 
 export async function GET(
   _request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const supabase = await createClient();
@@ -17,8 +17,9 @@ export async function GET(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    const { id } = await params;
     const inventoryService = new MultiLocationInventoryService();
-    const item = await inventoryService.getInventoryItem(params.id);
+    const item = await inventoryService.getInventoryItem(id);
 
     if (!item) {
       return NextResponse.json({ error: 'Item not found' }, { status: 404 });
@@ -35,7 +36,7 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const supabase = await createClient();
@@ -47,10 +48,11 @@ export async function PUT(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    const { id } = await params;
     const body = await request.json();
     const updateData: UpdateInventoryItem = {
       ...body,
-      id: params.id,
+      id: id,
       updated_by: session.user.id,
     };
 
@@ -68,7 +70,7 @@ export async function PUT(
 
 export async function DELETE(
   _request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const supabase = await createClient();
@@ -80,8 +82,9 @@ export async function DELETE(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    const { id } = await params;
     const inventoryService = new MultiLocationInventoryService();
-    await inventoryService.deleteInventoryItem(params.id);
+    await inventoryService.deleteInventoryItem(id);
 
     return NextResponse.json({ success: true });
   } catch (_error) {

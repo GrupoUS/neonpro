@@ -27,7 +27,7 @@ const UpdateTemplateSchema = z.object({
 });
 
 type RouteContext = {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 };
 
 /**
@@ -36,6 +36,7 @@ type RouteContext = {
  */
 export async function GET(_request: NextRequest, { params }: RouteContext) {
   try {
+    const { id } = await params;
     const supabase = createRouteHandlerClient({ cookies });
     const {
       data: { session },
@@ -48,7 +49,7 @@ export async function GET(_request: NextRequest, { params }: RouteContext) {
       );
     }
 
-    const templateId = params.id;
+    const templateId = id;
 
     if (!templateId) {
       return NextResponse.json(
@@ -107,6 +108,7 @@ export async function GET(_request: NextRequest, { params }: RouteContext) {
  */
 export async function PUT(request: NextRequest, { params }: RouteContext) {
   try {
+    const { id } = await params;
     const supabase = createRouteHandlerClient({ cookies });
     const {
       data: { session },
@@ -119,7 +121,7 @@ export async function PUT(request: NextRequest, { params }: RouteContext) {
       );
     }
 
-    const templateId = params.id;
+    const templateId = id;
 
     if (!templateId) {
       return NextResponse.json(
@@ -218,6 +220,7 @@ export async function PUT(request: NextRequest, { params }: RouteContext) {
  */
 export async function DELETE(_request: NextRequest, { params }: RouteContext) {
   try {
+    const { id } = await params;
     const supabase = createRouteHandlerClient({ cookies });
     const {
       data: { session },
@@ -230,7 +233,7 @@ export async function DELETE(_request: NextRequest, { params }: RouteContext) {
       );
     }
 
-    const templateId = params.id;
+    const templateId = id;
 
     if (!templateId) {
       return NextResponse.json(

@@ -5,12 +5,13 @@ import { TreatmentPredictionService } from '@/app/lib/services/treatment-predict
 import { createServerClient } from '@/app/utils/supabase/server';
 
 type RouteParams = {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 };
 
 // PUT /api/treatment-prediction/predictions/[id] - Update prediction outcome
 export async function PUT(request: NextRequest, { params }: RouteParams) {
   try {
+    const { id } = await params;
     const supabase = await createServerClient();
     const {
       data: { session },
@@ -46,7 +47,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     const { data: prediction } = await supabase
       .from('treatment_predictions')
       .select('id, patient_id')
-      .eq('id', params.id)
+      .eq('id', id)
       .single();
 
     if (!prediction) {
@@ -58,7 +59,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
 
     const predictionService = new TreatmentPredictionService();
     const updatedPrediction = await predictionService.updatePredictionOutcome(
-      params.id,
+      id,
       body.actual_outcome,
       body.outcome_date,
     );

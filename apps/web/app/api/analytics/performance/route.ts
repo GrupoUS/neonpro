@@ -7,7 +7,7 @@
 
 import { type NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/app/utils/supabase/server';
-import { CacheHeaders } from '@/performance/caching';
+import { CACHE_TTL, cache } from '@/lib/caching';
 
 // Performance metric interface
 type PerformanceMetric = {

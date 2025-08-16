@@ -12,8 +12,8 @@ import {
   describe,
   expect,
   it,
-  jest,
-} from '@jest/globals';
+  vi,
+} from 'vitest';
 import { getConnectionPoolMonitor } from '../../monitoring/connection-pool-monitor';
 import { getConnectionPoolManager } from '../connection-pool-manager';
 import { getRetryManager } from '../connection-retry-strategies';
@@ -21,21 +21,21 @@ import { createQueryContext, getQueryStrategies } from '../query-strategies';
 
 // Mock Supabase client
 const _mockSupabaseClient = {
-  from: jest.fn(() => ({
-    select: jest.fn(() => ({
-      eq: jest.fn(() => ({
-        single: jest.fn(),
-        limit: jest.fn(() => ({ single: jest.fn() })),
+  from: vi.fn(() => ({
+    select: vi.fn(() => ({
+      eq: vi.fn(() => ({
+        single: vi.fn(),
+        limit: vi.fn(() => ({ single: vi.fn() })),
       })),
     })),
-    insert: jest.fn(),
-    update: jest.fn(),
-    delete: jest.fn(),
+    insert: vi.fn(),
+    update: vi.fn(),
+    delete: vi.fn(),
   })),
   auth: {
-    getSession: jest.fn(),
+    getSession: vi.fn(),
   },
-  rpc: jest.fn(),
+  rpc: vi.fn(),
 };
 
 // Mock environment variables
@@ -61,7 +61,7 @@ describe('Healthcare Connection Pool Performance', () => {
   });
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe('Connection Pool Manager Performance', () => {
@@ -133,7 +133,7 @@ describe('Healthcare Connection Pool Performance', () => {
 
   describe('Query Strategies Performance', () => {
     it('should execute patient critical queries within emergency thresholds', async () => {
-      const mockQuery = jest
+      const mockQuery = vi
         .fn()
         .mockResolvedValue({ id: 1, name: 'Test Patient' });
       const context = createQueryContext(
@@ -158,7 +158,7 @@ describe('Healthcare Connection Pool Performance', () => {
     });
 
     it('should handle analytics queries with appropriate timeout', async () => {
-      const mockQuery = jest
+      const mockQuery = vi
         .fn()
         .mockImplementation(
           () =>
@@ -184,7 +184,7 @@ describe('Healthcare Connection Pool Performance', () => {
     });
 
     it('should fail fast on non-retryable errors', async () => {
-      const mockQuery = jest
+      const mockQuery = vi
         .fn()
         .mockRejectedValue(new Error('PGRST301: Authentication failed'));
       const context = createQueryContext(
@@ -210,7 +210,7 @@ describe('Healthcare Connection Pool Performance', () => {
   describe('Retry Manager Performance', () => {
     it('should retry with exponential backoff within healthcare timeouts', async () => {
       let attempts = 0;
-      const mockOperation = jest.fn().mockImplementation(() => {
+      const mockOperation = vi.fn().mockImplementation(() => {
         attempts++;
         if (attempts < 3) {
           throw new Error('Connection timeout');
@@ -234,7 +234,7 @@ describe('Healthcare Connection Pool Performance', () => {
     });
 
     it('should handle circuit breaker activation correctly', async () => {
-      const mockOperation = jest
+      const mockOperation = vi
         .fn()
         .mockRejectedValue(new Error('Service unavailable'));
 
@@ -264,7 +264,7 @@ describe('Healthcare Connection Pool Performance', () => {
     });
 
     it('should prioritize emergency operations', async () => {
-      const mockEmergencyOperation = jest
+      const mockEmergencyOperation = vi
         .fn()
         .mockResolvedValue({ emergency: true });
 
@@ -289,7 +289,7 @@ describe('Healthcare Connection Pool Performance', () => {
 
   describe('Healthcare Compliance Performance', () => {
     it('should validate LGPD compliance within acceptable time', async () => {
-      const mockQuery = jest
+      const mockQuery = vi
         .fn()
         .mockResolvedValue({ patientData: 'sensitive' });
       const context = createQueryContext(
@@ -399,7 +399,7 @@ describe('Healthcare Connection Pool Performance', () => {
       expect(client).toBeDefined();
 
       // Step 2: Execute query with retry
-      const mockQuery = jest.fn().mockResolvedValue({
+      const mockQuery = vi.fn().mockResolvedValue({
         patientId,
         vitals: { heartRate: 72, bloodPressure: '120/80' },
       });

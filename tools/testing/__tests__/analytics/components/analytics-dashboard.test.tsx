@@ -1,17 +1,24 @@
-import {
-  afterEach,
-  beforeEach,
-  describe,
-  expect,
-  jest,
-  test,
-} from '@jest/globals';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import {
+  afterEach,
+  afterEach,
+  beforeEach,
+  beforeEach,
+  describe,
+  describe,
+  expect,
+  expect,
+  jest,
+  jest,
+  test,
+  test,
+  vi,
+} from 'vitest';
 import AnalyticsDashboard from '@/components/dashboard/analytics-dashboard';
 
 // Mock the recharts library
-jest.mock('recharts', () => ({
+vi.Mock('recharts', () => ({
   ResponsiveContainer: ({ children }: { children: React.ReactNode }) => (
     <div data-testid="responsive-container">{children}</div>
   ),
@@ -36,7 +43,7 @@ jest.mock('recharts', () => ({
 }));
 
 // Mock date-fns
-jest.mock('date-fns', () => ({
+vi.Mock('date-fns', () => ({
   format: jest.fn((_date, formatStr) => {
     if (formatStr === 'MMM yyyy') {
       return 'Jan 2024';
@@ -53,24 +60,18 @@ jest.mock('date-fns', () => ({
 }));
 
 // Mock analytics service
-jest.mock('@/lib/analytics/service', () => ({
+vi.Mock('@/lib/analytics/service', () => ({
   analyticsService: {
-    getDashboardMetrics: jest.fn(),
-    getSubscriptionTrends: jest.fn(),
-    getTrialMetrics: jest.fn(),
-    getRevenueAnalytics: jest.fn(),
+    getDashboardMetrics: vi.fn(),
+    getSubscriptionTrends: vi.fn(),
+    getTrialMetrics: vi.fn(),
+    getRevenueAnalytics: vi.fn(),
   },
 }));
 
 // Mock UI components
-jest.mock('@/components/ui/card', () => ({
-  Card: ({
-    children,
-    className,
-  }: {
-    children: React.ReactNode;
-    className?: string;
-  }) => (
+vi.Mock('@/components/ui/card', () => ({
+  Card: ({ children, className }: { children: React.ReactNode; className?: string }) => (
     <div className={className} data-testid="card">
       {children}
     </div>
@@ -86,20 +87,15 @@ jest.mock('@/components/ui/card', () => ({
   ),
 }));
 
-jest.mock('@/components/ui/button', () => ({
+vi.Mock('@/components/ui/button', () => ({
   Button: ({ children, onClick, variant, size }: any) => (
-    <button
-      data-size={size}
-      data-testid="button"
-      data-variant={variant}
-      onClick={onClick}
-    >
+    <button data-size={size} data-testid="button" data-variant={variant} onClick={onClick}>
       {children}
     </button>
   ),
 }));
 
-jest.mock('@/components/ui/select', () => ({
+vi.Mock('@/components/ui/select', () => ({
   Select: ({ children, onValueChange }: any) => (
     <div data-onchange={onValueChange} data-testid="select">
       {children}
@@ -108,13 +104,7 @@ jest.mock('@/components/ui/select', () => ({
   SelectContent: ({ children }: { children: React.ReactNode }) => (
     <div data-testid="select-content">{children}</div>
   ),
-  SelectItem: ({
-    children,
-    value,
-  }: {
-    children: React.ReactNode;
-    value: string;
-  }) => (
+  SelectItem: ({ children, value }: { children: React.ReactNode; value: string }) => (
     <div data-testid="select-item" data-value={value}>
       {children}
     </div>
@@ -142,7 +132,7 @@ describe('AnalyticsDashboard Component', () => {
     });
 
     // Reset all mocks
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   afterEach(() => {
@@ -150,11 +140,7 @@ describe('AnalyticsDashboard Component', () => {
   });
 
   const renderWithQueryClient = (component: React.ReactElement) => {
-    return render(
-      <QueryClientProvider client={queryClient}>
-        {component}
-      </QueryClientProvider>
-    );
+    return render(<QueryClientProvider client={queryClient}>{component}</QueryClientProvider>);
   };
 
   describe('rendering and layout', () => {
@@ -211,18 +197,14 @@ describe('AnalyticsDashboard Component', () => {
 
     test('should display error state when data fetch fails', async () => {
       // Arrange
-      analyticsService.getDashboardMetrics.mockRejectedValue(
-        new Error('Failed to fetch data')
-      );
+      analyticsService.getDashboardMetrics.mockRejectedValue(new Error('Failed to fetch data'));
 
       // Act
       renderWithQueryClient(<AnalyticsDashboard />);
 
       // Assert
       await waitFor(() => {
-        expect(
-          screen.getByText('Error loading analytics data')
-        ).toBeInTheDocument();
+        expect(screen.getByText('Error loading analytics data')).toBeInTheDocument();
         expect(screen.getByText('Failed to fetch data')).toBeInTheDocument();
         expect(screen.getByText('Retry')).toBeInTheDocument();
       });
@@ -526,12 +508,8 @@ describe('AnalyticsDashboard Component', () => {
       // Assert
       await waitFor(() => {
         // Detailed metrics should be hidden on smaller screens
-        expect(
-          screen.queryByText('Average Subscription Value')
-        ).not.toBeInTheDocument();
-        expect(
-          screen.queryByText('Customer Lifetime Value')
-        ).not.toBeInTheDocument();
+        expect(screen.queryByText('Average Subscription Value')).not.toBeInTheDocument();
+        expect(screen.queryByText('Customer Lifetime Value')).not.toBeInTheDocument();
       });
     });
   });
@@ -554,18 +532,10 @@ describe('AnalyticsDashboard Component', () => {
 
       // Assert
       await waitFor(() => {
-        expect(
-          screen.getByRole('main', { name: 'Analytics Dashboard' })
-        ).toBeInTheDocument();
-        expect(
-          screen.getByRole('region', { name: 'Subscription Metrics' })
-        ).toBeInTheDocument();
-        expect(
-          screen.getByRole('region', { name: 'Trial Metrics' })
-        ).toBeInTheDocument();
-        expect(
-          screen.getByRole('region', { name: 'Revenue Charts' })
-        ).toBeInTheDocument();
+        expect(screen.getByRole('main', { name: 'Analytics Dashboard' })).toBeInTheDocument();
+        expect(screen.getByRole('region', { name: 'Subscription Metrics' })).toBeInTheDocument();
+        expect(screen.getByRole('region', { name: 'Trial Metrics' })).toBeInTheDocument();
+        expect(screen.getByRole('region', { name: 'Revenue Charts' })).toBeInTheDocument();
       });
     });
 

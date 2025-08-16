@@ -20,7 +20,7 @@
     "build": "tsup",
     "dev": "tsup --watch",
     "lint": "cd ../.. && biome lint packages/ui/src --write",
-    "format": "cd ../.. && prettier --write packages/ui/src",
+    "format": "cd ../.. && biome format --write packages/ui/src",
     "type-check": "tsc --noEmit"
   },
   "dependencies": {

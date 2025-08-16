@@ -11,9 +11,10 @@ const campaignService = new MarketingCampaignService();
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
+    const { id } = await params;
     // Authentication check
     const supabase = await createClient();
     const {
@@ -27,7 +28,7 @@ export async function POST(
     const body = await request.json();
     const validationResult = ABTestCreateSchema.safeParse({
       ...body,
-      campaign_id: params.id,
+      campaign_id: id,
     });
 
     if (!validationResult.success) {

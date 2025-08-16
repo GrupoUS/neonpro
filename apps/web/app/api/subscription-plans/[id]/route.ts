@@ -21,9 +21,10 @@ const updatePlanSchema = z.object({
 // GET /api/subscription-plans/[id] - Get plan details
 export async function GET(
   _request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
+    const { id } = await params;
     const supabase = createRouteHandlerClient({ cookies });
     const {
       data: { user },
@@ -34,7 +35,7 @@ export async function GET(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const planId = params.id;
+    const planId = id;
 
     if (!planId) {
       return NextResponse.json(
@@ -83,7 +84,7 @@ export async function GET(
       },
     });
   } catch (error) {
-    logger.error(`Error in GET /api/subscription-plans/${params.id}:`, error);
+    logger.error(`Error in GET /api/subscription-plans/${id}:`, error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 },
@@ -94,9 +95,10 @@ export async function GET(
 // PUT /api/subscription-plans/[id] - Update plan
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
+    const { id } = await params;
     const supabase = createRouteHandlerClient({ cookies });
     const {
       data: { user },
@@ -121,7 +123,7 @@ export async function PUT(
       );
     }
 
-    const planId = params.id;
+    const planId = id;
     const body = await request.json();
 
     // Validate request body
@@ -180,7 +182,7 @@ export async function PUT(
       message: 'Plan updated successfully',
     });
   } catch (error) {
-    logger.error(`Error in PUT /api/subscription-plans/${params.id}:`, error);
+    logger.error(`Error in PUT /api/subscription-plans/${id}:`, error);
 
     if (error instanceof Error) {
       return NextResponse.json({ error: error.message }, { status: 400 });
@@ -196,8 +198,9 @@ export async function PUT(
 // DELETE /api/subscription-plans/[id] - Deactivate plan
 export async function DELETE(
   _request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
+  const { id } = await params;
   try {
     const supabase = createRouteHandlerClient({ cookies });
     const {
@@ -270,7 +273,7 @@ export async function DELETE(
     });
   } catch (error) {
     logger.error(
-      `Error in DELETE /api/subscription-plans/${params.id}:`,
+      `Error in DELETE /api/subscription-plans/${id}:`,
       error,
     );
 

@@ -8,28 +8,21 @@
  * @created 2025-07-22
  */
 
-import {
-  afterEach,
-  beforeEach,
-  describe,
-  expect,
-  it,
-  jest,
-} from '@jest/globals';
+import { afterEach, beforeEach, describe, expect, it, jest, vi } from 'vitest';
 import { createMockResponse, createMockSubscription } from '../utils/testUtils';
 
 // Mock Next.js modules
-jest.mock('next/headers', () => ({
+vi.Mock('next/headers', () => ({
   cookies: jest.fn(() => ({
-    get: jest.fn(),
-    set: jest.fn(),
-    delete: jest.fn(),
+    get: vi.fn(),
+    set: vi.fn(),
+    delete: vi.fn(),
   })),
 }));
 
-jest.mock('next/navigation', () => ({
-  redirect: jest.fn(),
-  permanentRedirect: jest.fn(),
+vi.Mock('next/navigation', () => ({
+  redirect: vi.fn(),
+  permanentRedirect: vi.fn(),
 }));
 
 // ============================================================================
@@ -37,19 +30,19 @@ jest.mock('next/navigation', () => ({
 // ============================================================================
 
 describe('Subscription Middleware', () => {
-  let mockFetch: jest.MockedFunction<typeof fetch>;
+  let mockFetch: vi.MockedFunction<typeof fetch>;
 
   beforeEach(() => {
     // Reset all mocks
-    jest.clearAllMocks();
+    vi.clearAllMocks();
 
     // Setup fetch mock
-    mockFetch = global.fetch as jest.MockedFunction<typeof fetch>;
+    mockFetch = global.fetch as vi.MockedFunction<typeof fetch>;
     mockFetch.mockClear();
   });
 
   afterEach(() => {
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
   });
 
   // ============================================================================

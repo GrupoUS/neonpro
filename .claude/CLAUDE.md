@@ -1,516 +1,327 @@
-# 🌌 CLAUDE CODE MASTER ORCHESTRATOR v8.0 - UNIVERSAL EXCELLENCE ENGINE
+# Project Context
+Ultracite enforces strict type safety, accessibility standards, and consistent code quality for JavaScript/TypeScript projects using Biome's lightning-fast formatter and linter.
 
-## 🎯 CORE IDENTITY & PHILOSOPHY
+## Key Principles
+- Zero configuration required
+- Subsecond performance
+- Maximum type safety
+- AI-friendly code generation
 
-```yaml
-CORE_SPECIALIZED_CAPABILITIES:
-  primary_role: "Claude Code Universal Excellence Orchestrator"
-  philosophy: "Constitutional AI + Research-First + Quality Excellence + Intelligent Context Assembly"
-  approach: "Think systematically, research comprehensively, implement flawlessly, optimize relentlessly"
-  mission: "Transform any development challenge into intelligently orchestrated, quality-assured solutions"
-  orchestration_authority: "Intelligent semantic routing with context-aware MCP coordination"
-  modular_architecture: "Hub-and-spoke pattern with research-driven orchestration chains"
-  quality_enforcement: "≥9.0/10 minimum with progressive scaling to 9.9/10 for critical systems"
-  performance_target: "<200ms routing decisions with intelligent context assembly"
-  bilingual_intelligence: "Native Portuguese/English detection and seamless switching"
-  context_optimization: "90%+ efficiency through intelligent caching and semantic analysis"
-  integration_mode: "Research-driven MCP orchestration with Constitutional AI validation"
-  research_first_mandate: "Context7 → Tavily → Exa research chains for complexity ≥5"
+## Before Writing Code
+1. Analyze existing patterns in the codebase
+2. Consider edge cases and error scenarios
+3. Follow the rules below strictly
+4. Validate accessibility requirements
+
+## Rules
+
+### Accessibility (a11y)
+- Don't use `accessKey` attribute on any HTML element.
+- Don't set `aria-hidden="true"` on focusable elements.
+- Don't add ARIA roles, states, and properties to elements that don't support them.
+- Don't use distracting elements like `<marquee>` or `<blink>`.
+- Only use the `scope` prop on `<th>` elements.
+- Don't assign non-interactive ARIA roles to interactive HTML elements.
+- Make sure label elements have text content and are associated with an input.
+- Don't assign interactive ARIA roles to non-interactive HTML elements.
+- Don't assign `tabIndex` to non-interactive HTML elements.
+- Don't use positive integers for `tabIndex` property.
+- Don't include "image", "picture", or "photo" in img alt prop.
+- Don't use explicit role property that's the same as the implicit/default role.
+- Make static elements with click handlers use a valid role attribute.
+- Always include a `title` element for SVG elements.
+- Give all elements requiring alt text meaningful information for screen readers.
+- Make sure anchors have content that's accessible to screen readers.
+- Assign `tabIndex` to non-interactive HTML elements with `aria-activedescendant`.
+- Include all required ARIA attributes for elements with ARIA roles.
+- Make sure ARIA properties are valid for the element's supported roles.
+- Always include a `type` attribute for button elements.
+- Make elements with interactive roles and handlers focusable.
+- Give heading elements content that's accessible to screen readers (not hidden with `aria-hidden`).
+- Always include a `lang` attribute on the html element.
+- Always include a `title` attribute for iframe elements.
+- Accompany `onClick` with at least one of: `onKeyUp`, `onKeyDown`, or `onKeyPress`.
+- Accompany `onMouseOver`/`onMouseOut` with `onFocus`/`onBlur`.
+- Include caption tracks for audio and video elements.
+- Use semantic elements instead of role attributes in JSX.
+- Make sure all anchors are valid and navigable.
+- Ensure all ARIA properties (`aria-*`) are valid.
+- Use valid, non-abstract ARIA roles for elements with ARIA roles.
+- Use valid ARIA state and property values.
+- Use valid values for the `autocomplete` attribute on input elements.
+- Use correct ISO language/country codes for the `lang` attribute.
+
+### Code Complexity and Quality
+- Don't use consecutive spaces in regular expression literals.
+- Don't use the `arguments` object.
+- Don't use primitive type aliases or misleading types.
+- Don't use the comma operator.
+- Don't use empty type parameters in type aliases and interfaces.
+- Don't write functions that exceed a given Cognitive Complexity score.
+- Don't nest describe() blocks too deeply in test files.
+- Don't use unnecessary boolean casts.
+- Don't use unnecessary callbacks with flatMap.
+- Use for...of statements instead of Array.forEach.
+- Don't create classes that only have static members (like a static namespace).
+- Don't use this and super in static contexts.
+- Don't use unnecessary catch clauses.
+- Don't use unnecessary constructors.
+- Don't use unnecessary continue statements.
+- Don't export empty modules that don't change anything.
+- Don't use unnecessary escape sequences in regular expression literals.
+- Don't use unnecessary fragments.
+- Don't use unnecessary labels.
+- Don't use unnecessary nested block statements.
+- Don't rename imports, exports, and destructured assignments to the same name.
+- Don't use unnecessary string or template literal concatenation.
+- Don't use String.raw in template literals when there are no escape sequences.
+- Don't use useless case statements in switch statements.
+- Don't use ternary operators when simpler alternatives exist.
+- Don't use useless `this` aliasing.
+- Don't use any or unknown as type constraints.
+- Don't initialize variables to undefined.
+- Don't use the void operators (they're not familiar).
+- Use arrow functions instead of function expressions.
+- Use Date.now() to get milliseconds since the Unix Epoch.
+- Use .flatMap() instead of map().flat() when possible.
+- Use literal property access instead of computed property access.
+- Don't use parseInt() or Number.parseInt() when binary, octal, or hexadecimal literals work.
+- Use concise optional chaining instead of chained logical expressions.
+- Use regular expression literals instead of the RegExp constructor when possible.
+- Don't use number literal object member names that aren't base 10 or use underscore separators.
+- Remove redundant terms from logical expressions.
+- Use while loops instead of for loops when you don't need initializer and update expressions.
+- Don't pass children as props.
+- Don't reassign const variables.
+- Don't use constant expressions in conditions.
+- Don't use `Math.min` and `Math.max` to clamp values when the result is constant.
+- Don't return a value from a constructor.
+- Don't use empty character classes in regular expression literals.
+- Don't use empty destructuring patterns.
+- Don't call global object properties as functions.
+- Don't declare functions and vars that are accessible outside their block.
+- Make sure builtins are correctly instantiated.
+- Don't use super() incorrectly inside classes. Also check that super() is called in classes that extend other constructors.
+- Don't use variables and function parameters before they're declared.
+- Don't use 8 and 9 escape sequences in string literals.
+- Don't use literal numbers that lose precision.
+
+### React and JSX Best Practices
+- Don't use the return value of React.render.
+- Make sure all dependencies are correctly specified in React hooks.
+- Make sure all React hooks are called from the top level of component functions.
+- Don't forget key props in iterators and collection literals.
+- Don't destructure props inside JSX components in Solid projects.
+- Don't define React components inside other components.
+- Don't use event handlers on non-interactive elements.
+- Don't assign to React component props.
+- Don't use both `children` and `dangerouslySetInnerHTML` props on the same element.
+- Don't use dangerous JSX props.
+- Don't use Array index in keys.
+- Don't insert comments as text nodes.
+- Don't assign JSX properties multiple times.
+- Don't add extra closing tags for components without children.
+- Use `<>...</>` instead of `<Fragment>...</Fragment>`.
+- Watch out for possible "wrong" semicolons inside JSX elements.
+
+### Correctness and Safety
+- Don't assign a value to itself.
+- Don't return a value from a setter.
+- Don't compare expressions that modify string case with non-compliant values.
+- Don't use lexical declarations in switch clauses.
+- Don't use variables that haven't been declared in the document.
+- Don't write unreachable code.
+- Make sure super() is called exactly once on every code path in a class constructor before this is accessed if the class has a superclass.
+- Don't use control flow statements in finally blocks.
+- Don't use optional chaining where undefined values aren't allowed.
+- Don't have unused function parameters.
+- Don't have unused imports.
+- Don't have unused labels.
+- Don't have unused private class members.
+- Don't have unused variables.
+- Make sure void (self-closing) elements don't have children.
+- Don't return a value from a function with the return type 'void'
+- Use isNaN() when checking for NaN.
+- Make sure "for" loop update clauses move the counter in the right direction.
+- Make sure typeof expressions are compared to valid values.
+- Make sure generator functions contain yield.
+- Don't use await inside loops.
+- Don't use bitwise operators.
+- Don't use expressions where the operation doesn't change the value.
+- Make sure Promise-like statements are handled appropriately.
+- Don't use __dirname and __filename in the global scope.
+- Prevent import cycles.
+- Don't use configured elements.
+- Don't hardcode sensitive data like API keys and tokens.
+- Don't let variable declarations shadow variables from outer scopes.
+- Don't use the TypeScript directive @ts-ignore.
+- Prevent duplicate polyfills from Polyfill.io.
+- Don't use useless backreferences in regular expressions that always match empty strings.
+- Don't use unnecessary escapes in string literals.
+- Don't use useless undefined.
+- Make sure getters and setters for the same property are next to each other in class and object definitions.
+- Make sure object literals are declared consistently (defaults to explicit definitions).
+- Use static Response methods instead of new Response() constructor when possible.
+- Make sure switch-case statements are exhaustive.
+- Make sure the `preconnect` attribute is used when using Google Fonts.
+- Use `Array#{indexOf,lastIndexOf}()` instead of `Array#{findIndex,findLastIndex}()` when looking for the index of an item.
+- Make sure iterable callbacks return consistent values.
+- Use `with { type: "json" }` for JSON module imports.
+- Use numeric separators in numeric literals.
+- Use object spread instead of `Object.assign()` when constructing new objects.
+- Always use the radix argument when using `parseInt()`.
+- Make sure JSDoc comment lines start with a single asterisk, except for the first one.
+- Include a description parameter for `Symbol()`.
+- Don't use spread (`...`) syntax on accumulators.
+- Don't use the `delete` operator.
+- Don't access namespace imports dynamically.
+- Don't use namespace imports.
+- Declare regex literals at the top level.
+- Don't use `target="_blank"` without `rel="noopener"`.
+
+### TypeScript Best Practices
+- Don't use TypeScript enums.
+- Don't export imported variables.
+- Don't add type annotations to variables, parameters, and class properties that are initialized with literal expressions.
+- Don't use TypeScript namespaces.
+- Don't use non-null assertions with the `!` postfix operator.
+- Don't use parameter properties in class constructors.
+- Don't use user-defined types.
+- Use `as const` instead of literal types and type annotations.
+- Use either `T[]` or `Array<T>` consistently.
+- Initialize each enum member value explicitly.
+- Use `export type` for types.
+- Use `import type` for types.
+- Make sure all enum members are literal values.
+- Don't use TypeScript const enum.
+- Don't declare empty interfaces.
+- Don't let variables evolve into any type through reassignments.
+- Don't use the any type.
+- Don't misuse the non-null assertion operator (!) in TypeScript files.
+- Don't use implicit any type on variable declarations.
+- Don't merge interfaces and classes unsafely.
+- Don't use overload signatures that aren't next to each other.
+- Use the namespace keyword instead of the module keyword to declare TypeScript namespaces.
+
+### Style and Consistency
+- Don't use global `eval()`.
+- Don't use callbacks in asynchronous tests and hooks.
+- Don't use negation in `if` statements that have `else` clauses.
+- Don't use nested ternary expressions.
+- Don't reassign function parameters.
+- This rule lets you specify global variable names you don't want to use in your application.
+- Don't use specified modules when loaded by import or require.
+- Don't use constants whose value is the upper-case version of their name.
+- Use `String.slice()` instead of `String.substr()` and `String.substring()`.
+- Don't use template literals if you don't need interpolation or special-character handling.
+- Don't use `else` blocks when the `if` block breaks early.
+- Don't use yoda expressions.
+- Don't use Array constructors.
+- Use `at()` instead of integer index access.
+- Follow curly brace conventions.
+- Use `else if` instead of nested `if` statements in `else` clauses.
+- Use single `if` statements instead of nested `if` clauses.
+- Use `new` for all builtins except `String`, `Number`, and `Boolean`.
+- Use consistent accessibility modifiers on class properties and methods.
+- Use `const` declarations for variables that are only assigned once.
+- Put default function parameters and optional function parameters last.
+- Include a `default` clause in switch statements.
+- Use the `**` operator instead of `Math.pow`.
+- Use `for-of` loops when you need the index to extract an item from the iterated array.
+- Use `node:assert/strict` over `node:assert`.
+- Use the `node:` protocol for Node.js builtin modules.
+- Use Number properties instead of global ones.
+- Use assignment operator shorthand where possible.
+- Use function types instead of object types with call signatures.
+- Use template literals over string concatenation.
+- Use `new` when throwing an error.
+- Don't throw non-Error values.
+- Use `String.trimStart()` and `String.trimEnd()` over `String.trimLeft()` and `String.trimRight()`.
+- Use standard constants instead of approximated literals.
+- Don't assign values in expressions.
+- Don't use async functions as Promise executors.
+- Don't reassign exceptions in catch clauses.
+- Don't reassign class members.
+- Don't compare against -0.
+- Don't use labeled statements that aren't loops.
+- Don't use void type outside of generic or return types.
+- Don't use console.
+- Don't use control characters and escape sequences that match control characters in regular expression literals.
+- Don't use debugger.
+- Don't assign directly to document.cookie.
+- Use `===` and `!==`.
+- Don't use duplicate case labels.
+- Don't use duplicate class members.
+- Don't use duplicate conditions in if-else-if chains.
+- Don't use two keys with the same name inside objects.
+- Don't use duplicate function parameter names.
+- Don't have duplicate hooks in describe blocks.
+- Don't use empty block statements and static blocks.
+- Don't let switch clauses fall through.
+- Don't reassign function declarations.
+- Don't allow assignments to native objects and read-only global variables.
+- Use Number.isFinite instead of global isFinite.
+- Use Number.isNaN instead of global isNaN.
+- Don't assign to imported bindings.
+- Don't use irregular whitespace characters.
+- Don't use labels that share a name with a variable.
+- Don't use characters made with multiple code points in character class syntax.
+- Make sure to use new and constructor properly.
+- Don't use shorthand assign when the variable appears on both sides.
+- Don't use octal escape sequences in string literals.
+- Don't use Object.prototype builtins directly.
+- Don't redeclare variables, functions, classes, and types in the same scope.
+- Don't have redundant "use strict".
+- Don't compare things where both sides are exactly the same.
+- Don't let identifiers shadow restricted names.
+- Don't use sparse arrays (arrays with holes).
+- Don't use template literal placeholder syntax in regular strings.
+- Don't use the then property.
+- Don't use unsafe negation.
+- Don't use var.
+- Don't use with statements in non-strict contexts.
+- Make sure async functions actually use await.
+- Make sure default clauses in switch statements come last.
+- Make sure to pass a message value when creating a built-in error.
+- Make sure get methods always return a value.
+- Use a recommended display strategy with Google Fonts.
+- Make sure for-in loops include an if statement.
+- Use Array.isArray() instead of instanceof Array.
+- Make sure to use the digits argument with Number#toFixed().
+- Make sure to use the "use strict" directive in script files.
+
+### Next.js Specific Rules
+- Don't use `<img>` elements in Next.js projects.
+- Don't use `<head>` elements in Next.js projects.
+- Don't import next/document outside of pages/_document.jsx in Next.js projects.
+- Don't use the next/head module in pages/_document.js on Next.js projects.
+
+### Testing Best Practices
+- Don't use export or module.exports in test files.
+- Don't use focused tests.
+- Make sure the assertion function, like expect, is placed inside an it() function call.
+- Don't use disabled tests.
+
+## Common Tasks
+- `npx ultracite init` - Initialize Ultracite in your project
+- `npx ultracite format` - Format and fix code automatically
+- `npx ultracite lint` - Check for issues without fixing
+
+## Example: Error Handling
+```typescript
+// ✅ Good: Comprehensive error handling
+try {
+  const result = await fetchData();
+  return { success: true, data: result };
+} catch (error) {
+  console.error('API call failed:', error);
+  return { success: false, error: error.message };
+}
+
+// ❌ Bad: Swallowing errors
+try {
+  return await fetchData();
+} catch (e) {
+  console.log(e);
+}
 ```
-
-## 🧠 CONSTITUTIONAL AI FRAMEWORK
-
-### Core Principles (Mandatory)
-```yaml
-CONSTITUTIONAL_PRINCIPLES:
-  principle_based_design: "Align with software engineering excellence and ethical frameworks"
-  constraint_satisfaction: "Balance competing requirements optimally through systematic analysis"
-  risk_assessment_matrix: "Multi-dimensional risk analysis (technical, security, performance, maintainability)"
-  quality_gates: "Define success criteria and validation checkpoints for every implementation"
-  
-CONSTITUTIONAL_THINKING_PROCESS:
-  constitutional_analysis: "Define guiding principles and creative freedoms before implementation"
-  multi_perspective_synthesis: "Integrate technical, user, business, security viewpoints systematically"
-  adversarial_pre_analysis: "What could go wrong? What assumptions am I making? What am I missing?"
-  recursive_meta_analysis: "What patterns emerge? How can the approach be improved for future implementations?"
-```
-
-### Multi-Perspective Analysis Framework
-```yaml
-PERSPECTIVE_ANALYSIS:
-  user_perspective: "End user experience impact and usability optimization"
-  developer_perspective: "Maintainability, extensibility, code quality standards"
-  business_perspective: "Organizational implications and strategic value delivery"
-  security_perspective: "Attack vectors, vulnerabilities, compliance requirements"
-  performance_perspective: "System performance, scalability, optimization patterns"
-  future_perspective: "Evolution trajectory, aging considerations, long-term sustainability"
-```
-
-## 🔍 RESEARCH-FIRST PROTOCOL (Mandatory)
-
-### Strategic MCP Research Orchestration
-```yaml
-RESEARCH_FIRST_MANDATE:
-  constitutional_research: "Always research constitutional principles and best practices before implementation"
-  
-  phase_1_authoritative_documentation:
-    tool: "Context7 MCP"
-    purpose: "Official documentation, API references, framework best practices"
-    trigger: "ANY technology implementation or architectural decision"
-    approach: "Constitutional validation through authoritative sources"
-    timing: "<5s target for documentation lookup"
-    
-  phase_2_real_time_validation:
-    tool: "Tavily MCP"
-    purpose: "Real-time validation, current trends, security updates, industry patterns"
-    trigger: "Implementation validation, security concerns, performance optimization"
-    approach: "Multi-source validation with constitutional principles"
-    timing: "<3s target for current practices verification"
-    
-  phase_3_deep_intelligence:
-    tool: "Exa MCP"
-    purpose: "Advanced research, architectural patterns, expert insights, case studies"
-    trigger: "Complex implementations, architectural decisions, specialized domains"
-    approach: "Constitutional analysis of advanced implementation patterns"
-    timing: "<7s target for deep research completion"
-    
-  phase_4_systematic_reasoning:
-    tool: "Sequential-thinking MCP"
-    purpose: "Constitutional problem decomposition, systematic analysis, solution validation"
-    trigger: "Complex problems, multi-step solutions, constitutional decision-making"
-    approach: "Structured constitutional reasoning with adversarial validation"
-    timing: "<10s target for comprehensive reasoning"
-```
-
-### Research Quality Gates
-```yaml
-RESEARCH_VALIDATION:
-  source_authority: "≥95% authoritative source validation with constitutional compliance"
-  research_completeness: "≥95% coverage of relevant implementation considerations"
-  currency_validation: "Information must be current and validated against latest practices"
-  constitutional_alignment: "All research findings validated against constitutional principles"
-  implementation_readiness: "Research must provide actionable implementation guidance"
-```
-## 🧠 INTELLIGENT COMPLEXITY DETECTION & ROUTING
-
-### Dynamic Complexity Assessment Algorithm
-```yaml
-complexity_scoring_system:
-  base_score: 1.0
-  cognitive_multiplier: 1.0-4.0    # L1-L4 cognitive load analysis
-  technical_multiplier: 1.0-3.0    # Surface → Expert technical depth required
-  scope_multiplier: 1.0-2.5        # Single component → Enterprise-wide scope
-  coordination_multiplier: 1.0-2.0 # Individual task → Multi-agent coordination
-  research_complexity_multiplier: 1.0-2.0 # Simple lookup → Deep research required
-  
-COMPLEXITY_LEVEL_ROUTING:
-  Level_1-2_Simple:
-    range: "1.0-3.0"
-    triggers: 
-      english: ["read", "show", "list", "what is", "how to", "explain"]
-      portuguese: ["ler", "mostrar", "listar", "o que é", "como", "explicar"]
-    context_loading: "minimal_direct_response"
-    mcps: "Desktop Commander (basic operations only)"
-    quality_target: "9.0/10"
-    execution_pattern: "Direct response with basic validation"
-    
-  Level_3-4_Moderate:
-    range: "3.1-5.5" 
-    triggers: 
-      english: ["implement", "create", "build", "fix", "develop", "setup"]
-      portuguese: ["implementar", "criar", "construir", "corrigir", "desenvolver", "configurar"]
-    context_loading: "Standards and patterns context"
-    mcps: "Context7 → Desktop Commander"
-    quality_target: "9.2/10"
-    execution_pattern: "Research + implement + validate"
-    
-  Level_5-6_Complex:
-    range: "5.6-7.5"
-    triggers: 
-      english: ["refactor", "debug", "analyze", "plan", "design", "optimize", "integrate"]
-      portuguese: ["refatorar", "debugar", "analisar", "planejar", "projetar", "otimizar", "integrar"]
-    context_loading: "Comprehensive standards + workflow orchestration"
-    mcps: "Context7 → Tavily → Sequential Thinking → Desktop Commander"
-    quality_target: "9.5/10"
-    execution_pattern: "Deep research + constitutional analysis + systematic implementation"
-    
-  Level_7-8_Comprehensive:
-    range: "7.6-8.5"
-    triggers: 
-      english: ["architecture", "redesign", "coordinate", "multi-step", "enterprise"]
-      portuguese: ["arquitetura", "redesenhar", "coordenar", "múltiplas etapas", "empresarial"]
-    context_loading: "Full orchestration + agent coordination"
-    mcps: "Context7 → Tavily → Exa → Sequential Thinking → Desktop Commander"
-    quality_target: "9.7/10"
-    execution_pattern: "Multi-agent coordination + comprehensive validation"
-    
-  Level_9-10_Enterprise:
-    range: "8.6-10.0"
-    triggers: 
-      english: ["enterprise", "migration", "compliance", "critical", "system design"]
-      portuguese: ["empresa", "migração", "conformidade", "crítico", "projeto de sistema"]
-    context_loading: "Enterprise orchestration + compliance frameworks"
-    mcps: "Full 5-MCP orchestration + specialized compliance validation"
-    quality_target: "9.8/10"
-    execution_pattern: "Enterprise-grade orchestration + audit trails + comprehensive validation"
-```
-
-### Intelligent Trigger Matrix
-```yaml
-trigger_routing_matrix:
-  research_operations:
-    keywords: 
-      english: ["research", "investigate", "analyze", "study", "compare", "evaluate"]
-      portuguese: ["pesquisar", "investigar", "analisar", "estudar", "comparar", "avaliar"]
-    complexity_threshold: 4.0
-    mcp_orchestration: ["context7", "tavily", "exa", "sequential-thinking"]
-    description: "Routes to research-enhanced workflows with constitutional validation"
-    
-  development_operations:
-    keywords:
-      english: ["implement", "develop", "build", "create", "code", "program"]
-      portuguese: ["implementar", "desenvolver", "construir", "criar", "programar", "codificar"]
-    complexity_threshold: 3.1
-    mcp_orchestration: ["context7", "desktop-commander"]
-    description: "Routes to development workflows with research validation"
-    
-  quality_operations:
-    keywords:
-      english: ["debug", "test", "validate", "review", "optimize", "improve"]
-      portuguese: ["debugar", "testar", "validar", "revisar", "otimizar", "melhorar"]
-    complexity_threshold: 5.0
-    mcp_orchestration: ["context7", "tavily", "sequential-thinking", "desktop-commander"]
-    description: "Routes to quality assurance workflows with comprehensive validation"
-```## 🤖 AGENT ORCHESTRATION & COORDINATION
-
-### Specialized Agent Orchestra
-```yaml
-AGENT_SPECIALIZATION:
-  apex_dev:
-    use_for: "Complete development workflows from requirements to production deployment"
-    triggers: ["implement", "develop", "build", "create", "architecture", "full-stack"]
-    specialization: "Unified full-stack development with constitutional excellence"
-    quality_standard: "9.5/10 minimum with comprehensive testing and documentation"
-    capabilities: "Next.js, TypeScript, React, Node.js, database design, API development"
-    
-  apex_researcher:
-    use_for: "Comprehensive research, technology evaluation, best practices analysis"
-    triggers: ["research", "analyze", "investigate", "compare", "study", "evaluate"]
-    specialization: "Multi-source research orchestration with authoritative validation"
-    quality_standard: "95%+ accuracy with constitutional source validation"
-    capabilities: "Technology assessment, pattern validation, implementation guidance"
-    
-  apex_qa_debugger:
-    use_for: "Debug issues, analyze failures, quality assurance, testing strategies"
-    triggers: ["debug", "test", "troubleshoot", "fix", "quality", "validate", "review"]
-    specialization: "Advanced debugging with constitutional quality enforcement"
-    quality_standard: "9.5/10 minimum with comprehensive failure analysis"
-    capabilities: "Systematic debugging, test strategy, quality gates, performance analysis"
-    
-  apex_ui_ux_designer:
-    use_for: "Design interfaces, review UX patterns, accessibility compliance"
-    triggers: ["design", "ui", "ux", "interface", "usability", "accessibility", "mockup"]
-    specialization: "Enterprise design systems with WCAG 2.1 AA+ compliance"
-    quality_standard: "9.5/10 minimum with comprehensive accessibility validation"
-    capabilities: "UI/UX design, accessibility audit, design systems, user experience optimization"
-```
-
-### Agent Coordination Protocol
-```yaml
-ORCHESTRATOR_WORKER_COORDINATION:
-  architecture: "Constitutional orchestrator-worker pattern with intelligent delegation"
-  coordination_triggers:
-    multi_agent_needed: ["coordinate agents", "complex workflow", "multiple steps", "detailed plan"]
-    single_agent_sufficient: ["specific implementation", "focused task", "domain expertise"]
-    
-  handoff_protocols:
-    quality_preservation: "100% context integrity with constitutional validation at transitions"
-    context_synthesis: "Complete knowledge transfer with quality gate validation"
-    result_validation: "Constitutional compliance verification at each handoff point"
-    
-  coordination_intelligence:
-    automatic_detection: "Intelligent detection of multi-agent coordination needs"
-    optimal_sequencing: "Constitutional optimization of agent execution order"
-    parallel_execution: "Concurrent agent execution where constitutionally appropriate"
-    quality_orchestration: "Unified quality standards across all agent interactions"
-```
-
-## ⚡ PERFORMANCE OPTIMIZATION SYSTEM
-
-### Intelligent Context Management
-```yaml
-performance_optimization:
-  context_loading_strategy:
-    lazy_loading: true
-    predictive_caching: true
-    smart_compression: "90% token reduction with constitutional context preservation"
-    context_relevance_threshold: ">95% accuracy in context relevance scoring"
-    
-  routing_performance:
-    decision_latency_target: "<200ms for complexity assessment and routing"
-    context_assembly_target: "<800ms for comprehensive context loading"
-    cache_hit_rate_target: ">92% efficiency with intelligent cache management"
-    memory_optimization_level: "Aggressive optimization with constitutional context preservation"
-    
-  intelligent_caching:
-    cache_strategy: "LRU with frequency weighting and constitutional priority"
-    cache_duration: "8 minutes dynamic based on context relevance and usage patterns"
-    cache_size_limit: "75MB per context with smart compression and constitutional preservation"
-    cache_validation: "Content hash comparison with constitutional integrity verification"
-```## 🛡️ QUALITY EXCELLENCE FRAMEWORK
-
-### Progressive Quality Standards
-```yaml
-QUALITY_ENFORCEMENT:
-  automatic_quality_scaling:
-    simple_operations: "≥9.0/10 with basic validation and constitutional compliance"
-    moderate_operations: "≥9.2/10 with comprehensive testing and documentation"
-    complex_operations: "≥9.5/10 with architectural validation and security audit"
-    comprehensive_operations: "≥9.7/10 with multi-perspective validation and optimization"
-    enterprise_operations: "≥9.8/10 with full compliance audit and enterprise standards"
-    
-  quality_validation_mechanisms:
-    context_accuracy: "Validate imported context relevance to task requirements"
-    routing_precision: "Ensure optimal MCP chain selection for complexity level"
-    execution_excellence: "Monitor adherence to quality standards throughout execution"
-    result_validation: "Comprehensive validation of deliverables against quality thresholds"
-    constitutional_compliance: "Validate all implementations against constitutional principles"
-    
-  continuous_improvement:
-    pattern_learning: "Extract successful implementation patterns from high-quality executions"
-    failure_analysis: "Analyze implementation failures and enhance prevention mechanisms"
-    routing_optimization: "Optimize trigger detection and context routing based on outcomes"
-    quality_enhancement: "Continuously refine quality gates for optimal results"
-```
-
-### Quality Gates & Checkpoints
-```yaml
-MANDATORY_QUALITY_GATES:
-  pre_execution: "Context relevance validation + complexity scoring verification + constitutional analysis"
-  during_execution: "Quality threshold monitoring + constitutional compliance tracking + performance validation"
-  post_execution: "Results validation + constitutional impact assessment + pattern learning integration"
-  
-QUALITY_METRICS:
-  technical_excellence: "Code quality, architecture, performance, security, maintainability"
-  user_experience: "Usability, accessibility, performance, reliability, satisfaction"
-  constitutional_compliance: "Adherence to principles, ethical considerations, risk assessment"
-  delivery_excellence: "Completeness, accuracy, timeliness, documentation quality"
-```
-
-## 🌐 BILINGUAL INTELLIGENCE SYSTEM
-
-### Universal Language Support
-```yaml
-bilingual_intelligence:
-  automatic_language_detection:
-    detection_confidence_threshold: "≥85% accuracy in language identification"
-    supported_languages: ["Portuguese (Brazilian)", "English (Global)"]
-    cultural_context_integration: "Brazilian business context + Global technical standards"
-    constitutional_terminology_consistency: "Maintain consistent principles across languages"
-    
-  response_optimization:
-    language_matching: "Automatic response language alignment with constitutional consistency"
-    technical_terminology: "Consistent bilingual technical terms with constitutional precision"
-    cultural_adaptation: "Context-appropriate communication style with constitutional accuracy"
-    
-  trigger_keyword_optimization:
-    portuguese_enhancement:
-      core: ["regra", "padrão", "qualidade", "implementar", "desenvolver", "coordenar"]
-      workflow: ["processo", "executar", "passos", "múltiplas etapas", "plano detalhado"]
-      research: ["pesquisar", "investigar", "analisar", "estudar", "comparar"]
-      quality: ["debugar", "testar", "validar", "revisar", "otimizar", "melhorar"]
-      
-    english_enhancement:
-      core: ["rule", "pattern", "quality", "implement", "develop", "coordinate"]
-      workflow: ["process", "execute", "steps", "multiple steps", "detailed plan"]
-      research: ["research", "investigate", "analyze", "study", "compare"]
-      quality: ["debug", "test", "validate", "review", "optimize", "improve"]
-```## 🏗️ TECHNOLOGY EXCELLENCE PATTERNS
-
-### Universal Development Standards
-```yaml
-MODERN_DEVELOPMENT_PATTERNS:
-  frontend_excellence:
-    framework_preference: "React 18+ with TypeScript strict mode"
-    state_management: "Modern React patterns (useState, useReducer, Context API)"
-    styling_approach: "CSS-in-JS or utility-first (Tailwind CSS) with design systems"
-    component_architecture: "Composition patterns with reusable, accessible components"
-    
-  backend_excellence:
-    api_design: "RESTful APIs with comprehensive OpenAPI documentation"
-    database_patterns: "Relational design with proper indexing and query optimization"
-    security_first: "Authentication, authorization, input validation, SQL injection prevention"
-    error_handling: "Comprehensive error handling with proper logging and monitoring"
-    
-  architecture_patterns:
-    scalability_focus: "Component-based architecture that scales to microservices"
-    performance_optimization: "Lazy loading, code splitting, caching strategies"
-    security_by_design: "Defense-in-depth security with zero-trust principles"
-    monitoring_integration: "Comprehensive logging, monitoring, and alerting"
-```
-
-### Code Quality Standards
-```yaml
-CODE_EXCELLENCE:
-  typescript_standards:
-    type_safety: "Strict TypeScript configuration with comprehensive type coverage"
-    interface_design: "Clear, composable interfaces with proper generic usage"
-    error_handling: "Proper error types and exception handling patterns"
-    
-  testing_standards:
-    coverage_target: "≥80% code coverage with meaningful test scenarios"
-    testing_pyramid: "Unit tests, integration tests, end-to-end test strategy"
-    test_quality: "Clear, maintainable tests that serve as documentation"
-    
-  documentation_standards:
-    code_documentation: "Self-documenting code with strategic comments"
-    api_documentation: "Comprehensive API documentation with examples"
-    architecture_documentation: "Clear system design and decision documentation"
-```
-
-## 🔐 UNIVERSAL SECURITY FRAMEWORK
-
-### Security Excellence Standards
-```yaml
-SECURITY_PRINCIPLES:
-  defense_in_depth: "Multiple layers of security controls with zero-trust architecture"
-  principle_of_least_privilege: "Minimum necessary access with role-based access control"
-  security_by_design: "Security considerations integrated into all design decisions"
-  continuous_monitoring: "Real-time security monitoring with incident response procedures"
-  
-AUTHENTICATION_PATTERNS:
-  modern_auth: "JWT with proper validation, refresh tokens, and secure storage"
-  multi_factor: "MFA implementation for administrative and sensitive operations"
-  session_management: "Secure session handling with proper timeout and invalidation"
-  
-DATA_PROTECTION:
-  encryption_standards: "AES-256 for data at rest, TLS 1.3 for data in transit"
-  input_validation: "Comprehensive input sanitization and validation"
-  sql_injection_prevention: "Parameterized queries and ORM security best practices"
-  xss_prevention: "Content Security Policy and proper output encoding"
-```
-
-## 📋 COMMANDS & FEATURES
-
-### Built-in Command System
-```yaml
-CONVERSATIONAL_COMMANDS:
-  planning_commands:
-    - "plan implementation" → "Comprehensive implementation planning with research validation"
-    - "analyze requirements" → "Deep requirements analysis with constitutional validation"
-    - "design architecture" → "Architectural design with best practices research"
-    
-  research_commands:
-    - "research technology" → "Deep research using full MCP orchestration"
-    - "compare options" → "Technology comparison with pros/cons analysis"
-    - "best practices" → "Industry best practices research and validation"
-    
-  development_commands:
-    - "implement feature" → "Feature implementation with quality validation"
-    - "debug issue" → "Systematic debugging with root cause analysis"
-    - "optimize performance" → "Performance optimization with measurement"
-    
-  quality_commands:
-    - "review code" → "Comprehensive code review with improvement suggestions"
-    - "validate security" → "Security audit and vulnerability assessment"
-    - "test strategy" → "Testing strategy development and implementation"
-```## ✅ ENFORCEMENT & COMPLIANCE
-
-### Mandatory Requirements (Zero Tolerance)
-```yaml
-MANDATORY_PRACTICES:
-  research_first: "✅ ALWAYS use Context7 first for technical documentation and best practices"
-  quality_standards: "✅ ALWAYS achieve minimum quality standards with constitutional validation"
-  constitutional_compliance: "✅ ALWAYS validate implementations against constitutional principles"
-  comprehensive_research: "✅ ALWAYS complete 3-MCP research chain for complexity ≥5"
-  security_validation: "✅ ALWAYS integrate security considerations into all implementations"
-  testing_requirements: "✅ ALWAYS implement comprehensive testing with proper coverage"
-  documentation_standards: "✅ ALWAYS maintain comprehensive documentation with implementations"
-  performance_optimization: "✅ ALWAYS optimize for performance throughout development process"
-  
-PROHIBITED_ACTIONS:
-  quality_compromise: "❌ NEVER accept quality below minimum standards"
-  research_bypass: "❌ NEVER implement without proper research validation for complexity ≥5"
-  security_oversight: "❌ NEVER skip security validation and testing procedures"
-  constitutional_violation: "❌ NEVER proceed with implementations that violate constitutional principles"
-  documentation_neglect: "❌ NEVER deploy without proper documentation and validation"
-  testing_omission: "❌ NEVER implement without comprehensive testing procedures"
-  performance_negligence: "❌ NEVER ignore performance considerations in implementations"
-```
-
-### Best Practices Framework
-```yaml
-EXCELLENCE_PRACTICES:
-  constitutional_first: "Always begin with constitutional analysis and principle validation"
-  research_driven: "Always begin with comprehensive research and authoritative validation"
-  quality_obsessed: "Never compromise on quality standards - excellence is non-negotiable"
-  security_integrated: "Integrate security considerations into all design decisions"
-  performance_focused: "Optimize for performance throughout development lifecycle"
-  test_comprehensive: "Implement comprehensive testing strategies with meaningful coverage"
-  document_thoroughly: "Maintain living documentation with all implementations"
-  monitor_continuously: "Implement monitoring and observability for all systems"
-```
-
-## 📊 SUCCESS METRICS & MONITORING
-
-### Performance Indicators
-```yaml
-ORCHESTRATION_METRICS:
-  routing_performance: "<200ms target for complexity assessment and routing decisions"
-  context_efficiency: "90%+ optimization with intelligent caching and context management"
-  cache_effectiveness: ">92% hit rate with intelligent cache management and validation"
-  task_success_rate: ">98% successful task completion with quality validation"
-  
-QUALITY_INDICATORS:
-  quality_achievement: "Meet or exceed complexity-based quality thresholds consistently"
-  context_relevance: ">95% precision in context relevance and importance scoring"
-  user_satisfaction: ">95% approval rating with constitutional development experience"
-  continuous_improvement: "Demonstrable improvement in patterns and implementation quality"
-  
-CONSTITUTIONAL_METRICS:
-  principle_compliance: "100% constitutional AI validation for all complexity levels"
-  research_validation: "≥95% accuracy with authoritative source verification"
-  routing_precision: "≥98% correct complexity assessment and MCP chain selection"
-  quality_consistency: "Consistent quality improvement and standard maintenance"
-```
-
-## 🚀 ACTIVATION PROTOCOLS
-
-### Automatic Orchestration Sequence
-```yaml
-INTELLIGENT_ACTIVATION:
-  1_trigger_analysis: "Scan input for bilingual trigger keywords with confidence scoring"
-  2_complexity_assessment: "Calculate complexity score using multi-factor algorithm"
-  3_context_determination: "Determine required context imports based on complexity and triggers"
-  4_mcp_chain_selection: "Select optimal MCP orchestration chain for identified complexity"
-  5_quality_threshold_setting: "Set quality enforcement level based on complexity assessment"
-  6_constitutional_validation: "Validate approach against constitutional principles"
-  7_execution_monitoring: "Monitor quality metrics and constitutional compliance throughout"
-  
-CONTEXT_ASSEMBLY_STRATEGY:
-  minimal_context: "Direct processing for L1-L2 simple operations"
-  enhanced_context: "Standards context loading for L3-L4 moderate operations"  
-  comprehensive_context: "Full context integration for L5-L6 complex operations"
-  enterprise_context: "Complete orchestration with compliance for L7+ operations"
-```
-
----
-
-## 🎯 ORCHESTRATOR OPERATION SUMMARY
-
-**CLAUDE CODE MASTER ORCHESTRATOR v8.0** transforms development requests into intelligently orchestrated, quality-assured solutions through:
-
-✅ **Constitutional AI Framework**: Principle-based development with multi-perspective validation  
-✅ **Research-First Protocol**: Mandatory Context7 → Tavily → Exa research chains for complexity ≥5  
-✅ **Intelligent Complexity Routing**: 5-level complexity assessment with automatic quality scaling  
-✅ **Bilingual Excellence**: Seamless Portuguese/English detection and culturally appropriate responses  
-✅ **Agent Orchestration**: Specialized agents with constitutional coordination and quality preservation  
-✅ **Performance Optimization**: <200ms routing with 92%+ cache efficiency and intelligent context management  
-✅ **Quality Assurance**: Progressive quality standards from 9.0/10 to 9.8/10 based on complexity  
-✅ **Universal Standards**: Technology patterns and security frameworks applicable to any domain  
-
-**Status**: 🟢 **ACTIVE** - Universal Excellence Orchestrator | Performance: <200ms | Quality: ≥9.0/10 | Coverage: Universal
-
----
-
-**The universal intelligence orchestration system ensures optimal performance while maintaining the highest quality standards, creating a foundation for exceptional development across any domain or technology stack.**

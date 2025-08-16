@@ -104,10 +104,7 @@ const PatientCard = React.forwardRef<HTMLButtonElement, PatientCardProps>(
     } = patient;
 
     const age = birthDate
-      ? Math.floor(
-          (Date.now() - new Date(birthDate).getTime()) /
-            (365.25 * 24 * 60 * 60 * 1000)
-        )
+      ? Math.floor((Date.now() - new Date(birthDate).getTime()) / (365.25 * 24 * 60 * 60 * 1000))
       : null;
 
     const getStatusVariant = (patientStatus: string) => {
@@ -147,17 +144,10 @@ const PatientCard = React.forwardRef<HTMLButtonElement, PatientCardProps>(
           <div className="min-w-0 flex-1">
             <div className="flex items-start justify-between gap-2">
               <div>
-                <h3
-                  className={cn(
-                    'truncate font-medium',
-                    compact ? 'text-sm' : 'text-base'
-                  )}
-                >
+                <h3 className={cn('truncate font-medium', compact ? 'text-sm' : 'text-base')}>
                   {name}
                 </h3>
-                {age && (
-                  <p className="text-muted-foreground text-sm">{age} anos</p>
-                )}
+                {age && <p className="text-muted-foreground text-sm">{age} anos</p>}
               </div>
 
               <div className="flex items-center gap-2">
@@ -174,9 +164,7 @@ const PatientCard = React.forwardRef<HTMLButtonElement, PatientCardProps>(
             </div>
 
             {!compact && email && (
-              <p className="mt-1 truncate text-muted-foreground text-sm">
-                {email}
-              </p>
+              <p className="mt-1 truncate text-muted-foreground text-sm">{email}</p>
             )}
           </div>
         </div>{' '}
@@ -223,9 +211,7 @@ const PatientCard = React.forwardRef<HTMLButtonElement, PatientCardProps>(
           {nextAppointment && (
             <div className="flex items-center justify-between text-sm">
               <span className="text-muted-foreground">Próxima consulta:</span>
-              <span className="font-medium text-primary">
-                {formatDate(nextAppointment)}
-              </span>
+              <span className="font-medium text-primary">{formatDate(nextAppointment)}</span>
             </div>
           )}
 

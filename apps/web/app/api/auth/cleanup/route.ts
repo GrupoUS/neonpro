@@ -329,5 +329,3 @@ function _checkRateLimit(
   userLimit.count++;
   return true;
 }
-
-export { cleanupService };

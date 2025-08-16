@@ -9,12 +9,11 @@ import { createFollowupProtocolSchema } from '@/app/lib/validations/followup';
 
 export async function GET(
   _request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-    const protocol = await treatmentFollowupService.getFollowupProtocolById(
-      params.id,
-    );
+    const { id } = await params;
+    const protocol = await treatmentFollowupService.getFollowupProtocolById(id);
 
     if (!protocol) {
       return NextResponse.json(
@@ -44,9 +43,10 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
+    const { id } = await params;
     const body = await request.json();
 
     // Validate request data (partial validation for updates)
@@ -55,7 +55,7 @@ export async function PUT(
 
     // Update protocol
     const protocol = await treatmentFollowupService.updateFollowupProtocol(
-      params.id,
+      id,
       validatedData,
     );
 
@@ -88,10 +88,11 @@ export async function PUT(
 
 export async function DELETE(
   _request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-    await treatmentFollowupService.deleteFollowupProtocol(params.id);
+    const { id } = await params;
+    await treatmentFollowupService.deleteFollowupProtocol(id);
 
     return NextResponse.json({
       success: true,

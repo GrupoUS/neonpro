@@ -1,4 +1,5 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, fireEvent, render, render, screen, screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import '@testing-library/jest-dom';
 import {
   CriticalErrorBoundary,
@@ -17,7 +18,7 @@ const ThrowError = ({ shouldThrow = true }: { shouldThrow?: boolean }) => {
 // Mock console.error to avoid noise in tests
 const originalConsoleError = console.error;
 beforeAll(() => {
-  console.error = jest.fn();
+  console.error = vi.fn();
 });
 
 afterAll(() => {
@@ -44,9 +45,7 @@ describe('ErrorBoundary', () => {
 
     expect(screen.getByText('Oops! Algo deu errado')).toBeInTheDocument();
     expect(
-      screen.getByText(
-        'Ocorreu um erro inesperado. Nossa equipe foi notificada.'
-      )
+      screen.getByText('Ocorreu um erro inesperado. Nossa equipe foi notificada.')
     ).toBeInTheDocument();
   });
 
@@ -77,7 +76,7 @@ describe('ErrorBoundary', () => {
   });
 
   it('calls onError callback when error occurs', () => {
-    const onErrorMock = jest.fn();
+    const onErrorMock = vi.fn();
 
     render(
       <ErrorBoundary onError={onErrorMock}>
@@ -109,7 +108,7 @@ describe('ErrorBoundary', () => {
 describe('CriticalErrorBoundary', () => {
   it('renders critical error UI with reload button', () => {
     // Mock window.location.reload
-    const mockReload = jest.fn();
+    const mockReload = vi.fn();
     Object.defineProperty(window, 'location', {
       value: { reload: mockReload },
       writable: true,
@@ -150,9 +149,7 @@ describe('withErrorBoundary HOC', () => {
   });
 
   it('passes props to wrapped component', () => {
-    const TestComponent = ({ message }: { message: string }) => (
-      <div>{message}</div>
-    );
+    const TestComponent = ({ message }: { message: string }) => <div>{message}</div>;
     const WrappedComponent = withErrorBoundary(TestComponent);
 
     render(<WrappedComponent message="Hello World" />);
@@ -166,9 +163,7 @@ describe('withErrorBoundary HOC', () => {
 
     const WrappedComponent = withErrorBoundary(TestComponent);
 
-    expect(WrappedComponent.displayName).toBe(
-      'withErrorBoundary(TestComponent)'
-    );
+    expect(WrappedComponent.displayName).toBe('withErrorBoundary(TestComponent)');
   });
 });
 

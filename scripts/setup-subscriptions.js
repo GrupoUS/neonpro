@@ -53,7 +53,7 @@ async function checkDependencies() {
     // Verificar se node_modules existe
     if (!fs.existsSync('node_modules')) {
       console.log('   Instalando dependências...');
-      execSync('npm install', { stdio: 'pipe', shell: false });
+      execSync('pnpm install', { stdio: 'pipe', shell: false });
     }
 
     console.log('   Dependências verificadas');
@@ -214,11 +214,11 @@ async function runValidationTests() {
     console.log('   Teste do banco: OK');
   } catch (_error) {
     console.log('   Teste do banco: Algumas verificações falharam');
-    console.log('   Execute: npm run test:db para mais detalhes');
+    console.log('   Execute: pnpm run test:db para mais detalhes');
   }
 
   console.log('   Para teste completo do sistema, execute:');
-  console.log('   npm run test:subscriptions');
+  console.log('   pnpm run test:subscriptions');
 }
 
 // 7. Configurar scripts de desenvolvimento

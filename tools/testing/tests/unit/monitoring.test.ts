@@ -1,6 +1,6 @@
 const fs = require('node:fs');
 const path = require('node:path');
-const { describe, expect, it } = require('@jest/globals');
+const { describe, expect, it } = require('vitest');
 
 describe('TASK-001 Foundation Setup Verification', () => {
   const rootDir = path.join(__dirname, '../../../../');

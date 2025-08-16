@@ -54,7 +54,6 @@ export { PatientDetailLayout } from './PatientDetailLayout';
 export type {
   PatientTableAction,
   PatientTableColumn,
-
   PatientTableProps,
   PatientTableSort,
   PatientTableViewMode,

@@ -61,3 +61,16 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# testing
+tools/testing/reports/
+**/coverage/
+**/test-results/
+**/playwright-report/
+**/.nyc_output/
+**/allure-results/
+**/allure-report/
+
+# test artifacts
+tools/testing/reports/**/*
+!tools/testing/reports/.gitkeep

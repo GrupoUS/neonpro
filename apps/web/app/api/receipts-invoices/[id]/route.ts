@@ -109,7 +109,7 @@ function getReceiptInvoiceManager() {
 // GET - Get document details
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const supabase = createClient(
@@ -138,7 +138,8 @@ export async function GET(
       );
     }
 
-    const documentId = params.id;
+    const { id } = await params;
+    const documentId = id;
 
     const manager = getReceiptInvoiceManager();
     const document = await manager.getDocument(documentId);
@@ -161,7 +162,7 @@ export async function GET(
 // POST - Perform actions on document
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const supabase = createClient(
@@ -190,7 +191,8 @@ export async function POST(
       );
     }
 
-    const documentId = params.id;
+    const { id } = await params;
+    const documentId = id;
     const url = new URL(request.url);
     const action = url.searchParams.get('action');
 
@@ -380,7 +382,7 @@ export async function POST(
 // PUT - Update document details
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const supabase = createClient(
@@ -409,7 +411,8 @@ export async function PUT(
       );
     }
 
-    const documentId = params.id;
+    const { id } = await params;
+    const documentId = id;
     const body = await request.json();
 
     // Update document data
@@ -445,7 +448,7 @@ export async function PUT(
 // DELETE - Delete document
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const supabase = createClient(
@@ -474,7 +477,8 @@ export async function DELETE(
       );
     }
 
-    const documentId = params.id;
+    const { id } = await params;
+    const documentId = id;
 
     // Get document to check if it can be deleted
     const { data: document, error: fetchError } = await supabase

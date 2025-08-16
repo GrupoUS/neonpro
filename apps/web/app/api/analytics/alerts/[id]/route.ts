@@ -7,12 +7,13 @@ import { type NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/app/utils/supabase/server';
 
 type RouteParams = {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 };
 
 export async function GET(_request: NextRequest, { params }: RouteParams) {
+  const { id } = await params;
   try {
     const supabase = createClient();
 
@@ -37,7 +38,7 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
         financial_kpis(kpi_name, kpi_category)
       `,
       )
-      .eq('id', params.id)
+      .eq('id', id)
       .single();
 
     if (error) {
@@ -82,6 +83,7 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
 }
 
 export async function PATCH(request: NextRequest, { params }: RouteParams) {
+  const { id } = await params;
   try {
     const supabase = createClient();
 
@@ -132,7 +134,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     const { data: updatedAlert, error } = await supabase
       .from('kpi_alerts')
       .update(updateData)
-      .eq('id', params.id)
+      .eq('id', id)
       .select(
         `
         *,
@@ -184,6 +186,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
 }
 
 export async function DELETE(_request: NextRequest, { params }: RouteParams) {
+  const { id } = await params;
   try {
     const supabase = createClient();
 
@@ -200,10 +203,7 @@ export async function DELETE(_request: NextRequest, { params }: RouteParams) {
       );
     }
 
-    const { error } = await supabase
-      .from('kpi_alerts')
-      .delete()
-      .eq('id', params.id);
+    const { error } = await supabase.from('kpi_alerts').delete().eq('id', id);
 
     if (error) {
       throw new Error(`Database error: ${error.message}`);

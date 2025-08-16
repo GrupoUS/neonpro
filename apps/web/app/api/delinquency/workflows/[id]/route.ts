@@ -72,12 +72,13 @@ const ScheduleActionSchema = z.object({
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const { searchParams } = new URL(request.url);
     const action = searchParams.get('action') || 'details';
-    const workflowId = params.id;
+    const { id } = await params;
+    const workflowId = id;
 
     if (!workflowId) {
       return NextResponse.json(
@@ -371,12 +372,13 @@ export async function GET(
  */
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const body = await request.json();
     const { action, ...data } = body;
-    const workflowId = params.id;
+    const { id } = await params;
+    const workflowId = id;
 
     if (!workflowId) {
       return NextResponse.json(
@@ -631,11 +633,12 @@ export async function POST(
  */
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const body = await request.json();
-    const workflowId = params.id;
+    const { id } = await params;
+    const workflowId = id;
 
     if (!workflowId) {
       return NextResponse.json(
@@ -731,13 +734,14 @@ export async function PUT(
  */
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const { searchParams } = new URL(request.url);
     const action = searchParams.get('action') || 'complete';
     const reason = searchParams.get('reason');
-    const workflowId = params.id;
+    const { id } = await params;
+    const workflowId = id;
 
     if (!workflowId) {
       return NextResponse.json(

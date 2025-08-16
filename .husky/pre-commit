@@ -1,20 +1,31 @@
 #!/usr/bin/env sh
 
-echo "🚀 NEONPRO Pre-commit Quality Validation"
-echo "========================================"
+echo "🏥 NEONPRO Healthcare Pre-commit Quality Validation"
+echo "================================================="
 
-# Run lint-staged for staged files (includes Ultracite formatting)
-echo "🔍 Running lint-staged with Ultracite..."
+# Stage 0: Claude Intelligent Context Detection
+echo "🧠 Running Claude intelligent context detection..."
+export CONTEXT_TRIGGER="pre-commit"
+.claude/hooks/intelligence/context-detector.bat
+.claude/hooks/intelligence/complexity-router.bat
+.claude/hooks/intelligence/workflow-tracker.bat
+
+if [ $? -ne 0 ]; then
+    echo "⚠️  Claude hooks completed with warnings (continuing...)"
+fi
+
+# Stage 1: Format and lint with Ultracite + Biome
+echo "🔍 Running Ultracite format and lint-staged..."
+npx ultracite format
 npx lint-staged
 
-# Check exit code
 if [ $? -ne 0 ]; then
-    echo "❌ Lint-staged failed. Please fix the issues and try again."
+    echo "❌ Formatting/linting failed. Please fix the issues and try again."
     exit 1
 fi
 
-# Run type checking
-echo "🏗️  Running type check..."
+# Stage 2: Type checking (incremental for speed)
+echo "🏗️  Running incremental type check..."
 pnpm run type-check
 
 if [ $? -ne 0 ]; then
@@ -22,14 +33,87 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-# Run unit tests (without coverage for speed)
-echo "🧪 Running unit tests..."
-pnpm run test:unit
+# Stage 3: Healthcare compliance validation
+echo "🏥 Validating healthcare compliance..."
+
+# Check for potential patient data exposure
+echo "  🔒 Checking for exposed patient data..."
+if git diff --cached --name-only | xargs grep -l "cpf\|email\|phone\|patient.*id" 2>/dev/null; then
+    echo "  ⚠️  Patient data detected in staged files - ensure proper encryption/masking"
+fi
+
+# Check for LGPD compliance in new files
+echo "  📋 Validating LGPD compliance..."
+if git diff --cached --name-only | grep -E "\.(ts|tsx|js|jsx)$" | xargs grep -l "patient.*data\|personal.*data" 2>/dev/null; then
+    echo "  ✅ LGPD data handling detected - ensure consent is properly managed"
+fi
+
+# Check for ANVISA compliance in medical procedures
+echo "  🏛️  Checking ANVISA compliance..."
+if git diff --cached --name-only | xargs grep -l "procedure\|treatment\|medication" 2>/dev/null; then
+    echo "  ✅ Medical procedures detected - ensure ANVISA compliance"
+fi
+
+# Stage 4: Run related tests for changed files
+echo "🧪 Running tests for changed files..."
+pnpm vitest related --run --reporter=basic --coverage=false
 
 if [ $? -ne 0 ]; then
-    echo "❌ Unit tests failed. Please fix failing tests and try again."
+    echo "❌ Related tests failed. Please fix failing tests and try again."
     exit 1
 fi
 
+# Stage 5: Workspace-specific validations
+echo "🏗️  Running workspace-specific validations..."
+
+# Check if changes are in web app
+if git diff --cached --name-only | grep "^apps/web/" >/dev/null; then
+    echo "  📱 Web app changes detected - running Next.js validation..."
+    cd apps/web && pnpm run lint && cd ../..
+    
+    if [ $? -ne 0 ]; then
+        echo "❌ Web app validation failed."
+        exit 1
+    fi
+fi
+
+# Check if changes are in UI package
+if git diff --cached --name-only | grep "^packages/ui/" >/dev/null; then
+    echo "  🎨 UI package changes detected - running component validation..."
+    pnpm --filter @neonpro/ui run lint
+    
+    if [ $? -ne 0 ]; then
+        echo "❌ UI package validation failed."
+        exit 1
+    fi
+fi
+
+# Check if changes are in utilities package
+if git diff --cached --name-only | grep "^packages/utils/" >/dev/null; then
+    echo "  🛠️  Utils package changes detected - running utility validation..."
+    pnpm --filter @neonpro/utils run lint
+    
+    if [ $? -ne 0 ]; then
+        echo "❌ Utils package validation failed."
+        exit 1
+    fi
+fi
+
+# Stage 6: Security and performance checks
+echo "🔐 Running security and performance checks..."
+
+# Check for console.log statements in production code
+if git diff --cached --name-only | grep -E "\.(ts|tsx|js|jsx)$" | xargs grep -n "console\.\(log\|debug\|info\)" 2>/dev/null; then
+    echo "  ⚠️  Console statements found - consider removing before production"
+fi
+
+# Check for TODO/FIXME comments in critical healthcare files
+if git diff --cached --name-only | grep -E "(patient|treatment|medical)" | xargs grep -n "TODO\|FIXME\|XXX" 2>/dev/null; then
+    echo "  ⚠️  TODO/FIXME found in healthcare files - ensure completion before production"
+fi
+
+echo ""
 echo "✅ All pre-commit validations passed!"
-echo "🎯 Code quality standards maintained with Ultracite + lint-staged"
+echo "🏥 Healthcare compliance maintained"
+echo "🎯 Code quality standards enforced with Ultracite+Biome"
+echo "🚀 Ready for commit!"

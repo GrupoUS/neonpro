@@ -3,7 +3,7 @@
  * Comprehensive Performance Testing for NeonPro Financial System
  */
 
-import { afterAll, beforeAll, describe, expect, it } from '@jest/globals';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 describe('NeonPro Performance Load Tests', () => {
   const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
@@ -41,14 +41,11 @@ describe('NeonPro Performance Load Tests', () => {
     it('should load reconciliation data within acceptable time', async () => {
       const startTime = performance.now();
 
-      const response = await fetch(
-        `${BASE_URL}/api/payments/reconciliation?limit=50`,
-        {
-          headers: {
-            Authorization: `Bearer ${TEST_AUTH_TOKEN}`,
-          },
-        }
-      );
+      const response = await fetch(`${BASE_URL}/api/payments/reconciliation?limit=50`, {
+        headers: {
+          Authorization: `Bearer ${TEST_AUTH_TOKEN}`,
+        },
+      });
 
       const endTime = performance.now();
       const responseTime = endTime - startTime;
@@ -66,21 +63,18 @@ describe('NeonPro Performance Load Tests', () => {
 
       const startTime = performance.now();
 
-      const _response = await fetch(
-        `${BASE_URL}/api/payments/reconciliation/import`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${TEST_AUTH_TOKEN}`,
-          },
-          body: JSON.stringify({
-            file: testCSV,
-            format: 'CSV',
-            sessionId: 'performance-test',
-          }),
-        }
-      );
+      const _response = await fetch(`${BASE_URL}/api/payments/reconciliation/import`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${TEST_AUTH_TOKEN}`,
+        },
+        body: JSON.stringify({
+          file: testCSV,
+          format: 'CSV',
+          sessionId: 'performance-test',
+        }),
+      });
 
       const endTime = performance.now();
       const responseTime = endTime - startTime;
@@ -90,24 +84,21 @@ describe('NeonPro Performance Load Tests', () => {
     it('should generate reports within acceptable performance bounds', async () => {
       const startTime = performance.now();
 
-      const _response = await fetch(
-        `${BASE_URL}/api/payments/reconciliation/reports`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${TEST_AUTH_TOKEN}`,
+      const _response = await fetch(`${BASE_URL}/api/payments/reconciliation/reports`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${TEST_AUTH_TOKEN}`,
+        },
+        body: JSON.stringify({
+          reportType: 'summary',
+          dateRange: {
+            start: '2025-01-01',
+            end: '2025-01-31',
           },
-          body: JSON.stringify({
-            reportType: 'summary',
-            dateRange: {
-              start: '2025-01-01',
-              end: '2025-01-31',
-            },
-            sessionId: 'performance-test',
-          }),
-        }
-      );
+          sessionId: 'performance-test',
+        }),
+      });
 
       const endTime = performance.now();
       const responseTime = endTime - startTime;
@@ -142,9 +133,7 @@ describe('NeonPro Performance Load Tests', () => {
           (result.value.status === 200 || result.value.status === 429) // 429 is acceptable under load
       ).length;
 
-      expect(successfulRequests / concurrentRequests).toBeGreaterThanOrEqual(
-        0.8
-      );
+      expect(successfulRequests / concurrentRequests).toBeGreaterThanOrEqual(0.8);
     });
 
     it('should handle concurrent file upload operations', async () => {
@@ -179,13 +168,10 @@ describe('NeonPro Performance Load Tests', () => {
       // At least 70% of uploads should succeed or be rate limited (both acceptable)
       const acceptableResponses = responses.filter(
         (result) =>
-          result.status === 'fulfilled' &&
-          [200, 202, 400, 429].includes(result.value.status)
+          result.status === 'fulfilled' && [200, 202, 400, 429].includes(result.value.status)
       ).length;
 
-      expect(acceptableResponses / concurrentUploads).toBeGreaterThanOrEqual(
-        0.7
-      );
+      expect(acceptableResponses / concurrentUploads).toBeGreaterThanOrEqual(0.7);
     });
   });
 
@@ -207,21 +193,18 @@ describe('NeonPro Performance Load Tests', () => {
 
       const startTime = performance.now();
 
-      const response = await fetch(
-        `${BASE_URL}/api/payments/reconciliation/import`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${TEST_AUTH_TOKEN}`,
-          },
-          body: JSON.stringify({
-            file: `data:text/csv;base64,${base64Data}`,
-            format: 'CSV',
-            sessionId: 'large-file-test',
-          }),
-        }
-      );
+      const response = await fetch(`${BASE_URL}/api/payments/reconciliation/import`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${TEST_AUTH_TOKEN}`,
+        },
+        body: JSON.stringify({
+          file: `data:text/csv;base64,${base64Data}`,
+          format: 'CSV',
+          sessionId: 'large-file-test',
+        }),
+      });
 
       const endTime = performance.now();
       const responseTime = endTime - startTime;
@@ -261,25 +244,22 @@ describe('NeonPro Performance Load Tests', () => {
     it('should execute complex queries within performance thresholds', async () => {
       const startTime = performance.now();
 
-      const _response = await fetch(
-        `${BASE_URL}/api/payments/reconciliation/analytics`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${TEST_AUTH_TOKEN}`,
+      const _response = await fetch(`${BASE_URL}/api/payments/reconciliation/analytics`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${TEST_AUTH_TOKEN}`,
+        },
+        body: JSON.stringify({
+          analysisType: 'summary_statistics',
+          dateRange: {
+            start: '2024-01-01',
+            end: '2025-01-31',
           },
-          body: JSON.stringify({
-            analysisType: 'summary_statistics',
-            dateRange: {
-              start: '2024-01-01',
-              end: '2025-01-31',
-            },
-            groupBy: ['month', 'category'],
-            sessionId: 'db-performance-test',
-          }),
-        }
-      );
+          groupBy: ['month', 'category'],
+          sessionId: 'db-performance-test',
+        }),
+      });
 
       const endTime = performance.now();
       const responseTime = endTime - startTime;
@@ -324,14 +304,11 @@ describe('NeonPro Performance Load Tests', () => {
     it('should maintain stability under high concurrent load', async () => {
       const highConcurrency = 50;
       const requests = Array.from({ length: highConcurrency }, (_, i) =>
-        fetch(
-          `${BASE_URL}/api/payments/reconciliation?stress_test=true&id=${i}`,
-          {
-            headers: {
-              Authorization: `Bearer ${TEST_AUTH_TOKEN}`,
-            },
-          }
-        )
+        fetch(`${BASE_URL}/api/payments/reconciliation?stress_test=true&id=${i}`, {
+          headers: {
+            Authorization: `Bearer ${TEST_AUTH_TOKEN}`,
+          },
+        })
       );
 
       const startTime = performance.now();
@@ -342,17 +319,13 @@ describe('NeonPro Performance Load Tests', () => {
       const _averageTime = totalTime / highConcurrency;
 
       // System should remain stable (not crash) under high load
-      const completedRequests = responses.filter(
-        (result) => result.status === 'fulfilled'
-      ).length;
+      const completedRequests = responses.filter((result) => result.status === 'fulfilled').length;
 
       expect(completedRequests).toBe(highConcurrency); // All requests should complete
 
       // At least 60% should succeed (others may be rate limited)
       const successfulRequests = responses.filter(
-        (result) =>
-          result.status === 'fulfilled' &&
-          [200, 429].includes(result.value.status)
+        (result) => result.status === 'fulfilled' && [200, 429].includes(result.value.status)
       ).length;
 
       expect(successfulRequests / highConcurrency).toBeGreaterThanOrEqual(0.6);

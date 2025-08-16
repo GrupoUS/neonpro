@@ -4,9 +4,10 @@ import { createClient } from '@/app/utils/supabase/server';
 
 export async function GET(
   _request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
+    const { id } = await params;
     const supabase = await createClient();
     const {
       data: { session },
@@ -28,7 +29,7 @@ export async function GET(
     }
 
     const emailService = new EmailService(supabase, profile.clinic_id);
-    const template = await emailService.getTemplate(params.id);
+    const template = await emailService.getTemplate(id);
 
     if (!template) {
       return NextResponse.json(
@@ -48,9 +49,10 @@ export async function GET(
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
+    const { id } = await params;
     const supabase = await createClient();
     const {
       data: { session },
@@ -74,7 +76,7 @@ export async function PATCH(
     const body = await request.json();
     const emailService = new EmailService(supabase, profile.clinic_id);
 
-    const template = await emailService.updateTemplate(params.id, body);
+    const template = await emailService.updateTemplate(id, body);
 
     return NextResponse.json(template);
   } catch (error) {
@@ -94,9 +96,10 @@ export async function PATCH(
 
 export async function DELETE(
   _request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
+    const { id } = await params;
     const supabase = await createClient();
     const {
       data: { session },
@@ -118,7 +121,7 @@ export async function DELETE(
     }
 
     const emailService = new EmailService(supabase, profile.clinic_id);
-    await emailService.deleteTemplate(params.id);
+    await emailService.deleteTemplate(id);
 
     return NextResponse.json({ success: true });
   } catch (error) {

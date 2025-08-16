@@ -408,10 +408,10 @@ async function main() {
   }
 
   if (failedTestsList.some((t) => t.name.includes('API'))) {
-    console.log('4. Verificar se o servidor está rodando: npm run dev');
+    console.log('4. Verificar se o servidor está rodando: pnpm run dev');
   }
 
-  console.log('5. Executar testes específicos com: npm run test:[categoria]');
+  console.log('5. Executar testes específicos com: pnpm run test:[categoria]');
   console.log('6. Configurar webhook com ngrok para testes locais');
 
   process.exit(failedTests > 0 ? 1 : 0);

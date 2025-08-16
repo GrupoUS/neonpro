@@ -10,7 +10,7 @@ const patientInsights = new PatientInsightsIntegration();
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { patientId: string } },
+  { params }: { params: Promise<{ patientId: string }> },
 ) {
   try {
     const supabase = createRouteHandlerClient({ cookies });
@@ -23,11 +23,13 @@ export async function GET(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    const { patientId } = await params;
+
     // Validate patient access
     const { data: patient } = await supabase
       .from('patients')
       .select('id')
-      .eq('id', params.patientId)
+      .eq('id', patientId)
       .single();
 
     if (!patient) {
@@ -41,12 +43,12 @@ export async function GET(
 
     // Create comprehensive insight request
     const insightRequest: PatientInsightRequest = {
-      patientId: params.patientId,
+      patientId: patientId,
       requestedInsights:
         requestedInsights.length > 0 ? (requestedInsights as any[]) : undefined,
       treatmentContext,
       timestamp: new Date(),
-      requestId: `req_${Date.now()}_${params.patientId}`,
+      requestId: `req_${Date.now()}_${patientId}`,
     };
 
     // Generate comprehensive insights
@@ -67,7 +69,7 @@ export async function GET(
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { patientId: string } },
+  { params }: { params: Promise<{ patientId: string }> },
 ) {
   try {
     const supabase = createRouteHandlerClient({ cookies });
@@ -80,18 +82,19 @@ export async function POST(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    const { patientId } = await params;
     const body = await request.json();
 
     // Create detailed insight request from body
     const insightRequest: PatientInsightRequest = {
-      patientId: params.patientId,
+      patientId: patientId,
       requestedInsights: body.requestedInsights || [],
       treatmentContext: body.treatmentContext,
       treatmentId: body.treatmentId,
       customParameters: body.customParameters || {},
       feedbackData: body.feedbackData,
       timestamp: new Date(),
-      requestId: body.requestId || `req_${Date.now()}_${params.patientId}`,
+      requestId: body.requestId || `req_${Date.now()}_${patientId}`,
     };
 
     // Generate comprehensive insights with custom parameters

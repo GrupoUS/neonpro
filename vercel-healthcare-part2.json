@@ -1,5 +1,11 @@
-  ],
-  
+{
+  "version": 2,
+  "name": "neonpro-healthcare",
+  "regions": ["gru1"],
+  "env": {
+    "HEALTHCARE_REGION": "sao-paulo",
+    "LGPD_COMPLIANCE": "enabled"
+  },
   "routes": [
     {
       "src": "/api/health-check",
@@ -8,7 +14,7 @@
       }
     }
   ],
-  
+
   "functions": {
     "apps/web/app/api/**/*.ts": {
       "runtime": "nodejs20.x",
@@ -19,14 +25,14 @@
       }
     }
   },
-  
+
   "crons": [
     {
       "path": "/api/cron/patient-data-cleanup",
       "schedule": "0 2 * * *"
     }
   ],
-  
+
   "builds": [
     {
       "src": "apps/web/package.json",
@@ -37,7 +43,7 @@
       }
     }
   ],
-  
+
   "rewrites": [
     {
       "source": "/health",

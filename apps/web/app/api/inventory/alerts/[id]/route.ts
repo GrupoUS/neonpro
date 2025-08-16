@@ -13,7 +13,7 @@ import { createClient } from '@/app/utils/supabase/server';
 
 export async function PATCH(
   _request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const supabase = await createClient();
@@ -25,7 +25,7 @@ export async function PATCH(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const alertId = params.id;
+    const { id: alertId } = await params;
 
     // Verify alert exists and update
     const { data: alert, error } = await supabase
@@ -72,7 +72,7 @@ export async function PATCH(
 
 export async function DELETE(
   _request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const supabase = await createClient();
@@ -84,7 +84,7 @@ export async function DELETE(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const alertId = params.id;
+    const { id: alertId } = await params;
 
     // Verify alert exists and delete
     const { error } = await supabase

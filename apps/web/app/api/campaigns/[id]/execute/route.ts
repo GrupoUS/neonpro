@@ -11,9 +11,10 @@ const campaignService = new MarketingCampaignService();
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
+    const { id } = await params;
     // Authentication check
     const supabase = await createClient();
     const {
@@ -39,10 +40,7 @@ export async function POST(
 
     const { execution_type } = validationResult.data;
 
-    const result = await campaignService.executeCampaign(
-      params.id,
-      execution_type,
-    );
+    const result = await campaignService.executeCampaign(id, execution_type);
 
     if (!result.success) {
       return NextResponse.json({ error: result.error }, { status: 500 });

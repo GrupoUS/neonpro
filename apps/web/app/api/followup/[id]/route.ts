@@ -9,12 +9,11 @@ import { updateFollowupStatusSchema } from '@/app/lib/validations/followup';
 
 export async function GET(
   _request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-    const followup = await treatmentFollowupService.getPatientFollowupById(
-      params.id,
-    );
+    const { id } = await params;
+    const followup = await treatmentFollowupService.getPatientFollowupById(id);
 
     if (!followup) {
       return NextResponse.json(
@@ -44,9 +43,10 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
+    const { id } = await params;
     const body = await request.json();
 
     // Validate request data
@@ -54,7 +54,7 @@ export async function PUT(
 
     // Update follow-up
     const followup = await treatmentFollowupService.updatePatientFollowup(
-      params.id,
+      id,
       validatedData,
     );
 

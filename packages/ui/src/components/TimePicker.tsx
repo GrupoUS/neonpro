@@ -13,16 +13,7 @@ export type TimePickerProps = {
 };
 
 const TimePicker = React.forwardRef<HTMLButtonElement, TimePickerProps>(
-  (
-    {
-      value,
-      onChange,
-      placeholder = 'Selecione um horário',
-      disabled,
-      className,
-    },
-    ref
-  ) => {
+  ({ value, onChange, placeholder = 'Selecione um horário', disabled, className }, ref) => {
     const [open, setOpen] = React.useState(false);
 
     return (

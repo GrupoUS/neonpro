@@ -68,11 +68,12 @@ export async function GET(
  */
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
+    const { id } = await params;
     const supabase = createRouteHandlerClient<Database>({ cookies });
-    const patientId = params.id;
+    const patientId = id;
     const body = await request.json();
 
     // Get user session

@@ -11,9 +11,10 @@ const campaignService = new MarketingCampaignService();
 
 export async function GET(
   _request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
+    const { id } = await params;
     // Authentication check
     const supabase = await createClient();
     const {
@@ -23,7 +24,7 @@ export async function GET(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const result = await campaignService.getCampaignById(params.id);
+    const result = await campaignService.getCampaignById(id);
 
     if (!result.success) {
       return NextResponse.json({ error: result.error }, { status: 404 });
@@ -43,9 +44,10 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
+    const { id } = await params;
     // Authentication check
     const supabase = await createClient();
     const {
@@ -70,7 +72,7 @@ export async function PUT(
     }
 
     const result = await campaignService.updateCampaign(
-      params.id,
+      id,
       validationResult.data,
     );
 
@@ -93,9 +95,10 @@ export async function PUT(
 
 export async function DELETE(
   _request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
+    const { id } = await params;
     // Authentication check
     const supabase = await createClient();
     const {
@@ -105,7 +108,7 @@ export async function DELETE(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const result = await campaignService.deleteCampaign(params.id);
+    const result = await campaignService.deleteCampaign(id);
 
     if (!result.success) {
       return NextResponse.json({ error: result.error }, { status: 500 });

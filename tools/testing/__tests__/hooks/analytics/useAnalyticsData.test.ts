@@ -1,22 +1,25 @@
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import {
+  QueryClient,
+  QueryClient,
+  QueryClientProvider,
+  QueryClientProvider,
+} from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
 import React from 'react';
-import {
-  mockAnalyticsData,
-  mockErrorResponse,
-} from '@/../../__tests__/utils/mockData';
+import { vi } from 'vitest';
+import { mockAnalyticsData, mockErrorResponse } from '@/../../__tests__/utils/mockData';
 import { useAnalyticsData } from '@/hooks/analytics/useAnalyticsData';
 
 // Mock Supabase client
-jest.mock('@/utils/supabase/client', () => ({
+vi.Mock('@/utils/supabase/client', () => ({
   createSupabaseClient: () => ({
-    from: jest.fn().mockReturnThis(),
-    select: jest.fn().mockReturnThis(),
-    eq: jest.fn().mockReturnThis(),
-    gte: jest.fn().mockReturnThis(),
-    lte: jest.fn().mockReturnThis(),
-    order: jest.fn().mockReturnThis(),
-    limit: jest.fn().mockReturnThis(),
+    from: vi.fn().mockReturnThis(),
+    select: vi.fn().mockReturnThis(),
+    eq: vi.fn().mockReturnThis(),
+    gte: vi.fn().mockReturnThis(),
+    lte: vi.fn().mockReturnThis(),
+    order: vi.fn().mockReturnThis(),
+    limit: vi.fn().mockReturnThis(),
   }),
 }));
 
@@ -35,13 +38,12 @@ const createWrapper = () => {
 
 describe('useAnalyticsData', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('should return analytics data successfully', async () => {
     // Mock successful API response
-    const mockSupabase =
-      require('@/utils/supabase/client').createSupabaseClient();
+    const mockSupabase = require('@/utils/supabase/client').createSupabaseClient();
     mockSupabase.select.mockResolvedValueOnce({
       data: mockAnalyticsData,
       error: null,
@@ -74,8 +76,7 @@ describe('useAnalyticsData', () => {
 
   it('should handle API errors gracefully', async () => {
     // Mock error response
-    const mockSupabase =
-      require('@/utils/supabase/client').createSupabaseClient();
+    const mockSupabase = require('@/utils/supabase/client').createSupabaseClient();
     mockSupabase.select.mockResolvedValueOnce(mockErrorResponse);
 
     const { result } = renderHook(
@@ -97,22 +98,18 @@ describe('useAnalyticsData', () => {
   });
 
   it('should refetch data when filters change', async () => {
-    const mockSupabase =
-      require('@/utils/supabase/client').createSupabaseClient();
+    const mockSupabase = require('@/utils/supabase/client').createSupabaseClient();
     mockSupabase.select.mockResolvedValue({
       data: mockAnalyticsData,
       error: null,
     });
 
-    const { result, rerender } = renderHook(
-      ({ filters }) => useAnalyticsData(filters),
-      {
-        wrapper: createWrapper(),
-        initialProps: {
-          filters: { dateRange: { start: '2024-01-01', end: '2024-01-31' } },
-        },
-      }
-    );
+    const { result, rerender } = renderHook(({ filters }) => useAnalyticsData(filters), {
+      wrapper: createWrapper(),
+      initialProps: {
+        filters: { dateRange: { start: '2024-01-01', end: '2024-01-31' } },
+      },
+    });
 
     await waitFor(() => {
       expect(result.current.isSuccess).toBe(true);
@@ -135,8 +132,7 @@ describe('useAnalyticsData', () => {
   });
 
   it('should cache data properly', async () => {
-    const mockSupabase =
-      require('@/utils/supabase/client').createSupabaseClient();
+    const mockSupabase = require('@/utils/supabase/client').createSupabaseClient();
     mockSupabase.select.mockResolvedValue({
       data: mockAnalyticsData,
       error: null,

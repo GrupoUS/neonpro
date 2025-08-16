@@ -1,44 +1,49 @@
+import { NextRequest } from 'next/server';
 import {
   afterEach,
+  afterEach,
+  beforeEach,
   beforeEach,
   describe,
+  describe,
+  expect,
   expect,
   jest,
+  jest,
   test,
-} from '@jest/globals';
-import { NextRequest } from 'next/server';
+  test,
+  vi,
+} from 'vitest';
 import { GET, POST } from '@/app/api/export/route';
 import { createClient } from '@/utils/supabase/server';
 
 // Mock Supabase client
-jest.mock('@/utils/supabase/server');
-const mockCreateClient = createClient as jest.MockedFunction<
-  typeof createClient
->;
+vi.Mock('@/utils/supabase/server');
+const mockCreateClient = createClient as vi.MockedFunction<typeof createClient>;
 
 // Mock file system operations
-jest.mock('fs/promises');
-jest.mock('path');
+vi.Mock('fs/promises');
+vi.Mock('path');
 
 // Mock jsPDF and xlsx
-jest.mock('jspdf', () => ({
+vi.Mock('jspdf', () => ({
   __esModule: true,
-  default: jest.fn().mockImplementation(() => ({
-    text: jest.fn(),
-    addPage: jest.fn(),
-    save: jest.fn(),
-    output: jest.fn().mockReturnValue('mock-pdf-data'),
+  default: vi.fn().mockImplementation(() => ({
+    text: vi.fn(),
+    addPage: vi.fn(),
+    save: vi.fn(),
+    output: vi.fn().mockReturnValue('mock-pdf-data'),
   })),
 }));
 
-jest.mock('xlsx', () => ({
+vi.Mock('xlsx', () => ({
   utils: {
-    json_to_sheet: jest.fn().mockReturnValue({}),
-    book_new: jest.fn().mockReturnValue({}),
-    book_append_sheet: jest.fn(),
-    sheet_to_csv: jest.fn().mockReturnValue('mock,csv,data'),
+    json_to_sheet: vi.fn().mockReturnValue({}),
+    book_new: vi.fn().mockReturnValue({}),
+    book_append_sheet: vi.fn(),
+    sheet_to_csv: vi.fn().mockReturnValue('mock,csv,data'),
   },
-  write: jest.fn().mockReturnValue('mock-xlsx-data'),
+  write: vi.fn().mockReturnValue('mock-xlsx-data'),
 }));
 
 describe('Export API Routes', () => {
@@ -48,17 +53,17 @@ describe('Export API Routes', () => {
     // Setup mock Supabase client
     mockSupabase = {
       auth: {
-        getUser: jest.fn(),
+        getUser: vi.fn(),
       },
-      from: jest.fn(),
-      rpc: jest.fn(),
+      from: vi.fn(),
+      rpc: vi.fn(),
     };
 
     mockCreateClient.mockResolvedValue(mockSupabase);
   });
 
   afterEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe('GET /api/export', () => {
@@ -90,11 +95,11 @@ describe('Export API Routes', () => {
       });
 
       const mockFrom = {
-        select: jest.fn().mockReturnThis(),
-        eq: jest.fn().mockReturnThis(),
-        gte: jest.fn().mockReturnThis(),
-        lte: jest.fn().mockReturnThis(),
-        order: jest.fn().mockResolvedValue({
+        select: vi.fn().mockReturnThis(),
+        eq: vi.fn().mockReturnThis(),
+        gte: vi.fn().mockReturnThis(),
+        lte: vi.fn().mockReturnThis(),
+        order: vi.fn().mockResolvedValue({
           data: mockSubscriptions,
           error: null,
         }),
@@ -113,9 +118,7 @@ describe('Export API Routes', () => {
       // Assert
       expect(response.status).toBe(200);
       expect(response.headers.get('content-type')).toBe('text/csv');
-      expect(response.headers.get('content-disposition')).toContain(
-        'attachment'
-      );
+      expect(response.headers.get('content-disposition')).toContain('attachment');
       expect(mockSupabase.from).toHaveBeenCalledWith('subscriptions');
     });
 
@@ -160,9 +163,7 @@ describe('Export API Routes', () => {
       // Assert
       expect(response.status).toBe(200);
       expect(response.headers.get('content-type')).toBe('application/pdf');
-      expect(response.headers.get('content-disposition')).toContain(
-        'attachment'
-      );
+      expect(response.headers.get('content-disposition')).toContain('attachment');
     });
 
     test('should export trial data as Excel', async () => {
@@ -191,11 +192,11 @@ describe('Export API Routes', () => {
       });
 
       const mockFrom = {
-        select: jest.fn().mockReturnThis(),
-        eq: jest.fn().mockReturnThis(),
-        gte: jest.fn().mockReturnThis(),
-        lte: jest.fn().mockReturnThis(),
-        order: jest.fn().mockResolvedValue({
+        select: vi.fn().mockReturnThis(),
+        eq: vi.fn().mockReturnThis(),
+        gte: vi.fn().mockReturnThis(),
+        lte: vi.fn().mockReturnThis(),
+        order: vi.fn().mockResolvedValue({
           data: mockTrials,
           error: null,
         }),
@@ -203,10 +204,9 @@ describe('Export API Routes', () => {
 
       mockSupabase.from.mockReturnValue(mockFrom);
 
-      const request = new NextRequest(
-        'http://localhost:3000/api/export?type=trials&format=xlsx',
-        { method: 'GET' }
-      );
+      const request = new NextRequest('http://localhost:3000/api/export?type=trials&format=xlsx', {
+        method: 'GET',
+      });
 
       // Act
       const response = await GET(request);
@@ -216,9 +216,7 @@ describe('Export API Routes', () => {
       expect(response.headers.get('content-type')).toBe(
         'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
       );
-      expect(response.headers.get('content-disposition')).toContain(
-        'attachment'
-      );
+      expect(response.headers.get('content-disposition')).toContain('attachment');
     });
 
     test('should return 401 for unauthenticated requests', async () => {
@@ -313,10 +311,10 @@ describe('Export API Routes', () => {
       });
 
       const mockFrom = {
-        select: jest.fn().mockReturnThis(),
-        gte: jest.fn().mockReturnThis(),
-        lte: jest.fn().mockReturnThis(),
-        order: jest.fn().mockResolvedValue({
+        select: vi.fn().mockReturnThis(),
+        gte: vi.fn().mockReturnThis(),
+        lte: vi.fn().mockReturnThis(),
+        order: vi.fn().mockResolvedValue({
           data: [],
           error: null,
         }),
@@ -352,8 +350,8 @@ describe('Export API Routes', () => {
       });
 
       const mockFrom = {
-        select: jest.fn().mockReturnThis(),
-        order: jest.fn().mockResolvedValue({
+        select: vi.fn().mockReturnThis(),
+        order: vi.fn().mockResolvedValue({
           data: null,
           error: { message: 'Database connection failed' },
         }),
@@ -402,8 +400,8 @@ describe('Export API Routes', () => {
       });
 
       const mockFrom = {
-        insert: jest.fn().mockReturnThis(),
-        select: jest.fn().mockResolvedValue({
+        insert: vi.fn().mockReturnThis(),
+        select: vi.fn().mockResolvedValue({
           data: [{ id: 'job_123', status: 'queued' }],
           error: null,
         }),
@@ -491,8 +489,8 @@ describe('Export API Routes', () => {
       });
 
       const mockFrom = {
-        select: jest.fn().mockReturnThis(),
-        order: jest.fn().mockResolvedValue({
+        select: vi.fn().mockReturnThis(),
+        order: vi.fn().mockResolvedValue({
           data: largeDataset,
           error: null,
         }),
@@ -529,8 +527,8 @@ describe('Export API Routes', () => {
       });
 
       const mockFrom = {
-        select: jest.fn().mockReturnThis(),
-        order: jest.fn().mockResolvedValue({
+        select: vi.fn().mockReturnThis(),
+        order: vi.fn().mockResolvedValue({
           data: [],
           error: null,
         }),
@@ -538,20 +536,15 @@ describe('Export API Routes', () => {
 
       mockSupabase.from.mockReturnValue(mockFrom);
 
-      const requests = new Array(5)
-        .fill(null)
-        .map(
-          () =>
-            new NextRequest(
-              'http://localhost:3000/api/export?type=subscriptions&format=csv',
-              { method: 'GET' }
-            )
-        );
+      const requests = new Array(5).fill(null).map(
+        () =>
+          new NextRequest('http://localhost:3000/api/export?type=subscriptions&format=csv', {
+            method: 'GET',
+          })
+      );
 
       // Act
-      const responses = await Promise.all(
-        requests.map((request) => GET(request))
-      );
+      const responses = await Promise.all(requests.map((request) => GET(request)));
 
       // Assert
       responses.forEach((response) => {
@@ -579,8 +572,8 @@ describe('Export API Routes', () => {
       });
 
       const mockFrom = {
-        select: jest.fn().mockReturnThis(),
-        order: jest.fn().mockResolvedValue({
+        select: vi.fn().mockReturnThis(),
+        order: vi.fn().mockResolvedValue({
           data: moderateDataset,
           error: null,
         }),

@@ -2,15 +2,7 @@
 // Story 11.4: Alertas e Relatórios de Estoque
 // Integration tests covering API endpoints with database operations
 
-import {
-  afterAll,
-  afterEach,
-  beforeAll,
-  beforeEach,
-  describe,
-  expect,
-  it,
-} from '@jest/globals';
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Mock Next.js request/response for testing
 const mockRequest = (method: string, url: string, body?: any) =>
@@ -31,23 +23,23 @@ const mockSession = {
 // Mock Supabase client
 const mockSupabaseClient = {
   auth: {
-    getSession: jest.fn().mockResolvedValue({
+    getSession: vi.fn().mockResolvedValue({
       data: { session: mockSession },
       error: null,
     }),
   },
-  from: jest.fn().mockReturnThis(),
-  select: jest.fn().mockReturnThis(),
-  insert: jest.fn().mockReturnThis(),
-  update: jest.fn().mockReturnThis(),
-  eq: jest.fn().mockReturnThis(),
-  single: jest.fn(),
-  order: jest.fn().mockReturnThis(),
-  range: jest.fn().mockReturnThis(),
+  from: vi.fn().mockReturnThis(),
+  select: vi.fn().mockReturnThis(),
+  insert: vi.fn().mockReturnThis(),
+  update: vi.fn().mockReturnThis(),
+  eq: vi.fn().mockReturnThis(),
+  single: vi.fn(),
+  order: vi.fn().mockReturnThis(),
+  range: vi.fn().mockReturnThis(),
 };
 
 // Mock the Supabase import
-jest.mock('@/app/utils/supabase/server', () => ({
+vi.Mock('@/app/utils/supabase/server', () => ({
   createClient: jest.fn(() => Promise.resolve(mockSupabaseClient)),
 }));
 
@@ -119,12 +111,12 @@ beforeAll(() => {
 
 afterAll(() => {
   // Cleanup
-  jest.clearAllMocks();
+  vi.clearAllMocks();
 });
 
 beforeEach(() => {
   // Reset mocks before each test
-  jest.clearAllMocks();
+  vi.clearAllMocks();
 
   // Setup default successful responses
   mockSupabaseClient.single.mockResolvedValue({
@@ -135,7 +127,7 @@ beforeEach(() => {
 
 afterEach(() => {
   // Clean up after each test
-  jest.resetAllMocks();
+  vi.resetAllMocks();
 });
 
 // =====================================================
@@ -146,10 +138,10 @@ describe('GET /api/stock/alerts', () => {
   beforeEach(() => {
     // Mock the chain of Supabase query methods
     mockSupabaseClient.from.mockReturnValue({
-      select: jest.fn().mockReturnValue({
-        eq: jest.fn().mockReturnValue({
-          order: jest.fn().mockReturnValue({
-            range: jest.fn().mockResolvedValue({
+      select: vi.fn().mockReturnValue({
+        eq: vi.fn().mockReturnValue({
+          order: vi.fn().mockReturnValue({
+            range: vi.fn().mockResolvedValue({
               data: [mockAlert],
               error: null,
               count: 1,
@@ -197,10 +189,7 @@ describe('GET /api/stock/alerts', () => {
     expect(responseData.success).toBe(true);
 
     // Verify that the filter was applied
-    expect(mockSupabaseClient.eq).toHaveBeenCalledWith(
-      'severity_level',
-      'critical'
-    );
+    expect(mockSupabaseClient.eq).toHaveBeenCalledWith('severity_level', 'critical');
   });
 
   it('should handle authentication errors', async () => {
@@ -223,10 +212,10 @@ describe('GET /api/stock/alerts', () => {
   it('should handle database errors gracefully', async () => {
     // Mock database error
     mockSupabaseClient.from.mockReturnValue({
-      select: jest.fn().mockReturnValue({
-        eq: jest.fn().mockReturnValue({
-          order: jest.fn().mockReturnValue({
-            range: jest.fn().mockResolvedValue({
+      select: vi.fn().mockReturnValue({
+        eq: vi.fn().mockReturnValue({
+          order: vi.fn().mockReturnValue({
+            range: vi.fn().mockResolvedValue({
               data: null,
               error: new Error('Database connection failed'),
             }),
@@ -257,10 +246,7 @@ describe('GET /api/stock/alerts', () => {
   });
 
   it('should apply proper sorting', async () => {
-    const request = mockRequest(
-      'GET',
-      '/api/stock/alerts?sortBy=severity_level&sortOrder=asc'
-    );
+    const request = mockRequest('GET', '/api/stock/alerts?sortBy=severity_level&sortOrder=asc');
 
     const response = await GET(request);
 
@@ -288,9 +274,9 @@ describe('POST /api/stock/alerts', () => {
   beforeEach(() => {
     // Mock successful alert config creation
     mockSupabaseClient.from.mockReturnValue({
-      insert: jest.fn().mockReturnValue({
-        select: jest.fn().mockReturnValue({
-          single: jest.fn().mockResolvedValue({
+      insert: vi.fn().mockReturnValue({
+        select: vi.fn().mockReturnValue({
+          single: vi.fn().mockResolvedValue({
             data: mockAlertConfig,
             error: null,
           }),
@@ -300,11 +286,7 @@ describe('POST /api/stock/alerts', () => {
   });
 
   it('should create alert configuration successfully', async () => {
-    const request = mockRequest(
-      'POST',
-      '/api/stock/alerts',
-      validCreateRequest
-    );
+    const request = mockRequest('POST', '/api/stock/alerts', validCreateRequest);
 
     const response = await POST(request);
     const responseData = await response.json();
@@ -365,9 +347,9 @@ describe('POST /api/stock/alerts', () => {
   it('should handle duplicate configuration errors', async () => {
     // Mock duplicate constraint error
     mockSupabaseClient.from.mockReturnValue({
-      insert: jest.fn().mockReturnValue({
-        select: jest.fn().mockReturnValue({
-          single: jest.fn().mockResolvedValue({
+      insert: vi.fn().mockReturnValue({
+        select: vi.fn().mockReturnValue({
+          single: vi.fn().mockResolvedValue({
             data: null,
             error: {
               code: '23505',
@@ -378,11 +360,7 @@ describe('POST /api/stock/alerts', () => {
       }),
     });
 
-    const request = mockRequest(
-      'POST',
-      '/api/stock/alerts',
-      validCreateRequest
-    );
+    const request = mockRequest('POST', '/api/stock/alerts', validCreateRequest);
 
     const response = await POST(request);
     const responseData = await response.json();
@@ -405,18 +383,18 @@ describe('POST /api/stock/alerts/acknowledge', () => {
   beforeEach(() => {
     // Mock successful alert retrieval and update
     mockSupabaseClient.from.mockReturnValue({
-      select: jest.fn().mockReturnValue({
-        eq: jest.fn().mockReturnValue({
-          single: jest.fn().mockResolvedValue({
+      select: vi.fn().mockReturnValue({
+        eq: vi.fn().mockReturnValue({
+          single: vi.fn().mockResolvedValue({
             data: mockAlert,
             error: null,
           }),
         }),
       }),
-      update: jest.fn().mockReturnValue({
-        eq: jest.fn().mockReturnValue({
-          select: jest.fn().mockReturnValue({
-            single: jest.fn().mockResolvedValue({
+      update: vi.fn().mockReturnValue({
+        eq: vi.fn().mockReturnValue({
+          select: vi.fn().mockReturnValue({
+            single: vi.fn().mockResolvedValue({
               data: { ...mockAlert, status: 'acknowledged' },
               error: null,
             }),
@@ -427,11 +405,7 @@ describe('POST /api/stock/alerts/acknowledge', () => {
   });
 
   it('should acknowledge alert successfully', async () => {
-    const request = mockRequest(
-      'POST',
-      '/api/stock/alerts/acknowledge',
-      validAcknowledgeRequest
-    );
+    const request = mockRequest('POST', '/api/stock/alerts/acknowledge', validAcknowledgeRequest);
 
     const response = await acknowledgePost(request);
     const responseData = await response.json();
@@ -447,11 +421,7 @@ describe('POST /api/stock/alerts/acknowledge', () => {
       alertId: 'invalid-uuid',
     };
 
-    const request = mockRequest(
-      'POST',
-      '/api/stock/alerts/acknowledge',
-      invalidRequest
-    );
+    const request = mockRequest('POST', '/api/stock/alerts/acknowledge', invalidRequest);
 
     const response = await acknowledgePost(request);
     const responseData = await response.json();
@@ -464,9 +434,9 @@ describe('POST /api/stock/alerts/acknowledge', () => {
   it('should handle non-existent alert', async () => {
     // Mock alert not found
     mockSupabaseClient.from.mockReturnValue({
-      select: jest.fn().mockReturnValue({
-        eq: jest.fn().mockReturnValue({
-          single: jest.fn().mockResolvedValue({
+      select: vi.fn().mockReturnValue({
+        eq: vi.fn().mockReturnValue({
+          single: vi.fn().mockResolvedValue({
             data: null,
             error: new Error('Alert not found'),
           }),
@@ -474,11 +444,7 @@ describe('POST /api/stock/alerts/acknowledge', () => {
       }),
     });
 
-    const request = mockRequest(
-      'POST',
-      '/api/stock/alerts/acknowledge',
-      validAcknowledgeRequest
-    );
+    const request = mockRequest('POST', '/api/stock/alerts/acknowledge', validAcknowledgeRequest);
 
     const response = await acknowledgePost(request);
     const responseData = await response.json();
@@ -491,9 +457,9 @@ describe('POST /api/stock/alerts/acknowledge', () => {
     // Mock already acknowledged alert
     const acknowledgedAlert = { ...mockAlert, status: 'acknowledged' };
     mockSupabaseClient.from.mockReturnValue({
-      select: jest.fn().mockReturnValue({
-        eq: jest.fn().mockReturnValue({
-          single: jest.fn().mockResolvedValue({
+      select: vi.fn().mockReturnValue({
+        eq: vi.fn().mockReturnValue({
+          single: vi.fn().mockResolvedValue({
             data: acknowledgedAlert,
             error: null,
           }),
@@ -501,11 +467,7 @@ describe('POST /api/stock/alerts/acknowledge', () => {
       }),
     });
 
-    const request = mockRequest(
-      'POST',
-      '/api/stock/alerts/acknowledge',
-      validAcknowledgeRequest
-    );
+    const request = mockRequest('POST', '/api/stock/alerts/acknowledge', validAcknowledgeRequest);
 
     const response = await acknowledgePost(request);
     const responseData = await response.json();
@@ -529,18 +491,18 @@ describe('POST /api/stock/alerts/resolve', () => {
   beforeEach(() => {
     // Mock successful alert retrieval and resolution
     mockSupabaseClient.from.mockReturnValue({
-      select: jest.fn().mockReturnValue({
-        eq: jest.fn().mockReturnValue({
-          single: jest.fn().mockResolvedValue({
+      select: vi.fn().mockReturnValue({
+        eq: vi.fn().mockReturnValue({
+          single: vi.fn().mockResolvedValue({
             data: mockAlert,
             error: null,
           }),
         }),
       }),
-      update: jest.fn().mockReturnValue({
-        eq: jest.fn().mockReturnValue({
-          select: jest.fn().mockReturnValue({
-            single: jest.fn().mockResolvedValue({
+      update: vi.fn().mockReturnValue({
+        eq: vi.fn().mockReturnValue({
+          select: vi.fn().mockReturnValue({
+            single: vi.fn().mockResolvedValue({
               data: { ...mockAlert, status: 'resolved' },
               error: null,
             }),
@@ -551,11 +513,7 @@ describe('POST /api/stock/alerts/resolve', () => {
   });
 
   it('should resolve alert successfully', async () => {
-    const request = mockRequest(
-      'POST',
-      '/api/stock/alerts/resolve',
-      validResolveRequest
-    );
+    const request = mockRequest('POST', '/api/stock/alerts/resolve', validResolveRequest);
 
     const response = await resolvePost(request);
     const responseData = await response.json();
@@ -571,11 +529,7 @@ describe('POST /api/stock/alerts/resolve', () => {
       resolution: '',
     };
 
-    const request = mockRequest(
-      'POST',
-      '/api/stock/alerts/resolve',
-      invalidRequest
-    );
+    const request = mockRequest('POST', '/api/stock/alerts/resolve', invalidRequest);
 
     const response = await resolvePost(request);
     const responseData = await response.json();
@@ -588,9 +542,9 @@ describe('POST /api/stock/alerts/resolve', () => {
     // Mock already resolved alert
     const resolvedAlert = { ...mockAlert, status: 'resolved' };
     mockSupabaseClient.from.mockReturnValue({
-      select: jest.fn().mockReturnValue({
-        eq: jest.fn().mockReturnValue({
-          single: jest.fn().mockResolvedValue({
+      select: vi.fn().mockReturnValue({
+        eq: vi.fn().mockReturnValue({
+          single: vi.fn().mockResolvedValue({
             data: resolvedAlert,
             error: null,
           }),
@@ -598,11 +552,7 @@ describe('POST /api/stock/alerts/resolve', () => {
       }),
     });
 
-    const request = mockRequest(
-      'POST',
-      '/api/stock/alerts/resolve',
-      validResolveRequest
-    );
+    const request = mockRequest('POST', '/api/stock/alerts/resolve', validResolveRequest);
 
     const response = await resolvePost(request);
     const responseData = await response.json();
@@ -617,11 +567,7 @@ describe('POST /api/stock/alerts/resolve', () => {
       resolution: 'a'.repeat(1001), // Too long
     };
 
-    const request = mockRequest(
-      'POST',
-      '/api/stock/alerts/resolve',
-      invalidRequest
-    );
+    const request = mockRequest('POST', '/api/stock/alerts/resolve', invalidRequest);
 
     const response = await resolvePost(request);
     const responseData = await response.json();
@@ -654,10 +600,10 @@ describe('Edge Cases and Error Handling', () => {
   it('should handle network timeouts gracefully', async () => {
     // Mock timeout error
     mockSupabaseClient.from.mockReturnValue({
-      select: jest.fn().mockReturnValue({
-        eq: jest.fn().mockReturnValue({
-          order: jest.fn().mockReturnValue({
-            range: jest.fn().mockRejectedValue(new Error('TIMEOUT')),
+      select: vi.fn().mockReturnValue({
+        eq: vi.fn().mockReturnValue({
+          order: vi.fn().mockReturnValue({
+            range: vi.fn().mockRejectedValue(new Error('TIMEOUT')),
           }),
         }),
       }),
@@ -695,18 +641,16 @@ describe('Edge Cases and Error Handling', () => {
 describe('Performance Tests', () => {
   it('should handle large result sets efficiently', async () => {
     // Mock large dataset
-    const largeDataset = new Array(1000)
-      .fill(mockAlert)
-      .map((alert, index) => ({
-        ...alert,
-        id: `alert-${index}`,
-      }));
+    const largeDataset = new Array(1000).fill(mockAlert).map((alert, index) => ({
+      ...alert,
+      id: `alert-${index}`,
+    }));
 
     mockSupabaseClient.from.mockReturnValue({
-      select: jest.fn().mockReturnValue({
-        eq: jest.fn().mockReturnValue({
-          order: jest.fn().mockReturnValue({
-            range: jest.fn().mockResolvedValue({
+      select: vi.fn().mockReturnValue({
+        eq: vi.fn().mockReturnValue({
+          order: vi.fn().mockReturnValue({
+            range: vi.fn().mockResolvedValue({
               data: largeDataset,
               error: null,
               count: 1000,

@@ -7,15 +7,16 @@ import { treatmentFollowupService } from '@/app/lib/services/treatment-followup-
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
+    const { id } = await params;
     const { escalationLevel, reason, notifyRoles, autoScheduleAppointment } =
       await request.json();
 
     // Check escalation triggers
     const triggeredRules =
-      await treatmentFollowupService.checkEscalationTriggers(params.id);
+      await treatmentFollowupService.checkEscalationTriggers(id);
 
     if (triggeredRules.length === 0) {
       return NextResponse.json(
@@ -28,13 +29,10 @@ export async function POST(
     }
 
     // Update follow-up status to escalated
-    const followup = await treatmentFollowupService.updatePatientFollowup(
-      params.id,
-      {
-        status: 'escalated',
-        notes: reason || 'Escalated automatically due to triggered rules',
-      },
-    );
+    const followup = await treatmentFollowupService.updatePatientFollowup(id, {
+      status: 'escalated',
+      notes: reason || 'Escalated automatically due to triggered rules',
+    });
 
     // In a real implementation, this would:
     // 1. Send notifications to specified roles

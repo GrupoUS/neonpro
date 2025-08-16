@@ -1,12 +1,13 @@
-import { createMocks } from 'node-mocks-http';
+import { createMocks, createMocks } from 'node-mocks-http';
+import { vi } from 'vitest';
 import { mockExportData, mockSession } from '@/../../__tests__/utils/mockData';
 import handler from '@/app/api/analytics/export/route';
 
 // Mock Supabase auth
-jest.mock('@/utils/supabase/server', () => ({
+vi.Mock('@/utils/supabase/server', () => ({
   createClient: () => ({
     auth: {
-      getSession: jest.fn().mockResolvedValue({
+      getSession: vi.fn().mockResolvedValue({
         data: { session: mockSession },
         error: null,
       }),
@@ -15,49 +16,47 @@ jest.mock('@/utils/supabase/server', () => ({
 }));
 
 // Mock jsPDF
-jest.mock('jspdf', () => {
-  return jest.fn().mockImplementation(() => ({
-    text: jest.fn(),
-    save: jest.fn(),
+vi.Mock('jspdf', () => {
+  return vi.fn().mockImplementation(() => ({
+    text: vi.fn(),
+    save: vi.fn(),
     internal: {
       pageSize: {
         getWidth: () => 210,
         getHeight: () => 297,
       },
     },
-    setFontSize: jest.fn(),
-    setFont: jest.fn(),
-    addImage: jest.fn(),
-    output: jest.fn().mockReturnValue('mock-pdf-content'),
+    setFontSize: vi.fn(),
+    setFont: vi.fn(),
+    addImage: vi.fn(),
+    output: vi.fn().mockReturnValue('mock-pdf-content'),
   }));
 });
 
 // Mock ExcelJS
-jest.mock('exceljs', () => ({
-  Workbook: jest.fn().mockImplementation(() => ({
-    addWorksheet: jest.fn().mockReturnValue({
-      addRow: jest.fn(),
-      getColumn: jest.fn().mockReturnValue({
+vi.Mock('exceljs', () => ({
+  Workbook: vi.fn().mockImplementation(() => ({
+    addWorksheet: vi.fn().mockReturnValue({
+      addRow: vi.fn(),
+      getColumn: vi.fn().mockReturnValue({
         width: 0,
       }),
-      mergeCells: jest.fn(),
-      getCell: jest.fn().mockReturnValue({
+      mergeCells: vi.fn(),
+      getCell: vi.fn().mockReturnValue({
         font: {},
         alignment: {},
         fill: {},
       }),
     }),
     xlsx: {
-      writeBuffer: jest
-        .fn()
-        .mockResolvedValue(Buffer.from('mock-excel-content')),
+      writeBuffer: vi.fn().mockResolvedValue(Buffer.from('mock-excel-content')),
     },
   })),
 }));
 
 describe('/api/analytics/export', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('should export data to PDF format', async () => {
@@ -213,9 +212,7 @@ describe('/api/analytics/export', () => {
       })
     );
 
-    const responses = await Promise.all(
-      requests.map(({ req, res }) => handler(req, res))
-    );
+    const responses = await Promise.all(requests.map(({ req, res }) => handler(req, res)));
 
     // Should have some rate limited responses
     const rateLimitedResponses = responses.filter(

@@ -14,7 +14,7 @@ import crypto from 'node:crypto';
 import { createClient } from '@supabase/supabase-js';
 import { z } from 'zod';
 import { AuditLogger } from '../audit/audit-logger';
-import { LGPDManager } from '../auth/lgpd/lgpd-manager';
+import { LGPDManager } from '../lgpd/lgpd-manager';
 
 // ============================================================================
 // TYPES & INTERFACES

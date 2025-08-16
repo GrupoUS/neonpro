@@ -18,7 +18,7 @@ const FormField = React.forwardRef<HTMLDivElement, FormFieldProps>(
     return (
       <div className={cn('space-y-2', className)} ref={ref}>
         {label && (
-          <label 
+          <label
             className="font-medium text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             htmlFor={fieldId}
           >
@@ -29,9 +29,7 @@ const FormField = React.forwardRef<HTMLDivElement, FormFieldProps>(
 
         {children}
 
-        {description && (
-          <p className="text-muted-foreground text-sm">{description}</p>
-        )}
+        {description && <p className="text-muted-foreground text-sm">{description}</p>}
 
         {error && <p className="text-red-600 text-sm">{error}</p>}
       </div>

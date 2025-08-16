@@ -24,7 +24,8 @@
       "@neonpro/types/*": ["./packages/types/src/*"],
       "@neonpro/config": ["./packages/config"],
       "@neonpro/config/*": ["./packages/config/*"]
-    }
+    },
+    "strictNullChecks": true
   },
   "include": ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx"],
   "exclude": ["node_modules", ".next", "dist", "out"],

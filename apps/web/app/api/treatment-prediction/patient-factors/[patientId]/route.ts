@@ -5,12 +5,13 @@ import { TreatmentPredictionService } from '@/app/lib/services/treatment-predict
 import { createServerClient } from '@/app/utils/supabase/server';
 
 type RouteParams = {
-  params: { patientId: string };
+  params: Promise<{ patientId: string }>;
 };
 
 // GET /api/treatment-prediction/patient-factors/[patientId] - Get patient factors
 export async function GET(_request: NextRequest, { params }: RouteParams) {
   try {
+    const { patientId } = await params;
     const supabase = await createServerClient();
     const {
       data: { session },
@@ -24,7 +25,7 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
     const { data: patient } = await supabase
       .from('patients')
       .select('id')
-      .eq('id', params.patientId)
+      .eq('id', patientId)
       .single();
 
     if (!patient) {
@@ -32,7 +33,7 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
     }
 
     const predictionService = new TreatmentPredictionService();
-    const factors = await predictionService.getPatientFactors(params.patientId);
+    const factors = await predictionService.getPatientFactors(patientId);
 
     if (!factors) {
       return NextResponse.json(
@@ -56,6 +57,7 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
 // POST /api/treatment-prediction/patient-factors/[patientId] - Create/Update patient factors
 export async function POST(request: NextRequest, { params }: RouteParams) {
   try {
+    const { patientId } = await params;
     const supabase = await createServerClient();
     const {
       data: { session },
@@ -69,7 +71,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
     const { data: patient } = await supabase
       .from('patients')
       .select('id')
-      .eq('id', params.patientId)
+      .eq('id', patientId)
       .single();
 
     if (!patient) {
@@ -89,7 +91,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
     // Prepare factors data
     const factorsData = {
       ...body,
-      patient_id: params.patientId,
+      patient_id: patientId,
     };
 
     const predictionService = new TreatmentPredictionService();

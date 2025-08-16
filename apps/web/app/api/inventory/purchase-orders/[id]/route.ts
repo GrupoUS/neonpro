@@ -29,8 +29,12 @@ type RouteParams = {
   params: { id: string };
 };
 
-export async function GET(_request: NextRequest, { params }: RouteParams) {
+export async function GET(
+  _request: NextRequest,
+  { params }: { params: Promise<{ id: string }> },
+) {
   try {
+    const { id } = await params;
     const supabase = await createClient();
     const {
       data: { user },
@@ -69,7 +73,7 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
         )
       `,
       )
-      .eq('id', params.id)
+      .eq('id', id)
       .single();
 
     if (error) {
@@ -133,8 +137,12 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
   }
 }
 
-export async function PATCH(request: NextRequest, { params }: RouteParams) {
+export async function PATCH(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> },
+) {
   try {
+    const { id } = await params;
     const supabase = await createClient();
     const {
       data: { user },
@@ -151,7 +159,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     const { data: existingPO, error: fetchError } = await supabase
       .from('purchase_orders')
       .select('id, status, clinic_id')
-      .eq('id', params.id)
+      .eq('id', id)
       .single();
 
     if (fetchError) {
@@ -211,7 +219,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     const { data: updatedPO, error: updateError } = await supabase
       .from('purchase_orders')
       .update(updateData)
-      .eq('id', params.id)
+      .eq('id', id)
       .select()
       .single();
 
@@ -293,8 +301,12 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
   }
 }
 
-export async function DELETE(_request: NextRequest, { params }: RouteParams) {
+export async function DELETE(
+  _request: NextRequest,
+  { params }: { params: Promise<{ id: string }> },
+) {
   try {
+    const { id } = await params;
     const supabase = await createClient();
     const {
       data: { user },
@@ -308,7 +320,7 @@ export async function DELETE(_request: NextRequest, { params }: RouteParams) {
     const { data: existingPO, error: fetchError } = await supabase
       .from('purchase_orders')
       .select('id, status')
-      .eq('id', params.id)
+      .eq('id', id)
       .single();
 
     if (fetchError) {
@@ -350,7 +362,7 @@ export async function DELETE(_request: NextRequest, { params }: RouteParams) {
           (existingPO as any).notes +
           '\n[CANCELLED] Purchase order cancelled by user.',
       })
-      .eq('id', params.id)
+      .eq('id', id)
       .select()
       .single();
 

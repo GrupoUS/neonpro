@@ -14,7 +14,7 @@ const approvalActionSchema = z.object({
 });
 
 type RouteParams = {
-  params: { id: string; action: string };
+  params: Promise<{ id: string; action: string }>;
 };
 
 export async function POST(request: NextRequest, { params }: RouteParams) {
@@ -28,17 +28,18 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    const { id, action } = await params;
     const body = await request.json();
     const validatedData = approvalActionSchema.parse({
       ...body,
-      action: params.action,
+      action: action,
     });
 
     // Check if purchase order exists and is in the right status
     const { data: existingPO, error: fetchError } = await supabase
       .from('purchase_orders')
       .select('id, status, total_amount, clinic_id, created_by')
-      .eq('id', params.id)
+      .eq('id', id)
       .single();
 
     if (fetchError) {

@@ -4,9 +4,9 @@ import { budgetSchema } from '@/app/lib/validations/budget-approval';
 import { createClient } from '@/app/utils/supabase/server';
 
 type Params = {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 };
 
 export async function GET(_request: NextRequest, { params }: Params) {
@@ -20,8 +20,9 @@ export async function GET(_request: NextRequest, { params }: Params) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    const { id } = await params;
     const service = new BudgetApprovalService();
-    const budget = await service.getBudgetDetails(params.id);
+    const budget = await service.getBudgetDetails(id);
 
     if (!budget) {
       return NextResponse.json({ error: 'Budget not found' }, { status: 404 });
@@ -47,6 +48,7 @@ export async function PATCH(request: NextRequest, { params }: Params) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    const { id } = await params;
     const body = await request.json();
     const validated = budgetSchema.partial().parse(body);
 
@@ -56,7 +58,7 @@ export async function PATCH(request: NextRequest, { params }: Params) {
         ...validated,
         updated_at: new Date().toISOString(),
       })
-      .eq('id', params.id)
+      .eq('id', id)
       .eq('user_id', user.id)
       .select()
       .single();
@@ -95,10 +97,11 @@ export async function DELETE(_request: NextRequest, { params }: Params) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    const { id } = await params;
     const { error } = await supabase
       .from('budgets')
       .delete()
-      .eq('id', params.id)
+      .eq('id', id)
       .eq('user_id', user.id);
 
     if (error) {

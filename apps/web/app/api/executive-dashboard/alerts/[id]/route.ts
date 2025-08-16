@@ -8,9 +8,10 @@ import { executiveDashboardService } from '@/src/lib/services/executive-dashboar
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
+    const { id } = await params;
     const supabase = await createClient();
 
     // Check authentication
@@ -25,7 +26,7 @@ export async function PUT(
       );
     }
 
-    const alertId = params.id;
+    const alertId = id;
     if (!alertId) {
       return NextResponse.json(
         { error: 'Alert ID is required' },
