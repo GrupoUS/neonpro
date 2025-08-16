@@ -114,7 +114,7 @@ export class PhotoRecognitionManager {
     supabase: any,
     auditLogger: AuditLogger,
     lgpdManager: LGPDManager,
-    config: PhotoRecognitionConfig
+    config: PhotoRecognitionConfig,
   ) {
     this.supabase = supabase;
     this.auditLogger = auditLogger;
@@ -129,7 +129,7 @@ export class PhotoRecognitionManager {
     patientId: string,
     photoFile: File | Buffer,
     photoType: 'profile' | 'before' | 'after' | 'document' | 'verification',
-    userId: string
+    userId: string,
   ): Promise<{
     photoId: string;
     metadata: PhotoMetadata;
@@ -139,7 +139,7 @@ export class PhotoRecognitionManager {
       // Validate LGPD consent
       const hasConsent = await this.lgpdManager.checkConsent(
         patientId,
-        'photo_processing'
+        'photo_processing',
       );
 
       if (!hasConsent) {
@@ -150,7 +150,7 @@ export class PhotoRecognitionManager {
       const qualityAssessment = await this.assessPhotoQuality(photoFile);
       if (qualityAssessment.overall < this.config.qualityThreshold) {
         throw new Error(
-          `Photo quality too low: ${qualityAssessment.recommendations.join(', ')}`
+          `Photo quality too low: ${qualityAssessment.recommendations.join(', ')}`,
         );
       }
 
@@ -199,7 +199,7 @@ export class PhotoRecognitionManager {
       if (this.config.enabled && photoType === 'profile') {
         recognitionResult = await this.performFacialRecognition(
           photoFile,
-          patientId
+          patientId,
         );
       }
 
@@ -267,7 +267,7 @@ export class PhotoRecognitionManager {
    */
   async verifyPatientIdentity(
     request: VerificationRequest,
-    userId: string
+    userId: string,
   ): Promise<VerificationResult> {
     const startTime = Date.now();
 
@@ -275,7 +275,7 @@ export class PhotoRecognitionManager {
       // Check LGPD consent
       const hasConsent = await this.lgpdManager.checkConsent(
         request.patientId,
-        'biometric_verification'
+        'biometric_verification',
       );
 
       if (!hasConsent) {
@@ -284,7 +284,7 @@ export class PhotoRecognitionManager {
 
       // Assess photo quality
       const qualityAssessment = await this.assessPhotoQuality(
-        request.photoFile
+        request.photoFile,
       );
       if (qualityAssessment.overall < this.config.qualityThreshold) {
         return {
@@ -299,7 +299,7 @@ export class PhotoRecognitionManager {
       // Perform facial recognition
       const recognitionResult = await this.performFacialRecognition(
         request.photoFile,
-        request.patientId
+        request.patientId,
       );
 
       if (!recognitionResult.success) {
@@ -384,7 +384,7 @@ export class PhotoRecognitionManager {
    */
   private async performFacialRecognition(
     photoFile: File | Buffer,
-    patientId?: string
+    patientId?: string,
   ): Promise<RecognitionResult> {
     try {
       // Convert photo to base64 for processing
@@ -429,7 +429,7 @@ export class PhotoRecognitionManager {
    * Extract facial features from photo (ML placeholder)
    */
   private async extractFacialFeatures(
-    _photoBase64: string
+    _photoBase64: string,
   ): Promise<FacialFeatures | null> {
     // Placeholder implementation - in production, integrate with:
     // - AWS Rekognition
@@ -471,7 +471,7 @@ export class PhotoRecognitionManager {
    */
   private async searchFacialMatches(
     features: FacialFeatures,
-    excludePatientId?: string
+    excludePatientId?: string,
   ): Promise<PatientMatch[]> {
     try {
       // Query stored facial encodings
@@ -484,7 +484,7 @@ export class PhotoRecognitionManager {
           recognition_data,
           upload_date,
           patients!inner(id, name)
-        `
+        `,
         )
         .not('recognition_data', 'is', null)
         .eq('photo_type', 'profile');
@@ -509,7 +509,7 @@ export class PhotoRecognitionManager {
 
         const similarity = this.calculateFacialSimilarity(
           features.encoding,
-          photo.recognition_data.encoding
+          photo.recognition_data.encoding,
         );
 
         if (similarity >= this.config.confidenceThreshold) {
@@ -535,7 +535,7 @@ export class PhotoRecognitionManager {
    */
   private calculateFacialSimilarity(
     encoding1: number[],
-    encoding2: number[]
+    encoding2: number[],
   ): number {
     if (encoding1.length !== encoding2.length) {
       return 0;
@@ -560,7 +560,7 @@ export class PhotoRecognitionManager {
    * Assess photo quality
    */
   private async assessPhotoQuality(
-    photoFile: File | Buffer
+    photoFile: File | Buffer,
   ): Promise<PhotoQualityAssessment> {
     try {
       // Placeholder implementation - in production, use image analysis libraries
@@ -616,7 +616,7 @@ export class PhotoRecognitionManager {
    * Extract image dimensions
    */
   private async extractImageDimensions(
-    photoFile: File | Buffer
+    photoFile: File | Buffer,
   ): Promise<{ width: number; height: number }> {
     try {
       // Placeholder implementation - in production, use image processing library
@@ -677,7 +677,7 @@ export class PhotoRecognitionManager {
   async getPatientPhotos(
     patientId: string,
     photoType?: string,
-    userId?: string
+    userId?: string,
   ): Promise<PhotoMetadata[]> {
     try {
       // Check privacy controls
@@ -787,7 +787,7 @@ export class PhotoRecognitionManager {
   async updatePatientPrivacyControls(
     patientId: string,
     controls: Partial<PrivacyControls>,
-    userId: string
+    userId: string,
   ): Promise<void> {
     const { error } = await this.supabase
       .from('patient_privacy_controls')
@@ -822,7 +822,7 @@ export class PhotoRecognitionManager {
   async deletePatientPhoto(
     photoId: string,
     userId: string,
-    reason: string
+    reason: string,
   ): Promise<void> {
     // Get photo details
     const { data: photo, error: fetchError } = await this.supabase
@@ -911,7 +911,7 @@ export class PhotoRecognitionManager {
         .sort(
           (a, b) =>
             new Date(b.upload_date).getTime() -
-            new Date(a.upload_date).getTime()
+            new Date(a.upload_date).getTime(),
         )[0]?.upload_date;
 
       return {

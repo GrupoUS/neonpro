@@ -144,7 +144,7 @@ export class DeviceTrackingManager {
   constructor(
     supabaseUrl: string,
     supabaseKey: string,
-    customPolicies?: Partial<Record<UserRole, DeviceSecurityPolicy>>
+    customPolicies?: Partial<Record<UserRole, DeviceSecurityPolicy>>,
   ) {
     this.supabase = createClient(supabaseUrl, supabaseKey);
     this.auditLogger = new SecurityAuditLogger(supabaseUrl, supabaseKey);
@@ -224,7 +224,7 @@ export class DeviceTrackingManager {
       ipAddress: string;
       location?: DeviceInfo['location'];
     },
-    metadata?: Record<string, any>
+    metadata?: Record<string, any>,
   ): Promise<{
     deviceId: string;
     isNewDevice: boolean;
@@ -247,7 +247,7 @@ export class DeviceTrackingManager {
       fingerprint,
       deviceInfo.ipAddress,
       deviceInfo.location,
-      isNewDevice
+      isNewDevice,
     );
     const riskScore = this.calculateRiskScore(riskFactors);
 
@@ -427,7 +427,7 @@ export class DeviceTrackingManager {
   async blockDevice(
     deviceId: string,
     reason: string,
-    blockedBy: string
+    blockedBy: string,
   ): Promise<void> {
     const device = await this.getDeviceInfo(deviceId);
     if (!device) {
@@ -475,7 +475,7 @@ export class DeviceTrackingManager {
   async createVerificationChallenge(
     deviceId: string,
     userId: string,
-    challengeType: DeviceVerificationChallenge['challengeType']
+    challengeType: DeviceVerificationChallenge['challengeType'],
   ): Promise<string> {
     const challengeId = `challenge_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     const code = this.generateVerificationCode(challengeType);
@@ -497,7 +497,7 @@ export class DeviceTrackingManager {
 
     if (error) {
       throw new Error(
-        `Failed to create verification challenge: ${error.message}`
+        `Failed to create verification challenge: ${error.message}`,
       );
     }
 
@@ -512,7 +512,7 @@ export class DeviceTrackingManager {
    */
   async verifyDeviceChallenge(
     challengeId: string,
-    code: string
+    code: string,
   ): Promise<{
     success: boolean;
     deviceId?: string;
@@ -615,7 +615,7 @@ export class DeviceTrackingManager {
     // Clean up devices based on retention policies
     for (const [_role, policy] of Object.entries(this.devicePolicies)) {
       const retentionDate = new Date(
-        Date.now() - policy.deviceRetentionDays * 24 * 60 * 60 * 1000
+        Date.now() - policy.deviceRetentionDays * 24 * 60 * 60 * 1000,
       );
 
       const { data: oldDevices, error: selectError } = await this.supabase
@@ -633,7 +633,7 @@ export class DeviceTrackingManager {
           .delete()
           .in(
             'device_id',
-            oldDevices.map((d) => d.device_id)
+            oldDevices.map((d) => d.device_id),
           );
 
         if (!deleteError) {
@@ -659,7 +659,7 @@ export class DeviceTrackingManager {
         .delete()
         .in(
           'challenge_id',
-          expiredChallenges.map((c) => c.challenge_id)
+          expiredChallenges.map((c) => c.challenge_id),
         );
 
       if (!challengeDeleteError) {
@@ -684,7 +684,7 @@ export class DeviceTrackingManager {
    */
   updateDevicePolicy(
     role: UserRole,
-    policy: Partial<DeviceSecurityPolicy>
+    policy: Partial<DeviceSecurityPolicy>,
   ): void {
     this.devicePolicies[role] = {
       ...this.devicePolicies[role],
@@ -748,7 +748,7 @@ export class DeviceTrackingManager {
     fingerprint: DeviceFingerprint,
     ipAddress: string,
     location?: DeviceInfo['location'],
-    isNewDevice = false
+    isNewDevice = false,
   ): Promise<DeviceRiskFactors> {
     // Get user's previous devices for comparison
     const userDevices = await this.getUserDevices(userId);
@@ -772,7 +772,7 @@ export class DeviceTrackingManager {
       if (lastDevice.location && location) {
         const distance = this.calculateDistance(
           lastDevice.location.coordinates,
-          location.coordinates
+          location.coordinates,
         );
         riskFactors.locationChange = distance > 1000; // More than 1000km
       }
@@ -781,14 +781,14 @@ export class DeviceTrackingManager {
       const similarDevices = userDevices.filter(
         (d) =>
           d.fingerprint.platform === fingerprint.platform &&
-          d.fingerprint.userAgent.includes(fingerprint.userAgent.split('/')[0])
+          d.fingerprint.userAgent.includes(fingerprint.userAgent.split('/')[0]),
       );
       riskFactors.fingerprintMismatch = similarDevices.length === 0;
     }
 
     // Check for suspicious user agent
     riskFactors.suspiciousUserAgent = this.isSuspiciousUserAgent(
-      fingerprint.userAgent
+      fingerprint.userAgent,
     );
 
     // Check for VPN/Tor (simplified - in production, use proper IP intelligence)
@@ -835,7 +835,7 @@ export class DeviceTrackingManager {
 
   private calculateDistance(
     coord1?: { latitude: number; longitude: number },
-    coord2?: { latitude: number; longitude: number }
+    coord2?: { latitude: number; longitude: number },
   ): number {
     if (!(coord1 && coord2)) {
       return 0;
@@ -906,7 +906,7 @@ export class DeviceTrackingManager {
   }
 
   private generateVerificationCode(
-    challengeType: DeviceVerificationChallenge['challengeType']
+    challengeType: DeviceVerificationChallenge['challengeType'],
   ): string {
     switch (challengeType) {
       case 'totp':
@@ -919,7 +919,7 @@ export class DeviceTrackingManager {
   private async sendVerificationCode(
     userId: string,
     challengeType: DeviceVerificationChallenge['challengeType'],
-    code: string
+    code: string,
   ): Promise<void> {
     // This would integrate with your notification system
     // For now, we'll just log the event
@@ -941,7 +941,7 @@ export class DeviceTrackingManager {
 
   private async terminateDeviceSessions(
     deviceId: string,
-    reason: { type: string; message: string }
+    reason: { type: string; message: string },
   ): Promise<void> {
     // This would integrate with your session management system
     // to terminate all active sessions for the blocked device
@@ -955,7 +955,7 @@ export class DeviceTrackingManager {
   private async notifyNewDevice(
     userId: string,
     deviceId: string,
-    deviceInfo: { ipAddress: string; location?: DeviceInfo['location'] }
+    deviceInfo: { ipAddress: string; location?: DeviceInfo['location'] },
   ): Promise<void> {
     // This would integrate with your notification system
     await this.auditLogger.logSecurityEvent({
@@ -995,7 +995,7 @@ export class DeviceTrackingManager {
           await this.cleanupOldDevices();
         } catch (_error) {}
       },
-      24 * 60 * 60 * 1000
+      24 * 60 * 60 * 1000,
     ); // Daily cleanup
   }
 }

@@ -80,7 +80,7 @@ export async function GET(request: NextRequest) {
     if ('error' in authResult) {
       return NextResponse.json(
         { error: authResult.error },
-        { status: authResult.status }
+        { status: authResult.status },
       );
     }
 
@@ -106,7 +106,7 @@ export async function GET(request: NextRequest) {
           error: 'Parâmetros inválidos',
           details: validationResult.error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -133,7 +133,7 @@ export async function GET(request: NextRequest) {
         metadata,
         created_at,
         updated_at
-      `
+      `,
       )
       .eq('clinic_id', profile.clinic_id)
       .order('created_at', { ascending: false });
@@ -171,7 +171,7 @@ export async function GET(request: NextRequest) {
     if (error) {
       return NextResponse.json(
         { error: 'Erro ao buscar notificações' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -191,7 +191,7 @@ export async function GET(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

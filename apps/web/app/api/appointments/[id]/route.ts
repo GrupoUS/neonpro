@@ -16,7 +16,7 @@ import { createClient } from '@/app/utils/supabase/server';
  */
 export async function GET(
   _request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const supabase = await createClient();
@@ -28,7 +28,7 @@ export async function GET(
     if (!session) {
       return NextResponse.json(
         { success: false, error_message: 'Authentication required' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -45,7 +45,7 @@ export async function GET(
         professionals!inner(id, full_name, email, phone),
         service_types!inner(id, name, duration_minutes, price, color),
         clinics!inner(id, name)
-      `
+      `,
       )
       .eq('id', appointmentId)
       .eq('deleted_at', null)
@@ -54,7 +54,7 @@ export async function GET(
     if (error || !appointment) {
       return NextResponse.json(
         { success: false, error_message: 'Appointment not found' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -81,7 +81,7 @@ export async function GET(
   } catch (_error) {
     return NextResponse.json(
       { success: false, error_message: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 } /**
@@ -90,7 +90,7 @@ export async function GET(
  */
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const supabase = await createClient();
@@ -102,7 +102,7 @@ export async function PATCH(
     if (!session?.user) {
       return NextResponse.json(
         { success: false, error_message: 'Authentication required' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -146,7 +146,7 @@ export async function PATCH(
             error_message: 'Scheduling conflict detected',
             error_details: error.message,
           },
-          { status: 409 }
+          { status: 409 },
         );
       }
 
@@ -157,7 +157,7 @@ export async function PATCH(
             error_message: 'Appointment outside business hours',
             error_details: error.message,
           },
-          { status: 400 }
+          { status: 400 },
         );
       }
 
@@ -174,7 +174,7 @@ export async function PATCH(
         professionals!inner(full_name),
         service_types!inner(name, duration_minutes, price, color),
         clinics!inner(name)
-      `
+      `,
       )
       .eq('id', appointmentId)
       .single();
@@ -204,7 +204,7 @@ export async function PATCH(
   } catch (_error) {
     return NextResponse.json(
       { success: false, error_message: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -215,7 +215,7 @@ export async function PATCH(
  */
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const supabase = await createClient();
@@ -227,7 +227,7 @@ export async function DELETE(
     if (!session?.user) {
       return NextResponse.json(
         { success: false, error_message: 'Authentication required' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -253,7 +253,7 @@ export async function DELETE(
   } catch (_error) {
     return NextResponse.json(
       { success: false, error_message: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

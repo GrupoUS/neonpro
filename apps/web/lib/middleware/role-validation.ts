@@ -31,7 +31,7 @@ export type RoleValidationResult = {
  */
 export async function validateRole(
   request: NextRequest,
-  options: RoleValidationOptions = {}
+  options: RoleValidationOptions = {},
 ): Promise<RoleValidationResult> {
   try {
     const supabase = await createClient();
@@ -86,7 +86,10 @@ export async function validateRole(
     // Verificar permissões específicas se fornecidas
     if (options.requiredPermission && options.requiredPermission.length > 0) {
       const hasAllPermissions = options.requiredPermission.every((permission) =>
-        checkPermission(profile.role as keyof typeof ROLE_HIERARCHY, permission)
+        checkPermission(
+          profile.role as keyof typeof ROLE_HIERARCHY,
+          permission,
+        ),
       );
 
       if (!hasAllPermissions) {
@@ -140,9 +143,9 @@ export async function validateRole(
 export function withRoleValidation(
   handler: (
     req: NextRequest,
-    validation: RoleValidationResult
+    validation: RoleValidationResult,
   ) => Promise<NextResponse>,
-  options: RoleValidationOptions = {}
+  options: RoleValidationOptions = {},
 ) {
   return async (request: NextRequest): Promise<NextResponse> => {
     const validation = await validateRole(request, options);
@@ -150,7 +153,7 @@ export function withRoleValidation(
     if (!validation.success) {
       return NextResponse.json(
         { error: validation.error },
-        { status: validation.statusCode || 403 }
+        { status: validation.statusCode || 403 },
       );
     }
 
@@ -163,7 +166,7 @@ export function withRoleValidation(
  */
 export async function canManageUser(
   managerUserId: string,
-  targetUserId: string
+  targetUserId: string,
 ): Promise<{ canManage: boolean; reason?: string }> {
   try {
     const supabase = await createClient();
@@ -191,7 +194,7 @@ export async function canManageUser(
     // Verificar se pode gerenciar baseado na hierarquia
     const canManage = canManageTargetRole(
       managerProfile.role as keyof typeof ROLE_HIERARCHY,
-      targetProfile.role as keyof typeof ROLE_HIERARCHY
+      targetProfile.role as keyof typeof ROLE_HIERARCHY,
     );
 
     return {
@@ -211,7 +214,7 @@ export async function canManageUser(
 export async function logRoleAction(
   userId: string,
   actionType: string,
-  metadata: Record<string, any> = {}
+  metadata: Record<string, any> = {},
 ): Promise<void> {
   try {
     const supabase = await createClient();

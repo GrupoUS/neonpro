@@ -36,7 +36,7 @@ export async function GET(_request: Request) {
         duration_minutes,
         price,
         is_active
-      `
+      `,
       )
       .eq('clinic_id', profile.clinic_id)
       .eq('is_active', true)
@@ -50,7 +50,7 @@ export async function GET(_request: Request) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal Server Error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

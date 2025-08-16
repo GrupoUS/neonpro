@@ -74,7 +74,7 @@ export class SessionManager {
     auditLogger: AuditLogger,
     encryption: EncryptionService,
     lgpdManager: LGPDManager,
-    config?: Partial<SessionConfig>
+    config?: Partial<SessionConfig>,
   ) {
     this.supabase = createClient(supabaseUrl, supabaseKey);
     this.auditLogger = auditLogger;
@@ -106,7 +106,7 @@ export class SessionManager {
     patientId: string,
     ipAddress: string,
     userAgent: string,
-    deviceFingerprint?: DeviceFingerprint
+    deviceFingerprint?: DeviceFingerprint,
   ): Promise<SessionData> {
     try {
       // Check for existing sessions and enforce limits
@@ -115,7 +115,7 @@ export class SessionManager {
       // Generate secure session token
       const sessionToken = this.generateSessionToken();
       const expiresAt = new Date(
-        Date.now() + this.config.sessionTimeout * 60 * 1000
+        Date.now() + this.config.sessionTimeout * 60 * 1000,
       );
 
       // Create session record
@@ -201,7 +201,7 @@ export class SessionManager {
    * Validate a session token
    */
   async validateSession(
-    sessionToken: string
+    sessionToken: string,
   ): Promise<SessionValidationResult> {
     try {
       // Get all active sessions and check each one
@@ -219,7 +219,7 @@ export class SessionManager {
       for (const sessionRecord of sessions || []) {
         try {
           const decryptedToken = await this.encryption.decrypt(
-            sessionRecord.session_token
+            sessionRecord.session_token,
           );
           if (decryptedToken === sessionToken) {
             const session: SessionData = {
@@ -237,7 +237,7 @@ export class SessionManager {
 
             // Check if session needs refresh due to inactivity
             const inactivityLimit = new Date(
-              Date.now() - this.config.inactivityTimeout * 60 * 1000
+              Date.now() - this.config.inactivityTimeout * 60 * 1000,
             );
             const requiresRefresh = session.lastActivity < inactivityLimit;
 
@@ -272,7 +272,7 @@ export class SessionManager {
   async refreshSession(sessionId: string): Promise<SessionData | null> {
     try {
       const newExpiresAt = new Date(
-        Date.now() + this.config.sessionTimeout * 60 * 1000
+        Date.now() + this.config.sessionTimeout * 60 * 1000,
       );
 
       const { data, error } = await this.supabase
@@ -369,7 +369,7 @@ export class SessionManager {
    */
   async terminateAllSessions(
     patientId: string,
-    excludeSessionId?: string
+    excludeSessionId?: string,
   ): Promise<number> {
     try {
       let query = this.supabase
@@ -427,7 +427,7 @@ export class SessionManager {
       for (const sessionRecord of data || []) {
         try {
           const decryptedToken = await this.encryption.decrypt(
-            sessionRecord.session_token
+            sessionRecord.session_token,
           );
           sessions.push({
             id: sessionRecord.id,
@@ -454,7 +454,7 @@ export class SessionManager {
    * Generate device fingerprint hash
    */
   generateDeviceFingerprint(
-    fingerprintData: Omit<DeviceFingerprint, 'hash'>
+    fingerprintData: Omit<DeviceFingerprint, 'hash'>,
   ): DeviceFingerprint {
     const dataString = JSON.stringify(fingerprintData);
     const hash = crypto.createHash('sha256').update(dataString).digest('hex');
@@ -492,7 +492,7 @@ export class SessionManager {
         .from('patient_portal_sessions')
         .delete()
         .or(
-          `expires_at.lt.${new Date().toISOString()},last_activity.lt.${new Date(Date.now() - this.config.inactivityTimeout * 60 * 1000).toISOString()}`
+          `expires_at.lt.${new Date().toISOString()},last_activity.lt.${new Date(Date.now() - this.config.inactivityTimeout * 60 * 1000).toISOString()}`,
         );
 
       if (error) {
@@ -600,7 +600,7 @@ export class SessionManager {
         .sort((a, b) => a.lastActivity.getTime() - b.lastActivity.getTime())
         .slice(
           0,
-          activeSessions.length - this.config.maxConcurrentSessions + 1
+          activeSessions.length - this.config.maxConcurrentSessions + 1,
         );
 
       for (const session of sessionsToTerminate) {
@@ -623,7 +623,7 @@ export class SessionManager {
       async () => {
         await this.cleanupExpiredSessions();
       },
-      this.config.sessionCleanupInterval * 60 * 1000
+      this.config.sessionCleanupInterval * 60 * 1000,
     );
   }
 

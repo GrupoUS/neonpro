@@ -34,7 +34,7 @@ export async function GET(request: NextRequest) {
     // Validate required parameters
     if (!(code && state)) {
       return redirect(
-        '/dashboard/social-media?error=invalid_request&message=Missing authorization code or state'
+        '/dashboard/social-media?error=invalid_request&message=Missing authorization code or state',
       );
     }
 
@@ -53,7 +53,7 @@ export async function GET(request: NextRequest) {
     } = await supabase.auth.getSession();
     if (!session?.user) {
       return redirect(
-        '/login?error=session_expired&message=Please log in again'
+        '/login?error=session_expired&message=Please log in again',
       );
     }
 
@@ -66,7 +66,7 @@ export async function GET(request: NextRequest) {
 
     if (!userProfile?.clinic_id) {
       return redirect(
-        '/dashboard/social-media?error=clinic_not_found&message=Clinic configuration missing'
+        '/dashboard/social-media?error=clinic_not_found&message=Clinic configuration missing',
       );
     }
 
@@ -75,7 +75,7 @@ export async function GET(request: NextRequest) {
       session.user.id,
       userProfile.clinic_id,
       tokens,
-      profile
+      profile,
     );
 
     // Update social media platform status
@@ -86,12 +86,12 @@ export async function GET(request: NextRequest) {
         last_connected_at: new Date().toISOString(),
         connection_count: supabase.sql`connection_count + 1`,
       },
-      { onConflict: 'platform' }
+      { onConflict: 'platform' },
     );
 
     // Redirect to success page
     return redirect(
-      '/dashboard/social-media?success=true&platform=facebook&message=Facebook account connected successfully'
+      '/dashboard/social-media?success=true&platform=facebook&message=Facebook account connected successfully',
     );
   } catch (error) {
     // Store error for debugging
@@ -114,7 +114,7 @@ export async function GET(request: NextRequest) {
     const errorMessage =
       error instanceof Error ? error.message : 'Unknown error occurred';
     return redirect(
-      `/dashboard/social-media?error=connection_failed&message=${encodeURIComponent(errorMessage)}`
+      `/dashboard/social-media?error=connection_failed&message=${encodeURIComponent(errorMessage)}`,
     );
   }
 }

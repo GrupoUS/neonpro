@@ -17,7 +17,7 @@ export class SessionUtils {
     const array = new Uint8Array(32);
     crypto.getRandomValues(array);
     return Array.from(array, (byte) => byte.toString(16).padStart(2, '0')).join(
-      ''
+      '',
     );
   }
 
@@ -216,7 +216,7 @@ export class SessionUtils {
    */
   static calculateSecurityScore(
     session: SessionInfo,
-    events: SecurityEvent[]
+    events: SecurityEvent[],
   ): number {
     let score = 100;
 
@@ -246,7 +246,7 @@ export class SessionUtils {
 
     // Deduct points for session age
     const sessionAge = SessionUtils.calculateSessionDuration(
-      session.created_at
+      session.created_at,
     );
     if (sessionAge > 24 * 60) {
       // More than 24 hours
@@ -292,7 +292,7 @@ export class SessionUtils {
    */
   static generateSessionPolicy(
     _userRole: string,
-    securityLevel: 'LOW' | 'MEDIUM' | 'HIGH' = 'MEDIUM'
+    securityLevel: 'LOW' | 'MEDIUM' | 'HIGH' = 'MEDIUM',
   ): Partial<SessionPolicy> {
     const basePolicy = {
       max_session_duration: 8 * 60, // 8 hours
@@ -341,14 +341,14 @@ export class SessionUtils {
       encoder.encode(key.padEnd(32, '0').substring(0, 32)),
       { name: 'AES-GCM' },
       false,
-      ['encrypt']
+      ['encrypt'],
     );
 
     const iv = crypto.getRandomValues(new Uint8Array(12));
     const encrypted = await crypto.subtle.encrypt(
       { name: 'AES-GCM', iv },
       keyData,
-      encoder.encode(data)
+      encoder.encode(data),
     );
 
     const combined = new Uint8Array(iv.length + encrypted.byteLength);
@@ -363,7 +363,7 @@ export class SessionUtils {
    */
   static async decryptData(
     encryptedData: string,
-    key: string
+    key: string,
   ): Promise<string> {
     const decoder = new TextDecoder();
     const encoder = new TextEncoder();
@@ -371,7 +371,7 @@ export class SessionUtils {
     const combined = new Uint8Array(
       atob(encryptedData)
         .split('')
-        .map((char) => char.charCodeAt(0))
+        .map((char) => char.charCodeAt(0)),
     );
 
     const iv = combined.slice(0, 12);
@@ -382,13 +382,13 @@ export class SessionUtils {
       encoder.encode(key.padEnd(32, '0').substring(0, 32)),
       { name: 'AES-GCM' },
       false,
-      ['decrypt']
+      ['decrypt'],
     );
 
     const decrypted = await crypto.subtle.decrypt(
       { name: 'AES-GCM', iv },
       keyData,
-      encrypted
+      encrypted,
     );
 
     return decoder.decode(decrypted);

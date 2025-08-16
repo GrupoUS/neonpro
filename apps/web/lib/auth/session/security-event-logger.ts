@@ -142,7 +142,7 @@ export class SecurityEventLogger {
 
     // Check for alerts on high severity events
     const highSeverityEvents = loggedEvents.filter(
-      (e) => e.severity === 'high' || e.severity === 'critical'
+      (e) => e.severity === 'high' || e.severity === 'critical',
     );
 
     for (const event of highSeverityEvents) {
@@ -199,7 +199,7 @@ export class SecurityEventLogger {
       if (filter.offset) {
         query = query.range(
           filter.offset,
-          filter.offset + (filter.limit || 50) - 1
+          filter.offset + (filter.limit || 50) - 1,
         );
       }
 
@@ -230,7 +230,7 @@ export class SecurityEventLogger {
           *,
           profiles:user_id(email, full_name),
           resolver:resolved_by(email, full_name)
-        `
+        `,
         )
         .eq('id', eventId)
         .single();
@@ -276,7 +276,7 @@ export class SecurityEventLogger {
   async resolveEvent(
     eventId: string,
     resolvedBy: string,
-    resolution?: string
+    resolution?: string,
   ): Promise<SecurityEvent> {
     const { data, error } = await this.supabase
       .from('session_security_events')
@@ -308,7 +308,7 @@ export class SecurityEventLogger {
   async resolveEvents(
     eventIds: string[],
     resolvedBy: string,
-    resolution?: string
+    resolution?: string,
   ): Promise<SecurityEvent[]> {
     const { data, error } = await this.supabase
       .from('session_security_events')
@@ -343,7 +343,7 @@ export class SecurityEventLogger {
    */
   async getEventStatistics(
     startDate?: Date,
-    endDate?: Date
+    endDate?: Date,
   ): Promise<SecurityEventStats> {
     try {
       const start = startDate || new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
@@ -438,7 +438,7 @@ export class SecurityEventLogger {
           `
           user_id,
           profiles:user_id(email)
-        `
+        `,
         )
         .gte('timestamp', start.toISOString())
         .lte('timestamp', end.toISOString())
@@ -673,7 +673,7 @@ export class SecurityEventLogger {
    * Trigger session hijack alert
    */
   private async triggerSessionHijackAlert(
-    _event: SecurityEvent
+    _event: SecurityEvent,
   ): Promise<void> {
     // In production, this would trigger:
     // - Immediate session termination

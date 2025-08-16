@@ -52,7 +52,7 @@ export class SessionSecurityMiddleware {
     // Initialize Supabase client
     this.supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
     );
   }
 
@@ -78,7 +78,7 @@ export class SessionSecurityMiddleware {
       const securityResult = await this.performSecurityCheck(
         request,
         sessionId,
-        userId
+        userId,
       );
 
       // Handle security check result
@@ -105,7 +105,7 @@ export class SessionSecurityMiddleware {
   private async performSecurityCheck(
     request: NextRequest,
     sessionId: string,
-    userId?: string
+    userId?: string,
   ): Promise<SecurityCheckResult> {
     let totalRiskScore = 0;
     const reasons: string[] = [];
@@ -129,7 +129,7 @@ export class SessionSecurityMiddleware {
       const hijackResult = await this.checkSessionHijacking(
         request,
         sessionId,
-        userId
+        userId,
       );
       totalRiskScore += hijackResult.riskScore;
 
@@ -209,7 +209,7 @@ export class SessionSecurityMiddleware {
    */
   private async checkCSRF(
     request: NextRequest,
-    sessionId: string
+    sessionId: string,
   ): Promise<{ valid: boolean; reason?: string }> {
     try {
       const token =
@@ -222,7 +222,7 @@ export class SessionSecurityMiddleware {
 
       const isValid = await this.security.csrfProtection.validateToken(
         token,
-        sessionId
+        sessionId,
       );
 
       return { valid: isValid };
@@ -237,7 +237,7 @@ export class SessionSecurityMiddleware {
   private async checkSessionHijacking(
     request: NextRequest,
     sessionId: string,
-    userId: string
+    userId: string,
   ): Promise<{
     riskScore: number;
     action: 'allow' | 'challenge' | 'block' | 'terminate';
@@ -248,7 +248,7 @@ export class SessionSecurityMiddleware {
         await this.security.hijackingProtection.validateSessionFingerprint(
           request,
           sessionId,
-          userId
+          userId,
         );
 
       return {
@@ -270,12 +270,12 @@ export class SessionSecurityMiddleware {
    */
   private async checkSessionTimeout(
     sessionId: string,
-    userId: string
+    userId: string,
   ): Promise<{ valid: boolean; warning?: string }> {
     try {
       const result = await this.security.timeoutManager.checkSessionTimeout(
         sessionId,
-        userId
+        userId,
       );
 
       if (result.shouldTimeout) {
@@ -305,13 +305,13 @@ export class SessionSecurityMiddleware {
    * Check concurrent sessions
    */
   private async checkConcurrentSessions(
-    userId: string
+    userId: string,
   ): Promise<{ allowed: boolean }> {
     try {
       const sessions =
         await this.security.hijackingProtection.detectConcurrentSessions(
           userId,
-          this.config.maxConcurrentSessions || 3
+          this.config.maxConcurrentSessions || 3,
         );
 
       return {
@@ -327,7 +327,7 @@ export class SessionSecurityMiddleware {
    */
   private async checkRateLimit(
     _request: NextRequest,
-    _userId?: string
+    _userId?: string,
   ): Promise<{ allowed: boolean }> {
     try {
       // This would integrate with your existing rate limiting logic
@@ -343,7 +343,7 @@ export class SessionSecurityMiddleware {
    */
   private handleSecurityResult(
     request: NextRequest,
-    result: SecurityCheckResult
+    result: SecurityCheckResult,
   ): NextResponse {
     // Add security headers
     const response = result.allowed
@@ -404,7 +404,7 @@ export class SessionSecurityMiddleware {
   }
 
   private async extractUserId(
-    request: NextRequest
+    request: NextRequest,
   ): Promise<string | undefined> {
     try {
       const authHeader = request.headers.get('authorization');
@@ -423,7 +423,7 @@ export class SessionSecurityMiddleware {
   private createErrorResponse(message: string, status: number): NextResponse {
     return NextResponse.json(
       { error: message, timestamp: new Date().toISOString() },
-      { status }
+      { status },
     );
   }
 
@@ -462,7 +462,7 @@ export class SessionSecurityMiddleware {
  * Create session security middleware with default configuration
  */
 export function createSessionSecurityMiddleware(
-  config?: Partial<MiddlewareConfig>
+  config?: Partial<MiddlewareConfig>,
 ) {
   const middleware = new SessionSecurityMiddleware(config);
   return (request: NextRequest) => middleware.middleware(request);

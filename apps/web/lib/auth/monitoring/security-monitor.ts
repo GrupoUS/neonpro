@@ -477,7 +477,7 @@ export class SecurityMonitor {
    */
   private async createThreatFromAnomaly(
     anomaly: AnomalyAlert,
-    threatType: ThreatType
+    threatType: ThreatType,
   ): Promise<SecurityThreat | null> {
     try {
       const threat: SecurityThreat = {
@@ -541,7 +541,7 @@ export class SecurityMonitor {
    */
   private async executeRuleActions(
     rule: MonitoringRule,
-    threat: SecurityThreat
+    threat: SecurityThreat,
   ): Promise<void> {
     for (const action of rule.actions) {
       try {
@@ -562,7 +562,7 @@ export class SecurityMonitor {
         const mitigationAction = await this.executeMitigationAction(
           action.type,
           action.parameters,
-          threat
+          threat,
         );
 
         if (mitigationAction) {
@@ -578,7 +578,7 @@ export class SecurityMonitor {
   private async executeMitigationAction(
     type: MitigationType,
     parameters: Record<string, any>,
-    threat: SecurityThreat
+    threat: SecurityThreat,
   ): Promise<MitigationAction | null> {
     try {
       const action: MitigationAction = {
@@ -600,7 +600,7 @@ export class SecurityMonitor {
         case 'suspend_session':
           await this.suspendSession(
             threat.target.details.sessionId,
-            `Security threat: ${threat.type}`
+            `Security threat: ${threat.type}`,
           );
           action.result = 'success';
           break;
@@ -669,7 +669,7 @@ export class SecurityMonitor {
    */
   private async blockIpAddress(
     threat: SecurityThreat,
-    parameters: Record<string, any>
+    parameters: Record<string, any>,
   ): Promise<void> {
     const ipIndicator = threat.indicators.find((i) => i.type === 'ip_address');
     if (ipIndicator) {
@@ -687,7 +687,7 @@ export class SecurityMonitor {
 
   private async suspendSession(
     sessionId: string,
-    reason: string
+    reason: string,
   ): Promise<void> {
     await fetch('/api/session/suspend', {
       method: 'POST',
@@ -706,7 +706,7 @@ export class SecurityMonitor {
 
   private async applyRateLimit(
     threat: SecurityThreat,
-    parameters: Record<string, any>
+    parameters: Record<string, any>,
   ): Promise<void> {
     await fetch('/api/security/rate-limit', {
       method: 'POST',
@@ -729,7 +729,7 @@ export class SecurityMonitor {
 
   private async alertAdministrators(
     threat: SecurityThreat,
-    parameters: Record<string, any>
+    parameters: Record<string, any>,
   ): Promise<void> {
     await fetch('/api/security/alert-admins', {
       method: 'POST',
@@ -744,7 +744,7 @@ export class SecurityMonitor {
 
   private async logIncident(
     threat: SecurityThreat,
-    parameters: Record<string, any>
+    parameters: Record<string, any>,
   ): Promise<void> {
     await fetch('/api/security/incidents', {
       method: 'POST',
@@ -829,7 +829,7 @@ export class SecurityMonitor {
             source: 'anomaly_detector',
             timestamp: anomaly.timestamp,
           });
-        }
+        },
       );
     }
 
@@ -866,7 +866,7 @@ export class SecurityMonitor {
 
   private evaluateCondition(
     condition: string,
-    _threat: SecurityThreat
+    _threat: SecurityThreat,
   ): boolean {
     try {
       // Simple condition evaluation - in production, use a proper expression evaluator
@@ -918,7 +918,7 @@ export class SecurityMonitor {
   }
 
   private groupThreatsByType(
-    threats: SecurityThreat[]
+    threats: SecurityThreat[],
   ): Record<ThreatType, number> {
     const groups: Record<ThreatType, number> = {} as Record<ThreatType, number>;
     threats.forEach((threat) => {
@@ -928,7 +928,7 @@ export class SecurityMonitor {
   }
 
   private groupThreatsBySeverity(
-    threats: SecurityThreat[]
+    threats: SecurityThreat[],
   ): Record<ThreatSeverity, number> {
     const groups: Record<ThreatSeverity, number> = {} as Record<
       ThreatSeverity,
@@ -942,7 +942,7 @@ export class SecurityMonitor {
 
   private calculateMitigationSuccess(threats: SecurityThreat[]): number {
     const threatsWithActions = threats.filter(
-      (t) => t.mitigationActions.length > 0
+      (t) => t.mitigationActions.length > 0,
     );
     if (threatsWithActions.length === 0) {
       return 0;
@@ -956,7 +956,7 @@ export class SecurityMonitor {
 
     const totalActions = threatsWithActions.reduce(
       (sum, t) => sum + t.mitigationActions.length,
-      0
+      0,
     );
 
     return totalActions > 0 ? (successfulActions / totalActions) * 100 : 0;
@@ -1058,7 +1058,7 @@ export class SecurityMonitor {
    */
   public getActiveThreats(): SecurityThreat[] {
     return Array.from(this.activeThreats.values()).filter(
-      (threat) => threat.status === 'active'
+      (threat) => threat.status === 'active',
     );
   }
 

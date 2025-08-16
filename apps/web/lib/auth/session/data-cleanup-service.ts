@@ -126,11 +126,11 @@ export class DataCleanupService {
       totalOperations: results.length,
       totalRecordsProcessed: results.reduce(
         (sum, r) => sum + r.recordsProcessed,
-        0
+        0,
       ),
       totalRecordsDeleted: results.reduce(
         (sum, r) => sum + r.recordsDeleted,
-        0
+        0,
       ),
       totalExecutionTimeMs: endTime.getTime() - startTime.getTime(),
       successfulOperations: results.filter((r) => r.success).length,
@@ -186,11 +186,11 @@ export class DataCleanupService {
       totalOperations: results.length,
       totalRecordsProcessed: results.reduce(
         (sum, r) => sum + r.recordsProcessed,
-        0
+        0,
       ),
       totalRecordsDeleted: results.reduce(
         (sum, r) => sum + r.recordsDeleted,
-        0
+        0,
       ),
       totalExecutionTimeMs: endTime.getTime() - startTime.getTime(),
       successfulOperations: results.filter((r) => r.success).length,
@@ -216,7 +216,7 @@ export class DataCleanupService {
     try {
       const cutoffDate = new Date(
         Date.now() -
-          this.config.expiredSessionRetentionDays * 24 * 60 * 60 * 1000
+          this.config.expiredSessionRetentionDays * 24 * 60 * 60 * 1000,
       );
 
       // First, get count of records to be deleted
@@ -257,7 +257,7 @@ export class DataCleanupService {
 
           if (error) {
             throw new Error(
-              `Failed to delete expired sessions: ${error.message}`
+              `Failed to delete expired sessions: ${error.message}`,
             );
           }
 
@@ -297,7 +297,7 @@ export class DataCleanupService {
     try {
       const cutoffDate = new Date(
         Date.now() -
-          this.config.inactiveSessionRetentionDays * 24 * 60 * 60 * 1000
+          this.config.inactiveSessionRetentionDays * 24 * 60 * 60 * 1000,
       );
 
       // Get sessions that haven't been active for the specified period
@@ -339,7 +339,7 @@ export class DataCleanupService {
 
           if (error) {
             throw new Error(
-              `Failed to delete inactive sessions: ${error.message}`
+              `Failed to delete inactive sessions: ${error.message}`,
             );
           }
 
@@ -378,7 +378,7 @@ export class DataCleanupService {
 
     try {
       const cutoffDate = new Date(
-        Date.now() - this.config.activityLogRetentionDays * 24 * 60 * 60 * 1000
+        Date.now() - this.config.activityLogRetentionDays * 24 * 60 * 60 * 1000,
       );
 
       const { count: recordsToDelete } = await this.supabase
@@ -442,12 +442,12 @@ export class DataCleanupService {
     try {
       const resolvedCutoffDate = new Date(
         Date.now() -
-          this.config.resolvedEventRetentionDays * 24 * 60 * 60 * 1000
+          this.config.resolvedEventRetentionDays * 24 * 60 * 60 * 1000,
       );
 
       const unresolvedCutoffDate = new Date(
         Date.now() -
-          this.config.securityEventRetentionDays * 24 * 60 * 60 * 1000
+          this.config.securityEventRetentionDays * 24 * 60 * 60 * 1000,
       );
 
       // Delete resolved events older than retention period
@@ -495,7 +495,7 @@ export class DataCleanupService {
 
     try {
       const cutoffDate = new Date(
-        Date.now() - this.config.auditLogRetentionDays * 24 * 60 * 60 * 1000
+        Date.now() - this.config.auditLogRetentionDays * 24 * 60 * 60 * 1000,
       );
 
       const { count: recordsDeleted } = await this.supabase
@@ -534,11 +534,12 @@ export class DataCleanupService {
     try {
       const readCutoffDate = new Date(
         Date.now() -
-          this.config.readNotificationRetentionDays * 24 * 60 * 60 * 1000
+          this.config.readNotificationRetentionDays * 24 * 60 * 60 * 1000,
       );
 
       const unreadCutoffDate = new Date(
-        Date.now() - this.config.notificationRetentionDays * 24 * 60 * 60 * 1000
+        Date.now() -
+          this.config.notificationRetentionDays * 24 * 60 * 60 * 1000,
       );
 
       // Delete read notifications older than retention period
@@ -587,7 +588,7 @@ export class DataCleanupService {
     try {
       const cutoffDate = new Date(
         Date.now() -
-          this.config.inactiveDeviceRetentionDays * 24 * 60 * 60 * 1000
+          this.config.inactiveDeviceRetentionDays * 24 * 60 * 60 * 1000,
       );
 
       const { count: recordsDeleted } = await this.supabase
@@ -709,7 +710,7 @@ export class DataCleanupService {
           : 0;
       const totalRecordsDeleted = cleanupHistory.reduce(
         (sum, h) => sum + h.totalRecordsDeleted,
-        0
+        0,
       );
 
       // Calculate next scheduled run (daily at 2 AM)
@@ -753,28 +754,29 @@ export class DataCleanupService {
     try {
       const expiredSessionsCutoff = new Date(
         Date.now() -
-          this.config.expiredSessionRetentionDays * 24 * 60 * 60 * 1000
+          this.config.expiredSessionRetentionDays * 24 * 60 * 60 * 1000,
       );
       const inactiveSessionsCutoff = new Date(
         Date.now() -
-          this.config.inactiveSessionRetentionDays * 24 * 60 * 60 * 1000
+          this.config.inactiveSessionRetentionDays * 24 * 60 * 60 * 1000,
       );
       const activityLogsCutoff = new Date(
-        Date.now() - this.config.activityLogRetentionDays * 24 * 60 * 60 * 1000
+        Date.now() - this.config.activityLogRetentionDays * 24 * 60 * 60 * 1000,
       );
       const securityEventsCutoff = new Date(
         Date.now() -
-          this.config.securityEventRetentionDays * 24 * 60 * 60 * 1000
+          this.config.securityEventRetentionDays * 24 * 60 * 60 * 1000,
       );
       const auditLogsCutoff = new Date(
-        Date.now() - this.config.auditLogRetentionDays * 24 * 60 * 60 * 1000
+        Date.now() - this.config.auditLogRetentionDays * 24 * 60 * 60 * 1000,
       );
       const notificationsCutoff = new Date(
-        Date.now() - this.config.notificationRetentionDays * 24 * 60 * 60 * 1000
+        Date.now() -
+          this.config.notificationRetentionDays * 24 * 60 * 60 * 1000,
       );
       const devicesCutoff = new Date(
         Date.now() -
-          this.config.inactiveDeviceRetentionDays * 24 * 60 * 60 * 1000
+          this.config.inactiveDeviceRetentionDays * 24 * 60 * 60 * 1000,
       );
 
       const [

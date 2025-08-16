@@ -106,7 +106,7 @@ class NotificationManager {
   private ensureInitialized(): void {
     if (!this.isInitialized) {
       throw new Error(
-        'NotificationManager não foi inicializado. Chame initialize() primeiro.'
+        'NotificationManager não foi inicializado. Chame initialize() primeiro.',
       );
     }
   }
@@ -127,7 +127,7 @@ class NotificationManager {
       channels?: NotificationChannel[];
       scheduledFor?: Date;
       template?: string;
-    }
+    },
   ): Promise<DeliveryResult[]> {
     this.ensureInitialized();
 
@@ -136,14 +136,14 @@ class NotificationManager {
       const notification = await this.createNotification(
         type,
         data,
-        options?.priority
+        options?.priority,
       );
 
       // Determinar canais de entrega
       const channels = this.determineChannels(
         recipient,
         type,
-        options?.channels
+        options?.channels,
       );
 
       // Verificar rate limiting
@@ -156,14 +156,14 @@ class NotificationManager {
             notification,
             recipient,
             channel,
-            options
-          )
-        )
+            options,
+          ),
+        ),
       );
 
       // Enviar notificações
       const results = await Promise.all(
-        deliveryNotifications.map((dn) => this.deliverNotification(dn))
+        deliveryNotifications.map((dn) => this.deliverNotification(dn)),
       );
 
       // Registrar métricas
@@ -209,7 +209,7 @@ class NotificationManager {
       priority?: NotificationPriority;
       channels?: NotificationChannel[];
       batchSize?: number;
-    }
+    },
   ): Promise<DeliveryResult[][]> {
     this.ensureInitialized();
 
@@ -222,8 +222,8 @@ class NotificationManager {
 
       const batchResults = await Promise.all(
         batch.map((recipient) =>
-          this.sendNotification(type, recipient, data, options)
-        )
+          this.sendNotification(type, recipient, data, options),
+        ),
       );
 
       results.push(...batchResults);
@@ -247,7 +247,7 @@ class NotificationManager {
   private async createNotification(
     type: NotificationType,
     data: Record<string, any>,
-    priority: NotificationPriority = NotificationPriority.NORMAL
+    priority: NotificationPriority = NotificationPriority.NORMAL,
   ): Promise<BaseNotification> {
     const category = this.getNotificationCategory(type);
 
@@ -290,13 +290,13 @@ class NotificationManager {
     options?: {
       scheduledFor?: Date;
       template?: string;
-    }
+    },
   ): Promise<DeliveryNotification> {
     // Buscar template
     const template = await this.getTemplate(
       notification.type,
       channel,
-      options?.template
+      options?.template,
     );
 
     // Renderizar conteúdo
@@ -351,7 +351,7 @@ class NotificationManager {
    * Entrega uma notificação
    */
   private async deliverNotification(
-    notification: DeliveryNotification
+    notification: DeliveryNotification,
   ): Promise<DeliveryResult> {
     try {
       // Verificar se deve ser agendada
@@ -403,7 +403,7 @@ class NotificationManager {
   private async getTemplate(
     type: NotificationType,
     channel: NotificationChannel,
-    templateId?: string
+    templateId?: string,
   ): Promise<NotificationTemplate | undefined> {
     if (templateId) {
       return await this.templateEngine.getTemplate(templateId);
@@ -440,7 +440,7 @@ class NotificationManager {
   private determineChannels(
     recipient: NotificationRecipient,
     type: NotificationType,
-    requestedChannels?: NotificationChannel[]
+    requestedChannels?: NotificationChannel[],
   ): NotificationChannel[] {
     const category = this.getNotificationCategory(type);
     const preferences = recipient.preferences;
@@ -450,7 +450,7 @@ class NotificationManager {
       return requestedChannels.filter(
         (channel) =>
           preferences.channels[channel] &&
-          preferences.categories[category]?.channels.includes(channel)
+          preferences.categories[category]?.channels.includes(channel),
       );
     }
 
@@ -464,7 +464,7 @@ class NotificationManager {
    * Obtém categoria da notificação
    */
   private getNotificationCategory(
-    type: NotificationType
+    type: NotificationType,
   ): NotificationCategory {
     const categoryMap: Record<string, NotificationCategory> = {
       appointment_: NotificationCategory.APPOINTMENT,
@@ -548,7 +548,7 @@ class NotificationManager {
    */
   private async checkRateLimit(
     recipient: NotificationRecipient,
-    channels: NotificationChannel[]
+    channels: NotificationChannel[],
   ): Promise<void> {
     if (!this.config.rateLimiting.enabled) {
       return;
@@ -571,7 +571,7 @@ class NotificationManager {
    * Agenda notificação
    */
   private async scheduleNotification(
-    notification: DeliveryNotification
+    notification: DeliveryNotification,
   ): Promise<void> {
     // Implementar agendamento (pode usar cron jobs, queue, etc.)
     await auditLogger.log({
@@ -590,7 +590,7 @@ class NotificationManager {
    */
   private async updateDeliveryStatus(
     notificationId: string,
-    result: DeliveryResult
+    result: DeliveryResult,
   ): Promise<void> {
     const { error } = await this.supabase
       .from('notification_deliveries')
@@ -613,7 +613,7 @@ class NotificationManager {
   private async recordNotificationEvent(
     notificationId: string,
     event: string,
-    data?: Record<string, any>
+    data?: Record<string, any>,
   ): Promise<void> {
     const notificationEvent: NotificationEvent = {
       id: crypto.randomUUID(),
@@ -658,7 +658,7 @@ class NotificationManager {
    */
   async getNotifications(
     filters: NotificationFilters,
-    pagination: PaginationOptions
+    pagination: PaginationOptions,
   ): Promise<PaginatedResult<DeliveryNotification>> {
     this.ensureInitialized();
 
@@ -720,7 +720,7 @@ class NotificationManager {
   async getMetrics(
     _startDate: Date,
     _endDate: Date,
-    _filters?: NotificationFilters
+    _filters?: NotificationFilters,
   ): Promise<NotificationMetrics> {
     this.ensureInitialized();
     // return await this.metricsCollector.getMetrics(startDate, endDate, filters);
@@ -780,7 +780,7 @@ export function getNotificationManager(): NotificationManager {
  * Inicializa o sistema de notificações
  */
 export async function initializeNotificationSystem(
-  config: NotificationSystemConfig
+  config: NotificationSystemConfig,
 ): Promise<NotificationManager> {
   const manager = getNotificationManager();
   await manager.initialize(config);

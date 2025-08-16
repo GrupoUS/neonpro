@@ -30,7 +30,7 @@ const QUERY_KEYS = {
 // =============================================================================
 
 async function generateReport<T extends ReportType>(
-  parameters: ReportParameters
+  parameters: ReportParameters,
 ): Promise<ReportResult<T>> {
   const response = await fetch('/api/inventory/reports/generate', {
     method: 'POST',
@@ -51,7 +51,7 @@ async function generateReport<T extends ReportType>(
 
 async function _generateReportFromURL(
   type: ReportType,
-  filters: ReportFilters
+  filters: ReportFilters,
 ): Promise<ReportResult<any>> {
   const searchParams = new URLSearchParams();
   searchParams.set('type', type);
@@ -63,7 +63,7 @@ async function _generateReportFromURL(
   });
 
   const response = await fetch(
-    `/api/inventory/reports/generate?${searchParams.toString()}`
+    `/api/inventory/reports/generate?${searchParams.toString()}`,
   );
 
   if (!response.ok) {
@@ -89,7 +89,7 @@ async function fetchReportDefinitions(filters?: {
   }
 
   const response = await fetch(
-    `/api/inventory/reports/definitions?${searchParams.toString()}`
+    `/api/inventory/reports/definitions?${searchParams.toString()}`,
   );
 
   if (!response.ok) {
@@ -105,7 +105,7 @@ async function createReportDefinition(
   definition: Omit<
     ReportDefinition,
     'id' | 'created_at' | 'updated_at' | 'created_by'
-  >
+  >,
 ): Promise<ReportDefinition> {
   const response = await fetch('/api/inventory/reports/definitions', {
     method: 'POST',
@@ -175,7 +175,7 @@ export function useInventoryReports() {
 
 export function useStockMovementReport(
   filters: ReportFilters,
-  options?: { enabled?: boolean }
+  options?: { enabled?: boolean },
 ) {
   const parameters: ReportParameters = {
     type: 'stock_movement',
@@ -194,7 +194,7 @@ export function useStockMovementReport(
 
 export function useStockValuationReport(
   filters: ReportFilters,
-  options?: { enabled?: boolean }
+  options?: { enabled?: boolean },
 ) {
   const parameters: ReportParameters = {
     type: 'stock_valuation',
@@ -213,7 +213,7 @@ export function useStockValuationReport(
 
 export function useLowStockReport(
   filters: ReportFilters,
-  options?: { enabled?: boolean }
+  options?: { enabled?: boolean },
 ) {
   const parameters: ReportParameters = {
     type: 'low_stock',
@@ -232,7 +232,7 @@ export function useLowStockReport(
 
 export function useExpiringItemsReport(
   filters: ReportFilters,
-  options?: { enabled?: boolean }
+  options?: { enabled?: boolean },
 ) {
   const parameters: ReportParameters = {
     type: 'expiring_items',
@@ -251,7 +251,7 @@ export function useExpiringItemsReport(
 
 export function useTransferReport(
   filters: ReportFilters,
-  options?: { enabled?: boolean }
+  options?: { enabled?: boolean },
 ) {
   const parameters: ReportParameters = {
     type: 'transfers',
@@ -270,7 +270,7 @@ export function useTransferReport(
 
 export function useLocationPerformanceReport(
   filters: ReportFilters,
-  options?: { enabled?: boolean }
+  options?: { enabled?: boolean },
 ) {
   const parameters: ReportParameters = {
     type: 'location_performance',
@@ -335,7 +335,7 @@ export function useReportFilters() {
         end_date: endDate.toISOString(),
       };
     },
-    []
+    [],
   );
 
   const buildMonthFilter = useCallback(
@@ -344,12 +344,12 @@ export function useReportFilters() {
       const startDate = new Date(
         endDate.getFullYear(),
         endDate.getMonth() - monthsBack,
-        1
+        1,
       );
       const endOfMonth = new Date(
         endDate.getFullYear(),
         endDate.getMonth() - monthsBack + 1,
-        0
+        0,
       );
 
       return {
@@ -357,7 +357,7 @@ export function useReportFilters() {
         end_date: endOfMonth.toISOString(),
       };
     },
-    []
+    [],
   );
 
   const buildYearFilter = useCallback(
@@ -371,7 +371,7 @@ export function useReportFilters() {
         end_date: endDate.toISOString(),
       };
     },
-    []
+    [],
   );
 
   return {
@@ -395,7 +395,7 @@ export function useReportExport() {
       });
 
       const response = await fetch(
-        `/api/inventory/reports/generate?${searchParams.toString()}`
+        `/api/inventory/reports/generate?${searchParams.toString()}`,
       );
 
       if (!response.ok) {
@@ -412,7 +412,7 @@ export function useReportExport() {
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
     },
-    []
+    [],
   );
 
   return { exportToCSV };

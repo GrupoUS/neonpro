@@ -647,7 +647,7 @@ const BackupConfigForm: React.FC<BackupConfigFormProps> = ({
                               {...field}
                               onChange={(e) =>
                                 field.onChange(
-                                  Number.parseInt(e.target.value, 10)
+                                  Number.parseInt(e.target.value, 10),
                                 )
                               }
                             />
@@ -729,7 +729,7 @@ const BackupConfigForm: React.FC<BackupConfigFormProps> = ({
                       <strong>Schedule Preview:</strong>{' '}
                       {generateCronExpression(
                         watchedValues.schedule_frequency,
-                        watchedValues.schedule_config
+                        watchedValues.schedule_config,
                       )}
                     </AlertDescription>
                   </Alert>
@@ -1035,7 +1035,7 @@ const BackupConfigForm: React.FC<BackupConfigFormProps> = ({
                               {...field}
                               onChange={(e) =>
                                 field.onChange(
-                                  Number.parseInt(e.target.value, 10)
+                                  Number.parseInt(e.target.value, 10),
                                 )
                               }
                             />
@@ -1061,7 +1061,7 @@ const BackupConfigForm: React.FC<BackupConfigFormProps> = ({
                               {...field}
                               onChange={(e) =>
                                 field.onChange(
-                                  Number.parseInt(e.target.value, 10)
+                                  Number.parseInt(e.target.value, 10),
                                 )
                               }
                             />
@@ -1089,7 +1089,7 @@ const BackupConfigForm: React.FC<BackupConfigFormProps> = ({
                               {...field}
                               onChange={(e) =>
                                 field.onChange(
-                                  Number.parseInt(e.target.value, 10)
+                                  Number.parseInt(e.target.value, 10),
                                 )
                               }
                             />
@@ -1115,7 +1115,7 @@ const BackupConfigForm: React.FC<BackupConfigFormProps> = ({
                               {...field}
                               onChange={(e) =>
                                 field.onChange(
-                                  Number.parseInt(e.target.value, 10)
+                                  Number.parseInt(e.target.value, 10),
                                 )
                               }
                             />
@@ -1211,7 +1211,7 @@ const BackupConfigForm: React.FC<BackupConfigFormProps> = ({
                                 {...field}
                                 onChange={(e) =>
                                   field.onChange(
-                                    Number.parseInt(e.target.value, 10)
+                                    Number.parseInt(e.target.value, 10),
                                   )
                                 }
                               />
@@ -1266,7 +1266,7 @@ const BackupConfigForm: React.FC<BackupConfigFormProps> = ({
                                 {...field}
                                 onChange={(e) =>
                                   field.onChange(
-                                    Number.parseInt(e.target.value, 10)
+                                    Number.parseInt(e.target.value, 10),
                                   )
                                 }
                               />
@@ -1292,7 +1292,7 @@ const BackupConfigForm: React.FC<BackupConfigFormProps> = ({
                                 {...field}
                                 onChange={(e) =>
                                   field.onChange(
-                                    Number.parseInt(e.target.value, 10)
+                                    Number.parseInt(e.target.value, 10),
                                   )
                                 }
                               />

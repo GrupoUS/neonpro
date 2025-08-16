@@ -293,7 +293,7 @@ export class DataSubjectRightsManager extends EventEmitter {
       cleanupIntervalHours: 24,
       supportedFormats: [ExportFormat.JSON, ExportFormat.CSV, ExportFormat.PDF],
       defaultLanguage: 'pt',
-    }
+    },
   ) {
     super();
     this.setMaxListeners(100);
@@ -339,7 +339,7 @@ export class DataSubjectRightsManager extends EventEmitter {
       requestSource: string;
       language?: 'pt' | 'en';
       urgencyJustification?: string;
-    }
+    },
   ): Promise<DataSubjectRightsRequest> {
     const request: DataSubjectRightsRequest = {
       id: this.generateRequestId(),
@@ -349,7 +349,7 @@ export class DataSubjectRightsManager extends EventEmitter {
       priority: this.determinePriority(requestType, requestData),
       description: this.generateDescription(
         requestType,
-        this.config.defaultLanguage
+        this.config.defaultLanguage,
       ),
       requestData,
       verification: {
@@ -417,7 +417,7 @@ export class DataSubjectRightsManager extends EventEmitter {
       verificationCode?: string;
       documentData?: any;
       biometricData?: any;
-    }
+    },
   ): Promise<DataSubjectRightsRequest> {
     const request = this.requests.get(requestId);
     if (!request) {
@@ -481,7 +481,7 @@ export class DataSubjectRightsManager extends EventEmitter {
       // Gather user data
       const userData = await this.gatherUserData(
         request.userId,
-        request.requestData
+        request.requestData,
       );
 
       // Create access response
@@ -520,7 +520,7 @@ export class DataSubjectRightsManager extends EventEmitter {
    * Process a data portability request
    */
   async processPortabilityRequest(
-    requestId: string
+    requestId: string,
   ): Promise<DataPortabilityPackage> {
     const request = this.requests.get(requestId);
     if (!request || request.requestType !== DataSubjectRight.PORTABILITY) {
@@ -536,7 +536,7 @@ export class DataSubjectRightsManager extends EventEmitter {
       // Create portability package
       const userData = await this.gatherPortableData(
         request.userId,
-        request.requestData
+        request.requestData,
       );
       const format = request.requestData.exportFormat || ExportFormat.JSON;
 
@@ -563,7 +563,7 @@ export class DataSubjectRightsManager extends EventEmitter {
     } catch (error) {
       await this.rejectRequest(
         request.id,
-        `Portability processing failed: ${error}`
+        `Portability processing failed: ${error}`,
       );
       throw error;
     }
@@ -587,7 +587,7 @@ export class DataSubjectRightsManager extends EventEmitter {
       // Perform data rectification
       const changes = await this.rectifyUserData(
         request.userId,
-        request.requestData.rectificationData
+        request.requestData.rectificationData,
       );
 
       // Complete request
@@ -630,7 +630,7 @@ export class DataSubjectRightsManager extends EventEmitter {
       const erasedData = await this.eraseUserData(
         request.userId,
         request.requestData.specificData,
-        request.requestData.erasureReason
+        request.requestData.erasureReason,
       );
 
       // Complete request
@@ -666,7 +666,7 @@ export class DataSubjectRightsManager extends EventEmitter {
       const restrictions = await this.applyProcessingRestrictions(
         request.userId,
         request.requestData.specificData,
-        request.requestData.restrictionReason
+        request.requestData.restrictionReason,
       );
 
       // Complete request
@@ -743,13 +743,13 @@ export class DataSubjectRightsManager extends EventEmitter {
    */
   private async completeRequest(
     request: DataSubjectRightsRequest,
-    responseData: any
+    responseData: any,
   ): Promise<void> {
     request.status = RequestStatus.COMPLETED;
     request.processing.completedAt = new Date();
     request.response.responseData = responseData;
     request.response.expiryDate = new Date(
-      Date.now() + this.config.responseExpiryDays * 24 * 60 * 60 * 1000
+      Date.now() + this.config.responseExpiryDays * 24 * 60 * 60 * 1000,
     );
     request.updatedAt = new Date();
 
@@ -773,7 +773,7 @@ export class DataSubjectRightsManager extends EventEmitter {
    */
   private async rejectRequest(
     requestId: string,
-    reason: string
+    reason: string,
   ): Promise<void> {
     const request = this.requests.get(requestId);
     if (!request) {
@@ -807,7 +807,7 @@ export class DataSubjectRightsManager extends EventEmitter {
       async () => {
         await this.processQueue();
       },
-      this.config.processingIntervalMinutes * 60 * 1000
+      this.config.processingIntervalMinutes * 60 * 1000,
     );
   }
 
@@ -819,7 +819,7 @@ export class DataSubjectRightsManager extends EventEmitter {
       async () => {
         await this.cleanupExpiredRequests();
       },
-      this.config.cleanupIntervalHours * 60 * 60 * 1000
+      this.config.cleanupIntervalHours * 60 * 60 * 1000,
     );
   }
 
@@ -828,7 +828,7 @@ export class DataSubjectRightsManager extends EventEmitter {
    */
   private async processQueue(): Promise<void> {
     const processingCount = Array.from(this.requests.values()).filter(
-      (r) => r.status === RequestStatus.IN_PROGRESS
+      (r) => r.status === RequestStatus.IN_PROGRESS,
     ).length;
 
     if (processingCount >= this.config.maxConcurrentRequests) {
@@ -837,7 +837,7 @@ export class DataSubjectRightsManager extends EventEmitter {
 
     const requestsToProcess = this.processingQueue.splice(
       0,
-      this.config.maxConcurrentRequests - processingCount
+      this.config.maxConcurrentRequests - processingCount,
     );
 
     for (const requestId of requestsToProcess) {
@@ -879,7 +879,7 @@ export class DataSubjectRightsManager extends EventEmitter {
       // Check if request has expired
       const expiryDate = new Date(
         request.createdAt.getTime() +
-          this.config.processingTimeoutDays * 24 * 60 * 60 * 1000
+          this.config.processingTimeoutDays * 24 * 60 * 60 * 1000,
       );
 
       if (now > expiryDate && request.status === RequestStatus.PENDING) {
@@ -907,7 +907,7 @@ export class DataSubjectRightsManager extends EventEmitter {
   // Helper methods (implementation details)
   private determinePriority(
     requestType: DataSubjectRight,
-    _requestData: any
+    _requestData: any,
   ): RequestPriority {
     if (requestType === DataSubjectRight.ERASURE) {
       return RequestPriority.HIGH;
@@ -920,7 +920,7 @@ export class DataSubjectRightsManager extends EventEmitter {
 
   private generateDescription(
     requestType: DataSubjectRight,
-    language: 'pt' | 'en'
+    language: 'pt' | 'en',
   ): string {
     const descriptions = {
       pt: {
@@ -988,7 +988,7 @@ export class DataSubjectRightsManager extends EventEmitter {
 
   private async performVerification(
     _request: DataSubjectRightsRequest,
-    _verificationData: any
+    _verificationData: any,
   ): Promise<boolean> {
     // Implementation would depend on verification method
     return true;
@@ -996,7 +996,7 @@ export class DataSubjectRightsManager extends EventEmitter {
 
   private async gatherUserData(
     _userId: string,
-    _requestData: any
+    _requestData: any,
   ): Promise<any> {
     // Implementation would gather actual user data
     return {
@@ -1011,7 +1011,7 @@ export class DataSubjectRightsManager extends EventEmitter {
 
   private async gatherPortableData(
     _userId: string,
-    _requestData: any
+    _requestData: any,
   ): Promise<any> {
     // Implementation would gather portable user data
     return {};
@@ -1019,14 +1019,14 @@ export class DataSubjectRightsManager extends EventEmitter {
 
   private async rectifyUserData(
     _userId: string,
-    _rectificationData: any
+    _rectificationData: any,
   ): Promise<any> {
     // Implementation would perform data rectification
     return {};
   }
 
   private async validateErasureRequest(
-    _request: DataSubjectRightsRequest
+    _request: DataSubjectRightsRequest,
   ): Promise<{
     allowed: boolean;
     reason?: string;
@@ -1038,7 +1038,7 @@ export class DataSubjectRightsManager extends EventEmitter {
   private async eraseUserData(
     _userId: string,
     _specificData?: string[],
-    _reason?: string
+    _reason?: string,
   ): Promise<string[]> {
     // Implementation would perform data erasure
     return [];
@@ -1047,7 +1047,7 @@ export class DataSubjectRightsManager extends EventEmitter {
   private async applyProcessingRestrictions(
     _userId: string,
     _specificData?: string[],
-    _reason?: string
+    _reason?: string,
   ): Promise<string[]> {
     // Implementation would apply processing restrictions
     return [];
@@ -1118,7 +1118,7 @@ export class DataSubjectRightsManager extends EventEmitter {
     }
 
     const pendingRequests = Array.from(this.requests.values()).filter(
-      (r) => r.status === RequestStatus.PENDING
+      (r) => r.status === RequestStatus.PENDING,
     ).length;
 
     if (pendingRequests > 100) {

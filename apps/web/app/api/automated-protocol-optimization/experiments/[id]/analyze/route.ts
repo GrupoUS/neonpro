@@ -10,7 +10,7 @@ const service = new AutomatedProtocolOptimizationService();
 // POST: Analyze experiment results
 export async function POST(
   _request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const { id } = params;
@@ -18,7 +18,7 @@ export async function POST(
     if (!id) {
       return NextResponse.json(
         { success: false, error: 'Experiment ID is required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -36,7 +36,7 @@ export async function POST(
         error: 'Failed to analyze experiment results',
         details: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

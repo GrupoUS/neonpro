@@ -244,7 +244,7 @@ const AgendaPage = () => {
             key={day}
           >
             {day}
-          </div>
+          </div>,
         );
       }
 
@@ -592,7 +592,7 @@ const AgendaPage = () => {
                       const hour = 9 + i;
                       const timeSlot = `${hour.toString().padStart(2, '0')}:00`;
                       const appointment = appointments.find(
-                        (apt) => apt.time === timeSlot
+                        (apt) => apt.time === timeSlot,
                       );
 
                       return (

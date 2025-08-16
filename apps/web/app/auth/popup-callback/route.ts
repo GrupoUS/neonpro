@@ -40,7 +40,7 @@ function createErrorResponse(message: string) {
   `,
     {
       headers: { 'Content-Type': 'text/html' },
-    }
+    },
   );
 }
 
@@ -107,7 +107,7 @@ export async function GET(request: Request) {
       `,
         {
           headers: { 'Content-Type': 'text/html' },
-        }
+        },
       );
     } catch (_err) {
       return createErrorResponse('Unexpected error occurred');

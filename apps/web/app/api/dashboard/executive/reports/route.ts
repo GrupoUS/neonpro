@@ -42,7 +42,7 @@ const CreateTemplateSchema = z.object({
         type: z.enum(['kpi_summary', 'chart', 'table', 'text']),
         dataSource: z.string(),
         config: z.record(z.any()).optional(),
-      })
+      }),
     ),
     layout: z.object({
       orientation: z.enum(['portrait', 'landscape']).default('portrait'),
@@ -117,7 +117,7 @@ export async function GET(request: NextRequest) {
     if (!clinicUser) {
       return NextResponse.json(
         { error: 'Usuário não associado a uma clínica' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -152,13 +152,13 @@ export async function GET(request: NextRequest) {
     const instances = await reportSystem.getReportInstances(
       filters,
       limit,
-      offset
+      offset,
     );
     return NextResponse.json({ instances });
   } catch (_error) {
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -187,7 +187,7 @@ export async function POST(request: NextRequest) {
     if (!clinicUser) {
       return NextResponse.json(
         { error: 'Usuário não associado a uma clínica' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -208,7 +208,7 @@ export async function POST(request: NextRequest) {
           format: validatedData.format,
           parameters: validatedData.parameters,
           generatedBy: user.id,
-        }
+        },
       );
 
       return NextResponse.json({ reportInstance }, { status: 201 });
@@ -224,12 +224,12 @@ export async function POST(request: NextRequest) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Dados inválidos', details: error.errors },
-        { status: 400 }
+        { status: 400 },
       );
     }
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

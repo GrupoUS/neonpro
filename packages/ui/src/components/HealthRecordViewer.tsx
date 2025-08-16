@@ -8,7 +8,7 @@ import { Badge } from './Badge';
 import { Button } from './Button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './Tabs';
 
-export type HealthRecordViewerProps = {
+type HealthRecordViewerProps = {
   record: HealthRecordData;
   practitioner?: PractitionerData;
   canEdit?: boolean;
@@ -164,7 +164,7 @@ const HealthRecordViewer = React.forwardRef<
                     CPF
                   </label>
                   <div className="mt-1">
-                    {renderSensitiveContent(formatters.cpf(record.cpf), 'cpf')}
+                    {renderSensitiveContent(record.cpf, 'cpf')}
                   </div>
                 </div>
 
@@ -235,7 +235,7 @@ const HealthRecordViewer = React.forwardRef<
                 </h3>
 
                 <div className="flex items-center gap-4">
-                  <Avatar variant="practitioner">
+                  <Avatar>
                     <AvatarImage
                       alt={practitioner.name}
                       src={practitioner.avatar}
@@ -331,7 +331,7 @@ const HealthRecordViewer = React.forwardRef<
                           <Badge
                             variant={
                               procedure.status === 'completed'
-                                ? 'success'
+                                ? 'confirmed'
                                 : 'secondary'
                             }
                           >
@@ -370,7 +370,7 @@ const HealthRecordViewer = React.forwardRef<
                           <Badge
                             variant={
                               procedure.status === 'completed'
-                                ? 'success'
+                                ? 'confirmed'
                                 : 'default'
                             }
                           >

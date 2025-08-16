@@ -52,7 +52,7 @@ function handleError(error: unknown, defaultMessage = 'Internal server error') {
         error: 'Validation error',
         details: error.errors,
       },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
@@ -62,7 +62,7 @@ function handleError(error: unknown, defaultMessage = 'Internal server error') {
         success: false,
         error: error.message,
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 
@@ -71,7 +71,7 @@ function handleError(error: unknown, defaultMessage = 'Internal server error') {
       success: false,
       error: defaultMessage,
     },
-    { status: 500 }
+    { status: 500 },
   );
 }
 
@@ -86,7 +86,7 @@ export async function POST(request: NextRequest) {
     if ('error' in authResult) {
       return NextResponse.json(
         { success: false, error: authResult.error },
-        { status: authResult.status }
+        { status: authResult.status },
       );
     }
 
@@ -105,7 +105,7 @@ export async function POST(request: NextRequest) {
     const { data: alert, error: alertError } = await supabase
       .from('stock_alerts_history')
       .select(
-        'id, clinic_id, status, message, product_id, alert_type, current_value, threshold_value, metadata'
+        'id, clinic_id, status, message, product_id, alert_type, current_value, threshold_value, metadata',
       )
       .eq('id', resolveData.alertId)
       .eq('clinic_id', clinicId)
@@ -114,7 +114,7 @@ export async function POST(request: NextRequest) {
     if (alertError || !alert) {
       return NextResponse.json(
         { success: false, error: 'Alert not found or not accessible' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -126,7 +126,7 @@ export async function POST(request: NextRequest) {
           error: 'Alert is already resolved',
           currentStatus: alert.status,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -137,7 +137,7 @@ export async function POST(request: NextRequest) {
           error: 'Alert has been dismissed and cannot be resolved',
           currentStatus: alert.status,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -177,14 +177,14 @@ export async function POST(request: NextRequest) {
           name,
           email
         )
-      `
+      `,
       )
       .single();
 
     if (updateError) {
       return NextResponse.json(
         { success: false, error: 'Failed to resolve alert' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -231,7 +231,7 @@ export async function POST(request: NextRequest) {
       supabase,
       alert,
       resolveData,
-      clinicId
+      clinicId,
     );
 
     // Trigger analytics update for resolution metrics
@@ -240,7 +240,7 @@ export async function POST(request: NextRequest) {
       alert,
       resolveData,
       userId,
-      clinicId
+      clinicId,
     );
 
     // Send notifications to stakeholders
@@ -293,7 +293,7 @@ async function updateAlertConfigurationsIfRecurring(
   supabase: any,
   alert: any,
   _resolveData: any,
-  clinicId: string
+  clinicId: string,
 ) {
   try {
     // Check if this is a recurring issue (same product, same type within 30 days)
@@ -305,7 +305,7 @@ async function updateAlertConfigurationsIfRecurring(
       .eq('clinic_id', clinicId)
       .gte(
         'created_at',
-        new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
+        new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
       );
 
     if (error) {
@@ -334,7 +334,7 @@ async function updateAlertConfigurationsIfRecurring(
           },
           {
             onConflict: 'clinic_id,product_id,alert_type',
-          }
+          },
         );
 
       if (configError) {
@@ -352,7 +352,7 @@ async function updateResolutionAnalytics(
   alert: any,
   resolveData: any,
   userId: string,
-  clinicId: string
+  clinicId: string,
 ) {
   try {
     const resolutionTimeMs = Date.now() - new Date(alert.created_at).getTime();
@@ -395,7 +395,7 @@ async function sendResolutionNotifications(
   alert: any,
   resolveData: any,
   userId: string,
-  clinicId: string
+  clinicId: string,
 ) {
   try {
     // Get notification preferences for the clinic
@@ -444,7 +444,7 @@ async function integratePurchasingSystem(
   supabase: any,
   alert: any,
   resolveData: any,
-  clinicId: string
+  clinicId: string,
 ) {
   try {
     // Create purchase order record

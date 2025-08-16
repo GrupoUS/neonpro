@@ -36,7 +36,7 @@ export async function GET(request: NextRequest) {
 
     const reports =
       await automatedBeforeAfterAnalysisService.getAnalysisReports(
-        validatedFilters
+        validatedFilters,
       );
 
     return NextResponse.json({
@@ -50,7 +50,7 @@ export async function GET(request: NextRequest) {
         error: 'Failed to fetch analysis reports',
         details: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -81,7 +81,7 @@ export async function POST(request: NextRequest) {
         data: report,
         message: 'Analysis report generated successfully',
       },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (error) {
     return NextResponse.json(
@@ -89,7 +89,7 @@ export async function POST(request: NextRequest) {
         error: 'Failed to generate analysis report',
         details: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

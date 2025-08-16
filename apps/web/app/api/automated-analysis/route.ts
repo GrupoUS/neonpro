@@ -39,7 +39,7 @@ export async function GET(request: NextRequest) {
 
     const sessions =
       await automatedBeforeAfterAnalysisService.getAnalysisSessions(
-        validatedFilters
+        validatedFilters,
       );
 
     return NextResponse.json({
@@ -53,7 +53,7 @@ export async function GET(request: NextRequest) {
         error: 'Failed to fetch analysis sessions',
         details: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -77,7 +77,7 @@ export async function POST(request: NextRequest) {
 
     const session =
       await automatedBeforeAfterAnalysisService.createAnalysisSession(
-        validatedData
+        validatedData,
       );
 
     return NextResponse.json(
@@ -86,7 +86,7 @@ export async function POST(request: NextRequest) {
         data: session,
         message: 'Analysis session created successfully',
       },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (error) {
     return NextResponse.json(
@@ -94,7 +94,7 @@ export async function POST(request: NextRequest) {
         error: 'Failed to create analysis session',
         details: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -117,7 +117,7 @@ export async function PUT(request: NextRequest) {
     if (!id) {
       return NextResponse.json(
         { error: 'Session ID is required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -128,7 +128,7 @@ export async function PUT(request: NextRequest) {
     const updatedSession =
       await automatedBeforeAfterAnalysisService.updateAnalysisSession(
         id,
-        validatedUpdates
+        validatedUpdates,
       );
 
     return NextResponse.json({
@@ -142,7 +142,7 @@ export async function PUT(request: NextRequest) {
         error: 'Failed to update analysis session',
         details: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -165,7 +165,7 @@ export async function DELETE(request: NextRequest) {
     if (!id) {
       return NextResponse.json(
         { error: 'Session ID is required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -181,7 +181,7 @@ export async function DELETE(request: NextRequest) {
         error: 'Failed to delete analysis session',
         details: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

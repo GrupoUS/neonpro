@@ -121,7 +121,7 @@ class TwilioSMSProvider implements SMSProvider {
 
   constructor(
     config: SMSProviderConfig['primary'],
-    brazilConfig: SMSProviderConfig['brazil']
+    brazilConfig: SMSProviderConfig['brazil'],
   ) {
     this.accountSid = config.accountSid;
     this.authToken = config.authToken;
@@ -140,7 +140,7 @@ class TwilioSMSProvider implements SMSProvider {
           headers: {
             Authorization: `Basic ${auth}`,
           },
-        }
+        },
       );
 
       return response.ok;
@@ -198,14 +198,14 @@ class TwilioSMSProvider implements SMSProvider {
               'Content-Type': 'application/x-www-form-urlencoded',
             },
             body: payload,
-          }
+          },
         );
 
         const responseData = await response.json();
 
         if (!response.ok) {
           throw new Error(
-            `Twilio API error: ${responseData.message || response.statusText}`
+            `Twilio API error: ${responseData.message || response.statusText}`,
           );
         }
 
@@ -285,7 +285,7 @@ class TwilioSMSProvider implements SMSProvider {
           message: message.message,
           templateData: message.templateData,
           metadata: message.metadata,
-        })
+        }),
       );
 
       const batchResults = await Promise.allSettled(batchPromises);
@@ -344,7 +344,7 @@ class TwilioSMSProvider implements SMSProvider {
           headers: {
             Authorization: `Basic ${auth}`,
           },
-        }
+        },
       );
 
       const data = await response.json();
@@ -385,7 +385,7 @@ class TwilioSMSProvider implements SMSProvider {
   }
 
   private async validateLGPDCompliance(
-    lgpdData: LGPDCompliantData
+    lgpdData: LGPDCompliantData,
   ): Promise<void> {
     if (!lgpdData.consentGiven) {
       throw new Error('LGPD: SMS consent not provided');
@@ -414,11 +414,11 @@ class TwilioSMSProvider implements SMSProvider {
       const currentHour = now.getHours();
       const startHour = Number.parseInt(
         this.brazilConfig.operatingHours.start.split(':')[0],
-        10
+        10,
       );
       const endHour = Number.parseInt(
         this.brazilConfig.operatingHours.end.split(':')[0],
-        10
+        10,
       );
 
       if (currentHour < startHour || currentHour >= endHour) {
@@ -433,7 +433,7 @@ class TwilioSMSProvider implements SMSProvider {
         !(await this.validatePhoneNumber(phoneNumber))
       ) {
         throw new Error(
-          `Brazil Compliance: Invalid Brazilian phone number: ${phoneNumber}`
+          `Brazil Compliance: Invalid Brazilian phone number: ${phoneNumber}`,
         );
       }
     }
@@ -448,7 +448,7 @@ class TwilioSMSProvider implements SMSProvider {
       )
     ) {
       throw new Error(
-        'Brazil Compliance: Marketing SMS must include opt-out instructions'
+        'Brazil Compliance: Marketing SMS must include opt-out instructions',
       );
     }
   }

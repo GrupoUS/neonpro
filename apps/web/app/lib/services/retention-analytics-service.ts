@@ -46,7 +46,7 @@ export class RetentionAnalyticsService {
    */
   async calculatePatientRetentionMetrics(
     patientId: string,
-    clinicId: string
+    clinicId: string,
   ): Promise<PatientRetentionMetrics> {
     // Get patient appointment history
     const { data: appointments, error: appointmentsError } = await this.supabase
@@ -88,7 +88,7 @@ export class RetentionAnalyticsService {
     const daysSinceLastAppointment = lastAppointment
       ? Math.floor(
           (now.getTime() - new Date(lastAppointment.date).getTime()) /
-            (1000 * 60 * 60 * 24)
+            (1000 * 60 * 60 * 24),
         )
       : 0;
 
@@ -98,7 +98,7 @@ export class RetentionAnalyticsService {
     const daysSinceFirst = firstAppointment
       ? Math.floor(
           (now.getTime() - new Date(firstAppointment.date).getTime()) /
-            (1000 * 60 * 60 * 24)
+            (1000 * 60 * 60 * 24),
         )
       : 1;
     const appointmentFrequency =
@@ -175,7 +175,7 @@ export class RetentionAnalyticsService {
     const churnProbability = churnRiskScore;
     const daysToPredicatedChurn = this.predictDaysToChurn(
       churnRiskScore,
-      appointmentFrequency
+      appointmentFrequency,
     );
 
     const metrics: CreatePatientRetentionMetrics = {
@@ -224,7 +224,7 @@ export class RetentionAnalyticsService {
    */
   async getPatientRetentionMetrics(
     patientId: string,
-    clinicId: string
+    clinicId: string,
   ): Promise<PatientRetentionMetrics | null> {
     const { data, error } = await this.supabase
       .from('patient_retention_metrics')
@@ -245,7 +245,7 @@ export class RetentionAnalyticsService {
   async getClinicRetentionMetrics(
     clinicId: string,
     limit = 100,
-    offset = 0
+    offset = 0,
   ): Promise<PatientRetentionMetrics[]> {
     const { data, error } = await this.supabase
       .from('patient_retention_metrics')
@@ -270,7 +270,7 @@ export class RetentionAnalyticsService {
   async generateChurnPrediction(
     patientId: string,
     clinicId: string,
-    modelType: ChurnModelType = ChurnModelType.ENSEMBLE
+    modelType: ChurnModelType = ChurnModelType.ENSEMBLE,
   ): Promise<ChurnPrediction> {
     // Get patient retention metrics
     let metrics = await this.getPatientRetentionMetrics(patientId, clinicId);
@@ -279,7 +279,7 @@ export class RetentionAnalyticsService {
     if (!metrics || this.isMetricsOutdated(metrics)) {
       metrics = await this.calculatePatientRetentionMetrics(
         patientId,
-        clinicId
+        clinicId,
       );
     }
 
@@ -293,7 +293,7 @@ export class RetentionAnalyticsService {
     const recommendedActions = await this.generateRecommendedActions(
       metrics,
       prediction.churnProbability,
-      prediction.riskLevel
+      prediction.riskLevel,
     );
 
     const churnPrediction: CreateChurnPrediction = {
@@ -311,7 +311,7 @@ export class RetentionAnalyticsService {
       feature_scores: prediction.featureScores,
       recommended_actions: recommendedActions,
       intervention_priority: this.getInterventionPriority(
-        prediction.churnProbability
+        prediction.churnProbability,
       ),
       is_validated: false,
       actual_outcome: null,
@@ -338,7 +338,7 @@ export class RetentionAnalyticsService {
     clinicId: string,
     riskLevel?: ChurnRiskLevel,
     limit = 100,
-    offset = 0
+    offset = 0,
   ): Promise<ChurnPrediction[]> {
     let query = this.supabase
       .from('churn_predictions')
@@ -367,7 +367,7 @@ export class RetentionAnalyticsService {
    * Create retention strategy
    */
   async createRetentionStrategy(
-    strategy: CreateRetentionStrategy
+    strategy: CreateRetentionStrategy,
   ): Promise<RetentionStrategy> {
     const newStrategy = {
       ...strategy,
@@ -395,7 +395,7 @@ export class RetentionAnalyticsService {
    */
   async getRetentionStrategies(
     clinicId: string,
-    activeOnly = false
+    activeOnly = false,
   ): Promise<RetentionStrategy[]> {
     let query = this.supabase
       .from('retention_strategies')
@@ -421,7 +421,7 @@ export class RetentionAnalyticsService {
    */
   async executeRetentionStrategy(
     strategyId: string,
-    patientIds: string[]
+    patientIds: string[],
   ): Promise<RetentionPerformance[]> {
     // Get strategy details
     const { data: strategy, error: strategyError } = await this.supabase
@@ -444,7 +444,7 @@ export class RetentionAnalyticsService {
       try {
         const performance = await this.executeStrategyForPatient(
           strategy,
-          patientId
+          patientId,
         );
         performances.push(performance);
       } catch (_error) {
@@ -468,7 +468,7 @@ export class RetentionAnalyticsService {
   async generateRetentionAnalyticsDashboard(
     clinicId: string,
     periodStart: string,
-    periodEnd: string
+    periodEnd: string,
   ): Promise<RetentionAnalyticsDashboard> {
     const [
       overview,
@@ -533,7 +533,7 @@ export class RetentionAnalyticsService {
     const normalizedFactors = {
       daysSinceLastAppointment: Math.min(
         factors.daysSinceLastAppointment / 90,
-        1
+        1,
       ), // 90 days = max risk
       appointmentFrequency: Math.max(0, 1 - factors.appointmentFrequency / 2), // 2 appointments/month = no risk
       responseRate: 1 - factors.responseRate,
@@ -574,7 +574,7 @@ export class RetentionAnalyticsService {
    */
   private predictDaysToChurn(
     churnRiskScore: number,
-    appointmentFrequency: number
+    appointmentFrequency: number,
   ): number | null {
     if (churnRiskScore < 0.3) {
       return null; // Low risk, no prediction
@@ -602,7 +602,7 @@ export class RetentionAnalyticsService {
    */
   private generatePredictionWithModel(
     metrics: PatientRetentionMetrics,
-    _modelType: ChurnModelType
+    _modelType: ChurnModelType,
   ): {
     churnProbability: number;
     confidenceScore: number;
@@ -620,7 +620,7 @@ export class RetentionAnalyticsService {
     const daysUntilChurn = metrics.days_to_predicted_churn;
     const predictedChurnDate = daysUntilChurn
       ? new Date(
-          Date.now() + daysUntilChurn * 24 * 60 * 60 * 1000
+          Date.now() + daysUntilChurn * 24 * 60 * 60 * 1000,
         ).toISOString()
       : null;
 
@@ -696,7 +696,7 @@ export class RetentionAnalyticsService {
   private async generateRecommendedActions(
     metrics: PatientRetentionMetrics,
     _churnProbability: number,
-    riskLevel: ChurnRiskLevel
+    riskLevel: ChurnRiskLevel,
   ): Promise<RetentionAction[]> {
     const actions: RetentionAction[] = [];
 
@@ -770,7 +770,7 @@ export class RetentionAnalyticsService {
    * Get intervention priority based on churn probability
    */
   private getInterventionPriority(
-    churnProbability: number
+    churnProbability: number,
   ): InterventionPriority {
     if (churnProbability >= 0.8) {
       return InterventionPriority.URGENT;
@@ -789,7 +789,7 @@ export class RetentionAnalyticsService {
    */
   private async executeStrategyForPatient(
     strategy: RetentionStrategy,
-    patientId: string
+    patientId: string,
   ): Promise<RetentionPerformance> {
     // This is a simplified implementation
     // In production, this would integrate with communication services
@@ -807,7 +807,7 @@ export class RetentionAnalyticsService {
       actions_executed: strategy.actions.map((a) => a.id),
       total_cost: strategy.actions.reduce(
         (sum, action) => sum + action.cost,
-        0
+        0,
       ),
       outcome: RetentionOutcome.PENDING,
       success: false,
@@ -839,7 +839,7 @@ export class RetentionAnalyticsService {
    */
   private async updateStrategyPerformance(
     strategyId: string,
-    performances: RetentionPerformance[]
+    performances: RetentionPerformance[],
   ): Promise<void> {
     const successful = performances.filter((p) => p.success).length;
     const total = performances.length;
@@ -850,7 +850,7 @@ export class RetentionAnalyticsService {
 
     const totalRevenue = performances.reduce(
       (sum, p) => sum + p.revenue_generated,
-      0
+      0,
     );
     const roi = totalCost > 0 ? (totalRevenue - totalCost) / totalCost : 0;
 
@@ -871,7 +871,7 @@ export class RetentionAnalyticsService {
   private async getRetentionOverview(
     _clinicId: string,
     _periodStart: string,
-    _periodEnd: string
+    _periodEnd: string,
   ): Promise<RetentionOverview> {
     // Implementation would query actual data
     return {
@@ -892,7 +892,7 @@ export class RetentionAnalyticsService {
   private async getChurnAnalysis(
     _clinicId: string,
     _periodStart: string,
-    _periodEnd: string
+    _periodEnd: string,
   ): Promise<ChurnAnalysis> {
     // Implementation would analyze actual churn data
     return {
@@ -911,7 +911,7 @@ export class RetentionAnalyticsService {
   private async getStrategyPerformanceMetrics(
     _clinicId: string,
     _periodStart: string,
-    _periodEnd: string
+    _periodEnd: string,
   ): Promise<StrategyPerformanceMetrics[]> {
     return [];
   }
@@ -919,7 +919,7 @@ export class RetentionAnalyticsService {
   private async getRetentionBySegment(
     _clinicId: string,
     _periodStart: string,
-    _periodEnd: string
+    _periodEnd: string,
   ): Promise<RetentionBySegment[]> {
     return [];
   }
@@ -927,7 +927,7 @@ export class RetentionAnalyticsService {
   private async getRetentionTrends(
     _clinicId: string,
     _periodStart: string,
-    _periodEnd: string
+    _periodEnd: string,
   ): Promise<RetentionTrend[]> {
     return [];
   }
@@ -935,7 +935,7 @@ export class RetentionAnalyticsService {
   private async getChurnPredictionsSummary(
     _clinicId: string,
     _periodStart: string,
-    _periodEnd: string
+    _periodEnd: string,
   ): Promise<ChurnPredictionSummary> {
     return {
       total_predictions: 125,

@@ -164,13 +164,13 @@ export default function LGPDComplianceDashboard({
         consentAutomationManager.getConsentAnalytics(
           clinicId,
           startDate,
-          endDate
+          endDate,
         ),
         auditTrailManager.getAuditAnalytics(clinicId, startDate, endDate),
         dataRetentionManager.getRetentionAnalytics(
           clinicId,
           startDate,
-          endDate
+          endDate,
         ),
       ]);
 
@@ -181,7 +181,7 @@ export default function LGPDComplianceDashboard({
       // Calculate compliance overview
       const overview: ComplianceOverview = {
         complianceScore: Math.round(
-          (auditData.complianceRate + retentionData.retentionCompliance) / 2
+          (auditData.complianceRate + retentionData.retentionCompliance) / 2,
         ),
         totalConsents: consentData.totalConsents,
         activeConsents: consentData.activeConsents,
@@ -203,7 +203,7 @@ export default function LGPDComplianceDashboard({
           startDate,
           endDate,
         },
-        50
+        50,
       );
       setAuditTrail(auditRecords);
     } catch (_err) {
@@ -527,7 +527,7 @@ export default function LGPDComplianceDashboard({
                   <ResponsiveContainer height={300} width="100%">
                     <BarChart
                       data={Object.entries(
-                        consentAnalytics.consentsByDataType
+                        consentAnalytics.consentsByDataType,
                       ).map(([type, count]) => ({
                         type: type.replace('_', ' '),
                         count,
@@ -562,7 +562,7 @@ export default function LGPDComplianceDashboard({
                         cx="50%"
                         cy="50%"
                         data={Object.entries(
-                          auditAnalytics.eventsBySeverity
+                          auditAnalytics.eventsBySeverity,
                         ).map(([severity, count]) => ({
                           name: severity,
                           value: count,
@@ -581,7 +581,7 @@ export default function LGPDComplianceDashboard({
                               fill={COLORS[index % COLORS.length]}
                               key={`cell-${index}`}
                             />
-                          )
+                          ),
                         )}
                       </Pie>
                       <Tooltip />
@@ -820,7 +820,7 @@ export default function LGPDComplianceDashboard({
                   <div className="text-center">
                     <div className="font-bold text-2xl text-green-600">
                       {Math.round(
-                        auditAnalytics.dataSubjectRequests.averageResponseTime
+                        auditAnalytics.dataSubjectRequests.averageResponseTime,
                       )}
                     </div>
                     <div className="text-muted-foreground text-sm">

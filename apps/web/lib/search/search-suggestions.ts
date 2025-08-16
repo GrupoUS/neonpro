@@ -134,7 +134,7 @@ export class SearchSuggestions {
       includePersonalized: true,
       includeContextual: true,
       minConfidence: 0.3,
-    }
+    },
   ): Promise<SearchSuggestion[]> {
     try {
       // Check cache first
@@ -198,34 +198,34 @@ export class SearchSuggestions {
         ...popular,
         ...contextual,
         ...personalized,
-        ...semantic
+        ...semantic,
       );
 
       // Filter by confidence and categories
       let filteredSuggestions = suggestions.filter(
         (s) =>
           s.confidence >= options.minConfidence &&
-          (!options.categories || options.categories.includes(s.category))
+          (!options.categories || options.categories.includes(s.category)),
       );
 
       // Rank and deduplicate suggestions
       filteredSuggestions = this.rankSuggestions(
         filteredSuggestions,
         query,
-        context
+        context,
       );
       filteredSuggestions = this.deduplicateSuggestions(filteredSuggestions);
 
       // Apply highlighting
       filteredSuggestions = this.highlightSuggestions(
         filteredSuggestions,
-        query
+        query,
       );
 
       // Limit results
       const finalSuggestions = filteredSuggestions.slice(
         0,
-        options.maxSuggestions
+        options.maxSuggestions,
       );
 
       // Cache results
@@ -242,7 +242,7 @@ export class SearchSuggestions {
    */
   async getQueryCompletions(
     query: string,
-    context: SuggestionContext
+    context: SuggestionContext,
   ): Promise<QueryCompletion[]> {
     if (query.length < 2) {
       return [];
@@ -266,7 +266,7 @@ export class SearchSuggestions {
       // Semantic completions using NLP
       const semanticCompletions = await this.getSemanticCompletions(
         query,
-        context
+        context,
       );
       completions.push(...semanticCompletions);
 
@@ -308,7 +308,7 @@ export class SearchSuggestions {
    */
   private async getEntityCompletions(
     query: string,
-    context: SuggestionContext
+    context: SuggestionContext,
   ): Promise<QueryCompletion[]> {
     const completions: QueryCompletion[] = [];
 
@@ -373,7 +373,7 @@ export class SearchSuggestions {
    */
   private getTemplateCompletions(
     query: string,
-    _context: SuggestionContext
+    _context: SuggestionContext,
   ): QueryCompletion[] {
     const templates = [
       'pacientes com diabetes',
@@ -409,13 +409,13 @@ export class SearchSuggestions {
    */
   private async getSemanticCompletions(
     query: string,
-    context: SuggestionContext
+    context: SuggestionContext,
   ): Promise<QueryCompletion[]> {
     try {
       // Use NLP engine to understand query intent
       const nlpResult = await nlpEngine.processQuery(
         query,
-        context.language || 'pt'
+        context.language || 'pt',
       );
 
       const completions: QueryCompletion[] = [];
@@ -467,7 +467,7 @@ export class SearchSuggestions {
    */
   private async getHistoricalSuggestions(
     query: string,
-    context: SuggestionContext
+    context: SuggestionContext,
   ): Promise<SearchSuggestion[]> {
     const suggestions: SearchSuggestion[] = [];
 
@@ -509,7 +509,7 @@ export class SearchSuggestions {
    */
   private async getPopularSuggestions(
     query: string,
-    context: SuggestionContext
+    context: SuggestionContext,
   ): Promise<SearchSuggestion[]> {
     const suggestions: SearchSuggestion[] = [];
 
@@ -550,14 +550,14 @@ export class SearchSuggestions {
    */
   private async getContextualSuggestions(
     query: string,
-    context: SuggestionContext
+    context: SuggestionContext,
   ): Promise<SearchSuggestion[]> {
     const suggestions: SearchSuggestion[] = [];
 
     try {
       // Context-based suggestions based on current page
       const contextualQueries = this.getContextualQueries(
-        context.sessionContext.currentPage
+        context.sessionContext.currentPage,
       );
 
       contextualQueries.forEach((contextQuery) => {
@@ -606,7 +606,7 @@ export class SearchSuggestions {
    */
   private async getPersonalizedSuggestions(
     query: string,
-    context: SuggestionContext
+    context: SuggestionContext,
   ): Promise<SearchSuggestion[]> {
     const suggestions: SearchSuggestion[] = [];
 
@@ -657,7 +657,7 @@ export class SearchSuggestions {
    */
   private async getSemanticSuggestions(
     query: string,
-    _context: SuggestionContext
+    _context: SuggestionContext,
   ): Promise<SearchSuggestion[]> {
     const suggestions: SearchSuggestion[] = [];
 
@@ -691,7 +691,7 @@ export class SearchSuggestions {
   private rankSuggestions(
     suggestions: SearchSuggestion[],
     query: string,
-    context: SuggestionContext
+    context: SuggestionContext,
   ): SearchSuggestion[] {
     return suggestions.sort((a, b) => {
       // Calculate ranking score
@@ -708,7 +708,7 @@ export class SearchSuggestions {
   private calculateRankingScore(
     suggestion: SearchSuggestion,
     query: string,
-    _context: SuggestionContext
+    _context: SuggestionContext,
   ): number {
     let score = suggestion.confidence;
 
@@ -745,7 +745,7 @@ export class SearchSuggestions {
    * Remove duplicate suggestions
    */
   private deduplicateSuggestions(
-    suggestions: SearchSuggestion[]
+    suggestions: SearchSuggestion[],
   ): SearchSuggestion[] {
     const seen = new Set<string>();
     return suggestions.filter((suggestion) => {
@@ -763,7 +763,7 @@ export class SearchSuggestions {
    */
   private highlightSuggestions(
     suggestions: SearchSuggestion[],
-    query: string
+    query: string,
   ): SearchSuggestion[] {
     const queryLower = query.toLowerCase();
 
@@ -803,14 +803,14 @@ export class SearchSuggestions {
         {
           onConflict: 'query',
           ignoreDuplicates: false,
-        }
+        },
       );
 
       // Update suggestion performance
       if (data.selectedSuggestion) {
         await this.updateSuggestionPerformance(
           data.selectedSuggestion,
-          data.success
+          data.success,
         );
       }
 
@@ -829,7 +829,7 @@ export class SearchSuggestions {
    */
   private async updateSuggestionPerformance(
     suggestion: string,
-    success: boolean
+    success: boolean,
   ): Promise<void> {
     try {
       await this.supabase.from('suggestion_performance').upsert(
@@ -842,7 +842,7 @@ export class SearchSuggestions {
         {
           onConflict: 'suggestion_text',
           ignoreDuplicates: false,
-        }
+        },
       );
     } catch (_error) {}
   }
@@ -861,7 +861,7 @@ export class SearchSuggestions {
   private generateCacheKey(
     query: string,
     context: SuggestionContext,
-    options: SuggestionOptions
+    options: SuggestionOptions,
   ): string {
     return `${query}_${context.userId}_${JSON.stringify(options)}`;
   }
@@ -897,7 +897,7 @@ export class SearchSuggestions {
           matrix[i][j] = Math.min(
             matrix[i - 1][j - 1] + 1,
             matrix[i][j - 1] + 1,
-            matrix[i - 1][j] + 1
+            matrix[i - 1][j] + 1,
           );
         }
       }

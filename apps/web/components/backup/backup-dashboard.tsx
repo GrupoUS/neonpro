@@ -264,8 +264,8 @@ const BackupDashboard: React.FC = () => {
       // Update config enabled status
       setConfigs((prev) =>
         prev.map((config) =>
-          config.id === configId ? { ...config, enabled } : config
-        )
+          config.id === configId ? { ...config, enabled } : config,
+        ),
       );
       await loadDashboardData();
     } catch (_error) {}
@@ -275,8 +275,8 @@ const BackupDashboard: React.FC = () => {
     try {
       setAlerts((prev) =>
         prev.map((alert) =>
-          alert.id === alertId ? { ...alert, acknowledged: true } : alert
-        )
+          alert.id === alertId ? { ...alert, acknowledged: true } : alert,
+        ),
       );
     } catch (_error) {}
   };

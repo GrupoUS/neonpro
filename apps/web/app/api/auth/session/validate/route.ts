@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
           errors: ['No session token found'],
           security_score: 0,
         } as SessionValidationResult,
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -91,7 +91,7 @@ export async function POST(request: NextRequest) {
           errors: ['Session not found'],
           security_score: 0,
         } as SessionValidationResult,
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -151,11 +151,11 @@ export async function POST(request: NextRequest) {
 
     // Check for concurrent sessions
     const activeSessions = await manager.getActiveSessionsForUser(
-      session.user_id
+      session.user_id,
     );
     if (activeSessions.length > 3) {
       warnings.push(
-        `Multiple active sessions detected (${activeSessions.length})`
+        `Multiple active sessions detected (${activeSessions.length})`,
       );
     }
 
@@ -195,7 +195,7 @@ export async function POST(request: NextRequest) {
         errors: ['Internal server error during session validation'],
         security_score: 0,
       } as SessionValidationResult,
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

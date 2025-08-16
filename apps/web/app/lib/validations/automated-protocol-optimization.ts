@@ -372,7 +372,7 @@ export const GenerateOptimizationAnalysisRequestSchema = z.object({
 
 // API response validation schemas
 export const ProtocolApiResponseSchema = <T extends z.ZodTypeAny>(
-  dataSchema: T
+  dataSchema: T,
 ) =>
   z.object({
     data: dataSchema,

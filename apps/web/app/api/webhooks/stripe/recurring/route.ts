@@ -15,7 +15,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
+  process.env.SUPABASE_SERVICE_ROLE_KEY!,
 );
 
 const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET_RECURRING!;
@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
     switch (event.type) {
       case 'invoice.payment_succeeded':
         await handleInvoicePaymentSucceeded(
-          event.data.object as Stripe.Invoice
+          event.data.object as Stripe.Invoice,
         );
         break;
 
@@ -65,37 +65,37 @@ export async function POST(request: NextRequest) {
 
       case 'customer.subscription.created':
         await handleSubscriptionCreated(
-          event.data.object as Stripe.Subscription
+          event.data.object as Stripe.Subscription,
         );
         break;
 
       case 'customer.subscription.updated':
         await handleSubscriptionUpdated(
-          event.data.object as Stripe.Subscription
+          event.data.object as Stripe.Subscription,
         );
         break;
 
       case 'customer.subscription.deleted':
         await handleSubscriptionDeleted(
-          event.data.object as Stripe.Subscription
+          event.data.object as Stripe.Subscription,
         );
         break;
 
       case 'customer.subscription.trial_will_end':
         await handleSubscriptionTrialWillEnd(
-          event.data.object as Stripe.Subscription
+          event.data.object as Stripe.Subscription,
         );
         break;
 
       case 'payment_intent.succeeded':
         await handlePaymentIntentSucceeded(
-          event.data.object as Stripe.PaymentIntent
+          event.data.object as Stripe.PaymentIntent,
         );
         break;
 
       case 'payment_intent.payment_failed':
         await handlePaymentIntentFailed(
-          event.data.object as Stripe.PaymentIntent
+          event.data.object as Stripe.PaymentIntent,
         );
         break;
 
@@ -108,7 +108,7 @@ export async function POST(request: NextRequest) {
     logger.error('Error processing Stripe webhook:', error);
     return NextResponse.json(
       { error: 'Webhook processing failed' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -135,7 +135,7 @@ async function handleInvoicePaymentSucceeded(invoice: Stripe.Invoice) {
         .update({
           status: 'paid',
           paid_at: new Date(
-            invoice.status_transitions.paid_at! * 1000
+            invoice.status_transitions.paid_at! * 1000,
           ).toISOString(),
           stripe_payment_intent_id: invoice.payment_intent as string,
           updated_at: new Date().toISOString(),
@@ -148,7 +148,7 @@ async function handleInvoicePaymentSucceeded(invoice: Stripe.Invoice) {
         .update({
           status: 'active',
           current_period_start: new Date(
-            invoice.period_start * 1000
+            invoice.period_start * 1000,
           ).toISOString(),
           current_period_end: new Date(invoice.period_end * 1000).toISOString(),
           updated_at: new Date().toISOString(),
@@ -222,7 +222,7 @@ async function handleInvoiceCreated(invoice: Stripe.Invoice) {
         currency: invoice.currency,
         status: 'pending',
         billing_period_start: new Date(
-          invoice.period_start * 1000
+          invoice.period_start * 1000,
         ).toISOString(),
         billing_period_end: new Date(invoice.period_end * 1000).toISOString(),
         stripe_invoice_id: invoice.id,
@@ -275,10 +275,10 @@ async function handleSubscriptionCreated(subscription: Stripe.Subscription) {
       .update({
         status: subscription.status,
         current_period_start: new Date(
-          subscription.current_period_start * 1000
+          subscription.current_period_start * 1000,
         ).toISOString(),
         current_period_end: new Date(
-          subscription.current_period_end * 1000
+          subscription.current_period_end * 1000,
         ).toISOString(),
         trial_start: subscription.trial_start
           ? new Date(subscription.trial_start * 1000).toISOString()
@@ -305,10 +305,10 @@ async function handleSubscriptionUpdated(subscription: Stripe.Subscription) {
       .update({
         status: subscription.status,
         current_period_start: new Date(
-          subscription.current_period_start * 1000
+          subscription.current_period_start * 1000,
         ).toISOString(),
         current_period_end: new Date(
-          subscription.current_period_end * 1000
+          subscription.current_period_end * 1000,
         ).toISOString(),
         trial_start: subscription.trial_start
           ? new Date(subscription.trial_start * 1000).toISOString()
@@ -347,7 +347,7 @@ async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
 
 // Handle subscription trial ending soon
 async function handleSubscriptionTrialWillEnd(
-  subscription: Stripe.Subscription
+  subscription: Stripe.Subscription,
 ) {
   try {
     // Find the subscription
@@ -357,7 +357,7 @@ async function handleSubscriptionTrialWillEnd(
         `
         *,
         customer:customers(*)
-      `
+      `,
       )
       .eq('stripe_subscription_id', subscription.id)
       .single();
@@ -377,7 +377,7 @@ async function handleSubscriptionTrialWillEnd(
 
 // Handle successful payment intent
 async function handlePaymentIntentSucceeded(
-  paymentIntent: Stripe.PaymentIntent
+  paymentIntent: Stripe.PaymentIntent,
 ) {
   try {
     // Update any related billing events

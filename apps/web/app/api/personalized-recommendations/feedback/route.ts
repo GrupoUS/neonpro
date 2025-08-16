@@ -32,7 +32,7 @@ export async function GET(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to fetch recommendation feedback', success: false },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -52,7 +52,7 @@ export async function POST(request: NextRequest) {
           details: validationResult.error.issues,
           success: false,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -66,12 +66,12 @@ export async function POST(request: NextRequest) {
         feedback,
         success: true,
       },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to create recommendation feedback', success: false },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -133,7 +133,7 @@ export class MedicalTimelineService {
    */
   async getPatientTimeline(
     patientId: string,
-    filter?: TimelineFilter
+    filter?: TimelineFilter,
   ): Promise<TimelineEvent[]> {
     try {
       const supabase = await this.getSupabase();
@@ -147,7 +147,7 @@ export class MedicalTimelineService {
           before_after_photos:before_after_photos(*),
           outcome:treatment_outcomes(*),
           notes:progress_notes(*)
-        `
+        `,
         )
         .eq('patient_id', patientId);
 
@@ -191,7 +191,7 @@ export class MedicalTimelineService {
    * Add new timeline event
    */
   async addTimelineEvent(
-    event: Omit<TimelineEvent, 'id'>
+    event: Omit<TimelineEvent, 'id'>,
   ): Promise<TimelineEvent> {
     try {
       const supabase = await this.getSupabase();
@@ -230,7 +230,7 @@ export class MedicalTimelineService {
    */
   async updateTimelineEvent(
     eventId: string,
-    updates: Partial<TimelineEvent>
+    updates: Partial<TimelineEvent>,
   ): Promise<TimelineEvent> {
     const supabase = await this.getSupabase();
     const { data, error } = await supabase
@@ -259,7 +259,7 @@ export class MedicalTimelineService {
    */
   async addBeforeAfterPhotos(
     eventId: string,
-    photos: Omit<BeforeAfterPhoto, 'id' | 'eventId'>
+    photos: Omit<BeforeAfterPhoto, 'id' | 'eventId'>,
   ): Promise<BeforeAfterPhoto> {
     try {
       const supabase = await this.getSupabase();
@@ -298,7 +298,7 @@ export class MedicalTimelineService {
    */
   async addProgressNote(
     eventId: string,
-    note: Omit<ProgressNote, 'id'>
+    note: Omit<ProgressNote, 'id'>,
   ): Promise<ProgressNote> {
     try {
       const supabase = await this.getSupabase();
@@ -336,7 +336,7 @@ export class MedicalTimelineService {
    * Get treatment milestones for patient
    */
   async getTreatmentMilestones(
-    patientId: string
+    patientId: string,
   ): Promise<MilestoneTracking[]> {
     try {
       const supabase = await this.getSupabase();
@@ -346,7 +346,7 @@ export class MedicalTimelineService {
           `
           *,
           milestones:milestones(*)
-        `
+        `,
         )
         .eq('patient_id', patientId);
 
@@ -367,7 +367,7 @@ export class MedicalTimelineService {
   async updateMilestoneProgress(
     milestoneId: string,
     progress: number,
-    notes?: string
+    notes?: string,
   ): Promise<Milestone> {
     const updates: any = { progress };
     if (progress === 100) {
@@ -398,7 +398,7 @@ export class MedicalTimelineService {
    */
   async getTimelineSummary(
     patientId: string,
-    period: 'week' | 'month' | 'quarter' | 'year'
+    period: 'week' | 'month' | 'quarter' | 'year',
   ): Promise<any> {
     const endDate = new Date();
     const startDate = new Date();
@@ -480,7 +480,7 @@ export class MedicalTimelineService {
         acc[event.eventType] = (acc[event.eventType] || 0) + 1;
         return acc;
       },
-      {} as Record<string, number>
+      {} as Record<string, number>,
     );
   }
 
@@ -490,7 +490,7 @@ export class MedicalTimelineService {
         acc[event.category] = (acc[event.category] || 0) + 1;
         return acc;
       },
-      {} as Record<string, number>
+      {} as Record<string, number>,
     );
   }
 
@@ -510,7 +510,7 @@ export class MedicalTimelineService {
         acc[month] = (acc[month] || 0) + 1;
         return acc;
       },
-      {} as Record<string, number>
+      {} as Record<string, number>,
     );
 
     return (
@@ -520,7 +520,7 @@ export class MedicalTimelineService {
 
   private calculateTreatmentFrequency(events: TimelineEvent[]): number {
     const treatmentEvents = events.filter(
-      (e) => e.eventType === 'treatment' || e.eventType === 'procedure'
+      (e) => e.eventType === 'treatment' || e.eventType === 'procedure',
     );
     if (treatmentEvents.length < 2) {
       return 0;
@@ -546,12 +546,12 @@ export class MedicalTimelineService {
     }
 
     const successfulOutcomes = eventsWithOutcomes.filter(
-      (e) => e.outcome?.success
+      (e) => e.outcome?.success,
     ).length;
     const avgSatisfaction =
       eventsWithOutcomes.reduce(
         (sum, e) => sum + (e.outcome?.satisfactionScore || 0),
-        0
+        0,
       ) / totalOutcomes;
 
     return {
@@ -561,7 +561,7 @@ export class MedicalTimelineService {
   }
 
   private getProfessionalDistribution(
-    events: TimelineEvent[]
+    events: TimelineEvent[],
   ): Record<string, number> {
     return events.reduce(
       (acc, event) => {
@@ -570,7 +570,7 @@ export class MedicalTimelineService {
         }
         return acc;
       },
-      {} as Record<string, number>
+      {} as Record<string, number>,
     );
   }
 

@@ -320,7 +320,7 @@ export function validateVoidBeastCompliance(metrics: {
 
   if (metrics.accuracy < VISION_CONFIG.PERFORMANCE.MIN_ACCURACY_THRESHOLD) {
     violations.push(
-      `Accuracy ${(metrics.accuracy * 100).toFixed(1)}% below minimum ${VISION_CONFIG.PERFORMANCE.MIN_ACCURACY_THRESHOLD * 100}%`
+      `Accuracy ${(metrics.accuracy * 100).toFixed(1)}% below minimum ${VISION_CONFIG.PERFORMANCE.MIN_ACCURACY_THRESHOLD * 100}%`,
     );
   }
 
@@ -328,19 +328,19 @@ export function validateVoidBeastCompliance(metrics: {
     metrics.processingTime > VISION_CONFIG.PERFORMANCE.MAX_PROCESSING_TIME_MS
   ) {
     violations.push(
-      `Processing time ${metrics.processingTime}ms exceeds maximum ${VISION_CONFIG.PERFORMANCE.MAX_PROCESSING_TIME_MS}ms`
+      `Processing time ${metrics.processingTime}ms exceeds maximum ${VISION_CONFIG.PERFORMANCE.MAX_PROCESSING_TIME_MS}ms`,
     );
   }
 
   if (metrics.confidence < VISION_CONFIG.PERFORMANCE.MIN_CONFIDENCE_THRESHOLD) {
     violations.push(
-      `Confidence ${(metrics.confidence * 100).toFixed(1)}% below minimum ${VISION_CONFIG.PERFORMANCE.MIN_CONFIDENCE_THRESHOLD * 100}%`
+      `Confidence ${(metrics.confidence * 100).toFixed(1)}% below minimum ${VISION_CONFIG.PERFORMANCE.MIN_CONFIDENCE_THRESHOLD * 100}%`,
     );
   }
 
   if (metrics.quality < VISION_CONFIG.PERFORMANCE.QUALITY_THRESHOLD) {
     violations.push(
-      `Quality ${metrics.quality.toFixed(1)} below VOIDBEAST standard ${VISION_CONFIG.PERFORMANCE.QUALITY_THRESHOLD}`
+      `Quality ${metrics.quality.toFixed(1)} below VOIDBEAST standard ${VISION_CONFIG.PERFORMANCE.QUALITY_THRESHOLD}`,
     );
   }
 
@@ -349,7 +349,7 @@ export function validateVoidBeastCompliance(metrics: {
       Math.min(
         1,
         VISION_CONFIG.PERFORMANCE.TARGET_PROCESSING_TIME_MS /
-          metrics.processingTime
+          metrics.processingTime,
       ) *
         0.2 +
       metrics.confidence * 0.2 +

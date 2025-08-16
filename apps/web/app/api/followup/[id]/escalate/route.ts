@@ -7,7 +7,7 @@ import { treatmentFollowupService } from '@/app/lib/services/treatment-followup-
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const { escalationLevel, reason, notifyRoles, autoScheduleAppointment } =
@@ -23,7 +23,7 @@ export async function POST(
           success: false,
           error: 'No escalation triggers met for this follow-up',
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -33,7 +33,7 @@ export async function POST(
       {
         status: 'escalated',
         notes: reason || 'Escalated automatically due to triggered rules',
-      }
+      },
     );
 
     // In a real implementation, this would:
@@ -63,7 +63,7 @@ export async function POST(
         error: 'Failed to escalate follow-up',
         details: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

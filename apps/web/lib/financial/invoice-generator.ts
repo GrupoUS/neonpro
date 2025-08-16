@@ -306,7 +306,7 @@ class AutomatedInvoiceGenerator {
       paymentMethod?: PaymentMethod;
       dueDate?: Date;
       generateNFSe?: boolean;
-    }
+    },
   ): Promise<InvoiceData> {
     try {
       if (!this.isInitialized) {
@@ -441,7 +441,7 @@ class AutomatedInvoiceGenerator {
       templateId?: string;
       installments?: number;
       generateNFSe?: boolean;
-    }
+    },
   ): Promise<InvoiceData[]> {
     try {
       // Get treatment data
@@ -466,7 +466,7 @@ class AutomatedInvoiceGenerator {
             options.installments,
             installmentAmount,
             dueDate,
-            options
+            options,
           );
 
           invoices.push(installmentInvoice);
@@ -475,7 +475,7 @@ class AutomatedInvoiceGenerator {
         // Generate single invoice
         const singleInvoice = await this.generateSingleTreatmentInvoice(
           treatment,
-          options
+          options,
         );
         invoices.push(singleInvoice);
       }
@@ -490,11 +490,11 @@ class AutomatedInvoiceGenerator {
    */
   private calculateTaxes(
     services: ServiceItem[],
-    clinicTaxInfo: BrazilianTaxInfo
+    clinicTaxInfo: BrazilianTaxInfo,
   ): TaxCalculation {
     const subtotal = services.reduce(
       (sum, service) => sum + service.totalPrice,
-      0
+      0,
     );
 
     let issAmount = 0;
@@ -507,7 +507,7 @@ class AutomatedInvoiceGenerator {
     const taxableServices = services.filter((s) => s.taxable);
     const taxableAmount = taxableServices.reduce(
       (sum, service) => sum + service.totalPrice,
-      0
+      0,
     );
 
     if (taxableAmount > 0) {
@@ -652,7 +652,7 @@ class AutomatedInvoiceGenerator {
       paidAt: Date;
       fees?: number;
       notes?: string;
-    }
+    },
   ): Promise<void> {
     try {
       // Get invoice
@@ -706,7 +706,7 @@ class AutomatedInvoiceGenerator {
    */
   async generatePaymentLink(
     invoiceId: string,
-    method: PaymentMethod
+    method: PaymentMethod,
   ): Promise<{
     paymentUrl?: string;
     pixCode?: string;
@@ -803,7 +803,7 @@ class AutomatedInvoiceGenerator {
       const totalInvoices = invoices.length;
       const totalAmount = invoices.reduce(
         (sum, inv) => sum + inv.total_amount,
-        0
+        0,
       );
 
       let paidAmount = 0;
@@ -816,7 +816,7 @@ class AutomatedInvoiceGenerator {
         const payments = invoice.invoice_payments || [];
         const invoicePaidAmount = payments.reduce(
           (sum: number, p: any) => sum + p.amount,
-          0
+          0,
         );
 
         if (invoice.status === 'paid') {
@@ -893,7 +893,7 @@ class AutomatedInvoiceGenerator {
 
   // Private helper methods
   private initializeConfig(
-    config?: Partial<InvoiceGenerationConfig>
+    config?: Partial<InvoiceGenerationConfig>,
   ): InvoiceGenerationConfig {
     const defaultConfig: InvoiceGenerationConfig = {
       autoGeneration: {
@@ -991,7 +991,7 @@ class AutomatedInvoiceGenerator {
 
   private buildServicesFromTemplate(
     template: InvoiceTemplate,
-    _appointment: any
+    _appointment: any,
   ): ServiceItem[] {
     return template.services.map((service, index) => ({
       id: `service_${index}`,
@@ -1006,7 +1006,7 @@ class AutomatedInvoiceGenerator {
   }
 
   private async buildServicesFromAppointment(
-    appointment: any
+    appointment: any,
   ): Promise<ServiceItem[]> {
     // Build services based on appointment type and procedures
     return [
@@ -1024,7 +1024,7 @@ class AutomatedInvoiceGenerator {
   }
 
   private async generateInvoiceNumber(
-    clinicId: string
+    clinicId: string,
   ): Promise<{ number: string; series: string }> {
     // Generate sequential invoice number
     const { data: lastInvoice } = await this.supabase
@@ -1152,7 +1152,7 @@ class AutomatedInvoiceGenerator {
     _totalInstallments: number,
     _amount: number,
     _dueDate: Date,
-    _options?: any
+    _options?: any,
   ): Promise<InvoiceData> {
     // Implementation for installment invoice generation
     throw new Error('Method not implemented');
@@ -1160,14 +1160,14 @@ class AutomatedInvoiceGenerator {
 
   private async generateSingleTreatmentInvoice(
     _treatment: any,
-    _options?: any
+    _options?: any,
   ): Promise<InvoiceData> {
     // Implementation for single treatment invoice
     throw new Error('Method not implemented');
   }
 
   private async callNFSeWebservice(
-    _request: NFSeRequest
+    _request: NFSeRequest,
   ): Promise<NFSeResponse> {
     // Implementation for NFSe webservice call
     // This would vary by municipality
@@ -1182,7 +1182,7 @@ class AutomatedInvoiceGenerator {
 
   private async storeNFSeData(
     invoiceId: string,
-    nfseResponse: NFSeResponse
+    nfseResponse: NFSeResponse,
   ): Promise<void> {
     await this.supabase.from('nfse_records').insert({
       invoice_id: invoiceId,
@@ -1207,7 +1207,7 @@ class AutomatedInvoiceGenerator {
 
   private async updateInvoiceStatus(
     invoiceId: string,
-    status: InvoiceData['status']
+    status: InvoiceData['status'],
   ): Promise<void> {
     await this.supabase
       .from('invoices')
@@ -1217,7 +1217,7 @@ class AutomatedInvoiceGenerator {
 
   private async sendPaymentConfirmation(
     _invoice: InvoiceData,
-    _payment: any
+    _payment: any,
   ): Promise<void> {}
 
   private async generatePixCode(invoice: InvoiceData): Promise<string> {
@@ -1232,7 +1232,7 @@ class AutomatedInvoiceGenerator {
 
   private async generateCardPaymentUrl(
     invoice: InvoiceData,
-    _method: PaymentMethod
+    _method: PaymentMethod,
   ): Promise<string> {
     // Generate card payment URL
     return `https://payment.example.com/${invoice.id}`;

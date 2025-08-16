@@ -119,7 +119,7 @@ export const SkuSchema = z
   .max(100)
   .regex(
     /^[A-Z0-9\-_]+$/,
-    'SKU must contain only uppercase letters, numbers, hyphens, and underscores'
+    'SKU must contain only uppercase letters, numbers, hyphens, and underscores',
   );
 export const BarcodeSchema = z.string().min(1).max(128).optional();
 export const QuantitySchema = z.number().int().min(0);
@@ -130,7 +130,7 @@ export const LocationCodeSchema = z
   .max(50)
   .regex(
     /^[A-Z0-9\-_]+$/,
-    'Location code must contain only uppercase letters, numbers, hyphens, and underscores'
+    'Location code must contain only uppercase letters, numbers, hyphens, and underscores',
   );
 
 // =====================================================================================
@@ -228,7 +228,7 @@ export const InventoryLocationSchema = z
       message:
         'Minimum temperature must be less than or equal to maximum temperature',
       path: ['min_temperature'],
-    }
+    },
   );
 
 export const StockLevelSchema = z
@@ -276,7 +276,7 @@ export const StockLevelSchema = z
     {
       message: 'Manufacture date must be before expiration date',
       path: ['expiration_date'],
-    }
+    },
   );
 
 export const InventoryTransactionSchema = z
@@ -327,7 +327,7 @@ export const InventoryTransactionSchema = z
       message:
         'Quantity calculation is incorrect: before + change must equal after',
       path: ['quantity_after'],
-    }
+    },
   );
 
 // =====================================================================================
@@ -548,7 +548,7 @@ export const CreateLocationFormSchema = z
       message:
         'Minimum temperature must be less than or equal to maximum temperature',
       path: ['min_temperature'],
-    }
+    },
   );
 
 export const StockAdjustmentFormSchema = z.object({
@@ -595,7 +595,7 @@ export const BulkUpdateStockSchema = z.object({
         new_quantity: QuantitySchema,
         reason: z.string().min(1).max(500),
         batch_number: z.string().max(100).optional(),
-      })
+      }),
     )
     .min(1)
     .max(100),

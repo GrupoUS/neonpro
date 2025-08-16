@@ -143,7 +143,7 @@ export const createEquipmentSchema = z.object({
     .string()
     .regex(
       /^\d{4}-\d{2}-\d{2}$/,
-      'Data de compra deve estar no formato YYYY-MM-DD'
+      'Data de compra deve estar no formato YYYY-MM-DD',
     )
     .optional(),
   purchase_cost: z
@@ -154,14 +154,14 @@ export const createEquipmentSchema = z.object({
     .string()
     .regex(
       /^\d{4}-\d{2}-\d{2}$/,
-      'Data de início da garantia deve estar no formato YYYY-MM-DD'
+      'Data de início da garantia deve estar no formato YYYY-MM-DD',
     )
     .optional(),
   warranty_end_date: z
     .string()
     .regex(
       /^\d{4}-\d{2}-\d{2}$/,
-      'Data de fim da garantia deve estar no formato YYYY-MM-DD'
+      'Data de fim da garantia deve estar no formato YYYY-MM-DD',
     )
     .optional(),
   vendor_id: z
@@ -316,7 +316,7 @@ export const createMaintenanceScheduleSchema = z
     {
       message:
         'Frequência deve ser especificada de acordo com o tipo selecionado',
-    }
+    },
   );
 
 export const updateMaintenanceScheduleSchema = z.object({
@@ -414,7 +414,7 @@ export const createWorkOrderSchema = z.object({
     .string()
     .regex(
       /^\d{4}-\d{2}-\d{2}$/,
-      'Data agendada deve estar no formato YYYY-MM-DD'
+      'Data agendada deve estar no formato YYYY-MM-DD',
     )
     .optional(),
   scheduled_start_time: z
@@ -568,7 +568,7 @@ export const createUsageLogSchema = z
     },
     {
       message: 'Data/hora de fim deve ser posterior ao início',
-    }
+    },
   );
 
 // =====================================================================================
@@ -601,13 +601,13 @@ export const createMaintenanceAlertSchema = z.object({
     .string()
     .regex(
       /^\d{4}-\d{2}-\d{2}$/,
-      'Data do trigger deve estar no formato YYYY-MM-DD'
+      'Data do trigger deve estar no formato YYYY-MM-DD',
     ),
   due_date: z
     .string()
     .regex(
       /^\d{4}-\d{2}-\d{2}$/,
-      'Data de vencimento deve estar no formato YYYY-MM-DD'
+      'Data de vencimento deve estar no formato YYYY-MM-DD',
     )
     .optional(),
 
@@ -676,13 +676,13 @@ export const createVendorServiceContractSchema = z
       .string()
       .regex(
         /^\d{4}-\d{2}-\d{2}$/,
-        'Data de início deve estar no formato YYYY-MM-DD'
+        'Data de início deve estar no formato YYYY-MM-DD',
       ),
     end_date: z
       .string()
       .regex(
         /^\d{4}-\d{2}-\d{2}$/,
-        'Data de fim deve estar no formato YYYY-MM-DD'
+        'Data de fim deve estar no formato YYYY-MM-DD',
       ),
     auto_renewal: z.boolean().default(false),
     contract_value: z
@@ -728,7 +728,7 @@ export const createVendorServiceContractSchema = z
     },
     {
       message: 'Data de fim deve ser posterior à data de início',
-    }
+    },
   );
 
 // =====================================================================================
@@ -758,14 +758,14 @@ export const createComplianceRecordSchema = z.object({
     .string()
     .regex(
       /^\d{4}-\d{2}-\d{2}$/,
-      'Data de última conformidade deve estar no formato YYYY-MM-DD'
+      'Data de última conformidade deve estar no formato YYYY-MM-DD',
     )
     .optional(),
   next_compliance_due_date: z
     .string()
     .regex(
       /^\d{4}-\d{2}-\d{2}$/,
-      'Data de vencimento deve estar no formato YYYY-MM-DD'
+      'Data de vencimento deve estar no formato YYYY-MM-DD',
     )
     .optional(),
   compliance_frequency_days: z
@@ -881,13 +881,13 @@ export const analyticsQuerySchema = z
       .string()
       .regex(
         /^\d{4}-\d{2}-\d{2}$/,
-        'Data de início deve estar no formato YYYY-MM-DD'
+        'Data de início deve estar no formato YYYY-MM-DD',
       ),
     period_end: z
       .string()
       .regex(
         /^\d{4}-\d{2}-\d{2}$/,
-        'Data de fim deve estar no formato YYYY-MM-DD'
+        'Data de fim deve estar no formato YYYY-MM-DD',
       ),
     equipment_ids: z.array(z.string().uuid()).optional(),
     equipment_types: z.array(equipmentTypeSchema).optional(),
@@ -899,7 +899,7 @@ export const analyticsQuerySchema = z
     },
     {
       message: 'Data de fim deve ser posterior à data de início',
-    }
+    },
   );
 
 // =====================================================================================

@@ -105,14 +105,14 @@ export class ConsentAutomationManager {
   async collectConsent(
     request: ConsentCollectionRequest,
     ipAddress: string,
-    userAgent: string
+    userAgent: string,
   ): Promise<ConsentRecord[]> {
     try {
       const consentRecords: ConsentRecord[] = [];
       const timestamp = new Date();
       const expiresAt = request.expirationDays
         ? new Date(
-            timestamp.getTime() + request.expirationDays * 24 * 60 * 60 * 1000
+            timestamp.getTime() + request.expirationDays * 24 * 60 * 60 * 1000,
           )
         : undefined;
 
@@ -145,7 +145,7 @@ export class ConsentAutomationManager {
           if (error) {
             logger.error('Error creating consent record:', error);
             throw new Error(
-              `Failed to create consent record: ${error.message}`
+              `Failed to create consent record: ${error.message}`,
             );
           }
 
@@ -170,7 +170,7 @@ export class ConsentAutomationManager {
       }
 
       logger.info(
-        `Collected ${consentRecords.length} consent records for user ${request.userId}`
+        `Collected ${consentRecords.length} consent records for user ${request.userId}`,
       );
       return consentRecords;
     } catch (error) {
@@ -189,7 +189,7 @@ export class ConsentAutomationManager {
     purpose: LGPDPurpose,
     reason?: string,
     ipAddress?: string,
-    userAgent?: string
+    userAgent?: string,
   ): Promise<boolean> {
     try {
       const withdrawnAt = new Date();
@@ -217,7 +217,7 @@ export class ConsentAutomationManager {
 
       if (!data || data.length === 0) {
         logger.warn(
-          `No active consent found for withdrawal: ${userId}, ${dataType}, ${purpose}`
+          `No active consent found for withdrawal: ${userId}, ${dataType}, ${purpose}`,
         );
         return false;
       }
@@ -242,7 +242,7 @@ export class ConsentAutomationManager {
       await this.triggerDataProcessingStop(userId, clinicId, dataType, purpose);
 
       logger.info(
-        `Consent withdrawn for user ${userId}: ${dataType}/${purpose}`
+        `Consent withdrawn for user ${userId}: ${dataType}/${purpose}`,
       );
       return true;
     } catch (error) {
@@ -258,7 +258,7 @@ export class ConsentAutomationManager {
     userId: string,
     clinicId: string,
     dataType: LGPDDataType,
-    purpose: LGPDPurpose
+    purpose: LGPDPurpose,
   ): Promise<boolean> {
     try {
       const { data, error } = await this.supabase
@@ -292,7 +292,7 @@ export class ConsentAutomationManager {
   async getUserConsents(
     userId: string,
     clinicId: string,
-    activeOnly = false
+    activeOnly = false,
   ): Promise<ConsentRecord[]> {
     try {
       let query = this.supabase
@@ -332,13 +332,13 @@ export class ConsentAutomationManager {
     clinicId: string,
     newVersion: string,
     newConsentText: string,
-    forceRecollection = false
+    forceRecollection = false,
   ): Promise<boolean> {
     try {
       const currentConsents = await this.getUserConsents(
         userId,
         clinicId,
-        true
+        true,
       );
 
       if (currentConsents.length === 0) {
@@ -351,7 +351,7 @@ export class ConsentAutomationManager {
         forceRecollection ||
         this.versionRequiresRecollection(
           currentConsents[0].consentVersion,
-          newVersion
+          newVersion,
         );
 
       if (requiresRecollection) {
@@ -401,7 +401,7 @@ export class ConsentAutomationManager {
       }
 
       logger.info(
-        `Updated consent version for user ${userId} to ${newVersion}`
+        `Updated consent version for user ${userId} to ${newVersion}`,
       );
       return true;
     } catch (error) {
@@ -416,7 +416,7 @@ export class ConsentAutomationManager {
   async getConsentAnalytics(
     clinicId: string,
     startDate?: Date,
-    endDate?: Date
+    endDate?: Date,
   ): Promise<ConsentAnalytics> {
     try {
       let query = this.supabase
@@ -444,20 +444,20 @@ export class ConsentAutomationManager {
           (c) =>
             c.consentGiven &&
             !c.withdrawnAt &&
-            (!c.expiresAt || new Date(c.expiresAt) > now)
+            (!c.expiresAt || new Date(c.expiresAt) > now),
         ) || [];
 
       const withdrawnConsents = allConsents?.filter((c) => c.withdrawnAt) || [];
       const expiredConsents =
         allConsents?.filter(
-          (c) => c.expiresAt && new Date(c.expiresAt) <= now
+          (c) => c.expiresAt && new Date(c.expiresAt) <= now,
         ) || [];
 
       // Group by data type
       const consentsByDataType = {} as Record<LGPDDataType, number>;
       Object.values(LGPDDataType).forEach((type) => {
         consentsByDataType[type] = activeConsents.filter(
-          (c) => c.dataType === type
+          (c) => c.dataType === type,
         ).length;
       });
 
@@ -465,7 +465,7 @@ export class ConsentAutomationManager {
       const consentsByPurpose = {} as Record<LGPDPurpose, number>;
       Object.values(LGPDPurpose).forEach((purpose) => {
         consentsByPurpose[purpose] = activeConsents.filter(
-          (c) => c.purpose === purpose
+          (c) => c.purpose === purpose,
         ).length;
       });
 
@@ -477,11 +477,11 @@ export class ConsentAutomationManager {
 
       // Expiring consents (next 30 days)
       const thirtyDaysFromNow = new Date(
-        now.getTime() + 30 * 24 * 60 * 60 * 1000
+        now.getTime() + 30 * 24 * 60 * 60 * 1000,
       );
       const expiringConsents = activeConsents
         .filter(
-          (c) => c.expiresAt && new Date(c.expiresAt) <= thirtyDaysFromNow
+          (c) => c.expiresAt && new Date(c.expiresAt) <= thirtyDaysFromNow,
         )
         .slice(0, 10);
 
@@ -576,7 +576,7 @@ export class ConsentAutomationManager {
    */
   private versionRequiresRecollection(
     oldVersion: string,
-    newVersion: string
+    newVersion: string,
   ): boolean {
     // Simple version comparison - in production, implement semantic versioning
     const oldParts = oldVersion.split('.').map(Number);
@@ -602,7 +602,7 @@ export class ConsentAutomationManager {
     userId: string,
     clinicId: string,
     dataType: LGPDDataType,
-    purpose: LGPDPurpose
+    purpose: LGPDPurpose,
   ): Promise<void> {
     try {
       // This would integrate with other systems to stop data processing
@@ -621,7 +621,7 @@ export class ConsentAutomationManager {
       });
 
       logger.info(
-        `Data processing stop triggered for ${userId}: ${dataType}/${purpose}`
+        `Data processing stop triggered for ${userId}: ${dataType}/${purpose}`,
       );
     } catch (error) {
       logger.error('Error triggering data processing stop:', error);

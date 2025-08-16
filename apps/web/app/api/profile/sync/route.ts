@@ -19,7 +19,7 @@ export async function POST(_request: NextRequest) {
     if (userError || !user) {
       return NextResponse.json(
         { error: 'Unauthorized', message: 'User not authenticated' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -29,7 +29,7 @@ export async function POST(_request: NextRequest) {
 
     // Check if user has Google provider
     const hasGoogleProvider = user.identities?.some(
-      (identity: any) => identity.provider === 'google'
+      (identity: any) => identity.provider === 'google',
     );
 
     if (!hasGoogleProvider) {
@@ -38,7 +38,7 @@ export async function POST(_request: NextRequest) {
           error: 'No Google provider',
           message: 'User is not authenticated with Google',
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -87,7 +87,7 @@ export async function POST(_request: NextRequest) {
               error: 'Sync failed',
               message: 'Could not create or update profile',
             },
-            { status: 500 }
+            { status: 500 },
           );
         }
 
@@ -100,7 +100,7 @@ export async function POST(_request: NextRequest) {
 
       return NextResponse.json(
         { error: 'Sync failed', message: updateError.message },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -124,7 +124,7 @@ export async function POST(_request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error', message: 'Profile sync failed' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -142,7 +142,7 @@ export async function GET(_request: NextRequest) {
     if (userError || !user) {
       return NextResponse.json(
         { error: 'Unauthorized', message: 'User not authenticated' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -156,7 +156,7 @@ export async function GET(_request: NextRequest) {
     if (profileError) {
       return NextResponse.json(
         { error: 'Profile not found', message: profileError.message },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -170,7 +170,7 @@ export async function GET(_request: NextRequest) {
       profile,
       sync_status: syncStatus,
       google_connected: user.identities?.some(
-        (identity: any) => identity.provider === 'google'
+        (identity: any) => identity.provider === 'google',
       ),
     });
   } catch (_error) {
@@ -179,7 +179,7 @@ export async function GET(_request: NextRequest) {
         error: 'Internal server error',
         message: 'Could not fetch profile sync data',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

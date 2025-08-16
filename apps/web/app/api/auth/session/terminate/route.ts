@@ -40,7 +40,7 @@ export async function POST(request: NextRequest) {
     if (!sessionToken) {
       return NextResponse.json(
         { error: 'No session token provided' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -60,7 +60,7 @@ export async function POST(request: NextRequest) {
     if (!terminated) {
       return NextResponse.json(
         { error: 'Failed to terminate session or session not found' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -98,7 +98,7 @@ export async function POST(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error during session termination' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -111,7 +111,7 @@ export async function DELETE(request: NextRequest) {
     if (!userId) {
       return NextResponse.json(
         { error: 'User ID is required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -152,7 +152,7 @@ export async function DELETE(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error during bulk session termination' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

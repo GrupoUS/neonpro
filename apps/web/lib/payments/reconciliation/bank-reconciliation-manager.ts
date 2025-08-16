@@ -130,7 +130,7 @@ export class BankReconciliationManager {
    */
   async importBankStatement(
     statementData: Omit<BankStatement, 'id'>,
-    transactions: Omit<BankTransaction, 'id' | 'statement_id'>[]
+    transactions: Omit<BankTransaction, 'id' | 'statement_id'>[],
   ): Promise<ImportResult> {
     try {
       // Validate statement data
@@ -145,7 +145,7 @@ export class BankReconciliationManager {
 
       if (statementError) {
         throw new Error(
-          `Failed to insert bank statement: ${statementError.message}`
+          `Failed to insert bank statement: ${statementError.message}`,
         );
       }
 
@@ -179,7 +179,7 @@ export class BankReconciliationManager {
 
           if (error) {
             importResult.errors.push(
-              `Batch ${Math.floor(i / batchSize) + 1}: ${error.message}`
+              `Batch ${Math.floor(i / batchSize) + 1}: ${error.message}`,
             );
             importResult.failed_transactions += batch.length;
           } else {
@@ -187,7 +187,7 @@ export class BankReconciliationManager {
           }
         } catch (validationError) {
           importResult.errors.push(
-            `Validation error in batch ${Math.floor(i / batchSize) + 1}: ${validationError}`
+            `Validation error in batch ${Math.floor(i / batchSize) + 1}: ${validationError}`,
           );
           importResult.failed_transactions += batch.length;
         }
@@ -204,7 +204,7 @@ export class BankReconciliationManager {
       return importResult;
     } catch (error) {
       throw new Error(
-        `Import failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+        `Import failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
       );
     }
   }
@@ -234,7 +234,7 @@ export class BankReconciliationManager {
 
       if (rulesError) {
         throw new Error(
-          `Failed to fetch reconciliation rules: ${rulesError.message}`
+          `Failed to fetch reconciliation rules: ${rulesError.message}`,
         );
       }
 
@@ -264,7 +264,7 @@ export class BankReconciliationManager {
       return matchingResults;
     } catch (error) {
       throw new Error(
-        `Auto matching failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+        `Auto matching failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
       );
     }
   }
@@ -274,7 +274,7 @@ export class BankReconciliationManager {
    */
   private async findMatchingPayment(
     transaction: BankTransaction,
-    rules: ReconciliationRule[]
+    rules: ReconciliationRule[],
   ): Promise<MatchingResult | null> {
     try {
       const _amount =
@@ -306,7 +306,7 @@ export class BankReconciliationManager {
         const confidence = this.calculateMatchingConfidence(
           transaction,
           payment,
-          rules
+          rules,
         );
 
         if (confidence.score > highestConfidence && confidence.score >= 0.7) {
@@ -333,7 +333,7 @@ export class BankReconciliationManager {
   private calculateMatchingConfidence(
     transaction: BankTransaction,
     payment: any,
-    _rules: ReconciliationRule[]
+    _rules: ReconciliationRule[],
   ): { score: number; criteria: string[] } {
     let score = 0;
     const criteria: string[] = [];
@@ -384,7 +384,7 @@ export class BankReconciliationManager {
     if (transaction.description && payment.description) {
       const similarity = this.calculateStringSimilarity(
         transaction.description.toLowerCase(),
-        payment.description.toLowerCase()
+        payment.description.toLowerCase(),
       );
 
       if (similarity > 0.8) {
@@ -423,7 +423,7 @@ export class BankReconciliationManager {
           matrix[i][j] = Math.min(
             matrix[i - 1][j - 1] + 1,
             matrix[i][j - 1] + 1,
-            matrix[i - 1][j] + 1
+            matrix[i - 1][j] + 1,
           );
         }
       }
@@ -481,7 +481,7 @@ export class BankReconciliationManager {
 
       // Check for unmatched transactions
       const unmatchedTransactions = transactions.filter(
-        (trans) => trans.reconciliation_status === 'unmatched'
+        (trans) => trans.reconciliation_status === 'unmatched',
       );
 
       for (const transaction of unmatchedTransactions) {
@@ -521,7 +521,7 @@ export class BankReconciliationManager {
       return discrepancies;
     } catch (error) {
       throw new Error(
-        `Discrepancy detection failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+        `Discrepancy detection failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
       );
     }
   }
@@ -530,7 +530,7 @@ export class BankReconciliationManager {
    * Find duplicate transactions
    */
   private findDuplicateTransactions(
-    transactions: BankTransaction[]
+    transactions: BankTransaction[],
   ): BankTransaction[] {
     const duplicates: BankTransaction[] = [];
     const seen = new Map<string, BankTransaction>();
@@ -552,7 +552,7 @@ export class BankReconciliationManager {
    * Get reconciliation summary
    */
   async getReconciliationSummary(
-    statementId: string
+    statementId: string,
   ): Promise<ReconciliationSummary> {
     try {
       const { data: transactions, error } = await this.supabase
@@ -566,13 +566,13 @@ export class BankReconciliationManager {
 
       const total = transactions.length;
       const matched = transactions.filter(
-        (t) => t.reconciliation_status === 'matched'
+        (t) => t.reconciliation_status === 'matched',
       ).length;
       const unmatched = transactions.filter(
-        (t) => t.reconciliation_status === 'unmatched'
+        (t) => t.reconciliation_status === 'unmatched',
       ).length;
       const disputed = transactions.filter(
-        (t) => t.reconciliation_status === 'disputed'
+        (t) => t.reconciliation_status === 'disputed',
       ).length;
 
       const { data: discrepancies, error: discError } = await this.supabase
@@ -598,7 +598,7 @@ export class BankReconciliationManager {
       };
     } catch (error) {
       throw new Error(
-        `Failed to get reconciliation summary: ${error instanceof Error ? error.message : 'Unknown error'}`
+        `Failed to get reconciliation summary: ${error instanceof Error ? error.message : 'Unknown error'}`,
       );
     }
   }
@@ -609,7 +609,7 @@ export class BankReconciliationManager {
   async manualMatch(
     transactionId: string,
     paymentId: string,
-    notes?: string
+    notes?: string,
   ): Promise<void> {
     try {
       const { error } = await this.supabase
@@ -627,7 +627,7 @@ export class BankReconciliationManager {
       }
     } catch (error) {
       throw new Error(
-        `Manual matching failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+        `Manual matching failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
       );
     }
   }
@@ -636,7 +636,7 @@ export class BankReconciliationManager {
    * Create reconciliation rule
    */
   async createReconciliationRule(
-    ruleData: Omit<ReconciliationRule, 'id'>
+    ruleData: Omit<ReconciliationRule, 'id'>,
   ): Promise<ReconciliationRule> {
     try {
       const validatedRule = ReconciliationRuleSchema.parse(ruleData);
@@ -649,14 +649,14 @@ export class BankReconciliationManager {
 
       if (error) {
         throw new Error(
-          `Failed to create reconciliation rule: ${error.message}`
+          `Failed to create reconciliation rule: ${error.message}`,
         );
       }
 
       return data;
     } catch (error) {
       throw new Error(
-        `Rule creation failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+        `Rule creation failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
       );
     }
   }

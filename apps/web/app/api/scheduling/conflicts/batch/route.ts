@@ -16,7 +16,7 @@ const batchConflictCheckSchema = z.object({
       patientId: z.string().uuid().optional(),
       professionalId: z.string().uuid().optional(),
       timeSlot: z.string().optional(),
-    })
+    }),
   ),
   timestamp: z.string(),
   batchSize: z.number().max(50).optional(),
@@ -46,7 +46,7 @@ export async function POST(request: NextRequest) {
         cookies: {
           get: (name: string) => request.cookies.get(name)?.value,
         },
-      }
+      },
     );
 
     const {
@@ -66,7 +66,7 @@ export async function POST(request: NextRequest) {
           },
           error: 'Unauthorized',
         },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -85,7 +85,7 @@ export async function POST(request: NextRequest) {
           },
           error: 'Tenant ID required',
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -111,7 +111,7 @@ export async function POST(request: NextRequest) {
           },
           error: 'LGPD consent required for batch operations',
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -144,7 +144,7 @@ export async function POST(request: NextRequest) {
           impact_description, estimated_time_minutes, 
           compliance_impact, status
         )
-      `
+      `,
       )
       .eq('status', 'active')
       .eq('tenant_id', tenantId);
@@ -159,7 +159,7 @@ export async function POST(request: NextRequest) {
     }
     if (professionalIds.length > 0) {
       conditions.push(
-        `appointments.professional_id.in.(${professionalIds.join(',')})`
+        `appointments.professional_id.in.(${professionalIds.join(',')})`,
       );
     }
 
@@ -182,7 +182,7 @@ export async function POST(request: NextRequest) {
           },
           error: 'Database query failed',
         },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -237,7 +237,7 @@ export async function POST(request: NextRequest) {
               impact: res.impact_description,
               estimatedTime: res.estimated_time_minutes,
               complianceImpact: res.compliance_impact,
-            })
+            }),
           ),
           metadata: {
             lgpdConsent: conflict.lgpd_consent,
@@ -297,7 +297,7 @@ export async function POST(request: NextRequest) {
           },
           error: `Validation failed: ${error.errors.map((e) => e.message).join(', ')}`,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -313,7 +313,7 @@ export async function POST(request: NextRequest) {
         },
         error: 'Internal server error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

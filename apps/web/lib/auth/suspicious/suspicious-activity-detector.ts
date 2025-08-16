@@ -207,7 +207,7 @@ export class SuspiciousActivityDetector {
     userId: string,
     sessionId: string,
     behaviorType: BehaviorPatternType,
-    metrics: Partial<BehaviorMetrics>
+    metrics: Partial<BehaviorMetrics>,
   ): void {
     try {
       const pattern: BehaviorPattern = {
@@ -253,7 +253,7 @@ export class SuspiciousActivityDetector {
     userId: string,
     sessionId: string,
     typingSpeed: number,
-    _keyPressIntervals: number[]
+    _keyPressIntervals: number[],
   ): void {
     this.recordBehavior(userId, sessionId, 'typing_speed', {
       currentTypingSpeed: typingSpeed,
@@ -267,7 +267,7 @@ export class SuspiciousActivityDetector {
     userId: string,
     sessionId: string,
     mouseSpeed: number,
-    _clickPatterns: number[]
+    _clickPatterns: number[],
   ): void {
     this.recordBehavior(userId, sessionId, 'mouse_movement', {
       currentMouseSpeed: mouseSpeed,
@@ -280,7 +280,7 @@ export class SuspiciousActivityDetector {
   public recordNavigationBehavior(
     userId: string,
     sessionId: string,
-    navigationPath: string[]
+    navigationPath: string[],
   ): void {
     this.recordBehavior(userId, sessionId, 'navigation_pattern', {
       navigationPath,
@@ -294,13 +294,13 @@ export class SuspiciousActivityDetector {
     userId: string,
     sessionId: string,
     endpoint: string,
-    frequency: number
+    frequency: number,
   ): void {
     const userPatterns = this.activePatterns.get(userId) || [];
     const recentApiPatterns = userPatterns
       .filter(
         (p) =>
-          p.patternType === 'api_usage' && Date.now() - p.timestamp < 300_000
+          p.patternType === 'api_usage' && Date.now() - p.timestamp < 300_000,
       )
       .flatMap((p) => p.currentMetrics.apiEndpoints || []);
 
@@ -319,7 +319,7 @@ export class SuspiciousActivityDetector {
     try {
       for (const [userId, patterns] of this.activePatterns.entries()) {
         const recentPatterns = patterns.filter(
-          (p) => Date.now() - p.timestamp < 300_000 // Last 5 minutes
+          (p) => Date.now() - p.timestamp < 300_000, // Last 5 minutes
         );
 
         if (recentPatterns.length === 0) {
@@ -345,7 +345,7 @@ export class SuspiciousActivityDetector {
    */
   private async detectAnomalies(
     userId: string,
-    patterns: BehaviorPattern[]
+    patterns: BehaviorPattern[],
   ): Promise<AnomalyAlert[]> {
     const anomalies: AnomalyAlert[] = [];
 
@@ -355,7 +355,7 @@ export class SuspiciousActivityDetector {
       }
 
       const relevantPatterns = patterns.filter((p) =>
-        rule.patternTypes.includes(p.patternType)
+        rule.patternTypes.includes(p.patternType),
       );
 
       if (relevantPatterns.length === 0) {
@@ -365,7 +365,7 @@ export class SuspiciousActivityDetector {
       const anomaly = await this.applyDetectionRule(
         userId,
         rule,
-        relevantPatterns
+        relevantPatterns,
       );
       if (anomaly) {
         anomalies.push(anomaly);
@@ -381,7 +381,7 @@ export class SuspiciousActivityDetector {
   private async applyDetectionRule(
     userId: string,
     rule: DetectionRule,
-    patterns: BehaviorPattern[]
+    patterns: BehaviorPattern[],
   ): Promise<AnomalyAlert | null> {
     try {
       const avgAnomalyScore =
@@ -453,7 +453,7 @@ export class SuspiciousActivityDetector {
         // Immediately suspend session
         await this.suspendSession(
           anomaly.sessionId,
-          'Critical security anomaly detected'
+          'Critical security anomaly detected',
         );
         break;
 
@@ -504,7 +504,7 @@ export class SuspiciousActivityDetector {
       case 'time_pattern': {
         const currentHour = new Date().getHours();
         const isUsualTime = baseline.usualLoginTimes.some(
-          (hour) => Math.abs(hour - currentHour) <= 2
+          (hour) => Math.abs(hour - currentHour) <= 2,
         );
         score = isUsualTime ? 0 : 80;
         break;
@@ -512,7 +512,7 @@ export class SuspiciousActivityDetector {
 
       case 'location_pattern': {
         const isKnownLocation = baseline.frequentLocations.includes(
-          current.location
+          current.location,
         );
         score = isKnownLocation ? 0 : 90;
         break;
@@ -522,7 +522,7 @@ export class SuspiciousActivityDetector {
         if (baseline.interactionFrequency > 0) {
           const deviation =
             Math.abs(
-              current.interactionFrequency - baseline.interactionFrequency
+              current.interactionFrequency - baseline.interactionFrequency,
             ) / baseline.interactionFrequency;
           score = Math.min(100, deviation * 150); // Higher weight for interaction frequency
         }
@@ -611,7 +611,7 @@ export class SuspiciousActivityDetector {
 
   private mergeBehaviorMetrics(
     userId: string,
-    metrics: Partial<BehaviorMetrics>
+    metrics: Partial<BehaviorMetrics>,
   ): BehaviorMetrics {
     const baseline = this.getBehaviorBaseline(userId);
     return {
@@ -629,7 +629,7 @@ export class SuspiciousActivityDetector {
 
   private updateBehaviorBaseline(
     userId: string,
-    pattern: BehaviorPattern
+    pattern: BehaviorPattern,
   ): void {
     const baseline = this.getBehaviorBaseline(userId);
     const current = pattern.currentMetrics;
@@ -678,7 +678,7 @@ export class SuspiciousActivityDetector {
   }
 
   private mapPatternToAnomalyType(
-    patternType: BehaviorPatternType
+    patternType: BehaviorPatternType,
   ): AnomalyType {
     const mapping: Record<BehaviorPatternType, AnomalyType> = {
       typing_speed: 'unusual_typing_pattern',
@@ -694,7 +694,7 @@ export class SuspiciousActivityDetector {
   }
 
   private calculatePatternDeviations(
-    patterns: BehaviorPattern[]
+    patterns: BehaviorPattern[],
   ): Record<string, number> {
     const deviations: Record<string, number> = {};
     patterns.forEach((pattern) => {
@@ -705,7 +705,7 @@ export class SuspiciousActivityDetector {
 
   private getComparisonData(
     userId: string,
-    patterns: BehaviorPattern[]
+    patterns: BehaviorPattern[],
   ): Record<string, any> {
     const baseline = this.getBehaviorBaseline(userId);
     return {
@@ -734,7 +734,7 @@ export class SuspiciousActivityDetector {
 
   private calculateRiskScore(
     anomalyScore: number,
-    severity: AnomalyAlert['severity']
+    severity: AnomalyAlert['severity'],
   ): number {
     const severityMultiplier = {
       low: 0.5,
@@ -772,7 +772,7 @@ export class SuspiciousActivityDetector {
 
   private async suspendSession(
     sessionId: string,
-    reason: string
+    reason: string,
   ): Promise<void> {
     await fetch('/api/session/suspend', {
       method: 'POST',
@@ -798,12 +798,12 @@ export class SuspiciousActivityDetector {
   private async logForReview(_anomaly: AnomalyAlert): Promise<void> {}
 
   private async sendAnomalyNotification(
-    _anomaly: AnomalyAlert
+    _anomaly: AnomalyAlert,
   ): Promise<void> {}
 
   private async updateUserRiskScore(
     userId: string,
-    patterns: BehaviorPattern[]
+    patterns: BehaviorPattern[],
   ): Promise<void> {
     const avgRiskScore =
       patterns.reduce((sum, p) => sum + p.anomalyScore, 0) / patterns.length;
@@ -825,7 +825,7 @@ export class SuspiciousActivityDetector {
    */
   public getAnomalyAlerts(userId: string): AnomalyAlert[] {
     return Array.from(this.anomalyAlerts.values()).filter(
-      (alert) => alert.userId === userId && !alert.resolved
+      (alert) => alert.userId === userId && !alert.resolved,
     );
   }
 
@@ -847,7 +847,7 @@ export class SuspiciousActivityDetector {
   } {
     const patterns = this.activePatterns.get(userId) || [];
     const recentPatterns = patterns.filter(
-      (p) => Date.now() - p.timestamp < 86_400_000
+      (p) => Date.now() - p.timestamp < 86_400_000,
     ); // Last 24 hours
     const avgRiskScore =
       recentPatterns.length > 0
@@ -856,7 +856,7 @@ export class SuspiciousActivityDetector {
         : 0;
 
     const recentAnomalies = Array.from(this.anomalyAlerts.values()).filter(
-      (a) => a.userId === userId && Date.now() - a.timestamp < 86_400_000
+      (a) => a.userId === userId && Date.now() - a.timestamp < 86_400_000,
     ).length;
 
     return {

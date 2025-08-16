@@ -55,7 +55,7 @@ export const POST = withErrorMonitoring(async (request: NextRequest) => {
         analysis_annotations(*),
         analysis_performance(*),
         analysis_quality_control(*)
-      `
+      `,
       )
       .in('id', validatedData.analysisIds)
       .eq('user_id', user.id); // Ensure user can only export their own analyses
@@ -67,7 +67,7 @@ export const POST = withErrorMonitoring(async (request: NextRequest) => {
     if (!analysisData || analysisData.length === 0) {
       return NextResponse.json(
         { error: 'Nenhuma análise encontrada' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -108,7 +108,7 @@ export const POST = withErrorMonitoring(async (request: NextRequest) => {
     headers.set('Content-Type', exportResult.contentType);
     headers.set(
       'Content-Disposition',
-      `attachment; filename="${filename}.${validatedData.format}"`
+      `attachment; filename="${filename}.${validatedData.format}"`,
     );
     headers.set('Content-Length', exportResult.data.length.toString());
 
@@ -117,14 +117,13 @@ export const POST = withErrorMonitoring(async (request: NextRequest) => {
       headers,
     });
   } catch (error) {
-
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {
           error: 'Dados de entrada inválidos',
           details: error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -133,7 +132,7 @@ export const POST = withErrorMonitoring(async (request: NextRequest) => {
         error: 'Erro interno do servidor',
         details: error instanceof Error ? error.message : 'Erro desconhecido',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 });
@@ -222,7 +221,7 @@ async function generateCSVExport(analysisData: any[], options: any) {
 
   const csvContent = [headers, ...rows]
     .map((row) =>
-      row.map((field) => `"${String(field).replace(/"/g, '""')}"`).join(',')
+      row.map((field) => `"${String(field).replace(/"/g, '""')}"`).join(','),
     )
     .join('\n');
 
@@ -263,7 +262,7 @@ MÉTRICAS:
     : ''
 }
 ${analysis.notes ? `Observações: ${analysis.notes}` : ''}
-`
+`,
   )
   .join('\n')}
 `;
@@ -332,7 +331,7 @@ export const GET = withErrorMonitoring(async (request: NextRequest) => {
         error: 'Erro interno do servidor',
         details: error instanceof Error ? error.message : 'Erro desconhecido',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 });

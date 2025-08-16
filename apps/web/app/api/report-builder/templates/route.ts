@@ -24,7 +24,7 @@ export async function GET(request: NextRequest) {
     const result = await reportService.getReportTemplates(
       page,
       perPage,
-      filters
+      filters,
     );
 
     return NextResponse.json({
@@ -40,7 +40,7 @@ export async function GET(request: NextRequest) {
             ? error.message
             : 'Failed to fetch report templates',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -59,12 +59,12 @@ export async function POST(request: NextRequest) {
           error: 'Invalid request data',
           details: validationResult.error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     const template = await reportService.createReportTemplate(
-      validationResult.data
+      validationResult.data,
     );
 
     return NextResponse.json(
@@ -72,7 +72,7 @@ export async function POST(request: NextRequest) {
         success: true,
         data: template,
       },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (error) {
     return NextResponse.json(
@@ -83,7 +83,7 @@ export async function POST(request: NextRequest) {
             ? error.message
             : 'Failed to create report template',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

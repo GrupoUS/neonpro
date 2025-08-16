@@ -40,7 +40,7 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
           error:
             'Patient factors not found. Please complete patient assessment first.',
         },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -48,7 +48,7 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to fetch patient factors' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -82,7 +82,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
     if (!(body.age && body.gender)) {
       return NextResponse.json(
         { error: 'Missing required fields: age, gender' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -102,7 +102,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to update patient factors' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -8,7 +8,7 @@ type RouteParams = {
 
 export async function GET(
   _request: NextRequest,
-  { params }: { params: RouteParams }
+  { params }: { params: RouteParams },
 ) {
   try {
     const supabase = await createClient();
@@ -34,14 +34,14 @@ export async function GET(
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to fetch patient analysis' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: RouteParams }
+  { params }: { params: RouteParams },
 ) {
   try {
     const supabase = await createClient();
@@ -66,7 +66,7 @@ export async function POST(
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to update segment memberships' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

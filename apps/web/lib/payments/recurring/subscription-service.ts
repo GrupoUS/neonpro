@@ -61,7 +61,7 @@ export class SubscriptionService {
    * Create a new subscription
    */
   async createSubscription(
-    data: SubscriptionData
+    data: SubscriptionData,
   ): Promise<SubscriptionStatus> {
     // Get subscription plan details
     const { data: plan } = await this.supabase
@@ -140,10 +140,10 @@ export class SubscriptionService {
         stripe_subscription_id: stripeSubscription.id,
         status: stripeSubscription.status,
         current_period_start: new Date(
-          stripeSubscription.current_period_start * 1000
+          stripeSubscription.current_period_start * 1000,
         ),
         current_period_end: new Date(
-          stripeSubscription.current_period_end * 1000
+          stripeSubscription.current_period_end * 1000,
         ),
         trial_end: stripeSubscription.trial_end
           ? new Date(stripeSubscription.trial_end * 1000)
@@ -167,7 +167,7 @@ export class SubscriptionService {
    * Get subscription status
    */
   async getSubscriptionStatus(
-    subscriptionId: string
+    subscriptionId: string,
   ): Promise<SubscriptionStatus | null> {
     try {
       const { data: subscription } = await this.supabase
@@ -177,7 +177,7 @@ export class SubscriptionService {
           *,
           subscription_plans(*),
           patients(id, name, email)
-        `
+        `,
         )
         .eq('id', subscriptionId)
         .single();
@@ -188,7 +188,7 @@ export class SubscriptionService {
 
       // Get latest Stripe subscription data
       const stripeSubscription = await stripe.subscriptions.retrieve(
-        subscription.stripe_subscription_id
+        subscription.stripe_subscription_id,
       );
 
       return this.formatSubscriptionStatus(subscription, stripeSubscription);
@@ -202,7 +202,7 @@ export class SubscriptionService {
    */
   async cancelSubscription(
     subscriptionId: string,
-    cancelAtPeriodEnd = true
+    cancelAtPeriodEnd = true,
   ): Promise<boolean> {
     try {
       const { data: subscription } = await this.supabase
@@ -247,7 +247,7 @@ export class SubscriptionService {
   async updateSubscriptionPlan(
     subscriptionId: string,
     newPlanId: string,
-    prorationBehavior: 'create_prorations' | 'none' = 'create_prorations'
+    prorationBehavior: 'create_prorations' | 'none' = 'create_prorations',
   ): Promise<SubscriptionStatus | null> {
     try {
       const { data: subscription } = await this.supabase
@@ -273,7 +273,7 @@ export class SubscriptionService {
 
       // Get current Stripe subscription
       const stripeSubscription = await stripe.subscriptions.retrieve(
-        subscription.stripe_subscription_id
+        subscription.stripe_subscription_id,
       );
 
       // Update Stripe subscription
@@ -298,7 +298,7 @@ export class SubscriptionService {
             },
           ],
           proration_behavior: prorationBehavior,
-        }
+        },
       );
 
       // Update database
@@ -316,7 +316,7 @@ export class SubscriptionService {
 
       return this.formatSubscriptionStatus(
         updatedSubscription,
-        updatedStripeSubscription
+        updatedStripeSubscription,
       );
     } catch (_error) {
       return null;
@@ -402,13 +402,13 @@ export class SubscriptionService {
    */
   private formatSubscriptionStatus(
     subscription: any,
-    stripeSubscription: Stripe.Subscription
+    stripeSubscription: Stripe.Subscription,
   ): SubscriptionStatus {
     return {
       id: subscription.id,
       status: stripeSubscription.status as any,
       currentPeriodStart: new Date(
-        stripeSubscription.current_period_start * 1000
+        stripeSubscription.current_period_start * 1000,
       ),
       currentPeriodEnd: new Date(stripeSubscription.current_period_end * 1000),
       nextBillingDate: new Date(stripeSubscription.current_period_end * 1000),

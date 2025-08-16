@@ -101,7 +101,7 @@ export async function GET(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error while fetching session analytics' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -114,7 +114,7 @@ export async function POST(request: NextRequest) {
     if (!userId) {
       return NextResponse.json(
         { error: 'User ID is required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -125,7 +125,7 @@ export async function POST(request: NextRequest) {
     const recentSecurityEvents = await manager.getSecurityEvents(
       { user_id: userId },
       10, // limit
-      0 // offset
+      0, // offset
     );
 
     // Calculate session health score
@@ -145,13 +145,13 @@ export async function POST(request: NextRequest) {
       healthScore,
       alerts: {
         suspiciousActivity: recentSecurityEvents.filter(
-          (event) => event.severity === 'HIGH'
+          (event) => event.severity === 'HIGH',
         ).length,
         newDevices: recentSecurityEvents.filter(
-          (event) => event.event_type === 'DEVICE_REGISTERED'
+          (event) => event.event_type === 'DEVICE_REGISTERED',
         ).length,
         failedValidations: recentSecurityEvents.filter(
-          (event) => event.event_type === 'SESSION_VALIDATION_FAILED'
+          (event) => event.event_type === 'SESSION_VALIDATION_FAILED',
         ).length,
       },
     };
@@ -162,7 +162,7 @@ export async function POST(request: NextRequest) {
       {
         error: 'Internal server error while fetching real-time session status',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

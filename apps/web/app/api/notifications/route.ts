@@ -92,19 +92,19 @@ export async function GET(request: NextRequest) {
     if (clinicsError) {
       return NextResponse.json(
         { error: 'Failed to fetch user clinics' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
     // If clinicId is specified, verify user has access
     if (validatedQuery.clinicId) {
       const hasAccess = userClinics?.some(
-        (uc) => uc.clinic_id === validatedQuery.clinicId
+        (uc) => uc.clinic_id === validatedQuery.clinicId,
       );
       if (!hasAccess) {
         return NextResponse.json(
           { error: 'Access denied to specified clinic' },
-          { status: 403 }
+          { status: 403 },
         );
       }
     }
@@ -122,14 +122,14 @@ export async function GET(request: NextRequest) {
     if (!notifications) {
       return NextResponse.json(
         { error: 'Failed to fetch notifications' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
     // Get unread count
     const unreadCount = await AnalyticsNotificationService.getUnreadCount(
       user.id,
-      validatedQuery.clinicId
+      validatedQuery.clinicId,
     );
 
     return NextResponse.json({
@@ -145,13 +145,13 @@ export async function GET(request: NextRequest) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Invalid query parameters', details: error.errors },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -185,19 +185,19 @@ export async function POST(request: NextRequest) {
         if (validatedData.userId !== user.id) {
           return NextResponse.json(
             { error: 'Can only mark your own notifications as read' },
-            { status: 403 }
+            { status: 403 },
           );
         }
 
         const success = await AnalyticsNotificationService.markAsRead(
           validatedData.notificationId,
-          validatedData.userId
+          validatedData.userId,
         );
 
         if (!success) {
           return NextResponse.json(
             { error: 'Failed to mark notification as read' },
-            { status: 500 }
+            { status: 500 },
           );
         }
 
@@ -215,18 +215,18 @@ export async function POST(request: NextRequest) {
         if (clinicsError) {
           return NextResponse.json(
             { error: 'Failed to verify permissions' },
-            { status: 500 }
+            { status: 500 },
           );
         }
 
         const isAdmin = userClinics?.some((uc) =>
-          ['admin', 'owner', 'manager'].includes(uc.role)
+          ['admin', 'owner', 'manager'].includes(uc.role),
         );
 
         if (!isAdmin) {
           return NextResponse.json(
             { error: 'Insufficient permissions to send custom notifications' },
-            { status: 403 }
+            { status: 403 },
           );
         }
 
@@ -237,13 +237,13 @@ export async function POST(request: NextRequest) {
           const hasAccess = userClinics?.some(
             (uc) =>
               uc.clinic_id === validatedData.clinicId &&
-              ['admin', 'owner', 'manager'].includes(uc.role)
+              ['admin', 'owner', 'manager'].includes(uc.role),
           );
 
           if (!hasAccess) {
             return NextResponse.json(
               { error: 'Access denied to specified clinic' },
-              { status: 403 }
+              { status: 403 },
             );
           }
         }
@@ -264,13 +264,13 @@ export async function POST(request: NextRequest) {
                 : undefined,
               clinicId: validatedData.clinicId,
               metadata: validatedData.metadata,
-            }
+            },
           );
 
         if (!notificationId) {
           return NextResponse.json(
             { error: 'Failed to send notification' },
-            { status: 500 }
+            { status: 500 },
           );
         }
 
@@ -287,13 +287,13 @@ export async function POST(request: NextRequest) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Invalid request data', details: error.errors },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -322,7 +322,7 @@ export async function PUT(request: NextRequest) {
     if (!(action && Array.isArray(notificationIds))) {
       return NextResponse.json(
         { error: 'Invalid request format' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -338,7 +338,7 @@ export async function PUT(request: NextRequest) {
       if (clinicsError || !userClinics || userClinics.length === 0) {
         return NextResponse.json(
           { error: 'Access denied to specified clinic' },
-          { status: 403 }
+          { status: 403 },
         );
       }
     }
@@ -367,7 +367,7 @@ export async function PUT(request: NextRequest) {
         if (error) {
           return NextResponse.json(
             { error: 'Failed to mark notifications as read' },
-            { status: 500 }
+            { status: 500 },
           );
         }
 
@@ -385,7 +385,7 @@ export async function PUT(request: NextRequest) {
         if (error) {
           return NextResponse.json(
             { error: 'Failed to delete notifications' },
-            { status: 500 }
+            { status: 500 },
           );
         }
 
@@ -398,7 +398,7 @@ export async function PUT(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -139,7 +139,7 @@ describe('StockAlertService', () => {
       // Act
       const result = await stockAlertService.createAlertConfig(
         validRequest,
-        mockUserId
+        mockUserId,
       );
 
       // Assert
@@ -157,7 +157,7 @@ describe('StockAlertService', () => {
 
       // Act & Assert
       await expect(
-        stockAlertService.createAlertConfig(invalidRequest, mockUserId)
+        stockAlertService.createAlertConfig(invalidRequest, mockUserId),
       ).rejects.toThrow(StockAlertError);
     });
 
@@ -176,13 +176,13 @@ describe('StockAlertService', () => {
 
       // Act & Assert
       await expect(
-        stockAlertService.createAlertConfig(validRequest, mockUserId)
+        stockAlertService.createAlertConfig(validRequest, mockUserId),
       ).rejects.toThrow(
         new StockAlertError(
           'Alert configuration already exists for this product/category and type',
           'DUPLICATE_CONFIG',
-          { existingId: 'existing-id' }
-        )
+          { existingId: 'existing-id' },
+        ),
       );
     });
 
@@ -208,12 +208,12 @@ describe('StockAlertService', () => {
 
       // Act & Assert
       await expect(
-        stockAlertService.createAlertConfig(validRequest, mockUserId)
+        stockAlertService.createAlertConfig(validRequest, mockUserId),
       ).rejects.toThrow(
         new StockAlertError(
           'Failed to create alert configuration',
-          'CREATE_CONFIG_FAILED'
-        )
+          'CREATE_CONFIG_FAILED',
+        ),
       );
     });
   });
@@ -252,7 +252,7 @@ describe('StockAlertService', () => {
       const result = await stockAlertService.updateAlertConfig(
         configId,
         updates,
-        mockUserId
+        mockUserId,
       );
 
       // Assert
@@ -261,7 +261,7 @@ describe('StockAlertService', () => {
           id: configId,
           thresholdValue: updates.thresholdValue,
           severityLevel: updates.severityLevel,
-        })
+        }),
       );
     });
 
@@ -282,12 +282,12 @@ describe('StockAlertService', () => {
 
       // Act & Assert
       await expect(
-        stockAlertService.updateAlertConfig(configId, updates, mockUserId)
+        stockAlertService.updateAlertConfig(configId, updates, mockUserId),
       ).rejects.toThrow(
         new StockAlertError(
           'Failed to update alert configuration',
-          'UPDATE_CONFIG_FAILED'
-        )
+          'UPDATE_CONFIG_FAILED',
+        ),
       );
     });
   });
@@ -400,7 +400,7 @@ describe('StockAlertService', () => {
           alertType: 'low_stock',
           severityLevel: 'medium',
           productId: mockProductId,
-        })
+        }),
       );
     });
 
@@ -475,7 +475,7 @@ describe('StockAlertService', () => {
       // Act
       const result = await stockAlertService.acknowledgeAlert(
         request,
-        mockUserId
+        mockUserId,
       );
 
       // Assert
@@ -597,7 +597,7 @@ describe('StockAlertService', () => {
 
       // Act & Assert
       await expect(
-        stockAlertService.createAlertConfig(invalidRequest, mockUserId)
+        stockAlertService.createAlertConfig(invalidRequest, mockUserId),
       ).rejects.toThrow(StockAlertError);
     });
 
@@ -617,8 +617,8 @@ describe('StockAlertService', () => {
             severityLevel: 'medium',
             notificationChannels: ['in_app'],
           },
-          mockUserId
-        )
+          mockUserId,
+        ),
       ).rejects.toThrow(StockAlertError);
     });
   });

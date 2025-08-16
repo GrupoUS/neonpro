@@ -169,7 +169,7 @@ class FinancialManagementSystem {
   constructor(config?: Partial<FinancialSystemConfig>) {
     this.config = this.initializeConfig(config);
     this.invoiceGenerator = new AutomatedInvoiceGenerator(
-      this.config.invoiceGeneration
+      this.config.invoiceGeneration,
     );
     this.paymentTracker = new PaymentTracker(this.config.paymentTracking);
   }
@@ -238,14 +238,14 @@ class FinancialManagementSystem {
             paymentMethod: invoiceData.paymentMethods?.[0],
             dueDate: invoiceData.dueDate,
             generateNFSe: invoiceData.generateNFSe,
-          }
+          },
         );
       } else if (invoiceData.treatmentId) {
         const invoices = await this.invoiceGenerator.generateFromTreatment(
           invoiceData.treatmentId,
           {
             generateNFSe: invoiceData.generateNFSe,
-          }
+          },
         );
         invoice = invoices[0]; // Take first invoice for single treatment
       } else {
@@ -273,7 +273,7 @@ class FinancialManagementSystem {
         // Generate payment links
         paymentSetup = await this.paymentTracker.generatePaymentLink(
           payment.id,
-          primaryPaymentMethod
+          primaryPaymentMethod,
         );
       }
 
@@ -328,7 +328,7 @@ class FinancialManagementSystem {
 
       // Get updated payment and invoice data
       const payment = await this.getLatestPaymentForInvoice(
-        paymentData.invoiceId
+        paymentData.invoiceId,
       );
       const invoice = await this.getInvoiceData(paymentData.invoiceId);
 
@@ -441,7 +441,7 @@ class FinancialManagementSystem {
       // Calculate expenses
       const gatewayFees = Object.values(paymentAnalytics.byGateway).reduce(
         (sum, gateway) => sum + gateway.fees,
-        0
+        0,
       );
 
       const expenses = {
@@ -561,7 +561,7 @@ class FinancialManagementSystem {
       if (reportConfig.format !== 'json') {
         report.downloadUrl = await this.generateReportFile(
           report,
-          reportConfig.includeCharts
+          reportConfig.includeCharts,
         );
       }
       return report;
@@ -615,7 +615,7 @@ class FinancialManagementSystem {
   async resolveAlert(
     alertId: string,
     resolvedBy: string,
-    notes?: string
+    notes?: string,
   ): Promise<void> {
     try {
       await this.supabase
@@ -666,7 +666,7 @@ class FinancialManagementSystem {
       const startOfDay = new Date(
         today.getFullYear(),
         today.getMonth(),
-        today.getDate()
+        today.getDate(),
       );
 
       const [invoiceAnalytics, paymentAnalytics, alerts] = await Promise.all([
@@ -728,7 +728,7 @@ class FinancialManagementSystem {
 
   // Private helper methods
   private initializeConfig(
-    config?: Partial<FinancialSystemConfig>
+    config?: Partial<FinancialSystemConfig>,
   ): FinancialSystemConfig {
     const defaultConfig: FinancialSystemConfig = {
       invoiceGeneration: {},
@@ -773,12 +773,12 @@ class FinancialManagementSystem {
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'invoices' },
-        (payload) => this.handleInvoiceUpdate(payload)
+        (payload) => this.handleInvoiceUpdate(payload),
       )
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'payment_records' },
-        (payload) => this.handlePaymentUpdate(payload)
+        (payload) => this.handlePaymentUpdate(payload),
       )
       .subscribe();
   }
@@ -789,7 +789,7 @@ class FinancialManagementSystem {
   }
 
   private async createFinancialTransaction(
-    transaction: Omit<FinancialTransaction, 'id'>
+    transaction: Omit<FinancialTransaction, 'id'>,
   ): Promise<void> {
     const transactionId = `transaction_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
@@ -812,7 +812,7 @@ class FinancialManagementSystem {
   }
 
   private async generateAlert(
-    alertData: Omit<FinancialAlert, 'id' | 'createdAt'>
+    alertData: Omit<FinancialAlert, 'id' | 'createdAt'>,
   ): Promise<void> {
     const alertId = `alert_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
@@ -838,7 +838,7 @@ class FinancialManagementSystem {
   }
 
   private async getLatestPaymentForInvoice(
-    invoiceId: string
+    invoiceId: string,
   ): Promise<PaymentRecord | null> {
     const { data } = await this.supabase
       .from('payment_records')
@@ -921,7 +921,7 @@ class FinancialManagementSystem {
 
   private async generateReportFile(
     report: FinancialReport,
-    _includeCharts?: boolean
+    _includeCharts?: boolean,
   ): Promise<string> {
     // Generate report file based on format
     // This would integrate with a report generation service

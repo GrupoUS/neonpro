@@ -75,7 +75,7 @@ export class ConcurrentSessionManager {
   public async canCreateSession(
     userId: string,
     deviceId: string,
-    userRole: UserRole
+    userRole: UserRole,
   ): Promise<{
     allowed: boolean;
     reason?: string;
@@ -92,7 +92,7 @@ export class ConcurrentSessionManager {
           userId,
           'max_sessions_exceeded',
           existingSessions,
-          { userId, deviceId }
+          { userId, deviceId },
         );
 
         return {
@@ -105,14 +105,14 @@ export class ConcurrentSessionManager {
 
       // Check same device login
       const deviceSessions = existingSessions.filter(
-        (s) => s.deviceId === deviceId
+        (s) => s.deviceId === deviceId,
       );
       if (deviceSessions.length > 0 && !concurrentConfig.allowMultipleDevices) {
         const conflict = await this.createSessionConflict(
           userId,
           'same_device_login',
           deviceSessions,
-          { userId, deviceId }
+          { userId, deviceId },
         );
 
         return {
@@ -127,14 +127,14 @@ export class ConcurrentSessionManager {
       const suspiciousLogin = await this.detectSuspiciousLogin(
         userId,
         deviceId,
-        existingSessions
+        existingSessions,
       );
       if (suspiciousLogin) {
         const conflict = await this.createSessionConflict(
           userId,
           'suspicious_location',
           existingSessions,
-          { userId, deviceId }
+          { userId, deviceId },
         );
 
         return {
@@ -161,7 +161,7 @@ export class ConcurrentSessionManager {
     userId: string,
     deviceId: string,
     userRole: UserRole,
-    conflictId?: string
+    conflictId?: string,
   ): Promise<{
     success: boolean;
     sessionId?: string;
@@ -197,7 +197,7 @@ export class ConcurrentSessionManager {
       const resolution = await this.autoResolveConflict(
         concurrentConfig,
         existingSessions,
-        { userId, deviceId }
+        { userId, deviceId },
       );
 
       return resolution;
@@ -224,12 +224,12 @@ export class ConcurrentSessionManager {
       switch (resolution.action) {
         case 'terminate_oldest': {
           const oldestSession = this.findOldestSession(
-            conflict.existingSessions
+            conflict.existingSessions,
           );
           if (oldestSession) {
             await this.terminateSession(
               oldestSession.id,
-              'Replaced by newer session'
+              'Replaced by newer session',
             );
             terminatedSessions.push(oldestSession.id);
 
@@ -237,12 +237,12 @@ export class ConcurrentSessionManager {
             transferId = await this.initiateSessionTransfer(
               oldestSession.id,
               conflict.newSession.userId!,
-              conflict.newSession.deviceId!
+              conflict.newSession.deviceId!,
             );
           }
           newSessionId = await this.createNewSession(
             conflict.newSession.userId!,
-            conflict.newSession.deviceId!
+            conflict.newSession.deviceId!,
           );
           break;
         }
@@ -256,13 +256,13 @@ export class ConcurrentSessionManager {
             for (const sessionId of resolution.targetSessionIds) {
               await this.terminateSession(
                 sessionId,
-                'Terminated due to conflict resolution'
+                'Terminated due to conflict resolution',
               );
               terminatedSessions.push(sessionId);
             }
             newSessionId = await this.createNewSession(
               conflict.newSession.userId!,
-              conflict.newSession.deviceId!
+              conflict.newSession.deviceId!,
             );
           }
           break;
@@ -270,7 +270,7 @@ export class ConcurrentSessionManager {
         case 'allow_concurrent':
           newSessionId = await this.createNewSession(
             conflict.newSession.userId!,
-            conflict.newSession.deviceId!
+            conflict.newSession.deviceId!,
           );
           break;
 
@@ -289,7 +289,7 @@ export class ConcurrentSessionManager {
       if (terminatedSessions.length > 0) {
         await this.notifySessionTerminations(
           conflict.userId,
-          terminatedSessions
+          terminatedSessions,
         );
       }
 
@@ -310,7 +310,7 @@ export class ConcurrentSessionManager {
   private async autoResolveConflict(
     config: ConcurrentSessionConfig,
     existingSessions: UserSession[],
-    newSession: Partial<UserSession>
+    newSession: Partial<UserSession>,
   ): Promise<{
     success: boolean;
     sessionId?: string;
@@ -332,7 +332,7 @@ export class ConcurrentSessionManager {
       case 'device_priority':
         sessionToTerminate = this.findLowestPrioritySession(
           existingSessions,
-          config.devicePriorityOrder
+          config.devicePriorityOrder,
         );
         break;
 
@@ -343,7 +343,7 @@ export class ConcurrentSessionManager {
     if (sessionToTerminate) {
       await this.terminateSession(
         sessionToTerminate.id,
-        'Replaced by auto-resolution'
+        'Replaced by auto-resolution',
       );
       terminatedSessions.push(sessionToTerminate.id);
 
@@ -351,13 +351,13 @@ export class ConcurrentSessionManager {
       const transferId = await this.initiateSessionTransfer(
         sessionToTerminate.id,
         newSession.userId!,
-        newSession.deviceId!
+        newSession.deviceId!,
       );
 
       // Create new session
       const sessionId = await this.createNewSession(
         newSession.userId!,
-        newSession.deviceId!
+        newSession.deviceId!,
       );
 
       return {
@@ -377,7 +377,7 @@ export class ConcurrentSessionManager {
   private async initiateSessionTransfer(
     fromSessionId: string,
     _userId: string,
-    _deviceId: string
+    _deviceId: string,
   ): Promise<string> {
     // Get session data to transfer
     const sessionData = await this.getSessionTransferData(fromSessionId);
@@ -401,7 +401,7 @@ export class ConcurrentSessionManager {
    */
   public async completeSessionTransfer(
     transferId: string,
-    newSessionId: string
+    newSessionId: string,
   ): Promise<boolean> {
     try {
       const transfer = this.sessionTransfers.get(transferId);
@@ -421,7 +421,7 @@ export class ConcurrentSessionManager {
         () => {
           this.sessionTransfers.delete(transferId);
         },
-        24 * 60 * 60 * 1000
+        24 * 60 * 60 * 1000,
       );
 
       return true;
@@ -453,7 +453,7 @@ export class ConcurrentSessionManager {
     userId: string,
     conflictType: SessionConflict['conflictType'],
     existingSessions: UserSession[],
-    newSession: Partial<UserSession>
+    newSession: Partial<UserSession>,
   ): Promise<SessionConflict> {
     const conflictId = this.utils.generateSessionToken();
 
@@ -481,7 +481,7 @@ export class ConcurrentSessionManager {
           this.activeConflicts.delete(conflictId);
         }
       },
-      10 * 60 * 1000
+      10 * 60 * 1000,
     );
 
     return conflict;
@@ -493,12 +493,12 @@ export class ConcurrentSessionManager {
   private async detectSuspiciousLogin(
     _userId: string,
     deviceId: string,
-    existingSessions: UserSession[]
+    existingSessions: UserSession[],
   ): Promise<boolean> {
     try {
       // Check for rapid location changes
       const recentSessions = existingSessions.filter(
-        (s) => Date.now() - new Date(s.lastActivity).getTime() < 30 * 60 * 1000 // Last 30 minutes
+        (s) => Date.now() - new Date(s.lastActivity).getTime() < 30 * 60 * 1000, // Last 30 minutes
       );
 
       if (recentSessions.length > 0) {
@@ -536,13 +536,13 @@ export class ConcurrentSessionManager {
     return sessions.reduce((oldest, current) =>
       new Date(current.createdAt) < new Date(oldest.createdAt)
         ? current
-        : oldest
+        : oldest,
     );
   }
 
   private findLowestPrioritySession(
     sessions: UserSession[],
-    priorityOrder: string[]
+    priorityOrder: string[],
   ): UserSession | null {
     if (sessions.length === 0) {
       return null;
@@ -568,7 +568,7 @@ export class ConcurrentSessionManager {
 
   private async createNewSession(
     userId: string,
-    deviceId: string
+    deviceId: string,
   ): Promise<string> {
     const response = await fetch('/api/session/create', {
       method: 'POST',
@@ -591,7 +591,7 @@ export class ConcurrentSessionManager {
 
   private async terminateSession(
     sessionId: string,
-    reason: string
+    reason: string,
   ): Promise<void> {
     await fetch('/api/session/terminate', {
       method: 'POST',
@@ -608,7 +608,7 @@ export class ConcurrentSessionManager {
   private async trackSessionCreation(
     userId: string,
     deviceId: string,
-    sessionId: string
+    sessionId: string,
   ): Promise<void> {
     // Track in local maps
     const userSessions = this.userSessions.get(userId) || new Set();
@@ -621,7 +621,7 @@ export class ConcurrentSessionManager {
   }
 
   private async getSessionTransferData(
-    _sessionId: string
+    _sessionId: string,
   ): Promise<SessionTransfer['transferData']> {
     // This would typically fetch from session storage/database
     return {
@@ -633,7 +633,7 @@ export class ConcurrentSessionManager {
 
   private async applyTransferData(
     _sessionId: string,
-    _transferData: SessionTransfer['transferData']
+    _transferData: SessionTransfer['transferData'],
   ): Promise<void> {
     // Apply transferred data to new session
     // This would typically update session storage/database
@@ -655,7 +655,7 @@ export class ConcurrentSessionManager {
 
   private async notifySessionTerminations(
     _userId: string,
-    _sessionIds: string[]
+    _sessionIds: string[],
   ): Promise<void> {}
 
   /**
@@ -663,7 +663,7 @@ export class ConcurrentSessionManager {
    */
   public getActiveConflicts(userId: string): SessionConflict[] {
     return Array.from(this.activeConflicts.values()).filter(
-      (conflict) => conflict.userId === userId && !conflict.resolved
+      (conflict) => conflict.userId === userId && !conflict.resolved,
     );
   }
 
@@ -673,7 +673,7 @@ export class ConcurrentSessionManager {
   public async resolveConflictWithUserChoice(
     conflictId: string,
     action: ConflictResolution['action'],
-    targetSessionIds?: string[]
+    targetSessionIds?: string[],
   ): Promise<boolean> {
     const conflict = this.activeConflicts.get(conflictId);
     if (!conflict) {

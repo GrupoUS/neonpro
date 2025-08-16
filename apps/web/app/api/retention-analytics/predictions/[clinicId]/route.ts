@@ -44,7 +44,7 @@ const GeneratePredictionSchema = z
     (data) => data.patientId || (data.patientIds && data.patientIds.length > 0),
     {
       message: 'Either patientId or patientIds must be provided',
-    }
+    },
   );
 
 // =====================================================================================
@@ -53,7 +53,7 @@ const GeneratePredictionSchema = z
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { clinicId: string } }
+  { params }: { params: { clinicId: string } },
 ) {
   try {
     // Validate clinic ID parameter
@@ -67,7 +67,7 @@ export async function GET(
           error: 'Invalid clinic ID',
           details: clinicValidation.error.issues,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -91,7 +91,7 @@ export async function GET(
           error: 'Invalid query parameters',
           details: queryValidation.error.issues,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -119,14 +119,14 @@ export async function GET(
     if (profileError || !userProfile) {
       return NextResponse.json(
         { error: 'User profile not found' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
     if (userProfile.clinic_id !== clinicId) {
       return NextResponse.json(
         { error: 'Access denied to clinic data' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -136,7 +136,7 @@ export async function GET(
       clinicId,
       riskLevel,
       limit,
-      offset
+      offset,
     );
 
     // Apply additional filters and sorting
@@ -189,7 +189,7 @@ export async function GET(
     // Pagination
     const paginatedPredictions = filteredPredictions.slice(
       offset,
-      offset + limit
+      offset + limit,
     );
 
     // Calculate summary statistics
@@ -197,23 +197,23 @@ export async function GET(
       total_predictions: filteredPredictions.length,
       risk_distribution: {
         low: filteredPredictions.filter(
-          (p) => p.risk_level === ChurnRiskLevel.LOW
+          (p) => p.risk_level === ChurnRiskLevel.LOW,
         ).length,
         medium: filteredPredictions.filter(
-          (p) => p.risk_level === ChurnRiskLevel.MEDIUM
+          (p) => p.risk_level === ChurnRiskLevel.MEDIUM,
         ).length,
         high: filteredPredictions.filter(
-          (p) => p.risk_level === ChurnRiskLevel.HIGH
+          (p) => p.risk_level === ChurnRiskLevel.HIGH,
         ).length,
         critical: filteredPredictions.filter(
-          (p) => p.risk_level === ChurnRiskLevel.CRITICAL
+          (p) => p.risk_level === ChurnRiskLevel.CRITICAL,
         ).length,
       },
       average_churn_probability:
         filteredPredictions.reduce((sum, p) => sum + p.churn_probability, 0) /
           filteredPredictions.length || 0,
       high_risk_patients: filteredPredictions.filter((p) =>
-        ['high', 'critical'].includes(p.risk_level)
+        ['high', 'critical'].includes(p.risk_level),
       ).length,
       recent_predictions: filteredPredictions.filter((p) => {
         const predictionDate = new Date(p.prediction_date);
@@ -249,7 +249,7 @@ export async function GET(
         error: 'Internal server error',
         message: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -260,7 +260,7 @@ export async function GET(
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { clinicId: string } }
+  { params }: { params: { clinicId: string } },
 ) {
   try {
     // Validate clinic ID parameter
@@ -274,7 +274,7 @@ export async function POST(
           error: 'Invalid clinic ID',
           details: clinicValidation.error.issues,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -290,7 +290,7 @@ export async function POST(
           error: 'Invalid request data',
           details: validation.error.issues,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -318,14 +318,14 @@ export async function POST(
     if (profileError || !userProfile) {
       return NextResponse.json(
         { error: 'User profile not found' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
     if (userProfile.clinic_id !== clinicId) {
       return NextResponse.json(
         { error: 'Access denied to clinic data' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -334,7 +334,7 @@ export async function POST(
     if (!allowedRoles.includes(userProfile.role)) {
       return NextResponse.json(
         { error: 'Insufficient permissions to generate predictions' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -350,20 +350,20 @@ export async function POST(
 
     if (validationError) {
       throw new Error(
-        `Failed to validate patients: ${validationError.message}`
+        `Failed to validate patients: ${validationError.message}`,
       );
     }
 
     if (validPatients.length !== targetPatientIds.length) {
       const invalidIds = targetPatientIds.filter(
-        (id) => !validPatients.some((p) => p.id === id)
+        (id) => !validPatients.some((p) => p.id === id),
       );
       return NextResponse.json(
         {
           error: 'Some patients do not belong to the specified clinic',
           invalidPatientIds: invalidIds,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -383,7 +383,7 @@ export async function POST(
           const prediction = await retentionService.generateChurnPrediction(
             patientId,
             clinicId,
-            modelType
+            modelType,
           );
           return { patientId, prediction, success: true };
         } catch (error) {
@@ -422,7 +422,7 @@ export async function POST(
       success_rate: results.length / targetPatientIds.length,
       model_type: modelType,
       high_risk_detected: results.filter((r) =>
-        ['high', 'critical'].includes(r.prediction.risk_level)
+        ['high', 'critical'].includes(r.prediction.risk_level),
       ).length,
     };
 
@@ -442,7 +442,7 @@ export async function POST(
         error: 'Internal server error',
         message: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

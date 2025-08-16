@@ -50,7 +50,7 @@ export async function GET(request: NextRequest) {
 
     const thresholds = await thresholdService.getThresholdsByClinic(
       clinic_id,
-      filters
+      filters,
     );
 
     return NextResponse.json({
@@ -65,7 +65,7 @@ export async function GET(request: NextRequest) {
         error: 'Failed to fetch thresholds',
         details: error.message,
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -83,7 +83,7 @@ export async function POST(request: NextRequest) {
         data: threshold,
         message: 'Threshold created successfully with intelligent calculations',
       },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (error: any) {
     if (error instanceof z.ZodError) {
@@ -93,7 +93,7 @@ export async function POST(request: NextRequest) {
           error: 'Validation failed',
           details: error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -103,7 +103,7 @@ export async function POST(request: NextRequest) {
         error: 'Failed to create threshold',
         details: error.message,
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -116,14 +116,14 @@ export async function PATCH(request: NextRequest) {
     if (!id) {
       return NextResponse.json(
         { success: false, error: 'Threshold ID is required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     const validatedUpdates = updateReorderThresholdSchema.parse(updates);
     const threshold = await thresholdService.updateThreshold(
       id,
-      validatedUpdates
+      validatedUpdates,
     );
 
     return NextResponse.json({
@@ -139,7 +139,7 @@ export async function PATCH(request: NextRequest) {
           error: 'Validation failed',
           details: error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -149,7 +149,7 @@ export async function PATCH(request: NextRequest) {
         error: 'Failed to update threshold',
         details: error.message,
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

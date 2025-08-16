@@ -32,7 +32,7 @@ export async function GET(request: NextRequest) {
     ) {
       return NextResponse.json(
         { error: 'Insufficient permissions for performance data' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -44,7 +44,7 @@ export async function GET(request: NextRequest) {
     }
     if (searchParams.get('accuracy_min')) {
       filters.accuracy_min = Number.parseFloat(
-        searchParams.get('accuracy_min')!
+        searchParams.get('accuracy_min')!,
       );
     }
     if (searchParams.get('evaluation_date_from')) {
@@ -55,7 +55,7 @@ export async function GET(request: NextRequest) {
     }
     if (searchParams.get('improvement_percentage_min')) {
       filters.improvement_percentage_min = Number.parseFloat(
-        searchParams.get('improvement_percentage_min')!
+        searchParams.get('improvement_percentage_min')!,
       );
     }
 
@@ -69,7 +69,7 @@ export async function GET(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to fetch model performance' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

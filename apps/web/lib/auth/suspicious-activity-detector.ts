@@ -303,7 +303,7 @@ export class SuspiciousActivityDetector {
   constructor(
     supabaseUrl: string,
     supabaseKey: string,
-    customRules?: DetectionRule[]
+    customRules?: DetectionRule[],
   ) {
     this.supabase = createClient(supabaseUrl, supabaseKey);
     this.auditLogger = new SecurityAuditLogger(supabaseUrl, supabaseKey);
@@ -321,7 +321,7 @@ export class SuspiciousActivityDetector {
    * Record user activity for analysis
    */
   async recordActivity(
-    activity: Omit<ActivityPattern, 'timestamp'>
+    activity: Omit<ActivityPattern, 'timestamp'>,
   ): Promise<void> {
     try {
       const activityWithTimestamp: ActivityPattern = {
@@ -370,7 +370,7 @@ export class SuspiciousActivityDetector {
    * Analyze user activity for suspicious patterns
    */
   async analyzeUserActivity(
-    userId: string
+    userId: string,
   ): Promise<SuspiciousActivityAlert[]> {
     try {
       const alerts: SuspiciousActivityAlert[] = [];
@@ -392,7 +392,7 @@ export class SuspiciousActivityDetector {
           rule,
           userId,
           userActivities,
-          baseline
+          baseline,
         );
         alerts.push(...ruleAlerts);
       }
@@ -439,7 +439,7 @@ export class SuspiciousActivityDetector {
       patterns: this.calculateBaselinePatterns(activities || []),
       anomalyThresholds: this.calculateAnomalyThresholds(
         userRole,
-        activities || []
+        activities || [],
       ),
     };
 
@@ -483,7 +483,7 @@ export class SuspiciousActivityDetector {
         patterns: this.mergePatterns(
           existingBaseline.patterns,
           recentPatterns,
-          0.8
+          0.8,
         ),
       };
 
@@ -504,7 +504,7 @@ export class SuspiciousActivityDetector {
       resolved?: boolean;
       limit?: number;
       offset?: number;
-    }
+    },
   ): Promise<SuspiciousActivityAlert[]> {
     let query = this.supabase
       .from('suspicious_activity_alerts')
@@ -531,7 +531,7 @@ export class SuspiciousActivityDetector {
     if (options?.offset) {
       query = query.range(
         options.offset,
-        options.offset + (options.limit || 50) - 1
+        options.offset + (options.limit || 50) - 1,
       );
     }
 
@@ -551,7 +551,7 @@ export class SuspiciousActivityDetector {
     alertId: string,
     resolution: string,
     resolvedBy: string,
-    falsePositive = false
+    falsePositive = false,
   ): Promise<void> {
     const { error } = await this.supabase
       .from('suspicious_activity_alerts')
@@ -585,7 +585,7 @@ export class SuspiciousActivityDetector {
    */
   addDetectionRule(rule: DetectionRule): void {
     const existingIndex = this.detectionRules.findIndex(
-      (r) => r.ruleId === rule.ruleId
+      (r) => r.ruleId === rule.ruleId,
     );
     if (existingIndex >= 0) {
       this.detectionRules[existingIndex] = rule;
@@ -599,7 +599,7 @@ export class SuspiciousActivityDetector {
    */
   removeDetectionRule(ruleId: string): void {
     this.detectionRules = this.detectionRules.filter(
-      (r) => r.ruleId !== ruleId
+      (r) => r.ruleId !== ruleId,
     );
   }
 
@@ -713,7 +713,7 @@ export class SuspiciousActivityDetector {
   // Private methods
 
   private isCriticalActivity(
-    activityType: ActivityPattern['activityType']
+    activityType: ActivityPattern['activityType'],
   ): boolean {
     return [
       'login',
@@ -727,7 +727,7 @@ export class SuspiciousActivityDetector {
     rule: DetectionRule,
     userId: string,
     activities: ActivityPattern[],
-    baseline: UserBehaviorBaseline
+    baseline: UserBehaviorBaseline,
   ): Promise<SuspiciousActivityAlert[]> {
     const alerts: SuspiciousActivityAlert[] = [];
 
@@ -740,12 +740,12 @@ export class SuspiciousActivityDetector {
     const timeWindow = rule.conditions[0]?.timeWindow || 60;
     const windowStart = new Date(Date.now() - timeWindow * 60 * 1000);
     const windowActivities = activities.filter(
-      (a) => a.timestamp >= windowStart
+      (a) => a.timestamp >= windowStart,
     );
 
     // Apply rule conditions
     const conditionResults = rule.conditions.map((condition) =>
-      this.evaluateCondition(condition, windowActivities, baseline)
+      this.evaluateCondition(condition, windowActivities, baseline),
     );
 
     // All conditions must be met
@@ -779,7 +779,7 @@ export class SuspiciousActivityDetector {
   private evaluateCondition(
     condition: DetectionRule['conditions'][0],
     activities: ActivityPattern[],
-    _baseline: UserBehaviorBaseline
+    _baseline: UserBehaviorBaseline,
   ): { met: boolean; value: any; threshold: any } {
     let value: any;
 
@@ -789,13 +789,13 @@ export class SuspiciousActivityDetector {
         break;
       case 'failed_logins':
         value = activities.filter(
-          (a) => a.activityType === 'login' && a.metadata.statusCode >= 400
+          (a) => a.activityType === 'login' && a.metadata.statusCode >= 400,
         ).length;
         break;
       case 'data_volume':
         value = activities.reduce(
           (sum, a) => sum + (a.metadata.dataVolume || 0),
-          0
+          0,
         );
         break;
       case 'distance_km':
@@ -811,7 +811,7 @@ export class SuspiciousActivityDetector {
     const met = this.compareValues(
       value,
       condition.operator,
-      condition.threshold
+      condition.threshold,
     );
 
     return { met, value, threshold: condition.threshold };
@@ -844,7 +844,7 @@ export class SuspiciousActivityDetector {
       if (prev.location?.coordinates && curr.location?.coordinates) {
         const distance = this.calculateDistance(
           prev.location.coordinates,
-          curr.location.coordinates
+          curr.location.coordinates,
         );
         maxDistance = Math.max(maxDistance, distance);
       }
@@ -855,7 +855,7 @@ export class SuspiciousActivityDetector {
 
   private calculateDistance(
     coord1: { latitude: number; longitude: number },
-    coord2: { latitude: number; longitude: number }
+    coord2: { latitude: number; longitude: number },
   ): number {
     const R = 6371; // Earth's radius in km
     const dLat = this.toRadians(coord2.latitude - coord1.latitude);
@@ -877,7 +877,7 @@ export class SuspiciousActivityDetector {
   }
 
   private calculateMouseMovementVariance(
-    activities: ActivityPattern[]
+    activities: ActivityPattern[],
   ): number {
     const movements = activities
       .map((a) => a.metadata.mouseMovements || 0)
@@ -895,7 +895,7 @@ export class SuspiciousActivityDetector {
   }
 
   private calculateBaselinePatterns(
-    activities: any[]
+    activities: any[],
   ): UserBehaviorBaseline['patterns'] {
     // This is a simplified implementation
     // In production, you'd use more sophisticated statistical analysis
@@ -941,7 +941,7 @@ export class SuspiciousActivityDetector {
 
   private calculateAnomalyThresholds(
     userRole: UserRole,
-    _activities: any[]
+    _activities: any[],
   ): UserBehaviorBaseline['anomalyThresholds'] {
     // Role-based thresholds
     const baseThresholds = {
@@ -985,7 +985,7 @@ export class SuspiciousActivityDetector {
   private mergePatterns(
     existing: UserBehaviorBaseline['patterns'],
     recent: UserBehaviorBaseline['patterns'],
-    weight: number
+    weight: number,
   ): UserBehaviorBaseline['patterns'] {
     // Weighted merge of patterns (simplified)
     return {
@@ -1004,7 +1004,7 @@ export class SuspiciousActivityDetector {
 
   private calculateAlertRiskScore(
     rule: DetectionRule,
-    conditionResults: { met: boolean; value: any; threshold: any }[]
+    conditionResults: { met: boolean; value: any; threshold: any }[],
   ): number {
     const baseSeverityScore = {
       low: 0.25,
@@ -1032,7 +1032,7 @@ export class SuspiciousActivityDetector {
 
   private generateAlertDescription(
     rule: DetectionRule,
-    conditionResults: { met: boolean; value: any; threshold: any }[]
+    conditionResults: { met: boolean; value: any; threshold: any }[],
   ): string {
     const values = conditionResults
       .map((r) => `${r.value} (threshold: ${r.threshold})`)
@@ -1067,11 +1067,11 @@ export class SuspiciousActivityDetector {
   }
 
   private async executeAutomatedResponse(
-    alert: SuspiciousActivityAlert
+    alert: SuspiciousActivityAlert,
   ): Promise<void> {
     try {
       const rule = this.detectionRules.find(
-        (r) => r.alertType === alert.alertType
+        (r) => r.alertType === alert.alertType,
       );
       if (!rule?.actions.length) {
         return;
@@ -1082,7 +1082,7 @@ export class SuspiciousActivityDetector {
         if (action.delay > 0) {
           setTimeout(
             () => this.executeAction(alert, action.action),
-            action.delay * 1000
+            action.delay * 1000,
           );
         } else {
           await this.executeAction(alert, action.action);
@@ -1093,7 +1093,7 @@ export class SuspiciousActivityDetector {
 
   private async executeAction(
     alert: SuspiciousActivityAlert,
-    action: SuspiciousActivityAlert['automatedResponse']['action']
+    action: SuspiciousActivityAlert['automatedResponse']['action'],
   ): Promise<void> {
     try {
       // Log the action
@@ -1128,7 +1128,7 @@ export class SuspiciousActivityDetector {
   }
 
   private async storeUserBaseline(
-    baseline: UserBehaviorBaseline
+    baseline: UserBehaviorBaseline,
   ): Promise<void> {
     try {
       const { error } = await this.supabase
@@ -1219,7 +1219,7 @@ export class SuspiciousActivityDetector {
           }
         } catch (_error) {}
       },
-      24 * 60 * 60 * 1000
+      24 * 60 * 60 * 1000,
     ); // Daily
   }
 }

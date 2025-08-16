@@ -15,7 +15,7 @@ export async function POST(request: NextRequest) {
           success: false,
           error: 'Missing required parameters: patientId, protocolId, channel',
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
       await treatmentFollowupService.generatePersonalizedMessage(
         patientId,
         protocolId,
-        channel
+        channel,
       );
 
     return NextResponse.json({
@@ -52,7 +52,7 @@ export async function POST(request: NextRequest) {
         error: 'Failed to optimize follow-up',
         details: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

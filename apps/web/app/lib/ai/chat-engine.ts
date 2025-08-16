@@ -39,7 +39,7 @@ export class NeonProAIChatEngine {
     query: string,
     context: UniversalChatContext,
     userId: string,
-    clinicId: string
+    clinicId: string,
   ): Promise<AIResponse> {
     const startTime = performance.now();
 
@@ -51,21 +51,21 @@ export class NeonProAIChatEngine {
       const enrichedContext = await this.enrichContext(
         context,
         queryType,
-        clinicId
+        clinicId,
       );
 
       // 3. Security & RLS Validation
       await this.validateAccess(
         userId,
         clinicId,
-        queryType.requiredPermissions
+        queryType.requiredPermissions,
       );
 
       // 4. AI Processing with Full Context
       const response = await this.generateResponse(
         query,
         enrichedContext,
-        queryType
+        queryType,
       );
 
       // 5. Response Validation & Compliance
@@ -150,7 +150,7 @@ export class NeonProAIChatEngine {
   private async enrichContext(
     baseContext: UniversalChatContext,
     queryType: QueryClassification,
-    clinicId: string
+    clinicId: string,
   ): Promise<EnrichedContext> {
     // Dynamic context loading based on query type
     const relevantData = await Promise.all([
@@ -173,7 +173,7 @@ export class NeonProAIChatEngine {
   private async generateResponse(
     query: string,
     context: EnrichedContext,
-    queryType: QueryClassification
+    queryType: QueryClassification,
   ): Promise<AIResponse> {
     const systemPrompt = this.buildSystemPrompt(queryType, context);
 
@@ -210,7 +210,7 @@ export class NeonProAIChatEngine {
   // Helper methods
   private async loadFinancialContext(
     _clinicId: string,
-    _queryType: QueryClassification
+    _queryType: QueryClassification,
   ): Promise<any> {
     // Implementation for loading financial context
     return {};
@@ -218,7 +218,7 @@ export class NeonProAIChatEngine {
 
   private async loadClinicalContext(
     _clinicId: string,
-    _queryType: QueryClassification
+    _queryType: QueryClassification,
   ): Promise<any> {
     // Implementation for loading clinical context
     return {};
@@ -226,7 +226,7 @@ export class NeonProAIChatEngine {
 
   private async loadOperationalContext(
     _clinicId: string,
-    _queryType: QueryClassification
+    _queryType: QueryClassification,
   ): Promise<any> {
     // Implementation for loading operational context
     return {};
@@ -234,7 +234,7 @@ export class NeonProAIChatEngine {
 
   private async loadComplianceContext(
     _clinicId: string,
-    _queryType: QueryClassification
+    _queryType: QueryClassification,
   ): Promise<any> {
     // Implementation for loading compliance context
     return {};
@@ -244,21 +244,21 @@ export class NeonProAIChatEngine {
     // Implementation for merging contexts
     return contexts.reduce(
       (merged, context) => ({ ...merged, ...context }),
-      {}
+      {},
     );
   }
 
   private async validateAccess(
     _userId: string,
     _clinicId: string,
-    _permissions: string[]
+    _permissions: string[],
   ): Promise<void> {
     // Implementation for access validation
   }
 
   private async validateResponse(
     response: AIResponse,
-    _clinicId: string
+    _clinicId: string,
   ): Promise<AIResponse> {
     // Implementation for response validation
     return response;
@@ -267,7 +267,7 @@ export class NeonProAIChatEngine {
   private async logAIInteraction(
     _userId: string,
     _query: string,
-    _response: AIResponse
+    _response: AIResponse,
   ): Promise<void> {
     // Implementation for logging AI interactions
   }
@@ -284,7 +284,7 @@ export class NeonProAIChatEngine {
 
   private suggestNextActions(
     _context: EnrichedContext,
-    queryType: QueryClassification
+    queryType: QueryClassification,
   ): string[] {
     // Implementation for suggesting next actions
     return queryType.suggestedActions;
@@ -292,7 +292,7 @@ export class NeonProAIChatEngine {
 
   private buildSystemPrompt(
     _queryType: QueryClassification,
-    _context: EnrichedContext
+    _context: EnrichedContext,
   ): string {
     // Implementation for building system prompt
     return 'Você é um assistente de IA especializado em clínicas médicas.';

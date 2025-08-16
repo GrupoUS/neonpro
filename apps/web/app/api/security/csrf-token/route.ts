@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
     if (!authResult.authenticated) {
       return NextResponse.json(
         { error: 'Authentication required' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -30,7 +30,7 @@ export async function POST(request: NextRequest) {
     if (!sessionId) {
       return NextResponse.json(
         { error: 'Session ID is required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -41,7 +41,7 @@ export async function POST(request: NextRequest) {
       request.headers.get('x-forwarded-for')?.split(',')[0] ||
         request.headers.get('x-real-ip') ||
         request.ip ||
-        'unknown'
+        'unknown',
     );
 
     return NextResponse.json({
@@ -52,7 +52,7 @@ export async function POST(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to generate CSRF token' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -69,7 +69,7 @@ export async function PUT(request: NextRequest) {
     if (!(token && sessionId)) {
       return NextResponse.json(
         { error: 'Token and session ID are required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -79,7 +79,7 @@ export async function PUT(request: NextRequest) {
     if (!isValid) {
       return NextResponse.json(
         { error: 'Invalid CSRF token' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -90,7 +90,7 @@ export async function PUT(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to validate CSRF token' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -106,7 +106,7 @@ export async function DELETE(request: NextRequest) {
     if (!authResult.authenticated) {
       return NextResponse.json(
         { error: 'Authentication required' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -116,7 +116,7 @@ export async function DELETE(request: NextRequest) {
     if (!sessionId) {
       return NextResponse.json(
         { error: 'Session ID is required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -129,7 +129,7 @@ export async function DELETE(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to invalidate CSRF tokens' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

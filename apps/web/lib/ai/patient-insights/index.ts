@@ -58,7 +58,7 @@ export class PatientInsightsIntegration {
   }
 
   async generateComprehensiveInsights(
-    request: PatientInsightRequest
+    request: PatientInsightRequest,
   ): Promise<ComprehensivePatientInsights> {
     try {
       if (!this.isInitialized) {
@@ -76,7 +76,7 @@ export class PatientInsightsIntegration {
       // 3. Aggregate and correlate insights
       const aggregatedInsights = await this.aggregateInsights(
         insights,
-        request
+        request,
       );
 
       // 4. Generate alerts and recommendations
@@ -119,13 +119,13 @@ export class PatientInsightsIntegration {
       return comprehensiveInsights;
     } catch (error) {
       throw new Error(
-        `Failed to generate insights: ${error instanceof Error ? error.message : 'Unknown error'}`
+        `Failed to generate insights: ${error instanceof Error ? error.message : 'Unknown error'}`,
       );
     }
   }
 
   async generateQuickRiskAssessment(
-    patientId: string
+    patientId: string,
   ): Promise<PatientRiskAssessment> {
     try {
       if (!this.configuration.enableRiskAssessment) {
@@ -135,14 +135,14 @@ export class PatientInsightsIntegration {
       return await this.riskEngine.assessPatientRisk(patientId);
     } catch (error) {
       throw new Error(
-        `Failed to assess risk: ${error instanceof Error ? error.message : 'Unknown error'}`
+        `Failed to assess risk: ${error instanceof Error ? error.message : 'Unknown error'}`,
       );
     }
   }
 
   async generateTreatmentGuidance(
     patientId: string,
-    treatmentContext?: string
+    treatmentContext?: string,
   ): Promise<TreatmentRecommendations> {
     try {
       if (!this.configuration.enableTreatmentRecommendations) {
@@ -153,11 +153,11 @@ export class PatientInsightsIntegration {
       return await this.recommendationEngine.generateRecommendations(
         patientId,
         riskAssessment,
-        treatmentContext
+        treatmentContext,
       );
     } catch (error) {
       throw new Error(
-        `Failed to generate treatment guidance: ${error instanceof Error ? error.message : 'Unknown error'}`
+        `Failed to generate treatment guidance: ${error instanceof Error ? error.message : 'Unknown error'}`,
       );
     }
   }
@@ -181,7 +181,7 @@ export class PatientInsightsIntegration {
       if (this.configuration.enableHealthTrends) {
         const trendAlerts = await this.trendMonitor.detectRealTimeAnomalies(
           patientId,
-          { type: 'general', value: 0, timestamp: new Date() } // Mock data point
+          { type: 'general', value: 0, timestamp: new Date() }, // Mock data point
         );
         alerts.push(...trendAlerts);
       }
@@ -205,7 +205,7 @@ export class PatientInsightsIntegration {
       };
     } catch (error) {
       throw new Error(
-        `Failed to monitor alerts: ${error instanceof Error ? error.message : 'Unknown error'}`
+        `Failed to monitor alerts: ${error instanceof Error ? error.message : 'Unknown error'}`,
       );
     }
   }
@@ -213,7 +213,7 @@ export class PatientInsightsIntegration {
   async updatePatientOutcome(
     patientId: string,
     treatmentId: string,
-    outcome: any
+    outcome: any,
   ): Promise<LearningInsight[]> {
     try {
       if (!this.configuration.enableContinuousLearning) {
@@ -223,11 +223,11 @@ export class PatientInsightsIntegration {
       return await this.learningSystem.processNewOutcome(
         patientId,
         treatmentId,
-        outcome
+        outcome,
       );
     } catch (error) {
       throw new Error(
-        `Failed to update outcome: ${error instanceof Error ? error.message : 'Unknown error'}`
+        `Failed to update outcome: ${error instanceof Error ? error.message : 'Unknown error'}`,
       );
     }
   }
@@ -265,7 +265,7 @@ export class PatientInsightsIntegration {
 
   // Private methods for insight generation
   private async generateInsightsParallel(
-    request: PatientInsightRequest
+    request: PatientInsightRequest,
   ): Promise<InsightResults> {
     const tasks: Promise<any>[] = [];
 
@@ -275,7 +275,7 @@ export class PatientInsightsIntegration {
 
     if (this.configuration.enableBehaviorAnalysis) {
       tasks.push(
-        this.behaviorEngine.analyzeBehaviorPatterns(request.patientId)
+        this.behaviorEngine.analyzeBehaviorPatterns(request.patientId),
       );
     }
 
@@ -290,7 +290,7 @@ export class PatientInsightsIntegration {
   }
 
   private async generateInsightsSequential(
-    request: PatientInsightRequest
+    request: PatientInsightRequest,
   ): Promise<InsightResults> {
     const results: InsightResults = {
       riskAssessment: null,
@@ -304,7 +304,7 @@ export class PatientInsightsIntegration {
     try {
       if (this.configuration.enableRiskAssessment) {
         results.riskAssessment = await this.riskEngine.assessPatientRisk(
-          request.patientId
+          request.patientId,
         );
       }
 
@@ -316,7 +316,7 @@ export class PatientInsightsIntegration {
           await this.recommendationEngine.generateRecommendations(
             request.patientId,
             results.riskAssessment,
-            request.treatmentContext
+            request.treatmentContext,
           );
       }
 
@@ -327,7 +327,7 @@ export class PatientInsightsIntegration {
         const predictions = await this.predictiveEngine.predictTreatmentOutcome(
           request.patientId,
           request.treatmentId || 'default',
-          results.riskAssessment
+          results.riskAssessment,
         );
         results.predictiveAnalytics = { treatmentOutcome: predictions };
       }
@@ -339,14 +339,14 @@ export class PatientInsightsIntegration {
 
       if (this.configuration.enableHealthTrends) {
         results.healthTrends = await this.trendMonitor.monitorHealthTrends(
-          request.patientId
+          request.patientId,
         );
       }
 
       if (this.configuration.enableContinuousLearning) {
         // Learning insights based on historical data
         results.learningInsights = await this.getLearningInsights(
-          request.patientId
+          request.patientId,
         );
       }
     } catch (_error) {
@@ -358,7 +358,7 @@ export class PatientInsightsIntegration {
 
   private async aggregateInsights(
     insights: InsightResults,
-    _request: PatientInsightRequest
+    _request: PatientInsightRequest,
   ): Promise<AggregatedInsights> {
     // Cross-reference and validate insights
     const aggregated: AggregatedInsights = {
@@ -374,14 +374,14 @@ export class PatientInsightsIntegration {
     if (aggregated.riskAssessment && aggregated.behaviorAnalysis) {
       this.validateRiskBehaviorConsistency(
         aggregated.riskAssessment,
-        aggregated.behaviorAnalysis
+        aggregated.behaviorAnalysis,
       );
     }
 
     if (aggregated.treatmentRecommendations && aggregated.predictiveAnalytics) {
       this.validateTreatmentPredictionConsistency(
         aggregated.treatmentRecommendations,
-        aggregated.predictiveAnalytics
+        aggregated.predictiveAnalytics,
       );
     }
 
@@ -413,7 +413,7 @@ export class PatientInsightsIntegration {
       insights.behaviorAnalysis.riskFactors.length > 0
     ) {
       const highRiskFactors = insights.behaviorAnalysis.riskFactors.filter(
-        (rf) => rf.severity === 'high'
+        (rf) => rf.severity === 'high',
       );
       if (highRiskFactors.length > 0) {
         alerts.push({
@@ -433,7 +433,7 @@ export class PatientInsightsIntegration {
         ...insights.healthTrends.alerts.map((alert) => ({
           ...alert,
           source: 'health_trends',
-        }))
+        })),
       );
     }
 
@@ -450,7 +450,7 @@ export class PatientInsightsIntegration {
   }
 
   private generateUnifiedRecommendations(
-    insights: AggregatedInsights
+    insights: AggregatedInsights,
   ): string[] {
     const recommendations: string[] = [];
 
@@ -463,8 +463,8 @@ export class PatientInsightsIntegration {
     if (insights.treatmentRecommendations?.primaryRecommendations) {
       recommendations.push(
         ...insights.treatmentRecommendations.primaryRecommendations.map(
-          (tr) => tr.recommendation
-        )
+          (tr) => tr.recommendation,
+        ),
       );
     }
 
@@ -472,8 +472,8 @@ export class PatientInsightsIntegration {
     if (insights.behaviorAnalysis?.recommendations) {
       recommendations.push(
         ...insights.behaviorAnalysis.recommendations.map(
-          (rec) => rec.description
-        )
+          (rec) => rec.description,
+        ),
       );
     }
 
@@ -497,7 +497,7 @@ export class PatientInsightsIntegration {
   }
 
   private identifyInsightCorrelations(
-    insights: AggregatedInsights
+    insights: AggregatedInsights,
   ): InsightCorrelation[] {
     const correlations: InsightCorrelation[] = [];
 
@@ -507,7 +507,7 @@ export class PatientInsightsIntegration {
         type: 'risk_behavior',
         strength: this.calculateRiskBehaviorCorrelation(
           insights.riskAssessment,
-          insights.behaviorAnalysis
+          insights.behaviorAnalysis,
         ),
         description: 'Correlation between risk factors and behavioral patterns',
         significance: 'medium',
@@ -520,7 +520,7 @@ export class PatientInsightsIntegration {
         type: 'treatment_prediction',
         strength: this.calculateTreatmentPredictionCorrelation(
           insights.treatmentRecommendations,
-          insights.predictiveAnalytics
+          insights.predictiveAnalytics,
         ),
         description:
           'Consistency between treatment recommendations and outcome predictions',
@@ -563,7 +563,7 @@ export class PatientInsightsIntegration {
 
   private processParallelResults(
     results: PromiseSettledResult<any>[],
-    _request: PatientInsightRequest
+    _request: PatientInsightRequest,
   ): InsightResults {
     const insights: InsightResults = {
       riskAssessment: null,
@@ -678,14 +678,14 @@ export class PatientInsightsIntegration {
   // Additional utility methods (simplified implementations)
   private validateRiskBehaviorConsistency(
     _risk: PatientRiskAssessment,
-    _behavior: BehaviorAnalysis
+    _behavior: BehaviorAnalysis,
   ): void {
     // Validate consistency between risk and behavior assessments
   }
 
   private validateTreatmentPredictionConsistency(
     _treatment: TreatmentRecommendations,
-    _prediction: any
+    _prediction: any,
   ): void {
     // Validate consistency between treatment recommendations and predictions
   }
@@ -697,14 +697,14 @@ export class PatientInsightsIntegration {
 
   private calculateRiskBehaviorCorrelation(
     _risk: PatientRiskAssessment,
-    _behavior: BehaviorAnalysis
+    _behavior: BehaviorAnalysis,
   ): number {
     return 0.75; // Simplified implementation
   }
 
   private calculateTreatmentPredictionCorrelation(
     _treatment: TreatmentRecommendations,
-    _prediction: any
+    _prediction: any,
   ): number {
     return 0.8; // Simplified implementation
   }
@@ -745,27 +745,27 @@ export class PatientInsightsIntegration {
   }
 
   private async getLearningInsights(
-    _patientId: string
+    _patientId: string,
   ): Promise<LearningInsight[]> {
     return []; // Simplified implementation
   }
 
   private async processLearningFeedback(
     _request: PatientInsightRequest,
-    _insights: AggregatedInsights
+    _insights: AggregatedInsights,
   ): Promise<void> {
     // Process feedback for continuous learning
   }
 
   private async storeInsights(
-    _insights: ComprehensivePatientInsights
+    _insights: ComprehensivePatientInsights,
   ): Promise<void> {
     // Store insights for future reference and learning
   }
 
   private async checkEngineHealth(
     name: string,
-    _engine: any
+    _engine: any,
   ): Promise<EngineHealthStatus> {
     return {
       name,
@@ -777,10 +777,10 @@ export class PatientInsightsIntegration {
   }
 
   private calculateOverallHealth(
-    engines: EngineHealthStatus[]
+    engines: EngineHealthStatus[],
   ): 'healthy' | 'degraded' | 'critical' {
     const unhealthyEngines = engines.filter(
-      (e) => e.status !== 'healthy'
+      (e) => e.status !== 'healthy',
     ).length;
     const ratio = unhealthyEngines / engines.length;
 

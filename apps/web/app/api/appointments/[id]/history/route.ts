@@ -12,7 +12,7 @@ import { createClient } from '@/app/utils/supabase/server';
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const supabase = await createClient();
@@ -24,7 +24,7 @@ export async function GET(
     if (!session) {
       return NextResponse.json(
         { success: false, error_message: 'Authentication required' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -54,7 +54,7 @@ export async function GET(
         created_at,
         changed_by_user:profiles!appointment_history_changed_by_fkey(full_name)
       `,
-        { count: 'exact' }
+        { count: 'exact' },
       )
       .eq('appointment_id', appointmentId)
       .order('created_at', { ascending: false })
@@ -80,7 +80,7 @@ export async function GET(
   } catch (_error) {
     return NextResponse.json(
       { success: false, error_message: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

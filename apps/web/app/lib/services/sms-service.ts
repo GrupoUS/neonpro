@@ -48,7 +48,7 @@ export class SMSService {
       throw this.createSMSError(
         'PROVIDER_ERROR',
         'Failed to fetch providers',
-        error
+        error,
       );
     }
   }
@@ -72,7 +72,7 @@ export class SMSService {
       throw this.createSMSError(
         'PROVIDER_ERROR',
         'Failed to fetch active provider',
-        error
+        error,
       );
     }
   }
@@ -81,7 +81,7 @@ export class SMSService {
    * Create or update SMS provider configuration
    */
   async upsertProvider(
-    config: Omit<SMSProviderConfig, 'id' | 'created_at' | 'updated_at'>
+    config: Omit<SMSProviderConfig, 'id' | 'created_at' | 'updated_at'>,
   ): Promise<SMSProviderConfig> {
     try {
       // Validate provider configuration
@@ -112,7 +112,7 @@ export class SMSService {
       throw this.createSMSError(
         'PROVIDER_ERROR',
         'Failed to save provider configuration',
-        error
+        error,
       );
     }
   }
@@ -152,7 +152,7 @@ export class SMSService {
       if (optInStatus !== 'opted_in') {
         throw this.createSMSError(
           'OPT_OUT',
-          'Recipient has not opted in for SMS communication'
+          'Recipient has not opted in for SMS communication',
         );
       }
 
@@ -161,7 +161,7 @@ export class SMSService {
       if (!provider?.enabled) {
         throw this.createSMSError(
           'PROVIDER_ERROR',
-          'SMS provider not found or disabled'
+          'SMS provider not found or disabled',
         );
       }
 
@@ -172,7 +172,7 @@ export class SMSService {
         if (template) {
           messageBody = this.processTemplate(
             template.body,
-            params.variables || {}
+            params.variables || {},
           );
         }
       }
@@ -181,7 +181,7 @@ export class SMSService {
       const providerResponse = await this.sendViaProvider(
         provider,
         params.to,
-        messageBody
+        messageBody,
       );
 
       // Save message to database
@@ -213,7 +213,7 @@ export class SMSService {
         : this.createSMSError(
             'PROVIDER_ERROR',
             'Failed to send SMS message',
-            error
+            error,
           );
     }
   }
@@ -276,7 +276,7 @@ export class SMSService {
       throw this.createSMSError(
         'PROVIDER_ERROR',
         'Failed to send bulk SMS messages',
-        error
+        error,
       );
     }
   }
@@ -289,7 +289,7 @@ export class SMSService {
   private async sendViaProvider(
     provider: SMSProviderConfig,
     to: string,
-    body: string
+    body: string,
   ): Promise<{
     id: string;
     cost?: number;
@@ -307,7 +307,7 @@ export class SMSService {
       default:
         throw this.createSMSError(
           'PROVIDER_ERROR',
-          `Unsupported provider: ${provider.provider}`
+          `Unsupported provider: ${provider.provider}`,
         );
     }
   }
@@ -318,7 +318,7 @@ export class SMSService {
   private async sendViaTwilio(
     config: TwilioConfig,
     to: string,
-    body: string
+    body: string,
   ): Promise<{
     id: string;
     cost?: number;
@@ -326,7 +326,7 @@ export class SMSService {
   }> {
     try {
       const auth = Buffer.from(
-        `${config.account_sid}:${config.auth_token}`
+        `${config.account_sid}:${config.auth_token}`,
       ).toString('base64');
 
       const response = await fetch(
@@ -345,7 +345,7 @@ export class SMSService {
               StatusCallback: config.status_callback,
             }),
           }),
-        }
+        },
       );
 
       if (!response.ok) {
@@ -370,7 +370,7 @@ export class SMSService {
   private async sendViaSMSDev(
     config: SMSDevConfig,
     to: string,
-    body: string
+    body: string,
   ): Promise<{
     id: string;
     cost?: number;
@@ -413,7 +413,7 @@ export class SMSService {
   private async sendViaZenvia(
     config: ZenviaConfig,
     to: string,
-    body: string
+    body: string,
   ): Promise<{
     id: string;
     cost?: number;
@@ -438,7 +438,7 @@ export class SMSService {
               },
             ],
           }),
-        }
+        },
       );
 
       if (!response.ok) {
@@ -462,7 +462,7 @@ export class SMSService {
   private async sendViaMovile(
     config: MovileConfig,
     to: string,
-    body: string
+    body: string,
   ): Promise<{
     id: string;
     cost?: number;
@@ -482,7 +482,7 @@ export class SMSService {
             messageText: body,
             sender: config.sender_id,
           }),
-        }
+        },
       );
 
       if (!response.ok) {
@@ -535,7 +535,7 @@ export class SMSService {
       }
       if (filters.phone_number) {
         query = query.or(
-          `to.ilike.%${filters.phone_number}%,from.ilike.%${filters.phone_number}%`
+          `to.ilike.%${filters.phone_number}%,from.ilike.%${filters.phone_number}%`,
         );
       }
       if (filters.date_from) {
@@ -574,7 +574,7 @@ export class SMSService {
       throw this.createSMSError(
         'PROVIDER_ERROR',
         'Failed to fetch messages',
-        error
+        error,
       );
     }
   }
@@ -598,7 +598,7 @@ export class SMSService {
       throw this.createSMSError(
         'PROVIDER_ERROR',
         'Failed to fetch message',
-        error
+        error,
       );
     }
   }
@@ -623,7 +623,7 @@ export class SMSService {
       throw this.createSMSError(
         'PROVIDER_ERROR',
         'Failed to fetch templates',
-        error
+        error,
       );
     }
   }
@@ -632,7 +632,7 @@ export class SMSService {
    * Create or update SMS template
    */
   async upsertTemplate(
-    template: Omit<SMSTemplate, 'id' | 'created_at' | 'updated_at'>
+    template: Omit<SMSTemplate, 'id' | 'created_at' | 'updated_at'>,
   ): Promise<SMSTemplate> {
     try {
       const { data, error } = await this.supabase
@@ -652,7 +652,7 @@ export class SMSService {
       throw this.createSMSError(
         'PROVIDER_ERROR',
         'Failed to save template',
-        error
+        error,
       );
     }
   }
@@ -663,7 +663,7 @@ export class SMSService {
    * Check opt-in status for phone number
    */
   async checkOptInStatus(
-    phoneNumber: string
+    phoneNumber: string,
   ): Promise<'opted_in' | 'opted_out' | 'pending'> {
     try {
       const { data, error } = await this.supabase
@@ -688,7 +688,7 @@ export class SMSService {
     phoneNumber: string,
     status: 'opted_in' | 'opted_out',
     source = 'manual',
-    patientId?: string
+    patientId?: string,
   ): Promise<SMSOptIn> {
     try {
       const { data, error } = await this.supabase
@@ -713,7 +713,7 @@ export class SMSService {
       throw this.createSMSError(
         'PROVIDER_ERROR',
         'Failed to update opt-in status',
-        error
+        error,
       );
     }
   }
@@ -738,7 +738,7 @@ export class SMSService {
       throw this.createSMSError(
         'WEBHOOK_ERROR',
         'Failed to process webhook',
-        error
+        error,
       );
     }
   }
@@ -751,7 +751,7 @@ export class SMSService {
   async getAnalytics(
     startDate: string,
     endDate: string,
-    period: 'day' | 'week' | 'month' = 'day'
+    period: 'day' | 'week' | 'month' = 'day',
   ): Promise<SMSAnalytics> {
     try {
       const { data, error } = await this.supabase.rpc('get_sms_analytics', {
@@ -768,7 +768,7 @@ export class SMSService {
       throw this.createSMSError(
         'PROVIDER_ERROR',
         'Failed to fetch analytics',
-        error
+        error,
       );
     }
   }
@@ -780,14 +780,14 @@ export class SMSService {
    */
   private async validateProviderConfig(
     provider: SMSProvider,
-    config: any
+    config: any,
   ): Promise<void> {
     switch (provider) {
       case 'twilio':
         if (!(config.account_sid && config.auth_token && config.from_number)) {
           throw this.createSMSError(
             'INVALID_CONFIG',
-            'Twilio configuration incomplete'
+            'Twilio configuration incomplete',
           );
         }
         break;
@@ -795,7 +795,7 @@ export class SMSService {
         if (!(config.api_key && config.sender_id)) {
           throw this.createSMSError(
             'INVALID_CONFIG',
-            'SMS Dev configuration incomplete'
+            'SMS Dev configuration incomplete',
           );
         }
         break;
@@ -803,7 +803,7 @@ export class SMSService {
         if (!(config.api_token && config.from)) {
           throw this.createSMSError(
             'INVALID_CONFIG',
-            'ZENVIA configuration incomplete'
+            'ZENVIA configuration incomplete',
           );
         }
         break;
@@ -811,7 +811,7 @@ export class SMSService {
         if (!(config.username && config.auth_token && config.sender_id)) {
           throw this.createSMSError(
             'INVALID_CONFIG',
-            'Movile configuration incomplete'
+            'Movile configuration incomplete',
           );
         }
         break;
@@ -823,13 +823,13 @@ export class SMSService {
    */
   private processTemplate(
     template: string,
-    variables: Record<string, string>
+    variables: Record<string, string>,
   ): string {
     let processed = template;
     for (const [key, value] of Object.entries(variables)) {
       processed = processed.replace(
         new RegExp(`{{\\s*${key}\\s*}}`, 'g'),
-        value
+        value,
       );
     }
     return processed;
@@ -857,7 +857,7 @@ export class SMSService {
    * Save message to database
    */
   private async saveMessage(
-    message: Omit<SMSMessage, 'id' | 'created_at' | 'updated_at'>
+    message: Omit<SMSMessage, 'id' | 'created_at' | 'updated_at'>,
   ): Promise<SMSMessage> {
     const { data, error } = await this.supabase
       .from('sms_messages')
@@ -924,7 +924,7 @@ export class SMSService {
       webhook.MessageSid,
       statusMap[webhook.MessageStatus] || 'failed',
       webhook.ErrorCode,
-      webhook.ErrorMessage
+      webhook.ErrorMessage,
     );
   }
 
@@ -943,7 +943,7 @@ export class SMSService {
 
     await this.updateMessageStatus(
       webhook.id,
-      statusMap[webhook.status] || 'failed'
+      statusMap[webhook.status] || 'failed',
     );
   }
 
@@ -954,7 +954,7 @@ export class SMSService {
     providerMessageId: string,
     status: SMSStatus,
     errorCode?: string,
-    errorMessage?: string
+    errorMessage?: string,
   ): Promise<void> {
     const updateData: any = {
       status,
@@ -987,7 +987,7 @@ export class SMSService {
   private createSMSError(
     code: SMSErrorCode,
     message: string,
-    details?: any
+    details?: any,
   ): SMSError & Error {
     const error = new Error(message) as SMSError & Error;
     error.code = code;

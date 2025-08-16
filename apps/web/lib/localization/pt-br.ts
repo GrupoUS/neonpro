@@ -82,7 +82,7 @@ export type LocalizationStrings = {
     collapseSection: (section: string) => string;
     sortColumn: (
       column: string,
-      direction: 'ascending' | 'descending'
+      direction: 'ascending' | 'descending',
     ) => string;
     filterResults: (count: number) => string;
     searchResults: (count: number, query: string) => string;
@@ -380,7 +380,7 @@ export const ptBRStrings: LocalizationStrings = {
 export function formatHealthcareMessage(
   type: 'appointment' | 'patient' | 'treatment' | 'medication',
   action: 'created' | 'updated' | 'deleted' | 'scheduled' | 'completed',
-  name?: string
+  name?: string,
 ): string {
   const typeMap = {
     appointment: 'consulta',

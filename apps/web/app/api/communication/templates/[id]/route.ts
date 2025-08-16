@@ -44,7 +44,7 @@ export async function GET(_request: NextRequest, { params }: RouteContext) {
     if (!session) {
       return NextResponse.json(
         { error: 'Authentication required', code: 'AUTH_REQUIRED' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -53,7 +53,7 @@ export async function GET(_request: NextRequest, { params }: RouteContext) {
     if (!templateId) {
       return NextResponse.json(
         { error: 'Template ID is required', code: 'INVALID_ID' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -67,13 +67,13 @@ export async function GET(_request: NextRequest, { params }: RouteContext) {
     if (!profile?.clinic_id) {
       return NextResponse.json(
         { error: 'Clinic not found', code: 'CLINIC_NOT_FOUND' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
     const communicationService = new CommunicationService(
       supabase,
-      profile.clinic_id
+      profile.clinic_id,
     );
 
     // Get template
@@ -82,7 +82,7 @@ export async function GET(_request: NextRequest, { params }: RouteContext) {
     if (!template) {
       return NextResponse.json(
         { error: 'Template not found', code: 'TEMPLATE_NOT_FOUND' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -96,7 +96,7 @@ export async function GET(_request: NextRequest, { params }: RouteContext) {
         error: 'Failed to fetch template',
         code: 'FETCH_ERROR',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -115,7 +115,7 @@ export async function PUT(request: NextRequest, { params }: RouteContext) {
     if (!session) {
       return NextResponse.json(
         { error: 'Authentication required', code: 'AUTH_REQUIRED' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -124,7 +124,7 @@ export async function PUT(request: NextRequest, { params }: RouteContext) {
     if (!templateId) {
       return NextResponse.json(
         { error: 'Template ID is required', code: 'INVALID_ID' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -142,13 +142,13 @@ export async function PUT(request: NextRequest, { params }: RouteContext) {
     if (!profile?.clinic_id) {
       return NextResponse.json(
         { error: 'Clinic not found', code: 'CLINIC_NOT_FOUND' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
     const communicationService = new CommunicationService(
       supabase,
-      profile.clinic_id
+      profile.clinic_id,
     );
 
     // Check if template exists
@@ -156,14 +156,14 @@ export async function PUT(request: NextRequest, { params }: RouteContext) {
     if (!existingTemplate) {
       return NextResponse.json(
         { error: 'Template not found', code: 'TEMPLATE_NOT_FOUND' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
     // Check if name is being changed and if it conflicts
     if (validatedData.name && validatedData.name !== existingTemplate.name) {
       const nameConflict = await communicationService.getTemplateByName(
-        validatedData.name
+        validatedData.name,
       );
       if (nameConflict && nameConflict.id !== templateId) {
         return NextResponse.json(
@@ -171,7 +171,7 @@ export async function PUT(request: NextRequest, { params }: RouteContext) {
             error: 'Template name already exists',
             code: 'TEMPLATE_EXISTS',
           },
-          { status: 409 }
+          { status: 409 },
         );
       }
     }
@@ -182,7 +182,7 @@ export async function PUT(request: NextRequest, { params }: RouteContext) {
       {
         ...validatedData,
         updated_by: session.user.id,
-      }
+      },
     );
 
     return NextResponse.json({
@@ -198,7 +198,7 @@ export async function PUT(request: NextRequest, { params }: RouteContext) {
           code: 'VALIDATION_ERROR',
           details: error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -207,7 +207,7 @@ export async function PUT(request: NextRequest, { params }: RouteContext) {
         error: 'Failed to update template',
         code: 'UPDATE_ERROR',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -226,7 +226,7 @@ export async function DELETE(_request: NextRequest, { params }: RouteContext) {
     if (!session) {
       return NextResponse.json(
         { error: 'Authentication required', code: 'AUTH_REQUIRED' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -235,7 +235,7 @@ export async function DELETE(_request: NextRequest, { params }: RouteContext) {
     if (!templateId) {
       return NextResponse.json(
         { error: 'Template ID is required', code: 'INVALID_ID' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -249,13 +249,13 @@ export async function DELETE(_request: NextRequest, { params }: RouteContext) {
     if (!profile?.clinic_id) {
       return NextResponse.json(
         { error: 'Clinic not found', code: 'CLINIC_NOT_FOUND' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
     const communicationService = new CommunicationService(
       supabase,
-      profile.clinic_id
+      profile.clinic_id,
     );
 
     // Check if template exists
@@ -263,7 +263,7 @@ export async function DELETE(_request: NextRequest, { params }: RouteContext) {
     if (!existingTemplate) {
       return NextResponse.json(
         { error: 'Template not found', code: 'TEMPLATE_NOT_FOUND' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -277,7 +277,7 @@ export async function DELETE(_request: NextRequest, { params }: RouteContext) {
           error: 'Template is currently in use',
           code: 'TEMPLATE_IN_USE',
         },
-        { status: 409 }
+        { status: 409 },
       );
     }
 
@@ -294,7 +294,7 @@ export async function DELETE(_request: NextRequest, { params }: RouteContext) {
         error: 'Failed to delete template',
         code: 'DELETE_ERROR',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -313,7 +313,7 @@ export async function POST(request: NextRequest, { params }: RouteContext) {
     if (!session) {
       return NextResponse.json(
         { error: 'Authentication required', code: 'AUTH_REQUIRED' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -322,7 +322,7 @@ export async function POST(request: NextRequest, { params }: RouteContext) {
     if (!templateId) {
       return NextResponse.json(
         { error: 'Template ID is required', code: 'INVALID_ID' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -332,7 +332,7 @@ export async function POST(request: NextRequest, { params }: RouteContext) {
     if (!name || typeof name !== 'string') {
       return NextResponse.json(
         { error: 'New template name is required', code: 'INVALID_NAME' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -346,13 +346,13 @@ export async function POST(request: NextRequest, { params }: RouteContext) {
     if (!profile?.clinic_id) {
       return NextResponse.json(
         { error: 'Clinic not found', code: 'CLINIC_NOT_FOUND' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
     const communicationService = new CommunicationService(
       supabase,
-      profile.clinic_id
+      profile.clinic_id,
     );
 
     // Check if source template exists
@@ -360,7 +360,7 @@ export async function POST(request: NextRequest, { params }: RouteContext) {
     if (!sourceTemplate) {
       return NextResponse.json(
         { error: 'Source template not found', code: 'TEMPLATE_NOT_FOUND' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -372,7 +372,7 @@ export async function POST(request: NextRequest, { params }: RouteContext) {
           error: 'Template name already exists',
           code: 'TEMPLATE_EXISTS',
         },
-        { status: 409 }
+        { status: 409 },
       );
     }
 
@@ -380,7 +380,7 @@ export async function POST(request: NextRequest, { params }: RouteContext) {
     const duplicatedTemplate = await communicationService.duplicateTemplate(
       templateId,
       name,
-      session.user.id
+      session.user.id,
     );
 
     return NextResponse.json(
@@ -389,7 +389,7 @@ export async function POST(request: NextRequest, { params }: RouteContext) {
         data: { template: duplicatedTemplate },
         message: 'Template duplicated successfully',
       },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (_error) {
     return NextResponse.json(
@@ -397,7 +397,7 @@ export async function POST(request: NextRequest, { params }: RouteContext) {
         error: 'Failed to duplicate template',
         code: 'DUPLICATE_ERROR',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

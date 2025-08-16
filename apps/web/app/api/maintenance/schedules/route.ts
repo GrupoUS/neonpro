@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
     if (!equipmentId) {
       return NextResponse.json(
         { error: 'equipment_id é obrigatório' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -45,7 +45,7 @@ export async function GET(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -59,7 +59,7 @@ export async function POST(request: NextRequest) {
 
     const schedule =
       await equipmentMaintenanceService.createMaintenanceSchedule(
-        validatedData
+        validatedData,
       );
 
     return NextResponse.json(schedule, { status: 201 });
@@ -67,13 +67,13 @@ export async function POST(request: NextRequest) {
     if (error instanceof Error && error.message.includes('validation')) {
       return NextResponse.json(
         { error: 'Invalid schedule data', details: error.message },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     return NextResponse.json(
       { error: 'Failed to create maintenance schedule' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -87,7 +87,7 @@ export async function PUT(request: NextRequest) {
     if (!scheduleId) {
       return NextResponse.json(
         { error: 'schedule_id é obrigatório' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -99,7 +99,7 @@ export async function PUT(request: NextRequest) {
     const schedule =
       await equipmentMaintenanceService.updateMaintenanceSchedule(
         scheduleId,
-        validatedData
+        validatedData,
       );
 
     return NextResponse.json(schedule);
@@ -107,13 +107,13 @@ export async function PUT(request: NextRequest) {
     if (error instanceof Error && error.message.includes('validation')) {
       return NextResponse.json(
         { error: 'Invalid schedule data', details: error.message },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     return NextResponse.json(
       { error: 'Failed to update maintenance schedule' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

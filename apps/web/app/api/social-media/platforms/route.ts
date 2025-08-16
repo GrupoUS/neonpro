@@ -46,7 +46,7 @@ export async function GET(_request: NextRequest) {
     if (!session) {
       return NextResponse.json(
         { error: 'Authentication required' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -60,7 +60,7 @@ export async function GET(_request: NextRequest) {
     if (!profile?.clinic_id) {
       return NextResponse.json(
         { error: 'Clinic access required' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -80,14 +80,14 @@ export async function GET(_request: NextRequest) {
         webhook_capabilities,
         created_at,
         updated_at
-      `
+      `,
       )
       .order('platform_display_name');
 
     if (error) {
       return NextResponse.json(
         { error: 'Failed to fetch platforms' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -103,12 +103,12 @@ export async function GET(_request: NextRequest) {
       ...platform,
       connection_status:
         connectedAccounts?.find(
-          (account) => account.platform_name === platform.platform_name
+          (account) => account.platform_name === platform.platform_name,
         ) || null,
       is_connected: connectedAccounts?.some(
         (account) =>
           account.platform_name === platform.platform_name &&
-          account.status === 'active'
+          account.status === 'active',
       ),
     }));
 
@@ -120,7 +120,7 @@ export async function GET(_request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -142,7 +142,7 @@ export async function POST(request: NextRequest) {
     if (!session) {
       return NextResponse.json(
         { error: 'Authentication required' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -156,7 +156,7 @@ export async function POST(request: NextRequest) {
     if (profile?.role !== 'admin' && profile?.role !== 'owner') {
       return NextResponse.json(
         { error: 'Admin privileges required' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -174,7 +174,7 @@ export async function POST(request: NextRequest) {
     if (existingPlatform) {
       return NextResponse.json(
         { error: 'Platform already exists' },
-        { status: 409 }
+        { status: 409 },
       );
     }
 
@@ -188,7 +188,7 @@ export async function POST(request: NextRequest) {
     if (error) {
       return NextResponse.json(
         { error: 'Failed to create platform' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -198,19 +198,19 @@ export async function POST(request: NextRequest) {
         data: newPlatform,
         message: 'Social media platform created successfully',
       },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Invalid request data', details: error.errors },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

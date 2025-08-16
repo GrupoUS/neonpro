@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
           error:
             'Missing required parameters: patientId, treatmentId, protocolId',
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -25,7 +25,7 @@ export async function POST(request: NextRequest) {
       await treatmentFollowupService.scheduleAutomaticFollowups(
         patientId,
         treatmentId,
-        protocolId
+        protocolId,
       );
 
     return NextResponse.json({
@@ -50,7 +50,7 @@ export async function POST(request: NextRequest) {
         error: 'Failed to schedule follow-ups',
         details: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

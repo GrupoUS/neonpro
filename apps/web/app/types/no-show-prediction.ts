@@ -191,14 +191,14 @@ export const NoShowTrendsSchema = z.object({
       factor_impact: z.number().min(0).max(1),
       trend_direction: z.enum(['increasing', 'decreasing', 'stable']),
       correlation_strength: z.number().min(-1).max(1),
-    })
+    }),
   ),
   intervention_effectiveness: z.record(
     z.object({
       success_rate: z.number().min(0).max(1),
       cost_per_prevention: z.number(),
       roi: z.number(),
-    })
+    }),
   ),
 });
 

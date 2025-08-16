@@ -6,7 +6,7 @@ const service = new PredictiveAnalyticsService();
 
 export async function GET(
   _request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const model = await service.getForecastingModel(params.id);
@@ -14,7 +14,7 @@ export async function GET(
     if (!model) {
       return NextResponse.json(
         { error: 'Modelo não encontrado' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -22,14 +22,14 @@ export async function GET(
   } catch (_error) {
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const body = await request.json();
@@ -37,21 +37,21 @@ export async function PUT(
 
     const model = await service.updateForecastingModel(
       params.id,
-      validatedData
+      validatedData,
     );
 
     return NextResponse.json(model);
   } catch (_error) {
     return NextResponse.json(
       { error: 'Erro ao atualizar modelo' },
-      { status: 400 }
+      { status: 400 },
     );
   }
 }
 
 export async function DELETE(
   _request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     await service.deleteForecastingModel(params.id);
@@ -60,7 +60,7 @@ export async function DELETE(
   } catch (_error) {
     return NextResponse.json(
       { error: 'Erro ao deletar modelo' },
-      { status: 400 }
+      { status: 400 },
     );
   }
 }

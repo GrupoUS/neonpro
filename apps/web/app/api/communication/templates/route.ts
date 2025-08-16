@@ -52,7 +52,7 @@ export async function GET(request: NextRequest) {
     if (!session) {
       return NextResponse.json(
         { error: 'Authentication required', code: 'AUTH_REQUIRED' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -102,13 +102,13 @@ export async function GET(request: NextRequest) {
     if (!profile?.clinic_id) {
       return NextResponse.json(
         { error: 'Clinic not found', code: 'CLINIC_NOT_FOUND' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
     const communicationService = new CommunicationService(
       supabase,
-      profile.clinic_id
+      profile.clinic_id,
     );
 
     // Get templates with filters
@@ -142,7 +142,7 @@ export async function GET(request: NextRequest) {
           code: 'VALIDATION_ERROR',
           details: error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -151,7 +151,7 @@ export async function GET(request: NextRequest) {
         error: 'Failed to fetch templates',
         code: 'FETCH_ERROR',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -170,7 +170,7 @@ export async function POST(request: NextRequest) {
     if (!session) {
       return NextResponse.json(
         { error: 'Authentication required', code: 'AUTH_REQUIRED' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -188,18 +188,18 @@ export async function POST(request: NextRequest) {
     if (!profile?.clinic_id) {
       return NextResponse.json(
         { error: 'Clinic not found', code: 'CLINIC_NOT_FOUND' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
     const communicationService = new CommunicationService(
       supabase,
-      profile.clinic_id
+      profile.clinic_id,
     );
 
     // Check if template name already exists
     const existingTemplate = await communicationService.getTemplateByName(
-      validatedData.name
+      validatedData.name,
     );
     if (existingTemplate) {
       return NextResponse.json(
@@ -207,7 +207,7 @@ export async function POST(request: NextRequest) {
           error: 'Template name already exists',
           code: 'TEMPLATE_EXISTS',
         },
-        { status: 409 }
+        { status: 409 },
       );
     }
 
@@ -223,7 +223,7 @@ export async function POST(request: NextRequest) {
         data: { template },
         message: 'Template created successfully',
       },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (error) {
     if (error instanceof z.ZodError) {
@@ -233,7 +233,7 @@ export async function POST(request: NextRequest) {
           code: 'VALIDATION_ERROR',
           details: error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -242,7 +242,7 @@ export async function POST(request: NextRequest) {
         error: 'Failed to create template',
         code: 'CREATE_ERROR',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -261,7 +261,7 @@ export async function PUT(request: NextRequest) {
     if (!session) {
       return NextResponse.json(
         { error: 'Authentication required', code: 'AUTH_REQUIRED' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -271,14 +271,14 @@ export async function PUT(request: NextRequest) {
     if (!Array.isArray(template_ids) || template_ids.length === 0) {
       return NextResponse.json(
         { error: 'Template IDs array is required', code: 'INVALID_INPUT' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     if (typeof is_active !== 'boolean') {
       return NextResponse.json(
         { error: 'is_active must be boolean', code: 'INVALID_INPUT' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -292,19 +292,19 @@ export async function PUT(request: NextRequest) {
     if (!profile?.clinic_id) {
       return NextResponse.json(
         { error: 'Clinic not found', code: 'CLINIC_NOT_FOUND' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
     const communicationService = new CommunicationService(
       supabase,
-      profile.clinic_id
+      profile.clinic_id,
     );
 
     // Bulk update templates
     const updatedTemplates = await communicationService.bulkUpdateTemplates(
       template_ids,
-      { is_active, updated_by: session.user.id }
+      { is_active, updated_by: session.user.id },
     );
 
     return NextResponse.json({
@@ -318,7 +318,7 @@ export async function PUT(request: NextRequest) {
         error: 'Failed to update templates',
         code: 'UPDATE_ERROR',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -337,7 +337,7 @@ export async function DELETE(request: NextRequest) {
     if (!session) {
       return NextResponse.json(
         { error: 'Authentication required', code: 'AUTH_REQUIRED' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -347,7 +347,7 @@ export async function DELETE(request: NextRequest) {
     if (!Array.isArray(template_ids) || template_ids.length === 0) {
       return NextResponse.json(
         { error: 'Template IDs array is required', code: 'INVALID_INPUT' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -361,13 +361,13 @@ export async function DELETE(request: NextRequest) {
     if (!profile?.clinic_id) {
       return NextResponse.json(
         { error: 'Clinic not found', code: 'CLINIC_NOT_FOUND' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
     const communicationService = new CommunicationService(
       supabase,
-      profile.clinic_id
+      profile.clinic_id,
     );
 
     // Check if any templates are currently in use
@@ -380,7 +380,7 @@ export async function DELETE(request: NextRequest) {
           code: 'TEMPLATES_IN_USE',
           details: { templates_in_use: templatesInUse },
         },
-        { status: 409 }
+        { status: 409 },
       );
     }
 
@@ -397,7 +397,7 @@ export async function DELETE(request: NextRequest) {
         error: 'Failed to delete templates',
         code: 'DELETE_ERROR',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

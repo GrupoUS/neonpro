@@ -132,7 +132,7 @@ export class CacheManager {
   async set<T>(
     key: string,
     value: T,
-    ttlSeconds: number = CACHE_TTL.MEDIUM
+    ttlSeconds: number = CACHE_TTL.MEDIUM,
   ): Promise<void> {
     try {
       const serializedValue = JSON.stringify(value);
@@ -203,7 +203,7 @@ export class CacheManager {
   async getOrSet<T>(
     key: string,
     fetchFunction: () => Promise<T>,
-    ttlSeconds: number = CACHE_TTL.MEDIUM
+    ttlSeconds: number = CACHE_TTL.MEDIUM,
   ): Promise<T> {
     // Try to get from cache first
     const cached = await this.get<T>(key);
@@ -284,7 +284,7 @@ export class StockAlertCache {
     await this.cache.set(
       CACHE_KEYS.ALERT_CONFIGS(clinicId),
       configs,
-      CACHE_TTL.CONFIGS
+      CACHE_TTL.CONFIGS,
     );
   }
 
@@ -301,7 +301,7 @@ export class StockAlertCache {
     await this.cache.set(
       CACHE_KEYS.ACTIVE_ALERTS(clinicId),
       alerts,
-      CACHE_TTL.ALERTS
+      CACHE_TTL.ALERTS,
     );
   }
 
@@ -312,7 +312,7 @@ export class StockAlertCache {
   // Dashboard Data
   async getDashboardData(
     clinicId: string,
-    period: string
+    period: string,
   ): Promise<any | null> {
     return this.cache.get(CACHE_KEYS.DASHBOARD_DATA(clinicId, period));
   }
@@ -320,12 +320,12 @@ export class StockAlertCache {
   async setDashboardData(
     clinicId: string,
     period: string,
-    data: any
+    data: any,
   ): Promise<void> {
     await this.cache.set(
       CACHE_KEYS.DASHBOARD_DATA(clinicId, period),
       data,
-      CACHE_TTL.DASHBOARD
+      CACHE_TTL.DASHBOARD,
     );
   }
 
@@ -342,7 +342,7 @@ export class StockAlertCache {
     await this.cache.set(
       CACHE_KEYS.PRODUCT_STOCK(productId),
       stock,
-      CACHE_TTL.SHORT
+      CACHE_TTL.SHORT,
     );
   }
 
@@ -359,7 +359,7 @@ export class StockAlertCache {
     await this.cache.set(
       CACHE_KEYS.CLINIC_PRODUCTS(clinicId),
       products,
-      CACHE_TTL.MEDIUM
+      CACHE_TTL.MEDIUM,
     );
   }
 
@@ -376,7 +376,7 @@ export class StockAlertCache {
     await this.cache.set(
       CACHE_KEYS.REPORT_DATA(reportId),
       data,
-      CACHE_TTL.REPORTS
+      CACHE_TTL.REPORTS,
     );
   }
 
@@ -384,7 +384,7 @@ export class StockAlertCache {
   async addNotification(clinicId: string, notification: any): Promise<void> {
     await this.cache.listPush(
       CACHE_KEYS.NOTIFICATION_QUEUE(clinicId),
-      notification
+      notification,
     );
   }
 
@@ -392,7 +392,7 @@ export class StockAlertCache {
     return this.cache.listGet(
       CACHE_KEYS.NOTIFICATION_QUEUE(clinicId),
       0,
-      limit - 1
+      limit - 1,
     );
   }
 

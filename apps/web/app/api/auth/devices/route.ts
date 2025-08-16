@@ -117,7 +117,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -161,14 +161,14 @@ export async function POST(request: NextRequest) {
         if (!validation.success) {
           return NextResponse.json(
             { error: 'Invalid device data', details: validation.error.errors },
-            { status: 400 }
+            { status: 400 },
           );
         }
 
         // Register device
         const device = await sessionSystem.deviceManager.registerDevice(
           user.id,
-          validation.data
+          validation.data,
         );
 
         // Log security event
@@ -196,7 +196,7 @@ export async function POST(request: NextRequest) {
         if (!validation.success) {
           return NextResponse.json(
             { error: 'Invalid request data', details: validation.error.errors },
-            { status: 400 }
+            { status: 400 },
           );
         }
 
@@ -207,7 +207,7 @@ export async function POST(request: NextRequest) {
         if (!device || device.userId !== user.id) {
           return NextResponse.json(
             { error: 'Device not found or access denied' },
-            { status: 404 }
+            { status: 404 },
           );
         }
 
@@ -219,7 +219,7 @@ export async function POST(request: NextRequest) {
         if (!success) {
           return NextResponse.json(
             { error: 'Failed to update device trust status' },
-            { status: 400 }
+            { status: 400 },
           );
         }
 
@@ -246,7 +246,7 @@ export async function POST(request: NextRequest) {
         if (!validation.success) {
           return NextResponse.json(
             { error: 'Invalid request data', details: validation.error.errors },
-            { status: 400 }
+            { status: 400 },
           );
         }
 
@@ -257,14 +257,14 @@ export async function POST(request: NextRequest) {
         if (!device || device.userId !== user.id) {
           return NextResponse.json(
             { error: 'Device not found or access denied' },
-            { status: 404 }
+            { status: 404 },
           );
         }
 
         // Report suspicious device
         await sessionSystem.deviceManager.reportSuspiciousDevice(
           deviceId,
-          reason
+          reason,
         );
 
         // Log security event
@@ -296,7 +296,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -315,7 +315,7 @@ export async function PUT(request: NextRequest) {
     if (!deviceId) {
       return NextResponse.json(
         { error: 'Device ID is required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -324,7 +324,7 @@ export async function PUT(request: NextRequest) {
     if (!device || device.userId !== user.id) {
       return NextResponse.json(
         { error: 'Device not found or access denied' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -337,7 +337,7 @@ export async function PUT(request: NextRequest) {
     if (!success) {
       return NextResponse.json(
         { error: 'Failed to update device' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -365,7 +365,7 @@ export async function PUT(request: NextRequest) {
 
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -384,7 +384,7 @@ export async function DELETE(request: NextRequest) {
     if (!deviceId) {
       return NextResponse.json(
         { error: 'Device ID is required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -393,7 +393,7 @@ export async function DELETE(request: NextRequest) {
     if (!device || device.userId !== user.id) {
       return NextResponse.json(
         { error: 'Device not found or access denied' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -409,7 +409,7 @@ export async function DELETE(request: NextRequest) {
     if (device.fingerprint === currentFingerprint) {
       return NextResponse.json(
         { error: 'Cannot remove current device' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -419,7 +419,7 @@ export async function DELETE(request: NextRequest) {
     if (!success) {
       return NextResponse.json(
         { error: 'Failed to remove device' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -446,7 +446,7 @@ export async function DELETE(request: NextRequest) {
 
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

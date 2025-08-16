@@ -57,7 +57,7 @@ export function ProfessionalSelection({
         'get_professionals_for_service',
         {
           p_service_id: serviceId,
-        }
+        },
       );
 
       if (fetchError) {
@@ -92,13 +92,13 @@ export function ProfessionalSelection({
 
     for (let i = 0; i < fullStars; i++) {
       stars.push(
-        <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" key={i} />
+        <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" key={i} />,
       );
     }
 
     if (hasHalfStar) {
       stars.push(
-        <Star className="h-4 w-4 fill-yellow-200 text-yellow-400" key="half" />
+        <Star className="h-4 w-4 fill-yellow-200 text-yellow-400" key="half" />,
       );
     }
 

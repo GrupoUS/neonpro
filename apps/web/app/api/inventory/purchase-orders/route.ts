@@ -15,7 +15,7 @@ const createPurchaseOrderSchema = z.object({
       z.object({
         itemId: z.string().min(1, 'Item ID is required'),
         requiredQuantity: z.number().min(1, 'Quantity must be at least 1'),
-      })
+      }),
     )
     .min(1, 'At least one item is required'),
   user_id: z.string().min(1, 'User ID is required'),
@@ -65,7 +65,7 @@ export async function GET(request: NextRequest) {
     // Parse query parameters
     const searchParams = request.nextUrl.searchParams;
     const filters = purchaseOrderFiltersSchema.parse(
-      Object.fromEntries(searchParams)
+      Object.fromEntries(searchParams),
     );
 
     // Build query
@@ -118,7 +118,7 @@ export async function GET(request: NextRequest) {
     if (error) {
       return NextResponse.json(
         { error: 'Failed to fetch purchase orders' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -162,7 +162,7 @@ export async function GET(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -185,7 +185,7 @@ export async function POST(request: NextRequest) {
     const purchaseOrder = await purchaseOrderService.generatePurchaseOrder(
       validatedData.clinic_id,
       validatedData.items,
-      validatedData.user_id
+      validatedData.user_id,
     );
 
     // Save to database
@@ -209,7 +209,7 @@ export async function POST(request: NextRequest) {
     if (poError) {
       return NextResponse.json(
         { error: 'Failed to save purchase order' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -230,7 +230,7 @@ export async function POST(request: NextRequest) {
     if (itemsError) {
       return NextResponse.json(
         { error: 'Failed to save purchase order items' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -239,7 +239,7 @@ export async function POST(request: NextRequest) {
     if (validatedData.template_type) {
       template = await purchaseOrderService.generatePOTemplate(
         purchaseOrder,
-        validatedData.template_type
+        validatedData.template_type,
       );
     }
 
@@ -254,7 +254,7 @@ export async function POST(request: NextRequest) {
         template,
         message: 'Purchase order created successfully',
       },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (error) {
     if (error instanceof z.ZodError) {
@@ -263,12 +263,12 @@ export async function POST(request: NextRequest) {
           error: 'Validation error',
           details: error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

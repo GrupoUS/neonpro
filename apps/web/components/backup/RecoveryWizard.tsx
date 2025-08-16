@@ -86,7 +86,7 @@ const RecoveryWizard: React.FC<RecoveryWizardProps> = ({
   const [currentStep, setCurrentStep] = useState(0);
   const [backups, setBackups] = useState<BackupRecord[]>([]);
   const [selectedBackup, setSelectedBackup] = useState<BackupRecord | null>(
-    null
+    null,
   );
   const [recoveryOptions, setRecoveryOptions] = useState<RecoveryOptions>({
     backup_id: '',

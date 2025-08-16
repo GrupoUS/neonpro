@@ -57,7 +57,7 @@ export async function GET(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to fetch metrics' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -90,7 +90,7 @@ export async function POST(request: NextRequest) {
           error:
             'Missing required fields: route_path, metric_type, duration_ms',
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -112,7 +112,7 @@ export async function POST(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to record metric' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -135,7 +135,7 @@ function calculateMetricStats(metrics: any[]) {
   return {
     count: metrics.length,
     avg_duration: Math.round(
-      durations.reduce((a, b) => a + b, 0) / durations.length
+      durations.reduce((a, b) => a + b, 0) / durations.length,
     ),
     min_duration: durations[0],
     max_duration: durations.at(-1),

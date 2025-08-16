@@ -46,7 +46,7 @@ export async function POST(request: NextRequest) {
       if (convError || !existingConversation) {
         return NextResponse.json(
           { error: 'Conversation not found' },
-          { status: 404 }
+          { status: 404 },
         );
       }
       conversation = existingConversation;
@@ -66,7 +66,7 @@ export async function POST(request: NextRequest) {
       if (createError || !newConversation) {
         return NextResponse.json(
           { error: 'Failed to create conversation' },
-          { status: 500 }
+          { status: 500 },
         );
       }
       conversation = newConversation;
@@ -97,7 +97,7 @@ export async function POST(request: NextRequest) {
         service,
         notes,
         patients(name, phone)
-      `
+      `,
       )
       .eq('user_id', user.id)
       .order('date_time', { ascending: false })
@@ -124,7 +124,7 @@ ${
 ${recentAppointments
   .map(
     (apt) =>
-      `- ${apt.date_time}: ${apt.patients?.name} - ${apt.service} (${apt.status})`
+      `- ${apt.date_time}: ${apt.patients?.name} - ${apt.service} (${apt.status})`,
   )
   .join('\n')}`
     : 'Nenhum agendamento recente encontrado.'
@@ -183,7 +183,7 @@ Seja sempre útil, preciso e contextualmente relevante para a gestão de clínic
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

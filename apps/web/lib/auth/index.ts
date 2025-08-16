@@ -137,13 +137,13 @@ export { SessionUtils } from './utils/session-utils';
 
 // Utility functions for quick setup
 export const createAdvancedAuthSystem = (
-  config?: Partial<AdvancedAuthConfig>
+  config?: Partial<AdvancedAuthConfig>,
 ) => {
   return getAdvancedAuthSystem(config);
 };
 
 export const initializeAuthSystem = async (
-  config?: Partial<AdvancedAuthConfig>
+  config?: Partial<AdvancedAuthConfig>,
 ) => {
   const authSystem = getAdvancedAuthSystem(config);
   await authSystem.initialize();
@@ -214,7 +214,7 @@ export const SECURITY_LEVELS = {
 // Helper function to create config based on security level
 export const createSecurityConfig = (
   level: keyof typeof SECURITY_LEVELS,
-  overrides?: Partial<AdvancedAuthConfig>
+  overrides?: Partial<AdvancedAuthConfig>,
 ): AdvancedAuthConfig => {
   const baseConfig = SECURITY_LEVELS[level];
   return {
@@ -248,7 +248,7 @@ export const setupMaximumSecurityAuth = async () => {
 
 // Enterprise setup with custom compliance
 export const setupEnterpriseAuth = async (
-  complianceFrameworks: string[] = ['LGPD', 'GDPR', 'SOX']
+  complianceFrameworks: string[] = ['LGPD', 'GDPR', 'SOX'],
 ) => {
   const config = createSecurityConfig('HIGH', {
     complianceFrameworks,

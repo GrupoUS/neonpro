@@ -4,7 +4,7 @@ import { broadcastToChannel, broadcastToUser } from '@/app/api/websocket/route';
 // Initialize Supabase client
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
+  process.env.SUPABASE_SERVICE_ROLE_KEY!,
 );
 
 // Analytics & Trial notification types
@@ -203,7 +203,7 @@ export class AnalyticsNotificationService {
     type: AnalyticsNotificationType,
     userId: string,
     variables: Record<string, any> = {},
-    overrides: Partial<AnalyticsNotificationData> = {}
+    overrides: Partial<AnalyticsNotificationData> = {},
   ): Promise<string | null> {
     try {
       const template = ANALYTICS_NOTIFICATION_TEMPLATES[type];
@@ -214,11 +214,11 @@ export class AnalyticsNotificationService {
       // Replace variables in title and message
       const title = AnalyticsNotificationService.replaceVariables(
         template.title,
-        variables
+        variables,
       );
       const message = AnalyticsNotificationService.replaceVariables(
         template.message,
-        variables
+        variables,
       );
 
       const notificationData: AnalyticsNotificationData = {
@@ -236,7 +236,7 @@ export class AnalyticsNotificationService {
       };
 
       return await AnalyticsNotificationService.processNotification(
-        notificationData
+        notificationData,
       );
     } catch (_error) {
       return null;
@@ -247,7 +247,7 @@ export class AnalyticsNotificationService {
    * Send a custom analytics notification
    */
   static async sendCustomNotification(
-    data: AnalyticsNotificationData
+    data: AnalyticsNotificationData,
   ): Promise<string | null> {
     try {
       return await AnalyticsNotificationService.processNotification(data);
@@ -260,7 +260,7 @@ export class AnalyticsNotificationService {
    * Process notification through different channels
    */
   private static async processNotification(
-    data: AnalyticsNotificationData
+    data: AnalyticsNotificationData,
   ): Promise<string | null> {
     const notificationId =
       await AnalyticsNotificationService.saveToDatabase(data);
@@ -292,7 +292,7 @@ export class AnalyticsNotificationService {
    * Save notification to database
    */
   private static async saveToDatabase(
-    data: AnalyticsNotificationData
+    data: AnalyticsNotificationData,
   ): Promise<string | null> {
     try {
       const { data: notification, error } = await supabase
@@ -329,7 +329,7 @@ export class AnalyticsNotificationService {
    * Send WebSocket notification
    */
   private static async sendWebSocketNotification(
-    data: AnalyticsNotificationData
+    data: AnalyticsNotificationData,
   ): Promise<void> {
     try {
       const wsMessage = {
@@ -364,7 +364,7 @@ export class AnalyticsNotificationService {
    * Send email notification
    */
   private static async sendEmailNotification(
-    data: AnalyticsNotificationData
+    data: AnalyticsNotificationData,
   ): Promise<void> {
     try {
       // Get user email and preferences
@@ -403,7 +403,7 @@ export class AnalyticsNotificationService {
    * Send push notification
    */
   private static async sendPushNotification(
-    data: AnalyticsNotificationData
+    data: AnalyticsNotificationData,
   ): Promise<void> {
     try {
       // Get user's push tokens
@@ -439,7 +439,7 @@ export class AnalyticsNotificationService {
    */
   private static replaceVariables(
     template: string,
-    variables: Record<string, any>
+    variables: Record<string, any>,
   ): string {
     return template.replace(/\{\{(\w+)\}\}/g, (match, key) => {
       return variables[key]?.toString() || match;
@@ -451,7 +451,7 @@ export class AnalyticsNotificationService {
    */
   static async markAsRead(
     notificationId: string,
-    userId: string
+    userId: string,
   ): Promise<boolean> {
     try {
       const { error } = await supabase
@@ -480,7 +480,7 @@ export class AnalyticsNotificationService {
       unreadOnly?: boolean;
       types?: AnalyticsNotificationType[];
       clinicId?: string;
-    } = {}
+    } = {},
   ) {
     try {
       let query = supabase
@@ -508,7 +508,7 @@ export class AnalyticsNotificationService {
       if (options.offset) {
         query = query.range(
           options.offset,
-          options.offset + (options.limit || 10) - 1
+          options.offset + (options.limit || 10) - 1,
         );
       }
 
@@ -529,7 +529,7 @@ export class AnalyticsNotificationService {
    */
   static async getUnreadCount(
     userId: string,
-    clinicId?: string
+    clinicId?: string,
   ): Promise<number> {
     try {
       let query = supabase
@@ -565,7 +565,7 @@ export class AnalyticsNotificationService {
       endDate: string;
       conversionRate?: number;
     },
-    clinicId?: string
+    clinicId?: string,
   ): Promise<void> {
     try {
       let notificationType: AnalyticsNotificationType;
@@ -586,7 +586,7 @@ export class AnalyticsNotificationService {
           daysLeft: trialData.daysLeft.toString(),
           endDate: trialData.endDate,
         },
-        { clinicId }
+        { clinicId },
       );
     } catch (_error) {}
   }
@@ -602,7 +602,7 @@ export class AnalyticsNotificationService {
       previousValue?: number;
       target?: number;
     },
-    clinicId?: string
+    clinicId?: string,
   ): Promise<void> {
     try {
       let notificationType: AnalyticsNotificationType;
@@ -671,7 +671,7 @@ export class AnalyticsNotificationService {
         notificationType,
         userId,
         variables,
-        { clinicId }
+        { clinicId },
       );
     } catch (_error) {}
   }

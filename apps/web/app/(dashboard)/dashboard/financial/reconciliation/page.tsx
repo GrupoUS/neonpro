@@ -9,7 +9,10 @@ export default function BankReconciliationPage() {
   return (
     <div className="p-6 space-y-6">
       {/* Main Dashboard Header */}
-      <div data-testid="reconciliation-dashboard" className="bg-white rounded-lg shadow-sm border p-6">
+      <div
+        data-testid="reconciliation-dashboard"
+        className="bg-white rounded-lg shadow-sm border p-6"
+      >
         <h1 className="text-2xl font-bold text-gray-900 mb-4">
           Bank Reconciliation Dashboard
         </h1>
@@ -20,21 +23,21 @@ export default function BankReconciliationPage() {
 
       {/* Import Section */}
       <div className="bg-white rounded-lg shadow-sm border p-6">
-        <button 
+        <button
           data-testid="import-statement-button"
           className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
         >
           Import Bank Statement
         </button>
-        
+
         <div className="mt-4 hidden" data-testid="file-upload-section">
-          <input 
+          <input
             type="file"
             data-testid="file-upload-input"
             accept=".csv,.xlsx"
             className="block w-full text-sm text-gray-500"
           />
-          <button 
+          <button
             data-testid="start-import-button"
             className="mt-2 bg-green-600 text-white px-4 py-2 rounded-md"
           >
@@ -50,14 +53,27 @@ export default function BankReconciliationPage() {
       </div>
 
       {/* Summary Section */}
-      <div data-testid="reconciliation-summary" className="grid grid-cols-4 gap-4">
+      <div
+        data-testid="reconciliation-summary"
+        className="grid grid-cols-4 gap-4"
+      >
         <div className="bg-white rounded-lg shadow-sm border p-4">
           <h3 className="text-sm text-gray-500">Total Transactions</h3>
-          <p data-testid="total-transactions-count" className="text-2xl font-bold">0</p>
+          <p
+            data-testid="total-transactions-count"
+            className="text-2xl font-bold"
+          >
+            0
+          </p>
         </div>
         <div className="bg-white rounded-lg shadow-sm border p-4">
           <h3 className="text-sm text-gray-500">Matched Transactions</h3>
-          <p data-testid="matched-transactions-count" className="text-2xl font-bold">0</p>
+          <p
+            data-testid="matched-transactions-count"
+            className="text-2xl font-bold"
+          >
+            0
+          </p>
         </div>
         <div className="bg-white rounded-lg shadow-sm border p-4">
           <h3 className="text-sm text-gray-500">Unmatched Transactions</h3>
@@ -65,12 +81,17 @@ export default function BankReconciliationPage() {
         </div>
         <div className="bg-white rounded-lg shadow-sm border p-4">
           <h3 className="text-sm text-gray-500">Accuracy Rate</h3>
-          <p data-testid="accuracy-rate-value" className="text-2xl font-bold">100%</p>
+          <p data-testid="accuracy-rate-value" className="text-2xl font-bold">
+            100%
+          </p>
         </div>
       </div>
 
       {/* Transactions List */}
-      <div data-testid="transactions-list" className="bg-white rounded-lg shadow-sm border">
+      <div
+        data-testid="transactions-list"
+        className="bg-white rounded-lg shadow-sm border"
+      >
         <div className="p-4 border-b">
           <h2 className="text-lg font-semibold">Transactions</h2>
         </div>
@@ -80,15 +101,18 @@ export default function BankReconciliationPage() {
       </div>
 
       {/* Matching Algorithms Config */}
-      <div data-testid="matching-algorithms-config" className="bg-white rounded-lg shadow-sm border p-6">
+      <div
+        data-testid="matching-algorithms-config"
+        className="bg-white rounded-lg shadow-sm border p-6"
+      >
         <h2 className="text-lg font-semibold mb-4">Matching Configuration</h2>
-        <button 
+        <button
           data-testid="start-matching-button"
           className="bg-purple-600 text-white px-4 py-2 rounded-md"
         >
           Start Matching
         </button>
-        <button 
+        <button
           data-testid="execute-matching-button"
           className="ml-2 bg-green-600 text-white px-4 py-2 rounded-md"
         >

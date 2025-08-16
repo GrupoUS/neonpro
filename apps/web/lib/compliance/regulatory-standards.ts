@@ -226,7 +226,7 @@ export class HealthcareComplianceManager {
     } catch (error) {
       logger.error(
         'Failed to initialize Healthcare Compliance Framework:',
-        error
+        error,
       );
       throw error;
     }
@@ -237,7 +237,7 @@ export class HealthcareComplianceManager {
    */
   async validateComponentCompliance(
     componentId: string,
-    standards: RegulatoryStandard[]
+    standards: RegulatoryStandard[],
   ): Promise<MedicalDeviceCompliance> {
     try {
       logger.info(`Validating compliance for component ${componentId}`);
@@ -257,7 +257,7 @@ export class HealthcareComplianceManager {
         riskClassification: 'medium',
         lastAssessment: new Date().toISOString(),
         nextAssessment: new Date(
-          Date.now() + 365 * 24 * 60 * 60 * 1000
+          Date.now() + 365 * 24 * 60 * 60 * 1000,
         ).toISOString(), // 1 year
         complianceOfficer: 'system',
         certificationStatus: {},
@@ -268,17 +268,17 @@ export class HealthcareComplianceManager {
       for (const standard of standards) {
         const standardCompliance = await this.validateStandardCompliance(
           componentId,
-          standard
+          standard,
         );
         compliance.regulatoryStandards.push(standardCompliance);
       }
 
       // Determine overall compliance status
       compliance.overallComplianceStatus = this.calculateOverallCompliance(
-        compliance.regulatoryStandards
+        compliance.regulatoryStandards,
       );
       compliance.riskClassification = this.calculateRiskClassification(
-        compliance.regulatoryStandards
+        compliance.regulatoryStandards,
       );
 
       // Cache and save
@@ -299,13 +299,13 @@ export class HealthcareComplianceManager {
       });
 
       logger.info(
-        `Compliance validation completed for ${componentId}: ${compliance.overallComplianceStatus}`
+        `Compliance validation completed for ${componentId}: ${compliance.overallComplianceStatus}`,
       );
       return compliance;
     } catch (error) {
       logger.error(
         `Failed to validate compliance for component ${componentId}:`,
-        error
+        error,
       );
       throw error;
     }
@@ -316,7 +316,7 @@ export class HealthcareComplianceManager {
    */
   private async validateStandardCompliance(
     componentId: string,
-    standard: RegulatoryStandard
+    standard: RegulatoryStandard,
   ): Promise<RegulatoryStandardCompliance> {
     const requirements = await this.getStandardRequirements(standard);
     const validationResults: ComplianceRequirement[] = [];
@@ -324,13 +324,13 @@ export class HealthcareComplianceManager {
     for (const requirement of requirements) {
       const validation = await this.validateRequirement(
         componentId,
-        requirement
+        requirement,
       );
       validationResults.push(validation);
     }
 
     const nonCompliantRequirements = validationResults.filter(
-      (r) => r.status === 'non_compliant'
+      (r) => r.status === 'non_compliant',
     );
     const overallStatus =
       nonCompliantRequirements.length === 0
@@ -356,7 +356,7 @@ export class HealthcareComplianceManager {
    * Get requirements for a specific standard
    */
   private async getStandardRequirements(
-    standard: RegulatoryStandard
+    standard: RegulatoryStandard,
   ): Promise<ComplianceRequirement[]> {
     const requirementsMap: Record<RegulatoryStandard, ComplianceRequirement[]> =
       {
@@ -514,7 +514,7 @@ export class HealthcareComplianceManager {
    */
   private async validateRequirement(
     componentId: string,
-    requirement: ComplianceRequirement
+    requirement: ComplianceRequirement,
   ): Promise<ComplianceRequirement> {
     try {
       // Simulate validation logic based on the requirement type
@@ -524,7 +524,7 @@ export class HealthcareComplianceManager {
         case 'document_review':
           validationResult = await this.validateDocumentation(
             componentId,
-            requirement
+            requirement,
           );
           break;
         case 'audit':
@@ -533,7 +533,7 @@ export class HealthcareComplianceManager {
         case 'conformity_assessment':
           validationResult = await this.assessConformity(
             componentId,
-            requirement
+            requirement,
           );
           break;
         case 'system_audit':
@@ -549,7 +549,7 @@ export class HealthcareComplianceManager {
         lastValidated: new Date().toISOString(),
         evidence: await this.collectRequirementEvidence(
           componentId,
-          requirement
+          requirement,
         ),
       };
     } catch (error) {
@@ -568,7 +568,7 @@ export class HealthcareComplianceManager {
    */
   async generateComplianceReport(
     componentId?: string,
-    standards?: RegulatoryStandard[]
+    standards?: RegulatoryStandard[],
   ): Promise<ComplianceReport> {
     try {
       const components = componentId
@@ -584,7 +584,7 @@ export class HealthcareComplianceManager {
 
         const filteredStandards = standards
           ? compliance.regulatoryStandards.filter((s) =>
-              standards.includes(s.standard)
+              standards.includes(s.standard),
             )
           : compliance.regulatoryStandards;
 
@@ -628,7 +628,7 @@ export class HealthcareComplianceManager {
   }
 
   private calculateOverallCompliance(
-    standards: RegulatoryStandardCompliance[]
+    standards: RegulatoryStandardCompliance[],
   ): ComplianceStatus {
     if (standards.length === 0) {
       return 'pending_validation';
@@ -648,7 +648,7 @@ export class HealthcareComplianceManager {
   }
 
   private calculateRiskClassification(
-    standards: RegulatoryStandardCompliance[]
+    standards: RegulatoryStandardCompliance[],
   ): RiskLevel {
     const issues = standards.flatMap((s) => s.nonComplianceIssues);
     if (issues.some((i) => i.severity === 'critical')) {
@@ -664,7 +664,7 @@ export class HealthcareComplianceManager {
   }
 
   private getStandardExpirationDate(
-    standard: RegulatoryStandard
+    standard: RegulatoryStandard,
   ): string | undefined {
     // Standards that typically have expiration dates
     const expirationMap: Partial<Record<RegulatoryStandard, number>> = {
@@ -686,7 +686,7 @@ export class HealthcareComplianceManager {
   // Validation method implementations (simplified for this implementation)
   private async validateDocumentation(
     _componentId: string,
-    _requirement: ComplianceRequirement
+    _requirement: ComplianceRequirement,
   ): Promise<ComplianceStatus> {
     // In a real implementation, this would check for required documentation
     return 'compliant';
@@ -694,7 +694,7 @@ export class HealthcareComplianceManager {
 
   private async performAudit(
     _componentId: string,
-    _requirement: ComplianceRequirement
+    _requirement: ComplianceRequirement,
   ): Promise<ComplianceStatus> {
     // In a real implementation, this would perform an audit
     return 'compliant';
@@ -702,7 +702,7 @@ export class HealthcareComplianceManager {
 
   private async assessConformity(
     _componentId: string,
-    _requirement: ComplianceRequirement
+    _requirement: ComplianceRequirement,
   ): Promise<ComplianceStatus> {
     // In a real implementation, this would assess conformity
     return 'compliant';
@@ -710,7 +710,7 @@ export class HealthcareComplianceManager {
 
   private async auditSystem(
     _componentId: string,
-    _requirement: ComplianceRequirement
+    _requirement: ComplianceRequirement,
   ): Promise<ComplianceStatus> {
     // In a real implementation, this would audit the system
     return 'compliant';
@@ -718,7 +718,7 @@ export class HealthcareComplianceManager {
 
   private async collectEvidence(
     _componentId: string,
-    _standard: RegulatoryStandard
+    _standard: RegulatoryStandard,
   ): Promise<ComplianceEvidence[]> {
     // In a real implementation, this would collect evidence
     return [];
@@ -726,14 +726,14 @@ export class HealthcareComplianceManager {
 
   private async collectRequirementEvidence(
     _componentId: string,
-    _requirement: ComplianceRequirement
+    _requirement: ComplianceRequirement,
   ): Promise<string[]> {
     // In a real implementation, this would collect requirement-specific evidence
     return [];
   }
 
   private async identifyNonComplianceIssues(
-    requirements: ComplianceRequirement[]
+    requirements: ComplianceRequirement[],
   ): Promise<NonComplianceIssue[]> {
     const issues: NonComplianceIssue[] = [];
 
@@ -749,7 +749,7 @@ export class HealthcareComplianceManager {
           correctiveActions: [],
           status: 'open',
           dueDate: new Date(
-            Date.now() + 30 * 24 * 60 * 60 * 1000
+            Date.now() + 30 * 24 * 60 * 60 * 1000,
           ).toISOString(), // 30 days
           assignedTo: 'compliance_team',
         });
@@ -783,7 +783,7 @@ export class HealthcareComplianceManager {
       () => {
         this.performPeriodicCompliance();
       },
-      24 * 60 * 60 * 1000
+      24 * 60 * 60 * 1000,
     ); // Daily monitoring
   }
 
@@ -793,7 +793,7 @@ export class HealthcareComplianceManager {
   }
 
   private async saveComplianceData(
-    compliance: MedicalDeviceCompliance
+    compliance: MedicalDeviceCompliance,
   ): Promise<void> {
     const { error } = await this.supabase
       .from('medical_device_compliance')
@@ -822,14 +822,14 @@ export class HealthcareComplianceManager {
   }
 
   private generateSummary(
-    reportData: ComplianceReportData[]
+    reportData: ComplianceReportData[],
   ): ComplianceSummary {
     const totalComponents = reportData.length;
     const compliantComponents = reportData.filter(
-      (d) => d.compliance.overallComplianceStatus === 'compliant'
+      (d) => d.compliance.overallComplianceStatus === 'compliant',
     ).length;
     const nonCompliantComponents = reportData.filter(
-      (d) => d.compliance.overallComplianceStatus === 'non_compliant'
+      (d) => d.compliance.overallComplianceStatus === 'non_compliant',
     ).length;
 
     return {
@@ -840,30 +840,30 @@ export class HealthcareComplianceManager {
         totalComponents > 0 ? (compliantComponents / totalComponents) * 100 : 0,
       criticalIssues: reportData.flatMap((d) =>
         d.compliance.regulatoryStandards.flatMap((s) =>
-          s.nonComplianceIssues.filter((i) => i.severity === 'critical')
-        )
+          s.nonComplianceIssues.filter((i) => i.severity === 'critical'),
+        ),
       ).length,
     };
   }
 
   private async generateRecommendations(
-    reportData: ComplianceReportData[]
+    reportData: ComplianceReportData[],
   ): Promise<string[]> {
     const recommendations: string[] = [];
 
     const nonCompliantComponents = reportData.filter(
-      (d) => d.compliance.overallComplianceStatus !== 'compliant'
+      (d) => d.compliance.overallComplianceStatus !== 'compliant',
     );
 
     if (nonCompliantComponents.length > 0) {
       recommendations.push(
-        'Address non-compliant components immediately to ensure regulatory approval'
+        'Address non-compliant components immediately to ensure regulatory approval',
       );
       recommendations.push(
-        'Implement corrective action plans for all identified compliance issues'
+        'Implement corrective action plans for all identified compliance issues',
       );
       recommendations.push(
-        'Schedule follow-up audits to verify corrective actions'
+        'Schedule follow-up audits to verify corrective actions',
       );
     }
 
@@ -871,16 +871,16 @@ export class HealthcareComplianceManager {
   }
 
   private async generateNextActions(
-    reportData: ComplianceReportData[]
+    reportData: ComplianceReportData[],
   ): Promise<string[]> {
     const actions: string[] = [];
 
     const urgentIssues = reportData.flatMap((d) =>
       d.compliance.regulatoryStandards.flatMap((s) =>
         s.nonComplianceIssues.filter(
-          (i) => i.severity === 'critical' || i.severity === 'high'
-        )
-      )
+          (i) => i.severity === 'critical' || i.severity === 'high',
+        ),
+      ),
     );
 
     urgentIssues.forEach((issue) => {
@@ -937,7 +937,7 @@ export const ComplianceValidationSchema = z.object({
   componentId: z.string().min(1, 'Component ID is required'),
   standards: z
     .array(
-      z.enum(['FDA', 'CE', 'ANVISA', 'ISO_14971', 'ISO_13485', 'IEC_62304'])
+      z.enum(['FDA', 'CE', 'ANVISA', 'ISO_14971', 'ISO_13485', 'IEC_62304']),
     )
     .min(1, 'At least one standard is required'),
 });

@@ -11,7 +11,7 @@ export type TaxDeclaration = {
 
 export class TaxDeclarationService {
   static async createDeclaration(
-    data: Omit<TaxDeclaration, 'id' | 'createdAt'>
+    data: Omit<TaxDeclaration, 'id' | 'createdAt'>,
   ): Promise<TaxDeclaration> {
     return {
       id: Math.random().toString(36),

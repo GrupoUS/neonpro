@@ -39,7 +39,7 @@ export async function GET(_request: NextRequest) {
 
     // Determine overall status based on components
     const componentStatuses = Object.values(healthData.components).map(
-      (c) => c.status
+      (c) => c.status,
     );
     if (componentStatuses.some((status) => status === 'unhealthy')) {
       healthData.overall_status = 'unhealthy';
@@ -49,7 +49,7 @@ export async function GET(_request: NextRequest) {
 
     // Calculate average error rate
     const componentErrorRates = Object.values(healthData.components).map(
-      (c) => c.error_rate
+      (c) => c.error_rate,
     );
     healthData.error_rate =
       componentErrorRates.reduce((sum, rate) => sum + rate, 0) /
@@ -109,7 +109,7 @@ export async function GET(_request: NextRequest) {
         },
         error: 'System health check failed',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -163,12 +163,12 @@ async function checkApiHealth() {
     const response = await fetch(
       new URL(
         '/api/monitoring/metrics',
-        process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
+        process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000',
       ),
       {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
-      }
+      },
     );
 
     const responseTime = Date.now() - startTime;

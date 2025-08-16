@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
     if (!message || typeof message !== 'string') {
       return NextResponse.json(
         { error: 'Message is required and must be a string' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -35,14 +35,14 @@ export async function POST(request: NextRequest) {
     if (sessionError || !session) {
       return NextResponse.json(
         { error: 'Authentication required' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
     // Build universal context
     const universalContext = await buildUniversalContext(
       supabase,
-      session.user.id
+      session.user.id,
     );
 
     // Create AI request
@@ -75,7 +75,7 @@ export async function POST(request: NextRequest) {
         error: 'Internal server error',
         message: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -85,7 +85,7 @@ export async function POST(request: NextRequest) {
  */
 async function buildUniversalContext(
   supabase: any,
-  userId: string
+  userId: string,
 ): Promise<UniversalChatContext> {
   try {
     // Get user profile and clinic info
@@ -348,7 +348,7 @@ async function buildFinancialContext(supabase: any, clinicId: string) {
     .eq('clinic_id', clinicId)
     .gte(
       'created_at',
-      new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
+      new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
     )
     .limit(100);
 
@@ -476,7 +476,7 @@ async function buildClinicalContext(supabase: any, clinicId: string) {
 
 async function buildBusinessIntelligenceContext(
   _supabase: any,
-  _clinicId: string
+  _clinicId: string,
 ) {
   // Cross-epic analytics
   return {

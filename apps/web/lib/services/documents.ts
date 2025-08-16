@@ -79,7 +79,7 @@ class DocumentsService {
 
   async getDocuments(
     entityType: 'vendor' | 'payable',
-    entityId: string
+    entityId: string,
   ): Promise<Document[]> {
     const { data, error } = await this.supabase
       .from('ap_documents')

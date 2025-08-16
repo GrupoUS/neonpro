@@ -58,7 +58,7 @@ export class IntelligentRateLimit {
       requests: number;
       windowMs: number;
       blockDurationMs?: number;
-    }
+    },
   ): {
     allowed: boolean;
     remaining: number;
@@ -155,7 +155,7 @@ export class ThreatDetection {
     ip: string,
     userAgent: string,
     route: string,
-    _method: string
+    _method: string,
   ): { suspicious: boolean; reason?: string; riskScore: number } {
     let riskScore = 0;
     const reasons: string[] = [];
@@ -175,7 +175,7 @@ export class ThreatDetection {
     // Check for suspicious request frequency
     const recentEvents = securityCache.get(ip) || [];
     const recentRequests = recentEvents.filter(
-      (e) => Date.now() - e.timestamp < 10 * 1000 // last 10 seconds
+      (e) => Date.now() - e.timestamp < 10 * 1000, // last 10 seconds
     );
 
     if (recentRequests.length > 20) {
@@ -233,7 +233,7 @@ export class ThreatDetection {
 
     // Keep only recent events to prevent memory bloat
     const recent = events.filter(
-      (e) => Date.now() - e.timestamp < 15 * 60 * 1000
+      (e) => Date.now() - e.timestamp < 15 * 60 * 1000,
     );
     securityCache.set(event.ip, recent);
   }

@@ -10,7 +10,7 @@ const reportService = new ReportBuilderService();
 // GET /api/report-builder/reports/[id] - Get specific report
 export async function GET(
   _request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const reportId = params.id;
@@ -21,7 +21,7 @@ export async function GET(
           success: false,
           error: 'Report ID is required',
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -33,7 +33,7 @@ export async function GET(
           success: false,
           error: 'Report not found',
         },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -48,7 +48,7 @@ export async function GET(
         error:
           error instanceof Error ? error.message : 'Failed to fetch report',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -56,7 +56,7 @@ export async function GET(
 // PUT /api/report-builder/reports/[id] - Update specific report
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const reportId = params.id;
@@ -68,7 +68,7 @@ export async function PUT(
           success: false,
           error: 'Report ID is required',
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -81,13 +81,13 @@ export async function PUT(
           error: 'Invalid request data',
           details: validationResult.error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     const report = await reportService.updateReport(
       reportId,
-      validationResult.data
+      validationResult.data,
     );
 
     if (!report) {
@@ -96,7 +96,7 @@ export async function PUT(
           success: false,
           error: 'Report not found',
         },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -111,7 +111,7 @@ export async function PUT(
         error:
           error instanceof Error ? error.message : 'Failed to update report',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -119,7 +119,7 @@ export async function PUT(
 // DELETE /api/report-builder/reports/[id] - Delete specific report
 export async function DELETE(
   _request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const reportId = params.id;
@@ -130,7 +130,7 @@ export async function DELETE(
           success: false,
           error: 'Report ID is required',
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -142,7 +142,7 @@ export async function DELETE(
           success: false,
           error: 'Report not found',
         },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -157,7 +157,7 @@ export async function DELETE(
         error:
           error instanceof Error ? error.message : 'Failed to delete report',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

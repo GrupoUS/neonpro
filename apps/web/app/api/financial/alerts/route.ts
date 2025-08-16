@@ -20,7 +20,7 @@ type Alert = {
 // Função para gerar alertas baseados em métricas financeiras
 async function generateFinancialAlerts(
   supabase: any,
-  clinicId: string
+  clinicId: string,
 ): Promise<Alert[]> {
   const alerts: Alert[] = [];
 
@@ -139,14 +139,14 @@ async function generateFinancialAlerts(
     const recordsWithPredictions = recentCashFlow.filter(
       (record) =>
         record.prediction_accuracy !== null &&
-        record.prediction_accuracy !== undefined
+        record.prediction_accuracy !== undefined,
     );
 
     if (recordsWithPredictions.length >= 7) {
       const averagePredictionAccuracy =
         recordsWithPredictions.reduce(
           (sum, record) => sum + (record.prediction_accuracy || 0),
-          0
+          0,
         ) / recordsWithPredictions.length;
 
       if (averagePredictionAccuracy < 0.7) {
@@ -256,14 +256,14 @@ export async function GET(request: NextRequest) {
     if (accessError || !clinicAccess) {
       return NextResponse.json(
         { error: 'Access denied to clinic' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
     // Gerar alertas baseados em dados atuais
     const alerts = await generateFinancialAlerts(
       supabase,
-      validatedParams.clinic_id
+      validatedParams.clinic_id,
     );
 
     // Filtrar alertas resolvidos se necessário
@@ -289,13 +289,13 @@ export async function GET(request: NextRequest) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Invalid parameters', details: error.errors },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -309,7 +309,7 @@ export async function POST(_request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

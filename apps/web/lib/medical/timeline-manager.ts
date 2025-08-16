@@ -68,7 +68,7 @@ export class MedicalTimelineManager {
    * Adiciona um novo evento à timeline médica
    */
   async addTimelineEvent(
-    event: Omit<TimelineEvent, 'id' | 'createdAt' | 'updatedAt'>
+    event: Omit<TimelineEvent, 'id' | 'createdAt' | 'updatedAt'>,
   ): Promise<TimelineEvent> {
     try {
       const newEvent: TimelineEvent = {
@@ -90,7 +90,7 @@ export class MedicalTimelineManager {
    */
   async getPatientTimeline(
     patientId: string,
-    filter?: TimelineFilter
+    filter?: TimelineFilter,
   ): Promise<TimelineEvent[]> {
     try {
       // Simular dados de timeline médica
@@ -226,32 +226,32 @@ export class MedicalTimelineManager {
           filteredEvents = filteredEvents.filter(
             (event) =>
               event.date >= filter.dateRange?.start &&
-              event.date <= filter.dateRange?.end
+              event.date <= filter.dateRange?.end,
           );
         }
 
         if (filter.types && filter.types.length > 0) {
           filteredEvents = filteredEvents.filter((event) =>
-            filter.types?.includes(event.type)
+            filter.types?.includes(event.type),
           );
         }
 
         if (filter.categories && filter.categories.length > 0) {
           filteredEvents = filteredEvents.filter((event) =>
-            filter.categories?.includes(event.category)
+            filter.categories?.includes(event.category),
           );
         }
 
         if (filter.severity && filter.severity.length > 0) {
           filteredEvents = filteredEvents.filter(
             (event) =>
-              event.severity && filter.severity?.includes(event.severity)
+              event.severity && filter.severity?.includes(event.severity),
           );
         }
 
         if (filter.status && filter.status.length > 0) {
           filteredEvents = filteredEvents.filter((event) =>
-            filter.status?.includes(event.status)
+            filter.status?.includes(event.status),
           );
         }
       }
@@ -268,7 +268,7 @@ export class MedicalTimelineManager {
    */
   async updateTimelineEvent(
     eventId: string,
-    updates: Partial<TimelineEvent>
+    updates: Partial<TimelineEvent>,
   ): Promise<TimelineEvent> {
     try {
       // Simular atualização do evento
@@ -314,7 +314,7 @@ export class MedicalTimelineManager {
    */
   async getTimelineAnalytics(
     patientId: string,
-    _timeframe = '1year'
+    _timeframe = '1year',
   ): Promise<TimelineAnalytics> {
     try {
       const timeline = await this.getPatientTimeline(patientId);
@@ -326,14 +326,14 @@ export class MedicalTimelineManager {
             acc[event.type] = (acc[event.type] || 0) + 1;
             return acc;
           },
-          {} as Record<string, number>
+          {} as Record<string, number>,
         ),
         eventsByCategory: timeline.reduce(
           (acc, event) => {
             acc[event.category] = (acc[event.category] || 0) + 1;
             return acc;
           },
-          {} as Record<string, number>
+          {} as Record<string, number>,
         ),
         averageEventsPerMonth: timeline.length / 12,
         mostActiveProvider: 'Dr. Maria Silva',
@@ -350,12 +350,12 @@ export class MedicalTimelineManager {
           },
         ],
         upcomingEvents: timeline.filter(
-          (event) => event.status === 'scheduled' && event.date > new Date()
+          (event) => event.status === 'scheduled' && event.date > new Date(),
         ),
         recentSignificantEvents: timeline
           .filter(
             (event) =>
-              event.severity && ['high', 'critical'].includes(event.severity)
+              event.severity && ['high', 'critical'].includes(event.severity),
           )
           .slice(0, 5),
       };
@@ -371,7 +371,7 @@ export class MedicalTimelineManager {
    */
   async searchTimelineEvents(
     patientId: string,
-    query: string
+    query: string,
   ): Promise<TimelineEvent[]> {
     try {
       const timeline = await this.getPatientTimeline(patientId);
@@ -380,7 +380,7 @@ export class MedicalTimelineManager {
         (event) =>
           event.title.toLowerCase().includes(query.toLowerCase()) ||
           event.description.toLowerCase().includes(query.toLowerCase()) ||
-          event.provider.toLowerCase().includes(query.toLowerCase())
+          event.provider.toLowerCase().includes(query.toLowerCase()),
       );
 
       return searchResults;
@@ -394,7 +394,7 @@ export class MedicalTimelineManager {
    */
   async exportTimeline(
     patientId: string,
-    format: 'json' | 'csv' | 'pdf' = 'json'
+    format: 'json' | 'csv' | 'pdf' = 'json',
   ): Promise<any> {
     try {
       const timeline = await this.getPatientTimeline(patientId);
@@ -413,7 +413,7 @@ export class MedicalTimelineManager {
           const csvData = timeline
             .map(
               (event) =>
-                `${event.date.toISOString()},${event.type},${event.category},"${event.title}","${event.description}",${event.provider},${event.status}`
+                `${event.date.toISOString()},${event.type},${event.category},"${event.title}","${event.description}",${event.provider},${event.status}`,
             )
             .join('\n');
           return csvHeaders + csvData;

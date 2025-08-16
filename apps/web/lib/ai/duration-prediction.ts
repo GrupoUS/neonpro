@@ -76,7 +76,7 @@ export class AIDurationPredictionService {
    */
   async predictDuration(
     appointmentId: string,
-    features: PredictionFeatures
+    features: PredictionFeatures,
   ): Promise<DurationPrediction> {
     try {
       // Get active model version
@@ -91,7 +91,7 @@ export class AIDurationPredictionService {
       // Apply professional efficiency factor
       const efficiencyFactor = await this.getProfessionalEfficiencyFactor(
         features.professionalId,
-        features.treatmentType
+        features.treatmentType,
       );
 
       // Apply complexity factors
@@ -102,13 +102,13 @@ export class AIDurationPredictionService {
 
       // Calculate final prediction
       const predictedDuration = Math.round(
-        baseDuration * efficiencyFactor * complexityMultiplier * temporalFactor
+        baseDuration * efficiencyFactor * complexityMultiplier * temporalFactor,
       );
 
       // Calculate confidence score
       const confidenceScore = this.calculateConfidenceScore(
         features,
-        activeModel.confidenceThreshold
+        activeModel.confidenceThreshold,
       );
 
       const prediction: DurationPrediction = {
@@ -144,7 +144,7 @@ export class AIDurationPredictionService {
         {
           appointmentId,
           features,
-        }
+        },
       );
       throw error;
     }
@@ -156,7 +156,7 @@ export class AIDurationPredictionService {
   async updatePredictionWithActual(
     appointmentId: string,
     actualDuration: number,
-    feedbackNotes?: string
+    feedbackNotes?: string,
   ): Promise<PredictionFeedback> {
     if (actualDuration <= 0) {
       throw new Error('Duration must be positive');
@@ -182,7 +182,7 @@ export class AIDurationPredictionService {
         Math.min(
           Math.abs(prediction.predicted_duration - actualDuration) /
             Math.max(prediction.predicted_duration, actualDuration),
-          1.0
+          1.0,
         );
 
       const result: PredictionFeedback = {
@@ -225,7 +225,7 @@ export class AIDurationPredictionService {
         {
           appointmentId,
           actualDuration,
-        }
+        },
       );
       throw error;
     }
@@ -235,7 +235,7 @@ export class AIDurationPredictionService {
    * Get prediction for appointment
    */
   async getPredictionForAppointment(
-    appointmentId: string
+    appointmentId: string,
   ): Promise<DurationPrediction | null> {
     const { data, error } = await this.supabase
       .from('ml_duration_predictions')
@@ -285,7 +285,7 @@ export class AIDurationPredictionService {
         error as Error,
         {
           professionalId,
-        }
+        },
       );
       return null;
     }
@@ -317,7 +317,7 @@ export class AIDurationPredictionService {
 
   private async getProfessionalEfficiencyFactor(
     professionalId: string,
-    _treatmentType: string
+    _treatmentType: string,
   ): Promise<number> {
     try {
       const { data } = await this.supabase
@@ -406,13 +406,13 @@ export class AIDurationPredictionService {
 
   private calculateConfidenceScore(
     features: PredictionFeatures,
-    _threshold: number
+    _threshold: number,
   ): number {
     let confidence = 0.8; // Base confidence
 
     // More complete features = higher confidence
     const featureCount = Object.values(features).filter(
-      (v) => v !== undefined && v !== null
+      (v) => v !== undefined && v !== null,
     ).length;
     confidence += (featureCount - 4) * 0.02; // Boost for each additional feature
 
@@ -426,7 +426,7 @@ export class AIDurationPredictionService {
 
   private async storePrediction(
     appointmentId: string,
-    prediction: DurationPrediction
+    prediction: DurationPrediction,
   ) {
     const { error } = await this.supabase
       .from('ml_duration_predictions')
@@ -507,7 +507,7 @@ export class AIABTestingService {
         error as Error,
         {
           userId,
-        }
+        },
       );
       throw error;
     }
@@ -535,10 +535,10 @@ export class AIABTestingService {
       }
 
       const controlGroup = data.filter(
-        (d) => d.test_group === 'control'
+        (d) => d.test_group === 'control',
       ).length;
       const treatmentGroup = data.filter(
-        (d) => d.test_group === 'treatment'
+        (d) => d.test_group === 'treatment',
       ).length;
       const totalParticipants = data.length;
 
@@ -558,7 +558,7 @@ export class AIABTestingService {
     } catch (error) {
       await this.auditLogger.logError(
         'ab_test_statistics_failed',
-        error as Error
+        error as Error,
       );
       throw error;
     }
@@ -646,7 +646,7 @@ export class ModelPerformanceService {
         error as Error,
         {
           modelVersion: modelMetrics.modelVersion,
-        }
+        },
       );
       throw error;
     }
@@ -680,7 +680,7 @@ export class ModelPerformanceService {
     } catch (error) {
       await this.auditLogger.logError(
         'model_metrics_retrieval_failed',
-        error as Error
+        error as Error,
       );
       throw error;
     }
@@ -731,7 +731,7 @@ export class ModelPerformanceService {
     } catch (error) {
       await this.auditLogger.logError(
         'performance_metrics_update_failed',
-        error as Error
+        error as Error,
       );
       throw error;
     }

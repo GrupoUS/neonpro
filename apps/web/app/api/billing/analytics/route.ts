@@ -29,7 +29,7 @@ export async function GET(request: Request) {
       {
         start_date: startDate,
         end_date: endDate,
-      }
+      },
     );
 
     if (summaryError) {
@@ -42,7 +42,7 @@ export async function GET(request: Request) {
         start_date: startDate,
         end_date: endDate,
         period_type: period,
-      }
+      },
     );
 
     if (revenueError) {
@@ -79,7 +79,7 @@ export async function GET(request: Request) {
           acc[method].total_amount += payment.amount;
           return acc;
         },
-        {} as Record<string, { count: number; total_amount: number }>
+        {} as Record<string, { count: number; total_amount: number }>,
       );
     }
 
@@ -97,7 +97,7 @@ export async function GET(request: Request) {
             email
           )
         )
-      `
+      `,
       )
       .gte('payment_date', startDate)
       .lte('payment_date', endDate)
@@ -124,7 +124,7 @@ export async function GET(request: Request) {
           }
           return acc;
         },
-        {} as Record<string, any>
+        {} as Record<string, any>,
       );
     }
 
@@ -149,7 +149,7 @@ export async function GET(request: Request) {
           email
         ),
         payments:payments!inner(amount)
-      `
+      `,
         )
         .in('status', ['pending', 'overdue'])
         .order('due_date', { ascending: true });
@@ -174,7 +174,7 @@ export async function GET(request: Request) {
         const paidAmount =
           invoice.payments?.reduce(
             (sum: number, p: any) => sum + p.amount,
-            0
+            0,
           ) || 0;
         const remainingAmount = invoice.total_amount - paidAmount;
 
@@ -183,7 +183,7 @@ export async function GET(request: Request) {
 
           const dueDate = new Date(invoice.due_date);
           const daysPastDue = Math.floor(
-            (now.getTime() - dueDate.getTime()) / (1000 * 60 * 60 * 24)
+            (now.getTime() - dueDate.getTime()) / (1000 * 60 * 60 * 24),
           );
 
           if (daysPastDue > 0) {
@@ -227,7 +227,7 @@ export async function GET(request: Request) {
         start_date: monthlyTrendsStartDate.toISOString().split('T')[0],
         end_date: endDate,
         period_type: 'monthly',
-      }
+      },
     );
 
     return NextResponse.json({
@@ -256,7 +256,7 @@ export async function GET(request: Request) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal Server Error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -136,7 +136,7 @@ export class ChannelProvider {
    * Envia notificação com fallback automático
    */
   async sendWithFallback(
-    config: NotificationConfig
+    config: NotificationConfig,
   ): Promise<NotificationResult> {
     const channelConfig = this.channelConfigs.get(config.channel);
     const fallbackChannels = channelConfig?.fallback_channels || [];
@@ -175,7 +175,7 @@ export class ChannelProvider {
    * Obtém métricas de um canal específico
    */
   getChannelMetrics(
-    channel: NotificationChannelEnum
+    channel: NotificationChannelEnum,
   ): ChannelMetrics | undefined {
     return this.metrics.get(channel);
   }
@@ -192,7 +192,7 @@ export class ChannelProvider {
    */
   async updateChannelConfig(
     channel: NotificationChannelEnum,
-    config: Partial<ChannelConfig>
+    config: Partial<ChannelConfig>,
   ): Promise<void> {
     const currentConfig =
       this.channelConfigs.get(channel) || this.getDefaultChannelConfig();
@@ -212,7 +212,7 @@ export class ChannelProvider {
    * Obtém configuração de um canal
    */
   getChannelConfig(
-    channel: NotificationChannelEnum
+    channel: NotificationChannelEnum,
   ): ChannelConfig | undefined {
     return this.channelConfigs.get(channel);
   }
@@ -415,7 +415,7 @@ export class ChannelProvider {
 
   private async getRecipientContact(
     recipientId: string,
-    channel: NotificationChannelEnum
+    channel: NotificationChannelEnum,
   ): Promise<string> {
     // Implementar lógica para obter contato do destinatário baseado no canal
     // Por exemplo: email, telefone, device token, etc.
@@ -436,7 +436,7 @@ export class ChannelProvider {
   }
 
   private async checkRateLimit(
-    channel: NotificationChannelEnum
+    channel: NotificationChannelEnum,
   ): Promise<void> {
     const config = this.channelConfigs.get(channel);
     if (!config?.rate_limit) {
@@ -459,7 +459,7 @@ export class ChannelProvider {
   private async updateMetrics(
     channel: NotificationChannelEnum,
     result: any,
-    deliveryTimeMs: number
+    deliveryTimeMs: number,
   ): Promise<void> {
     const metrics = this.metrics.get(channel);
     if (!metrics) {
@@ -494,7 +494,7 @@ export class ChannelProvider {
 
   private async updateFailureMetrics(
     channel: NotificationChannelEnum,
-    _error: Error
+    _error: Error,
   ): Promise<void> {
     const metrics = this.metrics.get(channel);
     if (!metrics) {
@@ -511,7 +511,7 @@ export class ChannelProvider {
 
   private async tryFallback(
     config: NotificationConfig,
-    _error: Error
+    _error: Error,
   ): Promise<NotificationResult | null> {
     const channelConfig = this.channelConfigs.get(config.channel);
     const fallbackChannels = channelConfig?.fallback_channels;

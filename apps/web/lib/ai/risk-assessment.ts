@@ -87,7 +87,7 @@ export class AIRiskAssessmentEngine {
     patient: Patient,
     medicalHistory: MedicalRecord[],
     treatmentHistory: TreatmentHistory[],
-    appointmentHistory: AppointmentHistory[]
+    appointmentHistory: AppointmentHistory[],
   ): Promise<RiskAssessment> {
     try {
       // Extract risk factors from patient data
@@ -95,7 +95,7 @@ export class AIRiskAssessmentEngine {
         patient,
         medicalHistory,
         treatmentHistory,
-        appointmentHistory
+        appointmentHistory,
       );
 
       // Calculate overall risk score
@@ -106,33 +106,33 @@ export class AIRiskAssessmentEngine {
       const predictions = await this.generateHealthPredictions(
         patient,
         riskFactors,
-        medicalHistory
+        medicalHistory,
       );
 
       // Check for safety alerts and contraindications
       const safetyAlerts = await this.detectSafetyAlerts(
         patient,
         riskFactors,
-        treatmentHistory
+        treatmentHistory,
       );
 
       // Generate recommendations
       const recommendations = this.generateRecommendations(
         riskFactors,
         predictions,
-        safetyAlerts
+        safetyAlerts,
       );
 
       // Calculate confidence score
       const confidenceScore = this.calculateConfidenceScore(
         riskFactors,
-        patient
+        patient,
       );
 
       // Determine next assessment date
       const nextAssessmentDate = this.calculateNextAssessmentDate(
         riskLevel,
-        patient
+        patient,
       );
 
       const assessment: RiskAssessment = {
@@ -164,13 +164,13 @@ export class AIRiskAssessmentEngine {
     patient: Patient,
     medicalHistory: MedicalRecord[],
     treatmentHistory: TreatmentHistory[],
-    appointmentHistory: AppointmentHistory[]
+    appointmentHistory: AppointmentHistory[],
   ): Promise<RiskFactor[]> {
     const riskFactors: RiskFactor[] = [];
 
     // Medical risk factors
     riskFactors.push(
-      ...this.analyzeMedicalRiskFactors(patient, medicalHistory)
+      ...this.analyzeMedicalRiskFactors(patient, medicalHistory),
     );
 
     // Lifestyle risk factors
@@ -181,8 +181,8 @@ export class AIRiskAssessmentEngine {
       ...this.analyzeBehavioralRiskFactors(
         patient,
         appointmentHistory,
-        treatmentHistory
-      )
+        treatmentHistory,
+      ),
     );
 
     // Treatment-specific risk factors
@@ -196,7 +196,7 @@ export class AIRiskAssessmentEngine {
    */
   private analyzeMedicalRiskFactors(
     patient: Patient,
-    medicalHistory: MedicalRecord[]
+    medicalHistory: MedicalRecord[],
   ): RiskFactor[] {
     const factors: RiskFactor[] = [];
 
@@ -216,7 +216,7 @@ export class AIRiskAssessmentEngine {
 
     // Chronic conditions
     const chronicConditions = medicalHistory.filter(
-      (record) => record.condition_type === 'chronic'
+      (record) => record.condition_type === 'chronic',
     );
     if (chronicConditions.length > 0) {
       factors.push({
@@ -245,7 +245,7 @@ export class AIRiskAssessmentEngine {
 
     // Previous complications
     const complications = medicalHistory.filter(
-      (record) => record.complications && record.complications.length > 0
+      (record) => record.complications && record.complications.length > 0,
     );
     if (complications.length > 0) {
       factors.push({
@@ -319,14 +319,14 @@ export class AIRiskAssessmentEngine {
   private analyzeBehavioralRiskFactors(
     patient: Patient,
     appointmentHistory: AppointmentHistory[],
-    treatmentHistory: TreatmentHistory[]
+    treatmentHistory: TreatmentHistory[],
   ): RiskFactor[] {
     const factors: RiskFactor[] = [];
 
     // Appointment adherence
     const totalAppointments = appointmentHistory.length;
     const missedAppointments = appointmentHistory.filter(
-      (apt) => apt.status === 'no_show' || apt.status === 'cancelled_late'
+      (apt) => apt.status === 'no_show' || apt.status === 'cancelled_late',
     ).length;
 
     if (totalAppointments > 0) {
@@ -348,7 +348,7 @@ export class AIRiskAssessmentEngine {
     // Treatment compliance
     const incompletetreatments = treatmentHistory.filter(
       (treatment) =>
-        treatment.status === 'incomplete' || treatment.status === 'abandoned'
+        treatment.status === 'incomplete' || treatment.status === 'abandoned',
     ).length;
 
     if (incompletetreatments > 0 && treatmentHistory.length > 0) {
@@ -390,14 +390,14 @@ export class AIRiskAssessmentEngine {
    * Analyze treatment-specific risk factors
    */
   private analyzeTreatmentRiskFactors(
-    treatmentHistory: TreatmentHistory[]
+    treatmentHistory: TreatmentHistory[],
   ): RiskFactor[] {
     const factors: RiskFactor[] = [];
 
     // Multiple concurrent treatments
     const activeTreatments = treatmentHistory.filter(
       (treatment) =>
-        treatment.status === 'active' || treatment.status === 'in_progress'
+        treatment.status === 'active' || treatment.status === 'in_progress',
     );
 
     if (activeTreatments.length > 2) {
@@ -418,7 +418,7 @@ export class AIRiskAssessmentEngine {
         treatment.adverse_reactions &&
         treatment.adverse_reactions.length > 0 &&
         new Date(treatment.end_date || treatment.start_date) >
-          new Date(Date.now() - 365 * 24 * 60 * 60 * 1000)
+          new Date(Date.now() - 365 * 24 * 60 * 60 * 1000),
     );
 
     if (recentReactions.length > 0) {
@@ -477,7 +477,7 @@ export class AIRiskAssessmentEngine {
    * Determine risk level based on overall score
    */
   private determineRiskLevel(
-    score: number
+    score: number,
   ): 'low' | 'moderate' | 'high' | 'critical' {
     if (score >= 75) {
       return 'critical';
@@ -497,7 +497,7 @@ export class AIRiskAssessmentEngine {
   private async generateHealthPredictions(
     patient: Patient,
     riskFactors: RiskFactor[],
-    _medicalHistory: MedicalRecord[]
+    _medicalHistory: MedicalRecord[],
   ): Promise<HealthPrediction[]> {
     const predictions: HealthPrediction[] = [];
 
@@ -526,7 +526,7 @@ export class AIRiskAssessmentEngine {
     // Healing complications prediction
     const healingRisk = this.calculateHealingComplicationRisk(
       patient,
-      riskFactors
+      riskFactors,
     );
     if (healingRisk > 0.25) {
       predictions.push({
@@ -546,7 +546,7 @@ export class AIRiskAssessmentEngine {
     // Treatment satisfaction prediction
     const satisfactionRisk = this.calculateSatisfactionRisk(
       patient,
-      riskFactors
+      riskFactors,
     );
     if (satisfactionRisk < 0.8) {
       predictions.push({
@@ -572,13 +572,13 @@ export class AIRiskAssessmentEngine {
   private async detectSafetyAlerts(
     patient: Patient,
     riskFactors: RiskFactor[],
-    _treatmentHistory: TreatmentHistory[]
+    _treatmentHistory: TreatmentHistory[],
   ): Promise<SafetyAlert[]> {
     const alerts: SafetyAlert[] = [];
 
     // Check for critical risk factors
     const criticalFactors = riskFactors.filter(
-      (factor) => factor.severity === 'critical'
+      (factor) => factor.severity === 'critical',
     );
     if (criticalFactors.length > 0) {
       alerts.push({
@@ -594,7 +594,7 @@ export class AIRiskAssessmentEngine {
     // Allergy contraindications
     if (patient.allergies && patient.allergies.length > 0) {
       const allergyAlert = this.checkAllergyContraindications(
-        patient.allergies
+        patient.allergies,
       );
       if (allergyAlert) {
         alerts.push(allergyAlert);
@@ -604,7 +604,7 @@ export class AIRiskAssessmentEngine {
     // Drug interaction warnings
     if (patient.current_medications && patient.current_medications.length > 0) {
       const drugInteractions = this.checkDrugInteractions(
-        patient.current_medications
+        patient.current_medications,
       );
       alerts.push(...drugInteractions);
     }
@@ -632,57 +632,57 @@ export class AIRiskAssessmentEngine {
   private generateRecommendations(
     riskFactors: RiskFactor[],
     predictions: HealthPrediction[],
-    safetyAlerts: SafetyAlert[]
+    safetyAlerts: SafetyAlert[],
   ): string[] {
     const recommendations: string[] = [];
 
     // Risk mitigation recommendations
     const highRiskFactors = riskFactors.filter(
-      (factor) => factor.severity === 'high' || factor.severity === 'critical'
+      (factor) => factor.severity === 'high' || factor.severity === 'critical',
     );
 
     if (highRiskFactors.length > 0) {
       recommendations.push(
-        'Consider pre-treatment optimization period to address high-risk factors'
+        'Consider pre-treatment optimization period to address high-risk factors',
       );
       recommendations.push(
-        'Implement enhanced monitoring protocol during and after treatment'
+        'Implement enhanced monitoring protocol during and after treatment',
       );
     }
 
     // Lifestyle modification recommendations
     const lifestyleFactors = riskFactors.filter(
-      (factor) => factor.category === 'lifestyle'
+      (factor) => factor.category === 'lifestyle',
     );
     if (lifestyleFactors.length > 0) {
       recommendations.push(
-        'Provide lifestyle modification counseling before treatment'
+        'Provide lifestyle modification counseling before treatment',
       );
       if (lifestyleFactors.some((f) => f.id === 'smoking')) {
         recommendations.push(
-          'Strongly recommend smoking cessation at least 2 weeks before treatment'
+          'Strongly recommend smoking cessation at least 2 weeks before treatment',
         );
       }
     }
 
     // Behavioral intervention recommendations
     const behavioralFactors = riskFactors.filter(
-      (factor) => factor.category === 'behavioral'
+      (factor) => factor.category === 'behavioral',
     );
     if (behavioralFactors.length > 0) {
       recommendations.push(
-        'Implement patient engagement strategies to improve compliance'
+        'Implement patient engagement strategies to improve compliance',
       );
       recommendations.push('Consider motivational interviewing techniques');
     }
 
     // Prediction-based recommendations
     const highRiskPredictions = predictions.filter(
-      (pred) => pred.probability > 0.5
+      (pred) => pred.probability > 0.5,
     );
     if (highRiskPredictions.length > 0) {
       recommendations.push(
-        'Implement preventive measures for predicted complications'
+        'Implement preventive measures for predicted complications',
       );
       recommendations.push('Schedule more frequent follow-up appointments');
     }
@@ -690,7 +690,7 @@ export class AIRiskAssessmentEngine {
     // Safety alert recommendations
     if (safetyAlerts.some((alert) => alert.severity === 'critical')) {
       recommendations.push(
-        'Mandatory specialist consultation required before proceeding'
+        'Mandatory specialist consultation required before proceeding',
       );
     }
 
@@ -702,7 +702,7 @@ export class AIRiskAssessmentEngine {
    */
   private calculateConfidenceScore(
     riskFactors: RiskFactor[],
-    patient: Patient
+    patient: Patient,
   ): number {
     let confidenceScore = 0.5; // Base confidence
 
@@ -712,7 +712,7 @@ export class AIRiskAssessmentEngine {
 
     // Increase confidence based on evidence quality
     const strongEvidenceFactors = riskFactors.filter(
-      (f) => f.evidence_level === 'strong'
+      (f) => f.evidence_level === 'strong',
     ).length;
     const totalFactors = riskFactors.length;
     if (totalFactors > 0) {
@@ -727,7 +727,7 @@ export class AIRiskAssessmentEngine {
    */
   private calculateNextAssessmentDate(
     riskLevel: string,
-    _patient: Patient
+    _patient: Patient,
   ): Date {
     const now = new Date();
     const daysToAdd =
@@ -758,7 +758,7 @@ export class AIRiskAssessmentEngine {
 
   private calculateInfectionRisk(
     _patient: Patient,
-    riskFactors: RiskFactor[]
+    riskFactors: RiskFactor[],
   ): number {
     let risk = 0.1; // Base risk
 
@@ -783,7 +783,7 @@ export class AIRiskAssessmentEngine {
 
   private calculateHealingComplicationRisk(
     _patient: Patient,
-    riskFactors: RiskFactor[]
+    riskFactors: RiskFactor[],
   ): number {
     let risk = 0.05; // Base risk
 
@@ -807,7 +807,7 @@ export class AIRiskAssessmentEngine {
 
   private calculateSatisfactionRisk(
     _patient: Patient,
-    riskFactors: RiskFactor[]
+    riskFactors: RiskFactor[],
   ): number {
     let satisfaction = 0.8; // Base satisfaction
 
@@ -827,7 +827,7 @@ export class AIRiskAssessmentEngine {
   }
 
   private checkAllergyContraindications(
-    allergies: string[]
+    allergies: string[],
   ): SafetyAlert | null {
     const commonTreatmentAllergens = [
       'lidocaine',
@@ -837,8 +837,8 @@ export class AIRiskAssessmentEngine {
     ];
     const relevantAllergies = allergies.filter((allergy) =>
       commonTreatmentAllergens.some((allergen) =>
-        allergy.toLowerCase().includes(allergen.toLowerCase())
-      )
+        allergy.toLowerCase().includes(allergen.toLowerCase()),
+      ),
     );
 
     if (relevantAllergies.length > 0) {
@@ -862,7 +862,7 @@ export class AIRiskAssessmentEngine {
     // Check for blood thinners
     const bloodThinners = ['warfarin', 'aspirin', 'clopidogrel', 'rivaroxaban'];
     const hasBloodThinners = medications.some((med) =>
-      bloodThinners.some((bt) => med.toLowerCase().includes(bt.toLowerCase()))
+      bloodThinners.some((bt) => med.toLowerCase().includes(bt.toLowerCase())),
     );
 
     if (hasBloodThinners) {

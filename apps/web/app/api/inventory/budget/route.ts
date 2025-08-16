@@ -31,7 +31,7 @@ export async function GET(request: NextRequest) {
         cost_center:cost_centers(name),
         approvals:budget_approvals(*),
         allocations:budget_allocations(*)
-      `
+      `,
       )
       .eq('user_id', user.id);
 
@@ -54,7 +54,7 @@ export async function GET(request: NextRequest) {
     if (error) {
       return NextResponse.json(
         { error: 'Failed to fetch budgets' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -62,7 +62,7 @@ export async function GET(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -90,8 +90,8 @@ export async function POST(request: NextRequest) {
           service.createBudget(user.id, {
             ...budgetData,
             user_id: user.id,
-          })
-        )
+          }),
+        ),
       );
 
       return NextResponse.json({ budgets: results });
@@ -111,13 +111,13 @@ export async function POST(request: NextRequest) {
     if (error instanceof Error && error.name === 'ZodError') {
       return NextResponse.json(
         { error: 'Invalid budget data' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     return NextResponse.json(
       { error: 'Failed to create budget' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -139,7 +139,7 @@ export async function PATCH(request: NextRequest) {
 
     const updated = await service.updateBudgetPeriod(
       validated.budget_id,
-      validated.period_data
+      validated.period_data,
     );
 
     return NextResponse.json({ budget: updated });
@@ -147,13 +147,13 @@ export async function PATCH(request: NextRequest) {
     if (error instanceof Error && error.name === 'ZodError') {
       return NextResponse.json(
         { error: 'Invalid update data' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     return NextResponse.json(
       { error: 'Failed to update budget' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

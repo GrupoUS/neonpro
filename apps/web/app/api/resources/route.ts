@@ -22,7 +22,7 @@ export async function GET(request: NextRequest) {
     if (!clinicId) {
       return NextResponse.json(
         { error: 'clinic_id is required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -36,7 +36,7 @@ export async function GET(request: NextRequest) {
     if (authError || !user) {
       return NextResponse.json(
         { error: 'Authentication required' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -68,7 +68,7 @@ export async function GET(request: NextRequest) {
         error: 'Failed to fetch resources',
         details: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -85,7 +85,7 @@ export async function POST(request: NextRequest) {
     if (!(name && type && clinic_id)) {
       return NextResponse.json(
         { error: 'name, type, and clinic_id are required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -99,7 +99,7 @@ export async function POST(request: NextRequest) {
     if (authError || !user) {
       return NextResponse.json(
         { error: 'Authentication required' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -120,7 +120,7 @@ export async function POST(request: NextRequest) {
         data: newResource,
         message: 'Resource created successfully',
       },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (error) {
     return NextResponse.json(
@@ -128,7 +128,7 @@ export async function POST(request: NextRequest) {
         error: 'Failed to create resource',
         details: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -145,7 +145,7 @@ export async function PUT(request: NextRequest) {
     if (!id) {
       return NextResponse.json(
         { error: 'Resource id is required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -159,7 +159,7 @@ export async function PUT(request: NextRequest) {
     if (authError || !user) {
       return NextResponse.json(
         { error: 'Authentication required' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -181,7 +181,7 @@ export async function PUT(request: NextRequest) {
         error: 'Failed to update resource',
         details: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -198,7 +198,7 @@ export async function DELETE(request: NextRequest) {
     if (!resourceId) {
       return NextResponse.json(
         { error: 'Resource id is required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -212,7 +212,7 @@ export async function DELETE(request: NextRequest) {
     if (authError || !user) {
       return NextResponse.json(
         { error: 'Authentication required' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -230,7 +230,7 @@ export async function DELETE(request: NextRequest) {
         error: 'Failed to delete resource',
         details: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

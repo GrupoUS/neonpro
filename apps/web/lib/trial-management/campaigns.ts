@@ -22,7 +22,7 @@ export class CampaignManager {
   // ========================================================================
 
   async createCampaign(
-    campaignData: Partial<TrialCampaign>
+    campaignData: Partial<TrialCampaign>,
   ): Promise<TrialCampaign> {
     const campaign: Omit<TrialCampaign, 'id'> = {
       name: campaignData.name || 'Untitled Campaign',
@@ -152,7 +152,7 @@ export class CampaignManager {
 
   private async initializeABTest(
     campaignId: string,
-    abTestConfig: ABTestConfig
+    abTestConfig: ABTestConfig,
   ): Promise<void> {
     // Create A/B test record
     await this.supabase.from('campaign_ab_tests').insert({
@@ -205,7 +205,7 @@ export class CampaignManager {
   async trackTestConversion(
     campaignId: string,
     userId: string,
-    variantId: string
+    variantId: string,
   ): Promise<void> {
     await this.supabase.from('campaign_ab_test_results').insert({
       campaign_id: campaignId,
@@ -233,7 +233,7 @@ export class CampaignManager {
     // Personalize content
     const personalizedContent = await this.personalizeContent(
       campaign.content,
-      trial
+      trial,
     );
 
     // Execute based on campaign type
@@ -267,14 +267,14 @@ export class CampaignManager {
 
       personalizedMessage = personalizedMessage.replace(
         '{{user_name}}',
-        user?.full_name || 'there'
+        user?.full_name || 'there',
       );
     }
 
     if (content.personalization.useDaysRemaining) {
       personalizedMessage = personalizedMessage.replace(
         '{{days_remaining}}',
-        trial.daysRemaining.toString()
+        trial.daysRemaining.toString(),
       );
     }
 
@@ -282,7 +282,7 @@ export class CampaignManager {
       const topFeatures = await this.getTopUnusedFeatures(trial.userId);
       personalizedMessage = personalizedMessage.replace(
         '{{top_features}}',
-        topFeatures.join(', ')
+        topFeatures.join(', '),
       );
     }
 
@@ -301,7 +301,7 @@ export class CampaignManager {
       .eq('event_type', 'feature_usage');
 
     const used = new Set(
-      usedFeatures?.map((e) => e.event_data?.featureId) || []
+      usedFeatures?.map((e) => e.event_data?.featureId) || [],
     );
 
     // Return top unused features
@@ -320,18 +320,18 @@ export class CampaignManager {
 
   private async showInAppMessage(
     _userId: string,
-    _content: any
+    _content: any,
   ): Promise<void> {}
 
   private async sendPushNotification(
     _userId: string,
-    _content: any
+    _content: any,
   ): Promise<void> {}
 
   private async trackCampaignDelivery(
     campaignId: string,
     userId: string,
-    variant: string
+    variant: string,
   ): Promise<void> {
     await this.supabase.from('campaign_deliveries').insert({
       campaign_id: campaignId,
@@ -344,7 +344,7 @@ export class CampaignManager {
   // ========================================================================
 
   private async scheduleCampaignExecution(
-    campaign: TrialCampaign
+    campaign: TrialCampaign,
   ): Promise<void> {
     if (campaign.schedule.type === 'immediate') {
       // Execute immediately for all eligible trials
@@ -447,8 +447,8 @@ export class CampaignManager {
         0,
         Math.ceil(
           (new Date(data.end_date).getTime() - Date.now()) /
-            (1000 * 60 * 60 * 24)
-        )
+            (1000 * 60 * 60 * 24),
+        ),
       ),
       conversionProbability: data.conversion_probability || 0.1,
       engagementScore: data.engagement_score || 0,

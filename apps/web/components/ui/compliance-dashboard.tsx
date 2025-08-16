@@ -123,7 +123,7 @@ export default function ComplianceDashboard() {
     try {
       setRefreshing(true);
       const response = await fetch(
-        `/api/compliance/metrics?period=${period}&detailed=true`
+        `/api/compliance/metrics?period=${period}&detailed=true`,
       );
 
       if (!response.ok) {
@@ -382,7 +382,7 @@ export default function ComplianceDashboard() {
                         <span>•</span>
                         <span>
                           {new Date(alert.created_at).toLocaleDateString(
-                            'pt-BR'
+                            'pt-BR',
                           )}
                         </span>
                         {alert.action_required && (

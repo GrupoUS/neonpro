@@ -75,7 +75,7 @@ export class DuplicateDetectionSystem {
         return mockDuplicates.filter(
           (dup) =>
             dup.primaryPatientId === patientId ||
-            dup.duplicatePatientId === patientId
+            dup.duplicatePatientId === patientId,
         );
       }
 
@@ -90,7 +90,7 @@ export class DuplicateDetectionSystem {
    */
   async comparePatients(
     _patientId1: string,
-    _patientId2: string
+    _patientId2: string,
   ): Promise<FieldComparison[]> {
     try {
       // Simular comparação detalhada entre pacientes
@@ -150,7 +150,7 @@ export class DuplicateDetectionSystem {
    */
   async confirmDuplicate(
     _duplicateId: string,
-    _reviewedBy: string
+    _reviewedBy: string,
   ): Promise<boolean> {
     try {
       return true;
@@ -165,7 +165,7 @@ export class DuplicateDetectionSystem {
   async rejectDuplicate(
     _duplicateId: string,
     _reviewedBy: string,
-    _reason: string
+    _reason: string,
   ): Promise<boolean> {
     try {
       return true;
@@ -181,7 +181,7 @@ export class DuplicateDetectionSystem {
     primaryPatientId: string,
     duplicatePatientId: string,
     strategy: MergeStrategy,
-    _performedBy: string
+    _performedBy: string,
   ): Promise<MergeResult> {
     try {
       // Simular processo de merge
@@ -215,12 +215,12 @@ export class DuplicateDetectionSystem {
   async previewMerge(
     primaryPatientId: string,
     duplicatePatientId: string,
-    strategy: MergeStrategy
+    strategy: MergeStrategy,
   ): Promise<any> {
     try {
       const comparisons = await this.comparePatients(
         primaryPatientId,
-        duplicatePatientId
+        duplicatePatientId,
       );
 
       const preview = {
@@ -265,7 +265,7 @@ export class DuplicateDetectionSystem {
       const potentialDuplicates = await this.detectDuplicates();
 
       return potentialDuplicates.filter(
-        (dup) => dup.confidenceScore >= threshold
+        (dup) => dup.confidenceScore >= threshold,
       );
     } catch (_error) {
       throw new Error('Falha na busca de duplicatas');
@@ -293,7 +293,7 @@ export class DuplicateDetectionSystem {
         confidenceDistribution: {
           high: allDuplicates.filter((d) => d.confidenceScore >= 0.9).length,
           medium: allDuplicates.filter(
-            (d) => d.confidenceScore >= 0.7 && d.confidenceScore < 0.9
+            (d) => d.confidenceScore >= 0.7 && d.confidenceScore < 0.9,
           ).length,
           low: allDuplicates.filter((d) => d.confidenceScore < 0.7).length,
         },

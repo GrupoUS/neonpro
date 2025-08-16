@@ -149,24 +149,24 @@ class ConnectionPoolMonitor {
         totalPools: analytics.summary.totalPools,
         healthyPools: analytics.summary.healthyPools,
         degradedPools: analytics.pools.filter(
-          (p) => p.health.status === 'degraded'
+          (p) => p.health.status === 'degraded',
         ).length,
         unhealthyPools: analytics.pools.filter(
-          (p) => p.health.status === 'unhealthy'
+          (p) => p.health.status === 'unhealthy',
         ).length,
         avgResponseTime: analytics.summary.avgResponseTime,
         totalConnections: analytics.pools.reduce(
           (sum, p) => sum + p.metrics.totalConnections,
-          0
+          0,
         ),
         complianceScore: analytics.summary.complianceScore,
         activeAlerts: Array.from(this.alerts.values()).filter(
-          (a) => !a.resolved
+          (a) => !a.resolved,
         ).length,
         criticalAlerts: Array.from(this.alerts.values()).filter(
           (a) =>
             !a.resolved &&
-            (a.severity === 'critical' || a.severity === 'emergency')
+            (a.severity === 'critical' || a.severity === 'emergency'),
         ).length,
       };
 
@@ -208,7 +208,7 @@ class ConnectionPoolMonitor {
   private async checkPoolHealth(
     poolKey: string,
     health: HealthcheckResult,
-    metrics: ConnectionMetrics
+    metrics: ConnectionMetrics,
   ): Promise<void> {
     const clinicId = poolKey.split('_')[1] || 'unknown';
 
@@ -383,7 +383,7 @@ class ConnectionPoolMonitor {
    * Create and process healthcare alert
    */
   private async createAlert(
-    alertData: Omit<HealthcareAlert, 'id' | 'timestamp' | 'resolved'>
+    alertData: Omit<HealthcareAlert, 'id' | 'timestamp' | 'resolved'>,
   ): Promise<void> {
     const alertId = `${alertData.poolKey}_${alertData.type}_${Date.now()}`;
 
@@ -394,7 +394,7 @@ class ConnectionPoolMonitor {
         alert.type === alertData.type &&
         alert.severity === alertData.severity &&
         !alert.resolved &&
-        Date.now() - alert.timestamp.getTime() < 300_000 // 5 minutes
+        Date.now() - alert.timestamp.getTime() < 300_000, // 5 minutes
     );
 
     if (existingAlert) {
@@ -467,28 +467,28 @@ class ConnectionPoolMonitor {
    * Handle compliance emergency
    */
   private async handleComplianceEmergency(
-    _alert: HealthcareAlert
+    _alert: HealthcareAlert,
   ): Promise<void> {}
 
   /**
    * Handle security emergency
    */
   private async handleSecurityEmergency(
-    _alert: HealthcareAlert
+    _alert: HealthcareAlert,
   ): Promise<void> {}
 
   /**
    * Handle availability emergency
    */
   private async handleAvailabilityEmergency(
-    _alert: HealthcareAlert
+    _alert: HealthcareAlert,
   ): Promise<void> {}
 
   /**
    * Handle performance emergency
    */
   private async handlePerformanceEmergency(
-    _alert: HealthcareAlert
+    _alert: HealthcareAlert,
   ): Promise<void> {}
 
   /**
@@ -579,10 +579,10 @@ class ConnectionPoolMonitor {
   } {
     const activeAlerts = this.getActiveAlerts();
     const criticalAlerts = activeAlerts.filter(
-      (a) => a.severity === 'critical' || a.severity === 'emergency'
+      (a) => a.severity === 'critical' || a.severity === 'emergency',
     );
     const emergencyAlerts = activeAlerts.filter(
-      (a) => a.severity === 'emergency'
+      (a) => a.severity === 'emergency',
     );
 
     const latestMetrics = this.metrics.at(-1);

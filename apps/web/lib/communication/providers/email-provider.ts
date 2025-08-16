@@ -23,7 +23,7 @@ export class EmailProvider {
         content: Buffer;
         contentType: string;
       }>;
-    }
+    },
   ): Promise<EmailResult> {
     // Mock implementation for testing
     return {

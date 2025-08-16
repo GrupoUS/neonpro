@@ -38,7 +38,7 @@ export async function GET(request: NextRequest) {
         error: 'Failed to fetch report definitions',
         message: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -72,7 +72,7 @@ export async function POST(request: NextRequest) {
           error: 'Invalid report definition',
           details: validationResult.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -102,7 +102,7 @@ export async function POST(request: NextRequest) {
         error: 'Failed to create report definition',
         message: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -148,7 +148,7 @@ function validateReportDefinition(body: any): ValidationResult {
 
   if (body.report_type && !validTypes.includes(body.report_type)) {
     errors.push(
-      `Invalid report type. Must be one of: ${validTypes.join(', ')}`
+      `Invalid report type. Must be one of: ${validTypes.join(', ')}`,
     );
   }
 

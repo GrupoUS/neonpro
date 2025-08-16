@@ -16,7 +16,7 @@ import { TokenEncryptionService } from '@/lib/oauth/token-encryption';
 
 export async function GET(
   _request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const supabase = await createClient();
@@ -28,7 +28,7 @@ export async function GET(
     if (!session?.user) {
       return NextResponse.json(
         { error: 'Unauthorized - Please log in to access account information' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -52,7 +52,7 @@ export async function GET(
         is_active,
         last_sync_at,
         created_at
-      `
+      `,
       )
       .eq('id', accountId)
       .eq('user_id', session.user.id)
@@ -62,7 +62,7 @@ export async function GET(
     if (accountError || !account) {
       return NextResponse.json(
         { error: 'Facebook account not found or access denied' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -103,14 +103,14 @@ export async function GET(
         error: 'Failed to retrieve Facebook account information',
         details: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
 
 export async function DELETE(
   _request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const supabase = await createClient();
@@ -122,7 +122,7 @@ export async function DELETE(
     if (!session?.user) {
       return NextResponse.json(
         { error: 'Unauthorized - Please log in to disconnect account' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -141,7 +141,7 @@ export async function DELETE(
     if (accountError || !account) {
       return NextResponse.json(
         { error: 'Facebook account not found or access denied' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -175,7 +175,7 @@ export async function DELETE(
 
     if (deactivateError) {
       throw new Error(
-        `Failed to disconnect account: ${deactivateError.message}`
+        `Failed to disconnect account: ${deactivateError.message}`,
       );
     }
 
@@ -189,7 +189,7 @@ export async function DELETE(
         error: 'Failed to disconnect Facebook account',
         details: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

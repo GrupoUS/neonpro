@@ -242,7 +242,7 @@ export class ComprehensiveSearch {
    * Perform comprehensive search across all data types
    */
   async search(
-    options: ComprehensiveSearchOptions
+    options: ComprehensiveSearchOptions,
   ): Promise<ComprehensiveSearchResponse> {
     const startTime = Date.now();
 
@@ -280,7 +280,7 @@ export class ComprehensiveSearch {
           fuzzySearch,
           exactMatch,
           limit: Math.ceil(limit / typesToSearch.length),
-        })
+        }),
       );
 
       const searchResults = await Promise.all(searchPromises);
@@ -291,7 +291,7 @@ export class ComprehensiveSearch {
         allResults,
         nlpResult,
         sortBy,
-        sortOrder
+        sortOrder,
       );
 
       // Apply pagination
@@ -346,7 +346,7 @@ export class ComprehensiveSearch {
       fuzzySearch: boolean;
       exactMatch: boolean;
       limit: number;
-    }
+    },
   ): Promise<SearchResult[]> {
     const config = this.searchableTypes.get(dataType);
     if (!(config && this.supabase)) {
@@ -365,7 +365,7 @@ export class ComprehensiveSearch {
         options.query,
         options.nlpResult,
         options.fuzzySearch,
-        options.exactMatch
+        options.exactMatch,
       );
 
       if (searchConditions) {
@@ -377,7 +377,7 @@ export class ComprehensiveSearch {
         query,
         config,
         options.filters,
-        options.includeArchived
+        options.includeArchived,
       );
 
       // Apply date range
@@ -394,7 +394,7 @@ export class ComprehensiveSearch {
 
       // Transform results
       return (data || []).map((item) =>
-        this.transformResult(item, config, options.nlpResult)
+        this.transformResult(item, config, options.nlpResult),
       );
     } catch (_error) {
       return [];
@@ -406,7 +406,7 @@ export class ComprehensiveSearch {
    */
   private buildSelectClause(config: SearchableDataType): string {
     let selectFields = config.displayFields.map((field) =>
-      field.includes(' as ') ? field : `${config.table}.${field}`
+      field.includes(' as ') ? field : `${config.table}.${field}`,
     );
 
     if (config.joinTables) {
@@ -426,7 +426,7 @@ export class ComprehensiveSearch {
     query: string,
     nlpResult: any,
     fuzzySearch: boolean,
-    exactMatch: boolean
+    exactMatch: boolean,
   ): string {
     const conditions: string[] = [];
     const searchTerms = exactMatch ? [query] : [query, ...nlpResult.tokens];
@@ -460,7 +460,7 @@ export class ComprehensiveSearch {
     query: any,
     config: SearchableDataType,
     filters: Record<string, any>,
-    includeArchived: boolean
+    includeArchived: boolean,
   ): any {
     // Apply default filters
     if (config.filters) {
@@ -509,19 +509,19 @@ export class ComprehensiveSearch {
   private transformResult(
     item: any,
     config: SearchableDataType,
-    nlpResult: any
+    nlpResult: any,
   ): SearchResult {
     // Calculate relevance score
     const relevanceScore = this.calculateRelevanceScore(
       item,
       config,
-      nlpResult
+      nlpResult,
     );
 
     // Generate title and description
     const { title, description } = this.generateTitleAndDescription(
       item,
-      config
+      config,
     );
 
     // Find matched fields
@@ -531,7 +531,7 @@ export class ComprehensiveSearch {
     const highlightedText = this.generateHighlightedText(
       item,
       config,
-      nlpResult
+      nlpResult,
     );
 
     return {
@@ -558,7 +558,7 @@ export class ComprehensiveSearch {
   private calculateRelevanceScore(
     item: any,
     config: SearchableDataType,
-    nlpResult: any
+    nlpResult: any,
   ): number {
     let score = config.weight;
 
@@ -601,7 +601,7 @@ export class ComprehensiveSearch {
    */
   private generateTitleAndDescription(
     item: any,
-    config: SearchableDataType
+    config: SearchableDataType,
   ): { title: string; description: string } {
     let title = '';
     let description = '';
@@ -661,7 +661,7 @@ export class ComprehensiveSearch {
   private findMatchedFields(
     item: any,
     config: SearchableDataType,
-    nlpResult: any
+    nlpResult: any,
   ): string[] {
     const matchedFields: string[] = [];
     const searchTerms = [nlpResult.normalized, ...nlpResult.tokens];
@@ -685,7 +685,7 @@ export class ComprehensiveSearch {
   private generateHighlightedText(
     item: any,
     config: SearchableDataType,
-    nlpResult: any
+    nlpResult: any,
   ): string {
     const searchTerms = [nlpResult.normalized, ...nlpResult.tokens];
     let text = config.searchFields
@@ -742,7 +742,7 @@ export class ComprehensiveSearch {
     results: SearchResult[],
     _nlpResult: any,
     sortBy: string,
-    sortOrder: string
+    sortOrder: string,
   ): SearchResult[] {
     return results.sort((a, b) => {
       let comparison = 0;
@@ -769,7 +769,7 @@ export class ComprehensiveSearch {
    * Enhance results with related data
    */
   private async enhanceWithRelatedData(
-    results: SearchResult[]
+    results: SearchResult[],
   ): Promise<SearchResult[]> {
     // TODO: Implement related data enhancement
     // This could include:
@@ -786,7 +786,7 @@ export class ComprehensiveSearch {
    */
   private calculateSearchStats(
     results: SearchResult[],
-    nlpResult: any
+    nlpResult: any,
   ): {
     byType: Record<string, number>;
     avgRelevance: number;
@@ -813,7 +813,7 @@ export class ComprehensiveSearch {
   private async getSuggestions(
     query: string,
     _nlpResult: any,
-    language: SupportedLanguage
+    language: SupportedLanguage,
   ): Promise<string[]> {
     // Use the search indexer for suggestions
     return searchIndexer.getSuggestions(query, language, 5);
@@ -824,7 +824,7 @@ export class ComprehensiveSearch {
    */
   private async getRelatedSearches(
     query: string,
-    _language: SupportedLanguage
+    _language: SupportedLanguage,
   ): Promise<string[]> {
     try {
       if (!this.supabase) {
@@ -857,7 +857,7 @@ export class ComprehensiveSearch {
     type: string,
     contentId: string,
     searchableText: string,
-    metadata?: Record<string, any>
+    metadata?: Record<string, any>,
   ): Promise<void> {
     await searchIndexer.indexContent({
       contentType: type as any,
@@ -886,5 +886,5 @@ export class ComprehensiveSearch {
 // Export singleton instance
 export const comprehensiveSearch = new ComprehensiveSearch(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
 );

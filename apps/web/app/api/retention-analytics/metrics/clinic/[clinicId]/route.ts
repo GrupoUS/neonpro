@@ -31,7 +31,7 @@ const ClinicMetricsQuerySchema = z.object({
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { clinicId: string } }
+  { params }: { params: { clinicId: string } },
 ) {
   try {
     // Validate clinic ID parameter
@@ -45,7 +45,7 @@ export async function GET(
           error: 'Invalid clinic ID',
           details: clinicValidation.error.issues,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -67,7 +67,7 @@ export async function GET(
           error: 'Invalid query parameters',
           details: queryValidation.error.issues,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -95,14 +95,14 @@ export async function GET(
     if (profileError || !userProfile) {
       return NextResponse.json(
         { error: 'User profile not found' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
     if (userProfile.clinic_id !== clinicId) {
       return NextResponse.json(
         { error: 'Access denied to clinic data' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -122,7 +122,7 @@ export async function GET(
     const metrics = await retentionService.getClinicRetentionMetrics(
       clinicId,
       limit,
-      offset
+      offset,
     );
 
     // Apply additional filters if provided
@@ -169,15 +169,15 @@ export async function GET(
         high: filteredMetrics.filter((m) => m.churn_risk_level === 'high')
           .length,
         critical: filteredMetrics.filter(
-          (m) => m.churn_risk_level === 'critical'
+          (m) => m.churn_risk_level === 'critical',
         ).length,
       },
       total_lifetime_value: filteredMetrics.reduce(
         (sum, m) => sum + m.lifetime_value,
-        0
+        0,
       ),
       patients_at_risk: filteredMetrics.filter((m) =>
-        ['high', 'critical'].includes(m.churn_risk_level)
+        ['high', 'critical'].includes(m.churn_risk_level),
       ).length,
     };
 
@@ -206,7 +206,7 @@ export async function GET(
         error: 'Internal server error',
         message: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -217,7 +217,7 @@ export async function GET(
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { clinicId: string } }
+  { params }: { params: { clinicId: string } },
 ) {
   try {
     // Validate clinic ID parameter
@@ -231,7 +231,7 @@ export async function POST(
           error: 'Invalid clinic ID',
           details: clinicValidation.error.issues,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -262,14 +262,14 @@ export async function POST(
     if (profileError || !userProfile) {
       return NextResponse.json(
         { error: 'User profile not found' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
     if (userProfile.clinic_id !== clinicId) {
       return NextResponse.json(
         { error: 'Access denied to clinic data' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -278,7 +278,7 @@ export async function POST(
     if (!allowedRoles.includes(userProfile.role)) {
       return NextResponse.json(
         { error: 'Insufficient permissions for bulk calculations' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -310,7 +310,7 @@ export async function POST(
     if (validationError || validPatients.length !== targetPatientIds.length) {
       return NextResponse.json(
         { error: 'Some patients do not belong to the specified clinic' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -329,7 +329,7 @@ export async function POST(
           const metrics =
             await retentionService.calculatePatientRetentionMetrics(
               patientId,
-              clinicId
+              clinicId,
             );
           return { patientId, metrics, success: true };
         } catch (error) {
@@ -384,7 +384,7 @@ export async function POST(
         error: 'Internal server error',
         message: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -16,7 +16,7 @@ export type Role = {
 export class PermissionsService {
   static checkPermission(
     _userRoles: string[],
-    _requiredPermission: Permission
+    _requiredPermission: Permission,
   ): boolean {
     // Mock implementation for build
     return true;

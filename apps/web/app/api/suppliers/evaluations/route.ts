@@ -20,7 +20,7 @@ export async function GET(request: NextRequest) {
     if (!supplierId) {
       return NextResponse.json(
         { error: 'supplier_id é obrigatório' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -30,7 +30,7 @@ export async function GET(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -47,19 +47,19 @@ export async function POST(request: NextRequest) {
     if (!validationResult.success) {
       return NextResponse.json(
         { error: 'Dados inválidos', details: validationResult.error.issues },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     const evaluation = await supplierService.createEvaluation(
-      validationResult.data
+      validationResult.data,
     );
 
     return NextResponse.json(evaluation, { status: 201 });
   } catch (_error) {
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

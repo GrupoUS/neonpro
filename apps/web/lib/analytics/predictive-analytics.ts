@@ -574,7 +574,7 @@ export class PredictiveAnalyticsEngine {
       // Preprocess features
       const processedFeatures = await this.preprocessFeatures(
         model,
-        request.features
+        request.features,
       );
 
       // Make prediction
@@ -592,12 +592,12 @@ export class PredictiveAnalyticsEngine {
         explanations: await this.generateExplanations(
           model,
           rawPrediction,
-          processedFeatures
+          processedFeatures,
         ),
         recommendations: await this.generateRecommendations(
           model,
           rawPrediction,
-          request.features
+          request.features,
         ),
         metadata: {
           patientId: request.patientId,
@@ -636,7 +636,7 @@ export class PredictiveAnalyticsEngine {
 
       if (!model) {
         throw new Error(
-          `No forecasting model available for type: ${request.type}`
+          `No forecasting model available for type: ${request.type}`,
         );
       }
 
@@ -647,7 +647,7 @@ export class PredictiveAnalyticsEngine {
       const forecastPoints = await this.generateForecast(
         model,
         timeSeriesData,
-        request
+        request,
       );
 
       // Analyze trend
@@ -656,7 +656,7 @@ export class PredictiveAnalyticsEngine {
       // Analyze seasonality
       const seasonalityAnalysis = await this.analyzeSeasonality(
         timeSeriesData,
-        forecastPoints
+        forecastPoints,
       );
 
       // Create forecast result
@@ -680,7 +680,7 @@ export class PredictiveAnalyticsEngine {
           qualityScore: this.calculateDataQuality(timeSeriesData),
           warnings: this.generateForecastWarnings(
             timeSeriesData,
-            forecastPoints
+            forecastPoints,
           ),
         },
       };
@@ -701,7 +701,7 @@ export class PredictiveAnalyticsEngine {
    * Train new model
    */
   async trainModel(
-    request: ModelTrainingRequest
+    request: ModelTrainingRequest,
   ): Promise<ModelTrainingResult> {
     try {
       if (this.isTraining) {
@@ -720,7 +720,7 @@ export class PredictiveAnalyticsEngine {
       // Split data
       const { train, validation, test } = await this.splitData(
         trainingData,
-        request.validation
+        request.validation,
       );
 
       // Train model
@@ -731,7 +731,7 @@ export class PredictiveAnalyticsEngine {
         model,
         train,
         validation,
-        test
+        test,
       );
 
       // Generate artifacts
@@ -771,7 +771,7 @@ export class PredictiveAnalyticsEngine {
     clinicId: string,
     type?: PredictionType,
     startDate?: string,
-    endDate?: string
+    endDate?: string,
   ): Promise<PredictionInsights> {
     try {
       const insights: PredictionInsights = {
@@ -779,35 +779,35 @@ export class PredictiveAnalyticsEngine {
           clinicId,
           type,
           startDate,
-          endDate
+          endDate,
         ),
         accuracyMetrics: await this.calculateAccuracyMetrics(
           clinicId,
           type,
           startDate,
-          endDate
+          endDate,
         ),
         modelPerformance: await this.getModelPerformanceInsights(
           clinicId,
-          type
+          type,
         ),
         predictionTrends: await this.analyzePredictionTrends(
           clinicId,
           type,
           startDate,
-          endDate
+          endDate,
         ),
         riskDistribution: await this.analyzeRiskDistribution(
           clinicId,
           type,
           startDate,
-          endDate
+          endDate,
         ),
         recommendationImpact: await this.analyzeRecommendationImpact(
           clinicId,
           type,
           startDate,
-          endDate
+          endDate,
         ),
         topFeatures: await this.getTopFeatures(clinicId, type),
         modelDrift: await this.detectModelDrift(clinicId, type),
@@ -815,7 +815,7 @@ export class PredictiveAnalyticsEngine {
           clinicId,
           type,
           startDate,
-          endDate
+          endDate,
         ),
       };
 
@@ -831,7 +831,7 @@ export class PredictiveAnalyticsEngine {
    */
   async updateModelWithFeedback(
     predictionId: string,
-    feedback: PredictionFeedback
+    feedback: PredictionFeedback,
   ): Promise<void> {
     try {
       const prediction = this.predictions.get(predictionId);
@@ -972,7 +972,7 @@ export class PredictiveAnalyticsEngine {
   }
 
   private async createDefaultModel(
-    modelData: Partial<PredictiveModel>
+    modelData: Partial<PredictiveModel>,
   ): Promise<PredictiveModel> {
     const model: PredictiveModel = {
       id: `model_${modelData.type}_${Date.now()}`,
@@ -1044,7 +1044,7 @@ export class PredictiveAnalyticsEngine {
       async () => {
         await this.monitorModelPerformance();
       },
-      60 * 60 * 1000
+      60 * 60 * 1000,
     ); // 1 hour
 
     // Cache cleanup
@@ -1052,7 +1052,7 @@ export class PredictiveAnalyticsEngine {
       () => {
         this.cleanupCache();
       },
-      10 * 60 * 1000
+      10 * 60 * 1000,
     ); // 10 minutes
 
     // Model drift detection
@@ -1060,7 +1060,7 @@ export class PredictiveAnalyticsEngine {
       async () => {
         await this.detectModelDriftForAllModels();
       },
-      24 * 60 * 60 * 1000
+      24 * 60 * 60 * 1000,
     ); // 24 hours
   }
 
@@ -1071,7 +1071,7 @@ export class PredictiveAnalyticsEngine {
 
   private async validateFeatures(
     model: PredictiveModel,
-    features: Record<string, any>
+    features: Record<string, any>,
   ): Promise<void> {
     for (const feature of model.features) {
       const value = features[feature.name];
@@ -1114,7 +1114,7 @@ export class PredictiveAnalyticsEngine {
 
   private async preprocessFeatures(
     model: PredictiveModel,
-    features: Record<string, any>
+    features: Record<string, any>,
   ): Promise<Record<string, any>> {
     const processed = { ...features };
 
@@ -1151,7 +1151,7 @@ export class PredictiveAnalyticsEngine {
 
   private async makePrediction(
     model: PredictiveModel,
-    features: Record<string, any>
+    features: Record<string, any>,
   ): Promise<any> {
     // Simulate prediction based on model algorithm
     switch (model.algorithm) {
@@ -1168,7 +1168,7 @@ export class PredictiveAnalyticsEngine {
 
   private simulateRandomForestPrediction(
     model: PredictiveModel,
-    _features: Record<string, any>
+    _features: Record<string, any>,
   ): any {
     // Simulate random forest prediction
     const probability = 0.7 + Math.random() * 0.25; // 0.7-0.95
@@ -1183,14 +1183,14 @@ export class PredictiveAnalyticsEngine {
           acc[feature.name] = (Math.random() - 0.5) * feature.importance;
           return acc;
         },
-        {} as Record<string, number>
+        {} as Record<string, number>,
       ),
     };
   }
 
   private simulateNeuralNetworkPrediction(
     model: PredictiveModel,
-    _features: Record<string, any>
+    _features: Record<string, any>,
   ): any {
     // Simulate neural network prediction
     const probability = 0.75 + Math.random() * 0.2; // 0.75-0.95
@@ -1205,14 +1205,14 @@ export class PredictiveAnalyticsEngine {
           acc[feature.name] = Math.random() * feature.importance;
           return acc;
         },
-        {} as Record<string, number>
+        {} as Record<string, number>,
       ),
     };
   }
 
   private simulateLinearRegressionPrediction(
     model: PredictiveModel,
-    _features: Record<string, any>
+    _features: Record<string, any>,
   ): any {
     // Simulate linear regression prediction
     const value = 7.5 + Math.random() * 2; // 7.5-9.5 score
@@ -1227,14 +1227,14 @@ export class PredictiveAnalyticsEngine {
           acc[feature.name] = (Math.random() - 0.5) * feature.importance;
           return acc;
         },
-        {} as Record<string, number>
+        {} as Record<string, number>,
       ),
     };
   }
 
   private simulateDefaultPrediction(
     _model: PredictiveModel,
-    _features: Record<string, any>
+    _features: Record<string, any>,
   ): any {
     // Default simulation
     const probability = 0.6 + Math.random() * 0.3;
@@ -1249,7 +1249,7 @@ export class PredictiveAnalyticsEngine {
 
   private formatPrediction(
     type: PredictionType,
-    rawPrediction: any
+    rawPrediction: any,
   ): PredictionValue {
     switch (type) {
       case 'outcome':
@@ -1306,7 +1306,7 @@ export class PredictiveAnalyticsEngine {
   private async assessRisk(
     _model: PredictiveModel,
     _rawPrediction: any,
-    _features: Record<string, any>
+    _features: Record<string, any>,
   ): Promise<RiskAssessment> {
     // Simulate risk assessment
     const riskScore = Math.random() * 0.3 + 0.1; // 0.1-0.4
@@ -1332,7 +1332,7 @@ export class PredictiveAnalyticsEngine {
   private async generateExplanations(
     _model: PredictiveModel,
     rawPrediction: any,
-    features: Record<string, any>
+    features: Record<string, any>,
   ): Promise<PredictionExplanation[]> {
     const explanations: PredictionExplanation[] = [];
 
@@ -1344,11 +1344,11 @@ export class PredictiveAnalyticsEngine {
           value: features[feature],
           interpretation: this.interpretContribution(
             feature,
-            contribution as number
+            contribution as number,
           ),
           confidence: 0.8,
         });
-      }
+      },
     );
 
     return explanations;
@@ -1373,7 +1373,7 @@ export class PredictiveAnalyticsEngine {
   private async generateRecommendations(
     model: PredictiveModel,
     rawPrediction: any,
-    _features: Record<string, any>
+    _features: Record<string, any>,
   ): Promise<Recommendation[]> {
     const recommendations: Recommendation[] = [];
 
@@ -1399,7 +1399,7 @@ export class PredictiveAnalyticsEngine {
 
   // Placeholder methods for comprehensive functionality
   private async findForecastingModel(
-    type: PredictionType
+    type: PredictionType,
   ): Promise<PredictiveModel | null> {
     return (
       Array.from(this.models.values()).find((m) => m.type === type) || null
@@ -1407,7 +1407,7 @@ export class PredictiveAnalyticsEngine {
   }
 
   private async prepareTimeSeriesData(
-    _request: ForecastRequest
+    _request: ForecastRequest,
   ): Promise<any[]> {
     return []; // Implementation would prepare time series data
   }
@@ -1415,7 +1415,7 @@ export class PredictiveAnalyticsEngine {
   private async generateForecast(
     _model: PredictiveModel,
     _data: any[],
-    _request: ForecastRequest
+    _request: ForecastRequest,
   ): Promise<ForecastPoint[]> {
     return []; // Implementation would generate forecast points
   }
@@ -1433,7 +1433,7 @@ export class PredictiveAnalyticsEngine {
 
   private async analyzeSeasonality(
     _data: any[],
-    _points: ForecastPoint[]
+    _points: ForecastPoint[],
   ): Promise<SeasonalityAnalysis> {
     return {
       type: 'none',
@@ -1446,14 +1446,14 @@ export class PredictiveAnalyticsEngine {
   }
 
   private calculateForecastConfidence(
-    _points: ForecastPoint[]
+    _points: ForecastPoint[],
   ): ModelConfidence {
     return 'medium';
   }
 
   private async calculateForecastAccuracy(
     _model: PredictiveModel,
-    _data: any[]
+    _data: any[],
   ): Promise<number> {
     return 0.85;
   }
@@ -1464,7 +1464,7 @@ export class PredictiveAnalyticsEngine {
 
   private generateForecastWarnings(
     _data: any[],
-    _points: ForecastPoint[]
+    _points: ForecastPoint[],
   ): string[] {
     return [];
   }

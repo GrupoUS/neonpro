@@ -29,7 +29,7 @@ const _pauseSubscriptionSchema = z.object({
 // GET /api/subscriptions/[id] - Get subscription details
 export async function GET(
   _request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const supabase = createRouteHandlerClient({ cookies });
@@ -47,7 +47,7 @@ export async function GET(
     if (!subscriptionId) {
       return NextResponse.json(
         { error: 'Subscription ID is required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -64,7 +64,7 @@ export async function GET(
           *,
           payment_retry_logs(*)
         )
-      `
+      `,
       )
       .eq('id', subscriptionId)
       .single();
@@ -73,7 +73,7 @@ export async function GET(
       logger.error(`Error fetching subscription ${subscriptionId}:`, error);
       return NextResponse.json(
         { error: 'Subscription not found' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -93,7 +93,7 @@ export async function GET(
     if (!(isAdmin || isCustomerOwner || isSameOrganization)) {
       return NextResponse.json(
         { error: 'Insufficient permissions' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -104,7 +104,7 @@ export async function GET(
     logger.error(`Error in GET /api/subscriptions/${params.id}:`, error);
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -112,7 +112,7 @@ export async function GET(
 // PUT /api/subscriptions/[id] - Update subscription
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const supabase = createRouteHandlerClient({ cookies });
@@ -136,7 +136,7 @@ export async function PUT(
           error: 'Invalid request data',
           details: validationResult.error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -147,7 +147,7 @@ export async function PUT(
         `
         *,
         customer:customers(*)
-      `
+      `,
       )
       .eq('id', subscriptionId)
       .single();
@@ -155,7 +155,7 @@ export async function PUT(
     if (fetchError || !subscription) {
       return NextResponse.json(
         { error: 'Subscription not found' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -175,14 +175,14 @@ export async function PUT(
     if (!(isAdmin || isCustomerOwner || isSameOrganization)) {
       return NextResponse.json(
         { error: 'Insufficient permissions' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
     // Update subscription
     const updatedSubscription = await subscriptionManager.updateSubscription(
       subscriptionId,
-      validationResult.data
+      validationResult.data,
     );
 
     logger.info(`Subscription updated: ${subscriptionId} by user: ${user.id}`);
@@ -200,7 +200,7 @@ export async function PUT(
 
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -208,7 +208,7 @@ export async function PUT(
 // DELETE /api/subscriptions/[id] - Cancel subscription
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const supabase = createRouteHandlerClient({ cookies });
@@ -232,7 +232,7 @@ export async function DELETE(
         `
         *,
         customer:customers(*)
-      `
+      `,
       )
       .eq('id', subscriptionId)
       .single();
@@ -240,7 +240,7 @@ export async function DELETE(
     if (fetchError || !subscription) {
       return NextResponse.json(
         { error: 'Subscription not found' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -260,18 +260,18 @@ export async function DELETE(
     if (!(isAdmin || isCustomerOwner || isSameOrganization)) {
       return NextResponse.json(
         { error: 'Insufficient permissions' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
     // Cancel subscription
     const canceledSubscription = await subscriptionManager.cancelSubscription(
       subscriptionId,
-      immediate
+      immediate,
     );
 
     logger.info(
-      `Subscription canceled: ${subscriptionId} by user: ${user.id}, immediate: ${immediate}`
+      `Subscription canceled: ${subscriptionId} by user: ${user.id}, immediate: ${immediate}`,
     );
 
     return NextResponse.json({
@@ -289,7 +289,7 @@ export async function DELETE(
 
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

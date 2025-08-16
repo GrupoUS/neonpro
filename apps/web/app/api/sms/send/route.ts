@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
             message: 'Authentication required',
           },
         },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
           user_id: session.user.id,
         },
       },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
     // Handle validation errors
@@ -65,7 +65,7 @@ export async function POST(request: NextRequest) {
             details: error.errors,
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -81,7 +81,7 @@ export async function POST(request: NextRequest) {
             details: process.env.NODE_ENV === 'development' ? error : undefined,
           },
         },
-        { status: statusCode }
+        { status: statusCode },
       );
     }
 
@@ -95,7 +95,7 @@ export async function POST(request: NextRequest) {
           details: process.env.NODE_ENV === 'development' ? error : undefined,
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -132,7 +132,7 @@ export async function GET() {
         message: 'Only POST method is allowed',
       },
     },
-    { status: 405 }
+    { status: 405 },
   );
 }
 
@@ -145,7 +145,7 @@ export async function PUT() {
         message: 'Only POST method is allowed',
       },
     },
-    { status: 405 }
+    { status: 405 },
   );
 }
 
@@ -158,6 +158,6 @@ export async function DELETE() {
         message: 'Only POST method is allowed',
       },
     },
-    { status: 405 }
+    { status: 405 },
   );
 }

@@ -66,7 +66,7 @@ export class CohortAnalyzer {
    * Similar to Google Analytics cohort specification
    */
   async generateCohorts(
-    config: CohortAnalysisConfig
+    config: CohortAnalysisConfig,
   ): Promise<CohortDefinition[]> {
     const validConfig = cohortConfigSchema.parse(config);
 
@@ -82,7 +82,7 @@ export class CohortAnalyzer {
     const cohortRanges = this.generateCohortRanges(
       validConfig.startDate,
       validConfig.endDate,
-      validConfig.granularity
+      validConfig.granularity,
     );
 
     const cohorts: CohortDefinition[] = [];
@@ -94,7 +94,7 @@ export class CohortAnalyzer {
           p_start_date: range.start,
           p_end_date: range.end,
           p_dimension: dimension,
-        }
+        },
       );
 
       if (userCount && userCount > 0) {
@@ -118,7 +118,7 @@ export class CohortAnalyzer {
    */
   async calculateCohortRetention(
     cohorts: CohortDefinition[],
-    config: CohortAnalysisConfig
+    config: CohortAnalysisConfig,
   ): Promise<CohortMetrics[]> {
     const metrics: CohortMetrics[] = [];
 
@@ -127,7 +127,7 @@ export class CohortAnalyzer {
         const periodDate = this.calculatePeriodDate(
           cohort.startDate,
           period,
-          config.granularity
+          config.granularity,
         );
 
         // Get active users for this cohort in this period
@@ -139,7 +139,7 @@ export class CohortAnalyzer {
             p_period_date: periodDate,
             p_dimension: cohort.dimension,
             p_include_revenue: config.includeRevenue,
-          }
+          },
         );
 
         if (periodMetrics) {
@@ -163,7 +163,7 @@ export class CohortAnalyzer {
             averageRevenuePerUser:
               periodMetrics.active_users > 0
                 ? Math.round(
-                    (periodMetrics.revenue / periodMetrics.active_users) * 100
+                    (periodMetrics.revenue / periodMetrics.active_users) * 100,
                   ) / 100
                 : 0,
             churnedUsers: periodMetrics.churned_users || 0,
@@ -182,7 +182,7 @@ export class CohortAnalyzer {
    */
   async calculateRevenueCohorts(
     cohorts: CohortDefinition[],
-    config: CohortAnalysisConfig
+    config: CohortAnalysisConfig,
   ): Promise<any[]> {
     const revenueCohorts = [];
 
@@ -194,7 +194,7 @@ export class CohortAnalyzer {
           p_cohort_end: cohort.endDate,
           p_periods: config.periods,
           p_granularity: config.granularity,
-        }
+        },
       );
 
       if (revenueData) {
@@ -206,7 +206,7 @@ export class CohortAnalyzer {
           cumulativeRevenue: this.calculateCumulativeRevenue(revenueData),
           lifetimeValue: this.calculateLifetimeValue(
             revenueData,
-            cohort.userCount
+            cohort.userCount,
           ),
         });
       }
@@ -238,7 +238,7 @@ export class CohortAnalyzer {
   private generateCohortRanges(
     startDate: string,
     endDate: string,
-    granularity: string
+    granularity: string,
   ) {
     const ranges = [];
     const start = new Date(startDate);
@@ -293,7 +293,7 @@ export class CohortAnalyzer {
   private calculatePeriodDate(
     startDate: string,
     period: number,
-    granularity: string
+    granularity: string,
   ): string {
     const date = new Date(startDate);
 
@@ -314,7 +314,7 @@ export class CohortAnalyzer {
 
   private calculateLifetimeValue(
     revenueData: any[],
-    userCount: number
+    userCount: number,
   ): number {
     const totalRevenue = this.calculateCumulativeRevenue(revenueData);
     return userCount > 0
@@ -331,12 +331,12 @@ export class CohortAnalyzer {
         groups[metric.period].push(metric);
         return groups;
       },
-      {} as Record<number, CohortMetrics[]>
+      {} as Record<number, CohortMetrics[]>,
     );
   }
 
   private calculateRetentionTrends(
-    periodGroups: Record<number, CohortMetrics[]>
+    periodGroups: Record<number, CohortMetrics[]>,
   ) {
     const trends = [];
 
@@ -367,7 +367,7 @@ export class CohortAnalyzer {
         groups[metric.cohortId].push(metric);
         return groups;
       },
-      {} as Record<string, CohortMetrics[]>
+      {} as Record<string, CohortMetrics[]>,
     );
 
     const comparison = [];
@@ -389,7 +389,7 @@ export class CohortAnalyzer {
         lifetimeValue: Math.round(lifetimeValue * 100) / 100,
         performanceScore: this.calculatePerformanceScore(
           avgRetention,
-          lifetimeValue
+          lifetimeValue,
         ),
       });
     }
@@ -422,7 +422,7 @@ export class CohortAnalyzer {
   }
 
   private performSignificanceTests(
-    periodGroups: Record<number, CohortMetrics[]>
+    periodGroups: Record<number, CohortMetrics[]>,
   ) {
     // Simplified statistical significance testing
     // In production, would use proper statistical tests
@@ -468,7 +468,7 @@ export class CohortAnalyzer {
 
     // Analyze retention trends
     const retentionTrend = this.calculateTrendDirection(
-      metrics.map((m) => ({ period: m.period, value: m.retentionRate }))
+      metrics.map((m) => ({ period: m.period, value: m.retentionRate })),
     );
 
     if (retentionTrend.direction === 'increasing') {
@@ -492,7 +492,7 @@ export class CohortAnalyzer {
       metrics.map((m) => ({
         period: m.period,
         value: m.averageRevenuePerUser,
-      }))
+      })),
     );
 
     if (revenueTrend.direction === 'increasing') {
@@ -509,7 +509,7 @@ export class CohortAnalyzer {
 
   private calculatePerformanceScore(
     retention: number,
-    lifetimeValue: number
+    lifetimeValue: number,
   ): number {
     // Weighted performance score (retention: 60%, LTV: 40%)
     return (
@@ -557,14 +557,14 @@ export const cohortUtils = {
     const heatmapData = [];
     const cohorts = [...new Set(metrics.map((m) => m.cohortId))];
     const periods = [...new Set(metrics.map((m) => m.period))].sort(
-      (a, b) => a - b
+      (a, b) => a - b,
     );
 
     for (const cohort of cohorts) {
       const cohortData = { cohort };
       for (const period of periods) {
         const metric = metrics.find(
-          (m) => m.cohortId === cohort && m.period === period
+          (m) => m.cohortId === cohort && m.period === period,
         );
         cohortData[`period_${period}`] = metric ? metric.retentionRate : 0;
       }
@@ -582,7 +582,7 @@ export const cohortUtils = {
     return {
       total: sizes.reduce((sum, size) => sum + size, 0),
       average: Math.round(
-        sizes.reduce((sum, size) => sum + size, 0) / sizes.length
+        sizes.reduce((sum, size) => sum + size, 0) / sizes.length,
       ),
       median: sizes.sort((a, b) => a - b)[Math.floor(sizes.length / 2)],
       largest: Math.max(...sizes),

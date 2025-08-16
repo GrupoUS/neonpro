@@ -19,7 +19,7 @@ export async function GET(request: NextRequest) {
     const analytics =
       await personalizedRecommendationsService.getRecommendationAnalytics(
         startDate || undefined,
-        endDate || undefined
+        endDate || undefined,
       );
 
     return NextResponse.json({
@@ -29,7 +29,7 @@ export async function GET(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to fetch recommendation analytics', success: false },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -48,14 +48,14 @@ export async function POST(request: NextRequest) {
           details: validationResult.error.issues,
           success: false,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     // The validated data is guaranteed to have all required fields by the schema
     const performance =
       await personalizedRecommendationsService.recordRecommendationPerformance(
-        validationResult.data as RecordPerformanceRequest
+        validationResult.data as RecordPerformanceRequest,
       );
 
     return NextResponse.json(
@@ -63,12 +63,12 @@ export async function POST(request: NextRequest) {
         performance,
         success: true,
       },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to record performance metric', success: false },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -196,7 +196,7 @@ export class EnhancedSubscriptionCache {
    */
   async get(
     key: string,
-    prefetched = false
+    prefetched = false,
   ): Promise<SubscriptionValidationResult | null> {
     const startTime = performance.now();
 
@@ -267,7 +267,7 @@ export class EnhancedSubscriptionCache {
     key: string,
     value: SubscriptionValidationResult,
     ttl?: number,
-    options: { skipCompression?: boolean; priority?: number } = {}
+    options: { skipCompression?: boolean; priority?: number } = {},
   ): Promise<void> {
     const startTime = performance.now();
 
@@ -345,7 +345,7 @@ export class EnhancedSubscriptionCache {
           true,
           duration,
           'memory',
-          entry.memorySize
+          entry.memorySize,
         );
       }
 
@@ -484,7 +484,7 @@ export class EnhancedSubscriptionCache {
     // Limit concurrent prefetch operations
     const keys = Array.from(candidateKeys).slice(
       0,
-      this.config.prefetch.maxConcurrent
+      this.config.prefetch.maxConcurrent,
     );
 
     for (const key of keys) {
@@ -547,7 +547,7 @@ export class EnhancedSubscriptionCache {
     // Calculate access frequency
     const now = Date.now();
     const recentAccesses = pattern.filter(
-      (time) => now - time < 60 * 60 * 1000
+      (time) => now - time < 60 * 60 * 1000,
     ); // Last hour
     const frequency = recentAccesses.length / 60; // accesses per minute
 
@@ -564,7 +564,7 @@ export class EnhancedSubscriptionCache {
       // Low frequency
       adjustedTTL = Math.min(
         this.config.adaptiveTTL.maxTTL,
-        baseTTL * this.config.adaptiveTTL.adjustmentFactor
+        baseTTL * this.config.adaptiveTTL.adjustmentFactor,
       );
     }
 
@@ -623,7 +623,7 @@ export class EnhancedSubscriptionCache {
    * Get prefetch candidates based on strategy
    */
   private async getPrefetchCandidates(
-    strategy: PrefetchStrategy
+    strategy: PrefetchStrategy,
   ): Promise<string[]> {
     switch (strategy.strategy) {
       case 'recent':
@@ -820,7 +820,7 @@ export class EnhancedSubscriptionCache {
     hit?: boolean,
     duration?: number,
     cacheLayer: CacheOperation['cacheLayer'] = 'memory',
-    memorySize?: number
+    memorySize?: number,
   ): void {
     if (!this.config.monitoring.trackOperations) {
       return;
@@ -848,7 +848,7 @@ export class EnhancedSubscriptionCache {
   private handleCacheError(
     _error: any,
     _operation: string,
-    _key?: string
+    _key?: string,
   ): void {
     this.failureCount++;
     this.lastFailureTime = Date.now();
@@ -884,7 +884,7 @@ export class EnhancedSubscriptionCache {
       () => {
         this.prefetch().catch((_error) => {});
       },
-      5 * 60 * 1000
+      5 * 60 * 1000,
     ); // Every 5 minutes
   }
 

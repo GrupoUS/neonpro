@@ -26,25 +26,25 @@ const currencySchema = z.number().min(0);
 
 // Enum validation schemas
 const reportTypeSchema = z.enum(
-  Object.values(REPORT_TYPES) as [string, ...string[]]
+  Object.values(REPORT_TYPES) as [string, ...string[]],
 );
 const reportFormatSchema = z.enum(
-  Object.values(REPORT_FORMATS) as [string, ...string[]]
+  Object.values(REPORT_FORMATS) as [string, ...string[]],
 );
 const reportStatusSchema = z.enum(
-  Object.values(REPORT_STATUS) as [string, ...string[]]
+  Object.values(REPORT_STATUS) as [string, ...string[]],
 );
 const kpiUnitTypeSchema = z.enum(
-  Object.values(KPI_UNIT_TYPES) as [string, ...string[]]
+  Object.values(KPI_UNIT_TYPES) as [string, ...string[]],
 );
 const periodTypeSchema = z.enum(
-  Object.values(PERIOD_TYPES) as [string, ...string[]]
+  Object.values(PERIOD_TYPES) as [string, ...string[]],
 );
 const alertStatusSchema = z.enum(
-  Object.values(ALERT_STATUS) as [string, ...string[]]
+  Object.values(ALERT_STATUS) as [string, ...string[]],
 );
 const frequencyTypeSchema = z.enum(
-  Object.values(FREQUENCY_TYPES) as [string, ...string[]]
+  Object.values(FREQUENCY_TYPES) as [string, ...string[]],
 );
 
 // Financial Report validation schema
@@ -128,7 +128,7 @@ export const financialKPISchema = z
     {
       message: 'Warning and critical thresholds must be different',
       path: ['threshold_critical'],
-    }
+    },
   );
 
 // Create Financial KPI schema
@@ -356,7 +356,7 @@ export const reportParametersSchema = z
       message:
         'Comparison period end must be after or equal to comparison period start',
       path: ['comparison_period_end'],
-    }
+    },
   );
 
 // Financial statement validation schemas
@@ -505,7 +505,7 @@ export const revenueAnalyticsSchema = z.object({
       revenue: currencySchema,
       percentage: percentageSchema,
       growth_rate: z.number().optional(),
-    })
+    }),
   ),
   revenue_by_provider: z.array(
     z.object({
@@ -513,14 +513,14 @@ export const revenueAnalyticsSchema = z.object({
       revenue: currencySchema,
       percentage: percentageSchema,
       patient_count: z.number().int().min(0),
-    })
+    }),
   ),
   revenue_by_period: z.array(
     z.object({
       period: z.string(),
       revenue: currencySchema,
       growth_rate: z.number().optional(),
-    })
+    }),
   ),
   revenue_trends: z.object({
     daily_average: currencySchema,
@@ -614,7 +614,7 @@ export const validateEmailList = (emails: string[]): boolean => {
 
 export const validateKPIThresholds = (
   warning?: number,
-  critical?: number
+  critical?: number,
 ): boolean => {
   if (warning !== undefined && critical !== undefined) {
     return warning !== critical;

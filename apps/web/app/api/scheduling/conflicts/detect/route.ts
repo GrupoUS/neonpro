@@ -54,7 +54,7 @@ export async function POST(request: NextRequest) {
           error:
             'Missing required fields: appointmentStart, appointmentEnd, professionalId, treatmentType',
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -65,14 +65,14 @@ export async function POST(request: NextRequest) {
     if (Number.isNaN(startDate.getTime()) || Number.isNaN(endDate.getTime())) {
       return NextResponse.json(
         { error: 'Invalid date format. Use ISO 8601 format.' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     if (startDate >= endDate) {
       return NextResponse.json(
         { error: 'Start time must be before end time' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -86,7 +86,7 @@ export async function POST(request: NextRequest) {
       body.professionalId,
       body.treatmentType,
       body.roomId,
-      body.equipmentIds
+      body.equipmentIds,
     );
 
     // Log the conflict detection
@@ -100,7 +100,7 @@ export async function POST(request: NextRequest) {
         conflictCount: result.conflicts.length,
         processingTimeMs: result.processingTimeMs,
         hasConflicts: result.hasConflicts,
-      }
+      },
     );
 
     // Return results
@@ -121,7 +121,7 @@ export async function POST(request: NextRequest) {
         error: 'Internal server error during conflict detection',
         details: process.env.NODE_ENV === 'development' ? error : undefined,
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

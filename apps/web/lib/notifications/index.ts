@@ -90,7 +90,7 @@ export async function createNotificationSystem(config: {
   // Criar gerenciador principal
   const notificationManager = new NotificationManager(
     channelManager,
-    templateEngine
+    templateEngine,
   );
 
   // Criar motor de automação se habilitado
@@ -98,7 +98,7 @@ export async function createNotificationSystem(config: {
   if (config.enableAutomation) {
     automationEngine = new AutomationEngine(
       notificationManager,
-      templateEngine
+      templateEngine,
     );
     automationEngine.start();
   }

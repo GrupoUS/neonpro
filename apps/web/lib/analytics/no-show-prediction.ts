@@ -86,7 +86,7 @@ export class NoShowPredictionEngine {
    */
   async predictNoShow(
     appointmentId: string,
-    appointmentData: any
+    appointmentData: any,
   ): Promise<NoShowPrediction> {
     try {
       // Gather comprehensive data for prediction
@@ -117,7 +117,7 @@ export class NoShowPredictionEngine {
       const interventions = await this.generateInterventionRecommendations(
         prediction.riskScore,
         riskFactors,
-        appointmentData
+        appointmentData,
       );
 
       return {
@@ -206,7 +206,7 @@ export class NoShowPredictionEngine {
         acc[slot] = (acc[slot] || 0) + 1;
         return acc;
       },
-      {} as Record<string, number>
+      {} as Record<string, number>,
     );
 
     const preferredTimeSlots = Object.entries(timeSlotCounts)
@@ -238,7 +238,7 @@ export class NoShowPredictionEngine {
    * Extract appointment-specific features for prediction
    */
   private async extractAppointmentFeatures(
-    appointmentData: any
+    appointmentData: any,
   ): Promise<Record<string, any>> {
     const scheduledDate = new Date(appointmentData.scheduled_date);
     const createdDate = new Date(appointmentData.created_at);
@@ -254,7 +254,7 @@ export class NoShowPredictionEngine {
       priority: appointmentData.priority || 'NORMAL',
       bookingAdvanceDays: Math.ceil(
         (scheduledDate.getTime() - createdDate.getTime()) /
-          (1000 * 60 * 60 * 24)
+          (1000 * 60 * 60 * 24),
       ),
       isRecurring: appointmentData.is_recurring,
       providerExperience: appointmentData.provider_years_experience || 5,
@@ -266,7 +266,7 @@ export class NoShowPredictionEngine {
    * Get external factors that might affect no-show probability
    */
   private async getExternalFactors(
-    appointmentDate: string
+    appointmentDate: string,
   ): Promise<Record<string, any>> {
     const date = new Date(appointmentDate);
 
@@ -289,7 +289,7 @@ export class NoShowPredictionEngine {
    * Analyze patient communication patterns
    */
   private async getCommunicationPatterns(
-    _patientId: string
+    _patientId: string,
   ): Promise<Record<string, any>> {
     // This would integrate with communication logs
     // For now, returning default patterns
@@ -335,7 +335,7 @@ export class NoShowPredictionEngine {
       contribution:
         Math.min(
           data.patientHistory.avgDaysBetweenBookingAndAppointment / 30,
-          1
+          1,
         ) * 15,
       description: `Average booking ${data.patientHistory.avgDaysBetweenBookingAndAppointment.toFixed(1)} days in advance`,
     });
@@ -403,7 +403,7 @@ export class NoShowPredictionEngine {
     // Simple weighted sum model (can be enhanced with ML models)
     const totalContribution = riskFactors.reduce(
       (sum, factor) => sum + factor.contribution,
-      0
+      0,
     );
     const baseRiskScore = Math.min(Math.max(totalContribution, 0), 100);
 
@@ -440,7 +440,7 @@ export class NoShowPredictionEngine {
   private async generateInterventionRecommendations(
     riskScore: number,
     _riskFactors: RiskFactor[],
-    _appointmentData: any
+    _appointmentData: any,
   ): Promise<InterventionRecommendation[]> {
     const recommendations: InterventionRecommendation[] = [];
 
@@ -506,7 +506,7 @@ export class NoShowPredictionEngine {
    * Determine risk level based on score
    */
   private getRiskLevel(
-    riskScore: number
+    riskScore: number,
   ): 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL' {
     if (riskScore >= 80) {
       return 'CRITICAL';
@@ -548,7 +548,7 @@ export class NoShowPredictionEngine {
   }
 
   private calculateSeasonalPatterns(
-    _appointments: any[]
+    _appointments: any[],
   ): Record<string, number> {
     const patterns: Record<string, number> = {};
     // Implementation for seasonal analysis
@@ -556,7 +556,7 @@ export class NoShowPredictionEngine {
   }
 
   private calculateImprovementTrend(
-    _appointments: any[]
+    _appointments: any[],
   ): 'IMPROVING' | 'STABLE' | 'DECLINING' {
     // Implementation for trend analysis
     return 'STABLE';

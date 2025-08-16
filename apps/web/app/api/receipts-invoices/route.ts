@@ -19,7 +19,7 @@ const CreateDocumentSchema = z.object({
       total: z.number().positive(),
       taxRate: z.number().min(0).max(100).default(0),
       taxAmount: z.number().min(0).default(0),
-    })
+    }),
   ),
   dueDate: z.string().datetime().optional(),
   paymentMethod: z.string().optional(),
@@ -141,7 +141,7 @@ function getReceiptInvoiceManager() {
     supabaseKey,
     companyInfo,
     nfseConfig,
-    emailConfig
+    emailConfig,
   );
 }
 
@@ -150,7 +150,7 @@ export async function GET(request: NextRequest) {
   try {
     const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
     );
 
     // Check authentication
@@ -158,7 +158,7 @@ export async function GET(request: NextRequest) {
     if (!authHeader) {
       return NextResponse.json(
         { error: 'Authorization header required' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -170,7 +170,7 @@ export async function GET(request: NextRequest) {
     if (authError || !user) {
       return NextResponse.json(
         { error: 'Invalid authentication' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -211,7 +211,7 @@ export async function GET(request: NextRequest) {
         success: false,
         error: error instanceof Error ? error.message : 'Internal server error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -221,7 +221,7 @@ export async function POST(request: NextRequest) {
   try {
     const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
     );
 
     // Check authentication
@@ -229,7 +229,7 @@ export async function POST(request: NextRequest) {
     if (!authHeader) {
       return NextResponse.json(
         { error: 'Authorization header required' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -241,7 +241,7 @@ export async function POST(request: NextRequest) {
     if (authError || !user) {
       return NextResponse.json(
         { error: 'Invalid authentication' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -258,18 +258,18 @@ export async function POST(request: NextRequest) {
     if (customerError || !customer) {
       return NextResponse.json(
         { error: 'Customer not found' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
     // Calculate totals
     const subtotal = validatedData.items.reduce(
       (sum, item) => sum + item.total,
-      0
+      0,
     );
     const taxTotal = validatedData.items.reduce(
       (sum, item) => sum + item.taxAmount,
-      0
+      0,
     );
     const total = subtotal + taxTotal;
 
@@ -279,7 +279,7 @@ export async function POST(request: NextRequest) {
       {
         doc_type: validatedData.type,
         prefix: validatedData.type === 'receipt' ? 'REC' : 'FAT',
-      }
+      },
     );
 
     const documentId = crypto.randomUUID();
@@ -368,7 +368,7 @@ export async function POST(request: NextRequest) {
           error: 'Validation error',
           details: error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -377,7 +377,7 @@ export async function POST(request: NextRequest) {
         success: false,
         error: error instanceof Error ? error.message : 'Internal server error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -387,7 +387,7 @@ export async function PUT(request: NextRequest) {
   try {
     const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
     );
 
     // Check authentication
@@ -395,7 +395,7 @@ export async function PUT(request: NextRequest) {
     if (!authHeader) {
       return NextResponse.json(
         { error: 'Authorization header required' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -407,7 +407,7 @@ export async function PUT(request: NextRequest) {
     if (authError || !user) {
       return NextResponse.json(
         { error: 'Invalid authentication' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -417,7 +417,7 @@ export async function PUT(request: NextRequest) {
     if (!documentId) {
       return NextResponse.json(
         { error: 'Document ID is required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -430,7 +430,7 @@ export async function PUT(request: NextRequest) {
     if (validatedData.status) {
       const result = await manager.updateStatus(
         documentId,
-        validatedData.status
+        validatedData.status,
       );
 
       return NextResponse.json({
@@ -466,7 +466,7 @@ export async function PUT(request: NextRequest) {
           error: 'Validation error',
           details: error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -475,7 +475,7 @@ export async function PUT(request: NextRequest) {
         success: false,
         error: error instanceof Error ? error.message : 'Internal server error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -485,7 +485,7 @@ export async function DELETE(request: NextRequest) {
   try {
     const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
     );
 
     // Check authentication
@@ -493,7 +493,7 @@ export async function DELETE(request: NextRequest) {
     if (!authHeader) {
       return NextResponse.json(
         { error: 'Authorization header required' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -505,7 +505,7 @@ export async function DELETE(request: NextRequest) {
     if (authError || !user) {
       return NextResponse.json(
         { error: 'Invalid authentication' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -515,7 +515,7 @@ export async function DELETE(request: NextRequest) {
     if (!documentId) {
       return NextResponse.json(
         { error: 'Document ID is required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -529,7 +529,7 @@ export async function DELETE(request: NextRequest) {
     if (fetchError || !document) {
       return NextResponse.json(
         { error: 'Document not found' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -537,7 +537,7 @@ export async function DELETE(request: NextRequest) {
     if (document.status !== 'draft') {
       return NextResponse.json(
         { error: 'Only draft documents can be deleted' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -566,7 +566,7 @@ export async function DELETE(request: NextRequest) {
         success: false,
         error: error instanceof Error ? error.message : 'Internal server error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -194,7 +194,7 @@ export class ForecastingSystemAPI {
         request.forecast_type,
         new Date(request.start_date),
         new Date(request.end_date),
-        request.options
+        request.options,
       );
 
       const processingTime = Date.now() - startTime;
@@ -221,7 +221,7 @@ export class ForecastingSystemAPI {
    * Generate batch forecasts
    */
   async generateBatchForecasts(
-    request: BatchForecastRequest
+    request: BatchForecastRequest,
   ): Promise<BatchForecastResponse> {
     try {
       if (!this.initialized) {
@@ -245,7 +245,7 @@ export class ForecastingSystemAPI {
             forecastConfig.forecast_type,
             new Date(request.period.start_date),
             new Date(request.period.end_date),
-            request.options
+            request.options,
           );
           return { success: true, forecast };
         } catch (error) {
@@ -301,7 +301,7 @@ export class ForecastingSystemAPI {
    * Generate comprehensive allocation plan
    */
   async generateAllocationPlan(
-    request: AllocationPlanRequest
+    request: AllocationPlanRequest,
   ): Promise<AllocationPlanResponse> {
     try {
       if (!this.initialized) {
@@ -316,7 +316,7 @@ export class ForecastingSystemAPI {
         forecasts = await this.engine.generateServiceForecasts(
           request.clinic_id,
           new Date(request.planning_period.start_date),
-          new Date(request.planning_period.end_date)
+          new Date(request.planning_period.end_date),
         );
       }
 
@@ -328,7 +328,7 @@ export class ForecastingSystemAPI {
           start: new Date(request.planning_period.start_date),
           end: new Date(request.planning_period.end_date),
         },
-        request.objectives
+        request.objectives,
       );
 
       const processingTime = Date.now() - startTime;
@@ -355,7 +355,7 @@ export class ForecastingSystemAPI {
    * Train new model
    */
   async trainModel(
-    request: ModelTrainingRequest
+    request: ModelTrainingRequest,
   ): Promise<ModelTrainingResponse> {
     try {
       if (!this.initialized) {
@@ -365,7 +365,7 @@ export class ForecastingSystemAPI {
       const jobId = await this.modelManager.trainModel(
         request.clinic_id,
         request.config || this.getDefaultTrainingConfig(request.model_type),
-        request.service_id
+        request.service_id,
       );
 
       return {
@@ -373,7 +373,7 @@ export class ForecastingSystemAPI {
         data: {
           job_id: jobId,
           estimated_completion_time: new Date(
-            Date.now() + 30 * 60 * 1000
+            Date.now() + 30 * 60 * 1000,
           ).toISOString(), // 30 minutes
           training_config:
             request.config || this.getDefaultTrainingConfig(request.model_type),
@@ -448,7 +448,7 @@ export class ForecastingSystemAPI {
    * Helper method to get default training configuration
    */
   private getDefaultTrainingConfig(
-    modelType: ForecastModel['model_type']
+    modelType: ForecastModel['model_type'],
   ): ModelTrainingConfig {
     return {
       model_type: modelType,
@@ -483,7 +483,7 @@ export class ForecastingSystemAPI {
    * Helper method to check component health
    */
   private async checkComponentHealth(
-    _component: string
+    _component: string,
   ): Promise<ComponentStatus> {
     try {
       const startTime = Date.now();
@@ -522,7 +522,7 @@ export const ForecastingHelpers = {
   async quickForecast(
     clinicId: string,
     serviceId: string,
-    days = 30
+    days = 30,
   ): Promise<DemandForecast | null> {
     try {
       const endDate = new Date();
@@ -548,7 +548,7 @@ export const ForecastingHelpers = {
    */
   async quickAllocation(
     clinicId: string,
-    days = 30
+    days = 30,
   ): Promise<AllocationPlan | null> {
     try {
       const startDate = new Date();

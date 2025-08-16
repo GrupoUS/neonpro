@@ -292,7 +292,7 @@ export class AdvancedAuthSystem {
     this.updateComponentStatus(
       'timeout_manager',
       'healthy',
-      'Timeout manager initialized'
+      'Timeout manager initialized',
     );
 
     // Initialize concurrent session manager
@@ -300,7 +300,7 @@ export class AdvancedAuthSystem {
     this.updateComponentStatus(
       'concurrent_manager',
       'healthy',
-      'Concurrent session manager initialized'
+      'Concurrent session manager initialized',
     );
   }
 
@@ -313,7 +313,7 @@ export class AdvancedAuthSystem {
       this.updateComponentStatus(
         'suspicious_detector',
         'healthy',
-        'Suspicious activity detector initialized'
+        'Suspicious activity detector initialized',
       );
     }
 
@@ -322,7 +322,7 @@ export class AdvancedAuthSystem {
       this.updateComponentStatus(
         'security_monitor',
         'healthy',
-        'Security monitor initialized'
+        'Security monitor initialized',
       );
     }
   }
@@ -338,7 +338,7 @@ export class AdvancedAuthSystem {
       this.updateComponentStatus(
         'sync_manager',
         'healthy',
-        'Session sync manager initialized'
+        'Session sync manager initialized',
       );
     }
 
@@ -347,7 +347,7 @@ export class AdvancedAuthSystem {
       this.updateComponentStatus(
         'preservation_manager',
         'healthy',
-        'Session preservation manager initialized'
+        'Session preservation manager initialized',
       );
     }
   }
@@ -361,7 +361,7 @@ export class AdvancedAuthSystem {
       this.updateComponentStatus(
         'emergency_manager',
         'healthy',
-        'Emergency shutdown manager initialized'
+        'Emergency shutdown manager initialized',
       );
     }
 
@@ -370,7 +370,7 @@ export class AdvancedAuthSystem {
       this.updateComponentStatus(
         'audit_manager',
         'healthy',
-        'Audit trail manager initialized'
+        'Audit trail manager initialized',
       );
     }
 
@@ -379,7 +379,7 @@ export class AdvancedAuthSystem {
       this.updateComponentStatus(
         'cleanup_manager',
         'healthy',
-        'Data cleanup manager initialized'
+        'Data cleanup manager initialized',
       );
     }
   }
@@ -498,13 +498,13 @@ export class AdvancedAuthSystem {
           this.updateComponentStatus(
             name,
             health.status === 'healthy' ? 'healthy' : 'warning',
-            health.details || 'Health check completed'
+            health.details || 'Health check completed',
           );
         } catch (error) {
           this.updateComponentStatus(
             name,
             'error',
-            `Health check failed: ${error.message}`
+            `Health check failed: ${error.message}`,
           );
         }
       }
@@ -577,7 +577,7 @@ export class AdvancedAuthSystem {
   private updateComponentStatus(
     name: string,
     status: 'healthy' | 'warning' | 'error' | 'disabled',
-    details: any
+    details: any,
   ): void {
     this.componentStatuses.set(name, {
       name,
@@ -592,14 +592,14 @@ export class AdvancedAuthSystem {
    */
   public async createSession(
     userId: string,
-    deviceInfo: any
+    deviceInfo: any,
   ): Promise<UserSession> {
     try {
       // Check concurrent sessions
       if (this.concurrentManager) {
         const canCreate = await this.concurrentManager.canCreateSession(
           userId,
-          deviceInfo
+          deviceInfo,
         );
         if (!canCreate.allowed) {
           throw new Error(`Session creation denied: ${canCreate.reason}`);
@@ -609,7 +609,7 @@ export class AdvancedAuthSystem {
       // Create session
       const session = await this.sessionConfig.createSession(
         userId,
-        deviceInfo
+        deviceInfo,
       );
 
       // Initialize timeout
@@ -714,7 +714,7 @@ export class AdvancedAuthSystem {
 
   public async terminateSession(
     sessionId: string,
-    reason: string
+    reason: string,
   ): Promise<void> {
     const session = await this.sessionConfig.getSession(sessionId);
 
@@ -763,7 +763,7 @@ export class AdvancedAuthSystem {
    */
   public async reportSuspiciousActivity(
     sessionId: string,
-    activity: any
+    activity: any,
   ): Promise<void> {
     if (this.suspiciousDetector) {
       await this.suspiciousDetector.recordActivity(sessionId, activity);
@@ -772,7 +772,7 @@ export class AdvancedAuthSystem {
 
   public async triggerEmergencyShutdown(
     reason: string,
-    scope: 'user' | 'system' | 'global' = 'system'
+    scope: 'user' | 'system' | 'global' = 'system',
   ): Promise<void> {
     if (this.emergencyManager) {
       await this.emergencyManager.triggerEmergency({
@@ -816,7 +816,7 @@ export class AdvancedAuthSystem {
 
     // Calculate overall health
     const healthyComponents = components.filter(
-      (c) => c.status === 'healthy'
+      (c) => c.status === 'healthy',
     ).length;
     const totalComponents = components.length;
     const healthScore =
@@ -854,13 +854,13 @@ export class AdvancedAuthSystem {
 
     if (issues.length > 3) {
       recommendations.push(
-        'Consider system maintenance to address multiple issues'
+        'Consider system maintenance to address multiple issues',
       );
     }
 
     if (this.systemMetrics.performance.errorRate > 0.05) {
       recommendations.push(
-        'High error rate detected, investigate system stability'
+        'High error rate detected, investigate system stability',
       );
     }
 
@@ -986,7 +986,7 @@ export class AdvancedAuthSystem {
 let authSystemInstance: AdvancedAuthSystem | null = null;
 
 export function getAdvancedAuthSystem(
-  config?: Partial<AdvancedAuthConfig>
+  config?: Partial<AdvancedAuthConfig>,
 ): AdvancedAuthSystem {
   if (!authSystemInstance) {
     authSystemInstance = new AdvancedAuthSystem(config);

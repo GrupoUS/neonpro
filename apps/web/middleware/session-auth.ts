@@ -48,7 +48,7 @@ export class SessionAuthMiddleware {
               response.cookies.delete(name);
             },
           },
-        }
+        },
       );
 
       // Get session token from cookie
@@ -65,7 +65,7 @@ export class SessionAuthMiddleware {
           ipAddress: this.getClientIP(request),
           userAgent: request.headers.get('user-agent') || 'Unknown',
           requestPath: pathname,
-        }
+        },
       );
 
       if (!sessionValidation.isValid) {
@@ -78,7 +78,7 @@ export class SessionAuthMiddleware {
             ipAddress: this.getClientIP(request),
             userAgent: request.headers.get('user-agent') || 'Unknown',
             requestPath: pathname,
-          }
+          },
         );
 
         // Clear invalid session cookie
@@ -93,7 +93,7 @@ export class SessionAuthMiddleware {
           {
             ipAddress: this.getClientIP(request),
             userAgent: request.headers.get('user-agent') || 'Unknown',
-          }
+          },
         );
 
         if (refreshResult.success && refreshResult.newToken) {
@@ -150,7 +150,7 @@ export class SessionAuthMiddleware {
     ];
 
     return publicRoutes.some(
-      (route) => pathname === route || pathname.startsWith(`${route}/`)
+      (route) => pathname === route || pathname.startsWith(`${route}/`),
     );
   }
 
@@ -169,7 +169,7 @@ export class SessionAuthMiddleware {
     ];
 
     return publicApiRoutes.some(
-      (route) => pathname === route || pathname.startsWith(`${route}/`)
+      (route) => pathname === route || pathname.startsWith(`${route}/`),
     );
   }
 
@@ -208,7 +208,7 @@ export class SessionAuthMiddleware {
   private async logSecurityEvent(
     userId: string,
     eventType: SecurityEventType,
-    details: Record<string, any>
+    details: Record<string, any>,
   ): Promise<void> {
     try {
       await this.sessionManager.logSecurityEvent({
@@ -225,7 +225,7 @@ export class SessionAuthMiddleware {
    * Get event severity based on type
    */
   private getEventSeverity(
-    eventType: SecurityEventType
+    eventType: SecurityEventType,
   ): 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL' {
     switch (eventType) {
       case SecurityEventType.FAILED_LOGIN:
@@ -250,7 +250,7 @@ export class SessionAuthMiddleware {
    */
   private async checkSuspiciousActivity(
     request: NextRequest,
-    userId: string
+    userId: string,
   ): Promise<void> {
     try {
       const ipAddress = this.getClientIP(request);
@@ -269,7 +269,7 @@ export class SessionAuthMiddleware {
             ipAddress,
             userAgent,
             timeWindow: '1 minute',
-          }
+          },
         );
       }
 
@@ -282,14 +282,14 @@ export class SessionAuthMiddleware {
             reason: 'Unusual user agent detected',
             userAgent,
             ipAddress,
-          }
+          },
         );
       }
 
       // Check for geographic anomalies (simplified)
       const isUnusualLocation = await this.checkUnusualLocation(
         userId,
-        ipAddress
+        ipAddress,
       );
       if (isUnusualLocation) {
         await this.logSecurityEvent(
@@ -299,7 +299,7 @@ export class SessionAuthMiddleware {
             reason: 'Unusual geographic location',
             ipAddress,
             userAgent,
-          }
+          },
         );
       }
     } catch (_error) {}
@@ -337,7 +337,7 @@ export class SessionAuthMiddleware {
    */
   private async checkUnusualLocation(
     _userId: string,
-    _ipAddress: string
+    _ipAddress: string,
   ): Promise<boolean> {
     // In a real implementation, this would:
     // 1. Get IP geolocation

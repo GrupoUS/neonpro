@@ -13,7 +13,7 @@ const ConsentSchema = z.object({
 // POST - Record new LGPD consent
 export async function POST(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const supabase = await createClient();
@@ -51,7 +51,7 @@ export async function POST(
     if (error) {
       return NextResponse.json(
         { error: 'Failed to record consent' },
-        { status: 500 }
+        { status: 500 },
       );
     } // Log consent for audit trail
     await supabase.from('lgpd_audit_log').insert({
@@ -72,12 +72,12 @@ export async function POST(
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Validation error', details: error.errors },
-        { status: 400 }
+        { status: 400 },
       );
     }
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -85,7 +85,7 @@ export async function POST(
 // PATCH - Update existing consent
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const supabase = await createClient();
@@ -115,7 +115,7 @@ export async function PATCH(
     if (error) {
       return NextResponse.json(
         { error: 'Failed to update consent' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -126,7 +126,7 @@ export async function PATCH(
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -45,12 +45,12 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
       if (fetchError.code === 'PGRST116') {
         return NextResponse.json(
           { error: 'Purchase order not found' },
-          { status: 404 }
+          { status: 404 },
         );
       }
       return NextResponse.json(
         { error: 'Failed to fetch purchase order' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -60,7 +60,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
         {
           error: `Purchase order must be in pending_approval status. Current status: ${existingPO.status}`,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -70,7 +70,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
       user.id,
       existingPO.total_amount,
       existingPO.clinic_id,
-      validatedData.approval_level
+      validatedData.approval_level,
     );
 
     if (!canApprove.allowed) {
@@ -80,7 +80,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
             canApprove.reason ||
             'Insufficient permissions to approve this purchase order',
         },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -91,7 +91,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
     if (validatedData.action === 'approve') {
       // Check if this is the final approval level
       const requiredApprovalLevel = getRequiredApprovalLevel(
-        existingPO.total_amount
+        existingPO.total_amount,
       );
 
       if (validatedData.approval_level >= requiredApprovalLevel) {
@@ -122,7 +122,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
     if (updateError) {
       return NextResponse.json(
         { error: 'Failed to update purchase order' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -167,12 +167,12 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
           error: 'Validation error',
           details: error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -183,7 +183,7 @@ async function checkApprovalPermissions(
   userId: string,
   amount: number,
   clinicId: string,
-  approvalLevel: number
+  approvalLevel: number,
 ): Promise<{ allowed: boolean; reason?: string }> {
   try {
     // Get user role and permissions
@@ -199,7 +199,7 @@ async function checkApprovalPermissions(
           role,
           permissions
         )
-      `
+      `,
       )
       .eq('id', userId)
       .single();
@@ -210,7 +210,7 @@ async function checkApprovalPermissions(
 
     // Check clinic-specific permissions
     const clinicPermission = userProfile.clinic_permissions?.find(
-      (cp: any) => cp.clinic_id === clinicId
+      (cp: any) => cp.clinic_id === clinicId,
     );
 
     if (!clinicPermission) {
@@ -272,7 +272,7 @@ function getRequiredApprovalLevel(amount: number): number {
 async function sendApprovalNotification(
   supabase: any,
   purchaseOrder: any,
-  action: 'approved' | 'rejected'
+  action: 'approved' | 'rejected',
 ): Promise<void> {
   try {
     // Get creator details

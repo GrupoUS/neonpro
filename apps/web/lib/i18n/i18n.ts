@@ -948,7 +948,7 @@ const dictionaryCache: Partial<Record<Locale, Dictionary>> = {};
  * Load dictionary for specified locale
  */
 export async function getDictionary(
-  locale: Locale = defaultLocale
+  locale: Locale = defaultLocale,
 ): Promise<Dictionary> {
   // Return cached dictionary if available
   if (dictionaryCache[locale]) {
@@ -989,7 +989,7 @@ function getNestedValue(obj: any, path: string): string {
 export function createTranslator(dictionary: Dictionary) {
   return function t(
     key: string,
-    params?: Record<string, string | number>
+    params?: Record<string, string | number>,
   ): string {
     let translation = getNestedValue(dictionary, key);
 
@@ -1010,7 +1010,7 @@ export function createTranslator(dictionary: Dictionary) {
 export function formatCurrency(
   amount: number,
   locale: Locale = 'pt-BR',
-  currency = 'BRL'
+  currency = 'BRL',
 ): string {
   return new Intl.NumberFormat(locale, {
     style: 'currency',
@@ -1025,7 +1025,7 @@ export function formatCurrency(
 export function formatDate(
   date: Date,
   locale: Locale = 'pt-BR',
-  options?: Intl.DateTimeFormatOptions
+  options?: Intl.DateTimeFormatOptions,
 ): string {
   const defaultOptions: Intl.DateTimeFormatOptions = {
     day: '2-digit',
@@ -1045,7 +1045,7 @@ export function formatDate(
 export function formatTime(
   date: Date,
   locale: Locale = 'pt-BR',
-  options?: Intl.DateTimeFormatOptions
+  options?: Intl.DateTimeFormatOptions,
 ): string {
   const defaultOptions: Intl.DateTimeFormatOptions = {
     hour: '2-digit',
@@ -1149,7 +1149,7 @@ export const HealthcareFormatters = {
   professionalName: (
     name: string,
     specialty?: string,
-    _dictionary?: Dictionary
+    _dictionary?: Dictionary,
   ): string => {
     if (!specialty) {
       return name;

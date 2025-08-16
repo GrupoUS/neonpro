@@ -13,13 +13,13 @@ export const createTreatmentOutcomeSchema = z.object({
     .string()
     .refine(
       (date) => !Number.isNaN(Date.parse(date)),
-      'Data de tratamento inválida'
+      'Data de tratamento inválida',
     ),
   success_criteria: z
     .record(z.any())
     .refine(
       (obj) => Object.keys(obj).length > 0,
-      'Critérios de sucesso são obrigatórios'
+      'Critérios de sucesso são obrigatórios',
     ),
   notes: z.string().optional(),
 });
@@ -29,7 +29,7 @@ export const updateTreatmentOutcomeSchema = z.object({
     .string()
     .refine(
       (date) => !Number.isNaN(Date.parse(date)),
-      'Data de resultado inválida'
+      'Data de resultado inválida',
     )
     .optional(),
   success_score: z
@@ -71,13 +71,13 @@ export const createSuccessMetricsSchema = z
       .string()
       .refine(
         (date) => !Number.isNaN(Date.parse(date)),
-        'Data de início inválida'
+        'Data de início inválida',
       ),
     period_end: z
       .string()
       .refine(
         (date) => !Number.isNaN(Date.parse(date)),
-        'Data de fim inválida'
+        'Data de fim inválida',
       ),
     total_treatments: z
       .number()
@@ -117,7 +117,7 @@ export const createProviderPerformanceSchema = z.object({
     .string()
     .refine(
       (date) => !Number.isNaN(Date.parse(date)),
-      'Data de início inválida'
+      'Data de início inválida',
     ),
   period_end: z
     .string()
@@ -154,13 +154,13 @@ export const createProtocolOptimizationSchema = z.object({
     .record(z.any())
     .refine(
       (obj) => Object.keys(obj).length > 0,
-      'Protocolo atual é obrigatório'
+      'Protocolo atual é obrigatório',
     ),
   recommended_changes: z
     .record(z.any())
     .refine(
       (obj) => Object.keys(obj).length > 0,
-      'Mudanças recomendadas são obrigatórias'
+      'Mudanças recomendadas são obrigatórias',
     ),
   success_rate_improvement: z
     .number()
@@ -200,7 +200,7 @@ export const updateProtocolOptimizationSchema = z.object({
     .string()
     .refine(
       (date) => !Number.isNaN(Date.parse(date)),
-      'Data de implementação inválida'
+      'Data de implementação inválida',
     )
     .optional(),
   results_tracking: z.record(z.any()).optional(),
@@ -219,7 +219,7 @@ export const createQualityBenchmarkSchema = z.object({
         message:
           'Tipo de benchmark deve ser industry_standard, clinic_target ou best_practice',
       }),
-    }
+    },
   ),
   metric_name: z.string().min(1, 'Nome da métrica é obrigatório').max(100),
   target_value: z.number().min(0, 'Valor alvo deve ser positivo'),
@@ -245,7 +245,7 @@ export const updateQualityBenchmarkSchema = z.object({
     .string()
     .refine(
       (date) => !Number.isNaN(Date.parse(date)),
-      'Data de atualização inválida'
+      'Data de atualização inválida',
     )
     .optional(),
   status: z.enum(['active', 'inactive', 'deprecated']).optional(),
@@ -262,7 +262,7 @@ export const createSuccessPredictionSchema = z.object({
     .record(z.any())
     .refine(
       (obj) => Object.keys(obj).length > 0,
-      'Fatores de predição são obrigatórios'
+      'Fatores de predição são obrigatórios',
     ),
   confidence_score: z
     .number()
@@ -297,7 +297,7 @@ export const createComplianceReportSchema = z.object({
     .string()
     .refine(
       (date) => !Number.isNaN(Date.parse(date)),
-      'Data de início inválida'
+      'Data de início inválida',
     ),
   period_end: z
     .string()
@@ -306,7 +306,7 @@ export const createComplianceReportSchema = z.object({
     .record(z.any())
     .refine(
       (obj) => Object.keys(obj).length > 0,
-      'Dados do relatório são obrigatórios'
+      'Dados do relatório são obrigatórios',
     ),
   compliance_score: z
     .number()

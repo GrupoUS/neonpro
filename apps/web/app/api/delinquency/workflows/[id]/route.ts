@@ -72,7 +72,7 @@ const ScheduleActionSchema = z.object({
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const { searchParams } = new URL(request.url);
@@ -82,13 +82,13 @@ export async function GET(
     if (!workflowId) {
       return NextResponse.json(
         { error: 'Workflow ID is required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
     );
 
     // Check authentication
@@ -119,7 +119,7 @@ export async function GET(
           if (error.code === 'PGRST116') {
             return NextResponse.json(
               { error: 'Workflow not found' },
-              { status: 404 }
+              { status: 404 },
             );
           }
           throw error;
@@ -142,7 +142,7 @@ export async function GET(
         const totalCollected =
           stats?.reduce(
             (sum, activity) => sum + (activity.amount_collected || 0),
-            0
+            0,
           ) || 0;
 
         return NextResponse.json({
@@ -162,7 +162,7 @@ export async function GET(
 
       case 'activities': {
         const query = GetActivitiesQuerySchema.parse(
-          Object.fromEntries(searchParams)
+          Object.fromEntries(searchParams),
         );
         const page = Number.parseInt(query.page, 10);
         const limit = Number.parseInt(query.limit, 10);
@@ -179,7 +179,7 @@ export async function GET(
         if (query.activityType) {
           activitiesQuery = activitiesQuery.eq(
             'activity_type',
-            query.activityType
+            query.activityType,
           );
         }
 
@@ -194,7 +194,7 @@ export async function GET(
         if (query.performedBy) {
           activitiesQuery = activitiesQuery.eq(
             'performed_by',
-            query.performedBy
+            query.performedBy,
           );
         }
 
@@ -284,7 +284,7 @@ export async function GET(
 
         // Sort timeline by date
         timeline.sort(
-          (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+          (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
         );
 
         return NextResponse.json({ data: timeline });
@@ -325,7 +325,7 @@ export async function GET(
             const typeActivities = typeGroups[type];
             const typeCollected = typeActivities.reduce(
               (sum, a) => sum + (a.amount_collected || 0),
-              0
+              0,
             );
 
             (stats.activitiesByType as any)[type] = {
@@ -360,7 +360,7 @@ export async function GET(
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to fetch workflow data' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -371,7 +371,7 @@ export async function GET(
  */
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const body = await request.json();
@@ -381,13 +381,13 @@ export async function POST(
     if (!workflowId) {
       return NextResponse.json(
         { error: 'Workflow ID is required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
     );
 
     // Check authentication
@@ -415,7 +415,7 @@ export async function POST(
     if (workflowError || !workflow) {
       return NextResponse.json(
         { error: 'Workflow not found' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -544,7 +544,7 @@ export async function POST(
         const total =
           totalCollected?.reduce(
             (sum, activity) => sum + (activity.amount_collected || 0),
-            0
+            0,
           ) || 0;
 
         // Update workflow status if fully paid
@@ -614,13 +614,13 @@ export async function POST(
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Validation error', details: error.errors },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     return NextResponse.json(
       { error: 'Failed to process workflow action' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -631,7 +631,7 @@ export async function POST(
  */
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const body = await request.json();
@@ -640,7 +640,7 @@ export async function PUT(
     if (!workflowId) {
       return NextResponse.json(
         { error: 'Workflow ID is required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -648,7 +648,7 @@ export async function PUT(
 
     const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
     );
 
     // Check authentication
@@ -703,7 +703,7 @@ export async function PUT(
       if (error.code === 'PGRST116') {
         return NextResponse.json(
           { error: 'Workflow not found' },
-          { status: 404 }
+          { status: 404 },
         );
       }
       throw error;
@@ -714,13 +714,13 @@ export async function PUT(
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Validation error', details: error.errors },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     return NextResponse.json(
       { error: 'Failed to update workflow' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -731,7 +731,7 @@ export async function PUT(
  */
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const { searchParams } = new URL(request.url);
@@ -742,13 +742,13 @@ export async function DELETE(
     if (!workflowId) {
       return NextResponse.json(
         { error: 'Workflow ID is required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
     );
 
     // Check authentication
@@ -783,7 +783,7 @@ export async function DELETE(
       if (error.code === 'PGRST116') {
         return NextResponse.json(
           { error: 'Workflow not found' },
-          { status: 404 }
+          { status: 404 },
         );
       }
       throw error;
@@ -806,7 +806,7 @@ export async function DELETE(
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to complete workflow' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -18,7 +18,7 @@ export async function GET(request: NextRequest) {
     if (authError || !user) {
       return NextResponse.json(
         { error: 'Authentication required' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -38,12 +38,12 @@ export async function GET(request: NextRequest) {
         if (!patientId) {
           return NextResponse.json(
             { error: 'patient_id is required for trend data' },
-            { status: 400 }
+            { status: 400 },
           );
         }
         const trendData = await progressTrackingService.getProgressTrendData(
           patientId,
-          treatmentType
+          treatmentType,
         );
         return NextResponse.json(trendData);
       }
@@ -60,13 +60,13 @@ export async function GET(request: NextRequest) {
             error:
               'Invalid analytics type. Use: dashboard_stats, trend_data, or multi_session_analysis',
           },
-          { status: 400 }
+          { status: 400 },
         );
     }
   } catch (_error: any) {
     return NextResponse.json(
       { error: 'Failed to fetch analytics data' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

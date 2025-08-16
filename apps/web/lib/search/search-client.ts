@@ -107,7 +107,7 @@ export class SearchClient {
   async saveSearch(
     name: string,
     query: SearchQuery,
-    userId: string
+    userId: string,
   ): Promise<string> {
     const response = await fetch('/api/search', {
       method: 'POST',

@@ -25,7 +25,7 @@ type FinancialMetrics = {
 async function calculateFinancialMetrics(
   supabase: any,
   clinicId: string,
-  timeRange: string
+  timeRange: string,
 ): Promise<FinancialMetrics> {
   try {
     // Definir período baseado no time_range
@@ -37,25 +37,25 @@ async function calculateFinancialMetrics(
       case '7d':
         startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
         previousPeriodStart = new Date(
-          startDate.getTime() - 7 * 24 * 60 * 60 * 1000
+          startDate.getTime() - 7 * 24 * 60 * 60 * 1000,
         );
         break;
       case '30d':
         startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
         previousPeriodStart = new Date(
-          startDate.getTime() - 30 * 24 * 60 * 60 * 1000
+          startDate.getTime() - 30 * 24 * 60 * 60 * 1000,
         );
         break;
       case '90d':
         startDate = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
         previousPeriodStart = new Date(
-          startDate.getTime() - 90 * 24 * 60 * 60 * 1000
+          startDate.getTime() - 90 * 24 * 60 * 60 * 1000,
         );
         break;
       case '1y':
         startDate = new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000);
         previousPeriodStart = new Date(
-          startDate.getTime() - 365 * 24 * 60 * 60 * 1000
+          startDate.getTime() - 365 * 24 * 60 * 60 * 1000,
         );
         break;
       default:
@@ -101,7 +101,7 @@ async function calculateFinancialMetrics(
           status,
           created_at
         )
-      `
+      `,
       )
       .eq('clinic_id', clinicId)
       .gte('created_at', startDate.toISOString());
@@ -113,16 +113,16 @@ async function calculateFinancialMetrics(
     // Calcular métricas básicas
     const totalInflow = currentPeriodData.reduce(
       (sum, record) => sum + (record.inflow || 0),
-      0
+      0,
     );
     const totalOutflow = Math.abs(
-      currentPeriodData.reduce((sum, record) => sum + (record.outflow || 0), 0)
+      currentPeriodData.reduce((sum, record) => sum + (record.outflow || 0), 0),
     );
     const netCashFlow = totalInflow - totalOutflow;
 
     const previousTotalInflow = previousPeriodData.reduce(
       (sum, record) => sum + (record.inflow || 0),
-      0
+      0,
     );
 
     // Calcular métricas por período
@@ -158,13 +158,13 @@ async function calculateFinancialMetrics(
       const completedAppointments = patientData.flatMap(
         (patient) =>
           patient.appointments?.filter((apt) => apt.status === 'completed') ||
-          []
+          [],
       );
 
       if (completedAppointments.length > 0) {
         const totalTreatmentValue = completedAppointments.reduce(
           (sum, apt) => sum + (apt.total_amount || 0),
-          0
+          0,
         );
         average_treatment_value =
           totalTreatmentValue / completedAppointments.length;
@@ -239,7 +239,7 @@ export async function GET(request: NextRequest) {
     if (accessError || !clinicAccess) {
       return NextResponse.json(
         { error: 'Access denied to clinic' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -247,7 +247,7 @@ export async function GET(request: NextRequest) {
     const metrics = await calculateFinancialMetrics(
       supabase,
       validatedParams.clinic_id,
-      validatedParams.time_range
+      validatedParams.time_range,
     );
 
     return NextResponse.json({
@@ -263,13 +263,13 @@ export async function GET(request: NextRequest) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Invalid parameters', details: error.errors },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

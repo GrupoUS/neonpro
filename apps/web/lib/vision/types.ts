@@ -681,7 +681,7 @@ export function isValidTreatmentType(type: string): type is TreatmentType {
 }
 
 export function isValidAnalysisStatus(
-  status: string
+  status: string,
 ): status is AnalysisStatus {
   return Object.values(ANALYSIS_STATUS).includes(status as AnalysisStatus);
 }

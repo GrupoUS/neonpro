@@ -8,7 +8,7 @@ export function generateCSRFToken(): string {
 
 export function validateCSRFToken(
   token: string,
-  _sessionToken?: string
+  _sessionToken?: string,
 ): boolean {
   // Simple validation for build purposes
   return token && token.length > 10;

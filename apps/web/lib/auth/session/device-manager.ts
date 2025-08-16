@@ -75,12 +75,12 @@ export class DeviceManager {
   async registerOrUpdateDevice(
     userId: string,
     deviceInfo: DeviceInfo,
-    _ipAddress: string
+    _ipAddress: string,
   ): Promise<DeviceRegistration> {
     // Check if device already exists
     const existingDevice = await this.getDeviceByFingerprint(
       userId,
-      deviceInfo.fingerprint
+      deviceInfo.fingerprint,
     );
 
     if (existingDevice) {
@@ -132,7 +132,7 @@ export class DeviceManager {
    */
   async getDeviceByFingerprint(
     userId: string,
-    fingerprint: string
+    fingerprint: string,
   ): Promise<DeviceRegistration | null> {
     try {
       const { data, error } = await this.supabase
@@ -183,12 +183,12 @@ export class DeviceManager {
   async validateDevice(
     userId: string,
     deviceInfo: DeviceInfo,
-    ipAddress: string
+    ipAddress: string,
   ): Promise<DeviceValidationResult> {
     try {
       const registration = await this.getDeviceByFingerprint(
         userId,
-        deviceInfo.fingerprint
+        deviceInfo.fingerprint,
       );
       const isKnown = Boolean(registration);
       const isTrusted = registration?.trusted;
@@ -198,7 +198,7 @@ export class DeviceManager {
         userId,
         deviceInfo,
         ipAddress,
-        registration
+        registration,
       );
 
       // Determine risk factors
@@ -206,7 +206,7 @@ export class DeviceManager {
         userId,
         deviceInfo,
         ipAddress,
-        registration
+        registration,
       );
 
       return {
@@ -235,7 +235,7 @@ export class DeviceManager {
     userId: string,
     deviceInfo: DeviceInfo,
     ipAddress: string,
-    registration?: DeviceRegistration | null
+    registration?: DeviceRegistration | null,
   ): Promise<number> {
     let riskScore = 0;
 
@@ -250,7 +250,7 @@ export class DeviceManager {
     if (registration && deviceInfo.browserInfo) {
       const browserChanges = this.detectBrowserChanges(
         registration.browserInfo,
-        deviceInfo.browserInfo
+        deviceInfo.browserInfo,
       );
       riskScore += browserChanges * 5;
     }
@@ -263,7 +263,7 @@ export class DeviceManager {
     if (registration) {
       const usageRisk = await this.calculateUsagePatternRisk(
         userId,
-        registration
+        registration,
       );
       riskScore += usageRisk;
     }
@@ -282,7 +282,7 @@ export class DeviceManager {
     userId: string,
     deviceInfo: DeviceInfo,
     ipAddress: string,
-    registration?: DeviceRegistration | null
+    registration?: DeviceRegistration | null,
   ): Promise<string[]> {
     const factors: string[] = [];
 
@@ -297,7 +297,7 @@ export class DeviceManager {
     if (registration && deviceInfo.browserInfo) {
       const changes = this.detectBrowserChanges(
         registration.browserInfo,
-        deviceInfo.browserInfo
+        deviceInfo.browserInfo,
       );
       if (changes > 2) {
         factors.push('browser_fingerprint_changed');
@@ -325,7 +325,7 @@ export class DeviceManager {
     // Rapid requests
     const hasRapidRequests = await this.hasRapidLoginAttempts(
       userId,
-      ipAddress
+      ipAddress,
     );
     if (hasRapidRequests) {
       factors.push('rapid_login_attempts');
@@ -345,7 +345,7 @@ export class DeviceManager {
     userId: string,
     deviceId: string,
     trusted: boolean,
-    reason?: string
+    reason?: string,
   ): Promise<DeviceRegistration> {
     const { data, error } = await this.supabase
       .from('device_registrations')
@@ -373,7 +373,7 @@ export class DeviceManager {
    */
   async bulkUpdateDeviceTrust(
     userId: string,
-    updates: DeviceTrustUpdate[]
+    updates: DeviceTrustUpdate[],
   ): Promise<DeviceRegistration[]> {
     const results: DeviceRegistration[] = [];
 
@@ -382,7 +382,7 @@ export class DeviceManager {
         userId,
         update.deviceId,
         update.trusted,
-        update.reason
+        update.reason,
       );
       results.push(result);
     }
@@ -438,10 +438,10 @@ export class DeviceManager {
       const totalDevices = devices.length;
       const trustedDevices = devices.filter((d) => d.trusted).length;
       const activeDevices = devices.filter(
-        (d) => d.lastUsedAt && d.lastUsedAt > thirtyDaysAgo
+        (d) => d.lastUsedAt && d.lastUsedAt > thirtyDaysAgo,
       ).length;
       const recentDevices = devices.filter(
-        (d) => d.lastUsedAt && d.lastUsedAt > sevenDaysAgo
+        (d) => d.lastUsedAt && d.lastUsedAt > sevenDaysAgo,
       ).length;
 
       // Device type distribution
@@ -506,7 +506,7 @@ export class DeviceManager {
    */
   private detectBrowserChanges(
     oldBrowser?: BrowserInfo,
-    newBrowser?: BrowserInfo
+    newBrowser?: BrowserInfo,
   ): number {
     if (!(oldBrowser && newBrowser)) {
       return 0;
@@ -539,7 +539,7 @@ export class DeviceManager {
    */
   private async calculateIPRisk(
     userId: string,
-    ipAddress: string
+    ipAddress: string,
   ): Promise<number> {
     try {
       // Check if IP is new for this user
@@ -570,7 +570,7 @@ export class DeviceManager {
    */
   private async calculateUsagePatternRisk(
     userId: string,
-    registration: DeviceRegistration
+    registration: DeviceRegistration,
   ): Promise<number> {
     try {
       // Check how often this device is used
@@ -581,7 +581,7 @@ export class DeviceManager {
         .eq('device_fingerprint', registration.deviceFingerprint)
         .gte(
           'created_at',
-          new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
+          new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
         );
 
       if (error) {
@@ -624,7 +624,7 @@ export class DeviceManager {
    */
   private async isNewIPAddress(
     userId: string,
-    ipAddress: string
+    ipAddress: string,
   ): Promise<boolean> {
     try {
       const { data, error } = await this.supabase
@@ -657,7 +657,7 @@ export class DeviceManager {
         .in('event_type', ['suspicious_login', 'session_hijack_attempt'])
         .gte(
           'timestamp',
-          new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()
+          new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
         )
         .limit(1);
 
@@ -686,7 +686,7 @@ export class DeviceManager {
         .eq('user_id', userId)
         .gte(
           'created_at',
-          new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
+          new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
         );
 
       if (error || !data || data.length < 5) {
@@ -695,7 +695,7 @@ export class DeviceManager {
 
       // Calculate typical hours
       const hours = data.map((session) =>
-        new Date(session.created_at).getHours()
+        new Date(session.created_at).getHours(),
       );
       const hourCounts: Record<number, number> = {};
 
@@ -720,7 +720,7 @@ export class DeviceManager {
    */
   private async hasRapidLoginAttempts(
     userId: string,
-    ipAddress: string
+    ipAddress: string,
   ): Promise<boolean> {
     try {
       const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
@@ -749,7 +749,7 @@ export class DeviceManager {
     userId: string,
     deviceId: string,
     trusted: boolean,
-    reason?: string
+    reason?: string,
   ): Promise<void> {
     try {
       await this.supabase.from('session_audit_logs').insert({
@@ -769,7 +769,7 @@ export class DeviceManager {
    */
   private async logDeviceRemoval(
     userId: string,
-    deviceId: string
+    deviceId: string,
   ): Promise<void> {
     try {
       await this.supabase.from('session_audit_logs').insert({

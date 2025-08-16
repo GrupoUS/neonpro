@@ -34,7 +34,7 @@ export async function GET(_request: NextRequest) {
     if (!userClinic) {
       return NextResponse.json(
         { error: 'No active clinic found' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -46,7 +46,7 @@ export async function GET(_request: NextRequest) {
         *,
         plan:subscription_plans(*),
         usage:subscription_usage(*)
-      `
+      `,
       )
       .eq('clinic_id', userClinic.clinic_id)
       .in('status', ['trial', 'active'])
@@ -75,12 +75,12 @@ export async function GET(_request: NextRequest) {
         formatted_dates: {
           current_period_start: subscription.current_period_start
             ? new Date(subscription.current_period_start).toLocaleDateString(
-                'pt-BR'
+                'pt-BR',
               )
             : null,
           current_period_end: subscription.current_period_end
             ? new Date(subscription.current_period_end).toLocaleDateString(
-                'pt-BR'
+                'pt-BR',
               )
             : null,
           trial_end: subscription.trial_end
@@ -88,7 +88,7 @@ export async function GET(_request: NextRequest) {
             : null,
           next_billing_date: subscription.next_billing_date
             ? new Date(subscription.next_billing_date).toLocaleDateString(
-                'pt-BR'
+                'pt-BR',
               )
             : null,
         },
@@ -97,7 +97,7 @@ export async function GET(_request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -127,7 +127,7 @@ export async function PUT(request: NextRequest) {
     if (!userClinic) {
       return NextResponse.json(
         { error: 'No active clinic found' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -152,7 +152,7 @@ export async function PUT(request: NextRequest) {
     if (error) {
       return NextResponse.json(
         { error: 'Failed to update subscription' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -166,7 +166,7 @@ export async function PUT(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -243,7 +243,7 @@ function getSubscriptionStatus(subscription: any) {
   if (subscription.status === 'trial' && subscription.trial_end) {
     const trialEnd = new Date(subscription.trial_end);
     const daysRemaining = Math.ceil(
-      (trialEnd.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)
+      (trialEnd.getTime() - now.getTime()) / (1000 * 60 * 60 * 24),
     );
 
     if (daysRemaining <= 0) {
@@ -270,7 +270,7 @@ function getSubscriptionStatus(subscription: any) {
   if (subscription.cancel_at_period_end && subscription.current_period_end) {
     const periodEnd = new Date(subscription.current_period_end);
     const daysRemaining = Math.ceil(
-      (periodEnd.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)
+      (periodEnd.getTime() - now.getTime()) / (1000 * 60 * 60 * 24),
     );
 
     return {

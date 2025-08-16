@@ -28,7 +28,7 @@ function sendMetrics(
   name: string,
   delta: number,
   value: number,
-  rating: string
+  rating: string,
 ) {
   const metric = {
     name,
@@ -224,7 +224,7 @@ export const PerformanceDebug = {
       return null;
     }
     return performance.getEntriesByType(
-      'navigation'
+      'navigation',
     )[0] as PerformanceNavigationTiming;
   },
 

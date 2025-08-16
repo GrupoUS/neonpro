@@ -38,8 +38,8 @@ export async function GET(request: NextRequest) {
       return NextResponse.redirect(
         new URL(
           `/dashboard/settings/integrations?error=oauth_error&provider=hubspot&message=${encodeURIComponent(errorDescription || error)}`,
-          request.url
-        )
+          request.url,
+        ),
       );
     }
 
@@ -55,8 +55,8 @@ export async function GET(request: NextRequest) {
       return NextResponse.redirect(
         new URL(
           '/dashboard/settings/integrations?error=invalid_callback&provider=hubspot',
-          request.url
-        )
+          request.url,
+        ),
       );
     }
 
@@ -80,8 +80,8 @@ export async function GET(request: NextRequest) {
       return NextResponse.redirect(
         new URL(
           '/dashboard/settings/integrations?error=invalid_state&provider=hubspot',
-          request.url
-        )
+          request.url,
+        ),
       );
     }
 
@@ -97,8 +97,8 @@ export async function GET(request: NextRequest) {
       return NextResponse.redirect(
         new URL(
           '/dashboard/settings/integrations?error=state_expired&provider=hubspot',
-          request.url
-        )
+          request.url,
+        ),
       );
     }
 
@@ -123,8 +123,8 @@ export async function GET(request: NextRequest) {
       return NextResponse.redirect(
         new URL(
           '/dashboard/settings/integrations?error=session_mismatch&provider=hubspot',
-          request.url
-        )
+          request.url,
+        ),
       );
     }
 
@@ -132,22 +132,22 @@ export async function GET(request: NextRequest) {
     const oauthHandler = new HubSpotOAuthHandler();
     const encryptedToken = await oauthHandler.exchangeCodeForTokens(
       code,
-      state
+      state,
     );
 
     // Get user info from HubSpot
     const userInfo = await oauthHandler.getUserInfo(
-      encryptedToken.encryptedData
+      encryptedToken.encryptedData,
     );
 
     // Get portal info
     const portalInfo = await oauthHandler.getPortalInfo(
-      encryptedToken.encryptedData
+      encryptedToken.encryptedData,
     );
 
     // Get account info
     const accountInfo = await oauthHandler.getAccountInfo(
-      encryptedToken.encryptedData
+      encryptedToken.encryptedData,
     );
 
     // Create or update marketing platform connection
@@ -202,8 +202,8 @@ export async function GET(request: NextRequest) {
       return NextResponse.redirect(
         new URL(
           '/dashboard/settings/integrations?error=save_failed&provider=hubspot',
-          request.url
-        )
+          request.url,
+        ),
       );
     }
 
@@ -240,8 +240,8 @@ export async function GET(request: NextRequest) {
     return NextResponse.redirect(
       new URL(
         '/dashboard/settings/integrations?success=hubspot_connected',
-        request.url
-      )
+        request.url,
+      ),
     );
   } catch (error) {
     Logger.error('HubSpot OAuth callback error', {
@@ -254,8 +254,8 @@ export async function GET(request: NextRequest) {
     return NextResponse.redirect(
       new URL(
         `/dashboard/settings/integrations?error=callback_failed&provider=hubspot&requestId=${requestId}`,
-        request.url
-      )
+        request.url,
+      ),
     );
   }
 }

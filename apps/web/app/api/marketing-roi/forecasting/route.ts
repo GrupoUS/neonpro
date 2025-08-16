@@ -63,7 +63,7 @@ export async function GET(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to generate marketing forecast' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -85,7 +85,7 @@ export async function POST(request: NextRequest) {
     if (!(requestData.type && requestData.period)) {
       return NextResponse.json(
         { error: 'Forecast type and period are required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -116,7 +116,7 @@ export async function POST(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to generate detailed marketing forecast' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -137,7 +137,7 @@ export async function PUT(request: NextRequest) {
     if (!(forecastId && actualResults)) {
       return NextResponse.json(
         { error: 'Forecast ID and actual results are required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -145,14 +145,14 @@ export async function PUT(request: NextRequest) {
     const updatedForecast = await marketingROIService.updateForecastAccuracy(
       forecastId,
       actualResults,
-      feedback
+      feedback,
     );
 
     // Recalibrate forecasting model if needed
     const recalibrationResult =
       await marketingROIService.recalibrateForecastModel(
         forecastId,
-        actualResults
+        actualResults,
       );
 
     return NextResponse.json({
@@ -163,7 +163,7 @@ export async function PUT(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to update marketing forecast' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
     if (!validation.success) {
       return NextResponse.json(
         { error: 'Invalid request data', details: validation.error.errors },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
       await demandForecastingService.getHistoricalConsumption(
         itemId,
         clinicId,
-        analysisPeriod
+        analysisPeriod,
       );
 
     if (historicalData.length < 30) {
@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
           error:
             'Insufficient data for seasonal analysis (minimum 30 data points required)',
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -49,13 +49,13 @@ export async function POST(request: NextRequest) {
       await demandForecastingService.getAppointmentBasedDemand(
         itemId,
         clinicId,
-        analysisPeriod
+        analysisPeriod,
       );
 
     // Calculate consumption statistics
     const totalConsumption = historicalData.reduce(
       (sum, item) => sum + item.quantity,
-      0
+      0,
     );
     const averageDailyConsumption = totalConsumption / analysisPeriod;
     const consumptionByType = historicalData.reduce(
@@ -63,7 +63,7 @@ export async function POST(request: NextRequest) {
         acc[item.type] = (acc[item.type] || 0) + item.quantity;
         return acc;
       },
-      {} as Record<string, number>
+      {} as Record<string, number>,
     );
 
     // Calculate variability metrics
@@ -72,7 +72,7 @@ export async function POST(request: NextRequest) {
       const dateKey = item.date.toISOString().split('T')[0];
       dailyConsumption.set(
         dateKey,
-        (dailyConsumption.get(dateKey) || 0) + item.quantity
+        (dailyConsumption.get(dateKey) || 0) + item.quantity,
       );
     });
 
@@ -113,7 +113,7 @@ export async function POST(request: NextRequest) {
       recommendations: generateSeasonalRecommendations(
         seasonalPatterns,
         demandDrivers,
-        coefficientOfVariation
+        coefficientOfVariation,
       ),
       appointmentCorrelation: {
         hasAppointmentData: appointmentDemand.length > 0,
@@ -123,7 +123,7 @@ export async function POST(request: NextRequest) {
             ? appointmentDemand.reduce(
                 (sum, apt) =>
                   sum + (apt.actualConsumption || apt.expectedConsumption),
-                0
+                0,
               ) / appointmentDemand.length
             : 0,
       },
@@ -136,7 +136,7 @@ export async function POST(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to perform seasonal analysis' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -144,7 +144,7 @@ export async function POST(request: NextRequest) {
 function generateSeasonalRecommendations(
   patterns: any[],
   drivers: any,
-  variability: number
+  variability: number,
 ): string[] {
   const recommendations: string[] = [];
 
@@ -152,18 +152,18 @@ function generateSeasonalRecommendations(
   patterns.forEach((pattern) => {
     if (pattern.strength > 0.5) {
       recommendations.push(
-        `Strong ${pattern.pattern} seasonality detected (strength: ${Math.round(pattern.strength * 100)}%) - adjust inventory levels accordingly`
+        `Strong ${pattern.pattern} seasonality detected (strength: ${Math.round(pattern.strength * 100)}%) - adjust inventory levels accordingly`,
       );
 
       if (pattern.peaks.length > 0) {
         recommendations.push(
-          'Peak demand periods identified - consider increasing stock before these periods'
+          'Peak demand periods identified - consider increasing stock before these periods',
         );
       }
 
       if (pattern.valleys.length > 0) {
         recommendations.push(
-          'Low demand periods identified - reduce ordering during these periods to avoid excess inventory'
+          'Low demand periods identified - reduce ordering during these periods to avoid excess inventory',
         );
       }
     }
@@ -172,24 +172,24 @@ function generateSeasonalRecommendations(
   // Variability recommendations
   if (variability > 0.7) {
     recommendations.push(
-      'High demand variability detected - implement safety stock strategies and frequent monitoring'
+      'High demand variability detected - implement safety stock strategies and frequent monitoring',
     );
   } else if (variability < 0.2) {
     recommendations.push(
-      'Stable demand pattern - suitable for just-in-time inventory management'
+      'Stable demand pattern - suitable for just-in-time inventory management',
     );
   }
 
   // Demand driver recommendations
   if (drivers.appointmentBased) {
     recommendations.push(
-      'Demand is appointment-driven - consider linking inventory planning to appointment schedules'
+      'Demand is appointment-driven - consider linking inventory planning to appointment schedules',
     );
   }
 
   if (!(drivers.seasonalInfluenced || drivers.appointmentBased)) {
     recommendations.push(
-      'Demand appears independent of seasonal or appointment patterns - focus on trend-based forecasting'
+      'Demand appears independent of seasonal or appointment patterns - focus on trend-based forecasting',
     );
   }
 

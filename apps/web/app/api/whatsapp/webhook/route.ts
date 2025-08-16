@@ -25,7 +25,7 @@ export async function GET(request: NextRequest) {
       if (!config?.webhook_verify_token) {
         return NextResponse.json(
           { error: 'Webhook verify token not configured' },
-          { status: 400 }
+          { status: 400 },
         );
       }
 
@@ -34,18 +34,18 @@ export async function GET(request: NextRequest) {
       }
       return NextResponse.json(
         { error: 'Invalid verify token' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
     return NextResponse.json(
       { error: 'Invalid verification request' },
-      { status: 400 }
+      { status: 400 },
     );
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -59,14 +59,14 @@ export async function POST(request: NextRequest) {
     if (!payload.object || payload.object !== 'whatsapp_business_account') {
       return NextResponse.json(
         { error: 'Invalid webhook object' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     if (!(payload.entry && Array.isArray(payload.entry))) {
       return NextResponse.json(
         { error: 'Invalid webhook entry' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -79,12 +79,12 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     // Log the error for debugging
     await logWebhookError(
-      error instanceof Error ? error.message : 'Unknown error'
+      error instanceof Error ? error.message : 'Unknown error',
     );
 
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -29,7 +29,7 @@ export class StockAlertsService {
   async createAlertConfig(
     data: CreateStockAlertConfig,
     clinic_id: string,
-    user_id: string
+    user_id: string,
   ) {
     try {
       const supabase = await this.getSupabase();
@@ -64,7 +64,7 @@ export class StockAlertsService {
     filters?: {
       type?: AlertType;
       active_only?: boolean;
-    }
+    },
   ) {
     try {
       const supabase = await this.getSupabase();
@@ -102,7 +102,7 @@ export class StockAlertsService {
   async updateAlertConfig(
     id: string,
     updates: Partial<StockAlertConfig>,
-    user_id: string
+    user_id: string,
   ) {
     try {
       const supabase = await this.getSupabase();
@@ -166,7 +166,7 @@ export class StockAlertsService {
       type?: AlertType[];
       status?: AlertStatus[];
       limit?: number;
-    }
+    },
   ) {
     try {
       const supabase = await this.getSupabase();

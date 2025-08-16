@@ -26,7 +26,7 @@ export async function GET(request: NextRequest) {
     // Get message threads using communication service
     const threads = await communicationService.getMessageThreads(
       patientId,
-      includeArchived
+      includeArchived,
     );
 
     return NextResponse.json({
@@ -42,7 +42,7 @@ export async function GET(request: NextRequest) {
         error: 'Internal server error',
         message: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -67,7 +67,7 @@ export async function POST(request: NextRequest) {
     if (!(patient_id && subject)) {
       return NextResponse.json(
         { error: 'Patient ID and subject are required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -99,7 +99,7 @@ export async function POST(request: NextRequest) {
         error: 'Internal server error',
         message: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

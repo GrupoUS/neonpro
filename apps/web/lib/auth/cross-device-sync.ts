@@ -148,7 +148,7 @@ export class CrossDeviceSync {
   constructor(
     supabaseUrl: string,
     supabaseKey: string,
-    customConfig?: Partial<CrossDeviceSyncConfig>
+    customConfig?: Partial<CrossDeviceSyncConfig>,
   ) {
     this.supabase = createClient(supabaseUrl, supabaseKey);
     this.auditLogger = new SecurityAuditLogger(supabaseUrl, supabaseKey);
@@ -197,7 +197,7 @@ export class CrossDeviceSync {
     sessionId: string,
     userId: string,
     deviceInfo: DeviceSession['deviceInfo'],
-    preferences?: Partial<DeviceSession['preferences']>
+    preferences?: Partial<DeviceSession['preferences']>,
   ): Promise<DeviceSession> {
     const deviceId = this.generateDeviceId(deviceInfo);
 
@@ -253,7 +253,7 @@ export class CrossDeviceSync {
    */
   async updateDeviceSession(
     sessionId: string,
-    updates: Partial<DeviceSession>
+    updates: Partial<DeviceSession>,
   ): Promise<DeviceSession> {
     const existingSession = this.activeSessions.get(sessionId);
     if (!existingSession) {
@@ -328,7 +328,7 @@ export class CrossDeviceSync {
    */
   async syncSessionData(
     sessionId: string,
-    data: Record<string, any>
+    data: Record<string, any>,
   ): Promise<void> {
     const session = this.activeSessions.get(sessionId);
     if (!session) {
@@ -412,7 +412,7 @@ export class CrossDeviceSync {
   async handoffSession(
     fromSessionId: string,
     toDeviceId: string,
-    preserveState = true
+    preserveState = true,
   ): Promise<string> {
     const fromSession = this.activeSessions.get(fromSessionId);
     if (!fromSession) {
@@ -474,7 +474,7 @@ export class CrossDeviceSync {
   async resolveSyncConflict(
     conflictId: string,
     resolution: 'use_local' | 'use_remote' | 'merge' | 'manual',
-    resolvedData?: Record<string, any>
+    resolvedData?: Record<string, any>,
   ): Promise<void> {
     const { data: conflictData, error } = await this.supabase
       .from('sync_conflicts')
@@ -624,7 +624,7 @@ export class CrossDeviceSync {
           },
           (payload) => {
             this.handleRealtimeSyncEvent(payload.new);
-          }
+          },
         )
         .subscribe();
 
@@ -640,7 +640,7 @@ export class CrossDeviceSync {
           },
           (payload) => {
             this.handleRealtimeSessionChange(payload);
-          }
+          },
         )
         .subscribe();
     } catch (_error) {}
@@ -777,7 +777,7 @@ export class CrossDeviceSync {
   }
 
   private async detectDataConflict(
-    syncEvent: SyncEvent
+    syncEvent: SyncEvent,
   ): Promise<SyncConflict | null> {
     // Simplified conflict detection
     // In production, this would be more sophisticated
@@ -790,14 +790,14 @@ export class CrossDeviceSync {
     // Check if there are concurrent modifications
     const recentEvents = await this.getRecentSyncEvents(
       syncEvent.sessionId,
-      60
+      60,
     ); // Last minute
     const conflictingEvents = recentEvents.filter(
       (event) =>
         event.eventId !== syncEvent.eventId &&
         event.eventType === 'data_changed' &&
         Math.abs(event.timestamp.getTime() - syncEvent.timestamp.getTime()) <
-          5000 // 5 seconds
+          5000, // 5 seconds
     );
 
     if (conflictingEvents.length > 0) {
@@ -848,7 +848,7 @@ export class CrossDeviceSync {
   }
 
   private async attemptAutomaticResolution(
-    conflict: SyncConflict
+    conflict: SyncConflict,
   ): Promise<void> {
     try {
       let resolution: 'use_local' | 'use_remote';
@@ -909,12 +909,12 @@ export class CrossDeviceSync {
 
   private async broadcastToUserDevices(
     _userId: string,
-    _message: any
+    _message: any,
   ): Promise<void> {}
 
   private async getRecentSyncEvents(
     sessionId: string,
-    seconds: number
+    seconds: number,
   ): Promise<SyncEvent[]> {
     try {
       const since = new Date(Date.now() - seconds * 1000);
@@ -955,7 +955,7 @@ export class CrossDeviceSync {
 
   private async shouldBePrimaryDevice(
     userId: string,
-    _deviceId: string
+    _deviceId: string,
   ): Promise<boolean> {
     try {
       const { count, error } = await this.supabase
@@ -979,7 +979,7 @@ export class CrossDeviceSync {
     eventData: Omit<
       SyncEvent,
       'eventId' | 'timestamp' | 'version' | 'checksum' | 'isProcessed'
-    >
+    >,
   ): Promise<SyncEvent> {
     const syncEvent: SyncEvent = {
       ...eventData,
@@ -1028,10 +1028,10 @@ export class CrossDeviceSync {
   private updateStatistics(): void {
     this.syncStatistics.totalSessions = this.activeSessions.size;
     this.syncStatistics.activeSessions = Array.from(
-      this.activeSessions.values()
+      this.activeSessions.values(),
     ).filter((s) => s.isActive).length;
     this.syncStatistics.devicesOnline = Array.from(
-      this.activeSessions.values()
+      this.activeSessions.values(),
     ).filter((s) => s.syncState.isOnline).length;
     this.syncStatistics.lastSyncAt = new Date();
 

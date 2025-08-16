@@ -50,7 +50,7 @@ export async function GET(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -91,7 +91,7 @@ export async function POST(request: NextRequest) {
               message: err.message,
             })),
           },
-          { status: 400 }
+          { status: 400 },
         );
       }
       throw validationError;
@@ -109,7 +109,7 @@ export async function POST(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

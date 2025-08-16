@@ -402,10 +402,10 @@ class PermissionValidationSystem {
    * Check multiple permissions at once
    */
   async checkMultiplePermissions(
-    checks: PermissionCheck[]
+    checks: PermissionCheck[],
   ): Promise<PermissionResult[]> {
     const results = await Promise.all(
-      checks.map((check) => this.checkPermission(check))
+      checks.map((check) => this.checkPermission(check)),
     );
     return results;
   }
@@ -435,7 +435,7 @@ class PermissionValidationSystem {
       // Cache permissions
       localStorage.setItem(
         `user_permissions_${userId}`,
-        JSON.stringify(defaultPermissions)
+        JSON.stringify(defaultPermissions),
       );
 
       return defaultPermissions;
@@ -459,7 +459,7 @@ class PermissionValidationSystem {
       // Store updated permissions
       localStorage.setItem(
         `user_permissions_${userId}`,
-        JSON.stringify(updatedPermissions)
+        JSON.stringify(updatedPermissions),
       );
 
       // Clear cache for this user
@@ -473,7 +473,7 @@ class PermissionValidationSystem {
           newRoles: roles,
           changedBy: 'system', // In production, track who made the change
         },
-        userId
+        userId,
       );
     } catch (_error) {
       throw new Error('Failed to update user roles');
@@ -485,7 +485,7 @@ class PermissionValidationSystem {
    */
   async addCustomPermission(
     userId: string,
-    permission: RolePermission
+    permission: RolePermission,
   ): Promise<void> {
     try {
       const currentPermissions = await this.getUserPermissions(userId);
@@ -500,7 +500,7 @@ class PermissionValidationSystem {
 
       localStorage.setItem(
         `user_permissions_${userId}`,
-        JSON.stringify(updatedPermissions)
+        JSON.stringify(updatedPermissions),
       );
 
       this.clearUserPermissionCache(userId);
@@ -512,7 +512,7 @@ class PermissionValidationSystem {
           resource: permission.resource,
           actions: permission.actions,
         },
-        userId
+        userId,
       );
     } catch (_error) {
       throw new Error('Failed to add custom permission');
@@ -545,10 +545,10 @@ class PermissionValidationSystem {
    */
   getPermissionRequirements(
     resource: ResourceType,
-    action: Permission
+    action: Permission,
   ): RolePermission[] {
     return DEFAULT_PERMISSIONS.filter(
-      (p) => p.resource === resource && p.actions.includes(action)
+      (p) => p.resource === resource && p.actions.includes(action),
     );
   }
 
@@ -556,7 +556,7 @@ class PermissionValidationSystem {
 
   private async evaluatePermission(
     check: PermissionCheck,
-    userPermissions: UserPermissions
+    userPermissions: UserPermissions,
   ): Promise<PermissionResult> {
     if (!userPermissions.isActive) {
       return {
@@ -577,7 +577,7 @@ class PermissionValidationSystem {
             const conditionResult = await this.evaluateConditions(
               check,
               permission.conditions,
-              userPermissions
+              userPermissions,
             );
             if (!conditionResult.allowed) {
               continue;
@@ -616,7 +616,7 @@ class PermissionValidationSystem {
 
   private matchesPermission(
     check: PermissionCheck,
-    permission: RolePermission
+    permission: RolePermission,
   ): boolean {
     return (
       permission.resource === check.resource &&
@@ -627,7 +627,7 @@ class PermissionValidationSystem {
   private async evaluateConditions(
     check: PermissionCheck,
     conditions: string[],
-    _userPermissions: UserPermissions
+    _userPermissions: UserPermissions,
   ): Promise<{ allowed: boolean; reason: string }> {
     // Implement condition evaluation logic
     for (const condition of conditions) {
@@ -675,13 +675,13 @@ class PermissionValidationSystem {
 
   private async logPermissionCheck(
     check: PermissionCheck,
-    result: PermissionResult
+    result: PermissionResult,
   ): Promise<void> {
     if (!result.allowed) {
       await securityAuditLogger.logPermissionDenied(
         check.userId,
         check.resource,
-        check.action
+        check.action,
       );
     }
   }
@@ -695,7 +695,7 @@ export async function hasPermission(
   userId: string,
   resource: ResourceType,
   action: Permission,
-  resourceId?: string
+  resourceId?: string,
 ): Promise<boolean> {
   const result = await permissionValidator.checkPermission({
     userId,
@@ -710,7 +710,7 @@ export async function requirePermission(
   userId: string,
   resource: ResourceType,
   action: Permission,
-  resourceId?: string
+  resourceId?: string,
 ): Promise<void> {
   const result = await permissionValidator.checkPermission({
     userId,
@@ -730,7 +730,7 @@ export async function checkMultiplePermissions(
     resource: ResourceType;
     action: Permission;
     resourceId?: string;
-  }>
+  }>,
 ): Promise<boolean[]> {
   const permissionChecks = checks.map((check) => ({
     userId,
@@ -749,7 +749,7 @@ export async function getUserRoles(userId: string): Promise<SystemRole[]> {
 
 export async function updateUserRoles(
   userId: string,
-  roles: SystemRole[]
+  roles: SystemRole[],
 ): Promise<void> {
   return permissionValidator.updateUserRoles(userId, roles);
 }

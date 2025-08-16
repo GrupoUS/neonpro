@@ -91,7 +91,7 @@ export async function GET(request: NextRequest) {
           error: 'Parâmetros inválidos',
           details: error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -102,7 +102,7 @@ export async function GET(request: NextRequest) {
         message:
           process.env.NODE_ENV === 'development' ? error.message : undefined,
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -122,7 +122,7 @@ export async function POST(request: NextRequest) {
         .min(1, 'Slug é obrigatório')
         .regex(
           /^[a-z0-9-]+$/,
-          'Slug deve conter apenas letras minúsculas, números e hífens'
+          'Slug deve conter apenas letras minúsculas, números e hífens',
         ),
       description: z.string().optional(),
       logo_url: z.string().url().optional(),
@@ -159,7 +159,7 @@ export async function POST(request: NextRequest) {
           },
         },
       },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (error) {
     if (error instanceof z.ZodError) {
@@ -169,7 +169,7 @@ export async function POST(request: NextRequest) {
           error: 'Dados inválidos',
           details: error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -181,7 +181,7 @@ export async function POST(request: NextRequest) {
           error: 'Slug já existe',
           message: 'Este slug já está sendo usado por outro tenant',
         },
-        { status: 409 }
+        { status: 409 },
       );
     }
 
@@ -192,7 +192,7 @@ export async function POST(request: NextRequest) {
         message:
           process.env.NODE_ENV === 'development' ? error.message : undefined,
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

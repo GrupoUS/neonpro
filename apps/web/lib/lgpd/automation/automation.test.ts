@@ -37,7 +37,7 @@ const mockSupabase = {
     insert: jest.fn(() => ({
       select: jest.fn(() => ({
         single: jest.fn(() =>
-          Promise.resolve({ data: { id: 'test-id' }, error: null })
+          Promise.resolve({ data: { id: 'test-id' }, error: null }),
         ),
       })),
     })),
@@ -63,7 +63,7 @@ const mockComplianceManager = {
   getDashboardMetrics: jest.fn(() => Promise.resolve({})),
   getConsents: jest.fn(() => Promise.resolve({ consents: [] })),
   createOrUpdateConsent: jest.fn(() =>
-    Promise.resolve({ consent_id: 'test-consent' })
+    Promise.resolve({ consent_id: 'test-consent' }),
   ),
 } as any;
 
@@ -79,7 +79,7 @@ describe('LGPD Automation System', () => {
     orchestrator = new LGPDAutomationOrchestrator(
       mockSupabase,
       mockComplianceManager,
-      config
+      config,
     );
   });
 
@@ -154,7 +154,7 @@ describe('LGPD Automation System', () => {
       consentManager = new ConsentAutomationManager(
         mockSupabase,
         mockComplianceManager,
-        config.consent_automation
+        config.consent_automation,
       );
     });
 
@@ -231,7 +231,7 @@ describe('LGPD Automation System', () => {
       rightsManager = new DataSubjectRightsAutomation(
         mockSupabase,
         mockComplianceManager,
-        config.data_subject_rights
+        config.data_subject_rights,
       );
     });
 
@@ -312,7 +312,7 @@ describe('LGPD Automation System', () => {
       complianceMonitor = new RealTimeComplianceMonitor(
         mockSupabase,
         mockComplianceManager,
-        config.compliance_monitoring
+        config.compliance_monitoring,
       );
     });
 
@@ -344,7 +344,7 @@ describe('LGPD Automation System', () => {
       retentionManager = new DataRetentionAutomation(
         mockSupabase,
         mockComplianceManager,
-        config.data_retention
+        config.data_retention,
       );
     });
 
@@ -393,7 +393,7 @@ describe('LGPD Automation System', () => {
       breachDetection = new BreachDetectionAutomation(
         mockSupabase,
         mockComplianceManager,
-        config.breach_detection
+        config.breach_detection,
       );
     });
 
@@ -444,7 +444,7 @@ describe('LGPD Automation System', () => {
       dataMinimization = new DataMinimizationAutomation(
         mockSupabase,
         mockComplianceManager,
-        config.data_minimization
+        config.data_minimization,
       );
     });
 
@@ -492,7 +492,7 @@ describe('LGPD Automation System', () => {
       thirdPartyCompliance = new ThirdPartyComplianceAutomation(
         mockSupabase,
         mockComplianceManager,
-        config.third_party_compliance
+        config.third_party_compliance,
       );
     });
 
@@ -528,7 +528,7 @@ describe('LGPD Automation System', () => {
         safeguards: ['encryption'],
         start_date: new Date().toISOString(),
         end_date: new Date(
-          Date.now() + 365 * 24 * 60 * 60 * 1000
+          Date.now() + 365 * 24 * 60 * 60 * 1000,
         ).toISOString(),
       };
 
@@ -547,7 +547,7 @@ describe('LGPD Automation System', () => {
       auditReporting = new AuditReportingAutomation(
         mockSupabase,
         mockComplianceManager,
-        config.audit_reporting
+        config.audit_reporting,
       );
     });
 
@@ -620,10 +620,10 @@ describe('LGPD Automation System', () => {
 
       expect(devConfig.consent_automation.processing_interval_minutes).toBe(5);
       expect(devConfig.data_subject_rights.processing_interval_minutes).toBe(
-        10
+        10,
       );
       expect(devConfig.compliance_monitoring.monitoring_interval_minutes).toBe(
-        1
+        1,
       );
     });
 
@@ -631,10 +631,10 @@ describe('LGPD Automation System', () => {
       const prodConfig = getLGPDAutomationConfig('production');
 
       expect(
-        prodConfig.compliance_monitoring.alert_thresholds.consent_compliance
+        prodConfig.compliance_monitoring.alert_thresholds.consent_compliance,
       ).toBe(98);
       expect(
-        prodConfig.breach_detection.detection_rules.failed_login_threshold
+        prodConfig.breach_detection.detection_rules.failed_login_threshold,
       ).toBe(3);
       expect(prodConfig.data_retention.approval_required).toBe(true);
     });
@@ -650,7 +650,7 @@ describe('LGPD Automation System', () => {
             Promise.resolve({
               data: null,
               error: { message: 'Database error' },
-            })
+            }),
           ),
         })),
       };
@@ -658,7 +658,7 @@ describe('LGPD Automation System', () => {
       const errorOrchestrator = new LGPDAutomationOrchestrator(
         errorSupabase as any,
         mockComplianceManager,
-        config
+        config,
       );
 
       await expect(errorOrchestrator.getAutomationStatus()).rejects.toThrow();
@@ -674,7 +674,7 @@ describe('LGPD Automation System', () => {
         new LGPDAutomationOrchestrator(
           mockSupabase,
           mockComplianceManager,
-          invalidConfig as any
+          invalidConfig as any,
         );
       }).toThrow();
     });
@@ -699,7 +699,7 @@ describe('LGPD Automation System', () => {
           data_categories: ['personal'],
           retention_period_months: 24,
           third_party_sharing: false,
-        })
+        }),
       );
 
       const startTime = Date.now();

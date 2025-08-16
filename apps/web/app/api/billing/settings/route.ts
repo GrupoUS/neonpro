@@ -91,7 +91,7 @@ export async function GET(_request: Request) {
     if (error) {
       return NextResponse.json(
         { error: 'Failed to fetch financial settings' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -99,7 +99,7 @@ export async function GET(_request: Request) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal Server Error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -129,7 +129,7 @@ export async function PUT(request: Request) {
     if (checkError && checkError.code !== 'PGRST116') {
       return NextResponse.json(
         { error: 'Failed to check existing settings' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -183,7 +183,7 @@ export async function PUT(request: Request) {
     if (error) {
       return NextResponse.json(
         { error: 'Failed to update financial settings' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -192,12 +192,12 @@ export async function PUT(request: Request) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Validation failed', details: error.errors },
-        { status: 400 }
+        { status: 400 },
       );
     }
     return NextResponse.json(
       { error: 'Internal Server Error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -232,7 +232,7 @@ export async function POST(request: Request) {
     if (settingsError) {
       return NextResponse.json(
         { error: 'Failed to fetch financial settings' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -256,7 +256,7 @@ export async function POST(request: Request) {
     if (updateError) {
       return NextResponse.json(
         { error: 'Failed to update settings' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -267,7 +267,7 @@ export async function POST(request: Request) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal Server Error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

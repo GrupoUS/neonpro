@@ -28,7 +28,7 @@ async function validateUserAndClinic(request: NextRequest) {
     return {
       error: NextResponse.json(
         { error: 'clinic_id is required' },
-        { status: 400 }
+        { status: 400 },
       ),
     };
   }
@@ -44,7 +44,7 @@ async function validateUserAndClinic(request: NextRequest) {
     return {
       error: NextResponse.json(
         { error: 'Access denied to clinic' },
-        { status: 403 }
+        { status: 403 },
       ),
     };
   }
@@ -73,7 +73,7 @@ export async function GET(request: NextRequest) {
   } catch (error: any) {
     return NextResponse.json(
       { error: 'Internal server error', message: error.message },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -98,7 +98,7 @@ export async function POST(request: NextRequest) {
     const alert = await marketingROIService.createROIAlert(
       clinicId,
       validatedData,
-      user.id
+      user.id,
     );
 
     return NextResponse.json(alert, { status: 201 });
@@ -106,13 +106,13 @@ export async function POST(request: NextRequest) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Validation error', details: error.errors },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     return NextResponse.json(
       { error: 'Internal server error', message: error.message },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

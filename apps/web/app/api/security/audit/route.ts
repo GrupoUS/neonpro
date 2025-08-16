@@ -18,7 +18,7 @@ export async function POST(request: NextRequest) {
     if (!(start && end)) {
       return NextResponse.json(
         { error: 'Start and end dates are required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -55,7 +55,7 @@ export async function POST(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

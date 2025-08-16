@@ -11,7 +11,7 @@ export class WaitlistManager {
       serviceId: string;
       professionalId: string;
     },
-    _patientId: string
+    _patientId: string,
   ): Promise<{
     success: boolean;
     waitlistPosition?: number;

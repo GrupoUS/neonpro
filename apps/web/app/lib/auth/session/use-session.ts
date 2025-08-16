@@ -18,7 +18,7 @@ type UseSessionReturn = {
   destroySession: () => Promise<void>;
   updateActivity: (
     action?: string,
-    metadata?: Record<string, any>
+    metadata?: Record<string, any>,
   ) => Promise<void>;
   activeSessions: SessionData[];
   terminateSession: (sessionId: string) => Promise<boolean>;
@@ -68,7 +68,7 @@ export function useSession(): UseSessionReturn {
         // Create new session when user signs in
         try {
           const newSession = await sessionManager.createSession(
-            supabaseSession.user
+            supabaseSession.user,
           );
           setSession(newSession);
 
@@ -160,7 +160,7 @@ export function useSession(): UseSessionReturn {
         setSession(updatedSession);
       } catch (_error) {}
     },
-    []
+    [],
   );
 
   /**
@@ -181,7 +181,7 @@ export function useSession(): UseSessionReturn {
         return false;
       }
     },
-    []
+    [],
   );
 
   return {
@@ -208,7 +208,7 @@ export function useSessionActivity() {
     (route: string) => {
       updateActivity('navigation', { route });
     },
-    [updateActivity]
+    [updateActivity],
   );
 
   /**
@@ -218,7 +218,7 @@ export function useSessionActivity() {
     (action: string, metadata?: Record<string, any>) => {
       updateActivity(action, metadata);
     },
-    [updateActivity]
+    [updateActivity],
   );
 
   /**
@@ -228,7 +228,7 @@ export function useSessionActivity() {
     (formName: string, success: boolean) => {
       updateActivity('form_submission', { formName, success });
     },
-    [updateActivity]
+    [updateActivity],
   );
 
   /**
@@ -238,7 +238,7 @@ export function useSessionActivity() {
     (endpoint: string, method: string, status: number) => {
       updateActivity('api_call', { endpoint, method, status });
     },
-    [updateActivity]
+    [updateActivity],
   );
 
   return {

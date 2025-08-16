@@ -709,7 +709,7 @@ export function AuditDashboard({ className }: AuditDashboardProps) {
                     </h3>
                     <div className="grid gap-4 md:grid-cols-4">
                       {Object.entries(
-                        statistics.statistics.events_by_severity
+                        statistics.statistics.events_by_severity,
                       ).map(([severity, count]) => (
                         <Card key={severity}>
                           <CardContent className="pt-6">
@@ -722,7 +722,7 @@ export function AuditDashboard({ className }: AuditDashboardProps) {
                               </div>
                               <Badge
                                 variant={getSeverityVariant(
-                                  severity as AuditSeverity
+                                  severity as AuditSeverity,
                                 )}
                               >
                                 {severity}
@@ -749,7 +749,7 @@ export function AuditDashboard({ className }: AuditDashboardProps) {
                             <span className="font-medium">{type}</span>
                             <Badge variant="outline">{count}</Badge>
                           </div>
-                        )
+                        ),
                       )}
                     </div>
                   </div>
@@ -772,7 +772,7 @@ export function AuditDashboard({ className }: AuditDashboardProps) {
                             </div>
                             <Badge variant="outline">{count} eventos</Badge>
                           </div>
-                        )
+                        ),
                       )}
                     </div>
                   </div>
@@ -883,7 +883,7 @@ function LogDetailsView({ log }: { log: any }) {
  * Retorna a variante do badge baseada na severidade
  */
 function getSeverityVariant(
-  severity: AuditSeverity
+  severity: AuditSeverity,
 ): 'default' | 'secondary' | 'destructive' | 'outline' {
   switch (severity) {
     case AuditSeverity.CRITICAL:
@@ -903,7 +903,7 @@ function getSeverityVariant(
  * Retorna a variante do badge baseada no status do alerta
  */
 function getStatusVariant(
-  status: string
+  status: string,
 ): 'default' | 'secondary' | 'destructive' | 'outline' {
   switch (status) {
     case 'open':

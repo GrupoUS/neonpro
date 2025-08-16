@@ -13,7 +13,7 @@ import { z } from 'zod';
 // Initialize Supabase client
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
+  process.env.SUPABASE_SERVICE_ROLE_KEY!,
 );
 
 // Types
@@ -84,7 +84,7 @@ export class BankReconciliationService {
     csvContent: string,
     bankAccountId: string,
     mapping: z.infer<typeof csvMappingSchema>,
-    userId: string
+    userId: string,
   ): Promise<ReconciliationResult> {
     // Validate mapping
     const validatedMapping = csvMappingSchema.parse(mapping);
@@ -108,7 +108,7 @@ export class BankReconciliationService {
         const dateStr = record[validatedMapping.date_column];
         const parsedDate = BankReconciliationService.parseDate(
           dateStr,
-          validatedMapping.date_format
+          validatedMapping.date_format,
         );
 
         if (!parsedDate) {
@@ -120,7 +120,7 @@ export class BankReconciliationService {
         const amountStr = record[validatedMapping.amount_column];
         const amount = BankReconciliationService.parseAmount(
           amountStr,
-          validatedMapping.amount_format
+          validatedMapping.amount_format,
         );
 
         if (Number.isNaN(amount)) {
@@ -168,7 +168,7 @@ export class BankReconciliationService {
         transactions.push(transaction);
       } catch (error) {
         errors.push(
-          `Row ${i + 1}: ${error instanceof Error ? error.message : 'Unknown error'}`
+          `Row ${i + 1}: ${error instanceof Error ? error.message : 'Unknown error'}`,
         );
       }
     }
@@ -187,7 +187,7 @@ export class BankReconciliationService {
     const matchingResult =
       await BankReconciliationService.performAutomaticMatching(
         insertedTransactions || [],
-        userId
+        userId,
       );
 
     // Log import activity
@@ -218,7 +218,7 @@ export class BankReconciliationService {
    */
   static async performAutomaticMatching(
     transactions: BankTransaction[],
-    userId: string
+    userId: string,
   ): Promise<{
     matched_transactions: Array<{
       bank_transaction_id: string;
@@ -252,7 +252,7 @@ export class BankReconciliationService {
           description,
           supplier_name
         )
-      `
+      `,
       )
       .gte('payment_date', ninetyDaysAgo.toISOString())
       .in('status', ['completed', 'pending']);
@@ -265,7 +265,7 @@ export class BankReconciliationService {
     const { data: pixPayments } = await supabase
       .from('pix_payments')
       .select(
-        'id, amount, created_at as payment_date, customer_name, description'
+        'id, amount, created_at as payment_date, customer_name, description',
       )
       .gte('created_at', ninetyDaysAgo.toISOString())
       .eq('status', 'completed');
@@ -273,7 +273,7 @@ export class BankReconciliationService {
     const { data: cardPayments } = await supabase
       .from('card_payments')
       .select(
-        'id, amount, created_at as payment_date, customer_name, description'
+        'id, amount, created_at as payment_date, customer_name, description',
       )
       .gte('created_at', ninetyDaysAgo.toISOString())
       .eq('status', 'succeeded');
@@ -313,7 +313,7 @@ export class BankReconciliationService {
     for (const transaction of transactions) {
       const matches = BankReconciliationService.findPaymentMatches(
         transaction,
-        allPayments
+        allPayments,
       );
 
       if (matches.length > 0) {
@@ -366,7 +366,7 @@ export class BankReconciliationService {
    */
   private static findPaymentMatches(
     transaction: BankTransaction,
-    payments: PaymentRecord[]
+    payments: PaymentRecord[],
   ): Array<{ payment_id: string; confidence_score: number }> {
     const matches: Array<{ payment_id: string; confidence_score: number }> = [];
 
@@ -388,7 +388,7 @@ export class BankReconciliationService {
       const paymentDate = parseISO(payment.payment_date);
       const daysDiff = Math.abs(
         (transactionDate.getTime() - paymentDate.getTime()) /
-          (1000 * 60 * 60 * 24)
+          (1000 * 60 * 60 * 24),
       );
 
       if (daysDiff === 0) {
@@ -415,7 +415,7 @@ export class BankReconciliationService {
       if (payment.description && transaction.description) {
         const similarity = BankReconciliationService.calculateStringSimilarity(
           transaction.description.toLowerCase(),
-          payment.description.toLowerCase()
+          payment.description.toLowerCase(),
         );
         score += similarity * 0.1;
       }
@@ -424,7 +424,7 @@ export class BankReconciliationService {
       if (payment.customer_name && transaction.description) {
         const similarity = BankReconciliationService.calculateStringSimilarity(
           transaction.description.toLowerCase(),
-          payment.customer_name.toLowerCase()
+          payment.customer_name.toLowerCase(),
         );
         score += similarity * 0.1;
       }
@@ -448,7 +448,7 @@ export class BankReconciliationService {
   static async manualMatch(
     transactionId: string,
     paymentId: string,
-    userId: string
+    userId: string,
   ): Promise<void> {
     // Update transaction
     const { error: updateError } = await supabase
@@ -484,7 +484,7 @@ export class BankReconciliationService {
   static async getReconciliationSummary(
     bankAccountId: string,
     startDate: string,
-    endDate: string
+    endDate: string,
   ) {
     const { data: summary, error } = await supabase.rpc(
       'get_reconciliation_summary',
@@ -492,7 +492,7 @@ export class BankReconciliationService {
         p_bank_account_id: bankAccountId,
         p_start_date: startDate,
         p_end_date: endDate,
-      }
+      },
     );
 
     if (error) {
@@ -511,7 +511,7 @@ export class BankReconciliationService {
         return new Date(
           Number.parseInt(year, 10),
           Number.parseInt(month, 10) - 1,
-          Number.parseInt(day, 10)
+          Number.parseInt(day, 10),
         );
       }
 
@@ -529,7 +529,7 @@ export class BankReconciliationService {
 
   private static parseAmount(
     amountStr: string,
-    format: 'decimal' | 'cents'
+    format: 'decimal' | 'cents',
   ): number {
     // Remove currency symbols and spaces
     const cleaned = amountStr.replace(/[R$\s]/g, '').replace(',', '.');
@@ -548,7 +548,7 @@ export class BankReconciliationService {
 
     const editDistance = BankReconciliationService.levenshteinDistance(
       longer,
-      shorter
+      shorter,
     );
     return (longer.length - editDistance) / longer.length;
   }
@@ -572,7 +572,7 @@ export class BankReconciliationService {
           matrix[i][j] = Math.min(
             matrix[i - 1][j - 1] + 1,
             matrix[i][j - 1] + 1,
-            matrix[i - 1][j] + 1
+            matrix[i - 1][j] + 1,
           );
         }
       }

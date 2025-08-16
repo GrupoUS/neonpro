@@ -119,7 +119,7 @@ export default function PacientesPage() {
   const filteredPatients = patients.filter(
     (patient) =>
       patient.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      patient.email.toLowerCase().includes(searchTerm.toLowerCase())
+      patient.email.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   return (

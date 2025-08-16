@@ -4,7 +4,7 @@ import { updateEquipmentSchema } from '@/app/lib/validations/maintenance';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const { searchParams } = new URL(request.url);
@@ -14,7 +14,7 @@ export async function GET(
     if (!clinicId) {
       return NextResponse.json(
         { error: 'clinic_id é obrigatório' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -23,7 +23,7 @@ export async function GET(
     if (!equipment) {
       return NextResponse.json(
         { error: 'Equipment not found' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -36,14 +36,14 @@ export async function GET(
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const { searchParams } = new URL(request.url);
@@ -53,18 +53,18 @@ export async function PUT(
     if (!clinicId) {
       return NextResponse.json(
         { error: 'clinic_id é obrigatório' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     // First verify equipment exists and belongs to clinic
     const existingEquipment = await equipmentMaintenanceService.getEquipment(
-      params.id
+      params.id,
     );
     if (!existingEquipment || existingEquipment.clinic_id !== clinicId) {
       return NextResponse.json(
         { error: 'Equipment not found' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -75,7 +75,7 @@ export async function PUT(
 
     const equipment = await equipmentMaintenanceService.updateEquipment(
       params.id,
-      validatedData
+      validatedData,
     );
 
     return NextResponse.json(equipment);
@@ -83,20 +83,20 @@ export async function PUT(
     if (error instanceof Error && error.message.includes('validation')) {
       return NextResponse.json(
         { error: 'Invalid equipment data', details: error.message },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     return NextResponse.json(
       { error: 'Failed to update equipment' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const { searchParams } = new URL(request.url);
@@ -106,18 +106,18 @@ export async function DELETE(
     if (!clinicId) {
       return NextResponse.json(
         { error: 'clinic_id é obrigatório' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     // First verify equipment exists and belongs to clinic
     const existingEquipment = await equipmentMaintenanceService.getEquipment(
-      params.id
+      params.id,
     );
     if (!existingEquipment || existingEquipment.clinic_id !== clinicId) {
       return NextResponse.json(
         { error: 'Equipment not found' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -130,7 +130,7 @@ export async function DELETE(
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to delete equipment' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

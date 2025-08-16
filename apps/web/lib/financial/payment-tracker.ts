@@ -298,7 +298,7 @@ class PaymentTracker {
       const fees = await this.calculateFees(
         paymentData.amount,
         paymentData.method,
-        paymentData.gateway
+        paymentData.gateway,
       );
 
       // Create payment record
@@ -348,7 +348,7 @@ class PaymentTracker {
       tid?: string;
       processedAt?: Date;
       notes?: string;
-    }
+    },
   ): Promise<void> {
     try {
       const payment = await this.getPaymentRecord(paymentId);
@@ -401,7 +401,7 @@ class PaymentTracker {
   async processWebhook(
     gateway: PaymentGateway,
     webhookData: any,
-    signature?: string
+    signature?: string,
   ): Promise<void> {
     try {
       // Verify webhook signature
@@ -420,7 +420,7 @@ class PaymentTracker {
         paymentId: this.extractPaymentIdFromWebhook(gateway, webhookData),
         status: this.mapGatewayStatusToPaymentStatus(
           gateway,
-          webhookData.status || webhookData.state
+          webhookData.status || webhookData.state,
         ),
         amount: webhookData.amount || webhookData.transaction_amount,
         transactionId: webhookData.transaction_id || webhookData.id,
@@ -459,7 +459,7 @@ class PaymentTracker {
    */
   async reconcilePayments(
     gateway: PaymentGateway,
-    date: Date
+    date: Date,
   ): Promise<PaymentReconciliation> {
     try {
       const reconciliationId = `reconciliation_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
@@ -473,7 +473,7 @@ class PaymentTracker {
       // Compare and find discrepancies
       const discrepancies = this.findPaymentDiscrepancies(
         ourPayments,
-        gatewayPayments
+        gatewayPayments,
       );
 
       // Create reconciliation record
@@ -614,7 +614,7 @@ class PaymentTracker {
 
   // Private helper methods
   private initializeConfig(
-    config?: Partial<PaymentTrackerConfig>
+    config?: Partial<PaymentTrackerConfig>,
   ): PaymentTrackerConfig {
     const defaultConfig: PaymentTrackerConfig = {
       gateways: {
@@ -701,7 +701,7 @@ class PaymentTracker {
     this.webhookHandlers.set('pagarme', this.handlePagarmeWebhook.bind(this));
     this.webhookHandlers.set(
       'mercadopago',
-      this.handleMercadoPagoWebhook.bind(this)
+      this.handleMercadoPagoWebhook.bind(this),
     );
   }
 
@@ -716,7 +716,7 @@ class PaymentTracker {
   private async calculateFees(
     amount: number,
     method: PaymentMethod,
-    gateway: PaymentGateway
+    gateway: PaymentGateway,
   ): Promise<PaymentRecord['fees']> {
     // Calculate fees based on method and gateway
     let gatewayFee = 0;
@@ -749,7 +749,7 @@ class PaymentTracker {
   }
 
   private async initializeGatewayPayment(
-    payment: PaymentRecord
+    payment: PaymentRecord,
   ): Promise<void> {
     switch (payment.gateway) {
       case 'stripe':
@@ -796,7 +796,7 @@ class PaymentTracker {
   }
 
   private async getPaymentRecord(
-    paymentId: string
+    paymentId: string,
   ): Promise<PaymentRecord | null> {
     const { data } = await this.supabase
       .from('payment_records')
@@ -866,7 +866,7 @@ class PaymentTracker {
 
   private async handlePaymentStatusChange(
     payment: PaymentRecord,
-    status: PaymentStatus
+    status: PaymentStatus,
   ): Promise<void> {
     switch (status) {
       case 'confirmed':
@@ -897,7 +897,7 @@ class PaymentTracker {
     await this.logPaymentAudit(
       payment.id,
       'payment_confirmed',
-      'Payment confirmed successfully'
+      'Payment confirmed successfully',
     );
   }
 
@@ -919,7 +919,7 @@ class PaymentTracker {
     await this.logPaymentAudit(
       payment.id,
       'payment_refunded',
-      'Payment refunded'
+      'Payment refunded',
     );
   }
 
@@ -941,7 +941,7 @@ class PaymentTracker {
   }
 
   private async updateWebhookRecord(
-    webhook: Partial<PaymentWebhook>
+    webhook: Partial<PaymentWebhook>,
   ): Promise<void> {
     await this.supabase
       .from('payment_webhooks')
@@ -956,25 +956,25 @@ class PaymentTracker {
   // Gateway-specific implementations
   private async initializeGateway(
     _gateway: PaymentGateway,
-    _config: any
+    _config: any,
   ): Promise<void> {
     // Gateway-specific initialization
   }
 
   private async initializeStripePayment(
-    _payment: PaymentRecord
+    _payment: PaymentRecord,
   ): Promise<void> {
     // Stripe payment initialization
   }
 
   private async initializePagarmePayment(
-    _payment: PaymentRecord
+    _payment: PaymentRecord,
   ): Promise<void> {
     // Pagar.me payment initialization
   }
 
   private async initializeMercadoPagoPayment(
-    _payment: PaymentRecord
+    _payment: PaymentRecord,
   ): Promise<void> {
     // MercadoPago payment initialization
   }
@@ -988,7 +988,7 @@ class PaymentTracker {
   }
 
   private async handleMercadoPagoWebhook(
-    _webhook: PaymentWebhook
+    _webhook: PaymentWebhook,
   ): Promise<void> {
     // MercadoPago webhook handling
   }
@@ -996,7 +996,7 @@ class PaymentTracker {
   private async verifyWebhookSignature(
     _gateway: PaymentGateway,
     _data: any,
-    _signature: string
+    _signature: string,
   ): Promise<boolean> {
     // Verify webhook signature based on gateway
     return true; // Simplified for now
@@ -1004,7 +1004,7 @@ class PaymentTracker {
 
   private extractPaymentIdFromWebhook(
     _gateway: PaymentGateway,
-    data: any
+    data: any,
   ): string {
     // Extract payment ID from webhook data based on gateway
     return data.payment_id || data.id || 'unknown';
@@ -1012,7 +1012,7 @@ class PaymentTracker {
 
   private mapGatewayStatusToPaymentStatus(
     _gateway: PaymentGateway,
-    gatewayStatus: string
+    gatewayStatus: string,
   ): PaymentStatus {
     // Map gateway-specific status to our payment status
     const statusMap: Record<string, PaymentStatus> = {
@@ -1031,7 +1031,7 @@ class PaymentTracker {
 
   private async getPaymentsByDate(
     gateway: PaymentGateway,
-    date: Date
+    date: Date,
   ): Promise<PaymentRecord[]> {
     const startOfDay = new Date(date);
     startOfDay.setHours(0, 0, 0, 0);
@@ -1051,7 +1051,7 @@ class PaymentTracker {
 
   private async getGatewayPayments(
     _gateway: PaymentGateway,
-    _date: Date
+    _date: Date,
   ): Promise<any[]> {
     // Get payments from gateway API for reconciliation
     // Implementation would vary by gateway
@@ -1060,7 +1060,7 @@ class PaymentTracker {
 
   private findPaymentDiscrepancies(
     ourPayments: PaymentRecord[],
-    gatewayPayments: any[]
+    gatewayPayments: any[],
   ): PaymentReconciliation['discrepancies'] {
     const missingPayments: string[] = [];
     const extraPayments: string[] = [];
@@ -1072,7 +1072,7 @@ class PaymentTracker {
       const gatewayPayment = gatewayPayments.find(
         (gp) =>
           gp.transaction_id === ourPayment.transactionId ||
-          gp.id === ourPayment.gatewayTransactionId
+          gp.id === ourPayment.gatewayTransactionId,
       );
 
       if (!gatewayPayment) {
@@ -1094,7 +1094,7 @@ class PaymentTracker {
       const ourPayment = ourPayments.find(
         (op) =>
           op.transactionId === gatewayPayment.transaction_id ||
-          op.gatewayTransactionId === gatewayPayment.id
+          op.gatewayTransactionId === gatewayPayment.id,
       );
 
       if (!ourPayment) {
@@ -1106,7 +1106,7 @@ class PaymentTracker {
   }
 
   private async storeReconciliationRecord(
-    reconciliation: PaymentReconciliation
+    reconciliation: PaymentReconciliation,
   ): Promise<void> {
     await this.supabase.from('payment_reconciliations').insert({
       id: reconciliation.id,
@@ -1124,7 +1124,7 @@ class PaymentTracker {
   }
 
   private async handleReconciliationDiscrepancies(
-    reconciliation: PaymentReconciliation
+    reconciliation: PaymentReconciliation,
   ): Promise<void> {
     if (this.config.reconciliation.notifyDiscrepancies) {
       await this.sendReconciliationAlert(reconciliation);
@@ -1133,18 +1133,18 @@ class PaymentTracker {
 
   private calculatePaymentAnalytics(
     payments: any[],
-    filters?: any
+    filters?: any,
   ): PaymentAnalytics {
     const period = {
       startDate:
         filters?.startDate ||
         new Date(
-          Math.min(...payments.map((p) => new Date(p.created_at).getTime()))
+          Math.min(...payments.map((p) => new Date(p.created_at).getTime())),
         ),
       endDate:
         filters?.endDate ||
         new Date(
-          Math.max(...payments.map((p) => new Date(p.created_at).getTime()))
+          Math.max(...payments.map((p) => new Date(p.created_at).getTime())),
         ),
     };
 
@@ -1208,7 +1208,7 @@ class PaymentTracker {
         amount: gatewayPayments.reduce((sum, p) => sum + p.amount, 0),
         fees: gatewayPayments.reduce(
           (sum, p) => sum + (JSON.parse(p.fees || '{}').total || 0),
-          0
+          0,
         ),
         successRate: confirmed.length / gatewayPayments.length || 0,
       };
@@ -1244,7 +1244,7 @@ class PaymentTracker {
       .filter((p) => p.processed_at && p.created_at)
       .map(
         (p) =>
-          new Date(p.processed_at).getTime() - new Date(p.created_at).getTime()
+          new Date(p.processed_at).getTime() - new Date(p.created_at).getTime(),
       );
 
     return processingTimes.length > 0
@@ -1267,7 +1267,7 @@ class PaymentTracker {
   private async processDunningForInvoice(invoice: any): Promise<void> {
     const daysPastDue = Math.floor(
       (Date.now() - new Date(invoice.due_date).getTime()) /
-        (1000 * 60 * 60 * 24)
+        (1000 * 60 * 60 * 24),
     );
 
     // Find appropriate dunning stage
@@ -1276,7 +1276,7 @@ class PaymentTracker {
         daysPastDue >= s.daysAfterDue &&
         daysPastDue <
           (this.config.dunning.stages[this.config.dunning.stages.indexOf(s) + 1]
-            ?.daysAfterDue || Number.POSITIVE_INFINITY)
+            ?.daysAfterDue || Number.POSITIVE_INFINITY),
     );
 
     if (stage) {
@@ -1286,7 +1286,7 @@ class PaymentTracker {
 
   private async executeDunningAction(
     invoice: any,
-    stage: DunningConfig['stages'][0]
+    stage: DunningConfig['stages'][0],
   ): Promise<void> {
     switch (stage.action) {
       case 'email':
@@ -1350,30 +1350,30 @@ class PaymentTracker {
 
   // Notification methods (simplified implementations)
   private async sendPaymentConfirmationNotification(
-    _payment: PaymentRecord
+    _payment: PaymentRecord,
   ): Promise<void> {}
 
   private async sendPaymentFailureNotification(
-    _payment: PaymentRecord
+    _payment: PaymentRecord,
   ): Promise<void> {}
 
   private async sendReconciliationAlert(
-    _reconciliation: PaymentReconciliation
+    _reconciliation: PaymentReconciliation,
   ): Promise<void> {}
 
   private async sendDunningEmail(
     _invoice: any,
-    _template: string
+    _template: string,
   ): Promise<void> {}
 
   private async sendDunningSMS(
     _invoice: any,
-    _template: string
+    _template: string,
   ): Promise<void> {}
 
   private async sendDunningWhatsApp(
     _invoice: any,
-    _template: string
+    _template: string,
   ): Promise<void> {}
 
   private async scheduleDunningCall(_invoice: any): Promise<void> {}
@@ -1384,7 +1384,7 @@ class PaymentTracker {
   private async logPaymentAudit(
     paymentId: string,
     action: string,
-    details: string
+    details: string,
   ): Promise<void> {
     if (this.config.compliance.auditTrail) {
       await this.supabase.from('payment_audit_log').insert({
@@ -1400,7 +1400,7 @@ class PaymentTracker {
   private async logDunningAction(
     invoiceId: string,
     action: string,
-    template: string
+    template: string,
   ): Promise<void> {
     await this.supabase.from('dunning_log').insert({
       invoice_id: invoiceId,
@@ -1413,7 +1413,7 @@ class PaymentTracker {
   // Helper methods
   private async updateInvoicePaymentStatus(
     invoiceId: string,
-    status: string
+    status: string,
   ): Promise<void> {
     await this.supabase
       .from('invoices')

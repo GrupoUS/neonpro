@@ -21,7 +21,7 @@ export async function POST(request: NextRequest) {
     if (!subscription?.endpoint) {
       return NextResponse.json(
         { error: 'Invalid subscription data' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -29,20 +29,20 @@ export async function POST(request: NextRequest) {
     if (!(subscription.keys?.p256dh && subscription.keys?.auth)) {
       return NextResponse.json(
         { error: 'Missing subscription keys' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     // Save subscription to database
     const result = await pushNotificationService.saveSubscription(
       user.id,
-      subscription
+      subscription,
     );
 
     if (!result.success) {
       return NextResponse.json(
         { error: result.error || 'Failed to save subscription' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -50,7 +50,7 @@ export async function POST(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -77,13 +77,13 @@ export async function DELETE(request: NextRequest) {
     // Remove subscription from database
     const result = await pushNotificationService.removeSubscription(
       user.id,
-      endpoint
+      endpoint,
     );
 
     if (!result.success) {
       return NextResponse.json(
         { error: result.error || 'Failed to remove subscription' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -91,7 +91,7 @@ export async function DELETE(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -115,13 +115,13 @@ export async function GET(_request: NextRequest) {
     if (!vapidPublicKey) {
       return NextResponse.json(
         { error: 'Push notifications not configured' },
-        { status: 503 }
+        { status: 503 },
       );
     }
 
     // Get user's current subscriptions
     const subscriptions = await pushNotificationService.getUserSubscriptions(
-      user.id
+      user.id,
     );
 
     return NextResponse.json({
@@ -132,7 +132,7 @@ export async function GET(_request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

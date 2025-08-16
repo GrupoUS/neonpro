@@ -43,7 +43,7 @@ export async function GET(request: NextRequest) {
     if (!clinicId) {
       return NextResponse.json(
         { error: 'clinic_id parameter is required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -66,7 +66,7 @@ export async function GET(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -96,13 +96,13 @@ export async function POST(request: NextRequest) {
       default:
         return NextResponse.json(
           { error: 'Invalid action specified' },
-          { status: 400 }
+          { status: 400 },
         );
     }
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -111,7 +111,7 @@ export async function POST(request: NextRequest) {
 async function listNFEDocuments(
   supabase: any,
   clinicId: string,
-  searchParams: URLSearchParams
+  searchParams: URLSearchParams,
 ) {
   let query = supabase
     .from('nfe_documents')
@@ -142,7 +142,7 @@ async function listNFEDocuments(
   if (error) {
     return NextResponse.json(
       { error: 'Failed to fetch NFE documents' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 
@@ -164,7 +164,7 @@ async function getNFEStatus(supabase: any, searchParams: URLSearchParams) {
   if (!(nfeId || chaveNfe)) {
     return NextResponse.json(
       { error: 'nfe_id or chave_nfe parameter is required' },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
@@ -221,7 +221,7 @@ async function downloadNFE(supabase: any, searchParams: URLSearchParams) {
   if (!nfeId) {
     return NextResponse.json(
       { error: 'nfe_id parameter is required' },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
@@ -247,18 +247,18 @@ async function downloadNFE(supabase: any, searchParams: URLSearchParams) {
     const headers = new Headers();
     headers.set(
       'Content-Type',
-      format === 'pdf' ? 'application/pdf' : 'application/xml'
+      format === 'pdf' ? 'application/pdf' : 'application/xml',
     );
     headers.set(
       'Content-Disposition',
-      `attachment; filename="NFE_${nfe.numero_nfe}.${format}"`
+      `attachment; filename="NFE_${nfe.numero_nfe}.${format}"`,
     );
 
     return new NextResponse(fileData, { headers });
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to download NFE' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -269,7 +269,7 @@ async function validateNFE(supabase: any, searchParams: URLSearchParams) {
   if (!nfeId) {
     return NextResponse.json(
       { error: 'nfe_id parameter is required' },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
@@ -304,7 +304,7 @@ async function validateNFE(supabase: any, searchParams: URLSearchParams) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'NFE validation failed' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -317,13 +317,13 @@ async function getNFEOverview(supabase: any, clinicId: string) {
     .eq('clinic_id', clinicId)
     .gte(
       'created_at',
-      new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
+      new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
     );
 
   if (statsError) {
     return NextResponse.json(
       { error: 'Failed to fetch NFE statistics' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 
@@ -335,7 +335,7 @@ async function getNFEOverview(supabase: any, clinicId: string) {
         acc[doc.status] = (acc[doc.status] || 0) + 1;
         return acc;
       },
-      {} as Record<string, number>
+      {} as Record<string, number>,
     ),
     last_30_days: stats.length,
   };
@@ -409,7 +409,7 @@ async function emitNFE(supabase: any, body: any) {
 
     return NextResponse.json(
       { error: 'NFE emission failed', details: error.message },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -431,7 +431,7 @@ async function cancelNFE(supabase: any, body: any) {
   if (nfe.status !== 'emitted') {
     return NextResponse.json(
       { error: 'Only emitted NFEs can be cancelled' },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
@@ -444,7 +444,7 @@ async function cancelNFE(supabase: any, body: any) {
   try {
     const cancellation = await nfeService.cancelNFE(
       nfe.chave_nfe,
-      validatedData.justification
+      validatedData.justification,
     );
 
     // Update document status
@@ -470,7 +470,7 @@ async function cancelNFE(supabase: any, body: any) {
   } catch (error) {
     return NextResponse.json(
       { error: 'NFE cancellation failed', details: error.message },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -512,7 +512,7 @@ async function reprocessNFE(supabase: any, body: any) {
   } catch (error) {
     return NextResponse.json(
       { error: 'NFE reprocessing failed', details: error.message },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -523,7 +523,7 @@ async function batchEmitNFE(supabase: any, body: any) {
   if (!(nfe_ids && Array.isArray(nfe_ids))) {
     return NextResponse.json(
       { error: 'nfe_ids array is required' },
-      { status: 400 }
+      { status: 400 },
     );
   }
 

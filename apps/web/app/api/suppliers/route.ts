@@ -24,7 +24,7 @@ export async function GET(request: NextRequest) {
     if (!clinicId) {
       return NextResponse.json(
         { error: 'clinic_id é obrigatório' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -53,13 +53,13 @@ export async function GET(request: NextRequest) {
 
     if (searchParams.get('performance_score_min')) {
       filters.performance_score_min = Number.parseFloat(
-        searchParams.get('performance_score_min')!
+        searchParams.get('performance_score_min')!,
       );
     }
 
     if (searchParams.get('performance_score_max')) {
       filters.performance_score_max = Number.parseFloat(
-        searchParams.get('performance_score_max')!
+        searchParams.get('performance_score_max')!,
       );
     }
 
@@ -72,7 +72,7 @@ export async function GET(request: NextRequest) {
     if (!validationResult.success) {
       return NextResponse.json(
         { error: 'Filtros inválidos', details: validationResult.error.issues },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -80,14 +80,14 @@ export async function GET(request: NextRequest) {
       clinicId,
       validationResult.data,
       page,
-      limit
+      limit,
     );
 
     return NextResponse.json(result);
   } catch (_error) {
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -104,7 +104,7 @@ export async function POST(request: NextRequest) {
     if (!clinicId) {
       return NextResponse.json(
         { error: 'clinic_id é obrigatório' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -113,13 +113,13 @@ export async function POST(request: NextRequest) {
     if (!validationResult.success) {
       return NextResponse.json(
         { error: 'Dados inválidos', details: validationResult.error.issues },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     const supplier = await supplierService.createSupplier(
       clinicId,
-      validationResult.data
+      validationResult.data,
     );
 
     return NextResponse.json(supplier, { status: 201 });
@@ -130,7 +130,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

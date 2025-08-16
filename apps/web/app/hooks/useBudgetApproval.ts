@@ -27,18 +27,18 @@ type UseBudgetApprovalReturn = {
   createBudget: (budgetData: Partial<InventoryBudget>) => Promise<void>;
   updateBudget: (
     budgetId: string,
-    updates: Partial<InventoryBudget>
+    updates: Partial<InventoryBudget>,
   ) => Promise<void>;
   deleteBudget: (budgetId: string) => Promise<void>;
 
   // Approval Actions
   createApproval: (
-    approvalData: Partial<CreateApprovalRequest>
+    approvalData: Partial<CreateApprovalRequest>,
   ) => Promise<void>;
   processApproval: (
     approvalId: string,
     action: 'approve' | 'reject' | 'request_changes',
-    comments?: string
+    comments?: string,
   ) => Promise<void>;
 
   // Analytics
@@ -54,7 +54,7 @@ type UseBudgetApprovalReturn = {
 export function useBudgetApproval(): UseBudgetApprovalReturn {
   const [budgets, setBudgets] = useState<InventoryBudget[]>([]);
   const [currentBudget, _setCurrentBudget] = useState<InventoryBudget | null>(
-    null
+    null,
   );
   const [budgetLoading, setBudgetLoading] = useState(false);
 
@@ -70,7 +70,7 @@ export function useBudgetApproval(): UseBudgetApprovalReturn {
 
   const pendingApprovals = approvals.filter(
     (approval) =>
-      (approval as any).status === 'pending' || !('status' in approval)
+      (approval as any).status === 'pending' || !('status' in approval),
   );
 
   const fetchBudgets = async () => {
@@ -115,7 +115,7 @@ export function useBudgetApproval(): UseBudgetApprovalReturn {
 
   const updateBudget = async (
     budgetId: string,
-    updates: Partial<InventoryBudget>
+    updates: Partial<InventoryBudget>,
   ) => {
     const response = await fetch(`/api/inventory/budget/${budgetId}`, {
       method: 'PATCH',
@@ -139,7 +139,7 @@ export function useBudgetApproval(): UseBudgetApprovalReturn {
   };
 
   const createApproval = async (
-    approvalData: Partial<CreateApprovalRequest>
+    approvalData: Partial<CreateApprovalRequest>,
   ) => {
     const response = await fetch('/api/inventory/approvals', {
       method: 'POST',
@@ -155,7 +155,7 @@ export function useBudgetApproval(): UseBudgetApprovalReturn {
   const processApproval = async (
     approvalId: string,
     action: 'approve' | 'reject' | 'request_changes',
-    comments?: string
+    comments?: string,
   ) => {
     const response = await fetch(
       `/api/inventory/approvals/${approvalId}/${action}`,
@@ -163,7 +163,7 @@ export function useBudgetApproval(): UseBudgetApprovalReturn {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ comments }),
-      }
+      },
     );
 
     if (response.ok) {
@@ -186,7 +186,7 @@ export function useBudgetApproval(): UseBudgetApprovalReturn {
 
   const generateForecast = async (budgetId: string, periods = 12) => {
     const response = await fetch(
-      `/api/inventory/budget/optimize?budgetId=${budgetId}&period=${periods}`
+      `/api/inventory/budget/optimize?budgetId=${budgetId}&period=${periods}`,
     );
 
     if (response.ok) {

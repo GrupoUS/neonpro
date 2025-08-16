@@ -40,7 +40,7 @@ export async function POST(request: NextRequest) {
     if (clinicError || !clinic) {
       return NextResponse.json(
         { error: 'Clínica não encontrada' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -63,7 +63,7 @@ export async function POST(request: NextRequest) {
           category_id,
           product_categories (name)
         )
-      `
+      `,
       )
       .eq('clinic_id', params.clinicId)
       .gte('transaction_date', params.startDate)
@@ -72,7 +72,7 @@ export async function POST(request: NextRequest) {
     if (movementsError) {
       return NextResponse.json(
         { error: 'Erro ao buscar movimentações de estoque' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -89,7 +89,7 @@ export async function POST(request: NextRequest) {
           category_id,
           product_categories (name)
         )
-      `
+      `,
       )
       .eq('clinic_id', params.clinicId)
       .eq('is_active', true);
@@ -97,7 +97,7 @@ export async function POST(request: NextRequest) {
     if (inventoryError) {
       return NextResponse.json(
         { error: 'Erro ao buscar inventário atual' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -105,7 +105,7 @@ export async function POST(request: NextRequest) {
     const { data: budgetData, error: budgetError } = await supabase
       .from('financial_budgets')
       .select(
-        'category, allocated_amount, spent_amount, period_start, period_end'
+        'category, allocated_amount, spent_amount, period_start, period_end',
       )
       .eq('clinic_id', params.clinicId)
       .eq('budget_type', 'materials')
@@ -172,7 +172,7 @@ export async function POST(request: NextRequest) {
         case 'adjustment':
           financialMetrics.adjustments.totalCost += Math.abs(cost);
           financialMetrics.adjustments.totalQuantity += Math.abs(
-            movement.quantity_in || movement.quantity_out || 0
+            movement.quantity_in || movement.quantity_out || 0,
           );
           financialMetrics.adjustments.transactions++;
           break;
@@ -191,7 +191,7 @@ export async function POST(request: NextRequest) {
     const currentInventoryValue =
       currentInventory?.reduce(
         (sum, item) => sum + item.quantity_available * item.unit_cost,
-        0
+        0,
       ) || 0;
 
     // Calculate by category
@@ -253,7 +253,7 @@ export async function POST(request: NextRequest) {
     if (params.includeBudgetComparison && budgetData && budgetData.length > 0) {
       const totalBudget = budgetData.reduce(
         (sum, budget) => sum + budget.allocated_amount,
-        0
+        0,
       );
       const totalSpent = financialMetrics.purchases.totalCost;
 
@@ -279,7 +279,7 @@ export async function POST(request: NextRequest) {
       const daysInPeriod = Math.ceil(
         (new Date(params.endDate).getTime() -
           new Date(params.startDate).getTime()) /
-          (1000 * 60 * 60 * 24)
+          (1000 * 60 * 60 * 24),
       );
       const dailyConsumption =
         financialMetrics.consumption.totalCost / daysInPeriod;
@@ -346,13 +346,13 @@ export async function POST(request: NextRequest) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Parâmetros inválidos', details: error.errors },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

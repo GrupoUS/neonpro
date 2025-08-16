@@ -109,7 +109,7 @@ const requestMetrics: RequestMetrics[] = [];
  */
 export async function enhancedSubscriptionMiddleware(
   req: NextRequest,
-  config: Partial<MiddlewareConfig> = {}
+  config: Partial<MiddlewareConfig> = {},
 ): Promise<NextResponse> {
   const mergedConfig = { ...defaultConfig, ...config };
   const startTime = performance.now();
@@ -118,7 +118,7 @@ export async function enhancedSubscriptionMiddleware(
 
   // Performance monitoring start
   const timerId = subscriptionPerformanceMonitor.startTimer(
-    `middleware_${pathname}`
+    `middleware_${pathname}`,
   );
 
   try {
@@ -142,7 +142,7 @@ export async function enhancedSubscriptionMiddleware(
     // Get user session with caching
     const { user, sessionValidationResult } = await getCachedUserSession(
       req,
-      mergedConfig
+      mergedConfig,
     );
 
     if (!user) {
@@ -160,7 +160,7 @@ export async function enhancedSubscriptionMiddleware(
     const subscriptionResult = await getOptimizedSubscriptionStatus(
       user.id,
       pathname,
-      mergedConfig
+      mergedConfig,
     );
 
     // Validate access
@@ -168,7 +168,7 @@ export async function enhancedSubscriptionMiddleware(
       subscriptionResult,
       routeProtection,
       user,
-      mergedConfig
+      mergedConfig,
     );
 
     // Record performance metrics
@@ -183,7 +183,7 @@ export async function enhancedSubscriptionMiddleware(
         timestamp: Date.now(),
         userId: user.id,
       },
-      mergedConfig
+      mergedConfig,
     );
 
     // Handle access result
@@ -215,7 +215,7 @@ export async function enhancedSubscriptionMiddleware(
         status: 500,
         timestamp: Date.now(),
       },
-      mergedConfig
+      mergedConfig,
     );
 
     // Performance monitoring end with error
@@ -249,7 +249,7 @@ function isPublicRoute(pathname: string): boolean {
  */
 async function getCachedUserSession(
   req: NextRequest,
-  config: MiddlewareConfig
+  config: MiddlewareConfig,
 ): Promise<{ user: any; sessionValidationResult: any }> {
   const cacheKey = `session_${req.headers.get('authorization') || 'anonymous'}`;
 
@@ -273,7 +273,7 @@ async function getCachedUserSession(
           // No-op for middleware
         },
       },
-    }
+    },
   );
 
   const {
@@ -309,7 +309,7 @@ async function getCachedUserSession(
  */
 async function getRouteProtection(
   pathname: string,
-  config: MiddlewareConfig
+  config: MiddlewareConfig,
 ): Promise<{
   requiresSubscription: boolean;
   requiredTier?: string;
@@ -402,7 +402,7 @@ async function getRouteProtection(
 async function getOptimizedSubscriptionStatus(
   userId: string,
   pathname: string,
-  config: MiddlewareConfig
+  config: MiddlewareConfig,
 ): Promise<SubscriptionValidationResult> {
   const _cacheKey = `subscription_${userId}`;
 
@@ -424,7 +424,7 @@ async function getOptimizedSubscriptionStatus(
       useCache: config.enableCaching,
       cacheTTL: getCacheTTL(config.cacheStrategy, pathname),
       priority: getRequestPriority(pathname),
-    }
+    },
   );
 
   pendingRequests.set(userId, requestPromise);
@@ -442,7 +442,7 @@ async function getOptimizedSubscriptionStatus(
  */
 async function getBatchedSubscriptionStatus(
   userId: string,
-  config: MiddlewareConfig
+  config: MiddlewareConfig,
 ): Promise<SubscriptionValidationResult> {
   return new Promise((resolve, reject) => {
     const batchKey = 'subscription_batch';
@@ -469,7 +469,7 @@ async function getBatchedSubscriptionStatus(
               {
                 useCache: config.enableCaching,
                 batch: true,
-              }
+              },
             );
 
           // Resolve all pending requests
@@ -491,7 +491,7 @@ async function getBatchedSubscriptionStatus(
                   },
                 });
               }
-            }
+            },
           );
         } catch (error) {
           // Reject all pending requests
@@ -558,7 +558,7 @@ async function validateRouteAccess(
   subscriptionResult: SubscriptionValidationResult,
   routeProtection: any,
   _user: any,
-  _config: MiddlewareConfig
+  _config: MiddlewareConfig,
 ): Promise<boolean> {
   // Basic access check
   if (!subscriptionResult.hasAccess) {
@@ -595,7 +595,7 @@ async function validateRouteAccess(
  */
 function handleCircuitBreakerFailure(
   _error: any,
-  config: MiddlewareConfig
+  config: MiddlewareConfig,
 ): void {
   if (!config.circuitBreaker.enabled) {
     return;
@@ -614,7 +614,7 @@ function handleCircuitBreakerFailure(
  */
 function recordRequestMetrics(
   metrics: RequestMetrics,
-  config: MiddlewareConfig
+  config: MiddlewareConfig,
 ): void {
   if (!config.monitoring.enabled) {
     return;
@@ -639,7 +639,7 @@ function recordRequestMetrics(
   // Record in performance monitor
   subscriptionPerformanceMonitor.recordRealtimeOperation(
     metrics.duration,
-    requestMetrics.length
+    requestMetrics.length,
   );
 }
 
@@ -664,7 +664,7 @@ function redirectToLogin(req: NextRequest): NextResponse {
  */
 function createAccessDeniedResponse(
   subscriptionResult: SubscriptionValidationResult,
-  routeProtection: any
+  routeProtection: any,
 ): NextResponse {
   const upgradeNeeded =
     routeProtection.requiredTier &&
@@ -680,7 +680,7 @@ function createAccessDeniedResponse(
       requiredTier: routeProtection.requiredTier,
       currentTier: subscriptionResult.subscription?.plan?.name || 'free',
     },
-    { status: 403 }
+    { status: 403 },
   );
 }
 
@@ -698,16 +698,16 @@ function getTierLevel(tier: string): number {
 function addSubscriptionHeaders(
   response: NextResponse,
   subscriptionResult: SubscriptionValidationResult,
-  user: any
+  user: any,
 ): void {
   response.headers.set('x-user-id', user.id);
   response.headers.set(
     'x-subscription-status',
-    subscriptionResult.status || 'unknown'
+    subscriptionResult.status || 'unknown',
   );
   response.headers.set(
     'x-subscription-tier',
-    subscriptionResult.subscription?.plan?.name || 'free'
+    subscriptionResult.subscription?.plan?.name || 'free',
   );
   response.headers.set('x-has-access', subscriptionResult.hasAccess.toString());
 
@@ -718,11 +718,11 @@ function addSubscriptionHeaders(
   if (subscriptionResult.performance) {
     response.headers.set(
       'x-cache-hit',
-      subscriptionResult.performance.cacheHit.toString()
+      subscriptionResult.performance.cacheHit.toString(),
     );
     response.headers.set(
       'x-validation-time',
-      subscriptionResult.performance.validationTime.toString()
+      subscriptionResult.performance.validationTime.toString(),
     );
   }
 }
@@ -744,7 +744,7 @@ export function getMiddlewarePerformanceStats(): {
   const cacheHits = requestMetrics.filter((m) => m.cacheHit).length;
   const cacheHitRate = totalRequests > 0 ? cacheHits / totalRequests : 0;
   const slowRequestCount = requestMetrics.filter(
-    (m) => m.duration > 500
+    (m) => m.duration > 500,
   ).length;
 
   // Calculate top slow paths

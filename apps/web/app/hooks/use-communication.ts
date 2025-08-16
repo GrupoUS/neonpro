@@ -56,7 +56,7 @@ export const communicationKeys = {
 const api = {
   // Messages
   async getMessages(
-    filters?: MessageFilters
+    filters?: MessageFilters,
   ): Promise<PaginatedResponse<Message>> {
     const params = new URLSearchParams();
     if (filters) {
@@ -85,7 +85,7 @@ const api = {
   },
 
   async sendMessage(
-    data: SendMessageRequest
+    data: SendMessageRequest,
   ): Promise<{ data: { message: Message } }> {
     const response = await fetch('/api/communication/messages', {
       method: 'POST',
@@ -122,7 +122,7 @@ const api = {
 
   // Threads
   async getThreads(
-    filters?: ThreadFilters
+    filters?: ThreadFilters,
   ): Promise<PaginatedResponse<MessageThread>> {
     const params = new URLSearchParams();
     if (filters) {
@@ -173,7 +173,7 @@ const api = {
       status?: 'active' | 'closed' | 'archived';
       priority?: 'low' | 'normal' | 'high' | 'urgent';
       assigned_to?: string;
-    }
+    },
   ): Promise<{ data: { thread: MessageThread } }> {
     const response = await fetch(`/api/communication/threads/${id}`, {
       method: 'PUT',
@@ -188,7 +188,7 @@ const api = {
   },
 
   async archiveThread(
-    id: string
+    id: string,
   ): Promise<{ data: { thread: MessageThread } }> {
     const response = await fetch(`/api/communication/threads/${id}/archive`, {
       method: 'POST',
@@ -202,7 +202,7 @@ const api = {
 
   // Templates
   async getTemplates(
-    filters?: TemplateFilters
+    filters?: TemplateFilters,
   ): Promise<PaginatedResponse<MessageTemplate>> {
     const params = new URLSearchParams();
     if (filters) {
@@ -222,7 +222,7 @@ const api = {
   },
 
   async getTemplate(
-    id: string
+    id: string,
   ): Promise<{ data: { template: MessageTemplate } }> {
     const response = await fetch(`/api/communication/templates/${id}`);
     if (!response.ok) {
@@ -233,7 +233,7 @@ const api = {
   },
 
   async createTemplate(
-    data: CreateTemplateRequest
+    data: CreateTemplateRequest,
   ): Promise<{ data: { template: MessageTemplate } }> {
     const response = await fetch('/api/communication/templates', {
       method: 'POST',
@@ -249,7 +249,7 @@ const api = {
 
   async updateTemplate(
     id: string,
-    data: UpdateTemplateRequest
+    data: UpdateTemplateRequest,
   ): Promise<{ data: { template: MessageTemplate } }> {
     const response = await fetch(`/api/communication/templates/${id}`, {
       method: 'PUT',
@@ -275,7 +275,7 @@ const api = {
 
   async duplicateTemplate(
     id: string,
-    name: string
+    name: string,
   ): Promise<{ data: { template: MessageTemplate } }> {
     const response = await fetch(
       `/api/communication/templates/${id}/duplicate`,
@@ -283,7 +283,7 @@ const api = {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name }),
-      }
+      },
     );
     if (!response.ok) {
       const error = await response.json();
@@ -580,7 +580,7 @@ export function useInbox(filters?: MessageFilters) {
       // Auto-mark as read when selected
       markAsRead.mutate(messageId);
     },
-    [markAsRead]
+    [markAsRead],
   );
 
   return {
@@ -615,7 +615,7 @@ export function usePatientCommunication(patientId: string) {
         priority: 'normal',
       });
     },
-    [createThread, patientId]
+    [createThread, patientId],
   );
 
   const sendQuickMessage = useCallback(
@@ -628,7 +628,7 @@ export function usePatientCommunication(patientId: string) {
         priority: 'normal',
       });
     },
-    [sendMessage, patientId]
+    [sendMessage, patientId],
   );
 
   return {

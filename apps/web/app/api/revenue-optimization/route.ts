@@ -62,7 +62,7 @@ export async function GET(request: NextRequest) {
     if (!clinicId) {
       return NextResponse.json(
         { error: 'Clinic ID is required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -146,7 +146,7 @@ export async function GET(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to get revenue optimization overview' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 } // 🎯 POST: Create New Revenue Optimization
@@ -170,7 +170,7 @@ export async function POST(request: NextRequest) {
     if (!(optimizationType && clinicId)) {
       return NextResponse.json(
         { error: 'Optimization type and clinic ID are required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -197,7 +197,7 @@ export async function POST(request: NextRequest) {
         });
         result = await revenueOptimizationEngine.optimizePricing(
           pricingRequest.clinicId,
-          pricingRequest.serviceId
+          pricingRequest.serviceId,
         );
         break;
       }
@@ -205,7 +205,7 @@ export async function POST(request: NextRequest) {
       case 'service_mix': {
         const serviceMixRequest = ServiceMixRequestSchema.parse({ clinicId });
         result = await revenueOptimizationEngine.optimizeServiceMix(
-          serviceMixRequest.clinicId
+          serviceMixRequest.clinicId,
         );
         break;
       }
@@ -217,7 +217,7 @@ export async function POST(request: NextRequest) {
         });
         result = await revenueOptimizationEngine.enhanceCLV(
           clvRequest.clinicId,
-          clvRequest.patientId
+          clvRequest.patientId,
         );
         break;
       }
@@ -228,7 +228,7 @@ export async function POST(request: NextRequest) {
         });
         result =
           await revenueOptimizationEngine.generateAutomatedRecommendations(
-            automatedRequest.clinicId
+            automatedRequest.clinicId,
           );
         break;
       }
@@ -238,7 +238,7 @@ export async function POST(request: NextRequest) {
           clinicId,
         });
         result = await revenueOptimizationEngine.getCompetitiveAnalysis(
-          competitiveRequest.clinicId
+          competitiveRequest.clinicId,
         );
         break;
       }
@@ -250,7 +250,7 @@ export async function POST(request: NextRequest) {
         });
         result = await revenueOptimizationEngine.trackROI(
           roiRequest.clinicId,
-          roiRequest.optimizationId
+          roiRequest.optimizationId,
         );
         break;
       }
@@ -258,7 +258,7 @@ export async function POST(request: NextRequest) {
       default:
         return NextResponse.json(
           { error: 'Invalid optimization type' },
-          { status: 400 }
+          { status: 400 },
         );
     }
 
@@ -294,7 +294,7 @@ export async function POST(request: NextRequest) {
     if (error) {
       return NextResponse.json(
         { error: 'Failed to create optimization record' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -306,7 +306,7 @@ export async function POST(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to create revenue optimization' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -330,7 +330,7 @@ export async function PUT(request: NextRequest) {
     if (!(id && clinicId)) {
       return NextResponse.json(
         { error: 'Optimization ID and clinic ID are required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -362,7 +362,7 @@ export async function PUT(request: NextRequest) {
     if (error) {
       return NextResponse.json(
         { error: 'Failed to update optimization' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -373,7 +373,7 @@ export async function PUT(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to update revenue optimization' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -398,7 +398,7 @@ export async function DELETE(request: NextRequest) {
     if (!(id && clinicId)) {
       return NextResponse.json(
         { error: 'Optimization ID and clinic ID are required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -425,7 +425,7 @@ export async function DELETE(request: NextRequest) {
     if (error) {
       return NextResponse.json(
         { error: 'Failed to delete optimization' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -435,7 +435,7 @@ export async function DELETE(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to delete revenue optimization' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

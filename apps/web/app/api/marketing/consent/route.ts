@@ -28,13 +28,13 @@ export async function GET(request: NextRequest) {
     if (!patientId) {
       return NextResponse.json(
         { error: 'Patient ID is required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     const result = await campaignService.getPatientConsent(
       patientId,
-      consentType
+      consentType,
     );
 
     if (!result.success) {
@@ -48,7 +48,7 @@ export async function GET(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -74,7 +74,7 @@ export async function POST(request: NextRequest) {
           error: 'Validation failed',
           details: validationResult.error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -92,7 +92,7 @@ export async function POST(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -119,14 +119,14 @@ export async function DELETE(request: NextRequest) {
         {
           error: 'Patient ID and consent type are required',
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     const result = await campaignService.withdrawConsent(
       patientId,
       consentType,
-      reason
+      reason,
     );
 
     if (!result.success) {
@@ -141,7 +141,7 @@ export async function DELETE(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -314,7 +314,7 @@ class EmergencyResponseSystem {
   private async evaluateRule(rule: EmergencyRule): Promise<boolean> {
     // Check cooldown period
     const lastAlert = Array.from(this.activeAlerts.values()).find(
-      (alert) => alert.rule_id === rule.rule_id
+      (alert) => alert.rule_id === rule.rule_id,
     );
 
     if (lastAlert) {
@@ -351,7 +351,7 @@ class EmergencyResponseSystem {
       // Get recent metrics within time window
       const timeWindowStart = new Date();
       timeWindowStart.setMinutes(
-        timeWindowStart.getMinutes() - rule.time_window_minutes
+        timeWindowStart.getMinutes() - rule.time_window_minutes,
       );
 
       const { data, error } = await this.supabase
@@ -403,7 +403,7 @@ class EmergencyResponseSystem {
    * Evaluate consecutive failures rule
    */
   private async evaluateConsecutiveFailures(
-    rule: EmergencyRule
+    rule: EmergencyRule,
   ): Promise<boolean> {
     if (!(rule.metric_name && rule.consecutive_count)) {
       return false;
@@ -413,7 +413,7 @@ class EmergencyResponseSystem {
       // Get recent failure events
       const timeWindowStart = new Date();
       timeWindowStart.setMinutes(
-        timeWindowStart.getMinutes() - rule.time_window_minutes
+        timeWindowStart.getMinutes() - rule.time_window_minutes,
       );
 
       const { data, error } = await this.supabase
@@ -467,14 +467,14 @@ class EmergencyResponseSystem {
 
     // Execute actions in priority order
     const sortedActions = [...rule.actions].sort(
-      (a, b) => a.priority - b.priority
+      (a, b) => a.priority - b.priority,
     );
 
     for (const action of sortedActions) {
       try {
         await this.executeEmergencyAction(action, alert);
         alert.actions_taken.push(
-          `${action.action_type}: ${action.target || 'default'}`
+          `${action.action_type}: ${action.target || 'default'}`,
         );
       } catch (error) {
         alert.actions_taken.push(`${action.action_type}: FAILED - ${error}`);
@@ -496,7 +496,7 @@ class EmergencyResponseSystem {
    */
   private async executeEmergencyAction(
     action: EmergencyAction,
-    alert: EmergencyAlert
+    alert: EmergencyAlert,
   ): Promise<void> {
     switch (action.action_type) {
       case 'alert':
@@ -526,7 +526,7 @@ class EmergencyResponseSystem {
    */
   private async sendAlert(
     _alert: EmergencyAlert,
-    _parameters?: Record<string, any>
+    _parameters?: Record<string, any>,
   ): Promise<void> {
     // In production, integrate with Slack, email, SMS, etc.
   }
@@ -536,7 +536,7 @@ class EmergencyResponseSystem {
    */
   private async disableFeatureFlag(
     flagName?: string,
-    _parameters?: Record<string, any>
+    _parameters?: Record<string, any>,
   ): Promise<void> {
     if (!flagName) {
       return;
@@ -564,7 +564,7 @@ class EmergencyResponseSystem {
    */
   private async clearCache(
     cacheType?: string,
-    _parameters?: Record<string, any>
+    _parameters?: Record<string, any>,
   ): Promise<void> {
     // Clear browser caches
     if ('caches' in window) {
@@ -588,7 +588,7 @@ class EmergencyResponseSystem {
    */
   private async restartService(
     serviceName?: string,
-    _parameters?: Record<string, any>
+    _parameters?: Record<string, any>,
   ): Promise<void> {
     // This would integrate with your service management system
     // Log the restart action
@@ -609,11 +609,11 @@ class EmergencyResponseSystem {
    * Perform rollback
    */
   private async performRollback(
-    _parameters?: Record<string, any>
+    _parameters?: Record<string, any>,
   ): Promise<void> {
     // Get latest system snapshot before emergency
     const preEmergencySnapshot = this.snapshots.find(
-      (s) => s.system_state.system_health === 'healthy'
+      (s) => s.system_state.system_health === 'healthy',
     );
 
     if (!preEmergencySnapshot) {
@@ -622,7 +622,7 @@ class EmergencyResponseSystem {
 
     // Restore feature flags
     for (const [_flagName, _enabled] of Object.entries(
-      preEmergencySnapshot.system_state.feature_flags
+      preEmergencySnapshot.system_state.feature_flags,
     )) {
     }
 
@@ -645,7 +645,7 @@ class EmergencyResponseSystem {
    */
   private async sendNotification(
     alert: EmergencyAlert,
-    parameters?: Record<string, any>
+    parameters?: Record<string, any>,
   ): Promise<void> {
     const _message = parameters?.message || alert.alert_message;
     const _recipients = parameters?.recipients || ['admin'];
@@ -723,11 +723,11 @@ class EmergencyResponseSystem {
    */
   private determineSystemHealth(): 'healthy' | 'degraded' | 'critical' {
     const criticalAlerts = Array.from(this.activeAlerts.values()).filter(
-      (alert) => !alert.resolved && alert.severity === 'critical'
+      (alert) => !alert.resolved && alert.severity === 'critical',
     );
 
     const highAlerts = Array.from(this.activeAlerts.values()).filter(
-      (alert) => !alert.resolved && alert.severity === 'high'
+      (alert) => !alert.resolved && alert.severity === 'high',
     );
 
     if (criticalAlerts.length > 0) {
@@ -744,7 +744,7 @@ class EmergencyResponseSystem {
    */
   async resolveAlert(
     alertId: string,
-    method: 'auto' | 'manual' = 'manual'
+    method: 'auto' | 'manual' = 'manual',
   ): Promise<void> {
     const alert = this.activeAlerts.get(alertId);
     if (!alert) {
@@ -811,14 +811,14 @@ export async function addEmergencyRule(rule: EmergencyRule): Promise<void> {
 }
 
 export async function takeEmergencySnapshot(
-  reason?: string
+  reason?: string,
 ): Promise<SystemSnapshot> {
   return emergencyResponse.takeSystemSnapshot(reason);
 }
 
 export async function resolveEmergencyAlert(
   alertId: string,
-  method?: 'auto' | 'manual'
+  method?: 'auto' | 'manual',
 ): Promise<void> {
   return emergencyResponse.resolveAlert(alertId, method);
 }

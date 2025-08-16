@@ -177,12 +177,12 @@ export type ResolutionAlgorithm = {
   parameters: Record<string, any>;
   execute(
     conflict: SchedulingConflict,
-    context: ResolutionContext
+    context: ResolutionContext,
   ): Promise<ResolutionResult>;
   estimateExecutionTime(conflict: SchedulingConflict): number;
   calculateSuccessProbability(
     conflict: SchedulingConflict,
-    context: ResolutionContext
+    context: ResolutionContext,
   ): number;
 };
 
@@ -370,7 +370,7 @@ export class ConflictDetectionError extends Error {
     message: string,
     public readonly conflictId?: string,
     public readonly errorCode?: string,
-    public readonly details?: Record<string, any>
+    public readonly details?: Record<string, any>,
   ) {
     super(message);
     this.name = 'ConflictDetectionError';
@@ -383,7 +383,7 @@ export class ResolutionExecutionError extends Error {
     public readonly strategyType: StrategyType,
     public readonly conflictId: string,
     public readonly executionTimeMs?: number,
-    public readonly details?: Record<string, any>
+    public readonly details?: Record<string, any>,
   ) {
     super(message);
     this.name = 'ResolutionExecutionError';

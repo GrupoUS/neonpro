@@ -62,7 +62,7 @@ export class KPICalculationService {
   async calculateClinicKPIs(
     clinicId: string,
     periodStart?: Date,
-    periodEnd?: Date
+    periodEnd?: Date,
   ): Promise<KPICalculationResult[]> {
     try {
       const period = this.normalizePeriod(periodStart, periodEnd);
@@ -93,13 +93,13 @@ export class KPICalculationService {
         const result = await this.calculateSingleKPI(
           kpiDef,
           period.start,
-          period.end
+          period.end,
         );
         if (result) {
           results.push(result);
           this.setCachedResult(
             `kpi_${kpiDef.id}_${period.start.toISOString()}`,
-            result
+            result,
           );
         }
       }
@@ -117,7 +117,7 @@ export class KPICalculationService {
   async calculateSingleKPI(
     kpiDefinition: any,
     periodStart: Date,
-    periodEnd: Date
+    periodEnd: Date,
   ): Promise<KPICalculationResult | null> {
     try {
       const cacheKey = `kpi_${kpiDefinition.id}_${periodStart.toISOString()}`;
@@ -130,7 +130,7 @@ export class KPICalculationService {
       const currentValue = await this.executeKPICalculation(
         kpiDefinition,
         periodStart,
-        periodEnd
+        periodEnd,
       );
 
       if (currentValue === null) {
@@ -142,7 +142,7 @@ export class KPICalculationService {
       const previousValue = await this.executeKPICalculation(
         kpiDefinition,
         previousPeriod.start,
-        previousPeriod.end
+        previousPeriod.end,
       );
 
       // Calculate variance and trend
@@ -159,7 +159,7 @@ export class KPICalculationService {
       // Format values
       const formattedValue = this.formatKPIValue(
         currentValue,
-        kpiDefinition.unit
+        kpiDefinition.unit,
       );
       const formattedPreviousValue =
         previousValue !== null
@@ -212,7 +212,7 @@ export class KPICalculationService {
   private async executeKPICalculation(
     kpiDefinition: any,
     periodStart: Date,
-    periodEnd: Date
+    periodEnd: Date,
   ): Promise<number | null> {
     try {
       const method = kpiDefinition.calculation_method;
@@ -223,77 +223,77 @@ export class KPICalculationService {
           return await this.calculateMonthlyRevenue(
             clinicId,
             periodStart,
-            periodEnd
+            periodEnd,
           );
 
         case 'financial.average_ticket':
           return await this.calculateAverageTicket(
             clinicId,
             periodStart,
-            periodEnd
+            periodEnd,
           );
 
         case 'financial.profit_margin':
           return await this.calculateProfitMargin(
             clinicId,
             periodStart,
-            periodEnd
+            periodEnd,
           );
 
         case 'patients.new_patients':
           return await this.calculateNewPatients(
             clinicId,
             periodStart,
-            periodEnd
+            periodEnd,
           );
 
         case 'patients.retention_rate':
           return await this.calculateRetentionRate(
             clinicId,
             periodStart,
-            periodEnd
+            periodEnd,
           );
 
         case 'patients.satisfaction_score':
           return await this.calculateSatisfactionScore(
             clinicId,
             periodStart,
-            periodEnd
+            periodEnd,
           );
 
         case 'operations.occupancy_rate':
           return await this.calculateOccupancyRate(
             clinicId,
             periodStart,
-            periodEnd
+            periodEnd,
           );
 
         case 'operations.no_show_rate':
           return await this.calculateNoShowRate(
             clinicId,
             periodStart,
-            periodEnd
+            periodEnd,
           );
 
         case 'operations.average_wait_time':
           return await this.calculateAverageWaitTime(
             clinicId,
             periodStart,
-            periodEnd
+            periodEnd,
           );
 
         case 'staff.utilization_rate':
           return await this.calculateStaffUtilization(
             clinicId,
             periodStart,
-            periodEnd
+            periodEnd,
           );
 
         case 'staff.productivity_score':
           return await this.calculateStaffProductivity(
             clinicId,
             periodStart,
-            periodEnd
+            periodEnd,
           );
 
         default:
@@ -310,7 +310,7 @@ export class KPICalculationService {
   private async calculateMonthlyRevenue(
     clinicId: string,
     periodStart: Date,
-    periodEnd: Date
+    periodEnd: Date,
   ): Promise<number> {
     const { data, error } = await this.supabase
       .from('payments')
@@ -331,7 +331,7 @@ export class KPICalculationService {
   private async calculateAverageTicket(
     clinicId: string,
     periodStart: Date,
-    periodEnd: Date
+    periodEnd: Date,
   ): Promise<number> {
     const { data, error } = await this.supabase
       .from('payments')
@@ -352,13 +352,13 @@ export class KPICalculationService {
   private async calculateProfitMargin(
     clinicId: string,
     periodStart: Date,
-    periodEnd: Date
+    periodEnd: Date,
   ): Promise<number> {
     // This would need cost data - simplified calculation
     const revenue = await this.calculateMonthlyRevenue(
       clinicId,
       periodStart,
-      periodEnd
+      periodEnd,
     );
     // Assuming 30% cost ratio for now - this should come from actual cost data
     const estimatedCosts = revenue * 0.3;
@@ -370,7 +370,7 @@ export class KPICalculationService {
   private async calculateNewPatients(
     clinicId: string,
     periodStart: Date,
-    periodEnd: Date
+    periodEnd: Date,
   ): Promise<number> {
     const { data, error } = await this.supabase
       .from('patients')
@@ -390,7 +390,7 @@ export class KPICalculationService {
   private async calculateRetentionRate(
     clinicId: string,
     periodStart: Date,
-    periodEnd: Date
+    periodEnd: Date,
   ): Promise<number> {
     // Calculate patients who had appointments in both current and previous periods
     const previousPeriod = this.getPreviousPeriod(periodStart, periodEnd);
@@ -415,11 +415,11 @@ export class KPICalculationService {
 
     const currentPatientIds = new Set(currentPatients.map((p) => p.patient_id));
     const previousPatientIds = new Set(
-      previousPatients.map((p) => p.patient_id)
+      previousPatients.map((p) => p.patient_id),
     );
 
     const retainedPatients = Array.from(previousPatientIds).filter((id) =>
-      currentPatientIds.has(id)
+      currentPatientIds.has(id),
     ).length;
 
     return (retainedPatients / previousPatientIds.size) * 100;
@@ -428,7 +428,7 @@ export class KPICalculationService {
   private async calculateSatisfactionScore(
     clinicId: string,
     periodStart: Date,
-    periodEnd: Date
+    periodEnd: Date,
   ): Promise<number> {
     // This would come from patient feedback/surveys
     // For now, return a mock value based on appointment completion rate
@@ -444,7 +444,7 @@ export class KPICalculationService {
     }
 
     const completedAppointments = appointments.filter(
-      (a) => a.status === 'completed'
+      (a) => a.status === 'completed',
     ).length;
     const completionRate = (completedAppointments / appointments.length) * 100;
 
@@ -456,7 +456,7 @@ export class KPICalculationService {
   private async calculateOccupancyRate(
     clinicId: string,
     periodStart: Date,
-    periodEnd: Date
+    periodEnd: Date,
   ): Promise<number> {
     // Calculate total available slots vs booked slots
     const { data: appointments, error } = await this.supabase
@@ -473,7 +473,7 @@ export class KPICalculationService {
     // Simplified calculation - in reality would need room/staff availability data
     const totalSlots = appointments.length;
     const bookedSlots = appointments.filter((a) =>
-      ['scheduled', 'confirmed', 'completed'].includes(a.status)
+      ['scheduled', 'confirmed', 'completed'].includes(a.status),
     ).length;
 
     return totalSlots > 0 ? (bookedSlots / totalSlots) * 100 : 0;
@@ -482,7 +482,7 @@ export class KPICalculationService {
   private async calculateNoShowRate(
     clinicId: string,
     periodStart: Date,
-    periodEnd: Date
+    periodEnd: Date,
   ): Promise<number> {
     const { data: appointments, error } = await this.supabase
       .from('appointments')
@@ -502,7 +502,7 @@ export class KPICalculationService {
   private async calculateAverageWaitTime(
     clinicId: string,
     periodStart: Date,
-    periodEnd: Date
+    periodEnd: Date,
   ): Promise<number> {
     // This would need actual wait time tracking
     // For now, return a mock calculation based on appointment density
@@ -527,14 +527,14 @@ export class KPICalculationService {
   private async calculateStaffUtilization(
     clinicId: string,
     periodStart: Date,
-    periodEnd: Date
+    periodEnd: Date,
   ): Promise<number> {
     // This would need staff schedule vs actual work data
     // Simplified calculation based on appointments
     const occupancyRate = await this.calculateOccupancyRate(
       clinicId,
       periodStart,
-      periodEnd
+      periodEnd,
     );
     return occupancyRate * 0.9; // Assuming 90% correlation
   }
@@ -542,7 +542,7 @@ export class KPICalculationService {
   private async calculateStaffProductivity(
     clinicId: string,
     periodStart: Date,
-    periodEnd: Date
+    periodEnd: Date,
   ): Promise<number> {
     const { data: appointments, error } = await this.supabase
       .from('appointments')
@@ -556,7 +556,7 @@ export class KPICalculationService {
     }
 
     const completedAppointments = appointments.filter(
-      (a) => a.status === 'completed'
+      (a) => a.status === 'completed',
     ).length;
     return (completedAppointments / appointments.length) * 100;
   }
@@ -571,7 +571,7 @@ export class KPICalculationService {
       0,
       23,
       59,
-      59
+      59,
     );
 
     return {
@@ -590,7 +590,7 @@ export class KPICalculationService {
 
   private calculateTrend(
     current: number,
-    previous: number | null
+    previous: number | null,
   ): 'up' | 'down' | 'stable' {
     if (previous === null) {
       return 'stable';
@@ -606,7 +606,7 @@ export class KPICalculationService {
 
   private calculateStatus(
     value: number,
-    kpiDefinition: any
+    kpiDefinition: any,
   ): 'normal' | 'warning' | 'critical' {
     if (
       kpiDefinition.critical_threshold !== null &&
@@ -665,7 +665,7 @@ export class KPICalculationService {
         },
         {
           onConflict: 'kpi_id,period_start,period_end',
-        }
+        },
       );
     } catch (error) {
       logger.error('Error storing KPI value:', error);

@@ -99,7 +99,7 @@ export function PerformanceMetricsPanel({
   const [selectedCategory, setSelectedCategory] =
     useState<keyof RealtimePerformanceData['categories']>('system');
   const [historicalData, setHistoricalData] = useState<PerformanceChartData[]>(
-    []
+    [],
   );
   const [isLoadingHistory, setIsLoadingHistory] = useState(false);
 
@@ -117,7 +117,7 @@ export function PerformanceMetricsPanel({
       const history = await performanceMonitoringEngine.getHistoricalData(
         clinicId,
         AnalyticsUtils.getTimeRangeStart(timeframe),
-        new Date()
+        new Date(),
       );
 
       setHistoricalData(history);

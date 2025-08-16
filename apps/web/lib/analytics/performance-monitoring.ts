@@ -430,7 +430,7 @@ export class PerformanceMonitoringEngine {
     } catch (error) {
       logger.error(
         'Failed to initialize Performance Monitoring Engine:',
-        error
+        error,
       );
       throw error;
     }
@@ -493,7 +493,7 @@ export class PerformanceMonitoringEngine {
    */
   async getRealtimeData(
     clinicId: string,
-    categories: PerformanceCategory[] = ['system', 'application', 'database']
+    categories: PerformanceCategory[] = ['system', 'application', 'database'],
   ): Promise<RealtimePerformanceData> {
     try {
       const data: RealtimePerformanceData = {
@@ -510,7 +510,7 @@ export class PerformanceMonitoringEngine {
       for (const category of categories) {
         data.categories[category] = await this.getCategoryData(
           category,
-          clinicId
+          clinicId,
         );
       }
 
@@ -530,7 +530,7 @@ export class PerformanceMonitoringEngine {
   async generateReport(
     clinicId: string,
     startDate: string,
-    endDate: string
+    endDate: string,
   ): Promise<PerformanceReport> {
     try {
       const report: PerformanceReport = {
@@ -541,20 +541,20 @@ export class PerformanceMonitoringEngine {
         categories: await this.generateCategoryReports(
           clinicId,
           startDate,
-          endDate
+          endDate,
         ),
         trends: await this.analyzeTrends(clinicId, startDate, endDate),
         alerts: await this.getAlertsInPeriod(clinicId, startDate, endDate),
         optimizations: await this.getOptimizationsInPeriod(
           clinicId,
           startDate,
-          endDate
+          endDate,
         ),
         benchmarks: await this.getBenchmarks(clinicId),
         recommendations: await this.generateRecommendations(
           clinicId,
           startDate,
-          endDate
+          endDate,
         ),
         score: 0,
       };
@@ -578,7 +578,7 @@ export class PerformanceMonitoringEngine {
    */
   async optimizeResources(
     clinicId: string,
-    resourceTypes: ResourceType[] = ['cpu', 'memory', 'storage']
+    resourceTypes: ResourceType[] = ['cpu', 'memory', 'storage'],
   ): Promise<ResourceOptimization[]> {
     try {
       const optimizations: ResourceOptimization[] = [];
@@ -586,7 +586,7 @@ export class PerformanceMonitoringEngine {
       for (const resourceType of resourceTypes) {
         const optimization = await this.analyzeResourceOptimization(
           clinicId,
-          resourceType
+          resourceType,
         );
 
         if (optimization) {
@@ -617,10 +617,10 @@ export class PerformanceMonitoringEngine {
           faceDetection: await this.getModelMetrics('face_detection'),
           aestheticAnalysis: await this.getModelMetrics('aesthetic_analysis'),
           complicationDetection: await this.getModelMetrics(
-            'complication_detection'
+            'complication_detection',
           ),
           complianceMonitoring: await this.getModelMetrics(
-            'compliance_monitoring'
+            'compliance_monitoring',
           ),
         },
         overallHealth: 0,
@@ -629,7 +629,7 @@ export class PerformanceMonitoringEngine {
 
       // Calculate overall health
       const modelScores = Object.values(performance.models).map(
-        (m) => m.healthScore
+        (m) => m.healthScore,
       );
       performance.overallHealth =
         modelScores.reduce((sum, score) => sum + score, 0) / modelScores.length;
@@ -649,7 +649,7 @@ export class PerformanceMonitoringEngine {
    * Set performance threshold
    */
   async setThreshold(
-    threshold: Omit<PerformanceThreshold, 'id'>
+    threshold: Omit<PerformanceThreshold, 'id'>,
   ): Promise<PerformanceThreshold> {
     try {
       const performanceThreshold: PerformanceThreshold = {
@@ -677,7 +677,7 @@ export class PerformanceMonitoringEngine {
     component: string,
     startDate: string,
     endDate: string,
-    aggregation: 'minute' | 'hour' | 'day' = 'hour'
+    aggregation: 'minute' | 'hour' | 'day' = 'hour',
   ): Promise<HistoricalMetrics[]> {
     try {
       const { data, error } = await this.supabase
@@ -1179,7 +1179,7 @@ export class PerformanceMonitoringEngine {
 
   // Additional helper methods would be implemented here...
   private async checkThresholds(
-    metrics: SystemMetrics
+    metrics: SystemMetrics,
   ): Promise<PerformanceAlert[]> {
     const alerts: PerformanceAlert[] = [];
 
@@ -1196,7 +1196,7 @@ export class PerformanceMonitoringEngine {
     const memoryThreshold = this.findThreshold('system', 'memory', 'usage');
     if (memoryThreshold && this.shouldAlert(memoryThreshold, memoryUsage)) {
       alerts.push(
-        this.createAlert(memoryThreshold, memoryUsage, 'Memory usage high')
+        this.createAlert(memoryThreshold, memoryUsage, 'Memory usage high'),
       );
     }
 
@@ -1208,7 +1208,7 @@ export class PerformanceMonitoringEngine {
   private findThreshold(
     category: PerformanceCategory,
     component: string,
-    metric: string
+    metric: string,
   ): PerformanceThreshold | undefined {
     const key = `threshold_${category}_${component}_${metric}`;
     return this.thresholds.get(key);
@@ -1247,7 +1247,7 @@ export class PerformanceMonitoringEngine {
   private createAlert(
     threshold: PerformanceThreshold,
     value: number,
-    message: string
+    message: string,
   ): PerformanceAlert {
     let severity: MetricSeverity = 'normal';
 
@@ -1278,23 +1278,23 @@ export class PerformanceMonitoringEngine {
 
   private generateAlertRecommendations(
     threshold: PerformanceThreshold,
-    _value: number
+    _value: number,
   ): string[] {
     const recommendations: string[] = [];
 
     if (threshold.component === 'cpu' && threshold.metric === 'usage') {
       recommendations.push(
-        'Check for high CPU processes and optimize or scale resources'
+        'Check for high CPU processes and optimize or scale resources',
       );
       recommendations.push(
-        'Consider implementing CPU throttling or load balancing'
+        'Consider implementing CPU throttling or load balancing',
       );
     }
 
     if (threshold.component === 'memory' && threshold.metric === 'usage') {
       recommendations.push('Check for memory leaks in applications');
       recommendations.push(
-        'Consider increasing available memory or optimizing memory usage'
+        'Consider increasing available memory or optimizing memory usage',
       );
     }
 
@@ -1326,21 +1326,21 @@ export class PerformanceMonitoringEngine {
   }
 
   private async getActiveAlerts(
-    _clinicId: string
+    _clinicId: string,
   ): Promise<PerformanceAlert[]> {
     // Implementation would fetch active alerts
     return [];
   }
 
   private async getActiveOptimizations(
-    _clinicId: string
+    _clinicId: string,
   ): Promise<OptimizationSuggestion[]> {
     // Implementation would fetch active optimizations
     return [];
   }
 
   private async getPerformanceSummary(
-    _clinicId: string
+    _clinicId: string,
   ): Promise<PerformanceSummary> {
     // Implementation would generate performance summary
     return {
@@ -1361,14 +1361,14 @@ export class PerformanceMonitoringEngine {
 
   private async getCategoryData(
     _category: PerformanceCategory,
-    _clinicId: string
+    _clinicId: string,
   ): Promise<any> {
     // Implementation would fetch category-specific data
     return {};
   }
 
   private calculateOverallHealth(
-    _categories: Record<PerformanceCategory, any>
+    _categories: Record<PerformanceCategory, any>,
   ): number {
     // Implementation would calculate overall health score
     return 85;

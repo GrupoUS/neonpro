@@ -255,7 +255,7 @@ export const BulkKPIUpdateSchema = z.object({
     z.object({
       id: z.string().uuid(),
       data: UpdateKPIRequestSchema,
-    })
+    }),
   ),
   force_calculation: z.boolean().default(false),
 });

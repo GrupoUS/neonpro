@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
     if (!patientId) {
       return NextResponse.json(
         { error: 'Patient ID is required', success: false },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -29,7 +29,7 @@ export async function GET(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to fetch safety profile', success: false },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -48,7 +48,7 @@ export async function PUT(request: NextRequest) {
           details: validationResult.error.issues,
           success: false,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -57,13 +57,13 @@ export async function PUT(request: NextRequest) {
     const safetyProfile =
       await personalizedRecommendationsService.updateSafetyProfile(
         patient_id,
-        updateData
+        updateData,
       );
 
     if (!safetyProfile) {
       return NextResponse.json(
         { error: 'Safety profile not found', success: false },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -74,7 +74,7 @@ export async function PUT(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to update safety profile', success: false },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

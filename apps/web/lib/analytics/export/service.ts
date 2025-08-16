@@ -75,7 +75,7 @@ export class AnalyticsExportService {
           fileBuffer = await this.generateExcel(
             data,
             request.config,
-            excelOptions
+            excelOptions,
           );
           fileName = `analytics-${request.config.reportType}-${Date.now()}.xlsx`;
           mimeType =
@@ -99,7 +99,7 @@ export class AnalyticsExportService {
 
         default:
           throw new Error(
-            `Unsupported export format: ${request.config.format}`
+            `Unsupported export format: ${request.config.format}`,
           );
       }
 
@@ -167,7 +167,7 @@ export class AnalyticsExportService {
   // ========================================================================
 
   private async fetchAnalyticsData(
-    config: ExportConfig
+    config: ExportConfig,
   ): Promise<ExportableData> {
     const { reportType, dateRange, filters } = config;
     const { startDate, endDate } = dateRange;
@@ -191,7 +191,7 @@ export class AnalyticsExportService {
             'month',
             startDate,
             endDate,
-            filters
+            filters,
           );
           break;
 
@@ -200,7 +200,7 @@ export class AnalyticsExportService {
             'month',
             startDate,
             endDate,
-            filters
+            filters,
           );
           break;
 
@@ -209,7 +209,7 @@ export class AnalyticsExportService {
           const trialMetrics = await this.analyticsService.getTrialMetrics(
             startDate,
             endDate,
-            filters
+            filters,
           );
           data.trials = trialMetrics;
           break;
@@ -219,7 +219,7 @@ export class AnalyticsExportService {
           data.cohorts = await this.analyticsService.getCohortAnalysis(
             startDate,
             endDate,
-            filters
+            filters,
           );
           break;
 
@@ -227,7 +227,7 @@ export class AnalyticsExportService {
           data.forecasts = await this.analyticsService.getRevenueForecasts(
             startDate,
             endDate,
-            filters
+            filters,
           );
           break;
 
@@ -237,23 +237,23 @@ export class AnalyticsExportService {
             'month',
             startDate,
             endDate,
-            filters
+            filters,
           );
           data.conversion = await this.analyticsService.getConversionAnalytics(
             'month',
             startDate,
             endDate,
-            filters
+            filters,
           );
           data.cohorts = await this.analyticsService.getCohortAnalysis(
             startDate,
             endDate,
-            filters
+            filters,
           );
           data.forecasts = await this.analyticsService.getRevenueForecasts(
             startDate,
             endDate,
-            filters
+            filters,
           );
           break;
 
@@ -267,7 +267,7 @@ export class AnalyticsExportService {
       return data;
     } catch (error) {
       throw new Error(
-        `Failed to fetch analytics data: ${error instanceof Error ? error.message : 'Unknown error'}`
+        `Failed to fetch analytics data: ${error instanceof Error ? error.message : 'Unknown error'}`,
       );
     }
   }
@@ -279,7 +279,7 @@ export class AnalyticsExportService {
   private async generatePDF(
     data: ExportableData,
     config: ExportConfig,
-    options: PDFExportOptions
+    options: PDFExportOptions,
   ): Promise<Buffer> {
     const doc = new jsPDF({
       orientation: options.orientation,
@@ -299,7 +299,7 @@ export class AnalyticsExportService {
       doc.text(
         options.header.text,
         this.getXPosition(options.header.alignment, doc),
-        yPosition
+        yPosition,
       );
       yPosition += 15;
     }
@@ -327,13 +327,13 @@ export class AnalyticsExportService {
     doc.text(
       `Generated: ${data.metadata.generatedAt.toLocaleString()}`,
       options.margins.left,
-      yPosition
+      yPosition,
     );
     yPosition += 5;
     doc.text(
       `Period: ${config.dateRange.startDate.toLocaleDateString()} - ${config.dateRange.endDate.toLocaleDateString()}`,
       options.margins.left,
-      yPosition
+      yPosition,
     );
     yPosition += 15;
 
@@ -349,7 +349,7 @@ export class AnalyticsExportService {
         doc.text(
           'Page 1',
           doc.internal.pageSize.width - options.margins.right - 20,
-          footerY
+          footerY,
         );
       }
 
@@ -357,7 +357,7 @@ export class AnalyticsExportService {
         doc.text(
           `Generated: ${new Date().toLocaleString()}`,
           options.margins.left,
-          footerY
+          footerY,
         );
       }
 
@@ -374,7 +374,7 @@ export class AnalyticsExportService {
     data: ExportableData,
     config: ExportConfig,
     options: PDFExportOptions,
-    startY: number
+    startY: number,
   ): Promise<number> {
     let yPosition = startY;
 
@@ -390,13 +390,13 @@ export class AnalyticsExportService {
       doc.text(
         `Total Records: ${data.metadata.totalRecords}`,
         options.margins.left,
-        yPosition
+        yPosition,
       );
       yPosition += 5;
       doc.text(
         `Query Execution Time: ${data.metadata.queryExecutionTime}ms`,
         options.margins.left,
-        yPosition
+        yPosition,
       );
       yPosition += 15;
     }
@@ -407,7 +407,7 @@ export class AnalyticsExportService {
         doc,
         data.revenue,
         options,
-        yPosition
+        yPosition,
       );
     }
 
@@ -416,7 +416,7 @@ export class AnalyticsExportService {
         doc,
         data.conversion,
         options,
-        yPosition
+        yPosition,
       );
     }
 
@@ -425,7 +425,7 @@ export class AnalyticsExportService {
         doc,
         data.cohorts,
         options,
-        yPosition
+        yPosition,
       );
     }
 
@@ -436,7 +436,7 @@ export class AnalyticsExportService {
     doc: jsPDF,
     revenue: any,
     options: PDFExportOptions,
-    startY: number
+    startY: number,
   ): number {
     let yPosition = startY;
 
@@ -452,13 +452,13 @@ export class AnalyticsExportService {
       doc.text(
         `MRR Total: $${revenue.mrr.total.toLocaleString()}`,
         options.margins.left,
-        yPosition
+        yPosition,
       );
       yPosition += 5;
       doc.text(
         `MRR Growth: ${revenue.mrr.growth.toFixed(2)}%`,
         options.margins.left,
-        yPosition
+        yPosition,
       );
       yPosition += 5;
     }
@@ -467,13 +467,13 @@ export class AnalyticsExportService {
       doc.text(
         `ARR Total: $${revenue.arr.total.toLocaleString()}`,
         options.margins.left,
-        yPosition
+        yPosition,
       );
       yPosition += 5;
       doc.text(
         `ARR Growth: ${revenue.arr.growth.toFixed(2)}%`,
         options.margins.left,
-        yPosition
+        yPosition,
       );
       yPosition += 10;
     }
@@ -485,7 +485,7 @@ export class AnalyticsExportService {
     doc: jsPDF,
     conversion: any,
     options: PDFExportOptions,
-    startY: number
+    startY: number,
   ): number {
     let yPosition = startY;
 
@@ -501,7 +501,7 @@ export class AnalyticsExportService {
       doc.text(
         `Trial to Payment: ${conversion.trialToPayment.average.toFixed(2)}%`,
         options.margins.left,
-        yPosition
+        yPosition,
       );
       yPosition += 5;
     }
@@ -510,7 +510,7 @@ export class AnalyticsExportService {
       doc.text(
         `Signup to Trial: ${conversion.signupToTrial.average.toFixed(2)}%`,
         options.margins.left,
-        yPosition
+        yPosition,
       );
       yPosition += 10;
     }
@@ -522,7 +522,7 @@ export class AnalyticsExportService {
     doc: jsPDF,
     cohorts: any[],
     options: PDFExportOptions,
-    startY: number
+    startY: number,
   ): number {
     let yPosition = startY;
 
@@ -538,7 +538,7 @@ export class AnalyticsExportService {
       doc.text(
         `Cohort ${cohort.period}: ${cohort.size} users, ${cohort.churnRate.toFixed(2)}% churn`,
         options.margins.left,
-        yPosition
+        yPosition,
       );
       yPosition += 5;
     });
@@ -548,7 +548,7 @@ export class AnalyticsExportService {
 
   private getXPosition(
     alignment: 'left' | 'center' | 'right',
-    doc: jsPDF
+    doc: jsPDF,
   ): number {
     const pageWidth = doc.internal.pageSize.width;
     const margins = 20; // Default margin
@@ -572,7 +572,7 @@ export class AnalyticsExportService {
   private async generateExcel(
     data: ExportableData,
     config: ExportConfig,
-    options: ExcelExportOptions
+    options: ExcelExportOptions,
   ): Promise<Buffer> {
     const workbook = XLSX.utils.book_new();
 
@@ -643,7 +643,7 @@ export class AnalyticsExportService {
     }
 
     return Buffer.from(
-      XLSX.write(workbook, { type: 'buffer', bookType: 'xlsx' })
+      XLSX.write(workbook, { type: 'buffer', bookType: 'xlsx' }),
     );
   }
 
@@ -654,7 +654,7 @@ export class AnalyticsExportService {
   private async generateCSV(
     data: ExportableData,
     config: ExportConfig,
-    options: CSVExportOptions
+    options: CSVExportOptions,
   ): Promise<Buffer> {
     let csvContent = '';
 
@@ -706,7 +706,7 @@ export class AnalyticsExportService {
 
     if (options.includeHeaders) {
       csv += `${['Metric', 'Total', 'Average', 'Growth', 'Period'].join(
-        options.delimiter
+        options.delimiter,
       )}\n`;
     }
 
@@ -745,7 +745,7 @@ export class AnalyticsExportService {
 
   private generateConversionCSV(
     conversion: any,
-    options: CSVExportOptions
+    options: CSVExportOptions,
   ): string {
     let csv = '';
 
@@ -802,7 +802,7 @@ export class AnalyticsExportService {
 
   private generateComprehensiveCSV(
     data: ExportableData,
-    options: CSVExportOptions
+    options: CSVExportOptions,
   ): string {
     let csv = '';
 
@@ -826,7 +826,7 @@ export class AnalyticsExportService {
 
   private generateGenericCSV(
     data: ExportableData,
-    _options: CSVExportOptions
+    _options: CSVExportOptions,
   ): string {
     return JSON.stringify(data, null, 2);
   }
@@ -837,7 +837,7 @@ export class AnalyticsExportService {
 
   private prepareSummaryData(
     data: ExportableData,
-    config: ExportConfig
+    config: ExportConfig,
   ): any[] {
     return [
       { Metric: 'Report Type', Value: config.reportType },
@@ -933,7 +933,7 @@ export class AnalyticsExportService {
   private async uploadFile(
     fileName: string,
     buffer: Buffer,
-    mimeType: string
+    mimeType: string,
   ): Promise<string> {
     const { data, error } = await this.supabase.storage
       .from('analytics-exports')
@@ -960,7 +960,7 @@ export class AnalyticsExportService {
       percentage: number;
       currentStep: string;
       estimatedTimeRemaining?: number;
-    }
+    },
   ): Promise<void> {
     const updateData: any = { status };
 
@@ -983,13 +983,13 @@ export class AnalyticsExportService {
 
   private async sendCompletionNotification(
     _email: string,
-    _response: ExportResponse
+    _response: ExportResponse,
   ): Promise<void> {}
 
   private async logExportMetrics(
     request: ExportRequest,
     processingTime: number,
-    fileSize: number
+    fileSize: number,
   ): Promise<void> {
     const { error } = await this.supabase.from('export_metrics').insert({
       export_id: request.id,

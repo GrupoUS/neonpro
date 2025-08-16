@@ -303,7 +303,7 @@ export class HealthcareConsentManager {
   async validateConsent(
     patient_id: string,
     clinic_id: string,
-    purpose: HealthcareDataPurpose
+    purpose: HealthcareDataPurpose,
   ): Promise<{ valid: boolean; consent_id?: string; error?: string }> {
     const startTime = Date.now();
 
@@ -382,7 +382,7 @@ export class HealthcareConsentManager {
    */
   async getPatientConsentData(
     patient_id: string,
-    clinic_id: string
+    clinic_id: string,
   ): Promise<{ success: boolean; data?: any; error?: string }> {
     try {
       const { data, error } = await this.supabase
@@ -399,7 +399,7 @@ export class HealthcareConsentManager {
           withdrawn_at,
           expires_at,
           withdrawal_reason
-        `
+        `,
         )
         .eq('patient_id', patient_id)
         .eq('clinic_id', clinic_id)
@@ -424,12 +424,12 @@ export class HealthcareConsentManager {
   async exportPatientConsentData(
     patient_id: string,
     clinic_id: string,
-    format: 'json' | 'csv' | 'xml' = 'json'
+    format: 'json' | 'csv' | 'xml' = 'json',
   ): Promise<{ success: boolean; data?: any; error?: string }> {
     try {
       const consentData = await this.getPatientConsentData(
         patient_id,
-        clinic_id
+        clinic_id,
       );
 
       if (!(consentData.success && consentData.data)) {
@@ -501,7 +501,7 @@ export class HealthcareConsentManager {
     } catch (_error) {
       // 🚨 Critical error - this should be escalated
       throw new Error(
-        'Constitutional requirement violation: Failed to stop data processing'
+        'Constitutional requirement violation: Failed to stop data processing',
       );
     }
   }

@@ -120,7 +120,7 @@ export function UpcomingAppointments({
       groups[date].push(appointment);
       return groups;
     },
-    {} as Record<string, PatientAppointment[]>
+    {} as Record<string, PatientAppointment[]>,
   );
 
   // Sort dates
@@ -142,7 +142,7 @@ export function UpcomingAppointments({
             {dayAppointments.map((appointment) => {
               const { time } = formatAppointmentDateTime(
                 appointment.appointment_date,
-                appointment.appointment_time
+                appointment.appointment_time,
               );
 
               return (
@@ -158,7 +158,7 @@ export function UpcomingAppointments({
                           <div className="flex items-center gap-3">
                             <div className="flex items-center gap-2">
                               {getUrgencyIndicator(
-                                appointment.hours_until_appointment
+                                appointment.hours_until_appointment,
                               )}
                               <h3 className="font-semibold text-lg">
                                 {appointment.service_name}

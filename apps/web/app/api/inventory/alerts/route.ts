@@ -68,7 +68,7 @@ export async function GET(request: NextRequest) {
         *,
         inventory_items(name, sku),
         inventory_locations(name)
-      `
+      `,
       )
       .order('created_at', { ascending: false })
       .range(filters.offset, filters.offset + filters.limit - 1);
@@ -92,7 +92,7 @@ export async function GET(request: NextRequest) {
     if (error) {
       return NextResponse.json(
         { error: 'Failed to fetch alerts' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -119,13 +119,13 @@ export async function GET(request: NextRequest) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Invalid parameters', details: error.errors },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -179,14 +179,14 @@ export async function POST(request: NextRequest) {
         *,
         inventory_items(name, sku),
         inventory_locations(name)
-      `
+      `,
       )
       .single();
 
     if (error) {
       return NextResponse.json(
         { error: 'Failed to create alert' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -212,13 +212,13 @@ export async function POST(request: NextRequest) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Invalid alert data', details: error.errors },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -251,7 +251,7 @@ export async function PATCH(request: NextRequest) {
       if (error) {
         return NextResponse.json(
           { error: 'Failed to mark alerts as read' },
-          { status: 500 }
+          { status: 500 },
         );
       }
 
@@ -262,7 +262,7 @@ export async function PATCH(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

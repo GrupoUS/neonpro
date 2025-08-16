@@ -23,14 +23,14 @@ export class KPIEngine {
   constructor() {
     this.supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     );
     this.cache = new Map();
   }
 
   // Core KPI Calculation Methods
   async calculateKPIs(
-    request: KPICalculationRequest
+    request: KPICalculationRequest,
   ): Promise<KPICalculationResult[]> {
     const _startTime = Date.now();
     // Get KPIs to calculate
@@ -42,7 +42,7 @@ export class KPIEngine {
 
     // Calculate each KPI in parallel for performance
     const calculations = kpisToCalculate.map((kpi) =>
-      this.calculateSingleKPI(kpi, request)
+      this.calculateSingleKPI(kpi, request),
     );
 
     const calculationResults = await Promise.all(calculations);
@@ -61,7 +61,7 @@ export class KPIEngine {
 
   private async calculateSingleKPI(
     kpi: FinancialKPI,
-    request: KPICalculationRequest
+    request: KPICalculationRequest,
   ): Promise<KPICalculationResult> {
     const { start_date, end_date } = request.time_period;
     let calculatedValue = 0;
@@ -83,7 +83,7 @@ export class KPIEngine {
             kpi,
             start_date,
             end_date,
-            request.filters
+            request.filters,
           ));
           break;
 
@@ -96,7 +96,7 @@ export class KPIEngine {
             kpi,
             start_date,
             end_date,
-            request.filters
+            request.filters,
           ));
           break;
 
@@ -109,7 +109,7 @@ export class KPIEngine {
             kpi,
             start_date,
             end_date,
-            request.filters
+            request.filters,
           ));
           break;
 
@@ -122,7 +122,7 @@ export class KPIEngine {
             kpi,
             start_date,
             end_date,
-            request.filters
+            request.filters,
           ));
           break;
       }
@@ -138,7 +138,7 @@ export class KPIEngine {
 
       const trendDirection = this.determineTrendDirection(
         calculatedValue,
-        previousValue
+        previousValue,
       );
 
       return {
@@ -152,7 +152,7 @@ export class KPIEngine {
         data_points_used: dataPointsUsed,
         confidence_score: this.calculateConfidenceScore(
           dataPointsUsed,
-          kpi.kpi_category
+          kpi.kpi_category,
         ),
         breakdown,
       };
@@ -174,7 +174,7 @@ export class KPIEngine {
     kpi: FinancialKPI,
     startDate: string,
     endDate: string,
-    filters?: any
+    filters?: any,
   ) {
     const cacheKey = `revenue_${kpi.kpi_name}_${startDate}_${endDate}`;
     const cached = this.getFromCache(cacheKey);
@@ -214,7 +214,7 @@ export class KPIEngine {
           acc[inv.service_type] = (acc[inv.service_type] || 0) + inv.amount;
           return acc;
         },
-        {} as Record<string, number>
+        {} as Record<string, number>,
       );
 
       Object.entries(serviceBreakdown).forEach(([service, amount]) => {
@@ -245,7 +245,7 @@ export class KPIEngine {
     kpi: FinancialKPI,
     startDate: string,
     endDate: string,
-    _filters?: any
+    _filters?: any,
   ) {
     const cacheKey = `profitability_${kpi.kpi_name}_${startDate}_${endDate}`;
     const cached = this.getFromCache(cacheKey);
@@ -300,7 +300,7 @@ export class KPIEngine {
           acc[exp.category] = (acc[exp.category] || 0) + exp.amount;
           return acc;
         },
-        {} as Record<string, number>
+        {} as Record<string, number>,
       ) || {};
 
     Object.entries(expenseBreakdown).forEach(([category, amount]) => {
@@ -325,7 +325,7 @@ export class KPIEngine {
     kpi: FinancialKPI,
     startDate: string,
     endDate: string,
-    _filters?: any
+    _filters?: any,
   ) {
     const cacheKey = `operational_${kpi.kpi_name}_${startDate}_${endDate}`;
     const cached = this.getFromCache(cacheKey);
@@ -353,7 +353,7 @@ export class KPIEngine {
         .lte('created_at', endDate);
 
       const returningPatients = new Set(
-        appointments?.map((a) => a.patient_id) || []
+        appointments?.map((a) => a.patient_id) || [],
       );
       const totalPatients = patients?.length || 0;
 
@@ -406,7 +406,7 @@ export class KPIEngine {
     kpi: FinancialKPI,
     startDate: string,
     endDate: string,
-    _filters?: any
+    _filters?: any,
   ) {
     const cacheKey = `financial_health_${kpi.kpi_name}_${startDate}_${endDate}`;
     const cached = this.getFromCache(cacheKey);
@@ -473,7 +473,7 @@ export class KPIEngine {
 
   // Drill-down Analysis
   async performDrillDown(
-    request: DrillDownRequest
+    request: DrillDownRequest,
   ): Promise<DrillDownResult[]> {
     const _startTime = Date.now();
     const kpi = await this.getKPIById(request.kpi_id);
@@ -498,7 +498,7 @@ export class KPIEngine {
         break;
       default:
         throw new Error(
-          `Unsupported drill-down dimension: ${request.dimension}`
+          `Unsupported drill-down dimension: ${request.dimension}`,
         );
     }
     return results.slice(0, request.limit || 50);
@@ -507,7 +507,7 @@ export class KPIEngine {
   // Helper Methods
   private determineTrendDirection(
     current: number,
-    previous?: number
+    previous?: number,
   ): 'increasing' | 'decreasing' | 'stable' {
     if (!previous) {
       return 'stable';
@@ -523,7 +523,7 @@ export class KPIEngine {
 
   private calculateConfidenceScore(
     dataPoints: number,
-    category: string
+    category: string,
   ): number {
     // Simple confidence scoring based on data points and category
     const baseScore = Math.min(dataPoints / 100, 1); // More data points = higher confidence
@@ -594,7 +594,7 @@ export class KPIEngine {
   }
 
   private async updateKPIValues(
-    results: KPICalculationResult[]
+    results: KPICalculationResult[],
   ): Promise<void> {
     const updates = results.map((result) => ({
       id: result.kpi_id,
@@ -614,7 +614,7 @@ export class KPIEngine {
   }
 
   private async recordKPIHistory(
-    results: KPICalculationResult[]
+    results: KPICalculationResult[],
   ): Promise<void> {
     const historyRecords = results.map((result) => ({
       kpi_id: result.kpi_id,
@@ -631,7 +631,7 @@ export class KPIEngine {
   }
 
   private async checkThresholds(
-    results: KPICalculationResult[]
+    results: KPICalculationResult[],
   ): Promise<void> {
     for (const result of results) {
       const { data: thresholds } = await this.supabase
@@ -647,7 +647,7 @@ export class KPIEngine {
       for (const threshold of thresholds) {
         const breached = this.checkThresholdBreach(
           result.calculated_value,
-          threshold
+          threshold,
         );
 
         if (breached) {
@@ -659,7 +659,7 @@ export class KPIEngine {
 
   private checkThresholdBreach(
     value: number,
-    threshold: KPIThreshold
+    threshold: KPIThreshold,
   ): boolean {
     const { threshold_value, comparison_operator } = threshold;
 
@@ -681,7 +681,7 @@ export class KPIEngine {
 
   private async createAlert(
     result: KPICalculationResult,
-    threshold: KPIThreshold
+    threshold: KPIThreshold,
   ): Promise<void> {
     const alert = {
       kpi_id: result.kpi_id,
@@ -699,7 +699,7 @@ export class KPIEngine {
   private async getPreviousPeriodValue(
     kpi: FinancialKPI,
     startDate: string,
-    endDate: string
+    endDate: string,
   ): Promise<number | undefined> {
     const start = new Date(startDate);
     const end = new Date(endDate);
@@ -723,7 +723,7 @@ export class KPIEngine {
   // Drill-down implementations (simplified)
   private async drillDownByTime(
     _kpi: FinancialKPI,
-    _request: DrillDownRequest
+    _request: DrillDownRequest,
   ): Promise<DrillDownResult[]> {
     // Implementation would vary based on aggregation level (day, week, month, etc.)
     return [];
@@ -731,7 +731,7 @@ export class KPIEngine {
 
   private async drillDownByServiceType(
     _kpi: FinancialKPI,
-    _request: DrillDownRequest
+    _request: DrillDownRequest,
   ): Promise<DrillDownResult[]> {
     // Implementation for service type breakdown
     return [];
@@ -739,7 +739,7 @@ export class KPIEngine {
 
   private async drillDownByProvider(
     _kpi: FinancialKPI,
-    _request: DrillDownRequest
+    _request: DrillDownRequest,
   ): Promise<DrillDownResult[]> {
     // Implementation for provider breakdown
     return [];
@@ -747,7 +747,7 @@ export class KPIEngine {
 
   private async drillDownByPatientSegment(
     _kpi: FinancialKPI,
-    _request: DrillDownRequest
+    _request: DrillDownRequest,
   ): Promise<DrillDownResult[]> {
     // Implementation for patient segment breakdown
     return [];

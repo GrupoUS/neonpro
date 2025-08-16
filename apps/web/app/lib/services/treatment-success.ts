@@ -30,7 +30,7 @@ export class TreatmentSuccessService {
   async getTreatmentOutcomes(
     filters: TreatmentSuccessFilters = {},
     page = 1,
-    limit = 10
+    limit = 10,
   ) {
     let query = (await this.supabase)
       .from('treatment_outcomes')
@@ -80,7 +80,7 @@ export class TreatmentSuccessService {
 
     if (error) {
       throw new Error(
-        `Erro ao buscar resultados de tratamento: ${error.message}`
+        `Erro ao buscar resultados de tratamento: ${error.message}`,
       );
     }
 
@@ -101,7 +101,7 @@ export class TreatmentSuccessService {
 
     if (error) {
       throw new Error(
-        `Erro ao buscar resultado de tratamento: ${error.message}`
+        `Erro ao buscar resultado de tratamento: ${error.message}`,
       );
     }
 
@@ -117,7 +117,7 @@ export class TreatmentSuccessService {
 
     if (error) {
       throw new Error(
-        `Erro ao criar resultado de tratamento: ${error.message}`
+        `Erro ao criar resultado de tratamento: ${error.message}`,
       );
     }
 
@@ -126,11 +126,9 @@ export class TreatmentSuccessService {
 
   async updateTreatmentOutcome(
     id: string,
-    updateData: UpdateTreatmentOutcomeData
+    updateData: UpdateTreatmentOutcomeData,
   ) {
-    const { data, error } = await (
-      await this.supabase
-    )
+    const { data, error } = await (await this.supabase)
       .from('treatment_outcomes')
       .update({ ...updateData, updated_at: new Date().toISOString() })
       .eq('id', id)
@@ -139,7 +137,7 @@ export class TreatmentSuccessService {
 
     if (error) {
       throw new Error(
-        `Erro ao atualizar resultado de tratamento: ${error.message}`
+        `Erro ao atualizar resultado de tratamento: ${error.message}`,
       );
     }
 
@@ -154,7 +152,7 @@ export class TreatmentSuccessService {
 
     if (error) {
       throw new Error(
-        `Erro ao deletar resultado de tratamento: ${error.message}`
+        `Erro ao deletar resultado de tratamento: ${error.message}`,
       );
     }
 
@@ -165,7 +163,7 @@ export class TreatmentSuccessService {
   async getSuccessMetrics(
     filters: SuccessMetricsFilters = {},
     page = 1,
-    limit = 10
+    limit = 10,
   ) {
     let query = (await this.supabase)
       .from('success_metrics')
@@ -215,7 +213,7 @@ export class TreatmentSuccessService {
   async generateSuccessMetrics(
     treatmentType: string,
     providerId?: string,
-    timePeriod: 'monthly' | 'quarterly' | 'yearly' = 'monthly'
+    timePeriod: 'monthly' | 'quarterly' | 'yearly' = 'monthly',
   ) {
     // Calculate date range based on time period
     const endDate = new Date();
@@ -253,14 +251,14 @@ export class TreatmentSuccessService {
 
     const totalTreatments = outcomes.length;
     const successfulTreatments = outcomes.filter(
-      (o) => o.success_score && o.success_score >= 0.8
+      (o) => o.success_score && o.success_score >= 0.8,
     ).length;
     const successRate =
       totalTreatments > 0 ? successfulTreatments / totalTreatments : 0;
     const averageSatisfaction =
       outcomes.reduce(
         (sum, o) => sum + (o.patient_satisfaction_score || 0),
-        0
+        0,
       ) / totalTreatments;
     const complicationRate =
       outcomes.filter((o) => o.complications).length / totalTreatments;
@@ -295,7 +293,7 @@ export class TreatmentSuccessService {
   async getProviderPerformance(
     filters: ProviderPerformanceFilters = {},
     page = 1,
-    limit = 10
+    limit = 10,
   ) {
     let query = (await this.supabase)
       .from('provider_performance')
@@ -329,7 +327,7 @@ export class TreatmentSuccessService {
 
     if (error) {
       throw new Error(
-        `Erro ao buscar performance de profissionais: ${error.message}`
+        `Erro ao buscar performance de profissionais: ${error.message}`,
       );
     }
 
@@ -345,7 +343,7 @@ export class TreatmentSuccessService {
   async getProtocolOptimizations(
     filters: ProtocolOptimizationFilters = {},
     page = 1,
-    limit = 10
+    limit = 10,
   ) {
     let query = (await this.supabase)
       .from('protocol_optimizations')
@@ -358,7 +356,7 @@ export class TreatmentSuccessService {
     if (filters.implementation_priority) {
       query = query.eq(
         'implementation_priority',
-        filters.implementation_priority
+        filters.implementation_priority,
       );
     }
     if (filters.approval_status) {
@@ -367,7 +365,7 @@ export class TreatmentSuccessService {
     if (filters.success_improvement_min !== undefined) {
       query = query.gte(
         'success_rate_improvement',
-        filters.success_improvement_min
+        filters.success_improvement_min,
       );
     }
 
@@ -384,7 +382,7 @@ export class TreatmentSuccessService {
 
     if (error) {
       throw new Error(
-        `Erro ao buscar otimizações de protocolo: ${error.message}`
+        `Erro ao buscar otimizações de protocolo: ${error.message}`,
       );
     }
 
@@ -397,7 +395,7 @@ export class TreatmentSuccessService {
   }
 
   async createProtocolOptimization(
-    optimizationData: CreateProtocolOptimizationData
+    optimizationData: CreateProtocolOptimizationData,
   ) {
     const { data, error } = await (await this.supabase)
       .from('protocol_optimizations')
@@ -407,7 +405,7 @@ export class TreatmentSuccessService {
 
     if (error) {
       throw new Error(
-        `Erro ao criar otimização de protocolo: ${error.message}`
+        `Erro ao criar otimização de protocolo: ${error.message}`,
       );
     }
 
@@ -418,9 +416,7 @@ export class TreatmentSuccessService {
   async getQualityBenchmarks(page = 1, limit = 10) {
     const offset = (page - 1) * limit;
 
-    const { data, error, count } = await (
-      await this.supabase
-    )
+    const { data, error, count } = await (await this.supabase)
       .from('quality_benchmarks')
       .select('*', { count: 'exact' })
       .range(offset, offset + limit - 1)
@@ -428,7 +424,7 @@ export class TreatmentSuccessService {
 
     if (error) {
       throw new Error(
-        `Erro ao buscar benchmarks de qualidade: ${error.message}`
+        `Erro ao buscar benchmarks de qualidade: ${error.message}`,
       );
     }
 
@@ -487,7 +483,7 @@ export class TreatmentSuccessService {
 
     if (insertError) {
       throw new Error(
-        `Erro ao criar predição de sucesso: ${insertError.message}`
+        `Erro ao criar predição de sucesso: ${insertError.message}`,
       );
     }
 
@@ -498,9 +494,7 @@ export class TreatmentSuccessService {
   async getComplianceReports(page = 1, limit = 10) {
     const offset = (page - 1) * limit;
 
-    const { data, error, count } = await (
-      await this.supabase
-    )
+    const { data, error, count } = await (await this.supabase)
       .from('compliance_reports')
       .select('*', { count: 'exact' })
       .range(offset, offset + limit - 1)
@@ -508,7 +502,7 @@ export class TreatmentSuccessService {
 
     if (error) {
       throw new Error(
-        `Erro ao buscar relatórios de conformidade: ${error.message}`
+        `Erro ao buscar relatórios de conformidade: ${error.message}`,
       );
     }
 
@@ -529,7 +523,7 @@ export class TreatmentSuccessService {
 
     if (error) {
       throw new Error(
-        `Erro ao criar relatório de conformidade: ${error.message}`
+        `Erro ao criar relatório de conformidade: ${error.message}`,
       );
     }
 
@@ -550,12 +544,12 @@ export class TreatmentSuccessService {
 
     const totalTreatments = metricsData.reduce(
       (sum, m) => sum + m.total_treatments,
-      0
+      0,
     );
     const weightedSuccessRate =
       metricsData.reduce(
         (sum, m) => sum + m.success_rate * m.total_treatments,
-        0
+        0,
       ) / totalTreatments;
     const averageSatisfaction =
       metricsData.reduce((sum, m) => sum + (m.average_satisfaction || 0), 0) /
@@ -580,7 +574,7 @@ export class TreatmentSuccessService {
 
     if (error) {
       throw new Error(
-        `Erro ao buscar estatísticas de profissionais: ${error.message}`
+        `Erro ao buscar estatísticas de profissionais: ${error.message}`,
       );
     }
 
@@ -590,7 +584,7 @@ export class TreatmentSuccessService {
       performanceData.reduce((sum, p) => sum + p.overall_success_rate, 0) /
       totalProviders;
     const improvementNeeded = performanceData.filter(
-      (p) => p.overall_success_rate < 0.8
+      (p) => p.overall_success_rate < 0.8,
     ).length;
 
     return {
@@ -608,14 +602,14 @@ export class TreatmentSuccessService {
     const { data: metricsData, error } = await (await this.supabase)
       .from('success_metrics')
       .select(
-        'treatment_type, success_rate, total_treatments, average_satisfaction'
+        'treatment_type, success_rate, total_treatments, average_satisfaction',
       )
       .order('total_treatments', { ascending: false })
       .limit(10);
 
     if (error) {
       throw new Error(
-        `Erro ao buscar estatísticas por tipo de tratamento: ${error.message}`
+        `Erro ao buscar estatísticas por tipo de tratamento: ${error.message}`,
       );
     }
 
@@ -642,7 +636,7 @@ export class TreatmentSuccessService {
 
     if (error) {
       throw new Error(
-        `Erro ao buscar estatísticas de conformidade: ${error.message}`
+        `Erro ao buscar estatísticas de conformidade: ${error.message}`,
       );
     }
 
@@ -652,7 +646,7 @@ export class TreatmentSuccessService {
         .reduce((sum, r) => sum + r.compliance_score, 0) / reportsData.length;
 
     const pendingReports = reportsData.filter(
-      (r) => r.status === 'draft' || r.status === 'review'
+      (r) => r.status === 'draft' || r.status === 'review',
     ).length;
 
     return {

@@ -42,7 +42,7 @@ const DataAccessRequestSchema = z.object({
         'communications',
         'preferences',
         'all',
-      ])
+      ]),
     )
     .default(['all']),
   includeDeleted: z.boolean().default(false),
@@ -117,7 +117,7 @@ async function extractUserProfile(supabase: any, userId: string) {
       communication_preferences,
       created_at,
       updated_at
-    `
+    `,
     )
     .eq('id', userId)
     .single();
@@ -132,7 +132,7 @@ async function extractUserProfile(supabase: any, userId: string) {
 async function extractUserAppointments(
   supabase: any,
   userId: string,
-  includeDeleted = false
+  includeDeleted = false,
 ) {
   let query = supabase
     .from('appointments')
@@ -157,7 +157,7 @@ async function extractUserAppointments(
         estimated_sessions,
         cost_per_session
       )
-    `
+    `,
     )
     .eq('patient_id', userId);
 
@@ -179,7 +179,7 @@ async function extractUserAppointments(
 async function extractUserTreatments(
   supabase: any,
   userId: string,
-  includeDeleted = false
+  includeDeleted = false,
 ) {
   let query = supabase
     .from('treatments')
@@ -208,7 +208,7 @@ async function extractUserTreatments(
         after_photos,
         satisfaction_rating
       )
-    `
+    `,
     )
     .eq('patient_id', userId);
 
@@ -228,7 +228,7 @@ async function extractUserTreatments(
 async function extractUserPayments(
   supabase: any,
   userId: string,
-  includeDeleted = false
+  includeDeleted = false,
 ) {
   let query = supabase
     .from('payments')
@@ -253,7 +253,7 @@ async function extractUserPayments(
         amount,
         status
       )
-    `
+    `,
     )
     .eq('patient_id', userId);
 
@@ -275,7 +275,7 @@ async function extractUserPayments(
 async function extractUserCommunications(
   supabase: any,
   userId: string,
-  anonymizeThirdParty = true
+  anonymizeThirdParty = true,
 ) {
   const { data, error } = await supabase
     .from('communications')
@@ -293,7 +293,7 @@ async function extractUserCommunications(
       read_at,
       created_at,
       updated_at
-    `
+    `,
     )
     .or(`sender_id.eq.${userId},recipient_id.eq.${userId}`)
     .order('sent_at', { ascending: false });
@@ -332,7 +332,7 @@ async function extractUserPreferences(supabase: any, userId: string) {
       timezone,
       created_at,
       updated_at
-    `
+    `,
     )
     .eq('user_id', userId)
     .single();
@@ -426,7 +426,7 @@ async function logDataAccessRequest(
   userId: string,
   format: string,
   categories: string[],
-  success: boolean
+  success: boolean,
 ) {
   try {
     await supabase.from('lgpd_access_logs').insert([
@@ -460,7 +460,7 @@ export async function POST(request: NextRequest) {
     if (authError || !user) {
       return NextResponse.json(
         { error: 'Unauthorized. Please log in to access your data.' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -473,10 +473,10 @@ export async function POST(request: NextRequest) {
             'Rate limit exceeded. You can request data export 3 times per hour.',
           retryAfter:
             Math.ceil(
-              (rateLimitMap.get(user.id)?.resetTime || Date.now()) - Date.now()
+              (rateLimitMap.get(user.id)?.resetTime || Date.now()) - Date.now(),
             ) / 1000,
         },
-        { status: 429 }
+        { status: 429 },
       );
     }
 
@@ -506,7 +506,7 @@ export async function POST(request: NextRequest) {
       exportData.data.appointments = await extractUserAppointments(
         supabase,
         user.id,
-        includeDeleted
+        includeDeleted,
       );
     }
 
@@ -514,7 +514,7 @@ export async function POST(request: NextRequest) {
       exportData.data.treatments = await extractUserTreatments(
         supabase,
         user.id,
-        includeDeleted
+        includeDeleted,
       );
     }
 
@@ -522,7 +522,7 @@ export async function POST(request: NextRequest) {
       exportData.data.payments = await extractUserPayments(
         supabase,
         user.id,
-        includeDeleted
+        includeDeleted,
       );
     }
 
@@ -530,14 +530,14 @@ export async function POST(request: NextRequest) {
       exportData.data.communications = await extractUserCommunications(
         supabase,
         user.id,
-        anonymizeThirdParty
+        anonymizeThirdParty,
       );
     }
 
     if (categories.includes('all') || categories.includes('preferences')) {
       exportData.data.preferences = await extractUserPreferences(
         supabase,
-        user.id
+        user.id,
       );
     }
 
@@ -577,13 +577,13 @@ export async function POST(request: NextRequest) {
           error: 'Invalid request parameters',
           details: error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     return NextResponse.json(
       { error: 'Internal server error during data export' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -616,7 +616,7 @@ export async function GET(_request: NextRequest) {
     if (error) {
       return NextResponse.json(
         { error: 'Failed to fetch access history' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -663,7 +663,7 @@ export async function GET(_request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

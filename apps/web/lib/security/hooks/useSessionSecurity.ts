@@ -354,7 +354,7 @@ export function useSessionSecurity(options: UseSessionSecurityOptions = {}) {
       config.timeoutMinutes,
       enableTimeout,
       setupTimeoutMonitoring,
-    ]
+    ],
   );
 
   /**
@@ -493,7 +493,7 @@ export function useSessionTimeout(sessionId?: string, onTimeout?: () => void) {
     const checkTimeout = async () => {
       try {
         const response = await fetch(
-          `/api/security/session-timeout/status?sessionId=${sessionId}`
+          `/api/security/session-timeout/status?sessionId=${sessionId}`,
         );
         if (response.ok) {
           const data = await response.json();

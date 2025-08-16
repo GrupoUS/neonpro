@@ -33,7 +33,7 @@ export class LoadTester {
    */
   async executeLoadTest(
     testFn: () => Promise<boolean>,
-    config: LoadTestConfig
+    config: LoadTestConfig,
   ): Promise<LoadTestResult> {
     const startTime = Date.now();
     const results: Array<{ success: boolean; responseTime: number }> = [];
@@ -64,7 +64,7 @@ export class LoadTester {
           requestPromise.then((result) => {
             results.push(result);
             memoryReadings.push(this.getCurrentMemoryUsage());
-          })
+          }),
         );
       }
 
@@ -78,7 +78,7 @@ export class LoadTester {
    */
   private async executeRequest(
     testFn: () => Promise<boolean>,
-    operation: string
+    operation: string,
   ): Promise<{ success: boolean; responseTime: number }> {
     const measurementId = performanceMonitor.startMeasurement(operation);
     const startTime = performance.now();
@@ -121,7 +121,7 @@ export class LoadTester {
     results: Array<{ success: boolean; responseTime: number }>,
     memoryReadings: number[],
     startTime: number,
-    _config: LoadTestConfig
+    _config: LoadTestConfig,
   ): LoadTestResult {
     const totalRequests = results.length;
     const successfulRequests = results.filter((r) => r.success).length;

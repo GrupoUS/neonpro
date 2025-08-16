@@ -38,7 +38,7 @@ export async function GET(request: NextRequest) {
     if (!clinicId) {
       return NextResponse.json(
         { error: 'clinic_id parameter is required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -64,7 +64,7 @@ export async function GET(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -94,13 +94,13 @@ export async function POST(request: NextRequest) {
       default:
         return NextResponse.json(
           { error: 'Invalid action specified' },
-          { status: 400 }
+          { status: 400 },
         );
     }
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -109,7 +109,7 @@ export async function POST(request: NextRequest) {
 async function listDeclarations(
   supabase: any,
   clinicId: string,
-  searchParams: URLSearchParams
+  searchParams: URLSearchParams,
 ) {
   let query = supabase
     .from('tax_declarations')
@@ -144,7 +144,7 @@ async function listDeclarations(
   if (error) {
     return NextResponse.json(
       { error: 'Failed to fetch declarations' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 
@@ -161,14 +161,14 @@ async function listDeclarations(
 
 async function getDeclarationStatus(
   supabase: any,
-  searchParams: URLSearchParams
+  searchParams: URLSearchParams,
 ) {
   const declarationId = searchParams.get('declaration_id');
 
   if (!declarationId) {
     return NextResponse.json(
       { error: 'declaration_id parameter is required' },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
@@ -181,7 +181,7 @@ async function getDeclarationStatus(
   if (error || !data) {
     return NextResponse.json(
       { error: 'Declaration not found' },
-      { status: 404 }
+      { status: 404 },
     );
   }
 
@@ -195,7 +195,7 @@ async function getDeclarationStatus(
 
       const updatedStatus = await declarationService.checkSubmissionStatus(
         data.declaration_type,
-        data.protocol_number
+        data.protocol_number,
       );
 
       // Update database if status changed
@@ -225,7 +225,7 @@ async function getDeclarationStatus(
 
 async function downloadDeclaration(
   supabase: any,
-  searchParams: URLSearchParams
+  searchParams: URLSearchParams,
 ) {
   const declarationId = searchParams.get('declaration_id');
   const format = searchParams.get('format') || 'pdf';
@@ -233,7 +233,7 @@ async function downloadDeclaration(
   if (!declarationId) {
     return NextResponse.json(
       { error: 'declaration_id parameter is required' },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
@@ -246,7 +246,7 @@ async function downloadDeclaration(
   if (error || !declaration) {
     return NextResponse.json(
       { error: 'Declaration not found' },
-      { status: 404 }
+      { status: 404 },
     );
   }
 
@@ -258,24 +258,24 @@ async function downloadDeclaration(
 
     const fileData = await declarationService.exportDeclaration(
       declarationId,
-      format
+      format,
     );
 
     const headers = new Headers();
     headers.set(
       'Content-Type',
-      format === 'pdf' ? 'application/pdf' : 'application/xml'
+      format === 'pdf' ? 'application/pdf' : 'application/xml',
     );
     headers.set(
       'Content-Disposition',
-      `attachment; filename="${declaration.declaration_type}_${declaration.period_year}.${format}"`
+      `attachment; filename="${declaration.declaration_type}_${declaration.period_year}.${format}"`,
     );
 
     return new NextResponse(fileData, { headers });
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to download declaration' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -294,7 +294,7 @@ async function getDeclarationCalendar(supabase: any, clinicId: string) {
   if (!config) {
     return NextResponse.json(
       { error: 'Tax configuration not found' },
-      { status: 404 }
+      { status: 404 },
     );
   }
 
@@ -307,7 +307,7 @@ async function getDeclarationCalendar(supabase: any, clinicId: string) {
   try {
     const calendar = await declarationService.generateDeclarationCalendar(
       config.tax_regime,
-      currentYear
+      currentYear,
     );
 
     return NextResponse.json({
@@ -321,7 +321,7 @@ async function getDeclarationCalendar(supabase: any, clinicId: string) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to generate declaration calendar' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -347,7 +347,7 @@ async function getComplianceStatus(supabase: any, clinicId: string) {
   if (!config) {
     return NextResponse.json(
       { error: 'Tax configuration not found' },
-      { status: 404 }
+      { status: 404 },
     );
   }
 
@@ -360,7 +360,7 @@ async function getComplianceStatus(supabase: any, clinicId: string) {
     const compliance = await declarationService.assessCompliance(
       clinicId,
       config.tax_regime,
-      currentYear
+      currentYear,
     );
 
     return NextResponse.json({
@@ -381,7 +381,7 @@ async function getComplianceStatus(supabase: any, clinicId: string) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to assess compliance' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -404,7 +404,7 @@ async function getDeclarationsOverview(supabase: any, clinicId: string) {
           acc[decl.declaration_type] = (acc[decl.declaration_type] || 0) + 1;
           return acc;
         },
-        {} as Record<string, number>
+        {} as Record<string, number>,
       ) || {},
     by_status:
       stats?.reduce(
@@ -412,7 +412,7 @@ async function getDeclarationsOverview(supabase: any, clinicId: string) {
           acc[decl.status] = (acc[decl.status] || 0) + 1;
           return acc;
         },
-        {} as Record<string, number>
+        {} as Record<string, number>,
       ) || {},
     year: currentYear,
   };
@@ -462,7 +462,7 @@ async function generateDeclaration(supabase: any, body: any) {
     if (error) {
       return NextResponse.json(
         { error: 'Failed to store declaration' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -504,7 +504,7 @@ async function generateDeclaration(supabase: any, body: any) {
   } catch (error) {
     return NextResponse.json(
       { error: 'Declaration generation failed', details: error.message },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -522,7 +522,7 @@ async function validateDeclaration(supabase: any, body: any) {
   if (error || !declaration) {
     return NextResponse.json(
       { error: 'Declaration not found' },
-      { status: 404 }
+      { status: 404 },
     );
   }
 
@@ -537,7 +537,7 @@ async function validateDeclaration(supabase: any, body: any) {
       {
         validate_data: validatedData.validate_data,
         check_compliance: validatedData.check_compliance,
-      }
+      },
     );
 
     // Update declaration status
@@ -564,7 +564,7 @@ async function validateDeclaration(supabase: any, body: any) {
   } catch (error) {
     return NextResponse.json(
       { error: 'Declaration validation failed', details: error.message },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -575,7 +575,7 @@ async function submitDeclaration(supabase: any, body: any) {
   if (!declaration_id) {
     return NextResponse.json(
       { error: 'declaration_id is required' },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
@@ -589,14 +589,14 @@ async function submitDeclaration(supabase: any, body: any) {
   if (error || !declaration) {
     return NextResponse.json(
       { error: 'Declaration not found' },
-      { status: 404 }
+      { status: 404 },
     );
   }
 
   if (declaration.status === 'submitted' && !force_submit) {
     return NextResponse.json(
       { error: 'Declaration already submitted' },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
@@ -642,7 +642,7 @@ async function submitDeclaration(supabase: any, body: any) {
 
     return NextResponse.json(
       { error: 'Declaration submission failed', details: error.message },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -656,7 +656,7 @@ async function scheduleDeclaration(supabase: any, body: any) {
         error:
           'clinic_id, declaration_type, period, and schedule_date are required',
       },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
@@ -679,7 +679,7 @@ async function scheduleDeclaration(supabase: any, body: any) {
     if (error) {
       return NextResponse.json(
         { error: 'Failed to schedule declaration' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -697,7 +697,7 @@ async function scheduleDeclaration(supabase: any, body: any) {
   } catch (error) {
     return NextResponse.json(
       { error: 'Declaration scheduling failed', details: error.message },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

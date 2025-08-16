@@ -13,7 +13,7 @@ const markActionTakenSchema = z.object({
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const supabase = createRouteHandlerClient({ cookies });
@@ -26,7 +26,7 @@ export async function PATCH(
     if (authError || !user) {
       return NextResponse.json(
         { error: 'Authentication required' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -46,25 +46,25 @@ export async function PATCH(
 
       const alert = await progressTrackingService.markAlertActionTaken(
         id,
-        action_notes
+        action_notes,
       );
       return NextResponse.json(alert);
     }
     return NextResponse.json(
       { error: 'Invalid action. Use mark_read or mark_action_taken' },
-      { status: 400 }
+      { status: 400 },
     );
   } catch (error: any) {
     if (error.name === 'ZodError') {
       return NextResponse.json(
         { error: 'Invalid request data', details: error.errors },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     return NextResponse.json(
       { error: 'Failed to update alert' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

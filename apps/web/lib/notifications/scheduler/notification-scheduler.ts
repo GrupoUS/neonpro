@@ -80,7 +80,7 @@ const ScheduleConfigSchema = z.object({
             'contains',
           ]),
           value: z.any(),
-        })
+        }),
       )
       .optional(),
   }),
@@ -95,7 +95,7 @@ const ScheduleConfigSchema = z.object({
           field: z.string(),
           operator: z.string(),
           value: z.any(),
-        })
+        }),
       )
       .optional(),
     segmentId: z.string().uuid().optional(),
@@ -226,7 +226,7 @@ export class NotificationScheduler {
    */
   async updateSchedule(
     scheduleId: string,
-    updates: Partial<ScheduleConfig>
+    updates: Partial<ScheduleConfig>,
   ): Promise<void> {
     const { error } = await this.supabase
       .from('notification_schedules')
@@ -327,7 +327,7 @@ export class NotificationScheduler {
           `
           *,
           notification_schedules!inner(*)
-        `
+        `,
         )
         .eq('status', 'pending')
         .lte('scheduled_for', now.toISOString())
@@ -355,8 +355,8 @@ export class NotificationScheduler {
       const results = await Promise.allSettled(
         Array.from(groupedBySchedule.entries()).map(
           ([scheduleId, notifications]) =>
-            this.processBatch(scheduleId, notifications)
-        )
+            this.processBatch(scheduleId, notifications),
+        ),
       );
 
       // Log resultados
@@ -375,7 +375,7 @@ export class NotificationScheduler {
    */
   private async processBatch(
     scheduleId: string,
-    notifications: any[]
+    notifications: any[],
   ): Promise<BatchExecutionResult> {
     const startTime = Date.now();
     let totalQueued = 0;
@@ -398,7 +398,7 @@ export class NotificationScheduler {
           const optimization = await this.optimizeDeliveryTime(
             notification.user_id,
             notification.channel,
-            finalTime
+            finalTime,
           );
           finalTime = optimization.optimizedTime;
         }
@@ -407,13 +407,13 @@ export class NotificationScheduler {
         if (
           this.isInQuietHours(
             finalTime,
-            notification.notification_schedules.options?.quietHours
+            notification.notification_schedules.options?.quietHours,
           )
         ) {
           // Reagendar para fora do quiet hour
           const nextAvailable = this.findNextAvailableTime(
             finalTime,
-            notification.notification_schedules.options?.quietHours
+            notification.notification_schedules.options?.quietHours,
           );
 
           await this.supabase
@@ -508,7 +508,7 @@ export class NotificationScheduler {
   private async optimizeDeliveryTime(
     userId: string,
     channel: NotificationChannel,
-    scheduledTime: Date
+    scheduledTime: Date,
   ): Promise<OptimizationResult> {
     try {
       // Buscar histórico de engajamento do usuário
@@ -605,7 +605,7 @@ export class NotificationScheduler {
           factor: 'Tempo de resposta',
           weight: 0.4,
           impact: `Média de ${hourlyData?.avgResponseTime?.toFixed(0) || 0} minutos`,
-        }
+        },
       );
 
       return {
@@ -635,7 +635,7 @@ export class NotificationScheduler {
    */
   private isInQuietHours(
     time: Date,
-    quietHours?: { start: string; end: string }
+    quietHours?: { start: string; end: string },
   ): boolean {
     if (!quietHours) {
       return false;
@@ -664,7 +664,7 @@ export class NotificationScheduler {
    */
   private findNextAvailableTime(
     time: Date,
-    quietHours?: { start: string; end: string }
+    quietHours?: { start: string; end: string },
   ): Date {
     if (!quietHours) {
       return time;
@@ -712,7 +712,7 @@ export class NotificationScheduler {
     // Buscar audiência
     const audience = await this.resolveAudience(
       schedule.audience_config,
-      schedule.clinic_id
+      schedule.clinic_id,
     );
 
     // Criar notificações agendadas
@@ -732,7 +732,7 @@ export class NotificationScheduler {
         },
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
-      }))
+      })),
     );
 
     if (notifications.length > 0) {
@@ -804,7 +804,7 @@ export class NotificationScheduler {
 
         default:
           throw new Error(
-            `Frequência de recorrência não suportada: ${recurrence.frequency}`
+            `Frequência de recorrência não suportada: ${recurrence.frequency}`,
           );
       }
 
@@ -833,7 +833,7 @@ export class NotificationScheduler {
    */
   private async resolveAudience(
     audienceConfig: any,
-    clinicId: string
+    clinicId: string,
   ): Promise<string[]> {
     try {
       switch (audienceConfig.type) {
@@ -870,7 +870,7 @@ export class NotificationScheduler {
           // Implementar filtros customizados baseados em audienceConfig.filters
           return await this.resolveCustomAudience(
             audienceConfig.filters,
-            clinicId
+            clinicId,
           );
 
         default:
@@ -886,7 +886,7 @@ export class NotificationScheduler {
    */
   private async resolveCustomAudience(
     filters: any[],
-    clinicId: string
+    clinicId: string,
   ): Promise<string[]> {
     if (!filters || filters.length === 0) {
       return [];
@@ -943,7 +943,7 @@ export class NotificationScheduler {
     // Resolver audiência
     const audience = await this.resolveAudience(
       schedule.audience_config,
-      schedule.clinic_id
+      schedule.clinic_id,
     );
 
     // Criar notificações para envio imediato
@@ -961,7 +961,7 @@ export class NotificationScheduler {
           templateId: schedule.template_config.templateId,
           variables: schedule.template_config.variables,
         },
-      }))
+      })),
     );
 
     // Processar em lote

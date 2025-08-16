@@ -70,7 +70,7 @@ export class IntelligentTimeoutManager {
         'mousemove',
         this.throttle(() => {
           this.recordActivity('mouse_move');
-        }, 1000)
+        }, 1000),
       );
 
       // Keyboard input tracking
@@ -88,7 +88,7 @@ export class IntelligentTimeoutManager {
         'scroll',
         this.throttle(() => {
           this.recordActivity('scroll');
-        }, 2000)
+        }, 2000),
       );
 
       // Page visibility change
@@ -140,7 +140,7 @@ export class IntelligentTimeoutManager {
    */
   public recordActivity(
     type: ActivityType,
-    metadata?: Record<string, any>
+    metadata?: Record<string, any>,
   ): void {
     const sessionId = this.getCurrentSessionId();
     if (!sessionId) {
@@ -215,7 +215,7 @@ export class IntelligentTimeoutManager {
    */
   private scheduleWarnings(
     session: UserSession,
-    config: SessionTimeoutConfig
+    config: SessionTimeoutConfig,
   ): void {
     const warnings: TimeoutWarning[] = [];
 
@@ -250,7 +250,7 @@ export class IntelligentTimeoutManager {
   private showTimeoutWarning(
     session: UserSession,
     timeRemaining: number,
-    type: 'initial' | 'final'
+    type: 'initial' | 'final',
   ): void {
     const minutes = Math.floor(timeRemaining / 60);
     const seconds = timeRemaining % 60;
@@ -271,7 +271,7 @@ export class IntelligentTimeoutManager {
             type,
             canExtend: this.canExtendSession(session.id),
           },
-        })
+        }),
       );
     }
   }
@@ -281,7 +281,7 @@ export class IntelligentTimeoutManager {
    */
   public async extendSession(
     sessionId: string,
-    reason?: string
+    reason?: string,
   ): Promise<boolean> {
     if (!this.canExtendSession(sessionId)) {
       return false;
@@ -335,7 +335,7 @@ export class IntelligentTimeoutManager {
     const activities = this.activityBuffer.get(sessionId) || [];
     const now = Date.now();
     const recentActivities = activities.filter(
-      (a) => now - a.timestamp < 60_000
+      (a) => now - a.timestamp < 60_000,
     ); // Last minute
 
     const config = this.getTimeoutConfig('');
@@ -364,7 +364,7 @@ export class IntelligentTimeoutManager {
         // Grace period extension for recent activity
         await this.extendSession(
           session.id,
-          'Grace period for recent activity'
+          'Grace period for recent activity',
         );
         return;
       }
@@ -394,7 +394,7 @@ export class IntelligentTimeoutManager {
               sessionId: session.id,
               reason: 'Session expired due to inactivity',
             },
-          })
+          }),
         );
       }
     } catch (_error) {}
@@ -452,7 +452,7 @@ export class IntelligentTimeoutManager {
     const activities = this.activityBuffer.get(sessionId) || [];
     const now = Date.now();
     const recentActivities = activities.filter(
-      (a) => now - a.timestamp < 300_000
+      (a) => now - a.timestamp < 300_000,
     ); // Last 5 minutes
 
     const activityTypes: Record<ActivityType, number> = {
@@ -532,7 +532,7 @@ export class IntelligentTimeoutManager {
   private async getSessionById(sessionId: string): Promise<UserSession | null> {
     try {
       const response = await fetch(
-        `/api/session/validate?sessionId=${sessionId}`
+        `/api/session/validate?sessionId=${sessionId}`,
       );
       if (response.ok) {
         const data = await response.json();

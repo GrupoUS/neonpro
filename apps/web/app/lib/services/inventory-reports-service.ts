@@ -26,7 +26,7 @@ class InventoryReportsService {
   // =============================================================================
 
   async generateStockMovementReport(
-    filters: ReportFilters
+    filters: ReportFilters,
   ): Promise<ReportResult<'stock_movement'>> {
     const startTime = Date.now();
 
@@ -117,7 +117,7 @@ class InventoryReportsService {
   }
 
   private calculateStockMovementSummary(
-    data: StockMovementReportData[]
+    data: StockMovementReportData[],
   ): StockMovementSummary {
     const summary: StockMovementSummary = {
       total_movements: data.length,
@@ -134,7 +134,7 @@ class InventoryReportsService {
 
     data.forEach((movement) => {
       const isInbound = ['in', 'return', 'adjustment'].includes(
-        movement.movement_type
+        movement.movement_type,
       );
 
       if (isInbound) {
@@ -190,7 +190,7 @@ class InventoryReportsService {
   // =============================================================================
 
   async generateStockValuationReport(
-    filters: ReportFilters
+    filters: ReportFilters,
   ): Promise<ReportResult<'stock_valuation'>> {
     const startTime = Date.now();
 
@@ -235,7 +235,7 @@ class InventoryReportsService {
         const daysSinceMovement = stock.last_updated
           ? Math.floor(
               (Date.now() - new Date(stock.last_updated).getTime()) /
-                (1000 * 60 * 60 * 24)
+                (1000 * 60 * 60 * 24),
             )
           : null;
 
@@ -285,7 +285,7 @@ class InventoryReportsService {
   }
 
   private calculateStockValuationSummary(
-    data: StockValuationReportData[]
+    data: StockValuationReportData[],
   ): StockValuationSummary {
     const summary: StockValuationSummary = {
       total_items: data.length,
@@ -377,7 +377,7 @@ class InventoryReportsService {
   // =============================================================================
 
   async generateExpiringItemsReport(
-    filters: ReportFilters
+    filters: ReportFilters,
   ): Promise<ReportResult<'expiring_items'>> {
     const startTime = Date.now();
 
@@ -397,7 +397,7 @@ class InventoryReportsService {
         cost_per_unit,
         expiry_date,
         batch_number
-      `
+      `,
       )
       .not('expiry_date', 'is', null)
       .gt('current_quantity', 0);
@@ -430,7 +430,7 @@ class InventoryReportsService {
         const expiryDate = new Date(item.expiry_date);
         const today = new Date();
         const daysToExpiry = Math.ceil(
-          (expiryDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24)
+          (expiryDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24),
         );
 
         let urgencyLevel: 'immediate' | 'urgent' | 'warning' | 'watch' =
@@ -500,7 +500,7 @@ class InventoryReportsService {
   }
 
   private calculateExpiringItemsSummary(
-    data: ExpiringItemsReportData[]
+    data: ExpiringItemsReportData[],
   ): ExpiringItemsSummary {
     const summary: ExpiringItemsSummary = {
       total_expiring_items: data.length,
@@ -569,7 +569,7 @@ class InventoryReportsService {
   // =============================================================================
 
   async generateTransferReport(
-    filters: ReportFilters
+    filters: ReportFilters,
   ): Promise<ReportResult<'transfers'>> {
     const startTime = Date.now();
 
@@ -603,7 +603,7 @@ class InventoryReportsService {
     }
     if (filters.clinic_id) {
       query = query.or(
-        `from_clinic_id.eq.${filters.clinic_id},to_clinic_id.eq.${filters.clinic_id}`
+        `from_clinic_id.eq.${filters.clinic_id},to_clinic_id.eq.${filters.clinic_id}`,
       );
     }
     if (filters.category) {
@@ -655,7 +655,7 @@ class InventoryReportsService {
   }
 
   private calculateTransferSummary(
-    data: TransferReportData[]
+    data: TransferReportData[],
   ): TransferReportSummary {
     const summary: TransferReportSummary = {
       total_transfers: data.length,
@@ -735,7 +735,7 @@ class InventoryReportsService {
   // =============================================================================
 
   async generateLocationPerformanceReport(
-    filters: ReportFilters
+    filters: ReportFilters,
   ): Promise<ReportResult<'location_performance'>> {
     const startTime = Date.now();
 
@@ -758,7 +758,7 @@ class InventoryReportsService {
     for (const clinic of clinics || []) {
       const performance = await this.calculateLocationPerformance(
         clinic.id,
-        filters
+        filters,
       );
       reportData.push({
         clinic_id: clinic.id,
@@ -784,13 +784,13 @@ class InventoryReportsService {
 
   private async calculateLocationPerformance(
     clinicId: string,
-    filters: ReportFilters
+    filters: ReportFilters,
   ) {
     // Get stock data for clinic
     const { data: stockData } = await this.supabase
       .from('inventory_stock')
       .select(
-        'current_quantity, cost_per_unit, inventory_items!inner(minimum_quantity)'
+        'current_quantity, cost_per_unit, inventory_items!inner(minimum_quantity)',
       )
       .eq('clinic_id', clinicId);
 
@@ -825,7 +825,7 @@ class InventoryReportsService {
     const totalValue =
       stockData?.reduce(
         (sum, item) => sum + item.current_quantity * (item.cost_per_unit || 0),
-        0
+        0,
       ) || 0;
 
     const totalMovements = movements?.length || 0;
@@ -833,13 +833,13 @@ class InventoryReportsService {
       movements?.filter(
         (m) =>
           ['in', 'return', 'adjustment'].includes(m.transaction_type) &&
-          m.quantity_change > 0
+          m.quantity_change > 0,
       ).length || 0;
     const movementsOut =
       movements?.filter(
         (m) =>
           ['out', 'transfer', 'waste'].includes(m.transaction_type) &&
-          m.quantity_change < 0
+          m.quantity_change < 0,
       ).length || 0;
 
     const valueIn =
@@ -847,20 +847,20 @@ class InventoryReportsService {
         ?.filter((m) => m.quantity_change > 0)
         .reduce(
           (sum, m) => sum + Math.abs(m.quantity_change) * (m.unit_cost || 0),
-          0
+          0,
         ) || 0;
     const valueOut =
       movements
         ?.filter((m) => m.quantity_change < 0)
         .reduce(
           (sum, m) => sum + Math.abs(m.quantity_change) * (m.unit_cost || 0),
-          0
+          0,
         ) || 0;
 
     const lowStockItems =
       stockData?.filter(
         (item) =>
-          item.current_quantity <= (item.inventory_items.minimum_quantity || 0)
+          item.current_quantity <= (item.inventory_items.minimum_quantity || 0),
       ).length || 0;
 
     // Calculate performance metrics
@@ -878,7 +878,7 @@ class InventoryReportsService {
       turnoverRate * 0.3 +
         stockAccuracy * 0.3 +
         utilizationRate * 0.2 +
-        Math.min(100, (totalMovements / Math.max(1, totalItems)) * 20) * 0.2
+        Math.min(100, (totalMovements / Math.max(1, totalItems)) * 20) * 0.2,
     );
 
     return {
@@ -900,7 +900,7 @@ class InventoryReportsService {
   }
 
   private calculateLocationPerformanceSummary(
-    data: LocationPerformanceData[]
+    data: LocationPerformanceData[],
   ): LocationPerformanceSummary {
     if (data.length === 0) {
       return {
@@ -916,10 +916,10 @@ class InventoryReportsService {
     }
 
     const bestLocation = data.reduce((best, location) =>
-      location.performance_score > best.performance_score ? location : best
+      location.performance_score > best.performance_score ? location : best,
     );
     const worstLocation = data.reduce((worst, location) =>
-      location.performance_score < worst.performance_score ? location : worst
+      location.performance_score < worst.performance_score ? location : worst,
     );
 
     return {
@@ -931,12 +931,12 @@ class InventoryReportsService {
       total_system_value: data.reduce((sum, loc) => sum + loc.total_value, 0),
       total_system_movements: data.reduce(
         (sum, loc) => sum + loc.total_movements,
-        0
+        0,
       ),
       average_turnover_rate:
         data.reduce((sum, loc) => sum + loc.turnover_rate, 0) / data.length,
       locations_needing_attention: data.filter(
-        (loc) => loc.performance_score < 70
+        (loc) => loc.performance_score < 70,
       ).length,
     };
   }
@@ -960,11 +960,11 @@ class InventoryReportsService {
       case 'low_stock': {
         // Low stock is a subset of stock valuation
         const result = await this.generateStockValuationReport(
-          parameters.filters
+          parameters.filters,
         );
         result.data = result.data.filter(
           (item) =>
-            item.stock_status === 'low' || item.stock_status === 'critical'
+            item.stock_status === 'low' || item.stock_status === 'critical',
         );
         return result;
       }
@@ -978,7 +978,7 @@ class InventoryReportsService {
   // =============================================================================
 
   async saveReportDefinition(
-    definition: Omit<ReportDefinition, 'id' | 'created_at' | 'updated_at'>
+    definition: Omit<ReportDefinition, 'id' | 'created_at' | 'updated_at'>,
   ): Promise<ReportDefinition> {
     const { data, error } = await this.supabase
       .from('report_definitions')

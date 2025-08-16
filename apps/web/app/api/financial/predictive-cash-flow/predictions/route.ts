@@ -88,7 +88,7 @@ export async function GET(request: NextRequest) {
     if (!validation.success) {
       return NextResponse.json(
         { error: 'Invalid query parameters', details: validation.error.errors },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -110,7 +110,7 @@ export async function GET(request: NextRequest) {
         *,
         prediction_models!inner(name, model_type, algorithm_type, accuracy_rate),
         forecasting_scenarios(name, description)
-      `
+      `,
       )
       .eq('clinic_id', clinicId)
       .order('created_at', { ascending: false })
@@ -138,7 +138,7 @@ export async function GET(request: NextRequest) {
     if (error) {
       return NextResponse.json(
         { error: 'Failed to fetch predictions' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -175,7 +175,7 @@ export async function GET(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -194,7 +194,7 @@ export async function POST(request: NextRequest) {
     if (!validation.success) {
       return NextResponse.json(
         { error: 'Invalid request body', details: validation.error.errors },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -217,7 +217,7 @@ export async function POST(request: NextRequest) {
     if (clinicError || !clinic) {
       return NextResponse.json(
         { error: 'Clinic not found or access denied' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -228,14 +228,14 @@ export async function POST(request: NextRequest) {
     if (start >= end) {
       return NextResponse.json(
         { error: 'Start date must be before end date' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     if (end.getTime() - start.getTime() > 365 * 24 * 60 * 60 * 1000) {
       return NextResponse.json(
         { error: 'Date range cannot exceed 1 year' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -249,13 +249,13 @@ export async function POST(request: NextRequest) {
         periodType,
         startDate,
         endDate,
-        scenarioId
+        scenarioId,
       );
 
     if (predictionError || !prediction) {
       return NextResponse.json(
         { error: predictionError || 'Failed to generate prediction' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -267,7 +267,7 @@ export async function POST(request: NextRequest) {
         *,
         prediction_models!inner(name, model_type, algorithm_type, accuracy_rate),
         forecasting_scenarios(name, description)
-      `
+      `,
       )
       .eq('id', prediction.id)
       .single();
@@ -275,7 +275,7 @@ export async function POST(request: NextRequest) {
     if (fetchError) {
       return NextResponse.json(
         { prediction }, // Return basic prediction if fetch fails
-        { status: 201 }
+        { status: 201 },
       );
     }
 
@@ -298,12 +298,12 @@ export async function POST(request: NextRequest) {
         message: 'Prediction generated successfully',
         prediction: completePrediction || prediction,
       },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -322,7 +322,7 @@ export async function PUT(request: NextRequest) {
     if (!validation.success) {
       return NextResponse.json(
         { error: 'Invalid request body', details: validation.error.errors },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -342,7 +342,7 @@ export async function PUT(request: NextRequest) {
         `
         *,
         prediction_models!inner(name)
-      `
+      `,
       )
       .eq('id', predictionId)
       .single();
@@ -350,7 +350,7 @@ export async function PUT(request: NextRequest) {
     if (predictionError || !prediction) {
       return NextResponse.json(
         { error: 'Prediction not found' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -372,7 +372,7 @@ export async function PUT(request: NextRequest) {
         predictionId,
         actualInflow,
         actualOutflow,
-        actualNet
+        actualNet,
       );
 
     if (validationError) {
@@ -416,7 +416,7 @@ export async function PUT(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -434,7 +434,7 @@ export async function DELETE(request: NextRequest) {
     if (!predictionId) {
       return NextResponse.json(
         { error: 'Prediction ID is required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -454,7 +454,7 @@ export async function DELETE(request: NextRequest) {
     if (predictionError || !prediction) {
       return NextResponse.json(
         { error: 'Prediction not found' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -478,7 +478,7 @@ export async function DELETE(request: NextRequest) {
     if (deleteError) {
       return NextResponse.json(
         { error: 'Failed to delete prediction' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -498,7 +498,7 @@ export async function DELETE(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

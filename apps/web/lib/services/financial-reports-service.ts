@@ -112,7 +112,7 @@ export class FinancialReportsService {
   // Relatório de Aging de Contas a Pagar
   async getAgingReport(
     _clinicId: string,
-    asOfDate?: string
+    asOfDate?: string,
   ): Promise<AgingReportItem[]> {
     try {
       const _supabase = await this.getSupabaseClient();
@@ -168,7 +168,7 @@ export class FinancialReportsService {
   async getVendorPerformanceReport(
     _clinicId: string,
     _startDate: string,
-    _endDate: string
+    _endDate: string,
   ): Promise<VendorPerformanceMetrics[]> {
     try {
       const _supabase = await this.getSupabaseClient();
@@ -229,7 +229,7 @@ export class FinancialReportsService {
   async getCategoryExpenseReport(
     _clinicId: string,
     _year: number,
-    _month?: number
+    _month?: number,
   ): Promise<CategoryExpenseReport[]> {
     try {
       const _supabase = await this.getSupabaseClient();
@@ -303,7 +303,7 @@ export class FinancialReportsService {
   // Acompanhamento de Orçamento
   async getBudgetTrackingReport(
     _clinicId: string,
-    period: string
+    period: string,
   ): Promise<BudgetTrackingReport> {
     const _supabase = await this.getSupabaseClient();
 
@@ -367,7 +367,7 @@ export class FinancialReportsService {
   async getCashFlowProjection(
     _clinicId: string,
     periods = 12,
-    periodType: 'weekly' | 'monthly' = 'monthly'
+    periodType: 'weekly' | 'monthly' = 'monthly',
   ): Promise<CashFlowProjection[]> {
     try {
       const _supabase = await this.getSupabaseClient();
@@ -418,7 +418,7 @@ export class FinancialReportsService {
 
   // Métricas Resumidas do Sistema Financeiro
   async getFinancialSummary(
-    _clinicId: string
+    _clinicId: string,
   ): Promise<FinancialSummaryMetrics> {
     const _supabase = await this.getSupabaseClient();
 
@@ -482,7 +482,7 @@ export class FinancialReportsService {
   }
 
   getBudgetHealthColor(
-    utilizationPercentage: number
+    utilizationPercentage: number,
   ): 'secondary' | 'default' | 'destructive' {
     if (utilizationPercentage <= 80) {
       return 'secondary';

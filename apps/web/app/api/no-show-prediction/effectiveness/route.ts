@@ -57,7 +57,7 @@ export async function GET(request: NextRequest) {
           outcome,
           effectiveness_score
         )
-      `
+      `,
       )
       .not('actual_outcome', 'is', null); // Only predictions with known outcomes
 
@@ -65,21 +65,21 @@ export async function GET(request: NextRequest) {
     if (parsedQuery.clinic_id) {
       effectivenessQuery = effectivenessQuery.eq(
         'appointments.clinic_id',
-        parsedQuery.clinic_id
+        parsedQuery.clinic_id,
       );
     }
 
     if (parsedQuery.date_from) {
       effectivenessQuery = effectivenessQuery.gte(
         'prediction_date',
-        parsedQuery.date_from
+        parsedQuery.date_from,
       );
     }
 
     if (parsedQuery.date_to) {
       effectivenessQuery = effectivenessQuery.lte(
         'prediction_date',
-        parsedQuery.date_to
+        parsedQuery.date_to,
       );
     }
 
@@ -95,7 +95,7 @@ export async function GET(request: NextRequest) {
     if (predictionsError) {
       return NextResponse.json(
         { error: 'Failed to fetch effectiveness data' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -105,7 +105,7 @@ export async function GET(request: NextRequest) {
       predictions?.filter(
         (p) =>
           (p.risk_score > 0.5 && p.actual_outcome === true) ||
-          (p.risk_score <= 0.5 && p.actual_outcome === false)
+          (p.risk_score <= 0.5 && p.actual_outcome === false),
       ).length || 0;
 
     const overallAccuracy =
@@ -137,7 +137,7 @@ export async function GET(request: NextRequest) {
           });
           return acc;
         },
-        {} as Record<string, any>
+        {} as Record<string, any>,
       ) || {};
 
     // Model performance by version
@@ -171,7 +171,7 @@ export async function GET(request: NextRequest) {
             acc[version].total_confidence / acc[version].total;
           return acc;
         },
-        {} as Record<string, any>
+        {} as Record<string, any>,
       ) || {};
 
     return NextResponse.json({
@@ -192,7 +192,7 @@ export async function GET(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

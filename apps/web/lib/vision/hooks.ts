@@ -47,7 +47,7 @@ export function useVisionAnalysis() {
         const validation = validateAnalysisRequest(request);
         if (!validation.valid) {
           throw new Error(
-            validation.errors[0]?.message || 'Invalid analysis request'
+            validation.errors[0]?.message || 'Invalid analysis request',
           );
         }
 
@@ -94,7 +94,7 @@ export function useVisionAnalysis() {
         abortControllerRef.current = null;
       }
     },
-    []
+    [],
   );
 
   const cancelAnalysis = useCallback(() => {
@@ -177,7 +177,7 @@ export function useImageUpload() {
         setUploadProgress(100);
 
         toast.success(
-          `Imagem ${type === 'before' ? 'anterior' : 'posterior'} carregada com sucesso!`
+          `Imagem ${type === 'before' ? 'anterior' : 'posterior'} carregada com sucesso!`,
         );
         return imageData;
       } catch (err: any) {
@@ -190,7 +190,7 @@ export function useImageUpload() {
         setTimeout(() => setUploadProgress(0), 1000);
       }
     },
-    []
+    [],
   );
 
   const removeImage = useCallback((imageId: string) => {
@@ -226,7 +226,7 @@ export function useAnalysisExport() {
   const exportAnalysis = useCallback(
     async (
       analysisId: string,
-      options: ExportOptions
+      options: ExportOptions,
     ): Promise<ExportResult | null> => {
       try {
         setIsExporting(true);
@@ -236,7 +236,7 @@ export function useAnalysisExport() {
         const validation = VisionUtils.Export.validateExportOptions(options);
         if (!validation.valid) {
           throw new Error(
-            validation.errors[0]?.message || 'Invalid export options'
+            validation.errors[0]?.message || 'Invalid export options',
           );
         }
 
@@ -272,7 +272,7 @@ export function useAnalysisExport() {
         setTimeout(() => setExportProgress(0), 1000);
       }
     },
-    []
+    [],
   );
 
   const downloadExport = useCallback((exportResult: ExportResult) => {
@@ -318,7 +318,7 @@ export function useAnalysisExport() {
 export function useAnnotations(_imageId?: string) {
   const [annotations, setAnnotations] = useState<AnnotationData[]>([]);
   const [selectedAnnotation, setSelectedAnnotation] = useState<string | null>(
-    null
+    null,
   );
   const [isEditing, setIsEditing] = useState(false);
 
@@ -335,26 +335,26 @@ export function useAnnotations(_imageId?: string) {
 
       toast.success('Anotação adicionada');
     },
-    []
+    [],
   );
 
   const updateAnnotation = useCallback(
     (id: string, updates: Partial<AnnotationData>) => {
       setAnnotations((prev) =>
         prev.map((annotation) =>
-          annotation.id === id ? { ...annotation, ...updates } : annotation
-        )
+          annotation.id === id ? { ...annotation, ...updates } : annotation,
+        ),
       );
 
       toast.success('Anotação atualizada');
     },
-    []
+    [],
   );
 
   const removeAnnotation = useCallback(
     (id: string) => {
       setAnnotations((prev) =>
-        prev.filter((annotation) => annotation.id !== id)
+        prev.filter((annotation) => annotation.id !== id),
       );
 
       if (selectedAnnotation === id) {
@@ -363,7 +363,7 @@ export function useAnnotations(_imageId?: string) {
 
       toast.success('Anotação removida');
     },
-    [selectedAnnotation]
+    [selectedAnnotation],
   );
 
   const clearAnnotations = useCallback(() => {
@@ -408,7 +408,7 @@ export function useAnnotations(_imageId?: string) {
 export function useMeasurements(_imageId?: string) {
   const [measurements, setMeasurements] = useState<MeasurementData[]>([]);
   const [selectedMeasurement, setSelectedMeasurement] = useState<string | null>(
-    null
+    null,
   );
   const [calibration, setCalibration] = useState<{
     pixelToMmRatio: number;
@@ -427,26 +427,26 @@ export function useMeasurements(_imageId?: string) {
 
       toast.success('Medição adicionada');
     },
-    []
+    [],
   );
 
   const updateMeasurement = useCallback(
     (id: string, updates: Partial<MeasurementData>) => {
       setMeasurements((prev) =>
         prev.map((measurement) =>
-          measurement.id === id ? { ...measurement, ...updates } : measurement
-        )
+          measurement.id === id ? { ...measurement, ...updates } : measurement,
+        ),
       );
 
       toast.success('Medição atualizada');
     },
-    []
+    [],
   );
 
   const removeMeasurement = useCallback(
     (id: string) => {
       setMeasurements((prev) =>
-        prev.filter((measurement) => measurement.id !== id)
+        prev.filter((measurement) => measurement.id !== id),
       );
 
       if (selectedMeasurement === id) {
@@ -455,7 +455,7 @@ export function useMeasurements(_imageId?: string) {
 
       toast.success('Medição removida');
     },
-    [selectedMeasurement]
+    [selectedMeasurement],
   );
 
   const clearMeasurements = useCallback(() => {
@@ -473,7 +473,7 @@ export function useMeasurements(_imageId?: string) {
       prev.map((measurement) => ({
         ...measurement,
         // Recalculate real-world values if needed
-      }))
+      })),
     );
 
     toast.success('Calibração atualizada');
@@ -508,7 +508,7 @@ export function useAnalysisHistory() {
 
         const currentPage = reset ? 1 : page;
         const response = await fetch(
-          `/api/vision/history?page=${currentPage}&limit=10`
+          `/api/vision/history?page=${currentPage}&limit=10`,
         );
 
         if (response.ok) {
@@ -530,7 +530,7 @@ export function useAnalysisHistory() {
         setIsLoading(false);
       }
     },
-    [page]
+    [page],
   );
 
   const refreshHistory = useCallback(() => {
@@ -655,7 +655,7 @@ export function useLocalStorage<T>(key: string, initialValue: T) {
         window.localStorage.setItem(key, JSON.stringify(valueToStore));
       } catch (_error) {}
     },
-    [key, storedValue]
+    [key, storedValue],
   );
 
   return [storedValue, setValue] as const;
@@ -685,7 +685,7 @@ export function useDebounce<T>(value: T, delay: number): T {
  */
 export function useIntersectionObserver(
   elementRef: React.RefObject<Element>,
-  options?: IntersectionObserverInit
+  options?: IntersectionObserverInit,
 ) {
   const [isVisible, setIsVisible] = useState(false);
 

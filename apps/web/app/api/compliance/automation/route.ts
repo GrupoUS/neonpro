@@ -65,7 +65,7 @@ export async function GET(_request: NextRequest) {
         error: 'Erro interno do servidor',
         details: error instanceof Error ? error.message : 'Erro desconhecido',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -123,7 +123,7 @@ export async function POST(request: NextRequest) {
       default:
         return NextResponse.json(
           { error: 'Ação não reconhecida' },
-          { status: 400 }
+          { status: 400 },
         );
     }
 
@@ -138,7 +138,7 @@ export async function POST(request: NextRequest) {
         error: 'Erro interno do servidor',
         details: error instanceof Error ? error.message : 'Erro desconhecido',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

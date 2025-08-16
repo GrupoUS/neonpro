@@ -267,7 +267,7 @@ export default function TenantList({
                   </Badge>
                   <Badge
                     variant={getSubscriptionBadgeVariant(
-                      tenant.subscription_status
+                      tenant.subscription_status,
                     )}
                   >
                     {tenant.subscription_status}

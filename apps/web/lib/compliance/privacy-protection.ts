@@ -344,7 +344,7 @@ export class PrivacyProtectionManager {
   async createPrivacyProfile(
     patientId: string,
     initialConsent: Omit<ConsentRecord, 'id' | 'patientId'>,
-    preferences?: Partial<PrivacyPreferences>
+    preferences?: Partial<PrivacyPreferences>,
   ): Promise<PatientPrivacyProfile> {
     try {
       logger.info(`Creating privacy profile for patient ${patientId}`);
@@ -423,7 +423,7 @@ export class PrivacyProtectionManager {
             assessmentDate: new Date().toISOString(),
             assessor: 'system',
             nextAssessmentDate: new Date(
-              Date.now() + 365 * 24 * 60 * 60 * 1000
+              Date.now() + 365 * 24 * 60 * 60 * 1000,
             ).toISOString(),
           },
         },
@@ -448,20 +448,20 @@ export class PrivacyProtectionManager {
           accessLog: [],
           retentionPeriod: 365 * 10, // 10 years
           deletionScheduled: new Date(
-            Date.now() + 365 * 10 * 24 * 60 * 60 * 1000
+            Date.now() + 365 * 10 * 24 * 60 * 60 * 1000,
           ).toISOString(),
         },
-        patientId
+        patientId,
       );
 
       logger.info(
-        `Privacy profile created successfully for patient ${patientId}`
+        `Privacy profile created successfully for patient ${patientId}`,
       );
       return privacyProfile;
     } catch (error) {
       logger.error(
         `Failed to create privacy profile for patient ${patientId}:`,
-        error
+        error,
       );
       throw error;
     }
@@ -472,7 +472,7 @@ export class PrivacyProtectionManager {
    */
   async recordConsent(
     patientId: string,
-    consentData: Omit<ConsentRecord, 'id' | 'patientId'>
+    consentData: Omit<ConsentRecord, 'id' | 'patientId'>,
   ): Promise<ConsentRecord> {
     try {
       const profile = await this.getPrivacyProfile(patientId);
@@ -503,10 +503,10 @@ export class PrivacyProtectionManager {
           accessLog: [],
           retentionPeriod: 365 * 5, // 5 years
           deletionScheduled: new Date(
-            Date.now() + 365 * 5 * 24 * 60 * 60 * 1000
+            Date.now() + 365 * 5 * 24 * 60 * 60 * 1000,
           ).toISOString(),
         },
-        patientId
+        patientId,
       );
 
       logger.info(`Consent recorded for patient ${patientId}`);
@@ -523,7 +523,7 @@ export class PrivacyProtectionManager {
   async withdrawConsent(
     patientId: string,
     consentId: string,
-    withdrawalReason?: string
+    withdrawalReason?: string,
   ): Promise<void> {
     try {
       const profile = await this.getPrivacyProfile(patientId);
@@ -543,12 +543,12 @@ export class PrivacyProtectionManager {
       await this.processConsentWithdrawal(patientId, consent, withdrawalReason);
 
       logger.info(
-        `Consent withdrawn for patient ${patientId}, consent ${consentId}`
+        `Consent withdrawn for patient ${patientId}, consent ${consentId}`,
       );
     } catch (error) {
       logger.error(
         `Failed to withdraw consent for patient ${patientId}:`,
-        error
+        error,
       );
       throw error;
     }
@@ -560,7 +560,7 @@ export class PrivacyProtectionManager {
   async processDataSubjectRightRequest(
     patientId: string,
     requestType: DataSubjectRight,
-    requestDetails: string
+    requestDetails: string,
   ): Promise<DataSubjectRightRequest> {
     try {
       const profile = await this.getPrivacyProfile(patientId);
@@ -585,13 +585,13 @@ export class PrivacyProtectionManager {
       await this.savePrivacyProfile(profile);
 
       logger.info(
-        `Data subject right request processed for patient ${patientId}: ${requestType}`
+        `Data subject right request processed for patient ${patientId}: ${requestType}`,
       );
       return request;
     } catch (error) {
       logger.error(
         `Failed to process data subject right request for patient ${patientId}:`,
-        error
+        error,
       );
       throw error;
     }
@@ -603,7 +603,7 @@ export class PrivacyProtectionManager {
   async anonymizePatientData(
     patientId: string,
     anonymizationLevel: AnonymizationLevel,
-    method = 'k-anonymity'
+    method = 'k-anonymity',
   ): Promise<AnonymizationStatus> {
     try {
       const profile = await this.getPrivacyProfile(patientId);
@@ -642,7 +642,7 @@ export class PrivacyProtectionManager {
 
       // Update risk assessment
       profile.anonymizationStatus.riskAssessment = this.assessAnonymizationRisk(
-        profile.anonymizationStatus
+        profile.anonymizationStatus,
       );
 
       // Update profile
@@ -650,7 +650,7 @@ export class PrivacyProtectionManager {
       await this.savePrivacyProfile(profile);
 
       logger.info(
-        `Patient data anonymized for ${patientId} using ${method} at level ${anonymizationLevel}`
+        `Patient data anonymized for ${patientId} using ${method} at level ${anonymizationLevel}`,
       );
       return profile.anonymizationStatus;
     } catch (error) {
@@ -664,7 +664,7 @@ export class PrivacyProtectionManager {
    */
   async generatePrivacyComplianceReport(
     patientId?: string,
-    regulations?: PrivacyRegulation[]
+    regulations?: PrivacyRegulation[],
   ): Promise<PrivacyComplianceReport> {
     try {
       const patients = patientId
@@ -680,7 +680,7 @@ export class PrivacyProtectionManager {
 
         const complianceData = await this.assessPatientPrivacyCompliance(
           profile,
-          regulations
+          regulations,
         );
         reportData.push({
           patientId: pId,
@@ -713,7 +713,7 @@ export class PrivacyProtectionManager {
 
   // Helper Methods
   private async getPrivacyProfile(
-    patientId: string
+    patientId: string,
   ): Promise<PatientPrivacyProfile> {
     let profile = this.privacyProfiles.get(patientId);
 
@@ -737,7 +737,7 @@ export class PrivacyProtectionManager {
   }
 
   private async generatePrivacyNotices(
-    patientId: string
+    patientId: string,
   ): Promise<PrivacyNotice[]> {
     const notices: PrivacyNotice[] = [];
 
@@ -814,7 +814,7 @@ export class PrivacyProtectionManager {
 
   private async logDataProcessing(
     entry: DataProcessingEntry,
-    patientId: string
+    patientId: string,
   ): Promise<void> {
     const profile = await this.getPrivacyProfile(patientId);
     profile.dataProcessingLog.push(entry);
@@ -824,7 +824,7 @@ export class PrivacyProtectionManager {
   private async processConsentWithdrawal(
     patientId: string,
     _consent: ConsentRecord,
-    _reason?: string
+    _reason?: string,
   ): Promise<void> {
     // Implement consent withdrawal processing
     // This would include stopping processing, notifying relevant systems, etc.
@@ -846,7 +846,7 @@ export class PrivacyProtectionManager {
 
   private async fulfillDataSubjectRight(
     request: DataSubjectRightRequest,
-    profile: PatientPrivacyProfile
+    profile: PatientPrivacyProfile,
   ): Promise<void> {
     request.requestStatus = 'in_progress';
 
@@ -877,7 +877,7 @@ export class PrivacyProtectionManager {
 
   private async fulfillAccessRequest(
     request: DataSubjectRightRequest,
-    _profile: PatientPrivacyProfile
+    _profile: PatientPrivacyProfile,
   ): Promise<void> {
     // Generate comprehensive data export for the patient
     request.responseDetails = 'Complete data export generated and delivered';
@@ -886,7 +886,7 @@ export class PrivacyProtectionManager {
 
   private async fulfillPortabilityRequest(
     request: DataSubjectRightRequest,
-    _profile: PatientPrivacyProfile
+    _profile: PatientPrivacyProfile,
   ): Promise<void> {
     // Generate portable data format
     request.responseDetails = 'Data exported in machine-readable format';
@@ -895,7 +895,7 @@ export class PrivacyProtectionManager {
 
   private async fulfillRectificationRequest(
     request: DataSubjectRightRequest,
-    _profile: PatientPrivacyProfile
+    _profile: PatientPrivacyProfile,
   ): Promise<void> {
     // Process data correction request
     request.responseDetails = 'Data corrections applied as requested';
@@ -904,7 +904,7 @@ export class PrivacyProtectionManager {
 
   private async fulfillErasureRequest(
     request: DataSubjectRightRequest,
-    _profile: PatientPrivacyProfile
+    _profile: PatientPrivacyProfile,
   ): Promise<void> {
     // Process data deletion request
     request.responseDetails = 'Data deletion completed per request';
@@ -913,7 +913,7 @@ export class PrivacyProtectionManager {
 
   private async fulfillRestrictionRequest(
     request: DataSubjectRightRequest,
-    _profile: PatientPrivacyProfile
+    _profile: PatientPrivacyProfile,
   ): Promise<void> {
     // Process processing restriction request
     request.responseDetails = 'Processing restrictions applied as requested';
@@ -922,7 +922,7 @@ export class PrivacyProtectionManager {
 
   private async fulfillObjectionRequest(
     request: DataSubjectRightRequest,
-    _profile: PatientPrivacyProfile
+    _profile: PatientPrivacyProfile,
   ): Promise<void> {
     // Process objection to processing
     request.responseDetails = 'Processing objection acknowledged and processed';
@@ -978,7 +978,7 @@ export class PrivacyProtectionManager {
   }
 
   private assessAnonymizationRisk(
-    _status: AnonymizationStatus
+    _status: AnonymizationStatus,
   ): AnonymizationRiskAssessment {
     return {
       overallRisk: 'low',
@@ -987,14 +987,14 @@ export class PrivacyProtectionManager {
       assessmentDate: new Date().toISOString(),
       assessor: 'system_automated',
       nextAssessmentDate: new Date(
-        Date.now() + 365 * 24 * 60 * 60 * 1000
+        Date.now() + 365 * 24 * 60 * 60 * 1000,
       ).toISOString(),
     };
   }
 
   private async assessPatientPrivacyCompliance(
     _profile: PatientPrivacyProfile,
-    _regulations?: PrivacyRegulation[]
+    _regulations?: PrivacyRegulation[],
   ): Promise<PrivacyComplianceAssessment> {
     // Implement privacy compliance assessment
     return {
@@ -1010,32 +1010,32 @@ export class PrivacyProtectionManager {
   }
 
   private generatePrivacyComplianceSummary(
-    data: PatientPrivacyComplianceData[]
+    data: PatientPrivacyComplianceData[],
   ): PrivacyComplianceSummary {
     return {
       totalPatients: data.length,
       compliantPatients: data.filter(
-        (d) => d.complianceAssessment.overallCompliance === 'compliant'
+        (d) => d.complianceAssessment.overallCompliance === 'compliant',
       ).length,
       nonCompliantPatients: data.filter(
-        (d) => d.complianceAssessment.overallCompliance === 'non_compliant'
+        (d) => d.complianceAssessment.overallCompliance === 'non_compliant',
       ).length,
       complianceRate:
         data.length > 0
           ? (data.filter(
-              (d) => d.complianceAssessment.overallCompliance === 'compliant'
+              (d) => d.complianceAssessment.overallCompliance === 'compliant',
             ).length /
               data.length) *
             100
           : 0,
       criticalIssues: data.flatMap((d) =>
-        d.complianceAssessment.issues.filter((i) => i.severity === 'critical')
+        d.complianceAssessment.issues.filter((i) => i.severity === 'critical'),
       ).length,
     };
   }
 
   private async generatePrivacyRecommendations(
-    _data: PatientPrivacyComplianceData[]
+    _data: PatientPrivacyComplianceData[],
   ): Promise<string[]> {
     return [
       'Regular consent validation and renewal',
@@ -1045,7 +1045,7 @@ export class PrivacyProtectionManager {
   }
 
   private async generatePrivacyNextActions(
-    _data: PatientPrivacyComplianceData[]
+    _data: PatientPrivacyComplianceData[],
   ): Promise<string[]> {
     return [
       'Review and update privacy notices',
@@ -1076,7 +1076,7 @@ export class PrivacyProtectionManager {
       () => {
         this.performPeriodicPrivacyCheck();
       },
-      24 * 60 * 60 * 1000
+      24 * 60 * 60 * 1000,
     ); // Daily monitoring
   }
 
@@ -1085,7 +1085,7 @@ export class PrivacyProtectionManager {
   }
 
   private async savePrivacyProfile(
-    profile: PatientPrivacyProfile
+    profile: PatientPrivacyProfile,
   ): Promise<void> {
     const { error } = await this.supabase
       .from('patient_privacy_profiles')
@@ -1101,7 +1101,7 @@ export class PrivacyProtectionManager {
   }
 
   private async savePrivacyComplianceReport(
-    report: PrivacyComplianceReport
+    report: PrivacyComplianceReport,
   ): Promise<void> {
     const { error } = await this.supabase
       .from('privacy_compliance_reports')
@@ -1184,7 +1184,7 @@ export const ConsentValidationSchema = z.object({
         'public_health',
         'legal_compliance',
         'quality_improvement',
-      ])
+      ]),
     )
     .min(1),
   dataCategories: z
@@ -1196,7 +1196,7 @@ export const ConsentValidationSchema = z.object({
         'biometric',
         'genetic',
         'anonymous',
-      ])
+      ]),
     )
     .min(1),
   grantedDate: z.string(),

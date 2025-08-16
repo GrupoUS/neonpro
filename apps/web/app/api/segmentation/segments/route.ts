@@ -55,7 +55,7 @@ export async function GET(request: NextRequest) {
         error: 'Failed to fetch patient segments',
         details: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -77,7 +77,7 @@ export async function POST(request: NextRequest) {
     if (!validationResult.success) {
       return NextResponse.json(
         { error: 'Invalid input', details: validationResult.error.issues },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -100,12 +100,12 @@ export async function POST(request: NextRequest) {
         data: segment,
         message: 'AI-powered segment created successfully',
       },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to create patient segment' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

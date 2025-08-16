@@ -327,8 +327,8 @@ QUALITY_STANDARDS_NEONPRO:
 
   quality_gates:
     typescript_strict: 'Strict mode + no implicit any + no unused vars'
-    eslint_healthcare: 'Custom ESLint rules for healthcare applications'
-    prettier_formatting: 'Consistent code formatting across team'
+    biome_healthcare: 'Custom Biome rules for healthcare applications'
+  biome_formatting: 'Consistent code formatting across team'
     sonarqube_analysis: 'Coverage ≥85%, Maintainability A, Security A'
     husky_pre_commit: 'Lint + type check + test + security scan'
 
@@ -380,7 +380,7 @@ CICD_PIPELINE_NEONPRO:
 
   pipeline_stages:
     1_setup: 'Checkout code + Setup Node.js + Install dependencies'
-    2_quality: 'ESLint + Prettier + TypeScript check'
+    2_quality: 'Biome + TypeScript check'
     3_security: 'Snyk vulnerability scan + OWASP dependency check'
     4_testing: 'Unit tests + Integration tests + E2E tests'
     5_build: 'Next.js build + Supabase migrations + Asset optimization'

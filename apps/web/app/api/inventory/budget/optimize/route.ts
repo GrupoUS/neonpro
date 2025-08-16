@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
     if (!(budget_ids && Array.isArray(budget_ids)) || budget_ids.length === 0) {
       return NextResponse.json(
         { error: 'Budget IDs required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -28,15 +28,15 @@ export async function POST(request: NextRequest) {
     // Generate recommendations for each budget
     const allRecommendations = await Promise.all(
       budget_ids.map((budgetId: string) =>
-        service.generateBudgetOptimizationRecommendations(budgetId)
-      )
+        service.generateBudgetOptimizationRecommendations(budgetId),
+      ),
     );
 
     return NextResponse.json({ recommendations: allRecommendations.flat() });
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to analyze optimization' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -59,21 +59,21 @@ export async function GET(request: NextRequest) {
     if (!budgetId) {
       return NextResponse.json(
         { error: 'Budget ID required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     const service = new BudgetApprovalService();
     const forecasts = await service.generateBudgetForecast(
       budgetId,
-      Number(period)
+      Number(period),
     );
 
     return NextResponse.json({ forecasts });
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to generate forecast' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

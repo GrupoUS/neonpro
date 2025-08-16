@@ -72,7 +72,7 @@ export async function GET(request: NextRequest) {
     if (!sessionId) {
       return NextResponse.json(
         { error: 'Session ID is required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -81,7 +81,7 @@ export async function GET(request: NextRequest) {
     if (!validation.success) {
       return NextResponse.json(
         { error: 'Invalid session ID format' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -107,7 +107,7 @@ export async function GET(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -131,7 +131,7 @@ export async function POST(request: NextRequest) {
         if (!validation.success) {
           return NextResponse.json(
             { error: 'Invalid request data', details: validation.error.errors },
-            { status: 400 }
+            { status: 400 },
           );
         }
 
@@ -140,13 +140,13 @@ export async function POST(request: NextRequest) {
         // Extend session
         const success = await sessionSystem.sessionManager.extendSession(
           sessionId,
-          extendBy
+          extendBy,
         );
 
         if (!success) {
           return NextResponse.json(
             { error: 'Failed to extend session' },
-            { status: 400 }
+            { status: 400 },
           );
         }
 
@@ -173,7 +173,7 @@ export async function POST(request: NextRequest) {
         if (!validation.success) {
           return NextResponse.json(
             { error: 'Invalid request data', details: validation.error.errors },
-            { status: 400 }
+            { status: 400 },
           );
         }
 
@@ -198,7 +198,7 @@ export async function POST(request: NextRequest) {
         if (!validation.success) {
           return NextResponse.json(
             { error: 'Invalid request data', details: validation.error.errors },
-            { status: 400 }
+            { status: 400 },
           );
         }
 
@@ -212,7 +212,7 @@ export async function POST(request: NextRequest) {
             ...metadata,
             ipAddress: clientIP,
             userAgent,
-          }
+          },
         );
 
         return NextResponse.json({
@@ -228,7 +228,7 @@ export async function POST(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -246,7 +246,7 @@ export async function PUT(request: NextRequest) {
     if (!sessionId) {
       return NextResponse.json(
         { error: 'Session ID is required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -259,13 +259,13 @@ export async function PUT(request: NextRequest) {
     // Update session
     const success = await sessionSystem.sessionManager.updateSession(
       sessionId,
-      updates
+      updates,
     );
 
     if (!success) {
       return NextResponse.json(
         { error: 'Failed to update session' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -288,7 +288,7 @@ export async function PUT(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -306,7 +306,7 @@ export async function DELETE(request: NextRequest) {
     if (!sessionId) {
       return NextResponse.json(
         { error: 'Session ID is required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -315,7 +315,7 @@ export async function DELETE(request: NextRequest) {
     if (!validation.success) {
       return NextResponse.json(
         { error: 'Invalid session ID format' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -326,7 +326,7 @@ export async function DELETE(request: NextRequest) {
     if (!success) {
       return NextResponse.json(
         { error: 'Failed to terminate session' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -348,7 +348,7 @@ export async function DELETE(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

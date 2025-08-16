@@ -24,7 +24,7 @@ const escalateSchema = z.object({
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string; action: string } }
+  { params }: { params: { id: string; action: string } },
 ) {
   try {
     const body = await request.json();
@@ -39,7 +39,7 @@ export async function POST(
         result = await thresholdService.acknowledgeAlert(
           id,
           acknowledgeData.user_id,
-          acknowledgeData.notes
+          acknowledgeData.notes,
         );
         message = 'Alert acknowledged successfully';
         break;
@@ -50,7 +50,7 @@ export async function POST(
         result = await thresholdService.resolveAlert(
           id,
           resolveData.user_id,
-          resolveData.notes
+          resolveData.notes,
         );
         message = 'Alert resolved successfully';
         break;
@@ -61,7 +61,7 @@ export async function POST(
         result = await thresholdService.escalateAlert(
           id,
           escalateData.escalate_to,
-          escalateData.level
+          escalateData.level,
         );
         message = 'Alert escalated successfully';
         break;
@@ -74,7 +74,7 @@ export async function POST(
             error: 'Invalid action',
             valid_actions: ['acknowledge', 'resolve', 'escalate'],
           },
-          { status: 400 }
+          { status: 400 },
         );
     }
 
@@ -91,7 +91,7 @@ export async function POST(
           error: 'Validation failed',
           details: error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -101,7 +101,7 @@ export async function POST(
         error: `Failed to ${params.action} alert`,
         details: error.message,
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

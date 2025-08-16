@@ -39,7 +39,7 @@ export class RiskAssessmentEngine {
       // 4. Generate health predictions
       const predictions = await this.generateHealthPredictions(
         patientData,
-        riskFactors
+        riskFactors,
       );
 
       // 5. Generate safety alerts
@@ -56,7 +56,7 @@ export class RiskAssessmentEngine {
         alerts,
         confidenceScore: this.calculateConfidenceScore(
           riskFactors,
-          predictions
+          predictions,
         ),
         nextAssessmentDate: this.calculateNextAssessmentDate(overallRiskScore),
       };
@@ -90,7 +90,7 @@ export class RiskAssessmentEngine {
         allergies (*),
         medications (*),
         vital_signs (*)
-      `
+      `,
       )
       .eq('id', patientId)
       .single();
@@ -125,7 +125,7 @@ export class RiskAssessmentEngine {
     // Lifestyle risk factors
     if (patientData.lifestyle_data) {
       riskFactors.push(
-        ...this.assessLifestyleRisks(patientData.lifestyle_data)
+        ...this.assessLifestyleRisks(patientData.lifestyle_data),
       );
     }
 
@@ -212,7 +212,7 @@ export class RiskAssessmentEngine {
     medications.forEach((med) => {
       if (
         highRiskMeds.some((hrm) =>
-          med.medication_name.toLowerCase().includes(hrm)
+          med.medication_name.toLowerCase().includes(hrm),
         )
       ) {
         risks.push({
@@ -367,7 +367,7 @@ export class RiskAssessmentEngine {
 
   private async generateHealthPredictions(
     patientData: any,
-    riskFactors: RiskFactor[]
+    riskFactors: RiskFactor[],
   ): Promise<HealthPrediction[]> {
     const predictions: HealthPrediction[] = [];
 
@@ -385,7 +385,7 @@ export class RiskAssessmentEngine {
     // Treatment success prediction
     const successRate = this.calculateTreatmentSuccessRate(
       patientData,
-      riskFactors
+      riskFactors,
     );
     predictions.push({
       type: 'treatment_success',
@@ -431,7 +431,7 @@ export class RiskAssessmentEngine {
 
   private calculateTreatmentSuccessRate(
     _patientData: any,
-    riskFactors: RiskFactor[]
+    riskFactors: RiskFactor[],
   ): number {
     const baseSuccessRate = 0.85; // 85% baseline
 
@@ -468,13 +468,13 @@ export class RiskAssessmentEngine {
 
   private async generateSafetyAlerts(
     patientData: any,
-    riskFactors: RiskFactor[]
+    riskFactors: RiskFactor[],
   ): Promise<SafetyAlert[]> {
     const alerts: SafetyAlert[] = [];
 
     // Critical risk factors generate alerts
     const criticalFactors = riskFactors.filter(
-      (rf) => rf.severity === 'critical'
+      (rf) => rf.severity === 'critical',
     );
     criticalFactors.forEach((factor) => {
       alerts.push({
@@ -495,7 +495,7 @@ export class RiskAssessmentEngine {
     // Drug interaction alerts
     if (patientData.medications?.length > 0) {
       const interactions = await this.checkDrugInteractions(
-        patientData.medications
+        patientData.medications,
       );
       alerts.push(...interactions);
     }
@@ -519,7 +519,7 @@ export class RiskAssessmentEngine {
   }
 
   private async checkDrugInteractions(
-    medications: any[]
+    medications: any[],
   ): Promise<SafetyAlert[]> {
     const alerts: SafetyAlert[] = [];
 
@@ -554,7 +554,7 @@ export class RiskAssessmentEngine {
 
   private calculateConfidenceScore(
     riskFactors: RiskFactor[],
-    predictions: HealthPrediction[]
+    predictions: HealthPrediction[],
   ): number {
     const factorConfidence =
       riskFactors.reduce((sum, rf) => sum + rf.confidence, 0) /
@@ -599,7 +599,7 @@ export class RiskAssessmentEngine {
   }
 
   private async storeAssessment(
-    assessment: PatientRiskAssessment
+    assessment: PatientRiskAssessment,
   ): Promise<void> {
     try {
       const { error } = await this.supabase.from('ai_risk_assessments').insert({

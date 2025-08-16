@@ -67,7 +67,7 @@ export async function GET(request: NextRequest) {
     if (!(professionalId && clinicId && startDateStr && endDateStr)) {
       return NextResponse.json(
         { error: 'Missing required parameters' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -85,7 +85,7 @@ export async function GET(request: NextRequest) {
           professionalId,
           clinicId,
           startDate,
-          endDate
+          endDate,
         ),
         serviceTypeId
           ? getServiceRules(supabase, serviceTypeId, clinicId)
@@ -103,7 +103,7 @@ export async function GET(request: NextRequest) {
     ) {
       const dayOfWeek = currentDate.getDay();
       const daySchedule = professionalSchedule.find(
-        (s) => s.day_of_week === dayOfWeek
+        (s) => s.day_of_week === dayOfWeek,
       );
 
       if (daySchedule?.is_available) {
@@ -112,7 +112,7 @@ export async function GET(request: NextRequest) {
           daySchedule,
           existingAppointments,
           serviceRules,
-          holidays
+          holidays,
         );
         days.push(dayAvailability);
       } else {
@@ -142,7 +142,7 @@ export async function GET(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -150,7 +150,7 @@ export async function GET(request: NextRequest) {
 async function getProfessionalSchedule(
   supabase: any,
   professionalId: string,
-  clinicId: string
+  clinicId: string,
 ): Promise<ProfessionalSchedule[]> {
   const { data, error } = await supabase
     .from('professional_schedules')
@@ -170,7 +170,7 @@ async function getExistingAppointments(
   professionalId: string,
   clinicId: string,
   startDate: Date,
-  endDate: Date
+  endDate: Date,
 ) {
   const { data, error } = await supabase
     .from('appointments')
@@ -191,7 +191,7 @@ async function getExistingAppointments(
 async function getServiceRules(
   supabase: any,
   serviceTypeId: string,
-  clinicId: string
+  clinicId: string,
 ) {
   const { data, error } = await supabase
     .from('service_type_rules')
@@ -211,7 +211,7 @@ async function getClinicHolidays(
   supabase: any,
   clinicId: string,
   startDate: Date,
-  endDate: Date
+  endDate: Date,
 ) {
   const { data, error } = await supabase
     .from('clinic_holidays')
@@ -221,8 +221,8 @@ async function getClinicHolidays(
     .or(
       `start_date.lte.${format(endDate, 'yyyy-MM-dd')},end_date.gte.${format(
         startDate,
-        'yyyy-MM-dd'
-      )}`
+        'yyyy-MM-dd',
+      )}`,
     );
 
   if (error) {
@@ -237,7 +237,7 @@ async function generateDayAvailability(
   schedule: any,
   appointments: any[],
   serviceRules: any,
-  holidays: any[]
+  holidays: any[],
 ): Promise<DayAvailability> {
   const slots: AvailabilitySlot[] = [];
   const intervalMinutes = 30; // 30-minute slots
@@ -269,7 +269,7 @@ async function generateDayAvailability(
       schedule,
       appointments,
       serviceRules,
-      dayHolidays
+      dayHolidays,
     );
 
     slots.push(slot);
@@ -279,11 +279,11 @@ async function generateDayAvailability(
   const summary = {
     total_slots: slots.length,
     available_slots: slots.filter(
-      (s) => s.available && s.conflicts.length === 0
+      (s) => s.available && s.conflicts.length === 0,
     ).length,
     blocked_slots: slots.filter((s) => !s.available).length,
     warning_slots: slots.filter(
-      (s) => s.available && s.conflicts.some((c) => c.severity === 'warning')
+      (s) => s.available && s.conflicts.some((c) => c.severity === 'warning'),
     ).length,
   };
 
@@ -300,7 +300,7 @@ async function analyzeSlot(
   schedule: any,
   appointments: any[],
   serviceRules: any,
-  holidays: any[]
+  holidays: any[],
 ): Promise<AvailabilitySlot> {
   const conflicts = [];
   let available = true;

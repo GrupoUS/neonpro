@@ -375,7 +375,7 @@ export class AuditTrailManager extends EventEmitter {
       userId: string;
       action: string;
       description: string;
-    }
+    },
   ): Promise<AuditTrailEntry> {
     try {
       const auditEntry: AuditTrailEntry = {
@@ -467,7 +467,7 @@ export class AuditTrailManager extends EventEmitter {
 
       if (query.searchText) {
         queryBuilder = queryBuilder.or(
-          `description.ilike.%${query.searchText}%,action.ilike.%${query.searchText}%`
+          `description.ilike.%${query.searchText}%,action.ilike.%${query.searchText}%`,
         );
       }
 
@@ -510,11 +510,11 @@ export class AuditTrailManager extends EventEmitter {
   async generateAuditReport(
     reportType: AuditReport['reportType'],
     timeRange: { startDate: string; endDate: string },
-    scope?: Partial<AuditReportScope>
+    scope?: Partial<AuditReportScope>,
   ): Promise<AuditReport> {
     try {
       logger.info(
-        `Generating ${reportType} audit report for ${timeRange.startDate} to ${timeRange.endDate}`
+        `Generating ${reportType} audit report for ${timeRange.startDate} to ${timeRange.endDate}`,
       );
 
       const query: AuditQuery = {
@@ -564,7 +564,7 @@ export class AuditTrailManager extends EventEmitter {
    */
   async getComplianceValidation(
     timeRange: { startDate: string; endDate: string },
-    regulations?: string[]
+    regulations?: string[],
   ): Promise<ComplianceValidationSummary> {
     try {
       const query: AuditQuery = {
@@ -576,25 +576,25 @@ export class AuditTrailManager extends EventEmitter {
       const { entries } = await this.queryAuditTrail(query);
 
       const validationResults = entries.flatMap(
-        (entry) => entry.complianceContext.validationResults || []
+        (entry) => entry.complianceContext.validationResults || [],
       );
 
       const filteredResults = regulations
         ? validationResults.filter((result) =>
-            regulations.some((reg) => result.ruleName.includes(reg))
+            regulations.some((reg) => result.ruleName.includes(reg)),
           )
         : validationResults;
 
       const summary: ComplianceValidationSummary = {
         totalValidations: filteredResults.length,
         passedValidations: filteredResults.filter(
-          (r) => r.validationStatus === 'passed'
+          (r) => r.validationStatus === 'passed',
         ).length,
         failedValidations: filteredResults.filter(
-          (r) => r.validationStatus === 'failed'
+          (r) => r.validationStatus === 'failed',
         ).length,
         warningValidations: filteredResults.filter(
-          (r) => r.validationStatus === 'warning'
+          (r) => r.validationStatus === 'warning',
         ).length,
         complianceRate:
           filteredResults.length > 0
@@ -606,7 +606,7 @@ export class AuditTrailManager extends EventEmitter {
         validationsByRegulation:
           this.groupValidationsByRegulation(filteredResults),
         criticalFailures: filteredResults.filter(
-          (r) => r.validationStatus === 'failed' && r.severity === 'critical'
+          (r) => r.validationStatus === 'failed' && r.severity === 'critical',
         ).length,
         recommendations:
           await this.generateComplianceRecommendations(filteredResults),
@@ -643,13 +643,13 @@ export class AuditTrailManager extends EventEmitter {
 
   // Helper Methods
   private async generateComplianceContext(
-    eventData: Partial<AuditTrailEntry>
+    eventData: Partial<AuditTrailEntry>,
   ): Promise<ComplianceContext> {
     const applicableRegulations = this.getApplicableRegulations(eventData);
     const complianceRules = this.getComplianceRules(eventData);
     const validationResults = await this.validateCompliance(
       eventData,
-      complianceRules
+      complianceRules,
     );
     const violatedRules = validationResults
       .filter((r) => r.validationStatus === 'failed')
@@ -671,7 +671,7 @@ export class AuditTrailManager extends EventEmitter {
   }
 
   private async performRiskAssessment(
-    eventData: Partial<AuditTrailEntry>
+    eventData: Partial<AuditTrailEntry>,
   ): Promise<RiskAssessment> {
     const riskFactors = this.identifyRiskFactors(eventData);
     const riskScore = this.calculateRiskScore(eventData, riskFactors);
@@ -694,11 +694,11 @@ export class AuditTrailManager extends EventEmitter {
   }
 
   private generateRetentionInfo(
-    eventData: Partial<AuditTrailEntry>
+    eventData: Partial<AuditTrailEntry>,
   ): RetentionInfo {
     const retentionPeriod = this.getRetentionPeriod(
       eventData.category,
-      eventData.eventType
+      eventData.eventType,
     );
 
     return {
@@ -706,7 +706,7 @@ export class AuditTrailManager extends EventEmitter {
       legalBasis: 'CFM Resolution 1.821/2007 + LGPD Art. 16',
       retentionReason: 'Audit trail for compliance and legal requirements',
       scheduledDeletion: new Date(
-        Date.now() + retentionPeriod * 24 * 60 * 60 * 1000
+        Date.now() + retentionPeriod * 24 * 60 * 60 * 1000,
       ).toISOString(),
       archiveRequired: true,
       immutableRecord: true,
@@ -714,14 +714,14 @@ export class AuditTrailManager extends EventEmitter {
   }
 
   private async checkImmediateCompliance(
-    entry: AuditTrailEntry
+    entry: AuditTrailEntry,
   ): Promise<void> {
     if (entry.complianceContext.complianceStatus === 'non_compliant') {
       const criticalViolations = entry.complianceContext.violatedRules.filter(
         (ruleId) => {
           const rule = this.complianceRules.get(ruleId);
           return rule?.severity === 'critical';
-        }
+        },
       );
 
       if (criticalViolations.length > 0) {
@@ -774,7 +774,7 @@ export class AuditTrailManager extends EventEmitter {
   }
 
   private getApplicableRegulations(
-    eventData: Partial<AuditTrailEntry>
+    eventData: Partial<AuditTrailEntry>,
   ): string[] {
     const regulations = ['LGPD', 'CFM_1821_2007'];
 
@@ -790,22 +790,22 @@ export class AuditTrailManager extends EventEmitter {
   }
 
   private getComplianceRules(
-    eventData: Partial<AuditTrailEntry>
+    eventData: Partial<AuditTrailEntry>,
   ): ComplianceRule[] {
     return Array.from(this.complianceRules.values()).filter(
       (rule) =>
         rule.applicableCategories.includes(
-          eventData.category || 'system_security'
+          eventData.category || 'system_security',
         ) &&
         rule.applicableEventTypes.includes(
-          eventData.eventType || 'system_event'
-        )
+          eventData.eventType || 'system_event',
+        ),
     );
   }
 
   private async validateCompliance(
     eventData: Partial<AuditTrailEntry>,
-    rules: ComplianceRule[]
+    rules: ComplianceRule[],
   ): Promise<ComplianceValidationResult[]> {
     const results: ComplianceValidationResult[] = [];
 
@@ -819,7 +819,7 @@ export class AuditTrailManager extends EventEmitter {
 
   private async validateRule(
     eventData: Partial<AuditTrailEntry>,
-    rule: ComplianceRule
+    rule: ComplianceRule,
   ): Promise<ComplianceValidationResult> {
     // Simplified rule validation - in real implementation, this would be more complex
     const isValid = await this.executeRuleValidation(eventData, rule);
@@ -839,7 +839,7 @@ export class AuditTrailManager extends EventEmitter {
 
   private async executeRuleValidation(
     _eventData: Partial<AuditTrailEntry>,
-    _rule: ComplianceRule
+    _rule: ComplianceRule,
   ): Promise<boolean> {
     // Implement actual rule validation logic
     // This is a simplified version
@@ -869,7 +869,7 @@ export class AuditTrailManager extends EventEmitter {
 
   private calculateRiskScore(
     eventData: Partial<AuditTrailEntry>,
-    riskFactors: string[]
+    riskFactors: string[],
   ): number {
     let score = 0;
 
@@ -905,7 +905,7 @@ export class AuditTrailManager extends EventEmitter {
   }
 
   private getRiskLevel(
-    riskScore: number
+    riskScore: number,
   ): 'low' | 'medium' | 'high' | 'critical' {
     if (riskScore >= 80) {
       return 'critical';
@@ -920,7 +920,7 @@ export class AuditTrailManager extends EventEmitter {
   }
 
   private getRiskCategory(
-    eventData: Partial<AuditTrailEntry>
+    eventData: Partial<AuditTrailEntry>,
   ): 'operational' | 'security' | 'compliance' | 'privacy' | 'safety' {
     if (
       eventData.category === 'patient_data' ||
@@ -942,7 +942,7 @@ export class AuditTrailManager extends EventEmitter {
 
   private getImmediateActions(
     riskLevel: string,
-    _eventData: Partial<AuditTrailEntry>
+    _eventData: Partial<AuditTrailEntry>,
   ): string[] {
     const actions: string[] = [];
 
@@ -962,7 +962,7 @@ export class AuditTrailManager extends EventEmitter {
 
   private getLongTermActions(
     riskLevel: string,
-    _eventData: Partial<AuditTrailEntry>
+    _eventData: Partial<AuditTrailEntry>,
   ): string[] {
     const actions: string[] = [];
 
@@ -977,7 +977,7 @@ export class AuditTrailManager extends EventEmitter {
 
   private assessImpact(
     eventData: Partial<AuditTrailEntry>,
-    riskLevel: string
+    riskLevel: string,
   ): ImpactAssessment {
     const baseImpact =
       riskLevel === 'critical'
@@ -1000,7 +1000,7 @@ export class AuditTrailManager extends EventEmitter {
 
   private getRetentionPeriod(
     category?: AuditCategory,
-    _eventType?: AuditEventType
+    _eventType?: AuditEventType,
   ): number {
     // Retention periods in days
     const categoryRetention: Record<AuditCategory, number> = {
@@ -1054,11 +1054,11 @@ export class AuditTrailManager extends EventEmitter {
 
   private async triggerImmediateResponse(
     entry: AuditTrailEntry,
-    violations: string[]
+    violations: string[],
   ): Promise<void> {
     // Implement immediate response to critical violations
     logger.error(
-      `Critical compliance violation detected: ${violations.join(', ')}`
+      `Critical compliance violation detected: ${violations.join(', ')}`,
     );
 
     // Emit critical event
@@ -1070,7 +1070,7 @@ export class AuditTrailManager extends EventEmitter {
 
   private async handleComplianceViolation(
     _entry: AuditTrailEntry,
-    violations: string[]
+    violations: string[],
   ): Promise<void> {
     // Handle compliance violations
     logger.warning(`Compliance violation detected: ${violations.join(', ')}`);
@@ -1161,14 +1161,14 @@ export class AuditTrailManager extends EventEmitter {
   }
 
   private async generateAuditFindings(
-    entries: AuditTrailEntry[]
+    entries: AuditTrailEntry[],
   ): Promise<AuditFinding[]> {
     // Generate audit findings from entries
     const findings: AuditFinding[] = [];
 
     // Example finding for non-compliant events
     const nonCompliantEvents = entries.filter(
-      (e) => e.complianceContext.complianceStatus === 'non_compliant'
+      (e) => e.complianceContext.complianceStatus === 'non_compliant',
     );
     if (nonCompliantEvents.length > 0) {
       findings.push({
@@ -1199,7 +1199,7 @@ export class AuditTrailManager extends EventEmitter {
   }
 
   private async generateAuditRecommendations(
-    _entries: AuditTrailEntry[]
+    _entries: AuditTrailEntry[],
   ): Promise<AuditRecommendation[]> {
     // Generate recommendations based on audit analysis
     return [
@@ -1228,7 +1228,7 @@ export class AuditTrailManager extends EventEmitter {
   }
 
   private generateComplianceMetrics(
-    entries: AuditTrailEntry[]
+    entries: AuditTrailEntry[],
   ): ComplianceMetrics {
     return {
       overallComplianceRate: this.calculateComplianceRate(entries),
@@ -1247,10 +1247,10 @@ export class AuditTrailManager extends EventEmitter {
       riskByUser: this.calculateRiskByUser(entries),
       riskByResource: this.calculateRiskByResource(entries),
       highRiskEvents: entries.filter(
-        (e) => e.riskAssessment.riskLevel === 'high'
+        (e) => e.riskAssessment.riskLevel === 'high',
       ).length,
       criticalRiskEvents: entries.filter(
-        (e) => e.riskAssessment.riskLevel === 'critical'
+        (e) => e.riskAssessment.riskLevel === 'critical',
       ).length,
       riskTrends: this.calculateRiskTrends(entries),
       riskMitigationStatus: this.calculateRiskMitigationStatus(entries),
@@ -1259,7 +1259,7 @@ export class AuditTrailManager extends EventEmitter {
 
   private async generateAuditTrends(
     _entries: AuditTrailEntry[],
-    _timeRange: { startDate: string; endDate: string }
+    _timeRange: { startDate: string; endDate: string },
   ): Promise<AuditTrend[]> {
     // Generate trend analysis
     return [
@@ -1289,7 +1289,7 @@ export class AuditTrailManager extends EventEmitter {
   // Additional helper methods for calculations
   private groupByField<T extends Record<string, any>>(
     items: T[],
-    field: keyof T
+    field: keyof T,
   ): Record<string, number> {
     return items.reduce(
       (acc, item) => {
@@ -1297,7 +1297,7 @@ export class AuditTrailManager extends EventEmitter {
         acc[key] = (acc[key] || 0) + 1;
         return acc;
       },
-      {} as Record<string, number>
+      {} as Record<string, number>,
     );
   }
 
@@ -1307,17 +1307,17 @@ export class AuditTrailManager extends EventEmitter {
     }
 
     const compliantEntries = entries.filter(
-      (e) => e.complianceContext.complianceStatus === 'compliant'
+      (e) => e.complianceContext.complianceStatus === 'compliant',
     );
     return (compliantEntries.length / entries.length) * 100;
   }
 
   private calculateRiskDistribution(
-    entries: AuditTrailEntry[]
+    entries: AuditTrailEntry[],
   ): Record<string, number> {
     return this.groupByField(
       entries.map((e) => ({ riskLevel: e.riskAssessment.riskLevel })),
-      'riskLevel'
+      'riskLevel',
     );
   }
 
@@ -1398,43 +1398,43 @@ export class AuditTrailManager extends EventEmitter {
         modificationCount: activity.modificationCount,
         riskScore: activity.riskScore,
         lastAccessed: activity.lastAccessed,
-      })
+      }),
     );
   }
 
   private calculateComplianceByRegulation(
-    _entries: AuditTrailEntry[]
+    _entries: AuditTrailEntry[],
   ): Record<string, number> {
     // Implementation for compliance calculation by regulation
     return {};
   }
 
   private calculateComplianceByCategory(
-    _entries: AuditTrailEntry[]
+    _entries: AuditTrailEntry[],
   ): Record<AuditCategory, number> {
     // Implementation for compliance calculation by category
     return {} as Record<AuditCategory, number>;
   }
 
   private calculateComplianceByUser(
-    _entries: AuditTrailEntry[]
+    _entries: AuditTrailEntry[],
   ): Record<string, number> {
     // Implementation for compliance calculation by user
     return {};
   }
 
   private calculateComplianceTrends(
-    _entries: AuditTrailEntry[]
+    _entries: AuditTrailEntry[],
   ): ComplianceTrend[] {
     // Implementation for compliance trends calculation
     return [];
   }
 
   private calculateViolationsSummary(
-    entries: AuditTrailEntry[]
+    entries: AuditTrailEntry[],
   ): ViolationsSummary {
     const violations = entries.filter(
-      (e) => e.complianceContext.complianceStatus === 'non_compliant'
+      (e) => e.complianceContext.complianceStatus === 'non_compliant',
     );
 
     return {
@@ -1454,27 +1454,27 @@ export class AuditTrailManager extends EventEmitter {
 
     const totalRisk = entries.reduce(
       (sum, entry) => sum + entry.riskAssessment.riskScore,
-      0
+      0,
     );
     return totalRisk / entries.length;
   }
 
   private calculateRiskByCategory(
-    _entries: AuditTrailEntry[]
+    _entries: AuditTrailEntry[],
   ): Record<string, number> {
     // Implementation for risk calculation by category
     return {};
   }
 
   private calculateRiskByUser(
-    _entries: AuditTrailEntry[]
+    _entries: AuditTrailEntry[],
   ): Record<string, number> {
     // Implementation for risk calculation by user
     return {};
   }
 
   private calculateRiskByResource(
-    _entries: AuditTrailEntry[]
+    _entries: AuditTrailEntry[],
   ): Record<string, number> {
     // Implementation for risk calculation by resource
     return {};
@@ -1486,7 +1486,7 @@ export class AuditTrailManager extends EventEmitter {
   }
 
   private calculateRiskMitigationStatus(
-    _entries: AuditTrailEntry[]
+    _entries: AuditTrailEntry[],
   ): RiskMitigationStatus {
     // Implementation for risk mitigation status calculation
     return {
@@ -1499,14 +1499,14 @@ export class AuditTrailManager extends EventEmitter {
   }
 
   private groupValidationsByRegulation(
-    _results: ComplianceValidationResult[]
+    _results: ComplianceValidationResult[],
   ): Record<string, number> {
     // Implementation for grouping validations by regulation
     return {};
   }
 
   private async generateComplianceRecommendations(
-    _results: ComplianceValidationResult[]
+    _results: ComplianceValidationResult[],
   ): Promise<string[]> {
     // Implementation for generating compliance recommendations
     return [

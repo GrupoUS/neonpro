@@ -8,7 +8,7 @@ import { executiveDashboardService } from '@/src/lib/services/executive-dashboar
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const supabase = await createClient();
@@ -21,7 +21,7 @@ export async function PUT(
     if (authError || !user) {
       return NextResponse.json(
         { error: 'Authentication required' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -29,7 +29,7 @@ export async function PUT(
     if (!alertId) {
       return NextResponse.json(
         { error: 'Alert ID is required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -39,7 +39,7 @@ export async function PUT(
     if (!(action && ['acknowledge', 'resolve'].includes(action))) {
       return NextResponse.json(
         { error: 'Invalid action. Must be "acknowledge" or "resolve"' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -65,7 +65,7 @@ export async function PUT(
     if (!professional) {
       return NextResponse.json(
         { error: 'Access denied to this clinic' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -88,7 +88,7 @@ export async function PUT(
         error: `Failed to ${(await request.json()).action} alert`,
         details: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
     if (profile?.role !== 'admin' && profile?.role !== 'manager') {
       return NextResponse.json(
         { error: 'Insufficient permissions' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -35,7 +35,7 @@ export async function POST(request: NextRequest) {
     if (!(to && template)) {
       return NextResponse.json(
         { error: 'Missing required fields: to, template' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -57,7 +57,7 @@ export async function POST(request: NextRequest) {
             {
               error: 'Missing required variables for appointment confirmation',
             },
-            { status: 400 }
+            { status: 400 },
           );
         }
 
@@ -84,7 +84,7 @@ export async function POST(request: NextRequest) {
         ) {
           return NextResponse.json(
             { error: 'Missing required variables for appointment reminder' },
-            { status: 400 }
+            { status: 400 },
           );
         }
 
@@ -111,7 +111,7 @@ export async function POST(request: NextRequest) {
             {
               error: 'Missing required variables for appointment cancellation',
             },
-            { status: 400 }
+            { status: 400 },
           );
         }
 
@@ -139,7 +139,7 @@ export async function POST(request: NextRequest) {
         {
           error: result.error || 'Failed to send email',
         },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -166,7 +166,7 @@ export async function POST(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -197,7 +197,7 @@ export async function GET(_request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -217,7 +217,7 @@ export class PatientProfileManager {
    */
   async upsertPatientProfile(
     patientId: string,
-    profileData: Partial<PatientProfile>
+    profileData: Partial<PatientProfile>,
   ): Promise<PatientProfile | null> {
     try {
       const { data, error } = await this.supabase
@@ -250,7 +250,7 @@ export class PatientProfileManager {
     try {
       const { data, error } = await this.supabase.rpc(
         'calculate_profile_completeness',
-        { patient_uuid: patientId }
+        { patient_uuid: patientId },
       );
 
       if (error) {
@@ -274,7 +274,7 @@ export class PatientProfileManager {
    */
   async getPatientPhotos(
     patientId: string,
-    photoType?: string
+    photoType?: string,
   ): Promise<PatientPhoto[]> {
     try {
       let query = this.supabase
@@ -306,7 +306,7 @@ export class PatientProfileManager {
     patientId: string,
     file: File,
     photoType: PatientPhoto['photo_type'],
-    metadata?: Partial<PatientPhoto>
+    metadata?: Partial<PatientPhoto>,
   ): Promise<PatientPhoto | null> {
     try {
       // Upload file to Supabase storage
@@ -357,7 +357,7 @@ export class PatientProfileManager {
    */
   async getMedicalTimeline(
     patientId: string,
-    limit?: number
+    limit?: number,
   ): Promise<MedicalTimelineEvent[]> {
     try {
       let query = this.supabase
@@ -389,7 +389,7 @@ export class PatientProfileManager {
     eventData: Omit<
       MedicalTimelineEvent,
       'id' | 'patient_id' | 'created_at' | 'updated_at'
-    >
+    >,
   ): Promise<MedicalTimelineEvent | null> {
     try {
       const { data, error } = await this.supabase
@@ -422,7 +422,7 @@ export class PatientProfileManager {
       has_photo?: boolean;
       completion_threshold?: number;
     },
-    limit = 50
+    limit = 50,
   ): Promise<PatientSearchResult[]> {
     try {
       let searchQuery = this.supabase
@@ -433,7 +433,7 @@ export class PatientProfileManager {
           full_name_normalized,
           email_normalized,
           phone_normalized
-        `
+        `,
         )
         .limit(limit);
 
@@ -459,7 +459,7 @@ export class PatientProfileManager {
       const { data: profilesData, error: profilesError } = await this.supabase
         .from('patient_profiles_extended')
         .select(
-          'patient_id, risk_level, profile_completeness_score, updated_at'
+          'patient_id, risk_level, profile_completeness_score, updated_at',
         )
         .in('patient_id', patientIds);
 
@@ -470,7 +470,7 @@ export class PatientProfileManager {
       // Combine search and profile data
       const results = searchData.map((search) => {
         const profile = profilesData?.find(
-          (p) => p.patient_id === search.patient_id
+          (p) => p.patient_id === search.patient_id,
         );
         return {
           patient_id: search.patient_id,
@@ -533,7 +533,7 @@ export class PatientProfileManager {
    * Get image dimensions from file
    */
   private async getImageDimensions(
-    file: File
+    file: File,
   ): Promise<{ width: number; height: number } | null> {
     return new Promise((resolve) => {
       if (!file.type.startsWith('image/')) {
@@ -561,7 +561,7 @@ export class PatientProfileManager {
       last_visit_days?: number;
       has_photo?: boolean;
       completion_threshold?: number;
-    }
+    },
   ): PatientSearchResult[] {
     if (!filters) {
       return results;
@@ -585,7 +585,7 @@ export class PatientProfileManager {
       if (filters.last_visit_days && result.last_visit) {
         const daysSinceVisit = Math.floor(
           (Date.now() - new Date(result.last_visit).getTime()) /
-            (1000 * 60 * 60 * 24)
+            (1000 * 60 * 60 * 24),
         );
         if (daysSinceVisit > filters.last_visit_days) {
           return false;

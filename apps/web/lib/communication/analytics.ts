@@ -129,7 +129,7 @@ export class CommunicationAnalytics {
         `
           *,
           communication_events(*)
-        `
+        `,
       )
       .eq('clinic_id', clinicId)
       .gte('created_at', startDate.toISOString())
@@ -187,7 +187,7 @@ export class CommunicationAnalytics {
 
       const changePercentage = this.calculateChangePercentage(
         currentMetrics.delivery_rate,
-        previousMetrics.delivery_rate
+        previousMetrics.delivery_rate,
       );
 
       const trend =
@@ -230,7 +230,7 @@ export class CommunicationAnalytics {
         `
           *,
           communication_events(*)
-        `
+        `,
       )
       .eq('campaign_id', campaignId);
 
@@ -267,7 +267,7 @@ export class CommunicationAnalytics {
     // Calculate ROI (simplified)
     const roi = this.calculateROI(
       overallMetrics.cost_total,
-      patientEngagement.new_appointments
+      patientEngagement.new_appointments,
     );
 
     // Calculate conversion rate
@@ -295,7 +295,7 @@ export class CommunicationAnalytics {
    */
   async calculatePatientEngagementScore(
     patientId: string,
-    clinicId: string
+    clinicId: string,
   ): Promise<PatientEngagementScore> {
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
@@ -307,7 +307,7 @@ export class CommunicationAnalytics {
         `
           *,
           communication_events(*)
-        `
+        `,
       )
       .eq('patient_id', patientId)
       .eq('clinic_id', clinicId)
@@ -332,11 +332,11 @@ export class CommunicationAnalytics {
     // Calculate factors
     const responseRate = this.calculateResponseRate(communications || []);
     const appointmentAdherence = this.calculateAppointmentAdherence(
-      appointments || []
+      appointments || [],
     );
     const preferenceAlignment = this.calculatePreferenceAlignment(
       communications || [],
-      preferences
+      preferences,
     );
     const recency = this.calculateRecencyScore(communications || []);
 
@@ -345,7 +345,7 @@ export class CommunicationAnalytics {
       responseRate * 0.3 +
         appointmentAdherence * 0.4 +
         preferenceAlignment * 0.2 +
-        recency * 0.1
+        recency * 0.1,
     );
 
     // Generate recommendations
@@ -403,7 +403,7 @@ export class CommunicationAnalytics {
           *,
           communication_events(*),
           message_templates(name)
-        `
+        `,
       )
       .eq('clinic_id', clinicId)
       .gte('created_at', startDate.toISOString())
@@ -420,7 +420,7 @@ export class CommunicationAnalytics {
         acc[key].push(log);
         return acc;
       },
-      {} as Record<string, any[]>
+      {} as Record<string, any[]>,
     );
 
     // Calculate metrics for each template
@@ -437,7 +437,7 @@ export class CommunicationAnalytics {
           metrics,
           usage_count: templateLogs.length,
         };
-      }
+      },
     );
 
     // Sort by delivery rate and usage count
@@ -487,16 +487,16 @@ export class CommunicationAnalytics {
       // Delivery rate insights
       const deliveryChange = this.calculateChangePercentage(
         currentMetrics.delivery_rate,
-        previousMetrics.delivery_rate
+        previousMetrics.delivery_rate,
       );
 
       if (deliveryChange > 10) {
         insights.push(
-          `Delivery rate improved by ${deliveryChange.toFixed(1)}% this month`
+          `Delivery rate improved by ${deliveryChange.toFixed(1)}% this month`,
         );
       } else if (deliveryChange < -10) {
         insights.push(
-          `Delivery rate decreased by ${Math.abs(deliveryChange).toFixed(1)}% this month`
+          `Delivery rate decreased by ${Math.abs(deliveryChange).toFixed(1)}% this month`,
         );
         alerts.push('Delivery rate has significantly decreased');
         recommendations.push('Review message content and sending practices');
@@ -506,13 +506,13 @@ export class CommunicationAnalytics {
       if (currentMetrics.cost_per_message > 0) {
         const costChange = this.calculateChangePercentage(
           currentMetrics.cost_per_message,
-          previousMetrics.cost_per_message
+          previousMetrics.cost_per_message,
         );
 
         if (costChange > 20) {
           alerts.push('Communication costs have increased significantly');
           recommendations.push(
-            'Consider optimizing message frequency and channel mix'
+            'Consider optimizing message frequency and channel mix',
           );
         }
       }
@@ -520,12 +520,12 @@ export class CommunicationAnalytics {
       // Volume insights
       const volumeChange = this.calculateChangePercentage(
         currentMetrics.total_sent,
-        previousMetrics.total_sent
+        previousMetrics.total_sent,
       );
 
       if (volumeChange > 50) {
         insights.push(
-          `Message volume increased by ${volumeChange.toFixed(1)}%`
+          `Message volume increased by ${volumeChange.toFixed(1)}%`,
         );
       }
 
@@ -533,20 +533,20 @@ export class CommunicationAnalytics {
       if (currentMetrics.response_rate && currentMetrics.response_rate < 10) {
         alerts.push('Low patient response rate detected');
         recommendations.push(
-          'Consider personalizing messages and optimizing send times'
+          'Consider personalizing messages and optimizing send times',
         );
       }
 
       // General recommendations
       if (currentMetrics.delivery_rate < 90) {
         recommendations.push(
-          'Improve delivery rate by cleaning contact lists and verifying phone numbers'
+          'Improve delivery rate by cleaning contact lists and verifying phone numbers',
         );
       }
 
       if (currentMetrics.open_rate && currentMetrics.open_rate < 20) {
         recommendations.push(
-          'Improve email subject lines to increase open rates'
+          'Improve email subject lines to increase open rates',
         );
       }
 
@@ -560,21 +560,21 @@ export class CommunicationAnalytics {
   private calculateMetrics(logs: any[]): CommunicationMetrics {
     const totalSent = logs.length;
     const totalDelivered = logs.filter((log) =>
-      log.communication_events?.some((e: any) => e.event_type === 'delivered')
+      log.communication_events?.some((e: any) => e.event_type === 'delivered'),
     ).length;
     const totalFailed = logs.filter((log) =>
       log.communication_events?.some((e: any) =>
-        ['failed', 'bounced'].includes(e.event_type)
-      )
+        ['failed', 'bounced'].includes(e.event_type),
+      ),
     ).length;
     const totalOpened = logs.filter((log) =>
-      log.communication_events?.some((e: any) => e.event_type === 'opened')
+      log.communication_events?.some((e: any) => e.event_type === 'opened'),
     ).length;
     const totalClicked = logs.filter((log) =>
-      log.communication_events?.some((e: any) => e.event_type === 'clicked')
+      log.communication_events?.some((e: any) => e.event_type === 'clicked'),
     ).length;
     const totalReplied = logs.filter((log) =>
-      log.communication_events?.some((e: any) => e.event_type === 'replied')
+      log.communication_events?.some((e: any) => e.event_type === 'replied'),
     ).length;
 
     const deliveryRate = totalSent > 0 ? (totalDelivered / totalSent) * 100 : 0;
@@ -650,7 +650,7 @@ export class CommunicationAnalytics {
     }
 
     const responses = communications.filter((comm) =>
-      comm.communication_events?.some((e: any) => e.event_type === 'replied')
+      comm.communication_events?.some((e: any) => e.event_type === 'replied'),
     ).length;
 
     return (responses / communications.length) * 100;
@@ -662,7 +662,7 @@ export class CommunicationAnalytics {
     }
 
     const completed = appointments.filter(
-      (apt) => apt.status === 'completed' && !apt.actual_no_show
+      (apt) => apt.status === 'completed' && !apt.actual_no_show,
     ).length;
 
     return (completed / appointments.length) * 100;
@@ -670,7 +670,7 @@ export class CommunicationAnalytics {
 
   private calculatePreferenceAlignment(
     communications: any[],
-    preferences: any
+    preferences: any,
   ): number {
     if (!preferences || communications.length === 0) {
       return 50; // Neutral score
@@ -702,10 +702,10 @@ export class CommunicationAnalytics {
 
     const now = new Date();
     const mostRecent = new Date(
-      Math.max(...communications.map((c) => new Date(c.created_at).getTime()))
+      Math.max(...communications.map((c) => new Date(c.created_at).getTime())),
     );
     const daysSinceLastCommunication = Math.floor(
-      (now.getTime() - mostRecent.getTime()) / (1000 * 60 * 60 * 24)
+      (now.getTime() - mostRecent.getTime()) / (1000 * 60 * 60 * 24),
     );
 
     // Score decreases as days increase
@@ -714,7 +714,7 @@ export class CommunicationAnalytics {
 
   private isTimeAligned(
     communicationTime: string,
-    preferredTime: string
+    preferredTime: string,
   ): boolean {
     const commHour = new Date(communicationTime).getHours();
 
@@ -740,19 +740,19 @@ export class CommunicationAnalytics {
 
     if (factors.responseRate < 20) {
       recommendations.push(
-        'Send more personalized messages to improve response rate'
+        'Send more personalized messages to improve response rate',
       );
     }
 
     if (factors.appointmentAdherence < 80) {
       recommendations.push(
-        'Increase reminder frequency to improve appointment adherence'
+        'Increase reminder frequency to improve appointment adherence',
       );
     }
 
     if (factors.preferenceAlignment < 60) {
       recommendations.push(
-        'Align communication timing and channels with patient preferences'
+        'Align communication timing and channels with patient preferences',
       );
     }
 

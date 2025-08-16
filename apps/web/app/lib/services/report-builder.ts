@@ -90,7 +90,7 @@ export class ReportBuilderService {
 
   async updateReport(
     reportId: string,
-    data: UpdateReportRequest
+    data: UpdateReportRequest,
   ): Promise<CustomReport> {
     const {
       data: { user },
@@ -154,11 +154,11 @@ export class ReportBuilderService {
         `
         *,
         report_collaborators!inner(permission_level)
-      `
+      `,
       )
       .eq('id', reportId)
       .or(
-        `user_id.eq.${user.id},is_public.eq.true,report_collaborators.user_id.eq.${user.id}`
+        `user_id.eq.${user.id},is_public.eq.true,report_collaborators.user_id.eq.${user.id}`,
       )
       .single();
 
@@ -175,7 +175,7 @@ export class ReportBuilderService {
   async getReports(
     page = 1,
     perPage = 10,
-    filters?: any
+    filters?: any,
   ): Promise<ReportListResponse> {
     const {
       data: { user },
@@ -202,7 +202,7 @@ export class ReportBuilderService {
     }
     if (filters?.search) {
       query = query.or(
-        `report_name.ilike.%${filters.search}%,report_description.ilike.%${filters.search}%`
+        `report_name.ilike.%${filters.search}%,report_description.ilike.%${filters.search}%`,
       );
     }
 
@@ -308,7 +308,7 @@ export class ReportBuilderService {
 
   async createTemplate(
     reportId: string,
-    templateData: any
+    templateData: any,
   ): Promise<ReportTemplate> {
     const {
       data: { user },
@@ -450,7 +450,7 @@ export class ReportBuilderService {
   }
 
   async testDataSource(
-    connectorId: string
+    connectorId: string,
   ): Promise<{ success: boolean; message: string }> {
     const {
       data: { user },
@@ -491,7 +491,7 @@ export class ReportBuilderService {
   async addCollaborator(
     reportId: string,
     userId: string,
-    permissionLevel: string
+    permissionLevel: string,
   ): Promise<ReportCollaborator> {
     const {
       data: { user },
@@ -551,7 +551,7 @@ export class ReportBuilderService {
           full_name,
           email
         )
-      `
+      `,
       )
       .eq('report_id', reportId);
 
@@ -566,7 +566,7 @@ export class ReportBuilderService {
   async addComment(
     reportId: string,
     commentText: string,
-    parentCommentId?: string
+    parentCommentId?: string,
   ): Promise<ReportComment> {
     const {
       data: { user },
@@ -606,7 +606,7 @@ export class ReportBuilderService {
           user_id,
           full_name
         )
-      `
+      `,
       )
       .eq('report_id', reportId)
       .order('created_at', { ascending: true });
@@ -685,7 +685,7 @@ export class ReportBuilderService {
     reportId: string,
     userId: string,
     actionType: string,
-    duration = 0
+    duration = 0,
   ): Promise<void> {
     try {
       // Check if there's an existing record for today
@@ -794,7 +794,7 @@ export class ReportBuilderService {
       Number.parseInt(hours, 10),
       Number.parseInt(minutes, 10),
       0,
-      0
+      0,
     );
 
     return nextRun.toISOString();

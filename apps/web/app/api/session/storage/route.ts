@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
       if (!(token_type && encrypted_data)) {
         return NextResponse.json(
           { error: 'Tipo de token e dados criptografados são obrigatórios' },
-          { status: 400 }
+          { status: 400 },
         );
       }
 
@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
       if (storeError) {
         return NextResponse.json(
           { error: 'Erro ao armazenar token de forma segura' },
-          { status: 500 }
+          { status: 500 },
         );
       }
 
@@ -64,7 +64,7 @@ export async function POST(request: NextRequest) {
       if (!token_type) {
         return NextResponse.json(
           { error: 'Tipo de token é obrigatório' },
-          { status: 400 }
+          { status: 400 },
         );
       }
 
@@ -83,7 +83,7 @@ export async function POST(request: NextRequest) {
       if (retrieveError) {
         return NextResponse.json(
           { error: 'Token não encontrado ou expirado' },
-          { status: 404 }
+          { status: 404 },
         );
       }
 
@@ -123,7 +123,7 @@ export async function POST(request: NextRequest) {
       } else {
         return NextResponse.json(
           { error: 'ID do token ou tipo de token é obrigatório' },
-          { status: 400 }
+          { status: 400 },
         );
       }
 
@@ -132,7 +132,7 @@ export async function POST(request: NextRequest) {
       if (revokeError) {
         return NextResponse.json(
           { error: 'Erro ao revogar token' },
-          { status: 500 }
+          { status: 500 },
         );
       }
 
@@ -144,12 +144,12 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(
       { error: 'Ação não reconhecida' },
-      { status: 400 }
+      { status: 400 },
     );
   } catch (_error) {
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -175,7 +175,7 @@ export async function GET(request: NextRequest) {
     let query = supabase
       .from('secure_tokens')
       .select(
-        'id, token_type, expires_at, last_accessed, is_active, created_at, revoked_at'
+        'id, token_type, expires_at, last_accessed, is_active, created_at, revoked_at',
       )
       .eq('user_id', user.id);
 
@@ -189,13 +189,13 @@ export async function GET(request: NextRequest) {
 
     const { data: tokens, error: tokensError } = await query.order(
       'created_at',
-      { ascending: false }
+      { ascending: false },
     );
 
     if (tokensError) {
       return NextResponse.json(
         { error: 'Erro ao buscar tokens' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -220,7 +220,7 @@ export async function GET(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -255,7 +255,7 @@ export async function DELETE(request: NextRequest) {
       if (revokeError) {
         return NextResponse.json(
           { error: 'Erro ao revogar tokens' },
-          { status: 500 }
+          { status: 500 },
         );
       }
 
@@ -280,7 +280,7 @@ export async function DELETE(request: NextRequest) {
       if (cleanupError) {
         return NextResponse.json(
           { error: 'Erro ao limpar tokens expirados' },
-          { status: 500 }
+          { status: 500 },
         );
       }
 
@@ -292,12 +292,12 @@ export async function DELETE(request: NextRequest) {
 
     return NextResponse.json(
       { error: 'Ação de exclusão não reconhecida' },
-      { status: 400 }
+      { status: 400 },
     );
   } catch (_error) {
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

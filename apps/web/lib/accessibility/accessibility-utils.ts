@@ -55,7 +55,7 @@ export function generateAriaId(prefix = 'aria'): string {
  */
 export function announceToScreenReader(
   message: string,
-  priority: AnnouncementPriority = 'polite'
+  priority: AnnouncementPriority = 'polite',
 ): void {
   // Create or get existing live region
   let liveRegion = document.getElementById('sr-live-region');
@@ -103,7 +103,7 @@ export class FocusManager {
 
     const container = containerRef.current;
     const focusableElements = container.querySelectorAll(
-      'a[href], button:not([disabled]), textarea:not([disabled]), input[type="text"]:not([disabled]), input[type="radio"]:not([disabled]), input[type="checkbox"]:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])'
+      'a[href], button:not([disabled]), textarea:not([disabled]), input[type="text"]:not([disabled]), input[type="radio"]:not([disabled]), input[type="checkbox"]:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])',
     );
 
     const firstElement = focusableElements[0] as HTMLElement;
@@ -175,7 +175,7 @@ export const AriaAttributes = {
     labelId?: string,
     descriptionId?: string,
     errorId?: string,
-    required = false
+    required = false,
   ) => {
     const attributes: Record<string, string | boolean> = {
       id: fieldId,
@@ -208,7 +208,7 @@ export const AriaAttributes = {
     expanded?: boolean,
     controls?: string,
     pressed?: boolean,
-    label?: string
+    label?: string,
   ) => {
     const attributes: Record<string, string | boolean | undefined> = {};
 
@@ -261,7 +261,7 @@ export const KeyboardNavigation = {
     items: HTMLElement[],
     currentIndex: number,
     onIndexChange: (newIndex: number) => void,
-    circular = true
+    circular = true,
   ) => {
     let newIndex = currentIndex;
 
@@ -349,7 +349,7 @@ export const ColorContrast = {
   meetsWCAG: (
     foreground: string,
     background: string,
-    level: keyof typeof WCAG_CONTRAST_RATIOS = 'NORMAL_TEXT'
+    level: keyof typeof WCAG_CONTRAST_RATIOS = 'NORMAL_TEXT',
   ): boolean => {
     const ratio = ColorContrast.getContrastRatio(foreground, background);
     return ratio >= WCAG_CONTRAST_RATIOS[level];
@@ -366,7 +366,7 @@ export const HealthcareA11y = {
   announceAppointmentStatus: (
     patientName: string,
     appointmentTime: string,
-    status: string
+    status: string,
   ) => {
     const message = `Compromiso de ${patientName} às ${appointmentTime} atualizado para ${status}`;
     announceToScreenReader(message, 'assertive');
@@ -393,7 +393,7 @@ export const HealthcareA11y = {
     service: string,
     date: string,
     time: string,
-    status: string
+    status: string,
   ) => {
     return `Consulta de ${patientName}, ${service}, ${date} às ${time}, status ${status}`;
   },
@@ -446,7 +446,7 @@ export const FormA11y = {
       if (fieldId) {
         const _label = formElement.querySelector(`label[for="${fieldId}"]`);
         const errorElement = formElement.querySelector(
-          `[data-error-for="${fieldId}"]`
+          `[data-error-for="${fieldId}"]`,
         );
 
         const describedBy: string[] = [];
@@ -510,7 +510,7 @@ export const SkipLinks = {
    * Create skip navigation links
    */
   createSkipLinks: (
-    links: Array<{ href: string; text: string }>
+    links: Array<{ href: string; text: string }>,
   ): HTMLElement => {
     const container = document.createElement('div');
     container.className =

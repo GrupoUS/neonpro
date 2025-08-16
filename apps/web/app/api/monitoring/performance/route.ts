@@ -29,7 +29,7 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const timeWindow = Number.parseInt(
       searchParams.get('timeWindow') || '300000',
-      10
+      10,
     ); // 5min default
     const route = searchParams.get('route');
 
@@ -37,7 +37,7 @@ export async function GET(request: Request) {
       // Get performance for specific route
       const routePerformance = performanceMonitor.getRoutePerformance(
         route,
-        timeWindow
+        timeWindow,
       );
       return NextResponse.json({
         success: true,
@@ -59,7 +59,7 @@ export async function GET(request: Request) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 } /**
@@ -82,7 +82,7 @@ export async function POST(request: Request) {
     if (!name || typeof value !== 'number') {
       return NextResponse.json(
         { error: 'Invalid metric data' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -97,7 +97,7 @@ export async function POST(request: Request) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to record metric' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

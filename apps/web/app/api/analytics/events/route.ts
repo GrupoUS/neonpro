@@ -40,7 +40,7 @@ export async function POST(request: NextRequest) {
             error: 'Invalid batch events format',
             details: validation.error.issues,
           },
-          { status: 400 }
+          { status: 400 },
         );
       }
       events = validation.data.events;
@@ -49,7 +49,7 @@ export async function POST(request: NextRequest) {
       if (!validation.success) {
         return NextResponse.json(
           { error: 'Invalid event format', details: validation.error.issues },
-          { status: 400 }
+          { status: 400 },
         );
       }
       events = [validation.data];
@@ -78,7 +78,7 @@ export async function POST(request: NextRequest) {
         };
 
         return await analyticsService.trackEvent(eventData);
-      })
+      }),
     );
 
     return NextResponse.json({
@@ -92,7 +92,7 @@ export async function POST(request: NextRequest) {
         error: 'Failed to track events',
         message: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -103,13 +103,13 @@ export async function POST(request: NextRequest) {
 export async function GET(request: NextRequest) {
   // Require authentication for event retrieval
   const authResult = await requireAuth(['admin', 'clinic_owner', 'manager'])(
-    request
+    request,
   );
 
   if (!authResult.authenticated) {
     return NextResponse.json(
       { error: authResult.error },
-      { status: authResult.status }
+      { status: authResult.status },
     );
   }
 
@@ -130,7 +130,7 @@ export async function GET(request: NextRequest) {
     if (clinicId && user.role !== 'admin' && user.clinicId !== clinicId) {
       return NextResponse.json(
         { error: 'Access denied to clinic data' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -165,7 +165,7 @@ export async function GET(request: NextRequest) {
         error: 'Failed to retrieve events',
         message: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

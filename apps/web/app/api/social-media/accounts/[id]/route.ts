@@ -43,7 +43,7 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
     if (!session) {
       return NextResponse.json(
         { error: 'Authentication required' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -57,7 +57,7 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
     if (!profile?.clinic_id) {
       return NextResponse.json(
         { error: 'Clinic access required' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -86,7 +86,7 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
           supported_features,
           oauth_config
         )
-      `
+      `,
       )
       .eq('id', id)
       .eq('clinic_id', profile.clinic_id)
@@ -115,7 +115,7 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 } /**
@@ -135,7 +135,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     if (!session) {
       return NextResponse.json(
         { error: 'Authentication required' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -149,7 +149,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     if (!profile?.clinic_id) {
       return NextResponse.json(
         { error: 'Clinic access required' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -190,14 +190,14 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
         sync_status,
         status,
         updated_at
-      `
+      `,
       )
       .single();
 
     if (error) {
       return NextResponse.json(
         { error: 'Failed to update account' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -210,13 +210,13 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Invalid request data', details: error.errors },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -238,7 +238,7 @@ export async function DELETE(_request: NextRequest, { params }: RouteParams) {
     if (!session) {
       return NextResponse.json(
         { error: 'Authentication required' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -252,7 +252,7 @@ export async function DELETE(_request: NextRequest, { params }: RouteParams) {
     if (!profile?.clinic_id) {
       return NextResponse.json(
         { error: 'Clinic access required' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -260,7 +260,7 @@ export async function DELETE(_request: NextRequest, { params }: RouteParams) {
     if (!['admin', 'owner', 'manager'].includes(profile.role)) {
       return NextResponse.json(
         { error: 'Insufficient permissions' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -298,7 +298,7 @@ export async function DELETE(_request: NextRequest, { params }: RouteParams) {
       if (error) {
         return NextResponse.json(
           { error: 'Failed to disconnect account' },
-          { status: 500 }
+          { status: 500 },
         );
       }
 
@@ -317,7 +317,7 @@ export async function DELETE(_request: NextRequest, { params }: RouteParams) {
     if (error) {
       return NextResponse.json(
         { error: 'Failed to delete account' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -328,7 +328,7 @@ export async function DELETE(_request: NextRequest, { params }: RouteParams) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 } /**
@@ -348,7 +348,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
     if (!session) {
       return NextResponse.json(
         { error: 'Authentication required' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -362,7 +362,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
     if (!profile?.clinic_id) {
       return NextResponse.json(
         { error: 'Clinic access required' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -427,7 +427,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -65,7 +65,7 @@ export async function POST(request: NextRequest) {
     if (userError || !user) {
       return NextResponse.json(
         { success: false, error: 'Authentication required' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -131,7 +131,7 @@ export async function POST(request: NextRequest) {
           error: 'Invalid request data',
           details: error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -141,7 +141,7 @@ export async function POST(request: NextRequest) {
         error: 'Internal server error',
         message: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -159,7 +159,7 @@ export async function GET(request: NextRequest) {
     if (userError || !user) {
       return NextResponse.json(
         { success: false, error: 'Authentication required' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -175,7 +175,7 @@ export async function GET(request: NextRequest) {
         `
         *,
         kpi_targets(target_value, target_type, validity_period)
-      `
+      `,
       )
       .order('last_updated', { ascending: false })
       .limit(limit);
@@ -226,7 +226,7 @@ export async function GET(request: NextRequest) {
         error: 'Internal server error',
         message: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

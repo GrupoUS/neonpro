@@ -9,7 +9,7 @@ import { marketingCampaignsService } from '@/app/lib/services/marketing-campaign
 // GET /api/marketing/campaigns/[id] - Get campaign by ID
 export async function GET(
   _request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const { id } = params;
@@ -17,7 +17,7 @@ export async function GET(
     if (!id) {
       return NextResponse.json(
         { success: false, error: 'Campaign ID is required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -26,7 +26,7 @@ export async function GET(
     if (!campaign) {
       return NextResponse.json(
         { success: false, error: 'Campaign not found' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -41,7 +41,7 @@ export async function GET(
         error: 'Failed to fetch campaign',
         message: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -49,7 +49,7 @@ export async function GET(
 // PUT /api/marketing/campaigns/[id] - Update campaign
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const { id } = params;
@@ -58,7 +58,7 @@ export async function PUT(
     if (!id) {
       return NextResponse.json(
         { success: false, error: 'Campaign ID is required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -68,7 +68,7 @@ export async function PUT(
     if (!existingCampaign) {
       return NextResponse.json(
         { success: false, error: 'Campaign not found' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -80,14 +80,14 @@ export async function PUT(
     ) {
       return NextResponse.json(
         { success: false, error: 'Cannot modify completed campaigns' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     // Update campaign
     const updatedCampaign = await marketingCampaignsService.updateCampaign(
       id,
-      body
+      body,
     );
 
     return NextResponse.json({
@@ -102,7 +102,7 @@ export async function PUT(
         error: 'Failed to update campaign',
         message: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -110,7 +110,7 @@ export async function PUT(
 // DELETE /api/marketing/campaigns/[id] - Delete campaign
 export async function DELETE(
   _request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const { id } = params;
@@ -118,7 +118,7 @@ export async function DELETE(
     if (!id) {
       return NextResponse.json(
         { success: false, error: 'Campaign ID is required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -128,7 +128,7 @@ export async function DELETE(
     if (!existingCampaign) {
       return NextResponse.json(
         { success: false, error: 'Campaign not found' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -140,7 +140,7 @@ export async function DELETE(
           error:
             'Cannot delete active or completed campaigns. Please cancel first.',
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -157,7 +157,7 @@ export async function DELETE(
         error: 'Failed to delete campaign',
         message: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -47,7 +47,7 @@ type SupabaseHookResult = {
  * Main hook for optimized Supabase connections
  */
 export function useOptimizedSupabase(
-  options: UseOptimizedSupabaseOptions
+  options: UseOptimizedSupabaseOptions,
 ): SupabaseHookResult {
   const {
     clinicId,
@@ -60,7 +60,7 @@ export function useOptimizedSupabase(
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
   const [healthStatus, setHealthStatus] = useState<HealthcheckResult | null>(
-    null
+    null,
   );
   const [metrics, setMetrics] = useState<ConnectionMetrics | null>(null);
 
@@ -230,7 +230,7 @@ export function useOptimizedBrowserSupabase(clinicId: string) {
  */
 export function useHealthcareCompliantSupabase(
   clinicId: string,
-  operationType: HealthcareOperationType = 'standard'
+  operationType: HealthcareOperationType = 'standard',
 ) {
   const baseHook = useOptimizedSupabase({
     clinicId,
@@ -260,7 +260,7 @@ export function useHealthcareCompliantSupabase(
   const executeHealthcareQuery = useCallback(
     async (
       queryFn: (client: SupabaseClient<Database>) => Promise<any>,
-      auditInfo: { action: string; patientId?: string; professionalId: string }
+      auditInfo: { action: string; patientId?: string; professionalId: string },
     ) => {
       if (!(baseHook.client && complianceStatus?.overallCompliant)) {
         throw new Error('Healthcare compliance requirements not met');
@@ -282,7 +282,7 @@ export function useHealthcareCompliantSupabase(
 
       return result;
     },
-    [baseHook.client, complianceStatus, clinicId]
+    [baseHook.client, complianceStatus, clinicId],
   );
 
   return {
@@ -347,7 +347,7 @@ export function useCriticalHealthcareSupabase(clinicId: string) {
   const executeCriticalOperation = useCallback(
     async (
       queryFn: (client: SupabaseClient<Database>) => Promise<any>,
-      auditInfo: { action: string; patientId?: string; professionalId: string }
+      auditInfo: { action: string; patientId?: string; professionalId: string },
     ) => {
       const startTime = Date.now();
       let success = false;
@@ -355,7 +355,7 @@ export function useCriticalHealthcareSupabase(clinicId: string) {
       try {
         const result = await baseHook.executeHealthcareQuery(
           queryFn,
-          auditInfo
+          auditInfo,
         );
         success = true;
         return result;
@@ -372,11 +372,11 @@ export function useCriticalHealthcareSupabase(clinicId: string) {
               success,
               responseTime,
             },
-          ].slice(-100)
+          ].slice(-100),
         ); // Keep last 100 operations
       }
     },
-    [baseHook]
+    [baseHook],
   );
 
   return {

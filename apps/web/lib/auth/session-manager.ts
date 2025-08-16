@@ -42,14 +42,14 @@ export class SessionManager extends EventEmitter {
     this.config = config;
     this.supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
     );
     this.redis = new Redis(config.redis.url);
     this.securityMonitor = new SecurityMonitor(this.supabase, this.redis);
     this.deviceTracker = new DeviceTracker(this.supabase, this.redis);
     this.suspiciousActivityDetector = new SuspiciousActivityDetector(
       this.supabase,
-      this.redis
+      this.redis,
     );
 
     this.initializeCleanupInterval();
@@ -64,7 +64,7 @@ export class SessionManager extends EventEmitter {
     deviceFingerprint: string,
     ipAddress: string,
     userAgent: string,
-    additionalData?: Record<string, any>
+    additionalData?: Record<string, any>,
   ): Promise<UserSession> {
     try {
       // Check emergency controls
@@ -83,14 +83,14 @@ export class SessionManager extends EventEmitter {
       const deviceInfo = await this.deviceTracker.validateDevice(
         userId,
         deviceFingerprint,
-        userAgent
+        userAgent,
       );
       const suspiciousActivity =
         await this.suspiciousActivityDetector.analyzeLoginAttempt(
           userId,
           ipAddress,
           deviceFingerprint,
-          userAgent
+          userAgent,
         );
 
       if (suspiciousActivity.risk_score > 80) {
@@ -110,7 +110,7 @@ export class SessionManager extends EventEmitter {
       const sessionId = this.generateSessionId();
       const now = new Date();
       const expiresAt = new Date(
-        now.getTime() + policy.session_timeout_minutes * 60 * 1000
+        now.getTime() + policy.session_timeout_minutes * 60 * 1000,
       );
 
       const session: UserSession = {
@@ -172,7 +172,7 @@ export class SessionManager extends EventEmitter {
   async validateSession(
     sessionId: string,
     ipAddress?: string,
-    userAgent?: string
+    userAgent?: string,
   ): Promise<SessionValidationResult> {
     try {
       // Check emergency controls
@@ -215,7 +215,7 @@ export class SessionManager extends EventEmitter {
       const securityChecks = await this.performSecurityChecks(
         session,
         ipAddress,
-        userAgent
+        userAgent,
       );
 
       if (!securityChecks.passed) {
@@ -259,7 +259,7 @@ export class SessionManager extends EventEmitter {
    */
   async extendSession(
     sessionId: string,
-    additionalMinutes?: number
+    additionalMinutes?: number,
   ): Promise<UserSession> {
     const session = await this.getSession(sessionId);
     if (!session) {
@@ -354,7 +354,7 @@ export class SessionManager extends EventEmitter {
    */
   async activateEmergencyControls(
     controls: Partial<EmergencySessionControls>,
-    initiatedBy: string
+    initiatedBy: string,
   ): Promise<void> {
     this.emergencyControls = {
       global_kill_switch: false,
@@ -375,7 +375,7 @@ export class SessionManager extends EventEmitter {
       `${this.config.redis.prefix}emergency_controls`,
       JSON.stringify(this.emergencyControls),
       'EX',
-      3600 // 1 hour expiry
+      3600, // 1 hour expiry
     );
 
     this.emit('emergencyControlsActivated', this.emergencyControls);
@@ -415,7 +415,7 @@ export class SessionManager extends EventEmitter {
       `${this.config.redis.prefix}sync:${userId}`,
       JSON.stringify(syncData),
       'EX',
-      300 // 5 minutes
+      300, // 5 minutes
     );
 
     return syncData;
@@ -470,7 +470,7 @@ export class SessionManager extends EventEmitter {
 
   private async enforceConcurrentSessionLimits(
     userId: string,
-    policy: SessionPolicy
+    policy: SessionPolicy,
   ): Promise<void> {
     const activeSessions = await this.getUserActiveSessions(userId);
 
@@ -479,7 +479,7 @@ export class SessionManager extends EventEmitter {
       const oldestSession = activeSessions.at(-1);
       await this.terminateSession(
         oldestSession.id,
-        'Concurrent session limit exceeded'
+        'Concurrent session limit exceeded',
       );
 
       await this.logSecurityEvent({
@@ -517,21 +517,21 @@ export class SessionManager extends EventEmitter {
       `${this.config.redis.prefix}session:${session.id}`,
       JSON.stringify(session),
       'EX',
-      Math.floor((session.expires_at.getTime() - Date.now()) / 1000)
+      Math.floor((session.expires_at.getTime() - Date.now()) / 1000),
     );
   }
 
   private async getCachedSession(
-    sessionId: string
+    sessionId: string,
   ): Promise<UserSession | null> {
     const cached = await this.redis.get(
-      `${this.config.redis.prefix}session:${sessionId}`
+      `${this.config.redis.prefix}session:${sessionId}`,
     );
     return cached ? JSON.parse(cached) : null;
   }
 
   private async getSessionFromDatabase(
-    sessionId: string
+    sessionId: string,
   ): Promise<UserSession | null> {
     const { data, error } = await this.supabase
       .from('user_sessions')
@@ -612,7 +612,7 @@ export class SessionManager extends EventEmitter {
   private async performSecurityChecks(
     session: UserSession,
     ipAddress?: string,
-    userAgent?: string
+    userAgent?: string,
   ) {
     const violations: string[] = [];
     let securityScore = session.security_score;
@@ -636,7 +636,7 @@ export class SessionManager extends EventEmitter {
           session.user_id,
           session.id,
           ipAddress,
-          userAgent || ''
+          userAgent || '',
         );
 
       if (suspiciousActivity.risk_score > 50) {
@@ -653,7 +653,7 @@ export class SessionManager extends EventEmitter {
   }
 
   private async logSecurityEvent(
-    event: Omit<SessionSecurityEvent, 'id' | 'timestamp' | 'resolved'>
+    event: Omit<SessionSecurityEvent, 'id' | 'timestamp' | 'resolved'>,
   ): Promise<void> {
     const securityEvent: SessionSecurityEvent = {
       id: randomBytes(16).toString('hex'),
@@ -670,7 +670,7 @@ export class SessionManager extends EventEmitter {
   }
 
   private async logAuditEvent(
-    event: Omit<SessionAuditLog, 'id' | 'timestamp'>
+    event: Omit<SessionAuditLog, 'id' | 'timestamp'>,
   ): Promise<void> {
     const auditEvent: SessionAuditLog = {
       id: randomBytes(16).toString('hex'),
@@ -701,7 +701,7 @@ export class SessionManager extends EventEmitter {
       async () => {
         await this.cleanupExpiredSessions();
       },
-      this.config.policies.cleanup_interval_minutes * 60 * 1000
+      this.config.policies.cleanup_interval_minutes * 60 * 1000,
     );
   }
 
@@ -719,7 +719,7 @@ export class SessionManager extends EventEmitter {
 
       this.emit(
         'sessionCleanup',
-        expiredSessions.map(this.mapDatabaseRowToSession)
+        expiredSessions.map(this.mapDatabaseRowToSession),
       );
     }
   }
@@ -840,13 +840,13 @@ class SecurityMonitor {
 class DeviceTracker {
   constructor(
     private readonly supabase: any,
-    _redis: Redis
+    _redis: Redis,
   ) {}
 
   async validateDevice(
     _userId: string,
     _deviceFingerprint: string,
-    userAgent: string
+    userAgent: string,
   ): Promise<any> {
     const parser = new UAParser(userAgent);
     const result = parser.getResult();
@@ -884,7 +884,7 @@ class SuspiciousActivityDetector {
     userId: string,
     ipAddress: string,
     deviceFingerprint: string,
-    userAgent: string
+    userAgent: string,
   ): Promise<SuspiciousActivity> {
     // TODO: Implement sophisticated suspicious activity detection
     return {
@@ -908,7 +908,7 @@ class SuspiciousActivityDetector {
     userId: string,
     sessionId: string,
     ipAddress: string,
-    userAgent: string
+    userAgent: string,
   ): Promise<SuspiciousActivity> {
     // TODO: Implement session activity analysis
     return {

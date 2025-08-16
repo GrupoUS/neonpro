@@ -34,7 +34,7 @@ export async function POST(request: NextRequest) {
     // Get optimization recommendations
     const optimizationResults = await purchaseOrderService.optimizeBulkOrder(
       validatedData.clinic_id,
-      validatedData.item_ids
+      validatedData.item_ids,
     );
 
     // Get additional item details for recommendations
@@ -51,14 +51,14 @@ export async function POST(request: NextRequest) {
         minimum_threshold,
         maximum_threshold,
         unit
-      `
+      `,
       )
       .in('id', validatedData.item_ids);
 
     if (itemsError) {
       return NextResponse.json(
         { error: 'Failed to fetch item details' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -86,14 +86,14 @@ export async function POST(request: NextRequest) {
               100
             : 0,
         };
-      }
+      },
     );
 
     // Calculate additional bulk optimization opportunities
     const bulkOpportunities = await analyzeBulkOpportunities(
       supabase,
       validatedData.item_ids,
-      validatedData.clinic_id
+      validatedData.clinic_id,
     );
 
     // Generate seasonal recommendations if requested
@@ -103,7 +103,7 @@ export async function POST(request: NextRequest) {
         ? await generateSeasonalRecommendations(
             supabase,
             validatedData.item_ids,
-            validatedData.clinic_id
+            validatedData.clinic_id,
           )
         : [];
 
@@ -131,12 +131,12 @@ export async function POST(request: NextRequest) {
           error: 'Validation error',
           details: error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -145,7 +145,7 @@ export async function POST(request: NextRequest) {
 async function analyzeBulkOpportunities(
   supabase: any,
   itemIds: string[],
-  _clinicId: string
+  _clinicId: string,
 ) {
   try {
     // Get supplier data for bulk discount analysis
@@ -163,7 +163,7 @@ async function analyzeBulkOpportunities(
           name,
           bulk_order_incentives
         )
-      `
+      `,
       )
       .in('item_id', itemIds)
       .not('bulk_discount_threshold', 'is', null);
@@ -198,7 +198,7 @@ async function analyzeBulkOpportunities(
       }) || [];
 
     return bulkOpportunities.sort(
-      (a: any, b: any) => b.potential_savings - a.potential_savings
+      (a: any, b: any) => b.potential_savings - a.potential_savings,
     );
   } catch (_error) {
     return [];
@@ -209,7 +209,7 @@ async function analyzeBulkOpportunities(
 async function generateSeasonalRecommendations(
   supabase: any,
   itemIds: string[],
-  clinicId: string
+  clinicId: string,
 ) {
   try {
     // Analyze historical consumption patterns for seasonality
@@ -224,14 +224,14 @@ async function generateSeasonalRecommendations(
           name,
           category
         )
-      `
+      `,
       )
       .in('item_id', itemIds)
       .eq('clinic_id', clinicId)
       .eq('transaction_type', 'consumption')
       .gte(
         'created_at',
-        new Date(Date.now() - 365 * 24 * 60 * 60 * 1000).toISOString()
+        new Date(Date.now() - 365 * 24 * 60 * 60 * 1000).toISOString(),
       ); // Last year
 
     if (error || !consumptionData) {
@@ -255,7 +255,7 @@ async function generateSeasonalRecommendations(
 
         return acc;
       },
-      {}
+      {},
     );
 
     const seasonalRecommendations = [];
@@ -266,13 +266,13 @@ async function generateSeasonalRecommendations(
         months.reduce((sum, val) => sum + val, 0) / months.length;
       const maxConsumption = Math.max(...months);
       const peakMonth = Object.entries(monthlyData as any).find(
-        ([, value]) => value === maxConsumption
+        ([, value]) => value === maxConsumption,
       )?.[0];
 
       // If peak consumption is significantly higher than average
       if (maxConsumption > avgConsumption * 1.5) {
         const itemData = consumptionData.find(
-          (t: any) => t.item_id === itemId
+          (t: any) => t.item_id === itemId,
         )?.inventory_items;
 
         seasonalRecommendations.push({
@@ -292,7 +292,7 @@ async function generateSeasonalRecommendations(
     }
 
     return seasonalRecommendations.sort(
-      (a, b) => b.seasonality_factor - a.seasonality_factor
+      (a, b) => b.seasonality_factor - a.seasonality_factor,
     );
   } catch (_error) {
     return [];

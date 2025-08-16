@@ -38,7 +38,7 @@ export async function GET(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to fetch treatment recommendations', success: false },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -58,7 +58,7 @@ export async function POST(request: NextRequest) {
           details: validationResult.error.issues,
           success: false,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -66,7 +66,7 @@ export async function POST(request: NextRequest) {
       validationResult.data;
     const recommendation =
       await personalizedRecommendationsService.createRecommendation(
-        recommendationData
+        recommendationData,
       );
 
     return NextResponse.json(
@@ -74,12 +74,12 @@ export async function POST(request: NextRequest) {
         recommendation,
         success: true,
       },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to create treatment recommendation', success: false },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -98,7 +98,7 @@ export async function PATCH(request: NextRequest) {
           details: validationResult.error.issues,
           success: false,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -106,13 +106,13 @@ export async function PATCH(request: NextRequest) {
     const recommendation =
       await personalizedRecommendationsService.approveRecommendation(
         approvalData.id,
-        approvalData
+        approvalData,
       );
 
     if (!recommendation) {
       return NextResponse.json(
         { error: 'Treatment recommendation not found', success: false },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -123,7 +123,7 @@ export async function PATCH(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to approve treatment recommendation', success: false },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

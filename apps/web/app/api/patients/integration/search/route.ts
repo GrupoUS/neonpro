@@ -31,7 +31,7 @@ export async function GET(request: NextRequest) {
     if (!(profile && ['admin', 'manager', 'staff'].includes(profile.role))) {
       return NextResponse.json(
         { error: 'Acesso negado: permissões insuficientes' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -104,7 +104,7 @@ export async function GET(request: NextRequest) {
       query,
       filters,
       user.id,
-      limit
+      limit,
     );
 
     // Log search activity
@@ -146,7 +146,7 @@ export async function GET(request: NextRequest) {
         error: 'Erro interno do servidor',
         details: error instanceof Error ? error.message : 'Erro desconhecido',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -180,7 +180,7 @@ export async function POST(request: NextRequest) {
           error:
             'Acesso negado: apenas administradores e gerentes podem criar segmentos',
         },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -191,7 +191,7 @@ export async function POST(request: NextRequest) {
     if (!(name && description && criteria)) {
       return NextResponse.json(
         { error: 'Campos obrigatórios: name, description, criteria' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -200,7 +200,7 @@ export async function POST(request: NextRequest) {
       name,
       description,
       criteria,
-      user.id
+      user.id,
     );
 
     // Log segment creation
@@ -234,7 +234,7 @@ export async function POST(request: NextRequest) {
         error: 'Erro interno do servidor',
         details: error instanceof Error ? error.message : 'Erro desconhecido',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

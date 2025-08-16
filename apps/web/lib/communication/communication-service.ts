@@ -71,7 +71,7 @@ export class CommunicationService {
    * Get communication preferences for a patient
    */
   async getPatientPreferences(
-    _patientId: string
+    _patientId: string,
   ): Promise<PatientCommPreferences> {
     const _supabase = await createClient();
 
@@ -94,7 +94,7 @@ export class CommunicationService {
    * Log communication for audit and analytics
    */
   async logCommunication(
-    log: Omit<CommunicationLog, 'id' | 'createdAt'>
+    log: Omit<CommunicationLog, 'id' | 'createdAt'>,
   ): Promise<void> {
     const supabase = await createClient();
 
@@ -114,7 +114,7 @@ export class CommunicationService {
    */
   async getAnalytics(
     _clinicId: string,
-    _dateRange: { start: Date; end: Date }
+    _dateRange: { start: Date; end: Date },
   ) {
     const _supabase = await createClient();
 

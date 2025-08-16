@@ -120,7 +120,7 @@ export class TemplateEngine {
    * Obtém template por ID
    */
   async getTemplate(
-    templateId: string
+    templateId: string,
   ): Promise<NotificationTemplate | undefined> {
     return this.templates.get(templateId);
   }
@@ -130,7 +130,7 @@ export class TemplateEngine {
    */
   async getTemplateByType(
     type: NotificationType,
-    channel: NotificationChannel
+    channel: NotificationChannel,
   ): Promise<NotificationTemplate | undefined> {
     for (const template of this.templates.values()) {
       if (
@@ -169,7 +169,7 @@ export class TemplateEngine {
    */
   async render(
     template: NotificationTemplate | undefined,
-    context: NotificationContext
+    context: NotificationContext,
   ): Promise<RenderedContent> {
     if (!template) {
       return {
@@ -197,7 +197,7 @@ export class TemplateEngine {
   private renderString(
     template: string,
     variables: Record<string, any>,
-    context: NotificationContext
+    context: NotificationContext,
   ): string {
     let result = template;
 
@@ -225,13 +225,13 @@ export class TemplateEngine {
           const shouldShow = this.evaluateCondition(
             condition.trim(),
             variables,
-            context
+            context,
           );
           return shouldShow ? content : '';
         } catch (_error) {
           return '';
         }
-      }
+      },
     );
 
     return result;
@@ -280,7 +280,7 @@ export class TemplateEngine {
   private getVariableValue(
     path: string,
     variables: Record<string, any>,
-    _context: NotificationContext
+    _context: NotificationContext,
   ): any {
     const keys = path.split('.');
     let value = variables;
@@ -301,7 +301,7 @@ export class TemplateEngine {
    */
   private evaluateFunction(
     funcCall: string,
-    context: NotificationContext
+    context: NotificationContext,
   ): any {
     // Parse simples de função: functionName(arg1, arg2)
     const match = funcCall.match(/^(\w+)\((.*)\)$/);
@@ -342,7 +342,7 @@ export class TemplateEngine {
           return this.getVariableValue(
             trimmed,
             this.extractVariables(context),
-            context
+            context,
           );
         })
       : [];
@@ -357,7 +357,7 @@ export class TemplateEngine {
   private evaluateCondition(
     condition: string,
     variables: Record<string, any>,
-    context: NotificationContext
+    context: NotificationContext,
   ): boolean {
     // Condições simples: variable, !variable, variable == value
     condition = condition.trim();
@@ -405,7 +405,7 @@ export class TemplateEngine {
   private parseValue(
     value: string,
     variables: Record<string, any>,
-    context: NotificationContext
+    context: NotificationContext,
   ): any {
     value = value.trim();
 
@@ -454,12 +454,12 @@ export class TemplateEngine {
    */
   private getDefaultTemplate(
     type: NotificationType,
-    channel: NotificationChannel
+    channel: NotificationChannel,
   ): NotificationTemplate {
     const templates = this.getDefaultTemplates();
 
     const template = templates.find(
-      (t) => t.type === type && t.channel === channel
+      (t) => t.type === type && t.channel === channel,
     );
     if (template) {
       return template;

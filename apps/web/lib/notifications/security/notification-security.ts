@@ -109,7 +109,7 @@ export class NotificationSecurity {
   constructor(config?: Partial<SecurityConfig>) {
     this.supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
     );
 
     this.auditLogger = new AuditLogger();
@@ -154,7 +154,7 @@ export class NotificationSecurity {
       ip_address?: string;
       user_agent?: string;
       role?: string;
-    }
+    },
   ): Promise<SecurityValidationResult> {
     const violations: SecurityViolation[] = [];
     let riskScore = 0;
@@ -178,7 +178,7 @@ export class NotificationSecurity {
       // 4. Validação LGPD
       const lgpdViolations = await this.validateLGPDCompliance(
         notificationData,
-        context.user_id
+        context.user_id,
       );
       violations.push(...lgpdViolations);
       riskScore += lgpdViolations.length * 40;
@@ -191,7 +191,7 @@ export class NotificationSecurity {
 
       const isValid =
         violations.filter(
-          (v) => v.severity === 'critical' || v.severity === 'high'
+          (v) => v.severity === 'critical' || v.severity === 'high',
         ).length === 0;
       const recommendations = this.generateSecurityRecommendations(violations);
 
@@ -246,10 +246,10 @@ export class NotificationSecurity {
       }
 
       const encryptedContent = await this.encryptionService.encrypt(
-        JSON.stringify(dataToEncrypt)
+        JSON.stringify(dataToEncrypt),
       );
       const encryptedMetadata = await this.encryptionService.encrypt(
-        JSON.stringify(metadata)
+        JSON.stringify(metadata),
       );
 
       return {
@@ -268,7 +268,7 @@ export class NotificationSecurity {
    * Descriptografa dados da notificação
    */
   async decryptNotificationData(
-    encryptedData: EncryptedNotificationData
+    encryptedData: EncryptedNotificationData,
   ): Promise<any> {
     if (!this.securityConfig.encryption_enabled) {
       throw new Error('Criptografia não está habilitada');
@@ -502,7 +502,7 @@ export class NotificationSecurity {
     try {
       const cutoffDate = new Date();
       cutoffDate.setDate(
-        cutoffDate.getDate() - this.securityConfig.data_retention_days
+        cutoffDate.getDate() - this.securityConfig.data_retention_days,
       );
 
       // Buscar notificações expiradas
@@ -558,7 +558,7 @@ export class NotificationSecurity {
    * Gera relatório de segurança
    */
   async generateSecurityReport(
-    period: 'day' | 'week' | 'month' = 'week'
+    period: 'day' | 'week' | 'month' = 'week',
   ): Promise<{
     summary: {
       total_validations: number;
@@ -613,7 +613,7 @@ export class NotificationSecurity {
           counts[violation.type] = (counts[violation.type] || 0) + 1;
           return counts;
         },
-        {} as Record<string, number>
+        {} as Record<string, number>,
       );
 
       // Top violações
@@ -633,7 +633,7 @@ export class NotificationSecurity {
             rl.current_minute >=
               this.securityConfig.rate_limiting.max_per_minute ||
             rl.current_hour >= this.securityConfig.rate_limiting.max_per_hour ||
-            rl.current_day >= this.securityConfig.rate_limiting.max_per_day
+            rl.current_day >= this.securityConfig.rate_limiting.max_per_day,
         ).length || 0;
 
       const recommendations =
@@ -692,7 +692,7 @@ export class NotificationSecurity {
   }
 
   private async validateAccessControl(
-    context: any
+    context: any,
   ): Promise<SecurityViolation[]> {
     const violations: SecurityViolation[] = [];
     const config = this.securityConfig.access_control;
@@ -736,7 +736,7 @@ export class NotificationSecurity {
   }
 
   private async validateRateLimit(
-    userId?: string
+    userId?: string,
   ): Promise<SecurityViolation[]> {
     if (!(userId && this.securityConfig.rate_limiting.enabled)) {
       return [];
@@ -786,7 +786,7 @@ export class NotificationSecurity {
 
   private async validateLGPDCompliance(
     _data: any,
-    userId?: string
+    userId?: string,
   ): Promise<SecurityViolation[]> {
     const violations: SecurityViolation[] = [];
 
@@ -798,7 +798,7 @@ export class NotificationSecurity {
       // Verificar consentimento
       const hasConsent = await this.lgpdManager.hasValidConsent(
         userId,
-        'notifications'
+        'notifications',
       );
       if (!hasConsent) {
         violations.push({
@@ -813,7 +813,7 @@ export class NotificationSecurity {
       // Verificar se usuário optou por não receber
       const hasOptOut = await this.lgpdManager.hasOptedOut(
         userId,
-        'notifications'
+        'notifications',
       );
       if (hasOptOut) {
         violations.push({
@@ -842,7 +842,7 @@ export class NotificationSecurity {
       const createdDate = new Date(data.created_at);
       const now = new Date();
       const daysDiff = Math.floor(
-        (now.getTime() - createdDate.getTime()) / (1000 * 60 * 60 * 24)
+        (now.getTime() - createdDate.getTime()) / (1000 * 60 * 60 * 24),
       );
 
       if (daysDiff > this.securityConfig.data_retention_days) {
@@ -970,7 +970,7 @@ export class NotificationSecurity {
   }
 
   private generateSecurityRecommendations(
-    violations: SecurityViolation[]
+    violations: SecurityViolation[],
   ): string[] {
     const recommendations = new Set<string>();
 
@@ -980,7 +980,7 @@ export class NotificationSecurity {
 
     // Recomendações gerais baseadas no padrão de violações
     const criticalCount = violations.filter(
-      (v) => v.severity === 'critical'
+      (v) => v.severity === 'critical',
     ).length;
     const highCount = violations.filter((v) => v.severity === 'high').length;
 
@@ -1001,7 +1001,7 @@ export class NotificationSecurity {
   }
 
   private async logSecurityAudit(
-    auditData: Omit<SecurityAuditLog, 'id' | 'timestamp' | 'metadata'>
+    auditData: Omit<SecurityAuditLog, 'id' | 'timestamp' | 'metadata'>,
   ): Promise<void> {
     try {
       await this.supabase.from('security_audit_logs').insert({

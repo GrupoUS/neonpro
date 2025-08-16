@@ -37,7 +37,7 @@ export class CSRFProtection {
   static generateToken(
     sessionId: string,
     userAgent: string,
-    ipAddress: string
+    ipAddress: string,
   ): CSRFTokenData {
     const token = randomBytes(CSRFProtection.TOKEN_LENGTH).toString('hex');
     const now = Date.now();
@@ -58,7 +58,7 @@ export class CSRFProtection {
   static createTokenHash(tokenData: CSRFTokenData): string {
     return createHash('sha256')
       .update(
-        `${tokenData.token}:${tokenData.sessionId}:${tokenData.userAgent}`
+        `${tokenData.token}:${tokenData.sessionId}:${tokenData.userAgent}`,
       )
       .digest('hex');
   }
@@ -93,7 +93,7 @@ export class CSRFProtection {
     token: string,
     sessionId: string,
     userAgent: string,
-    ipAddress: string
+    ipAddress: string,
   ): Promise<CSRFValidationResult> {
     try {
       if (!(token && sessionId)) {
@@ -179,7 +179,7 @@ export class CSRFProtection {
    * Middleware to validate CSRF tokens
    */
   static async validateCSRFMiddleware(
-    request: NextRequest
+    request: NextRequest,
   ): Promise<NextResponse | null> {
     // Skip CSRF validation for safe methods
     if (['GET', 'HEAD', 'OPTIONS'].includes(request.method)) {
@@ -200,7 +200,7 @@ export class CSRFProtection {
     if (!csrfToken) {
       return new NextResponse(
         JSON.stringify({ error: 'CSRF token required' }),
-        { status: 403, headers: { 'Content-Type': 'application/json' } }
+        { status: 403, headers: { 'Content-Type': 'application/json' } },
       );
     }
 
@@ -212,7 +212,7 @@ export class CSRFProtection {
     if (!sessionId) {
       return new NextResponse(
         JSON.stringify({ error: 'Session ID required' }),
-        { status: 403, headers: { 'Content-Type': 'application/json' } }
+        { status: 403, headers: { 'Content-Type': 'application/json' } },
       );
     }
 
@@ -224,13 +224,13 @@ export class CSRFProtection {
       csrfToken,
       sessionId,
       userAgent,
-      ipAddress
+      ipAddress,
     );
 
     if (!validation.valid) {
       return new NextResponse(
         JSON.stringify({ error: validation.error || 'Invalid CSRF token' }),
-        { status: 403, headers: { 'Content-Type': 'application/json' } }
+        { status: 403, headers: { 'Content-Type': 'application/json' } },
       );
     }
 
@@ -241,7 +241,7 @@ export class CSRFProtection {
    * Generate CSRF token for client
    */
   static async generateTokenForClient(
-    request: NextRequest
+    request: NextRequest,
   ): Promise<{ token: string; expires: number } | null> {
     try {
       const sessionId =
@@ -258,7 +258,7 @@ export class CSRFProtection {
       const tokenData = CSRFProtection.generateToken(
         sessionId,
         userAgent,
-        ipAddress
+        ipAddress,
       );
       const stored = await CSRFProtection.storeToken(tokenData);
 

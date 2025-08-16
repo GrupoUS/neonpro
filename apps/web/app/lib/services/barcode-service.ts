@@ -142,7 +142,7 @@ export class BarcodeService {
       // Generate barcode based on type
       const barcode = await this.createBarcodeNumber(
         options.barcode_type,
-        options.item_id
+        options.item_id,
       );
 
       // Generate QR code if requested
@@ -152,7 +152,7 @@ export class BarcodeService {
       if (options.include_qr) {
         const qrData: QRCodeData = await this.buildQRData(
           options.item_id,
-          options
+          options,
         );
         qr_code = await this.generateQRCode(qrData);
         qr_data = qrData;
@@ -222,7 +222,7 @@ export class BarcodeService {
             id,
             location_name
           )
-        `
+        `,
         )
         .eq('barcode', request.value)
         .single();
@@ -265,7 +265,7 @@ export class BarcodeService {
         request.user_id,
         barcodeData.item_id,
         request.value,
-        'success'
+        'success',
       );
 
       return {
@@ -292,7 +292,7 @@ export class BarcodeService {
         '',
         request.value,
         'error',
-        error instanceof Error ? error.message : 'Erro desconhecido'
+        error instanceof Error ? error.message : 'Erro desconhecido',
       );
 
       return {
@@ -359,7 +359,7 @@ export class BarcodeService {
   async processBulkScan(
     operationId: string,
     scanValue: string,
-    userId: string
+    userId: string,
   ): Promise<ScanResult> {
     try {
       // Get operation
@@ -433,7 +433,7 @@ export class BarcodeService {
    */
   validateBarcodeFormat(
     barcode: string,
-    type: string
+    type: string,
   ): { valid: boolean; error?: string } {
     try {
       switch (type.toUpperCase()) {
@@ -478,7 +478,7 @@ export class BarcodeService {
 
   private async createBarcodeNumber(
     type: string,
-    itemId: string
+    itemId: string,
   ): Promise<string> {
     switch (type) {
       case 'EAN13': {
@@ -512,7 +512,7 @@ export class BarcodeService {
 
   private async buildQRData(
     itemId: string,
-    options: BarcodeGenerationOptions
+    options: BarcodeGenerationOptions,
   ): Promise<QRCodeData> {
     // Get item details
     const { data: item } = await this.supabase
@@ -558,7 +558,7 @@ export class BarcodeService {
 
   private async scanQRCode(
     qrValue: string,
-    userId: string
+    userId: string,
   ): Promise<ScanResult> {
     try {
       // Try to parse as JSON (our QR format)
@@ -598,7 +598,7 @@ export class BarcodeService {
     itemId: string,
     scanValue: string,
     status: 'success' | 'error',
-    errorMessage?: string
+    errorMessage?: string,
   ): Promise<void> {
     try {
       await this.supabase.from('scan_activity_log').insert({

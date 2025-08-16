@@ -56,7 +56,7 @@ export async function GET(request: NextRequest) {
     if (!session) {
       return NextResponse.json(
         { error: 'Authentication required' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -70,7 +70,7 @@ export async function GET(request: NextRequest) {
     if (!profile?.clinic_id) {
       return NextResponse.json(
         { error: 'Clinic access required' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -104,7 +104,7 @@ export async function GET(request: NextRequest) {
           platform_icon_url,
           supported_features
         )
-      `
+      `,
       )
       .eq('clinic_id', profile.clinic_id);
 
@@ -126,7 +126,7 @@ export async function GET(request: NextRequest) {
     if (error) {
       return NextResponse.json(
         { error: 'Failed to fetch accounts' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -147,7 +147,7 @@ export async function GET(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -169,7 +169,7 @@ export async function POST(request: NextRequest) {
     if (!session) {
       return NextResponse.json(
         { error: 'Authentication required' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -183,7 +183,7 @@ export async function POST(request: NextRequest) {
     if (!profile?.clinic_id) {
       return NextResponse.json(
         { error: 'Clinic access required' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -215,7 +215,7 @@ export async function POST(request: NextRequest) {
       if (existingAccount) {
         return NextResponse.json(
           { error: 'Account already connected' },
-          { status: 409 }
+          { status: 409 },
         );
       }
     }
@@ -248,14 +248,14 @@ export async function POST(request: NextRequest) {
           platform_display_name,
           platform_icon_url
         )
-      `
+      `,
       )
       .single();
 
     if (error) {
       return NextResponse.json(
         { error: 'Failed to create account connection' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -265,19 +265,19 @@ export async function POST(request: NextRequest) {
         data: newAccount,
         message: 'Social media account connected successfully',
       },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Invalid request data', details: error.errors },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

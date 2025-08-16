@@ -66,7 +66,7 @@ export class ConsentAutomationManager {
   constructor(
     supabase: SupabaseClient,
     complianceManager: LGPDComplianceManager,
-    config: ConsentAutomationConfig
+    config: ConsentAutomationConfig,
   ) {
     this.supabase = supabase;
     this.complianceManager = complianceManager;
@@ -88,7 +88,7 @@ export class ConsentAutomationManager {
       processing_activities: string[];
       legal_basis: string;
       retention_period?: string;
-    }
+    },
   ): Promise<{ success: boolean; consent_id: string; tracking_id: string }> {
     try {
       // Start transaction for atomic consent collection
@@ -105,7 +105,7 @@ export class ConsentAutomationManager {
             expires_at: metadata.retention_period
               ? new Date(
                   Date.now() +
-                    this.parseRetentionPeriod(metadata.retention_period)
+                    this.parseRetentionPeriod(metadata.retention_period),
                 ).toISOString()
               : null,
             collection_method: metadata.collection_method,
@@ -115,7 +115,7 @@ export class ConsentAutomationManager {
           },
           {
             onConflict: 'user_id,purpose_id',
-          }
+          },
         )
         .select('id')
         .single();
@@ -160,7 +160,7 @@ export class ConsentAutomationManager {
         await this.scheduleConsentRenewal(
           userId,
           purposeId,
-          metadata.retention_period
+          metadata.retention_period,
         );
       }
 
@@ -175,7 +175,7 @@ export class ConsentAutomationManager {
           userId,
           purposeId,
           granted,
-          metadata
+          metadata,
         );
       }
 
@@ -203,7 +203,7 @@ export class ConsentAutomationManager {
       };
     } catch (error) {
       throw new Error(
-        `Failed to collect consent with tracking: ${error.message}`
+        `Failed to collect consent with tracking: ${error.message}`,
       );
     }
   }
@@ -214,15 +214,15 @@ export class ConsentAutomationManager {
   async scheduleConsentRenewal(
     userId: string,
     purposeId: string,
-    retentionPeriod: string
+    retentionPeriod: string,
   ): Promise<string> {
     try {
       const expiryDate = new Date(
-        Date.now() + this.parseRetentionPeriod(retentionPeriod)
+        Date.now() + this.parseRetentionPeriod(retentionPeriod),
       );
       const renewalDate = new Date(
         expiryDate.getTime() -
-          this.config.renewal_notice_days * 24 * 60 * 60 * 1000
+          this.config.renewal_notice_days * 24 * 60 * 60 * 1000,
       );
 
       const { data: renewalTask, error } = await this.supabase
@@ -268,7 +268,7 @@ export class ConsentAutomationManager {
             purpose_id,
             granted
           )
-        `
+        `,
         )
         .eq('renewal_completed', false)
         .lte('renewal_due', new Date().toISOString());
@@ -301,7 +301,7 @@ export class ConsentAutomationManager {
           // Check if renewal period has passed
           const gracePeriodEnd = new Date(
             new Date(renewal.renewal_due).getTime() +
-              this.config.withdrawal_grace_period_hours * 60 * 60 * 1000
+              this.config.withdrawal_grace_period_hours * 60 * 60 * 1000,
           );
 
           if (new Date() > gracePeriodEnd) {
@@ -342,7 +342,7 @@ export class ConsentAutomationManager {
       ip_address?: string;
       user_agent?: string;
       immediate: boolean;
-    }
+    },
   ): Promise<{
     success: boolean;
     effective_date: string;
@@ -353,7 +353,7 @@ export class ConsentAutomationManager {
         ? new Date()
         : new Date(
             Date.now() +
-              this.config.withdrawal_grace_period_hours * 60 * 60 * 1000
+              this.config.withdrawal_grace_period_hours * 60 * 60 * 1000,
           );
 
       // Update consent status
@@ -393,7 +393,7 @@ export class ConsentAutomationManager {
         await this.scheduleDataProcessingCessation(
           userId,
           purposeId,
-          effectiveDate
+          effectiveDate,
         );
       }
 
@@ -439,7 +439,7 @@ export class ConsentAutomationManager {
         {
           start_date: dateRange.start,
           end_date: dateRange.end,
-        }
+        },
       );
 
       if (error) {
@@ -463,7 +463,7 @@ export class ConsentAutomationManager {
       inherit_analytics: boolean;
       inherit_marketing: boolean;
       inherit_communication: boolean;
-    }
+    },
   ): Promise<{
     success: boolean;
     inherited_consents: number;
@@ -490,7 +490,7 @@ export class ConsentAutomationManager {
             // Check inheritance rules
             const shouldInherit = this.shouldInheritConsent(
               parentConsent.purpose,
-              inheritanceRules
+              inheritanceRules,
             );
 
             if (shouldInherit) {
@@ -505,13 +505,13 @@ export class ConsentAutomationManager {
                     parentConsent.processing_activities || [],
                   legal_basis: 'inherited_consent',
                   retention_period: parentConsent.retention_period,
-                }
+                },
               );
               inheritedConsents++;
             }
           } catch (inheritError) {
             errors.push(
-              `Child ${childUserId}, Purpose ${parentConsent.purpose_id}: ${inheritError.message}`
+              `Child ${childUserId}, Purpose ${parentConsent.purpose_id}: ${inheritError.message}`,
             );
           }
         }
@@ -524,7 +524,7 @@ export class ConsentAutomationManager {
       };
     } catch (error) {
       throw new Error(
-        `Failed to process consent inheritance: ${error.message}`
+        `Failed to process consent inheritance: ${error.message}`,
       );
     }
   }
@@ -548,24 +548,24 @@ export class ConsentAutomationManager {
   }
 
   private async sendConsentRenewalNotification(
-    _renewal: ConsentRenewalTask
+    _renewal: ConsentRenewalTask,
   ): Promise<void> {}
 
   private async autoWithdrawExpiredConsent(
-    renewal: ConsentRenewalTask
+    renewal: ConsentRenewalTask,
   ): Promise<void> {
     await this.processConsentWithdrawal(
       renewal.user_id,
       renewal.purpose_id,
       'automatic_expiry',
-      { immediate: true }
+      { immediate: true },
     );
   }
 
   private async scheduleDataProcessingCessation(
     userId: string,
     purposeId: string,
-    effectiveDate: Date
+    effectiveDate: Date,
   ): Promise<void> {
     // Schedule data processing to stop at effective date
     await this.supabase.from('lgpd_data_processing_schedule').insert({
@@ -578,7 +578,7 @@ export class ConsentAutomationManager {
 
   private async immediateDataProcessingCessation(
     userId: string,
-    purposeId: string
+    purposeId: string,
   ): Promise<void> {
     // Immediately stop data processing for this purpose
     await this.supabase.from('lgpd_data_processing_log').insert({
@@ -592,7 +592,7 @@ export class ConsentAutomationManager {
   private async updateConsentAnalytics(
     userId: string,
     purposeId: string,
-    granted: boolean
+    granted: boolean,
   ): Promise<void> {
     // Update real-time consent analytics
     await this.supabase.rpc('update_consent_analytics', {
@@ -606,7 +606,7 @@ export class ConsentAutomationManager {
     _userId: string,
     _purposeId: string,
     _granted: boolean,
-    _metadata: any
+    _metadata: any,
   ): Promise<void> {}
 
   private shouldInheritConsent(purpose: string, rules: any): boolean {

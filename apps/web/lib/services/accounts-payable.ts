@@ -18,7 +18,7 @@ export class AccountsPayableService {
   static async getAccountsPayable(
     filters?: AccountsPayableFilters,
     page = 1,
-    pageSize = 20
+    pageSize = 20,
   ): Promise<AccountsPayableResponse> {
     let query = supabase
       .from('accounts_payable')
@@ -28,7 +28,7 @@ export class AccountsPayableService {
           vendor:vendors(*),
           expense_category:expense_categories(*)
         `,
-        { count: 'exact' }
+        { count: 'exact' },
       )
       .is('deleted_at', null)
       .order('due_date', { ascending: true });
@@ -36,7 +36,7 @@ export class AccountsPayableService {
     // Apply filters
     if (filters?.search) {
       query = query.or(
-        `ap_number.ilike.%${filters.search}%,invoice_number.ilike.%${filters.search}%,description.ilike.%${filters.search}%`
+        `ap_number.ilike.%${filters.search}%,invoice_number.ilike.%${filters.search}%,description.ilike.%${filters.search}%`,
       );
     }
 
@@ -91,7 +91,7 @@ export class AccountsPayableService {
    * Get accounts payable by ID
    */
   static async getAccountsPayableById(
-    id: string
+    id: string,
   ): Promise<AccountsPayable | null> {
     const { data: ap, error } = await supabase
       .from('accounts_payable')
@@ -100,7 +100,7 @@ export class AccountsPayableService {
           *,
           vendor:vendors(*),
           expense_category:expense_categories(*)
-        `
+        `,
       )
       .eq('id', id)
       .is('deleted_at', null)
@@ -120,7 +120,7 @@ export class AccountsPayableService {
    * Create new accounts payable
    */
   static async createAccountsPayable(
-    apData: AccountsPayableFormData
+    apData: AccountsPayableFormData,
   ): Promise<AccountsPayable> {
     const { data: ap, error } = await supabase
       .from('accounts_payable')
@@ -135,7 +135,7 @@ export class AccountsPayableService {
           *,
           vendor:vendors(*),
           expense_category:expense_categories(*)
-        `
+        `,
       )
       .single();
 
@@ -151,7 +151,7 @@ export class AccountsPayableService {
    */
   static async updateAccountsPayable(
     id: string,
-    apData: Partial<AccountsPayableFormData>
+    apData: Partial<AccountsPayableFormData>,
   ): Promise<AccountsPayable> {
     const { data: ap, error } = await supabase
       .from('accounts_payable')
@@ -167,7 +167,7 @@ export class AccountsPayableService {
           *,
           vendor:vendors(*),
           expense_category:expense_categories(*)
-        `
+        `,
       )
       .single();
 
@@ -183,7 +183,7 @@ export class AccountsPayableService {
    */
   static async deleteAccountsPayable(
     id: string,
-    reason?: string
+    reason?: string,
   ): Promise<void> {
     const { error } = await supabase
       .from('accounts_payable')
@@ -206,7 +206,7 @@ export class AccountsPayableService {
   static async updateStatus(
     id: string,
     status: string,
-    notes?: string
+    notes?: string,
   ): Promise<AccountsPayable> {
     const updateData: any = {
       status,
@@ -232,7 +232,7 @@ export class AccountsPayableService {
           *,
           vendor:vendors(*),
           expense_category:expense_categories(*)
-        `
+        `,
       )
       .single();
 
@@ -292,7 +292,7 @@ export class AccountsPayableService {
       const totalOpenAmount =
         totalAmountResult.data?.reduce(
           (sum, ap) => sum + (ap.balance_amount || 0),
-          0
+          0,
         ) || 0;
 
       return {
@@ -327,7 +327,7 @@ export class AccountsPayableService {
           *,
           vendor:vendors(company_name),
           expense_category:expense_categories(category_name)
-        `
+        `,
       )
       .gte('due_date', today.toISOString().split('T')[0])
       .lte('due_date', endDate.toISOString().split('T')[0])
@@ -402,7 +402,7 @@ export class AccountsPayableService {
         {} as Record<
           string,
           { count: number; totalAmount: number; balanceAmount: number }
-        >
+        >,
       );
 
       return summary;

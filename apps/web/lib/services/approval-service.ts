@@ -97,7 +97,7 @@ class ApprovalService {
   }
 
   async createApprovalLevel(
-    levelData: Partial<ApprovalLevel>
+    levelData: Partial<ApprovalLevel>,
   ): Promise<ApprovalLevel> {
     try {
       const { data, error } = await this.supabase
@@ -124,7 +124,7 @@ class ApprovalService {
 
   async updateApprovalLevel(
     id: string,
-    levelData: Partial<ApprovalLevel>
+    levelData: Partial<ApprovalLevel>,
   ): Promise<ApprovalLevel> {
     try {
       const { data, error } = await this.supabase
@@ -174,7 +174,7 @@ class ApprovalService {
             level_name,
             level_order
           )
-        `
+        `,
         )
         .eq('is_active', true)
         .order('user_name');
@@ -189,7 +189,7 @@ class ApprovalService {
   }
 
   async createApprovalUser(
-    userData: Partial<ApprovalUser>
+    userData: Partial<ApprovalUser>,
   ): Promise<ApprovalUser> {
     try {
       const { data, error } = await this.supabase
@@ -215,7 +215,7 @@ class ApprovalService {
 
   async updateApprovalUser(
     id: string,
-    userData: Partial<ApprovalUser>
+    userData: Partial<ApprovalUser>,
   ): Promise<ApprovalUser> {
     try {
       const { data, error } = await this.supabase
@@ -272,12 +272,12 @@ class ApprovalService {
       const applicableLevels = levels.filter(
         (level) =>
           requestData.amount >= level.min_amount &&
-          (level.max_amount === null || requestData.amount <= level.max_amount)
+          (level.max_amount === null || requestData.amount <= level.max_amount),
       );
 
       if (applicableLevels.length === 0) {
         throw new Error(
-          'Nenhum nível de aprovação configurado para este valor'
+          'Nenhum nível de aprovação configurado para este valor',
         );
       }
 
@@ -324,7 +324,7 @@ class ApprovalService {
           isAutoApproved && index === 0 ? level.required_approvers : 0,
         status: isAutoApproved && index === 0 ? 'approved' : 'pending',
         deadline: new Date(
-          Date.now() + level.approval_timeout_hours * 60 * 60 * 1000
+          Date.now() + level.approval_timeout_hours * 60 * 60 * 1000,
         ).toISOString(),
         created_at: new Date().toISOString(),
         completed_at:
@@ -363,7 +363,7 @@ class ApprovalService {
             vendor_name,
             category
           )
-        `
+        `,
         )
         .eq('id', id)
         .single();
@@ -400,7 +400,7 @@ class ApprovalService {
             ...step,
             approvers: actions || [],
           };
-        })
+        }),
       );
 
       return {
@@ -431,7 +431,7 @@ class ApprovalService {
             vendor_name,
             category
           )
-        `
+        `,
         )
         .eq('requester_id', user.id)
         .order('created_at', { ascending: false });
@@ -485,7 +485,7 @@ class ApprovalService {
             status,
             deadline
           )
-        `
+        `,
         )
         .eq('status', 'pending')
         .in('approval_steps.level_order', levelIds) // This would need proper join logic
@@ -504,7 +504,7 @@ class ApprovalService {
   async processApprovalAction(
     stepId: string,
     action: 'approve' | 'reject' | 'request_info' | 'escalate',
-    comments?: string
+    comments?: string,
   ): Promise<void> {
     try {
       const {
@@ -521,7 +521,7 @@ class ApprovalService {
           `
           *,
           approval_requests (*)
-        `
+        `,
         )
         .eq('id', stepId)
         .single();
@@ -618,7 +618,7 @@ class ApprovalService {
       await this.sendApprovalNotification(
         step.approval_request_id,
         action,
-        userPermission.user_name
+        userPermission.user_name,
       );
     } catch (_error) {
       throw new Error('Falha ao processar ação de aprovação');
@@ -679,7 +679,7 @@ class ApprovalService {
   private async sendApprovalNotification(
     _requestId: string,
     _action: string,
-    _approverName: string
+    _approverName: string,
   ): Promise<void> {
     try {
       // Could send email, push notification, etc.
@@ -750,11 +750,11 @@ class ApprovalService {
       // Check if levels have sufficient approvers
       for (const level of levels) {
         const levelUsers = users.filter(
-          (u) => u.approval_level_id === level.id
+          (u) => u.approval_level_id === level.id,
         );
         if (levelUsers.length < level.required_approvers) {
           issues.push(
-            `Nível ${level.level_name} requer ${level.required_approvers} aprovadores mas só tem ${levelUsers.length}`
+            `Nível ${level.level_name} requer ${level.required_approvers} aprovadores mas só tem ${levelUsers.length}`,
           );
         }
       }
@@ -772,7 +772,7 @@ class ApprovalService {
 
           if (l1Min <= l2Max && l1Max >= l2Min) {
             issues.push(
-              `Níveis ${level1.level_name} e ${level2.level_name} têm faixas de valores sobrepostas`
+              `Níveis ${level1.level_name} e ${level2.level_name} têm faixas de valores sobrepostas`,
             );
           }
         }

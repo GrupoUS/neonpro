@@ -46,7 +46,7 @@ export class SchedulerService {
   constructor(backupManager: any) {
     this.supabase = createClient(
       process.env.SUPABASE_URL!,
-      process.env.SUPABASE_ANON_KEY!
+      process.env.SUPABASE_ANON_KEY!,
     );
     this.backupManager = backupManager;
   }
@@ -88,7 +88,7 @@ export class SchedulerService {
    * Agendar backup
    */
   async scheduleBackup(
-    config: BackupConfig
+    config: BackupConfig,
   ): Promise<ApiResponse<ScheduledTask>> {
     try {
       // Remover agendamento existente se houver
@@ -110,13 +110,13 @@ export class SchedulerService {
         {
           scheduled: true,
           timezone: config.schedule.timezone || 'America/Sao_Paulo',
-        }
+        },
       );
 
       // Calcular próxima execução
       const nextRun = this.getNextRunTime(
         cronExpression,
-        config.schedule.timezone
+        config.schedule.timezone,
       );
 
       const scheduledTask: ScheduledBackupTask = {
@@ -174,7 +174,7 @@ export class SchedulerService {
    * Reagendar backup
    */
   async rescheduleBackup(
-    config: BackupConfig
+    config: BackupConfig,
   ): Promise<ApiResponse<ScheduledTask>> {
     try {
       if (config.enabled) {
@@ -241,7 +241,7 @@ export class SchedulerService {
       // Executar backup
       const result = await this.backupManager.executeBackup(
         configId,
-        'scheduler'
+        'scheduler',
       );
 
       if (result.success) {
@@ -252,7 +252,7 @@ export class SchedulerService {
         // Calcular próxima execução
         scheduledTask.nextRun = this.getNextRunTime(
           scheduledTask.cronExpression,
-          scheduledTask.config.schedule.timezone
+          scheduledTask.config.schedule.timezone,
         );
 
         await auditLogger.log({
@@ -277,7 +277,7 @@ export class SchedulerService {
           () => {
             this.executeScheduledBackup(configId);
           },
-          5 * 60 * 1000
+          5 * 60 * 1000,
         );
 
         scheduledTask.status = TaskStatus.RETRYING;
@@ -538,7 +538,7 @@ export class SchedulerService {
    */
   async executeImmediateBackup(
     configId: string,
-    userId: string
+    userId: string,
   ): Promise<ApiResponse> {
     try {
       const result = await this.backupManager.executeBackup(configId, userId);

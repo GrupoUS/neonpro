@@ -45,7 +45,7 @@ export async function GET(request: NextRequest) {
         error: 'Failed to fetch protocol outcomes',
         details: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -64,12 +64,12 @@ export async function POST(request: NextRequest) {
           error: 'Validation failed',
           details: validation.error.format(),
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     const protocolOutcome = await service.createProtocolOutcome(
-      validation.data
+      validation.data,
     );
 
     return NextResponse.json(
@@ -78,7 +78,7 @@ export async function POST(request: NextRequest) {
         data: protocolOutcome,
         message: 'Protocol outcome recorded successfully',
       },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (error) {
     return NextResponse.json(
@@ -87,7 +87,7 @@ export async function POST(request: NextRequest) {
         error: 'Failed to record protocol outcome',
         details: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

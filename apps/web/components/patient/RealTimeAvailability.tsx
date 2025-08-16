@@ -149,7 +149,7 @@ export function RealTimeAvailability({
       getAlternatives,
       maxAlternatives,
       scrollToAlternatives,
-    ]
+    ],
   );
 
   /**
@@ -226,7 +226,7 @@ export function RealTimeAvailability({
           'cursor-pointer transition-all duration-200 hover:shadow-md',
           isSelected && 'ring-2 ring-primary',
           isAlternative && 'border-amber-200 bg-amber-50',
-          !slot.available && 'cursor-not-allowed opacity-50'
+          !slot.available && 'cursor-not-allowed opacity-50',
         )}
         key={slot.id}
         onClick={() => slot.available && handleSlotSelect(slot)}
@@ -291,7 +291,7 @@ export function RealTimeAvailability({
     selectedSlot && showAlternatives
       ? getAlternatives(
           slots.find((s) => s.id === selectedSlot)!,
-          maxAlternatives
+          maxAlternatives,
         )
       : [];
 

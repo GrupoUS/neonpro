@@ -87,7 +87,7 @@ export async function GET(request: NextRequest) {
         error: 'Internal server error',
         message: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -123,7 +123,7 @@ export async function POST(request: NextRequest) {
             error: 'Validation error',
             message: `Field '${field}' is required`,
           },
-          { status: 400 }
+          { status: 400 },
         );
       }
     }
@@ -144,7 +144,7 @@ export async function POST(request: NextRequest) {
         data: newFollowup,
         message: 'Follow-up created successfully',
       },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (error) {
     return NextResponse.json(
@@ -152,7 +152,7 @@ export async function POST(request: NextRequest) {
         error: 'Internal server error',
         message: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

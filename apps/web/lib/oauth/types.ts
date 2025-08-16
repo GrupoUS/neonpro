@@ -101,7 +101,7 @@ export abstract class IOAuthHandler {
   abstract getAuthorizationUrl(state: OAuthState): string;
   abstract exchangeCodeForTokens(
     code: string,
-    state: string
+    state: string,
   ): Promise<OAuthTokens>;
   abstract refreshTokens(refreshToken: string): Promise<OAuthTokens>;
   abstract getUserProfile(accessToken: string): Promise<OAuthUserProfile>;

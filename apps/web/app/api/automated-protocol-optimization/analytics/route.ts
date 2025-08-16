@@ -22,7 +22,7 @@ export async function POST(request: NextRequest) {
           error: 'Validation failed',
           details: validation.error.format(),
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -40,7 +40,7 @@ export async function POST(request: NextRequest) {
         error: 'Failed to generate protocol analytics',
         details: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

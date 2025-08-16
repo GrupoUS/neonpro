@@ -30,7 +30,7 @@ export async function GET(request: NextRequest) {
             {
               error: 'Recommendation ID required',
             },
-            { status: 400 }
+            { status: 400 },
           );
         }
 
@@ -42,7 +42,7 @@ export async function GET(request: NextRequest) {
 
         if (error) {
           throw new Error(
-            `Failed to fetch validation history: ${error.message}`
+            `Failed to fetch validation history: ${error.message}`,
           );
         }
 
@@ -59,7 +59,7 @@ export async function GET(request: NextRequest) {
 
         if (pendingError) {
           throw new Error(
-            `Failed to fetch pending validations: ${pendingError.message}`
+            `Failed to fetch pending validations: ${pendingError.message}`,
           );
         }
 
@@ -76,7 +76,7 @@ export async function GET(request: NextRequest) {
 
         if (statsError) {
           throw new Error(
-            `Failed to fetch validation stats: ${statsError.message}`
+            `Failed to fetch validation stats: ${statsError.message}`,
           );
         }
 
@@ -109,14 +109,14 @@ export async function GET(request: NextRequest) {
         const { data: evidence, error: evidenceError } = await supabase
           .from('medical_knowledge')
           .select(
-            'id, title, evidence_level, source_id, knowledge_sources(source_name)'
+            'id, title, evidence_level, source_id, knowledge_sources(source_name)',
           )
           .textSearch('title', evidenceQuery)
           .limit(limit);
 
         if (evidenceError) {
           throw new Error(
-            `Failed to fetch evidence sources: ${evidenceError.message}`
+            `Failed to fetch evidence sources: ${evidenceError.message}`,
           );
         }
 
@@ -126,7 +126,7 @@ export async function GET(request: NextRequest) {
       default:
         return NextResponse.json(
           { error: 'Invalid action parameter' },
-          { status: 400 }
+          { status: 400 },
         );
     }
   } catch (error) {
@@ -135,7 +135,7 @@ export async function GET(request: NextRequest) {
         error: 'Internal server error',
         details: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -169,12 +169,12 @@ export async function POST(request: NextRequest) {
             {
               error: 'Recommendations must be an array',
             },
-            { status: 400 }
+            { status: 400 },
           );
         }
 
         const batchResults = await Promise.all(
-          recommendations.map((rec) => service.validateRecommendation(rec))
+          recommendations.map((rec) => service.validateRecommendation(rec)),
         );
 
         return NextResponse.json({ success: true, data: batchResults });
@@ -194,7 +194,7 @@ export async function POST(request: NextRequest) {
             {
               error: 'Validation ID and reviewer decision required',
             },
-            { status: 400 }
+            { status: 400 },
           );
         }
 
@@ -213,7 +213,7 @@ export async function POST(request: NextRequest) {
 
         if (updateError) {
           throw new Error(
-            `Failed to update validation: ${updateError.message}`
+            `Failed to update validation: ${updateError.message}`,
           );
         }
 
@@ -230,7 +230,7 @@ export async function POST(request: NextRequest) {
             {
               error: 'Evidence ID and feedback type required',
             },
-            { status: 400 }
+            { status: 400 },
           );
         }
 
@@ -269,7 +269,7 @@ export async function POST(request: NextRequest) {
             {
               error: 'Evidence IDs array required',
             },
-            { status: 400 }
+            { status: 400 },
           );
         }
 
@@ -287,7 +287,7 @@ export async function POST(request: NextRequest) {
         const synthesis = await service.createMedicalKnowledge(synthesisData);
         return NextResponse.json(
           { success: true, data: synthesis },
-          { status: 201 }
+          { status: 201 },
         );
       }
 
@@ -300,7 +300,7 @@ export async function POST(request: NextRequest) {
         error: 'Internal server error',
         details: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -322,7 +322,7 @@ export async function PUT(request: NextRequest) {
     if (!id) {
       return NextResponse.json(
         { error: 'ID required for update operations' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -365,7 +365,7 @@ export async function PUT(request: NextRequest) {
 
         if (approveError) {
           throw new Error(
-            `Failed to approve validation: ${approveError.message}`
+            `Failed to approve validation: ${approveError.message}`,
           );
         }
 
@@ -390,7 +390,7 @@ export async function PUT(request: NextRequest) {
 
         if (rejectError) {
           throw new Error(
-            `Failed to reject validation: ${rejectError.message}`
+            `Failed to reject validation: ${rejectError.message}`,
           );
         }
 
@@ -406,7 +406,7 @@ export async function PUT(request: NextRequest) {
         error: 'Internal server error',
         details: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -133,7 +133,7 @@ export default function FinanceiroPage() {
   const totalExpenses = Math.abs(
     transactions
       .filter((t) => t.type === 'expense')
-      .reduce((sum, t) => sum + t.amount, 0)
+      .reduce((sum, t) => sum + t.amount, 0),
   );
 
   const netProfit = totalRevenue - totalExpenses;
@@ -434,7 +434,7 @@ export default function FinanceiroPage() {
                           >
                             {transaction.type === 'income' ? '+' : ''}R${' '}
                             {Math.abs(transaction.amount).toLocaleString(
-                              'pt-BR'
+                              'pt-BR',
                             )}
                           </p>
                         </div>

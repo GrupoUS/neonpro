@@ -32,7 +32,7 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
     if (!id) {
       return NextResponse.json(
         { error: 'Follow-up ID is required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -42,7 +42,7 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
     if (!followup) {
       return NextResponse.json(
         { error: 'Follow-up not found' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -53,7 +53,7 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
         error: 'Internal server error',
         message: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -76,7 +76,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     if (!id) {
       return NextResponse.json(
         { error: 'Follow-up ID is required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -94,7 +94,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     // Update follow-up
     const updatedFollowup = await treatmentFollowupService.updateFollowup(
       id,
-      updates
+      updates,
     );
 
     return NextResponse.json({
@@ -107,7 +107,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
         error: 'Internal server error',
         message: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -130,7 +130,7 @@ export async function DELETE(_request: NextRequest, { params }: RouteParams) {
     if (!id) {
       return NextResponse.json(
         { error: 'Follow-up ID is required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -146,7 +146,7 @@ export async function DELETE(_request: NextRequest, { params }: RouteParams) {
         error: 'Internal server error',
         message: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -49,7 +49,7 @@ export class PerformanceMonitor {
     const measure = performance.measure(
       measurementId,
       `${measurementId}-start`,
-      endMark
+      endMark,
     );
 
     const metric: PerformanceMetrics = {
@@ -90,7 +90,7 @@ export class PerformanceMonitor {
    */
   getBenchmark(operation: string): PerformanceBenchmark | null {
     const operationMetrics = this.metrics.filter(
-      (m) => m.operation === operation
+      (m) => m.operation === operation,
     );
 
     if (operationMetrics.length === 0) {

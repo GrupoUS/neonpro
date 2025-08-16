@@ -31,7 +31,7 @@ export async function GET(_request: NextRequest) {
           error:
             'Acesso negado. Apenas administradores podem acessar esta funcionalidade.',
         },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -44,7 +44,7 @@ export async function GET(_request: NextRequest) {
     if (mappingsError) {
       return NextResponse.json(
         { error: 'Erro ao buscar mapeamentos de domínio' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -56,7 +56,7 @@ export async function GET(_request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -87,7 +87,7 @@ export async function POST(request: NextRequest) {
           error:
             'Acesso negado. Apenas administradores podem criar mapeamentos.',
         },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -98,7 +98,7 @@ export async function POST(request: NextRequest) {
     if (!(domain && default_role)) {
       return NextResponse.json(
         { error: 'Domínio e role padrão são obrigatórios' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -109,7 +109,7 @@ export async function POST(request: NextRequest) {
         {
           error: `Role inválida. Valores permitidos: ${validRoles.join(', ')}`,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -123,14 +123,14 @@ export async function POST(request: NextRequest) {
     if (checkError && checkError.code !== 'PGRST116') {
       return NextResponse.json(
         { error: 'Erro ao verificar domínio' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
     if (existingMapping) {
       return NextResponse.json(
         { error: 'Este domínio já possui um mapeamento configurado' },
-        { status: 409 }
+        { status: 409 },
       );
     }
 
@@ -154,7 +154,7 @@ export async function POST(request: NextRequest) {
     if (createError) {
       return NextResponse.json(
         { error: 'Erro ao criar mapeamento de domínio' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -183,7 +183,7 @@ export async function POST(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

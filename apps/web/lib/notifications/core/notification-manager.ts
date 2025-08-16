@@ -113,7 +113,7 @@ export class NotificationManager {
   constructor() {
     this.supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
     );
     this.auditLogger = new AuditLogger();
     this.lgpdManager = new LGPDManager();
@@ -128,7 +128,7 @@ export class NotificationManager {
    * Envia uma notificação
    */
   async sendNotification(
-    config: NotificationConfig
+    config: NotificationConfig,
   ): Promise<NotificationResult> {
     try {
       // Validar configuração
@@ -138,12 +138,12 @@ export class NotificationManager {
       const hasConsent = await this.lgpdManager.checkConsentForNotification(
         config.recipient_id,
         config.channel,
-        config.type
+        config.type,
       );
 
       if (!hasConsent) {
         throw new Error(
-          'Usuário não possui consentimento para este tipo de notificação'
+          'Usuário não possui consentimento para este tipo de notificação',
         );
       }
 
@@ -159,13 +159,13 @@ export class NotificationManager {
       // Renderizar template
       const renderedContent = await this.templateEngine.render(
         config.template_id,
-        config.data
+        config.data,
       );
 
       // Criptografar dados sensíveis se necessário
       const encryptedData = await this.encryptSensitiveData(
         config,
-        renderedContent
+        renderedContent,
       );
 
       // Enviar através do canal apropriado
@@ -211,7 +211,7 @@ export class NotificationManager {
    */
   async scheduleNotification(
     config: NotificationConfig,
-    scheduledAt: Date
+    scheduledAt: Date,
   ): Promise<string> {
     try {
       // Validar data de agendamento
@@ -260,7 +260,7 @@ export class NotificationManager {
    * Envia notificações em lote
    */
   async sendBulkNotifications(
-    configs: NotificationConfig[]
+    configs: NotificationConfig[],
   ): Promise<NotificationResult[]> {
     const results: NotificationResult[] = [];
     const batchSize = 100; // Processar em lotes de 100
@@ -274,7 +274,7 @@ export class NotificationManager {
           channel: config.channel,
           error_message: error.message,
           retry_count: 0,
-        }))
+        })),
       );
 
       const batchResults = await Promise.all(batchPromises);
@@ -327,7 +327,7 @@ export class NotificationManager {
    */
   async updateUserPreferences(
     userId: string,
-    preferences: Partial<NotificationPreferences>
+    preferences: Partial<NotificationPreferences>,
   ): Promise<void> {
     try {
       const { error } = await this.supabase
@@ -400,7 +400,7 @@ export class NotificationManager {
       endDate?: Date;
       limit?: number;
       offset?: number;
-    }
+    },
   ) {
     try {
       let query = this.supabase
@@ -436,7 +436,7 @@ export class NotificationManager {
       if (filters?.offset) {
         query = query.range(
           filters.offset,
-          filters.offset + (filters.limit || 50) - 1
+          filters.offset + (filters.limit || 50) - 1,
         );
       }
 
@@ -473,7 +473,7 @@ export class NotificationManager {
       // Atualizar analytics
       await this.analytics.recordNotificationEngagement(
         notificationId,
-        'opened'
+        'opened',
       );
     } catch (error) {
       throw new Error(`Erro ao marcar como lida: ${error}`);
@@ -482,7 +482,7 @@ export class NotificationManager {
 
   // Métodos privados
   private async validateNotificationConfig(
-    config: NotificationConfig
+    config: NotificationConfig,
   ): Promise<void> {
     if (!config.recipient_id) {
       throw new Error('recipient_id é obrigatório');
@@ -509,7 +509,7 @@ export class NotificationManager {
 
   private isChannelEnabled(
     preferences: NotificationPreferences,
-    channel: NotificationChannelEnum
+    channel: NotificationChannelEnum,
   ): boolean {
     switch (channel) {
       case NotificationChannelEnum.EMAIL:
@@ -527,7 +527,7 @@ export class NotificationManager {
 
   private async checkRateLimit(
     userId: string,
-    channel: NotificationChannelEnum
+    channel: NotificationChannelEnum,
   ): Promise<void> {
     const preferences = await this.getUserPreferences(userId);
     const now = new Date();
@@ -547,7 +547,7 @@ export class NotificationManager {
 
   private async encryptSensitiveData(
     config: NotificationConfig,
-    renderedContent: { subject?: string; content: string }
+    renderedContent: { subject?: string; content: string },
   ) {
     // Criptografar dados sensíveis baseado no tipo de notificação
     const sensitiveTypes = [
@@ -570,7 +570,7 @@ export class NotificationManager {
 
   private async saveNotification(
     config: NotificationConfig,
-    result: NotificationResult
+    result: NotificationResult,
   ) {
     const { data, error } = await this.supabase
       .from('notifications')
@@ -595,7 +595,7 @@ export class NotificationManager {
 
   private async handleNotificationError(
     config: NotificationConfig,
-    error: Error
+    error: Error,
   ): Promise<void> {
     await this.auditLogger.log({
       action: 'notification_error',
@@ -626,7 +626,7 @@ export class NotificationManager {
     ];
 
     return retryableErrors.some((retryableError) =>
-      error.message.toLowerCase().includes(retryableError)
+      error.message.toLowerCase().includes(retryableError),
     );
   }
 
@@ -634,7 +634,7 @@ export class NotificationManager {
     // Implementar lógica de retry com backoff exponencial
     const retryDelay = Math.min(
       1000 * 2 ** (config.metadata?.retry_count || 0),
-      300_000
+      300_000,
     );
     const retryAt = new Date(Date.now() + retryDelay);
 
@@ -647,7 +647,7 @@ export class NotificationManager {
           original_attempt: config.metadata?.original_attempt || new Date(),
         },
       },
-      retryAt
+      retryAt,
     );
   }
 }

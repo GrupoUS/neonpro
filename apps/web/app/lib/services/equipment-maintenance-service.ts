@@ -27,7 +27,7 @@ export class EquipmentMaintenanceService {
    * Create new equipment record
    */
   async createEquipment(
-    data: Omit<Equipment, 'id' | 'created_at' | 'updated_at' | 'status'>
+    data: Omit<Equipment, 'id' | 'created_at' | 'updated_at' | 'status'>,
   ): Promise<Equipment> {
     const supabase = await this.getSupabase();
 
@@ -69,7 +69,7 @@ export class EquipmentMaintenanceService {
           title,
           created_at
         )
-      `
+      `,
       )
       .eq('id', id)
       .eq('active_alerts.is_active', true)
@@ -97,7 +97,7 @@ export class EquipmentMaintenanceService {
       warranty_expiring?: boolean;
       search?: string;
     },
-    pagination?: { page: number; limit: number }
+    pagination?: { page: number; limit: number },
   ): Promise<{ equipment: Equipment[]; total: number }> {
     const supabase = await this.getSupabase();
 
@@ -117,7 +117,7 @@ export class EquipmentMaintenanceService {
           severity
         )
       `,
-        { count: 'exact' }
+        { count: 'exact' },
       )
       .eq('clinic_id', clinicId)
       .eq('active_schedules.is_active', true)
@@ -145,12 +145,12 @@ export class EquipmentMaintenanceService {
         futureDate.setMonth(futureDate.getMonth() + 3);
         query = query.lte(
           'warranty_end_date',
-          futureDate.toISOString().split('T')[0]
+          futureDate.toISOString().split('T')[0],
         );
       }
       if (filters.search) {
         query = query.or(
-          `name.ilike.%${filters.search}%,model.ilike.%${filters.search}%,serial_number.ilike.%${filters.search}%`
+          `name.ilike.%${filters.search}%,model.ilike.%${filters.search}%,serial_number.ilike.%${filters.search}%`,
         );
       }
     }
@@ -179,7 +179,7 @@ export class EquipmentMaintenanceService {
    */
   async updateEquipment(
     id: string,
-    updates: Partial<Equipment>
+    updates: Partial<Equipment>,
   ): Promise<Equipment> {
     const supabase = await this.getSupabase();
 
@@ -212,7 +212,7 @@ export class EquipmentMaintenanceService {
     data: Omit<
       MaintenanceSchedule,
       'id' | 'created_at' | 'updated_at' | 'next_due_date' | 'is_active'
-    >
+    >,
   ): Promise<MaintenanceSchedule> {
     const supabase = await this.getSupabase();
 
@@ -235,7 +235,7 @@ export class EquipmentMaintenanceService {
 
     if (error) {
       throw new Error(
-        `Failed to create maintenance schedule: ${error.message}`
+        `Failed to create maintenance schedule: ${error.message}`,
       );
     }
 
@@ -251,7 +251,7 @@ export class EquipmentMaintenanceService {
         message: 'Manutenção programada para o equipamento está se aproximando',
         trigger_date: this.calculateAlertDate(
           nextDueDate,
-          schedule.alert_days_before
+          schedule.alert_days_before,
         ),
         due_date: nextDueDate,
         notification_recipients: schedule.notification_recipients,
@@ -268,7 +268,7 @@ export class EquipmentMaintenanceService {
    * Get maintenance schedules for equipment
    */
   async getEquipmentSchedules(
-    equipmentId: string
+    equipmentId: string,
   ): Promise<MaintenanceSchedule[]> {
     const supabase = await this.getSupabase();
 
@@ -290,7 +290,7 @@ export class EquipmentMaintenanceService {
    */
   async updateMaintenanceSchedule(
     id: string,
-    updates: Partial<MaintenanceSchedule>
+    updates: Partial<MaintenanceSchedule>,
   ): Promise<MaintenanceSchedule> {
     const supabase = await this.getSupabase();
 
@@ -328,7 +328,7 @@ export class EquipmentMaintenanceService {
 
     if (error) {
       throw new Error(
-        `Failed to update maintenance schedule: ${error.message}`
+        `Failed to update maintenance schedule: ${error.message}`,
       );
     }
     return data;
@@ -345,7 +345,7 @@ export class EquipmentMaintenanceService {
     data: Omit<
       MaintenanceAlert,
       'id' | 'created_at' | 'is_active' | 'is_acknowledged' | 'is_resolved'
-    >
+    >,
   ): Promise<MaintenanceAlert> {
     const supabase = await this.getSupabase();
 
@@ -379,7 +379,7 @@ export class EquipmentMaintenanceService {
       alert_type?: string[];
       severity?: string[];
       is_acknowledged?: boolean;
-    }
+    },
   ): Promise<MaintenanceAlert[]> {
     const supabase = await this.getSupabase();
 
@@ -394,7 +394,7 @@ export class EquipmentMaintenanceService {
           location,
           department
         )
-      `
+      `,
       )
       .eq('clinic_id', clinicId)
       .eq('is_active', true)
@@ -431,7 +431,7 @@ export class EquipmentMaintenanceService {
   async acknowledgeAlert(
     alertId: string,
     acknowledgedBy: string,
-    notes?: string
+    notes?: string,
   ): Promise<MaintenanceAlert> {
     const supabase = await this.getSupabase();
 
@@ -460,7 +460,7 @@ export class EquipmentMaintenanceService {
   async resolveAlert(
     alertId: string,
     resolvedBy: string,
-    notes: string
+    notes: string,
   ): Promise<MaintenanceAlert> {
     const supabase = await this.getSupabase();
 
@@ -545,7 +545,7 @@ export class EquipmentMaintenanceService {
         acc[item.status] = (acc[item.status] || 0) + 1;
         return acc;
       },
-      {}
+      {},
     );
 
     // Get alerts by severity
@@ -560,7 +560,7 @@ export class EquipmentMaintenanceService {
         acc[item.severity] = (acc[item.severity] || 0) + 1;
         return acc;
       },
-      {}
+      {},
     );
 
     return {

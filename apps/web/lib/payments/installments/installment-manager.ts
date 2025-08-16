@@ -9,7 +9,7 @@ import { logger } from '@/lib/utils/logger';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
+  process.env.SUPABASE_SERVICE_ROLE_KEY!,
 );
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
@@ -70,7 +70,7 @@ type ModifyPaymentPlanRequest = {
 class InstallmentManager {
   // Create new payment plan
   async createPaymentPlan(
-    request: CreatePaymentPlanRequest
+    request: CreatePaymentPlanRequest,
   ): Promise<PaymentPlan> {
     try {
       // Validate customer exists
@@ -124,7 +124,7 @@ class InstallmentManager {
       await this.generateInstallments(createdPlan.id, request);
 
       logger.info(
-        `Payment plan created: ${createdPlan.id} for customer: ${request.customer_id}`
+        `Payment plan created: ${createdPlan.id} for customer: ${request.customer_id}`,
       );
       return createdPlan;
     } catch (error) {
@@ -136,7 +136,7 @@ class InstallmentManager {
   // Generate installments for payment plan
   private async generateInstallments(
     paymentPlanId: string,
-    request: CreatePaymentPlanRequest
+    request: CreatePaymentPlanRequest,
   ): Promise<void> {
     try {
       const installments: Omit<Installment, 'id'>[] = [];
@@ -148,7 +148,7 @@ class InstallmentManager {
           installment_number: i,
           amount:
             Math.round(
-              (request.total_amount / request.installment_count) * 100
+              (request.total_amount / request.installment_count) * 100,
             ) / 100,
           due_date: currentDate.toISOString(),
           status: 'pending',
@@ -186,7 +186,7 @@ class InstallmentManager {
       }
 
       logger.info(
-        `Generated ${installments.length} installments for payment plan: ${paymentPlanId}`
+        `Generated ${installments.length} installments for payment plan: ${paymentPlanId}`,
       );
     } catch (error) {
       logger.error('Error generating installments:', error);
@@ -198,7 +198,7 @@ class InstallmentManager {
   async processInstallmentPayment(
     installmentId: string,
     paymentMethodId?: string,
-    metadata?: Record<string, any>
+    metadata?: Record<string, any>,
   ): Promise<any> {
     try {
       // Get installment details
@@ -211,7 +211,7 @@ class InstallmentManager {
             *,
             customer:customers(*)
           )
-        `
+        `,
         )
         .eq('id', installmentId)
         .single();
@@ -295,7 +295,7 @@ class InstallmentManager {
   async markInstallmentAsPaid(
     installmentId: string,
     paymentIntentId: string,
-    paymentMethod?: string
+    paymentMethod?: string,
   ): Promise<void> {
     try {
       // Update installment status
@@ -330,7 +330,7 @@ class InstallmentManager {
 
   // Check if payment plan is completed
   private async checkPaymentPlanCompletion(
-    paymentPlanId: string
+    paymentPlanId: string,
   ): Promise<void> {
     try {
       const { data: installments } = await supabase
@@ -369,7 +369,7 @@ class InstallmentManager {
             *,
             customer:customers(*)
           )
-        `
+        `,
         )
         .eq('status', 'pending')
         .lt('due_date', cutoffDate)
@@ -407,12 +407,12 @@ class InstallmentManager {
 
       if (error) {
         throw new Error(
-          `Failed to mark installments as overdue: ${error.message}`
+          `Failed to mark installments as overdue: ${error.message}`,
         );
       }
 
       logger.info(
-        `Marked ${overdueInstallments.length} installments as overdue`
+        `Marked ${overdueInstallments.length} installments as overdue`,
       );
       return overdueInstallments.length;
     } catch (error) {
@@ -424,7 +424,7 @@ class InstallmentManager {
   // Modify payment plan
   async modifyPaymentPlan(
     paymentPlanId: string,
-    modifications: ModifyPaymentPlanRequest
+    modifications: ModifyPaymentPlanRequest,
   ): Promise<PaymentPlan> {
     try {
       // Get current payment plan
@@ -458,7 +458,7 @@ class InstallmentManager {
       ) {
         if (paidCount >= modifications.installment_count) {
           throw new Error(
-            'Cannot reduce installment count below paid installments'
+            'Cannot reduce installment count below paid installments',
           );
         }
 
@@ -560,7 +560,7 @@ class InstallmentManager {
 
       if (updateError) {
         throw new Error(
-          `Failed to update payment plan: ${updateError.message}`
+          `Failed to update payment plan: ${updateError.message}`,
         );
       }
 
@@ -575,7 +575,7 @@ class InstallmentManager {
   // Cancel payment plan
   async cancelPaymentPlan(
     paymentPlanId: string,
-    reason?: string
+    reason?: string,
   ): Promise<void> {
     try {
       // Update payment plan status
@@ -618,7 +618,7 @@ class InstallmentManager {
           *,
           customer:customers(*),
           installments(*)
-        `
+        `,
         )
         .eq('id', paymentPlanId)
         .single();
@@ -643,7 +643,7 @@ class InstallmentManager {
           `
           *,
           installments(*)
-        `
+        `,
         )
         .eq('customer_id', customerId)
         .order('created_at', { ascending: false });

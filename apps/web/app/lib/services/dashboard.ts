@@ -48,7 +48,7 @@ export class DashboardService {
     userId: string,
     metric: string,
     value: number,
-    metadata?: any
+    metadata?: any,
   ) {
     const supabase = await this.getSupabase();
 
@@ -88,7 +88,7 @@ export class DashboardService {
       widget_preferences: any;
       update_frequency?: number;
       is_default?: boolean;
-    }
+    },
   ) {
     const supabase = await this.getSupabase();
     const { data: config, error } = await supabase
@@ -118,7 +118,7 @@ export class DashboardService {
         dashboard_widgets (
           *
         )
-      `
+      `,
       )
       .eq('user_id', userId);
 
@@ -252,28 +252,28 @@ export class DashboardService {
     const revenueMetrics = await this.calculateRevenueMetrics(
       clinicId,
       startDate,
-      endDate
+      endDate,
     );
 
     // Patient Metrics
     const patientMetrics = await this.calculatePatientMetrics(
       clinicId,
       startDate,
-      endDate
+      endDate,
     );
 
     // Appointment Metrics
     const appointmentMetrics = await this.calculateAppointmentMetrics(
       clinicId,
       startDate,
-      endDate
+      endDate,
     );
 
     // Efficiency Metrics
     const efficiencyMetrics = await this.calculateEfficiencyMetrics(
       clinicId,
       startDate,
-      endDate
+      endDate,
     );
 
     return {
@@ -289,7 +289,7 @@ export class DashboardService {
   private async calculateRevenueMetrics(
     clinicId?: string,
     startDate?: Date,
-    endDate?: Date
+    endDate?: Date,
   ) {
     const supabase = await this.getSupabase();
     let query = supabase
@@ -304,7 +304,7 @@ export class DashboardService {
           name,
           price
         )
-      `
+      `,
       )
       .eq('status', 'completed');
 
@@ -326,7 +326,7 @@ export class DashboardService {
     const totalRevenue =
       appointments?.reduce(
         (sum: number, apt: any) => sum + (apt.paid_amount || 0),
-        0
+        0,
       ) || 0;
     const averageTransaction = appointments?.length
       ? totalRevenue / appointments.length
@@ -352,7 +352,7 @@ export class DashboardService {
         revenue: data.revenue,
         count: data.count,
         percentage: totalRevenue > 0 ? (data.revenue / totalRevenue) * 100 : 0,
-      })
+      }),
     );
 
     return {
@@ -370,7 +370,7 @@ export class DashboardService {
   private async calculatePatientMetrics(
     clinicId?: string,
     startDate?: Date,
-    _endDate?: Date
+    _endDate?: Date,
   ) {
     const supabase = await this.getSupabase();
     let query = supabase.from('profiles').select('*');
@@ -390,7 +390,7 @@ export class DashboardService {
     const totalPatients = patients?.length || 0;
     const newPatients =
       patients?.filter(
-        (p: any) => new Date(p.created_at) >= (startDate || new Date(0))
+        (p: any) => new Date(p.created_at) >= (startDate || new Date(0)),
       ).length || 0;
 
     return {
@@ -408,7 +408,7 @@ export class DashboardService {
   private async calculateAppointmentMetrics(
     clinicId?: string,
     startDate?: Date,
-    endDate?: Date
+    endDate?: Date,
   ) {
     const supabase = await this.getSupabase();
     let query = supabase.from('appointments').select('*');
@@ -464,7 +464,7 @@ export class DashboardService {
   private async calculateEfficiencyMetrics(
     _clinicId?: string,
     _startDate?: Date,
-    _endDate?: Date
+    _endDate?: Date,
   ) {
     // TODO: Implement efficiency calculations based on appointments, resources, and staff
     return {
@@ -488,7 +488,7 @@ export class DashboardService {
       threshold_value: number;
       threshold_operator?: string;
       notification_method?: string;
-    }
+    },
   ) {
     const supabase = await this.getSupabase();
     const { data: alert, error } = await supabase
@@ -567,7 +567,7 @@ export class DashboardService {
       data_fetch_time: number;
       widget_count: number;
       error_count?: number;
-    }
+    },
   ) {
     const supabase = await this.getSupabase();
     const { data: log, error } = await supabase
@@ -625,7 +625,7 @@ export class DashboardService {
     cacheKey: string,
     data: any,
     expiresInMinutes = 30,
-    clinicId?: string
+    clinicId?: string,
   ) {
     const supabase = await this.getSupabase();
     const expiresAt = new Date();

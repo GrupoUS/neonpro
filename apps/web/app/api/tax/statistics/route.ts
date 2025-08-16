@@ -25,7 +25,7 @@ export async function GET(request: Request) {
     if (!clinicId) {
       return NextResponse.json(
         { error: 'clinic_id is required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -39,7 +39,7 @@ export async function GET(request: Request) {
     if (clinicError || !clinic) {
       return NextResponse.json(
         { error: 'Clinic not found or access denied' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -67,7 +67,7 @@ export async function GET(request: Request) {
     if (taxError) {
       return NextResponse.json(
         { error: 'Failed to fetch tax calculations' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -86,7 +86,7 @@ export async function GET(request: Request) {
     if (nfeError) {
       return NextResponse.json(
         { error: 'Failed to fetch NFe documents' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -96,7 +96,7 @@ export async function GET(request: Request) {
         total: taxCalculations.length,
         total_base_amount: taxCalculations.reduce(
           (sum, calc) => sum + (calc.base_amount || 0),
-          0
+          0,
         ),
         total_tax_amount: taxCalculations.reduce((sum, calc) => {
           const taxes = calc.taxes || {};
@@ -104,13 +104,13 @@ export async function GET(request: Request) {
             sum +
             Object.values(taxes).reduce(
               (taxSum: number, tax: any) => taxSum + (tax.amount || 0),
-              0
+              0,
             )
           );
         }, 0),
         total_final_amount: taxCalculations.reduce(
           (sum, calc) => sum + (calc.total_amount || 0),
-          0
+          0,
         ),
         by_service_type: {},
       },
@@ -121,17 +121,17 @@ export async function GET(request: Request) {
             acc[nfe.status] = (acc[nfe.status] || 0) + 1;
             return acc;
           },
-          {} as Record<string, number>
+          {} as Record<string, number>,
         ),
         total_value: nfeDocuments.reduce((sum, nfe) => {
           const totals = nfe.totals || {};
           return sum + (totals.total || 0);
         }, 0),
         authorized_count: nfeDocuments.filter(
-          (nfe) => nfe.status === 'authorized'
+          (nfe) => nfe.status === 'authorized',
         ).length,
         cancelled_count: nfeDocuments.filter(
-          (nfe) => nfe.status === 'cancelled'
+          (nfe) => nfe.status === 'cancelled',
         ).length,
       },
       compliance: {
@@ -144,7 +144,7 @@ export async function GET(request: Request) {
             : 0,
         average_processing_time: 0, // TODO: Calculate based on actual processing times
         pending_authorizations: nfeDocuments.filter(
-          (nfe) => nfe.status === 'draft'
+          (nfe) => nfe.status === 'draft',
         ).length,
       },
     };
@@ -169,7 +169,7 @@ export async function GET(request: Request) {
       const taxes = calc.taxes || {};
       serviceStats.total_tax += Object.values(taxes).reduce(
         (sum: number, tax: any) => sum + (tax.amount || 0),
-        0
+        0,
       );
     });
 
@@ -187,7 +187,7 @@ export async function GET(request: Request) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

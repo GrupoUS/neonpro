@@ -65,7 +65,7 @@ export class TemplateEngine {
   constructor() {
     this.supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
     );
     this.auditLogger = new AuditLogger();
     this.templateCache = new Map();
@@ -77,7 +77,7 @@ export class TemplateEngine {
    */
   async render(
     templateId: string,
-    context: TemplateRenderContext
+    context: TemplateRenderContext,
   ): Promise<RenderedTemplate> {
     const startTime = Date.now();
 
@@ -101,7 +101,7 @@ export class TemplateEngine {
       // Renderizar conteúdo
       const renderedContent = await this.renderContent(
         template.content,
-        context
+        context,
       );
 
       // Renderizar subject se existir
@@ -113,7 +113,7 @@ export class TemplateEngine {
       // Extrair variáveis utilizadas
       const variablesUsed = this.extractUsedVariables(
         template.content,
-        template.subject
+        template.subject,
       );
 
       const result: RenderedTemplate = {
@@ -188,7 +188,7 @@ export class TemplateEngine {
    * Cria um novo template
    */
   async createTemplate(
-    template: Omit<NotificationTemplate, 'id' | 'created_at' | 'updated_at'>
+    template: Omit<NotificationTemplate, 'id' | 'created_at' | 'updated_at'>,
   ): Promise<NotificationTemplate> {
     try {
       // Validar template
@@ -236,7 +236,7 @@ export class TemplateEngine {
     templateId: string,
     updates: Partial<
       Omit<NotificationTemplate, 'id' | 'created_at' | 'created_by'>
-    >
+    >,
   ): Promise<NotificationTemplate> {
     try {
       // Incrementar versão
@@ -322,7 +322,7 @@ export class TemplateEngine {
       if (filters?.offset) {
         query = query.range(
           filters.offset,
-          filters.offset + (filters.limit || 50) - 1
+          filters.offset + (filters.limit || 50) - 1,
         );
       }
 
@@ -370,7 +370,7 @@ export class TemplateEngine {
    * Valida um template antes de salvar
    */
   async validateTemplate(
-    template: Omit<NotificationTemplate, 'id' | 'created_at' | 'updated_at'>
+    template: Omit<NotificationTemplate, 'id' | 'created_at' | 'updated_at'>,
   ): Promise<void> {
     // Validar campos obrigatórios
     if (!template.name || template.name.trim().length === 0) {
@@ -394,12 +394,12 @@ export class TemplateEngine {
     // Verificar se todas as variáveis estão na lista permitida
     const allowedVariables = this.getAllowedVariables();
     const invalidVariables = variables.filter(
-      (v) => !allowedVariables.includes(v)
+      (v) => !allowedVariables.includes(v),
     );
 
     if (invalidVariables.length > 0) {
       throw new Error(
-        `Variáveis inválidas encontradas: ${invalidVariables.join(', ')}`
+        `Variáveis inválidas encontradas: ${invalidVariables.join(', ')}`,
       );
     }
   }
@@ -409,7 +409,7 @@ export class TemplateEngine {
    */
   async previewTemplate(
     templateContent: string,
-    templateSubject?: string
+    templateSubject?: string,
   ): Promise<RenderedTemplate> {
     const sampleContext: TemplateRenderContext = {
       user: {
@@ -446,20 +446,20 @@ export class TemplateEngine {
     try {
       const renderedContent = await this.renderContent(
         templateContent,
-        sampleContext
+        sampleContext,
       );
       let renderedSubject: string | undefined;
 
       if (templateSubject) {
         renderedSubject = await this.renderContent(
           templateSubject,
-          sampleContext
+          sampleContext,
         );
       }
 
       const variablesUsed = this.extractUsedVariables(
         templateContent,
-        templateSubject
+        templateSubject,
       );
 
       return {
@@ -477,7 +477,7 @@ export class TemplateEngine {
   // Métodos privados
   private async renderContent(
     content: string,
-    context: TemplateRenderContext
+    context: TemplateRenderContext,
   ): Promise<string> {
     let rendered = content;
 
@@ -485,15 +485,15 @@ export class TemplateEngine {
     if (context.user) {
       rendered = rendered.replace(
         /{{\s*user\.name\s*}}/g,
-        context.user.name || ''
+        context.user.name || '',
       );
       rendered = rendered.replace(
         /{{\s*user\.email\s*}}/g,
-        context.user.email || ''
+        context.user.email || '',
       );
       rendered = rendered.replace(
         /{{\s*user\.phone\s*}}/g,
-        context.user.phone || ''
+        context.user.phone || '',
       );
     }
 
@@ -501,23 +501,23 @@ export class TemplateEngine {
     if (context.appointment) {
       rendered = rendered.replace(
         /{{\s*appointment\.date\s*}}/g,
-        context.appointment.date.toLocaleDateString('pt-BR')
+        context.appointment.date.toLocaleDateString('pt-BR'),
       );
       rendered = rendered.replace(
         /{{\s*appointment\.time\s*}}/g,
-        context.appointment.time
+        context.appointment.time,
       );
       rendered = rendered.replace(
         /{{\s*appointment\.service\s*}}/g,
-        context.appointment.service
+        context.appointment.service,
       );
       rendered = rendered.replace(
         /{{\s*appointment\.professional\s*}}/g,
-        context.appointment.professional
+        context.appointment.professional,
       );
       rendered = rendered.replace(
         /{{\s*appointment\.location\s*}}/g,
-        context.appointment.location || ''
+        context.appointment.location || '',
       );
     }
 
@@ -528,13 +528,13 @@ export class TemplateEngine {
         context.payment.amount.toLocaleString('pt-BR', {
           style: 'currency',
           currency: context.payment.currency || 'BRL',
-        })
+        }),
       );
 
       if (context.payment.due_date) {
         rendered = rendered.replace(
           /{{\s*payment\.due_date\s*}}/g,
-          context.payment.due_date.toLocaleDateString('pt-BR')
+          context.payment.due_date.toLocaleDateString('pt-BR'),
         );
       }
     }
@@ -543,23 +543,23 @@ export class TemplateEngine {
     if (context.clinic) {
       rendered = rendered.replace(
         /{{\s*clinic\.name\s*}}/g,
-        context.clinic.name
+        context.clinic.name,
       );
       rendered = rendered.replace(
         /{{\s*clinic\.address\s*}}/g,
-        context.clinic.address
+        context.clinic.address,
       );
       rendered = rendered.replace(
         /{{\s*clinic\.phone\s*}}/g,
-        context.clinic.phone
+        context.clinic.phone,
       );
       rendered = rendered.replace(
         /{{\s*clinic\.email\s*}}/g,
-        context.clinic.email
+        context.clinic.email,
       );
       rendered = rendered.replace(
         /{{\s*clinic\.website\s*}}/g,
-        context.clinic.website || ''
+        context.clinic.website || '',
       );
     }
 
@@ -575,15 +575,15 @@ export class TemplateEngine {
     const now = new Date();
     rendered = rendered.replace(
       /{{\s*current\.date\s*}}/g,
-      now.toLocaleDateString('pt-BR')
+      now.toLocaleDateString('pt-BR'),
     );
     rendered = rendered.replace(
       /{{\s*current\.time\s*}}/g,
-      now.toLocaleTimeString('pt-BR')
+      now.toLocaleTimeString('pt-BR'),
     );
     rendered = rendered.replace(
       /{{\s*current\.year\s*}}/g,
-      now.getFullYear().toString()
+      now.getFullYear().toString(),
     );
 
     return rendered;
@@ -655,7 +655,7 @@ export class TemplateEngine {
   }
 
   private async getTemplateVariables(
-    templateId: string
+    templateId: string,
   ): Promise<TemplateVariable[]> {
     // Verificar cache
     if (this.variableCache.has(templateId)) {
@@ -697,7 +697,7 @@ export class TemplateEngine {
 
   private async validateContext(
     context: TemplateRenderContext,
-    variables: TemplateVariable[]
+    variables: TemplateVariable[],
   ): Promise<void> {
     // Verificar se todas as variáveis obrigatórias estão presentes
     const requiredVariables = variables.filter((v) => v.required);
@@ -713,7 +713,7 @@ export class TemplateEngine {
 
   private getVariableValue(
     context: TemplateRenderContext,
-    variableName: string
+    variableName: string,
   ): any {
     const parts = variableName.split('.');
     let value: any = context;

@@ -155,14 +155,14 @@ export class AIPredictiveAnalyticsEngine {
     patient: Patient,
     treatment: Treatment,
     riskAssessment: RiskAssessment,
-    treatmentHistory: TreatmentHistory[]
+    treatmentHistory: TreatmentHistory[],
   ): Promise<OutcomePrediction> {
     try {
       // Build patient response model
       const responseModel = await this.buildPatientResponseModel(
         patient,
         treatmentHistory,
-        riskAssessment
+        riskAssessment,
       );
 
       // Extract prediction features
@@ -170,39 +170,39 @@ export class AIPredictiveAnalyticsEngine {
         patient,
         treatment,
         riskAssessment,
-        responseModel
+        responseModel,
       );
 
       // Generate core predictions
       const predictedOutcome = await this.generateCorePredictions(
         features,
         treatment,
-        responseModel
+        responseModel,
       );
 
       // Identify contributing factors
       const contributingFactors = this.identifyContributingFactors(
         features,
-        predictedOutcome
+        predictedOutcome,
       );
 
       // Generate alternative scenarios
       const alternativeScenarios = this.generateAlternativeScenarios(
         features,
-        predictedOutcome
+        predictedOutcome,
       );
 
       // Create monitoring recommendations
       const monitoringRecommendations = this.generateMonitoringRecommendations(
         predictedOutcome,
-        riskAssessment
+        riskAssessment,
       );
 
       // Calculate overall confidence
       const confidenceScore = this.calculatePredictionConfidence(
         features,
         responseModel,
-        treatment
+        treatment,
       );
 
       return {
@@ -227,7 +227,7 @@ export class AIPredictiveAnalyticsEngine {
   async predictPatientSatisfaction(
     patient: Patient,
     treatment: Treatment,
-    riskAssessment: RiskAssessment
+    riskAssessment: RiskAssessment,
   ): Promise<number> {
     const baselineSatisfaction = this.getBaselineSatisfaction(treatment.type);
 
@@ -273,36 +273,36 @@ export class AIPredictiveAnalyticsEngine {
   async predictRecoveryTimeline(
     patient: Patient,
     treatment: Treatment,
-    riskAssessment: RiskAssessment
+    riskAssessment: RiskAssessment,
   ): Promise<RecoveryTimeline> {
     const baselineTimeline = this.getBaselineRecoveryTimeline(treatment.type);
 
     // Adjust timeline based on patient factors
     const adjustmentFactor = this.calculateTimelineAdjustmentFactor(
       patient,
-      riskAssessment
+      riskAssessment,
     );
 
     return {
       immediate_recovery: this.adjustTimeframe(
         baselineTimeline.immediate_recovery,
-        adjustmentFactor
+        adjustmentFactor,
       ),
       short_term_recovery: this.adjustTimeframe(
         baselineTimeline.short_term_recovery,
-        adjustmentFactor
+        adjustmentFactor,
       ),
       medium_term_recovery: this.adjustTimeframe(
         baselineTimeline.medium_term_recovery,
-        adjustmentFactor
+        adjustmentFactor,
       ),
       long_term_recovery: this.adjustTimeframe(
         baselineTimeline.long_term_recovery,
-        adjustmentFactor
+        adjustmentFactor,
       ),
       full_result_timeline: this.adjustTimeframe(
         baselineTimeline.full_result_timeline,
-        adjustmentFactor
+        adjustmentFactor,
       ),
     };
   }
@@ -313,20 +313,20 @@ export class AIPredictiveAnalyticsEngine {
   async assessComplicationRisks(
     patient: Patient,
     treatment: Treatment,
-    riskAssessment: RiskAssessment
+    riskAssessment: RiskAssessment,
   ): Promise<ComplicationPrediction[]> {
     const complications: ComplicationPrediction[] = [];
 
     // Common complications based on treatment type
     const treatmentComplications = this.getTreatmentSpecificComplications(
-      treatment.type
+      treatment.type,
     );
 
     for (const complication of treatmentComplications) {
       const probability = this.calculateComplicationProbability(
         complication,
         patient,
-        riskAssessment
+        riskAssessment,
       );
 
       if (probability > 0.05) {
@@ -351,25 +351,25 @@ export class AIPredictiveAnalyticsEngine {
   async optimizeTreatmentTimeline(
     patient: Patient,
     treatments: Treatment[],
-    riskAssessment: RiskAssessment
+    riskAssessment: RiskAssessment,
   ): Promise<any> {
     const responseModel = await this.buildPatientResponseModel(
       patient,
       [],
-      riskAssessment
+      riskAssessment,
     );
 
     // Optimize spacing between treatments
     const optimalSpacing = this.calculateOptimalTreatmentSpacing(
       treatments,
-      responseModel
+      responseModel,
     );
 
     // Optimize treatment sequence
     const optimalSequence = this.optimizeTreatmentSequence(
       treatments,
       patient,
-      responseModel
+      responseModel,
     );
 
     return {
@@ -377,7 +377,7 @@ export class AIPredictiveAnalyticsEngine {
       optimal_sequence: optimalSequence,
       total_timeline: this.calculateTotalTimeline(
         optimalSpacing,
-        optimalSequence
+        optimalSequence,
       ),
       rationale: this.generateTimelineRationale(responseModel, treatments),
     };
@@ -389,14 +389,14 @@ export class AIPredictiveAnalyticsEngine {
   async predictTreatmentDurability(
     patient: Patient,
     treatment: Treatment,
-    riskAssessment: RiskAssessment
+    riskAssessment: RiskAssessment,
   ): Promise<LongTermPrognosis> {
     const baseDurability = this.getBaseTreatmentDurability(treatment.type);
 
     // Adjust based on patient factors
     const durabilityFactor = this.calculateDurabilityFactor(
       patient,
-      riskAssessment
+      riskAssessment,
     );
     const adjustedDurability = Math.round(baseDurability * durabilityFactor);
 
@@ -404,15 +404,15 @@ export class AIPredictiveAnalyticsEngine {
       durability_months: adjustedDurability,
       maintenance_requirements: this.getMaintenanceRequirements(
         treatment.type,
-        patient
+        patient,
       ),
       potential_future_treatments: this.getFutureTreatmentOptions(
         treatment.type,
-        patient
+        patient,
       ),
       aging_considerations: this.getAgingConsiderations(
         treatment.type,
-        patient
+        patient,
       ),
     };
   }
@@ -422,7 +422,7 @@ export class AIPredictiveAnalyticsEngine {
   private async buildPatientResponseModel(
     patient: Patient,
     treatmentHistory: TreatmentHistory[],
-    riskAssessment: RiskAssessment
+    riskAssessment: RiskAssessment,
   ): Promise<PatientResponseModel> {
     // Check if model already exists
     const existingModel = this.patientResponseModels.get(patient.id);
@@ -434,12 +434,12 @@ export class AIPredictiveAnalyticsEngine {
     const responseProfile = this.analyzeResponseProfile(
       patient,
       treatmentHistory,
-      riskAssessment
+      riskAssessment,
     );
     const historicalPatterns = this.extractHistoricalPatterns(treatmentHistory);
     const predictiveIndicators = this.identifyPredictiveIndicators(
       patient,
-      riskAssessment
+      riskAssessment,
     );
     const personalizationFactors = this.extractPersonalizationFactors(patient);
 
@@ -460,7 +460,7 @@ export class AIPredictiveAnalyticsEngine {
   private analyzeResponseProfile(
     patient: Patient,
     treatmentHistory: TreatmentHistory[],
-    riskAssessment: RiskAssessment
+    riskAssessment: RiskAssessment,
   ): ResponseProfile {
     // Analyze healing rate
     const healingRate = this.analyzeHealingRate(patient, treatmentHistory);
@@ -479,7 +479,7 @@ export class AIPredictiveAnalyticsEngine {
     const complicationSusceptibility = this.analyzeComplicationSusceptibility(
       patient,
       treatmentHistory,
-      riskAssessment
+      riskAssessment,
     );
 
     return {
@@ -495,7 +495,7 @@ export class AIPredictiveAnalyticsEngine {
     patient: Patient,
     treatment: Treatment,
     riskAssessment: RiskAssessment,
-    responseModel: PatientResponseModel
+    responseModel: PatientResponseModel,
   ): any {
     return {
       // Patient demographics
@@ -526,10 +526,10 @@ export class AIPredictiveAnalyticsEngine {
 
       // Historical patterns
       previous_satisfaction_avg: this.calculateAverageSatisfaction(
-        responseModel.historical_patterns
+        responseModel.historical_patterns,
       ),
       previous_complication_rate: this.calculateComplicationRate(
-        responseModel.historical_patterns
+        responseModel.historical_patterns,
       ),
     };
   }
@@ -537,43 +537,43 @@ export class AIPredictiveAnalyticsEngine {
   private async generateCorePredictions(
     features: any,
     treatment: Treatment,
-    responseModel: PatientResponseModel
+    responseModel: PatientResponseModel,
   ): Promise<PredictedOutcome> {
     // Generate success probability
     const successProbability = this.predictSuccessProbability(
       features,
-      treatment
+      treatment,
     );
 
     // Generate satisfaction score
     const satisfactionScore = this.predictSatisfactionScore(
       features,
-      responseModel
+      responseModel,
     );
 
     // Generate recovery timeline
     const recoveryTimeline = this.predictRecoveryTimelineFromFeatures(
       features,
-      treatment
+      treatment,
     );
 
     // Generate complication predictions
     const potentialComplications = this.predictComplications(
       features,
-      treatment
+      treatment,
     );
 
     // Generate expected results
     const expectedResults = this.generateExpectedResults(
       features,
       treatment,
-      successProbability
+      successProbability,
     );
 
     // Generate long-term prognosis
     const longTermPrognosis = this.generateLongTermPrognosis(
       features,
-      treatment
+      treatment,
     );
 
     return {
@@ -649,7 +649,7 @@ export class AIPredictiveAnalyticsEngine {
 
   private calculateTimelineAdjustmentFactor(
     patient: Patient,
-    riskAssessment: RiskAssessment
+    riskAssessment: RiskAssessment,
   ): number {
     let factor = 1.0;
 
@@ -685,7 +685,7 @@ export class AIPredictiveAnalyticsEngine {
     // Simple timeframe adjustment logic
     if (adjustmentFactor > 1.2) {
       return timeframe.replace(/\d+/g, (match) =>
-        Math.ceil(Number.parseInt(match, 10) * adjustmentFactor).toString()
+        Math.ceil(Number.parseInt(match, 10) * adjustmentFactor).toString(),
       );
     }
     return timeframe;
@@ -701,7 +701,7 @@ export class AIPredictiveAnalyticsEngine {
   // Additional helper methods would be implemented here...
   private analyzeHealingRate(
     _patient: Patient,
-    _history: TreatmentHistory[]
+    _history: TreatmentHistory[],
   ): 'slow' | 'average' | 'fast' {
     // Analyze healing patterns from history
     return 'average';
@@ -709,21 +709,21 @@ export class AIPredictiveAnalyticsEngine {
 
   private analyzePainTolerance(
     _patient: Patient,
-    _history: TreatmentHistory[]
+    _history: TreatmentHistory[],
   ): 'low' | 'moderate' | 'high' {
     // Analyze pain tolerance from history
     return 'moderate';
   }
 
   private analyzeComplianceTendency(
-    _history: TreatmentHistory[]
+    _history: TreatmentHistory[],
   ): 'poor' | 'average' | 'excellent' {
     // Analyze compliance patterns
     return 'average';
   }
 
   private analyzeSatisfactionTendency(
-    _history: TreatmentHistory[]
+    _history: TreatmentHistory[],
   ): 'critical' | 'moderate' | 'easily_satisfied' {
     // Analyze satisfaction patterns
     return 'moderate';
@@ -732,7 +732,7 @@ export class AIPredictiveAnalyticsEngine {
   private analyzeComplicationSusceptibility(
     _patient: Patient,
     _history: TreatmentHistory[],
-    riskAssessment: RiskAssessment
+    riskAssessment: RiskAssessment,
   ): 'low' | 'moderate' | 'high' {
     // Analyze complication susceptibility
     return riskAssessment.risk_level === 'high' ||
@@ -742,7 +742,7 @@ export class AIPredictiveAnalyticsEngine {
   }
 
   private extractHistoricalPatterns(
-    _history: TreatmentHistory[]
+    _history: TreatmentHistory[],
   ): HistoricalPattern[] {
     // Extract patterns from treatment history
     return [];
@@ -750,14 +750,14 @@ export class AIPredictiveAnalyticsEngine {
 
   private identifyPredictiveIndicators(
     _patient: Patient,
-    _riskAssessment: RiskAssessment
+    _riskAssessment: RiskAssessment,
   ): PredictiveIndicator[] {
     // Identify predictive indicators
     return [];
   }
 
   private extractPersonalizationFactors(
-    _patient: Patient
+    _patient: Patient,
   ): PersonalizationFactor[] {
     // Extract personalization factors
     return [];
@@ -780,7 +780,7 @@ export class AIPredictiveAnalyticsEngine {
 
   private predictSuccessProbability(
     _features: any,
-    _treatment: Treatment
+    _treatment: Treatment,
   ): number {
     // Predict success probability using ML model
     return 0.85;
@@ -788,7 +788,7 @@ export class AIPredictiveAnalyticsEngine {
 
   private predictSatisfactionScore(
     _features: any,
-    _responseModel: PatientResponseModel
+    _responseModel: PatientResponseModel,
   ): number {
     // Predict satisfaction score
     return 8.2;
@@ -796,7 +796,7 @@ export class AIPredictiveAnalyticsEngine {
 
   private predictRecoveryTimelineFromFeatures(
     _features: any,
-    treatment: Treatment
+    treatment: Treatment,
   ): RecoveryTimeline {
     // Predict recovery timeline from features
     return this.getBaselineRecoveryTimeline(treatment.type);
@@ -804,7 +804,7 @@ export class AIPredictiveAnalyticsEngine {
 
   private predictComplications(
     _features: any,
-    _treatment: Treatment
+    _treatment: Treatment,
   ): ComplicationPrediction[] {
     // Predict potential complications
     return [];
@@ -813,7 +813,7 @@ export class AIPredictiveAnalyticsEngine {
   private generateExpectedResults(
     _features: any,
     _treatment: Treatment,
-    successProbability: number
+    successProbability: number,
   ): ExpectedResult[] {
     // Generate expected results
     return [
@@ -829,7 +829,7 @@ export class AIPredictiveAnalyticsEngine {
 
   private generateLongTermPrognosis(
     _features: any,
-    _treatment: Treatment
+    _treatment: Treatment,
   ): LongTermPrognosis {
     // Generate long-term prognosis
     return {
@@ -842,7 +842,7 @@ export class AIPredictiveAnalyticsEngine {
 
   private identifyContributingFactors(
     _features: any,
-    _outcome: PredictedOutcome
+    _outcome: PredictedOutcome,
   ): PredictionFactor[] {
     // Identify factors contributing to prediction
     return [];
@@ -850,7 +850,7 @@ export class AIPredictiveAnalyticsEngine {
 
   private generateAlternativeScenarios(
     _features: any,
-    _outcome: PredictedOutcome
+    _outcome: PredictedOutcome,
   ): AlternativeScenario[] {
     // Generate alternative scenarios
     return [];
@@ -858,7 +858,7 @@ export class AIPredictiveAnalyticsEngine {
 
   private generateMonitoringRecommendations(
     _outcome: PredictedOutcome,
-    riskAssessment: RiskAssessment
+    riskAssessment: RiskAssessment,
   ): string[] {
     // Generate monitoring recommendations
     const recommendations = ['Regular follow-up appointments'];
@@ -877,7 +877,7 @@ export class AIPredictiveAnalyticsEngine {
   private calculatePredictionConfidence(
     _features: any,
     _responseModel: PatientResponseModel,
-    _treatment: Treatment
+    _treatment: Treatment,
   ): number {
     // Calculate prediction confidence
     return 0.85;
@@ -891,7 +891,7 @@ export class AIPredictiveAnalyticsEngine {
   private calculateComplicationProbability(
     _complication: any,
     _patient: Patient,
-    _riskAssessment: RiskAssessment
+    _riskAssessment: RiskAssessment,
   ): number {
     // Calculate complication probability
     return 0.05;
@@ -899,7 +899,7 @@ export class AIPredictiveAnalyticsEngine {
 
   private assessComplicationSeverity(
     _complication: any,
-    _patient: Patient
+    _patient: Patient,
   ): 'mild' | 'moderate' | 'severe' {
     // Assess complication severity
     return 'mild';
@@ -907,7 +907,7 @@ export class AIPredictiveAnalyticsEngine {
 
   private calculateOptimalTreatmentSpacing(
     _treatments: Treatment[],
-    _responseModel: PatientResponseModel
+    _responseModel: PatientResponseModel,
   ): any {
     // Calculate optimal spacing between treatments
     return {};
@@ -916,7 +916,7 @@ export class AIPredictiveAnalyticsEngine {
   private optimizeTreatmentSequence(
     _treatments: Treatment[],
     _patient: Patient,
-    _responseModel: PatientResponseModel
+    _responseModel: PatientResponseModel,
   ): any {
     // Optimize treatment sequence
     return {};
@@ -929,7 +929,7 @@ export class AIPredictiveAnalyticsEngine {
 
   private generateTimelineRationale(
     _responseModel: PatientResponseModel,
-    _treatments: Treatment[]
+    _treatments: Treatment[],
   ): string {
     // Generate rationale for timeline optimization
     return 'Timeline optimized based on patient response profile and treatment requirements';
@@ -948,7 +948,7 @@ export class AIPredictiveAnalyticsEngine {
 
   private calculateDurabilityFactor(
     patient: Patient,
-    riskAssessment: RiskAssessment
+    riskAssessment: RiskAssessment,
   ): number {
     // Calculate durability adjustment factor
     let factor = 1.0;
@@ -971,7 +971,7 @@ export class AIPredictiveAnalyticsEngine {
 
   private getMaintenanceRequirements(
     _treatmentType: string,
-    _patient: Patient
+    _patient: Patient,
   ): string[] {
     // Get maintenance requirements
     return ['Regular follow-up appointments', 'Proper skincare routine'];
@@ -979,7 +979,7 @@ export class AIPredictiveAnalyticsEngine {
 
   private getFutureTreatmentOptions(
     _treatmentType: string,
-    _patient: Patient
+    _patient: Patient,
   ): string[] {
     // Get future treatment options
     return ['Touch-up treatments', 'Complementary procedures'];
@@ -987,7 +987,7 @@ export class AIPredictiveAnalyticsEngine {
 
   private getAgingConsiderations(
     _treatmentType: string,
-    _patient: Patient
+    _patient: Patient,
   ): string[] {
     // Get aging considerations
     return [

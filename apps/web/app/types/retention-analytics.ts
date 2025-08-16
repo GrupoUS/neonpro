@@ -525,7 +525,7 @@ export const ChurnPredictionSchema = z.object({
       current_value: z.number(),
       threshold_value: z.number(),
       description: z.string(),
-    })
+    }),
   ),
 
   feature_scores: z.record(z.string(), z.number()),
@@ -547,7 +547,7 @@ export const ChurnPredictionSchema = z.object({
       success_rate: z.number().min(0).max(1),
       cost: z.number().min(0),
       created_at: z.string(),
-    })
+    }),
   ),
 
   intervention_priority: z.nativeEnum(InterventionPriority),
@@ -575,7 +575,7 @@ export const RetentionStrategySchema = z.object({
       operator: z.enum(['gt', 'lt', 'eq', 'gte', 'lte', 'between']),
       value: z.union([z.number(), z.string()]),
       secondary_value: z.number().optional(),
-    })
+    }),
   ),
 
   actions: z.array(z.any()), // Reference to RetentionAction schema

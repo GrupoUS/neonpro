@@ -193,13 +193,13 @@ class MLRiskAssessmentEngine {
       // Step 5: Generate recommendations
       const recommendations = await this.generateRecommendations(
         input,
-        categoryRisks
+        categoryRisks,
       );
 
       // Step 6: Generate predictive insights
       const predictiveInsights = await this.generatePredictiveInsights(
         input,
-        overallRisk
+        overallRisk,
       );
 
       // Step 7: Add compliance notes
@@ -312,8 +312,8 @@ class MLRiskAssessmentEngine {
     const hasCardiacHistory = input.patientData.medicalHistory.some(
       (condition) =>
         cardiacConditions.some((cardiac) =>
-          condition.toLowerCase().includes(cardiac)
-        )
+          condition.toLowerCase().includes(cardiac),
+        ),
     );
     if (hasCardiacHistory) {
       score += 25;
@@ -361,8 +361,8 @@ class MLRiskAssessmentEngine {
     // Drug allergies specifically
     const drugAllergies = input.patientData.allergies.filter((allergy) =>
       ['penicillin', 'lidocaine', 'latex', 'iodine'].some((drug) =>
-        allergy.toLowerCase().includes(drug)
-      )
+        allergy.toLowerCase().includes(drug),
+      ),
     );
     if (drugAllergies.length > 0) {
       score += 20;
@@ -372,7 +372,7 @@ class MLRiskAssessmentEngine {
 
     // Family history of allergies
     const hasAllergyFamilyHistory = input.patientData.familyHistory.some(
-      (condition) => condition.toLowerCase().includes('allergy')
+      (condition) => condition.toLowerCase().includes('allergy'),
     );
     if (hasAllergyFamilyHistory) {
       score += 5;
@@ -416,8 +416,8 @@ class MLRiskAssessmentEngine {
     const immuneConditions = ['diabetes', 'hiv', 'cancer', 'immunosuppression'];
     const hasImmuneIssues = input.patientData.medicalHistory.some((condition) =>
       immuneConditions.some((immune) =>
-        condition.toLowerCase().includes(immune)
-      )
+        condition.toLowerCase().includes(immune),
+      ),
     );
     if (hasImmuneIssues) {
       score += 20;
@@ -458,7 +458,7 @@ class MLRiskAssessmentEngine {
     // Medications affecting bleeding
     const bleedingMeds = ['warfarin', 'aspirin', 'clopidogrel', 'heparin'];
     const hasBleedingMeds = input.patientData.medications.some((med) =>
-      bleedingMeds.some((bleeding) => med.toLowerCase().includes(bleeding))
+      bleedingMeds.some((bleeding) => med.toLowerCase().includes(bleeding)),
     );
     if (hasBleedingMeds) {
       score += 25;
@@ -476,8 +476,8 @@ class MLRiskAssessmentEngine {
     const hasBleedingConditions = input.patientData.medicalHistory.some(
       (condition) =>
         bleedingConditions.some((bleeding) =>
-          condition.toLowerCase().includes(bleeding)
-        )
+          condition.toLowerCase().includes(bleeding),
+        ),
     );
     if (hasBleedingConditions) {
       score += 30;
@@ -541,8 +541,8 @@ class MLRiskAssessmentEngine {
     const hasRespiratoryIssues = input.patientData.medicalHistory.some(
       (condition) =>
         respiratoryConditions.some((resp) =>
-          condition.toLowerCase().includes(resp)
-        )
+          condition.toLowerCase().includes(resp),
+        ),
     );
     if (hasRespiratoryIssues) {
       score += 15;
@@ -552,7 +552,7 @@ class MLRiskAssessmentEngine {
 
     // Previous anesthesia complications
     const hasAnesthesiaComplications = input.patientData.complications.some(
-      (comp) => comp.toLowerCase().includes('anesthesia')
+      (comp) => comp.toLowerCase().includes('anesthesia'),
     );
     if (hasAnesthesiaComplications) {
       score += 25;
@@ -588,7 +588,7 @@ class MLRiskAssessmentEngine {
         const treatmentRisk = treatmentRisks[0];
         score += treatmentRisk.base_risk_score || 10;
         factors.push(
-          `Treatment-specific base risk: ${treatmentRisk.base_risk_score}`
+          `Treatment-specific base risk: ${treatmentRisk.base_risk_score}`,
         );
 
         // Add contraindications
@@ -597,8 +597,8 @@ class MLRiskAssessmentEngine {
           const hasContraindications = contraindications.some(
             (contra: string) =>
               input.patientData.medicalHistory.some((condition) =>
-                condition.toLowerCase().includes(contra.toLowerCase())
-              )
+                condition.toLowerCase().includes(contra.toLowerCase()),
+              ),
           );
           if (hasContraindications) {
             score += 40;
@@ -617,7 +617,7 @@ class MLRiskAssessmentEngine {
 
       if (previousOutcomes && previousOutcomes.length > 0) {
         const complications = previousOutcomes.filter(
-          (outcome) => outcome.complications
+          (outcome) => outcome.complications,
         );
         if (complications.length > 0) {
           score += 15;
@@ -657,8 +657,8 @@ class MLRiskAssessmentEngine {
     const hasMentalHealthIssues = input.patientData.medicalHistory.some(
       (condition) =>
         mentalHealthConditions.some((mental) =>
-          condition.toLowerCase().includes(mental)
-        )
+          condition.toLowerCase().includes(mental),
+        ),
     );
     if (hasMentalHealthIssues) {
       score += 15;
@@ -670,7 +670,7 @@ class MLRiskAssessmentEngine {
     const hasTrauma = input.patientData.complications.some(
       (comp) =>
         comp.toLowerCase().includes('trauma') ||
-        comp.toLowerCase().includes('anxiety')
+        comp.toLowerCase().includes('anxiety'),
     );
     if (hasTrauma) {
       score += 20;
@@ -704,7 +704,7 @@ class MLRiskAssessmentEngine {
       score: number;
       factors: string[];
       recommendations: string[];
-    }>
+    }>,
   ) {
     // Weighted average of category risks
     const weights: Record<RiskCategory, number> = {
@@ -765,7 +765,7 @@ class MLRiskAssessmentEngine {
       severity: RiskSeverity;
       score: number;
       factors: string[];
-    }>
+    }>,
   ) {
     const alerts = [];
 
@@ -794,11 +794,11 @@ class MLRiskAssessmentEngine {
     const hasContraindications = input.treatmentData.contraindications.some(
       (contra) =>
         input.patientData.medicalHistory.some((condition) =>
-          condition.toLowerCase().includes(contra.toLowerCase())
+          condition.toLowerCase().includes(contra.toLowerCase()),
         ) ||
         input.patientData.allergies.some((allergy) =>
-          allergy.toLowerCase().includes(contra.toLowerCase())
-        )
+          allergy.toLowerCase().includes(contra.toLowerCase()),
+        ),
     );
 
     if (hasContraindications) {
@@ -823,7 +823,7 @@ class MLRiskAssessmentEngine {
       category: RiskCategory;
       severity: RiskSeverity;
       recommendations: string[];
-    }>
+    }>,
   ) {
     const recommendations = {
       preOperative: [] as string[],
@@ -846,10 +846,10 @@ class MLRiskAssessmentEngine {
       overallRisk.severity === 'critical'
     ) {
       recommendations.preOperative.push(
-        'Comprehensive pre-operative assessment required'
+        'Comprehensive pre-operative assessment required',
       );
       recommendations.intraOperative.push(
-        'Enhanced monitoring during procedure'
+        'Enhanced monitoring during procedure',
       );
       recommendations.postOperative.push('Extended observation period');
       recommendations.monitoring.push('Continuous vital signs monitoring');
@@ -868,7 +868,7 @@ class MLRiskAssessmentEngine {
    */
   private async generatePredictiveInsights(
     input: RiskAssessmentInput,
-    overallRisk: { severity: RiskSeverity; score: number }
+    overallRisk: { severity: RiskSeverity; score: number },
   ) {
     // Calculate complication probability based on risk score
     const complicationProbability = Math.min(overallRisk.score / 100, 0.95);
@@ -935,7 +935,7 @@ class MLRiskAssessmentEngine {
    */
   private generateComplianceNotes(
     _input: RiskAssessmentInput,
-    overallRisk: { severity: RiskSeverity; score: number }
+    overallRisk: { severity: RiskSeverity; score: number },
   ) {
     const cfmGuidelines = [
       'Patient autonomy and informed consent required',
@@ -961,7 +961,7 @@ class MLRiskAssessmentEngine {
       cfmGuidelines.push('Enhanced informed consent for high-risk procedures');
       anvisaRequirements.push('Additional safety protocols activation');
       ethicalConsiderations.push(
-        'Ethics committee consultation may be warranted'
+        'Ethics committee consultation may be warranted',
       );
     }
 
@@ -1003,7 +1003,7 @@ class MLRiskAssessmentEngine {
    * Calculate confidence score
    */
   private calculateConfidence(
-    categoryRisks: Array<{ category: RiskCategory; score: number }>
+    categoryRisks: Array<{ category: RiskCategory; score: number }>,
   ): number {
     // Base confidence on model accuracy and data completeness
     let confidence = this.modelAccuracy * 100;
@@ -1037,7 +1037,7 @@ class MLRiskAssessmentEngine {
    */
   private async storeAssessment(
     input: RiskAssessmentInput,
-    result: RiskAssessmentResult
+    result: RiskAssessmentResult,
   ): Promise<void> {
     try {
       await this.supabase.from('risk_assessments').insert({

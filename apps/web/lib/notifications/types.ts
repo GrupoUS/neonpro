@@ -577,7 +577,7 @@ export type NotificationData = Record<string, any>;
 export type TemplateVariables = Record<string, any>;
 export type NotificationCallback = (
   notification: DeliveryNotification,
-  result: DeliveryResult
+  result: DeliveryResult,
 ) => void;
 
 /**

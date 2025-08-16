@@ -25,7 +25,7 @@ export async function GET(request: NextRequest) {
     if (!patientId) {
       return NextResponse.json(
         { error: 'Patient ID is required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -56,7 +56,7 @@ export async function GET(request: NextRequest) {
 
         const timeline = await medicalTimelineService.getPatientTimeline(
           patientId,
-          filter
+          filter,
         );
         return NextResponse.json({ timeline }, { status: 200 });
       }
@@ -76,7 +76,7 @@ export async function GET(request: NextRequest) {
             | 'year') || 'month';
         const summary = await medicalTimelineService.getTimelineSummary(
           patientId,
-          period
+          period,
         );
         return NextResponse.json({ summary }, { status: 200 });
       }
@@ -87,7 +87,7 @@ export async function GET(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -123,7 +123,7 @@ export async function POST(request: NextRequest) {
         if (!(patientId && eventType && title && date)) {
           return NextResponse.json(
             { error: 'Missing required fields' },
-            { status: 400 }
+            { status: 400 },
           );
         }
 
@@ -148,7 +148,7 @@ export async function POST(request: NextRequest) {
         if (!(eventId && note && author)) {
           return NextResponse.json(
             { error: 'Missing required fields' },
-            { status: 400 }
+            { status: 400 },
           );
         }
 
@@ -160,7 +160,7 @@ export async function POST(request: NextRequest) {
             author,
             type: type || 'observation',
             visibility: visibility || 'professional',
-          }
+          },
         );
 
         return NextResponse.json({ note: progressNote }, { status: 201 });
@@ -172,7 +172,7 @@ export async function POST(request: NextRequest) {
         if (!(photoEventId && comparisonType)) {
           return NextResponse.json(
             { error: 'Missing required fields' },
-            { status: 400 }
+            { status: 400 },
           );
         }
 
@@ -185,7 +185,7 @@ export async function POST(request: NextRequest) {
 
         return NextResponse.json(
           { photos: beforeAfterPhotos },
-          { status: 201 }
+          { status: 201 },
         );
       }
 
@@ -195,7 +195,7 @@ export async function POST(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -221,7 +221,7 @@ export async function PUT(request: NextRequest) {
         if (!eventId) {
           return NextResponse.json(
             { error: 'Event ID is required' },
-            { status: 400 }
+            { status: 400 },
           );
         }
 
@@ -232,7 +232,7 @@ export async function PUT(request: NextRequest) {
 
         const updatedEvent = await medicalTimelineService.updateTimelineEvent(
           eventId,
-          updates
+          updates,
         );
         return NextResponse.json({ event: updatedEvent }, { status: 200 });
       }
@@ -243,7 +243,7 @@ export async function PUT(request: NextRequest) {
         if (!milestoneId || progress === undefined) {
           return NextResponse.json(
             { error: 'Milestone ID and progress are required' },
-            { status: 400 }
+            { status: 400 },
           );
         }
 
@@ -251,12 +251,12 @@ export async function PUT(request: NextRequest) {
           await medicalTimelineService.updateMilestoneProgress(
             milestoneId,
             progress,
-            notes
+            notes,
           );
 
         return NextResponse.json(
           { milestone: updatedMilestone },
-          { status: 200 }
+          { status: 200 },
         );
       }
 
@@ -266,7 +266,7 @@ export async function PUT(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

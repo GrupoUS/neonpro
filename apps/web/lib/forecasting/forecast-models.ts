@@ -136,7 +136,7 @@ export class ForecastModelManager {
   async trainModel(
     clinicId: string,
     config: ModelTrainingConfig,
-    serviceId?: string
+    serviceId?: string,
   ): Promise<string> {
     // Create training job
     const job: ModelTrainingJob = {
@@ -204,7 +204,7 @@ export class ForecastModelManager {
   async compareModels(
     championModelId: string,
     challengerModelId: string,
-    testPeriodDays = 30
+    testPeriodDays = 30,
   ): Promise<ModelComparisonResult> {
     // Load models
     const [championModel, challengerModel] = await Promise.all([
@@ -295,7 +295,7 @@ export class ForecastModelManager {
 
     if (model.accuracy_score < this.ACCURACY_THRESHOLD) {
       throw new Error(
-        `Model accuracy ${model.accuracy_score} below threshold ${this.ACCURACY_THRESHOLD}`
+        `Model accuracy ${model.accuracy_score} below threshold ${this.ACCURACY_THRESHOLD}`,
       );
     }
 
@@ -303,7 +303,7 @@ export class ForecastModelManager {
     await this.deactivateCurrentModels(
       clinicId,
       model.model_type,
-      model.service_type
+      model.service_type,
     );
 
     // Activate new model
@@ -324,7 +324,7 @@ export class ForecastModelManager {
    */
   async getModelPerformanceHistory(
     modelId: string,
-    days = 30
+    days = 30,
   ): Promise<ModelPerformanceMetrics[]> {
     try {
       const startDate = new Date();
@@ -354,7 +354,7 @@ export class ForecastModelManager {
     clinicId: string,
     modelType: ForecastModel['model_type'],
     serviceId?: string,
-    trials = 50
+    trials = 50,
   ): Promise<ModelTrainingConfig> {
     // Get hyperparameter space for model type
     const hyperparamSpace = this.getHyperparameterSpace(modelType);
@@ -388,7 +388,7 @@ export class ForecastModelManager {
       clinicId,
       modelType,
       bestConfig,
-      bestScore
+      bestScore,
     );
 
     return bestConfig;
@@ -540,7 +540,7 @@ export class ForecastModelManager {
    * Create trained model from job
    */
   private async createTrainedModel(
-    job: ModelTrainingJob
+    job: ModelTrainingJob,
   ): Promise<ForecastModel> {
     const model: ForecastModel = {
       id: crypto.randomUUID(),
@@ -653,7 +653,7 @@ export class ForecastModelManager {
   private async evaluateModelPerformance(
     model: ForecastModel,
     _startDate: Date,
-    _endDate: Date
+    _endDate: Date,
   ): Promise<ModelPerformanceMetrics> {
     // Simplified evaluation - in production would use actual ML evaluation
     return {
@@ -684,7 +684,7 @@ export class ForecastModelManager {
    * Additional helper methods would be implemented here...
    */
   private async storeComparisonResult(
-    _result: ModelComparisonResult
+    _result: ModelComparisonResult,
   ): Promise<void> {
     // Implementation would store comparison results
   }
@@ -692,20 +692,20 @@ export class ForecastModelManager {
   private async deactivateCurrentModels(
     _clinicId: string,
     _modelType: ForecastModel['model_type'],
-    _serviceType: string | null
+    _serviceType: string | null,
   ): Promise<void> {
     // Implementation would deactivate current models
   }
 
   private async logModelDeployment(
     _modelId: string,
-    _clinicId: string
+    _clinicId: string,
   ): Promise<void> {
     // Implementation would log deployment
   }
 
   private getHyperparameterSpace(
-    modelType: ForecastModel['model_type']
+    modelType: ForecastModel['model_type'],
   ): HyperparameterSpace {
     // Implementation would return hyperparameter space
     return {
@@ -716,7 +716,7 @@ export class ForecastModelManager {
 
   private async loadOptimizationData(
     _clinicId: string,
-    _serviceId?: string
+    _serviceId?: string,
   ): Promise<any[]> {
     // Implementation would load data for optimization
     return [];
@@ -724,7 +724,7 @@ export class ForecastModelManager {
 
   private generateRandomConfig(
     modelType: ForecastModel['model_type'],
-    _hyperparamSpace: HyperparameterSpace
+    _hyperparamSpace: HyperparameterSpace,
   ): ModelTrainingConfig {
     // Implementation would generate random configuration
     return {
@@ -755,7 +755,7 @@ export class ForecastModelManager {
 
   private async evaluateConfigurationCV(
     _config: ModelTrainingConfig,
-    _data: any[]
+    _data: any[],
   ): Promise<number> {
     // Implementation would evaluate configuration with cross-validation
     return 0.85 + Math.random() * 0.1;
@@ -765,7 +765,7 @@ export class ForecastModelManager {
     _clinicId: string,
     _modelType: ForecastModel['model_type'],
     _config: ModelTrainingConfig,
-    _score: number
+    _score: number,
   ): Promise<void> {
     // Implementation would store optimization results
   }
@@ -798,7 +798,7 @@ export class ForecastModelManager {
 
   private async evaluateTrainedModel(
     model: ForecastModel,
-    _job: ModelTrainingJob
+    _job: ModelTrainingJob,
   ): Promise<ModelPerformanceMetrics> {
     // Implementation would evaluate the trained model
     return {

@@ -163,7 +163,7 @@ class ComplianceRulesEngine {
   async validateCompliance(
     recommendation: SchedulingRecommendation,
     criteria: SchedulingCriteria,
-    context: any = {}
+    context: any = {},
   ): Promise<ComplianceValidationResult> {
     try {
       const violations: RuleViolation[] = [];
@@ -175,7 +175,7 @@ class ComplianceRulesEngine {
       const validationContext = await this.buildValidationContext(
         recommendation,
         criteria,
-        context
+        context,
       );
 
       // Validate against each active rule
@@ -207,13 +207,13 @@ class ComplianceRulesEngine {
       const complianceScore = this.calculateComplianceScore(
         violations,
         warnings,
-        requiredApprovals
+        requiredApprovals,
       );
 
       const result: ComplianceValidationResult = {
         isCompliant:
           violations.filter(
-            (v) => v.severity === 'critical' || v.severity === 'error'
+            (v) => v.severity === 'critical' || v.severity === 'error',
           ).length === 0,
         violations,
         warnings,
@@ -240,7 +240,7 @@ class ComplianceRulesEngine {
    */
   private async validateRule(
     rule: ComplianceRule,
-    context: any
+    context: any,
   ): Promise<{
     violations: RuleViolation[];
     warnings: RuleWarning[];
@@ -255,7 +255,7 @@ class ComplianceRulesEngine {
     // Check if rule conditions are met
     const conditionsMet = await this.evaluateRuleConditions(
       rule.conditions,
-      context
+      context,
     );
 
     if (conditionsMet) {
@@ -318,7 +318,7 @@ class ComplianceRulesEngine {
    */
   private async evaluateRuleConditions(
     conditions: RuleCondition[],
-    context: any
+    context: any,
   ): Promise<boolean> {
     if (conditions.length === 0) {
       return true;
@@ -392,7 +392,7 @@ class ComplianceRulesEngine {
   private async buildValidationContext(
     recommendation: SchedulingRecommendation,
     criteria: SchedulingCriteria,
-    additionalContext: any
+    additionalContext: any,
   ): Promise<any> {
     try {
       // Load patient data
@@ -417,7 +417,7 @@ class ComplianceRulesEngine {
           *,
           staff_certifications(*),
           staff_specializations(*)
-        `
+        `,
         )
         .eq('id', recommendation.staffId)
         .single();
@@ -429,7 +429,7 @@ class ComplianceRulesEngine {
           `
           *,
           equipment(*)
-        `
+        `,
         )
         .eq('treatment_id', criteria.treatmentId);
 
@@ -484,7 +484,7 @@ class ComplianceRulesEngine {
   private calculateComplianceScore(
     violations: RuleViolation[],
     warnings: RuleWarning[],
-    requiredApprovals: RequiredApproval[]
+    requiredApprovals: RequiredApproval[],
   ): number {
     let score = 100;
 
@@ -596,7 +596,7 @@ class ComplianceRulesEngine {
           rule_conditions(*),
           rule_actions(*),
           rule_exceptions(*)
-        `
+        `,
         )
         .eq('status', 'active');
 
@@ -801,7 +801,7 @@ class ComplianceRulesEngine {
    */
   private generateCacheKey(
     recommendation: SchedulingRecommendation,
-    criteria: SchedulingCriteria
+    criteria: SchedulingCriteria,
   ): string {
     return `${criteria.patientId}-${criteria.treatmentId}-${recommendation.staffId}-${recommendation.timeSlot.startTime.getTime()}`;
   }
@@ -812,7 +812,7 @@ class ComplianceRulesEngine {
   private async logComplianceValidation(
     recommendation: SchedulingRecommendation,
     criteria: SchedulingCriteria,
-    result: ComplianceValidationResult
+    result: ComplianceValidationResult,
   ): Promise<void> {
     try {
       await this.supabase.from('compliance_validations').insert({
@@ -835,7 +835,7 @@ class ComplianceRulesEngine {
    * Add new compliance rule
    */
   async addComplianceRule(
-    rule: Omit<ComplianceRule, 'id' | 'createdAt' | 'updatedAt'>
+    rule: Omit<ComplianceRule, 'id' | 'createdAt' | 'updatedAt'>,
   ): Promise<string> {
     try {
       const ruleId = `rule-${Date.now()}`;
@@ -875,7 +875,7 @@ class ComplianceRulesEngine {
    */
   async updateComplianceRule(
     ruleId: string,
-    updates: Partial<ComplianceRule>
+    updates: Partial<ComplianceRule>,
   ): Promise<void> {
     try {
       const existingRule = this.rules.get(ruleId);

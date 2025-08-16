@@ -12,7 +12,7 @@ export const GET = withRoleValidation(
       const page = Number.parseInt(searchParams.get('page') || '1', 10);
       const limit = Math.min(
         Number.parseInt(searchParams.get('limit') || '50', 10),
-        100
+        100,
       );
       const action_type = searchParams.get('action_type');
       const target_user_id = searchParams.get('target_user_id');
@@ -28,7 +28,7 @@ export const GET = withRoleValidation(
           user:profiles!role_audit_log_user_id_fkey(id, email, full_name),
           target_user:profiles!role_audit_log_target_user_id_fkey(id, email, full_name)
         `,
-        { count: 'exact' }
+        { count: 'exact' },
       );
 
       // Aplicar filtros
@@ -60,7 +60,7 @@ export const GET = withRoleValidation(
       if (logsError) {
         return NextResponse.json(
           { error: 'Erro ao buscar logs de auditoria' },
-          { status: 500 }
+          { status: 500 },
         );
       }
 
@@ -70,7 +70,7 @@ export const GET = withRoleValidation(
         .select('action_type')
         .gte(
           'created_at',
-          new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
+          new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
         ); // Últimos 30 dias
 
       const stats =
@@ -106,14 +106,14 @@ export const GET = withRoleValidation(
     } catch (_error) {
       return NextResponse.json(
         { error: 'Erro interno do servidor' },
-        { status: 500 }
+        { status: 500 },
       );
     }
   },
   {
     requiredRole: ['admin'],
     requiredPermission: ['view_analytics', 'manage_system'],
-  }
+  },
 );
 
 export const POST = withRoleValidation(
@@ -136,7 +136,7 @@ export const POST = withRoleValidation(
       if (!action_type) {
         return NextResponse.json(
           { error: 'Tipo de ação é obrigatório' },
-          { status: 400 }
+          { status: 400 },
         );
       }
 
@@ -165,14 +165,14 @@ export const POST = withRoleValidation(
           *,
           user:profiles!role_audit_log_user_id_fkey(id, email, full_name),
           target_user:profiles!role_audit_log_target_user_id_fkey(id, email, full_name)
-        `
+        `,
         )
         .single();
 
       if (logError) {
         return NextResponse.json(
           { error: 'Erro ao criar entrada de log' },
-          { status: 500 }
+          { status: 500 },
         );
       }
 
@@ -184,11 +184,11 @@ export const POST = withRoleValidation(
     } catch (_error) {
       return NextResponse.json(
         { error: 'Erro interno do servidor' },
-        { status: 500 }
+        { status: 500 },
       );
     }
   },
   {
     requiredRole: ['admin'],
-  }
+  },
 );

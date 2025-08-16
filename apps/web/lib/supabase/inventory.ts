@@ -41,7 +41,7 @@ export async function getInventoryItems(filters?: {
         *,
         category:inventory_categories(*),
         location:inventory_locations(*)
-      `
+      `,
       )
       .eq('is_active', true)
       .order('name');
@@ -58,7 +58,7 @@ export async function getInventoryItems(filters?: {
     }
     if (filters?.search) {
       query = query.or(
-        `name.ilike.%${filters.search}%,sku.ilike.%${filters.search}%,description.ilike.%${filters.search}%`
+        `name.ilike.%${filters.search}%,sku.ilike.%${filters.search}%,description.ilike.%${filters.search}%`,
       );
     }
     if (filters?.limit) {
@@ -67,7 +67,7 @@ export async function getInventoryItems(filters?: {
     if (filters?.offset) {
       query = query.range(
         filters.offset,
-        filters.offset + (filters.limit || 20) - 1
+        filters.offset + (filters.limit || 20) - 1,
       );
     }
 
@@ -94,7 +94,7 @@ export async function getInventoryItems(filters?: {
 }
 
 export async function getInventoryItemById(
-  id: string
+  id: string,
 ): Promise<InventoryApiResponse<InventoryItem | null>> {
   try {
     const { data, error } = await supabase
@@ -104,7 +104,7 @@ export async function getInventoryItemById(
         *,
         category:inventory_categories(*),
         location:inventory_locations(*)
-      `
+      `,
       )
       .eq('id', id)
       .single();
@@ -129,7 +129,7 @@ export async function getInventoryItemById(
 }
 
 export async function getInventoryItemByBarcode(
-  barcode: string
+  barcode: string,
 ): Promise<InventoryApiResponse<InventoryItem | null>> {
   try {
     const { data, error } = await supabase
@@ -139,7 +139,7 @@ export async function getInventoryItemByBarcode(
         *,
         category:inventory_categories(*),
         location:inventory_locations(*)
-      `
+      `,
       )
       .or(`barcode.eq.${barcode},qr_code.eq.${barcode}`)
       .eq('is_active', true)
@@ -166,7 +166,7 @@ export async function getInventoryItemByBarcode(
 }
 
 export async function createInventoryItem(
-  item: Partial<InventoryItem>
+  item: Partial<InventoryItem>,
 ): Promise<InventoryApiResponse<InventoryItem | null>> {
   try {
     const { data: userData } = await supabase.auth.getUser();
@@ -183,7 +183,7 @@ export async function createInventoryItem(
         *,
         category:inventory_categories(*),
         location:inventory_locations(*)
-      `
+      `,
       )
       .single();
 
@@ -208,7 +208,7 @@ export async function createInventoryItem(
 
 export async function updateInventoryItem(
   id: string,
-  updates: Partial<InventoryItem>
+  updates: Partial<InventoryItem>,
 ): Promise<InventoryApiResponse<InventoryItem | null>> {
   try {
     const { data: userData } = await supabase.auth.getUser();
@@ -225,7 +225,7 @@ export async function updateInventoryItem(
         *,
         category:inventory_categories(*),
         location:inventory_locations(*)
-      `
+      `,
       )
       .single();
 
@@ -263,7 +263,7 @@ export async function updateStockLevel(
     notes?: string;
     batchNumber?: string;
     expirationDate?: string;
-  }
+  },
 ): Promise<InventoryApiResponse<boolean>> {
   try {
     const { data: userData } = await supabase.auth.getUser();
@@ -319,7 +319,7 @@ export async function getStockMovements(filters?: {
         *,
         inventory_item:inventory_items(*),
         location:inventory_locations(*)
-      `
+      `,
       )
       .order('created_at', { ascending: false });
 
@@ -345,7 +345,7 @@ export async function getStockMovements(filters?: {
     if (filters?.offset) {
       query = query.range(
         filters.offset,
-        filters.offset + (filters.limit || 20) - 1
+        filters.offset + (filters.limit || 20) - 1,
       );
     }
 
@@ -387,7 +387,7 @@ export async function getStockAlerts(filters?: {
         `
         *,
         inventory_item:inventory_items(*)
-      `
+      `,
       )
       .order('created_at', { ascending: false });
 
@@ -428,7 +428,7 @@ export async function getStockAlerts(filters?: {
 
 export async function resolveStockAlert(
   alertId: string,
-  resolutionNotes?: string
+  resolutionNotes?: string,
 ): Promise<InventoryApiResponse<boolean>> {
   try {
     const { data: userData } = await supabase.auth.getUser();
@@ -468,7 +468,7 @@ export async function resolveStockAlert(
 
 export async function createBarcodeSession(
   sessionType: SessionType,
-  locationId: string
+  locationId: string,
 ): Promise<InventoryApiResponse<BarcodeSession | null>> {
   try {
     const { data: userData } = await supabase.auth.getUser();
@@ -517,7 +517,7 @@ export async function addScannedItem(
     | 'duplicate_scan'
     | 'error',
   inventoryItemId?: string,
-  errorMessage?: string
+  errorMessage?: string,
 ): Promise<InventoryApiResponse<ScannedItem | null>> {
   try {
     const { data, error } = await supabase
@@ -571,7 +571,7 @@ async function getSessionItemCount(sessionId: string): Promise<number> {
 
 export async function completeBarcodeSession(
   sessionId: string,
-  notes?: string
+  notes?: string,
 ): Promise<InventoryApiResponse<boolean>> {
   try {
     const { error } = await supabase
@@ -678,7 +678,7 @@ export function subscribeToInventoryUpdates(callback: (payload: any) => void) {
         schema: 'public',
         table: 'inventory_items',
       },
-      callback
+      callback,
     )
     .on(
       'postgres_changes',
@@ -687,7 +687,7 @@ export function subscribeToInventoryUpdates(callback: (payload: any) => void) {
         schema: 'public',
         table: 'stock_movements',
       },
-      callback
+      callback,
     )
     .on(
       'postgres_changes',
@@ -696,7 +696,7 @@ export function subscribeToInventoryUpdates(callback: (payload: any) => void) {
         schema: 'public',
         table: 'stock_alerts',
       },
-      callback
+      callback,
     )
     .subscribe();
 }
@@ -711,7 +711,7 @@ export function subscribeToStockAlerts(callback: (payload: any) => void) {
         schema: 'public',
         table: 'stock_alerts',
       },
-      callback
+      callback,
     )
     .subscribe();
 }

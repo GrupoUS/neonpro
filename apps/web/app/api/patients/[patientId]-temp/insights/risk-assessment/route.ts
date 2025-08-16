@@ -9,7 +9,7 @@ const patientInsights = new PatientInsightsIntegration();
 
 export async function GET(
   _request: NextRequest,
-  { params }: { params: { patientId: string } }
+  { params }: { params: { patientId: string } },
 ) {
   try {
     const supabase = createRouteHandlerClient({ cookies });
@@ -35,7 +35,7 @@ export async function GET(
 
     // Generate risk assessment
     const riskAssessment = await patientInsights.generateQuickRiskAssessment(
-      params.patientId
+      params.patientId,
     );
 
     return NextResponse.json({
@@ -45,14 +45,14 @@ export async function GET(
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to generate risk assessment' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { patientId: string } }
+  { params }: { params: { patientId: string } },
 ) {
   try {
     const supabase = createRouteHandlerClient({ cookies });
@@ -70,13 +70,13 @@ export async function POST(
 
     // Generate comprehensive risk assessment
     const riskAssessment = await patientInsights.generateQuickRiskAssessment(
-      params.patientId
+      params.patientId,
     );
 
     let recommendations = [];
     if (includeRecommendations) {
       const treatmentGuidance = await patientInsights.generateTreatmentGuidance(
-        params.patientId
+        params.patientId,
       );
       recommendations = treatmentGuidance.primaryRecommendations || [];
     }
@@ -91,7 +91,7 @@ export async function POST(
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to generate comprehensive risk assessment' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -33,7 +33,7 @@ export async function POST(request: Request) {
     if (!(professional_id && start_time && end_time)) {
       return NextResponse.json(
         { error: 'Missing required parameters' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -62,7 +62,7 @@ export async function POST(request: Request) {
         professionals:professional_id (
           full_name
         )
-      `
+      `,
       )
       .eq('clinic_id', profile.clinic_id)
       .eq('professional_id', professional_id)
@@ -94,7 +94,7 @@ export async function POST(request: Request) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal Server Error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

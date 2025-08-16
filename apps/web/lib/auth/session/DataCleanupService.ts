@@ -40,7 +40,7 @@ export class DataCleanupService {
 
     this.supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     );
 
     this.initializeScheduledTasks();
@@ -101,7 +101,7 @@ export class DataCleanupService {
       const totalDeleted = results.reduce((sum, r) => sum + r.itemsDeleted, 0);
       const totalProcessed = results.reduce(
         (sum, r) => sum + r.itemsProcessed,
-        0
+        0,
       );
       const successfulTasks = results.filter((r) => r.success).length;
 
@@ -164,7 +164,7 @@ export class DataCleanupService {
 
       if (selectError) {
         throw new Error(
-          `Failed to query expired sessions: ${selectError.message}`
+          `Failed to query expired sessions: ${selectError.message}`,
         );
       }
 
@@ -191,7 +191,7 @@ export class DataCleanupService {
 
       if (deleteError) {
         throw new Error(
-          `Failed to delete expired sessions: ${deleteError.message}`
+          `Failed to delete expired sessions: ${deleteError.message}`,
         );
       }
 
@@ -230,7 +230,7 @@ export class DataCleanupService {
     try {
       const cutoffDate = new Date();
       cutoffDate.setDate(
-        cutoffDate.getDate() - this.config.deviceRetentionDays
+        cutoffDate.getDate() - this.config.deviceRetentionDays,
       );
       const cutoffDateString = cutoffDate.toISOString();
 
@@ -242,7 +242,7 @@ export class DataCleanupService {
 
       if (selectError) {
         throw new Error(
-          `Failed to query inactive devices: ${selectError.message}`
+          `Failed to query inactive devices: ${selectError.message}`,
         );
       }
 
@@ -269,7 +269,7 @@ export class DataCleanupService {
 
       if (deleteError) {
         throw new Error(
-          `Failed to delete inactive devices: ${deleteError.message}`
+          `Failed to delete inactive devices: ${deleteError.message}`,
         );
       }
 
@@ -308,7 +308,7 @@ export class DataCleanupService {
     try {
       const cutoffDate = new Date();
       cutoffDate.setDate(
-        cutoffDate.getDate() - this.config.securityEventRetentionDays
+        cutoffDate.getDate() - this.config.securityEventRetentionDays,
       );
       const cutoffDateString = cutoffDate.toISOString();
 
@@ -321,7 +321,7 @@ export class DataCleanupService {
 
       if (selectError) {
         throw new Error(
-          `Failed to query old security events: ${selectError.message}`
+          `Failed to query old security events: ${selectError.message}`,
         );
       }
 
@@ -354,7 +354,7 @@ export class DataCleanupService {
 
       if (deleteError) {
         throw new Error(
-          `Failed to delete old security events: ${deleteError.message}`
+          `Failed to delete old security events: ${deleteError.message}`,
         );
       }
 
@@ -393,7 +393,7 @@ export class DataCleanupService {
     try {
       const cutoffDate = new Date();
       cutoffDate.setDate(
-        cutoffDate.getDate() - this.config.notificationRetentionDays
+        cutoffDate.getDate() - this.config.notificationRetentionDays,
       );
       const cutoffDateString = cutoffDate.toISOString();
 
@@ -405,7 +405,7 @@ export class DataCleanupService {
 
       if (selectError) {
         throw new Error(
-          `Failed to query old notifications: ${selectError.message}`
+          `Failed to query old notifications: ${selectError.message}`,
         );
       }
 
@@ -433,7 +433,7 @@ export class DataCleanupService {
 
       if (deleteError) {
         throw new Error(
-          `Failed to delete old notifications: ${deleteError.message}`
+          `Failed to delete old notifications: ${deleteError.message}`,
         );
       }
 
@@ -487,7 +487,7 @@ export class DataCleanupService {
 
       if (selectError) {
         throw new Error(
-          `Failed to query expired verifications: ${selectError.message}`
+          `Failed to query expired verifications: ${selectError.message}`,
         );
       }
 
@@ -515,7 +515,7 @@ export class DataCleanupService {
 
       if (deleteError) {
         throw new Error(
-          `Failed to delete expired verifications: ${deleteError.message}`
+          `Failed to delete expired verifications: ${deleteError.message}`,
         );
       }
 
@@ -670,7 +670,7 @@ export class DataCleanupService {
     try {
       const cutoffDate = new Date();
       cutoffDate.setDate(
-        cutoffDate.getDate() - this.config.auditLogRetentionDays
+        cutoffDate.getDate() - this.config.auditLogRetentionDays,
       );
       const _cutoffDateString = cutoffDate.toISOString();
 
@@ -738,7 +738,7 @@ export class DataCleanupService {
     }
 
     const [minute, hour, day, _month, dayOfWeek] = parts.map((p) =>
-      Number.parseInt(p, 10)
+      Number.parseInt(p, 10),
     );
     const now = new Date(fromTime);
     const next = new Date(now);

@@ -54,7 +54,7 @@ type RBACMiddlewareOptions = {
   /** Custom error handler */
   errorHandler?: (
     error: RBACError,
-    request: NextRequest
+    request: NextRequest,
   ) => Promise<NextResponse>;
 
   /** Audit log additional data */
@@ -103,7 +103,7 @@ export class HealthcareRBACMiddleware {
           set: (_name: string, _value: string, _options: CookieOptions) => {},
           remove: (_name: string, _options: CookieOptions) => {},
         },
-      }
+      },
     );
 
     this.rbacEngine = new HealthcareRBACEngine(this.supabase);
@@ -133,7 +133,7 @@ export class HealthcareRBACMiddleware {
               statusCode: 403,
               details: { userId: user.id },
             },
-            request
+            request,
           );
         }
 
@@ -149,14 +149,14 @@ export class HealthcareRBACMiddleware {
             user.id,
             options.permissions,
             requestContext,
-            request
+            request,
           );
         }
 
         // Validate healthcare requirements
         const healthcareValidation = await this.validateHealthcareRequirements(
           userContext,
-          options
+          options,
         );
         if (!healthcareValidation.valid) {
           return this.createErrorResponse(healthcareValidation.error!, request);
@@ -166,17 +166,17 @@ export class HealthcareRBACMiddleware {
         const permissionResults = await this.checkPermissions(
           user.id,
           options,
-          { ...requestContext, emergencyOverride }
+          { ...requestContext, emergencyOverride },
         );
 
         const hasRequiredPermissions = permissionResults.every(
-          (result) => result.granted
+          (result) => result.granted,
         );
         const hasAlternativePermissions = options.alternativePermissions
           ? await this.checkAlternativePermissions(
               user.id,
               options.alternativePermissions,
-              { ...requestContext, emergencyOverride }
+              { ...requestContext, emergencyOverride },
             )
           : false;
 
@@ -201,7 +201,7 @@ export class HealthcareRBACMiddleware {
                 context: requestContext,
               },
             },
-            request
+            request,
           );
         }
 
@@ -211,7 +211,7 @@ export class HealthcareRBACMiddleware {
           options.permissions,
           requestContext,
           request,
-          options.auditMetadata
+          options.auditMetadata,
         );
 
         // Add RBAC context to request headers for downstream use
@@ -230,7 +230,7 @@ export class HealthcareRBACMiddleware {
 
         requestWithContext.headers.set(
           'x-rbac-context',
-          Buffer.from(JSON.stringify(rbacContext)).toString('base64')
+          Buffer.from(JSON.stringify(rbacContext)).toString('base64'),
         );
 
         return;
@@ -244,7 +244,7 @@ export class HealthcareRBACMiddleware {
               error: error instanceof Error ? error.message : 'Unknown error',
             },
           },
-          request
+          request,
         );
       }
     };
@@ -279,7 +279,7 @@ export class HealthcareRBACMiddleware {
             acc[name] = value;
             return acc;
           },
-          {} as Record<string, string>
+          {} as Record<string, string>,
         );
 
         token = cookies['sb-access-token'] || cookies['supabase-auth-token'];
@@ -334,7 +334,7 @@ export class HealthcareRBACMiddleware {
    * Get user role context from database
    */
   private async getUserRoleContext(
-    userId: string
+    userId: string,
   ): Promise<UserRoleContext | null> {
     try {
       const { data, error } = await this.supabase
@@ -350,7 +350,7 @@ export class HealthcareRBACMiddleware {
             active,
             expires_at
           )
-        `
+        `,
         )
         .eq('user_id', userId)
         .eq('active', true)
@@ -452,7 +452,7 @@ export class HealthcareRBACMiddleware {
    */
   private async validateHealthcareRequirements(
     userContext: UserRoleContext,
-    options: RBACMiddlewareOptions
+    options: RBACMiddlewareOptions,
   ): Promise<{ valid: boolean; error?: RBACError }> {
     // Check medical license requirement
     if (options.requireMedicalLicense && !userContext.medical_license) {
@@ -558,12 +558,12 @@ export class HealthcareRBACMiddleware {
       patientId?: string;
       resourceId?: string;
       emergencyOverride?: boolean;
-    }
+    },
   ): Promise<PermissionCheckResult[]> {
     const results = await Promise.all(
       options.permissions.map((permission) =>
-        this.rbacEngine.checkPermission(userId, permission, context)
-      )
+        this.rbacEngine.checkPermission(userId, permission, context),
+      ),
     );
     return results;
   }
@@ -579,12 +579,12 @@ export class HealthcareRBACMiddleware {
       patientId?: string;
       resourceId?: string;
       emergencyOverride?: boolean;
-    }
+    },
   ): Promise<boolean> {
     const results = await Promise.all(
       permissions.map((permission) =>
-        this.rbacEngine.checkPermission(userId, permission, context)
-      )
+        this.rbacEngine.checkPermission(userId, permission, context),
+      ),
     );
     return results.some((result) => result.granted);
   }
@@ -596,7 +596,7 @@ export class HealthcareRBACMiddleware {
     userId: string,
     permissions: string[],
     context: any,
-    request: NextRequest
+    request: NextRequest,
   ): Promise<void> {
     try {
       await this.supabase.from('audit_logs').insert({
@@ -628,7 +628,7 @@ export class HealthcareRBACMiddleware {
     permissions: string[],
     context: any,
     request: NextRequest,
-    metadata?: Record<string, any>
+    metadata?: Record<string, any>,
   ): Promise<void> {
     try {
       await this.supabase.from('audit_logs').insert({
@@ -657,7 +657,7 @@ export class HealthcareRBACMiddleware {
    */
   private async createErrorResponse(
     error: RBACError,
-    request: NextRequest
+    request: NextRequest,
   ): Promise<NextResponse> {
     // Log access denial
     try {
@@ -689,7 +689,7 @@ export class HealthcareRBACMiddleware {
         statusCode: error.statusCode,
         timestamp: new Date().toISOString(),
       },
-      { status: error.statusCode }
+      { status: error.statusCode },
     );
   }
 }
@@ -708,7 +708,7 @@ const rbacMiddleware = new HealthcareRBACMiddleware();
  */
 export function requirePermissions(
   permissions: string[],
-  options: Omit<RBACMiddlewareOptions, 'permissions'> = {}
+  options: Omit<RBACMiddlewareOptions, 'permissions'> = {},
 ) {
   return rbacMiddleware.protect({ permissions, ...options });
 }
@@ -717,7 +717,7 @@ export function requirePermissions(
  * Protect clinical API routes
  */
 export function requireClinicalAccess(
-  options: Omit<RBACMiddlewareOptions, 'permissions'> = {}
+  options: Omit<RBACMiddlewareOptions, 'permissions'> = {},
 ) {
   return rbacMiddleware.protect({
     permissions: ['patient.read.own', 'procedure.perform.general'],
@@ -731,7 +731,7 @@ export function requireClinicalAccess(
  * Protect administrative API routes
  */
 export function requireAdministrativeAccess(
-  options: Omit<RBACMiddlewareOptions, 'permissions'> = {}
+  options: Omit<RBACMiddlewareOptions, 'permissions'> = {},
 ) {
   return rbacMiddleware.protect({
     permissions: ['scheduling.manage.clinic', 'billing.process.standard'],
@@ -744,7 +744,7 @@ export function requireAdministrativeAccess(
  * Protect compliance API routes
  */
 export function requireComplianceAccess(
-  options: Omit<RBACMiddlewareOptions, 'permissions'> = {}
+  options: Omit<RBACMiddlewareOptions, 'permissions'> = {},
 ) {
   return rbacMiddleware.protect({
     permissions: ['audit.access.clinic', 'compliance.report.cfm'],
@@ -757,7 +757,7 @@ export function requireComplianceAccess(
  * Protect system administration routes
  */
 export function requireSystemAdminAccess(
-  options: Omit<RBACMiddlewareOptions, 'permissions'> = {}
+  options: Omit<RBACMiddlewareOptions, 'permissions'> = {},
 ) {
   return rbacMiddleware.protect({
     permissions: ['system.manage.users', 'system.configure.clinic'],
@@ -777,7 +777,7 @@ export function extractRBACContext(request: NextRequest): RBACContext | null {
     }
 
     const contextData = JSON.parse(
-      Buffer.from(contextHeader, 'base64').toString()
+      Buffer.from(contextHeader, 'base64').toString(),
     );
     return contextData as RBACContext;
   } catch (_error) {

@@ -39,13 +39,13 @@ export class AccessibilityTester {
 
   // Test color contrast ratios
   testColorContrast(
-    container: HTMLElement = document.body
+    container: HTMLElement = document.body,
   ): AccessibilityTestResult[] {
     const results: AccessibilityTestResult[] = [];
 
     // Get all text elements
     const textElements = container.querySelectorAll(
-      'p, span, div, h1, h2, h3, h4, h5, h6, button, a, label, input, textarea'
+      'p, span, div, h1, h2, h3, h4, h5, h6, button, a, label, input, textarea',
     );
 
     textElements.forEach((element) => {
@@ -61,7 +61,7 @@ export class AccessibilityTester {
       if (foregroundHex && backgroundHex) {
         const contrast = ContrastChecker.calculateContrastRatio(
           foregroundHex,
-          backgroundHex
+          backgroundHex,
         );
         const fontSize = Number.parseInt(computedStyles.fontSize, 10);
         const fontWeight =
@@ -72,7 +72,7 @@ export class AccessibilityTester {
         const meetsAA = ContrastChecker.meetsWCAGAA(
           foregroundHex,
           backgroundHex,
-          isLargeText
+          isLargeText,
         );
         const meetsAAA = contrast >= (isLargeText ? 4.5 : 7);
 
@@ -93,7 +93,7 @@ export class AccessibilityTester {
 
   // Test focus management
   testFocusManagement(
-    container: HTMLElement = document.body
+    container: HTMLElement = document.body,
   ): AccessibilityTestResult[] {
     const results: AccessibilityTestResult[] = [];
 
@@ -135,7 +135,7 @@ export class AccessibilityTester {
 
     // Test focus indicators
     const elementsWithFocusStyle = Array.from(
-      container.querySelectorAll('*:focus, *:focus-visible, .focus\\:ring-2')
+      container.querySelectorAll('*:focus, *:focus-visible, .focus\\:ring-2'),
     ).length;
 
     results.push({
@@ -153,7 +153,7 @@ export class AccessibilityTester {
 
   // Test ARIA labels and roles
   testAriaLabels(
-    container: HTMLElement = document.body
+    container: HTMLElement = document.body,
   ): AccessibilityTestResult[] {
     const results: AccessibilityTestResult[] = [];
 
@@ -246,18 +246,18 @@ export class AccessibilityTester {
 
   // Test keyboard navigation
   testKeyboardNavigation(
-    container: HTMLElement = document.body
+    container: HTMLElement = document.body,
   ): AccessibilityTestResult[] {
     const results: AccessibilityTestResult[] = [];
 
     // Check for keyboard event handlers
     const elementsWithKeyboardHandlers = container.querySelectorAll(
-      '[onkeydown], [onkeyup], [onkeypress]'
+      '[onkeydown], [onkeyup], [onkeypress]',
     );
 
     // Check for elements that might need keyboard support
     const interactiveElements = container.querySelectorAll(
-      'button, a, input, select, textarea, [onclick], [tabindex]:not([tabindex="-1"])'
+      'button, a, input, select, textarea, [onclick], [tabindex]:not([tabindex="-1"])',
     );
 
     results.push({
@@ -275,7 +275,7 @@ export class AccessibilityTester {
 
     // Test for custom interactive elements with proper roles
     const customInteractive = container.querySelectorAll(
-      '[onclick]:not(button):not(a):not(input):not([role])'
+      '[onclick]:not(button):not(a):not(input):not([role])',
     );
 
     results.push({
@@ -296,13 +296,13 @@ export class AccessibilityTester {
 
   // Test semantic structure
   testSemanticStructure(
-    container: HTMLElement = document.body
+    container: HTMLElement = document.body,
   ): AccessibilityTestResult[] {
     const results: AccessibilityTestResult[] = [];
 
     // Test heading hierarchy
     const headings = Array.from(
-      container.querySelectorAll('h1, h2, h3, h4, h5, h6')
+      container.querySelectorAll('h1, h2, h3, h4, h5, h6'),
     );
     let hasValidHeadingStructure = true;
 
@@ -310,7 +310,7 @@ export class AccessibilityTester {
       const currentLevel = Number.parseInt(headings[i].tagName.charAt(1), 10);
       const previousLevel = Number.parseInt(
         headings[i - 1].tagName.charAt(1),
-        10
+        10,
       );
 
       if (currentLevel > previousLevel + 1) {
@@ -332,7 +332,7 @@ export class AccessibilityTester {
 
     // Test landmarks
     const landmarks = container.querySelectorAll(
-      'main, nav, header, footer, aside, section[aria-label], [role="main"], [role="navigation"], [role="banner"], [role="contentinfo"], [role="complementary"]'
+      'main, nav, header, footer, aside, section[aria-label], [role="main"], [role="navigation"], [role="banner"], [role="contentinfo"], [role="complementary"]',
     );
 
     results.push({
@@ -350,7 +350,7 @@ export class AccessibilityTester {
 
   // Run complete accessibility audit
   auditAccessibility(
-    container: HTMLElement = document.body
+    container: HTMLElement = document.body,
   ): AccessibilityAuditReport {
     const colorContrast = this.testColorContrast(container);
     const focusManagement = this.testFocusManagement(container);

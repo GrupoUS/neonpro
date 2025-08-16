@@ -567,13 +567,13 @@ export const ReconciliationDashboard: React.FC = () => {
   };
 
   const unmatchedTransactions = data.transactions.filter(
-    (t) => t.status === 'unmatched'
+    (t) => t.status === 'unmatched',
   );
   const matchedTransactions = data.transactions.filter(
-    (t) => t.status === 'matched'
+    (t) => t.status === 'matched',
   );
   const disputedTransactions = data.transactions.filter(
-    (t) => t.status === 'disputed'
+    (t) => t.status === 'disputed',
   );
 
   return (

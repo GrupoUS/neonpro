@@ -238,7 +238,7 @@ export class ComplianceMonitor extends EventEmitter {
         ComplianceCategory.DATA_BREACH,
       ],
       notificationEnabled: true,
-    }
+    },
   ) {
     super();
     this.setMaxListeners(100);
@@ -290,7 +290,7 @@ export class ComplianceMonitor extends EventEmitter {
       data?: Record<string, any>;
       category: ComplianceCategory;
       location: string;
-    }
+    },
   ): Promise<{
     compliant: boolean;
     violations: ComplianceViolation[];
@@ -326,7 +326,7 @@ export class ComplianceMonitor extends EventEmitter {
 
       // If critical violations are found, emit alert
       const criticalViolations = violations.filter(
-        (v) => v.severity === ViolationSeverity.CRITICAL
+        (v) => v.severity === ViolationSeverity.CRITICAL,
       );
 
       if (criticalViolations.length > 0 && this.config.notificationEnabled) {
@@ -371,7 +371,7 @@ export class ComplianceMonitor extends EventEmitter {
       operation: string;
       data?: Record<string, any>;
       location: string;
-    }
+    },
   ): Promise<ComplianceViolation> {
     return this.createViolation({
       category,
@@ -391,7 +391,7 @@ export class ComplianceMonitor extends EventEmitter {
       resolvedBy: string;
       resolution: string;
       preventiveMeasures: string;
-    }
+    },
   ): Promise<ComplianceViolation> {
     const violation = this.violations.get(violationId);
     if (!violation) {
@@ -426,7 +426,7 @@ export class ComplianceMonitor extends EventEmitter {
   async markAsFalsePositive(
     violationId: string,
     reviewer: string,
-    reason: string
+    reason: string,
   ): Promise<ComplianceViolation> {
     const violation = this.violations.get(violationId);
     if (!violation) {
@@ -502,7 +502,7 @@ export class ComplianceMonitor extends EventEmitter {
    */
   async updateRequirement(
     id: string,
-    updates: Partial<ComplianceRequirement>
+    updates: Partial<ComplianceRequirement>,
   ): Promise<ComplianceRequirement> {
     const requirement = this.requirements.get(id);
     if (!requirement) {
@@ -533,7 +533,7 @@ export class ComplianceMonitor extends EventEmitter {
    */
   async createAudit(
     scope: ComplianceCategory[],
-    auditor: string
+    auditor: string,
   ): Promise<ComplianceAudit> {
     const audit: ComplianceAudit = {
       id: this.generateId('audit'),
@@ -578,7 +578,7 @@ export class ComplianceMonitor extends EventEmitter {
       }[];
       recommendations: string[];
     },
-    report: string
+    report: string,
   ): Promise<ComplianceAudit> {
     const audit = this.audits.get(auditId);
     if (!audit) {
@@ -603,7 +603,7 @@ export class ComplianceMonitor extends EventEmitter {
     // Set next audit date
     const nextAuditDate = new Date();
     nextAuditDate.setMonth(
-      nextAuditDate.getMonth() + this.config.auditFrequencyMonths
+      nextAuditDate.getMonth() + this.config.auditFrequencyMonths,
     );
     audit.nextAuditDate = nextAuditDate;
 
@@ -659,7 +659,7 @@ export class ComplianceMonitor extends EventEmitter {
         acc[v.severity] = (acc[v.severity] || 0) + 1;
         return acc;
       },
-      {} as Record<ViolationSeverity, number>
+      {} as Record<ViolationSeverity, number>,
     );
 
     const byCategory = activeViolations.reduce(
@@ -667,7 +667,7 @@ export class ComplianceMonitor extends EventEmitter {
         acc[v.category] = (acc[v.category] || 0) + 1;
         return acc;
       },
-      {} as Record<ComplianceCategory, number>
+      {} as Record<ComplianceCategory, number>,
     );
 
     // Count requirements by status and risk
@@ -676,7 +676,7 @@ export class ComplianceMonitor extends EventEmitter {
         acc[r.implementationStatus] = (acc[r.implementationStatus] || 0) + 1;
         return acc;
       },
-      {} as Record<ComplianceStatus, number>
+      {} as Record<ComplianceStatus, number>,
     );
 
     const byRisk = requirements.reduce(
@@ -684,7 +684,7 @@ export class ComplianceMonitor extends EventEmitter {
         acc[r.riskLevel] = (acc[r.riskLevel] || 0) + 1;
         return acc;
       },
-      {} as Record<string, number>
+      {} as Record<string, number>,
     );
 
     return {
@@ -720,16 +720,16 @@ export class ComplianceMonitor extends EventEmitter {
     const requirements = Array.from(this.requirements.values());
     const violations = Array.from(this.violations.values());
     const activeViolations = violations.filter(
-      (v) => v.status === 'detected' || v.status === 'investigating'
+      (v) => v.status === 'detected' || v.status === 'investigating',
     );
 
     // Calculate overall compliance score
     const totalRequirements = requirements.length;
     const compliantRequirements = requirements.filter(
-      (r) => r.implementationStatus === ComplianceStatus.COMPLIANT
+      (r) => r.implementationStatus === ComplianceStatus.COMPLIANT,
     ).length;
     const partiallyCompliantRequirements = requirements.filter(
-      (r) => r.implementationStatus === ComplianceStatus.PARTIALLY_COMPLIANT
+      (r) => r.implementationStatus === ComplianceStatus.PARTIALLY_COMPLIANT,
     ).length;
 
     // Weight: Compliant = 1, Partially = 0.5
@@ -765,14 +765,14 @@ export class ComplianceMonitor extends EventEmitter {
     // Calculate final score (0-100)
     const overallScore = Math.max(
       0,
-      Math.min(100, weightedScore * 100 * (1 - violationPenalty))
+      Math.min(100, weightedScore * 100 * (1 - violationPenalty)),
     );
 
     // Calculate score by category
     const byCategory = {} as Record<ComplianceCategory, number>;
     for (const category of Object.values(ComplianceCategory)) {
       const categoryRequirements = requirements.filter(
-        (r) => r.category === category
+        (r) => r.category === category,
       );
       if (categoryRequirements.length === 0) {
         byCategory[category] = 100; // Default if no requirements
@@ -780,10 +780,10 @@ export class ComplianceMonitor extends EventEmitter {
       }
 
       const compliant = categoryRequirements.filter(
-        (r) => r.implementationStatus === ComplianceStatus.COMPLIANT
+        (r) => r.implementationStatus === ComplianceStatus.COMPLIANT,
       ).length;
       const partiallyCompliant = categoryRequirements.filter(
-        (r) => r.implementationStatus === ComplianceStatus.PARTIALLY_COMPLIANT
+        (r) => r.implementationStatus === ComplianceStatus.PARTIALLY_COMPLIANT,
       ).length;
 
       const categoryWeightedScore =
@@ -791,7 +791,7 @@ export class ComplianceMonitor extends EventEmitter {
 
       // Adjust for violations in this category
       const categoryViolations = activeViolations.filter(
-        (v) => v.category === category
+        (v) => v.category === category,
       );
       let categoryPenalty = 0;
       for (const violation of categoryViolations) {
@@ -819,7 +819,7 @@ export class ComplianceMonitor extends EventEmitter {
 
       byCategory[category] = Math.max(
         0,
-        Math.min(100, categoryWeightedScore * 100 * (1 - categoryPenalty))
+        Math.min(100, categoryWeightedScore * 100 * (1 - categoryPenalty)),
       );
     }
 
@@ -831,7 +831,7 @@ export class ComplianceMonitor extends EventEmitter {
         score,
         trend: this.calculateCategoryTrend(category as ComplianceCategory),
         recommendations: this.generateRecommendations(
-          category as ComplianceCategory
+          category as ComplianceCategory,
         ),
       }))
       .sort((a, b) => a.score - b.score); // Sort by lowest score first
@@ -900,7 +900,7 @@ export class ComplianceMonitor extends EventEmitter {
         detectionSource: 'automated_monitoring',
         relatedRequirements: this.findRelatedRequirements(
           data.category,
-          data.article
+          data.article,
         ).map((r) => r.id),
       },
     };
@@ -921,7 +921,7 @@ export class ComplianceMonitor extends EventEmitter {
       async () => {
         await this.performSystemCheck();
       },
-      this.config.monitoringIntervalMinutes * 60 * 1000
+      this.config.monitoringIntervalMinutes * 60 * 1000,
     );
   }
 
@@ -933,7 +933,7 @@ export class ComplianceMonitor extends EventEmitter {
       async () => {
         await this.calculateComplianceScore();
       },
-      this.config.scoreUpdateIntervalHours * 60 * 60 * 1000
+      this.config.scoreUpdateIntervalHours * 60 * 60 * 1000,
     );
   }
 
@@ -944,7 +944,7 @@ export class ComplianceMonitor extends EventEmitter {
     try {
       // Check for outdated requirements
       const outdatedRequirements = Array.from(
-        this.requirements.values()
+        this.requirements.values(),
       ).filter((r) => {
         if (!r.lastVerified) {
           return true;
@@ -953,7 +953,7 @@ export class ComplianceMonitor extends EventEmitter {
         const lastVerified = new Date(r.lastVerified);
         const updateThreshold = new Date();
         updateThreshold.setDate(
-          updateThreshold.getDate() - this.config.requirementUpdateIntervalDays
+          updateThreshold.getDate() - this.config.requirementUpdateIntervalDays,
         );
 
         return lastVerified < updateThreshold;
@@ -968,7 +968,7 @@ export class ComplianceMonitor extends EventEmitter {
 
       // Check for long-standing violations
       const longStandingViolations = Array.from(
-        this.violations.values()
+        this.violations.values(),
       ).filter((v) => {
         if (v.status !== 'detected' && v.status !== 'investigating') {
           return false;
@@ -997,7 +997,7 @@ export class ComplianceMonitor extends EventEmitter {
               category: v.category,
               severity: v.severity,
               age: Math.floor(
-                (Date.now() - v.timestamp.getTime()) / (1000 * 60 * 60 * 24)
+                (Date.now() - v.timestamp.getTime()) / (1000 * 60 * 60 * 24),
               ),
             })),
             timestamp: new Date(),
@@ -1010,7 +1010,7 @@ export class ComplianceMonitor extends EventEmitter {
       if (latestAudit?.nextAuditDate) {
         const daysUntilAudit = Math.floor(
           (latestAudit.nextAuditDate.getTime() - Date.now()) /
-            (1000 * 60 * 60 * 24)
+            (1000 * 60 * 60 * 24),
         );
 
         if (
@@ -1055,7 +1055,7 @@ export class ComplianceMonitor extends EventEmitter {
   private async evaluateRule(
     rule: any,
     operation: string,
-    context: any
+    context: any,
   ): Promise<{
     compliant: boolean;
     reason?: string;
@@ -1077,7 +1077,7 @@ export class ComplianceMonitor extends EventEmitter {
    */
   private determineSeverity(
     category: ComplianceCategory,
-    _rule: any
+    _rule: any,
   ): ViolationSeverity {
     // Critical categories always get high or critical severity
     if (this.config.criticalCategories.includes(category)) {
@@ -1093,10 +1093,10 @@ export class ComplianceMonitor extends EventEmitter {
    */
   private findRelatedRequirements(
     category: ComplianceCategory,
-    article: LGPDArticle
+    article: LGPDArticle,
   ): ComplianceRequirement[] {
     return Array.from(this.requirements.values()).filter(
-      (r) => r.category === category && r.article === article
+      (r) => r.category === category && r.article === article,
     );
   }
 
@@ -1129,7 +1129,7 @@ export class ComplianceMonitor extends EventEmitter {
    * Calculate score trend
    */
   private calculateScoreTrend(
-    period: 'daily' | 'weekly' | 'monthly'
+    period: 'daily' | 'weekly' | 'monthly',
   ): Record<string, number> {
     // In a real implementation, this would calculate from historical data
     // For now, we'll return placeholder data
@@ -1160,7 +1160,7 @@ export class ComplianceMonitor extends EventEmitter {
    * Calculate category trend
    */
   private calculateCategoryTrend(
-    _category: ComplianceCategory
+    _category: ComplianceCategory,
   ): 'improving' | 'stable' | 'declining' {
     // In a real implementation, this would calculate from historical data
     // For now, we'll return a random trend
@@ -1332,7 +1332,7 @@ export class ComplianceMonitor extends EventEmitter {
    * Save requirement
    */
   private async saveRequirement(
-    requirement: ComplianceRequirement
+    requirement: ComplianceRequirement,
   ): Promise<void> {
     // In a real implementation, this would save to database
     // For now, we'll just keep in memory
@@ -1362,7 +1362,7 @@ export class ComplianceMonitor extends EventEmitter {
   private logActivity(
     _actor: string,
     _action: string,
-    _details: Record<string, any>
+    _details: Record<string, any>,
   ): void {}
 
   /**
@@ -1422,7 +1422,7 @@ export class ComplianceMonitor extends EventEmitter {
     const criticalViolations = Array.from(this.violations.values()).filter(
       (v) =>
         v.severity === ViolationSeverity.CRITICAL &&
-        (v.status === 'detected' || v.status === 'investigating')
+        (v.status === 'detected' || v.status === 'investigating'),
     ).length;
 
     if (criticalViolations > 0) {

@@ -34,12 +34,12 @@ export async function GET(request: NextRequest) {
     }
     if (searchParams.get('prediction_score_min')) {
       filters.prediction_score_min = Number.parseFloat(
-        searchParams.get('prediction_score_min')!
+        searchParams.get('prediction_score_min')!,
       );
     }
     if (searchParams.get('prediction_score_max')) {
       filters.prediction_score_max = Number.parseFloat(
-        searchParams.get('prediction_score_max')!
+        searchParams.get('prediction_score_max')!,
       );
     }
     if (searchParams.get('risk_assessment')) {
@@ -85,7 +85,7 @@ export async function GET(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to fetch predictions' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -108,7 +108,7 @@ export async function POST(request: NextRequest) {
     if (!(body.patient_id && body.treatment_type)) {
       return NextResponse.json(
         { error: 'Missing required fields: patient_id, treatment_type' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -131,7 +131,7 @@ export async function POST(request: NextRequest) {
         ...predictionResponse,
         message: 'Treatment prediction generated successfully',
       },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (error) {
     if (error instanceof Error) {
@@ -140,7 +140,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(
       { error: 'Failed to generate prediction' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

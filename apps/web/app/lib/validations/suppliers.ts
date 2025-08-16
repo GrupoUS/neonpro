@@ -172,7 +172,7 @@ export const volumeDiscountTierSchema = z
     {
       message: 'Quantidade máxima deve ser maior que a mínima',
       path: ['max_quantity'],
-    }
+    },
   );
 
 export const supplierSchema = z.object({
@@ -277,7 +277,7 @@ export const supplierContractSchema = z
     {
       message: 'Data de fim deve ser posterior à data de início',
       path: ['end_date'],
-    }
+    },
   );
 
 export const supplierContactSchema = z
@@ -438,7 +438,7 @@ export const supplierEvaluationSchema = z
     {
       message: 'Data de fim deve ser posterior à data de início',
       path: ['evaluation_period_end'],
-    }
+    },
   );
 
 export const supplierCommunicationSchema = z.object({
@@ -593,7 +593,7 @@ export const createContractSchema = z
     {
       message: 'Data de fim deve ser posterior à data de início',
       path: ['end_date'],
-    }
+    },
   );
 
 export const createEvaluationSchema = z
@@ -641,7 +641,7 @@ export const createEvaluationSchema = z
     {
       message: 'Data de fim deve ser posterior à data de início',
       path: ['evaluation_period_end'],
-    }
+    },
   );
 
 export const createQualityIssueSchema = z.object({
@@ -726,7 +726,7 @@ export const supplierFiltersSchema = z
     {
       message: 'Score mínimo deve ser menor ou igual ao máximo',
       path: ['performance_score_min'],
-    }
+    },
   );
 
 export const qualityIssueFiltersSchema = z
@@ -751,7 +751,7 @@ export const qualityIssueFiltersSchema = z
     {
       message: 'Data inicial deve ser anterior ou igual à data final',
       path: ['date_from'],
-    }
+    },
   );
 
 // =====================================================================================

@@ -723,7 +723,7 @@ export const OptimizationRecommendationSchema = z.object({
       description: z.string(),
       priority: z.number(),
       estimated_impact: z.number(),
-    })
+    }),
   ),
   status: z.enum([
     'pending',

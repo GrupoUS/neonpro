@@ -64,7 +64,7 @@ export class DemandForecastingService {
   async getHistoricalConsumption(
     itemId: string,
     clinicId: string,
-    daysBack = 365
+    daysBack = 365,
   ): Promise<ConsumptionData[]> {
     const supabase = await this.getSupabase();
 
@@ -80,7 +80,7 @@ export class DemandForecastingService {
         transaction_type,
         transaction_context,
         appointment_id
-      `
+      `,
       )
       .eq('item_id', itemId)
       .eq('clinic_id', clinicId)
@@ -98,7 +98,7 @@ export class DemandForecastingService {
         quantity: Math.abs(tx.quantity),
         type: this.categorizeConsumption(
           tx.transaction_context,
-          tx.appointment_id
+          tx.appointment_id,
         ),
         context: tx.transaction_context,
       })) || []
@@ -111,7 +111,7 @@ export class DemandForecastingService {
   async getAppointmentBasedDemand(
     itemId: string,
     clinicId: string,
-    daysBack = 365
+    daysBack = 365,
   ): Promise<
     Array<{
       date: Date;
@@ -137,7 +137,7 @@ export class DemandForecastingService {
           item_id,
           quantity_used
         )
-      `
+      `,
       )
       .eq('clinic_id', clinicId)
       .gte('date', startDate.toISOString())
@@ -155,10 +155,10 @@ export class DemandForecastingService {
           procedureType: apt.procedure_type,
           expectedConsumption: this.getExpectedConsumptionForProcedure(
             apt.procedure_type,
-            itemId
+            itemId,
           ),
           actualConsumption: apt.inventory_usage?.find(
-            (usage: any) => usage.item_id === itemId
+            (usage: any) => usage.item_id === itemId,
           )?.quantity_used,
         }))
         .filter((item) => item.expectedConsumption > 0) || []
@@ -173,7 +173,7 @@ export class DemandForecastingService {
    * Analyze seasonal patterns in consumption data
    */
   analyzeSeasonalPatterns(
-    consumptionData: ConsumptionData[]
+    consumptionData: ConsumptionData[],
   ): SeasonalPattern[] {
     if (consumptionData.length < 30) {
       return []; // Dados insuficientes
@@ -214,7 +214,7 @@ export class DemandForecastingService {
     });
 
     const weeklyAverages = weeklyData.map((day) =>
-      day.count > 0 ? day.total / day.count : 0
+      day.count > 0 ? day.total / day.count : 0,
     );
     const overallAverage =
       weeklyAverages.reduce((sum, val) => sum + val, 0) / 7;
@@ -223,7 +223,7 @@ export class DemandForecastingService {
     const variance =
       weeklyAverages.reduce(
         (sum, val) => sum + (val - overallAverage) ** 2,
-        0
+        0,
       ) / 7;
     const strength = Math.min(Math.sqrt(variance) / overallAverage, 1);
 
@@ -258,7 +258,7 @@ export class DemandForecastingService {
     });
 
     const monthlyAverages = monthlyData.map((month) =>
-      month.count > 0 ? month.total / month.count : 0
+      month.count > 0 ? month.total / month.count : 0,
     );
     const overallAverage =
       monthlyAverages.reduce((sum, val) => sum + val, 0) / 12;
@@ -272,7 +272,7 @@ export class DemandForecastingService {
     const variance =
       monthlyAverages.reduce(
         (sum, val) => sum + (val - overallAverage) ** 2,
-        0
+        0,
       ) / 12;
     const strength = Math.min(Math.sqrt(variance) / overallAverage, 1);
 
@@ -307,7 +307,7 @@ export class DemandForecastingService {
     });
 
     const quarterlyAverages = quarterlyData.map((q) =>
-      q.count > 0 ? q.total / q.count : 0
+      q.count > 0 ? q.total / q.count : 0,
     );
     const overallAverage =
       quarterlyAverages.reduce((sum, val) => sum + val, 0) / 4;
@@ -315,7 +315,7 @@ export class DemandForecastingService {
     const variance =
       quarterlyAverages.reduce(
         (sum, val) => sum + (val - overallAverage) ** 2,
-        0
+        0,
       ) / 4;
     const strength = Math.min(Math.sqrt(variance) / overallAverage, 1);
 
@@ -351,7 +351,7 @@ export class DemandForecastingService {
     const historicalData = await this.getHistoricalConsumption(
       input.itemId,
       input.clinicId,
-      Math.max(input.forecastPeriod * 4, 365) // Pelo menos 4x o período ou 1 ano
+      Math.max(input.forecastPeriod * 4, 365), // Pelo menos 4x o período ou 1 ano
     );
 
     if (historicalData.length < 30) {
@@ -375,27 +375,27 @@ export class DemandForecastingService {
     // Preparar dados para previsão
     const timeSeriesData = this.prepareTimeSeriesData(
       historicalData,
-      input.forecastPeriod
+      input.forecastPeriod,
     );
 
     // Aplicar diferentes algoritmos e escolher o melhor
     const forecasts = {
       exponentialSmoothing: this.exponentialSmoothingForecast(
         timeSeriesData,
-        input.forecastPeriod
+        input.forecastPeriod,
       ),
       seasonalDecomposition: this.seasonalDecompositionForecast(
         timeSeriesData,
         seasonalPatterns,
-        input.forecastPeriod
+        input.forecastPeriod,
       ),
       movingAverage: this.movingAverageForecast(
         timeSeriesData,
-        input.forecastPeriod
+        input.forecastPeriod,
       ),
       linearRegression: this.linearRegressionForecast(
         timeSeriesData,
-        input.forecastPeriod
+        input.forecastPeriod,
       ),
     };
 
@@ -408,14 +408,14 @@ export class DemandForecastingService {
     const confidenceInterval = this.calculateConfidenceInterval(
       selectedForecast.prediction,
       selectedForecast.errorEstimate,
-      input.confidenceLevel
+      input.confidenceLevel,
     );
 
     // Gerar recomendações
     const recommendations = this.generateRecommendations(
       selectedForecast,
       seasonalPatterns,
-      input.forecastPeriod
+      input.forecastPeriod,
     );
 
     return {
@@ -467,7 +467,7 @@ export class DemandForecastingService {
       rmse: this.calculateRMSE(data, smoothedValues),
       lastPeriodAccuracy: this.calculateLastPeriodAccuracy(
         data,
-        smoothedValues
+        smoothedValues,
       ),
     };
   }
@@ -475,7 +475,7 @@ export class DemandForecastingService {
   private seasonalDecompositionForecast(
     data: number[],
     patterns: SeasonalPattern[],
-    periods: number
+    periods: number,
   ) {
     // Decompose into trend, seasonal, and residual components
     const trend = this.extractTrend(data);
@@ -491,7 +491,7 @@ export class DemandForecastingService {
     const errorEstimate = this.calculateDecompositionError(
       data,
       trend,
-      seasonal
+      seasonal,
     );
 
     return {
@@ -562,7 +562,7 @@ export class DemandForecastingService {
 
   private categorizeConsumption(
     context?: string,
-    appointmentId?: string
+    appointmentId?: string,
   ): ConsumptionData['type'] {
     if (appointmentId) {
       return 'appointment_based';
@@ -575,7 +575,7 @@ export class DemandForecastingService {
 
   private getExpectedConsumptionForProcedure(
     procedureType: string,
-    _itemId: string
+    _itemId: string,
   ): number {
     // This would typically come from a procedure-item mapping table
     // For now, return a simplified estimate
@@ -593,7 +593,7 @@ export class DemandForecastingService {
 
   private prepareTimeSeriesData(
     consumption: ConsumptionData[],
-    _forecastPeriod: number
+    _forecastPeriod: number,
   ): number[] {
     // Group by day and sum quantities
     const dailyConsumption = new Map<string, number>();
@@ -602,7 +602,7 @@ export class DemandForecastingService {
       const dateKey = item.date.toISOString().split('T')[0];
       dailyConsumption.set(
         dateKey,
-        (dailyConsumption.get(dateKey) || 0) + item.quantity
+        (dailyConsumption.get(dateKey) || 0) + item.quantity,
       );
     });
 
@@ -611,7 +611,7 @@ export class DemandForecastingService {
 
   private selectBestModelKey(
     forecasts: any,
-    _historicalData: number[]
+    _historicalData: number[],
   ): keyof typeof forecasts {
     // Select model with lowest MAPE
     let bestModel: keyof typeof forecasts = 'movingAverage';
@@ -628,7 +628,7 @@ export class DemandForecastingService {
   }
 
   private mapModelKeyToEnum(
-    modelKey: string
+    modelKey: string,
   ):
     | 'exponential_smoothing'
     | 'seasonal_decomposition'
@@ -653,7 +653,7 @@ export class DemandForecastingService {
   private calculateConfidenceInterval(
     prediction: number,
     errorEstimate: number,
-    confidenceLevel: number
+    confidenceLevel: number,
   ) {
     // Z-scores for common confidence levels
     const zScores: Record<number, number> = {
@@ -675,18 +675,18 @@ export class DemandForecastingService {
   private generateRecommendations(
     forecast: any,
     seasonalPatterns: SeasonalPattern[],
-    _forecastPeriod: number
+    _forecastPeriod: number,
   ): string[] {
     const recommendations: string[] = [];
 
     // Trend-based recommendations
     if (forecast.trend > 0.1) {
       recommendations.push(
-        'Increasing trend detected - consider higher safety stock levels'
+        'Increasing trend detected - consider higher safety stock levels',
       );
     } else if (forecast.trend < -0.1) {
       recommendations.push(
-        'Decreasing trend detected - review minimum stock levels'
+        'Decreasing trend detected - review minimum stock levels',
       );
     }
 
@@ -694,7 +694,7 @@ export class DemandForecastingService {
     seasonalPatterns.forEach((pattern) => {
       if (pattern.strength > 0.5) {
         recommendations.push(
-          `Strong ${pattern.pattern} seasonality detected - adjust ordering patterns accordingly`
+          `Strong ${pattern.pattern} seasonality detected - adjust ordering patterns accordingly`,
         );
       }
     });
@@ -702,7 +702,7 @@ export class DemandForecastingService {
     // Accuracy recommendations
     if (forecast.mape > 0.3) {
       recommendations.push(
-        'High forecast uncertainty - consider more frequent monitoring'
+        'High forecast uncertainty - consider more frequent monitoring',
       );
     }
 
@@ -712,10 +712,10 @@ export class DemandForecastingService {
   // Error calculation helper methods
   private calculateForecastError(
     actual: number[],
-    predicted: number[]
+    predicted: number[],
   ): number {
     const errors = actual.map((val, idx) =>
-      Math.abs(val - (predicted[idx] || 0))
+      Math.abs(val - (predicted[idx] || 0)),
     );
     return errors.reduce((sum, err) => sum + err, 0) / errors.length;
   }
@@ -733,7 +733,7 @@ export class DemandForecastingService {
 
   private calculateRMSE(actual: number[], predicted: number[]): number {
     const squaredErrors = actual.map(
-      (val, idx) => (val - (predicted[idx] || 0)) ** 2
+      (val, idx) => (val - (predicted[idx] || 0)) ** 2,
     );
     const mse =
       squaredErrors.reduce((sum, err) => sum + err, 0) / squaredErrors.length;
@@ -758,7 +758,7 @@ export class DemandForecastingService {
 
   private calculateLastPeriodAccuracy(
     actual: number[],
-    predicted: number[]
+    predicted: number[],
   ): number {
     if (actual.length === 0 || predicted.length === 0) {
       return 0;
@@ -791,7 +791,7 @@ export class DemandForecastingService {
 
   private extractSeasonal(
     data: number[],
-    patterns: SeasonalPattern[]
+    patterns: SeasonalPattern[],
   ): number[] {
     // Simplified seasonal extraction
     return data.map((_, idx) => {
@@ -824,7 +824,7 @@ export class DemandForecastingService {
 
   private getSeasonalAdjustment(
     patterns: SeasonalPattern[],
-    _periods: number
+    _periods: number,
   ): number {
     // Simplified seasonal adjustment
     const currentPeriod = new Date();
@@ -848,7 +848,7 @@ export class DemandForecastingService {
   private calculateDecompositionError(
     data: number[],
     trend: number[],
-    seasonal: number[]
+    seasonal: number[],
   ): number {
     const errors = data.map((val, idx) => {
       const predicted = (trend[idx] || 0) * (seasonal[idx] || 1);

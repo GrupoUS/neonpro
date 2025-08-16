@@ -52,7 +52,7 @@ export async function GET(request: NextRequest) {
     if (!(userProfile && ['admin', 'owner'].includes(userProfile.role))) {
       return NextResponse.json(
         { error: 'Insufficient permissions' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -76,7 +76,7 @@ export async function GET(request: NextRequest) {
           plan:subscription_plans(*)
         ),
         payment_retry_logs(*)
-      `
+      `,
       )
       .order('created_at', { ascending: false })
       .range((page - 1) * limit, page * limit - 1);
@@ -98,7 +98,7 @@ export async function GET(request: NextRequest) {
       logger.error('Error fetching billing events:', error);
       return NextResponse.json(
         { error: 'Failed to fetch billing events' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -108,7 +108,7 @@ export async function GET(request: NextRequest) {
       .select('status, amount')
       .gte(
         'created_at',
-        new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
+        new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
       );
 
     const summary = {
@@ -149,7 +149,7 @@ export async function GET(request: NextRequest) {
     logger.error('Error in GET /api/recurring-payments:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -177,7 +177,7 @@ export async function POST(request: NextRequest) {
     if (!(userProfile && ['admin', 'owner'].includes(userProfile.role))) {
       return NextResponse.json(
         { error: 'Insufficient permissions' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -191,7 +191,7 @@ export async function POST(request: NextRequest) {
           error: 'Invalid request data',
           details: validationResult.error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -205,7 +205,7 @@ export async function POST(request: NextRequest) {
         *,
         customer:customers(*),
         plan:subscription_plans(*)
-      `
+      `,
       )
       .eq('id', paymentData.subscription_id)
       .single();
@@ -213,14 +213,14 @@ export async function POST(request: NextRequest) {
     if (subscriptionError || !subscription) {
       return NextResponse.json(
         { error: 'Subscription not found' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
     if (!['active', 'trialing'].includes(subscription.status)) {
       return NextResponse.json(
         { error: 'Subscription is not active or trialing' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -229,11 +229,11 @@ export async function POST(request: NextRequest) {
       paymentData.subscription_id,
       paymentData.amount,
       paymentData.force_process,
-      paymentData.metadata
+      paymentData.metadata,
     );
 
     logger.info(
-      `Recurring payment processed for subscription: ${paymentData.subscription_id} by user: ${user.id}`
+      `Recurring payment processed for subscription: ${paymentData.subscription_id} by user: ${user.id}`,
     );
 
     return NextResponse.json(
@@ -241,7 +241,7 @@ export async function POST(request: NextRequest) {
         data: result,
         message: 'Payment processed successfully',
       },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (error) {
     logger.error('Error in POST /api/recurring-payments:', error);
@@ -252,7 +252,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -280,7 +280,7 @@ export async function PUT(request: NextRequest) {
     if (!(userProfile && ['admin', 'owner'].includes(userProfile.role))) {
       return NextResponse.json(
         { error: 'Insufficient permissions' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -294,7 +294,7 @@ export async function PUT(request: NextRequest) {
           error: 'Invalid request data',
           details: validationResult.error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -311,7 +311,7 @@ export async function PUT(request: NextRequest) {
             subscriptionId,
             undefined,
             force_process,
-            metadata
+            metadata,
           );
         results.push({
           subscription_id: subscriptionId,
@@ -326,7 +326,7 @@ export async function PUT(request: NextRequest) {
     }
 
     logger.info(
-      `Bulk payment processing completed: ${results.length} successful, ${errors.length} errors by user: ${user.id}`
+      `Bulk payment processing completed: ${results.length} successful, ${errors.length} errors by user: ${user.id}`,
     );
 
     return NextResponse.json({
@@ -344,7 +344,7 @@ export async function PUT(request: NextRequest) {
     logger.error('Error in PUT /api/recurring-payments:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

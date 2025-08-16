@@ -42,37 +42,37 @@ export async function POST(request: NextRequest) {
     switch (event.type) {
       case 'payment_intent.succeeded':
         await handlePaymentIntentSucceeded(
-          event.data.object as Stripe.PaymentIntent
+          event.data.object as Stripe.PaymentIntent,
         );
         break;
 
       case 'payment_intent.payment_failed':
         await handlePaymentIntentFailed(
-          event.data.object as Stripe.PaymentIntent
+          event.data.object as Stripe.PaymentIntent,
         );
         break;
 
       case 'payment_intent.canceled':
         await handlePaymentIntentCanceled(
-          event.data.object as Stripe.PaymentIntent
+          event.data.object as Stripe.PaymentIntent,
         );
         break;
 
       case 'payment_intent.requires_action':
         await handlePaymentIntentRequiresAction(
-          event.data.object as Stripe.PaymentIntent
+          event.data.object as Stripe.PaymentIntent,
         );
         break;
 
       case 'payment_intent.processing':
         await handlePaymentIntentProcessing(
-          event.data.object as Stripe.PaymentIntent
+          event.data.object as Stripe.PaymentIntent,
         );
         break;
 
       case 'payment_method.attached':
         await handlePaymentMethodAttached(
-          event.data.object as Stripe.PaymentMethod
+          event.data.object as Stripe.PaymentMethod,
         );
         break;
 
@@ -82,7 +82,7 @@ export async function POST(request: NextRequest) {
 
       case 'invoice.payment_succeeded':
         await handleInvoicePaymentSucceeded(
-          event.data.object as Stripe.Invoice
+          event.data.object as Stripe.Invoice,
         );
         break;
 
@@ -100,7 +100,7 @@ export async function POST(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Webhook processing failed' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -109,118 +109,117 @@ export async function POST(request: NextRequest) {
  * Handle successful payment intent
  */
 async function handlePaymentIntentSucceeded(
-  paymentIntent: Stripe.PaymentIntent
+  paymentIntent: Stripe.PaymentIntent,
 ) {
-    const installmentId = paymentIntent.metadata.installment_id;
-    const _paymentPlanId = paymentIntent.metadata.payment_plan_id;
-    const _customerId = paymentIntent.metadata.customer_id;
-    const _lateFee = Number.parseFloat(paymentIntent.metadata.late_fee || '0');
+  const installmentId = paymentIntent.metadata.installment_id;
+  const _paymentPlanId = paymentIntent.metadata.payment_plan_id;
+  const _customerId = paymentIntent.metadata.customer_id;
+  const _lateFee = Number.parseFloat(paymentIntent.metadata.late_fee || '0');
 
-    if (!installmentId) {
-      return;
-    }
+  if (!installmentId) {
+    return;
+  }
 }
 
 /**
  * Handle failed payment intent
  */
 async function handlePaymentIntentFailed(paymentIntent: Stripe.PaymentIntent) {
-    const installmentId = paymentIntent.metadata.installment_id;
-    const _paymentPlanId = paymentIntent.metadata.payment_plan_id;
-    const _customerId = paymentIntent.metadata.customer_id;
-    const _errorMessage =
-      paymentIntent.last_payment_error?.message || 'Payment failed';
+  const installmentId = paymentIntent.metadata.installment_id;
+  const _paymentPlanId = paymentIntent.metadata.payment_plan_id;
+  const _customerId = paymentIntent.metadata.customer_id;
+  const _errorMessage =
+    paymentIntent.last_payment_error?.message || 'Payment failed';
 
-    if (!installmentId) {
-      return;
-    }
+  if (!installmentId) {
+    return;
+  }
 }
 
 /**
  * Handle canceled payment intent
  */
 async function handlePaymentIntentCanceled(
-  paymentIntent: Stripe.PaymentIntent
+  paymentIntent: Stripe.PaymentIntent,
 ) {
-    const installmentId = paymentIntent.metadata.installment_id;
-    const _paymentPlanId = paymentIntent.metadata.payment_plan_id;
-    const _customerId = paymentIntent.metadata.customer_id;
+  const installmentId = paymentIntent.metadata.installment_id;
+  const _paymentPlanId = paymentIntent.metadata.payment_plan_id;
+  const _customerId = paymentIntent.metadata.customer_id;
 
-    if (!installmentId) {
-      return;
-    }
+  if (!installmentId) {
+    return;
+  }
 }
 
 /**
  * Handle payment intent that requires action
  */
 async function handlePaymentIntentRequiresAction(
-  paymentIntent: Stripe.PaymentIntent
+  paymentIntent: Stripe.PaymentIntent,
 ) {
-    const installmentId = paymentIntent.metadata.installment_id;
-    const _paymentPlanId = paymentIntent.metadata.payment_plan_id;
-    const _customerId = paymentIntent.metadata.customer_id;
+  const installmentId = paymentIntent.metadata.installment_id;
+  const _paymentPlanId = paymentIntent.metadata.payment_plan_id;
+  const _customerId = paymentIntent.metadata.customer_id;
 
-    if (!installmentId) {
-      return;
-    }
+  if (!installmentId) {
+    return;
+  }
 }
 
 /**
  * Handle payment intent processing
  */
 async function handlePaymentIntentProcessing(
-  paymentIntent: Stripe.PaymentIntent
+  paymentIntent: Stripe.PaymentIntent,
 ) {
-    const installmentId = paymentIntent.metadata.installment_id;
-    const _paymentPlanId = paymentIntent.metadata.payment_plan_id;
-    const _customerId = paymentIntent.metadata.customer_id;
+  const installmentId = paymentIntent.metadata.installment_id;
+  const _paymentPlanId = paymentIntent.metadata.payment_plan_id;
+  const _customerId = paymentIntent.metadata.customer_id;
 
-    if (!installmentId) {
-      return;
-    }
+  if (!installmentId) {
+    return;
+  }
 }
 
 /**
  * Handle payment method attached to customer
  */
 async function handlePaymentMethodAttached(
-  _paymentMethod: Stripe.PaymentMethod
-) {
-}
+  _paymentMethod: Stripe.PaymentMethod,
+) {}
 
 /**
  * Handle customer updated
  */
 async function handleCustomerUpdated(customer: Stripe.Customer) {
-    if (customer.deleted) {
-      return;
-    }
+  if (customer.deleted) {
+    return;
+  }
 }
 
 /**
  * Handle successful invoice payment
  */
 async function handleInvoicePaymentSucceeded(invoice: Stripe.Invoice) {
-    const installmentId = invoice.metadata?.installment_id;
-    const _paymentPlanId = invoice.metadata?.payment_plan_id;
+  const installmentId = invoice.metadata?.installment_id;
+  const _paymentPlanId = invoice.metadata?.payment_plan_id;
 
-    // If this invoice is related to an installment, handle accordingly
-    if (installmentId) {
-    }
+  // If this invoice is related to an installment, handle accordingly
+  if (installmentId) {
+  }
 }
 
 /**
  * Handle failed invoice payment
  */
 async function handleInvoicePaymentFailed(invoice: Stripe.Invoice) {
-    const installmentId = invoice.metadata?.installment_id;
-    const _paymentPlanId = invoice.metadata?.payment_plan_id;
+  const installmentId = invoice.metadata?.installment_id;
+  const _paymentPlanId = invoice.metadata?.payment_plan_id;
 
-    // If this invoice is related to an installment, handle accordingly
-    if (installmentId) {
-      // TODO: Implement retry logic or escalation
-    }
+  // If this invoice is related to an installment, handle accordingly
+  if (installmentId) {
+    // TODO: Implement retry logic or escalation
+  }
 }
 
 // Export for testing

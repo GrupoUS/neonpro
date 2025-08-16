@@ -39,7 +39,7 @@ export async function POST(request: NextRequest) {
     if (clinicError || !clinic) {
       return NextResponse.json(
         { error: 'Clínica não encontrada' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -59,7 +59,7 @@ export async function POST(request: NextRequest) {
           estimated_duration,
           required_materials
         )
-      `
+      `,
       )
       .eq('clinic_id', params.clinicId)
       .gte('scheduled_date', params.startDate)
@@ -69,7 +69,7 @@ export async function POST(request: NextRequest) {
     if (appointmentsError) {
       return NextResponse.json(
         { error: 'Erro ao buscar agendamentos' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -87,7 +87,7 @@ export async function POST(request: NextRequest) {
           name,
           unit_cost
         )
-      `
+      `,
       )
       .eq('clinic_id', params.clinicId)
       .eq('is_active', true);
@@ -95,7 +95,7 @@ export async function POST(request: NextRequest) {
     if (templatesError) {
       return NextResponse.json(
         { error: 'Erro ao buscar templates de materiais' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -110,7 +110,7 @@ export async function POST(request: NextRequest) {
       // Get materials for this procedure type
       const requiredMaterials =
         materialTemplates?.filter(
-          (template) => template.procedure_type === procedureType
+          (template) => template.procedure_type === procedureType,
         ) || [];
 
       requiredMaterials.forEach((material) => {
@@ -164,7 +164,7 @@ export async function POST(request: NextRequest) {
     if (stockError) {
       return NextResponse.json(
         { error: 'Erro ao buscar estoque atual' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -228,7 +228,7 @@ export async function POST(request: NextRequest) {
         acc[item.date].materials.push(item);
         return acc;
       },
-      {}
+      {},
     );
 
     return NextResponse.json({
@@ -243,7 +243,7 @@ export async function POST(request: NextRequest) {
           uniqueMaterials: materialPredictions.size,
           totalEstimatedCost: Array.from(materialPredictions.values()).reduce(
             (sum, pred) => sum + pred.totalQuantity * pred.unitCost,
-            0
+            0,
           ),
           potentialShortages: alerts.length,
         },
@@ -261,13 +261,13 @@ export async function POST(request: NextRequest) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Parâmetros inválidos', details: error.errors },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

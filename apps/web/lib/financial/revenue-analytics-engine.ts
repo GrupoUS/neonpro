@@ -71,7 +71,7 @@ export class RevenueAnalyticsEngine {
    * Analyze revenue by service type and category with profitability metrics
    */
   async analyzeRevenueByService(
-    filters: RevenueAnalysisFilters
+    filters: RevenueAnalysisFilters,
   ): Promise<ServiceRevenueData[]> {
     const { clinicId, dateRange, serviceIds } = filters;
 
@@ -83,7 +83,7 @@ export class RevenueAnalyticsEngine {
         p_start_date: dateRange.start.toISOString(),
         p_end_date: dateRange.end.toISOString(),
         p_service_ids: serviceIds || null,
-      }
+      },
     );
 
     if (error) {
@@ -95,15 +95,15 @@ export class RevenueAnalyticsEngine {
       serviceData.map(async (service: any) => {
         const costAllocation = await this.calculateServiceCostAllocation(
           service.service_id,
-          dateRange
+          dateRange,
         );
         const seasonalIndex = await this.calculateSeasonalIndex(
           service.service_id,
-          dateRange
+          dateRange,
         );
         const growthRate = await this.calculateGrowthRate(
           service.service_id,
-          dateRange
+          dateRange,
         );
 
         return {
@@ -121,7 +121,7 @@ export class RevenueAnalyticsEngine {
           growthRate,
           seasonalIndex,
         };
-      })
+      }),
     );
 
     return enrichedData.sort((a, b) => b.totalRevenue - a.totalRevenue);
@@ -132,7 +132,7 @@ export class RevenueAnalyticsEngine {
    */
   async calculateServiceProfitability(
     serviceId: string,
-    dateRange: { start: Date; end: Date }
+    dateRange: { start: Date; end: Date },
   ): Promise<ServiceProfitability> {
     // Get direct costs (provider time, materials, equipment usage)
     const { data: directCosts } = await this.supabase
@@ -149,13 +149,13 @@ export class RevenueAnalyticsEngine {
         p_service_id: serviceId,
         p_start_date: dateRange.start.toISOString(),
         p_end_date: dateRange.end.toISOString(),
-      }
+      },
     );
 
     const directCostTotal =
       directCosts?.reduce(
         (sum, cost) => sum + Number.parseFloat(cost.amount),
-        0
+        0,
       ) || 0;
     const overheadCost = overheadData?.[0]?.overhead_allocation || 0;
     const totalCost = directCostTotal + overheadCost;
@@ -167,7 +167,7 @@ export class RevenueAnalyticsEngine {
         p_service_id: serviceId,
         p_start_date: dateRange.start.toISOString(),
         p_end_date: dateRange.end.toISOString(),
-      }
+      },
     );
 
     const totalRevenue = revenueData?.[0]?.total_revenue || 0;
@@ -187,7 +187,7 @@ export class RevenueAnalyticsEngine {
         totalCost > 0
           ? Math.ceil(
               totalCost /
-                (totalRevenue / (revenueData?.[0]?.transaction_count || 1))
+                (totalRevenue / (revenueData?.[0]?.transaction_count || 1)),
             )
           : 0,
     };
@@ -201,7 +201,7 @@ export class RevenueAnalyticsEngine {
    * Analyze provider performance and revenue contribution
    */
   async analyzeProviderPerformance(
-    filters: RevenueAnalysisFilters
+    filters: RevenueAnalysisFilters,
   ): Promise<ProviderRevenueData[]> {
     const { clinicId, dateRange, providerIds } = filters;
 
@@ -212,7 +212,7 @@ export class RevenueAnalyticsEngine {
         p_start_date: dateRange.start.toISOString(),
         p_end_date: dateRange.end.toISOString(),
         p_provider_ids: providerIds || null,
-      }
+      },
     );
 
     if (error) {
@@ -224,15 +224,15 @@ export class RevenueAnalyticsEngine {
       providerData.map(async (provider: any) => {
         const utilizationRate = await this.calculateProviderUtilization(
           provider.provider_id,
-          dateRange
+          dateRange,
         );
         const conversionRate = await this.calculateProviderConversionRate(
           provider.provider_id,
-          dateRange
+          dateRange,
         );
         const growthTrend = await this.calculateProviderGrowthTrend(
           provider.provider_id,
-          dateRange
+          dateRange,
         );
 
         return {
@@ -242,13 +242,13 @@ export class RevenueAnalyticsEngine {
           totalRevenue: Number.parseFloat(provider.total_revenue),
           patientCount: Number.parseInt(provider.patient_count, 10),
           averageRevenuePerPatient: Number.parseFloat(
-            provider.avg_revenue_per_patient
+            provider.avg_revenue_per_patient,
           ),
           utilizationRate,
           conversionRate,
           growthTrend,
         };
-      })
+      }),
     );
 
     return enrichedData.sort((a, b) => b.totalRevenue - a.totalRevenue);
@@ -259,7 +259,7 @@ export class RevenueAnalyticsEngine {
    */
   private async calculateProviderUtilization(
     providerId: string,
-    dateRange: { start: Date; end: Date }
+    dateRange: { start: Date; end: Date },
   ): Promise<number> {
     const { data: utilizationData } = await this.supabase.rpc(
       'calculate_provider_utilization',
@@ -267,7 +267,7 @@ export class RevenueAnalyticsEngine {
         p_provider_id: providerId,
         p_start_date: dateRange.start.toISOString(),
         p_end_date: dateRange.end.toISOString(),
-      }
+      },
     );
 
     return utilizationData?.[0]?.utilization_rate || 0;
@@ -278,7 +278,7 @@ export class RevenueAnalyticsEngine {
    */
   private async calculateProviderConversionRate(
     providerId: string,
-    dateRange: { start: Date; end: Date }
+    dateRange: { start: Date; end: Date },
   ): Promise<number> {
     const { data: conversionData } = await this.supabase.rpc(
       'calculate_provider_conversion',
@@ -286,7 +286,7 @@ export class RevenueAnalyticsEngine {
         p_provider_id: providerId,
         p_start_date: dateRange.start.toISOString(),
         p_end_date: dateRange.end.toISOString(),
-      }
+      },
     );
 
     return conversionData?.[0]?.conversion_rate || 0;
@@ -305,7 +305,7 @@ export class RevenueAnalyticsEngine {
     comparisonType:
       | 'previous_period'
       | 'same_period_last_year'
-      | 'rolling_average'
+      | 'rolling_average',
   ): Promise<TimeSeriesData[]> {
     const { data: timeSeriesData, error } = await this.supabase.rpc(
       'generate_time_series_analysis',
@@ -314,7 +314,7 @@ export class RevenueAnalyticsEngine {
         p_current_start: currentPeriod.start.toISOString(),
         p_current_end: currentPeriod.end.toISOString(),
         p_comparison_type: comparisonType,
-      }
+      },
     );
 
     if (error) {
@@ -337,7 +337,7 @@ export class RevenueAnalyticsEngine {
    */
   private async calculateSeasonalIndex(
     serviceId: string,
-    dateRange: { start: Date; end: Date }
+    dateRange: { start: Date; end: Date },
   ): Promise<number> {
     const { data: seasonalData } = await this.supabase.rpc(
       'calculate_seasonal_index',
@@ -345,7 +345,7 @@ export class RevenueAnalyticsEngine {
         p_service_id: serviceId,
         p_date_range_start: dateRange.start.toISOString(),
         p_date_range_end: dateRange.end.toISOString(),
-      }
+      },
     );
 
     return seasonalData?.[0]?.seasonal_index || 1.0;
@@ -360,14 +360,14 @@ export class RevenueAnalyticsEngine {
    */
   async calculatePatientLifetimeValue(
     clinicId: string,
-    patientIds?: string[]
+    patientIds?: string[],
   ): Promise<PatientLTVData[]> {
     const { data: ltvData, error } = await this.supabase.rpc(
       'calculate_patient_ltv',
       {
         p_clinic_id: clinicId,
         p_patient_ids: patientIds || null,
-      }
+      },
     );
 
     if (error) {
@@ -420,7 +420,7 @@ export class RevenueAnalyticsEngine {
   async generateRevenueForecast(
     clinicId: string,
     forecastPeriods = 12,
-    forecastType: 'linear' | 'seasonal' | 'ml_enhanced' = 'seasonal'
+    forecastType: 'linear' | 'seasonal' | 'ml_enhanced' = 'seasonal',
   ): Promise<RevenueForecast[]> {
     const { data: forecastData, error } = await this.supabase.rpc(
       'generate_revenue_forecast',
@@ -428,7 +428,7 @@ export class RevenueAnalyticsEngine {
         p_clinic_id: clinicId,
         p_forecast_periods: forecastPeriods,
         p_forecast_type: forecastType,
-      }
+      },
     );
 
     if (error) {
@@ -454,7 +454,7 @@ export class RevenueAnalyticsEngine {
   private async calculateGrowthRate(
     entityId: string,
     dateRange: { start: Date; end: Date },
-    entityType: 'service' | 'provider' = 'service'
+    entityType: 'service' | 'provider' = 'service',
   ): Promise<number> {
     const { data: growthData } = await this.supabase.rpc(
       'calculate_growth_rate',
@@ -463,7 +463,7 @@ export class RevenueAnalyticsEngine {
         p_entity_type: entityType,
         p_start_date: dateRange.start.toISOString(),
         p_end_date: dateRange.end.toISOString(),
-      }
+      },
     );
 
     return growthData?.[0]?.growth_rate || 0;
@@ -471,7 +471,7 @@ export class RevenueAnalyticsEngine {
 
   private async calculateProviderGrowthTrend(
     providerId: string,
-    dateRange: { start: Date; end: Date }
+    dateRange: { start: Date; end: Date },
   ): Promise<number> {
     return this.calculateGrowthRate(providerId, dateRange, 'provider');
   }
@@ -485,7 +485,7 @@ export class RevenueAnalyticsEngine {
    */
   private async calculateServiceCostAllocation(
     serviceId: string,
-    dateRange: { start: Date; end: Date }
+    dateRange: { start: Date; end: Date },
   ): Promise<number> {
     const { data: costData } = await this.supabase.rpc(
       'calculate_service_cost_allocation',
@@ -493,7 +493,7 @@ export class RevenueAnalyticsEngine {
         p_service_id: serviceId,
         p_start_date: dateRange.start.toISOString(),
         p_end_date: dateRange.end.toISOString(),
-      }
+      },
     );
 
     return costData?.[0]?.total_allocated_cost || 0;
@@ -508,7 +508,7 @@ export class RevenueAnalyticsEngine {
    */
   async getRevenueAnalyticsDashboard(
     clinicId: string,
-    dateRange: { start: Date; end: Date }
+    dateRange: { start: Date; end: Date },
   ): Promise<RevenueAnalytics> {
     const [
       serviceRevenue,
@@ -533,7 +533,7 @@ export class RevenueAnalyticsEngine {
       summary: {
         totalRevenue: serviceRevenue.reduce(
           (sum, s) => sum + s.totalRevenue,
-          0
+          0,
         ),
         averageProfitMargin:
           serviceRevenue.reduce((sum, s) => sum + s.profitMargin, 0) /

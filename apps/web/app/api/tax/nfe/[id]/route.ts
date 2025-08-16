@@ -6,7 +6,7 @@ import { createClient } from '@/app/utils/supabase/server';
 
 export async function GET(
   _request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const supabase = createClient();
@@ -32,7 +32,7 @@ export async function GET(
     if (fetchError || !nfeDocument) {
       return NextResponse.json(
         { error: 'NFe document not found' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -54,14 +54,14 @@ export async function GET(
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
 
 export async function PATCH(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const supabase = createClient();
@@ -88,7 +88,7 @@ export async function PATCH(
     if (fetchError || !existingNfe) {
       return NextResponse.json(
         { error: 'NFe document not found' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -117,7 +117,7 @@ export async function PATCH(
     if (updateError) {
       return NextResponse.json(
         { error: 'Failed to update NFe document' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -128,14 +128,14 @@ export async function PATCH(
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
 
 export async function DELETE(
   _request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const supabase = createClient();
@@ -161,7 +161,7 @@ export async function DELETE(
     if (fetchError || !existingNfe) {
       return NextResponse.json(
         { error: 'NFe document not found' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -180,7 +180,7 @@ export async function DELETE(
     if (existingNfe.status !== 'draft') {
       return NextResponse.json(
         { error: 'Only draft NFe documents can be deleted' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -193,7 +193,7 @@ export async function DELETE(
     if (deleteError) {
       return NextResponse.json(
         { error: 'Failed to delete NFe document' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -204,7 +204,7 @@ export async function DELETE(
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

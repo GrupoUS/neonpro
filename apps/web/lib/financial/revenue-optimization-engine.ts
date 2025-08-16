@@ -101,7 +101,7 @@ export class RevenueOptimizationEngine {
   // 💰 Dynamic Pricing Optimization
   async optimizePricing(
     clinicId: string,
-    serviceId?: string
+    serviceId?: string,
   ): Promise<{
     currentStrategy: PricingStrategy | null;
     recommendations: string[];
@@ -126,7 +126,7 @@ export class RevenueOptimizationEngine {
       // Analyze market demand and competitor pricing
       const marketAnalysis = await this.analyzeMarketDemand(
         clinicId,
-        serviceId
+        serviceId,
       );
       const competitiveAnalysis = await this.getCompetitiveAnalysis(clinicId);
 
@@ -135,14 +135,14 @@ export class RevenueOptimizationEngine {
         clinicId,
         serviceId,
         marketAnalysis,
-        competitiveAnalysis
+        competitiveAnalysis,
       );
 
       // Calculate projected revenue increase
       const projectedIncrease = this.calculateProjectedIncrease(
         currentStrategy,
         recommendations,
-        marketAnalysis
+        marketAnalysis,
       );
 
       return {
@@ -174,13 +174,13 @@ export class RevenueOptimizationEngine {
       // Generate service mix recommendations
       const optimizedMix = this.generateOptimizedServiceMix(
         servicePerformance,
-        profitabilityMetrics
+        profitabilityMetrics,
       );
 
       // Calculate potential profitability gain
       const profitabilityGain = this.calculateMixProfitabilityGain(
         servicePerformance,
-        optimizedMix
+        optimizedMix,
       );
 
       const recommendations = [
@@ -205,7 +205,7 @@ export class RevenueOptimizationEngine {
   // 📊 Customer Lifetime Value Enhancement
   async enhanceCLV(
     clinicId: string,
-    patientId?: string
+    patientId?: string,
   ): Promise<{
     clvPredictions: CLVPrediction[];
     enhancementStrategies: string[];
@@ -232,13 +232,13 @@ export class RevenueOptimizationEngine {
       // Generate enhancement strategies
       const enhancementStrategies = this.generateCLVEnhancementStrategies(
         clvPredictions,
-        riskSegmentation
+        riskSegmentation,
       );
 
       // Calculate projected CLV increase
       const projectedIncrease = this.calculateCLVIncrease(
         clvPredictions,
-        enhancementStrategies
+        enhancementStrategies,
       );
 
       return {
@@ -320,7 +320,7 @@ export class RevenueOptimizationEngine {
       // Calculate total projected increase
       const totalProjectedIncrease = recommendations.reduce(
         (sum, rec) => sum + rec.expectedImpact,
-        0
+        0,
       );
 
       // Generate implementation plan
@@ -394,7 +394,7 @@ export class RevenueOptimizationEngine {
   // 📈 ROI Tracking and Performance
   async trackROI(
     clinicId: string,
-    optimizationId?: string
+    optimizationId?: string,
   ): Promise<{
     roiMetrics: any[];
     performanceIndicators: any;
@@ -435,7 +435,7 @@ export class RevenueOptimizationEngine {
       // Generate recommendations based on performance
       const recommendations = this.generatePerformanceRecommendations(
         performanceIndicators,
-        trendAnalysis
+        trendAnalysis,
       );
 
       return {
@@ -464,7 +464,7 @@ export class RevenueOptimizationEngine {
     _clinicId: string,
     _serviceId: string | undefined,
     _marketAnalysis: any,
-    _competitiveAnalysis: any
+    _competitiveAnalysis: any,
   ) {
     // Generate intelligent pricing recommendations
     return [
@@ -485,7 +485,7 @@ export class RevenueOptimizationEngine {
   private calculateProjectedIncrease(
     _currentStrategy: any,
     recommendations: any[],
-    _marketAnalysis: any
+    _marketAnalysis: any,
   ): number {
     // Calculate projected revenue increase based on recommendations
     return recommendations.reduce((sum, rec) => sum + rec.impact, 0);
@@ -528,7 +528,7 @@ export class RevenueOptimizationEngine {
 
   private generateOptimizedServiceMix(
     servicePerformance: any[],
-    _profitabilityMetrics: any
+    _profitabilityMetrics: any,
   ) {
     // Generate optimized service mix recommendations
     return servicePerformance.map((service) => ({
@@ -540,16 +540,16 @@ export class RevenueOptimizationEngine {
 
   private calculateMixProfitabilityGain(
     currentMix: any[],
-    optimizedMix: any[]
+    optimizedMix: any[],
   ): number {
     // Calculate potential profitability gain from optimized mix
     const currentTotal = currentMix.reduce(
       (sum, service) => sum + service.revenue,
-      0
+      0,
     );
     const optimizedTotal = optimizedMix.reduce(
       (sum, service) => sum + service.targetRevenue,
-      0
+      0,
     );
     return ((optimizedTotal - currentTotal) / currentTotal) * 100;
   }
@@ -558,23 +558,23 @@ export class RevenueOptimizationEngine {
     // Segment customers by churn risk and value
     return {
       highValueLowRisk: clvPredictions.filter(
-        (c) => c.predicted_clv > 5000 && c.churn_risk < 0.3
+        (c) => c.predicted_clv > 5000 && c.churn_risk < 0.3,
       ).length,
       highValueHighRisk: clvPredictions.filter(
-        (c) => c.predicted_clv > 5000 && c.churn_risk >= 0.3
+        (c) => c.predicted_clv > 5000 && c.churn_risk >= 0.3,
       ).length,
       lowValueLowRisk: clvPredictions.filter(
-        (c) => c.predicted_clv <= 5000 && c.churn_risk < 0.3
+        (c) => c.predicted_clv <= 5000 && c.churn_risk < 0.3,
       ).length,
       lowValueHighRisk: clvPredictions.filter(
-        (c) => c.predicted_clv <= 5000 && c.churn_risk >= 0.3
+        (c) => c.predicted_clv <= 5000 && c.churn_risk >= 0.3,
       ).length,
     };
   }
 
   private generateCLVEnhancementStrategies(
     _clvPredictions: CLVPrediction[],
-    _riskSegmentation: any
+    _riskSegmentation: any,
   ): string[] {
     return [
       'Implement VIP program for high-value, low-risk customers',
@@ -587,7 +587,7 @@ export class RevenueOptimizationEngine {
 
   private calculateCLVIncrease(
     clvPredictions: CLVPrediction[],
-    strategies: string[]
+    strategies: string[],
   ): number {
     // Calculate projected CLV increase from enhancement strategies
     const _averageCLV =
@@ -629,11 +629,11 @@ export class RevenueOptimizationEngine {
   private calculatePerformanceIndicators(roiMetrics: any[]) {
     const totalExpected = roiMetrics.reduce(
       (sum, metric) => sum + metric.expectedROI,
-      0
+      0,
     );
     const totalActual = roiMetrics.reduce(
       (sum, metric) => sum + metric.actualROI,
-      0
+      0,
     );
 
     return {
@@ -654,32 +654,32 @@ export class RevenueOptimizationEngine {
         .length,
       stable: roiMetrics.filter(
         (m) =>
-          m.actualROI >= m.expectedROI * 0.8 && m.actualROI <= m.expectedROI
+          m.actualROI >= m.expectedROI * 0.8 && m.actualROI <= m.expectedROI,
       ).length,
     };
   }
 
   private generatePerformanceRecommendations(
     indicators: any,
-    trends: any
+    trends: any,
   ): string[] {
     const recommendations = [];
 
     if (indicators.overallROI < 0.8) {
       recommendations.push(
-        'Review and adjust optimization strategies for better ROI'
+        'Review and adjust optimization strategies for better ROI',
       );
     }
 
     if (trends.declining > trends.improving) {
       recommendations.push(
-        'Focus on improving underperforming optimization initiatives'
+        'Focus on improving underperforming optimization initiatives',
       );
     }
 
     if (indicators.successRate > 0.8) {
       recommendations.push(
-        'Scale successful optimization strategies to other areas'
+        'Scale successful optimization strategies to other areas',
       );
     }
 

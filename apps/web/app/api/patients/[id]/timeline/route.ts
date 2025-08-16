@@ -9,7 +9,7 @@ import type { Database } from '@/types/supabase';
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const supabase = createRouteHandlerClient<Database>({ cookies });
@@ -38,7 +38,7 @@ export async function GET(
     if (!(userRole && ['admin', 'doctor', 'nurse'].includes(userRole.role))) {
       return NextResponse.json(
         { error: 'Insufficient permissions' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -60,7 +60,7 @@ export async function GET(
     if (timelineError) {
       return NextResponse.json(
         { error: 'Failed to fetch medical timeline' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -89,7 +89,7 @@ export async function GET(
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -100,7 +100,7 @@ export async function GET(
  */
 export async function POST(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const supabase = createRouteHandlerClient<Database>({ cookies });
@@ -126,7 +126,7 @@ export async function POST(
     if (!(userRole && ['admin', 'doctor', 'nurse'].includes(userRole.role))) {
       return NextResponse.json(
         { error: 'Insufficient permissions' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -144,7 +144,7 @@ export async function POST(
     if (!(event_type && event_date && description)) {
       return NextResponse.json(
         { error: 'Missing required fields' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -169,7 +169,7 @@ export async function POST(
     if (insertError) {
       return NextResponse.json(
         { error: 'Failed to add timeline event' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -180,7 +180,7 @@ export async function POST(
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -67,7 +67,7 @@ export function useUpsertSMSProvider() {
 
   return useMutation({
     mutationFn: (
-      config: Omit<SMSProviderConfig, 'id' | 'created_at' | 'updated_at'>
+      config: Omit<SMSProviderConfig, 'id' | 'created_at' | 'updated_at'>,
     ) => smsService.upsertProvider(config),
     onSuccess: (data) => {
       // Invalidate and refetch providers
@@ -101,7 +101,7 @@ export function useTestSMSProvider() {
         toast.success('Teste de conexão SMS realizado com sucesso!');
       } else {
         toast.error(
-          'Falha no teste de conexão SMS. Verifique as configurações.'
+          'Falha no teste de conexão SMS. Verifique as configurações.',
         );
       }
     },
@@ -182,7 +182,7 @@ export function useSendBulkSMS() {
         100
       ).toFixed(1);
       toast.success(
-        `Envio em lote concluído: ${data.queued_messages}/${data.total_messages} mensagens enviadas (${successRate}%)`
+        `Envio em lote concluído: ${data.queued_messages}/${data.total_messages} mensagens enviadas (${successRate}%)`,
       );
 
       if (data.failed_messages > 0) {
@@ -217,7 +217,7 @@ export function useUpsertSMSTemplate() {
 
   return useMutation({
     mutationFn: (
-      template: Omit<SMSTemplate, 'id' | 'created_at' | 'updated_at'>
+      template: Omit<SMSTemplate, 'id' | 'created_at' | 'updated_at'>,
     ) => smsService.upsertTemplate(template),
     onSuccess: (data) => {
       // Invalidate templates list
@@ -293,7 +293,7 @@ export function useUpdateSMSOptIn() {
         params.phoneNumber,
         params.status,
         params.source,
-        params.patientId
+        params.patientId,
       ),
     onSuccess: (_data, variables) => {
       // Invalidate opt-in queries
@@ -308,7 +308,7 @@ export function useUpdateSMSOptIn() {
     },
     onError: (error, variables) => {
       toast.error(
-        `Erro ao atualizar autorização SMS para ${variables.phoneNumber}: ${error.message}`
+        `Erro ao atualizar autorização SMS para ${variables.phoneNumber}: ${error.message}`,
       );
     },
   });
@@ -323,7 +323,7 @@ export function useSMSAnalytics(
   startDate: string,
   endDate: string,
   period: 'day' | 'week' | 'month' = 'day',
-  enabled = true
+  enabled = true,
 ) {
   return useQuery({
     queryKey: SMS_QUERY_KEYS.analytics(startDate, endDate, period),
@@ -467,11 +467,11 @@ export function useSMSMessageStats(messages: SMSMessage[]) {
   return {
     totalMessages: messages.length,
     sentMessages: messages.filter(
-      (m) => m.status === 'sent' || m.status === 'delivered'
+      (m) => m.status === 'sent' || m.status === 'delivered',
     ).length,
     deliveredMessages: messages.filter((m) => m.status === 'delivered').length,
     failedMessages: messages.filter(
-      (m) => m.status === 'failed' || m.status === 'undelivered'
+      (m) => m.status === 'failed' || m.status === 'undelivered',
     ).length,
     deliveryRate:
       messages.length > 0
@@ -489,14 +489,14 @@ export function useSMSMessageStats(messages: SMSMessage[]) {
         acc[m.provider] = (acc[m.provider] || 0) + 1;
         return acc;
       },
-      {} as Record<SMSProvider, number>
+      {} as Record<SMSProvider, number>,
     ),
     messagesByStatus: messages.reduce(
       (acc, m) => {
         acc[m.status] = (acc[m.status] || 0) + 1;
         return acc;
       },
-      {} as Record<string, number>
+      {} as Record<string, number>,
     ),
   };
 }
@@ -507,7 +507,7 @@ export function useSMSMessageStats(messages: SMSMessage[]) {
 export function useSMSValidation() {
   return {
     validateMessage: (
-      body: string
+      body: string,
     ): { isValid: boolean; errors: string[]; warnings: string[] } => {
       const errors: string[] = [];
       const warnings: string[] = [];
@@ -528,7 +528,7 @@ export function useSMSValidation() {
       // Check for common issues
       if (body.includes('{{') && body.includes('}}')) {
         warnings.push(
-          'Mensagem contém variáveis. Certifique-se de usar um template.'
+          'Mensagem contém variáveis. Certifique-se de usar um template.',
         );
       }
 
@@ -542,7 +542,7 @@ export function useSMSValidation() {
     estimateCost: (
       messageLength: number,
       recipients: number,
-      costPerMessage = 0.05
+      costPerMessage = 0.05,
     ): number => {
       const parts = Math.ceil(messageLength / 160);
       return recipients * parts * costPerMessage;
@@ -592,7 +592,7 @@ export function useRealtimeSMSMessages() {
 export function useSMSConfigurationWizard() {
   const [currentStep, setCurrentStep] = React.useState(0);
   const [providerType, setProviderType] = React.useState<SMSProvider | null>(
-    null
+    null,
   );
   const [configuration, setConfiguration] = React.useState<any>({});
 

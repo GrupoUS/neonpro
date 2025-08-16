@@ -82,7 +82,7 @@ export class SubscriptionBillingService {
   constructor() {
     this.supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
     );
 
     this.stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
@@ -101,7 +101,7 @@ export class SubscriptionBillingService {
    * Create a new subscription plan
    */
   async createSubscriptionPlan(
-    planData: Omit<SubscriptionPlan, 'id' | 'created_at' | 'updated_at'>
+    planData: Omit<SubscriptionPlan, 'id' | 'created_at' | 'updated_at'>,
   ): Promise<SubscriptionPlan> {
     try {
       // Create Stripe product and price
@@ -153,7 +153,7 @@ export class SubscriptionBillingService {
       trial_days?: number;
       promo_code?: string;
       metadata?: Record<string, any>;
-    } = {}
+    } = {},
   ): Promise<Subscription> {
     try {
       // Get plan details
@@ -208,10 +208,10 @@ export class SubscriptionBillingService {
         plan_id: planId,
         status: stripeSubscription.status as any,
         current_period_start: new Date(
-          stripeSubscription.current_period_start * 1000
+          stripeSubscription.current_period_start * 1000,
         ).toISOString(),
         current_period_end: new Date(
-          stripeSubscription.current_period_end * 1000
+          stripeSubscription.current_period_end * 1000,
         ).toISOString(),
         trial_end: trialEnd?.toISOString(),
         cancel_at_period_end: false,
@@ -246,7 +246,7 @@ export class SubscriptionBillingService {
           *,
           subscription_plans(*),
           customers(*)
-        `
+        `,
         )
         .eq('id', subscriptionId)
         .single();
@@ -266,13 +266,13 @@ export class SubscriptionBillingService {
       // Process payment through Stripe
       if (subscription.stripe_subscription_id) {
         const stripeSubscription = await this.stripe.subscriptions.retrieve(
-          subscription.stripe_subscription_id
+          subscription.stripe_subscription_id,
         );
 
         // Update local subscription with Stripe data
         await this.syncSubscriptionWithStripe(
           subscriptionId,
-          stripeSubscription
+          stripeSubscription,
         );
       }
 
@@ -292,7 +292,7 @@ export class SubscriptionBillingService {
    */
   async handleFailedPayment(
     subscriptionId: string,
-    paymentIntentId: string
+    paymentIntentId: string,
   ): Promise<void> {
     try {
       // Get current retry count
@@ -315,7 +315,7 @@ export class SubscriptionBillingService {
       // Schedule next retry
       const retryDate = addDays(
         new Date(),
-        this.retryConfig.retry_intervals[currentAttempt - 1]
+        this.retryConfig.retry_intervals[currentAttempt - 1],
       );
 
       await this.supabase.from('payment_retry_log').insert({
@@ -343,7 +343,7 @@ export class SubscriptionBillingService {
   async calculateProratedBilling(
     subscriptionId: string,
     newPlanId: string,
-    effectiveDate: Date = new Date()
+    effectiveDate: Date = new Date(),
   ): Promise<ProratedBilling> {
     try {
       const { data: subscription, error } = await this.supabase
@@ -352,7 +352,7 @@ export class SubscriptionBillingService {
           `
           *,
           subscription_plans(*)
-        `
+        `,
         )
         .eq('id', subscriptionId)
         .single();
@@ -407,7 +407,7 @@ export class SubscriptionBillingService {
     options: {
       prorate?: boolean;
       effective_date?: Date;
-    } = {}
+    } = {},
   ): Promise<Subscription> {
     try {
       const effectiveDate = options.effective_date || new Date();
@@ -418,7 +418,7 @@ export class SubscriptionBillingService {
         proratedBilling = await this.calculateProratedBilling(
           subscriptionId,
           newPlanId,
-          effectiveDate
+          effectiveDate,
         );
       }
 
@@ -452,7 +452,7 @@ export class SubscriptionBillingService {
               {
                 id: (
                   await this.stripe.subscriptions.retrieve(
-                    subscription.stripe_subscription_id
+                    subscription.stripe_subscription_id,
                   )
                 ).items.data[0].id,
                 price: newPlan.stripe_price_id,
@@ -460,7 +460,7 @@ export class SubscriptionBillingService {
             ],
             proration_behavior:
               options.prorate !== false ? 'create_prorations' : 'none',
-          }
+          },
         );
       }
 
@@ -502,7 +502,7 @@ export class SubscriptionBillingService {
     options: {
       immediate?: boolean;
       reason?: string;
-    } = {}
+    } = {},
   ): Promise<Subscription> {
     try {
       const { data: subscription, error } = await this.supabase
@@ -519,12 +519,12 @@ export class SubscriptionBillingService {
       if (subscription.stripe_subscription_id) {
         if (options.immediate) {
           await this.stripe.subscriptions.cancel(
-            subscription.stripe_subscription_id
+            subscription.stripe_subscription_id,
           );
         } else {
           await this.stripe.subscriptions.update(
             subscription.stripe_subscription_id,
-            { cancel_at_period_end: true }
+            { cancel_at_period_end: true },
           );
         }
       }
@@ -595,17 +595,17 @@ export class SubscriptionBillingService {
 
   private async syncSubscriptionWithStripe(
     subscriptionId: string,
-    stripeSubscription: Stripe.Subscription
+    stripeSubscription: Stripe.Subscription,
   ): Promise<void> {
     await this.supabase
       .from('subscriptions')
       .update({
         status: stripeSubscription.status as any,
         current_period_start: new Date(
-          stripeSubscription.current_period_start * 1000
+          stripeSubscription.current_period_start * 1000,
         ).toISOString(),
         current_period_end: new Date(
-          stripeSubscription.current_period_end * 1000
+          stripeSubscription.current_period_end * 1000,
         ).toISOString(),
         updated_at: new Date().toISOString(),
       })
@@ -630,7 +630,7 @@ export class SubscriptionBillingService {
 
   private async handleBillingError(
     subscriptionId: string,
-    error: Error
+    error: Error,
   ): Promise<void> {
     await this.logBillingEvent(subscriptionId, 'billing_error', {
       error_message: error.message,
@@ -641,7 +641,7 @@ export class SubscriptionBillingService {
   private async logBillingEvent(
     subscriptionId: string,
     eventType: string,
-    data: any
+    data: any,
   ): Promise<void> {
     await this.supabase.from('billing_events').insert({
       subscription_id: subscriptionId,
@@ -653,11 +653,11 @@ export class SubscriptionBillingService {
 
   private async sendPaymentFailureNotification(
     _subscriptionId: string,
-    _attemptCount: number
+    _attemptCount: number,
   ): Promise<void> {}
 
   private async sendFinalPaymentNotice(
-    _subscriptionId: string
+    _subscriptionId: string,
   ): Promise<void> {}
 }
 

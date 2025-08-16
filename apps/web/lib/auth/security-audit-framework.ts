@@ -85,7 +85,7 @@ class SecurityAuditFramework {
    * Log security event with automatic threat detection
    */
   async logSecurityEvent(
-    event: Omit<SecurityEvent, 'id' | 'timestamp'>
+    event: Omit<SecurityEvent, 'id' | 'timestamp'>,
   ): Promise<void> {
     const startTime = Date.now();
 
@@ -128,7 +128,7 @@ class SecurityAuditFramework {
 
       performanceTracker.recordMetric(
         'security_event_logging',
-        Date.now() - startTime
+        Date.now() - startTime,
       );
     } catch (_error) {}
   }
@@ -169,7 +169,7 @@ class SecurityAuditFramework {
    */
   private async checkFailedLoginThreshold(
     ipAddress: string,
-    userId?: string
+    userId?: string,
   ): Promise<void> {
     try {
       const supabase = await createClient();
@@ -243,7 +243,7 @@ class SecurityAuditFramework {
    */
   private async checkDataAccessPatterns(
     userId?: string,
-    ipAddress?: string
+    ipAddress?: string,
   ): Promise<void> {
     if (!userId) {
       return;
@@ -430,13 +430,13 @@ class SecurityAuditFramework {
     // Calculate overall risk score
     const overallRiskScore = this.calculateRiskScore(
       securityMetrics,
-      highRiskEvents || []
+      highRiskEvents || [],
     );
 
     // Generate recommendations
     const recommendations = this.generateRecommendations(
       securityMetrics,
-      highRiskEvents || []
+      highRiskEvents || [],
     );
 
     return {
@@ -446,7 +446,7 @@ class SecurityAuditFramework {
       riskAssessment: {
         overallRiskScore,
         highRiskEvents: (highRiskEvents || []).map(
-          this.mapDatabaseEventToSecurityEvent
+          this.mapDatabaseEventToSecurityEvent,
         ),
         recommendations,
       },
@@ -474,7 +474,7 @@ class SecurityAuditFramework {
 
       return {
         dataAccessRequests: events.filter(
-          (e) => e.action === 'data_access_request'
+          (e) => e.action === 'data_access_request',
         ).length,
         dataExportRequests: events.filter((e) => e.action === 'data_export')
           .length,
@@ -483,7 +483,7 @@ class SecurityAuditFramework {
         consentUpdates: events.filter((e) => e.action === 'consent_update')
           .length,
         breachNotifications: events.filter(
-          (e) => e.action === 'breach_notification'
+          (e) => e.action === 'breach_notification',
         ).length,
       };
     } catch (_error) {
@@ -518,14 +518,14 @@ class SecurityAuditFramework {
 
       return {
         failedLoginAttempts: events.filter(
-          (e) => e.event_type === 'authentication' && e.outcome === 'failure'
+          (e) => e.event_type === 'authentication' && e.outcome === 'failure',
         ).length,
         suspiciousActivities: events.filter(
-          (e) => e.severity === 'high' || e.severity === 'critical'
+          (e) => e.severity === 'high' || e.severity === 'critical',
         ).length,
         blockedRequests: events.filter((e) => e.outcome === 'blocked').length,
         vulnerabilityScans: events.filter(
-          (e) => e.event_type === 'security_scan'
+          (e) => e.event_type === 'security_scan',
         ).length,
       };
     } catch (_error) {
@@ -543,7 +543,7 @@ class SecurityAuditFramework {
    */
   private calculateRiskScore(
     securityMetrics: any,
-    highRiskEvents: any[]
+    highRiskEvents: any[],
   ): number {
     let score = 0;
 
@@ -562,13 +562,13 @@ class SecurityAuditFramework {
    */
   private generateRecommendations(
     securityMetrics: any,
-    highRiskEvents: any[]
+    highRiskEvents: any[],
   ): string[] {
     const recommendations: string[] = [];
 
     if (securityMetrics.failedLoginAttempts > 50) {
       recommendations.push(
-        'Consider implementing stronger brute force protection'
+        'Consider implementing stronger brute force protection',
       );
     }
 

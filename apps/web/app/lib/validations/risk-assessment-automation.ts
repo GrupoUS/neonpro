@@ -311,7 +311,7 @@ export const RiskThresholdSchema = z
     {
       message:
         'Thresholds must be in ascending order: low ≤ moderate ≤ high ≤ critical',
-    }
+    },
   );
 
 // Request Schemas for API Operations
@@ -397,7 +397,7 @@ export const CreateThresholdRequestSchema = z
     {
       message:
         'Thresholds must be in ascending order: low ≤ moderate ≤ high ≤ critical',
-    }
+    },
   );
 
 export const UpdateThresholdRequestSchema = z.object({
@@ -470,7 +470,7 @@ export const RiskAssessmentResponseSchema = z.object({
 });
 
 export const PaginatedResponseSchema = <T extends z.ZodTypeAny>(
-  itemSchema: T
+  itemSchema: T,
 ) =>
   z.object({
     data: z.array(itemSchema),

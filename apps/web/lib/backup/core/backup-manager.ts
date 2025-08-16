@@ -120,7 +120,7 @@ export class BackupManager {
   constructor(config?: Partial<BackupConfig>) {
     this.supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
     );
 
     this.auditLogger = new AuditLogger();
@@ -233,7 +233,7 @@ export class BackupManager {
       description?: string;
       priority?: 'low' | 'normal' | 'high';
       notify_on_completion?: boolean;
-    }
+    },
   ): Promise<string> {
     try {
       const jobId = this.generateJobId();
@@ -326,7 +326,7 @@ export class BackupManager {
     pagination?: {
       page: number;
       limit: number;
-    }
+    },
   ): Promise<{
     jobs: BackupJob[];
     total: number;
@@ -419,20 +419,20 @@ export class BackupManager {
    */
   async createRecoveryPoint(
     backupJobId: string,
-    description?: string
+    description?: string,
   ): Promise<string> {
     try {
       const job = await this.getBackupJobStatus(backupJobId);
       if (!job || job.status !== 'completed') {
         throw new Error(
-          'Backup deve estar completo para criar ponto de recuperação'
+          'Backup deve estar completo para criar ponto de recuperação',
         );
       }
 
       const recoveryPointId = this.generateJobId();
       const retentionDate = new Date();
       retentionDate.setDate(
-        retentionDate.getDate() + this.config.retention.full_backup_days
+        retentionDate.getDate() + this.config.retention.full_backup_days,
       );
 
       const recoveryPoint: RecoveryPoint = {
@@ -487,7 +487,7 @@ export class BackupManager {
       recovery_type: 'full_restore' | 'partial_restore' | 'point_in_time';
       target_timestamp?: Date;
     },
-    userId: string
+    userId: string,
   ): Promise<string> {
     try {
       // Verificar ponto de recuperação
@@ -553,7 +553,7 @@ export class BackupManager {
    * Obtém métricas do sistema de backup
    */
   async getBackupMetrics(
-    period: 'day' | 'week' | 'month' = 'month'
+    period: 'day' | 'week' | 'month' = 'month',
   ): Promise<BackupMetrics> {
     try {
       const startDate = new Date();
@@ -580,14 +580,14 @@ export class BackupManager {
 
       const totalBackups = jobs.length;
       const successfulBackups = jobs.filter(
-        (j) => j.status === 'completed'
+        (j) => j.status === 'completed',
       ).length;
       const failedBackups = jobs.filter((j) => j.status === 'failed').length;
       const successRate =
         totalBackups > 0 ? (successfulBackups / totalBackups) * 100 : 0;
 
       const completedJobs = jobs.filter(
-        (j) => j.status === 'completed' && j.duration_seconds
+        (j) => j.status === 'completed' && j.duration_seconds,
       );
       const averageDuration =
         completedJobs.length > 0
@@ -598,7 +598,7 @@ export class BackupManager {
 
       const totalStorageBytes = jobs.reduce(
         (sum, j) => sum + (j.total_size_bytes || 0),
-        0
+        0,
       );
       const totalStorageGB = totalStorageBytes / (1024 * 1024 * 1024);
 
@@ -608,7 +608,7 @@ export class BackupManager {
         .sort(
           (a, b) =>
             new Date(b.completed_at).getTime() -
-            new Date(a.completed_at).getTime()
+            new Date(a.completed_at).getTime(),
         )[0];
 
       // Próximo backup agendado (simulado)
@@ -699,7 +699,7 @@ export class BackupManager {
 
     const scheduleNextFullBackup = () => {
       const nextRun = this.getNextCronDate(
-        this.config.schedule.full_backup_cron
+        this.config.schedule.full_backup_cron,
       );
       const timeout = nextRun.getTime() - Date.now();
 
@@ -707,7 +707,7 @@ export class BackupManager {
         await this.createBackup(
           'full',
           Object.keys(this.config.data_sources),
-          'system'
+          'system',
         );
         scheduleNextFullBackup();
       }, timeout);
@@ -770,7 +770,7 @@ export class BackupManager {
       job.status = 'completed';
       job.completed_at = new Date();
       job.duration_seconds = Math.floor(
-        (job.completed_at.getTime() - job.started_at.getTime()) / 1000
+        (job.completed_at.getTime() - job.started_at.getTime()) / 1000,
       );
 
       await this.updateBackupJob(job);
@@ -916,7 +916,7 @@ export class BackupManager {
 
     for (const policy of retentionPolicies) {
       const cutoffDate = new Date(
-        now.getTime() - policy.days * 24 * 60 * 60 * 1000
+        now.getTime() - policy.days * 24 * 60 * 60 * 1000,
       );
 
       const { data: expiredJobs } = await this.supabase
@@ -932,7 +932,7 @@ export class BackupManager {
           .delete()
           .in(
             'id',
-            expiredJobs.map((j) => j.id)
+            expiredJobs.map((j) => j.id),
           );
       }
     }
@@ -988,7 +988,7 @@ export class BackupManager {
   }
 
   private async getStorageTrend(
-    period: string
+    period: string,
   ): Promise<Array<{ date: string; size_gb: number }>> {
     // Implementar cálculo de tendência de armazenamento
     const trend = [];

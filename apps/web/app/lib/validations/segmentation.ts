@@ -131,7 +131,7 @@ export const RuleLogicSchema: z.ZodType<any> = z.lazy(() =>
     conditions: z.array(RuleConditionSchema),
     operator: z.enum(['AND', 'OR']),
     nested_rules: z.array(RuleLogicSchema).optional(),
-  })
+  }),
 );
 
 // =====================================================================================
@@ -192,7 +192,7 @@ export const TreatmentPropensitySchema = z.record(
     confidence: z.number().min(0).max(1),
     recommended_timing: z.string().optional(),
     factors: z.array(z.string()),
-  })
+  }),
 );
 
 export const MembershipReasonSchema = z.object({

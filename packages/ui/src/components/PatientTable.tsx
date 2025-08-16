@@ -1,9 +1,13 @@
 import {
+  ChevronDown,
   ChevronLeft,
   ChevronRight,
-  Grid3X3,
+  ChevronUp,
+  Grid,
   List,
   MoreHorizontal,
+  RefreshCw,
+  Users,
 } from 'lucide-react';
 import * as React from 'react';
 import { cn } from '../utils/cn';
@@ -11,6 +15,7 @@ import { formatDate, formatPhone } from '../utils/formatters';
 import { Avatar, AvatarFallback, AvatarImage } from './Avatar';
 import { Badge } from './Badge';
 import { Button } from './Button';
+import { Checkbox } from './Checkbox';
 import { PatientCard, type PatientData } from './PatientCard';
 import type { FilterOption } from './SearchBox';
 
@@ -19,10 +24,11 @@ export type PaginationProps = {
   totalPages: number;
   totalItems: number;
   itemsPerPage: number;
-  onPageChange: (page: number) => void;
+  page: number;
+  pageSize: number;
 };
 
-export type PatientTableColumn = {
+type PatientTableColumn = {
   key: keyof PatientData | 'actions';
   label: string;
   sortable?: boolean;
@@ -30,7 +36,23 @@ export type PatientTableColumn = {
   render?: (patient: PatientData) => React.ReactNode;
 };
 
-export type PatientTableProps = {
+type PatientTableViewMode = 'table' | 'cards';
+
+type PatientTableSort = {
+  column: string;
+  direction: 'asc' | 'desc';
+};
+
+type PatientTablePagination = PaginationProps;
+
+type PatientTableAction = {
+  key: string;
+  label: string;
+  icon?: React.ReactNode;
+  onClick: (patient: PatientData) => void;
+};
+
+type PatientTableProps = {
   patients: PatientData[];
   loading?: boolean;
   searchValue?: string;
@@ -42,13 +64,14 @@ export type PatientTableProps = {
   onSelectionChange?: (patientIds: string[]) => void;
   onPatientClick?: (patient: PatientData) => void;
   onPatientAction?: (action: string, patient: PatientData) => void;
+  onRefresh?: () => void;
   pagination?: PaginationProps;
   filters?: FilterOption[];
   activeFilters?: string[];
   onFilterChange?: (filters: string[]) => void;
   columns?: PatientTableColumn[];
-  viewMode?: 'table' | 'cards';
-  onViewModeChange?: (mode: 'table' | 'cards') => void;
+  viewMode?: PatientTableViewMode;
+  onViewModeChange?: (mode: PatientTableViewMode) => void;
   className?: string;
 };
 
@@ -83,16 +106,19 @@ const formatRelativeTime = (dateString?: string): string => {
     return `${diffDays} dias atrás`;
   }
   if (diffDays < 30) {
-    return `${Math.floor(diffDays / 7)} semanas atrás`;
+    const weeks = Math.floor(diffDays / 7);
+    return `${weeks} semana${weeks > 1 ? 's' : ''} atrás`;
   }
+  
   return formatDate(dateString);
 };
+
 const defaultColumns: PatientTableColumn[] = [
-  { key: 'name', label: 'Paciente', sortable: true },
+  { key: 'name', label: 'Nome', sortable: true },
+  { key: 'email', label: 'Email', sortable: true },
   { key: 'phone', label: 'Telefone', sortable: false },
+  { key: 'lastVisit', label: 'Última Visita', sortable: true },
   { key: 'status', label: 'Status', sortable: true },
-  { key: 'lastVisit', label: 'Última Consulta', sortable: true },
-  { key: 'nextAppointment', label: 'Próxima Consulta', sortable: true },
   { key: 'actions', label: 'Ações', sortable: false, width: '120px' },
 ];
 
@@ -110,6 +136,7 @@ const PatientTable = React.forwardRef<HTMLDivElement, PatientTableProps>(
       onSelectionChange,
       onPatientClick,
       onPatientAction,
+      onRefresh,
       pagination,
       filters = [],
       activeFilters = [],
@@ -120,58 +147,118 @@ const PatientTable = React.forwardRef<HTMLDivElement, PatientTableProps>(
       className,
       ...props
     },
-    _ref
+    ref
   ) => {
-    const _handleSort = (column: string) => {
-      if (!onSort) {
-        return;
+    // Internal state management
+    const [sort, setSort] = React.useState<{ column: string; direction: 'asc' | 'desc' } | null>(null);
+    const [searchTerm, setSearchTerm] = React.useState(searchValue);
+    const [internalSelectedPatients, setSelectedPatients] = React.useState<string[]>(selectedPatients);
+    const [internalPagination, setPagination] = React.useState(pagination);
+    const [internalViewMode, setViewMode] = React.useState(viewMode);
+    
+    // Computed values
+    const enableSelection = !!onSelectionChange;
+    
+    // Filter and sort data
+    const filteredData = React.useMemo(() => {
+      let result = [...patients];
+      
+      // Apply search filter
+      if (searchTerm) {
+        result = result.filter((patient) =>
+          patient.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          patient.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          patient.phone?.includes(searchTerm)
+        );
+      }
+      
+      return result;
+    }, [patients, searchTerm]);
+
+    // Paginated data
+    const paginatedData = React.useMemo(() => {
+      if (!internalPagination?.pageSize) {
+        return filteredData;
       }
 
-      const newDirection =
-        sortBy === column && sortDirection === 'asc' ? 'desc' : 'asc';
-      onSort(column, newDirection);
+      const startIndex = ((internalPagination.page || 1) - 1) * internalPagination.pageSize;
+      const endIndex = startIndex + internalPagination.pageSize;
+      return filteredData.slice(startIndex, endIndex);
+    }, [filteredData, internalPagination]);
+
+    // Update internal state when props change
+    React.useEffect(() => {
+      setSearchTerm(searchValue);
+    }, [searchValue]);
+
+    React.useEffect(() => {
+      setSelectedPatients(selectedPatients);
+    }, [selectedPatients]);
+
+    React.useEffect(() => {
+      setPagination(pagination);
+    }, [pagination]);
+
+    React.useEffect(() => {
+      setViewMode(viewMode);
+    }, [viewMode]);
+
+    // Handler functions
+    const handleSort = (column: string) => {
+      setSort((prev) => {
+        if (prev?.column === column) {
+          return { column, direction: prev.direction === 'asc' ? 'desc' : 'asc' };
+        }
+        return { column, direction: 'asc' };
+      });
+      
+      if (onSort) {
+        const newDirection = sort?.column === column && sort?.direction === 'asc' ? 'desc' : 'asc';
+        onSort(column, newDirection);
+      }
     };
 
-    const _handleSelectAll = () => {
-      if (!onSelectionChange) {
-        return;
-      }
-
-      if (selectedPatients.length === patients.length) {
-        onSelectionChange([]);
-      } else {
-        onSelectionChange(patients.map((p) => p.id));
+    const handleSelectAll = () => {
+      const newSelected = internalSelectedPatients.length === patients.length ? [] : patients.map((p) => p.id);
+      setSelectedPatients(newSelected);
+      
+      if (onSelectionChange) {
+        onSelectionChange(newSelected);
       }
     };
 
-    const _handleSelectPatient = (patientId: string) => {
-      if (!onSelectionChange) {
-        return;
-      }
-
-      if (selectedPatients.includes(patientId)) {
-        onSelectionChange(selectedPatients.filter((id) => id !== patientId));
-      } else {
-        onSelectionChange([...selectedPatients, patientId]);
-      }
+    const handleSelectPatient = (patientId: string) => {
+      setSelectedPatients((prev) => {
+        const newSelected = prev.includes(patientId) 
+          ? prev.filter((id) => id !== patientId)
+          : [...prev, patientId];
+        
+        if (onSelectionChange) {
+          onSelectionChange(newSelected);
+        }
+        return newSelected;
+      });
     };
-    const getStatusVariant = (status: string) => {
-      switch (status) {
-        case 'active':
-          return 'confirmed';
-        case 'inactive':
-          return 'pending';
-        case 'blocked':
-          return 'cancelled';
-        default:
-          return 'default';
+
+    const handlePatientSelect = (patient: PatientData) => {
+      if (onPatientClick) {
+        onPatientClick(patient);
       }
     };
 
-    const renderTableCell = (
-      column: PatientTableColumn,
-      patient: PatientData
-    ) => {
+    const handlePaginationChange = (page: number) => {
+      setPagination((prev) => prev ? { ...prev, page } : undefined);
+    };
+
+    const handleViewModeChange = (mode: PatientTableViewMode) => {
+      setViewMode(mode);
+      if (onViewModeChange) {
+        onViewModeChange(mode);
+      }
+    };
+
+    // Render cell content
+    const renderCellContent = (patient: PatientData, column: PatientTableColumn) => {
       if (column.render) {
         return column.render(patient);
       }
@@ -182,43 +269,26 @@ const PatientTable = React.forwardRef<HTMLDivElement, PatientTableProps>(
             <div className="flex items-center gap-3">
               <Avatar size="sm">
                 <AvatarImage alt={patient.name} src={patient.avatar} />
-                <AvatarFallback>{getInitials(patient.name)}</AvatarFallback>
+                <AvatarFallback>{getInitials(patient.name || 'Unknown')}</AvatarFallback>
               </Avatar>
               <div>
                 <div className="font-medium">{patient.name}</div>
-                {patient.email && (
-                  <div className="text-muted-foreground text-sm">
-                    {patient.email}
-                  </div>
-                )}
+                <div className="text-muted-foreground text-sm">{patient.email}</div>
               </div>
             </div>
           );
 
         case 'phone':
-          return patient.phone ? formatPhone(patient.phone) : '-';
-
-        case 'status': {
-          const statusVariant = getStatusVariant(patient.status);
-          const statusLabel =
-            patient.status === 'active'
-              ? 'Ativo'
-              : patient.status === 'inactive'
-                ? 'Inativo'
-                : 'Bloqueado';
-          return <Badge variant={statusVariant}>{statusLabel}</Badge>;
-        }
+          return formatPhone(patient.phone || '');
 
         case 'lastVisit':
           return formatRelativeTime(patient.lastVisit);
 
-        case 'nextAppointment':
-          return patient.nextAppointment ? (
-            <span className="font-medium text-primary">
-              {formatDate(patient.nextAppointment)}
-            </span>
-          ) : (
-            '-'
+        case 'status':
+          return (
+            <Badge variant={getStatusVariant(patient.status)}>
+              {getStatusLabel(patient.status)}
+            </Badge>
           );
 
         case 'actions':
@@ -248,243 +318,50 @@ const PatientTable = React.forwardRef<HTMLDivElement, PatientTableProps>(
           );
 
         default:
-          return patient[column.key as keyof PatientData] || '-';
-      }
-    }; // Sort data
-    const sortedData = React.useMemo(() => {
-      if (!sort) {
-        return filteredData;
-      }
-
-      return [...filteredData].sort((a, b) => {
-        const aValue = a[sort.key as keyof PatientData];
-        const bValue = b[sort.key as keyof PatientData];
-
-        if (!(aValue || bValue)) {
-          return 0;
-        }
-        if (!aValue) {
-          return 1;
-        }
-        if (!bValue) {
-          return -1;
-        }
-
-        let comparison = 0;
-        if (typeof aValue === 'string' && typeof bValue === 'string') {
-          comparison = aValue.localeCompare(bValue, 'pt-BR');
-        } else if (aValue instanceof Date && bValue instanceof Date) {
-          comparison = aValue.getTime() - bValue.getTime();
-        } else {
-          comparison = String(aValue).localeCompare(String(bValue), 'pt-BR');
-        }
-
-        return sort.direction === 'desc' ? -comparison : comparison;
-      });
-    }, []);
-
-    // Pagination
-    const totalPages = Math.ceil(sortedData.length / pagination.pageSize);
-    const paginatedData = sortedData.slice(
-      (pagination.page - 1) * pagination.pageSize,
-      pagination.page * pagination.pageSize
-    );
-
-    const handleSort = (key: string) => {
-      setSort((prev) => ({
-        key,
-        direction:
-          prev?.key === key && prev.direction === 'asc' ? 'desc' : 'asc',
-      }));
-    };
-
-    const handleSelectAll = () => {
-      if (selectedPatients.length === paginatedData.length) {
-        setSelectedPatients([]);
-      } else {
-        setSelectedPatients(paginatedData.map((p) => p.id));
+          return (patient as any)[column.key] || '-';
       }
     };
 
-    const handleSelectPatient = (patientId: string) => {
-      setSelectedPatients((prev) =>
-        prev.includes(patientId)
-          ? prev.filter((id) => id !== patientId)
-          : [...prev, patientId]
-      );
+    const getStatusVariant = (status: string) => {
+      switch (status) {
+        case 'active':
+          return 'confirmed';
+        case 'inactive':
+          return 'secondary';
+        case 'pending':
+          return 'pending';
+        default:
+          return 'default';
+      }
     };
 
-    const handleRowClick = (patient: PatientData) => {
-      if (onPatientSelect) {
-        onPatientSelect(patient);
+    const getStatusLabel = (status: string) => {
+      switch (status) {
+        case 'active':
+          return 'Ativo';
+        case 'inactive':
+          return 'Inativo';
+        case 'pending':
+          return 'Pendente';
+        default:
+          return status;
       }
-    }; // Table view
-    const renderTableView = () => (
-      <div className="overflow-hidden rounded-lg border">
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead className="border-b bg-muted/50">
-              <tr>
-                {enableSelection && (
-                  <th className="w-12 px-4 py-3 text-left">
-                    <Checkbox
-                      aria-label="Selecionar todos"
-                      checked={
-                        selectedPatients.length === paginatedData.length &&
-                        paginatedData.length > 0
-                      }
-                      onCheckedChange={handleSelectAll}
-                    />
-                  </th>
-                )}
-                {columns.map((column) => (
-                  <th
-                    className={cn(
-                      'px-4 py-3 text-left font-medium text-muted-foreground text-sm',
-                      column.sortable && 'cursor-pointer hover:text-foreground',
-                      column.width && `w-${column.width}`
-                    )}
-                    key={column.key}
-                    onClick={() => column.sortable && handleSort(column.key)}
-                  >
-                    <div className="flex items-center gap-1">
-                      {column.label}
-                      {column.sortable &&
-                        sort?.key === column.key &&
-                        (sort.direction === 'asc' ? (
-                          <ChevronUp className="h-4 w-4" />
-                        ) : (
-                          <ChevronDown className="h-4 w-4" />
-                        ))}
-                    </div>
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {paginatedData.map((patient) => (
-                <tr
-                  className={cn(
-                    'border-b transition-colors hover:bg-muted/50',
-                    onPatientSelect && 'cursor-pointer',
-                    selectedPatients.includes(patient.id) && 'bg-muted/30'
-                  )}
-                  key={patient.id}
-                  onClick={() => handleRowClick(patient)}
-                >
-                  {enableSelection && (
-                    <td className="px-4 py-3">
-                      <Checkbox
-                        aria-label={`Selecionar ${patient.name}`}
-                        checked={selectedPatients.includes(patient.id)}
-                        onCheckedChange={() => handleSelectPatient(patient.id)}
-                        onClick={(e) => e.stopPropagation()}
-                      />
-                    </td>
-                  )}
-                  {columns.map((column) => (
-                    <td className="px-4 py-3 text-sm" key={column.key}>
-                      {renderTableCell(column, patient)}
-                    </td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    ); // Card view
-    const renderCardView = () => (
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {paginatedData.map((patient) => (
-          <PatientCard
-            className={cn(
-              'transition-all',
-              onPatientSelect && 'cursor-pointer hover:shadow-md'
-            )}
-            key={patient.id}
-            onClick={() => handleRowClick(patient)}
-            onSelect={
-              enableSelection
-                ? () => handleSelectPatient(patient.id)
-                : undefined
-            }
-            patient={patient}
-            selected={selectedPatients.includes(patient.id)}
-          />
-        ))}
-      </div>
-    );
-
-    // Pagination controls
-    const renderPagination = () => (
-      <div className="flex items-center justify-between">
-        <p className="text-muted-foreground text-sm">
-          Mostrando {paginatedData.length} de {sortedData.length} pacientes
-        </p>
-        <div className="flex items-center gap-2">
-          <Button
-            disabled={pagination.page === 1}
-            onClick={() =>
-              setPagination((prev) => ({ ...prev, page: prev.page - 1 }))
-            }
-            size="sm"
-            variant="outline"
-          >
-            <ChevronLeft className="h-4 w-4" />
-            Anterior
-          </Button>
-          <span className="text-sm">
-            Página {pagination.page} de {totalPages || 1}
-          </span>
-          <Button
-            disabled={pagination.page >= totalPages}
-            onClick={() =>
-              setPagination((prev) => ({ ...prev, page: prev.page + 1 }))
-            }
-            size="sm"
-            variant="outline"
-          >
-            Próxima
-            <ChevronRight className="h-4 w-4" />
-          </Button>
-        </div>
-      </div>
-    );
+    };
 
     return (
-      <div className={cn('space-y-4', className)}>
+      <div {...props} className={cn('space-y-4', className)} ref={ref}>
         {/* Header with actions */}
         <div className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-4">
             <h3 className="font-semibold text-lg">Pacientes</h3>
-            {selectedPatients.length > 0 && (
-              <Badge variant="secondary">
-                {selectedPatients.length} selecionado
-                {selectedPatients.length > 1 ? 's' : ''}
-              </Badge>
+            {internalSelectedPatients.length > 0 && (
+              <span className="text-muted-foreground text-sm">
+                {internalSelectedPatients.length} selecionado{internalSelectedPatients.length > 1 ? 's' : ''}
+              </span>
             )}
           </div>
+
           <div className="flex items-center gap-2">
-            <Button
-              onClick={() =>
-                setViewMode(viewMode === 'table' ? 'card' : 'table')
-              }
-              size="sm"
-              variant="outline"
-            >
-              {viewMode === 'table' ? (
-                <>
-                  <Grid3X3 className="h-4 w-4" />
-                  Cards
-                </>
-              ) : (
-                <>
-                  <List className="h-4 w-4" />
-                  Tabela
-                </>
-              )}
-            </Button>
             {onRefresh && (
               <Button
                 disabled={loading}
@@ -492,41 +369,162 @@ const PatientTable = React.forwardRef<HTMLDivElement, PatientTableProps>(
                 size="sm"
                 variant="outline"
               >
-                <RefreshCw
-                  className={cn('h-4 w-4', loading && 'animate-spin')}
-                />
-                Atualizar
+                <RefreshCw className={cn('h-4 w-4', loading && 'animate-spin')} />
               </Button>
             )}
-          </div>
-        </div>{' '}
-        {/* Content */}
-        {loading ? (
-          <div className="flex items-center justify-center py-12">
-            <div className="flex items-center gap-2">
-              <RefreshCw className="h-4 w-4 animate-spin" />
-              <span className="text-muted-foreground text-sm">
-                Carregando pacientes...
-              </span>
+
+            <div className="flex items-center rounded-md border">
+              <Button
+                onClick={() => handleViewModeChange('table')}
+                size="sm"
+                variant={internalViewMode === 'table' ? 'default' : 'ghost'}
+              >
+                <List className="h-4 w-4" />
+              </Button>
+              <Button
+                onClick={() => handleViewModeChange('cards')}
+                size="sm"
+                variant={internalViewMode === 'cards' ? 'default' : 'ghost'}
+              >
+                <Grid className="h-4 w-4" />
+              </Button>
             </div>
           </div>
-        ) : sortedData.length === 0 ? (
-          <div className="py-12 text-center">
-            <Users className="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
-            <h4 className="mb-2 font-medium text-lg">
-              Nenhum paciente encontrado
-            </h4>
-            <p className="text-muted-foreground">
-              {searchTerm
-                ? 'Tente ajustar os filtros de busca.'
-                : 'Comece adicionando um novo paciente.'}
+        </div>
+
+        {/* Table View */}
+        {internalViewMode === 'table' && (
+          <div className="overflow-hidden rounded-lg border">
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead className="border-b bg-muted/50">
+                  <tr>
+                    {enableSelection && (
+                      <th className="w-12 px-4 py-3 text-left">
+                        <Checkbox
+                          checked={
+                            internalSelectedPatients.length === patients.length &&
+                            patients.length > 0
+                          }
+                          onCheckedChange={handleSelectAll}
+                        />
+                      </th>
+                    )}
+                    {columns.map((column) => (
+                      <th
+                        className={cn(
+                          'px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider',
+                          column.sortable && 'cursor-pointer hover:text-foreground',
+                          column.width && `w-[${column.width}]`
+                        )}
+                        key={column.key}
+                        onClick={() => column.sortable && handleSort(column.key as string)}
+                      >
+                        <div className="flex items-center gap-2">
+                          {column.label}
+                          {column.sortable && sort?.column === column.key && (
+                            <div className="text-foreground">
+                              {sort.direction === 'asc' ? (
+                                <ChevronUp className="h-4 w-4" />
+                              ) : (
+                                <ChevronDown className="h-4 w-4" />
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody className="divide-y">
+                  {paginatedData.map((patient) => (
+                    <tr
+                      className="cursor-pointer hover:bg-muted/50"
+                      key={patient.id}
+                      onClick={() => handlePatientSelect(patient)}
+                    >
+                      {enableSelection && (
+                        <td className="w-12 px-4 py-3">
+                          <Checkbox
+                            checked={internalSelectedPatients.includes(patient.id)}
+                            onCheckedChange={() => handleSelectPatient(patient.id)}
+                            onClick={(e) => e.stopPropagation()}
+                          />
+                        </td>
+                      )}
+                      {columns.map((column) => (
+                        <td className="px-4 py-3" key={column.key}>
+                          {renderCellContent(patient, column)}
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
+        {/* Cards View */}
+        {internalViewMode === 'cards' && (
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {paginatedData.map((patient) => (
+              <PatientCard
+                className="cursor-pointer"
+                key={patient.id}
+                onClick={() => handlePatientSelect(patient)}
+                patient={patient}
+              />
+            ))}
+          </div>
+        )}
+
+        {/* Pagination */}
+        {internalPagination && internalPagination.totalPages > 1 && (
+          <div className="flex items-center justify-between">
+            <div className="text-muted-foreground text-sm">
+              Mostrando {((internalPagination.page || 1) - 1) * internalPagination.pageSize + 1} a{' '}
+              {Math.min((internalPagination.page || 1) * internalPagination.pageSize, internalPagination.totalItems)} de{' '}
+              {internalPagination.totalItems} pacientes
+            </div>
+
+            <div className="flex items-center gap-2">
+              <Button
+                disabled={(internalPagination.page || 1) <= 1}
+                onClick={() => handlePaginationChange((internalPagination.page || 1) - 1)}
+                size="sm"
+                variant="outline"
+              >
+                <ChevronLeft className="h-4 w-4" />
+                Anterior
+              </Button>
+
+              <span className="text-sm">
+                Página {internalPagination.page || 1} de {internalPagination.totalPages}
+              </span>
+
+              <Button
+                disabled={(internalPagination.page || 1) >= internalPagination.totalPages}
+                onClick={() => handlePaginationChange((internalPagination.page || 1) + 1)}
+                size="sm"
+                variant="outline"
+              >
+                Próxima
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+        )}
+
+        {/* Empty State */}
+        {filteredData.length === 0 && !loading && (
+          <div className="flex flex-col items-center justify-center py-12 text-center">
+            <Users className="mb-4 h-12 w-12 text-muted-foreground" />
+            <h3 className="mb-2 font-semibold text-lg">Nenhum paciente encontrado</h3>
+            <p className="text-muted-foreground text-sm">
+              {searchTerm ? 'Tente ajustar os filtros de busca.' : 'Comece adicionando seu primeiro paciente.'}
             </p>
           </div>
-        ) : (
-          <>
-            {viewMode === 'table' ? renderTableView() : renderCardView()}
-            {totalPages > 1 && renderPagination()}
-          </>
         )}
       </div>
     );
@@ -541,6 +539,5 @@ export type {
   PatientTableColumn,
   PatientTableViewMode,
   PatientTableSort,
-  PatientTablePagination,
   PatientTableAction,
 };

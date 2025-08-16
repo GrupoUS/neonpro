@@ -130,7 +130,7 @@ export function InsightsPanel({
 
       // Determine if actionable
       const actionable = Boolean(
-        insight.recommendations && insight.recommendations.length > 0
+        insight.recommendations && insight.recommendations.length > 0,
       );
 
       // Estimate impact based on confidence and business value
@@ -210,7 +210,7 @@ export function InsightsPanel({
         insights.length;
       const totalImpact = insights.reduce(
         (sum, insight) => sum + (insight.businessImpact?.efficiency || 0),
-        0
+        0,
       );
 
       categoryList.push({
@@ -234,7 +234,7 @@ export function InsightsPanel({
       selectedCategory === 'all'
         ? processedInsights
         : processedInsights.filter(
-            (insight) => insight.category === selectedCategory
+            (insight) => insight.category === selectedCategory,
           );
 
     return insightsToSort.sort((a, b) => {
@@ -503,7 +503,7 @@ export function InsightsPanel({
               <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-3">
                 {(() => {
                   const category = insightCategories.find(
-                    (cat) => cat.id === selectedCategory
+                    (cat) => cat.id === selectedCategory,
                   );
                   if (!category) {
                     return null;

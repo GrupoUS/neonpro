@@ -54,17 +54,17 @@ export async function GET(request: NextRequest) {
       preferred_start_time: searchParams.get('preferred_start_time') || '',
       duration_minutes: Number.parseInt(
         searchParams.get('duration_minutes') || '60',
-        10
+        10,
       ),
       exclude_appointment_id:
         searchParams.get('exclude_appointment_id') || undefined,
       max_suggestions: Math.min(
         Number.parseInt(searchParams.get('max_suggestions') || '6', 10),
-        20
+        20,
       ),
       search_window_days: Math.min(
         Number.parseInt(searchParams.get('search_window_days') || '14', 10),
-        30
+        30,
       ),
       clinic_id: searchParams.get('clinic_id') || '',
     };
@@ -80,7 +80,7 @@ export async function GET(request: NextRequest) {
     ) {
       return NextResponse.json(
         { error: 'Missing required parameters' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -92,7 +92,7 @@ export async function GET(request: NextRequest) {
         getProfessionalSchedule(
           supabase,
           params.professional_id,
-          params.clinic_id
+          params.clinic_id,
         ),
         getServiceRules(supabase, params.service_type_id, params.clinic_id),
         getExistingAppointments(
@@ -100,7 +100,7 @@ export async function GET(request: NextRequest) {
           params.professional_id,
           params.clinic_id,
           params.search_window_days,
-          params.exclude_appointment_id
+          params.exclude_appointment_id,
         ),
       ]);
 
@@ -109,7 +109,7 @@ export async function GET(request: NextRequest) {
       params,
       professionalSchedule,
       serviceRules,
-      existingAppointments
+      existingAppointments,
     );
 
     // Calculate search info
@@ -121,7 +121,7 @@ export async function GET(request: NextRequest) {
         start_date: format(preferredDate, 'yyyy-MM-dd'),
         end_date: format(
           addDays(preferredDate, params.search_window_days),
-          'yyyy-MM-dd'
+          'yyyy-MM-dd',
         ),
       },
     };
@@ -135,7 +135,7 @@ export async function GET(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -143,7 +143,7 @@ export async function GET(request: NextRequest) {
 async function getProfessionalSchedule(
   supabase: any,
   professionalId: string,
-  clinicId: string
+  clinicId: string,
 ) {
   const { data, error } = await supabase
     .from('professional_schedules')
@@ -162,7 +162,7 @@ async function getProfessionalSchedule(
 async function getServiceRules(
   supabase: any,
   serviceTypeId: string,
-  clinicId: string
+  clinicId: string,
 ) {
   const { data, error } = await supabase
     .from('service_type_rules')
@@ -183,7 +183,7 @@ async function getExistingAppointments(
   professionalId: string,
   clinicId: string,
   searchWindowDays: number,
-  excludeId?: string
+  excludeId?: string,
 ) {
   const startDate = new Date();
   const endDate = addDays(startDate, searchWindowDays);
@@ -214,7 +214,7 @@ async function generateSlotSuggestions(
   params: SlotSuggestionParams,
   schedule: any[],
   serviceRules: any,
-  existingAppointments: any[]
+  existingAppointments: any[],
 ): Promise<AlternativeSlot[]> {
   const suggestions: AlternativeSlot[] = [];
   const preferredDate = parseISO(params.preferred_start_time);
@@ -250,7 +250,7 @@ async function generateSlotSuggestions(
       appointments,
       params,
       preferredTime,
-      dayOffset
+      dayOffset,
     );
 
     suggestions.push(...daySlots);
@@ -267,7 +267,7 @@ function generateDaySuggestions(
   appointments: any[],
   params: SlotSuggestionParams,
   preferredTime: string,
-  dayOffset: number
+  dayOffset: number,
 ): AlternativeSlot[] {
   const slots: AlternativeSlot[] = [];
   const startTime = parseTime(schedule.start_time);
@@ -292,7 +292,7 @@ function generateDaySuggestions(
       appointments,
       schedule,
       bufferBefore,
-      bufferAfter
+      bufferAfter,
     );
     const hasErrors = conflicts.some((c) => c.severity === 'error');
 
@@ -301,7 +301,7 @@ function generateDaySuggestions(
         slotStart,
         preferredTime,
         dayOffset,
-        conflicts.length
+        conflicts.length,
       );
 
       slots.push({
@@ -331,7 +331,7 @@ function checkSlotConflicts(
   appointments: any[],
   schedule: any,
   bufferBefore: number,
-  bufferAfter: number
+  bufferAfter: number,
 ): Array<{
   type: string;
   message: string;
@@ -383,7 +383,7 @@ function checkSlotConflicts(
   const hourEnd = addMinutes(hourStart, 60);
 
   const appointmentsInHour = appointments.filter(
-    (apt) => apt.start >= hourStart && apt.start < hourEnd
+    (apt) => apt.start >= hourStart && apt.start < hourEnd,
   ).length;
 
   if (appointmentsInHour >= (schedule.max_appointments_per_hour || 4)) {
@@ -401,7 +401,7 @@ function calculateSlotScore(
   slotStart: Date,
   preferredTime: string,
   dayOffset: number,
-  conflictCount: number
+  conflictCount: number,
 ): number {
   let score = 100;
 
@@ -430,7 +430,7 @@ function calculateSlotScore(
 function generateSlotReason(
   slotStart: Date,
   preferredTime: string,
-  dayOffset: number
+  dayOffset: number,
 ): string {
   if (dayOffset === 0) {
     const slotTime = format(slotStart, 'HH:mm');

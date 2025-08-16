@@ -164,7 +164,7 @@ export class SessionPreservation {
   constructor(
     supabaseUrl: string,
     supabaseKey: string,
-    customConfig?: Partial<PreservationConfig>
+    customConfig?: Partial<PreservationConfig>,
   ) {
     this.supabase = createClient(supabaseUrl, supabaseKey);
     this.auditLogger = new SecurityAuditLogger(supabaseUrl, supabaseKey);
@@ -199,7 +199,7 @@ export class SessionPreservation {
    */
   async updateSessionState(
     sessionId: string,
-    stateUpdates: Partial<SessionState['applicationState']>
+    stateUpdates: Partial<SessionState['applicationState']>,
   ): Promise<void> {
     if (
       !this.currentSessionState ||
@@ -219,7 +219,7 @@ export class SessionPreservation {
     this.currentSessionState.metadata.lastUpdatedAt = new Date();
     this.currentSessionState.metadata.version++;
     this.currentSessionState.metadata.checksum = this.calculateChecksum(
-      this.currentSessionState
+      this.currentSessionState,
     );
 
     // Trigger backup if significant changes
@@ -234,7 +234,7 @@ export class SessionPreservation {
   async createBackup(
     sessionId: string,
     backupType: SessionBackup['backupType'] = 'automatic',
-    trigger: SessionBackup['backupTrigger'] = 'interval'
+    trigger: SessionBackup['backupTrigger'] = 'interval',
   ): Promise<SessionBackup> {
     try {
       if (this.isBackupInProgress) {
@@ -258,7 +258,7 @@ export class SessionPreservation {
         sessionState: { ...sessionState },
         createdAt: new Date(),
         expiresAt: new Date(
-          Date.now() + this.config.backupRetentionDays * 24 * 60 * 60 * 1000
+          Date.now() + this.config.backupRetentionDays * 24 * 60 * 60 * 1000,
         ),
         isCompressed: this.config.compressionEnabled,
         isEncrypted: this.config.encryptionEnabled,
@@ -378,11 +378,11 @@ export class SessionPreservation {
             break;
           }
           warnings.push(
-            `Failed to recover from backup ${backup.backupId}: ${result.errors.join(', ')}`
+            `Failed to recover from backup ${backup.backupId}: ${result.errors.join(', ')}`,
           );
         } catch (error) {
           errors.push(
-            `Error recovering from backup ${backup.backupId}: ${error.message}`
+            `Error recovering from backup ${backup.backupId}: ${error.message}`,
           );
         }
       }
@@ -391,7 +391,7 @@ export class SessionPreservation {
       if (!recoveryResult) {
         recoveryResult = await this.recoverFromAlternativeSources(sessionId);
         warnings.push(
-          'Primary backup recovery failed, using alternative sources'
+          'Primary backup recovery failed, using alternative sources',
         );
       }
 
@@ -443,7 +443,7 @@ export class SessionPreservation {
    */
   async createEmergencyBackup(
     sessionId: string,
-    reason: string
+    reason: string,
   ): Promise<SessionBackup> {
     const backup = await this.createBackup(sessionId, 'emergency', 'error');
 
@@ -593,7 +593,7 @@ export class SessionPreservation {
           await this.createBackup(
             this.currentSessionState.sessionId,
             'automatic',
-            'interval'
+            'interval',
           );
         }
       } catch (_error) {}
@@ -607,7 +607,7 @@ export class SessionPreservation {
           await this.cleanupExpiredBackups();
         } catch (_error) {}
       },
-      this.config.cleanupSchedule.frequency * 60 * 60 * 1000
+      this.config.cleanupSchedule.frequency * 60 * 60 * 1000,
     ); // Convert hours to milliseconds
   }
 
@@ -618,7 +618,7 @@ export class SessionPreservation {
         if (this.currentSessionState) {
           await this.createEmergencyBackup(
             this.currentSessionState.sessionId,
-            'page_unload'
+            'page_unload',
           );
         }
       });
@@ -628,7 +628,7 @@ export class SessionPreservation {
         if (this.currentSessionState) {
           await this.createEmergencyBackup(
             this.currentSessionState.sessionId,
-            'network_loss'
+            'network_loss',
           );
         }
       });
@@ -636,7 +636,7 @@ export class SessionPreservation {
   }
 
   private async getOrCreateSessionState(
-    sessionId: string
+    sessionId: string,
   ): Promise<SessionState> {
     // Try to load existing session state
     const { data, error } = await this.supabase
@@ -695,7 +695,7 @@ export class SessionPreservation {
   }
 
   private shouldTriggerBackup(
-    stateUpdates: Partial<SessionState['applicationState']>
+    stateUpdates: Partial<SessionState['applicationState']>,
   ): boolean {
     // Check if updates contain high-priority data
     const highPriorityFields = ['formData', 'unsavedChanges'];
@@ -710,7 +710,7 @@ export class SessionPreservation {
   }
 
   private determineRecoveryPriority(
-    sessionState: SessionState
+    sessionState: SessionState,
   ): SessionBackup['recoveryPriority'] {
     // Determine priority based on data content
     const hasFormData =
@@ -745,7 +745,7 @@ export class SessionPreservation {
 
   private async storeBackup(
     backup: SessionBackup,
-    backupData: string
+    backupData: string,
   ): Promise<void> {
     await this.supabase.from('session_backups').insert({
       backup_id: backup.backupId,
@@ -767,7 +767,7 @@ export class SessionPreservation {
 
   private async updateBackupMetadata(
     backupId: string,
-    metadata: Record<string, any>
+    metadata: Record<string, any>,
   ): Promise<void> {
     try {
       await this.supabase
@@ -794,7 +794,7 @@ export class SessionPreservation {
   }
 
   private async recoverFromBackup(
-    backup: SessionBackup
+    backup: SessionBackup,
   ): Promise<RecoveryResult> {
     try {
       // Get backup data
@@ -826,7 +826,7 @@ export class SessionPreservation {
       // Validate data integrity
       const dataIntegrity = await this.validateDataIntegrity(
         sessionState,
-        backup.checksum
+        backup.checksum,
       );
 
       if (
@@ -878,7 +878,7 @@ export class SessionPreservation {
   }
 
   private async recoverFromAlternativeSources(
-    sessionId: string
+    sessionId: string,
   ): Promise<RecoveryResult> {
     // Try to recover from local storage or other sources
     const recoveredData = {
@@ -929,7 +929,7 @@ export class SessionPreservation {
 
   private async validateDataIntegrity(
     sessionState: SessionState,
-    expectedChecksum: string
+    expectedChecksum: string,
   ): Promise<RecoveryResult['dataIntegrity']> {
     const actualChecksum = this.calculateChecksum(sessionState);
     const checksumValid = actualChecksum === expectedChecksum;

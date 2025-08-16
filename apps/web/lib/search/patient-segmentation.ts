@@ -138,18 +138,18 @@ export class PatientSegmentation {
     naturalLanguageQuery: string,
     language: SupportedLanguage,
     createdBy: string,
-    description?: string
+    description?: string,
   ): Promise<PatientSegment> {
     // Process natural language query with NLP
     const nlpResult = await nlpEngine.processQuery(
       naturalLanguageQuery,
-      language
+      language,
     );
 
     // Convert NLP result to structured criteria
     const structuredCriteria = await this.convertNLPToStructuredCriteria(
       nlpResult,
-      language
+      language,
     );
 
     // Create segment criteria
@@ -184,7 +184,7 @@ export class PatientSegmentation {
 
     if (criteriaError) {
       throw new Error(
-        `Failed to save segment criteria: ${criteriaError.message}`
+        `Failed to save segment criteria: ${criteriaError.message}`,
       );
     }
 
@@ -204,7 +204,7 @@ export class PatientSegmentation {
    */
   private async convertNLPToStructuredCriteria(
     nlpResult: any,
-    _language: SupportedLanguage
+    _language: SupportedLanguage,
   ): Promise<SegmentCriteria['structuredCriteria']> {
     const criteria: SegmentCriteria['structuredCriteria'] = {};
 
@@ -230,13 +230,13 @@ export class PatientSegmentation {
    * Extract demographic criteria from NLP result
    */
   private extractDemographicCriteria(
-    nlpResult: any
+    nlpResult: any,
   ): SegmentCriteria['structuredCriteria']['demographics'] {
     const demographics: any = {};
 
     // Age range extraction
     const ageEntities = nlpResult.entities.filter(
-      (e: any) => e.type === 'age' || e.type === 'number'
+      (e: any) => e.type === 'age' || e.type === 'number',
     );
     if (ageEntities.length > 0) {
       const ages = ageEntities
@@ -281,7 +281,7 @@ export class PatientSegmentation {
 
     // Location extraction
     const locationEntities = nlpResult.entities.filter(
-      (e: any) => e.type === 'location'
+      (e: any) => e.type === 'location',
     );
     if (locationEntities.length > 0) {
       demographics.location = locationEntities.map((e: any) => e.value);
@@ -294,7 +294,7 @@ export class PatientSegmentation {
    * Extract medical criteria from NLP result
    */
   private extractMedicalCriteria(
-    nlpResult: any
+    nlpResult: any,
   ): SegmentCriteria['structuredCriteria']['medical'] {
     const medical: any = {};
 
@@ -363,7 +363,7 @@ export class PatientSegmentation {
     // Extract conditions
     const conditions =
       conditionKeywords[lang]?.filter((condition) =>
-        queryLower.includes(condition.toLowerCase())
+        queryLower.includes(condition.toLowerCase()),
       ) || [];
 
     if (conditions.length > 0) {
@@ -373,7 +373,7 @@ export class PatientSegmentation {
     // Extract treatments
     const treatments =
       treatmentKeywords[lang]?.filter((treatment) =>
-        queryLower.includes(treatment.toLowerCase())
+        queryLower.includes(treatment.toLowerCase()),
       ) || [];
 
     if (treatments.length > 0) {
@@ -382,7 +382,7 @@ export class PatientSegmentation {
 
     // Extract medication entities
     const medicationEntities = nlpResult.entities.filter(
-      (e: any) => e.type === 'medication'
+      (e: any) => e.type === 'medication',
     );
     if (medicationEntities.length > 0) {
       medical.medications = medicationEntities.map((e: any) => e.value);
@@ -395,7 +395,7 @@ export class PatientSegmentation {
    * Extract behavioral criteria from NLP result
    */
   private extractBehavioralCriteria(
-    nlpResult: any
+    nlpResult: any,
   ): SegmentCriteria['structuredCriteria']['behavioral'] {
     const behavioral: any = {};
 
@@ -434,7 +434,7 @@ export class PatientSegmentation {
 
     // Extract date entities for last visit
     const dateEntities = nlpResult.entities.filter(
-      (e: any) => e.type === 'date'
+      (e: any) => e.type === 'date',
     );
     if (dateEntities.length > 0) {
       const date = dateEntities[0].value;
@@ -460,7 +460,7 @@ export class PatientSegmentation {
    * Extract financial criteria from NLP result
    */
   private extractFinancialCriteria(
-    nlpResult: any
+    nlpResult: any,
   ): SegmentCriteria['structuredCriteria']['financial'] {
     const financial: any = {};
 
@@ -477,7 +477,7 @@ export class PatientSegmentation {
     // Extract insurance types
     const insuranceTypes =
       insuranceKeywords[lang]?.filter((type) =>
-        queryLower.includes(type.toLowerCase())
+        queryLower.includes(type.toLowerCase()),
       ) || [];
 
     if (insuranceTypes.length > 0) {
@@ -486,7 +486,7 @@ export class PatientSegmentation {
 
     // Extract payment method entities
     const paymentEntities = nlpResult.entities.filter(
-      (e: any) => e.type === 'payment'
+      (e: any) => e.type === 'payment',
     );
     if (paymentEntities.length > 0) {
       financial.paymentMethods = paymentEntities.map((e: any) => e.value);
@@ -551,7 +551,7 @@ export class PatientSegmentation {
    */
   async generateSegment(
     criteria: SegmentCriteria,
-    options: SegmentationOptions = {}
+    options: SegmentationOptions = {},
   ): Promise<PatientSegment> {
     const {
       includeInactive = false,
@@ -580,7 +580,7 @@ export class PatientSegmentation {
         criteria_json: criteria.structuredCriteria,
         include_inactive: includeInactive,
         max_results: maxPatients,
-      }
+      },
     );
 
     if (error) {
@@ -591,26 +591,26 @@ export class PatientSegmentation {
     const segmentMembers = await this.calculateMatchScores(
       patients || [],
       criteria,
-      minMatchScore
+      minMatchScore,
     );
 
     // Sort results
     const sortedMembers = this.sortSegmentMembers(
       segmentMembers,
       sortBy,
-      sortOrder
+      sortOrder,
     );
 
     // Generate insights
     const insights = await this.generateSegmentInsights(
       sortedMembers,
-      criteria
+      criteria,
     );
 
     // Calculate performance metrics
     const performance = this.calculateSegmentPerformance(
       sortedMembers,
-      criteria
+      criteria,
     );
 
     const segment: PatientSegment = {
@@ -645,7 +645,7 @@ export class PatientSegmentation {
    */
   private buildSegmentQuery(
     criteria: SegmentCriteria,
-    includeInactive: boolean
+    includeInactive: boolean,
   ): string {
     const conditions: string[] = [];
     const { structuredCriteria } = criteria;
@@ -657,12 +657,12 @@ export class PatientSegmentation {
       if (demo.ageRange) {
         if (demo.ageRange.min !== undefined) {
           conditions.push(
-            `EXTRACT(YEAR FROM AGE(birth_date)) >= ${demo.ageRange.min}`
+            `EXTRACT(YEAR FROM AGE(birth_date)) >= ${demo.ageRange.min}`,
           );
         }
         if (demo.ageRange.max !== undefined) {
           conditions.push(
-            `EXTRACT(YEAR FROM AGE(birth_date)) <= ${demo.ageRange.max}`
+            `EXTRACT(YEAR FROM AGE(birth_date)) <= ${demo.ageRange.max}`,
           );
         }
       }
@@ -675,7 +675,7 @@ export class PatientSegmentation {
       if (demo.location && demo.location.length > 0) {
         const locationConditions = demo.location.map(
           (loc) =>
-            `(address ILIKE '%${loc}%' OR city ILIKE '%${loc}%' OR state ILIKE '%${loc}%')`
+            `(address ILIKE '%${loc}%' OR city ILIKE '%${loc}%' OR state ILIKE '%${loc}%')`,
         );
         conditions.push(`(${locationConditions.join(' OR ')})`);
       }
@@ -695,14 +695,14 @@ export class PatientSegmentation {
   private async calculateMatchScores(
     patients: any[],
     criteria: SegmentCriteria,
-    minMatchScore: number
+    minMatchScore: number,
   ): Promise<PatientSegmentMember[]> {
     const members: PatientSegmentMember[] = [];
 
     for (const patient of patients) {
       const matchResult = await this.calculatePatientMatchScore(
         patient,
-        criteria
+        criteria,
       );
 
       if (matchResult.score >= minMatchScore) {
@@ -738,7 +738,7 @@ export class PatientSegmentation {
    */
   private async calculatePatientMatchScore(
     patient: any,
-    criteria: SegmentCriteria
+    criteria: SegmentCriteria,
   ): Promise<{ score: number; matchedCriteria: string[] }> {
     let totalScore = 0;
     let maxPossibleScore = 0;
@@ -750,7 +750,7 @@ export class PatientSegmentation {
     if (structuredCriteria.demographics) {
       const demoScore = this.scoreDemographics(
         patient,
-        structuredCriteria.demographics
+        structuredCriteria.demographics,
       );
       totalScore += demoScore.score;
       maxPossibleScore += demoScore.maxScore;
@@ -761,7 +761,7 @@ export class PatientSegmentation {
     if (structuredCriteria.medical) {
       const medicalScore = this.scoreMedical(
         patient,
-        structuredCriteria.medical
+        structuredCriteria.medical,
       );
       totalScore += medicalScore.score;
       maxPossibleScore += medicalScore.maxScore;
@@ -772,7 +772,7 @@ export class PatientSegmentation {
     if (structuredCriteria.behavioral) {
       const behavioralScore = this.scoreBehavioral(
         patient,
-        structuredCriteria.behavioral
+        structuredCriteria.behavioral,
       );
       totalScore += behavioralScore.score;
       maxPossibleScore += behavioralScore.maxScore;
@@ -783,7 +783,7 @@ export class PatientSegmentation {
     if (structuredCriteria.financial) {
       const financialScore = this.scoreFinancial(
         patient,
-        structuredCriteria.financial
+        structuredCriteria.financial,
       );
       totalScore += financialScore.score;
       maxPossibleScore += financialScore.maxScore;
@@ -805,7 +805,7 @@ export class PatientSegmentation {
     patient: any,
     demographics: NonNullable<
       SegmentCriteria['structuredCriteria']['demographics']
-    >
+    >,
   ): { score: number; maxScore: number; matched: string[] } {
     let score = 0;
     let maxScore = 0;
@@ -843,7 +843,7 @@ export class PatientSegmentation {
 
       if (
         demographics.location.some((loc) =>
-          patientLocation.includes(loc.toLowerCase())
+          patientLocation.includes(loc.toLowerCase()),
         )
       ) {
         score += 10;
@@ -859,7 +859,7 @@ export class PatientSegmentation {
    */
   private scoreMedical(
     patient: any,
-    medical: NonNullable<SegmentCriteria['structuredCriteria']['medical']>
+    medical: NonNullable<SegmentCriteria['structuredCriteria']['medical']>,
   ): { score: number; maxScore: number; matched: string[] } {
     let score = 0;
     let maxScore = 0;
@@ -869,16 +869,16 @@ export class PatientSegmentation {
     if (medical.conditions && medical.conditions.length > 0) {
       maxScore += 15;
       const patientConditions = (patient.conditions || []).map((c: string) =>
-        c.toLowerCase()
+        c.toLowerCase(),
       );
       const matchedConditions = medical.conditions.filter((condition) =>
-        patientConditions.some((pc) => pc.includes(condition.toLowerCase()))
+        patientConditions.some((pc) => pc.includes(condition.toLowerCase())),
       );
 
       if (matchedConditions.length > 0) {
         score += Math.min(
           15,
-          (matchedConditions.length / medical.conditions.length) * 15
+          (matchedConditions.length / medical.conditions.length) * 15,
         );
         matched.push('conditions');
       }
@@ -888,16 +888,16 @@ export class PatientSegmentation {
     if (medical.treatments && medical.treatments.length > 0) {
       maxScore += 10;
       const patientTreatments = (patient.treatments || []).map((t: string) =>
-        t.toLowerCase()
+        t.toLowerCase(),
       );
       const matchedTreatments = medical.treatments.filter((treatment) =>
-        patientTreatments.some((pt) => pt.includes(treatment.toLowerCase()))
+        patientTreatments.some((pt) => pt.includes(treatment.toLowerCase())),
       );
 
       if (matchedTreatments.length > 0) {
         score += Math.min(
           10,
-          (matchedTreatments.length / medical.treatments.length) * 10
+          (matchedTreatments.length / medical.treatments.length) * 10,
         );
         matched.push('treatments');
       }
@@ -907,16 +907,16 @@ export class PatientSegmentation {
     if (medical.medications && medical.medications.length > 0) {
       maxScore += 10;
       const patientMedications = (patient.medications || []).map((m: string) =>
-        m.toLowerCase()
+        m.toLowerCase(),
       );
       const matchedMedications = medical.medications.filter((medication) =>
-        patientMedications.some((pm) => pm.includes(medication.toLowerCase()))
+        patientMedications.some((pm) => pm.includes(medication.toLowerCase())),
       );
 
       if (matchedMedications.length > 0) {
         score += Math.min(
           10,
-          (matchedMedications.length / medical.medications.length) * 10
+          (matchedMedications.length / medical.medications.length) * 10,
         );
         matched.push('medications');
       }
@@ -930,7 +930,9 @@ export class PatientSegmentation {
    */
   private scoreBehavioral(
     patient: any,
-    behavioral: NonNullable<SegmentCriteria['structuredCriteria']['behavioral']>
+    behavioral: NonNullable<
+      SegmentCriteria['structuredCriteria']['behavioral']
+    >,
   ): { score: number; maxScore: number; matched: string[] } {
     let score = 0;
     let maxScore = 0;
@@ -981,7 +983,7 @@ export class PatientSegmentation {
    */
   private scoreFinancial(
     patient: any,
-    financial: NonNullable<SegmentCriteria['structuredCriteria']['financial']>
+    financial: NonNullable<SegmentCriteria['structuredCriteria']['financial']>,
   ): { score: number; maxScore: number; matched: string[] } {
     let score = 0;
     let maxScore = 0;
@@ -994,7 +996,7 @@ export class PatientSegmentation {
 
       if (
         financial.insuranceTypes.some((type) =>
-          patientInsurance.includes(type.toLowerCase())
+          patientInsurance.includes(type.toLowerCase()),
         )
       ) {
         score += 10;
@@ -1050,7 +1052,7 @@ export class PatientSegmentation {
   private sortSegmentMembers(
     members: PatientSegmentMember[],
     sortBy: string,
-    sortOrder: string
+    sortOrder: string,
   ): PatientSegmentMember[] {
     return members.sort((a, b) => {
       let comparison = 0;
@@ -1078,7 +1080,7 @@ export class PatientSegmentation {
    */
   private async generateSegmentInsights(
     members: PatientSegmentMember[],
-    criteria: SegmentCriteria
+    criteria: SegmentCriteria,
   ): Promise<PatientSegment['insights']> {
     const insights: PatientSegment['insights'] = {
       commonCharacteristics: [],
@@ -1118,7 +1120,7 @@ export class PatientSegmentation {
    * Analyze age distribution
    */
   private analyzeAgeDistribution(
-    members: PatientSegmentMember[]
+    members: PatientSegmentMember[],
   ): Array<{ range: string; count: number }> {
     const ageGroups: Record<string, number> = {
       '0-18': 0,
@@ -1191,7 +1193,7 @@ export class PatientSegmentation {
 
     const totalScore = members.reduce(
       (sum, member) => sum + member.matchScore,
-      0
+      0,
     );
     return totalScore / members.length;
   }
@@ -1200,7 +1202,7 @@ export class PatientSegmentation {
    * Calculate average visit frequency
    */
   private calculateAverageVisitFrequency(
-    members: PatientSegmentMember[]
+    members: PatientSegmentMember[],
   ): number {
     if (members.length === 0) {
       return 0;
@@ -1208,7 +1210,7 @@ export class PatientSegmentation {
 
     const totalFrequency = members.reduce(
       (sum, member) => sum + member.behavioralMetrics.visitFrequency,
-      0
+      0,
     );
     return totalFrequency / members.length;
   }
@@ -1218,18 +1220,18 @@ export class PatientSegmentation {
    */
   private generateRecommendations(
     members: PatientSegmentMember[],
-    _criteria: SegmentCriteria
+    _criteria: SegmentCriteria,
   ): string[] {
     const recommendations: string[] = [];
 
     // Size-based recommendations
     if (members.length < 10) {
       recommendations.push(
-        'Segmento pequeno - considere expandir os critérios para incluir mais pacientes'
+        'Segmento pequeno - considere expandir os critérios para incluir mais pacientes',
       );
     } else if (members.length > 500) {
       recommendations.push(
-        'Segmento muito grande - considere refinar os critérios para melhor direcionamento'
+        'Segmento muito grande - considere refinar os critérios para melhor direcionamento',
       );
     }
 
@@ -1237,7 +1239,7 @@ export class PatientSegmentation {
     const avgMatchScore = this.calculateAverageMatchScore(members);
     if (avgMatchScore < 0.7) {
       recommendations.push(
-        'Score de correspondência baixo - revise os critérios para melhor precisão'
+        'Score de correspondência baixo - revise os critérios para melhor precisão',
       );
     }
 
@@ -1245,11 +1247,11 @@ export class PatientSegmentation {
     const avgVisitFreq = this.calculateAverageVisitFrequency(members);
     if (avgVisitFreq < 2) {
       recommendations.push(
-        'Pacientes com baixa frequência de visitas - considere campanhas de engajamento'
+        'Pacientes com baixa frequência de visitas - considere campanhas de engajamento',
       );
     } else if (avgVisitFreq > 6) {
       recommendations.push(
-        'Pacientes frequentes - oportunidade para programas de fidelidade'
+        'Pacientes frequentes - oportunidade para programas de fidelidade',
       );
     }
 
@@ -1261,7 +1263,7 @@ export class PatientSegmentation {
    */
   private calculateSegmentPerformance(
     members: PatientSegmentMember[],
-    _criteria: SegmentCriteria
+    _criteria: SegmentCriteria,
   ): PatientSegment['performance'] {
     const avgMatchScore = this.calculateAverageMatchScore(members);
 
@@ -1270,7 +1272,7 @@ export class PatientSegmentation {
       precision:
         Math.round(
           (members.filter((m) => m.matchScore >= 0.8).length / members.length) *
-            100
+            100,
         ) / 100,
       recall: Math.round((members.length / (members.length + 10)) * 100) / 100, // Simplified calculation
     };
@@ -1341,7 +1343,7 @@ export class PatientSegmentation {
    */
   async updateSegment(
     segmentId: string,
-    updates: Partial<SegmentCriteria>
+    updates: Partial<SegmentCriteria>,
   ): Promise<PatientSegment> {
     const { data, error } = await this.supabase
       .from('patient_segments')
@@ -1408,7 +1410,7 @@ export class PatientSegmentation {
     const totalSegments = segments.length;
     const totalPatients = segments.reduce(
       (sum, segment) => sum + segment.patientCount,
-      0
+      0,
     );
     const averageSegmentSize =
       totalSegments > 0 ? totalPatients / totalSegments : 0;
@@ -1431,7 +1433,7 @@ export class PatientSegmentation {
       highPerforming: segments.filter((s) => s.performance.accuracy >= 0.8)
         .length,
       mediumPerforming: segments.filter(
-        (s) => s.performance.accuracy >= 0.6 && s.performance.accuracy < 0.8
+        (s) => s.performance.accuracy >= 0.6 && s.performance.accuracy < 0.8,
       ).length,
       lowPerforming: segments.filter((s) => s.performance.accuracy < 0.6)
         .length,
@@ -1449,7 +1451,7 @@ export class PatientSegmentation {
         .filter(
           (s) =>
             s.patientCount >= averageSegmentSize * 0.5 &&
-            s.patientCount <= averageSegmentSize
+            s.patientCount <= averageSegmentSize,
         )
         .map((s) => s.criteria.name),
     };
@@ -1468,5 +1470,5 @@ export class PatientSegmentation {
 // Export singleton instance
 export const patientSegmentation = new PatientSegmentation(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
 );

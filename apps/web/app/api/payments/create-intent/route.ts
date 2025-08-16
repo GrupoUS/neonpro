@@ -17,7 +17,7 @@ export async function POST(request: NextRequest) {
     if (!amount || amount <= 0) {
       return NextResponse.json(
         { error: 'Invalid amount provided' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -76,7 +76,7 @@ export async function POST(request: NextRequest) {
         error: 'Failed to create payment intent',
         details: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -89,7 +89,7 @@ export async function GET(request: NextRequest) {
     if (!paymentIntentId) {
       return NextResponse.json(
         { error: 'Payment Intent ID required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -111,7 +111,7 @@ export async function GET(request: NextRequest) {
     if (paymentIntent.metadata.userId !== user.id) {
       return NextResponse.json(
         { error: 'Unauthorized access to payment intent' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -129,7 +129,7 @@ export async function GET(request: NextRequest) {
         error: 'Failed to retrieve payment intent',
         details: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

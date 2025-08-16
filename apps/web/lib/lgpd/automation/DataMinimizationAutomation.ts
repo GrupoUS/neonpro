@@ -137,7 +137,7 @@ export class DataMinimizationAutomation {
   constructor(
     supabase: SupabaseClient,
     complianceManager: LGPDComplianceManager,
-    config: MinimizationConfig
+    config: MinimizationConfig,
   ) {
     this.supabase = supabase;
     this.complianceManager = complianceManager;
@@ -167,7 +167,7 @@ export class DataMinimizationAutomation {
               await this.processScheduledMinimization();
             } catch (_error) {}
           },
-          analysisIntervalHours * 60 * 60 * 1000
+          analysisIntervalHours * 60 * 60 * 1000,
         );
       }
     } catch (error) {
@@ -189,14 +189,14 @@ export class DataMinimizationAutomation {
    * Create Minimization Rule
    */
   async createMinimizationRule(
-    ruleData: Omit<DataMinimizationRule, 'id' | 'created_at' | 'updated_at'>
+    ruleData: Omit<DataMinimizationRule, 'id' | 'created_at' | 'updated_at'>,
   ): Promise<{ success: boolean; rule_id: string }> {
     try {
       // Validate minimization rule
       const validation = await this.validateMinimizationRule(ruleData);
       if (!validation.valid) {
         throw new Error(
-          `Invalid minimization rule: ${validation.errors.join(', ')}`
+          `Invalid minimization rule: ${validation.errors.join(', ')}`,
         );
       }
 
@@ -245,7 +245,7 @@ export class DataMinimizationAutomation {
   async scheduleMinimizationTask(
     ruleId: string,
     scheduledAt: string,
-    taskType: 'scheduled' | 'triggered' | 'manual' = 'scheduled'
+    taskType: 'scheduled' | 'triggered' | 'manual' = 'scheduled',
   ): Promise<{ success: boolean; task_id: string }> {
     try {
       // Get minimization rule
@@ -268,13 +268,13 @@ export class DataMinimizationAutomation {
       // Generate execution plan
       const executionPlan = await this.generateExecutionPlan(
         rule,
-        affectedRecords
+        affectedRecords,
       );
 
       // Generate business impact assessment
       const businessImpact = await this.assessBusinessImpact(
         rule,
-        affectedRecords
+        affectedRecords,
       );
 
       // Generate rollback plan
@@ -339,7 +339,7 @@ export class DataMinimizationAutomation {
    */
   async executeMinimizationTask(
     taskId: string,
-    executedBy?: string
+    executedBy?: string,
   ): Promise<{ success: boolean; records_processed: number }> {
     try {
       // Get task details
@@ -401,7 +401,7 @@ export class DataMinimizationAutomation {
             break;
           default:
             throw new Error(
-              `Unsupported minimization method: ${task.minimization_method}`
+              `Unsupported minimization method: ${task.minimization_method}`,
             );
         }
 
@@ -469,7 +469,7 @@ export class DataMinimizationAutomation {
   async approveMinimizationTask(
     taskId: string,
     approvedBy: string,
-    approvalNotes?: string
+    approvalNotes?: string,
   ): Promise<{ success: boolean }> {
     try {
       // Update task status
@@ -515,7 +515,7 @@ export class DataMinimizationAutomation {
         'get_data_inventory',
         {
           include_analysis: includeAnalysis,
-        }
+        },
       );
 
       if (error) {
@@ -532,14 +532,14 @@ export class DataMinimizationAutomation {
    * Analyze Minimization Opportunities
    */
   async analyzeMinimizationOpportunities(
-    tableName?: string
+    tableName?: string,
   ): Promise<MinimizationAnalysis[]> {
     try {
       const { data: analysis, error } = await this.supabase.rpc(
         'analyze_minimization_opportunities',
         {
           table_name: tableName,
-        }
+        },
       );
 
       if (error) {
@@ -549,7 +549,7 @@ export class DataMinimizationAutomation {
       return analysis || [];
     } catch (error) {
       throw new Error(
-        `Failed to analyze minimization opportunities: ${error.message}`
+        `Failed to analyze minimization opportunities: ${error.message}`,
       );
     }
   }
@@ -569,7 +569,7 @@ export class DataMinimizationAutomation {
   }> {
     try {
       const { data: dashboard, error } = await this.supabase.rpc(
-        'get_minimization_dashboard'
+        'get_minimization_dashboard',
       );
 
       if (error) {
@@ -628,7 +628,7 @@ export class DataMinimizationAutomation {
   }
 
   private async validateMinimizationRule(
-    rule: any
+    rule: any,
   ): Promise<{ valid: boolean; errors: string[] }> {
     const errors: string[] = [];
 
@@ -674,7 +674,7 @@ export class DataMinimizationAutomation {
   }
 
   private async analyzeAffectedRecords(
-    rule: DataMinimizationRule
+    rule: DataMinimizationRule,
   ): Promise<{ count: number; sample: any[] }> {
     const { data: analysis, error } = await this.supabase.rpc(
       'analyze_affected_records',
@@ -682,7 +682,7 @@ export class DataMinimizationAutomation {
         table_name: rule.table_name,
         column_name: rule.column_name,
         trigger_condition: rule.trigger_condition,
-      }
+      },
     );
 
     if (error) {
@@ -694,7 +694,7 @@ export class DataMinimizationAutomation {
 
   private async generateExecutionPlan(
     rule: DataMinimizationRule,
-    affectedRecords: any
+    affectedRecords: any,
   ): Promise<any> {
     return {
       method: rule.minimization_type,
@@ -704,10 +704,10 @@ export class DataMinimizationAutomation {
       execution_steps: this.getExecutionSteps(rule.minimization_type),
       estimated_duration: this.estimateExecutionDuration(
         affectedRecords.count,
-        rule.minimization_type
+        rule.minimization_type,
       ),
       resource_requirements: this.getResourceRequirements(
-        rule.minimization_type
+        rule.minimization_type,
       ),
       rollback_supported: this.isRollbackSupported(rule.minimization_type),
     };
@@ -715,14 +715,14 @@ export class DataMinimizationAutomation {
 
   private async assessBusinessImpact(
     rule: DataMinimizationRule,
-    affectedRecords: any
+    affectedRecords: any,
   ): Promise<any> {
     return {
       data_utility_impact: 'medium', // Would be calculated based on usage patterns
       performance_impact: 'low',
       storage_savings: this.calculateStorageSavings(
         affectedRecords.count,
-        rule.minimization_type
+        rule.minimization_type,
       ),
       compliance_benefit: 'high',
       risk_reduction: 'high',
@@ -733,7 +733,7 @@ export class DataMinimizationAutomation {
 
   private async generateRollbackPlan(
     rule: DataMinimizationRule,
-    executionPlan: any
+    executionPlan: any,
   ): Promise<any> {
     if (!executionPlan.rollback_supported) {
       return {
@@ -773,7 +773,7 @@ export class DataMinimizationAutomation {
         columns: task.target_columns,
         execution_plan: task.execution_plan,
         anonymization_config: this.config.anonymization_algorithms,
-      }
+      },
     );
 
     if (error) {
@@ -783,7 +783,7 @@ export class DataMinimizationAutomation {
   }
 
   private async executePseudonymization(
-    task: MinimizationTask
+    task: MinimizationTask,
   ): Promise<number> {
     // Implement pseudonymization using configured methods
     const { data: result, error } = await this.supabase.rpc(
@@ -794,7 +794,7 @@ export class DataMinimizationAutomation {
         columns: task.target_columns,
         execution_plan: task.execution_plan,
         pseudonymization_config: this.config.pseudonymization_methods,
-      }
+      },
     );
 
     if (error) {
@@ -812,7 +812,7 @@ export class DataMinimizationAutomation {
         table_name: task.target_table,
         columns: task.target_columns,
         execution_plan: task.execution_plan,
-      }
+      },
     );
 
     if (error) {
@@ -830,7 +830,7 @@ export class DataMinimizationAutomation {
         table_name: task.target_table,
         columns: task.target_columns,
         execution_plan: task.execution_plan,
-      }
+      },
     );
 
     if (error) {
@@ -848,7 +848,7 @@ export class DataMinimizationAutomation {
         table_name: task.target_table,
         columns: task.target_columns,
         execution_plan: task.execution_plan,
-      }
+      },
     );
 
     if (error) {
@@ -866,7 +866,7 @@ export class DataMinimizationAutomation {
         table_name: task.target_table,
         columns: task.target_columns,
         execution_plan: task.execution_plan,
-      }
+      },
     );
 
     if (error) {
@@ -920,7 +920,7 @@ export class DataMinimizationAutomation {
 
   private estimateExecutionDuration(
     recordCount: number,
-    minimizationType: string
+    minimizationType: string,
   ): number {
     // Estimate duration in minutes based on record count and method complexity
     const baseTime = Math.ceil(recordCount / 1000); // 1 minute per 1000 records
@@ -962,7 +962,7 @@ export class DataMinimizationAutomation {
 
   private calculateStorageSavings(
     recordCount: number,
-    minimizationType: string
+    minimizationType: string,
   ): string {
     // Estimate storage savings based on minimization type
     const avgRecordSize = 1024; // 1KB average

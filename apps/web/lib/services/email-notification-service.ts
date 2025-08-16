@@ -27,7 +27,7 @@ export type EmailNotificationConfig = {
 const EmailTemplates = {
   overduePayment: (
     data: NotificationData,
-    config: EmailNotificationConfig
+    config: EmailNotificationConfig,
   ) => ({
     subject: `[URGENTE] Pagamento em atraso - ${data.supplierName}`,
     html: `
@@ -209,7 +209,7 @@ const EmailTemplates = {
 
   paymentCompleted: (
     data: NotificationData,
-    config: EmailNotificationConfig
+    config: EmailNotificationConfig,
   ) => ({
     subject: `✅ Pagamento confirmado - ${data.supplierName}`,
     html: `
@@ -296,14 +296,14 @@ export class EmailNotificationService {
       fromEmail: 'noreply@neonpro.com',
       companyName: 'NeonPro',
       supportEmail: 'suporte@neonpro.com',
-    }
+    },
   ) {
     this.config = config;
   }
 
   // Public notification methods
   async sendOverduePaymentNotification(
-    data: NotificationData
+    data: NotificationData,
   ): Promise<boolean> {
     return await this.sendNotification('overduePayment', data);
   }
@@ -317,7 +317,7 @@ export class EmailNotificationService {
   }
 
   async sendPaymentCompletedNotification(
-    data: NotificationData
+    data: NotificationData,
   ): Promise<boolean> {
     return await this.sendNotification('paymentCompleted', data);
   }
@@ -325,7 +325,7 @@ export class EmailNotificationService {
   // Private notification dispatcher
   private async sendNotification(
     type: keyof typeof EmailTemplates,
-    data: NotificationData
+    data: NotificationData,
   ): Promise<boolean> {
     let emailSuccess = true;
     let smsSuccess = true;
@@ -350,7 +350,7 @@ export class EmailNotificationService {
   // Email sender
   private async sendEmail(
     type: keyof typeof EmailTemplates,
-    data: NotificationData
+    data: NotificationData,
   ): Promise<boolean> {
     try {
       if (!process.env.RESEND_API_KEY) {
@@ -379,7 +379,7 @@ export class EmailNotificationService {
   // SMS sender (placeholder)
   private async sendSMS(
     type: keyof typeof SMSTemplates,
-    data: NotificationData
+    data: NotificationData,
   ): Promise<boolean> {
     try {
       const _message = SMSTemplates[type](data);
@@ -402,7 +402,7 @@ export class EmailNotificationService {
   static createNotificationData(
     accountsPayable: any,
     recipientEmail: string,
-    recipientPhone?: string
+    recipientPhone?: string,
   ): NotificationData {
     return {
       recipientEmail,
@@ -420,14 +420,14 @@ export class EmailNotificationService {
     notifications: {
       type: keyof typeof EmailTemplates;
       data: NotificationData;
-    }[]
+    }[],
   ): Promise<boolean[]> {
     const results = await Promise.allSettled(
-      notifications.map(({ type, data }) => this.sendNotification(type, data))
+      notifications.map(({ type, data }) => this.sendNotification(type, data)),
     );
 
     return results.map((result) =>
-      result.status === 'fulfilled' ? result.value : false
+      result.status === 'fulfilled' ? result.value : false,
     );
   }
 

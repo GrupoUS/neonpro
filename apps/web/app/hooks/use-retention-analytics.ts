@@ -34,7 +34,7 @@ export function usePatientRetentionMetrics(
   options?: {
     enabled?: boolean;
     refetchInterval?: number;
-  }
+  },
 ) {
   return useQuery({
     queryKey: ['patient-retention-metrics', patientId, clinicId],
@@ -56,7 +56,7 @@ export function useClinicRetentionMetrics(
     limit?: number;
     offset?: number;
     enabled?: boolean;
-  }
+  },
 ) {
   const { limit = 100, offset = 0, enabled = true } = options || {};
 
@@ -114,7 +114,7 @@ export function useChurnPredictions(
     limit?: number;
     offset?: number;
     enabled?: boolean;
-  }
+  },
 ) {
   const { riskLevel, limit = 100, offset = 0, enabled = true } = options || {};
 
@@ -168,7 +168,7 @@ export function useRetentionStrategies(
   options?: {
     activeOnly?: boolean;
     enabled?: boolean;
-  }
+  },
 ) {
   const { activeOnly = false, enabled = true } = options || {};
 
@@ -239,7 +239,7 @@ export function useRetentionAnalyticsDashboard(
   options?: {
     enabled?: boolean;
     refetchInterval?: number;
-  }
+  },
 ) {
   return useQuery({
     queryKey: ['retention-dashboard', clinicId, periodStart, periodEnd],
@@ -247,7 +247,7 @@ export function useRetentionAnalyticsDashboard(
       retentionService.generateRetentionAnalyticsDashboard(
         clinicId,
         periodStart,
-        periodEnd
+        periodEnd,
       ),
     enabled:
       options?.enabled !== false &&
@@ -271,7 +271,7 @@ export function useChurnRiskMonitoring(
   options?: {
     enabled?: boolean;
     refreshInterval?: number;
-  }
+  },
 ) {
   const [alerts, setAlerts] = useState<{
     criticalRisk: number;
@@ -293,19 +293,19 @@ export function useChurnRiskMonitoring(
   React.useEffect(() => {
     if (predictions) {
       const critical = predictions.filter(
-        (p) => p.risk_level === ChurnRiskLevel.CRITICAL
+        (p) => p.risk_level === ChurnRiskLevel.CRITICAL,
       ).length;
       const high = predictions.filter(
-        (p) => p.risk_level === ChurnRiskLevel.HIGH
+        (p) => p.risk_level === ChurnRiskLevel.HIGH,
       ).length;
       const medium = predictions.filter(
-        (p) => p.risk_level === ChurnRiskLevel.MEDIUM
+        (p) => p.risk_level === ChurnRiskLevel.MEDIUM,
       ).length;
 
       // Count predictions from last 24 hours
       const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000);
       const newPredictions = predictions.filter(
-        (p) => new Date(p.prediction_date) > yesterday
+        (p) => new Date(p.prediction_date) > yesterday,
       ).length;
 
       setAlerts({
@@ -332,7 +332,7 @@ export function useRetentionStrategyAnalytics(
   strategyId?: string,
   options?: {
     enabled?: boolean;
-  }
+  },
 ) {
   return useQuery({
     queryKey: ['retention-strategy-analytics', clinicId, strategyId],
@@ -361,7 +361,7 @@ export function usePatientRiskInsights(
   clinicId: string,
   options?: {
     enabled?: boolean;
-  }
+  },
 ) {
   const { data: metrics } = usePatientRetentionMetrics(patientId, clinicId, {
     enabled: options?.enabled,
@@ -476,15 +476,15 @@ export function useBulkChurnPrediction() {
           retentionService.generateChurnPrediction(
             patientId,
             clinicId,
-            modelType
-          )
+            modelType,
+          ),
         );
 
         const batchResults = await Promise.allSettled(batchPromises);
         const successful = batchResults
           .filter(
             (result): result is PromiseFulfilledResult<ChurnPrediction> =>
-              result.status === 'fulfilled'
+              result.status === 'fulfilled',
           )
           .map((result) => result.value);
 
@@ -528,16 +528,19 @@ export function useBulkRetentionMetrics() {
       for (let i = 0; i < patientIds.length; i += batchSize) {
         const batch = patientIds.slice(i, i + batchSize);
         const batchPromises = batch.map((patientId) =>
-          retentionService.calculatePatientRetentionMetrics(patientId, clinicId)
+          retentionService.calculatePatientRetentionMetrics(
+            patientId,
+            clinicId,
+          ),
         );
 
         const batchResults = await Promise.allSettled(batchPromises);
         const successful = batchResults
           .filter(
             (
-              result
+              result,
             ): result is PromiseFulfilledResult<PatientRetentionMetrics> =>
-              result.status === 'fulfilled'
+              result.status === 'fulfilled',
           )
           .map((result) => result.value);
 
@@ -566,7 +569,7 @@ export function useBulkRetentionMetrics() {
  */
 export function useRetentionAnalyticsFormatters() {
   const formatRiskLevel = (
-    level: ChurnRiskLevel
+    level: ChurnRiskLevel,
   ): { color: string; label: string } => {
     switch (level) {
       case ChurnRiskLevel.CRITICAL:

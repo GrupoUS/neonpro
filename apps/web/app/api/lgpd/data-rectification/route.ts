@@ -191,7 +191,7 @@ function validatePhoneNumber(phone: string): boolean {
 async function getCurrentValues(
   supabase: any,
   userId: string,
-  requestType: string
+  requestType: string,
 ) {
   let currentValues: Record<string, any> = {};
 
@@ -200,7 +200,7 @@ async function getCurrentValues(
       const { data: profile } = await supabase
         .from('users')
         .select(
-          'full_name, phone, birth_date, gender, address, city, state, zip_code, emergency_contact_name, emergency_contact_phone, preferred_language, communication_preferences'
+          'full_name, phone, birth_date, gender, address, city, state, zip_code, emergency_contact_name, emergency_contact_phone, preferred_language, communication_preferences',
         )
         .eq('id', userId)
         .single();
@@ -247,7 +247,7 @@ async function applyChanges(
   supabase: any,
   userId: string,
   requestType: string,
-  changes: Record<string, any>
+  changes: Record<string, any>,
 ) {
   let result;
 
@@ -307,7 +307,7 @@ async function applyChanges(
 // Check if changes require approval
 function requiresApproval(
   requestType: string,
-  changes: Record<string, any>
+  changes: Record<string, any>,
 ): boolean {
   // Medical information always requires approval
   if (requestType === 'medical') {
@@ -331,7 +331,7 @@ async function createApprovalRequest(
   userId: string,
   requestType: string,
   changes: Record<string, any>,
-  reason: string
+  reason: string,
 ) {
   const { error } = await supabase.from('rectification_approvals').insert([
     {
@@ -353,7 +353,7 @@ async function createApprovalRequest(
 // Log rectification request
 async function logRectificationRequest(
   supabase: any,
-  rectificationResult: RectificationResult
+  rectificationResult: RectificationResult,
 ) {
   try {
     await supabase.from('lgpd_rectification_logs').insert([
@@ -390,7 +390,7 @@ export async function POST(request: NextRequest) {
     if (authError || !user) {
       return NextResponse.json(
         { error: 'Unauthorized. Please log in to rectify your data.' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -417,21 +417,21 @@ export async function POST(request: NextRequest) {
     if (changes.cpf && !validateCPF(changes.cpf)) {
       return NextResponse.json(
         { error: 'Invalid CPF format' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     if (changes.birth_date && !validateAge(changes.birth_date)) {
       return NextResponse.json(
         { error: 'Invalid birth date' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     if (changes.phone && !validatePhoneNumber(changes.phone)) {
       return NextResponse.json(
         { error: 'Invalid phone number format' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -439,7 +439,7 @@ export async function POST(request: NextRequest) {
     const originalValues = await getCurrentValues(
       supabase,
       user.id,
-      requestType
+      requestType,
     );
 
     // Check if approval is required
@@ -477,7 +477,7 @@ export async function POST(request: NextRequest) {
         user.id,
         requestType,
         changes,
-        reason
+        reason,
       );
 
       // Log request
@@ -508,13 +508,13 @@ export async function POST(request: NextRequest) {
           error: 'Invalid request parameters',
           details: error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     return NextResponse.json(
       { error: 'Internal server error during data rectification' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -633,7 +633,7 @@ export async function GET(_request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

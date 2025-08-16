@@ -122,7 +122,7 @@ export class ErrorAnalysisSystem {
    */
   private performAnalysis(
     message: string,
-    stack?: string
+    stack?: string,
   ): {
     category: ErrorContext['category'];
     severity: ErrorContext['severity'];
@@ -196,7 +196,7 @@ export class ErrorAnalysisSystem {
     const now = Date.now();
     const oneHour = 60 * 60 * 1000;
     const recentErrors = this.errorHistory.filter(
-      (error) => now - error.timestamp < oneHour
+      (error) => now - error.timestamp < oneHour,
     );
 
     const categoryBreakdown = new Map<string, number>();
@@ -205,11 +205,11 @@ export class ErrorAnalysisSystem {
     for (const error of recentErrors) {
       categoryBreakdown.set(
         error.category,
-        (categoryBreakdown.get(error.category) || 0) + 1
+        (categoryBreakdown.get(error.category) || 0) + 1,
       );
       severityBreakdown.set(
         error.severity,
-        (severityBreakdown.get(error.severity) || 0) + 1
+        (severityBreakdown.get(error.severity) || 0) + 1,
       );
     }
 
@@ -230,7 +230,7 @@ export class ErrorAnalysisSystem {
     const criticalErrors = this.errorHistory.filter(
       (error) =>
         error.severity === 'critical' &&
-        Date.now() - error.timestamp < 3_600_000
+        Date.now() - error.timestamp < 3_600_000,
     );
 
     const topPatterns = Array.from(this.patternStats.entries())
@@ -258,7 +258,7 @@ export class ErrorAnalysisSystem {
 
     if (trends.categoryBreakdown.network > 5) {
       recommendations.push(
-        'Consider implementing circuit breaker pattern for network calls'
+        'Consider implementing circuit breaker pattern for network calls',
       );
     }
 
@@ -272,7 +272,7 @@ export class ErrorAnalysisSystem {
 
     if (trends.totalErrors > 20) {
       recommendations.push(
-        'High error rate detected - consider system health check'
+        'High error rate detected - consider system health check',
       );
     }
 
@@ -287,7 +287,7 @@ export class ErrorAnalysisSystem {
     const cutoff = Date.now() - maxAge;
 
     this.errorHistory = this.errorHistory.filter(
-      (error) => error.timestamp > cutoff
+      (error) => error.timestamp > cutoff,
     );
   }
 

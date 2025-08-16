@@ -71,7 +71,7 @@ export class RLSOptimizationManager {
     try {
       const { data, error } = await this.supabase.rpc(
         'user_belongs_to_clinic',
-        { target_clinic_id: clinicId }
+        { target_clinic_id: clinicId },
       );
 
       if (error) {
@@ -126,7 +126,7 @@ export class RLSOptimizationManager {
   async getPerformanceBenchmarks(): Promise<RLSPerformanceBenchmark[]> {
     try {
       const { data, error } = await this.supabase.rpc(
-        'benchmark_rls_performance'
+        'benchmark_rls_performance',
       );
 
       if (error) {
@@ -161,7 +161,7 @@ export class RLSOptimizationManager {
    */
   private async logPerformanceMetric(
     metricName: string,
-    value: number
+    value: number,
   ): Promise<void> {
     try {
       await this.supabase.rpc('log_performance_metric', {
@@ -189,10 +189,10 @@ export class RLSOptimizationManager {
 
       // Determine overall health status
       const criticalIssues = healthChecks.filter(
-        (check) => check.status === 'CRITICAL'
+        (check) => check.status === 'CRITICAL',
       );
       const warningIssues = healthChecks.filter(
-        (check) => check.status === 'WARNING'
+        (check) => check.status === 'WARNING',
       );
 
       let healthStatus: 'OK' | 'WARNING' | 'CRITICAL' = 'OK';
@@ -204,12 +204,12 @@ export class RLSOptimizationManager {
 
       // Get response time from health checks
       const responseTimeCheck = healthChecks.find(
-        (check) => check.check_name === 'response_time_target'
+        (check) => check.check_name === 'response_time_target',
       );
 
       const avgResponseTime = responseTimeCheck
         ? Number.parseFloat(
-            responseTimeCheck.details.match(/(\d+\.?\d*) ms/)?.[1] || '0'
+            responseTimeCheck.details.match(/(\d+\.?\d*) ms/)?.[1] || '0',
           )
         : 0;
 
@@ -234,7 +234,7 @@ export class RLSOptimizationManager {
  * Helper function to create RLS optimization manager
  */
 export function createRLSOptimizationManager(
-  supabaseClient: ReturnType<typeof createClient<Database>>
+  supabaseClient: ReturnType<typeof createClient<Database>>,
 ): RLSOptimizationManager {
   return new RLSOptimizationManager(supabaseClient);
 }

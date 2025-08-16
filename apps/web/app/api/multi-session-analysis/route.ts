@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
     if (authError || !user) {
       return NextResponse.json(
         { error: 'Authentication required' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -37,13 +37,13 @@ export async function POST(request: NextRequest) {
     if (error.name === 'ZodError') {
       return NextResponse.json(
         { error: 'Invalid request data', details: error.errors },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     return NextResponse.json(
       { error: 'Failed to create multi-session analysis' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -60,7 +60,7 @@ export async function GET(request: NextRequest) {
     if (authError || !user) {
       return NextResponse.json(
         { error: 'Authentication required' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -75,7 +75,7 @@ export async function GET(request: NextRequest) {
   } catch (_error: any) {
     return NextResponse.json(
       { error: 'Failed to fetch multi-session analyses' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

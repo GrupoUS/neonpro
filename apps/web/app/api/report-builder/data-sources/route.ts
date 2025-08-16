@@ -24,7 +24,7 @@ export async function GET(_request: NextRequest) {
             ? error.message
             : 'Failed to fetch data sources',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

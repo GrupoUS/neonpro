@@ -29,7 +29,7 @@ export async function POST(request: NextRequest) {
     ) {
       return NextResponse.json(
         { error: 'Insufficient permissions for batch operations' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -45,7 +45,7 @@ export async function POST(request: NextRequest) {
           error:
             'Invalid request: predictions array is required and must not be empty',
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -53,7 +53,7 @@ export async function POST(request: NextRequest) {
     if (body.predictions.length > 100) {
       return NextResponse.json(
         { error: 'Batch size limited to 100 predictions per request' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -64,7 +64,7 @@ export async function POST(request: NextRequest) {
           {
             error: `Invalid prediction at index ${index}: patient_id and treatment_type are required`,
           },
-          { status: 400 }
+          { status: 400 },
         );
       }
     }
@@ -79,7 +79,7 @@ export async function POST(request: NextRequest) {
     if (!patients || patients.length !== patientIds.length) {
       return NextResponse.json(
         { error: 'One or more patients not found' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -92,12 +92,12 @@ export async function POST(request: NextRequest) {
         ...batchResponse,
         message: `Batch prediction completed: ${batchResponse.predictions.length} predictions generated`,
       },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to generate batch predictions' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

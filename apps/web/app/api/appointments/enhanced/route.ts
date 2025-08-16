@@ -29,7 +29,7 @@ export async function POST(request: Request) {
     if (!user) {
       return NextResponse.json(
         { success: false, error_message: 'Unauthorized' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -51,7 +51,7 @@ export async function POST(request: Request) {
           success: false,
           error_message: 'Dados obrigatórios não fornecidos',
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -65,7 +65,7 @@ export async function POST(request: Request) {
     if (profileError || !profile) {
       return NextResponse.json(
         { success: false, error_message: 'Perfil do usuário não encontrado' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -120,7 +120,7 @@ export async function POST(request: Request) {
           error_message: 'Erro ao criar consulta',
           details: appointmentError.message,
         },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -183,7 +183,7 @@ export async function POST(request: Request) {
         error_message: 'Erro interno do servidor',
         details: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -204,7 +204,7 @@ export async function GET(request: Request) {
     if (!user) {
       return NextResponse.json(
         { success: false, error_message: 'Unauthorized' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -218,7 +218,7 @@ export async function GET(request: Request) {
     if (profileError || !profile) {
       return NextResponse.json(
         { success: false, error_message: 'Perfil do usuário não encontrado' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -257,7 +257,7 @@ export async function GET(request: Request) {
           duration_minutes,
           price
         )
-      `
+      `,
       )
       .eq('clinic_id', profile.clinic_id)
       .order('appointment_date', { ascending: true })
@@ -277,7 +277,7 @@ export async function GET(request: Request) {
     if (appointmentsError) {
       return NextResponse.json(
         { success: false, error_message: 'Erro ao buscar consultas' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -304,7 +304,7 @@ export async function GET(request: Request) {
         success: false,
         error_message: 'Erro interno do servidor',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

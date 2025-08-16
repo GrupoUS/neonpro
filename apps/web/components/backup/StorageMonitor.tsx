@@ -157,7 +157,7 @@ const StorageMonitor: React.FC = () => {
         `/api/backup/storage/providers/${providerId}/test`,
         {
           method: 'POST',
-        }
+        },
       );
 
       if (response.ok) {

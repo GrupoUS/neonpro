@@ -44,7 +44,7 @@ export class UnifiedSearchSystem {
       if (query.options?.useNLP !== false) {
         nlpAnalysis = await nlpSearchEngine.processQuery(
           query.term,
-          query.context
+          query.context,
         );
         query.nlpAnalysis = nlpAnalysis;
       }
@@ -136,7 +136,7 @@ export class UnifiedSearchSystem {
    */
   private refineSearchTypesFromNLP(
     defaultTypes: SearchType[],
-    nlpAnalysis: NLPSearchQuery
+    nlpAnalysis: NLPSearchQuery,
   ): SearchType[] {
     const refinedTypes = [...defaultTypes];
 
@@ -190,13 +190,13 @@ export class UnifiedSearchSystem {
 
     // Based on entities found, add relevant search types
     const hasPersonEntity = nlpAnalysis.entities.some(
-      (e) => e.type === 'person'
+      (e) => e.type === 'person',
     );
     const hasProcedureEntity = nlpAnalysis.entities.some(
-      (e) => e.type === 'procedure'
+      (e) => e.type === 'procedure',
     );
     const hasConditionEntity = nlpAnalysis.entities.some(
-      (e) => e.type === 'condition'
+      (e) => e.type === 'condition',
     );
 
     if (hasPersonEntity && !refinedTypes.includes('patients')) {
@@ -232,7 +232,7 @@ export class UnifiedSearchSystem {
       if (nlpAnalysis) {
         // Use person entities as name filters
         const personEntities = nlpAnalysis.entities.filter(
-          (e) => e.type === 'person'
+          (e) => e.type === 'person',
         );
         if (personEntities.length > 0) {
           nameFilter = personEntities[0].value;
@@ -240,7 +240,7 @@ export class UnifiedSearchSystem {
 
         // Use age entities for age filtering
         const ageEntities = nlpAnalysis.entities.filter(
-          (e) => e.type === 'age'
+          (e) => e.type === 'age',
         );
         if (ageEntities.length > 0) {
           const age = Number.parseInt(ageEntities[0].value, 10);
@@ -249,7 +249,7 @@ export class UnifiedSearchSystem {
 
         // Use specialty entities
         const specialtyEntities = nlpAnalysis.entities.filter(
-          (e) => e.type === 'specialty'
+          (e) => e.type === 'specialty',
         );
         if (specialtyEntities.length > 0) {
           specialtyFilter = specialtyEntities[0].value;
@@ -304,7 +304,7 @@ export class UnifiedSearchSystem {
             searchTerm,
             patient.name,
             patient.email,
-            patient.phone
+            patient.phone,
           )
         ) {
           matches = true;
@@ -338,7 +338,7 @@ export class UnifiedSearchSystem {
         // Check for procedure entities (enhanced matching)
         if (nlpAnalysis) {
           const procedureEntities = nlpAnalysis.entities.filter(
-            (e) => e.type === 'procedure'
+            (e) => e.type === 'procedure',
           );
           for (const proc of procedureEntities) {
             if (
@@ -397,7 +397,7 @@ export class UnifiedSearchSystem {
    * Busca eventos da timeline
    */
   private async searchTimelineEvents(
-    query: SearchQuery
+    query: SearchQuery,
   ): Promise<SearchResult[]> {
     try {
       const results: SearchResult[] = [];
@@ -428,7 +428,7 @@ export class UnifiedSearchSystem {
             query.term,
             event.title,
             event.description,
-            event.provider
+            event.provider,
           )
         ) {
           results.push({
@@ -563,7 +563,7 @@ export class UnifiedSearchSystem {
             query.term,
             photo.fileName,
             photo.patientId,
-            photo.status
+            photo.status,
           )
         ) {
           results.push({
@@ -588,7 +588,7 @@ export class UnifiedSearchSystem {
    * Busca registros médicos
    */
   private async searchMedicalRecords(
-    _query: SearchQuery
+    _query: SearchQuery,
   ): Promise<SearchResult[]> {
     try {
       // Simular busca de registros médicos
@@ -602,7 +602,7 @@ export class UnifiedSearchSystem {
    * Busca consultas
    */
   private async searchAppointments(
-    _query: SearchQuery
+    _query: SearchQuery,
   ): Promise<SearchResult[]> {
     try {
       // Simular busca de consultas
@@ -653,7 +653,7 @@ export class UnifiedSearchSystem {
     const termWords = term.split(' ');
     const contentWords = content.split(' ');
     const matches = termWords.filter((word) =>
-      contentWords.some((contentWord) => contentWord.includes(word))
+      contentWords.some((contentWord) => contentWord.includes(word)),
     ).length;
 
     return (matches / termWords.length) * 0.6;
@@ -678,7 +678,7 @@ export class UnifiedSearchSystem {
    * Gera facetas para filtros
    */
   private generateSearchFacets(
-    results: SearchResult[]
+    results: SearchResult[],
   ): Record<string, Array<{ value: string; count: number }>> {
     const facets: Record<string, Array<{ value: string; count: number }>> = {};
 
@@ -706,7 +706,7 @@ export class UnifiedSearchSystem {
       limit?: number;
       types?: SearchType[];
       includeInactive?: boolean;
-    }
+    },
   ): Promise<SearchResponse> {
     const query: SearchQuery = {
       term,
@@ -735,7 +735,7 @@ export class UnifiedSearchSystem {
   async conversationalSearch(
     naturalLanguageQuery: string,
     userId: string,
-    userRole = 'user'
+    userRole = 'user',
   ): Promise<SearchResponse> {
     const context: SearchContext = {
       userId,
@@ -817,7 +817,7 @@ export class UnifiedSearchSystem {
   async saveSearch(
     _name: string,
     _query: SearchQuery,
-    _userId: string
+    _userId: string,
   ): Promise<string> {
     try {
       const savedSearchId = `search_${Date.now()}`;

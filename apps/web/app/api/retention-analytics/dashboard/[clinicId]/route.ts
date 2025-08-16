@@ -39,7 +39,7 @@ const DashboardQuerySchema = z.object({
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { clinicId: string } }
+  { params }: { params: { clinicId: string } },
 ) {
   try {
     // Validate clinic ID parameter
@@ -53,7 +53,7 @@ export async function GET(
           error: 'Invalid clinic ID',
           details: clinicValidation.error.issues,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -78,7 +78,7 @@ export async function GET(
           error: 'Invalid query parameters',
           details: queryValidation.error.issues,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -114,14 +114,14 @@ export async function GET(
     if (profileError || !userProfile) {
       return NextResponse.json(
         { error: 'User profile not found' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
     if (userProfile.clinic_id !== clinicId) {
       return NextResponse.json(
         { error: 'Access denied to clinic data' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -144,7 +144,7 @@ export async function GET(
       await retentionService.generateRetentionAnalyticsDashboard(
         clinicId,
         periodStart,
-        periodEnd
+        periodEnd,
       );
 
     // Collect additional detailed data based on parameters
@@ -154,7 +154,7 @@ export async function GET(
       const metrics = await retentionService.getClinicRetentionMetrics(
         clinicId,
         metricsLimit,
-        0
+        0,
       );
 
       // Filter metrics by date range
@@ -171,14 +171,14 @@ export async function GET(
         summary: {
           total_patients: filteredMetrics.length,
           high_risk_patients: filteredMetrics.filter((m) =>
-            ['high', 'critical'].includes(m.churn_risk_level)
+            ['high', 'critical'].includes(m.churn_risk_level),
           ).length,
           average_retention_rate:
             filteredMetrics.reduce((sum, m) => sum + m.retention_rate, 0) /
               filteredMetrics.length || 0,
           total_lifetime_value: filteredMetrics.reduce(
             (sum, m) => sum + m.lifetime_value,
-            0
+            0,
           ),
         },
       };
@@ -189,7 +189,7 @@ export async function GET(
         clinicId,
         undefined,
         predictionsLimit,
-        0
+        0,
       );
 
       // Filter predictions by date range
@@ -206,21 +206,21 @@ export async function GET(
         summary: {
           total_predictions: filteredPredictions.length,
           critical_risk: filteredPredictions.filter(
-            (p) => p.risk_level === ChurnRiskLevel.CRITICAL
+            (p) => p.risk_level === ChurnRiskLevel.CRITICAL,
           ).length,
           high_risk: filteredPredictions.filter(
-            (p) => p.risk_level === ChurnRiskLevel.HIGH
+            (p) => p.risk_level === ChurnRiskLevel.HIGH,
           ).length,
           medium_risk: filteredPredictions.filter(
-            (p) => p.risk_level === ChurnRiskLevel.MEDIUM
+            (p) => p.risk_level === ChurnRiskLevel.MEDIUM,
           ).length,
           low_risk: filteredPredictions.filter(
-            (p) => p.risk_level === ChurnRiskLevel.LOW
+            (p) => p.risk_level === ChurnRiskLevel.LOW,
           ).length,
           average_churn_probability:
             filteredPredictions.reduce(
               (sum, p) => sum + p.churn_probability,
-              0
+              0,
             ) / filteredPredictions.length || 0,
         },
       };
@@ -229,7 +229,7 @@ export async function GET(
     if (includeStrategies) {
       const strategies = await retentionService.getRetentionStrategies(
         clinicId,
-        false
+        false,
       );
 
       additionalData.strategies = {
@@ -240,7 +240,7 @@ export async function GET(
           active_count: strategies.filter((s) => s.is_active).length,
           total_executions: strategies.reduce(
             (sum, s) => sum + s.execution_count,
-            0
+            0,
           ),
           average_success_rate:
             strategies.reduce((sum, s) => sum + (s.success_rate || 0), 0) /
@@ -254,7 +254,7 @@ export async function GET(
       const startDate = new Date(periodStart);
       const endDate = new Date(periodEnd);
       const daysDiff = Math.ceil(
-        (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)
+        (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24),
       );
 
       // Generate weekly performance data points
@@ -263,13 +263,13 @@ export async function GET(
 
       for (let week = 0; week < weeksCount; week++) {
         const weekStart = new Date(
-          startDate.getTime() + week * 7 * 24 * 60 * 60 * 1000
+          startDate.getTime() + week * 7 * 24 * 60 * 60 * 1000,
         );
         const weekEnd = new Date(
           Math.min(
             weekStart.getTime() + 6 * 24 * 60 * 60 * 1000,
-            endDate.getTime()
-          )
+            endDate.getTime(),
+          ),
         );
 
         weeklyData.push({
@@ -309,7 +309,7 @@ export async function GET(
         dashboardData.engagement_metrics.low_engagement_count || 0,
       recent_strategy_failures:
         additionalData.strategies?.all_strategies?.filter(
-          (s) => s.execution_count > 0 && (s.success_rate || 0) < 0.5
+          (s) => s.execution_count > 0 && (s.success_rate || 0) < 0.5,
         ).length || 0,
     };
 
@@ -327,7 +327,7 @@ export async function GET(
           end: periodEnd,
           duration_days: Math.ceil(
             (new Date(periodEnd).getTime() - new Date(periodStart).getTime()) /
-              (1000 * 60 * 60 * 24)
+              (1000 * 60 * 60 * 24),
           ),
         },
         alerts,
@@ -359,7 +359,7 @@ export async function GET(
         error: 'Internal server error',
         message: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

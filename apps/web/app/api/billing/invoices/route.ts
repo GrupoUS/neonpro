@@ -18,7 +18,7 @@ const CreateInvoiceSchema = z.object({
         unit_price: z.number().min(0, 'Preço unitário deve ser positivo'),
         discount_type: z.enum(['percentage', 'fixed']).optional(),
         discount_value: z.number().min(0).optional(),
-      })
+      }),
     )
     .min(1, 'Pelo menos um item é obrigatório'),
 });
@@ -81,7 +81,7 @@ export async function GET(request: Request) {
           status,
           payment_date
         )
-      `
+      `,
       )
       .order('created_at', { ascending: false })
       .range(offset, offset + limit - 1);
@@ -99,7 +99,7 @@ export async function GET(request: Request) {
     if (error) {
       return NextResponse.json(
         { error: 'Failed to fetch invoices' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -115,7 +115,7 @@ export async function GET(request: Request) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal Server Error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -160,7 +160,7 @@ export async function POST(request: Request) {
     if (invoiceError) {
       return NextResponse.json(
         { error: 'Failed to create invoice' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -187,7 +187,7 @@ export async function POST(request: Request) {
       await supabase.from('invoices').delete().eq('id', invoice.id);
       return NextResponse.json(
         { error: 'Failed to create invoice items' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -214,7 +214,7 @@ export async function POST(request: Request) {
           total_amount,
           service:services(name)
         )
-      `
+      `,
       )
       .eq('id', invoice.id)
       .single();
@@ -222,7 +222,7 @@ export async function POST(request: Request) {
     if (fetchError) {
       return NextResponse.json(
         { error: 'Invoice created but failed to fetch complete data' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -231,12 +231,12 @@ export async function POST(request: Request) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Validation failed', details: error.errors },
-        { status: 400 }
+        { status: 400 },
       );
     }
     return NextResponse.json(
       { error: 'Internal Server Error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

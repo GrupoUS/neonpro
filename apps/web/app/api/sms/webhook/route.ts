@@ -21,7 +21,7 @@ export async function POST(request: NextRequest) {
             message: 'Provider parameter required',
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -39,7 +39,7 @@ export async function POST(request: NextRequest) {
             message: 'Invalid webhook signature',
           },
         },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -57,7 +57,7 @@ export async function POST(request: NextRequest) {
           request_id: `webhook_${Date.now()}`,
         },
       },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
     return NextResponse.json(
@@ -74,7 +74,7 @@ export async function POST(request: NextRequest) {
           request_id: `webhook_error_${Date.now()}`,
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -85,7 +85,7 @@ export async function POST(request: NextRequest) {
 async function verifyWebhookSignature(
   provider: SMSProvider,
   request: NextRequest,
-  payload: any
+  payload: any,
 ): Promise<boolean> {
   const headersList = headers();
 
@@ -190,7 +190,7 @@ export async function GET() {
         message: 'Only POST method is allowed for webhooks',
       },
     },
-    { status: 405 }
+    { status: 405 },
   );
 }
 
@@ -203,7 +203,7 @@ export async function PUT() {
         message: 'Only POST method is allowed for webhooks',
       },
     },
-    { status: 405 }
+    { status: 405 },
   );
 }
 
@@ -216,6 +216,6 @@ export async function DELETE() {
         message: 'Only POST method is allowed for webhooks',
       },
     },
-    { status: 405 }
+    { status: 405 },
   );
 }

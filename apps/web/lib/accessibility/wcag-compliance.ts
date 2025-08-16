@@ -83,7 +83,7 @@ export class FocusManager {
 
   static announceToScreenReader(
     message: string,
-    priority: 'polite' | 'assertive' = 'polite'
+    priority: 'polite' | 'assertive' = 'polite',
   ) {
     const announcer = document.createElement('div');
     announcer.setAttribute('aria-live', priority);
@@ -140,11 +140,11 @@ export class ContrastChecker {
   static meetsWCAGAA(
     foreground: string,
     background: string,
-    isLargeText = false
+    isLargeText = false,
   ): boolean {
     const ratio = ContrastChecker.calculateContrastRatio(
       foreground,
-      background
+      background,
     );
     const required = isLargeText
       ? CONTRAST_RATIOS.AA_LARGE
@@ -158,7 +158,7 @@ export class KeyboardNavigation {
   static handleArrowNavigation(
     event: KeyboardEvent,
     items: NodeListOf<HTMLElement> | HTMLElement[],
-    currentIndex: number
+    currentIndex: number,
   ): number {
     let newIndex = currentIndex;
 
@@ -214,7 +214,7 @@ export class KeyboardNavigation {
         currentIndex = KeyboardNavigation.handleArrowNavigation(
           event,
           items,
-          currentIndex
+          currentIndex,
         );
 
         // Update tab indexes

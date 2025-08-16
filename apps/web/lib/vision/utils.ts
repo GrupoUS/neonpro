@@ -95,7 +95,7 @@ export class ImageUtils {
             quality: ImageUtils.estimateImageQuality(
               ctx,
               img.width,
-              img.height
+              img.height,
             ),
           };
 
@@ -122,14 +122,14 @@ export class ImageUtils {
   private static estimateImageQuality(
     ctx: CanvasRenderingContext2D,
     width: number,
-    height: number
+    height: number,
   ): number {
     try {
       const imageData = ctx.getImageData(
         0,
         0,
         Math.min(width, 100),
-        Math.min(height, 100)
+        Math.min(height, 100),
       );
       const data = imageData.data;
 
@@ -170,7 +170,7 @@ export class ImageUtils {
   static async generateThumbnail(
     file: File,
     maxWidth = 200,
-    maxHeight = 200
+    maxHeight = 200,
   ): Promise<Blob> {
     return new Promise((resolve, reject) => {
       const img = new Image();
@@ -183,7 +183,7 @@ export class ImageUtils {
           img.width,
           img.height,
           maxWidth,
-          maxHeight
+          maxHeight,
         );
 
         canvas.width = width;
@@ -201,7 +201,7 @@ export class ImageUtils {
               }
             },
             'image/jpeg',
-            0.8
+            0.8,
           );
         } else {
           reject(new Error('Failed to get canvas context'));
@@ -226,7 +226,7 @@ export class ImageUtils {
     originalWidth: number,
     originalHeight: number,
     maxWidth: number,
-    maxHeight: number
+    maxHeight: number,
   ): { width: number; height: number } {
     const aspectRatio = originalWidth / originalHeight;
 
@@ -261,10 +261,10 @@ export class AnalysisUtils {
    * Calculate overall improvement score from change metrics
    */
   static calculateOverallImprovement(
-    changeMetrics: Record<string, number>
+    changeMetrics: Record<string, number>,
   ): number {
     const values = Object.values(changeMetrics).filter(
-      (v) => typeof v === 'number' && !Number.isNaN(v)
+      (v) => typeof v === 'number' && !Number.isNaN(v),
     );
 
     if (values.length === 0) {
@@ -354,7 +354,7 @@ export class AnalysisUtils {
    * Validate analysis result completeness
    */
   static validateAnalysisResult(
-    result: Partial<AnalysisResult>
+    result: Partial<AnalysisResult>,
   ): ValidationResult {
     const errors: ValidationError[] = [];
     const warnings: ValidationWarning[] = [];
@@ -475,7 +475,7 @@ export class MeasurementUtils {
   static calculateAngle(
     point1: Coordinates,
     vertex: Coordinates,
-    point2: Coordinates
+    point2: Coordinates,
   ): number {
     const vector1 = { x: point1.x - vertex.x, y: point1.y - vertex.y };
     const vector2 = { x: point2.x - vertex.x, y: point2.y - vertex.y };
@@ -509,7 +509,7 @@ export class MeasurementUtils {
    */
   static calculateChangePercentage(
     beforeValue: number,
-    afterValue: number
+    afterValue: number,
   ): number {
     if (beforeValue === 0) {
       return afterValue > 0 ? 100 : 0;
@@ -522,7 +522,7 @@ export class MeasurementUtils {
    */
   static determineClinicalSignificance(
     changePercentage: number,
-    measurementType: MeasurementType
+    measurementType: MeasurementType,
   ): string {
     const absChange = Math.abs(changePercentage);
 
@@ -570,7 +570,7 @@ export class AnnotationUtils {
   static validateCoordinates(
     coordinates: Coordinates,
     imageWidth: number,
-    imageHeight: number
+    imageHeight: number,
   ): boolean {
     return (
       coordinates.x >= 0 &&
@@ -606,7 +606,7 @@ export class AnnotationUtils {
    */
   static isPointInRegion(
     point: Coordinates,
-    region: RegionOfInterest
+    region: RegionOfInterest,
   ): boolean {
     switch (region.type) {
       case 'rectangle': {
@@ -639,7 +639,7 @@ export class AnnotationUtils {
    */
   private static isPointInPolygon(
     point: Coordinates,
-    polygon: Coordinates[]
+    polygon: Coordinates[],
   ): boolean {
     let inside = false;
 
@@ -709,7 +709,7 @@ export class PerformanceUtils {
    */
   static throttle<T extends (...args: any[]) => any>(
     func: T,
-    delay: number
+    delay: number,
   ): (...args: Parameters<T>) => void {
     let timeoutId: NodeJS.Timeout | null = null;
     let lastExecTime = 0;
@@ -729,7 +729,7 @@ export class PerformanceUtils {
             func(...args);
             lastExecTime = Date.now();
           },
-          delay - (currentTime - lastExecTime)
+          delay - (currentTime - lastExecTime),
         );
       }
     };
@@ -740,7 +740,7 @@ export class PerformanceUtils {
    */
   static debounce<T extends (...args: any[]) => any>(
     func: T,
-    delay: number
+    delay: number,
   ): (...args: Parameters<T>) => void {
     let timeoutId: NodeJS.Timeout | null = null;
 
@@ -871,7 +871,7 @@ export class DateUtils {
   static isDateInRange(
     date: string | Date,
     startDate: string | Date,
-    endDate: string | Date
+    endDate: string | Date,
   ): boolean {
     const d = typeof date === 'string' ? new Date(date) : date;
     const start =

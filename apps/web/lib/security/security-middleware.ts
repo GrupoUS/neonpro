@@ -2,7 +2,7 @@
  * 🛡️ Main Security Middleware Function
  */
 export async function intelligentSecurityMiddleware(
-  request: NextRequest
+  request: NextRequest,
 ): Promise<NextResponse> {
   const startTime = Date.now();
   const ip = getClientIP(request);
@@ -21,7 +21,7 @@ export async function intelligentSecurityMiddleware(
       ip,
       userAgent,
       route,
-      method
+      method,
     );
 
     // 3. Apply rate limiting with adaptive limits
@@ -29,7 +29,7 @@ export async function intelligentSecurityMiddleware(
     const rateLimitResult = IntelligentRateLimit.checkRateLimit(
       ip,
       route,
-      limits
+      limits,
     );
 
     // 4. Record security event
@@ -49,7 +49,7 @@ export async function intelligentSecurityMiddleware(
         JSON.stringify({
           error: 'Rate limit exceeded',
           retryAfter: Math.ceil(
-            (rateLimitResult.resetTime - Date.now()) / 1000
+            (rateLimitResult.resetTime - Date.now()) / 1000,
           ),
         }),
         {
@@ -57,13 +57,13 @@ export async function intelligentSecurityMiddleware(
           headers: {
             'Content-Type': 'application/json',
             'Retry-After': String(
-              Math.ceil((rateLimitResult.resetTime - Date.now()) / 1000)
+              Math.ceil((rateLimitResult.resetTime - Date.now()) / 1000),
             ),
             'X-RateLimit-Limit': String(limits.requests),
             'X-RateLimit-Remaining': String(rateLimitResult.remaining),
             'X-RateLimit-Reset': String(rateLimitResult.resetTime),
           },
-        }
+        },
       );
 
       // Record performance metric
@@ -93,7 +93,7 @@ export async function intelligentSecurityMiddleware(
           headers: {
             'Content-Type': 'application/json',
           },
-        }
+        },
       );
 
       performanceMonitor.recordAPIPerformance({
@@ -123,7 +123,7 @@ export async function intelligentSecurityMiddleware(
     if (process.env.NODE_ENV === 'development') {
       response.headers.set(
         'X-RateLimit-Remaining',
-        String(rateLimitResult.remaining)
+        String(rateLimitResult.remaining),
       );
       response.headers.set('X-Threat-Score', String(threatAnalysis.riskScore));
     }

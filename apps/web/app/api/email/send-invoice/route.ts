@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
           error: 'Dados inválidos',
           details: validation.error.issues,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -53,7 +53,7 @@ export async function POST(request: NextRequest) {
           email,
           full_name
         )
-      `
+      `,
       )
       .eq('id', invoiceId)
       .eq('user_id', user.id)
@@ -62,14 +62,14 @@ export async function POST(request: NextRequest) {
     if (invoiceError || !invoice) {
       return NextResponse.json(
         { error: 'Fatura não encontrada' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
     if (!invoice.profiles) {
       return NextResponse.json(
         { error: 'Dados do cliente não encontrados' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -110,7 +110,7 @@ export async function POST(request: NextRequest) {
     if (!emailResult.success) {
       return NextResponse.json(
         { error: emailResult.error || 'Falha ao enviar email' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -135,7 +135,7 @@ export async function POST(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -161,7 +161,7 @@ export async function GET(request: NextRequest) {
     if (!invoiceId) {
       return NextResponse.json(
         { error: 'ID da fatura obrigatório' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -176,7 +176,7 @@ export async function GET(request: NextRequest) {
     if (invoiceError || !invoice) {
       return NextResponse.json(
         { error: 'Fatura não encontrada' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -188,7 +188,7 @@ export async function GET(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

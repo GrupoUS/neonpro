@@ -20,7 +20,7 @@ export class SubscriptionService {
     userId: string,
     userEmail: string,
     successUrl: string,
-    cancelUrl: string
+    cancelUrl: string,
   ): Promise<Stripe.Checkout.Session> {
     const plan = NEONPRO_PLANS[planId];
 
@@ -62,7 +62,7 @@ export class SubscriptionService {
   // Create a billing portal session
   async createBillingPortalSession(
     customerId: string,
-    returnUrl: string
+    returnUrl: string,
   ): Promise<Stripe.BillingPortal.Session> {
     const session = await stripe.billingPortal.sessions.create({
       customer: customerId,
@@ -75,7 +75,7 @@ export class SubscriptionService {
 
   // Get customer's active subscription
   async getActiveSubscription(
-    customerId: string
+    customerId: string,
   ): Promise<Stripe.Subscription | null> {
     try {
       const subscriptions = await stripe.subscriptions.list({
@@ -92,7 +92,7 @@ export class SubscriptionService {
 
   // Cancel subscription
   async cancelSubscription(
-    subscriptionId: string
+    subscriptionId: string,
   ): Promise<Stripe.Subscription> {
     const subscription = await stripe.subscriptions.update(subscriptionId, {
       cancel_at_period_end: true,
@@ -103,7 +103,7 @@ export class SubscriptionService {
 
   // Reactivate subscription
   async reactivateSubscription(
-    subscriptionId: string
+    subscriptionId: string,
   ): Promise<Stripe.Subscription> {
     const subscription = await stripe.subscriptions.update(subscriptionId, {
       cancel_at_period_end: false,
@@ -122,7 +122,7 @@ export class SubscriptionService {
       status?: string;
       currentPeriodStart?: Date;
       currentPeriodEnd?: Date;
-    }
+    },
   ): Promise<void> {
     const supabase = await this.getSupabaseClient();
 
@@ -213,26 +213,26 @@ export class StripeWebhookHandler {
     event = stripe.webhooks.constructEvent(
       body,
       signature,
-      process.env.STRIPE_WEBHOOK_SECRET!
+      process.env.STRIPE_WEBHOOK_SECRET!,
     );
 
     switch (event.type) {
       case 'checkout.session.completed':
         await this.handleCheckoutCompleted(
-          event.data.object as Stripe.Checkout.Session
+          event.data.object as Stripe.Checkout.Session,
         );
         break;
 
       case 'customer.subscription.created':
       case 'customer.subscription.updated':
         await this.handleSubscriptionChange(
-          event.data.object as Stripe.Subscription
+          event.data.object as Stripe.Subscription,
         );
         break;
 
       case 'customer.subscription.deleted':
         await this.handleSubscriptionDeleted(
-          event.data.object as Stripe.Subscription
+          event.data.object as Stripe.Subscription,
         );
         break;
 
@@ -249,7 +249,7 @@ export class StripeWebhookHandler {
   }
 
   private async handleCheckoutCompleted(
-    session: Stripe.Checkout.Session
+    session: Stripe.Checkout.Session,
   ): Promise<void> {
     try {
       const userId = session.metadata?.userId;
@@ -260,7 +260,7 @@ export class StripeWebhookHandler {
 
       // Get the subscription
       const subscription = await stripe.subscriptions.retrieve(
-        session.subscription as string
+        session.subscription as string,
       );
 
       await this.subscriptionService.updateUserSubscription(userId, {
@@ -269,17 +269,17 @@ export class StripeWebhookHandler {
         planId: session.metadata?.planId,
         status: subscription.status,
         currentPeriodStart: new Date(
-          (subscription as any).current_period_start * 1000
+          (subscription as any).current_period_start * 1000,
         ),
         currentPeriodEnd: new Date(
-          (subscription as any).current_period_end * 1000
+          (subscription as any).current_period_end * 1000,
         ),
       });
     } catch (_error) {}
   }
 
   private async handleSubscriptionChange(
-    subscription: Stripe.Subscription
+    subscription: Stripe.Subscription,
   ): Promise<void> {
     try {
       const userId = subscription.metadata?.userId;
@@ -291,17 +291,17 @@ export class StripeWebhookHandler {
       await this.subscriptionService.updateUserSubscription(userId, {
         status: subscription.status,
         currentPeriodStart: new Date(
-          (subscription as any).current_period_start * 1000
+          (subscription as any).current_period_start * 1000,
         ),
         currentPeriodEnd: new Date(
-          (subscription as any).current_period_end * 1000
+          (subscription as any).current_period_end * 1000,
         ),
       });
     } catch (_error) {}
   }
 
   private async handleSubscriptionDeleted(
-    subscription: Stripe.Subscription
+    subscription: Stripe.Subscription,
   ): Promise<void> {
     try {
       const userId = subscription.metadata?.userId;
@@ -317,7 +317,7 @@ export class StripeWebhookHandler {
   }
 
   private async handlePaymentSucceeded(
-    _invoice: Stripe.Invoice
+    _invoice: Stripe.Invoice,
   ): Promise<void> {
     // Here you could send a payment confirmation email
   }

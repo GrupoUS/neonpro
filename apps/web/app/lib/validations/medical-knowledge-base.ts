@@ -363,7 +363,7 @@ export const evidenceValidationResponseSchema = z.object({
       relevance_score: z.number().min(0).max(1),
       supports_recommendation: z.boolean(),
       conflicting_evidence: z.boolean().optional(),
-    })
+    }),
   ),
   recommendations: z.object({
     action: z.enum(['approve', 'review', 'reject', 'modify']),

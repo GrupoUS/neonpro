@@ -68,7 +68,7 @@ async function getActiveClinics(supabase: any): Promise<string[]> {
     throw new StockAlertError(
       'Failed to fetch active clinics',
       'FETCH_CLINICS_FAILED',
-      { error: error.message }
+      { error: error.message },
     );
   }
 
@@ -81,7 +81,7 @@ async function getActiveClinics(supabase: any): Promise<string[]> {
 async function processBatch(
   clinicIds: string[],
   supabase: any,
-  startTime: number
+  startTime: number,
 ): Promise<ProcessingResult> {
   const result: ProcessingResult = {
     clinicsProcessed: 0,
@@ -119,7 +119,7 @@ async function processBatch(
 async function processClinicAlerts(
   clinicId: string,
   supabase: any,
-  result: ProcessingResult
+  result: ProcessingResult,
 ): Promise<void> {
   // Create a service instance for this clinic
   const _alertService = new StockAlertService(supabase);
@@ -149,7 +149,7 @@ async function processClinicAlerts(
  */
 async function evaluateClinicAlerts(
   clinicId: string,
-  supabase: any
+  supabase: any,
 ): Promise<any[]> {
   // Get active alert configurations for the clinic
   const { data: configs, error: configError } = await supabase
@@ -165,7 +165,7 @@ async function evaluateClinicAlerts(
         expiration_date,
         unit_cost
       )
-    `
+    `,
     )
     .eq('clinic_id', clinicId)
     .eq('is_active', true);
@@ -174,7 +174,7 @@ async function evaluateClinicAlerts(
     throw new StockAlertError(
       'Failed to fetch alert configurations',
       'FETCH_CONFIGS_FAILED',
-      { clinicId, error: configError.message }
+      { clinicId, error: configError.message },
     );
   }
 
@@ -203,7 +203,7 @@ async function evaluateClinicAlerts(
  */
 async function evaluateConfigCondition(
   config: any,
-  supabase: any
+  supabase: any,
 ): Promise<any | null> {
   const product = config.product;
   if (!product) {
@@ -225,7 +225,7 @@ async function evaluateConfigCondition(
       if (product.expiration_date) {
         const daysUntilExpiration = Math.ceil(
           (new Date(product.expiration_date).getTime() - Date.now()) /
-            (1000 * 60 * 60 * 24)
+            (1000 * 60 * 60 * 24),
         );
         currentValue = daysUntilExpiration;
         shouldAlert =
@@ -239,7 +239,7 @@ async function evaluateConfigCondition(
       if (product.expiration_date) {
         const daysUntilExpiration = Math.ceil(
           (new Date(product.expiration_date).getTime() - Date.now()) /
-            (1000 * 60 * 60 * 24)
+            (1000 * 60 * 60 * 24),
         );
         currentValue = Math.abs(daysUntilExpiration);
         shouldAlert = daysUntilExpiration <= 0;
@@ -335,7 +335,7 @@ async function evaluateConfigCondition(
  */
 async function recordProcessingStats(
   supabase: any,
-  result: ProcessingResult
+  result: ProcessingResult,
 ): Promise<void> {
   try {
     await supabase.from('alert_processing_stats').insert({
@@ -367,7 +367,7 @@ export async function POST(request: NextRequest) {
     if (!validateCronRequest(request)) {
       return NextResponse.json(
         { error: 'Unauthorized', code: 'INVALID_CRON_REQUEST' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -440,7 +440,7 @@ export async function POST(request: NextRequest) {
           code: error.code,
           context: error.context,
         },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -450,7 +450,7 @@ export async function POST(request: NextRequest) {
         error: 'Internal server error',
         code: 'INTERNAL_ERROR',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -54,7 +54,7 @@ class OAuthErrorHandler {
    */
   async handleOAuthError(
     error: Error | AuthError | any,
-    context: OAuthErrorContext
+    context: OAuthErrorContext,
   ): Promise<OAuthErrorDetails> {
     const startTime = Date.now();
 
@@ -75,7 +75,7 @@ class OAuthErrorHandler {
 
       performanceTracker.recordMetric(
         'oauth_error_handling',
-        Date.now() - startTime
+        Date.now() - startTime,
       );
       return errorDetails;
     } catch (_handlingError) {
@@ -88,7 +88,7 @@ class OAuthErrorHandler {
    */
   private classifyError(
     error: any,
-    context: OAuthErrorContext
+    context: OAuthErrorContext,
   ): OAuthErrorDetails {
     const errorMessage =
       error?.message || error?.error_description || 'Unknown error';
@@ -124,7 +124,7 @@ class OAuthErrorHandler {
   private classifyGoogleOAuthError(
     code: string,
     message: string,
-    context: OAuthErrorContext
+    context: OAuthErrorContext,
   ): OAuthErrorDetails {
     switch (code) {
       case 'access_denied':
@@ -215,7 +215,7 @@ class OAuthErrorHandler {
    */
   private classifySupabaseAuthError(
     error: AuthError,
-    _context: OAuthErrorContext
+    _context: OAuthErrorContext,
   ): OAuthErrorDetails {
     switch (error.message) {
       case 'Invalid login credentials':
@@ -323,7 +323,8 @@ class OAuthErrorHandler {
     const lowerCode = code.toLowerCase();
 
     return sessionErrorPatterns.some(
-      (pattern) => lowerMessage.includes(pattern) || lowerCode.includes(pattern)
+      (pattern) =>
+        lowerMessage.includes(pattern) || lowerCode.includes(pattern),
     );
   }
 
@@ -332,7 +333,7 @@ class OAuthErrorHandler {
    */
   private getNetworkErrorDetails(
     error: any,
-    _context: OAuthErrorContext
+    _context: OAuthErrorContext,
   ): OAuthErrorDetails {
     return {
       code: 'network_error',
@@ -357,7 +358,7 @@ class OAuthErrorHandler {
   private getSessionErrorDetails(
     _code: string,
     message: string,
-    _context: OAuthErrorContext
+    _context: OAuthErrorContext,
   ): OAuthErrorDetails {
     return {
       code: 'session_error',
@@ -379,7 +380,7 @@ class OAuthErrorHandler {
   private getGenericGoogleErrorDetails(
     code: string,
     message: string,
-    _context: OAuthErrorContext
+    _context: OAuthErrorContext,
   ): OAuthErrorDetails {
     return {
       code: `google_${code}`,
@@ -403,7 +404,7 @@ class OAuthErrorHandler {
   private getGenericErrorDetails(
     code: string,
     message: string,
-    _context: OAuthErrorContext
+    _context: OAuthErrorContext,
   ): OAuthErrorDetails {
     return {
       code: code || 'unknown_error',
@@ -444,7 +445,7 @@ class OAuthErrorHandler {
    */
   private async executeRecoveryAction(
     errorDetails: OAuthErrorDetails,
-    context: OAuthErrorContext
+    context: OAuthErrorContext,
   ): Promise<void> {
     const { recoveryAction } = errorDetails;
 
@@ -472,7 +473,7 @@ class OAuthErrorHandler {
    */
   private async handleRetryAction(
     errorDetails: OAuthErrorDetails,
-    context: OAuthErrorContext
+    context: OAuthErrorContext,
   ): Promise<void> {
     const retryKey = `${context.provider}_${context.operation}_${context.sessionId || 'anonymous'}`;
     const currentRetries = this.retryAttempts.get(retryKey) || 0;
@@ -495,7 +496,7 @@ class OAuthErrorHandler {
         window.dispatchEvent(
           new CustomEvent('oauth-retry', {
             detail: { errorDetails, context, attempt: currentRetries + 1 },
-          })
+          }),
         );
       }
     }, delay);
@@ -506,13 +507,13 @@ class OAuthErrorHandler {
    */
   private async handleRedirectAction(
     errorDetails: OAuthErrorDetails,
-    context: OAuthErrorContext
+    context: OAuthErrorContext,
   ): Promise<void> {
     // Clear session if exists
     if (context.sessionId) {
       await enhancedSessionManager.forceSessionTimeout(
         context.sessionId,
-        'error_recovery_redirect'
+        'error_recovery_redirect',
       );
     }
 
@@ -521,7 +522,7 @@ class OAuthErrorHandler {
       window.dispatchEvent(
         new CustomEvent('oauth-redirect', {
           detail: { errorDetails, context },
-        })
+        }),
       );
     }
   }
@@ -531,7 +532,7 @@ class OAuthErrorHandler {
    */
   private async handleSupportAction(
     errorDetails: OAuthErrorDetails,
-    context: OAuthErrorContext
+    context: OAuthErrorContext,
   ): Promise<void> {
     // Log critical error for support team
     await this.logCriticalError(errorDetails, context);
@@ -541,7 +542,7 @@ class OAuthErrorHandler {
       window.dispatchEvent(
         new CustomEvent('oauth-support-needed', {
           detail: { errorDetails, context },
-        })
+        }),
       );
     }
   }
@@ -551,7 +552,7 @@ class OAuthErrorHandler {
    */
   private trackErrorMetrics(
     errorCode: string,
-    context: OAuthErrorContext
+    context: OAuthErrorContext,
   ): void {
     const metricKey = `oauth_error_${errorCode}`;
     const currentCount = this.errorCounts.get(metricKey) || 0;
@@ -568,7 +569,7 @@ class OAuthErrorHandler {
   private async logError(
     error: any,
     context: OAuthErrorContext,
-    errorDetails: OAuthErrorDetails
+    errorDetails: OAuthErrorDetails,
   ): Promise<void> {
     try {
       const logEntry = {
@@ -597,7 +598,7 @@ class OAuthErrorHandler {
    */
   private async logCriticalError(
     errorDetails: OAuthErrorDetails,
-    context: OAuthErrorContext
+    context: OAuthErrorContext,
   ): Promise<void> {
     try {
       const criticalLogEntry = {
@@ -623,7 +624,7 @@ class OAuthErrorHandler {
   clearRetryAttempts(
     provider: string,
     operation: string,
-    sessionId?: string
+    sessionId?: string,
   ): void {
     const retryKey = `${provider}_${operation}_${sessionId || 'anonymous'}`;
     this.retryAttempts.delete(retryKey);

@@ -80,7 +80,7 @@ export class AppointmentManager {
     auditLogger: AuditLogger,
     lgpdManager: LGPDManager,
     sessionManager: SessionManager,
-    config?: Partial<AppointmentConfig>
+    config?: Partial<AppointmentConfig>,
   ) {
     this.supabase = createClient(supabaseUrl, supabaseKey);
     this.auditLogger = auditLogger;
@@ -107,7 +107,7 @@ export class AppointmentManager {
     serviceId: string,
     startDate: Date,
     endDate: Date,
-    staffId?: string
+    staffId?: string,
   ): Promise<TimeSlot[]> {
     try {
       // Validate session
@@ -123,12 +123,12 @@ export class AppointmentManager {
       // Validate date range
       const now = new Date();
       const maxDate = new Date(
-        now.getTime() + this.config.maxAdvanceBookingDays * 24 * 60 * 60 * 1000
+        now.getTime() + this.config.maxAdvanceBookingDays * 24 * 60 * 60 * 1000,
       );
 
       if (startDate < now || endDate > maxDate) {
         throw new Error(
-          `Booking dates must be between now and ${this.config.maxAdvanceBookingDays} days in advance`
+          `Booking dates must be between now and ${this.config.maxAdvanceBookingDays} days in advance`,
         );
       }
       // Get service details
@@ -157,7 +157,7 @@ export class AppointmentManager {
           staff_availability!inner(
             day_of_week, start_time, end_time, is_available
           )
-        `
+        `,
         )
         .match(staffFilter)
         .eq('staff_availability.is_available', true);
@@ -171,7 +171,7 @@ export class AppointmentManager {
         await this.supabase
           .from('appointments')
           .select(
-            'staff_id, appointment_date, appointment_time, estimated_duration'
+            'staff_id, appointment_date, appointment_time, estimated_duration',
           )
           .gte('appointment_date', startDate.toISOString().split('T')[0])
           .lte('appointment_date', endDate.toISOString().split('T')[0])
@@ -190,7 +190,7 @@ export class AppointmentManager {
         // Check each staff member's availability for this day
         for (const staff of availableStaff || []) {
           const dayAvailability = staff.staff_availability.find(
-            (avail: any) => avail.day_of_week === dayOfWeek
+            (avail: any) => avail.day_of_week === dayOfWeek,
           );
 
           if (dayAvailability) {
@@ -201,7 +201,7 @@ export class AppointmentManager {
               service.duration,
               staff,
               service,
-              existingAppointments
+              existingAppointments,
             );
             availableSlots.push(...slots);
           }
@@ -243,7 +243,7 @@ export class AppointmentManager {
     serviceDuration: number,
     staff: any,
     service: any,
-    existingAppointments: any[]
+    existingAppointments: any[],
   ): TimeSlot[] {
     const slots: TimeSlot[] = [];
     const [startHour, startMinute] = startTime.split(':').map(Number);
@@ -257,7 +257,7 @@ export class AppointmentManager {
 
     const now = new Date();
     const minBookingTime = new Date(
-      now.getTime() + this.config.minAdvanceBookingHours * 60 * 60 * 1000
+      now.getTime() + this.config.minAdvanceBookingHours * 60 * 60 * 1000,
     );
 
     while (
@@ -265,7 +265,7 @@ export class AppointmentManager {
       slotEnd.getTime()
     ) {
       const slotEndTime = new Date(
-        slotStart.getTime() + serviceDuration * 60 * 1000
+        slotStart.getTime() + serviceDuration * 60 * 1000,
       );
 
       // Check if slot is in the future with minimum advance booking time
@@ -277,10 +277,10 @@ export class AppointmentManager {
           }
 
           const aptDate = new Date(
-            `${apt.appointment_date}T${apt.appointment_time}`
+            `${apt.appointment_date}T${apt.appointment_time}`,
           );
           const aptEndTime = new Date(
-            aptDate.getTime() + apt.estimated_duration * 60 * 1000
+            aptDate.getTime() + apt.estimated_duration * 60 * 1000,
           );
 
           return (
@@ -318,7 +318,7 @@ export class AppointmentManager {
    */
   async bookAppointment(
     request: BookingRequest,
-    sessionToken: string
+    sessionToken: string,
   ): Promise<BookingResult> {
     try {
       // Validate session
@@ -349,7 +349,7 @@ export class AppointmentManager {
           .eq('staff_id', request.staffId)
           .eq(
             'appointment_date',
-            request.preferredDate.toISOString().split('T')[0]
+            request.preferredDate.toISOString().split('T')[0],
           )
           .eq('appointment_time', request.preferredTime)
           .in('status', ['scheduled', 'confirmed', 'in_progress']);
@@ -363,7 +363,7 @@ export class AppointmentManager {
         const alternatives = await this.getAlternativeSlots(
           request.serviceId,
           request.preferredDate,
-          request.staffId
+          request.staffId,
         );
 
         return {
@@ -438,13 +438,13 @@ export class AppointmentManager {
   }> {
     const now = new Date();
     const appointmentDateTime = new Date(
-      `${request.preferredDate.toISOString().split('T')[0]}T${request.preferredTime}`
+      `${request.preferredDate.toISOString().split('T')[0]}T${request.preferredTime}`,
     );
     const minBookingTime = new Date(
-      now.getTime() + this.config.minAdvanceBookingHours * 60 * 60 * 1000
+      now.getTime() + this.config.minAdvanceBookingHours * 60 * 60 * 1000,
     );
     const maxBookingTime = new Date(
-      now.getTime() + this.config.maxAdvanceBookingDays * 24 * 60 * 60 * 1000
+      now.getTime() + this.config.maxAdvanceBookingDays * 24 * 60 * 60 * 1000,
     );
 
     // Check minimum advance booking time
@@ -502,7 +502,7 @@ export class AppointmentManager {
   private async getAlternativeSlots(
     serviceId: string,
     preferredDate: Date,
-    staffId: string
+    staffId: string,
   ): Promise<TimeSlot[]> {
     const startDate = new Date(preferredDate);
     const endDate = new Date(preferredDate.getTime() + 7 * 24 * 60 * 60 * 1000); // Next 7 days
@@ -513,7 +513,7 @@ export class AppointmentManager {
       serviceId,
       startDate,
       endDate,
-      staffId
+      staffId,
     );
 
     return alternatives.slice(0, 5); // Return top 5 alternatives

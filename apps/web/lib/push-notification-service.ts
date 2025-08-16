@@ -8,7 +8,7 @@ if (process.env.VAPID_PUBLIC_KEY && process.env.VAPID_PRIVATE_KEY) {
   webpush.setVapidDetails(
     process.env.VAPID_SUBJECT || 'mailto:admin@neonpro.com',
     process.env.VAPID_PUBLIC_KEY,
-    process.env.VAPID_PRIVATE_KEY
+    process.env.VAPID_PRIVATE_KEY,
   );
 } else {
 }
@@ -66,7 +66,7 @@ class PushNotificationService {
         const { createClient } = await import('@supabase/supabase-js');
         this.supabase = createClient(
           process.env.NEXT_PUBLIC_SUPABASE_URL!,
-          process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+          process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
         );
       }
     } else {
@@ -74,7 +74,7 @@ class PushNotificationService {
       const { createClient } = await import('@supabase/supabase-js');
       this.supabase = createClient(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
       );
     }
 
@@ -84,7 +84,7 @@ class PushNotificationService {
   // Save push subscription for a user
   async saveSubscription(
     userId: string,
-    subscription: PushSubscription
+    subscription: PushSubscription,
   ): Promise<{ success: boolean; error?: string }> {
     try {
       const supabase = await this.getSupabaseClient();
@@ -113,7 +113,7 @@ class PushNotificationService {
   // Remove push subscription for a user
   async removeSubscription(
     userId: string,
-    endpoint: string
+    endpoint: string,
   ): Promise<{ success: boolean; error?: string }> {
     try {
       const supabase = await this.getSupabaseClient();
@@ -165,7 +165,7 @@ class PushNotificationService {
   // Send push notification to a specific user
   async sendToUser(
     userId: string,
-    payload: PushNotificationPayload
+    payload: PushNotificationPayload,
   ): Promise<{
     success: boolean;
     sent: number;
@@ -186,8 +186,8 @@ class PushNotificationService {
 
       const results = await Promise.allSettled(
         subscriptions.map((subscription) =>
-          webpush.sendNotification(subscription, JSON.stringify(payload))
-        )
+          webpush.sendNotification(subscription, JSON.stringify(payload)),
+        ),
       );
 
       let sent = 0;
@@ -201,7 +201,7 @@ class PushNotificationService {
           failed++;
           const subscription = subscriptions[index];
           errors.push(
-            `Failed to send to ${subscription.endpoint}: ${result.reason?.message}`
+            `Failed to send to ${subscription.endpoint}: ${result.reason?.message}`,
           );
 
           // If subscription is invalid, mark as inactive
@@ -230,7 +230,7 @@ class PushNotificationService {
   // Send push notification to multiple users
   async sendToUsers(
     userIds: string[],
-    payload: PushNotificationPayload
+    payload: PushNotificationPayload,
   ): Promise<{
     success: boolean;
     totalSent: number;
@@ -244,7 +244,7 @@ class PushNotificationService {
   }> {
     try {
       const results = await Promise.allSettled(
-        userIds.map((userId) => this.sendToUser(userId, payload))
+        userIds.map((userId) => this.sendToUser(userId, payload)),
       );
 
       let totalSent = 0;
@@ -301,7 +301,7 @@ class PushNotificationService {
       appointmentDate: string;
       appointmentTime: string;
       appointmentId: string;
-    }
+    },
   ) {
     const payload: PushNotificationPayload = {
       title: '🔔 Lembrete de Consulta',
@@ -342,7 +342,7 @@ class PushNotificationService {
       appointmentDate: string;
       appointmentTime: string;
       appointmentId: string;
-    }
+    },
   ) {
     const payload: PushNotificationPayload = {
       title: '✅ Consulta Confirmada',
@@ -375,7 +375,7 @@ class PushNotificationService {
       amount: number;
       dueDate: string;
       invoiceId: string;
-    }
+    },
   ) {
     const payload: PushNotificationPayload = {
       title: '💰 Lembrete de Pagamento',

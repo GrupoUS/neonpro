@@ -58,12 +58,12 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const query = GetDelinquencyQuerySchema.parse(
-      Object.fromEntries(searchParams)
+      Object.fromEntries(searchParams),
     );
 
     const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
     );
 
     // Check authentication
@@ -83,7 +83,7 @@ export async function GET(request: NextRequest) {
 
     const delinquencyManager = new DelinquencyManager(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
     );
 
     const page = Number.parseInt(query.page, 10);
@@ -148,7 +148,7 @@ export async function GET(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to fetch delinquency data' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -164,7 +164,7 @@ export async function POST(request: NextRequest) {
 
     const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
     );
 
     // Check authentication
@@ -196,7 +196,7 @@ export async function POST(request: NextRequest) {
           },
         },
         from: process.env.SMTP_FROM!,
-      }
+      },
     );
 
     switch (action) {
@@ -221,13 +221,13 @@ export async function POST(request: NextRequest) {
 
           if (validatedData.customerIds) {
             filteredPayments = filteredPayments.filter((p) =>
-              validatedData.customerIds?.includes(p.customerId)
+              validatedData.customerIds?.includes(p.customerId),
             );
           }
 
           if (validatedData.riskLevels) {
             filteredPayments = filteredPayments.filter((p) =>
-              validatedData.riskLevels?.includes(p.riskLevel)
+              validatedData.riskLevels?.includes(p.riskLevel),
             );
           }
 
@@ -277,7 +277,7 @@ export async function POST(request: NextRequest) {
           validatedData.type,
           validatedData.channel,
           validatedData.templateId,
-          validatedData.metadata
+          validatedData.metadata,
         );
 
         return NextResponse.json({
@@ -306,13 +306,13 @@ export async function POST(request: NextRequest) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Validation error', details: error.errors },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     return NextResponse.json(
       { error: 'Failed to process delinquency action' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -328,7 +328,7 @@ export async function PUT(request: NextRequest) {
 
     const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
     );
 
     // Check authentication
@@ -463,13 +463,13 @@ export async function PUT(request: NextRequest) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Validation error', details: error.errors },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     return NextResponse.json(
       { error: 'Failed to update delinquency data' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -487,13 +487,13 @@ export async function DELETE(request: NextRequest) {
     if (!(action && id)) {
       return NextResponse.json(
         { error: 'Action and ID are required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
     );
 
     // Check authentication
@@ -568,7 +568,7 @@ export async function DELETE(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to delete delinquency data' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

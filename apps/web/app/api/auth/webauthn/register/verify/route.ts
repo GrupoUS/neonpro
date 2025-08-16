@@ -25,7 +25,7 @@ export async function POST(request: NextRequest) {
         if (sessionError || !session?.user) {
           return NextResponse.json(
             { error: 'Authentication required' },
-            { status: 401 }
+            { status: 401 },
           );
         }
 
@@ -34,7 +34,7 @@ export async function POST(request: NextRequest) {
         if (!response) {
           return NextResponse.json(
             { error: 'Registration response required' },
-            { status: 400 }
+            { status: 400 },
           );
         }
 
@@ -42,13 +42,13 @@ export async function POST(request: NextRequest) {
         const verification = await webAuthnService.verifyRegistrationResponse(
           session.user.id,
           response,
-          deviceName
+          deviceName,
         );
 
         if (!verification.verified) {
           return NextResponse.json(
             { error: 'Registration verification failed' },
-            { status: 400 }
+            { status: 400 },
           );
         }
 
@@ -65,13 +65,13 @@ export async function POST(request: NextRequest) {
                 ? error.message
                 : 'Registration verification failed',
           },
-          { status: 500 }
+          { status: 500 },
         );
       }
     },
     {
       method: 'webauthn',
       additionalData: { operation: 'registration_verification' },
-    }
+    },
   );
 }

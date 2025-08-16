@@ -90,7 +90,7 @@ export function FinancialAnalyticsDashboard({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [timeRange, setTimeRange] = useState<'7d' | '30d' | '90d' | '1y'>(
-    '30d'
+    '30d',
   );
   const [refreshing, setRefreshing] = useState(false);
 
@@ -101,7 +101,7 @@ export function FinancialAnalyticsDashboard({
 
       // Fetch cash flow data
       const cashFlowResponse = await fetch(
-        `/api/financial/cash-flow?clinic_id=${clinicId}&time_range=${timeRange}`
+        `/api/financial/cash-flow?clinic_id=${clinicId}&time_range=${timeRange}`,
       );
       if (!cashFlowResponse.ok) {
         throw new Error('Failed to fetch cash flow data');
@@ -110,7 +110,7 @@ export function FinancialAnalyticsDashboard({
 
       // Fetch financial metrics
       const metricsResponse = await fetch(
-        `/api/financial/metrics?clinic_id=${clinicId}&time_range=${timeRange}`
+        `/api/financial/metrics?clinic_id=${clinicId}&time_range=${timeRange}`,
       );
       if (!metricsResponse.ok) {
         throw new Error('Failed to fetch metrics');
@@ -119,7 +119,7 @@ export function FinancialAnalyticsDashboard({
 
       // Fetch alerts
       const alertsResponse = await fetch(
-        `/api/financial/alerts?clinic_id=${clinicId}`
+        `/api/financial/alerts?clinic_id=${clinicId}`,
       );
       if (!alertsResponse.ok) {
         throw new Error('Failed to fetch alerts');
@@ -132,7 +132,7 @@ export function FinancialAnalyticsDashboard({
       setError(null);
     } catch (err) {
       setError(
-        err instanceof Error ? err.message : 'Failed to load financial data'
+        err instanceof Error ? err.message : 'Failed to load financial data',
       );
     } finally {
       setLoading(false);

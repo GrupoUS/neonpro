@@ -147,7 +147,7 @@ class CacheManager<T = any> {
   async getOrSet(
     key: string,
     factory: () => Promise<T> | T,
-    ttl?: number
+    ttl?: number,
   ): Promise<T> {
     const cached = this.get(key);
     if (cached !== null) {

@@ -31,10 +31,10 @@ export async function GET(request: NextRequest) {
       ?.split(',')
       .filter(Boolean);
     const priority = searchParams.get(
-      'priority'
+      'priority',
     ) as MarketingOptimizationPriority | null;
     const strategy = searchParams.get(
-      'strategy'
+      'strategy',
     ) as MarketingOptimizationStrategy | null;
 
     const requestData: OptimizationRecommendationsRequest = {
@@ -66,7 +66,7 @@ export async function GET(request: NextRequest) {
           recommendations.length,
         totalImplementationCost: recommendations.reduce(
           (sum, r) => sum + (r.implementationCost || 0),
-          0
+          0,
         ),
       },
     };
@@ -75,7 +75,7 @@ export async function GET(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to fetch marketing ROI recommendations' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -98,7 +98,7 @@ export async function POST(request: NextRequest) {
     if (!(requestData.campaignIds || requestData.treatmentIds)) {
       return NextResponse.json(
         { error: 'Either campaignIds or treatmentIds must be provided' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -124,10 +124,10 @@ export async function POST(request: NextRequest) {
           recommendations.length,
         totalImplementationCost: recommendations.reduce(
           (sum, r) => sum + (r.implementationCost || 0),
-          0
+          0,
         ),
         estimatedTimeframe: Math.max(
-          ...recommendations.map((r) => r.timeframe || 30)
+          ...recommendations.map((r) => r.timeframe || 30),
         ),
       },
     };
@@ -136,7 +136,7 @@ export async function POST(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to generate marketing ROI recommendations' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -157,7 +157,7 @@ export async function PUT(request: NextRequest) {
     if (!(recommendationId && status)) {
       return NextResponse.json(
         { error: 'Recommendation ID and status are required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -165,7 +165,7 @@ export async function PUT(request: NextRequest) {
       await marketingROIService.updateRecommendationStatus(
         recommendationId,
         status,
-        feedback
+        feedback,
       );
 
     return NextResponse.json({
@@ -175,7 +175,7 @@ export async function PUT(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to update marketing ROI recommendation' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

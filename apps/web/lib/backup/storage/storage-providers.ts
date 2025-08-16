@@ -95,12 +95,12 @@ export abstract class StorageProvider {
   abstract upload(
     localPath: string,
     remotePath: string,
-    options?: any
+    options?: any,
   ): Promise<StorageResult>;
   abstract download(
     remotePath: string,
     localPath: string,
-    options?: any
+    options?: any,
   ): Promise<StorageResult>;
   abstract delete(remotePath: string): Promise<boolean>;
   abstract list(remotePath: string): Promise<StorageLocation[]>;
@@ -111,7 +111,7 @@ export abstract class StorageProvider {
 
   protected async processFile(
     filePath: string,
-    operation: 'encrypt' | 'decrypt' | 'compress' | 'decompress'
+    operation: 'encrypt' | 'decrypt' | 'compress' | 'decompress',
   ): Promise<string> {
     switch (operation) {
       case 'encrypt':
@@ -184,7 +184,7 @@ export class LocalStorageProvider extends StorageProvider {
   async upload(
     localPath: string,
     remotePath: string,
-    options?: any
+    options?: any,
   ): Promise<StorageResult> {
     const startTime = Date.now();
 
@@ -217,7 +217,7 @@ export class LocalStorageProvider extends StorageProvider {
         expires_at:
           this.config.retention_days > 0
             ? new Date(
-                Date.now() + this.config.retention_days * 24 * 60 * 60 * 1000
+                Date.now() + this.config.retention_days * 24 * 60 * 60 * 1000,
               )
             : undefined,
         metadata: options?.metadata || {},
@@ -258,7 +258,7 @@ export class LocalStorageProvider extends StorageProvider {
   async download(
     remotePath: string,
     localPath: string,
-    _options?: any
+    _options?: any,
   ): Promise<StorageResult> {
     const startTime = Date.now();
 
@@ -441,7 +441,7 @@ export class S3StorageProvider extends StorageProvider {
   async upload(
     localPath: string,
     remotePath: string,
-    options?: any
+    options?: any,
   ): Promise<StorageResult> {
     const startTime = Date.now();
 
@@ -473,7 +473,7 @@ export class S3StorageProvider extends StorageProvider {
         expires_at:
           this.config.retention_days > 0
             ? new Date(
-                Date.now() + this.config.retention_days * 24 * 60 * 60 * 1000
+                Date.now() + this.config.retention_days * 24 * 60 * 60 * 1000,
               )
             : undefined,
         metadata: {
@@ -506,7 +506,7 @@ export class S3StorageProvider extends StorageProvider {
   async download(
     _remotePath: string,
     localPath: string,
-    _options?: any
+    _options?: any,
   ): Promise<StorageResult> {
     const startTime = Date.now();
 
@@ -621,7 +621,7 @@ export class StorageManager {
   constructor() {
     this.supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
     );
 
     this.auditLogger = new AuditLogger();
@@ -696,7 +696,7 @@ export class StorageManager {
     localPath: string,
     remotePath: string,
     providerName?: string,
-    options?: any
+    options?: any,
   ): Promise<StorageResult> {
     try {
       const provider = providerName
@@ -752,7 +752,7 @@ export class StorageManager {
     remotePath: string,
     localPath: string,
     providerName?: string,
-    options?: any
+    options?: any,
   ): Promise<StorageResult> {
     try {
       const provider = providerName
@@ -806,7 +806,7 @@ export class StorageManager {
    */
   async listFiles(
     remotePath: string,
-    providerName?: string
+    providerName?: string,
   ): Promise<StorageLocation[]> {
     try {
       const provider = providerName
@@ -828,7 +828,7 @@ export class StorageManager {
    */
   async deleteFile(
     remotePath: string,
-    providerName?: string
+    providerName?: string,
   ): Promise<boolean> {
     try {
       const provider = providerName
@@ -909,7 +909,7 @@ export class StorageManager {
     pagination?: {
       page: number;
       limit: number;
-    }
+    },
   ): Promise<{
     operations: StorageOperation[];
     total: number;
@@ -972,7 +972,7 @@ export class StorageManager {
     // baseado em prioridade, disponibilidade, performance, etc.
 
     const availableProviders = Array.from(this.providers.values()).filter(
-      (provider) => provider.config.enabled
+      (provider) => provider.config.enabled,
     );
 
     if (availableProviders.length === 0) {
@@ -1022,7 +1022,7 @@ export class StorageManager {
   }
 
   private async saveStorageOperation(
-    operation: StorageOperation
+    operation: StorageOperation,
   ): Promise<void> {
     const { error } = await this.supabase.from('storage_operations').insert({
       id: operation.id,

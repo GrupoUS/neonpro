@@ -71,7 +71,7 @@ type RecoveryStrategyImplementation = {
     operation: () => Promise<T>,
     error: SubscriptionError,
     context: ErrorContext,
-    attempt: number
+    attempt: number,
   ) => Promise<T>;
   maxAttempts: number;
   delayMs: number;
@@ -97,7 +97,7 @@ export class SubscriptionErrorHandler {
   async handleError<T>(
     error: Error | SubscriptionError,
     operation: () => Promise<T>,
-    context?: ErrorContext
+    context?: ErrorContext,
   ): Promise<ErrorHandlingResult<T>> {
     const startTime = Date.now();
     let subscriptionError: SubscriptionError;
@@ -113,7 +113,7 @@ export class SubscriptionErrorHandler {
     if (context) {
       subscriptionError = SubscriptionErrorFactory.enrichError(
         subscriptionError,
-        context
+        context,
       );
     }
 
@@ -134,7 +134,7 @@ export class SubscriptionErrorHandler {
         operation,
         subscriptionError,
         context,
-        startTime
+        startTime,
       );
     }
 
@@ -144,14 +144,14 @@ export class SubscriptionErrorHandler {
         operation,
         subscriptionError,
         context,
-        startTime
+        startTime,
       );
     }
 
     // Fallback strategies
     const fallbackResult = await this.applyFallbackStrategies(
       subscriptionError,
-      context
+      context,
     );
 
     return {
@@ -171,7 +171,7 @@ export class SubscriptionErrorHandler {
    */
   private classifyError(
     error: Error,
-    context?: ErrorContext
+    context?: ErrorContext,
   ): SubscriptionError {
     const message = error.message.toLowerCase();
 
@@ -184,7 +184,7 @@ export class SubscriptionErrorHandler {
       return SubscriptionErrorFactory.createError(
         'auth',
         error.message,
-        context
+        context,
       );
     }
 
@@ -197,7 +197,7 @@ export class SubscriptionErrorHandler {
       return SubscriptionErrorFactory.createError(
         'network',
         error.message,
-        context
+        context,
       );
     }
 
@@ -206,7 +206,7 @@ export class SubscriptionErrorHandler {
       return SubscriptionErrorFactory.createError(
         'timeout',
         error.message,
-        context
+        context,
       );
     }
 
@@ -219,7 +219,7 @@ export class SubscriptionErrorHandler {
       return SubscriptionErrorFactory.createError(
         'database',
         error.message,
-        context
+        context,
       );
     }
 
@@ -232,7 +232,7 @@ export class SubscriptionErrorHandler {
       return SubscriptionErrorFactory.createError(
         'rate_limit',
         error.message,
-        context
+        context,
       );
     }
 
@@ -240,7 +240,7 @@ export class SubscriptionErrorHandler {
     return SubscriptionErrorFactory.createError(
       'validation',
       error.message,
-      context
+      context,
     );
   }
 
@@ -309,7 +309,7 @@ export class SubscriptionErrorHandler {
     operation: () => Promise<T>,
     error: SubscriptionError,
     context: ErrorContext | undefined,
-    startTime: number
+    startTime: number,
   ): Promise<ErrorHandlingResult<T>> {
     const strategy = this.recoveryStrategies.get(error.recoveryStrategy);
 
@@ -329,7 +329,7 @@ export class SubscriptionErrorHandler {
     let attempts = 0;
     const maxAttempts = Math.min(
       strategy.maxAttempts,
-      this.config.maxRetryAttempts
+      this.config.maxRetryAttempts,
     );
 
     while (attempts < maxAttempts) {
@@ -340,7 +340,7 @@ export class SubscriptionErrorHandler {
           operation,
           lastError,
           context || {},
-          attempts
+          attempts,
         );
 
         return {
@@ -375,7 +375,7 @@ export class SubscriptionErrorHandler {
     // Recovery failed, try fallback strategies
     const fallbackResult = await this.applyFallbackStrategies(
       lastError,
-      context
+      context,
     );
 
     return {
@@ -398,7 +398,7 @@ export class SubscriptionErrorHandler {
     operation: () => Promise<T>,
     error: SubscriptionError,
     context: ErrorContext | undefined,
-    startTime: number
+    startTime: number,
   ): Promise<ErrorHandlingResult<T>> {
     const breakerName = this.getCircuitBreakerName(error);
     const breaker = circuitBreakerRegistry.get(breakerName);
@@ -429,7 +429,7 @@ export class SubscriptionErrorHandler {
    */
   private async applyFallbackStrategies<T>(
     _error: SubscriptionError,
-    context?: ErrorContext
+    context?: ErrorContext,
   ): Promise<{ fallbackUsed: boolean; data?: T }> {
     // Try cached fallback data
     if (this.config.enableFallbackCache && context?.userId) {
@@ -454,7 +454,7 @@ export class SubscriptionErrorHandler {
    * Try to get fallback data from cache
    */
   private async tryFallbackCache(
-    userId: string
+    userId: string,
   ): Promise<SubscriptionValidationResult | null> {
     try {
       const cacheKey = `subscription:fallback:${userId}`;
@@ -476,7 +476,7 @@ export class SubscriptionErrorHandler {
    * Get degraded service response
    */
   private async getDegradedService(
-    _context?: ErrorContext
+    _context?: ErrorContext,
   ): Promise<SubscriptionValidationResult | null> {
     // Return a basic valid response with limited features
     return {
@@ -658,7 +658,7 @@ export const subscriptionErrorHandler = new SubscriptionErrorHandler();
 // Utility function for easy error handling
 export async function withErrorHandling<T>(
   operation: () => Promise<T>,
-  context?: ErrorContext
+  context?: ErrorContext,
 ): Promise<ErrorHandlingResult<T>> {
   try {
     const result = await operation();
@@ -674,7 +674,7 @@ export async function withErrorHandling<T>(
     return subscriptionErrorHandler.handleError(
       error as Error,
       operation,
-      context
+      context,
     );
   }
 }

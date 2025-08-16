@@ -29,7 +29,7 @@ export class WhatsAppOAuthHandler extends BaseOAuthHandler {
 
     if (missing.length > 0) {
       throw new Error(
-        `Missing required WhatsApp OAuth configuration: ${missing.join(', ')}`
+        `Missing required WhatsApp OAuth configuration: ${missing.join(', ')}`,
       );
     }
   }
@@ -63,7 +63,7 @@ export class WhatsAppOAuthHandler extends BaseOAuthHandler {
 
   async exchangeCodeForTokens(
     code: string,
-    _state: string
+    _state: string,
   ): Promise<EncryptedToken> {
     try {
       const response = await fetch(this.config.tokenUrl, {
@@ -90,7 +90,7 @@ export class WhatsAppOAuthHandler extends BaseOAuthHandler {
           error: errorData,
         });
         throw new Error(
-          `Token exchange failed: ${response.status} ${response.statusText}`
+          `Token exchange failed: ${response.status} ${response.statusText}`,
         );
       }
 
@@ -153,7 +153,7 @@ export class WhatsAppOAuthHandler extends BaseOAuthHandler {
           error: errorData,
         });
         throw new Error(
-          `Token refresh failed: ${response.status} ${response.statusText}`
+          `Token refresh failed: ${response.status} ${response.statusText}`,
         );
       }
 
@@ -238,7 +238,7 @@ export class WhatsAppOAuthHandler extends BaseOAuthHandler {
             Accept: 'application/json',
             'User-Agent': 'NeonPro/1.0',
           },
-        }
+        },
       );
 
       if (!response.ok) {
@@ -249,7 +249,7 @@ export class WhatsAppOAuthHandler extends BaseOAuthHandler {
           error: errorData,
         });
         throw new Error(
-          `User info fetch failed: ${response.status} ${response.statusText}`
+          `User info fetch failed: ${response.status} ${response.statusText}`,
         );
       }
 
@@ -291,7 +291,7 @@ export class WhatsAppOAuthHandler extends BaseOAuthHandler {
             Accept: 'application/json',
             'User-Agent': 'NeonPro/1.0',
           },
-        }
+        },
       );
 
       const isValid = response.ok;
@@ -321,7 +321,7 @@ export class WhatsAppOAuthHandler extends BaseOAuthHandler {
             Accept: 'application/json',
             'User-Agent': 'NeonPro/1.0',
           },
-        }
+        },
       );
 
       if (!response.ok) {
@@ -332,7 +332,7 @@ export class WhatsAppOAuthHandler extends BaseOAuthHandler {
           error: errorData,
         });
         throw new Error(
-          `Business accounts fetch failed: ${response.status} ${response.statusText}`
+          `Business accounts fetch failed: ${response.status} ${response.statusText}`,
         );
       }
 
@@ -354,7 +354,7 @@ export class WhatsAppOAuthHandler extends BaseOAuthHandler {
 
   async getPhoneNumbers(
     encryptedToken: string,
-    businessId: string
+    businessId: string,
   ): Promise<any[]> {
     try {
       const token = await this.decryptToken(encryptedToken);
@@ -367,7 +367,7 @@ export class WhatsAppOAuthHandler extends BaseOAuthHandler {
             Accept: 'application/json',
             'User-Agent': 'NeonPro/1.0',
           },
-        }
+        },
       );
 
       if (!response.ok) {
@@ -379,7 +379,7 @@ export class WhatsAppOAuthHandler extends BaseOAuthHandler {
           businessId,
         });
         throw new Error(
-          `Phone numbers fetch failed: ${response.status} ${response.statusText}`
+          `Phone numbers fetch failed: ${response.status} ${response.statusText}`,
         );
       }
 

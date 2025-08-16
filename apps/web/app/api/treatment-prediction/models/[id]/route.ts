@@ -30,7 +30,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     if (!(profile && ['admin', 'manager'].includes(profile.role))) {
       return NextResponse.json(
         { error: 'Insufficient permissions' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -46,7 +46,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to update prediction model' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -73,7 +73,7 @@ export async function DELETE(_request: NextRequest, { params }: RouteParams) {
     if (!(profile && ['admin', 'manager'].includes(profile.role))) {
       return NextResponse.json(
         { error: 'Insufficient permissions' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -90,7 +90,7 @@ export async function DELETE(_request: NextRequest, { params }: RouteParams) {
           error:
             'Cannot delete model with existing predictions. Archive it instead.',
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -110,7 +110,7 @@ export async function DELETE(_request: NextRequest, { params }: RouteParams) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to delete prediction model' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

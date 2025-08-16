@@ -51,7 +51,7 @@ export class AnalyticsController {
         period,
         startDate,
         endDate,
-        filters
+        filters,
       );
 
       return NextResponse.json(analytics, {
@@ -100,7 +100,7 @@ export class AnalyticsController {
         period,
         startDate,
         endDate,
-        filters
+        filters,
       );
 
       return NextResponse.json(analytics, {
@@ -133,7 +133,7 @@ export class AnalyticsController {
             'Cache-Control': 'no-cache, no-store, must-revalidate',
             'Content-Type': 'application/json',
           },
-        }
+        },
       );
     } catch (error) {
       return this.handleError(error);
@@ -151,13 +151,13 @@ export class AnalyticsController {
       if (!(userId && trialId)) {
         return NextResponse.json(
           { error: 'userId and trialId are required' },
-          { status: 400 }
+          { status: 400 },
         );
       }
 
       const prediction = await this.service.predictTrialConversion(
         userId,
-        trialId
+        trialId,
       );
 
       return NextResponse.json(
@@ -174,7 +174,7 @@ export class AnalyticsController {
           headers: {
             'Cache-Control': 'private, max-age=3600', // 1 hour cache for predictions
           },
-        }
+        },
       );
     } catch (error) {
       return this.handleError(error);
@@ -197,7 +197,7 @@ export class AnalyticsController {
               query.period,
               query.startDate,
               query.endDate,
-              query.filters
+              query.filters,
             );
           }
           if (query.metrics.includes('conversion')) {
@@ -205,11 +205,11 @@ export class AnalyticsController {
               query.period,
               query.startDate,
               query.endDate,
-              query.filters
+              query.filters,
             );
           }
           throw new Error(`Unsupported metrics: ${query.metrics.join(', ')}`);
-        })
+        }),
       );
 
       return NextResponse.json({
@@ -236,7 +236,7 @@ export class AnalyticsController {
             message: e.message,
           })),
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -246,7 +246,7 @@ export class AnalyticsController {
 
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 
@@ -271,7 +271,7 @@ export class AnalyticsController {
           timestamp: new Date().toISOString(),
           error: error instanceof Error ? error.message : 'Unknown error',
         },
-        { status: 503 }
+        { status: 503 },
       );
     }
   }

@@ -223,7 +223,7 @@ export class CacheOptimizer {
       memoryEfficiency: this.cache.size / this.strategy.maxSize,
       responseTimeImprovement: Math.max(
         0,
-        100 - this.metrics.averageAccessTime
+        100 - this.metrics.averageAccessTime,
       ),
       recommendations: this.generateRecommendations(hitRate, evictionRate),
     };
@@ -234,7 +234,7 @@ export class CacheOptimizer {
    */
   private generateRecommendations(
     hitRate: number,
-    evictionRate: number
+    evictionRate: number,
   ): string[] {
     const recommendations: string[] = [];
 
@@ -244,7 +244,7 @@ export class CacheOptimizer {
 
     if (evictionRate > 0.3) {
       recommendations.push(
-        'High eviction rate detected - consider optimizing cache strategy'
+        'High eviction rate detected - consider optimizing cache strategy',
       );
     }
 

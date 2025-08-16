@@ -25,7 +25,7 @@ export async function PATCH(_request: NextRequest, { params }: RouteParams) {
     if (userError || !user) {
       return NextResponse.json(
         { success: false, error: 'Authentication required' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -45,7 +45,7 @@ export async function PATCH(_request: NextRequest, { params }: RouteParams) {
       if (error.code === 'PGRST116') {
         return NextResponse.json(
           { success: false, error: 'Alert not found' },
-          { status: 404 }
+          { status: 404 },
         );
       }
       throw new Error(`Database error: ${error.message}`);
@@ -63,7 +63,7 @@ export async function PATCH(_request: NextRequest, { params }: RouteParams) {
         error: 'Internal server error',
         message: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

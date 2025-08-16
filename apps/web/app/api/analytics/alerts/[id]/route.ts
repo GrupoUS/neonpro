@@ -25,7 +25,7 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
     if (userError || !user) {
       return NextResponse.json(
         { success: false, error: 'Authentication required' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -35,7 +35,7 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
         `
         *,
         financial_kpis(kpi_name, kpi_category)
-      `
+      `,
       )
       .eq('id', params.id)
       .single();
@@ -44,7 +44,7 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
       if (error.code === 'PGRST116') {
         return NextResponse.json(
           { success: false, error: 'Alert not found' },
-          { status: 404 }
+          { status: 404 },
         );
       }
       throw new Error(`Database error: ${error.message}`);
@@ -76,7 +76,7 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
         error: 'Internal server error',
         message: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -94,7 +94,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     if (userError || !user) {
       return NextResponse.json(
         { success: false, error: 'Authentication required' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -121,7 +121,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
           success: false,
           error: 'Invalid action. Use "acknowledge" or "unacknowledge"',
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -137,7 +137,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
         `
         *,
         financial_kpis(kpi_name, kpi_category)
-      `
+      `,
       )
       .single();
 
@@ -145,7 +145,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
       if (error.code === 'PGRST116') {
         return NextResponse.json(
           { success: false, error: 'Alert not found' },
-          { status: 404 }
+          { status: 404 },
         );
       }
       throw new Error(`Database error: ${error.message}`);
@@ -178,7 +178,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
         error: 'Internal server error',
         message: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -196,7 +196,7 @@ export async function DELETE(_request: NextRequest, { params }: RouteParams) {
     if (userError || !user) {
       return NextResponse.json(
         { success: false, error: 'Authentication required' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -220,7 +220,7 @@ export async function DELETE(_request: NextRequest, { params }: RouteParams) {
         error: 'Internal server error',
         message: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -168,7 +168,7 @@ export class LGPDAutomationOrchestrator {
   constructor(
     supabase: SupabaseClient,
     complianceManager: LGPDComplianceManager,
-    config: LGPDAutomationConfig
+    config: LGPDAutomationConfig,
   ) {
     this.supabase = supabase;
     this.complianceManager = complianceManager;
@@ -185,49 +185,49 @@ export class LGPDAutomationOrchestrator {
     this.consentAutomation = new ConsentAutomationManager(
       this.supabase,
       this.complianceManager,
-      this.config.consent_automation
+      this.config.consent_automation,
     );
 
     this.dataSubjectRights = new DataSubjectRightsAutomation(
       this.supabase,
       this.complianceManager,
-      this.config.data_subject_rights
+      this.config.data_subject_rights,
     );
 
     this.complianceMonitor = new RealTimeComplianceMonitor(
       this.supabase,
       this.complianceManager,
-      this.config.compliance_monitoring
+      this.config.compliance_monitoring,
     );
 
     this.dataRetention = new DataRetentionAutomation(
       this.supabase,
       this.complianceManager,
-      this.config.data_retention
+      this.config.data_retention,
     );
 
     this.breachDetection = new BreachDetectionAutomation(
       this.supabase,
       this.complianceManager,
-      this.config.breach_detection
+      this.config.breach_detection,
     );
 
     this.dataMinimization = new DataMinimizationAutomation(
       this.supabase,
       this.complianceManager,
-      this.config.data_minimization
+      this.config.data_minimization,
     );
 
     this.thirdPartyCompliance = new ThirdPartyComplianceAutomation(
       this.supabase,
       this.complianceManager,
-      this.config.third_party_compliance
+      this.config.third_party_compliance,
     );
 
     this.auditReporting = new AuditReportingAutomation(
       this.supabase,
       this.complianceManager,
-      this.config.audit_reporting
+      this.config.audit_reporting,
     );
 
     // Set up cross-module event handlers
@@ -333,7 +333,7 @@ export class LGPDAutomationOrchestrator {
       };
     } catch (error) {
       throw new Error(
-        `Failed to start automation orchestrator: ${error.message}`
+        `Failed to start automation orchestrator: ${error.message}`,
       );
     }
   }
@@ -422,7 +422,7 @@ export class LGPDAutomationOrchestrator {
       };
     } catch (error) {
       throw new Error(
-        `Failed to stop automation orchestrator: ${error.message}`
+        `Failed to stop automation orchestrator: ${error.message}`,
       );
     }
   }
@@ -433,7 +433,7 @@ export class LGPDAutomationOrchestrator {
   async getAutomationStatus(): Promise<AutomationStatus[]> {
     try {
       const { data: statusData, error } = await this.supabase.rpc(
-        'get_automation_status'
+        'get_automation_status',
       );
 
       if (error) {
@@ -452,7 +452,7 @@ export class LGPDAutomationOrchestrator {
   async getAutomationMetrics(): Promise<AutomationMetrics> {
     try {
       const { data: metrics, error } = await this.supabase.rpc(
-        'get_automation_metrics'
+        'get_automation_metrics',
       );
 
       if (error) {
@@ -476,7 +476,7 @@ export class LGPDAutomationOrchestrator {
       start_date?: string;
       end_date?: string;
     } = {},
-    pagination: { page: number; limit: number } = { page: 1, limit: 50 }
+    pagination: { page: number; limit: number } = { page: 1, limit: 50 },
   ): Promise<{
     alerts: AutomationAlert[];
     total_count: number;
@@ -536,7 +536,7 @@ export class LGPDAutomationOrchestrator {
   async resolveAlert(
     alertId: string,
     resolvedBy: string,
-    resolutionNotes?: string
+    resolutionNotes?: string,
   ): Promise<{ success: boolean }> {
     try {
       const { error } = await this.supabase
@@ -585,7 +585,7 @@ export class LGPDAutomationOrchestrator {
   }> {
     try {
       const { data: dashboard, error } = await this.supabase.rpc(
-        'get_unified_automation_dashboard'
+        'get_unified_automation_dashboard',
       );
 
       if (error) {
@@ -641,7 +641,7 @@ export class LGPDAutomationOrchestrator {
     this.consentAutomation.onConsentWithdrawn(async (consent) => {
       await this.dataRetention.reviewRetentionForConsent(
         consent.user_id,
-        consent.purpose
+        consent.purpose,
       );
     });
 
@@ -665,7 +665,7 @@ export class LGPDAutomationOrchestrator {
             details: assessment,
           });
         }
-      }
+      },
     );
 
     // Data minimization opportunities trigger retention review
@@ -696,7 +696,7 @@ export class LGPDAutomationOrchestrator {
   }
 
   private async createAlert(
-    alertData: Omit<AutomationAlert, 'id' | 'timestamp' | 'resolved'>
+    alertData: Omit<AutomationAlert, 'id' | 'timestamp' | 'resolved'>,
   ): Promise<void> {
     try {
       const { data: alert, error } = await this.supabase

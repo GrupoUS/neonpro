@@ -56,7 +56,7 @@ export async function POST(request: NextRequest, { params }: Params) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to process approval' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

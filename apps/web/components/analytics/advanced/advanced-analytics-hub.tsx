@@ -150,7 +150,7 @@ export function AdvancedAnalyticsHub({
               cohortSize: 'monthly',
               metrics: ['retention', 'revenue', 'churn'],
             }),
-          }
+          },
         );
 
         // Fetch forecasting data
@@ -165,7 +165,7 @@ export function AdvancedAnalyticsHub({
               confidence_level: config.confidenceLevel / 100,
               include_scenarios: true,
             }),
-          }
+          },
         );
 
         // Fetch statistical analysis
@@ -180,7 +180,7 @@ export function AdvancedAnalyticsHub({
               confidence_level: config.confidenceLevel / 100,
               include_outliers: true,
             }),
-          }
+          },
         );
 
         // Process responses
@@ -226,7 +226,7 @@ export function AdvancedAnalyticsHub({
         }
       }
     },
-    [config]
+    [config],
   );
 
   // Auto-refresh effect
@@ -254,15 +254,15 @@ export function AdvancedAnalyticsHub({
   const analyticsSummary = useMemo(() => {
     const totalKPIs = analyticsData.kpis.length;
     const overPerformingKPIs = analyticsData.kpis.filter(
-      (kpi) => kpi.value.target && kpi.value.current >= kpi.value.target
+      (kpi) => kpi.value.target && kpi.value.current >= kpi.value.target,
     ).length;
 
     const strongCorrelations = analyticsData.correlations.filter(
-      (c) => Math.abs(c.correlation) >= 0.6
+      (c) => Math.abs(c.correlation) >= 0.6,
     ).length;
 
     const significantTests = analyticsData.statisticalTests.filter(
-      (t) => t.result === 'reject'
+      (t) => t.result === 'reject',
     ).length;
 
     const overallDataQuality =
@@ -275,7 +275,7 @@ export function AdvancedAnalyticsHub({
 
     const bestModel = analyticsData.predictiveModels.reduce(
       (best, model) => (model.accuracy > (best?.accuracy || 0) ? model : best),
-      analyticsData.predictiveModels[0]
+      analyticsData.predictiveModels[0],
     );
 
     return {

@@ -2,7 +2,7 @@ import { Heart } from 'lucide-react';
 import * as React from 'react';
 import { cn } from '../utils/cn';
 
-export type AuthLayoutProps = {
+type AuthLayoutProps = {
   children: React.ReactNode;
   title?: string;
   subtitle?: string;

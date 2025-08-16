@@ -17,7 +17,7 @@ import { LGPDManager } from '../../../../../lib/security/lgpd-manager';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
+  process.env.SUPABASE_SERVICE_ROLE_KEY!,
 );
 
 const auditLogger = new AuditLogger(supabase);
@@ -26,7 +26,7 @@ const photoManager = new PhotoRecognitionManager(
   supabase,
   auditLogger,
   lgpdManager,
-  defaultPhotoRecognitionConfig
+  defaultPhotoRecognitionConfig,
 );
 
 export async function GET(request: NextRequest) {
@@ -36,7 +36,7 @@ export async function GET(request: NextRequest) {
     if (!authHeader) {
       return NextResponse.json(
         { error: 'Authorization required' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -49,7 +49,7 @@ export async function GET(request: NextRequest) {
     if (authError || !user) {
       return NextResponse.json(
         { error: 'Invalid authentication' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -67,7 +67,7 @@ export async function GET(request: NextRequest) {
     ) {
       return NextResponse.json(
         { error: 'Insufficient permissions' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -79,7 +79,7 @@ export async function GET(request: NextRequest) {
     // Get recognition statistics
     const stats = await photoManager.getRecognitionStats(
       timeframe,
-      patientId || undefined
+      patientId || undefined,
     );
 
     // Get additional system-wide statistics
@@ -100,7 +100,7 @@ export async function GET(request: NextRequest) {
         error: 'Failed to get statistics',
         details: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -176,7 +176,7 @@ async function getSystemPhotoStats(timeframe: string) {
         acc.total += 1;
         return acc;
       },
-      { facialRecognitionEnabled: 0, photoSharingEnabled: 0, total: 0 }
+      { facialRecognitionEnabled: 0, photoSharingEnabled: 0, total: 0 },
     ) || { facialRecognitionEnabled: 0, photoSharingEnabled: 0, total: 0 };
 
     // Storage usage

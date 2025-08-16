@@ -6,7 +6,7 @@ import { HubSpotOAuthHandler } from '@/lib/oauth/platforms/hubspot-handler';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   const requestId = randomBytes(16).toString('hex');
   const { id } = await params;
@@ -40,7 +40,7 @@ export async function GET(
 
       return NextResponse.json(
         { error: 'Authentication required' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -48,7 +48,7 @@ export async function GET(
     const { data: connection, error: connectionError } = await supabase
       .from('marketing_platform_connections')
       .select(
-        'id, platform_type, platform_user_id, platform_username, status, connected_at, token_expires_at, scopes, platform_data'
+        'id, platform_type, platform_user_id, platform_username, status, connected_at, token_expires_at, scopes, platform_data',
       )
       .eq('id', connectionId)
       .eq('profile_id', session.user.id)
@@ -66,7 +66,7 @@ export async function GET(
 
       return NextResponse.json(
         { error: 'HubSpot connection not found' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -75,7 +75,7 @@ export async function GET(
     const now = new Date();
     const isTokenExpired = tokenExpiresAt < now;
     const minutesUntilExpiry = Math.round(
-      (tokenExpiresAt.getTime() - now.getTime()) / (1000 * 60)
+      (tokenExpiresAt.getTime() - now.getTime()) / (1000 * 60),
     );
 
     Logger.info('HubSpot connection details retrieved successfully', {
@@ -115,14 +115,14 @@ export async function GET(
         error: 'Failed to retrieve HubSpot connection details',
         requestId,
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   const requestId = randomBytes(16).toString('hex');
   const { id } = await params;
@@ -156,7 +156,7 @@ export async function DELETE(
 
       return NextResponse.json(
         { error: 'Authentication required' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -180,7 +180,7 @@ export async function DELETE(
 
       return NextResponse.json(
         { error: 'HubSpot connection not found' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -199,7 +199,7 @@ export async function DELETE(
             revokeError instanceof Error
               ? revokeError.message
               : 'Unknown error',
-        }
+        },
       );
     }
 
@@ -223,7 +223,7 @@ export async function DELETE(
 
       return NextResponse.json(
         { error: 'Failed to disconnect HubSpot account' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -267,7 +267,7 @@ export async function DELETE(
         error: 'Failed to disconnect HubSpot account',
         requestId,
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

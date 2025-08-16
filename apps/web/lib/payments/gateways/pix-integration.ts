@@ -76,7 +76,7 @@ export class PixIntegration {
    * Create a new PIX payment
    */
   async createPayment(
-    paymentData: PixPaymentData
+    paymentData: PixPaymentData,
   ): Promise<PixPaymentResponse> {
     try {
       // Generate unique payment ID
@@ -139,7 +139,7 @@ export class PixIntegration {
       };
     } catch (error) {
       throw new Error(
-        `PIX payment creation failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+        `PIX payment creation failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
       );
     }
   }
@@ -314,7 +314,7 @@ export class PixIntegration {
    */
   private async updatePaymentStatus(
     paymentId: string,
-    status: PixPaymentStatus
+    status: PixPaymentStatus,
   ): Promise<void> {
     const { error } = await this.supabase
       .from('pix_payments')

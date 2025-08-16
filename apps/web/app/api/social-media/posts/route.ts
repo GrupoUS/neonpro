@@ -63,7 +63,7 @@ export async function GET(request: NextRequest) {
     if (!session) {
       return NextResponse.json(
         { error: 'Authentication required' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -77,7 +77,7 @@ export async function GET(request: NextRequest) {
     if (!profile?.clinic_id) {
       return NextResponse.json(
         { error: 'Clinic access required' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -91,7 +91,7 @@ export async function GET(request: NextRequest) {
     const toDate = searchParams.get('to_date');
     const limit = Math.min(
       Number.parseInt(searchParams.get('limit') || '50', 10),
-      100
+      100,
     );
     const offset = Number.parseInt(searchParams.get('offset') || '0', 10);
 
@@ -135,7 +135,7 @@ export async function GET(request: NextRequest) {
           first_name,
           last_name
         )
-      `
+      `,
       )
       .eq('clinic_id', profile.clinic_id);
 
@@ -170,7 +170,7 @@ export async function GET(request: NextRequest) {
     if (error) {
       return NextResponse.json(
         { error: 'Failed to fetch posts' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -184,7 +184,7 @@ export async function GET(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -206,7 +206,7 @@ export async function POST(request: NextRequest) {
     if (!session) {
       return NextResponse.json(
         { error: 'Authentication required' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -220,7 +220,7 @@ export async function POST(request: NextRequest) {
     if (!profile?.clinic_id) {
       return NextResponse.json(
         { error: 'Clinic access required' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -239,14 +239,14 @@ export async function POST(request: NextRequest) {
     if (!account) {
       return NextResponse.json(
         { error: 'Invalid social media account' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     if (account.status !== 'active' || account.sync_status !== 'active') {
       return NextResponse.json(
         { error: 'Social media account is not active or synchronized' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -255,7 +255,7 @@ export async function POST(request: NextRequest) {
       account.platform_name,
       validatedData.post_type,
       validatedData.content_text || '',
-      validatedData.media_urls
+      validatedData.media_urls,
     );
 
     if (!contentValidation.valid) {
@@ -264,7 +264,7 @@ export async function POST(request: NextRequest) {
           error: 'Post content validation failed',
           details: contentValidation.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -277,7 +277,7 @@ export async function POST(request: NextRequest) {
       } else {
         return NextResponse.json(
           { error: 'Scheduled time must be in the future' },
-          { status: 400 }
+          { status: 400 },
         );
       }
     }
@@ -313,14 +313,14 @@ export async function POST(request: NextRequest) {
             platform_display_name
           )
         )
-      `
+      `,
       )
       .single();
 
     if (error) {
       return NextResponse.json(
         { error: 'Failed to create post' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -336,19 +336,19 @@ export async function POST(request: NextRequest) {
             ? 'Post scheduled successfully'
             : 'Post created successfully',
       },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Invalid request data', details: error.errors },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -360,7 +360,7 @@ function validatePostContent(
   platform: string,
   postType: string,
   content: string,
-  mediaUrls: string[]
+  mediaUrls: string[],
 ): { valid: boolean; errors: string[] } {
   const errors: string[] = [];
 

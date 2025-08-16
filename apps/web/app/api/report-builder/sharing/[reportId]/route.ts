@@ -10,7 +10,7 @@ const reportService = new ReportBuilderService();
 // GET /api/report-builder/sharing/[reportId] - Get sharing info for specific report
 export async function GET(
   _request: NextRequest,
-  { params }: { params: { reportId: string } }
+  { params }: { params: { reportId: string } },
 ) {
   try {
     const reportId = params.reportId;
@@ -21,7 +21,7 @@ export async function GET(
           success: false,
           error: 'Report ID is required',
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -40,7 +40,7 @@ export async function GET(
             ? error.message
             : 'Failed to fetch report sharing',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -48,7 +48,7 @@ export async function GET(
 // POST /api/report-builder/sharing/[reportId] - Create new sharing link for report
 export async function POST(
   request: NextRequest,
-  { params }: { params: { reportId: string } }
+  { params }: { params: { reportId: string } },
 ) {
   try {
     const reportId = params.reportId;
@@ -60,7 +60,7 @@ export async function POST(
           success: false,
           error: 'Report ID is required',
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -73,13 +73,13 @@ export async function POST(
           error: 'Invalid request data',
           details: validationResult.error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     const sharing = await reportService.createReportShare(
       reportId,
-      validationResult.data
+      validationResult.data,
     );
 
     return NextResponse.json(
@@ -87,7 +87,7 @@ export async function POST(
         success: true,
         data: sharing,
       },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (error) {
     return NextResponse.json(
@@ -98,7 +98,7 @@ export async function POST(
             ? error.message
             : 'Failed to create report sharing',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

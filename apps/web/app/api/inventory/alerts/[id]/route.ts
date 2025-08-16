@@ -13,7 +13,7 @@ import { createClient } from '@/app/utils/supabase/server';
 
 export async function PATCH(
   _request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const supabase = await createClient();
@@ -42,7 +42,7 @@ export async function PATCH(
     if (error) {
       return NextResponse.json(
         { error: 'Failed to mark alert as read' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -61,7 +61,7 @@ export async function PATCH(
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -72,7 +72,7 @@ export async function PATCH(
 
 export async function DELETE(
   _request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const supabase = await createClient();
@@ -95,7 +95,7 @@ export async function DELETE(
     if (error) {
       return NextResponse.json(
         { error: 'Failed to delete alert' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -105,7 +105,7 @@ export async function DELETE(
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -15,7 +15,7 @@ const cancelRequestSchema = z.object({
 
 export async function POST(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const supabase = createClient();
@@ -45,7 +45,7 @@ export async function POST(
     if (fetchError || !nfeDocument) {
       return NextResponse.json(
         { error: 'NFe document not found' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -64,7 +64,7 @@ export async function POST(
     if (nfeDocument.status !== 'authorized') {
       return NextResponse.json(
         { error: 'Only authorized NFe documents can be cancelled' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -76,7 +76,7 @@ export async function POST(
     if (hoursDiff > 24) {
       return NextResponse.json(
         { error: 'NFe can only be cancelled within 24 hours of authorization' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -103,7 +103,7 @@ export async function POST(
     if (updateError) {
       return NextResponse.json(
         { error: 'Failed to update NFe document' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -128,13 +128,13 @@ export async function POST(
     if (error instanceof Error && error.name === 'ZodError') {
       return NextResponse.json(
         { error: 'Invalid request data', details: error.message },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

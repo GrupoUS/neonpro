@@ -27,7 +27,7 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
 export const signUp = async (
   email: string,
   password: string,
-  metadata?: any
+  metadata?: any,
 ) => {
   const { data, error } = await supabase.auth.signUp({
     email,
@@ -80,7 +80,7 @@ export const getUser = async () => {
 
 // Listen to auth state changes
 export const onAuthStateChange = (
-  callback: (event: string, session: any) => void
+  callback: (event: string, session: any) => void,
 ) => {
   return supabase.auth.onAuthStateChange(callback);
 };

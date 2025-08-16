@@ -170,7 +170,7 @@ export class AuditSystem {
    * Registra um evento de auditoria
    */
   async logEvent(
-    event: Omit<AuditEvent, 'id' | 'timestamp' | 'checksum'>
+    event: Omit<AuditEvent, 'id' | 'timestamp' | 'checksum'>,
   ): Promise<void> {
     try {
       const auditEvent: AuditEvent = {
@@ -182,12 +182,12 @@ export class AuditSystem {
       // Criptografa dados sensíveis
       if (auditEvent.old_values) {
         auditEvent.old_values = this.encryptSensitiveData(
-          auditEvent.old_values
+          auditEvent.old_values,
         );
       }
       if (auditEvent.new_values) {
         auditEvent.new_values = this.encryptSensitiveData(
-          auditEvent.new_values
+          auditEvent.new_values,
         );
       }
 
@@ -256,7 +256,7 @@ export class AuditSystem {
     if (filters.offset) {
       query = query.range(
         filters.offset,
-        filters.offset + (filters.limit || 50) - 1
+        filters.offset + (filters.limit || 50) - 1,
       );
     }
 
@@ -287,7 +287,7 @@ export class AuditSystem {
     title: string,
     description: string,
     filters: AuditQueryFilters,
-    generatedBy: string
+    generatedBy: string,
   ): Promise<AuditReport> {
     const events = await this.queryEvents(filters);
 
@@ -323,7 +323,7 @@ export class AuditSystem {
    * Obtém estatísticas de auditoria
    */
   async getStatistics(
-    filters: Partial<AuditQueryFilters>
+    filters: Partial<AuditQueryFilters>,
   ): Promise<AuditStatistics> {
     const events = await this.queryEvents(filters as AuditQueryFilters);
 
@@ -382,7 +382,7 @@ export class AuditSystem {
    */
   async archiveOldLogs(retentionDays = 365): Promise<number> {
     const cutoffDate = new Date(
-      Date.now() - retentionDays * 24 * 60 * 60 * 1000
+      Date.now() - retentionDays * 24 * 60 * 60 * 1000,
     );
 
     // Move logs antigos para tabela de arquivo
@@ -393,7 +393,7 @@ export class AuditSystem {
 
     if (selectError) {
       throw new Error(
-        `Erro ao selecionar logs antigos: ${selectError.message}`
+        `Erro ao selecionar logs antigos: ${selectError.message}`,
       );
     }
 
@@ -418,7 +418,7 @@ export class AuditSystem {
 
     if (deleteError) {
       throw new Error(
-        `Erro ao deletar logs arquivados: ${deleteError.message}`
+        `Erro ao deletar logs arquivados: ${deleteError.message}`,
       );
     }
 
@@ -505,7 +505,7 @@ export class AuditSystem {
         let encryptedValue = cipher.update(
           JSON.stringify(encrypted[key]),
           'utf8',
-          'hex'
+          'hex',
         );
         encryptedValue += cipher.final('hex');
         encrypted[key] = `encrypted:${encryptedValue}`;
@@ -530,7 +530,7 @@ export class AuditSystem {
           const encryptedValue = decrypted[key].replace('encrypted:', '');
           const decipher = crypto.createDecipher(
             'aes-256-cbc',
-            this.encryptionKey
+            this.encryptionKey,
           );
           let decryptedValue = decipher.update(encryptedValue, 'hex', 'utf8');
           decryptedValue += decipher.final('utf8');
@@ -593,7 +593,7 @@ export class AuditSystem {
       const logDir = path.join(process.cwd(), 'logs', 'audit');
       const logFile = path.join(
         logDir,
-        `audit-${new Date().toISOString().split('T')[0]}.log`
+        `audit-${new Date().toISOString().split('T')[0]}.log`,
       );
 
       // Cria diretório se não existir
@@ -611,7 +611,7 @@ export const auditSystem = new AuditSystem();
 
 // Helper functions para uso fácil
 export const logAuditEvent = (
-  event: Omit<AuditEvent, 'id' | 'timestamp' | 'checksum'>
+  event: Omit<AuditEvent, 'id' | 'timestamp' | 'checksum'>,
 ) => auditSystem.logEvent(event);
 
 export const queryAuditEvents = (filters: AuditQueryFilters) =>
@@ -621,7 +621,7 @@ export const generateAuditReport = (
   title: string,
   description: string,
   filters: AuditQueryFilters,
-  generatedBy: string
+  generatedBy: string,
 ) => auditSystem.generateReport(title, description, filters, generatedBy);
 
 export const getAuditStatistics = (filters: Partial<AuditQueryFilters>) =>

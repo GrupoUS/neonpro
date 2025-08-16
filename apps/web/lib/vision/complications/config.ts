@@ -313,13 +313,13 @@ export function validateConfiguration(): {
   Object.entries(DETECTION_MODELS).forEach(([key, model]) => {
     if (model.accuracy < PERFORMANCE_BENCHMARKS.minimumAccuracy) {
       errors.push(
-        `Model ${key} accuracy ${model.accuracy} below minimum ${PERFORMANCE_BENCHMARKS.minimumAccuracy}`
+        `Model ${key} accuracy ${model.accuracy} below minimum ${PERFORMANCE_BENCHMARKS.minimumAccuracy}`,
       );
     }
 
     if (model.confidenceThreshold < 0.7 || model.confidenceThreshold > 0.99) {
       errors.push(
-        `Model ${key} confidence threshold ${model.confidenceThreshold} outside valid range [0.7, 0.99]`
+        `Model ${key} confidence threshold ${model.confidenceThreshold} outside valid range [0.7, 0.99]`,
       );
     }
   });
@@ -361,7 +361,7 @@ export function validateConfiguration(): {
 
 // Helper Functions for Configuration Management
 export function getModelByType(
-  complicationType: ComplicationCategory
+  complicationType: ComplicationCategory,
 ): ModelConfig | null {
   const modelMap: Record<ComplicationCategory, string> = {
     infection: 'infection_detector',
@@ -395,13 +395,13 @@ export function getAlertLevelForRiskScore(riskScore: number): AlertLevel {
 }
 
 export function getNotificationTargetsForAlert(
-  alertLevel: AlertLevel
+  alertLevel: AlertLevel,
 ): NotificationTarget[] {
   return NOTIFICATION_PRIORITY[alertLevel] || [];
 }
 
 export function calculateComplicationRiskScore(
-  complications: Array<{ type: ComplicationCategory; confidence: number }>
+  complications: Array<{ type: ComplicationCategory; confidence: number }>,
 ): number {
   if (complications.length === 0) {
     return 0;
@@ -419,7 +419,7 @@ export function calculateComplicationRiskScore(
 // Configuration Update Functions
 export function updateModelConfig(
   modelKey: string,
-  updates: Partial<ModelConfig>
+  updates: Partial<ModelConfig>,
 ): void {
   if (DETECTION_MODELS[modelKey]) {
     DETECTION_MODELS[modelKey] = { ...DETECTION_MODELS[modelKey], ...updates };
@@ -436,7 +436,7 @@ export function disableModel(modelKey: string): void {
 
 export function getEnabledModels(): Record<string, ModelConfig> {
   return Object.fromEntries(
-    Object.entries(DETECTION_MODELS).filter(([, model]) => model.enabled)
+    Object.entries(DETECTION_MODELS).filter(([, model]) => model.enabled),
   );
 }
 

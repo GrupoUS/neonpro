@@ -47,7 +47,7 @@ export class InventoryConfigManager {
    * Save configuration to database
    */
   async saveConfig(
-    config: Partial<InventoryConfig>
+    config: Partial<InventoryConfig>,
   ): Promise<{ success: boolean; error: string | null }> {
     try {
       const updatedConfig = { ...this.config, ...config };
@@ -84,7 +84,7 @@ export class InventoryConfigManager {
    */
   async updateConfigSection<K extends keyof InventoryConfig>(
     section: K,
-    updates: Partial<InventoryConfig[K]>
+    updates: Partial<InventoryConfig[K]>,
   ): Promise<{ success: boolean; error: string | null }> {
     const newConfig = {
       ...this.config,
@@ -138,7 +138,8 @@ export class InventoryDashboardProvider {
    * Get stock levels summary
    */
   private async getStockLevels() {
-    const { data: stockData } = await this.supabase.from('produtos_estoque')
+    const { data: stockData } = await this.supabase
+      .from('produtos_estoque')
       .select(`
         id,
         preco_custo,
@@ -159,14 +160,14 @@ export class InventoryDashboardProvider {
 
     const totalProducts = stockData.length;
     const lowStockProducts = stockData.filter(
-      (p) => p.estoque_atual <= p.estoque_minimo
+      (p) => p.estoque_atual <= p.estoque_minimo,
     ).length;
     const outOfStockProducts = stockData.filter(
-      (p) => p.estoque_atual === 0
+      (p) => p.estoque_atual === 0,
     ).length;
     const totalValue = stockData.reduce(
       (sum, p) => sum + p.estoque_atual * (p.preco_custo || 0),
-      0
+      0,
     );
 
     // Calculate expiring soon products
@@ -401,7 +402,7 @@ export class InventoryIntegrationManager {
    */
   async updateIntegration(
     system: keyof SystemIntegration,
-    config: any
+    config: any,
   ): Promise<{ success: boolean; error: string | null }> {
     try {
       const { error } = await this.supabase.from('integracoes_sistema').upsert({

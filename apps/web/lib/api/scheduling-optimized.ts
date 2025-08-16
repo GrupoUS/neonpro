@@ -170,7 +170,7 @@ class BatchRequestManager {
   private async executeBatchRequest(batch: BatchRequest[]): Promise<any[]> {
     const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
     );
 
     // Group requests by type for optimal batching
@@ -182,7 +182,7 @@ class BatchRequestManager {
         acc[req.type].push(req);
         return acc;
       },
-      {} as Record<string, BatchRequest[]>
+      {} as Record<string, BatchRequest[]>,
     );
 
     const results: any[] = [];
@@ -192,7 +192,7 @@ class BatchRequestManager {
         case 'conflict-check': {
           const conflictResults = await this.batchConflictCheck(
             supabase,
-            requests
+            requests,
           );
           results.push(...conflictResults);
           break;
@@ -201,7 +201,7 @@ class BatchRequestManager {
         case 'resolution-validation': {
           const validationResults = await this.batchResolutionValidation(
             supabase,
-            requests
+            requests,
           );
           results.push(...validationResults);
           break;
@@ -217,7 +217,7 @@ class BatchRequestManager {
 
   private async batchConflictCheck(
     supabase: any,
-    requests: BatchRequest[]
+    requests: BatchRequest[],
   ): Promise<any[]> {
     const appointmentIds = requests.map((req) => req.params.appointmentId);
 
@@ -229,7 +229,7 @@ class BatchRequestManager {
         appointments!inner(*),
         professionals!inner(*),
         patients!inner(*)
-      `
+      `,
       )
       .in('appointment_id', appointmentIds)
       .eq('status', 'active');
@@ -242,7 +242,7 @@ class BatchRequestManager {
       return (
         data.find(
           (conflict: any) =>
-            conflict.appointment_id === req.params.appointmentId
+            conflict.appointment_id === req.params.appointmentId,
         ) || null
       );
     });
@@ -250,7 +250,7 @@ class BatchRequestManager {
 
   private async batchResolutionValidation(
     supabase: any,
-    requests: BatchRequest[]
+    requests: BatchRequest[],
   ): Promise<any[]> {
     const conflictIds = requests.map((req) => req.params.conflictId);
 
@@ -267,7 +267,7 @@ class BatchRequestManager {
     return requests.map((req) => {
       return (
         data.find(
-          (resolution: any) => resolution.conflict_id === req.params.conflictId
+          (resolution: any) => resolution.conflict_id === req.params.conflictId,
         ) || null
       );
     });
@@ -310,7 +310,7 @@ export class OptimizedSchedulingAPI {
   constructor() {
     this.supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
     );
   }
 
@@ -321,7 +321,7 @@ export class OptimizedSchedulingAPI {
       severity?: string;
       type?: string;
       dateRange?: string;
-    } = {}
+    } = {},
   ): Promise<ApiResponse<ConflictData[]>> {
     const startTime = Date.now();
     this.performanceMetrics.totalRequests++;
@@ -364,7 +364,7 @@ export class OptimizedSchedulingAPI {
             professionals!inner(id, name, specialty)
           ),
           conflict_resolutions(*)
-        `
+        `,
           )
           .eq('status', 'active')
           .order('created_at', { ascending: false });
@@ -396,7 +396,7 @@ export class OptimizedSchedulingAPI {
               startDate = new Date(
                 now.getFullYear(),
                 now.getMonth(),
-                now.getDate()
+                now.getDate(),
               );
               break;
             case 'week':
@@ -436,7 +436,7 @@ export class OptimizedSchedulingAPI {
               impact: res.impact_description,
               estimatedTime: res.estimated_time_minutes,
               complianceImpact: res.compliance_impact,
-            })
+            }),
           ),
           metadata: {
             lgpdConsent: conflict.lgpd_consent,
@@ -446,7 +446,7 @@ export class OptimizedSchedulingAPI {
         }));
 
         return transformedData;
-      }
+      },
     );
 
     // Cache the results with intelligent TTL
@@ -470,7 +470,7 @@ export class OptimizedSchedulingAPI {
   async resolveConflictsBatch(
     conflictIds: string[],
     resolutionType: string,
-    metadata: any
+    metadata: any,
   ): Promise<ApiResponse<any>> {
     const startTime = Date.now();
     this.performanceMetrics.totalRequests++;
@@ -489,7 +489,7 @@ export class OptimizedSchedulingAPI {
           p_resolution_type: resolutionType,
           p_metadata: metadata,
           p_batch_timestamp: new Date().toISOString(),
-        }
+        },
       );
 
       if (error) {
@@ -503,7 +503,7 @@ export class OptimizedSchedulingAPI {
       // Track API call reduction
       this.performanceMetrics.apiCallsReduced += Math.max(
         0,
-        conflictIds.length - 1
+        conflictIds.length - 1,
       );
 
       return {
@@ -528,7 +528,7 @@ export class OptimizedSchedulingAPI {
 
   // Optimized individual conflict check with batching
   async checkConflict(
-    appointmentId: string
+    appointmentId: string,
   ): Promise<ApiResponse<ConflictData | null>> {
     const startTime = Date.now();
     this.performanceMetrics.totalRequests++;
@@ -588,7 +588,7 @@ export class OptimizedSchedulingAPI {
   createConflictStream(
     _filters: any,
     onConflict: (conflict: ConflictData) => void,
-    onError: (error: Error) => void
+    onError: (error: Error) => void,
   ): () => void {
     const channel = this.supabase
       .channel('schedule_conflicts')
@@ -624,7 +624,7 @@ export class OptimizedSchedulingAPI {
           this.cache.invalidate(`conflict-check-${conflict.appointmentId}`);
 
           onConflict(conflict);
-        }
+        },
       )
       .subscribe((status: string) => {
         if (status === 'SUBSCRIBED') {
@@ -650,7 +650,7 @@ export class OptimizedSchedulingAPI {
           ? `${(
               (this.performanceMetrics.cachedResponses /
                 this.performanceMetrics.totalRequests) *
-              100
+                100
             ).toFixed(2)}%`
           : '0%',
       apiCallReduction:
@@ -658,7 +658,7 @@ export class OptimizedSchedulingAPI {
           ? `${(
               (this.performanceMetrics.apiCallsReduced /
                 this.performanceMetrics.totalRequests) *
-              100
+                100
             ).toFixed(2)}%`
           : '0%',
     };
@@ -681,10 +681,10 @@ export class OptimizedSchedulingAPI {
   }> {
     const metrics = this.getPerformanceMetrics();
     const cacheHitRate = Number.parseFloat(
-      metrics.cacheHitRate.replace('%', '')
+      metrics.cacheHitRate.replace('%', ''),
     );
     const apiReductionRate = Number.parseFloat(
-      metrics.apiCallReduction.replace('%', '')
+      metrics.apiCallReduction.replace('%', ''),
     );
 
     let status: 'healthy' | 'degraded' | 'unhealthy' = 'healthy';
@@ -693,27 +693,27 @@ export class OptimizedSchedulingAPI {
     if (cacheHitRate < 30) {
       status = 'degraded';
       recommendations.push(
-        'Cache hit rate is low. Consider adjusting TTL values.'
+        'Cache hit rate is low. Consider adjusting TTL values.',
       );
     }
 
     if (apiReductionRate < 50) {
       status = 'degraded';
       recommendations.push(
-        'API call reduction target not met. Review batching strategy.'
+        'API call reduction target not met. Review batching strategy.',
       );
     }
 
     if (metrics.cacheStats.size > 800) {
       recommendations.push(
-        'Cache size is high. Consider implementing more aggressive eviction.'
+        'Cache size is high. Consider implementing more aggressive eviction.',
       );
     }
 
     if (metrics.activeRequests > 50) {
       status = 'unhealthy';
       recommendations.push(
-        'High number of active requests. Check for request loops.'
+        'High number of active requests. Check for request loops.',
       );
     }
 
@@ -736,12 +736,12 @@ export const useOptimizedConflicts = (filters: any = {}) => {
 export const useConflictStream = (
   filters: any,
   onConflict: (conflict: ConflictData) => void,
-  onError: (error: Error) => void = console.error
+  onError: (error: Error) => void = console.error,
 ) => {
   return optimizedSchedulingAPI.createConflictStream(
     filters,
     onConflict,
-    onError
+    onError,
   );
 };
 

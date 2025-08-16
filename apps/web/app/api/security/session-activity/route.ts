@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
     if (!authResult.authenticated) {
       return NextResponse.json(
         { error: 'Authentication required' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -34,7 +34,7 @@ export async function POST(request: NextRequest) {
     if (!sessionId) {
       return NextResponse.json(
         { error: 'Session ID is required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
       authResult.user?.id,
       sessionId,
       activityType,
-      metadata
+      metadata,
     );
 
     return NextResponse.json({
@@ -55,7 +55,7 @@ export async function POST(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to update session activity' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -71,7 +71,7 @@ export async function GET(request: NextRequest) {
     if (!authResult.authenticated) {
       return NextResponse.json(
         { error: 'Authentication required' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -81,20 +81,20 @@ export async function GET(request: NextRequest) {
     if (!sessionId) {
       return NextResponse.json(
         { error: 'Session ID is required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     // Check session timeout status
     const timeoutStatus = await timeoutManager.checkSessionTimeout(
       authResult.user?.id,
-      sessionId
+      sessionId,
     );
 
     // Get timeout warning if applicable
     const warning = await timeoutManager.getTimeoutWarning(
       authResult.user?.id,
-      sessionId
+      sessionId,
     );
 
     return NextResponse.json({
@@ -106,7 +106,7 @@ export async function GET(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to check session timeout' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -122,7 +122,7 @@ export async function PUT(request: NextRequest) {
     if (!authResult.authenticated) {
       return NextResponse.json(
         { error: 'Authentication required' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -132,7 +132,7 @@ export async function PUT(request: NextRequest) {
     if (!sessionId) {
       return NextResponse.json(
         { error: 'Session ID is required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -140,7 +140,7 @@ export async function PUT(request: NextRequest) {
     const result = await timeoutManager.extendSession(
       authResult.user?.id,
       sessionId,
-      extensionMinutes
+      extensionMinutes,
     );
 
     return NextResponse.json({
@@ -153,7 +153,7 @@ export async function PUT(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to extend session timeout' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

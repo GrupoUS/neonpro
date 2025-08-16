@@ -49,7 +49,7 @@ const licenseSchema = z
   .max(20, 'License number too long')
   .regex(
     /^[A-Z0-9-]+$/,
-    'License number must contain only uppercase letters, numbers, and hyphens'
+    'License number must contain only uppercase letters, numbers, and hyphens',
   );
 
 // Professional suffix validation
@@ -57,7 +57,7 @@ const suffixSchema = z
   .string()
   .regex(
     /^[A-Z.]+$/,
-    'Professional suffix must be uppercase letters and periods'
+    'Professional suffix must be uppercase letters and periods',
   )
   .max(10, 'Professional suffix too long')
   .optional();
@@ -243,7 +243,7 @@ export const medicalSpecialtyCreateSchema = z.object({
     .max(20, 'Specialty code too long')
     .regex(
       /^[A-Z0-9_-]+$/,
-      'Specialty code must be uppercase letters, numbers, underscores, or hyphens'
+      'Specialty code must be uppercase letters, numbers, underscores, or hyphens',
     ),
 
   description: z.string().max(500).optional(),
@@ -380,7 +380,7 @@ export const professionalServiceCreateSchema = z.object({
         'friday',
         'saturday',
         'sunday',
-      ])
+      ]),
     )
     .optional(),
   max_patients_per_day: z.number().int().min(1).max(100).optional(),
@@ -594,7 +594,7 @@ export const credentialingWorkflowCreateSchema = z.object({
         type: z.enum(['email', 'phone', 'letter', 'meeting']),
         summary: z.string().max(500),
         sent_by: z.string().max(100),
-      })
+      }),
     )
     .optional(),
 });

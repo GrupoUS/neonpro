@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
     if (!authResult.authenticated) {
       return NextResponse.json(
         { error: 'Authentication required' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -30,7 +30,7 @@ export async function POST(request: NextRequest) {
     if (!sessionId) {
       return NextResponse.json(
         { error: 'Session ID is required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -39,7 +39,7 @@ export async function POST(request: NextRequest) {
       authResult.user?.id,
       sessionId,
       request,
-      { maxConcurrentSessions }
+      { maxConcurrentSessions },
     );
 
     return NextResponse.json({
@@ -52,7 +52,7 @@ export async function POST(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to initialize session security' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -69,7 +69,7 @@ export async function PUT(request: NextRequest) {
     if (!(sessionId && userId)) {
       return NextResponse.json(
         { error: 'Session ID and User ID are required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -77,7 +77,7 @@ export async function PUT(request: NextRequest) {
     const securityCheck = await sessionSecurity.performSecurityCheck(
       userId,
       sessionId,
-      request
+      request,
     );
 
     if (!securityCheck.allowed) {
@@ -87,7 +87,7 @@ export async function PUT(request: NextRequest) {
           reason: securityCheck.reason,
           action: securityCheck.action,
         },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -99,7 +99,7 @@ export async function PUT(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to validate session security' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -115,7 +115,7 @@ export async function GET(request: NextRequest) {
     if (!authResult.authenticated) {
       return NextResponse.json(
         { error: 'Authentication required' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -125,14 +125,14 @@ export async function GET(request: NextRequest) {
     if (!sessionId) {
       return NextResponse.json(
         { error: 'Session ID is required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     // Get session security status
     const status = await sessionSecurity.getSessionSecurityStatus(
       authResult.user?.id,
-      sessionId
+      sessionId,
     );
 
     return NextResponse.json({
@@ -143,7 +143,7 @@ export async function GET(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to get session security status' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -159,7 +159,7 @@ export async function DELETE(request: NextRequest) {
     if (!authResult.authenticated) {
       return NextResponse.json(
         { error: 'Authentication required' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -170,7 +170,7 @@ export async function DELETE(request: NextRequest) {
     if (!(sessionId || terminateAll)) {
       return NextResponse.json(
         { error: 'Session ID is required or set terminateAll=true' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -190,7 +190,7 @@ export async function DELETE(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to terminate session' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

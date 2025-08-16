@@ -29,7 +29,7 @@ export async function POST(request: NextRequest) {
         {
           error: 'Acesso negado. Apenas administradores podem atribuir roles.',
         },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -40,7 +40,7 @@ export async function POST(request: NextRequest) {
     if (!(target_user_id && new_role)) {
       return NextResponse.json(
         { error: 'ID do usuário e nova role são obrigatórios' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
         {
           error: `Role inválida. Valores permitidos: ${validRoles.join(', ')}`,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -65,7 +65,7 @@ export async function POST(request: NextRequest) {
     if (targetError) {
       return NextResponse.json(
         { error: 'Usuário não encontrado' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -73,7 +73,7 @@ export async function POST(request: NextRequest) {
     if (targetProfile.role === new_role) {
       return NextResponse.json(
         { error: 'O usuário já possui esta role' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -93,7 +93,7 @@ export async function POST(request: NextRequest) {
     if (updateError) {
       return NextResponse.json(
         { error: 'Erro ao atribuir nova role' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -145,7 +145,7 @@ export async function POST(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -176,7 +176,7 @@ export async function GET(request: NextRequest) {
           error:
             'Acesso negado. Apenas administradores podem visualizar esta informação.',
         },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -216,7 +216,7 @@ export async function GET(request: NextRequest) {
     if (profilesError) {
       return NextResponse.json(
         { error: 'Erro ao buscar perfis de usuários' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -249,7 +249,7 @@ export async function GET(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -60,7 +60,7 @@ export const POST = withErrorMonitoring(async (request: NextRequest) => {
     if (analysisError || !analysis) {
       return NextResponse.json(
         { error: 'Análise não encontrada ou acesso negado' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -73,7 +73,7 @@ export const POST = withErrorMonitoring(async (request: NextRequest) => {
     const expiresAt =
       validatedData.expiresAt ||
       new Date(
-        Date.now() + defaultExpiration * 24 * 60 * 60 * 1000
+        Date.now() + defaultExpiration * 24 * 60 * 60 * 1000,
       ).toISOString();
 
     // Hash password if provided
@@ -138,14 +138,13 @@ export const POST = withErrorMonitoring(async (request: NextRequest) => {
       },
     });
   } catch (error) {
-
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {
           error: 'Dados de entrada inválidos',
           details: error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -154,7 +153,7 @@ export const POST = withErrorMonitoring(async (request: NextRequest) => {
         error: 'Erro interno do servidor',
         details: error instanceof Error ? error.message : 'Erro desconhecido',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 });
@@ -172,7 +171,7 @@ export const GET = withErrorMonitoring(async (request: NextRequest) => {
     if (!shareId) {
       return NextResponse.json(
         { error: 'ID de compartilhamento é obrigatório' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -198,7 +197,7 @@ export const GET = withErrorMonitoring(async (request: NextRequest) => {
           analysis_annotations(*),
           analysis_performance(*)
         )
-      `
+      `,
       )
       .eq('id', shareId)
       .eq('is_active', true)
@@ -207,7 +206,7 @@ export const GET = withErrorMonitoring(async (request: NextRequest) => {
     if (shareError || !shareRecord) {
       return NextResponse.json(
         { error: 'Link de compartilhamento não encontrado ou expirado' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -215,7 +214,7 @@ export const GET = withErrorMonitoring(async (request: NextRequest) => {
     if (new Date(shareRecord.expires_at) < new Date()) {
       return NextResponse.json(
         { error: 'Link de compartilhamento expirado' },
-        { status: 410 }
+        { status: 410 },
       );
     }
 
@@ -228,7 +227,7 @@ export const GET = withErrorMonitoring(async (request: NextRequest) => {
     } else if (shareRecord.password_hash && !password) {
       return NextResponse.json(
         { error: 'Senha obrigatória', requiresPassword: true },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -240,7 +239,7 @@ export const GET = withErrorMonitoring(async (request: NextRequest) => {
     ) {
       return NextResponse.json(
         { error: 'Acesso restrito - email não autorizado' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -314,7 +313,7 @@ export const GET = withErrorMonitoring(async (request: NextRequest) => {
         error: 'Erro interno do servidor',
         details: error instanceof Error ? error.message : 'Erro desconhecido',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 });
@@ -339,7 +338,7 @@ export const DELETE = withErrorMonitoring(async (request: NextRequest) => {
     if (!shareId) {
       return NextResponse.json(
         { error: 'ID de compartilhamento é obrigatório' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -358,7 +357,7 @@ export const DELETE = withErrorMonitoring(async (request: NextRequest) => {
     if (error || !data) {
       return NextResponse.json(
         { error: 'Compartilhamento não encontrado ou acesso negado' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -381,7 +380,7 @@ export const DELETE = withErrorMonitoring(async (request: NextRequest) => {
         error: 'Erro interno do servidor',
         details: error instanceof Error ? error.message : 'Erro desconhecido',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 });

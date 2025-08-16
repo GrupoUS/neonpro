@@ -122,7 +122,7 @@ export async function GET(request: NextRequest) {
       .order('created_at', { ascending: false })
       .range(
         (validatedQuery.page - 1) * validatedQuery.limit,
-        validatedQuery.page * validatedQuery.limit - 1
+        validatedQuery.page * validatedQuery.limit - 1,
       );
 
     if (requestsError) {
@@ -173,13 +173,13 @@ export async function GET(request: NextRequest) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Invalid query parameters', details: error.errors },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -217,19 +217,19 @@ export async function POST(request: NextRequest) {
         success: true,
         data: dsrRequest,
       },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Invalid request data', details: error.errors },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -257,7 +257,7 @@ export async function PUT(request: NextRequest) {
     if (profile?.role !== 'admin') {
       return NextResponse.json(
         { error: 'Forbidden - Admin access required' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -269,7 +269,7 @@ export async function PUT(request: NextRequest) {
     if (!requestId) {
       return NextResponse.json(
         { error: 'Request ID is required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -293,7 +293,7 @@ export async function PUT(request: NextRequest) {
         {
           responseData: validatedData.responseData,
           adminNotes: validatedData.adminNotes,
-        }
+        },
       );
 
       return NextResponse.json({
@@ -364,13 +364,13 @@ export async function PUT(request: NextRequest) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Invalid request data', details: error.errors },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -65,7 +65,7 @@ export class NotificationService {
    * Respects user preferences and HIPAA compliance requirements
    */
   async sendNotification(
-    payload: NotificationPayload
+    payload: NotificationPayload,
   ): Promise<NotificationResult[]> {
     try {
       // Validate payload
@@ -73,7 +73,7 @@ export class NotificationService {
 
       // Get user preferences
       const preferences = await this.getUserPreferences(
-        validPayload.recipientId
+        validPayload.recipientId,
       );
       if (!preferences) {
         throw new Error('User preferences not found');
@@ -119,7 +119,7 @@ export class NotificationService {
         return await this.scheduleNotification(
           validPayload,
           channels,
-          preferences
+          preferences,
         );
       }
 
@@ -149,7 +149,7 @@ export class NotificationService {
   private async scheduleNotification(
     payload: NotificationPayload,
     channels: NotificationChannel[],
-    preferences: NotificationPreferences
+    preferences: NotificationPreferences,
   ): Promise<NotificationResult[]> {
     const results: NotificationResult[] = [];
 
@@ -199,7 +199,7 @@ export class NotificationService {
   private async sendImmediately(
     payload: NotificationPayload,
     channels: NotificationChannel[],
-    preferences: NotificationPreferences
+    preferences: NotificationPreferences,
   ): Promise<NotificationResult[]> {
     const results: NotificationResult[] = [];
 
@@ -260,7 +260,7 @@ export class NotificationService {
    * Get user notification preferences from database
    */
   private async getUserPreferences(
-    userId: string
+    userId: string,
   ): Promise<NotificationPreferences | null> {
     try {
       const { data, error } = await supabase
@@ -284,7 +284,7 @@ export class NotificationService {
    */
   private determineChannels(
     payload: NotificationPayload,
-    preferences: NotificationPreferences
+    preferences: NotificationPreferences,
   ): NotificationChannel[] {
     const channels: NotificationChannel[] = [];
 
@@ -293,7 +293,7 @@ export class NotificationService {
       const channelEnabled = this.isChannelEnabled(
         payload.channel,
         payload.type,
-        preferences
+        preferences,
       );
       if (channelEnabled) {
         channels.push(payload.channel);
@@ -324,7 +324,7 @@ export class NotificationService {
   private isChannelEnabled(
     channel: NotificationChannel,
     type: NotificationType,
-    preferences: NotificationPreferences
+    preferences: NotificationPreferences,
   ): boolean {
     const channelPrefs = preferences.channels[channel];
     if (!channelPrefs?.enabled) {
@@ -339,7 +339,7 @@ export class NotificationService {
    * Get channels appropriate for notification priority
    */
   private getChannelsForPriority(
-    priority: NotificationPriority
+    priority: NotificationPriority,
   ): NotificationChannel[] {
     switch (priority) {
       case 'urgent':
@@ -358,7 +358,7 @@ export class NotificationService {
    */
   private getChannelsForType(
     type: NotificationType,
-    preferences: NotificationPreferences
+    preferences: NotificationPreferences,
   ): NotificationChannel[] {
     const channels: NotificationChannel[] = [];
 
@@ -368,7 +368,7 @@ export class NotificationService {
         if (channelPrefs.enabled && channelPrefs.enabledTypes.includes(type)) {
           channels.push(channelKey as NotificationChannel);
         }
-      }
+      },
     );
 
     return channels;
@@ -378,7 +378,7 @@ export class NotificationService {
    * Send in-app notification
    */
   private async sendInAppNotification(
-    payload: NotificationPayload
+    payload: NotificationPayload,
   ): Promise<NotificationResult> {
     try {
       // Store notification in database for in-app display
@@ -398,7 +398,7 @@ export class NotificationService {
 
       if (error) {
         throw new Error(
-          `Failed to create in-app notification: ${error.message}`
+          `Failed to create in-app notification: ${error.message}`,
         );
       }
 
@@ -480,7 +480,7 @@ export class NotificationService {
    */
   async updateUserPreferences(
     userId: string,
-    preferences: Partial<NotificationPreferences>
+    preferences: Partial<NotificationPreferences>,
   ): Promise<boolean> {
     try {
       const { error } = await supabase.from('notification_preferences').upsert({

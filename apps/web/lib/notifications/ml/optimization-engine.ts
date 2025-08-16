@@ -214,7 +214,7 @@ export class NotificationMLEngine {
    */
   async buildUserProfile(
     userId: string,
-    clinicId: string
+    clinicId: string,
   ): Promise<UserProfile> {
     // Buscar dados básicos do usuário
     const { data: user, error: userError } = await this.supabase
@@ -341,7 +341,7 @@ export class NotificationMLEngine {
 
     // Risco de churn
     const lastEngagement = notificationHistory.find(
-      (n) => n.opened_at || n.clicked_at
+      (n) => n.opened_at || n.clicked_at,
     );
     const daysSinceLastEngagement = lastEngagement
       ? (Date.now() - new Date(lastEngagement.sent_at).getTime()) /
@@ -429,7 +429,7 @@ export class NotificationMLEngine {
       type: NotificationType;
       scheduledFor?: Date;
       channels?: NotificationChannel[];
-    }
+    },
   ): Promise<OptimizationResult> {
     // Obter perfil do usuário
     const profile = await this.buildUserProfile(userId, clinicId);
@@ -437,19 +437,19 @@ export class NotificationMLEngine {
     // Otimização de canal
     const channelOptimization = await this.optimizeChannel(
       profile,
-      baseNotification.channels
+      baseNotification.channels,
     );
 
     // Otimização de timing
     const timingOptimization = await this.optimizeTiming(
       profile,
-      baseNotification.scheduledFor || new Date()
+      baseNotification.scheduledFor || new Date(),
     );
 
     // Personalização de conteúdo
     const contentOptimization = await this.personalizeContent(
       profile,
-      baseNotification.content
+      baseNotification.content,
     );
 
     // Otimização de frequência
@@ -477,7 +477,7 @@ export class NotificationMLEngine {
    */
   private async optimizeChannel(
     profile: UserProfile,
-    availableChannels?: NotificationChannel[]
+    availableChannels?: NotificationChannel[],
   ): Promise<OptimizationResult['optimizations']['channel']> {
     const channels = availableChannels || Object.values(NotificationChannel);
     const _engagementModel = this.models.get('engagement');
@@ -529,7 +529,7 @@ export class NotificationMLEngine {
    */
   private async optimizeTiming(
     profile: UserProfile,
-    baseTime: Date
+    baseTime: Date,
   ): Promise<OptimizationResult['optimizations']['timing']> {
     const optimizedTime = new Date(baseTime);
     const factors: string[] = [];
@@ -577,7 +577,7 @@ export class NotificationMLEngine {
 
     const confidence = Math.min(
       0.6 + (profile.history.totalNotifications / 100) * 0.4,
-      0.95
+      0.95,
     );
 
     return {
@@ -592,7 +592,7 @@ export class NotificationMLEngine {
    */
   private async personalizeContent(
     profile: UserProfile,
-    baseContent: string
+    baseContent: string,
   ): Promise<OptimizationResult['optimizations']['content']> {
     let personalizedContent = baseContent;
     const adjustments: string[] = [];
@@ -637,7 +637,7 @@ export class NotificationMLEngine {
    * Otimiza frequência de mensagens
    */
   private async optimizeFrequency(
-    profile: UserProfile
+    profile: UserProfile,
   ): Promise<OptimizationResult['optimizations']['frequency']> {
     let recommendedFrequency: number;
 
@@ -664,7 +664,7 @@ export class NotificationMLEngine {
 
     const confidence = Math.min(
       0.5 + (profile.history.totalNotifications / 50) * 0.4,
-      0.9
+      0.9,
     );
 
     return {
@@ -717,11 +717,11 @@ export class NotificationMLEngine {
   private performKMeans(
     features: number[][],
     profiles: any[],
-    k: number
+    k: number,
   ): SegmentationResult['segments'] {
     // Inicializar centroids aleatoriamente
     const centroids = Array.from({ length: k }, () =>
-      features[Math.floor(Math.random() * features.length)].slice()
+      features[Math.floor(Math.random() * features.length)].slice(),
     );
 
     let assignments = new Array(features.length).fill(0);
@@ -749,7 +749,7 @@ export class NotificationMLEngine {
 
       // Verificar convergência
       converged = newAssignments.every(
-        (assignment, i) => assignment === assignments[i]
+        (assignment, i) => assignment === assignments[i],
       );
       assignments = newAssignments;
 
@@ -779,7 +779,7 @@ export class NotificationMLEngine {
       const avgEngagement =
         segmentUsers.reduce(
           (sum, user) => sum + user.behavior.engagementScore,
-          0
+          0,
         ) / segmentUsers.length;
       const avgChurnRisk =
         segmentUsers.reduce((sum, user) => sum + user.behavior.churnRisk, 0) /
@@ -871,7 +871,7 @@ export class NotificationMLEngine {
           `
           *,
           profiles!inner(*)
-        `
+        `,
         )
         .eq('profiles.clinic_id', clinicId)
         .not('opened_at', 'is', null)
@@ -925,7 +925,7 @@ export class NotificationMLEngine {
       const currentChannelWeight = model.weights.channel.get(channel) || 0;
       model.weights.channel.set(
         channel,
-        currentChannelWeight + this.config.learningRate * (label - 0.5)
+        currentChannelWeight + this.config.learningRate * (label - 0.5),
       );
     });
 

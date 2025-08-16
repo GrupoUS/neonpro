@@ -96,7 +96,7 @@ export default function DashboardPage() {
             trendLabel="estável"
             trendValue="0%"
             value="87%"
-            variant="warning"
+            status="warning"
           />
         </div>
 

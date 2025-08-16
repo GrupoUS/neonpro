@@ -148,7 +148,7 @@ class HealthcareConnectionRetryManager {
       patientId?: string;
       userId: string;
       requiresCompliance?: boolean;
-    }
+    },
   ): Promise<RetryResult<T>> {
     const startTime = Date.now();
     const config = this.retryConfigs[options.priority];
@@ -165,7 +165,7 @@ class HealthcareConnectionRetryManager {
         attempts: 0,
         totalTime: Date.now() - startTime,
         finalError: new Error(
-          'Circuit breaker is open - service temporarily unavailable'
+          'Circuit breaker is open - service temporarily unavailable',
         ),
         circuitBreakerTriggered: true,
         patientSafetyEnsured: false,
@@ -184,14 +184,14 @@ class HealthcareConnectionRetryManager {
           options.clinicId,
           options.priority === 'emergency' || options.priority === 'critical'
             ? 'critical'
-            : 'standard'
+            : 'standard',
         );
 
         // Execute operation with timeout based on priority
         const timeoutMs = this.getTimeoutForPriority(options.priority);
         const result = await this.executeWithTimeout(
           operation(client),
-          timeoutMs
+          timeoutMs,
         );
 
         // Success - reset circuit breaker
@@ -217,7 +217,7 @@ class HealthcareConnectionRetryManager {
 
         // Classify error for healthcare context
         const errorClassification = this.classifyHealthcareError(
-          error as Error
+          error as Error,
         );
 
         // Log healthcare-specific error information
@@ -225,7 +225,7 @@ class HealthcareConnectionRetryManager {
           error as Error,
           options,
           attempts,
-          errorClassification
+          errorClassification,
         );
 
         // Check if this error requires immediate escalation
@@ -233,7 +233,7 @@ class HealthcareConnectionRetryManager {
           await this.escalateEmergency(
             error as Error,
             options,
-            errorClassification
+            errorClassification,
           );
           break;
         }
@@ -263,7 +263,7 @@ class HealthcareConnectionRetryManager {
       lastError!,
       options,
       attempts,
-      totalTime
+      totalTime,
     );
 
     return {
@@ -388,11 +388,11 @@ class HealthcareConnectionRetryManager {
    */
   private calculateDelay(
     attempt: number,
-    config: HealthcareRetryConfig
+    config: HealthcareRetryConfig,
   ): number {
     const exponentialDelay = Math.min(
       config.baseDelay * config.backoffMultiplier ** (attempt - 1),
-      config.maxDelay
+      config.maxDelay,
     );
 
     if (config.jitter) {
@@ -425,7 +425,7 @@ class HealthcareConnectionRetryManager {
    */
   private async executeWithTimeout<T>(
     promise: Promise<T>,
-    timeoutMs: number
+    timeoutMs: number,
   ): Promise<T> {
     return Promise.race([
       promise,
@@ -433,9 +433,9 @@ class HealthcareConnectionRetryManager {
         setTimeout(
           () =>
             reject(
-              new Error(`Healthcare operation timeout after ${timeoutMs}ms`)
+              new Error(`Healthcare operation timeout after ${timeoutMs}ms`),
             ),
-          timeoutMs
+          timeoutMs,
         );
       }),
     ]);
@@ -448,7 +448,7 @@ class HealthcareConnectionRetryManager {
     error: Error,
     options: any,
     attempt: number,
-    classification: HealthcareErrorClassification
+    classification: HealthcareErrorClassification,
   ): Promise<void> {
     const _errorLog = {
       timestamp: new Date().toISOString(),
@@ -481,7 +481,7 @@ class HealthcareConnectionRetryManager {
   private async escalateEmergency(
     _error: Error,
     _options: any,
-    _classification: HealthcareErrorClassification
+    _classification: HealthcareErrorClassification,
   ): Promise<void> {
     // Additional escalation logic would go here
     // e.g., alert healthcare administrators, activate backup systems
@@ -494,7 +494,7 @@ class HealthcareConnectionRetryManager {
     error: Error,
     options: any,
     _attempts: number,
-    _totalTime: number
+    _totalTime: number,
   ): Promise<boolean> {
     const classification = this.classifyHealthcareError(error);
 
@@ -513,7 +513,7 @@ class HealthcareConnectionRetryManager {
   private async activatePatientSafetyProtocols(
     _error: Error,
     _options: any,
-    _classification: HealthcareErrorClassification
+    _classification: HealthcareErrorClassification,
   ): Promise<void> {
     // Implement specific safety protocols
     // 1. Isolate affected connections
@@ -527,7 +527,7 @@ class HealthcareConnectionRetryManager {
    */
   private async validateHealthcareCompliance<T>(
     options: any,
-    _result: T
+    _result: T,
   ): Promise<boolean> {
     try {
       // Implement LGPD compliance validation
@@ -657,7 +657,7 @@ class HealthcareConnectionRetryManager {
     openCircuitBreakers: number;
   } {
     const openBreakers = Array.from(this.circuitBreakers.values()).filter(
-      (b) => b.state === 'open'
+      (b) => b.state === 'open',
     ).length;
 
     return {
@@ -691,7 +691,7 @@ export const executeWithHealthcareRetry = async <T>(
     patientId?: string;
     userId?: string;
     requiresCompliance?: boolean;
-  }
+  },
 ): Promise<RetryResult<T>> => {
   const retryManager = getRetryManager();
 

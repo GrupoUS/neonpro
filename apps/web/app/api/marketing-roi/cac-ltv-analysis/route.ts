@@ -26,7 +26,7 @@ async function validateUserAndClinic(request: NextRequest) {
     return {
       error: NextResponse.json(
         { error: 'clinic_id is required' },
-        { status: 400 }
+        { status: 400 },
       ),
     };
   }
@@ -42,7 +42,7 @@ async function validateUserAndClinic(request: NextRequest) {
     return {
       error: NextResponse.json(
         { error: 'Access denied to clinic' },
-        { status: 403 }
+        { status: 403 },
       ),
     };
   }
@@ -77,21 +77,21 @@ export async function GET(request: NextRequest) {
     if (!(start_date && end_date)) {
       return NextResponse.json(
         { error: 'start_date and end_date are required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     const analysis = await marketingROIService.getCACLTVAnalysis(
       clinicId,
       start_date,
-      end_date
+      end_date,
     );
 
     return NextResponse.json(analysis);
   } catch (error: any) {
     return NextResponse.json(
       { error: 'Internal server error', message: error.message },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

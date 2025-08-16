@@ -35,7 +35,7 @@ export class AutomatedProtocolOptimizationService {
 
   // Protocol Version Management
   async createProtocolVersion(
-    data: CreateProtocolVersionRequest
+    data: CreateProtocolVersionRequest,
   ): Promise<ProtocolVersion> {
     const { data: result, error } = await this.supabase
       .from('protocol_versions')
@@ -102,7 +102,7 @@ export class AutomatedProtocolOptimizationService {
           outcome_count: outcomeCount,
           feedback_count: feedbackCount,
         };
-      })
+      }),
     );
 
     return { data: protocolsWithCounts, total: count || 0 };
@@ -123,7 +123,7 @@ export class AutomatedProtocolOptimizationService {
 
   async updateProtocolVersion(
     id: string,
-    data: UpdateProtocolVersionRequest
+    data: UpdateProtocolVersionRequest,
   ): Promise<ProtocolVersion> {
     const { data: result, error } = await this.supabase
       .from('protocol_versions')
@@ -154,7 +154,7 @@ export class AutomatedProtocolOptimizationService {
 
   // Protocol Outcome Tracking
   async createProtocolOutcome(
-    data: CreateProtocolOutcomeRequest
+    data: CreateProtocolOutcomeRequest,
   ): Promise<ProtocolOutcome> {
     const { data: result, error } = await this.supabase
       .from('protocol_outcomes')
@@ -216,7 +216,7 @@ export class AutomatedProtocolOptimizationService {
   }
 
   private async getProtocolOutcomeCount(
-    protocol_version_id: string
+    protocol_version_id: string,
   ): Promise<number> {
     const { count, error } = await this.supabase
       .from('protocol_outcomes')
@@ -231,7 +231,7 @@ export class AutomatedProtocolOptimizationService {
 
   // Protocol Feedback Management
   async createProtocolFeedback(
-    data: CreateProtocolFeedbackRequest
+    data: CreateProtocolFeedbackRequest,
   ): Promise<ProtocolFeedback> {
     const { data: result, error } = await this.supabase
       .from('protocol_feedback')
@@ -300,7 +300,7 @@ export class AutomatedProtocolOptimizationService {
 
   async updateProtocolFeedback(
     id: string,
-    data: UpdateProtocolFeedbackRequest
+    data: UpdateProtocolFeedbackRequest,
   ): Promise<ProtocolFeedback> {
     const { data: result, error } = await this.supabase
       .from('protocol_feedback')
@@ -334,7 +334,7 @@ export class AutomatedProtocolOptimizationService {
 
   // Optimization Analysis Engine
   async triggerOptimizationAnalysis(
-    protocol_id: string
+    protocol_id: string,
   ): Promise<OptimizationResult> {
     // Get protocol data and recent outcomes
     const [protocol, outcomes, feedback] = await Promise.all([
@@ -351,7 +351,7 @@ export class AutomatedProtocolOptimizationService {
     const analysis = await this.performOptimizationAnalysis(
       protocol,
       outcomes.data,
-      feedback.data
+      feedback.data,
     );
 
     // Store optimization results
@@ -382,7 +382,7 @@ export class AutomatedProtocolOptimizationService {
   private async performOptimizationAnalysis(
     protocol: ProtocolVersion,
     outcomes: ProtocolOutcome[],
-    feedback: ProtocolFeedback[]
+    feedback: ProtocolFeedback[],
   ): Promise<{
     metrics: Record<string, any>;
     validation: Record<string, any>;
@@ -406,18 +406,18 @@ export class AutomatedProtocolOptimizationService {
 
     const complicationRate =
       (outcomes.filter(
-        (o) => Array.isArray(o.complications) && o.complications.length > 0
+        (o) => Array.isArray(o.complications) && o.complications.length > 0,
       ).length /
         outcomes.length) *
       100;
 
     // Analyze feedback patterns
     const criticalFeedback = feedback.filter(
-      (f) => f.priority_level === 'critical'
+      (f) => f.priority_level === 'critical',
     ).length;
     const _improvementSuggestions = feedback.filter(
       (f) =>
-        f.feedback_type === 'improvement' || f.feedback_type === 'suggestion'
+        f.feedback_type === 'improvement' || f.feedback_type === 'suggestion',
     ).length;
 
     // Generate recommendations based on analysis
@@ -456,7 +456,7 @@ export class AutomatedProtocolOptimizationService {
       100,
       outcomes.length * 2 +
         feedback.length * 1.5 +
-        (protocol.optimization_data ? 10 : 0)
+        (protocol.optimization_data ? 10 : 0),
     );
 
     // Calculate statistical significance (simplified)
@@ -480,7 +480,7 @@ export class AutomatedProtocolOptimizationService {
       significance,
       recommendations: {
         high_priority: recommendations.filter(
-          (r) => r.priority === 'critical' || r.priority === 'high'
+          (r) => r.priority === 'critical' || r.priority === 'high',
         ),
         medium_priority: recommendations.filter((r) => r.priority === 'medium'),
         all_recommendations: recommendations,
@@ -493,10 +493,10 @@ export class AutomatedProtocolOptimizationService {
             outcomes.length > 0
               ? {
                   start: Math.min(
-                    ...outcomes.map((o) => new Date(o.outcome_date).getTime())
+                    ...outcomes.map((o) => new Date(o.outcome_date).getTime()),
                   ),
                   end: Math.max(
-                    ...outcomes.map((o) => new Date(o.outcome_date).getTime())
+                    ...outcomes.map((o) => new Date(o.outcome_date).getTime()),
                   ),
                 }
               : null,
@@ -507,7 +507,7 @@ export class AutomatedProtocolOptimizationService {
                 acc[f.feedback_type] = (acc[f.feedback_type] || 0) + 1;
                 return acc;
               },
-              {} as Record<string, number>
+              {} as Record<string, number>,
             ),
           },
         },
@@ -516,7 +516,7 @@ export class AutomatedProtocolOptimizationService {
   }
 
   async getOptimizationResults(
-    protocol_id?: string
+    protocol_id?: string,
   ): Promise<ProtocolOptimizationQueue> {
     let query = this.supabase.from('optimization_results').select('*');
 
@@ -539,16 +539,16 @@ export class AutomatedProtocolOptimizationService {
         (r) =>
           r.confidence_score &&
           r.confidence_score >= 80 &&
-          r.improvement_metrics?.recommendations?.high_priority?.length > 0
+          r.improvement_metrics?.recommendations?.high_priority?.length > 0,
       ),
       medium_priority: results.filter(
         (r) =>
           r.confidence_score &&
           r.confidence_score >= 60 &&
-          r.confidence_score < 80
+          r.confidence_score < 80,
       ),
       low_priority: results.filter(
-        (r) => r.confidence_score && r.confidence_score < 60
+        (r) => r.confidence_score && r.confidence_score < 60,
       ),
       review_required: results.filter((r) => r.human_review_required),
     };
@@ -556,7 +556,7 @@ export class AutomatedProtocolOptimizationService {
 
   // A/B Testing and Experiments
   async createProtocolExperiment(
-    data: CreateProtocolExperimentRequest
+    data: CreateProtocolExperimentRequest,
   ): Promise<ProtocolExperiment> {
     const { data: result, error } = await this.supabase
       .from('protocol_experiments')
@@ -577,7 +577,7 @@ export class AutomatedProtocolOptimizationService {
 
   async updateProtocolExperiment(
     id: string,
-    data: UpdateProtocolExperimentRequest
+    data: UpdateProtocolExperimentRequest,
   ): Promise<ProtocolExperiment> {
     const { data: result, error } = await this.supabase
       .from('protocol_experiments')
@@ -626,7 +626,7 @@ export class AutomatedProtocolOptimizationService {
   }
 
   async analyzeExperimentResults(
-    experiment_id: string
+    experiment_id: string,
   ): Promise<ProtocolExperimentResults> {
     const { data: experiment, error } = await this.supabase
       .from('protocol_experiments')
@@ -657,7 +657,7 @@ export class AutomatedProtocolOptimizationService {
       controlOutcomes.data.length > 0
         ? (controlOutcomes.data as any[]).reduce(
             (sum, o) => sum + o.success_score,
-            0
+            0,
           ) / controlOutcomes.data.length
         : 0;
 
@@ -665,7 +665,7 @@ export class AutomatedProtocolOptimizationService {
       testOutcomes.data.length > 0
         ? (testOutcomes.data as any[]).reduce(
             (sum, o) => sum + o.success_score,
-            0
+            0,
           ) / testOutcomes.data.length
         : 0;
 
@@ -676,7 +676,7 @@ export class AutomatedProtocolOptimizationService {
     // Simplified statistical calculations
     const standardError = Math.sqrt(
       (controlMean * (100 - controlMean)) / controlOutcomes.data.length +
-        (testMean * (100 - testMean)) / testOutcomes.data.length
+        (testMean * (100 - testMean)) / testOutcomes.data.length,
     );
 
     const zScore = standardError > 0 ? effectSize / standardError : 0;
@@ -718,7 +718,7 @@ export class AutomatedProtocolOptimizationService {
 
   // Evidence and Compliance Management
   async createProtocolEvidence(
-    data: CreateProtocolEvidenceRequest
+    data: CreateProtocolEvidenceRequest,
   ): Promise<ProtocolEvidence> {
     const { data: result, error } = await this.supabase
       .from('protocol_evidence')
@@ -752,7 +752,7 @@ export class AutomatedProtocolOptimizationService {
 
   // Protocol Implementation and Distribution
   async createProtocolImplementation(
-    data: CreateProtocolImplementationRequest
+    data: CreateProtocolImplementationRequest,
   ): Promise<ProtocolImplementation> {
     const { data: result, error } = await this.supabase
       .from('protocol_implementations')
@@ -767,7 +767,7 @@ export class AutomatedProtocolOptimizationService {
 
     if (error) {
       throw new Error(
-        `Failed to create protocol implementation: ${error.message}`
+        `Failed to create protocol implementation: ${error.message}`,
       );
     }
     return result;
@@ -775,7 +775,7 @@ export class AutomatedProtocolOptimizationService {
 
   async updateProtocolImplementation(
     id: string,
-    data: UpdateProtocolImplementationRequest
+    data: UpdateProtocolImplementationRequest,
   ): Promise<ProtocolImplementation> {
     const { data: result, error } = await this.supabase
       .from('protocol_implementations')
@@ -789,14 +789,14 @@ export class AutomatedProtocolOptimizationService {
 
     if (error) {
       throw new Error(
-        `Failed to update protocol implementation: ${error.message}`
+        `Failed to update protocol implementation: ${error.message}`,
       );
     }
     return result;
   }
 
   async getProtocolImplementations(
-    protocol_version_id?: string
+    protocol_version_id?: string,
   ): Promise<ProtocolImplementation[]> {
     let query = this.supabase.from('protocol_implementations').select('*');
 
@@ -810,7 +810,7 @@ export class AutomatedProtocolOptimizationService {
 
     if (error) {
       throw new Error(
-        `Failed to fetch protocol implementations: ${error.message}`
+        `Failed to fetch protocol implementations: ${error.message}`,
       );
     }
     return data || [];
@@ -818,7 +818,7 @@ export class AutomatedProtocolOptimizationService {
 
   // Analytics and Reporting
   async generateProtocolAnalytics(
-    request: ProtocolAnalyticsRequest
+    request: ProtocolAnalyticsRequest,
   ): Promise<ProtocolAnalytics> {
     const { protocol_version_id, analytics_period, period_start, period_end } =
       request;
@@ -833,7 +833,7 @@ export class AutomatedProtocolOptimizationService {
     if (protocol_version_id) {
       outcomeQuery = outcomeQuery.eq(
         'protocol_version_id',
-        protocol_version_id
+        protocol_version_id,
       );
     }
 
@@ -841,7 +841,7 @@ export class AutomatedProtocolOptimizationService {
 
     if (outcomeError) {
       throw new Error(
-        `Failed to fetch outcomes for analytics: ${outcomeError.message}`
+        `Failed to fetch outcomes for analytics: ${outcomeError.message}`,
       );
     }
 
@@ -862,7 +862,7 @@ export class AutomatedProtocolOptimizationService {
     const complicationRate =
       usageCount > 0
         ? (outcomes?.filter(
-            (o) => Array.isArray(o.complications) && o.complications.length > 0
+            (o) => Array.isArray(o.complications) && o.complications.length > 0,
           ).length /
             usageCount) *
           100
@@ -885,11 +885,11 @@ export class AutomatedProtocolOptimizationService {
           outcomes?.filter((o) => o.success_score >= 75).length || 0,
         complications:
           outcomes?.filter(
-            (o) => Array.isArray(o.complications) && o.complications.length > 0
+            (o) => Array.isArray(o.complications) && o.complications.length > 0,
           ).length || 0,
         side_effects:
           outcomes?.filter(
-            (o) => Array.isArray(o.side_effects) && o.side_effects.length > 0
+            (o) => Array.isArray(o.side_effects) && o.side_effects.length > 0,
           ).length || 0,
       },
       calculated_at: new Date().toISOString(),
@@ -911,7 +911,7 @@ export class AutomatedProtocolOptimizationService {
   async generatePerformanceReport(
     protocol_version_id: string,
     period_start: string,
-    period_end: string
+    period_end: string,
   ): Promise<ProtocolPerformanceReport> {
     const [protocol, analytics, _outcomes, feedback] = await Promise.all([
       this.getProtocolVersionById(protocol_version_id),
@@ -986,7 +986,7 @@ export class AutomatedProtocolOptimizationService {
   }
 
   async getProtocolOptimizationAnalysis(
-    protocol_id: string
+    protocol_id: string,
   ): Promise<ProtocolOptimizationAnalysis> {
     const [protocol, outcomes, feedback, _optimizationResults] =
       await Promise.all([
@@ -1019,7 +1019,7 @@ export class AutomatedProtocolOptimizationService {
         outcomes.data.length > 0
           ? (outcomes.data.filter(
               (o) =>
-                Array.isArray(o.complications) && o.complications.length > 0
+                Array.isArray(o.complications) && o.complications.length > 0,
             ).length /
               outcomes.data.length) *
             100
@@ -1031,7 +1031,7 @@ export class AutomatedProtocolOptimizationService {
         type: 'success_rate_optimization',
         potential_improvement: Math.max(
           0,
-          85 - currentPerformance.success_rate
+          85 - currentPerformance.success_rate,
         ),
         confidence_score: outcomes.data.length >= 10 ? 85 : 60,
         recommendation:
@@ -1043,7 +1043,7 @@ export class AutomatedProtocolOptimizationService {
         type: 'complication_reduction',
         potential_improvement: Math.max(
           0,
-          currentPerformance.complication_rate - 5
+          currentPerformance.complication_rate - 5,
         ),
         confidence_score: outcomes.data.length >= 20 ? 90 : 65,
         recommendation:

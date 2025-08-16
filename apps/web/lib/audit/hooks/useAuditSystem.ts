@@ -77,7 +77,7 @@ type UseSecurityAlertsReturn = {
   markAsRead: (alertId: string) => Promise<void>;
   updateStatus: (
     alertId: string,
-    status: SecurityAlert['status']
+    status: SecurityAlert['status'],
   ) => Promise<void>;
   assignAlert: (alertId: string, userId: string) => Promise<void>;
 };
@@ -89,12 +89,12 @@ type UseAuditReportsReturn = {
   generateReport: (
     title: string,
     description: string,
-    filters: AuditQueryFilters
+    filters: AuditQueryFilters,
   ) => Promise<AuditReport | null>;
   deleteReport: (reportId: string) => Promise<void>;
   exportReport: (
     reportId: string,
-    format: 'json' | 'csv' | 'pdf'
+    format: 'json' | 'csv' | 'pdf',
   ) => Promise<void>;
   refresh: () => Promise<void>;
 };
@@ -109,18 +109,18 @@ type UseAuditStatisticsReturn = {
 
 type UseAuditLoggerReturn = {
   logEvent: (
-    event: Omit<AuditEvent, 'id' | 'timestamp' | 'checksum'>
+    event: Omit<AuditEvent, 'id' | 'timestamp' | 'checksum'>,
   ) => Promise<void>;
   logUserAction: (
     action: string,
     resourceType?: string,
     resourceId?: string,
-    metadata?: Record<string, any>
+    metadata?: Record<string, any>,
   ) => Promise<void>;
   logSecurityEvent: (
     eventType: AuditEventType,
     description: string,
-    severity?: AuditSeverity
+    severity?: AuditSeverity,
   ) => Promise<void>;
 };
 
@@ -132,7 +132,7 @@ type UseAuditLoggerReturn = {
  * Hook para consulta e gestão de logs de auditoria
  */
 export function useAuditLogs(
-  options: UseAuditLogsOptions = {}
+  options: UseAuditLogsOptions = {},
 ): UseAuditLogsReturn {
   const {
     autoRefresh = false,
@@ -202,7 +202,7 @@ export function useAuditLogs(
                 event.user_id || '',
                 `"${event.description.replace(/"/g, '""')}"`,
                 event.ip_address || '',
-              ].join(',')
+              ].join(','),
             ),
           ].join('\n');
 
@@ -227,7 +227,7 @@ export function useAuditLogs(
         });
       }
     },
-    [filters, toast]
+    [filters, toast],
   );
 
   // Auto refresh
@@ -296,7 +296,7 @@ export function useSecurityAlerts(): UseSecurityAlertsReturn {
 
       setAlerts(formattedAlerts);
       setUnreadCount(
-        formattedAlerts.filter((alert) => alert.status === 'open').length
+        formattedAlerts.filter((alert) => alert.status === 'open').length,
       );
     } catch (err) {
       const errorMessage =
@@ -333,7 +333,7 @@ export function useSecurityAlerts(): UseSecurityAlertsReturn {
         });
       }
     },
-    [supabase, fetchAlerts, toast]
+    [supabase, fetchAlerts, toast],
   );
 
   const updateStatus = useCallback(
@@ -367,7 +367,7 @@ export function useSecurityAlerts(): UseSecurityAlertsReturn {
         });
       }
     },
-    [supabase, fetchAlerts, toast]
+    [supabase, fetchAlerts, toast],
   );
 
   const assignAlert = useCallback(
@@ -396,7 +396,7 @@ export function useSecurityAlerts(): UseSecurityAlertsReturn {
         });
       }
     },
-    [supabase, fetchAlerts, toast]
+    [supabase, fetchAlerts, toast],
   );
 
   useEffect(() => {
@@ -414,7 +414,7 @@ export function useSecurityAlerts(): UseSecurityAlertsReturn {
         },
         () => {
           fetchAlerts();
-        }
+        },
       )
       .subscribe();
 
@@ -490,7 +490,7 @@ export function useAuditReports(): UseAuditReportsReturn {
     async (
       title: string,
       description: string,
-      filters: AuditQueryFilters
+      filters: AuditQueryFilters,
     ): Promise<AuditReport | null> => {
       if (!user) {
         toast({
@@ -508,7 +508,7 @@ export function useAuditReports(): UseAuditReportsReturn {
           title,
           description,
           filters,
-          user.id
+          user.id,
         );
 
         await fetchReports();
@@ -530,7 +530,7 @@ export function useAuditReports(): UseAuditReportsReturn {
         setLoading(false);
       }
     },
-    [user, fetchReports, toast]
+    [user, fetchReports, toast],
   );
 
   const deleteReport = useCallback(
@@ -559,7 +559,7 @@ export function useAuditReports(): UseAuditReportsReturn {
         });
       }
     },
-    [supabase, fetchReports, toast]
+    [supabase, fetchReports, toast],
   );
 
   const exportReport = useCallback(
@@ -578,7 +578,7 @@ export function useAuditReports(): UseAuditReportsReturn {
         });
       }
     },
-    [toast]
+    [toast],
   );
 
   useEffect(() => {
@@ -630,7 +630,7 @@ export function useAuditStatistics(): UseAuditStatisticsReturn {
         setLoading(false);
       }
     },
-    [toast]
+    [toast],
   );
 
   const refresh = useCallback(async () => {
@@ -678,7 +678,7 @@ export function useAuditLogger(): UseAuditLoggerReturn {
         // Não mostra toast para não interferir na UX
       }
     },
-    [user]
+    [user],
   );
 
   const logUserAction = useCallback(
@@ -686,7 +686,7 @@ export function useAuditLogger(): UseAuditLoggerReturn {
       action: string,
       resourceType?: string,
       resourceId?: string,
-      metadata?: Record<string, any>
+      metadata?: Record<string, any>,
     ) => {
       await logEvent({
         event_type: `user.${action}` as AuditEventType,
@@ -697,14 +697,14 @@ export function useAuditLogger(): UseAuditLoggerReturn {
         metadata,
       });
     },
-    [logEvent]
+    [logEvent],
   );
 
   const logSecurityEvent = useCallback(
     async (
       eventType: AuditEventType,
       description: string,
-      severity: AuditSeverity = AuditSeverity.MEDIUM
+      severity: AuditSeverity = AuditSeverity.MEDIUM,
     ) => {
       await logEvent({
         event_type: eventType,
@@ -712,7 +712,7 @@ export function useAuditLogger(): UseAuditLoggerReturn {
         description,
       });
     },
-    [logEvent]
+    [logEvent],
   );
 
   return {

@@ -256,7 +256,7 @@ export enum ExportErrorCode {
 // Utility Types
 export type ExportHandler = (
   data: any,
-  options: ExportOptions
+  options: ExportOptions,
 ) => Buffer | string;
 export type ValidationResult =
   | { valid: true }

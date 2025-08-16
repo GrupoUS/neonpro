@@ -39,7 +39,7 @@ export class MemoryRateLimiter {
       () => {
         this.cleanup();
       },
-      5 * 60 * 1000
+      5 * 60 * 1000,
     );
   }
 
@@ -48,7 +48,7 @@ export class MemoryRateLimiter {
    */
   async checkRateLimit(
     identifier: string,
-    config: RateLimitConfig
+    config: RateLimitConfig,
   ): Promise<{
     allowed: boolean;
     limit: number;
@@ -174,7 +174,7 @@ export class MemoryRateLimiter {
    */
   async getRateLimitStatus(
     identifier: string,
-    config: RateLimitConfig
+    config: RateLimitConfig,
   ): Promise<{
     limit: number;
     remaining: number;
@@ -221,7 +221,7 @@ export const rateLimiter = new MemoryRateLimiter();
 export function createRateLimitIdentifier(
   ip: string,
   userId?: string,
-  endpoint?: string
+  endpoint?: string,
 ): string {
   const parts = [ip];
 

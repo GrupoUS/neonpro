@@ -396,7 +396,7 @@ export class StockOutputManager {
     try {
       // 1. Validate stock availability with FIFO optimization
       const stockValidation = await this.validateStockAvailabilityWithFIFO(
-        data.itens
+        data.itens,
       );
       if (!stockValidation.available) {
         return {
@@ -415,7 +415,7 @@ export class StockOutputManager {
       const requiresApproval = await this.checkApprovalRequirement(
         data.centro_custo_id,
         totals.valor_total,
-        data.tipo_saida
+        data.tipo_saida,
       );
 
       // 5. Generate output number
@@ -511,7 +511,7 @@ export class StockOutputManager {
           `
           *,
           produto:produtos_estoque(nome, codigo_interno, categoria)
-        `
+        `,
         )
         .eq('procedimento_id', data.procedimento_id)
         .eq('ativo', true);
@@ -526,7 +526,7 @@ export class StockOutputManager {
       // 2. Apply manual adjustments if provided
       const materialsForDeduction = this.applyManualAdjustments(
         standardMaterials,
-        data.ajustes_manuais || []
+        data.ajustes_manuais || [],
       );
 
       // 3. Create automatic stock output
@@ -560,7 +560,7 @@ export class StockOutputManager {
       produto_id: string;
       quantidade: number;
       localizacao_origem: string;
-    }>
+    }>,
   ): Promise<
     Array<{
       produto_id: string;
@@ -590,7 +590,7 @@ export class StockOutputManager {
 
       if (!availableBatches || availableBatches.length === 0) {
         throw new Error(
-          `Nenhum lote disponível para o produto ${item.produto_id}`
+          `Nenhum lote disponível para o produto ${item.produto_id}`,
         );
       }
 
@@ -604,7 +604,7 @@ export class StockOutputManager {
 
         const quantityToTake = Math.min(
           remainingQuantity,
-          batch.quantidade_disponivel
+          batch.quantidade_disponivel,
         );
 
         // Get cost from latest entry
@@ -633,7 +633,7 @@ export class StockOutputManager {
 
       if (remainingQuantity > 0) {
         throw new Error(
-          `Quantidade insuficiente em estoque para o produto ${item.produto_id}`
+          `Quantidade insuficiente em estoque para o produto ${item.produto_id}`,
         );
       }
     }
@@ -648,7 +648,7 @@ export class StockOutputManager {
     items: Array<{
       produto_id: string;
       quantidade: number;
-    }>
+    }>,
   ): Promise<{
     available: boolean;
     unavailableItems: string[];
@@ -662,7 +662,7 @@ export class StockOutputManager {
       const { data: batchSummary } = await this.supabase
         .from('lotes_estoque')
         .select(
-          'quantidade_disponivel, numero_lote, data_validade, dias_para_vencer, prioridade_uso, id'
+          'quantidade_disponivel, numero_lote, data_validade, dias_para_vencer, prioridade_uso, id',
         )
         .eq('produto_id', item.produto_id)
         .eq('status', 'disponivel')
@@ -672,7 +672,7 @@ export class StockOutputManager {
       const totalAvailable =
         batchSummary?.reduce(
           (sum, batch) => sum + batch.quantidade_disponivel,
-          0
+          0,
         ) || 0;
 
       if (totalAvailable < item.quantidade) {
@@ -706,7 +706,7 @@ export class StockOutputManager {
               batch.dias_para_vencer <= 30
                 ? 'Próximo ao vencimento'
                 : 'FIFO otimizado',
-          }))
+          })),
         );
       }
     }
@@ -725,7 +725,7 @@ export class StockOutputManager {
     items: Array<{
       lote_id: string;
       quantidade: number;
-    }>
+    }>,
   ): Promise<void> {
     for (const item of items) {
       await this.supabase.rpc('update_batch_quantity_after_output', {
@@ -741,7 +741,7 @@ export class StockOutputManager {
   async checkApprovalRequirement(
     centroCustoId: string,
     valorTotal: number,
-    tipoSaida: StockOutputType
+    tipoSaida: StockOutputType,
   ): Promise<boolean> {
     const { data: costCenter } = await this.supabase
       .from('centros_custo')
@@ -792,7 +792,7 @@ export class StockOutputManager {
     items: Array<{
       quantidade: number;
       custo_unitario: number;
-    }>
+    }>,
   ): {
     quantidade: number;
     valor: number;
@@ -804,7 +804,7 @@ export class StockOutputManager {
         valor: totals.valor + item.quantidade * item.custo_unitario,
         custo: totals.custo + item.quantidade * item.custo_unitario,
       }),
-      { quantidade: 0, valor: 0, custo: 0 }
+      { quantidade: 0, valor: 0, custo: 0 },
     );
   }
 
@@ -816,11 +816,11 @@ export class StockOutputManager {
     adjustments: Array<{
       produto_id: string;
       quantidade_ajustada: number;
-    }>
+    }>,
   ): any[] {
     return standardMaterials.map((material) => {
       const adjustment = adjustments.find(
-        (adj) => adj.produto_id === material.produto_id
+        (adj) => adj.produto_id === material.produto_id,
       );
       return {
         ...material,
@@ -885,7 +885,7 @@ export class StockOutputManager {
    * Calculate consumption metrics (placeholder for complex logic)
    */
   private async calculateConsumptionMetrics(
-    params: any
+    params: any,
   ): Promise<ConsumptionAnalysis> {
     // This would contain complex SQL aggregations and calculations
     // Returning a mock structure for now

@@ -36,7 +36,7 @@ export async function PATCH(_request: NextRequest) {
     if (error) {
       return NextResponse.json(
         { error: 'Failed to mark alerts as read' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -47,7 +47,7 @@ export async function PATCH(_request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -73,7 +73,7 @@ class StockAnalyticsService {
     clinicId: string,
     date: Date,
     alertType?: string,
-    severityLevel?: string
+    severityLevel?: string,
   ): Promise<AlertResolutionMetrics | null> {
     try {
       const supabase = await this.getSupabaseClient();
@@ -162,7 +162,7 @@ class StockAnalyticsService {
         thirtyDaysAgo,
         date,
         alertType,
-        severityLevel
+        severityLevel,
       );
 
       // Get notification metrics
@@ -170,7 +170,7 @@ class StockAnalyticsService {
         clinicId,
         date,
         alertType,
-        severityLevel
+        severityLevel,
       );
 
       return {
@@ -202,7 +202,7 @@ class StockAnalyticsService {
     startDate: Date,
     endDate: Date,
     alertType?: string,
-    severityLevel?: string
+    severityLevel?: string,
   ): Promise<number> {
     try {
       const supabase = await this.getSupabaseClient();
@@ -233,7 +233,7 @@ class StockAnalyticsService {
           acc[alert.product_id] = (acc[alert.product_id] || 0) + 1;
           return acc;
         },
-        {} as Record<string, number>
+        {} as Record<string, number>,
       );
 
       return Object.values(productCounts).filter((count) => count > 1).length;
@@ -246,7 +246,7 @@ class StockAnalyticsService {
     clinicId: string,
     date: Date,
     alertType?: string,
-    severityLevel?: string
+    severityLevel?: string,
   ): Promise<{
     automationTriggered: number;
     notificationsSent: number;
@@ -270,7 +270,7 @@ class StockAnalyticsService {
             alert_type,
             severity_level
           )
-        `
+        `,
         )
         .eq('clinic_id', clinicId)
         .gte('created_at', startOfDay.toISOString())
@@ -302,7 +302,7 @@ class StockAnalyticsService {
 
       const totalNotifications = filteredNotifications.length;
       const successfulNotifications = filteredNotifications.filter(
-        (n) => n.status === 'sent' || n.status === 'delivered'
+        (n) => n.status === 'sent' || n.status === 'delivered',
       ).length;
 
       const successRate =
@@ -315,7 +315,7 @@ class StockAnalyticsService {
         clinicId,
         date,
         alertType,
-        severityLevel
+        severityLevel,
       );
 
       return {
@@ -332,7 +332,7 @@ class StockAnalyticsService {
     clinicId: string,
     date: Date,
     _alertType?: string,
-    _severityLevel?: string
+    _severityLevel?: string,
   ): Promise<number> {
     try {
       const startOfDay = new Date(date);
@@ -467,7 +467,7 @@ class StockAnalyticsService {
     clinicId: string,
     startDate: Date,
     endDate: Date,
-    alertType?: string
+    alertType?: string,
   ): Promise<ResolutionTimeAnalysis[]> {
     try {
       const supabase = await this.getSupabaseClient();
@@ -520,7 +520,7 @@ class StockAnalyticsService {
 
   async getRecurrencePatterns(
     clinicId: string,
-    lookbackDays = 90
+    lookbackDays = 90,
   ): Promise<RecurrencePattern[]> {
     try {
       const startDate = new Date();
@@ -535,7 +535,7 @@ class StockAnalyticsService {
           alert_type,
           created_at,
           products!inner(name)
-        `
+        `,
         )
         .eq('clinic_id', clinicId)
         .gte('created_at', startDate.toISOString())
@@ -574,7 +574,7 @@ class StockAnalyticsService {
         .filter((pattern) => pattern.dates.length > 1)
         .map((pattern) => {
           const sortedDates = pattern.dates.sort(
-            (a, b) => a.getTime() - b.getTime()
+            (a, b) => a.getTime() - b.getTime(),
           );
           const intervals = [];
 
@@ -625,7 +625,7 @@ class StockAnalyticsService {
 
   async getDashboardSummary(
     clinicId: string,
-    days = 30
+    days = 30,
   ): Promise<{
     totalAlerts: number;
     resolvedAlerts: number;
@@ -653,11 +653,11 @@ class StockAnalyticsService {
       // Aggregate totals
       const totalAlerts = metrics.reduce(
         (sum, m) => sum + m.total_alerts_created,
-        0
+        0,
       );
       const resolvedAlerts = metrics.reduce(
         (sum, m) => sum + m.total_alerts_resolved,
-        0
+        0,
       );
       const resolutionRate =
         totalAlerts > 0 ? (resolvedAlerts / totalAlerts) * 100 : 0;
@@ -674,7 +674,7 @@ class StockAnalyticsService {
 
       const recurringIssuesCount = metrics.reduce(
         (sum, m) => sum + m.recurrence_count,
-        0
+        0,
       );
 
       const notificationSuccessRate =
@@ -699,8 +699,8 @@ class StockAnalyticsService {
                 acc[alert.alert_type] = (acc[alert.alert_type] || 0) + 1;
                 return acc;
               },
-              {} as Record<string, number>
-            )
+              {} as Record<string, number>,
+            ),
           )
             .map(([type, count]) => ({ type, count }))
             .sort((a, b) => b.count - a.count)
@@ -749,7 +749,7 @@ class StockAnalyticsService {
 
   async processMetricsForDate(
     clinicId: string,
-    date: Date
+    date: Date,
   ): Promise<{
     processed: number;
     success: number;
@@ -783,7 +783,7 @@ class StockAnalyticsService {
             clinicId,
             date,
             alertType,
-            severityLevel
+            severityLevel,
           );
           if (metrics) {
             const saved = await this.saveMetrics(metrics);
@@ -792,13 +792,13 @@ class StockAnalyticsService {
             } else {
               results.failed++;
               results.errors.push(
-                `Failed to save metrics for ${alertType}/${severityLevel}`
+                `Failed to save metrics for ${alertType}/${severityLevel}`,
               );
             }
           } else {
             results.failed++;
             results.errors.push(
-              `Failed to calculate metrics for ${alertType}/${severityLevel}`
+              `Failed to calculate metrics for ${alertType}/${severityLevel}`,
             );
           }
         }
@@ -807,7 +807,7 @@ class StockAnalyticsService {
       return results;
     } catch (error) {
       results.errors.push(
-        error instanceof Error ? error.message : 'Unknown error'
+        error instanceof Error ? error.message : 'Unknown error',
       );
       return results;
     }

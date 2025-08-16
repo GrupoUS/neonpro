@@ -137,7 +137,7 @@ export class MemoryOptimizer {
 
     const baseline = this.snapshots[0];
     const peak = this.snapshots.reduce((max, snap) =>
-      snap.heapUsed > max.heapUsed ? snap : max
+      snap.heapUsed > max.heapUsed ? snap : max,
     );
     const current = this.snapshots.at(-1);
 
@@ -197,7 +197,7 @@ export class MemoryOptimizer {
 
       if (current.heapUsed > 100) {
         opportunities.push(
-          'Consider implementing object pooling for large objects'
+          'Consider implementing object pooling for large objects',
         );
       }
 

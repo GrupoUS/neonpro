@@ -41,7 +41,7 @@ export class DatabaseOptimizer {
     query: string,
     executionTime: number,
     rowsAffected = 0,
-    cached = false
+    cached = false,
   ): void {
     const metric: QueryMetrics = {
       query,
@@ -69,7 +69,7 @@ export class DatabaseOptimizer {
 
     // Find slow queries
     const slowQueries = this.queryMetrics.filter(
-      (m) => m.executionTime > this.slowQueryThreshold
+      (m) => m.executionTime > this.slowQueryThreshold,
     );
 
     slowQueries.forEach((query) => {
@@ -103,7 +103,7 @@ export class DatabaseOptimizer {
    */
   generateReport(): DatabasePerformanceReport {
     const slowQueries = this.queryMetrics.filter(
-      (m) => m.executionTime > this.slowQueryThreshold
+      (m) => m.executionTime > this.slowQueryThreshold,
     );
     const totalQueries = this.queryMetrics.length;
     const cachedQueries = this.queryMetrics.filter((m) => m.cached).length;
@@ -142,7 +142,7 @@ export class DatabaseOptimizer {
   private calculateIndexUtilization(): number {
     // Simplified calculation - in real implementation would analyze query plans
     const indexedQueries = this.queryMetrics.filter(
-      (m) => m.query.includes('WHERE') || m.query.includes('ORDER BY')
+      (m) => m.query.includes('WHERE') || m.query.includes('ORDER BY'),
     ).length;
 
     return this.queryMetrics.length > 0
@@ -157,7 +157,7 @@ export class DatabaseOptimizer {
     const slowQueryRatio =
       this.queryMetrics.length > 0
         ? this.queryMetrics.filter(
-            (m) => m.executionTime > this.slowQueryThreshold
+            (m) => m.executionTime > this.slowQueryThreshold,
           ).length / this.queryMetrics.length
         : 0;
 

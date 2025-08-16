@@ -42,7 +42,7 @@ export async function GET(request: NextRequest) {
         error: 'Failed to fetch protocol feedback',
         details: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -61,12 +61,12 @@ export async function POST(request: NextRequest) {
           error: 'Validation failed',
           details: validation.error.format(),
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     const protocolFeedback = await service.createProtocolFeedback(
-      validation.data
+      validation.data,
     );
 
     return NextResponse.json(
@@ -75,7 +75,7 @@ export async function POST(request: NextRequest) {
         data: protocolFeedback,
         message: 'Protocol feedback submitted successfully',
       },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (error) {
     return NextResponse.json(
@@ -84,7 +84,7 @@ export async function POST(request: NextRequest) {
         error: 'Failed to submit protocol feedback',
         details: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -121,7 +121,7 @@ export class SuggestionEngine {
   async generateSuggestions(
     conflictResult: ConflictDetectionResult,
     appointmentData: Partial<Appointment>,
-    clinicId: string
+    clinicId: string,
   ): Promise<ResolutionSuggestion[]> {
     try {
       logger.info('Generating resolution suggestions', {
@@ -140,7 +140,7 @@ export class SuggestionEngine {
         const conflictSuggestions = await this.generateSuggestionsForConflict(
           conflict,
           appointmentData,
-          clinicId
+          clinicId,
         );
         suggestions.push(...conflictSuggestions);
       }
@@ -150,7 +150,7 @@ export class SuggestionEngine {
         await this.generateOptimizationSuggestions(
           conflictResult,
           appointmentData,
-          clinicId
+          clinicId,
         );
       suggestions.push(...optimizationSuggestions);
 
@@ -170,7 +170,7 @@ export class SuggestionEngine {
         .slice(
           0,
           this.config.maxSuggestionsPerConflict *
-            conflictResult.conflicts.length
+            conflictResult.conflicts.length,
         );
 
       logger.info('Generated suggestions', {
@@ -192,7 +192,7 @@ export class SuggestionEngine {
   private async generateSuggestionsForConflict(
     conflict: DetectedConflict,
     appointmentData: Partial<Appointment>,
-    clinicId: string
+    clinicId: string,
   ): Promise<ResolutionSuggestion[]> {
     const suggestions: ResolutionSuggestion[] = [];
 
@@ -202,8 +202,8 @@ export class SuggestionEngine {
           ...(await this.generateStaffConflictSuggestions(
             conflict,
             appointmentData,
-            clinicId
-          ))
+            clinicId,
+          )),
         );
         break;
 
@@ -212,8 +212,8 @@ export class SuggestionEngine {
           ...(await this.generateRoomConflictSuggestions(
             conflict,
             appointmentData,
-            clinicId
-          ))
+            clinicId,
+          )),
         );
         break;
 
@@ -222,8 +222,8 @@ export class SuggestionEngine {
           ...(await this.generateEquipmentConflictSuggestions(
             conflict,
             appointmentData,
-            clinicId
-          ))
+            clinicId,
+          )),
         );
         break;
 
@@ -232,8 +232,8 @@ export class SuggestionEngine {
           ...(await this.generateSkillMismatchSuggestions(
             conflict,
             appointmentData,
-            clinicId
-          ))
+            clinicId,
+          )),
         );
         break;
 
@@ -242,8 +242,8 @@ export class SuggestionEngine {
           ...(await this.generateBreakViolationSuggestions(
             conflict,
             appointmentData,
-            clinicId
-          ))
+            clinicId,
+          )),
         );
         break;
 
@@ -252,8 +252,8 @@ export class SuggestionEngine {
           ...(await this.generateMaintenanceSuggestions(
             conflict,
             appointmentData,
-            clinicId
-          ))
+            clinicId,
+          )),
         );
         break;
 
@@ -270,7 +270,7 @@ export class SuggestionEngine {
   private async generateStaffConflictSuggestions(
     conflict: DetectedConflict,
     appointmentData: Partial<Appointment>,
-    clinicId: string
+    clinicId: string,
   ): Promise<ResolutionSuggestion[]> {
     const suggestions: ResolutionSuggestion[] = [];
 
@@ -281,7 +281,7 @@ export class SuggestionEngine {
         new Date(appointmentData.start_time!),
         new Date(appointmentData.end_time!),
         clinicId,
-        appointmentData.staff_id
+        appointmentData.staff_id,
       );
 
       if (alternativeStaff.length > 0) {
@@ -348,7 +348,7 @@ export class SuggestionEngine {
         appointmentData.service_id!,
         new Date(appointmentData.start_time!),
         clinicId,
-        this.config.maxRescheduleDistance
+        this.config.maxRescheduleDistance,
       );
 
       if (availableSlots.length > 0) {
@@ -425,7 +425,7 @@ export class SuggestionEngine {
   private async generateRoomConflictSuggestions(
     conflict: DetectedConflict,
     appointmentData: Partial<Appointment>,
-    clinicId: string
+    clinicId: string,
   ): Promise<ResolutionSuggestion[]> {
     const suggestions: ResolutionSuggestion[] = [];
 
@@ -436,7 +436,7 @@ export class SuggestionEngine {
         new Date(appointmentData.start_time!),
         new Date(appointmentData.end_time!),
         clinicId,
-        appointmentData.room_id
+        appointmentData.room_id,
       );
 
       if (alternativeRooms.length > 0) {
@@ -510,7 +510,7 @@ export class SuggestionEngine {
   private async generateEquipmentConflictSuggestions(
     conflict: DetectedConflict,
     appointmentData: Partial<Appointment>,
-    clinicId: string
+    clinicId: string,
   ): Promise<ResolutionSuggestion[]> {
     const suggestions: ResolutionSuggestion[] = [];
 
@@ -524,7 +524,7 @@ export class SuggestionEngine {
           equipmentId,
           new Date(appointmentData.start_time!),
           new Date(appointmentData.end_time!),
-          clinicId
+          clinicId,
         );
 
         if (alternatives.length > 0) {
@@ -591,7 +591,7 @@ export class SuggestionEngine {
   private async generateSkillMismatchSuggestions(
     conflict: DetectedConflict,
     appointmentData: Partial<Appointment>,
-    clinicId: string
+    clinicId: string,
   ): Promise<ResolutionSuggestion[]> {
     const suggestions: ResolutionSuggestion[] = [];
 
@@ -601,7 +601,7 @@ export class SuggestionEngine {
         appointmentData.service_id!,
         new Date(appointmentData.start_time!),
         new Date(appointmentData.end_time!),
-        clinicId
+        clinicId,
       );
 
       if (qualifiedStaff.length > 0) {
@@ -667,7 +667,7 @@ export class SuggestionEngine {
   private async generateBreakViolationSuggestions(
     conflict: DetectedConflict,
     appointmentData: Partial<Appointment>,
-    clinicId: string
+    clinicId: string,
   ): Promise<ResolutionSuggestion[]> {
     const suggestions: ResolutionSuggestion[] = [];
 
@@ -677,7 +677,7 @@ export class SuggestionEngine {
         appointmentData.staff_id!,
         appointmentData.service_id!,
         new Date(appointmentData.start_time!),
-        clinicId
+        clinicId,
       );
 
       if (availableSlots.length > 0) {
@@ -743,7 +743,7 @@ export class SuggestionEngine {
   private async generateMaintenanceSuggestions(
     conflict: DetectedConflict,
     appointmentData: Partial<Appointment>,
-    clinicId: string
+    clinicId: string,
   ): Promise<ResolutionSuggestion[]> {
     const suggestions: ResolutionSuggestion[] = [];
 
@@ -751,12 +751,12 @@ export class SuggestionEngine {
       // Encontrar quando a manutenção termina
       const maintenanceEnd = await this.getMaintenanceEndTime(
         conflict.affectedResources[0]?.id,
-        clinicId
+        clinicId,
       );
 
       if (maintenanceEnd) {
         const suggestedStart = new Date(
-          maintenanceEnd.getTime() + 30 * 60 * 1000
+          maintenanceEnd.getTime() + 30 * 60 * 1000,
         ); // 30 min buffer
         const duration =
           new Date(appointmentData.end_time!).getTime() -
@@ -823,7 +823,7 @@ export class SuggestionEngine {
   private async generateOptimizationSuggestions(
     conflictResult: ConflictDetectionResult,
     _appointmentData: Partial<Appointment>,
-    _clinicId: string
+    _clinicId: string,
   ): Promise<ResolutionSuggestion[]> {
     const suggestions: ResolutionSuggestion[] = [];
 
@@ -840,7 +840,7 @@ export class SuggestionEngine {
           impact: {
             resolvedConflicts: conflictResult.conflicts.length,
             affectedAppointments: conflictResult.conflicts.flatMap(
-              (c) => c.affectedAppointments
+              (c) => c.affectedAppointments,
             ),
             resourceChanges: [],
             timeChanges: [],
@@ -907,7 +907,7 @@ export class SuggestionEngine {
     startTime: Date,
     endTime: Date,
     clinicId: string,
-    excludeStaffId?: string
+    excludeStaffId?: string,
   ): Promise<Array<Staff & { confidence: number }>> {
     try {
       // Buscar staff qualificado e disponível
@@ -917,7 +917,7 @@ export class SuggestionEngine {
           `
           id, name, specialties, hourly_rate,
           staff_availability(*)
-        `
+        `,
         )
         .eq('clinic_id', clinicId)
         .eq('active', true);
@@ -950,7 +950,7 @@ export class SuggestionEngine {
           const staffSpecialties = (staff.specialties as string[]) || [];
 
           const hasRequiredSkills = requiredSpecialties.every((specialty) =>
-            staffSpecialties.includes(specialty)
+            staffSpecialties.includes(specialty),
           );
 
           if (!hasRequiredSkills) {
@@ -963,7 +963,7 @@ export class SuggestionEngine {
           staff.id,
           startTime,
           endTime,
-          clinicId
+          clinicId,
         );
 
         if (isAvailable) {
@@ -986,7 +986,7 @@ export class SuggestionEngine {
     startTime: Date,
     endTime: Date,
     clinicId: string,
-    excludeRoomId?: string
+    excludeRoomId?: string,
   ): Promise<Array<Room & { confidence: number }>> {
     try {
       let query = this.supabase
@@ -1013,7 +1013,7 @@ export class SuggestionEngine {
           room.id,
           startTime,
           endTime,
-          clinicId
+          clinicId,
         );
 
         if (isAvailable) {
@@ -1035,7 +1035,7 @@ export class SuggestionEngine {
     equipmentId: string,
     startTime: Date,
     endTime: Date,
-    clinicId: string
+    clinicId: string,
   ): Promise<Array<Equipment & { confidence: number }>> {
     try {
       // Buscar equipamento original para encontrar tipo/categoria
@@ -1070,7 +1070,7 @@ export class SuggestionEngine {
           equipment.id,
           startTime,
           endTime,
-          clinicId
+          clinicId,
         );
 
         if (isAvailable) {
@@ -1093,7 +1093,7 @@ export class SuggestionEngine {
     staffId: string,
     startTime: Date,
     endTime: Date,
-    clinicId: string
+    clinicId: string,
   ): Promise<boolean> {
     try {
       const { data: conflicts } = await this.supabase
@@ -1103,7 +1103,7 @@ export class SuggestionEngine {
         .eq('clinic_id', clinicId)
         .neq('status', 'cancelled')
         .or(
-          `and(start_time.lte.${endTime.toISOString()},end_time.gte.${startTime.toISOString()})`
+          `and(start_time.lte.${endTime.toISOString()},end_time.gte.${startTime.toISOString()})`,
         );
 
       return !conflicts || conflicts.length === 0;
@@ -1117,7 +1117,7 @@ export class SuggestionEngine {
     roomId: string,
     startTime: Date,
     endTime: Date,
-    clinicId: string
+    clinicId: string,
   ): Promise<boolean> {
     try {
       const { data: conflicts } = await this.supabase
@@ -1127,7 +1127,7 @@ export class SuggestionEngine {
         .eq('clinic_id', clinicId)
         .neq('status', 'cancelled')
         .or(
-          `and(start_time.lte.${endTime.toISOString()},end_time.gte.${startTime.toISOString()})`
+          `and(start_time.lte.${endTime.toISOString()},end_time.gte.${startTime.toISOString()})`,
         );
 
       return !conflicts || conflicts.length === 0;
@@ -1141,7 +1141,7 @@ export class SuggestionEngine {
     equipmentId: string,
     startTime: Date,
     endTime: Date,
-    clinicId: string
+    clinicId: string,
   ): Promise<boolean> {
     try {
       // Verificar manutenção
@@ -1151,7 +1151,7 @@ export class SuggestionEngine {
         .eq('equipment_id', equipmentId)
         .eq('status', 'active')
         .or(
-          `and(start_time.lte.${endTime.toISOString()},end_time.gte.${startTime.toISOString()})`
+          `and(start_time.lte.${endTime.toISOString()},end_time.gte.${startTime.toISOString()})`,
         );
 
       if (maintenance && maintenance.length > 0) {
@@ -1166,7 +1166,7 @@ export class SuggestionEngine {
         .neq('status', 'cancelled')
         .contains('required_equipment', [equipmentId])
         .or(
-          `and(start_time.lte.${endTime.toISOString()},end_time.gte.${startTime.toISOString()})`
+          `and(start_time.lte.${endTime.toISOString()},end_time.gte.${startTime.toISOString()})`,
         );
 
       return !conflicts || conflicts.length === 0;
@@ -1182,7 +1182,7 @@ export class SuggestionEngine {
     _serviceId: string,
     preferredDate: Date,
     clinicId: string,
-    maxDays: number
+    maxDays: number,
   ): Promise<Array<{ start: Date; end: Date; confidence: number }>> {
     // Implementação simplificada - pode ser expandida
     const slots: Array<{ start: Date; end: Date; confidence: number }> = [];
@@ -1204,7 +1204,7 @@ export class SuggestionEngine {
           staffId,
           slotStart,
           slotEnd,
-          clinicId
+          clinicId,
         );
 
         if (isAvailable) {
@@ -1224,7 +1224,7 @@ export class SuggestionEngine {
     serviceId: string,
     startTime: Date,
     endTime: Date,
-    clinicId: string
+    clinicId: string,
   ): Promise<Array<Staff & { confidence: number }>> {
     return this.findAlternativeStaff(serviceId, startTime, endTime, clinicId);
   }
@@ -1233,7 +1233,7 @@ export class SuggestionEngine {
     staffId: string,
     serviceId: string,
     preferredDate: Date,
-    clinicId: string
+    clinicId: string,
   ): Promise<Array<{ start: Date; end: Date; confidence: number }>> {
     // Implementação similar ao findAvailableTimeSlots mas considerando break times
     return this.findAvailableTimeSlots(
@@ -1241,13 +1241,13 @@ export class SuggestionEngine {
       serviceId,
       preferredDate,
       clinicId,
-      3
+      3,
     );
   }
 
   private async getMaintenanceEndTime(
     equipmentId: string,
-    _clinicId: string
+    _clinicId: string,
   ): Promise<Date | null> {
     try {
       const { data: maintenance } = await this.supabase
@@ -1273,7 +1273,7 @@ export class SuggestionEngine {
     suggestion: ResolutionSuggestion,
     appointmentId: string,
     clinicId: string,
-    userId: string
+    userId: string,
   ): Promise<{ success: boolean; message: string; changes: any[] }> {
     try {
       if (!suggestion.autoApplicable) {
@@ -1290,7 +1290,7 @@ export class SuggestionEngine {
       switch (suggestion.type) {
         case SuggestionType.REASSIGN_STAFF: {
           const staffChange = suggestion.impact.resourceChanges.find(
-            (c) => c.resourceType === 'staff'
+            (c) => c.resourceType === 'staff',
           );
           if (staffChange) {
             const { error } = await this.supabase
@@ -1312,7 +1312,7 @@ export class SuggestionEngine {
 
         case SuggestionType.CHANGE_ROOM: {
           const roomChange = suggestion.impact.resourceChanges.find(
-            (c) => c.resourceType === 'room'
+            (c) => c.resourceType === 'room',
           );
           if (roomChange) {
             const { error } = await this.supabase
@@ -1334,7 +1334,7 @@ export class SuggestionEngine {
 
         case SuggestionType.SUBSTITUTE_EQUIPMENT: {
           const equipmentChange = suggestion.impact.resourceChanges.find(
-            (c) => c.resourceType === 'equipment'
+            (c) => c.resourceType === 'equipment',
           );
           if (equipmentChange) {
             // Atualizar lista de equipamentos necessários
@@ -1348,7 +1348,7 @@ export class SuggestionEngine {
               const currentEquipment =
                 (appointment.required_equipment as string[]) || [];
               const updatedEquipment = currentEquipment.map((eq) =>
-                eq === equipmentChange.from ? equipmentChange.to : eq
+                eq === equipmentChange.from ? equipmentChange.to : eq,
               );
 
               const { error } = await this.supabase
@@ -1438,7 +1438,7 @@ export async function generateResolutionSuggestions(
   conflictResult: ConflictDetectionResult,
   appointmentData: Partial<Appointment>,
   clinicId: string,
-  config?: Partial<SuggestionConfig>
+  config?: Partial<SuggestionConfig>,
 ): Promise<ResolutionSuggestion[]> {
   const engine = config ? new SuggestionEngine(config) : suggestionEngine;
   return engine.generateSuggestions(conflictResult, appointmentData, clinicId);

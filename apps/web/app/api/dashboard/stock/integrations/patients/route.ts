@@ -45,7 +45,7 @@ export async function GET(request: NextRequest) {
               email
             )
           )
-        `
+        `,
         )
         .eq('movement_type', 'out')
         .contains('reason', patientId)
@@ -76,7 +76,7 @@ export async function GET(request: NextRequest) {
             name,
             category
           )
-        `
+        `,
       )
       .eq('movement_type', 'out')
       .like('reason', '%patient_%')
@@ -94,7 +94,7 @@ export async function GET(request: NextRequest) {
       totalValue:
         generalStats?.reduce(
           (acc, movement) => acc + movement.quantity * movement.unit_price,
-          0
+          0,
         ) || 0,
       categoryUsage:
         generalStats?.reduce(
@@ -103,7 +103,7 @@ export async function GET(request: NextRequest) {
             acc[category] = (acc[category] || 0) + movement.quantity;
             return acc;
           },
-          {} as Record<string, number>
+          {} as Record<string, number>,
         ) || {},
       monthlyTrend:
         generalStats?.reduce(
@@ -114,7 +114,7 @@ export async function GET(request: NextRequest) {
             acc[month] = (acc[month] || 0) + movement.quantity;
             return acc;
           },
-          {} as Record<string, number>
+          {} as Record<string, number>,
         ) || {},
     };
 
@@ -126,7 +126,7 @@ export async function GET(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -156,14 +156,14 @@ export async function POST(request: NextRequest) {
     if (stockError || !stockItem) {
       return NextResponse.json(
         { error: 'Item de estoque não encontrado' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
     if (stockItem.current_quantity < quantity) {
       return NextResponse.json(
         { error: 'Quantidade insuficiente em estoque' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -184,7 +184,7 @@ export async function POST(request: NextRequest) {
     if (movementError) {
       return NextResponse.json(
         { error: movementError.message },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -225,7 +225,7 @@ export async function POST(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

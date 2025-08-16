@@ -204,7 +204,7 @@ export function createNotificationConfig(): NotificationSystemConfig {
       persistenceEnabled: process.env.PERSISTENCE_ENABLED !== 'false',
       maxNotifications: Number.parseInt(
         process.env.MAX_NOTIFICATIONS || '100',
-        10
+        10,
       ),
       retentionDays: Number.parseInt(process.env.RETENTION_DAYS || '30', 10),
     },
@@ -287,7 +287,7 @@ export function validateConfig(config: NotificationSystemConfig): void {
 
 export function getChannelConfig(
   config: NotificationSystemConfig,
-  channel: NotificationChannel
+  channel: NotificationChannel,
 ) {
   switch (channel) {
     case NotificationChannel.EMAIL:
@@ -305,7 +305,7 @@ export function getChannelConfig(
 
 export function isChannelEnabled(
   config: NotificationSystemConfig,
-  channel: NotificationChannel
+  channel: NotificationChannel,
 ): boolean {
   const channelConfig = getChannelConfig(config, channel);
 
@@ -345,7 +345,7 @@ export function isChannelEnabled(
 export function getRateLimit(
   config: NotificationSystemConfig,
   channel: NotificationChannel,
-  period: 'minute' | 'hour' | 'day'
+  period: 'minute' | 'hour' | 'day',
 ): number {
   const rateLimits = config.rateLimits[channel];
 

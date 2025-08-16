@@ -88,7 +88,7 @@ export class InstallmentProcessor {
   async processInstallmentPayment(
     installmentId: string,
     paymentMethodId?: string,
-    customerId?: string
+    customerId?: string,
   ): Promise<ProcessingResult> {
     try {
       // Get installment details
@@ -109,7 +109,7 @@ export class InstallmentProcessor {
               stripe_customer_id
             )
           )
-        `
+        `,
         )
         .eq('id', installmentId)
         .single();
@@ -230,7 +230,7 @@ export class InstallmentProcessor {
       paymentMethodId?: string;
       customerId?: string;
       maxConcurrent?: number;
-    } = {}
+    } = {},
   ): Promise<BulkProcessingResult> {
     const { maxConcurrent = 5 } = options;
     const results: ProcessingResult[] = [];
@@ -248,7 +248,7 @@ export class InstallmentProcessor {
         const result = await this.processInstallmentPayment(
           installmentId,
           options.paymentMethodId,
-          options.customerId
+          options.customerId,
         );
 
         if (result.success) {
@@ -294,7 +294,7 @@ export class InstallmentProcessor {
       maxDaysOverdue?: number;
       maxInstallments?: number;
       dryRun?: boolean;
-    } = {}
+    } = {},
   ): Promise<BulkProcessingResult> {
     const {
       maxDaysOverdue = 30,
@@ -312,7 +312,7 @@ export class InstallmentProcessor {
 
       if (error) {
         throw new Error(
-          `Failed to fetch overdue installments: ${error.message}`
+          `Failed to fetch overdue installments: ${error.message}`,
         );
       }
 
@@ -338,7 +338,7 @@ export class InstallmentProcessor {
             installmentId: installment.id,
             amount: installment.amount,
             lateFee: installment.late_fee || 0,
-          })
+          }),
         );
 
         return {
@@ -349,11 +349,11 @@ export class InstallmentProcessor {
           summary: {
             totalAmount: overdueInstallments.reduce(
               (sum, i) => sum + i.amount,
-              0
+              0,
             ),
             totalLateFees: overdueInstallments.reduce(
               (sum, i) => sum + (i.late_fee || 0),
-              0
+              0,
             ),
             errors: [],
           },
@@ -384,7 +384,7 @@ export class InstallmentProcessor {
   async markInstallmentAsPaid(
     installmentId: string,
     paymentIntentId: string,
-    paymentMethod?: string
+    paymentMethod?: string,
   ): Promise<void> {
     const { error } = await this.supabase
       .from('installments')
@@ -427,7 +427,7 @@ export class InstallmentProcessor {
    * Get default payment method for customer
    */
   private async getDefaultPaymentMethod(
-    customerId: string
+    customerId: string,
   ): Promise<PaymentMethodInfo | null> {
     try {
       const customer = await this.stripe.customers.retrieve(customerId);
@@ -470,7 +470,7 @@ export class InstallmentProcessor {
   async updateOverdueStatus(): Promise<{ updated: number; errors: string[] }> {
     try {
       const { data, error } = await this.supabase.rpc(
-        'mark_overdue_installments'
+        'mark_overdue_installments',
       );
 
       if (error) {
@@ -518,7 +518,7 @@ export class InstallmentProcessor {
    */
   async retryFailedPayment(
     installmentId: string,
-    paymentMethodId?: string
+    paymentMethodId?: string,
   ): Promise<ProcessingResult> {
     try {
       // Get installment details
@@ -544,7 +544,7 @@ export class InstallmentProcessor {
       if (installment.stripe_payment_intent_id) {
         try {
           await this.stripe.paymentIntents.cancel(
-            installment.stripe_payment_intent_id
+            installment.stripe_payment_intent_id,
           );
         } catch (_cancelError) {}
       }
@@ -553,7 +553,7 @@ export class InstallmentProcessor {
       return await this.processInstallmentPayment(
         installmentId,
         paymentMethodId,
-        installment.payment_plans.customers.stripe_customer_id
+        installment.payment_plans.customers.stripe_customer_id,
       );
     } catch (error) {
       return {
@@ -571,19 +571,19 @@ export class InstallmentProcessor {
     switch (event.type) {
       case 'payment_intent.succeeded':
         await this.handlePaymentIntentSucceeded(
-          event.data.object as Stripe.PaymentIntent
+          event.data.object as Stripe.PaymentIntent,
         );
         break;
 
       case 'payment_intent.payment_failed':
         await this.handlePaymentIntentFailed(
-          event.data.object as Stripe.PaymentIntent
+          event.data.object as Stripe.PaymentIntent,
         );
         break;
 
       case 'payment_intent.canceled':
         await this.handlePaymentIntentCanceled(
-          event.data.object as Stripe.PaymentIntent
+          event.data.object as Stripe.PaymentIntent,
         );
         break;
 
@@ -592,7 +592,7 @@ export class InstallmentProcessor {
   }
 
   private async handlePaymentIntentSucceeded(
-    paymentIntent: Stripe.PaymentIntent
+    paymentIntent: Stripe.PaymentIntent,
   ): Promise<void> {
     const installmentId = paymentIntent.metadata.installment_id;
 
@@ -600,13 +600,13 @@ export class InstallmentProcessor {
       await this.markInstallmentAsPaid(
         installmentId,
         paymentIntent.id,
-        'stripe'
+        'stripe',
       );
     }
   }
 
   private async handlePaymentIntentFailed(
-    paymentIntent: Stripe.PaymentIntent
+    paymentIntent: Stripe.PaymentIntent,
   ): Promise<void> {
     const installmentId = paymentIntent.metadata.installment_id;
 
@@ -631,7 +631,7 @@ export class InstallmentProcessor {
   }
 
   private async handlePaymentIntentCanceled(
-    paymentIntent: Stripe.PaymentIntent
+    paymentIntent: Stripe.PaymentIntent,
   ): Promise<void> {
     const installmentId = paymentIntent.metadata.installment_id;
 

@@ -75,7 +75,7 @@ export async function GET(request: NextRequest) {
         const targetDate = date ? new Date(date) : undefined;
         const summary = await cashFlowEngine.getCashFlowSummary(
           period,
-          targetDate
+          targetDate,
         );
         return NextResponse.json({
           success: true,
@@ -115,7 +115,7 @@ export async function GET(request: NextRequest) {
       default:
         return NextResponse.json(
           { error: 'Invalid action parameter' },
-          { status: 400 }
+          { status: 400 },
         );
     }
   } catch (error) {
@@ -125,7 +125,7 @@ export async function GET(request: NextRequest) {
           error: 'Invalid query parameters',
           details: error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -134,7 +134,7 @@ export async function GET(request: NextRequest) {
         error: 'Internal server error',
         message: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -171,7 +171,7 @@ export async function POST(request: NextRequest) {
     if (!['admin', 'owner', 'manager'].includes(profile.role)) {
       return NextResponse.json(
         { error: 'Insufficient permissions' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -197,7 +197,7 @@ export async function POST(request: NextRequest) {
         if (!(type && amount) || amount <= 0) {
           return NextResponse.json(
             { error: 'Invalid transaction data' },
-            { status: 400 }
+            { status: 400 },
           );
         }
 
@@ -219,7 +219,7 @@ export async function POST(request: NextRequest) {
 
         if (transactionError) {
           throw new Error(
-            `Failed to create transaction: ${transactionError.message}`
+            `Failed to create transaction: ${transactionError.message}`,
           );
         }
 
@@ -240,7 +240,7 @@ export async function POST(request: NextRequest) {
           error: 'Invalid request data',
           details: error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -249,7 +249,7 @@ export async function POST(request: NextRequest) {
         error: 'Internal server error',
         message: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

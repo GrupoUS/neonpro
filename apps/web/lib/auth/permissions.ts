@@ -572,10 +572,10 @@ export function getPermission(permissionId: string): Permission | undefined {
  * Get permissions by category
  */
 export function getPermissionsByCategory(
-  category: Permission['category']
+  category: Permission['category'],
 ): Permission[] {
   return Object.values(HEALTHCARE_PERMISSIONS).filter(
-    (permission) => permission.category === category
+    (permission) => permission.category === category,
   );
 }
 
@@ -584,7 +584,7 @@ export function getPermissionsByCategory(
  */
 export function getLicenseRequiredPermissions(): Permission[] {
   return Object.values(HEALTHCARE_PERMISSIONS).filter(
-    (permission) => permission.requires_license
+    (permission) => permission.requires_license,
   );
 }
 
@@ -593,7 +593,7 @@ export function getLicenseRequiredPermissions(): Permission[] {
  */
 export function getCFMCompliancePermissions(): Permission[] {
   return Object.values(HEALTHCARE_PERMISSIONS).filter(
-    (permission) => permission.cfm_compliance
+    (permission) => permission.cfm_compliance,
   );
 }
 
@@ -602,7 +602,7 @@ export function getCFMCompliancePermissions(): Permission[] {
  */
 export function getLGPDSensitivePermissions(): Permission[] {
   return Object.values(HEALTHCARE_PERMISSIONS).filter(
-    (permission) => permission.lgpd_sensitive
+    (permission) => permission.lgpd_sensitive,
   );
 }
 
@@ -611,7 +611,7 @@ export function getLGPDSensitivePermissions(): Permission[] {
  */
 export function getANVISAControlledPermissions(): Permission[] {
   return Object.values(HEALTHCARE_PERMISSIONS).filter(
-    (permission) => permission.anvisa_controlled
+    (permission) => permission.anvisa_controlled,
   );
 }
 
@@ -620,7 +620,7 @@ export function getANVISAControlledPermissions(): Permission[] {
  */
 export function getEmergencyOverridePermissions(): Permission[] {
   return Object.values(HEALTHCARE_PERMISSIONS).filter(
-    (permission) => permission.emergency_override
+    (permission) => permission.emergency_override,
   );
 }
 
@@ -629,7 +629,7 @@ export function getEmergencyOverridePermissions(): Permission[] {
  */
 export function permissionRequiresSpecialty(
   permissionId: string,
-  specialty?: MedicalSpecialty
+  specialty?: MedicalSpecialty,
 ): boolean {
   const permission = getPermission(permissionId);
   if (!permission || permission.requires_specialty.length === 0) {

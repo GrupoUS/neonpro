@@ -104,7 +104,7 @@ export class OptimizedQueryBuilder {
     cacheKey: string,
     selectQuery: string,
     filters: Record<string, any> = {},
-    cacheTtl = 300
+    cacheTtl = 300,
   ): Promise<{ data: T[] | null; fromCache: boolean }> {
     const startTime = Date.now();
 
@@ -164,7 +164,7 @@ export class OptimizedQueryBuilder {
    */
   async batchInsert<T>(
     records: T[],
-    batchSize: number = DB_CONFIG.defaultBatchSize
+    batchSize: number = DB_CONFIG.defaultBatchSize,
   ): Promise<{ data: T[]; errors: any[] }> {
     const startTime = Date.now();
     const results: T[] = [];
@@ -213,7 +213,7 @@ export class OptimizedQueryBuilder {
       max?: string[];
     },
     filters: Record<string, any> = {},
-    cacheTtl = 600
+    cacheTtl = 600,
   ): Promise<any> {
     const startTime = Date.now();
 
@@ -267,7 +267,7 @@ export class StockAlertQueries {
       supabaseClient ||
       createClient(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
       );
   }
 
@@ -278,7 +278,7 @@ export class StockAlertQueries {
     const cacheKey = `alert-configs:${clinicId}`;
     const builder = new OptimizedQueryBuilder(
       this.supabase,
-      'stock_alert_configs'
+      'stock_alert_configs',
     );
 
     const { data } = await builder.cachedSelect(
@@ -300,7 +300,7 @@ export class StockAlertQueries {
         )
       `,
       { clinic_id: clinicId, is_active: true },
-      900 // 15 minutes cache
+      900, // 15 minutes cache
     );
 
     return data || [];
@@ -333,7 +333,7 @@ export class StockAlertQueries {
           alert_type,
           severity_level
         )
-      `
+      `,
       )
       .eq('clinic_id', clinicId)
       .eq('status', 'active')
@@ -393,7 +393,7 @@ export class StockAlertQueries {
             id,
             name
           )
-        `
+        `,
         )
         .eq('clinic_id', clinicId)
         .is('deleted_at', null),
@@ -545,7 +545,7 @@ export class StockAlertQueries {
         if (product.expiration_date) {
           const daysUntilExpiration = Math.ceil(
             (new Date(product.expiration_date).getTime() - Date.now()) /
-              (1000 * 60 * 60 * 24)
+              (1000 * 60 * 60 * 24),
           );
           currentValue = daysUntilExpiration;
           shouldAlert =
@@ -604,7 +604,7 @@ export class DatabaseHealthMonitor {
   constructor() {
     this.supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     );
   }
 

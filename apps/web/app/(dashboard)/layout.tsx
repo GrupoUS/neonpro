@@ -76,7 +76,7 @@ const Sidebar: React.FC<{
     <div
       className={cn(
         'flex h-full flex-col bg-sidebar text-sidebar-foreground',
-        className
+        className,
       )}
     >
       {/* Logo/Brand */}
@@ -108,7 +108,7 @@ const Sidebar: React.FC<{
                 'flex w-full items-center gap-3 rounded-lg px-3 py-2.5 font-sans text-sm transition-all',
                 isActive
                   ? 'bg-sidebar-accent text-sidebar-accent-foreground shadow-sm'
-                  : 'text-sidebar-foreground/80 hover:bg-sidebar-accent/50'
+                  : 'text-sidebar-foreground/80 hover:bg-sidebar-accent/50',
               )}
               initial={{ opacity: 0, x: -20 }}
               key={item.id}

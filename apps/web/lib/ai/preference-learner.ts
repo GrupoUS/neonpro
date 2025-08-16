@@ -38,7 +38,7 @@ export class PatientPreferenceLearner {
   }
 
   async learnFromAppointmentHistory(
-    patientId: string
+    patientId: string,
   ): Promise<PreferenceLearningResult> {
     try {
       // Get patient's appointment history
@@ -62,7 +62,7 @@ export class PatientPreferenceLearner {
         timePatterns,
         staffPatterns,
         treatmentPatterns,
-        satisfactionPatterns
+        satisfactionPatterns,
       );
 
       // Calculate confidence improvements
@@ -76,7 +76,7 @@ export class PatientPreferenceLearner {
       const recommendations = this.generateRecommendations(
         timePatterns,
         staffPatterns,
-        satisfactionPatterns
+        satisfactionPatterns,
       );
 
       // Save updated preferences
@@ -94,7 +94,7 @@ export class PatientPreferenceLearner {
   }
 
   private async getAppointmentHistory(
-    patientId: string
+    patientId: string,
   ): Promise<AppointmentData[]> {
     const { data, error } = await this.supabase
       .from('appointments')
@@ -110,7 +110,7 @@ export class PatientPreferenceLearner {
         no_show,
         rescheduled_count,
         wait_time_minutes
-      `
+      `,
       )
       .eq('patient_id', patientId)
       .order('appointment_time', { ascending: false })
@@ -148,10 +148,10 @@ export class PatientPreferenceLearner {
 
     // Calculate average satisfaction by time periods
     const avgSatisfactionByDay = satisfactionByDay.map((sum, i) =>
-      dayCounters[i] > 0 ? sum / dayCounters[i] : 0
+      dayCounters[i] > 0 ? sum / dayCounters[i] : 0,
     );
     const avgSatisfactionByHour = satisfactionByHour.map((sum, i) =>
-      hourCounters[i] > 0 ? sum / hourCounters[i] : 0
+      hourCounters[i] > 0 ? sum / hourCounters[i] : 0,
     );
 
     // Identify preferred time patterns
@@ -244,7 +244,7 @@ export class PatientPreferenceLearner {
           appointment_count: data.appointment_count,
           avg_satisfaction: avgSatisfaction,
         };
-      }
+      },
     );
 
     const preferredStaff = staffScores
@@ -255,7 +255,7 @@ export class PatientPreferenceLearner {
 
     const avoidStaff = staffScores
       .filter(
-        (item) => item.appointment_count >= 2 && item.avg_satisfaction < 3.0
+        (item) => item.appointment_count >= 2 && item.avg_satisfaction < 3.0,
       )
       .map((item) => item.staff_id);
 
@@ -265,7 +265,7 @@ export class PatientPreferenceLearner {
       staff_loyalty_score: preferredStaff.length > 0 ? 0.8 : 0.3,
       confidence: Math.min(
         1.0,
-        staffScores.reduce((sum, item) => sum + item.appointment_count, 0) / 15
+        staffScores.reduce((sum, item) => sum + item.appointment_count, 0) / 15,
       ),
     };
   }
@@ -303,7 +303,7 @@ export class PatientPreferenceLearner {
         avg_satisfaction: data.total_satisfaction / data.count || 0,
         avg_duration: data.total_duration / data.count,
         no_show_rate: data.no_show_count / data.count,
-      })
+      }),
     );
 
     const preferredTreatments = treatmentAnalysis
@@ -316,7 +316,7 @@ export class PatientPreferenceLearner {
         acc[item.treatment_type] = Math.round(item.avg_duration);
         return acc;
       },
-      {} as Record<string, number>
+      {} as Record<string, number>,
     );
 
     return {
@@ -352,10 +352,10 @@ export class PatientPreferenceLearner {
 
     // Time-based satisfaction patterns
     const morningApts = satisfactionData.filter(
-      (item) => item.hour_of_day < 12
+      (item) => item.hour_of_day < 12,
     );
     const afternoonApts = satisfactionData.filter(
-      (item) => item.hour_of_day >= 12
+      (item) => item.hour_of_day >= 12,
     );
 
     if (morningApts.length > 0 && afternoonApts.length > 0) {
@@ -381,7 +381,7 @@ export class PatientPreferenceLearner {
     // Wait time sensitivity
     const lowWaitApts = satisfactionData.filter((item) => item.wait_time < 15);
     const highWaitApts = satisfactionData.filter(
-      (item) => item.wait_time >= 15
+      (item) => item.wait_time >= 15,
     );
 
     if (lowWaitApts.length > 0 && highWaitApts.length > 0) {
@@ -413,7 +413,7 @@ export class PatientPreferenceLearner {
     timePatterns: any,
     staffPatterns: any,
     treatmentPatterns: any,
-    satisfactionPatterns: any
+    satisfactionPatterns: any,
   ): any {
     const combinedConfidence =
       timePatterns.confidence * 0.3 +
@@ -442,7 +442,7 @@ export class PatientPreferenceLearner {
       },
       communication_preferences: {
         wait_sensitivity: satisfactionPatterns.patterns.some(
-          (p) => p.type === 'wait_sensitivity'
+          (p) => p.type === 'wait_sensitivity',
         ),
         satisfaction_threshold: satisfactionPatterns.overall_satisfaction,
       },
@@ -453,7 +453,7 @@ export class PatientPreferenceLearner {
   }
 
   private calculateConfidenceImprovement(
-    appointments: AppointmentData[]
+    appointments: AppointmentData[],
   ): number {
     // Base improvement on data quantity and quality
     const dataQuality =
@@ -465,7 +465,7 @@ export class PatientPreferenceLearner {
   }
 
   private detectNewPatterns(
-    appointments: AppointmentData[]
+    appointments: AppointmentData[],
   ): LearningPattern[] {
     const patterns: LearningPattern[] = [];
 
@@ -500,7 +500,7 @@ export class PatientPreferenceLearner {
     confidence: number;
   } {
     const days = appointments.map((apt) =>
-      new Date(apt.appointment_time).getDay()
+      new Date(apt.appointment_time).getDay(),
     );
     const uniqueDays = new Set(days);
 
@@ -513,7 +513,7 @@ export class PatientPreferenceLearner {
     confidence: number;
   } {
     const hours = appointments.map((apt) =>
-      new Date(apt.appointment_time).getHours()
+      new Date(apt.appointment_time).getHours(),
     );
     const hourRange = Math.max(...hours) - Math.min(...hours);
 
@@ -525,7 +525,7 @@ export class PatientPreferenceLearner {
   private generateRecommendations(
     timePatterns: any,
     staffPatterns: any,
-    satisfactionPatterns: any
+    satisfactionPatterns: any,
   ): string[] {
     const recommendations: string[] = [];
 
@@ -533,13 +533,13 @@ export class PatientPreferenceLearner {
       if (timePatterns.preferred_hours.length > 0) {
         const hourRanges = this.formatHourRanges(timePatterns.preferred_hours);
         recommendations.push(
-          `Schedule appointments between ${hourRanges} for optimal satisfaction`
+          `Schedule appointments between ${hourRanges} for optimal satisfaction`,
         );
       }
 
       if (timePatterns.weekend_preference) {
         recommendations.push(
-          'Consider offering weekend appointments for this patient'
+          'Consider offering weekend appointments for this patient',
         );
       }
     }
@@ -549,7 +549,7 @@ export class PatientPreferenceLearner {
       staffPatterns.preferred_staff_ids.length > 0
     ) {
       recommendations.push(
-        'Prioritize booking with preferred staff members when possible'
+        'Prioritize booking with preferred staff members when possible',
       );
     }
 
@@ -557,13 +557,13 @@ export class PatientPreferenceLearner {
       satisfactionPatterns.patterns.some((p) => p.type === 'wait_sensitivity')
     ) {
       recommendations.push(
-        'Minimize wait times - patient is highly sensitive to delays'
+        'Minimize wait times - patient is highly sensitive to delays',
       );
     }
 
     if (satisfactionPatterns.overall_satisfaction < 3.5) {
       recommendations.push(
-        'Review appointment experience - satisfaction scores indicate issues'
+        'Review appointment experience - satisfaction scores indicate issues',
       );
     }
 

@@ -507,7 +507,7 @@ export const MessageTemplateSchema = z.object({
       default_value: z.string().optional(),
       validation_pattern: z.string().optional(),
       options: z.array(z.string()).optional(),
-    })
+    }),
   ),
   is_active: z.boolean().default(true),
 });
@@ -540,14 +540,14 @@ export const CommunicationCampaignSchema = z.object({
         field: z.string(),
         operator: z.string(),
         value: z.any(),
-      })
+      }),
     ),
     exclude_criteria: z.array(
       z.object({
         field: z.string(),
         operator: z.string(),
         value: z.any(),
-      })
+      }),
     ),
     patient_ids: z.array(z.string().uuid()).optional(),
   }),
@@ -560,7 +560,7 @@ export const QuickResponseSchema = z.object({
     .min(1, 'Shortcut is required')
     .regex(
       /^\/\w+$/,
-      'Shortcut must start with / and contain only letters, numbers, and underscores'
+      'Shortcut must start with / and contain only letters, numbers, and underscores',
     ),
   content: z.string().min(1, 'Content is required'),
   category: z.string().min(1, 'Category is required'),
@@ -587,7 +587,7 @@ export const CommunicationPreferencesSchema = z.object({
     enabled: z.boolean(),
     advance_days: z.array(z.number().min(0).max(30)),
     channels: z.array(
-      z.enum(['sms', 'email', 'portal', 'whatsapp', 'internal'])
+      z.enum(['sms', 'email', 'portal', 'whatsapp', 'internal']),
     ),
   }),
   follow_up_preferences: z.object({

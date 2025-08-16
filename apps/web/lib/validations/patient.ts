@@ -18,7 +18,7 @@ export const FHIRDateTimeSchema = z
   .string()
   .regex(
     /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{3})?Z?$/,
-    'Must be a valid FHIR datetime (YYYY-MM-DDTHH:mm:ss.sssZ)'
+    'Must be a valid FHIR datetime (YYYY-MM-DDTHH:mm:ss.sssZ)',
   );
 
 export const FHIRCodeSchema = z.string().min(1, 'Code cannot be empty');
@@ -35,7 +35,7 @@ export const FHIRIdentifierSchema = z.object({
             system: FHIRURISchema.optional(),
             code: FHIRCodeSchema.optional(),
             display: z.string().optional(),
-          })
+          }),
         )
         .optional(),
       text: z.string().optional(),
@@ -104,7 +104,7 @@ export const BrazilianPhoneSchema = z
   .string()
   .regex(
     /^(\+55\s?)?(\(?\d{2}\)?\s?)?\d{4,5}-?\d{4}$/,
-    'Must be a valid Brazilian phone number (+55 (11) 99999-9999)'
+    'Must be a valid Brazilian phone number (+55 (11) 99999-9999)',
   );
 
 // Brazilian CPF validation
@@ -150,11 +150,11 @@ export const FHIRPatientContactSchema = z.object({
               system: FHIRURISchema.optional(),
               code: FHIRCodeSchema.optional(),
               display: z.string().optional(),
-            })
+            }),
           )
           .optional(),
         text: z.string().optional(),
-      })
+      }),
     )
     .optional(),
   name: FHIRHumanNameSchema.optional(),
@@ -208,7 +208,7 @@ export const FHIRPatientSchema = z.object({
             system: FHIRURISchema.optional(),
             code: FHIRCodeSchema.optional(),
             display: z.string().optional(),
-          })
+          }),
         )
         .optional(),
       text: z.string().optional(),
@@ -226,7 +226,7 @@ export const FHIRPatientSchema = z.object({
         hash: z.string().optional(),
         title: z.string().optional(),
         creation: FHIRDateTimeSchema.optional(),
-      })
+      }),
     )
     .optional(),
   contact: z.array(FHIRPatientContactSchema).optional(),
@@ -240,13 +240,13 @@ export const FHIRPatientSchema = z.object({
                 system: FHIRURISchema.optional(),
                 code: FHIRCodeSchema.optional(),
                 display: z.string().optional(),
-              })
+              }),
             )
             .optional(),
           text: z.string().optional(),
         }),
         preferred: z.boolean().optional(),
-      })
+      }),
     )
     .optional(),
   generalPractitioner: z
@@ -254,7 +254,7 @@ export const FHIRPatientSchema = z.object({
       z.object({
         reference: z.string().optional(),
         display: z.string().optional(),
-      })
+      }),
     )
     .optional(),
   managingOrganization: z
@@ -271,7 +271,7 @@ export const FHIRPatientSchema = z.object({
           display: z.string().optional(),
         }),
         type: z.enum(['replaced-by', 'replaces', 'refer', 'seealso']),
-      })
+      }),
     )
     .optional(),
 });
@@ -307,7 +307,7 @@ export const LGPDConsentSchema = z.object({
         organization: z.string().min(1, 'Organization name is required'),
         purpose: z.string().min(10, 'Purpose must be at least 10 characters'),
         legal_basis: z.string().min(1, 'Legal basis is required'),
-      })
+      }),
     )
     .optional(),
   patient_signature: z.string().optional(),

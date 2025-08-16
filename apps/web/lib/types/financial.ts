@@ -466,7 +466,7 @@ export type InvoiceNumberGenerator = {
 export type TaxCalculator = {
   calculateServiceTax(
     amount: AmountInCentavos,
-    service_code: string
+    service_code: string,
   ): AmountInCentavos;
   calculateTotalTax(items: InvoiceItem[]): AmountInCentavos;
   getServiceTaxRate(service_code: string): number;
@@ -477,7 +477,7 @@ export class FinancialError extends Error {
   constructor(
     message: string,
     public code: string,
-    public details?: Record<string, any>
+    public details?: Record<string, any>,
   ) {
     super(message);
     this.name = 'FinancialError';
@@ -489,7 +489,7 @@ export class ShadowValidationError extends FinancialError {
     message: string,
     public variance: number,
     public tolerance: number,
-    details?: Record<string, any>
+    details?: Record<string, any>,
   ) {
     super(message, 'SHADOW_VALIDATION_FAILED', details);
     this.name = 'ShadowValidationError';
@@ -501,7 +501,7 @@ export class PaymentProcessingError extends FinancialError {
     message: string,
     public payment_id: string,
     public processor_error?: string,
-    details?: Record<string, any>
+    details?: Record<string, any>,
   ) {
     super(message, 'PAYMENT_PROCESSING_FAILED', details);
     this.name = 'PaymentProcessingError';
@@ -513,7 +513,7 @@ export class NFSeError extends FinancialError {
     message: string,
     public invoice_id: string,
     public nfse_error_code?: string,
-    details?: Record<string, any>
+    details?: Record<string, any>,
   ) {
     super(message, 'NFSE_GENERATION_FAILED', details);
     this.name = 'NFSeError';

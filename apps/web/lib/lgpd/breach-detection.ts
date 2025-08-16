@@ -374,7 +374,7 @@ export class BreachDetectionSystem extends EventEmitter {
         high: 3,
         medium: 10,
       },
-    }
+    },
   ) {
     super();
     this.setMaxListeners(100);
@@ -419,7 +419,7 @@ export class BreachDetectionSystem extends EventEmitter {
    * Create new breach incident
    */
   async createIncident(
-    incidentData: Omit<BreachIncident, 'id' | 'createdAt' | 'updatedAt'>
+    incidentData: Omit<BreachIncident, 'id' | 'createdAt' | 'updatedAt'>,
   ): Promise<BreachIncident> {
     if (!this.isInitialized) {
       await this.initialize();
@@ -474,7 +474,7 @@ export class BreachDetectionSystem extends EventEmitter {
     incidentId: string,
     status: BreachStatus,
     updatedBy: string,
-    notes?: string
+    notes?: string,
   ): Promise<BreachIncident> {
     const incident = this.incidents.get(incidentId);
     if (!incident) {
@@ -546,7 +546,7 @@ export class BreachDetectionSystem extends EventEmitter {
     alertData: Omit<
       MonitoringAlert,
       'id' | 'ruleId' | 'ruleName' | 'createdAt' | 'updatedAt'
-    >
+    >,
   ): Promise<MonitoringAlert> {
     if (!this.isInitialized) {
       await this.initialize();
@@ -666,13 +666,13 @@ export class BreachDetectionSystem extends EventEmitter {
         incidents = incidents.filter(
           (i) =>
             i.detectedAt >= filters.dateRange?.start &&
-            i.detectedAt <= filters.dateRange?.end
+            i.detectedAt <= filters.dateRange?.end,
         );
       }
     }
 
     return incidents.sort(
-      (a, b) => b.detectedAt.getTime() - a.detectedAt.getTime()
+      (a, b) => b.detectedAt.getTime() - a.detectedAt.getTime(),
     );
   }
 
@@ -699,7 +699,7 @@ export class BreachDetectionSystem extends EventEmitter {
     }
 
     return alerts.sort(
-      (a, b) => b.detectedAt.getTime() - a.detectedAt.getTime()
+      (a, b) => b.detectedAt.getTime() - a.detectedAt.getTime(),
     );
   }
 
@@ -708,7 +708,7 @@ export class BreachDetectionSystem extends EventEmitter {
    */
   async generateBreachReport(
     incidentId: string,
-    reportType: 'anpd' | 'internal' | 'data_subject' | 'forensic'
+    reportType: 'anpd' | 'internal' | 'data_subject' | 'forensic',
   ): Promise<{
     reportId: string;
     content: Record<string, any>;
@@ -765,35 +765,35 @@ export class BreachDetectionSystem extends EventEmitter {
     // Data sensitivity scoring
     if (
       incident.affectedData.categories.includes(
-        AffectedDataCategory.SENSITIVE_PERSONAL
+        AffectedDataCategory.SENSITIVE_PERSONAL,
       )
     ) {
       score += 30;
     }
     if (
       incident.affectedData.categories.includes(
-        AffectedDataCategory.FINANCIAL_DATA
+        AffectedDataCategory.FINANCIAL_DATA,
       )
     ) {
       score += 25;
     }
     if (
       incident.affectedData.categories.includes(
-        AffectedDataCategory.HEALTH_DATA
+        AffectedDataCategory.HEALTH_DATA,
       )
     ) {
       score += 25;
     }
     if (
       incident.affectedData.categories.includes(
-        AffectedDataCategory.BIOMETRIC_DATA
+        AffectedDataCategory.BIOMETRIC_DATA,
       )
     ) {
       score += 20;
     }
     if (
       incident.affectedData.categories.includes(
-        AffectedDataCategory.CHILDREN_DATA
+        AffectedDataCategory.CHILDREN_DATA,
       )
     ) {
       score += 20;
@@ -864,7 +864,7 @@ export class BreachDetectionSystem extends EventEmitter {
 
     // Data subject notification deadline (varies based on risk)
     const dataSubjectDeadline = new Date(
-      now.getTime() + 30 * 24 * 60 * 60 * 1000
+      now.getTime() + 30 * 24 * 60 * 60 * 1000,
     ); // 30 days default
     incident.compliance.notificationDeadlines.push({
       authority: 'Data Subjects',
@@ -877,7 +877,7 @@ export class BreachDetectionSystem extends EventEmitter {
    * Start forensic collection
    */
   private async startForensicCollection(
-    incident: BreachIncident
+    incident: BreachIncident,
   ): Promise<void> {
     // Collect system logs
     incident.investigation.forensicEvidence.push({
@@ -910,7 +910,7 @@ export class BreachDetectionSystem extends EventEmitter {
    * Trigger immediate response
    */
   private async triggerImmediateResponse(
-    incident: BreachIncident
+    incident: BreachIncident,
   ): Promise<void> {
     // Add immediate containment actions based on incident type
     switch (incident.type) {
@@ -956,7 +956,7 @@ export class BreachDetectionSystem extends EventEmitter {
    */
   private async evaluateRule(
     rule: DetectionRule,
-    event: any
+    event: any,
   ): Promise<boolean> {
     // Simple rule evaluation - in a real implementation this would be more sophisticated
     for (const condition of rule.conditions) {
@@ -1017,7 +1017,7 @@ export class BreachDetectionSystem extends EventEmitter {
     const field = condition.parameters.field;
     const pattern = new RegExp(
       condition.parameters.pattern,
-      condition.parameters.flags || 'i'
+      condition.parameters.flags || 'i',
     );
 
     const value = this.getNestedValue(event.data, field);
@@ -1033,7 +1033,7 @@ export class BreachDetectionSystem extends EventEmitter {
    */
   private async evaluateAnomalyCondition(
     condition: any,
-    event: any
+    event: any,
   ): Promise<boolean> {
     // Simple anomaly detection - in a real implementation this would use ML
     const field = condition.parameters.field;
@@ -1083,7 +1083,7 @@ export class BreachDetectionSystem extends EventEmitter {
       (a) =>
         a.ruleId === alert.ruleId &&
         a.detectedAt >= oneHourAgo &&
-        a.status === 'open'
+        a.status === 'open',
     );
 
     return similarAlerts.length >= threshold;
@@ -1124,7 +1124,7 @@ export class BreachDetectionSystem extends EventEmitter {
    * Generate internal report
    */
   private generateInternalReport(
-    incident: BreachIncident
+    incident: BreachIncident,
   ): Record<string, any> {
     return {
       executiveSummary: {
@@ -1148,7 +1148,7 @@ export class BreachDetectionSystem extends EventEmitter {
    * Generate data subject report
    */
   private generateDataSubjectReport(
-    incident: BreachIncident
+    incident: BreachIncident,
   ): Record<string, any> {
     return {
       incidentSummary: {
@@ -1176,7 +1176,7 @@ export class BreachDetectionSystem extends EventEmitter {
    * Generate forensic report
    */
   private generateForensicReport(
-    incident: BreachIncident
+    incident: BreachIncident,
   ): Record<string, any> {
     return {
       incidentOverview: {
@@ -1198,21 +1198,21 @@ export class BreachDetectionSystem extends EventEmitter {
    * Assess risk to individuals
    */
   private assessRiskToIndividuals(
-    incident: BreachIncident
+    incident: BreachIncident,
   ): 'low' | 'medium' | 'high' {
     if (
       incident.affectedData.categories.includes(
-        AffectedDataCategory.SENSITIVE_PERSONAL
+        AffectedDataCategory.SENSITIVE_PERSONAL,
       ) ||
       incident.affectedData.categories.includes(
-        AffectedDataCategory.FINANCIAL_DATA
+        AffectedDataCategory.FINANCIAL_DATA,
       )
     ) {
       return 'high';
     }
     if (
       incident.affectedData.categories.includes(
-        AffectedDataCategory.PERSONAL_IDENTIFIERS
+        AffectedDataCategory.PERSONAL_IDENTIFIERS,
       )
     ) {
       return 'medium';
@@ -1228,21 +1228,21 @@ export class BreachDetectionSystem extends EventEmitter {
 
     if (
       incident.affectedData.categories.includes(
-        AffectedDataCategory.FINANCIAL_DATA
+        AffectedDataCategory.FINANCIAL_DATA,
       )
     ) {
       consequences.push('Financial fraud or identity theft');
     }
     if (
       incident.affectedData.categories.includes(
-        AffectedDataCategory.SENSITIVE_PERSONAL
+        AffectedDataCategory.SENSITIVE_PERSONAL,
       )
     ) {
       consequences.push('Discrimination or reputational damage');
     }
     if (
       incident.affectedData.categories.includes(
-        AffectedDataCategory.AUTHENTICATION_DATA
+        AffectedDataCategory.AUTHENTICATION_DATA,
       )
     ) {
       consequences.push('Unauthorized account access');
@@ -1255,13 +1255,13 @@ export class BreachDetectionSystem extends EventEmitter {
    * Get recommended actions for data subjects
    */
   private getRecommendedActionsForDataSubjects(
-    incident: BreachIncident
+    incident: BreachIncident,
   ): string[] {
     const actions: string[] = [];
 
     if (
       incident.affectedData.categories.includes(
-        AffectedDataCategory.AUTHENTICATION_DATA
+        AffectedDataCategory.AUTHENTICATION_DATA,
       )
     ) {
       actions.push('Change your password immediately');
@@ -1269,7 +1269,7 @@ export class BreachDetectionSystem extends EventEmitter {
     }
     if (
       incident.affectedData.categories.includes(
-        AffectedDataCategory.FINANCIAL_DATA
+        AffectedDataCategory.FINANCIAL_DATA,
       )
     ) {
       actions.push('Monitor your financial accounts for suspicious activity');
@@ -1290,7 +1290,7 @@ export class BreachDetectionSystem extends EventEmitter {
       async () => {
         await this.performMonitoringCheck();
       },
-      this.config.monitoringIntervalMinutes * 60 * 1000
+      this.config.monitoringIntervalMinutes * 60 * 1000,
     );
   }
 
@@ -1302,7 +1302,7 @@ export class BreachDetectionSystem extends EventEmitter {
       async () => {
         await this.performComplianceCheck();
       },
-      this.config.complianceCheckIntervalHours * 60 * 60 * 1000
+      this.config.complianceCheckIntervalHours * 60 * 60 * 1000,
     );
   }
 
@@ -1313,7 +1313,7 @@ export class BreachDetectionSystem extends EventEmitter {
     try {
       // Check for system health
       const openAlerts = Array.from(this.alerts.values()).filter(
-        (a) => a.status === 'open'
+        (a) => a.status === 'open',
       );
 
       if (openAlerts.length > 100) {
@@ -1501,7 +1501,7 @@ export class BreachDetectionSystem extends EventEmitter {
   private logActivity(
     _actor: string,
     _action: string,
-    _details: Record<string, any>
+    _details: Record<string, any>,
   ): void {}
 
   /**
@@ -1555,7 +1555,7 @@ export class BreachDetectionSystem extends EventEmitter {
     }
 
     const enabledRules = Array.from(this.rules.values()).filter(
-      (r) => r.enabled
+      (r) => r.enabled,
     );
     if (enabledRules.length === 0) {
       issues.push('No enabled detection rules');
@@ -1564,7 +1564,7 @@ export class BreachDetectionSystem extends EventEmitter {
     const openIncidents = Array.from(this.incidents.values()).filter(
       (i) =>
         i.status !== BreachStatus.RESOLVED &&
-        i.status !== BreachStatus.FALSE_POSITIVE
+        i.status !== BreachStatus.FALSE_POSITIVE,
     );
 
     if (openIncidents.length > 50) {

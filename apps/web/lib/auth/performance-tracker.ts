@@ -42,7 +42,7 @@ class PerformanceTracker {
   recordMetric(
     name: string,
     value: number,
-    tags?: Record<string, string>
+    tags?: Record<string, string>,
   ): void {
     try {
       // Get or create metric array

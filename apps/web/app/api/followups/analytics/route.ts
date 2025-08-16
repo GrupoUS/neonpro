@@ -32,7 +32,7 @@ export async function GET(request: NextRequest) {
     if (!clinicId) {
       return NextResponse.json(
         { error: 'clinic_id is required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -40,7 +40,7 @@ export async function GET(request: NextRequest) {
     const analytics = await treatmentFollowupService.getAnalytics(
       clinicId,
       dateFrom || undefined,
-      dateTo || undefined
+      dateTo || undefined,
     );
 
     return NextResponse.json({
@@ -57,7 +57,7 @@ export async function GET(request: NextRequest) {
         error: 'Internal server error',
         message: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -77,7 +77,7 @@ export class JobQueueManager {
    */
   async addJob(
     job: BackgroundJob,
-    priority: 'high' | 'medium' | 'low' = 'medium'
+    priority: 'high' | 'medium' | 'low' = 'medium',
   ): Promise<string> {
     const { data, error } = await this.supabase
       .from('background_jobs')
@@ -229,7 +229,7 @@ export class JobQueueManager {
       }
 
       const refreshedTokens = await handler.refreshToken(
-        job.refreshToken || job.currentToken
+        job.refreshToken || job.currentToken,
       );
 
       // Update the connection with new tokens
@@ -326,7 +326,7 @@ export class JobQueueManager {
    * Process analytics aggregation jobs
    */
   private async processAnalyticsAggregation(
-    job: AnalyticsAggregationJob
+    job: AnalyticsAggregationJob,
   ): Promise<void> {
     const { startDate, endDate } = job.dateRange;
 
@@ -336,7 +336,7 @@ export class JobQueueManager {
         job.platform,
         metric,
         startDate,
-        endDate
+        endDate,
       );
     }
   }
@@ -344,42 +344,42 @@ export class JobQueueManager {
   // Private helper methods for specific sync operations
   private async syncSocialMediaPosts(
     _connection: any,
-    _job: DataSyncJob
+    _job: DataSyncJob,
   ): Promise<void> {}
 
   private async syncSocialMediaAnalytics(
     _connection: any,
-    _job: DataSyncJob
+    _job: DataSyncJob,
   ): Promise<void> {}
 
   private async syncMarketingContacts(
     _connection: any,
-    _job: DataSyncJob
+    _job: DataSyncJob,
   ): Promise<void> {}
 
   private async syncMarketingDeals(
     _connection: any,
-    _job: DataSyncJob
+    _job: DataSyncJob,
   ): Promise<void> {}
 
   private async processInstagramWebhookData(
     _webhookData: any,
-    _eventType: string
+    _eventType: string,
   ): Promise<void> {}
 
   private async processFacebookWebhookData(
     _webhookData: any,
-    _eventType: string
+    _eventType: string,
   ): Promise<void> {}
 
   private async processWhatsAppWebhookData(
     _webhookData: any,
-    _eventType: string
+    _eventType: string,
   ): Promise<void> {}
 
   private async processHubSpotWebhookData(
     _webhookData: any,
-    _eventType: string
+    _eventType: string,
   ): Promise<void> {}
 
   private async aggregateMetric(
@@ -387,7 +387,7 @@ export class JobQueueManager {
     _platform: string,
     _metric: string,
     _startDate: string,
-    _endDate: string
+    _endDate: string,
   ): Promise<void> {}
 }
 

@@ -75,7 +75,7 @@ export class UnifiedSessionSystem {
     // Initialize Supabase client
     this.supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     );
 
     // Initialize core components
@@ -83,10 +83,10 @@ export class UnifiedSessionSystem {
     this.deviceManager = new DeviceManager(this.config.device);
     this.securityLogger = new SecurityEventLogger(this.config.security);
     this.notificationService = new NotificationService(
-      this.config.security.notifications
+      this.config.security.notifications,
     );
     this.cleanupService = new DataCleanupService(
-      this.config.security.retentionDays
+      this.config.security.retentionDays,
     );
 
     // Start background services
@@ -99,7 +99,7 @@ export class UnifiedSessionSystem {
    * Authenticate user with intelligent timeout and activity tracking
    */
   async authenticateUser(
-    request: AuthenticationRequest
+    request: AuthenticationRequest,
   ): Promise<AuthenticationResponse> {
     try {
       const startTime = Date.now();
@@ -326,13 +326,13 @@ export class UnifiedSessionSystem {
    */
   async updateSessionActivity(
     sessionId: string,
-    activity?: SessionActivityUpdate
+    activity?: SessionActivityUpdate,
   ): Promise<AuthenticationResponse> {
     try {
       // Update session activity
       const updateResult = await this.sessionManager.updateActivity(
         sessionId,
-        activity
+        activity,
       );
 
       if (!updateResult.success) {
@@ -393,7 +393,7 @@ export class UnifiedSessionSystem {
    */
   async terminateSession(
     sessionId: string,
-    reason = 'user_logout'
+    reason = 'user_logout',
   ): Promise<AuthenticationResponse> {
     try {
       // Clear activity tracking
@@ -402,7 +402,7 @@ export class UnifiedSessionSystem {
       // Terminate session
       const terminateResult = await this.sessionManager.terminateSession(
         sessionId,
-        reason
+        reason,
       );
 
       if (!terminateResult.success) {
@@ -429,7 +429,7 @@ export class UnifiedSessionSystem {
         data: {
           session,
           securityEvent: await this.securityLogger.getLatestEvent(
-            session.userId
+            session.userId,
           ),
         },
         timestamp: new Date().toISOString(),
@@ -470,7 +470,7 @@ export class UnifiedSessionSystem {
       const enrichedSessions = await Promise.all(
         sessions.map(async (session) => {
           const deviceResult = await this.deviceManager.getDevice(
-            session.deviceId
+            session.deviceId,
           );
           const device = deviceResult.success ? deviceResult.data : null;
 
@@ -480,7 +480,7 @@ export class UnifiedSessionSystem {
             isActive: this.activityTrackers.has(session.id),
             timeToExpiry: new Date(session.expiresAt).getTime() - Date.now(),
           };
-        })
+        }),
       );
 
       return {
@@ -536,7 +536,7 @@ export class UnifiedSessionSystem {
   }
 
   private async setupSessionTimeoutTracking(
-    session: SessionData
+    session: SessionData,
   ): Promise<void> {
     const timeToExpiry = new Date(session.expiresAt).getTime() - Date.now();
     const warningTime = timeToExpiry - 5 * 60 * 1000; // 5 minutes before expiry
@@ -569,7 +569,7 @@ export class UnifiedSessionSystem {
 
   private async sendSessionWarning(
     sessionId: string,
-    timeRemaining: string
+    timeRemaining: string,
   ): Promise<void> {
     try {
       const sessionResult = await this.sessionManager.getSession(sessionId);
@@ -605,7 +605,7 @@ export class UnifiedSessionSystem {
 
       await this.sessionManager.extendSession(
         sessionId,
-        new Date(newExpiryTime).toISOString()
+        new Date(newExpiryTime).toISOString(),
       );
 
       // Clear old timers and setup new ones
@@ -633,7 +633,7 @@ export class UnifiedSessionSystem {
 
       this.activityTrackers.set(sessionId, inactivityTimer);
     },
-    1000
+    1000,
   ); // Debounce activity updates
 
   private async handleSessionInactivity(sessionId: string): Promise<void> {
@@ -669,7 +669,7 @@ export class UnifiedSessionSystem {
    */
   private async calculateAuthenticationRisk(
     request: AuthenticationRequest,
-    device: DeviceData
+    device: DeviceData,
   ): Promise<number> {
     let riskScore = 0;
 
@@ -687,7 +687,7 @@ export class UnifiedSessionSystem {
     if (request.location && device.lastLocation) {
       const distance = this.calculateDistance(
         request.location,
-        device.lastLocation
+        device.lastLocation,
       );
       if (distance > 1000) {
         // More than 1000km
@@ -705,7 +705,7 @@ export class UnifiedSessionSystem {
     // Recent failed attempts
     const recentFailures = await this.securityLogger.getRecentFailedAttempts(
       request.userId,
-      60 * 60 * 1000
+      60 * 60 * 1000,
     ); // Last hour
     if (recentFailures > 3) {
       riskScore += 0.4;
@@ -716,7 +716,7 @@ export class UnifiedSessionSystem {
 
   private async getRiskFactors(
     request: AuthenticationRequest,
-    device: DeviceData
+    device: DeviceData,
   ): Promise<string[]> {
     const factors: string[] = [];
 
@@ -730,7 +730,7 @@ export class UnifiedSessionSystem {
     if (request.location && device.lastLocation) {
       const distance = this.calculateDistance(
         request.location,
-        device.lastLocation
+        device.lastLocation,
       );
       if (distance > 1000) {
         factors.push('location_change');
@@ -744,7 +744,7 @@ export class UnifiedSessionSystem {
 
     const recentFailures = await this.securityLogger.getRecentFailedAttempts(
       request.userId,
-      60 * 60 * 1000
+      60 * 60 * 1000,
     );
     if (recentFailures > 3) {
       factors.push('recent_failures');
@@ -755,7 +755,7 @@ export class UnifiedSessionSystem {
 
   private calculateDistance(
     loc1: { latitude: number; longitude: number },
-    loc2: { latitude: number; longitude: number }
+    loc2: { latitude: number; longitude: number },
   ): number {
     const R = 6371; // Earth's radius in kilometers
     const dLat = ((loc2.latitude - loc1.latitude) * Math.PI) / 180;
@@ -790,7 +790,7 @@ export class UnifiedSessionSystem {
           await this.performScheduledCleanup();
         } catch (_error) {}
       },
-      60 * 60 * 1000
+      60 * 60 * 1000,
     );
   }
 
@@ -828,11 +828,11 @@ export class UnifiedSessionSystem {
   async authenticateWithTrustedDevice(
     request: Omit<AuthenticationRequest, 'deviceInfo'> & {
       deviceFingerprint: string;
-    }
+    },
   ): Promise<AuthenticationResponse> {
     // Implementation for trusted device authentication
     const deviceResult = await this.deviceManager.getDeviceByFingerprint(
-      request.deviceFingerprint
+      request.deviceFingerprint,
     );
 
     if (!(deviceResult.success && deviceResult.data?.trusted)) {
@@ -857,14 +857,14 @@ export class UnifiedSessionSystem {
 
   async initiateDeviceTrust(
     deviceId: string,
-    verificationMethod: 'email' | 'sms'
+    verificationMethod: 'email' | 'sms',
   ): Promise<AuthenticationResponse> {
     return this.deviceManager.initiateDeviceTrust(deviceId, verificationMethod);
   }
 
   async verifyDeviceTrust(
     deviceId: string,
-    verificationCode: string
+    verificationCode: string,
   ): Promise<AuthenticationResponse> {
     return this.deviceManager.verifyDeviceTrust(deviceId, verificationCode);
   }
@@ -874,7 +874,7 @@ export class UnifiedSessionSystem {
   }
 
   async handleSecurityThreat(
-    threatData: SecurityThreatData
+    threatData: SecurityThreatData,
   ): Promise<AuthenticationResponse> {
     // Implementation for security threat handling
     try {
@@ -892,8 +892,8 @@ export class UnifiedSessionSystem {
         if (sessionsResult.success && sessionsResult.data?.sessions) {
           await Promise.all(
             sessionsResult.data.sessions.map((session) =>
-              this.terminateSession(session.id, 'security_threat')
-            )
+              this.terminateSession(session.id, 'security_threat'),
+            ),
           );
         }
       }
@@ -930,7 +930,7 @@ export class UnifiedSessionSystem {
     try {
       const events = await this.securityLogger.getEventsByDateRange(
         period.startDate.toISOString(),
-        period.endDate.toISOString()
+        period.endDate.toISOString(),
       );
 
       const statistics =
@@ -1045,7 +1045,7 @@ export class UnifiedSessionSystem {
 
   async getSecurityEvents(
     userId: string,
-    limit = 50
+    limit = 50,
   ): Promise<AuthenticationResponse> {
     try {
       const events = await this.securityLogger.getUserEvents(userId, limit);
@@ -1097,7 +1097,7 @@ export const unifiedSessionSystem = new UnifiedSessionSystem();
 
 // Export factory function for custom configurations
 export function createUnifiedSessionSystem(
-  config?: Partial<typeof sessionConfig>
+  config?: Partial<typeof sessionConfig>,
 ): UnifiedSessionSystem {
   return new UnifiedSessionSystem(config);
 }

@@ -36,7 +36,7 @@ import {
 // Get Supabase client
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
 );
 
 /**
@@ -45,7 +45,7 @@ const supabase = createClient(
 
 // Create a new invoice with items and shadow validation
 export async function createInvoice(
-  input: CreateInvoiceInput
+  input: CreateInvoiceInput,
 ): Promise<Invoice> {
   try {
     // Validate input
@@ -61,13 +61,13 @@ export async function createInvoice(
     // Calculate totals
     const subtotal = items.reduce(
       (sum, item) => sum + item.unit_price * item.quantity,
-      0
+      0,
     );
     const discount = items.reduce((sum, item) => sum + item.discount_amount, 0);
     const tax = items.reduce(
       (sum, item) =>
         sum + Math.round(item.unit_price * item.quantity * item.tax_rate),
-      0
+      0,
     );
     const total = subtotal - discount + tax;
 
@@ -85,7 +85,7 @@ export async function createInvoice(
     // Generate invoice number
     const { data: invoiceNumber } = await supabase.rpc(
       'generate_invoice_number',
-      { clinic_uuid: validatedInput.clinic_id }
+      { clinic_uuid: validatedInput.clinic_id },
     );
 
     // Create invoice
@@ -147,7 +147,7 @@ export async function createInvoice(
     return await getInvoiceById(invoice.id);
   } catch (error) {
     throw new Error(
-      `Failed to create invoice: ${error instanceof Error ? error.message : 'Unknown error'}`
+      `Failed to create invoice: ${error instanceof Error ? error.message : 'Unknown error'}`,
     );
   }
 }
@@ -164,7 +164,7 @@ export async function getInvoiceById(id: string): Promise<Invoice> {
         payments(*),
         patient:patients(id, name, email, phone, cpf),
         clinic:clinics(id, name, cnpj, address)
-      `
+      `,
       )
       .eq('id', id)
       .single();
@@ -179,7 +179,7 @@ export async function getInvoiceById(id: string): Promise<Invoice> {
     return data as Invoice;
   } catch (error) {
     throw new Error(
-      `Failed to fetch invoice: ${error instanceof Error ? error.message : 'Unknown error'}`
+      `Failed to fetch invoice: ${error instanceof Error ? error.message : 'Unknown error'}`,
     );
   }
 }
@@ -188,7 +188,7 @@ export async function getInvoiceById(id: string): Promise<Invoice> {
 export async function listInvoices(
   filters: InvoiceReportFilters = {},
   page = 1,
-  limit = 20
+  limit = 20,
 ): Promise<InvoiceListResponse> {
   try {
     let query = supabase.from('invoices').select(
@@ -198,7 +198,7 @@ export async function listInvoices(
         clinic:clinics(id, name),
         invoice_items(count)
       `,
-      { count: 'exact' }
+      { count: 'exact' },
     );
 
     // Apply filters
@@ -261,7 +261,7 @@ export async function listInvoices(
     };
   } catch (error) {
     throw new Error(
-      `Failed to list invoices: ${error instanceof Error ? error.message : 'Unknown error'}`
+      `Failed to list invoices: ${error instanceof Error ? error.message : 'Unknown error'}`,
     );
   }
 }
@@ -269,7 +269,7 @@ export async function listInvoices(
 // Update invoice
 export async function updateInvoice(
   id: string,
-  input: UpdateInvoiceInput
+  input: UpdateInvoiceInput,
 ): Promise<Invoice> {
   try {
     // Validate input
@@ -295,7 +295,7 @@ export async function updateInvoice(
     return await getInvoiceById(id);
   } catch (error) {
     throw new Error(
-      `Failed to update invoice: ${error instanceof Error ? error.message : 'Unknown error'}`
+      `Failed to update invoice: ${error instanceof Error ? error.message : 'Unknown error'}`,
     );
   }
 }
@@ -323,7 +323,7 @@ export async function issueInvoice(id: string): Promise<Invoice> {
     return await getInvoiceById(id);
   } catch (error) {
     throw new Error(
-      `Failed to issue invoice: ${error instanceof Error ? error.message : 'Unknown error'}`
+      `Failed to issue invoice: ${error instanceof Error ? error.message : 'Unknown error'}`,
     );
   }
 }
@@ -352,7 +352,7 @@ export async function cancelInvoice(id: string): Promise<Invoice> {
     return await getInvoiceById(id);
   } catch (error) {
     throw new Error(
-      `Failed to cancel invoice: ${error instanceof Error ? error.message : 'Unknown error'}`
+      `Failed to cancel invoice: ${error instanceof Error ? error.message : 'Unknown error'}`,
     );
   }
 }
@@ -363,7 +363,7 @@ export async function cancelInvoice(id: string): Promise<Invoice> {
 
 // Create payment with installments support
 export async function createPayment(
-  input: CreatePaymentInput
+  input: CreatePaymentInput,
 ): Promise<Payment> {
   try {
     // Validate input
@@ -420,7 +420,7 @@ export async function createPayment(
     return await getPaymentById(payment.id);
   } catch (error) {
     throw new Error(
-      `Failed to create payment: ${error instanceof Error ? error.message : 'Unknown error'}`
+      `Failed to create payment: ${error instanceof Error ? error.message : 'Unknown error'}`,
     );
   }
 }
@@ -434,7 +434,7 @@ export async function getPaymentById(id: string): Promise<Payment> {
         `
         *,
         installments:payment_installments(*)
-      `
+      `,
       )
       .eq('id', id)
       .single();
@@ -449,7 +449,7 @@ export async function getPaymentById(id: string): Promise<Payment> {
     return data as Payment;
   } catch (error) {
     throw new Error(
-      `Failed to fetch payment: ${error instanceof Error ? error.message : 'Unknown error'}`
+      `Failed to fetch payment: ${error instanceof Error ? error.message : 'Unknown error'}`,
     );
   }
 }
@@ -457,7 +457,7 @@ export async function getPaymentById(id: string): Promise<Payment> {
 // Update payment status
 export async function updatePayment(
   id: string,
-  input: UpdatePaymentInput
+  input: UpdatePaymentInput,
 ): Promise<Payment> {
   try {
     // Validate input
@@ -471,7 +471,7 @@ export async function updatePayment(
     // Convert processing fee to centavos if provided
     if (validatedInput.processing_fee !== undefined) {
       updateData.processing_fee = reaisToCentavos(
-        validatedInput.processing_fee
+        validatedInput.processing_fee,
       );
     }
 
@@ -498,14 +498,14 @@ export async function updatePayment(
     return await getPaymentById(id);
   } catch (error) {
     throw new Error(
-      `Failed to update payment: ${error instanceof Error ? error.message : 'Unknown error'}`
+      `Failed to update payment: ${error instanceof Error ? error.message : 'Unknown error'}`,
     );
   }
 }
 
 // List payments for an invoice
 export async function listPaymentsByInvoice(
-  invoiceId: string
+  invoiceId: string,
 ): Promise<Payment[]> {
   try {
     const { data, error } = await supabase
@@ -514,7 +514,7 @@ export async function listPaymentsByInvoice(
         `
         *,
         installments:payment_installments(*)
-      `
+      `,
       )
       .eq('invoice_id', invoiceId)
       .order('created_at', { ascending: false });
@@ -526,7 +526,7 @@ export async function listPaymentsByInvoice(
     return data as Payment[];
   } catch (error) {
     throw new Error(
-      `Failed to list payments: ${error instanceof Error ? error.message : 'Unknown error'}`
+      `Failed to list payments: ${error instanceof Error ? error.message : 'Unknown error'}`,
     );
   }
 }
@@ -539,13 +539,13 @@ export async function listPaymentsByInvoice(
 export async function performShadowValidation(
   operationType: string,
   referenceId: string,
-  calculationData: any
+  calculationData: any,
 ): Promise<ShadowValidation> {
   try {
     // Perform shadow calculation
     const shadowResult = await performShadowCalculation(
       operationType,
-      calculationData
+      calculationData,
     );
 
     // Store validation result
@@ -588,7 +588,7 @@ export async function performShadowValidation(
     return data as ShadowValidation;
   } catch (error) {
     throw new Error(
-      `Shadow validation failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+      `Shadow validation failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
     );
   }
 }
@@ -596,7 +596,7 @@ export async function performShadowValidation(
 // Perform shadow calculation (alternative calculation method)
 async function performShadowCalculation(
   operationType: string,
-  data: any
+  data: any,
 ): Promise<ShadowCalculationResult> {
   let original: any;
   let shadow: any;
@@ -614,15 +614,15 @@ async function performShadowCalculation(
       shadow = {
         subtotal: data.items.reduce(
           (sum: number, item: any) => sum + item.unit_price * item.quantity,
-          0
+          0,
         ),
         discount: data.items.reduce(
           (sum: number, item: any) => sum + item.discount_amount,
-          0
+          0,
         ),
         tax: data.items.reduce(
           (sum: number, item: any) => sum + item.tax_amount,
-          0
+          0,
         ),
         total: 0,
       };
@@ -670,7 +670,7 @@ function getTableName(operationType: string): string {
 
 // Get financial summary for dashboard
 export async function getFinancialSummary(
-  filters: InvoiceReportFilters = {}
+  filters: InvoiceReportFilters = {},
 ): Promise<FinancialSummary> {
   try {
     let query = supabase.from('invoices').select('*');
@@ -706,7 +706,7 @@ export async function getFinancialSummary(
     if (invoices) {
       summary.total_amount = invoices.reduce(
         (sum, inv) => sum + inv.total_amount,
-        0
+        0,
       );
       summary.total_paid = invoices
         .filter((inv) => inv.payment_status === 'paid')
@@ -749,7 +749,7 @@ export async function getFinancialSummary(
     return summary;
   } catch (error) {
     throw new Error(
-      `Failed to get financial summary: ${error instanceof Error ? error.message : 'Unknown error'}`
+      `Failed to get financial summary: ${error instanceof Error ? error.message : 'Unknown error'}`,
     );
   }
 }
@@ -785,7 +785,7 @@ async function generateNFSe(invoice: Invoice): Promise<NFSeResponse> {
     return mockResponse;
   } catch (error) {
     throw new Error(
-      `NFSe generation failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+      `NFSe generation failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
     );
   }
 }
@@ -801,7 +801,7 @@ async function cancelNFSe(invoice: Invoice): Promise<void> {
       .eq('id', invoice.id);
   } catch (error) {
     throw new Error(
-      `NFSe cancellation failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+      `NFSe cancellation failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
     );
   }
 }
@@ -812,7 +812,7 @@ async function cancelNFSe(invoice: Invoice): Promise<void> {
  */
 
 async function processPayment(
-  payment: Payment
+  payment: Payment,
 ): Promise<PaymentProcessingResponse> {
   try {
     // Mock payment processing - in production this would call payment processor APIs
@@ -842,7 +842,7 @@ async function processPayment(
     return mockResponse;
   } catch (error) {
     throw new Error(
-      `Payment processing failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+      `Payment processing failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
     );
   }
 }
@@ -871,7 +871,7 @@ Total: ${formatCurrency(invoice.total_amount)}
     return blob;
   } catch (error) {
     throw new Error(
-      `PDF generation failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+      `PDF generation failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
     );
   }
 }

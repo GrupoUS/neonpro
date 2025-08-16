@@ -64,7 +64,7 @@ export class IntelligentErrorHandler {
    */
   captureError(
     error: Error | string,
-    context: Partial<ErrorContext> = {}
+    context: Partial<ErrorContext> = {},
   ): ErrorContext {
     const errorMessage = typeof error === 'string' ? error : error.message;
     const errorStack = typeof error === 'object' ? error.stack : undefined;
@@ -120,7 +120,7 @@ export class IntelligentErrorHandler {
         route: errorContext.route,
         recoveryAction: errorContext.recoveryAction,
         timestamp: errorContext.timestamp,
-      }
+      },
     );
   }
 
@@ -133,7 +133,7 @@ export class IntelligentErrorHandler {
     // Clean old errors to prevent memory leaks
     if (this.errorHistory.length > this.maxErrors) {
       this.errorHistory = this.errorHistory.slice(
-        -Math.floor(this.maxErrors * 0.8)
+        -Math.floor(this.maxErrors * 0.8),
       );
     }
   }
@@ -150,7 +150,7 @@ export class IntelligentErrorHandler {
   } {
     const now = Date.now();
     const recentErrors = this.errorHistory.filter(
-      (e) => now - e.timestamp <= timeWindow
+      (e) => now - e.timestamp <= timeWindow,
     );
 
     const byCategory: Record<string, number> = {};
@@ -209,7 +209,7 @@ export class IntelligentErrorHandler {
    */
   private analyzeError(
     message: string,
-    stack?: string
+    stack?: string,
   ): {
     category: ErrorContext['category'];
     severity: ErrorContext['severity'];
@@ -347,7 +347,7 @@ export const intelligentErrorHandler = IntelligentErrorHandler.getInstance();
  */
 export function withErrorHandling<T extends any[], R>(
   fn: (...args: T) => Promise<R>,
-  context?: Partial<ErrorContext>
+  context?: Partial<ErrorContext>,
 ): (...args: T) => Promise<R | null> {
   return async (...args: T): Promise<R | null> => {
     try {
@@ -364,7 +364,7 @@ export function withErrorHandling<T extends any[], R>(
  */
 export function withErrorBoundary(
   Component: React.ComponentType<any>,
-  fallback?: React.ComponentType<{ error: Error; errorId: string }>
+  fallback?: React.ComponentType<{ error: Error; errorId: string }>,
 ) {
   return class ErrorBoundaryWrapper extends React.Component<
     any,
@@ -415,7 +415,7 @@ export function withErrorBoundary(
                 key: 'title',
                 className: 'text-red-800 font-medium mb-2',
               },
-              'Algo deu errado'
+              'Algo deu errado',
             ),
             React.createElement(
               'p',
@@ -423,7 +423,7 @@ export function withErrorBoundary(
                 key: 'message',
                 className: 'text-red-600 text-sm',
               },
-              'Um erro inesperado ocorreu. Nossa equipe foi notificada.'
+              'Um erro inesperado ocorreu. Nossa equipe foi notificada.',
             ),
             this.state.errorId &&
               React.createElement(
@@ -432,9 +432,9 @@ export function withErrorBoundary(
                   key: 'errorId',
                   className: 'text-red-500 text-xs mt-2 font-mono',
                 },
-                `ID: ${this.state.errorId}`
+                `ID: ${this.state.errorId}`,
               ),
-          ].filter(Boolean)
+          ].filter(Boolean),
         );
       }
 

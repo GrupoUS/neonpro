@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
     if (!(conflictType && localProfile && googleProfile && resolution)) {
       return NextResponse.json(
         { error: 'Dados obrigatórios ausentes' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -75,7 +75,7 @@ export async function POST(request: NextRequest) {
       default:
         return NextResponse.json(
           { error: 'Estratégia de resolução inválida' },
-          { status: 400 }
+          { status: 400 },
         );
     }
 
@@ -90,7 +90,7 @@ export async function POST(request: NextRequest) {
     if (updateError) {
       return NextResponse.json(
         { error: 'Erro ao resolver conflito de perfil' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -126,7 +126,7 @@ export async function POST(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -154,7 +154,7 @@ export async function GET(_request: NextRequest) {
     if (profileError) {
       return NextResponse.json(
         { error: 'Erro ao buscar perfil' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -225,7 +225,7 @@ export async function GET(_request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -220,7 +220,7 @@ class SafetyAlertsSystem {
       recipients?: string[];
       expiresIn?: number;
       escalateIn?: number;
-    }
+    },
   ): Promise<SafetyAlert> {
     try {
       const alertId = this.generateAlertId();
@@ -249,7 +249,7 @@ class SafetyAlertsSystem {
         recipients: await this.determineRecipients(
           type,
           severity,
-          options?.recipients
+          options?.recipients,
         ),
         compliance: this.determineComplianceRequirements(type, severity),
       };
@@ -272,7 +272,7 @@ class SafetyAlertsSystem {
   async processRiskAssessment(
     patientId: string,
     treatmentId: string,
-    riskResult: any
+    riskResult: any,
   ): Promise<SafetyAlert[]> {
     const alerts: SafetyAlert[] = [];
 
@@ -303,7 +303,7 @@ class SafetyAlertsSystem {
             {
               priority: 'critical',
               escalateIn: criticalAlert.severity === 'critical' ? 5 : 15,
-            }
+            },
           );
           alerts.push(alert);
         }
@@ -339,14 +339,14 @@ class SafetyAlertsSystem {
               riskResult.overallRisk.severity === 'critical'
                 ? 'critical'
                 : 'high',
-          }
+          },
         );
         alerts.push(alert);
       }
 
       // Check for contraindications
       const contraindications = riskResult.criticalAlerts?.filter(
-        (alert: any) => alert.type === 'contraindication'
+        (alert: any) => alert.type === 'contraindication',
       );
       if (contraindications && contraindications.length > 0) {
         const alert = await this.createAlert(
@@ -368,7 +368,7 @@ class SafetyAlertsSystem {
           {
             priority: 'critical',
             escalateIn: 0, // Immediate escalation
-          }
+          },
         );
         alerts.push(alert);
       }
@@ -390,7 +390,7 @@ class SafetyAlertsSystem {
       oxygenSaturation?: number;
       temperature?: number;
       respiratoryRate?: number;
-    }
+    },
   ): Promise<SafetyAlert[]> {
     const alerts: SafetyAlert[] = [];
 
@@ -416,7 +416,7 @@ class SafetyAlertsSystem {
             timeframe: 'Immediate',
             consequences: ['Cardiac complications', 'Hemodynamic instability'],
           },
-          { priority: 'critical', escalateIn: 2 }
+          { priority: 'critical', escalateIn: 2 },
         );
         alerts.push(alert);
       }
@@ -449,7 +449,7 @@ class SafetyAlertsSystem {
               timeframe: 'Immediate',
               consequences: ['Cardiovascular complications', 'Stroke risk'],
             },
-            { priority: 'critical', escalateIn: 2 }
+            { priority: 'critical', escalateIn: 2 },
           );
           alerts.push(alert);
         }
@@ -470,7 +470,7 @@ class SafetyAlertsSystem {
             timeframe: 'Immediate',
             consequences: ['Hypoxia', 'Respiratory failure'],
           },
-          { priority: 'critical', escalateIn: 1 }
+          { priority: 'critical', escalateIn: 1 },
         );
         alerts.push(alert);
       }
@@ -487,7 +487,7 @@ class SafetyAlertsSystem {
   async checkDrugInteractions(
     patientId: string,
     medications: string[],
-    newMedication: string
+    newMedication: string,
   ): Promise<SafetyAlert[]> {
     const alerts: SafetyAlert[] = [];
 
@@ -516,7 +516,7 @@ class SafetyAlertsSystem {
             {
               priority: severity === 'critical' ? 'critical' : 'high',
               escalateIn: severity === 'critical' ? 5 : 30,
-            }
+            },
           );
           alerts.push(alert);
         }
@@ -539,7 +539,7 @@ class SafetyAlertsSystem {
       nextMaintenance?: Date;
       errorCodes?: string[];
       calibrationStatus?: 'valid' | 'expired' | 'due';
-    }
+    },
   ): Promise<SafetyAlert[]> {
     const alerts: SafetyAlert[] = [];
 
@@ -562,7 +562,7 @@ class SafetyAlertsSystem {
             timeframe: 'Immediate',
             consequences: ['Treatment delay', 'Patient safety risk'],
           },
-          { priority: 'critical', escalateIn: 0 }
+          { priority: 'critical', escalateIn: 0 },
         );
         alerts.push(alert);
       }
@@ -581,7 +581,7 @@ class SafetyAlertsSystem {
             timeframe: 'Before next use',
             consequences: ['Inaccurate readings', 'Treatment errors'],
           },
-          { priority: 'high', escalateIn: 60 }
+          { priority: 'high', escalateIn: 60 },
         );
         alerts.push(alert);
       }
@@ -600,7 +600,7 @@ class SafetyAlertsSystem {
             timeframe: '24 hours',
             consequences: ['Equipment failure risk', 'Reduced reliability'],
           },
-          { priority: 'medium', escalateIn: 1440 } // 24 hours
+          { priority: 'medium', escalateIn: 1440 }, // 24 hours
         );
         alerts.push(alert);
       }
@@ -617,7 +617,7 @@ class SafetyAlertsSystem {
   async acknowledgeAlert(
     alertId: string,
     userId: string,
-    _notes?: string
+    _notes?: string,
   ): Promise<boolean> {
     try {
       const alert = this.activeAlerts.get(alertId);
@@ -653,7 +653,7 @@ class SafetyAlertsSystem {
     alertId: string,
     userId: string,
     _resolution: string,
-    _notes?: string
+    _notes?: string,
   ): Promise<boolean> {
     try {
       const alert = this.activeAlerts.get(alertId);
@@ -684,7 +684,7 @@ class SafetyAlertsSystem {
   async escalateAlert(
     alertId: string,
     escalationLevel: number,
-    _reason?: string
+    _reason?: string,
   ): Promise<boolean> {
     try {
       const alert = this.activeAlerts.get(alertId);
@@ -752,12 +752,12 @@ class SafetyAlertsSystem {
       }
       if (filters.patientId) {
         alerts = alerts.filter(
-          (a) => a.details.patientId === filters.patientId
+          (a) => a.details.patientId === filters.patientId,
         );
       }
       if (filters.treatmentId) {
         alerts = alerts.filter(
-          (a) => a.details.treatmentId === filters.treatmentId
+          (a) => a.details.treatmentId === filters.treatmentId,
         );
       }
     }
@@ -833,7 +833,7 @@ class SafetyAlertsSystem {
         .map(
           (a) =>
             new Date(a.acknowledged_at).getTime() -
-            new Date(a.created_at).getTime()
+            new Date(a.created_at).getTime(),
         )
         .map((ms) => ms / 60_000); // Convert to minutes
 
@@ -871,7 +871,7 @@ class SafetyAlertsSystem {
     if (this.config.monitoring.batchProcessing) {
       this.monitoringInterval = setInterval(
         () => this.performPeriodicChecks(),
-        this.config.monitoring.intervalMinutes * 60_000
+        this.config.monitoring.intervalMinutes * 60_000,
       );
     }
   }
@@ -898,7 +898,7 @@ class SafetyAlertsSystem {
       .on(
         'postgres_changes',
         { event: 'INSERT', schema: 'public', table: 'patient_vitals' },
-        (payload) => this.handleVitalsUpdate(payload.new)
+        (payload) => this.handleVitalsUpdate(payload.new),
       )
       .subscribe();
 
@@ -908,7 +908,7 @@ class SafetyAlertsSystem {
       .on(
         'postgres_changes',
         { event: 'UPDATE', schema: 'public', table: 'equipment' },
-        (payload) => this.handleEquipmentUpdate(payload.new)
+        (payload) => this.handleEquipmentUpdate(payload.new),
       )
       .subscribe();
 
@@ -918,7 +918,7 @@ class SafetyAlertsSystem {
       .on(
         'postgres_changes',
         { event: 'UPDATE', schema: 'public', table: 'treatments' },
-        (payload) => this.handleTreatmentUpdate(payload.new)
+        (payload) => this.handleTreatmentUpdate(payload.new),
       )
       .subscribe();
   }
@@ -984,7 +984,7 @@ class SafetyAlertsSystem {
             timeframe: 'Immediate',
             consequences: ['Patient safety risk'],
           },
-          { priority: 'critical', escalateIn: 0 }
+          { priority: 'critical', escalateIn: 0 },
         );
       }
     } catch (_error) {}
@@ -1111,7 +1111,7 @@ class SafetyAlertsSystem {
   private async determineRecipients(
     type: AlertType,
     severity: AlertSeverity,
-    customRecipients?: string[]
+    customRecipients?: string[],
   ): Promise<SafetyAlert['recipients']> {
     const recipients: SafetyAlert['recipients'] = [];
 
@@ -1136,7 +1136,7 @@ class SafetyAlertsSystem {
 
   private async getDefaultRecipients(
     _type: AlertType,
-    _severity: AlertSeverity
+    _severity: AlertSeverity,
   ): Promise<SafetyAlert['recipients']> {
     // This would query the database for default recipients based on roles
     // For now, return empty array
@@ -1145,7 +1145,7 @@ class SafetyAlertsSystem {
 
   private determineComplianceRequirements(
     type: AlertType,
-    severity: AlertSeverity
+    severity: AlertSeverity,
   ): SafetyAlert['compliance'] {
     return {
       cfmRequired: severity === 'critical' || severity === 'emergency',
@@ -1159,7 +1159,7 @@ class SafetyAlertsSystem {
   private extractRiskFactors(categoryRisks: any[]): string[] {
     return categoryRisks
       .filter(
-        (risk) => risk.severity === 'high' || risk.severity === 'critical'
+        (risk) => risk.severity === 'high' || risk.severity === 'critical',
       )
       .flatMap((risk) => risk.factors);
   }
@@ -1184,7 +1184,7 @@ class SafetyAlertsSystem {
 
   private async sendAlertNotifications(
     _alert: SafetyAlert,
-    _channels: AlertChannel[]
+    _channels: AlertChannel[],
   ): Promise<void> {}
 
   private async applyAlertRules(alert: SafetyAlert): Promise<void> {

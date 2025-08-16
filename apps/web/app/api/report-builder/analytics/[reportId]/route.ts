@@ -9,7 +9,7 @@ const reportService = new ReportBuilderService();
 // GET /api/report-builder/analytics/[reportId] - Get analytics for specific report
 export async function GET(
   _request: NextRequest,
-  { params }: { params: { reportId: string } }
+  { params }: { params: { reportId: string } },
 ) {
   try {
     const reportId = params.reportId;
@@ -20,7 +20,7 @@ export async function GET(
           success: false,
           error: 'Report ID is required',
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -32,7 +32,7 @@ export async function GET(
           success: false,
           error: 'Analytics not found for this report',
         },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -49,7 +49,7 @@ export async function GET(
             ? error.message
             : 'Failed to fetch report analytics',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

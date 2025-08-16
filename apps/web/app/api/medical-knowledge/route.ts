@@ -44,7 +44,7 @@ export async function GET(request: NextRequest) {
           if (!knowledge) {
             return NextResponse.json(
               { error: 'Knowledge not found' },
-              { status: 404 }
+              { status: 404 },
             );
           }
           return NextResponse.json({ success: true, data: knowledge });
@@ -103,7 +103,7 @@ export async function GET(request: NextRequest) {
         if (!guidelineId) {
           return NextResponse.json(
             { error: 'Guideline ID required' },
-            { status: 400 }
+            { status: 400 },
           );
         }
 
@@ -111,7 +111,7 @@ export async function GET(request: NextRequest) {
         if (!guideline) {
           return NextResponse.json(
             { error: 'Guideline not found' },
-            { status: 404 }
+            { status: 404 },
           );
         }
         return NextResponse.json({ success: true, data: guideline });
@@ -139,13 +139,13 @@ export async function GET(request: NextRequest) {
         if (!cacheQuery) {
           return NextResponse.json(
             { error: 'Query required for cache lookup' },
-            { status: 400 }
+            { status: 400 },
           );
         }
 
         const cachedResults = await service.getCachedSearchResults(
           cacheQuery,
-          sourceId
+          sourceId,
         );
         return NextResponse.json({
           success: true,
@@ -157,7 +157,7 @@ export async function GET(request: NextRequest) {
       default:
         return NextResponse.json(
           { error: 'Invalid action parameter' },
-          { status: 400 }
+          { status: 400 },
         );
     }
   } catch (error) {
@@ -166,7 +166,7 @@ export async function GET(request: NextRequest) {
         error: 'Internal server error',
         details: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -190,7 +190,7 @@ export async function POST(request: NextRequest) {
         const source = await service.createKnowledgeSource(data);
         return NextResponse.json(
           { success: true, data: source },
-          { status: 201 }
+          { status: 201 },
         );
       }
 
@@ -198,7 +198,7 @@ export async function POST(request: NextRequest) {
         const knowledge = await service.createMedicalKnowledge(data);
         return NextResponse.json(
           { success: true, data: knowledge },
-          { status: 201 }
+          { status: 201 },
         );
       }
 
@@ -211,7 +211,7 @@ export async function POST(request: NextRequest) {
         const cachedData = await service.cacheSearchResults(data);
         return NextResponse.json(
           { success: true, data: cachedData },
-          { status: 201 }
+          { status: 201 },
         );
       }
 
@@ -220,7 +220,7 @@ export async function POST(request: NextRequest) {
         if (!source_id) {
           return NextResponse.json(
             { error: 'Source ID required' },
-            { status: 400 }
+            { status: 400 },
           );
         }
 
@@ -240,7 +240,7 @@ export async function POST(request: NextRequest) {
         error: 'Internal server error',
         details: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -262,7 +262,7 @@ export async function PUT(request: NextRequest) {
     if (!id) {
       return NextResponse.json(
         { error: 'ID required for update operations' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -286,7 +286,7 @@ export async function PUT(request: NextRequest) {
         error: 'Internal server error',
         details: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -309,7 +309,7 @@ export async function DELETE(request: NextRequest) {
     if (!id) {
       return NextResponse.json(
         { error: 'ID required for delete operations' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -330,7 +330,7 @@ export async function DELETE(request: NextRequest) {
         error: 'Internal server error',
         details: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

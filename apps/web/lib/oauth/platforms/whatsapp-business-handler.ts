@@ -35,14 +35,14 @@ export class WhatsAppBusinessOAuthHandler extends BaseOAuthHandler {
     try {
       // Get user basic info
       const userResponse = await fetch(
-        `https://graph.facebook.com/v18.0/me?fields=id,name,email&access_token=${accessToken}`
+        `https://graph.facebook.com/v18.0/me?fields=id,name,email&access_token=${accessToken}`,
       );
 
       if (!userResponse.ok) {
         throw new OAuthError(
           'Failed to fetch user info',
           userResponse.status,
-          await userResponse.text()
+          await userResponse.text(),
         );
       }
 
@@ -50,7 +50,7 @@ export class WhatsAppBusinessOAuthHandler extends BaseOAuthHandler {
 
       // Get WhatsApp Business Accounts
       const wabaResponse = await fetch(
-        `https://graph.facebook.com/v18.0/me/businesses?fields=whatsapp_business_accounts{id,name,currency,timezone_id,message_template_namespace}&access_token=${accessToken}`
+        `https://graph.facebook.com/v18.0/me/businesses?fields=whatsapp_business_accounts{id,name,currency,timezone_id,message_template_namespace}&access_token=${accessToken}`,
       );
 
       let whatsappAccounts = [];
@@ -59,14 +59,14 @@ export class WhatsAppBusinessOAuthHandler extends BaseOAuthHandler {
         // Extract WhatsApp Business Accounts from business accounts
         whatsappAccounts =
           wabaData.data?.flatMap(
-            (business: any) => business.whatsapp_business_accounts?.data || []
+            (business: any) => business.whatsapp_business_accounts?.data || [],
           ) || [];
       }
 
       // Get phone numbers for each WABA
       const phoneNumbers = await this.getPhoneNumbers(
         accessToken,
-        whatsappAccounts
+        whatsappAccounts,
       );
 
       return {
@@ -87,7 +87,7 @@ export class WhatsAppBusinessOAuthHandler extends BaseOAuthHandler {
       throw new OAuthError(
         'Failed to get WhatsApp Business user info',
         500,
-        error instanceof Error ? error.message : 'Unknown error'
+        error instanceof Error ? error.message : 'Unknown error',
       );
     }
   }
@@ -102,14 +102,14 @@ export class WhatsAppBusinessOAuthHandler extends BaseOAuthHandler {
           'grant_type=fb_exchange_token&' +
           `client_id=${config.clientId}&` +
           `client_secret=${config.clientSecret}&` +
-          `fb_exchange_token=${refreshToken}`
+          `fb_exchange_token=${refreshToken}`,
       );
 
       if (!response.ok) {
         throw new OAuthError(
           'Failed to refresh WhatsApp Business access token',
           response.status,
-          await response.text()
+          await response.text(),
         );
       }
 
@@ -129,7 +129,7 @@ export class WhatsAppBusinessOAuthHandler extends BaseOAuthHandler {
       throw new OAuthError(
         'Failed to refresh WhatsApp Business token',
         500,
-        error instanceof Error ? error.message : 'Unknown error'
+        error instanceof Error ? error.message : 'Unknown error',
       );
     }
   }
@@ -138,7 +138,7 @@ export class WhatsAppBusinessOAuthHandler extends BaseOAuthHandler {
     try {
       // Validate by attempting to access WhatsApp Business API
       const response = await fetch(
-        `https://graph.facebook.com/v18.0/me/businesses?fields=whatsapp_business_accounts&access_token=${accessToken}`
+        `https://graph.facebook.com/v18.0/me/businesses?fields=whatsapp_business_accounts&access_token=${accessToken}`,
       );
       return response.ok;
     } catch {
@@ -150,7 +150,7 @@ export class WhatsAppBusinessOAuthHandler extends BaseOAuthHandler {
     try {
       // Get user ID first
       const userResponse = await fetch(
-        `https://graph.facebook.com/v18.0/me?access_token=${accessToken}`
+        `https://graph.facebook.com/v18.0/me?access_token=${accessToken}`,
       );
 
       if (!userResponse.ok) {
@@ -167,7 +167,7 @@ export class WhatsAppBusinessOAuthHandler extends BaseOAuthHandler {
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },
-        }
+        },
       );
 
       return response.ok;
@@ -178,14 +178,14 @@ export class WhatsAppBusinessOAuthHandler extends BaseOAuthHandler {
 
   private async getPhoneNumbers(
     accessToken: string,
-    whatsappAccounts: any[]
+    whatsappAccounts: any[],
   ): Promise<any[]> {
     const phoneNumbers = [];
 
     for (const account of whatsappAccounts) {
       try {
         const response = await fetch(
-          `https://graph.facebook.com/v18.0/${account.id}/phone_numbers?access_token=${accessToken}`
+          `https://graph.facebook.com/v18.0/${account.id}/phone_numbers?access_token=${accessToken}`,
         );
 
         if (response.ok) {
@@ -195,7 +195,7 @@ export class WhatsAppBusinessOAuthHandler extends BaseOAuthHandler {
               ...phone,
               waba_id: account.id,
               waba_name: account.name,
-            }))
+            })),
           );
         }
       } catch (_error) {}
@@ -206,11 +206,11 @@ export class WhatsAppBusinessOAuthHandler extends BaseOAuthHandler {
 
   private async getUserPermissions(
     accessToken: string,
-    userId: string
+    userId: string,
   ): Promise<string[]> {
     try {
       const response = await fetch(
-        `https://graph.facebook.com/v18.0/${userId}/permissions?access_token=${accessToken}`
+        `https://graph.facebook.com/v18.0/${userId}/permissions?access_token=${accessToken}`,
       );
 
       if (!response.ok) {
@@ -243,7 +243,7 @@ export class WhatsAppBusinessOAuthHandler extends BaseOAuthHandler {
     accessToken: string,
     phoneNumberId: string,
     to: string,
-    message: string
+    message: string,
   ): Promise<any> {
     try {
       const response = await fetch(
@@ -259,14 +259,14 @@ export class WhatsAppBusinessOAuthHandler extends BaseOAuthHandler {
             to,
             text: { body: message },
           }),
-        }
+        },
       );
 
       if (!response.ok) {
         throw new OAuthError(
           'Failed to send WhatsApp message',
           response.status,
-          await response.text()
+          await response.text(),
         );
       }
 
@@ -278,25 +278,25 @@ export class WhatsAppBusinessOAuthHandler extends BaseOAuthHandler {
       throw new OAuthError(
         'Failed to send WhatsApp message',
         500,
-        error instanceof Error ? error.message : 'Unknown error'
+        error instanceof Error ? error.message : 'Unknown error',
       );
     }
   }
 
   async getMessageTemplates(
     accessToken: string,
-    wabaId: string
+    wabaId: string,
   ): Promise<any[]> {
     try {
       const response = await fetch(
-        `https://graph.facebook.com/v18.0/${wabaId}/message_templates?access_token=${accessToken}`
+        `https://graph.facebook.com/v18.0/${wabaId}/message_templates?access_token=${accessToken}`,
       );
 
       if (!response.ok) {
         throw new OAuthError(
           'Failed to get WhatsApp message templates',
           response.status,
-          await response.text()
+          await response.text(),
         );
       }
 
@@ -309,7 +309,7 @@ export class WhatsAppBusinessOAuthHandler extends BaseOAuthHandler {
       throw new OAuthError(
         'Failed to get WhatsApp message templates',
         500,
-        error instanceof Error ? error.message : 'Unknown error'
+        error instanceof Error ? error.message : 'Unknown error',
       );
     }
   }

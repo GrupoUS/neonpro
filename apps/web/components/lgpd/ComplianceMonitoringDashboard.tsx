@@ -184,7 +184,7 @@ export function ComplianceMonitoringDashboard({
     await resolveViolation(
       selectedViolation.id,
       resolutionForm.resolution,
-      resolutionForm.responsible
+      resolutionForm.responsible,
     );
 
     setSelectedViolation(null);
@@ -277,7 +277,7 @@ export function ComplianceMonitoringDashboard({
               {metrics && (
                 <span
                   className={getComplianceLevelColor(
-                    metrics.overallComplianceLevel
+                    metrics.overallComplianceLevel,
                   )}
                 >
                   {getComplianceLevelText(metrics.overallComplianceLevel)}
@@ -974,7 +974,7 @@ export function ComplianceMonitoringDashboard({
                     <div>
                       Cobertura:{' '}
                       {(metrics.auditMetrics.coveragePercentage * 100).toFixed(
-                        1
+                        1,
                       )}
                       %
                     </div>

@@ -22,13 +22,13 @@ export async function GET(_request: NextRequest) {
     if (sessionError || !session?.user) {
       return NextResponse.json(
         { error: 'Authentication required' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
     // Get user's WebAuthn credentials
     const credentials = await webAuthnService.getUserCredentials(
-      session.user.id
+      session.user.id,
     );
 
     return NextResponse.json({
@@ -38,7 +38,7 @@ export async function GET(_request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to fetch credentials' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

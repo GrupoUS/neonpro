@@ -33,7 +33,7 @@ const paramsSchema = z.object({
  */
 export async function GET(
   _request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const supabase = createRouteHandlerClient({ cookies });
@@ -60,7 +60,7 @@ export async function GET(
     if (!paymentPlan) {
       return NextResponse.json(
         { error: 'Payment plan not found' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -85,13 +85,13 @@ export async function GET(
           error: 'Invalid payment plan ID',
           details: error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -102,7 +102,7 @@ export async function GET(
  */
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const supabase = createRouteHandlerClient({ cookies });
@@ -147,7 +147,7 @@ export async function PUT(
           error: 'Invalid request data',
           details: error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -156,28 +156,28 @@ export async function PUT(
       if (error.message.includes('Payment plan not found')) {
         return NextResponse.json(
           { error: 'Payment plan not found' },
-          { status: 404 }
+          { status: 404 },
         );
       }
 
       if (error.message.includes('Cannot modify completed payment plan')) {
         return NextResponse.json(
           { error: 'Cannot modify completed payment plan' },
-          { status: 400 }
+          { status: 400 },
         );
       }
 
       if (error.message.includes('Cannot modify cancelled payment plan')) {
         return NextResponse.json(
           { error: 'Cannot modify cancelled payment plan' },
-          { status: 400 }
+          { status: 400 },
         );
       }
     }
 
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -188,7 +188,7 @@ export async function PUT(
  */
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const supabase = createRouteHandlerClient({ cookies });
@@ -234,7 +234,7 @@ export async function DELETE(
           error: 'Invalid payment plan ID',
           details: error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -243,28 +243,28 @@ export async function DELETE(
       if (error.message.includes('Payment plan not found')) {
         return NextResponse.json(
           { error: 'Payment plan not found' },
-          { status: 404 }
+          { status: 404 },
         );
       }
 
       if (error.message.includes('Payment plan already cancelled')) {
         return NextResponse.json(
           { error: 'Payment plan already cancelled' },
-          { status: 400 }
+          { status: 400 },
         );
       }
 
       if (error.message.includes('Cannot cancel completed payment plan')) {
         return NextResponse.json(
           { error: 'Cannot cancel completed payment plan' },
-          { status: 400 }
+          { status: 400 },
         );
       }
     }
 
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -275,7 +275,7 @@ export async function DELETE(
  */
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const supabase = createRouteHandlerClient({ cookies });
@@ -300,7 +300,7 @@ export async function PATCH(
     if (!action) {
       return NextResponse.json(
         { error: 'Action is required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -341,7 +341,7 @@ export async function PATCH(
               'reactivate',
             ],
           },
-          { status: 400 }
+          { status: 400 },
         );
     }
 
@@ -357,7 +357,7 @@ export async function PATCH(
           error: 'Invalid payment plan ID',
           details: error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -366,7 +366,7 @@ export async function PATCH(
       if (error.message.includes('Payment plan not found')) {
         return NextResponse.json(
           { error: 'Payment plan not found' },
-          { status: 404 }
+          { status: 404 },
         );
       }
 
@@ -377,7 +377,7 @@ export async function PATCH(
 
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

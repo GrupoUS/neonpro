@@ -43,7 +43,7 @@ export class DeviceManager {
 
     this.supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     );
   }
 
@@ -51,7 +51,7 @@ export class DeviceManager {
    * Register or update a device
    */
   async registerDevice(
-    request: DeviceRegistrationRequest
+    request: DeviceRegistrationRequest,
   ): Promise<AuthenticationResponse> {
     try {
       // Validate input
@@ -169,7 +169,7 @@ export class DeviceManager {
    * Get device by fingerprint
    */
   async getDeviceByFingerprint(
-    fingerprint: string
+    fingerprint: string,
   ): Promise<AuthenticationResponse> {
     try {
       const { data, error } = await this.supabase
@@ -326,7 +326,7 @@ export class DeviceManager {
    */
   async trustDevice(
     deviceId: string,
-    trustDuration?: number
+    trustDuration?: number,
   ): Promise<AuthenticationResponse> {
     try {
       if (!validateUUID(deviceId)) {
@@ -452,7 +452,7 @@ export class DeviceManager {
    */
   async blockDevice(
     deviceId: string,
-    reason: string
+    reason: string,
   ): Promise<AuthenticationResponse> {
     try {
       if (!validateUUID(deviceId)) {
@@ -579,12 +579,12 @@ export class DeviceManager {
    */
   async initiateDeviceTrust(
     deviceId: string,
-    verificationMethod: 'email' | 'sms'
+    verificationMethod: 'email' | 'sms',
   ): Promise<AuthenticationResponse> {
     try {
       // Generate verification code
       const verificationCode = Math.floor(
-        100_000 + Math.random() * 900_000
+        100_000 + Math.random() * 900_000,
       ).toString();
       const expiresAt = new Date(Date.now() + 10 * 60 * 1000).toISOString(); // 10 minutes
 
@@ -642,7 +642,7 @@ export class DeviceManager {
    */
   async verifyDeviceTrust(
     deviceId: string,
-    verificationCode: string
+    verificationCode: string,
   ): Promise<AuthenticationResponse> {
     try {
       // Check verification code
@@ -758,7 +758,7 @@ export class DeviceManager {
    * Clean up inactive devices
    */
   async cleanupInactiveDevices(
-    inactiveDays = 90
+    inactiveDays = 90,
   ): Promise<AuthenticationResponse> {
     try {
       const cutoffDate = new Date();
@@ -823,7 +823,7 @@ export class DeviceManager {
       const trustedDevices = devices.filter(
         (d) =>
           d.trusted &&
-          (!d.trust_expires_at || new Date(d.trust_expires_at) > now)
+          (!d.trust_expires_at || new Date(d.trust_expires_at) > now),
       );
       const blockedDevices = devices.filter((d) => d.blocked);
       const recentDevices = devices.filter((d) => {
@@ -840,7 +840,7 @@ export class DeviceManager {
           acc[type] = (acc[type] || 0) + 1;
           return acc;
         },
-        {} as Record<string, number>
+        {} as Record<string, number>,
       );
 
       // Group by OS
@@ -850,7 +850,7 @@ export class DeviceManager {
           acc[os] = (acc[os] || 0) + 1;
           return acc;
         },
-        {} as Record<string, number>
+        {} as Record<string, number>,
       );
 
       return {
@@ -864,7 +864,7 @@ export class DeviceManager {
       };
     } catch (error) {
       throw new Error(
-        `Error generating device statistics: ${error instanceof Error ? error.message : 'Unknown error'}`
+        `Error generating device statistics: ${error instanceof Error ? error.message : 'Unknown error'}`,
       );
     }
   }
@@ -874,7 +874,7 @@ export class DeviceManager {
    */
   private async updateExistingDevice(
     existingDevice: DeviceData,
-    request: DeviceRegistrationRequest
+    request: DeviceRegistrationRequest,
   ): Promise<AuthenticationResponse> {
     try {
       const updateData = removeUndefined({
@@ -932,7 +932,7 @@ export class DeviceManager {
   }
 
   private async checkDeviceLimit(
-    userId: string
+    userId: string,
   ): Promise<AuthenticationResponse> {
     try {
       const { data: devices, error } = await this.supabase
@@ -1002,7 +1002,7 @@ export class DeviceManager {
           .eq('trusted', true);
 
         const sameNetworkTrusted = trustedDevices?.some((td) =>
-          this.isSameNetwork(device.ipAddress!, td.ip_address)
+          this.isSameNetwork(device.ipAddress!, td.ip_address),
         );
 
         if (sameNetworkTrusted) {

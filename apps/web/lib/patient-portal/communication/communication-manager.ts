@@ -159,7 +159,7 @@ export class CommunicationManager {
     lgpdManager: LGPDManager,
     sessionManager: SessionManager,
     notificationService: NotificationService,
-    config: CommunicationConfig
+    config: CommunicationConfig,
   ) {
     this.supabase = supabase;
     this.auditLogger = auditLogger;
@@ -173,7 +173,7 @@ export class CommunicationManager {
    */
   async sendMessage(
     request: SendMessageRequest,
-    sessionToken: string
+    sessionToken: string,
   ): Promise<SendMessageResult> {
     try {
       // Validate session
@@ -206,7 +206,7 @@ export class CommunicationManager {
       if (request.attachments && request.attachments.length > 0) {
         attachments = await this.processAttachments(
           request.attachments,
-          request.patientId
+          request.patientId,
         );
       }
 
@@ -335,7 +335,7 @@ export class CommunicationManager {
    * Create a new conversation
    */
   private async createConversation(
-    request: SendMessageRequest
+    request: SendMessageRequest,
   ): Promise<string> {
     const { data: conversation, error } = await this.supabase
       .from('conversations')
@@ -372,7 +372,7 @@ export class CommunicationManager {
       lastMessageAt: Date;
       status: string;
       unreadCount: number;
-    }>
+    }>,
   ): Promise<void> {
     const updateData: any = {};
 
@@ -400,7 +400,7 @@ export class CommunicationManager {
    */
   private async processAttachments(
     files: File[],
-    patientId: string
+    patientId: string,
   ): Promise<MessageAttachment[]> {
     const attachments: MessageAttachment[] = [];
 
@@ -440,7 +440,7 @@ export class CommunicationManager {
    */
   private async sendNotifications(
     _message: any,
-    request: SendMessageRequest
+    request: SendMessageRequest,
   ): Promise<void> {
     // This would integrate with the notification service
     // to send email, SMS, or push notifications based on recipient preferences
@@ -486,7 +486,7 @@ export class CommunicationManager {
    */
   async getCommunicationStats(
     patientId: string,
-    sessionToken: string
+    sessionToken: string,
   ): Promise<CommunicationStats> {
     // Validate session
     const sessionValidation =

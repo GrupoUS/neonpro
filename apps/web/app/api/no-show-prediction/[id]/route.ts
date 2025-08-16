@@ -28,7 +28,7 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
     if (!prediction) {
       return NextResponse.json(
         { error: 'Prediction not found' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -61,7 +61,7 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
           full_name,
           professional_title
         )
-      `
+      `,
       )
       .eq('id', prediction.appointment_id)
       .single();
@@ -76,7 +76,7 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to fetch prediction' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -97,19 +97,19 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
 
     // Check if prediction exists
     const existingPrediction = await noShowPredictionEngine.getPrediction(
-      params.id
+      params.id,
     );
     if (!existingPrediction) {
       return NextResponse.json(
         { error: 'Prediction not found' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
     // Update the prediction
     const updatedPrediction = await noShowPredictionEngine.updatePrediction(
       params.id,
-      validatedInput
+      validatedInput,
     );
 
     // If actual outcome was provided, update model performance metrics
@@ -121,7 +121,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     // Get updated related data
     const [riskFactors, interventions] = await Promise.all([
       noShowPredictionEngine.getRiskFactorsByPatient(
-        updatedPrediction.patient_id
+        updatedPrediction.patient_id,
       ),
       noShowPredictionEngine.getRecommendedInterventions(updatedPrediction.id),
     ]);
@@ -136,13 +136,13 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     if (error instanceof Error && error.message.includes('validation')) {
       return NextResponse.json(
         { error: 'Invalid input data', details: error.message },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     return NextResponse.json(
       { error: 'Failed to update prediction' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -160,12 +160,12 @@ export async function DELETE(_request: NextRequest, { params }: RouteParams) {
 
     // Check if prediction exists
     const existingPrediction = await noShowPredictionEngine.getPrediction(
-      params.id
+      params.id,
     );
     if (!existingPrediction) {
       return NextResponse.json(
         { error: 'Prediction not found' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -178,7 +178,7 @@ export async function DELETE(_request: NextRequest, { params }: RouteParams) {
     if (error) {
       return NextResponse.json(
         { error: 'Failed to delete prediction' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -188,7 +188,7 @@ export async function DELETE(_request: NextRequest, { params }: RouteParams) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to delete prediction' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

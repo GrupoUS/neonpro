@@ -58,7 +58,7 @@ export async function POST(request: NextRequest) {
     if (!(body.action && body.patientId && body.treatmentType)) {
       return NextResponse.json(
         { error: 'Missing required fields: action, patientId, treatmentType' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -73,7 +73,7 @@ export async function POST(request: NextRequest) {
         if (!body.preferredDateRange) {
           return NextResponse.json(
             { error: 'preferredDateRange is required for add action' },
-            { status: 400 }
+            { status: 400 },
           );
         }
 
@@ -86,7 +86,7 @@ export async function POST(request: NextRequest) {
           },
           body.preferredTimeSlots || [],
           body.urgencyLevel || 'normal',
-          body.specialRequirements || {}
+          body.specialRequirements || {},
         );
 
         await auditLogger.logActivity(
@@ -97,7 +97,7 @@ export async function POST(request: NextRequest) {
             waitlistEntryId: result.id,
             treatmentType: body.treatmentType,
             urgencyLevel: body.urgencyLevel,
-          }
+          },
         );
         break;
 
@@ -111,7 +111,7 @@ export async function POST(request: NextRequest) {
               error:
                 'availableStart, availableEnd, and professionalId are required for process action',
             },
-            { status: 400 }
+            { status: 400 },
           );
         }
 
@@ -119,7 +119,7 @@ export async function POST(request: NextRequest) {
           new Date(body.availableStart),
           new Date(body.availableEnd),
           body.professionalId,
-          body.treatmentType
+          body.treatmentType,
         );
 
         await auditLogger.logActivity(
@@ -130,7 +130,7 @@ export async function POST(request: NextRequest) {
             professionalId: body.professionalId,
             treatmentType: body.treatmentType,
             matchesFound: result.length,
-          }
+          },
         );
         break;
 
@@ -142,13 +142,13 @@ export async function POST(request: NextRequest) {
               error:
                 'waitlistEntryId and availableSlots are required for notify action',
             },
-            { status: 400 }
+            { status: 400 },
           );
         }
 
         result = await waitlistService.sendWaitlistNotifications(
           body.waitlistEntryId,
-          body.availableSlots
+          body.availableSlots,
         );
 
         await auditLogger.logActivity(
@@ -158,14 +158,14 @@ export async function POST(request: NextRequest) {
             userId: session.user.id,
             waitlistEntryId: body.waitlistEntryId,
             availableSlots: body.availableSlots.length,
-          }
+          },
         );
         break;
 
       default:
         return NextResponse.json(
           { error: 'Invalid action. Must be add, process, or notify' },
-          { status: 400 }
+          { status: 400 },
         );
     }
 
@@ -187,7 +187,7 @@ export async function POST(request: NextRequest) {
         error: 'Internal server error during waitlist management',
         details: process.env.NODE_ENV === 'development' ? error : undefined,
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -241,7 +241,7 @@ export async function GET(request: NextRequest) {
         treatmentType,
         status,
         count: waitlistEntries.length,
-      }
+      },
     );
 
     return NextResponse.json({
@@ -261,7 +261,7 @@ export async function GET(request: NextRequest) {
         error: 'Internal server error during waitlist retrieval',
         details: process.env.NODE_ENV === 'development' ? error : undefined,
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

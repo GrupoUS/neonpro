@@ -58,7 +58,7 @@ export const reorderThresholdSchema = z
     {
       message: 'Reorder point must be greater than or equal to safety stock',
       path: ['reorder_point'],
-    }
+    },
   )
   .refine(
     (data) => {
@@ -71,7 +71,7 @@ export const reorderThresholdSchema = z
     {
       message: 'Maximum stock must be greater than reorder point',
       path: ['maximum_stock'],
-    }
+    },
   )
   .refine(
     (data) => {
@@ -86,7 +86,7 @@ export const reorderThresholdSchema = z
       message:
         'Alert thresholds must be in ascending order (warning < critical < emergency)',
       path: ['critical_threshold_percentage'],
-    }
+    },
   );
 
 export const reorderAlertSchema = z.object({
@@ -261,7 +261,7 @@ export const purchaseOrderSchema = z
     {
       message: 'Total amount must equal subtotal + tax + shipping - discount',
       path: ['total_amount'],
-    }
+    },
   )
   .refine(
     (data) => {
@@ -276,7 +276,7 @@ export const purchaseOrderSchema = z
     {
       message: 'Requested delivery date must be after order date',
       path: ['requested_delivery_date'],
-    }
+    },
   );
 
 export const purchaseOrderItemSchema = z
@@ -319,7 +319,7 @@ export const purchaseOrderItemSchema = z
     {
       message: 'Total price must equal quantity × unit price',
       path: ['total_price'],
-    }
+    },
   )
   .refine(
     (data) => {
@@ -332,7 +332,7 @@ export const purchaseOrderItemSchema = z
     {
       message: 'Quantity received cannot exceed ordered quantity',
       path: ['quantity_received'],
-    }
+    },
   );
 
 export const approvalWorkflowSchema = z.object({
@@ -395,7 +395,7 @@ export const supplierLeadTimeSchema = z
       message:
         'Lead times must be in logical order: minimum ≤ average ≤ maximum',
       path: ['average_lead_time_days'],
-    }
+    },
   );
 
 // Request schemas for API endpoints
@@ -419,7 +419,7 @@ export const createReorderThresholdSchema = z
     {
       message: 'Reorder point must be greater than or equal to safety stock',
       path: ['reorder_point'],
-    }
+    },
   );
 
 export const updateReorderThresholdSchema = z.object({
@@ -478,7 +478,7 @@ export const createPurchaseOrderSchema = z.object({
         item_id: z.string().uuid(),
         quantity: z.number().int().min(1),
         unit_price: z.number().min(0),
-      })
+      }),
     )
     .min(1),
   priority: z.enum(['low', 'medium', 'high', 'urgent']).optional(),
@@ -513,7 +513,7 @@ export const updatePurchaseOrderSchema = z.object({
 export const alertFilterSchema = z.object({
   status: z
     .array(
-      z.enum(['pending', 'acknowledged', 'resolved', 'escalated', 'dismissed'])
+      z.enum(['pending', 'acknowledged', 'resolved', 'escalated', 'dismissed']),
     )
     .optional(),
   priority: z
@@ -551,7 +551,7 @@ export const purchaseOrderFilterSchema = z.object({
         'partially_received',
         'received',
         'cancelled',
-      ])
+      ]),
     )
     .optional(),
   priority: z.array(z.enum(['low', 'medium', 'high', 'urgent'])).optional(),
@@ -627,7 +627,7 @@ export const notificationSettingsSchema = z.object({
   user_id: z.string().uuid(),
   channels: z.array(z.enum(['dashboard', 'email', 'sms', 'push', 'webhook'])),
   alert_types: z.array(
-    z.enum(['warning', 'critical', 'emergency', 'reorder', 'overstock'])
+    z.enum(['warning', 'critical', 'emergency', 'reorder', 'overstock']),
   ),
   priority_threshold: z.enum([
     'low',

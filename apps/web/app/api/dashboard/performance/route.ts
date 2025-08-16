@@ -32,7 +32,7 @@ export async function GET(request: NextRequest) {
     if (error) {
       return NextResponse.json(
         { error: 'Failed to fetch performance logs' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -40,7 +40,7 @@ export async function GET(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -62,7 +62,7 @@ export async function POST(request: NextRequest) {
     if (!metric_type || value === undefined) {
       return NextResponse.json(
         { error: 'Metric type and value are required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -83,7 +83,7 @@ export async function POST(request: NextRequest) {
     if (error) {
       return NextResponse.json(
         { error: 'Failed to create performance log' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -91,7 +91,7 @@ export async function POST(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Invalid request data' },
-      { status: 400 }
+      { status: 400 },
     );
   }
 }
@@ -113,7 +113,7 @@ export async function DELETE(request: NextRequest) {
     if (!olderThan) {
       return NextResponse.json(
         { error: 'older_than parameter is required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -126,7 +126,7 @@ export async function DELETE(request: NextRequest) {
     if (error) {
       return NextResponse.json(
         { error: 'Failed to delete performance logs' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -136,7 +136,7 @@ export async function DELETE(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

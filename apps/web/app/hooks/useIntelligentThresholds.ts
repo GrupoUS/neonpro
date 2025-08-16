@@ -30,7 +30,7 @@ export function useIntelligentThresholds({
 }: UseIntelligentThresholdsProps) {
   const [thresholds, setThresholds] = useState<ReorderThreshold[]>([]);
   const [optimizations, setOptimizations] = useState<ThresholdOptimization[]>(
-    []
+    [],
   );
   const [alerts, _setAlerts] = useState<ReorderAlert[]>([]);
   const [alertStats, setAlertStats] = useState<any>(null);
@@ -48,13 +48,13 @@ export function useIntelligentThresholds({
       if (filters?.auto_reorder_enabled !== undefined) {
         params.append(
           'auto_reorder_enabled',
-          filters.auto_reorder_enabled.toString()
+          filters.auto_reorder_enabled.toString(),
         );
       }
       if (filters?.needs_optimization !== undefined) {
         params.append(
           'needs_optimization',
-          filters.needs_optimization.toString()
+          filters.needs_optimization.toString(),
         );
       }
 
@@ -74,7 +74,7 @@ export function useIntelligentThresholds({
   const fetchOptimizations = useCallback(async () => {
     try {
       const response = await fetch(
-        `/api/inventory/thresholds/optimize?clinic_id=${clinicId}`
+        `/api/inventory/thresholds/optimize?clinic_id=${clinicId}`,
       );
       if (!response.ok) {
         throw new Error('Failed to fetch optimizations');
@@ -91,7 +91,7 @@ export function useIntelligentThresholds({
   const fetchAlertStats = useCallback(async () => {
     try {
       const response = await fetch(
-        `/api/inventory/alerts/stats?clinic_id=${clinicId}`
+        `/api/inventory/alerts/stats?clinic_id=${clinicId}`,
       );
       if (!response.ok) {
         throw new Error('Failed to fetch alert stats');
@@ -125,7 +125,7 @@ export function useIntelligentThresholds({
   // Create new threshold
   const createThreshold = useCallback(
     async (
-      thresholdData: Omit<ReorderThreshold, 'id' | 'created_at' | 'updated_at'>
+      thresholdData: Omit<ReorderThreshold, 'id' | 'created_at' | 'updated_at'>,
     ) => {
       try {
         const response = await fetch('/api/inventory/thresholds', {
@@ -147,7 +147,7 @@ export function useIntelligentThresholds({
         throw err;
       }
     },
-    [fetchThresholds]
+    [fetchThresholds],
   );
 
   // Update threshold
@@ -173,7 +173,7 @@ export function useIntelligentThresholds({
         throw err;
       }
     },
-    [fetchThresholds]
+    [fetchThresholds],
   );
 
   // Delete threshold (soft delete)
@@ -195,7 +195,7 @@ export function useIntelligentThresholds({
         throw err;
       }
     },
-    [fetchThresholds]
+    [fetchThresholds],
   );
 
   // Generate demand forecast
@@ -203,7 +203,7 @@ export function useIntelligentThresholds({
     async (
       itemId: string,
       forecastPeriod: 'daily' | 'weekly' | 'monthly' | 'quarterly',
-      forecastDate?: Date
+      forecastDate?: Date,
     ): Promise<DemandForecast> => {
       try {
         const response = await fetch('/api/inventory/forecasting', {
@@ -230,7 +230,7 @@ export function useIntelligentThresholds({
         throw err;
       }
     },
-    [clinicId]
+    [clinicId],
   );
 
   // Bulk forecast generation
@@ -240,7 +240,7 @@ export function useIntelligentThresholds({
         item_id: string;
         forecast_period?: 'daily' | 'weekly' | 'monthly' | 'quarterly';
       }>,
-      forecastDate?: Date
+      forecastDate?: Date,
     ) => {
       try {
         const response = await fetch('/api/inventory/forecasting', {
@@ -257,7 +257,7 @@ export function useIntelligentThresholds({
         if (!response.ok) {
           const errorData = await response.json();
           throw new Error(
-            errorData.error || 'Failed to generate bulk forecast'
+            errorData.error || 'Failed to generate bulk forecast',
           );
         }
 
@@ -268,7 +268,7 @@ export function useIntelligentThresholds({
         throw err;
       }
     },
-    [clinicId]
+    [clinicId],
   );
 
   // Alert actions
@@ -281,7 +281,7 @@ export function useIntelligentThresholds({
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ user_id: userId, notes }),
-          }
+          },
         );
 
         if (!response.ok) {
@@ -296,7 +296,7 @@ export function useIntelligentThresholds({
         throw err;
       }
     },
-    [fetchAlertStats]
+    [fetchAlertStats],
   );
 
   const resolveAlert = useCallback(
@@ -308,7 +308,7 @@ export function useIntelligentThresholds({
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ user_id: userId, notes }),
-          }
+          },
         );
 
         if (!response.ok) {
@@ -323,7 +323,7 @@ export function useIntelligentThresholds({
         throw err;
       }
     },
-    [fetchAlertStats]
+    [fetchAlertStats],
   );
 
   const escalateAlert = useCallback(
@@ -335,7 +335,7 @@ export function useIntelligentThresholds({
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ escalate_to: escalateTo, level }),
-          }
+          },
         );
 
         if (!response.ok) {
@@ -350,7 +350,7 @@ export function useIntelligentThresholds({
         throw err;
       }
     },
-    [fetchAlertStats]
+    [fetchAlertStats],
   );
 
   // Initial load
@@ -397,7 +397,7 @@ export function useIntelligentThresholds({
     optimizationOpportunities: optimizations.length,
     totalPotentialSavings: optimizations.reduce(
       (sum, opt) => sum + opt.potential_savings,
-      0
+      0,
     ),
   };
 }

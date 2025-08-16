@@ -44,7 +44,7 @@ export class NotificationService {
 
     this.supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     );
 
     this.initializeTemplates();
@@ -60,7 +60,7 @@ export class NotificationService {
     priority: NotificationPriority,
     channels: NotificationChannel[],
     data: Record<string, any> = {},
-    templateId?: string
+    templateId?: string,
   ): Promise<AuthenticationResponse> {
     try {
       // Validate input
@@ -80,7 +80,7 @@ export class NotificationService {
 
       // Filter channels based on user preferences
       const allowedChannels = channels.filter((channel) =>
-        userPreferences.enabledChannels.includes(channel)
+        userPreferences.enabledChannels.includes(channel),
       );
 
       if (allowedChannels.length === 0) {
@@ -175,7 +175,7 @@ export class NotificationService {
   async sendSessionTimeoutWarning(
     userId: string,
     sessionId: string,
-    timeoutMinutes: number
+    timeoutMinutes: number,
   ): Promise<AuthenticationResponse> {
     return this.sendNotification(
       userId,
@@ -187,7 +187,7 @@ export class NotificationService {
         timeoutMinutes,
         message: `Your session will expire in ${timeoutMinutes} minutes. Click to extend.`,
       },
-      'session_timeout_warning'
+      'session_timeout_warning',
     );
   }
 
@@ -198,7 +198,7 @@ export class NotificationService {
     userId: string,
     alertType: string,
     severity: 'low' | 'medium' | 'high' | 'critical',
-    details: Record<string, any>
+    details: Record<string, any>,
   ): Promise<AuthenticationResponse> {
     const priorityMap = {
       low: 'low' as NotificationPriority,
@@ -224,7 +224,7 @@ export class NotificationService {
         severity,
         ...details,
       },
-      'security_alert'
+      'security_alert',
     );
   }
 
@@ -235,7 +235,7 @@ export class NotificationService {
     userId: string,
     deviceId: string,
     action: 'trust_requested' | 'trust_granted' | 'trust_revoked',
-    deviceInfo: Record<string, any>
+    deviceInfo: Record<string, any>,
   ): Promise<AuthenticationResponse> {
     return this.sendNotification(
       userId,
@@ -247,7 +247,7 @@ export class NotificationService {
         action,
         deviceInfo,
       },
-      'device_trust'
+      'device_trust',
     );
   }
 
@@ -257,7 +257,7 @@ export class NotificationService {
   async sendLoginNotification(
     userId: string,
     deviceInfo: Record<string, any>,
-    location?: Record<string, any>
+    location?: Record<string, any>,
   ): Promise<AuthenticationResponse> {
     return this.sendNotification(
       userId,
@@ -269,7 +269,7 @@ export class NotificationService {
         location,
         timestamp: new Date().toISOString(),
       },
-      'login_notification'
+      'login_notification',
     );
   }
 
@@ -318,7 +318,7 @@ export class NotificationService {
   async updateUserNotificationPreferences(
     userId: string,
     enabledChannels: NotificationChannel[],
-    preferences: Record<string, any>
+    preferences: Record<string, any>,
   ): Promise<AuthenticationResponse> {
     try {
       if (!validateUUID(userId)) {
@@ -383,7 +383,7 @@ export class NotificationService {
   async getNotificationHistory(
     userId: string,
     limit = 50,
-    offset = 0
+    offset = 0,
   ): Promise<AuthenticationResponse> {
     try {
       if (!validateUUID(userId)) {
@@ -416,7 +416,7 @@ export class NotificationService {
       }
 
       const notifications = (data || []).map((row) =>
-        this.convertToNotificationData(row)
+        this.convertToNotificationData(row),
       );
 
       return {
@@ -502,7 +502,7 @@ export class NotificationService {
    * Clean up old notifications
    */
   async cleanupOldNotifications(
-    retentionDays = 30
+    retentionDays = 30,
   ): Promise<AuthenticationResponse> {
     try {
       const cutoffDate = new Date();
@@ -615,7 +615,7 @@ export class NotificationService {
       const batch = this.deliveryQueue.splice(0, batchSize);
 
       await Promise.all(
-        batch.map((notification) => this.processNotification(notification))
+        batch.map((notification) => this.processNotification(notification)),
       );
     } catch (_error) {
     } finally {
@@ -624,7 +624,7 @@ export class NotificationService {
   }
 
   private async processNotification(
-    notification: NotificationData
+    notification: NotificationData,
   ): Promise<void> {
     try {
       const template = this.templates.get(notification.templateId || '');
@@ -654,7 +654,7 @@ export class NotificationService {
   private async deliverToChannel(
     notification: NotificationData,
     channel: NotificationChannel,
-    template?: NotificationTemplate
+    template?: NotificationTemplate,
   ): Promise<void> {
     const content = this.renderTemplate(template, notification.data);
 
@@ -678,7 +678,7 @@ export class NotificationService {
 
   private renderTemplate(
     template: NotificationTemplate | undefined,
-    data: Record<string, any>
+    data: Record<string, any>,
   ): {
     subject: string;
     body: string;
@@ -708,7 +708,7 @@ export class NotificationService {
 
   private async deliverInApp(
     notification: NotificationData,
-    content: { subject: string; body: string }
+    content: { subject: string; body: string },
   ): Promise<void> {
     // Store in-app notification in database
     await this.supabase.from('in_app_notifications').insert({
@@ -726,22 +726,22 @@ export class NotificationService {
 
   private async deliverEmail(
     _notification: NotificationData,
-    _content: { subject: string; body: string }
+    _content: { subject: string; body: string },
   ): Promise<void> {}
 
   private async deliverPush(
     _notification: NotificationData,
-    _content: { subject: string; body: string }
+    _content: { subject: string; body: string },
   ): Promise<void> {}
 
   private async deliverSMS(
     _notification: NotificationData,
-    _content: { subject: string; body: string }
+    _content: { subject: string; body: string },
   ): Promise<void> {}
 
   private async updateNotificationStatus(
     notificationId: string,
-    status: string
+    status: string,
   ): Promise<void> {
     try {
       await this.supabase

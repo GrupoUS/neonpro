@@ -61,7 +61,7 @@ export async function GET(request: NextRequest) {
     if (clinicError || !clinic) {
       return NextResponse.json(
         { error: 'Clínica não encontrada' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -77,7 +77,7 @@ export async function GET(request: NextRequest) {
         max_stock_level,
         unit_cost,
         products (name, category_id)
-      `
+      `,
       )
       .eq('clinic_id', params.clinicId)
       .eq('is_active', true);
@@ -85,7 +85,7 @@ export async function GET(request: NextRequest) {
     if (stockError) {
       return NextResponse.json(
         { error: 'Erro ao buscar dados de estoque' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -100,7 +100,7 @@ export async function GET(request: NextRequest) {
     if (movementError) {
       return NextResponse.json(
         { error: 'Erro ao buscar movimentações' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -108,14 +108,14 @@ export async function GET(request: NextRequest) {
     const totalValue =
       stockData?.reduce(
         (sum, item) => sum + item.quantity_available * item.unit_cost,
-        0
+        0,
       ) || 0;
 
     const totalConsumption =
       movementData?.reduce(
         (sum, movement) =>
           movement.movement_type === 'out' ? sum + movement.quantity_out : sum,
-        0
+        0,
       ) || 0;
 
     const averageInventory =
@@ -129,7 +129,7 @@ export async function GET(request: NextRequest) {
       totalConsumption /
       Math.max(
         1,
-        (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)
+        (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24),
       );
 
     const daysCoverage =
@@ -137,7 +137,7 @@ export async function GET(request: NextRequest) {
 
     const productsInRange =
       stockData?.filter(
-        (item) => item.quantity_available >= item.min_stock_level
+        (item) => item.quantity_available >= item.min_stock_level,
       ).length || 0;
 
     const accuracyPercentage = stockData?.length
@@ -150,7 +150,7 @@ export async function GET(request: NextRequest) {
           movement.movement_type === 'waste'
             ? sum + movement.quantity_out * movement.unit_cost
             : sum,
-        0
+        0,
       ) || 0;
 
     const wastePercentage =
@@ -240,13 +240,13 @@ export async function GET(request: NextRequest) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Parâmetros inválidos', details: error.errors },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

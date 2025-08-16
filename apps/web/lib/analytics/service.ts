@@ -32,7 +32,7 @@ export class AnalyticsService {
     period: MetricPeriod,
     startDate: Date,
     endDate: Date,
-    filters?: Record<string, any>
+    filters?: Record<string, any>,
   ): Promise<AnalyticsResponse<RevenueAnalytics>> {
     const startTime = Date.now();
     const query: AnalyticsQuery = {
@@ -79,7 +79,7 @@ export class AnalyticsService {
         };
       },
       [cacheKey],
-      { revalidate: this.defaultCacheTTL, tags: ['analytics', 'revenue'] }
+      { revalidate: this.defaultCacheTTL, tags: ['analytics', 'revenue'] },
     )();
 
     return this.createResponse(cachedAnalytics, query, startTime, true);
@@ -88,7 +88,7 @@ export class AnalyticsService {
     period: MetricPeriod,
     startDate: Date,
     endDate: Date,
-    filters?: Record<string, any>
+    filters?: Record<string, any>,
   ): Promise<AnalyticsResponse<ConversionAnalytics>> {
     const startTime = Date.now();
     const query: AnalyticsQuery = {
@@ -117,7 +117,7 @@ export class AnalyticsService {
               ...query,
               filters: { ...filters, stage: 'visitor_to_signup' },
             }),
-          ]
+          ],
         );
 
         const funnelAnalysis = await this.calculateFunnelAnalysis(query);
@@ -132,7 +132,7 @@ export class AnalyticsService {
         };
       },
       [cacheKey],
-      { revalidate: this.defaultCacheTTL, tags: ['analytics', 'conversion'] }
+      { revalidate: this.defaultCacheTTL, tags: ['analytics', 'conversion'] },
     )();
 
     return this.createResponse(cachedAnalytics, query, startTime, true);
@@ -147,7 +147,7 @@ export class AnalyticsService {
 
   async predictTrialConversion(
     userId: string,
-    trialId: string
+    trialId: string,
   ): Promise<TrialConversionPrediction> {
     const cacheKey = `trial-prediction:${trialId}`;
 
@@ -178,14 +178,14 @@ export class AnalyticsService {
         };
       },
       [cacheKey],
-      { revalidate: 3600, tags: ['predictions', 'trials'] } // 1 hour cache
+      { revalidate: 3600, tags: ['predictions', 'trials'] }, // 1 hour cache
     )();
   } // ========================================================================
   // HELPER METHODS & BUSINESS LOGIC
   // ========================================================================
 
   private async generateRevenueForecast(
-    query: AnalyticsQuery
+    query: AnalyticsQuery,
   ): Promise<ForecastData> {
     // Simple linear regression forecast based on historical data
     const historicalRevenue = await this.repository.getRevenueMetrics(query);
@@ -210,8 +210,8 @@ export class AnalyticsService {
         this.repository.getRevenueAggregation({
           ...query,
           filters: { ...query.filters, tier },
-        })
-      )
+        }),
+      ),
     );
 
     return {
@@ -276,7 +276,7 @@ export class AnalyticsService {
 
     const totalActions = metrics.reduce(
       (sum, m) => sum + (m.actionsCount || 0),
-      0
+      0,
     );
     const avgDaysActive =
       metrics.reduce((sum, m) => sum + (m.daysActive || 0), 0) / metrics.length;
@@ -342,7 +342,7 @@ export class AnalyticsService {
   private projectForecast(values: number[], trend: number, periods: number) {
     const lastValue = values.at(-1) || 0;
     const realistic = Array.from({ length: periods }, (_, i) =>
-      Math.max(0, lastValue + trend * (i + 1))
+      Math.max(0, lastValue + trend * (i + 1)),
     );
 
     return {
@@ -374,7 +374,7 @@ export class AnalyticsService {
     data: T,
     query: AnalyticsQuery,
     startTime: number,
-    cacheHit = false
+    cacheHit = false,
   ): AnalyticsResponse<T> {
     return {
       data,

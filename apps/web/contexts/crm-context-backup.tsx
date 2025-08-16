@@ -157,7 +157,7 @@ function crmReducer(state: CRMState, action: CRMAction): CRMState {
       return {
         ...state,
         customers: state.customers.map((customer) =>
-          customer.id === action.payload.id ? action.payload : customer
+          customer.id === action.payload.id ? action.payload : customer,
         ),
       };
 
@@ -165,7 +165,7 @@ function crmReducer(state: CRMState, action: CRMAction): CRMState {
       return {
         ...state,
         customers: state.customers.filter(
-          (customer) => customer.id !== action.payload
+          (customer) => customer.id !== action.payload,
         ),
       };
 
@@ -179,7 +179,7 @@ function crmReducer(state: CRMState, action: CRMAction): CRMState {
       return {
         ...state,
         segments: state.segments.map((segment) =>
-          segment.id === action.payload.id ? action.payload : segment
+          segment.id === action.payload.id ? action.payload : segment,
         ),
       };
 
@@ -187,7 +187,7 @@ function crmReducer(state: CRMState, action: CRMAction): CRMState {
       return {
         ...state,
         segments: state.segments.filter(
-          (segment) => segment.id !== action.payload
+          (segment) => segment.id !== action.payload,
         ),
       };
 
@@ -201,7 +201,7 @@ function crmReducer(state: CRMState, action: CRMAction): CRMState {
       return {
         ...state,
         campaigns: state.campaigns.map((campaign) =>
-          campaign.id === action.payload.id ? action.payload : campaign
+          campaign.id === action.payload.id ? action.payload : campaign,
         ),
       };
 
@@ -209,7 +209,7 @@ function crmReducer(state: CRMState, action: CRMAction): CRMState {
       return {
         ...state,
         campaigns: state.campaigns.filter(
-          (campaign) => campaign.id !== action.payload
+          (campaign) => campaign.id !== action.payload,
         ),
       };
 
@@ -297,7 +297,7 @@ export function CRMProvider({ children }: CRMProviderProps) {
 
   const totalCustomers = state.customers.length;
   const activeCustomers = state.customers.filter(
-    (c) => c.status === 'active'
+    (c) => c.status === 'active',
   ).length;
   const vipCustomers = state.customers.filter((c) => c.status === 'vip').length;
 

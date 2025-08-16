@@ -92,7 +92,7 @@ class ErrorTracker {
       severity?: ErrorEvent['severity'];
       metadata?: Record<string, any>;
       error_code?: string;
-    }
+    },
   ): Promise<void> {
     const errorEvent: ErrorEvent = {
       error_type: errorType,
@@ -123,7 +123,7 @@ class ErrorTracker {
    */
   private determineSeverity(
     errorType: ErrorEvent['error_type'],
-    error: Error | string
+    error: Error | string,
   ): ErrorEvent['severity'] {
     const message = error instanceof Error ? error.message : error;
     const lowerMessage = message.toLowerCase();
@@ -220,7 +220,7 @@ class ErrorTracker {
                 status: response.status,
                 statusText: response.statusText,
               },
-            }
+            },
           );
         }
 
@@ -239,7 +239,7 @@ class ErrorTracker {
               url: url.toString(),
               type: 'network_error',
             },
-          }
+          },
         );
 
         throw error;
@@ -259,7 +259,7 @@ class ErrorTracker {
    */
   private async checkErrorThresholds(errorEvent: ErrorEvent): Promise<void> {
     const threshold = this.thresholds.find(
-      (t) => t.error_type === errorEvent.error_type
+      (t) => t.error_type === errorEvent.error_type,
     );
     if (!threshold?.alert_enabled) {
       return;
@@ -288,7 +288,7 @@ class ErrorTracker {
         await this.triggerErrorAlert(
           errorEvent.error_type,
           hourlyCount,
-          threshold
+          threshold,
         );
       }
 
@@ -303,7 +303,7 @@ class ErrorTracker {
   private async triggerErrorAlert(
     errorType: string,
     count: number,
-    threshold: ErrorThreshold
+    threshold: ErrorThreshold,
   ): Promise<void> {
     // Log alert as system metric
     await this.supabase.from('system_metrics').insert({
@@ -327,7 +327,7 @@ class ErrorTracker {
    */
   private async logErrorMetric(
     errorType: string,
-    count: number
+    count: number,
   ): Promise<void> {
     try {
       await this.supabase.from('system_metrics').insert({
@@ -344,7 +344,7 @@ class ErrorTracker {
    */
   async getErrorSummary(
     hours = 24,
-    errorType?: ErrorEvent['error_type']
+    errorType?: ErrorEvent['error_type'],
   ): Promise<ErrorSummary[]> {
     try {
       const startDate = new Date();
@@ -513,7 +513,7 @@ export const errorTracker = new ErrorTracker();
 export async function trackError(
   errorType: ErrorEvent['error_type'],
   error: Error | string,
-  context?: Parameters<typeof errorTracker.trackError>[2]
+  context?: Parameters<typeof errorTracker.trackError>[2],
 ): Promise<void> {
   return errorTracker.trackError(errorType, error, context);
 }

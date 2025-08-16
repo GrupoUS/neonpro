@@ -9,11 +9,11 @@ import { updateFollowupStatusSchema } from '@/app/lib/validations/followup';
 
 export async function GET(
   _request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const followup = await treatmentFollowupService.getPatientFollowupById(
-      params.id
+      params.id,
     );
 
     if (!followup) {
@@ -22,7 +22,7 @@ export async function GET(
           success: false,
           error: 'Patient follow-up not found',
         },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -37,14 +37,14 @@ export async function GET(
         error: 'Failed to fetch patient follow-up',
         details: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const body = await request.json();
@@ -55,7 +55,7 @@ export async function PUT(
     // Update follow-up
     const followup = await treatmentFollowupService.updatePatientFollowup(
       params.id,
-      validatedData
+      validatedData,
     );
 
     return NextResponse.json({
@@ -71,7 +71,7 @@ export async function PUT(
           error: 'Validation failed',
           details: error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
     return NextResponse.json(
@@ -80,7 +80,7 @@ export async function PUT(
         error: 'Failed to update patient follow-up',
         details: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

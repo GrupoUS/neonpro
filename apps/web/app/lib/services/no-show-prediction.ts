@@ -58,7 +58,7 @@ export class NoShowPredictionEngine {
   // Core prediction methods
   async generatePrediction(
     appointmentId: string,
-    patientId?: string
+    patientId?: string,
   ): Promise<PredictionAnalysis> {
     // Get appointment details
     const appointment = await this.getAppointmentDetails(appointmentId);
@@ -76,13 +76,13 @@ export class NoShowPredictionEngine {
     // Calculate risk factors
     const riskFactors = await this.calculateRiskFactors(
       targetPatientId,
-      appointment
+      appointment,
     );
 
     // Generate ML prediction
     const predictionResult = await this.runPredictionModel(
       riskFactors,
-      historicalPattern
+      historicalPattern,
     );
 
     return {
@@ -96,14 +96,14 @@ export class NoShowPredictionEngine {
 
   async analyzeRiskFactors(
     patientId: string,
-    appointment: any
+    appointment: any,
   ): Promise<RiskFactor[]> {
     return await this.calculateRiskFactors(patientId, appointment);
   }
 
   async updatePredictionOutcome(
     predictionId: string,
-    actualOutcome: boolean
+    actualOutcome: boolean,
   ): Promise<NoShowPrediction> {
     const outcome: AppointmentOutcomeValue = actualOutcome
       ? 'no_show'
@@ -128,7 +128,7 @@ export class NoShowPredictionEngine {
   async calculateAccuracyMetrics(
     _clinicId: string,
     startDate: string,
-    endDate: string
+    endDate: string,
   ): Promise<ModelPerformance> {
     const { data: predictions, error } = await this.supabase
       .from('no_show_predictions')
@@ -144,7 +144,7 @@ export class NoShowPredictionEngine {
     const totalPredictions = predictions?.length || 0;
     if (totalPredictions === 0) {
       throw new Error(
-        'No predictions with actual outcomes found for the specified period'
+        'No predictions with actual outcomes found for the specified period',
       );
     }
 
@@ -179,7 +179,7 @@ export class NoShowPredictionEngine {
   async getHighRiskPatients(
     _clinicId: string,
     startDate: string,
-    endDate: string
+    endDate: string,
   ): Promise<NoShowPrediction[]> {
     const { data, error } = await this.supabase
       .from('no_show_predictions')
@@ -188,7 +188,7 @@ export class NoShowPredictionEngine {
         *,
         appointments!inner(*),
         patients!inner(*)
-      `
+      `,
       )
       .gte('prediction_date', startDate)
       .lte('prediction_date', endDate)
@@ -203,7 +203,7 @@ export class NoShowPredictionEngine {
   }
 
   async createPrediction(
-    input: CreatePredictionInput
+    input: CreatePredictionInput,
   ): Promise<NoShowPrediction> {
     const { data, error } = await this.supabase
       .from('no_show_predictions')
@@ -219,7 +219,7 @@ export class NoShowPredictionEngine {
 
   async updatePrediction(
     id: string,
-    input: UpdatePredictionInput
+    input: UpdatePredictionInput,
   ): Promise<NoShowPrediction> {
     const { data, error } = await this.supabase
       .from('no_show_predictions')
@@ -248,7 +248,7 @@ export class NoShowPredictionEngine {
   }
 
   async getPredictionsByAppointment(
-    appointmentId: string
+    appointmentId: string,
   ): Promise<NoShowPrediction[]> {
     const { data, error } = await this.supabase
       .from('no_show_predictions')
@@ -311,7 +311,7 @@ export class NoShowPredictionEngine {
     for (const factor of factors) {
       const newWeight = await this.calculateFactorWeight(
         factor,
-        recentAppointments
+        recentAppointments,
       );
       await this.supabase
         .from('risk_factors')
@@ -327,7 +327,7 @@ export class NoShowPredictionEngine {
 
   // Intervention management
   async createIntervention(
-    input: CreateInterventionInput
+    input: CreateInterventionInput,
   ): Promise<InterventionStrategy> {
     const { data, error } = await this.supabase
       .from('intervention_strategies')
@@ -343,7 +343,7 @@ export class NoShowPredictionEngine {
 
   async executeIntervention(
     id: string,
-    input: UpdateInterventionInput
+    input: UpdateInterventionInput,
   ): Promise<InterventionStrategy> {
     const { data, error } = await this.supabase
       .from('intervention_strategies')
@@ -362,7 +362,7 @@ export class NoShowPredictionEngine {
   }
 
   async getRecommendedInterventions(
-    predictionId: string
+    predictionId: string,
   ): Promise<InterventionStrategy[]> {
     const prediction = await this.getPrediction(predictionId);
     if (!prediction?.intervention_recommended) {
@@ -380,7 +380,7 @@ export class NoShowPredictionEngine {
     // Generate recommendations based on risk score and factors
     const recommendations = await this.generateInterventionRecommendations(
       prediction,
-      existingTypes
+      existingTypes,
     );
 
     return recommendations;
@@ -498,7 +498,7 @@ export class NoShowPredictionEngine {
 
   async getNoShowTrends(
     startDate: string,
-    endDate: string
+    endDate: string,
   ): Promise<NoShowTrends> {
     const { data: analytics, error } = await this.supabase
       .from('no_show_analytics')
@@ -514,7 +514,7 @@ export class NoShowPredictionEngine {
     const totalAppointments =
       analytics?.reduce(
         (sum, a) => sum + (a.predicted_no_shows + a.actual_no_shows),
-        0
+        0,
       ) || 0;
     const totalPredicted =
       analytics?.reduce((sum, a) => sum + a.predicted_no_shows, 0) || 0;
@@ -541,7 +541,7 @@ export class NoShowPredictionEngine {
       trends_by_factor: await this.calculateFactorTrends(startDate, endDate),
       intervention_effectiveness: await this.calculateInterventionEffectiveness(
         startDate,
-        endDate
+        endDate,
       ),
     };
   }
@@ -549,10 +549,10 @@ export class NoShowPredictionEngine {
   // Helper methods for metrics calculation
   private calculatePrecision(predictions: NoShowPrediction[]): number {
     const predictedPositives = predictions.filter(
-      (p) => p.risk_score >= this.config.confidenceThreshold
+      (p) => p.risk_score >= this.config.confidenceThreshold,
     );
     const truePositives = predictedPositives.filter(
-      (p) => p.actual_outcome === 'no_show'
+      (p) => p.actual_outcome === 'no_show',
     );
 
     return predictedPositives.length > 0
@@ -562,10 +562,10 @@ export class NoShowPredictionEngine {
 
   private calculateRecall(predictions: NoShowPrediction[]): number {
     const actualPositives = predictions.filter(
-      (p) => p.actual_outcome === 'no_show'
+      (p) => p.actual_outcome === 'no_show',
     );
     const truePositives = actualPositives.filter(
-      (p) => p.risk_score >= this.config.confidenceThreshold
+      (p) => p.risk_score >= this.config.confidenceThreshold,
     );
 
     return actualPositives.length > 0
@@ -577,7 +577,7 @@ export class NoShowPredictionEngine {
     return predictions.filter(
       (p) =>
         p.risk_score >= this.config.confidenceThreshold &&
-        p.actual_outcome === 'attended'
+        p.actual_outcome === 'attended',
     ).length;
   }
 
@@ -585,7 +585,7 @@ export class NoShowPredictionEngine {
     return predictions.filter(
       (p) =>
         p.risk_score < this.config.confidenceThreshold &&
-        p.actual_outcome === 'no_show'
+        p.actual_outcome === 'no_show',
     ).length;
   }
 
@@ -599,7 +599,7 @@ export class NoShowPredictionEngine {
         service_types(*),
         patients(*),
         professionals(*)
-      `
+      `,
       )
       .eq('id', appointmentId)
       .single();
@@ -624,7 +624,7 @@ export class NoShowPredictionEngine {
     const attended =
       appointments?.filter((a) => a.status === 'completed').length || 0;
     const lastAttendance = appointments?.find(
-      (a) => a.status === 'completed'
+      (a) => a.status === 'completed',
     )?.start_time;
 
     return {
@@ -637,7 +637,7 @@ export class NoShowPredictionEngine {
 
   private async calculateRiskFactors(
     patientId: string,
-    appointment: any
+    appointment: any,
   ): Promise<RiskFactor[]> {
     const factors: CreateRiskFactorInput[] = [];
     const patientHistory = await this.getPatientHistoricalPattern(patientId);
@@ -691,7 +691,7 @@ export class NoShowPredictionEngine {
 
   private async runPredictionModel(
     riskFactors: RiskFactor[],
-    historicalPattern: any
+    historicalPattern: any,
   ) {
     let totalRisk = 0;
     let totalWeight = 0;
@@ -715,13 +715,13 @@ export class NoShowPredictionEngine {
     const historyAdjustment = (1 - historicalPattern.attendance_rate) * 0.2;
     const finalRiskScore = Math.min(
       1,
-      Math.max(0, baseRiskScore + historyAdjustment)
+      Math.max(0, baseRiskScore + historyAdjustment),
     );
 
     // Calculate confidence based on data quality
     const confidence = this.calculatePredictionConfidence(
       riskFactors,
-      historicalPattern
+      historicalPattern,
     );
 
     return {
@@ -753,7 +753,7 @@ export class NoShowPredictionEngine {
 
   private calculatePredictionConfidence(
     riskFactors: RiskFactor[],
-    historicalPattern: any
+    historicalPattern: any,
   ): number {
     let confidence = 0.7; // Base confidence
 
@@ -778,7 +778,7 @@ export class NoShowPredictionEngine {
 
   private async generateInterventionRecommendations(
     prediction: NoShowPrediction,
-    existingTypes: InterventionTypeValue[]
+    existingTypes: InterventionTypeValue[],
   ): Promise<InterventionStrategy[]> {
     const recommendations: CreateInterventionInput[] = [];
 
@@ -819,7 +819,7 @@ export class NoShowPredictionEngine {
 
   private async getRecentAppointments(patientId: string, days: number) {
     const startDate = new Date(
-      Date.now() - days * 24 * 60 * 60 * 1000
+      Date.now() - days * 24 * 60 * 60 * 1000,
     ).toISOString();
 
     const { data, error } = await this.supabase
@@ -834,7 +834,7 @@ export class NoShowPredictionEngine {
 
   private async calculateFactorWeight(
     factor: RiskFactor,
-    _recentAppointments: any[]
+    _recentAppointments: any[],
   ): number {
     // Simplified weight calculation - in production, this would use ML
     const baseWeight = this.config.factorWeights[factor.factor_type] || 0.1;
@@ -857,7 +857,7 @@ export class NoShowPredictionEngine {
     const scheduled = interventions.filter((i) => !i.executed_at).length;
     const estimatedCost = interventions.reduce(
       (sum, i) => sum + (i.cost_impact || 0),
-      0
+      0,
     );
 
     return { scheduled, estimatedCost };
@@ -878,17 +878,17 @@ export class NoShowPredictionEngine {
         (analytics.length || 1),
       interventionsExecuted: analytics.reduce(
         (sum, a) => sum + a.interventions_executed,
-        0
+        0,
       ),
       successfulInterventions: analytics.reduce(
         (sum, a) => sum + a.interventions_executed * 0.7,
-        0
+        0,
       ), // Estimated
       revenueSaved: analytics.reduce((sum, a) => sum + a.revenue_recovered, 0),
       totalPredictions: analytics.length * 10, // Estimated
       costSavings: analytics.reduce(
         (sum, a) => sum + a.revenue_recovered - a.cost_impact,
-        0
+        0,
       ),
       trendDirection:
         analytics.length > 1
@@ -916,7 +916,7 @@ export class NoShowPredictionEngine {
 
   private async calculateInterventionEffectiveness(
     _startDate: string,
-    _endDate: string
+    _endDate: string,
   ) {
     // Placeholder implementation - would analyze intervention success rates
     const interventions: Record<string, any> = {};

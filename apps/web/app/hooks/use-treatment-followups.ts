@@ -88,7 +88,7 @@ export function useCreateFollowup() {
       // Add to cache
       queryClient.setQueryData(
         QUERY_KEYS.followup(newFollowup.id),
-        newFollowup
+        newFollowup,
       );
 
       toast.success('Follow-up criado com sucesso!');
@@ -117,7 +117,7 @@ export function useUpdateFollowup() {
       // Update specific follow-up in cache
       queryClient.setQueryData(
         QUERY_KEYS.followup(updatedFollowup.id),
-        updatedFollowup
+        updatedFollowup,
       );
 
       // Invalidate follow-ups list
@@ -169,7 +169,7 @@ export function useCompleteFollowup() {
       // Update specific follow-up in cache
       queryClient.setQueryData(
         QUERY_KEYS.followup(completedFollowup.id),
-        completedFollowup
+        completedFollowup,
       );
 
       // Invalidate follow-ups list
@@ -218,7 +218,7 @@ export function useCreateFollowupTemplate() {
       // Add to cache
       queryClient.setQueryData(
         QUERY_KEYS.template(newTemplate.id),
-        newTemplate
+        newTemplate,
       );
 
       toast.success('Template de follow-up criado com sucesso!');
@@ -247,7 +247,7 @@ export function useUpdateFollowupTemplate() {
       // Update specific template in cache
       queryClient.setQueryData(
         QUERY_KEYS.template(updatedTemplate.id),
-        updatedTemplate
+        updatedTemplate,
       );
 
       // Invalidate templates list
@@ -295,7 +295,7 @@ export function useCreateTreatmentProtocol() {
       // Add to cache
       queryClient.setQueryData(
         QUERY_KEYS.protocol(newProtocol.id),
-        newProtocol
+        newProtocol,
       );
 
       toast.success('Protocolo de tratamento criado com sucesso!');
@@ -316,7 +316,7 @@ export function useCreateTreatmentProtocol() {
 export function useFollowupAnalytics(
   clinicId: string,
   dateFrom?: string,
-  dateTo?: string
+  dateTo?: string,
 ) {
   return useQuery({
     queryKey: QUERY_KEYS.analytics(clinicId, dateFrom, dateTo),
@@ -358,12 +358,12 @@ export function useTodayFollowups(clinicId: string) {
   const todayStart = new Date(
     today.getFullYear(),
     today.getMonth(),
-    today.getDate()
+    today.getDate(),
   );
   const todayEnd = new Date(
     today.getFullYear(),
     today.getMonth(),
-    today.getDate() + 1
+    today.getDate() + 1,
   );
 
   return useFollowups({

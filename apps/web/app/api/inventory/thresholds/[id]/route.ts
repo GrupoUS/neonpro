@@ -10,7 +10,7 @@ const thresholdService = new IntelligentThresholdService();
 
 export async function GET(
   _request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const threshold = await thresholdService.getThreshold(params.id);
@@ -18,7 +18,7 @@ export async function GET(
     if (!threshold) {
       return NextResponse.json(
         { success: false, error: 'Threshold not found' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -33,14 +33,14 @@ export async function GET(
         error: 'Failed to fetch threshold',
         details: error.message,
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const body = await request.json();
@@ -48,7 +48,7 @@ export async function PATCH(
 
     const threshold = await thresholdService.updateThreshold(
       params.id,
-      validatedUpdates
+      validatedUpdates,
     );
 
     return NextResponse.json({
@@ -64,7 +64,7 @@ export async function PATCH(
           error: 'Validation failed',
           details: error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -74,14 +74,14 @@ export async function PATCH(
         error: 'Failed to update threshold',
         details: error.message,
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
 
 export async function DELETE(
   _request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     // Soft delete by marking as inactive
@@ -102,7 +102,7 @@ export async function DELETE(
         error: 'Failed to deactivate threshold',
         details: error.message,
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

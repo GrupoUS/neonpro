@@ -90,7 +90,7 @@ export class WidgetService {
    * Get all widgets for a dashboard
    */
   async getDashboardWidgets(
-    dashboardId: string
+    dashboardId: string,
   ): Promise<WidgetConfiguration[]> {
     try {
       const { data, error } = await this.supabase
@@ -130,7 +130,7 @@ export class WidgetService {
    * Create a new widget
    */
   async createWidget(
-    widget: Omit<WidgetConfiguration, 'id' | 'createdAt' | 'updatedAt'>
+    widget: Omit<WidgetConfiguration, 'id' | 'createdAt' | 'updatedAt'>,
   ): Promise<WidgetConfiguration | null> {
     try {
       const widgetId = crypto.randomUUID();
@@ -190,7 +190,7 @@ export class WidgetService {
    */
   async updateWidget(
     widgetId: string,
-    updates: Partial<WidgetConfiguration>
+    updates: Partial<WidgetConfiguration>,
   ): Promise<WidgetConfiguration | null> {
     try {
       const { data, error } = await this.supabase
@@ -271,7 +271,7 @@ export class WidgetService {
    */
   async getWidgetData(
     widgetId: string,
-    forceRefresh = false
+    forceRefresh = false,
   ): Promise<WidgetData | null> {
     try {
       // Check cache first
@@ -307,7 +307,7 @@ export class WidgetService {
         },
         cacheExpiry: widgetConfig.data_source.cacheEnabled
           ? new Date(
-              Date.now() + widgetConfig.data_source.refreshInterval * 1000
+              Date.now() + widgetConfig.data_source.refreshInterval * 1000,
             ).toISOString()
           : undefined,
       };
@@ -345,19 +345,19 @@ export class WidgetService {
         return await this.fetchKPIData(
           widgetConfig.clinic_id,
           dataSource.source,
-          dataSource.parameters
+          dataSource.parameters,
         );
 
       case 'query':
         return await this.fetchQueryData(
           dataSource.source,
-          dataSource.parameters
+          dataSource.parameters,
         );
 
       case 'api':
         return await this.fetchAPIData(
           dataSource.source,
-          dataSource.parameters
+          dataSource.parameters,
         );
 
       case 'static':
@@ -374,7 +374,7 @@ export class WidgetService {
   private async fetchKPIData(
     clinicId: string,
     kpiSource: string,
-    parameters?: any
+    parameters?: any,
   ): Promise<any> {
     switch (kpiSource) {
       case 'all_kpis':
@@ -383,7 +383,7 @@ export class WidgetService {
           parameters?.periodStart
             ? new Date(parameters.periodStart)
             : undefined,
-          parameters?.periodEnd ? new Date(parameters.periodEnd) : undefined
+          parameters?.periodEnd ? new Date(parameters.periodEnd) : undefined,
         );
 
       case 'financial_summary': {
@@ -396,7 +396,7 @@ export class WidgetService {
         const operationalKPIs =
           await kpiCalculationService.calculateClinicKPIs(clinicId);
         return operationalKPIs.filter(
-          (kpi) => kpi.kpi.category === 'operational'
+          (kpi) => kpi.kpi.category === 'operational',
         );
       }
 
@@ -473,7 +473,7 @@ export class WidgetService {
         {
           query_name: query,
           query_params: parameters || {},
-        }
+        },
       );
 
       if (error) {
@@ -492,7 +492,7 @@ export class WidgetService {
    */
   private async fetchAPIData(
     apiEndpoint: string,
-    parameters?: any
+    parameters?: any,
   ): Promise<any> {
     try {
       // This would call external APIs for additional data

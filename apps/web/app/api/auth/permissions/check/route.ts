@@ -69,7 +69,7 @@ export async function POST(request: NextRequest) {
           granted: false,
           reason: authResult.error || 'Invalid authentication',
         },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -84,7 +84,7 @@ export async function POST(request: NextRequest) {
           granted: false,
           reason: 'Malformed request data',
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -99,7 +99,7 @@ export async function POST(request: NextRequest) {
           reason: 'Request validation failed',
           details: validationResult.error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -112,7 +112,7 @@ export async function POST(request: NextRequest) {
         user,
         data.permission as Permission,
         data.resourceId,
-        data.context as PermissionContext
+        data.context as PermissionContext,
       );
 
       return NextResponse.json({
@@ -158,7 +158,7 @@ export async function POST(request: NextRequest) {
         granted: false,
         reason: 'Unknown permission check format',
       },
-      { status: 400 }
+      { status: 400 },
     );
   } catch (_error) {
     return NextResponse.json(
@@ -168,7 +168,7 @@ export async function POST(request: NextRequest) {
         reason: 'Permission validation failed due to server error',
         timestamp: new Date().toISOString(),
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -190,7 +190,7 @@ export async function GET(request: NextRequest) {
           error: 'Authentication required',
           authenticated: false,
         },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -220,7 +220,7 @@ export async function GET(request: NextRequest) {
         authenticated: false,
         timestamp: new Date().toISOString(),
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

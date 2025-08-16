@@ -72,14 +72,14 @@ describe('Healthcare Connection Pool Performance', () => {
       // Test critical client creation
       const criticalClient = poolManager.getHealthcareClient(
         clinicId,
-        'critical'
+        'critical',
       );
       expect(criticalClient).toBeDefined();
 
       // Test standard client creation
       const standardClient = poolManager.getHealthcareClient(
         clinicId,
-        'standard'
+        'standard',
       );
       expect(standardClient).toBeDefined();
 
@@ -100,7 +100,7 @@ describe('Healthcare Connection Pool Performance', () => {
       });
 
       const clients = await Promise.all(
-        promises.map((client) => Promise.resolve(client))
+        promises.map((client) => Promise.resolve(client)),
       );
       const elapsedTime = Date.now() - startTime;
 
@@ -118,7 +118,7 @@ describe('Healthcare Connection Pool Performance', () => {
       for (let i = 0; i < 10; i++) {
         poolManager.getHealthcareClient(
           clinicId,
-          i % 2 === 0 ? 'critical' : 'standard'
+          i % 2 === 0 ? 'critical' : 'standard',
         );
       }
 
@@ -144,7 +144,7 @@ describe('Healthcare Connection Pool Performance', () => {
           patientId: 'patient-001',
           priority: 'emergency',
           userRole: 'professional',
-        }
+        },
       );
 
       const startTime = Date.now();
@@ -163,8 +163,8 @@ describe('Healthcare Connection Pool Performance', () => {
         .mockImplementation(
           () =>
             new Promise((resolve) =>
-              setTimeout(() => resolve({ count: 100 }), 2000)
-            )
+              setTimeout(() => resolve({ count: 100 }), 2000),
+            ),
         );
       const context = createQueryContext(
         'test-clinic-005',
@@ -173,7 +173,7 @@ describe('Healthcare Connection Pool Performance', () => {
         {
           priority: 'low',
           userRole: 'admin',
-        }
+        },
       );
 
       const result = await queryStrategies.executeQuery(mockQuery, context);
@@ -194,7 +194,7 @@ describe('Healthcare Connection Pool Performance', () => {
         {
           patientId: 'patient-002',
           userRole: 'professional',
-        }
+        },
       );
 
       const startTime = Date.now();
@@ -277,7 +277,7 @@ describe('Healthcare Connection Pool Performance', () => {
           priority: 'emergency',
           userId: 'test-user-006',
           patientId: 'patient-003',
-        }
+        },
       );
       const executionTime = Date.now() - startTime;
 
@@ -301,7 +301,7 @@ describe('Healthcare Connection Pool Performance', () => {
           lgpdSensitive: true,
           requiresAudit: true,
           userRole: 'professional',
-        }
+        },
       );
 
       const startTime = Date.now();
@@ -322,19 +322,19 @@ describe('Healthcare Connection Pool Performance', () => {
       // Simulate operations from different clinics
       for (let i = 0; i < 25; i++) {
         clinic1Operations.push(
-          poolManager.getHealthcareClient('clinic-001', 'standard')
+          poolManager.getHealthcareClient('clinic-001', 'standard'),
         );
         clinic2Operations.push(
-          poolManager.getHealthcareClient('clinic-002', 'standard')
+          poolManager.getHealthcareClient('clinic-002', 'standard'),
         );
       }
 
       const allClients = [
         ...(await Promise.all(
-          clinic1Operations.map((c) => Promise.resolve(c))
+          clinic1Operations.map((c) => Promise.resolve(c)),
         )),
         ...(await Promise.all(
-          clinic2Operations.map((c) => Promise.resolve(c))
+          clinic2Operations.map((c) => Promise.resolve(c)),
         )),
       ];
 
@@ -344,10 +344,10 @@ describe('Healthcare Connection Pool Performance', () => {
       // Verify analytics shows proper isolation
       const analytics = poolManager.getPoolAnalytics();
       const clinic1Pools = analytics.pools.filter((p) =>
-        p.poolKey.includes('clinic-001')
+        p.poolKey.includes('clinic-001'),
       );
       const clinic2Pools = analytics.pools.filter((p) =>
-        p.poolKey.includes('clinic-002')
+        p.poolKey.includes('clinic-002'),
       );
 
       expect(clinic1Pools.length).toBeGreaterThan(0);
@@ -363,7 +363,7 @@ describe('Healthcare Connection Pool Performance', () => {
 
       expect(healthSummary).toBeDefined();
       expect(healthSummary.status).toMatch(
-        /healthy|degraded|critical|emergency/
+        /healthy|degraded|critical|emergency/,
       );
       expect(healthSummary.lastUpdate).toBeInstanceOf(Date);
       expect(executionTime).toBeLessThan(50); // Should be very fast
@@ -374,7 +374,7 @@ describe('Healthcare Connection Pool Performance', () => {
       const startTime = Date.now();
 
       const promises = Array.from({ length: concurrentRequests }, () =>
-        Promise.resolve(monitor.getHealthSummary())
+        Promise.resolve(monitor.getHealthSummary()),
       );
 
       const results = await Promise.all(promises);
@@ -446,13 +446,13 @@ describe('Healthcare Connection Pool Performance', () => {
               () => {
                 const client = poolManager.getHealthcareClient(
                   clinicId,
-                  operationType
+                  operationType,
                 );
                 resolve(client);
               },
-              (i / operationsPerSecond) * 1000
+              (i / operationsPerSecond) * 1000,
             );
-          })
+          }),
         );
       }
 

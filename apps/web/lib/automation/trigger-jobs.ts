@@ -60,7 +60,7 @@ export class NeonProAutomation {
       };
     } catch (error) {
       throw new Error(
-        `Failed to send appointment confirmation: ${error instanceof Error ? error.message : error}`
+        `Failed to send appointment confirmation: ${error instanceof Error ? error.message : error}`,
       );
     }
   }
@@ -98,10 +98,10 @@ export class NeonProAutomation {
       let scheduleFor = params.reminderDate;
       if (!scheduleFor) {
         const appointmentDateTime = new Date(
-          `${params.appointmentDate}T${params.appointmentTime}`
+          `${params.appointmentDate}T${params.appointmentTime}`,
         );
         scheduleFor = new Date(
-          appointmentDateTime.getTime() - 24 * 60 * 60 * 1000
+          appointmentDateTime.getTime() - 24 * 60 * 60 * 1000,
         ); // 24h antes
       }
 
@@ -121,7 +121,7 @@ export class NeonProAutomation {
       };
     } catch (error) {
       throw new Error(
-        `Failed to schedule reminder: ${error instanceof Error ? error.message : error}`
+        `Failed to schedule reminder: ${error instanceof Error ? error.message : error}`,
       );
     }
   }
@@ -165,7 +165,7 @@ export class NeonProAutomation {
       };
     } catch (error) {
       throw new Error(
-        `Failed to send invoice: ${error instanceof Error ? error.message : error}`
+        `Failed to send invoice: ${error instanceof Error ? error.message : error}`,
       );
     }
   }
@@ -218,7 +218,7 @@ export class NeonProAutomation {
       };
     } catch (error) {
       throw new Error(
-        `Failed to send payment reminder: ${error instanceof Error ? error.message : error}`
+        `Failed to send payment reminder: ${error instanceof Error ? error.message : error}`,
       );
     }
   }
@@ -289,7 +289,7 @@ export class NeonProAutomation {
       results.paymentReminder = await NeonProAutomation.sendPaymentReminder({
         ...invoiceData,
         delayDays: Math.ceil(
-          (reminderDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24)
+          (reminderDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24),
         ),
       });
 

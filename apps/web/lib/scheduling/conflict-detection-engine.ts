@@ -76,7 +76,7 @@ export class ConflictDetectionEngine {
         'Failed to initialize conflict detection engine',
         undefined,
         'INITIALIZATION_ERROR',
-        { originalError: error }
+        { originalError: error },
       );
     }
   }
@@ -85,7 +85,7 @@ export class ConflictDetectionEngine {
    * Detect conflicts for a specific appointment or all active appointments
    */
   async detectConflicts(
-    appointmentId?: string
+    appointmentId?: string,
   ): Promise<ConflictDetectionResponse> {
     const startTime = performance.now();
 
@@ -95,7 +95,7 @@ export class ConflictDetectionEngine {
       // Use PostgreSQL function for optimized conflict detection
       const { data: conflicts, error } = await this.supabase.rpc(
         'detect_scheduling_conflicts',
-        { target_appointment_id: appointmentId }
+        { target_appointment_id: appointmentId },
       );
 
       if (error) {
@@ -103,7 +103,7 @@ export class ConflictDetectionEngine {
           'Database conflict detection failed',
           appointmentId,
           'DB_DETECTION_ERROR',
-          { error }
+          { error },
         );
       }
 
@@ -165,7 +165,7 @@ export class ConflictDetectionEngine {
         'Conflict detection failed',
         appointmentId,
         'DETECTION_ERROR',
-        { originalError: error, detectionLatency }
+        { originalError: error, detectionLatency },
       );
     }
   }
@@ -180,7 +180,7 @@ export class ConflictDetectionEngine {
       throw new ConflictDetectionError(
         'Real-time detection is disabled in configuration',
         undefined,
-        'REALTIME_DISABLED'
+        'REALTIME_DISABLED',
       );
     }
 
@@ -195,7 +195,7 @@ export class ConflictDetectionEngine {
           table: 'appointments',
           filter: appointmentIds.map((id) => `id=eq.${id}`).join(','),
         },
-        this.handleAppointmentChange.bind(this)
+        this.handleAppointmentChange.bind(this),
       );
     }
 
@@ -207,7 +207,7 @@ export class ConflictDetectionEngine {
         schema: 'public',
         table: 'scheduling_conflicts',
       },
-      this.handleConflictInsert.bind(this)
+      this.handleConflictInsert.bind(this),
     );
   }
 
@@ -226,7 +226,7 @@ export class ConflictDetectionEngine {
    */
   addEventListener(
     eventType: string,
-    listener: (event: ConflictDetectionEvent) => void
+    listener: (event: ConflictDetectionEvent) => void,
   ): void {
     if (!this.eventListeners.has(eventType)) {
       this.eventListeners.set(eventType, []);
@@ -239,7 +239,7 @@ export class ConflictDetectionEngine {
    */
   removeEventListener(
     eventType: string,
-    listener: (event: ConflictDetectionEvent) => void
+    listener: (event: ConflictDetectionEvent) => void,
   ): void {
     const listeners = this.eventListeners.get(eventType);
     if (listeners) {
@@ -290,14 +290,14 @@ export class ConflictDetectionEngine {
       throw new ConflictDetectionError(
         'Required database schema not found. Please run the conflict resolution migration.',
         undefined,
-        'SCHEMA_VALIDATION_ERROR'
+        'SCHEMA_VALIDATION_ERROR',
       );
     }
 
     // Verify conflict detection function exists
     const { data: functions, error: functionsError } = await this.supabase.rpc(
       'detect_scheduling_conflicts',
-      { target_appointment_id: null }
+      { target_appointment_id: null },
     );
 
     if (functionsError && functionsError.code !== 'PGRST200') {
@@ -305,7 +305,7 @@ export class ConflictDetectionEngine {
         'Conflict detection function not available',
         undefined,
         'FUNCTION_VALIDATION_ERROR',
-        { error: functionsError }
+        { error: functionsError },
       );
     }
   }
@@ -331,7 +331,7 @@ export class ConflictDetectionEngine {
         schema: 'public',
         table: 'scheduling_conflicts',
       },
-      this.handleRealtimeConflictEvent.bind(this)
+      this.handleRealtimeConflictEvent.bind(this),
     );
   }
 
@@ -349,7 +349,7 @@ export class ConflictDetectionEngine {
   }
 
   private async enhanceConflictData(
-    rawConflicts: any[]
+    rawConflicts: any[],
   ): Promise<SchedulingConflict[]> {
     const enhancedConflicts: SchedulingConflict[] = [];
 
@@ -363,7 +363,7 @@ export class ConflictDetectionEngine {
           clients(name, email),
           professionals(name, specialties),
           services(name, duration)
-        `
+        `,
         )
         .in('id', [conflict.appointment_a, conflict.appointment_b]);
 
@@ -389,7 +389,7 @@ export class ConflictDetectionEngine {
   }
 
   private async generateResolutionRecommendations(
-    conflicts: SchedulingConflict[]
+    conflicts: SchedulingConflict[],
   ): Promise<ResolutionRecommendation[]> {
     const recommendations: ResolutionRecommendation[] = [];
 
@@ -561,7 +561,7 @@ export class ConflictDetectionEngine {
       throw new ConflictDetectionError(
         'Conflict detection engine not initialized. Call initialize() first.',
         undefined,
-        'NOT_INITIALIZED'
+        'NOT_INITIALIZED',
       );
     }
   }

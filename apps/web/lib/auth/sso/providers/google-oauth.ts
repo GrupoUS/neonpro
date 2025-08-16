@@ -294,7 +294,7 @@ export class GoogleOAuthProvider {
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
           },
-        }
+        },
       );
 
       if (!response.ok) {
@@ -322,7 +322,7 @@ export class GoogleOAuthProvider {
     try {
       // For production, use Google's token validation endpoint
       const response = await fetch(
-        `https://oauth2.googleapis.com/tokeninfo?id_token=${idToken}`
+        `https://oauth2.googleapis.com/tokeninfo?id_token=${idToken}`,
       );
 
       if (!response.ok) {
@@ -339,7 +339,7 @@ export class GoogleOAuthProvider {
       // Validate issuer
       if (
         !['accounts.google.com', 'https://accounts.google.com'].includes(
-          tokenInfo.iss
+          tokenInfo.iss,
         )
       ) {
         throw new Error('ID token issuer mismatch');
@@ -421,7 +421,7 @@ export class GoogleOAuthProvider {
 
 // Export factory function
 export function createGoogleOAuthProvider(
-  config: GoogleOAuthConfig
+  config: GoogleOAuthConfig,
 ): GoogleOAuthProvider {
   return new GoogleOAuthProvider(config);
 }

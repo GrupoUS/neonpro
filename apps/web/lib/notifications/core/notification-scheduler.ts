@@ -81,7 +81,7 @@ export class NotificationScheduler {
   constructor() {
     this.supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
     );
     this.auditLogger = new AuditLogger();
   }
@@ -99,7 +99,7 @@ export class NotificationScheduler {
     // Processar notificações pendentes a cada minuto
     this.processingInterval = setInterval(
       () => this.processScheduledNotifications(),
-      this.processingIntervalMs
+      this.processingIntervalMs,
     );
 
     // Limpar notificações expiradas diariamente
@@ -338,7 +338,7 @@ export class NotificationScheduler {
       if (filters?.offset) {
         query = query.range(
           filters.offset,
-          filters.offset + (filters.limit || 50) - 1
+          filters.offset + (filters.limit || 50) - 1,
         );
       }
 
@@ -445,7 +445,7 @@ export class NotificationScheduler {
   }
 
   private async processNotification(
-    notification: ScheduledNotification
+    notification: ScheduledNotification,
   ): Promise<void> {
     // Marcar como sendo processada
     await this.supabase
@@ -483,7 +483,7 @@ export class NotificationScheduler {
   }
 
   private async sendNotification(
-    _notification: ScheduledNotification
+    _notification: ScheduledNotification,
   ): Promise<void> {
     // Simular delay de envio
     await new Promise((resolve) => setTimeout(resolve, 100));
@@ -491,7 +491,7 @@ export class NotificationScheduler {
 
   private async handleNotificationError(
     notification: ScheduledNotification,
-    error: Error
+    error: Error,
   ): Promise<void> {
     const retryCount = notification.retry_count + 1;
 
@@ -523,7 +523,7 @@ export class NotificationScheduler {
   }
 
   private async scheduleNextOccurrence(
-    notification: ScheduledNotification
+    notification: ScheduledNotification,
   ): Promise<void> {
     if (!notification.repeat_pattern) {
       return;
@@ -536,13 +536,13 @@ export class NotificationScheduler {
     switch (pattern.type) {
       case 'daily':
         nextDate = new Date(
-          currentDate.getTime() + (pattern.interval || 1) * 24 * 60 * 60 * 1000
+          currentDate.getTime() + (pattern.interval || 1) * 24 * 60 * 60 * 1000,
         );
         break;
       case 'weekly':
         nextDate = new Date(
           currentDate.getTime() +
-            (pattern.interval || 1) * 7 * 24 * 60 * 60 * 1000
+            (pattern.interval || 1) * 7 * 24 * 60 * 60 * 1000,
         );
         break;
       case 'monthly':
@@ -603,7 +603,7 @@ export class NotificationScheduler {
 
   private async createCronJob(
     scheduleId: string,
-    scheduledAt: Date
+    scheduledAt: Date,
   ): Promise<void> {
     const cronExpression = this.dateToCronExpression(scheduledAt);
 
@@ -629,7 +629,7 @@ export class NotificationScheduler {
       },
       {
         scheduled: false,
-      }
+      },
     );
 
     this.cronJobs.set(scheduleId, job);

@@ -78,7 +78,7 @@ export async function GET(request: NextRequest) {
     if (parsedQuery.intervention_recommended !== undefined) {
       query = query.eq(
         'intervention_recommended',
-        parsedQuery.intervention_recommended
+        parsedQuery.intervention_recommended,
       );
     }
 
@@ -100,7 +100,7 @@ export async function GET(request: NextRequest) {
     if (error) {
       return NextResponse.json(
         { error: 'Failed to fetch predictions' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -121,7 +121,7 @@ export async function GET(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -143,13 +143,13 @@ export async function POST(request: NextRequest) {
     // Check if prediction already exists for this appointment
     const existingPrediction =
       await noShowPredictionEngine.getPredictionsByAppointment(
-        validatedInput.appointment_id
+        validatedInput.appointment_id,
       );
 
     if (existingPrediction.length > 0) {
       return NextResponse.json(
         { error: 'Prediction already exists for this appointment' },
-        { status: 409 }
+        { status: 409 },
       );
     }
 
@@ -166,7 +166,7 @@ export async function POST(request: NextRequest) {
 
     // Get related risk factors
     const riskFactors = await noShowPredictionEngine.getRiskFactorsByPatient(
-      prediction.patient_id
+      prediction.patient_id,
     );
 
     return NextResponse.json(
@@ -176,19 +176,19 @@ export async function POST(request: NextRequest) {
         risk_factors: riskFactors,
         message: 'Prediction created successfully',
       },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (error) {
     if (error instanceof Error && error.message.includes('validation')) {
       return NextResponse.json(
         { error: 'Invalid input data', details: error.message },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     return NextResponse.json(
       { error: 'Failed to create prediction' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

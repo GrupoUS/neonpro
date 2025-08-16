@@ -19,7 +19,7 @@ export class WhatsAppProvider {
       templateParams?: Record<string, string>;
       mediaUrl?: string;
       priority?: 'low' | 'medium' | 'high' | 'urgent';
-    }
+    },
   ): Promise<WhatsAppResult> {
     // Mock implementation for testing
     return {

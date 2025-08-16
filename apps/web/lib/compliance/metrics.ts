@@ -136,7 +136,7 @@ export class ComplianceMetricsEngine {
       const { data: consentData, error: consentError } = await this.supabase
         .from('patient_profiles')
         .select(
-          'id, consent_marketing, consent_data_processing, privacy_policy_accepted'
+          'id, consent_marketing, consent_data_processing, privacy_policy_accepted',
         );
 
       if (consentError) {
@@ -166,7 +166,7 @@ export class ComplianceMetricsEngine {
       const totalPatients = consentData?.length || 0;
       const consentedPatients =
         consentData?.filter(
-          (p) => p.consent_marketing && p.consent_data_processing
+          (p) => p.consent_marketing && p.consent_data_processing,
         ).length || 0;
 
       const privacyAccepted =
@@ -177,12 +177,12 @@ export class ComplianceMetricsEngine {
 
       const pendingRequests =
         requestsData?.filter(
-          (r) => r.status === 'pending' || r.status === 'processing'
+          (r) => r.status === 'pending' || r.status === 'processing',
         ).length || 0;
 
       const deletionRequests =
         requestsData?.filter(
-          (r) => r.request_type === 'deletion' && r.status === 'completed'
+          (r) => r.request_type === 'deletion' && r.status === 'completed',
         ).length || 0;
 
       const breachIncidents = breachData?.length || 0;
@@ -204,18 +204,18 @@ export class ComplianceMetricsEngine {
           requestScore * 0.3 +
           privacyScore * 0.2 +
           100 * 0.2 -
-          breachPenalty
+          breachPenalty,
       );
 
       return {
         consent_rate: Math.round(
-          (consentedPatients / Math.max(totalPatients, 1)) * 100
+          (consentedPatients / Math.max(totalPatients, 1)) * 100,
         ),
         data_requests_fulfilled: fulfilledRequests,
         data_requests_pending: pendingRequests,
         data_deletion_completed: deletionRequests,
         privacy_policy_acceptance: Math.round(
-          (privacyAccepted / Math.max(totalPatients, 1)) * 100
+          (privacyAccepted / Math.max(totalPatients, 1)) * 100,
         ),
         breach_incidents: breachIncidents,
         compliance_score: Math.round(complianceScore),
@@ -279,7 +279,8 @@ export class ComplianceMetricsEngine {
       const certifiedEquipment =
         productData?.filter(
           (p) =>
-            p.product_type === 'equipment' && p.registration_status === 'active'
+            p.product_type === 'equipment' &&
+            p.registration_status === 'active',
         ).length || 0;
 
       const passedAudits = auditData?.length || 0;
@@ -330,7 +331,7 @@ export class ComplianceMetricsEngine {
       const { data: retentionData, error: retentionError } = await this.supabase
         .from('data_retention_logs')
         .select(
-          'id, table_name, records_processed, records_deleted, job_status, created_at'
+          'id, table_name, records_processed, records_deleted, job_status, created_at',
         );
 
       if (retentionError) {
@@ -342,7 +343,7 @@ export class ComplianceMetricsEngine {
         .select('id, job_type, status, records_affected, executed_at')
         .gte(
           'executed_at',
-          new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
+          new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
         ); // Last 30 days
 
       if (cleanupError) {
@@ -352,13 +353,13 @@ export class ComplianceMetricsEngine {
       const totalRecords =
         retentionData?.reduce(
           (sum, record) => sum + (record.records_processed || 0),
-          0
+          0,
         ) || 1000; // Default estimate
 
       const recordsScheduledDeletion =
         retentionData?.reduce(
           (sum, record) => sum + (record.records_deleted || 0),
-          0
+          0,
         ) || 0;
 
       const recordsDeletedToday =
@@ -380,7 +381,7 @@ export class ComplianceMetricsEngine {
         100,
         ((totalRecords - recordsScheduledDeletion + recordsDeletedToday) /
           totalRecords) *
-          100
+          100,
       );
 
       return {
@@ -412,7 +413,7 @@ export class ComplianceMetricsEngine {
   private async calculateAuditTrailMetrics(): Promise<AuditTrailMetrics> {
     try {
       const thirtyDaysAgo = new Date(
-        Date.now() - 30 * 24 * 60 * 60 * 1000
+        Date.now() - 30 * 24 * 60 * 60 * 1000,
       ).toISOString();
       const today = new Date().toISOString().split('T')[0];
 
@@ -433,21 +434,21 @@ export class ComplianceMetricsEngine {
 
       const criticalEvents =
         auditData?.filter(
-          (entry) => entry.severity === 'critical' || entry.severity === 'high'
+          (entry) => entry.severity === 'critical' || entry.severity === 'high',
         ).length || 2;
 
       const accessViolations =
         auditData?.filter(
           (entry) =>
             entry.action_type === 'unauthorized_access' ||
-            entry.action_type === 'permission_denied'
+            entry.action_type === 'permission_denied',
         ).length || 0;
 
       const dataModifications =
         auditData?.filter(
           (entry) =>
             entry.action_type === 'data_update' ||
-            entry.action_type === 'data_delete'
+            entry.action_type === 'data_delete',
         ).length || 45;
 
       const complianceEvents =
@@ -455,7 +456,7 @@ export class ComplianceMetricsEngine {
           (entry) =>
             entry.action_type?.includes('compliance') ||
             entry.action_type?.includes('lgpd') ||
-            entry.action_type?.includes('anvisa')
+            entry.action_type?.includes('anvisa'),
         ).length || 8;
 
       // Calculate system integrity score
@@ -464,7 +465,7 @@ export class ComplianceMetricsEngine {
       const violationPenalty = Math.min(accessViolations * 10, 40);
       const integrityScore = Math.max(
         0,
-        baseScore - criticalPenalty - violationPenalty
+        baseScore - criticalPenalty - violationPenalty,
       );
 
       return {
@@ -537,7 +538,7 @@ export class ComplianceMetricsEngine {
             '2 retention policies require review due to new LGPD guidelines',
           severity_score: 65,
           created_at: new Date(
-            Date.now() - 2 * 24 * 60 * 60 * 1000
+            Date.now() - 2 * 24 * 60 * 60 * 1000,
           ).toISOString(),
           action_required: true,
           responsible_team: 'Compliance Team',
@@ -550,7 +551,7 @@ export class ComplianceMetricsEngine {
           description: 'Q4 2025 ANVISA compliance report due in 15 days',
           severity_score: 30,
           created_at: new Date(
-            Date.now() - 5 * 24 * 60 * 60 * 1000
+            Date.now() - 5 * 24 * 60 * 60 * 1000,
           ).toISOString(),
           action_required: true,
           responsible_team: 'Regulatory Affairs',
@@ -627,7 +628,7 @@ export function getComplianceScoreColor(score: number): string {
  */
 export function formatMetricValue(
   value: number,
-  type: 'percentage' | 'count' | 'score'
+  type: 'percentage' | 'count' | 'score',
 ): string {
   switch (type) {
     case 'percentage':

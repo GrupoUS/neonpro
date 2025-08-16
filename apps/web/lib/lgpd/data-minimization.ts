@@ -340,7 +340,7 @@ export class DataMinimizationManager extends EventEmitter {
       monitoringIntervalMinutes: 60,
       maxRequestsPerHour: 1000,
       defaultRetentionDays: 365,
-    }
+    },
   ) {
     super();
     this.setMaxListeners(50);
@@ -373,7 +373,7 @@ export class DataMinimizationManager extends EventEmitter {
       });
     } catch (error) {
       throw new Error(
-        `Failed to initialize data minimization system: ${error}`
+        `Failed to initialize data minimization system: ${error}`,
       );
     }
   }
@@ -382,7 +382,7 @@ export class DataMinimizationManager extends EventEmitter {
    * Create data collection schema
    */
   async createSchema(
-    schemaData: Omit<DataCollectionSchema, 'id' | 'createdAt' | 'updatedAt'>
+    schemaData: Omit<DataCollectionSchema, 'id' | 'createdAt' | 'updatedAt'>,
   ): Promise<DataCollectionSchema> {
     if (!this.isInitialized) {
       await this.initialize();
@@ -418,7 +418,7 @@ export class DataMinimizationManager extends EventEmitter {
    * Process data collection request
    */
   async processCollectionRequest(
-    requestData: Omit<DataCollectionRequest, 'id' | 'processing' | 'createdAt'>
+    requestData: Omit<DataCollectionRequest, 'id' | 'processing' | 'createdAt'>,
   ): Promise<DataCollectionRequest> {
     if (!this.isInitialized) {
       await this.initialize();
@@ -464,7 +464,7 @@ export class DataMinimizationManager extends EventEmitter {
       // Calculate reduction percentage
       const originalFields = Object.keys(request.requestedData).length;
       const minimizedFields = Object.keys(
-        request.processing.minimizedData || {}
+        request.processing.minimizedData || {},
       ).length;
       const reductionPercentage =
         originalFields > 0
@@ -503,7 +503,7 @@ export class DataMinimizationManager extends EventEmitter {
     ruleData: Omit<
       MinimizationRule,
       'id' | 'metrics' | 'createdAt' | 'updatedAt'
-    >
+    >,
   ): Promise<MinimizationRule> {
     if (!this.isInitialized) {
       await this.initialize();
@@ -540,7 +540,7 @@ export class DataMinimizationManager extends EventEmitter {
    */
   private async applyMinimization(
     request: DataCollectionRequest,
-    schema: DataCollectionSchema
+    schema: DataCollectionSchema,
   ): Promise<void> {
     const minimizedData: Record<string, any> = {};
     const requestedFields = Object.keys(request.requestedData);
@@ -601,7 +601,7 @@ export class DataMinimizationManager extends EventEmitter {
         case MinimizationAction.PSEUDONYMIZE:
           minimizedData[fieldName] = this.pseudonymizeValue(
             fieldValue,
-            fieldDef
+            fieldDef,
           );
           request.processing.appliedActions.push({
             field: fieldName,
@@ -637,7 +637,7 @@ export class DataMinimizationManager extends EventEmitter {
    */
   private async determineMinimizationAction(
     fieldDef: DataField,
-    request: DataCollectionRequest
+    request: DataCollectionRequest,
   ): Promise<{ action: MinimizationAction; reason?: string }> {
     // Check field-specific rules first
     for (const rule of fieldDef.minimizationRules) {
@@ -708,7 +708,7 @@ export class DataMinimizationManager extends EventEmitter {
   private evaluateRuleConditions(
     conditions: Record<string, any>,
     request: DataCollectionRequest,
-    fieldDef: DataField
+    fieldDef: DataField,
   ): boolean {
     // Simple condition evaluation - in a real implementation this would be more sophisticated
     if (conditions.purpose && conditions.purpose !== request.purpose) {
@@ -735,7 +735,7 @@ export class DataMinimizationManager extends EventEmitter {
   private evaluateGlobalRuleConditions(
     conditions: MinimizationRule['conditions'],
     request: DataCollectionRequest,
-    fieldDef: DataField
+    fieldDef: DataField,
   ): boolean {
     if (conditions.purpose && conditions.purpose !== request.purpose) {
       return false;
@@ -868,7 +868,7 @@ export class DataMinimizationManager extends EventEmitter {
    */
   private async validateConsent(
     request: DataCollectionRequest,
-    _schema: DataCollectionSchema
+    _schema: DataCollectionSchema,
   ): Promise<void> {
     if (!request.userConsent) {
       throw new Error('Consent required but not provided');
@@ -893,21 +893,21 @@ export class DataMinimizationManager extends EventEmitter {
    */
   async generateReport(
     period: { start: Date; end: Date },
-    generatedBy: string
+    generatedBy: string,
   ): Promise<MinimizationReport> {
     const requests = Array.from(this.requests.values()).filter(
-      (r) => r.createdAt >= period.start && r.createdAt <= period.end
+      (r) => r.createdAt >= period.start && r.createdAt <= period.end,
     );
 
     const totalRequests = requests.length;
     const processedRequests = requests.filter(
-      (r) => r.processing.status === 'processed'
+      (r) => r.processing.status === 'processed',
     ).length;
     const rejectedRequests = requests.filter(
-      (r) => r.processing.status === 'rejected'
+      (r) => r.processing.status === 'rejected',
     ).length;
     const minimizedRequests = requests.filter(
-      (r) => r.processing.appliedActions.length > 0
+      (r) => r.processing.appliedActions.length > 0,
     ).length;
 
     // Calculate reduction metrics
@@ -925,7 +925,7 @@ export class DataMinimizationManager extends EventEmitter {
     for (const request of requests) {
       const requestedCount = Object.keys(request.requestedData).length;
       const collectedCount = Object.keys(
-        request.processing.minimizedData || {}
+        request.processing.minimizedData || {},
       ).length;
 
       totalFieldsRequested += requestedCount;
@@ -1039,20 +1039,20 @@ export class DataMinimizationManager extends EventEmitter {
       }
       if (filters.status) {
         requests = requests.filter(
-          (r) => r.processing.status === filters.status
+          (r) => r.processing.status === filters.status,
         );
       }
       if (filters.dateRange) {
         requests = requests.filter(
           (r) =>
             r.createdAt >= filters.dateRange?.start &&
-            r.createdAt <= filters.dateRange?.end
+            r.createdAt <= filters.dateRange?.end,
         );
       }
     }
 
     return requests.sort(
-      (a, b) => b.createdAt.getTime() - a.createdAt.getTime()
+      (a, b) => b.createdAt.getTime() - a.createdAt.getTime(),
     );
   }
 
@@ -1061,7 +1061,7 @@ export class DataMinimizationManager extends EventEmitter {
    */
   getSchemas(): DataCollectionSchema[] {
     return Array.from(this.schemas.values()).sort(
-      (a, b) => b.updatedAt.getTime() - a.updatedAt.getTime()
+      (a, b) => b.updatedAt.getTime() - a.updatedAt.getTime(),
     );
   }
 
@@ -1070,7 +1070,7 @@ export class DataMinimizationManager extends EventEmitter {
    */
   getRules(): MinimizationRule[] {
     return Array.from(this.rules.values()).sort(
-      (a, b) => b.priority - a.priority
+      (a, b) => b.priority - a.priority,
     );
   }
 
@@ -1078,7 +1078,7 @@ export class DataMinimizationManager extends EventEmitter {
    * Calculate consent compliance
    */
   private calculateConsentCompliance(
-    requests: DataCollectionRequest[]
+    requests: DataCollectionRequest[],
   ): number {
     const consentRequiredRequests = requests.filter((r) => {
       const schema = this.schemas.get(r.schemaId);
@@ -1090,7 +1090,7 @@ export class DataMinimizationManager extends EventEmitter {
     }
 
     const validConsentRequests = consentRequiredRequests.filter(
-      (r) => r.userConsent
+      (r) => r.userConsent,
     );
     return (validConsentRequests.length / consentRequiredRequests.length) * 100;
   }
@@ -1099,7 +1099,7 @@ export class DataMinimizationManager extends EventEmitter {
    * Calculate purpose limitation compliance
    */
   private calculatePurposeLimitation(
-    requests: DataCollectionRequest[]
+    requests: DataCollectionRequest[],
   ): number {
     let compliantRequests = 0;
 
@@ -1121,10 +1121,10 @@ export class DataMinimizationManager extends EventEmitter {
   private calculateDataAccuracy(requests: DataCollectionRequest[]): number {
     // Simplified calculation - in a real implementation this would be more sophisticated
     const _processedRequests = requests.filter(
-      (r) => r.processing.status === 'processed'
+      (r) => r.processing.status === 'processed',
     );
     const errorRequests = requests.filter(
-      (r) => r.processing.status === 'error'
+      (r) => r.processing.status === 'error',
     );
 
     if (requests.length === 0) {
@@ -1137,7 +1137,7 @@ export class DataMinimizationManager extends EventEmitter {
    * Convert stats to reduction format
    */
   private convertToReductionStats(
-    stats: Record<string, { requested: number; collected: number }>
+    stats: Record<string, { requested: number; collected: number }>,
   ): Record<
     string,
     { requested: number; collected: number; reduction: number }
@@ -1246,7 +1246,7 @@ export class DataMinimizationManager extends EventEmitter {
       async () => {
         await this.performMonitoringCheck();
       },
-      this.config.monitoringIntervalMinutes * 60 * 1000
+      this.config.monitoringIntervalMinutes * 60 * 1000,
     );
   }
 
@@ -1258,7 +1258,7 @@ export class DataMinimizationManager extends EventEmitter {
       // Check for high request volume
       const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
       const recentRequests = Array.from(this.requests.values()).filter(
-        (r) => r.createdAt >= oneHourAgo
+        (r) => r.createdAt >= oneHourAgo,
       );
 
       if (recentRequests.length > this.config.maxRequestsPerHour) {
@@ -1272,7 +1272,7 @@ export class DataMinimizationManager extends EventEmitter {
       const violations = recentRequests.filter(
         (r) =>
           r.processing.status === 'error' ||
-          r.processing.rejectedFields.length > 0
+          r.processing.rejectedFields.length > 0,
       );
 
       if (violations.length > recentRequests.length * 0.1) {
@@ -1366,7 +1366,7 @@ export class DataMinimizationManager extends EventEmitter {
   private logActivity(
     _actor: string,
     _action: string,
-    _details: Record<string, any>
+    _details: Record<string, any>,
   ): void {}
 
   /**
@@ -1408,7 +1408,7 @@ export class DataMinimizationManager extends EventEmitter {
     }
 
     const enabledRules = Array.from(this.rules.values()).filter(
-      (r) => r.enabled
+      (r) => r.enabled,
     );
     if (enabledRules.length === 0) {
       issues.push('No enabled minimization rules');

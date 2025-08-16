@@ -25,7 +25,7 @@ export type AuthResult = {
  * JWT secret key for token verification
  */
 const JWT_SECRET = new TextEncoder().encode(
-  process.env.JWT_SECRET || 'fallback-secret-key-change-in-production'
+  process.env.JWT_SECRET || 'fallback-secret-key-change-in-production',
 );
 
 /**
@@ -75,7 +75,7 @@ export async function verifyAuthToken(token: string): Promise<AuthUser | null> {
  * Get user session from Supabase
  */
 export async function getSupabaseUser(
-  _request: NextRequest
+  _request: NextRequest,
 ): Promise<AuthUser | null> {
   try {
     const supabase = createClient();
@@ -110,7 +110,7 @@ export async function getSupabaseUser(
  * Authenticate request using multiple methods
  */
 export async function authenticateRequest(
-  request: NextRequest
+  request: NextRequest,
 ): Promise<AuthResult> {
   // Try JWT token first
   const token = extractToken(request);
@@ -135,7 +135,7 @@ export async function authenticateRequest(
  */
 export function hasRole(
   user: AuthUser,
-  requiredRole: string | string[]
+  requiredRole: string | string[],
 ): boolean {
   if (Array.isArray(requiredRole)) {
     return requiredRole.includes(user.role);
@@ -199,7 +199,7 @@ export function canAccessClinic(user: AuthUser, clinicId: string): boolean {
  */
 export function requireAuth(
   requiredRole?: string | string[],
-  requiredPermission?: string
+  requiredPermission?: string,
 ) {
   return async (request: NextRequest) => {
     const authResult = await authenticateRequest(request);

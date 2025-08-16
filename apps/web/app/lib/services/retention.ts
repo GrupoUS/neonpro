@@ -116,7 +116,7 @@ export class RetentionService {
     analyticsData: Omit<
       PatientRetentionAnalytics,
       'id' | 'created_at' | 'updated_at'
-    >
+    >,
   ) {
     const supabase = RetentionService.getClient();
 
@@ -138,7 +138,7 @@ export class RetentionService {
    */
   static async updatePatientRetentionAnalytics(
     id: string,
-    updates: Partial<PatientRetentionAnalytics>
+    updates: Partial<PatientRetentionAnalytics>,
   ) {
     const supabase = RetentionService.getClient();
 
@@ -248,7 +248,7 @@ export class RetentionService {
     predictionData: Omit<
       PatientChurnPrediction,
       'id' | 'created_at' | 'updated_at'
-    >
+    >,
   ) {
     const supabase = RetentionService.getClient();
 
@@ -278,7 +278,7 @@ export class RetentionService {
     id: string,
     validation_status: 'pending' | 'validated' | 'disputed',
     actual_outcome?: 'retained' | 'churned' | 'unknown',
-    outcome_date?: string
+    outcome_date?: string,
   ) {
     const supabase = RetentionService.getClient();
 
@@ -395,7 +395,7 @@ export class RetentionService {
     interventionData: Omit<
       RetentionIntervention,
       'id' | 'created_at' | 'updated_at'
-    >
+    >,
   ) {
     const supabase = RetentionService.getClient();
 
@@ -420,7 +420,7 @@ export class RetentionService {
     status: InterventionStatus,
     response_data?: Record<string, any>,
     effectiveness_score?: number,
-    roi?: number
+    roi?: number,
   ) {
     const supabase = RetentionService.getClient();
 
@@ -486,9 +486,9 @@ export class RetentionService {
         .eq('churn_risk_level', 'critical');
 
       // Get churn rate and other analytics from aggregated view
-      const { data: churnSummary } = await supabase.from(
-        'patient_retention_analytics'
-      ).select(`
+      const { data: churnSummary } = await supabase
+        .from('patient_retention_analytics')
+        .select(`
           churn_probability,
           lifetime_value,
           predicted_ltv,
@@ -505,28 +505,28 @@ export class RetentionService {
         totalPatients > 0
           ? (churnSummary?.reduce(
               (sum, item) => sum + (item.churn_probability || 0),
-              0
+              0,
             ) || 0) / totalPatients
           : 0;
       const avgLifetimeValue =
         totalPatients > 0
           ? (churnSummary?.reduce(
               (sum, item) => sum + (item.lifetime_value || 0),
-              0
+              0,
             ) || 0) / totalPatients
           : 0;
       const avgPredictedLTV =
         totalPatients > 0
           ? (churnSummary?.reduce(
               (sum, item) => sum + (item.predicted_ltv || 0),
-              0
+              0,
             ) || 0) / totalPatients
           : 0;
       const avgRetentionScore =
         totalPatients > 0
           ? (churnSummary?.reduce(
               (sum, item) => sum + (item.retention_score || 0),
-              0
+              0,
             ) || 0) / totalPatients
           : 0;
 
@@ -558,7 +558,8 @@ export class RetentionService {
   }) {
     const supabase = RetentionService.getClient();
 
-    const { data, error } = await supabase.from('patient_retention_analytics')
+    const { data, error } = await supabase
+      .from('patient_retention_analytics')
       .select(`
         churn_risk_level,
         retention_segment,
@@ -592,7 +593,7 @@ export class RetentionService {
         summary.reduce((sum, p) => sum + (p.lifetime_value || 0), 0) /
           summary.length || 0,
       segments: Array.from(
-        new Set(summary.map((p) => p.retention_segment))
+        new Set(summary.map((p) => p.retention_segment)),
       ).map((segment) => ({
         name: segment,
         count: summary.filter((p) => p.retention_segment === segment).length,

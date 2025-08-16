@@ -14,7 +14,7 @@ import { CardPaymentService } from '@/lib/payments/card/card-payment-service';
 // Initialize Supabase client
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
+  process.env.SUPABASE_SERVICE_ROLE_KEY!,
 );
 
 /**
@@ -23,7 +23,7 @@ const supabase = createClient(
  */
 export async function GET(
   _request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     // Get user session
@@ -31,7 +31,7 @@ export async function GET(
     if (!session?.user?.id) {
       return NextResponse.json(
         { error: 'Unauthorized', message: 'User not authenticated' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -41,7 +41,7 @@ export async function GET(
     if (!paymentIntentId?.startsWith('pi_')) {
       return NextResponse.json(
         { error: 'Invalid Request', message: 'Invalid payment intent ID' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -68,7 +68,7 @@ export async function GET(
             paid_at
           )
         )
-      `
+      `,
       )
       .eq('stripe_payment_intent_id', paymentIntentId)
       .single();
@@ -76,7 +76,7 @@ export async function GET(
     if (paymentError || !cardPayment) {
       return NextResponse.json(
         { error: 'Not Found', message: 'Payment not found' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -95,7 +95,7 @@ export async function GET(
     if (!(isOwner || hasPermission)) {
       return NextResponse.json(
         { error: 'Forbidden', message: 'Insufficient permissions' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -173,7 +173,7 @@ export async function GET(
             due_date,
             status
           )
-        `
+        `,
         )
         .eq('reference_id', paymentIntentId)
         .single();
@@ -241,7 +241,7 @@ export async function GET(
                     due_date: payment.due_date,
                     status: payment.status,
                     paid_at: payment.paid_at,
-                  })
+                  }),
                 ) || [],
             }
           : null,
@@ -286,7 +286,7 @@ export async function GET(
         message:
           error instanceof Error ? error.message : 'Unknown error occurred',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

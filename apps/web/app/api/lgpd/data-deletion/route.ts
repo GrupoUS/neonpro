@@ -39,7 +39,7 @@ const DataDeletionRequestSchema = z.object({
         'communications',
         'preferences',
         'account',
-      ])
+      ]),
     )
     .optional(),
   reason: z.string().min(10).max(500),
@@ -86,7 +86,7 @@ const GRACE_PERIOD = 30 * 24 * 60 * 60 * 1000; // 30 days
 function checkRetentionRequirements(record: any, recordType: string): boolean {
   const now = Date.now();
   const recordDate = new Date(
-    record.created_at || record.date || record.timestamp
+    record.created_at || record.date || record.timestamp,
   ).getTime();
   const retentionPeriod =
     RETENTION_REQUIREMENTS[recordType as keyof typeof RETENTION_REQUIREMENTS];
@@ -125,7 +125,7 @@ function anonymizeRecord(record: any): any {
 async function deleteUserProfile(
   supabase: any,
   userId: string,
-  anonymize = false
+  anonymize = false,
 ) {
   if (anonymize) {
     const { data: profile } = await supabase
@@ -156,7 +156,7 @@ async function deleteUserAppointments(
   supabase: any,
   userId: string,
   retainLegal = true,
-  anonymize = false
+  anonymize = false,
 ) {
   let deleted = 0;
   let retained = 0;
@@ -200,7 +200,7 @@ async function deleteUserTreatments(
   supabase: any,
   userId: string,
   retainLegal = true,
-  anonymize = false
+  anonymize = false,
 ) {
   let deleted = 0;
   let retained = 0;
@@ -249,7 +249,7 @@ async function deleteUserPayments(
   supabase: any,
   userId: string,
   retainLegal = true,
-  anonymize = false
+  anonymize = false,
 ) {
   let deleted = 0;
   let retained = 0;
@@ -295,7 +295,7 @@ async function deleteUserPayments(
 async function deleteUserCommunications(
   supabase: any,
   userId: string,
-  anonymize = false
+  anonymize = false,
 ) {
   const _deleted = 0;
   let anonymized = 0;
@@ -346,7 +346,7 @@ async function deleteUserPreferences(supabase: any, userId: string) {
 // Schedule deletion (for grace period)
 async function scheduleDeletion(
   supabase: any,
-  deletionRequest: any
+  deletionRequest: any,
 ): Promise<string> {
   const deletionId = nanoid();
   const gracePeriodEnd = new Date(Date.now() + GRACE_PERIOD).toISOString();
@@ -393,7 +393,7 @@ async function executeDeletion(supabase: any, userId: string, request: any) {
       supabase,
       userId,
       retainLegalData,
-      anonymize
+      anonymize,
     );
     totalDeleted += result.deleted;
     totalRetained += result.retained;
@@ -408,7 +408,7 @@ async function executeDeletion(supabase: any, userId: string, request: any) {
       supabase,
       userId,
       retainLegalData,
-      anonymize
+      anonymize,
     );
     totalDeleted += result.deleted;
     totalRetained += result.retained;
@@ -423,7 +423,7 @@ async function executeDeletion(supabase: any, userId: string, request: any) {
       supabase,
       userId,
       retainLegalData,
-      anonymize
+      anonymize,
     );
     totalDeleted += result.deleted;
     totalRetained += result.retained;
@@ -472,7 +472,7 @@ async function logDeletionRequest(
   userId: string,
   request: any,
   success: boolean,
-  deletionId?: string
+  deletionId?: string,
 ) {
   try {
     await supabase.from('lgpd_deletion_logs').insert([
@@ -503,7 +503,7 @@ export async function POST(request: NextRequest) {
     if (authError || !user) {
       return NextResponse.json(
         { error: 'Unauthorized. Please log in to delete your data.' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -558,7 +558,7 @@ export async function POST(request: NextRequest) {
         user.id,
         deletionRequest,
         true,
-        deletionId
+        deletionId,
       );
 
       return NextResponse.json({
@@ -595,7 +595,7 @@ export async function POST(request: NextRequest) {
       user.id,
       deletionRequest,
       true,
-      deletionId
+      deletionId,
     );
 
     return NextResponse.json({
@@ -611,13 +611,13 @@ export async function POST(request: NextRequest) {
           error: 'Invalid request parameters',
           details: error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     return NextResponse.json(
       { error: 'Internal server error during data deletion' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -705,7 +705,7 @@ export async function GET(_request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

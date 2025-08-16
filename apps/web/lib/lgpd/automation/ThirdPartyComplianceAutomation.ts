@@ -167,7 +167,7 @@ export class ThirdPartyComplianceAutomation {
   constructor(
     supabase: SupabaseClient,
     complianceManager: LGPDComplianceManager,
-    config: ThirdPartyConfig
+    config: ThirdPartyConfig,
   ) {
     this.supabase = supabase;
     this.complianceManager = complianceManager;
@@ -196,12 +196,12 @@ export class ThirdPartyComplianceAutomation {
               await this.validateActiveTransfers();
             } catch (_error) {}
           },
-          this.config.monitoring_frequency_hours * 60 * 60 * 1000
+          this.config.monitoring_frequency_hours * 60 * 60 * 1000,
         );
       }
     } catch (error) {
       throw new Error(
-        `Failed to start compliance monitoring: ${error.message}`
+        `Failed to start compliance monitoring: ${error.message}`,
       );
     }
   }
@@ -223,7 +223,7 @@ export class ThirdPartyComplianceAutomation {
     providerData: Omit<
       ThirdPartyProvider,
       'id' | 'compliance_score' | 'risk_level' | 'created_at' | 'updated_at'
-    >
+    >,
   ): Promise<{
     success: boolean;
     provider_id: string;
@@ -234,7 +234,7 @@ export class ThirdPartyComplianceAutomation {
       const validation = await this.validateProviderData(providerData);
       if (!validation.valid) {
         throw new Error(
-          `Invalid provider data: ${validation.errors.join(', ')}`
+          `Invalid provider data: ${validation.errors.join(', ')}`,
         );
       }
 
@@ -292,7 +292,7 @@ export class ThirdPartyComplianceAutomation {
       };
     } catch (error) {
       throw new Error(
-        `Failed to register third-party provider: ${error.message}`
+        `Failed to register third-party provider: ${error.message}`,
       );
     }
   }
@@ -304,7 +304,7 @@ export class ThirdPartyComplianceAutomation {
     agreementData: Omit<
       DataSharingAgreement,
       'id' | 'status' | 'created_at' | 'updated_at'
-    >
+    >,
   ): Promise<{
     success: boolean;
     agreement_id: string;
@@ -315,20 +315,20 @@ export class ThirdPartyComplianceAutomation {
       const validation = await this.validateAgreementData(agreementData);
       if (!validation.valid) {
         throw new Error(
-          `Invalid agreement data: ${validation.errors.join(', ')}`
+          `Invalid agreement data: ${validation.errors.join(', ')}`,
         );
       }
 
       // Validate provider compliance
       const providerCompliance = await this.validateProviderCompliance(
-        agreementData.provider_id
+        agreementData.provider_id,
       );
       if (
         !providerCompliance.compliant &&
         this.config.risk_threshold_blocking
       ) {
         throw new Error(
-          `Provider does not meet compliance requirements: ${providerCompliance.issues.join(', ')}`
+          `Provider does not meet compliance requirements: ${providerCompliance.issues.join(', ')}`,
         );
       }
 
@@ -370,7 +370,7 @@ export class ThirdPartyComplianceAutomation {
       };
     } catch (error) {
       throw new Error(
-        `Failed to create data sharing agreement: ${error.message}`
+        `Failed to create data sharing agreement: ${error.message}`,
       );
     }
   }
@@ -382,7 +382,7 @@ export class ThirdPartyComplianceAutomation {
     transferData: Omit<
       DataTransfer,
       'id' | 'status' | 'audit_trail' | 'created_at' | 'updated_at'
-    >
+    >,
   ): Promise<{
     success: boolean;
     transfer_id: string;
@@ -406,11 +406,11 @@ export class ThirdPartyComplianceAutomation {
       // Validate transfer against agreement
       const transferValidation = await this.validateDataTransfer(
         transferData,
-        agreement
+        agreement,
       );
       if (!transferValidation.valid) {
         throw new Error(
-          `Transfer validation failed: ${transferValidation.errors.join(', ')}`
+          `Transfer validation failed: ${transferValidation.errors.join(', ')}`,
         );
       }
 
@@ -419,14 +419,14 @@ export class ThirdPartyComplianceAutomation {
       if (this.config.real_time_validation_enabled) {
         validationResults = await this.performRealTimeValidation(
           transferData,
-          agreement
+          agreement,
         );
         if (
           !validationResults.compliant &&
           this.config.risk_threshold_blocking
         ) {
           throw new Error(
-            `Real-time validation failed: ${validationResults.issues.join(', ')}`
+            `Real-time validation failed: ${validationResults.issues.join(', ')}`,
           );
         }
       }
@@ -459,7 +459,7 @@ export class ThirdPartyComplianceAutomation {
         await this.sendTransferNotifications(
           transfer.id,
           transferData,
-          agreement
+          agreement,
         );
       }
 
@@ -499,7 +499,7 @@ export class ThirdPartyComplianceAutomation {
       records_transferred?: number;
       error_message?: string;
       completion_notes?: string;
-    }
+    },
   ): Promise<{ success: boolean }> {
     try {
       const updateData: any = {
@@ -572,7 +572,7 @@ export class ThirdPartyComplianceAutomation {
     providerId: string,
     assessmentType: 'initial' | 'periodic' | 'incident_based' | 'renewal',
     assessor: string,
-    customScope?: string[]
+    customScope?: string[],
   ): Promise<{
     success: boolean;
     assessment_id: string;
@@ -596,13 +596,13 @@ export class ThirdPartyComplianceAutomation {
       // Perform automated assessment
       const assessmentResults = await this.performAutomatedAssessment(
         provider,
-        customScope
+        customScope,
       );
 
       // Calculate next assessment date
       const nextAssessmentDate = new Date();
       nextAssessmentDate.setDate(
-        nextAssessmentDate.getDate() + this.config.assessment_frequency_days
+        nextAssessmentDate.getDate() + this.config.assessment_frequency_days,
       );
 
       // Create assessment record
@@ -679,7 +679,7 @@ export class ThirdPartyComplianceAutomation {
       };
     } catch (error) {
       throw new Error(
-        `Failed to perform compliance assessment: ${error.message}`
+        `Failed to perform compliance assessment: ${error.message}`,
       );
     }
   }
@@ -701,7 +701,7 @@ export class ThirdPartyComplianceAutomation {
   }> {
     try {
       const { data: dashboard, error } = await this.supabase.rpc(
-        'get_third_party_compliance_dashboard'
+        'get_third_party_compliance_dashboard',
       );
 
       if (error) {
@@ -718,7 +718,7 @@ export class ThirdPartyComplianceAutomation {
    * Register Compliance Callback
    */
   onComplianceAssessmentCompleted(
-    callback: (assessment: ComplianceAssessment) => void
+    callback: (assessment: ComplianceAssessment) => void,
   ): void {
     this.complianceCallbacks.push(callback);
   }
@@ -769,7 +769,7 @@ export class ThirdPartyComplianceAutomation {
       const { data: transfers, error } = await this.supabase
         .from('lgpd_data_transfers')
         .select(
-          '*, lgpd_data_sharing_agreements(*, lgpd_third_party_providers(*))'
+          '*, lgpd_data_sharing_agreements(*, lgpd_third_party_providers(*))',
         )
         .in('status', ['pending', 'in_progress']);
 
@@ -791,7 +791,7 @@ export class ThirdPartyComplianceAutomation {
   }
 
   private async validateProviderData(
-    providerData: any
+    providerData: any,
   ): Promise<{ valid: boolean; errors: string[] }> {
     const errors: string[] = [];
 
@@ -835,7 +835,7 @@ export class ThirdPartyComplianceAutomation {
   }
 
   private async performInitialRiskAssessment(
-    providerData: any
+    providerData: any,
   ): Promise<{ score: number; risk_level: string }> {
     let score = 100; // Start with perfect score
     let riskFactors = 0;
@@ -880,7 +880,7 @@ export class ThirdPartyComplianceAutomation {
   }
 
   private async validateAgreementData(
-    agreementData: any
+    agreementData: any,
   ): Promise<{ valid: boolean; errors: string[] }> {
     const errors: string[] = [];
 
@@ -947,7 +947,7 @@ export class ThirdPartyComplianceAutomation {
   }
 
   private async validateProviderCompliance(
-    providerId: string
+    providerId: string,
   ): Promise<{ compliant: boolean; issues: string[] }> {
     const issues: string[] = [];
 
@@ -994,7 +994,7 @@ export class ThirdPartyComplianceAutomation {
 
   private async validateDataTransfer(
     transferData: any,
-    agreement: any
+    agreement: any,
   ): Promise<{ valid: boolean; errors: string[] }> {
     const errors: string[] = [];
 
@@ -1039,7 +1039,7 @@ export class ThirdPartyComplianceAutomation {
 
   private async performRealTimeValidation(
     transferData: any,
-    agreement: any
+    agreement: any,
   ): Promise<any> {
     const validationResults = {
       compliant: true,
@@ -1056,7 +1056,7 @@ export class ThirdPartyComplianceAutomation {
 
     // Check provider status
     const providerCheck = await this.validateProviderCompliance(
-      agreement.provider_id
+      agreement.provider_id,
     );
     validationResults.checks.provider_status = providerCheck.compliant;
     if (!providerCheck.compliant) {
@@ -1067,7 +1067,7 @@ export class ThirdPartyComplianceAutomation {
     // Check agreement validity
     const agreementCheck = await this.validateDataTransfer(
       transferData,
-      agreement
+      agreement,
     );
     validationResults.checks.agreement_validity = agreementCheck.valid;
     if (!agreementCheck.valid) {
@@ -1082,12 +1082,12 @@ export class ThirdPartyComplianceAutomation {
 
   private async scheduleComplianceAssessment(
     _providerId: string,
-    _assessmentType: string
+    _assessmentType: string,
   ): Promise<void> {}
 
   private async performAutomatedAssessment(
     _provider: any,
-    _scope?: string[]
+    _scope?: string[],
   ): Promise<any> {
     // Implementation would perform automated compliance assessment
     return {
@@ -1102,7 +1102,7 @@ export class ThirdPartyComplianceAutomation {
   private async sendTransferNotifications(
     _transferId: string,
     _transferData: any,
-    _agreement: any
+    _agreement: any,
   ): Promise<void> {}
 
   private async checkExpiredCertifications(): Promise<void> {
@@ -1122,7 +1122,7 @@ export class ThirdPartyComplianceAutomation {
   }
 
   private async assessCountryRisk(
-    _country: string
+    _country: string,
   ): Promise<{ penalty: number; factors: number }> {
     // Implementation would assess country-specific risks
     return { penalty: 0, factors: 0 };

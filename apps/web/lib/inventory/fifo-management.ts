@@ -105,7 +105,7 @@ export class FIFOManager {
           `
           *,
           produto:produtos_estoque(nome, codigo_interno, categoria, preco_custo)
-        `
+        `,
         )
         .eq('status', 'disponivel')
         .gt('quantidade_disponivel', 0);
@@ -133,14 +133,14 @@ export class FIFOManager {
             acc[productId].push(batch);
             return acc;
           },
-          {} as Record<string, any[]>
+          {} as Record<string, any[]>,
         ) || {};
 
       // Generate analysis for each product
       const analyses = Object.entries(batchesByProduct).map(
         ([productId, productBatches]) => {
           return this.analyzeProductFIFO(productId, productBatches);
-        }
+        },
       );
 
       const resolvedAnalyses = await Promise.all(analyses);
@@ -171,7 +171,7 @@ export class FIFOManager {
           `
           *,
           produto:produtos_estoque(nome, codigo_interno, preco_custo)
-        `
+        `,
         )
         .eq('status', 'disponivel')
         .gt('quantidade_disponivel', 0)
@@ -201,11 +201,11 @@ export class FIFOManager {
             centro_custo_principal: batch.localizacao_principal,
             acoes_disponiveis: this.generateExpiryActions(
               batch,
-              estimatedValue
+              estimatedValue,
             ),
             prioridade: this.calculateExpiryPriority(
               daysToExpiry,
-              estimatedValue
+              estimatedValue,
             ),
           } as ExpiryAlert;
         }) || [];
@@ -231,7 +231,7 @@ export class FIFOManager {
       quantidade_necessaria: number;
       centro_custo_id: string;
       urgente?: boolean;
-    }>
+    }>,
   ): Promise<{
     data: FIFOResult[] | null;
     error: string | null;
@@ -378,7 +378,7 @@ export class FIFOManager {
         })
         .in(
           'id',
-          expiringBatches.map((b) => b.id)
+          expiringBatches.map((b) => b.id),
         );
 
       if (blockError) {
@@ -420,7 +420,7 @@ export class FIFOManager {
           `
           *,
           responsavel:auth.users(nome)
-        `
+        `,
         )
         .eq('lote_id', loteId)
         .order('data_movimento', { ascending: false });
@@ -446,7 +446,7 @@ export class FIFOManager {
    */
   private async analyzeProductFIFO(
     productId: string,
-    batches: any[]
+    batches: any[],
   ): Promise<FIFOAnalysis> {
     // Sort batches by FIFO priority
     const sortedBatches = batches.sort((a, b) => {
@@ -515,7 +515,7 @@ export class FIFOManager {
 
       const quantityToTake = Math.min(
         remainingQuantity,
-        batch.quantidade_disponivel
+        batch.quantidade_disponivel,
       );
 
       selectedBatches.push({
@@ -541,7 +541,7 @@ export class FIFOManager {
    */
   private generateExpiryActions(
     batch: any,
-    estimatedValue: number
+    estimatedValue: number,
   ): ExpiryAction[] {
     const actions: ExpiryAction[] = [];
     const daysToExpiry = batch.dias_para_vencer;
@@ -600,7 +600,7 @@ export class FIFOManager {
    */
   private calculateExpiryPriority(
     daysToExpiry: number,
-    estimatedValue: number
+    estimatedValue: number,
   ): 'baixa' | 'media' | 'alta' | 'critica' {
     if (daysToExpiry <= 0) {
       return 'critica';
@@ -692,7 +692,7 @@ export class FIFOManager {
     movement: Omit<
       BatchMovement,
       'id' | 'data_movimento' | 'responsavel' | 'auditoria_completa'
-    >
+    >,
   ): Promise<void> {
     try {
       await this.supabase.from('movimentacoes_lote').insert({

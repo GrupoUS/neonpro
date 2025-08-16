@@ -31,7 +31,7 @@ const AnalyticsQuerySchema = z.object({
         'retention_improvement',
         'patient_engagement',
         'revenue_impact',
-      ])
+      ]),
     )
     .optional(),
   groupBy: z
@@ -77,7 +77,7 @@ export async function GET(request: NextRequest) {
           error: 'Invalid analytics query',
           details: validation.error.issues,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -103,7 +103,7 @@ export async function GET(request: NextRequest) {
         created_at,
         campaign_metrics:retention_campaign_metrics(*),
         executions:retention_campaign_executions(*)
-      `
+      `,
       )
       .eq('clinic_id', clinicId);
 
@@ -130,11 +130,11 @@ export async function GET(request: NextRequest) {
 
       const totalExecutions = executions.length;
       const successfulExecutions = executions.filter(
-        (e) => e.status === 'executed'
+        (e) => e.status === 'executed',
       ).length;
       const totalPatientsTargeted = executions.reduce(
         (sum, e) => sum + (e.patients_targeted || 0),
-        0
+        0,
       );
 
       const performance = {
@@ -179,7 +179,7 @@ export async function GET(request: NextRequest) {
         lastExecuted:
           executions.length > 0
             ? Math.max(
-                ...executions.map((e) => new Date(e.executed_at).getTime())
+                ...executions.map((e) => new Date(e.executed_at).getTime()),
               )
             : null,
       };
@@ -257,7 +257,7 @@ export async function GET(request: NextRequest) {
             group.aggregated.averagePerformance[metric] =
               group.campaigns.reduce(
                 (sum, c) => sum + c.performance[metric],
-                0
+                0,
               ) / campaignCount;
           });
         }
@@ -289,22 +289,22 @@ export async function GET(request: NextRequest) {
         deliveryRate:
           campaignAnalytics.reduce(
             (sum, c) => sum + c.performance.deliveryRate,
-            0
+            0,
           ) / campaignAnalytics.length,
         openRate:
           campaignAnalytics.reduce(
             (sum, c) => sum + c.performance.openRate,
-            0
+            0,
           ) / campaignAnalytics.length,
         clickRate:
           campaignAnalytics.reduce(
             (sum, c) => sum + c.performance.clickRate,
-            0
+            0,
           ) / campaignAnalytics.length,
         conversionRate:
           campaignAnalytics.reduce(
             (sum, c) => sum + c.performance.conversionRate,
-            0
+            0,
           ) / campaignAnalytics.length,
         roi:
           campaignAnalytics.reduce((sum, c) => sum + c.performance.roi, 0) /
@@ -312,7 +312,7 @@ export async function GET(request: NextRequest) {
         engagementScore:
           campaignAnalytics.reduce(
             (sum, c) => sum + c.performance.engagementScore,
-            0
+            0,
           ) / campaignAnalytics.length,
       };
 
@@ -344,32 +344,32 @@ export async function GET(request: NextRequest) {
           totalCampaigns: campaigns.length,
           totalExecutions: campaignAnalytics.reduce(
             (sum, c) => sum + c.totalExecutions,
-            0
+            0,
           ),
           totalPatientsTargeted: campaignAnalytics.reduce(
             (sum, c) => sum + c.totalPatientsTargeted,
-            0
+            0,
           ),
           averagePerformance: {
             deliveryRate:
               campaignAnalytics.reduce(
                 (sum, c) => sum + c.performance.deliveryRate,
-                0
+                0,
               ) / campaignAnalytics.length,
             openRate:
               campaignAnalytics.reduce(
                 (sum, c) => sum + c.performance.openRate,
-                0
+                0,
               ) / campaignAnalytics.length,
             clickRate:
               campaignAnalytics.reduce(
                 (sum, c) => sum + c.performance.clickRate,
-                0
+                0,
               ) / campaignAnalytics.length,
             conversionRate:
               campaignAnalytics.reduce(
                 (sum, c) => sum + c.performance.conversionRate,
-                0
+                0,
               ) / campaignAnalytics.length,
             roi:
               campaignAnalytics.reduce((sum, c) => sum + c.performance.roi, 0) /
@@ -389,7 +389,7 @@ export async function GET(request: NextRequest) {
         error: 'Failed to fetch campaign analytics',
         message: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -409,7 +409,7 @@ export async function POST(request: NextRequest) {
           error: 'Invalid A/B test query',
           details: validation.error.issues,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -424,7 +424,7 @@ export async function POST(request: NextRequest) {
         *,
         campaign_metrics:retention_campaign_metrics(*),
         executions:retention_campaign_executions(*)
-      `
+      `,
       )
       .eq('id', campaignId)
       .single();
@@ -432,14 +432,14 @@ export async function POST(request: NextRequest) {
     if (campaignError || !campaign) {
       return NextResponse.json(
         { error: 'Campaign not found' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
     if (!campaign.measurement_criteria.abtest_enabled) {
       return NextResponse.json(
         { error: 'A/B testing is not enabled for this campaign' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -478,13 +478,13 @@ export async function POST(request: NextRequest) {
     const standardError = Math.sqrt(
       pooledConversionRate *
         (1 - pooledConversionRate) *
-        (1 / groupASize + 1 / groupBSize)
+        (1 / groupASize + 1 / groupBSize),
     );
 
     const zScore = Math.abs(
       (groupAPerformance.conversionRate / 100 -
         groupBPerformance.conversionRate / 100) /
-        standardError
+        standardError,
     );
 
     const criticalValue = confidenceLevel === 0.95 ? 1.96 : 2.58; // 95% or 99%
@@ -495,7 +495,7 @@ export async function POST(request: NextRequest) {
         ? 'A'
         : 'B';
     const improvement = Math.abs(
-      groupAPerformance.conversionRate - groupBPerformance.conversionRate
+      groupAPerformance.conversionRate - groupBPerformance.conversionRate,
     );
 
     return NextResponse.json({
@@ -551,7 +551,7 @@ export async function POST(request: NextRequest) {
         error: 'Failed to generate A/B test results',
         message: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

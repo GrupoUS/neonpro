@@ -106,11 +106,11 @@ export class NeonProConnectionPoolManager {
    * Singleton instance with clinic size optimization
    */
   public static getInstance(
-    clinicSize?: 'small' | 'medium' | 'large'
+    clinicSize?: 'small' | 'medium' | 'large',
   ): NeonProConnectionPoolManager {
     if (!NeonProConnectionPoolManager.instance) {
       NeonProConnectionPoolManager.instance = new NeonProConnectionPoolManager(
-        clinicSize
+        clinicSize,
       );
     }
     return NeonProConnectionPoolManager.instance;
@@ -122,7 +122,7 @@ export class NeonProConnectionPoolManager {
    */
   public getHealthcareClient(
     clinicId: string,
-    operationType: 'critical' | 'standard' = 'standard'
+    operationType: 'critical' | 'standard' = 'standard',
   ): SupabaseClient<Database> {
     const poolKey = `healthcare_${clinicId}_${operationType}`;
 
@@ -141,7 +141,7 @@ export class NeonProConnectionPoolManager {
    * FIXED: Dynamic import for next/headers to avoid client-side import errors
    */
   public async getServerClient(
-    clinicId: string
+    clinicId: string,
   ): Promise<SupabaseClient<Database>> {
     const poolKey = `server_${clinicId}`;
 
@@ -172,7 +172,7 @@ export class NeonProConnectionPoolManager {
                   } catch (_error) {}
                 },
               },
-            }
+            },
           );
 
           this.pools.set(poolKey, client);
@@ -181,7 +181,7 @@ export class NeonProConnectionPoolManager {
           // Fallback para cliente básico sem cookies
           const fallbackClient = createClient<Database>(
             process.env.NEXT_PUBLIC_SUPABASE_URL!,
-            process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+            process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
           );
           this.pools.set(poolKey, fallbackClient);
           this.initializeMetrics(poolKey);
@@ -207,7 +207,7 @@ export class NeonProConnectionPoolManager {
     if (!this.pools.has(poolKey)) {
       const client = createBrowserClient<Database>(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
       );
 
       this.pools.set(poolKey, client);
@@ -223,7 +223,7 @@ export class NeonProConnectionPoolManager {
    */
   private createOptimizedClient(
     operationType: 'critical' | 'standard',
-    clinicId: string
+    clinicId: string,
   ): SupabaseClient<Database> {
     const connectionString = this.buildConnectionString(operationType);
 
@@ -246,7 +246,7 @@ export class NeonProConnectionPoolManager {
             'X-Healthcare-Compliance': 'LGPD-ANVISA-CFM',
           },
         },
-      }
+      },
     );
   }
 
@@ -254,7 +254,7 @@ export class NeonProConnectionPoolManager {
    * Build connection string with healthcare optimizations
    */
   private buildConnectionString(
-    operationType: 'critical' | 'standard'
+    operationType: 'critical' | 'standard',
   ): string {
     const baseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 
@@ -262,7 +262,7 @@ export class NeonProConnectionPoolManager {
     const port = operationType === 'critical' ? '6543' : '5432';
     const poolerUrl = baseUrl.replace(
       'supabase.co',
-      `pooler.supabase.com:${port}`
+      `pooler.supabase.com:${port}`,
     );
 
     return poolerUrl;
@@ -416,7 +416,7 @@ export class NeonProConnectionPoolManager {
    */
   private async handleComplianceViolation(
     poolKey: string,
-    healthCheck: HealthcheckResult
+    healthCheck: HealthcheckResult,
   ): Promise<void> {
     // Immediate isolation for patient safety
     this.isolatePool(poolKey);
@@ -430,7 +430,7 @@ export class NeonProConnectionPoolManager {
    */
   private async handlePerformanceDegradation(
     poolKey: string,
-    _healthCheck: HealthcheckResult
+    _healthCheck: HealthcheckResult,
   ): Promise<void> {
     // Try to recover the pool
     await this.attemptPoolRecovery(poolKey);
@@ -441,7 +441,7 @@ export class NeonProConnectionPoolManager {
    */
   private async handleConnectionFailure(
     poolKey: string,
-    _error: Error
+    _error: Error,
   ): Promise<void> {
     const metrics = this.metrics.get(poolKey);
     if (metrics) {
@@ -458,7 +458,7 @@ export class NeonProConnectionPoolManager {
    */
   private async retryConnection(
     poolKey: string,
-    maxRetries: number
+    maxRetries: number,
   ): Promise<void> {
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
       try {
@@ -473,7 +473,7 @@ export class NeonProConnectionPoolManager {
 
         const newClient = this.createOptimizedClient(
           operationType as 'critical' | 'standard',
-          clinicId
+          clinicId,
         );
         this.pools.set(poolKey, newClient);
         return;
@@ -516,7 +516,7 @@ export class NeonProConnectionPoolManager {
 
       const recoveredClient = this.createOptimizedClient(
         operationType as 'critical' | 'standard',
-        clinicId
+        clinicId,
       );
       this.pools.set(poolKey, recoveredClient);
     } catch (_error) {
@@ -529,7 +529,7 @@ export class NeonProConnectionPoolManager {
    */
   private async sendComplianceAlert(
     _poolKey: string,
-    _healthCheck: HealthcheckResult
+    _healthCheck: HealthcheckResult,
   ): Promise<void> {}
 
   /**
@@ -555,7 +555,7 @@ export class NeonProConnectionPoolManager {
     }));
 
     const healthyPools = pools.filter(
-      (p) => p.health.status === 'healthy'
+      (p) => p.health.status === 'healthy',
     ).length;
     const complianceScore =
       (pools.reduce((acc, p) => {
@@ -626,7 +626,7 @@ export class NeonProConnectionPoolManager {
 
 // Export singleton factory
 export const getConnectionPoolManager = (
-  clinicSize?: 'small' | 'medium' | 'large'
+  clinicSize?: 'small' | 'medium' | 'large',
 ) => NeonProConnectionPoolManager.getInstance(clinicSize);
 
 // Export types for use in other modules

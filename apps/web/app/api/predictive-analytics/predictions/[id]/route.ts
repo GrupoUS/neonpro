@@ -5,7 +5,7 @@ const service = new PredictiveAnalyticsService();
 
 export async function GET(
   _request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const prediction = await service.getPrediction(params.id);
@@ -13,7 +13,7 @@ export async function GET(
     if (!prediction) {
       return NextResponse.json(
         { error: 'Predição não encontrada' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -21,14 +21,14 @@ export async function GET(
   } catch (_error) {
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
 
 export async function DELETE(
   _request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     await service.deletePrediction(params.id);
@@ -37,7 +37,7 @@ export async function DELETE(
   } catch (_error) {
     return NextResponse.json(
       { error: 'Erro ao deletar predição' },
-      { status: 400 }
+      { status: 400 },
     );
   }
 }

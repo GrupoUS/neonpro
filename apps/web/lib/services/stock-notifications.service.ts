@@ -90,7 +90,7 @@ class StockNotificationsService {
   async getNotificationTemplate(
     clinicId: string,
     templateType: string,
-    channel: string
+    channel: string,
   ): Promise<NotificationTemplate | null> {
     try {
       const { data, error } = await this.supabase
@@ -114,7 +114,7 @@ class StockNotificationsService {
 
   private replaceVariables(
     content: string,
-    variables: Record<string, any>
+    variables: Record<string, any>,
   ): string {
     let result = content;
 
@@ -128,7 +128,7 @@ class StockNotificationsService {
       /\{\{#if\s+(\w+)\}\}(.*?)\{\{\/if\}\}/g,
       (_match, condition, content) => {
         return variables[condition] ? content : '';
-      }
+      },
     );
 
     return result;
@@ -139,7 +139,7 @@ class StockNotificationsService {
   // ==========================================
 
   async logNotificationDelivery(
-    delivery: Omit<NotificationDelivery, 'id'>
+    delivery: Omit<NotificationDelivery, 'id'>,
   ): Promise<string | null> {
     try {
       const { data, error } = await this.supabase
@@ -184,7 +184,7 @@ class StockNotificationsService {
         | 'error_message'
         | 'retry_count'
       >
-    >
+    >,
   ): Promise<boolean> {
     try {
       const { error } = await this.supabase
@@ -209,7 +209,7 @@ class StockNotificationsService {
   async getNotificationRecipients(
     clinicId: string,
     alertType: string,
-    severityLevel: string
+    severityLevel: string,
   ): Promise<
     Array<{
       user_id: string;
@@ -235,7 +235,7 @@ class StockNotificationsService {
             phone,
             notification_preferences
           )
-        `
+        `,
         )
         .eq('clinic_id', clinicId)
         .in('role', ['admin', 'manager', 'staff']);
@@ -282,7 +282,7 @@ class StockNotificationsService {
     clinicId: string,
     alertData: StockAlertNotificationData | ResolutionNotificationData,
     recipients: string[],
-    templateType: 'stock_alert' | 'resolution_notification'
+    templateType: 'stock_alert' | 'resolution_notification',
   ): Promise<{
     success: boolean;
     sent: number;
@@ -303,7 +303,7 @@ class StockNotificationsService {
       const template = await this.getNotificationTemplate(
         clinicId,
         templateType,
-        'email'
+        'email',
       );
       if (!template) {
         results.errors.push(`Email template not found for ${templateType}`);
@@ -325,7 +325,7 @@ class StockNotificationsService {
           status: 'pending',
           subject: this.replaceVariables(
             template.subject_template || '',
-            variables
+            variables,
           ),
           content: this.replaceVariables(template.body_template, variables),
           metadata: { variables, template_type: templateType },
@@ -335,7 +335,7 @@ class StockNotificationsService {
         if (!deliveryId) {
           results.failed++;
           results.errors.push(
-            `Failed to log email delivery for ${recipientEmail}`
+            `Failed to log email delivery for ${recipientEmail}`,
           );
           continue;
         }
@@ -349,7 +349,7 @@ class StockNotificationsService {
             to: [recipientEmail],
             subject: this.replaceVariables(
               template.subject_template || '',
-              variables
+              variables,
             ),
             html: this.replaceVariables(template.body_template, variables),
             reply_to: process.env.DEFAULT_REPLY_TO_EMAIL,
@@ -371,7 +371,7 @@ class StockNotificationsService {
             error instanceof Error ? error.message : 'Unknown error';
           results.failed++;
           results.errors.push(
-            `Failed to send email to ${recipientEmail}: ${errorMessage}`
+            `Failed to send email to ${recipientEmail}: ${errorMessage}`,
           );
 
           // Update delivery status
@@ -388,7 +388,7 @@ class StockNotificationsService {
     } catch (error) {
       results.failed = recipients.length;
       results.errors.push(
-        error instanceof Error ? error.message : 'Unknown error'
+        error instanceof Error ? error.message : 'Unknown error',
       );
       return results;
     }
@@ -402,7 +402,7 @@ class StockNotificationsService {
     clinicId: string,
     alertData: StockAlertNotificationData | ResolutionNotificationData,
     userIds: string[],
-    templateType: 'stock_alert' | 'resolution_notification'
+    templateType: 'stock_alert' | 'resolution_notification',
   ): Promise<{
     success: boolean;
     sent: number;
@@ -423,7 +423,7 @@ class StockNotificationsService {
       const template = await this.getNotificationTemplate(
         clinicId,
         templateType,
-        'push'
+        'push',
       );
       if (!template) {
         results.errors.push(`Push template not found for ${templateType}`);
@@ -491,7 +491,7 @@ class StockNotificationsService {
           // Send push notification
           const pushResult = await pushNotificationService.sendToUser(
             userId,
-            pushPayload
+            pushPayload,
           );
 
           if (!pushResult.success) {
@@ -510,7 +510,7 @@ class StockNotificationsService {
             error instanceof Error ? error.message : 'Unknown error';
           results.failed++;
           results.errors.push(
-            `Failed to send push to user ${userId}: ${errorMessage}`
+            `Failed to send push to user ${userId}: ${errorMessage}`,
           );
 
           // Update delivery status
@@ -527,7 +527,7 @@ class StockNotificationsService {
     } catch (error) {
       results.failed = userIds.length;
       results.errors.push(
-        error instanceof Error ? error.message : 'Unknown error'
+        error instanceof Error ? error.message : 'Unknown error',
       );
       return results;
     }
@@ -541,7 +541,7 @@ class StockNotificationsService {
     clinicId: string,
     alertData: StockAlertNotificationData | ResolutionNotificationData,
     webhookUrls: string[],
-    templateType: 'stock_alert' | 'resolution_notification'
+    templateType: 'stock_alert' | 'resolution_notification',
   ): Promise<{
     success: boolean;
     sent: number;
@@ -562,7 +562,7 @@ class StockNotificationsService {
       const template = await this.getNotificationTemplate(
         clinicId,
         templateType,
-        'webhook'
+        'webhook',
       );
 
       // Prepare webhook payload
@@ -571,7 +571,7 @@ class StockNotificationsService {
 
       if (template) {
         webhookPayload = JSON.parse(
-          this.replaceVariables(template.body_template, variables)
+          this.replaceVariables(template.body_template, variables),
         );
       } else {
         // Default webhook payload
@@ -603,7 +603,7 @@ class StockNotificationsService {
         if (!deliveryId) {
           results.failed++;
           results.errors.push(
-            `Failed to log webhook delivery for ${webhookUrl}`
+            `Failed to log webhook delivery for ${webhookUrl}`,
           );
           continue;
         }
@@ -640,7 +640,7 @@ class StockNotificationsService {
             error instanceof Error ? error.message : 'Unknown error';
           results.failed++;
           results.errors.push(
-            `Failed to send webhook to ${webhookUrl}: ${errorMessage}`
+            `Failed to send webhook to ${webhookUrl}: ${errorMessage}`,
           );
 
           // Update delivery status
@@ -657,7 +657,7 @@ class StockNotificationsService {
     } catch (error) {
       results.failed = webhookUrls.length;
       results.errors.push(
-        error instanceof Error ? error.message : 'Unknown error'
+        error instanceof Error ? error.message : 'Unknown error',
       );
       return results;
     }
@@ -668,7 +668,7 @@ class StockNotificationsService {
   // ==========================================
 
   async sendStockAlertNotifications(
-    alertData: StockAlertNotificationData
+    alertData: StockAlertNotificationData,
   ): Promise<{
     success: boolean;
     results: {
@@ -695,7 +695,7 @@ class StockNotificationsService {
       const recipients = await this.getNotificationRecipients(
         alertData.clinicId,
         alertData.alertType,
-        alertData.severityLevel
+        alertData.severityLevel,
       );
 
       if (recipients.length === 0) {
@@ -712,7 +712,7 @@ class StockNotificationsService {
           alertData.clinicId,
           alertData,
           emailRecipients,
-          'stock_alert'
+          'stock_alert',
         );
         overallResults.results.email = {
           sent: emailResult.sent,
@@ -731,7 +731,7 @@ class StockNotificationsService {
           alertData.clinicId,
           alertData,
           pushRecipients,
-          'stock_alert'
+          'stock_alert',
         );
         overallResults.results.push = {
           sent: pushResult.sent,
@@ -743,14 +743,14 @@ class StockNotificationsService {
       // Send webhook notifications (if configured)
       const webhookUrls = await this.getClinicWebhookUrls(
         alertData.clinicId,
-        'stock_alert'
+        'stock_alert',
       );
       if (webhookUrls.length > 0) {
         const webhookResult = await this.sendWebhookNotification(
           alertData.clinicId,
           alertData,
           webhookUrls,
-          'stock_alert'
+          'stock_alert',
         );
         overallResults.results.webhook = {
           sent: webhookResult.sent,
@@ -779,7 +779,7 @@ class StockNotificationsService {
   }
 
   async sendResolutionNotifications(
-    resolutionData: ResolutionNotificationData
+    resolutionData: ResolutionNotificationData,
   ): Promise<{
     success: boolean;
     results: {
@@ -801,7 +801,7 @@ class StockNotificationsService {
 
   private prepareTemplateVariables(
     data: StockAlertNotificationData | ResolutionNotificationData,
-    templateType: 'stock_alert' | 'resolution_notification'
+    templateType: 'stock_alert' | 'resolution_notification',
   ): Record<string, any> {
     const baseVariables = {
       product_name: data.productName,
@@ -837,7 +837,7 @@ class StockNotificationsService {
 
   private async getClinicWebhookUrls(
     clinicId: string,
-    eventType: string
+    eventType: string,
   ): Promise<string[]> {
     try {
       // Get webhook configurations for this clinic and event type
@@ -882,7 +882,7 @@ class StockNotificationsService {
         .lt('retry_count', this.maxRetries)
         .gt(
           'created_at',
-          new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()
+          new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
         ); // Within last 24 hours
 
       if (error) {
@@ -939,7 +939,7 @@ class StockNotificationsService {
                   {
                     timeout: 30_000,
                     headers: { 'Content-Type': 'application/json' },
-                  }
+                  },
                 );
                 success = response.status >= 200 && response.status < 300;
                 if (!success) {
@@ -953,7 +953,7 @@ class StockNotificationsService {
                 const payload = JSON.parse(notification.content);
                 const pushResult = await pushNotificationService.sendToUser(
                   notification.recipient_id,
-                  payload
+                  payload,
                 );
                 success = pushResult.success;
                 if (!success) {

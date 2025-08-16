@@ -25,12 +25,12 @@ type IStorageProvider = {
   upload(
     localPath: string,
     remotePath: string,
-    onProgress?: (progress: UploadProgress) => void
+    onProgress?: (progress: UploadProgress) => void,
   ): Promise<string>;
   download(
     remotePath: string,
     localPath: string,
-    onProgress?: (progress: DownloadProgress) => void
+    onProgress?: (progress: DownloadProgress) => void,
   ): Promise<string>;
   delete(remotePath: string): Promise<void>;
   exists(remotePath: string): Promise<boolean>;
@@ -58,7 +58,7 @@ class LocalStorageProvider implements IStorageProvider {
   async upload(
     localPath: string,
     remotePath: string,
-    onProgress?: (progress: UploadProgress) => void
+    onProgress?: (progress: UploadProgress) => void,
   ): Promise<string> {
     const targetPath = path.join(this.basePath, remotePath);
     const targetDir = path.dirname(targetPath);
@@ -93,7 +93,7 @@ class LocalStorageProvider implements IStorageProvider {
   async download(
     remotePath: string,
     localPath: string,
-    onProgress?: (progress: DownloadProgress) => void
+    onProgress?: (progress: DownloadProgress) => void,
   ): Promise<string> {
     const sourcePath = path.join(this.basePath, remotePath);
 
@@ -206,7 +206,7 @@ class S3StorageProvider implements IStorageProvider {
   async upload(
     _localPath: string,
     _remotePath: string,
-    _onProgress?: (progress: UploadProgress) => void
+    _onProgress?: (progress: UploadProgress) => void,
   ): Promise<string> {
     // Implementar upload para S3
     throw new Error('S3 upload não implementado ainda');
@@ -215,7 +215,7 @@ class S3StorageProvider implements IStorageProvider {
   async download(
     _remotePath: string,
     _localPath: string,
-    _onProgress?: (progress: DownloadProgress) => void
+    _onProgress?: (progress: DownloadProgress) => void,
   ): Promise<string> {
     // Implementar download do S3
     throw new Error('S3 download não implementado ainda');
@@ -272,7 +272,7 @@ class GCSStorageProvider implements IStorageProvider {
   async upload(
     _localPath: string,
     _remotePath: string,
-    _onProgress?: (progress: UploadProgress) => void
+    _onProgress?: (progress: UploadProgress) => void,
   ): Promise<string> {
     // Implementar upload para GCS
     throw new Error('GCS upload não implementado ainda');
@@ -281,7 +281,7 @@ class GCSStorageProvider implements IStorageProvider {
   async download(
     _remotePath: string,
     _localPath: string,
-    _onProgress?: (progress: DownloadProgress) => void
+    _onProgress?: (progress: DownloadProgress) => void,
   ): Promise<string> {
     // Implementar download do GCS
     throw new Error('GCS download não implementado ainda');
@@ -337,7 +337,7 @@ class AzureStorageProvider implements IStorageProvider {
   async upload(
     _localPath: string,
     _remotePath: string,
-    _onProgress?: (progress: UploadProgress) => void
+    _onProgress?: (progress: UploadProgress) => void,
   ): Promise<string> {
     // Implementar upload para Azure
     throw new Error('Azure upload não implementado ainda');
@@ -346,7 +346,7 @@ class AzureStorageProvider implements IStorageProvider {
   async download(
     _remotePath: string,
     _localPath: string,
-    _onProgress?: (progress: DownloadProgress) => void
+    _onProgress?: (progress: DownloadProgress) => void,
   ): Promise<string> {
     // Implementar download do Azure
     throw new Error('Azure download não implementado ainda');
@@ -422,7 +422,7 @@ export class StorageProvider {
   async upload(
     localPath: string,
     config: StorageConfig,
-    remotePath?: string
+    remotePath?: string,
   ): Promise<ApiResponse<string>> {
     try {
       const providerName = `${config.type}-${Date.now()}`;
@@ -487,7 +487,7 @@ export class StorageProvider {
   async download(
     remotePath: string,
     localPath: string,
-    config: StorageConfig
+    config: StorageConfig,
   ): Promise<ApiResponse<string>> {
     try {
       const providerName = `${config.type}-${Date.now()}`;
@@ -546,7 +546,7 @@ export class StorageProvider {
    */
   async exists(
     remotePath: string,
-    config: StorageConfig
+    config: StorageConfig,
   ): Promise<ApiResponse<boolean>> {
     try {
       const providerName = `${config.type}-${Date.now()}`;
@@ -582,7 +582,7 @@ export class StorageProvider {
    */
   async list(
     config: StorageConfig,
-    prefix?: string
+    prefix?: string,
   ): Promise<ApiResponse<string[]>> {
     try {
       const providerName = `${config.type}-${Date.now()}`;
@@ -617,7 +617,7 @@ export class StorageProvider {
    * Obter métricas de storage
    */
   async getMetrics(
-    config: StorageConfig
+    config: StorageConfig,
   ): Promise<ApiResponse<StorageMetrics>> {
     try {
       const providerName = `${config.type}-${Date.now()}`;
@@ -653,7 +653,7 @@ export class StorageProvider {
    */
   async delete(
     remotePath: string,
-    config: StorageConfig
+    config: StorageConfig,
   ): Promise<ApiResponse> {
     try {
       const providerName = `${config.type}-${Date.now()}`;

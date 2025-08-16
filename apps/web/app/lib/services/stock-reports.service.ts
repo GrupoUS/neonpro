@@ -59,7 +59,7 @@ export class StockReportsService {
       type?: ReportType;
       user_id?: string;
       active_only?: boolean;
-    }
+    },
   ) {
     try {
       const supabase = await this.getSupabase();
@@ -169,7 +169,7 @@ export class StockReportsService {
             appointment_date,
             status
           )
-        `
+        `,
         )
         .eq('clinic_id', clinic_id);
 
@@ -400,7 +400,7 @@ export class StockReportsService {
    */
   async calculatePerformanceMetrics(
     clinic_id: string,
-    date: Date = new Date()
+    date: Date = new Date(),
   ) {
     try {
       const supabase = await this.getSupabase();
@@ -527,7 +527,7 @@ export class StockReportsService {
         acc[category].items.push(item);
         return acc;
       },
-      {} as Record<string, any>
+      {} as Record<string, any>,
     );
 
     return grouped;
@@ -550,7 +550,7 @@ export class StockReportsService {
         acc[userId].items.push(item);
         return acc;
       },
-      {} as Record<string, any>
+      {} as Record<string, any>,
     );
 
     return grouped;
@@ -573,7 +573,7 @@ export class StockReportsService {
         acc[date].items.push(item);
         return acc;
       },
-      {} as Record<string, any>
+      {} as Record<string, any>,
     );
 
     return grouped;
@@ -598,7 +598,7 @@ export class StockReportsService {
         acc[key].usage_count += 1;
         return acc;
       },
-      {} as Record<string, any>
+      {} as Record<string, any>,
     );
 
     return Object.values(grouped)
@@ -624,7 +624,7 @@ export class StockReportsService {
 
   private getUniqueProductsCount(usageData: any[]): number {
     const uniqueProducts = new Set(
-      usageData.map((item) => `${item.material_name}_${item.material_type}`)
+      usageData.map((item) => `${item.material_name}_${item.material_type}`),
     );
     return uniqueProducts.size;
   }

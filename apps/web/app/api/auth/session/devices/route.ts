@@ -43,7 +43,7 @@ export async function GET(request: NextRequest) {
     if (!userId) {
       return NextResponse.json(
         { error: 'User ID is required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -54,7 +54,7 @@ export async function GET(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error while fetching devices' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -72,7 +72,7 @@ export async function POST(request: NextRequest) {
     if (!(userId && deviceName && deviceType)) {
       return NextResponse.json(
         { error: 'User ID, device name, and device type are required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -116,7 +116,7 @@ export async function POST(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error during device registration' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -129,7 +129,7 @@ export async function PUT(request: NextRequest) {
     if (!deviceId) {
       return NextResponse.json(
         { error: 'Device ID is required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -173,7 +173,7 @@ export async function PUT(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error during device update' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -187,7 +187,7 @@ export async function DELETE(request: NextRequest) {
     if (!deviceId) {
       return NextResponse.json(
         { error: 'Device ID is required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -207,7 +207,7 @@ export async function DELETE(request: NextRequest) {
     if (!removed) {
       return NextResponse.json(
         { error: 'Device not found or could not be removed' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -233,7 +233,7 @@ export async function DELETE(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error during device removal' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

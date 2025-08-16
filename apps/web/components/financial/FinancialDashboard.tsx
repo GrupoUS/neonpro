@@ -445,7 +445,7 @@ const RevenueChart: React.FC<{ analytics: RevenueAnalytics }> = ({
                       currency: 'BRL',
                     }).format(
                       (forecast.confidence.upper - forecast.confidence.lower) /
-                        2
+                        2,
                     )}
                   </div>
                 </div>
@@ -474,7 +474,7 @@ export const FinancialDashboard: React.FC = () => {
       revenue: data.kpis.filter((kpi) => kpi.category === 'revenue'),
       costs: data.kpis.filter((kpi) => kpi.category === 'costs'),
       profitability: data.kpis.filter(
-        (kpi) => kpi.category === 'profitability'
+        (kpi) => kpi.category === 'profitability',
       ),
       efficiency: data.kpis.filter((kpi) => kpi.category === 'efficiency'),
     };
@@ -572,7 +572,7 @@ export const FinancialDashboard: React.FC = () => {
                 {[...kpisByCategory.costs, ...kpisByCategory.profitability].map(
                   (kpi) => (
                     <KPICard key={kpi.id} kpi={kpi} />
-                  )
+                  ),
                 )}
               </div>
             </div>

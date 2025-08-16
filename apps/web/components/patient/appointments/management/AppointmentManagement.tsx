@@ -49,7 +49,7 @@ type AppointmentManagementProps = {
    */
   onAppointmentAction?: (
     action: 'cancel' | 'reschedule' | 'view',
-    appointmentId: string
+    appointmentId: string,
   ) => void;
 };
 
@@ -83,7 +83,7 @@ export function AppointmentManagement({
   // Handle appointment actions with analytics tracking
   const handleAppointmentAction = (
     action: 'cancel' | 'reschedule' | 'view',
-    appointmentId: string
+    appointmentId: string,
   ) => {
     setSelectedAppointmentId(appointmentId);
 
@@ -105,7 +105,7 @@ export function AppointmentManagement({
   // Handle cancellation completion
   const handleCancellationComplete = async (
     appointmentId: string,
-    reason: string
+    reason: string,
   ) => {
     const success = await cancelAppointment(appointmentId, reason);
     if (success) {
@@ -120,13 +120,13 @@ export function AppointmentManagement({
     appointmentId: string,
     newDate: string,
     newTime: string,
-    reason: string
+    reason: string,
   ) => {
     const success = await requestReschedule(
       appointmentId,
       newDate,
       newTime,
-      reason
+      reason,
     );
     if (success) {
       setShowRescheduleDialog(false);
@@ -367,7 +367,7 @@ export function AppointmentManagement({
       {selectedAppointmentId && showCancellationDialog && (
         <AppointmentCancellation
           appointment={upcomingAppointments.find(
-            (apt) => apt.id === selectedAppointmentId
+            (apt) => apt.id === selectedAppointmentId,
           )}
           appointmentId={selectedAppointmentId}
           cancellationPolicies={cancellationPolicies}
@@ -380,7 +380,7 @@ export function AppointmentManagement({
       {selectedAppointmentId && showRescheduleDialog && (
         <RescheduleRequest
           appointment={upcomingAppointments.find(
-            (apt) => apt.id === selectedAppointmentId
+            (apt) => apt.id === selectedAppointmentId,
           )}
           appointmentId={selectedAppointmentId}
           onConfirm={handleRescheduleComplete}

@@ -158,7 +158,7 @@ class NotificationChannelOrchestrator {
    * Send notification across multiple channels with intelligent routing and fallback
    */
   async sendMultiChannel(
-    params: MultiChannelNotificationParams
+    params: MultiChannelNotificationParams,
   ): Promise<MultiChannelResult> {
     const startTime = Date.now();
     const results: MultiChannelResult['results'] = [];
@@ -173,14 +173,14 @@ class NotificationChannelOrchestrator {
       // Apply user preferences and compliance filters
       const filteredChannels = await this.applyUserPreferences(
         optimalChannels,
-        params
+        params,
       );
 
       // Primary channel attempts
       const primaryResults = await this.attemptChannels(
         filteredChannels,
         params,
-        results
+        results,
       );
 
       // Determine if fallback is needed
@@ -190,7 +190,7 @@ class NotificationChannelOrchestrator {
         fallbackUsed = true;
         const fallbackChannels = await this.determineFallbackChannels(
           params,
-          failedChannels
+          failedChannels,
         );
         await this.attemptChannels(fallbackChannels, params, results);
       }
@@ -250,7 +250,7 @@ class NotificationChannelOrchestrator {
    */
   async sendToChannel(
     channel: NotificationChannel,
-    params: MultiChannelNotificationParams
+    params: MultiChannelNotificationParams,
   ): Promise<NotificationResult> {
     try {
       switch (channel) {
@@ -277,7 +277,7 @@ class NotificationChannelOrchestrator {
             throw new Error('WhatsApp content not provided');
           }
           return await this.whatsappFactory.sendWhatsApp(
-            params.content.whatsapp
+            params.content.whatsapp,
           );
 
         case 'in_app':
@@ -286,7 +286,7 @@ class NotificationChannelOrchestrator {
           }
           return await this.sendInAppNotification(
             params.content.inApp,
-            params.metadata
+            params.metadata,
           );
 
         default:
@@ -409,7 +409,7 @@ class NotificationChannelOrchestrator {
   // Private methods for internal orchestration
 
   private async determineOptimalChannels(
-    params: MultiChannelNotificationParams
+    params: MultiChannelNotificationParams,
   ): Promise<NotificationChannel[]> {
     // Start with requested channels
     let channels = [...params.channels];
@@ -429,15 +429,15 @@ class NotificationChannelOrchestrator {
 
     if (isBusinessHours) {
       channels = channels.filter((ch) =>
-        this.config.routing.timeBasedRouting.businessHours.includes(ch)
+        this.config.routing.timeBasedRouting.businessHours.includes(ch),
       );
     } else if (isWeekend) {
       channels = channels.filter((ch) =>
-        this.config.routing.timeBasedRouting.weekends.includes(ch)
+        this.config.routing.timeBasedRouting.weekends.includes(ch),
       );
     } else {
       channels = channels.filter((ch) =>
-        this.config.routing.timeBasedRouting.afterHours.includes(ch)
+        this.config.routing.timeBasedRouting.afterHours.includes(ch),
       );
     }
 
@@ -453,7 +453,7 @@ class NotificationChannelOrchestrator {
 
   private async applyUserPreferences(
     channels: NotificationChannel[],
-    params: MultiChannelNotificationParams
+    params: MultiChannelNotificationParams,
   ): Promise<NotificationChannel[]> {
     if (!params.metadata.userPreferences) {
       return channels;
@@ -506,7 +506,7 @@ class NotificationChannelOrchestrator {
   private async attemptChannels(
     channels: NotificationChannel[],
     params: MultiChannelNotificationParams,
-    results: MultiChannelResult['results']
+    results: MultiChannelResult['results'],
   ): Promise<void> {
     for (const channel of channels) {
       const attemptNumber =
@@ -532,7 +532,7 @@ class NotificationChannelOrchestrator {
       // If failed and retries are configured, wait and retry
       if (attemptNumber < this.config.fallback.maxRetries) {
         await new Promise((resolve) =>
-          setTimeout(resolve, this.config.fallback.retryDelayMs)
+          setTimeout(resolve, this.config.fallback.retryDelayMs),
         );
       }
     }
@@ -540,7 +540,7 @@ class NotificationChannelOrchestrator {
 
   private shouldUseFallback(
     results: MultiChannelResult['results'],
-    params: MultiChannelNotificationParams
+    params: MultiChannelNotificationParams,
   ): boolean {
     if (!this.config.fallback.enabled) {
       return false;
@@ -565,7 +565,7 @@ class NotificationChannelOrchestrator {
 
   private async determineFallbackChannels(
     params: MultiChannelNotificationParams,
-    failedChannels: NotificationChannel[]
+    failedChannels: NotificationChannel[],
   ): Promise<NotificationChannel[]> {
     const fallbackChannels =
       params.fallbackChannels || this.config.fallback.channelPriority;
@@ -576,7 +576,7 @@ class NotificationChannelOrchestrator {
 
   private async sendInAppNotification(
     _params: InAppNotificationParams,
-    metadata: NotificationMetadata
+    metadata: NotificationMetadata,
   ): Promise<NotificationResult> {
     try {
       // This would typically save to database and push via WebSocket/SSE
@@ -694,7 +694,7 @@ class NotificationChannelOrchestrator {
   private async trackAnalytics(
     _params: MultiChannelNotificationParams,
     _results: MultiChannelResult['results'],
-    _duration: number
+    _duration: number,
   ): Promise<void> {
     // This would typically save analytics to database
     // For now, just log the data

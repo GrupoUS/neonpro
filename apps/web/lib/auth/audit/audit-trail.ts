@@ -472,7 +472,7 @@ export class AuditTrailManager {
    * Create audit event
    */
   private async createAuditEvent(
-    eventData: Partial<AuditEvent>
+    eventData: Partial<AuditEvent>,
   ): Promise<AuditEvent> {
     const timestamp = Date.now();
     const id = this.utils.generateSessionToken();
@@ -514,7 +514,7 @@ export class AuditTrailManager {
    * Build audit context
    */
   private async buildContext(
-    contextData?: Partial<AuditContext>
+    contextData?: Partial<AuditContext>,
   ): Promise<AuditContext> {
     const context: AuditContext = {
       sessionId: contextData?.sessionId,
@@ -697,7 +697,7 @@ export class AuditTrailManager {
       includeInsights?: boolean;
       includeRecommendations?: boolean;
       includeCompliance?: boolean;
-    }
+    },
   ): Promise<AuditReport> {
     const events = await this.queryEvents(query);
 
@@ -787,7 +787,7 @@ export class AuditTrailManager {
    * Verify event integrity
    */
   private async verifyEventIntegrity(
-    events: AuditEvent[]
+    events: AuditEvent[],
   ): Promise<AuditEvent[]> {
     const verifiedEvents: AuditEvent[] = [];
 
@@ -877,7 +877,7 @@ export class AuditTrailManager {
   public async logAuthentication(
     userId: string,
     success: boolean,
-    details?: any
+    details?: any,
   ): Promise<string> {
     return this.logEvent({
       type: 'authentication',
@@ -896,7 +896,7 @@ export class AuditTrailManager {
     sessionId: string,
     action: string,
     userId?: string,
-    details?: any
+    details?: any,
   ): Promise<string> {
     return this.logEvent({
       type: 'session_management',
@@ -916,7 +916,7 @@ export class AuditTrailManager {
     type: string,
     description: string,
     severity: AuditSeverity,
-    details?: any
+    details?: any,
   ): Promise<string> {
     return this.logEvent({
       type: 'security_incident',
@@ -941,7 +941,7 @@ export class AuditTrailManager {
     resource: string,
     action: string,
     success: boolean,
-    details?: any
+    details?: any,
   ): Promise<string> {
     return this.logEvent({
       type: 'data_access',
@@ -961,7 +961,7 @@ export class AuditTrailManager {
     setting: string,
     oldValue: any,
     newValue: any,
-    details?: any
+    details?: any,
   ): Promise<string> {
     return this.logEvent({
       type: 'configuration_change',
@@ -1057,7 +1057,7 @@ export class AuditTrailManager {
       };
 
       const allHealthy = Object.values(checks).every((check) =>
-        typeof check === 'boolean' ? check : check.status === 'healthy'
+        typeof check === 'boolean' ? check : check.status === 'healthy',
       );
 
       return {
@@ -1215,7 +1215,7 @@ class AnalyticsEngine {
   }
 
   async generateRecommendations(
-    _events: AuditEvent[]
+    _events: AuditEvent[],
   ): Promise<AuditRecommendation[]> {
     // Generate recommendations
     return [];

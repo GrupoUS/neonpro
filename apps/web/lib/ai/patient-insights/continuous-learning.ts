@@ -25,7 +25,7 @@ export class ContinuousLearningSystem {
   async processNewOutcome(
     patientId: string,
     treatmentId: string,
-    outcome: PatientOutcome
+    outcome: PatientOutcome,
   ): Promise<LearningInsight[]> {
     try {
       // 1. Store outcome data
@@ -35,20 +35,20 @@ export class ContinuousLearningSystem {
       const predictionAccuracy = await this.evaluatePredictionAccuracy(
         patientId,
         treatmentId,
-        outcome
+        outcome,
       );
 
       // 3. Identify learning opportunities
       const learningOpportunities = this.identifyLearningOpportunities(
         predictionAccuracy,
-        outcome
+        outcome,
       );
 
       // 4. Generate learning insights
       const insights = this.generateLearningInsights(
         predictionAccuracy,
         learningOpportunities,
-        outcome
+        outcome,
       );
 
       // 5. Queue model updates if needed
@@ -60,13 +60,13 @@ export class ContinuousLearningSystem {
       await this.updateFeatureImportance(
         treatmentId,
         outcome,
-        predictionAccuracy
+        predictionAccuracy,
       );
 
       return insights;
     } catch (error) {
       throw new Error(
-        `Failed to process outcome: ${error instanceof Error ? error.message : 'Unknown error'}`
+        `Failed to process outcome: ${error instanceof Error ? error.message : 'Unknown error'}`,
       );
     }
   }
@@ -79,7 +79,7 @@ export class ContinuousLearningSystem {
       // 2. Evaluate current model performance
       const currentPerformance = await this.evaluateCurrentModel(
         modelId,
-        trainingData
+        trainingData,
       );
 
       // 3. Retrain model with new data
@@ -88,13 +88,13 @@ export class ContinuousLearningSystem {
       // 4. Evaluate retrained model performance
       const newPerformance = await this.evaluateRetrainedModel(
         updatedModel,
-        trainingData
+        trainingData,
       );
 
       // 5. Compare performance and decide whether to deploy
       const performanceImprovement = this.calculatePerformanceImprovement(
         currentPerformance,
-        newPerformance
+        newPerformance,
       );
 
       // 6. Deploy model if improvement is significant
@@ -107,7 +107,7 @@ export class ContinuousLearningSystem {
       await this.updateModelHistory(
         modelId,
         newPerformance,
-        performanceImprovement
+        performanceImprovement,
       );
 
       return {
@@ -120,18 +120,18 @@ export class ContinuousLearningSystem {
         trainingDataSize: trainingData.length,
         improvements: this.identifySpecificImprovements(
           currentPerformance,
-          newPerformance
+          newPerformance,
         ),
       };
     } catch (error) {
       throw new Error(
-        `Failed to retrain model: ${error instanceof Error ? error.message : 'Unknown error'}`
+        `Failed to retrain model: ${error instanceof Error ? error.message : 'Unknown error'}`,
       );
     }
   }
 
   async generateLearningReport(
-    timeframe: 'week' | 'month' | 'quarter'
+    timeframe: 'week' | 'month' | 'quarter',
   ): Promise<LearningReport> {
     try {
       const reportPeriod = this.calculateReportPeriod(timeframe);
@@ -150,13 +150,13 @@ export class ContinuousLearningSystem {
       const improvementAreas = this.identifyImprovementAreas(
         performanceTrends,
         learnedPatterns,
-        learningMetrics
+        learningMetrics,
       );
 
       // 5. Generate recommendations
       const recommendations = this.generateLearningRecommendations(
         performanceTrends,
-        improvementAreas
+        improvementAreas,
       );
 
       return {
@@ -173,13 +173,13 @@ export class ContinuousLearningSystem {
       };
     } catch (error) {
       throw new Error(
-        `Failed to generate learning report: ${error instanceof Error ? error.message : 'Unknown error'}`
+        `Failed to generate learning report: ${error instanceof Error ? error.message : 'Unknown error'}`,
       );
     }
   }
 
   async optimizeModelParameters(
-    modelId: string
+    modelId: string,
   ): Promise<ParameterOptimization> {
     try {
       // 1. Get current model parameters
@@ -191,7 +191,7 @@ export class ContinuousLearningSystem {
       // 3. Generate parameter combinations to test
       const parameterCombinations = this.generateParameterCombinations(
         searchSpace,
-        50
+        50,
       );
 
       // 4. Test each combination
@@ -208,7 +208,7 @@ export class ContinuousLearningSystem {
       // 6. Validate best parameters with cross-validation
       const validationResult = await this.validateParameters(
         modelId,
-        bestParameters
+        bestParameters,
       );
 
       // 7. Update model if improvement is significant
@@ -217,7 +217,7 @@ export class ContinuousLearningSystem {
         // 5% improvement threshold
         updateStatus = await this.updateModelParameters(
           modelId,
-          bestParameters
+          bestParameters,
         );
       }
 
@@ -233,14 +233,14 @@ export class ContinuousLearningSystem {
       };
     } catch (error) {
       throw new Error(
-        `Failed to optimize parameters: ${error instanceof Error ? error.message : 'Unknown error'}`
+        `Failed to optimize parameters: ${error instanceof Error ? error.message : 'Unknown error'}`,
       );
     }
   }
 
   async identifyFeatureImportance(
     modelId: string,
-    treatmentType?: string
+    treatmentType?: string,
   ): Promise<FeatureImportanceAnalysis> {
     try {
       // 1. Get model and recent data
@@ -251,7 +251,7 @@ export class ContinuousLearningSystem {
 
       const analysisData = await this.getFeatureAnalysisData(
         modelId,
-        treatmentType
+        treatmentType,
       );
 
       // 2. Calculate feature importance using multiple methods
@@ -272,7 +272,7 @@ export class ContinuousLearningSystem {
         permutationImportance,
         shapValues,
         correlationAnalysis,
-        gainImportance
+        gainImportance,
       );
 
       // 4. Identify top features
@@ -281,14 +281,14 @@ export class ContinuousLearningSystem {
       // 5. Analyze feature interactions
       const featureInteractions = await this.analyzeFeatureInteractions(
         topFeatures,
-        analysisData
+        analysisData,
       );
 
       // 6. Generate feature recommendations
       const recommendations = this.generateFeatureRecommendations(
         topFeatures,
         featureInteractions,
-        correlationAnalysis
+        correlationAnalysis,
       );
 
       return {
@@ -303,7 +303,7 @@ export class ContinuousLearningSystem {
       };
     } catch (error) {
       throw new Error(
-        `Failed to analyze feature importance: ${error instanceof Error ? error.message : 'Unknown error'}`
+        `Failed to analyze feature importance: ${error instanceof Error ? error.message : 'Unknown error'}`,
       );
     }
   }
@@ -319,19 +319,19 @@ export class ContinuousLearningSystem {
       // 3. Analyze feature distributions
       const featureDrift = await this.analyzeFeatureDrift(
         baselineData,
-        recentData
+        recentData,
       );
 
       // 4. Analyze target variable drift
       const targetDrift = await this.analyzeTargetDrift(
         baselineData,
-        recentData
+        recentData,
       );
 
       // 5. Calculate overall drift score
       const overallDriftScore = this.calculateOverallDriftScore(
         featureDrift,
-        targetDrift
+        targetDrift,
       );
 
       // 6. Identify drifted features
@@ -340,14 +340,14 @@ export class ContinuousLearningSystem {
       // 7. Generate drift alerts if necessary
       const alerts = this.generateDriftAlerts(
         overallDriftScore,
-        driftedFeatures
+        driftedFeatures,
       );
 
       // 8. Recommend actions
       const recommendations = this.generateDriftRecommendations(
         overallDriftScore,
         driftedFeatures,
-        targetDrift
+        targetDrift,
       );
 
       return {
@@ -364,7 +364,7 @@ export class ContinuousLearningSystem {
       };
     } catch (error) {
       throw new Error(
-        `Failed to detect data drift: ${error instanceof Error ? error.message : 'Unknown error'}`
+        `Failed to detect data drift: ${error instanceof Error ? error.message : 'Unknown error'}`,
       );
     }
   }
@@ -373,7 +373,7 @@ export class ContinuousLearningSystem {
   private async storeOutcomeData(
     patientId: string,
     treatmentId: string,
-    outcome: PatientOutcome
+    outcome: PatientOutcome,
   ): Promise<void> {
     await this.supabase.from('treatment_outcomes').insert({
       patient_id: patientId,
@@ -385,7 +385,7 @@ export class ContinuousLearningSystem {
 
   private async getTrainingData(
     _modelId: string,
-    limit: number
+    limit: number,
   ): Promise<TrainingDataPoint[]> {
     const { data } = await this.supabase
       .from('treatment_outcomes')
@@ -394,7 +394,7 @@ export class ContinuousLearningSystem {
         *,
         patients (*),
         treatments (*)
-      `
+      `,
       )
       .order('created_at', { ascending: false })
       .limit(limit);
@@ -404,7 +404,7 @@ export class ContinuousLearningSystem {
 
   private async getFeatureAnalysisData(
     _modelId: string,
-    treatmentType?: string
+    treatmentType?: string,
   ): Promise<FeatureDataPoint[]> {
     let query = this.supabase.from('treatment_outcomes').select(`
         *,
@@ -425,7 +425,7 @@ export class ContinuousLearningSystem {
   private async evaluatePredictionAccuracy(
     patientId: string,
     treatmentId: string,
-    actualOutcome: PatientOutcome
+    actualOutcome: PatientOutcome,
   ): Promise<PredictionAccuracy> {
     // Get stored predictions for this treatment
     const { data: predictions } = await this.supabase
@@ -448,15 +448,15 @@ export class ContinuousLearningSystem {
     const prediction = predictions[0];
     const accuracyScore = this.calculateAccuracyScore(
       prediction.predicted_outcome,
-      actualOutcome
+      actualOutcome,
     );
     const predictionError = this.calculatePredictionError(
       prediction.predicted_outcome,
-      actualOutcome
+      actualOutcome,
     );
     const predictionBias = this.calculatePredictionBias(
       prediction.predicted_outcome,
-      actualOutcome
+      actualOutcome,
     );
 
     return {
@@ -471,7 +471,7 @@ export class ContinuousLearningSystem {
 
   private async retrainModel(
     modelId: string,
-    trainingData: TrainingDataPoint[]
+    trainingData: TrainingDataPoint[],
   ): Promise<LearningModel> {
     // In a real implementation, this would call ML training service
     // For now, we'll simulate model training
@@ -500,7 +500,7 @@ export class ContinuousLearningSystem {
 
   private async evaluateCurrentModel(
     modelId: string,
-    testData: TrainingDataPoint[]
+    testData: TrainingDataPoint[],
   ): Promise<ModelPerformance> {
     const model = this.models.get(modelId);
     if (!model) {
@@ -521,7 +521,7 @@ export class ContinuousLearningSystem {
 
   private async evaluateRetrainedModel(
     model: LearningModel,
-    testData: TrainingDataPoint[]
+    testData: TrainingDataPoint[],
   ): Promise<ModelPerformance> {
     // Simulate evaluation of retrained model
     return {
@@ -538,7 +538,7 @@ export class ContinuousLearningSystem {
   // Learning analysis methods
   private identifyLearningOpportunities(
     accuracy: PredictionAccuracy,
-    _outcome: PatientOutcome
+    _outcome: PatientOutcome,
   ): LearningOpportunity[] {
     const opportunities: LearningOpportunity[] = [];
 
@@ -566,7 +566,7 @@ export class ContinuousLearningSystem {
   private generateLearningInsights(
     accuracy: PredictionAccuracy,
     opportunities: LearningOpportunity[],
-    _outcome: PatientOutcome
+    _outcome: PatientOutcome,
   ): LearningInsight[] {
     const insights: LearningInsight[] = [];
 
@@ -604,7 +604,7 @@ export class ContinuousLearningSystem {
   private async queueModelUpdate(
     treatmentId: string,
     outcome: PatientOutcome,
-    accuracy: PredictionAccuracy
+    accuracy: PredictionAccuracy,
   ): Promise<void> {
     const task: LearningTask = {
       id: `task_${Date.now()}`,
@@ -622,7 +622,7 @@ export class ContinuousLearningSystem {
   private async updateFeatureImportance(
     treatmentId: string,
     _outcome: PatientOutcome,
-    accuracy: PredictionAccuracy
+    accuracy: PredictionAccuracy,
   ): Promise<void> {
     // Update feature importance scores based on prediction accuracy
     const modelId = `model_${treatmentId}`;
@@ -639,7 +639,7 @@ export class ContinuousLearningSystem {
 
   private calculatePerformanceImprovement(
     current: ModelPerformance,
-    new_: ModelPerformance
+    new_: ModelPerformance,
   ): PerformanceImprovement {
     const accuracyImprovement = new_.accuracy - current.accuracy;
     const precisionImprovement = new_.precision - current.precision;
@@ -677,7 +677,7 @@ export class ContinuousLearningSystem {
   private async updateModelHistory(
     modelId: string,
     performance: ModelPerformance,
-    _improvement: PerformanceImprovement
+    _improvement: PerformanceImprovement,
   ): Promise<void> {
     const history = this.performanceHistory.get(modelId) || [];
     history.push(performance);
@@ -691,25 +691,25 @@ export class ContinuousLearningSystem {
 
   private identifySpecificImprovements(
     previous: ModelPerformance,
-    current: ModelPerformance
+    current: ModelPerformance,
   ): string[] {
     const improvements: string[] = [];
 
     if (current.accuracy > previous.accuracy + 0.01) {
       improvements.push(
-        `Accuracy improved by ${((current.accuracy - previous.accuracy) * 100).toFixed(1)}%`
+        `Accuracy improved by ${((current.accuracy - previous.accuracy) * 100).toFixed(1)}%`,
       );
     }
 
     if (current.precision > previous.precision + 0.01) {
       improvements.push(
-        `Precision improved by ${((current.precision - previous.precision) * 100).toFixed(1)}%`
+        `Precision improved by ${((current.precision - previous.precision) * 100).toFixed(1)}%`,
       );
     }
 
     if (current.recall > previous.recall + 0.01) {
       improvements.push(
-        `Recall improved by ${((current.recall - previous.recall) * 100).toFixed(1)}%`
+        `Recall improved by ${((current.recall - previous.recall) * 100).toFixed(1)}%`,
       );
     }
 
@@ -719,7 +719,7 @@ export class ContinuousLearningSystem {
   // Additional utility methods (simplified implementations)
   private calculateAccuracyScore(
     _predicted: any,
-    _actual: PatientOutcome
+    _actual: PatientOutcome,
   ): number {
     // Simplified accuracy calculation
     return 0.85 + Math.random() * 0.1;
@@ -727,7 +727,7 @@ export class ContinuousLearningSystem {
 
   private calculatePredictionError(
     _predicted: any,
-    _actual: PatientOutcome
+    _actual: PatientOutcome,
   ): number {
     // Simplified error calculation
     return Math.random() * 0.2;
@@ -735,7 +735,7 @@ export class ContinuousLearningSystem {
 
   private calculatePredictionBias(
     _predicted: any,
-    _actual: PatientOutcome
+    _actual: PatientOutcome,
   ): number {
     // Simplified bias calculation
     return (Math.random() - 0.5) * 0.2;
@@ -859,14 +859,14 @@ export class ContinuousLearningSystem {
   private identifyImprovementAreas(
     _trends: PerformanceTrend[],
     _patterns: LearnedPattern[],
-    _metrics: LearningMetrics
+    _metrics: LearningMetrics,
   ): ImprovementArea[] {
     return []; // Simplified implementation
   }
 
   private generateLearningRecommendations(
     _trends: PerformanceTrend[],
-    _areas: ImprovementArea[]
+    _areas: ImprovementArea[],
   ): string[] {
     return ['Continue current learning approach']; // Simplified implementation
   }
@@ -887,7 +887,7 @@ export class ContinuousLearningSystem {
 
   // Parameter optimization methods (simplified)
   private async getCurrentModelParameters(
-    _modelId: string
+    _modelId: string,
   ): Promise<ModelParameters> {
     return {}; // Simplified implementation
   }
@@ -898,14 +898,14 @@ export class ContinuousLearningSystem {
 
   private generateParameterCombinations(
     _space: ParameterSearchSpace,
-    _count: number
+    _count: number,
   ): ModelParameters[] {
     return []; // Simplified implementation
   }
 
   private async testParameterCombination(
     _modelId: string,
-    params: ModelParameters
+    params: ModelParameters,
   ): Promise<ParameterTestResult> {
     return {
       parameters: params,
@@ -920,7 +920,7 @@ export class ContinuousLearningSystem {
 
   private async validateParameters(
     _modelId: string,
-    _params: ModelParameters
+    _params: ModelParameters,
   ): Promise<ParameterValidationResult> {
     return {
       crossValidationScore: 0.84,
@@ -930,7 +930,7 @@ export class ContinuousLearningSystem {
 
   private async updateModelParameters(
     _modelId: string,
-    _params: ModelParameters
+    _params: ModelParameters,
   ): Promise<string> {
     return 'updated'; // Simplified implementation
   }
@@ -938,27 +938,27 @@ export class ContinuousLearningSystem {
   // Feature importance methods (simplified)
   private async calculatePermutationImportance(
     _model: LearningModel,
-    _data: FeatureDataPoint[]
+    _data: FeatureDataPoint[],
   ): Promise<FeatureImportance> {
     return {}; // Simplified implementation
   }
 
   private async calculateShapValues(
     _model: LearningModel,
-    _data: FeatureDataPoint[]
+    _data: FeatureDataPoint[],
   ): Promise<FeatureImportance> {
     return {}; // Simplified implementation
   }
 
   private async analyzeFeatureCorrelations(
-    _data: FeatureDataPoint[]
+    _data: FeatureDataPoint[],
   ): Promise<FeatureCorrelation> {
     return {}; // Simplified implementation
   }
 
   private async calculateGainImportance(
     _model: LearningModel,
-    _data: FeatureDataPoint[]
+    _data: FeatureDataPoint[],
   ): Promise<FeatureImportance> {
     return {}; // Simplified implementation
   }
@@ -967,21 +967,21 @@ export class ContinuousLearningSystem {
     _permutation: FeatureImportance,
     _shap: FeatureImportance,
     _correlation: FeatureCorrelation,
-    _gain: FeatureImportance
+    _gain: FeatureImportance,
   ): FeatureImportance {
     return {}; // Simplified implementation
   }
 
   private identifyTopFeatures(
     _importance: FeatureImportance,
-    _count: number
+    _count: number,
   ): TopFeature[] {
     return []; // Simplified implementation
   }
 
   private async analyzeFeatureInteractions(
     _features: TopFeature[],
-    _data: FeatureDataPoint[]
+    _data: FeatureDataPoint[],
   ): Promise<FeatureInteraction[]> {
     return []; // Simplified implementation
   }
@@ -989,7 +989,7 @@ export class ContinuousLearningSystem {
   private generateFeatureRecommendations(
     _features: TopFeature[],
     _interactions: FeatureInteraction[],
-    _correlations: FeatureCorrelation
+    _correlations: FeatureCorrelation,
   ): string[] {
     return []; // Simplified implementation
   }
@@ -1001,21 +1001,21 @@ export class ContinuousLearningSystem {
 
   private async getRecentProductionData(
     _modelId: string,
-    _days: number
+    _days: number,
   ): Promise<DriftDataPoint[]> {
     return []; // Simplified implementation
   }
 
   private async analyzeFeatureDrift(
     _baseline: DriftDataPoint[],
-    _recent: DriftDataPoint[]
+    _recent: DriftDataPoint[],
   ): Promise<FeatureDriftScore[]> {
     return []; // Simplified implementation
   }
 
   private async analyzeTargetDrift(
     _baseline: DriftDataPoint[],
-    _recent: DriftDataPoint[]
+    _recent: DriftDataPoint[],
   ): Promise<TargetDriftScore> {
     return {
       score: 0.05,
@@ -1026,21 +1026,21 @@ export class ContinuousLearningSystem {
 
   private calculateOverallDriftScore(
     _featureDrift: FeatureDriftScore[],
-    _targetDrift: TargetDriftScore
+    _targetDrift: TargetDriftScore,
   ): number {
     return 0.05; // Simplified implementation
   }
 
   private identifyDriftedFeatures(
     _drift: FeatureDriftScore[],
-    _threshold: number
+    _threshold: number,
   ): DriftedFeature[] {
     return []; // Simplified implementation
   }
 
   private generateDriftAlerts(
     _overallScore: number,
-    _driftedFeatures: DriftedFeature[]
+    _driftedFeatures: DriftedFeature[],
   ): DriftAlert[] {
     return []; // Simplified implementation
   }
@@ -1048,7 +1048,7 @@ export class ContinuousLearningSystem {
   private generateDriftRecommendations(
     _overallScore: number,
     _driftedFeatures: DriftedFeature[],
-    _targetDrift: TargetDriftScore
+    _targetDrift: TargetDriftScore,
   ): string[] {
     return []; // Simplified implementation
   }

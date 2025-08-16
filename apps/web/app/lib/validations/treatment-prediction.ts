@@ -386,7 +386,7 @@ export const PredictionFiltersSchema = z
     },
     {
       message: 'Minimum prediction score must be less than or equal to maximum',
-    }
+    },
   );
 
 export const ModelFiltersSchema = z.object({

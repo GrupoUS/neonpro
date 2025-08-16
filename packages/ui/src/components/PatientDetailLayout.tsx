@@ -19,7 +19,7 @@ export type PatientTab = {
   };
 };
 
-export type PatientDetailLayoutProps = {
+type PatientDetailLayoutProps = {
   patient: PatientData;
   tabs: PatientTab[];
   activeTab?: string;

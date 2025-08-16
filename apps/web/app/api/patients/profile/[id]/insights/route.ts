@@ -12,7 +12,7 @@ const patientInsights = new PatientInsights();
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const supabase = createClient();
@@ -34,7 +34,7 @@ export async function GET(
     if (!profile) {
       return NextResponse.json(
         { error: 'Patient profile not found' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -75,7 +75,7 @@ export async function GET(
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -85,7 +85,7 @@ export async function GET(
  */
 export async function POST(
   _request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const supabase = createClient();
@@ -107,7 +107,7 @@ export async function POST(
     if (!profile) {
       return NextResponse.json(
         { error: 'Patient profile not found' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -127,7 +127,7 @@ export async function POST(
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

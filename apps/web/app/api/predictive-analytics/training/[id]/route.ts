@@ -5,7 +5,7 @@ const service = new PredictiveAnalyticsService();
 
 export async function GET(
   _request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const trainingData = await service.getTrainingData(params.id);
@@ -14,14 +14,14 @@ export async function GET(
   } catch (_error) {
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const body = await request.json();
@@ -30,7 +30,7 @@ export async function POST(
     if (!Array.isArray(data)) {
       return NextResponse.json(
         { error: 'Dados devem ser um array' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -40,7 +40,7 @@ export async function POST(
   } catch (_error) {
     return NextResponse.json(
       { error: 'Erro ao fazer upload dos dados' },
-      { status: 400 }
+      { status: 400 },
     );
   }
 }

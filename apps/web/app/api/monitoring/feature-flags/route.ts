@@ -50,7 +50,7 @@ export async function GET(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to fetch feature flags' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -80,7 +80,7 @@ export async function POST(request: NextRequest) {
     if (!(name && description)) {
       return NextResponse.json(
         { error: 'Missing required fields: name, description' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -98,7 +98,7 @@ export async function POST(request: NextRequest) {
           error:
             'Feature flag with this name already exists in this environment',
         },
-        { status: 409 }
+        { status: 409 },
       );
     }
 
@@ -129,7 +129,7 @@ export async function POST(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to create feature flag' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

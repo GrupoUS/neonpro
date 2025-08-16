@@ -9,7 +9,7 @@ type RouteParams = {
 
 export async function GET(
   _request: NextRequest,
-  { params }: { params: RouteParams }
+  { params }: { params: RouteParams },
 ) {
   try {
     const supabase = await createClient();
@@ -33,14 +33,14 @@ export async function GET(
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to fetch segment analytics' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: RouteParams }
+  { params }: { params: RouteParams },
 ) {
   try {
     const supabase = await createClient();
@@ -60,7 +60,7 @@ export async function PUT(
     if (!validationResult.success) {
       return NextResponse.json(
         { error: 'Invalid input', details: validationResult.error.issues },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -84,14 +84,14 @@ export async function PUT(
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to update segment' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
 
 export async function DELETE(
   _request: NextRequest,
-  { params }: { params: RouteParams }
+  { params }: { params: RouteParams },
 ) {
   try {
     const supabase = await createClient();
@@ -125,7 +125,7 @@ export async function DELETE(
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to deactivate segment' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

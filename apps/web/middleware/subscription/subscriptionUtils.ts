@@ -20,7 +20,7 @@ export type SubscriptionContext = {
   hasFeature: (feature: string) => boolean;
   checkUsageLimit: (
     feature: string,
-    currentUsage?: number
+    currentUsage?: number,
   ) => Promise<{
     allowed: boolean;
     limit?: number;
@@ -34,7 +34,7 @@ export type SubscriptionContext = {
  * Get subscription context for API routes
  */
 export async function getSubscriptionContext(
-  request: NextRequest
+  request: NextRequest,
 ): Promise<SubscriptionContext | null> {
   try {
     const supabase = createServerClient<Database>(
@@ -46,7 +46,7 @@ export async function getSubscriptionContext(
             return request.cookies.get(name)?.value;
           },
         },
-      }
+      },
     );
 
     const {
@@ -75,7 +75,7 @@ export async function getSubscriptionContext(
         `
         *,
         plan:subscription_plans(*)
-      `
+      `,
       )
       .eq('clinic_id', userClinic.clinic_id)
       .in('status', ['trial', 'active'])
@@ -123,7 +123,7 @@ export async function getSubscriptionContext(
           supabase,
           subscription,
           feature,
-          amount
+          amount,
         );
       },
     };
@@ -138,7 +138,7 @@ export async function getSubscriptionContext(
 async function getCurrentUsage(
   supabase: any,
   subscription: UserSubscription,
-  feature: string
+  feature: string,
 ): Promise<number> {
   try {
     switch (feature) {
@@ -215,7 +215,7 @@ async function incrementFeatureUsage(
   supabase: any,
   subscription: UserSubscription,
   feature: string,
-  amount: number
+  amount: number,
 ): Promise<boolean> {
   try {
     const periodStart = getUsagePeriodStart('monthly');
@@ -230,7 +230,7 @@ async function incrementFeatureUsage(
       {
         onConflict: 'subscription_id,feature_name,usage_period_start',
         ignoreDuplicates: false,
-      }
+      },
     );
 
     if (error) {
@@ -247,7 +247,7 @@ async function incrementFeatureUsage(
  * Get usage period start based on reset frequency
  */
 function getUsagePeriodStart(
-  frequency: 'daily' | 'weekly' | 'monthly' | 'yearly'
+  frequency: 'daily' | 'weekly' | 'monthly' | 'yearly',
 ): string {
   const now = new Date();
 
@@ -256,7 +256,7 @@ function getUsagePeriodStart(
       return new Date(
         now.getFullYear(),
         now.getMonth(),
-        now.getDate()
+        now.getDate(),
       ).toISOString();
 
     case 'weekly': {

@@ -72,7 +72,7 @@ export class DatabaseBackupStrategy implements DataSourceHandler {
   constructor() {
     this.supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
     );
     this.auditLogger = new AuditLogger();
     this.encryptionService = new EncryptionService();
@@ -274,7 +274,7 @@ export class DatabaseBackupStrategy implements DataSourceHandler {
   async getLastModified(): Promise<Date> {
     try {
       const { data, error } = await this.supabase.rpc(
-        'get_last_modification_time'
+        'get_last_modification_time',
       );
       if (error) {
         throw error;
@@ -324,7 +324,7 @@ export class DatabaseBackupStrategy implements DataSourceHandler {
 
   private async backupTable(
     tableName: string,
-    context: BackupExecutionContext
+    context: BackupExecutionContext,
   ): Promise<{ size: number; location: string }> {
     try {
       // Determinar tipo de backup
@@ -362,12 +362,12 @@ export class DatabaseBackupStrategy implements DataSourceHandler {
   }
 
   private async backupDatabaseSchema(
-    context: BackupExecutionContext
+    context: BackupExecutionContext,
   ): Promise<{ size: number; location: string }> {
     try {
       // Obter esquema do banco
       const { data: schema, error } = await this.supabase.rpc(
-        'get_database_schema'
+        'get_database_schema',
       );
       if (error) {
         throw error;
@@ -435,7 +435,7 @@ export class DatabaseBackupStrategy implements DataSourceHandler {
 
   private async saveToStorage(
     _location: string,
-    _data: string
+    _data: string,
   ): Promise<void> {}
 
   private async getBackupSize(_jobId: string): Promise<number> {
@@ -450,7 +450,7 @@ export class DatabaseBackupStrategy implements DataSourceHandler {
 
   private async saveEncryptedBackup(
     _jobId: string,
-    _encryptedData: string
+    _encryptedData: string,
   ): Promise<void> {}
 
   private async checkBackupExists(_location: string): Promise<boolean> {
@@ -492,7 +492,7 @@ export class DatabaseBackupStrategy implements DataSourceHandler {
 
   private async restoreTable(
     _tableName: string,
-    _location: string
+    _location: string,
   ): Promise<void> {}
 
   private async verifyRestoreIntegrity(): Promise<void> {}
@@ -678,13 +678,13 @@ export class FileSystemBackupStrategy implements DataSourceHandler {
       (_path) =>
         context.strategy.data_sources.includes('files') ||
         context.strategy.data_sources.includes('logs') ||
-        context.strategy.data_sources.includes('configurations')
+        context.strategy.data_sources.includes('configurations'),
     );
   }
 
   private async backupPath(
     _path: string,
-    _context: BackupExecutionContext
+    _context: BackupExecutionContext,
   ): Promise<{ size: number; files: number; skipped: number }> {
     // Implementar backup de diretório específico
     return {
@@ -707,7 +707,7 @@ export class FileSystemBackupStrategy implements DataSourceHandler {
   private async encryptFileSystemBackup(_jobId: string): Promise<void> {}
 
   private generateFileSystemStorageLocation(
-    context: BackupExecutionContext
+    context: BackupExecutionContext,
   ): string {
     const date = new Date().toISOString().split('T')[0];
     return `filesystem/${date}/${context.job_id}`;
@@ -718,7 +718,7 @@ export class FileSystemBackupStrategy implements DataSourceHandler {
   }
 
   private async checkFileSystemBackupExists(
-    _location: string
+    _location: string,
   ): Promise<boolean> {
     return true; // Simulado
   }
@@ -733,11 +733,11 @@ export class FileSystemBackupStrategy implements DataSourceHandler {
 
   private async restoreFiles(
     _backupLocation: string,
-    _targetLocation: string
+    _targetLocation: string,
   ): Promise<void> {}
 
   private async verifyFileSystemRestore(
-    _targetLocation: string
+    _targetLocation: string,
   ): Promise<void> {}
 }
 
@@ -767,7 +767,7 @@ export class BackupStrategyManager {
 
   async executeStrategy(
     strategyName: string,
-    context: BackupExecutionContext
+    context: BackupExecutionContext,
   ): Promise<BackupResult> {
     const strategy = this.getStrategy(strategyName);
     if (!strategy) {
@@ -811,7 +811,7 @@ export class BackupStrategyManager {
   }
 
   async validateStrategy(
-    strategy: BackupStrategy
+    strategy: BackupStrategy,
   ): Promise<{ valid: boolean; errors: string[] }> {
     const errors: string[] = [];
 
@@ -852,7 +852,7 @@ export class BackupStrategyManager {
   }
 
   private async validateExecutionContext(
-    context: BackupExecutionContext
+    context: BackupExecutionContext,
   ): Promise<void> {
     if (!context.job_id) {
       throw new Error('Job ID é obrigatório');

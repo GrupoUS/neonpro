@@ -9,7 +9,7 @@ export async function POST(request: NextRequest) {
     if (!returnUrl) {
       return NextResponse.json(
         { error: 'Missing required field: returnUrl' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -23,27 +23,27 @@ export async function POST(request: NextRequest) {
     if (userError || !user) {
       return NextResponse.json(
         { error: 'User not authenticated' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
     // Get user's subscription to find customer ID
     const subscriptionService = new SubscriptionService();
     const userSubscription = await subscriptionService.getUserSubscription(
-      user.id
+      user.id,
     );
 
     if (!userSubscription?.stripe_customer_id) {
       return NextResponse.json(
         { error: 'No active subscription found' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
     // Create billing portal session
     const session = await subscriptionService.createBillingPortalSession(
       userSubscription.stripe_customer_id,
-      returnUrl
+      returnUrl,
     );
 
     return NextResponse.json({
@@ -55,7 +55,7 @@ export async function POST(request: NextRequest) {
         error: 'Failed to create billing portal session',
         message: error.message,
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

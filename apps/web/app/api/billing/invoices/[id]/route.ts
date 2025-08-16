@@ -13,7 +13,7 @@ const UpdateInvoiceSchema = z.object({
 
 export async function GET(
   _request: Request,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const supabase = await createClient();
@@ -64,7 +64,7 @@ export async function GET(
           transaction_id,
           notes
         )
-      `
+      `,
       )
       .eq('id', resolvedParams.id)
       .single();
@@ -77,14 +77,14 @@ export async function GET(
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal Server Error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
 
 export async function PUT(
   request: Request,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const supabase = await createClient();
@@ -125,14 +125,14 @@ export async function PUT(
           total_amount,
           service:services(name)
         )
-      `
+      `,
       )
       .single();
 
     if (error) {
       return NextResponse.json(
         { error: 'Failed to update invoice' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -141,19 +141,19 @@ export async function PUT(
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Validation failed', details: error.errors },
-        { status: 400 }
+        { status: 400 },
       );
     }
     return NextResponse.json(
       { error: 'Internal Server Error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
 
 export async function DELETE(
   _request: Request,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const supabase = await createClient();
@@ -177,7 +177,7 @@ export async function DELETE(
     if (paymentError) {
       return NextResponse.json(
         { error: 'Failed to check invoice payments' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -193,7 +193,7 @@ export async function DELETE(
       if (error) {
         return NextResponse.json(
           { error: 'Failed to cancel invoice' },
-          { status: 500 }
+          { status: 500 },
         );
       }
 
@@ -212,7 +212,7 @@ export async function DELETE(
     if (itemsError) {
       return NextResponse.json(
         { error: 'Failed to delete invoice items' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -225,7 +225,7 @@ export async function DELETE(
     if (error) {
       return NextResponse.json(
         { error: 'Failed to delete invoice' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -233,7 +233,7 @@ export async function DELETE(
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal Server Error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

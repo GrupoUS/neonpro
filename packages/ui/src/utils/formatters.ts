@@ -1,6 +1,12 @@
 import { format, formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
+// Performance-optimized regex patterns (moved to top-level for healthcare performance)
+const PHONE_11_REGEX = /(\d{2})(\d{5})(\d{4})/;
+const PHONE_10_REGEX = /(\d{2})(\d{4})(\d{4})/;
+const CPF_REGEX = /(\d{3})(\d{3})(\d{3})(\d{2})/;
+const DIGITS_ONLY_REGEX = /\D/g;
+
 export const formatters = {
   /**
    * Get initials from a name
@@ -17,40 +23,40 @@ export const formatters = {
   /**
    * Format phone number to Brazilian standard
    */
-  phone: (phone: string): string => {
-    const numbers = phone.replace(/\D/g, '');
+  phone: (phoneNumber: string): string => {
+    const numbers = phoneNumber.replace(DIGITS_ONLY_REGEX, '');
 
     if (numbers.length === 11) {
-      return numbers.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+      return numbers.replace(PHONE_11_REGEX, '($1) $2-$3');
     }
     if (numbers.length === 10) {
-      return numbers.replace(/(\d{2})(\d{4})(\d{4})/, '($1) $2-$3');
+      return numbers.replace(PHONE_10_REGEX, '($1) $2-$3');
     }
 
-    return phone;
+    return phoneNumber;
   },
 
   /**
    * Format date to Brazilian standard
    */
-  date: (date: Date | string): string => {
-    const dateObj = typeof date === 'string' ? new Date(date) : date;
+  date: (dateInput: Date | string): string => {
+    const dateObj = typeof dateInput === 'string' ? new Date(dateInput) : dateInput;
     return format(dateObj, "dd/MM/yyyy 'às' HH:mm", { locale: ptBR });
   },
 
   /**
    * Format date to short Brazilian standard
    */
-  shortDate: (date: Date | string): string => {
-    const dateObj = typeof date === 'string' ? new Date(date) : date;
+  shortDate: (dateInput: Date | string): string => {
+    const dateObj = typeof dateInput === 'string' ? new Date(dateInput) : dateInput;
     return format(dateObj, 'dd/MM/yyyy', { locale: ptBR });
   },
 
   /**
    * Format relative time (e.g., "há 2 dias")
    */
-  relativeTime: (date: Date | string): string => {
-    const dateObj = typeof date === 'string' ? new Date(date) : date;
+  relativeTime: (dateInput: Date | string): string => {
+    const dateObj = typeof dateInput === 'string' ? new Date(dateInput) : dateInput;
     return formatDistanceToNow(dateObj, {
       addSuffix: true,
       locale: ptBR,
@@ -109,8 +115,8 @@ export const formatters = {
   },
 };
 // Date and time formatters
-export const date = (date: Date | string): string => {
-  const d = typeof date === 'string' ? new Date(date) : date;
+export const date = (dateInput: Date | string): string => {
+  const d = typeof dateInput === 'string' ? new Date(dateInput) : dateInput;
   return d.toLocaleDateString('pt-BR', {
     day: '2-digit',
     month: '2-digit',
@@ -118,18 +124,18 @@ export const date = (date: Date | string): string => {
   });
 };
 
-export const time = (time: string | Date): string => {
-  if (typeof time === 'string') {
-    return time;
+export const time = (timeInput: string | Date): string => {
+  if (typeof timeInput === 'string') {
+    return timeInput;
   }
-  return time.toLocaleTimeString('pt-BR', {
+  return timeInput.toLocaleTimeString('pt-BR', {
     hour: '2-digit',
     minute: '2-digit',
   });
 };
 
-export const dateTime = (date: Date | string): string => {
-  const d = typeof date === 'string' ? new Date(date) : date;
+export const dateTime = (dateInput: Date | string): string => {
+  const d = typeof dateInput === 'string' ? new Date(dateInput) : dateInput;
   return d.toLocaleDateString('pt-BR', {
     day: '2-digit',
     month: '2-digit',
@@ -139,8 +145,8 @@ export const dateTime = (date: Date | string): string => {
   });
 };
 
-export const relativeTime = (date: Date | string): string => {
-  const d = typeof date === 'string' ? new Date(date) : date;
+export const relativeTime = (dateInput: Date | string): string => {
+  const d = typeof dateInput === 'string' ? new Date(dateInput) : dateInput;
   const now = new Date();
   const diffInMs = now.getTime() - d.getTime();
   const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
@@ -167,20 +173,20 @@ export const relativeTime = (date: Date | string): string => {
 };
 
 // Document formatters
-export const cpf = (cpf: string): string => {
-  const numbers = cpf.replace(/\D/g, '');
-  return numbers.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+export const cpf = (cpfInput: string): string => {
+  const numbers = cpfInput.replace(DIGITS_ONLY_REGEX, '');
+  return numbers.replace(CPF_REGEX, '$1.$2.$3-$4');
 };
 
-export const phone = (phone: string): string => {
-  const numbers = phone.replace(/\D/g, '');
+export const phone = (phoneInput: string): string => {
+  const numbers = phoneInput.replace(DIGITS_ONLY_REGEX, '');
   if (numbers.length === 11) {
-    return numbers.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+    return numbers.replace(PHONE_11_REGEX, '($1) $2-$3');
   }
   if (numbers.length === 10) {
-    return numbers.replace(/(\d{2})(\d{4})(\d{4})/, '($1) $2-$3');
+    return numbers.replace(PHONE_10_REGEX, '($1) $2-$3');
   }
-  return phone;
+  return phoneInput;
 };
 
 // Name formatters
@@ -202,14 +208,14 @@ export const firstName = (name: string): string => {
 export const age = (birthDate: Date | string): number => {
   const birth = typeof birthDate === 'string' ? new Date(birthDate) : birthDate;
   const today = new Date();
-  let age = today.getFullYear() - birth.getFullYear();
+  let currentAge = today.getFullYear() - birth.getFullYear();
   const monthDiff = today.getMonth() - birth.getMonth();
 
   if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
-    age--;
+    currentAge--;
   }
 
-  return age;
+  return currentAge;
 };
 
 // Currency formatter

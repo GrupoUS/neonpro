@@ -54,7 +54,7 @@ const LGPDConsentSchema = z.object({
       'professional',
       'financial',
       'biometric',
-    ])
+    ]),
   ),
   consentGivenAt: z.string().datetime(),
   consentMethod: z.enum(['form', 'email', 'phone', 'sms', 'in_person']),
@@ -110,7 +110,7 @@ const DPIASchema = z.object({
         likelihood: z.enum(['low', 'medium', 'high']),
         impact: z.enum(['low', 'medium', 'high']),
         mitigation: z.string(),
-      })
+      }),
     ),
     overallRiskScore: z.number().min(1).max(10),
     recommendation: z.enum([
@@ -190,7 +190,7 @@ export class NotificationComplianceEngine {
     userId: string,
     clinicId: string,
     notificationType: NotificationType,
-    channel: NotificationChannel
+    channel: NotificationChannel,
   ): Promise<ComplianceCheckResult> {
     const violations: ComplianceCheckResult['violations'] = [];
     const recommendations: string[] = [];
@@ -200,11 +200,11 @@ export class NotificationComplianceEngine {
     const consent = await this.getValidConsent(
       userId,
       clinicId,
-      notificationType
+      notificationType,
     );
     if (consent) {
       auditTrail.push(
-        `Consentimento válido encontrado: ${consent.consentType}`
+        `Consentimento válido encontrado: ${consent.consentType}`,
       );
     } else {
       violations.push({
@@ -231,7 +231,7 @@ export class NotificationComplianceEngine {
     // 3. Verificar minimização de dados
     const dataMinimizationCheck = await this.validateDataMinimization(
       userId,
-      notificationType
+      notificationType,
     );
     if (!dataMinimizationCheck.isCompliant) {
       violations.push({
@@ -246,7 +246,7 @@ export class NotificationComplianceEngine {
     // 4. Verificar canal adequado
     const channelCompliance = await this.validateChannelCompliance(
       userId,
-      channel
+      channel,
     );
     if (!channelCompliance) {
       violations.push({
@@ -303,7 +303,7 @@ export class NotificationComplianceEngine {
   private async getValidConsent(
     userId: string,
     clinicId: string,
-    notificationType: NotificationType
+    notificationType: NotificationType,
   ): Promise<LGPDConsent | null> {
     try {
       const { data, error } = await this.supabase
@@ -347,7 +347,7 @@ export class NotificationComplianceEngine {
 
       const requiredPurposes = purposeMapping[notificationType] || [];
       const hasPurpose = requiredPurposes.some((purpose) =>
-        consent.purpose_details.toLowerCase().includes(purpose)
+        consent.purpose_details.toLowerCase().includes(purpose),
       );
 
       if (!hasPurpose) {
@@ -376,7 +376,7 @@ export class NotificationComplianceEngine {
    */
   private async validateDataMinimization(
     _userId: string,
-    notificationType: NotificationType
+    notificationType: NotificationType,
   ): Promise<{ isCompliant: boolean; details: string[] }> {
     // Define campos necessários por tipo de notificação
     const requiredFields: Record<NotificationType, string[]> = {
@@ -412,7 +412,7 @@ export class NotificationComplianceEngine {
    */
   private async validateChannelCompliance(
     _userId: string,
-    channel: NotificationChannel
+    channel: NotificationChannel,
   ): Promise<boolean> {
     // SMS e WhatsApp são adequados para dados não-sensíveis
     // Email com criptografia é adequado para dados sensíveis
@@ -440,7 +440,7 @@ export class NotificationComplianceEngine {
     userId: string,
     clinicId: string,
     content: string,
-    notificationType: NotificationType
+    notificationType: NotificationType,
   ): Promise<ComplianceCheckResult> {
     const violations: ComplianceCheckResult['violations'] = [];
     const recommendations: string[] = [];
@@ -450,13 +450,13 @@ export class NotificationComplianceEngine {
     const hasSensitiveInfo = this.detectSensitiveMedicalInfo(content);
     if (hasSensitiveInfo.detected) {
       auditTrail.push(
-        `Informações médicas detectadas: ${hasSensitiveInfo.types.join(', ')}`
+        `Informações médicas detectadas: ${hasSensitiveInfo.types.join(', ')}`,
       );
 
       // CFM - Resolução 2.314/2022 (Telemedicina)
       if (notificationType === NotificationType.FOLLOW_UP) {
         recommendations.push(
-          'Considerar usar canal seguro para seguimento médico'
+          'Considerar usar canal seguro para seguimento médico',
         );
       }
     }
@@ -583,7 +583,7 @@ export class NotificationComplianceEngine {
    */
   async encryptSensitiveData(
     data: string,
-    dataType: string
+    dataType: string,
   ): Promise<EncryptionResult> {
     const iv = randomBytes(16);
     const cipher = createCipheriv('aes-256-gcm', this.encryptionKey, iv);
@@ -622,7 +622,7 @@ export class NotificationComplianceEngine {
    * Descriptografa dados
    */
   async decryptSensitiveData(
-    encryptionResult: EncryptionResult
+    encryptionResult: EncryptionResult,
   ): Promise<string> {
     const { encryptedData, iv, algorithm } = encryptionResult;
 
@@ -637,7 +637,7 @@ export class NotificationComplianceEngine {
     const decipher = createDecipheriv(
       'aes-256-gcm',
       this.encryptionKey,
-      ivBuffer
+      ivBuffer,
     );
     decipher.setAuthTag(authTag);
 
@@ -668,7 +668,7 @@ export class NotificationComplianceEngine {
       'default-secret-key-change-in-production';
     return Buffer.from(
       createHash('sha256').update(secret).digest('hex'),
-      'hex'
+      'hex',
     );
   }
 
@@ -686,7 +686,7 @@ export class NotificationComplianceEngine {
    * Registra evento de auditoria
    */
   async logAuditEvent(
-    event: Omit<AuditLog, 'id' | 'timestamp'>
+    event: Omit<AuditLog, 'id' | 'timestamp'>,
   ): Promise<void> {
     const auditLog: AuditLog = {
       ...event,
@@ -794,7 +794,7 @@ export class NotificationComplianceEngine {
     clinicId: string,
     processName: string,
     description: string,
-    reviewerId: string
+    reviewerId: string,
   ): Promise<DPIA> {
     const assessmentId = createHash('sha256')
       .update(`${clinicId}_${processName}_${Date.now()}`)
@@ -844,7 +844,7 @@ export class NotificationComplianceEngine {
         'Políticas de retenção automatizadas',
       ],
       reviewDate: new Date(
-        Date.now() + 365 * 24 * 60 * 60 * 1000
+        Date.now() + 365 * 24 * 60 * 60 * 1000,
       ).toISOString(), // 1 ano
       reviewerId,
       status: 'approved',

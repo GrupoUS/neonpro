@@ -147,7 +147,7 @@ export class LGPDComplianceSystem {
    */
   async getComplianceStatus(
     startDate?: Date,
-    endDate?: Date
+    endDate?: Date,
   ): Promise<LGPDComplianceStatus> {
     try {
       // Get analytics from all managers
@@ -156,17 +156,17 @@ export class LGPDComplianceSystem {
           consentAutomationManager.getConsentAnalytics(
             this.config.clinicId,
             startDate,
-            endDate
+            endDate,
           ),
           auditTrailManager.getAuditAnalytics(
             this.config.clinicId,
             startDate,
-            endDate
+            endDate,
           ),
           dataRetentionManager.getRetentionAnalytics(
             this.config.clinicId,
             startDate,
-            endDate
+            endDate,
           ),
         ]);
 
@@ -181,32 +181,32 @@ export class LGPDComplianceSystem {
       const auditComplianceRate = auditAnalytics.complianceRate;
       const auditScore = Math.max(
         0,
-        auditComplianceRate - auditAnalytics.recentViolations.length * 10
+        auditComplianceRate - auditAnalytics.recentViolations.length * 10,
       );
 
       // Calculate retention compliance
       const retentionComplianceRate = retentionAnalytics.retentionCompliance;
       const retentionScore = Math.max(
         0,
-        retentionComplianceRate - retentionAnalytics.expiredRecords * 5
+        retentionComplianceRate - retentionAnalytics.expiredRecords * 5,
       );
 
       // Calculate overall score (weighted average)
       const overallScore = Math.round(
-        consentScore * 0.4 + auditScore * 0.4 + retentionScore * 0.2
+        consentScore * 0.4 + auditScore * 0.4 + retentionScore * 0.2,
       );
 
       // Determine risk level
       const riskLevel = this.calculateRiskLevel(
         overallScore,
-        auditAnalytics.riskScore
+        auditAnalytics.riskScore,
       );
 
       // Generate recommendations
       const recommendations = this.generateRecommendations(
         consentAnalytics,
         auditAnalytics,
-        retentionAnalytics
+        retentionAnalytics,
       );
 
       // Get current alerts
@@ -247,7 +247,7 @@ export class LGPDComplianceSystem {
    * Process data subject rights request
    */
   async processDataSubjectRequest(
-    request: DataSubjectRightsRequest
+    request: DataSubjectRightsRequest,
   ): Promise<string> {
     try {
       // Log the request in audit trail
@@ -384,7 +384,7 @@ export class LGPDComplianceSystem {
       const expiringConsents =
         await consentAutomationManager.getExpiringConsents(
           this.config.clinicId,
-          30 // 30 days warning
+          30, // 30 days warning
         );
 
       if (expiringConsents.length > 0) {
@@ -418,7 +418,7 @@ export class LGPDComplianceSystem {
 
       // Check for compliance violations
       const auditAnalytics = await auditTrailManager.getAuditAnalytics(
-        this.config.clinicId
+        this.config.clinicId,
       );
       if (auditAnalytics.recentViolations.length > 0) {
         alerts.push({
@@ -465,7 +465,7 @@ export class LGPDComplianceSystem {
    */
   async generateComplianceReport(
     startDate: Date,
-    endDate: Date
+    endDate: Date,
   ): Promise<LGPDComplianceReport> {
     try {
       const reportId = `lgpd-report-${Date.now()}`;
@@ -481,17 +481,17 @@ export class LGPDComplianceSystem {
         consentAutomationManager.getConsentAnalytics(
           this.config.clinicId,
           startDate,
-          endDate
+          endDate,
         ),
         auditTrailManager.getAuditAnalytics(
           this.config.clinicId,
           startDate,
-          endDate
+          endDate,
         ),
         dataRetentionManager.getRetentionAnalytics(
           this.config.clinicId,
           startDate,
-          endDate
+          endDate,
         ),
       ]);
 
@@ -503,7 +503,7 @@ export class LGPDComplianceSystem {
           startDate,
           endDate,
         },
-        100
+        100,
       );
 
       // Generate executive summary
@@ -511,7 +511,7 @@ export class LGPDComplianceSystem {
         complianceStatus,
         consentAnalytics,
         auditAnalytics,
-        retentionAnalytics
+        retentionAnalytics,
       );
 
       return {
@@ -547,12 +547,12 @@ export class LGPDComplianceSystem {
 
       // Process expired data retention
       const result = await dataRetentionManager.processExpiredData(
-        this.config.clinicId
+        this.config.clinicId,
       );
 
       // Clean up expired consents
       await consentAutomationManager.cleanupExpiredConsents(
-        this.config.clinicId
+        this.config.clinicId,
       );
 
       // Log cleanup activity
@@ -577,7 +577,7 @@ export class LGPDComplianceSystem {
 
   private calculateRiskLevel(
     overallScore: number,
-    auditRiskScore: number
+    auditRiskScore: number,
   ): 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL' {
     const combinedRisk = 100 - overallScore + auditRiskScore;
 
@@ -596,7 +596,7 @@ export class LGPDComplianceSystem {
   private generateRecommendations(
     consentAnalytics: ConsentAnalytics,
     auditAnalytics: AuditTrailAnalytics,
-    retentionAnalytics: RetentionAnalytics
+    retentionAnalytics: RetentionAnalytics,
   ): string[] {
     const recommendations: string[] = [];
 
@@ -606,7 +606,7 @@ export class LGPDComplianceSystem {
       consentAnalytics.activeConsents * 0.1
     ) {
       recommendations.push(
-        'Renovar consentimentos expirados para manter conformidade'
+        'Renovar consentimentos expirados para manter conformidade',
       );
     }
 
@@ -615,20 +615,20 @@ export class LGPDComplianceSystem {
       consentAnalytics.totalConsents * 0.2
     ) {
       recommendations.push(
-        'Revisar processos de coleta de consentimento para reduzir retiradas'
+        'Revisar processos de coleta de consentimento para reduzir retiradas',
       );
     }
 
     // Audit recommendations
     if (auditAnalytics.recentViolations.length > 0) {
       recommendations.push(
-        'Investigar e corrigir violações de conformidade identificadas'
+        'Investigar e corrigir violações de conformidade identificadas',
       );
     }
 
     if (auditAnalytics.dataSubjectRequests.averageResponseTime > 15) {
       recommendations.push(
-        'Otimizar processo de resposta a solicitações de titulares (meta: 15 dias)'
+        'Otimizar processo de resposta a solicitações de titulares (meta: 15 dias)',
       );
     }
 
@@ -642,14 +642,14 @@ export class LGPDComplianceSystem {
       retentionAnalytics.activeRecords * 0.1
     ) {
       recommendations.push(
-        'Preparar para expiração de dados nos próximos 30 dias'
+        'Preparar para expiração de dados nos próximos 30 dias',
       );
     }
 
     // General recommendations
     if (recommendations.length === 0) {
       recommendations.push(
-        'Manter monitoramento contínuo da conformidade LGPD'
+        'Manter monitoramento contínuo da conformidade LGPD',
       );
     }
 
@@ -660,7 +660,7 @@ export class LGPDComplianceSystem {
     complianceStatus: LGPDComplianceStatus,
     consentAnalytics: ConsentAnalytics,
     auditAnalytics: AuditTrailAnalytics,
-    retentionAnalytics: RetentionAnalytics
+    retentionAnalytics: RetentionAnalytics,
   ): string {
     const riskText = {
       LOW: 'baixo',
@@ -685,7 +685,7 @@ Recomendações principais: ${complianceStatus.recommendations.slice(0, 3).join(
   }
 
   private async createAlert(
-    alertData: Omit<LGPDAlert, 'id' | 'createdAt'>
+    alertData: Omit<LGPDAlert, 'id' | 'createdAt'>,
   ): Promise<void> {
     const alert: LGPDAlert = {
       id: `alert-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
@@ -716,7 +716,7 @@ Recomendações principais: ${complianceStatus.recommendations.slice(0, 3).join(
 
   private async processDataDeletion(
     userId: string,
-    dataTypes: LGPDDataType[]
+    dataTypes: LGPDDataType[],
   ): Promise<void> {
     // Log data deletion
     await auditTrailManager.logAuditEvent({
@@ -759,7 +759,7 @@ export const defaultLGPDConfig: Omit<LGPDComplianceConfig, 'clinicId'> = {
  */
 export function createLGPDComplianceSystem(
   clinicId: string,
-  config?: Partial<LGPDComplianceConfig>
+  config?: Partial<LGPDComplianceConfig>,
 ): LGPDComplianceSystem {
   const fullConfig: LGPDComplianceConfig = {
     clinicId,

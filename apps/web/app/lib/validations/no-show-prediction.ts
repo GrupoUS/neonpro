@@ -126,7 +126,7 @@ export const ModelEvaluationInputSchema = z.object({
         'auc_roc',
         'cost_effectiveness',
         'intervention_success',
-      ])
+      ]),
     )
     .default(['accuracy', 'precision', 'recall', 'f1_score']),
   include_confusion_matrix: z.boolean().default(true),
@@ -208,7 +208,7 @@ export const RiskScoreCalibrationInputSchema = z.object({
         max_score: z.number().min(0).max(1),
       }),
       expected_no_show_rate: z.number().min(0).max(1),
-    })
+    }),
   ),
   calibration_method: z
     .enum(['platt_scaling', 'isotonic_regression'])
@@ -261,7 +261,7 @@ export const AnalyticsResponseSchema = z.object({
       metric: z.string(),
       value: z.number(),
       change_percentage: z.number(),
-    })
+    }),
   ),
 });
 
@@ -272,7 +272,7 @@ export const ModelPerformanceResponseSchema = z.object({
       model_version: z.string(),
       accuracy_rate: z.number().min(0).max(1),
       deployment_date: z.string().date(),
-    })
+    }),
   ),
   improvement_recommendations: z.array(
     z.object({
@@ -280,7 +280,7 @@ export const ModelPerformanceResponseSchema = z.object({
       recommendation: z.string(),
       expected_impact: z.number().min(0).max(1),
       implementation_effort: z.enum(['low', 'medium', 'high']),
-    })
+    }),
   ),
 });
 

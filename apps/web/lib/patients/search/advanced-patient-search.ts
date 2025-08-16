@@ -64,7 +64,7 @@ export class AdvancedPatientSearch {
     query: string,
     filters: SearchFilters = {},
     page = 1,
-    perPage = 20
+    perPage = 20,
   ): Promise<SearchResult> {
     const startTime = Date.now();
 
@@ -77,7 +77,7 @@ export class AdvancedPatientSearch {
           patient_photos(count),
           appointments(count)
         `,
-        { count: 'exact' }
+        { count: 'exact' },
       );
 
       // Apply text search with AI-powered fuzzy matching
@@ -85,7 +85,7 @@ export class AdvancedPatientSearch {
         const searchTerms = AdvancedPatientSearch.processSearchQuery(query);
         searchQuery = AdvancedPatientSearch.applyTextSearch(
           searchQuery,
-          searchTerms
+          searchTerms,
         );
       }
 
@@ -107,7 +107,7 @@ export class AdvancedPatientSearch {
       // Generate AI suggestions
       const suggestions = await AdvancedPatientSearch.generateSearchSuggestions(
         query,
-        filters
+        filters,
       );
 
       const searchTime = Date.now() - startTime;
@@ -143,14 +143,14 @@ export class AdvancedPatientSearch {
           `
           id, name, email, phone, date_of_birth,
           patient_profiles_extended(risk_score)
-        `
+        `,
         )
         .or(
           `
           name.ilike.%${query}%,
           email.ilike.%${query}%,
           phone.ilike.%${query}%
-        `
+        `,
         )
         .limit(10)
         .order('updated_at', { ascending: false });
@@ -172,7 +172,7 @@ export class AdvancedPatientSearch {
   static async createPatientSegment(
     name: string,
     description: string,
-    criteria: SearchFilters
+    criteria: SearchFilters,
   ): Promise<PatientSegment> {
     try {
       // Count patients matching criteria
@@ -180,7 +180,7 @@ export class AdvancedPatientSearch {
         '',
         criteria,
         1,
-        1
+        1,
       );
 
       // Calculate segment statistics
@@ -205,7 +205,7 @@ export class AdvancedPatientSearch {
       }
 
       logger.info(
-        `Created patient segment: ${name} with ${segment.patient_count} patients`
+        `Created patient segment: ${name} with ${segment.patient_count} patients`,
       );
       return segment;
     } catch (error) {
@@ -237,7 +237,7 @@ export class AdvancedPatientSearch {
         criteria: {
           registration_date_range: {
             start: new Date(
-              Date.now() - 30 * 24 * 60 * 60 * 1000
+              Date.now() - 30 * 24 * 60 * 60 * 1000,
             ).toISOString(),
             end: new Date().toISOString(),
           },
@@ -271,12 +271,12 @@ export class AdvancedPatientSearch {
           '',
           segment.criteria,
           1,
-          1
+          1,
         );
         segment.patient_count = result.total_count;
 
         const stats = await AdvancedPatientSearch.calculateSegmentStats(
-          segment.criteria
+          segment.criteria,
         );
         segment.avg_satisfaction = stats.avg_satisfaction;
         segment.avg_risk_score = stats.avg_risk_score;
@@ -326,7 +326,7 @@ export class AdvancedPatientSearch {
     const searchConditions = searchTerms
       .map(
         (term) =>
-          `name.ilike.%${term}%,email.ilike.%${term}%,phone.ilike.%${term}%`
+          `name.ilike.%${term}%,email.ilike.%${term}%,phone.ilike.%${term}%`,
       )
       .join(',');
 
@@ -389,7 +389,7 @@ export class AdvancedPatientSearch {
    */
   private static async generateSearchSuggestions(
     query: string,
-    _filters: SearchFilters
+    _filters: SearchFilters,
   ): Promise<SearchSuggestion[]> {
     const suggestions: SearchSuggestion[] = [];
 

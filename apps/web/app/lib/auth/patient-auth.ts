@@ -95,7 +95,7 @@ export class PatientAuthServer {
   static async recordDataAccess(
     patientId: string,
     action: string,
-    details?: any
+    details?: any,
   ): Promise<void> {
     try {
       const supabase = await createServerClient();
@@ -118,7 +118,7 @@ export class PatientAuthServer {
       | 'marketing'
       | 'data_sharing'
       | 'medical_history'
-      | 'treatment_photos'
+      | 'treatment_photos',
   ): Promise<boolean> {
     try {
       const supabase = await createServerClient();
@@ -196,7 +196,7 @@ export class PatientAuthServer {
 } // Client-side patient authentication utilities
 export class PatientAuthClient {
   static async registerPatient(
-    data: PatientRegistrationData
+    data: PatientRegistrationData,
   ): Promise<AuthResult> {
     try {
       const supabase = createClient();
@@ -245,7 +245,7 @@ export class PatientAuthClient {
   }
   static async loginPatient(
     email: string,
-    password: string
+    password: string,
   ): Promise<AuthResult> {
     try {
       const supabase = createClient();

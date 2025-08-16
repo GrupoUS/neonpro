@@ -52,7 +52,7 @@ export async function POST(request: NextRequest) {
     if (!profile?.clinic_id) {
       return NextResponse.json(
         { error: 'User not associated with clinic' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -72,7 +72,7 @@ export async function POST(request: NextRequest) {
         {
           error: `File size too large. Maximum size is ${MAX_FILE_SIZE / 1024 / 1024}MB`,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -84,7 +84,7 @@ export async function POST(request: NextRequest) {
           {
             error: `File type not allowed. Supported types: ${ALLOWED_FILE_EXTENSIONS.join(', ')}`,
           },
-          { status: 400 }
+          { status: 400 },
         );
       }
     }
@@ -117,7 +117,7 @@ export async function POST(request: NextRequest) {
     if (uploadError) {
       return NextResponse.json(
         { error: 'Failed to upload file' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -159,7 +159,7 @@ export async function POST(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -184,7 +184,7 @@ export async function DELETE(request: NextRequest) {
     if (!filePath) {
       return NextResponse.json(
         { error: 'File path is required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -196,7 +196,7 @@ export async function DELETE(request: NextRequest) {
     if (deleteError) {
       return NextResponse.json(
         { error: 'Failed to delete file' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -225,7 +225,7 @@ export async function DELETE(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

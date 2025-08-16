@@ -6,7 +6,7 @@
 export class TemplateEngine {
   async renderTemplate(
     templateId: string,
-    variables: Record<string, any>
+    variables: Record<string, any>,
   ): Promise<string> {
     // Mock implementation for testing
     return `Template ${templateId} rendered with variables: ${JSON.stringify(variables)}`;

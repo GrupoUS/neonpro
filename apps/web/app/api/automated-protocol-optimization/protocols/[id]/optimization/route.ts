@@ -10,7 +10,7 @@ const service = new AutomatedProtocolOptimizationService();
 // GET: Get protocol optimization analysis
 export async function GET(
   _request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const { id } = params;
@@ -18,7 +18,7 @@ export async function GET(
     if (!id) {
       return NextResponse.json(
         { success: false, error: 'Protocol ID is required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -36,7 +36,7 @@ export async function GET(
         error: 'Failed to fetch protocol optimization analysis',
         details: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

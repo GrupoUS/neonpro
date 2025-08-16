@@ -25,7 +25,7 @@ export async function POST(_request: NextRequest) {
           error: 'Failed to send test notification',
           details: result.errors.join(', '),
         },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -37,7 +37,7 @@ export async function POST(_request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

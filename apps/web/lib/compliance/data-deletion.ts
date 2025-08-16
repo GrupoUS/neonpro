@@ -8,7 +8,7 @@ export type DataDeletionRequest = {
 
 export class DataDeletionService {
   static async scheduleDataDeletion(
-    request: DataDeletionRequest
+    request: DataDeletionRequest,
   ): Promise<{ scheduledFor: Date; requestId: string }> {
     const retentionDays = request.retentionPeriod || 30;
     const scheduledFor = new Date();

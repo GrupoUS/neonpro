@@ -9,7 +9,7 @@ const patientInsights = new PatientInsightsIntegration();
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { patientId: string } }
+  { params }: { params: { patientId: string } },
 ) {
   try {
     const supabase = createRouteHandlerClient({ cookies });
@@ -41,7 +41,7 @@ export async function GET(
     const treatmentRecommendations =
       await patientInsights.generateTreatmentGuidance(
         params.patientId,
-        treatmentContext
+        treatmentContext,
       );
 
     return NextResponse.json({
@@ -51,14 +51,14 @@ export async function GET(
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to generate treatment recommendations' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { patientId: string } }
+  { params }: { params: { patientId: string } },
 ) {
   try {
     const supabase = createRouteHandlerClient({ cookies });
@@ -83,14 +83,14 @@ export async function POST(
     const treatmentRecommendations =
       await patientInsights.generateTreatmentGuidance(
         params.patientId,
-        treatmentContext
+        treatmentContext,
       );
 
     const response: any = { treatmentRecommendations };
 
     if (includeRiskAssessment) {
       const riskAssessment = await patientInsights.generateQuickRiskAssessment(
-        params.patientId
+        params.patientId,
       );
       response.riskAssessment = riskAssessment;
     }
@@ -100,7 +100,7 @@ export async function POST(
       const learningInsights = await patientInsights.updatePatientOutcome(
         params.patientId,
         outcomeData.treatmentId,
-        outcomeData
+        outcomeData,
       );
       response.learningInsights = learningInsights;
     }
@@ -112,7 +112,7 @@ export async function POST(
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to generate comprehensive treatment recommendations' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

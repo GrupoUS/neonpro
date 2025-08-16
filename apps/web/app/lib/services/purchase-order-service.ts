@@ -92,7 +92,7 @@ export class PurchaseOrderService {
           reliability_score,
           cost_rating
         )
-      `
+      `,
       )
       .eq('item_id', itemId)
       .order('cost_rating', { ascending: false });
@@ -126,7 +126,7 @@ export class PurchaseOrderService {
       costWeight: number; // 0-1
       reliabilityWeight: number; // 0-1
       leadTimeWeight: number; // 0-1
-    } = { costWeight: 0.5, reliabilityWeight: 0.3, leadTimeWeight: 0.2 }
+    } = { costWeight: 0.5, reliabilityWeight: 0.3, leadTimeWeight: 0.2 },
   ): Promise<SupplierInfo | null> {
     const suppliers = await this.getPreferredSuppliers(itemId);
 
@@ -151,7 +151,7 @@ export class PurchaseOrderService {
 
     // Retornar supplier com maior score
     return scoredSuppliers.reduce((best, current) =>
-      current.score > best.score ? current : best
+      current.score > best.score ? current : best,
     );
   }
 
@@ -168,7 +168,7 @@ export class PurchaseOrderService {
     // EOQ = √(2 × D × S / H)
     // D = Annual demand, S = Ordering cost, H = Holding cost per unit
     const optimalOrderQuantity = Math.sqrt(
-      (2 * annualDemand * orderingCost) / holdingCost
+      (2 * annualDemand * orderingCost) / holdingCost,
     );
 
     // Total cost = Ordering cost + Holding cost
@@ -209,7 +209,7 @@ export class PurchaseOrderService {
       .eq('transaction_type', 'consumption')
       .gte(
         'created_at',
-        new Date(Date.now() - 365 * 24 * 60 * 60 * 1000).toISOString()
+        new Date(Date.now() - 365 * 24 * 60 * 60 * 1000).toISOString(),
       );
 
     const annualDemand =
@@ -243,7 +243,7 @@ export class PurchaseOrderService {
   async generatePurchaseOrder(
     clinicId: string,
     items: Array<{ itemId: string; requiredQuantity: number }>,
-    userId: string
+    userId: string,
   ): Promise<PurchaseOrder> {
     const supabase = await this.getSupabase();
 
@@ -262,7 +262,7 @@ export class PurchaseOrderService {
     for (const item of items) {
       const supplier = await this.selectOptimalSupplier(
         item.itemId,
-        item.requiredQuantity
+        item.requiredQuantity,
       );
       if (!supplier) {
         continue;
@@ -286,7 +286,7 @@ export class PurchaseOrderService {
       // Usar maior entre quantidade necessária e EOQ (para otimização)
       const optimizedQuantity = Math.max(
         item.requiredQuantity,
-        eoqResult.optimalOrderQuantity
+        eoqResult.optimalOrderQuantity,
       );
 
       if (!supplierGroups.has(supplier.id)) {
@@ -309,12 +309,12 @@ export class PurchaseOrderService {
       const orderNumber = await this.generateOrderNumber(clinicId);
       const totalAmount = orderItems.reduce(
         (sum, item) => sum + item.quantity * item.unitPrice,
-        0
+        0,
       );
 
       // Obter lead time do supplier
       const supplierInfo = await this.getPreferredSuppliers(
-        orderItems[0].itemId
+        orderItems[0].itemId,
       );
       const supplier = supplierInfo.find((s) => s.id === supplierId);
       const leadTime = supplier?.leadTime || 7;
@@ -370,7 +370,7 @@ export class PurchaseOrderService {
    */
   async optimizeBulkOrder(
     clinicId: string,
-    itemIds: string[]
+    itemIds: string[],
   ): Promise<{
     recommendations: Array<{
       itemId: string;
@@ -431,7 +431,7 @@ export class PurchaseOrderService {
    */
   async generatePOTemplate(
     purchaseOrder: PurchaseOrder,
-    templateType: 'standard' | 'medical' | 'urgent' = 'standard'
+    templateType: 'standard' | 'medical' | 'urgent' = 'standard',
   ): Promise<{
     html: string;
     subject: string;
@@ -525,7 +525,7 @@ export class PurchaseOrderService {
                   <td style="border: 1px solid #dee2e6; padding: 12px; text-align: right;">R$ ${item.unit_price.toFixed(2)}</td>
                   <td style="border: 1px solid #dee2e6; padding: 12px; text-align: right;">R$ ${item.total_price.toFixed(2)}</td>
                 </tr>
-              `
+              `,
                 )
                 .join('')}
             </tbody>

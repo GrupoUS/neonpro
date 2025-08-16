@@ -54,7 +54,7 @@ import type {
  */
 async function _createPredictionModel(
   supabase: ReturnType<typeof createClient>,
-  input: CreatePredictionModelInput
+  input: CreatePredictionModelInput,
 ): Promise<{ data: PredictionModel | null; error: string | null }> {
   try {
     const { data, error } = await supabase
@@ -91,7 +91,7 @@ async function _createPredictionModel(
 async function _updatePredictionModel(
   supabase: ReturnType<typeof createClient>,
   id: string,
-  input: UpdatePredictionModelInput
+  input: UpdatePredictionModelInput,
 ): Promise<{ data: PredictionModel | null; error: string | null }> {
   try {
     const updateData: any = {
@@ -122,7 +122,7 @@ async function _updatePredictionModel(
 async function _getPredictionModels(
   supabase: ReturnType<typeof createClient>,
   filters: ModelFilters = {},
-  pagination: PaginationParams = {}
+  pagination: PaginationParams = {},
 ): Promise<{ data: PredictionModel[]; total: number; error: string | null }> {
   try {
     let query = supabase
@@ -175,7 +175,7 @@ async function _getPredictionModels(
  */
 export async function getPredictionModel(
   supabase: ReturnType<typeof createClient>,
-  id: string
+  id: string,
 ): Promise<{ data: PredictionModel | null; error: string | null }> {
   try {
     const { data, error } = await supabase
@@ -199,7 +199,7 @@ export async function getPredictionModel(
  */
 export async function deletePredictionModel(
   supabase: ReturnType<typeof createClient>,
-  id: string
+  id: string,
 ): Promise<{ error: string | null }> {
   try {
     const { error } = await supabase
@@ -226,7 +226,7 @@ export async function deletePredictionModel(
  */
 export async function createCashFlowPrediction(
   supabase: ReturnType<typeof createClient>,
-  input: CreateCashFlowPredictionInput
+  input: CreateCashFlowPredictionInput,
 ): Promise<{ data: CashFlowPrediction | null; error: string | null }> {
   try {
     const { data, error } = await supabase
@@ -256,7 +256,7 @@ export async function createCashFlowPrediction(
         *,
         model:prediction_models(*),
         scenario:forecasting_scenarios(*)
-      `
+      `,
       )
       .single();
 
@@ -276,7 +276,7 @@ export async function createCashFlowPrediction(
 export async function updateCashFlowPrediction(
   supabase: ReturnType<typeof createClient>,
   id: string,
-  input: UpdateCashFlowPredictionInput
+  input: UpdateCashFlowPredictionInput,
 ): Promise<{ data: CashFlowPrediction | null; error: string | null }> {
   try {
     const updateData: any = {
@@ -293,7 +293,7 @@ export async function updateCashFlowPrediction(
         *,
         model:prediction_models(*),
         scenario:forecasting_scenarios(*)
-      `
+      `,
       )
       .single();
 
@@ -313,7 +313,7 @@ export async function updateCashFlowPrediction(
 export async function getCashFlowPredictions(
   supabase: ReturnType<typeof createClient>,
   filters: PredictionFilters = {},
-  pagination: PaginationParams = {}
+  pagination: PaginationParams = {},
 ): Promise<{
   data: CashFlowPrediction[];
   total: number;
@@ -327,7 +327,7 @@ export async function getCashFlowPredictions(
         scenario:forecasting_scenarios(*),
         accuracy:prediction_accuracy(*)
       `,
-      { count: 'exact' }
+      { count: 'exact' },
     );
 
     // Apply filters
@@ -393,7 +393,7 @@ export async function getCashFlowPredictions(
  */
 export async function createForecastingScenario(
   supabase: ReturnType<typeof createClient>,
-  input: CreateForecastingScenarioInput
+  input: CreateForecastingScenarioInput,
 ): Promise<{ data: ForecastingScenario | null; error: string | null }> {
   try {
     // If this is marked as baseline, unset any existing baseline for the clinic
@@ -440,7 +440,7 @@ export async function createForecastingScenario(
 export async function updateForecastingScenario(
   supabase: ReturnType<typeof createClient>,
   id: string,
-  input: UpdateForecastingScenarioInput
+  input: UpdateForecastingScenarioInput,
 ): Promise<{ data: ForecastingScenario | null; error: string | null }> {
   try {
     // If this is being marked as baseline, unset any existing baseline for the clinic
@@ -489,7 +489,7 @@ export async function updateForecastingScenario(
 export async function getForecastingScenarios(
   supabase: ReturnType<typeof createClient>,
   filters: ScenarioFilters = {},
-  pagination: PaginationParams = {}
+  pagination: PaginationParams = {},
 ): Promise<{
   data: ForecastingScenario[];
   total: number;
@@ -559,7 +559,7 @@ export async function getForecastingScenarios(
  */
 export async function createPredictionAccuracy(
   supabase: ReturnType<typeof createClient>,
-  input: CreatePredictionAccuracyInput
+  input: CreatePredictionAccuracyInput,
 ): Promise<{ data: PredictionAccuracy | null; error: string | null }> {
   try {
     const { data, error } = await supabase
@@ -588,7 +588,7 @@ export async function createPredictionAccuracy(
         *,
         prediction:cash_flow_predictions(*),
         model:prediction_models(*)
-      `
+      `,
       )
       .single();
 
@@ -620,7 +620,7 @@ export async function createPredictionAccuracy(
  */
 export async function createPredictionAlert(
   supabase: ReturnType<typeof createClient>,
-  input: CreatePredictionAlertInput
+  input: CreatePredictionAlertInput,
 ): Promise<{ data: PredictionAlert | null; error: string | null }> {
   try {
     const { data, error } = await supabase
@@ -645,7 +645,7 @@ export async function createPredictionAlert(
         `
         *,
         prediction:cash_flow_predictions(*)
-      `
+      `,
       )
       .single();
 
@@ -665,7 +665,7 @@ export async function createPredictionAlert(
 export async function updatePredictionAlert(
   supabase: ReturnType<typeof createClient>,
   id: string,
-  input: UpdatePredictionAlertInput
+  input: UpdatePredictionAlertInput,
 ): Promise<{ data: PredictionAlert | null; error: string | null }> {
   try {
     const updateData: any = {
@@ -681,7 +681,7 @@ export async function updatePredictionAlert(
         `
         *,
         prediction:cash_flow_predictions(*)
-      `
+      `,
       )
       .single();
 
@@ -701,7 +701,7 @@ export async function updatePredictionAlert(
 export async function getPredictionAlerts(
   supabase: ReturnType<typeof createClient>,
   filters: AlertFilters = {},
-  pagination: PaginationParams = {}
+  pagination: PaginationParams = {},
 ): Promise<{ data: PredictionAlert[]; total: number; error: string | null }> {
   try {
     let query = supabase.from('prediction_alerts').select(
@@ -709,7 +709,7 @@ export async function getPredictionAlerts(
         *,
         prediction:cash_flow_predictions(*)
       `,
-      { count: 'exact' }
+      { count: 'exact' },
     );
 
     // Apply filters
@@ -767,7 +767,7 @@ export async function getPredictionAlerts(
  */
 export async function getModelAccuracySummary(
   supabase: ReturnType<typeof createClient>,
-  modelId: string
+  modelId: string,
 ): Promise<{ data: ModelAccuracySummary | null; error: string | null }> {
   try {
     const { data, error } = await supabase.rpc('get_model_accuracy_summary', {
@@ -791,7 +791,7 @@ export async function generateCashFlowForecast(
   supabase: ReturnType<typeof createClient>,
   clinicId: string,
   periodType: string,
-  periodsAhead = 12
+  periodsAhead = 12,
 ): Promise<{ data: CashFlowForecast | null; error: string | null }> {
   try {
     // Get the best performing model for this clinic
@@ -825,15 +825,15 @@ export async function generateCashFlowForecast(
     // Calculate summary statistics
     const totalInflow = predictions.reduce(
       (sum, p) => sum + p.predicted_inflow_amount,
-      0
+      0,
     );
     const totalOutflow = predictions.reduce(
       (sum, p) => sum + p.predicted_outflow_amount,
-      0
+      0,
     );
     const totalNet = predictions.reduce(
       (sum, p) => sum + p.predicted_net_amount,
-      0
+      0,
     );
     const avgConfidence =
       predictions.reduce((sum, p) => sum + p.confidence_score, 0) /
@@ -859,7 +859,7 @@ export async function generateCashFlowForecast(
 
     // Find peak and lowest periods
     const sortedByNet = [...predictions].sort(
-      (a, b) => b.predicted_net_amount - a.predicted_net_amount
+      (a, b) => b.predicted_net_amount - a.predicted_net_amount,
     );
     const peakPeriod = sortedByNet[0]?.start_date || '';
     const lowestPeriod = sortedByNet.at(-1)?.start_date || '';
@@ -894,7 +894,7 @@ export async function generateCashFlowForecast(
         potential_shortfalls: potentialShortfalls,
         recommended_actions: generateRecommendedActions(
           predictions,
-          trendDirection
+          trendDirection,
         ),
       },
     };
@@ -910,20 +910,20 @@ export async function generateCashFlowForecast(
  */
 function generateRecommendedActions(
   predictions: any[],
-  trend: 'up' | 'down' | 'stable'
+  trend: 'up' | 'down' | 'stable',
 ): string[] {
   const actions: string[] = [];
 
   // Check for negative cash flow periods
   const negativePeriodsCount = predictions.filter(
-    (p) => p.predicted_net_amount < 0
+    (p) => p.predicted_net_amount < 0,
   ).length;
   if (negativePeriodsCount > 0) {
     actions.push(
-      `Review and optimize expenses for ${negativePeriodsCount} periods with negative cash flow`
+      `Review and optimize expenses for ${negativePeriodsCount} periods with negative cash flow`,
     );
     actions.push(
-      'Consider adjusting payment terms with suppliers to improve cash flow timing'
+      'Consider adjusting payment terms with suppliers to improve cash flow timing',
     );
   }
 
@@ -934,18 +934,18 @@ function generateRecommendedActions(
     actions.push('Consider diversifying revenue streams');
   } else if (trend === 'up') {
     actions.push(
-      'Plan for expansion opportunities with positive cash flow trend'
+      'Plan for expansion opportunities with positive cash flow trend',
     );
     actions.push('Consider investing excess cash in growth initiatives');
   }
 
   // Confidence-based recommendations
   const lowConfidencePeriods = predictions.filter(
-    (p) => p.confidence_score < 70
+    (p) => p.confidence_score < 70,
   ).length;
   if (lowConfidencePeriods > 0) {
     actions.push(
-      `Improve data quality and model accuracy for ${lowConfidencePeriods} periods with low confidence`
+      `Improve data quality and model accuracy for ${lowConfidencePeriods} periods with low confidence`,
     );
   }
 

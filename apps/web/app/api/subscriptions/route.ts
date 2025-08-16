@@ -57,7 +57,7 @@ export async function GET(request: NextRequest) {
         plan:subscription_plans(*),
         customer:customers(*),
         usage:subscription_usage(*)
-      `
+      `,
       )
       .order('created_at', { ascending: false })
       .range((page - 1) * limit, page * limit - 1);
@@ -79,7 +79,7 @@ export async function GET(request: NextRequest) {
       logger.error('Error fetching subscriptions:', error);
       return NextResponse.json(
         { error: 'Failed to fetch subscriptions' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -101,7 +101,7 @@ export async function GET(request: NextRequest) {
     logger.error('Error in GET /api/subscriptions:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -129,7 +129,7 @@ export async function POST(request: NextRequest) {
           error: 'Invalid request data',
           details: validationResult.error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -145,7 +145,7 @@ export async function POST(request: NextRequest) {
     if (customerError || !customer) {
       return NextResponse.json(
         { error: 'Customer not found' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -159,7 +159,7 @@ export async function POST(request: NextRequest) {
     if (existingSubscriptions && existingSubscriptions.length > 0) {
       return NextResponse.json(
         { error: 'Customer already has an active subscription' },
-        { status: 409 }
+        { status: 409 },
       );
     }
 
@@ -168,7 +168,7 @@ export async function POST(request: NextRequest) {
       await subscriptionManager.createSubscription(subscriptionData);
 
     logger.info(
-      `Subscription created: ${subscription.id} for customer: ${subscriptionData.customer_id}`
+      `Subscription created: ${subscription.id} for customer: ${subscriptionData.customer_id}`,
     );
 
     return NextResponse.json(
@@ -176,7 +176,7 @@ export async function POST(request: NextRequest) {
         data: subscription,
         message: 'Subscription created successfully',
       },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (error) {
     logger.error('Error in POST /api/subscriptions:', error);
@@ -187,7 +187,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -215,7 +215,7 @@ export async function PUT(request: NextRequest) {
     if (!(userProfile && ['admin', 'owner'].includes(userProfile.role))) {
       return NextResponse.json(
         { error: 'Insufficient permissions' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -225,7 +225,7 @@ export async function PUT(request: NextRequest) {
     if (!(Array.isArray(subscription_ids) && updates)) {
       return NextResponse.json(
         { error: 'Invalid request data' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -237,7 +237,7 @@ export async function PUT(request: NextRequest) {
           error: 'Invalid update data',
           details: validationResult.error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -250,7 +250,7 @@ export async function PUT(request: NextRequest) {
         const updatedSubscription =
           await subscriptionManager.updateSubscription(
             subscriptionId,
-            validationResult.data
+            validationResult.data,
           );
         results.push(updatedSubscription);
       } catch (error) {
@@ -270,7 +270,7 @@ export async function PUT(request: NextRequest) {
     logger.error('Error in PUT /api/subscriptions:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -298,7 +298,7 @@ export async function DELETE(request: NextRequest) {
     if (!(userProfile && ['admin', 'owner'].includes(userProfile.role))) {
       return NextResponse.json(
         { error: 'Insufficient permissions' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -308,7 +308,7 @@ export async function DELETE(request: NextRequest) {
     if (!Array.isArray(subscription_ids)) {
       return NextResponse.json(
         { error: 'Invalid request data' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -321,7 +321,7 @@ export async function DELETE(request: NextRequest) {
         const canceledSubscription =
           await subscriptionManager.cancelSubscription(
             subscriptionId,
-            immediate
+            immediate,
           );
         results.push(canceledSubscription);
       } catch (error) {
@@ -341,7 +341,7 @@ export async function DELETE(request: NextRequest) {
     logger.error('Error in DELETE /api/subscriptions:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

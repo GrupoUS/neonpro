@@ -11,18 +11,18 @@ import {
 import type { SidebarItem, UserProfile } from './DashboardSidebar';
 import { DashboardSidebar } from './DashboardSidebar';
 
-export type BreadcrumbItem = {
+export type BreadcrumbData = {
   title: string;
   href?: string;
 };
 
-export type DashboardLayoutProps = {
+type DashboardLayoutProps = {
   user: UserProfile;
   items: SidebarItem[];
   activeMenuItem?: string;
   onItemSelect?: (item: SidebarItem) => void;
   onUserMenuSelect?: (action: 'profile' | 'settings' | 'logout') => void;
-  breadcrumbs?: BreadcrumbItem[];
+  breadcrumbs?: BreadcrumbData[];
   title?: string;
   description?: string;
   headerActions?: React.ReactNode;
@@ -31,7 +31,6 @@ export type DashboardLayoutProps = {
   sidebarCollapsed?: boolean;
   onSidebarToggle?: () => void;
   notifications?: number;
-  className?: string;
 };
 
 const DashboardLayout = React.forwardRef<HTMLDivElement, DashboardLayoutProps>(
@@ -83,7 +82,7 @@ const DashboardLayout = React.forwardRef<HTMLDivElement, DashboardLayoutProps>(
                   <Breadcrumb>
                     <BreadcrumbList>
                       {breadcrumbs.map((item, index) => (
-                        <React.Fragment key={index}>
+                        <React.Fragment key={item.href || item.title || index}>
                           {index > 0 && <BreadcrumbSeparator />}
                           <BreadcrumbItem>
                             {item.href ? (

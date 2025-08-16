@@ -324,7 +324,7 @@ export class SessionConfig {
 
       // Validate policy configurations
       for (const [_name, policy] of Object.entries(
-        SessionConfig.DEFAULT_POLICIES
+        SessionConfig.DEFAULT_POLICIES,
       )) {
         if (!SessionConfig.validatePolicy(policy)) {
           return false;

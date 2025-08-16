@@ -59,7 +59,7 @@ const _ExecuteStrategySchema = z.object({
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { clinicId: string } }
+  { params }: { params: { clinicId: string } },
 ) {
   try {
     // Validate clinic ID parameter
@@ -73,7 +73,7 @@ export async function GET(
           error: 'Invalid clinic ID',
           details: clinicValidation.error.issues,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -97,7 +97,7 @@ export async function GET(
           error: 'Invalid query parameters',
           details: queryValidation.error.issues,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -132,14 +132,14 @@ export async function GET(
     if (profileError || !userProfile) {
       return NextResponse.json(
         { error: 'User profile not found' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
     if (userProfile.clinic_id !== clinicId) {
       return NextResponse.json(
         { error: 'Access denied to clinic data' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -147,7 +147,7 @@ export async function GET(
     const retentionService = new RetentionAnalyticsService();
     const strategies = await retentionService.getRetentionStrategies(
       clinicId,
-      activeOnly
+      activeOnly,
     );
 
     // Apply additional filters
@@ -155,13 +155,13 @@ export async function GET(
 
     if (strategyType) {
       filteredStrategies = filteredStrategies.filter(
-        (s) => s.strategy_type === strategyType
+        (s) => s.strategy_type === strategyType,
       );
     }
 
     if (status) {
       filteredStrategies = filteredStrategies.filter(
-        (s) => s.status === status
+        (s) => s.status === status,
       );
     }
 
@@ -200,7 +200,7 @@ export async function GET(
     // Apply pagination
     const paginatedStrategies = filteredStrategies.slice(
       offset,
-      offset + limit
+      offset + limit,
     );
 
     // Calculate summary statistics
@@ -217,11 +217,11 @@ export async function GET(
           filteredStrategies.length || 0,
       total_executions: filteredStrategies.reduce(
         (sum, s) => sum + s.execution_count,
-        0
+        0,
       ),
       successful_executions: filteredStrategies.reduce(
         (sum, s) => sum + s.successful_executions,
-        0
+        0,
       ),
     };
 
@@ -252,7 +252,7 @@ export async function GET(
         error: 'Internal server error',
         message: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -263,7 +263,7 @@ export async function GET(
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { clinicId: string } }
+  { params }: { params: { clinicId: string } },
 ) {
   try {
     // Validate clinic ID parameter
@@ -277,7 +277,7 @@ export async function POST(
           error: 'Invalid clinic ID',
           details: clinicValidation.error.issues,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -293,7 +293,7 @@ export async function POST(
           error: 'Invalid strategy data',
           details: validation.error.issues,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -320,14 +320,14 @@ export async function POST(
     if (profileError || !userProfile) {
       return NextResponse.json(
         { error: 'User profile not found' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
     if (userProfile.clinic_id !== clinicId) {
       return NextResponse.json(
         { error: 'Access denied to clinic data' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -336,7 +336,7 @@ export async function POST(
     if (!allowedRoles.includes(userProfile.role)) {
       return NextResponse.json(
         { error: 'Insufficient permissions to create strategies' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -362,7 +362,7 @@ export async function POST(
         error: 'Internal server error',
         message: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

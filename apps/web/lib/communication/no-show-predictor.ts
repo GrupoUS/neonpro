@@ -23,7 +23,7 @@ export class NoShowPredictor {
 
   async updatePrediction(
     _appointmentId: string,
-    _actualOutcome: 'attended' | 'no_show'
+    _actualOutcome: 'attended' | 'no_show',
   ): Promise<void> {
     // Mock implementation for learning
   }

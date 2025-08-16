@@ -156,7 +156,7 @@ class AuthErrorHandler {
     type: AuthErrorType,
     code: string,
     originalError?: Error | any,
-    metadata?: Record<string, any>
+    metadata?: Record<string, any>,
   ): AuthError {
     const errorConfig = ERROR_MESSAGES[code] || ERROR_MESSAGES.unknown_error;
 
@@ -278,7 +278,7 @@ class AuthErrorHandler {
   async retry<T>(
     operation: () => Promise<T>,
     errorType: AuthErrorType,
-    maxRetries: number = RETRY_CONFIG.MAX_RETRIES
+    maxRetries: number = RETRY_CONFIG.MAX_RETRIES,
   ): Promise<T> {
     let lastError: any;
 
@@ -289,7 +289,7 @@ class AuthErrorHandler {
           const delay = Math.min(
             RETRY_CONFIG.BASE_DELAY *
               RETRY_CONFIG.BACKOFF_FACTOR ** (attempt - 1),
-            RETRY_CONFIG.MAX_DELAY
+            RETRY_CONFIG.MAX_DELAY,
           );
 
           toast.info(`Tentativa ${attempt + 1} de ${maxRetries + 1}...`, {
@@ -402,7 +402,7 @@ class AuthErrorHandler {
 
   private determineSeverity(
     type: AuthErrorType,
-    code: string
+    code: string,
   ): AuthErrorSeverity {
     // Critical errors
     if (type === AuthErrorType.SERVER || code.includes('critical')) {
@@ -490,7 +490,7 @@ export function handleAuthError(error: any, type?: AuthErrorType): AuthError {
   return authErrorHandler.createError(
     AuthErrorType.UNKNOWN,
     'unknown_error',
-    error
+    error,
   );
 }
 
@@ -501,7 +501,7 @@ export function displayAuthError(error: any, type?: AuthErrorType): void {
 
 export function withRetry<T>(
   operation: () => Promise<T>,
-  type: AuthErrorType = AuthErrorType.UNKNOWN
+  type: AuthErrorType = AuthErrorType.UNKNOWN,
 ): Promise<T> {
   return authErrorHandler.retry(operation, type);
 }

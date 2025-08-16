@@ -380,7 +380,7 @@ export class LGPDComplianceSystem extends EventEmitter {
       ) {
         const consentValid = await this.consentManager.validateConsent(
           operation.dataSubject,
-          operation.purpose
+          operation.purpose,
         );
 
         if (consentValid.isValid) {
@@ -626,7 +626,7 @@ export class LGPDComplianceSystem extends EventEmitter {
           });
         }
       },
-      5 * 60 * 1000
+      5 * 60 * 1000,
     ); // Every 5 minutes
   }
 
@@ -636,7 +636,7 @@ export class LGPDComplianceSystem extends EventEmitter {
   private logActivity(
     actor: string,
     action: string,
-    details: Record<string, any>
+    details: Record<string, any>,
   ): void {
     const entry = {
       timestamp: new Date(),
@@ -765,7 +765,7 @@ export class LGPDComplianceSystem extends EventEmitter {
  * Create default LGPD system configuration
  */
 export function createDefaultLGPDConfig(
-  organizationInfo: LGPDSystemConfiguration['organization']
+  organizationInfo: LGPDSystemConfiguration['organization'],
 ): LGPDSystemConfiguration {
   return {
     organization: organizationInfo,
@@ -840,7 +840,7 @@ let defaultLGPDSystem: LGPDComplianceSystem | null = null;
  * Get or create default LGPD system
  */
 export function getLGPDSystem(
-  config?: LGPDSystemConfiguration
+  config?: LGPDSystemConfiguration,
 ): LGPDComplianceSystem {
   if (!defaultLGPDSystem && config) {
     defaultLGPDSystem = new LGPDComplianceSystem(config);
@@ -848,7 +848,7 @@ export function getLGPDSystem(
 
   if (!defaultLGPDSystem) {
     throw new Error(
-      'LGPD system not initialized. Please provide configuration.'
+      'LGPD system not initialized. Please provide configuration.',
     );
   }
 

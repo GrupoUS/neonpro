@@ -47,7 +47,7 @@ const CreateRetentionCampaignSchema = z.object({
         'booking_scheduled',
         'payment_made',
         'engagement_rate',
-      ])
+      ]),
     ),
     trackingPeriodDays: z.number().min(1).max(365).default(30),
     abtestEnabled: z.boolean().default(false),
@@ -84,7 +84,7 @@ export async function GET(request: NextRequest) {
     if (!clinicId) {
       return NextResponse.json(
         { error: 'Clinic ID is required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -100,7 +100,7 @@ export async function GET(request: NextRequest) {
         executions:retention_campaign_executions(
           count
         )
-      `
+      `,
       )
       .eq('clinic_id', clinicId)
       .order('created_at', { ascending: false });
@@ -160,7 +160,7 @@ export async function GET(request: NextRequest) {
         error: 'Failed to fetch retention campaigns',
         message: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -180,7 +180,7 @@ export async function POST(request: NextRequest) {
           error: 'Invalid campaign data',
           details: validation.error.issues,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -197,7 +197,7 @@ export async function POST(request: NextRequest) {
     if (clinicError || !clinic) {
       return NextResponse.json(
         { error: 'Clinic not found or access denied' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -221,7 +221,7 @@ export async function POST(request: NextRequest) {
 
     if (campaignError) {
       throw new Error(
-        `Failed to create retention campaign: ${campaignError.message}`
+        `Failed to create retention campaign: ${campaignError.message}`,
       );
     }
 
@@ -250,7 +250,7 @@ export async function POST(request: NextRequest) {
         data: campaign,
         message: 'Retention campaign created successfully',
       },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (error) {
     return NextResponse.json(
@@ -259,7 +259,7 @@ export async function POST(request: NextRequest) {
         error: 'Failed to create retention campaign',
         message: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -279,7 +279,7 @@ export async function PATCH(request: NextRequest) {
           error: 'Invalid metrics data',
           details: validation.error.issues,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -313,7 +313,7 @@ export async function PATCH(request: NextRequest) {
         error: 'Failed to update campaign metrics',
         message: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -29,7 +29,7 @@ class ProgressTrackingService {
 
   // Progress Tracking Management
   async createProgressTracking(
-    data: CreateProgressTrackingRequest
+    data: CreateProgressTrackingRequest,
   ): Promise<ProgressTracking> {
     const user = await this.getCurrentUser();
 
@@ -126,7 +126,7 @@ class ProgressTrackingService {
 
   async updateProgressTracking(
     id: string,
-    data: UpdateProgressTrackingRequest
+    data: UpdateProgressTrackingRequest,
   ): Promise<ProgressTracking> {
     const user = await this.getCurrentUser();
 
@@ -159,7 +159,7 @@ class ProgressTrackingService {
 
   // Progress Milestones Management
   async createProgressMilestone(
-    data: CreateProgressMilestoneRequest
+    data: CreateProgressMilestoneRequest,
   ): Promise<ProgressMilestone> {
     const user = await this.getCurrentUser();
 
@@ -235,7 +235,7 @@ class ProgressTrackingService {
   async validateMilestone(
     id: string,
     validationStatus: 'confirmed' | 'false_positive',
-    notes?: string
+    notes?: string,
   ): Promise<ProgressMilestone> {
     const user = await this.getCurrentUser();
 
@@ -259,7 +259,7 @@ class ProgressTrackingService {
 
   // Progress Predictions Management
   async createProgressPrediction(
-    data: CreateProgressPredictionRequest
+    data: CreateProgressPredictionRequest,
   ): Promise<ProgressPrediction> {
     const user = await this.getCurrentUser();
 
@@ -282,7 +282,7 @@ class ProgressTrackingService {
   }
 
   async getProgressPredictions(
-    patientId?: string
+    patientId?: string,
   ): Promise<ProgressPrediction[]> {
     let query = this.supabase
       .from('progress_predictions')
@@ -303,7 +303,7 @@ class ProgressTrackingService {
   async verifyPrediction(
     id: string,
     actualOutcome: Record<string, any>,
-    accuracyScore: number
+    accuracyScore: number,
   ): Promise<ProgressPrediction> {
     const user = await this.getCurrentUser();
 
@@ -328,13 +328,13 @@ class ProgressTrackingService {
 
   // Multi-Session Analysis
   async createMultiSessionAnalysis(
-    data: CreateMultiSessionAnalysisRequest
+    data: CreateMultiSessionAnalysisRequest,
   ): Promise<MultiSessionAnalysis> {
     const user = await this.getCurrentUser();
 
     // Calculate progression score and trend direction
     const trackingData = await this.getTrackingDataForSessions(
-      data.session_ids
+      data.session_ids,
     );
     const analysis = this.calculateProgressionAnalysis(trackingData);
 
@@ -361,7 +361,7 @@ class ProgressTrackingService {
   }
 
   async getMultiSessionAnalyses(
-    patientId?: string
+    patientId?: string,
   ): Promise<MultiSessionAnalysis[]> {
     let query = this.supabase
       .from('multi_session_analysis')
@@ -381,7 +381,7 @@ class ProgressTrackingService {
 
   // Progress Alerts Management
   async createProgressAlert(
-    data: CreateProgressAlertRequest
+    data: CreateProgressAlertRequest,
   ): Promise<ProgressAlert> {
     const user = await this.getCurrentUser();
 
@@ -483,7 +483,7 @@ class ProgressTrackingService {
 
   async markAlertActionTaken(
     id: string,
-    actionNotes?: string
+    actionNotes?: string,
   ): Promise<ProgressAlert> {
     const user = await this.getCurrentUser();
 
@@ -506,7 +506,7 @@ class ProgressTrackingService {
 
   // Tracking Metrics Management
   async createTrackingMetric(
-    data: TrackingMetricRequest
+    data: TrackingMetricRequest,
   ): Promise<TrackingMetric> {
     const user = await this.getCurrentUser();
 
@@ -548,7 +548,7 @@ class ProgressTrackingService {
 
   // Analytics and Dashboard
   async getProgressDashboardStats(
-    patientId?: string
+    patientId?: string,
   ): Promise<ProgressDashboardStats> {
     const baseQuery = patientId
       ? this.supabase
@@ -570,7 +570,7 @@ class ProgressTrackingService {
         .select('treatment_type')
         .eq(
           patientId ? 'patient_id' : 'validation_status',
-          patientId || 'validated'
+          patientId || 'validated',
         )
         .not('progress_score', 'eq', 100),
       this.supabase
@@ -578,7 +578,7 @@ class ProgressTrackingService {
         .select('*')
         .eq(
           patientId ? 'patient_id' : 'validation_status',
-          patientId || 'confirmed'
+          patientId || 'confirmed',
         ),
       this.supabase
         .from('progress_alerts')
@@ -595,7 +595,7 @@ class ProgressTrackingService {
       activeData && activeData.length > 0
         ? activeData.reduce(
             (sum, item) => sum + (item as any).progress_score,
-            0
+            0,
           ) / activeData.length
         : 0;
 
@@ -603,14 +603,14 @@ class ProgressTrackingService {
       predictionData && predictionData.length > 0
         ? predictionData.reduce(
             (sum, item) => sum + (item as any).accuracy_score,
-            0
+            0,
           ) / predictionData.length
         : 0;
 
     return {
       total_trackings: totalTrackings || 0,
       active_treatments: new Set(
-        activeData?.map((item: any) => item.treatment_type)
+        activeData?.map((item: any) => item.treatment_type),
       ).size,
       average_progress: Math.round(averageProgress * 10) / 10,
       milestone_achievements: milestoneData?.length || 0,
@@ -623,7 +623,7 @@ class ProgressTrackingService {
 
   async getProgressTrendData(
     patientId: string,
-    treatmentType?: string
+    treatmentType?: string,
   ): Promise<ProgressTrendData[]> {
     let query = this.supabase
       .from('progress_tracking')
@@ -662,7 +662,7 @@ class ProgressTrackingService {
 
         return acc;
       },
-      {} as Record<string, ProgressTrendData>
+      {} as Record<string, ProgressTrendData>,
     );
 
     // Calculate trend direction for each group
@@ -698,7 +698,7 @@ class ProgressTrackingService {
       | 'aesthetic'
       | 'treatment_response'
       | 'maintenance',
-    baselineId?: string
+    baselineId?: string,
   ): Promise<CVProgressAnalysis> {
     // This would integrate with actual computer vision service
     // For now, return simulated data
@@ -757,7 +757,7 @@ class ProgressTrackingService {
   }
 
   private async getTrackingDataForSessions(
-    sessionIds: string[]
+    sessionIds: string[],
   ): Promise<ProgressTracking[]> {
     const { data, error } = await this.supabase
       .from('progress_tracking')
@@ -799,11 +799,11 @@ class ProgressTrackingService {
     const variance =
       scores.reduce(
         (sum, score) => sum + (score - (firstScore + lastScore) / 2) ** 2,
-        0
+        0,
       ) / scores.length;
     const statisticalSignificance = Math.min(
       100,
-      (Math.abs(progressionScore) * 10) / Math.sqrt(variance)
+      (Math.abs(progressionScore) * 10) / Math.sqrt(variance),
     );
 
     return {

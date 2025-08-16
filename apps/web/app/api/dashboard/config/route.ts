@@ -31,14 +31,14 @@ export async function GET(request: NextRequest) {
       if (error) {
         return NextResponse.json(
           { error: 'Failed to fetch dashboard config' },
-          { status: 500 }
+          { status: 500 },
         );
       }
 
       if (!data) {
         return NextResponse.json(
           { error: 'Dashboard config not found' },
-          { status: 404 }
+          { status: 404 },
         );
       }
 
@@ -54,7 +54,7 @@ export async function GET(request: NextRequest) {
     if (error) {
       return NextResponse.json(
         { error: 'Failed to fetch dashboard configs' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -62,7 +62,7 @@ export async function GET(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -95,7 +95,7 @@ export async function POST(request: NextRequest) {
     if (error) {
       return NextResponse.json(
         { error: 'Failed to create dashboard config' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -103,7 +103,7 @@ export async function POST(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Invalid request data' },
-      { status: 400 }
+      { status: 400 },
     );
   }
 }
@@ -134,14 +134,14 @@ export async function PUT(request: NextRequest) {
     if (error) {
       return NextResponse.json(
         { error: 'Failed to update dashboard config' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
     if (!data) {
       return NextResponse.json(
         { error: 'Dashboard config not found' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -149,7 +149,7 @@ export async function PUT(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Invalid request data' },
-      { status: 400 }
+      { status: 400 },
     );
   }
 }
@@ -171,7 +171,7 @@ export async function DELETE(request: NextRequest) {
     if (!configId) {
       return NextResponse.json(
         { error: 'Config ID is required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -184,7 +184,7 @@ export async function DELETE(request: NextRequest) {
     if (error) {
       return NextResponse.json(
         { error: 'Failed to delete dashboard config' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -194,7 +194,7 @@ export async function DELETE(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

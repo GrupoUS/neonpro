@@ -37,7 +37,7 @@ export class BehaviorAnalysisEngine {
       const riskFactors = this.identifyBehavioralRisks(
         appointmentPatterns,
         compliancePatterns,
-        communicationPatterns
+        communicationPatterns,
       );
 
       // 4. Generate behavioral insights
@@ -46,14 +46,14 @@ export class BehaviorAnalysisEngine {
         compliancePatterns,
         communicationPatterns,
         treatmentPreferences,
-        satisfactionPatterns
+        satisfactionPatterns,
       );
 
       // 5. Create personalized recommendations
       const recommendations = this.generatePersonalizedRecommendations(
         insights,
         riskFactors,
-        behaviorData
+        behaviorData,
       );
 
       // 6. Calculate behavior score
@@ -61,7 +61,7 @@ export class BehaviorAnalysisEngine {
         appointmentPatterns,
         compliancePatterns,
         communicationPatterns,
-        satisfactionPatterns
+        satisfactionPatterns,
       );
 
       return {
@@ -80,7 +80,7 @@ export class BehaviorAnalysisEngine {
       };
     } catch (error) {
       throw new Error(
-        `Failed to analyze behavior patterns: ${error instanceof Error ? error.message : 'Unknown error'}`
+        `Failed to analyze behavior patterns: ${error instanceof Error ? error.message : 'Unknown error'}`,
       );
     }
   }
@@ -96,28 +96,28 @@ export class BehaviorAnalysisEngine {
       // Check for appointment anomalies
       const appointmentAnomalies = this.detectAppointmentAnomalies(
         currentBehavior,
-        historicalPatterns
+        historicalPatterns,
       );
       anomalies.push(...appointmentAnomalies);
 
       // Check for communication anomalies
       const communicationAnomalies = this.detectCommunicationAnomalies(
         currentBehavior,
-        historicalPatterns
+        historicalPatterns,
       );
       anomalies.push(...communicationAnomalies);
 
       // Check for compliance anomalies
       const complianceAnomalies = this.detectComplianceAnomalies(
         currentBehavior,
-        historicalPatterns
+        historicalPatterns,
       );
       anomalies.push(...complianceAnomalies);
 
       // Check for satisfaction anomalies
       const satisfactionAnomalies = this.detectSatisfactionAnomalies(
         currentBehavior,
-        historicalPatterns
+        historicalPatterns,
       );
       anomalies.push(...satisfactionAnomalies);
 
@@ -129,7 +129,7 @@ export class BehaviorAnalysisEngine {
 
   async predictBehavioralChanges(
     patientId: string,
-    treatmentPlanId: string
+    treatmentPlanId: string,
   ): Promise<BehaviorChangePrediction> {
     try {
       const [behaviorData, treatmentData, similarPatients] = await Promise.all([
@@ -142,27 +142,27 @@ export class BehaviorAnalysisEngine {
       const appointmentCompliance = this.predictAppointmentCompliance(
         behaviorData,
         treatmentData,
-        similarPatients
+        similarPatients,
       );
 
       // Predict treatment adherence
       const treatmentAdherence = this.predictTreatmentAdherence(
         behaviorData,
         treatmentData,
-        similarPatients
+        similarPatients,
       );
 
       // Predict communication needs
       const communicationNeeds = this.predictCommunicationNeeds(
         behaviorData,
-        treatmentData
+        treatmentData,
       );
 
       // Predict satisfaction trajectory
       const satisfactionTrajectory = this.predictSatisfactionTrajectory(
         behaviorData,
         treatmentData,
-        similarPatients
+        similarPatients,
       );
 
       // Generate intervention recommendations
@@ -170,7 +170,7 @@ export class BehaviorAnalysisEngine {
         appointmentCompliance,
         treatmentAdherence,
         communicationNeeds,
-        satisfactionTrajectory
+        satisfactionTrajectory,
       );
 
       return {
@@ -186,13 +186,13 @@ export class BehaviorAnalysisEngine {
       };
     } catch (error) {
       throw new Error(
-        `Failed to predict behavioral changes: ${error instanceof Error ? error.message : 'Unknown error'}`
+        `Failed to predict behavioral changes: ${error instanceof Error ? error.message : 'Unknown error'}`,
       );
     }
   }
 
   async generatePersonalizedCommunicationStrategy(
-    patientId: string
+    patientId: string,
   ): Promise<CommunicationStrategy> {
     try {
       const behaviorData = await this.getPatientBehaviorData(patientId);
@@ -202,32 +202,32 @@ export class BehaviorAnalysisEngine {
       // Analyze communication preferences
       const preferences = this.analyzeCommunicationPreferences(
         behaviorData,
-        communicationHistory
+        communicationHistory,
       );
 
       // Determine optimal communication timing
       const timing = this.determineOptimalTiming(
         behaviorData,
-        communicationHistory
+        communicationHistory,
       );
 
       // Identify communication style preferences
       const style = this.identifyPreferredCommunicationStyle(
         behaviorData,
-        communicationHistory
+        communicationHistory,
       );
 
       // Generate content recommendations
       const contentRecommendations = this.generateContentRecommendations(
         behaviorData,
-        preferences
+        preferences,
       );
 
       // Create engagement strategy
       const engagementStrategy = this.createEngagementStrategy(
         preferences,
         timing,
-        style
+        style,
       );
 
       return {
@@ -243,7 +243,7 @@ export class BehaviorAnalysisEngine {
       };
     } catch (error) {
       throw new Error(
-        `Failed to generate communication strategy: ${error instanceof Error ? error.message : 'Unknown error'}`
+        `Failed to generate communication strategy: ${error instanceof Error ? error.message : 'Unknown error'}`,
       );
     }
   }
@@ -262,7 +262,7 @@ export class BehaviorAnalysisEngine {
         payment_history (*),
         support_tickets (*),
         preferences (*)
-      `
+      `,
       )
       .eq('id', patientId)
       .single();
@@ -289,7 +289,7 @@ export class BehaviorAnalysisEngine {
           *,
           created_at >= '${thirtyDaysAgo.toISOString()}'
         )
-      `
+      `,
       )
       .eq('id', patientId)
       .single();
@@ -324,7 +324,7 @@ export class BehaviorAnalysisEngine {
 
   private async findSimilarPatientBehaviors(
     patientId: string,
-    _treatmentPlanId: string
+    _treatmentPlanId: string,
   ) {
     // Simplified similarity search - in production would use ML clustering
     const { data } = await this.supabase
@@ -334,7 +334,7 @@ export class BehaviorAnalysisEngine {
         *,
         appointments (*),
         satisfaction_scores (*)
-      `
+      `,
       )
       .neq('id', patientId)
       .limit(10);
@@ -344,7 +344,7 @@ export class BehaviorAnalysisEngine {
 
   // Analysis methods
   private async analyzeAppointmentBehavior(
-    behaviorData: any
+    behaviorData: any,
   ): Promise<AppointmentBehaviorPattern> {
     const appointments = behaviorData.appointments || [];
 
@@ -368,7 +368,7 @@ export class BehaviorAnalysisEngine {
   }
 
   private async analyzeComplianceBehavior(
-    behaviorData: any
+    behaviorData: any,
   ): Promise<ComplianceBehaviorPattern> {
     const treatmentSessions = behaviorData.treatment_sessions || [];
     const communications = behaviorData.communications || [];
@@ -376,7 +376,7 @@ export class BehaviorAnalysisEngine {
     const adherenceRate = this.calculateAdherenceRate(treatmentSessions);
     const followUpCompliance = this.calculateFollowUpCompliance(
       treatmentSessions,
-      communications
+      communications,
     );
     const instructionCompliance =
       this.calculateInstructionCompliance(treatmentSessions);
@@ -386,7 +386,7 @@ export class BehaviorAnalysisEngine {
       followUpCompliance,
       instructionCompliance,
       paymentPunctuality: this.calculatePaymentPunctuality(
-        behaviorData.payment_history
+        behaviorData.payment_history,
       ),
       documentationCompliance:
         this.calculateDocumentationCompliance(treatmentSessions),
@@ -396,7 +396,7 @@ export class BehaviorAnalysisEngine {
   }
 
   private async analyzeCommunicationBehavior(
-    behaviorData: any
+    behaviorData: any,
   ): Promise<CommunicationBehaviorPattern> {
     const communications = behaviorData.communications || [];
 
@@ -417,7 +417,7 @@ export class BehaviorAnalysisEngine {
   }
 
   private async analyzeTreatmentPreferences(
-    behaviorData: any
+    behaviorData: any,
   ): Promise<TreatmentPreferencePattern> {
     const treatmentSessions = behaviorData.treatment_sessions || [];
     const preferences = behaviorData.preferences || {};
@@ -426,7 +426,7 @@ export class BehaviorAnalysisEngine {
       preferredTreatmentTypes:
         this.identifyPreferredTreatments(treatmentSessions),
       pricePreferences: this.analyzePricePreferences(
-        behaviorData.payment_history
+        behaviorData.payment_history,
       ),
       timingPreferences: this.analyzeTimingPreferences(treatmentSessions),
       providerPreferences: this.analyzeProviderPreferences(treatmentSessions),
@@ -436,7 +436,7 @@ export class BehaviorAnalysisEngine {
   }
 
   private async analyzeSatisfactionPatterns(
-    behaviorData: any
+    behaviorData: any,
   ): Promise<SatisfactionBehaviorPattern> {
     const satisfactionScores = behaviorData.satisfaction_scores || [];
 
@@ -461,7 +461,7 @@ export class BehaviorAnalysisEngine {
   private identifyBehavioralRisks(
     appointmentPatterns: AppointmentBehaviorPattern,
     compliancePatterns: ComplianceBehaviorPattern,
-    communicationPatterns: CommunicationBehaviorPattern
+    communicationPatterns: CommunicationBehaviorPattern,
   ): BehaviorRiskFactor[] {
     const risks: BehaviorRiskFactor[] = [];
 
@@ -505,7 +505,7 @@ export class BehaviorAnalysisEngine {
     _compliancePatterns: ComplianceBehaviorPattern,
     communicationPatterns: CommunicationBehaviorPattern,
     treatmentPreferences: TreatmentPreferencePattern,
-    _satisfactionPatterns: SatisfactionBehaviorPattern
+    _satisfactionPatterns: SatisfactionBehaviorPattern,
   ): BehaviorInsight[] {
     const insights: BehaviorInsight[] = [];
 
@@ -549,7 +549,7 @@ export class BehaviorAnalysisEngine {
   private generatePersonalizedRecommendations(
     insights: BehaviorInsight[],
     riskFactors: BehaviorRiskFactor[],
-    _behaviorData: any
+    _behaviorData: any,
   ): PersonalizedRecommendation[] {
     const recommendations: PersonalizedRecommendation[] = [];
 
@@ -585,13 +585,13 @@ export class BehaviorAnalysisEngine {
     appointmentPatterns: AppointmentBehaviorPattern,
     compliancePatterns: ComplianceBehaviorPattern,
     communicationPatterns: CommunicationBehaviorPattern,
-    satisfactionPatterns: SatisfactionBehaviorPattern
+    satisfactionPatterns: SatisfactionBehaviorPattern,
   ): BehaviorScore {
     const appointmentScore =
       this.calculateAppointmentScore(appointmentPatterns);
     const complianceScore = this.calculateComplianceScore(compliancePatterns);
     const communicationScore = this.calculateCommunicationScore(
-      communicationPatterns
+      communicationPatterns,
     );
     const satisfactionScore = satisfactionPatterns.averageSatisfaction / 10;
 
@@ -616,7 +616,7 @@ export class BehaviorAnalysisEngine {
       return 0;
     }
     const cancelled = appointments.filter(
-      (apt) => apt.status === 'cancelled'
+      (apt) => apt.status === 'cancelled',
     ).length;
     return cancelled / appointments.length;
   }
@@ -626,7 +626,7 @@ export class BehaviorAnalysisEngine {
       return 0;
     }
     const rescheduled = appointments.filter(
-      (apt) => apt.rescheduled_count > 0
+      (apt) => apt.rescheduled_count > 0,
     ).length;
     return rescheduled / appointments.length;
   }
@@ -636,7 +636,7 @@ export class BehaviorAnalysisEngine {
       return 0;
     }
     const noShows = appointments.filter(
-      (apt) => apt.status === 'no_show'
+      (apt) => apt.status === 'no_show',
     ).length;
     return noShows / appointments.length;
   }
@@ -673,7 +673,7 @@ export class BehaviorAnalysisEngine {
 
   private calculateFollowUpCompliance(
     _treatmentSessions: any[],
-    _communications: any[]
+    _communications: any[],
   ): number {
     // Mock implementation
     return 0.9;
@@ -704,7 +704,7 @@ export class BehaviorAnalysisEngine {
       return 0;
     }
     const responded = communications.filter(
-      (comm) => comm.response_received
+      (comm) => comm.response_received,
     ).length;
     return responded / communications.length;
   }
@@ -798,13 +798,13 @@ export class BehaviorAnalysisEngine {
   }
 
   private calculateAppointmentScore(
-    patterns: AppointmentBehaviorPattern
+    patterns: AppointmentBehaviorPattern,
   ): number {
     return 1 - (patterns.cancellationRate + patterns.noShowRate) / 2;
   }
 
   private calculateComplianceScore(
-    patterns: ComplianceBehaviorPattern
+    patterns: ComplianceBehaviorPattern,
   ): number {
     return (
       (patterns.adherenceRate +
@@ -815,7 +815,7 @@ export class BehaviorAnalysisEngine {
   }
 
   private calculateCommunicationScore(
-    patterns: CommunicationBehaviorPattern
+    patterns: CommunicationBehaviorPattern,
   ): number {
     return patterns.responseRate;
   }
@@ -825,28 +825,28 @@ export class BehaviorAnalysisEngine {
 
   private detectAppointmentAnomalies(
     _current: any,
-    _historical: any[]
+    _historical: any[],
   ): BehaviorAlert[] {
     return []; // Mock implementation
   }
 
   private detectCommunicationAnomalies(
     _current: any,
-    _historical: any[]
+    _historical: any[],
   ): BehaviorAlert[] {
     return []; // Mock implementation
   }
 
   private detectComplianceAnomalies(
     _current: any,
-    _historical: any[]
+    _historical: any[],
   ): BehaviorAlert[] {
     return []; // Mock implementation
   }
 
   private detectSatisfactionAnomalies(
     _current: any,
-    _historical: any[]
+    _historical: any[],
   ): BehaviorAlert[] {
     return []; // Mock implementation
   }
@@ -854,7 +854,7 @@ export class BehaviorAnalysisEngine {
   private predictAppointmentCompliance(
     _behaviorData: any,
     _treatmentData: any,
-    _similarPatients: any[]
+    _similarPatients: any[],
   ): number {
     return 0.85; // Mock implementation
   }
@@ -862,14 +862,14 @@ export class BehaviorAnalysisEngine {
   private predictTreatmentAdherence(
     _behaviorData: any,
     _treatmentData: any,
-    _similarPatients: any[]
+    _similarPatients: any[],
   ): number {
     return 0.9; // Mock implementation
   }
 
   private predictCommunicationNeeds(
     _behaviorData: any,
-    _treatmentData: any
+    _treatmentData: any,
   ): string[] {
     return ['pre_appointment_reminder', 'post_treatment_follow_up']; // Mock implementation
   }
@@ -877,7 +877,7 @@ export class BehaviorAnalysisEngine {
   private predictSatisfactionTrajectory(
     _behaviorData: any,
     _treatmentData: any,
-    _similarPatients: any[]
+    _similarPatients: any[],
   ): number {
     return 8.5; // Mock implementation
   }
@@ -886,7 +886,7 @@ export class BehaviorAnalysisEngine {
     _appointmentCompliance: number,
     _treatmentAdherence: number,
     _communicationNeeds: string[],
-    _satisfactionTrajectory: number
+    _satisfactionTrajectory: number,
   ): string[] {
     return ['Appointment reminders', 'Enhanced follow-up']; // Mock implementation
   }
@@ -897,7 +897,7 @@ export class BehaviorAnalysisEngine {
 
   private analyzeCommunicationPreferences(
     _behaviorData: any,
-    _communicationHistory: any[]
+    _communicationHistory: any[],
   ): CommunicationPreferences {
     return {
       channels: ['email', 'sms'],
@@ -909,7 +909,7 @@ export class BehaviorAnalysisEngine {
 
   private determineOptimalTiming(
     _behaviorData: any,
-    _communicationHistory: any[]
+    _communicationHistory: any[],
   ): OptimalTiming {
     return {
       dayOfWeek: ['tuesday', 'wednesday'],
@@ -920,14 +920,14 @@ export class BehaviorAnalysisEngine {
 
   private identifyPreferredCommunicationStyle(
     _behaviorData: any,
-    _communicationHistory: any[]
+    _communicationHistory: any[],
   ): string {
     return 'professional_friendly'; // Mock implementation
   }
 
   private generateContentRecommendations(
     _behaviorData: any,
-    _preferences: CommunicationPreferences
+    _preferences: CommunicationPreferences,
   ): string[] {
     return [
       'educational_content',
@@ -939,7 +939,7 @@ export class BehaviorAnalysisEngine {
   private createEngagementStrategy(
     _preferences: CommunicationPreferences,
     _timing: OptimalTiming,
-    _style: string
+    _style: string,
   ): EngagementStrategy {
     return {
       approach: 'personalized',
@@ -949,7 +949,7 @@ export class BehaviorAnalysisEngine {
   }
 
   private calculateExpectedResponseRate(
-    _preferences: CommunicationPreferences
+    _preferences: CommunicationPreferences,
   ): number {
     return 0.75; // Mock implementation
   }

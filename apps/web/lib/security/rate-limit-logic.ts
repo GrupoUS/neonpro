@@ -33,7 +33,7 @@ export class RateLimitLogic {
   static checkRateLimit(
     identifier: string,
     route: string,
-    method: string
+    method: string,
   ): RateLimitResult {
     const key = `${identifier}:${route}:${method}`;
     const now = Date.now();

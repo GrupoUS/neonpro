@@ -201,11 +201,11 @@ export function AdvancedMetricsDashboard({
       kpis.reduce((sum, kpi) => sum + kpi.value.changePercent, 0) / kpis.length;
 
     const overPerforming = kpis.filter(
-      (kpi) => kpi.value.target && kpi.value.current >= kpi.value.target
+      (kpi) => kpi.value.target && kpi.value.current >= kpi.value.target,
     ).length;
 
     const underPerforming = kpis.filter(
-      (kpi) => kpi.value.target && kpi.value.current < kpi.value.target * 0.8
+      (kpi) => kpi.value.target && kpi.value.current < kpi.value.target * 0.8,
     ).length;
 
     return {
@@ -231,7 +231,7 @@ export function AdvancedMetricsDashboard({
 
         if (timeGranularity === 'week') {
           const weekStart = new Date(
-            date.setDate(date.getDate() - date.getDay())
+            date.setDate(date.getDate() - date.getDay()),
           );
           key = weekStart.toISOString().split('T')[0];
         } else {
@@ -256,7 +256,7 @@ export function AdvancedMetricsDashboard({
 
         return acc;
       },
-      {} as Record<string, any>
+      {} as Record<string, any>,
     );
 
     return Object.values(grouped).map((item: any) => {
@@ -277,7 +277,7 @@ export function AdvancedMetricsDashboard({
       setSelectedKPI(kpiId === selectedKPI ? null : kpiId);
       onMetricClick?.(kpiId);
     },
-    [selectedKPI, onMetricClick]
+    [selectedKPI, onMetricClick],
   );
 
   // Custom tooltip for charts
@@ -512,7 +512,7 @@ export function AdvancedMetricsDashboard({
                               className="h-1"
                               value={Math.min(
                                 (kpi.value.current / kpi.value.target) * 100,
-                                100
+                                100,
                               )}
                             />
                           </div>
@@ -686,7 +686,7 @@ export function AdvancedMetricsDashboard({
                           name: kpi.title,
                           value: Math.min(
                             (kpi.value.current / kpi.value.target!) * 100,
-                            150
+                            150,
                           ),
                           fill: kpi.color
                             .replace('text-', '#')
@@ -725,7 +725,7 @@ export function AdvancedMetricsDashboard({
                     .sort(
                       (a, b) =>
                         b.value.current / b.value.target! -
-                        a.value.current / a.value.target!
+                        a.value.current / a.value.target!,
                     )
                     .map((kpi, index) => {
                       const achievement =
@@ -918,7 +918,7 @@ export function AdvancedMetricsDashboard({
                           benchmarkData.filter(
                             (b) =>
                               b.value < b.benchmark &&
-                              b.value >= b.benchmark * 0.8
+                              b.value >= b.benchmark * 0.8,
                           ).length
                         }
                       </p>
@@ -938,7 +938,7 @@ export function AdvancedMetricsDashboard({
                       <p className="font-bold text-2xl text-red-900">
                         {
                           benchmarkData.filter(
-                            (b) => b.value < b.benchmark * 0.8
+                            (b) => b.value < b.benchmark * 0.8,
                           ).length
                         }
                       </p>
@@ -962,7 +962,7 @@ export function AdvancedMetricsDashboard({
                   {benchmarkData.map((benchmark) => {
                     const status = getBenchmarkStatus(
                       benchmark.value,
-                      benchmark.benchmark
+                      benchmark.benchmark,
                     );
                     const StatusIcon = status.icon;
 
@@ -1031,7 +1031,7 @@ export function AdvancedMetricsDashboard({
                             className="h-2"
                             value={Math.min(
                               (benchmark.value / benchmark.benchmark) * 100,
-                              150
+                              150,
                             )}
                           />
                         </div>

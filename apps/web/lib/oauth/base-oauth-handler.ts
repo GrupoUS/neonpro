@@ -50,7 +50,7 @@ export abstract class BaseOAuthHandler implements IOAuthHandler {
    */
   abstract exchangeCodeForTokens(
     code: string,
-    state: string
+    state: string,
   ): Promise<OAuthTokens>;
 
   /**
@@ -98,7 +98,7 @@ export abstract class BaseOAuthHandler implements IOAuthHandler {
    * Validate and retrieve OAuth state from database
    */
   protected async validateOAuthState(
-    stateId: string
+    stateId: string,
   ): Promise<OAuthState | null> {
     const supabase = await createClient();
 
@@ -134,13 +134,13 @@ export abstract class BaseOAuthHandler implements IOAuthHandler {
     userId: string,
     clinicId: string,
     tokens: OAuthTokens,
-    profile: OAuthUserProfile
+    profile: OAuthUserProfile,
   ): Promise<string> {
     const supabase = await createClient();
 
     // Encrypt tokens
     const encryptedAccessToken = TokenEncryptionService.encryptToken(
-      tokens.accessToken
+      tokens.accessToken,
     );
     const encryptedRefreshToken = tokens.refreshToken
       ? TokenEncryptionService.encryptToken(tokens.refreshToken)
@@ -185,14 +185,14 @@ export abstract class BaseOAuthHandler implements IOAuthHandler {
    * Retrieve and decrypt tokens from database
    */
   protected async getStoredTokens(
-    accountId: string
+    accountId: string,
   ): Promise<OAuthTokens | null> {
     const supabase = await createClient();
 
     const { data, error } = await supabase
       .from('social_media_accounts')
       .select(
-        'encrypted_access_token, encrypted_refresh_token, token_expires_at, token_scopes'
+        'encrypted_access_token, encrypted_refresh_token, token_expires_at, token_scopes',
       )
       .eq('id', accountId)
       .eq('is_active', true)
@@ -217,14 +217,14 @@ export abstract class BaseOAuthHandler implements IOAuthHandler {
         refreshToken,
         expiresAt: new Date(data.token_expires_at),
         expiresIn: Math.floor(
-          (new Date(data.token_expires_at).getTime() - Date.now()) / 1000
+          (new Date(data.token_expires_at).getTime() - Date.now()) / 1000,
         ),
         tokenType: 'Bearer',
         scope: data.token_scopes?.join(' '),
       };
     } catch (error) {
       throw new Error(
-        `Failed to decrypt tokens: ${error instanceof Error ? error.message : 'Unknown error'}`
+        `Failed to decrypt tokens: ${error instanceof Error ? error.message : 'Unknown error'}`,
       );
     }
   }

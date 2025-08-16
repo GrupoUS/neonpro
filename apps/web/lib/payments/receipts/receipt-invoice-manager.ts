@@ -143,7 +143,7 @@ export class ReceiptInvoiceManager {
     supabaseKey: string,
     companyInfo: CompanyInfo,
     nfseConfig: NFSeConfig,
-    emailConfig: EmailConfig
+    emailConfig: EmailConfig,
   ) {
     this.supabase = createClient(supabaseUrl, supabaseKey);
     this.companyInfo = CompanyInfoSchema.parse(companyInfo);
@@ -164,7 +164,7 @@ export class ReceiptInvoiceManager {
       template: 'modern',
       colors: { primary: '#2563eb', secondary: '#64748b', accent: '#10b981' },
       fonts: { header: 'Helvetica-Bold', body: 'Helvetica' },
-    }
+    },
   ): Promise<GenerationResult> {
     try {
       const validatedData = ReceiptDataSchema.parse(data);
@@ -280,7 +280,7 @@ export class ReceiptInvoiceManager {
   async sendEmail(
     documentId: string,
     recipientEmail?: string,
-    customMessage?: string
+    customMessage?: string,
   ): Promise<EmailResult> {
     try {
       if (!(this.emailConfig.enabled && this.emailTransporter)) {
@@ -322,7 +322,7 @@ export class ReceiptInvoiceManager {
         html: this.processEmailTemplate(
           template.html,
           document.data,
-          customMessage
+          customMessage,
         ),
         attachments: [
           {
@@ -385,7 +385,7 @@ export class ReceiptInvoiceManager {
       dateTo?: Date;
       limit?: number;
       offset?: number;
-    } = {}
+    } = {},
   ) {
     let query = this.supabase
       .from('receipts_invoices')
@@ -418,7 +418,7 @@ export class ReceiptInvoiceManager {
     if (filters.offset) {
       query = query.range(
         filters.offset,
-        filters.offset + (filters.limit || 50) - 1
+        filters.offset + (filters.limit || 50) - 1,
       );
     }
 
@@ -439,7 +439,7 @@ export class ReceiptInvoiceManager {
    */
   async updateStatus(
     id: string,
-    status: 'draft' | 'sent' | 'paid' | 'overdue' | 'cancelled'
+    status: 'draft' | 'sent' | 'paid' | 'overdue' | 'cancelled',
   ) {
     const { data, error } = await this.supabase
       .from('receipts_invoices')
@@ -462,7 +462,7 @@ export class ReceiptInvoiceManager {
   private generatePDFContent(
     doc: PDFKit.PDFDocument,
     data: ReceiptData,
-    options: TemplateOptions
+    options: TemplateOptions,
   ) {
     const { colors, fonts } = options;
 
@@ -485,12 +485,12 @@ export class ReceiptInvoiceManager {
       .text(
         `${this.companyInfo.address}, ${this.companyInfo.city} - ${this.companyInfo.state}`,
         50,
-        80
+        80,
       )
       .text(
         `CEP: ${this.companyInfo.zipCode} | CNPJ: ${this.companyInfo.cnpj}`,
         50,
-        95
+        95,
       );
 
     // Document title and number
@@ -510,14 +510,14 @@ export class ReceiptInvoiceManager {
       .text(
         `Data: ${format(data.date, 'dd/MM/yyyy', { locale: ptBR })}`,
         400,
-        90
+        90,
       );
 
     if (data.dueDate) {
       doc.text(
         `Vencimento: ${format(data.dueDate, 'dd/MM/yyyy', { locale: ptBR })}`,
         400,
-        105
+        105,
       );
     }
 
@@ -589,7 +589,7 @@ export class ReceiptInvoiceManager {
       .text(
         `TOTAL: R$ ${data.total.toFixed(2)}`,
         350,
-        totalsY + (data.taxTotal > 0 ? 35 : 15)
+        totalsY + (data.taxTotal > 0 ? 35 : 15),
       );
 
     // Payment info
@@ -605,7 +605,7 @@ export class ReceiptInvoiceManager {
       doc.text(
         `Data do pagamento: ${format(data.paymentDate, 'dd/MM/yyyy', { locale: ptBR })}`,
         50,
-        totalsY + 65
+        totalsY + 65,
       );
     }
 
@@ -630,7 +630,7 @@ export class ReceiptInvoiceManager {
   }
 
   private async processNFSe(
-    _data: ReceiptData
+    _data: ReceiptData,
   ): Promise<{ nfseNumber: string }> {
     // This is a placeholder for NFSe integration
     // Each provider (Ginfes, ISSNet, WebISS, etc.) has different APIs
@@ -650,14 +650,14 @@ export class ReceiptInvoiceManager {
   private processEmailTemplate(
     template: string,
     data: ReceiptData,
-    customMessage?: string
+    customMessage?: string,
   ): string {
     let processed = template
       .replace(/{{customerName}}/g, data.customer.name)
       .replace(/{{documentNumber}}/g, data.number)
       .replace(
         /{{documentType}}/g,
-        data.type === 'receipt' ? 'recibo' : 'fatura'
+        data.type === 'receipt' ? 'recibo' : 'fatura',
       )
       .replace(/{{total}}/g, `R$ ${data.total.toFixed(2)}`)
       .replace(/{{date}}/g, format(data.date, 'dd/MM/yyyy', { locale: ptBR }))

@@ -69,7 +69,7 @@ export class NLPSearchEngine {
    */
   async processQuery(
     query: string,
-    context?: SearchContext
+    context?: SearchContext,
   ): Promise<NLPSearchQuery> {
     // Normalize the input query
     const normalizedQuery = this.normalizeQuery(query);
@@ -86,7 +86,7 @@ export class NLPSearchEngine {
     // Generate suggestions based on context
     const suggestions = await this.generateSuggestions(
       normalizedQuery,
-      context
+      context,
     );
 
     return {
@@ -321,7 +321,7 @@ export class NLPSearchEngine {
    */
   private entitiesToFilters(
     entities: SearchEntity[],
-    context?: SearchContext
+    context?: SearchContext,
   ): Record<string, any> {
     const filters: Record<string, any> = {};
 
@@ -343,12 +343,12 @@ export class NLPSearchEngine {
               gte: new Date(
                 date.getFullYear(),
                 date.getMonth(),
-                date.getDate()
+                date.getDate(),
               ),
               lt: new Date(
                 date.getFullYear(),
                 date.getMonth(),
-                date.getDate() + 1
+                date.getDate() + 1,
               ),
             };
           }
@@ -407,7 +407,7 @@ export class NLPSearchEngine {
    */
   private async generateSuggestions(
     query: string,
-    context?: SearchContext
+    context?: SearchContext,
   ): Promise<string[]> {
     const suggestions: string[] = [];
 
@@ -433,7 +433,7 @@ export class NLPSearchEngine {
       .filter(
         (pattern) =>
           pattern.toLowerCase().includes(query.toLowerCase()) ||
-          query.toLowerCase().includes(pattern.toLowerCase())
+          query.toLowerCase().includes(pattern.toLowerCase()),
       )
       .slice(0, 2);
 
@@ -534,7 +534,7 @@ export class NLPSearchEngine {
           (entity.endIndex > existing.startIndex &&
             entity.endIndex <= existing.endIndex) ||
           (entity.startIndex <= existing.startIndex &&
-            entity.endIndex >= existing.endIndex)
+            entity.endIndex >= existing.endIndex),
       );
 
       if (!hasOverlap) {

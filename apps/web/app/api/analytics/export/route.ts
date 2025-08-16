@@ -101,7 +101,7 @@ export async function POST(request: NextRequest) {
       default:
         return NextResponse.json(
           { error: 'Unsupported export format' },
-          { status: 400 }
+          { status: 400 },
         );
     }
 
@@ -122,11 +122,11 @@ export async function POST(request: NextRequest) {
     response.headers.set('Content-Type', contentType);
     response.headers.set(
       'Content-Disposition',
-      `attachment; filename="${filename}"`
+      `attachment; filename="${filename}"`,
     );
     response.headers.set(
       'Cache-Control',
-      'no-cache, no-store, must-revalidate'
+      'no-cache, no-store, must-revalidate',
     );
 
     return response;
@@ -134,13 +134,13 @@ export async function POST(request: NextRequest) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Invalid request format', details: error.errors },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     return NextResponse.json(
       { error: 'Export generation failed' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -151,7 +151,7 @@ export async function POST(request: NextRequest) {
 async function generateCSVExport(
   type: string,
   data: any,
-  options: any
+  options: any,
 ): Promise<{ data: string; contentType: string; filename: string }> {
   let csvData = '';
   let filename = `${type}-export-${new Date().toISOString().split('T')[0]}.csv`;
@@ -204,7 +204,7 @@ async function generateCSVExport(
 async function generateExcelExport(
   type: string,
   data: any,
-  options: any
+  options: any,
 ): Promise<{ data: Buffer; contentType: string; filename: string }> {
   const workbook = XLSX.utils.book_new();
   let filename = `${type}-export-${new Date().toISOString().split('T')[0]}.xlsx`;
@@ -257,7 +257,7 @@ async function generateExcelExport(
 async function generatePDFExport(
   type: string,
   data: any,
-  options: any
+  options: any,
 ): Promise<{ data: Buffer; contentType: string; filename: string }> {
   const pdf = new jsPDF('p', 'mm', 'a4');
   const template = options.template || 'standard';
@@ -313,7 +313,7 @@ async function generatePDFExport(
 async function generateJSONExport(
   type: string,
   data: any,
-  options: any
+  options: any,
 ): Promise<{ data: string; contentType: string; filename: string }> {
   let exportData: any = data;
   const filename: string = `${type}-export-${new Date().toISOString().split('T')[0]}.json`;

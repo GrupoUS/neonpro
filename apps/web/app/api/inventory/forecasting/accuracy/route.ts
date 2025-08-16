@@ -30,7 +30,7 @@ export async function GET(request: NextRequest) {
     if (!validation.success) {
       return NextResponse.json(
         { error: 'Invalid parameters', details: validation.error.errors },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -59,7 +59,7 @@ export async function GET(request: NextRequest) {
           name,
           category
         )
-      `
+      `,
       )
       .eq('clinic_id', clinicId)
       .gte('forecast_date', startDate.toISOString())
@@ -102,14 +102,14 @@ export async function GET(request: NextRequest) {
         recommendations: generateAccuracyRecommendations(
           stats,
           byModel,
-          trends
+          trends,
         ),
       },
     });
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to analyze forecast accuracy' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -150,7 +150,7 @@ export async function POST(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to log accuracy data' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -172,7 +172,7 @@ function calculateAccuracyStatistics(data: any[]) {
   const mapes = data.map((d) => d.mape).filter((m) => m !== null);
   const rmses = data.map((d) => d.rmse).filter((r) => r !== null);
   const confidenceHits = data.filter(
-    (d) => d.within_confidence_interval === true
+    (d) => d.within_confidence_interval === true,
   ).length;
 
   return {
@@ -282,20 +282,20 @@ function calculateAccuracyTrends(data: any[], _period: string) {
 function generateAccuracyRecommendations(
   overallStats: any,
   byModel: any,
-  trends: any
+  trends: any,
 ): string[] {
   const recommendations: string[] = [];
 
   // Overall accuracy recommendations
   if (overallStats.averageAccuracy < 0.7) {
     recommendations.push(
-      'Overall forecast accuracy is below 70% - consider reviewing forecasting parameters and data quality'
+      'Overall forecast accuracy is below 70% - consider reviewing forecasting parameters and data quality',
     );
   }
 
   if (overallStats.confidenceIntervalHitRate < 0.8) {
     recommendations.push(
-      'Confidence intervals are not performing well - consider adjusting confidence levels or improving uncertainty estimates'
+      'Confidence intervals are not performing well - consider adjusting confidence levels or improving uncertainty estimates',
     );
   }
 
@@ -314,7 +314,7 @@ function generateAccuracyRecommendations(
 
     if (bestModel.accuracy - worstModel.accuracy > 0.1) {
       recommendations.push(
-        `Consider using ${bestModel.model} more frequently - it shows ${Math.round((bestModel.accuracy - worstModel.accuracy) * 100)}% better accuracy than ${worstModel.model}`
+        `Consider using ${bestModel.model} more frequently - it shows ${Math.round((bestModel.accuracy - worstModel.accuracy) * 100)}% better accuracy than ${worstModel.model}`,
       );
     }
   }
@@ -322,14 +322,14 @@ function generateAccuracyRecommendations(
   // Trend recommendations
   if (trends.trend.direction === 'declining' && trends.trend.isSignificant) {
     recommendations.push(
-      'Forecast accuracy is declining over time - review data quality and model parameters'
+      'Forecast accuracy is declining over time - review data quality and model parameters',
     );
   } else if (
     trends.trend.direction === 'improving' &&
     trends.trend.isSignificant
   ) {
     recommendations.push(
-      'Forecast accuracy is improving - current approach is working well'
+      'Forecast accuracy is improving - current approach is working well',
     );
   }
 

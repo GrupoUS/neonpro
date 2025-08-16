@@ -20,7 +20,7 @@ export interface MonitoringError extends Error {
  * Automatically captures errors and sends them to Sentry
  */
 export function withErrorMonitoring<T extends any[]>(
-  handler: (...args: T) => Promise<NextResponse>
+  handler: (...args: T) => Promise<NextResponse>,
 ) {
   return async (...args: T): Promise<NextResponse> => {
     try {
@@ -55,7 +55,7 @@ export function withErrorMonitoring<T extends any[]>(
           error: 'Internal Server Error',
           timestamp: new Date().toISOString(),
         },
-        { status: 500 }
+        { status: 500 },
       );
     }
   };
@@ -72,7 +72,7 @@ export function reportError(
     tags?: Record<string, string>;
     extra?: Record<string, any>;
     level?: 'info' | 'warning' | 'error' | 'fatal';
-  }
+  },
 ): void {
   Sentry.withScope((scope) => {
     // Set user context
@@ -115,7 +115,7 @@ export function reportError(
  */
 export function withPerformanceMonitoring<T>(
   name: string,
-  operation: () => Promise<T>
+  operation: () => Promise<T>,
 ): Promise<T> {
   const transaction = Sentry.startTransaction({
     op: 'function',
@@ -145,12 +145,12 @@ export function withPerformanceMonitoring<T>(
  */
 export function monitorDatabaseOperation<_T>(
   operation: string,
-  query?: string
+  query?: string,
 ) {
   return (
     _target: any,
     _propertyKey: string,
-    descriptor: PropertyDescriptor
+    descriptor: PropertyDescriptor,
   ) => {
     const originalMethod = descriptor.value;
 
@@ -206,7 +206,7 @@ export function monitorDatabaseOperation<_T>(
  */
 export function trackUserAction(
   action: string,
-  properties?: Record<string, any>
+  properties?: Record<string, any>,
 ): void {
   Sentry.addBreadcrumb({
     message: `User action: ${action}`,
@@ -222,7 +222,7 @@ export function trackUserAction(
 export function trackBusinessMetric(
   metric: string,
   value: number,
-  tags?: Record<string, string>
+  tags?: Record<string, string>,
 ): void {
   Sentry.metrics.gauge(metric, value, {
     tags: {
@@ -242,7 +242,7 @@ export function reportAuthError(
     email?: string;
     provider?: string;
     operation?: string;
-  }
+  },
 ): void {
   Sentry.withScope((scope) => {
     scope.setTag('errorType', 'authentication');

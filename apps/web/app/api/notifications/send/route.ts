@@ -117,7 +117,7 @@ async function validateAuth(_request: NextRequest) {
  */
 async function applyMLOptimization(
   request: SendNotificationRequest,
-  skipOptimization = false
+  skipOptimization = false,
 ) {
   if (skipOptimization || !request.enableMLOptimization) {
     return request;
@@ -134,7 +134,7 @@ async function applyMLOptimization(
           ? new Date(request.scheduledFor)
           : undefined,
         channels: request.channels,
-      }
+      },
     );
 
     // Aplicar otimizações
@@ -183,7 +183,7 @@ async function validateCompliance(request: SendNotificationRequest) {
       request.userId,
       request.clinicId,
       request.type,
-      request.channels?.[0] || NotificationChannel.EMAIL
+      request.channels?.[0] || NotificationChannel.EMAIL,
     );
 
     // Validação médica (se aplicável)
@@ -192,12 +192,12 @@ async function validateCompliance(request: SendNotificationRequest) {
         request.userId,
         request.clinicId,
         request.content,
-        request.type
+        request.type,
       );
 
     const allViolations = [...lgpdCheck.violations, ...medicalCheck.violations];
     const criticalViolations = allViolations.filter(
-      (v) => v.severity === 'critical'
+      (v) => v.severity === 'critical',
     );
 
     if (criticalViolations.length > 0) {
@@ -239,7 +239,7 @@ export async function POST(request: NextRequest) {
     if ('error' in authResult) {
       return NextResponse.json(
         { error: authResult.error },
-        { status: authResult.status }
+        { status: authResult.status },
       );
     }
 
@@ -258,7 +258,7 @@ export async function POST(request: NextRequest) {
             message: e.message,
           })),
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -268,7 +268,7 @@ export async function POST(request: NextRequest) {
     if (profile.clinic_id !== notificationRequest.clinicId) {
       return NextResponse.json(
         { error: 'Usuário não autorizado para esta clínica' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -283,7 +283,7 @@ export async function POST(request: NextRequest) {
           error: complianceResult.error || 'Falha na validação de compliance',
           violations: complianceResult.violations,
         },
-        { status: 422 }
+        { status: 422 },
       );
     }
 
@@ -317,7 +317,7 @@ export async function POST(request: NextRequest) {
       compliance: {
         validated: true,
         warnings: complianceResult.violations?.filter(
-          (v) => v.severity !== 'critical'
+          (v) => v.severity !== 'critical',
         ),
         recommendations: complianceResult.recommendations,
       },
@@ -331,7 +331,7 @@ export async function POST(request: NextRequest) {
         details:
           process.env.NODE_ENV === 'development' ? error.message : undefined,
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -347,7 +347,7 @@ export async function PUT(request: NextRequest) {
     if ('error' in authResult) {
       return NextResponse.json(
         { error: authResult.error },
-        { status: authResult.status }
+        { status: authResult.status },
       );
     }
 
@@ -363,7 +363,7 @@ export async function PUT(request: NextRequest) {
           error: 'Dados inválidos para envio em lote',
           details: validationResult.error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -373,7 +373,7 @@ export async function PUT(request: NextRequest) {
     if (profile.clinic_id !== bulkRequest.clinicId) {
       return NextResponse.json(
         { error: 'Usuário não autorizado para esta clínica' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -387,7 +387,7 @@ export async function PUT(request: NextRequest) {
         // Aplicar otimização e compliance para cada notificação
         const optimizedNotification = await applyMLOptimization(notification);
         const complianceResult = await validateCompliance(
-          optimizedNotification
+          optimizedNotification,
         );
 
         if (!complianceResult.isCompliant) {
@@ -429,7 +429,7 @@ export async function PUT(request: NextRequest) {
         // Delay entre envios se configurado
         if (bulkRequest.batchOptions?.delay) {
           await new Promise((resolve) =>
-            setTimeout(resolve, bulkRequest.batchOptions.delay)
+            setTimeout(resolve, bulkRequest.batchOptions.delay),
           );
         }
       } catch (error) {
@@ -462,7 +462,7 @@ export async function PUT(request: NextRequest) {
         details:
           process.env.NODE_ENV === 'development' ? error.message : undefined,
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -477,7 +477,7 @@ export async function GET(request: NextRequest) {
     if ('error' in authResult) {
       return NextResponse.json(
         { error: authResult.error },
-        { status: authResult.status }
+        { status: authResult.status },
       );
     }
 
@@ -512,7 +512,7 @@ export async function GET(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Erro ao obter configurações' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

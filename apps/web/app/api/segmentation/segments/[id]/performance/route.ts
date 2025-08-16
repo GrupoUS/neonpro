@@ -7,7 +7,7 @@ type RouteParams = {
 
 export async function GET(
   _request: NextRequest,
-  { params }: { params: RouteParams }
+  { params }: { params: RouteParams },
 ) {
   try {
     const supabase = await createClient();
@@ -76,7 +76,7 @@ export async function GET(
         error: 'Failed to fetch segment performance',
         details: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

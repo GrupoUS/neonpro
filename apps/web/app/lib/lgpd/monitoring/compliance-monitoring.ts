@@ -186,12 +186,12 @@ class RealTimeComplianceMonitor {
       // Set up monitoring intervals
       this.monitoringInterval = setInterval(
         () => this.performFullAssessment(),
-        MONITORING_CONFIG.ASSESSMENT_FREQUENCY
+        MONITORING_CONFIG.ASSESSMENT_FREQUENCY,
       );
 
       this.alertCheckInterval = setInterval(
         () => this.checkForAlerts(),
-        MONITORING_CONFIG.ALERT_CHECK_FREQUENCY
+        MONITORING_CONFIG.ALERT_CHECK_FREQUENCY,
       );
 
       // Log monitoring start
@@ -232,7 +232,7 @@ class RealTimeComplianceMonitor {
       const alerts = await this.getActiveAlerts();
       const recommendations = await this.generateRecommendations(
         metrics,
-        violations
+        violations,
       );
 
       return {
@@ -253,7 +253,7 @@ class RealTimeComplianceMonitor {
    * Add real-time status listener
    */
   addStatusListener(
-    listener: (status: RealTimeComplianceStatus) => void
+    listener: (status: RealTimeComplianceStatus) => void,
   ): void {
     this.listeners.push(listener);
   }
@@ -262,7 +262,7 @@ class RealTimeComplianceMonitor {
    * Remove status listener
    */
   removeStatusListener(
-    listener: (status: RealTimeComplianceStatus) => void
+    listener: (status: RealTimeComplianceStatus) => void,
   ): void {
     const index = this.listeners.indexOf(listener);
     if (index >= 0) {
@@ -281,7 +281,7 @@ class RealTimeComplianceMonitor {
    * Report violation manually
    */
   async reportViolation(
-    violation: Omit<ComplianceViolation, 'id' | 'detectedAt' | 'status'>
+    violation: Omit<ComplianceViolation, 'id' | 'detectedAt' | 'status'>,
   ): Promise<void> {
     try {
       const newViolation: ComplianceViolation = {
@@ -315,7 +315,7 @@ class RealTimeComplianceMonitor {
   async resolveViolation(
     violationId: string,
     resolution: string,
-    responsible: string
+    responsible: string,
   ): Promise<void> {
     try {
       const violations = this.getStoredViolations();
@@ -362,7 +362,7 @@ class RealTimeComplianceMonitor {
    */
   async acknowledgeAlert(
     alertId: string,
-    acknowledgedBy: string
+    acknowledgedBy: string,
   ): Promise<void> {
     try {
       const alerts = this.getStoredAlerts();
@@ -413,16 +413,16 @@ class RealTimeComplianceMonitor {
             0;
           return sum + score * weight;
         },
-        0
+        0,
       );
 
       // Get violation counts
       const violations = await this.getActiveViolations();
       const criticalViolations = violations.filter(
-        (v) => v.severity === 'critical'
+        (v) => v.severity === 'critical',
       ).length;
       const resolvedViolations = this.getStoredViolations().filter(
-        (v) => v.status === 'resolved'
+        (v) => v.status === 'resolved',
       ).length;
 
       // Get consent metrics
@@ -484,7 +484,7 @@ class RealTimeComplianceMonitor {
       const consentMetrics = await lgpdComplianceManager.getConsentMetrics();
       const violations = this.getStoredViolations().filter(
         (v) =>
-          v.type === ViolationType.CONSENT_VIOLATION && v.status !== 'resolved'
+          v.type === ViolationType.CONSENT_VIOLATION && v.status !== 'resolved',
       );
 
       let baseScore = 100;
@@ -514,7 +514,7 @@ class RealTimeComplianceMonitor {
       const violations = this.getStoredViolations().filter(
         (v) =>
           v.type === ViolationType.RESPONSE_TIME_VIOLATION &&
-          v.status !== 'resolved'
+          v.status !== 'resolved',
       );
 
       let baseScore = 100;
@@ -543,7 +543,8 @@ class RealTimeComplianceMonitor {
       const securityMetrics = await securityAuditLogger.getSecurityMetrics(24);
       const violations = this.getStoredViolations().filter(
         (v) =>
-          v.type === ViolationType.SECURITY_VIOLATION && v.status !== 'resolved'
+          v.type === ViolationType.SECURITY_VIOLATION &&
+          v.status !== 'resolved',
       );
 
       let baseScore = 100;
@@ -567,7 +568,7 @@ class RealTimeComplianceMonitor {
       const securityMetrics = await securityAuditLogger.getSecurityMetrics(24);
       const violations = this.getStoredViolations().filter(
         (v) =>
-          v.type === ViolationType.AUDIT_VIOLATION && v.status !== 'resolved'
+          v.type === ViolationType.AUDIT_VIOLATION && v.status !== 'resolved',
       );
 
       let baseScore = 100;
@@ -593,7 +594,7 @@ class RealTimeComplianceMonitor {
       const violations = this.getStoredViolations().filter(
         (v) =>
           v.type === ViolationType.RETENTION_VIOLATION &&
-          v.status !== 'resolved'
+          v.status !== 'resolved',
       );
 
       let baseScore = 100;
@@ -697,7 +698,7 @@ class RealTimeComplianceMonitor {
 
   private async generateRecommendations(
     metrics: ComplianceMetrics,
-    _violations: ComplianceViolation[]
+    _violations: ComplianceViolation[],
   ): Promise<ComplianceRecommendation[]> {
     const recommendations: ComplianceRecommendation[] = [];
 
@@ -724,7 +725,7 @@ class RealTimeComplianceMonitor {
   }
 
   private async createViolationAlert(
-    violation: ComplianceViolation
+    violation: ComplianceViolation,
   ): Promise<void> {
     await this.createAlert({
       type: 'violation',
@@ -739,7 +740,7 @@ class RealTimeComplianceMonitor {
   }
 
   private async createAlert(
-    alertData: Omit<ComplianceAlert, 'id' | 'createdAt' | 'acknowledged'>
+    alertData: Omit<ComplianceAlert, 'id' | 'createdAt' | 'acknowledged'>,
   ): Promise<void> {
     const alert: ComplianceAlert = {
       ...alertData,
@@ -759,7 +760,7 @@ class RealTimeComplianceMonitor {
   }
 
   private async updateComplianceTrends(
-    _metrics: ComplianceMetrics
+    _metrics: ComplianceMetrics,
   ): Promise<void> {
     // TODO: Implement trend tracking
     // Store historical metrics and calculate trends
@@ -810,7 +811,7 @@ class RealTimeComplianceMonitor {
   private storeViolations(violations: ComplianceViolation[]): void {
     localStorage.setItem(
       'lgpd_compliance_violations',
-      JSON.stringify(violations)
+      JSON.stringify(violations),
     );
   }
 
@@ -845,7 +846,7 @@ export async function getComplianceStatus(): Promise<RealTimeComplianceStatus> {
 }
 
 export async function reportComplianceViolation(
-  violation: Omit<ComplianceViolation, 'id' | 'detectedAt' | 'status'>
+  violation: Omit<ComplianceViolation, 'id' | 'detectedAt' | 'status'>,
 ): Promise<void> {
   return realTimeComplianceMonitor.reportViolation(violation);
 }
@@ -853,12 +854,12 @@ export async function reportComplianceViolation(
 export async function resolveComplianceViolation(
   violationId: string,
   resolution: string,
-  responsible: string
+  responsible: string,
 ): Promise<void> {
   return realTimeComplianceMonitor.resolveViolation(
     violationId,
     resolution,
-    responsible
+    responsible,
   );
 }
 

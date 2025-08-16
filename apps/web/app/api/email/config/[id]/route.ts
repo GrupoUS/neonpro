@@ -5,7 +5,7 @@ import { createClient } from '@/app/utils/supabase/server';
 
 export async function GET(
   _request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const supabase = await createClient();
@@ -39,7 +39,7 @@ export async function GET(
     if (!config) {
       return NextResponse.json(
         { error: 'Configuration not found' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -47,14 +47,14 @@ export async function GET(
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const supabase = await createClient();
@@ -102,7 +102,7 @@ export async function PATCH(
     if (!config) {
       return NextResponse.json(
         { error: 'Configuration not found' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -111,20 +111,20 @@ export async function PATCH(
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Invalid configuration data', details: error.errors },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
 
 export async function DELETE(
   _request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const supabase = await createClient();
@@ -162,7 +162,7 @@ export async function DELETE(
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -145,7 +145,7 @@ export class ConsumptionAnalyzer {
   async getConsumptionAnalytics(
     centroCustoId: string,
     dataInicio: Date,
-    dataFim: Date
+    dataFim: Date,
   ): Promise<{
     data: ConsumptionAnalytics | null;
     error: string | null;
@@ -160,7 +160,7 @@ export class ConsumptionAnalyzer {
           *,
           produto:produtos_estoque(nome, categoria, preco_custo),
           centro_custo:centros_custo(nome)
-        `
+        `,
           )
           .eq('centro_custo_id', centroCustoId)
           .gte('data_saida', dataInicio.toISOString())
@@ -181,41 +181,41 @@ export class ConsumptionAnalyzer {
       // 2. Calculate totals
       const totalQuantity = consumptions.reduce(
         (sum, c) => sum + c.quantidade,
-        0
+        0,
       );
       const totalValue = consumptions.reduce(
         (sum, c) => sum + c.valor_total,
-        0
+        0,
       );
       const uniqueProducts = new Set(consumptions.map((c) => c.produto_id))
         .size;
       const totalDays = Math.ceil(
-        (dataFim.getTime() - dataInicio.getTime()) / (1000 * 60 * 60 * 24)
+        (dataFim.getTime() - dataInicio.getTime()) / (1000 * 60 * 60 * 24),
       );
 
       // 3. Get product consumption details
       const productConsumptions = await this.calculateProductConsumptions(
         consumptions,
-        totalValue
+        totalValue,
       );
 
       // 4. Calculate trends
       const trends = await this.calculateConsumptionTrends(
         centroCustoId,
         dataInicio,
-        dataFim
+        dataFim,
       );
 
       // 5. Calculate cost efficiency
       const costEfficiency = await this.calculateCostEfficiency(
         consumptions,
-        centroCustoId
+        centroCustoId,
       );
 
       // 6. Generate alerts
       const alerts = await this.generateConsumptionAlerts(
         consumptions,
-        productConsumptions
+        productConsumptions,
       );
 
       const analytics: ConsumptionAnalytics = {
@@ -262,7 +262,7 @@ export class ConsumptionAnalyzer {
   async getConsumptionForecast(
     centroCustoId: string,
     produtoIds?: string[],
-    diasPrevisao = 30
+    diasPrevisao = 30,
   ): Promise<{
     data: ConsumptionForecast[] | null;
     error: string | null;
@@ -278,7 +278,7 @@ export class ConsumptionAnalyzer {
           `
           *,
           produto:produtos_estoque(nome, categoria)
-        `
+        `,
         )
         .eq('centro_custo_id', centroCustoId)
         .gte('data_saida', sixMonthsAgo.toISOString())
@@ -311,7 +311,7 @@ export class ConsumptionAnalyzer {
           acc[productId].push(consumption);
           return acc;
         },
-        {} as Record<string, any[]>
+        {} as Record<string, any[]>,
       );
 
       const forecasts = Object.entries(productGroups).map(
@@ -319,9 +319,9 @@ export class ConsumptionAnalyzer {
           return this.calculateProductForecast(
             productId,
             consumptions,
-            diasPrevisao
+            diasPrevisao,
           );
-        }
+        },
       );
 
       const resolvedForecasts = await Promise.all(forecasts);
@@ -343,7 +343,7 @@ export class ConsumptionAnalyzer {
    */
   async identifyConsumptionPatterns(
     centroCustoId: string,
-    mesesAnalise = 6
+    mesesAnalise = 6,
   ): Promise<{
     data: ConsumptionPattern[] | null;
     error: string | null;
@@ -358,7 +358,7 @@ export class ConsumptionAnalyzer {
           `
           *,
           produto:produtos_estoque(nome, categoria)
-        `
+        `,
         )
         .eq('centro_custo_id', centroCustoId)
         .gte('data_saida', startDate.toISOString())
@@ -386,7 +386,7 @@ export class ConsumptionAnalyzer {
           acc[productId].push(consumption);
           return acc;
         },
-        {} as Record<string, any[]>
+        {} as Record<string, any[]>,
       );
 
       const patterns = Object.entries(productGroups).map(
@@ -394,9 +394,9 @@ export class ConsumptionAnalyzer {
           return this.analyzeProductPattern(
             centroCustoId,
             productId,
-            productConsumptions
+            productConsumptions,
           );
-        }
+        },
       );
 
       const resolvedPatterns = await Promise.all(patterns);
@@ -419,7 +419,7 @@ export class ConsumptionAnalyzer {
   async generateCostOptimizationRecommendations(
     centroCustoId: string,
     dataInicio: Date,
-    dataFim: Date
+    dataFim: Date,
   ): Promise<{
     data: EfficiencyOpportunity[] | null;
     error: string | null;
@@ -429,7 +429,7 @@ export class ConsumptionAnalyzer {
       const { data: analytics } = await this.getConsumptionAnalytics(
         centroCustoId,
         dataInicio,
-        dataFim
+        dataFim,
       );
 
       if (!analytics) {
@@ -443,13 +443,13 @@ export class ConsumptionAnalyzer {
 
       // 1. Analyze supplier consolidation opportunities
       const supplierOpportunities = await this.analyzeSupplierConsolidation(
-        analytics.produtos_mais_consumidos
+        analytics.produtos_mais_consumidos,
       );
       opportunities.push(...supplierOpportunities);
 
       // 2. Analyze batch optimization opportunities
       const batchOpportunities = await this.analyzeBatchOptimization(
-        analytics.produtos_mais_consumidos
+        analytics.produtos_mais_consumidos,
       );
       opportunities.push(...batchOpportunities);
 
@@ -457,13 +457,13 @@ export class ConsumptionAnalyzer {
       const wasteOpportunities = await this.analyzeWasteReduction(
         centroCustoId,
         dataInicio,
-        dataFim
+        dataFim,
       );
       opportunities.push(...wasteOpportunities);
 
       // 4. Analyze product substitution opportunities
       const substitutionOpportunities = await this.analyzeProductSubstitution(
-        analytics.produtos_mais_consumidos
+        analytics.produtos_mais_consumidos,
       );
       opportunities.push(...substitutionOpportunities);
 
@@ -487,7 +487,7 @@ export class ConsumptionAnalyzer {
    */
   private async calculateProductConsumptions(
     consumptions: any[],
-    totalValue: number
+    totalValue: number,
   ): Promise<ProductConsumption[]> {
     const productGroups = consumptions.reduce(
       (acc, consumption) => {
@@ -512,7 +512,7 @@ export class ConsumptionAnalyzer {
 
         return acc;
       },
-      {} as Record<string, any>
+      {} as Record<string, any>,
     );
 
     return Object.values(productGroups)
@@ -520,7 +520,7 @@ export class ConsumptionAnalyzer {
         const custoMedio =
           group.valores_unitarios.reduce(
             (sum: number, val: number) => sum + val,
-            0
+            0,
           ) / group.valores_unitarios.length;
         const percentualConsumo = (group.valor_consumido / totalValue) * 100;
 
@@ -546,14 +546,14 @@ export class ConsumptionAnalyzer {
   private async calculateConsumptionTrends(
     centroCustoId: string,
     dataInicio: Date,
-    dataFim: Date
+    dataFim: Date,
   ): Promise<ConsumptionTrend[]> {
     // This would implement sophisticated trend analysis
     // For now, returning simplified trends
     const trends: ConsumptionTrend[] = [];
 
     const totalDays = Math.ceil(
-      (dataFim.getTime() - dataInicio.getTime()) / (1000 * 60 * 60 * 24)
+      (dataFim.getTime() - dataInicio.getTime()) / (1000 * 60 * 60 * 24),
     );
     const weekCount = Math.ceil(totalDays / 7);
 
@@ -576,11 +576,11 @@ export class ConsumptionAnalyzer {
       if (weekConsumptions) {
         const totalQuantity = weekConsumptions.reduce(
           (sum, c) => sum + c.quantidade,
-          0
+          0,
         );
         const totalValue = weekConsumptions.reduce(
           (sum, c) => sum + c.valor_total,
-          0
+          0,
         );
 
         trends.push({
@@ -601,7 +601,7 @@ export class ConsumptionAnalyzer {
               : 0,
           eficiencia_score: this.calculateEfficiencyScore(
             totalQuantity,
-            totalValue
+            totalValue,
           ),
         });
       }
@@ -615,19 +615,19 @@ export class ConsumptionAnalyzer {
    */
   private async calculateCostEfficiency(
     consumptions: any[],
-    _centroCustoId: string
+    _centroCustoId: string,
   ): Promise<CostEfficiency> {
     const totalValue = consumptions.reduce((sum, c) => sum + c.valor_total, 0);
     const totalQuantity = consumptions.reduce(
       (sum, c) => sum + c.quantidade,
-      0
+      0,
     );
     const avgCostPerUnit = totalValue / totalQuantity;
 
     // Calculate efficiency score (simplified)
     const efficiencyScore = this.calculateEfficiencyScore(
       totalQuantity,
-      totalValue
+      totalValue,
     );
 
     // Identify potential savings (simplified calculation)
@@ -676,7 +676,7 @@ export class ConsumptionAnalyzer {
    */
   private async generateConsumptionAlerts(
     _consumptions: any[],
-    productConsumptions: ProductConsumption[]
+    productConsumptions: ProductConsumption[],
   ): Promise<ConsumptionAlert[]> {
     const alerts: ConsumptionAlert[] = [];
 
@@ -720,12 +720,12 @@ export class ConsumptionAnalyzer {
   private async calculateProductForecast(
     productId: string,
     consumptions: any[],
-    diasPrevisao: number
+    diasPrevisao: number,
   ): Promise<ConsumptionForecast> {
     // Simplified forecast calculation
     const totalQuantity = consumptions.reduce(
       (sum, c) => sum + c.quantidade,
-      0
+      0,
     );
     const totalValue = consumptions.reduce((sum, c) => sum + c.valor_total, 0);
     const avgDailyConsumption = totalQuantity / 180; // Assuming 6 months = 180 days
@@ -758,7 +758,7 @@ export class ConsumptionAnalyzer {
   private async analyzeProductPattern(
     centroCustoId: string,
     productId: string,
-    consumptions: any[]
+    consumptions: any[],
   ): Promise<ConsumptionPattern> {
     // Analyze consumption frequency and patterns
     const monthlyConsumption = consumptions.length / 6; // 6 months of data
@@ -768,10 +768,10 @@ export class ConsumptionAnalyzer {
 
     // Analyze time patterns
     const hourPatterns = consumptions.map((c) =>
-      new Date(c.data_saida).getHours()
+      new Date(c.data_saida).getHours(),
     );
     const dayPatterns = consumptions.map((c) =>
-      new Date(c.data_saida).getDay()
+      new Date(c.data_saida).getDay(),
     );
 
     const peakHours = this.findPeakHours(hourPatterns);
@@ -811,7 +811,7 @@ export class ConsumptionAnalyzer {
         acc[hour] = (acc[hour] || 0) + 1;
         return acc;
       },
-      {} as Record<number, number>
+      {} as Record<number, number>,
     );
 
     const sortedHours = Object.entries(hourCounts)
@@ -831,7 +831,7 @@ export class ConsumptionAnalyzer {
         acc[day] = (acc[day] || 0) + 1;
         return acc;
       },
-      {} as Record<number, number>
+      {} as Record<number, number>,
     );
 
     return Object.entries(dayCounts)
@@ -849,7 +849,10 @@ export class ConsumptionAnalyzer {
     const benchmarkCost = 10; // Benchmark cost per unit
     const efficiency = Math.max(
       0,
-      Math.min(100, 100 - ((costPerUnit - benchmarkCost) / benchmarkCost) * 100)
+      Math.min(
+        100,
+        100 - ((costPerUnit - benchmarkCost) / benchmarkCost) * 100,
+      ),
     );
     return Math.round(efficiency);
   }
@@ -858,7 +861,7 @@ export class ConsumptionAnalyzer {
    * Analyze supplier consolidation opportunities
    */
   private async analyzeSupplierConsolidation(
-    products: ProductConsumption[]
+    products: ProductConsumption[],
   ): Promise<EfficiencyOpportunity[]> {
     // Simplified analysis - would involve complex supplier analysis
     const highValueProducts = products.filter((p) => p.valor_consumido > 1000);
@@ -885,7 +888,7 @@ export class ConsumptionAnalyzer {
    * Analyze batch optimization opportunities
    */
   private async analyzeBatchOptimization(
-    products: ProductConsumption[]
+    products: ProductConsumption[],
   ): Promise<EfficiencyOpportunity[]> {
     const opportunities: EfficiencyOpportunity[] = [];
 
@@ -911,7 +914,7 @@ export class ConsumptionAnalyzer {
   private async analyzeWasteReduction(
     _centroCustoId: string,
     _dataInicio: Date,
-    _dataFim: Date
+    _dataFim: Date,
   ): Promise<EfficiencyOpportunity[]> {
     // Simplified waste analysis - would involve complex waste detection
     return [
@@ -930,10 +933,10 @@ export class ConsumptionAnalyzer {
    * Analyze product substitution opportunities
    */
   private async analyzeProductSubstitution(
-    products: ProductConsumption[]
+    products: ProductConsumption[],
   ): Promise<EfficiencyOpportunity[]> {
     const expensiveProducts = products.filter(
-      (p) => p.custo_medio_unitario > 50
+      (p) => p.custo_medio_unitario > 50,
     );
 
     return expensiveProducts.slice(0, 3).map((product) => ({

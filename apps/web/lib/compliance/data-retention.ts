@@ -192,7 +192,7 @@ export class DataRetentionEngine {
    * Anonimiza dados que passaram do período de anonimização
    */
   private async anonymizeExpiredData(
-    policy: RetentionPolicy
+    policy: RetentionPolicy,
   ): Promise<ComplianceRecord[]> {
     if (!policy.anonymize_after_days) {
       return [];
@@ -220,7 +220,7 @@ export class DataRetentionEngine {
     for (const record of records) {
       const anonymizedData = this.applyAnonymization(
         record,
-        anonymizationRules
+        anonymizationRules,
       );
 
       // Atualizar registro com dados anonimizados
@@ -255,7 +255,7 @@ export class DataRetentionEngine {
    * Deleta dados que passaram do período de retenção
    */
   private async deleteExpiredData(
-    policy: RetentionPolicy
+    policy: RetentionPolicy,
   ): Promise<ComplianceRecord[]> {
     const cutoffDate = new Date();
     cutoffDate.setDate(cutoffDate.getDate() - policy.delete_after_days);
@@ -319,7 +319,7 @@ export class DataRetentionEngine {
 
         case 'hash':
           anonymizedRecord[rule.field_name] = this.hashValue(
-            anonymizedRecord[rule.field_name]
+            anonymizedRecord[rule.field_name],
           );
           break;
 
@@ -330,7 +330,7 @@ export class DataRetentionEngine {
         case 'generalize':
           anonymizedRecord[rule.field_name] = this.generalizeValue(
             anonymizedRecord[rule.field_name],
-            rule.generalization_level
+            rule.generalization_level,
           );
           break;
       }
@@ -376,7 +376,7 @@ export class DataRetentionEngine {
    * Registra ações de compliance no audit log
    */
   private async logComplianceActions(
-    complianceRecords: ComplianceRecord[]
+    complianceRecords: ComplianceRecord[],
   ): Promise<void> {
     if (complianceRecords.length === 0) {
       return;
@@ -406,7 +406,7 @@ export class DataRetentionEngine {
     const policy = RETENTION_POLICIES.find((p) => p.table === tableName);
     if (!policy) {
       throw new Error(
-        `Política de retenção não encontrada para tabela: ${tableName}`
+        `Política de retenção não encontrada para tabela: ${tableName}`,
       );
     }
     // Contar total de registros
@@ -419,7 +419,7 @@ export class DataRetentionEngine {
     if (policy.anonymize_after_days) {
       const anonymizationCutoff = new Date();
       anonymizationCutoff.setDate(
-        anonymizationCutoff.getDate() - policy.anonymize_after_days
+        anonymizationCutoff.getDate() - policy.anonymize_after_days,
       );
 
       const { count } = await this.supabase
@@ -445,7 +445,7 @@ export class DataRetentionEngine {
           (1 -
             (recordsNeedAnonymization + (recordsNeedDeletion || 0)) /
               totalRecords) *
-            100
+            100,
         )
       : 100;
 

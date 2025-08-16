@@ -145,7 +145,7 @@ export class SearchAnalytics {
    * Track a search event
    */
   async trackSearchEvent(
-    event: Omit<SearchEvent, 'id' | 'timestamp'>
+    event: Omit<SearchEvent, 'id' | 'timestamp'>,
   ): Promise<void> {
     try {
       const searchEvent: SearchEvent = {
@@ -193,7 +193,7 @@ export class SearchAnalytics {
     query: string,
     resultId: string,
     action: 'click' | 'view' | 'bookmark' | 'share',
-    position: number
+    position: number,
   ): Promise<void> {
     try {
       const { error } = await this.supabase
@@ -216,7 +216,7 @@ export class SearchAnalytics {
    * Get comprehensive search metrics
    */
   async getSearchMetrics(
-    options: AnalyticsOptions = {}
+    options: AnalyticsOptions = {},
   ): Promise<SearchMetrics> {
     const cacheKey = `metrics_${JSON.stringify(options)}`;
     const cached = this.metricsCache.get(cacheKey);
@@ -271,7 +271,7 @@ export class SearchAnalytics {
    */
   async getUserSearchBehavior(
     userId: string,
-    days = 30
+    days = 30,
   ): Promise<UserSearchBehavior> {
     const startDate = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
 
@@ -348,7 +348,7 @@ export class SearchAnalytics {
         .gt('response_time', this.performanceThresholds.responseTime)
         .gte(
           'created_at',
-          new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()
+          new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
         )
         .order('response_time', { ascending: false })
         .limit(100);
@@ -386,7 +386,7 @@ export class SearchAnalytics {
     const recommendations = this.generateRecommendations(
       summary,
       alerts,
-      optimizations
+      optimizations,
     );
 
     return {
@@ -495,7 +495,7 @@ export class SearchAnalytics {
         type,
         count: stats.count,
         avgResponseTime: stats.totalTime / stats.count,
-      })
+      }),
     );
 
     // Performance breakdown
@@ -510,7 +510,7 @@ export class SearchAnalytics {
           total: acc.total + event.response_time,
         };
       },
-      { nlpProcessing: 0, databaseQuery: 0, resultProcessing: 0, total: 0 }
+      { nlpProcessing: 0, databaseQuery: 0, resultProcessing: 0, total: 0 },
     );
 
     // Average the breakdown
@@ -536,7 +536,7 @@ export class SearchAnalytics {
 
   private analyzeBehavior(
     searchEvents: any[],
-    interactions: any[]
+    interactions: any[],
   ): UserSearchBehavior {
     const totalSearches = searchEvents.length;
 
@@ -576,7 +576,7 @@ export class SearchAnalytics {
     const averageSessionDuration =
       Array.from(sessions.values()).reduce(
         (sum, session) => sum + (session.end - session.start),
-        0
+        0,
       ) / sessions.size;
 
     // Preferred search types
@@ -584,7 +584,7 @@ export class SearchAnalytics {
     searchEvents.forEach((event) => {
       typeCount.set(
         event.search_type,
-        (typeCount.get(event.search_type) || 0) + 1
+        (typeCount.get(event.search_type) || 0) + 1,
       );
     });
 
@@ -605,7 +605,7 @@ export class SearchAnalytics {
 
     // Click-through rate
     const clickedSessions = new Set(
-      interactions.filter((i) => i.action === 'click').map((i) => i.session_id)
+      interactions.filter((i) => i.action === 'click').map((i) => i.session_id),
     );
     const clickThroughRate = clickedSessions.size / sessions.size;
 
@@ -620,7 +620,7 @@ export class SearchAnalytics {
       performancePreferences: {
         prefersVoice: preferredSearchTypes[0] === 'voice',
         prefersFilters: searchEvents.some(
-          (e) => e.filters && Object.keys(e.filters).length > 0
+          (e) => e.filters && Object.keys(e.filters).length > 0,
         ),
         averageResultsViewed:
           interactions.filter((i) => i.action === 'view').length /
@@ -754,7 +754,7 @@ export class SearchAnalytics {
   }
 
   private async generateTrends(
-    options: AnalyticsOptions
+    options: AnalyticsOptions,
   ): Promise<Array<{ date: string; metrics: Partial<SearchMetrics> }>> {
     // Simplified trend generation - could be enhanced
     const trends: Array<{ date: string; metrics: Partial<SearchMetrics> }> = [];
@@ -765,7 +765,7 @@ export class SearchAnalytics {
       const dayStart = new Date(
         date.getFullYear(),
         date.getMonth(),
-        date.getDate()
+        date.getDate(),
       );
       const dayEnd = new Date(dayStart.getTime() + 24 * 60 * 60 * 1000);
 
@@ -790,41 +790,41 @@ export class SearchAnalytics {
   private generateRecommendations(
     metrics: SearchMetrics,
     alerts: PerformanceAlert[],
-    optimizations: SearchOptimization[]
+    optimizations: SearchOptimization[],
   ): string[] {
     const recommendations: string[] = [];
 
     // Performance recommendations
     if (metrics.averageResponseTime > this.performanceThresholds.responseTime) {
       recommendations.push(
-        `Tempo de resposta médio (${Math.round(metrics.averageResponseTime)}ms) está acima do limite recomendado. Considere implementar cache ou otimizar consultas.`
+        `Tempo de resposta médio (${Math.round(metrics.averageResponseTime)}ms) está acima do limite recomendado. Considere implementar cache ou otimizar consultas.`,
       );
     }
 
     if (metrics.successRate < this.performanceThresholds.successRate) {
       recommendations.push(
-        `Taxa de sucesso (${Math.round(metrics.successRate * 100)}%) está abaixo do esperado. Revise o tratamento de erros e validação de consultas.`
+        `Taxa de sucesso (${Math.round(metrics.successRate * 100)}%) está abaixo do esperado. Revise o tratamento de erros e validação de consultas.`,
       );
     }
 
     // Alert-based recommendations
     const criticalAlerts = alerts.filter(
-      (a) => a.severity === 'critical'
+      (a) => a.severity === 'critical',
     ).length;
     if (criticalAlerts > 0) {
       recommendations.push(
-        `${criticalAlerts} alertas críticos detectados. Ação imediata necessária para manter a qualidade do serviço.`
+        `${criticalAlerts} alertas críticos detectados. Ação imediata necessária para manter a qualidade do serviço.`,
       );
     }
 
     // Optimization recommendations
     if (optimizations.length > 0) {
       const highImpactOptimizations = optimizations.filter(
-        (o) => o.impact.potentialSpeedup > 0.3
+        (o) => o.impact.potentialSpeedup > 0.3,
       ).length;
       if (highImpactOptimizations > 0) {
         recommendations.push(
-          `${highImpactOptimizations} otimizações de alto impacto identificadas. Implementação pode melhorar performance significativamente.`
+          `${highImpactOptimizations} otimizações de alto impacto identificadas. Implementação pode melhorar performance significativamente.`,
         );
       }
     }
@@ -835,7 +835,7 @@ export class SearchAnalytics {
       this.performanceThresholds.clickThroughRate
     ) {
       recommendations.push(
-        `Taxa de cliques baixa (${Math.round(metrics.userEngagement.clickThroughRate * 100)}%). Considere melhorar relevância dos resultados ou interface de usuário.`
+        `Taxa de cliques baixa (${Math.round(metrics.userEngagement.clickThroughRate * 100)}%). Considere melhorar relevância dos resultados ou interface de usuário.`,
       );
     }
 

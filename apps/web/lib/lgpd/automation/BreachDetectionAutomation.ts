@@ -144,7 +144,7 @@ export class BreachDetectionAutomation {
   constructor(
     supabase: SupabaseClient,
     complianceManager: LGPDComplianceManager,
-    config: DetectionConfig
+    config: DetectionConfig,
   ) {
     this.supabase = supabase;
     this.complianceManager = complianceManager;
@@ -171,7 +171,7 @@ export class BreachDetectionAutomation {
               await this.performDetectionScan();
             } catch (_error) {}
           },
-          intervalMinutes * 60 * 1000
+          intervalMinutes * 60 * 1000,
         );
 
         // Set up database change listeners for critical events
@@ -196,14 +196,14 @@ export class BreachDetectionAutomation {
    * Create Breach Detection Rule
    */
   async createDetectionRule(
-    ruleData: Omit<BreachDetectionRule, 'id' | 'created_at' | 'updated_at'>
+    ruleData: Omit<BreachDetectionRule, 'id' | 'created_at' | 'updated_at'>,
   ): Promise<{ success: boolean; rule_id: string }> {
     try {
       // Validate detection rule
       const validation = await this.validateDetectionRule(ruleData);
       if (!validation.valid) {
         throw new Error(
-          `Invalid detection rule: ${validation.errors.join(', ')}`
+          `Invalid detection rule: ${validation.errors.join(', ')}`,
         );
       }
 
@@ -252,7 +252,7 @@ export class BreachDetectionAutomation {
     incidentData: Omit<
       BreachIncident,
       'id' | 'created_at' | 'updated_at' | 'legal_deadline'
-    >
+    >,
   ): Promise<{
     success: boolean;
     incident_id: string;
@@ -282,7 +282,7 @@ export class BreachDetectionAutomation {
       // Initialize breach response
       const response = await this.initializeBreachResponse(
         incident.id,
-        incidentData
+        incidentData,
       );
 
       // Trigger automated response if enabled
@@ -340,7 +340,7 @@ export class BreachDetectionAutomation {
     incidentId: string,
     status: BreachIncident['status'],
     notes?: string,
-    updatedBy?: string
+    updatedBy?: string,
   ): Promise<{ success: boolean }> {
     try {
       const updateData: any = {
@@ -415,7 +415,7 @@ export class BreachDetectionAutomation {
    */
   async sendANPDNotification(
     incidentId: string,
-    customContent?: string
+    customContent?: string,
   ): Promise<{ success: boolean; notification_id: string }> {
     try {
       // Get incident details
@@ -516,7 +516,7 @@ export class BreachDetectionAutomation {
    */
   async sendUserNotifications(
     incidentId: string,
-    notificationMethod: 'email' | 'sms' | 'portal' | 'postal' = 'email'
+    notificationMethod: 'email' | 'sms' | 'portal' | 'postal' = 'email',
   ): Promise<{
     success: boolean;
     notifications_sent: number;
@@ -641,7 +641,7 @@ export class BreachDetectionAutomation {
   }> {
     try {
       const { data: dashboard, error } = await this.supabase.rpc(
-        'get_breach_dashboard'
+        'get_breach_dashboard',
       );
 
       if (error) {
@@ -698,7 +698,7 @@ export class BreachDetectionAutomation {
           detection_query: rule.detection_query,
           threshold_value: rule.threshold_value,
           time_window_minutes: rule.time_window_minutes,
-        }
+        },
       );
 
       if (error) {
@@ -714,7 +714,7 @@ export class BreachDetectionAutomation {
 
   private async handleDetectedBreach(
     rule: BreachDetectionRule,
-    detectionResult: any
+    detectionResult: any,
   ): Promise<void> {
     try {
       // Create breach incident
@@ -732,11 +732,11 @@ export class BreachDetectionAutomation {
         detection_timestamp: new Date().toISOString(),
         requires_anpd_notification: this.requiresANPDNotification(
           rule.severity,
-          detectionResult
+          detectionResult,
         ),
         requires_user_notification: this.requiresUserNotification(
           rule.severity,
-          detectionResult
+          detectionResult,
         ),
         anpd_notification_sent: false,
         user_notification_sent: false,
@@ -750,7 +750,7 @@ export class BreachDetectionAutomation {
   }
 
   private async validateDetectionRule(
-    rule: any
+    rule: any,
   ): Promise<{ valid: boolean; errors: string[] }> {
     const errors: string[] = [];
 
@@ -782,7 +782,7 @@ export class BreachDetectionAutomation {
 
   private async initializeBreachResponse(
     incidentId: string,
-    incidentData: any
+    incidentData: any,
   ): Promise<BreachResponse> {
     const response: BreachResponse = {
       incident_id: incidentId,
@@ -819,7 +819,7 @@ export class BreachDetectionAutomation {
 
   private async triggerAutomatedContainment(
     incidentId: string,
-    incidentData: any
+    incidentData: any,
   ): Promise<void> {
     // Implement automated containment measures based on incident type and severity
     const containmentActions =
@@ -834,7 +834,7 @@ export class BreachDetectionAutomation {
 
   private async triggerBreachNotifications(
     incidentId: string,
-    _incidentData: any
+    _incidentData: any,
   ): Promise<void> {
     // Send immediate internal notifications
     if (this.config.notification_channels.email) {
@@ -852,7 +852,7 @@ export class BreachDetectionAutomation {
 
   private async updateBreachResponseTimeline(
     incidentId: string,
-    timelineEntry: any
+    timelineEntry: any,
   ): Promise<void> {
     const { data: response, error: responseError } = await this.supabase
       .from('lgpd_breach_responses')
@@ -892,7 +892,7 @@ export class BreachDetectionAutomation {
         },
         async (payload) => {
           await this.handleAuthEvent(payload);
-        }
+        },
       )
       .on(
         'postgres_changes',
@@ -903,7 +903,7 @@ export class BreachDetectionAutomation {
         },
         async (payload) => {
           await this.handleAuditEvent(payload);
-        }
+        },
       )
       .subscribe();
   }
@@ -924,7 +924,7 @@ export class BreachDetectionAutomation {
   }
 
   private mapRuleTypeToIncidentType(
-    ruleType: string
+    ruleType: string,
   ): BreachIncident['incident_type'] {
     const mapping: Record<string, BreachIncident['incident_type']> = {
       anomaly: 'unauthorized_access',
@@ -940,7 +940,7 @@ export class BreachDetectionAutomation {
 
   private requiresANPDNotification(
     severity: string,
-    detectionResult: any
+    detectionResult: any,
   ): boolean {
     // ANPD notification required for high/critical incidents or when personal data is involved
     return (
@@ -952,7 +952,7 @@ export class BreachDetectionAutomation {
 
   private requiresUserNotification(
     severity: string,
-    detectionResult: any
+    detectionResult: any,
   ): boolean {
     // User notification required when their personal data is compromised
     return (
@@ -962,7 +962,7 @@ export class BreachDetectionAutomation {
   }
 
   private async generateANPDNotificationContent(
-    incident: BreachIncident
+    incident: BreachIncident,
   ): Promise<string> {
     // Generate ANPD-compliant notification content
     return `
@@ -987,7 +987,7 @@ Contato: compliance@empresa.com
   }
 
   private async generateUserNotificationContent(
-    incident: BreachIncident
+    incident: BreachIncident,
   ): Promise<string> {
     // Generate user-friendly notification content
     return `
@@ -1019,7 +1019,7 @@ Equipe de Segurança
       'get_affected_users_by_incident',
       {
         incident_id: incidentId,
-      }
+      },
     );
 
     if (error) {
@@ -1051,7 +1051,7 @@ Equipe de Segurança
 
   private async executeContainmentAction(
     _incidentId: string,
-    _action: any
+    _action: any,
   ): Promise<void> {
     // Implementation would depend on the specific action type
     // This is a placeholder for the actual containment logic
@@ -1059,7 +1059,7 @@ Equipe de Segurança
 
   private async sendInternalNotification(
     _incidentId: string,
-    _channel: string
+    _channel: string,
   ): Promise<void> {}
 
   private async analyzeLoginPattern(_authEvent: any): Promise<void> {

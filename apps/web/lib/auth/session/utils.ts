@@ -61,7 +61,7 @@ export function generateSessionToken(): string {
  * Gera um fingerprint de dispositivo
  */
 export function generateDeviceFingerprint(
-  deviceInfo: Partial<DeviceInfo>
+  deviceInfo: Partial<DeviceInfo>,
 ): DeviceFingerprint {
   const data = JSON.stringify({
     userAgent: deviceInfo.userAgent,
@@ -132,7 +132,7 @@ export function isSessionActive(session: UserSession): boolean {
  */
 export function isSessionNearTimeout(
   session: UserSession,
-  thresholdMinutes = 5
+  thresholdMinutes = 5,
 ): boolean {
   if (!isSessionActive(session)) {
     return false;
@@ -212,7 +212,7 @@ export function validatePasswordStrength(password: string): {
  */
 export function formatTimestamp(
   timestamp: Timestamp,
-  locale = 'pt-BR'
+  locale = 'pt-BR',
 ): string {
   const date = new Date(timestamp);
   return date.toLocaleString(locale, {
@@ -328,7 +328,7 @@ export function parseUserAgent(userAgent: UserAgent): {
  */
 export function extractDeviceInfo(
   userAgent: UserAgent,
-  ipAddress?: IPAddress
+  ipAddress?: IPAddress,
 ): DeviceInfo {
   const parsed = parseUserAgent(userAgent);
 
@@ -420,7 +420,7 @@ export function decryptData(encryptedData: string): string {
  */
 export function hashPassword(
   password: string,
-  salt?: string
+  salt?: string,
 ): { hash: string; salt: string } {
   const actualSalt = salt || randomBytes(32).toString('hex');
   const hash = createHash('sha256')
@@ -436,7 +436,7 @@ export function hashPassword(
 export function verifyPassword(
   password: string,
   hash: string,
-  salt: string
+  salt: string,
 ): boolean {
   const { hash: computedHash } = hashPassword(password, salt);
   return computedHash === hash;
@@ -451,7 +451,7 @@ export function verifyPassword(
  */
 export function calculateDeviceRiskScore(
   device: UserDevice,
-  _recentActivity?: any[]
+  _recentActivity?: any[],
 ): {
   score: number;
   level: RiskLevel;
@@ -514,7 +514,7 @@ export function calculateDeviceRiskScore(
  */
 export function detectAnomalousActivity(
   activities: any[],
-  _userBaseline?: any
+  _userBaseline?: any,
 ): {
   isAnomalous: boolean;
   anomalies: string[];
@@ -615,7 +615,7 @@ export async function getLocationByIP(ipAddress: IPAddress): Promise<{
  */
 export function calculateDistance(
   coord1: [number, number],
-  coord2: [number, number]
+  coord2: [number, number],
 ): number {
   const [lat1, lon1] = coord1;
   const [lat2, lon2] = coord2;
@@ -645,7 +645,7 @@ export function calculateDistance(
 export function addTime(
   date: Date,
   amount: number,
-  unit: 'ms' | 's' | 'm' | 'h' | 'd'
+  unit: 'ms' | 's' | 'm' | 'h' | 'd',
 ): Date {
   const result = new Date(date);
 
@@ -675,7 +675,7 @@ export function addTime(
  */
 export function isInQuietHours(
   quietHours: { start: string; end: string; timezone: string },
-  date: Date = new Date()
+  date: Date = new Date(),
 ): boolean {
   try {
     const timeStr = date.toLocaleTimeString('en-US', {
@@ -708,7 +708,7 @@ export function isInQuietHours(
  * Remove propriedades undefined de um objeto
  */
 export function removeUndefined<T extends Record<string, any>>(
-  obj: T
+  obj: T,
 ): Partial<T> {
   const result: Partial<T> = {};
 
@@ -726,7 +726,7 @@ export function removeUndefined<T extends Record<string, any>>(
  */
 export function groupBy<T, K extends keyof T>(
   array: T[],
-  key: K
+  key: K,
 ): Record<string, T[]> {
   return array.reduce(
     (groups, item) => {
@@ -735,7 +735,7 @@ export function groupBy<T, K extends keyof T>(
       groups[group].push(item);
       return groups;
     },
-    {} as Record<string, T[]>
+    {} as Record<string, T[]>,
   );
 }
 
@@ -745,7 +745,7 @@ export function groupBy<T, K extends keyof T>(
 export function paginate<T>(
   array: T[],
   page: number,
-  limit: number
+  limit: number,
 ): {
   data: T[];
   pagination: {
@@ -780,7 +780,7 @@ export function paginate<T>(
  */
 export function debounce<T extends (...args: any[]) => any>(
   func: T,
-  wait: number
+  wait: number,
 ): (...args: Parameters<T>) => void {
   let timeout: NodeJS.Timeout | null = null;
 
@@ -800,7 +800,7 @@ export function debounce<T extends (...args: any[]) => any>(
  */
 export function throttle<T extends (...args: any[]) => any>(
   func: T,
-  limit: number
+  limit: number,
 ): (...args: Parameters<T>) => void {
   let inThrottle = false;
 

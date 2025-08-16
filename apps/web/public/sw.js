@@ -54,7 +54,7 @@ self.addEventListener('install', (event) => {
         return cache.addAll(STATIC_CACHE_URLS);
       }),
       self.skipWaiting(),
-    ])
+    ]),
   );
 });
 
@@ -68,11 +68,11 @@ self.addEventListener('activate', (event) => {
             if (!cacheName.includes(CACHE_VERSION)) {
               return caches.delete(cacheName);
             }
-          })
+          }),
         );
       }),
       self.clients.claim(),
-    ])
+    ]),
   );
 });
 
@@ -148,7 +148,7 @@ async function handleOfflineCapableRequest(request) {
         headers: {
           'Content-Type': 'application/json',
         },
-      }
+      },
     );
   }
 }
@@ -452,7 +452,7 @@ self.addEventListener('push', (event) => {
       silent: notificationData.silent,
       vibrate: notificationData.vibrate || [200, 100, 200],
       timestamp: Date.now(),
-    }
+    },
   );
 
   event.waitUntil(notificationPromise);

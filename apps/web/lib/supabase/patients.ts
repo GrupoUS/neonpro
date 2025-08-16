@@ -23,7 +23,7 @@ export class PatientError extends Error {
   constructor(
     message: string,
     public code: string,
-    public statusCode = 500
+    public statusCode = 500,
   ) {
     super(message);
     this.name = 'PatientError';
@@ -34,7 +34,7 @@ export class PatientError extends Error {
 export function transformRegistrationToFHIR(
   data: PatientRegistrationData,
   clinic_id: string,
-  user_id: string
+  user_id: string,
 ): {
   patient: Omit<PatientDB, 'id'>;
   consents: Omit<PatientConsentDB, 'id' | 'patient_id'>[];
@@ -317,7 +317,7 @@ export function transformRegistrationToFHIR(
 // Create a new patient with LGPD consents
 export async function createPatient(
   data: PatientRegistrationData,
-  user_id: string
+  user_id: string,
 ): Promise<{ patient: PatientDB; consents: PatientConsentDB[] }> {
   const supabase = createClient();
 
@@ -344,7 +344,7 @@ export async function createPatient(
     if (checkError && checkError.code !== 'PGRST116') {
       throw new PatientError(
         'Database error checking medical record number',
-        'DATABASE_ERROR'
+        'DATABASE_ERROR',
       );
     }
 
@@ -352,7 +352,7 @@ export async function createPatient(
       throw new PatientError(
         'Medical record number already exists in this clinic',
         'DUPLICATE_MEDICAL_RECORD',
-        409
+        409,
       );
     }
 
@@ -370,7 +370,7 @@ export async function createPatient(
     if (patientError) {
       throw new PatientError(
         `Failed to create patient: ${patientError.message}`,
-        'PATIENT_CREATION_FAILED'
+        'PATIENT_CREATION_FAILED',
       );
     }
 
@@ -390,7 +390,7 @@ export async function createPatient(
       await supabase.from('patients').delete().eq('id', createdPatient.id);
       throw new PatientError(
         `Failed to create patient consents: ${consentError.message}`,
-        'CONSENT_CREATION_FAILED'
+        'CONSENT_CREATION_FAILED',
       );
     }
 
@@ -404,7 +404,7 @@ export async function createPatient(
     }
     throw new PatientError(
       `Unexpected error creating patient: ${error instanceof Error ? error.message : 'Unknown error'}`,
-      'UNEXPECTED_ERROR'
+      'UNEXPECTED_ERROR',
     );
   }
 }
@@ -412,7 +412,7 @@ export async function createPatient(
 // Search patients with filters and pagination
 export async function searchPatients(
   params: PatientSearchParams,
-  user_id: string
+  user_id: string,
 ): Promise<{
   patients: (PatientDB & { consents_count: number })[];
   total_count: number;
@@ -440,7 +440,7 @@ export async function searchPatients(
         *,
         consents_count:patient_consents(count)
       `,
-        { count: 'exact' }
+        { count: 'exact' },
       )
       .eq('clinic_id', profile.clinic_id);
 
@@ -448,7 +448,7 @@ export async function searchPatients(
     if (params.query) {
       // Search in patient name (FHIR data) and medical record number
       query = query.or(
-        `medical_record_number.ilike.%${params.query}%,fhir_data->>name.ilike.%${params.query}%`
+        `medical_record_number.ilike.%${params.query}%,fhir_data->>name.ilike.%${params.query}%`,
       );
     }
 
@@ -481,7 +481,7 @@ export async function searchPatients(
     if (searchError) {
       throw new PatientError(
         `Failed to search patients: ${searchError.message}`,
-        'SEARCH_FAILED'
+        'SEARCH_FAILED',
       );
     }
 
@@ -496,7 +496,7 @@ export async function searchPatients(
     }
     throw new PatientError(
       `Unexpected error searching patients: ${error instanceof Error ? error.message : 'Unknown error'}`,
-      'UNEXPECTED_ERROR'
+      'UNEXPECTED_ERROR',
     );
   }
 }
@@ -504,7 +504,7 @@ export async function searchPatients(
 // Get patient by ID with full details
 export async function getPatientById(
   patient_id: string,
-  user_id: string
+  user_id: string,
 ): Promise<
   | (PatientDB & {
       consents: PatientConsentDB[];
@@ -536,7 +536,7 @@ export async function getPatientById(
         consents:patient_consents(*),
         conditions:medical_conditions(*),
         allergies:allergies_intolerances(*)
-      `
+      `,
       )
       .eq('id', patient_id)
       .eq('clinic_id', profile.clinic_id)
@@ -548,7 +548,7 @@ export async function getPatientById(
       }
       throw new PatientError(
         `Failed to get patient: ${patientError.message}`,
-        'GET_PATIENT_FAILED'
+        'GET_PATIENT_FAILED',
       );
     }
 
@@ -559,7 +559,7 @@ export async function getPatientById(
     }
     throw new PatientError(
       `Unexpected error getting patient: ${error instanceof Error ? error.message : 'Unknown error'}`,
-      'UNEXPECTED_ERROR'
+      'UNEXPECTED_ERROR',
     );
   }
 }
@@ -569,7 +569,7 @@ export async function updatePatientConsent(
   patient_id: string,
   consent_id: string,
   updates: Partial<Omit<PatientConsentDB, 'id' | 'patient_id' | 'created_at'>>,
-  user_id: string
+  user_id: string,
 ): Promise<PatientConsentDB> {
   const supabase = createClient();
 
@@ -595,7 +595,7 @@ export async function updatePatientConsent(
     if (updateError) {
       throw new PatientError(
         `Failed to update consent: ${updateError.message}`,
-        'UPDATE_CONSENT_FAILED'
+        'UPDATE_CONSENT_FAILED',
       );
     }
 
@@ -606,7 +606,7 @@ export async function updatePatientConsent(
     }
     throw new PatientError(
       `Unexpected error updating consent: ${error instanceof Error ? error.message : 'Unknown error'}`,
-      'UNEXPECTED_ERROR'
+      'UNEXPECTED_ERROR',
     );
   }
 }
@@ -650,7 +650,7 @@ export async function getPatientStats(clinicId?: string) {
     if (totalError) {
       throw new PatientError(
         `Failed to get total patients: ${totalError.message}`,
-        'STATS_FETCH_FAILED'
+        'STATS_FETCH_FAILED',
       );
     }
 
@@ -666,7 +666,7 @@ export async function getPatientStats(clinicId?: string) {
     if (newError) {
       throw new PatientError(
         `Failed to get new patients: ${newError.message}`,
-        'STATS_FETCH_FAILED'
+        'STATS_FETCH_FAILED',
       );
     }
 
@@ -681,7 +681,7 @@ export async function getPatientStats(clinicId?: string) {
     if (activeError) {
       throw new PatientError(
         `Failed to get active patients: ${activeError.message}`,
-        'STATS_FETCH_FAILED'
+        'STATS_FETCH_FAILED',
       );
     }
 
@@ -699,7 +699,7 @@ export async function getPatientStats(clinicId?: string) {
     if (scheduledError) {
       throw new PatientError(
         `Failed to get scheduled appointments: ${scheduledError.message}`,
-        'STATS_FETCH_FAILED'
+        'STATS_FETCH_FAILED',
       );
     }
 

@@ -134,7 +134,7 @@ export async function GET(request: NextRequest) {
     if ('error' in authResult) {
       return NextResponse.json(
         { error: authResult.error },
-        { status: authResult.status }
+        { status: authResult.status },
       );
     }
 
@@ -163,7 +163,7 @@ export async function GET(request: NextRequest) {
           error: 'Parâmetros inválidos',
           details: validationResult.error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -171,7 +171,7 @@ export async function GET(request: NextRequest) {
     const { from, to } = calculatePeriod(
       query.period,
       query.dateFrom,
-      query.dateTo
+      query.dateTo,
     );
 
     // Buscar métricas baseadas no tipo solicitado
@@ -182,7 +182,7 @@ export async function GET(request: NextRequest) {
         analyticsData = await notificationAnalytics.getOverviewMetrics(
           profile.clinic_id,
           from,
-          to
+          to,
         );
         break;
 
@@ -191,7 +191,7 @@ export async function GET(request: NextRequest) {
           profile.clinic_id,
           from,
           to,
-          query.filters
+          query.filters,
         );
         break;
 
@@ -200,7 +200,7 @@ export async function GET(request: NextRequest) {
           profile.clinic_id,
           from,
           to,
-          query.filters
+          query.filters,
         );
         break;
 
@@ -208,7 +208,7 @@ export async function GET(request: NextRequest) {
         analyticsData = await notificationAnalytics.getChannelAnalytics(
           profile.clinic_id,
           from,
-          to
+          to,
         );
         break;
 
@@ -217,14 +217,14 @@ export async function GET(request: NextRequest) {
           profile.clinic_id,
           from,
           to,
-          query.groupBy || 'type'
+          query.groupBy || 'type',
         );
         break;
 
       default:
         return NextResponse.json(
           { error: 'Tipo de métrica não suportado' },
-          { status: 400 }
+          { status: 400 },
         );
     }
 
@@ -247,7 +247,7 @@ export async function GET(request: NextRequest) {
         details:
           process.env.NODE_ENV === 'development' ? error.message : undefined,
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

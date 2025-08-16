@@ -84,7 +84,7 @@ export class PatientSegmentationService {
 
   // Multi-dimensional Segmentation
   async analyzePatientsForSegmentation(
-    _segmentId: string
+    _segmentId: string,
   ): Promise<PatientBehaviorAnalysis[]> {
     const supabase = await this.getSupabase();
 
@@ -116,14 +116,14 @@ export class PatientSegmentationService {
     const analyses = await Promise.all(
       patients.map(async (patient) => {
         return await this.generatePatientBehaviorAnalysis(patient);
-      })
+      }),
     );
 
     return analyses;
   }
 
   async updateSegmentMemberships(
-    updates: SegmentMembershipUpdate[]
+    updates: SegmentMembershipUpdate[],
   ): Promise<void> {
     const supabase = await this.getSupabase();
 
@@ -137,7 +137,7 @@ export class PatientSegmentationService {
         last_updated: new Date().toISOString(),
         engagement_level: update.engagement_level,
         lifetime_value_prediction: update.lifetime_value_prediction,
-      }))
+      })),
     );
 
     if (error) {
@@ -147,7 +147,7 @@ export class PatientSegmentationService {
 
   // Automated Segment Management
   async createAutomatedSegment(
-    rule: CreateSegmentationRuleRequest
+    rule: CreateSegmentationRuleRequest,
   ): Promise<SegmentationRule> {
     const supabase = await this.getSupabase();
 
@@ -158,7 +158,7 @@ export class PatientSegmentationService {
         description: rule.description,
         conditions: rule.conditions,
         ai_recommendations: await this.generateAIRecommendations(
-          rule.conditions
+          rule.conditions,
         ),
         is_active: true,
         auto_execute: rule.auto_execute,
@@ -306,7 +306,7 @@ export class PatientSegmentationService {
       segmentation_consent?: boolean;
       marketing_consent?: boolean;
       analytics_consent?: boolean;
-    }
+    },
   ): Promise<void> {
     const supabase = await this.getSupabase();
 
@@ -362,7 +362,7 @@ export class PatientSegmentationService {
   }
 
   private async generatePatientBehaviorAnalysis(
-    patient: any
+    patient: any,
   ): Promise<PatientBehaviorAnalysis> {
     // Comprehensive patient behavior analysis using AI
     const appointments = patient.appointments || [];
@@ -384,24 +384,24 @@ export class PatientSegmentationService {
       },
       psychographic_profile: {
         lifestyle_indicators: this.extractLifestyleIndicators(
-          patient.preferences
+          patient.preferences,
         ),
         value_orientation: this.analyzeValueOrientation(treatmentHistory),
         communication_preferences: this.analyzeCommPreferences(
-          patient.preferences
+          patient.preferences,
         ),
       },
       predictive_scores: {
         lifetime_value: this.predictLifetimeValue(
           appointments,
-          treatmentHistory
+          treatmentHistory,
         ),
         churn_probability: this.calculateChurnProbability(appointments),
         treatment_propensity:
           this.calculateTreatmentPropensity(treatmentHistory),
         engagement_score: this.calculateEngagementScore(
           appointments,
-          patient.preferences
+          patient.preferences,
         ),
       },
       last_analyzed: new Date().toISOString(),
@@ -410,7 +410,7 @@ export class PatientSegmentationService {
 
   private async generateSegmentMemberships(
     segmentId: string,
-    criteria: any
+    criteria: any,
   ): Promise<void> {
     const supabase = await this.getSupabase();
 
@@ -441,7 +441,7 @@ export class PatientSegmentationService {
   }
 
   private async generateSegmentPerformance(
-    segmentId: string
+    segmentId: string,
   ): Promise<SegmentPerformance> {
     const supabase = await this.getSupabase();
 
@@ -519,7 +519,7 @@ export class PatientSegmentationService {
     const recentAppointments = appointments.filter(
       (a) =>
         new Date(a.appointment_date) >
-        new Date(Date.now() - 90 * 24 * 60 * 60 * 1000)
+        new Date(Date.now() - 90 * 24 * 60 * 60 * 1000),
     );
 
     if (recentAppointments.length >= 3) {
@@ -571,7 +571,7 @@ export class PatientSegmentationService {
 
   private predictLifetimeValue(
     appointments: any[],
-    treatmentHistory: any[]
+    treatmentHistory: any[],
   ): number {
     const avgSpendPerVisit =
       treatmentHistory.reduce((sum, t) => sum + (t.amount || 0), 0) /
@@ -598,7 +598,7 @@ export class PatientSegmentationService {
 
   private calculateEngagementScore(
     appointments: any[],
-    preferences: any
+    preferences: any,
   ): number {
     const recencyScore = this.calculateRecencyScore(appointments);
     const frequencyScore = this.calculateFrequencyScore(appointments);
@@ -609,7 +609,7 @@ export class PatientSegmentationService {
 
   private matchesCriteria(
     _analysis: PatientBehaviorAnalysis,
-    _criteria: any
+    _criteria: any,
   ): boolean {
     // Implement criteria matching logic
     return true; // Simplified for now
@@ -617,14 +617,14 @@ export class PatientSegmentationService {
 
   private calculateMembershipScore(
     _analysis: PatientBehaviorAnalysis,
-    _criteria: any
+    _criteria: any,
   ): number {
     // Calculate how well patient matches segment criteria
     return 0.75; // Simplified for now
   }
 
   private async getSegmentMemberships(
-    segmentId: string
+    segmentId: string,
   ): Promise<SegmentMembership[]> {
     const supabase = await this.getSupabase();
 
@@ -650,7 +650,7 @@ export class PatientSegmentationService {
 
   private calculateEngagementRate(memberships: SegmentMembership[]): number {
     const engaged = memberships.filter(
-      (m) => m.engagement_level === 'high'
+      (m) => m.engagement_level === 'high',
     ).length;
     return memberships.length > 0 ? engaged / memberships.length : 0;
   }
@@ -666,11 +666,11 @@ export class PatientSegmentationService {
   }
 
   private calculateAverageLifetimeValue(
-    memberships: SegmentMembership[]
+    memberships: SegmentMembership[],
   ): number {
     const total = memberships.reduce(
       (sum, m) => sum + (m.lifetime_value_prediction || 0),
-      0
+      0,
     );
     return memberships.length > 0 ? total / memberships.length : 0;
   }
@@ -678,12 +678,12 @@ export class PatientSegmentationService {
   private calculateRevenueGenerated(memberships: SegmentMembership[]): number {
     return memberships.reduce(
       (sum, m) => sum + (m.lifetime_value_prediction || 0),
-      0
+      0,
     );
   }
 
   private calculateCostPerAcquisition(
-    _memberships: SegmentMembership[]
+    _memberships: SegmentMembership[],
   ): number {
     return 150; // Simplified for now
   }
@@ -713,7 +713,7 @@ export class PatientSegmentationService {
 
   private async updateRulePerformance(
     ruleId: string,
-    segmentId: string
+    segmentId: string,
   ): Promise<void> {
     const supabase = await this.getSupabase();
 

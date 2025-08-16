@@ -96,7 +96,7 @@ export async function GET(request: NextRequest) {
     if (profile?.role !== 'admin') {
       return NextResponse.json(
         { error: 'Forbidden - Admin access required' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -152,7 +152,7 @@ export async function GET(request: NextRequest) {
 
     if (validatedQuery.search) {
       query = query.or(
-        `title.ilike.%${validatedQuery.search}%,description.ilike.%${validatedQuery.search}%`
+        `title.ilike.%${validatedQuery.search}%,description.ilike.%${validatedQuery.search}%`,
       );
     }
 
@@ -163,12 +163,12 @@ export async function GET(request: NextRequest) {
       })
       .range(
         (validatedQuery.page - 1) * validatedQuery.limit,
-        validatedQuery.page * validatedQuery.limit - 1
+        validatedQuery.page * validatedQuery.limit - 1,
       );
 
     if (breachError) {
       throw new Error(
-        `Failed to fetch breach incidents: ${breachError.message}`
+        `Failed to fetch breach incidents: ${breachError.message}`,
       );
     }
 
@@ -197,7 +197,7 @@ export async function GET(request: NextRequest) {
       .select('severity, status')
       .gte(
         'discovered_at',
-        new Date(Date.now() - 365 * 24 * 60 * 60 * 1000).toISOString()
+        new Date(Date.now() - 365 * 24 * 60 * 60 * 1000).toISOString(),
       ); // Last year
 
     const severityStats =
@@ -245,13 +245,13 @@ export async function GET(request: NextRequest) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Invalid query parameters', details: error.errors },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -279,7 +279,7 @@ export async function POST(request: NextRequest) {
     if (profile?.role !== 'admin') {
       return NextResponse.json(
         { error: 'Forbidden - Admin access required' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -310,19 +310,19 @@ export async function POST(request: NextRequest) {
         success: true,
         data: breach,
       },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Invalid request data', details: error.errors },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -350,7 +350,7 @@ export async function PUT(request: NextRequest) {
     if (profile?.role !== 'admin') {
       return NextResponse.json(
         { error: 'Forbidden - Admin access required' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -362,7 +362,7 @@ export async function PUT(request: NextRequest) {
     if (!breachId) {
       return NextResponse.json(
         { error: 'Breach ID is required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -376,7 +376,7 @@ export async function PUT(request: NextRequest) {
     if (!existingBreach) {
       return NextResponse.json(
         { error: 'Breach incident not found' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -440,7 +440,7 @@ export async function PUT(request: NextRequest) {
 
     if (updateError) {
       throw new Error(
-        `Failed to update breach incident: ${updateError.message}`
+        `Failed to update breach incident: ${updateError.message}`,
       );
     }
 
@@ -467,13 +467,13 @@ export async function PUT(request: NextRequest) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Invalid request data', details: error.errors },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

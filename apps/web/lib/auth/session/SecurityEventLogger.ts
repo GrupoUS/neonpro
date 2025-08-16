@@ -43,7 +43,7 @@ export class SecurityEventLogger {
 
     this.supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     );
   }
 
@@ -57,7 +57,7 @@ export class SecurityEventLogger {
     deviceId?: string,
     details?: Record<string, any>,
     ipAddress?: string,
-    userAgent?: string
+    userAgent?: string,
   ): Promise<AuthenticationResponse> {
     try {
       // Validate input
@@ -88,7 +88,7 @@ export class SecurityEventLogger {
         type,
         severity,
         userId,
-        details
+        details,
       );
 
       // Determine threat level
@@ -164,7 +164,7 @@ export class SecurityEventLogger {
    */
   async analyzePatterns(
     userId: string,
-    timeWindow = 24
+    timeWindow = 24,
   ): Promise<AuthenticationResponse> {
     try {
       if (!validateUUID(userId)) {
@@ -179,7 +179,7 @@ export class SecurityEventLogger {
       }
 
       const startTime = new Date(
-        Date.now() - timeWindow * 60 * 60 * 1000
+        Date.now() - timeWindow * 60 * 60 * 1000,
       ).toISOString();
 
       const { data: events, error } = await this.supabase
@@ -244,7 +244,7 @@ export class SecurityEventLogger {
     severity?: SecuritySeverity,
     startDate?: string,
     endDate?: string,
-    limit = 100
+    limit = 100,
   ): Promise<AuthenticationResponse> {
     try {
       let query = this.supabase.from('security_events').select('*');
@@ -295,7 +295,7 @@ export class SecurityEventLogger {
       }
 
       const events = (data || []).map((row) =>
-        this.convertToSecurityEvent(row)
+        this.convertToSecurityEvent(row),
       );
 
       return {
@@ -324,7 +324,7 @@ export class SecurityEventLogger {
   async resolveEvent(
     eventId: string,
     resolution: string,
-    resolvedBy: string
+    resolvedBy: string,
   ): Promise<AuthenticationResponse> {
     try {
       if (!validateUUID(eventId)) {
@@ -389,7 +389,7 @@ export class SecurityEventLogger {
   async generateSecurityReport(
     startDate: string,
     endDate: string,
-    userId?: string
+    userId?: string,
   ): Promise<SecurityReport> {
     try {
       let query = this.supabase
@@ -409,7 +409,7 @@ export class SecurityEventLogger {
       }
 
       const securityEvents = (events || []).map((row) =>
-        this.convertToSecurityEvent(row)
+        this.convertToSecurityEvent(row),
       );
 
       // Generate statistics
@@ -429,7 +429,7 @@ export class SecurityEventLogger {
       // Generate recommendations
       const recommendations = this.generateSecurityRecommendations(
         securityEvents,
-        trends
+        trends,
       );
 
       return {
@@ -454,7 +454,7 @@ export class SecurityEventLogger {
       };
     } catch (error) {
       throw new Error(
-        `Error generating security report: ${error instanceof Error ? error.message : 'Unknown error'}`
+        `Error generating security report: ${error instanceof Error ? error.message : 'Unknown error'}`,
       );
     }
   }
@@ -512,7 +512,7 @@ export class SecurityEventLogger {
    * Check for security violations
    */
   async checkSecurityViolations(
-    userId: string
+    userId: string,
   ): Promise<AuthenticationResponse> {
     try {
       if (!validateUUID(userId)) {
@@ -535,7 +535,7 @@ export class SecurityEventLogger {
       const failedLogins = await this.getRecentEventCount(
         userId,
         'login_failed',
-        new Date(now.getTime() - oneHour).toISOString()
+        new Date(now.getTime() - oneHour).toISOString(),
       );
 
       if (failedLogins >= this.config.maxFailedLogins) {
@@ -552,7 +552,7 @@ export class SecurityEventLogger {
       const suspiciousActivity = await this.getRecentEventCount(
         userId,
         'suspicious_activity',
-        new Date(now.getTime() - oneDay).toISOString()
+        new Date(now.getTime() - oneDay).toISOString(),
       );
 
       if (suspiciousActivity >= this.config.maxSuspiciousActivity) {
@@ -569,7 +569,7 @@ export class SecurityEventLogger {
       const concurrentSessions = await this.getRecentEventCount(
         userId,
         'concurrent_session_violation',
-        new Date(now.getTime() - oneHour).toISOString()
+        new Date(now.getTime() - oneHour).toISOString(),
       );
 
       if (concurrentSessions > 0) {
@@ -614,7 +614,7 @@ export class SecurityEventLogger {
     type: SecurityEventType,
     severity: SecuritySeverity,
     userId: string,
-    details?: Record<string, any>
+    details?: Record<string, any>,
   ): Promise<number> {
     let baseScore = 0;
 
@@ -682,7 +682,7 @@ export class SecurityEventLogger {
 
   private determineThreatLevel(
     riskScore: number,
-    severity: SecuritySeverity
+    severity: SecuritySeverity,
   ): ThreatLevel {
     if (severity === 'critical' || riskScore >= 15) {
       return 'critical';
@@ -708,7 +708,7 @@ export class SecurityEventLogger {
           triggeredBy: event.id,
           originalEvent: event.type,
           automatedResponse: true,
-        }
+        },
       );
 
       // TODO: Implement specific automated responses
@@ -722,7 +722,7 @@ export class SecurityEventLogger {
   private async updatePatternAnalysis(
     userId: string,
     _type: SecurityEventType,
-    severity: SecuritySeverity
+    severity: SecuritySeverity,
   ): Promise<void> {
     try {
       const currentScore = this.riskScores.get(userId) || 0;
@@ -743,7 +743,7 @@ export class SecurityEventLogger {
           const score = this.riskScores.get(userId) || 0;
           this.riskScores.set(userId, Math.max(0, score - 1));
         },
-        24 * 60 * 60 * 1000
+        24 * 60 * 60 * 1000,
       ); // 24 hours
     } catch (_error) {}
   }
@@ -766,7 +766,7 @@ export class SecurityEventLogger {
 
     // Detect suspicious device registrations
     const deviceRegistrations = events.filter(
-      (e) => e.type === 'device_registered'
+      (e) => e.type === 'device_registered',
     );
     if (deviceRegistrations.length >= 3) {
       patterns.push({
@@ -807,7 +807,7 @@ export class SecurityEventLogger {
     const totalEvents = events.length;
 
     const highSeverityEvents = events.filter(
-      (e) => e.severity === 'high' || e.severity === 'critical'
+      (e) => e.severity === 'high' || e.severity === 'critical',
     );
     const highSeverityRatio =
       totalEvents > 0 ? highSeverityEvents.length / totalEvents : 0;
@@ -838,7 +838,7 @@ export class SecurityEventLogger {
   private async getRecentEventCount(
     userId: string,
     type: SecurityEventType,
-    since: string
+    since: string,
   ): Promise<number> {
     try {
       const { data, error } = await this.supabase
@@ -859,38 +859,38 @@ export class SecurityEventLogger {
   }
 
   private groupEventsBySeverity(
-    events: SecurityEvent[]
+    events: SecurityEvent[],
   ): Record<SecuritySeverity, number> {
     return events.reduce(
       (acc, event) => {
         acc[event.severity] = (acc[event.severity] || 0) + 1;
         return acc;
       },
-      {} as Record<SecuritySeverity, number>
+      {} as Record<SecuritySeverity, number>,
     );
   }
 
   private groupEventsByType(
-    events: SecurityEvent[]
+    events: SecurityEvent[],
   ): Record<SecurityEventType, number> {
     return events.reduce(
       (acc, event) => {
         acc[event.type] = (acc[event.type] || 0) + 1;
         return acc;
       },
-      {} as Record<SecurityEventType, number>
+      {} as Record<SecurityEventType, number>,
     );
   }
 
   private getThreatLevelDistribution(
-    events: SecurityEvent[]
+    events: SecurityEvent[],
   ): Record<ThreatLevel, number> {
     return events.reduce(
       (acc, event) => {
         acc[event.threatLevel] = (acc[event.threatLevel] || 0) + 1;
         return acc;
       },
-      {} as Record<ThreatLevel, number>
+      {} as Record<ThreatLevel, number>,
     );
   }
 
@@ -906,7 +906,7 @@ export class SecurityEventLogger {
         type: type as SecurityEventType,
         count,
         severity: this.getMostCommonSeverity(
-          events.filter((e) => e.type === type)
+          events.filter((e) => e.type === type),
         ),
       }))
       .sort((a, b) => b.count - a.count)
@@ -917,7 +917,7 @@ export class SecurityEventLogger {
     const severityCounts = this.groupEventsBySeverity(events);
     return (
       (Object.entries(severityCounts).sort(
-        ([, a], [, b]) => b - a
+        ([, a], [, b]) => b - a,
       )[0]?.[0] as SecuritySeverity) || 'low'
     );
   }
@@ -982,20 +982,20 @@ export class SecurityEventLogger {
 
   private generateSecurityRecommendations(
     events: SecurityEvent[],
-    trends: any[]
+    trends: any[],
   ): string[] {
     const recommendations = [];
 
     const failedLogins = events.filter((e) => e.type === 'login_failed').length;
     if (failedLogins > 10) {
       recommendations.push(
-        'Consider implementing additional authentication factors'
+        'Consider implementing additional authentication factors',
       );
       recommendations.push('Review and strengthen password policies');
     }
 
     const suspiciousActivity = events.filter(
-      (e) => e.type === 'suspicious_activity'
+      (e) => e.type === 'suspicious_activity',
     ).length;
     if (suspiciousActivity > 5) {
       recommendations.push('Enhance device fingerprinting and detection');
@@ -1003,20 +1003,20 @@ export class SecurityEventLogger {
     }
 
     const increasingTrend = trends.find(
-      (t) => t.type === 'increasing_activity'
+      (t) => t.type === 'increasing_activity',
     );
     if (increasingTrend) {
       recommendations.push(
-        'Monitor security events more closely due to increasing activity'
+        'Monitor security events more closely due to increasing activity',
       );
       recommendations.push(
-        'Consider implementing automated response mechanisms'
+        'Consider implementing automated response mechanisms',
       );
     }
 
     if (recommendations.length === 0) {
       recommendations.push(
-        'Security posture appears stable - continue monitoring'
+        'Security posture appears stable - continue monitoring',
       );
     }
 

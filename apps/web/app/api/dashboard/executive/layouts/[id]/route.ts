@@ -21,7 +21,7 @@ const UpdateLayoutSchema = z.object({
             h: z.number(),
           }),
           config: z.record(z.any()),
-        })
+        }),
       ),
     })
     .optional(),
@@ -57,20 +57,20 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
     if (!clinicUser) {
       return NextResponse.json(
         { error: 'Usuário não associado a uma clínica' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
     const layoutEngine = new DashboardLayoutEngine(
       supabase,
-      clinicUser.clinic_id
+      clinicUser.clinic_id,
     );
     const layout = await layoutEngine.getLayout(params.id);
 
     if (!layout) {
       return NextResponse.json(
         { error: 'Layout não encontrado' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -78,7 +78,7 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -107,7 +107,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     if (!clinicUser) {
       return NextResponse.json(
         { error: 'Usuário não associado a uma clínica' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -117,7 +117,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
 
     const layoutEngine = new DashboardLayoutEngine(
       supabase,
-      clinicUser.clinic_id
+      clinicUser.clinic_id,
     );
 
     // Check if layout exists
@@ -125,7 +125,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     if (!existingLayout) {
       return NextResponse.json(
         { error: 'Layout não encontrado' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -136,12 +136,12 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Dados inválidos', details: error.errors },
-        { status: 400 }
+        { status: 400 },
       );
     }
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -170,13 +170,13 @@ export async function DELETE(_request: NextRequest, { params }: RouteParams) {
     if (!clinicUser) {
       return NextResponse.json(
         { error: 'Usuário não associado a uma clínica' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
     const layoutEngine = new DashboardLayoutEngine(
       supabase,
-      clinicUser.clinic_id
+      clinicUser.clinic_id,
     );
 
     // Check if layout exists
@@ -184,7 +184,7 @@ export async function DELETE(_request: NextRequest, { params }: RouteParams) {
     if (!existingLayout) {
       return NextResponse.json(
         { error: 'Layout não encontrado' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -192,7 +192,7 @@ export async function DELETE(_request: NextRequest, { params }: RouteParams) {
     if (existingLayout.isDefault) {
       return NextResponse.json(
         { error: 'Não é possível deletar o layout padrão' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -202,7 +202,7 @@ export async function DELETE(_request: NextRequest, { params }: RouteParams) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

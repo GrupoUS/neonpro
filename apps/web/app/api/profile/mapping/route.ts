@@ -53,7 +53,7 @@ export async function POST(request: NextRequest) {
     if (!email) {
       return NextResponse.json(
         { error: 'Email required', message: 'Email is required for mapping' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -66,7 +66,7 @@ export async function POST(request: NextRequest) {
     if (userError || !user) {
       return NextResponse.json(
         { error: 'Unauthorized', message: 'User not authenticated' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -79,7 +79,7 @@ export async function POST(request: NextRequest) {
           error: 'Invalid email',
           message: 'Could not extract domain from email',
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -101,7 +101,7 @@ export async function POST(request: NextRequest) {
     if (profileError && profileError.code !== 'PGRST116') {
       return NextResponse.json(
         { error: 'Profile lookup failed', message: profileError.message },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -142,7 +142,7 @@ export async function POST(request: NextRequest) {
       if (updateError) {
         return NextResponse.json(
           { error: 'Mapping failed', message: updateError.message },
-          { status: 500 }
+          { status: 500 },
         );
       }
 
@@ -163,7 +163,7 @@ export async function POST(request: NextRequest) {
       if (createError) {
         return NextResponse.json(
           { error: 'Mapping failed', message: createError.message },
-          { status: 500 }
+          { status: 500 },
         );
       }
 
@@ -200,7 +200,7 @@ export async function POST(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error', message: 'Profile mapping failed' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -214,7 +214,7 @@ export async function GET(request: NextRequest) {
     if (!email) {
       return NextResponse.json(
         { error: 'Email required', message: 'Email parameter is required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -230,7 +230,7 @@ export async function GET(request: NextRequest) {
     const { data: existingProfile } = await supabase
       .from('profiles')
       .select(
-        'email, role, department, professional_title, profile_sync_status'
+        'email, role, department, professional_title, profile_sync_status',
       )
       .eq('email', email)
       .single();
@@ -252,7 +252,7 @@ export async function GET(request: NextRequest) {
         error: 'Internal server error',
         message: 'Could not fetch mapping information',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -318,7 +318,7 @@ export default function PatientsPage() {
         (patient) =>
           patient.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
           patient.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          patient.phone.includes(searchTerm)
+          patient.phone.includes(searchTerm),
       );
     }
 
@@ -584,7 +584,7 @@ export default function PatientsPage() {
     }
 
     const patientAppointments = sampleAppointments.filter(
-      (apt) => apt.patientId === selectedPatient.id
+      (apt) => apt.patientId === selectedPatient.id,
     );
 
     return (
@@ -841,7 +841,7 @@ export default function PatientsPage() {
                           </div>
                           <Badge
                             className={getTreatmentStatusColor(
-                              treatment.status
+                              treatment.status,
                             )}
                             variant="outline"
                           >
@@ -916,7 +916,7 @@ export default function PatientsPage() {
                               appointment.status === 'cancelled' &&
                                 'bg-red-100 text-red-800',
                               appointment.status === 'no-show' &&
-                                'bg-orange-100 text-orange-800'
+                                'bg-orange-100 text-orange-800',
                             )}
                             variant="outline"
                           >

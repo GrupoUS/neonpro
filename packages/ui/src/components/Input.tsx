@@ -2,6 +2,16 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import * as React from 'react';
 import { cn } from '../utils/cn';
 
+// Healthcare-optimized regex patterns for Brazilian formats (performance optimization)
+const CPF_REGEX_1 = /(\d{3})(\d)/;
+const CPF_REGEX_2 = /(\d{3})(\d)/;  
+const CPF_REGEX_3 = /(\d{3})(\d{1,2})/;
+const PHONE_REGEX_1 = /(\d{2})(\d)/;
+const PHONE_REGEX_2 = /(\d{4})(\d)/;
+const PHONE_REGEX_3 = /(\d{5})(\d)/;
+const DATE_REGEX_1 = /(\d{2})(\d)/;
+const DATE_REGEX_2 = /(\d{2})(\d)/;
+
 const inputVariants = cva(
   'flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:font-medium file:text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
   {
@@ -26,7 +36,7 @@ const inputVariants = cva(
 );
 
 export interface InputProps
-  extends React.InputHTMLAttributes<HTMLInputElement>,
+  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size'>,
     VariantProps<typeof inputVariants> {
   label?: string;
   error?: string;
@@ -53,11 +63,14 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
       disabled,
       value,
       onChange,
+      id,
       ...props
     },
     ref
   ) => {
     const [internalValue, setInternalValue] = React.useState(value || '');
+    const generatedId = React.useId(); // Generate unique ID for accessibility  
+    const inputId = id || generatedId;
 
     React.useEffect(() => {
       setInternalValue(value || '');
@@ -74,20 +87,20 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         case 'cpf':
           return cleaned
             .slice(0, 11)
-            .replace(/(\d{3})(\d)/, '$1.$2')
-            .replace(/(\d{3})(\d)/, '$1.$2')
-            .replace(/(\d{3})(\d{1,2})/, '$1-$2');
+            .replace(CPF_REGEX_1, '$1.$2')
+            .replace(CPF_REGEX_2, '$1.$2')
+            .replace(CPF_REGEX_3, '$1-$2');
 
         case 'phone':
           if (cleaned.length <= 10) {
             return cleaned
-              .replace(/(\d{2})(\d)/, '($1) $2')
-              .replace(/(\d{4})(\d)/, '$1-$2');
+              .replace(PHONE_REGEX_1, '($1) $2')
+              .replace(PHONE_REGEX_2, '$1-$2');
           }
           return cleaned
             .slice(0, 11)
-            .replace(/(\d{2})(\d)/, '($1) $2')
-            .replace(/(\d{5})(\d)/, '$1-$2');
+            .replace(PHONE_REGEX_1, '($1) $2')
+            .replace(PHONE_REGEX_3, '$1-$2');
         case 'currency': {
           const numberValue = `${cleaned.slice(0, -2)}.${cleaned.slice(-2)}`;
           return new Intl.NumberFormat('pt-BR', {
@@ -99,8 +112,8 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         case 'date':
           return cleaned
             .slice(0, 8)
-            .replace(/(\d{2})(\d)/, '$1/$2')
-            .replace(/(\d{2})(\d)/, '$1/$2');
+            .replace(DATE_REGEX_1, '$1/$2')
+            .replace(DATE_REGEX_2, '$1/$2');
 
         default:
           return inputValue;
@@ -123,7 +136,10 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     return (
       <div className="space-y-2">
         {label && (
-          <label className="font-medium text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+          <label 
+            className="font-medium text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            htmlFor={inputId}
+          >
             {label}
             {props.required && <span className="ml-1 text-destructive">*</span>}
           </label>
@@ -144,6 +160,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
               className
             )}
             disabled={disabled || loading}
+            id={inputId}
             onChange={handleChange}
             ref={ref}
             type={type}

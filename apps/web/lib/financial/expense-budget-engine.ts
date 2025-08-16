@@ -88,14 +88,14 @@ export class ExpenseBudgetEngine {
    */
   async categorizeExpenses(
     clinicId: string,
-    expenseIds?: string[]
+    expenseIds?: string[],
   ): Promise<{ categorized: number; failed: number; suggestions: any[] }> {
     const { data: categorizationResult, error } = await this.supabase.rpc(
       'auto_categorize_expenses',
       {
         p_clinic_id: clinicId,
         p_expense_ids: expenseIds || null,
-      }
+      },
     );
 
     if (error) {
@@ -114,7 +114,7 @@ export class ExpenseBudgetEngine {
    */
   async getExpenseCategories(
     clinicId: string,
-    dateRange: { start: Date; end: Date }
+    dateRange: { start: Date; end: Date },
   ): Promise<ExpenseCategory[]> {
     const { data: categoryData, error } = await this.supabase.rpc(
       'get_expense_categories_with_budget',
@@ -122,7 +122,7 @@ export class ExpenseBudgetEngine {
         p_clinic_id: clinicId,
         p_start_date: dateRange.start.toISOString(),
         p_end_date: dateRange.end.toISOString(),
-      }
+      },
     );
 
     if (error) {
@@ -152,7 +152,7 @@ export class ExpenseBudgetEngine {
   async generateBudgetVarianceReport(
     clinicId: string,
     period: string,
-    _includeForecasting = true
+    _includeForecasting = true,
   ): Promise<BudgetVarianceReport> {
     const dateRange = this.parsePeriodToDates(period);
 
@@ -163,11 +163,11 @@ export class ExpenseBudgetEngine {
 
     const totalBudget = categories.reduce(
       (sum, cat) => sum + cat.budgetAllocation,
-      0
+      0,
     );
     const totalActual = categories.reduce(
       (sum, cat) => sum + cat.actualSpending,
-      0
+      0,
     );
     const totalVariance = totalActual - totalBudget;
     const variancePercent =
@@ -189,7 +189,7 @@ export class ExpenseBudgetEngine {
    */
   async getBudgetAlerts(
     clinicId: string,
-    dateRange: { start: Date; end: Date }
+    dateRange: { start: Date; end: Date },
   ): Promise<BudgetAlert[]> {
     const { data: alertData, error } = await this.supabase
       .from('budget_alerts')
@@ -224,12 +224,12 @@ export class ExpenseBudgetEngine {
     categoryId: string,
     alertType: 'warning' | 'critical' | 'exceeded',
     currentAmount: number,
-    threshold: number
+    threshold: number,
   ): Promise<string> {
     const alertMessage = this.generateAlertMessage(
       alertType,
       currentAmount,
-      threshold
+      threshold,
     );
 
     const { data: alertData, error } = await this.supabase
@@ -263,7 +263,7 @@ export class ExpenseBudgetEngine {
   async analyzeExpenseTrends(
     clinicId: string,
     dateRange: { start: Date; end: Date },
-    granularity: 'daily' | 'weekly' | 'monthly' = 'monthly'
+    granularity: 'daily' | 'weekly' | 'monthly' = 'monthly',
   ): Promise<any[]> {
     const { data: trendData, error } = await this.supabase.rpc(
       'analyze_expense_trends',
@@ -272,7 +272,7 @@ export class ExpenseBudgetEngine {
         p_start_date: dateRange.start.toISOString(),
         p_end_date: dateRange.end.toISOString(),
         p_granularity: granularity,
-      }
+      },
     );
 
     if (error) {
@@ -294,7 +294,7 @@ export class ExpenseBudgetEngine {
    */
   async generateCostOptimizationInsights(
     clinicId: string,
-    dateRange: { start: Date; end: Date }
+    dateRange: { start: Date; end: Date },
   ): Promise<any[]> {
     const { data: insights, error } = await this.supabase.rpc(
       'generate_cost_optimization_insights',
@@ -302,7 +302,7 @@ export class ExpenseBudgetEngine {
         p_clinic_id: clinicId,
         p_start_date: dateRange.start.toISOString(),
         p_end_date: dateRange.end.toISOString(),
-      }
+      },
     );
 
     if (error) {
@@ -329,7 +329,7 @@ export class ExpenseBudgetEngine {
    */
   async analyzeVendorExpenses(
     clinicId: string,
-    dateRange: { start: Date; end: Date }
+    dateRange: { start: Date; end: Date },
   ): Promise<VendorExpenseData[]> {
     const { data: vendorData, error } = await this.supabase.rpc(
       'analyze_vendor_expenses',
@@ -337,7 +337,7 @@ export class ExpenseBudgetEngine {
         p_clinic_id: clinicId,
         p_start_date: dateRange.start.toISOString(),
         p_end_date: dateRange.end.toISOString(),
-      }
+      },
     );
 
     if (error) {
@@ -367,7 +367,7 @@ export class ExpenseBudgetEngine {
    */
   async allocateCostsByCenter(
     clinicId: string,
-    dateRange: { start: Date; end: Date }
+    dateRange: { start: Date; end: Date },
   ): Promise<CostCenterAllocation[]> {
     const { data: allocationData, error } = await this.supabase.rpc(
       'allocate_costs_by_center',
@@ -375,7 +375,7 @@ export class ExpenseBudgetEngine {
         p_clinic_id: clinicId,
         p_start_date: dateRange.start.toISOString(),
         p_end_date: dateRange.end.toISOString(),
-      }
+      },
     );
 
     if (error) {
@@ -404,7 +404,7 @@ export class ExpenseBudgetEngine {
   async generateExpenseForecast(
     clinicId: string,
     categoryIds: string[],
-    forecastPeriods = 12
+    forecastPeriods = 12,
   ): Promise<ExpenseForecast[]> {
     const { data: forecastData, error } = await this.supabase.rpc(
       'generate_expense_forecast',
@@ -412,7 +412,7 @@ export class ExpenseBudgetEngine {
         p_clinic_id: clinicId,
         p_category_ids: categoryIds,
         p_forecast_periods: forecastPeriods,
-      }
+      },
     );
 
     if (error) {
@@ -441,7 +441,7 @@ export class ExpenseBudgetEngine {
     baselineType:
       | 'historical'
       | 'zero_based'
-      | 'growth_adjusted' = 'growth_adjusted'
+      | 'growth_adjusted' = 'growth_adjusted',
   ): Promise<any> {
     const { data: budgetPlan, error } = await this.supabase.rpc(
       'create_budget_plan',
@@ -449,7 +449,7 @@ export class ExpenseBudgetEngine {
         p_clinic_id: clinicId,
         p_plan_year: planYear,
         p_baseline_type: baselineType,
-      }
+      },
     );
 
     if (error) {
@@ -502,7 +502,7 @@ export class ExpenseBudgetEngine {
   private generateAlertMessage(
     alertType: 'warning' | 'critical' | 'exceeded',
     currentAmount: number,
-    threshold: number
+    threshold: number,
   ): string {
     const percentage = ((currentAmount / threshold) * 100).toFixed(1);
 

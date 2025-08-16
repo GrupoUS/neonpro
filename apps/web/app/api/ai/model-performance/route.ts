@@ -51,7 +51,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     if (authError || !user) {
       return NextResponse.json(
         { success: false, error: 'Authentication required' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -69,7 +69,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
           success: false,
           error: 'Insufficient permissions. Admin or Manager role required.',
         },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -79,7 +79,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
     // Get model performance data
     const models = await performanceService.getModelPerformance(
-      modelVersion || undefined
+      modelVersion || undefined,
     );
 
     // Prepare response
@@ -113,7 +113,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
         error:
           'Internal server error occurred while retrieving model performance',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -131,7 +131,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
           success: false,
           error: 'Missing required fields: modelVersion, action',
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -145,7 +145,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     if (authError || !user) {
       return NextResponse.json(
         { success: false, error: 'Authentication required' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -163,7 +163,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
           success: false,
           error: 'Insufficient permissions. Admin role required.',
         },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -200,7 +200,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
               error:
                 'Missing required fields for model deployment: hyperparameters, featureImportance, trainingDataCount',
             },
-            { status: 400 }
+            { status: 400 },
           );
         }
 
@@ -208,7 +208,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
           modelVersion,
           hyperparameters,
           featureImportance,
-          trainingDataCount
+          trainingDataCount,
         );
 
         return NextResponse.json({
@@ -223,7 +223,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
             success: false,
             error: `Unsupported action: ${action}. Supported actions: update_performance, deploy_model`,
           },
-          { status: 400 }
+          { status: 400 },
         );
     }
   } catch (_error) {
@@ -233,7 +233,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         error:
           'Internal server error occurred while processing model performance request',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -245,7 +245,7 @@ export async function PUT() {
       success: false,
       error: 'Method not allowed. Use GET to retrieve or POST to update.',
     },
-    { status: 405 }
+    { status: 405 },
   );
 }
 
@@ -255,6 +255,6 @@ export async function DELETE() {
       success: false,
       error: 'Method not allowed. Use GET to retrieve or POST to update.',
     },
-    { status: 405 }
+    { status: 405 },
   );
 }

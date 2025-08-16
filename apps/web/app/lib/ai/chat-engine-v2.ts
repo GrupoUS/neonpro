@@ -44,20 +44,20 @@ export class NeonProAIChatEngine {
       // Step 2: Classify query
       const classification = await this.classifyQuery(
         request.query,
-        request.context
+        request.context,
       );
 
       // Step 3: Enrich context with relevant data
       const enrichedContext = await this.enrichContext(
         classification,
-        request.context
+        request.context,
       );
 
       // Step 4: Generate AI response
       const response = await this.generateResponse(
         request.query,
         enrichedContext,
-        classification
+        classification,
       );
       return response;
     } catch (error) {
@@ -70,7 +70,7 @@ export class NeonProAIChatEngine {
    * Ensures LGPD compliance and proper authorization
    */
   private async validateSecurity(
-    request: AIRequest
+    request: AIRequest,
   ): Promise<SecurityValidation> {
     try {
       // Validate user session
@@ -81,7 +81,7 @@ export class NeonProAIChatEngine {
       // Check user permissions based on query type
       const hasPermission = await this.checkUserPermissions(
         request.sessionId,
-        request.clinicId
+        request.clinicId,
       );
 
       if (!hasPermission) {
@@ -105,13 +105,13 @@ export class NeonProAIChatEngine {
    */
   private async classifyQuery(
     message: string,
-    context: UniversalChatContext
+    context: UniversalChatContext,
   ): Promise<QueryClassification> {
     try {
       // Use OpenAI to classify the query
       const classificationPrompt = this.buildClassificationPrompt(
         message,
-        context
+        context,
       );
 
       const completion = await openai.chat.completions.create({
@@ -152,7 +152,7 @@ export class NeonProAIChatEngine {
    */
   private async enrichContext(
     classification: QueryClassification,
-    baseContext: UniversalChatContext
+    baseContext: UniversalChatContext,
   ): Promise<EnrichedContext> {
     const enriched: EnrichedContext = {
       ...baseContext,
@@ -192,7 +192,7 @@ export class NeonProAIChatEngine {
         case 'analytics_query':
           if (enriched.relevantData) {
             enriched.relevantData.analytics = await this.getAnalyticsSummary(
-              baseContext.clinic.id
+              baseContext.clinic.id,
             );
           }
           break;
@@ -210,7 +210,7 @@ export class NeonProAIChatEngine {
   private async generateResponse(
     message: string,
     context: EnrichedContext,
-    classification: QueryClassification
+    classification: QueryClassification,
   ): Promise<AIResponse> {
     try {
       const systemPrompt = this.buildSystemPrompt(context, classification);
@@ -245,7 +245,7 @@ export class NeonProAIChatEngine {
    */
   private buildClassificationPrompt(
     _message: string,
-    context: UniversalChatContext
+    context: UniversalChatContext,
   ): string {
     return `You are a clinical management AI assistant. Classify the following user query and respond with JSON.
 
@@ -278,7 +278,7 @@ Required JSON format:
    */
   private buildSystemPrompt(
     context: EnrichedContext,
-    classification: QueryClassification
+    classification: QueryClassification,
   ): string {
     const clinicInfo = `Clinic: ${context.clinic.name} (${context.clinic.id})`;
     const userInfo = `User: ${context.user.name} (${context.user.role})`;
@@ -325,7 +325,7 @@ Available Data: ${JSON.stringify(context.relevantData, null, 2)}`;
       .eq('clinic_id', clinicId)
       .gte(
         'created_at',
-        new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
+        new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
       );
 
     return {
@@ -353,7 +353,7 @@ Available Data: ${JSON.stringify(context.relevantData, null, 2)}`;
         data?.filter(
           (p) =>
             new Date(p.created_at) >
-            new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
+            new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
         ).length || 0,
     };
   }
@@ -372,7 +372,7 @@ Available Data: ${JSON.stringify(context.relevantData, null, 2)}`;
    */
   private async checkUserPermissions(
     _sessionId: string,
-    _clinicId: string
+    _clinicId: string,
   ): Promise<boolean> {
     try {
       const { data: session } = await this.supabase.auth.getSession();

@@ -36,7 +36,7 @@ export class FinancialReportingEngine {
    */
   async generateProfitLossStatement(
     clinicId: string,
-    parameters: ReportParameters
+    parameters: ReportParameters,
   ): Promise<ProfitLossStatement> {
     const { period_start, period_end } = parameters;
 
@@ -53,7 +53,7 @@ export class FinancialReportingEngine {
           total_amount,
           description
         )
-      `
+      `,
       )
       .eq('clinic_id', clinicId)
       .gte('issue_date', period_start)
@@ -82,8 +82,8 @@ export class FinancialReportingEngine {
       revenueData
         ?.filter((inv) =>
           inv.invoice_items.some((item) =>
-            item.description?.includes('consulta')
-          )
+            item.description?.includes('consulta'),
+          ),
         )
         .reduce((sum, inv) => sum + inv.total_amount, 0) || 0;
 
@@ -91,8 +91,8 @@ export class FinancialReportingEngine {
       revenueData
         ?.filter((inv) =>
           inv.invoice_items.some((item) =>
-            item.description?.includes('tratamento')
-          )
+            item.description?.includes('tratamento'),
+          ),
         )
         .reduce((sum, inv) => sum + inv.total_amount, 0) || 0;
 
@@ -100,8 +100,8 @@ export class FinancialReportingEngine {
       revenueData
         ?.filter((inv) =>
           inv.invoice_items.some((item) =>
-            item.description?.includes('produto')
-          )
+            item.description?.includes('produto'),
+          ),
         )
         .reduce((sum, inv) => sum + inv.total_amount, 0) || 0;
 
@@ -113,8 +113,8 @@ export class FinancialReportingEngine {
               (item) =>
                 item.description?.includes('consulta') ||
                 item.description?.includes('tratamento') ||
-                item.description?.includes('produto')
-            )
+                item.description?.includes('produto'),
+            ),
         )
         .reduce((sum, inv) => sum + inv.total_amount, 0) || 0;
 
@@ -125,14 +125,14 @@ export class FinancialReportingEngine {
     const staffCosts =
       expenseData
         ?.filter(
-          (exp) => exp.category === 'staff' || exp.category === 'payroll'
+          (exp) => exp.category === 'staff' || exp.category === 'payroll',
         )
         .reduce((sum, exp) => sum + exp.amount, 0) || 0;
 
     const rentUtilities =
       expenseData
         ?.filter(
-          (exp) => exp.category === 'rent' || exp.category === 'utilities'
+          (exp) => exp.category === 'rent' || exp.category === 'utilities',
         )
         .reduce((sum, exp) => sum + exp.amount, 0) || 0;
 
@@ -149,7 +149,7 @@ export class FinancialReportingEngine {
     const directCosts =
       expenseData
         ?.filter(
-          (exp) => exp.category === 'materials' || exp.category === 'supplies'
+          (exp) => exp.category === 'materials' || exp.category === 'supplies',
         )
         .reduce((sum, exp) => sum + exp.amount, 0) || 0;
 
@@ -177,7 +177,7 @@ export class FinancialReportingEngine {
               'materials',
               'supplies',
               'equipment',
-            ].includes(exp.category)
+            ].includes(exp.category),
         )
         .reduce((sum, exp) => sum + exp.amount, 0) || 0;
 
@@ -265,7 +265,7 @@ export class FinancialReportingEngine {
    */
   async generateBalanceSheet(
     clinicId: string,
-    asOfDate: string
+    asOfDate: string,
   ): Promise<BalanceSheet> {
     // Fetch cash position from latest cash flow
     const { data: cashData, error: cashError } = await this.supabase
@@ -288,7 +288,7 @@ export class FinancialReportingEngine {
 
     if (receivableError) {
       throw new Error(
-        `Receivable data fetch failed: ${receivableError.message}`
+        `Receivable data fetch failed: ${receivableError.message}`,
       );
     }
 
@@ -402,7 +402,7 @@ export class FinancialReportingEngine {
     const validation = balanceSheetSchema.safeParse(balanceSheet);
     if (!validation.success) {
       throw new Error(
-        `Balance sheet validation failed: ${validation.error.message}`
+        `Balance sheet validation failed: ${validation.error.message}`,
       );
     }
 
@@ -414,7 +414,7 @@ export class FinancialReportingEngine {
    */
   async generateCashFlowStatement(
     clinicId: string,
-    parameters: ReportParameters
+    parameters: ReportParameters,
   ): Promise<CashFlowStatement> {
     const { period_start, period_end } = parameters;
 
@@ -462,7 +462,7 @@ export class FinancialReportingEngine {
           (entry) =>
             entry.transaction_type === 'expense' &&
             entry.category !== 'equipment' &&
-            entry.category !== 'investment'
+            entry.category !== 'investment',
         )
         .reduce((sum, entry) => sum + entry.amount, 0) || 0;
 
@@ -486,7 +486,7 @@ export class FinancialReportingEngine {
         ?.filter(
           (entry) =>
             entry.transaction_type === 'expense' &&
-            entry.category === 'equipment'
+            entry.category === 'equipment',
         )
         .reduce((sum, entry) => sum + entry.amount, 0) || 0;
 
@@ -495,7 +495,7 @@ export class FinancialReportingEngine {
         ?.filter(
           (entry) =>
             entry.transaction_type === 'expense' &&
-            entry.category === 'software'
+            entry.category === 'software',
         )
         .reduce((sum, entry) => sum + entry.amount, 0) || 0;
 
@@ -504,7 +504,7 @@ export class FinancialReportingEngine {
         ?.filter(
           (entry) =>
             entry.transaction_type === 'expense' &&
-            entry.category === 'investment'
+            entry.category === 'investment',
         )
         .reduce((sum, entry) => sum + entry.amount, 0) || 0;
 
@@ -560,7 +560,7 @@ export class FinancialReportingEngine {
     const validation = cashFlowStatementSchema.safeParse(cashFlowStatement);
     if (!validation.success) {
       throw new Error(
-        `Cash flow statement validation failed: ${validation.error.message}`
+        `Cash flow statement validation failed: ${validation.error.message}`,
       );
     }
 
@@ -576,7 +576,7 @@ export class FinancialReportingEngine {
    */
   async calculateRevenueAnalytics(
     clinicId: string,
-    parameters: ReportParameters
+    parameters: ReportParameters,
   ): Promise<RevenueAnalytics> {
     const { period_start, period_end } = parameters;
 
@@ -598,7 +598,7 @@ export class FinancialReportingEngine {
             name
           )
         )
-      `
+      `,
       )
       .eq('clinic_id', clinicId)
       .gte('issue_date', period_start)
@@ -619,7 +619,7 @@ export class FinancialReportingEngine {
         const serviceName = item.description || 'Other';
         serviceRevenue.set(
           serviceName,
-          (serviceRevenue.get(serviceName) || 0) + item.total_amount
+          (serviceRevenue.get(serviceName) || 0) + item.total_amount,
         );
       });
     });
@@ -629,7 +629,7 @@ export class FinancialReportingEngine {
         service_name,
         revenue,
         percentage: totalRevenue > 0 ? (revenue / totalRevenue) * 100 : 0,
-      })
+      }),
     );
 
     // Calculate revenue by provider
@@ -655,7 +655,7 @@ export class FinancialReportingEngine {
         revenue: data.revenue,
         percentage: totalRevenue > 0 ? (data.revenue / totalRevenue) * 100 : 0,
         patient_count: data.patient_count,
-      })
+      }),
     );
 
     // Calculate revenue trends (placeholder - would need more sophisticated analysis)
@@ -682,7 +682,7 @@ export class FinancialReportingEngine {
    */
   async calculateExpenseAnalytics(
     clinicId: string,
-    parameters: ReportParameters
+    parameters: ReportParameters,
   ): Promise<ExpenseAnalytics> {
     const { period_start, period_end } = parameters;
 
@@ -708,7 +708,7 @@ export class FinancialReportingEngine {
       const category = expense.category || 'Other';
       categoryExpenses.set(
         category,
-        (categoryExpenses.get(category) || 0) + expense.amount
+        (categoryExpenses.get(category) || 0) + expense.amount,
       );
     });
 
@@ -717,14 +717,14 @@ export class FinancialReportingEngine {
         category_name,
         amount,
         percentage: totalExpenses > 0 ? (amount / totalExpenses) * 100 : 0,
-      })
+      }),
     );
 
     // Calculate fixed vs variable expenses (simplified categorization)
     const fixedExpenses =
       expenseData
         ?.filter((exp) =>
-          ['rent', 'utilities', 'insurance', 'software'].includes(exp.category)
+          ['rent', 'utilities', 'insurance', 'software'].includes(exp.category),
         )
         .reduce((sum, exp) => sum + exp.amount, 0) || 0;
 
@@ -752,7 +752,7 @@ export class FinancialReportingEngine {
    */
   async saveFinancialReport(
     report: Partial<FinancialReport>,
-    _content: any
+    _content: any,
   ): Promise<FinancialReport> {
     const { data, error } = await this.supabase
       .from('financial_reports')
@@ -788,7 +788,7 @@ export class FinancialReportingEngine {
       period_end?: string;
       page?: number;
       limit?: number;
-    } = {}
+    } = {},
   ): Promise<{ reports: FinancialReport[]; total: number }> {
     let query = this.supabase
       .from('financial_reports')
@@ -860,7 +860,7 @@ export class FinancialReportingEngine {
 
     if (diffDays > 365) {
       warnings.push(
-        'Report period exceeds 1 year, performance may be impacted'
+        'Report period exceeds 1 year, performance may be impacted',
       );
     }
 

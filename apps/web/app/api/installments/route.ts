@@ -141,13 +141,13 @@ export async function GET(request: NextRequest) {
           error: 'Invalid query parameters',
           details: error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -176,7 +176,7 @@ export async function POST(request: NextRequest) {
     if (!action) {
       return NextResponse.json(
         { error: 'Action is required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -189,7 +189,7 @@ export async function POST(request: NextRequest) {
         result = await installmentProcessor.processInstallmentPayment(
           singleData.installmentId,
           singleData.paymentMethodId,
-          singleData.customerId
+          singleData.customerId,
         );
         break;
       }
@@ -202,7 +202,7 @@ export async function POST(request: NextRequest) {
             paymentMethodId: bulkData.paymentMethodId,
             customerId: bulkData.customerId,
             maxConcurrent: bulkData.maxConcurrent,
-          }
+          },
         );
         break;
       }
@@ -228,7 +228,7 @@ export async function POST(request: NextRequest) {
 
         result = await installmentProcessor.retryFailedPayment(
           retryData.installmentId,
-          retryData.paymentMethodId
+          retryData.paymentMethodId,
         );
         break;
       }
@@ -244,7 +244,7 @@ export async function POST(request: NextRequest) {
               'retry_failed',
             ],
           },
-          { status: 400 }
+          { status: 400 },
         );
     }
 
@@ -260,13 +260,13 @@ export async function POST(request: NextRequest) {
           error: 'Invalid request data',
           details: error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -295,7 +295,7 @@ export async function PUT(request: NextRequest) {
     if (!(action && installmentIds && Array.isArray(installmentIds))) {
       return NextResponse.json(
         { error: 'Invalid request: action and installmentIds are required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -317,7 +317,7 @@ export async function PUT(request: NextRequest) {
               await installmentManager.markInstallmentAsPaid(
                 id,
                 paymentData.paymentIntentId,
-                paymentData.paymentMethod
+                paymentData.paymentMethod,
               );
               return { id, success: true };
             } catch (error) {
@@ -327,7 +327,7 @@ export async function PUT(request: NextRequest) {
                 error: error instanceof Error ? error.message : 'Unknown error',
               };
             }
-          })
+          }),
         );
         break;
       }
@@ -345,7 +345,7 @@ export async function PUT(request: NextRequest) {
                 error: error instanceof Error ? error.message : 'Unknown error',
               };
             }
-          })
+          }),
         );
         break;
 
@@ -363,7 +363,7 @@ export async function PUT(request: NextRequest) {
                 error: error instanceof Error ? error.message : 'Unknown error',
               };
             }
-          })
+          }),
         );
         break;
       }
@@ -374,7 +374,7 @@ export async function PUT(request: NextRequest) {
             error: 'Invalid action',
             supportedActions: ['mark_paid', 'mark_overdue', 'cancel'],
           },
-          { status: 400 }
+          { status: 400 },
         );
     }
 
@@ -398,13 +398,13 @@ export async function PUT(request: NextRequest) {
           error: 'Invalid request data',
           details: error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

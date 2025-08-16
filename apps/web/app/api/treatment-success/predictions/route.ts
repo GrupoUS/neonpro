@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
         success: true,
         data: prediction,
       },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (error) {
     if (error instanceof Error && error.name === 'ZodError') {
@@ -29,7 +29,7 @@ export async function POST(request: NextRequest) {
           error: 'Dados inválidos',
           details: error.message,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -39,7 +39,7 @@ export async function POST(request: NextRequest) {
         error: 'Erro interno do servidor',
         details: error instanceof Error ? error.message : 'Erro desconhecido',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

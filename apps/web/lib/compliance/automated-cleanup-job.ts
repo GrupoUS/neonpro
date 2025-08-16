@@ -97,11 +97,11 @@ export class AutomatedCleanupJob {
           () => {
             reject(
               new Error(
-                `Job timeout after ${this.config.max_runtime_minutes} minutes`
-              )
+                `Job timeout after ${this.config.max_runtime_minutes} minutes`,
+              ),
             );
           },
-          this.config.max_runtime_minutes * 60 * 1000
+          this.config.max_runtime_minutes * 60 * 1000,
         );
       });
 
@@ -118,7 +118,7 @@ export class AutomatedCleanupJob {
           ? 'timeout'
           : 'failed';
       result.errors.push(
-        error instanceof Error ? error.message : 'Unknown error'
+        error instanceof Error ? error.message : 'Unknown error',
       );
     } finally {
       const endTime = new Date();
@@ -194,10 +194,10 @@ export class AutomatedCleanupJob {
       // Processar resultados
       result.total_processed = complianceRecords.length;
       result.anonymized_count = complianceRecords.filter(
-        (r) => r.action === 'anonymized'
+        (r) => r.action === 'anonymized',
       ).length;
       result.deleted_count = complianceRecords.filter(
-        (r) => r.action === 'deleted'
+        (r) => r.action === 'deleted',
       ).length;
     } catch (error) {
       const errorMsg = `Erro durante limpeza real: ${error}`;
@@ -247,7 +247,7 @@ export class AutomatedCleanupJob {
    * Envia notificação de conclusão
    */
   private async sendCompletionNotification(
-    result: CleanupJobResult
+    result: CleanupJobResult,
   ): Promise<void> {
     try {
       const isSuccess =
@@ -272,7 +272,7 @@ export class AutomatedCleanupJob {
    */
   private generateNotificationBody(
     result: CleanupJobResult,
-    isSuccess: boolean
+    isSuccess: boolean,
   ): string {
     const duration = Math.round(result.execution_time_ms / 1000);
     const status = isSuccess ? '✅ SUCESSO' : '⚠️ COM PROBLEMAS';
@@ -343,7 +343,7 @@ Para mais detalhes, acesse o dashboard de compliance.
  * Pode ser usado para executar o job via webhook ou cron
  */
 export async function handleCleanupRequest(
-  request: Request
+  request: Request,
 ): Promise<Response> {
   const url = new URL(request.url);
   const isDryRun = url.searchParams.get('dry_run') === 'true';
@@ -375,7 +375,7 @@ export async function handleCleanupRequest(
         error: 'Internal server error',
         message: error instanceof Error ? error.message : 'Unknown error',
       }),
-      { status: 500, headers: { 'Content-Type': 'application/json' } }
+      { status: 500, headers: { 'Content-Type': 'application/json' } },
     );
   }
 }

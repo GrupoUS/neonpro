@@ -57,7 +57,7 @@ export class AISchedulingOptimizer {
   }
 
   async suggestOptimalSlots(
-    request: SchedulingRequest
+    request: SchedulingRequest,
   ): Promise<OptimizedSlot[]> {
     try {
       // Get patient preferences
@@ -66,20 +66,20 @@ export class AISchedulingOptimizer {
       // Get available slots in the requested range
       const availableSlots = await this.getAvailableSlots(
         request.preferred_date_range,
-        request.duration_minutes
+        request.duration_minutes,
       );
 
       // Score and rank slots
       const scoredSlots = await this.scoreSlots(
         availableSlots,
         request,
-        patientPrefs
+        patientPrefs,
       );
 
       // Apply optimization algorithms
       const optimizedSlots = await this.optimizeSlotSelection(
         scoredSlots,
-        request
+        request,
       );
 
       // Log the AI decision for learning
@@ -92,7 +92,7 @@ export class AISchedulingOptimizer {
   }
 
   private async getPatientPreferences(
-    patientId: string
+    patientId: string,
   ): Promise<PatientPreferences> {
     const { data, error } = await this.supabase
       .from('patient_preferences')
@@ -135,7 +135,7 @@ export class AISchedulingOptimizer {
 
   private async getAvailableSlots(
     dateRange: any,
-    durationMinutes: number
+    durationMinutes: number,
   ): Promise<any[]> {
     // Simplified slot generation - in practice would query actual availability
     const slots = [];
@@ -166,7 +166,7 @@ export class AISchedulingOptimizer {
   private async scoreSlots(
     slots: any[],
     request: SchedulingRequest,
-    patientPrefs: PatientPreferences
+    patientPrefs: PatientPreferences,
   ): Promise<any[]> {
     const scoredSlots = [];
 
@@ -176,20 +176,20 @@ export class AISchedulingOptimizer {
       // Patient preference score
       const patientScore = this.calculatePatientPreferenceScore(
         slotDate,
-        patientPrefs
+        patientPrefs,
       );
 
       // Staff efficiency score
       const staffScore = await this.getStaffEfficiencyScore(
         slot.staff_id,
         slotDate.getDay(),
-        slotDate.getHours()
+        slotDate.getHours(),
       );
 
       // Revenue optimization score
       const revenueScore = this.calculateRevenueScore(
         slotDate,
-        request.treatment_type
+        request.treatment_type,
       );
 
       // Utilization score
@@ -219,7 +219,7 @@ export class AISchedulingOptimizer {
 
   private calculatePatientPreferenceScore(
     slotDate: Date,
-    prefs: PatientPreferences
+    prefs: PatientPreferences,
   ): number {
     let score = 0.5; // Base score
 
@@ -252,7 +252,7 @@ export class AISchedulingOptimizer {
   private async getStaffEfficiencyScore(
     staffId: string,
     dayOfWeek: number,
-    hourOfDay: number
+    hourOfDay: number,
   ): Promise<number> {
     const { data, error } = await this.supabase
       .from('staff_efficiency_patterns')
@@ -271,7 +271,7 @@ export class AISchedulingOptimizer {
 
   private calculateRevenueScore(
     slotDate: Date,
-    _treatmentType: string
+    _treatmentType: string,
   ): number {
     // Simplified revenue scoring - would use complex pricing models
     const hourOfDay = slotDate.getHours();
@@ -298,7 +298,7 @@ export class AISchedulingOptimizer {
 
   private async optimizeSlotSelection(
     scoredSlots: any[],
-    _request: SchedulingRequest
+    _request: SchedulingRequest,
   ): Promise<OptimizedSlot[]> {
     const optimizedSlots: OptimizedSlot[] = [];
 
@@ -331,7 +331,7 @@ export class AISchedulingOptimizer {
 
   private async logSchedulingDecision(
     request: SchedulingRequest,
-    suggestions: OptimizedSlot[]
+    suggestions: OptimizedSlot[],
   ): Promise<void> {
     try {
       const decisionId = `decision_${Date.now()}_${request.patient_id}`;
@@ -354,7 +354,7 @@ export class AISchedulingOptimizer {
 
   async updatePatientPreferences(
     patientId: string,
-    appointmentOutcome: any
+    appointmentOutcome: any,
   ): Promise<void> {
     try {
       // Learn from appointment outcomes to improve future suggestions
@@ -374,7 +374,7 @@ export class AISchedulingOptimizer {
         // Update existing preferences based on satisfaction
         updatedPrefs = this.mergePreferenceData(
           currentPrefs,
-          appointmentOutcome
+          appointmentOutcome,
         );
       } else {
         // Create new preferences
@@ -466,7 +466,7 @@ export class AISchedulingOptimizer {
         data.length;
 
       const utilizationData = data.filter(
-        (item) => item.metric_type === 'utilization'
+        (item) => item.metric_type === 'utilization',
       );
       if (utilizationData.length > 0) {
         metrics.utilization_improvement =

@@ -72,12 +72,12 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const query = GetWorkflowsQuerySchema.parse(
-      Object.fromEntries(searchParams)
+      Object.fromEntries(searchParams),
     );
 
     const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
     );
 
     // Check authentication
@@ -121,7 +121,7 @@ export async function GET(request: NextRequest) {
     if (query.priority) {
       supabaseQuery = supabaseQuery.eq(
         'priority',
-        Number.parseInt(query.priority, 10)
+        Number.parseInt(query.priority, 10),
       );
     }
 
@@ -145,7 +145,7 @@ export async function GET(request: NextRequest) {
 
     // Get workflow statistics
     const { data: stats, error: statsError } = await supabase.rpc(
-      'get_workflow_statistics'
+      'get_workflow_statistics',
     );
 
     if (statsError) {
@@ -170,7 +170,7 @@ export async function GET(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to fetch collection workflows' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -186,7 +186,7 @@ export async function POST(request: NextRequest) {
 
     const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
     );
 
     // Check authentication
@@ -219,7 +219,7 @@ export async function POST(request: NextRequest) {
         if (existingWorkflow) {
           return NextResponse.json(
             { error: 'Customer already has an active collection workflow' },
-            { status: 409 }
+            { status: 409 },
           );
         }
 
@@ -258,7 +258,7 @@ export async function POST(request: NextRequest) {
         if (workflowError || !workflow) {
           return NextResponse.json(
             { error: 'Workflow not found' },
-            { status: 404 }
+            { status: 404 },
           );
         }
 
@@ -384,13 +384,13 @@ export async function POST(request: NextRequest) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Validation error', details: error.errors },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     return NextResponse.json(
       { error: 'Failed to process workflow action' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -406,7 +406,7 @@ export async function PUT(request: NextRequest) {
 
     const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
     );
 
     // Check authentication
@@ -565,13 +565,13 @@ export async function PUT(request: NextRequest) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Validation error', details: error.errors },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     return NextResponse.json(
       { error: 'Failed to update workflow' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -589,13 +589,13 @@ export async function DELETE(request: NextRequest) {
     if (!workflowId) {
       return NextResponse.json(
         { error: 'Workflow ID is required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
     );
 
     // Check authentication
@@ -646,7 +646,7 @@ export async function DELETE(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to complete workflow' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

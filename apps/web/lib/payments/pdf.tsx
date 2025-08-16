@@ -331,7 +331,7 @@ export const InvoicePDFDocument: React.FC<{ data: InvoicePDFData }> = ({
 
 // Generate PDF Buffer
 export const generateInvoicePDF = async (
-  data: InvoicePDFData
+  data: InvoicePDFData,
 ): Promise<Buffer> => {
   const document = <InvoicePDFDocument data={data} />;
   const pdfBuffer = await pdf(document).toBuffer();
@@ -340,7 +340,7 @@ export const generateInvoicePDF = async (
 
 // Generate PDF Blob (for download)
 export const generateInvoicePDFBlob = async (
-  data: InvoicePDFData
+  data: InvoicePDFData,
 ): Promise<Blob> => {
   const document = <InvoicePDFDocument data={data} />;
   const pdfBlob = await pdf(document).toBlob();

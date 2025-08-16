@@ -70,7 +70,7 @@ export class SupabaseStorageManager {
    */
   private compressImage(
     file: File,
-    options: CompressionOptions = {}
+    options: CompressionOptions = {},
   ): Promise<Blob> {
     const {
       maxWidth = 1920,
@@ -117,7 +117,7 @@ export class SupabaseStorageManager {
               }
             },
             format,
-            quality
+            quality,
           );
         } catch (error) {
           reject(error);
@@ -169,7 +169,7 @@ export class SupabaseStorageManager {
     file: File,
     patientId: string,
     metadata: PhotoMetadata,
-    options: CompressionOptions = {}
+    options: CompressionOptions = {},
   ): Promise<UploadResult> {
     try {
       // Validate file
@@ -263,7 +263,7 @@ export class SupabaseStorageManager {
     patientId: string,
     metadata: PhotoMetadata,
     onProgress?: (progress: number) => void,
-    options: CompressionOptions = {}
+    options: CompressionOptions = {},
   ): Promise<{
     success: boolean;
     results: UploadResult[];
@@ -311,7 +311,7 @@ export class SupabaseStorageManager {
       limit?: number;
       category?: 'before' | 'after' | 'during';
       treatmentType?: string;
-    } = {}
+    } = {},
   ) {
     const { page = 1, limit = 20, category, treatmentType } = options;
     const offset = (page - 1) * limit;
@@ -352,7 +352,7 @@ export class SupabaseStorageManager {
             publicUrl: urlData?.signedUrl || '',
             metadata: photo.metadata as PhotoMetadata,
           };
-        })
+        }),
       );
 
       return {
@@ -377,7 +377,7 @@ export class SupabaseStorageManager {
    * Delete photo (both storage and database)
    */
   async deletePhoto(
-    photoId: string
+    photoId: string,
   ): Promise<{ success: boolean; error?: string }> {
     try {
       // Get file path first
@@ -423,7 +423,7 @@ export class SupabaseStorageManager {
    * Download photo as blob
    */
   async downloadPhoto(
-    filePath: string
+    filePath: string,
   ): Promise<{ success: boolean; blob?: Blob; error?: string }> {
     try {
       const { data, error } = await this.supabase.storage
@@ -448,7 +448,7 @@ export class SupabaseStorageManager {
    */
   async createSignedUrl(
     filePath: string,
-    expiresIn = 3600
+    expiresIn = 3600,
   ): Promise<{ success: boolean; url?: string; error?: string }> {
     try {
       const { data, error } = await this.supabase.storage
@@ -523,7 +523,7 @@ export class SupabaseStorageManager {
       treatmentType?: string;
       beforeDate?: Date;
       afterDate?: Date;
-    }
+    },
   ): Promise<{ success: boolean; deletedCount: number; error?: string }> {
     try {
       let query = this.supabase

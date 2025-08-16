@@ -34,7 +34,7 @@ export async function GET(request: NextRequest) {
     if (!(professionalId && date)) {
       return NextResponse.json(
         { error: 'Missing required parameters' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -96,7 +96,7 @@ export async function GET(request: NextRequest) {
           data: [],
           error_message: appointmentsError.message,
         } as AvailableSlotsResponse,
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -136,7 +136,7 @@ export async function GET(request: NextRequest) {
         data: [],
         error_message: 'Internal Server Error',
       } as AvailableSlotsResponse,
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

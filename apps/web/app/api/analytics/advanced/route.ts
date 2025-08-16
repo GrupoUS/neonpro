@@ -53,14 +53,14 @@ function handleAPIError(error: any, context: string) {
   if (error.code === 'PGRST301') {
     return NextResponse.json(
       { error: 'Database query failed', details: 'Invalid query parameters' },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
   if (error.name === 'ZodError') {
     return NextResponse.json(
       { error: 'Validation failed', details: error.errors },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
@@ -73,7 +73,7 @@ function handleAPIError(error: any, context: string) {
           : 'An error occurred',
       context,
     },
-    { status: 500 }
+    { status: 500 },
   );
 }
 
@@ -108,7 +108,7 @@ export async function POST(request: NextRequest) {
             error:
               'Invalid endpoint. Use ?type=cohort-analysis|forecasting|statistical-analysis',
           },
-          { status: 404 }
+          { status: 404 },
         );
     }
   } catch (error) {
@@ -120,7 +120,7 @@ export async function POST(request: NextRequest) {
 async function handleCohortAnalysis(
   request: NextRequest,
   supabase: any,
-  userId: string
+  userId: string,
 ) {
   try {
     const body = await request.json();
@@ -182,7 +182,7 @@ async function handleCohortAnalysis(
 async function handleForecasting(
   request: NextRequest,
   supabase: any,
-  userId: string
+  userId: string,
 ) {
   try {
     const body = await request.json();
@@ -204,7 +204,7 @@ async function handleForecasting(
           message:
             'At least 14 days of historical data required for forecasting',
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -274,7 +274,7 @@ async function handleForecasting(
 async function handleStatisticalAnalysis(
   request: NextRequest,
   supabase: any,
-  userId: string
+  userId: string,
 ) {
   try {
     const body = await request.json();
@@ -287,7 +287,7 @@ async function handleStatisticalAnalysis(
       .eq('user_id', userId)
       .gte(
         'created_at',
-        new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString()
+        new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString(),
       ) // Last 90 days
       .order('created_at', { ascending: true });
 
@@ -301,14 +301,14 @@ async function handleStatisticalAnalysis(
           error: 'Insufficient data',
           message: 'At least 30 data points required for statistical analysis',
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     // Process data for analysis
     const processedData = processAnalyticsDataForStatistics(
       analyticsData,
-      validatedData.metrics
+      validatedData.metrics,
     );
 
     const results: any = {};
@@ -321,7 +321,7 @@ async function handleStatisticalAnalysis(
       results.correlations = await calculateCorrelations(
         processedData,
         validatedData.metrics,
-        validatedData.confidence_level
+        validatedData.confidence_level,
       );
     }
 
@@ -334,7 +334,7 @@ async function handleStatisticalAnalysis(
         processedData,
         validatedData.metrics[0], // Primary metric as dependent variable
         validatedData.metrics.slice(1), // Other metrics as independent variables
-        validatedData.confidence_level
+        validatedData.confidence_level,
       );
     }
 
@@ -346,20 +346,20 @@ async function handleStatisticalAnalysis(
       results.significance_tests = await performSignificanceTests(
         processedData,
         validatedData.metrics,
-        validatedData.confidence_level
+        validatedData.confidence_level,
       );
     }
 
     // Data Quality Assessment
     const dataQuality = await assessDataQuality(
       processedData,
-      validatedData.include_outliers
+      validatedData.include_outliers,
     );
 
     // Predictive Model Evaluation
     const predictiveModels = await evaluatePredictiveModels(
       processedData,
-      validatedData.metrics
+      validatedData.metrics,
     );
 
     // Format response
@@ -409,7 +409,7 @@ export async function GET(request: NextRequest) {
     if (!cacheKey) {
       return NextResponse.json(
         { error: 'Cache key required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -425,7 +425,7 @@ export async function GET(request: NextRequest) {
     if (cacheError || !cachedData) {
       return NextResponse.json(
         { error: 'Cache miss or expired' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -479,7 +479,7 @@ function processAnalyticsDataForStatistics(rawData: any[], _metrics: string[]) {
 
       return acc;
     },
-    {} as Record<string, any>
+    {} as Record<string, any>,
   );
 
   // Convert to array and calculate derived metrics
@@ -493,7 +493,7 @@ function processAnalyticsDataForStatistics(rawData: any[], _metrics: string[]) {
 async function calculateCorrelations(
   data: any[],
   metrics: string[],
-  _confidenceLevel: number
+  _confidenceLevel: number,
 ) {
   const correlations = [];
 
@@ -513,7 +513,7 @@ async function calculateCorrelations(
         const correlation = calculatePearsonCorrelation(values1, values2);
         const pValue = calculateCorrelationPValue(
           correlation,
-          Math.min(values1.length, values2.length)
+          Math.min(values1.length, values2.length),
         );
 
         correlations.push({
@@ -529,7 +529,7 @@ async function calculateCorrelations(
   }
 
   return correlations.sort(
-    (a, b) => Math.abs(b.correlation) - Math.abs(a.correlation)
+    (a, b) => Math.abs(b.correlation) - Math.abs(a.correlation),
   );
 }
 
@@ -547,7 +547,7 @@ function calculatePearsonCorrelation(x: number[], y: number[]) {
 
   const numerator = n * sumXY - sumX * sumY;
   const denominator = Math.sqrt(
-    (n * sumX2 - sumX * sumX) * (n * sumY2 - sumY * sumY)
+    (n * sumX2 - sumX * sumX) * (n * sumY2 - sumY * sumY),
   );
 
   return denominator === 0 ? 0 : numerator / denominator;
@@ -566,7 +566,7 @@ function studentTCDF(t: number, df: number) {
 }
 
 function getSignificanceCategory(
-  pValue: number
+  pValue: number,
 ): 'high' | 'medium' | 'low' | 'none' {
   if (pValue < 0.001) {
     return 'high';
@@ -584,7 +584,7 @@ async function performRegressionAnalysis(
   data: any[],
   dependent: string,
   independent: string[],
-  _confidenceLevel: number
+  _confidenceLevel: number,
 ) {
   const y = data.map((d) => d[dependent]).filter((v) => !Number.isNaN(v));
   const _X = data.map((d) => independent.map((metric) => d[metric] || 0));
@@ -618,7 +618,7 @@ async function performRegressionAnalysis(
 async function performSignificanceTests(
   data: any[],
   metrics: string[],
-  confidenceLevel: number
+  confidenceLevel: number,
 ) {
   const tests = [];
 
@@ -670,7 +670,7 @@ async function assessDataQuality(data: any[], includeOutliers: boolean) {
       if (values.length > 0) {
         const mean = values.reduce((sum, v) => sum + v, 0) / values.length;
         const stdDev = Math.sqrt(
-          values.reduce((sum, v) => sum + (v - mean) ** 2, 0) / values.length
+          values.reduce((sum, v) => sum + (v - mean) ** 2, 0) / values.length,
         );
 
         values.forEach((value) => {

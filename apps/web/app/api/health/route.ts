@@ -177,7 +177,7 @@ function checkEnvironment(): HealthCheck {
  * Get overall system status
  */
 function getOverallStatus(
-  checks: HealthCheck[]
+  checks: HealthCheck[],
 ): 'healthy' | 'unhealthy' | 'degraded' {
   const hasUnhealthy = checks.some((check) => check.status === 'unhealthy');
   const hasDegraded = checks.some((check) => check.status === 'degraded');
@@ -233,7 +233,7 @@ export async function GET(_request: NextRequest) {
           };
           return acc;
         },
-        {} as Record<string, any>
+        {} as Record<string, any>,
       ),
     };
 
@@ -247,7 +247,7 @@ export async function GET(_request: NextRequest) {
         error: 'Health check failed',
         message: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 503 }
+      { status: 503 },
     );
   }
 }

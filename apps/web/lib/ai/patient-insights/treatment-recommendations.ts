@@ -19,7 +19,7 @@ export class TreatmentRecommendationEngine {
   async generateRecommendations(
     patientId: string,
     riskAssessment: PatientRiskAssessment,
-    treatmentGoal?: string
+    treatmentGoal?: string,
   ): Promise<TreatmentRecommendationResponse> {
     const startTime = Date.now();
 
@@ -38,7 +38,7 @@ export class TreatmentRecommendationEngine {
           treatment,
           patientData,
           riskAssessment,
-          treatmentGoal
+          treatmentGoal,
         );
 
         if (recommendation) {
@@ -52,7 +52,7 @@ export class TreatmentRecommendationEngine {
       // 5. Filter out contraindicated treatments
       const safeRecommendations = this.filterContraindications(
         rankedRecommendations,
-        riskAssessment
+        riskAssessment,
       );
 
       return {
@@ -79,7 +79,7 @@ export class TreatmentRecommendationEngine {
         treatment_outcomes (*),
         medical_history (*),
         preferences (*)
-      `
+      `,
       )
       .eq('id', patientId)
       .single();
@@ -100,7 +100,7 @@ export class TreatmentRecommendationEngine {
     treatment: any,
     patientData: any,
     riskAssessment: PatientRiskAssessment,
-    treatmentGoal?: string
+    treatmentGoal?: string,
   ): Promise<TreatmentRecommendation | null> {
     // 1. Check basic eligibility
     if (!this.isPatientEligible(treatment, patientData)) {
@@ -111,7 +111,7 @@ export class TreatmentRecommendationEngine {
     const successProbability = this.calculateSuccessProbability(
       treatment,
       patientData,
-      riskAssessment
+      riskAssessment,
     );
 
     // 3. Assess risk level
@@ -121,7 +121,7 @@ export class TreatmentRecommendationEngine {
     const contraindications = this.checkContraindications(
       treatment,
       patientData,
-      riskAssessment
+      riskAssessment,
     );
 
     // 5. Get evidence level
@@ -131,7 +131,7 @@ export class TreatmentRecommendationEngine {
     const estimatedCost = this.calculateEstimatedCost(treatment, patientData);
     const estimatedDuration = this.calculateEstimatedDuration(
       treatment,
-      patientData
+      patientData,
     );
 
     // 7. Generate reasoning
@@ -139,7 +139,7 @@ export class TreatmentRecommendationEngine {
       treatment,
       successProbability,
       riskLevel,
-      evidenceLevel
+      evidenceLevel,
     );
 
     return {
@@ -192,7 +192,7 @@ export class TreatmentRecommendationEngine {
   private calculateSuccessProbability(
     treatment: any,
     patientData: any,
-    riskAssessment: PatientRiskAssessment
+    riskAssessment: PatientRiskAssessment,
   ): number {
     // Base success rate from clinical data
     let baseRate = treatment.base_success_rate || 0.75;
@@ -213,7 +213,7 @@ export class TreatmentRecommendationEngine {
     // Adjust for previous treatment outcomes
     if (patientData.treatments?.length > 0) {
       const successfulTreatments = patientData.treatments.filter(
-        (t) => t.outcome === 'successful'
+        (t) => t.outcome === 'successful',
       ).length;
       const successRate = successfulTreatments / patientData.treatments.length;
       baseRate = (baseRate + successRate) / 2; // Average with historical success
@@ -221,7 +221,7 @@ export class TreatmentRecommendationEngine {
 
     // Adjust for specific risk factors
     const medicalRisks = riskAssessment.riskFactors.filter(
-      (rf) => rf.category === 'medical'
+      (rf) => rf.category === 'medical',
     );
     const riskReduction = medicalRisks.reduce((reduction, risk) => {
       return reduction + risk.weight * 0.1; // Max 10% reduction per risk factor
@@ -234,13 +234,13 @@ export class TreatmentRecommendationEngine {
 
   private assessTreatmentRisk(
     treatment: any,
-    riskAssessment: PatientRiskAssessment
+    riskAssessment: PatientRiskAssessment,
   ): TreatmentRecommendation['riskLevel'] {
     let riskScore = treatment.base_risk_score || 1; // 1-4 scale
 
     // Increase risk based on patient risk factors
     const highRiskFactors = riskAssessment.riskFactors.filter(
-      (rf) => rf.severity === 'high' || rf.severity === 'critical'
+      (rf) => rf.severity === 'high' || rf.severity === 'critical',
     );
 
     riskScore += highRiskFactors.length * 0.5;
@@ -268,7 +268,7 @@ export class TreatmentRecommendationEngine {
   private checkContraindications(
     treatment: any,
     patientData: any,
-    riskAssessment: PatientRiskAssessment
+    riskAssessment: PatientRiskAssessment,
   ): string[] {
     const contraindications: string[] = [];
 
@@ -311,11 +311,11 @@ export class TreatmentRecommendationEngine {
 
     // Critical risk factor contraindications
     const criticalRisks = riskAssessment.riskFactors.filter(
-      (rf) => rf.severity === 'critical'
+      (rf) => rf.severity === 'critical',
     );
     if (criticalRisks.length > 0 && treatment.invasiveness === 'high') {
       contraindications.push(
-        'Critical risk factors present for invasive procedure'
+        'Critical risk factors present for invasive procedure',
       );
     }
 
@@ -324,7 +324,7 @@ export class TreatmentRecommendationEngine {
 
   private getEvidenceLevel(
     treatment: any,
-    treatmentGoal?: string
+    treatmentGoal?: string,
   ): TreatmentRecommendation['evidenceLevel'] {
     const evidence =
       this.evidenceDatabase.get(treatment.id) ||
@@ -355,8 +355,8 @@ export class TreatmentRecommendationEngine {
     const complicatingConditions =
       patientData.medical_history?.filter((mh) =>
         ['diabetes', 'heart_disease', 'kidney_disease'].includes(
-          mh.condition_type
-        )
+          mh.condition_type,
+        ),
       ) || [];
 
     baseCost *= 1 + complicatingConditions.length * 0.1;
@@ -424,7 +424,7 @@ export class TreatmentRecommendationEngine {
 
     if (
       medications.some(
-        (m) => m.includes('warfarin') || m.includes('anticoagulant')
+        (m) => m.includes('warfarin') || m.includes('anticoagulant'),
       )
     ) {
       prerequisites.push('Anticoagulation management');
@@ -435,7 +435,7 @@ export class TreatmentRecommendationEngine {
 
   private getExpectedOutcome(
     treatment: any,
-    successProbability: number
+    successProbability: number,
   ): string {
     const baseOutcome =
       treatment.expected_outcome || 'Improvement in treated area';
@@ -453,7 +453,7 @@ export class TreatmentRecommendationEngine {
     _treatment: any,
     successProbability: number,
     riskLevel: TreatmentRecommendation['riskLevel'],
-    evidenceLevel: TreatmentRecommendation['evidenceLevel']
+    evidenceLevel: TreatmentRecommendation['evidenceLevel'],
   ): string {
     const reasons: string[] = [];
 
@@ -488,7 +488,7 @@ export class TreatmentRecommendationEngine {
   }
 
   private rankRecommendations(
-    recommendations: TreatmentRecommendation[]
+    recommendations: TreatmentRecommendation[],
   ): TreatmentRecommendation[] {
     return recommendations.sort((a, b) => {
       // Primary sort by category (primary > alternative > contraindicated)
@@ -525,7 +525,7 @@ export class TreatmentRecommendationEngine {
 
   private filterContraindications(
     recommendations: TreatmentRecommendation[],
-    _riskAssessment: PatientRiskAssessment
+    _riskAssessment: PatientRiskAssessment,
   ): TreatmentRecommendation[] {
     // Filter out contraindicated treatments unless specifically requested
     return recommendations.filter((rec) => rec.category !== 'contraindicated');

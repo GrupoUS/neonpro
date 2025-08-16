@@ -154,7 +154,7 @@ export class LGPDEncryption {
       salt,
       this.config.iterations,
       this.config.keyLength,
-      'sha256'
+      'sha256',
     );
   }
 
@@ -184,7 +184,7 @@ export class LGPDEncryption {
   public encrypt(
     plaintext: string,
     context = 'default',
-    _metadata?: Partial<EncryptionMetadata>
+    _metadata?: Partial<EncryptionMetadata>,
   ): EncryptedData {
     try {
       // Generate salt and derive key
@@ -220,7 +220,7 @@ export class LGPDEncryption {
       return result;
     } catch (error) {
       throw new Error(
-        `Encryption failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+        `Encryption failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
       );
     }
   }
@@ -236,7 +236,7 @@ export class LGPDEncryption {
       // Check version compatibility
       if (encryptedData.version !== ENCRYPTION_VERSION) {
         throw new Error(
-          `Unsupported encryption version: ${encryptedData.version}`
+          `Unsupported encryption version: ${encryptedData.version}`,
         );
       }
 
@@ -260,7 +260,7 @@ export class LGPDEncryption {
       return decrypted;
     } catch (error) {
       throw new Error(
-        `Decryption failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+        `Decryption failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
       );
     }
   }
@@ -275,12 +275,12 @@ export class LGPDEncryption {
   public encryptFields(
     data: Record<string, any>,
     fieldClassifications: Record<string, DataClassification>,
-    context = 'default'
+    context = 'default',
   ): Record<string, any> {
     const result = { ...data };
 
     for (const [field, classification] of Object.entries(
-      fieldClassifications
+      fieldClassifications,
     )) {
       if (
         classification === DataClassification.SENSITIVE &&
@@ -302,12 +302,12 @@ export class LGPDEncryption {
   public decryptFields(
     data: Record<string, any>,
     fieldClassifications: Record<string, DataClassification>,
-    context = 'default'
+    context = 'default',
   ): Record<string, any> {
     const result = { ...data };
 
     for (const [field, classification] of Object.entries(
-      fieldClassifications
+      fieldClassifications,
     )) {
       if (
         classification === DataClassification.SENSITIVE &&
@@ -358,7 +358,7 @@ export class LGPDEncryption {
 
       return crypto.timingSafeEqual(
         Buffer.from(expectedHash, 'hex'),
-        Buffer.from(actualHash, 'hex')
+        Buffer.from(actualHash, 'hex'),
       );
     } catch (_error) {
       return false;
@@ -383,7 +383,7 @@ export class LGPDEncryption {
     classification: DataClassification,
     purpose: string,
     retention: number,
-    keyId: string
+    keyId: string,
   ): EncryptionMetadata {
     const metadata: EncryptionMetadata = {
       classification,
@@ -412,7 +412,7 @@ export class LGPDEncryption {
    * Get encryption strength based on classification
    */
   public getEncryptionStrength(
-    classification: DataClassification
+    classification: DataClassification,
   ): 'none' | 'standard' | 'strong' {
     switch (classification) {
       case DataClassification.PUBLIC:
@@ -465,7 +465,7 @@ export class LGPDEncryption {
  * Create LGPD encryption instance
  */
 export function createLGPDEncryption(
-  config?: Partial<EncryptionConfig>
+  config?: Partial<EncryptionConfig>,
 ): LGPDEncryption {
   const encryption = new LGPDEncryption(config);
   encryption.initializeMasterKey();

@@ -103,7 +103,7 @@ export class PatientPortal {
     lgpdManager: LGPDManager,
     encryptionService: EncryptionService,
     notificationService: NotificationService,
-    config: PatientPortalConfig
+    config: PatientPortalConfig,
   ) {
     this.supabase = supabase;
     this.auditLogger = auditLogger;
@@ -127,7 +127,7 @@ export class PatientPortal {
       this.auditLogger,
       this.lgpdManager,
       this.encryptionService,
-      this.config.session
+      this.config.session,
     );
 
     // Initialize dashboard
@@ -136,7 +136,7 @@ export class PatientPortal {
       this.auditLogger,
       this.lgpdManager,
       this.sessionManager,
-      this.config.dashboard
+      this.config.dashboard,
     );
 
     // Initialize appointment manager
@@ -145,7 +145,7 @@ export class PatientPortal {
       this.auditLogger,
       this.lgpdManager,
       this.sessionManager,
-      this.config.appointments
+      this.config.appointments,
     );
 
     // Initialize upload manager
@@ -155,7 +155,7 @@ export class PatientPortal {
       this.lgpdManager,
       this.sessionManager,
       this.encryptionService,
-      this.config.uploads
+      this.config.uploads,
     );
 
     // Initialize communication manager
@@ -165,7 +165,7 @@ export class PatientPortal {
       this.lgpdManager,
       this.sessionManager,
       this.notificationService,
-      this.config.communication
+      this.config.communication,
     );
   }
   /**
@@ -342,7 +342,7 @@ export class PatientPortal {
 
       if (error) {
         throw new Error(
-          `Tabela requerida '${table}' não encontrada ou inacessível`
+          `Tabela requerida '${table}' não encontrada ou inacessível`,
         );
       }
     }
@@ -367,7 +367,7 @@ export class PatientPortal {
         },
         (payload) => {
           this.handleNewMessage(payload.new);
-        }
+        },
       )
       .subscribe();
   }

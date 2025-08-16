@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
       const result = await barcodeService.processBulkScan(
         validatedData.operation_id,
         validatedData.scan_value,
-        session.user.id
+        session.user.id,
       );
 
       return NextResponse.json({
@@ -65,13 +65,13 @@ export async function POST(request: NextRequest) {
             message: e.message,
           })),
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -105,7 +105,7 @@ export async function GET(request: NextRequest) {
       if (error) {
         return NextResponse.json(
           { error: 'Operação não encontrada' },
-          { status: 404 }
+          { status: 404 },
         );
       }
 
@@ -131,7 +131,7 @@ export async function GET(request: NextRequest) {
     if (error) {
       return NextResponse.json(
         { error: 'Erro ao buscar operações' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -142,7 +142,7 @@ export async function GET(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -166,7 +166,7 @@ export async function PATCH(request: NextRequest) {
     if (!operationId) {
       return NextResponse.json(
         { error: 'operation_id é obrigatório' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -187,7 +187,7 @@ export async function PATCH(request: NextRequest) {
     if (error) {
       return NextResponse.json(
         { error: 'Erro ao atualizar operação' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -205,13 +205,13 @@ export async function PATCH(request: NextRequest) {
             message: e.message,
           })),
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

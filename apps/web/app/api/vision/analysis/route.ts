@@ -27,7 +27,7 @@ const analysisRequestSchema = z.object({
       'wrinkle_reduction',
       'other',
     ],
-    { required_error: 'Tipo de tratamento é obrigatório' }
+    { required_error: 'Tipo de tratamento é obrigatório' },
   ),
   analysisOptions: z
     .object({
@@ -60,7 +60,7 @@ export const GET = withErrorMonitoring(async (request: NextRequest) => {
     if (!patientId) {
       return NextResponse.json(
         { error: 'ID do paciente é obrigatório' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -68,7 +68,7 @@ export const GET = withErrorMonitoring(async (request: NextRequest) => {
     const history = await visionAnalysisEngine.getPatientAnalysisHistory(
       patientId,
       limit,
-      offset
+      offset,
     );
 
     return NextResponse.json({
@@ -86,7 +86,7 @@ export const GET = withErrorMonitoring(async (request: NextRequest) => {
         error: 'Erro interno do servidor',
         details: error instanceof Error ? error.message : 'Erro desconhecido',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 });
@@ -117,7 +117,7 @@ export const POST = withErrorMonitoring(async (request: NextRequest) => {
       validatedData.afterImageUrl,
       validatedData.patientId,
       validatedData.treatmentType,
-      validatedData.analysisOptions
+      validatedData.analysisOptions,
     );
 
     const processingTime = Date.now() - startTime;
@@ -126,12 +126,12 @@ export const POST = withErrorMonitoring(async (request: NextRequest) => {
     const performanceWarnings = [];
     if (analysisResult.accuracyScore < 0.95) {
       performanceWarnings.push(
-        `Precisão abaixo do esperado: ${(analysisResult.accuracyScore * 100).toFixed(1)}%`
+        `Precisão abaixo do esperado: ${(analysisResult.accuracyScore * 100).toFixed(1)}%`,
       );
     }
     if (processingTime > 30_000) {
       performanceWarnings.push(
-        `Tempo de processamento excedeu 30s: ${(processingTime / 1000).toFixed(1)}s`
+        `Tempo de processamento excedeu 30s: ${(processingTime / 1000).toFixed(1)}s`,
       );
     }
 
@@ -156,14 +156,13 @@ export const POST = withErrorMonitoring(async (request: NextRequest) => {
       },
     });
   } catch (error) {
-
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {
           error: 'Dados de entrada inválidos',
           details: error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -172,7 +171,7 @@ export const POST = withErrorMonitoring(async (request: NextRequest) => {
         error: 'Erro interno do servidor',
         details: error instanceof Error ? error.message : 'Erro desconhecido',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 });
@@ -197,7 +196,7 @@ export const PUT = withErrorMonitoring(async (request: NextRequest) => {
     if (!analysisId) {
       return NextResponse.json(
         { error: 'ID da análise é obrigatório' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -233,7 +232,7 @@ export const PUT = withErrorMonitoring(async (request: NextRequest) => {
         error: 'Erro interno do servidor',
         details: error instanceof Error ? error.message : 'Erro desconhecido',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 });
@@ -258,7 +257,7 @@ export const DELETE = withErrorMonitoring(async (request: NextRequest) => {
     if (!analysisId) {
       return NextResponse.json(
         { error: 'ID da análise é obrigatório' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -286,7 +285,7 @@ export const DELETE = withErrorMonitoring(async (request: NextRequest) => {
         error: 'Erro interno do servidor',
         details: error instanceof Error ? error.message : 'Erro desconhecido',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 });

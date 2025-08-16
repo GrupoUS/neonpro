@@ -36,7 +36,7 @@ const requestSchema = z.object({
       z.object({
         dimension: z.string(),
         value: z.string(),
-      })
+      }),
     )
     .optional(),
 });
@@ -54,7 +54,7 @@ export async function POST(request: NextRequest) {
     if (userError || !user) {
       return NextResponse.json(
         { success: false, error: 'Authentication required' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -80,14 +80,14 @@ export async function POST(request: NextRequest) {
         sortedResults.sort((a, b) =>
           validatedData.sort_order === 'desc'
             ? b.value - a.value
-            : a.value - b.value
+            : a.value - b.value,
         );
         break;
       case 'percentage':
         sortedResults.sort((a, b) =>
           validatedData.sort_order === 'desc'
             ? b.percentage_of_total - a.percentage_of_total
-            : a.percentage_of_total - b.percentage_of_total
+            : a.percentage_of_total - b.percentage_of_total,
         );
         break;
       case 'variance':
@@ -143,7 +143,7 @@ export async function POST(request: NextRequest) {
           error: 'Invalid request data',
           details: error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -153,7 +153,7 @@ export async function POST(request: NextRequest) {
         error: 'Internal server error',
         message: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -171,7 +171,7 @@ export async function GET(request: NextRequest) {
     if (userError || !user) {
       return NextResponse.json(
         { success: false, error: 'Authentication required' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -181,7 +181,7 @@ export async function GET(request: NextRequest) {
     if (!kpiId) {
       return NextResponse.json(
         { success: false, error: 'KPI ID is required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -214,7 +214,7 @@ export async function GET(request: NextRequest) {
         error: 'Internal server error',
         message: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

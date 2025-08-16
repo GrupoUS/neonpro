@@ -55,7 +55,7 @@ class EmailService {
         const { createClient } = await import('@supabase/supabase-js');
         this.supabase = createClient(
           process.env.NEXT_PUBLIC_SUPABASE_URL!,
-          process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+          process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
         );
       }
     } else {
@@ -63,7 +63,7 @@ class EmailService {
       const { createClient } = await import('@supabase/supabase-js');
       this.supabase = createClient(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
       );
     }
 
@@ -92,7 +92,7 @@ class EmailService {
 
   private replaceVariables(
     content: string,
-    variables: Record<string, string>
+    variables: Record<string, string>,
   ): string {
     let result = content;
 
@@ -187,11 +187,11 @@ class EmailService {
         recipients.map(async (recipient) => {
           const subject = this.replaceVariables(
             template.subject,
-            recipient.variables
+            recipient.variables,
           );
           const html = this.replaceVariables(
             template.html_content,
-            recipient.variables
+            recipient.variables,
           );
           const text = template.text_content
             ? this.replaceVariables(template.text_content, recipient.variables)
@@ -212,7 +212,7 @@ class EmailService {
             messageId: data?.id,
             error: error?.message,
           };
-        })
+        }),
       );
 
       const processedResults = results.map((result, index) => {
@@ -365,7 +365,7 @@ export default emailService;
 export async function sendAppointmentNotificationEmail(
   _appointmentId: string,
   _type: 'confirmation' | 'reminder' | 'cancellation',
-  _cancellationReason?: string
+  _cancellationReason?: string,
 ) {
   try {
     // The actual implementation would:

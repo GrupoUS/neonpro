@@ -314,7 +314,7 @@ export default function MonitoringDashboard() {
   const overallComplianceScore = useMemo(() => {
     const total = complianceMetrics.reduce(
       (sum, metric) => sum + metric.value,
-      0
+      0,
     );
     return Math.round(total / complianceMetrics.length);
   }, [complianceMetrics]);
@@ -323,7 +323,7 @@ export default function MonitoringDashboard() {
     return visionAlerts.filter(
       (alert) =>
         (alert.level === 'error' || alert.level === 'critical') &&
-        !alert.resolved
+        !alert.resolved,
     );
   }, [visionAlerts]);
 
@@ -469,7 +469,7 @@ export default function MonitoringDashboard() {
                         ? 'bg-red-500'
                         : level === 'warning'
                           ? 'bg-yellow-500'
-                          : 'bg-blue-500'
+                          : 'bg-blue-500',
                     )}
                     key={level}
                   />
@@ -585,7 +585,7 @@ export default function MonitoringDashboard() {
                 <div className="space-y-4">
                   {['info', 'warning', 'error', 'critical'].map((level) => {
                     const count = visionAlerts.filter(
-                      (a) => a.level === level
+                      (a) => a.level === level,
                     ).length;
                     const colors = {
                       info: 'bg-blue-500',
@@ -603,7 +603,7 @@ export default function MonitoringDashboard() {
                           <div
                             className={cn(
                               'h-3 w-3 rounded-full',
-                              colors[level as keyof typeof colors]
+                              colors[level as keyof typeof colors],
                             )}
                           />
                           <span className="font-medium capitalize">
@@ -677,7 +677,7 @@ export default function MonitoringDashboard() {
                         <Badge
                           className={cn(
                             'px-2 py-1',
-                            getStatusColor(metric.status)
+                            getStatusColor(metric.status),
                           )}
                         >
                           {metric.status.replace('_', ' ').toUpperCase()}
@@ -797,7 +797,7 @@ export default function MonitoringDashboard() {
                         <Badge
                           className={cn(
                             'px-2 py-1',
-                            getAlertColor(alert.level)
+                            getAlertColor(alert.level),
                           )}
                         >
                           {alert.level.toUpperCase()}

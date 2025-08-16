@@ -28,7 +28,7 @@ export class ExpenseCategoryService {
    * Get expense category by ID
    */
   static async getExpenseCategoryById(
-    id: string
+    id: string,
   ): Promise<ExpenseCategory | null> {
     const { data: category, error } = await supabase
       .from('expense_categories')
@@ -60,7 +60,7 @@ export class ExpenseCategoryService {
 
     if (error) {
       throw new Error(
-        `Failed to fetch active expense categories: ${error.message}`
+        `Failed to fetch active expense categories: ${error.message}`,
       );
     }
 
@@ -111,7 +111,7 @@ export class ExpenseCategoryService {
       description?: string;
       requires_approval?: boolean;
       is_active?: boolean;
-    }
+    },
   ): Promise<ExpenseCategory> {
     const { data: category, error } = await supabase
       .from('expense_categories')
@@ -136,7 +136,7 @@ export class ExpenseCategoryService {
    */
   static async isCategoryCodeUnique(
     categoryCode: string,
-    excludeId?: string
+    excludeId?: string,
   ): Promise<boolean> {
     try {
       let query = supabase

@@ -35,7 +35,7 @@ export async function GET(request: NextRequest) {
       loginUrl.searchParams.set('error', 'sso_failed');
       loginUrl.searchParams.set(
         'message',
-        errorDescription || 'SSO authentication failed'
+        errorDescription || 'SSO authentication failed',
       );
 
       return NextResponse.redirect(loginUrl);
@@ -81,7 +81,7 @@ export async function GET(request: NextRequest) {
       loginUrl.searchParams.set('error', 'auth_failed');
       loginUrl.searchParams.set(
         'message',
-        result.error?.message || 'Authentication failed'
+        result.error?.message || 'Authentication failed',
       );
 
       return NextResponse.redirect(loginUrl);
@@ -98,7 +98,8 @@ export async function GET(request: NextRequest) {
         sameSite: 'lax',
         maxAge: result.session.expiresAt
           ? Math.floor(
-              (new Date(result.session.expiresAt).getTime() - Date.now()) / 1000
+              (new Date(result.session.expiresAt).getTime() - Date.now()) /
+                1000,
             )
           : 60 * 60 * 24 * 7, // 7 days default
         path: '/',
@@ -119,7 +120,7 @@ export async function GET(request: NextRequest) {
           sameSite: 'lax',
           maxAge: 60 * 60 * 24 * 7, // 7 days
           path: '/',
-        }
+        },
       );
     }
 
@@ -178,20 +179,20 @@ export async function GET(request: NextRequest) {
 export async function POST() {
   return NextResponse.json(
     { error: 'METHOD_NOT_ALLOWED', message: 'POST method not allowed' },
-    { status: 405 }
+    { status: 405 },
   );
 }
 
 export async function PUT() {
   return NextResponse.json(
     { error: 'METHOD_NOT_ALLOWED', message: 'PUT method not allowed' },
-    { status: 405 }
+    { status: 405 },
   );
 }
 
 export async function DELETE() {
   return NextResponse.json(
     { error: 'METHOD_NOT_ALLOWED', message: 'DELETE method not allowed' },
-    { status: 405 }
+    { status: 405 },
   );
 }

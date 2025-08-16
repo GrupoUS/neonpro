@@ -14,7 +14,7 @@ const verifyPredictionSchema = z.object({
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const supabase = createRouteHandlerClient({ cookies });
@@ -27,7 +27,7 @@ export async function PATCH(
     if (authError || !user) {
       return NextResponse.json(
         { error: 'Authentication required' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -42,7 +42,7 @@ export async function PATCH(
     const prediction = await progressTrackingService.verifyPrediction(
       id,
       actual_outcome,
-      accuracy_score
+      accuracy_score,
     );
 
     return NextResponse.json(prediction);
@@ -50,13 +50,13 @@ export async function PATCH(
     if (error.name === 'ZodError') {
       return NextResponse.json(
         { error: 'Invalid request data', details: error.errors },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     return NextResponse.json(
       { error: 'Failed to verify prediction' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

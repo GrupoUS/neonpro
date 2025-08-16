@@ -174,7 +174,7 @@ export class MedicalDocumentManager {
   constructor() {
     this.supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
     );
     this.auditLogger = new AuditLogger();
     this.lgpdManager = new LGPDManager();
@@ -189,7 +189,7 @@ export class MedicalDocumentManager {
     patientId: string,
     clinicId: string,
     options: UploadOptions,
-    userId: string
+    userId: string,
   ): Promise<{ success: boolean; data?: MedicalDocument; error?: string }> {
     try {
       // Validate file
@@ -201,7 +201,7 @@ export class MedicalDocumentManager {
       // Check LGPD consent
       const consentCheck = await this.lgpdManager.checkConsent(
         patientId,
-        'medical_data'
+        'medical_data',
       );
 
       if (!consentCheck.hasConsent) {
@@ -311,7 +311,7 @@ export class MedicalDocumentManager {
         await this.handleBeforeAfterPairing(
           documentId,
           options.beforeAfterPairId,
-          options.category
+          options.category,
         );
       }
 
@@ -341,7 +341,7 @@ export class MedicalDocumentManager {
 
   async getDocument(
     documentId: string,
-    userId: string
+    userId: string,
   ): Promise<{ success: boolean; data?: MedicalDocument; error?: string }> {
     try {
       const { data, error } = await this.supabase
@@ -389,7 +389,7 @@ export class MedicalDocumentManager {
     patientId: string,
     userId: string,
     filters?: SearchFilters,
-    pagination?: { limit: number; offset: number }
+    pagination?: { limit: number; offset: number },
   ): Promise<{
     success: boolean;
     data?: MedicalDocument[];
@@ -434,7 +434,7 @@ export class MedicalDocumentManager {
       if (pagination) {
         query = query.range(
           pagination.offset,
-          pagination.offset + pagination.limit - 1
+          pagination.offset + pagination.limit - 1,
         );
       }
 
@@ -490,7 +490,7 @@ export class MedicalDocumentManager {
         'title' | 'description' | 'tags' | 'access_level' | 'expires_at'
       >
     >,
-    userId: string
+    userId: string,
   ): Promise<{ success: boolean; data?: MedicalDocument; error?: string }> {
     try {
       // Get current document
@@ -539,7 +539,7 @@ export class MedicalDocumentManager {
   async deleteDocument(
     documentId: string,
     userId: string,
-    permanent = false
+    permanent = false,
   ): Promise<{ success: boolean; error?: string }> {
     try {
       // Get document info
@@ -560,7 +560,7 @@ export class MedicalDocumentManager {
         if (document.thumbnail_url) {
           const thumbnailPath = document.file_path.replace(
             /\.[^/.]+$/,
-            '_thumb.jpg'
+            '_thumb.jpg',
           );
           await this.supabase.storage
             .from(this.STORAGE_BUCKET)
@@ -627,7 +627,7 @@ export class MedicalDocumentManager {
     beforePhotoId: string,
     afterPhotoId: string,
     userId: string,
-    notes?: string
+    notes?: string,
   ): Promise<{ success: boolean; data?: BeforeAfterPair; error?: string }> {
     try {
       const pairId = crypto.randomUUID();
@@ -688,7 +688,7 @@ export class MedicalDocumentManager {
 
   async getPatientBeforeAfterPairs(
     patientId: string,
-    _userId: string
+    _userId: string,
   ): Promise<{ success: boolean; data?: BeforeAfterPair[]; error?: string }> {
     try {
       const { data, error } = await this.supabase
@@ -698,7 +698,7 @@ export class MedicalDocumentManager {
           *,
           before_photo:medical_documents!before_after_pairs_before_photo_id_fkey(*),
           after_photo:medical_documents!before_after_pairs_after_photo_id_fkey(*)
-        `
+        `,
         )
         .eq('patient_id', patientId)
         .order('procedure_date', { ascending: false });
@@ -724,7 +724,7 @@ export class MedicalDocumentManager {
     documentId: string,
     newFile: File,
     changesDescription: string,
-    userId: string
+    userId: string,
   ): Promise<{ success: boolean; data?: DocumentVersion; error?: string }> {
     try {
       // Get current document
@@ -818,7 +818,7 @@ export class MedicalDocumentManager {
 
   async getDocumentVersions(
     documentId: string,
-    _userId: string
+    _userId: string,
   ): Promise<{ success: boolean; data?: DocumentVersion[]; error?: string }> {
     try {
       const { data, error } = await this.supabase
@@ -845,7 +845,7 @@ export class MedicalDocumentManager {
   // ========================================================================
 
   private async validateFile(
-    file: File
+    file: File,
   ): Promise<{ isValid: boolean; error?: string }> {
     // Check file size
     if (file.size > this.MAX_FILE_SIZE) {
@@ -875,7 +875,7 @@ export class MedicalDocumentManager {
 
   private async checkDuplicate(
     checksum: string,
-    patientId: string
+    patientId: string,
   ): Promise<{ isDuplicate: boolean; originalDate?: string }> {
     try {
       const { data, error } = await this.supabase
@@ -935,7 +935,7 @@ export class MedicalDocumentManager {
 
   private async generateThumbnail(
     filePath: string,
-    _file: File
+    _file: File,
   ): Promise<string | undefined> {
     try {
       // Simplified thumbnail generation
@@ -956,7 +956,7 @@ export class MedicalDocumentManager {
 
   private async processImage(
     _documentId: string,
-    _filePath: string
+    _filePath: string,
   ): Promise<void> {
     try {
     } catch (_error) {}
@@ -965,7 +965,7 @@ export class MedicalDocumentManager {
   private async handleBeforeAfterPairing(
     documentId: string,
     pairId: string,
-    _category: DocumentCategory
+    _category: DocumentCategory,
   ): Promise<void> {
     try {
       // Update document metadata to include pair information
@@ -981,7 +981,7 @@ export class MedicalDocumentManager {
 
   private async checkDocumentAccess(
     document: MedicalDocument,
-    userId: string
+    userId: string,
   ): Promise<boolean> {
     try {
       // Simplified access control
@@ -1018,7 +1018,7 @@ export class MedicalDocumentManager {
     query: string,
     clinicId: string,
     userId: string,
-    filters?: SearchFilters
+    filters?: SearchFilters,
   ): Promise<{ success: boolean; data?: MedicalDocument[]; error?: string }> {
     try {
       let dbQuery = this.supabase
@@ -1027,7 +1027,7 @@ export class MedicalDocumentManager {
         .eq('clinic_id', clinicId)
         .eq('is_active', true)
         .or(
-          `title.ilike.%${query}%,description.ilike.%${query}%,original_file_name.ilike.%${query}%`
+          `title.ilike.%${query}%,description.ilike.%${query}%,original_file_name.ilike.%${query}%`,
         );
 
       // Apply filters
@@ -1092,7 +1092,7 @@ export class MedicalDocumentManager {
   async getDocumentStatistics(
     clinicId: string,
     _userId: string,
-    period?: { from: string; to: string }
+    period?: { from: string; to: string },
   ): Promise<{ success: boolean; data?: any; error?: string }> {
     try {
       let query = this.supabase

@@ -32,14 +32,14 @@ export async function GET(request: NextRequest) {
       if (error) {
         return NextResponse.json(
           { error: 'Failed to fetch widget' },
-          { status: 500 }
+          { status: 500 },
         );
       }
 
       if (!data) {
         return NextResponse.json(
           { error: 'Widget not found' },
-          { status: 404 }
+          { status: 404 },
         );
       }
 
@@ -57,7 +57,7 @@ export async function GET(request: NextRequest) {
       if (error) {
         return NextResponse.json(
           { error: 'Failed to fetch widgets' },
-          { status: 500 }
+          { status: 500 },
         );
       }
 
@@ -73,7 +73,7 @@ export async function GET(request: NextRequest) {
     if (error) {
       return NextResponse.json(
         { error: 'Failed to fetch widgets' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -81,7 +81,7 @@ export async function GET(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -114,7 +114,7 @@ export async function POST(request: NextRequest) {
     if (error) {
       return NextResponse.json(
         { error: 'Failed to create widget' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -122,7 +122,7 @@ export async function POST(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Invalid request data' },
-      { status: 400 }
+      { status: 400 },
     );
   }
 }
@@ -147,7 +147,7 @@ export async function PUT(request: NextRequest) {
     if (!widgetId) {
       return NextResponse.json(
         { error: 'Widget ID is required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -162,7 +162,7 @@ export async function PUT(request: NextRequest) {
     if (error) {
       return NextResponse.json(
         { error: 'Failed to update widget' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -174,7 +174,7 @@ export async function PUT(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Invalid request data' },
-      { status: 400 }
+      { status: 400 },
     );
   }
 }
@@ -196,7 +196,7 @@ export async function DELETE(request: NextRequest) {
     if (!widgetId) {
       return NextResponse.json(
         { error: 'Widget ID is required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -209,7 +209,7 @@ export async function DELETE(request: NextRequest) {
     if (error) {
       return NextResponse.json(
         { error: 'Failed to delete widget' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -217,7 +217,7 @@ export async function DELETE(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

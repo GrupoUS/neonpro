@@ -74,7 +74,7 @@ const PatientRetentionAnalyticsSchema = z.object({
         effectiveness_score: z.number().min(0).max(1).optional(),
         roi: z.number().optional(),
         outcome: z.enum(['positive', 'neutral', 'negative', 'unknown']),
-      })
+      }),
     )
     .default([]),
   calculation_date: z.string().datetime(),
@@ -130,7 +130,7 @@ const PatientChurnPredictionSchema = z.object({
           'demographic',
         ]),
         description: z.string().min(1),
-      })
+      }),
     )
     .default([]),
   intervention_recommendations: z
@@ -144,7 +144,7 @@ const PatientChurnPredictionSchema = z.object({
         personalization_suggestions: z.record(z.any()),
         timing_recommendation: z.string().min(1),
         success_metrics: z.array(z.string()),
-      })
+      }),
     )
     .default([]),
   model_features: z.record(z.number()).default({}),
@@ -283,7 +283,7 @@ const CreatePatientRetentionAnalyticsSchema = z.object({
         effectiveness_score: z.number().min(0).max(1).optional(),
         roi: z.number().optional(),
         outcome: z.enum(['positive', 'neutral', 'negative', 'unknown']),
-      })
+      }),
     )
     .default([]),
   calculation_date: z.string().datetime(),
@@ -312,7 +312,7 @@ const CreatePatientChurnPredictionSchema = z.object({
           'demographic',
         ]),
         description: z.string().min(1),
-      })
+      }),
     )
     .default([]),
   intervention_recommendations: z
@@ -326,7 +326,7 @@ const CreatePatientChurnPredictionSchema = z.object({
         personalization_suggestions: z.record(z.any()),
         timing_recommendation: z.string().min(1),
         success_metrics: z.array(z.string()),
-      })
+      }),
     )
     .default([]),
   model_features: z.record(z.number()).default({}),

@@ -25,7 +25,7 @@ export async function POST(request: NextRequest) {
     if (!result.success) {
       return NextResponse.json(
         { error: 'Webhook processing failed' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -41,7 +41,7 @@ export async function POST(request: NextRequest) {
         error: 'Internal server error',
         message: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
  */
 function verifyWebhookSignature(
   body: string,
-  signature: string | null
+  signature: string | null,
 ): boolean {
   if (!signature) {
     return false;

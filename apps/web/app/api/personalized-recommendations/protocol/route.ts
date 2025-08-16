@@ -15,13 +15,13 @@ export async function GET(request: NextRequest) {
     if (!patientId) {
       return NextResponse.json(
         { error: 'Patient ID is required', success: false },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     const customizations =
       await personalizedRecommendationsService.getProtocolCustomizations(
-        patientId
+        patientId,
       );
 
     return NextResponse.json({
@@ -31,7 +31,7 @@ export async function GET(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to fetch protocol customizations', success: false },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
           details: validationResult.error.issues,
           success: false,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -59,7 +59,7 @@ export async function POST(request: NextRequest) {
       validationResult.data;
     const customization =
       await personalizedRecommendationsService.createProtocolCustomization(
-        customizationData
+        customizationData,
       );
 
     return NextResponse.json(
@@ -67,12 +67,12 @@ export async function POST(request: NextRequest) {
         customization,
         success: true,
       },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to create protocol customization', success: false },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

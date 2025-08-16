@@ -112,7 +112,7 @@ export class CNPJConsultationService {
   static async consultCNPJ(
     cnpj: string,
     clientIP = 'unknown',
-    config: Partial<CNPJConsultationConfig> = {}
+    config: Partial<CNPJConsultationConfig> = {},
   ): Promise<CNPJConsultationResult> {
     const finalConfig = { ...DEFAULT_CONFIG, ...config };
 
@@ -158,7 +158,7 @@ export class CNPJConsultationService {
     try {
       const data = await CNPJConsultationService.fetchWithRetry(
         `${CNPJConsultationService.BASE_URL}/${cleanedCNPJ}`,
-        finalConfig
+        finalConfig,
       );
 
       const transformed =
@@ -189,7 +189,7 @@ export class CNPJConsultationService {
   private static async fetchWithRetry(
     url: string,
     config: CNPJConsultationConfig,
-    attempt = 1
+    attempt = 1,
   ): Promise<BrasilAPIResponse> {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), config.timeout);
@@ -228,7 +228,7 @@ export class CNPJConsultationService {
         error.name !== CNPJConsultationError.NOT_FOUND
       ) {
         await new Promise((resolve) =>
-          setTimeout(resolve, config.retryDelay * attempt)
+          setTimeout(resolve, config.retryDelay * attempt),
         );
 
         return CNPJConsultationService.fetchWithRetry(url, config, attempt + 1);
@@ -242,7 +242,7 @@ export class CNPJConsultationService {
    * Transform Brasil API response to our interface
    */
   private static transformBrasilAPIResponse(
-    response: BrasilAPIResponse
+    response: BrasilAPIResponse,
   ): CNPJCompanyData {
     return {
       cnpj: response.cnpj,
@@ -274,7 +274,7 @@ export class CNPJConsultationService {
       motivo_situacao: response.motivo_situacao_cadastral || undefined,
       natureza_juridica: response.codigo_natureza_juridica,
       capital_social: Number.parseFloat(
-        response.capital_social.replace(',', '.')
+        response.capital_social.replace(',', '.'),
       ),
       data_inicio_atividade: response.data_inicio_atividade,
       qsa: response.qsa?.map((socio) => ({
@@ -291,7 +291,7 @@ export class CNPJConsultationService {
    */
   private static handleConsultationError(
     error: any,
-    clientIP: string
+    clientIP: string,
   ): CNPJConsultationResult {
     let _errorType = CNPJConsultationError.API_ERROR;
     let errorMessage = 'Erro desconhecido na consulta';
@@ -336,7 +336,7 @@ export class CNPJConsultationService {
   static async batchConsultCNPJ(
     cnpjs: string[],
     clientIP = 'unknown',
-    config: Partial<CNPJConsultationConfig> = {}
+    config: Partial<CNPJConsultationConfig> = {},
   ): Promise<Map<string, CNPJConsultationResult>> {
     const results = new Map<string, CNPJConsultationResult>();
 
@@ -351,7 +351,7 @@ export class CNPJConsultationService {
         const result = await CNPJConsultationService.consultCNPJ(
           cnpj,
           clientIP,
-          config
+          config,
         );
         results.set(cnpj, result);
       });

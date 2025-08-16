@@ -7,7 +7,7 @@ import { WebSocketServer } from 'ws';
 // Initialize Supabase client
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
+  process.env.SUPABASE_SERVICE_ROLE_KEY!,
 );
 
 // WebSocket server instance
@@ -49,7 +49,7 @@ export async function GET(request: NextRequest) {
           error: 'WebSocket upgrade required',
           message: 'This endpoint only accepts WebSocket connections',
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -61,12 +61,12 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(
       { message: 'WebSocket server ready' },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to setup WebSocket server' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -80,7 +80,6 @@ function setupWebSocketHandlers() {
   }
 
   wss.on('connection', async (ws: any, request: IncomingMessage) => {
-
     // Parse query parameters for authentication
     const { query } = parse(request.url || '', true);
     const token = query.token as string;
@@ -111,7 +110,7 @@ function setupWebSocketHandlers() {
         type: 'connected',
         clientId,
         message: 'WebSocket connection established',
-      })
+      }),
     );
 
     // Handle incoming messages
@@ -124,7 +123,7 @@ function setupWebSocketHandlers() {
           JSON.stringify({
             type: 'error',
             message: 'Invalid message format',
-          })
+          }),
         );
       }
     });
@@ -177,14 +176,14 @@ async function handleWebSocketMessage(clientId: string, message: WSMessage) {
               type: 'subscribed',
               channel: message.channel,
               message: `Subscribed to ${message.channel}`,
-            })
+            }),
           );
         } else {
           ws.send(
             JSON.stringify({
               type: 'error',
               message: `Access denied to channel ${message.channel}`,
-            })
+            }),
           );
         }
       }
@@ -198,7 +197,7 @@ async function handleWebSocketMessage(clientId: string, message: WSMessage) {
             type: 'unsubscribed',
             channel: message.channel,
             message: `Unsubscribed from ${message.channel}`,
-          })
+          }),
         );
       }
       break;
@@ -208,7 +207,7 @@ async function handleWebSocketMessage(clientId: string, message: WSMessage) {
         JSON.stringify({
           type: 'pong',
           timestamp: new Date().toISOString(),
-        })
+        }),
       );
       break;
 
@@ -217,7 +216,7 @@ async function handleWebSocketMessage(clientId: string, message: WSMessage) {
         JSON.stringify({
           type: 'error',
           message: `Unknown message type: ${message.type}`,
-        })
+        }),
       );
   }
 }
@@ -248,7 +247,7 @@ async function verifyWebSocketAuth(token: string): Promise<string | null> {
  */
 async function verifyChannelAccess(
   userId: string,
-  channel: string
+  channel: string,
 ): Promise<boolean> {
   // Define channel access rules
   const channelRules: Record<string, (userId: string) => Promise<boolean>> = {
@@ -306,7 +305,7 @@ function broadcastToChannel(channel: string, message: any) {
           channel,
           data: message,
           timestamp: new Date().toISOString(),
-        })
+        }),
       );
     }
   });
@@ -323,7 +322,7 @@ function broadcastToUser(userId: string, message: any) {
           type: 'direct_message',
           data: message,
           timestamp: new Date().toISOString(),
-        })
+        }),
       );
     }
   });

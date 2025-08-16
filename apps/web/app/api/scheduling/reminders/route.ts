@@ -82,11 +82,11 @@ export async function POST(request: NextRequest) {
         const workflow = new SchedulingCommunicationWorkflow();
         const workflows = await workflow.initializeWorkflows(
           validatedData.appointmentId,
-          workflowConfig
+          workflowConfig,
         );
 
         const reminderWorkflows = workflows.filter(
-          (w) => w.workflowType === 'reminder'
+          (w) => w.workflowType === 'reminder',
         );
 
         return NextResponse.json({
@@ -111,12 +111,12 @@ export async function POST(request: NextRequest) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Invalid request data', details: error.errors },
-        { status: 400 }
+        { status: 400 },
       );
     }
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -127,7 +127,7 @@ export async function POST(request: NextRequest) {
 async function handleImmediateReminder(
   supabase: any,
   data: z.infer<typeof ImmediateReminderSchema>,
-  user: any
+  user: any,
 ) {
   const communicationService = new CommunicationService();
 
@@ -141,7 +141,7 @@ async function handleImmediateReminder(
       professionals(*),
       services(*),
       clinics(*)
-    `
+    `,
     )
     .eq('id', data.appointmentId)
     .single();
@@ -149,7 +149,7 @@ async function handleImmediateReminder(
   if (appointmentError || !appointment) {
     return NextResponse.json(
       { error: 'Appointment not found' },
-      { status: 404 }
+      { status: 404 },
     );
   }
 
@@ -166,7 +166,7 @@ async function handleImmediateReminder(
     if (recentReminder) {
       return NextResponse.json(
         { error: 'Immediate reminder already sent recently' },
-        { status: 409 }
+        { status: 409 },
       );
     }
   }
@@ -180,7 +180,7 @@ async function handleImmediateReminder(
       'reminder',
       appointment,
       appointment.patients,
-      null
+      null,
     );
 
     if (template) {
@@ -194,7 +194,7 @@ async function handleImmediateReminder(
           {
             hour: '2-digit',
             minute: '2-digit',
-          }
+          },
         ),
         clinicName: appointment.clinics.name,
         clinicPhone: appointment.clinics.phone,
@@ -203,7 +203,7 @@ async function handleImmediateReminder(
       message = await schedulingTemplateEngine.renderTemplate(
         template,
         channel,
-        variables
+        variables,
       );
     }
   }
@@ -211,7 +211,7 @@ async function handleImmediateReminder(
   if (!message) {
     return NextResponse.json(
       { error: 'No message content available' },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
@@ -258,7 +258,7 @@ async function handleImmediateReminder(
 async function handleLegacyReminders(
   supabase: any,
   data: z.infer<typeof ReminderConfigSchema>,
-  user: any
+  user: any,
 ) {
   // Get appointment details
   const { data: appointment, error: appointmentError } = await supabase
@@ -270,7 +270,7 @@ async function handleLegacyReminders(
       professionals(*),
       services(*),
       clinics(*)
-    `
+    `,
     )
     .eq('id', data.appointmentId)
     .single();
@@ -278,7 +278,7 @@ async function handleLegacyReminders(
   if (appointmentError || !appointment) {
     return NextResponse.json(
       { error: 'Appointment not found' },
-      { status: 404 }
+      { status: 404 },
     );
   }
 
@@ -292,12 +292,12 @@ async function handleLegacyReminders(
     switch (reminderType) {
       case '24h':
         scheduledTime = new Date(
-          appointmentDate.getTime() - 24 * 60 * 60 * 1000
+          appointmentDate.getTime() - 24 * 60 * 60 * 1000,
         );
         break;
       case '2h':
         scheduledTime = new Date(
-          appointmentDate.getTime() - 2 * 60 * 60 * 1000
+          appointmentDate.getTime() - 2 * 60 * 60 * 1000,
         );
         break;
       case '30m':
@@ -341,7 +341,7 @@ async function handleLegacyReminders(
   if (insertError) {
     return NextResponse.json(
       { error: 'Failed to schedule reminders' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 
@@ -391,7 +391,7 @@ export async function GET(request: NextRequest) {
       } catch (_error) {
         return NextResponse.json(
           { error: 'Workflow not found' },
-          { status: 404 }
+          { status: 404 },
         );
       }
     }
@@ -428,13 +428,13 @@ export async function GET(request: NextRequest) {
 
     const { data: reminders, error: queryError } = await query.order(
       'scheduled_time',
-      { ascending: true }
+      { ascending: true },
     );
 
     if (queryError) {
       return NextResponse.json(
         { error: 'Failed to fetch reminders' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -464,7 +464,7 @@ export async function GET(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -505,7 +505,7 @@ export async function PUT(request: NextRequest) {
     if (appointmentsError) {
       return NextResponse.json(
         { error: 'Failed to fetch appointments' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -539,7 +539,7 @@ export async function PUT(request: NextRequest) {
           const workflowInstance = new SchedulingCommunicationWorkflow();
           const workflows = await workflowInstance.initializeWorkflows(
             appointment.id,
-            workflowConfig
+            workflowConfig,
           );
 
           results.push({
@@ -588,12 +588,12 @@ export async function PUT(request: NextRequest) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Invalid request data', details: error.errors },
-        { status: 400 }
+        { status: 400 },
       );
     }
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

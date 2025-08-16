@@ -45,7 +45,7 @@ export async function GET(request: NextRequest) {
         error: 'Failed to fetch churn predictions',
         details: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -65,7 +65,7 @@ export async function POST(request: NextRequest) {
         data: churnPrediction,
         message: 'Churn prediction created successfully',
       },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (error) {
     if (error instanceof Error && error.name === 'ZodError') {
@@ -75,7 +75,7 @@ export async function POST(request: NextRequest) {
           error: 'Validation failed',
           details: error.message,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -85,7 +85,7 @@ export async function POST(request: NextRequest) {
         error: 'Failed to create churn prediction',
         details: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

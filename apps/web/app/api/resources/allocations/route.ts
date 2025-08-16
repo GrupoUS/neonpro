@@ -21,7 +21,7 @@ export async function GET(request: NextRequest) {
     if (!resourceId) {
       return NextResponse.json(
         { error: 'resource_id is required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -35,7 +35,7 @@ export async function GET(request: NextRequest) {
     if (authError || !user) {
       return NextResponse.json(
         { error: 'Authentication required' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -44,7 +44,7 @@ export async function GET(request: NextRequest) {
     const allocations = await resourceManager.getAllocations(
       resourceId,
       startDate || undefined,
-      endDate || undefined
+      endDate || undefined,
     );
 
     return NextResponse.json({
@@ -58,7 +58,7 @@ export async function GET(request: NextRequest) {
         error: 'Failed to fetch allocations',
         details: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -78,7 +78,7 @@ export async function POST(request: NextRequest) {
           error:
             'resource_id, start_time, end_time, and allocation_type are required',
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -92,7 +92,7 @@ export async function POST(request: NextRequest) {
     if (authError || !user) {
       return NextResponse.json(
         { error: 'Authentication required' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -106,7 +106,7 @@ export async function POST(request: NextRequest) {
         data: newAllocation,
         message: 'Allocation created successfully',
       },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (error) {
     // Handle specific conflict errors
@@ -117,7 +117,7 @@ export async function POST(request: NextRequest) {
           details: error.message,
           code: 'RESOURCE_CONFLICT',
         },
-        { status: 409 }
+        { status: 409 },
       );
     }
 
@@ -126,7 +126,7 @@ export async function POST(request: NextRequest) {
         error: 'Failed to create allocation',
         details: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -143,7 +143,7 @@ export async function PUT(request: NextRequest) {
     if (!(id && status)) {
       return NextResponse.json(
         { error: 'Allocation id and status are required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -157,7 +157,7 @@ export async function PUT(request: NextRequest) {
     if (authError || !user) {
       return NextResponse.json(
         { error: 'Authentication required' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -175,7 +175,7 @@ export async function PUT(request: NextRequest) {
         error: 'Failed to update allocation',
         details: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -192,7 +192,7 @@ export async function DELETE(request: NextRequest) {
     if (!allocationId) {
       return NextResponse.json(
         { error: 'Allocation id is required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -206,7 +206,7 @@ export async function DELETE(request: NextRequest) {
     if (authError || !user) {
       return NextResponse.json(
         { error: 'Authentication required' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -224,7 +224,7 @@ export async function DELETE(request: NextRequest) {
         error: 'Failed to cancel allocation',
         details: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

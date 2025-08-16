@@ -213,7 +213,7 @@ export class PerformanceMonitorUtils {
 
     let score = 100;
     const recentAlerts = this.alerts.filter(
-      (alert) => Date.now() - alert.timestamp < 300_000 // Last 5 minutes
+      (alert) => Date.now() - alert.timestamp < 300_000, // Last 5 minutes
     );
 
     // Deduct points for alerts
@@ -235,7 +235,7 @@ export class PerformanceMonitorUtils {
     const aggregated = this.aggregateMetrics(metrics);
     const trends = this.generateTrends(metrics);
     const recentAlerts = this.alerts.filter(
-      (alert) => Date.now() - alert.timestamp < 3_600_000 // Last hour
+      (alert) => Date.now() - alert.timestamp < 3_600_000, // Last hour
     );
     const score = this.calculatePerformanceScore(metrics);
 

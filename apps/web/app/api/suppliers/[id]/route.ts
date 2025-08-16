@@ -26,7 +26,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     if (!clinicId) {
       return NextResponse.json(
         { error: 'clinic_id é obrigatório' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -35,7 +35,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     if (!supplier) {
       return NextResponse.json(
         { error: 'Fornecedor não encontrado' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -43,7 +43,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -60,7 +60,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     if (!clinicId) {
       return NextResponse.json(
         { error: 'clinic_id é obrigatório' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -69,21 +69,21 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     if (!validationResult.success) {
       return NextResponse.json(
         { error: 'Dados inválidos', details: validationResult.error.issues },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     const supplier = await supplierService.updateSupplier(
       clinicId,
       params.id,
-      validationResult.data
+      validationResult.data,
     );
 
     return NextResponse.json(supplier);
   } catch (_error) {
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -99,7 +99,7 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
     if (!clinicId) {
       return NextResponse.json(
         { error: 'clinic_id é obrigatório' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -113,7 +113,7 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
 
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

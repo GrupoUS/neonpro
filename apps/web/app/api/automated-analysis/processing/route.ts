@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
         const validatedData = validationSchemas.startAnalysis.parse(data);
         const progress =
           await automatedBeforeAfterAnalysisService.startAnalysis(
-            validatedData
+            validatedData,
           );
 
         return NextResponse.json({
@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
         const validatedData = validationSchemas.comparisonAnalysis.parse(data);
         const result =
           await automatedBeforeAfterAnalysisService.performComparisonAnalysis(
-            validatedData
+            validatedData,
           );
 
         return NextResponse.json({
@@ -58,7 +58,7 @@ export async function POST(request: NextRequest) {
         const validatedData = validationSchemas.batchAnalysis.parse(data);
         const results =
           await automatedBeforeAfterAnalysisService.batchAnalysis(
-            validatedData
+            validatedData,
           );
 
         return NextResponse.json({
@@ -71,7 +71,7 @@ export async function POST(request: NextRequest) {
       default:
         return NextResponse.json(
           { error: 'Invalid action specified' },
-          { status: 400 }
+          { status: 400 },
         );
     }
   } catch (error) {
@@ -80,7 +80,7 @@ export async function POST(request: NextRequest) {
         error: 'Failed to process analysis request',
         details: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -103,7 +103,7 @@ export async function GET(request: NextRequest) {
     if (!sessionId) {
       return NextResponse.json(
         { error: 'Session ID is required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -120,7 +120,7 @@ export async function GET(request: NextRequest) {
         error: 'Failed to fetch analysis progress',
         details: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

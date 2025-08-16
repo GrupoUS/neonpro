@@ -94,7 +94,7 @@ export class DataSubjectRightsAutomation {
   constructor(
     supabase: SupabaseClient,
     complianceManager: LGPDComplianceManager,
-    config: AutomationConfig
+    config: AutomationConfig,
   ) {
     this.supabase = supabase;
     this.complianceManager = complianceManager;
@@ -106,7 +106,7 @@ export class DataSubjectRightsAutomation {
    */
   async processDataAccessRequest(
     requestId: string,
-    userId: string
+    userId: string,
   ): Promise<{
     success: boolean;
     report?: DataAccessReport;
@@ -117,7 +117,7 @@ export class DataSubjectRightsAutomation {
       if (this.config.identity_verification_required) {
         const verificationResult = await this.verifyUserIdentity(
           userId,
-          requestId
+          requestId,
         );
         if (!verificationResult.verified) {
           throw new Error('Identity verification failed');
@@ -163,7 +163,7 @@ export class DataSubjectRightsAutomation {
           report_data: report,
           generated_at: new Date().toISOString(),
           expires_at: new Date(
-            Date.now() + 30 * 24 * 60 * 60 * 1000
+            Date.now() + 30 * 24 * 60 * 60 * 1000,
           ).toISOString(), // 30 days
           access_count: 0,
         })
@@ -216,7 +216,7 @@ export class DataSubjectRightsAutomation {
         .eq('id', requestId);
 
       throw new Error(
-        `Failed to process data access request: ${error.message}`
+        `Failed to process data access request: ${error.message}`,
       );
     }
   }
@@ -233,7 +233,7 @@ export class DataSubjectRightsAutomation {
       current_value: any;
       new_value: any;
       justification: string;
-    }[]
+    }[],
   ): Promise<{
     success: boolean;
     changes_applied: number;
@@ -247,7 +247,7 @@ export class DataSubjectRightsAutomation {
       if (this.config.identity_verification_required) {
         const verificationResult = await this.verifyUserIdentity(
           userId,
-          requestId
+          requestId,
         );
         if (!verificationResult.verified) {
           throw new Error('Identity verification failed');
@@ -271,7 +271,7 @@ export class DataSubjectRightsAutomation {
             userId,
             rectification.table,
             rectification.field,
-            rectification.new_value
+            rectification.new_value,
           );
 
           if (!isValid.valid) {
@@ -291,7 +291,7 @@ export class DataSubjectRightsAutomation {
             rectification.field,
             rectification.current_value,
             rectification.new_value,
-            rectification.justification
+            rectification.justification,
           );
 
           if (changeResult.success) {
@@ -372,7 +372,7 @@ export class DataSubjectRightsAutomation {
       };
     } catch (error) {
       throw new Error(
-        `Failed to process rectification request: ${error.message}`
+        `Failed to process rectification request: ${error.message}`,
       );
     }
   }
@@ -388,7 +388,7 @@ export class DataSubjectRightsAutomation {
       specific_categories?: string[];
       retention_exceptions?: string[];
       legal_basis_check: boolean;
-    }
+    },
   ): Promise<{
     success: boolean;
     erased_records: number;
@@ -400,7 +400,7 @@ export class DataSubjectRightsAutomation {
       if (this.config.identity_verification_required) {
         const verificationResult = await this.verifyUserIdentity(
           userId,
-          requestId
+          requestId,
         );
         if (!verificationResult.verified) {
           throw new Error('Identity verification failed');
@@ -419,14 +419,14 @@ export class DataSubjectRightsAutomation {
       // Analyze data for erasure eligibility
       const erasureAnalysis = await this.analyzeDataForErasure(
         userId,
-        erasureScope
+        erasureScope,
       );
 
       // Execute erasure with proper safeguards
       const erasureResult = await this.executeSecureDataErasure(
         userId,
         erasureAnalysis.eligible_for_erasure,
-        requestId
+        requestId,
       );
 
       // Update request status
@@ -488,7 +488,7 @@ export class DataSubjectRightsAutomation {
     requestId: string,
     userId: string,
     exportFormat: 'json' | 'csv' | 'xml' | 'pdf',
-    deliveryMethod: 'download' | 'email' | 'secure_link'
+    deliveryMethod: 'download' | 'email' | 'secure_link',
   ): Promise<{
     success: boolean;
     package?: DataPortabilityPackage;
@@ -499,7 +499,7 @@ export class DataSubjectRightsAutomation {
       if (this.config.identity_verification_required) {
         const verificationResult = await this.verifyUserIdentity(
           userId,
-          requestId
+          requestId,
         );
         if (!verificationResult.verified) {
           throw new Error('Identity verification failed');
@@ -519,13 +519,13 @@ export class DataSubjectRightsAutomation {
       const portabilityPackage = await this.generatePortableDataPackage(
         userId,
         requestId,
-        exportFormat
+        exportFormat,
       );
 
       // Create secure download link
       const downloadUrl = await this.createSecureDownloadLink(
         portabilityPackage,
-        deliveryMethod
+        deliveryMethod,
       );
 
       // Update package with download URL
@@ -592,7 +592,7 @@ export class DataSubjectRightsAutomation {
       };
     } catch (error) {
       throw new Error(
-        `Failed to process portability request: ${error.message}`
+        `Failed to process portability request: ${error.message}`,
       );
     }
   }
@@ -608,7 +608,7 @@ export class DataSubjectRightsAutomation {
   }> {
     try {
       const { data: timelineStats, error } = await this.supabase.rpc(
-        'monitor_legal_timeline_compliance'
+        'monitor_legal_timeline_compliance',
       );
 
       if (error) {
@@ -618,7 +618,7 @@ export class DataSubjectRightsAutomation {
       return timelineStats;
     } catch (error) {
       throw new Error(
-        `Failed to monitor timeline compliance: ${error.message}`
+        `Failed to monitor timeline compliance: ${error.message}`,
       );
     }
   }
@@ -626,7 +626,7 @@ export class DataSubjectRightsAutomation {
   // Private helper methods
   private async verifyUserIdentity(
     _userId: string,
-    _requestId: string
+    _requestId: string,
   ): Promise<{ verified: boolean; method: string }> {
     // Implementation for identity verification
     // This would integrate with your identity verification system
@@ -635,7 +635,7 @@ export class DataSubjectRightsAutomation {
 
   private async generateDataAccessReport(
     userId: string,
-    requestId: string
+    requestId: string,
   ): Promise<DataAccessReport> {
     // Generate comprehensive data access report
     const { data: reportData, error } = await this.supabase.rpc(
@@ -643,7 +643,7 @@ export class DataSubjectRightsAutomation {
       {
         target_user_id: userId,
         request_id: requestId,
-      }
+      },
     );
 
     if (error) {
@@ -657,7 +657,7 @@ export class DataSubjectRightsAutomation {
     _userId: string,
     _table: string,
     _field: string,
-    _newValue: any
+    _newValue: any,
   ): Promise<{ valid: boolean; reason?: string }> {
     // Validate rectification request
     // Check field constraints, data types, business rules, etc.
@@ -670,7 +670,7 @@ export class DataSubjectRightsAutomation {
     field: string,
     currentValue: any,
     newValue: any,
-    justification: string
+    justification: string,
   ): Promise<{ success: boolean; change_id: string }> {
     // Apply data rectification with audit trail
     const { data: change, error } = await this.supabase
@@ -697,7 +697,7 @@ export class DataSubjectRightsAutomation {
 
   private async analyzeDataForErasure(
     userId: string,
-    erasureScope: any
+    erasureScope: any,
   ): Promise<{ eligible_for_erasure: any[]; retention_required: any[] }> {
     // Analyze user data for erasure eligibility
     const { data: analysis, error } = await this.supabase.rpc(
@@ -705,7 +705,7 @@ export class DataSubjectRightsAutomation {
       {
         target_user_id: userId,
         erasure_scope: erasureScope,
-      }
+      },
     );
 
     if (error) {
@@ -718,7 +718,7 @@ export class DataSubjectRightsAutomation {
   private async executeSecureDataErasure(
     userId: string,
     eligibleData: any[],
-    requestId: string
+    requestId: string,
   ): Promise<{
     erased_records: number;
     retained_records: number;
@@ -731,7 +731,7 @@ export class DataSubjectRightsAutomation {
         target_user_id: userId,
         eligible_data: eligibleData,
         request_id: requestId,
-      }
+      },
     );
 
     if (error) {
@@ -744,7 +744,7 @@ export class DataSubjectRightsAutomation {
   private async generatePortableDataPackage(
     userId: string,
     requestId: string,
-    format: string
+    format: string,
   ): Promise<DataPortabilityPackage> {
     // Generate portable data package
     const { data: packageData, error } = await this.supabase.rpc(
@@ -753,7 +753,7 @@ export class DataSubjectRightsAutomation {
         target_user_id: userId,
         request_id: requestId,
         export_format: format,
-      }
+      },
     );
 
     if (error) {
@@ -765,7 +765,7 @@ export class DataSubjectRightsAutomation {
 
   private async createSecureDownloadLink(
     packageData: DataPortabilityPackage,
-    deliveryMethod: string
+    deliveryMethod: string,
   ): Promise<string> {
     // Create secure download link
     const { data: link, error } = await this.supabase.rpc(
@@ -773,7 +773,7 @@ export class DataSubjectRightsAutomation {
       {
         package_data: packageData,
         delivery_method: deliveryMethod,
-      }
+      },
     );
 
     if (error) {

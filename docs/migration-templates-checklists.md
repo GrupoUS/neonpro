@@ -121,8 +121,8 @@
 
 #### 🔍 Linting e Formatação
 
-- [ ] ESLint configurado para FSD
-- [ ] Prettier configurado
+- [ ] Biome configurado para FSD
+- [ ] Formatação automática configurada
 - [ ] Regras de import/export definidas
 - [ ] Pre-commit hooks configurados
 - [ ] Todos os arquivos passando no lint

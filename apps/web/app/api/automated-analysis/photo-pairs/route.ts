@@ -54,7 +54,7 @@ export async function GET(request: NextRequest) {
         error: 'Failed to fetch photo pairs',
         details: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -85,7 +85,7 @@ export async function POST(request: NextRequest) {
         data: photoPair,
         message: 'Photo pair created successfully',
       },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (error) {
     return NextResponse.json(
@@ -93,7 +93,7 @@ export async function POST(request: NextRequest) {
         error: 'Failed to create photo pair',
         details: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -116,7 +116,7 @@ export async function PUT(request: NextRequest) {
     if (!id) {
       return NextResponse.json(
         { error: 'Photo pair ID is required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -126,7 +126,7 @@ export async function PUT(request: NextRequest) {
     const updatedPhotoPair =
       await automatedBeforeAfterAnalysisService.updatePhotoPair(
         id,
-        validatedUpdates
+        validatedUpdates,
       );
 
     return NextResponse.json({
@@ -140,7 +140,7 @@ export async function PUT(request: NextRequest) {
         error: 'Failed to update photo pair',
         details: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -163,7 +163,7 @@ export async function DELETE(request: NextRequest) {
     if (!id) {
       return NextResponse.json(
         { error: 'Photo pair ID is required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -179,7 +179,7 @@ export async function DELETE(request: NextRequest) {
         error: 'Failed to delete photo pair',
         details: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

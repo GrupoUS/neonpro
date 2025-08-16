@@ -22,21 +22,21 @@ export async function GET(request: NextRequest) {
     if (!(clinicId && periodStart && periodEnd)) {
       return NextResponse.json(
         { error: 'clinic_id, period_start e period_end são obrigatórios' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     const analytics = await supplierService.getSupplierAnalytics(
       clinicId,
       periodStart,
-      periodEnd
+      periodEnd,
     );
 
     return NextResponse.json(analytics);
   } catch (_error) {
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -53,19 +53,19 @@ export async function POST(request: NextRequest) {
     if (!validationResult.success) {
       return NextResponse.json(
         { error: 'Dados inválidos', details: validationResult.error.issues },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     const comparison = await supplierService.compareSuppliers(
-      validationResult.data.supplier_ids
+      validationResult.data.supplier_ids,
     );
 
     return NextResponse.json(comparison);
   } catch (_error) {
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

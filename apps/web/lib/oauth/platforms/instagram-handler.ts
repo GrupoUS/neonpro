@@ -36,12 +36,12 @@ export class InstagramOAuthHandler extends BaseOAuthHandler {
     }
     if (!process.env.INSTAGRAM_CLIENT_SECRET) {
       throw new Error(
-        'INSTAGRAM_CLIENT_SECRET environment variable is required'
+        'INSTAGRAM_CLIENT_SECRET environment variable is required',
       );
     }
     if (!process.env.INSTAGRAM_REDIRECT_URI) {
       throw new Error(
-        'INSTAGRAM_REDIRECT_URI environment variable is required'
+        'INSTAGRAM_REDIRECT_URI environment variable is required',
       );
     }
   }
@@ -70,7 +70,7 @@ export class InstagramOAuthHandler extends BaseOAuthHandler {
    */
   async exchangeCodeForTokens(
     code: string,
-    stateParam: string
+    stateParam: string,
   ): Promise<OAuthTokens> {
     try {
       // Validate state parameter
@@ -93,7 +93,7 @@ export class InstagramOAuthHandler extends BaseOAuthHandler {
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
           },
-        }
+        },
       );
 
       if (!shortLivedResponse.data.access_token) {
@@ -109,7 +109,7 @@ export class InstagramOAuthHandler extends BaseOAuthHandler {
             client_secret: this.config.clientSecret,
             access_token: shortLivedResponse.data.access_token,
           },
-        }
+        },
       );
 
       const tokens: OAuthTokens = {
@@ -117,7 +117,7 @@ export class InstagramOAuthHandler extends BaseOAuthHandler {
         tokenType: longLivedResponse.data.token_type || 'Bearer',
         expiresIn: longLivedResponse.data.expires_in || 5_184_000, // 60 days default
         expiresAt: new Date(
-          Date.now() + (longLivedResponse.data.expires_in || 5_184_000) * 1000
+          Date.now() + (longLivedResponse.data.expires_in || 5_184_000) * 1000,
         ),
         scope: this.config.scopes.join(' '),
       };
@@ -127,11 +127,11 @@ export class InstagramOAuthHandler extends BaseOAuthHandler {
       if (axios.isAxiosError(error)) {
         const errorData = error.response?.data;
         throw new Error(
-          `Instagram token exchange failed: ${errorData?.error_description || error.message}`
+          `Instagram token exchange failed: ${errorData?.error_description || error.message}`,
         );
       }
       throw new Error(
-        `Token exchange failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+        `Token exchange failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
       );
     }
   }
@@ -148,7 +148,7 @@ export class InstagramOAuthHandler extends BaseOAuthHandler {
             grant_type: 'ig_refresh_token',
             access_token: accessToken,
           },
-        }
+        },
       );
 
       const tokens: OAuthTokens = {
@@ -156,7 +156,7 @@ export class InstagramOAuthHandler extends BaseOAuthHandler {
         tokenType: response.data.token_type || 'Bearer',
         expiresIn: response.data.expires_in || 5_184_000, // 60 days default
         expiresAt: new Date(
-          Date.now() + (response.data.expires_in || 5_184_000) * 1000
+          Date.now() + (response.data.expires_in || 5_184_000) * 1000,
         ),
         scope: this.config.scopes.join(' '),
       };
@@ -166,11 +166,11 @@ export class InstagramOAuthHandler extends BaseOAuthHandler {
       if (axios.isAxiosError(error)) {
         const errorData = error.response?.data;
         throw new Error(
-          `Instagram token refresh failed: ${errorData?.error?.message || error.message}`
+          `Instagram token refresh failed: ${errorData?.error?.message || error.message}`,
         );
       }
       throw new Error(
-        `Token refresh failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+        `Token refresh failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
       );
     }
   }
@@ -202,11 +202,11 @@ export class InstagramOAuthHandler extends BaseOAuthHandler {
       if (axios.isAxiosError(error)) {
         const errorData = error.response?.data;
         throw new Error(
-          `Instagram profile fetch failed: ${errorData?.error?.message || error.message}`
+          `Instagram profile fetch failed: ${errorData?.error?.message || error.message}`,
         );
       }
       throw new Error(
-        `Profile fetch failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+        `Profile fetch failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
       );
     }
   }
@@ -254,11 +254,11 @@ export class InstagramOAuthHandler extends BaseOAuthHandler {
       if (axios.isAxiosError(error)) {
         const errorData = error.response?.data;
         throw new Error(
-          `Instagram media fetch failed: ${errorData?.error?.message || error.message}`
+          `Instagram media fetch failed: ${errorData?.error?.message || error.message}`,
         );
       }
       throw new Error(
-        `Media fetch failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+        `Media fetch failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
       );
     }
   }
@@ -268,7 +268,7 @@ export class InstagramOAuthHandler extends BaseOAuthHandler {
    */
   async getAccountInsights(
     accessToken: string,
-    period: 'day' | 'week' | 'days_28' = 'day'
+    period: 'day' | 'week' | 'days_28' = 'day',
   ): Promise<any> {
     try {
       const response = await axios.get(
@@ -279,7 +279,7 @@ export class InstagramOAuthHandler extends BaseOAuthHandler {
             period,
             access_token: accessToken,
           },
-        }
+        },
       );
 
       return response.data.data || [];
@@ -291,11 +291,11 @@ export class InstagramOAuthHandler extends BaseOAuthHandler {
           return [];
         }
         throw new Error(
-          `Instagram insights fetch failed: ${errorData?.error?.message || error.message}`
+          `Instagram insights fetch failed: ${errorData?.error?.message || error.message}`,
         );
       }
       throw new Error(
-        `Insights fetch failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+        `Insights fetch failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
       );
     }
   }

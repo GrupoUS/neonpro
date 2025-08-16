@@ -15,14 +15,14 @@ export async function POST(request: NextRequest) {
     if (!phoneNumber) {
       return NextResponse.json(
         { error: 'Phone number is required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     if (!templateName) {
       return NextResponse.json(
         { error: 'Template name is required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -41,7 +41,7 @@ export async function POST(request: NextRequest) {
     if (!config?.isActive) {
       return NextResponse.json(
         { error: 'WhatsApp is not configured or inactive' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
       if (!isOptedIn) {
         return NextResponse.json(
           { error: 'Patient has not opted in for WhatsApp communications' },
-          { status: 400 }
+          { status: 400 },
         );
       }
     }
@@ -61,7 +61,7 @@ export async function POST(request: NextRequest) {
       phoneNumber,
       templateName,
       parameters,
-      patientId
+      patientId,
     );
 
     return NextResponse.json({
@@ -75,7 +75,7 @@ export async function POST(request: NextRequest) {
         error: error instanceof Error ? error.message : 'Internal server error',
         details: error instanceof Error ? error.stack : undefined,
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

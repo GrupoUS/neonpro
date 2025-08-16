@@ -52,14 +52,14 @@ export class FacebookOAuthHandler extends BaseOAuthHandler {
     }
     if (!process.env.FACEBOOK_CLIENT_SECRET) {
       throw new Error(
-        'FACEBOOK_CLIENT_SECRET environment variable is required'
+        'FACEBOOK_CLIENT_SECRET environment variable is required',
       );
     }
     if (
       !(process.env.FACEBOOK_REDIRECT_URI || process.env.NEXT_PUBLIC_APP_URL)
     ) {
       throw new Error(
-        'FACEBOOK_REDIRECT_URI or NEXT_PUBLIC_APP_URL environment variable is required'
+        'FACEBOOK_REDIRECT_URI or NEXT_PUBLIC_APP_URL environment variable is required',
       );
     }
   }
@@ -93,7 +93,7 @@ export class FacebookOAuthHandler extends BaseOAuthHandler {
    */
   async exchangeCodeForTokens(
     code: string,
-    stateParam: string
+    stateParam: string,
   ): Promise<OAuthTokens> {
     // Validate state to prevent CSRF attacks
     const state = await this.validateOAuthState(stateParam);
@@ -110,7 +110,7 @@ export class FacebookOAuthHandler extends BaseOAuthHandler {
       });
 
       const response = await axios.get(
-        `${this.config.tokenUrl}?${params.toString()}`
+        `${this.config.tokenUrl}?${params.toString()}`,
       );
 
       if (!response.data.access_token) {
@@ -129,7 +129,7 @@ export class FacebookOAuthHandler extends BaseOAuthHandler {
       };
     } catch (error) {
       throw new Error(
-        `Failed to exchange code for tokens: ${error instanceof Error ? error.message : 'Unknown error'}`
+        `Failed to exchange code for tokens: ${error instanceof Error ? error.message : 'Unknown error'}`,
       );
     }
   }
@@ -150,7 +150,7 @@ export class FacebookOAuthHandler extends BaseOAuthHandler {
       });
 
       const response = await axios.get(
-        `${this.config.tokenUrl}?${params.toString()}`
+        `${this.config.tokenUrl}?${params.toString()}`,
       );
 
       if (!response.data.access_token) {
@@ -168,7 +168,7 @@ export class FacebookOAuthHandler extends BaseOAuthHandler {
       };
     } catch (error) {
       throw new Error(
-        `Failed to refresh Facebook tokens: ${error instanceof Error ? error.message : 'Unknown error'}`
+        `Failed to refresh Facebook tokens: ${error instanceof Error ? error.message : 'Unknown error'}`,
       );
     }
   }
@@ -199,7 +199,7 @@ export class FacebookOAuthHandler extends BaseOAuthHandler {
             params: {
               access_token: accessToken,
             },
-          }
+          },
         );
         pageCount = pagesResponse.data.data?.length || 0;
       } catch (_error) {}
@@ -214,7 +214,7 @@ export class FacebookOAuthHandler extends BaseOAuthHandler {
       };
     } catch (error) {
       throw new Error(
-        `Failed to get Facebook user profile: ${error instanceof Error ? error.message : 'Unknown error'}`
+        `Failed to get Facebook user profile: ${error instanceof Error ? error.message : 'Unknown error'}`,
       );
     }
   }
@@ -263,7 +263,7 @@ export class FacebookOAuthHandler extends BaseOAuthHandler {
           params: {
             access_token: accessToken,
           },
-        }
+        },
       );
 
       return revokeResponse.status === 200;

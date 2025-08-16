@@ -11,7 +11,7 @@ export async function POST(request: NextRequest) {
     if (!(patient_id && learning_data)) {
       return NextResponse.json(
         { error: 'Missing required fields: patient_id, learning_data' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
     // Process learning data to update patient preferences
     const learningResult = await learner.updatePreferences(
       patient_id,
-      learning_data
+      learning_data,
     );
 
     return NextResponse.json({
@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
         error: 'Failed to update patient preferences',
         details: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -61,7 +61,7 @@ export async function GET(request: NextRequest) {
     if (!patientId) {
       return NextResponse.json(
         { error: 'patient_id parameter is required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -70,7 +70,7 @@ export async function GET(request: NextRequest) {
     // Get current patient preferences and insights
     const preferences = await learner.getPatientPreferences(
       patientId,
-      includeHistory
+      includeHistory,
     );
 
     return NextResponse.json({
@@ -101,7 +101,7 @@ export async function GET(request: NextRequest) {
         error: 'Failed to retrieve patient preferences',
         details: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

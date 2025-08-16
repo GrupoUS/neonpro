@@ -30,7 +30,7 @@ export async function GET(request: NextRequest) {
     }
     if (searchParams.get('accuracy_min')) {
       filters.accuracy_min = Number.parseFloat(
-        searchParams.get('accuracy_min')!
+        searchParams.get('accuracy_min')!,
       );
     }
     if (searchParams.get('version')) {
@@ -53,7 +53,7 @@ export async function GET(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to fetch prediction models' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -80,7 +80,7 @@ export async function POST(request: NextRequest) {
     if (!(profile && ['admin', 'manager'].includes(profile.role))) {
       return NextResponse.json(
         { error: 'Insufficient permissions' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -90,7 +90,7 @@ export async function POST(request: NextRequest) {
     if (!(body.name && body.algorithm_type)) {
       return NextResponse.json(
         { error: 'Missing required fields: name, algorithm_type' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -102,12 +102,12 @@ export async function POST(request: NextRequest) {
         model,
         message: 'Prediction model created successfully',
       },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to create prediction model' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

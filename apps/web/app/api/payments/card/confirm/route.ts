@@ -15,7 +15,7 @@ import { CardPaymentService } from '@/lib/payments/card/card-payment-service';
 // Initialize Supabase client
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
+  process.env.SUPABASE_SERVICE_ROLE_KEY!,
 );
 
 // Validation schema
@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
     if (!session?.user?.id) {
       return NextResponse.json(
         { error: 'Unauthorized', message: 'User not authenticated' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
         `
         *,
         profiles!card_payments_created_by_fkey(role)
-      `
+      `,
       )
       .eq('stripe_payment_intent_id', validatedData.payment_intent_id)
       .single();
@@ -59,7 +59,7 @@ export async function POST(request: NextRequest) {
     if (paymentError || !cardPayment) {
       return NextResponse.json(
         { error: 'Not Found', message: 'Payment not found' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -78,7 +78,7 @@ export async function POST(request: NextRequest) {
     if (!(isOwner || hasPermission)) {
       return NextResponse.json(
         { error: 'Forbidden', message: 'Insufficient permissions' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -95,7 +95,7 @@ export async function POST(request: NextRequest) {
           error: 'Invalid State',
           message: `Payment cannot be confirmed in current state: ${cardPayment.status}`,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -105,7 +105,7 @@ export async function POST(request: NextRequest) {
       {
         payment_method: validatedData.payment_method_id,
         return_url: validatedData.return_url,
-      }
+      },
     );
 
     // Update payment status in database
@@ -217,7 +217,7 @@ export async function POST(request: NextRequest) {
           message: 'Invalid request data',
           details: error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -233,7 +233,7 @@ export async function POST(request: NextRequest) {
               message: stripeError.message || 'Your card was declined',
               decline_code: stripeError.decline_code,
             },
-            { status: 402 }
+            { status: 402 },
           );
 
         case 'authentication_required':
@@ -243,7 +243,7 @@ export async function POST(request: NextRequest) {
               message: 'Additional authentication is required',
               requires_action: true,
             },
-            { status: 402 }
+            { status: 402 },
           );
 
         case 'invalid_request_error':
@@ -252,7 +252,7 @@ export async function POST(request: NextRequest) {
               error: 'Invalid Request',
               message: stripeError.message || 'Invalid payment request',
             },
-            { status: 400 }
+            { status: 400 },
           );
 
         default:
@@ -261,7 +261,7 @@ export async function POST(request: NextRequest) {
               error: 'Payment Error',
               message: stripeError.message || 'Payment processing failed',
             },
-            { status: 402 }
+            { status: 402 },
           );
       }
     }
@@ -272,7 +272,7 @@ export async function POST(request: NextRequest) {
         message:
           error instanceof Error ? error.message : 'Unknown error occurred',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

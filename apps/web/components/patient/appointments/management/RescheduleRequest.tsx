@@ -50,7 +50,7 @@ type RescheduleRequestProps = {
     appointmentId: string,
     newDate: string,
     newTime: string,
-    reason: string
+    reason: string,
   ) => Promise<void>;
 };
 
@@ -116,7 +116,7 @@ export function RescheduleRequest({
       setTimeout(() => {
         // In real implementation, this would check professional availability
         const mockAvailableSlots = TIME_SLOTS.filter(
-          (_, _index) => Math.random() > 0.3
+          (_, _index) => Math.random() > 0.3,
         );
         setAvailableSlots(mockAvailableSlots);
         setLoadingSlots(false);
@@ -187,7 +187,7 @@ export function RescheduleRequest({
 
   const { date, time } = formatAppointmentDateTime(
     appointment.appointment_date,
-    appointment.appointment_time
+    appointment.appointment_time,
   );
 
   return (
@@ -269,7 +269,7 @@ export function RescheduleRequest({
                       <Button
                         className={cn(
                           'w-full justify-start text-left font-normal',
-                          !selectedDate && 'text-muted-foreground'
+                          !selectedDate && 'text-muted-foreground',
                         )}
                         variant="outline"
                       >

@@ -109,7 +109,7 @@ export async function initializeComplicationDetectionSystem(): Promise<{
     const configValidation = validateConfiguration();
     if (!configValidation.isValid) {
       throw new Error(
-        `Configuration validation failed: ${configValidation.errors.join(', ')}`
+        `Configuration validation failed: ${configValidation.errors.join(', ')}`,
       );
     }
 
@@ -144,7 +144,7 @@ export async function initializeComplicationDetectionSystem(): Promise<{
  * Process a complication detection request end-to-end
  */
 export async function processComplicationDetection(
-  request: import('./types').ComplicationDetectionRequest
+  request: import('./types').ComplicationDetectionRequest,
 ): Promise<{
   result: import('./types').ComplicationDetectionResult;
   alerts: import('./types').ComplicationAlert[];
@@ -160,14 +160,14 @@ export async function processComplicationDetection(
     const alerts = await alertSystem.processDetectionResult(result);
 
     logger.info(
-      `Complication detection completed for patient ${request.patientId}: ${result.detectedComplications.length} complications, ${alerts.length} alerts`
+      `Complication detection completed for patient ${request.patientId}: ${result.detectedComplications.length} complications, ${alerts.length} alerts`,
     );
 
     return { result, alerts };
   } catch (error) {
     logger.error(
       `Complication detection failed for patient ${request.patientId}:`,
-      error
+      error,
     );
     throw error;
   }
@@ -255,7 +255,7 @@ export async function getSystemHealth(): Promise<
  * Generate complication statistics for a time period
  */
 export async function generateComplicationStatistics(
-  timeframe = '7_days'
+  timeframe = '7_days',
 ): Promise<import('./types').ComplicationStatistics> {
   try {
     // This would typically query the database for actual statistics
@@ -354,7 +354,7 @@ export const Emergency = {
   async alertAllEmergencyContacts(
     patientId: string,
     message: string,
-    severity: 'high' | 'critical' = 'critical'
+    severity: 'high' | 'critical' = 'critical',
   ): Promise<void> {
     try {
       const alertSystem = complicationAlertSystem;
@@ -416,12 +416,12 @@ export const Emergency = {
       });
 
       logger.warn(
-        `Emergency alert triggered for patient ${patientId}: ${message}`
+        `Emergency alert triggered for patient ${patientId}: ${message}`,
       );
     } catch (error) {
       logger.error(
         `Failed to trigger emergency alert for patient ${patientId}:`,
-        error
+        error,
       );
       throw error;
     }
@@ -448,7 +448,7 @@ export const Emergency = {
       const systemHealthy = configValidation.isValid && isHealthy;
 
       logger.info(
-        `Emergency system test ${systemHealthy ? 'passed' : 'failed'}`
+        `Emergency system test ${systemHealthy ? 'passed' : 'failed'}`,
       );
       return systemHealthy;
     } catch (error) {

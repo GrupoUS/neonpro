@@ -75,7 +75,7 @@ export function ConsentBanner({
     const initialConsents: Record<string, boolean> = {};
     purposes?.forEach((purpose) => {
       const existingConsent = userConsents?.find(
-        (c) => c.purpose_id === purpose.id
+        (c) => c.purpose_id === purpose.id,
       );
       initialConsents[purpose.id] = existingConsent?.status === 'given';
     });

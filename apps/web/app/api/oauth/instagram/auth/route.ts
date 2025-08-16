@@ -21,7 +21,7 @@ export async function GET(request: NextRequest) {
     if (!session) {
       return NextResponse.json(
         { error: 'Authentication required' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -40,7 +40,7 @@ export async function GET(request: NextRequest) {
     if (!profile?.clinic_id) {
       return NextResponse.json(
         { error: 'User clinic context not found' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -72,7 +72,7 @@ export async function GET(request: NextRequest) {
         error: 'Failed to initiate Instagram authentication',
         details: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

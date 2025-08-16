@@ -53,7 +53,7 @@ export class MarketingCampaignsService {
           click_count,
           conversion_count
         )
-      `
+      `,
       )
       .order('created_at', { ascending: false });
 
@@ -76,7 +76,7 @@ export class MarketingCampaignsService {
     if (filters?.offset) {
       query = query.range(
         filters.offset,
-        filters.offset + (filters.limit || 10) - 1
+        filters.offset + (filters.limit || 10) - 1,
       );
     }
 
@@ -114,7 +114,7 @@ export class MarketingCampaignsService {
           )
         ),
         metrics:campaign_metrics(*)
-      `
+      `,
       )
       .eq('id', id)
       .single();
@@ -130,7 +130,7 @@ export class MarketingCampaignsService {
    * Create new marketing campaign
    */
   async createCampaign(
-    campaignData: CreateCampaignData
+    campaignData: CreateCampaignData,
   ): Promise<MarketingCampaign> {
     const { data, error } = await this.supabase
       .from('marketing_campaigns')
@@ -177,7 +177,7 @@ export class MarketingCampaignsService {
    */
   async updateCampaign(
     id: string,
-    updates: Partial<CreateCampaignData>
+    updates: Partial<CreateCampaignData>,
   ): Promise<MarketingCampaign> {
     const { data, error } = await this.supabase
       .from('marketing_campaigns')
@@ -254,7 +254,7 @@ export class MarketingCampaignsService {
    * Create campaign template
    */
   async createTemplate(
-    templateData: CreateTemplateData
+    templateData: CreateTemplateData,
   ): Promise<CampaignTemplate> {
     const { data, error } = await this.supabase
       .from('campaign_templates')
@@ -278,7 +278,7 @@ export class MarketingCampaignsService {
    */
   async executeCampaign(
     campaignId: string,
-    _executionData: ExecuteCampaignData
+    _executionData: ExecuteCampaignData,
   ): Promise<CampaignExecution> {
     // First, validate campaign exists and is executable
     const campaign = await this.getCampaignById(campaignId);
@@ -294,7 +294,7 @@ export class MarketingCampaignsService {
     const recipients = await this.getTargetRecipients(
       campaign.targetSegments,
       campaign.includeCriteria,
-      campaign.excludeCriteria
+      campaign.excludeCriteria,
     );
 
     // Apply personalization
@@ -302,7 +302,7 @@ export class MarketingCampaignsService {
       campaign.content,
       campaign.subject,
       campaign.personalizationLevel,
-      campaign.personalizationData
+      campaign.personalizationData,
     );
 
     // Create execution record
@@ -337,11 +337,11 @@ export class MarketingCampaignsService {
       personalization_data: recipient.personalizationData || {},
       final_content: this.personalizeContent(
         personalizedContent.content,
-        recipient
+        recipient,
       ),
       final_subject: this.personalizeContent(
         personalizedContent.subject || '',
-        recipient
+        recipient,
       ),
       delivery_status: 'pending',
       consent_status: recipient.consentStatus || 'pending',
@@ -367,7 +367,7 @@ export class MarketingCampaignsService {
   private async getTargetRecipients(
     _targetSegments: string[],
     _includeCriteria?: any,
-    _excludeCriteria?: any
+    _excludeCriteria?: any,
   ): Promise<any[]> {
     // This would integrate with patient segmentation service
     // For now, return mock data
@@ -400,7 +400,7 @@ export class MarketingCampaignsService {
     content: string,
     subject: string | null,
     _level: string,
-    data: any
+    data: any,
   ): Promise<{ content: string; subject: string | null }> {
     // Basic personalization - replace template variables
     let personalizedContent = content;
@@ -425,7 +425,7 @@ export class MarketingCampaignsService {
         const regex = new RegExp(`{{${key}}}`, 'g');
         personalizedSubject = personalizedSubject?.replace(
           regex,
-          String(value)
+          String(value),
         );
       });
     }
@@ -447,7 +447,7 @@ export class MarketingCampaignsService {
       ([key, value]) => {
         const regex = new RegExp(`{{${key}}}`, 'g');
         content = content.replace(regex, String(value));
-      }
+      },
     );
 
     return content;
@@ -458,7 +458,7 @@ export class MarketingCampaignsService {
    */
   private async startDelivery(
     executionId: string,
-    _campaignType: string
+    _campaignType: string,
   ): Promise<void> {
     // Update execution status
     await this.supabase
@@ -490,19 +490,19 @@ export class MarketingCampaignsService {
 
     const totalSent = executions.reduce(
       (sum, exec) => sum + (exec.successfulSends || 0),
-      0
+      0,
     );
     const totalOpened = executions.reduce(
       (sum, exec) => sum + (exec.openCount || 0),
-      0
+      0,
     );
     const totalClicked = executions.reduce(
       (sum, exec) => sum + (exec.clickCount || 0),
-      0
+      0,
     );
     const totalConverted = executions.reduce(
       (sum, exec) => sum + (exec.conversionCount || 0),
-      0
+      0,
     );
 
     return {
@@ -539,7 +539,7 @@ export class MarketingCampaignsService {
    * Get campaign executions
    */
   private async getCampaignExecutions(
-    campaignId: string
+    campaignId: string,
   ): Promise<CampaignExecution[]> {
     const { data, error } = await this.supabase
       .from('campaign_executions')
@@ -558,7 +558,7 @@ export class MarketingCampaignsService {
    * Get campaign metrics
    */
   private async getCampaignMetrics(
-    campaignId: string
+    campaignId: string,
   ): Promise<CampaignMetrics | null> {
     const { data, error } = await this.supabase
       .from('campaign_metrics')
@@ -647,7 +647,7 @@ export class MarketingCampaignsService {
    * Create campaign automation
    */
   async createAutomation(
-    automationData: Omit<CampaignAutomation, 'id' | 'createdAt' | 'updatedAt'>
+    automationData: Omit<CampaignAutomation, 'id' | 'createdAt' | 'updatedAt'>,
   ): Promise<CampaignAutomation> {
     const { data, error } = await this.supabase
       .from('campaign_automations')
@@ -667,7 +667,7 @@ export class MarketingCampaignsService {
    */
   async processAutomationTriggers(
     eventType: string,
-    eventData: any
+    eventData: any,
   ): Promise<void> {
     // Get active automations that match the event
     const { data: automations, error } = await this.supabase
@@ -684,14 +684,14 @@ export class MarketingCampaignsService {
       const shouldTrigger = this.evaluateAutomationConditions(
         automation.entryConditions,
         eventType,
-        eventData
+        eventData,
       );
 
       if (shouldTrigger) {
         await this.executeAutomationSteps(
           automation.id,
           automation.steps,
-          eventData
+          eventData,
         );
       }
     }
@@ -703,7 +703,7 @@ export class MarketingCampaignsService {
   private evaluateAutomationConditions(
     conditions: any[],
     eventType: string,
-    _eventData: any
+    _eventData: any,
   ): boolean {
     // Implement condition evaluation logic
     return conditions.some((condition) => {
@@ -721,7 +721,7 @@ export class MarketingCampaignsService {
   private async executeAutomationSteps(
     _automationId: string,
     steps: AutomationStep[],
-    eventData: any
+    eventData: any,
   ): Promise<void> {
     for (const step of steps) {
       // Schedule or execute step based on delay
@@ -738,7 +738,7 @@ export class MarketingCampaignsService {
    */
   private async executeAutomationStep(
     step: AutomationStep,
-    _eventData: any
+    _eventData: any,
   ): Promise<void> {
     switch (step.type) {
       case 'send_email':

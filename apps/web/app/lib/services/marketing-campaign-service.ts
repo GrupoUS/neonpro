@@ -130,7 +130,7 @@ export class MarketingCampaignService {
           campaign_ab_tests (*),
           campaign_triggers (*),
           campaign_performance_metrics (*)
-        `
+        `,
         )
         .eq('id', id)
         .single();
@@ -214,7 +214,7 @@ export class MarketingCampaignService {
 
       // Get target patients based on segmentation
       const targetPatients = await this.getTargetPatients(
-        campaign.target_segments
+        campaign.target_segments,
       );
 
       // Create executions for each delivery channel
@@ -228,7 +228,7 @@ export class MarketingCampaignService {
           personalized_content: await this.personalizeContent(
             campaign,
             targetPatients,
-            channel
+            channel,
           ),
           execution_status: 'pending',
           scheduled_at: new Date().toISOString(),
@@ -305,13 +305,13 @@ export class MarketingCampaignService {
 
       // Get target audience
       const targetPatients = await this.getTargetPatients(
-        abTest.marketing_campaigns.target_segments
+        abTest.marketing_campaigns.target_segments,
       );
 
       // Split patients into variations
       const patientGroups = this.splitPatientsForABTest(
         targetPatients,
-        trafficSplit
+        trafficSplit,
       );
 
       // Execute each variation
@@ -448,7 +448,7 @@ export class MarketingCampaignService {
   async withdrawConsent(
     patientId: string,
     consentType: string,
-    reason?: string
+    reason?: string,
   ) {
     try {
       const { data: consent, error } = await this.supabase
@@ -475,7 +475,7 @@ export class MarketingCampaignService {
 
   // Performance Analytics
   async getCampaignAnalytics(
-    campaignId: string
+    campaignId: string,
   ): Promise<{ success: boolean; data?: CampaignAnalytics; error?: string }> {
     try {
       // Get campaign performance metrics
@@ -492,21 +492,21 @@ export class MarketingCampaignService {
       const totalRecipients = metrics.reduce((sum, m) => sum + m.total_sent, 0);
       const _totalDelivered = metrics.reduce(
         (sum, m) => sum + m.total_delivered,
-        0
+        0,
       );
       const totalOpened = metrics.reduce((sum, m) => sum + m.total_opened, 0);
       const totalClicked = metrics.reduce((sum, m) => sum + m.total_clicked, 0);
       const totalConverted = metrics.reduce(
         (sum, m) => sum + m.total_converted,
-        0
+        0,
       );
       const totalUnsubscribed = metrics.reduce(
         (sum, m) => sum + m.total_unsubscribed,
-        0
+        0,
       );
       const totalRevenue = metrics.reduce(
         (sum, m) => sum + (m.revenue_generated || 0),
-        0
+        0,
       );
 
       // Get campaign details for automation rate
@@ -576,7 +576,7 @@ export class MarketingCampaignService {
   private async personalizeContent(
     campaign: any,
     patients: any[],
-    channel: string
+    channel: string,
   ) {
     // AI-powered content personalization would be implemented here
     // For now, return basic personalized content
@@ -652,7 +652,7 @@ export class MarketingCampaignService {
   private async createAuditEntry(
     campaignId: string,
     action: string,
-    details: any
+    details: any,
   ) {
     try {
       await this.supabase.from('campaign_audit_trail').insert([

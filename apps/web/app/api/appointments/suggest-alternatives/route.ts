@@ -48,7 +48,7 @@ export async function POST(request: NextRequest) {
     if (authError || !user?.id) {
       return NextResponse.json(
         { error: 'Unauthorized', details: 'Authentication required' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -65,7 +65,7 @@ export async function POST(request: NextRequest) {
           error: 'Profile not found',
           details: 'User profile or clinic not found',
         },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -94,7 +94,7 @@ export async function POST(request: NextRequest) {
           details: suggestionsError.message,
           code: 'SUGGESTION_PROCEDURE_ERROR',
         },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -127,7 +127,7 @@ export async function POST(request: NextRequest) {
       days_from_preferred: Math.ceil(
         (new Date(slot.start_time).getTime() -
           new Date(validatedData.preferred_start_time).getTime()) /
-          (1000 * 60 * 60 * 24)
+          (1000 * 60 * 60 * 24),
       ),
     }));
 
@@ -149,7 +149,7 @@ export async function POST(request: NextRequest) {
         total_suggestions: enhancedSuggestions.length,
         search_window_end: new Date(
           new Date(validatedData.preferred_start_time).getTime() +
-            validatedData.search_window_days * 24 * 60 * 60 * 1000
+            validatedData.search_window_days * 24 * 60 * 60 * 1000,
         ).toISOString(),
         generated_at: new Date().toISOString(),
       },
@@ -169,7 +169,7 @@ export async function POST(request: NextRequest) {
           validation_errors: error.errors,
           code: 'INVALID_REQUEST_PARAMETERS',
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -181,7 +181,7 @@ export async function POST(request: NextRequest) {
           details: 'Request body contains invalid JSON',
           code: 'INVALID_JSON',
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -196,7 +196,7 @@ export async function POST(request: NextRequest) {
           generation_time_ms: Date.now() - startTime,
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -253,7 +253,7 @@ export async function GET(request: NextRequest) {
           details:
             'professional_id, service_type_id, preferred_start_time, and duration_minutes are required',
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -288,7 +288,7 @@ export async function GET(request: NextRequest) {
           error: 'Suggestion generation failed',
           details: suggestionsError.message,
         },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -314,7 +314,7 @@ export async function GET(request: NextRequest) {
           error: 'Invalid parameters',
           validation_errors: error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -326,7 +326,7 @@ export async function GET(request: NextRequest) {
           generation_time_ms: Date.now() - startTime,
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

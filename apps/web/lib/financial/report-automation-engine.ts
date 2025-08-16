@@ -82,7 +82,7 @@ export class ReportAutomationEngine {
    */
   async createReportSchedule(
     clinicId: string,
-    schedule: Omit<ReportSchedule, 'scheduleId'>
+    schedule: Omit<ReportSchedule, 'scheduleId'>,
   ): Promise<string> {
     const { data: scheduleData, error } = await this.supabase
       .from('report_schedules')
@@ -179,7 +179,7 @@ export class ReportAutomationEngine {
     // Generate report based on type and parameters
     const reportData = await this.generateReport(
       schedule.report_type,
-      schedule.parameters
+      schedule.parameters,
     );
 
     // Export to specified format
@@ -216,7 +216,7 @@ export class ReportAutomationEngine {
    */
   async createReportTemplate(
     clinicId: string,
-    template: Omit<ReportTemplate, 'templateId' | 'createdAt'>
+    template: Omit<ReportTemplate, 'templateId' | 'createdAt'>,
   ): Promise<string> {
     const { data: templateData, error } = await this.supabase
       .from('report_templates')
@@ -246,7 +246,7 @@ export class ReportAutomationEngine {
    */
   async getReportTemplates(
     clinicId: string,
-    reportType?: string
+    reportType?: string,
   ): Promise<ReportTemplate[]> {
     let query = this.supabase
       .from('report_templates')
@@ -288,7 +288,7 @@ export class ReportAutomationEngine {
    */
   async exportReport(
     reportData: any,
-    options: ExportOptions
+    options: ExportOptions,
   ): Promise<{ filePath: string; fileSize: number; downloadUrl: string }> {
     try {
       let exportResult;
@@ -319,7 +319,7 @@ export class ReportAutomationEngine {
       if (options.password) {
         exportResult = await this.passwordProtectFile(
           exportResult,
-          options.password
+          options.password,
         );
       }
 
@@ -334,7 +334,7 @@ export class ReportAutomationEngine {
    */
   private async exportToPDF(
     reportData: any,
-    options: ExportOptions
+    options: ExportOptions,
   ): Promise<{ filePath: string; fileSize: number; downloadUrl: string }> {
     // Use Puppeteer or similar for PDF generation
     const { data: pdfResult, error } = await this.supabase.rpc(
@@ -344,7 +344,7 @@ export class ReportAutomationEngine {
         include_charts: options.includeCharts,
         watermark: options.watermark,
         branding: options.branding,
-      }
+      },
     );
 
     if (error) {
@@ -363,7 +363,7 @@ export class ReportAutomationEngine {
    */
   private async exportToExcel(
     reportData: any,
-    options: ExportOptions
+    options: ExportOptions,
   ): Promise<{ filePath: string; fileSize: number; downloadUrl: string }> {
     const { data: excelResult, error } = await this.supabase.rpc(
       'generate_excel_report',
@@ -372,7 +372,7 @@ export class ReportAutomationEngine {
         include_charts: options.includeCharts,
         include_raw_data: options.includeRawData,
         branding: options.branding,
-      }
+      },
     );
 
     if (error) {
@@ -391,14 +391,14 @@ export class ReportAutomationEngine {
    */
   private async exportToCSV(
     reportData: any,
-    options: ExportOptions
+    options: ExportOptions,
   ): Promise<{ filePath: string; fileSize: number; downloadUrl: string }> {
     const { data: csvResult, error } = await this.supabase.rpc(
       'generate_csv_report',
       {
         report_data: reportData,
         include_raw_data: options.includeRawData,
-      }
+      },
     );
 
     if (error) {
@@ -417,13 +417,13 @@ export class ReportAutomationEngine {
    */
   private async exportToJSON(
     reportData: any,
-    _options: ExportOptions
+    _options: ExportOptions,
   ): Promise<{ filePath: string; fileSize: number; downloadUrl: string }> {
     const { data: jsonResult, error } = await this.supabase.rpc(
       'generate_json_report',
       {
         report_data: reportData,
-      }
+      },
     );
 
     if (error) {
@@ -445,7 +445,7 @@ export class ReportAutomationEngine {
    * Deliver report to recipients via email
    */
   async deliverReport(
-    delivery: Omit<ReportDelivery, 'deliveryId'>
+    delivery: Omit<ReportDelivery, 'deliveryId'>,
   ): Promise<string> {
     const { data: deliveryData, error } = await this.supabase
       .from('report_deliveries')
@@ -470,7 +470,7 @@ export class ReportAutomationEngine {
       await this.sendReportEmail(
         deliveryData.id,
         delivery.recipients,
-        delivery.filePath!
+        delivery.filePath!,
       );
     }
 
@@ -483,7 +483,7 @@ export class ReportAutomationEngine {
   private async sendReportEmail(
     deliveryId: string,
     recipients: string[],
-    filePath: string
+    filePath: string,
   ): Promise<void> {
     try {
       const { error } = await this.supabase.rpc('send_report_email', {
@@ -530,7 +530,7 @@ export class ReportAutomationEngine {
     archive: Omit<
       ReportArchive,
       'archiveId' | 'downloadCount' | 'lastAccessedAt'
-    >
+    >,
   ): Promise<string> {
     const { data: archiveData, error } = await this.supabase
       .from('report_archives')
@@ -562,7 +562,7 @@ export class ReportAutomationEngine {
   async getArchivedReports(
     clinicId: string,
     reportType?: string,
-    dateRange?: { start: Date; end: Date }
+    dateRange?: { start: Date; end: Date },
   ): Promise<ReportArchive[]> {
     let query = this.supabase
       .from('report_archives')
@@ -613,14 +613,14 @@ export class ReportAutomationEngine {
    */
   private async generateReport(
     reportType: string,
-    parameters: any
+    parameters: any,
   ): Promise<any> {
     const { data: reportData, error } = await this.supabase.rpc(
       'generate_report_data',
       {
         report_type: reportType,
         parameters,
-      }
+      },
     );
 
     if (error) {
@@ -635,7 +635,7 @@ export class ReportAutomationEngine {
    */
   private async updateNextRunDate(
     scheduleId: string,
-    frequency: string
+    frequency: string,
   ): Promise<void> {
     const nextRunDate = this.calculateNextRunDate(new Date(), frequency);
 
@@ -684,7 +684,7 @@ export class ReportAutomationEngine {
       'compress_file',
       {
         file_path: fileResult.filePath,
-      }
+      },
     );
 
     if (error) {
@@ -699,14 +699,14 @@ export class ReportAutomationEngine {
    */
   private async passwordProtectFile(
     fileResult: { filePath: string; fileSize: number; downloadUrl: string },
-    password: string
+    password: string,
   ): Promise<{ filePath: string; fileSize: number; downloadUrl: string }> {
     const { data: protectedResult, error } = await this.supabase.rpc(
       'password_protect_file',
       {
         file_path: fileResult.filePath,
         password,
-      }
+      },
     );
 
     if (error) {

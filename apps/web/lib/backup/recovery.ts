@@ -49,7 +49,7 @@ export class RecoveryService {
   constructor(storageManager: StorageManager, monitoring?: MonitoringService) {
     this.supabase = createClient(
       process.env.SUPABASE_URL!,
-      process.env.SUPABASE_ANON_KEY!
+      process.env.SUPABASE_ANON_KEY!,
     );
     this.storageManager = storageManager;
     this.monitoring = monitoring;
@@ -66,7 +66,7 @@ export class RecoveryService {
     backupId: string,
     type: RecoveryType,
     options: RecoveryOptions,
-    userId: string
+    userId: string,
   ): Promise<ApiResponse<RecoveryRequest>> {
     try {
       // Validar backup
@@ -145,7 +145,7 @@ export class RecoveryService {
   private async validateRecovery(
     backup: BackupRecord,
     type: RecoveryType,
-    options: RecoveryOptions
+    options: RecoveryOptions,
   ): Promise<RecoveryValidation> {
     const validation: RecoveryValidation = {
       isValid: true,
@@ -191,7 +191,7 @@ export class RecoveryService {
       // Verificar conflitos
       if (type === RecoveryType.FULL_RESTORE) {
         validation.warnings.push(
-          'Recovery completo irá sobrescrever dados existentes'
+          'Recovery completo irá sobrescrever dados existentes',
         );
       }
     } catch (error) {
@@ -252,7 +252,7 @@ export class RecoveryService {
       progress: 0,
       currentStep: 'Iniciando recovery',
       estimatedCompletion: new Date(
-        Date.now() + request.estimatedDuration * 1000
+        Date.now() + request.estimatedDuration * 1000,
       ),
     };
 
@@ -304,7 +304,7 @@ export class RecoveryService {
    */
   private async performFullRestore(
     request: RecoveryRequest,
-    progress: RecoveryProgress
+    progress: RecoveryProgress,
   ): Promise<RecoveryResult> {
     const result: RecoveryResult = {
       success: false,
@@ -350,7 +350,7 @@ export class RecoveryService {
       // Extrair e restaurar arquivos
       const extractedFiles = await this.extractBackup(
         backupData,
-        request.options
+        request.options,
       );
 
       progress.currentStep = 'Restaurando arquivos';
@@ -360,7 +360,7 @@ export class RecoveryService {
       // Restaurar para destino
       const restoredFiles = await this.restoreFiles(
         extractedFiles,
-        request.options
+        request.options,
       );
 
       // Verificar integridade
@@ -396,7 +396,7 @@ export class RecoveryService {
    */
   private async performPartialRestore(
     _request: RecoveryRequest,
-    progress: RecoveryProgress
+    progress: RecoveryProgress,
   ): Promise<RecoveryResult> {
     // Implementação similar ao restore completo, mas com filtros
     const result: RecoveryResult = {
@@ -420,7 +420,7 @@ export class RecoveryService {
    */
   private async performPointInTimeRestore(
     _request: RecoveryRequest,
-    progress: RecoveryProgress
+    progress: RecoveryProgress,
   ): Promise<RecoveryResult> {
     const result: RecoveryResult = {
       success: true,
@@ -443,7 +443,7 @@ export class RecoveryService {
    */
   private async performVerification(
     _request: RecoveryRequest,
-    progress: RecoveryProgress
+    progress: RecoveryProgress,
   ): Promise<RecoveryResult> {
     const result: RecoveryResult = {
       success: true,
@@ -470,7 +470,7 @@ export class RecoveryService {
    */
   private async extractBackup(
     _backupData: Buffer,
-    _options: RecoveryOptions
+    _options: RecoveryOptions,
   ): Promise<any[]> {
     // Implementar extração baseada no formato do backup
     return [];
@@ -481,7 +481,7 @@ export class RecoveryService {
    */
   private async restoreFiles(
     _files: any[],
-    _options: RecoveryOptions
+    _options: RecoveryOptions,
   ): Promise<any[]> {
     // Implementar restauração de arquivos
     return [];
@@ -522,7 +522,7 @@ export class RecoveryService {
   private async completeRecovery(
     request: RecoveryRequest,
     result: RecoveryResult,
-    _progress: RecoveryProgress
+    _progress: RecoveryProgress,
   ): Promise<void> {
     const endTime = new Date();
 
@@ -556,7 +556,7 @@ export class RecoveryService {
   private async failRecovery(
     request: RecoveryRequest,
     errorMessage: string,
-    _progress: RecoveryProgress
+    _progress: RecoveryProgress,
   ): Promise<void> {
     const endTime = new Date();
 
@@ -588,7 +588,7 @@ export class RecoveryService {
         'RECOVERY_FAILURE',
         'HIGH',
         `Falha no recovery ${request.id}: ${errorMessage}`,
-        { requestId: request.id, error: errorMessage }
+        { requestId: request.id, error: errorMessage },
       );
     }
   }
@@ -602,7 +602,7 @@ export class RecoveryService {
    */
   private async notifyRecoveryCompletion(
     request: RecoveryRequest,
-    result: RecoveryResult
+    result: RecoveryResult,
   ): Promise<void> {
     try {
       const notification = {
@@ -626,7 +626,7 @@ export class RecoveryService {
    */
   private async notifyRecoveryFailure(
     request: RecoveryRequest,
-    errorMessage: string
+    errorMessage: string,
   ): Promise<void> {
     try {
       const notification = {
@@ -653,7 +653,7 @@ export class RecoveryService {
    * Obter status de recovery
    */
   async getRecoveryStatus(
-    requestId: string
+    requestId: string,
   ): Promise<ApiResponse<RecoveryProgress>> {
     try {
       // Verificar cache local primeiro
@@ -709,7 +709,7 @@ export class RecoveryService {
    */
   async cancelRecovery(
     requestId: string,
-    userId: string
+    userId: string,
   ): Promise<ApiResponse> {
     try {
       // Verificar se está ativo
@@ -767,7 +767,7 @@ export class RecoveryService {
       startDate?: Date;
       endDate?: Date;
     },
-    pagination?: { page: number; limit: number }
+    pagination?: { page: number; limit: number },
   ): Promise<ApiResponse<{ requests: RecoveryRequest[]; total: number }>> {
     try {
       let query = this.supabase
@@ -823,7 +823,7 @@ export class RecoveryService {
    * Obter pontos de recuperação disponíveis
    */
   async getRecoveryPoints(
-    configId?: string
+    configId?: string,
   ): Promise<ApiResponse<RecoveryPoint[]>> {
     try {
       let query = this.supabase

@@ -127,7 +127,7 @@ export class WaitlistService {
   }
 
   async getWaitlistPosition(
-    patientId: string
+    patientId: string,
   ): Promise<{ position: number | null; estimatedWait: string | null }> {
     try {
       const { data, error } = await this.supabase
@@ -176,7 +176,7 @@ export class WaitlistService {
   }
 
   async processWaitlist(
-    _criteria?: any
+    _criteria?: any,
   ): Promise<{ processed: number; matched: number }> {
     try {
       // Get waitlist entries that match criteria

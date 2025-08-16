@@ -96,7 +96,7 @@ export const CreateCampaignSchema = z
     {
       message: 'End date must be after start date',
       path: ['end_date'],
-    }
+    },
   );
 
 export const UpdateCampaignSchema = z.object({

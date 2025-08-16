@@ -22,21 +22,21 @@ export async function GET(request: Request) {
       if (error) {
         return NextResponse.redirect(
           `${origin}/auth/auth-code-error?error=${encodeURIComponent(
-            error.message
-          )}`
+            error.message,
+          )}`,
         );
       }
       // Sucesso: redireciona para o dashboard ou próxima página
       return NextResponse.redirect(`${origin}${next}`);
     } catch (_err) {
       return NextResponse.redirect(
-        `${origin}/auth/auth-code-error?error=unexpected_error`
+        `${origin}/auth/auth-code-error?error=unexpected_error`,
       );
     }
   }
 
   // Redireciona para página de erro se não houver código
   return NextResponse.redirect(
-    `${origin}/auth/auth-code-error?error=no_code_provided`
+    `${origin}/auth/auth-code-error?error=no_code_provided`,
   );
 }

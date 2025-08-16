@@ -54,13 +54,13 @@ export async function GET(request: NextRequest) {
       default:
         return NextResponse.json(
           { error: 'Action parameter is required' },
-          { status: 400 }
+          { status: 400 },
         );
     }
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -90,13 +90,13 @@ export async function POST(request: NextRequest) {
       default:
         return NextResponse.json(
           { error: 'Invalid action specified' },
-          { status: 400 }
+          { status: 400 },
         );
     }
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -104,14 +104,14 @@ export async function POST(request: NextRequest) {
 // Helper functions
 async function validateSingleCNPJ(
   supabase: any,
-  searchParams: URLSearchParams
+  searchParams: URLSearchParams,
 ) {
   const cnpj = searchParams.get('cnpj');
 
   if (!cnpj) {
     return NextResponse.json(
       { error: 'cnpj parameter is required' },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
@@ -147,7 +147,7 @@ async function validateSingleCNPJ(
   } catch (error) {
     return NextResponse.json(
       { error: 'CNPJ validation failed', details: error.message },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -162,7 +162,7 @@ async function searchCompanies(_supabase: any, searchParams: URLSearchParams) {
   if (!(companyName || activityCode || city)) {
     return NextResponse.json(
       { error: 'At least one search parameter is required' },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
@@ -194,14 +194,14 @@ async function searchCompanies(_supabase: any, searchParams: URLSearchParams) {
   } catch (error) {
     return NextResponse.json(
       { error: 'Company search failed', details: error.message },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
 
 async function getValidationHistory(
   supabase: any,
-  searchParams: URLSearchParams
+  searchParams: URLSearchParams,
 ) {
   const cnpj = searchParams.get('cnpj');
   const limit = Number.parseInt(searchParams.get('limit') || '50', 10);
@@ -222,7 +222,7 @@ async function getValidationHistory(
   if (error) {
     return NextResponse.json(
       { error: 'Failed to fetch validation history' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 
@@ -243,7 +243,7 @@ async function getCNPJStatus(supabase: any, searchParams: URLSearchParams) {
   if (!cnpj) {
     return NextResponse.json(
       { error: 'cnpj parameter is required' },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
@@ -259,7 +259,7 @@ async function getCNPJStatus(supabase: any, searchParams: URLSearchParams) {
   if (error || !latestValidation) {
     return NextResponse.json(
       { error: 'CNPJ validation not found' },
-      { status: 404 }
+      { status: 404 },
     );
   }
 
@@ -354,7 +354,7 @@ async function validateCNPJ(supabase: any, body: any) {
   } catch (error) {
     return NextResponse.json(
       { error: 'CNPJ validation failed', details: error.message },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -423,7 +423,7 @@ async function batchValidateCNPJ(supabase: any, body: any) {
   } catch (error) {
     return NextResponse.json(
       { error: 'Batch validation failed', details: error.message },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -468,7 +468,7 @@ async function searchCompaniesByData(supabase: any, body: any) {
   } catch (error) {
     return NextResponse.json(
       { error: 'Company search failed', details: error.message },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -544,12 +544,12 @@ async function updateCNPJStatus(supabase: any, body: any) {
     }
     return NextResponse.json(
       { error: 'CNPJ validation failed', details: validation.errors },
-      { status: 400 }
+      { status: 400 },
     );
   } catch (error) {
     return NextResponse.json(
       { error: 'CNPJ status update failed', details: error.message },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

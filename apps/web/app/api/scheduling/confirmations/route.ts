@@ -74,7 +74,7 @@ export async function POST(request: NextRequest) {
         professionals(*),
         services(*),
         clinics(*)
-      `
+      `,
       )
       .eq('id', validatedData.appointmentId)
       .single();
@@ -82,7 +82,7 @@ export async function POST(request: NextRequest) {
     if (appointmentError || !appointment) {
       return NextResponse.json(
         { error: 'Appointment not found' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -100,7 +100,7 @@ export async function POST(request: NextRequest) {
           error: 'Confirmation request already exists',
           existing: existingConfirmation,
         },
-        { status: 409 }
+        { status: 409 },
       );
     }
 
@@ -125,11 +125,11 @@ export async function POST(request: NextRequest) {
         const workflow = new SchedulingCommunicationWorkflow();
         const workflows = await workflow.initializeWorkflows(
           validatedData.appointmentId,
-          workflowConfig
+          workflowConfig,
         );
 
         const confirmationWorkflow = workflows.find(
-          (w) => w.workflowType === 'confirmation'
+          (w) => w.workflowType === 'confirmation',
         );
 
         if (confirmationWorkflow) {
@@ -153,18 +153,18 @@ export async function POST(request: NextRequest) {
       supabase,
       validatedData,
       appointment,
-      user
+      user,
     );
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Invalid request data', details: error.errors },
-        { status: 400 }
+        { status: 400 },
       );
     }
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -176,7 +176,7 @@ async function handleLegacyConfirmation(
   supabase: any,
   data: z.infer<typeof ConfirmationRequestSchema>,
   appointment: any,
-  user: any
+  user: any,
 ) {
   // Generate confirmation token
   const confirmationToken = generateConfirmationToken();
@@ -190,7 +190,7 @@ async function handleLegacyConfirmation(
 
   // Calculate expiration time
   const expiresAt = new Date(
-    sendAt.getTime() + data.timeoutHours * 60 * 60 * 1000
+    sendAt.getTime() + data.timeoutHours * 60 * 60 * 1000,
   );
 
   // Get no-show prediction if enabled
@@ -259,7 +259,7 @@ export async function PUT(request: NextRequest) {
         appointments(*),
         patients(*),
         clinics(*)
-      `
+      `,
       )
       .eq('confirmation_token', validatedData.confirmationToken)
       .single();
@@ -267,7 +267,7 @@ export async function PUT(request: NextRequest) {
     if (confirmationError || !confirmation) {
       return NextResponse.json(
         { error: 'Invalid confirmation token' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -275,7 +275,7 @@ export async function PUT(request: NextRequest) {
     if (new Date() > new Date(confirmation.expires_at)) {
       return NextResponse.json(
         { error: 'Confirmation request has expired' },
-        { status: 410 }
+        { status: 410 },
       );
     }
 
@@ -286,7 +286,7 @@ export async function PUT(request: NextRequest) {
           error: 'Already responded to this confirmation',
           currentResponse: confirmation.status,
         },
-        { status: 409 }
+        { status: 409 },
       );
     }
 
@@ -315,7 +315,7 @@ export async function PUT(request: NextRequest) {
     if (updateError) {
       return NextResponse.json(
         { error: 'Failed to update confirmation' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -377,12 +377,12 @@ export async function PUT(request: NextRequest) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Invalid request data', details: error.errors },
-        { status: 400 }
+        { status: 400 },
       );
     }
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -423,7 +423,7 @@ export async function GET(request: NextRequest) {
           professionals(name),
           services(name),
           clinics(name, address, phone)
-        `
+        `,
         )
         .eq('confirmation_token', confirmationToken)
         .single();
@@ -431,7 +431,7 @@ export async function GET(request: NextRequest) {
       if (tokenError || !confirmation) {
         return NextResponse.json(
           { error: 'Invalid confirmation token' },
-          { status: 404 }
+          { status: 404 },
         );
       }
 
@@ -479,13 +479,13 @@ export async function GET(request: NextRequest) {
 
     const { data: confirmations, error: queryError } = await query.order(
       'send_at',
-      { ascending: true }
+      { ascending: true },
     );
 
     if (queryError) {
       return NextResponse.json(
         { error: 'Failed to fetch confirmations' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -496,7 +496,7 @@ export async function GET(request: NextRequest) {
         expired: new Date() > new Date(conf.expires_at),
         timeRemaining: Math.max(
           0,
-          new Date(conf.expires_at).getTime() - Date.now()
+          new Date(conf.expires_at).getTime() - Date.now(),
         ),
       })) || [];
 
@@ -506,16 +506,16 @@ export async function GET(request: NextRequest) {
       count: confirmationsWithStatus.length,
       summary: {
         pending: confirmationsWithStatus.filter(
-          (c) => c.status === 'pending' && !c.expired
+          (c) => c.status === 'pending' && !c.expired,
         ).length,
         confirmed: confirmationsWithStatus.filter(
-          (c) => c.status === 'confirmed'
+          (c) => c.status === 'confirmed',
         ).length,
         cancelled: confirmationsWithStatus.filter(
-          (c) => c.status === 'cancelled'
+          (c) => c.status === 'cancelled',
         ).length,
         reschedule: confirmationsWithStatus.filter(
-          (c) => c.status === 'reschedule'
+          (c) => c.status === 'reschedule',
         ).length,
         expired: confirmationsWithStatus.filter((c) => c.expired).length,
       },
@@ -523,7 +523,7 @@ export async function GET(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -552,7 +552,7 @@ export async function DELETE(request: NextRequest) {
     if (!(confirmationId || appointmentId)) {
       return NextResponse.json(
         { error: 'Either confirmationId or appointmentId required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -573,7 +573,7 @@ export async function DELETE(request: NextRequest) {
     if (updateError) {
       return NextResponse.json(
         { error: 'Failed to expire confirmations' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -585,7 +585,7 @@ export async function DELETE(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -334,7 +334,7 @@ export const ReconciliationSummary: React.FC<ReconciliationSummaryProps> = ({
                   </div>
                   <Progress className="h-2" value={percentage} />
                 </div>
-              )
+              ),
             )}
           </div>
         </CardContent>

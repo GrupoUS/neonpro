@@ -45,7 +45,7 @@ export async function POST(request: NextRequest) {
     if (!(userProfile && ['admin', 'owner'].includes(userProfile.role))) {
       return NextResponse.json(
         { error: 'Insufficient permissions' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -59,7 +59,7 @@ export async function POST(request: NextRequest) {
           error: 'Invalid request data',
           details: validationResult.error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -78,7 +78,7 @@ export async function POST(request: NextRequest) {
           plan:subscription_plans(*)
         ),
         payment_retry_logs(*)
-      `
+      `,
       )
       .eq('id', billing_event_id)
       .single();
@@ -86,14 +86,14 @@ export async function POST(request: NextRequest) {
     if (billingError || !billingEvent) {
       return NextResponse.json(
         { error: 'Billing event not found' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
     if (billingEvent.status !== 'payment_failed') {
       return NextResponse.json(
         { error: 'Billing event is not in a retryable state' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -104,7 +104,7 @@ export async function POST(request: NextRequest) {
     if (retryCount >= maxRetries) {
       return NextResponse.json(
         { error: 'Maximum retry attempts exceeded' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -112,11 +112,11 @@ export async function POST(request: NextRequest) {
     const result = await recurringPaymentProcessor.retryFailedPayment(
       billing_event_id,
       retry_attempt || retryCount + 1,
-      metadata
+      metadata,
     );
 
     logger.info(
-      `Payment retry processed for billing event: ${billing_event_id} by user: ${user.id}`
+      `Payment retry processed for billing event: ${billing_event_id} by user: ${user.id}`,
     );
 
     return NextResponse.json(
@@ -124,7 +124,7 @@ export async function POST(request: NextRequest) {
         data: result,
         message: 'Payment retry processed successfully',
       },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
     logger.error('Error in POST /api/recurring-payments/retry:', error);
@@ -135,7 +135,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -163,7 +163,7 @@ export async function PUT(request: NextRequest) {
     if (!(userProfile && ['admin', 'owner'].includes(userProfile.role))) {
       return NextResponse.json(
         { error: 'Insufficient permissions' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -177,7 +177,7 @@ export async function PUT(request: NextRequest) {
           error: 'Invalid request data',
           details: validationResult.error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -201,7 +201,7 @@ export async function PUT(request: NextRequest) {
               plan:subscription_plans(max_retry_attempts)
             ),
             payment_retry_logs(*)
-          `
+          `,
           )
           .eq('id', billingEventId)
           .single();
@@ -229,7 +229,7 @@ export async function PUT(request: NextRequest) {
         const result = await recurringPaymentProcessor.retryFailedPayment(
           billingEventId,
           retryCount + 1,
-          metadata
+          metadata,
         );
 
         results.push({
@@ -245,7 +245,7 @@ export async function PUT(request: NextRequest) {
     }
 
     logger.info(
-      `Bulk payment retry completed: ${results.length} successful, ${errors.length} errors by user: ${user.id}`
+      `Bulk payment retry completed: ${results.length} successful, ${errors.length} errors by user: ${user.id}`,
     );
 
     return NextResponse.json({
@@ -263,7 +263,7 @@ export async function PUT(request: NextRequest) {
     logger.error('Error in PUT /api/recurring-payments/retry:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -291,14 +291,14 @@ export async function GET(request: NextRequest) {
     if (!(userProfile && ['admin', 'owner'].includes(userProfile.role))) {
       return NextResponse.json(
         { error: 'Insufficient permissions' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
     const { searchParams } = new URL(request.url);
     const days = Number.parseInt(searchParams.get('days') || '30', 10);
     const startDate = new Date(
-      Date.now() - days * 24 * 60 * 60 * 1000
+      Date.now() - days * 24 * 60 * 60 * 1000,
     ).toISOString();
 
     // Get retry statistics
@@ -316,7 +316,7 @@ export async function GET(request: NextRequest) {
             customer:customers(name, email)
           )
         )
-      `
+      `,
       )
       .gte('created_at', startDate)
       .order('created_at', { ascending: false });
@@ -350,7 +350,7 @@ export async function GET(request: NextRequest) {
         {} as Record<
           number,
           { total: number; successful: number; failed: number }
-        >
+        >,
       ) || {};
 
     // Get failed payments that can be retried
@@ -367,7 +367,7 @@ export async function GET(request: NextRequest) {
           plan:subscription_plans(max_retry_attempts)
         ),
         payment_retry_logs(retry_attempt)
-      `
+      `,
       )
       .eq('status', 'payment_failed')
       .gte('created_at', startDate);
@@ -396,7 +396,7 @@ export async function GET(request: NextRequest) {
           count: eligibleForRetry.length,
           total_amount: eligibleForRetry.reduce(
             (sum, payment) => sum + (payment.amount || 0),
-            0
+            0,
           ),
           payments: eligibleForRetry.slice(0, 20), // Limit to first 20 for performance
         },
@@ -408,7 +408,7 @@ export async function GET(request: NextRequest) {
     logger.error('Error in GET /api/recurring-payments/retry:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

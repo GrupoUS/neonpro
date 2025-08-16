@@ -152,7 +152,7 @@ export const escalationRuleSchema = z.object({
   // Notifications
   notify_immediately: z.boolean().default(true),
   notification_channels: z.array(
-    z.enum(['email', 'sms', 'whatsapp', 'phone', 'dashboard'])
+    z.enum(['email', 'sms', 'whatsapp', 'phone', 'dashboard']),
   ),
   notification_template: z.string().max(1000).optional(),
   internal_alert_template: z.string().max(1000).optional(),
@@ -387,7 +387,7 @@ export const messageTemplateSchema = z
     },
     {
       message: 'Template excede o tamanho máximo permitido para o canal',
-    }
+    },
   );
 
 // AI optimization schemas

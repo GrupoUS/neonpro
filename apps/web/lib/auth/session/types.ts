@@ -927,7 +927,7 @@ export function isRiskLevel(value: any): value is RiskLevel {
  * Verifica se um valor é um canal de notificação válido
  */
 export function isNotificationChannel(
-  value: any
+  value: any,
 ): value is NotificationChannel {
   return NOTIFICATION_CHANNELS.includes(value);
 }
@@ -936,7 +936,7 @@ export function isNotificationChannel(
  * Verifica se um valor é uma prioridade de notificação válida
  */
 export function isNotificationPriority(
-  value: any
+  value: any,
 ): value is NotificationPriority {
   return NOTIFICATION_PRIORITIES.includes(value);
 }

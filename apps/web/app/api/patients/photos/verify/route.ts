@@ -17,7 +17,7 @@ import { LGPDManager } from '../../../../../lib/security/lgpd-manager';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
+  process.env.SUPABASE_SERVICE_ROLE_KEY!,
 );
 
 const auditLogger = new AuditLogger(supabase);
@@ -26,7 +26,7 @@ const photoManager = new PhotoRecognitionManager(
   supabase,
   auditLogger,
   lgpdManager,
-  defaultPhotoRecognitionConfig
+  defaultPhotoRecognitionConfig,
 );
 
 export async function POST(request: NextRequest) {
@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
     if (!authHeader) {
       return NextResponse.json(
         { error: 'Authorization required' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -49,7 +49,7 @@ export async function POST(request: NextRequest) {
     if (authError || !user) {
       return NextResponse.json(
         { error: 'Invalid authentication' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -63,7 +63,7 @@ export async function POST(request: NextRequest) {
     if (!(photoFile && patientId)) {
       return NextResponse.json(
         { error: 'Photo file and patient ID are required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -72,7 +72,7 @@ export async function POST(request: NextRequest) {
     if (!allowedTypes.includes(photoFile.type)) {
       return NextResponse.json(
         { error: 'Invalid file type. Only JPEG, PNG, and WebP are allowed' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -80,7 +80,7 @@ export async function POST(request: NextRequest) {
     if (photoFile.size > 5 * 1024 * 1024) {
       return NextResponse.json(
         { error: 'File too large. Maximum size is 5MB for verification' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -100,7 +100,7 @@ export async function POST(request: NextRequest) {
       patientId,
       photoFile,
       user.id,
-      verificationContext
+      verificationContext,
     );
 
     return NextResponse.json({
@@ -125,7 +125,7 @@ export async function POST(request: NextRequest) {
         error: 'Verification failed',
         details: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -138,7 +138,7 @@ export async function GET(request: NextRequest) {
     if (!authHeader) {
       return NextResponse.json(
         { error: 'Authorization required' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -151,7 +151,7 @@ export async function GET(request: NextRequest) {
     if (authError || !user) {
       return NextResponse.json(
         { error: 'Invalid authentication' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -164,7 +164,7 @@ export async function GET(request: NextRequest) {
     if (!patientId) {
       return NextResponse.json(
         { error: 'Patient ID is required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -179,7 +179,7 @@ export async function GET(request: NextRequest) {
         context,
         created_at,
         verified_by
-      `
+      `,
       )
       .eq('patient_id', patientId)
       .order('created_at', { ascending: false })
@@ -204,7 +204,7 @@ export async function GET(request: NextRequest) {
         error: 'Failed to get verification history',
         details: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

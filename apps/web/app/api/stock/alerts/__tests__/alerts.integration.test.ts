@@ -93,7 +93,7 @@ const mockAlert = {
 // Helper function to create mock request
 function createMockRequest(
   url: string,
-  options: RequestInit = {}
+  options: RequestInit = {},
 ): NextRequest {
   return new NextRequest(url, options);
 }
@@ -175,7 +175,7 @@ describe('GET /api/stock/alerts', () => {
     });
 
     const request = createMockRequest(
-      'http://localhost:3000/api/stock/alerts?page=1&limit=10'
+      'http://localhost:3000/api/stock/alerts?page=1&limit=10',
     );
 
     // Act
@@ -234,7 +234,7 @@ describe('GET /api/stock/alerts', () => {
     createRouteHandlerClient.mockReturnValue(mockSupabase);
 
     const request = createMockRequest(
-      'http://localhost:3000/api/stock/alerts?page=invalid&limit=999'
+      'http://localhost:3000/api/stock/alerts?page=invalid&limit=999',
     );
 
     // Act
@@ -295,7 +295,7 @@ describe('POST /api/stock/alerts', () => {
         method: 'POST',
         body: JSON.stringify(requestBody),
         headers: { 'Content-Type': 'application/json' },
-      }
+      },
     );
 
     // Act
@@ -332,7 +332,7 @@ describe('POST /api/stock/alerts', () => {
         method: 'POST',
         body: JSON.stringify(invalidRequestBody),
         headers: { 'Content-Type': 'application/json' },
-      }
+      },
     );
 
     // Act
@@ -386,7 +386,7 @@ describe('POST /api/stock/alerts', () => {
         method: 'POST',
         body: JSON.stringify(requestBody),
         headers: { 'Content-Type': 'application/json' },
-      }
+      },
     );
 
     // Act
@@ -442,7 +442,7 @@ describe('PUT /api/stock/alerts/[id]', () => {
         method: 'PUT',
         body: JSON.stringify(requestBody),
         headers: { 'Content-Type': 'application/json' },
-      }
+      },
     );
 
     // Act
@@ -491,7 +491,7 @@ describe('DELETE /api/stock/alerts/[id]', () => {
       `http://localhost:3000/api/stock/alerts/${mockAlertConfig.id}`,
       {
         method: 'DELETE',
-      }
+      },
     );
 
     // Act
@@ -553,7 +553,7 @@ describe('POST /api/stock/alerts/acknowledge', () => {
         method: 'POST',
         body: JSON.stringify(requestBody),
         headers: { 'Content-Type': 'application/json' },
-      }
+      },
     );
 
     // Act
@@ -580,7 +580,7 @@ describe('POST /api/stock/alerts/acknowledge', () => {
         method: 'POST',
         body: JSON.stringify(invalidRequestBody),
         headers: { 'Content-Type': 'application/json' },
-      }
+      },
     );
 
     // Act
@@ -644,7 +644,7 @@ describe('End-to-End Alert Workflow', () => {
           notificationChannels: ['in_app'],
         }),
         headers: { 'Content-Type': 'application/json' },
-      }
+      },
     );
 
     const createResponse = await POST(createRequest);
@@ -683,7 +683,7 @@ describe('End-to-End Alert Workflow', () => {
           alertId: mockAlert.id,
         }),
         headers: { 'Content-Type': 'application/json' },
-      }
+      },
     );
 
     const ackResponse = await AcknowledgePost(ackRequest);

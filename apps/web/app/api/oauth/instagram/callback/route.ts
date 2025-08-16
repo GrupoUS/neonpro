@@ -21,15 +21,18 @@ export async function GET(request: NextRequest) {
       return NextResponse.redirect(
         new URL(
           `/dashboard/social-media?error=${encodeURIComponent(error)}&error_description=${encodeURIComponent(errorDescription || '')}`,
-          request.url
-        )
+          request.url,
+        ),
       );
     }
 
     // Validate required parameters
     if (!(code && state)) {
       return NextResponse.redirect(
-        new URL('/dashboard/social-media?error=missing_parameters', request.url)
+        new URL(
+          '/dashboard/social-media?error=missing_parameters',
+          request.url,
+        ),
       );
     }
 
@@ -46,7 +49,7 @@ export async function GET(request: NextRequest) {
     const oauthState = await instagramHandler.validateOAuthState(state);
     if (!oauthState) {
       return NextResponse.redirect(
-        new URL('/dashboard/social-media?error=invalid_state', request.url)
+        new URL('/dashboard/social-media?error=invalid_state', request.url),
       );
     }
 
@@ -55,7 +58,7 @@ export async function GET(request: NextRequest) {
       oauthState.userId,
       oauthState.clinicId,
       tokens,
-      profile
+      profile,
     );
 
     // Log successful connection
@@ -75,7 +78,7 @@ export async function GET(request: NextRequest) {
     // Redirect to success page with account information
     const redirectUrl = new URL(
       oauthState.redirectTo || '/dashboard/social-media',
-      request.url
+      request.url,
     );
     redirectUrl.searchParams.set('success', 'instagram_connected');
     redirectUrl.searchParams.set('username', profile.username || profile.name);
@@ -87,7 +90,7 @@ export async function GET(request: NextRequest) {
     errorUrl.searchParams.set('error', 'callback_failed');
     errorUrl.searchParams.set(
       'error_description',
-      error instanceof Error ? error.message : 'Unknown error'
+      error instanceof Error ? error.message : 'Unknown error',
     );
 
     return NextResponse.redirect(errorUrl);
@@ -107,7 +110,7 @@ export async function POST(_request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Webhook processing failed' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -106,8 +106,8 @@ async function runTests() {
     await testApiWithData(
       'API - Listar Tenants',
       `${BASE_URL}/api/tenants`,
-      'GET'
-    )
+      'GET',
+    ),
   );
 
   // Teste 4: API - Criar Tenant (POST)
@@ -123,8 +123,8 @@ async function runTests() {
       `${BASE_URL}/api/tenants`,
       'POST',
       newTenant,
-      201
-    )
+      201,
+    ),
   );
 
   // Teste 5: Verificar se CSS está carregando
@@ -132,8 +132,8 @@ async function runTests() {
     await testEndpoint(
       'CSS Global',
       `${BASE_URL}/_next/static/css/app/layout.css`,
-      200
-    )
+      200,
+    ),
   );
 
   const passed = results.filter((r) => r).length;

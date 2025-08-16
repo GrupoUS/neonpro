@@ -17,11 +17,11 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const limit = Math.min(
       Number.parseInt(searchParams.get('limit') || '20', 10),
-      50
+      50,
     );
     const offset = Math.max(
       Number.parseInt(searchParams.get('offset') || '0', 10),
-      0
+      0,
     );
 
     // Buscar conversas do usuário com contagem de mensagens
@@ -36,7 +36,7 @@ export async function GET(request: NextRequest) {
         created_at,
         updated_at,
         assistant_messages(count)
-      `
+      `,
       )
       .eq('user_id', user.id)
       .order('updated_at', { ascending: false })
@@ -45,7 +45,7 @@ export async function GET(request: NextRequest) {
     if (error) {
       return NextResponse.json(
         { error: 'Failed to fetch conversations' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -72,7 +72,7 @@ export async function GET(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -111,7 +111,7 @@ export async function POST(request: NextRequest) {
     if (error) {
       return NextResponse.json(
         { error: 'Failed to create conversation' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -119,7 +119,7 @@ export async function POST(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

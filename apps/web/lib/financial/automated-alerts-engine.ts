@@ -191,7 +191,7 @@ export class AutomatedAlertsEngine {
    */
   private async evaluateAlertRule(
     clinicId: string,
-    rule: AlertRule
+    rule: AlertRule,
   ): Promise<FinancialAlert[]> {
     const alerts: FinancialAlert[] = [];
 
@@ -207,7 +207,7 @@ export class AutomatedAlertsEngine {
       // Evaluate conditions
       const conditionsMet = await this.evaluateConditions(
         rule.conditions,
-        currentData
+        currentData,
       );
 
       if (conditionsMet.met) {
@@ -232,7 +232,7 @@ export class AutomatedAlertsEngine {
             auto_generated: true,
             recommended_actions: this.getRecommendedActions(
               rule.alert_type,
-              conditionsMet.values
+              conditionsMet.values,
             ),
           },
         };
@@ -248,7 +248,7 @@ export class AutomatedAlertsEngine {
    * Detect financial anomalies using statistical analysis
    */
   private async detectFinancialAnomalies(
-    clinicId: string
+    clinicId: string,
   ): Promise<FinancialAlert[]> {
     const alerts: FinancialAlert[] = [];
 
@@ -340,7 +340,7 @@ export class AutomatedAlertsEngine {
    */
   private async sendAlert(
     alert: FinancialAlert,
-    rule: AlertRule
+    rule: AlertRule,
   ): Promise<void> {
     const sentChannels: AlertChannel[] = [];
 
@@ -348,7 +348,7 @@ export class AutomatedAlertsEngine {
       // Get recipients for this alert
       const recipients = await this.getAlertRecipients(
         alert.clinic_id,
-        rule.recipients
+        rule.recipients,
       );
 
       for (const recipient of recipients) {
@@ -376,7 +376,7 @@ export class AutomatedAlertsEngine {
   private async sendAlertToChannel(
     alert: FinancialAlert,
     recipient: any,
-    channel: AlertChannel
+    channel: AlertChannel,
   ): Promise<void> {
     const message = this.formatAlertForChannel(alert, channel);
 
@@ -432,7 +432,7 @@ export class AutomatedAlertsEngine {
    */
   private formatAlertForChannel(
     alert: FinancialAlert,
-    channel: AlertChannel
+    channel: AlertChannel,
   ): string {
     const emoji = this.getSeverityEmoji(alert.severity);
     const baseMessage = `${emoji} ${alert.title}\n\n${alert.message}`;
@@ -581,7 +581,7 @@ export class AutomatedAlertsEngine {
    */
   private async isFrequencyLimitExceeded(
     _clinicId: string,
-    _rule: AlertRule
+    _rule: AlertRule,
   ): Promise<boolean> {
     // Implementation for frequency limit checking
     return false; // Simplified for now
@@ -589,7 +589,7 @@ export class AutomatedAlertsEngine {
 
   private async getFinancialDataForRule(
     clinicId: string,
-    rule: AlertRule
+    rule: AlertRule,
   ): Promise<any> {
     // Get relevant financial data based on alert type
     switch (rule.alert_type) {
@@ -603,7 +603,7 @@ export class AutomatedAlertsEngine {
 
   private async evaluateConditions(
     _conditions: AlertCondition[],
-    data: any
+    data: any,
   ): Promise<any> {
     // Simplified condition evaluation
     return { met: true, values: data, threshold: 0, current: 0 };
@@ -636,7 +636,7 @@ export class AutomatedAlertsEngine {
 
   private async getAlertRecipients(
     _clinicId: string,
-    _recipients: AlertRecipient[]
+    _recipients: AlertRecipient[],
   ): Promise<any[]> {
     // Get recipient details from database
     return [];
@@ -644,7 +644,7 @@ export class AutomatedAlertsEngine {
 
   private async scheduleEscalation(
     _alert: FinancialAlert,
-    _escalationRule: EscalationRule
+    _escalationRule: EscalationRule,
   ): Promise<void> {
     // Schedule alert escalation
   }

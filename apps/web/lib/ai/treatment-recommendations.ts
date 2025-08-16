@@ -115,7 +115,7 @@ export class AITreatmentRecommendationEngine {
     riskAssessment: RiskAssessment,
     treatmentHistory: TreatmentHistory[],
     medicalHistory: MedicalRecord[],
-    treatmentGoals: string[]
+    treatmentGoals: string[],
   ): Promise<TreatmentRecommendation[]> {
     try {
       // Analyze patient profile and goals
@@ -123,32 +123,32 @@ export class AITreatmentRecommendationEngine {
         patient,
         riskAssessment,
         treatmentHistory,
-        medicalHistory
+        medicalHistory,
       );
 
       // Get candidate treatments based on goals
       const candidateTreatments = await this.identifyCandidateTreatments(
         treatmentGoals,
-        patientProfile
+        patientProfile,
       );
 
       // Score and rank treatments
       const scoredTreatments = await this.scoreTreatments(
         candidateTreatments,
         patientProfile,
-        riskAssessment
+        riskAssessment,
       );
 
       // Generate detailed recommendations
       const recommendations = await this.generateDetailedRecommendations(
         scoredTreatments,
         patientProfile,
-        riskAssessment
+        riskAssessment,
       );
 
       // Sort by recommendation score
       return recommendations.sort(
-        (a, b) => b.recommendation_score - a.recommendation_score
+        (a, b) => b.recommendation_score - a.recommendation_score,
       );
     } catch (_error) {
       throw new Error('Failed to generate treatment recommendations');
@@ -161,7 +161,7 @@ export class AITreatmentRecommendationEngine {
   async getOptimizedProtocol(
     treatmentId: string,
     patient: Patient,
-    riskAssessment: RiskAssessment
+    riskAssessment: RiskAssessment,
   ): Promise<TreatmentProtocol> {
     const baseProtocol = this.protocolDatabase.get(treatmentId);
     if (!baseProtocol) {
@@ -172,14 +172,14 @@ export class AITreatmentRecommendationEngine {
     const customizations = this.generateProtocolCustomizations(
       baseProtocol,
       patient,
-      riskAssessment
+      riskAssessment,
     );
 
     // Calculate patient suitability score
     const suitabilityScore = this.calculateProtocolSuitability(
       baseProtocol,
       patient,
-      riskAssessment
+      riskAssessment,
     );
 
     return {
@@ -195,7 +195,7 @@ export class AITreatmentRecommendationEngine {
   async recommendTreatmentCombinations(
     primaryTreatment: string,
     patient: Patient,
-    riskAssessment: RiskAssessment
+    riskAssessment: RiskAssessment,
   ): Promise<TreatmentCombination[]> {
     const combinations: TreatmentCombination[] = [];
 
@@ -203,7 +203,7 @@ export class AITreatmentRecommendationEngine {
     const complementaryTreatments = this.getCompatibleTreatments(
       primaryTreatment,
       patient,
-      riskAssessment
+      riskAssessment,
     );
 
     for (const complementary of complementaryTreatments) {
@@ -211,7 +211,7 @@ export class AITreatmentRecommendationEngine {
         primaryTreatment,
         complementary,
         patient,
-        riskAssessment
+        riskAssessment,
       );
 
       if (combination.synergy_score > 0.6) {
@@ -228,7 +228,7 @@ export class AITreatmentRecommendationEngine {
   async predictTreatmentSuccess(
     treatmentId: string,
     patient: Patient,
-    riskAssessment: RiskAssessment
+    riskAssessment: RiskAssessment,
   ): Promise<number> {
     const model = this.successRateModels.get(treatmentId);
     if (!model) {
@@ -263,7 +263,7 @@ export class AITreatmentRecommendationEngine {
     patient: Patient,
     riskAssessment: RiskAssessment,
     treatmentHistory: TreatmentHistory[],
-    medicalHistory: MedicalRecord[]
+    medicalHistory: MedicalRecord[],
   ): any {
     return {
       age: this.calculateAge(patient.birth_date),
@@ -271,7 +271,7 @@ export class AITreatmentRecommendationEngine {
       overallRiskScore: riskAssessment.overall_score,
       previousTreatments: treatmentHistory.map((t) => t.treatment_type),
       chronicConditions: medicalHistory.filter(
-        (m) => m.condition_type === 'chronic'
+        (m) => m.condition_type === 'chronic',
       ),
       allergies: patient.allergies || [],
       lifestyle: patient.lifestyle_factors,
@@ -282,7 +282,7 @@ export class AITreatmentRecommendationEngine {
 
   private async identifyCandidateTreatments(
     treatmentGoals: string[],
-    patientProfile: any
+    patientProfile: any,
   ): Promise<string[]> {
     const candidates: string[] = [];
 
@@ -328,7 +328,7 @@ export class AITreatmentRecommendationEngine {
   private async scoreTreatments(
     treatments: string[],
     patientProfile: any,
-    riskAssessment: RiskAssessment
+    riskAssessment: RiskAssessment,
   ): Promise<Array<{ treatment: string; score: number }>> {
     const scoredTreatments = [];
 
@@ -336,7 +336,7 @@ export class AITreatmentRecommendationEngine {
       const score = await this.calculateTreatmentScore(
         treatment,
         patientProfile,
-        riskAssessment
+        riskAssessment,
       );
       scoredTreatments.push({ treatment, score });
     }
@@ -347,7 +347,7 @@ export class AITreatmentRecommendationEngine {
   private async calculateTreatmentScore(
     treatmentId: string,
     patientProfile: any,
-    riskAssessment: RiskAssessment
+    riskAssessment: RiskAssessment,
   ): Promise<number> {
     let score = 50; // Base score
 
@@ -355,14 +355,14 @@ export class AITreatmentRecommendationEngine {
     const successRate = await this.predictTreatmentSuccess(
       treatmentId,
       patientProfile,
-      riskAssessment
+      riskAssessment,
     );
     score += (successRate - 0.5) * 40;
 
     // Risk compatibility factor (30% weight)
     const riskCompatibility = this.calculateRiskCompatibility(
       treatmentId,
-      riskAssessment
+      riskAssessment,
     );
     score += (riskCompatibility - 0.5) * 30;
 
@@ -373,7 +373,7 @@ export class AITreatmentRecommendationEngine {
     // Patient preference factor (10% weight)
     const preferenceMatch = this.calculatePreferenceMatch(
       treatmentId,
-      patientProfile
+      patientProfile,
     );
     score += (preferenceMatch - 0.5) * 10;
 
@@ -383,7 +383,7 @@ export class AITreatmentRecommendationEngine {
   private async generateDetailedRecommendations(
     scoredTreatments: Array<{ treatment: string; score: number }>,
     patientProfile: any,
-    riskAssessment: RiskAssessment
+    riskAssessment: RiskAssessment,
   ): Promise<TreatmentRecommendation[]> {
     const recommendations: TreatmentRecommendation[] = [];
 
@@ -394,7 +394,7 @@ export class AITreatmentRecommendationEngine {
           treatment,
           score,
           patientProfile,
-          riskAssessment
+          riskAssessment,
         );
         recommendations.push(recommendation);
       }
@@ -407,7 +407,7 @@ export class AITreatmentRecommendationEngine {
     treatmentId: string,
     score: number,
     patientProfile: any,
-    riskAssessment: RiskAssessment
+    riskAssessment: RiskAssessment,
   ): Promise<TreatmentRecommendation> {
     const treatment = this.treatmentDatabase.get(treatmentId);
     if (!treatment) {
@@ -417,25 +417,25 @@ export class AITreatmentRecommendationEngine {
     const successProbability = await this.predictTreatmentSuccess(
       treatmentId,
       patientProfile,
-      riskAssessment
+      riskAssessment,
     );
 
     const expectedOutcomes = this.generateExpectedOutcomes(
       treatmentId,
       patientProfile,
-      successProbability
+      successProbability,
     );
 
     const contraindications = this.identifyContraindications(
       treatmentId,
       patientProfile,
-      riskAssessment
+      riskAssessment,
     );
 
     const prerequisites = this.identifyPrerequisites(
       treatmentId,
       patientProfile,
-      riskAssessment
+      riskAssessment,
     );
 
     return {
@@ -473,7 +473,7 @@ export class AITreatmentRecommendationEngine {
 
   private filterByPatientSuitability(
     treatments: string[],
-    patientProfile: any
+    patientProfile: any,
   ): string[] {
     return treatments.filter((treatment) => {
       // Basic suitability checks
@@ -483,7 +483,7 @@ export class AITreatmentRecommendationEngine {
 
       if (
         patientProfile.allergies.some((allergy: string) =>
-          this.hasAllergyContraindication(treatment, allergy)
+          this.hasAllergyContraindication(treatment, allergy),
         )
       ) {
         return false;
@@ -495,7 +495,7 @@ export class AITreatmentRecommendationEngine {
 
   private calculateRiskCompatibility(
     treatmentId: string,
-    riskAssessment: RiskAssessment
+    riskAssessment: RiskAssessment,
   ): number {
     const treatmentRiskProfile = this.getTreatmentRiskProfile(treatmentId);
 
@@ -536,7 +536,7 @@ export class AITreatmentRecommendationEngine {
 
   private calculatePreferenceMatch(
     treatmentId: string,
-    patientProfile: any
+    patientProfile: any,
   ): number {
     const preferences = patientProfile.treatmentPreferences || {};
 
@@ -644,7 +644,7 @@ export class AITreatmentRecommendationEngine {
 
   private extractPredictionFeatures(
     patient: any,
-    riskAssessment: RiskAssessment
+    riskAssessment: RiskAssessment,
   ): any {
     return {
       age: patient.age,
@@ -667,7 +667,7 @@ export class AITreatmentRecommendationEngine {
 
   private hasAllergyContraindication(
     treatmentId: string,
-    allergy: string
+    allergy: string,
   ): boolean {
     const contraindications = {
       botox: ['botulinum', 'albumin'],
@@ -678,7 +678,7 @@ export class AITreatmentRecommendationEngine {
     const treatmentContras =
       contraindications[treatmentId as keyof typeof contraindications] || [];
     return treatmentContras.some((contra) =>
-      allergy.toLowerCase().includes(contra)
+      allergy.toLowerCase().includes(contra),
     );
   }
 
@@ -722,7 +722,7 @@ export class AITreatmentRecommendationEngine {
   private generateRationale(
     _treatmentId: string,
     patientProfile: any,
-    score: number
+    score: number,
   ): string {
     return (
       `Based on patient profile analysis, this treatment shows ${score}% compatibility. ` +
@@ -734,7 +734,7 @@ export class AITreatmentRecommendationEngine {
   private generateExpectedOutcomes(
     _treatmentId: string,
     _patientProfile: any,
-    successProbability: number
+    successProbability: number,
   ): ExpectedOutcome[] {
     // Generate expected outcomes based on treatment type
     return [
@@ -751,13 +751,13 @@ export class AITreatmentRecommendationEngine {
   private identifyContraindications(
     _treatmentId: string,
     _patientProfile: any,
-    riskAssessment: RiskAssessment
+    riskAssessment: RiskAssessment,
   ): string[] {
     const contraindications: string[] = [];
 
     if (riskAssessment.risk_level === 'critical') {
       contraindications.push(
-        'High-risk patient profile requires specialist consultation'
+        'High-risk patient profile requires specialist consultation',
       );
     }
 
@@ -767,7 +767,7 @@ export class AITreatmentRecommendationEngine {
   private identifyPrerequisites(
     _treatmentId: string,
     patientProfile: any,
-    riskAssessment: RiskAssessment
+    riskAssessment: RiskAssessment,
   ): string[] {
     const prerequisites: string[] = [];
 
@@ -794,7 +794,7 @@ export class AITreatmentRecommendationEngine {
   private generateProtocolCustomizations(
     _protocol: TreatmentProtocol,
     _patient: Patient,
-    _riskAssessment: RiskAssessment
+    _riskAssessment: RiskAssessment,
   ): ProtocolCustomization[] {
     // Generate protocol customizations based on patient factors
     return [];
@@ -803,7 +803,7 @@ export class AITreatmentRecommendationEngine {
   private calculateProtocolSuitability(
     _protocol: TreatmentProtocol,
     _patient: Patient,
-    _riskAssessment: RiskAssessment
+    _riskAssessment: RiskAssessment,
   ): number {
     // Calculate how suitable the protocol is for this patient
     return 0.85;
@@ -812,7 +812,7 @@ export class AITreatmentRecommendationEngine {
   private getCompatibleTreatments(
     _primaryTreatment: string,
     _patient: Patient,
-    _riskAssessment: RiskAssessment
+    _riskAssessment: RiskAssessment,
   ): string[] {
     // Return treatments compatible with the primary treatment
     return [];
@@ -822,7 +822,7 @@ export class AITreatmentRecommendationEngine {
     primary: string,
     complementary: string,
     _patient: Patient,
-    _riskAssessment: RiskAssessment
+    _riskAssessment: RiskAssessment,
   ): Promise<TreatmentCombination> {
     // Analyze synergy between treatments
     return {

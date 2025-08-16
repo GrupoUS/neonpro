@@ -162,7 +162,7 @@ class ResendEmailProvider implements EmailProvider {
 
       if (!response.ok) {
         throw new Error(
-          `Resend API error: ${responseData.message || response.statusText}`
+          `Resend API error: ${responseData.message || response.statusText}`,
         );
       }
 
@@ -214,7 +214,7 @@ class ResendEmailProvider implements EmailProvider {
           templateId: params.templateId,
           templateData: recipient.templateData,
           metadata: recipient.metadata,
-        })
+        }),
       );
 
       const batchResults = await Promise.allSettled(batchPromises);
@@ -254,7 +254,7 @@ class ResendEmailProvider implements EmailProvider {
   }
 
   private async validateLGPDCompliance(
-    lgpdData: LGPDCompliantData
+    lgpdData: LGPDCompliantData,
   ): Promise<void> {
     if (!lgpdData.consentGiven) {
       throw new Error('LGPD: Email consent not provided');
@@ -377,7 +377,7 @@ class SendGridEmailProvider implements EmailProvider {
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
         throw new Error(
-          `SendGrid API error: ${errorData.errors?.[0]?.message || response.statusText}`
+          `SendGrid API error: ${errorData.errors?.[0]?.message || response.statusText}`,
         );
       }
 
@@ -447,7 +447,7 @@ class SendGridEmailProvider implements EmailProvider {
           headers: {
             Authorization: `Bearer ${this.apiKey}`,
           },
-        }
+        },
       );
 
       return response.ok;
@@ -457,7 +457,7 @@ class SendGridEmailProvider implements EmailProvider {
   }
 
   private async validateLGPDCompliance(
-    lgpdData: LGPDCompliantData
+    lgpdData: LGPDCompliantData,
   ): Promise<void> {
     if (!lgpdData.consentGiven) {
       throw new Error('LGPD: Email consent not provided');
@@ -521,7 +521,7 @@ class EmailProviderFactory {
   }
 
   async sendBulkWithFallback(
-    params: BulkEmailParams
+    params: BulkEmailParams,
   ): Promise<NotificationResult[]> {
     try {
       const provider = await this.getHealthyProvider();

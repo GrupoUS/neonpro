@@ -24,7 +24,7 @@ export class MultiLocationInventoryService {
   // ===== INVENTORY ITEMS =====
 
   async getInventoryItems(
-    filters: InventoryFilters = {}
+    filters: InventoryFilters = {},
   ): Promise<InventoryItem[]> {
     let query = this.supabase.from('inventory_items').select('*').order('name');
 
@@ -102,7 +102,7 @@ export class MultiLocationInventoryService {
   // ===== INVENTORY STOCK =====
 
   async getInventoryStock(
-    filters: InventoryFilters = {}
+    filters: InventoryFilters = {},
   ): Promise<InventoryStock[]> {
     let query = this.supabase
       .from('inventory_stock')
@@ -112,7 +112,7 @@ export class MultiLocationInventoryService {
         inventory_item:inventory_items(*),
         clinic:clinics(id, clinic_name, clinic_code),
         room:rooms(id, name, description)
-      `
+      `,
       )
       .order('updated_at', { ascending: false });
 
@@ -127,7 +127,7 @@ export class MultiLocationInventoryService {
     if (filters.low_stock) {
       query = query.lt(
         'available_quantity',
-        'inventory_items.minimum_stock_alert'
+        'inventory_items.minimum_stock_alert',
       );
     }
 
@@ -150,7 +150,7 @@ export class MultiLocationInventoryService {
 
   async getStockByLocation(
     clinic_id: string,
-    room_id?: string
+    room_id?: string,
   ): Promise<InventoryStock[]> {
     return this.getInventoryStock({ clinic_id, room_id });
   }
@@ -170,7 +170,7 @@ export class MultiLocationInventoryService {
         inventory_item:inventory_items(*),
         clinic:clinics(id, clinic_name, clinic_code),
         room:rooms(id, name, description)
-      `
+      `,
       )
       .single();
 
@@ -181,7 +181,7 @@ export class MultiLocationInventoryService {
   }
 
   async createOrUpdateStock(
-    stock: CreateInventoryStock
+    stock: CreateInventoryStock,
   ): Promise<InventoryStock> {
     const { data, error } = await this.supabase
       .from('inventory_stock')
@@ -192,7 +192,7 @@ export class MultiLocationInventoryService {
         inventory_item:inventory_items(*),
         clinic:clinics(id, clinic_name, clinic_code),
         room:rooms(id, name, description)
-      `
+      `,
       )
       .single();
 
@@ -203,7 +203,7 @@ export class MultiLocationInventoryService {
   } // ===== STOCK TRANSFERS =====
 
   async getStockTransfers(
-    filters: StockTransferFilters = {}
+    filters: StockTransferFilters = {},
   ): Promise<StockTransfer[]> {
     let query = this.supabase
       .from('stock_transfers')
@@ -216,13 +216,13 @@ export class MultiLocationInventoryService {
         to_clinic:to_clinic_id(id, clinic_name, clinic_code),
         to_room:to_room_id(id, name),
         requester:requested_by(id, full_name)
-      `
+      `,
       )
       .order('created_at', { ascending: false });
 
     if (filters.clinic_id) {
       query = query.or(
-        `from_clinic_id.eq.${filters.clinic_id},to_clinic_id.eq.${filters.clinic_id}`
+        `from_clinic_id.eq.${filters.clinic_id},to_clinic_id.eq.${filters.clinic_id}`,
       );
     }
 
@@ -250,7 +250,7 @@ export class MultiLocationInventoryService {
   }
 
   async createStockTransfer(
-    transfer: CreateStockTransfer
+    transfer: CreateStockTransfer,
   ): Promise<StockTransfer> {
     const { data, error } = await this.supabase
       .from('stock_transfers')
@@ -266,7 +266,7 @@ export class MultiLocationInventoryService {
         from_room:from_room_id(id, name),
         to_clinic:to_clinic_id(id, clinic_name, clinic_code),
         to_room:to_room_id(id, name)
-      `
+      `,
       )
       .single();
 
@@ -277,7 +277,7 @@ export class MultiLocationInventoryService {
   }
 
   async updateStockTransfer(
-    transfer: UpdateStockTransfer
+    transfer: UpdateStockTransfer,
   ): Promise<StockTransfer> {
     const { id, ...updates } = transfer;
 
@@ -304,7 +304,7 @@ export class MultiLocationInventoryService {
         from_room:from_room_id(id, name),
         to_clinic:to_clinic_id(id, clinic_name, clinic_code),
         to_room:to_room_id(id, name)
-      `
+      `,
       )
       .single();
 
@@ -317,7 +317,7 @@ export class MultiLocationInventoryService {
   // ===== STOCK TRANSACTIONS =====
 
   async getStockTransactions(
-    filters: StockTransactionFilters = {}
+    filters: StockTransactionFilters = {},
   ): Promise<StockTransaction[]> {
     let query = this.supabase
       .from('stock_transactions')
@@ -328,7 +328,7 @@ export class MultiLocationInventoryService {
         clinic:clinics(id, clinic_name, clinic_code),
         room:rooms(id, name),
         performer:performed_by(id, full_name)
-      `
+      `,
       )
       .order('created_at', { ascending: false });
 
@@ -364,7 +364,7 @@ export class MultiLocationInventoryService {
   }
 
   async createStockTransaction(
-    transaction: CreateStockTransaction
+    transaction: CreateStockTransaction,
   ): Promise<StockTransaction> {
     const { data, error } = await this.supabase
       .from('stock_transactions')
@@ -375,7 +375,7 @@ export class MultiLocationInventoryService {
         inventory_item:inventory_items(id, name, sku, category),
         clinic:clinics(id, clinic_name, clinic_code),
         room:rooms(id, name)
-      `
+      `,
       )
       .single();
 
@@ -388,7 +388,7 @@ export class MultiLocationInventoryService {
   // ===== DASHBOARD & ANALYTICS =====
 
   async getLocationStockSummary(
-    clinic_id?: string
+    clinic_id?: string,
   ): Promise<LocationStockSummary[]> {
     let query = this.supabase.rpc('get_location_stock_summary');
 
@@ -405,7 +405,7 @@ export class MultiLocationInventoryService {
 
   async getInventoryMovementSummary(
     clinic_id?: string,
-    days = 30
+    days = 30,
   ): Promise<InventoryMovementSummary[]> {
     const fromDate = new Date();
     fromDate.setDate(fromDate.getDate() - days);
@@ -416,7 +416,7 @@ export class MultiLocationInventoryService {
         clinic_filter: clinic_id,
         from_date: fromDate.toISOString(),
         to_date: new Date().toISOString(),
-      }
+      },
     );
 
     if (error) {
@@ -434,7 +434,7 @@ export class MultiLocationInventoryService {
 
   async getExpiringItems(
     clinic_id?: string,
-    _days = 30
+    _days = 30,
   ): Promise<InventoryStock[]> {
     return this.getInventoryStock({
       clinic_id,
@@ -445,14 +445,17 @@ export class MultiLocationInventoryService {
   // ===== BULK OPERATIONS =====
 
   async bulkUpdateStock(
-    updates: UpdateInventoryStock[]
+    updates: UpdateInventoryStock[],
   ): Promise<InventoryStock[]> {
-    const { data, error } = await this.supabase.from('inventory_stock').upsert(
-      updates.map((update) => ({
-        ...update,
-        last_counted_at: new Date().toISOString(),
-      }))
-    ).select(`
+    const { data, error } = await this.supabase
+      .from('inventory_stock')
+      .upsert(
+        updates.map((update) => ({
+          ...update,
+          last_counted_at: new Date().toISOString(),
+        })),
+      )
+      .select(`
         *,
         inventory_item:inventory_items(*),
         clinic:clinics(id, clinic_name, clinic_code),
@@ -472,7 +475,7 @@ export class MultiLocationInventoryService {
     quantity: number,
     from_room_id?: string,
     to_room_id?: string,
-    notes?: string
+    notes?: string,
   ): Promise<StockTransfer> {
     const transfer: CreateStockTransfer = {
       inventory_item_id,

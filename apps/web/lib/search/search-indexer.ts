@@ -147,7 +147,7 @@ export class SearchIndexer {
       limit?: number;
       offset?: number;
       filters?: Record<string, any>;
-    } = {}
+    } = {},
   ): Promise<{
     results: SearchIndexEntry[];
     totalCount: number;
@@ -200,7 +200,7 @@ export class SearchIndexer {
         query,
         nlpResult,
         data?.length || 0,
-        processingTime
+        processingTime,
       );
 
       return {
@@ -225,7 +225,7 @@ export class SearchIndexer {
   async getSuggestions(
     partialQuery: string,
     language: SupportedLanguage = 'pt',
-    limit = 10
+    limit = 10,
   ): Promise<string[]> {
     try {
       if (!this.supabase) {
@@ -275,7 +275,7 @@ export class SearchIndexer {
     try {
       const batch = this.indexingQueue.splice(0, this.batchSize);
       const indexEntries = await Promise.all(
-        batch.map((content) => this.prepareIndexEntry(content))
+        batch.map((content) => this.prepareIndexEntry(content)),
       );
 
       if (this.supabase) {
@@ -311,7 +311,7 @@ export class SearchIndexer {
     // Process with NLP to extract keywords and improve searchability
     const nlpResult = await nlpEngine.processQuery(
       content.searchableText,
-      language
+      language,
     );
 
     // Extract keywords from NLP tokens and entities
@@ -324,7 +324,7 @@ export class SearchIndexer {
     // Calculate relevance score based on content type and NLP confidence
     const relevanceScore = this.calculateRelevanceScore(
       content,
-      nlpResult.confidence
+      nlpResult.confidence,
     );
 
     return {
@@ -344,7 +344,7 @@ export class SearchIndexer {
    */
   private calculateRelevanceScore(
     content: IndexableContent,
-    nlpConfidence: number
+    nlpConfidence: number,
   ): number {
     let score = 1.0;
 
@@ -387,7 +387,7 @@ export class SearchIndexer {
     query: string,
     nlpResult: any,
     resultCount: number,
-    responseTime: number
+    responseTime: number,
   ): Promise<void> {
     try {
       if (!this.supabase) {
@@ -471,5 +471,5 @@ export class SearchIndexer {
 // Export singleton instance
 export const searchIndexer = new SearchIndexer(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
 );

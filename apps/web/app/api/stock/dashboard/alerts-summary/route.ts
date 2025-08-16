@@ -61,7 +61,7 @@ export async function GET(request: NextRequest) {
     if (clinicError || !clinic) {
       return NextResponse.json(
         { error: 'Clínica não encontrada' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -75,7 +75,7 @@ export async function GET(request: NextRequest) {
     if (alertsError) {
       return NextResponse.json(
         { error: 'Erro ao buscar alertas' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -91,7 +91,7 @@ export async function GET(request: NextRequest) {
     if (historicalError) {
       return NextResponse.json(
         { error: 'Erro ao buscar histórico de alertas' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -150,7 +150,7 @@ export async function GET(request: NextRequest) {
 
     // Calculate trends based on historical data
     const previousPeriodStart = new Date(
-      startDate.getTime() - (endDate.getTime() - startDate.getTime())
+      startDate.getTime() - (endDate.getTime() - startDate.getTime()),
     );
     const previousPeriodEnd = startDate;
 
@@ -232,13 +232,13 @@ export async function GET(request: NextRequest) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Parâmetros inválidos', details: error.errors },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

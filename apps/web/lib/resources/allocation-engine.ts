@@ -94,7 +94,7 @@ export class AllocationEngine {
 
   async suggestOptimalAllocation(
     clinicId: string,
-    criteria: AllocationCriteria
+    criteria: AllocationCriteria,
   ): Promise<AllocationOptimization> {
     try {
       // Step 1: Get available resources
@@ -104,26 +104,26 @@ export class AllocationEngine {
           criteria.startTime,
           criteria.endTime,
           criteria.resourceType,
-          criteria.requirements
+          criteria.requirements,
         );
 
       // Step 2: Score and rank resources
       const suggestions = await this.scoreResources(
         availableResources,
-        criteria
+        criteria,
       );
 
       // Step 3: Check for potential conflicts
       const conflicts = await this.analyzeSystemConflicts(
         clinicId,
         criteria.startTime,
-        criteria.endTime
+        criteria.endTime,
       );
 
       // Step 4: Calculate optimization metrics
       const optimizationMetrics = await this.calculateOptimizationMetrics(
         clinicId,
-        suggestions
+        suggestions,
       );
 
       return {
@@ -138,7 +138,7 @@ export class AllocationEngine {
 
   private async scoreResources(
     resources: Resource[],
-    criteria: AllocationCriteria
+    criteria: AllocationCriteria,
   ): Promise<AllocationSuggestion[]> {
     const suggestions: AllocationSuggestion[] = [];
 
@@ -149,7 +149,7 @@ export class AllocationEngine {
       const estimatedCost = this.calculateEstimatedCost(resource, criteria);
       const utilizationImpact = await this.calculateUtilizationImpact(
         resource,
-        criteria
+        criteria,
       );
 
       suggestions.push({
@@ -168,7 +168,7 @@ export class AllocationEngine {
 
   private async calculateResourceScore(
     resource: Resource,
-    criteria: AllocationCriteria
+    criteria: AllocationCriteria,
   ): Promise<number> {
     let score = 100; // Base score
 
@@ -195,7 +195,7 @@ export class AllocationEngine {
       if (req.skills && resource.type === 'staff') {
         const resourceSkills = resource.skills || [];
         const matchedSkills = req.skills.filter((skill) =>
-          resourceSkills.includes(skill)
+          resourceSkills.includes(skill),
         );
         const skillScore = (matchedSkills.length / req.skills.length) * 20;
         score += skillScore;
@@ -205,7 +205,7 @@ export class AllocationEngine {
       if (req.equipment && resource.type === 'room') {
         const resourceEquipment = resource.equipment_ids || [];
         const matchedEquipment = req.equipment.filter((eq) =>
-          resourceEquipment.includes(eq)
+          resourceEquipment.includes(eq),
         );
         const equipmentScore =
           (matchedEquipment.length / req.equipment.length) * 15;
@@ -247,7 +247,7 @@ export class AllocationEngine {
     if (resource.type === 'staff') {
       const workload = await this.getStaffWorkload(
         resource.id,
-        criteria.startTime
+        criteria.startTime,
       );
       if (workload.fatigue_score > 80) {
         score -= 25; // High fatigue penalty
@@ -262,7 +262,7 @@ export class AllocationEngine {
       const appointmentDate = new Date(criteria.startTime);
       const daysUntilMaintenance = Math.ceil(
         (maintenanceDate.getTime() - appointmentDate.getTime()) /
-          (1000 * 60 * 60 * 24)
+          (1000 * 60 * 60 * 24),
       );
 
       if (daysUntilMaintenance <= 3) {
@@ -277,7 +277,7 @@ export class AllocationEngine {
 
   private calculateConfidence(
     resource: Resource,
-    criteria: AllocationCriteria
+    criteria: AllocationCriteria,
   ): number {
     let confidence = 100;
 
@@ -309,7 +309,7 @@ export class AllocationEngine {
   private generateReasoning(
     resource: Resource,
     _criteria: AllocationCriteria,
-    score: number
+    score: number,
   ): string[] {
     const reasoning: string[] = [];
 
@@ -346,7 +346,7 @@ export class AllocationEngine {
 
   private calculateEstimatedCost(
     resource: Resource,
-    criteria: AllocationCriteria
+    criteria: AllocationCriteria,
   ): number {
     const startTime = new Date(criteria.startTime);
     const endTime = new Date(criteria.endTime);
@@ -357,7 +357,7 @@ export class AllocationEngine {
 
   private async calculateUtilizationImpact(
     resource: Resource,
-    criteria: AllocationCriteria
+    criteria: AllocationCriteria,
   ): Promise<number> {
     try {
       const currentUtilization = await this.getCurrentUtilization(resource.id);
@@ -382,13 +382,13 @@ export class AllocationEngine {
 
   async validateBusinessRules(
     allocation: AllocationRequest,
-    criteria: AllocationCriteria
+    criteria: AllocationCriteria,
   ): Promise<{ valid: boolean; violations: string[] }> {
     const violations: string[] = [];
 
     try {
       const resource = await this.resourceManager.getResourceById(
-        allocation.resource_id
+        allocation.resource_id,
       );
       if (!resource) {
         violations.push('Resource not found');
@@ -403,11 +403,11 @@ export class AllocationEngine {
         if (rules.maxConsecutiveHours && resource.type === 'staff') {
           const workload = await this.getStaffWorkload(
             resource.id,
-            allocation.start_time
+            allocation.start_time,
           );
           if (workload.consecutive_hours >= rules.maxConsecutiveHours) {
             violations.push(
-              `Exceeds maximum consecutive hours (${rules.maxConsecutiveHours})`
+              `Exceeds maximum consecutive hours (${rules.maxConsecutiveHours})`,
             );
           }
         }
@@ -416,7 +416,7 @@ export class AllocationEngine {
         if (rules.minimumBreak && resource.type === 'staff') {
           const workload = await this.getStaffWorkload(
             resource.id,
-            allocation.start_time
+            allocation.start_time,
           );
           if (workload.last_break) {
             const lastBreak = new Date(workload.last_break);
@@ -426,7 +426,7 @@ export class AllocationEngine {
 
             if (minutesSinceBreak < rules.minimumBreak) {
               violations.push(
-                `Insufficient break time (minimum ${rules.minimumBreak} minutes)`
+                `Insufficient break time (minimum ${rules.minimumBreak} minutes)`,
               );
             }
           }
@@ -436,7 +436,7 @@ export class AllocationEngine {
         if (rules.maxDailyHours && resource.type === 'staff') {
           const workload = await this.getStaffWorkload(
             resource.id,
-            allocation.start_time
+            allocation.start_time,
           );
           const appointmentHours =
             (new Date(allocation.end_time).getTime() -
@@ -445,7 +445,7 @@ export class AllocationEngine {
 
           if (workload.total_hours + appointmentHours > rules.maxDailyHours) {
             violations.push(
-              `Exceeds maximum daily hours (${rules.maxDailyHours})`
+              `Exceeds maximum daily hours (${rules.maxDailyHours})`,
             );
           }
         }
@@ -474,7 +474,7 @@ export class AllocationEngine {
   private async analyzeSystemConflicts(
     clinicId: string,
     startTime: string,
-    endTime: string
+    endTime: string,
   ): Promise<
     Array<{
       resource_id: string;
@@ -491,7 +491,7 @@ export class AllocationEngine {
         const resourceConflicts = await this.resourceManager.detectConflicts(
           resource.id,
           startTime,
-          endTime
+          endTime,
         );
 
         if (resourceConflicts.length > 0) {
@@ -521,7 +521,7 @@ export class AllocationEngine {
 
   private async calculateOptimizationMetrics(
     _clinicId: string,
-    suggestions: AllocationSuggestion[]
+    suggestions: AllocationSuggestion[],
   ): Promise<{
     overall_efficiency: number;
     cost_efficiency: number;
@@ -544,7 +544,7 @@ export class AllocationEngine {
         overall_efficiency: Math.round(totalScore / count),
         cost_efficiency: Math.round(100 - totalCost / count), // Inverse of cost
         utilization_balance: Math.round(
-          100 - Math.abs(50 - totalUtilization / count)
+          100 - Math.abs(50 - totalUtilization / count),
         ), // Closer to 50% = better balance
       };
     } catch (_error) {
@@ -566,7 +566,7 @@ export class AllocationEngine {
       const allocations = await this.resourceManager.getAllocations(
         resourceId,
         `${today}T00:00:00Z`,
-        `${today}T23:59:59Z`
+        `${today}T23:59:59Z`,
       );
 
       // Calculate utilization for today
@@ -585,7 +585,7 @@ export class AllocationEngine {
 
   private async getStaffWorkload(
     staffId: string,
-    appointmentTime: string
+    appointmentTime: string,
   ): Promise<StaffWorkload> {
     try {
       const appointmentDate = new Date(appointmentTime)
@@ -594,7 +594,7 @@ export class AllocationEngine {
       const allocations = await this.resourceManager.getAllocations(
         staffId,
         `${appointmentDate}T00:00:00Z`,
-        `${appointmentDate}T23:59:59Z`
+        `${appointmentDate}T23:59:59Z`,
       );
 
       // Calculate workload metrics
@@ -659,7 +659,7 @@ export class AllocationEngine {
 
   async optimizeStaffWorkload(
     clinicId: string,
-    date: string
+    date: string,
   ): Promise<{
     recommendations: Array<{
       staff_id: string;
@@ -679,7 +679,7 @@ export class AllocationEngine {
       for (const staff of staffResources) {
         const workload = await this.getStaffWorkload(
           staff.id,
-          `${date}T09:00:00Z`
+          `${date}T09:00:00Z`,
         );
         const optimalWorkload = 7; // 7 hours optimal
         const currentWorkload = workload.total_hours;
@@ -709,7 +709,7 @@ export class AllocationEngine {
       return {
         recommendations,
         efficiency_improvement: Math.round(
-          totalImprovement / staffResources.length
+          totalImprovement / staffResources.length,
         ),
       };
     } catch (_error) {

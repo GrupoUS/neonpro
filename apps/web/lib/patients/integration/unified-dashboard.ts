@@ -111,7 +111,7 @@ export class UnifiedPatientDashboard {
    * Get complete 360° patient profile
    */
   static async getUnifiedPatientProfile(
-    patientId: string
+    patientId: string,
   ): Promise<UnifiedPatientProfile> {
     try {
       logger.info(`Generating unified profile for patient ${patientId}`);
@@ -125,7 +125,7 @@ export class UnifiedPatientDashboard {
           patient_profiles_extended(*),
           patient_photos(*),
           emergency_contacts(*)
-        `
+        `,
         )
         .eq('id', patientId)
         .single();
@@ -140,7 +140,7 @@ export class UnifiedPatientDashboard {
       // Get appointment insights
       const appointmentInsights =
         await PatientAppointmentIntegration.generateAppointmentInsights(
-          patientId
+          patientId,
         );
 
       // Get treatment insights
@@ -162,7 +162,7 @@ export class UnifiedPatientDashboard {
           appointmentInsights,
           treatmentInsights,
           financialSummary,
-        }
+        },
       );
 
       // Get visual data
@@ -216,7 +216,7 @@ export class UnifiedPatientDashboard {
       };
 
       logger.info(
-        `Successfully generated unified profile for patient ${patientId}`
+        `Successfully generated unified profile for patient ${patientId}`,
       );
       return unifiedProfile;
     } catch (error) {
@@ -246,7 +246,7 @@ export class UnifiedPatientDashboard {
           id,
           appointments!inner(id)
         `,
-          { count: 'exact', head: true }
+          { count: 'exact', head: true },
         )
         .gte('appointments.appointment_date', sixMonthsAgo.toISOString());
 
@@ -276,7 +276,7 @@ export class UnifiedPatientDashboard {
         satisfactionData && satisfactionData.length > 0
           ? satisfactionData.reduce(
               (sum, p) => sum + (p.satisfaction_score || 0),
-              0
+              0,
             ) / satisfactionData.length
           : 0;
 
@@ -290,7 +290,7 @@ export class UnifiedPatientDashboard {
       const outstandingPayments =
         financialData?.reduce(
           (sum, t) => sum + ((t.cost_total || 0) - (t.cost_paid || 0)),
-          0
+          0,
         ) || 0;
 
       // Get appointment utilization (last 30 days)
@@ -339,7 +339,7 @@ export class UnifiedPatientDashboard {
           id,
           appointments!inner(id)
         `,
-          { count: 'exact', head: true }
+          { count: 'exact', head: true },
         )
         .lt('created_at', oneYearAgo.toISOString())
         .gte('appointments.appointment_date', oneYearAgo.toISOString());
@@ -403,7 +403,7 @@ export class UnifiedPatientDashboard {
         insurance_coverage: insuranceCoverage,
         payment_history: payments || [],
         payment_patterns: UnifiedPatientDashboard.analyzePaymentPatterns(
-          payments || []
+          payments || [],
         ),
       };
     } catch (error) {
@@ -441,7 +441,7 @@ export class UnifiedPatientDashboard {
 
       const preferredChannel = Object.keys(channelCounts).reduce(
         (a, b) => (channelCounts[a] > channelCounts[b] ? a : b),
-        'email'
+        'email',
       );
 
       // Calculate response rate
@@ -489,13 +489,13 @@ export class UnifiedPatientDashboard {
       const nextServiceRecommendations =
         await UnifiedPatientDashboard.generateServiceRecommendations(
           patientId,
-          data
+          data,
         );
 
       // Determine optimal contact time
       const optimalContactTime =
         UnifiedPatientDashboard.determineOptimalContactTime(
-          data.communicationHistory
+          data.communicationHistory,
         );
 
       // Generate personality profile
@@ -584,12 +584,12 @@ export class UnifiedPatientDashboard {
         methods[p.payment_method] = (methods[p.payment_method] || 0) + 1;
         return methods;
       },
-      {} as Record<string, number>
+      {} as Record<string, number>,
     );
 
     const preferredMethod = Object.keys(paymentMethods).reduce(
       (a, b) => (paymentMethods[a] > paymentMethods[b] ? a : b),
-      'cash'
+      'cash',
     );
 
     return {
@@ -614,9 +614,10 @@ export class UnifiedPatientDashboard {
         ? Math.floor(
             (Date.now() -
               new Date(
-                data.appointmentInsights.recent_appointments[0].appointment_date
+                data.appointmentInsights.recent_appointments[0]
+                  .appointment_date,
               ).getTime()) /
-              (1000 * 60 * 60 * 24)
+              (1000 * 60 * 60 * 24),
           )
         : 365;
 
@@ -672,14 +673,14 @@ export class UnifiedPatientDashboard {
    */
   private static async generateServiceRecommendations(
     _patientId: string,
-    data: any
+    data: any,
   ): Promise<string[]> {
     const recommendations: string[] = [];
 
     // Based on successful past treatments
     if (data.treatmentInsights.preferred_services.length > 0) {
       recommendations.push(
-        `Follow-up ${data.treatmentInsights.preferred_services[0]}`
+        `Follow-up ${data.treatmentInsights.preferred_services[0]}`,
       );
     }
 
@@ -702,7 +703,7 @@ export class UnifiedPatientDashboard {
    * Determine optimal contact time
    */
   private static determineOptimalContactTime(
-    _communicationHistory: any
+    _communicationHistory: any,
   ): string {
     // Analyze response times to determine best contact hours
     // Default to 10:00 AM for now
@@ -759,7 +760,7 @@ export class UnifiedPatientDashboard {
 
     const sortedPayments = payments.sort(
       (a, b) =>
-        new Date(a.payment_date).getTime() - new Date(b.payment_date).getTime()
+        new Date(a.payment_date).getTime() - new Date(b.payment_date).getTime(),
     );
 
     const intervals = [];
@@ -767,7 +768,7 @@ export class UnifiedPatientDashboard {
       const days = Math.floor(
         (new Date(sortedPayments[i].payment_date).getTime() -
           new Date(sortedPayments[i - 1].payment_date).getTime()) /
-          (1000 * 60 * 60 * 24)
+          (1000 * 60 * 60 * 24),
       );
       intervals.push(days);
     }
@@ -792,7 +793,7 @@ export class UnifiedPatientDashboard {
    */
   private static calculateOnTimePaymentRate(payments: any[]): number {
     const onTimePayments = payments.filter(
-      (p) => new Date(p.payment_date) <= new Date(p.due_date)
+      (p) => new Date(p.payment_date) <= new Date(p.due_date),
     ).length;
 
     return payments.length > 0 ? (onTimePayments / payments.length) * 100 : 0;
@@ -803,7 +804,7 @@ export class UnifiedPatientDashboard {
    */
   static async exportPatientData(
     patientId: string,
-    format: 'json' | 'csv' = 'json'
+    format: 'json' | 'csv' = 'json',
   ) {
     try {
       const profile =

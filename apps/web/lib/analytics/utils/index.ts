@@ -45,7 +45,7 @@ export type AnalyticsFilters = {
 export const formatCurrency = (
   value: number | null | undefined,
   currency = 'USD',
-  precision = 2
+  precision = 2,
 ): string => {
   // Handle invalid inputs
   if (value === null || value === undefined || Number.isNaN(value)) {
@@ -65,7 +65,7 @@ export const formatCurrency = (
 
 export const formatPercentage = (
   value: number | null | undefined,
-  precision = 2
+  precision = 2,
 ): string => {
   // Handle invalid edge cases
   if (
@@ -83,7 +83,7 @@ export const formatPercentage = (
 // Calculation Utilities
 export const calculateGrowthRate = (
   previous: number | null | undefined,
-  current: number | null | undefined
+  current: number | null | undefined,
 ): number => {
   // Handle invalid inputs
   if (
@@ -110,7 +110,7 @@ export const calculateGrowthRate = (
 
 export const calculateChurnRate = (
   customersChurned: number | null | undefined,
-  customersAtStart: number | null | undefined
+  customersAtStart: number | null | undefined,
 ): number => {
   // Handle invalid inputs
   if (
@@ -141,7 +141,7 @@ export const calculateChurnRate = (
 
 export const calculateLTV = (
   arpu: number | null | undefined,
-  churnRate: number | null | undefined
+  churnRate: number | null | undefined,
 ): number => {
   // Handle invalid inputs
   if (
@@ -177,7 +177,7 @@ export const calculateLTV = (
 };
 
 export const calculateMRR = (
-  subscriptions: Subscription[] | null | undefined
+  subscriptions: Subscription[] | null | undefined,
 ): number => {
   // Handle invalid inputs
   if (!(subscriptions && Array.isArray(subscriptions))) {
@@ -191,7 +191,7 @@ export const calculateMRR = (
         sub &&
         sub.status === 'active' &&
         typeof sub.amount === 'number' &&
-        !Number.isNaN(sub.amount)
+        !Number.isNaN(sub.amount),
     )
     .reduce((total, sub) => total + sub.amount / 100, 0);
 };
@@ -213,7 +213,7 @@ export const calculateARR = (mrr: number | null | undefined): number => {
 export const aggregateMetricsByPeriod = (
   data: any[], // Accept any array since test uses strings for dates
   period: 'day' | 'week' | 'month' | 'year',
-  aggregateFunction: (items: any[]) => number
+  aggregateFunction: (items: any[]) => number,
 ): { period: string; value: number }[] => {
   if (!(data && Array.isArray(data)) || data.length === 0) {
     return [];
@@ -268,7 +268,7 @@ export const aggregateMetricsByPeriod = (
         date = new Date(
           Number.parseInt(parts[0], 10),
           Number.parseInt(parts[1], 10) - 1,
-          Number.parseInt(parts[2], 10)
+          Number.parseInt(parts[2], 10),
         );
       } else {
         date = new Date(item.date);
@@ -353,7 +353,7 @@ export const validateDateRange = (startDate: Date, endDate: Date): boolean => {
 
 // Filter Parsing
 export const parseAnalyticsFilters = (
-  params: URLSearchParams
+  params: URLSearchParams,
 ): AnalyticsFilters => {
   const period = params.get('period') || 'last_30_days';
   const metric = params.get('metric') || 'all';
@@ -459,7 +459,7 @@ export const parseAnalyticsFilters = (
 export const exportToCSV = (
   data: any[],
   _type: string,
-  _options?: { filename?: string; includeTimestamp?: boolean }
+  _options?: { filename?: string; includeTimestamp?: boolean },
 ): string => {
   // Use XLSX to convert data to CSV for testing compatibility
   const XLSX = require('xlsx');
@@ -477,7 +477,7 @@ export const exportToPDF = (
     orientation?: string;
     fontSize?: number;
     margin?: number;
-  }
+  },
 ): string => {
   const jsPDF = require('jspdf').default;
   const doc = new jsPDF();
@@ -509,7 +509,7 @@ export const exportToExcel = (
   options?: {
     sheets?: Record<string, any[]>;
     formatting?: Record<string, any>;
-  }
+  },
 ): string => {
   const XLSX = require('xlsx');
 
@@ -537,14 +537,14 @@ export const exportToExcel = (
     } else {
       // Single sheet
       const worksheet = XLSX.utils.json_to_sheet(
-        Array.isArray(data) ? data : [data]
+        Array.isArray(data) ? data : [data],
       );
       XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
     }
   } else {
     // Single sheet from array data
     const worksheet = XLSX.utils.json_to_sheet(
-      Array.isArray(data) ? data : [data]
+      Array.isArray(data) ? data : [data],
     );
     XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
   }
@@ -556,7 +556,7 @@ export const exportToExcel = (
 // Date formatting
 export const formatDate = (
   date: Date,
-  formatString = 'MMM dd, yyyy'
+  formatString = 'MMM dd, yyyy',
 ): string => {
   return format(date, formatString);
 };

@@ -189,21 +189,21 @@ export const TransactionsList: React.FC<TransactionsListProps> = ({
           transaction.professional
             .toLowerCase()
             .includes(searchTerm.toLowerCase()) ||
-          transaction.id.toLowerCase().includes(searchTerm.toLowerCase())
+          transaction.id.toLowerCase().includes(searchTerm.toLowerCase()),
       );
     }
 
     // Status filter
     if (statusFilter !== 'all') {
       filtered = filtered.filter(
-        (transaction) => transaction.status === statusFilter
+        (transaction) => transaction.status === statusFilter,
       );
     }
 
     // Payment method filter
     if (paymentFilter !== 'all') {
       filtered = filtered.filter(
-        (transaction) => transaction.paymentMethod === paymentFilter
+        (transaction) => transaction.paymentMethod === paymentFilter,
       );
     }
 
@@ -264,7 +264,7 @@ export const TransactionsList: React.FC<TransactionsListProps> = ({
 
   const paginatedTransactions = filteredTransactions.slice(
     (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
+    currentPage * itemsPerPage,
   );
 
   const totalPages = Math.ceil(filteredTransactions.length / itemsPerPage);

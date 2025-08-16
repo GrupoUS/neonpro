@@ -51,7 +51,7 @@ export class MonitoringService {
   constructor(backupManager: any) {
     this.supabase = createClient(
       process.env.SUPABASE_URL!,
-      process.env.SUPABASE_ANON_KEY!
+      process.env.SUPABASE_ANON_KEY!,
     );
     this.backupManager = backupManager;
 
@@ -121,7 +121,7 @@ export class MonitoringService {
    */
   async calculateMetrics(
     startDate?: Date,
-    endDate?: Date
+    endDate?: Date,
   ): Promise<BackupMetrics> {
     const start = startDate || new Date(Date.now() - 30 * 24 * 60 * 60 * 1000); // 30 dias
     const end = endDate || new Date();
@@ -141,10 +141,10 @@ export class MonitoringService {
     const records = backups || [];
     const totalBackups = records.length;
     const successfulBackups = records.filter(
-      (b) => b.status === BackupStatus.COMPLETED
+      (b) => b.status === BackupStatus.COMPLETED,
     ).length;
     const failedBackups = records.filter(
-      (b) => b.status === BackupStatus.FAILED
+      (b) => b.status === BackupStatus.FAILED,
     ).length;
     const totalSize = records.reduce((sum, b) => sum + (b.size || 0), 0);
     const totalDuration = records
@@ -177,7 +177,7 @@ export class MonitoringService {
 
     // Tendências (comparar com período anterior)
     const previousPeriod = new Date(
-      start.getTime() - (end.getTime() - start.getTime())
+      start.getTime() - (end.getTime() - start.getTime()),
     );
     const { data: previousBackups } = await this.supabase
       .from('backup_records')
@@ -322,7 +322,7 @@ export class MonitoringService {
     severity: AlertSeverity,
     message: string,
     details?: any,
-    entityId?: string
+    entityId?: string,
   ): Promise<BackupAlert> {
     const alert: BackupAlert = {
       id: crypto.randomUUID(),
@@ -415,7 +415,7 @@ export class MonitoringService {
           {
             successRate: metrics.successRate,
             threshold: this.config.alertThresholds.failureRate,
-          }
+          },
         );
       }
 
@@ -428,7 +428,7 @@ export class MonitoringService {
           {
             averageDuration: metrics.averageDuration,
             threshold: this.config.alertThresholds.maxBackupTime,
-          }
+          },
         );
       }
 
@@ -493,7 +493,7 @@ export class MonitoringService {
                 hoursSinceLastBackup,
                 maxHours,
               },
-              config.id
+              config.id,
             );
           }
         }
@@ -592,7 +592,7 @@ export class MonitoringService {
    */
   async notifyBackupSuccess(
     backupId: string,
-    config: BackupConfig
+    config: BackupConfig,
   ): Promise<void> {
     try {
       if (config.notifications?.onSuccess) {
@@ -619,7 +619,7 @@ export class MonitoringService {
   async notifyBackupFailure(
     backupId: string,
     config: BackupConfig,
-    errorMessage: string
+    errorMessage: string,
   ): Promise<void> {
     try {
       const notification = {
@@ -643,7 +643,7 @@ export class MonitoringService {
         AlertSeverity.HIGH,
         `Falha no backup "${config.name}": ${errorMessage}`,
         { backupId, configId: config.id, error: errorMessage },
-        config.id
+        config.id,
       );
     } catch (_error) {}
   }
@@ -691,7 +691,7 @@ export class MonitoringService {
    */
   async acknowledgeAlert(
     alertId: string,
-    userId: string
+    userId: string,
   ): Promise<ApiResponse> {
     try {
       const { error } = await this.supabase
@@ -732,7 +732,7 @@ export class MonitoringService {
   async resolveAlert(
     alertId: string,
     userId: string,
-    resolution?: string
+    resolution?: string,
   ): Promise<ApiResponse> {
     try {
       const { error } = await this.supabase

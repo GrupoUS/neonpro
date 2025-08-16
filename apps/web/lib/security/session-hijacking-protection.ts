@@ -73,7 +73,7 @@ export class SessionHijackingProtection {
   static async storeSessionFingerprint(
     sessionId: string,
     userId: string,
-    fingerprint: SessionFingerprint
+    fingerprint: SessionFingerprint,
   ): Promise<boolean> {
     try {
       const supabase = createClient();
@@ -102,7 +102,7 @@ export class SessionHijackingProtection {
    */
   static async validateSessionFingerprint(
     sessionId: string,
-    currentFingerprint: SessionFingerprint
+    currentFingerprint: SessionFingerprint,
   ): Promise<SessionValidationResult> {
     try {
       const supabase = createClient();
@@ -217,7 +217,7 @@ export class SessionHijackingProtection {
   static async detectConcurrentSessions(
     userId: string,
     currentSessionId: string,
-    maxConcurrentSessions = 3
+    maxConcurrentSessions = 3,
   ): Promise<{
     hasExcess: boolean;
     activeSessions: number;
@@ -233,7 +233,7 @@ export class SessionHijackingProtection {
         .eq('user_id', userId)
         .gte(
           'last_seen',
-          new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()
+          new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
         ) // Last 24 hours
         .order('last_seen', { ascending: false });
 
@@ -253,13 +253,13 @@ export class SessionHijackingProtection {
           .concat(
             sessions
               .filter((s) => s.session_id !== currentSessionId)
-              .slice(0, maxConcurrentSessions - 1)
+              .slice(0, maxConcurrentSessions - 1),
           );
 
         sessionsToTerminate = sessions
           .filter(
             (s) =>
-              !sessionsToKeep.some((keep) => keep.session_id === s.session_id)
+              !sessionsToKeep.some((keep) => keep.session_id === s.session_id),
           )
           .map((s) => s.session_id);
 

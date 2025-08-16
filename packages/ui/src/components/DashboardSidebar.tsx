@@ -16,7 +16,7 @@ import { Badge } from './Badge';
 import { Button } from './Button';
 
 // Types
-export type SidebarItem = {
+type SidebarItem = {
   id: string;
   label: string;
   icon: React.ElementType;
@@ -27,7 +27,7 @@ export type SidebarItem = {
   onClick?: () => void;
 };
 
-export type UserProfile = {
+type UserProfile = {
   id: string;
   name: string;
   email: string;
@@ -36,7 +36,7 @@ export type UserProfile = {
   clinic?: string;
 };
 
-export type DashboardSidebarProps = {
+type DashboardSidebarProps = {
   user: UserProfile;
   items: SidebarItem[];
   collapsed?: boolean;
@@ -185,9 +185,9 @@ export const DashboardSidebar = React.forwardRef<
         {/* Notifications */}
         {notifications > 0 && (
           <div className="px-4 py-2">
-            <div
+            <button
               className={cn(
-                'flex cursor-pointer items-center gap-2 rounded-lg bg-muted/50 p-2 hover:bg-muted',
+                'flex w-full items-center gap-2 rounded-lg bg-muted/50 p-2 hover:bg-muted focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2',
                 collapsed && 'justify-center'
               )}
               onClick={() =>
@@ -197,6 +197,7 @@ export const DashboardSidebar = React.forwardRef<
                   icon: Bell,
                 })
               }
+              type="button"
             >
               <Bell className="h-4 w-4" />
               {!collapsed && (
@@ -207,18 +208,19 @@ export const DashboardSidebar = React.forwardRef<
                   </Badge>
                 </>
               )}
-            </div>
+            </button>
           </div>
         )}
 
         {/* User Profile */}
         <div className="border-t p-4">
-          <div
+          <button
             className={cn(
-              'flex cursor-pointer items-center gap-3 rounded-lg p-2 transition-colors hover:bg-muted',
+              'flex w-full items-center gap-3 rounded-lg p-2 transition-colors hover:bg-muted focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2',
               collapsed && 'justify-center'
             )}
             onClick={() => setShowUserMenu(!showUserMenu)}
+            type="button"
           >
             <Avatar size="sm">
               <AvatarImage alt={user.name} src={user.avatar} />
@@ -242,7 +244,7 @@ export const DashboardSidebar = React.forwardRef<
                 />
               </>
             )}
-          </div>
+          </button>
 
           {/* User Menu */}
           {showUserMenu && !collapsed && (
@@ -293,5 +295,4 @@ export const DashboardSidebar = React.forwardRef<
 
 DashboardSidebar.displayName = 'DashboardSidebar';
 
-export { DashboardSidebar };
 export type { DashboardSidebarProps, SidebarItem, UserProfile };

@@ -61,7 +61,7 @@ export async function GET(_request: NextRequest) {
         error: 'Healthcare system check failed',
         patient_safety: 'at_risk',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -461,7 +461,7 @@ Não perca essa oportunidade! 💚`,
    */
   getTemplatesByType(
     type: SchedulingTemplate['type'],
-    conditions?: any
+    conditions?: any,
   ): SchedulingTemplate[] {
     return Array.from(this.templates.values())
       .filter((template) => template.type === type && template.active)
@@ -475,7 +475,7 @@ Não perca essa oportunidade! 💚`,
     type: SchedulingTemplate['type'],
     appointmentData: any,
     patientData: any,
-    noShowPrediction?: any
+    noShowPrediction?: any,
   ): SchedulingTemplate | null {
     const availableTemplates = this.getTemplatesByType(type);
 
@@ -492,7 +492,7 @@ Não perca essa oportunidade! 💚`,
 
     // Find templates that match conditions
     const matchingTemplates = availableTemplates.filter((template) =>
-      this.matchesConditions(template, contextData)
+      this.matchesConditions(template, contextData),
     );
 
     if (matchingTemplates.length === 0) {
@@ -504,7 +504,7 @@ Não perca essa oportunidade! 💚`,
     return matchingTemplates.reduce((best, current) =>
       current.analytics.responseRate > best.analytics.responseRate
         ? current
-        : best
+        : best,
     );
   }
 
@@ -553,7 +553,7 @@ Não perca essa oportunidade! 💚`,
   async renderTemplate(
     template: SchedulingTemplate,
     channel: 'sms' | 'email' | 'whatsapp',
-    variables: Record<string, any>
+    variables: Record<string, any>,
   ): Promise<string | object> {
     const content = template.content[channel];
     if (!content) {
@@ -563,7 +563,7 @@ Não perca essa oportunidade! 💚`,
     // Apply personalization rules
     const personalizedVariables = await this.applyPersonalization(
       template.personalization,
-      variables
+      variables,
     );
 
     // Render template based on channel
@@ -592,7 +592,7 @@ Não perca essa oportunidade! 💚`,
    */
   private async applyPersonalization(
     rules: PersonalizationRules,
-    variables: Record<string, any>
+    variables: Record<string, any>,
   ): Promise<Record<string, any>> {
     const personalized = { ...variables };
 
@@ -642,7 +642,7 @@ Não perca essa oportunidade! 💚`,
       /{{#if (\w+)}}(.*?){{\/if}}/gs,
       (_match, condition, content) => {
         return variables[condition] ? content : '';
-      }
+      },
     );
 
     return rendered;

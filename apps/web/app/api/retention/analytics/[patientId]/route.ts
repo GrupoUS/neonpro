@@ -6,7 +6,7 @@ import { RetentionService } from '../../../../lib/services/retention';
 
 export async function GET(
   _request: NextRequest,
-  { params }: { params: Promise<{ patientId: string }> }
+  { params }: { params: Promise<{ patientId: string }> },
 ) {
   try {
     const { patientId } = await params;
@@ -17,7 +17,7 @@ export async function GET(
           success: false,
           error: 'Patient ID is required',
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -30,7 +30,7 @@ export async function GET(
           success: false,
           error: 'Retention analytics not found for this patient',
         },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -45,7 +45,7 @@ export async function GET(
         error: 'Failed to fetch retention analytics',
         details: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

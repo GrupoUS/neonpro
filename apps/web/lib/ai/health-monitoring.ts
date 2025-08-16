@@ -304,21 +304,21 @@ export class AIHealthMonitoringEngine {
     healthData: HealthMetric[],
     vitalSigns: VitalSigns[],
     treatments: TreatmentHistory[],
-    monitoringPeriod: MonitoringPeriod
+    monitoringPeriod: MonitoringPeriod,
   ): Promise<HealthTrendAnalysis> {
     try {
       // Analyze health metric trends
       const healthTrends = await this.analyzeHealthMetricTrends(
         patient,
         healthData,
-        monitoringPeriod
+        monitoringPeriod,
       );
 
       // Analyze vital sign trends
       const vitalTrends = await this.analyzeVitalSignTrends(
         patient,
         vitalSigns,
-        monitoringPeriod
+        monitoringPeriod,
       );
 
       // Assess treatment effectiveness
@@ -326,7 +326,7 @@ export class AIHealthMonitoringEngine {
         patient,
         treatments,
         healthData,
-        vitalSigns
+        vitalSigns,
       );
 
       // Generate early warnings
@@ -334,7 +334,7 @@ export class AIHealthMonitoringEngine {
         patient,
         healthTrends,
         vitalTrends,
-        treatmentEffectiveness
+        treatmentEffectiveness,
       );
 
       // Generate health recommendations
@@ -342,21 +342,21 @@ export class AIHealthMonitoringEngine {
         patient,
         healthTrends,
         vitalTrends,
-        earlyWarnings
+        earlyWarnings,
       );
 
       // Calculate confidence score
       const confidenceScore = this.calculateAnalysisConfidence(
         healthData,
         vitalSigns,
-        monitoringPeriod
+        monitoringPeriod,
       );
 
       // Determine next monitoring date
       const nextMonitoringDate = this.calculateNextMonitoringDate(
         patient,
         earlyWarnings,
-        healthTrends
+        healthTrends,
       );
 
       return {
@@ -383,7 +383,7 @@ export class AIHealthMonitoringEngine {
   async monitorRealTimeHealth(
     patient: Patient,
     realtimeData: HealthDataPoint[],
-    _riskAssessment: RiskAssessment
+    _riskAssessment: RiskAssessment,
   ): Promise<VitalAlert[]> {
     const alerts: VitalAlert[] = [];
 
@@ -420,7 +420,7 @@ export class AIHealthMonitoringEngine {
   async predictHealthOutcomes(
     patient: Patient,
     currentTrends: HealthTrend[],
-    timeHorizon: string
+    timeHorizon: string,
   ): Promise<HealthPrediction[]> {
     const predictions: HealthPrediction[] = [];
 
@@ -428,7 +428,7 @@ export class AIHealthMonitoringEngine {
       const prediction = await this.generateHealthPrediction(
         patient,
         trend,
-        timeHorizon
+        timeHorizon,
       );
       predictions.push(prediction);
     }
@@ -442,7 +442,7 @@ export class AIHealthMonitoringEngine {
   async integrateWearableData(
     patient: Patient,
     deviceData: any[],
-    deviceInfo: WearableIntegration
+    deviceInfo: WearableIntegration,
   ): Promise<HealthDataPoint[]> {
     const processedData: HealthDataPoint[] = [];
 
@@ -450,7 +450,7 @@ export class AIHealthMonitoringEngine {
       const dataPoint = await this.processWearableDataPoint(
         data,
         deviceInfo,
-        patient
+        patient,
       );
 
       if (dataPoint && this.validateDataQuality(dataPoint)) {
@@ -471,7 +471,7 @@ export class AIHealthMonitoringEngine {
   async generateHealthInsights(
     patient: Patient,
     trendAnalysis: HealthTrendAnalysis,
-    behaviorAnalysis: BehaviorAnalysis
+    behaviorAnalysis: BehaviorAnalysis,
   ): Promise<any> {
     return {
       overall_health_score: this.calculateOverallHealthScore(trendAnalysis),
@@ -479,15 +479,15 @@ export class AIHealthMonitoringEngine {
       success_areas: this.identifySuccessAreas(trendAnalysis),
       behavioral_correlations: this.analyzeBehaviorHealthCorrelations(
         trendAnalysis,
-        behaviorAnalysis
+        behaviorAnalysis,
       ),
       personalized_goals: this.generatePersonalizedGoals(
         patient,
-        trendAnalysis
+        trendAnalysis,
       ),
       motivation_strategies: this.generateMotivationStrategies(
         patient,
-        behaviorAnalysis
+        behaviorAnalysis,
       ),
     };
   }
@@ -497,7 +497,7 @@ export class AIHealthMonitoringEngine {
   private async analyzeHealthMetricTrends(
     patient: Patient,
     healthData: HealthMetric[],
-    period: MonitoringPeriod
+    period: MonitoringPeriod,
   ): Promise<HealthTrend[]> {
     const trends: HealthTrend[] = [];
 
@@ -513,7 +513,7 @@ export class AIHealthMonitoringEngine {
         patient,
         metricName,
         dataPoints,
-        period
+        period,
       );
 
       if (trend) {
@@ -527,7 +527,7 @@ export class AIHealthMonitoringEngine {
   private async analyzeVitalSignTrends(
     patient: Patient,
     vitalSigns: VitalSigns[],
-    period: MonitoringPeriod
+    period: MonitoringPeriod,
   ): Promise<VitalTrend[]> {
     const trends: VitalTrend[] = [];
 
@@ -539,7 +539,7 @@ export class AIHealthMonitoringEngine {
         patient,
         vitalType,
         measurements,
-        period
+        period,
       );
 
       if (trend) {
@@ -554,7 +554,7 @@ export class AIHealthMonitoringEngine {
     patient: Patient,
     treatments: TreatmentHistory[],
     healthData: HealthMetric[],
-    vitalSigns: VitalSigns[]
+    vitalSigns: VitalSigns[],
   ): Promise<TreatmentEffectiveness[]> {
     const effectiveness: TreatmentEffectiveness[] = [];
 
@@ -563,7 +563,7 @@ export class AIHealthMonitoringEngine {
         patient,
         treatment,
         healthData,
-        vitalSigns
+        vitalSigns,
       );
 
       effectiveness.push(treatmentEffectiveness);
@@ -576,7 +576,7 @@ export class AIHealthMonitoringEngine {
     patient: Patient,
     healthTrends: HealthTrend[],
     vitalTrends: VitalTrend[],
-    treatmentEffectiveness: TreatmentEffectiveness[]
+    treatmentEffectiveness: TreatmentEffectiveness[],
   ): Promise<EarlyWarning[]> {
     const warnings: EarlyWarning[] = [];
 
@@ -593,11 +593,15 @@ export class AIHealthMonitoringEngine {
     // Check for vital sign concerns
     for (const vitalTrend of vitalTrends) {
       const criticalAlerts = vitalTrend.alerts.filter(
-        (a) => a.severity === 'critical'
+        (a) => a.severity === 'critical',
       );
       if (criticalAlerts.length > 0) {
         warnings.push(
-          await this.createVitalSignWarning(patient, vitalTrend, criticalAlerts)
+          await this.createVitalSignWarning(
+            patient,
+            vitalTrend,
+            criticalAlerts,
+          ),
         );
       }
     }
@@ -606,7 +610,7 @@ export class AIHealthMonitoringEngine {
     for (const treatment of treatmentEffectiveness) {
       if (treatment.effectiveness_score < 0.3) {
         warnings.push(
-          await this.createTreatmentFailureWarning(patient, treatment)
+          await this.createTreatmentFailureWarning(patient, treatment),
         );
       }
     }
@@ -618,7 +622,7 @@ export class AIHealthMonitoringEngine {
     patient: Patient,
     healthTrends: HealthTrend[],
     vitalTrends: VitalTrend[],
-    warnings: EarlyWarning[]
+    warnings: EarlyWarning[],
   ): Promise<HealthRecommendation[]> {
     const recommendations: HealthRecommendation[] = [];
 
@@ -626,7 +630,7 @@ export class AIHealthMonitoringEngine {
     for (const trend of healthTrends) {
       if (trend.trend_direction === 'declining') {
         recommendations.push(
-          await this.createTrendBasedRecommendation(patient, trend)
+          await this.createTrendBasedRecommendation(patient, trend),
         );
       }
     }
@@ -634,7 +638,7 @@ export class AIHealthMonitoringEngine {
     // Generate recommendations based on warnings
     for (const warning of warnings) {
       recommendations.push(
-        await this.createWarningBasedRecommendation(patient, warning)
+        await this.createWarningBasedRecommendation(patient, warning),
       );
     }
 
@@ -643,7 +647,7 @@ export class AIHealthMonitoringEngine {
       await this.generatePreventiveRecommendations(
         patient,
         healthTrends,
-        vitalTrends
+        vitalTrends,
       );
     recommendations.push(...preventiveRecommendations);
 
@@ -651,7 +655,7 @@ export class AIHealthMonitoringEngine {
   }
 
   private groupHealthDataByMetric(
-    healthData: HealthMetric[]
+    healthData: HealthMetric[],
   ): Map<string, HealthDataPoint[]> {
     const groups = new Map<string, HealthDataPoint[]>();
 
@@ -680,7 +684,7 @@ export class AIHealthMonitoringEngine {
   }
 
   private groupVitalSignsByType(
-    vitalSigns: VitalSigns[]
+    vitalSigns: VitalSigns[],
   ): Map<string, VitalMeasurement[]> {
     const groups = new Map<string, VitalMeasurement[]>();
 
@@ -730,7 +734,7 @@ export class AIHealthMonitoringEngine {
     _patient: Patient,
     metricName: string,
     dataPoints: HealthDataPoint[],
-    _period: MonitoringPeriod
+    _period: MonitoringPeriod,
   ): Promise<HealthTrend | null> {
     if (dataPoints.length < 3) {
       return null;
@@ -738,7 +742,7 @@ export class AIHealthMonitoringEngine {
 
     // Sort data points by timestamp
     const sortedData = dataPoints.sort(
-      (a, b) => a.timestamp.getTime() - b.timestamp.getTime()
+      (a, b) => a.timestamp.getTime() - b.timestamp.getTime(),
     );
 
     // Calculate trend analysis
@@ -772,7 +776,7 @@ export class AIHealthMonitoringEngine {
     patient: Patient,
     vitalType: string,
     measurements: VitalMeasurement[],
-    _period: MonitoringPeriod
+    _period: MonitoringPeriod,
   ): Promise<VitalTrend | null> {
     if (measurements.length < 3) {
       return null;
@@ -780,7 +784,7 @@ export class AIHealthMonitoringEngine {
 
     // Sort measurements by timestamp
     const sortedMeasurements = measurements.sort(
-      (a, b) => a.timestamp.getTime() - b.timestamp.getTime()
+      (a, b) => a.timestamp.getTime() - b.timestamp.getTime(),
     );
 
     // Convert to data points for trend analysis
@@ -808,14 +812,14 @@ export class AIHealthMonitoringEngine {
     const alerts = this.generateVitalAlerts(
       sortedMeasurements,
       normalRange,
-      trendAnalysis
+      trendAnalysis,
     );
 
     // Generate recommendations
     const recommendations = this.generateVitalRecommendations(
       vitalType,
       trendAnalysis,
-      alerts
+      alerts,
     );
 
     return {
@@ -867,7 +871,7 @@ export class AIHealthMonitoringEngine {
   }
 
   private determineTrendDirection(
-    slope: number
+    slope: number,
   ): 'improving' | 'stable' | 'declining' | 'fluctuating' {
     if (Math.abs(slope) < 0.1) {
       return 'stable';
@@ -882,7 +886,7 @@ export class AIHealthMonitoringEngine {
   }
 
   private getMetricType(
-    metricName: string
+    metricName: string,
   ): 'vital_sign' | 'symptom' | 'biomarker' | 'functional' | 'psychological' {
     const vitalSigns = [
       'blood_pressure',
@@ -978,7 +982,7 @@ export class AIHealthMonitoringEngine {
   private generateVitalAlerts(
     measurements: VitalMeasurement[],
     normalRange: NormalRange,
-    trendAnalysis: TrendAnalysis
+    trendAnalysis: TrendAnalysis,
   ): VitalAlert[] {
     const alerts: VitalAlert[] = [];
 
@@ -1014,7 +1018,7 @@ export class AIHealthMonitoringEngine {
   private generateVitalRecommendations(
     _vitalType: string,
     _trendAnalysis: TrendAnalysis,
-    alerts: VitalAlert[]
+    alerts: VitalAlert[],
   ): string[] {
     const recommendations: string[] = [];
 
@@ -1106,8 +1110,7 @@ export class AIHealthMonitoringEngine {
     });
   }
 
-  private loadBaselineData(): void {
-  }
+  private loadBaselineData(): void {}
 
   private initializePredictionModels(): void {
     // Initialize ML models for health prediction
@@ -1129,7 +1132,7 @@ export class AIHealthMonitoringEngine {
     _patient: Patient,
     treatment: TreatmentHistory,
     healthData: HealthMetric[],
-    _vitalSigns: VitalSigns[]
+    _vitalSigns: VitalSigns[],
   ): Promise<TreatmentEffectiveness> {
     // Calculate treatment effectiveness based on health improvements
     const treatmentStart = new Date(treatment.start_date);
@@ -1139,19 +1142,19 @@ export class AIHealthMonitoringEngine {
 
     // Get health data before and after treatment
     const preTreatmentData = healthData.filter(
-      (hd) => new Date(hd.recorded_at) < treatmentStart
+      (hd) => new Date(hd.recorded_at) < treatmentStart,
     );
     const postTreatmentData = healthData.filter(
       (hd) =>
         new Date(hd.recorded_at) >= treatmentStart &&
-        new Date(hd.recorded_at) <= treatmentEnd
+        new Date(hd.recorded_at) <= treatmentEnd,
     );
 
     // Calculate effectiveness score
     const effectivenessScore = this.calculateEffectivenessScore(
       preTreatmentData,
       postTreatmentData,
-      treatment
+      treatment,
     );
 
     return {
@@ -1198,7 +1201,7 @@ export class AIHealthMonitoringEngine {
   private calculateEffectivenessScore(
     preData: HealthMetric[],
     postData: HealthMetric[],
-    _treatment: TreatmentHistory
+    _treatment: TreatmentHistory,
   ): number {
     if (preData.length === 0 || postData.length === 0) {
       return 0.5;
@@ -1231,7 +1234,7 @@ export class AIHealthMonitoringEngine {
   }
 
   private groupMetricsByName(
-    metrics: HealthMetric[]
+    metrics: HealthMetric[],
   ): Map<string, HealthMetric[]> {
     const groups = new Map<string, HealthMetric[]>();
 
@@ -1247,7 +1250,7 @@ export class AIHealthMonitoringEngine {
 
   private async createHealthDeclineWarning(
     _patient: Patient,
-    trend: HealthTrend
+    trend: HealthTrend,
   ): Promise<EarlyWarning> {
     return {
       warning_id: `health_decline_${Date.now()}`,
@@ -1281,64 +1284,72 @@ export class AIHealthMonitoringEngine {
   }
 
   private async createVitalSignWarning(
-    patient: Patient,
+    _patient: Patient,
     vitalTrend: VitalTrend,
-    _alerts: VitalAlert[]
+    _alerts: VitalAlert[],
   ): Promise<EarlyWarning> {
     return {
-        warning_id: `vital_sign_${Date.now()}`,
-        warning_type: 'risk_elevation',
-        severity: 'high',
-        probability: 0.8,
-        trigger_metrics: [vitalTrend.vital_type],
-        detection_date: new Date(),
-        predicted_timeline: 'Immediate',
-        intervention_window: 'Immediate',
-        recommended_actions: [
-          'Immediate medical attention',
-          'Continuous monitoring',
-          'Emergency protocol activation'
+      warning_id: `vital_sign_${Date.now()}`,
+      warning_type: 'risk_elevation',
+      severity: 'high',
+      probability: 0.8,
+      trigger_metrics: [vitalTrend.vital_type],
+      detection_date: new Date(),
+      predicted_timeline: 'Immediate',
+      intervention_window: 'Immediate',
+      recommended_actions: [
+        'Immediate medical attention',
+        'Continuous monitoring',
+        'Emergency protocol activation',
+      ],
+      escalation_protocol: {
+        immediate_actions: ['Emergency response', 'Continuous monitoring'],
+        notification_list: ['Emergency team', 'Primary physician'],
+        escalation_timeline: 'Immediate',
+        emergency_contacts: ['911', 'Emergency department'],
+        documentation_requirements: [
+          'Vital sign log',
+          'Emergency response log',
         ],
-        escalation_protocol: {
-          immediate_actions: ['Emergency response', 'Continuous monitoring'],
-          notification_list: ['Emergency team', 'Primary physician'],
-          escalation_timeline: 'Immediate',
-          emergency_contacts: ['911', 'Emergency department'],
-          documentation_requirements: ['Vital sign log', 'Emergency response log']
-        }
-      };
+      },
+    };
+  }
 
   private async createTreatmentFailureWarning(
-    patient: Patient,
-    treatment: TreatmentEffectiveness
+    _patient: Patient,
+    treatment: TreatmentEffectiveness,
   ): Promise<EarlyWarning> {
     return {
-        warning_id: `treatment_failure_${Date.now()}`,
-        warning_type: 'treatment_failure',
-        severity: 'moderate',
-        probability: 1 - treatment.effectiveness_score,
-        trigger_metrics: ['treatment_effectiveness'],
-        detection_date: new Date(),
-        predicted_timeline: '1-2 weeks',
-        intervention_window: '3-5 days',
-        recommended_actions: [
-          'Review treatment protocol',
-          'Consider alternative treatments',
-          'Assess patient compliance',
-          'Evaluate dosage adjustments'
+      warning_id: `treatment_failure_${Date.now()}`,
+      warning_type: 'treatment_failure',
+      severity: 'moderate',
+      probability: 1 - treatment.effectiveness_score,
+      trigger_metrics: ['treatment_effectiveness'],
+      detection_date: new Date(),
+      predicted_timeline: '1-2 weeks',
+      intervention_window: '3-5 days',
+      recommended_actions: [
+        'Review treatment protocol',
+        'Consider alternative treatments',
+        'Assess patient compliance',
+        'Evaluate dosage adjustments',
+      ],
+      escalation_protocol: {
+        immediate_actions: ['Treatment review', 'Patient consultation'],
+        notification_list: ['Treating physician', 'Care team'],
+        escalation_timeline: '48-72 hours',
+        emergency_contacts: ['Treating physician'],
+        documentation_requirements: [
+          'Treatment review report',
+          'Alternative options analysis',
         ],
-        escalation_protocol: {
-          immediate_actions: ['Treatment review', 'Patient consultation'],
-          notification_list: ['Treating physician', 'Care team'],
-          escalation_timeline: '48-72 hours',
-          emergency_contacts: ['Treating physician'],
-          documentation_requirements: ['Treatment review report', 'Alternative options analysis']
-        }
-      };
+      },
+    };
+  }
 
   private async createTrendBasedRecommendation(
-    patient: Patient,
-    trend: HealthTrend
+    _patient: Patient,
+    trend: HealthTrend,
   ): Promise<HealthRecommendation> {
     return {
       recommendation_id: `trend_rec_${Date.now()}`,
@@ -1351,25 +1362,26 @@ export class AIHealthMonitoringEngine {
         'Schedule consultation with healthcare provider',
         'Review current lifestyle factors',
         'Consider treatment adjustments',
-        'Increase monitoring frequency'
+        'Increase monitoring frequency',
       ],
       expected_outcomes: [
         'Stabilization of declining trend',
         'Improvement in target metrics',
-        'Better overall health outcomes'
+        'Better overall health outcomes',
       ],
       timeline: '2-4 weeks',
       success_metrics: [
         'Trend reversal or stabilization',
         'Improved metric values',
-        'Patient satisfaction'
+        'Patient satisfaction',
       ],
-      contraindications: []
+      contraindications: [],
     };
+  }
 
   private async createWarningBasedRecommendation(
-    patient: Patient,
-    warning: EarlyWarning
+    _patient: Patient,
+    warning: EarlyWarning,
   ): Promise<HealthRecommendation> {
     return {
       recommendation_id: `warning_rec_${Date.now()}`,
@@ -1382,21 +1394,22 @@ export class AIHealthMonitoringEngine {
       expected_outcomes: [
         'Risk mitigation',
         'Prevention of complications',
-        'Improved safety profile'
+        'Improved safety profile',
       ],
       timeline: warning.intervention_window,
       success_metrics: [
         'Warning resolution',
         'Risk reduction',
-        'Stable health metrics'
+        'Stable health metrics',
       ],
-      contraindications: []
+      contraindications: [],
     };
+  }
 
   private async generatePreventiveRecommendations(
-    patient: Patient,
-    healthTrends: HealthTrend[],
-    vitalTrends: VitalTrend[]
+    _patient: Patient,
+    _healthTrends: HealthTrend[],
+    _vitalTrends: VitalTrend[],
   ): Promise<HealthRecommendation[]> {
     const recommendations: HealthRecommendation[] = [];
 
@@ -1433,14 +1446,11 @@ export class AIHealthMonitoringEngine {
     return recommendations;
   }
 
-  private
-  calculateAnalysisConfidence(
-      healthData: HealthMetric[],
-      vitalSigns: VitalSigns[],
-      period: MonitoringPeriod
-    )
-  : number
-  {
+  private calculateAnalysisConfidence(
+    healthData: HealthMetric[],
+    vitalSigns: VitalSigns[],
+    period: MonitoringPeriod,
+  ): number {
     // Calculate confidence based on data quality and quantity
     const dataPoints = healthData.length + vitalSigns.length;
     const expectedDataPoints = period.duration_days * 2; // Assuming 2 measurements per day
@@ -1452,14 +1462,12 @@ export class AIHealthMonitoringEngine {
     return (dataCompleteness * 0.6 + timeSpanAdequacy * 0.4) * 0.95; // Max 95% confidence
   }
 
-  private
+  private;
   calculateNextMonitoringDate(
-      patient: Patient,
-      warnings: EarlyWarning[],
-      trends: HealthTrend[]
-    )
-  : Date
-  {
+    _patient: Patient,
+    warnings: EarlyWarning[],
+    trends: HealthTrend[],
+  ): Date {
     const now = new Date();
 
     // If there are critical warnings, monitor daily
@@ -1470,7 +1478,7 @@ export class AIHealthMonitoringEngine {
     // If there are concerning trends, monitor weekly
     if (
       trends.some(
-        (t) => t.trend_direction === 'declining' && t.trend_strength > 0.5
+        (t) => t.trend_direction === 'declining' && t.trend_strength > 0.5,
       )
     ) {
       return new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000); // 1 week
@@ -1481,7 +1489,10 @@ export class AIHealthMonitoringEngine {
   }
 
   // Real-time monitoring methods
-  private checkValueRange(patient: Patient, dataPoint: HealthDataPoint): VitalAlert | null {
+  private checkValueRange(
+    _patient: Patient,
+    dataPoint: HealthDataPoint,
+  ): VitalAlert | null {
     const thresholds = this.alertThresholds.get(dataPoint.source);
     if (!thresholds) {
       return null;
@@ -1489,38 +1500,49 @@ export class AIHealthMonitoringEngine {
 
     if (dataPoint.value > thresholds.critical) {
       return {
-          alert_type: 'out_of_range',
-          severity: 'critical',
-          message: `Critical value detected: ${dataPoint.value}`,
-          triggered_at: dataPoint.timestamp,
-          auto_resolved: false
-        };
+        alert_type: 'out_of_range',
+        severity: 'critical',
+        message: `Critical value detected: ${dataPoint.value}`,
+        triggered_at: dataPoint.timestamp,
+        auto_resolved: false,
+      };
     }
 
     if (dataPoint.value > thresholds.warning) {
       return {
-          alert_type: 'out_of_range',
-          severity: 'warning',
-          message: `Warning value detected: ${dataPoint.value}`,
-          triggered_at: dataPoint.timestamp,
-          auto_resolved: false
-        };
+        alert_type: 'out_of_range',
+        severity: 'warning',
+        message: `Warning value detected: ${dataPoint.value}`,
+        triggered_at: dataPoint.timestamp,
+        auto_resolved: false,
+      };
     }
 
     return null;
   }
 
-  private async checkRapidChanges(patient: Patient, dataPoint: HealthDataPoint): Promise<VitalAlert | null> 
+  private async checkRapidChanges(
+    _patient: Patient,
+    _dataPoint: HealthDataPoint,
+  ): Promise<VitalAlert | null> {
     // Check for rapid changes compared to recent values
     // This would require access to recent historical data
     return null; // Simplified implementation
+  }
 
-  private async checkTrendConcerns(patient: Patient, dataPoint: HealthDataPoint): Promise<VitalAlert | null> 
+  private async checkTrendConcerns(
+    _patient: Patient,
+    _dataPoint: HealthDataPoint,
+  ): Promise<VitalAlert | null> {
     // Check if this data point indicates a concerning trend
     // This would require trend analysis of recent data
     return null; // Simplified implementation
+  }
 
-  private checkMissingData(patient: Patient, realtimeData: HealthDataPoint[]): VitalAlert[] {
+  private checkMissingData(
+    _patient: Patient,
+    realtimeData: HealthDataPoint[],
+  ): VitalAlert[] {
     const alerts: VitalAlert[] = [];
     const now = new Date();
     const _expectedInterval = 24 * 60 * 60 * 1000; // 24 hours
@@ -1539,30 +1561,34 @@ export class AIHealthMonitoringEngine {
   }
 
   private async generateHealthPrediction(
-      patient: Patient,
-      trend: HealthTrend,
-      timeHorizon: string
-    ): Promise<HealthPrediction> {
+    _patient: Patient,
+    trend: HealthTrend,
+    timeHorizon: string,
+  ): Promise<HealthPrediction> {
     // Generate prediction based on current trend
     const daysAhead = this.parseTimeHorizon(timeHorizon);
     const predictedValue =
       trend.current_value + trend.trend_analysis.slope * daysAhead;
 
     return {
-        prediction_id: `pred_${Date.now()}`,
-        prediction_type: trend.metric_name,
-        predicted_value: predictedValue,
-        prediction_date: new Date(Date.now() + daysAhead * 24 * 60 * 60 * 1000),
-        confidence_interval: [
-          predictedValue - (predictedValue * 0.1),
-          predictedValue + (predictedValue * 0.1)
-        ],
-        factors_considered: [trend.metric_name, 'historical_trend', 'patient_profile'],
-        model_accuracy: trend.trend_analysis.prediction_accuracy
-      };
+      prediction_id: `pred_${Date.now()}`,
+      prediction_type: trend.metric_name,
+      predicted_value: predictedValue,
+      prediction_date: new Date(Date.now() + daysAhead * 24 * 60 * 60 * 1000),
+      confidence_interval: [
+        predictedValue - predictedValue * 0.1,
+        predictedValue + predictedValue * 0.1,
+      ],
+      factors_considered: [
+        trend.metric_name,
+        'historical_trend',
+        'patient_profile',
+      ],
+      model_accuracy: trend.trend_analysis.prediction_accuracy,
+    };
   }
 
-  private parseTimeHorizon(timeHorizon: string): number 
+  private parseTimeHorizon(timeHorizon: string): number {
     // Parse time horizon string to days
     if (timeHorizon.includes('week')) {
       return 7;
@@ -1574,38 +1600,46 @@ export class AIHealthMonitoringEngine {
       return 1;
     }
     return 30; // default to 30 days
-
-  private async processWearableDataPoint(
-      data: any,
-      deviceInfo: WearableIntegration,
-      patient: Patient
-    ): Promise<HealthDataPoint | null> 
-    // Process wearable device data point
-    try {
-    return {
-          timestamp: new Date(data.timestamp),
-          value: data.value,
-          source: 'device',
-          quality_score: this.assessDataQuality(data, deviceInfo),
-          context: {
-            activity_level: data.activity_level || 'unknown',
-            stress_level: data.stress_level || 'unknown',
-            medication_timing: 'unknown',
-            environmental_factors: data.environmental_factors || [],
-            notes: `From ${deviceInfo.device_type}`
-          }
-        };
-  } catch (_error) {
-    return null;
   }
 
-  private validateDataQuality(dataPoint: HealthDataPoint): boolean 
-    return dataPoint.quality_score > 0.7 && 
-           dataPoint.value !== null && 
-           dataPoint.value !== undefined &&
-           !Number.isNaN(dataPoint.value);
+  private async processWearableDataPoint(
+    data: any,
+    deviceInfo: WearableIntegration,
+    _patient: Patient,
+  ): Promise<HealthDataPoint | null> {
+    // Process wearable device data point
+    try {
+      return {
+        timestamp: new Date(data.timestamp),
+        value: data.value,
+        source: 'device',
+        quality_score: this.assessDataQuality(data, deviceInfo),
+        context: {
+          activity_level: data.activity_level || 'unknown',
+          stress_level: data.stress_level || 'unknown',
+          medication_timing: 'unknown',
+          environmental_factors: data.environmental_factors || [],
+          notes: `From ${deviceInfo.device_type}`,
+        },
+      };
+    } catch (_error) {
+      return null;
+    }
+  }
 
-  private assessDataQuality(data: any, deviceInfo: WearableIntegration): number {
+  private validateDataQuality(dataPoint: HealthDataPoint): boolean {
+    return (
+      dataPoint.quality_score > 0.7 &&
+      dataPoint.value !== null &&
+      dataPoint.value !== undefined &&
+      !Number.isNaN(dataPoint.value)
+    );
+  }
+
+  private assessDataQuality(
+    data: any,
+    deviceInfo: WearableIntegration,
+  ): number {
     let quality = 0.8; // Base quality for device data
 
     // Adjust based on device type
@@ -1648,31 +1682,33 @@ export class AIHealthMonitoringEngine {
 
   private identifyImprovementAreas(analysis: HealthTrendAnalysis): string[] {
     return analysis.health_trends
-          .filter(t => t.trend_direction === 'declining')
-          .map(t => t.metric_name);
+      .filter((t) => t.trend_direction === 'declining')
+      .map((t) => t.metric_name);
   }
 
   private identifySuccessAreas(analysis: HealthTrendAnalysis): string[] {
     return analysis.health_trends
-          .filter(t => t.trend_direction === 'improving')
-          .map(t => t.metric_name);
+      .filter((t) => t.trend_direction === 'improving')
+      .map((t) => t.metric_name);
   }
 
   private analyzeBehaviorHealthCorrelations(
-      trendAnalysis: HealthTrendAnalysis,
-      behaviorAnalysis: BehaviorAnalysis
-    ): any {
+    _trendAnalysis: HealthTrendAnalysis,
+    _behaviorAnalysis: BehaviorAnalysis,
+  ): any {
     return {
-          appointment_adherence_impact: 'High adherence correlates with better health outcomes',
-          communication_effectiveness: 'Regular communication improves treatment compliance',
-          lifestyle_factors: 'Lifestyle modifications show positive health impact'
-        };
+      appointment_adherence_impact:
+        'High adherence correlates with better health outcomes',
+      communication_effectiveness:
+        'Regular communication improves treatment compliance',
+      lifestyle_factors: 'Lifestyle modifications show positive health impact',
+    };
   }
 
   private generatePersonalizedGoals(
-      patient: Patient,
-      analysis: HealthTrendAnalysis
-    ): any[] {
+    _patient: Patient,
+    analysis: HealthTrendAnalysis,
+  ): any[] {
     const goals = [];
 
     for (const trend of analysis.health_trends) {
@@ -1690,26 +1726,26 @@ export class AIHealthMonitoringEngine {
   }
 
   private generateMotivationStrategies(
-      patient: Patient,
-      behaviorAnalysis: BehaviorAnalysis
-    ): any[] {
+    _patient: Patient,
+    _behaviorAnalysis: BehaviorAnalysis,
+  ): any[] {
     return [
-        {
-          strategy: 'Progress visualization',
-          description: 'Show visual progress charts and achievements',
-          effectiveness: 'High for visual learners'
-        },
-        {
-          strategy: 'Goal setting',
-          description: 'Set achievable short-term and long-term goals',
-          effectiveness: 'High for goal-oriented individuals'
-        },
-        {
-          strategy: 'Social support',
-          description: 'Encourage family involvement and peer support',
-          effectiveness: 'High for socially motivated individuals'
-        }
-      ];
+      {
+        strategy: 'Progress visualization',
+        description: 'Show visual progress charts and achievements',
+        effectiveness: 'High for visual learners',
+      },
+      {
+        strategy: 'Goal setting',
+        description: 'Set achievable short-term and long-term goals',
+        effectiveness: 'High for goal-oriented individuals',
+      },
+      {
+        strategy: 'Social support',
+        description: 'Encourage family involvement and peer support',
+        effectiveness: 'High for socially motivated individuals',
+      },
+    ];
   }
 }
 

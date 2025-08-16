@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
           error: 'Validation failed',
           details: validation.error.format(),
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
         error: 'Failed to trigger optimization analysis',
         details: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -71,7 +71,7 @@ export async function GET(request: NextRequest) {
         error: 'Failed to fetch optimization results',
         details: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

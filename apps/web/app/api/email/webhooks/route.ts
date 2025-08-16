@@ -17,7 +17,7 @@ export async function POST(request: NextRequest) {
     if (!signature) {
       return NextResponse.json(
         { error: 'Missing webhook signature' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -34,7 +34,7 @@ export async function POST(request: NextRequest) {
     if (!provider) {
       return NextResponse.json(
         { error: 'Unknown webhook provider' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -43,13 +43,13 @@ export async function POST(request: NextRequest) {
       provider,
       body,
       signature,
-      request.headers
+      request.headers,
     );
 
     if (!isValidSignature) {
       return NextResponse.json(
         { error: 'Invalid webhook signature' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -63,7 +63,7 @@ export async function POST(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -72,7 +72,7 @@ async function verifyWebhookSignature(
   provider: string,
   body: string,
   signature: string,
-  headers: Headers
+  headers: Headers,
 ): Promise<boolean> {
   try {
     switch (provider) {

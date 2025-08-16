@@ -206,7 +206,7 @@ const MedicalRecordSchema = z.object({
         end_date: z.string().optional(),
         prescriber: z.string(),
         notes: z.string().optional(),
-      })
+      }),
     )
     .optional(),
   allergies: z
@@ -217,7 +217,7 @@ const MedicalRecordSchema = z.object({
         severity: z.enum(['mild', 'moderate', 'severe']),
         onset_date: z.string().optional(),
         notes: z.string().optional(),
-      })
+      }),
     )
     .optional(),
   vital_signs: z
@@ -247,7 +247,7 @@ export class MedicalRecordsManager {
   constructor() {
     this.supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
     );
     this.lgpdManager = new LGPDManager();
     this.auditLogger = new AuditLogger();
@@ -262,7 +262,7 @@ export class MedicalRecordsManager {
       MedicalRecord,
       'id' | 'created_at' | 'updated_at' | 'version'
     >,
-    userId: string
+    userId: string,
   ): Promise<{ success: boolean; data?: MedicalRecord; error?: string }> {
     try {
       // Validate input
@@ -271,7 +271,7 @@ export class MedicalRecordsManager {
       // Check LGPD consent
       const consentCheck = await this.lgpdManager.checkConsent(
         recordData.patient_id,
-        'medical_data'
+        'medical_data',
       );
 
       if (!consentCheck.hasConsent) {
@@ -328,7 +328,7 @@ export class MedicalRecordsManager {
 
   async getMedicalRecord(
     recordId: string,
-    userId: string
+    userId: string,
   ): Promise<{ success: boolean; data?: MedicalRecord; error?: string }> {
     try {
       const { data, error } = await this.supabase
@@ -338,7 +338,7 @@ export class MedicalRecordsManager {
           *,
           attachments:medical_attachments(*),
           digital_signatures(*)
-        `
+        `,
         )
         .eq('id', recordId)
         .eq('status', RecordStatus.ACTIVE)
@@ -374,7 +374,7 @@ export class MedicalRecordsManager {
   async updateMedicalRecord(
     recordId: string,
     updates: Partial<MedicalRecord>,
-    userId: string
+    userId: string,
   ): Promise<{ success: boolean; data?: MedicalRecord; error?: string }> {
     try {
       // Get current record for versioning
@@ -435,7 +435,7 @@ export class MedicalRecordsManager {
       offset?: number;
       sortBy?: 'created_at' | 'updated_at';
       sortOrder?: 'asc' | 'desc';
-    }
+    },
   ): Promise<{
     success: boolean;
     data?: MedicalRecord[];
@@ -460,7 +460,7 @@ export class MedicalRecordsManager {
       if (options?.offset) {
         query = query.range(
           options.offset,
-          options.offset + (options.limit || 10) - 1
+          options.offset + (options.limit || 10) - 1,
         );
       }
 
@@ -501,13 +501,13 @@ export class MedicalRecordsManager {
 
   async createMedicalHistory(
     historyData: Omit<MedicalHistory, 'id' | 'created_at' | 'updated_at'>,
-    userId: string
+    userId: string,
   ): Promise<{ success: boolean; data?: MedicalHistory; error?: string }> {
     try {
       // Check LGPD consent
       const consentCheck = await this.lgpdManager.checkConsent(
         historyData.patient_id,
-        'medical_data'
+        'medical_data',
       );
 
       if (!consentCheck.hasConsent) {
@@ -559,7 +559,7 @@ export class MedicalRecordsManager {
 
   async getPatientMedicalHistory(
     patientId: string,
-    userId: string
+    userId: string,
   ): Promise<{ success: boolean; data?: MedicalHistory; error?: string }> {
     try {
       const { data, error } = await this.supabase
@@ -595,7 +595,7 @@ export class MedicalRecordsManager {
   async updateMedicalHistory(
     patientId: string,
     updates: Partial<MedicalHistory>,
-    userId: string
+    userId: string,
   ): Promise<{ success: boolean; data?: MedicalHistory; error?: string }> {
     try {
       const now = new Date().toISOString();
@@ -651,7 +651,7 @@ export class MedicalRecordsManager {
       description?: string;
       isBeforeAfter?: boolean;
       beforeAfterPairId?: string;
-    }
+    },
   ): Promise<{ success: boolean; data?: MedicalAttachment; error?: string }> {
     try {
       const attachmentId = crypto.randomUUID();
@@ -731,7 +731,7 @@ export class MedicalRecordsManager {
 
   async getRecordAttachments(
     recordId: string,
-    _userId: string
+    _userId: string,
   ): Promise<{ success: boolean; data?: MedicalAttachment[]; error?: string }> {
     try {
       const { data, error } = await this.supabase
@@ -755,7 +755,7 @@ export class MedicalRecordsManager {
 
   async deleteAttachment(
     attachmentId: string,
-    userId: string
+    userId: string,
   ): Promise<{ success: boolean; error?: string }> {
     try {
       // Get attachment info first
@@ -812,7 +812,7 @@ export class MedicalRecordsManager {
     recordId: string,
     signerId: string,
     signerName: string,
-    signerRole: string
+    signerRole: string,
   ): Promise<{ success: boolean; data?: DigitalSignature; error?: string }> {
     try {
       // Get record data for signing
@@ -878,7 +878,7 @@ export class MedicalRecordsManager {
   }
 
   async verifySignature(
-    signatureId: string
+    signatureId: string,
   ): Promise<{ success: boolean; isValid?: boolean; error?: string }> {
     try {
       const { data: signature, error } = await this.supabase
@@ -894,7 +894,7 @@ export class MedicalRecordsManager {
       // Get current record data
       const recordResult = await this.getMedicalRecord(
         signature.record_id,
-        signature.signer_id
+        signature.signer_id,
       );
 
       if (!(recordResult.success && recordResult.data)) {
@@ -919,7 +919,7 @@ export class MedicalRecordsManager {
 
   private async createRecordVersion(
     record: MedicalRecord,
-    userId: string
+    userId: string,
   ): Promise<void> {
     try {
       const versionData = {
@@ -936,7 +936,7 @@ export class MedicalRecordsManager {
 
   private async generateThumbnail(
     filePath: string,
-    _file: File
+    _file: File,
   ): Promise<string | undefined> {
     try {
       // Simplified thumbnail generation
@@ -968,7 +968,7 @@ export class MedicalRecordsManager {
       recordType?: MedicalRecordType;
       dateFrom?: string;
       dateTo?: string;
-    }
+    },
   ): Promise<{ success: boolean; data?: MedicalRecord[]; error?: string }> {
     try {
       let dbQuery = this.supabase
@@ -977,7 +977,7 @@ export class MedicalRecordsManager {
         .eq('clinic_id', clinicId)
         .eq('status', RecordStatus.ACTIVE)
         .or(
-          `title.ilike.%${query}%,description.ilike.%${query}%,diagnosis.ilike.%${query}%`
+          `title.ilike.%${query}%,description.ilike.%${query}%,diagnosis.ilike.%${query}%`,
         );
 
       if (filters?.patientId) {
@@ -1029,7 +1029,7 @@ export class MedicalRecordsManager {
   async getRecordStatistics(
     clinicId: string,
     _userId: string,
-    period?: { from: string; to: string }
+    period?: { from: string; to: string },
   ): Promise<{ success: boolean; data?: any; error?: string }> {
     try {
       let query = this.supabase

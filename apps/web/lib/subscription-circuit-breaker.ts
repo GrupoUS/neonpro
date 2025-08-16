@@ -129,7 +129,7 @@ export class SubscriptionCircuitBreaker {
     if (this.config.monitoring.enabled) {
       this.logStateChange(
         CircuitBreakerState.CLOSED,
-        'Circuit breaker initialized'
+        'Circuit breaker initialized',
       );
     }
   }
@@ -139,7 +139,7 @@ export class SubscriptionCircuitBreaker {
    */
   async execute<T>(
     operation: () => Promise<T>,
-    context?: ErrorContext
+    context?: ErrorContext,
   ): Promise<CircuitBreakerResult<T>> {
     const startTime = Date.now();
     this.totalRequests++;
@@ -156,7 +156,7 @@ export class SubscriptionCircuitBreaker {
         const error = SubscriptionErrorFactory.createError(
           'external_service',
           `Circuit breaker is OPEN for ${this.serviceName}`,
-          context
+          context,
         );
 
         return {
@@ -179,7 +179,7 @@ export class SubscriptionCircuitBreaker {
         const error = SubscriptionErrorFactory.createError(
           'rate_limit',
           `Circuit breaker is HALF_OPEN with maximum concurrent requests for ${this.serviceName}`,
-          context
+          context,
         );
 
         return {
@@ -218,7 +218,7 @@ export class SubscriptionCircuitBreaker {
           : SubscriptionErrorFactory.createError(
               'external_service',
               error instanceof Error ? error.message : 'Unknown error',
-              context
+              context,
             );
 
       // Record failure
@@ -289,13 +289,13 @@ export class SubscriptionCircuitBreaker {
       this.stateChangedAt = new Date();
       this.logStateChange(
         CircuitBreakerState.OPEN,
-        'Circuit opened due to failures'
+        'Circuit opened due to failures',
       );
 
       // Alert if configured
       if (this.config.monitoring.alertOnOpen) {
         this.sendAlert(
-          `Circuit breaker opened for ${this.serviceName} after ${this.failureCount} failures`
+          `Circuit breaker opened for ${this.serviceName} after ${this.failureCount} failures`,
         );
       }
     } else if (this.state === CircuitBreakerState.HALF_OPEN) {
@@ -305,7 +305,7 @@ export class SubscriptionCircuitBreaker {
       this.stateChangedAt = new Date();
       this.logStateChange(
         CircuitBreakerState.OPEN,
-        'Circuit opened from half-open due to failure'
+        'Circuit opened from half-open due to failure',
       );
     }
   }
@@ -389,7 +389,7 @@ export class SubscriptionCircuitBreaker {
             this.stateChangedAt = new Date();
             this.logStateChange(
               CircuitBreakerState.HALF_OPEN,
-              'Health check passed, attempting reset'
+              'Health check passed, attempting reset',
             );
           }
         } catch (_error) {
@@ -415,7 +415,7 @@ export class SubscriptionCircuitBreaker {
    */
   private logStateChange(
     _newState: CircuitBreakerState,
-    _reason: string
+    _reason: string,
   ): void {
     if (
       this.config.monitoring.enabled &&
@@ -490,7 +490,7 @@ export class SubscriptionCacheCircuitBreaker extends SubscriptionCircuitBreaker 
       new Promise<void>((_, reject) => {
         setTimeout(
           () => reject(new Error('Cache health check timeout')),
-          timeout
+          timeout,
         );
       }),
     ]);
@@ -519,7 +519,7 @@ export class SubscriptionExternalAPICircuitBreaker extends SubscriptionCircuitBr
       new Promise<void>((_, reject) => {
         setTimeout(
           () => reject(new Error('API health check timeout')),
-          timeout
+          timeout,
         );
       }),
     ]);

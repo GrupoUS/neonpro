@@ -354,7 +354,7 @@ export const cvProgressAnalysisSchema = z.object({
       }),
       confidence: z.number().min(0).max(100),
       measurements: z.record(z.number()),
-    })
+    }),
   ),
   overall_score: z.number().min(0).max(100),
   confidence_score: z.number().min(0).max(100),
@@ -379,7 +379,7 @@ export const cvProgressAnalysisSchema = z.object({
         y: z.number(),
       }),
       data: z.record(z.any()),
-    })
+    }),
   ),
 });
 

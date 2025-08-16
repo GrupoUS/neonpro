@@ -45,7 +45,7 @@ export const PatientProfileSchema = z.object({
     .string()
     .regex(
       /^\(\d{2}\)\s\d{4,5}-\d{4}$/,
-      'Telefone deve estar no formato (XX) XXXXX-XXXX'
+      'Telefone deve estar no formato (XX) XXXXX-XXXX',
     )
     .optional(),
 
@@ -53,7 +53,7 @@ export const PatientProfileSchema = z.object({
     .string()
     .regex(
       /^\(\d{2}\)\s\d{5}-\d{4}$/,
-      'Celular deve estar no formato (XX) XXXXX-XXXX'
+      'Celular deve estar no formato (XX) XXXXX-XXXX',
     ),
 
   email: z
@@ -148,7 +148,7 @@ export const PatientProfileSchema = z.object({
           .string()
           .regex(
             /^\(\d{2}\)\s\d{4,5}-\d{4}$/,
-            'Telefone deve estar no formato (XX) XXXXX-XXXX'
+            'Telefone deve estar no formato (XX) XXXXX-XXXX',
           ),
 
         email: z
@@ -158,7 +158,7 @@ export const PatientProfileSchema = z.object({
           .optional(),
 
         isPrimary: z.boolean().default(false),
-      })
+      }),
     )
     .max(3, 'Máximo de 3 contatos de emergência permitidos'),
 
@@ -168,14 +168,14 @@ export const PatientProfileSchema = z.object({
       .boolean()
       .refine(
         (val) => val === true,
-        'Consentimento para processamento de dados é obrigatório'
+        'Consentimento para processamento de dados é obrigatório',
       ),
 
     sensitiveDataConsent: z
       .boolean()
       .refine(
         (val) => val === true,
-        'Consentimento para dados sensíveis de saúde é obrigatório'
+        'Consentimento para dados sensíveis de saúde é obrigatório',
       ),
 
     marketingConsent: z.boolean().default(false),
@@ -184,7 +184,7 @@ export const PatientProfileSchema = z.object({
       .boolean()
       .refine(
         (val) => val === true,
-        'Reconhecimento sobre retenção de dados é obrigatório'
+        'Reconhecimento sobre retenção de dados é obrigatório',
       ),
 
     consentDate: z.string().optional(),

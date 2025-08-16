@@ -25,7 +25,7 @@ export async function POST(request: NextRequest) {
         if (sessionError || !session?.user) {
           return NextResponse.json(
             { error: 'Authentication required' },
-            { status: 401 }
+            { status: 401 },
           );
         }
 
@@ -55,13 +55,13 @@ export async function POST(request: NextRequest) {
       } catch (_error) {
         return NextResponse.json(
           { error: 'Failed to generate registration options' },
-          { status: 500 }
+          { status: 500 },
         );
       }
     },
     {
       method: 'webauthn',
       additionalData: { operation: 'registration_options' },
-    }
+    },
   );
 }

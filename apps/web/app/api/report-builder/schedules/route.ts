@@ -19,7 +19,7 @@ export async function GET(request: NextRequest) {
           success: false,
           error: 'Report ID is required',
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -38,7 +38,7 @@ export async function GET(request: NextRequest) {
             ? error.message
             : 'Failed to fetch report schedules',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -57,7 +57,7 @@ export async function POST(request: NextRequest) {
           error: 'Invalid request data',
           details: validationResult.error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -68,7 +68,7 @@ export async function POST(request: NextRequest) {
         success: true,
         data: schedule,
       },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (error) {
     return NextResponse.json(
@@ -79,7 +79,7 @@ export async function POST(request: NextRequest) {
             ? error.message
             : 'Failed to create report schedule',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

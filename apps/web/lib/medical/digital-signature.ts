@@ -175,7 +175,7 @@ export class DigitalSignatureManager {
   constructor() {
     this.supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
     );
     this.auditLogger = new AuditLogger();
     this.lgpdManager = new LGPDManager();
@@ -191,7 +191,7 @@ export class DigitalSignatureManager {
     signerName: string,
     signerEmail: string,
     signerRole: SignerRole,
-    options: SignatureOptions
+    options: SignatureOptions,
   ): Promise<{ success: boolean; data?: DigitalSignature; error?: string }> {
     try {
       // Get document hash
@@ -203,7 +203,7 @@ export class DigitalSignatureManager {
       // Check LGPD consent for signature
       const consentCheck = await this.lgpdManager.checkConsent(
         signerId,
-        'digital_signature'
+        'digital_signature',
       );
 
       if (!consentCheck.hasConsent) {
@@ -227,7 +227,7 @@ export class DigitalSignatureManager {
             documentHash,
             options.certificatePath!,
             options.privateKeyPath!,
-            options.pin
+            options.pin,
           );
           signatureData = certResult.signature;
           certificateData = certResult.certificate;
@@ -239,14 +239,14 @@ export class DigitalSignatureManager {
           signatureData = await this.createElectronicSignature(
             documentHash,
             signerId,
-            timestamp
+            timestamp,
           );
           break;
 
         case SignatureType.BIOMETRIC_SIGNATURE:
           signatureData = await this.createBiometricSignature(
             documentHash,
-            options.biometricData
+            options.biometricData,
           );
           break;
 
@@ -255,7 +255,7 @@ export class DigitalSignatureManager {
             documentHash,
             signerId,
             options.pin!,
-            timestamp
+            timestamp,
           );
           break;
 
@@ -345,7 +345,7 @@ export class DigitalSignatureManager {
 
   async verifySignature(
     signatureId: string,
-    options?: VerificationOptions
+    options?: VerificationOptions,
   ): Promise<{ success: boolean; data?: ValidationDetails; error?: string }> {
     try {
       // Get signature
@@ -364,7 +364,7 @@ export class DigitalSignatureManager {
 
       // Get current document hash
       const currentDocumentHash = await this.getDocumentHash(
-        signature.document_id
+        signature.document_id,
       );
       if (!currentDocumentHash) {
         return { success: false, error: 'Document not found' };
@@ -385,7 +385,7 @@ export class DigitalSignatureManager {
       if (signature.document_hash !== currentDocumentHash) {
         validationDetails.document_unchanged = false;
         validationDetails.validation_errors.push(
-          'Document has been modified after signing'
+          'Document has been modified after signing',
         );
       }
 
@@ -394,7 +394,7 @@ export class DigitalSignatureManager {
         case SignatureType.DIGITAL_CERTIFICATE: {
           const certValidation = await this.verifyCertificateSignature(
             signature,
-            options
+            options,
           );
           Object.assign(validationDetails, certValidation);
           break;
@@ -425,7 +425,7 @@ export class DigitalSignatureManager {
       const signatureAge = Date.now() - new Date(signature.timestamp).getTime();
       if (signatureAge > this.SIGNATURE_VALIDITY_PERIOD) {
         validationDetails.validation_warnings.push(
-          'Signature is older than recommended validity period'
+          'Signature is older than recommended validity period',
         );
       }
 
@@ -472,7 +472,7 @@ export class DigitalSignatureManager {
     requiredSigners: Omit<RequiredSigner, 'id'>[],
     signatureOrder: SignatureOrder,
     deadline?: string,
-    instructions?: string
+    instructions?: string,
   ): Promise<{ success: boolean; data?: SignatureRequest; error?: string }> {
     try {
       const requestId = crypto.randomUUID();
@@ -484,7 +484,7 @@ export class DigitalSignatureManager {
           ...signer,
           id: crypto.randomUUID(),
           order_index: index,
-        })
+        }),
       );
 
       const request: SignatureRequest = {
@@ -536,7 +536,7 @@ export class DigitalSignatureManager {
   }
 
   async getSignatureRequest(
-    requestId: string
+    requestId: string,
   ): Promise<{ success: boolean; data?: SignatureRequest; error?: string }> {
     try {
       const { data, error } = await this.supabase
@@ -566,7 +566,7 @@ export class DigitalSignatureManager {
     signerId: string,
     action: 'sign' | 'decline',
     signatureId?: string,
-    declineReason?: string
+    declineReason?: string,
   ): Promise<{ success: boolean; error?: string }> {
     try {
       // Get current request
@@ -664,7 +664,7 @@ export class DigitalSignatureManager {
     documentHash: string,
     _certificatePath: string,
     _privateKeyPath: string,
-    _pin?: string
+    _pin?: string,
   ): Promise<{ signature: string; certificate: string; thumbprint: string }> {
     try {
       // In a real implementation, use actual certificate libraries
@@ -691,7 +691,7 @@ export class DigitalSignatureManager {
   private async createElectronicSignature(
     documentHash: string,
     signerId: string,
-    timestamp: string
+    timestamp: string,
   ): Promise<string> {
     try {
       const signatureData = `${documentHash}:${signerId}:${timestamp}`;
@@ -703,7 +703,7 @@ export class DigitalSignatureManager {
 
   private async createBiometricSignature(
     documentHash: string,
-    biometricData: any
+    biometricData: any,
   ): Promise<string> {
     try {
       const biometricHash = crypto
@@ -722,7 +722,7 @@ export class DigitalSignatureManager {
     documentHash: string,
     signerId: string,
     pin: string,
-    timestamp: string
+    timestamp: string,
   ): Promise<string> {
     try {
       const pinHash = crypto.createHash('sha256').update(pin).digest('hex');
@@ -740,7 +740,7 @@ export class DigitalSignatureManager {
 
   private async verifyCertificateSignature(
     _signature: DigitalSignature,
-    _options?: VerificationOptions
+    _options?: VerificationOptions,
   ): Promise<Partial<ValidationDetails>> {
     try {
       // In a real implementation, verify actual certificate
@@ -764,13 +764,13 @@ export class DigitalSignatureManager {
   }
 
   private async verifyElectronicSignature(
-    signature: DigitalSignature
+    signature: DigitalSignature,
   ): Promise<boolean> {
     try {
       const expectedSignature = await this.createElectronicSignature(
         signature.document_hash,
         signature.signer_id,
-        signature.timestamp
+        signature.timestamp,
       );
 
       return signature.signature_data === expectedSignature;
@@ -780,7 +780,7 @@ export class DigitalSignatureManager {
   }
 
   private async verifyBiometricSignature(
-    signature: DigitalSignature
+    signature: DigitalSignature,
   ): Promise<boolean> {
     try {
       if (!signature.metadata?.biometric_data) {
@@ -789,7 +789,7 @@ export class DigitalSignatureManager {
 
       const expectedSignature = await this.createBiometricSignature(
         signature.document_hash,
-        signature.metadata.biometric_data
+        signature.metadata.biometric_data,
       );
 
       return signature.signature_data === expectedSignature;
@@ -799,7 +799,7 @@ export class DigitalSignatureManager {
   }
 
   private async verifyPinSignature(
-    _signature: DigitalSignature
+    _signature: DigitalSignature,
   ): Promise<boolean> {
     try {
       // PIN verification requires the original PIN, which we don't store
@@ -834,7 +834,7 @@ export class DigitalSignatureManager {
   }
 
   private async updateDocumentSignatureStatus(
-    documentId: string
+    documentId: string,
   ): Promise<void> {
     try {
       // Count signatures for this document
@@ -866,7 +866,7 @@ export class DigitalSignatureManager {
   }
 
   private async sendSignatureNotifications(
-    request: SignatureRequest
+    request: SignatureRequest,
   ): Promise<void> {
     try {
       // In a real implementation, send email/SMS notifications
@@ -887,7 +887,7 @@ export class DigitalSignatureManager {
   // ========================================================================
 
   async getDocumentSignatures(
-    documentId: string
+    documentId: string,
   ): Promise<{ success: boolean; data?: DigitalSignature[]; error?: string }> {
     try {
       const { data, error } = await this.supabase
@@ -911,7 +911,7 @@ export class DigitalSignatureManager {
 
   async getUserSignatures(
     userId: string,
-    limit?: number
+    limit?: number,
   ): Promise<{ success: boolean; data?: DigitalSignature[]; error?: string }> {
     try {
       let query = this.supabase
@@ -940,7 +940,7 @@ export class DigitalSignatureManager {
   }
 
   async getPendingSignatureRequests(
-    userId: string
+    userId: string,
   ): Promise<{ success: boolean; data?: SignatureRequest[]; error?: string }> {
     try {
       const { data, error } = await this.supabase
@@ -957,7 +957,7 @@ export class DigitalSignatureManager {
       // Filter requests where user hasn't signed yet
       const pendingRequests = (data || []).filter((request) => {
         const userSigner = request.required_signers.find(
-          (s) => s.user_id === userId
+          (s) => s.user_id === userId,
         );
         return userSigner && !userSigner.signed_at && !userSigner.declined_at;
       });
@@ -978,7 +978,7 @@ export class DigitalSignatureManager {
   async revokeSignature(
     signatureId: string,
     reason: string,
-    revokedBy: string
+    revokedBy: string,
   ): Promise<{ success: boolean; error?: string }> {
     try {
       const { error } = await this.supabase
@@ -1017,7 +1017,7 @@ export class DigitalSignatureManager {
 
   async getSignatureStatistics(
     _clinicId: string,
-    period?: { from: string; to: string }
+    period?: { from: string; to: string },
   ): Promise<{ success: boolean; data?: any; error?: string }> {
     try {
       let query = this.supabase

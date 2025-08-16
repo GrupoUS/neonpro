@@ -32,7 +32,7 @@ export async function POST(request: NextRequest) {
     if (!(plan_id && billing_cycle)) {
       return NextResponse.json(
         { error: 'Missing required fields: plan_id, billing_cycle' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
     if (!userClinic) {
       return NextResponse.json(
         { error: 'No active clinic found' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -62,7 +62,7 @@ export async function POST(request: NextRequest) {
     if (planError || !plan) {
       return NextResponse.json(
         { error: 'Invalid subscription plan' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -81,14 +81,14 @@ export async function POST(request: NextRequest) {
       default:
         return NextResponse.json(
           { error: 'Invalid billing cycle' },
-          { status: 400 }
+          { status: 400 },
         );
     }
 
     if (price <= 0) {
       return NextResponse.json(
         { error: 'Price not available for selected billing cycle' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -108,7 +108,7 @@ export async function POST(request: NextRequest) {
           message:
             'Você já possui uma assinatura ativa. Para alterar o plano, use a função de upgrade/downgrade.',
         },
-        { status: 409 }
+        { status: 409 },
       );
     }
 
@@ -134,7 +134,7 @@ export async function POST(request: NextRequest) {
     } else {
       return NextResponse.json(
         { error: 'Unsupported payment provider' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -174,7 +174,7 @@ export async function POST(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

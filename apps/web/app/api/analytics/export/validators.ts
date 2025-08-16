@@ -165,7 +165,7 @@ function validateCohortData(data: any): string[] {
       }
       if (typeof metric.totalUsers !== 'number' || metric.totalUsers < 0) {
         errors.push(
-          `Metric ${index}: totalUsers must be a non-negative number`
+          `Metric ${index}: totalUsers must be a non-negative number`,
         );
       }
       if (
@@ -174,7 +174,7 @@ function validateCohortData(data: any): string[] {
         metric.retentionRate > 100
       ) {
         errors.push(
-          `Metric ${index}: retentionRate must be a number between 0 and 100`
+          `Metric ${index}: retentionRate must be a number between 0 and 100`,
         );
       }
       if (typeof metric.revenue !== 'number' || metric.revenue < 0) {
@@ -186,7 +186,7 @@ function validateCohortData(data: any): string[] {
         metric.churnRate > 100
       ) {
         errors.push(
-          `Metric ${index}: churnRate must be a number between 0 and 100`
+          `Metric ${index}: churnRate must be a number between 0 and 100`,
         );
       }
     });
@@ -237,7 +237,7 @@ function validateForecastData(data: any): string[] {
           prediction.confidence > 1)
       ) {
         errors.push(
-          `Prediction ${index}: confidence must be a number between 0 and 1`
+          `Prediction ${index}: confidence must be a number between 0 and 1`,
         );
       }
     });
@@ -264,7 +264,7 @@ function validateInsightsData(data: any): string[] {
     data.correlations.forEach((corr: any, index: number) => {
       if (!(corr.metric1 && corr.metric2)) {
         errors.push(
-          `Correlation ${index}: both metric1 and metric2 are required`
+          `Correlation ${index}: both metric1 and metric2 are required`,
         );
       }
       if (
@@ -273,7 +273,7 @@ function validateInsightsData(data: any): string[] {
         corr.correlation > 1
       ) {
         errors.push(
-          `Correlation ${index}: correlation must be a number between -1 and 1`
+          `Correlation ${index}: correlation must be a number between -1 and 1`,
         );
       }
     });
@@ -300,7 +300,7 @@ function validateInsightsData(data: any): string[] {
         !['Low', 'Medium', 'High', 'Critical'].includes(anomaly.severity)
       ) {
         errors.push(
-          `Anomaly ${index}: severity must be Low, Medium, High, or Critical`
+          `Anomaly ${index}: severity must be Low, Medium, High, or Critical`,
         );
       }
     });
@@ -446,7 +446,7 @@ export function validateRequest(request: ExportRequest): ValidationResult {
  * Sanitizes and normalizes export options
  */
 export function normalizeOptions(
-  options: Partial<ExportOptions> = {}
+  options: Partial<ExportOptions> = {},
 ): ExportOptions {
   return {
     format: options.format || 'csv',
@@ -468,7 +468,7 @@ export function normalizeOptions(
  */
 export function validateFileSize(
   data: Buffer | string,
-  maxSize: number = 50 * 1024 * 1024
+  maxSize: number = 50 * 1024 * 1024,
 ): ValidationResult {
   const size = Buffer.isBuffer(data)
     ? data.length
@@ -492,18 +492,18 @@ export function validateFileSize(
 export function validateRateLimit(
   _userId: string,
   exportHistory: Array<{ createdAt: string }>,
-  limits: { maxExportsPerHour: number; maxExportsPerDay: number }
+  limits: { maxExportsPerHour: number; maxExportsPerDay: number },
 ): ValidationResult {
   const now = new Date();
   const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000);
   const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
 
   const recentExports = exportHistory.filter(
-    (export_) => new Date(export_.createdAt) > oneHourAgo
+    (export_) => new Date(export_.createdAt) > oneHourAgo,
   );
 
   const dailyExports = exportHistory.filter(
-    (export_) => new Date(export_.createdAt) > oneDayAgo
+    (export_) => new Date(export_.createdAt) > oneDayAgo,
   );
 
   if (recentExports.length >= limits.maxExportsPerHour) {
@@ -532,7 +532,7 @@ export function validateRateLimit(
  */
 export function createValidationError(
   errors: string[],
-  code: ExportErrorCode = ExportErrorCode.VALIDATION_FAILED
+  code: ExportErrorCode = ExportErrorCode.VALIDATION_FAILED,
 ) {
   return {
     success: false as const,

@@ -145,13 +145,13 @@ export class NFSeGenerator {
       // Submit to municipal system
       const submissionResult = await this.submitToMunicipality(
         signedXML,
-        validatedRequest
+        validatedRequest,
       );
 
       // Process response
       const response = await this.processSubmissionResponse(
         submissionResult,
-        validatedRequest
+        validatedRequest,
       );
 
       // Store in database
@@ -167,7 +167,7 @@ export class NFSeGenerator {
    * Generate multiple NFSe in batch
    */
   async generateNFSeBatch(
-    batchRequest: NFSeBatchRequest
+    batchRequest: NFSeBatchRequest,
   ): Promise<NFSeBatchResponse> {
     try {
       const response: NFSeBatchResponse = {
@@ -202,7 +202,7 @@ export class NFSeGenerator {
           } else {
             response.failedRequests++;
             response.results.push(
-              this.createErrorResponse(result.reason, 'batch')
+              this.createErrorResponse(result.reason, 'batch'),
             );
           }
         }
@@ -232,7 +232,7 @@ export class NFSeGenerator {
    */
   async cancelNFSe(
     nfseNumber: string,
-    reason: string
+    reason: string,
   ): Promise<{
     success: boolean;
     cancellationDate?: Date;
@@ -248,7 +248,7 @@ export class NFSeGenerator {
       // Generate cancellation XML
       const cancellationXML = await this.generateCancellationXML(
         nfseNumber,
-        reason
+        reason,
       );
 
       // Sign XML
@@ -257,7 +257,7 @@ export class NFSeGenerator {
       // Submit cancellation to municipality
       const cancellationResult = await this.submitCancellation(
         signedXML,
-        nfseNumber
+        nfseNumber,
       );
 
       // Update database record
@@ -429,7 +429,7 @@ export class NFSeGenerator {
 
   private async submitToMunicipality(
     signedXML: string,
-    _request: NFSeRequest
+    _request: NFSeRequest,
   ): Promise<any> {
     const response = await fetch(this.config.webserviceUrl, {
       method: 'POST',
@@ -450,7 +450,7 @@ export class NFSeGenerator {
 
   private async processSubmissionResponse(
     submissionResult: any,
-    _request: NFSeRequest
+    _request: NFSeRequest,
   ): Promise<NFSeResponse> {
     // Process municipality response and extract NFSe data
     // Implementation varies by municipality response format
@@ -584,7 +584,7 @@ export class NFSeGenerator {
 
   private async storeNFSeRecord(
     _request: NFSeRequest,
-    _response: NFSeResponse
+    _response: NFSeResponse,
   ): Promise<void> {
     // Store NFSe record in database
     // Implementation would use Supabase/database integration
@@ -593,21 +593,21 @@ export class NFSeGenerator {
   private async updateNFSeStatus(
     _nfseNumber: string,
     _status: string,
-    _data: any
+    _data: any,
   ): Promise<void> {
     // Update NFSe status in database
   }
 
   private async syncNFSeStatus(
     _nfseNumber: string,
-    _queryResult: any
+    _queryResult: any,
   ): Promise<void> {
     // Sync NFSe status with database
   }
 
   private async sendBatchCallback(
     callbackUrl: string,
-    response: NFSeBatchResponse
+    response: NFSeBatchResponse,
   ): Promise<void> {
     // Send batch completion callback
     try {
@@ -621,7 +621,7 @@ export class NFSeGenerator {
 
   private async generateCancellationXML(
     nfseNumber: string,
-    _reason: string
+    _reason: string,
   ): Promise<string> {
     return `<?xml version="1.0" encoding="UTF-8"?>
 <CancelarNfseEnvio xmlns="http://www.abrasf.org.br/nfse.xsd">
@@ -641,7 +641,7 @@ export class NFSeGenerator {
 
   private async submitCancellation(
     _signedXML: string,
-    _nfseNumber: string
+    _nfseNumber: string,
   ): Promise<any> {
     // Submit cancellation to municipality
     return { protocol: `CANCEL_${Date.now()}` };
@@ -683,7 +683,7 @@ export const NFSeUtils = {
 
     const checkDigit1 = NFSeUtils.calculateCheckDigit(
       digits.slice(0, 12),
-      weights
+      weights,
     );
     const checkDigit2 = NFSeUtils.calculateCheckDigit(digits.slice(0, 13), [
       6,
@@ -702,11 +702,11 @@ export const NFSeUtils = {
     const digits = cleanCPF.split('').map(Number);
     const checkDigit1 = NFSeUtils.calculateCPFCheckDigit(
       digits.slice(0, 9),
-      [10, 9, 8, 7, 6, 5, 4, 3, 2]
+      [10, 9, 8, 7, 6, 5, 4, 3, 2],
     );
     const checkDigit2 = NFSeUtils.calculateCPFCheckDigit(
       digits.slice(0, 10),
-      [11, 10, 9, 8, 7, 6, 5, 4, 3, 2]
+      [11, 10, 9, 8, 7, 6, 5, 4, 3, 2],
     );
 
     return digits[9] === checkDigit1 && digits[10] === checkDigit2;
@@ -715,7 +715,7 @@ export const NFSeUtils = {
   calculateCheckDigit: (digits: number[], weights: number[]): number => {
     const sum = digits.reduce(
       (acc, digit, index) => acc + digit * weights[index],
-      0
+      0,
     );
     const remainder = sum % 11;
     return remainder < 2 ? 0 : 11 - remainder;
@@ -724,7 +724,7 @@ export const NFSeUtils = {
   calculateCPFCheckDigit: (digits: number[], weights: number[]): number => {
     const sum = digits.reduce(
       (acc, digit, index) => acc + digit * weights[index],
-      0
+      0,
     );
     const remainder = sum % 11;
     return remainder < 2 ? 0 : 11 - remainder;
@@ -734,7 +734,7 @@ export const NFSeUtils = {
     const clean = cnpj.replace(/[^\d]/g, '');
     return clean.replace(
       /^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/,
-      '$1.$2.$3/$4-$5'
+      '$1.$2.$3/$4-$5',
     );
   },
 

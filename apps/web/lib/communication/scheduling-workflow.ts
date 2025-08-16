@@ -93,7 +93,7 @@ export class SchedulingCommunicationWorkflow {
    */
   async initializeWorkflows(
     appointmentId: string,
-    config?: Partial<WorkflowConfig>
+    config?: Partial<WorkflowConfig>,
   ): Promise<WorkflowExecution[]> {
     // Get appointment details
     const { data: appointment, error: appointmentError } = await this.supabase
@@ -105,7 +105,7 @@ export class SchedulingCommunicationWorkflow {
           professionals(*),
           services(*),
           clinics(*)
-        `
+        `,
       )
       .eq('id', appointmentId)
       .single();
@@ -117,7 +117,7 @@ export class SchedulingCommunicationWorkflow {
     // Get clinic workflow configuration
     const workflowConfig = await this.getWorkflowConfig(
       appointment.clinic_id,
-      config
+      config,
     );
 
     if (!workflowConfig.enabled) {
@@ -131,7 +131,7 @@ export class SchedulingCommunicationWorkflow {
     // 1. Schedule reminder workflows
     if (workflowConfig.reminderSettings.enabled24h) {
       const reminderTime24h = new Date(
-        appointmentDate.getTime() - 24 * 60 * 60 * 1000
+        appointmentDate.getTime() - 24 * 60 * 60 * 1000,
       );
       if (reminderTime24h > now) {
         workflows.push(
@@ -139,15 +139,15 @@ export class SchedulingCommunicationWorkflow {
             appointment,
             '24h',
             reminderTime24h,
-            workflowConfig
-          )
+            workflowConfig,
+          ),
         );
       }
     }
 
     if (workflowConfig.reminderSettings.enabled2h) {
       const reminderTime2h = new Date(
-        appointmentDate.getTime() - 2 * 60 * 60 * 1000
+        appointmentDate.getTime() - 2 * 60 * 60 * 1000,
       );
       if (reminderTime2h > now) {
         workflows.push(
@@ -155,15 +155,15 @@ export class SchedulingCommunicationWorkflow {
             appointment,
             '2h',
             reminderTime2h,
-            workflowConfig
-          )
+            workflowConfig,
+          ),
         );
       }
     }
 
     if (workflowConfig.reminderSettings.enabled30m) {
       const reminderTime30m = new Date(
-        appointmentDate.getTime() - 30 * 60 * 1000
+        appointmentDate.getTime() - 30 * 60 * 1000,
       );
       if (reminderTime30m > now) {
         workflows.push(
@@ -171,8 +171,8 @@ export class SchedulingCommunicationWorkflow {
             appointment,
             '30m',
             reminderTime30m,
-            workflowConfig
-          )
+            workflowConfig,
+          ),
         );
       }
     }
@@ -181,15 +181,15 @@ export class SchedulingCommunicationWorkflow {
     if (workflowConfig.confirmationSettings.enableConfirmationRequests) {
       const confirmationTime = this.calculateConfirmationTime(
         appointmentDate,
-        workflowConfig.confirmationSettings.sendTime
+        workflowConfig.confirmationSettings.sendTime,
       );
       if (confirmationTime > now) {
         workflows.push(
           await this.createConfirmationWorkflow(
             appointment,
             confirmationTime,
-            workflowConfig
-          )
+            workflowConfig,
+          ),
         );
       }
     }
@@ -203,7 +203,7 @@ export class SchedulingCommunicationWorkflow {
       ) {
         const interventionTime = this.calculateInterventionTime(
           appointmentDate,
-          workflowConfig.noShowPrevention.interventionTiming
+          workflowConfig.noShowPrevention.interventionTiming,
         );
         if (interventionTime > now) {
           workflows.push(
@@ -211,8 +211,8 @@ export class SchedulingCommunicationWorkflow {
               appointment,
               prediction,
               interventionTime,
-              workflowConfig
-            )
+              workflowConfig,
+            ),
           );
         }
       }
@@ -233,7 +233,7 @@ export class SchedulingCommunicationWorkflow {
   createReminderWorkflows(
     appointmentId: string,
     config: any,
-    _appointment: any
+    _appointment: any,
   ): WorkflowExecution[] {
     const workflows: WorkflowExecution[] = [];
 
@@ -299,7 +299,7 @@ export class SchedulingCommunicationWorkflow {
    */
   private async executeWorkflowStep(
     workflow: WorkflowExecution,
-    step: WorkflowStep
+    step: WorkflowStep,
   ): Promise<void> {
     step.status = 'running';
     step.executedAt = new Date();
@@ -330,7 +330,7 @@ export class SchedulingCommunicationWorkflow {
    */
   private async executeSendMessageStep(
     workflow: WorkflowExecution,
-    step: WorkflowStep
+    step: WorkflowStep,
   ): Promise<void> {
     const { templateType, channel, timing } = step.input;
 
@@ -344,7 +344,7 @@ export class SchedulingCommunicationWorkflow {
         professionals(*),
         services(*),
         clinics(*)
-      `
+      `,
       )
       .eq('id', workflow.appointmentId)
       .single();
@@ -364,7 +364,7 @@ export class SchedulingCommunicationWorkflow {
       templateType,
       templateConditionData,
       appointment.patients || {},
-      workflow.metadata.noShowPrediction || {}
+      workflow.metadata.noShowPrediction || {},
     );
 
     if (!template) {
@@ -393,7 +393,7 @@ export class SchedulingCommunicationWorkflow {
     const renderedContent = await schedulingTemplateEngine.renderTemplate(
       template,
       channel,
-      variables
+      variables,
     );
 
     // Send message
@@ -432,10 +432,10 @@ export class SchedulingCommunicationWorkflow {
    */
   private async executePredictNoShowStep(
     workflow: WorkflowExecution,
-    step: WorkflowStep
+    step: WorkflowStep,
   ): Promise<void> {
     const prediction = await this.noShowPredictor.predict(
-      workflow.appointmentId
+      workflow.appointmentId,
     );
 
     step.output = prediction;
@@ -449,7 +449,7 @@ export class SchedulingCommunicationWorkflow {
    */
   private async executeWaitResponseStep(
     workflow: WorkflowExecution,
-    step: WorkflowStep
+    step: WorkflowStep,
   ): Promise<void> {
     // Check if response has been received
     const { data: response } = await this.supabase
@@ -479,7 +479,7 @@ export class SchedulingCommunicationWorkflow {
    */
   private async executeEscalationStep(
     workflow: WorkflowExecution,
-    step: WorkflowStep
+    step: WorkflowStep,
   ): Promise<void> {
     // Send escalation message with different template/channel
     const escalationChannel = step.input.escalationChannel || 'whatsapp';
@@ -500,7 +500,7 @@ export class SchedulingCommunicationWorkflow {
    */
   private async getWorkflowConfig(
     clinicId: string,
-    override?: Partial<WorkflowConfig>
+    override?: Partial<WorkflowConfig>,
   ): Promise<WorkflowConfig> {
     // Get saved configuration from database
     const { data: savedConfig } = await this.supabase
@@ -557,7 +557,7 @@ export class SchedulingCommunicationWorkflow {
     appointment: any,
     timing: string,
     scheduledTime: Date,
-    config: WorkflowConfig
+    config: WorkflowConfig,
   ): Promise<WorkflowExecution> {
     const workflowId = `reminder_${timing}_${appointment.id}_${Date.now()}`;
 
@@ -613,7 +613,7 @@ export class SchedulingCommunicationWorkflow {
   private async createConfirmationWorkflow(
     appointment: any,
     scheduledTime: Date,
-    config: WorkflowConfig
+    config: WorkflowConfig,
   ): Promise<WorkflowExecution> {
     const workflowId = `confirmation_${appointment.id}_${Date.now()}`;
     const confirmationToken = this.generateConfirmationToken();
@@ -653,7 +653,7 @@ export class SchedulingCommunicationWorkflow {
           status: 'pending',
           scheduledAt: new Date(
             scheduledTime.getTime() +
-              config.confirmationSettings.timeoutHours * 60 * 60 * 1000
+              config.confirmationSettings.timeoutHours * 60 * 60 * 1000,
           ),
           input: { timeoutHours: config.confirmationSettings.timeoutHours },
           output: null,
@@ -682,7 +682,7 @@ export class SchedulingCommunicationWorkflow {
     appointment: any,
     prediction: any,
     scheduledTime: Date,
-    _config: WorkflowConfig
+    _config: WorkflowConfig,
   ): Promise<WorkflowExecution> {
     const workflowId = `no_show_prevention_${appointment.id}_${Date.now()}`;
 
@@ -745,7 +745,7 @@ export class SchedulingCommunicationWorkflow {
    */
   private calculateConfirmationTime(
     appointmentDate: Date,
-    sendTime: string
+    sendTime: string,
   ): Date {
     const [hours, minutes] = sendTime.split(':').map(Number);
     const confirmationDate = new Date(appointmentDate);
@@ -756,7 +756,7 @@ export class SchedulingCommunicationWorkflow {
 
   private calculateInterventionTime(
     appointmentDate: Date,
-    timing: string
+    timing: string,
   ): Date {
     const hours = Number.parseInt(timing.replace('h', ''), 10);
     return new Date(appointmentDate.getTime() - hours * 60 * 60 * 1000);
@@ -788,7 +788,7 @@ export class SchedulingCommunicationWorkflow {
   }
 
   private async getWorkflow(
-    workflowId: string
+    workflowId: string,
   ): Promise<WorkflowExecution | null> {
     const { data } = await this.supabase
       .from('communication_workflows')

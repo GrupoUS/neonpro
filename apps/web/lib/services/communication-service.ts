@@ -22,7 +22,7 @@ export class CommunicationService {
   static async sendMessage(
     threadId: string,
     content: string,
-    senderId: string
+    senderId: string,
   ): Promise<Message> {
     return {
       id: Math.random().toString(36),

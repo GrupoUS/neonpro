@@ -266,7 +266,7 @@ const BulkSMSSchema = z.object({
         to: PhoneNumberSchema,
         body: SMSMessageBodySchema,
         variables: z.record(z.string()).optional(),
-      })
+      }),
     )
     .min(1, 'Lista de mensagens não pode estar vazia')
     .max(1000, 'Máximo 1000 mensagens por lote'),

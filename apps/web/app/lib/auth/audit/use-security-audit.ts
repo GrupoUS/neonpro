@@ -78,7 +78,7 @@ export function useSecurityAudit(options: UseSecurityAuditOptions = {}) {
       if (enableRealTimeAlerts) {
         const newAlerts = report.suspiciousPatterns.filter(
           (pattern) =>
-            pattern.riskLevel === 'high' || pattern.riskLevel === 'critical'
+            pattern.riskLevel === 'high' || pattern.riskLevel === 'critical',
         );
         if (newAlerts.length > 0) {
           setAlerts((prev) => [...prev, ...newAlerts]);
@@ -155,31 +155,31 @@ export function useAuthAudit() {
         timestamp: Date.now(),
       });
     },
-    []
+    [],
   );
 
   const logLoginSuccess = useCallback(
     async (userId: string, sessionId: string, method = 'oauth') => {
       await securityAuditLogger.logLoginSuccess(userId, sessionId, method);
     },
-    []
+    [],
   );
 
   const logLoginFailure = useCallback(
     async (email: string, reason: string, method = 'oauth') => {
       await securityAuditLogger.logLoginFailure(email, reason, method);
     },
-    []
+    [],
   );
 
   const logOAuthFlow = useCallback(
     async (
       stage: 'start' | 'success' | 'failure',
-      details: Record<string, any>
+      details: Record<string, any>,
     ) => {
       await securityAuditLogger.logOAuthFlow(stage, details);
     },
-    []
+    [],
   );
 
   const logSessionEvent = useCallback(
@@ -187,7 +187,7 @@ export function useAuthAudit() {
       type: 'created' | 'terminated',
       userId: string,
       sessionId: string,
-      details?: Record<string, any>
+      details?: Record<string, any>,
     ) => {
       if (type === 'created') {
         await securityAuditLogger.logSessionCreated(userId, sessionId);
@@ -195,18 +195,18 @@ export function useAuthAudit() {
         await securityAuditLogger.logSessionTerminated(
           userId,
           sessionId,
-          details?.reason || 'user_logout'
+          details?.reason || 'user_logout',
         );
       }
     },
-    []
+    [],
   );
 
   const logPermissionDenied = useCallback(
     async (userId: string, resource: string, action: string) => {
       await securityAuditLogger.logPermissionDenied(userId, resource, action);
     },
-    []
+    [],
   );
 
   return {

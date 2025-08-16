@@ -74,7 +74,7 @@ const NeonGradientCard: React.FC<NeonGradientCardProps> = ({
     <div
       className={cn(
         'relative z-10 size-full rounded-[var(--border-radius)]',
-        className
+        className,
       )}
       ref={containerRef}
       style={
@@ -102,7 +102,7 @@ const NeonGradientCard: React.FC<NeonGradientCardProps> = ({
           'after:-left-[var(--border-size)] after:-top-[var(--border-size)] after:-z-10 after:absolute after:block',
           "after:h-[var(--pseudo-element-height)] after:w-[var(--pseudo-element-width)] after:rounded-[var(--border-radius)] after:blur-[var(--after-blur)] after:content-['']",
           'after:bg-[length:100%_200%] after:bg-[linear-gradient(0deg,var(--neon-first-color),var(--neon-second-color))] after:opacity-80',
-          'after:animate-[background-position-spin_3s_infinite_alternate]'
+          'after:animate-[background-position-spin_3s_infinite_alternate]',
         )}
       >
         {children}
@@ -137,7 +137,7 @@ const CosmicGlowButton: React.FC<CosmicGlowButtonProps> = ({
         'bg-gradient-to-r from-neon-primary via-neon-secondary to-neon-primary',
         'text-white shadow-lg shadow-neon-primary/20',
         'overflow-hidden transition-all duration-300 hover:scale-105',
-        className
+        className,
       )}
       onClick={onClick}
     >
@@ -315,7 +315,7 @@ export default function AdvancedDashboard() {
                 <div
                   className={cn(
                     'h-full cursor-pointer rounded-xl p-6 transition-all duration-300 hover:scale-105',
-                    metric.bgColor
+                    metric.bgColor,
                   )}
                   onMouseEnter={() => setActiveMetric(metric.title)}
                   onMouseLeave={() => setActiveMetric(null)}

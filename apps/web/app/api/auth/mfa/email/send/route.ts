@@ -11,7 +11,7 @@ export async function POST(request: NextRequest) {
     if (!(email && code && userId)) {
       return NextResponse.json(
         { success: false, error: 'Missing required parameters' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -25,7 +25,7 @@ export async function POST(request: NextRequest) {
     if (authError || !user || user.id !== userId) {
       return NextResponse.json(
         { success: false, error: 'Unauthorized' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -39,7 +39,7 @@ export async function POST(request: NextRequest) {
             'Rate limit exceeded. Please wait before requesting another code.',
           retryAfter: rateLimitResult.retryAfter,
         },
-        { status: 429 }
+        { status: 429 },
       );
     }
 
@@ -100,14 +100,14 @@ export async function POST(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { success: false, error: 'Failed to send email' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
 
 // Rate limiting for email sending
 async function checkEmailRateLimit(
-  userId: string
+  userId: string,
 ): Promise<{ allowed: boolean; retryAfter?: number }> {
   try {
     const supabase = await createClient();

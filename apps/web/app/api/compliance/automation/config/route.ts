@@ -106,7 +106,7 @@ export async function GET(_request: NextRequest) {
         error: 'Erro interno do servidor',
         details: error instanceof Error ? error.message : 'Erro desconhecido',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -135,7 +135,7 @@ export async function PUT(request: NextRequest) {
           error: 'Dados inválidos',
           details: validationResult.error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -181,7 +181,7 @@ export async function PUT(request: NextRequest) {
         error: 'Erro interno do servidor',
         details: error instanceof Error ? error.message : 'Erro desconhecido',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

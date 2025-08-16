@@ -7,7 +7,7 @@ import { nfeService } from '@/lib/services/tax/nfe-service';
 
 export async function POST(
   _request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const supabase = createClient();
@@ -33,7 +33,7 @@ export async function POST(
     if (fetchError || !nfeDocument) {
       return NextResponse.json(
         { error: 'NFe document not found' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -52,7 +52,7 @@ export async function POST(
     if (nfeDocument.status !== 'draft') {
       return NextResponse.json(
         { error: 'Only draft NFe documents can be authorized' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -79,7 +79,7 @@ export async function POST(
     if (updateError) {
       return NextResponse.json(
         { error: 'Failed to update NFe document' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -103,7 +103,7 @@ export async function POST(
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

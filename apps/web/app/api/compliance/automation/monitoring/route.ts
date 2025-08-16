@@ -93,7 +93,7 @@ export async function GET(request: NextRequest) {
                 acc[event.event_type] = (acc[event.event_type] || 0) + 1;
                 return acc;
               },
-              {} as Record<string, number>
+              {} as Record<string, number>,
             ) || {},
           bySeverity:
             auditMetrics?.reduce(
@@ -101,7 +101,7 @@ export async function GET(request: NextRequest) {
                 acc[event.severity] = (acc[event.severity] || 0) + 1;
                 return acc;
               },
-              {} as Record<string, number>
+              {} as Record<string, number>,
             ) || {},
         },
         dataSubjectRequests: {
@@ -112,7 +112,7 @@ export async function GET(request: NextRequest) {
                 acc[req.request_type] = (acc[req.request_type] || 0) + 1;
                 return acc;
               },
-              {} as Record<string, number>
+              {} as Record<string, number>,
             ) || {},
           byStatus:
             requestMetrics?.reduce(
@@ -120,7 +120,7 @@ export async function GET(request: NextRequest) {
                 acc[req.status] = (acc[req.status] || 0) + 1;
                 return acc;
               },
-              {} as Record<string, number>
+              {} as Record<string, number>,
             ) || {},
         },
       };
@@ -150,7 +150,7 @@ export async function GET(request: NextRequest) {
               acc[alert.severity] = (acc[alert.severity] || 0) + 1;
               return acc;
             },
-            {} as Record<string, number>
+            {} as Record<string, number>,
           ) || {},
         recent: alerts?.slice(0, 10) || [],
       };
@@ -170,14 +170,14 @@ export async function GET(request: NextRequest) {
         error: 'Erro interno do servidor',
         details: error instanceof Error ? error.message : 'Erro desconhecido',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
 // Função auxiliar para calcular pontuação de conformidade
 async function calculateComplianceScore(
   supabase: any,
-  clinicId: string
+  clinicId: string,
 ): Promise<number> {
   try {
     const now = new Date();
@@ -202,7 +202,7 @@ async function calculateComplianceScore(
       .gte('created_at', last30Days.toISOString());
 
     const uniqueEventTypes = new Set(
-      auditEvents?.map((e) => e.event_type) || []
+      auditEvents?.map((e) => e.event_type) || [],
     ).size;
     const auditScore = Math.min((uniqueEventTypes / 6) * 25, 25); // 6 tipos de eventos esperados
 
@@ -239,8 +239,8 @@ async function calculateComplianceScore(
           auditScore +
           requestScore +
           encryptionScore -
-          alertPenalty
-      )
+          alertPenalty,
+      ),
     );
 
     return Math.round(finalScore * 100) / 100;

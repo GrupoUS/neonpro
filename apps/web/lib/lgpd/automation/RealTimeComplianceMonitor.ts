@@ -115,7 +115,7 @@ export class RealTimeComplianceMonitor {
   constructor(
     supabase: SupabaseClient,
     complianceManager: LGPDComplianceManager,
-    config: MonitoringConfig
+    config: MonitoringConfig,
   ) {
     this.supabase = supabase;
     this.complianceManager = complianceManager;
@@ -142,7 +142,7 @@ export class RealTimeComplianceMonitor {
               await this.performComplianceCheck();
             } catch (_error) {}
           },
-          intervalMinutes * 60 * 1000
+          intervalMinutes * 60 * 1000,
         );
 
         // Set up database change listeners
@@ -150,7 +150,7 @@ export class RealTimeComplianceMonitor {
       }
     } catch (error) {
       throw new Error(
-        `Failed to start compliance monitoring: ${error.message}`
+        `Failed to start compliance monitoring: ${error.message}`,
       );
     }
   }
@@ -262,7 +262,7 @@ export class RealTimeComplianceMonitor {
               affected_users: alert.affected_users,
               status: 'active',
               created_at: new Date().toISOString(),
-            }))
+            })),
           );
 
         if (alertsError) {
@@ -327,7 +327,7 @@ export class RealTimeComplianceMonitor {
       method: 'manual' | 'automated';
       notes?: string;
       resolved_by?: string;
-    }
+    },
   ): Promise<{ success: boolean }> {
     try {
       const { error } = await this.supabase
@@ -369,7 +369,7 @@ export class RealTimeComplianceMonitor {
    */
   async generateComplianceReport(
     reportType: 'daily' | 'weekly' | 'monthly' | 'quarterly',
-    includeRecommendations = true
+    includeRecommendations = true,
   ): Promise<{
     report_id: string;
     metrics: ComplianceMetrics;
@@ -388,7 +388,7 @@ export class RealTimeComplianceMonitor {
           report_type: reportType,
           include_recommendations: includeRecommendations,
           dashboard_data: dashboard,
-        }
+        },
       );
 
       if (error) {
@@ -424,7 +424,7 @@ export class RealTimeComplianceMonitor {
   // Private helper methods
   private async calculateComplianceMetrics(): Promise<ComplianceMetrics> {
     const { data: metrics, error } = await this.supabase.rpc(
-      'calculate_compliance_metrics'
+      'calculate_compliance_metrics',
     );
 
     if (error) {
@@ -461,8 +461,8 @@ export class RealTimeComplianceMonitor {
                 24 *
                 60 *
                 60 *
-                1000
-          ).toISOString()
+                1000,
+          ).toISOString(),
         );
 
       if (error) {
@@ -554,8 +554,8 @@ export class RealTimeComplianceMonitor {
               this.config.alert_thresholds.breach_response_hours *
                 60 *
                 60 *
-                1000
-          ).toISOString()
+                1000,
+          ).toISOString(),
         );
 
       if (error) {
@@ -571,7 +571,7 @@ export class RealTimeComplianceMonitor {
           description: `${breachIncidents.length} breach incidents require immediate notification to ANPD`,
           severity_score: 100,
           legal_deadline: new Date(
-            Date.now() + 72 * 60 * 60 * 1000
+            Date.now() + 72 * 60 * 60 * 1000,
           ).toISOString(), // 72 hours from now
           auto_resolution_available: true,
           resolution_steps: [
@@ -582,7 +582,7 @@ export class RealTimeComplianceMonitor {
           ],
           affected_users: breachIncidents.reduce(
             (sum, incident) => sum + (incident.affected_users || 0),
-            0
+            0,
           ),
           created_at: new Date().toISOString(),
           status: 'active',
@@ -601,7 +601,7 @@ export class RealTimeComplianceMonitor {
     try {
       // Check for data past retention period
       const { data: retentionViolations, error } = await this.supabase.rpc(
-        'check_retention_compliance'
+        'check_retention_compliance',
       );
 
       if (error) {
@@ -640,7 +640,7 @@ export class RealTimeComplianceMonitor {
     try {
       // Check for missing or outdated documentation
       const { data: documentationIssues, error } = await this.supabase.rpc(
-        'check_documentation_compliance'
+        'check_documentation_compliance',
       );
 
       if (error) {
@@ -679,7 +679,7 @@ export class RealTimeComplianceMonitor {
     try {
       // Check third-party data sharing compliance
       const { data: thirdPartyIssues, error } = await this.supabase.rpc(
-        'check_third_party_compliance'
+        'check_third_party_compliance',
       );
 
       if (error) {
@@ -727,7 +727,7 @@ export class RealTimeComplianceMonitor {
           if (payload.eventType === 'INSERT') {
             await this.handleBreachIncidentAlert(payload.new);
           }
-        }
+        },
       )
       .on(
         'postgres_changes',
@@ -740,7 +740,7 @@ export class RealTimeComplianceMonitor {
           if (payload.eventType === 'INSERT') {
             await this.handleDataSubjectRequestAlert(payload.new);
           }
-        }
+        },
       )
       .subscribe();
   }
@@ -755,7 +755,7 @@ export class RealTimeComplianceMonitor {
         description: `A ${incident.severity} severity breach incident has been reported`,
         severity_score: incident.severity === 'critical' ? 100 : 90,
         legal_deadline: new Date(
-          Date.now() + 72 * 60 * 60 * 1000
+          Date.now() + 72 * 60 * 60 * 1000,
         ).toISOString(),
         auto_resolution_available: false,
         resolution_steps: [
@@ -800,7 +800,7 @@ export class RealTimeComplianceMonitor {
   }
 
   private async triggerAlertNotification(
-    alert: ComplianceAlert
+    alert: ComplianceAlert,
   ): Promise<void> {
     // Trigger registered callbacks
     for (const callback of this.alertCallbacks) {
@@ -822,7 +822,7 @@ export class RealTimeComplianceMonitor {
   private async sendEmailNotification(_alert: ComplianceAlert): Promise<void> {}
 
   private async sendWebhookNotification(
-    _alert: ComplianceAlert
+    _alert: ComplianceAlert,
   ): Promise<void> {}
 
   private async getComplianceTrends(): Promise<any> {
@@ -830,7 +830,7 @@ export class RealTimeComplianceMonitor {
       'get_compliance_trends',
       {
         days_back: 30,
-      }
+      },
     );
 
     if (error) {
@@ -841,7 +841,7 @@ export class RealTimeComplianceMonitor {
 
   private async getUpcomingLegalDeadlines(): Promise<any[]> {
     const { data: deadlines, error } = await this.supabase.rpc(
-      'get_upcoming_legal_deadlines'
+      'get_upcoming_legal_deadlines',
     );
 
     if (error) {

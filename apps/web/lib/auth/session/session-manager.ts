@@ -134,7 +134,7 @@ export class SessionManager {
     deviceFingerprint: string,
     ipAddress: string,
     userAgent: string,
-    location?: { country?: string; city?: string; timezone?: string }
+    location?: { country?: string; city?: string; timezone?: string },
   ): Promise<SessionData> {
     try {
       // Get user role and session config
@@ -147,7 +147,7 @@ export class SessionManager {
       // Calculate session expiry
       const now = new Date();
       const expiresAt = new Date(
-        now.getTime() + config.timeoutMinutes * 60 * 1000
+        now.getTime() + config.timeoutMinutes * 60 * 1000,
       );
 
       // Create session record
@@ -207,7 +207,7 @@ export class SessionManager {
   async updateSessionActivity(
     sessionId: string,
     activityType: SessionActivity['activityType'],
-    details?: Record<string, any>
+    details?: Record<string, any>,
   ): Promise<void> {
     try {
       const now = new Date();
@@ -258,7 +258,7 @@ export class SessionManager {
    */
   private shouldExtendSession(
     session: any,
-    activityType: SessionActivity['activityType']
+    activityType: SessionActivity['activityType'],
   ): boolean {
     const significantActivities = ['page_view', 'api_call', 'user_action'];
     const timeSinceLastActivity =
@@ -337,7 +337,7 @@ export class SessionManager {
    */
   private async showSessionWarning(
     sessionId: string,
-    minutesRemaining: number
+    minutesRemaining: number,
   ): Promise<void> {
     try {
       // Log warning event
@@ -427,7 +427,7 @@ export class SessionManager {
    */
   private async enforceConcurrentSessionLimits(
     userId: string,
-    config: SessionConfig
+    config: SessionConfig,
   ): Promise<void> {
     try {
       // Get active sessions for user
@@ -446,7 +446,7 @@ export class SessionManager {
       if (activeSessions.length >= config.maxConcurrentSessions) {
         const sessionsToTerminate = activeSessions.slice(
           0,
-          activeSessions.length - config.maxConcurrentSessions + 1
+          activeSessions.length - config.maxConcurrentSessions + 1,
         );
 
         for (const session of sessionsToTerminate) {
@@ -521,13 +521,13 @@ export class SessionManager {
         .eq('user_id', params.userId)
         .gte(
           'created_at',
-          new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()
+          new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
         )
         .limit(10);
 
       if (recentSessions && params.location) {
         const hasRecentLocationMatch = recentSessions.some(
-          (session) => session.location?.country === params.location?.country
+          (session) => session.location?.country === params.location?.country,
         );
 
         if (!hasRecentLocationMatch) {
@@ -549,7 +549,7 @@ export class SessionManager {
   private async logSessionActivity(
     sessionId: string,
     activityType: SessionActivity['activityType'],
-    details?: Record<string, any>
+    details?: Record<string, any>,
   ): Promise<void> {
     try {
       await this.supabase.from('session_activities').insert({
@@ -567,7 +567,7 @@ export class SessionManager {
   private emitSessionEvent(
     sessionId: string,
     eventType: string,
-    data: Record<string, any>
+    data: Record<string, any>,
   ): void {
     // This would integrate with WebSocket or Server-Sent Events
     // For now, we'll use a simple event system
@@ -580,7 +580,7 @@ export class SessionManager {
             data,
             timestamp: new Date().toISOString(),
           },
-        })
+        }),
       );
     }
   }
@@ -642,7 +642,7 @@ export class SessionManager {
 
           // Clean up old session data (older than 30 days)
           const thirtyDaysAgo = new Date(
-            now.getTime() - 30 * 24 * 60 * 60 * 1000
+            now.getTime() - 30 * 24 * 60 * 60 * 1000,
           );
 
           await this.supabase
@@ -652,7 +652,7 @@ export class SessionManager {
             .lt('created_at', thirtyDaysAgo.toISOString());
         } catch (_error) {}
       },
-      5 * 60 * 1000
+      5 * 60 * 1000,
     ); // 5 minutes
   }
 

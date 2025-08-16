@@ -43,7 +43,7 @@ export async function GET(request: NextRequest) {
 
     if (search) {
       query = query.or(
-        `name.ilike.%${search}%,authority_name.ilike.%${search}%,description.ilike.%${search}%`
+        `name.ilike.%${search}%,authority_name.ilike.%${search}%,description.ilike.%${search}%`,
       );
     }
 
@@ -52,7 +52,7 @@ export async function GET(request: NextRequest) {
     if (error) {
       return NextResponse.json(
         { error: 'Failed to fetch categories' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -66,7 +66,7 @@ export async function GET(request: NextRequest) {
         acc[authority].push(category);
         return acc;
       },
-      {} as Record<string, typeof categories>
+      {} as Record<string, typeof categories>,
     );
 
     return NextResponse.json({
@@ -77,12 +77,12 @@ export async function GET(request: NextRequest) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Invalid query parameters', details: error.errors },
-        { status: 400 }
+        { status: 400 },
       );
     }
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -110,7 +110,7 @@ export async function POST(_request: NextRequest) {
     if (error) {
       return NextResponse.json(
         { error: 'Failed to fetch authorities' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -118,7 +118,7 @@ export async function POST(_request: NextRequest) {
     const uniqueAuthorities = authorities?.reduce(
       (acc, item) => {
         const existing = acc.find(
-          (a) => a.authority_name === item.authority_name
+          (a) => a.authority_name === item.authority_name,
         );
         if (!existing) {
           acc.push({
@@ -128,7 +128,7 @@ export async function POST(_request: NextRequest) {
         }
         return acc;
       },
-      [] as { authority_name: string; authority_code: string }[]
+      [] as { authority_name: string; authority_code: string }[],
     );
 
     return NextResponse.json({
@@ -137,7 +137,7 @@ export async function POST(_request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

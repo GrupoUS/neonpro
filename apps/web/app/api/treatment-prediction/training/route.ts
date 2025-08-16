@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
     if (!(profile && ['admin', 'manager'].includes(profile.role))) {
       return NextResponse.json(
         { error: 'Insufficient permissions for model training' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
     if (!(body.model_name && body.algorithm_type)) {
       return NextResponse.json(
         { error: 'Missing required fields: model_name, algorithm_type' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -55,7 +55,7 @@ export async function POST(request: NextRequest) {
             'Invalid algorithm type. Must be one of: ' +
             validAlgorithms.join(', '),
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -67,12 +67,12 @@ export async function POST(request: NextRequest) {
         ...trainingResponse,
         message: 'Model training started successfully',
       },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to start model training' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

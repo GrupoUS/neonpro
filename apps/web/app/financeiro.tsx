@@ -286,7 +286,7 @@ export default function Financeiro() {
       const matchesStatus =
         filterStatus === 'todos' || transaction.status === filterStatus;
       return matchesType && matchesStatus;
-    }
+    },
   );
 
   const totalReceitas = filteredTransactions

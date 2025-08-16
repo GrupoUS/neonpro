@@ -163,7 +163,7 @@ export class DemandForecastingEngine {
     forecastType: DemandForecast['forecast_type'],
     startDate: Date,
     endDate: Date,
-    options: Partial<ForecastingOptions> = {}
+    options: Partial<ForecastingOptions> = {},
   ): Promise<DemandForecast> {
     const defaultOptions: ForecastingOptions = {
       forecast_horizon_days: 30,
@@ -183,7 +183,7 @@ export class DemandForecastingEngine {
         serviceId,
         forecastType,
         startDate,
-        endDate
+        endDate,
       );
 
       // 2. Detect patterns and seasonality
@@ -193,7 +193,7 @@ export class DemandForecastingEngine {
       const selectedModel = await this.selectOptimalModel(
         forecastType,
         serviceId,
-        patterns
+        patterns,
       );
 
       // 4. Apply external factors if enabled
@@ -202,7 +202,7 @@ export class DemandForecastingEngine {
         adjustedData = await this.applyExternalFactors(
           historicalData,
           startDate,
-          endDate
+          endDate,
         );
       }
 
@@ -211,7 +211,7 @@ export class DemandForecastingEngine {
         selectedModel,
         adjustedData,
         startDate,
-        endDate
+        endDate,
       );
 
       // 6. Apply ensemble if enabled
@@ -222,7 +222,7 @@ export class DemandForecastingEngine {
           serviceId,
           adjustedData,
           startDate,
-          endDate
+          endDate,
         );
       }
 
@@ -230,7 +230,7 @@ export class DemandForecastingEngine {
       const confidenceLevel = await this.calculateConfidence(
         selectedModel,
         patterns,
-        forecast
+        forecast,
       );
 
       // 8. Validate accuracy threshold
@@ -271,7 +271,7 @@ export class DemandForecastingEngine {
   async generateServiceForecasts(
     clinicId: string,
     startDate: Date,
-    endDate: Date
+    endDate: Date,
   ): Promise<DemandForecast[]> {
     try {
       // Get all active services
@@ -295,7 +295,7 @@ export class DemandForecastingEngine {
             service.id,
             'service_demand',
             startDate,
-            endDate
+            endDate,
           );
           forecasts.push(forecast);
         } catch (_error) {}
@@ -307,7 +307,7 @@ export class DemandForecastingEngine {
         null,
         'appointments',
         startDate,
-        endDate
+        endDate,
       );
       forecasts.push(appointmentForecast);
 
@@ -322,7 +322,7 @@ export class DemandForecastingEngine {
    */
   async adjustForecastRealTime(
     forecastId: string,
-    currentData: any[]
+    currentData: any[],
   ): Promise<DemandForecast> {
     // Load existing forecast
     const { data: existingForecast, error } = await supabase
@@ -338,7 +338,7 @@ export class DemandForecastingEngine {
     // Calculate adjustment factor based on recent trends
     const adjustmentFactor = await this.calculateAdjustmentFactor(
       existingForecast,
-      currentData
+      currentData,
     );
 
     // Apply adjustment
@@ -347,7 +347,7 @@ export class DemandForecastingEngine {
     // Recalculate confidence
     const newConfidence = await this.recalculateConfidence(
       existingForecast,
-      adjustmentFactor
+      adjustmentFactor,
     );
 
     // Update forecast
@@ -374,28 +374,28 @@ export class DemandForecastingEngine {
    */
   async generateResourceAllocations(
     clinicId: string,
-    forecasts: DemandForecast[]
+    forecasts: DemandForecast[],
   ): Promise<ResourceAllocation[]> {
     const allocations: ResourceAllocation[] = [];
 
     // Staff allocation recommendations
     const staffAllocations = await this.calculateStaffAllocations(
       clinicId,
-      forecasts
+      forecasts,
     );
     allocations.push(...staffAllocations);
 
     // Equipment allocation recommendations
     const equipmentAllocations = await this.calculateEquipmentAllocations(
       clinicId,
-      forecasts
+      forecasts,
     );
     allocations.push(...equipmentAllocations);
 
     // Room allocation recommendations
     const roomAllocations = await this.calculateRoomAllocations(
       clinicId,
-      forecasts
+      forecasts,
     );
     allocations.push(...roomAllocations);
 
@@ -410,7 +410,7 @@ export class DemandForecastingEngine {
     serviceId: string | null,
     _forecastType: DemandForecast['forecast_type'],
     startDate: Date,
-    endDate: Date
+    endDate: Date,
   ): Promise<any[]> {
     let query = supabase.from('appointments').select(`
         id,
@@ -598,11 +598,11 @@ export class DemandForecastingEngine {
   private async selectOptimalModel(
     forecastType: DemandForecast['forecast_type'],
     _serviceId: string | null,
-    _patterns: DemandPattern[]
+    _patterns: DemandPattern[],
   ): Promise<ForecastModel> {
     // Get available models for this forecast type
     const availableModels = Array.from(this.models.values()).filter(
-      (model) => model.status === 'active'
+      (model) => model.status === 'active',
     );
 
     if (availableModels.length === 0) {
@@ -625,7 +625,7 @@ export class DemandForecastingEngine {
     model: ForecastModel,
     data: any[],
     startDate: Date,
-    endDate: Date
+    endDate: Date,
   ): Promise<{ value: number; confidence: number }> {
     // This is a simplified implementation
     // In production, this would call actual ML models
@@ -635,12 +635,12 @@ export class DemandForecastingEngine {
       Math.max(
         1,
         Math.ceil(
-          (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)
-        )
+          (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24),
+        ),
       );
 
     const forecastDays = Math.ceil(
-      (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)
+      (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24),
     );
 
     // Apply model-specific adjustments
@@ -677,12 +677,12 @@ export class DemandForecastingEngine {
   private async applyExternalFactors(
     data: any[],
     startDate: Date,
-    endDate: Date
+    endDate: Date,
   ): Promise<any[]> {
     // Get applicable external factors for the period
     const applicableFactors = this.getApplicableExternalFactors(
       startDate,
-      endDate
+      endDate,
     );
 
     // Apply factor adjustments to data
@@ -701,7 +701,7 @@ export class DemandForecastingEngine {
    */
   private getApplicableExternalFactors(
     startDate: Date,
-    endDate: Date
+    endDate: Date,
   ): ExternalFactor[] {
     return this.externalFactors.filter((factor) => {
       const factorStart = new Date(factor.start_date);
@@ -722,7 +722,7 @@ export class DemandForecastingEngine {
     _serviceId: string | null,
     data: any[],
     startDate: Date,
-    endDate: Date
+    endDate: Date,
   ): Promise<{ value: number; confidence: number }> {
     // Get multiple model predictions
     const activeModels = Array.from(this.models.values())
@@ -741,7 +741,7 @@ export class DemandForecastingEngine {
           model,
           data,
           startDate,
-          endDate
+          endDate,
         );
         predictions.push(prediction);
       } catch (_error) {}
@@ -776,7 +776,7 @@ export class DemandForecastingEngine {
   private async calculateConfidence(
     model: ForecastModel,
     patterns: DemandPattern[],
-    _forecast: { value: number; confidence: number }
+    _forecast: { value: number; confidence: number },
   ): Promise<number> {
     // Base confidence from model accuracy
     let confidence = model.accuracy_score;
@@ -808,7 +808,7 @@ export class DemandForecastingEngine {
    */
   private async checkForecastAlerts(
     forecast: DemandForecast,
-    historicalData: any[]
+    historicalData: any[],
   ): Promise<void> {
     const alerts: ForecastAlert[] = [];
 
@@ -984,7 +984,7 @@ export class DemandForecastingEngine {
    * Get default model for forecast type
    */
   private getDefaultModel(
-    _forecastType: DemandForecast['forecast_type']
+    _forecastType: DemandForecast['forecast_type'],
   ): ForecastModel {
     return {
       id: 'default-model',
@@ -1008,7 +1008,7 @@ export class DemandForecastingEngine {
    */
   private async calculateAdjustmentFactor(
     _forecast: any,
-    currentData: any[]
+    currentData: any[],
   ): Promise<number> {
     // Simplified adjustment calculation
     // In production, this would use sophisticated trend analysis
@@ -1022,13 +1022,13 @@ export class DemandForecastingEngine {
    */
   private async recalculateConfidence(
     forecast: any,
-    adjustmentFactor: number
+    adjustmentFactor: number,
   ): Promise<number> {
     // Reduce confidence based on deviation from original forecast
     const deviationPenalty = Math.abs(adjustmentFactor - 1.0) * 0.1;
     return Math.max(
       this.ACCURACY_THRESHOLD,
-      forecast.confidence_level - deviationPenalty
+      forecast.confidence_level - deviationPenalty,
     );
   }
 
@@ -1037,14 +1037,14 @@ export class DemandForecastingEngine {
    */
   private async calculateStaffAllocations(
     _clinicId: string,
-    forecasts: DemandForecast[]
+    forecasts: DemandForecast[],
   ): Promise<ResourceAllocation[]> {
     const allocations: ResourceAllocation[] = [];
 
     // This is simplified - production would use complex optimization
     const totalDemand = forecasts.reduce(
       (sum, forecast) => sum + forecast.predicted_demand,
-      0
+      0,
     );
 
     allocations.push({
@@ -1065,7 +1065,7 @@ export class DemandForecastingEngine {
    */
   private async calculateEquipmentAllocations(
     _clinicId: string,
-    _forecasts: DemandForecast[]
+    _forecasts: DemandForecast[],
   ): Promise<ResourceAllocation[]> {
     // Simplified implementation
     return [];
@@ -1076,7 +1076,7 @@ export class DemandForecastingEngine {
    */
   private async calculateRoomAllocations(
     _clinicId: string,
-    _forecasts: DemandForecast[]
+    _forecasts: DemandForecast[],
   ): Promise<ResourceAllocation[]> {
     // Simplified implementation
     return [];
@@ -1095,7 +1095,7 @@ export const ForecastingUtils = {
    */
   calculateAccuracyMetrics: (
     predicted: number[],
-    actual: number[]
+    actual: number[],
   ): ForecastValidationMetrics => {
     if (predicted.length !== actual.length) {
       throw new Error('Predicted and actual arrays must have same length');

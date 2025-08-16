@@ -845,7 +845,7 @@ export class DataCleanupManager {
    * Create cleanup task
    */
   public async createTask(
-    taskData: Partial<CleanupTask>
+    taskData: Partial<CleanupTask>,
   ): Promise<CleanupTask> {
     const task: CleanupTask = {
       id: this.utils.generateSessionToken(),
@@ -1046,7 +1046,7 @@ export class DataCleanupManager {
       dryRun?: boolean;
       batchSize?: number;
       maxItems?: number;
-    }
+    },
   ): Promise<CleanupResult> {
     const task = this.tasks.get(taskId);
     if (!task) {
@@ -1070,7 +1070,7 @@ export class DataCleanupManager {
       const executionPromise = this.performTaskExecution(
         task,
         executionId,
-        options
+        options,
       );
       this.runningTasks.set(taskId, executionPromise);
 
@@ -1165,7 +1165,7 @@ export class DataCleanupManager {
   private async performTaskExecution(
     task: CleanupTask,
     executionId: string,
-    options?: any
+    options?: any,
   ): Promise<CleanupResult> {
     const startTime = Date.now();
     const result: CleanupResult = {
@@ -1256,7 +1256,7 @@ export class DataCleanupManager {
 
         if (action.required && actionResult.status === 'failure') {
           throw new Error(
-            `Required action '${action.id}' failed: ${actionResult.error}`
+            `Required action '${action.id}' failed: ${actionResult.error}`,
           );
         }
       }
@@ -1320,7 +1320,7 @@ export class DataCleanupManager {
   private async processTarget(
     target: CleanupTarget,
     task: CleanupTask,
-    options?: any
+    options?: any,
   ): Promise<TargetResult> {
     const startTime = Date.now();
     const targetResult: TargetResult = {
@@ -1352,7 +1352,7 @@ export class DataCleanupManager {
           batch,
           target,
           task,
-          options
+          options,
         );
 
         targetResult.itemsProcessed += batchResult.itemsProcessed;
@@ -1375,7 +1375,7 @@ export class DataCleanupManager {
    */
   private async getTargetItems(
     _target: CleanupTarget,
-    _task: CleanupTask
+    _task: CleanupTask,
   ): Promise<any[]> {
     return [];
   }
@@ -1387,7 +1387,7 @@ export class DataCleanupManager {
     batch: any[],
     _target: CleanupTarget,
     _task: CleanupTask,
-    _options?: any
+    _options?: any,
   ): Promise<{ itemsProcessed: number; sizeProcessed?: number }> {
     return { itemsProcessed: batch.length, sizeProcessed: batch.length * 1024 };
   }
@@ -1398,7 +1398,7 @@ export class DataCleanupManager {
   private async executeAction(
     action: CleanupAction,
     task: CleanupTask,
-    result: CleanupResult
+    result: CleanupResult,
   ): Promise<ActionResult> {
     const startTime = Date.now();
     const actionResult: ActionResult = {
@@ -1461,7 +1461,7 @@ export class DataCleanupManager {
    */
   private async evaluateCondition(
     condition: CleanupCondition,
-    _task: CleanupTask
+    _task: CleanupTask,
   ): Promise<ConditionResult> {
     const startTime = Date.now();
     const conditionResult: ConditionResult = {
@@ -1489,7 +1489,7 @@ export class DataCleanupManager {
    */
   private async processCompliance(
     _task: CleanupTask,
-    _result: CleanupResult
+    _result: CleanupResult,
   ): Promise<ComplianceResult> {
     return {
       frameworkResults: [],
@@ -1504,7 +1504,7 @@ export class DataCleanupManager {
    * Calculate performance metrics
    */
   private calculatePerformanceMetrics(
-    result: CleanupResult
+    result: CleanupResult,
   ): PerformanceMetrics {
     const durationSeconds = result.duration / 1000;
     return {
@@ -1613,7 +1613,7 @@ export class DataCleanupManager {
 
   public async updateTask(
     taskId: string,
-    updates: Partial<CleanupTask>
+    updates: Partial<CleanupTask>,
   ): Promise<void> {
     const task = this.tasks.get(taskId);
     if (!task) {
@@ -1724,7 +1724,7 @@ export class DataCleanupManager {
       const allHealthy = Object.values(checks).every((check) =>
         typeof check === 'boolean' || typeof check === 'number'
           ? true
-          : check.status === 'healthy'
+          : check.status === 'healthy',
       );
 
       return {

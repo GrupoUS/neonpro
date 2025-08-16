@@ -14,7 +14,7 @@ import { z } from 'zod';
 // Initialize Supabase client
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
+  process.env.SUPABASE_SERVICE_ROLE_KEY!,
 );
 
 // =================== ENHANCED TYPES & SCHEMAS ===================
@@ -110,7 +110,7 @@ export const ReconciliationMatchSchema = z.object({
       'customer',
       'reference',
       'pix_key',
-    ])
+    ]),
   ),
   amount_variance: z.number().optional(),
   date_variance: z.number().optional(), // Days
@@ -223,7 +223,7 @@ export class EnhancedBankReconciliationService {
       autoApproveHighConfidence?: boolean;
       healthcareMode?: boolean;
       batchSize?: number;
-    } = {}
+    } = {},
   ): Promise<EnhancedReconciliationResult> {
     const startTime = Date.now();
 
@@ -244,14 +244,14 @@ export class EnhancedBankReconciliationService {
           records,
           bankAccountId,
           validatedMapping,
-          options.healthcareMode
+          options.healthcareMode,
         );
 
       // Get existing payments for matching
       const payments =
         await EnhancedBankReconciliationService.getPaymentsForMatching(
           bankAccountId,
-          options.healthcareMode
+          options.healthcareMode,
         );
 
       // Perform intelligent matching with multiple algorithms
@@ -259,7 +259,7 @@ export class EnhancedBankReconciliationService {
         await EnhancedBankReconciliationService.performIntelligentMatching(
           transactions,
           payments,
-          options.autoApproveHighConfidence
+          options.autoApproveHighConfidence,
         );
 
       // Save transactions and matches to database
@@ -267,7 +267,7 @@ export class EnhancedBankReconciliationService {
         transactions,
         matchingResult.matches,
         bankAccountId,
-        userId
+        userId,
       );
 
       const processingTime = Date.now() - startTime;
@@ -276,46 +276,46 @@ export class EnhancedBankReconciliationService {
       const result: EnhancedReconciliationResult = {
         total_imported: transactions.length,
         total_matched: matchingResult.matches.filter(
-          (m) => m.validation_status === 'approved'
+          (m) => m.validation_status === 'approved',
         ).length,
         total_unmatched: transactions.filter(
-          (t) => t.reconciliation_status === 'unmatched'
+          (t) => t.reconciliation_status === 'unmatched',
         ).length,
         automatic_matches: matchingResult.matches.filter(
-          (m) => m.match_type !== 'manual'
+          (m) => m.match_type !== 'manual',
         ).length,
         manual_review_required: matchingResult.matches.filter(
-          (m) => m.validation_status === 'pending'
+          (m) => m.validation_status === 'pending',
         ).length,
         reconciliation_rate:
           transactions.length > 0
             ? matchingResult.matches.filter(
-                (m) => m.validation_status === 'approved'
+                (m) => m.validation_status === 'approved',
               ).length / transactions.length
             : 0,
         average_confidence:
           matchingResult.matches.length > 0
             ? matchingResult.matches.reduce(
                 (sum, m) => sum + m.match_confidence,
-                0
+                0,
               ) / matchingResult.matches.length
             : 0,
         matched_transactions: matchingResult.matches,
         unmatched_bank_transactions: transactions.filter(
-          (t) => t.reconciliation_status === 'unmatched'
+          (t) => t.reconciliation_status === 'unmatched',
         ),
         unmatched_payments: payments.filter(
-          (p) => p.reconciliation_status === 'unmatched'
+          (p) => p.reconciliation_status === 'unmatched',
         ),
         processing_summary: {
           exact_matches: matchingResult.matches.filter(
-            (m) => m.match_type === 'exact'
+            (m) => m.match_type === 'exact',
           ).length,
           fuzzy_matches: matchingResult.matches.filter(
-            (m) => m.match_type === 'fuzzy'
+            (m) => m.match_type === 'fuzzy',
           ).length,
           partial_matches: matchingResult.matches.filter(
-            (m) => m.match_type === 'partial'
+            (m) => m.match_type === 'partial',
           ).length,
           processing_time_ms: processingTime,
         },
@@ -327,14 +327,14 @@ export class EnhancedBankReconciliationService {
         result.healthcare_metrics =
           EnhancedBankReconciliationService.calculateHealthcareMetrics(
             matchingResult.matches,
-            payments
+            payments,
           );
       }
 
       return result;
     } catch (error) {
       throw new Error(
-        `Failed to perform enhanced bank reconciliation: ${error.message}`
+        `Failed to perform enhanced bank reconciliation: ${error.message}`,
       );
     }
   } /**
@@ -344,7 +344,7 @@ export class EnhancedBankReconciliationService {
     records: any[],
     bankAccountId: string,
     mapping: z.infer<typeof enhancedCsvMappingSchema>,
-    healthcareMode?: boolean
+    healthcareMode?: boolean,
   ): Promise<EnhancedBankTransaction[]> {
     const transactions: EnhancedBankTransaction[] = [];
 
@@ -354,7 +354,7 @@ export class EnhancedBankReconciliationService {
         const dateStr = record[mapping.date_column];
         const date = EnhancedBankReconciliationService.parseDate(
           dateStr,
-          mapping.date_format
+          mapping.date_format,
         );
 
         if (!(date && isValid(date))) {
@@ -366,7 +366,7 @@ export class EnhancedBankReconciliationService {
           record[mapping.amount_column]
             ?.toString()
             .replace(/[^\d.,-]/g, '')
-            .replace(',', '.') || '0'
+            .replace(',', '.') || '0',
         );
         if (mapping.amount_format === 'cents') {
           amount /= 100;
@@ -456,7 +456,7 @@ export class EnhancedBankReconciliationService {
    */
   private static async getPaymentsForMatching(
     _bankAccountId: string,
-    healthcareMode?: boolean
+    healthcareMode?: boolean,
   ): Promise<EnhancedPaymentRecord[]> {
     try {
       let query = supabase
@@ -477,12 +477,12 @@ export class EnhancedBankReconciliationService {
           clinic_id,
           expected_settlement_date,
           metadata
-        `
+        `,
         )
         .eq('status', 'completed')
         .gte(
           'payment_date',
-          format(new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), 'yyyy-MM-dd')
+          format(new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), 'yyyy-MM-dd'),
         );
 
       if (healthcareMode) {
@@ -510,7 +510,7 @@ export class EnhancedBankReconciliationService {
   private static async performIntelligentMatching(
     bankTransactions: EnhancedBankTransaction[],
     payments: EnhancedPaymentRecord[],
-    autoApproveHighConfidence = false
+    autoApproveHighConfidence = false,
   ): Promise<{
     matches: ReconciliationMatch[];
     unmatchedBankIds: Set<string>;
@@ -524,7 +524,7 @@ export class EnhancedBankReconciliationService {
     const exactMatches =
       await EnhancedBankReconciliationService.findExactMatches(
         bankTransactions,
-        payments
+        payments,
       );
     matches.push(...exactMatches);
     exactMatches.forEach((match) => {
@@ -534,14 +534,14 @@ export class EnhancedBankReconciliationService {
 
     // Phase 2: High confidence fuzzy matches
     const remainingBankTx = bankTransactions.filter(
-      (tx) => tx.id && !usedBankTxIds.has(tx.id)
+      (tx) => tx.id && !usedBankTxIds.has(tx.id),
     );
     const remainingPayments = payments.filter((p) => !usedPaymentIds.has(p.id));
 
     const fuzzyMatches =
       await EnhancedBankReconciliationService.findFuzzyMatches(
         remainingBankTx,
-        remainingPayments
+        remainingPayments,
       );
     matches.push(...fuzzyMatches);
     fuzzyMatches.forEach((match) => {
@@ -551,16 +551,16 @@ export class EnhancedBankReconciliationService {
 
     // Phase 3: Partial matches (installments, split payments)
     const remainingBankTx2 = bankTransactions.filter(
-      (tx) => tx.id && !usedBankTxIds.has(tx.id)
+      (tx) => tx.id && !usedBankTxIds.has(tx.id),
     );
     const remainingPayments2 = payments.filter(
-      (p) => !usedPaymentIds.has(p.id)
+      (p) => !usedPaymentIds.has(p.id),
     );
 
     const partialMatches =
       await EnhancedBankReconciliationService.findPartialMatches(
         remainingBankTx2,
-        remainingPayments2
+        remainingPayments2,
       );
     matches.push(...partialMatches);
     partialMatches.forEach((match) => {
@@ -587,7 +587,7 @@ export class EnhancedBankReconciliationService {
     EnhancedBankReconciliationService.updateReconciliationStatuses(
       bankTransactions,
       payments,
-      matches
+      matches,
     );
 
     return {
@@ -595,10 +595,10 @@ export class EnhancedBankReconciliationService {
       unmatchedBankIds: new Set(
         bankTransactions
           .filter((tx) => tx.id && !usedBankTxIds.has(tx.id))
-          .map((tx) => tx.id!)
+          .map((tx) => tx.id!),
       ),
       unmatchedPaymentIds: new Set(
-        payments.filter((p) => !usedPaymentIds.has(p.id)).map((p) => p.id)
+        payments.filter((p) => !usedPaymentIds.has(p.id)).map((p) => p.id),
       ),
     };
   }
@@ -608,7 +608,7 @@ export class EnhancedBankReconciliationService {
    */
   private static async findExactMatches(
     bankTransactions: EnhancedBankTransaction[],
-    payments: EnhancedPaymentRecord[]
+    payments: EnhancedPaymentRecord[],
   ): Promise<ReconciliationMatch[]> {
     const matches: ReconciliationMatch[] = [];
 
@@ -685,7 +685,7 @@ export class EnhancedBankReconciliationService {
    */
   private static async findFuzzyMatches(
     bankTransactions: EnhancedBankTransaction[],
-    payments: EnhancedPaymentRecord[]
+    payments: EnhancedPaymentRecord[],
   ): Promise<ReconciliationMatch[]> {
     const matches: ReconciliationMatch[] = [];
 
@@ -704,7 +704,7 @@ export class EnhancedBankReconciliationService {
         const matchScore =
           EnhancedBankReconciliationService.calculateEnhancedMatchScore(
             bankTx,
-            payment
+            payment,
           );
 
         if (
@@ -753,7 +753,7 @@ export class EnhancedBankReconciliationService {
    */
   private static calculateEnhancedMatchScore(
     bankTx: EnhancedBankTransaction,
-    payment: EnhancedPaymentRecord
+    payment: EnhancedPaymentRecord,
   ): { score: number; criteria: string[] } {
     let score = 0;
     const criteria: string[] = [];
@@ -771,7 +771,7 @@ export class EnhancedBankReconciliationService {
     const amountDiff = Math.abs(bankTx.amount - Math.abs(payment.amount));
     const amountSimilarity = Math.max(
       0,
-      1 - amountDiff / Math.max(bankTx.amount, Math.abs(payment.amount))
+      1 - amountDiff / Math.max(bankTx.amount, Math.abs(payment.amount)),
     );
 
     if (amountSimilarity < 0.9) {
@@ -797,11 +797,11 @@ export class EnhancedBankReconciliationService {
       const customerSimilarity =
         EnhancedBankReconciliationService.calculateStringSimilarity(
           EnhancedBankReconciliationService.normalizeName(
-            payment.customer_name
+            payment.customer_name,
           ),
           EnhancedBankReconciliationService.normalizeName(
-            bankTx.counterparty.name
-          )
+            bankTx.counterparty.name,
+          ),
         );
 
       if (customerSimilarity > 0.7) {
@@ -814,7 +814,7 @@ export class EnhancedBankReconciliationService {
     const descriptionSimilarity =
       EnhancedBankReconciliationService.calculateDescriptionSimilarity(
         bankTx.description,
-        payment.description || payment.customer_name || ''
+        payment.description || payment.customer_name || '',
       );
 
     if (descriptionSimilarity > 0.6) {
@@ -836,14 +836,14 @@ export class EnhancedBankReconciliationService {
    */
   private static async findPartialMatches(
     bankTransactions: EnhancedBankTransaction[],
-    payments: EnhancedPaymentRecord[]
+    payments: EnhancedPaymentRecord[],
   ): Promise<ReconciliationMatch[]> {
     const matches: ReconciliationMatch[] = [];
 
     // Group payments by customer and date for installment detection
     const paymentGroups =
       EnhancedBankReconciliationService.groupPaymentsByCustomerAndDate(
-        payments
+        payments,
       );
 
     for (const bankTx of bankTransactions) {
@@ -855,7 +855,7 @@ export class EnhancedBankReconciliationService {
       const matchingGroups =
         EnhancedBankReconciliationService.findMatchingPaymentGroups(
           bankTx,
-          paymentGroups
+          paymentGroups,
         );
 
       for (const group of matchingGroups) {
@@ -890,7 +890,7 @@ export class EnhancedBankReconciliationService {
   private static updateReconciliationStatuses(
     bankTransactions: EnhancedBankTransaction[],
     payments: EnhancedPaymentRecord[],
-    matches: ReconciliationMatch[]
+    matches: ReconciliationMatch[],
   ): void {
     const matchedBankIds = new Set(matches.map((m) => m.bank_transaction_id));
     const matchedPaymentIds = new Set(matches.map((m) => m.payment_id));
@@ -927,7 +927,7 @@ export class EnhancedBankReconciliationService {
     transactions: EnhancedBankTransaction[],
     matches: ReconciliationMatch[],
     _bankAccountId: string,
-    userId: string
+    userId: string,
   ): Promise<void> {
     // Save bank transactions
     const { error: txError } = await supabase.from('bank_transactions').upsert(
@@ -936,7 +936,7 @@ export class EnhancedBankReconciliationService {
         created_by: userId,
         updated_at: new Date().toISOString(),
       })),
-      { onConflict: 'external_id,bank_account_id' }
+      { onConflict: 'external_id,bank_account_id' },
     );
 
     if (txError) {
@@ -953,7 +953,7 @@ export class EnhancedBankReconciliationService {
             created_by: userId,
             created_at: new Date().toISOString(),
           })),
-          { onConflict: 'bank_transaction_id,payment_id' }
+          { onConflict: 'bank_transaction_id,payment_id' },
         );
 
       if (matchError) {
@@ -963,7 +963,7 @@ export class EnhancedBankReconciliationService {
 
     // Update payment reconciliation status
     for (const match of matches.filter(
-      (m) => m.validation_status === 'approved'
+      (m) => m.validation_status === 'approved',
     )) {
       await supabase
         .from('payments')
@@ -981,17 +981,17 @@ export class EnhancedBankReconciliationService {
    */
   private static calculateHealthcareMetrics(
     matches: ReconciliationMatch[],
-    payments: EnhancedPaymentRecord[]
+    payments: EnhancedPaymentRecord[],
   ): {
     patient_matches: number;
     treatment_matches: number;
     insurance_matches: number;
   } {
     const approvedMatches = matches.filter(
-      (m) => m.validation_status === 'approved'
+      (m) => m.validation_status === 'approved',
     );
     const matchedPayments = payments.filter((p) =>
-      approvedMatches.some((m) => m.payment_id === p.id)
+      approvedMatches.some((m) => m.payment_id === p.id),
     );
 
     return {
@@ -999,7 +999,7 @@ export class EnhancedBankReconciliationService {
       treatment_matches: matchedPayments.filter((p) => p.treatment_type).length,
       insurance_matches: matchedPayments.filter(
         (p) =>
-          p.payment_method === 'bank_transfer' && p.metadata?.insurance_claim
+          p.payment_method === 'bank_transfer' && p.metadata?.insurance_claim,
       ).length,
     };
   }
@@ -1025,7 +1025,7 @@ export class EnhancedBankReconciliationService {
     // Use Levenshtein distance
     return EnhancedBankReconciliationService.levenshteinSimilarity(
       norm1,
-      norm2
+      norm2,
     );
   }
 
@@ -1034,7 +1034,7 @@ export class EnhancedBankReconciliationService {
    */
   private static calculateDescriptionSimilarity(
     desc1: string,
-    desc2: string
+    desc2: string,
   ): number {
     if (!(desc1 && desc2)) {
       return 0;
@@ -1060,7 +1060,7 @@ export class EnhancedBankReconciliationService {
 
     let similarity = EnhancedBankReconciliationService.levenshteinSimilarity(
       norm1,
-      norm2
+      norm2,
     );
 
     // Boost similarity if healthcare terms are present
@@ -1094,7 +1094,7 @@ export class EnhancedBankReconciliationService {
         matrix[j][i] = Math.min(
           matrix[j][i - 1] + 1, // deletion
           matrix[j - 1][i] + 1, // insertion
-          matrix[j - 1][i - 1] + indicator // substitution
+          matrix[j - 1][i - 1] + indicator, // substitution
         );
       }
     }
@@ -1109,7 +1109,7 @@ export class EnhancedBankReconciliationService {
    * Group payments by customer and date for partial matching
    */
   private static groupPaymentsByCustomerAndDate(
-    payments: EnhancedPaymentRecord[]
+    payments: EnhancedPaymentRecord[],
   ): Map<string, { payments: EnhancedPaymentRecord[]; totalAmount: number }> {
     const groups = new Map<
       string,
@@ -1137,7 +1137,7 @@ export class EnhancedBankReconciliationService {
     paymentGroups: Map<
       string,
       { payments: EnhancedPaymentRecord[]; totalAmount: number }
-    >
+    >,
   ): Array<{
     payments: EnhancedPaymentRecord[];
     confidence: number;
@@ -1159,8 +1159,8 @@ export class EnhancedBankReconciliationService {
         const avgDate = new Date(
           group.payments.reduce(
             (sum, p) => sum + new Date(p.payment_date).getTime(),
-            0
-          ) / group.payments.length
+            0,
+          ) / group.payments.length,
         );
         const bankDate = parseISO(bankTx.date);
         const dateDiff = Math.abs(differenceInDays(bankDate, avgDate));

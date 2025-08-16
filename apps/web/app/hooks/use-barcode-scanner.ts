@@ -96,7 +96,7 @@ export function useBarcodeScanner() {
         setIsScanning(false);
       }
     },
-    []
+    [],
   );
 
   const clearHistory = useCallback(() => {
@@ -149,12 +149,12 @@ export function useBulkScanning() {
     async (
       operationId: string,
       scanValue: string,
-      userId: string
+      userId: string,
     ): Promise<ScanResult> => {
       const result = await barcodeService.processBulkScan(
         operationId,
         scanValue,
-        userId
+        userId,
       );
 
       // Update progress
@@ -167,7 +167,7 @@ export function useBulkScanning() {
 
       return result;
     },
-    [activeOperation]
+    [activeOperation],
   );
 
   return {
@@ -395,17 +395,17 @@ export function useLabelPrinting() {
         }, 1000);
 
         toast.success(
-          `Etiqueta enviada para impressão (${options.copies || 1} cópia(s))`
+          `Etiqueta enviada para impressão (${options.copies || 1} cópia(s))`,
         );
       } catch (error) {
         toast.error(
-          `Falha na impressão: ${error instanceof Error ? error.message : 'Erro desconhecido'}`
+          `Falha na impressão: ${error instanceof Error ? error.message : 'Erro desconhecido'}`,
         );
       } finally {
         setIsPrinting(false);
       }
     },
-    []
+    [],
   );
 
   return {

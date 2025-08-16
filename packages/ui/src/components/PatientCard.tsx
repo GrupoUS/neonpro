@@ -65,7 +65,14 @@ const formatRelativeTime = (dateString: string): string => {
   }
   return formatDate(dateString);
 };
-const PatientCard = React.forwardRef<HTMLDivElement, PatientCardProps>(
+
+// Helper function to get status text
+const getStatusText = (patientStatus: string): string => {
+  if (patientStatus === 'active') return 'Ativo';
+  if (patientStatus === 'inactive') return 'Inativo';
+  return 'Bloqueado';
+};
+const PatientCard = React.forwardRef<HTMLButtonElement, PatientCardProps>(
   (
     {
       patient,
@@ -103,8 +110,8 @@ const PatientCard = React.forwardRef<HTMLDivElement, PatientCardProps>(
         )
       : null;
 
-    const getStatusVariant = (status: string) => {
-      switch (status) {
+    const getStatusVariant = (patientStatus: string) => {
+      switch (patientStatus) {
         case 'active':
           return 'confirmed';
         case 'inactive':
@@ -119,14 +126,15 @@ const PatientCard = React.forwardRef<HTMLDivElement, PatientCardProps>(
     const statusVariant = getStatusVariant(status);
 
     return (
-      <div
+      <button
         className={cn(
-          'rounded-lg border bg-card p-4 text-card-foreground transition-shadow hover:shadow-md',
+          'w-full rounded-lg border bg-card p-4 text-left text-card-foreground transition-shadow hover:shadow-md focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2',
           onClick && 'cursor-pointer',
           className
         )}
         onClick={onClick}
         ref={ref}
+        type="button"
         {...props}
       >
         {/* Header */}
@@ -160,11 +168,7 @@ const PatientCard = React.forwardRef<HTMLDivElement, PatientCardProps>(
                   </Badge>
                 )}
                 <Badge size="sm" variant={statusVariant}>
-                  {status === 'active'
-                    ? 'Ativo'
-                    : status === 'inactive'
-                      ? 'Inativo'
-                      : 'Bloqueado'}
+                  {getStatusText(status)}
                 </Badge>
               </div>
             </div>
@@ -272,7 +276,7 @@ const PatientCard = React.forwardRef<HTMLDivElement, PatientCardProps>(
             Cadastrado em {formatDate(registrationDate)}
           </div>
         )}
-      </div>
+      </button>
     );
   }
 );

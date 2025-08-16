@@ -40,7 +40,7 @@ export async function GET(request: NextRequest) {
     if (userError || !user) {
       return NextResponse.json(
         { success: false, error: 'Authentication required' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -69,12 +69,12 @@ export async function GET(request: NextRequest) {
         `
         *,
         financial_kpis(kpi_name, kpi_category)
-      `
+      `,
       )
       .order('created_at', { ascending: false })
       .range(
         validatedFilters.offset,
-        validatedFilters.offset + validatedFilters.limit - 1
+        validatedFilters.offset + validatedFilters.limit - 1,
       );
 
     // Apply filters
@@ -89,7 +89,7 @@ export async function GET(request: NextRequest) {
     if (validatedFilters.kpi_category) {
       query = query.eq(
         'financial_kpis.kpi_category',
-        validatedFilters.kpi_category
+        validatedFilters.kpi_category,
       );
     }
 
@@ -120,7 +120,7 @@ export async function GET(request: NextRequest) {
     if (validatedFilters.is_acknowledged !== undefined) {
       countQuery = countQuery.eq(
         'is_acknowledged',
-        validatedFilters.is_acknowledged
+        validatedFilters.is_acknowledged,
       );
     }
 
@@ -131,7 +131,7 @@ export async function GET(request: NextRequest) {
     if (validatedFilters.created_before) {
       countQuery = countQuery.lte(
         'created_at',
-        validatedFilters.created_before
+        validatedFilters.created_before,
       );
     }
 
@@ -176,7 +176,7 @@ export async function GET(request: NextRequest) {
           error: 'Invalid request parameters',
           details: error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -186,7 +186,7 @@ export async function GET(request: NextRequest) {
         error: 'Internal server error',
         message: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -204,7 +204,7 @@ export async function POST(request: NextRequest) {
     if (userError || !user) {
       return NextResponse.json(
         { success: false, error: 'Authentication required' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -257,7 +257,7 @@ export async function POST(request: NextRequest) {
           error: 'Invalid request data',
           details: error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -267,7 +267,7 @@ export async function POST(request: NextRequest) {
         error: 'Internal server error',
         message: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

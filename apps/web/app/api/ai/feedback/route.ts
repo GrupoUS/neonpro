@@ -49,7 +49,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
           error:
             'Missing required fields: appointmentId, actualDuration, completionStatus',
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -60,7 +60,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
           success: false,
           error: 'actualDuration must be a positive number',
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -74,7 +74,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     if (authError || !user) {
       return NextResponse.json(
         { success: false, error: 'Authentication required' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -89,7 +89,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     if (roleError || !userRole) {
       return NextResponse.json(
         { success: false, error: 'Insufficient permissions' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -99,7 +99,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
     // Check if appointment has a prediction
     const prediction = await aiService.getPredictionForAppointment(
-      body.appointmentId
+      body.appointmentId,
     );
 
     if (!prediction) {
@@ -108,7 +108,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
           success: false,
           error: 'No AI prediction found for this appointment',
         },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -116,7 +116,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     await aiService.updatePredictionWithActual(
       body.appointmentId,
       body.actualDuration,
-      body.feedbackNotes
+      body.feedbackNotes,
     );
 
     // Calculate accuracy metrics
@@ -126,7 +126,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       Math.min(
         Math.abs(predictionError) /
           Math.max(prediction.predictedDuration, body.actualDuration),
-        1.0
+        1.0,
       );
 
     // Submit additional feedback if provided
@@ -167,7 +167,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         success: false,
         error: 'Internal server error occurred while processing feedback',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -181,7 +181,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     if (!appointmentId) {
       return NextResponse.json(
         { success: false, error: 'appointmentId parameter is required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -195,7 +195,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     if (authError || !user) {
       return NextResponse.json(
         { success: false, error: 'Authentication required' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -210,7 +210,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     if (roleError || !userRole) {
       return NextResponse.json(
         { success: false, error: 'Insufficient permissions' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -234,7 +234,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
           confidence_score,
           model_version
         )
-      `
+      `,
       )
       .eq('appointment_id', appointmentId)
       .single();
@@ -243,7 +243,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       if (error.code === 'PGRST116') {
         return NextResponse.json(
           { success: false, error: 'No feedback found for this appointment' },
-          { status: 404 }
+          { status: 404 },
         );
       }
       throw error;
@@ -274,7 +274,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
         success: false,
         error: 'Internal server error occurred while retrieving feedback',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -287,7 +287,7 @@ export async function PUT() {
       error:
         'Method not allowed. Use POST to submit feedback or GET to retrieve.',
     },
-    { status: 405 }
+    { status: 405 },
   );
 }
 
@@ -298,6 +298,6 @@ export async function DELETE() {
       error:
         'Method not allowed. Use POST to submit feedback or GET to retrieve.',
     },
-    { status: 405 }
+    { status: 405 },
   );
 }

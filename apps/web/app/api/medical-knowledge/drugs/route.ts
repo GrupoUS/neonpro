@@ -41,7 +41,7 @@ export async function GET(request: NextRequest) {
         if (!drugId) {
           return NextResponse.json(
             { error: 'Drug ID required' },
-            { status: 400 }
+            { status: 400 },
           );
         }
 
@@ -49,7 +49,7 @@ export async function GET(request: NextRequest) {
         if (!drug) {
           return NextResponse.json(
             { error: 'Drug not found' },
-            { status: 404 }
+            { status: 404 },
           );
         }
         return NextResponse.json({ success: true, data: drug });
@@ -62,7 +62,7 @@ export async function GET(request: NextRequest) {
             {
               error: 'At least 2 drug IDs required for interaction check',
             },
-            { status: 400 }
+            { status: 400 },
           );
         }
 
@@ -73,7 +73,7 @@ export async function GET(request: NextRequest) {
       default:
         return NextResponse.json(
           { error: 'Invalid action parameter' },
-          { status: 400 }
+          { status: 400 },
         );
     }
   } catch (error) {
@@ -82,7 +82,7 @@ export async function GET(request: NextRequest) {
         error: 'Internal server error',
         details: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -108,12 +108,12 @@ export async function POST(request: NextRequest) {
         if (!Array.isArray(queries)) {
           return NextResponse.json(
             { error: 'Queries must be an array' },
-            { status: 400 }
+            { status: 400 },
           );
         }
 
         const batchResults = await Promise.all(
-          queries.map((query) => service.searchDrugs(query))
+          queries.map((query) => service.searchDrugs(query)),
         );
 
         return NextResponse.json({ success: true, data: batchResults });
@@ -131,19 +131,21 @@ export async function POST(request: NextRequest) {
             {
               error: 'Drug combinations required',
             },
-            { status: 400 }
+            { status: 400 },
           );
         }
 
         const complexInteractions = await Promise.all(
-          drug_combinations.map((combo) => service.checkDrugInteractions(combo))
+          drug_combinations.map((combo) =>
+            service.checkDrugInteractions(combo),
+          ),
         );
 
         // Flatten and deduplicate interactions
         const allInteractions = complexInteractions.flat();
         const uniqueInteractions = allInteractions.filter(
           (interaction, index, arr) =>
-            arr.findIndex((i) => i.id === interaction.id) === index
+            arr.findIndex((i) => i.id === interaction.id) === index,
         );
 
         return NextResponse.json({
@@ -155,13 +157,13 @@ export async function POST(request: NextRequest) {
             risk_assessment: {
               total_interactions: uniqueInteractions.length,
               high_severity: uniqueInteractions.filter(
-                (i) => i.severity_level >= 8
+                (i) => i.severity_level >= 8,
               ).length,
               moderate_severity: uniqueInteractions.filter(
-                (i) => i.severity_level >= 5 && i.severity_level < 8
+                (i) => i.severity_level >= 5 && i.severity_level < 8,
               ).length,
               low_severity: uniqueInteractions.filter(
-                (i) => i.severity_level < 5
+                (i) => i.severity_level < 5,
               ).length,
             },
           },
@@ -177,7 +179,7 @@ export async function POST(request: NextRequest) {
         error: 'Internal server error',
         details: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

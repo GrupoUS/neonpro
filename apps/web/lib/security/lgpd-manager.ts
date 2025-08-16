@@ -18,7 +18,7 @@ export type DataProcessingLog = {
 
 export class LGPDManager {
   static async recordConsent(
-    consent: Omit<LGPDConsent, 'timestamp'>
+    consent: Omit<LGPDConsent, 'timestamp'>,
   ): Promise<LGPDConsent> {
     return {
       ...consent,
@@ -27,7 +27,7 @@ export class LGPDManager {
   }
 
   static async logDataProcessing(
-    log: Omit<DataProcessingLog, 'id' | 'timestamp'>
+    log: Omit<DataProcessingLog, 'id' | 'timestamp'>,
   ): Promise<DataProcessingLog> {
     return {
       id: Math.random().toString(36),
@@ -38,7 +38,7 @@ export class LGPDManager {
 
   static async checkConsent(
     _userId: string,
-    _purpose: string
+    _purpose: string,
   ): Promise<boolean> {
     // Mock implementation for build
     return true;

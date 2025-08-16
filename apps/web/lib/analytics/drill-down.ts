@@ -33,7 +33,7 @@ export class DrillDownSystem {
   constructor() {
     this.supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     );
     this.cache = new Map();
   }
@@ -50,7 +50,7 @@ export class DrillDownSystem {
       sortOrder?: 'asc' | 'desc';
       includeSubDimensions?: boolean;
       includeTransactionDetails?: boolean;
-    } = {}
+    } = {},
   ): Promise<{
     results: DrillDownResult[];
     context: DrillDownContext;
@@ -73,7 +73,7 @@ export class DrillDownSystem {
       kpi,
       dimension,
       filters,
-      options
+      options,
     );
 
     // Generate context and navigation path
@@ -81,7 +81,7 @@ export class DrillDownSystem {
     const path = this.buildDrillDownPath(
       kpi,
       dimension,
-      context.breadcrumbs.length
+      context.breadcrumbs.length,
     );
 
     // Add sub-dimensions if requested
@@ -91,7 +91,7 @@ export class DrillDownSystem {
           kpi,
           dimension,
           result,
-          filters
+          filters,
         );
       }
     }
@@ -111,7 +111,7 @@ export class DrillDownSystem {
   async drillDownByTime(
     kpi: FinancialKPI,
     aggregationLevel: 'hour' | 'day' | 'week' | 'month' | 'quarter' | 'year',
-    filters: Record<string, any> = {}
+    filters: Record<string, any> = {},
   ): Promise<DrillDownResult[]> {
     const cacheKey = `time_drill_${kpi.id}_${aggregationLevel}_${JSON.stringify(filters)}`;
     const cached = this.getFromCache(cacheKey);
@@ -173,7 +173,7 @@ export class DrillDownSystem {
 
       const totalValue = data.reduce(
         (sum: number, row: any) => sum + Number.parseFloat(row.value),
-        0
+        0,
       );
 
       results.push(
@@ -188,7 +188,7 @@ export class DrillDownSystem {
             aggregation_level: aggregationLevel,
             period_start: row.period,
           },
-        }))
+        })),
       );
     }
 
@@ -199,7 +199,7 @@ export class DrillDownSystem {
   // Service type drill-down
   async drillDownByServiceType(
     kpi: FinancialKPI,
-    filters: Record<string, any> = {}
+    filters: Record<string, any> = {},
   ): Promise<DrillDownResult[]> {
     const cacheKey = `service_drill_${kpi.id}_${JSON.stringify(filters)}`;
     const cached = this.getFromCache(cacheKey);
@@ -249,12 +249,12 @@ export class DrillDownSystem {
           acc[service].count += 1;
           return acc;
         },
-        {} as Record<string, any>
+        {} as Record<string, any>,
       );
 
       const totalRevenue = Object.values(serviceGroups).reduce(
         (sum: number, group: any) => sum + group.revenue,
-        0
+        0,
       );
 
       results.push(
@@ -278,8 +278,8 @@ export class DrillDownSystem {
                 ? ((data.revenue - data.costs) / data.revenue) * 100
                 : 0,
             },
-          })
-        )
+          }),
+        ),
       );
     }
 
@@ -290,7 +290,7 @@ export class DrillDownSystem {
   // Provider drill-down
   async drillDownByProvider(
     kpi: FinancialKPI,
-    filters: Record<string, any> = {}
+    filters: Record<string, any> = {},
   ): Promise<DrillDownResult[]> {
     const cacheKey = `provider_drill_${kpi.id}_${JSON.stringify(filters)}`;
     const cached = this.getFromCache(cacheKey);
@@ -350,12 +350,12 @@ export class DrillDownSystem {
 
         return acc;
       },
-      {} as Record<string, any>
+      {} as Record<string, any>,
     );
 
     const totalRevenue = Object.values(providerGroups).reduce(
       (sum: number, group: any) => sum + group.revenue,
-      0
+      0,
     );
 
     results.push(
@@ -383,8 +383,8 @@ export class DrillDownSystem {
               ? (data.completed / data.appointments) * 100
               : 0,
           },
-        })
-      )
+        }),
+      ),
     );
 
     this.setCache(cacheKey, results);
@@ -394,7 +394,7 @@ export class DrillDownSystem {
   // Patient segment drill-down
   async drillDownByPatientSegment(
     kpi: FinancialKPI,
-    filters: Record<string, any> = {}
+    filters: Record<string, any> = {},
   ): Promise<DrillDownResult[]> {
     const cacheKey = `patient_drill_${kpi.id}_${JSON.stringify(filters)}`;
     const cached = this.getFromCache(cacheKey);
@@ -457,18 +457,18 @@ export class DrillDownSystem {
         acc[ageGroup].revenue +=
           patient.invoices?.reduce(
             (sum: number, inv: any) => sum + (inv.amount || 0),
-            0
+            0,
           ) || 0;
         acc[ageGroup].appointments += patient.appointments?.length || 0;
 
         return acc;
       },
-      {} as Record<string, any>
+      {} as Record<string, any>,
     );
 
     const totalPatients = Object.values(ageSegments).reduce(
       (sum: number, segment: any) => sum + segment.count,
-      0
+      0,
     );
 
     results.push(
@@ -490,7 +490,7 @@ export class DrillDownSystem {
           total_appointments: data.appointments,
           avg_revenue_per_patient: data.count ? data.revenue / data.count : 0,
         },
-      }))
+      })),
     );
 
     this.setCache(cacheKey, results);
@@ -501,7 +501,7 @@ export class DrillDownSystem {
   private buildDrillDownContext(
     dimension: string,
     filters: Record<string, any>,
-    options: any
+    options: any,
   ): DrillDownContext {
     const breadcrumbs = [
       {
@@ -528,13 +528,13 @@ export class DrillDownSystem {
   private buildDrillDownPath(
     kpi: FinancialKPI,
     currentDimension: string,
-    currentLevel: number
+    currentLevel: number,
   ): DrillDownPath {
     const availableDimensions = this.getAvailableDimensions(kpi);
     const maxLevels = this.getMaxDrillLevels(kpi);
     const nextLevelOptions = this.getNextLevelOptions(
       currentDimension,
-      currentLevel
+      currentLevel,
     );
 
     return {
@@ -555,14 +555,14 @@ export class DrillDownSystem {
     kpi: FinancialKPI,
     dimension: string,
     filters: Record<string, any>,
-    options: any
+    options: any,
   ): Promise<DrillDownResult[]> {
     switch (dimension) {
       case 'time':
         return this.drillDownByTime(
           kpi,
           options.aggregationLevel || 'month',
-          filters
+          filters,
         );
       case 'service_type':
         return this.drillDownByServiceType(kpi, filters);
@@ -579,7 +579,7 @@ export class DrillDownSystem {
     kpi: FinancialKPI,
     parentDimension: string,
     parentResult: DrillDownResult,
-    filters: Record<string, any>
+    filters: Record<string, any>,
   ): Promise<DrillDownResult[]> {
     // Get sub-dimensions for the current drill-down level
     const subFilters = {
@@ -620,7 +620,7 @@ export class DrillDownSystem {
 
   private getNextLevelOptions(
     dimension: string,
-    _level: number
+    _level: number,
   ): string[] | undefined {
     const dimensionHierarchy: Record<string, string[]> = {
       time: ['service_type', 'provider'],

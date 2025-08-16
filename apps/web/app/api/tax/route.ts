@@ -18,7 +18,7 @@ const taxCalculationSchema = z.object({
       valor_unitario: z.number().positive(),
       quantidade: z.number().positive(),
       valor_total: z.number().positive(),
-    })
+    }),
   ),
   customer: z.object({
     cnpj: z.string().optional(),
@@ -56,7 +56,7 @@ export async function GET(request: NextRequest) {
     if (!clinicId) {
       return NextResponse.json(
         { error: 'clinic_id parameter is required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -76,7 +76,7 @@ export async function GET(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -103,13 +103,13 @@ export async function POST(request: NextRequest) {
       default:
         return NextResponse.json(
           { error: 'Invalid action specified' },
-          { status: 400 }
+          { status: 400 },
         );
     }
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -126,7 +126,7 @@ async function getTaxConfiguration(supabase: any, clinicId: string) {
   if (error) {
     return NextResponse.json(
       { error: 'Tax configuration not found' },
-      { status: 404 }
+      { status: 404 },
     );
   }
 
@@ -141,13 +141,13 @@ async function getTaxStatistics(supabase: any, clinicId: string) {
     .eq('clinic_id', clinicId)
     .gte(
       'created_at',
-      new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
+      new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
     );
 
   if (nfeError) {
     return NextResponse.json(
       { error: 'Failed to fetch NFE statistics' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 
@@ -159,7 +159,7 @@ async function getTaxStatistics(supabase: any, clinicId: string) {
       acc[doc.status] = (acc[doc.status] || 0) + 1;
       return acc;
     },
-    {} as Record<string, number>
+    {} as Record<string, number>,
   );
 
   return NextResponse.json({
@@ -183,7 +183,7 @@ async function getNFEStatus(supabase: any, clinicId: string) {
   if (error) {
     return NextResponse.json(
       { error: 'Failed to fetch NFE status' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 
@@ -238,11 +238,11 @@ async function calculateTaxes(supabase: any, body: any) {
       calculations,
       total_base: validatedData.services.reduce(
         (sum, s) => sum + s.valor_total,
-        0
+        0,
       ),
       total_taxes: calculations.reduce(
         (sum, c) => sum + c.calculation.total_taxes,
-        0
+        0,
       ),
       created_at: new Date().toISOString(),
     })
@@ -252,7 +252,7 @@ async function calculateTaxes(supabase: any, body: any) {
   if (error) {
     return NextResponse.json(
       { error: 'Failed to store tax calculation' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 
@@ -310,7 +310,7 @@ async function generateNFE(supabase: any, body: any) {
     if (error) {
       return NextResponse.json(
         { error: 'Failed to store NFE document' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -331,7 +331,7 @@ async function generateNFE(supabase: any, body: any) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'NFE generation failed' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -368,7 +368,7 @@ async function validateCNPJ(supabase: any, body: any) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'CNPJ validation failed' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

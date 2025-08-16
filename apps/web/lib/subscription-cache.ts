@@ -130,7 +130,7 @@ export class SubscriptionCache {
   set(
     key: string,
     data: SubscriptionValidationResult,
-    customTTL?: number
+    customTTL?: number,
   ): void {
     const startTime = Date.now();
 
@@ -468,7 +468,7 @@ export const cacheManager = {
    */
   async warmUp(
     userId: string,
-    validationResult: SubscriptionValidationResult
+    validationResult: SubscriptionValidationResult,
   ): Promise<void> {
     const key = `subscription:${userId}`;
     globalSubscriptionCache.set(key, validationResult);
@@ -516,7 +516,7 @@ export const cacheManager = {
     if (stats.hitRate < 70) {
       healthy = false;
       recommendations.push(
-        'Low cache hit rate - consider increasing TTL or optimizing invalidation strategy'
+        'Low cache hit rate - consider increasing TTL or optimizing invalidation strategy',
       );
     }
 
@@ -524,7 +524,7 @@ export const cacheManager = {
     if (stats.memoryUsage > 50 * 1024 * 1024) {
       // 50MB
       recommendations.push(
-        'High memory usage - consider reducing cache size or TTL'
+        'High memory usage - consider reducing cache size or TTL',
       );
     }
 
@@ -532,7 +532,7 @@ export const cacheManager = {
     const expiredPercentage = (stats.expiredEntries / stats.totalEntries) * 100;
     if (expiredPercentage > 30) {
       recommendations.push(
-        'High percentage of expired entries - consider running manual cleanup'
+        'High percentage of expired entries - consider running manual cleanup',
       );
     }
 

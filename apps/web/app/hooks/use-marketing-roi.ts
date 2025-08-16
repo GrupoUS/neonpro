@@ -32,7 +32,7 @@ export function useMarketingCampaigns(
   clinicId: string,
   filters?: MarketingROIFilters,
   page = 1,
-  limit = 20
+  limit = 20,
 ) {
   return useQuery({
     queryKey: ['marketing-campaigns', clinicId, filters, page, limit],
@@ -81,7 +81,7 @@ export function useMarketingCampaign(campaignId: string) {
     queryKey: ['marketing-campaign', campaignId],
     queryFn: async () => {
       const response = await fetch(
-        `/api/marketing-roi/campaigns/${campaignId}`
+        `/api/marketing-roi/campaigns/${campaignId}`,
       );
       if (!response.ok) {
         throw new Error('Failed to fetch marketing campaign');
@@ -161,7 +161,7 @@ export function useUpdateCampaignMetrics() {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify(metrics),
-        }
+        },
       );
 
       if (!response.ok) {
@@ -199,7 +199,7 @@ export function useUpdateCampaignMetrics() {
  */
 export function useTreatmentProfitabilityAnalysis(
   clinicId: string,
-  filters?: TreatmentROIFilters
+  filters?: TreatmentROIFilters,
 ) {
   return useQuery({
     queryKey: ['treatment-profitability', clinicId, filters],
@@ -210,7 +210,7 @@ export function useTreatmentProfitabilityAnalysis(
 
       if (filters?.treatment_ids?.length) {
         filters.treatment_ids.forEach((id) =>
-          params.append('treatment_ids', id)
+          params.append('treatment_ids', id),
         );
       }
       if (filters?.min_roi) {
@@ -231,7 +231,7 @@ export function useTreatmentProfitabilityAnalysis(
       }
 
       const response = await fetch(
-        `/api/marketing-roi/treatment-profitability?${params}`
+        `/api/marketing-roi/treatment-profitability?${params}`,
       );
       if (!response.ok) {
         throw new Error('Failed to fetch treatment profitability analysis');
@@ -273,7 +273,7 @@ export function useCalculateTreatmentROI() {
             period_start: periodStart.toISOString(),
             period_end: periodEnd.toISOString(),
           }),
-        }
+        },
       );
 
       if (!response.ok) {
@@ -306,7 +306,7 @@ export function useCalculateTreatmentROI() {
 export function useCACLTVAnalysis(
   clinicId: string,
   periodStart: Date,
-  periodEnd: Date
+  periodEnd: Date,
 ) {
   return useQuery({
     queryKey: ['cac-ltv-analysis', clinicId, periodStart, periodEnd],
@@ -318,7 +318,7 @@ export function useCACLTVAnalysis(
       });
 
       const response = await fetch(
-        `/api/marketing-roi/cac-ltv-analysis?${params}`
+        `/api/marketing-roi/cac-ltv-analysis?${params}`,
       );
       if (!response.ok) {
         throw new Error('Failed to fetch CAC & LTV analysis');
@@ -436,7 +436,7 @@ export function useROIAlerts(clinicId: string) {
     queryKey: ['roi-alerts', clinicId],
     queryFn: async () => {
       const response = await fetch(
-        `/api/marketing-roi/alerts?clinic_id=${clinicId}`
+        `/api/marketing-roi/alerts?clinic_id=${clinicId}`,
       );
       if (!response.ok) {
         throw new Error('Failed to fetch ROI alerts');
@@ -531,7 +531,7 @@ export function useUpdateROIAlert() {
         dismissed: 'Alerta dispensado com sucesso!',
       };
       toast.success(
-        statusMessages[data.status] || 'Alerta atualizado com sucesso!'
+        statusMessages[data.status] || 'Alerta atualizado com sucesso!',
       );
     },
     onError: (error: Error) => {
@@ -550,7 +550,7 @@ export function useOptimizationRecommendations(clinicId: string) {
     queryKey: ['optimization-recommendations', clinicId],
     queryFn: async () => {
       const response = await fetch(
-        `/api/marketing-roi/optimization-recommendations?clinic_id=${clinicId}`
+        `/api/marketing-roi/optimization-recommendations?clinic_id=${clinicId}`,
       );
       if (!response.ok) {
         throw new Error('Failed to fetch optimization recommendations');
@@ -577,13 +577,13 @@ export function useGenerateOptimizationRecommendations() {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({ clinic_id: clinicId }),
-        }
+        },
       );
 
       if (!response.ok) {
         const error = await response.json();
         throw new Error(
-          error.message || 'Failed to generate optimization recommendations'
+          error.message || 'Failed to generate optimization recommendations',
         );
       }
 
@@ -623,13 +623,13 @@ export function useUpdateRecommendationStatus() {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({ status }),
-        }
+        },
       );
 
       if (!response.ok) {
         const error = await response.json();
         throw new Error(
-          error.message || 'Failed to update recommendation status'
+          error.message || 'Failed to update recommendation status',
         );
       }
 
@@ -646,7 +646,7 @@ export function useUpdateRecommendationStatus() {
         rejected: 'Recomendação rejeitada!',
       };
       toast.success(
-        statusMessages[data.status] || 'Recomendação atualizada com sucesso!'
+        statusMessages[data.status] || 'Recomendação atualizada com sucesso!',
       );
     },
     onError: (error: Error) => {
@@ -666,7 +666,7 @@ export function useROIDashboardMetrics(
   periodEnd: Date,
   includeTrends = false,
   includeComparisons = false,
-  includeForecasts = false
+  includeForecasts = false,
 ) {
   return useQuery({
     queryKey: [
@@ -689,7 +689,7 @@ export function useROIDashboardMetrics(
       });
 
       const response = await fetch(
-        `/api/marketing-roi/dashboard-metrics?${params}`
+        `/api/marketing-roi/dashboard-metrics?${params}`,
       );
       if (!response.ok) {
         throw new Error('Failed to fetch ROI dashboard metrics');
@@ -708,7 +708,7 @@ export function useROITrendData(
   clinicId: string,
   periodStart: Date,
   periodEnd: Date,
-  granularity: 'daily' | 'weekly' | 'monthly' = 'daily'
+  granularity: 'daily' | 'weekly' | 'monthly' = 'daily',
 ) {
   return useQuery({
     queryKey: ['roi-trend-data', clinicId, periodStart, periodEnd, granularity],
@@ -739,7 +739,7 @@ export function useROIComparisons(
   currentPeriodStart: Date,
   currentPeriodEnd: Date,
   previousPeriodStart: Date,
-  previousPeriodEnd: Date
+  previousPeriodEnd: Date,
 ) {
   return useQuery({
     queryKey: [
@@ -836,7 +836,7 @@ export function useGenerateROIForecast() {
  */
 export function useROIForecasts(
   clinicId: string,
-  forecastType?: 'campaign' | 'treatment' | 'channel' | 'overall'
+  forecastType?: 'campaign' | 'treatment' | 'channel' | 'overall',
 ) {
   return useQuery({
     queryKey: ['roi-forecasts', clinicId, forecastType],
@@ -869,7 +869,7 @@ export function useMarketingROIInsights(clinicId: string) {
     queryKey: ['marketing-roi-insights', clinicId],
     queryFn: async () => {
       const response = await fetch(
-        `/api/marketing-roi/insights?clinic_id=${clinicId}`
+        `/api/marketing-roi/insights?clinic_id=${clinicId}`,
       );
       if (!response.ok) {
         throw new Error('Failed to fetch marketing ROI insights');
@@ -887,7 +887,7 @@ export function useMarketingROIInsights(clinicId: string) {
 export function useROIMetricsSummary(
   clinicId: string,
   periodStart: Date,
-  periodEnd: Date
+  periodEnd: Date,
 ) {
   return useQuery({
     queryKey: ['roi-metrics-summary', clinicId, periodStart, periodEnd],
@@ -899,7 +899,7 @@ export function useROIMetricsSummary(
       });
 
       const response = await fetch(
-        `/api/marketing-roi/metrics-summary?${params}`
+        `/api/marketing-roi/metrics-summary?${params}`,
       );
       if (!response.ok) {
         throw new Error('Failed to fetch ROI metrics summary');
@@ -968,7 +968,7 @@ export function useRealTimeROIMonitoring(clinicId: string, enabled = true) {
     queryKey: ['real-time-roi-monitoring', clinicId],
     queryFn: async () => {
       const response = await fetch(
-        `/api/marketing-roi/real-time-monitoring?clinic_id=${clinicId}`
+        `/api/marketing-roi/real-time-monitoring?clinic_id=${clinicId}`,
       );
       if (!response.ok) {
         throw new Error('Failed to fetch real-time ROI monitoring data');
@@ -991,7 +991,7 @@ export function useROICalculationSettings(clinicId: string) {
     queryKey: ['roi-calculation-settings', clinicId],
     queryFn: async () => {
       const response = await fetch(
-        `/api/marketing-roi/calculation-settings?clinic_id=${clinicId}`
+        `/api/marketing-roi/calculation-settings?clinic_id=${clinicId}`,
       );
       if (!response.ok) {
         throw new Error('Failed to fetch ROI calculation settings');
@@ -1017,7 +1017,7 @@ export function useROICalculationSettings(clinicId: string) {
       if (!response.ok) {
         const error = await response.json();
         throw new Error(
-          error.message || 'Failed to update ROI calculation settings'
+          error.message || 'Failed to update ROI calculation settings',
         );
       }
 

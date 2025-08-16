@@ -28,16 +28,16 @@ export async function GET(request: NextRequest) {
         total_items_analyzed: optimizations.length,
         potential_savings: optimizations.reduce(
           (sum, opt) => sum + opt.potential_savings,
-          0
+          0,
         ),
         high_priority_items: optimizations.filter(
-          (opt) => opt.implementation_priority === 'high'
+          (opt) => opt.implementation_priority === 'high',
         ).length,
         average_confidence:
           optimizations.length > 0
             ? optimizations.reduce(
                 (sum, opt) => sum + opt.confidence_score,
-                0
+                0,
               ) / optimizations.length
             : 0,
       },
@@ -50,7 +50,7 @@ export async function GET(request: NextRequest) {
           error: 'Invalid parameters',
           details: error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -60,7 +60,7 @@ export async function GET(request: NextRequest) {
         error: 'Failed to analyze threshold optimization',
         details: error.message,
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

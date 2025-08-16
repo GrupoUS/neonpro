@@ -46,7 +46,7 @@ export class PredictiveAnalyticsService {
   }
 
   async createModel(
-    model: Omit<ForecastingModel, 'id' | 'created_at' | 'updated_at'>
+    model: Omit<ForecastingModel, 'id' | 'created_at' | 'updated_at'>,
   ): Promise<ForecastingModel> {
     const { data, error } = await this.supabase
       .from('forecasting_models')
@@ -62,7 +62,7 @@ export class PredictiveAnalyticsService {
 
   async updateModel(
     id: string,
-    updates: UpdateModelRequest
+    updates: UpdateModelRequest,
   ): Promise<ForecastingModel> {
     const { data, error } = await this.supabase
       .from('forecasting_models')
@@ -107,7 +107,7 @@ export class PredictiveAnalyticsService {
   }
 
   async createPrediction(
-    prediction: CreatePredictionRequest
+    prediction: CreatePredictionRequest,
   ): Promise<DemandPrediction> {
     const { data, error } = await this.supabase
       .from('demand_predictions')
@@ -124,7 +124,7 @@ export class PredictiveAnalyticsService {
   async getPredictionsByTimeframe(
     startDate: string,
     endDate: string,
-    category?: string
+    category?: string,
   ): Promise<DemandPrediction[]> {
     let query = this.supabase
       .from('demand_predictions')
@@ -163,7 +163,7 @@ export class PredictiveAnalyticsService {
   }
 
   async createAccuracyRecord(
-    accuracy: Omit<ForecastAccuracy, 'id' | 'created_at'>
+    accuracy: Omit<ForecastAccuracy, 'id' | 'created_at'>,
   ): Promise<ForecastAccuracy> {
     const { data, error } = await this.supabase
       .from('forecast_accuracy')
@@ -210,7 +210,7 @@ export class PredictiveAnalyticsService {
 
   async acknowledgeAlert(
     id: string,
-    acknowledgedBy: string
+    acknowledgedBy: string,
   ): Promise<DemandAlert> {
     const { data, error } = await this.supabase
       .from('demand_alerts')
@@ -265,7 +265,7 @@ export class PredictiveAnalyticsService {
   async updateSettings(
     settingKey: string,
     settingValue: any,
-    updatedBy: string
+    updatedBy: string,
   ): Promise<ForecastingSettings> {
     const existingSetting = await this.supabase
       .from('forecasting_settings')
@@ -326,7 +326,7 @@ export class PredictiveAnalyticsService {
   }
 
   async createTrainingRecord(
-    training: Omit<ModelTrainingHistory, 'id' | 'created_at'>
+    training: Omit<ModelTrainingHistory, 'id' | 'created_at'>,
   ): Promise<ModelTrainingHistory> {
     const { data, error } = await this.supabase
       .from('model_training_history')
@@ -405,7 +405,7 @@ export class PredictiveAnalyticsService {
     const avgAccuracy =
       accuracyMetrics.reduce(
         (sum, metric) => sum + metric.accuracy_percentage,
-        0
+        0,
       ) / accuracyMetrics.length;
     const avgMape =
       accuracyMetrics.reduce((sum, metric) => sum + (metric.mape || 0), 0) /
@@ -424,7 +424,7 @@ export class PredictiveAnalyticsService {
   async generateForecast(
     category: string,
     timeframe: 'daily' | 'weekly' | 'monthly',
-    horizon: number
+    horizon: number,
   ): Promise<DemandPrediction[]> {
     // This would typically call ML models
     // For now, we'll generate mock forecasts

@@ -25,13 +25,13 @@ export async function POST(request: NextRequest) {
       } catch (_error) {
         return NextResponse.json(
           { error: 'Failed to generate authentication options' },
-          { status: 500 }
+          { status: 500 },
         );
       }
     },
     {
       method: 'webauthn',
       additionalData: { operation: 'authentication_options' },
-    }
+    },
   );
 }

@@ -125,13 +125,13 @@ export async function GET(request: NextRequest) {
           error: 'Invalid query parameters',
           details: error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -178,7 +178,7 @@ export async function POST(request: NextRequest) {
         data: paymentPlan,
         message: 'Payment plan created successfully',
       },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (error) {
     if (error instanceof z.ZodError) {
@@ -187,7 +187,7 @@ export async function POST(request: NextRequest) {
           error: 'Invalid request data',
           details: error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -196,7 +196,7 @@ export async function POST(request: NextRequest) {
       if (error.message.includes('Customer not found')) {
         return NextResponse.json(
           { error: 'Customer not found' },
-          { status: 404 }
+          { status: 404 },
         );
       }
 
@@ -207,7 +207,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -236,7 +236,7 @@ export async function PUT(request: NextRequest) {
     if (!(action && paymentPlanIds && Array.isArray(paymentPlanIds))) {
       return NextResponse.json(
         { error: 'Invalid request: action and paymentPlanIds are required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -247,8 +247,8 @@ export async function PUT(request: NextRequest) {
       case 'cancel':
         results = await Promise.all(
           paymentPlanIds.map((id) =>
-            installmentManager.cancelPaymentPlan(id, updateData?.reason)
-          )
+            installmentManager.cancelPaymentPlan(id, updateData?.reason),
+          ),
         );
         break;
 
@@ -256,15 +256,15 @@ export async function PUT(request: NextRequest) {
         if (!updateData) {
           return NextResponse.json(
             { error: 'Update data is required for update action' },
-            { status: 400 }
+            { status: 400 },
           );
         }
 
         const validatedUpdateData = updatePaymentPlanSchema.parse(updateData);
         results = await Promise.all(
           paymentPlanIds.map((id) =>
-            installmentManager.modifyPaymentPlan(id, validatedUpdateData)
-          )
+            installmentManager.modifyPaymentPlan(id, validatedUpdateData),
+          ),
         );
         break;
       }
@@ -272,7 +272,7 @@ export async function PUT(request: NextRequest) {
       default:
         return NextResponse.json(
           { error: 'Invalid action. Supported actions: cancel, update' },
-          { status: 400 }
+          { status: 400 },
         );
     }
 
@@ -288,13 +288,13 @@ export async function PUT(request: NextRequest) {
           error: 'Invalid request data',
           details: error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -323,7 +323,7 @@ export async function DELETE(request: NextRequest) {
     if (!(paymentPlanIds && Array.isArray(paymentPlanIds))) {
       return NextResponse.json(
         { error: 'paymentPlanIds array is required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -335,7 +335,7 @@ export async function DELETE(request: NextRequest) {
         try {
           await installmentManager.cancelPaymentPlan(
             id,
-            reason || 'Bulk deletion'
+            reason || 'Bulk deletion',
           );
           return { id, success: true };
         } catch (error) {
@@ -345,7 +345,7 @@ export async function DELETE(request: NextRequest) {
             error: error instanceof Error ? error.message : 'Unknown error',
           };
         }
-      })
+      }),
     );
 
     const successful = results.filter((r) => r.success).length;
@@ -364,7 +364,7 @@ export async function DELETE(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -28,7 +28,7 @@ export class SSOManager {
   constructor(
     supabaseUrl: string,
     supabaseKey: string,
-    config?: SSOConfiguration
+    config?: SSOConfiguration,
   ) {
     this.supabase = createClient<Database>(supabaseUrl, supabaseKey);
     this.config = config || this.getDefaultConfig();
@@ -75,20 +75,20 @@ export class SSOManager {
    */
   async generateAuthUrl(
     providerId: string,
-    options: Partial<SSOAuthRequest> = {}
+    options: Partial<SSOAuthRequest> = {},
   ): Promise<string> {
     const provider = this.providers.get(providerId);
     if (!provider) {
       throw this.createError(
         'PROVIDER_NOT_FOUND',
-        `Provider ${providerId} not found`
+        `Provider ${providerId} not found`,
       );
     }
 
     if (!provider.enabled) {
       throw this.createError(
         'PROVIDER_DISABLED',
-        `Provider ${providerId} is disabled`
+        `Provider ${providerId} is disabled`,
       );
     }
 
@@ -128,13 +128,13 @@ export class SSOManager {
    */
   async handleCallback(
     providerId: string,
-    response: SSOAuthResponse
+    response: SSOAuthResponse,
   ): Promise<SSOSession> {
     const provider = this.providers.get(providerId);
     if (!provider) {
       throw this.createError(
         'PROVIDER_NOT_FOUND',
-        `Provider ${providerId} not found`
+        `Provider ${providerId} not found`,
       );
     }
 
@@ -157,14 +157,14 @@ export class SSOManager {
       });
       throw this.createError(
         'PROVIDER_ERROR',
-        response.errorDescription || response.error
+        response.errorDescription || response.error,
       );
     }
 
     if (!response.code) {
       throw this.createError(
         'PROVIDER_ERROR',
-        'No authorization code received'
+        'No authorization code received',
       );
     }
 
@@ -173,13 +173,13 @@ export class SSOManager {
       const tokenResponse = await this.exchangeCodeForTokens(
         provider,
         response.code,
-        authRequest.redirectUri
+        authRequest.redirectUri,
       );
 
       // Get user info
       const userInfo = await this.getUserInfo(
         provider,
-        tokenResponse.accessToken
+        tokenResponse.accessToken,
       );
 
       // Create or link account
@@ -226,7 +226,7 @@ export class SSOManager {
   private async exchangeCodeForTokens(
     provider: SSOProvider,
     code: string,
-    redirectUri: string
+    redirectUri: string,
   ): Promise<SSOTokenResponse> {
     const params = new URLSearchParams({
       grant_type: 'authorization_code',
@@ -249,7 +249,7 @@ export class SSOManager {
       const errorData = await response.text();
       throw this.createError(
         'PROVIDER_ERROR',
-        `Token exchange failed: ${errorData}`
+        `Token exchange failed: ${errorData}`,
       );
     }
 
@@ -270,13 +270,13 @@ export class SSOManager {
    */
   private async getUserInfo(
     provider: SSOProvider,
-    accessToken: string
+    accessToken: string,
   ): Promise<SSOUserInfo> {
     if (!provider.config.userInfoUrl) {
       // Try to decode user info from ID token if available
       throw this.createError(
         'CONFIGURATION_ERROR',
-        'No user info URL configured'
+        'No user info URL configured',
       );
     }
 
@@ -357,7 +357,7 @@ export class SSOManager {
    */
   private async createOrLinkAccount(
     provider: SSOProvider,
-    userInfo: SSOUserInfo
+    userInfo: SSOUserInfo,
   ): Promise<string> {
     // Check if user already exists by email
     const { data: existingUser } = await this.supabase
@@ -392,7 +392,7 @@ export class SSOManager {
     if (error) {
       throw this.createError(
         'ACCOUNT_LINKING_FAILED',
-        `Failed to create user: ${error.message}`
+        `Failed to create user: ${error.message}`,
       );
     }
 
@@ -408,7 +408,7 @@ export class SSOManager {
   private async linkSSOAccount(
     userId: string,
     providerId: string,
-    userInfo: SSOUserInfo
+    userInfo: SSOUserInfo,
   ): Promise<void> {
     const linking: Omit<SSOAccountLinking, 'id'> = {
       userId,
@@ -430,7 +430,7 @@ export class SSOManager {
     if (error) {
       throw this.createError(
         'ACCOUNT_LINKING_FAILED',
-        `Failed to link account: ${error.message}`
+        `Failed to link account: ${error.message}`,
       );
     }
 
@@ -447,7 +447,7 @@ export class SSOManager {
    * Create SSO session
    */
   private async createSSOSession(
-    sessionData: Omit<SSOSession, 'id' | 'createdAt' | 'lastUsedAt'>
+    sessionData: Omit<SSOSession, 'id' | 'createdAt' | 'lastUsedAt'>,
   ): Promise<SSOSession> {
     const session: Omit<SSOSession, 'id'> = {
       ...sessionData,
@@ -464,7 +464,7 @@ export class SSOManager {
     if (error) {
       throw this.createError(
         'PROVIDER_ERROR',
-        `Failed to create session: ${error.message}`
+        `Failed to create session: ${error.message}`,
       );
     }
 
@@ -493,14 +493,14 @@ export class SSOManager {
     if (!provider) {
       throw this.createError(
         'PROVIDER_NOT_FOUND',
-        `Provider ${session.providerId} not found`
+        `Provider ${session.providerId} not found`,
       );
     }
 
     try {
       const tokenResponse = await this.refreshAccessToken(
         provider,
-        session.refreshToken
+        session.refreshToken,
       );
 
       const updatedSession = {
@@ -521,7 +521,7 @@ export class SSOManager {
       if (updateError) {
         throw this.createError(
           'PROVIDER_ERROR',
-          `Failed to update session: ${updateError.message}`
+          `Failed to update session: ${updateError.message}`,
         );
       }
 
@@ -552,7 +552,7 @@ export class SSOManager {
    */
   private async refreshAccessToken(
     provider: SSOProvider,
-    refreshToken: string
+    refreshToken: string,
   ): Promise<SSOTokenResponse> {
     const params = new URLSearchParams({
       grant_type: 'refresh_token',
@@ -574,7 +574,7 @@ export class SSOManager {
       const errorData = await response.text();
       throw this.createError(
         'TOKEN_EXPIRED',
-        `Token refresh failed: ${errorData}`
+        `Token refresh failed: ${errorData}`,
       );
     }
 
@@ -625,7 +625,7 @@ export class SSOManager {
     }
 
     const domainMapping = this.config.domainMappings.find(
-      (mapping) => mapping.domain === domain && mapping.autoRedirect
+      (mapping) => mapping.domain === domain && mapping.autoRedirect,
     );
 
     if (!domainMapping) {
@@ -703,7 +703,10 @@ export class SSOManager {
    * Log audit event
    */
   private async logAudit(
-    auditData: Omit<SSOAuditLog, 'id' | 'timestamp' | 'ipAddress' | 'userAgent'>
+    auditData: Omit<
+      SSOAuditLog,
+      'id' | 'timestamp' | 'ipAddress' | 'userAgent'
+    >,
   ): Promise<void> {
     const audit: Omit<SSOAuditLog, 'id'> = {
       ...auditData,
@@ -721,7 +724,7 @@ export class SSOManager {
   private createError(
     code: SSOErrorCode,
     message: string,
-    details?: Record<string, any>
+    details?: Record<string, any>,
   ): SSOError {
     return {
       code,
@@ -736,7 +739,7 @@ export class SSOManager {
    */
   getAvailableProviders(): SSOProvider[] {
     return Array.from(this.providers.values()).filter(
-      (provider) => provider.enabled
+      (provider) => provider.enabled,
     );
   }
 
@@ -767,5 +770,5 @@ export class SSOManager {
 // Export singleton instance
 export const ssoManager = new SSOManager(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
+  process.env.SUPABASE_SERVICE_ROLE_KEY!,
 );

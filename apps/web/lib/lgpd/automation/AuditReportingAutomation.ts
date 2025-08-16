@@ -188,7 +188,7 @@ export class AuditReportingAutomation {
   constructor(
     supabase: SupabaseClient,
     complianceManager: LGPDComplianceManager,
-    config: AuditConfig
+    config: AuditConfig,
   ) {
     this.supabase = supabase;
     this.complianceManager = complianceManager;
@@ -217,7 +217,7 @@ export class AuditReportingAutomation {
               await this.updateDashboards();
             } catch (_error) {}
           },
-          60 * 60 * 1000
+          60 * 60 * 1000,
         ); // Check every hour
       }
     } catch (error) {
@@ -244,7 +244,7 @@ export class AuditReportingAutomation {
     periodEnd: string,
     scope: string[],
     format: 'pdf' | 'excel' | 'json' | 'html',
-    generatedBy: string
+    generatedBy: string,
   ): Promise<{ success: boolean; report_id: string; file_path?: string }> {
     try {
       // Create report record
@@ -277,7 +277,7 @@ export class AuditReportingAutomation {
           reportType,
           periodStart,
           periodEnd,
-          scope
+          scope,
         );
 
         // Generate executive summary
@@ -293,7 +293,7 @@ export class AuditReportingAutomation {
         // Generate recommendations
         const recommendations = await this.generateRecommendations(
           reportContent,
-          complianceGaps
+          complianceGaps,
         );
 
         // Calculate next audit date
@@ -305,7 +305,7 @@ export class AuditReportingAutomation {
           filePath = await this.exportReportToFile(
             report.id,
             reportContent,
-            format
+            format,
           );
         }
 
@@ -380,13 +380,13 @@ export class AuditReportingAutomation {
     scheduleData: Omit<
       AuditSchedule,
       'id' | 'next_generation_date' | 'created_at' | 'updated_at'
-    >
+    >,
   ): Promise<{ success: boolean; schedule_id: string }> {
     try {
       // Calculate next generation date
       const nextGenerationDate = this.calculateNextGenerationDate(
         scheduleData.frequency,
-        scheduleData.custom_frequency_days
+        scheduleData.custom_frequency_days,
       );
 
       // Create schedule record
@@ -433,14 +433,17 @@ export class AuditReportingAutomation {
    * Create Compliance Dashboard
    */
   async createComplianceDashboard(
-    dashboardData: Omit<ComplianceDashboard, 'id' | 'created_at' | 'updated_at'>
+    dashboardData: Omit<
+      ComplianceDashboard,
+      'id' | 'created_at' | 'updated_at'
+    >,
   ): Promise<{ success: boolean; dashboard_id: string }> {
     try {
       // Validate dashboard configuration
       const validation = await this.validateDashboardConfig(dashboardData);
       if (!validation.valid) {
         throw new Error(
-          `Invalid dashboard configuration: ${validation.errors.join(', ')}`
+          `Invalid dashboard configuration: ${validation.errors.join(', ')}`,
         );
       }
 
@@ -482,7 +485,7 @@ export class AuditReportingAutomation {
       };
     } catch (error) {
       throw new Error(
-        `Failed to create compliance dashboard: ${error.message}`
+        `Failed to create compliance dashboard: ${error.message}`,
       );
     }
   }
@@ -501,7 +504,7 @@ export class AuditReportingAutomation {
       risk_level?: string;
       compliance_relevant?: boolean;
     },
-    pagination: { page: number; limit: number } = { page: 1, limit: 100 }
+    pagination: { page: number; limit: number } = { page: 1, limit: 100 },
   ): Promise<{
     audit_trail: AuditTrail[];
     total_count: number;
@@ -577,7 +580,7 @@ export class AuditReportingAutomation {
   }> {
     try {
       const { data: dashboard, error } = await this.supabase.rpc(
-        'get_executive_compliance_dashboard'
+        'get_executive_compliance_dashboard',
       );
 
       if (error) {
@@ -587,7 +590,7 @@ export class AuditReportingAutomation {
       return dashboard;
     } catch (error) {
       throw new Error(
-        `Failed to generate executive dashboard: ${error.message}`
+        `Failed to generate executive dashboard: ${error.message}`,
       );
     }
   }
@@ -599,21 +602,21 @@ export class AuditReportingAutomation {
     exportType: 'audit_trail' | 'reports' | 'dashboards' | 'all',
     format: 'csv' | 'excel' | 'json',
     filters: any = {},
-    includeMetadata = true
+    includeMetadata = true,
   ): Promise<{ success: boolean; file_path: string; file_size: number }> {
     try {
       // Generate export data based on type
       const exportData = await this.generateExportData(
         exportType,
         filters,
-        includeMetadata
+        includeMetadata,
       );
 
       // Export to file
       const filePath = await this.exportDataToFile(
         exportData,
         format,
-        exportType
+        exportType,
       );
       const fileSize = await this.getFileSize(filePath);
 
@@ -720,7 +723,7 @@ export class AuditReportingAutomation {
   private generateReportTitle(
     reportType: string,
     periodStart: string,
-    periodEnd: string
+    periodEnd: string,
   ): string {
     const startDate = new Date(periodStart).toLocaleDateString();
     const endDate = new Date(periodEnd).toLocaleDateString();
@@ -739,7 +742,7 @@ export class AuditReportingAutomation {
 
   private generateReportDescription(
     reportType: string,
-    scope: string[]
+    scope: string[],
   ): string {
     const descriptions = {
       compliance_overview:
@@ -764,7 +767,7 @@ export class AuditReportingAutomation {
     _reportType: string,
     _periodStart: string,
     _periodEnd: string,
-    _scope: string[]
+    _scope: string[],
   ): Promise<any> {
     // Implementation would generate comprehensive report content based on type
     return {
@@ -798,7 +801,7 @@ export class AuditReportingAutomation {
 
   private async generateRecommendations(
     _reportContent: any,
-    _complianceGaps: any[]
+    _complianceGaps: any[],
   ): Promise<any[]> {
     // Implementation would generate recommendations
     return [];
@@ -828,7 +831,7 @@ export class AuditReportingAutomation {
   private async exportReportToFile(
     reportId: string,
     _content: any,
-    format: string
+    format: string,
   ): Promise<string> {
     // Implementation would export report to specified format
     return `/reports/${reportId}.${format}`;
@@ -841,7 +844,7 @@ export class AuditReportingAutomation {
 
   private calculateNextGenerationDate(
     frequency: string,
-    customDays?: number
+    customDays?: number,
   ): string {
     const nextDate = new Date();
 
@@ -872,7 +875,7 @@ export class AuditReportingAutomation {
   }
 
   private async validateDashboardConfig(
-    dashboardData: any
+    dashboardData: any,
   ): Promise<{ valid: boolean; errors: string[] }> {
     const errors: string[] = [];
 
@@ -892,7 +895,7 @@ export class AuditReportingAutomation {
 
   private async initializeDashboardData(
     _dashboardId: string,
-    _dashboardData: any
+    _dashboardData: any,
   ): Promise<void> {
     // Implementation would initialize dashboard with initial data
   }
@@ -917,7 +920,7 @@ export class AuditReportingAutomation {
   private async generateExportData(
     _exportType: string,
     _filters: any,
-    _includeMetadata: boolean
+    _includeMetadata: boolean,
   ): Promise<any> {
     // Implementation would generate export data
     return {};
@@ -926,7 +929,7 @@ export class AuditReportingAutomation {
   private async exportDataToFile(
     _data: any,
     format: string,
-    exportType: string
+    exportType: string,
   ): Promise<string> {
     // Implementation would export data to file
     return `/exports/${exportType}_${Date.now()}.${format}`;

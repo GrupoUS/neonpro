@@ -38,7 +38,7 @@ export class RiskAssessmentService {
   // Calculate comprehensive risk score
   calculateRiskScore(
     factors: Partial<RiskFactors>,
-    context: Partial<AssessmentContext>
+    context: Partial<AssessmentContext>,
   ): number {
     let totalScore = 0;
     let _factorCount = 0;
@@ -49,7 +49,7 @@ export class RiskAssessmentService {
       if (factors.medical.chronic_conditions?.length) {
         medicalScore += Math.min(
           factors.medical.chronic_conditions.length * 10,
-          40
+          40,
         );
       }
       if (factors.medical.allergies?.length) {
@@ -58,13 +58,13 @@ export class RiskAssessmentService {
       if (factors.medical.contraindications?.length) {
         medicalScore += Math.min(
           factors.medical.contraindications.length * 15,
-          50
+          50,
         );
       }
       if (factors.medical.previous_complications?.length) {
         medicalScore += Math.min(
           factors.medical.previous_complications.length * 8,
-          30
+          30,
         );
       }
       totalScore += Math.min(medicalScore, 100) * 0.4;
@@ -83,13 +83,13 @@ export class RiskAssessmentService {
       if (factors.procedural.equipment_factors?.length) {
         proceduralScore += Math.min(
           factors.procedural.equipment_factors.length * 5,
-          25
+          25,
         );
       }
       if (factors.procedural.technique_risks?.length) {
         proceduralScore += Math.min(
           factors.procedural.technique_risks.length * 7,
-          35
+          35,
         );
       }
       totalScore += Math.min(proceduralScore, 100) * 0.3;
@@ -114,7 +114,7 @@ export class RiskAssessmentService {
       if (factors.patient_specific.mobility_limitations?.length) {
         patientScore += Math.min(
           factors.patient_specific.mobility_limitations.length * 8,
-          25
+          25,
         );
       }
       totalScore += Math.min(patientScore, 100) * 0.2;
@@ -134,7 +134,7 @@ export class RiskAssessmentService {
       if (factors.environmental.equipment_status?.length) {
         environmentalScore += Math.min(
           factors.environmental.equipment_status.length * 10,
-          30
+          30,
         );
       }
       totalScore += Math.min(environmentalScore, 100) * 0.1;
@@ -183,7 +183,7 @@ export class RiskAssessmentService {
       if (factors.medical.chronic_conditions?.length) {
         score += factors.medical.chronic_conditions.length * 10;
         medicalFactors.push(
-          `${factors.medical.chronic_conditions.length} chronic conditions`
+          `${factors.medical.chronic_conditions.length} chronic conditions`,
         );
       }
       if (factors.medical.allergies?.length) {
@@ -193,7 +193,7 @@ export class RiskAssessmentService {
       if (factors.medical.contraindications?.length) {
         score += factors.medical.contraindications.length * 15;
         medicalFactors.push(
-          `${factors.medical.contraindications.length} contraindications`
+          `${factors.medical.contraindications.length} contraindications`,
         );
       }
 
@@ -222,12 +222,12 @@ export class RiskAssessmentService {
    */
 
   async createRiskAssessment(
-    data: CreateRiskAssessmentRequest
+    data: CreateRiskAssessmentRequest,
   ): Promise<RiskAssessment> {
     const supabase = await this.getSupabase();
     const riskScore = this.calculateRiskScore(
       data.risk_factors || {},
-      data.assessment_context || {}
+      data.assessment_context || {},
     );
     const riskLevel = this.determineRiskLevel(riskScore);
     const riskCategories = this.generateRiskCategories(data.risk_factors || {});
@@ -308,7 +308,7 @@ export class RiskAssessmentService {
   async getAllRiskAssessments(
     filters: Record<string, any> = {},
     limit = 50,
-    offset = 0
+    offset = 0,
   ): Promise<RiskAssessment[]> {
     const supabase = await this.getSupabase();
     let query = supabase
@@ -359,7 +359,7 @@ export class RiskAssessmentService {
   async getAllValidations(
     filters: Record<string, any> = {},
     limit = 50,
-    offset = 0
+    offset = 0,
   ): Promise<RiskValidation[]> {
     const supabase = await this.getSupabase();
     let query = supabase
@@ -386,7 +386,7 @@ export class RiskAssessmentService {
   async getAllAlerts(
     filters: Record<string, any> = {},
     limit = 50,
-    offset = 0
+    offset = 0,
   ): Promise<RiskAlert[]> {
     const supabase = await this.getSupabase();
     let query = supabase
@@ -412,7 +412,7 @@ export class RiskAssessmentService {
 
   async updateRiskAssessment(
     id: string,
-    updates: UpdateRiskAssessmentRequest
+    updates: UpdateRiskAssessmentRequest,
   ): Promise<RiskAssessment> {
     const supabase = await this.getSupabase();
     const updateData: any = { ...updates };
@@ -423,13 +423,13 @@ export class RiskAssessmentService {
       if (currentAssessment) {
         const newScore = this.calculateRiskScore(
           updates.risk_factors,
-          currentAssessment.assessment_context
+          currentAssessment.assessment_context,
         );
         const newLevel = this.determineRiskLevel(newScore);
         updateData.risk_score = newScore;
         updateData.risk_level = newLevel;
         updateData.risk_categories = this.generateRiskCategories(
-          updates.risk_factors
+          updates.risk_factors,
         );
         updateData.validation_required = this.requiresValidation({
           ...currentAssessment,
@@ -468,7 +468,7 @@ export class RiskAssessmentService {
 
   async getPatientRiskAssessments(
     patientId: string,
-    limit = 10
+    limit = 10,
   ): Promise<RiskAssessment[]> {
     const supabase = await this.getSupabase();
     const { data, error } = await supabase
@@ -480,7 +480,7 @@ export class RiskAssessmentService {
 
     if (error) {
       throw new Error(
-        `Failed to get patient risk assessments: ${error.message}`
+        `Failed to get patient risk assessments: ${error.message}`,
       );
     }
     return data || [];
@@ -491,7 +491,7 @@ export class RiskAssessmentService {
    */
 
   async createValidation(
-    data: CreateValidationRequest
+    data: CreateValidationRequest,
   ): Promise<RiskValidation> {
     const supabase = await this.getSupabase();
     const validationData = {
@@ -525,7 +525,7 @@ export class RiskAssessmentService {
   }
 
   async getValidationsForAssessment(
-    assessmentId: string
+    assessmentId: string,
   ): Promise<RiskValidation[]> {
     const supabase = await this.getSupabase();
     const { data, error } = await supabase
@@ -545,7 +545,7 @@ export class RiskAssessmentService {
    */
 
   async createMitigation(
-    data: CreateMitigationRequest
+    data: CreateMitigationRequest,
   ): Promise<RiskMitigation> {
     const supabase = await this.getSupabase();
     const mitigationData = {
@@ -568,7 +568,7 @@ export class RiskAssessmentService {
 
   async updateMitigationStatus(
     id: string,
-    status: 'planned' | 'active' | 'completed' | 'cancelled'
+    status: 'planned' | 'active' | 'completed' | 'cancelled',
   ): Promise<void> {
     const supabase = await this.getSupabase();
     const { error } = await supabase
@@ -608,7 +608,7 @@ export class RiskAssessmentService {
   async resolveAlert(
     id: string,
     userId: string,
-    notes?: string
+    notes?: string,
   ): Promise<void> {
     const supabase = await this.getSupabase();
     const { error } = await supabase
@@ -753,7 +753,7 @@ export class RiskAssessmentService {
 
   async updateRiskThreshold(
     id: string,
-    updates: Partial<RiskThreshold>
+    updates: Partial<RiskThreshold>,
   ): Promise<RiskThreshold> {
     const supabase = await this.getSupabase();
     const { data, error } = await supabase

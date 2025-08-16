@@ -39,7 +39,7 @@ class NotificationService {
   // Templates de email
   private getEmailTemplate(
     type: NotificationType,
-    context: NotificationContext
+    context: NotificationContext,
   ): EmailNotificationData {
     const baseSubject = '[NeonPro] Contas a Pagar - ';
 
@@ -158,7 +158,7 @@ class NotificationService {
   // Templates de SMS
   private getSMSTemplate(
     type: NotificationType,
-    context: NotificationContext
+    context: NotificationContext,
   ): string {
     switch (type) {
       case 'overdue':
@@ -182,7 +182,7 @@ class NotificationService {
   async sendEmail(
     type: NotificationType,
     context: NotificationContext,
-    recipientEmail: string
+    recipientEmail: string,
   ): Promise<boolean> {
     try {
       if (
@@ -212,7 +212,7 @@ class NotificationService {
   async sendSMS(
     type: NotificationType,
     context: NotificationContext,
-    _phoneNumber: string
+    _phoneNumber: string,
   ): Promise<boolean> {
     try {
       const _message = this.getSMSTemplate(type, context);
@@ -234,7 +234,7 @@ class NotificationService {
   async sendNotification(
     type: NotificationType,
     context: NotificationContext,
-    recipients: { email?: string; phone?: string }
+    recipients: { email?: string; phone?: string },
   ): Promise<{ emailSent: boolean; smsSent: boolean }> {
     const results = { emailSent: false, smsSent: false };
 

@@ -101,7 +101,7 @@ export async function GET(request: NextRequest) {
           status,
           payment_method
         )
-      `
+      `,
       )
       .eq('bank_statements.created_by', user.id);
 
@@ -128,19 +128,19 @@ export async function GET(request: NextRequest) {
 
     if (validatedQuery.amountMin !== undefined) {
       query = query.or(
-        `debit_amount.gte.${validatedQuery.amountMin},credit_amount.gte.${validatedQuery.amountMin}`
+        `debit_amount.gte.${validatedQuery.amountMin},credit_amount.gte.${validatedQuery.amountMin}`,
       );
     }
 
     if (validatedQuery.amountMax !== undefined) {
       query = query.or(
-        `debit_amount.lte.${validatedQuery.amountMax},credit_amount.lte.${validatedQuery.amountMax}`
+        `debit_amount.lte.${validatedQuery.amountMax},credit_amount.lte.${validatedQuery.amountMax}`,
       );
     }
 
     if (validatedQuery.searchTerm) {
       query = query.or(
-        `description.ilike.%${validatedQuery.searchTerm}%,reference_number.ilike.%${validatedQuery.searchTerm}%`
+        `description.ilike.%${validatedQuery.searchTerm}%,reference_number.ilike.%${validatedQuery.searchTerm}%`,
       );
     }
 
@@ -159,12 +159,12 @@ export async function GET(request: NextRequest) {
     // Apply pagination
     const { data: transactions, error: transactionsError } = await query.range(
       (validatedQuery.page - 1) * validatedQuery.limit,
-      validatedQuery.page * validatedQuery.limit - 1
+      validatedQuery.page * validatedQuery.limit - 1,
     );
 
     if (transactionsError) {
       throw new Error(
-        `Failed to fetch transactions: ${transactionsError.message}`
+        `Failed to fetch transactions: ${transactionsError.message}`,
       );
     }
 
@@ -181,7 +181,7 @@ export async function GET(request: NextRequest) {
     if (validatedQuery.status) {
       countQuery = countQuery.eq(
         'reconciliation_status',
-        validatedQuery.status
+        validatedQuery.status,
       );
     }
     if (validatedQuery.dateFrom) {
@@ -193,12 +193,12 @@ export async function GET(request: NextRequest) {
     if (validatedQuery.transactionType) {
       countQuery = countQuery.eq(
         'transaction_type',
-        validatedQuery.transactionType
+        validatedQuery.transactionType,
       );
     }
     if (validatedQuery.searchTerm) {
       countQuery = countQuery.or(
-        `description.ilike.%${validatedQuery.searchTerm}%,reference_number.ilike.%${validatedQuery.searchTerm}%`
+        `description.ilike.%${validatedQuery.searchTerm}%,reference_number.ilike.%${validatedQuery.searchTerm}%`,
       );
     }
 
@@ -245,7 +245,7 @@ export async function GET(request: NextRequest) {
           error: 'Validation error',
           details: error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -254,7 +254,7 @@ export async function GET(request: NextRequest) {
         success: false,
         error: error instanceof Error ? error.message : 'Internal server error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -288,7 +288,7 @@ export async function POST(request: NextRequest) {
           validatedData.transactionId,
           validatedData.paymentId,
           validatedData.confidence,
-          validatedData.notes
+          validatedData.notes,
         );
 
         return NextResponse.json({
@@ -339,13 +339,13 @@ export async function POST(request: NextRequest) {
             `
             *,
             bank_statements!inner(created_by)
-          `
+          `,
           )
           .eq('bank_statements.created_by', user.id);
 
         if (updateError) {
           throw new Error(
-            `Failed to update transactions: ${updateError.message}`
+            `Failed to update transactions: ${updateError.message}`,
           );
         }
 
@@ -362,7 +362,7 @@ export async function POST(request: NextRequest) {
         if (!transactionId) {
           return NextResponse.json(
             { error: 'Transaction ID is required' },
-            { status: 400 }
+            { status: 400 },
           );
         }
 
@@ -388,7 +388,7 @@ export async function POST(request: NextRequest) {
           error: 'Validation error',
           details: error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -397,7 +397,7 @@ export async function POST(request: NextRequest) {
         success: false,
         error: error instanceof Error ? error.message : 'Internal server error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -454,7 +454,7 @@ export async function PUT(request: NextRequest) {
           account_number,
           created_by
         )
-      `
+      `,
       )
       .eq('bank_statements.created_by', user.id)
       .single();
@@ -466,7 +466,7 @@ export async function PUT(request: NextRequest) {
     if (!transaction) {
       return NextResponse.json(
         { error: 'Transaction not found or access denied' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -483,7 +483,7 @@ export async function PUT(request: NextRequest) {
           error: 'Validation error',
           details: error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -492,7 +492,7 @@ export async function PUT(request: NextRequest) {
         success: false,
         error: error instanceof Error ? error.message : 'Internal server error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -520,7 +520,7 @@ export async function DELETE(request: NextRequest) {
     if (!(transactionIds && Array.isArray(transactionIds))) {
       return NextResponse.json(
         { error: 'Transaction IDs array is required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -534,7 +534,7 @@ export async function DELETE(request: NextRequest) {
 
       if (deleteError) {
         throw new Error(
-          `Failed to delete transactions: ${deleteError.message}`
+          `Failed to delete transactions: ${deleteError.message}`,
         );
       }
 
@@ -555,13 +555,13 @@ export async function DELETE(request: NextRequest) {
         `
           *,
           bank_statements!inner(created_by)
-        `
+        `,
       )
       .eq('bank_statements.created_by', user.id);
 
     if (updateError) {
       throw new Error(
-        `Failed to mark transactions as ignored: ${updateError.message}`
+        `Failed to mark transactions as ignored: ${updateError.message}`,
       );
     }
 
@@ -576,7 +576,7 @@ export async function DELETE(request: NextRequest) {
         success: false,
         error: error instanceof Error ? error.message : 'Internal server error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

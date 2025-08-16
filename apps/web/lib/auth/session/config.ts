@@ -448,33 +448,33 @@ export function getEnvironmentConfig(): Partial<SessionConfig> {
     timeout: {
       defaultMinutes: Number.parseInt(
         process.env.SESSION_TIMEOUT_MINUTES || '30',
-        10
+        10,
       ),
       extendThresholdMinutes: Number.parseInt(
         process.env.SESSION_EXTEND_THRESHOLD_MINUTES || '5',
-        10
+        10,
       ),
       warningMinutes: Number.parseInt(
         process.env.SESSION_WARNING_MINUTES || '2',
-        10
+        10,
       ),
       maxExtensions: Number.parseInt(
         process.env.SESSION_MAX_EXTENSIONS || '3',
-        10
+        10,
       ),
     },
     security: {
       maxConcurrentSessions: Number.parseInt(
         process.env.MAX_CONCURRENT_SESSIONS || '3',
-        10
+        10,
       ),
       maxLoginAttempts: Number.parseInt(
         process.env.MAX_LOGIN_ATTEMPTS || '5',
-        10
+        10,
       ),
       lockoutDurationMinutes: Number.parseInt(
         process.env.LOCKOUT_DURATION_MINUTES || '15',
-        10
+        10,
       ),
       requireDeviceVerification:
         process.env.REQUIRE_DEVICE_VERIFICATION === 'true',
@@ -608,7 +608,7 @@ export function getConfigValue<T>(key: string, defaultValue: T): T {
  * Cria configuração personalizada
  */
 export function createCustomConfig(
-  overrides: Partial<SessionConfig>
+  overrides: Partial<SessionConfig>,
 ): SessionConfig {
   const baseConfig = getMergedConfig();
   return {

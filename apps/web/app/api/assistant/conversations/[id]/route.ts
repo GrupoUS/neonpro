@@ -34,7 +34,7 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
     if (convError || !conversation) {
       return NextResponse.json(
         { error: 'Conversation not found' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -49,7 +49,7 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
     if (messagesError) {
       return NextResponse.json(
         { error: 'Failed to fetch messages' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -60,7 +60,7 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -93,7 +93,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     if (convError || !existingConversation) {
       return NextResponse.json(
         { error: 'Conversation not found' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -109,7 +109,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     if (Object.keys(updateData).length === 0) {
       return NextResponse.json(
         { error: 'No valid fields to update' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -125,7 +125,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     if (error) {
       return NextResponse.json(
         { error: 'Failed to update conversation' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -133,7 +133,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -165,7 +165,7 @@ export async function DELETE(_request: NextRequest, { params }: RouteParams) {
     if (convError || !existingConversation) {
       return NextResponse.json(
         { error: 'Conversation not found' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -179,7 +179,7 @@ export async function DELETE(_request: NextRequest, { params }: RouteParams) {
     if (error) {
       return NextResponse.json(
         { error: 'Failed to delete conversation' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -187,7 +187,7 @@ export async function DELETE(_request: NextRequest, { params }: RouteParams) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

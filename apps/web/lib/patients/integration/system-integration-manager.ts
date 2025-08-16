@@ -76,7 +76,7 @@ export class SystemIntegrationManager {
     query: string,
     filters: PatientSearchFilters,
     userId: string,
-    limit = 50
+    limit = 50,
   ): Promise<{
     patients: IntegratedPatientData[];
     suggestions: SearchSuggestion[];
@@ -103,7 +103,7 @@ export class SystemIntegrationManager {
     // Apply text search
     if (query) {
       searchQuery = searchQuery.or(
-        `name.ilike.%${query}%,email.ilike.%${query}%,phone.ilike.%${query}%,cpf.ilike.%${query}%`
+        `name.ilike.%${query}%,email.ilike.%${query}%,phone.ilike.%${query}%,cpf.ilike.%${query}%`,
       );
     }
 
@@ -125,18 +125,18 @@ export class SystemIntegrationManager {
       searchQuery = searchQuery
         .gte(
           'appointments.appointment_date',
-          filters.lastVisit.from.toISOString()
+          filters.lastVisit.from.toISOString(),
         )
         .lte(
           'appointments.appointment_date',
-          filters.lastVisit.to.toISOString()
+          filters.lastVisit.to.toISOString(),
         );
     }
 
     if (filters.appointmentStatus) {
       searchQuery = searchQuery.eq(
         'appointments.status',
-        filters.appointmentStatus
+        filters.appointmentStatus,
       );
     }
 
@@ -161,7 +161,7 @@ export class SystemIntegrationManager {
     const enrichedPatients = await Promise.all(
       (patients || []).map(async (patient) => {
         return await this.getIntegratedPatientData(patient.id, userId);
-      })
+      }),
     );
 
     // Generate AI suggestions
@@ -182,18 +182,18 @@ export class SystemIntegrationManager {
    */
   async getIntegratedPatientData(
     patientId: string,
-    userId: string
+    userId: string,
   ): Promise<IntegratedPatientData> {
     // Check LGPD permissions
     const hasPermission = await this.lgpdManager.checkDataAccess(
       userId,
       patientId,
-      'patient_profile'
+      'patient_profile',
     );
 
     if (!hasPermission) {
       throw new Error(
-        'Acesso negado: sem permissão LGPD para visualizar dados do paciente'
+        'Acesso negado: sem permissão LGPD para visualizar dados do paciente',
       );
     }
 
@@ -240,11 +240,11 @@ export class SystemIntegrationManager {
 
     const lastActivity = this.getLastActivity(
       appointments || [],
-      treatments || []
+      treatments || [],
     );
     const loyaltyScore = this.calculateLoyaltyScore(
       appointments || [],
-      treatments || []
+      treatments || [],
     );
 
     // Get communication history (placeholder)
@@ -276,7 +276,7 @@ export class SystemIntegrationManager {
    */
   private async generateSearchSuggestions(
     query: string,
-    _filters: PatientSearchFilters
+    _filters: PatientSearchFilters,
   ): Promise<SearchSuggestion[]> {
     const suggestions: SearchSuggestion[] = [];
 
@@ -337,7 +337,7 @@ export class SystemIntegrationManager {
     name: string,
     description: string,
     criteria: PatientSearchFilters,
-    userId: string
+    userId: string,
   ): Promise<PatientSegment> {
     // Count patients matching criteria
     const { count } = await this.searchPatients('', criteria, userId, 1);
@@ -378,12 +378,12 @@ export class SystemIntegrationManager {
           patients(name),
           appointment_date,
           status
-        `
+        `,
         )
         .eq('staff_id', userId)
         .gte(
           'appointment_date',
-          new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()
+          new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
         )
         .order('appointment_date', { ascending: false })
         .limit(10);
@@ -416,18 +416,18 @@ export class SystemIntegrationManager {
    */
   async getPatientCommunicationHistory(
     patientId: string,
-    userId: string
+    userId: string,
   ): Promise<any[]> {
     // Check permissions
     const hasPermission = await this.lgpdManager.checkDataAccess(
       userId,
       patientId,
-      'communication_history'
+      'communication_history',
     );
 
     if (!hasPermission) {
       throw new Error(
-        'Acesso negado: sem permissão para histórico de comunicação'
+        'Acesso negado: sem permissão para histórico de comunicação',
       );
     }
 
@@ -457,7 +457,7 @@ export class SystemIntegrationManager {
    */
   private getLastActivity(
     appointments: Appointment[],
-    treatments: Treatment[]
+    treatments: Treatment[],
   ): Date {
     const allDates = [
       ...appointments.map((a) => new Date(a.appointment_date)),
@@ -471,12 +471,12 @@ export class SystemIntegrationManager {
 
   private calculateLoyaltyScore(
     appointments: Appointment[],
-    treatments: Treatment[]
+    treatments: Treatment[],
   ): number {
     const appointmentCount = appointments.length;
     const treatmentCount = treatments.length;
     const completedAppointments = appointments.filter(
-      (a) => a.status === 'completed'
+      (a) => a.status === 'completed',
     ).length;
 
     // Simple loyalty calculation

@@ -11,7 +11,7 @@ export async function GET(request: NextRequest) {
     if (!clinicId) {
       return NextResponse.json(
         { error: 'clinic_id é obrigatório' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -58,14 +58,14 @@ export async function GET(request: NextRequest) {
     const result = await equipmentMaintenanceService.getClinicEquipment(
       clinicId,
       Object.keys(filters).length ? filters : undefined,
-      { page, limit }
+      { page, limit },
     );
 
     return NextResponse.json(result);
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -79,7 +79,7 @@ export async function POST(request: NextRequest) {
     if (!clinicId) {
       return NextResponse.json(
         { error: 'clinic_id é obrigatório' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -98,13 +98,13 @@ export async function POST(request: NextRequest) {
     if (error instanceof Error && error.message.includes('validation')) {
       return NextResponse.json(
         { error: 'Invalid equipment data', details: error.message },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     return NextResponse.json(
       { error: 'Failed to create equipment' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

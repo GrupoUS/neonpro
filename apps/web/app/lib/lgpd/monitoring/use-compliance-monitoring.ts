@@ -24,12 +24,12 @@ export type UseComplianceMonitoringResult = {
   stopMonitoring: () => void;
   refresh: () => Promise<void>;
   reportViolation: (
-    violation: Omit<ComplianceViolation, 'id' | 'detectedAt' | 'status'>
+    violation: Omit<ComplianceViolation, 'id' | 'detectedAt' | 'status'>,
   ) => Promise<void>;
   resolveViolation: (
     violationId: string,
     resolution: string,
-    responsible: string
+    responsible: string,
   ) => Promise<void>;
   acknowledgeAlert: (alertId: string, acknowledgedBy: string) => Promise<void>;
   triggerAssessment: () => Promise<void>;
@@ -47,7 +47,7 @@ export function useComplianceMonitoring(): UseComplianceMonitoringResult {
       setStatus(newStatus);
       setIsLoading(false);
     },
-    []
+    [],
   );
 
   // Start monitoring
@@ -100,7 +100,7 @@ export function useComplianceMonitoring(): UseComplianceMonitoringResult {
   // Report violation
   const reportViolation = useCallback(
     async (
-      violation: Omit<ComplianceViolation, 'id' | 'detectedAt' | 'status'>
+      violation: Omit<ComplianceViolation, 'id' | 'detectedAt' | 'status'>,
     ) => {
       try {
         await realTimeComplianceMonitor.reportViolation(violation);
@@ -108,7 +108,7 @@ export function useComplianceMonitoring(): UseComplianceMonitoringResult {
         setError('Falha ao reportar violação');
       }
     },
-    []
+    [],
   );
 
   // Resolve violation
@@ -118,13 +118,13 @@ export function useComplianceMonitoring(): UseComplianceMonitoringResult {
         await realTimeComplianceMonitor.resolveViolation(
           violationId,
           resolution,
-          responsible
+          responsible,
         );
       } catch (_err) {
         setError('Falha ao resolver violação');
       }
     },
-    []
+    [],
   );
 
   // Acknowledge alert
@@ -133,13 +133,13 @@ export function useComplianceMonitoring(): UseComplianceMonitoringResult {
       try {
         await realTimeComplianceMonitor.acknowledgeAlert(
           alertId,
-          acknowledgedBy
+          acknowledgedBy,
         );
       } catch (_err) {
         setError('Falha ao confirmar alerta');
       }
     },
-    []
+    [],
   );
 
   // Trigger manual assessment
@@ -198,7 +198,7 @@ export function useComplianceMetrics() {
           return 'text-gray-600';
       }
     },
-    []
+    [],
   );
 
   const getComplianceLevelText = useCallback(
@@ -218,7 +218,7 @@ export function useComplianceMetrics() {
           return 'Desconhecida';
       }
     },
-    []
+    [],
   );
 
   return {
@@ -243,7 +243,7 @@ export function useComplianceViolations() {
       }
       return violations.filter((v) => v.type === type);
     },
-    [violations]
+    [violations],
   );
 
   const getViolationsByCategory = useCallback(
@@ -253,7 +253,7 @@ export function useComplianceViolations() {
       }
       return violations.filter((v) => v.category === category);
     },
-    [violations]
+    [violations],
   );
 
   const getCriticalViolations = useCallback(() => {
@@ -330,7 +330,7 @@ export function useComplianceAlerts() {
       }
       return alerts.filter((a) => a.category === category);
     },
-    [alerts]
+    [alerts],
   );
 
   const getAlertSeverityColor = useCallback((severity: string): string => {
@@ -372,7 +372,7 @@ export function useComplianceRecommendations() {
       }
       return recommendations.filter((r) => r.priority === priority);
     },
-    [recommendations]
+    [recommendations],
   );
 
   const getCriticalRecommendations = useCallback(() => {
@@ -386,7 +386,7 @@ export function useComplianceRecommendations() {
       }
       return recommendations.filter((r) => r.category === category);
     },
-    [recommendations]
+    [recommendations],
   );
 
   const getPriorityColor = useCallback((priority: string): string => {

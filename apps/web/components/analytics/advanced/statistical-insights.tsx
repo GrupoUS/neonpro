@@ -201,7 +201,7 @@ const calculateCorrelationMatrix = (data: Record<string, number>[]) => {
   }
 
   const keys = Object.keys(data[0]).filter(
-    (key) => typeof data[0][key] === 'number'
+    (key) => typeof data[0][key] === 'number',
   );
   const matrix: Array<{ x: string; y: string; value: number }> = [];
 
@@ -234,7 +234,7 @@ const calculatePearsonCorrelation = (x: number[], y: number[]) => {
 
   const numerator = n * sumXY - sumX * sumY;
   const denominator = Math.sqrt(
-    (n * sumX2 - sumX * sumX) * (n * sumY2 - sumY * sumY)
+    (n * sumX2 - sumX * sumX) * (n * sumY2 - sumY * sumY),
   );
 
   return denominator === 0 ? 0 : numerator / denominator;
@@ -257,7 +257,7 @@ export function StatisticalInsights({
     'correlations' | 'regression' | 'tests' | 'quality' | 'models'
   >('correlations');
   const [selectedCorrelation, setSelectedCorrelation] = useState<string | null>(
-    null
+    null,
   );
   const [_confidenceLevel, _setConfidenceLevel] = useState<number>(95);
   const [showOnlySignificant, setShowOnlySignificant] = useState(false);
@@ -277,10 +277,10 @@ export function StatisticalInsights({
   // Calculate overall statistics
   const statisticalSummary = useMemo(() => {
     const strongCorrelations = correlations.filter(
-      (c) => Math.abs(c.correlation) >= 0.6
+      (c) => Math.abs(c.correlation) >= 0.6,
     ).length;
     const significantTests = statisticalTests.filter(
-      (t) => t.result === 'reject'
+      (t) => t.result === 'reject',
     ).length;
     const overallDataQuality =
       (dataQuality.completeness +
@@ -292,7 +292,7 @@ export function StatisticalInsights({
 
     const bestModel = predictiveModels.reduce(
       (best, model) => (model.accuracy > (best?.accuracy || 0) ? model : best),
-      predictiveModels[0]
+      predictiveModels[0],
     );
 
     return {
@@ -519,10 +519,10 @@ export function StatisticalInsights({
                 <div className="space-y-4">
                   {significantCorrelations.map((correlation, _index) => {
                     const strength = getCorrelationStrength(
-                      correlation.correlation
+                      correlation.correlation,
                     );
                     const significance = getSignificanceLevel(
-                      correlation.pValue
+                      correlation.pValue,
                     );
 
                     return (
@@ -534,7 +534,7 @@ export function StatisticalInsights({
                             selectedCorrelation ===
                               `${correlation.variable1}-${correlation.variable2}`
                               ? null
-                              : `${correlation.variable1}-${correlation.variable2}`
+                              : `${correlation.variable1}-${correlation.variable2}`,
                           )
                         }
                       >
@@ -644,7 +644,7 @@ export function StatisticalInsights({
                       <p className="mt-1 font-bold text-2xl text-green-900">
                         {
                           regressionResults.coefficients.filter(
-                            (c) => c.significance
+                            (c) => c.significance,
                           ).length
                         }
                       </p>

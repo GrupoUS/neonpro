@@ -159,7 +159,7 @@ class AISchedulingSystem {
    * Main scheduling method - processes a scheduling request
    */
   async scheduleAppointment(
-    request: SchedulingRequest
+    request: SchedulingRequest,
   ): Promise<SchedulingResponse> {
     const startTime = Date.now();
     const algorithmsUsed: string[] = [];
@@ -180,7 +180,7 @@ class AISchedulingSystem {
       algorithmsUsed.push('AI Core Algorithm');
       const initialRecommendations = await this.aiCore.generateRecommendations(
         request.criteria,
-        request.preferences
+        request.preferences,
       );
 
       if (initialRecommendations.length === 0) {
@@ -209,7 +209,7 @@ class AISchedulingSystem {
         optimizationResult = await this.optimizationEngine.optimizeSchedule(
           initialRecommendations,
           request.criteria,
-          this.config.optimizationWeights
+          this.config.optimizationWeights,
         );
         optimizedRecommendations = optimizationResult.optimizedRecommendations;
       }
@@ -228,7 +228,7 @@ class AISchedulingSystem {
           const validation = await this.complianceEngine.validateCompliance(
             recommendation,
             request.criteria,
-            request.context
+            request.context,
           );
 
           if (
@@ -238,7 +238,7 @@ class AISchedulingSystem {
             validatedRecommendations.push(recommendation);
           } else {
             warnings.push(
-              `Recommendation excluded due to compliance violations: ${validation.violations.map((v) => v.description).join(', ')}`
+              `Recommendation excluded due to compliance violations: ${validation.violations.map((v) => v.description).join(', ')}`,
             );
           }
 
@@ -254,14 +254,14 @@ class AISchedulingSystem {
       // Step 4: Generate alternatives
       const alternatives = await this.generateAlternatives(
         request,
-        compliantRecommendations
+        compliantRecommendations,
       );
 
       // Step 5: Calculate confidence score
       const confidenceScore = this.calculateConfidenceScore(
         compliantRecommendations,
         optimizationResult,
-        complianceResult
+        complianceResult,
       );
 
       // Step 6: Setup real-time monitoring if enabled
@@ -272,7 +272,7 @@ class AISchedulingSystem {
         algorithmsUsed.push('Real-time Adaptive Monitoring');
         await this.setupRealTimeMonitoring(
           compliantRecommendations[0],
-          request
+          request,
         );
       }
 
@@ -308,7 +308,7 @@ class AISchedulingSystem {
       return response;
     } catch (error) {
       errors.push(
-        `System error: ${error instanceof Error ? error.message : 'Unknown error'}`
+        `System error: ${error instanceof Error ? error.message : 'Unknown error'}`,
       );
 
       return {
@@ -332,7 +332,7 @@ class AISchedulingSystem {
   async rescheduleAppointment(
     appointmentId: string,
     newCriteria: Partial<SchedulingCriteria>,
-    reason?: string
+    reason?: string,
   ): Promise<SchedulingResponse> {
     try {
       // Get existing appointment
@@ -397,7 +397,7 @@ class AISchedulingSystem {
   async cancelAppointment(
     appointmentId: string,
     reason: string,
-    notifyPatient = true
+    notifyPatient = true,
   ): Promise<void> {
     try {
       // Get appointment details
@@ -438,7 +438,7 @@ class AISchedulingSystem {
         await this.notifyPatientCancellation(
           appointment.patient_id,
           appointmentId,
-          reason
+          reason,
         );
       }
     } catch (_error) {
@@ -528,7 +528,7 @@ class AISchedulingSystem {
    */
   private async generateAlternatives(
     request: SchedulingRequest,
-    primaryRecommendations: SchedulingRecommendation[]
+    primaryRecommendations: SchedulingRecommendation[],
   ): Promise<SchedulingRecommendation[]> {
     try {
       // If we have primary recommendations, generate alternatives around them
@@ -536,13 +536,13 @@ class AISchedulingSystem {
         const alternativeCriteria: SchedulingCriteria = {
           ...request.criteria,
           preferredDate: new Date(
-            request.criteria.preferredDate.getTime() + 24 * 60 * 60 * 1000
+            request.criteria.preferredDate.getTime() + 24 * 60 * 60 * 1000,
           ), // Next day
         };
 
         const alternatives = await this.aiCore.generateRecommendations(
           alternativeCriteria,
-          request.preferences
+          request.preferences,
         );
 
         return alternatives.slice(0, 3); // Return top 3 alternatives
@@ -560,7 +560,7 @@ class AISchedulingSystem {
         {
           ...request.preferences,
           allowAlternatives: true,
-        }
+        },
       );
 
       return alternatives.slice(0, 5); // Return top 5 alternatives
@@ -575,7 +575,7 @@ class AISchedulingSystem {
   private calculateConfidenceScore(
     recommendations: SchedulingRecommendation[],
     optimizationResult?: OptimizationResult,
-    complianceResult?: ComplianceValidationResult
+    complianceResult?: ComplianceValidationResult,
   ): number {
     if (recommendations.length === 0) {
       return 0;
@@ -607,7 +607,7 @@ class AISchedulingSystem {
    */
   private async setupRealTimeMonitoring(
     recommendation: SchedulingRecommendation,
-    request: SchedulingRequest
+    request: SchedulingRequest,
   ): Promise<void> {
     try {
       await this.realTimeAdaptive.monitorAppointment({
@@ -688,7 +688,7 @@ class AISchedulingSystem {
   private async notifyPatientCancellation(
     _patientId: string,
     _appointmentId: string,
-    _reason: string
+    _reason: string,
   ): Promise<void> {
     try {
       // Could send email, SMS, push notification, etc.
@@ -716,31 +716,31 @@ class AISchedulingSystem {
 
     if (successRate < 0.8) {
       recommendations.push(
-        'Consider adjusting scheduling criteria to improve success rate'
+        'Consider adjusting scheduling criteria to improve success rate',
       );
     }
 
     if (rescheduleRate > 0.15) {
       recommendations.push(
-        'High reschedule rate detected - review scheduling accuracy'
+        'High reschedule rate detected - review scheduling accuracy',
       );
     }
 
     if (cancellationRate > 0.1) {
       recommendations.push(
-        'High cancellation rate - consider implementing confirmation reminders'
+        'High cancellation rate - consider implementing confirmation reminders',
       );
     }
 
     if (metrics.averageComplianceScore < 85) {
       recommendations.push(
-        'Compliance score below target - review and update compliance rules'
+        'Compliance score below target - review and update compliance rules',
       );
     }
 
     if (recommendations.length === 0) {
       recommendations.push(
-        'System performance is optimal - continue current practices'
+        'System performance is optimal - continue current practices',
       );
     }
 

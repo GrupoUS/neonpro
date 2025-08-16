@@ -102,8 +102,8 @@ export interface MFAAuditLog {
   userAgent: string;
   deviceFingerprint?: string;
   emergencyBypass?: boolean;
-  metadata: Record&lt;string, unknown&gt
-timestamp: Date;
+  metadata: Record<string, unknown>;
+  timestamp: Date;
 }
 
 // Validation Schemas
@@ -112,10 +112,8 @@ export const MFASetupSchema = z.object({
   method: z.enum(['totp', 'sms']),
   phoneNumber: z.string().optional(),
   deviceName: z.string().min(1, 'Device name is required'),
-  lgpdConsent: z.boolean().refine(val =&gt;
-val === true, 'LGPD consent is required';
-),
-})
+  lgpdConsent: z.boolean().refine(val => val === true, 'LGPD consent is required'),
+});
 
 export const MFAVerificationSchema = z.object({
   userId: z.string().uuid(),
@@ -147,23 +145,18 @@ const DEFAULT_MFA_CONFIG: MFAConfig = {
  * Comprehensive MFA Service for Healthcare Platform
  */
 export class MFAService {
-  constructor(supabaseUrl: string, supabaseKey: string, config?: Partial&lt;
-  MFAConfig;
-  &
-  gt;
-  ) {
-    this.
-  supabase = createClient(supabaseUrl, supabaseKey);
-  this;
-  .
-  config = { ...DEFAULT_MFA_CONFIG, ...config };
-}
+  private supabase: any;
+  private config: MFAConfig;
 
-/**
- * Setup MFA for a user with comprehensive healthcare compliance
- */
-async;
-setupMFA(
+  constructor(supabaseUrl: string, supabaseKey: string, config?: Partial<MFAConfig>) {
+    this.supabase = createClient(supabaseUrl, supabaseKey);
+    this.config = { ...DEFAULT_MFA_CONFIG, ...config };
+  }
+
+  /**
+   * Setup MFA for a user with comprehensive healthcare compliance
+   */
+  async setupMFA(
     userId: string,
     method: 'totp' | 'sms',
     options: {
@@ -173,8 +166,7 @@ lgpdConsent: boolean;
 userAgent: string;
 ipAddress: string;
 }
-  ): Promise&lt
-MFASetupResult & gt
+  ): Promise<MFASetupResult>
 {
   try {
     // Validate input
@@ -263,21 +255,22 @@ MFASetupResult & gt
 
     throw error;
   }
-} /**
+}
+
+/**
  * Verify MFA token with comprehensive security and healthcare compliance
  */
-async;
-verifyMFA(
+async verifyMFA(
     userId: string,
     token: string,
     method: 'totp' | 'sms' | 'backup',
     options: {
       deviceFingerprint?: string;
-userAgent: string;
-ipAddress: string;
-emergencyBypass?: boolean;
-emergencyReason?: string;
-}
+      userAgent: string;
+      ipAddress: string;
+      emergencyBypass?: boolean;
+      emergencyReason?: string;
+    }
   ): Promise<MFAVerificationResult>
 {
   try {
@@ -411,15 +404,10 @@ emergencyReason?: string;
 /**
  * Verify TOTP token using OTPAuth library
  */
-private
-async;
-verifyTOTP(userId: string, token: string)
-: Promise<
-{
+private async verifyTOTP(userId: string, token: string): Promise<{
   isValid: boolean;
-  delta?: number
-}
->
+  delta?: number;
+}>
 {
   // Get user's TOTP secret from database
   const { data: mfaData, error } = await this.supabase
@@ -458,10 +446,7 @@ verifyTOTP(userId: string, token: string)
 /**
  * Verify SMS token (stored in database temporarily)
  */
-private
-async;
-verifySMS(userId: string, token: string)
-: Promise<boolean>
+private async verifySMS(userId: string, token: string): Promise<boolean>
 {
   const { data: smsData, error } = await this.supabase
     .from('user_mfa_sms_tokens')
@@ -500,10 +485,7 @@ verifySMS(userId: string, token: string)
 /**
  * Verify backup code (one-time use)
  */
-private
-async;
-verifyBackupCode(userId: string, code: string)
-: Promise<boolean>
+private async verifyBackupCode(userId: string, code: string): Promise<boolean>
 {
   const { data: mfaData, error } = await this.supabase
     .from('user_mfa_settings')
@@ -537,18 +519,18 @@ verifyBackupCode(userId: string, code: string)
   }
 
   return isValid;
-} /**
+}
+
+/**
  * Handle emergency bypass for clinical emergencies
  */
-private
-async;
-handleEmergencyBypass(
+private async handleEmergencyBypass(
     userId: string,
     options: {
       emergencyReason?: string;
-userAgent: string;
-ipAddress: string;
-}
+      userAgent: string;
+      ipAddress: string;
+    }
   ): Promise<MFAVerificationResult>
 {
   // Check daily emergency bypass limit
@@ -598,13 +580,12 @@ ipAddress: string;
 /**
  * Send SMS OTP for fallback authentication
  */
-async;
-sendSMSOTP(
+async sendSMSOTP(
     userId: string,
     options: {
       userAgent: string;
-ipAddress: string;
-}
+      ipAddress: string;
+    }
   ): Promise<
 {
   success: boolean;
@@ -677,15 +658,14 @@ ipAddress: string;
 /**
  * Disable MFA for a user (with proper authorization)
  */
-async;
-disableMFA(
+async disableMFA(
     userId: string,
     options: {
       adminUserId?: string;
-reason: string;
-userAgent: string;
-ipAddress: string;
-}
+      reason: string;
+      userAgent: string;
+      ipAddress: string;
+    }
   ): Promise<
 {
   success: boolean;
@@ -744,9 +724,7 @@ ipAddress: string;
 /**
  * Get MFA settings for a user
  */
-async;
-getUserMFASettings(userId: string)
-: Promise<MFAUserSettings | null>
+async getUserMFASettings(userId: string): Promise<MFAUserSettings | null>
 {
   const { data, error } = await this.supabase
     .from('user_mfa_settings')
@@ -793,21 +771,14 @@ generateBackupCodes(count: number = 8)
 /**
  * Generate recovery token for account recovery
  */
-private
-generateRecoveryToken();
-: string
-{
+private generateRecoveryToken(): string {
   return crypto.randomBytes(32).toString('hex');
 }
 
 /**
  * Hash backup codes for secure storage
  */
-private
-async;
-hashBackupCodes(codes: string[])
-: Promise<string[]>
-{
+private async hashBackupCodes(codes: string[]): Promise<string[]> {
   const hashedCodes: string[] = [];
   for (const code of codes) {
     const hash = await this.hashBackupCode(code);
@@ -819,37 +790,27 @@ hashBackupCodes(codes: string[])
 /**
  * Hash individual backup code
  */
-private
-async;
-hashBackupCode(code: string)
-: Promise<string>
-{
+private async hashBackupCode(code: string): Promise<string> {
   return crypto.pbkdf2Sync(code, 'neonpro-mfa-salt', 100_000, 64, 'sha512').toString('hex');
 }
 
 /**
  * Hash recovery token for secure storage
  */
-private
-async;
-hashRecoveryToken(token: string)
-: Promise<string>
-{
+private async hashRecoveryToken(token: string): Promise<string> {
   return crypto.pbkdf2Sync(token, 'neonpro-recovery-salt', 100_000, 64, 'sha512').toString('hex');
 }
 
 /**
  * Store MFA configuration in database
  */
-private
-async;
-storeMFAConfiguration(userId: string, config: {
+private async storeMFAConfiguration(userId: string, config: {
     secret: string;
-method: 'totp' | 'sms';
-phoneNumber?: string;
-deviceName: string;
-backupCodes: string[];
-recoveryToken: string;
+    method: 'totp' | 'sms';
+    phoneNumber?: string;
+    deviceName: string;
+    backupCodes: string[];
+    recoveryToken: string;
 }): Promise<void>
 {
   // Begin transaction
@@ -891,16 +852,11 @@ recoveryToken: string;
 /**
  * Check rate limiting for MFA attempts
  */
-private
-async;
-checkRateLimit(userId: string, ipAddress: string)
-: Promise<
-{
+private async checkRateLimit(userId: string, ipAddress: string): Promise<{
   isLocked: boolean;
   remainingAttempts: number;
   lockedUntil?: Date;
-}
->
+}>
 {
   const windowStart = new Date(
     Date.now() - RATE_LIMIT_CONFIG.windowMinutes * 60 * 1000
@@ -945,10 +901,7 @@ checkRateLimit(userId: string, ipAddress: string)
 /**
  * Update rate limiting after verification attempt
  */
-private
-async;
-updateRateLimit(userId: string, ipAddress: string, success: boolean)
-: Promise<void>
+private async updateRateLimit(userId: string, ipAddress: string, success: boolean): Promise<void>
 {
   // Rate limiting is handled through audit logs
   // This method is placeholder for additional rate limiting logic if needed
@@ -957,10 +910,7 @@ updateRateLimit(userId: string, ipAddress: string, success: boolean)
 /**
  * Create comprehensive audit log entry
  */
-private
-async;
-createAuditLog(log: Omit<MFAAuditLog, 'id' | 'timestamp'>)
-: Promise<string>
+private async createAuditLog(log: Omit<MFAAuditLog, 'id' | 'timestamp'>): Promise<string>
 {
   const { data, error } = await this.supabase
     .from('mfa_audit_logs')
@@ -989,15 +939,13 @@ createAuditLog(log: Omit<MFAAuditLog, 'id' | 'timestamp'>)
 /**
  * Update trusted device information
  */
-private
-async;
-updateTrustedDevice(
+private async updateTrustedDevice(
     userId: string,
     deviceFingerprint: string,
     options: {
       userAgent: string;
-ipAddress: string;
-}
+      ipAddress: string;
+    }
   ): Promise<void>
 {
   const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000); // 30 days
@@ -1015,10 +963,7 @@ ipAddress: string;
 /**
  * Update last verified timestamp
  */
-private
-async;
-updateLastVerified(userId: string, method: string)
-: Promise<void>
+private async updateLastVerified(userId: string, method: string): Promise<void>
 {
   await this.supabase
     .from('user_mfa_settings')
@@ -1038,10 +983,7 @@ updateLastVerified(userId: string, method: string)
 } /**
  * Send SMS via integrated SMS service
  */
-private
-async;
-sendSMS(phoneNumber: string, otp: string)
-: Promise<void>
+private async sendSMS(phoneNumber: string, otp: string): Promise<void>
 {
   // This would integrate with your SMS service (Twilio, AWS SNS, etc.)
   // For now, we'll use Supabase's built-in SMS functionality
@@ -1055,14 +997,12 @@ sendSMS(phoneNumber: string, otp: string)
 /**
  * Send emergency bypass notification
  */
-private
-async;
-sendEmergencyBypassNotification(
+private async sendEmergencyBypassNotification(
     userId: string,
     options: {
       emergencyReason?: string;
-userAgent: string;
-ipAddress: string;
+      userAgent: string;
+      ipAddress: string;
 }
   ): Promise<void>
 {
@@ -1102,10 +1042,7 @@ ipAddress: string;
 /**
  * Verify admin authorization for sensitive operations
  */
-private
-async;
-verifyAdminAuthorization(adminUserId: string, operation: string)
-: Promise<void>
+private async verifyAdminAuthorization(adminUserId: string, operation: string): Promise<void>
 {
   const { data: admin } = await this.supabase
     .from('user_roles')
@@ -1122,13 +1059,12 @@ verifyAdminAuthorization(adminUserId: string, operation: string)
 /**
  * Generate MFA recovery codes
  */
-async;
-generateNewBackupCodes(
+async generateNewBackupCodes(
     userId: string,
     options: {
       userAgent: string;
-ipAddress: string;
-}
+      ipAddress: string;
+    }
   ): Promise<string[]>
 {
   try {
@@ -1186,18 +1122,14 @@ ipAddress: string;
 /**
  * Get MFA statistics for dashboard/monitoring
  */
-async;
-getMFAStatistics(userId?: string)
-: Promise<
-{
+async getMFAStatistics(userId?: string): Promise<{
   totalUsers: number;
   enabledUsers: number;
   totpUsers: number;
   smsUsers: number;
   emergencyBypassesToday: number;
   failedAttemptsToday: number;
-}
->
+}>
 {
   const todayStart = new Date();
   todayStart.setHours(0, 0, 0, 0);

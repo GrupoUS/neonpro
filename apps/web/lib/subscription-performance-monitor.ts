@@ -188,7 +188,7 @@ export class SubscriptionPerformanceMonitor {
     this.metrics.caching.averageRetrievalTime = this.updateAverage(
       this.metrics.caching.averageRetrievalTime,
       retrievalTime,
-      this.metrics.subscriptionChecks.total
+      this.metrics.subscriptionChecks.total,
     );
 
     // Check cache performance
@@ -204,7 +204,7 @@ export class SubscriptionPerformanceMonitor {
     this.metrics.database.averageQueryTime = this.updateAverage(
       this.metrics.database.averageQueryTime,
       queryTime,
-      this.metrics.database.queryCount
+      this.metrics.database.queryCount,
     );
 
     if (queryTime > this.thresholds.dbQueryTime.critical) {
@@ -221,7 +221,7 @@ export class SubscriptionPerformanceMonitor {
     this.metrics.realtime.averageLatency = this.updateAverage(
       this.metrics.realtime.averageLatency,
       latency,
-      connectionsCount
+      connectionsCount,
     );
 
     this.metrics.realtime.activeConnections = connectionsCount;
@@ -263,7 +263,7 @@ export class SubscriptionPerformanceMonitor {
   private updateAverage(
     currentAverage: number,
     newValue: number,
-    count: number
+    count: number,
   ): number {
     return (currentAverage * (count - 1) + newValue) / count;
   }
@@ -312,7 +312,7 @@ export class SubscriptionPerformanceMonitor {
     type: 'warning' | 'critical',
     metric: string,
     value: number,
-    threshold: number
+    threshold: number,
   ): void {
     const alert: PerformanceAlert = {
       id: `alert_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
@@ -359,7 +359,7 @@ export class SubscriptionPerformanceMonitor {
   private getAlertMessage(
     metric: string,
     value: number,
-    threshold: number
+    threshold: number,
   ): string {
     const messages = {
       responseTime: `Subscription response time (${value.toFixed(2)}ms) exceeds threshold (${threshold}ms)`,
@@ -380,7 +380,7 @@ export class SubscriptionPerformanceMonitor {
   private generateRecommendations(
     metric: string,
     _value: number,
-    _threshold: number
+    _threshold: number,
   ): void {
     const recommendations: Record<string, OptimizationRecommendation> = {
       responseTime: {
@@ -418,7 +418,7 @@ export class SubscriptionPerformanceMonitor {
     if (
       recommendation &&
       !this.recommendations.find(
-        (r) => r.component === recommendation.component
+        (r) => r.component === recommendation.component,
       )
     ) {
       this.recommendations.push(recommendation);

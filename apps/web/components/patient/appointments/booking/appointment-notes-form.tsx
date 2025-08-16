@@ -101,7 +101,7 @@ export function AppointmentNotesForm({
       // Remove from notes
       const notePattern = new RegExp(
         `\n?• ?${noteText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`,
-        'gi'
+        'gi',
       );
       const newNotes = notes.replace(notePattern, '').trim();
       onNotesChange(newNotes);
@@ -282,7 +282,7 @@ export function AppointmentNotesForm({
                 <div className="flex flex-wrap gap-2">
                   {selectedSuggestions.map((suggestionId) => {
                     const suggestion = SUGGESTED_NOTES.find(
-                      (note) => note.id === suggestionId
+                      (note) => note.id === suggestionId,
                     );
                     if (!suggestion) {
                       return null;

@@ -9,7 +9,7 @@ import { updateProgressTrackingSchema } from '@/app/lib/validations/progress-tra
 
 export async function GET(
   _request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const supabase = createRouteHandlerClient({ cookies });
@@ -22,7 +22,7 @@ export async function GET(
     if (authError || !user) {
       return NextResponse.json(
         { error: 'Authentication required' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -34,7 +34,7 @@ export async function GET(
     if (!tracking) {
       return NextResponse.json(
         { error: 'Progress tracking not found' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -42,14 +42,14 @@ export async function GET(
   } catch (_error: any) {
     return NextResponse.json(
       { error: 'Failed to fetch progress tracking' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const supabase = createRouteHandlerClient({ cookies });
@@ -62,7 +62,7 @@ export async function PATCH(
     if (authError || !user) {
       return NextResponse.json(
         { error: 'Authentication required' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -75,7 +75,7 @@ export async function PATCH(
     // Update progress tracking
     const tracking = await progressTrackingService.updateProgressTracking(
       id,
-      validatedData
+      validatedData,
     );
 
     return NextResponse.json(tracking);
@@ -83,20 +83,20 @@ export async function PATCH(
     if (error.name === 'ZodError') {
       return NextResponse.json(
         { error: 'Invalid request data', details: error.errors },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     return NextResponse.json(
       { error: 'Failed to update progress tracking' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
 
 export async function DELETE(
   _request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const supabase = createRouteHandlerClient({ cookies });
@@ -109,7 +109,7 @@ export async function DELETE(
     if (authError || !user) {
       return NextResponse.json(
         { error: 'Authentication required' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -122,7 +122,7 @@ export async function DELETE(
   } catch (_error: any) {
     return NextResponse.json(
       { error: 'Failed to delete progress tracking' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

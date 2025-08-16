@@ -6,7 +6,7 @@ import { PatientProfileUpdateSchema } from '@/lib/validations/patient-profile';
 // GET - Retrieve patient profile
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const supabase = await createClient();
@@ -32,7 +32,7 @@ export async function GET(
         emergency_contacts (*),
         lgpd_consents (*),
         contact_preferences (*)
-      `
+      `,
       )
       .eq('id', id)
       .single();
@@ -56,13 +56,13 @@ export async function GET(
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 } // PUT - Update patient profile
 export async function PUT(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const supabase = await createClient();
@@ -88,7 +88,7 @@ export async function PUT(
     ) {
       return NextResponse.json(
         { error: 'LGPD consent required for processing health data' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -105,13 +105,13 @@ export async function PUT(
         p_profile_data: validatedData,
         p_user_agent: request.headers.get('user-agent') || 'unknown',
         p_ip_address: request.ip || 'unknown',
-      }
+      },
     );
 
     if (updateError) {
       return NextResponse.json(
         { error: 'Failed to update patient profile' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -123,12 +123,12 @@ export async function PUT(
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Validation error', details: error.errors },
-        { status: 400 }
+        { status: 400 },
       );
     }
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -136,7 +136,7 @@ export async function PUT(
 // PATCH - Partial update patient profile
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const supabase = await createClient();
@@ -191,7 +191,7 @@ export async function PATCH(
     if (updateError) {
       return NextResponse.json(
         { error: 'Failed to update patient profile' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -202,7 +202,7 @@ export async function PATCH(
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

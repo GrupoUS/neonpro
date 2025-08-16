@@ -44,14 +44,14 @@ export const ImportStatementButton: React.FC<ImportStatementButtonProps> = ({
 }) => {
   const [isImporting, setIsImporting] = useState(false);
   const [importProgress, setImportProgress] = useState<ImportProgress | null>(
-    null
+    null,
   );
   const [error, setError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
   const handleFileSelect = async (
-    event: React.ChangeEvent<HTMLInputElement>
+    event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const file = event.target.files?.[0];
     if (!file) {
@@ -74,7 +74,7 @@ export const ImportStatementButton: React.FC<ImportStatementButtonProps> = ({
     if (file.size > 10 * 1024 * 1024) {
       // 10MB limit for healthcare data
       setError(
-        'Arquivo muito grande. Limite: 10MB para proteção de dados de saúde.'
+        'Arquivo muito grande. Limite: 10MB para proteção de dados de saúde.',
       );
       return;
     }

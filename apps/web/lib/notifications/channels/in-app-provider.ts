@@ -166,7 +166,7 @@ export class InAppProvider implements ChannelProvider {
               readAt: n.readAt ? new Date(n.readAt) : undefined,
               expiresAt: n.expiresAt ? new Date(n.expiresAt) : undefined,
             })),
-          ])
+          ]),
         );
       }
     } catch (_error) {}
@@ -181,7 +181,7 @@ export class InAppProvider implements ChannelProvider {
    */
   async send(
     context: NotificationContext,
-    content: InAppContent
+    content: InAppContent,
   ): Promise<NotificationDelivery> {
     if (!this.config) {
       throw new Error('Provedor não inicializado');
@@ -225,7 +225,7 @@ export class InAppProvider implements ChannelProvider {
             type: 'notification',
             data: notification,
             timestamp: new Date(),
-          })
+          }),
         );
       }
 
@@ -282,7 +282,7 @@ export class InAppProvider implements ChannelProvider {
    */
   private addNotificationToUser(
     userId: string,
-    notification: InAppNotification
+    notification: InAppNotification,
   ): void {
     if (!this.notifications.has(userId)) {
       this.notifications.set(userId, []);
@@ -313,7 +313,7 @@ export class InAppProvider implements ChannelProvider {
       category?: string;
       limit?: number;
       offset?: number;
-    } = {}
+    } = {},
   ): InAppNotification[] {
     const userNotifications = this.notifications.get(userId) || [];
 
@@ -369,7 +369,7 @@ export class InAppProvider implements ChannelProvider {
           type: 'read',
           data: { userId, notificationId },
           timestamp: new Date(),
-        })
+        }),
       );
     }
 
@@ -409,7 +409,7 @@ export class InAppProvider implements ChannelProvider {
    */
   async archiveNotification(
     userId: string,
-    notificationId: string
+    notificationId: string,
   ): Promise<boolean> {
     const userNotifications = this.notifications.get(userId);
     if (!userNotifications) {
@@ -436,7 +436,7 @@ export class InAppProvider implements ChannelProvider {
    */
   async deleteNotification(
     userId: string,
-    notificationId: string
+    notificationId: string,
   ): Promise<boolean> {
     const userNotifications = this.notifications.get(userId);
     if (!userNotifications) {
@@ -467,7 +467,7 @@ export class InAppProvider implements ChannelProvider {
    */
   addNotificationListener(
     userId: string,
-    callback: (notification: InAppNotification) => void
+    callback: (notification: InAppNotification) => void,
   ): () => void {
     if (!this.listeners.has(userId)) {
       this.listeners.set(userId, []);
@@ -492,7 +492,7 @@ export class InAppProvider implements ChannelProvider {
    */
   private notifyListeners(
     userId: string,
-    notification: InAppNotification
+    notification: InAppNotification,
   ): void {
     const userListeners = this.listeners.get(userId);
     if (userListeners) {
@@ -532,7 +532,7 @@ export class InAppProvider implements ChannelProvider {
    * Calcula data de expiração baseada na prioridade
    */
   private calculateExpirationDate(
-    priority: NotificationPriority
+    priority: NotificationPriority,
   ): Date | undefined {
     const now = new Date();
 
@@ -561,7 +561,7 @@ export class InAppProvider implements ChannelProvider {
 
     const now = new Date();
     const validNotifications = userNotifications.filter(
-      (n) => !n.expiresAt || n.expiresAt > now
+      (n) => !n.expiresAt || n.expiresAt > now,
     );
 
     if (validNotifications.length !== userNotifications.length) {
@@ -670,7 +670,7 @@ export class InAppProvider implements ChannelProvider {
     this.notifications.forEach((userNotifications) => {
       totalNotifications += userNotifications.length;
       unreadNotifications += userNotifications.filter(
-        (n) => !(n.isRead || n.isArchived)
+        (n) => !(n.isRead || n.isArchived),
       ).length;
     });
 

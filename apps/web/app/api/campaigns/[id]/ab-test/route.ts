@@ -11,7 +11,7 @@ const campaignService = new MarketingCampaignService();
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     // Authentication check
@@ -36,7 +36,7 @@ export async function POST(
           error: 'Validation failed',
           details: validationResult.error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -52,12 +52,12 @@ export async function POST(
         ab_test: result.data,
         timestamp: new Date().toISOString(),
       },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -76,7 +76,7 @@ export class MedicalKnowledgeBaseService {
 
   async updateKnowledgeSource(
     id: string,
-    updates: any
+    updates: any,
   ): Promise<KnowledgeSource> {
     const validatedData = updateKnowledgeSourceRequestSchema.parse(updates);
     const supabase = await this.getSupabase();
@@ -159,7 +159,7 @@ export class MedicalKnowledgeBaseService {
       if (filters.medical_categories?.length) {
         dbQuery = dbQuery.overlaps(
           'medical_categories',
-          filters.medical_categories
+          filters.medical_categories,
         );
       }
 
@@ -228,7 +228,7 @@ export class MedicalKnowledgeBaseService {
 
   async updateMedicalKnowledge(
     id: string,
-    updates: Partial<MedicalKnowledge>
+    updates: Partial<MedicalKnowledge>,
   ): Promise<MedicalKnowledge> {
     const supabase = await this.getSupabase();
 
@@ -267,7 +267,7 @@ export class MedicalKnowledgeBaseService {
     if (validatedQuery.generic_name) {
       dbQuery = dbQuery.ilike(
         'generic_name',
-        `%${validatedQuery.generic_name}%`
+        `%${validatedQuery.generic_name}%`,
       );
     }
 
@@ -296,7 +296,7 @@ export class MedicalKnowledgeBaseService {
         .from('drug_interactions')
         .select('*')
         .or(
-          `and(drug_1_id.in.(${drugIds.join(',')}),drug_2_id.in.(${checkIds.join(',')})),and(drug_1_id.in.(${checkIds.join(',')}),drug_2_id.in.(${drugIds.join(',')}))`
+          `and(drug_1_id.in.(${drugIds.join(',')}),drug_2_id.in.(${checkIds.join(',')})),and(drug_1_id.in.(${checkIds.join(',')}),drug_2_id.in.(${drugIds.join(',')}))`,
         );
 
       if (interactionError) {
@@ -342,7 +342,7 @@ export class MedicalKnowledgeBaseService {
       .from('drug_interactions')
       .select('*')
       .or(
-        `and(drug_1_id.in.(${drugIds.join(',')}),drug_2_id.in.(${drugIds.join(',')})),and(drug_2_id.in.(${drugIds.join(',')}),drug_1_id.in.(${drugIds.join(',')}))`
+        `and(drug_1_id.in.(${drugIds.join(',')}),drug_2_id.in.(${drugIds.join(',')})),and(drug_2_id.in.(${drugIds.join(',')}),drug_1_id.in.(${drugIds.join(',')}))`,
       );
 
     if (error) {
@@ -405,7 +405,7 @@ export class MedicalKnowledgeBaseService {
 
   // Evidence Validation
   async validateRecommendation(
-    request: EvidenceValidationRequest
+    request: EvidenceValidationRequest,
   ): Promise<EvidenceValidationResponse> {
     const validatedRequest = evidenceValidationRequestSchema.parse(request);
     const supabase = await this.getSupabase();
@@ -438,10 +438,10 @@ export class MedicalKnowledgeBaseService {
       })) || [];
 
     const supportingEvidence = evidenceSources.filter(
-      (e) => e.supports_recommendation
+      (e) => e.supports_recommendation,
     );
     const conflictingEvidence = evidenceSources.filter(
-      (e) => e.conflicting_evidence
+      (e) => e.conflicting_evidence,
     );
 
     let overallStatus:
@@ -493,7 +493,7 @@ export class MedicalKnowledgeBaseService {
 
     if (storeError) {
       throw new Error(
-        `Failed to store validation result: ${storeError.message}`
+        `Failed to store validation result: ${storeError.message}`,
       );
     }
 
@@ -517,7 +517,7 @@ export class MedicalKnowledgeBaseService {
   // Research Cache Management
   async getCachedSearchResults(
     query: string,
-    sourceId?: string
+    sourceId?: string,
   ): Promise<ResearchCache | null> {
     const supabase = await this.getSupabase();
 
@@ -544,7 +544,7 @@ export class MedicalKnowledgeBaseService {
   }
 
   async cacheSearchResults(
-    cacheData: Omit<ResearchCache, 'id' | 'cache_date'>
+    cacheData: Omit<ResearchCache, 'id' | 'cache_date'>,
   ): Promise<ResearchCache> {
     const supabase = await this.getSupabase();
 

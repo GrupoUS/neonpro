@@ -18,7 +18,7 @@ export async function POST(request: NextRequest) {
     if (!query || typeof query !== 'string') {
       return NextResponse.json(
         { success: false, error: 'Query is required and must be a string' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -32,7 +32,7 @@ export async function POST(request: NextRequest) {
     if (sessionError || !session) {
       return NextResponse.json(
         { success: false, error: 'Authentication required' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -48,7 +48,7 @@ export async function POST(request: NextRequest) {
     if (!profile?.clinic_id) {
       return NextResponse.json(
         { success: false, error: 'User clinic not found' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -96,7 +96,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(
       { success: false, error: errorMessage },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -107,7 +107,7 @@ export async function POST(request: NextRequest) {
 async function buildUniversalContext(
   supabase: any,
   clinicId: string,
-  userId: string
+  userId: string,
 ): Promise<UniversalChatContext> {
   try {
     const [appointmentsData, financialData, clinicalData, biData, clinicData] =
@@ -354,7 +354,7 @@ async function buildFinancialContext(supabase: any, clinicId: string) {
     .eq('clinic_id', clinicId)
     .gte(
       'created_at',
-      new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
+      new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
     )
     .limit(100);
 
@@ -480,7 +480,7 @@ async function buildClinicalContext(supabase: any, clinicId: string) {
 
 async function buildBusinessIntelligenceContext(
   _supabase: any,
-  _clinicId: string
+  _clinicId: string,
 ) {
   // Cross-epic analytics
   return {

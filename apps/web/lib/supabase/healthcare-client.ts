@@ -25,7 +25,7 @@ export function createHealthcareClient() {
           'x-healthcare-compliance': 'lgpd-anvisa-cfm',
         },
       },
-    }
+    },
   );
 }
 
@@ -56,6 +56,6 @@ export function createHealthcareServerClient() {
           'x-patient-safety': 'enabled',
         },
       },
-    }
+    },
   );
 }

@@ -25,7 +25,7 @@ export async function GET(request: NextRequest) {
     if (!session?.user) {
       return NextResponse.json(
         { error: 'Unauthorized - Please log in to connect Facebook account' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -42,7 +42,7 @@ export async function GET(request: NextRequest) {
           error:
             'Clinic not found - Please ensure your profile is properly configured',
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -74,7 +74,7 @@ export async function GET(request: NextRequest) {
         error: 'Failed to initiate Facebook authorization',
         details: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

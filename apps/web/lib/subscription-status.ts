@@ -105,7 +105,7 @@ class SubscriptionCache {
   set(
     key: string,
     data: SubscriptionValidationResult,
-    customTTL?: number
+    customTTL?: number,
   ): void {
     let ttl = this.DEFAULT_TTL;
 
@@ -194,7 +194,7 @@ function createSubscriptionClient(request: NextRequest) {
           // No-op for middleware
         },
       },
-    }
+    },
   );
 }
 
@@ -203,7 +203,7 @@ function createSubscriptionClient(request: NextRequest) {
  */
 export async function validateSubscriptionStatus(
   userId: string,
-  request: NextRequest
+  request: NextRequest,
 ): Promise<SubscriptionValidationResult> {
   const startTime = Date.now();
   const cacheKey = `subscription:${userId}`;

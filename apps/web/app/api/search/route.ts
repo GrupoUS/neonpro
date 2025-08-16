@@ -18,7 +18,7 @@ export async function GET(request: NextRequest) {
     if (!session) {
       return NextResponse.json(
         { success: false, error: 'Authentication required' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -33,7 +33,7 @@ export async function GET(request: NextRequest) {
       const response = await unifiedSearchSystem.conversationalSearch(
         naturalQuery,
         session.user.id,
-        'user'
+        'user',
       );
 
       return NextResponse.json({
@@ -54,7 +54,7 @@ export async function GET(request: NextRequest) {
         },
         {
           limit: Number.parseInt(searchParams.get('limit') || '20', 10),
-        }
+        },
       );
 
       return NextResponse.json({
@@ -98,7 +98,7 @@ export async function GET(request: NextRequest) {
       session.user.id,
       query.term,
       'traditional',
-      response.totalCount
+      response.totalCount,
     ).catch((_error: any) => {});
 
     return NextResponse.json({
@@ -112,7 +112,7 @@ export async function GET(request: NextRequest) {
         success: false,
         error: 'Erro interno do servidor',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -126,7 +126,7 @@ export async function POST(request: NextRequest) {
     switch (action) {
       case 'advanced_search': {
         const response = await unifiedSearchSystem.advancedSearch(
-          data.criteria
+          data.criteria,
         );
         return NextResponse.json({
           success: true,
@@ -138,7 +138,7 @@ export async function POST(request: NextRequest) {
         const savedId = await unifiedSearchSystem.saveSearch(
           data.name,
           data.query,
-          data.userId
+          data.userId,
         );
         return NextResponse.json({
           success: true,
@@ -148,7 +148,7 @@ export async function POST(request: NextRequest) {
 
       case 'get_statistics': {
         const stats = await unifiedSearchSystem.getSearchStatistics(
-          data.timeframe
+          data.timeframe,
         );
         return NextResponse.json({
           success: true,
@@ -162,7 +162,7 @@ export async function POST(request: NextRequest) {
             success: false,
             error: 'Ação não reconhecida',
           },
-          { status: 400 }
+          { status: 400 },
         );
     }
   } catch (_error) {
@@ -171,7 +171,7 @@ export async function POST(request: NextRequest) {
         success: false,
         error: 'Erro interno do servidor',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -183,7 +183,7 @@ async function logSearchAnalytics(
   userId: string,
   query: string,
   searchType: string,
-  resultCount: number
+  resultCount: number,
 ): Promise<void> {
   try {
     const supabase = await createClient();

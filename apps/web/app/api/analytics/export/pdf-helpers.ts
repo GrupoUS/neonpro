@@ -126,7 +126,7 @@ export function generateCohortPDF(data: any, options: PDFOptions = {}): jsPDF {
 
 export function generateForecastPDF(
   data: any,
-  options: PDFOptions = {}
+  options: PDFOptions = {},
 ): jsPDF {
   const doc = new jsPDF({
     orientation: options.orientation || 'portrait',
@@ -240,7 +240,7 @@ export function generateForecastPDF(
         scenario.probability
           ? `${(scenario.probability * 100).toFixed(1)}%`
           : '',
-      ]
+      ],
     );
 
     doc.autoTable({
@@ -263,7 +263,7 @@ export function generateForecastPDF(
 
 export function generateInsightsPDF(
   data: any,
-  options: PDFOptions = {}
+  options: PDFOptions = {},
 ): jsPDF {
   const doc = new jsPDF({
     orientation: options.orientation || 'portrait',
@@ -355,7 +355,7 @@ export function generateInsightsPDF(
       doc.text(
         `${index + 1}. ${pred.metric || 'Unknown Metric'}`,
         14,
-        yPosition
+        yPosition,
       );
       yPosition += 6;
 
@@ -365,7 +365,7 @@ export function generateInsightsPDF(
       doc.text(
         `Confidence: ${pred.confidence ? `${(pred.confidence * 100).toFixed(1)}%` : 'N/A'}`,
         20,
-        yPosition
+        yPosition,
       );
       yPosition += 5;
       doc.text(`Timeframe: ${pred.timeframe || 'N/A'}`, 20, yPosition);
@@ -374,7 +374,7 @@ export function generateInsightsPDF(
       if (pred.reasoning) {
         const reasoningLines = doc.splitTextToSize(
           `Reasoning: ${pred.reasoning}`,
-          160
+          160,
         );
         doc.text(reasoningLines, 20, yPosition);
         yPosition += reasoningLines.length * 5 + 5;
@@ -416,7 +416,7 @@ export function generateInsightsPDF(
 
 export function generateDashboardPDF(
   data: any,
-  options: PDFOptions = {}
+  options: PDFOptions = {},
 ): jsPDF {
   const doc = new jsPDF({
     orientation: options.orientation || 'landscape',
@@ -444,7 +444,7 @@ export function generateDashboardPDF(
         typeof value === 'number'
           ? value.toLocaleString()
           : value?.toString() || 'N/A',
-      ]
+      ],
     );
 
     doc.autoTable({
@@ -549,7 +549,7 @@ function addPDFFooter(doc: jsPDF) {
       14,
       pageHeight - 15,
       doc.internal.pageSize.width - 14,
-      pageHeight - 15
+      pageHeight - 15,
     );
 
     // Add footer text
@@ -559,7 +559,7 @@ function addPDFFooter(doc: jsPDF) {
     doc.text(
       `Page ${i} of ${pageCount}`,
       doc.internal.pageSize.width - 50,
-      pageHeight - 10
+      pageHeight - 10,
     );
   }
 }

@@ -36,7 +36,7 @@ export class PatientAppointmentIntegration {
    * Get comprehensive appointment history for a patient
    */
   static async getPatientAppointmentHistory(
-    patientId: string
+    patientId: string,
   ): Promise<PatientAppointmentHistory> {
     try {
       const { data: appointments, error } = await supabase
@@ -46,7 +46,7 @@ export class PatientAppointmentIntegration {
           *,
           services(*),
           staff(*)
-        `
+        `,
         )
         .eq('patient_id', patientId)
         .order('appointment_date', { ascending: false });
@@ -109,12 +109,12 @@ export class PatientAppointmentIntegration {
    * Generate appointment insights for a patient
    */
   static async generateAppointmentInsights(
-    patientId: string
+    patientId: string,
   ): Promise<AppointmentInsights> {
     try {
       const history =
         await PatientAppointmentIntegration.getPatientAppointmentHistory(
-          patientId
+          patientId,
         );
 
       const attendanceRate =
@@ -125,7 +125,7 @@ export class PatientAppointmentIntegration {
       // Calculate punctuality score based on check-in times
       const punctualityScore =
         await PatientAppointmentIntegration.calculatePunctualityScore(
-          patientId
+          patientId,
         );
 
       // Calculate satisfaction score from ratings
@@ -138,7 +138,7 @@ export class PatientAppointmentIntegration {
       // Identify risk factors
       const riskFactors = PatientAppointmentIntegration.identifyRiskFactors(
         history,
-        attendanceRate
+        attendanceRate,
       );
 
       // Generate recommendations
@@ -146,7 +146,7 @@ export class PatientAppointmentIntegration {
         PatientAppointmentIntegration.generateRecommendations(
           history,
           attendanceRate,
-          satisfactionScore
+          satisfactionScore,
         );
 
       return {
@@ -168,13 +168,13 @@ export class PatientAppointmentIntegration {
    */
   static async linkPatientToAppointment(
     patientId: string,
-    appointmentData: Partial<Appointment>
+    appointmentData: Partial<Appointment>,
   ): Promise<Appointment> {
     try {
       // Get patient preferences to suggest optimal appointment
       const history =
         await PatientAppointmentIntegration.getPatientAppointmentHistory(
-          patientId
+          patientId,
         );
 
       // Apply patient preferences if not specified
@@ -206,7 +206,7 @@ export class PatientAppointmentIntegration {
         .eq('id', patientId);
 
       logger.info(
-        `Patient ${patientId} linked to appointment ${appointment.id}`
+        `Patient ${patientId} linked to appointment ${appointment.id}`,
       );
       return appointment;
     } catch (error) {
@@ -219,7 +219,7 @@ export class PatientAppointmentIntegration {
    * Calculate time preferences based on appointment history
    */
   private static calculateTimePreferences(
-    appointments: Appointment[]
+    appointments: Appointment[],
   ): string[] {
     const timeSlots: { [key: string]: number } = {};
 
@@ -239,7 +239,7 @@ export class PatientAppointmentIntegration {
    * Calculate service preferences based on appointment history
    */
   private static calculateServicePreferences(
-    appointments: Appointment[]
+    appointments: Appointment[],
   ): string[] {
     const services: { [key: string]: number } = {};
 
@@ -259,7 +259,7 @@ export class PatientAppointmentIntegration {
    * Calculate punctuality score based on check-in times
    */
   private static async calculatePunctualityScore(
-    patientId: string
+    patientId: string,
   ): Promise<number> {
     try {
       const { data: checkIns, error } = await supabase
@@ -291,7 +291,7 @@ export class PatientAppointmentIntegration {
    * Calculate loyalty index based on appointment patterns
    */
   private static calculateLoyaltyIndex(
-    history: PatientAppointmentHistory
+    history: PatientAppointmentHistory,
   ): number {
     const factors = {
       totalAppointments: Math.min(history.total_appointments / 10, 1) * 30,
@@ -305,7 +305,7 @@ export class PatientAppointmentIntegration {
     };
 
     return Math.round(
-      Object.values(factors).reduce((sum, factor) => sum + factor, 0)
+      Object.values(factors).reduce((sum, factor) => sum + factor, 0),
     );
   }
 
@@ -313,7 +313,7 @@ export class PatientAppointmentIntegration {
    * Calculate appointment consistency
    */
   private static calculateConsistency(
-    history: PatientAppointmentHistory
+    history: PatientAppointmentHistory,
   ): number {
     if (history.appointments.length < 2) {
       return 0;
@@ -335,7 +335,7 @@ export class PatientAppointmentIntegration {
     const variance =
       intervals.reduce(
         (sum, interval) => sum + (interval - avgInterval) ** 2,
-        0
+        0,
       ) / intervals.length;
 
     return Math.max(0, 1 - variance / (avgInterval * avgInterval));
@@ -346,7 +346,7 @@ export class PatientAppointmentIntegration {
    */
   private static identifyRiskFactors(
     history: PatientAppointmentHistory,
-    attendanceRate: number
+    attendanceRate: number,
   ): string[] {
     const risks: string[] = [];
 
@@ -384,7 +384,7 @@ export class PatientAppointmentIntegration {
   private static generateRecommendations(
     history: PatientAppointmentHistory,
     attendanceRate: number,
-    satisfactionScore: number
+    satisfactionScore: number,
   ): string[] {
     const recommendations: string[] = [];
 
@@ -394,25 +394,25 @@ export class PatientAppointmentIntegration {
 
     if (history.preferred_times.length > 0) {
       recommendations.push(
-        `Schedule during preferred times: ${history.preferred_times.join(', ')}`
+        `Schedule during preferred times: ${history.preferred_times.join(', ')}`,
       );
     }
 
     if (satisfactionScore < 70) {
       recommendations.push(
-        'Follow up after appointments to improve satisfaction'
+        'Follow up after appointments to improve satisfaction',
       );
     }
 
     if (history.no_show_count > 1) {
       recommendations.push(
-        'Require confirmation calls for future appointments'
+        'Require confirmation calls for future appointments',
       );
     }
 
     if (history.preferred_services.length > 0) {
       recommendations.push(
-        `Focus on preferred services: ${history.preferred_services.slice(0, 2).join(', ')}`
+        `Focus on preferred services: ${history.preferred_services.slice(0, 2).join(', ')}`,
       );
     }
 

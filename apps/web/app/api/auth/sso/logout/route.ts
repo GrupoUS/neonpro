@@ -167,7 +167,7 @@ export async function POST(request: NextRequest) {
         details:
           process.env.NODE_ENV === 'development' ? error.message : undefined,
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -181,13 +181,13 @@ export async function GET(request: NextRequest) {
 export async function PUT() {
   return NextResponse.json(
     { error: 'METHOD_NOT_ALLOWED', message: 'PUT method not allowed' },
-    { status: 405 }
+    { status: 405 },
   );
 }
 
 export async function DELETE() {
   return NextResponse.json(
     { error: 'METHOD_NOT_ALLOWED', message: 'DELETE method not allowed' },
-    { status: 405 }
+    { status: 405 },
   );
 }

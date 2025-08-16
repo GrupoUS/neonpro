@@ -36,7 +36,7 @@ export class LGPDComplianceManager {
   constructor(
     supabaseUrl: string,
     supabaseKey: string,
-    config: LGPDConfiguration
+    config: LGPDConfiguration,
   ) {
     this.supabase = createClient(supabaseUrl, supabaseKey);
     this.config = config;
@@ -52,13 +52,13 @@ export class LGPDComplianceManager {
   async grantConsent(
     userId: string,
     request: ConsentRequest,
-    metadata?: { ip_address?: string; user_agent?: string }
+    metadata?: { ip_address?: string; user_agent?: string },
   ): Promise<ConsentRecord> {
     // Check if consent already exists
     const existingConsent = await this.getActiveConsent(
       userId,
       request.data_type,
-      request.purpose
+      request.purpose,
     );
 
     if (existingConsent?.consent_given) {
@@ -73,7 +73,7 @@ export class LGPDComplianceManager {
       consent_given: request.consent_given,
       consent_text: this.generateConsentText(
         request.data_type,
-        request.purpose
+        request.purpose,
       ),
       version: '1.0',
       legal_basis: request.legal_basis || 'consent',
@@ -125,7 +125,7 @@ export class LGPDComplianceManager {
   async withdrawConsent(
     userId: string,
     consentId: string,
-    reason?: string
+    reason?: string,
   ): Promise<void> {
     const { data, error } = await this.supabase
       .from('lgpd_consent_records')
@@ -173,7 +173,7 @@ export class LGPDComplianceManager {
   async getActiveConsent(
     userId: string,
     dataType: LGPDDataType,
-    purpose: LGPDPurpose
+    purpose: LGPDPurpose,
   ): Promise<ConsentRecord | null> {
     try {
       const { data, error } = await this.supabase
@@ -226,7 +226,7 @@ export class LGPDComplianceManager {
    */
   async createDataSubjectRequest(
     userId: string,
-    request: CreateDataSubjectRequest
+    request: CreateDataSubjectRequest,
   ): Promise<DataSubjectRequest> {
     const deadline = new Date();
     deadline.setDate(deadline.getDate() + 30); // 30-day legal deadline
@@ -416,7 +416,7 @@ export class LGPDComplianceManager {
    */
   async verifyAuditTrailIntegrity(
     startDate?: Date,
-    endDate?: Date
+    endDate?: Date,
   ): Promise<{
     isValid: boolean;
     corruptedEntries: string[];
@@ -577,7 +577,7 @@ export class LGPDComplianceManager {
         auditScore +
         retentionScore +
         breachScore) /
-        5
+        5,
     );
 
     // Identify gaps and recommendations
@@ -657,7 +657,7 @@ export class LGPDComplianceManager {
 
   private generateConsentText(
     dataType: LGPDDataType,
-    purpose: LGPDPurpose
+    purpose: LGPDPurpose,
   ): string {
     return `Eu autorizo o processamento dos meus dados de ${dataType} para a finalidade de ${purpose}, conforme descrito na política de privacidade.`;
   }
@@ -680,25 +680,25 @@ export class LGPDComplianceManager {
 
   private async triggerDataCleanup(
     _userId: string,
-    _dataType: LGPDDataType
+    _dataType: LGPDDataType,
   ): Promise<void> {}
 
   private async scheduleRequestProcessing(_requestId: string): Promise<void> {}
 
   private async fulfillAccessRequest(
-    _request: DataSubjectRequest
+    _request: DataSubjectRequest,
   ): Promise<void> {}
 
   private async fulfillDeletionRequest(
-    _request: DataSubjectRequest
+    _request: DataSubjectRequest,
   ): Promise<void> {}
 
   private async fulfillPortabilityRequest(
-    _request: DataSubjectRequest
+    _request: DataSubjectRequest,
   ): Promise<void> {}
 
   private async fulfillRectificationRequest(
-    _request: DataSubjectRequest
+    _request: DataSubjectRequest,
   ): Promise<void> {}
 
   private async notifyAffectedUsers(_incidentId: string): Promise<void> {}

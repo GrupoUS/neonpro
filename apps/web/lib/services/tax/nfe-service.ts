@@ -31,18 +31,18 @@ export class NFEIntegrationService {
           valor_base: service.valor_total,
           tipo_servico: service.descricao,
           codigo_servico: service.codigo_servico,
-        })
-      )
+        }),
+      ),
     );
 
     // Build NFe document
     const totalValue = validatedRequest.services.reduce(
       (sum, service) => sum + service.valor_total,
-      0
+      0,
     );
     const _totalTaxes = taxCalculations.reduce(
       (sum, calc) => sum + calc.total_taxes,
-      0
+      0,
     );
 
     const nfeDocument: NFEDocument = {
@@ -58,19 +58,19 @@ export class NFEIntegrationService {
       valor_base_calculo: totalValue,
       valor_icms: taxCalculations.reduce(
         (sum, calc) => sum + calc.tax_breakdown.icms,
-        0
+        0,
       ),
       valor_iss: taxCalculations.reduce(
         (sum, calc) => sum + calc.tax_breakdown.iss,
-        0
+        0,
       ),
       valor_pis: taxCalculations.reduce(
         (sum, calc) => sum + calc.tax_breakdown.pis,
-        0
+        0,
       ),
       valor_cofins: taxCalculations.reduce(
         (sum, calc) => sum + calc.tax_breakdown.cofins,
-        0
+        0,
       ),
       cliente_cnpj_cpf: validatedRequest.customer.cnpj_cpf,
       cliente_nome: validatedRequest.customer.nome,
@@ -195,7 +195,7 @@ export class NFEIntegrationService {
   // Cancel NFe
   async cancelNFE(
     nfeId: string,
-    reason: string
+    reason: string,
   ): Promise<{
     success: boolean;
     message: string;
@@ -273,7 +273,7 @@ export class NFEIntegrationService {
       customerName?: string;
       limit?: number;
       offset?: number;
-    }
+    },
   ): Promise<{
     documents: NFEDocument[];
     total: number;
@@ -324,7 +324,7 @@ export class NFEIntegrationService {
   async getNFEStatistics(
     clinicId: string,
     startDate: string,
-    endDate: string
+    endDate: string,
   ): Promise<{
     total_documents: number;
     total_value: number;
@@ -350,7 +350,7 @@ export class NFEIntegrationService {
     const totalDocuments = documents.length;
     const totalValue = documents.reduce(
       (sum, doc) => sum + (doc.valor_total || 0),
-      0
+      0,
     );
 
     // Group by status
@@ -359,7 +359,7 @@ export class NFEIntegrationService {
         acc[doc.status] = (acc[doc.status] || 0) + 1;
         return acc;
       },
-      {} as Record<string, number>
+      {} as Record<string, number>,
     );
 
     // Group by month
@@ -379,7 +379,7 @@ export class NFEIntegrationService {
         }
         return acc;
       },
-      [] as Array<{ month: string; count: number; value: number }>
+      [] as Array<{ month: string; count: number; value: number }>,
     );
 
     // Sort by month
@@ -416,14 +416,14 @@ export class NFEIntegrationService {
         const calculatedTotal = service.quantidade * service.valor_unitario;
         if (Math.abs(calculatedTotal - service.valor_total) > 0.01) {
           errors.push(
-            `Service "${service.descricao}": total value doesn't match quantity × unit value`
+            `Service "${service.descricao}": total value doesn't match quantity × unit value`,
           );
         }
       }
 
       // Check tax configuration
       const taxValidation = await this.taxEngine.validateTaxSetup(
-        request.clinic_id
+        request.clinic_id,
       );
       if (!taxValidation.isValid) {
         errors.push(...taxValidation.errors);

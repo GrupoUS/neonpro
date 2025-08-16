@@ -46,7 +46,7 @@ export async function GET(request: NextRequest) {
         error: 'Failed to fetch campaigns',
         message: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -73,7 +73,7 @@ export async function POST(request: NextRequest) {
             success: false,
             error: `Missing required field: ${field}`,
           },
-          { status: 400 }
+          { status: 400 },
         );
       }
     }
@@ -93,7 +93,7 @@ export async function POST(request: NextRequest) {
           success: false,
           error: `Invalid campaign type. Must be one of: ${validCampaignTypes.join(', ')}`,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -114,7 +114,7 @@ export async function POST(request: NextRequest) {
           success: false,
           error: `Invalid trigger type. Must be one of: ${validTriggerTypes.join(', ')}`,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -157,7 +157,7 @@ export async function POST(request: NextRequest) {
         data: campaign,
         message: 'Campaign created successfully',
       },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (error) {
     return NextResponse.json(
@@ -166,7 +166,7 @@ export async function POST(request: NextRequest) {
         error: 'Failed to create campaign',
         message: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

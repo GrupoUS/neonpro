@@ -102,7 +102,7 @@ export class DataRetentionAutomation {
   constructor(
     supabase: SupabaseClient,
     complianceManager: LGPDComplianceManager,
-    config: RetentionConfig
+    config: RetentionConfig,
   ) {
     this.supabase = supabase;
     this.complianceManager = complianceManager;
@@ -129,7 +129,7 @@ export class DataRetentionAutomation {
               await this.processRetentionSchedules();
             } catch (_error) {}
           },
-          checkIntervalHours * 60 * 60 * 1000
+          checkIntervalHours * 60 * 60 * 1000,
         );
       }
     } catch (error) {
@@ -151,14 +151,14 @@ export class DataRetentionAutomation {
    * Create Retention Policy
    */
   async createRetentionPolicy(
-    policyData: Omit<RetentionPolicy, 'id' | 'created_at' | 'updated_at'>
+    policyData: Omit<RetentionPolicy, 'id' | 'created_at' | 'updated_at'>,
   ): Promise<{ success: boolean; policy_id: string }> {
     try {
       // Validate policy data
       const validation = await this.validateRetentionPolicy(policyData);
       if (!validation.valid) {
         throw new Error(
-          `Invalid retention policy: ${validation.errors.join(', ')}`
+          `Invalid retention policy: ${validation.errors.join(', ')}`,
         );
       }
 
@@ -205,7 +205,7 @@ export class DataRetentionAutomation {
    */
   async scheduleRetentionExecution(
     policyId: string,
-    scheduledDate?: string
+    scheduledDate?: string,
   ): Promise<{
     success: boolean;
     schedule_id: string;
@@ -286,7 +286,7 @@ export class DataRetentionAutomation {
       };
     } catch (error) {
       throw new Error(
-        `Failed to schedule retention execution: ${error.message}`
+        `Failed to schedule retention execution: ${error.message}`,
       );
     }
   }
@@ -296,7 +296,7 @@ export class DataRetentionAutomation {
    */
   async executeRetentionSchedule(
     scheduleId: string,
-    forceExecution = false
+    forceExecution = false,
   ): Promise<{
     success: boolean;
     execution_id: string;
@@ -361,7 +361,7 @@ export class DataRetentionAutomation {
         const results = await this.performRetentionExecution(
           execution.id,
           schedule.lgpd_retention_policies,
-          schedule.affected_records
+          schedule.affected_records,
         );
 
         // Update execution record with results
@@ -516,7 +516,7 @@ export class DataRetentionAutomation {
       return results;
     } catch (error) {
       throw new Error(
-        `Failed to process retention schedules: ${error.message}`
+        `Failed to process retention schedules: ${error.message}`,
       );
     }
   }
@@ -534,7 +534,7 @@ export class DataRetentionAutomation {
   }> {
     try {
       const { data: report, error } = await this.supabase.rpc(
-        'get_retention_status_report'
+        'get_retention_status_report',
       );
 
       if (error) {
@@ -544,7 +544,7 @@ export class DataRetentionAutomation {
       return report;
     } catch (error) {
       throw new Error(
-        `Failed to get retention status report: ${error.message}`
+        `Failed to get retention status report: ${error.message}`,
       );
     }
   }
@@ -555,7 +555,7 @@ export class DataRetentionAutomation {
   async approveRetentionSchedule(
     scheduleId: string,
     approvedBy: string,
-    notes?: string
+    notes?: string,
   ): Promise<{ success: boolean }> {
     try {
       const { error } = await this.supabase
@@ -594,7 +594,7 @@ export class DataRetentionAutomation {
 
   // Private helper methods
   private async validateRetentionPolicy(
-    policy: any
+    policy: any,
   ): Promise<{ valid: boolean; errors: string[] }> {
     const errors: string[] = [];
 
@@ -620,7 +620,7 @@ export class DataRetentionAutomation {
 
     if (
       !['hard_delete', 'soft_delete', 'anonymize', 'archive'].includes(
-        policy.deletion_method
+        policy.deletion_method,
       )
     ) {
       errors.push('Invalid deletion method');
@@ -633,7 +633,7 @@ export class DataRetentionAutomation {
   }
 
   private async calculateAffectedRecords(
-    policy: RetentionPolicy
+    policy: RetentionPolicy,
   ): Promise<{ count: number; sample: any[] }> {
     try {
       const { data: result, error } = await this.supabase.rpc(
@@ -642,7 +642,7 @@ export class DataRetentionAutomation {
           table_name: policy.table_name,
           retention_period_days: policy.retention_period_days,
           data_category: policy.data_category,
-        }
+        },
       );
 
       if (error) {
@@ -677,7 +677,7 @@ export class DataRetentionAutomation {
   }
 
   private async validateExecutionConditions(
-    schedule: any
+    schedule: any,
   ): Promise<{ valid: boolean; reason?: string }> {
     // Check if schedule is approved (if approval required)
     if (schedule.approval_required && schedule.status !== 'approved') {
@@ -716,7 +716,7 @@ export class DataRetentionAutomation {
   private async performRetentionExecution(
     executionId: string,
     policy: RetentionPolicy,
-    expectedRecords: number
+    expectedRecords: number,
   ): Promise<RetentionExecution> {
     const executionLog: any[] = [];
     let recordsProcessed = 0;
@@ -781,7 +781,7 @@ export class DataRetentionAutomation {
           if (!this.config.backup_before_deletion) {
             const archiveResult = await this.createDataArchive(
               executionId,
-              policy
+              policy,
             );
             recordsArchived = archiveResult.record_count;
             recordsProcessed = archiveResult.record_count;
@@ -839,7 +839,7 @@ export class DataRetentionAutomation {
 
   private async createDataArchive(
     executionId: string,
-    policy: RetentionPolicy
+    policy: RetentionPolicy,
   ): Promise<DataArchive> {
     const { data: archive, error } = await this.supabase.rpc(
       'create_data_archive',
@@ -848,7 +848,7 @@ export class DataRetentionAutomation {
         policy_id: policy.id,
         table_name: policy.table_name,
         retention_period_days: policy.retention_period_days,
-      }
+      },
     );
 
     if (error) {
@@ -859,7 +859,7 @@ export class DataRetentionAutomation {
   }
 
   private async performHardDelete(
-    policy: RetentionPolicy
+    policy: RetentionPolicy,
   ): Promise<{ deleted_count: number; processed_count: number }> {
     const { data: result, error } = await this.supabase.rpc(
       'perform_hard_delete',
@@ -867,7 +867,7 @@ export class DataRetentionAutomation {
         table_name: policy.table_name,
         retention_period_days: policy.retention_period_days,
         batch_size: this.config.batch_size,
-      }
+      },
     );
 
     if (error) {
@@ -878,7 +878,7 @@ export class DataRetentionAutomation {
   }
 
   private async performSoftDelete(
-    policy: RetentionPolicy
+    policy: RetentionPolicy,
   ): Promise<{ deleted_count: number; processed_count: number }> {
     const { data: result, error } = await this.supabase.rpc(
       'perform_soft_delete',
@@ -886,7 +886,7 @@ export class DataRetentionAutomation {
         table_name: policy.table_name,
         retention_period_days: policy.retention_period_days,
         batch_size: this.config.batch_size,
-      }
+      },
     );
 
     if (error) {
@@ -897,7 +897,7 @@ export class DataRetentionAutomation {
   }
 
   private async performAnonymization(
-    policy: RetentionPolicy
+    policy: RetentionPolicy,
   ): Promise<{ anonymized_count: number; processed_count: number }> {
     const { data: result, error } = await this.supabase.rpc(
       'perform_anonymization',
@@ -905,7 +905,7 @@ export class DataRetentionAutomation {
         table_name: policy.table_name,
         retention_period_days: policy.retention_period_days,
         batch_size: this.config.batch_size,
-      }
+      },
     );
 
     if (error) {

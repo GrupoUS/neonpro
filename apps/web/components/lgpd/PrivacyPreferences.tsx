@@ -70,7 +70,7 @@ export function PrivacyPreferences({
     const initialPreferences: Record<string, boolean> = {};
     purposes?.forEach((purpose) => {
       const existingConsent = userConsents?.find(
-        (c) => c.purpose_id === purpose.id
+        (c) => c.purpose_id === purpose.id,
       );
       initialPreferences[purpose.id] = existingConsent?.status === 'given';
     });
@@ -85,7 +85,7 @@ export function PrivacyPreferences({
       // Verificar se há mudanças
       const hasChanges = purposes?.some((purpose) => {
         const existingConsent = userConsents?.find(
-          (c) => c.purpose_id === purpose.id
+          (c) => c.purpose_id === purpose.id,
         );
         const currentStatus = existingConsent?.status === 'given';
         return newPreferences[purpose.id] !== currentStatus;
@@ -103,7 +103,7 @@ export function PrivacyPreferences({
     try {
       for (const [purposeId, enabled] of Object.entries(preferences)) {
         const existingConsent = userConsents?.find(
-          (c) => c.purpose_id === purposeId
+          (c) => c.purpose_id === purposeId,
         );
         const currentStatus = existingConsent?.status === 'given';
 
@@ -131,7 +131,7 @@ export function PrivacyPreferences({
     const resetPreferences: Record<string, boolean> = {};
     purposes?.forEach((purpose) => {
       const existingConsent = userConsents?.find(
-        (c) => c.purpose_id === purpose.id
+        (c) => c.purpose_id === purpose.id,
       );
       resetPreferences[purpose.id] = existingConsent?.status === 'given';
     });
@@ -407,7 +407,7 @@ export function PrivacyPreferences({
                 {purposes?.map((purpose) => {
                   const history = getConsentHistory(purpose.id);
                   const currentConsent = history.find(
-                    (c) => c.status === 'given'
+                    (c) => c.status === 'given',
                   );
 
                   return (
@@ -450,7 +450,7 @@ export function PrivacyPreferences({
                               </div>
                               <span className="text-gray-500">
                                 {new Date(
-                                  consent.created_at
+                                  consent.created_at,
                                 ).toLocaleDateString('pt-BR')}
                               </span>
                             </div>

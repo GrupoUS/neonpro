@@ -67,7 +67,7 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
           phone,
           email
         )
-      `
+      `,
       )
       .eq('id', params.id)
       .single();
@@ -76,12 +76,12 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
       if (error.code === 'PGRST116') {
         return NextResponse.json(
           { error: 'Purchase order not found' },
-          { status: 404 }
+          { status: 404 },
         );
       }
       return NextResponse.json(
         { error: 'Failed to fetch purchase order' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -128,7 +128,7 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -158,12 +158,12 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
       if (fetchError.code === 'PGRST116') {
         return NextResponse.json(
           { error: 'Purchase order not found' },
-          { status: 404 }
+          { status: 404 },
         );
       }
       return NextResponse.json(
         { error: 'Failed to fetch purchase order' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -184,7 +184,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
           {
             error: `Cannot change status from ${existingPO.status} to ${validatedData.status}`,
           },
-          { status: 400 }
+          { status: 400 },
         );
       }
     }
@@ -218,7 +218,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     if (updateError) {
       return NextResponse.json(
         { error: 'Failed to update purchase order' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -238,7 +238,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
             *,
             inventory_items (name)
           )
-        `
+        `,
         )
         .eq('id', params.id)
         .single();
@@ -266,7 +266,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
 
         template = await purchaseOrderService.generatePOTemplate(
           purchaseOrderData as any,
-          validatedData.template_type
+          validatedData.template_type,
         );
       }
     }
@@ -283,12 +283,12 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
           error: 'Validation error',
           details: error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -315,12 +315,12 @@ export async function DELETE(_request: NextRequest, { params }: RouteParams) {
       if (fetchError.code === 'PGRST116') {
         return NextResponse.json(
           { error: 'Purchase order not found' },
-          { status: 404 }
+          { status: 404 },
         );
       }
       return NextResponse.json(
         { error: 'Failed to fetch purchase order' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -336,7 +336,7 @@ export async function DELETE(_request: NextRequest, { params }: RouteParams) {
         {
           error: `Cannot cancel purchase order with status: ${existingPO.status}`,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -357,7 +357,7 @@ export async function DELETE(_request: NextRequest, { params }: RouteParams) {
     if (cancelError) {
       return NextResponse.json(
         { error: 'Failed to cancel purchase order' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -368,7 +368,7 @@ export async function DELETE(_request: NextRequest, { params }: RouteParams) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

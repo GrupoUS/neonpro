@@ -33,7 +33,7 @@ export async function GET(request: NextRequest) {
     if (!clinicId) {
       return NextResponse.json(
         { error: 'clinic_id é obrigatório' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -45,7 +45,7 @@ export async function GET(request: NextRequest) {
     if (authError || !user) {
       return NextResponse.json(
         { error: 'Usuário não autenticado' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -64,7 +64,7 @@ export async function GET(request: NextRequest) {
         return await handleReportGenerationRequest(
           clinicId,
           reportType,
-          searchParams
+          searchParams,
         );
 
       case 'performance':
@@ -73,13 +73,13 @@ export async function GET(request: NextRequest) {
       default:
         return NextResponse.json(
           { error: `Ação '${action}' não reconhecida` },
-          { status: 400 }
+          { status: 400 },
         );
     }
   } catch (_error) {
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -97,7 +97,7 @@ export async function POST(request: NextRequest) {
     if (!clinic_id) {
       return NextResponse.json(
         { error: 'clinic_id é obrigatório' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -109,7 +109,7 @@ export async function POST(request: NextRequest) {
     if (authError || !user) {
       return NextResponse.json(
         { error: 'Usuário não autenticado' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -133,13 +133,13 @@ export async function POST(request: NextRequest) {
       default:
         return NextResponse.json(
           { error: `Ação '${action}' não reconhecida` },
-          { status: 400 }
+          { status: 400 },
         );
     }
   } catch (_error) {
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -163,7 +163,7 @@ async function handleDashboardRequest(clinicId: string) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Erro ao gerar dados do dashboard' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -173,7 +173,7 @@ async function handleDashboardRequest(clinicId: string) {
  */
 async function handleKPIRequest(
   clinicId: string,
-  searchParams: URLSearchParams
+  searchParams: URLSearchParams,
 ) {
   try {
     const periodStart = searchParams.get('period_start');
@@ -191,7 +191,7 @@ async function handleKPIRequest(
 
       const kpis = await analyticsCore.calculateFinancialKPIs(
         clinicId,
-        parameters
+        parameters,
       );
 
       return NextResponse.json({
@@ -207,13 +207,13 @@ async function handleKPIRequest(
     if (!validation.success) {
       return NextResponse.json(
         { error: 'Parâmetros inválidos', details: validation.error.errors },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     const kpis = await analyticsCore.calculateFinancialKPIs(
       clinicId,
-      parameters
+      parameters,
     );
 
     return NextResponse.json({
@@ -224,7 +224,7 @@ async function handleKPIRequest(
   } catch (_error) {
     return NextResponse.json(
       { error: 'Erro ao calcular KPIs' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -234,7 +234,7 @@ async function handleKPIRequest(
  */
 async function handleReportsListRequest(
   clinicId: string,
-  searchParams: URLSearchParams
+  searchParams: URLSearchParams,
 ) {
   try {
     const reportType = searchParams.get('report_type');
@@ -251,7 +251,7 @@ async function handleReportsListRequest(
 
     const reports = await reportingEngine.getFinancialReports(
       clinicId,
-      filters
+      filters,
     );
 
     return NextResponse.json({
@@ -267,7 +267,7 @@ async function handleReportsListRequest(
   } catch (_error) {
     return NextResponse.json(
       { error: 'Erro ao buscar relatórios' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -278,7 +278,7 @@ async function handleReportsListRequest(
 async function handleReportGenerationRequest(
   clinicId: string,
   reportType: string | null,
-  searchParams: URLSearchParams
+  searchParams: URLSearchParams,
 ) {
   try {
     if (
@@ -286,7 +286,7 @@ async function handleReportGenerationRequest(
     ) {
       return NextResponse.json(
         { error: 'Tipo de relatório inválido' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -296,7 +296,7 @@ async function handleReportGenerationRequest(
     if (!(periodStart && periodEnd)) {
       return NextResponse.json(
         { error: 'period_start e period_end são obrigatórios' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -306,7 +306,7 @@ async function handleReportGenerationRequest(
     if (!validation.success) {
       return NextResponse.json(
         { error: 'Parâmetros inválidos', details: validation.error.errors },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -316,25 +316,25 @@ async function handleReportGenerationRequest(
       case REPORT_TYPES.PROFIT_LOSS:
         reportData = await reportingEngine.generateProfitLossStatement(
           clinicId,
-          parameters
+          parameters,
         );
         break;
       case REPORT_TYPES.BALANCE_SHEET:
         reportData = await reportingEngine.generateBalanceSheet(
           clinicId,
-          periodEnd
+          periodEnd,
         );
         break;
       case REPORT_TYPES.CASH_FLOW:
         reportData = await reportingEngine.generateCashFlowStatement(
           clinicId,
-          parameters
+          parameters,
         );
         break;
       default:
         return NextResponse.json(
           { error: 'Tipo de relatório não implementado' },
-          { status: 400 }
+          { status: 400 },
         );
     }
 
@@ -347,7 +347,7 @@ async function handleReportGenerationRequest(
         period_end: periodEnd,
         generated_by: 'system', // TODO: Get user ID
       },
-      reportData
+      reportData,
     );
 
     return NextResponse.json({
@@ -360,7 +360,7 @@ async function handleReportGenerationRequest(
   } catch (_error) {
     return NextResponse.json(
       { error: 'Erro ao gerar relatório' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -370,7 +370,7 @@ async function handleReportGenerationRequest(
  */
 async function handlePerformanceRequest(
   clinicId: string,
-  searchParams: URLSearchParams
+  searchParams: URLSearchParams,
 ) {
   try {
     const periodStart = searchParams.get('period_start');
@@ -379,7 +379,7 @@ async function handlePerformanceRequest(
     if (!(periodStart && periodEnd)) {
       return NextResponse.json(
         { error: 'period_start e period_end são obrigatórios' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -389,13 +389,13 @@ async function handlePerformanceRequest(
     if (!validation.success) {
       return NextResponse.json(
         { error: 'Parâmetros inválidos', details: validation.error.errors },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     const performance = await analyticsCore.calculatePerformanceMetrics(
       clinicId,
-      parameters
+      parameters,
     );
 
     return NextResponse.json({
@@ -406,7 +406,7 @@ async function handlePerformanceRequest(
   } catch (_error) {
     return NextResponse.json(
       { error: 'Erro ao calcular métricas de performance' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -421,13 +421,13 @@ async function handleProfitLossGeneration(clinicId: string, parameters: any) {
     if (!validation.success) {
       return NextResponse.json(
         { error: 'Parâmetros inválidos', details: validation.error.errors },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     const profitLoss = await reportingEngine.generateProfitLossStatement(
       clinicId,
-      validation.data
+      validation.data,
     );
 
     const savedReport = await reportingEngine.saveFinancialReport(
@@ -438,7 +438,7 @@ async function handleProfitLossGeneration(clinicId: string, parameters: any) {
         period_end: parameters.period_end,
         generated_by: 'system',
       },
-      profitLoss
+      profitLoss,
     );
 
     return NextResponse.json({
@@ -461,13 +461,13 @@ async function handleBalanceSheetGeneration(clinicId: string, parameters: any) {
     if (!parameters.as_of_date) {
       return NextResponse.json(
         { error: 'as_of_date é obrigatório para balanço patrimonial' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     const balanceSheet = await reportingEngine.generateBalanceSheet(
       clinicId,
-      parameters.as_of_date
+      parameters.as_of_date,
     );
 
     const savedReport = await reportingEngine.saveFinancialReport(
@@ -478,7 +478,7 @@ async function handleBalanceSheetGeneration(clinicId: string, parameters: any) {
         period_end: parameters.as_of_date,
         generated_by: 'system',
       },
-      balanceSheet
+      balanceSheet,
     );
 
     return NextResponse.json({
@@ -491,7 +491,7 @@ async function handleBalanceSheetGeneration(clinicId: string, parameters: any) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Erro ao gerar balanço patrimonial' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -506,13 +506,13 @@ async function handleCashFlowGeneration(clinicId: string, parameters: any) {
     if (!validation.success) {
       return NextResponse.json(
         { error: 'Parâmetros inválidos', details: validation.error.errors },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     const cashFlow = await reportingEngine.generateCashFlowStatement(
       clinicId,
-      validation.data
+      validation.data,
     );
 
     const savedReport = await reportingEngine.saveFinancialReport(
@@ -523,7 +523,7 @@ async function handleCashFlowGeneration(clinicId: string, parameters: any) {
         period_end: parameters.period_end,
         generated_by: 'system',
       },
-      cashFlow
+      cashFlow,
     );
 
     return NextResponse.json({
@@ -536,7 +536,7 @@ async function handleCashFlowGeneration(clinicId: string, parameters: any) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Erro ao gerar fluxo de caixa' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -547,7 +547,7 @@ async function handleCashFlowGeneration(clinicId: string, parameters: any) {
 async function handleReportExport(
   clinicId: string,
   parameters: any,
-  options: any
+  options: any,
 ) {
   try {
     // TODO: Implement report export functionality (PDF, Excel, CSV)
@@ -563,7 +563,7 @@ async function handleReportExport(
   } catch (_error) {
     return NextResponse.json(
       { error: 'Erro ao exportar relatório' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -574,7 +574,7 @@ async function handleReportExport(
 async function handleReportScheduling(
   clinicId: string,
   parameters: any,
-  options: any
+  options: any,
 ) {
   try {
     // TODO: Implement report scheduling functionality
@@ -590,7 +590,7 @@ async function handleReportScheduling(
   } catch (_error) {
     return NextResponse.json(
       { error: 'Erro ao agendar relatório' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

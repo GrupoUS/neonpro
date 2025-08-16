@@ -48,7 +48,7 @@ class PerformanceMonitor {
    */
   async endMeasurement(
     operationId: string,
-    metric: Omit<PerformanceMetric, 'duration_ms'>
+    metric: Omit<PerformanceMetric, 'duration_ms'>,
   ): Promise<void> {
     const startTime = this.measurements.get(operationId);
     if (!startTime) {
@@ -67,7 +67,7 @@ class PerformanceMonitor {
     this.checkPerformanceBudget(
       metric.metric_type,
       duration_ms,
-      metric.route_path
+      metric.route_path,
     );
   }
 
@@ -91,7 +91,7 @@ class PerformanceMonitor {
   private checkPerformanceBudget(
     metricType: PerformanceMetric['metric_type'],
     duration: number,
-    routePath: string
+    routePath: string,
   ): void {
     let budget: number;
 
@@ -119,7 +119,7 @@ class PerformanceMonitor {
         `${metricType}_budget_exceeded`,
         duration - budget,
         'ms',
-        { route_path: routePath, budget, actual: duration }
+        { route_path: routePath, budget, actual: duration },
       );
     }
   }
@@ -132,7 +132,7 @@ class PerformanceMonitor {
     metricName: string,
     value: number,
     unit: string,
-    metadata?: Record<string, any>
+    metadata?: Record<string, any>,
   ): Promise<void> {
     try {
       const { error } = await this.supabase.from('system_metrics').insert({
@@ -154,7 +154,7 @@ class PerformanceMonitor {
   async getPerformanceBaseline(
     routePath: string,
     metricType?: PerformanceMetric['metric_type'],
-    days = 7
+    days = 7,
   ): Promise<{
     average: number;
     median: number;
@@ -233,7 +233,7 @@ class PerformanceMonitor {
       // Calculate statistics for each route/metric combination
       Object.keys(report).forEach((key) => {
         const durations = report[key].durations.sort(
-          (a: number, b: number) => a - b
+          (a: number, b: number) => a - b,
         );
         const count = durations.length;
 
@@ -266,12 +266,12 @@ export const performanceMonitor = new PerformanceMonitor();
 export function measureAsync<_T>(
   operationId: string,
   metricType: PerformanceMetric['metric_type'],
-  routePath: string
+  routePath: string,
 ) {
   return (
     _target: any,
     _propertyName: string,
-    descriptor: PropertyDescriptor
+    descriptor: PropertyDescriptor,
   ) => {
     const method = descriptor.value;
 

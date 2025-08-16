@@ -139,7 +139,7 @@ export async function GET(request: NextRequest) {
       // Get notification statistics
       const stats =
         await sessionSystem.notificationService.getNotificationStatistics(
-          user.id
+          user.id,
         );
 
       return NextResponse.json({
@@ -163,7 +163,7 @@ export async function GET(request: NextRequest) {
     if (!validation.success) {
       return NextResponse.json(
         { error: 'Invalid query parameters', details: validation.error.errors },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -197,7 +197,7 @@ export async function GET(request: NextRequest) {
 
     // Get unread count
     const unreadCount = await sessionSystem.notificationService.getUnreadCount(
-      user.id
+      user.id,
     );
 
     return NextResponse.json({
@@ -217,7 +217,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -245,7 +245,7 @@ export async function POST(request: NextRequest) {
               error: 'Invalid notification data',
               details: validation.error.errors,
             },
-            { status: 400 }
+            { status: 400 },
           );
         }
 
@@ -307,15 +307,15 @@ export async function POST(request: NextRequest) {
         if (!Array.isArray(notificationIds) || notificationIds.length === 0) {
           return NextResponse.json(
             { error: 'Invalid notification IDs' },
-            { status: 400 }
+            { status: 400 },
           );
         }
 
         // Mark notifications as read
         const results = await Promise.all(
           notificationIds.map((id) =>
-            sessionSystem.notificationService.markAsRead(id, user.id)
-          )
+            sessionSystem.notificationService.markAsRead(id, user.id),
+          ),
         );
 
         const successCount = results.filter(Boolean).length;
@@ -352,7 +352,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -371,7 +371,7 @@ export async function PUT(request: NextRequest) {
     if (!validation.success) {
       return NextResponse.json(
         { error: 'Invalid preferences data', details: validation.error.errors },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -381,13 +381,13 @@ export async function PUT(request: NextRequest) {
     const success =
       await sessionSystem.notificationService.updateUserPreferences(
         user.id,
-        preferences
+        preferences,
       );
 
     if (!success) {
       return NextResponse.json(
         { error: 'Failed to update preferences' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -414,7 +414,7 @@ export async function PUT(request: NextRequest) {
 
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -438,13 +438,13 @@ export async function DELETE(request: NextRequest) {
       const success =
         await sessionSystem.notificationService.deleteNotification(
           notificationId,
-          user.id
+          user.id,
         );
 
       if (!success) {
         return NextResponse.json(
           { error: 'Failed to delete notification or notification not found' },
-          { status: 400 }
+          { status: 400 },
         );
       }
 
@@ -506,14 +506,14 @@ export async function DELETE(request: NextRequest) {
       if (!cutoffDate) {
         return NextResponse.json(
           { error: 'Invalid date format' },
-          { status: 400 }
+          { status: 400 },
         );
       }
 
       const deletedCount =
         await sessionSystem.notificationService.clearOldNotifications(
           user.id,
-          cutoffDate
+          cutoffDate,
         );
 
       // Log the cleanup
@@ -537,7 +537,7 @@ export async function DELETE(request: NextRequest) {
     }
     return NextResponse.json(
       { error: 'Invalid delete operation' },
-      { status: 400 }
+      { status: 400 },
     );
   } catch (error) {
     if (error instanceof Error && error.message === 'Unauthorized') {
@@ -546,7 +546,7 @@ export async function DELETE(request: NextRequest) {
 
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

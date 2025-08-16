@@ -660,7 +660,7 @@ export class InteroperabilityManager {
   async createFHIRResource(
     resourceType: FHIRResourceType,
     resourceData: any,
-    profileId?: string
+    profileId?: string,
   ): Promise<FHIRResource> {
     try {
       const profile = profileId
@@ -675,7 +675,7 @@ export class InteroperabilityManager {
       const validationResults = await this.validateFHIRResource(
         resourceType,
         resourceData,
-        profile
+        profile,
       );
 
       if (validationResults.some((r) => r.status === 'failed')) {
@@ -683,7 +683,7 @@ export class InteroperabilityManager {
           `FHIR resource validation failed: ${validationResults
             .filter((r) => r.status === 'failed')
             .map((r) => r.message)
-            .join(', ')}`
+            .join(', ')}`,
         );
       }
 
@@ -718,7 +718,7 @@ export class InteroperabilityManager {
     format: DataFormat,
     messageType: MessageType,
     payload: any,
-    metadata?: Partial<ExchangeMetadata>
+    metadata?: Partial<ExchangeMetadata>,
   ): Promise<DataExchangeRequest> {
     try {
       const exchangeRequest: DataExchangeRequest = {
@@ -778,7 +778,7 @@ export class InteroperabilityManager {
     standard: InteroperabilityStandard,
     format: DataFormat,
     payload: any,
-    metadata: ExchangeMetadata
+    metadata: ExchangeMetadata,
   ): Promise<ProcessingInfo> {
     try {
       logger.info(`Processing incoming exchange from ${sourceSystem}`);
@@ -795,7 +795,7 @@ export class InteroperabilityManager {
       const validationResults = await this.validateIncomingData(
         standard,
         format,
-        payload
+        payload,
       );
       processing.validationResults = validationResults;
 
@@ -804,7 +804,7 @@ export class InteroperabilityManager {
           `Validation failed: ${validationResults
             .filter((r) => r.status === 'failed')
             .map((r) => r.message)
-            .join(', ')}`
+            .join(', ')}`,
         );
       }
 
@@ -813,7 +813,7 @@ export class InteroperabilityManager {
       if (mapping) {
         const transformationResults = await this.transformData(
           payload,
-          mapping
+          mapping,
         );
         processing.transformationResults = transformationResults;
       }
@@ -827,13 +827,13 @@ export class InteroperabilityManager {
         new Date(processing.startTime).getTime();
 
       logger.info(
-        `Incoming exchange processed successfully from ${sourceSystem}`
+        `Incoming exchange processed successfully from ${sourceSystem}`,
       );
       return processing;
     } catch (error) {
       logger.error(
         `Failed to process incoming exchange from ${sourceSystem}:`,
-        error
+        error,
       );
       throw error;
     }
@@ -848,7 +848,7 @@ export class InteroperabilityManager {
 
       if (!profile?.compliance.hl7FhirCompliance.capabilityStatement) {
         throw new Error(
-          'Default FHIR profile or capability statement not found'
+          'Default FHIR profile or capability statement not found',
         );
       }
 
@@ -881,7 +881,7 @@ export class InteroperabilityManager {
   async validateFHIRResource(
     resourceType: FHIRResourceType,
     resourceData: any,
-    profile: InteroperabilityProfile
+    profile: InteroperabilityProfile,
   ): Promise<ValidationResult[]> {
     const results: ValidationResult[] = [];
 
@@ -900,13 +900,13 @@ export class InteroperabilityManager {
 
       // Profile-specific validation
       const profileValidationRules = profile.validationRules.filter(
-        (rule) => rule.type === 'schema' && rule.name.includes(resourceType)
+        (rule) => rule.type === 'schema' && rule.name.includes(resourceType),
       );
 
       for (const rule of profileValidationRules) {
         const validationResult = await this.executeValidationRule(
           resourceData,
-          rule
+          rule,
         );
         results.push(validationResult);
       }
@@ -960,13 +960,13 @@ export class InteroperabilityManager {
       const metrics: InteroperabilityMetrics = {
         totalExchanges: exchanges.length,
         successfulExchanges: exchanges.filter(
-          (e) => e.status?.status === 'completed'
+          (e) => e.status?.status === 'completed',
         ).length,
         failedExchanges: exchanges.filter((e) => e.status?.status === 'failed')
           .length,
         pendingExchanges: exchanges.filter(
           (e) =>
-            e.status?.status === 'pending' || e.status?.status === 'processing'
+            e.status?.status === 'pending' || e.status?.status === 'processing',
         ).length,
         averageProcessingTime: this.calculateAverageProcessingTime(exchanges),
         exchangesByStandard: this.groupByField(exchanges, 'standard'),
@@ -1188,7 +1188,7 @@ export class InteroperabilityManager {
   private async validateIncomingData(
     standard: InteroperabilityStandard,
     format: DataFormat,
-    payload: any
+    payload: any,
   ): Promise<ValidationResult[]> {
     const results: ValidationResult[] = [];
 
@@ -1241,17 +1241,17 @@ export class InteroperabilityManager {
   private findMapping(
     _sourceSystem: string,
     standard: InteroperabilityStandard,
-    format: DataFormat
+    format: DataFormat,
   ): DataMapping | undefined {
     return Array.from(this.mappings.values()).find(
       (mapping) =>
-        mapping.sourceStandard === standard && mapping.sourceFormat === format
+        mapping.sourceStandard === standard && mapping.sourceFormat === format,
     );
   }
 
   private async transformData(
     payload: any,
-    mapping: DataMapping
+    mapping: DataMapping,
   ): Promise<TransformationResult[]> {
     const results: TransformationResult[] = [];
 
@@ -1262,7 +1262,7 @@ export class InteroperabilityManager {
         // Apply transformation (simplified implementation)
         const transformedData = await this.applyTransformation(
           payload,
-          transformation
+          transformation,
         );
 
         results.push({
@@ -1289,7 +1289,7 @@ export class InteroperabilityManager {
 
   private async applyTransformation(
     data: any,
-    transformation: DataTransformation
+    transformation: DataTransformation,
   ): Promise<any> {
     // Simplified transformation logic
     switch (transformation.type) {
@@ -1318,7 +1318,7 @@ export class InteroperabilityManager {
 
   private transformStructure(
     data: any,
-    _transformation: DataTransformation
+    _transformation: DataTransformation,
   ): any {
     // Structure transformation implementation
     return data;
@@ -1326,7 +1326,7 @@ export class InteroperabilityManager {
 
   private transformTerminology(
     data: any,
-    _transformation: DataTransformation
+    _transformation: DataTransformation,
   ): any {
     // Terminology transformation implementation
     return data;
@@ -1334,17 +1334,17 @@ export class InteroperabilityManager {
 
   private async processAndStoreData(
     _payload: any,
-    metadata: ExchangeMetadata
+    metadata: ExchangeMetadata,
   ): Promise<void> {
     // Process and store the incoming data
     logger.info(
-      `Processing and storing data from ${metadata.sendingApplication}`
+      `Processing and storing data from ${metadata.sendingApplication}`,
     );
   }
 
   private async executeValidationRule(
     _data: any,
-    rule: ValidationRule
+    rule: ValidationRule,
   ): Promise<ValidationResult> {
     try {
       // Simplified validation rule execution
@@ -1375,7 +1375,7 @@ export class InteroperabilityManager {
     }
 
     const pendingExchanges = this.exchangeQueue.filter(
-      (e) => e.status.status === 'pending'
+      (e) => e.status.status === 'pending',
     );
 
     for (const exchange of pendingExchanges.slice(0, 10)) {
@@ -1398,12 +1398,12 @@ export class InteroperabilityManager {
       (ep) =>
         ep.standard === exchange.standard &&
         ep.format === exchange.format &&
-        ep.status === 'active'
+        ep.status === 'active',
     );
 
     if (!endpoint) {
       throw new Error(
-        `No active endpoint found for ${exchange.standard}/${exchange.format}`
+        `No active endpoint found for ${exchange.standard}/${exchange.format}`,
       );
     }
 
@@ -1429,7 +1429,7 @@ export class InteroperabilityManager {
 
   private async deliverToEndpoint(
     exchange: DataExchangeRequest,
-    endpoint: InteroperabilityEndpoint
+    endpoint: InteroperabilityEndpoint,
   ): Promise<DeliveryResult> {
     try {
       // Simplified delivery implementation
@@ -1484,14 +1484,14 @@ export class InteroperabilityManager {
 
     const totalTime = completedExchanges.reduce(
       (sum, e) => sum + e.processing.duration,
-      0
+      0,
     );
     return totalTime / completedExchanges.length;
   }
 
   private groupByField<T extends Record<string, any>>(
     items: T[],
-    field: keyof T
+    field: keyof T,
   ): Record<string, number> {
     return items.reduce(
       (acc, item) => {
@@ -1499,19 +1499,19 @@ export class InteroperabilityManager {
         acc[key] = (acc[key] || 0) + 1;
         return acc;
       },
-      {} as Record<string, number>
+      {} as Record<string, number>,
     );
   }
 
   private generateErrorSummary(exchanges: any[]): Record<string, number> {
     const failedExchanges = exchanges.filter(
-      (e) => e.status?.status === 'failed'
+      (e) => e.status?.status === 'failed',
     );
     return this.groupByField(
       failedExchanges.map((e) => ({
         reason: e.status.statusReason || 'unknown',
       })),
-      'reason'
+      'reason',
     );
   }
 
@@ -1550,7 +1550,7 @@ export class InteroperabilityManager {
   }
 
   private async saveExchangeRequest(
-    exchange: DataExchangeRequest
+    exchange: DataExchangeRequest,
   ): Promise<void> {
     const { error } = await this.supabase.from('data_exchanges').insert({
       id: exchange.id,
@@ -1572,7 +1572,7 @@ export class InteroperabilityManager {
   }
 
   private async updateExchangeRequest(
-    exchange: DataExchangeRequest
+    exchange: DataExchangeRequest,
   ): Promise<void> {
     const { error } = await this.supabase
       .from('data_exchanges')

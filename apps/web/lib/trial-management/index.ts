@@ -68,7 +68,7 @@ export class TrialManager {
   static async trackActivity(
     trialId: string,
     eventType: JourneyEvent['type'],
-    data: Record<string, any>
+    data: Record<string, any>,
   ) {
     return TrialManager.engine.trackEvent(trialId, eventType, data);
   }

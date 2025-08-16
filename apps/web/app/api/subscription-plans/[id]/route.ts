@@ -21,7 +21,7 @@ const updatePlanSchema = z.object({
 // GET /api/subscription-plans/[id] - Get plan details
 export async function GET(
   _request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const supabase = createRouteHandlerClient({ cookies });
@@ -39,7 +39,7 @@ export async function GET(
     if (!planId) {
       return NextResponse.json(
         { error: 'Plan ID is required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -50,7 +50,7 @@ export async function GET(
         `
         *,
         subscriptions:subscriptions(count)
-      `
+      `,
       )
       .eq('id', planId)
       .single();
@@ -86,7 +86,7 @@ export async function GET(
     logger.error(`Error in GET /api/subscription-plans/${params.id}:`, error);
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -94,7 +94,7 @@ export async function GET(
 // PUT /api/subscription-plans/[id] - Update plan
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const supabase = createRouteHandlerClient({ cookies });
@@ -117,7 +117,7 @@ export async function PUT(
     if (!(userProfile && ['admin', 'owner'].includes(userProfile.role))) {
       return NextResponse.json(
         { error: 'Insufficient permissions' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -132,7 +132,7 @@ export async function PUT(
           error: 'Invalid request data',
           details: validationResult.error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -162,7 +162,7 @@ export async function PUT(
       if (conflictingPlan) {
         return NextResponse.json(
           { error: 'Plan with this name already exists' },
-          { status: 409 }
+          { status: 409 },
         );
       }
     }
@@ -170,7 +170,7 @@ export async function PUT(
     // Update plan
     const updatedPlan = await subscriptionManager.updatePlan(
       planId,
-      validationResult.data
+      validationResult.data,
     );
 
     logger.info(`Plan updated: ${planId} by user: ${user.id}`);
@@ -188,7 +188,7 @@ export async function PUT(
 
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -196,7 +196,7 @@ export async function PUT(
 // DELETE /api/subscription-plans/[id] - Deactivate plan
 export async function DELETE(
   _request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const supabase = createRouteHandlerClient({ cookies });
@@ -219,7 +219,7 @@ export async function DELETE(
     if (!(userProfile && ['admin', 'owner'].includes(userProfile.role))) {
       return NextResponse.json(
         { error: 'Insufficient permissions' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -253,7 +253,7 @@ export async function DELETE(
               'Cancel or migrate all active subscriptions before deactivating the plan',
           },
         },
-        { status: 409 }
+        { status: 409 },
       );
     }
 
@@ -271,7 +271,7 @@ export async function DELETE(
   } catch (error) {
     logger.error(
       `Error in DELETE /api/subscription-plans/${params.id}:`,
-      error
+      error,
     );
 
     if (error instanceof Error) {
@@ -280,7 +280,7 @@ export async function DELETE(
 
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

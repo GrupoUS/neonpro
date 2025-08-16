@@ -1,27 +1,27 @@
 /**
  * ⚕️ CFM PROFESSIONAL STANDARDS INTEGRATION
- * 
+ *
  * Constitutional CFM compliance for Brazilian healthcare with:
  * - Real-time CFM medical professional license verification
  * - CFM-compliant digital signatures for medical documentation
  * - Professional ethics compliance integration
  * - Telemedicine standards for remote consultations
- * 
+ *
  * Quality Standard: ≥9.9/10 (Healthcare Regulatory Compliance)
  * Compliance: CFM + ANVISA + LGPD + Brazilian Constitutional Requirements
  */
 
-import { z } from 'zod';
 import { createHash, createSign, createVerify } from 'crypto';
+import { z } from 'zod';
 
 // ⚕️ CFM PROFESSIONAL CATEGORIES (Brazilian Medical Council)
 export enum CFMProfessionalCategory {
-  MEDICO = 'medico',                           // Licensed medical doctor
-  ESPECIALISTA = 'especialista',               // Medical specialist
-  RESIDENTE = 'residente',                     // Medical resident
-  ACADEMICO = 'academico',                     // Academic/teaching physician
-  ESTRANGEIRO = 'estrangeiro',                 // Foreign physician (special registration)
-  TEMPORARIO = 'temporario'                    // Temporary registration
+  MEDICO = 'medico', // Licensed medical doctor
+  ESPECIALISTA = 'especialista', // Medical specialist
+  RESIDENTE = 'residente', // Medical resident
+  ACADEMICO = 'academico', // Academic/teaching physician
+  ESTRANGEIRO = 'estrangeiro', // Foreign physician (special registration)
+  TEMPORARIO = 'temporario', // Temporary registration
 }
 
 // 🏥 MEDICAL SPECIALTIES (CFM Recognition)
@@ -30,101 +30,106 @@ export enum CFMSpecialty {
   DERMATOLOGIA = 'dermatologia',
   CIRURGIA_PLASTICA = 'cirurgia_plastica',
   MEDICINA_ESTETICA = 'medicina_estetica',
-  
+
   // Clinical Specialties
   CLINICA_MEDICA = 'clinica_medica',
   CARDIOLOGIA = 'cardiologia',
   ENDOCRINOLOGIA = 'endocrinologia',
   GINECOLOGIA = 'ginecologia',
-  
+
   // Surgical Specialties
   CIRURGIA_GERAL = 'cirurgia_geral',
   ANESTESIOLOGIA = 'anestesiologia',
-  
+
   // Other Specialties
   PSIQUIATRIA = 'psiquiatria',
   RADIOLOGIA = 'radiologia',
-  MEDICINA_NUCLEAR = 'medicina_nuclear'
+  MEDICINA_NUCLEAR = 'medicina_nuclear',
 }
 
 // 📋 CFM LICENSE STATUS (Brazilian Medical Council)
 export enum CFMLicenseStatus {
-  ATIVO = 'ativo',                             // Active license
-  SUSPENSO = 'suspenso',                       // Suspended license
-  CANCELADO = 'cancelado',                     // Cancelled license
-  TRANSFERIDO = 'transferido',                 // Transferred to another CRM
-  TEMPORARIO = 'temporario',                   // Temporary license
-  PROVISORIO = 'provisorio'                    // Provisional license
+  ATIVO = 'ativo', // Active license
+  SUSPENSO = 'suspenso', // Suspended license
+  CANCELADO = 'cancelado', // Cancelled license
+  TRANSFERIDO = 'transferido', // Transferred to another CRM
+  TEMPORARIO = 'temporario', // Temporary license
+  PROVISORIO = 'provisorio', // Provisional license
 }
 
 // 📱 TELEMEDICINE AUTHORIZATION (CFM Resolution 2314/2022)
 export enum TelemedicineAuthorization {
-  TELECONSULTA = 'teleconsulta',               // Remote consultation
-  TELEDIAGNOSTICO = 'telediagnostico',         // Remote diagnosis
-  TELECIRURGIA = 'telecirurgia',               // Remote surgery supervision
-  TELEMONITORAMENTO = 'telemonitoramento',     // Remote patient monitoring
-  TELETRIAGEM = 'teletriagem'                  // Remote triage
+  TELECONSULTA = 'teleconsulta', // Remote consultation
+  TELEDIAGNOSTICO = 'telediagnostico', // Remote diagnosis
+  TELECIRURGIA = 'telecirurgia', // Remote surgery supervision
+  TELEMONITORAMENTO = 'telemonitoramento', // Remote patient monitoring
+  TELETRIAGEM = 'teletriagem', // Remote triage
 }
 
 // 🔐 CFM DIGITAL SIGNATURE TYPES
 export enum CFMSignatureType {
-  PRESCRICAO = 'prescricao',                   // Medical prescription
-  LAUDO = 'laudo',                             // Medical report
-  ATESTADO = 'atestado',                       // Medical certificate
-  RELATÓRIO = 'relatorio',                     // Medical report
-  RECEITA = 'receita',                         // Prescription
-  SOLICITACAO_EXAME = 'solicitacao_exame'      // Exam request
+  PRESCRICAO = 'prescricao', // Medical prescription
+  LAUDO = 'laudo', // Medical report
+  ATESTADO = 'atestado', // Medical certificate
+  RELATÓRIO = 'relatorio', // Medical report
+  RECEITA = 'receita', // Prescription
+  SOLICITACAO_EXAME = 'solicitacao_exame', // Exam request
 }
 
 // 📋 CFM PROFESSIONAL RECORD SCHEMA
 export const CFMProfessionalSchema = z.object({
   id: z.string().uuid(),
-  
+
   // CFM Registration Details
   crm_number: z.string().regex(/^\d{4,6}$/, 'Invalid CRM number format'),
   crm_state: z.string().length(2, 'State code must be 2 characters'),
   cfm_registration: z.string(),
-  
+
   // Professional Information
   full_name: z.string().min(1),
   cpf: z.string().regex(/^\d{11}$/, 'Invalid CPF format'),
   category: z.nativeEnum(CFMProfessionalCategory),
   specialties: z.array(z.nativeEnum(CFMSpecialty)),
-  
+
   // License Status
   license_status: z.nativeEnum(CFMLicenseStatus),
   license_issued_date: z.date(),
   license_expiry_date: z.date().optional(),
-  
+
   // Telemedicine Authorization
   telemedicine_authorized: z.boolean().default(false),
-  telemedicine_types: z.array(z.nativeEnum(TelemedicineAuthorization)).optional(),
-  
+  telemedicine_types: z
+    .array(z.nativeEnum(TelemedicineAuthorization))
+    .optional(),
+
   // Digital Signature Capability
   digital_signature_enabled: z.boolean().default(false),
   digital_certificate_thumbprint: z.string().optional(),
-  
+
   // Ethical and Professional Status
   ethical_restrictions: z.array(z.string()).default([]),
   professional_sanctions: z.array(z.string()).default([]),
-  
+
   // Constitutional Compliance
   created_at: z.date(),
   updated_at: z.date(),
   last_verification_date: z.date().optional(),
-  verification_status: z.enum(['verified', 'pending', 'failed', 'expired']).default('pending')
+  verification_status: z
+    .enum(['verified', 'pending', 'failed', 'expired'])
+    .default('pending'),
 });
 
 export type CFMProfessional = z.infer<typeof CFMProfessionalSchema>;
 
 /**
  * ⚕️ CFM PROFESSIONAL STANDARDS MANAGER
- * 
+ *
  * Constitutional CFM compliance with healthcare professional validation
- */export class CFMProfessionalStandardsManager {
+ */ export class CFMProfessionalStandardsManager {
   private supabase: any;
   private cfmApiKey: string;
-  private verificationCache: Map<string, { data: any; timestamp: number }> = new Map();
+  private verificationCache: Map<string, { data: any; timestamp: number }> =
+    new Map();
   private readonly CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 hours
 
   constructor(supabaseClient: any, cfmApiKey?: string) {
@@ -138,11 +143,11 @@ export type CFMProfessional = z.infer<typeof CFMProfessionalSchema>;
   async verifyProfessionalLicense(
     crmNumber: string,
     crmState: string,
-    forceRefresh: boolean = false
-  ): Promise<{ 
-    valid: boolean; 
-    professional?: CFMProfessional; 
-    error?: string; 
+    forceRefresh: boolean = false,
+  ): Promise<{
+    valid: boolean;
+    professional?: CFMProfessional;
+    error?: string;
     cached?: boolean;
     verificationId?: string;
   }> {
@@ -151,28 +156,28 @@ export type CFMProfessional = z.infer<typeof CFMProfessionalSchema>;
 
     try {
       const cacheKey = `${crmNumber}-${crmState}`;
-      
+
       // 🚀 Check cache first (unless forced refresh)
       if (!forceRefresh && this.verificationCache.has(cacheKey)) {
         const cached = this.verificationCache.get(cacheKey)!;
         if (Date.now() - cached.timestamp < this.CACHE_DURATION) {
-          return { 
-            valid: true, 
-            professional: cached.data, 
+          return {
+            valid: true,
+            professional: cached.data,
             cached: true,
-            verificationId 
+            verificationId,
           };
         }
       }
 
       // 🔍 Real-time CFM verification (simulated - in production, integrate with CFM API)
       const cfmData = await this.performCFMVerification(crmNumber, crmState);
-      
+
       if (!cfmData.success) {
-        return { 
-          valid: false, 
+        return {
+          valid: false,
           error: cfmData.error || 'CFM verification failed',
-          verificationId
+          verificationId,
         };
       }
 
@@ -188,7 +193,9 @@ export type CFMProfessional = z.infer<typeof CFMProfessionalSchema>;
         specialties: cfmData.specialties || [],
         license_status: cfmData.licenseStatus,
         license_issued_date: new Date(cfmData.licenseIssuedDate),
-        license_expiry_date: cfmData.licenseExpiryDate ? new Date(cfmData.licenseExpiryDate) : undefined,
+        license_expiry_date: cfmData.licenseExpiryDate
+          ? new Date(cfmData.licenseExpiryDate)
+          : undefined,
         telemedicine_authorized: cfmData.telemedicineAuthorized || false,
         telemedicine_types: cfmData.telemedicineTypes || [],
         digital_signature_enabled: cfmData.digitalSignatureEnabled || false,
@@ -197,7 +204,7 @@ export type CFMProfessional = z.infer<typeof CFMProfessionalSchema>;
         created_at: new Date(),
         updated_at: new Date(),
         last_verification_date: new Date(),
-        verification_status: 'verified'
+        verification_status: 'verified',
       };
 
       // 🔒 Store verification in database
@@ -206,26 +213,28 @@ export type CFMProfessional = z.infer<typeof CFMProfessionalSchema>;
       // 🚀 Cache the result
       this.verificationCache.set(cacheKey, {
         data: professional,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       });
 
       // 📊 Track verification performance
       const duration = Date.now() - startTime;
-      console.log(`CFM verification completed in ${duration}ms for CRM ${crmNumber}-${crmState}`);
+      console.log(
+        `CFM verification completed in ${duration}ms for CRM ${crmNumber}-${crmState}`,
+      );
 
-      return { 
-        valid: true, 
+      return {
+        valid: true,
         professional: professional as CFMProfessional,
         verificationId,
-        cached: false 
+        cached: false,
       };
-
     } catch (error) {
       console.error('CFM professional verification failed:', error);
-      return { 
-        valid: false, 
-        error: error instanceof Error ? error.message : 'Verification system error',
-        verificationId
+      return {
+        valid: false,
+        error:
+          error instanceof Error ? error.message : 'Verification system error',
+        verificationId,
       };
     }
   }
@@ -236,16 +245,19 @@ export type CFMProfessional = z.infer<typeof CFMProfessionalSchema>;
   async checkTelemedicineAuthorization(
     crmNumber: string,
     crmState: string,
-    requestedType: TelemedicineAuthorization
+    requestedType: TelemedicineAuthorization,
   ): Promise<{ authorized: boolean; restrictions?: string[]; error?: string }> {
     try {
       // 🔍 Verify current license status
-      const verification = await this.verifyProfessionalLicense(crmNumber, crmState);
-      
+      const verification = await this.verifyProfessionalLicense(
+        crmNumber,
+        crmState,
+      );
+
       if (!verification.valid || !verification.professional) {
-        return { 
-          authorized: false, 
-          error: 'Professional license verification failed' 
+        return {
+          authorized: false,
+          error: 'Professional license verification failed',
         };
       }
 
@@ -253,17 +265,19 @@ export type CFMProfessional = z.infer<typeof CFMProfessionalSchema>;
 
       // 📋 Check general telemedicine authorization
       if (!professional.telemedicine_authorized) {
-        return { 
-          authorized: false, 
-          restrictions: ['Professional not authorized for telemedicine services'] 
+        return {
+          authorized: false,
+          restrictions: [
+            'Professional not authorized for telemedicine services',
+          ],
         };
       }
 
       // 🔍 Check specific telemedicine type authorization
       if (!professional.telemedicine_types?.includes(requestedType)) {
-        return { 
-          authorized: false, 
-          restrictions: [`Professional not authorized for ${requestedType}`] 
+        return {
+          authorized: false,
+          restrictions: [`Professional not authorized for ${requestedType}`],
         };
       }
 
@@ -279,25 +293,28 @@ export type CFMProfessional = z.infer<typeof CFMProfessionalSchema>;
       }
 
       // ⏰ Check license expiry
-      if (professional.license_expiry_date && professional.license_expiry_date < new Date()) {
+      if (
+        professional.license_expiry_date &&
+        professional.license_expiry_date < new Date()
+      ) {
         restrictions.push('Professional license has expired');
       }
 
       const authorized = restrictions.length === 0;
 
-      return { 
-        authorized, 
-        restrictions: restrictions.length > 0 ? restrictions : undefined 
+      return {
+        authorized,
+        restrictions: restrictions.length > 0 ? restrictions : undefined,
       };
-
     } catch (error) {
       console.error('Telemedicine authorization check failed:', error);
-      return { 
-        authorized: false, 
-        error: error instanceof Error ? error.message : 'Authorization check failed' 
+      return {
+        authorized: false,
+        error:
+          error instanceof Error ? error.message : 'Authorization check failed',
       };
     }
-  }  /**
+  } /**
    * 📝 CREATE CFM DIGITAL SIGNATURE - Constitutional Medical Documentation
    */
   async createCFMDigitalSignature(request: {
@@ -308,10 +325,10 @@ export type CFMProfessional = z.infer<typeof CFMProfessionalSchema>;
     patientId?: string;
     clinicId: string;
     signatureReason: string;
-  }): Promise<{ 
-    success: boolean; 
-    signature?: string; 
-    signatureId?: string; 
+  }): Promise<{
+    success: boolean;
+    signature?: string;
+    signatureId?: string;
     error?: string;
     timestamp?: string;
   }> {
@@ -321,15 +338,15 @@ export type CFMProfessional = z.infer<typeof CFMProfessionalSchema>;
     try {
       // ✅ Verify professional license and digital signature capability
       const verification = await this.verifyProfessionalLicense(
-        request.professionalCrm, 
-        request.professionalState
+        request.professionalCrm,
+        request.professionalState,
       );
-      
+
       if (!verification.valid || !verification.professional) {
-        return { 
-          success: false, 
+        return {
+          success: false,
           error: 'Professional license verification failed',
-          signatureId
+          signatureId,
         };
       }
 
@@ -337,24 +354,24 @@ export type CFMProfessional = z.infer<typeof CFMProfessionalSchema>;
 
       // 🔐 Check digital signature authorization
       if (!professional.digital_signature_enabled) {
-        return { 
-          success: false, 
+        return {
+          success: false,
           error: 'Professional not authorized for digital signatures',
-          signatureId
+          signatureId,
         };
       }
 
       // 📋 Validate document type authorization
       const authorizationCheck = await this.validateDocumentTypeAuthorization(
-        professional, 
-        request.documentType
+        professional,
+        request.documentType,
       );
-      
+
       if (!authorizationCheck.authorized) {
-        return { 
-          success: false, 
+        return {
+          success: false,
           error: authorizationCheck.error || 'Document type not authorized',
-          signatureId
+          signatureId,
         };
       }
 
@@ -365,12 +382,14 @@ export type CFMProfessional = z.infer<typeof CFMProfessionalSchema>;
         professionalState: request.professionalState,
         professionalName: professional.full_name,
         documentType: request.documentType,
-        documentHash: createHash('sha256').update(request.documentContent).digest('hex'),
+        documentHash: createHash('sha256')
+          .update(request.documentContent)
+          .digest('hex'),
         signatureReason: request.signatureReason,
         timestamp,
         clinicId: request.clinicId,
         patientId: request.patientId,
-        cfmCompliance: 'CFM_RESOLUTION_2314_2022'
+        cfmCompliance: 'CFM_RESOLUTION_2314_2022',
       };
 
       // 🔐 Generate digital signature (in production, use proper PKI)
@@ -387,22 +406,24 @@ export type CFMProfessional = z.infer<typeof CFMProfessionalSchema>;
         documentType: request.documentType,
         clinicId: request.clinicId,
         signatureId,
-        timestamp
+        timestamp,
       });
 
-      return { 
-        success: true, 
+      return {
+        success: true,
         signature,
         signatureId,
-        timestamp
+        timestamp,
       };
-
     } catch (error) {
       console.error('CFM digital signature creation failed:', error);
-      return { 
-        success: false, 
-        error: error instanceof Error ? error.message : 'Digital signature creation failed',
-        signatureId
+      return {
+        success: false,
+        error:
+          error instanceof Error
+            ? error.message
+            : 'Digital signature creation failed',
+        signatureId,
       };
     }
   }
@@ -413,10 +434,10 @@ export type CFMProfessional = z.infer<typeof CFMProfessionalSchema>;
   async verifyCFMDigitalSignature(
     signature: string,
     documentContent: string,
-    signatureId: string
-  ): Promise<{ 
-    valid: boolean; 
-    professional?: Partial<CFMProfessional>; 
+    signatureId: string,
+  ): Promise<{
+    valid: boolean;
+    professional?: Partial<CFMProfessional>;
     error?: string;
     signatureData?: any;
   }> {
@@ -429,72 +450,76 @@ export type CFMProfessional = z.infer<typeof CFMProfessionalSchema>;
         .single();
 
       if (error || !signatureRecord) {
-        return { 
-          valid: false, 
-          error: 'Signature record not found' 
+        return {
+          valid: false,
+          error: 'Signature record not found',
         };
       }
 
       // 🔐 Verify document integrity
-      const documentHash = createHash('sha256').update(documentContent).digest('hex');
+      const documentHash = createHash('sha256')
+        .update(documentContent)
+        .digest('hex');
       if (documentHash !== signatureRecord.document_hash) {
-        return { 
-          valid: false, 
-          error: 'Document has been modified after signing' 
+        return {
+          valid: false,
+          error: 'Document has been modified after signing',
         };
       }
 
       // ✅ Verify professional license at time of signing
       const verification = await this.verifyProfessionalLicense(
         signatureRecord.professional_crm,
-        signatureRecord.professional_state
+        signatureRecord.professional_state,
       );
 
       if (!verification.valid) {
-        return { 
-          valid: false, 
-          error: 'Professional license verification failed' 
+        return {
+          valid: false,
+          error: 'Professional license verification failed',
         };
       }
 
       // 🔍 Verify signature cryptographically (simplified for demo)
       const signatureValid = this.verifyCFMSignatureCryptographically(
-        signature, 
-        signatureRecord, 
-        verification.professional!
+        signature,
+        signatureRecord,
+        verification.professional!,
       );
 
       if (!signatureValid) {
-        return { 
-          valid: false, 
-          error: 'Digital signature cryptographic verification failed' 
+        return {
+          valid: false,
+          error: 'Digital signature cryptographic verification failed',
         };
       }
 
-      return { 
-        valid: true, 
+      return {
+        valid: true,
         professional: verification.professional,
-        signatureData: signatureRecord 
+        signatureData: signatureRecord,
       };
-
     } catch (error) {
       console.error('CFM digital signature verification failed:', error);
-      return { 
-        valid: false, 
-        error: error instanceof Error ? error.message : 'Signature verification failed' 
+      return {
+        valid: false,
+        error:
+          error instanceof Error
+            ? error.message
+            : 'Signature verification failed',
       };
     }
-  }  /**
+  } /**
    * 🔍 PERFORM CFM VERIFICATION - Real-time Professional License Check
    */
   private async performCFMVerification(
     crmNumber: string,
-    crmState: string
+    crmState: string,
   ): Promise<{ success: boolean; error?: string; [key: string]: any }> {
     try {
       // 🌐 In production, integrate with CFM API
       // For now, simulate CFM verification with validation logic
-      
+
       // ✅ Basic validation
       if (!/^\d{4,6}$/.test(crmNumber)) {
         return { success: false, error: 'Invalid CRM number format' };
@@ -519,16 +544,15 @@ export type CFMProfessional = z.infer<typeof CFMProfessionalSchema>;
         telemedicineTypes: [TelemedicineAuthorization.TELECONSULTA],
         digitalSignatureEnabled: true,
         ethicalRestrictions: [],
-        professionalSanctions: []
+        professionalSanctions: [],
       };
 
       return mockCFMResponse;
-
     } catch (error) {
       console.error('CFM verification API call failed:', error);
-      return { 
-        success: false, 
-        error: 'CFM verification service unavailable' 
+      return {
+        success: false,
+        error: 'CFM verification service unavailable',
       };
     }
   }
@@ -538,22 +562,22 @@ export type CFMProfessional = z.infer<typeof CFMProfessionalSchema>;
    */
   private async storeProfessionalVerification(
     professional: Partial<CFMProfessional>,
-    verificationId: string
+    verificationId: string,
   ): Promise<void> {
     try {
-      const { error } = await this.supabase
-        .from('cfm_professionals')
-        .upsert({
+      const { error } = await this.supabase.from('cfm_professionals').upsert(
+        {
           ...professional,
-          verification_id: verificationId
-        }, {
-          onConflict: 'crm_number,crm_state'
-        });
+          verification_id: verificationId,
+        },
+        {
+          onConflict: 'crm_number,crm_state',
+        },
+      );
 
       if (error) {
         console.error('Failed to store professional verification:', error);
       }
-
     } catch (error) {
       console.error('Professional verification storage failed:', error);
     }
@@ -564,22 +588,25 @@ export type CFMProfessional = z.infer<typeof CFMProfessionalSchema>;
    */
   private async validateDocumentTypeAuthorization(
     professional: CFMProfessional,
-    documentType: CFMSignatureType
+    documentType: CFMSignatureType,
   ): Promise<{ authorized: boolean; error?: string }> {
     try {
       // 🚨 Check license status
       if (professional.license_status !== CFMLicenseStatus.ATIVO) {
-        return { 
-          authorized: false, 
-          error: `License status is ${professional.license_status}, not active` 
+        return {
+          authorized: false,
+          error: `License status is ${professional.license_status}, not active`,
         };
       }
 
       // ⏰ Check license expiry
-      if (professional.license_expiry_date && professional.license_expiry_date < new Date()) {
-        return { 
-          authorized: false, 
-          error: 'Professional license has expired' 
+      if (
+        professional.license_expiry_date &&
+        professional.license_expiry_date < new Date()
+      ) {
+        return {
+          authorized: false,
+          error: 'Professional license has expired',
         };
       }
 
@@ -604,17 +631,16 @@ export type CFMProfessional = z.infer<typeof CFMProfessionalSchema>;
           return { authorized: true };
 
         default:
-          return { 
-            authorized: false, 
-            error: `Unknown document type: ${documentType}` 
+          return {
+            authorized: false,
+            error: `Unknown document type: ${documentType}`,
           };
       }
-
     } catch (error) {
       console.error('Document type authorization validation failed:', error);
-      return { 
-        authorized: false, 
-        error: 'Authorization validation failed' 
+      return {
+        authorized: false,
+        error: 'Authorization validation failed',
       };
     }
   }
@@ -624,16 +650,16 @@ export type CFMProfessional = z.infer<typeof CFMProfessionalSchema>;
    */
   private generateCFMSignature(
     signatureData: any,
-    professional: CFMProfessional
+    professional: CFMProfessional,
   ): string {
     try {
       // 🔐 In production, use proper PKI with professional's digital certificate
       // For now, create a verifiable signature using professional data
-      
+
       const signatureContent = JSON.stringify({
         ...signatureData,
         professionalCpf: professional.cpf,
-        licenseStatus: professional.license_status
+        licenseStatus: professional.license_status,
       });
 
       const signature = createHash('sha256')
@@ -642,7 +668,6 @@ export type CFMProfessional = z.infer<typeof CFMProfessionalSchema>;
         .digest('hex');
 
       return `CFM-SIG-${signature}`;
-
     } catch (error) {
       console.error('CFM signature generation failed:', error);
       throw new Error('Failed to generate CFM signature');
@@ -654,7 +679,7 @@ export type CFMProfessional = z.infer<typeof CFMProfessionalSchema>;
    */
   private async storeCFMSignature(
     signatureData: any,
-    signature: string
+    signature: string,
   ): Promise<void> {
     try {
       const { error } = await this.supabase
@@ -671,14 +696,13 @@ export type CFMProfessional = z.infer<typeof CFMProfessionalSchema>;
           clinic_id: signatureData.clinicId,
           patient_id: signatureData.patientId,
           cfm_compliance: signatureData.cfmCompliance,
-          created_at: signatureData.timestamp
+          created_at: signatureData.timestamp,
         });
 
       if (error) {
         console.error('Failed to store CFM signature:', error);
         throw new Error('CFM signature storage failed');
       }
-
     } catch (error) {
       console.error('CFM signature storage failed:', error);
       throw error;
@@ -691,7 +715,7 @@ export type CFMProfessional = z.infer<typeof CFMProfessionalSchema>;
   private verifyCFMSignatureCryptographically(
     signature: string,
     signatureRecord: any,
-    professional: CFMProfessional
+    professional: CFMProfessional,
   ): boolean {
     try {
       // 🔐 Recreate signature using stored data
@@ -708,13 +732,15 @@ export type CFMProfessional = z.infer<typeof CFMProfessionalSchema>;
         patientId: signatureRecord.patient_id,
         cfmCompliance: signatureRecord.cfm_compliance,
         professionalCpf: professional.cpf,
-        licenseStatus: professional.license_status
+        licenseStatus: professional.license_status,
       };
 
-      const expectedSignature = this.generateCFMSignature(signatureData, professional);
-      
-      return signature === expectedSignature;
+      const expectedSignature = this.generateCFMSignature(
+        signatureData,
+        professional,
+      );
 
+      return signature === expectedSignature;
     } catch (error) {
       console.error('CFM signature cryptographic verification failed:', error);
       return false;
@@ -740,30 +766,27 @@ export type CFMProfessional = z.infer<typeof CFMProfessionalSchema>;
         action: activity.action,
         resource_type: 'cfm_professional_activity',
         resource_id: activity.signatureId,
-        
+
         // 🏥 Professional context (anonymized for compliance)
         clinic_id: activity.clinicId,
-        
+
         // 📊 CFM activity metadata (constitutional compliance)
         metadata: {
           professional_context: `${activity.professionalCrm}-${activity.professionalState}`,
           document_type: activity.documentType,
           cfm_compliance: 'CFM_RESOLUTION_2314_2022',
           activity_type: activity.action,
-          regulatory_context: 'CFM_PROFESSIONAL_STANDARDS'
+          regulatory_context: 'CFM_PROFESSIONAL_STANDARDS',
         },
-        
+
         regulatory_context: 'CFM',
         success: true,
         created_at: activity.timestamp,
         ip_address: null, // Anonymized for constitutional compliance
-        user_agent: null  // Anonymized for constitutional compliance
+        user_agent: null, // Anonymized for constitutional compliance
       };
 
-      await this.supabase
-        .from('audit_logs')
-        .insert(auditEntry);
-
+      await this.supabase.from('audit_logs').insert(auditEntry);
     } catch (error) {
       console.error('CFM activity logging failed:', error);
       // Note: Audit failure should not block the main operation
@@ -776,7 +799,7 @@ export type CFMProfessional = z.infer<typeof CFMProfessionalSchema>;
   async getCFMComplianceReport(
     clinicId: string,
     dateFrom: Date,
-    dateTo: Date
+    dateTo: Date,
   ): Promise<{ success: boolean; report?: any; error?: string }> {
     try {
       const { data: cfmActivities, error } = await this.supabase
@@ -788,7 +811,9 @@ export type CFMProfessional = z.infer<typeof CFMProfessionalSchema>;
         .lte('created_at', dateTo.toISOString());
 
       if (error) {
-        throw new Error(`CFM compliance report generation failed: ${error.message}`);
+        throw new Error(
+          `CFM compliance report generation failed: ${error.message}`,
+        );
       }
 
       // 📊 Constitutional compliance metrics (NO PHI)
@@ -797,31 +822,40 @@ export type CFMProfessional = z.infer<typeof CFMProfessionalSchema>;
         clinic_id: clinicId,
         period: {
           from: dateFrom.toISOString(),
-          to: dateTo.toISOString()
+          to: dateTo.toISOString(),
         },
         generated_at: new Date().toISOString(),
-        
+
         // CFM compliance metrics
         cfm_metrics: {
           total_cfm_activities: cfmActivities?.length || 0,
-          digital_signatures_created: cfmActivities?.filter(a => a.action === 'CFM_DIGITAL_SIGNATURE_CREATED')?.length || 0,
-          license_verifications: cfmActivities?.filter(a => a.action === 'CFM_PROFESSIONAL_LICENSE_VERIFIED')?.length || 0,
-          telemedicine_authorizations: cfmActivities?.filter(a => a.action === 'CFM_TELEMEDICINE_AUTHORIZED')?.length || 0
+          digital_signatures_created:
+            cfmActivities?.filter(
+              (a) => a.action === 'CFM_DIGITAL_SIGNATURE_CREATED',
+            )?.length || 0,
+          license_verifications:
+            cfmActivities?.filter(
+              (a) => a.action === 'CFM_PROFESSIONAL_LICENSE_VERIFIED',
+            )?.length || 0,
+          telemedicine_authorizations:
+            cfmActivities?.filter(
+              (a) => a.action === 'CFM_TELEMEDICINE_AUTHORIZED',
+            )?.length || 0,
         },
-        
+
         // Constitutional compliance summary
         compliance_status: 'CFM_COMPLIANT',
         regulatory_framework: 'CFM_RESOLUTION_2314_2022',
-        data_protection: 'LGPD_CONSTITUTIONAL_COMPLIANCE'
+        data_protection: 'LGPD_CONSTITUTIONAL_COMPLIANCE',
       };
 
       return { success: true, report };
-
     } catch (error) {
       console.error('CFM compliance report generation failed:', error);
-      return { 
-        success: false, 
-        error: error instanceof Error ? error.message : 'Report generation failed' 
+      return {
+        success: false,
+        error:
+          error instanceof Error ? error.message : 'Report generation failed',
       };
     }
   }
@@ -829,7 +863,10 @@ export type CFMProfessional = z.infer<typeof CFMProfessionalSchema>;
   /**
    * 🧹 CLEANUP EXPIRED VERIFICATIONS - Performance Optimization
    */
-  async cleanupExpiredVerifications(): Promise<{ cleaned: number; error?: string }> {
+  async cleanupExpiredVerifications(): Promise<{
+    cleaned: number;
+    error?: string;
+  }> {
     try {
       const expiryDate = new Date(Date.now() - this.CACHE_DURATION);
       let cleaned = 0;
@@ -843,12 +880,11 @@ export type CFMProfessional = z.infer<typeof CFMProfessionalSchema>;
       }
 
       return { cleaned };
-
     } catch (error) {
       console.error('CFM verification cleanup failed:', error);
-      return { 
-        cleaned: 0, 
-        error: error instanceof Error ? error.message : 'Cleanup failed' 
+      return {
+        cleaned: 0,
+        error: error instanceof Error ? error.message : 'Cleanup failed',
       };
     }
   }

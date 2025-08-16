@@ -98,7 +98,7 @@ export class ExecutiveDashboardService {
    * Get comprehensive dashboard metrics for executive view
    */
   async getDashboardMetrics(
-    filters: ExecutiveDashboardFilters
+    filters: ExecutiveDashboardFilters,
   ): Promise<DashboardMetrics> {
     try {
       const user = await getCurrentUser();
@@ -191,7 +191,7 @@ export class ExecutiveDashboardService {
    * Get dashboard alerts
    */
   async getAlerts(
-    filters: ExecutiveDashboardFilters
+    filters: ExecutiveDashboardFilters,
   ): Promise<DashboardAlert[]> {
     try {
       const { data: alerts, error } = await this.supabase
@@ -229,7 +229,7 @@ export class ExecutiveDashboardService {
    */
   async comparePeriods(
     currentPeriod: { start: string; end: string },
-    previousPeriod: { start: string; end: string }
+    previousPeriod: { start: string; end: string },
   ): Promise<PeriodComparison> {
     try {
       const [currentMetrics, previousMetrics] = await Promise.all([
@@ -276,7 +276,7 @@ export class ExecutiveDashboardService {
    */
   async exportDashboard(
     filters: ExecutiveDashboardFilters,
-    format: 'pdf' | 'excel' | 'csv'
+    format: 'pdf' | 'excel' | 'csv',
   ): Promise<{ url: string; filename: string }> {
     try {
       const _metrics = await this.getDashboardMetrics(filters);
@@ -318,15 +318,15 @@ export class ExecutiveDashboardService {
 
   private async calculateRevenueKPI(
     data: any[],
-    filters: ExecutiveDashboardFilters
+    filters: ExecutiveDashboardFilters,
   ): Promise<DashboardKPI> {
     const currentRevenue = data.reduce(
       (sum, item) => sum + (item.revenue || 0),
-      0
+      0,
     );
     const previousRevenue = await this.getPreviousPeriodValue(
       'revenue',
-      filters
+      filters,
     );
 
     return {
@@ -351,15 +351,15 @@ export class ExecutiveDashboardService {
 
   private async calculatePatientsKPI(
     data: any[],
-    filters: ExecutiveDashboardFilters
+    filters: ExecutiveDashboardFilters,
   ): Promise<DashboardKPI> {
     const currentPatients = data.reduce(
       (sum, item) => sum + (item.new_patients || 0),
-      0
+      0,
     );
     const previousPatients = await this.getPreviousPeriodValue(
       'new_patients',
-      filters
+      filters,
     );
 
     return {
@@ -384,15 +384,15 @@ export class ExecutiveDashboardService {
 
   private async calculateAppointmentsKPI(
     data: any[],
-    filters: ExecutiveDashboardFilters
+    filters: ExecutiveDashboardFilters,
   ): Promise<DashboardKPI> {
     const currentAppointments = data.reduce(
       (sum, item) => sum + (item.appointments || 0),
-      0
+      0,
     );
     const previousAppointments = await this.getPreviousPeriodValue(
       'appointments',
-      filters
+      filters,
     );
 
     return {
@@ -419,15 +419,15 @@ export class ExecutiveDashboardService {
 
   private async calculateEfficiencyKPI(
     data: any[],
-    filters: ExecutiveDashboardFilters
+    filters: ExecutiveDashboardFilters,
   ): Promise<DashboardKPI> {
     const totalAppointments = data.reduce(
       (sum, item) => sum + (item.appointments || 0),
-      0
+      0,
     );
     const completedAppointments = data.reduce(
       (sum, item) => sum + (item.completed_appointments || 0),
-      0
+      0,
     );
     const currentEfficiency =
       totalAppointments === 0
@@ -435,7 +435,7 @@ export class ExecutiveDashboardService {
         : (completedAppointments / totalAppointments) * 100;
     const previousEfficiency = await this.getPreviousPeriodValue(
       'efficiency',
-      filters
+      filters,
     );
 
     return {
@@ -461,7 +461,7 @@ export class ExecutiveDashboardService {
 
   private async calculateProfitabilityKPI(
     data: any[],
-    filters: ExecutiveDashboardFilters
+    filters: ExecutiveDashboardFilters,
   ): Promise<DashboardKPI> {
     const revenue = data.reduce((sum, item) => sum + (item.revenue || 0), 0);
     const costs = data.reduce((sum, item) => sum + (item.costs || 0), 0);
@@ -469,7 +469,7 @@ export class ExecutiveDashboardService {
       revenue === 0 ? 0 : ((revenue - costs) / revenue) * 100;
     const previousProfitability = await this.getPreviousPeriodValue(
       'profitability',
-      filters
+      filters,
     );
 
     return {
@@ -496,21 +496,21 @@ export class ExecutiveDashboardService {
 
   private async calculateSatisfactionKPI(
     data: any[],
-    filters: ExecutiveDashboardFilters
+    filters: ExecutiveDashboardFilters,
   ): Promise<DashboardKPI> {
     const totalRatings = data.reduce(
       (sum, item) => sum + (item.satisfaction_count || 0),
-      0
+      0,
     );
     const satisfactionSum = data.reduce(
       (sum, item) => sum + (item.satisfaction_sum || 0),
-      0
+      0,
     );
     const currentSatisfaction =
       totalRatings === 0 ? 0 : satisfactionSum / totalRatings;
     const previousSatisfaction = await this.getPreviousPeriodValue(
       'satisfaction',
-      filters
+      filters,
     );
 
     return {
@@ -537,13 +537,13 @@ export class ExecutiveDashboardService {
 
   private async getPreviousPeriodValue(
     metric: string,
-    filters: ExecutiveDashboardFilters
+    filters: ExecutiveDashboardFilters,
   ): Promise<number> {
     // Calculate previous period based on current date range
     const startDate = new Date(filters.dateRange.start);
     const endDate = new Date(filters.dateRange.end);
     const periodDays = Math.ceil(
-      (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)
+      (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24),
     );
 
     const previousStartDate = new Date(startDate);
@@ -571,11 +571,11 @@ export class ExecutiveDashboardService {
       case 'efficiency': {
         const totalAppts = data.reduce(
           (sum, item) => sum + (item.appointments || 0),
-          0
+          0,
         );
         const completedAppts = data.reduce(
           (sum, item) => sum + (item.completed_appointments || 0),
-          0
+          0,
         );
         return totalAppts === 0 ? 0 : (completedAppts / totalAppts) * 100;
       }
@@ -587,11 +587,11 @@ export class ExecutiveDashboardService {
       case 'satisfaction': {
         const totalRatings = data.reduce(
           (sum, item) => sum + (item.satisfaction_count || 0),
-          0
+          0,
         );
         const satisfactionSum = data.reduce(
           (sum, item) => sum + (item.satisfaction_sum || 0),
-          0
+          0,
         );
         return totalRatings === 0 ? 0 : satisfactionSum / totalRatings;
       }
@@ -667,11 +667,11 @@ export class ExecutiveDashboardService {
       revenue: data.reduce((sum, item) => sum + (item.revenue || 0), 0),
       new_patients: data.reduce(
         (sum, item) => sum + (item.new_patients || 0),
-        0
+        0,
       ),
       appointments: data.reduce(
         (sum, item) => sum + (item.appointments || 0),
-        0
+        0,
       ),
       costs: data.reduce((sum, item) => sum + (item.costs || 0), 0),
       satisfaction_average:

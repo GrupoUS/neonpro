@@ -80,7 +80,7 @@ export class HighPerformanceImageProcessor {
    */
   async processImage(
     imageInput: string | HTMLImageElement | ImageData,
-    options: ImageProcessingOptions = {}
+    options: ImageProcessingOptions = {},
   ): Promise<ImageProcessingResult> {
     const startTime = performance.now();
     const cacheKey = this.generateCacheKey(imageInput, options);
@@ -109,7 +109,7 @@ export class HighPerformanceImageProcessor {
       // Parallel preprocessing pipeline
       const preprocessedImage = await this.parallelPreprocessing(
         rawImage,
-        options
+        options,
       );
 
       const preprocessingTime = performance.now() - preprocessingStart;
@@ -118,7 +118,7 @@ export class HighPerformanceImageProcessor {
       // GPU-accelerated analysis
       const analyzedImage = await this.gpuAcceleratedAnalysis(
         preprocessedImage,
-        options
+        options,
       );
 
       const analysisTime = performance.now() - analysisStart;
@@ -127,7 +127,7 @@ export class HighPerformanceImageProcessor {
       // Post-processing optimizations
       const finalImage = await this.optimizedPostprocessing(
         analyzedImage,
-        options
+        options,
       );
 
       const postprocessingTime = performance.now() - postprocessingStart;
@@ -149,7 +149,7 @@ export class HighPerformanceImageProcessor {
         preprocessingTime,
         analysisTime,
         postprocessingTime,
-        false
+        false,
       );
 
       // Performance validation
@@ -165,7 +165,7 @@ export class HighPerformanceImageProcessor {
       };
     } catch (error) {
       throw new Error(
-        `Processing failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+        `Processing failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
       );
     }
   }
@@ -175,7 +175,7 @@ export class HighPerformanceImageProcessor {
    */
   private async parallelPreprocessing(
     image: tf.Tensor3D,
-    options: ImageProcessingOptions
+    options: ImageProcessingOptions,
   ): Promise<tf.Tensor3D> {
     const tasks: Promise<tf.Tensor3D>[] = [];
 
@@ -223,7 +223,7 @@ export class HighPerformanceImageProcessor {
    */
   private async gpuAcceleratedAnalysis(
     image: tf.Tensor3D,
-    options: ImageProcessingOptions
+    options: ImageProcessingOptions,
   ): Promise<tf.Tensor3D> {
     if (!(this.config.enableGPU && this.gpuAccelerator.isAvailable())) {
       return this.cpuFallbackAnalysis(image, options);
@@ -246,7 +246,7 @@ export class HighPerformanceImageProcessor {
    */
   private async optimizedPostprocessing(
     image: tf.Tensor3D,
-    options: ImageProcessingOptions
+    options: ImageProcessingOptions,
   ): Promise<tf.Tensor3D> {
     let result = image;
 
@@ -279,7 +279,7 @@ export class HighPerformanceImageProcessor {
   // Optimized processing methods
   private async optimizedResize(
     image: tf.Tensor3D,
-    targetSize: { width: number; height: number }
+    targetSize: { width: number; height: number },
   ): Promise<tf.Tensor3D> {
     // Use bilinear interpolation for speed vs quality balance
     return tf.image.resizeBilinear(image, [
@@ -342,7 +342,7 @@ export class HighPerformanceImageProcessor {
 
   private cpuFallbackAnalysis(
     image: tf.Tensor3D,
-    options: ImageProcessingOptions
+    options: ImageProcessingOptions,
   ): tf.Tensor3D {
     // CPU-optimized analysis when GPU is not available
     let result = image;
@@ -370,10 +370,10 @@ export class HighPerformanceImageProcessor {
             [-2, 0, 2],
             [-1, 0, 1],
           ],
-          [3, 3, 1, 1]
+          [3, 3, 1, 1],
         ),
         1,
-        'same'
+        'same',
       );
       const sobelY = tf.conv2d(
         gray.expandDims(0),
@@ -383,10 +383,10 @@ export class HighPerformanceImageProcessor {
             [0, 0, 0],
             [1, 2, 1],
           ],
-          [3, 3, 1, 1]
+          [3, 3, 1, 1],
         ),
         1,
-        'same'
+        'same',
       );
 
       const magnitude = tf.sqrt(tf.add(tf.square(sobelX), tf.square(sobelY)));
@@ -407,12 +407,12 @@ export class HighPerformanceImageProcessor {
           [-1, 5, -1],
           [0, -1, 0],
         ],
-        [3, 3, 1, 1]
+        [3, 3, 1, 1],
       );
 
       const channels = tf.split(image, 3, 2);
       const sharpened = channels.map((channel) =>
-        tf.conv2d(channel.expandDims(0), kernel, 1, 'same').squeeze([0])
+        tf.conv2d(channel.expandDims(0), kernel, 1, 'same').squeeze([0]),
       );
 
       return tf.concat(sharpened, 2);
@@ -422,7 +422,7 @@ export class HighPerformanceImageProcessor {
   // Cache management
   private generateCacheKey(
     input: any,
-    options: ImageProcessingOptions
+    options: ImageProcessingOptions,
   ): string {
     const inputHash =
       typeof input === 'string' ? input : this.hashImageData(input);
@@ -479,7 +479,7 @@ export class HighPerformanceImageProcessor {
   private getCacheSize(): number {
     return Array.from(this.cache.values()).reduce(
       (total, entry) => total + entry.size,
-      0
+      0,
     );
   }
 
@@ -504,7 +504,7 @@ export class HighPerformanceImageProcessor {
   // Performance monitoring
   private createMetrics(
     totalTime: number,
-    fromCache: boolean
+    fromCache: boolean,
   ): ProcessingMetrics {
     return {
       totalTime,
@@ -522,7 +522,7 @@ export class HighPerformanceImageProcessor {
     preprocessingTime: number,
     analysisTime: number,
     postprocessingTime: number,
-    fromCache: boolean
+    fromCache: boolean,
   ): ProcessingMetrics {
     return {
       totalTime,
@@ -565,7 +565,7 @@ export class HighPerformanceImageProcessor {
       // Reduce quality for speed
       this.config.compressionLevel = Math.max(
         0.5,
-        this.config.compressionLevel - 0.1
+        this.config.compressionLevel - 0.1,
       );
     }
 
@@ -596,7 +596,7 @@ export class HighPerformanceImageProcessor {
   }
 
   private async loadImage(
-    input: string | HTMLImageElement | ImageData
+    input: string | HTMLImageElement | ImageData,
   ): Promise<tf.Tensor3D> {
     if (typeof input === 'string') {
       const img = await this.loadImageFromUrl(input);
@@ -697,7 +697,7 @@ class PerformanceMonitor {
 }
 
 class GPUAccelerator {
-  private readonly isGPUAvailable = false;
+  private isGPUAvailable = false;
   private utilization = 0;
 
   constructor(private readonly enabled: boolean) {}
@@ -731,7 +731,7 @@ class GPUAccelerator {
       edgeDetection?: boolean;
       featureExtraction?: boolean;
       textureAnalysis?: boolean;
-    }
+    },
   ): Promise<tf.Tensor3D> {
     if (!this.isGPUAvailable) {
       throw new Error('GPU not available');

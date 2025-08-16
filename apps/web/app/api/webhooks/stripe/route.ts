@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
     if (!(signature && STRIPE_WEBHOOK_SECRET)) {
       return NextResponse.json(
         { error: 'Missing signature or webhook secret' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -41,7 +41,7 @@ export async function POST(request: NextRequest) {
           set() {},
           remove() {},
         },
-      }
+      },
     );
 
     // Handle different Stripe events
@@ -81,7 +81,7 @@ export async function POST(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Webhook processing failed' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -143,8 +143,7 @@ async function handleCheckoutCompleted(supabase: any, event: any) {
         checkout_completed_at: new Date(session.created * 1000).toISOString(),
       },
     });
-  } catch (_error) {
-  }
+  } catch (_error) {}
 }
 
 async function handlePaymentSucceeded(supabase: any, event: any) {
@@ -168,7 +167,7 @@ async function handlePaymentSucceeded(supabase: any, event: any) {
       .update({
         status: 'active',
         current_period_start: new Date(
-          invoice.period_start * 1000
+          invoice.period_start * 1000,
         ).toISOString(),
         current_period_end: new Date(invoice.period_end * 1000).toISOString(),
         next_billing_date: new Date(invoice.period_end * 1000).toISOString(),
@@ -191,8 +190,7 @@ async function handlePaymentSucceeded(supabase: any, event: any) {
         period_end: new Date(invoice.period_end * 1000).toISOString(),
       },
     });
-  } catch (_error) {
-  }
+  } catch (_error) {}
 }
 
 async function handlePaymentFailed(supabase: any, event: any) {
@@ -233,15 +231,13 @@ async function handlePaymentFailed(supabase: any, event: any) {
         failure_reason: invoice.status,
       },
     });
-  } catch (_error) {
-  }
+  } catch (_error) {}
 }
 
 async function handleSubscriptionCreated(_supabase: any, event: any) {
   try {
     const _subscription = event.data.object;
-  } catch (_error) {
-  }
+  } catch (_error) {}
 }
 
 async function handleSubscriptionUpdated(supabase: any, event: any) {
@@ -286,8 +282,7 @@ async function handleSubscriptionUpdated(supabase: any, event: any) {
           : null,
       })
       .eq('id', localSub.id);
-  } catch (_error) {
-  }
+  } catch (_error) {}
 }
 
 async function handleSubscriptionDeleted(supabase: any, event: any) {
@@ -306,8 +301,7 @@ async function handleSubscriptionDeleted(supabase: any, event: any) {
     if (error) {
       return;
     }
-  } catch (_error) {
-  }
+  } catch (_error) {}
 }
 
 async function handleInvoiceCreated(supabase: any, event: any) {
@@ -341,8 +335,7 @@ async function handleInvoiceCreated(supabase: any, event: any) {
         period_end: new Date(invoice.period_end * 1000).toISOString(),
       },
     });
-  } catch (_error) {
-  }
+  } catch (_error) {}
 }
 
 function calculatePeriodEnd(billingCycle: string): string {
@@ -353,25 +346,25 @@ function calculatePeriodEnd(billingCycle: string): string {
       return new Date(
         now.getFullYear(),
         now.getMonth() + 1,
-        now.getDate()
+        now.getDate(),
       ).toISOString();
     case 'quarterly':
       return new Date(
         now.getFullYear(),
         now.getMonth() + 3,
-        now.getDate()
+        now.getDate(),
       ).toISOString();
     case 'yearly':
       return new Date(
         now.getFullYear() + 1,
         now.getMonth(),
-        now.getDate()
+        now.getDate(),
       ).toISOString();
     default:
       return new Date(
         now.getFullYear(),
         now.getMonth() + 1,
-        now.getDate()
+        now.getDate(),
       ).toISOString();
   }
 }

@@ -31,7 +31,7 @@ export async function GET(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to fetch metrics' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -53,7 +53,7 @@ export async function POST(request: NextRequest) {
     if (!metric || value === undefined) {
       return NextResponse.json(
         { error: 'Metric and value are required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -62,13 +62,13 @@ export async function POST(request: NextRequest) {
       user.id,
       metric,
       value,
-      metadata
+      metadata,
     );
     return NextResponse.json(result, { status: 201 });
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to record metric' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -153,7 +153,7 @@ export class SubscriptionErrorLogger {
   async logError(
     error: SubscriptionError,
     context?: ErrorContext,
-    correlationId?: string
+    correlationId?: string,
   ): Promise<void> {
     const logEntry = this.createLogEntry(error, context, correlationId);
 
@@ -186,7 +186,7 @@ export class SubscriptionErrorLogger {
   private createLogEntry(
     error: SubscriptionError,
     context?: ErrorContext,
-    correlationId?: string
+    correlationId?: string,
   ): LogEntry {
     const logLevel = this.mapSeverityToLogLevel(error.severity);
     const id = this.generateLogId();

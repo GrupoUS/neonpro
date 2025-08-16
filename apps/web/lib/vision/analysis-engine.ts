@@ -52,11 +52,11 @@ export type ImageProcessingOptions = {
 export class VisionAnalysisEngine {
   private readonly supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
   );
 
-  private readonly model: tf.LayersModel | null = null;
-  private readonly isModelLoaded = false;
+  private model: tf.LayersModel | null = null;
+  private isModelLoaded = false;
 
   constructor() {
     this.initializeModel();
@@ -70,7 +70,7 @@ export class VisionAnalysisEngine {
       // Load pre-trained model for medical image analysis
       // In production, this would be a custom trained model
       this.model = await tf.loadLayersModel(
-        '/models/medical-analysis-model.json'
+        '/models/medical-analysis-model.json',
       );
       this.isModelLoaded = true;
     } catch (_error) {
@@ -87,7 +87,7 @@ export class VisionAnalysisEngine {
     beforeImageUrl: string,
     afterImageUrl: string,
     patientId: string,
-    treatmentType: string
+    treatmentType: string,
   ): Promise<AnalysisResult> {
     const startTime = Date.now();
 
@@ -100,14 +100,14 @@ export class VisionAnalysisEngine {
       const changeMetrics = await this.calculateChangeMetrics(
         beforeImage,
         afterImage,
-        treatmentType
+        treatmentType,
       );
 
       // Generate annotations and measurements
       const annotations = await this.generateAnnotations(
         beforeImage,
         afterImage,
-        changeMetrics
+        changeMetrics,
       );
 
       // Calculate overall improvement percentage
@@ -118,7 +118,7 @@ export class VisionAnalysisEngine {
       const accuracyScore = await this.calculateAccuracyScore(
         beforeImage,
         afterImage,
-        changeMetrics
+        changeMetrics,
       );
 
       const processingTime = Date.now() - startTime;
@@ -147,7 +147,7 @@ export class VisionAnalysisEngine {
       return result;
     } catch (error) {
       throw new Error(
-        `Analysis failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+        `Analysis failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
       );
     }
   }
@@ -157,12 +157,12 @@ export class VisionAnalysisEngine {
    */
   private async loadAndPreprocessImage(
     imageUrl: string,
-    options: ImageProcessingOptions = {}
+    options: ImageProcessingOptions = {},
   ): Promise<tf.Tensor3D> {
     try {
       // Load image as tensor
       const image = await tf.browser.fromPixels(
-        await this.loadImageElement(imageUrl)
+        await this.loadImageElement(imageUrl),
       );
 
       // Standardize image size
@@ -202,7 +202,7 @@ export class VisionAnalysisEngine {
   private async calculateChangeMetrics(
     beforeImage: tf.Tensor3D,
     afterImage: tf.Tensor3D,
-    treatmentType: string
+    treatmentType: string,
   ): Promise<ChangeMetrics> {
     try {
       // Calculate pixel-level differences
@@ -220,11 +220,11 @@ export class VisionAnalysisEngine {
       ) {
         metrics.skinTexture = await this.calculateSkinTextureImprovement(
           beforeImage,
-          afterImage
+          afterImage,
         );
         metrics.wrinkleReduction = await this.calculateWrinkleReduction(
           beforeImage,
-          afterImage
+          afterImage,
         );
         metrics.pigmentationImprovement =
           await this.calculatePigmentationImprovement(beforeImage, afterImage);
@@ -236,11 +236,11 @@ export class VisionAnalysisEngine {
       ) {
         metrics.lesionHealing = await this.calculateLesionHealing(
           beforeImage,
-          afterImage
+          afterImage,
         );
         metrics.scarReduction = await this.calculateScarReduction(
           beforeImage,
-          afterImage
+          afterImage,
         );
       }
 
@@ -250,11 +250,11 @@ export class VisionAnalysisEngine {
       ) {
         metrics.volumeChange = await this.calculateVolumeChange(
           beforeImage,
-          afterImage
+          afterImage,
         );
         metrics.symmetryImprovement = await this.calculateSymmetryImprovement(
           beforeImage,
-          afterImage
+          afterImage,
         );
       }
 
@@ -277,7 +277,7 @@ export class VisionAnalysisEngine {
   private async generateAnnotations(
     _beforeImage: tf.Tensor3D,
     _afterImage: tf.Tensor3D,
-    changeMetrics: ChangeMetrics
+    changeMetrics: ChangeMetrics,
   ): Promise<AnnotationData[]> {
     const annotations: AnnotationData[] = [];
 
@@ -330,7 +330,7 @@ export class VisionAnalysisEngine {
   private calculateOverallImprovement(metrics: ChangeMetrics): number {
     const values = Object.values(metrics).filter(
       (value): value is number =>
-        typeof value === 'number' && value !== metrics.overallImprovement
+        typeof value === 'number' && value !== metrics.overallImprovement,
     );
 
     if (values.length === 0) {
@@ -348,14 +348,14 @@ export class VisionAnalysisEngine {
   private async calculateAccuracyScore(
     beforeImage: tf.Tensor3D,
     afterImage: tf.Tensor3D,
-    changeMetrics: ChangeMetrics
+    changeMetrics: ChangeMetrics,
   ): Promise<number> {
     try {
       if (this.isModelLoaded && this.model) {
         // Use ML model to predict accuracy
         const combinedInput = tf.concat([beforeImage, afterImage], 2);
         const prediction = this.model.predict(
-          combinedInput.expandDims(0)
+          combinedInput.expandDims(0),
         ) as tf.Tensor;
         const accuracy = await prediction.data();
 
@@ -378,7 +378,7 @@ export class VisionAnalysisEngine {
   // Helper methods for specific analysis types
   private async calculateSkinTextureImprovement(
     _beforeImage: tf.Tensor3D,
-    _afterImage: tf.Tensor3D
+    _afterImage: tf.Tensor3D,
   ): Promise<number> {
     // Implement skin texture analysis using computer vision
     // This would use advanced algorithms to detect texture changes
@@ -387,7 +387,7 @@ export class VisionAnalysisEngine {
 
   private async calculateWrinkleReduction(
     _beforeImage: tf.Tensor3D,
-    _afterImage: tf.Tensor3D
+    _afterImage: tf.Tensor3D,
   ): Promise<number> {
     // Implement wrinkle detection and comparison
     return Math.random() * 25 + 15; // Placeholder: 15-40% reduction
@@ -395,7 +395,7 @@ export class VisionAnalysisEngine {
 
   private async calculatePigmentationImprovement(
     _beforeImage: tf.Tensor3D,
-    _afterImage: tf.Tensor3D
+    _afterImage: tf.Tensor3D,
   ): Promise<number> {
     // Implement pigmentation analysis
     return Math.random() * 20 + 20; // Placeholder: 20-40% improvement
@@ -403,7 +403,7 @@ export class VisionAnalysisEngine {
 
   private async calculateLesionHealing(
     _beforeImage: tf.Tensor3D,
-    _afterImage: tf.Tensor3D
+    _afterImage: tf.Tensor3D,
   ): Promise<number> {
     // Implement lesion detection and healing analysis
     return Math.random() * 35 + 25; // Placeholder: 25-60% healing
@@ -411,7 +411,7 @@ export class VisionAnalysisEngine {
 
   private async calculateScarReduction(
     _beforeImage: tf.Tensor3D,
-    _afterImage: tf.Tensor3D
+    _afterImage: tf.Tensor3D,
   ): Promise<number> {
     // Implement scar analysis
     return Math.random() * 30 + 20; // Placeholder: 20-50% reduction
@@ -419,7 +419,7 @@ export class VisionAnalysisEngine {
 
   private async calculateVolumeChange(
     _beforeImage: tf.Tensor3D,
-    _afterImage: tf.Tensor3D
+    _afterImage: tf.Tensor3D,
   ): Promise<number> {
     // Implement volume measurement and comparison
     return Math.random() * 15 + 5; // Placeholder: 5-20% change
@@ -427,7 +427,7 @@ export class VisionAnalysisEngine {
 
   private async calculateSymmetryImprovement(
     _beforeImage: tf.Tensor3D,
-    _afterImage: tf.Tensor3D
+    _afterImage: tf.Tensor3D,
   ): Promise<number> {
     // Implement symmetry analysis
     return Math.random() * 25 + 10; // Placeholder: 10-35% improvement
@@ -493,7 +493,7 @@ export class VisionAnalysisEngine {
    * Get analysis history for a patient
    */
   async getPatientAnalysisHistory(
-    patientId: string
+    patientId: string,
   ): Promise<AnalysisResult[]> {
     const { data, error } = await this.supabase
       .from('image_analysis')

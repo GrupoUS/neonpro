@@ -123,10 +123,10 @@ export class SubscriptionRealtimeManager {
             schema: 'public',
             table: 'subscriptions',
           },
-          (payload) => this.handleSubscriptionChange(payload)
+          (payload) => this.handleSubscriptionChange(payload),
         )
         .on('broadcast', { event: 'subscription_event' }, (payload) =>
-          this.handleBroadcastEvent(payload)
+          this.handleBroadcastEvent(payload),
         )
         .on('presence', { event: 'sync' }, () => this.handlePresenceSync())
         .subscribe((status, err) => {
@@ -149,7 +149,7 @@ export class SubscriptionRealtimeManager {
     } catch (error) {
       this.log(
         `Failed to connect: ${error instanceof Error ? error.message : 'Unknown error'}`,
-        'error'
+        'error',
       );
       this.scheduleReconnect();
       return false;
@@ -175,7 +175,7 @@ export class SubscriptionRealtimeManager {
    */
   public subscribe(
     userId: string,
-    callback: (update: SubscriptionRealtimeUpdate) => void
+    callback: (update: SubscriptionRealtimeUpdate) => void,
   ): () => void {
     if (!this.listeners.has(userId)) {
       this.listeners.set(userId, []);
@@ -208,7 +208,7 @@ export class SubscriptionRealtimeManager {
       if (!(this.channel && this.isConnected)) {
         this.log(
           'Cannot broadcast: not connected to real-time channel',
-          'warning'
+          'warning',
         );
         return false;
       }
@@ -225,7 +225,7 @@ export class SubscriptionRealtimeManager {
     } catch (error) {
       this.log(
         `Failed to broadcast event: ${error instanceof Error ? error.message : 'Unknown error'}`,
-        'error'
+        'error',
       );
       return false;
     }
@@ -246,7 +246,7 @@ export class SubscriptionRealtimeManager {
       if (error) {
         this.log(
           `Failed to refresh subscription for user ${userId}: ${error.message}`,
-          'error'
+          'error',
         );
         return;
       }
@@ -271,7 +271,7 @@ export class SubscriptionRealtimeManager {
     } catch (error) {
       this.log(
         `Failed to force refresh: ${error instanceof Error ? error.message : 'Unknown error'}`,
-        'error'
+        'error',
       );
     }
   }
@@ -356,13 +356,13 @@ export class SubscriptionRealtimeManager {
 
         this.notifyListeners(update);
         this.log(
-          `Processed subscription change: ${event} for user ${record.user_id}`
+          `Processed subscription change: ${event} for user ${record.user_id}`,
         );
       }
     } catch (error) {
       this.log(
         `Failed to handle subscription change: ${error instanceof Error ? error.message : 'Unknown error'}`,
-        'error'
+        'error',
       );
     }
   }
@@ -376,12 +376,12 @@ export class SubscriptionRealtimeManager {
       const update = payload.payload as SubscriptionRealtimeUpdate;
       this.notifyListeners(update);
       this.log(
-        `Received broadcast event: ${update.event} for user ${update.userId}`
+        `Received broadcast event: ${update.event} for user ${update.userId}`,
       );
     } catch (error) {
       this.log(
         `Failed to handle broadcast event: ${error instanceof Error ? error.message : 'Unknown error'}`,
-        'error'
+        'error',
       );
     }
   }
@@ -409,7 +409,7 @@ export class SubscriptionRealtimeManager {
         } catch (error) {
           this.log(
             `Listener error for user ${update.userId}: ${error instanceof Error ? error.message : 'Unknown error'}`,
-            'error'
+            'error',
           );
         }
       });
@@ -434,7 +434,7 @@ export class SubscriptionRealtimeManager {
     if (this.reconnectAttempts >= this.config.maxReconnectAttempts) {
       this.log(
         `Max reconnection attempts (${this.config.maxReconnectAttempts}) reached`,
-        'error'
+        'error',
       );
       return;
     }
@@ -444,7 +444,7 @@ export class SubscriptionRealtimeManager {
 
     setTimeout(() => {
       this.log(
-        `Reconnection attempt ${this.reconnectAttempts}/${this.config.maxReconnectAttempts}`
+        `Reconnection attempt ${this.reconnectAttempts}/${this.config.maxReconnectAttempts}`,
       );
       this.connect();
     }, this.config.reconnectInterval * this.reconnectAttempts); // Exponential backoff
@@ -490,7 +490,7 @@ export class SubscriptionRealtimeManager {
    */
   private log(
     _message: string,
-    level: 'info' | 'warning' | 'error' = 'info'
+    level: 'info' | 'warning' | 'error' = 'info',
   ): void {
     if (this.config.enableLogging) {
       const _timestamp = new Date().toISOString();
@@ -515,13 +515,13 @@ export const subscriptionRealtimeManager = new SubscriptionRealtimeManager({
 // Helper functions for common operations
 export async function subscribeToUserUpdates(
   userId: string,
-  callback: (update: SubscriptionRealtimeUpdate) => void
+  callback: (update: SubscriptionRealtimeUpdate) => void,
 ): Promise<() => void> {
   return subscriptionRealtimeManager.subscribe(userId, callback);
 }
 
 export async function broadcastSubscriptionEvent(
-  event: SubscriptionRealtimeUpdate
+  event: SubscriptionRealtimeUpdate,
 ): Promise<boolean> {
   return subscriptionRealtimeManager.broadcast(event);
 }

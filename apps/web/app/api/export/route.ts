@@ -6,7 +6,7 @@ import { z } from 'zod';
 // Initialize Supabase client
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
+  process.env.SUPABASE_SERVICE_ROLE_KEY!,
 );
 
 // Validation schemas
@@ -31,7 +31,7 @@ export async function POST(request: NextRequest) {
     if (!userId) {
       return NextResponse.json(
         { error: 'Authentication required' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -39,7 +39,7 @@ export async function POST(request: NextRequest) {
     if (subscriptionStatus === 'free') {
       return NextResponse.json(
         { error: 'Export functionality requires a paid subscription' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -70,7 +70,7 @@ export async function POST(request: NextRequest) {
         if (userRole !== 'admin') {
           return NextResponse.json(
             { error: 'Admin access required for user data export' },
-            { status: 403 }
+            { status: 403 },
           );
         }
         data = await getUsersData(validatedRequest);
@@ -81,7 +81,7 @@ export async function POST(request: NextRequest) {
         if (userRole !== 'admin') {
           return NextResponse.json(
             { error: 'Admin access required for campaign data export' },
-            { status: 403 }
+            { status: 403 },
           );
         }
         data = await getCampaignsData(validatedRequest);
@@ -91,14 +91,14 @@ export async function POST(request: NextRequest) {
       default:
         return NextResponse.json(
           { error: 'Invalid export type' },
-          { status: 400 }
+          { status: 400 },
         );
     }
 
     if (!data || data.length === 0) {
       return NextResponse.json(
         { error: 'No data found for export' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -147,7 +147,7 @@ export async function POST(request: NextRequest) {
       default:
         return NextResponse.json(
           { error: 'Unsupported export format' },
-          { status: 400 }
+          { status: 400 },
         );
     }
 
@@ -179,13 +179,13 @@ export async function POST(request: NextRequest) {
           error: 'Invalid export request',
           details: error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -195,7 +195,7 @@ export async function POST(request: NextRequest) {
 async function getAnalyticsData(
   request: any,
   userId: string,
-  userRole: string | null
+  userRole: string | null,
 ) {
   const { startDate, endDate, filters } = request;
 
@@ -232,7 +232,7 @@ async function getAnalyticsData(
 async function getTrialsData(
   request: any,
   userId: string,
-  userRole: string | null
+  userRole: string | null,
 ) {
   const { startDate, endDate, filters } = request;
 
@@ -273,7 +273,7 @@ async function getTrialsData(
 async function getSubscriptionsData(
   request: any,
   userId: string,
-  userRole: string | null
+  userRole: string | null,
 ) {
   const { startDate, endDate, filters } = request;
 

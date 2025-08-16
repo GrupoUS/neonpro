@@ -102,7 +102,7 @@ class PermissionValidator {
   async checkPermission(
     context: PermissionContext,
     resource: string,
-    action: PermissionAction
+    action: PermissionAction,
   ): Promise<PermissionCheckResult> {
     const startTime = Date.now();
 
@@ -114,7 +114,7 @@ class PermissionValidator {
       const matchedPermission = this.findMatchingPermission(
         userPermissions.effectivePermissions,
         resource,
-        action
+        action,
       );
 
       if (!matchedPermission) {
@@ -130,7 +130,7 @@ class PermissionValidator {
       // Evaluate conditions
       const conditionResult = await this.evaluateConditions(
         matchedPermission.conditions || [],
-        context
+        context,
       );
 
       if (!conditionResult.passed) {
@@ -148,7 +148,7 @@ class PermissionValidator {
       // Check for elevation requirements
       const elevationCheck = await this.checkElevationRequirements(
         matchedPermission,
-        context
+        context,
       );
 
       const result: PermissionCheckResult = {
@@ -163,7 +163,7 @@ class PermissionValidator {
       await this.logPermissionCheck(context, resource, action, result);
       performanceTracker.recordMetric(
         'permission_check',
-        Date.now() - startTime
+        Date.now() - startTime,
       );
 
       return result;
@@ -183,7 +183,7 @@ class PermissionValidator {
    */
   async checkMultiplePermissions(
     context: PermissionContext,
-    checks: Array<{ resource: string; action: PermissionAction }>
+    checks: Array<{ resource: string; action: PermissionAction }>,
   ): Promise<Record<string, PermissionCheckResult>> {
     const results: Record<string, PermissionCheckResult> = {};
 
@@ -192,7 +192,7 @@ class PermissionValidator {
       results[key] = await this.checkPermission(
         context,
         check.resource,
-        check.action
+        check.action,
       );
     }
 
@@ -240,7 +240,7 @@ class PermissionValidator {
               )
             )
           )
-        `
+        `,
         )
         .eq('user_id', userId)
         .eq('is_active', true);
@@ -260,7 +260,7 @@ class PermissionValidator {
             conditions,
             description
           )
-        `
+        `,
         )
         .eq('user_id', userId)
         .eq('is_active', true);
@@ -324,7 +324,7 @@ class PermissionValidator {
                 clinicPermissions[dp.clinic_id] = [];
               }
               clinicPermissions[dp.clinic_id].push(
-                dp.permissions as Permission
+                dp.permissions as Permission,
               );
             }
           }
@@ -348,7 +348,7 @@ class PermissionValidator {
 
       performanceTracker.recordMetric(
         'user_permissions_load',
-        Date.now() - startTime
+        Date.now() - startTime,
       );
       return userPermissions;
     } catch (_error) {
@@ -370,7 +370,7 @@ class PermissionValidator {
     userId: string,
     roleId: string,
     clinicId?: string,
-    assignedBy?: string
+    assignedBy?: string,
   ): Promise<boolean> {
     try {
       const supabase = await createClient();
@@ -404,7 +404,7 @@ class PermissionValidator {
           userId,
           severity: 'info',
           complianceFlags: ['lgpd_relevant'],
-        }
+        },
       );
 
       return true;
@@ -420,7 +420,7 @@ class PermissionValidator {
     userId: string,
     roleId: string,
     clinicId?: string,
-    removedBy?: string
+    removedBy?: string,
   ): Promise<boolean> {
     try {
       const supabase = await createClient();
@@ -461,7 +461,7 @@ class PermissionValidator {
           userId,
           severity: 'info',
           complianceFlags: ['lgpd_relevant'],
-        }
+        },
       );
 
       return true;
@@ -477,7 +477,7 @@ class PermissionValidator {
     userId: string,
     permissionId: string,
     clinicId?: string,
-    grantedBy?: string
+    grantedBy?: string,
   ): Promise<boolean> {
     try {
       const supabase = await createClient();
@@ -511,7 +511,7 @@ class PermissionValidator {
           userId,
           severity: 'info',
           complianceFlags: ['lgpd_relevant'],
-        }
+        },
       );
 
       return true;
@@ -527,7 +527,7 @@ class PermissionValidator {
     userId: string,
     permissionId: string,
     clinicId?: string,
-    revokedBy?: string
+    revokedBy?: string,
   ): Promise<boolean> {
     try {
       const supabase = await createClient();
@@ -568,7 +568,7 @@ class PermissionValidator {
           userId,
           severity: 'info',
           complianceFlags: ['lgpd_relevant'],
-        }
+        },
       );
 
       return true;
@@ -583,17 +583,17 @@ class PermissionValidator {
   private findMatchingPermission(
     permissions: Permission[],
     resource: string,
-    action: PermissionAction
+    action: PermissionAction,
   ): Permission | undefined {
     return permissions.find(
       (permission) =>
-        permission.resource === resource && permission.action === action
+        permission.resource === resource && permission.action === action,
     );
   }
 
   private async evaluateConditions(
     conditions: PermissionCondition[],
-    context: PermissionContext
+    context: PermissionContext,
   ): Promise<{ passed: boolean; reason?: string }> {
     for (const condition of conditions) {
       const result = await this.evaluateCondition(condition, context);
@@ -607,7 +607,7 @@ class PermissionValidator {
 
   private async evaluateCondition(
     condition: PermissionCondition,
-    context: PermissionContext
+    context: PermissionContext,
   ): Promise<{ passed: boolean; reason?: string }> {
     switch (condition.type) {
       case 'time':
@@ -627,7 +627,7 @@ class PermissionValidator {
 
   private evaluateTimeCondition(
     condition: PermissionCondition,
-    context: PermissionContext
+    context: PermissionContext,
   ): { passed: boolean; reason?: string } {
     const currentTime = new Date(context.timestamp);
     const currentHour = currentTime.getHours();
@@ -656,7 +656,7 @@ class PermissionValidator {
 
   private evaluateLocationCondition(
     condition: PermissionCondition,
-    context: PermissionContext
+    context: PermissionContext,
   ): { passed: boolean; reason?: string } {
     // IP-based location checking (simplified)
     const userIP = context.ipAddress;
@@ -680,7 +680,7 @@ class PermissionValidator {
 
   private async evaluateResourceOwnerCondition(
     _condition: PermissionCondition,
-    context: PermissionContext
+    context: PermissionContext,
   ): Promise<{ passed: boolean; reason?: string }> {
     if (!(context.resourceId && context.resourceType)) {
       return {
@@ -719,7 +719,7 @@ class PermissionValidator {
 
   private async evaluateClinicMemberCondition(
     _condition: PermissionCondition,
-    context: PermissionContext
+    context: PermissionContext,
   ): Promise<{ passed: boolean; reason?: string }> {
     if (!context.clinicId) {
       return { passed: false, reason: 'Clinic context required' };
@@ -748,7 +748,7 @@ class PermissionValidator {
 
   private async evaluateCustomCondition(
     _condition: PermissionCondition,
-    _context: PermissionContext
+    _context: PermissionContext,
   ): Promise<{ passed: boolean; reason?: string }> {
     // Custom condition evaluation logic
     // This can be extended based on specific business requirements
@@ -757,7 +757,7 @@ class PermissionValidator {
 
   private async checkElevationRequirements(
     permission: Permission,
-    _context: PermissionContext
+    _context: PermissionContext,
   ): Promise<{ required: boolean; reason?: string }> {
     // Check if permission requires elevation (e.g., for sensitive operations)
     const sensitiveActions: PermissionAction[] = ['delete', 'export', 'manage'];
@@ -797,7 +797,7 @@ class PermissionValidator {
     context: PermissionContext,
     resource: string,
     action: PermissionAction,
-    result: PermissionCheckResult
+    result: PermissionCheckResult,
   ): Promise<void> {
     const eventType = result.granted
       ? 'permission_granted'
@@ -821,7 +821,7 @@ class PermissionValidator {
         userAgent: context.userAgent,
         severity: result.granted ? 'info' : 'warning',
         complianceFlags: ['lgpd_relevant'],
-      }
+      },
     );
   }
 

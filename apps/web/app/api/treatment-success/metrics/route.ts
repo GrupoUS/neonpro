@@ -30,7 +30,7 @@ export async function GET(request: NextRequest) {
     const result = await treatmentSuccessService.getSuccessMetrics(
       filters,
       page,
-      limit
+      limit,
     );
 
     return NextResponse.json({
@@ -50,7 +50,7 @@ export async function GET(request: NextRequest) {
         error: 'Erro interno do servidor',
         details: error instanceof Error ? error.message : 'Erro desconhecido',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -66,14 +66,14 @@ export async function POST(request: NextRequest) {
           success: false,
           error: 'Tipo de tratamento é obrigatório',
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     const metrics = await treatmentSuccessService.generateSuccessMetrics(
       treatment_type,
       provider_id,
-      time_period
+      time_period,
     );
 
     return NextResponse.json(
@@ -81,7 +81,7 @@ export async function POST(request: NextRequest) {
         success: true,
         data: metrics,
       },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (error) {
     return NextResponse.json(
@@ -90,7 +90,7 @@ export async function POST(request: NextRequest) {
         error: 'Erro interno do servidor',
         details: error instanceof Error ? error.message : 'Erro desconhecido',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

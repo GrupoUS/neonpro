@@ -4,7 +4,7 @@ import { createContext, useContext, useEffect, useRef, useState } from 'react';
 type AccessibilityContextValue = {
   announceToScreenReader: (
     message: string,
-    priority?: 'polite' | 'assertive'
+    priority?: 'polite' | 'assertive',
   ) => void;
   setFocusOn: (element: HTMLElement | string) => void;
   trapFocus: (container: HTMLElement) => () => void;
@@ -26,7 +26,7 @@ export function AccessibilityProvider({
   const [isHighContrast, setIsHighContrast] = useState(false);
   const [reduceMotion, setReduceMotion] = useState(false);
   const [fontSize, setFontSize] = useState<'normal' | 'large' | 'extra-large'>(
-    'normal'
+    'normal',
   );
   const announceRef = useRef<HTMLDivElement>(null);
 
@@ -68,7 +68,7 @@ export function AccessibilityProvider({
 
   const announceToScreenReader = (
     message: string,
-    priority: 'polite' | 'assertive' = 'polite'
+    priority: 'polite' | 'assertive' = 'polite',
   ) => {
     if (announceRef.current) {
       // Clear previous message
@@ -95,7 +95,7 @@ export function AccessibilityProvider({
         !(
           targetElement.hasAttribute('tabindex') ||
           ['INPUT', 'BUTTON', 'SELECT', 'TEXTAREA', 'A'].includes(
-            targetElement.tagName
+            targetElement.tagName,
           )
         )
       ) {
@@ -114,7 +114,7 @@ export function AccessibilityProvider({
 
   const trapFocus = (container: HTMLElement) => {
     const focusableElements = container.querySelectorAll(
-      'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+      'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
     );
 
     const firstFocusable = focusableElements[0] as HTMLElement;
@@ -140,7 +140,7 @@ export function AccessibilityProvider({
       if (e.key === 'Escape') {
         // Allow escape to break focus trap for dialogs
         const closeButton = container.querySelector(
-          '[data-close-modal]'
+          '[data-close-modal]',
         ) as HTMLElement;
         if (closeButton) {
           closeButton.click();
@@ -162,13 +162,13 @@ export function AccessibilityProvider({
   };
 
   const handleFontSizeChange = (
-    newSize: 'normal' | 'large' | 'extra-large'
+    newSize: 'normal' | 'large' | 'extra-large',
   ) => {
     setFontSize(newSize);
     localStorage.setItem('neonpro-font-size', newSize);
     document.documentElement.setAttribute('data-font-size', newSize);
     announceToScreenReader(
-      `Tamanho da fonte alterado para ${newSize === 'normal' ? 'normal' : newSize === 'large' ? 'grande' : 'extra grande'}`
+      `Tamanho da fonte alterado para ${newSize === 'normal' ? 'normal' : newSize === 'large' ? 'grande' : 'extra grande'}`,
     );
   };
 
@@ -201,7 +201,7 @@ export function useAccessibility() {
   const context = useContext(AccessibilityContext);
   if (context === undefined) {
     throw new Error(
-      'useAccessibility must be used within an AccessibilityProvider'
+      'useAccessibility must be used within an AccessibilityProvider',
     );
   }
   return context;
@@ -218,7 +218,7 @@ export function useKeyboardNavigation() {
       horizontal?: boolean;
       wrap?: boolean;
       enterAction?: () => void;
-    } = {}
+    } = {},
   ) => {
     const { horizontal = false, wrap = true, enterAction } = options;
 

@@ -18,7 +18,7 @@ export async function GET(request: NextRequest) {
     if (authError || !user) {
       return NextResponse.json(
         { error: 'Authentication required' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -30,7 +30,7 @@ export async function GET(request: NextRequest) {
     if (!clinicId) {
       return NextResponse.json(
         { error: 'clinic_id parameter is required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -45,14 +45,14 @@ export async function GET(request: NextRequest) {
     if (!professional) {
       return NextResponse.json(
         { error: 'Access denied to this clinic' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
     // Get dashboard reports
     const reports = await executiveDashboardService.getDashboardReports(
       clinicId,
-      limit
+      limit,
     );
 
     return NextResponse.json({
@@ -70,7 +70,7 @@ export async function GET(request: NextRequest) {
         error: 'Failed to fetch reports',
         details: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -87,7 +87,7 @@ export async function POST(request: NextRequest) {
     if (authError || !user) {
       return NextResponse.json(
         { error: 'Authentication required' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -107,7 +107,7 @@ export async function POST(request: NextRequest) {
       if (!reportRequest[field]) {
         return NextResponse.json(
           { error: `Missing required field: ${field}` },
-          { status: 400 }
+          { status: 400 },
         );
       }
     }
@@ -123,7 +123,7 @@ export async function POST(request: NextRequest) {
     if (!professional) {
       return NextResponse.json(
         { error: 'Access denied to this clinic' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -136,7 +136,7 @@ export async function POST(request: NextRequest) {
       new Date(reportRequest.period_start),
       new Date(reportRequest.period_end),
       reportRequest.format || 'pdf',
-      reportRequest.parameters
+      reportRequest.parameters,
     );
 
     return NextResponse.json({
@@ -150,7 +150,7 @@ export async function POST(request: NextRequest) {
         error: 'Failed to request report generation',
         details: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

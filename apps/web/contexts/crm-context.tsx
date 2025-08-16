@@ -139,14 +139,14 @@ const crmReducer = (state: CRMState, action: CRMAction): CRMState => {
       return {
         ...state,
         customers: state.customers.map((customer) =>
-          customer.id === action.payload.id ? action.payload : customer
+          customer.id === action.payload.id ? action.payload : customer,
         ),
       };
     case 'DELETE_CUSTOMER':
       return {
         ...state,
         customers: state.customers.filter(
-          (customer) => customer.id !== action.payload
+          (customer) => customer.id !== action.payload,
         ),
       };
     case 'SET_SEGMENTS':
@@ -157,14 +157,14 @@ const crmReducer = (state: CRMState, action: CRMAction): CRMState => {
       return {
         ...state,
         segments: state.segments.map((segment) =>
-          segment.id === action.payload.id ? action.payload : segment
+          segment.id === action.payload.id ? action.payload : segment,
         ),
       };
     case 'DELETE_SEGMENT':
       return {
         ...state,
         segments: state.segments.filter(
-          (segment) => segment.id !== action.payload
+          (segment) => segment.id !== action.payload,
         ),
       };
     case 'SET_CAMPAIGNS':
@@ -175,14 +175,14 @@ const crmReducer = (state: CRMState, action: CRMAction): CRMState => {
       return {
         ...state,
         campaigns: state.campaigns.map((campaign) =>
-          campaign.id === action.payload.id ? action.payload : campaign
+          campaign.id === action.payload.id ? action.payload : campaign,
         ),
       };
     case 'DELETE_CAMPAIGN':
       return {
         ...state,
         campaigns: state.campaigns.filter(
-          (campaign) => campaign.id !== action.payload
+          (campaign) => campaign.id !== action.payload,
         ),
       };
     case 'SET_FILTER':
@@ -223,7 +223,7 @@ type CRMContextType = {
   // Customer actions
   loadCustomers: () => Promise<void>;
   createCustomer: (
-    customer: Omit<Customer, 'id' | 'created_at' | 'updated_at'>
+    customer: Omit<Customer, 'id' | 'created_at' | 'updated_at'>,
   ) => Promise<void>;
   updateCustomer: (customer: Customer) => Promise<void>;
   deleteCustomer: (customerId: string) => Promise<void>;
@@ -231,7 +231,7 @@ type CRMContextType = {
   // Segment actions
   loadSegments: () => Promise<void>;
   createSegment: (
-    segment: Omit<CustomerSegment, 'id' | 'created_at' | 'updated_at'>
+    segment: Omit<CustomerSegment, 'id' | 'created_at' | 'updated_at'>,
   ) => Promise<void>;
   updateSegment: (segment: CustomerSegment) => Promise<void>;
   deleteSegment: (segmentId: string) => Promise<void>;
@@ -239,7 +239,7 @@ type CRMContextType = {
   // Campaign actions
   loadCampaigns: () => Promise<void>;
   createCampaign: (
-    campaign: Omit<MarketingCampaign, 'id' | 'created_at' | 'updated_at'>
+    campaign: Omit<MarketingCampaign, 'id' | 'created_at' | 'updated_at'>,
   ) => Promise<void>;
   updateCampaign: (campaign: MarketingCampaign) => Promise<void>;
   deleteCampaign: (campaignId: string) => Promise<void>;
@@ -282,7 +282,7 @@ export function CRMProvider({ children }: { children: ReactNode }) {
             email,
             phone
           )
-        `
+        `,
         )
         .order('created_at', { ascending: false });
 
@@ -306,7 +306,7 @@ export function CRMProvider({ children }: { children: ReactNode }) {
   };
 
   const createCustomer = async (
-    customerData: Omit<Customer, 'id' | 'created_at' | 'updated_at'>
+    customerData: Omit<Customer, 'id' | 'created_at' | 'updated_at'>,
   ) => {
     try {
       const { data, error } = await supabase
@@ -404,7 +404,7 @@ export function CRMProvider({ children }: { children: ReactNode }) {
   };
 
   const createSegment = async (
-    segmentData: Omit<CustomerSegment, 'id' | 'created_at' | 'updated_at'>
+    segmentData: Omit<CustomerSegment, 'id' | 'created_at' | 'updated_at'>,
   ) => {
     try {
       const { data, error } = await supabase
@@ -502,7 +502,7 @@ export function CRMProvider({ children }: { children: ReactNode }) {
   };
 
   const createCampaign = async (
-    campaignData: Omit<MarketingCampaign, 'id' | 'created_at' | 'updated_at'>
+    campaignData: Omit<MarketingCampaign, 'id' | 'created_at' | 'updated_at'>,
   ) => {
     try {
       const { data, error } = await supabase

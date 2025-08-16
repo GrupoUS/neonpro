@@ -72,14 +72,14 @@ export function usePrivacyControls(userId: string): UsePrivacyControlsResult {
 
         await lgpdComplianceManager.updatePrivacySettings(
           userId,
-          updatedSettings
+          updatedSettings,
         );
         setSettings(updatedSettings);
       } catch (_err) {
         setError('Falha ao atualizar consentimento');
       }
     },
-    [userId, settings]
+    [userId, settings],
   );
 
   // Update communication preferences
@@ -100,14 +100,14 @@ export function usePrivacyControls(userId: string): UsePrivacyControlsResult {
 
         await lgpdComplianceManager.updatePrivacySettings(
           userId,
-          updatedSettings
+          updatedSettings,
         );
         setSettings(updatedSettings);
       } catch (_err) {
         setError('Falha ao atualizar preferências de comunicação');
       }
     },
-    [userId, settings]
+    [userId, settings],
   );
 
   // Request data export
@@ -119,11 +119,11 @@ export function usePrivacyControls(userId: string): UsePrivacyControlsResult {
     try {
       await lgpdComplianceManager.processDataSubjectRequest(
         userId,
-        LGPDRights.PORTABILITY
+        LGPDRights.PORTABILITY,
       );
       // In production, would trigger download or email
       alert(
-        'Solicitação de exportação de dados enviada. Você receberá um email com os dados em até 30 dias.'
+        'Solicitação de exportação de dados enviada. Você receberá um email com os dados em até 30 dias.',
       );
     } catch (_err) {
       setError('Falha ao solicitar exportação de dados');
@@ -139,7 +139,7 @@ export function usePrivacyControls(userId: string): UsePrivacyControlsResult {
     const confirmed = window.confirm(
       'Tem certeza que deseja solicitar a exclusão dos seus dados? ' +
         'Esta ação pode não ser reversível. Dados médicos podem ser mantidos ' +
-        'conforme exigências legais.'
+        'conforme exigências legais.',
     );
 
     if (!confirmed) {
@@ -149,10 +149,10 @@ export function usePrivacyControls(userId: string): UsePrivacyControlsResult {
     try {
       await lgpdComplianceManager.processDataSubjectRequest(
         userId,
-        LGPDRights.DELETION
+        LGPDRights.DELETION,
       );
       alert(
-        'Solicitação de exclusão de dados enviada. Entraremos em contato em até 30 dias.'
+        'Solicitação de exclusão de dados enviada. Entraremos em contato em até 30 dias.',
       );
     } catch (_err) {
       setError('Falha ao solicitar exclusão de dados');
@@ -168,10 +168,10 @@ export function usePrivacyControls(userId: string): UsePrivacyControlsResult {
     try {
       await lgpdComplianceManager.processDataSubjectRequest(
         userId,
-        LGPDRights.ACCESS
+        LGPDRights.ACCESS,
       );
       alert(
-        'Solicitação de acesso aos dados enviada. Você receberá um relatório em até 30 dias.'
+        'Solicitação de acesso aos dados enviada. Você receberá um relatório em até 30 dias.',
       );
     } catch (_err) {
       setError('Falha ao solicitar acesso aos dados');
@@ -243,12 +243,12 @@ export function useConsentManagement(userId: string) {
           userId,
           type,
           purpose,
-          true
+          true,
         );
         setConsents((prev) => [...prev, consent]);
       } catch (_err) {}
     },
-    [userId]
+    [userId],
   );
 
   const withdrawConsent = useCallback(
@@ -262,12 +262,12 @@ export function useConsentManagement(userId: string) {
           userId,
           type,
           purpose,
-          false
+          false,
         );
         setConsents((prev) => [...prev, consent]);
       } catch (_err) {}
     },
-    [userId]
+    [userId],
   );
 
   useEffect(() => {
@@ -318,12 +318,12 @@ export function useDataSubjectRequests(userId: string) {
       const request = await lgpdComplianceManager.processDataSubjectRequest(
         userId,
         type,
-        description
+        description,
       );
       setRequests((prev) => [...prev, request]);
       return request;
     },
-    [userId]
+    [userId],
   );
 
   useEffect(() => {

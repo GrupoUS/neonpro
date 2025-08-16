@@ -49,7 +49,7 @@ async function getClinicIdFromSession(): Promise<{
     throw new StockAlertError(
       'User profile not found or no clinic associated',
       'PROFILE_NOT_FOUND',
-      { userId, profileError: profileError?.message }
+      { userId, profileError: profileError?.message },
     );
   }
 
@@ -69,7 +69,7 @@ function handleError(error: unknown): NextResponse {
           timestamp: new Date().toISOString(),
         },
       },
-      { status: statusCode }
+      { status: statusCode },
     );
   }
 
@@ -84,7 +84,7 @@ function handleError(error: unknown): NextResponse {
           timestamp: new Date().toISOString(),
         },
       },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
@@ -97,7 +97,7 @@ function handleError(error: unknown): NextResponse {
         timestamp: new Date().toISOString(),
       },
     },
-    { status: 500 }
+    { status: 500 },
   );
 }
 
@@ -139,7 +139,7 @@ export async function POST(request: NextRequest) {
     // Acknowledge alert using service layer (QA Best Practice)
     const acknowledgedAlert = await alertService.acknowledgeAlert(
       validatedRequest,
-      userId
+      userId,
     );
 
     // Performance monitoring

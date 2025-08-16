@@ -14,7 +14,7 @@ const validateMilestoneSchema = z.object({
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const supabase = createRouteHandlerClient({ cookies });
@@ -27,7 +27,7 @@ export async function PATCH(
     if (authError || !user) {
       return NextResponse.json(
         { error: 'Authentication required' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -41,7 +41,7 @@ export async function PATCH(
     const milestone = await progressTrackingService.validateMilestone(
       id,
       validation_status,
-      notes
+      notes,
     );
 
     return NextResponse.json(milestone);
@@ -49,13 +49,13 @@ export async function PATCH(
     if (error.name === 'ZodError') {
       return NextResponse.json(
         { error: 'Invalid request data', details: error.errors },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     return NextResponse.json(
       { error: 'Failed to validate milestone' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -47,7 +47,7 @@ export class SchedulingService {
    * Schedule a notification for future delivery
    */
   async scheduleNotification(
-    payload: ScheduleNotificationPayload
+    payload: ScheduleNotificationPayload,
   ): Promise<string> {
     const { data, error } = await supabase
       .from('scheduled_notifications')
@@ -107,7 +107,7 @@ export class SchedulingService {
    */
   async markNotificationSent(
     notificationId: string,
-    deliveryDetails?: any
+    deliveryDetails?: any,
   ): Promise<boolean> {
     try {
       const { error } = await supabase
@@ -135,7 +135,7 @@ export class SchedulingService {
    */
   async markNotificationFailed(
     notificationId: string,
-    errorMessage: string
+    errorMessage: string,
   ): Promise<boolean> {
     try {
       // Get current notification state
@@ -265,7 +265,7 @@ export class SchedulingService {
    */
   async rescheduleNotification(
     notificationId: string,
-    newScheduledTime: Date
+    newScheduledTime: Date,
   ): Promise<boolean> {
     try {
       const { error } = await supabase
@@ -293,7 +293,7 @@ export class SchedulingService {
   async scheduleAppointmentReminders(
     appointmentId: string,
     appointmentDate: Date,
-    patientId: string
+    patientId: string,
   ): Promise<string[]> {
     try {
       // Get patient notification preferences
@@ -313,14 +313,14 @@ export class SchedulingService {
       for (const interval of preferences.reminderIntervals || [24, 2]) {
         // Default: 24h and 2h before
         const reminderTime = new Date(
-          appointmentDate.getTime() - interval * 60 * 60 * 1000
+          appointmentDate.getTime() - interval * 60 * 60 * 1000,
         );
 
         // Only schedule if reminder time is in the future
         if (reminderTime > new Date()) {
           // Schedule for enabled channels
           for (const [channel, channelPrefs] of Object.entries(
-            preferences.channels
+            preferences.channels,
           )) {
             if (
               channelPrefs.enabled &&
@@ -361,7 +361,7 @@ export class SchedulingService {
    * Cancel all scheduled notifications for an appointment
    */
   async cancelAppointmentNotifications(
-    appointmentId: string
+    appointmentId: string,
   ): Promise<boolean> {
     try {
       const { error } = await supabase

@@ -8,7 +8,7 @@ export type DataExportRequest = {
 
 export class DataExportService {
   static async exportUserData(
-    request: DataExportRequest
+    request: DataExportRequest,
   ): Promise<Buffer | string> {
     // Simple mock implementation for build
     const data = {

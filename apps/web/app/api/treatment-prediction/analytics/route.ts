@@ -29,7 +29,7 @@ export async function GET(request: NextRequest) {
     if (!(profile && ['admin', 'manager'].includes(profile.role))) {
       return NextResponse.json(
         { error: 'Insufficient permissions for analytics' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -40,7 +40,7 @@ export async function GET(request: NextRequest) {
     const predictionService = new TreatmentPredictionService();
     const analytics = await predictionService.getPredictionAnalytics(
       dateFrom || undefined,
-      dateTo || undefined
+      dateTo || undefined,
     );
 
     return NextResponse.json({
@@ -53,7 +53,7 @@ export async function GET(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to fetch prediction analytics' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -118,7 +118,7 @@ export class SessionError extends Error {
   constructor(
     message: string,
     public code: string,
-    public statusCode = 500
+    public statusCode = 500,
   ) {
     super(message);
     this.name = 'SessionError';
@@ -129,7 +129,7 @@ export class DeviceError extends Error {
   constructor(
     message: string,
     public code: string,
-    public statusCode = 400
+    public statusCode = 400,
   ) {
     super(message);
     this.name = 'DeviceError';
@@ -140,7 +140,7 @@ export class SecurityError extends Error {
   constructor(
     message: string,
     public code: string,
-    public statusCode = 403
+    public statusCode = 403,
   ) {
     super(message);
     this.name = 'SecurityError';

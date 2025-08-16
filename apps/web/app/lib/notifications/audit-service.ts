@@ -81,7 +81,7 @@ export class AuditService {
     recipientId: string,
     channel: NotificationChannel,
     type: NotificationType,
-    deliveredAt?: Date
+    deliveredAt?: Date,
   ): Promise<void> {
     await this.log({
       action: 'notification_sent',
@@ -102,7 +102,7 @@ export class AuditService {
     recipientId: string,
     channel: NotificationChannel,
     type: NotificationType,
-    error: string
+    error: string,
   ): Promise<void> {
     await this.log({
       action: 'notification_failed',
@@ -123,7 +123,7 @@ export class AuditService {
     recipientId: string,
     channel: NotificationChannel,
     type: NotificationType,
-    scheduledFor: Date
+    scheduledFor: Date,
   ): Promise<void> {
     await this.log({
       action: 'notification_scheduled',
@@ -141,7 +141,7 @@ export class AuditService {
   async logCancellation(
     notificationId: string,
     recipientId?: string,
-    reason?: string
+    reason?: string,
   ): Promise<void> {
     await this.log({
       action: 'notification_cancelled',
@@ -157,7 +157,7 @@ export class AuditService {
   async logConsentChange(
     recipientId: string,
     action: 'consent_granted' | 'consent_revoked',
-    metadata?: Record<string, any>
+    metadata?: Record<string, any>,
   ): Promise<void> {
     await this.log({
       action,
@@ -171,7 +171,7 @@ export class AuditService {
    */
   async logPreferencesUpdate(
     recipientId: string,
-    metadata?: Record<string, any>
+    metadata?: Record<string, any>,
   ): Promise<void> {
     await this.log({
       action: 'preferences_updated',
@@ -206,7 +206,7 @@ export class AuditService {
     recipientId: string,
     startDate?: Date,
     endDate?: Date,
-    limit = 100
+    limit = 100,
   ): Promise<any[]> {
     try {
       let query = supabase
@@ -241,7 +241,7 @@ export class AuditService {
    */
   async generateComplianceReport(
     startDate: Date,
-    endDate: Date
+    endDate: Date,
   ): Promise<{
     totalNotifications: number;
     successfulDeliveries: number;
@@ -270,10 +270,10 @@ export class AuditService {
       const successful = sent.filter((l) => l.success === true).length;
       const failed = sent.filter((l) => l.success === false).length;
       const cancelled = logs.filter(
-        (l) => l.action === 'notification_cancelled'
+        (l) => l.action === 'notification_cancelled',
       ).length;
       const consentChanges = logs.filter(
-        (l) => l.action === 'consent_granted' || l.action === 'consent_revoked'
+        (l) => l.action === 'consent_granted' || l.action === 'consent_revoked',
       ).length;
 
       // Channel breakdown

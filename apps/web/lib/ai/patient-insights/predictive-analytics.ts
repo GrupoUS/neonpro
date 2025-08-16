@@ -15,7 +15,7 @@ export class PredictiveAnalyticsEngine {
   async predictTreatmentOutcome(
     patientId: string,
     treatmentId: string,
-    riskAssessment: PatientRiskAssessment
+    riskAssessment: PatientRiskAssessment,
   ): Promise<TreatmentOutcomePrediction> {
     try {
       // 1. Get patient and treatment data
@@ -29,13 +29,13 @@ export class PredictiveAnalyticsEngine {
       const features = this.extractFeatures(
         patientData,
         treatmentData,
-        riskAssessment
+        riskAssessment,
       );
 
       // 3. Run predictions using multiple models
       const predictions = await this.runPredictionModels(
         features,
-        treatmentData.category
+        treatmentData.category,
       );
 
       // 4. Calculate composite predictions
@@ -45,7 +45,7 @@ export class PredictiveAnalyticsEngine {
       // 5. Add confidence intervals and uncertainty measures
       const uncertaintyAnalysis = this.analyzeUncertainty(
         predictions,
-        historicalData
+        historicalData,
       );
 
       return {
@@ -56,7 +56,7 @@ export class PredictiveAnalyticsEngine {
         uncertaintyFactors: uncertaintyAnalysis.factors,
         baselineComparison: this.calculateBaselineComparison(
           compositePrediction,
-          historicalData
+          historicalData,
         ),
         recommendedMonitoring:
           this.generateMonitoringRecommendations(compositePrediction),
@@ -65,7 +65,7 @@ export class PredictiveAnalyticsEngine {
       };
     } catch (error) {
       throw new Error(
-        `Failed to predict treatment outcome: ${error instanceof Error ? error.message : 'Unknown error'}`
+        `Failed to predict treatment outcome: ${error instanceof Error ? error.message : 'Unknown error'}`,
       );
     }
   }
@@ -73,7 +73,7 @@ export class PredictiveAnalyticsEngine {
   async predictComplicationRisk(
     patientId: string,
     treatmentId: string,
-    riskAssessment: PatientRiskAssessment
+    riskAssessment: PatientRiskAssessment,
   ): Promise<ComplicationRiskPrediction> {
     try {
       const patientData = await this.getPatientData(patientId);
@@ -83,24 +83,24 @@ export class PredictiveAnalyticsEngine {
       const complicationFeatures = this.extractComplicationFeatures(
         patientData,
         treatmentData,
-        riskAssessment
+        riskAssessment,
       );
 
       // Predict specific complication types
       const complicationPredictions = await this.predictSpecificComplications(
         complicationFeatures,
-        treatmentData
+        treatmentData,
       );
 
       // Calculate overall complication risk
       const overallRisk = this.calculateOverallComplicationRisk(
-        complicationPredictions
+        complicationPredictions,
       );
 
       // Generate prevention strategies
       const preventionStrategies = this.generatePreventionStrategies(
         complicationPredictions,
-        patientData
+        patientData,
       );
 
       return {
@@ -111,14 +111,14 @@ export class PredictiveAnalyticsEngine {
         preventionStrategies,
         riskFactors: this.identifyPrimaryRiskFactors(complicationFeatures),
         recommendedPrecautions: this.generatePrecautionRecommendations(
-          complicationPredictions
+          complicationPredictions,
         ),
         monitoringSchedule: this.generateMonitoringSchedule(overallRisk),
         predictionDate: new Date(),
       };
     } catch (error) {
       throw new Error(
-        `Failed to predict complications: ${error instanceof Error ? error.message : 'Unknown error'}`
+        `Failed to predict complications: ${error instanceof Error ? error.message : 'Unknown error'}`,
       );
     }
   }
@@ -126,7 +126,7 @@ export class PredictiveAnalyticsEngine {
   async predictRecoveryTrajectory(
     patientId: string,
     treatmentId: string,
-    riskAssessment: PatientRiskAssessment
+    riskAssessment: PatientRiskAssessment,
   ): Promise<RecoveryTrajectoryPrediction> {
     try {
       const patientData = await this.getPatientData(patientId);
@@ -136,25 +136,25 @@ export class PredictiveAnalyticsEngine {
       const recoveryFeatures = this.extractRecoveryFeatures(
         patientData,
         treatmentData,
-        riskAssessment
+        riskAssessment,
       );
 
       // Predict recovery phases
       const recoveryPhases = await this.predictRecoveryPhases(
         recoveryFeatures,
-        treatmentData
+        treatmentData,
       );
 
       // Calculate expected milestones
       const milestones = this.calculateRecoveryMilestones(
         recoveryPhases,
-        treatmentData
+        treatmentData,
       );
 
       // Predict potential delays or accelerations
       const trajectoryVariations = this.predictTrajectoryVariations(
         recoveryFeatures,
-        patientData
+        patientData,
       );
 
       return {
@@ -172,7 +172,7 @@ export class PredictiveAnalyticsEngine {
       };
     } catch (error) {
       throw new Error(
-        `Failed to predict recovery: ${error instanceof Error ? error.message : 'Unknown error'}`
+        `Failed to predict recovery: ${error instanceof Error ? error.message : 'Unknown error'}`,
       );
     }
   }
@@ -180,7 +180,7 @@ export class PredictiveAnalyticsEngine {
   async predictPatientSatisfaction(
     patientId: string,
     treatmentId: string,
-    riskAssessment: PatientRiskAssessment
+    riskAssessment: PatientRiskAssessment,
   ): Promise<SatisfactionPrediction> {
     try {
       const [patientData, treatmentData, _historicalSatisfaction] =
@@ -194,30 +194,30 @@ export class PredictiveAnalyticsEngine {
       const satisfactionFeatures = this.extractSatisfactionFeatures(
         patientData,
         treatmentData,
-        riskAssessment
+        riskAssessment,
       );
 
       // Predict satisfaction across different dimensions
       const satisfactionDimensions = await this.predictSatisfactionDimensions(
         satisfactionFeatures,
-        treatmentData
+        treatmentData,
       );
 
       // Calculate overall satisfaction score
       const overallSatisfaction = this.calculateOverallSatisfaction(
-        satisfactionDimensions
+        satisfactionDimensions,
       );
 
       // Identify satisfaction risk factors
       const satisfactionRisks = this.identifySatisfactionRisks(
         satisfactionFeatures,
-        patientData
+        patientData,
       );
 
       // Generate satisfaction optimization strategies
       const optimizationStrategies = this.generateSatisfactionOptimization(
         satisfactionDimensions,
-        satisfactionRisks
+        satisfactionRisks,
       );
 
       return {
@@ -231,13 +231,13 @@ export class PredictiveAnalyticsEngine {
           this.generateCommunicationRecommendations(satisfactionFeatures),
         expectationManagement: this.generateExpectationManagement(
           satisfactionDimensions,
-          treatmentData
+          treatmentData,
         ),
         predictionDate: new Date(),
       };
     } catch (error) {
       throw new Error(
-        `Failed to predict satisfaction: ${error instanceof Error ? error.message : 'Unknown error'}`
+        `Failed to predict satisfaction: ${error instanceof Error ? error.message : 'Unknown error'}`,
       );
     }
   }
@@ -256,7 +256,7 @@ export class PredictiveAnalyticsEngine {
         vital_signs (*),
         allergies (*),
         medications (*)
-      `
+      `,
       )
       .eq('id', patientId)
       .single();
@@ -287,7 +287,7 @@ export class PredictiveAnalyticsEngine {
 
   private async getHistoricalSatisfactionData(
     patientId: string,
-    _treatmentId: string
+    _treatmentId: string,
   ) {
     const { data } = await this.supabase
       .from('satisfaction_scores')
@@ -303,7 +303,7 @@ export class PredictiveAnalyticsEngine {
   private extractFeatures(
     patientData: any,
     treatmentData: any,
-    riskAssessment: PatientRiskAssessment
+    riskAssessment: PatientRiskAssessment,
   ): PredictionFeatures {
     return {
       // Patient demographics
@@ -330,10 +330,10 @@ export class PredictiveAnalyticsEngine {
       // Historical factors
       previousTreatmentCount: patientData.previous_treatments?.length || 0,
       previousSuccessRate: this.calculatePreviousSuccessRate(
-        patientData.previous_treatments
+        patientData.previous_treatments,
       ),
       averageSatisfaction: this.calculateAverageSatisfaction(
-        patientData.satisfaction_scores
+        patientData.satisfaction_scores,
       ),
     };
   }
@@ -341,12 +341,12 @@ export class PredictiveAnalyticsEngine {
   private extractComplicationFeatures(
     patientData: any,
     treatmentData: any,
-    riskAssessment: PatientRiskAssessment
+    riskAssessment: PatientRiskAssessment,
   ) {
     const baseFeatures = this.extractFeatures(
       patientData,
       treatmentData,
-      riskAssessment
+      riskAssessment,
     );
 
     return {
@@ -363,12 +363,12 @@ export class PredictiveAnalyticsEngine {
   private extractRecoveryFeatures(
     patientData: any,
     treatmentData: any,
-    riskAssessment: PatientRiskAssessment
+    riskAssessment: PatientRiskAssessment,
   ) {
     const baseFeatures = this.extractFeatures(
       patientData,
       treatmentData,
-      riskAssessment
+      riskAssessment,
     );
 
     return {
@@ -384,12 +384,12 @@ export class PredictiveAnalyticsEngine {
   private extractSatisfactionFeatures(
     patientData: any,
     treatmentData: any,
-    riskAssessment: PatientRiskAssessment
+    riskAssessment: PatientRiskAssessment,
   ) {
     const baseFeatures = this.extractFeatures(
       patientData,
       treatmentData,
-      riskAssessment
+      riskAssessment,
     );
 
     return {
@@ -401,7 +401,7 @@ export class PredictiveAnalyticsEngine {
       decisionMakingStyle: patientData.decision_making_style || 'collaborative',
       anxietyLevel: patientData.anxiety_level || 'moderate',
       previousSatisfactionPattern: this.analyzeSatisfactionPattern(
-        patientData.satisfaction_scores
+        patientData.satisfaction_scores,
       ),
     };
   }
@@ -409,7 +409,7 @@ export class PredictiveAnalyticsEngine {
   // Prediction calculation methods
   private async runPredictionModels(
     features: PredictionFeatures,
-    treatmentCategory: string
+    treatmentCategory: string,
   ): Promise<ModelPredictions> {
     const models =
       this.models.get(treatmentCategory) || this.models.get('default')!;
@@ -423,18 +423,18 @@ export class PredictiveAnalyticsEngine {
   }
 
   private calculateCompositePrediction(
-    predictions: ModelPredictions
+    predictions: ModelPredictions,
   ): CompositePrediction {
     return {
       successProbability: Math.max(
         0,
-        Math.min(1, predictions.successProbability)
+        Math.min(1, predictions.successProbability),
       ),
       complicationRisk: Math.max(0, Math.min(1, predictions.complicationRisk)),
       expectedRecoveryDays: Math.max(1, Math.round(predictions.recoveryTime)),
       expectedSatisfaction: Math.max(
         1,
-        Math.min(10, predictions.satisfactionScore)
+        Math.min(10, predictions.satisfactionScore),
       ),
       confidenceInterval: {
         lower: predictions.successProbability * 0.85,
@@ -445,7 +445,7 @@ export class PredictiveAnalyticsEngine {
 
   private analyzeUncertainty(
     predictions: ModelPredictions,
-    historicalData: any[]
+    historicalData: any[],
   ): UncertaintyAnalysis {
     // Calculate prediction confidence based on model agreement and historical variance
     const modelVariance = this.calculateModelVariance(predictions);
@@ -453,14 +453,14 @@ export class PredictiveAnalyticsEngine {
 
     const confidence = Math.max(
       0.5,
-      1 - (modelVariance + historicalVariance) / 2
+      1 - (modelVariance + historicalVariance) / 2,
     );
 
     return {
       confidence,
       factors: this.identifyUncertaintyFactors(
         modelVariance,
-        historicalVariance
+        historicalVariance,
       ),
       recommendedValidation:
         confidence < 0.7
@@ -500,7 +500,7 @@ export class PredictiveAnalyticsEngine {
     }
 
     const successful = treatments.filter(
-      (t) => t.outcome === 'successful'
+      (t) => t.outcome === 'successful',
     ).length;
     return successful / treatments.length;
   }
@@ -592,7 +592,7 @@ export class PredictiveAnalyticsEngine {
 
   private identifyUncertaintyFactors(
     _modelVariance: number,
-    _historicalVariance: number
+    _historicalVariance: number,
   ): string[] {
     return ['Limited historical data', 'Patient complexity']; // Mock factors
   }
@@ -600,20 +600,20 @@ export class PredictiveAnalyticsEngine {
   // Additional prediction methods (simplified for brevity)
   private async predictSpecificComplications(
     _features: any,
-    _treatmentData: any
+    _treatmentData: any,
   ): Promise<SpecificComplication[]> {
     return []; // Mock implementation
   }
 
   private calculateOverallComplicationRisk(
-    _complications: SpecificComplication[]
+    _complications: SpecificComplication[],
   ): number {
     return 0.1; // Mock implementation
   }
 
   private generatePreventionStrategies(
     _complications: SpecificComplication[],
-    _patientData: any
+    _patientData: any,
   ): string[] {
     return ['Standard precautions']; // Mock implementation
   }
@@ -623,7 +623,7 @@ export class PredictiveAnalyticsEngine {
   }
 
   private generatePrecautionRecommendations(
-    _complications: SpecificComplication[]
+    _complications: SpecificComplication[],
   ): string[] {
     return ['Standard monitoring']; // Mock implementation
   }
@@ -634,7 +634,7 @@ export class PredictiveAnalyticsEngine {
 
   private async predictRecoveryPhases(
     _features: any,
-    _treatmentData: any
+    _treatmentData: any,
   ): Promise<RecoveryPhases> {
     return {
       immediate: { expectedDays: 3, description: 'Initial recovery' },
@@ -646,14 +646,14 @@ export class PredictiveAnalyticsEngine {
 
   private calculateRecoveryMilestones(
     _phases: RecoveryPhases,
-    _treatmentData: any
+    _treatmentData: any,
   ): RecoveryMilestone[] {
     return []; // Mock implementation
   }
 
   private predictTrajectoryVariations(
     _features: any,
-    _patientData: any
+    _patientData: any,
   ): TrajectoryVariation[] {
     return []; // Mock implementation
   }
@@ -668,14 +668,14 @@ export class PredictiveAnalyticsEngine {
 
   private identifyRecoveryRedFlags(
     _treatmentData: any,
-    _riskAssessment: PatientRiskAssessment
+    _riskAssessment: PatientRiskAssessment,
   ): string[] {
     return ['Severe pain', 'Signs of infection']; // Mock implementation
   }
 
   private async predictSatisfactionDimensions(
     _features: any,
-    _treatmentData: any
+    _treatmentData: any,
   ): Promise<SatisfactionDimensions> {
     return {
       procedureExperience: 8.5,
@@ -688,7 +688,7 @@ export class PredictiveAnalyticsEngine {
   }
 
   private calculateOverallSatisfaction(
-    dimensions: SatisfactionDimensions
+    dimensions: SatisfactionDimensions,
   ): number {
     return (
       Object.values(dimensions).reduce((sum, score) => sum + score, 0) /
@@ -698,14 +698,14 @@ export class PredictiveAnalyticsEngine {
 
   private identifySatisfactionRisks(
     _features: any,
-    _patientData: any
+    _patientData: any,
   ): SatisfactionRisk[] {
     return []; // Mock implementation
   }
 
   private generateSatisfactionOptimization(
     _dimensions: SatisfactionDimensions,
-    _risks: SatisfactionRisk[]
+    _risks: SatisfactionRisk[],
   ): string[] {
     return ['Clear communication', 'Manage expectations']; // Mock implementation
   }
@@ -716,14 +716,14 @@ export class PredictiveAnalyticsEngine {
 
   private generateExpectationManagement(
     _dimensions: SatisfactionDimensions,
-    _treatmentData: any
+    _treatmentData: any,
   ): string[] {
     return ['Set realistic expectations', 'Explain process']; // Mock implementation
   }
 
   private calculateBaselineComparison(
     prediction: CompositePrediction,
-    _historicalData: any[]
+    _historicalData: any[],
   ): BaselineComparison {
     return {
       betterThanAverage: prediction.successProbability > 0.8,
@@ -733,7 +733,7 @@ export class PredictiveAnalyticsEngine {
   }
 
   private generateMonitoringRecommendations(
-    _prediction: CompositePrediction
+    _prediction: CompositePrediction,
   ): string[] {
     return ['Standard monitoring protocol']; // Mock implementation
   }
@@ -743,7 +743,7 @@ export class PredictiveAnalyticsEngine {
 class MockPredictionModel {
   constructor(
     _type: string,
-    private readonly baseline: number
+    private readonly baseline: number,
   ) {}
 
   predict(features: PredictionFeatures): number {

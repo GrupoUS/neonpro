@@ -140,7 +140,7 @@ export async function GET(request: NextRequest) {
     if (!validation.success) {
       return NextResponse.json(
         { error: 'Invalid query parameters', details: validation.error.errors },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -172,7 +172,7 @@ export async function GET(request: NextRequest) {
 
     // Get statistics
     const stats = await sessionSystem.securityEventLogger.getEventStatistics(
-      user.id
+      user.id,
     );
 
     return NextResponse.json({
@@ -192,7 +192,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -217,7 +217,7 @@ export async function POST(request: NextRequest) {
         if (!validation.success) {
           return NextResponse.json(
             { error: 'Invalid event data', details: validation.error.errors },
-            { status: 400 }
+            { status: 400 },
           );
         }
 
@@ -254,7 +254,7 @@ export async function POST(request: NextRequest) {
               error: 'Invalid resolution data',
               details: validation.error.errors,
             },
-            { status: 400 }
+            { status: 400 },
           );
         }
 
@@ -265,7 +265,7 @@ export async function POST(request: NextRequest) {
         if (!event || event.userId !== user.id) {
           return NextResponse.json(
             { error: 'Event not found or access denied' },
-            { status: 404 }
+            { status: 404 },
           );
         }
 
@@ -278,13 +278,13 @@ export async function POST(request: NextRequest) {
             resolvedBy: user.id,
             resolvedAt: new Date().toISOString(),
             resolvedViaAPI: true,
-          }
+          },
         );
 
         if (!success) {
           return NextResponse.json(
             { error: 'Failed to resolve event' },
-            { status: 400 }
+            { status: 400 },
           );
         }
 
@@ -320,7 +320,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -344,7 +344,7 @@ export async function DELETE(request: NextRequest) {
       if (!event || event.userId !== user.id) {
         return NextResponse.json(
           { error: 'Event not found or access denied' },
-          { status: 404 }
+          { status: 404 },
         );
       }
 
@@ -354,7 +354,7 @@ export async function DELETE(request: NextRequest) {
       if (!success) {
         return NextResponse.json(
           { error: 'Failed to delete event' },
-          { status: 400 }
+          { status: 400 },
         );
       }
 
@@ -393,14 +393,14 @@ export async function DELETE(request: NextRequest) {
       if (!cutoffDate) {
         return NextResponse.json(
           { error: 'Invalid date format' },
-          { status: 400 }
+          { status: 400 },
         );
       }
 
       const deletedCount =
         await sessionSystem.securityEventLogger.clearOldEvents(
           user.id,
-          cutoffDate
+          cutoffDate,
         );
 
       // Log the cleanup
@@ -424,7 +424,7 @@ export async function DELETE(request: NextRequest) {
     }
     return NextResponse.json(
       { error: 'Invalid delete operation' },
-      { status: 400 }
+      { status: 400 },
     );
   } catch (error) {
     if (error instanceof Error && error.message === 'Unauthorized') {
@@ -433,7 +433,7 @@ export async function DELETE(request: NextRequest) {
 
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

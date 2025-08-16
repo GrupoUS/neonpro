@@ -68,7 +68,7 @@ export class SessionManager {
       // Validate device and security
       const _deviceInfo = await this.validateDevice(
         request.user_id,
-        request.device_fingerprint
+        request.device_fingerprint,
       );
       const securityScore = await this.calculateSecurityScore(request);
 
@@ -109,7 +109,7 @@ export class SessionManager {
           device_fingerprint: request.device_fingerprint,
           ip_address: request.ip_address,
           security_score: securityScore,
-        }
+        },
       );
 
       // Monitor for suspicious activity
@@ -135,7 +135,7 @@ export class SessionManager {
    */
   async updateSession(
     sessionId: string,
-    updates: UpdateSessionRequest
+    updates: UpdateSessionRequest,
   ): Promise<UserSession> {
     try {
       const updateData = {
@@ -172,7 +172,7 @@ export class SessionManager {
    */
   async terminateSession(
     sessionId: string,
-    reason = 'user_logout'
+    reason = 'user_logout',
   ): Promise<void> {
     try {
       const { data: session } = await this.supabase
@@ -206,7 +206,7 @@ export class SessionManager {
         {
           reason,
           terminated_at: new Date().toISOString(),
-        }
+        },
       );
 
       logger.info('Session terminated', { session_id: sessionId, reason });
@@ -253,7 +253,7 @@ export class SessionManager {
         await this.createSecurityEvent(
           session,
           SecurityEventType.SESSION_HIJACK_ATTEMPT,
-          SecuritySeverity.CRITICAL
+          SecuritySeverity.CRITICAL,
         );
       }
     } catch (error) {
@@ -268,7 +268,7 @@ export class SessionManager {
    * Calculate security score for session
    */
   private async calculateSecurityScore(
-    request: CreateSessionRequest
+    request: CreateSessionRequest,
   ): Promise<number> {
     let score = 100; // Start with perfect score
 
@@ -276,7 +276,7 @@ export class SessionManager {
       // Check device trust level
       const device = await this.getDeviceRegistration(
         request.user_id,
-        request.device_fingerprint
+        request.device_fingerprint,
       );
       if (!device?.trusted) {
         score -= 20;
@@ -308,7 +308,7 @@ export class SessionManager {
   private async createSecurityEvent(
     session: UserSession,
     eventType: SecurityEventType,
-    severity: SecuritySeverity = SecuritySeverity.MEDIUM
+    severity: SecuritySeverity = SecuritySeverity.MEDIUM,
   ): Promise<void> {
     try {
       const eventData: Partial<SessionSecurityEvent> = {
@@ -359,7 +359,7 @@ export class SessionManager {
    */
   private async validateDevice(
     userId: string,
-    deviceFingerprint: string
+    deviceFingerprint: string,
   ): Promise<DeviceRegistration | null> {
     try {
       let device = await this.getDeviceRegistration(userId, deviceFingerprint);
@@ -388,7 +388,7 @@ export class SessionManager {
    */
   private async registerDevice(
     userId: string,
-    deviceFingerprint: string
+    deviceFingerprint: string,
   ): Promise<DeviceRegistration> {
     try {
       const deviceData: Partial<DeviceRegistration> = {
@@ -437,7 +437,7 @@ export class SessionManager {
    */
   private async getDeviceRegistration(
     userId: string,
-    deviceFingerprint: string
+    deviceFingerprint: string,
   ): Promise<DeviceRegistration | null> {
     try {
       const { data: device } = await this.supabase
@@ -484,12 +484,12 @@ export class SessionManager {
         // Terminate oldest session
         const oldestSession = activeSessions.sort(
           (a, b) =>
-            new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+            new Date(a.created_at).getTime() - new Date(b.created_at).getTime(),
         )[0];
 
         await this.terminateSession(
           oldestSession.id,
-          'concurrent_limit_exceeded'
+          'concurrent_limit_exceeded',
         );
 
         logger.info('Terminated oldest session due to concurrent limit', {
@@ -610,7 +610,7 @@ export class SessionManager {
    */
   private async isUnusualLocation(
     userId: string,
-    ipAddress: string
+    ipAddress: string,
   ): Promise<boolean> {
     try {
       // Get user's recent locations
@@ -620,7 +620,7 @@ export class SessionManager {
         .eq('user_id', userId)
         .gte(
           'created_at',
-          new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
+          new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
         )
         .limit(10);
 
@@ -646,12 +646,12 @@ export class SessionManager {
    */
   private async isNewDevice(
     userId: string,
-    deviceFingerprint: string
+    deviceFingerprint: string,
   ): Promise<boolean> {
     try {
       const device = await this.getDeviceRegistration(
         userId,
-        deviceFingerprint
+        deviceFingerprint,
       );
       return !device;
     } catch (error) {
@@ -738,7 +738,7 @@ export class SessionManager {
     sessionId: string,
     userId: string,
     action: SessionAction,
-    details: Record<string, any>
+    details: Record<string, any>,
   ): Promise<void> {
     try {
       const auditData: Partial<SessionAuditLog> = {

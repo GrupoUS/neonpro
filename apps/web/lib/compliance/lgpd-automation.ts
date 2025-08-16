@@ -128,7 +128,7 @@ export class LGPDAutoConsentService {
   constructor() {
     this.supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
     );
     this.complianceService = new LGPDComplianceService();
   }
@@ -137,7 +137,7 @@ export class LGPDAutoConsentService {
    * Configura regras de consentimento automático
    */
   async createAutoConsentRule(
-    rule: Omit<AutoConsentRule, 'id' | 'createdAt' | 'updatedAt'>
+    rule: Omit<AutoConsentRule, 'id' | 'createdAt' | 'updatedAt'>,
   ): Promise<AutoConsentRule> {
     const { data, error } = await this.supabase
       .from('lgpd_auto_consent_rules')
@@ -162,7 +162,7 @@ export class LGPDAutoConsentService {
   async processAutoConsent(
     context: LGPDContext,
     triggerEvent: string,
-    eventData: Record<string, any>
+    eventData: Record<string, any>,
   ): Promise<ConsentRecord[]> {
     // Buscar regras ativas para o evento
     const { data: rules, error } = await this.supabase
@@ -194,7 +194,7 @@ export class LGPDAutoConsentService {
             rule.legalBasis,
             rule.purpose,
             `${rule.description} (Automático: ${triggerEvent})`,
-            expiresAt
+            expiresAt,
           );
 
           grantedConsents.push(consent);
@@ -240,7 +240,7 @@ export class LGPDAutoConsentService {
         .update({ status: ConsentStatus.EXPIRED })
         .in(
           'id',
-          expired.map((c) => c.id)
+          expired.map((c) => c.id),
         );
     }
 
@@ -265,7 +265,7 @@ export class LGPDAutoConsentService {
    */
   private evaluateRuleConditions(
     conditions: Record<string, any>,
-    eventData: Record<string, any>
+    eventData: Record<string, any>,
   ): boolean {
     for (const [key, expectedValue] of Object.entries(conditions)) {
       const actualValue = this.getNestedValue(eventData, key);
@@ -293,7 +293,7 @@ export class LGPDAutoConsentService {
    * Envia notificação de expiração de consentimento
    */
   private async sendConsentExpirationNotification(
-    _consent: ConsentRecord
+    _consent: ConsentRecord,
   ): Promise<void> {}
 }
 
@@ -308,7 +308,7 @@ export class LGPDAutoDataSubjectRightsService {
   constructor() {
     this.supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
     );
     this.complianceService = new LGPDComplianceService();
   }
@@ -360,7 +360,7 @@ export class LGPDAutoDataSubjectRightsService {
    * Verifica se uma solicitação pode ser automatizada
    */
   private async canAutomateRequest(
-    request: DataSubjectRequest
+    request: DataSubjectRequest,
   ): Promise<boolean> {
     // Regras para automação baseadas no tipo de solicitação
     switch (request.requestType) {
@@ -387,7 +387,7 @@ export class LGPDAutoDataSubjectRightsService {
    * Automatiza processamento de solicitação
    */
   private async automateDataSubjectRequest(
-    request: DataSubjectRequest
+    request: DataSubjectRequest,
   ): Promise<void> {
     await this.supabase
       .from('lgpd_data_subject_requests')
@@ -429,11 +429,11 @@ export class LGPDAutoDataSubjectRightsService {
    * Automatiza solicitação de acesso
    */
   private async automateAccessRequest(
-    request: DataSubjectRequest
+    request: DataSubjectRequest,
   ): Promise<void> {
     const userData = await this.complianceService.dataSubject.exportUserData(
       request.userId,
-      request.clinicId
+      request.clinicId,
     );
 
     // Gerar relatório de dados
@@ -455,11 +455,11 @@ export class LGPDAutoDataSubjectRightsService {
    * Automatiza solicitação de portabilidade
    */
   private async automatePortabilityRequest(
-    request: DataSubjectRequest
+    request: DataSubjectRequest,
   ): Promise<void> {
     const userData = await this.complianceService.dataSubject.exportUserData(
       request.userId,
-      request.clinicId
+      request.clinicId,
     );
 
     // Gerar arquivo de exportação em formato estruturado
@@ -488,11 +488,11 @@ export class LGPDAutoDataSubjectRightsService {
    * Automatiza solicitação de eliminação
    */
   private async automateErasureRequest(
-    request: DataSubjectRequest
+    request: DataSubjectRequest,
   ): Promise<void> {
     await this.complianceService.dataSubject.processErasureRequest(
       request.id,
-      'SYSTEM_AUTO'
+      'SYSTEM_AUTO',
     );
   }
 
@@ -500,14 +500,14 @@ export class LGPDAutoDataSubjectRightsService {
    * Automatiza solicitação de retificação
    */
   private async automateRectificationRequest(
-    _request: DataSubjectRequest
+    _request: DataSubjectRequest,
   ): Promise<void> {}
 
   /**
    * Marca solicitação para revisão manual
    */
   private async flagForManualReview(
-    request: DataSubjectRequest
+    request: DataSubjectRequest,
   ): Promise<void> {
     await this.supabase
       .from('lgpd_data_subject_requests')
@@ -539,7 +539,7 @@ export class LGPDAutoDataSubjectRightsService {
    */
   private async canDeleteUserData(
     userId: string,
-    clinicId: string
+    clinicId: string,
   ): Promise<boolean> {
     // Verificar se há impedimentos legais para exclusão
     // Ex: dados médicos com retenção obrigatória
@@ -556,7 +556,7 @@ export class LGPDAutoDataSubjectRightsService {
       fiveYearsAgo.setFullYear(fiveYearsAgo.getFullYear() - 5);
 
       const recentRecords = medicalRecords.filter(
-        (record) => new Date(record.created_at) > fiveYearsAgo
+        (record) => new Date(record.created_at) > fiveYearsAgo,
       );
 
       return recentRecords.length === 0;
@@ -570,7 +570,7 @@ export class LGPDAutoDataSubjectRightsService {
    */
   private async sendAccessReport(
     _request: DataSubjectRequest,
-    _report: any
+    _report: any,
   ): Promise<void> {}
 
   /**
@@ -578,14 +578,14 @@ export class LGPDAutoDataSubjectRightsService {
    */
   private async sendPortabilityData(
     _request: DataSubjectRequest,
-    _data: any
+    _data: any,
   ): Promise<void> {}
 
   /**
    * Notifica equipe de compliance
    */
   private async notifyComplianceTeam(
-    _request: DataSubjectRequest
+    _request: DataSubjectRequest,
   ): Promise<void> {}
 } // ============================================================================
 // AUTOMATIC COMPLIANCE AUDITING
@@ -597,7 +597,7 @@ export class LGPDAutoAuditService {
   constructor() {
     this.supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
     );
     this.auditService = new LGPDAuditTrailService();
   }
@@ -606,7 +606,7 @@ export class LGPDAutoAuditService {
    * Executa auditoria automática de compliance
    */
   async performComplianceAudit(
-    clinicId: string
+    clinicId: string,
   ): Promise<ComplianceHealthCheck> {
     const timestamp = new Date();
 
@@ -632,7 +632,7 @@ export class LGPDAutoAuditService {
         auditCheck.score +
         encryptionCheck.score +
         rightsCheck.score) /
-        5
+        5,
     );
 
     // Gerar itens de ação
@@ -691,7 +691,7 @@ export class LGPDAutoAuditService {
 
     if (expiredConsents?.length) {
       issues.push(
-        `${expiredConsents.length} consentimentos expirados encontrados`
+        `${expiredConsents.length} consentimentos expirados encontrados`,
       );
       recommendations.push('Renovar ou revogar consentimentos expirados');
       score -= Math.min(30, expiredConsents.length * 2);
@@ -721,7 +721,7 @@ export class LGPDAutoAuditService {
           consentType,
           status
         )
-      `
+      `,
       )
       .eq('clinic_id', clinicId)
       .neq('lgpd_consent_records.consentType', ConsentType.SENSITIVE_DATA)
@@ -729,10 +729,10 @@ export class LGPDAutoAuditService {
 
     if (usersWithoutConsent?.length) {
       issues.push(
-        `${usersWithoutConsent.length} usuários sem consentimento para dados sensíveis`
+        `${usersWithoutConsent.length} usuários sem consentimento para dados sensíveis`,
       );
       recommendations.push(
-        'Solicitar consentimento para processamento de dados sensíveis'
+        'Solicitar consentimento para processamento de dados sensíveis',
       );
       score -= Math.min(20, usersWithoutConsent.length);
     }
@@ -770,7 +770,7 @@ export class LGPDAutoAuditService {
     if (expiredMedicalRecords?.length) {
       expiredRecords += expiredMedicalRecords.length;
       recommendations.push(
-        `Anonimizar ou deletar ${expiredMedicalRecords.length} registros médicos expirados`
+        `Anonimizar ou deletar ${expiredMedicalRecords.length} registros médicos expirados`,
       );
       score -= Math.min(40, expiredMedicalRecords.length);
     }
@@ -788,7 +788,7 @@ export class LGPDAutoAuditService {
     if (oldAuditLogs?.length) {
       expiredRecords += oldAuditLogs.length;
       recommendations.push(
-        `Arquivar ${oldAuditLogs.length} logs de auditoria antigos`
+        `Arquivar ${oldAuditLogs.length} logs de auditoria antigos`,
       );
       score -= Math.min(20, Math.floor(oldAuditLogs.length / 100));
     }
@@ -825,7 +825,7 @@ export class LGPDAutoAuditService {
     if (!recentLogs || recentLogs.length < expectedMinimumLogs) {
       missingLogs = expectedMinimumLogs - (recentLogs?.length || 0);
       recommendations.push(
-        'Verificar se todos os eventos estão sendo auditados'
+        'Verificar se todos os eventos estão sendo auditados',
       );
       score -= 30;
     }
@@ -899,7 +899,7 @@ export class LGPDAutoAuditService {
     if (unencryptedFields.length) {
       recommendations.push('Criptografar campos sensíveis identificados');
       recommendations.push(
-        'Implementar criptografia automática para novos dados'
+        'Implementar criptografia automática para novos dados',
       );
     }
 
@@ -935,7 +935,7 @@ export class LGPDAutoAuditService {
     const fifteenDaysAgo = new Date(Date.now() - 15 * 24 * 60 * 60 * 1000);
     const overdueRequests =
       pendingRequests?.filter(
-        (req) => new Date(req.requestedAt) < fifteenDaysAgo
+        (req) => new Date(req.requestedAt) < fifteenDaysAgo,
       ) || [];
 
     const overdueCount = overdueRequests.length;
@@ -948,7 +948,7 @@ export class LGPDAutoAuditService {
     if (overdueCount > 0) {
       score -= Math.min(40, overdueCount * 5);
       recommendations.push(
-        `URGENTE: ${overdueCount} solicitações em atraso (>15 dias)`
+        `URGENTE: ${overdueCount} solicitações em atraso (>15 dias)`,
       );
     }
 
@@ -964,7 +964,7 @@ export class LGPDAutoAuditService {
    * Gera itens de ação baseados na auditoria
    */
   private generateActionItems(
-    checks: any
+    checks: any,
   ): ComplianceHealthCheck['actionItems'] {
     const actionItems: ComplianceHealthCheck['actionItems'] = [];
     const now = new Date();
@@ -1010,7 +1010,7 @@ export class LGPDAutoAuditService {
    * Salva resultado da verificação de compliance
    */
   private async saveComplianceHealthCheck(
-    healthCheck: ComplianceHealthCheck
+    healthCheck: ComplianceHealthCheck,
   ): Promise<void> {
     await this.supabase
       .from('lgpd_compliance_health_checks')
@@ -1021,7 +1021,7 @@ export class LGPDAutoAuditService {
    * Gera alerta de compliance
    */
   private async generateComplianceAlert(
-    healthCheck: ComplianceHealthCheck
+    healthCheck: ComplianceHealthCheck,
   ): Promise<void> {
     const alert = {
       clinicId: healthCheck.clinicId,
@@ -1064,7 +1064,7 @@ export class LGPDAutoReportingService {
   constructor() {
     this.supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
     );
   }
 
@@ -1073,7 +1073,7 @@ export class LGPDAutoReportingService {
    */
   async generateComplianceReports(
     clinicId: string,
-    reportTypes: ComplianceReportType[]
+    reportTypes: ComplianceReportType[],
   ): Promise<ComplianceReport[]> {
     const reports: ComplianceReport[] = [];
 
@@ -1092,7 +1092,7 @@ export class LGPDAutoReportingService {
    */
   private async generateReport(
     clinicId: string,
-    reportType: ComplianceReportType
+    reportType: ComplianceReportType,
   ): Promise<ComplianceReport> {
     const now = new Date();
     const startDate = new Date(now.getFullYear(), now.getMonth() - 1, 1); // Mês anterior
@@ -1107,7 +1107,7 @@ export class LGPDAutoReportingService {
         reportData = await this.generateConsentSummaryData(
           clinicId,
           startDate,
-          endDate
+          endDate,
         );
         title = 'Relatório de Consentimentos';
         description =
@@ -1118,7 +1118,7 @@ export class LGPDAutoReportingService {
         reportData = await this.generateDataProcessingData(
           clinicId,
           startDate,
-          endDate
+          endDate,
         );
         title = 'Relatório de Processamento de Dados';
         description = 'Atividades de processamento de dados pessoais';
@@ -1128,7 +1128,7 @@ export class LGPDAutoReportingService {
         reportData = await this.generateAuditTrailData(
           clinicId,
           startDate,
-          endDate
+          endDate,
         );
         title = 'Relatório de Trilha de Auditoria';
         description = 'Eventos de auditoria e atividades do sistema';
@@ -1144,7 +1144,7 @@ export class LGPDAutoReportingService {
         reportData = await this.generateRiskAssessmentData(
           clinicId,
           startDate,
-          endDate
+          endDate,
         );
         title = 'Avaliação de Riscos';
         description = 'Análise de riscos de privacidade e segurança';
@@ -1179,7 +1179,7 @@ export class LGPDAutoReportingService {
   private async generateConsentSummaryData(
     clinicId: string,
     startDate: Date,
-    endDate: Date
+    endDate: Date,
   ): Promise<any> {
     // Consentimentos por tipo
     const { data: consentsByType } = await this.supabase
@@ -1225,7 +1225,7 @@ export class LGPDAutoReportingService {
   private async generateDataProcessingData(
     clinicId: string,
     startDate: Date,
-    endDate: Date
+    endDate: Date,
   ): Promise<any> {
     // Eventos de processamento
     const { data: processingEvents } = await this.supabase
@@ -1265,7 +1265,7 @@ export class LGPDAutoReportingService {
   private async generateAuditTrailData(
     clinicId: string,
     startDate: Date,
-    endDate: Date
+    endDate: Date,
   ): Promise<any> {
     // Todos os eventos de auditoria
     const { data: auditEvents } = await this.supabase
@@ -1334,10 +1334,10 @@ export class LGPDAutoReportingService {
         totalDataTypes: inventory.length,
         totalRecords: inventory.reduce(
           (sum, item) => sum + item.recordCount,
-          0
+          0,
         ),
         sensitiveDataTypes: inventory.filter(
-          (item) => item.dataClassification === 'sensitive'
+          (item) => item.dataClassification === 'sensitive',
         ).length,
       },
     };
@@ -1349,7 +1349,7 @@ export class LGPDAutoReportingService {
   private async generateRiskAssessmentData(
     clinicId: string,
     startDate: Date,
-    endDate: Date
+    endDate: Date,
   ): Promise<any> {
     // Eventos de alto risco
     const { data: highRiskEvents } = await this.supabase
@@ -1398,7 +1398,7 @@ export class LGPDAutoReportingService {
   private calculateExpirationRate(statusStats: Record<string, number>): number {
     const total = Object.values(statusStats).reduce(
       (sum, count) => sum + count,
-      0
+      0,
     );
     const expired = statusStats[ConsentStatus.EXPIRED] || 0;
     return total > 0 ? Math.round((expired / total) * 100) : 0;
@@ -1426,7 +1426,7 @@ export class LGPDAutoReportingService {
     return events.filter(
       (event) =>
         event.eventType === AuditEventType.UNAUTHORIZED_ACCESS ||
-        event.eventType === AuditEventType.DATA_BREACH
+        event.eventType === AuditEventType.DATA_BREACH,
     ).length;
   }
 
@@ -1477,7 +1477,7 @@ export class LGPDAutoReportingService {
 
   private countConsentViolations(events: any[]): number {
     return events.filter(
-      (event) => event.eventType === AuditEventType.CONSENT_WITHDRAWN
+      (event) => event.eventType === AuditEventType.CONSENT_WITHDRAWN,
     ).length;
   }
 
@@ -1534,7 +1534,7 @@ export class LGPDAutoAnonymizationService {
   constructor() {
     this.supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
     );
     this.encryptionService = new LGPDEncryptionService();
   }
@@ -1582,13 +1582,13 @@ export class LGPDAutoAnonymizationService {
    */
   private async processAnonymizationRule(
     job: AnonymizationJob,
-    rule: AnonymizationRule
+    rule: AnonymizationRule,
   ): Promise<void> {
     try {
       // Buscar registros que precisam ser anonimizados
       const records = await this.findRecordsForAnonymization(
         job.clinicId,
-        rule
+        rule,
       );
 
       for (const record of records) {
@@ -1601,7 +1601,7 @@ export class LGPDAutoAnonymizationService {
         job.errors = [];
       }
       job.errors.push(
-        `Rule ${rule.id}: ${error instanceof Error ? error.message : 'Unknown error'}`
+        `Rule ${rule.id}: ${error instanceof Error ? error.message : 'Unknown error'}`,
       );
     }
   }
@@ -1611,7 +1611,7 @@ export class LGPDAutoAnonymizationService {
    */
   private async findRecordsForAnonymization(
     clinicId: string,
-    rule: AnonymizationRule
+    rule: AnonymizationRule,
   ): Promise<any[]> {
     let query = this.supabase
       .from(rule.tableName)
@@ -1663,7 +1663,7 @@ export class LGPDAutoAnonymizationService {
    */
   private async anonymizeRecord(
     record: any,
-    rule: AnonymizationRule
+    rule: AnonymizationRule,
   ): Promise<void> {
     const originalValue = record[rule.fieldName];
     if (!originalValue) {
@@ -1684,7 +1684,7 @@ export class LGPDAutoAnonymizationService {
       case 'pseudonymize':
         anonymizedValue = await this.pseudonymizeValue(
           originalValue,
-          rule.fieldName
+          rule.fieldName,
         );
         break;
 
@@ -1698,7 +1698,7 @@ export class LGPDAutoAnonymizationService {
 
       default:
         throw new Error(
-          `Unsupported anonymization type: ${rule.anonymizationType}`
+          `Unsupported anonymization type: ${rule.anonymizationType}`,
         );
     }
 
@@ -1721,7 +1721,7 @@ export class LGPDAutoAnonymizationService {
       record.id,
       rule,
       originalValue,
-      anonymizedValue
+      anonymizedValue,
     );
   }
 
@@ -1769,7 +1769,7 @@ export class LGPDAutoAnonymizationService {
    */
   private async pseudonymizeValue(
     value: string,
-    fieldName: string
+    fieldName: string,
   ): Promise<string> {
     // Usar chave específica do campo para consistência
     const key = `${fieldName}_pseudonym_key`;
@@ -1837,7 +1837,7 @@ export class LGPDAutoAnonymizationService {
    * Busca regras ativas de anonimização
    */
   private async getActiveAnonymizationRules(
-    clinicId: string
+    clinicId: string,
   ): Promise<AnonymizationRule[]> {
     const { data, error } = await this.supabase
       .from('lgpd_anonymization_rules')
@@ -1887,7 +1887,7 @@ export class LGPDAutoAnonymizationService {
     recordId: string,
     rule: AnonymizationRule,
     originalValue: any,
-    anonymizedValue: any
+    anonymizedValue: any,
   ): Promise<void> {
     const auditLog: LGPDAuditLog = {
       id: crypto.randomUUID(),
@@ -1921,7 +1921,7 @@ export class LGPDAutoAnonymizationService {
   async scheduleAnonymization(
     clinicId: string,
     rules: AnonymizationRule[],
-    scheduledFor: Date
+    scheduledFor: Date,
   ): Promise<string> {
     const jobId = crypto.randomUUID();
 

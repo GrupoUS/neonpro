@@ -140,7 +140,7 @@ export function ForecastingCharts({
     'forecast' | 'scenarios' | 'accuracy'
   >('forecast');
   const [enabledScenarios, setEnabledScenarios] = useState<Set<string>>(
-    new Set(scenarios.map((s) => s.name))
+    new Set(scenarios.map((s) => s.name)),
   );
   const [showConfidenceInterval, setShowConfidenceInterval] = useState(true);
   const [_zoomDomain, setZoomDomain] = useState<[string, string] | null>(null);
@@ -213,7 +213,7 @@ export function ForecastingCharts({
       setEnabledScenarios(newEnabled);
       onScenarioToggle?.(scenarioName, newEnabled.has(scenarioName));
     },
-    [enabledScenarios, onScenarioToggle]
+    [enabledScenarios, onScenarioToggle],
   );
 
   // Custom tooltip for forecast chart

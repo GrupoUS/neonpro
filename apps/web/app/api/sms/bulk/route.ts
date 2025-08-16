@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
             message: 'Authentication required',
           },
         },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -42,7 +42,7 @@ export async function POST(request: NextRequest) {
             message: 'Maximum 1000 messages allowed per bulk request',
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -66,7 +66,7 @@ export async function POST(request: NextRequest) {
           total_recipients: validatedData.messages.length,
         },
       },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
     // Handle validation errors
@@ -80,7 +80,7 @@ export async function POST(request: NextRequest) {
             details: error.errors,
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -96,7 +96,7 @@ export async function POST(request: NextRequest) {
             details: process.env.NODE_ENV === 'development' ? error : undefined,
           },
         },
-        { status: statusCode }
+        { status: statusCode },
       );
     }
 
@@ -110,7 +110,7 @@ export async function POST(request: NextRequest) {
           details: process.env.NODE_ENV === 'development' ? error : undefined,
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -135,7 +135,7 @@ export async function GET(request: NextRequest) {
             message: 'Authentication required',
           },
         },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -151,7 +151,7 @@ export async function GET(request: NextRequest) {
           `
           *,
           sms_messages(count)
-        `
+        `,
         )
         .eq('batch_id', batchId)
         .single();
@@ -165,7 +165,7 @@ export async function GET(request: NextRequest) {
               message: 'Bulk batch not found',
             },
           },
-          { status: 404 }
+          { status: 404 },
         );
       }
 
@@ -178,13 +178,13 @@ export async function GET(request: NextRequest) {
             request_id: `batch_status_${Date.now()}`,
           },
         },
-        { status: 200 }
+        { status: 200 },
       );
     }
     // Get bulk sending statistics
     const hoursBack = timeframe === '24h' ? 24 : timeframe === '7d' ? 168 : 24;
     const startDate = new Date(
-      Date.now() - hoursBack * 60 * 60 * 1000
+      Date.now() - hoursBack * 60 * 60 * 1000,
     ).toISOString();
 
     const { data, error } = await supabase
@@ -197,7 +197,7 @@ export async function GET(request: NextRequest) {
             cost,
             created_at
           )
-        `
+        `,
       )
       .gte('created_at', startDate)
       .order('created_at', { ascending: false });
@@ -211,7 +211,7 @@ export async function GET(request: NextRequest) {
       total_messages:
         data?.reduce(
           (sum, batch) => sum + (batch.sms_messages?.length || 0),
-          0
+          0,
         ) || 0,
       total_cost:
         data?.reduce(
@@ -219,9 +219,9 @@ export async function GET(request: NextRequest) {
             sum +
             (batch.sms_messages?.reduce(
               (msgSum: number, msg: any) => msgSum + (msg.cost || 0),
-              0
+              0,
             ) || 0),
-          0
+          0,
         ) || 0,
       status_breakdown:
         data?.reduce(
@@ -231,7 +231,7 @@ export async function GET(request: NextRequest) {
             });
             return acc;
           },
-          {} as Record<string, number>
+          {} as Record<string, number>,
         ) || {},
     };
 
@@ -248,7 +248,7 @@ export async function GET(request: NextRequest) {
           timeframe,
         },
       },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
     return NextResponse.json(
@@ -260,7 +260,7 @@ export async function GET(request: NextRequest) {
           details: process.env.NODE_ENV === 'development' ? error : undefined,
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -298,7 +298,7 @@ export async function PUT() {
         message: 'Only POST and GET methods are allowed',
       },
     },
-    { status: 405 }
+    { status: 405 },
   );
 }
 
@@ -311,6 +311,6 @@ export async function DELETE() {
         message: 'Only POST and GET methods are allowed',
       },
     },
-    { status: 405 }
+    { status: 405 },
   );
 }

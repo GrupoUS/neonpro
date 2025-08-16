@@ -15,7 +15,7 @@ const bulkForecastRequestSchema = z.object({
     z.object({
       itemId: z.string().uuid(),
       forecastPeriod: z.number().min(1).max(365).default(30),
-    })
+    }),
   ),
   clinicId: z.string().uuid(),
   confidenceLevel: z.number().min(0.5).max(0.99).default(0.95),
@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to generate demand forecast' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -43,12 +43,12 @@ async function handleSingleForecast(body: any) {
   if (!validation.success) {
     return NextResponse.json(
       { error: 'Invalid request data', details: validation.error.errors },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
   const forecast = await demandForecastingService.generateDemandForecast(
-    validation.data
+    validation.data,
   );
 
   return NextResponse.json({
@@ -62,7 +62,7 @@ async function handleBulkForecast(body: any) {
   if (!validation.success) {
     return NextResponse.json(
       { error: 'Invalid bulk request data', details: validation.error.errors },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
@@ -80,7 +80,7 @@ async function handleBulkForecast(body: any) {
       .catch((error) => ({
         itemId: item.itemId,
         error: error.message,
-      }))
+      })),
   );
 
   const forecasts = await Promise.all(forecastPromises);
@@ -111,7 +111,7 @@ export async function GET(request: NextRequest) {
     if (!clinicId) {
       return NextResponse.json(
         { error: 'Clinic ID is required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -156,7 +156,7 @@ export async function GET(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to retrieve forecasting information' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

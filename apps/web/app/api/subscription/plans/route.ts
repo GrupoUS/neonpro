@@ -25,7 +25,7 @@ export async function GET(_request: NextRequest) {
     if (error) {
       return NextResponse.json(
         { error: 'Failed to fetch subscription plans' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -38,7 +38,7 @@ export async function GET(_request: NextRequest) {
             ? Math.round(
                 ((plan.price_monthly * 3 - plan.price_quarterly) /
                   (plan.price_monthly * 3)) *
-                  100
+                  100,
               )
             : 0,
         yearly:
@@ -46,7 +46,7 @@ export async function GET(_request: NextRequest) {
             ? Math.round(
                 ((plan.price_monthly * 12 - plan.price_yearly) /
                   (plan.price_monthly * 12)) *
-                  100
+                  100,
               )
             : 0,
       },
@@ -66,7 +66,7 @@ export async function GET(_request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

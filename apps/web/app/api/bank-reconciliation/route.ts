@@ -113,13 +113,13 @@ export async function GET(request: NextRequest) {
           reconciliation_status,
           matching_confidence
         )
-      `
+      `,
       )
       .match(filters)
       .order('statement_date', { ascending: false })
       .range(
         (validatedQuery.page - 1) * validatedQuery.limit,
-        validatedQuery.page * validatedQuery.limit - 1
+        validatedQuery.page * validatedQuery.limit - 1,
       );
 
     if (statementsError) {
@@ -146,7 +146,7 @@ export async function GET(request: NextRequest) {
           dateFrom: validatedQuery.dateFrom,
           dateTo: validatedQuery.dateTo,
           bankName: validatedQuery.bankName,
-        }
+        },
       ),
     };
 
@@ -167,7 +167,7 @@ export async function GET(request: NextRequest) {
         success: false,
         error: error instanceof Error ? error.message : 'Internal server error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -200,7 +200,7 @@ export async function POST(request: NextRequest) {
       if (!file) {
         return NextResponse.json(
           { error: 'No file provided' },
-          { status: 400 }
+          { status: 400 },
         );
       }
 
@@ -210,7 +210,7 @@ export async function POST(request: NextRequest) {
       } catch {
         return NextResponse.json(
           { error: 'Invalid metadata JSON' },
-          { status: 400 }
+          { status: 400 },
         );
       }
 
@@ -220,7 +220,7 @@ export async function POST(request: NextRequest) {
       const result = await processor.processStatementFile(
         file,
         file.name,
-        validatedData.processingOptions
+        validatedData.processingOptions,
       );
 
       return NextResponse.json({
@@ -246,7 +246,7 @@ export async function POST(request: NextRequest) {
           {
             confidenceThreshold: validatedData.confidenceThreshold,
             autoMatchOnly: validatedData.autoMatchOnly,
-          }
+          },
         );
 
         return NextResponse.json({
@@ -264,7 +264,7 @@ export async function POST(request: NextRequest) {
           validatedData.transactionId,
           validatedData.paymentId,
           validatedData.confidence,
-          validatedData.notes
+          validatedData.notes,
         );
 
         return NextResponse.json({
@@ -287,7 +287,7 @@ export async function POST(request: NextRequest) {
           error: 'Validation error',
           details: error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -296,7 +296,7 @@ export async function POST(request: NextRequest) {
         success: false,
         error: error instanceof Error ? error.message : 'Internal server error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -328,7 +328,7 @@ export async function PUT(request: NextRequest) {
         if (!ruleId) {
           return NextResponse.json(
             { error: 'Rule ID is required' },
-            { status: 400 }
+            { status: 400 },
           );
         }
 
@@ -357,7 +357,7 @@ export async function PUT(request: NextRequest) {
         if (!(statementId && status)) {
           return NextResponse.json(
             { error: 'Statement ID and status are required' },
-            { status: 400 }
+            { status: 400 },
           );
         }
 
@@ -389,7 +389,7 @@ export async function PUT(request: NextRequest) {
         success: false,
         error: error instanceof Error ? error.message : 'Internal server error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -417,7 +417,7 @@ export async function DELETE(request: NextRequest) {
     if (!(action && ids && Array.isArray(ids))) {
       return NextResponse.json(
         { error: 'Action and IDs array are required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -431,7 +431,7 @@ export async function DELETE(request: NextRequest) {
 
         if (deleteError) {
           throw new Error(
-            `Failed to delete statements: ${deleteError.message}`
+            `Failed to delete statements: ${deleteError.message}`,
           );
         }
 
@@ -467,7 +467,7 @@ export async function DELETE(request: NextRequest) {
         success: false,
         error: error instanceof Error ? error.message : 'Internal server error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

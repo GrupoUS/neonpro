@@ -44,7 +44,7 @@ export async function GET(request: NextRequest) {
     if (profile?.role !== 'admin') {
       return NextResponse.json(
         { error: 'Forbidden - Admin access required' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -96,7 +96,7 @@ export async function GET(request: NextRequest) {
           compliance_percentage,
           completed_at,
           next_assessment_due
-        `
+        `,
         )
         .order('completed_at', { ascending: false })
         .limit(5);
@@ -128,13 +128,13 @@ export async function GET(request: NextRequest) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Invalid query parameters', details: error.errors },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -162,7 +162,7 @@ export async function POST(request: NextRequest) {
     if (profile?.role !== 'admin') {
       return NextResponse.json(
         { error: 'Forbidden - Admin access required' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -199,19 +199,19 @@ export async function POST(request: NextRequest) {
         success: true,
         data: assessment,
       },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Invalid request data', details: error.errors },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -239,18 +239,18 @@ export async function PUT(_request: NextRequest) {
     if (profile?.role !== 'admin') {
       return NextResponse.json(
         { error: 'Forbidden - Admin access required' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
     // Run automated compliance assessment
     const { data: assessmentId, error: assessmentError } = await supabase.rpc(
-      'generate_compliance_assessment'
+      'generate_compliance_assessment',
     );
 
     if (assessmentError) {
       throw new Error(
-        `Assessment generation failed: ${assessmentError.message}`
+        `Assessment generation failed: ${assessmentError.message}`,
       );
     }
 
@@ -267,7 +267,7 @@ export async function PUT(_request: NextRequest) {
         findings,
         recommendations,
         completed_at
-      `
+      `,
       )
       .eq('id', assessmentId)
       .single();
@@ -294,7 +294,7 @@ export async function PUT(_request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to run automated assessment' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

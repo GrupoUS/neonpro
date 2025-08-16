@@ -966,7 +966,7 @@ export class HealthcareRBACEngine {
       clinicId?: string;
       patientId?: string;
       emergencyOverride?: boolean;
-    }
+    },
   ): Promise<PermissionCheckResult> {
     try {
       // Get user role context
@@ -977,7 +977,7 @@ export class HealthcareRBACEngine {
           permission,
           userId,
           HealthcareRole.GUEST,
-          'User not found'
+          'User not found',
         );
       }
 
@@ -996,7 +996,7 @@ export class HealthcareRBACEngine {
           permission,
           userId,
           userContext.role,
-          'Role not found'
+          'Role not found',
         );
       }
 
@@ -1011,7 +1011,7 @@ export class HealthcareRBACEngine {
           userId,
           userContext.role,
           'Emergency override granted',
-          { emergency_override: true }
+          { emergency_override: true },
         );
         this.setCache(cacheKey, result);
         await this.logAuditTrail(result, context);
@@ -1026,7 +1026,7 @@ export class HealthcareRBACEngine {
           permission,
           userId,
           userContext.role,
-          'Permission not granted to role'
+          'Permission not granted to role',
         );
       }
 
@@ -1038,14 +1038,14 @@ export class HealthcareRBACEngine {
           permission,
           userId,
           userContext.role,
-          'Permission definition not found'
+          'Permission definition not found',
         );
       }
 
       // Healthcare-specific validation
       const healthcareValidation = await this.validateHealthcareRequirements(
         userContext,
-        permissionDef
+        permissionDef,
       );
       if (!healthcareValidation.valid) {
         return this.createPermissionResult(
@@ -1058,7 +1058,7 @@ export class HealthcareRBACEngine {
             license_valid: healthcareValidation.license_valid,
             specialty_match: healthcareValidation.specialty_match,
             cfm_compliant: healthcareValidation.cfm_compliant,
-          }
+          },
         );
       }
 
@@ -1066,7 +1066,7 @@ export class HealthcareRBACEngine {
       const contextValidation = await this.validateContext(
         userContext,
         permissionDef,
-        context
+        context,
       );
       if (!contextValidation.valid) {
         return this.createPermissionResult(
@@ -1074,7 +1074,7 @@ export class HealthcareRBACEngine {
           permission,
           userId,
           userContext.role,
-          contextValidation.reason
+          contextValidation.reason,
         );
       }
 
@@ -1090,7 +1090,7 @@ export class HealthcareRBACEngine {
           specialty_match: healthcareValidation.specialty_match,
           cfm_compliant: healthcareValidation.cfm_compliant,
           lgpd_compliant: true,
-        }
+        },
       );
 
       this.setCache(cacheKey, result);
@@ -1102,7 +1102,7 @@ export class HealthcareRBACEngine {
         permission,
         userId,
         HealthcareRole.GUEST,
-        'System error during permission check'
+        'System error during permission check',
       );
     }
   }
@@ -1117,12 +1117,12 @@ export class HealthcareRBACEngine {
       clinicId?: string;
       patientId?: string;
       emergencyOverride?: boolean;
-    }
+    },
   ): Promise<PermissionCheckResult[]> {
     const results = await Promise.all(
       permissions.map((permission) =>
-        this.checkPermission(userId, permission, context)
-      )
+        this.checkPermission(userId, permission, context),
+      ),
     );
     return results;
   }
@@ -1163,7 +1163,7 @@ export class HealthcareRBACEngine {
     grantedBy: string,
     permissions: string[],
     expiresAt: Date,
-    reason: string
+    reason: string,
   ): Promise<boolean> {
     try {
       // Validate granter has authority
@@ -1204,7 +1204,7 @@ export class HealthcareRBACEngine {
   async revokeAccess(
     userId: string,
     revokedBy: string,
-    reason: string
+    reason: string,
   ): Promise<boolean> {
     try {
       // Validate revoker has authority
@@ -1255,7 +1255,7 @@ export class HealthcareRBACEngine {
   // ============================================================================
 
   private async getUserRoleContext(
-    userId: string
+    userId: string,
   ): Promise<UserRoleContext | null> {
     try {
       if (!this.supabase) {
@@ -1281,7 +1281,7 @@ export class HealthcareRBACEngine {
 
   private async validateHealthcareRequirements(
     userContext: UserRoleContext,
-    permission: Permission
+    permission: Permission,
   ): Promise<{
     valid: boolean;
     reason: string;
@@ -1325,7 +1325,7 @@ export class HealthcareRBACEngine {
     // Check specialty requirements
     const specialtyMatch = this.checkSpecialtyRequirement(
       userContext,
-      permission
+      permission,
     );
     if (!specialtyMatch) {
       return {
@@ -1359,7 +1359,7 @@ export class HealthcareRBACEngine {
 
   private checkSpecialtyRequirement(
     userContext: UserRoleContext,
-    permission: Permission
+    permission: Permission,
   ): boolean {
     if (permission.requires_specialty.length === 0) {
       return true;
@@ -1377,7 +1377,7 @@ export class HealthcareRBACEngine {
     ];
 
     return permission.requires_specialty.some((required) =>
-      userSpecialties.includes(required)
+      userSpecialties.includes(required),
     );
   }
 
@@ -1388,7 +1388,7 @@ export class HealthcareRBACEngine {
       clinicId?: string;
       patientId?: string;
       emergencyOverride?: boolean;
-    }
+    },
   ): Promise<{ valid: boolean; reason: string }> {
     // Clinic context validation
     if (context?.clinicId && context.clinicId !== userContext.clinic_id) {
@@ -1403,7 +1403,7 @@ export class HealthcareRBACEngine {
       // Check if user has relationship with patient
       const hasPatientRelationship = await this.checkPatientRelationship(
         userContext.user_id,
-        context.patientId
+        context.patientId,
       );
       if (!hasPatientRelationship) {
         return {
@@ -1418,7 +1418,7 @@ export class HealthcareRBACEngine {
 
   private async checkPatientRelationship(
     userId: string,
-    patientId: string
+    patientId: string,
   ): Promise<boolean> {
     if (!this.supabase) {
       return false;
@@ -1441,7 +1441,7 @@ export class HealthcareRBACEngine {
     userId: string,
     role: HealthcareRole,
     reason: string,
-    additionalData: Partial<PermissionCheckResult> = {}
+    additionalData: Partial<PermissionCheckResult> = {},
   ): PermissionCheckResult {
     return {
       granted,
@@ -1462,7 +1462,7 @@ export class HealthcareRBACEngine {
 
   private async logAuditTrail(
     result: PermissionCheckResult,
-    context?: any
+    context?: any,
   ): Promise<void> {
     if (!this.supabase) {
       return;
@@ -1505,7 +1505,7 @@ export class HealthcareRBACEngine {
 
   private clearUserCache(userId: string): void {
     const keysToDelete = Array.from(this.permissionCache.keys()).filter((key) =>
-      key.startsWith(`${userId}:`)
+      key.startsWith(`${userId}:`),
     );
     keysToDelete.forEach((key) => this.permissionCache.delete(key));
   }
@@ -1519,7 +1519,7 @@ export class HealthcareRBACEngine {
  * Get role definition by role
  */
 export function getRoleDefinition(
-  role: HealthcareRole
+  role: HealthcareRole,
 ): RoleDefinition | undefined {
   return HEALTHCARE_ROLE_DEFINITIONS[role];
 }
@@ -1528,10 +1528,10 @@ export function getRoleDefinition(
  * Get roles by category
  */
 export function getRolesByCategory(
-  category: RoleDefinition['category']
+  category: RoleDefinition['category'],
 ): RoleDefinition[] {
   return Object.values(HEALTHCARE_ROLE_DEFINITIONS).filter(
-    (role) => role.category === category
+    (role) => role.category === category,
   );
 }
 
@@ -1540,7 +1540,7 @@ export function getRolesByCategory(
  */
 export function getLicenseRequiredRoles(): RoleDefinition[] {
   return Object.values(HEALTHCARE_ROLE_DEFINITIONS).filter(
-    (role) => role.requires_medical_license
+    (role) => role.requires_medical_license,
   );
 }
 
@@ -1549,7 +1549,7 @@ export function getLicenseRequiredRoles(): RoleDefinition[] {
  */
 export function getRolesByLevel(
   minLevel: number,
-  maxLevel?: number
+  maxLevel?: number,
 ): RoleDefinition[] {
   return Object.values(HEALTHCARE_ROLE_DEFINITIONS).filter((role) => {
     return role.level >= minLevel && (!maxLevel || role.level <= maxLevel);
@@ -1561,7 +1561,7 @@ export function getRolesByLevel(
  */
 export function canDelegate(
   fromRole: HealthcareRole,
-  toRole: HealthcareRole
+  toRole: HealthcareRole,
 ): boolean {
   const fromRoleDef = HEALTHCARE_ROLE_DEFINITIONS[fromRole];
   return fromRoleDef?.can_delegate_to.includes(toRole);

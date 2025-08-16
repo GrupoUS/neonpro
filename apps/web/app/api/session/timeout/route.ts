@@ -33,7 +33,7 @@ export async function GET(_request: NextRequest) {
     if (profileError) {
       return NextResponse.json(
         { error: 'Erro ao buscar perfil do usuário' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -78,7 +78,7 @@ export async function GET(_request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -108,7 +108,7 @@ export async function POST(request: NextRequest) {
         if (refreshError) {
           return NextResponse.json(
             { error: 'Não foi possível estender a sessão' },
-            { status: 401 }
+            { status: 401 },
           );
         }
 
@@ -131,7 +131,7 @@ export async function POST(request: NextRequest) {
       } catch (_refreshError) {
         return NextResponse.json(
           { error: 'Erro ao estender sessão' },
-          { status: 500 }
+          { status: 500 },
         );
       }
     }
@@ -143,7 +143,7 @@ export async function POST(request: NextRequest) {
       if (timeout_minutes && (timeout_minutes < 5 || timeout_minutes > 120)) {
         return NextResponse.json(
           { error: 'Timeout deve estar entre 5 e 120 minutos' },
-          { status: 400 }
+          { status: 400 },
         );
       }
 
@@ -163,7 +163,7 @@ export async function POST(request: NextRequest) {
       if (updateError) {
         return NextResponse.json(
           { error: 'Erro ao salvar configurações de timeout' },
-          { status: 500 }
+          { status: 500 },
         );
       }
 
@@ -194,12 +194,12 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(
       { error: 'Ação não reconhecida' },
-      { status: 400 }
+      { status: 400 },
     );
   } catch (_error) {
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -238,13 +238,13 @@ export async function DELETE(_request: NextRequest) {
     } catch (_signOutError) {
       return NextResponse.json(
         { error: 'Erro ao encerrar sessão' },
-        { status: 500 }
+        { status: 500 },
       );
     }
   } catch (_error) {
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

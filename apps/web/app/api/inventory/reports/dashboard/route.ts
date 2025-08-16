@@ -27,7 +27,7 @@ export async function GET(_request: NextRequest) {
         error: 'Failed to fetch dashboard stats',
         message: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -61,7 +61,7 @@ function getClientIP(request: NextRequest): string {
 
 async function validateStatisticsAccess(
   supabase: any,
-  userId: string
+  userId: string,
 ): Promise<boolean> {
   try {
     const { data: profile } = await supabase
@@ -201,7 +201,7 @@ async function getSecurityStatistics(supabase: any, filters: any) {
           acc[alert.severity] = (acc[alert.severity] || 0) + 1;
           return acc;
         },
-        {} as Record<string, number>
+        {} as Record<string, number>,
       ) || {},
   };
 }
@@ -317,7 +317,7 @@ export async function GET(request: NextRequest) {
     if (!rateLimitResult.success) {
       return NextResponse.json(
         { error: 'Rate limit exceeded' },
-        { status: 429 }
+        { status: 429 },
       );
     }
 
@@ -347,7 +347,7 @@ export async function GET(request: NextRequest) {
 
       return NextResponse.json(
         { error: 'Insufficient permissions' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -369,7 +369,7 @@ export async function GET(request: NextRequest) {
             error: 'Invalid query parameters',
             details: validationResult.error.errors,
           },
-          { status: 400 }
+          { status: 400 },
         );
       }
 
@@ -438,7 +438,7 @@ export async function GET(request: NextRequest) {
           error: 'Invalid query parameters',
           details: validationResult.error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -485,7 +485,7 @@ export async function GET(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -109,7 +109,7 @@ const BackupHistory: React.FC = () => {
   const [filteredBackups, setFilteredBackups] = useState<BackupRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedBackup, setSelectedBackup] = useState<BackupDetails | null>(
-    null
+    null,
   );
   const [showDetails, setShowDetails] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
@@ -169,14 +169,14 @@ const BackupHistory: React.FC = () => {
     if (filters.dateFrom) {
       const fromDate = new Date(filters.dateFrom);
       filtered = filtered.filter(
-        (backup) => new Date(backup.start_time) >= fromDate
+        (backup) => new Date(backup.start_time) >= fromDate,
       );
     }
 
     if (filters.dateTo) {
       const toDate = new Date(filters.dateTo);
       filtered = filtered.filter(
-        (backup) => new Date(backup.start_time) <= toDate
+        (backup) => new Date(backup.start_time) <= toDate,
       );
     }
 
@@ -185,7 +185,7 @@ const BackupHistory: React.FC = () => {
       filtered = filtered.filter(
         (backup) =>
           backup.config_name.toLowerCase().includes(term) ||
-          backup.id.toLowerCase().includes(term)
+          backup.id.toLowerCase().includes(term),
       );
     }
 

@@ -274,14 +274,14 @@ export class EmergencyShutdownManager {
       customActions?: EmergencyAction[];
       skipBackup?: boolean;
       immediateShutdown?: boolean;
-    }
+    },
   ): Promise<EmergencyEvent> {
     const emergency = await this.createEmergencyEvent(
       type,
       severity,
       reason,
       triggeredBy,
-      options
+      options,
     );
 
     // Store emergency event
@@ -307,7 +307,7 @@ export class EmergencyShutdownManager {
     severity: EmergencySeverity,
     reason: string,
     triggeredBy: string,
-    options?: any
+    options?: any,
   ): Promise<EmergencyEvent> {
     const emergency: EmergencyEvent = {
       id: this.utils.generateSessionToken(),
@@ -330,7 +330,7 @@ export class EmergencyShutdownManager {
         evidence: [],
         impact: await this.assessImpact(
           options?.affectedSessions,
-          options?.affectedUsers
+          options?.affectedUsers,
         ),
         timeline: [
           {
@@ -351,7 +351,7 @@ export class EmergencyShutdownManager {
    * Execute emergency response
    */
   private async executeEmergencyResponse(
-    emergency: EmergencyEvent
+    emergency: EmergencyEvent,
   ): Promise<void> {
     try {
       // Update status
@@ -402,7 +402,7 @@ export class EmergencyShutdownManager {
    * Execute immediate shutdown
    */
   private async executeImmediateShutdown(
-    emergency: EmergencyEvent
+    emergency: EmergencyEvent,
   ): Promise<void> {
     this.isShuttingDown = true;
     this.shutdownStartTime = Date.now();
@@ -412,7 +412,7 @@ export class EmergencyShutdownManager {
 
     // Execute actions in parallel for speed
     const actionPromises = emergency.actions.map((action) =>
-      this.executeAction(action, emergency.id)
+      this.executeAction(action, emergency.id),
     );
 
     // Wait for all actions with timeout
@@ -426,7 +426,7 @@ export class EmergencyShutdownManager {
    * Execute controlled shutdown
    */
   private async executeControlledShutdown(
-    emergency: EmergencyEvent
+    emergency: EmergencyEvent,
   ): Promise<void> {
     this.isShuttingDown = true;
     this.shutdownStartTime = Date.now();
@@ -458,7 +458,7 @@ export class EmergencyShutdownManager {
    */
   private async executeAction(
     action: EmergencyAction,
-    emergencyId: string
+    emergencyId: string,
   ): Promise<void> {
     const lockKey = `${action.type}_${action.target}`;
 
@@ -482,7 +482,7 @@ export class EmergencyShutdownManager {
       const result = await Promise.race([
         this.performAction(action),
         new Promise<ActionResult>((_, reject) =>
-          setTimeout(() => reject(new Error('Action timeout')), timeout)
+          setTimeout(() => reject(new Error('Action timeout')), timeout),
         ),
       ]);
 
@@ -538,7 +538,7 @@ export class EmergencyShutdownManager {
       case 'notify_user':
         return await this.notifyUser(
           action.parameters.userId,
-          action.parameters.message
+          action.parameters.message,
         );
 
       case 'log_event':
@@ -586,7 +586,7 @@ export class EmergencyShutdownManager {
   }
 
   private async terminateAllSessions(
-    excludeAdmin = false
+    excludeAdmin = false,
   ): Promise<ActionResult> {
     try {
       const response = await fetch('/api/session/terminate-all', {
@@ -800,7 +800,7 @@ export class EmergencyShutdownManager {
 
   private async notifyUser(
     userId: string,
-    message: string
+    message: string,
   ): Promise<ActionResult> {
     try {
       const response = await fetch('/api/notifications/user-alert', {
@@ -922,7 +922,7 @@ export class EmergencyShutdownManager {
    * Force terminate all sessions
    */
   private async forceTerminateAllSessions(
-    _emergency: EmergencyEvent
+    _emergency: EmergencyEvent,
   ): Promise<void> {
     try {
       // Get all active sessions
@@ -930,7 +930,7 @@ export class EmergencyShutdownManager {
 
       // Terminate each session forcefully
       const terminationPromises = sessions.map((sessionId) =>
-        this.terminateSession(sessionId)
+        this.terminateSession(sessionId),
       );
 
       await Promise.allSettled(terminationPromises);
@@ -942,7 +942,7 @@ export class EmergencyShutdownManager {
    */
   private async sendEmergencyNotifications(
     emergency: EmergencyEvent,
-    urgency: 'immediate' | 'warning'
+    urgency: 'immediate' | 'warning',
   ): Promise<void> {
     try {
       const message = this.generateNotificationMessage(emergency, urgency);
@@ -983,7 +983,7 @@ export class EmergencyShutdownManager {
    */
   private generateEmergencyDescription(
     type: EmergencyType,
-    reason: string
+    reason: string,
   ): string {
     const descriptions = {
       security_breach: 'Security breach detected requiring immediate response',
@@ -1010,7 +1010,7 @@ export class EmergencyShutdownManager {
 
   private generateDefaultActions(
     type: EmergencyType,
-    severity: EmergencySeverity
+    severity: EmergencySeverity,
   ): EmergencyAction[] {
     const actions: EmergencyAction[] = [];
 
@@ -1083,7 +1083,7 @@ export class EmergencyShutdownManager {
 
   private generateNotificationMessage(
     emergency: EmergencyEvent,
-    urgency: string
+    urgency: string,
   ): string {
     const urgencyText = urgency === 'immediate' ? 'IMMEDIATE' : 'WARNING';
     return `${urgencyText}: ${emergency.description}. Triggered by: ${emergency.triggeredBy}. Severity: ${emergency.severity.toUpperCase()}.`;
@@ -1117,7 +1117,7 @@ export class EmergencyShutdownManager {
 
   private async assessImpact(
     affectedSessions?: string[],
-    affectedUsers?: string[]
+    affectedUsers?: string[],
   ): Promise<ImpactAssessment> {
     return {
       usersAffected: affectedUsers?.length || 0,
@@ -1161,7 +1161,7 @@ export class EmergencyShutdownManager {
       const remaining = duration - i * interval;
 
       await new Promise((resolve) =>
-        setTimeout(resolve, Math.min(interval, remaining))
+        setTimeout(resolve, Math.min(interval, remaining)),
       );
     }
   }
@@ -1202,7 +1202,7 @@ export class EmergencyShutdownManager {
    */
   public async cancelEmergency(
     emergencyId: string,
-    reason: string
+    reason: string,
   ): Promise<boolean> {
     const emergency = this.activeEmergencies.get(emergencyId);
     if (!emergency) {
@@ -1230,7 +1230,7 @@ export class EmergencyShutdownManager {
 
   public getActiveEmergencies(): EmergencyEvent[] {
     return Array.from(this.activeEmergencies.values()).filter(
-      (e) => e.status === 'triggered' || e.status === 'in_progress'
+      (e) => e.status === 'triggered' || e.status === 'in_progress',
     );
   }
 

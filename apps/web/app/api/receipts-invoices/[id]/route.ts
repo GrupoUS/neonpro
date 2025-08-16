@@ -102,19 +102,19 @@ function getReceiptInvoiceManager() {
     supabaseKey,
     companyInfo,
     nfseConfig,
-    emailConfig
+    emailConfig,
   );
 }
 
 // GET - Get document details
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
     );
 
     // Check authentication
@@ -122,7 +122,7 @@ export async function GET(
     if (!authHeader) {
       return NextResponse.json(
         { error: 'Authorization header required' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -134,7 +134,7 @@ export async function GET(
     if (authError || !user) {
       return NextResponse.json(
         { error: 'Invalid authentication' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -153,7 +153,7 @@ export async function GET(
         success: false,
         error: error instanceof Error ? error.message : 'Internal server error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -161,12 +161,12 @@ export async function GET(
 // POST - Perform actions on document
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
     );
 
     // Check authentication
@@ -174,7 +174,7 @@ export async function POST(
     if (!authHeader) {
       return NextResponse.json(
         { error: 'Authorization header required' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -186,7 +186,7 @@ export async function POST(
     if (authError || !user) {
       return NextResponse.json(
         { error: 'Invalid authentication' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -197,7 +197,7 @@ export async function POST(
     if (!action) {
       return NextResponse.json(
         { error: 'Action parameter is required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -211,7 +211,7 @@ export async function POST(
         const result = await manager.sendEmail(
           documentId,
           validatedData.recipientEmail,
-          validatedData.customMessage
+          validatedData.customMessage,
         );
 
         return NextResponse.json({
@@ -246,7 +246,7 @@ export async function POST(
 
         const result = await manager.generatePDF(
           document.data,
-          templateOptions
+          templateOptions,
         );
 
         return NextResponse.json({
@@ -265,7 +265,7 @@ export async function POST(
         if (document.type !== 'invoice') {
           return NextResponse.json(
             { error: 'NFSe can only be generated for invoices' },
-            { status: 400 }
+            { status: 400 },
           );
         }
 
@@ -292,14 +292,14 @@ export async function POST(
         if (error || !document) {
           return NextResponse.json(
             { error: 'Document not found' },
-            { status: 404 }
+            { status: 404 },
           );
         }
 
         if (!document.pdf_path) {
           return NextResponse.json(
             { error: 'PDF not available' },
-            { status: 404 }
+            { status: 404 },
           );
         }
 
@@ -311,7 +311,7 @@ export async function POST(
         if (downloadError) {
           return NextResponse.json(
             { error: 'Failed to download PDF' },
-            { status: 500 }
+            { status: 500 },
           );
         }
 
@@ -363,7 +363,7 @@ export async function POST(
           error: 'Validation error',
           details: error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -372,7 +372,7 @@ export async function POST(
         success: false,
         error: error instanceof Error ? error.message : 'Internal server error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -380,12 +380,12 @@ export async function POST(
 // PUT - Update document details
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
     );
 
     // Check authentication
@@ -393,7 +393,7 @@ export async function PUT(
     if (!authHeader) {
       return NextResponse.json(
         { error: 'Authorization header required' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -405,7 +405,7 @@ export async function PUT(
     if (authError || !user) {
       return NextResponse.json(
         { error: 'Invalid authentication' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -437,7 +437,7 @@ export async function PUT(
         success: false,
         error: error instanceof Error ? error.message : 'Internal server error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -445,12 +445,12 @@ export async function PUT(
 // DELETE - Delete document
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
     );
 
     // Check authentication
@@ -458,7 +458,7 @@ export async function DELETE(
     if (!authHeader) {
       return NextResponse.json(
         { error: 'Authorization header required' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -470,7 +470,7 @@ export async function DELETE(
     if (authError || !user) {
       return NextResponse.json(
         { error: 'Invalid authentication' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -486,7 +486,7 @@ export async function DELETE(
     if (fetchError || !document) {
       return NextResponse.json(
         { error: 'Document not found' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -494,7 +494,7 @@ export async function DELETE(
     if (document.status !== 'draft') {
       return NextResponse.json(
         { error: 'Only draft documents can be deleted' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -523,7 +523,7 @@ export async function DELETE(
         success: false,
         error: error instanceof Error ? error.message : 'Internal server error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -250,7 +250,7 @@ export class RealTimeSecurityMonitor {
     supabaseUrl: string,
     supabaseKey: string,
     activityDetector: SuspiciousActivityDetector,
-    customConfig?: Partial<MonitoringConfig>
+    customConfig?: Partial<MonitoringConfig>,
   ) {
     this.supabase = createClient(supabaseUrl, supabaseKey);
     this.auditLogger = new SecurityAuditLogger(supabaseUrl, supabaseKey);
@@ -322,7 +322,7 @@ export class RealTimeSecurityMonitor {
    */
   async getMetricsHistory(
     timeRange: { start: Date; end: Date },
-    _interval: 'minute' | 'hour' | 'day' = 'hour'
+    _interval: 'minute' | 'hour' | 'day' = 'hour',
   ): Promise<SecurityMetrics[]> {
     const { data, error } = await this.supabase
       .from('security_metrics')
@@ -342,7 +342,7 @@ export class RealTimeSecurityMonitor {
    * Create security incident
    */
   async createIncident(
-    incident: Omit<SecurityIncident, 'incidentId' | 'detectedAt' | 'timeline'>
+    incident: Omit<SecurityIncident, 'incidentId' | 'detectedAt' | 'timeline'>,
   ): Promise<SecurityIncident> {
     const fullIncident: SecurityIncident = {
       ...incident,
@@ -386,7 +386,7 @@ export class RealTimeSecurityMonitor {
   async updateIncident(
     incidentId: string,
     updates: Partial<SecurityIncident>,
-    user = 'system'
+    user = 'system',
   ): Promise<SecurityIncident> {
     const existingIncident = this.activeIncidents.get(incidentId);
     if (!existingIncident) {
@@ -425,7 +425,7 @@ export class RealTimeSecurityMonitor {
   async resolveIncident(
     incidentId: string,
     resolution: string,
-    user: string
+    user: string,
   ): Promise<SecurityIncident> {
     const updates: Partial<SecurityIncident> = {
       status: 'resolved',
@@ -443,7 +443,7 @@ export class RealTimeSecurityMonitor {
     const resolvedIncident = await this.updateIncident(
       incidentId,
       updates,
-      user
+      user,
     );
 
     // Remove from active incidents
@@ -527,7 +527,7 @@ export class RealTimeSecurityMonitor {
     if (options?.offset) {
       query = query.range(
         options.offset,
-        options.offset + (options.limit || 50) - 1
+        options.offset + (options.limit || 50) - 1,
       );
     }
 
@@ -573,7 +573,7 @@ export class RealTimeSecurityMonitor {
         JSON.stringify({
           type: 'metrics_update',
           data: this.lastMetrics,
-        })
+        }),
       );
     }
 
@@ -584,7 +584,7 @@ export class RealTimeSecurityMonitor {
         JSON.stringify({
           type: 'incidents_update',
           data: activeIncidents,
-        })
+        }),
       );
     }
   }
@@ -851,7 +851,7 @@ export class RealTimeSecurityMonitor {
         const breached = this.compareValues(
           value,
           threshold.operator,
-          threshold.value
+          threshold.value,
         );
 
         if (breached && !this.isInCooldown(threshold)) {
@@ -897,7 +897,7 @@ export class RealTimeSecurityMonitor {
     }
 
     const cooldownEnd = new Date(
-      lastAlert.getTime() + threshold.cooldownMinutes * 60 * 1000
+      lastAlert.getTime() + threshold.cooldownMinutes * 60 * 1000,
     );
     return new Date() < cooldownEnd;
   }
@@ -909,7 +909,7 @@ export class RealTimeSecurityMonitor {
   private async handleThresholdBreach(
     threshold: SecurityThreshold,
     value: any,
-    metrics: SecurityMetrics
+    metrics: SecurityMetrics,
   ): Promise<void> {
     try {
       // Create incident
@@ -944,7 +944,7 @@ export class RealTimeSecurityMonitor {
         if (action.delay > 0) {
           setTimeout(
             () => this.executeThresholdAction(action, incident),
-            action.delay * 1000
+            action.delay * 1000,
           );
         } else {
           await this.executeThresholdAction(action, incident);
@@ -955,7 +955,7 @@ export class RealTimeSecurityMonitor {
 
   private async executeThresholdAction(
     action: SecurityThreshold['actions'][0],
-    incident: SecurityIncident
+    incident: SecurityIncident,
   ): Promise<void> {
     try {
       switch (action.type) {
@@ -985,17 +985,17 @@ export class RealTimeSecurityMonitor {
 
   private async sendEmailAlert(
     _recipient: string,
-    _incident: SecurityIncident
+    _incident: SecurityIncident,
   ): Promise<void> {}
 
   private async sendWebhookAlert(
     _url: string,
-    _incident: SecurityIncident
+    _incident: SecurityIncident,
   ): Promise<void> {}
 
   private async escalateIncident(
     _incident: SecurityIncident,
-    _target: string
+    _target: string,
   ): Promise<void> {}
 
   private broadcastToClients(type: string, data: any): void {

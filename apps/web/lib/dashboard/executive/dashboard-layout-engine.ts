@@ -81,7 +81,7 @@ export class DashboardLayoutEngine {
    * Get dashboard layout by ID with caching
    */
   async getDashboardLayout(
-    dashboardId: string
+    dashboardId: string,
   ): Promise<DashboardLayout | null> {
     try {
       // Check cache first
@@ -96,7 +96,7 @@ export class DashboardLayoutEngine {
           `
           *,
           widgets:dashboard_widgets(*)
-        `
+        `,
         )
         .eq('id', dashboardId)
         .single();
@@ -131,7 +131,7 @@ export class DashboardLayoutEngine {
           `
           *,
           widgets:dashboard_widgets(*)
-        `
+        `,
         )
         .eq('clinic_id', clinicId)
         .order('created_at', { ascending: false });
@@ -152,7 +152,7 @@ export class DashboardLayoutEngine {
    * Create new dashboard layout
    */
   async createDashboardLayout(
-    layout: Omit<DashboardLayout, 'id' | 'createdAt' | 'updatedAt'>
+    layout: Omit<DashboardLayout, 'id' | 'createdAt' | 'updatedAt'>,
   ): Promise<DashboardLayout | null> {
     try {
       const now = new Date().toISOString();
@@ -236,7 +236,7 @@ export class DashboardLayoutEngine {
    */
   async updateDashboardLayout(
     dashboardId: string,
-    updates: Partial<Omit<DashboardLayout, 'id' | 'createdAt' | 'updatedAt'>>
+    updates: Partial<Omit<DashboardLayout, 'id' | 'createdAt' | 'updatedAt'>>,
   ): Promise<DashboardLayout | null> {
     try {
       const now = new Date().toISOString();
@@ -357,7 +357,7 @@ export class DashboardLayoutEngine {
    */
   async updateWidgetPosition(
     widgetId: string,
-    position: WidgetPosition
+    position: WidgetPosition,
   ): Promise<boolean> {
     try {
       const { error } = await this.supabase
@@ -392,7 +392,7 @@ export class DashboardLayoutEngine {
         return {
           isValid: false,
           errors: error.errors.map(
-            (err) => `${err.path.join('.')}: ${err.message}`
+            (err) => `${err.path.join('.')}: ${err.message}`,
           ),
         };
       }
@@ -409,7 +409,7 @@ export class DashboardLayoutEngine {
   generateDefaultLayout(
     clinicId: string,
     createdBy: string,
-    name = 'Dashboard Executivo'
+    name = 'Dashboard Executivo',
   ): Omit<DashboardLayout, 'id' | 'createdAt' | 'updatedAt'> {
     const now = new Date().toISOString();
 

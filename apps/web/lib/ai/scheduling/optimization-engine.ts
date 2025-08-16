@@ -123,7 +123,7 @@ class OptimizationEngine {
    */
   async optimizeScheduling(
     criteria: SchedulingCriteria,
-    additionalConstraints: Partial<OptimizationConstraints> = {}
+    additionalConstraints: Partial<OptimizationConstraints> = {},
   ): Promise<OptimizationResult> {
     const startTime = Date.now();
 
@@ -139,7 +139,7 @@ class OptimizationEngine {
       const validatedRecommendations = await this.validateConstraints(
         initialRecommendations,
         mergedConstraints,
-        criteria
+        criteria,
       );
 
       // 4. Apply multi-objective optimization
@@ -147,26 +147,26 @@ class OptimizationEngine {
         await this.applyMultiObjectiveOptimization(
           validatedRecommendations,
           criteria,
-          mergedConstraints
+          mergedConstraints,
         );
 
       // 5. Generate alternative scenarios
       const alternativeScenarios = await this.generateAlternativeScenarios(
         criteria,
         optimizedRecommendations,
-        mergedConstraints
+        mergedConstraints,
       );
 
       // 6. Calculate optimization metrics
       const metrics = this.calculateOptimizationMetrics(
         optimizedRecommendations,
-        startTime
+        startTime,
       );
 
       // 7. Determine confidence score
       const confidenceScore = this.calculateConfidenceScore(
         optimizedRecommendations,
-        metrics
+        metrics,
       );
 
       const result: OptimizationResult = {
@@ -192,7 +192,7 @@ class OptimizationEngine {
   private async validateConstraints(
     recommendations: SchedulingRecommendation[],
     constraints: OptimizationConstraints,
-    criteria: SchedulingCriteria
+    criteria: SchedulingCriteria,
   ): Promise<SchedulingRecommendation[]> {
     const validatedRecommendations: SchedulingRecommendation[] = [];
     const violations: ConstraintViolation[] = [];
@@ -205,7 +205,7 @@ class OptimizationEngine {
       for (const constraint of constraints.hardConstraints) {
         const context = await this.buildConstraintContext(
           recommendation,
-          criteria
+          criteria,
         );
 
         if (!constraint.validator(recommendation.timeSlot, context)) {
@@ -216,7 +216,7 @@ class OptimizationEngine {
             description: `Hard constraint violated: ${constraint.description}`,
             suggestedResolution: await this.suggestConstraintResolution(
               constraint,
-              recommendation
+              recommendation,
             ),
             impactScore: 1.0,
           });
@@ -229,11 +229,11 @@ class OptimizationEngine {
         for (const constraint of constraints.softConstraints) {
           const context = await this.buildConstraintContext(
             recommendation,
-            criteria
+            criteria,
           );
           const constraintScore = constraint.scorer(
             recommendation.timeSlot,
-            context
+            context,
           );
 
           // Apply weighted penalty for soft constraint violations
@@ -246,7 +246,7 @@ class OptimizationEngine {
               description: `Soft constraint not optimal: ${constraint.description}`,
               suggestedResolution: await this.suggestConstraintResolution(
                 constraint,
-                recommendation
+                recommendation,
               ),
               impactScore: constraint.weight * (0.5 - constraintScore),
             });
@@ -261,7 +261,7 @@ class OptimizationEngine {
     }
 
     return validatedRecommendations.sort(
-      (a, b) => b.optimizationScore - a.optimizationScore
+      (a, b) => b.optimizationScore - a.optimizationScore,
     );
   }
 
@@ -271,7 +271,7 @@ class OptimizationEngine {
   private async applyMultiObjectiveOptimization(
     recommendations: SchedulingRecommendation[],
     criteria: SchedulingCriteria,
-    _constraints: OptimizationConstraints
+    _constraints: OptimizationConstraints,
   ): Promise<SchedulingRecommendation[]> {
     const objectives = {
       revenue: 0.25,
@@ -303,11 +303,11 @@ class OptimizationEngine {
             `Efficiency: ${(scores.staffEfficiency * 100).toFixed(1)}%`,
           ],
         };
-      })
+      }),
     );
 
     return optimizedRecommendations.sort(
-      (a, b) => b.optimizationScore - a.optimizationScore
+      (a, b) => b.optimizationScore - a.optimizationScore,
     );
   }
 
@@ -317,7 +317,7 @@ class OptimizationEngine {
   private async generateAlternativeScenarios(
     criteria: SchedulingCriteria,
     _primaryRecommendations: SchedulingRecommendation[],
-    _constraints: OptimizationConstraints
+    _constraints: OptimizationConstraints,
   ): Promise<AlternativeScenario[]> {
     const scenarios: AlternativeScenario[] = [];
 
@@ -348,7 +348,7 @@ class OptimizationEngine {
    */
   private calculateOptimizationMetrics(
     recommendations: SchedulingRecommendation[],
-    startTime: number
+    startTime: number,
   ): OptimizationMetrics {
     if (recommendations.length === 0) {
       return {
@@ -380,7 +380,7 @@ class OptimizationEngine {
    */
   private calculateConfidenceScore(
     recommendations: SchedulingRecommendation[],
-    metrics: OptimizationMetrics
+    metrics: OptimizationMetrics,
   ): number {
     if (recommendations.length === 0) {
       return 0;
@@ -406,7 +406,7 @@ class OptimizationEngine {
   // Helper methods for constraint validation
   private async buildConstraintContext(
     recommendation: SchedulingRecommendation,
-    criteria: SchedulingCriteria
+    criteria: SchedulingCriteria,
   ): Promise<any> {
     return {
       timeSlot: recommendation.timeSlot,
@@ -420,7 +420,7 @@ class OptimizationEngine {
 
   private async suggestConstraintResolution(
     constraint: HardConstraint | SoftConstraint,
-    _recommendation: SchedulingRecommendation
+    _recommendation: SchedulingRecommendation,
   ): Promise<string> {
     switch (constraint.type) {
       case 'staff_availability':
@@ -439,7 +439,7 @@ class OptimizationEngine {
   // Helper methods for objective scoring
   private async calculateObjectiveScores(
     recommendation: SchedulingRecommendation,
-    _criteria: SchedulingCriteria
+    _criteria: SchedulingCriteria,
   ): Promise<{
     revenue: number;
     patientSatisfaction: number;
@@ -458,7 +458,7 @@ class OptimizationEngine {
 
   // Scenario generation methods
   private async generateRevenueOptimizedScenario(
-    _criteria: SchedulingCriteria
+    _criteria: SchedulingCriteria,
   ): Promise<AlternativeScenario> {
     // Implementation for revenue-optimized scenario
     return {
@@ -475,7 +475,7 @@ class OptimizationEngine {
   }
 
   private async generatePatientOptimizedScenario(
-    _criteria: SchedulingCriteria
+    _criteria: SchedulingCriteria,
   ): Promise<AlternativeScenario> {
     // Implementation for patient-optimized scenario
     return {
@@ -491,7 +491,7 @@ class OptimizationEngine {
   }
 
   private async generateStaffOptimizedScenario(
-    _criteria: SchedulingCriteria
+    _criteria: SchedulingCriteria,
   ): Promise<AlternativeScenario> {
     // Implementation for staff-optimized scenario
     return {
@@ -507,7 +507,7 @@ class OptimizationEngine {
   }
 
   private async generateEarliestAvailableScenario(
-    _criteria: SchedulingCriteria
+    _criteria: SchedulingCriteria,
   ): Promise<AlternativeScenario> {
     // Implementation for earliest available scenario
     return {
@@ -563,7 +563,7 @@ class OptimizationEngine {
   }
 
   private mergeConstraints(
-    additionalConstraints: Partial<OptimizationConstraints>
+    additionalConstraints: Partial<OptimizationConstraints>,
   ): OptimizationConstraints {
     return {
       hardConstraints: [
@@ -587,7 +587,7 @@ class OptimizationEngine {
 
   private async storeOptimizationHistory(
     criteria: SchedulingCriteria,
-    result: OptimizationResult
+    result: OptimizationResult,
   ): Promise<void> {
     try {
       await this.supabase.from('optimization_history').insert({

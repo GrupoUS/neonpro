@@ -19,20 +19,20 @@ export async function POST(request: NextRequest) {
         if (!response) {
           return NextResponse.json(
             { error: 'Authentication response required' },
-            { status: 400 }
+            { status: 400 },
           );
         }
 
         // Verify authentication response
         const verification = await webAuthnService.verifyAuthenticationResponse(
           response,
-          userIdentifier
+          userIdentifier,
         );
 
         if (!verification.verified) {
           return NextResponse.json(
             { error: 'Authentication verification failed' },
-            { status: 400 }
+            { status: 400 },
           );
         }
 
@@ -46,7 +46,7 @@ export async function POST(request: NextRequest) {
         if (userError || !user) {
           return NextResponse.json(
             { error: 'User not found' },
-            { status: 404 }
+            { status: 404 },
           );
         }
 
@@ -66,13 +66,13 @@ export async function POST(request: NextRequest) {
                 ? error.message
                 : 'Authentication verification failed',
           },
-          { status: 500 }
+          { status: 500 },
         );
       }
     },
     {
       method: 'webauthn',
       additionalData: { operation: 'authentication_verification' },
-    }
+    },
   );
 }

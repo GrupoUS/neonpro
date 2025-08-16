@@ -87,7 +87,7 @@ export class LGPDComplianceManager {
    * Complies with LGPD Article 37 - Data Processing Records
    */
   async createAuditLog(
-    logEntry: Omit<LGPDAuditLog, 'id' | 'created_at'>
+    logEntry: Omit<LGPDAuditLog, 'id' | 'created_at'>,
   ): Promise<{ success: boolean; error?: string }> {
     try {
       // Get current user for audit trail
@@ -140,7 +140,7 @@ export class LGPDComplianceManager {
     accessType: 'view' | 'edit' | 'create' | 'delete',
     tableAccessed: string,
     recordId?: string,
-    purpose?: string
+    purpose?: string,
   ): Promise<void> {
     await this.createAuditLog({
       event_type: 'patient_record_access',
@@ -165,7 +165,7 @@ export class LGPDComplianceManager {
     clinicId: string,
     consentType: LGPDConsentType,
     action: 'granted' | 'revoked' | 'updated',
-    consentDetails: Record<string, any>
+    consentDetails: Record<string, any>,
   ): Promise<void> {
     await this.createAuditLog({
       event_type: action === 'granted' ? 'consent_granted' : 'consent_revoked',
@@ -187,7 +187,7 @@ export class LGPDComplianceManager {
   async logAuthenticationEvent(
     userId: string,
     action: 'login' | 'logout' | 'failed_login' | 'password_reset',
-    metadata?: Record<string, any>
+    metadata?: Record<string, any>,
   ): Promise<void> {
     await this.createAuditLog({
       event_type: 'user_authentication',
@@ -213,7 +213,7 @@ export class LGPDComplianceManager {
     clinicId: string,
     dataType: 'financial' | 'medical_procedure' | 'photo' | 'biometric',
     action: string,
-    recordId?: string
+    recordId?: string,
   ): Promise<void> {
     await this.createAuditLog({
       event_type: 'sensitive_data_access',
@@ -241,7 +241,7 @@ export class LGPDComplianceManager {
     patientId: string,
     clinicId: string,
     requestType: LGPDDataSubjectRights,
-    requestDetails: Record<string, any>
+    requestDetails: Record<string, any>,
   ): Promise<{ success: boolean; data?: any; error?: string }> {
     try {
       // Log the data subject rights request
@@ -286,7 +286,7 @@ export class LGPDComplianceManager {
    */
   private async exportPatientData(
     patientId: string,
-    clinicId: string
+    clinicId: string,
   ): Promise<{ success: boolean; data?: any; error?: string }> {
     try {
       // Fetch all patient-related data across tables
@@ -307,7 +307,7 @@ export class LGPDComplianceManager {
         patientId,
         clinicId,
         'medical_procedure',
-        'data_export'
+        'data_export',
       );
 
       return {
@@ -332,7 +332,7 @@ export class LGPDComplianceManager {
    */
   private async anonymizePatientData(
     patientId: string,
-    clinicId: string
+    clinicId: string,
   ): Promise<{ success: boolean; error?: string }> {
     try {
       // Instead of deletion, anonymize data to preserve medical history
@@ -381,7 +381,7 @@ export class LGPDComplianceManager {
    */
   private async exportPatientDataPortable(
     patientId: string,
-    clinicId: string
+    clinicId: string,
   ): Promise<{ success: boolean; data?: any; error?: string }> {
     const exportResult = await this.exportPatientData(patientId, clinicId);
 
@@ -463,7 +463,7 @@ export class HealthcareLGPDHooks {
       purpose?: string;
       tableAccessed?: string;
       recordId?: string;
-    }
+    },
   ): Promise<{ allowed: boolean; reason?: string }> {
     try {
       // Log access attempt
@@ -473,7 +473,7 @@ export class HealthcareLGPDHooks {
         action,
         context.tableAccessed || 'patients',
         context.recordId,
-        context.purpose
+        context.purpose,
       );
 
       // Check if user has permission to access this patient's data
@@ -500,7 +500,7 @@ export class HealthcareLGPDHooks {
       userRole: string;
       recordId?: string;
       justification?: string;
-    }
+    },
   ): Promise<{ allowed: boolean; reason?: string }> {
     try {
       // Enhanced logging for sensitive data
@@ -510,7 +510,7 @@ export class HealthcareLGPDHooks {
         clinicId,
         dataType,
         action,
-        context.recordId
+        context.recordId,
       );
 
       // Additional validation for sensitive data access
@@ -540,7 +540,7 @@ export class HealthcareLGPDHooks {
     patientId: string,
     clinicId: string,
     consentType: LGPDConsentType,
-    purpose: string
+    purpose: string,
   ): Promise<{ valid: boolean; reason?: string }> {
     try {
       // Check if valid consent exists for this purpose
@@ -588,7 +588,7 @@ export const lgpdUtils = {
   generateConsentFormData: (
     consentType: LGPDConsentType,
     purpose: string,
-    retentionPeriod?: string
+    retentionPeriod?: string,
   ) => ({
     consent_type: consentType,
     purpose,
@@ -610,7 +610,7 @@ export const lgpdUtils = {
   validateDataProcessing: (
     purpose: string,
     legalBasis: string,
-    dataCategories: string[]
+    dataCategories: string[],
   ): { compliant: boolean; issues: string[] } => {
     const issues: string[] = [];
 
@@ -628,7 +628,7 @@ export const lgpdUtils = {
       !legalBasis.includes('Article 11')
     ) {
       issues.push(
-        'Sensitive data requires specific legal basis under Article 11'
+        'Sensitive data requires specific legal basis under Article 11',
       );
     }
 

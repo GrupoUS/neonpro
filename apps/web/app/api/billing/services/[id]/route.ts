@@ -15,7 +15,7 @@ const UpdateServiceSchema = z.object({
 
 export async function GET(
   _request: Request,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const resolvedParams = await params;
@@ -43,14 +43,14 @@ export async function GET(
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal Server Error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
 
 export async function PUT(
   request: Request,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const resolvedParams = await params;
@@ -77,7 +77,7 @@ export async function PUT(
     if (error) {
       return NextResponse.json(
         { error: 'Failed to update service' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -86,19 +86,19 @@ export async function PUT(
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Validation failed', details: error.errors },
-        { status: 400 }
+        { status: 400 },
       );
     }
     return NextResponse.json(
       { error: 'Internal Server Error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
 
 export async function DELETE(
   _request: Request,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const resolvedParams = await params;
@@ -122,7 +122,7 @@ export async function DELETE(
     if (invoiceError) {
       return NextResponse.json(
         { error: 'Failed to check service relations' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -138,7 +138,7 @@ export async function DELETE(
       if (error) {
         return NextResponse.json(
           { error: 'Failed to deactivate service' },
-          { status: 500 }
+          { status: 500 },
         );
       }
 
@@ -157,7 +157,7 @@ export async function DELETE(
     if (error) {
       return NextResponse.json(
         { error: 'Failed to delete service' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -165,7 +165,7 @@ export async function DELETE(
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal Server Error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

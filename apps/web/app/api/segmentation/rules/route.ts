@@ -36,7 +36,7 @@ export async function GET(_request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to fetch segmentation rules' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -58,7 +58,7 @@ export async function POST(request: NextRequest) {
     if (!validationResult.success) {
       return NextResponse.json(
         { error: 'Invalid input', details: validationResult.error.issues },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -80,12 +80,12 @@ export async function POST(request: NextRequest) {
         data: rule,
         message: 'Automated segmentation rule created successfully',
       },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to create segmentation rule' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

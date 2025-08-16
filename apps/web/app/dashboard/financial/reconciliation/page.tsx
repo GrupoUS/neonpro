@@ -28,10 +28,10 @@ export default function ReconciliationPage() {
   // Healthcare role-based access control
   const canAccessFinancial = hasPermission('financial.reconciliation.view');
   const canManageReconciliation = hasPermission(
-    'financial.reconciliation.manage'
+    'financial.reconciliation.manage',
   );
   const canConfigureAlgorithms = hasPermission(
-    'financial.algorithms.configure'
+    'financial.algorithms.configure',
   );
 
   if (authLoading || permissionsLoading) {

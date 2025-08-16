@@ -127,7 +127,7 @@ export const GET = withErrorMonitoring(async (_request: NextRequest) => {
         error: 'Erro interno do servidor',
         details: error instanceof Error ? error.message : 'Erro desconhecido',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 });
@@ -160,14 +160,14 @@ export const PUT = withErrorMonitoring(async (request: NextRequest) => {
           error:
             'Limite de precisão não pode ser maior que limite de confiança',
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     if (validatedConfig.retentionPeriodDays < 30) {
       return NextResponse.json(
         { error: 'Período de retenção mínimo é de 30 dias' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -234,14 +234,13 @@ export const PUT = withErrorMonitoring(async (request: NextRequest) => {
       message: 'Configuração atualizada com sucesso',
     });
   } catch (error) {
-
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {
           error: 'Dados de configuração inválidos',
           details: error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -250,7 +249,7 @@ export const PUT = withErrorMonitoring(async (request: NextRequest) => {
         error: 'Erro interno do servidor',
         details: error instanceof Error ? error.message : 'Erro desconhecido',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 });
@@ -318,7 +317,7 @@ export const POST = withErrorMonitoring(async (request: NextRequest) => {
         error: 'Erro interno do servidor',
         details: error instanceof Error ? error.message : 'Erro desconhecido',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 });

@@ -51,7 +51,7 @@ export class HealthTrendMonitor {
         vitalSignsTrends,
         symptomTrends,
         treatmentResponseTrends,
-        recoveryTrends
+        recoveryTrends,
       );
 
       // 6. Generate trend insights and recommendations
@@ -61,7 +61,7 @@ export class HealthTrendMonitor {
         treatmentResponseTrends,
         recoveryTrends,
         satisfactionTrends,
-        behavioralHealthTrends
+        behavioralHealthTrends,
       );
 
       // 7. Predict future health trends
@@ -87,21 +87,21 @@ export class HealthTrendMonitor {
         futureTrends,
         monitoringRecommendations: this.generateMonitoringRecommendations(
           alerts,
-          insights
+          insights,
         ),
         lastAnalysisDate: new Date(),
         analysisVersion: '1.0.0',
       };
     } catch (error) {
       throw new Error(
-        `Failed to monitor health trends: ${error instanceof Error ? error.message : 'Unknown error'}`
+        `Failed to monitor health trends: ${error instanceof Error ? error.message : 'Unknown error'}`,
       );
     }
   }
 
   async detectRealTimeAnomalies(
     patientId: string,
-    newHealthData: HealthDataPoint
+    newHealthData: HealthDataPoint,
   ): Promise<TrendAlert[]> {
     try {
       // Get recent trends for context
@@ -110,16 +110,16 @@ export class HealthTrendMonitor {
       // Analyze new data point against trends
       const anomalies = this.analyzeDataPointAnomalies(
         newHealthData,
-        recentTrends
+        recentTrends,
       );
 
       // Generate alerts for significant anomalies
       const alerts = anomalies
         .filter(
-          (anomaly) => anomaly.severity >= this.alertThresholds.minimumSeverity
+          (anomaly) => anomaly.severity >= this.alertThresholds.minimumSeverity,
         )
         .map((anomaly) =>
-          this.createTrendAlert(patientId, anomaly, newHealthData)
+          this.createTrendAlert(patientId, anomaly, newHealthData),
         );
 
       // Update trend cache
@@ -133,7 +133,7 @@ export class HealthTrendMonitor {
 
   async generateHealthReport(
     patientId: string,
-    timeframe: 'week' | 'month' | 'quarter' | 'year'
+    timeframe: 'week' | 'month' | 'quarter' | 'year',
   ): Promise<HealthTrendReport> {
     try {
       const _healthData = await this.getPatientHealthData(patientId, timeframe);
@@ -148,21 +148,21 @@ export class HealthTrendMonitor {
         keyMetrics: this.calculateKeyMetrics(trends),
         trendAnalysis: {
           improving: trends.vitalSignsTrends.filter(
-            (t) => t.direction === 'improving'
+            (t) => t.direction === 'improving',
           ),
           stable: trends.vitalSignsTrends.filter(
-            (t) => t.direction === 'stable'
+            (t) => t.direction === 'stable',
           ),
           concerning: trends.vitalSignsTrends.filter(
-            (t) => t.direction === 'deteriorating'
+            (t) => t.direction === 'deteriorating',
           ),
         },
         riskAssessment: this.assessTrendBasedRisks(trends),
         recommendations: trends.insights.map(
-          (insight) => insight.recommendation
+          (insight) => insight.recommendation,
         ),
         nextReviewDate: this.calculateNextReviewDate(
-          trends.healthTrajectoryScore
+          trends.healthTrajectoryScore,
         ),
         reportGeneratedDate: new Date(),
       };
@@ -170,7 +170,7 @@ export class HealthTrendMonitor {
       return report;
     } catch (error) {
       throw new Error(
-        `Failed to generate health report: ${error instanceof Error ? error.message : 'Unknown error'}`
+        `Failed to generate health report: ${error instanceof Error ? error.message : 'Unknown error'}`,
       );
     }
   }
@@ -178,7 +178,7 @@ export class HealthTrendMonitor {
   async predictHealthOutcomes(
     patientId: string,
     treatmentPlanId: string,
-    timeHorizon = 90 // days
+    timeHorizon = 90, // days
   ): Promise<HealthOutcomePrediction> {
     try {
       const [healthData, treatmentPlan, currentTrends] = await Promise.all([
@@ -192,7 +192,7 @@ export class HealthTrendMonitor {
         healthData,
         treatmentPlan,
         currentTrends,
-        timeHorizon
+        timeHorizon,
       );
 
       // Calculate confidence intervals
@@ -202,13 +202,13 @@ export class HealthTrendMonitor {
       // Identify factors that could influence outcomes
       const influencingFactors = this.identifyInfluencingFactors(
         currentTrends,
-        treatmentPlan
+        treatmentPlan,
       );
 
       // Generate scenario analysis
       const scenarios = this.generateScenarioAnalysis(
         predictions,
-        influencingFactors
+        influencingFactors,
       );
 
       return {
@@ -226,7 +226,7 @@ export class HealthTrendMonitor {
       };
     } catch (error) {
       throw new Error(
-        `Failed to predict health outcomes: ${error instanceof Error ? error.message : 'Unknown error'}`
+        `Failed to predict health outcomes: ${error instanceof Error ? error.message : 'Unknown error'}`,
       );
     }
   }
@@ -234,7 +234,7 @@ export class HealthTrendMonitor {
   // Data retrieval methods
   private async getPatientHealthData(
     patientId: string,
-    timeframe?: 'week' | 'month' | 'quarter' | 'year'
+    timeframe?: 'week' | 'month' | 'quarter' | 'year',
   ) {
     const timeWindow = this.calculateTimeWindow(timeframe);
 
@@ -263,7 +263,7 @@ export class HealthTrendMonitor {
           *,
           created_at >= '${timeWindow.start.toISOString()}'
         )
-      `
+      `,
       )
       .eq('id', patientId)
       .single();
@@ -273,14 +273,14 @@ export class HealthTrendMonitor {
 
   private async getRecentTrends(
     patientId: string,
-    days: number
+    days: number,
   ): Promise<HealthTrend[]> {
     // Check cache first
     const cached = this.trendCache.get(patientId);
     if (cached) {
       const cutoffDate = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
       return cached.filter(
-        (trend) => new Date(trend.lastUpdated) >= cutoffDate
+        (trend) => new Date(trend.lastUpdated) >= cutoffDate,
       );
     }
 
@@ -297,7 +297,7 @@ export class HealthTrendMonitor {
         `
         *,
         treatment_plan_items (*)
-      `
+      `,
       )
       .eq('id', treatmentPlanId)
       .single();
@@ -307,7 +307,7 @@ export class HealthTrendMonitor {
 
   // Trend analysis methods
   private async analyzeVitalSignsTrends(
-    healthData: any
+    healthData: any,
   ): Promise<HealthTrend[]> {
     const vitalSigns = healthData.vital_signs || [];
     const trends: HealthTrend[] = [];
@@ -350,7 +350,7 @@ export class HealthTrendMonitor {
     Object.entries(symptomGroups).forEach(([symptomType, symptomData]) => {
       const trend = this.analyzeSymptomTypeTrend(
         symptomType,
-        symptomData as any[]
+        symptomData as any[],
       );
       if (trend) {
         trends.push(trend);
@@ -361,7 +361,7 @@ export class HealthTrendMonitor {
   }
 
   private async analyzeTreatmentResponseTrends(
-    healthData: any
+    healthData: any,
   ): Promise<HealthTrend[]> {
     const treatmentSessions = healthData.treatment_sessions || [];
     const trends: HealthTrend[] = [];
@@ -396,7 +396,7 @@ export class HealthTrendMonitor {
     // Analyze overall recovery progression
     const overallRecoveryTrend = this.analyzeOverallRecovery(
       treatmentSessions,
-      healthAssessments
+      healthAssessments,
     );
     if (overallRecoveryTrend) {
       trends.push(overallRecoveryTrend);
@@ -412,7 +412,7 @@ export class HealthTrendMonitor {
   }
 
   private async analyzeSatisfactionTrends(
-    healthData: any
+    healthData: any,
   ): Promise<HealthTrend[]> {
     const satisfactionScores = healthData.satisfaction_scores || [];
     const trends: HealthTrend[] = [];
@@ -433,7 +433,7 @@ export class HealthTrendMonitor {
   }
 
   private async analyzeBehavioralHealthTrends(
-    healthData: any
+    healthData: any,
   ): Promise<HealthTrend[]> {
     const trends: HealthTrend[] = [];
 
@@ -468,19 +468,19 @@ export class HealthTrendMonitor {
     }
 
     const systolicTrend = this.calculateLinearTrend(
-      bpReadings.map((r) => r.systolic)
+      bpReadings.map((r) => r.systolic),
     );
     const diastolicTrend = this.calculateLinearTrend(
-      bpReadings.map((r) => r.diastolic)
+      bpReadings.map((r) => r.diastolic),
     );
 
     const direction = this.determineTrendDirection(
       systolicTrend.slope,
-      diastolicTrend.slope
+      diastolicTrend.slope,
     );
     const significance = this.calculateTrendSignificance(
       systolicTrend.rSquared,
-      diastolicTrend.rSquared
+      diastolicTrend.rSquared,
     );
 
     return {
@@ -492,18 +492,18 @@ export class HealthTrendMonitor {
       significance,
       timeframe: this.calculateTimeframe(
         bpReadings[0].date,
-        bpReadings.at(-1).date
+        bpReadings.at(-1).date,
       ),
       dataPoints: bpReadings.length,
       description: this.generateBPTrendDescription(
         direction,
         systolicTrend,
-        diastolicTrend
+        diastolicTrend,
       ),
       alertLevel: this.calculateBPAlertLevel(
         direction,
         systolicTrend,
-        diastolicTrend
+        diastolicTrend,
       ),
       lastUpdated: new Date(),
     };
@@ -536,7 +536,7 @@ export class HealthTrendMonitor {
       significance,
       timeframe: this.calculateTimeframe(
         hrReadings[0].date,
-        hrReadings.at(-1).date
+        hrReadings.at(-1).date,
       ),
       dataPoints: hrReadings.length,
       description: this.generateHRTrendDescription(direction, trend),
@@ -559,7 +559,7 @@ export class HealthTrendMonitor {
     }
 
     const trend = this.calculateLinearTrend(
-      weightReadings.map((r) => r.weight)
+      weightReadings.map((r) => r.weight),
     );
 
     const direction = this.determineTrendDirection(trend.slope);
@@ -574,7 +574,7 @@ export class HealthTrendMonitor {
       significance,
       timeframe: this.calculateTimeframe(
         weightReadings[0].date,
-        weightReadings.at(-1).date
+        weightReadings.at(-1).date,
       ),
       dataPoints: weightReadings.length,
       description: this.generateWeightTrendDescription(direction, trend),
@@ -610,7 +610,7 @@ export class HealthTrendMonitor {
       significance,
       timeframe: this.calculateTimeframe(
         bmiReadings[0].date,
-        bmiReadings.at(-1).date
+        bmiReadings.at(-1).date,
       ),
       dataPoints: bmiReadings.length,
       description: this.generateBMITrendDescription(direction, trend),
@@ -647,7 +647,7 @@ export class HealthTrendMonitor {
 
   private determineTrendDirection(
     slope: number,
-    slope2?: number
+    slope2?: number,
   ): 'improving' | 'stable' | 'deteriorating' {
     const avgSlope = slope2 !== undefined ? (slope + slope2) / 2 : slope;
 
@@ -659,7 +659,7 @@ export class HealthTrendMonitor {
 
   private calculateTrendSignificance(
     rSquared: number,
-    rSquared2?: number
+    rSquared2?: number,
   ): 'high' | 'medium' | 'low' {
     const avgRSquared =
       rSquared2 !== undefined ? (rSquared + rSquared2) / 2 : rSquared;
@@ -675,14 +675,14 @@ export class HealthTrendMonitor {
 
   private calculateTimeframe(startDate: Date, endDate: Date): number {
     return Math.floor(
-      (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)
+      (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24),
     );
   }
 
   private generateBPTrendDescription(
     direction: string,
     systolicTrend: LinearTrendResult,
-    diastolicTrend: LinearTrendResult
+    diastolicTrend: LinearTrendResult,
   ): string {
     if (direction === 'stable') {
       return 'Blood pressure readings remain stable within normal range';
@@ -700,7 +700,7 @@ export class HealthTrendMonitor {
   private calculateBPAlertLevel(
     direction: string,
     systolicTrend: LinearTrendResult,
-    diastolicTrend: LinearTrendResult
+    diastolicTrend: LinearTrendResult,
   ): 'none' | 'low' | 'medium' | 'high' {
     if (direction === 'stable') {
       return 'none';
@@ -708,11 +708,11 @@ export class HealthTrendMonitor {
 
     const maxSlope = Math.max(
       Math.abs(systolicTrend.slope),
-      Math.abs(diastolicTrend.slope)
+      Math.abs(diastolicTrend.slope),
     );
     const significance = this.calculateTrendSignificance(
       systolicTrend.rSquared,
-      diastolicTrend.rSquared
+      diastolicTrend.rSquared,
     );
 
     if (significance === 'high' && maxSlope > 1) {
@@ -731,42 +731,42 @@ export class HealthTrendMonitor {
   // Additional helper methods (simplified implementations)
   private generateHRTrendDescription(
     direction: string,
-    _trend: LinearTrendResult
+    _trend: LinearTrendResult,
   ): string {
     return `Heart rate showing ${direction} trend`; // Simplified
   }
 
   private calculateHRAlertLevel(
     _direction: string,
-    _trend: LinearTrendResult
+    _trend: LinearTrendResult,
   ): 'none' | 'low' | 'medium' | 'high' {
     return 'none'; // Simplified
   }
 
   private generateWeightTrendDescription(
     direction: string,
-    _trend: LinearTrendResult
+    _trend: LinearTrendResult,
   ): string {
     return `Weight showing ${direction} trend`; // Simplified
   }
 
   private calculateWeightAlertLevel(
     _direction: string,
-    _trend: LinearTrendResult
+    _trend: LinearTrendResult,
   ): 'none' | 'low' | 'medium' | 'high' {
     return 'none'; // Simplified
   }
 
   private generateBMITrendDescription(
     direction: string,
-    _trend: LinearTrendResult
+    _trend: LinearTrendResult,
   ): string {
     return `BMI showing ${direction} trend`; // Simplified
   }
 
   private calculateBMIAlertLevel(
     _direction: string,
-    _trend: LinearTrendResult
+    _trend: LinearTrendResult,
   ): 'none' | 'low' | 'medium' | 'high' {
     return 'none'; // Simplified
   }
@@ -784,32 +784,32 @@ export class HealthTrendMonitor {
 
   private analyzeSymptomTypeTrend(
     _symptomType: string,
-    _symptoms: any[]
+    _symptoms: any[],
   ): HealthTrend | null {
     return null; // Simplified implementation
   }
 
   private analyzeTreatmentEffectiveness(
-    _treatmentSessions: any[]
+    _treatmentSessions: any[],
   ): HealthTrend | null {
     return null; // Simplified implementation
   }
 
   private analyzeSideEffectsTrend(
-    _treatmentSessions: any[]
+    _treatmentSessions: any[],
   ): HealthTrend | null {
     return null; // Simplified implementation
   }
 
   private analyzeRecoveryTimeTrend(
-    _treatmentSessions: any[]
+    _treatmentSessions: any[],
   ): HealthTrend | null {
     return null; // Simplified implementation
   }
 
   private analyzeOverallRecovery(
     _treatmentSessions: any[],
-    _healthAssessments: any[]
+    _healthAssessments: any[],
   ): HealthTrend | null {
     return null; // Simplified implementation
   }
@@ -819,13 +819,13 @@ export class HealthTrendMonitor {
   }
 
   private analyzeOverallSatisfactionTrend(
-    _satisfactionScores: any[]
+    _satisfactionScores: any[],
   ): HealthTrend | null {
     return null; // Simplified implementation
   }
 
   private analyzeSatisfactionDimensionTrends(
-    _satisfactionScores: any[]
+    _satisfactionScores: any[],
   ): HealthTrend[] {
     return []; // Simplified implementation
   }
@@ -844,7 +844,7 @@ export class HealthTrendMonitor {
 
   private generateTrendAlerts(
     _anomalies: TrendAnomaly[],
-    _patientId: string
+    _patientId: string,
   ): TrendAlert[] {
     return []; // Simplified implementation
   }
@@ -853,7 +853,7 @@ export class HealthTrendMonitor {
     _vitalSignsTrends: HealthTrend[],
     _symptomTrends: HealthTrend[],
     _treatmentResponseTrends: HealthTrend[],
-    _recoveryTrends: HealthTrend[]
+    _recoveryTrends: HealthTrend[],
   ): number {
     return 7.5; // Simplified implementation
   }
@@ -864,21 +864,21 @@ export class HealthTrendMonitor {
     _treatmentResponseTrends: HealthTrend[],
     _recoveryTrends: HealthTrend[],
     _satisfactionTrends: HealthTrend[],
-    _behavioralHealthTrends: HealthTrend[]
+    _behavioralHealthTrends: HealthTrend[],
   ): TrendInsight[] {
     return []; // Simplified implementation
   }
 
   private async predictFutureTrends(
     _healthData: any,
-    _currentTrends: HealthTrend[]
+    _currentTrends: HealthTrend[],
   ): Promise<FutureTrendPrediction[]> {
     return []; // Simplified implementation
   }
 
   private generateMonitoringRecommendations(
     _alerts: TrendAlert[],
-    _insights: TrendInsight[]
+    _insights: TrendInsight[],
   ): string[] {
     return ['Continue regular monitoring']; // Simplified implementation
   }
@@ -916,7 +916,7 @@ export class HealthTrendMonitor {
 
   private analyzeDataPointAnomalies(
     _newData: HealthDataPoint,
-    _recentTrends: HealthTrend[]
+    _recentTrends: HealthTrend[],
   ): Anomaly[] {
     return []; // Simplified implementation
   }
@@ -924,7 +924,7 @@ export class HealthTrendMonitor {
   private createTrendAlert(
     patientId: string,
     anomaly: Anomaly,
-    data: HealthDataPoint
+    data: HealthDataPoint,
   ): TrendAlert {
     return {
       id: `alert_${Date.now()}`,
@@ -972,15 +972,15 @@ export class HealthTrendMonitor {
   }
 
   private calculateKeyMetrics(
-    trends: HealthTrendAnalysis
+    trends: HealthTrendAnalysis,
   ): Record<string, number> {
     return {
       overallScore: trends.healthTrajectoryScore,
       improvingTrends: trends.vitalSignsTrends.filter(
-        (t) => t.direction === 'improving'
+        (t) => t.direction === 'improving',
       ).length,
       concerningTrends: trends.vitalSignsTrends.filter(
-        (t) => t.direction === 'deteriorating'
+        (t) => t.direction === 'deteriorating',
       ).length,
     };
   }
@@ -999,39 +999,39 @@ export class HealthTrendMonitor {
     _healthData: any,
     _treatmentPlan: any,
     _trends: HealthTrendAnalysis,
-    _timeHorizon: number
+    _timeHorizon: number,
   ): Promise<HealthPrediction[]> {
     return []; // Simplified implementation
   }
 
   private calculateConfidenceIntervals(
-    _predictions: HealthPrediction[]
+    _predictions: HealthPrediction[],
   ): ConfidenceInterval[] {
     return []; // Simplified implementation
   }
 
   private identifyInfluencingFactors(
     _trends: HealthTrendAnalysis,
-    _treatmentPlan: any
+    _treatmentPlan: any,
   ): InfluencingFactor[] {
     return []; // Simplified implementation
   }
 
   private generateScenarioAnalysis(
     _predictions: HealthPrediction[],
-    _factors: InfluencingFactor[]
+    _factors: InfluencingFactor[],
   ): Scenario[] {
     return []; // Simplified implementation
   }
 
   private identifyRecommendedInterventions(
-    _predictions: HealthPrediction[]
+    _predictions: HealthPrediction[],
   ): string[] {
     return ['Continue current treatment plan']; // Simplified implementation
   }
 
   private identifyMonitoringPriorities(
-    _predictions: HealthPrediction[]
+    _predictions: HealthPrediction[],
   ): string[] {
     return ['Vital signs', 'Symptom tracking']; // Simplified implementation
   }

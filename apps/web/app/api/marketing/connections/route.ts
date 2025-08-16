@@ -60,7 +60,7 @@ export async function GET(request: NextRequest) {
     if (!session) {
       return NextResponse.json(
         { error: 'Authentication required' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -74,7 +74,7 @@ export async function GET(request: NextRequest) {
     if (!profile?.clinic_id) {
       return NextResponse.json(
         { error: 'Clinic access required' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -108,7 +108,7 @@ export async function GET(request: NextRequest) {
           integration_complexity,
           documentation_url
         )
-      `
+      `,
       )
       .eq('clinic_id', profile.clinic_id);
 
@@ -127,7 +127,7 @@ export async function GET(request: NextRequest) {
     if (error) {
       return NextResponse.json(
         { error: 'Failed to fetch connections' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -155,7 +155,7 @@ export async function GET(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -177,7 +177,7 @@ export async function POST(request: NextRequest) {
     if (!session) {
       return NextResponse.json(
         { error: 'Authentication required' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -191,7 +191,7 @@ export async function POST(request: NextRequest) {
     if (!profile?.clinic_id) {
       return NextResponse.json(
         { error: 'Clinic access required' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -199,7 +199,7 @@ export async function POST(request: NextRequest) {
     if (!['admin', 'owner', 'manager'].includes(profile.role)) {
       return NextResponse.json(
         { error: 'Insufficient permissions' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -217,7 +217,7 @@ export async function POST(request: NextRequest) {
     if (!platform || platform.status !== 'active') {
       return NextResponse.json(
         { error: 'Invalid or inactive platform' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -234,7 +234,7 @@ export async function POST(request: NextRequest) {
       if (existingConnection) {
         return NextResponse.json(
           { error: 'Connection already exists for this account' },
-          { status: 409 }
+          { status: 409 },
         );
       }
     }
@@ -266,14 +266,14 @@ export async function POST(request: NextRequest) {
           platform_type,
           features_supported
         )
-      `
+      `,
       )
       .single();
 
     if (error) {
       return NextResponse.json(
         { error: 'Failed to create connection' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -283,19 +283,19 @@ export async function POST(request: NextRequest) {
         data: newConnection,
         message: 'Marketing platform connected successfully',
       },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Invalid request data', details: error.errors },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

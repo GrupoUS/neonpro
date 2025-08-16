@@ -37,7 +37,7 @@ export class AnalyticsRepository {
   }
 
   async getConversionMetrics(
-    query: AnalyticsQuery
+    query: AnalyticsQuery,
   ): Promise<ConversionMetric[]> {
     const { data, error } = await this.supabase.rpc('get_conversion_metrics', {
       p_start_date: query.startDate.toISOString(),
@@ -68,7 +68,7 @@ export class AnalyticsRepository {
   // ========================================================================
 
   async getRevenueAggregation(
-    query: AnalyticsQuery
+    query: AnalyticsQuery,
   ): Promise<MetricAggregation> {
     const { data, error } = await this.supabase.rpc(
       'calculate_revenue_aggregation',
@@ -77,7 +77,7 @@ export class AnalyticsRepository {
         p_start_date: query.startDate.toISOString(),
         p_end_date: query.endDate.toISOString(),
         p_group_by: query.groupBy || [],
-      }
+      },
     );
 
     if (error) {
@@ -87,7 +87,7 @@ export class AnalyticsRepository {
   }
 
   async getConversionAggregation(
-    query: AnalyticsQuery
+    query: AnalyticsQuery,
   ): Promise<MetricAggregation> {
     const { data, error } = await this.supabase.rpc(
       'calculate_conversion_aggregation',
@@ -96,7 +96,7 @@ export class AnalyticsRepository {
         p_start_date: query.startDate.toISOString(),
         p_end_date: query.endDate.toISOString(),
         p_group_by: query.groupBy || [],
-      }
+      },
     );
 
     if (error) {
@@ -132,7 +132,7 @@ export class AnalyticsRepository {
             trend: payload.new?.trend || 'stable',
           };
           callback(metric);
-        }
+        },
       )
       .subscribe();
 

@@ -50,7 +50,7 @@ const UpdateProfileSchema = z.object({
  */
 export async function GET(
   _request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const supabase = await createClient();
@@ -96,7 +96,7 @@ export async function GET(
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to fetch patient profile' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -106,7 +106,7 @@ export async function GET(
  */
 export async function PUT(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const supabase = await createClient();
@@ -127,7 +127,7 @@ export async function PUT(
     if (!validation.success) {
       return NextResponse.json(
         { error: 'Invalid request data', details: validation.error.issues },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -140,7 +140,7 @@ export async function PUT(
     // Update profile
     const updatedProfile = await profileManager.updatePatientProfile(
       patientId,
-      validation.data
+      validation.data,
     );
 
     // Generate updated AI insights
@@ -167,7 +167,7 @@ export async function PUT(
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to update patient profile' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -177,7 +177,7 @@ export async function PUT(
  */
 export async function DELETE(
   _request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const supabase = await createClient();
@@ -207,7 +207,7 @@ export async function DELETE(
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to archive patient profile' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

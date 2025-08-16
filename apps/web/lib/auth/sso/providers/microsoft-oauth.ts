@@ -125,7 +125,7 @@ export class MicrosoftOAuthProvider {
     if (options.domainHint || this.config.domainHint) {
       params.append(
         'domain_hint',
-        options.domainHint || this.config.domainHint
+        options.domainHint || this.config.domainHint,
       );
     }
 
@@ -319,7 +319,7 @@ export class MicrosoftOAuthProvider {
             Authorization: `Bearer ${accessToken}`,
             Accept: 'application/json',
           },
-        }
+        },
       );
 
       if (!response.ok) {
@@ -330,7 +330,7 @@ export class MicrosoftOAuthProvider {
           tenant: this.config.tenant,
         });
         throw new Error(
-          `Microsoft OAuth extended user info fetch failed: ${errorData}`
+          `Microsoft OAuth extended user info fetch failed: ${errorData}`,
         );
       }
 
@@ -373,7 +373,7 @@ export class MicrosoftOAuthProvider {
           tenant: this.config.tenant,
         });
         throw new Error(
-          `Microsoft OAuth organization info fetch failed: ${errorData}`
+          `Microsoft OAuth organization info fetch failed: ${errorData}`,
         );
       }
 
@@ -531,7 +531,7 @@ export class MicrosoftOAuthProvider {
 
 // Export factory function
 export function createMicrosoftOAuthProvider(
-  config: MicrosoftOAuthConfig
+  config: MicrosoftOAuthConfig,
 ): MicrosoftOAuthProvider {
   return new MicrosoftOAuthProvider(config);
 }

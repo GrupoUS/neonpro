@@ -8,7 +8,7 @@ export const cnpjSchema = z
   .string()
   .regex(
     /^\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}$/,
-    'CNPJ deve estar no formato XX.XXX.XXX/XXXX-XX'
+    'CNPJ deve estar no formato XX.XXX.XXX/XXXX-XX',
   )
   .refine((cnpj) => {
     // Remove formatting
@@ -50,7 +50,7 @@ export const cpfSchema = z
   .string()
   .regex(
     /^\d{3}\.\d{3}\.\d{3}-\d{2}$/,
-    'CPF deve estar no formato XXX.XXX.XXX-XX'
+    'CPF deve estar no formato XXX.XXX.XXX-XX',
   )
   .refine((cpf) => {
     const digits = cpf.replace(/[^\d]/g, '');
@@ -92,11 +92,11 @@ export const cnpjCpfSchema = z
     const digits = value.replace(/[^\d]/g, '');
     if (digits.length === 11) {
       return cpfSchema.safeParse(
-        value.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4')
+        value.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4'),
       ).success;
     }
     return cnpjSchema.safeParse(
-      value.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, '$1.$2.$3/$4-$5')
+      value.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, '$1.$2.$3/$4-$5'),
     ).success;
   }, 'CNPJ ou CPF inválido');
 
@@ -184,7 +184,7 @@ export const taxConfigurationSchema = z.object({
     ['simples_nacional', 'lucro_presumido', 'lucro_real'],
     {
       errorMap: () => ({ message: 'Regime tributário inválido' }),
-    }
+    },
   ),
   optante_simples_nacional: z.boolean(),
 
@@ -259,7 +259,7 @@ export const serviceItemSchema = z
     {
       message: 'Valor total deve ser igual a quantidade × valor unitário',
       path: ['valor_total'],
-    }
+    },
   );
 
 // Customer Info Schema
@@ -443,7 +443,7 @@ export const spedEntrySchema = z
     {
       message: 'Lançamento deve ter valor a débito OU a crédito, não ambos',
       path: ['valor_debito'],
-    }
+    },
   );
 
 // Tax Compliance Report Schema
@@ -455,7 +455,7 @@ export const taxComplianceReportSchema = z.object({
     ['sped_ecd', 'sped_ecf', 'livro_registro', 'dctf', 'defis'],
     {
       errorMap: () => ({ message: 'Tipo de relatório inválido' }),
-    }
+    },
   ),
   periodo_referencia: z
     .string()
@@ -512,7 +512,7 @@ export const serviceTaxCodeSchema = z
     {
       message: 'Alíquota mínima deve ser menor ou igual à máxima',
       path: ['iss_aliquota_maxima'],
-    }
+    },
   );
 
 // Bulk Tax Calculation Request Schema
@@ -526,7 +526,7 @@ export const bulkTaxCalculationRequestSchema = z.object({
         description: z.string().optional(),
         customer_cnpj_cpf: cnpjCpfSchema.optional(),
         customer_city: z.string().optional(),
-      })
+      }),
     )
     .min(1, 'Pelo menos um cálculo é necessário')
     .max(100, 'Máximo de 100 cálculos por lote'),

@@ -141,7 +141,7 @@ export function formatCNPJ(cnpj: string): string {
 
   return clean.replace(
     /^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/,
-    '$1.$2.$3/$4-$5'
+    '$1.$2.$3/$4-$5',
   );
 }
 
@@ -185,7 +185,7 @@ class CNPJRateLimiter {
 
     // Remove old requests outside the window
     const validRequests = requests.filter(
-      (timestamp) => now - timestamp < CNPJRateLimiter.WINDOW_MS
+      (timestamp) => now - timestamp < CNPJRateLimiter.WINDOW_MS,
     );
 
     if (validRequests.length >= CNPJRateLimiter.MAX_REQUESTS_PER_MINUTE) {
@@ -203,12 +203,12 @@ class CNPJRateLimiter {
     const now = Date.now();
     const requests = CNPJRateLimiter.requests.get(ip) || [];
     const validRequests = requests.filter(
-      (timestamp) => now - timestamp < CNPJRateLimiter.WINDOW_MS
+      (timestamp) => now - timestamp < CNPJRateLimiter.WINDOW_MS,
     );
 
     return Math.max(
       0,
-      CNPJRateLimiter.MAX_REQUESTS_PER_MINUTE - validRequests.length
+      CNPJRateLimiter.MAX_REQUESTS_PER_MINUTE - validRequests.length,
     );
   }
 

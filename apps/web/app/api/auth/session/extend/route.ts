@@ -40,7 +40,7 @@ export async function POST(request: NextRequest) {
     if (!sessionToken) {
       return NextResponse.json(
         { error: 'No session token found' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
           error:
             'Invalid extension duration. Must be between 1 and 480 minutes.',
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -81,13 +81,13 @@ export async function POST(request: NextRequest) {
     // Extend the session
     const extendedSession = await manager.extendSession(
       sessionToken,
-      extendMinutes
+      extendMinutes,
     );
 
     if (!extendedSession) {
       return NextResponse.json(
         { error: 'Failed to extend session' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -116,7 +116,7 @@ export async function POST(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error during session extension' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

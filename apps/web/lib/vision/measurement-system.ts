@@ -150,7 +150,7 @@ export enum MeasurementCategory {
 export class ObjectiveMeasurementSystem {
   private readonly supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
   );
 
   private readonly calibrationData: Map<string, CalibrationData> = new Map();
@@ -177,7 +177,7 @@ export class ObjectiveMeasurementSystem {
     patientId: string,
     analysisId: string,
     treatmentType: string,
-    _options: MeasurementOptions = {}
+    _options: MeasurementOptions = {},
   ): Promise<MeasurementResult> {
     try {
       // Get measurement protocol for treatment type
@@ -190,46 +190,46 @@ export class ObjectiveMeasurementSystem {
       const beforeMeasurements = await this.extractMeasurements(
         beforeImage,
         protocol,
-        'before'
+        'before',
       );
 
       const afterMeasurements = await this.extractMeasurements(
         afterImage,
         protocol,
-        'after'
+        'after',
       );
 
       // Calculate objective measurements
       const objectiveMeasurements = this.calculateObjectiveMeasurements(
         beforeMeasurements,
         afterMeasurements,
-        protocol
+        protocol,
       );
 
       // Perform statistical analysis
       const comparisonScore =
         await this.statisticalAnalyzer.calculateComparisonScore(
-          objectiveMeasurements
+          objectiveMeasurements,
         );
 
       // Assess clinical significance
       const clinicalSignificance =
         await this.clinicalValidator.assessSignificance(
           objectiveMeasurements,
-          treatmentType
+          treatmentType,
         );
 
       // Generate standardized metrics
       const standardizedMetrics = this.generateStandardizedMetrics(
         objectiveMeasurements,
-        treatmentType
+        treatmentType,
       );
 
       // Perform quality assurance
       const qualityAssurance = await this.qualityController.performQA(
         objectiveMeasurements,
         beforeImage,
-        afterImage
+        afterImage,
       );
 
       const result: MeasurementResult = {
@@ -254,7 +254,7 @@ export class ObjectiveMeasurementSystem {
       return result;
     } catch (error) {
       throw new Error(
-        `Measurement failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+        `Measurement failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
       );
     }
   }
@@ -265,7 +265,7 @@ export class ObjectiveMeasurementSystem {
   private async extractMeasurements(
     image: tf.Tensor3D,
     protocol: MeasurementProtocol,
-    _phase: 'before' | 'after'
+    _phase: 'before' | 'after',
   ): Promise<RawMeasurement[]> {
     const measurements: RawMeasurement[] = [];
 
@@ -273,7 +273,7 @@ export class ObjectiveMeasurementSystem {
       try {
         const measurement = await this.performSingleMeasurement(
           image,
-          measurementSpec
+          measurementSpec,
         );
         measurements.push(measurement);
       } catch (_error) {}
@@ -287,7 +287,7 @@ export class ObjectiveMeasurementSystem {
    */
   private async performSingleMeasurement(
     image: tf.Tensor3D,
-    spec: MeasurementSpec
+    spec: MeasurementSpec,
   ): Promise<RawMeasurement> {
     switch (spec.type) {
       case MeasurementType.AREA:
@@ -318,7 +318,7 @@ export class ObjectiveMeasurementSystem {
   // Specific measurement implementations
   private async measureArea(
     image: tf.Tensor3D,
-    spec: MeasurementSpec
+    spec: MeasurementSpec,
   ): Promise<RawMeasurement> {
     return tf.tidy(() => {
       // Segment region of interest
@@ -350,7 +350,7 @@ export class ObjectiveMeasurementSystem {
 
   private async measurePerimeter(
     image: tf.Tensor3D,
-    spec: MeasurementSpec
+    spec: MeasurementSpec,
   ): Promise<RawMeasurement> {
     return tf.tidy(() => {
       const roi = this.extractROI(image, spec.region);
@@ -380,7 +380,7 @@ export class ObjectiveMeasurementSystem {
 
   private async measureVolume(
     image: tf.Tensor3D,
-    spec: MeasurementSpec
+    spec: MeasurementSpec,
   ): Promise<RawMeasurement> {
     // Stereophotogrammetry-based volume estimation
     return tf.tidy(() => {
@@ -410,7 +410,7 @@ export class ObjectiveMeasurementSystem {
 
   private async measureDistance(
     image: tf.Tensor3D,
-    spec: MeasurementSpec
+    spec: MeasurementSpec,
   ): Promise<RawMeasurement> {
     const landmarks = this.detectLandmarks(image, spec);
 
@@ -422,7 +422,7 @@ export class ObjectiveMeasurementSystem {
     const point2 = landmarks[1];
 
     const pixelDistance = Math.sqrt(
-      (point2.x - point1.x) ** 2 + (point2.y - point1.y) ** 2
+      (point2.x - point1.x) ** 2 + (point2.y - point1.y) ** 2,
     );
 
     const pixelSize = this.getPixelSize(spec.region);
@@ -445,7 +445,7 @@ export class ObjectiveMeasurementSystem {
 
   private async measureAngle(
     image: tf.Tensor3D,
-    spec: MeasurementSpec
+    spec: MeasurementSpec,
   ): Promise<RawMeasurement> {
     const landmarks = this.detectLandmarks(image, spec);
 
@@ -480,7 +480,7 @@ export class ObjectiveMeasurementSystem {
 
   private async measureIntensity(
     image: tf.Tensor3D,
-    spec: MeasurementSpec
+    spec: MeasurementSpec,
   ): Promise<RawMeasurement> {
     return tf.tidy(() => {
       const roi = this.extractROI(image, spec.region);
@@ -504,7 +504,7 @@ export class ObjectiveMeasurementSystem {
 
   private async measureTexture(
     image: tf.Tensor3D,
-    spec: MeasurementSpec
+    spec: MeasurementSpec,
   ): Promise<RawMeasurement> {
     return tf.tidy(() => {
       const roi = this.extractROI(image, spec.region);
@@ -528,7 +528,7 @@ export class ObjectiveMeasurementSystem {
 
   private async measureColor(
     image: tf.Tensor3D,
-    spec: MeasurementSpec
+    spec: MeasurementSpec,
   ): Promise<RawMeasurement> {
     return tf.tidy(() => {
       const roi = this.extractROI(image, spec.region);
@@ -557,7 +557,7 @@ export class ObjectiveMeasurementSystem {
 
   private async measureSymmetry(
     image: tf.Tensor3D,
-    spec: MeasurementSpec
+    spec: MeasurementSpec,
   ): Promise<RawMeasurement> {
     return tf.tidy(() => {
       const roi = this.extractROI(image, spec.region);
@@ -582,7 +582,7 @@ export class ObjectiveMeasurementSystem {
 
   private async measureRoughness(
     image: tf.Tensor3D,
-    spec: MeasurementSpec
+    spec: MeasurementSpec,
   ): Promise<RawMeasurement> {
     return tf.tidy(() => {
       const roi = this.extractROI(image, spec.region);
@@ -611,7 +611,7 @@ export class ObjectiveMeasurementSystem {
     return tf.slice(
       image,
       [region.y, region.x, 0],
-      [region.height, region.width, -1]
+      [region.height, region.width, -1],
     ) as tf.Tensor3D;
   }
 
@@ -623,7 +623,7 @@ export class ObjectiveMeasurementSystem {
 
   private calculateMeasurementConfidence(
     tensor: tf.Tensor,
-    _spec: MeasurementSpec
+    _spec: MeasurementSpec,
   ): number {
     // Calculate confidence based on measurement quality
     const variance = tf.moments(tensor).variance.dataSync()[0];
@@ -649,7 +649,7 @@ export class ObjectiveMeasurementSystem {
 
   private detectLandmarks(
     _image: tf.Tensor3D,
-    spec: MeasurementSpec
+    spec: MeasurementSpec,
   ): Landmark[] {
     // Simplified landmark detection
     // In production, this would use advanced computer vision algorithms
@@ -695,13 +695,13 @@ export class ObjectiveMeasurementSystem {
   private calculateObjectiveMeasurements(
     beforeMeasurements: RawMeasurement[],
     afterMeasurements: RawMeasurement[],
-    protocol: MeasurementProtocol
+    protocol: MeasurementProtocol,
   ): ObjectiveMeasurement[] {
     const objectiveMeasurements: ObjectiveMeasurement[] = [];
 
     for (const beforeMeas of beforeMeasurements) {
       const afterMeas = afterMeasurements.find(
-        (m) => m.type === beforeMeas.type
+        (m) => m.type === beforeMeas.type,
       );
 
       if (afterMeas) {
@@ -727,7 +727,7 @@ export class ObjectiveMeasurementSystem {
           methodology: protocol.methodology,
           clinicalRelevance: this.calculateClinicalRelevance(
             beforeMeas.type,
-            changePercentage
+            changePercentage,
           ),
         });
       }
@@ -738,7 +738,7 @@ export class ObjectiveMeasurementSystem {
 
   private getMeasurementCategory(
     _type: MeasurementType,
-    protocol: MeasurementProtocol
+    protocol: MeasurementProtocol,
   ): MeasurementCategory {
     // Map measurement types to categories based on protocol
     const categoryMap: Record<string, MeasurementCategory> = {
@@ -754,7 +754,7 @@ export class ObjectiveMeasurementSystem {
 
   private calculateClinicalRelevance(
     type: MeasurementType,
-    changePercentage: number
+    changePercentage: number,
   ): number {
     // Calculate clinical relevance based on measurement type and change magnitude
     const relevanceThresholds: Record<MeasurementType, number> = {
@@ -778,7 +778,7 @@ export class ObjectiveMeasurementSystem {
 
   private generateStandardizedMetrics(
     measurements: ObjectiveMeasurement[],
-    treatmentType: string
+    treatmentType: string,
   ): StandardizedMetrics {
     const metrics: StandardizedMetrics = {
       overallImprovement: 0,
@@ -831,7 +831,7 @@ export class ObjectiveMeasurementSystem {
   // Standardized metric calculations
   private calculateSymmetryIndex(measurements: ObjectiveMeasurement[]): number {
     const symmetryMeasurements = measurements.filter(
-      (m) => m.type === MeasurementType.SYMMETRY
+      (m) => m.type === MeasurementType.SYMMETRY,
     );
     if (symmetryMeasurements.length === 0) {
       return 0;
@@ -844,10 +844,10 @@ export class ObjectiveMeasurementSystem {
   }
 
   private calculateVolumetricChange(
-    measurements: ObjectiveMeasurement[]
+    measurements: ObjectiveMeasurement[],
   ): number {
     const volumeMeasurements = measurements.filter(
-      (m) => m.type === MeasurementType.VOLUME
+      (m) => m.type === MeasurementType.VOLUME,
     );
     if (volumeMeasurements.length === 0) {
       return 0;
@@ -860,10 +860,10 @@ export class ObjectiveMeasurementSystem {
   }
 
   private calculateContourDefinition(
-    measurements: ObjectiveMeasurement[]
+    measurements: ObjectiveMeasurement[],
   ): number {
     const perimeterMeasurements = measurements.filter(
-      (m) => m.type === MeasurementType.PERIMETER
+      (m) => m.type === MeasurementType.PERIMETER,
     );
     if (perimeterMeasurements.length === 0) {
       return 0;
@@ -872,16 +872,16 @@ export class ObjectiveMeasurementSystem {
     const avgChange =
       perimeterMeasurements.reduce(
         (sum, m) => sum + Math.abs(m.changePercentage),
-        0
+        0,
       ) / perimeterMeasurements.length;
     return Math.min(100, avgChange);
   }
 
   private calculateProportionalBalance(
-    measurements: ObjectiveMeasurement[]
+    measurements: ObjectiveMeasurement[],
   ): number {
     const angleMeasurements = measurements.filter(
-      (m) => m.type === MeasurementType.ANGLE
+      (m) => m.type === MeasurementType.ANGLE,
     );
     if (angleMeasurements.length === 0) {
       return 0;
@@ -890,13 +890,13 @@ export class ObjectiveMeasurementSystem {
     const avgImprovement =
       angleMeasurements.reduce(
         (sum, m) => sum + Math.abs(m.changePercentage),
-        0
+        0,
       ) / angleMeasurements.length;
     return Math.max(0, 100 - avgImprovement); // Lower angle changes = better balance
   }
 
   private calculateSkinQualityIndex(
-    measurements: ObjectiveMeasurement[]
+    measurements: ObjectiveMeasurement[],
   ): number {
     const textureScore = this.calculateTextureUniformity(measurements);
     const colorScore = this.calculatePigmentationIndex(measurements);
@@ -906,17 +906,17 @@ export class ObjectiveMeasurementSystem {
         .reduce((sum, m) => sum + (100 - Math.abs(m.changePercentage)), 0) /
       Math.max(
         1,
-        measurements.filter((m) => m.type === MeasurementType.ROUGHNESS).length
+        measurements.filter((m) => m.type === MeasurementType.ROUGHNESS).length,
       );
 
     return (textureScore + colorScore + roughnessScore) / 3;
   }
 
   private calculateTextureUniformity(
-    measurements: ObjectiveMeasurement[]
+    measurements: ObjectiveMeasurement[],
   ): number {
     const textureMeasurements = measurements.filter(
-      (m) => m.type === MeasurementType.TEXTURE
+      (m) => m.type === MeasurementType.TEXTURE,
     );
     if (textureMeasurements.length === 0) {
       return 0;
@@ -929,10 +929,10 @@ export class ObjectiveMeasurementSystem {
   }
 
   private calculatePigmentationIndex(
-    measurements: ObjectiveMeasurement[]
+    measurements: ObjectiveMeasurement[],
   ): number {
     const colorMeasurements = measurements.filter(
-      (m) => m.type === MeasurementType.COLOR
+      (m) => m.type === MeasurementType.COLOR,
     );
     if (colorMeasurements.length === 0) {
       return 0;
@@ -945,7 +945,7 @@ export class ObjectiveMeasurementSystem {
   }
 
   private calculateElasticityScore(
-    measurements: ObjectiveMeasurement[]
+    measurements: ObjectiveMeasurement[],
   ): number {
     // Elasticity would be measured through specialized techniques
     // For now, approximate from texture and volume changes
@@ -956,10 +956,10 @@ export class ObjectiveMeasurementSystem {
   }
 
   private calculateHealingProgress(
-    measurements: ObjectiveMeasurement[]
+    measurements: ObjectiveMeasurement[],
   ): number {
     const areaMeasurements = measurements.filter(
-      (m) => m.type === MeasurementType.AREA
+      (m) => m.type === MeasurementType.AREA,
     );
     if (areaMeasurements.length === 0) {
       return 0;
@@ -969,16 +969,16 @@ export class ObjectiveMeasurementSystem {
     const avgAreaReduction =
       areaMeasurements.reduce(
         (sum, m) => sum + Math.max(0, -m.changePercentage),
-        0
+        0,
       ) / areaMeasurements.length;
     return Math.min(100, avgAreaReduction);
   }
 
   private calculateInflammationReduction(
-    measurements: ObjectiveMeasurement[]
+    measurements: ObjectiveMeasurement[],
   ): number {
     const intensityMeasurements = measurements.filter(
-      (m) => m.type === MeasurementType.INTENSITY
+      (m) => m.type === MeasurementType.INTENSITY,
     );
     if (intensityMeasurements.length === 0) {
       return 0;
@@ -988,14 +988,14 @@ export class ObjectiveMeasurementSystem {
     const avgIntensityReduction =
       intensityMeasurements.reduce(
         (sum, m) => sum + Math.max(0, -m.changePercentage),
-        0
+        0,
       ) / intensityMeasurements.length;
     return Math.min(100, avgIntensityReduction);
   }
 
   private calculateLesionSize(measurements: ObjectiveMeasurement[]): number {
     const areaMeasurements = measurements.filter(
-      (m) => m.type === MeasurementType.AREA
+      (m) => m.type === MeasurementType.AREA,
     );
     if (areaMeasurements.length === 0) {
       return 0;
@@ -1008,20 +1008,20 @@ export class ObjectiveMeasurementSystem {
   }
 
   private calculateScarVisibility(
-    measurements: ObjectiveMeasurement[]
+    measurements: ObjectiveMeasurement[],
   ): number {
     const textureMeasurements = measurements.filter(
-      (m) => m.type === MeasurementType.TEXTURE
+      (m) => m.type === MeasurementType.TEXTURE,
     );
     const colorMeasurements = measurements.filter(
-      (m) => m.type === MeasurementType.COLOR
+      (m) => m.type === MeasurementType.COLOR,
     );
 
     const textureScore =
       textureMeasurements.length > 0
         ? textureMeasurements.reduce(
             (sum, m) => sum + (100 - Math.abs(m.changePercentage)),
-            0
+            0,
           ) / textureMeasurements.length
         : 50;
 
@@ -1029,7 +1029,7 @@ export class ObjectiveMeasurementSystem {
       colorMeasurements.length > 0
         ? colorMeasurements.reduce(
             (sum, m) => sum + (100 - Math.abs(m.changePercentage)),
-            0
+            0,
           ) / colorMeasurements.length
         : 50;
 
@@ -1037,7 +1037,7 @@ export class ObjectiveMeasurementSystem {
   }
 
   private calculateOverallImprovement(
-    measurements: ObjectiveMeasurement[]
+    measurements: ObjectiveMeasurement[],
   ): number {
     if (measurements.length === 0) {
       return 0;
@@ -1051,14 +1051,14 @@ export class ObjectiveMeasurementSystem {
 
     const totalWeight = measurements.reduce(
       (sum, m) => sum + m.clinicalRelevance,
-      0
+      0,
     );
 
     return totalWeight > 0 ? weightedSum / totalWeight : 0;
   }
 
   private calculateTreatmentResponse(
-    measurements: ObjectiveMeasurement[]
+    measurements: ObjectiveMeasurement[],
   ): number {
     // Treatment response based on confidence-weighted improvements
     if (measurements.length === 0) {
@@ -1077,7 +1077,7 @@ export class ObjectiveMeasurementSystem {
   }
 
   private predictPatientSatisfaction(
-    measurements: ObjectiveMeasurement[]
+    measurements: ObjectiveMeasurement[],
   ): number {
     // Predict patient satisfaction based on visible improvements
     const visibleImprovements = measurements.filter(
@@ -1085,7 +1085,7 @@ export class ObjectiveMeasurementSystem {
         m.type === MeasurementType.AREA ||
         m.type === MeasurementType.COLOR ||
         m.type === MeasurementType.TEXTURE ||
-        m.type === MeasurementType.SYMMETRY
+        m.type === MeasurementType.SYMMETRY,
     );
 
     if (visibleImprovements.length === 0) {
@@ -1095,7 +1095,7 @@ export class ObjectiveMeasurementSystem {
     const avgImprovement =
       visibleImprovements.reduce(
         (sum, m) => sum + Math.abs(m.changePercentage),
-        0
+        0,
       ) / visibleImprovements.length;
 
     // Convert to satisfaction score (0-100)
@@ -1251,7 +1251,7 @@ export class ObjectiveMeasurementSystem {
 
   private async ensureCalibration(
     _beforeImage: tf.Tensor3D,
-    _afterImage: tf.Tensor3D
+    _afterImage: tf.Tensor3D,
   ): Promise<void> {
     // Verify calibration is still valid
     const calibration = this.calibrationData.get('default');
@@ -1268,7 +1268,7 @@ export class ObjectiveMeasurementSystem {
   }
 
   private async saveMeasurementResult(
-    result: MeasurementResult
+    result: MeasurementResult,
   ): Promise<void> {
     const { error } = await this.supabase.from('measurement_results').insert({
       id: result.id,
@@ -1327,11 +1327,11 @@ export class ObjectiveMeasurementSystem {
    */
   async validateMeasurements(
     measurementId: string,
-    groundTruth: ObjectiveMeasurement[]
+    groundTruth: ObjectiveMeasurement[],
   ): Promise<ValidationResult> {
     return this.clinicalValidator.validateMeasurements(
       measurementId,
-      groundTruth
+      groundTruth,
     );
   }
 
@@ -1358,7 +1358,7 @@ class QualityController {
   async performQA(
     measurements: ObjectiveMeasurement[],
     beforeImage: tf.Tensor3D,
-    afterImage: tf.Tensor3D
+    afterImage: tf.Tensor3D,
   ): Promise<QualityAssurance> {
     const validationChecks: ValidationCheck[] = [];
 
@@ -1379,7 +1379,7 @@ class QualityController {
     });
 
     const _passedChecks = validationChecks.filter(
-      (check) => check.passed
+      (check) => check.passed,
     ).length;
     const _totalChecks = validationChecks.length;
 
@@ -1399,7 +1399,7 @@ class QualityController {
 
   private checkImageQuality(
     _beforeImage: tf.Tensor3D,
-    _afterImage: tf.Tensor3D
+    _afterImage: tf.Tensor3D,
   ): boolean {
     // Check image quality metrics
     return true; // Simplified for now
@@ -1408,7 +1408,7 @@ class QualityController {
 
 class StatisticalAnalyzer {
   async calculateComparisonScore(
-    measurements: ObjectiveMeasurement[]
+    measurements: ObjectiveMeasurement[],
   ): Promise<number> {
     if (measurements.length === 0) {
       return 0;
@@ -1423,7 +1423,7 @@ class StatisticalAnalyzer {
 
     const totalWeight = measurements.reduce(
       (sum, m) => sum + m.confidence * m.clinicalRelevance,
-      0
+      0,
     );
 
     return totalWeight > 0 ? Math.min(100, weightedSum / totalWeight) : 0;
@@ -1433,7 +1433,7 @@ class StatisticalAnalyzer {
 class ClinicalValidator {
   async assessSignificance(
     measurements: ObjectiveMeasurement[],
-    _treatmentType: string
+    _treatmentType: string,
   ): Promise<ClinicalSignificance> {
     const progressIndicators: ProgressIndicator[] = measurements.map((m) => ({
       metric: `${m.type}_change`,
@@ -1469,7 +1469,7 @@ class ClinicalValidator {
 
   async validateMeasurements(
     _measurementId: string,
-    _groundTruth: ObjectiveMeasurement[]
+    _groundTruth: ObjectiveMeasurement[],
   ): Promise<ValidationResult> {
     // Validate measurements against ground truth
     return {

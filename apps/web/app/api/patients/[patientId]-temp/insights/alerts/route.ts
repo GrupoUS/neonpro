@@ -9,7 +9,7 @@ const patientInsights = new PatientInsightsIntegration();
 
 export async function GET(
   _request: NextRequest,
-  { params }: { params: { patientId: string } }
+  { params }: { params: { patientId: string } },
 ) {
   try {
     const supabase = createRouteHandlerClient({ cookies });
@@ -35,7 +35,7 @@ export async function GET(
 
     // Monitor patient alerts
     const alertSummary = await patientInsights.monitorPatientAlerts(
-      params.patientId
+      params.patientId,
     );
 
     return NextResponse.json({
@@ -45,14 +45,14 @@ export async function GET(
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to retrieve patient alerts' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { patientId: string } }
+  { params }: { params: { patientId: string } },
 ) {
   try {
     const supabase = createRouteHandlerClient({ cookies });
@@ -70,7 +70,7 @@ export async function POST(
 
     // Get detailed alerts with filters
     const alertSummary = await patientInsights.monitorPatientAlerts(
-      params.patientId
+      params.patientId,
     );
 
     // Apply filters
@@ -78,13 +78,13 @@ export async function POST(
 
     if (alertTypes.length > 0) {
       filteredAlerts = filteredAlerts.filter((alert) =>
-        alertTypes.includes(alert.type)
+        alertTypes.includes(alert.type),
       );
     }
 
     if (severityFilter) {
       filteredAlerts = filteredAlerts.filter(
-        (alert) => alert.severity === severityFilter
+        (alert) => alert.severity === severityFilter,
       );
     }
 
@@ -99,7 +99,7 @@ export async function POST(
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to retrieve filtered alerts' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

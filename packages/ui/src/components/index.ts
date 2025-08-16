@@ -54,7 +54,7 @@ export { PatientDetailLayout } from './PatientDetailLayout';
 export type {
   PatientTableAction,
   PatientTableColumn,
-  PatientTablePagination,
+
   PatientTableProps,
   PatientTableSort,
   PatientTableViewMode,
@@ -62,7 +62,7 @@ export type {
 // Complex Components
 export { PatientTable } from './PatientTable';
 export { Popover, PopoverContent, PopoverTrigger } from './Popover';
-export type { ProcedureFormProps } from './ProcedureForm';
+
 export { ProcedureForm } from './ProcedureForm';
 export type { ProgressBarProps } from './ProgressBar';
 // Supporting Components
@@ -88,6 +88,6 @@ export { Textarea } from './Textarea';
 export type { TimePickerProps } from './TimePicker';
 
 export { TimePicker } from './TimePicker';
-export type { TreatmentCardProps } from './TreatmentCard';
+
 // Healthcare Specialized Components
 export { TreatmentCard } from './TreatmentCard';

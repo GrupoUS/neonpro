@@ -30,14 +30,14 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
 
     const issue = await supplierService.updateQualityIssue(
       params.id,
-      validationResult.data
+      validationResult.data,
     );
 
     return NextResponse.json(issue);
   } catch (_error) {
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

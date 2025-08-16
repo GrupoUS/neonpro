@@ -31,7 +31,7 @@ export async function GET(_request: NextRequest, { params }: Params) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to fetch budget' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -64,7 +64,7 @@ export async function PATCH(request: NextRequest, { params }: Params) {
     if (error || !budget) {
       return NextResponse.json(
         { error: 'Failed to update budget' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -73,13 +73,13 @@ export async function PATCH(request: NextRequest, { params }: Params) {
     if (error instanceof Error && error.name === 'ZodError') {
       return NextResponse.json(
         { error: 'Invalid update data' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     return NextResponse.json(
       { error: 'Failed to update budget' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -104,7 +104,7 @@ export async function DELETE(_request: NextRequest, { params }: Params) {
     if (error) {
       return NextResponse.json(
         { error: 'Failed to delete budget' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -112,7 +112,7 @@ export async function DELETE(_request: NextRequest, { params }: Params) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to delete budget' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

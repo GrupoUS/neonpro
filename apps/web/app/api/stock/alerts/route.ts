@@ -71,7 +71,7 @@ export async function GET(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -105,7 +105,7 @@ export async function POST(request: NextRequest) {
       case 'acknowledge': {
         const ackResult = await alertsService.acknowledgeAlert(
           body.data,
-          user.id
+          user.id,
         );
         if (!ackResult.success) {
           return NextResponse.json({ error: ackResult.error }, { status: 400 });
@@ -116,12 +116,12 @@ export async function POST(request: NextRequest) {
       case 'resolve': {
         const resolveResult = await alertsService.resolveAlert(
           body.data,
-          user.id
+          user.id,
         );
         if (!resolveResult.success) {
           return NextResponse.json(
             { error: resolveResult.error },
-            { status: 400 }
+            { status: 400 },
           );
         }
         return NextResponse.json({ data: resolveResult.data });
@@ -131,12 +131,12 @@ export async function POST(request: NextRequest) {
         const dismissResult = await alertsService.dismissAlert(
           body.data.alert_id,
           user.id,
-          body.data.reason
+          body.data.reason,
         );
         if (!dismissResult.success) {
           return NextResponse.json(
             { error: dismissResult.error },
-            { status: 400 }
+            { status: 400 },
           );
         }
         return NextResponse.json({ data: dismissResult.data });
@@ -144,12 +144,12 @@ export async function POST(request: NextRequest) {
 
       case 'generate': {
         const generateResult = await alertsService.generateAlerts(
-          profile.clinic_id
+          profile.clinic_id,
         );
         if (!generateResult.success) {
           return NextResponse.json(
             { error: generateResult.error },
-            { status: 500 }
+            { status: 500 },
           );
         }
         return NextResponse.json({ data: generateResult.data });
@@ -161,7 +161,7 @@ export async function POST(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

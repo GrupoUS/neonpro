@@ -99,7 +99,7 @@ export class NotificationService {
 
   // Configuração de Notificações
   async getNotificationConfigs(
-    clinicId: string
+    clinicId: string,
   ): Promise<NotificationConfig[]> {
     // Mock implementation - substituir por query real quando tabela for criada
     return [
@@ -130,7 +130,7 @@ export class NotificationService {
   }
 
   async createNotificationConfig(
-    config: Omit<NotificationConfig, 'id' | 'created_at' | 'updated_at'>
+    config: Omit<NotificationConfig, 'id' | 'created_at' | 'updated_at'>,
   ): Promise<NotificationConfig> {
     // Mock implementation
     const newConfig: NotificationConfig = {
@@ -144,11 +144,11 @@ export class NotificationService {
 
   async updateNotificationConfig(
     id: string,
-    config: Partial<NotificationConfig>
+    config: Partial<NotificationConfig>,
   ): Promise<NotificationConfig> {
     // Mock implementation
     const existingConfig = await this.getNotificationConfigs(
-      config.clinic_id || ''
+      config.clinic_id || '',
     );
     const configToUpdate = existingConfig.find((c) => c.id === id);
 
@@ -166,7 +166,7 @@ export class NotificationService {
   // Monitoramento de Vencimentos
   async getDuePayments(
     clinicId: string,
-    daysAhead = 7
+    daysAhead = 7,
   ): Promise<PaymentReminder[]> {
     try {
       const supabase = await this.getSupabaseClient();
@@ -177,7 +177,7 @@ export class NotificationService {
           `
           *,
           vendor:vendors(*)
-        `
+        `,
         )
         .eq('clinic_id', clinicId)
         .in('status', ['pending', 'approved'])
@@ -185,7 +185,7 @@ export class NotificationService {
           'due_date',
           new Date(Date.now() + daysAhead * 24 * 60 * 60 * 1000)
             .toISOString()
-            .split('T')[0]
+            .split('T')[0],
         );
 
       if (error) {
@@ -250,7 +250,7 @@ export class NotificationService {
   // Alertas do Dashboard
   async getDashboardAlerts(
     clinicId: string,
-    limit = 10
+    limit = 10,
   ): Promise<DashboardAlert[]> {
     // Mock implementation baseada em pagamentos próximos do vencimento
     const duePayments = await this.getDuePayments(clinicId, 7);
@@ -284,7 +284,7 @@ export class NotificationService {
         is_dismissed: false,
         action_url: `/dashboard/accounts-payable/payables?id=${reminder.accounts_payable.id}`,
         expires_at: new Date(
-          Date.now() + 7 * 24 * 60 * 60 * 1000
+          Date.now() + 7 * 24 * 60 * 60 * 1000,
         ).toISOString(),
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
@@ -300,7 +300,7 @@ export class NotificationService {
 
   // Fila de Notificações
   async queueNotification(
-    notification: Omit<NotificationQueue, 'id' | 'created_at' | 'updated_at'>
+    notification: Omit<NotificationQueue, 'id' | 'created_at' | 'updated_at'>,
   ): Promise<NotificationQueue> {
     const queuedNotification: NotificationQueue = {
       ...notification,
@@ -350,7 +350,7 @@ export class NotificationService {
   async getNotificationStats(
     _clinicId: string,
     _startDate: string,
-    _endDate: string
+    _endDate: string,
   ) {
     // Mock implementation
     return {

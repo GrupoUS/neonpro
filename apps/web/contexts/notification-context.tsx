@@ -22,7 +22,7 @@ type NotificationContextValue = {
   markAllAsRead: () => Promise<void>;
   deleteNotification: (notificationId: string) => Promise<void>;
   updatePreferences: (
-    preferences: Partial<NotificationPreferences>
+    preferences: Partial<NotificationPreferences>,
   ) => Promise<void>;
   refreshNotifications: () => Promise<void>;
 
@@ -38,7 +38,7 @@ type NotificationContextValue = {
 };
 
 const NotificationContext = createContext<NotificationContextValue | undefined>(
-  undefined
+  undefined,
 );
 
 type NotificationProviderProps = {
@@ -167,7 +167,7 @@ export function NotificationProvider({
   // Send push notification
   const sendPushNotification = (
     title: string,
-    options: NotificationOptions = {}
+    options: NotificationOptions = {},
   ) => {
     if (!('Notification' in window) || Notification.permission !== 'granted') {
       return;
@@ -243,7 +243,7 @@ export function NotificationProvider({
       if (hasUnreadNotifications && preferences?.push_enabled) {
         // Auto-mark recent notifications as read when user focuses the app
         const recentNotifications = getUnreadNotifications().filter(
-          (notif) => new Date(notif.created_at).getTime() > Date.now() - 30_000 // Last 30 seconds
+          (notif) => new Date(notif.created_at).getTime() > Date.now() - 30_000, // Last 30 seconds
         );
 
         recentNotifications.forEach((notif) => {
@@ -294,7 +294,7 @@ export function useNotificationContext(): NotificationContextValue {
 
   if (context === undefined) {
     throw new Error(
-      'useNotificationContext must be used within a NotificationProvider'
+      'useNotificationContext must be used within a NotificationProvider',
     );
   }
 
@@ -306,7 +306,7 @@ export function useNotificationToast() {
   const showSuccess = (
     title: string,
     description?: string,
-    action?: { label: string; onClick: () => void }
+    action?: { label: string; onClick: () => void },
   ) => {
     toast.success(title, { description, action });
   };

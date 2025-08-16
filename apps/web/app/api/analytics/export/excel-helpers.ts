@@ -211,7 +211,7 @@ function _addForecastSheetsToWorkbook(workbook: any, data: any, _options: any) {
           scenario.impact || '',
           scenario.probability || '',
         ]);
-      }
+      },
     );
 
     const scenarioSheet = XLSX.utils.aoa_to_sheet(scenarioData);
@@ -340,7 +340,7 @@ function _addInsightsSheetsToWorkbook(workbook: any, data: any, _options: any) {
 function _addDashboardSheetsToWorkbook(
   workbook: any,
   data: any,
-  _options: any
+  _options: any,
 ) {
   // KPIs Sheet
   const kpiData = [

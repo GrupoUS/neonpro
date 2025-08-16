@@ -9,7 +9,7 @@ export async function POST(request: NextRequest) {
     if (!(planId && successUrl && cancelUrl)) {
       return NextResponse.json(
         { error: 'Missing required fields: planId, successUrl, cancelUrl' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
     if (userError || !user) {
       return NextResponse.json(
         { error: 'User not authenticated' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -34,7 +34,7 @@ export async function POST(request: NextRequest) {
       user.id,
       user.email!,
       successUrl,
-      cancelUrl
+      cancelUrl,
     );
 
     return NextResponse.json({
@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
         error: 'Failed to create checkout session',
         message: error.message,
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

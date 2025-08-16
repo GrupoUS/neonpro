@@ -99,7 +99,7 @@ export const ReconciliationMatchSchema = z.object({
   matchConfidence: z.number().min(0).max(1),
   matchType: z.enum(['exact', 'fuzzy', 'partial', 'manual']),
   matchCriteria: z.array(
-    z.enum(['amount', 'date', 'description', 'customer', 'reference'])
+    z.enum(['amount', 'date', 'description', 'customer', 'reference']),
   ),
   amountVariance: z.number().optional(),
   dateVariance: z.number().optional(), // Days
@@ -153,7 +153,7 @@ export class AutomatedReconciliationEngine {
       dateRange?: { startDate: Date; endDate: Date };
       autoApproveHighConfidence?: boolean;
       batchSize?: number;
-    } = {}
+    } = {},
   ): Promise<{
     matches: ReconciliationMatch[];
     report: ReconciliationReport;
@@ -170,11 +170,11 @@ export class AutomatedReconciliationEngine {
       // Filter by date range if specified
       const filteredBankTx = this.filterByDateRange(
         bankTransactions,
-        options.dateRange
+        options.dateRange,
       );
       const filteredClinicTx = this.filterByDateRange(
         clinicTransactions,
-        options.dateRange
+        options.dateRange,
       );
 
       // Reset reconciliation status
@@ -183,7 +183,7 @@ export class AutomatedReconciliationEngine {
       // Perform intelligent matching
       const matches = await this.performIntelligentMatching(
         filteredBankTx,
-        filteredClinicTx
+        filteredClinicTx,
       );
 
       // Auto-approve high confidence matches if enabled
@@ -195,7 +195,7 @@ export class AutomatedReconciliationEngine {
       await this.updateTransactionStatuses(
         matches,
         filteredBankTx,
-        filteredClinicTx
+        filteredClinicTx,
       );
 
       // Generate reconciliation report
@@ -203,19 +203,19 @@ export class AutomatedReconciliationEngine {
         filteredBankTx,
         filteredClinicTx,
         matches,
-        Date.now() - startTime
+        Date.now() - startTime,
       );
 
       // Get unmatched transactions
       const unmatchedBank = this.getUnmatchedTransactions(
         filteredBankTx,
         matches,
-        'bank'
+        'bank',
       );
       const unmatchedClinic = this.getUnmatchedTransactions(
         filteredClinicTx,
         matches,
-        'clinic'
+        'clinic',
       );
 
       return {
@@ -234,7 +234,7 @@ export class AutomatedReconciliationEngine {
    */
   private async performIntelligentMatching(
     bankTransactions: BankTransaction[],
-    clinicTransactions: ClinicTransaction[]
+    clinicTransactions: ClinicTransaction[],
   ): Promise<ReconciliationMatch[]> {
     const matches: ReconciliationMatch[] = [];
     const usedBankTxIds = new Set<string>();
@@ -243,7 +243,7 @@ export class AutomatedReconciliationEngine {
     // Phase 1: Exact matches (amount + date + reference)
     const exactMatches = await this.findExactMatches(
       bankTransactions,
-      clinicTransactions
+      clinicTransactions,
     );
     matches.push(...exactMatches);
     exactMatches.forEach((match) => {
@@ -253,15 +253,15 @@ export class AutomatedReconciliationEngine {
 
     // Phase 2: High confidence fuzzy matches
     const remainingBankTx = bankTransactions.filter(
-      (tx) => !usedBankTxIds.has(tx.id)
+      (tx) => !usedBankTxIds.has(tx.id),
     );
     const remainingClinicTx = clinicTransactions.filter(
-      (tx) => !usedClinicTxIds.has(tx.id)
+      (tx) => !usedClinicTxIds.has(tx.id),
     );
 
     const fuzzyMatches = await this.findFuzzyMatches(
       remainingBankTx,
-      remainingClinicTx
+      remainingClinicTx,
     );
     matches.push(...fuzzyMatches);
     fuzzyMatches.forEach((match) => {
@@ -271,15 +271,15 @@ export class AutomatedReconciliationEngine {
 
     // Phase 3: Partial matches (split payments, installments)
     const remainingBankTx2 = bankTransactions.filter(
-      (tx) => !usedBankTxIds.has(tx.id)
+      (tx) => !usedBankTxIds.has(tx.id),
     );
     const remainingClinicTx2 = clinicTransactions.filter(
-      (tx) => !usedClinicTxIds.has(tx.id)
+      (tx) => !usedClinicTxIds.has(tx.id),
     );
 
     const partialMatches = await this.findPartialMatches(
       remainingBankTx2,
-      remainingClinicTx2
+      remainingClinicTx2,
     );
     matches.push(...partialMatches);
 
@@ -291,7 +291,7 @@ export class AutomatedReconciliationEngine {
    */
   private async findExactMatches(
     bankTransactions: BankTransaction[],
-    clinicTransactions: ClinicTransaction[]
+    clinicTransactions: ClinicTransaction[],
   ): Promise<ReconciliationMatch[]> {
     const matches: ReconciliationMatch[] = [];
 
@@ -335,7 +335,7 @@ export class AutomatedReconciliationEngine {
    */
   private async findFuzzyMatches(
     bankTransactions: BankTransaction[],
-    clinicTransactions: ClinicTransaction[]
+    clinicTransactions: ClinicTransaction[],
   ): Promise<ReconciliationMatch[]> {
     const matches: ReconciliationMatch[] = [];
 
@@ -370,11 +370,11 @@ export class AutomatedReconciliationEngine {
           matchType: 'fuzzy',
           matchCriteria: bestMatch.criteria as any[],
           amountVariance: Math.abs(
-            bankTx.amount - Math.abs(bestMatch.clinicTx.amount)
+            bankTx.amount - Math.abs(bestMatch.clinicTx.amount),
           ),
           dateVariance:
             Math.abs(
-              bankTx.date.getTime() - bestMatch.clinicTx.date.getTime()
+              bankTx.date.getTime() - bestMatch.clinicTx.date.getTime(),
             ) /
             (1000 * 60 * 60 * 24),
           validationStatus:
@@ -397,7 +397,7 @@ export class AutomatedReconciliationEngine {
    */
   private async findPartialMatches(
     bankTransactions: BankTransaction[],
-    clinicTransactions: ClinicTransaction[]
+    clinicTransactions: ClinicTransaction[],
   ): Promise<ReconciliationMatch[]> {
     const matches: ReconciliationMatch[] = [];
 
@@ -435,7 +435,7 @@ export class AutomatedReconciliationEngine {
    */
   private calculateMatchScore(
     bankTx: BankTransaction,
-    clinicTx: ClinicTransaction
+    clinicTx: ClinicTransaction,
   ): { score: number; criteria: string[] } {
     let score = 0;
     const criteria: string[] = [];
@@ -452,7 +452,7 @@ export class AutomatedReconciliationEngine {
       0,
       1 -
         amountDiff /
-          Math.max(Math.abs(bankTx.amount), Math.abs(clinicTx.amount))
+          Math.max(Math.abs(bankTx.amount), Math.abs(clinicTx.amount)),
     );
 
     if (amountSimilarity > 0.95) {
@@ -477,7 +477,7 @@ export class AutomatedReconciliationEngine {
     // Description similarity (using Levenshtein distance)
     const descriptionSimilarity = this.calculateStringSimilarity(
       this.normalizeDescription(bankTx.description),
-      this.normalizeDescription(clinicTx.description)
+      this.normalizeDescription(clinicTx.description),
     );
 
     if (descriptionSimilarity > 0.6) {
@@ -489,7 +489,7 @@ export class AutomatedReconciliationEngine {
     if (clinicTx.customerName && bankTx.counterparty?.name) {
       const customerSimilarity = this.calculateStringSimilarity(
         this.normalizeName(clinicTx.customerName),
-        this.normalizeName(bankTx.counterparty.name)
+        this.normalizeName(bankTx.counterparty.name),
       );
 
       if (customerSimilarity > 0.7) {
@@ -505,7 +505,7 @@ export class AutomatedReconciliationEngine {
    * Auto-approve high confidence matches
    */
   private async autoApproveHighConfidenceMatches(
-    matches: ReconciliationMatch[]
+    matches: ReconciliationMatch[],
   ): Promise<void> {
     for (const match of matches) {
       if (
@@ -525,7 +525,7 @@ export class AutomatedReconciliationEngine {
   private async updateTransactionStatuses(
     matches: ReconciliationMatch[],
     bankTransactions: BankTransaction[],
-    clinicTransactions: ClinicTransaction[]
+    clinicTransactions: ClinicTransaction[],
   ): Promise<void> {
     const matchedBankIds = new Set(matches.map((m) => m.bankTransactionId));
     const matchedClinicIds = new Set(matches.map((m) => m.clinicTransactionId));
@@ -561,13 +561,13 @@ export class AutomatedReconciliationEngine {
     bankTransactions: BankTransaction[],
     clinicTransactions: ClinicTransaction[],
     matches: ReconciliationMatch[],
-    processingTime: number
+    processingTime: number,
   ): ReconciliationReport {
     const approvedMatches = matches.filter(
-      (m) => m.validationStatus === 'approved'
+      (m) => m.validationStatus === 'approved',
     );
     const pendingMatches = matches.filter(
-      (m) => m.validationStatus === 'pending'
+      (m) => m.validationStatus === 'pending',
     );
     const automaticMatches = matches.filter((m) => m.matchType !== 'manual');
     const manualMatches = matches.filter((m) => m.matchType === 'manual');
@@ -590,20 +590,20 @@ export class AutomatedReconciliationEngine {
     return {
       period: {
         startDate: new Date(
-          Math.min(...bankTransactions.map((tx) => tx.date.getTime()))
+          Math.min(...bankTransactions.map((tx) => tx.date.getTime())),
         ),
         endDate: new Date(
-          Math.max(...bankTransactions.map((tx) => tx.date.getTime()))
+          Math.max(...bankTransactions.map((tx) => tx.date.getTime())),
         ),
       },
       totalBankTransactions: bankTransactions.length,
       totalClinicTransactions: clinicTransactions.length,
       matchedTransactions: approvedMatches.length,
       unmatchedBankTransactions: bankTransactions.filter(
-        (tx) => tx.reconciliationStatus === 'unmatched'
+        (tx) => tx.reconciliationStatus === 'unmatched',
       ).length,
       unmatchedClinicTransactions: clinicTransactions.filter(
-        (tx) => tx.reconciliationStatus === 'unmatched'
+        (tx) => tx.reconciliationStatus === 'unmatched',
       ).length,
       pendingReviewTransactions: pendingMatches.length,
       reconciliationRate,
@@ -623,20 +623,20 @@ export class AutomatedReconciliationEngine {
 
   private filterByDateRange<T extends { date: Date }>(
     transactions: T[],
-    dateRange?: { startDate: Date; endDate: Date }
+    dateRange?: { startDate: Date; endDate: Date },
   ): T[] {
     if (!dateRange) {
       return transactions;
     }
 
     return transactions.filter(
-      (tx) => tx.date >= dateRange.startDate && tx.date <= dateRange.endDate
+      (tx) => tx.date >= dateRange.startDate && tx.date <= dateRange.endDate,
     );
   }
 
   private async resetReconciliationStatus(
     bankTransactions: BankTransaction[],
-    clinicTransactions: ClinicTransaction[]
+    clinicTransactions: ClinicTransaction[],
   ): Promise<void> {
     bankTransactions.forEach((tx) => {
       tx.reconciliationStatus = 'pending';
@@ -651,19 +651,19 @@ export class AutomatedReconciliationEngine {
   private getUnmatchedTransactions<T extends { id: string }>(
     transactions: T[],
     matches: ReconciliationMatch[],
-    type: 'bank' | 'clinic'
+    type: 'bank' | 'clinic',
   ): T[] {
     const matchedIds = new Set(
       matches.map((m) =>
-        type === 'bank' ? m.bankTransactionId : m.clinicTransactionId
-      )
+        type === 'bank' ? m.bankTransactionId : m.clinicTransactionId,
+      ),
     );
 
     return transactions.filter((tx) => !matchedIds.has(tx.id));
   }
 
   private groupTransactionsByCustomerAndDate(
-    transactions: ClinicTransaction[]
+    transactions: ClinicTransaction[],
   ): Map<string, ClinicTransaction[]> {
     const groups = new Map<string, ClinicTransaction[]>();
 
@@ -680,7 +680,7 @@ export class AutomatedReconciliationEngine {
 
   private findMatchingGroups(
     bankTx: BankTransaction,
-    groupedTransactions: Map<string, ClinicTransaction[]>
+    groupedTransactions: Map<string, ClinicTransaction[]>,
   ): Array<{ transactions: ClinicTransaction[]; confidence: number }> {
     const matchingGroups: Array<{
       transactions: ClinicTransaction[];
@@ -690,7 +690,7 @@ export class AutomatedReconciliationEngine {
     for (const [_key, transactions] of groupedTransactions) {
       const totalAmount = transactions.reduce(
         (sum, tx) => sum + Math.abs(tx.amount),
-        0
+        0,
       );
       const amountMatch =
         Math.abs(bankTx.amount - totalAmount) <= this.AMOUNT_VARIANCE_TOLERANCE;
@@ -699,7 +699,7 @@ export class AutomatedReconciliationEngine {
         // Calculate confidence based on amount match and date proximity
         const avgDate = new Date(
           transactions.reduce((sum, tx) => sum + tx.date.getTime(), 0) /
-            transactions.length
+            transactions.length,
         );
         const dateDiff =
           Math.abs(bankTx.date.getTime() - avgDate.getTime()) /
@@ -734,7 +734,7 @@ export class AutomatedReconciliationEngine {
         matrix[j][i] = Math.min(
           matrix[j][i - 1] + 1, // deletion
           matrix[j - 1][i] + 1, // insertion
-          matrix[j - 1][i - 1] + indicator // substitution
+          matrix[j - 1][i - 1] + indicator, // substitution
         );
       }
     }

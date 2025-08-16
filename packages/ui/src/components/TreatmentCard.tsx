@@ -16,7 +16,7 @@ import { Badge } from './Badge';
 import { Button } from './Button';
 import { ProgressBar } from './ProgressBar';
 
-export type TreatmentCardProps = {
+type TreatmentCardProps = {
   treatment: TreatmentData;
   practitioner?: PractitionerData;
   showProgress?: boolean;
@@ -93,7 +93,7 @@ const TreatmentCard = React.forwardRef<HTMLDivElement, TreatmentCardProps>(
               <Badge
                 variant={
                   treatment.status === 'completed'
-                    ? 'success'
+                    ? 'confirmed'
                     : treatment.status === 'active'
                       ? 'default'
                       : treatment.status === 'cancelled'
@@ -116,7 +116,7 @@ const TreatmentCard = React.forwardRef<HTMLDivElement, TreatmentCardProps>(
           {treatment.priority && treatment.priority !== 'normal' && (
             <Badge
               variant={
-                treatment.priority === 'high' ? 'destructive' : 'warning'
+                treatment.priority === 'high' ? 'destructive' : 'pending'
               }
             >
               {treatment.priority === 'high' ? 'Alta Prioridade' : 'Moderada'}
@@ -181,7 +181,7 @@ const TreatmentCard = React.forwardRef<HTMLDivElement, TreatmentCardProps>(
           {/* Practitioner */}
           {practitioner && (
             <div className="flex items-center gap-3 rounded-md bg-muted/50 p-3">
-              <Avatar size="sm" variant="practitioner">
+              <Avatar size="sm">
                 <AvatarImage
                   alt={practitioner.name}
                   src={practitioner.avatar}
@@ -312,4 +312,3 @@ const TreatmentCard = React.forwardRef<HTMLDivElement, TreatmentCardProps>(
 TreatmentCard.displayName = 'TreatmentCard';
 
 export { TreatmentCard };
-export type { TreatmentCardProps };

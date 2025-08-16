@@ -18,7 +18,7 @@ export class VendorService {
   static async getVendors(
     filters?: VendorFilters,
     page = 1,
-    pageSize = 20
+    pageSize = 20,
   ): Promise<VendorsResponse> {
     let query = supabase
       .from('vendors')
@@ -29,7 +29,7 @@ export class VendorService {
     // Apply filters
     if (filters?.search) {
       query = query.or(
-        `company_name.ilike.%${filters.search}%,vendor_code.ilike.%${filters.search}%,contact_person.ilike.%${filters.search}%`
+        `company_name.ilike.%${filters.search}%,vendor_code.ilike.%${filters.search}%,contact_person.ilike.%${filters.search}%`,
       );
     }
 
@@ -114,7 +114,7 @@ export class VendorService {
    */
   static async updateVendor(
     id: string,
-    vendorData: Partial<VendorFormData>
+    vendorData: Partial<VendorFormData>,
   ): Promise<Vendor> {
     const { data: vendor, error } = await supabase
       .from('vendors')
@@ -159,7 +159,7 @@ export class VendorService {
    */
   static async toggleVendorStatus(
     id: string,
-    isActive: boolean
+    isActive: boolean,
   ): Promise<Vendor> {
     const { data: vendor, error } = await supabase
       .from('vendors')
@@ -185,7 +185,7 @@ export class VendorService {
    */
   static async isVendorCodeUnique(
     vendorCode: string,
-    excludeId?: string
+    excludeId?: string,
   ): Promise<boolean> {
     try {
       let query = supabase

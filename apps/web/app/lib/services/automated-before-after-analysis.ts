@@ -56,7 +56,7 @@ export class AutomatedBeforeAfterAnalysisService {
   }
 
   async getAnalysisEngineConfig(
-    id: string
+    id: string,
   ): Promise<AnalysisEngineConfig | null> {
     const { data, error } = await this.supabase
       .from('analysis_engine_config')
@@ -71,7 +71,7 @@ export class AutomatedBeforeAfterAnalysisService {
   }
 
   async createAnalysisEngineConfig(
-    config: Partial<AnalysisEngineConfig>
+    config: Partial<AnalysisEngineConfig>,
   ): Promise<AnalysisEngineConfig> {
     const { data, error } = await this.supabase
       .from('analysis_engine_config')
@@ -87,7 +87,7 @@ export class AutomatedBeforeAfterAnalysisService {
 
   async updateAnalysisEngineConfig(
     id: string,
-    updates: Partial<AnalysisEngineConfig>
+    updates: Partial<AnalysisEngineConfig>,
   ): Promise<AnalysisEngineConfig> {
     const { data, error } = await this.supabase
       .from('analysis_engine_config')
@@ -104,7 +104,7 @@ export class AutomatedBeforeAfterAnalysisService {
 
   // Photo Analysis Session Methods
   async getAnalysisSessions(
-    filters: AnalysisSessionFilters = {}
+    filters: AnalysisSessionFilters = {},
   ): Promise<PhotoAnalysisSession[]> {
     let query = this.supabase.from('photo_analysis_sessions').select('*');
 
@@ -158,7 +158,7 @@ export class AutomatedBeforeAfterAnalysisService {
   }
 
   async createAnalysisSession(
-    request: CreateAnalysisSessionRequest
+    request: CreateAnalysisSessionRequest,
   ): Promise<PhotoAnalysisSession> {
     const {
       data: { user },
@@ -183,7 +183,7 @@ export class AutomatedBeforeAfterAnalysisService {
 
   async updateAnalysisSession(
     id: string,
-    updates: Partial<PhotoAnalysisSession>
+    updates: Partial<PhotoAnalysisSession>,
   ): Promise<PhotoAnalysisSession> {
     const { data, error } = await this.supabase
       .from('photo_analysis_sessions')
@@ -211,7 +211,7 @@ export class AutomatedBeforeAfterAnalysisService {
 
   // Before/After Photo Pair Methods
   async getPhotoPairs(
-    filters: PhotoPairFilters = {}
+    filters: PhotoPairFilters = {},
   ): Promise<BeforeAfterPhotoPair[]> {
     let query = this.supabase.from('before_after_photo_pairs').select('*');
 
@@ -262,7 +262,7 @@ export class AutomatedBeforeAfterAnalysisService {
   }
 
   async createPhotoPair(
-    request: CreatePhotoPairRequest
+    request: CreatePhotoPairRequest,
   ): Promise<BeforeAfterPhotoPair> {
     const { data, error } = await this.supabase
       .from('before_after_photo_pairs')
@@ -278,7 +278,7 @@ export class AutomatedBeforeAfterAnalysisService {
 
   async updatePhotoPair(
     id: string,
-    updates: Partial<BeforeAfterPhotoPair>
+    updates: Partial<BeforeAfterPhotoPair>,
   ): Promise<BeforeAfterPhotoPair> {
     const { data, error } = await this.supabase
       .from('before_after_photo_pairs')
@@ -306,7 +306,7 @@ export class AutomatedBeforeAfterAnalysisService {
 
   // Image Analysis Result Methods
   async getAnalysisResults(
-    filters: AnalysisResultFilters = {}
+    filters: AnalysisResultFilters = {},
   ): Promise<ImageAnalysisResult[]> {
     let query = this.supabase.from('image_analysis_results').select('*');
 
@@ -351,7 +351,7 @@ export class AutomatedBeforeAfterAnalysisService {
   }
 
   async createAnalysisResult(
-    result: Partial<ImageAnalysisResult>
+    result: Partial<ImageAnalysisResult>,
   ): Promise<ImageAnalysisResult> {
     const { data, error } = await this.supabase
       .from('image_analysis_results')
@@ -393,7 +393,7 @@ export class AutomatedBeforeAfterAnalysisService {
   }
 
   async createMeasurementMetric(
-    metric: Partial<MeasurementMetric>
+    metric: Partial<MeasurementMetric>,
   ): Promise<MeasurementMetric> {
     const { data, error } = await this.supabase
       .from('measurement_metrics')
@@ -409,7 +409,7 @@ export class AutomatedBeforeAfterAnalysisService {
 
   async updateMeasurementMetric(
     id: string,
-    updates: Partial<MeasurementMetric>
+    updates: Partial<MeasurementMetric>,
   ): Promise<MeasurementMetric> {
     const { data, error } = await this.supabase
       .from('measurement_metrics')
@@ -452,7 +452,7 @@ export class AutomatedBeforeAfterAnalysisService {
   }
 
   async createTreatmentArea(
-    area: Partial<TreatmentArea>
+    area: Partial<TreatmentArea>,
   ): Promise<TreatmentArea> {
     const { data, error } = await this.supabase
       .from('treatment_areas')
@@ -468,7 +468,7 @@ export class AutomatedBeforeAfterAnalysisService {
 
   async updateTreatmentArea(
     id: string,
-    updates: Partial<TreatmentArea>
+    updates: Partial<TreatmentArea>,
   ): Promise<TreatmentArea> {
     const { data, error } = await this.supabase
       .from('treatment_areas')
@@ -485,7 +485,7 @@ export class AutomatedBeforeAfterAnalysisService {
 
   // Visual Annotations Methods
   async getVisualAnnotations(
-    analysisResultId: string
+    analysisResultId: string,
   ): Promise<VisualAnnotation[]> {
     const { data, error } = await this.supabase
       .from('visual_annotations')
@@ -501,7 +501,7 @@ export class AutomatedBeforeAfterAnalysisService {
   }
 
   async createVisualAnnotation(
-    request: AnnotationCreateRequest
+    request: AnnotationCreateRequest,
   ): Promise<VisualAnnotation> {
     const { data, error } = await this.supabase
       .from('visual_annotations')
@@ -517,7 +517,7 @@ export class AutomatedBeforeAfterAnalysisService {
 
   async updateVisualAnnotation(
     id: string,
-    updates: Partial<VisualAnnotation>
+    updates: Partial<VisualAnnotation>,
   ): Promise<VisualAnnotation> {
     const { data, error } = await this.supabase
       .from('visual_annotations')
@@ -545,7 +545,7 @@ export class AutomatedBeforeAfterAnalysisService {
 
   // Analysis Reports Methods
   async getAnalysisReports(
-    filters: ReportFilters = {}
+    filters: ReportFilters = {},
   ): Promise<AnalysisReport[]> {
     let query = this.supabase.from('analysis_reports').select('*');
 
@@ -580,7 +580,7 @@ export class AutomatedBeforeAfterAnalysisService {
   }
 
   async generateReport(
-    request: GenerateReportRequest
+    request: GenerateReportRequest,
   ): Promise<AnalysisReport> {
     const {
       data: { user },
@@ -604,12 +604,12 @@ export class AutomatedBeforeAfterAnalysisService {
       analysis_summary: {
         total_pairs: photoPairs.length,
         analyzed_pairs: photoPairs.filter(
-          (p) => p.analysis_status === 'analyzed'
+          (p) => p.analysis_status === 'analyzed',
         ).length,
         average_improvement:
           photoPairs.reduce(
             (acc, p) => acc + (p.improvement_percentage || 0),
-            0
+            0,
           ) / photoPairs.length,
         overall_accuracy: session.accuracy_score,
         processing_time: session.processing_time_seconds,
@@ -641,7 +641,7 @@ export class AutomatedBeforeAfterAnalysisService {
 
   // Quality Validation Methods
   async getQualityValidations(
-    analysisResultId: string
+    analysisResultId: string,
   ): Promise<QualityValidation[]> {
     const { data, error } = await this.supabase
       .from('quality_validations')
@@ -656,7 +656,7 @@ export class AutomatedBeforeAfterAnalysisService {
   }
 
   async createQualityValidation(
-    request: AccuracyValidationRequest
+    request: AccuracyValidationRequest,
   ): Promise<QualityValidation> {
     const {
       data: { user },
@@ -681,7 +681,7 @@ export class AutomatedBeforeAfterAnalysisService {
 
   async updateQualityValidation(
     id: string,
-    updates: Partial<QualityValidation>
+    updates: Partial<QualityValidation>,
   ): Promise<QualityValidation> {
     const { data, error } = await this.supabase
       .from('quality_validations')
@@ -710,7 +710,7 @@ export class AutomatedBeforeAfterAnalysisService {
   }
 
   async createMLModelTraining(
-    request: ModelTrainingRequest
+    request: ModelTrainingRequest,
   ): Promise<MLModelTraining> {
     const trainingData = {
       ...request,
@@ -731,7 +731,7 @@ export class AutomatedBeforeAfterAnalysisService {
 
   async updateMLModelTraining(
     id: string,
-    updates: Partial<MLModelTraining>
+    updates: Partial<MLModelTraining>,
   ): Promise<MLModelTraining> {
     const { data, error } = await this.supabase
       .from('ml_model_training')
@@ -748,7 +748,7 @@ export class AutomatedBeforeAfterAnalysisService {
 
   // Analysis Operations
   async startAnalysis(
-    request: StartAnalysisRequest
+    request: StartAnalysisRequest,
   ): Promise<AnalysisProgressResponse> {
     // Update session status to processing
     await this.updateAnalysisSession(request.session_id, {
@@ -776,7 +776,7 @@ export class AutomatedBeforeAfterAnalysisService {
   }
 
   async getAnalysisProgress(
-    sessionId: string
+    sessionId: string,
   ): Promise<AnalysisProgressResponse> {
     const session = await this.getAnalysisSession(sessionId);
     if (!session) {
@@ -785,10 +785,10 @@ export class AutomatedBeforeAfterAnalysisService {
 
     const photoPairs = await this.getPhotoPairs({ session_id: sessionId });
     const processedPairs = photoPairs.filter(
-      (p) => p.analysis_status === 'analyzed'
+      (p) => p.analysis_status === 'analyzed',
     );
     const currentProcessing = photoPairs.find(
-      (p) => p.analysis_status === 'pending'
+      (p) => p.analysis_status === 'pending',
     );
 
     const progressResponse: AnalysisProgressResponse = {
@@ -807,7 +807,7 @@ export class AutomatedBeforeAfterAnalysisService {
   }
 
   async performComparisonAnalysis(
-    request: ComparisonAnalysisRequest
+    request: ComparisonAnalysisRequest,
   ): Promise<ComparisonAnalysisResponse> {
     const startTime = Date.now();
 
@@ -885,7 +885,7 @@ export class AutomatedBeforeAfterAnalysisService {
     const avgProcessingTime =
       completedSessions.reduce(
         (acc, s) => acc + (s.processing_time_seconds || 0),
-        0
+        0,
       ) / (completedSessions.length || 1);
 
     return {
@@ -939,7 +939,7 @@ export class AutomatedBeforeAfterAnalysisService {
     const avgProcessingTime =
       completedSessions.reduce(
         (acc, s) => acc + (s.processing_time_seconds || 0),
-        0
+        0,
       ) / (completedSessions.length || 1);
 
     const pendingSessions = await this.getAnalysisSessions({
@@ -967,7 +967,7 @@ export class AutomatedBeforeAfterAnalysisService {
         completed_today: completedSessions.filter(
           (s) =>
             new Date(s.completed_at || '').toDateString() ===
-            new Date().toDateString()
+            new Date().toDateString(),
         ).length,
       },
     };
@@ -999,15 +999,15 @@ export class AutomatedBeforeAfterAnalysisService {
 
   // Batch Operations
   async batchAnalysis(
-    request: BatchAnalysisRequest
+    request: BatchAnalysisRequest,
   ): Promise<AnalysisProgressResponse[]> {
     const results = await Promise.all(
       request.session_ids.map((sessionId: string) =>
         this.startAnalysis({
           session_id: sessionId,
           analysis_parameters: request.analysis_parameters,
-        })
-      )
+        }),
+      ),
     );
 
     return results;
@@ -1015,10 +1015,10 @@ export class AutomatedBeforeAfterAnalysisService {
 
   async batchUpdateSessions(
     sessionIds: string[],
-    updates: Partial<PhotoAnalysisSession>
+    updates: Partial<PhotoAnalysisSession>,
   ): Promise<PhotoAnalysisSession[]> {
     const results = await Promise.all(
-      sessionIds.map((id) => this.updateAnalysisSession(id, updates))
+      sessionIds.map((id) => this.updateAnalysisSession(id, updates)),
     );
 
     return results;

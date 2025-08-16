@@ -38,8 +38,8 @@ export async function GET(request: NextRequest) {
       return NextResponse.redirect(
         new URL(
           `/dashboard/settings/integrations?error=oauth_error&provider=whatsapp&message=${encodeURIComponent(errorDescription || error)}`,
-          request.url
-        )
+          request.url,
+        ),
       );
     }
 
@@ -55,8 +55,8 @@ export async function GET(request: NextRequest) {
       return NextResponse.redirect(
         new URL(
           '/dashboard/settings/integrations?error=invalid_callback&provider=whatsapp',
-          request.url
-        )
+          request.url,
+        ),
       );
     }
 
@@ -80,8 +80,8 @@ export async function GET(request: NextRequest) {
       return NextResponse.redirect(
         new URL(
           '/dashboard/settings/integrations?error=invalid_state&provider=whatsapp',
-          request.url
-        )
+          request.url,
+        ),
       );
     }
 
@@ -97,8 +97,8 @@ export async function GET(request: NextRequest) {
       return NextResponse.redirect(
         new URL(
           '/dashboard/settings/integrations?error=state_expired&provider=whatsapp',
-          request.url
-        )
+          request.url,
+        ),
       );
     }
 
@@ -123,8 +123,8 @@ export async function GET(request: NextRequest) {
       return NextResponse.redirect(
         new URL(
           '/dashboard/settings/integrations?error=session_mismatch&provider=whatsapp',
-          request.url
-        )
+          request.url,
+        ),
       );
     }
 
@@ -132,17 +132,17 @@ export async function GET(request: NextRequest) {
     const oauthHandler = new WhatsAppOAuthHandler();
     const encryptedToken = await oauthHandler.exchangeCodeForTokens(
       code,
-      state
+      state,
     );
 
     // Get user info from WhatsApp
     const userInfo = await oauthHandler.getUserInfo(
-      encryptedToken.encryptedData
+      encryptedToken.encryptedData,
     );
 
     // Get business accounts
     const businessAccounts = await oauthHandler.getBusinessAccounts(
-      encryptedToken.encryptedData
+      encryptedToken.encryptedData,
     );
 
     // Create or update marketing platform connection
@@ -185,8 +185,8 @@ export async function GET(request: NextRequest) {
       return NextResponse.redirect(
         new URL(
           '/dashboard/settings/integrations?error=save_failed&provider=whatsapp',
-          request.url
-        )
+          request.url,
+        ),
       );
     }
 
@@ -222,8 +222,8 @@ export async function GET(request: NextRequest) {
     return NextResponse.redirect(
       new URL(
         '/dashboard/settings/integrations?success=whatsapp_connected',
-        request.url
-      )
+        request.url,
+      ),
     );
   } catch (error) {
     Logger.error('WhatsApp OAuth callback error', {
@@ -236,8 +236,8 @@ export async function GET(request: NextRequest) {
     return NextResponse.redirect(
       new URL(
         `/dashboard/settings/integrations?error=callback_failed&provider=whatsapp&requestId=${requestId}`,
-        request.url
-      )
+        request.url,
+      ),
     );
   }
 }

@@ -26,7 +26,7 @@ export type ChannelProvider = {
   initialize(config: ChannelConfig): Promise<void>;
   send(
     context: NotificationContext,
-    content: any
+    content: any,
   ): Promise<NotificationDelivery>;
   validateConfig(config: ChannelConfig): string[];
   getStatus(): Promise<{ healthy: boolean; message?: string }>;
@@ -38,12 +38,12 @@ export type ChannelManager = {
   send(
     channel: NotificationChannel,
     context: NotificationContext,
-    content: any
+    content: any,
   ): Promise<NotificationDelivery>;
   getAvailableChannels(): NotificationChannel[];
   validateChannelConfig(
     channel: NotificationChannel,
-    config: ChannelConfig
+    config: ChannelConfig,
   ): string[];
 };
 
@@ -135,7 +135,7 @@ export class NotificationChannelManager implements ChannelManager {
   async send(
     channel: NotificationChannel,
     context: NotificationContext,
-    content: any
+    content: any,
   ): Promise<NotificationDelivery> {
     const provider = this.getProvider(channel);
 
@@ -196,7 +196,7 @@ export class NotificationChannelManager implements ChannelManager {
    */
   validateChannelConfig(
     channel: NotificationChannel,
-    config: ChannelConfig
+    config: ChannelConfig,
   ): string[] {
     const provider = this.getProvider(channel);
 
@@ -269,7 +269,7 @@ export class NotificationChannelManager implements ChannelManager {
    * Obtém configuração do canal
    */
   private async getChannelConfig(
-    channel: NotificationChannel
+    channel: NotificationChannel,
   ): Promise<ChannelConfig | undefined> {
     // Em uma implementação real, isso viria do banco de dados
     // Por enquanto, retornamos configurações padrão baseadas em variáveis de ambiente

@@ -49,7 +49,7 @@ export async function GET(request: NextRequest) {
           error: 'Invalid parameters',
           details: error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -59,7 +59,7 @@ export async function GET(request: NextRequest) {
         error: 'Failed to fetch alert statistics',
         details: error.message,
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

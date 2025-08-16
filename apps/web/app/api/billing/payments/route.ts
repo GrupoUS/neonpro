@@ -68,7 +68,7 @@ export async function GET(request: Request) {
           status,
           payment_date
         )
-      `
+      `,
       )
       .order('created_at', { ascending: false })
       .range(offset, offset + limit - 1);
@@ -99,7 +99,7 @@ export async function GET(request: Request) {
     if (error) {
       return NextResponse.json(
         { error: 'Failed to fetch payments' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -108,7 +108,7 @@ export async function GET(request: Request) {
       payments?.reduce(
         (sum, payment) =>
           payment.status === 'completed' ? sum + payment.amount : sum,
-        0
+        0,
       ) || 0;
 
     const pendingAmount =
@@ -117,7 +117,7 @@ export async function GET(request: Request) {
           ['pending', 'processing'].includes(payment.status)
             ? sum + payment.amount
             : sum,
-        0
+        0,
       ) || 0;
 
     return NextResponse.json({
@@ -139,7 +139,7 @@ export async function GET(request: Request) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal Server Error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -180,7 +180,7 @@ export async function POST(request: Request) {
     if (paymentsError) {
       return NextResponse.json(
         { error: 'Failed to check existing payments' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -194,7 +194,7 @@ export async function POST(request: Request) {
           error: 'Payment amount exceeds remaining balance',
           remaining_balance: remainingBalance,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -238,14 +238,14 @@ export async function POST(request: Request) {
             email
           )
         )
-      `
+      `,
       )
       .single();
 
     if (paymentError) {
       return NextResponse.json(
         { error: 'Failed to create payment' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -296,12 +296,12 @@ export async function POST(request: Request) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Validation failed', details: error.errors },
-        { status: 400 }
+        { status: 400 },
       );
     }
     return NextResponse.json(
       { error: 'Internal Server Error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

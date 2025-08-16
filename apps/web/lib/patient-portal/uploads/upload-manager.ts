@@ -127,7 +127,7 @@ export class UploadManager {
     lgpdManager: LGPDManager,
     sessionManager: SessionManager,
     encryptionService: EncryptionService,
-    config: UploadConfig
+    config: UploadConfig,
   ) {
     this.supabase = supabase;
     this.auditLogger = auditLogger;
@@ -142,7 +142,7 @@ export class UploadManager {
    */
   async uploadFiles(
     request: UploadRequest,
-    sessionToken: string
+    sessionToken: string,
   ): Promise<UploadResult> {
     try {
       // Validate session
@@ -195,7 +195,7 @@ export class UploadManager {
           const uploadedFile = await this.processFile(
             file,
             uploadRecord.id,
-            request
+            request,
           );
           uploadedFiles.push(uploadedFile);
         } catch (error) {
@@ -265,7 +265,7 @@ export class UploadManager {
   private async processFile(
     file: File,
     uploadId: string,
-    request: UploadRequest
+    request: UploadRequest,
   ): Promise<UploadedFile> {
     // Generate unique file name
     const fileExtension = file.name.split('.').pop();
@@ -393,7 +393,7 @@ export class UploadManager {
   private async processFileBackground(
     fileId: string,
     filePath: string,
-    mimeType: string
+    mimeType: string,
   ): Promise<void> {
     try {
       let virusScanResult: 'clean' | 'infected' | 'pending' = 'pending';
@@ -442,7 +442,7 @@ export class UploadManager {
    * Perform virus scan (placeholder - integrate with actual antivirus service)
    */
   private async performVirusScan(
-    _filePath: string
+    _filePath: string,
   ): Promise<'clean' | 'infected' | 'pending'> {
     // This would integrate with an actual antivirus service
     // For now, return clean as placeholder
@@ -453,7 +453,7 @@ export class UploadManager {
    * Generate thumbnail for image files
    */
   private async generateThumbnail(
-    _filePath: string
+    _filePath: string,
   ): Promise<string | undefined> {
     // This would integrate with image processing service
     // For now, return undefined as placeholder
@@ -491,7 +491,7 @@ export class UploadManager {
    */
   async getUploadStats(
     patientId: string,
-    sessionToken: string
+    sessionToken: string,
   ): Promise<UploadStats> {
     // Validate session
     const sessionValidation =
@@ -509,7 +509,7 @@ export class UploadManager {
         `
         *,
         patient_files(*)
-      `
+      `,
       )
       .eq('patient_id', patientId);
 

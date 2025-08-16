@@ -4,7 +4,7 @@ import { createClient } from '@/app/utils/supabase/server';
 
 export async function GET(
   _request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const supabase = await createClient();
@@ -33,7 +33,7 @@ export async function GET(
     if (!template) {
       return NextResponse.json(
         { error: 'Template not found' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -41,14 +41,14 @@ export async function GET(
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const supabase = await createClient();
@@ -81,20 +81,20 @@ export async function PATCH(
     if (error instanceof Error && error.message.includes('not found')) {
       return NextResponse.json(
         { error: 'Template not found' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
 
 export async function DELETE(
   _request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const supabase = await createClient();
@@ -125,13 +125,13 @@ export async function DELETE(
     if (error instanceof Error && error.message.includes('not found')) {
       return NextResponse.json(
         { error: 'Template not found' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

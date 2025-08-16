@@ -63,7 +63,7 @@ type PerformanceQuery = {
 export class PersonalizedRecommendationService {
   // Recommendation Profile Management
   async createRecommendationProfile(
-    data: CreateRecommendationProfileRequest
+    data: CreateRecommendationProfileRequest,
   ): Promise<RecommendationProfile> {
     const supabase = await createClient();
     const { data: profile, error } = await supabase
@@ -81,14 +81,14 @@ export class PersonalizedRecommendationService {
 
     if (error) {
       throw new Error(
-        `Failed to create recommendation profile: ${error.message}`
+        `Failed to create recommendation profile: ${error.message}`,
       );
     }
     return profile as RecommendationProfile;
   }
 
   async getRecommendationProfile(
-    patientId: string
+    patientId: string,
   ): Promise<RecommendationProfile | null> {
     const supabase = await createClient();
     const { data, error } = await supabase
@@ -106,7 +106,7 @@ export class PersonalizedRecommendationService {
 
   async updateRecommendationProfile(
     patientId: string,
-    updates: UpdateRecommendationProfileRequest
+    updates: UpdateRecommendationProfileRequest,
   ): Promise<RecommendationProfile> {
     const supabase = await createClient();
     const { data, error } = await supabase
@@ -118,7 +118,7 @@ export class PersonalizedRecommendationService {
 
     if (error) {
       throw new Error(
-        `Failed to update recommendation profile: ${error.message}`
+        `Failed to update recommendation profile: ${error.message}`,
       );
     }
     return data as RecommendationProfile;
@@ -127,7 +127,7 @@ export class PersonalizedRecommendationService {
   // AI-Powered Recommendation Generation
   async generatePersonalizedRecommendations(
     patientId: string,
-    treatmentCategory?: string
+    treatmentCategory?: string,
   ): Promise<PersonalizedRecommendationResult> {
     // Get patient profile and personalization factors
     const profile = await this.getRecommendationProfile(patientId);
@@ -140,7 +140,7 @@ export class PersonalizedRecommendationService {
       profile,
       factors,
       safetyProfile,
-      treatmentCategory
+      treatmentCategory,
     );
 
     return {
@@ -159,7 +159,7 @@ export class PersonalizedRecommendationService {
     profile: RecommendationProfile | null,
     factors: PersonalizationFactor[],
     safetyProfile: SafetyProfile | null,
-    category?: string
+    category?: string,
   ): Promise<{
     primary: TreatmentRecommendation[];
     alternatives: TreatmentAlternative[];
@@ -171,11 +171,11 @@ export class PersonalizedRecommendationService {
     const baseRecommendations = await this.getBaseTreatmentOptions(category);
     const personalizedOptions = this.applyPersonalizationFactors(
       baseRecommendations,
-      factors
+      factors,
     );
     const safeOptions = this.applySafetyFiltering(
       personalizedOptions,
-      safetyProfile
+      safetyProfile,
     );
 
     const recommendations = await Promise.all(
@@ -199,7 +199,7 @@ export class PersonalizedRecommendationService {
           updated_at: new Date().toISOString(),
         };
         return recommendation;
-      })
+      }),
     );
 
     const alternatives = safeOptions.slice(3, 6).map(
@@ -218,7 +218,7 @@ export class PersonalizedRecommendationService {
           'May require longer duration',
         ],
         suitability_score: option.success_probability * 0.85,
-      })
+      }),
     );
 
     return {
@@ -226,19 +226,19 @@ export class PersonalizedRecommendationService {
       alternatives,
       personalization_score: this.calculatePersonalizationScore(
         factors,
-        profile
+        profile,
       ),
       confidence_level: this.calculateConfidenceLevel(factors, safetyProfile),
       explanation: this.generateExplanation(
         factors,
         safetyProfile,
-        recommendations.length
+        recommendations.length,
       ),
     };
   }
 
   private async getBaseTreatmentOptions(
-    category?: string
+    category?: string,
   ): Promise<TreatmentOption[]> {
     // Simulated base treatment options
     const options: TreatmentOption[] = [
@@ -321,7 +321,7 @@ export class PersonalizedRecommendationService {
 
   private applyPersonalizationFactors(
     options: TreatmentOption[],
-    factors: PersonalizationFactor[]
+    factors: PersonalizationFactor[],
   ): TreatmentOption[] {
     return options.map((option) => {
       let adjustedProbability = option.success_probability;
@@ -329,7 +329,8 @@ export class PersonalizedRecommendationService {
       // Apply age factor
       const ageFactor = factors.find(
         (f) =>
-          f.factor_type === 'demographic' && f.factor_category === 'age_related'
+          f.factor_type === 'demographic' &&
+          f.factor_category === 'age_related',
       );
       if (ageFactor) {
         const age = ageFactor.factor_value.age;
@@ -344,7 +345,7 @@ export class PersonalizedRecommendationService {
       const historyFactor = factors.find(
         (f) =>
           f.factor_type === 'medical_history' &&
-          f.factor_category === 'treatment_history'
+          f.factor_category === 'treatment_history',
       );
       if (historyFactor) {
         const previousTreatments =
@@ -356,7 +357,7 @@ export class PersonalizedRecommendationService {
 
       // Apply lifestyle factors
       const lifestyleFactor = factors.find(
-        (f) => f.factor_type === 'lifestyle'
+        (f) => f.factor_type === 'lifestyle',
       );
       if (lifestyleFactor) {
         const sunExposure = lifestyleFactor.factor_value.sun_exposure;
@@ -374,7 +375,7 @@ export class PersonalizedRecommendationService {
 
   private applySafetyFiltering(
     options: TreatmentOption[],
-    safetyProfile: SafetyProfile | null
+    safetyProfile: SafetyProfile | null,
   ): TreatmentOption[] {
     if (!safetyProfile) {
       return options;
@@ -384,12 +385,12 @@ export class PersonalizedRecommendationService {
       // Check contraindications
       const hasContraindication = safetyProfile.contraindications.some(
         (contraindication) =>
-          option.contraindications.includes(contraindication.description)
+          option.contraindications.includes(contraindication.description),
       );
 
       // Check allergies
       const hasAllergy = safetyProfile.allergies.some((allergy) =>
-        option.contraindications.includes(allergy.allergen)
+        option.contraindications.includes(allergy.allergen),
       );
 
       return !(hasContraindication || hasAllergy);
@@ -398,7 +399,7 @@ export class PersonalizedRecommendationService {
 
   private generateRiskAssessment(
     option: TreatmentOption,
-    safetyProfile: SafetyProfile | null
+    safetyProfile: SafetyProfile | null,
   ): RiskAssessment {
     const riskFactors = safetyProfile?.risk_factors || [];
 
@@ -432,7 +433,7 @@ export class PersonalizedRecommendationService {
 
   private calculatePersonalizationScore(
     factors: PersonalizationFactor[],
-    profile: RecommendationProfile | null
+    profile: RecommendationProfile | null,
   ): number {
     const factorCount = factors.length;
     const profileCompleteness = profile
@@ -444,7 +445,7 @@ export class PersonalizedRecommendationService {
 
   private calculateConfidenceLevel(
     factors: PersonalizationFactor[],
-    safetyProfile: SafetyProfile | null
+    safetyProfile: SafetyProfile | null,
   ): number {
     const factorConfidence =
       factors.reduce((sum, f) => sum + f.confidence_score, 0) /
@@ -457,7 +458,7 @@ export class PersonalizedRecommendationService {
   private generateExplanation(
     factors: PersonalizationFactor[],
     safetyProfile: SafetyProfile | null,
-    recommendationCount: number
+    recommendationCount: number,
   ): string {
     const factorTypes = Array.from(new Set(factors.map((f) => f.factor_type)));
     const hasCommonFactors =
@@ -488,7 +489,7 @@ export class PersonalizedRecommendationService {
 
   // Treatment Recommendation Management
   async createTreatmentRecommendation(
-    data: CreateTreatmentRecommendationRequest & { provider_id: string }
+    data: CreateTreatmentRecommendationRequest & { provider_id: string },
   ): Promise<TreatmentRecommendation> {
     const supabase = await createClient();
     const { data: recommendation, error } = await supabase
@@ -505,7 +506,7 @@ export class PersonalizedRecommendationService {
         contraindications: [],
         alternatives: [],
         expires_at: new Date(
-          Date.now() + 30 * 24 * 60 * 60 * 1000
+          Date.now() + 30 * 24 * 60 * 60 * 1000,
         ).toISOString(),
       })
       .select()
@@ -513,7 +514,7 @@ export class PersonalizedRecommendationService {
 
     if (error) {
       throw new Error(
-        `Failed to create treatment recommendation: ${error.message}`
+        `Failed to create treatment recommendation: ${error.message}`,
       );
     }
     return recommendation as TreatmentRecommendation;
@@ -530,7 +531,7 @@ export class PersonalizedRecommendationService {
         patient:patient_id(id, email, raw_user_meta_data),
         provider:provider_id(id, email, raw_user_meta_data)
       `,
-      { count: 'exact' }
+      { count: 'exact' },
     );
 
     if (query.patient_id) {
@@ -545,7 +546,7 @@ export class PersonalizedRecommendationService {
     if (query.recommendation_type) {
       queryBuilder = queryBuilder.eq(
         'recommendation_type',
-        query.recommendation_type
+        query.recommendation_type,
       );
     }
 
@@ -555,7 +556,7 @@ export class PersonalizedRecommendationService {
 
     if (error) {
       throw new Error(
-        `Failed to get treatment recommendations: ${error.message}`
+        `Failed to get treatment recommendations: ${error.message}`,
       );
     }
 
@@ -566,7 +567,7 @@ export class PersonalizedRecommendationService {
   }
 
   async getTreatmentRecommendation(
-    id: string
+    id: string,
   ): Promise<RecommendationWithDetails | null> {
     const supabase = await createClient();
     const { data, error } = await supabase
@@ -576,14 +577,14 @@ export class PersonalizedRecommendationService {
         *,
         patient:patient_id(id, email, raw_user_meta_data),
         provider:provider_id(id, email, raw_user_meta_data)
-      `
+      `,
       )
       .eq('id', id)
       .single();
 
     if (error && error.code !== 'PGRST116') {
       throw new Error(
-        `Failed to get treatment recommendation: ${error.message}`
+        `Failed to get treatment recommendation: ${error.message}`,
       );
     }
 
@@ -592,7 +593,7 @@ export class PersonalizedRecommendationService {
 
   async approveRecommendation(
     id: string,
-    approval: ApproveRecommendationRequest
+    approval: ApproveRecommendationRequest,
   ): Promise<TreatmentRecommendation> {
     const supabase = await createClient();
     const { data, error } = await supabase
@@ -614,7 +615,7 @@ export class PersonalizedRecommendationService {
 
   async rejectRecommendation(
     id: string,
-    rejectedBy: string
+    rejectedBy: string,
   ): Promise<TreatmentRecommendation> {
     const supabase = await createClient();
     const { data, error } = await supabase
@@ -636,7 +637,7 @@ export class PersonalizedRecommendationService {
 
   // Feedback Management
   async createRecommendationFeedback(
-    data: CreateRecommendationFeedbackRequest & { provider_id: string }
+    data: CreateRecommendationFeedbackRequest & { provider_id: string },
   ): Promise<RecommendationFeedback> {
     const supabase = await createClient();
     const { data: feedback, error } = await supabase
@@ -658,7 +659,7 @@ export class PersonalizedRecommendationService {
 
     if (error) {
       throw new Error(
-        `Failed to create recommendation feedback: ${error.message}`
+        `Failed to create recommendation feedback: ${error.message}`,
       );
     }
     return feedback as RecommendationFeedback;
@@ -676,7 +677,7 @@ export class PersonalizedRecommendationService {
     if (query.recommendation_id) {
       queryBuilder = queryBuilder.eq(
         'recommendation_id',
-        query.recommendation_id
+        query.recommendation_id,
       );
     }
     if (query.provider_id) {
@@ -695,7 +696,7 @@ export class PersonalizedRecommendationService {
 
     if (error) {
       throw new Error(
-        `Failed to get recommendation feedback: ${error.message}`
+        `Failed to get recommendation feedback: ${error.message}`,
       );
     }
 
@@ -707,7 +708,7 @@ export class PersonalizedRecommendationService {
 
   // Personalization Factor Management
   async createPersonalizationFactor(
-    data: CreatePersonalizationFactorRequest
+    data: CreatePersonalizationFactorRequest,
   ): Promise<PersonalizationFactor> {
     const supabase = await createClient();
     const { data: factor, error } = await supabase
@@ -726,14 +727,14 @@ export class PersonalizedRecommendationService {
 
     if (error) {
       throw new Error(
-        `Failed to create personalization factor: ${error.message}`
+        `Failed to create personalization factor: ${error.message}`,
       );
     }
     return factor as PersonalizationFactor;
   }
 
   async getPersonalizationFactors(
-    patientId: string
+    patientId: string,
   ): Promise<PersonalizationFactor[]> {
     const supabase = await createClient();
     const { data, error } = await supabase
@@ -744,7 +745,7 @@ export class PersonalizedRecommendationService {
 
     if (error) {
       throw new Error(
-        `Failed to get personalization factors: ${error.message}`
+        `Failed to get personalization factors: ${error.message}`,
       );
     }
     return (data || []) as PersonalizationFactor[];
@@ -790,7 +791,7 @@ export class PersonalizedRecommendationService {
 
   async updateSafetyProfile(
     patientId: string,
-    updates: UpdateSafetyProfileRequest
+    updates: UpdateSafetyProfileRequest,
   ): Promise<SafetyProfile> {
     const supabase = await createClient();
     const { data, error } = await supabase
@@ -811,7 +812,7 @@ export class PersonalizedRecommendationService {
 
   // Performance Tracking
   async recordRecommendationPerformance(
-    data: RecordPerformanceRequest
+    data: RecordPerformanceRequest,
   ): Promise<RecommendationPerformance> {
     const supabase = await createClient();
     const { data: performance, error } = await supabase
@@ -832,7 +833,7 @@ export class PersonalizedRecommendationService {
 
     if (error) {
       throw new Error(
-        `Failed to record recommendation performance: ${error.message}`
+        `Failed to record recommendation performance: ${error.message}`,
       );
     }
     return performance as RecommendationPerformance;
@@ -850,7 +851,7 @@ export class PersonalizedRecommendationService {
     if (query.recommendation_id) {
       queryBuilder = queryBuilder.eq(
         'recommendation_id',
-        query.recommendation_id
+        query.recommendation_id,
       );
     }
     if (query.patient_id) {
@@ -868,7 +869,7 @@ export class PersonalizedRecommendationService {
     if (query.min_effectiveness) {
       queryBuilder = queryBuilder.gte(
         'effectiveness_score',
-        query.min_effectiveness
+        query.min_effectiveness,
       );
     }
 
@@ -878,7 +879,7 @@ export class PersonalizedRecommendationService {
 
     if (error) {
       throw new Error(
-        `Failed to get recommendation performance: ${error.message}`
+        `Failed to get recommendation performance: ${error.message}`,
       );
     }
 
@@ -891,7 +892,7 @@ export class PersonalizedRecommendationService {
   // Analytics and Insights
   async getRecommendationAnalytics(
     dateFrom?: string,
-    dateTo?: string
+    dateTo?: string,
   ): Promise<RecommendationAnalytics> {
     const supabase = await createClient();
     const query = supabase.from('treatment_recommendations').select('*');
@@ -906,7 +907,7 @@ export class PersonalizedRecommendationService {
     const { data: recommendations, error } = await query;
     if (error) {
       throw new Error(
-        `Failed to get recommendation analytics: ${error.message}`
+        `Failed to get recommendation analytics: ${error.message}`,
       );
     }
 
@@ -968,7 +969,7 @@ export class PersonalizedRecommendationService {
   }
 
   async getPersonalizationInsights(
-    patientId?: string
+    patientId?: string,
   ): Promise<PersonalizationInsights> {
     const supabase = await createClient();
     let factorsQuery = supabase.from('personalization_factors').select('*');
@@ -983,7 +984,7 @@ export class PersonalizedRecommendationService {
     const mostInfluential = (factors || [])
       .sort(
         (a: any, b: any) =>
-          b.weight * b.confidence_score - a.weight * a.confidence_score
+          b.weight * b.confidence_score - a.weight * a.confidence_score,
       )
       .slice(0, 10);
 

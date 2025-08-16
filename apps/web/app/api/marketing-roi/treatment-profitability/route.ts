@@ -28,7 +28,7 @@ async function validateUserAndClinic(request: NextRequest) {
     return {
       error: NextResponse.json(
         { error: 'clinic_id is required' },
-        { status: 400 }
+        { status: 400 },
       ),
     };
   }
@@ -44,7 +44,7 @@ async function validateUserAndClinic(request: NextRequest) {
     return {
       error: NextResponse.json(
         { error: 'Access denied to clinic' },
-        { status: 403 }
+        { status: 403 },
       ),
     };
   }
@@ -105,7 +105,7 @@ export async function GET(request: NextRequest) {
     const profitabilityAnalysis =
       await marketingROIService.getTreatmentProfitabilityAnalysis(
         clinicId,
-        validatedFilters
+        validatedFilters,
       );
 
     return NextResponse.json(profitabilityAnalysis);
@@ -113,13 +113,13 @@ export async function GET(request: NextRequest) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Validation error', details: error.errors },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     return NextResponse.json(
       { error: 'Internal server error', message: error.message },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -143,7 +143,7 @@ export async function POST(request: NextRequest) {
     if (!(treatment_id && period_start && period_end)) {
       return NextResponse.json(
         { error: 'treatment_id, period_start, and period_end are required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -151,14 +151,14 @@ export async function POST(request: NextRequest) {
       clinicId,
       treatment_id,
       new Date(period_start),
-      new Date(period_end)
+      new Date(period_end),
     );
 
     return NextResponse.json(treatmentROI);
   } catch (error: any) {
     return NextResponse.json(
       { error: 'Internal server error', message: error.message },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

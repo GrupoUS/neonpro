@@ -172,7 +172,7 @@ const BackupScheduler: React.FC = () => {
 
       if (response.ok) {
         toast.success(
-          `Configuração ${enabled ? 'ativada' : 'desativada'} com sucesso`
+          `Configuração ${enabled ? 'ativada' : 'desativada'} com sucesso`,
         );
         loadConfigs();
       } else {

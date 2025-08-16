@@ -117,7 +117,7 @@ export class DataRetentionManager {
    * Create or update data retention policy
    */
   async createRetentionPolicy(
-    policy: Omit<DataRetentionPolicy, 'id' | 'createdAt' | 'updatedAt'>
+    policy: Omit<DataRetentionPolicy, 'id' | 'createdAt' | 'updatedAt'>,
   ): Promise<DataRetentionPolicy> {
     try {
       const timestamp = new Date();
@@ -157,7 +157,7 @@ export class DataRetentionManager {
       });
 
       logger.info(
-        `Retention policy created: ${data.id} for ${policy.dataType}`
+        `Retention policy created: ${data.id} for ${policy.dataType}`,
       );
       return data;
     } catch (error) {
@@ -175,7 +175,7 @@ export class DataRetentionManager {
     dataType: LGPDDataType,
     purpose: LGPDPurpose,
     dataCreatedAt: Date = new Date(),
-    customRetentionDays?: number
+    customRetentionDays?: number,
   ): Promise<DataRetentionRecord> {
     try {
       // Get applicable retention policy
@@ -186,7 +186,7 @@ export class DataRetentionManager {
         const _defaultPolicy = await this.createDefaultRetentionPolicy(
           clinicId,
           dataType,
-          purpose
+          purpose,
         );
         return this.registerDataForRetention(
           dataSubjectId,
@@ -194,14 +194,14 @@ export class DataRetentionManager {
           dataType,
           purpose,
           dataCreatedAt,
-          customRetentionDays
+          customRetentionDays,
         );
       }
 
       const retentionPeriodDays =
         customRetentionDays || policy.retentionPeriodDays;
       const retentionExpiresAt = new Date(
-        dataCreatedAt.getTime() + retentionPeriodDays * 24 * 60 * 60 * 1000
+        dataCreatedAt.getTime() + retentionPeriodDays * 24 * 60 * 60 * 1000,
       );
 
       const retentionRecord: Partial<DataRetentionRecord> = {
@@ -223,12 +223,12 @@ export class DataRetentionManager {
       if (error) {
         logger.error('Error registering data for retention:', error);
         throw new Error(
-          `Failed to register data for retention: ${error.message}`
+          `Failed to register data for retention: ${error.message}`,
         );
       }
 
       logger.info(
-        `Data registered for retention: ${data.id} expires ${retentionExpiresAt.toISOString()}`
+        `Data registered for retention: ${data.id} expires ${retentionExpiresAt.toISOString()}`,
       );
       return data;
     } catch (error) {
@@ -262,7 +262,7 @@ export class DataRetentionManager {
           `
           *,
           lgpd_retention_policies!inner(*)
-        `
+        `,
         )
         .lt('retentionExpiresAt', now.toISOString())
         .in('status', ['active', 'expiring_soon']);
@@ -276,7 +276,7 @@ export class DataRetentionManager {
       if (error) {
         logger.error('Error fetching expired retention records:', error);
         throw new Error(
-          `Failed to fetch expired retention records: ${error.message}`
+          `Failed to fetch expired retention records: ${error.message}`,
         );
       }
 
@@ -332,7 +332,7 @@ export class DataRetentionManager {
                   retentionRecordId: record.id,
                   method: 'automated_retention',
                   retentionExpired: true,
-                }
+                },
               );
             }
           } else {
@@ -361,7 +361,7 @@ export class DataRetentionManager {
         } catch (recordError) {
           logger.error(
             `Error processing retention record ${record.id}:`,
-            recordError
+            recordError,
           );
           results.errors++;
         }
@@ -390,7 +390,7 @@ export class DataRetentionManager {
           `
           *,
           lgpd_retention_policies!inner(*)
-        `
+        `,
         )
         .eq('status', 'active');
 
@@ -413,7 +413,7 @@ export class DataRetentionManager {
         const policy = record.lgpd_retention_policies;
         const daysUntilExpiration = Math.ceil(
           (new Date(record.retentionExpiresAt).getTime() - now.getTime()) /
-            (1000 * 60 * 60 * 24)
+            (1000 * 60 * 60 * 24),
         );
 
         // Check if notification should be sent
@@ -433,7 +433,7 @@ export class DataRetentionManager {
             await this.sendExpirationNotification(
               record,
               policy,
-              daysUntilExpiration
+              daysUntilExpiration,
             );
             await this.updateRetentionRecordStatus(record.id, 'expiring_soon', {
               lastNotificationSent: now,
@@ -460,7 +460,7 @@ export class DataRetentionManager {
   async getRetentionAnalytics(
     clinicId: string,
     startDate?: Date,
-    endDate?: Date
+    endDate?: Date,
   ): Promise<RetentionAnalytics> {
     try {
       let query = this.supabase
@@ -469,7 +469,7 @@ export class DataRetentionManager {
           `
           *,
           lgpd_retention_policies!inner(*)
-        `
+        `,
         )
         .eq('lgpd_retention_policies.clinicId', clinicId);
 
@@ -485,7 +485,7 @@ export class DataRetentionManager {
       if (error) {
         logger.error('Error fetching retention analytics:', error);
         throw new Error(
-          `Failed to fetch retention analytics: ${error.message}`
+          `Failed to fetch retention analytics: ${error.message}`,
         );
       }
 
@@ -494,12 +494,12 @@ export class DataRetentionManager {
 
       const activeRecords = allRecords.filter((r) => r.status === 'active');
       const expiringSoonRecords = allRecords.filter(
-        (r) => r.status === 'expiring_soon'
+        (r) => r.status === 'expiring_soon',
       );
       const expiredRecords = allRecords.filter((r) => r.status === 'expired');
       const deletedRecords = allRecords.filter((r) => r.status === 'deleted');
       const anonymizedRecords = allRecords.filter(
-        (r) => r.status === 'anonymized'
+        (r) => r.status === 'anonymized',
       );
 
       // Group by data type
@@ -524,14 +524,14 @@ export class DataRetentionManager {
 
       // Upcoming expirations (next 30 days)
       const thirtyDaysFromNow = new Date(
-        now.getTime() + 30 * 24 * 60 * 60 * 1000
+        now.getTime() + 30 * 24 * 60 * 60 * 1000,
       );
       const upcomingExpirations = activeRecords
         .filter((r) => new Date(r.retentionExpiresAt) <= thirtyDaysFromNow)
         .sort(
           (a, b) =>
             new Date(a.retentionExpiresAt).getTime() -
-            new Date(b.retentionExpiresAt).getTime()
+            new Date(b.retentionExpiresAt).getTime(),
         )
         .slice(0, 20);
 
@@ -542,7 +542,7 @@ export class DataRetentionManager {
           r.status === 'active' ||
           r.status === 'expiring_soon' ||
           r.status === 'deleted' ||
-          r.status === 'anonymized'
+          r.status === 'anonymized',
       ).length;
       const retentionCompliance =
         totalManagedRecords > 0
@@ -572,7 +572,7 @@ export class DataRetentionManager {
   private async getRetentionPolicy(
     clinicId: string,
     dataType: LGPDDataType,
-    purpose: LGPDPurpose
+    purpose: LGPDPurpose,
   ): Promise<DataRetentionPolicy | null> {
     try {
       const { data, error } = await this.supabase
@@ -605,7 +605,7 @@ export class DataRetentionManager {
   private async createDefaultRetentionPolicy(
     clinicId: string,
     dataType: LGPDDataType,
-    purpose: LGPDPurpose
+    purpose: LGPDPurpose,
   ): Promise<DataRetentionPolicy> {
     const retentionPeriodDays = this.defaultRetentionPeriods[dataType];
 
@@ -629,7 +629,7 @@ export class DataRetentionManager {
   private async updateRetentionRecordStatus(
     recordId: string,
     status: DataRetentionRecord['status'],
-    metadata?: Record<string, any>
+    metadata?: Record<string, any>,
   ): Promise<void> {
     try {
       const updateData: Partial<DataRetentionRecord> = { status };
@@ -652,7 +652,7 @@ export class DataRetentionManager {
       if (error) {
         logger.error('Error updating retention record status:', error);
         throw new Error(
-          `Failed to update retention record status: ${error.message}`
+          `Failed to update retention record status: ${error.message}`,
         );
       }
     } catch (error) {
@@ -669,7 +669,7 @@ export class DataRetentionManager {
       // This would implement actual data anonymization based on data type
       // For now, we'll log the requirement
       logger.info(
-        `Anonymizing data for record ${record.id}: ${record.dataType}`
+        `Anonymizing data for record ${record.id}: ${record.dataType}`,
       );
 
       // In a real implementation, this would:
@@ -709,12 +709,12 @@ export class DataRetentionManager {
   private async sendExpirationNotification(
     record: DataRetentionRecord,
     policy: DataRetentionPolicy,
-    daysUntilExpiration: number
+    daysUntilExpiration: number,
   ): Promise<void> {
     try {
       // This would integrate with notification systems
       logger.info(
-        `Sending expiration notification for record ${record.id}: ${daysUntilExpiration} days remaining`
+        `Sending expiration notification for record ${record.id}: ${daysUntilExpiration} days remaining`,
       );
 
       // Log notification

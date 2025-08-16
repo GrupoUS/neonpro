@@ -280,7 +280,7 @@ export class ConsentFormsManager {
   constructor() {
     this.supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
     );
     this.auditLogger = new AuditLogger();
     this.lgpdManager = new LGPDManager();
@@ -294,7 +294,7 @@ export class ConsentFormsManager {
   async createConsentForm(
     clinicId: string,
     formData: Omit<ConsentForm, 'id' | 'created_at' | 'updated_at'>,
-    createdBy: string
+    createdBy: string,
   ): Promise<{ success: boolean; data?: ConsentForm; error?: string }> {
     try {
       const formId = crypto.randomUUID();
@@ -349,7 +349,7 @@ export class ConsentFormsManager {
   }
 
   async getConsentForm(
-    formId: string
+    formId: string,
   ): Promise<{ success: boolean; data?: ConsentForm; error?: string }> {
     try {
       const { data, error } = await this.supabase
@@ -378,7 +378,7 @@ export class ConsentFormsManager {
   async getClinicConsentForms(
     clinicId: string,
     formType?: ConsentFormType,
-    activeOnly = true
+    activeOnly = true,
   ): Promise<{ success: boolean; data?: ConsentForm[]; error?: string }> {
     try {
       let query = this.supabase
@@ -414,7 +414,7 @@ export class ConsentFormsManager {
   async updateConsentForm(
     formId: string,
     updates: Partial<ConsentForm>,
-    updatedBy: string
+    updatedBy: string,
   ): Promise<{ success: boolean; data?: ConsentForm; error?: string }> {
     try {
       // Get current form
@@ -481,7 +481,7 @@ export class ConsentFormsManager {
       userAgent?: string;
       geolocation?: GeolocationData;
       requireSignature?: boolean;
-    }
+    },
   ): Promise<{ success: boolean; data?: ConsentResponse; error?: string }> {
     try {
       // Get form
@@ -507,7 +507,7 @@ export class ConsentFormsManager {
       const expiresAt =
         form.retention_period > 0
           ? new Date(
-              Date.now() + form.retention_period * 24 * 60 * 60 * 1000
+              Date.now() + form.retention_period * 24 * 60 * 60 * 1000,
             ).toISOString()
           : undefined;
 
@@ -554,7 +554,7 @@ export class ConsentFormsManager {
             signatureType: SignatureType.ELECTRONIC_SIGNATURE,
             includeTimestamp: true,
             includeGeolocation: Boolean(options?.geolocation),
-          }
+          },
         );
 
         if (signatureResult.success && signatureResult.data) {
@@ -598,7 +598,7 @@ export class ConsentFormsManager {
   async getPatientConsentResponses(
     patientId: string,
     formType?: ConsentFormType,
-    activeOnly = true
+    activeOnly = true,
   ): Promise<{ success: boolean; data?: ConsentResponse[]; error?: string }> {
     try {
       let query = this.supabase
@@ -607,7 +607,7 @@ export class ConsentFormsManager {
           `
           *,
           consent_form:consent_forms(*)
-        `
+        `,
         )
         .eq('patient_id', patientId);
 
@@ -639,7 +639,7 @@ export class ConsentFormsManager {
   async withdrawConsent(
     responseId: string,
     patientId: string,
-    reason: string
+    reason: string,
   ): Promise<{ success: boolean; error?: string }> {
     try {
       const now = new Date().toISOString();
@@ -689,7 +689,7 @@ export class ConsentFormsManager {
 
   async createFormTemplate(
     templateType: ConsentFormType,
-    language = 'pt-BR'
+    language = 'pt-BR',
   ): Promise<{
     success: boolean;
     data?: Partial<ConsentForm>;
@@ -708,7 +708,7 @@ export class ConsentFormsManager {
 
   private getFormTemplate(
     templateType: ConsentFormType,
-    language: string
+    language: string,
   ): Partial<ConsentForm> {
     const baseTemplate = {
       form_type: templateType,
@@ -1076,7 +1076,7 @@ export class ConsentFormsManager {
   // ========================================================================
 
   private async validateFormStructure(
-    form: ConsentForm
+    form: ConsentForm,
   ): Promise<{ isValid: boolean; error?: string }> {
     try {
       // Check required fields
@@ -1113,7 +1113,7 @@ export class ConsentFormsManager {
 
   private async validateResponses(
     form: ConsentForm,
-    responses: FieldResponse[]
+    responses: FieldResponse[],
   ): Promise<{ isValid: boolean; error?: string }> {
     try {
       // Check required fields
@@ -1146,7 +1146,7 @@ export class ConsentFormsManager {
 
   private validateFieldResponse(
     field: FormField,
-    value: any
+    value: any,
   ): { isValid: boolean; error?: string } {
     try {
       const validation = field.validation;
@@ -1242,12 +1242,12 @@ export class ConsentFormsManager {
 
   private checkConsentGiven(
     form: ConsentForm,
-    responses: FieldResponse[]
+    responses: FieldResponse[],
   ): boolean {
     try {
       // Check if all required consent fields are true
       const consentFields = form.fields.filter(
-        (f) => f.type === FieldType.CONSENT_CHECKBOX && f.is_required
+        (f) => f.type === FieldType.CONSENT_CHECKBOX && f.is_required,
       );
 
       for (const field of consentFields) {
@@ -1270,7 +1270,7 @@ export class ConsentFormsManager {
   private async createFormVersion(
     formId: string,
     currentForm: ConsentForm,
-    updatedBy: string
+    updatedBy: string,
   ): Promise<void> {
     try {
       const versionId = crypto.randomUUID();
@@ -1292,7 +1292,7 @@ export class ConsentFormsManager {
     patientId: string,
     form: ConsentForm,
     responses: FieldResponse[],
-    consentGiven: boolean
+    consentGiven: boolean,
   ): Promise<void> {
     try {
       // Update LGPD consent for each data category
@@ -1310,7 +1310,7 @@ export class ConsentFormsManager {
             patientId,
             category,
             form.legal_basis[0]?.purpose || 'Medical services',
-            form.retention_period
+            form.retention_period,
           );
         }
       }
@@ -1323,7 +1323,7 @@ export class ConsentFormsManager {
 
   async getConsentStatistics(
     clinicId: string,
-    period?: { from: string; to: string }
+    period?: { from: string; to: string },
   ): Promise<{ success: boolean; data?: any; error?: string }> {
     try {
       let query = this.supabase

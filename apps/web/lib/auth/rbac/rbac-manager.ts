@@ -30,7 +30,7 @@ export class RBACPermissionManager {
    */
   async getUserRole(
     userId: string,
-    clinicId: string
+    clinicId: string,
   ): Promise<UserRoleAssignment | null> {
     const cacheKey = `getUserRole:${userId}:${clinicId}`;
     const cached = this.permissionCache.get(cacheKey);
@@ -45,7 +45,7 @@ export class RBACPermissionManager {
         `
           *,
           role:roles(*)
-        `
+        `,
       )
       .eq('user_id', userId)
       .eq('clinic_id', clinicId)
@@ -72,7 +72,7 @@ export class RBACPermissionManager {
     userId: string,
     permission: Permission,
     clinicId: string,
-    resourceId?: string
+    resourceId?: string,
   ): Promise<PermissionResult> {
     try {
       const cacheKey = `hasPermission:${userId}:${permission}:${clinicId}:${resourceId || ''}`;
@@ -134,7 +134,7 @@ export class RBACPermissionManager {
   async canManageUser(
     managerId: string,
     targetUserId: string,
-    clinicId: string
+    clinicId: string,
   ): Promise<boolean> {
     try {
       const managerRole = await this.getUserRole(managerId, clinicId);
@@ -161,7 +161,7 @@ export class RBACPermissionManager {
     userId: string,
     roleId: string,
     clinicId: string,
-    assignedBy: string
+    assignedBy: string,
   ): Promise<boolean> {
     try {
       const { error } = await this.supabase.from('user_roles').insert({
@@ -186,7 +186,7 @@ export class RBACPermissionManager {
   async removeRole(
     userId: string,
     clinicId: string,
-    removedBy: string
+    removedBy: string,
   ): Promise<boolean> {
     try {
       const { error } = await this.supabase

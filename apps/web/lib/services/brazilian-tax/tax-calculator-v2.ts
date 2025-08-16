@@ -104,7 +104,7 @@ export class BrazilianTaxCalculatorService {
    */
   static calculateTaxes(
     request: TaxCalculationRequest,
-    config: Partial<TaxCalculationConfig> = {}
+    config: Partial<TaxCalculationConfig> = {},
   ): TaxCalculationResponse {
     const finalConfig = { ...DEFAULT_CONFIG, ...config };
 
@@ -114,26 +114,26 @@ export class BrazilianTaxCalculatorService {
     // Calculate individual taxes
     const icms = BrazilianTaxCalculatorService.calculateICMS(
       request,
-      finalConfig
+      finalConfig,
     );
     const iss = BrazilianTaxCalculatorService.calculateISS(
       request,
-      finalConfig
+      finalConfig,
     );
     const pis = BrazilianTaxCalculatorService.calculatePIS(
       request,
       regime,
-      finalConfig
+      finalConfig,
     );
     const cofins = BrazilianTaxCalculatorService.calculateCOFINS(
       request,
       regime,
-      finalConfig
+      finalConfig,
     );
     const simplesNacional =
       BrazilianTaxCalculatorService.calculateSimplesNacional(
         request,
-        finalConfig
+        finalConfig,
       );
 
     // Calculate totals
@@ -180,7 +180,7 @@ export class BrazilianTaxCalculatorService {
    */
   private static calculateICMS(
     _request: TaxCalculationRequest,
-    _config: TaxCalculationConfig
+    _config: TaxCalculationConfig,
   ): TaxCalculationDetail {
     // Healthcare services typically exempt from ICMS
     return {
@@ -195,7 +195,7 @@ export class BrazilianTaxCalculatorService {
    */
   private static calculateISS(
     request: TaxCalculationRequest,
-    config: TaxCalculationConfig
+    config: TaxCalculationConfig,
   ): TaxCalculationDetail {
     if (!config.includeISS) {
       return {
@@ -226,7 +226,7 @@ export class BrazilianTaxCalculatorService {
   private static calculatePIS(
     request: TaxCalculationRequest,
     regime: TaxRegime,
-    config: TaxCalculationConfig
+    config: TaxCalculationConfig,
   ): TaxCalculationDetail {
     if (!config.includePISCOFINS || regime === 'simples_nacional') {
       return {
@@ -263,7 +263,7 @@ export class BrazilianTaxCalculatorService {
   private static calculateCOFINS(
     request: TaxCalculationRequest,
     regime: TaxRegime,
-    config: TaxCalculationConfig
+    config: TaxCalculationConfig,
   ): TaxCalculationDetail {
     if (!config.includePISCOFINS || regime === 'simples_nacional') {
       return {
@@ -299,7 +299,7 @@ export class BrazilianTaxCalculatorService {
    */
   private static calculateSimplesNacional(
     request: TaxCalculationRequest,
-    config: TaxCalculationConfig
+    config: TaxCalculationConfig,
   ): TaxCalculationDetail {
     const regime = request.regime_tributario;
 
@@ -313,7 +313,7 @@ export class BrazilianTaxCalculatorService {
 
     // Determine annexo based on service type
     const anexo = BrazilianTaxCalculatorService.determineSimplexAnexo(
-      request.tipo_servico
+      request.tipo_servico,
     );
 
     // For this example, assume annual revenue of R$ 500,000 (mid-range)
@@ -321,7 +321,7 @@ export class BrazilianTaxCalculatorService {
     const estimatedAnnualRevenue = 500_000;
     const rate = BrazilianTaxCalculatorService.getSimplesNacionalRate(
       anexo,
-      estimatedAnnualRevenue
+      estimatedAnnualRevenue,
     );
 
     const baseCalculo = request.valor_base;
@@ -341,7 +341,7 @@ export class BrazilianTaxCalculatorService {
    * Determine Simples Nacional annexo based on service type
    */
   private static determineSimplexAnexo(
-    serviceType: string
+    serviceType: string,
   ): SimplesNacionalAnexo {
     // Healthcare professional services typically fall under Anexo V
     const anexoVServices = [
@@ -361,7 +361,7 @@ export class BrazilianTaxCalculatorService {
    */
   private static getSimplesNacionalRate(
     anexo: SimplesNacionalAnexo,
-    annualRevenue: number
+    annualRevenue: number,
   ): number {
     const brackets = SIMPLES_NACIONAL_RATES[anexo];
 
@@ -401,7 +401,7 @@ export class BrazilianTaxCalculatorService {
    */
   static batchCalculateTaxes(
     requests: TaxCalculationRequest[],
-    config: Partial<TaxCalculationConfig> = {}
+    config: Partial<TaxCalculationConfig> = {},
   ): Map<string, TaxCalculationResponse> {
     const results = new Map<string, TaxCalculationResponse>();
 
@@ -409,7 +409,7 @@ export class BrazilianTaxCalculatorService {
       const key = `${request.clinic_id}_${index}`;
       const result = BrazilianTaxCalculatorService.calculateTaxes(
         request,
-        config
+        config,
       );
       results.set(key, result);
     });
@@ -423,7 +423,7 @@ export class BrazilianTaxCalculatorService {
   static estimateAnnualTax(
     monthlyRevenue: number,
     regime: TaxRegime,
-    serviceType: string
+    serviceType: string,
   ): {
     annual_revenue: number;
     estimated_taxes: number;

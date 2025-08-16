@@ -40,7 +40,7 @@ export async function GET(request: NextRequest) {
         error: 'Failed to fetch follow-up protocols',
         details: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -62,7 +62,7 @@ export async function POST(request: NextRequest) {
         data: protocol,
         message: 'Follow-up protocol created successfully',
       },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (error) {
     if (error instanceof z.ZodError) {
@@ -72,7 +72,7 @@ export async function POST(request: NextRequest) {
           error: 'Validation failed',
           details: error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
     return NextResponse.json(
@@ -81,7 +81,7 @@ export async function POST(request: NextRequest) {
         error: 'Failed to create follow-up protocol',
         details: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

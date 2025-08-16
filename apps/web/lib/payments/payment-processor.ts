@@ -7,7 +7,7 @@ export type PaymentProcessorConfig = {
 export class PaymentProcessor {
   async processPayment(
     _amount: number,
-    _paymentMethodId: string
+    _paymentMethodId: string,
   ): Promise<{ success: boolean; paymentId?: string; error?: string }> {
     // Mock implementation for build
     return {
@@ -17,7 +17,7 @@ export class PaymentProcessor {
   }
 
   async refundPayment(
-    _paymentId: string
+    _paymentId: string,
   ): Promise<{ success: boolean; refundId?: string; error?: string }> {
     // Mock implementation for build
     return {

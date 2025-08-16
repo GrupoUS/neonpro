@@ -57,7 +57,7 @@ export async function validateHealthcareRLS() {
     return rlsStatus;
   } catch (_error) {
     throw new Error(
-      'Healthcare RLS validation failed - patient safety at risk'
+      'Healthcare RLS validation failed - patient safety at risk',
     );
   }
 }

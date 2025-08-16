@@ -484,7 +484,7 @@ const TaxBreakdown: React.FC<{ summary: TaxSummary }> = ({ summary }) => {
 
   const totalTaxes = Object.values(summary.impostos).reduce(
     (sum, tax) => sum + tax,
-    0
+    0,
   );
 
   return (
@@ -685,16 +685,16 @@ export const NFSeDashboard: React.FC = () => {
   };
 
   const criticalIssues = data.pendingIssues.filter(
-    (issue) => issue.severity === 'critical'
+    (issue) => issue.severity === 'critical',
   );
   const draftDocuments = data.nfseDocuments.filter(
-    (doc) => doc.status === 'draft'
+    (doc) => doc.status === 'draft',
   );
   const pendingDocuments = data.nfseDocuments.filter(
-    (doc) => doc.status === 'pending'
+    (doc) => doc.status === 'pending',
   );
   const errorDocuments = data.nfseDocuments.filter(
-    (doc) => doc.status === 'error'
+    (doc) => doc.status === 'error',
   );
 
   return (

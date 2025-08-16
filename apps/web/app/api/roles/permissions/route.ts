@@ -94,18 +94,18 @@ export async function GET(request: NextRequest) {
       if (!(role && permission)) {
         return NextResponse.json(
           { error: 'Role e permissão são obrigatórias para verificação' },
-          { status: 400 }
+          { status: 400 },
         );
       }
 
       const hasPermission = checkPermission(
         role as keyof typeof ROLE_HIERARCHY,
-        permission
+        permission,
       );
       const canManageRole = targetRole
         ? canManageTargetRole(
             role as keyof typeof ROLE_HIERARCHY,
-            targetRole as keyof typeof ROLE_HIERARCHY
+            targetRole as keyof typeof ROLE_HIERARCHY,
           )
         : null;
 
@@ -125,7 +125,7 @@ export async function GET(request: NextRequest) {
       if (!roleInfo) {
         return NextResponse.json(
           { error: 'Role não encontrada' },
-          { status: 404 }
+          { status: 404 },
         );
       }
 
@@ -154,7 +154,7 @@ export async function GET(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -185,7 +185,7 @@ export async function POST(request: NextRequest) {
           error:
             'Acesso negado. Apenas administradores podem gerenciar permissões.',
         },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -198,13 +198,13 @@ export async function POST(request: NextRequest) {
       if (!(user_role && required_permission)) {
         return NextResponse.json(
           { error: 'Role do usuário e permissão requerida são obrigatórias' },
-          { status: 400 }
+          { status: 400 },
         );
       }
 
       const hasAccess = checkPermission(
         user_role as keyof typeof ROLE_HIERARCHY,
-        required_permission
+        required_permission,
       );
 
       // Registrar tentativa de acesso
@@ -234,12 +234,12 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(
       { error: 'Ação não reconhecida' },
-      { status: 400 }
+      { status: 400 },
     );
   } catch (_error) {
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -247,7 +247,7 @@ export async function POST(request: NextRequest) {
 // Função para verificar se uma role tem determinada permissão
 export function checkPermission(
   userRole: keyof typeof ROLE_HIERARCHY,
-  permission: string
+  permission: string,
 ): boolean {
   const roleInfo = ROLE_HIERARCHY[userRole];
   if (!roleInfo) {
@@ -260,7 +260,7 @@ export function checkPermission(
 // Função para verificar se uma role pode gerenciar outra role
 export function canManageTargetRole(
   userRole: keyof typeof ROLE_HIERARCHY,
-  targetRole: keyof typeof ROLE_HIERARCHY
+  targetRole: keyof typeof ROLE_HIERARCHY,
 ): boolean {
   const userRoleInfo = ROLE_HIERARCHY[userRole];
   if (!userRoleInfo) {
@@ -273,7 +273,7 @@ export function canManageTargetRole(
 // Função para verificar se uma role tem nível hierárquico superior
 function _hasHigherLevel(
   userRole: keyof typeof ROLE_HIERARCHY,
-  targetRole: keyof typeof ROLE_HIERARCHY
+  targetRole: keyof typeof ROLE_HIERARCHY,
 ): boolean {
   const userRoleInfo = ROLE_HIERARCHY[userRole];
   const targetRoleInfo = ROLE_HIERARCHY[targetRole];

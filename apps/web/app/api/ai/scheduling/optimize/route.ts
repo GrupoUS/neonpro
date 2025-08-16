@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
           error:
             'Missing required fields: patient_id, treatment_type, preferred_date_range, duration_minutes',
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -37,14 +37,14 @@ export async function POST(request: NextRequest) {
     if (Number.isNaN(startDate.getTime()) || Number.isNaN(endDate.getTime())) {
       return NextResponse.json(
         { error: 'Invalid date format in preferred_date_range' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     if (startDate >= endDate) {
       return NextResponse.json(
         { error: 'Start date must be before end date' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -52,7 +52,7 @@ export async function POST(request: NextRequest) {
     if (duration_minutes < 15 || duration_minutes > 480) {
       return NextResponse.json(
         { error: 'Duration must be between 15 and 480 minutes' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -101,7 +101,7 @@ export async function POST(request: NextRequest) {
         error: 'Failed to generate optimal scheduling suggestions',
         details: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -114,7 +114,7 @@ export async function GET(request: NextRequest) {
     if (!patientId) {
       return NextResponse.json(
         { error: 'patient_id parameter is required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -144,7 +144,7 @@ export async function GET(request: NextRequest) {
         error: 'Failed to retrieve patient scheduling preferences',
         details: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

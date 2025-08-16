@@ -11,6 +11,7 @@ import {
   Heart,
   LogOut,
   Menu,
+  Package,
   Plus,
   Search,
   Settings,
@@ -19,6 +20,7 @@ import {
   Users,
   X,
 } from 'lucide-react';
+import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
 // NeonGradientCard Component
@@ -92,13 +94,14 @@ const CosmicGlowButton = ({
 // Sidebar Component
 const Sidebar = ({ isOpen, onClose }) => {
   const menuItems = [
-    { icon: BarChart3, label: 'Dashboard', active: true },
-    { icon: Users, label: 'Pacientes' },
-    { icon: Calendar, label: 'Agendamentos' },
-    { icon: Sparkles, label: 'Procedimentos' },
-    { icon: FileText, label: 'Relatórios' },
-    { icon: DollarSign, label: 'Financeiro' },
-    { icon: Settings, label: 'Configurações' },
+    { icon: BarChart3, label: 'Dashboard', active: true, href: '/dashboard' },
+    { icon: Users, label: 'Pacientes', href: '/pacientes' },
+    { icon: Calendar, label: 'Agendamentos', href: '/agendamentos' },
+    { icon: Sparkles, label: 'Procedimentos', href: '/procedimentos' },
+    { icon: Package, label: 'Estoque', href: '/estoque' },
+    { icon: FileText, label: 'Relatórios', href: '/relatorios' },
+    { icon: DollarSign, label: 'Financeiro', href: '/financeiro' },
+    { icon: Settings, label: 'Configurações', href: '/configuracoes' },
   ];
 
   return (
@@ -137,21 +140,25 @@ const Sidebar = ({ isOpen, onClose }) => {
 
             <nav className="space-y-2 p-4">
               {menuItems.map((item, index) => (
-                <motion.button
+                <motion.div
                   animate={{ opacity: 1, x: 0 }}
-                  className={`flex w-full items-center gap-3 rounded-lg px-4 py-3 text-left transition-all duration-200 ${
-                    item.active
-                      ? 'border border-blue-500/30 bg-gradient-to-r from-blue-600/20 to-purple-600/20 text-white'
-                      : 'text-gray-400 hover:bg-white/5 hover:text-white'
-                  }
-                  `}
                   initial={{ opacity: 0, x: -20 }}
                   key={item.label}
                   transition={{ delay: index * 0.1 }}
                 >
-                  <item.icon className="h-5 w-5" />
-                  <span className="font-medium">{item.label}</span>
-                </motion.button>
+                  <Link href={item.href}>
+                    <div
+                      className={`flex w-full items-center gap-3 rounded-lg px-4 py-3 text-left transition-all duration-200 cursor-pointer ${
+                        item.active
+                          ? 'border border-blue-500/30 bg-gradient-to-r from-blue-600/20 to-purple-600/20 text-white'
+                          : 'text-gray-400 hover:bg-white/5 hover:text-white'
+                      }`}
+                    >
+                      <item.icon className="h-5 w-5" />
+                      <span className="font-medium">{item.label}</span>
+                    </div>
+                  </Link>
+                </motion.div>
               ))}
             </nav>
 
@@ -483,7 +490,7 @@ const Dashboard = () => {
                                         className="h-3 w-3 fill-yellow-400 text-yellow-400"
                                         key={i}
                                       />
-                                    )
+                                    ),
                                   )}
                                 </div>
                               )}

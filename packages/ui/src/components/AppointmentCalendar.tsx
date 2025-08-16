@@ -19,7 +19,7 @@ import { Badge } from './Badge';
 import { Button } from './Button';
 
 // Types
-export type AppointmentData = {
+type AppointmentData = {
   id: string;
   patientId: string;
   patientName: string;
@@ -40,19 +40,19 @@ export type AppointmentData = {
   notes?: string;
 };
 
-export type CalendarTimeSlot = {
+type CalendarTimeSlot = {
   time: string;
   available: boolean;
   appointments: AppointmentData[];
 };
 
-export type CalendarView = {
+type CalendarView = {
   month: 'month';
   week: 'week';
   day: 'day';
 };
 
-export type AppointmentCalendarProps = {
+type AppointmentCalendarProps = {
   appointments: AppointmentData[];
   selectedDate?: Date;
   view?: keyof CalendarView;
@@ -503,7 +503,6 @@ export const AppointmentCalendar = React.forwardRef<
 );
 AppointmentCalendar.displayName = 'AppointmentCalendar';
 
-export { AppointmentCalendar };
 export type {
   AppointmentCalendarProps,
   AppointmentData,

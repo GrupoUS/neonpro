@@ -38,7 +38,7 @@ export class HubSpotOAuthHandler extends BaseOAuthHandler {
 
     if (missing.length > 0) {
       throw new Error(
-        `Missing required HubSpot OAuth configuration: ${missing.join(', ')}`
+        `Missing required HubSpot OAuth configuration: ${missing.join(', ')}`,
       );
     }
   }
@@ -71,7 +71,7 @@ export class HubSpotOAuthHandler extends BaseOAuthHandler {
 
   async exchangeCodeForTokens(
     code: string,
-    _state: string
+    _state: string,
   ): Promise<EncryptedToken> {
     try {
       const response = await fetch(this.config.tokenUrl, {
@@ -98,7 +98,7 @@ export class HubSpotOAuthHandler extends BaseOAuthHandler {
           error: errorData,
         });
         throw new Error(
-          `Token exchange failed: ${response.status} ${response.statusText}`
+          `Token exchange failed: ${response.status} ${response.statusText}`,
         );
       }
 
@@ -161,7 +161,7 @@ export class HubSpotOAuthHandler extends BaseOAuthHandler {
           error: errorData,
         });
         throw new Error(
-          `Token refresh failed: ${response.status} ${response.statusText}`
+          `Token refresh failed: ${response.status} ${response.statusText}`,
         );
       }
 
@@ -229,7 +229,7 @@ export class HubSpotOAuthHandler extends BaseOAuthHandler {
             Accept: 'application/json',
             'User-Agent': 'NeonPro/1.0',
           },
-        }
+        },
       );
 
       if (!response.ok) {
@@ -240,7 +240,7 @@ export class HubSpotOAuthHandler extends BaseOAuthHandler {
           error: errorData,
         });
         throw new Error(
-          `User info fetch failed: ${response.status} ${response.statusText}`
+          `User info fetch failed: ${response.status} ${response.statusText}`,
         );
       }
 
@@ -283,7 +283,7 @@ export class HubSpotOAuthHandler extends BaseOAuthHandler {
             Accept: 'application/json',
             'User-Agent': 'NeonPro/1.0',
           },
-        }
+        },
       );
 
       const isValid = response.ok;
@@ -314,7 +314,7 @@ export class HubSpotOAuthHandler extends BaseOAuthHandler {
             Accept: 'application/json',
             'User-Agent': 'NeonPro/1.0',
           },
-        }
+        },
       );
 
       if (!response.ok) {
@@ -325,7 +325,7 @@ export class HubSpotOAuthHandler extends BaseOAuthHandler {
           error: errorData,
         });
         throw new Error(
-          `Portal info fetch failed: ${response.status} ${response.statusText}`
+          `Portal info fetch failed: ${response.status} ${response.statusText}`,
         );
       }
 
@@ -359,7 +359,7 @@ export class HubSpotOAuthHandler extends BaseOAuthHandler {
             Accept: 'application/json',
             'User-Agent': 'NeonPro/1.0',
           },
-        }
+        },
       );
 
       if (!response.ok) {
@@ -370,7 +370,7 @@ export class HubSpotOAuthHandler extends BaseOAuthHandler {
           error: errorData,
         });
         throw new Error(
-          `Account info fetch failed: ${response.status} ${response.statusText}`
+          `Account info fetch failed: ${response.status} ${response.statusText}`,
         );
       }
 

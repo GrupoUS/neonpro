@@ -156,7 +156,7 @@ export class NotificationAnalytics {
           clicked_at,
           cost,
           metadata
-        `
+        `,
       )
       .eq('clinic_id', clinicId)
       .gte('sent_at', last24h.toISOString());
@@ -195,7 +195,7 @@ export class NotificationAnalytics {
 
     // Métricas de tempo
     const deliveredNotifications = data.filter(
-      (n) => n.delivered_at && n.sent_at
+      (n) => n.delivered_at && n.sent_at,
     );
     const avgDeliveryTime =
       deliveredNotifications.length > 0
@@ -209,7 +209,7 @@ export class NotificationAnalytics {
         : 0;
 
     const respondedNotifications = data.filter(
-      (n) => n.opened_at && n.delivered_at
+      (n) => n.opened_at && n.delivered_at,
     );
     const avgResponseTime =
       respondedNotifications.length > 0
@@ -257,7 +257,7 @@ export class NotificationAnalytics {
    * Calcula breakdown de métricas por canal
    */
   private calculateChannelBreakdown(
-    data: any[]
+    data: any[],
   ): Record<NotificationChannel, ChannelMetrics> {
     const channels = Object.values(NotificationChannel);
     const breakdown: Record<NotificationChannel, ChannelMetrics> = {} as any;
@@ -266,11 +266,11 @@ export class NotificationAnalytics {
       const channelData = data.filter((n) => n.channel === channel);
       const sent = channelData.length;
       const delivered = channelData.filter(
-        (n) => n.status === 'delivered'
+        (n) => n.status === 'delivered',
       ).length;
       const failed = channelData.filter((n) => n.status === 'failed').length;
       const engaged = channelData.filter(
-        (n) => n.opened_at || n.clicked_at
+        (n) => n.opened_at || n.clicked_at,
       ).length;
 
       const engagementRate = delivered > 0 ? (engaged / delivered) * 100 : 0;
@@ -300,7 +300,7 @@ export class NotificationAnalytics {
    */
   async generateReport(
     query: AnalyticsQuery,
-    clinicId: string
+    clinicId: string,
   ): Promise<AnalyticsReport> {
     const validatedQuery = AnalyticsQuerySchema.parse(query);
     // Buscar dados históricos
@@ -322,13 +322,13 @@ export class NotificationAnalytics {
     // Gerar dados de time series
     const trends = this.generateTimeSeriesData(
       historicalData || [],
-      validatedQuery.groupBy || 'day'
+      validatedQuery.groupBy || 'day',
     );
 
     // Gerar insights preditivos
     const insights = await this.generatePredictiveInsights(
       historicalData || [],
-      clinicId
+      clinicId,
     );
 
     // Gerar recomendações
@@ -352,7 +352,7 @@ export class NotificationAnalytics {
    */
   private generateTimeSeriesData(
     data: any[],
-    groupBy: string
+    groupBy: string,
   ): TimeSeriesData[] {
     const grouped = new Map<string, any[]>();
 
@@ -414,7 +414,7 @@ export class NotificationAnalytics {
           timestamp: new Date(key),
           value: metrics.conversionRate,
           metric: 'conversion_rate',
-        }
+        },
       );
     });
 
@@ -430,7 +430,7 @@ export class NotificationAnalytics {
    */
   private async generatePredictiveInsights(
     data: any[],
-    _clinicId: string
+    _clinicId: string,
   ): Promise<PredictiveInsights> {
     if (!this.config.enablePredictive || data.length < 100) {
       return {
@@ -504,10 +504,10 @@ export class NotificationAnalytics {
     Object.values(NotificationChannel).forEach((channel) => {
       const channelData = data.filter((n) => n.channel === channel);
       const delivered = channelData.filter(
-        (n) => n.status === 'delivered'
+        (n) => n.status === 'delivered',
       ).length;
       const engaged = channelData.filter(
-        (n) => n.opened_at || n.clicked_at
+        (n) => n.opened_at || n.clicked_at,
       ).length;
 
       const engagementRate = delivered > 0 ? engaged / delivered : 0;
@@ -540,7 +540,7 @@ export class NotificationAnalytics {
 
     const delivered = recentData.filter((n) => n.status === 'delivered').length;
     const engaged = recentData.filter(
-      (n) => n.opened_at || n.clicked_at
+      (n) => n.opened_at || n.clicked_at,
     ).length;
 
     return delivered > 0 ? Math.min(engaged / delivered, 1) : 0.5;
@@ -562,7 +562,7 @@ export class NotificationAnalytics {
 
     const recent = last30Days.filter((n) => n.opened_at || n.clicked_at).length;
     const previous = last60Days.filter(
-      (n) => n.opened_at || n.clicked_at
+      (n) => n.opened_at || n.clicked_at,
     ).length;
 
     if (previous === 0) {
@@ -604,26 +604,26 @@ export class NotificationAnalytics {
    */
   private generateRecommendations(
     metrics: NotificationMetrics,
-    trends: TimeSeriesData[]
+    trends: TimeSeriesData[],
   ): string[] {
     const recommendations: string[] = [];
 
     // Análise de performance geral
     if (metrics.deliveryRate < 90) {
       recommendations.push(
-        `📉 Taxa de entrega baixa (${metrics.deliveryRate.toFixed(1)}%). Verifique configurações de DNS e reputação do remetente.`
+        `📉 Taxa de entrega baixa (${metrics.deliveryRate.toFixed(1)}%). Verifique configurações de DNS e reputação do remetente.`,
       );
     }
 
     if (metrics.openRate < 20) {
       recommendations.push(
-        `📧 Taxa de abertura baixa (${metrics.openRate.toFixed(1)}%). Otimize assuntos e horários de envio.`
+        `📧 Taxa de abertura baixa (${metrics.openRate.toFixed(1)}%). Otimize assuntos e horários de envio.`,
       );
     }
 
     if (metrics.clickRate < 5) {
       recommendations.push(
-        `🎯 Taxa de clique baixa (${metrics.clickRate.toFixed(1)}%). Melhore call-to-actions e relevância do conteúdo.`
+        `🎯 Taxa de clique baixa (${metrics.clickRate.toFixed(1)}%). Melhore call-to-actions e relevância do conteúdo.`,
       );
     }
 
@@ -632,37 +632,37 @@ export class NotificationAnalytics {
       ([channel, channelMetrics]) => {
         if (channelMetrics.reliability < 85) {
           recommendations.push(
-            `🔧 Canal ${channel} com baixa confiabilidade (${channelMetrics.reliability.toFixed(1)}%). Considere configuração ou provider alternativo.`
+            `🔧 Canal ${channel} com baixa confiabilidade (${channelMetrics.reliability.toFixed(1)}%). Considere configuração ou provider alternativo.`,
           );
         }
-      }
+      },
     );
 
     // Análise de custos
     if (metrics.costPerDelivery > 0.5) {
       recommendations.push(
-        `💰 Custo por entrega alto (R$ ${metrics.costPerDelivery.toFixed(2)}). Avalie otimização de canais e providers.`
+        `💰 Custo por entrega alto (R$ ${metrics.costPerDelivery.toFixed(2)}). Avalie otimização de canais e providers.`,
       );
     }
 
     // Análise de ROI
     if (metrics.roi < 2) {
       recommendations.push(
-        `📊 ROI baixo (${metrics.roi.toFixed(1)}x). Foque em segmentação e personalização para melhorar conversões.`
+        `📊 ROI baixo (${metrics.roi.toFixed(1)}x). Foque em segmentação e personalização para melhorar conversões.`,
       );
     }
 
     // Análise de tendências
     const recentTrends = trends.slice(-7); // Últimos 7 pontos
     const deliveryTrend = recentTrends.filter(
-      (t) => t.metric === 'delivery_rate'
+      (t) => t.metric === 'delivery_rate',
     );
 
     if (deliveryTrend.length >= 2) {
       const isDecreasing = deliveryTrend.at(-1).value < deliveryTrend[0].value;
       if (isDecreasing) {
         recommendations.push(
-          '📉 Taxa de entrega em declínio. Monitore reputação do remetente e listas de bloqueio.'
+          '📉 Taxa de entrega em declínio. Monitore reputação do remetente e listas de bloqueio.',
         );
       }
     }
@@ -672,7 +672,7 @@ export class NotificationAnalytics {
       recommendations.push(
         '✅ Performance geral boa! Considere testes A/B para otimização contínua.',
         '🎯 Explore segmentação avançada para personalização.',
-        '📱 Teste novos canais ou formatos de conteúdo.'
+        '📱 Teste novos canais ou formatos de conteúdo.',
       );
     }
 

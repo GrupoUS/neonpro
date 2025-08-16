@@ -36,7 +36,7 @@ export async function GET(request: NextRequest) {
           message: 'Invalid request parameters',
           details: validationResult.error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -90,7 +90,7 @@ export async function GET(request: NextRequest) {
             scope.includes('admin') ||
             scope.includes('write') ||
             scope.includes('delete')
-          )
+          ),
       ),
     }));
 
@@ -113,7 +113,7 @@ export async function GET(request: NextRequest) {
         details:
           process.env.NODE_ENV === 'development' ? error.message : undefined,
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -122,20 +122,20 @@ export async function GET(request: NextRequest) {
 export async function POST() {
   return NextResponse.json(
     { error: 'METHOD_NOT_ALLOWED', message: 'POST method not allowed' },
-    { status: 405 }
+    { status: 405 },
   );
 }
 
 export async function PUT() {
   return NextResponse.json(
     { error: 'METHOD_NOT_ALLOWED', message: 'PUT method not allowed' },
-    { status: 405 }
+    { status: 405 },
   );
 }
 
 export async function DELETE() {
   return NextResponse.json(
     { error: 'METHOD_NOT_ALLOWED', message: 'DELETE method not allowed' },
-    { status: 405 }
+    { status: 405 },
   );
 }

@@ -119,7 +119,7 @@ class SecurityAuditLogger {
       userAgent?: string;
       severity?: SecuritySeverity;
       complianceFlags?: ComplianceFlag[];
-    } = {}
+    } = {},
   ): Promise<string> {
     const eventId = this.generateEventId();
     const timestamp = Date.now();
@@ -163,7 +163,7 @@ class SecurityAuditLogger {
     success: boolean,
     userId?: string,
     sessionId?: string,
-    metadata: Record<string, any> = {}
+    metadata: Record<string, any> = {},
   ): Promise<string> {
     const eventType: SecurityEventType = success
       ? operation === 'signin' || operation === 'signup'
@@ -189,7 +189,7 @@ class SecurityAuditLogger {
         sessionId,
         severity: success ? 'info' : 'warning',
         complianceFlags: ['lgpd_relevant', 'data_processing'],
-      }
+      },
     );
   }
 
@@ -205,7 +205,7 @@ class SecurityAuditLogger {
       | 'data_deletion',
     userId: string,
     complianceData: Partial<LGPDComplianceData>,
-    metadata: Record<string, any> = {}
+    metadata: Record<string, any> = {},
   ): Promise<string> {
     const securityEventType: SecurityEventType =
       eventType === 'consent_given'
@@ -236,7 +236,7 @@ class SecurityAuditLogger {
           'data_processing',
           'consent_required',
         ],
-      }
+      },
     );
   }
 
@@ -248,7 +248,7 @@ class SecurityAuditLogger {
     sessionId: string,
     userId?: string,
     reason?: string,
-    metadata: Record<string, any> = {}
+    metadata: Record<string, any> = {},
   ): Promise<string> {
     const securityEventType: SecurityEventType =
       eventType === 'created'
@@ -274,7 +274,7 @@ class SecurityAuditLogger {
         sessionId,
         severity: eventType === 'suspicious' ? 'warning' : 'info',
         complianceFlags: ['lgpd_relevant'],
-      }
+      },
     );
   }
 
@@ -287,7 +287,7 @@ class SecurityAuditLogger {
     resourceId: string,
     operation: 'read' | 'write' | 'delete',
     success: boolean,
-    metadata: Record<string, any> = {}
+    metadata: Record<string, any> = {},
   ): Promise<string> {
     const eventType: SecurityEventType =
       operation === 'read' ? 'data_access' : 'data_modification';
@@ -308,7 +308,7 @@ class SecurityAuditLogger {
         userId,
         severity: success ? 'info' : 'warning',
         complianceFlags: ['lgpd_relevant', 'data_processing'],
-      }
+      },
     );
   }
 
@@ -330,14 +330,14 @@ class SecurityAuditLogger {
       if (query.startDate) {
         queryBuilder = queryBuilder.gte(
           'timestamp',
-          query.startDate.toISOString()
+          query.startDate.toISOString(),
         );
       }
 
       if (query.endDate) {
         queryBuilder = queryBuilder.lte(
           'timestamp',
-          query.endDate.toISOString()
+          query.endDate.toISOString(),
         );
       }
 
@@ -364,7 +364,7 @@ class SecurityAuditLogger {
       if (query.offset) {
         queryBuilder = queryBuilder.range(
           query.offset,
-          query.offset + (query.limit || 100) - 1
+          query.offset + (query.limit || 100) - 1,
         );
       }
 
@@ -376,7 +376,7 @@ class SecurityAuditLogger {
 
       performanceTracker.recordMetric(
         'audit_log_query',
-        Date.now() - startTime
+        Date.now() - startTime,
       );
       return data || [];
     } catch (_error) {
@@ -390,7 +390,7 @@ class SecurityAuditLogger {
   async generateComplianceReport(
     startDate: Date,
     endDate: Date,
-    complianceFlags: ComplianceFlag[] = ['lgpd_relevant']
+    complianceFlags: ComplianceFlag[] = ['lgpd_relevant'],
   ): Promise<any> {
     const events = await this.queryAuditLogs({
       startDate,
@@ -423,7 +423,7 @@ class SecurityAuditLogger {
       {
         severity: 'info',
         complianceFlags: ['lgpd_relevant'],
-      }
+      },
     );
 
     return report;
@@ -458,7 +458,7 @@ class SecurityAuditLogger {
   }
 
   private determineComplianceFlags(
-    eventType: SecurityEventType
+    eventType: SecurityEventType,
   ): ComplianceFlag[] {
     const flags: ComplianceFlag[] = [];
 
@@ -522,7 +522,7 @@ class SecurityAuditLogger {
           description: event.description,
           metadata: event.metadata,
           compliance_flags: event.complianceFlags,
-        }))
+        })),
       );
 
       if (error) {
@@ -551,38 +551,38 @@ class SecurityAuditLogger {
 
   private generateComplianceSummary(events: any[]): any {
     const lgpdEvents = events.filter((e) =>
-      e.compliance_flags?.includes('lgpd_relevant')
+      e.compliance_flags?.includes('lgpd_relevant'),
     );
 
     return {
       total_compliance_events: lgpdEvents.length,
       data_processing_events: events.filter((e) =>
-        e.compliance_flags?.includes('data_processing')
+        e.compliance_flags?.includes('data_processing'),
       ).length,
       consent_events: events.filter((e) =>
-        e.compliance_flags?.includes('consent_required')
+        e.compliance_flags?.includes('consent_required'),
       ).length,
     };
   }
 
   private generateLGPDSummary(events: any[]): any {
     const lgpdEvents = events.filter((e) =>
-      e.compliance_flags?.includes('lgpd_relevant')
+      e.compliance_flags?.includes('lgpd_relevant'),
     );
 
     return {
       total_lgpd_events: lgpdEvents.length,
       consent_given: events.filter(
-        (e) => e.event_type === 'privacy_consent_given'
+        (e) => e.event_type === 'privacy_consent_given',
       ).length,
       consent_withdrawn: events.filter(
-        (e) => e.event_type === 'privacy_consent_withdrawn'
+        (e) => e.event_type === 'privacy_consent_withdrawn',
       ).length,
       data_exports: events.filter(
-        (e) => e.event_type === 'data_export_requested'
+        (e) => e.event_type === 'data_export_requested',
       ).length,
       data_deletions: events.filter(
-        (e) => e.event_type === 'data_deletion_requested'
+        (e) => e.event_type === 'data_deletion_requested',
       ).length,
     };
   }
@@ -596,20 +596,20 @@ class SecurityAuditLogger {
     }
 
     const failedAuth = events.filter(
-      (e) => e.event_type === 'authentication_failure'
+      (e) => e.event_type === 'authentication_failure',
     );
     if (failedAuth.length > 10) {
       recommendations.push(
-        'High number of authentication failures detected - consider implementing additional security measures'
+        'High number of authentication failures detected - consider implementing additional security measures',
       );
     }
 
     const suspiciousActivity = events.filter(
-      (e) => e.event_type === 'suspicious_activity'
+      (e) => e.event_type === 'suspicious_activity',
     );
     if (suspiciousActivity.length > 0) {
       recommendations.push(
-        'Suspicious activity detected - review and investigate'
+        'Suspicious activity detected - review and investigate',
       );
     }
 

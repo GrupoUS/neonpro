@@ -50,7 +50,7 @@ export async function POST(request: NextRequest) {
     if (itemError || !item) {
       return NextResponse.json(
         { error: 'Item não encontrado' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -68,7 +68,7 @@ export async function POST(request: NextRequest) {
           error: 'Código de barras já existe para este item',
           existing_barcode: existingBarcode.barcode,
         },
-        { status: 409 }
+        { status: 409 },
       );
     }
 
@@ -101,13 +101,13 @@ export async function POST(request: NextRequest) {
             message: e.message,
           })),
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

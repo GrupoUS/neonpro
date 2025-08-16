@@ -142,14 +142,14 @@ class RiskScoringAlgorithm {
   async calculateRiskScore(
     patientId: string,
     treatmentId: string,
-    inputData: any
+    inputData: any,
   ): Promise<RiskScoreResult> {
     try {
       // Step 1: Calculate component scores
       const components = await this.calculateComponents(
         patientId,
         treatmentId,
-        inputData
+        inputData,
       );
 
       // Step 2: Apply weights and calculate total score
@@ -158,7 +158,7 @@ class RiskScoringAlgorithm {
       // Step 3: Normalize score (0-100)
       const normalizedScore = this.normalizeScore(
         totalScore,
-        inputData.treatmentData?.type
+        inputData.treatmentData?.type,
       );
 
       // Step 4: Determine risk level
@@ -176,14 +176,14 @@ class RiskScoringAlgorithm {
       // Step 8: Calculate benchmarks
       const benchmarks = await this.calculateBenchmarks(
         inputData,
-        normalizedScore
+        normalizedScore,
       );
 
       // Step 9: Generate recommendations
       const recommendations = this.generateRecommendations(
         components,
         riskLevel,
-        trends
+        trends,
       );
 
       const result: RiskScoreResult = {
@@ -212,7 +212,7 @@ class RiskScoringAlgorithm {
   private async calculateComponents(
     patientId: string,
     _treatmentId: string,
-    inputData: any
+    inputData: any,
   ): Promise<RiskScoreComponents> {
     const components: RiskScoreComponents = {
       patientFactors: {
@@ -243,44 +243,44 @@ class RiskScoringAlgorithm {
 
     // Calculate patient factors
     components.patientFactors.demographic = this.calculateDemographicScore(
-      inputData.patientData
+      inputData.patientData,
     );
     components.patientFactors.medical = this.calculateMedicalScore(
-      inputData.patientData
+      inputData.patientData,
     );
     components.patientFactors.lifestyle = this.calculateLifestyleScore(
-      inputData.patientData
+      inputData.patientData,
     );
     components.patientFactors.medication = this.calculateMedicationScore(
-      inputData.patientData
+      inputData.patientData,
     );
 
     // Calculate treatment factors
     components.treatmentFactors.complexity = this.calculateComplexityScore(
-      inputData.treatmentData
+      inputData.treatmentData,
     );
     components.treatmentFactors.invasiveness = this.calculateInvasivenessScore(
-      inputData.treatmentData
+      inputData.treatmentData,
     );
     components.treatmentFactors.duration = this.calculateDurationScore(
-      inputData.treatmentData
+      inputData.treatmentData,
     );
     components.treatmentFactors.anesthesia = this.calculateAnesthesiaScore(
-      inputData.treatmentData
+      inputData.treatmentData,
     );
 
     // Calculate environmental factors
     components.environmentalFactors.facility = this.calculateFacilityScore(
-      inputData.environmentalFactors
+      inputData.environmentalFactors,
     );
     components.environmentalFactors.staff = this.calculateStaffScore(
-      inputData.environmentalFactors
+      inputData.environmentalFactors,
     );
     components.environmentalFactors.equipment = this.calculateEquipmentScore(
-      inputData.environmentalFactors
+      inputData.environmentalFactors,
     );
     components.environmentalFactors.emergency = this.calculateEmergencyScore(
-      inputData.environmentalFactors
+      inputData.environmentalFactors,
     );
 
     // Calculate historical factors
@@ -395,7 +395,7 @@ class RiskScoringAlgorithm {
     familyHistory.forEach((condition: string) => {
       if (
         highRiskConditions.some((risk) =>
-          condition.toLowerCase().includes(risk)
+          condition.toLowerCase().includes(risk),
         )
       ) {
         score += 5;
@@ -709,7 +709,7 @@ class RiskScoringAlgorithm {
 
     const complications = historicalData.filter(
       (record) =>
-        record.outcome === 'complication' || record.outcome === 'failure'
+        record.outcome === 'complication' || record.outcome === 'failure',
     );
 
     const complicationRate = complications.length / historicalData.length;
@@ -742,7 +742,7 @@ class RiskScoringAlgorithm {
     }
 
     const slowRecoveries = historicalData.filter(
-      (record) => record.recovery_time > record.expected_recovery_time * 1.5
+      (record) => record.recovery_time > record.expected_recovery_time * 1.5,
     );
 
     const slowRecoveryRate = slowRecoveries.length / historicalData.length;
@@ -758,7 +758,7 @@ class RiskScoringAlgorithm {
     }
 
     const poorAdherence = historicalData.filter(
-      (record) => record.adherence_score < 0.7 // Less than 70% adherence
+      (record) => record.adherence_score < 0.7, // Less than 70% adherence
     );
 
     const poorAdherenceRate = poorAdherence.length / historicalData.length;
@@ -830,7 +830,7 @@ class RiskScoringAlgorithm {
    * Determine risk level from score
    */
   private determineRiskLevel(
-    score: number
+    score: number,
   ): 'minimal' | 'low' | 'moderate' | 'high' | 'critical' {
     const thresholds = this.config.thresholds;
 
@@ -854,7 +854,7 @@ class RiskScoringAlgorithm {
    */
   private calculateConfidence(
     components: RiskScoreComponents,
-    inputData: any
+    inputData: any,
   ): number {
     let confidence = 100;
 
@@ -878,7 +878,7 @@ class RiskScoringAlgorithm {
     // Reduce confidence for missing historical data
     const totalHistorical = Object.values(components.historicalFactors).reduce(
       (sum, score) => sum + score,
-      0
+      0,
     );
     if (totalHistorical === 0) {
       confidence -= 20;
@@ -898,7 +898,7 @@ class RiskScoringAlgorithm {
     const patientTotal =
       Object.values(components.patientFactors).reduce(
         (sum, score) => sum + score,
-        0
+        0,
       ) / 4;
     breakdown.push({
       category: 'Patient Factors',
@@ -912,7 +912,7 @@ class RiskScoringAlgorithm {
     const treatmentTotal =
       Object.values(components.treatmentFactors).reduce(
         (sum, score) => sum + score,
-        0
+        0,
       ) / 4;
     breakdown.push({
       category: 'Treatment Factors',
@@ -926,14 +926,14 @@ class RiskScoringAlgorithm {
     const environmentalTotal =
       Object.values(components.environmentalFactors).reduce(
         (sum, score) => sum + score,
-        0
+        0,
       ) / 4;
     breakdown.push({
       category: 'Environmental Factors',
       score: Math.round(environmentalTotal),
       weight: weights.environmentalFactors,
       contribution: Math.round(
-        environmentalTotal * weights.environmentalFactors
+        environmentalTotal * weights.environmentalFactors,
       ),
       factors: ['Facility', 'Staff', 'Equipment', 'Emergency Preparedness'],
     });
@@ -942,7 +942,7 @@ class RiskScoringAlgorithm {
     const historicalTotal =
       Object.values(components.historicalFactors).reduce(
         (sum, score) => sum + score,
-        0
+        0,
       ) / 4;
     breakdown.push({
       category: 'Historical Factors',
@@ -1075,7 +1075,7 @@ class RiskScoringAlgorithm {
   private generateRecommendations(
     components: RiskScoreComponents,
     riskLevel: string,
-    trends: any
+    trends: any,
   ) {
     const recommendations = {
       immediate: [] as string[],
@@ -1087,7 +1087,7 @@ class RiskScoringAlgorithm {
     // Risk level based recommendations
     if (riskLevel === 'critical' || riskLevel === 'high') {
       recommendations.immediate.push(
-        'Comprehensive pre-operative assessment required'
+        'Comprehensive pre-operative assessment required',
       );
       recommendations.immediate.push('Specialist consultation recommended');
       recommendations.monitoring.push('Continuous monitoring during procedure');
@@ -1097,14 +1097,14 @@ class RiskScoringAlgorithm {
     if (riskLevel === 'moderate') {
       recommendations.immediate.push('Enhanced pre-operative preparation');
       recommendations.monitoring.push(
-        'Standard monitoring with additional precautions'
+        'Standard monitoring with additional precautions',
       );
     }
 
     // Trend-based recommendations
     if (trends.direction === 'worsening') {
       recommendations.shortTerm.push(
-        'Address factors contributing to increasing risk'
+        'Address factors contributing to increasing risk',
       );
       recommendations.monitoring.push('More frequent risk assessments');
     }
@@ -1113,7 +1113,7 @@ class RiskScoringAlgorithm {
     const patientTotal =
       Object.values(components.patientFactors).reduce(
         (sum, score) => sum + score,
-        0
+        0,
       ) / 4;
     if (patientTotal > 40) {
       recommendations.longTerm.push('Lifestyle modification counseling');
@@ -1123,7 +1123,7 @@ class RiskScoringAlgorithm {
     const treatmentTotal =
       Object.values(components.treatmentFactors).reduce(
         (sum, score) => sum + score,
-        0
+        0,
       ) / 4;
     if (treatmentTotal > 40) {
       recommendations.immediate.push('Consider less invasive alternatives');
@@ -1138,7 +1138,7 @@ class RiskScoringAlgorithm {
    */
   private async storeRiskScore(
     patientId: string,
-    result: RiskScoreResult
+    result: RiskScoreResult,
   ): Promise<void> {
     try {
       await this.supabase.from('risk_scores').insert({
@@ -1253,7 +1253,7 @@ class RiskScoringAlgorithm {
    * Create score function from string definition
    */
   private createScoreFunction(
-    _functionDef: string
+    _functionDef: string,
   ): (value: any, context: any) => number {
     // This would parse and create a function from the database definition
     // For now, return a simple function

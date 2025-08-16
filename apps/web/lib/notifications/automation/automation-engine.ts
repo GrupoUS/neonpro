@@ -69,7 +69,7 @@ export class AutomationEngine {
 
   constructor(
     private readonly notificationManager: NotificationManager,
-    private readonly templateEngine: TemplateEngine
+    private readonly templateEngine: TemplateEngine,
   ) {}
 
   // ============================================================================
@@ -174,7 +174,7 @@ export class AutomationEngine {
    */
   private matchesTrigger(
     trigger: AutomationTrigger,
-    event: EventData
+    event: EventData,
   ): boolean {
     // Verificar tipo de evento
     if (trigger.eventType !== event.type) {
@@ -208,7 +208,7 @@ export class AutomationEngine {
    */
   private async executeRule(
     rule: AutomationRule,
-    event: EventData
+    event: EventData,
   ): Promise<RuleExecution> {
     const startTime = Date.now();
     const execution: RuleExecution = {
@@ -227,7 +227,7 @@ export class AutomationEngine {
       if (rule.conditions && rule.conditions.length > 0) {
         execution.conditionsMet = this.evaluateConditions(
           rule.conditions,
-          event
+          event,
         );
       } else {
         execution.conditionsMet = true;
@@ -262,10 +262,10 @@ export class AutomationEngine {
    */
   private evaluateConditions(
     conditions: AutomationCondition[],
-    event: EventData
+    event: EventData,
   ): boolean {
     return conditions.every((condition) =>
-      this.evaluateCondition(condition, event)
+      this.evaluateCondition(condition, event),
     );
   }
 
@@ -274,7 +274,7 @@ export class AutomationEngine {
    */
   private evaluateCondition(
     condition: AutomationCondition,
-    event: EventData
+    event: EventData,
   ): boolean {
     const value = this.getValueFromEvent(condition.field, event);
 
@@ -344,7 +344,7 @@ export class AutomationEngine {
   private async executeAction(
     action: AutomationAction,
     event: EventData,
-    rule: AutomationRule
+    rule: AutomationRule,
   ): Promise<void> {
     switch (action.type) {
       case 'send_notification':
@@ -370,7 +370,7 @@ export class AutomationEngine {
   private async executeSendNotificationAction(
     action: AutomationAction,
     event: EventData,
-    rule: AutomationRule
+    rule: AutomationRule,
   ): Promise<void> {
     const config = action.config;
 
@@ -381,7 +381,7 @@ export class AutomationEngine {
     const templateData = this.buildTemplateData(event, rule);
     const content = await this.templateEngine.render(
       config.templateId,
-      templateData
+      templateData,
     );
 
     // Enviar notificação para cada destinatário
@@ -422,7 +422,7 @@ export class AutomationEngine {
    */
   private async executeWebhookAction(
     action: AutomationAction,
-    event: EventData
+    event: EventData,
   ): Promise<void> {
     const config = action.config;
 
@@ -441,7 +441,7 @@ export class AutomationEngine {
 
     if (!response.ok) {
       throw new Error(
-        `Webhook falhou: ${response.status} ${response.statusText}`
+        `Webhook falhou: ${response.status} ${response.statusText}`,
       );
     }
   }
@@ -451,7 +451,7 @@ export class AutomationEngine {
    */
   private async executeUpdateEntityAction(
     _action: AutomationAction,
-    _event: EventData
+    _event: EventData,
   ): Promise<void> {}
 
   // ============================================================================
@@ -463,7 +463,7 @@ export class AutomationEngine {
    */
   private async resolveRecipients(
     recipientConfig: any,
-    event: EventData
+    event: EventData,
   ): Promise<NotificationRecipient[]> {
     const recipients: NotificationRecipient[] = [];
 
@@ -504,7 +504,7 @@ export class AutomationEngine {
    */
   private buildTemplateData(
     event: EventData,
-    rule: AutomationRule
+    rule: AutomationRule,
   ): Record<string, any> {
     return {
       event: {
@@ -594,13 +594,13 @@ export class AutomationEngine {
   getStats(): AutomationStats {
     const totalExecutions = this.executionHistory.length;
     const successfulExecutions = this.executionHistory.filter(
-      (e) => e.errors.length === 0
+      (e) => e.errors.length === 0,
     ).length;
     const failedExecutions = totalExecutions - successfulExecutions;
 
     const totalDuration = this.executionHistory.reduce(
       (sum, e) => sum + e.duration,
-      0
+      0,
     );
     const averageExecutionTime =
       totalExecutions > 0 ? totalDuration / totalExecutions : 0;

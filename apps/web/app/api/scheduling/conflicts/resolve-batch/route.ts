@@ -50,7 +50,7 @@ export async function POST(request: NextRequest) {
         cookies: {
           get: (name: string) => request.cookies.get(name)?.value,
         },
-      }
+      },
     );
 
     const {
@@ -69,7 +69,7 @@ export async function POST(request: NextRequest) {
           },
           error: 'Unauthorized',
         },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -87,7 +87,7 @@ export async function POST(request: NextRequest) {
           },
           error: 'Tenant ID required',
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -111,7 +111,7 @@ export async function POST(request: NextRequest) {
           },
           error: 'LGPD compliance required for batch resolution',
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -138,7 +138,7 @@ export async function POST(request: NextRequest) {
           },
           error: `Resolution failed: ${resolutionError.message}`,
         },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -198,7 +198,7 @@ export async function POST(request: NextRequest) {
           },
           error: `Validation failed: ${error.errors.map((e) => e.message).join(', ')}`,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -213,7 +213,7 @@ export async function POST(request: NextRequest) {
         },
         error: 'Internal server error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -5,7 +5,7 @@ import { createClient } from '@/app/utils/supabase/server';
 
 export async function GET(
   _request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const supabase = await createClient();
@@ -28,14 +28,14 @@ export async function GET(
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to fetch inventory item' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const supabase = await createClient();
@@ -61,14 +61,14 @@ export async function PUT(
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to update inventory item' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
 
 export async function DELETE(
   _request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const supabase = await createClient();
@@ -87,7 +87,7 @@ export async function DELETE(
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to delete inventory item' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

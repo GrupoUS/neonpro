@@ -40,7 +40,7 @@ export async function POST(request: NextRequest) {
     if (!['admin', 'manager', 'marketer'].includes(profile.role)) {
       return NextResponse.json(
         { error: 'Insufficient permissions for bulk email sending' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -59,7 +59,7 @@ export async function POST(request: NextRequest) {
               message: err.message,
             })),
           },
-          { status: 400 }
+          { status: 400 },
         );
       }
       throw validationError;
@@ -95,7 +95,7 @@ export async function POST(request: NextRequest) {
           error: 'Rate limit exceeded',
           details: `Hourly limit of ${hourlyLimit} emails would be exceeded`,
         },
-        { status: 429 }
+        { status: 429 },
       );
     }
 
@@ -113,7 +113,7 @@ export async function POST(request: NextRequest) {
           error: 'Daily rate limit exceeded',
           details: `Daily limit of ${dailyLimit} emails would be exceeded`,
         },
-        { status: 429 }
+        { status: 429 },
       );
     }
 
@@ -131,7 +131,7 @@ export async function POST(request: NextRequest) {
     if (!providerConfigs || providerConfigs.length === 0) {
       return NextResponse.json(
         { error: 'No email providers configured' },
-        { status: 503 }
+        { status: 503 },
       );
     }
 
@@ -146,7 +146,7 @@ export async function POST(request: NextRequest) {
         dailyLimit: config.daily_limit,
         monthlyLimit: config.monthly_limit,
         rateLimit: config.rate_limit,
-      }))
+      })),
     );
 
     // Create bulk email campaign record
@@ -169,7 +169,7 @@ export async function POST(request: NextRequest) {
     const result = await emailService.sendBulkEmail(
       messages,
       undefined,
-      batchSize
+      batchSize,
     );
 
     // Log each email send attempt
@@ -235,7 +235,7 @@ export async function POST(request: NextRequest) {
         success: false,
         error: error instanceof Error ? error.message : 'Internal server error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -294,7 +294,7 @@ export async function GET(request: NextRequest) {
       if (campaignError.code === 'PGRST116') {
         return NextResponse.json(
           { error: 'Campaign not found' },
-          { status: 404 }
+          { status: 404 },
         );
       }
       throw campaignError;
@@ -334,7 +334,7 @@ export async function GET(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

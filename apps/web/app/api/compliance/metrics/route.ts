@@ -44,7 +44,7 @@ export async function GET(request: NextRequest) {
             'Unauthorized access - compliance metrics require elevated permissions',
           required_roles: ['admin', 'compliance_officer', 'clinic_manager'],
         },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -65,7 +65,7 @@ export async function GET(request: NextRequest) {
           error: 'Invalid query parameters',
           details: validationResult.error.format(),
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -98,7 +98,7 @@ export async function GET(request: NextRequest) {
     // 📈 Calculate trend data based on period
     const trendData = await calculateComplianceTrends(
       params.period,
-      authResult.user.id
+      authResult.user.id,
     );
 
     // 🎨 Format response
@@ -139,7 +139,7 @@ export async function GET(request: NextRequest) {
     await logComplianceAccess(
       authResult.user.id,
       'metrics_view',
-      params.category
+      params.category,
     );
 
     return NextResponse.json(response, {
@@ -159,7 +159,7 @@ export async function GET(request: NextRequest) {
           process.env.NODE_ENV === 'development' ? error.message : undefined,
         timestamp: new Date().toISOString(),
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -290,7 +290,7 @@ function getScoreStatus(score: number): string {
 async function logComplianceAccess(
   userId: string,
   action: string,
-  category: string
+  category: string,
 ) {
   try {
     const supabase = createClient();

@@ -65,26 +65,26 @@ type UseSupplierManagementReturn = {
   loadSuppliers: (
     filters?: SupplierFilters,
     page?: number,
-    limit?: number
+    limit?: number,
   ) => Promise<void>;
   loadSupplierDetails: (supplierId: string) => Promise<void>;
   createSupplier: (
-    supplierData: CreateSupplierRequest
+    supplierData: CreateSupplierRequest,
   ) => Promise<Supplier | null>;
   updateSupplier: (
     supplierId: string,
-    updates: UpdateSupplierRequest
+    updates: UpdateSupplierRequest,
   ) => Promise<Supplier | null>;
   deleteSupplier: (supplierId: string) => Promise<boolean>;
 
   // Contract management
   loadContracts: (supplierId: string) => Promise<void>;
   createContract: (
-    contractData: CreateContractRequest
+    contractData: CreateContractRequest,
   ) => Promise<SupplierContract | null>;
   updateContract: (
     contractId: string,
-    updates: Partial<CreateContractRequest>
+    updates: Partial<CreateContractRequest>,
   ) => Promise<SupplierContract | null>;
   loadContractAlerts: (daysAhead?: number) => Promise<void>;
 
@@ -93,36 +93,36 @@ type UseSupplierManagementReturn = {
   createContact: (contactData: any) => Promise<SupplierContact | null>;
   updateContact: (
     contactId: string,
-    updates: any
+    updates: any,
   ) => Promise<SupplierContact | null>;
 
   // Performance and evaluation
   loadEvaluations: (supplierId: string) => Promise<void>;
   createEvaluation: (
-    evaluationData: CreateEvaluationRequest
+    evaluationData: CreateEvaluationRequest,
   ) => Promise<SupplierEvaluation | null>;
 
   // Quality issues
   loadQualityIssuesSummary: () => Promise<void>;
   createQualityIssue: (
-    issueData: CreateQualityIssueRequest
+    issueData: CreateQualityIssueRequest,
   ) => Promise<SupplierQualityIssue | null>;
   updateQualityIssue: (
     issueId: string,
-    updates: any
+    updates: any,
   ) => Promise<SupplierQualityIssue | null>;
 
   // Communications
   loadCommunications: (supplierId: string) => Promise<void>;
   createCommunication: (
-    communicationData: any
+    communicationData: any,
   ) => Promise<SupplierCommunication | null>;
 
   // Dashboard and analytics
   loadDashboardData: () => Promise<void>;
   loadAnalytics: (periodStart: string, periodEnd: string) => Promise<void>;
   compareSuppliers: (
-    supplierIds: string[]
+    supplierIds: string[],
   ) => Promise<SupplierComparison | null>;
 
   // Utility functions
@@ -143,15 +143,15 @@ export function useSupplierManagement({
   const [contacts, setContacts] = useState<SupplierContact[]>([]);
   const [evaluations, setEvaluations] = useState<SupplierEvaluation[]>([]);
   const [qualityIssues, setQualityIssues] = useState<SupplierQualityIssue[]>(
-    []
+    [],
   );
   const [communications, setCommunications] = useState<SupplierCommunication[]>(
-    []
+    [],
   );
   const [dashboardData, setDashboardData] =
     useState<SupplierDashboardData | null>(null);
   const [contractAlerts, setContractAlerts] = useState<ContractRenewalAlert[]>(
-    []
+    [],
   );
   const [qualityIssuesSummary, setQualityIssuesSummary] = useState<
     QualityIssuesSummary[]
@@ -176,7 +176,7 @@ export function useSupplierManagement({
   const handleApiCall = async <T>(
     apiCall: () => Promise<T>,
     onSuccess?: (data: T) => void,
-    loadingState?: 'loading' | 'creating' | 'updating' | 'deleting'
+    loadingState?: 'loading' | 'creating' | 'updating' | 'deleting',
   ): Promise<T | null> => {
     try {
       setError(null);
@@ -229,7 +229,7 @@ export function useSupplierManagement({
             if (filters.supplier_type?.length) {
               queryParams.append(
                 'supplier_type',
-                filters.supplier_type.join(',')
+                filters.supplier_type.join(','),
               );
             }
             if (filters.status?.length) {
@@ -238,7 +238,7 @@ export function useSupplierManagement({
             if (filters.is_preferred !== undefined) {
               queryParams.append(
                 'is_preferred',
-                filters.is_preferred.toString()
+                filters.is_preferred.toString(),
               );
             }
             if (filters.is_critical !== undefined) {
@@ -247,13 +247,13 @@ export function useSupplierManagement({
             if (filters.performance_score_min !== undefined) {
               queryParams.append(
                 'performance_score_min',
-                filters.performance_score_min.toString()
+                filters.performance_score_min.toString(),
               );
             }
             if (filters.performance_score_max !== undefined) {
               queryParams.append(
                 'performance_score_max',
-                filters.performance_score_max.toString()
+                filters.performance_score_max.toString(),
               );
             }
             if (filters.search) {
@@ -277,10 +277,10 @@ export function useSupplierManagement({
             total: data.total,
           });
         },
-        'loading'
+        'loading',
       );
     },
-    [clinicId, handleApiCall]
+    [clinicId, handleApiCall],
   );
 
   const loadSupplierDetails = useCallback(
@@ -288,7 +288,7 @@ export function useSupplierManagement({
       await handleApiCall(
         async () => {
           const response = await fetch(
-            `/api/suppliers/${supplierId}?clinic_id=${clinicId}`
+            `/api/suppliers/${supplierId}?clinic_id=${clinicId}`,
           );
           if (!response.ok) {
             throw new Error('Erro ao carregar detalhes do fornecedor');
@@ -296,10 +296,10 @@ export function useSupplierManagement({
           return response.json();
         },
         (data) => setSupplierDetails(data),
-        'loading'
+        'loading',
       );
     },
-    [clinicId, handleApiCall]
+    [clinicId, handleApiCall],
   );
 
   const createSupplier = useCallback(
@@ -322,10 +322,10 @@ export function useSupplierManagement({
         (newSupplier) => {
           setSuppliers((prev) => [newSupplier, ...prev]);
         },
-        'creating'
+        'creating',
       );
     },
-    [clinicId, handleApiCall]
+    [clinicId, handleApiCall],
   );
 
   const updateSupplier = useCallback(
@@ -338,7 +338,7 @@ export function useSupplierManagement({
               method: 'PUT',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify(updates),
-            }
+            },
           );
 
           if (!response.ok) {
@@ -351,17 +351,17 @@ export function useSupplierManagement({
         (updatedSupplier) => {
           setSuppliers((prev) =>
             prev.map((supplier) =>
-              supplier.id === supplierId ? updatedSupplier : supplier
-            )
+              supplier.id === supplierId ? updatedSupplier : supplier,
+            ),
           );
           if (supplierDetails?.id === supplierId) {
             setSupplierDetails(updatedSupplier);
           }
         },
-        'updating'
+        'updating',
       );
     },
-    [clinicId, supplierDetails, handleApiCall]
+    [clinicId, supplierDetails, handleApiCall],
   );
 
   const deleteSupplier = useCallback(
@@ -372,7 +372,7 @@ export function useSupplierManagement({
             `/api/suppliers/${supplierId}?clinic_id=${clinicId}`,
             {
               method: 'DELETE',
-            }
+            },
           );
 
           if (!response.ok) {
@@ -384,18 +384,18 @@ export function useSupplierManagement({
         },
         () => {
           setSuppliers((prev) =>
-            prev.filter((supplier) => supplier.id !== supplierId)
+            prev.filter((supplier) => supplier.id !== supplierId),
           );
           if (supplierDetails?.id === supplierId) {
             setSupplierDetails(null);
           }
         },
-        'deleting'
+        'deleting',
       );
 
       return result !== null;
     },
-    [clinicId, supplierDetails, handleApiCall]
+    [clinicId, supplierDetails, handleApiCall],
   );
 
   // =====================================================================================
@@ -407,7 +407,7 @@ export function useSupplierManagement({
       await handleApiCall(
         async () => {
           const response = await fetch(
-            `/api/suppliers/contracts?supplier_id=${supplierId}`
+            `/api/suppliers/contracts?supplier_id=${supplierId}`,
           );
           if (!response.ok) {
             throw new Error('Erro ao carregar contratos');
@@ -416,10 +416,10 @@ export function useSupplierManagement({
           return data.contracts;
         },
         (contractsData) => setContracts(contractsData),
-        'loading'
+        'loading',
       );
     },
-    [handleApiCall]
+    [handleApiCall],
   );
 
   const createContract = useCallback(
@@ -442,10 +442,10 @@ export function useSupplierManagement({
         (newContract) => {
           setContracts((prev) => [newContract, ...prev]);
         },
-        'creating'
+        'creating',
       );
     },
-    [handleApiCall]
+    [handleApiCall],
   );
 
   const updateContract = useCallback(
@@ -458,7 +458,7 @@ export function useSupplierManagement({
               method: 'PUT',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify(updates),
-            }
+            },
           );
 
           if (!response.ok) {
@@ -471,14 +471,14 @@ export function useSupplierManagement({
         (updatedContract) => {
           setContracts((prev) =>
             prev.map((contract) =>
-              contract.id === contractId ? updatedContract : contract
-            )
+              contract.id === contractId ? updatedContract : contract,
+            ),
           );
         },
-        'updating'
+        'updating',
       );
     },
-    [handleApiCall]
+    [handleApiCall],
   );
 
   const loadContractAlerts = useCallback(
@@ -486,7 +486,7 @@ export function useSupplierManagement({
       await handleApiCall(
         async () => {
           const response = await fetch(
-            `/api/suppliers/contracts?clinic_id=${clinicId}&action=renewal-alerts&days_ahead=${daysAhead}`
+            `/api/suppliers/contracts?clinic_id=${clinicId}&action=renewal-alerts&days_ahead=${daysAhead}`,
           );
           if (!response.ok) {
             throw new Error('Erro ao carregar alertas de contrato');
@@ -495,10 +495,10 @@ export function useSupplierManagement({
           return data.alerts;
         },
         (alertsData) => setContractAlerts(alertsData),
-        'loading'
+        'loading',
       );
     },
-    [clinicId, handleApiCall]
+    [clinicId, handleApiCall],
   );
 
   // =====================================================================================
@@ -510,7 +510,7 @@ export function useSupplierManagement({
       await handleApiCall(
         async () => {
           const response = await fetch(
-            `/api/suppliers/contacts?supplier_id=${supplierId}`
+            `/api/suppliers/contacts?supplier_id=${supplierId}`,
           );
           if (!response.ok) {
             throw new Error('Erro ao carregar contatos');
@@ -519,10 +519,10 @@ export function useSupplierManagement({
           return data.contacts;
         },
         (contactsData) => setContacts(contactsData),
-        'loading'
+        'loading',
       );
     },
-    [handleApiCall]
+    [handleApiCall],
   );
 
   const createContact = useCallback(
@@ -545,10 +545,10 @@ export function useSupplierManagement({
         (newContact) => {
           setContacts((prev) => [newContact, ...prev]);
         },
-        'creating'
+        'creating',
       );
     },
-    [handleApiCall]
+    [handleApiCall],
   );
 
   const updateContact = useCallback(
@@ -571,14 +571,14 @@ export function useSupplierManagement({
         (updatedContact) => {
           setContacts((prev) =>
             prev.map((contact) =>
-              contact.id === contactId ? updatedContact : contact
-            )
+              contact.id === contactId ? updatedContact : contact,
+            ),
           );
         },
-        'updating'
+        'updating',
       );
     },
-    [handleApiCall]
+    [handleApiCall],
   );
 
   // =====================================================================================
@@ -590,7 +590,7 @@ export function useSupplierManagement({
       await handleApiCall(
         async () => {
           const response = await fetch(
-            `/api/suppliers/evaluations?supplier_id=${supplierId}`
+            `/api/suppliers/evaluations?supplier_id=${supplierId}`,
           );
           if (!response.ok) {
             throw new Error('Erro ao carregar avaliações');
@@ -599,10 +599,10 @@ export function useSupplierManagement({
           return data.evaluations;
         },
         (evaluationsData) => setEvaluations(evaluationsData),
-        'loading'
+        'loading',
       );
     },
-    [handleApiCall]
+    [handleApiCall],
   );
 
   const createEvaluation = useCallback(
@@ -625,10 +625,10 @@ export function useSupplierManagement({
         (newEvaluation) => {
           setEvaluations((prev) => [newEvaluation, ...prev]);
         },
-        'creating'
+        'creating',
       );
     },
-    [handleApiCall]
+    [handleApiCall],
   );
 
   // =====================================================================================
@@ -639,7 +639,7 @@ export function useSupplierManagement({
     await handleApiCall(
       async () => {
         const response = await fetch(
-          `/api/suppliers/quality-issues?clinic_id=${clinicId}`
+          `/api/suppliers/quality-issues?clinic_id=${clinicId}`,
         );
         if (!response.ok) {
           throw new Error('Erro ao carregar resumo de issues');
@@ -648,7 +648,7 @@ export function useSupplierManagement({
         return data.summary;
       },
       (summaryData) => setQualityIssuesSummary(summaryData),
-      'loading'
+      'loading',
     );
   }, [clinicId, handleApiCall]);
 
@@ -672,10 +672,10 @@ export function useSupplierManagement({
         (newIssue) => {
           setQualityIssues((prev) => [newIssue, ...prev]);
         },
-        'creating'
+        'creating',
       );
     },
-    [handleApiCall]
+    [handleApiCall],
   );
 
   const updateQualityIssue = useCallback(
@@ -688,7 +688,7 @@ export function useSupplierManagement({
               method: 'PUT',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify(updates),
-            }
+            },
           );
 
           if (!response.ok) {
@@ -700,13 +700,13 @@ export function useSupplierManagement({
         },
         (updatedIssue) => {
           setQualityIssues((prev) =>
-            prev.map((issue) => (issue.id === issueId ? updatedIssue : issue))
+            prev.map((issue) => (issue.id === issueId ? updatedIssue : issue)),
           );
         },
-        'updating'
+        'updating',
       );
     },
-    [handleApiCall]
+    [handleApiCall],
   );
 
   // =====================================================================================
@@ -718,7 +718,7 @@ export function useSupplierManagement({
       await handleApiCall(
         async () => {
           const response = await fetch(
-            `/api/suppliers/communications?supplier_id=${supplierId}`
+            `/api/suppliers/communications?supplier_id=${supplierId}`,
           );
           if (!response.ok) {
             throw new Error('Erro ao carregar comunicações');
@@ -727,10 +727,10 @@ export function useSupplierManagement({
           return data.communications;
         },
         (communicationsData) => setCommunications(communicationsData),
-        'loading'
+        'loading',
       );
     },
-    [handleApiCall]
+    [handleApiCall],
   );
 
   const createCommunication = useCallback(
@@ -753,10 +753,10 @@ export function useSupplierManagement({
         (newCommunication) => {
           setCommunications((prev) => [newCommunication, ...prev]);
         },
-        'creating'
+        'creating',
       );
     },
-    [handleApiCall]
+    [handleApiCall],
   );
 
   // =====================================================================================
@@ -767,7 +767,7 @@ export function useSupplierManagement({
     await handleApiCall(
       async () => {
         const response = await fetch(
-          `/api/suppliers/dashboard?clinic_id=${clinicId}`
+          `/api/suppliers/dashboard?clinic_id=${clinicId}`,
         );
         if (!response.ok) {
           throw new Error('Erro ao carregar dados do dashboard');
@@ -775,7 +775,7 @@ export function useSupplierManagement({
         return response.json();
       },
       (data) => setDashboardData(data),
-      'loading'
+      'loading',
     );
   }, [clinicId, handleApiCall]);
 
@@ -784,7 +784,7 @@ export function useSupplierManagement({
       await handleApiCall(
         async () => {
           const response = await fetch(
-            `/api/suppliers/analytics?clinic_id=${clinicId}&period_start=${periodStart}&period_end=${periodEnd}`
+            `/api/suppliers/analytics?clinic_id=${clinicId}&period_start=${periodStart}&period_end=${periodEnd}`,
           );
           if (!response.ok) {
             throw new Error('Erro ao carregar analytics');
@@ -792,10 +792,10 @@ export function useSupplierManagement({
           return response.json();
         },
         (data) => setAnalytics(data),
-        'loading'
+        'loading',
       );
     },
-    [clinicId, handleApiCall]
+    [clinicId, handleApiCall],
   );
 
   const compareSuppliers = useCallback(
@@ -824,10 +824,10 @@ export function useSupplierManagement({
           return response.json();
         },
         undefined,
-        'loading'
+        'loading',
       );
     },
-    [handleApiCall]
+    [handleApiCall],
   );
 
   // =====================================================================================

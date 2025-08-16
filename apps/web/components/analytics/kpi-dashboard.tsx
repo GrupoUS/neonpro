@@ -430,7 +430,7 @@ export const KPIDashboard: React.FC<KPIDashboardProps> = ({
   const [isEditing, setIsEditing] = useState(false);
   const [selectedKpi, setSelectedKpi] = useState<FinancialKPI | null>(null);
   const [drillDownResults, setDrillDownResults] = useState<DrillDownResult[]>(
-    []
+    [],
   );
   const [drillDownDimension, setDrillDownDimension] = useState<string>('');
   const [showDrillDown, setShowDrillDown] = useState(false);
@@ -499,7 +499,7 @@ export const KPIDashboard: React.FC<KPIDashboardProps> = ({
   const loadAlerts = async () => {
     try {
       const response = await fetch(
-        '/api/analytics/alerts?is_acknowledged=false'
+        '/api/analytics/alerts?is_acknowledged=false',
       );
       const data = await response.json();
       if (data.success) {
@@ -558,7 +558,7 @@ export const KPIDashboard: React.FC<KPIDashboardProps> = ({
         `/api/analytics/alerts/${alertId}/acknowledge`,
         {
           method: 'PATCH',
-        }
+        },
       );
 
       if (response.ok) {
@@ -581,7 +581,7 @@ export const KPIDashboard: React.FC<KPIDashboardProps> = ({
         groups[category].push(kpi);
         return groups;
       },
-      {} as Record<string, FinancialKPI[]>
+      {} as Record<string, FinancialKPI[]>,
     );
   }, [kpis]);
 
@@ -639,26 +639,26 @@ export const KPIDashboard: React.FC<KPIDashboardProps> = ({
                       startDate = new Date(
                         now.getFullYear(),
                         now.getMonth(),
-                        now.getDate()
+                        now.getDate(),
                       );
                       break;
                     case 'week':
                       startDate = new Date(
-                        now.getTime() - 7 * 24 * 60 * 60 * 1000
+                        now.getTime() - 7 * 24 * 60 * 60 * 1000,
                       );
                       break;
                     case 'month':
                       startDate = new Date(
                         now.getFullYear(),
                         now.getMonth(),
-                        1
+                        1,
                       );
                       break;
                     case 'quarter':
                       startDate = new Date(
                         now.getFullYear(),
                         Math.floor(now.getMonth() / 3) * 3,
-                        1
+                        1,
                       );
                       break;
                     case 'year':

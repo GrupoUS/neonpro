@@ -56,7 +56,7 @@ export const riskAssessmentSchema = z.object({
       risk_level: z.enum(['very_low', 'low', 'moderate', 'high', 'very_high']),
       description: z.string(),
       mitigation_strategies: z.array(z.string()),
-    })
+    }),
   ),
   mitigation_strategies: z.array(z.string()),
   monitoring_requirements: z.array(z.string()),
@@ -274,7 +274,7 @@ export const safetyProfileSchema = z.object({
         ]),
         description: z.string(),
         mitigation_strategies: z.array(z.string()),
-      })
+      }),
     )
     .default([]),
   safety_alerts: z.array(safetyAlertSchema).default([]),
@@ -457,7 +457,7 @@ export const updateSafetyProfileRequestSchema = z.object({
         ]),
         description: z.string(),
         mitigation_strategies: z.array(z.string()),
-      })
+      }),
     )
     .optional(),
   safety_alerts: z.array(safetyAlertSchema).optional(),

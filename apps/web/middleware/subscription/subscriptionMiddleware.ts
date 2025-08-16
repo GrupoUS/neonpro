@@ -23,7 +23,7 @@ type SubscriptionContext = {
   hasFeature: (feature: string) => boolean;
   checkUsageLimit: (
     feature: string,
-    currentUsage: number
+    currentUsage: number,
   ) => {
     allowed: boolean;
     limit?: number;
@@ -77,7 +77,7 @@ const USAGE_LIMIT_MAP: Record<string, string> = {
  */
 export async function subscriptionMiddleware(
   request: NextRequest,
-  _context: { params?: any }
+  _context: { params?: any },
 ): Promise<NextResponse | null> {
   try {
     // Get user session
@@ -90,7 +90,7 @@ export async function subscriptionMiddleware(
             return request.cookies.get(name)?.value;
           },
         },
-      }
+      },
     );
 
     const {
@@ -113,7 +113,7 @@ export async function subscriptionMiddleware(
     if (!userClinic) {
       return NextResponse.json(
         { error: 'No active clinic found' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -124,7 +124,7 @@ export async function subscriptionMiddleware(
         `
         *,
         plan:subscription_plans(*)
-      `
+      `,
       )
       .eq('clinic_id', userClinic.clinic_id)
       .in('status', ['trial', 'active'])
@@ -137,7 +137,7 @@ export async function subscriptionMiddleware(
           code: 'SUBSCRIPTION_REQUIRED',
           message: 'Esta funcionalidade requer uma assinatura ativa.',
         },
-        { status: 402 } // Payment Required
+        { status: 402 }, // Payment Required
       );
     }
 
@@ -154,7 +154,7 @@ export async function subscriptionMiddleware(
             message:
               'Seu período de teste expirou. Faça upgrade para continuar usando.',
           },
-          { status: 402 }
+          { status: 402 },
         );
       }
     }
@@ -166,7 +166,7 @@ export async function subscriptionMiddleware(
     if (requiredFeature) {
       const hasAccess = hasFeatureAccess(
         subscription.plan as SubscriptionPlan,
-        requiredFeature
+        requiredFeature,
       );
 
       if (!hasAccess) {
@@ -179,7 +179,7 @@ export async function subscriptionMiddleware(
             current_plan: subscription.plan?.name,
             upgrade_required: true,
           },
-          { status: 403 }
+          { status: 403 },
         );
       }
     }
@@ -190,7 +190,7 @@ export async function subscriptionMiddleware(
       const usageCheck = await checkUsageLimit(
         supabase,
         subscription,
-        usageLimitKey
+        usageLimitKey,
       );
 
       if (!usageCheck.allowed) {
@@ -203,7 +203,7 @@ export async function subscriptionMiddleware(
             current_usage: usageCheck.current,
             upgrade_required: true,
           },
-          { status: 429 } // Too Many Requests
+          { status: 429 }, // Too Many Requests
         );
       }
     }
@@ -212,7 +212,7 @@ export async function subscriptionMiddleware(
     const response = NextResponse.next();
     response.headers.set(
       'x-subscription-tier',
-      subscription.plan?.name || 'unknown'
+      subscription.plan?.name || 'unknown',
     );
     response.headers.set('x-subscription-id', subscription.id);
     response.headers.set('x-clinic-id', subscription.clinic_id);
@@ -226,7 +226,7 @@ export async function subscriptionMiddleware(
         message:
           'Erro interno do sistema. Tente novamente em alguns instantes.',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -268,7 +268,7 @@ function hasFeatureAccess(plan: SubscriptionPlan, feature: string): boolean {
 async function checkUsageLimit(
   supabase: any,
   subscription: UserSubscription & { plan: SubscriptionPlan },
-  limitKey: string
+  limitKey: string,
 ): Promise<{ allowed: boolean; limit?: number; current?: number }> {
   const limits = (subscription.plan?.limits as Record<string, number>) || {};
   const limit = limits[limitKey];
@@ -330,8 +330,8 @@ async function checkUsageLimit(
             new Date(
               new Date().getFullYear(),
               new Date().getMonth(),
-              1
-            ).toISOString()
+              1,
+            ).toISOString(),
           )
           .single();
         currentUsage = usage?.usage_count || 0;
@@ -358,7 +358,7 @@ async function checkUsageLimit(
  * Helper function to create subscription context for API routes
  */
 export async function getSubscriptionContext(
-  _request: NextRequest
+  _request: NextRequest,
 ): Promise<SubscriptionContext | null> {
   // This will be used in API routes to get subscription context
   // Implementation similar to middleware but returns context object

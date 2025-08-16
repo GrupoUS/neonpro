@@ -48,7 +48,7 @@ export class LGPDAutomationService {
     this.orchestrator = new LGPDAutomationOrchestrator(
       this.supabase,
       this.complianceManager,
-      config
+      config,
     );
 
     // Configurar callbacks de monitoramento
@@ -190,7 +190,7 @@ export class LGPDUsageExamples {
     userId: string,
     purpose: string,
     ipAddress: string,
-    userAgent: string
+    userAgent: string,
   ) {
     const modules = this.service.getModules();
     const consent = await modules.consentAutomation.collectConsentWithTracking({
@@ -287,7 +287,7 @@ export class LGPDUsageExamples {
    * Exemplo: Gerar relatório de conformidade
    */
   async generateComplianceReport(
-    reportType: 'daily' | 'weekly' | 'monthly' | 'quarterly'
+    reportType: 'daily' | 'weekly' | 'monthly' | 'quarterly',
   ) {
     const modules = this.service.getModules();
     const report = await modules.auditReporting.generateComplianceReport({
@@ -338,7 +338,7 @@ export const lgpdApiExamples = {
         userId,
         purpose,
         ipAddress,
-        userAgent
+        userAgent,
       );
 
       res.status(200).json({ success: true, consent });

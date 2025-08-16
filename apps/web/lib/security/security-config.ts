@@ -385,7 +385,7 @@ export const PRODUCTION_CONFIG_OVERRIDES: Partial<IntegratedSecurityConfig> = {
  * Get security configuration based on environment
  */
 export function getSecurityConfig(
-  environment?: string
+  environment?: string,
 ): IntegratedSecurityConfig {
   const env = environment || process.env.NODE_ENV || 'production';
 
@@ -405,7 +405,7 @@ export function getSecurityConfig(
  */
 function mergeConfigs(
   base: IntegratedSecurityConfig,
-  override: Partial<IntegratedSecurityConfig>
+  override: Partial<IntegratedSecurityConfig>,
 ): IntegratedSecurityConfig {
   const result = { ...base };
 
@@ -434,7 +434,7 @@ function mergeConfigs(
  * Validate security configuration
  */
 export function validateSecurityConfig(
-  config: IntegratedSecurityConfig
+  config: IntegratedSecurityConfig,
 ): string[] {
   const errors: string[] = [];
 
@@ -491,43 +491,43 @@ export function getCSRFConfig(config?: IntegratedSecurityConfig): CSRFConfig {
 }
 
 export function getSessionHijackingConfig(
-  config?: IntegratedSecurityConfig
+  config?: IntegratedSecurityConfig,
 ): SessionHijackingConfig {
   return (config || getSecurityConfig()).sessionHijacking;
 }
 
 export function getSessionTimeoutConfig(
-  config?: IntegratedSecurityConfig
+  config?: IntegratedSecurityConfig,
 ): SessionTimeoutConfig {
   return (config || getSecurityConfig()).sessionTimeout;
 }
 
 export function getConcurrentSessionConfig(
-  config?: IntegratedSecurityConfig
+  config?: IntegratedSecurityConfig,
 ): ConcurrentSessionConfig {
   return (config || getSecurityConfig()).concurrentSessions;
 }
 
 export function getRateLimitConfig(
-  config?: IntegratedSecurityConfig
+  config?: IntegratedSecurityConfig,
 ): RateLimitConfig {
   return (config || getSecurityConfig()).rateLimiting;
 }
 
 export function getSecurityEventConfig(
-  config?: IntegratedSecurityConfig
+  config?: IntegratedSecurityConfig,
 ): SecurityEventConfig {
   return (config || getSecurityConfig()).securityEvents;
 }
 
 export function getCleanupConfig(
-  config?: IntegratedSecurityConfig
+  config?: IntegratedSecurityConfig,
 ): CleanupConfig {
   return (config || getSecurityConfig()).cleanup;
 }
 
 export function getSecurityHeadersConfig(
-  config?: IntegratedSecurityConfig
+  config?: IntegratedSecurityConfig,
 ): SecurityHeadersConfig {
   return (config || getSecurityConfig()).securityHeaders;
 }
@@ -541,7 +541,7 @@ export const SECURITY_CONFIG = getSecurityConfig();
  * Type guard to check if an event type is valid
  */
 export function isValidSecurityEventType(
-  eventType: string
+  eventType: string,
 ): eventType is SecurityEventType {
   const validTypes: SecurityEventType[] = [
     'csrf_validation_failed',

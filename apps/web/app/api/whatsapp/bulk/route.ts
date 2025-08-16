@@ -21,7 +21,7 @@ export async function POST(request: NextRequest) {
     if (!templateName) {
       return NextResponse.json(
         { error: 'Template name is required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -29,7 +29,7 @@ export async function POST(request: NextRequest) {
       !(
         recipientType &&
         ['all_patients', 'selected_patients', 'custom_list'].includes(
-          recipientType
+          recipientType,
         )
       )
     ) {
@@ -38,7 +38,7 @@ export async function POST(request: NextRequest) {
           error:
             'Valid recipient type is required (all_patients, selected_patients, custom_list)',
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -57,7 +57,7 @@ export async function POST(request: NextRequest) {
     if (!config?.isActive) {
       return NextResponse.json(
         { error: 'WhatsApp is not configured or inactive' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -82,7 +82,7 @@ export async function POST(request: NextRequest) {
           {
             error: 'Selected patients are required for selected_patients type',
           },
-          { status: 400 }
+          { status: 400 },
         );
       }
 
@@ -102,7 +102,7 @@ export async function POST(request: NextRequest) {
       if (!customPhoneNumbers.length) {
         return NextResponse.json(
           { error: 'Custom phone numbers are required for custom_list type' },
-          { status: 400 }
+          { status: 400 },
         );
       }
 
@@ -111,18 +111,18 @@ export async function POST(request: NextRequest) {
         customPhoneNumbers.map(async (phone: string) => {
           const isOptedIn = await whatsAppService.checkOptIn(phone);
           return isOptedIn ? phone : null;
-        })
+        }),
       );
 
       phoneNumbers = optInChecks.filter(
-        (phone): phone is string => phone !== null
+        (phone): phone is string => phone !== null,
       );
     }
 
     if (!phoneNumbers.length) {
       return NextResponse.json(
         { error: 'No valid recipients found with WhatsApp opt-in' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -130,7 +130,7 @@ export async function POST(request: NextRequest) {
     if (phoneNumbers.length > 1000) {
       return NextResponse.json(
         { error: 'Bulk sending limited to 1000 recipients per batch' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -138,7 +138,7 @@ export async function POST(request: NextRequest) {
     const results = await whatsAppService.sendBulkMessages(
       phoneNumbers,
       templateName,
-      parameters
+      parameters,
     );
 
     return NextResponse.json({
@@ -157,7 +157,7 @@ export async function POST(request: NextRequest) {
         error: error instanceof Error ? error.message : 'Internal server error',
         details: error instanceof Error ? error.stack : undefined,
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

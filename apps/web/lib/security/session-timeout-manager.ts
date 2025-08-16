@@ -55,7 +55,7 @@ export class SessionTimeoutManager {
   static async initializeSessionTimeout(
     sessionId: string,
     userId: string,
-    config: Partial<SessionTimeoutConfig> = {}
+    config: Partial<SessionTimeoutConfig> = {},
   ): Promise<void> {
     const fullConfig = { ...SessionTimeoutManager.DEFAULT_CONFIG, ...config };
 
@@ -69,7 +69,7 @@ export class SessionTimeoutManager {
         config: fullConfig,
         last_activity: new Date().toISOString(),
         timeout_at: new Date(
-          Date.now() + fullConfig.maxInactivityMinutes * 60 * 1000
+          Date.now() + fullConfig.maxInactivityMinutes * 60 * 1000,
         ).toISOString(),
         warnings_sent: [],
         is_active: true,
@@ -82,7 +82,7 @@ export class SessionTimeoutManager {
       SessionTimeoutManager.setupActivityMonitoring(
         sessionId,
         userId,
-        fullConfig
+        fullConfig,
       );
     } catch (_error) {}
   }
@@ -92,7 +92,7 @@ export class SessionTimeoutManager {
    */
   static async updateActivity(
     sessionId: string,
-    activity: Omit<SessionActivity, 'sessionId'>
+    activity: Omit<SessionActivity, 'sessionId'>,
   ): Promise<void> {
     try {
       const supabase = createClient();
@@ -114,7 +114,7 @@ export class SessionTimeoutManager {
 
       // Update last activity and reset timeout
       const newTimeoutAt = new Date(
-        Date.now() + config.maxInactivityMinutes * 60 * 1000
+        Date.now() + config.maxInactivityMinutes * 60 * 1000,
       );
 
       await supabase
@@ -196,7 +196,7 @@ export class SessionTimeoutManager {
    */
   static async extendSession(
     sessionId: string,
-    additionalMinutes?: number
+    additionalMinutes?: number,
   ): Promise<boolean> {
     try {
       const supabase = createClient();
@@ -296,7 +296,7 @@ export class SessionTimeoutManager {
    */
   private static setupWarningTimers(
     sessionId: string,
-    config: SessionTimeoutConfig
+    config: SessionTimeoutConfig,
   ): void {
     const timers: NodeJS.Timeout[] = [];
 
@@ -318,7 +318,7 @@ export class SessionTimeoutManager {
       () => {
         SessionTimeoutManager.forceTimeout(sessionId);
       },
-      config.maxInactivityMinutes * 60 * 1000
+      config.maxInactivityMinutes * 60 * 1000,
     );
 
     timers.push(timeoutTimer);
@@ -342,7 +342,7 @@ export class SessionTimeoutManager {
   private static setupActivityMonitoring(
     _sessionId: string,
     _userId: string,
-    _config: SessionTimeoutConfig
+    _config: SessionTimeoutConfig,
   ): void {
     // This would typically be handled client-side
     // Server-side we just track API calls and page views
@@ -364,7 +364,7 @@ export class SessionTimeoutManager {
    */
   private static async sendTimeoutWarning(
     sessionId: string,
-    minutesRemaining: number
+    minutesRemaining: number,
   ): Promise<void> {
     try {
       const supabase = createClient();
@@ -405,7 +405,7 @@ export class SessionTimeoutManager {
 
       // Clean up old session data (older than 30 days)
       const thirtyDaysAgo = new Date(
-        Date.now() - 30 * 24 * 60 * 60 * 1000
+        Date.now() - 30 * 24 * 60 * 60 * 1000,
       ).toISOString();
 
       await supabase

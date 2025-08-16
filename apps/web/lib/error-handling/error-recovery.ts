@@ -86,7 +86,7 @@ export class ErrorRecoverySystem {
   async attemptRecovery(errorContext: ErrorContext): Promise<boolean> {
     // Find applicable recovery strategies
     const applicableStrategies = Array.from(
-      this.recoveryStrategies.values()
+      this.recoveryStrategies.values(),
     ).filter((strategy) => strategy.condition(errorContext));
 
     if (applicableStrategies.length === 0) {
@@ -134,7 +134,7 @@ export class ErrorRecoverySystem {
    */
   private logRecoverySuccess(
     errorContext: ErrorContext,
-    strategyName: string
+    strategyName: string,
   ): void {
     const recoveredContext = {
       ...errorContext,
@@ -186,7 +186,7 @@ export class ErrorRecoverySystem {
     // 1 hour default
     const cutoff = Date.now() - maxAge;
     this.recoveryHistory = this.recoveryHistory.filter(
-      (recovery) => (recovery.metadata?.recoveredAt || 0) > cutoff
+      (recovery) => (recovery.metadata?.recoveredAt || 0) > cutoff,
     );
   }
 }

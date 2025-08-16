@@ -162,7 +162,7 @@ const createInvoiceItemSchema = z
       .min(1, 'Description is required')
       .max(
         MAX_DESCRIPTION_LENGTH,
-        `Description cannot exceed ${MAX_DESCRIPTION_LENGTH} characters`
+        `Description cannot exceed ${MAX_DESCRIPTION_LENGTH} characters`,
       ),
     quantity: z
       .number()
@@ -195,7 +195,7 @@ const createInvoiceItemSchema = z
     {
       message: 'Discount cannot be greater than item total',
       path: ['discount_amount'],
-    }
+    },
   );
 
 // Invoice validation
@@ -209,7 +209,7 @@ export const createInvoiceSchema = z
       .min(1, 'Description is required')
       .max(
         MAX_DESCRIPTION_LENGTH,
-        `Description cannot exceed ${MAX_DESCRIPTION_LENGTH} characters`
+        `Description cannot exceed ${MAX_DESCRIPTION_LENGTH} characters`,
       ),
     service_list_code: serviceCodeSchema,
     due_date: z
@@ -227,7 +227,7 @@ export const createInvoiceSchema = z
       .min(1, 'At least one item is required')
       .max(
         MAX_INVOICE_ITEMS,
-        `Cannot have more than ${MAX_INVOICE_ITEMS} items`
+        `Cannot have more than ${MAX_INVOICE_ITEMS} items`,
       ),
     metadata: z.record(z.any()).default({}),
   })
@@ -242,7 +242,7 @@ export const createInvoiceSchema = z
     {
       message: 'Invoice total must be greater than zero',
       path: ['items'],
-    }
+    },
   );
 
 export const updateInvoiceSchema = z.object({
@@ -251,7 +251,7 @@ export const updateInvoiceSchema = z.object({
     .min(1, 'Description is required')
     .max(
       MAX_DESCRIPTION_LENGTH,
-      `Description cannot exceed ${MAX_DESCRIPTION_LENGTH} characters`
+      `Description cannot exceed ${MAX_DESCRIPTION_LENGTH} characters`,
     )
     .optional(),
   service_list_code: serviceCodeSchema,
@@ -282,7 +282,7 @@ const createInstallmentSchema = z
       .min(1, 'Total installments must be at least 1')
       .max(
         MAX_INSTALLMENTS,
-        `Cannot have more than ${MAX_INSTALLMENTS} installments`
+        `Cannot have more than ${MAX_INSTALLMENTS} installments`,
       ),
     amount: z
       .number()
@@ -302,7 +302,7 @@ const createInstallmentSchema = z
     {
       message: 'Installment number cannot exceed total installments',
       path: ['installment_number'],
-    }
+    },
   );
 
 // Payment validation
@@ -331,7 +331,7 @@ export const createPaymentSchema = z
       .array(createInstallmentSchema)
       .max(
         MAX_INSTALLMENTS,
-        `Cannot have more than ${MAX_INSTALLMENTS} installments`
+        `Cannot have more than ${MAX_INSTALLMENTS} installments`,
       )
       .optional(),
     metadata: z.record(z.any()).default({}),
@@ -347,7 +347,7 @@ export const createPaymentSchema = z
     {
       message: 'Installments required for installment payment method',
       path: ['installments'],
-    }
+    },
   )
   .refine(
     (data) => {
@@ -355,7 +355,7 @@ export const createPaymentSchema = z
       if (data.installments && data.installments.length > 0) {
         const installmentTotal = data.installments.reduce(
           (sum, inst) => sum + inst.amount,
-          0
+          0,
         );
         return Math.abs(installmentTotal - data.amount) < 0.01; // Allow small rounding differences
       }
@@ -364,7 +364,7 @@ export const createPaymentSchema = z
     {
       message: 'Total installment amount must equal payment amount',
       path: ['installments'],
-    }
+    },
   )
   .refine(
     (data) => {
@@ -377,7 +377,7 @@ export const createPaymentSchema = z
     {
       message: 'PIX key required for PIX payment method',
       path: ['pix_key'],
-    }
+    },
   );
 
 export const updatePaymentSchema = z.object({
@@ -474,7 +474,7 @@ export const invoiceReportFiltersSchema = z
     {
       message: 'End date must be after start date',
       path: ['date_to'],
-    }
+    },
   )
   .refine(
     (data) => {
@@ -487,7 +487,7 @@ export const invoiceReportFiltersSchema = z
     {
       message: 'Maximum amount must be greater than minimum amount',
       path: ['amount_max'],
-    }
+    },
   );
 
 export const paymentReportFiltersSchema = z
@@ -518,7 +518,7 @@ export const paymentReportFiltersSchema = z
     {
       message: 'End date must be after start date',
       path: ['date_to'],
-    }
+    },
   )
   .refine(
     (data) => {
@@ -531,7 +531,7 @@ export const paymentReportFiltersSchema = z
     {
       message: 'Maximum amount must be greater than minimum amount',
       path: ['amount_max'],
-    }
+    },
   );
 
 // Shadow validation
@@ -628,7 +628,7 @@ export const validateAmount = (amount: number, _fieldName = 'amount') => {
 
 export const validatePositiveAmount = (
   amount: number,
-  _fieldName = 'amount'
+  _fieldName = 'amount',
 ) => {
   return positiveAmountSchema.parse(amount);
 };

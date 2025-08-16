@@ -60,7 +60,7 @@ function hasMinimumRole(userRole: UserRole, requiredRole: UserRole): boolean {
  */
 export async function authorize(
   req: NextRequest,
-  config: AuthorizationConfig
+  config: AuthorizationConfig,
 ): Promise<AuthorizationResult> {
   try {
     // Skip authorization if condition is met
@@ -110,7 +110,7 @@ export async function authorize(
         user,
         config.requiredPermissions,
         resourceId,
-        context
+        context,
       );
 
       if (!permissionResult.granted) {
@@ -129,7 +129,7 @@ export async function authorize(
         user,
         config.anyPermissions,
         resourceId,
-        context
+        context,
       );
 
       if (!permissionResult.granted) {
@@ -184,7 +184,7 @@ export function createAuthorizationMiddleware(config: AuthorizationConfig) {
           message: result.reason || 'Access denied',
           code: result.statusCode || 403,
         },
-        { status: result.statusCode || 403 }
+        { status: result.statusCode || 403 },
       );
     }
 
@@ -352,7 +352,7 @@ export function withAuthorization(config: AuthorizationConfig) {
             message: authResult.reason || 'Access denied',
             code: authResult.statusCode || 403,
           },
-          { status: authResult.statusCode || 403 }
+          { status: authResult.statusCode || 403 },
         );
       }
 
@@ -368,7 +368,7 @@ export function withAuthorization(config: AuthorizationConfig) {
  */
 export async function checkAuthorization(
   req: NextRequest,
-  config: AuthorizationConfig
+  config: AuthorizationConfig,
 ): Promise<{ authorized: boolean; user?: AuthUser; error?: NextResponse }> {
   const result = await authorize(req, config);
 
@@ -381,7 +381,7 @@ export async function checkAuthorization(
           message: result.reason || 'Access denied',
           code: result.statusCode || 403,
         },
-        { status: result.statusCode || 403 }
+        { status: result.statusCode || 403 },
       ),
     };
   }

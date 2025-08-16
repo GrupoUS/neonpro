@@ -175,7 +175,7 @@ export type HealthcareAuditEntry = z.infer<typeof HealthcareAuditEntrySchema>;
       // 🚨 COMPLIANCE VIOLATION DETECTION
       const violationCheck = await this.detectComplianceViolation(
         anonymizedEntry,
-        entry.user_id
+        entry.user_id,
       );
       if (violationCheck.violationDetected) {
         anonymizedEntry.violation_detected = true;
@@ -223,7 +223,7 @@ export type HealthcareAuditEntry = z.infer<typeof HealthcareAuditEntrySchema>;
    */
   private async detectComplianceViolation(
     auditEntry: Partial<HealthcareAuditEntry>,
-    user_id: string
+    user_id: string,
   ): Promise<{
     violationDetected: boolean;
     severity?: ViolationSeverity;
@@ -346,7 +346,7 @@ export type HealthcareAuditEntry = z.infer<typeof HealthcareAuditEntrySchema>;
       severity?: ViolationSeverity;
       details?: string;
     },
-    clinic_id: string
+    clinic_id: string,
   ): Promise<void> {
     const alertStartTime = Date.now();
 
@@ -374,7 +374,7 @@ export type HealthcareAuditEntry = z.infer<typeof HealthcareAuditEntrySchema>;
         // Alert escalation based on severity
         escalation_level: this.getEscalationLevel(violation.severity),
         response_deadline: new Date(
-          Date.now() + this.getResponseDeadline(violation.severity)
+          Date.now() + this.getResponseDeadline(violation.severity),
         ).toISOString(),
       };
 
@@ -576,12 +576,12 @@ export type HealthcareAuditEntry = z.infer<typeof HealthcareAuditEntrySchema>;
         .lte('created_at', request.date_to.toISOString())
         .eq(
           'regulatory_context',
-          request.report_type === 'COMPREHENSIVE' ? null : request.report_type
+          request.report_type === 'COMPREHENSIVE' ? null : request.report_type,
         );
 
       if (error) {
         throw new Error(
-          `Regulatory report generation failed: ${error.message}`
+          `Regulatory report generation failed: ${error.message}`,
         );
       }
 
@@ -605,14 +605,14 @@ export type HealthcareAuditEntry = z.infer<typeof HealthcareAuditEntrySchema>;
           successful_operations:
             auditData?.filter((entry) => entry.success)?.length || 0,
           average_response_time: this.calculateAverageResponseTime(
-            auditData || []
+            auditData || [],
           ),
         },
 
         // Constitutional compliance summary
         compliance_summary: this.generateComplianceSummary(
           auditData || [],
-          request.report_type
+          request.report_type,
         ),
         regulatory_context: `Brazilian Healthcare Compliance - ${request.report_type}`,
       };
@@ -657,7 +657,7 @@ export type HealthcareAuditEntry = z.infer<typeof HealthcareAuditEntrySchema>;
    * 🧹 SANITIZE METADATA - Remove PHI from metadata
    */
   private sanitizeMetadata(
-    metadata?: Record<string, any>
+    metadata?: Record<string, any>,
   ): Record<string, any> | undefined {
     if (!metadata) {
       return;
@@ -694,7 +694,7 @@ export type HealthcareAuditEntry = z.infer<typeof HealthcareAuditEntrySchema>;
 
     const totalDuration = entriesWithDuration.reduce(
       (sum, entry) => sum + entry.duration_ms,
-      0
+      0,
     );
     return Math.round(totalDuration / entriesWithDuration.length);
   }
@@ -705,7 +705,7 @@ export type HealthcareAuditEntry = z.infer<typeof HealthcareAuditEntrySchema>;
   private generateComplianceSummary(auditData: any[], reportType: string): any {
     const violations = auditData.filter((entry) => entry.violation_detected);
     const criticalViolations = violations.filter(
-      (v) => v.violation_severity === ViolationSeverity.CRITICAL
+      (v) => v.violation_severity === ViolationSeverity.CRITICAL,
     );
 
     return {
@@ -713,19 +713,19 @@ export type HealthcareAuditEntry = z.infer<typeof HealthcareAuditEntrySchema>;
       violations_by_severity: {
         critical: criticalViolations.length,
         high: violations.filter(
-          (v) => v.violation_severity === ViolationSeverity.HIGH
+          (v) => v.violation_severity === ViolationSeverity.HIGH,
         ).length,
         medium: violations.filter(
-          (v) => v.violation_severity === ViolationSeverity.MEDIUM
+          (v) => v.violation_severity === ViolationSeverity.MEDIUM,
         ).length,
         low: violations.filter(
-          (v) => v.violation_severity === ViolationSeverity.LOW
+          (v) => v.violation_severity === ViolationSeverity.LOW,
         ).length,
       },
       compliance_trends: this.analyzeComplianceTrends(auditData),
       regulatory_recommendations: this.generateRegulatoryRecommendations(
         violations,
-        reportType
+        reportType,
       ),
     };
   }
@@ -755,7 +755,7 @@ export type HealthcareAuditEntry = z.infer<typeof HealthcareAuditEntrySchema>;
       .filter(
         (entry) =>
           new Date(entry.created_at) >
-          new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
+          new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
       );
 
     return {
@@ -773,23 +773,23 @@ export type HealthcareAuditEntry = z.infer<typeof HealthcareAuditEntrySchema>;
    */
   private generateRegulatoryRecommendations(
     violations: any[],
-    reportType: string
+    reportType: string,
   ): string[] {
     const recommendations: string[] = [];
 
     if (violations.length > 10) {
       recommendations.push(
-        'Implement additional staff training on data protection policies'
+        'Implement additional staff training on data protection policies',
       );
       recommendations.push('Review and strengthen access control procedures');
     }
 
     const criticalViolations = violations.filter(
-      (v) => v.violation_severity === ViolationSeverity.CRITICAL
+      (v) => v.violation_severity === ViolationSeverity.CRITICAL,
     );
     if (criticalViolations.length > 0) {
       recommendations.push(
-        'URGENT: Address critical compliance violations immediately'
+        'URGENT: Address critical compliance violations immediately',
       );
       recommendations.push('Conduct comprehensive security audit');
     }

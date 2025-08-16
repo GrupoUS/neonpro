@@ -372,7 +372,7 @@ class AIRiskAssessmentSystem {
    * Perform comprehensive risk assessment
    */
   async assessRisk(
-    request: AssessmentRequest
+    request: AssessmentRequest,
   ): Promise<ComprehensiveAssessmentResult> {
     try {
       if (!this.isInitialized) {
@@ -436,7 +436,7 @@ class AIRiskAssessmentSystem {
       const criticalFindings = this.extractCriticalFindings(
         riskAssessment,
         riskScore,
-        safetyAlerts
+        safetyAlerts,
       );
 
       // Generate insights if requested
@@ -447,7 +447,7 @@ class AIRiskAssessmentSystem {
           {
             timeHorizon: 'medium_term',
             includePopulation: request.options?.includePopulationComparison,
-          }
+          },
         );
       }
 
@@ -457,7 +457,7 @@ class AIRiskAssessmentSystem {
         predictions = await this.generatePredictions(
           riskAssessment,
           riskScore,
-          patientData
+          patientData,
         );
       }
 
@@ -467,21 +467,21 @@ class AIRiskAssessmentSystem {
         riskScore,
         safetyAlerts,
         insights,
-        request
+        request,
       );
 
       // Calculate quality metrics
       const quality = this.calculateQualityMetrics(
         riskAssessment,
         riskScore,
-        patientData
+        patientData,
       );
 
       // Create audit trail
       const auditTrail = this.createAuditTrail(
         request,
         riskAssessment,
-        riskScore
+        riskScore,
       );
 
       // Compile comprehensive result
@@ -525,7 +525,7 @@ class AIRiskAssessmentSystem {
    * Perform batch risk assessments
    */
   async assessRiskBatch(
-    requests: AssessmentRequest[]
+    requests: AssessmentRequest[],
   ): Promise<ComprehensiveAssessmentResult[]> {
     try {
       if (!this.config.performance.batchProcessing) {
@@ -545,7 +545,7 @@ class AIRiskAssessmentSystem {
       for (let i = 0; i < requests.length; i += concurrency) {
         const batch = requests.slice(i, i + concurrency);
         const batchResults = await Promise.all(
-          batch.map((request) => this.assessRisk(request))
+          batch.map((request) => this.assessRisk(request)),
         );
         results.push(...batchResults);
       }
@@ -693,7 +693,7 @@ class AIRiskAssessmentSystem {
         assessments?.filter((a) => new Date(a.created_at) >= today).length || 0;
 
       const daysDiff = Math.ceil(
-        (end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)
+        (end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24),
       );
       const averagePerDay = totalAssessments / daysDiff;
 
@@ -742,7 +742,7 @@ class AIRiskAssessmentSystem {
           totalInsights,
           actionableInsights:
             insights?.filter(
-              (i) => i.priority === 'high' || i.priority === 'critical'
+              (i) => i.priority === 'high' || i.priority === 'critical',
             ).length || 0,
           implementedRecommendations: Math.floor(totalInsights * 0.7), // 70% implementation rate
           impactScore: 8.5, // out of 10
@@ -757,7 +757,7 @@ class AIRiskAssessmentSystem {
    * Update system configuration
    */
   async updateConfig(
-    newConfig: Partial<AIRiskAssessmentConfig>
+    newConfig: Partial<AIRiskAssessmentConfig>,
   ): Promise<void> {
     try {
       this.config = { ...this.config, ...newConfig };
@@ -807,7 +807,7 @@ class AIRiskAssessmentSystem {
 
   // Private helper methods
   private initializeConfig(
-    config?: Partial<AIRiskAssessmentConfig>
+    config?: Partial<AIRiskAssessmentConfig>,
   ): AIRiskAssessmentConfig {
     const defaultConfig: AIRiskAssessmentConfig = {
       enabled: true,
@@ -881,7 +881,7 @@ class AIRiskAssessmentSystem {
         treatments(*),
         risk_assessments(*),
         vital_signs(*)
-      `
+      `,
       )
       .eq('id', patientId)
       .single();
@@ -892,13 +892,13 @@ class AIRiskAssessmentSystem {
   private async generateSafetyAlerts(
     riskAssessment: RiskAssessmentResult,
     _riskScore: RiskScoreResult,
-    request: AssessmentRequest
+    request: AssessmentRequest,
   ): Promise<SafetyAlert[]> {
     const alerts: SafetyAlert[] = [];
 
     // Generate alerts based on high-risk findings
     for (const [category, risk] of Object.entries(
-      riskAssessment.categoryRisks
+      riskAssessment.categoryRisks,
     )) {
       if (risk.severity === 'high' || risk.severity === 'critical') {
         const alert = await this.safetyAlerts.createAlert({
@@ -927,13 +927,13 @@ class AIRiskAssessmentSystem {
   private extractCriticalFindings(
     riskAssessment: RiskAssessmentResult,
     _riskScore: RiskScoreResult,
-    alerts: SafetyAlert[]
+    alerts: SafetyAlert[],
   ): any[] {
     const findings: any[] = [];
 
     // Extract from risk assessment
     for (const [category, risk] of Object.entries(
-      riskAssessment.categoryRisks
+      riskAssessment.categoryRisks,
     )) {
       if (risk.severity === 'critical') {
         findings.push({
@@ -961,7 +961,7 @@ class AIRiskAssessmentSystem {
   private async generatePredictions(
     _riskAssessment: RiskAssessmentResult,
     riskScore: RiskScoreResult,
-    _patientData: any
+    _patientData: any,
   ): Promise<any> {
     // Generate outcome predictions
     const outcomesPrediction = [
@@ -1015,7 +1015,7 @@ class AIRiskAssessmentSystem {
     _riskScore: RiskScoreResult,
     _alerts: SafetyAlert[],
     _insights?: PredictiveInsight[],
-    _request?: AssessmentRequest
+    _request?: AssessmentRequest,
   ): Promise<any> {
     const recommendations = {
       immediate: [],
@@ -1033,7 +1033,7 @@ class AIRiskAssessmentSystem {
   private calculateQualityMetrics(
     riskAssessment: RiskAssessmentResult,
     _riskScore: RiskScoreResult,
-    _patientData: any
+    _patientData: any,
   ): any {
     return {
       dataCompleteness: 0.95,
@@ -1046,7 +1046,7 @@ class AIRiskAssessmentSystem {
   private createAuditTrail(
     request: AssessmentRequest,
     riskAssessment: RiskAssessmentResult,
-    riskScore: RiskScoreResult
+    riskScore: RiskScoreResult,
   ): any[] {
     return [
       {
@@ -1082,7 +1082,7 @@ class AIRiskAssessmentSystem {
 
   private checkCompliance(
     _riskAssessment: RiskAssessmentResult,
-    _riskScore: RiskScoreResult
+    _riskScore: RiskScoreResult,
   ): string[] {
     const flags: string[] = [];
 
@@ -1100,7 +1100,7 @@ class AIRiskAssessmentSystem {
   }
 
   private async storeAssessmentResult(
-    result: ComprehensiveAssessmentResult
+    result: ComprehensiveAssessmentResult,
   ): Promise<void> {
     try {
       await this.supabase.from('comprehensive_assessments').insert({

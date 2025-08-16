@@ -22,7 +22,7 @@ export async function POST(request: NextRequest) {
           error:
             'clinic_id, resource_type, start_time, and end_time are required',
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
     if (authError || !user) {
       return NextResponse.json(
         { error: 'Authentication required' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -44,7 +44,7 @@ export async function POST(request: NextRequest) {
     const allocationEngine = new AllocationEngine();
     const optimization = await allocationEngine.suggestOptimalAllocation(
       clinic_id,
-      body
+      body,
     );
 
     return NextResponse.json({
@@ -58,7 +58,7 @@ export async function POST(request: NextRequest) {
         error: 'Failed to generate allocation suggestions',
         details: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -76,7 +76,7 @@ export async function GET(request: NextRequest) {
     if (!(clinicId && date)) {
       return NextResponse.json(
         { error: 'clinic_id and date are required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -90,7 +90,7 @@ export async function GET(request: NextRequest) {
     if (authError || !user) {
       return NextResponse.json(
         { error: 'Authentication required' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -98,7 +98,7 @@ export async function GET(request: NextRequest) {
     const allocationEngine = new AllocationEngine();
     const optimization = await allocationEngine.optimizeStaffWorkload(
       clinicId,
-      date
+      date,
     );
 
     return NextResponse.json({
@@ -112,7 +112,7 @@ export async function GET(request: NextRequest) {
         error: 'Failed to optimize staff workload',
         details: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -43,7 +43,7 @@ const DelinquencyRuleSchema = z.object({
       delay: z.number(), // Days after trigger
       template: z.string(),
       escalation: z.boolean().default(false),
-    })
+    }),
   ),
   isActive: z.boolean().default(true),
 });
@@ -137,7 +137,7 @@ export class DelinquencyManager {
         auth: { user: string; pass: string };
       };
       from: string;
-    }
+    },
   ) {
     this.supabase = createClient(supabaseUrl, supabaseKey);
 
@@ -160,7 +160,7 @@ export class DelinquencyManager {
           data,
           customer_id,
           customers!inner(name, email, risk_profile)
-        `
+        `,
       )
       .eq('type', 'invoice')
       .in('status', ['sent', 'overdue'])
@@ -184,7 +184,7 @@ export class DelinquencyManager {
             customer_id,
             customers!inner(name, email, risk_profile)
           )
-        `
+        `,
         )
         .eq('status', 'pending')
         .lt('due_date', new Date().toISOString());
@@ -212,7 +212,7 @@ export class DelinquencyManager {
         status: 'overdue',
         riskLevel: this.calculateRiskLevel(
           invoice.customers.risk_profile,
-          daysOverdue
+          daysOverdue,
         ),
       });
     });
@@ -234,7 +234,7 @@ export class DelinquencyManager {
         status: 'overdue',
         riskLevel: this.calculateRiskLevel(
           installment.payment_plans.customers.risk_profile,
-          daysOverdue
+          daysOverdue,
         ),
       });
     });
@@ -254,7 +254,7 @@ export class DelinquencyManager {
 
     for (const payment of overduePayments) {
       const applicableRules = rules.filter((rule) =>
-        this.isRuleApplicable(rule, payment)
+        this.isRuleApplicable(rule, payment),
       );
 
       for (const rule of applicableRules) {
@@ -270,7 +270,7 @@ export class DelinquencyManager {
     // Get payment history
     const { data: paymentHistory, error } = await this.supabase.rpc(
       'get_customer_payment_history',
-      { customer_id: customerId }
+      { customer_id: customerId },
     );
 
     if (error) {
@@ -353,10 +353,10 @@ export class DelinquencyManager {
    * Create payment plan for delinquent customer
    */
   async createPaymentPlan(
-    planData: Omit<PaymentPlan, 'status'>
+    planData: Omit<PaymentPlan, 'status'>,
   ): Promise<PaymentPlan> {
     const validatedData = PaymentPlanSchema.omit({ status: true }).parse(
-      planData
+      planData,
     );
 
     const paymentPlan: PaymentPlan = {
@@ -397,7 +397,7 @@ export class DelinquencyManager {
     type: 'reminder' | 'warning' | 'final_notice' | 'collection' | 'legal',
     channel: 'email' | 'sms' | 'call' | 'letter',
     templateId: string,
-    metadata?: Record<string, any>
+    metadata?: Record<string, any>,
   ): Promise<boolean> {
     try {
       // Get customer info
@@ -428,7 +428,7 @@ export class DelinquencyManager {
         success = await this.sendEmailNotification(
           customer,
           template,
-          metadata
+          metadata,
         );
       } else if (channel === 'sms') {
         success = await this.sendSMSNotification(customer, template, metadata);
@@ -463,7 +463,7 @@ export class DelinquencyManager {
       {
         start_date: dateRange?.from?.toISOString(),
         end_date: dateRange?.to?.toISOString(),
-      }
+      },
     );
 
     if (error) {
@@ -484,7 +484,7 @@ export class DelinquencyManager {
    * Get collection workflow for customer
    */
   async getCollectionWorkflow(
-    customerId: string
+    customerId: string,
   ): Promise<CollectionWorkflow | null> {
     try {
       const { data, error } = await this.supabase
@@ -520,7 +520,7 @@ export class DelinquencyManager {
   // Private methods
   private calculateRiskLevel(
     riskProfile: any,
-    daysOverdue: number
+    daysOverdue: number,
   ): 'low' | 'medium' | 'high' | 'critical' {
     if (daysOverdue > 90) {
       return 'critical';
@@ -535,7 +535,7 @@ export class DelinquencyManager {
   }
 
   private async updateOverdueStatus(
-    overduePayments: OverduePayment[]
+    overduePayments: OverduePayment[],
   ): Promise<void> {
     for (const payment of overduePayments) {
       if (payment.type === 'invoice') {
@@ -576,7 +576,7 @@ export class DelinquencyManager {
 
   private isRuleApplicable(
     rule: DelinquencyRule,
-    payment: OverduePayment
+    payment: OverduePayment,
   ): boolean {
     const conditions = rule.triggerConditions;
 
@@ -603,7 +603,7 @@ export class DelinquencyManager {
 
   private async executeRule(
     rule: DelinquencyRule,
-    payment: OverduePayment
+    payment: OverduePayment,
   ): Promise<void> {
     for (const action of rule.actions) {
       const scheduledFor = addDays(new Date(), action.delay);
@@ -617,7 +617,7 @@ export class DelinquencyManager {
         .eq('template_id', action.template)
         .gte(
           'created_at',
-          new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()
+          new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
         );
 
       if (existing && existing.length > 0) {
@@ -630,7 +630,7 @@ export class DelinquencyManager {
           payment.customerId,
           action.type as any,
           'email', // Default to email
-          action.template
+          action.template,
         );
       } else {
         // Schedule for later
@@ -650,7 +650,7 @@ export class DelinquencyManager {
   private async sendEmailNotification(
     customer: any,
     template: any,
-    metadata?: Record<string, any>
+    metadata?: Record<string, any>,
   ): Promise<boolean> {
     if (!this.emailTransporter) {
       return false;
@@ -660,7 +660,7 @@ export class DelinquencyManager {
       const subject = this.processTemplate(
         template.subject,
         customer,
-        metadata
+        metadata,
       );
       const html = this.processTemplate(template.content, customer, metadata);
 
@@ -680,7 +680,7 @@ export class DelinquencyManager {
   private async sendSMSNotification(
     _customer: any,
     _template: any,
-    _metadata?: Record<string, any>
+    _metadata?: Record<string, any>,
   ): Promise<boolean> {
     return true;
   }
@@ -688,21 +688,21 @@ export class DelinquencyManager {
   private processTemplate(
     template: string,
     customer: any,
-    metadata?: Record<string, any>
+    metadata?: Record<string, any>,
   ): string {
     let processed = template
       .replace(/{{customerName}}/g, customer.name)
       .replace(/{{customerEmail}}/g, customer.email)
       .replace(
         /{{currentDate}}/g,
-        format(new Date(), 'dd/MM/yyyy', { locale: ptBR })
+        format(new Date(), 'dd/MM/yyyy', { locale: ptBR }),
       );
 
     if (metadata) {
       Object.entries(metadata).forEach(([key, value]) => {
         processed = processed.replace(
           new RegExp(`{{${key}}}`, 'g'),
-          String(value)
+          String(value),
         );
       });
     }

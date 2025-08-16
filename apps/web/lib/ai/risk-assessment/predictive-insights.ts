@@ -402,7 +402,7 @@ class PredictiveInsightsEngine {
       includePopulation?: boolean;
       timeHorizon?: TimeHorizon;
       focusAreas?: InsightType[];
-    }
+    },
   ): Promise<PredictiveInsight[]> {
     try {
       const insights: PredictiveInsight[] = [];
@@ -417,7 +417,7 @@ class PredictiveInsightsEngine {
       if (!options?.focusAreas || options.focusAreas.includes('risk_trend')) {
         const riskTrendInsight = await this.generateRiskTrendInsight(
           patientId,
-          patientData
+          patientData,
         );
         if (riskTrendInsight) {
           insights.push(riskTrendInsight);
@@ -431,7 +431,7 @@ class PredictiveInsightsEngine {
       ) {
         const outcomeInsight = await this.generateOutcomePredictionInsight(
           patientId,
-          patientData
+          patientData,
         );
         if (outcomeInsight) {
           insights.push(outcomeInsight);
@@ -446,7 +446,7 @@ class PredictiveInsightsEngine {
         const treatmentInsight =
           await this.generateTreatmentRecommendationInsight(
             patientId,
-            patientData
+            patientData,
           );
         if (treatmentInsight) {
           insights.push(treatmentInsight);
@@ -460,7 +460,7 @@ class PredictiveInsightsEngine {
       ) {
         const preventiveInsight = await this.generatePreventiveCareInsight(
           patientId,
-          patientData
+          patientData,
         );
         if (preventiveInsight) {
           insights.push(preventiveInsight);
@@ -472,7 +472,7 @@ class PredictiveInsightsEngine {
         const populationInsight =
           await this.generatePopulationComparisonInsight(
             patientId,
-            patientData
+            patientData,
           );
         if (populationInsight) {
           insights.push(populationInsight);
@@ -521,13 +521,13 @@ class PredictiveInsightsEngine {
       // Generate intervention recommendations
       const interventions = await this.generatePopulationInterventions(
         populationData,
-        riskProfile
+        riskProfile,
       );
 
       // Generate comparisons
       const comparisons = await this.generatePopulationComparisons(
         populationData,
-        healthMetrics
+        healthMetrics,
       );
 
       const insight: PopulationHealthInsight = {
@@ -559,14 +559,14 @@ class PredictiveInsightsEngine {
   async performTrendAnalysis(
     metric: string,
     timeframe: string,
-    filters?: any
+    filters?: any,
   ): Promise<TrendAnalysis> {
     try {
       // Get historical data
       const historicalData = await this.getHistoricalData(
         metric,
         timeframe,
-        filters
+        filters,
       );
 
       // Analyze trend
@@ -603,7 +603,7 @@ class PredictiveInsightsEngine {
   async detectPatterns(
     dataType: string,
     timeWindow: number,
-    filters?: any
+    filters?: any,
   ): Promise<PatternRecognition[]> {
     try {
       const patterns: PatternRecognition[] = [];
@@ -612,7 +612,7 @@ class PredictiveInsightsEngine {
       const data = await this.getPatternAnalysisData(
         dataType,
         timeWindow,
-        filters
+        filters,
       );
 
       // Apply pattern recognition algorithms
@@ -658,7 +658,7 @@ class PredictiveInsightsEngine {
   async detectAnomalies(
     metric: string,
     value: number,
-    context?: any
+    context?: any,
   ): Promise<AnomalyDetection[]> {
     try {
       const anomalies: AnomalyDetection[] = [];
@@ -671,7 +671,7 @@ class PredictiveInsightsEngine {
         metric,
         value,
         baseline,
-        context
+        context,
       );
 
       for (const anomaly of detectedAnomalies) {
@@ -686,7 +686,7 @@ class PredictiveInsightsEngine {
           // Generate recommendations
           const recommendations = this.generateAnomalyRecommendations(
             anomaly,
-            investigation
+            investigation,
           );
 
           const anomalyDetection: AnomalyDetection = {
@@ -720,7 +720,7 @@ class PredictiveInsightsEngine {
    */
   private async generateRiskTrendInsight(
     patientId: string,
-    patientData: any
+    patientData: any,
   ): Promise<PredictiveInsight | null> {
     try {
       // Get historical risk scores
@@ -747,7 +747,7 @@ class PredictiveInsightsEngine {
       const recommendations = this.generateRiskTrendRecommendations(
         trend,
         forecast,
-        patientData
+        patientData,
       );
 
       return {
@@ -854,7 +854,7 @@ class PredictiveInsightsEngine {
    */
   private async generateOutcomePredictionInsight(
     patientId: string,
-    patientData: any
+    patientData: any,
   ): Promise<PredictiveInsight | null> {
     try {
       // Get similar patient outcomes
@@ -959,7 +959,7 @@ class PredictiveInsightsEngine {
    */
   private async generateTreatmentRecommendationInsight(
     patientId: string,
-    patientData: any
+    patientData: any,
   ): Promise<PredictiveInsight | null> {
     try {
       // Analyze treatment options
@@ -972,7 +972,7 @@ class PredictiveInsightsEngine {
       // Rank treatments by effectiveness and safety
       const rankedTreatments = this.rankTreatments(
         treatmentOptions,
-        patientData
+        patientData,
       );
 
       // Generate recommendations
@@ -1055,7 +1055,7 @@ class PredictiveInsightsEngine {
    */
   private async generatePreventiveCareInsight(
     patientId: string,
-    patientData: any
+    patientData: any,
   ): Promise<PredictiveInsight | null> {
     try {
       // Analyze preventive care opportunities
@@ -1068,12 +1068,12 @@ class PredictiveInsightsEngine {
 
       // Prioritize opportunities
       const prioritizedOpportunities = this.prioritizePreventiveCare(
-        preventiveOpportunities
+        preventiveOpportunities,
       );
 
       // Generate recommendations
       const recommendations = this.generatePreventiveCareRecommendations(
-        prioritizedOpportunities
+        prioritizedOpportunities,
       );
 
       return {
@@ -1180,12 +1180,12 @@ class PredictiveInsightsEngine {
       }
       if (filters.timeHorizon) {
         insights = insights.filter(
-          (i) => i.timeHorizon === filters.timeHorizon
+          (i) => i.timeHorizon === filters.timeHorizon,
         );
       }
       if (filters.patientId) {
         insights = insights.filter(
-          (i) => i.details.patientId === filters.patientId
+          (i) => i.details.patientId === filters.patientId,
         );
       }
       if (filters.validOnly) {
@@ -1246,7 +1246,7 @@ class PredictiveInsightsEngine {
     }
 
     return anomalies.sort(
-      (a, b) => b.detected.getTime() - a.detected.getTime()
+      (a, b) => b.detected.getTime() - a.detected.getTime(),
     );
   }
 
@@ -1270,7 +1270,7 @@ class PredictiveInsightsEngine {
     // Set up periodic processing
     this.processingInterval = setInterval(
       () => this.performPeriodicProcessing(),
-      60 * 60 * 1000 // Every hour
+      60 * 60 * 1000, // Every hour
     );
   }
 
@@ -1323,7 +1323,7 @@ class PredictiveInsightsEngine {
         treatments(*),
         risk_assessments(*),
         medical_history(*)
-      `
+      `,
       )
       .eq('id', patientId)
       .single();
@@ -1357,7 +1357,7 @@ class PredictiveInsightsEngine {
   private async getHistoricalData(
     _metric: string,
     _timeframe: string,
-    _filters?: any
+    _filters?: any,
   ): Promise<any[]> {
     // Implementation would fetch historical data based on metric and timeframe
     return [];
@@ -1543,13 +1543,13 @@ class PredictiveInsightsEngine {
   }
   private async generatePopulationInterventions(
     _data: any[],
-    _risk: any
+    _risk: any,
   ): Promise<any> {
     return {};
   }
   private async generatePopulationComparisons(
     _data: any[],
-    _metrics: any[]
+    _metrics: any[],
   ): Promise<any> {
     return {};
   }
@@ -1571,7 +1571,7 @@ class PredictiveInsightsEngine {
   private async getPatternAnalysisData(
     _type: string,
     _window: number,
-    _filters?: any
+    _filters?: any,
   ): Promise<any[]> {
     return [];
   }
@@ -1588,7 +1588,7 @@ class PredictiveInsightsEngine {
     _metric: string,
     _value: number,
     _baseline: any,
-    _context?: any
+    _context?: any,
   ): Promise<any[]> {
     return [];
   }
@@ -1597,20 +1597,20 @@ class PredictiveInsightsEngine {
   }
   private generateAnomalyRecommendations(
     _anomaly: any,
-    _investigation: any
+    _investigation: any,
   ): any {
     return {};
   }
   private determineRiskTrendPriority(
     _trend: any,
-    _forecast: any
+    _forecast: any,
   ): InsightPriority {
     return 'medium';
   }
   private generateRiskTrendRecommendations(
     _trend: any,
     _forecast: any,
-    _patient: any
+    _patient: any,
   ): any[] {
     return [];
   }
@@ -1657,7 +1657,7 @@ class PredictiveInsightsEngine {
     return [];
   }
   private async analyzePreventiveCareOpportunities(
-    _patient: any
+    _patient: any,
   ): Promise<any[]> {
     return [];
   }
@@ -1673,12 +1673,12 @@ class PredictiveInsightsEngine {
   private async cleanupExpiredInsights(): Promise<void> {}
   private async storeTrendAnalysis(
     _id: string,
-    _analysis: TrendAnalysis
+    _analysis: TrendAnalysis,
   ): Promise<void> {}
   private async storePattern(_pattern: PatternRecognition): Promise<void> {}
   private async storeAnomaly(_anomaly: AnomalyDetection): Promise<void> {}
   private async storePopulationInsight(
-    _insight: PopulationHealthInsight
+    _insight: PopulationHealthInsight,
   ): Promise<void> {}
 }
 

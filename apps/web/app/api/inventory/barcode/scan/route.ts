@@ -78,7 +78,7 @@ export async function POST(request: NextRequest) {
           error: scanResult.error,
           metadata: scanResult.metadata,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -97,13 +97,13 @@ export async function POST(request: NextRequest) {
             message: e.message,
           })),
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -137,7 +137,7 @@ export async function GET(request: NextRequest) {
             name,
             sku
           )
-        `
+        `,
         )
         .eq('user_id', session.user.id)
         .order('scanned_at', { ascending: false })
@@ -146,7 +146,7 @@ export async function GET(request: NextRequest) {
       if (error) {
         return NextResponse.json(
           { error: 'Erro ao buscar histórico de scans' },
-          { status: 500 }
+          { status: 500 },
         );
       }
 
@@ -180,7 +180,7 @@ export async function GET(request: NextRequest) {
         inventory_locations (
           location_name
         )
-      `
+      `,
       )
       .order('created_at', { ascending: false })
       .limit(limit);
@@ -188,7 +188,7 @@ export async function GET(request: NextRequest) {
     if (error) {
       return NextResponse.json(
         { error: 'Erro ao buscar códigos de barras' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -199,7 +199,7 @@ export async function GET(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

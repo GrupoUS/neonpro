@@ -137,7 +137,7 @@ export const stockAlertConfigSchema = z
       message:
         'Either productId, categoryId, or neither should be provided (not both)',
       path: ['productId', 'categoryId'],
-    }
+    },
   );
 
 // Create alert config schema (for API requests)
@@ -198,7 +198,7 @@ export const stockAlertSchema = z
       message:
         'Both acknowledgedBy and acknowledgedAt must be provided when acknowledging an alert',
       path: ['acknowledgedBy', 'acknowledgedAt'],
-    }
+    },
   );
 
 // Acknowledge alert schema
@@ -270,7 +270,7 @@ const reportScheduleConfigSchema = z
     {
       message:
         'dayOfWeek required for weekly frequency, dayOfMonth required for monthly frequency',
-    }
+    },
   );
 
 export const customStockReportSchema = z.object({
@@ -382,7 +382,7 @@ export const recommendationSchema = z.object({
         label: z.string(),
         action: z.string(),
         parameters: z.record(z.any()).optional(),
-      })
+      }),
     )
     .optional(),
   dismissible: z.boolean().default(true),
@@ -532,7 +532,7 @@ export const validateStockAlertConfig = (data: unknown): StockAlertConfig => {
 };
 
 export const validateCreateStockAlertConfig = (
-  data: unknown
+  data: unknown,
 ): CreateStockAlertConfig => {
   return createStockAlertConfigSchema.parse(data);
 };
@@ -565,7 +565,7 @@ export class StockAlertValidationError extends Error {
   constructor(
     message: string,
     public field?: string,
-    public code?: string
+    public code?: string,
   ) {
     super(message);
     this.name = 'StockAlertValidationError';

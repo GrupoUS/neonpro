@@ -22,7 +22,7 @@ const bulkForecastRequestSchema = z.object({
         .enum(['daily', 'weekly', 'monthly', 'quarterly'])
         .optional()
         .default('weekly'),
-    })
+    }),
   ),
   clinic_id: z.string(),
   forecast_date: z
@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
       validatedData.item_id,
       validatedData.clinic_id,
       validatedData.forecast_period,
-      validatedData.forecast_date
+      validatedData.forecast_date,
     );
 
     return NextResponse.json({
@@ -63,7 +63,7 @@ export async function POST(request: NextRequest) {
           error: 'Validation failed',
           details: error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -73,7 +73,7 @@ export async function POST(request: NextRequest) {
         error: 'Failed to generate demand forecast',
         details: error.message,
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -89,7 +89,7 @@ async function handleBulkForecast(body: any) {
             item.item_id,
             validatedData.clinic_id,
             item.forecast_period,
-            validatedData.forecast_date
+            validatedData.forecast_date,
           );
           return { success: true, item_id: item.item_id, data: forecast };
         } catch (error: any) {
@@ -99,7 +99,7 @@ async function handleBulkForecast(body: any) {
             error: error.message,
           };
         }
-      })
+      }),
     );
 
     const successful = forecasts.filter((f) => f.success);
@@ -124,7 +124,7 @@ async function handleBulkForecast(body: any) {
           error: 'Bulk forecast validation failed',
           details: error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -134,7 +134,7 @@ async function handleBulkForecast(body: any) {
         error: 'Failed to process bulk forecast',
         details: error.message,
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

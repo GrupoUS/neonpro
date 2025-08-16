@@ -38,7 +38,7 @@ export class SupplierManagementService {
   constructor(supabaseUrl?: string, supabaseKey?: string) {
     this.supabase = createClient(
       supabaseUrl || process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      supabaseKey || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+      supabaseKey || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     );
   }
 
@@ -52,7 +52,7 @@ export class SupplierManagementService {
 
   async createSupplier(
     clinicId: string,
-    supplierData: CreateSupplierRequest
+    supplierData: CreateSupplierRequest,
   ): Promise<Supplier> {
     const supabase = await this.getSupabaseClient();
 
@@ -93,7 +93,7 @@ export class SupplierManagementService {
 
   async getSupplier(
     clinicId: string,
-    supplierId: string
+    supplierId: string,
   ): Promise<Supplier | null> {
     const supabase = await this.getSupabaseClient();
 
@@ -114,7 +114,7 @@ export class SupplierManagementService {
   async updateSupplier(
     clinicId: string,
     supplierId: string,
-    updates: UpdateSupplierRequest
+    updates: UpdateSupplierRequest,
   ): Promise<Supplier> {
     const supabase = await this.getSupabaseClient();
 
@@ -168,7 +168,7 @@ export class SupplierManagementService {
     clinicId: string,
     filters?: SupplierFilters,
     page = 1,
-    limit = 50
+    limit = 50,
   ): Promise<SupplierListResponse> {
     const supabase = await this.getSupabaseClient();
 
@@ -205,7 +205,7 @@ export class SupplierManagementService {
 
       if (filters.search) {
         query = query.or(
-          `supplier_name.ilike.%${filters.search}%,supplier_code.ilike.%${filters.search}%`
+          `supplier_name.ilike.%${filters.search}%,supplier_code.ilike.%${filters.search}%`,
         );
       }
     }
@@ -237,7 +237,7 @@ export class SupplierManagementService {
   // =====================================================================================
 
   async createContract(
-    contractData: CreateContractRequest
+    contractData: CreateContractRequest,
   ): Promise<SupplierContract> {
     const supabase = await this.getSupabaseClient();
 
@@ -251,7 +251,7 @@ export class SupplierManagementService {
 
     if (existingContract) {
       throw new Error(
-        `Número de contrato '${contractData.contract_number}' já existe para este fornecedor`
+        `Número de contrato '${contractData.contract_number}' já existe para este fornecedor`,
       );
     }
 
@@ -269,7 +269,7 @@ export class SupplierManagementService {
         `
         *,
         supplier:suppliers(*)
-      `
+      `,
       )
       .single();
 
@@ -289,7 +289,7 @@ export class SupplierManagementService {
         `
         *,
         supplier:suppliers(*)
-      `
+      `,
       )
       .eq('id', contractId)
       .single();
@@ -303,7 +303,7 @@ export class SupplierManagementService {
 
   async updateContract(
     contractId: string,
-    updates: Partial<CreateContractRequest>
+    updates: Partial<CreateContractRequest>,
   ): Promise<SupplierContract> {
     const supabase = await this.getSupabaseClient();
 
@@ -320,7 +320,7 @@ export class SupplierManagementService {
         `
         *,
         supplier:suppliers(*)
-      `
+      `,
       )
       .single();
 
@@ -340,7 +340,7 @@ export class SupplierManagementService {
         `
         *,
         supplier:suppliers(*)
-      `
+      `,
       )
       .eq('supplier_id', supplierId)
       .order('created_at', { ascending: false });
@@ -354,7 +354,7 @@ export class SupplierManagementService {
 
   async getContractRenewalAlerts(
     clinicId: string,
-    daysAhead = 90
+    daysAhead = 90,
   ): Promise<ContractRenewalAlert[]> {
     const supabase = await this.getSupabaseClient();
 
@@ -395,7 +395,7 @@ export class SupplierManagementService {
         `
         *,
         supplier:suppliers(*)
-      `
+      `,
       )
       .single();
 
@@ -415,7 +415,7 @@ export class SupplierManagementService {
         `
         *,
         supplier:suppliers(*)
-      `
+      `,
       )
       .eq('supplier_id', supplierId)
       .eq('is_active', true)
@@ -431,7 +431,7 @@ export class SupplierManagementService {
 
   async updateContact(
     contactId: string,
-    updates: Partial<any>
+    updates: Partial<any>,
   ): Promise<SupplierContact> {
     const supabase = await this.getSupabaseClient();
 
@@ -448,7 +448,7 @@ export class SupplierManagementService {
         `
         *,
         supplier:suppliers(*)
-      `
+      `,
       )
       .single();
 
@@ -467,7 +467,7 @@ export class SupplierManagementService {
     supplierId: string,
     periodStart: string,
     periodEnd: string,
-    evaluationType: EvaluationType
+    evaluationType: EvaluationType,
   ): Promise<SupplierPerformance> {
     const supabase = await this.getSupabaseClient();
 
@@ -523,7 +523,7 @@ export class SupplierManagementService {
         `
         *,
         supplier:suppliers(*)
-      `
+      `,
       )
       .single();
 
@@ -535,7 +535,7 @@ export class SupplierManagementService {
   }
 
   async createEvaluation(
-    evaluationData: CreateEvaluationRequest
+    evaluationData: CreateEvaluationRequest,
   ): Promise<SupplierEvaluation> {
     const supabase = await this.getSupabaseClient();
 
@@ -575,7 +575,7 @@ export class SupplierManagementService {
         `
         *,
         supplier:suppliers(*)
-      `
+      `,
       )
       .single();
 
@@ -587,7 +587,7 @@ export class SupplierManagementService {
   }
 
   async getSupplierEvaluations(
-    supplierId: string
+    supplierId: string,
   ): Promise<SupplierEvaluation[]> {
     const supabase = await this.getSupabaseClient();
 
@@ -597,7 +597,7 @@ export class SupplierManagementService {
         `
         *,
         supplier:suppliers(*)
-      `
+      `,
       )
       .eq('supplier_id', supplierId)
       .order('evaluation_date', { ascending: false });
@@ -614,7 +614,7 @@ export class SupplierManagementService {
   // =====================================================================================
 
   async createQualityIssue(
-    issueData: CreateQualityIssueRequest
+    issueData: CreateQualityIssueRequest,
   ): Promise<SupplierQualityIssue> {
     const supabase = await this.getSupabaseClient();
 
@@ -633,7 +633,7 @@ export class SupplierManagementService {
         `
         *,
         supplier:suppliers(*)
-      `
+      `,
       )
       .single();
 
@@ -646,7 +646,7 @@ export class SupplierManagementService {
 
   async updateQualityIssue(
     issueId: string,
-    updates: Partial<CreateQualityIssueRequest & { status: IssueStatus }>
+    updates: Partial<CreateQualityIssueRequest & { status: IssueStatus }>,
   ): Promise<SupplierQualityIssue> {
     const supabase = await this.getSupabaseClient();
 
@@ -663,7 +663,7 @@ export class SupplierManagementService {
         `
         *,
         supplier:suppliers(*)
-      `
+      `,
       )
       .single();
 
@@ -675,7 +675,7 @@ export class SupplierManagementService {
   }
 
   async getQualityIssuesSummary(
-    clinicId: string
+    clinicId: string,
   ): Promise<QualityIssuesSummary[]> {
     const supabase = await this.getSupabaseClient();
 
@@ -697,7 +697,7 @@ export class SupplierManagementService {
   // =====================================================================================
 
   async createCommunication(
-    communicationData: any
+    communicationData: any,
   ): Promise<SupplierCommunication> {
     const supabase = await this.getSupabaseClient();
 
@@ -717,7 +717,7 @@ export class SupplierManagementService {
         *,
         supplier:suppliers(*),
         contact:supplier_contacts(*)
-      `
+      `,
       )
       .single();
 
@@ -729,7 +729,7 @@ export class SupplierManagementService {
   }
 
   async getSupplierCommunications(
-    supplierId: string
+    supplierId: string,
   ): Promise<SupplierCommunication[]> {
     const supabase = await this.getSupabaseClient();
 
@@ -740,7 +740,7 @@ export class SupplierManagementService {
         *,
         supplier:suppliers(*),
         contact:supplier_contacts(*)
-      `
+      `,
       )
       .eq('supplier_id', supplierId)
       .order('communication_date', { ascending: false });
@@ -763,7 +763,7 @@ export class SupplierManagementService {
     const { data: suppliers } = await supabase
       .from('suppliers')
       .select(
-        'id, supplier_type, status, is_preferred, is_critical, performance_score'
+        'id, supplier_type, status, is_preferred, is_critical, performance_score',
       )
       .eq('clinic_id', clinicId);
 
@@ -798,7 +798,7 @@ export class SupplierManagementService {
         *,
         supplier:suppliers(*),
         contact:supplier_contacts(*)
-      `
+      `,
       )
       .eq('supplier.clinic_id', clinicId)
       .order('communication_date', { ascending: false })
@@ -831,7 +831,7 @@ export class SupplierManagementService {
   async getSupplierAnalytics(
     _clinicId: string,
     periodStart: string,
-    periodEnd: string
+    periodEnd: string,
   ): Promise<SupplierAnalytics> {
     const _supabase = await this.getSupabaseClient();
 
@@ -865,7 +865,7 @@ export class SupplierManagementService {
 
     if (error) {
       throw new Error(
-        `Erro ao buscar fornecedores para comparação: ${error.message}`
+        `Erro ao buscar fornecedores para comparação: ${error.message}`,
       );
     }
 
@@ -885,7 +885,7 @@ export class SupplierManagementService {
   private async getDeliveryPerformanceData(
     _supplierId: string,
     _periodStart: string,
-    _periodEnd: string
+    _periodEnd: string,
   ): Promise<any> {
     // This would query actual orders/deliveries data
     return {
@@ -899,7 +899,7 @@ export class SupplierManagementService {
   private async getQualityPerformanceData(
     supplierId: string,
     periodStart: string,
-    periodEnd: string
+    periodEnd: string,
   ): Promise<any> {
     const supabase = await this.getSupabaseClient();
 
@@ -922,7 +922,7 @@ export class SupplierManagementService {
   private async getFinancialPerformanceData(
     _supplierId: string,
     _periodStart: string,
-    _periodEnd: string
+    _periodEnd: string,
   ): Promise<any> {
     // This would query actual financial data
     return {

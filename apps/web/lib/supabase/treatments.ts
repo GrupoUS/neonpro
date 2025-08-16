@@ -35,7 +35,7 @@ const supabase = createClient();
  * Create a new treatment plan
  */
 export async function createTreatmentPlan(
-  data: TreatmentPlanFormData
+  data: TreatmentPlanFormData,
 ): Promise<TreatmentPlan> {
   const {
     data: { user },
@@ -108,7 +108,7 @@ export async function createTreatmentPlan(
  */
 export async function updateTreatmentPlan(
   id: string,
-  data: Partial<TreatmentPlanFormData>
+  data: Partial<TreatmentPlanFormData>,
 ): Promise<TreatmentPlan> {
   const {
     data: { user },
@@ -142,7 +142,7 @@ export async function updateTreatmentPlan(
  * Get treatment plan by ID
  */
 export async function getTreatmentPlan(
-  id: string
+  id: string,
 ): Promise<TreatmentPlan | null> {
   const { data, error } = await supabase
     .from('treatment_plans')
@@ -151,7 +151,7 @@ export async function getTreatmentPlan(
       *,
       patient:patients!treatment_plans_patient_id_fkey(id, given_name, family_name),
       provider:profiles!treatment_plans_provider_id_fkey(id, full_name, professional_title)
-    `
+    `,
     )
     .eq('id', id)
     .single();
@@ -172,7 +172,7 @@ export async function getTreatmentPlan(
 export async function searchTreatmentPlans(
   filters: TreatmentPlanSearchFilters,
   page = 1,
-  perPage = 10
+  perPage = 10,
 ): Promise<TreatmentPlanListResponse> {
   let query = supabase.from('treatment_plans').select(
     `
@@ -180,7 +180,7 @@ export async function searchTreatmentPlans(
       patient:patients!treatment_plans_patient_id_fkey(id, given_name, family_name),
       provider:profiles!treatment_plans_provider_id_fkey(id, full_name, professional_title)
     `,
-    { count: 'exact' }
+    { count: 'exact' },
   );
 
   // Apply filters
@@ -210,7 +210,7 @@ export async function searchTreatmentPlans(
 
   if (filters.search_text) {
     query = query.or(
-      `title.ilike.%${filters.search_text}%,description.ilike.%${filters.search_text}%`
+      `title.ilike.%${filters.search_text}%,description.ilike.%${filters.search_text}%`,
     );
   }
 
@@ -242,7 +242,7 @@ export async function searchTreatmentPlans(
  * Create a new procedure
  */
 export async function createProcedure(
-  data: ProcedureFormData
+  data: ProcedureFormData,
 ): Promise<Procedure> {
   const {
     data: { user },
@@ -335,7 +335,7 @@ export async function createProcedure(
  */
 export async function updateProcedure(
   id: string,
-  data: Partial<ProcedureFormData>
+  data: Partial<ProcedureFormData>,
 ): Promise<Procedure> {
   const {
     data: { user },
@@ -377,7 +377,7 @@ export async function getProcedure(id: string): Promise<Procedure | null> {
       patient:patients!procedures_patient_id_fkey(id, given_name, family_name),
       provider:profiles!procedures_provider_id_fkey(id, full_name, professional_title),
       treatment_plan:treatment_plans!procedures_treatment_plan_id_fkey(id, title, status)
-    `
+    `,
     )
     .eq('id', id)
     .single();
@@ -398,7 +398,7 @@ export async function getProcedure(id: string): Promise<Procedure | null> {
 export async function searchProcedures(
   filters: ProcedureSearchFilters,
   page = 1,
-  perPage = 10
+  perPage = 10,
 ): Promise<ProcedureListResponse> {
   let query = supabase.from('procedures').select(
     `
@@ -407,7 +407,7 @@ export async function searchProcedures(
       provider:profiles!procedures_provider_id_fkey(id, full_name, professional_title),
       treatment_plan:treatment_plans!procedures_treatment_plan_id_fkey(id, title, status)
     `,
-    { count: 'exact' }
+    { count: 'exact' },
   );
 
   // Apply filters
@@ -473,7 +473,7 @@ export async function searchProcedures(
  * Create a new clinical note
  */
 export async function createClinicalNote(
-  data: ClinicalNoteFormData
+  data: ClinicalNoteFormData,
 ): Promise<ClinicalNote> {
   const {
     data: { user },
@@ -550,7 +550,7 @@ export async function createClinicalNote(
  */
 export async function updateClinicalNote(
   id: string,
-  data: Partial<ClinicalNoteFormData>
+  data: Partial<ClinicalNoteFormData>,
 ): Promise<ClinicalNote> {
   const {
     data: { user },
@@ -584,7 +584,7 @@ export async function updateClinicalNote(
  * Get clinical note by ID
  */
 export async function getClinicalNote(
-  id: string
+  id: string,
 ): Promise<ClinicalNote | null> {
   const { data, error } = await supabase
     .from('clinical_notes')
@@ -595,7 +595,7 @@ export async function getClinicalNote(
       provider:profiles!clinical_notes_provider_id_fkey(id, full_name, professional_title),
       treatment_plan:treatment_plans!clinical_notes_treatment_plan_id_fkey(id, title, status),
       procedure:procedures!clinical_notes_procedure_id_fkey(id, code, status)
-    `
+    `,
     )
     .eq('id', id)
     .single();
@@ -616,7 +616,7 @@ export async function getClinicalNote(
 export async function searchClinicalNotes(
   filters: ClinicalNoteSearchFilters,
   page = 1,
-  perPage = 10
+  perPage = 10,
 ): Promise<ClinicalNoteListResponse> {
   let query = supabase.from('clinical_notes').select(
     `
@@ -626,7 +626,7 @@ export async function searchClinicalNotes(
       treatment_plan:treatment_plans!clinical_notes_treatment_plan_id_fkey(id, title, status),
       procedure:procedures!clinical_notes_procedure_id_fkey(id, code, status)
     `,
-    { count: 'exact' }
+    { count: 'exact' },
   );
 
   // Apply filters
@@ -668,7 +668,7 @@ export async function searchClinicalNotes(
 
   if (filters.search_text) {
     query = query.or(
-      `title.ilike.%${filters.search_text}%,content.ilike.%${filters.search_text}%`
+      `title.ilike.%${filters.search_text}%,content.ilike.%${filters.search_text}%`,
     );
   }
 
@@ -748,7 +748,7 @@ export async function getTreatmentStatistics(): Promise<TreatmentStatistics> {
       acc[code].count++;
       return acc;
     },
-    {} as Record<string, { code: string; display: string; count: number }>
+    {} as Record<string, { code: string; display: string; count: number }>,
   );
 
   const mostCommonProcedures = Object.values(procedureCounts)
@@ -757,7 +757,7 @@ export async function getTreatmentStatistics(): Promise<TreatmentStatistics> {
 
   // Calculate average treatment duration
   const completedPlans = (treatmentPlansStats || []).filter(
-    (plan) => plan.status === 'completed'
+    (plan) => plan.status === 'completed',
   );
   const avgDuration =
     completedPlans.length > 0

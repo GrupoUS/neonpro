@@ -196,7 +196,7 @@ describe('Patient Supabase Functions', () => {
       // Check CPF identifier
       const cpfIdentifier = insertedData.fhir_data.identifier.find(
         (id: any) =>
-          id.system === 'http://rnds.saude.gov.br/fhir/r4/NamingSystem/cpf'
+          id.system === 'http://rnds.saude.gov.br/fhir/r4/NamingSystem/cpf',
       );
       expect(cpfIdentifier.value).toBe('12345678901');
     });
@@ -410,7 +410,7 @@ describe('Patient Supabase Functions', () => {
 
       const mockCalls = mockSupabase.from().eq.mock.calls;
       expect(
-        mockCalls.some((call) => call[0] === 'status' && call[1] === 'active')
+        mockCalls.some((call) => call[0] === 'status' && call[1] === 'active'),
       ).toBe(true);
     });
   });

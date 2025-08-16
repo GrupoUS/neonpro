@@ -183,17 +183,17 @@ export class RiskScoringEngine {
       const recommendedInterventions =
         await this.generateInterventionRecommendations(
           overallRiskScore,
-          topRiskFactors
+          topRiskFactors,
         );
       const appointmentRecommendations =
         await this.generateAppointmentRecommendations(
           patientId,
-          appointmentHistory
+          appointmentHistory,
         );
 
       // Calculate confidence score
       const confidence = this.calculateConfidenceScore(
-        appointmentHistory.length
+        appointmentHistory.length,
       );
 
       return {
@@ -233,20 +233,20 @@ export class RiskScoringEngine {
    * Calculate historical risk based on appointment history
    */
   private async calculateHistoricalRisk(
-    appointmentHistory: any[]
+    appointmentHistory: any[],
   ): Promise<number> {
     if (appointmentHistory.length < this.config.minimumDataPoints) {
       return 50; // Default medium risk for insufficient data
     }
 
     const noShows = appointmentHistory.filter(
-      (apt) => apt.status === 'NO_SHOW'
+      (apt) => apt.status === 'NO_SHOW',
     );
     const cancellations = appointmentHistory.filter(
-      (apt) => apt.status === 'CANCELLED'
+      (apt) => apt.status === 'CANCELLED',
     );
     const lateArrival = appointmentHistory.filter(
-      (apt) => apt.late_arrival === true
+      (apt) => apt.late_arrival === true,
     );
 
     // Calculate base metrics
@@ -258,7 +258,7 @@ export class RiskScoringEngine {
     const weightedNoShowRate = this.applyTimeDecay(noShows, appointmentHistory);
     const weightedCancellationRate = this.applyTimeDecay(
       cancellations,
-      appointmentHistory
+      appointmentHistory,
     );
 
     // Calculate risk score (0-100)
@@ -278,7 +278,7 @@ export class RiskScoringEngine {
    * Calculate behavioral risk based on appointment patterns
    */
   private async calculateBehavioralRisk(
-    appointmentHistory: any[]
+    appointmentHistory: any[],
   ): Promise<number> {
     if (appointmentHistory.length === 0) {
       return 50;
@@ -294,13 +294,13 @@ export class RiskScoringEngine {
     // Analyze rescheduling behavior
     const reschedulingRate =
       appointmentHistory.filter(
-        (apt) => apt.reschedule_count && apt.reschedule_count > 0
+        (apt) => apt.reschedule_count && apt.reschedule_count > 0,
       ).length / appointmentHistory.length;
     riskScore += reschedulingRate * 25;
 
     // Communication responsiveness
     const communicationScore = await this.getCommunicationScore(
-      appointmentHistory[0]?.patient_id
+      appointmentHistory[0]?.patient_id,
     );
     riskScore += (1 - communicationScore) * 20;
 
@@ -315,7 +315,7 @@ export class RiskScoringEngine {
    * Calculate demographic risk factors
    */
   private async calculateDemographicRisk(
-    demographicData: DemographicRiskFactors
+    demographicData: DemographicRiskFactors,
   ): Promise<number> {
     let riskScore = 0;
 
@@ -368,14 +368,14 @@ export class RiskScoringEngine {
    * Calculate communication risk based on response patterns
    */
   private async calculateCommunicationRisk(
-    communicationHistory: any[]
+    communicationHistory: any[],
   ): Promise<number> {
     if (communicationHistory.length === 0) {
       return 30; // Default low-medium risk
     }
 
     const responses = communicationHistory.filter(
-      (comm) => comm.response_received
+      (comm) => comm.response_received,
     );
     const responseRate = responses.length / communicationHistory.length;
 
@@ -469,7 +469,7 @@ export class RiskScoringEngine {
         groups[month].push(apt);
         return groups;
       },
-      {} as Record<string, any[]>
+      {} as Record<string, any[]>,
     );
 
     // Calculate monthly risk scores
@@ -522,7 +522,7 @@ export class RiskScoringEngine {
    * Identify top risk factors for the patient
    */
   private async identifyTopRiskFactors(
-    _patientId: string
+    _patientId: string,
   ): Promise<RiskFactor[]> {
     // This would analyze all factors and return the most significant ones
     // Placeholder implementation
@@ -542,7 +542,7 @@ export class RiskScoringEngine {
    * Identify protective factors that reduce risk
    */
   private async identifyProtectiveFactors(
-    _patientId: string
+    _patientId: string,
   ): Promise<RiskFactor[]> {
     // This would identify factors that positively influence attendance
     // Placeholder implementation
@@ -563,7 +563,7 @@ export class RiskScoringEngine {
    */
   private async generateInterventionRecommendations(
     riskScore: number,
-    _riskFactors: RiskFactor[]
+    _riskFactors: RiskFactor[],
   ): Promise<string[]> {
     const recommendations: string[] = [];
 
@@ -588,7 +588,7 @@ export class RiskScoringEngine {
    */
   private async generateAppointmentRecommendations(
     _patientId: string,
-    appointmentHistory: any[]
+    appointmentHistory: any[],
   ): Promise<AppointmentRecommendation[]> {
     const recommendations: AppointmentRecommendation[] = [];
 
@@ -632,7 +632,7 @@ export class RiskScoringEngine {
       const eventDate = new Date(event.scheduled_date);
       const monthsAgo = Math.max(
         0,
-        (now.getTime() - eventDate.getTime()) / (1000 * 60 * 60 * 24 * 30)
+        (now.getTime() - eventDate.getTime()) / (1000 * 60 * 60 * 24 * 30),
       );
       const weight = this.config.decayFactors.timeDecay ** monthsAgo;
 
@@ -645,7 +645,7 @@ export class RiskScoringEngine {
       const eventDate = new Date(event.scheduled_date);
       const monthsAgo = Math.max(
         0,
-        (now.getTime() - eventDate.getTime()) / (1000 * 60 * 60 * 24 * 30)
+        (now.getTime() - eventDate.getTime()) / (1000 * 60 * 60 * 24 * 30),
       );
       return sum + this.config.decayFactors.timeDecay ** monthsAgo;
     }, 0);
@@ -665,7 +665,7 @@ export class RiskScoringEngine {
       .sort(
         (a, b) =>
           new Date(b.scheduled_date).getTime() -
-          new Date(a.scheduled_date).getTime()
+          new Date(a.scheduled_date).getTime(),
       )
       .forEach((apt) => {
         if (apt.status === 'NO_SHOW') {
@@ -765,25 +765,25 @@ export class RiskScoringEngine {
         }
         return acc;
       },
-      {} as Record<string, { sent: number; responded: number }>
+      {} as Record<string, { sent: number; responded: number }>,
     );
 
     const channelRates = Object.values(channels).map(
-      (ch) => ch.responded / ch.sent
+      (ch) => ch.responded / ch.sent,
     );
     return channelRates.length > 0 ? Math.max(...channelRates) : 0.5;
   }
 
   private calculateMonthlyRiskScore(appointments: any[]): number {
     const noShows = appointments.filter(
-      (apt) => apt.status === 'NO_SHOW'
+      (apt) => apt.status === 'NO_SHOW',
     ).length;
     const total = appointments.length;
     return total > 0 ? (noShows / total) * 100 : 0;
   }
 
   private analyzeInterventionEffectiveness(
-    interventionHistory: InterventionOutcome[]
+    interventionHistory: InterventionOutcome[],
   ): Record<string, number> {
     const effectiveness: Record<string, number> = {};
 
@@ -820,11 +820,11 @@ export class RiskScoringEngine {
         acc[hour] = (acc[hour] || 0) + 1;
         return acc;
       },
-      {} as Record<number, number>
+      {} as Record<number, number>,
     );
 
     const [mostFrequentHour, count] = Object.entries(timeCounts).sort(
-      ([, a], [, b]) => b - a
+      ([, a], [, b]) => b - a,
     )[0];
 
     const confidence = count / timeSlots.length;
@@ -837,13 +837,13 @@ export class RiskScoringEngine {
     const advanceTimes = appointmentHistory
       .filter(
         (apt) =>
-          apt.created_at && apt.scheduled_date && apt.status === 'ATTENDED'
+          apt.created_at && apt.scheduled_date && apt.status === 'ATTENDED',
       )
       .map((apt) => {
         const booking = new Date(apt.created_at);
         const appointment = new Date(apt.scheduled_date);
         return Math.round(
-          (appointment.getTime() - booking.getTime()) / (1000 * 60 * 60 * 24)
+          (appointment.getTime() - booking.getTime()) / (1000 * 60 * 60 * 24),
         );
       });
 
@@ -857,11 +857,11 @@ export class RiskScoringEngine {
         acc[time] = (acc[time] || 0) + 1;
         return acc;
       },
-      {} as Record<number, number>
+      {} as Record<number, number>,
     );
 
     const [optimalTime] = Object.entries(timeFrequency).sort(
-      ([, a], [, b]) => b - a
+      ([, a], [, b]) => b - a,
     )[0];
 
     return Number.parseInt(optimalTime, 10);
@@ -884,13 +884,13 @@ export class RiskScoringEngine {
 
     const confidenceIncrease = Math.min(
       appointmentCount / optimalDataPoints,
-      1
+      1,
     );
     return minConfidence + (maxConfidence - minConfidence) * confidenceIncrease;
   }
 
   private getRiskLevel(
-    riskScore: number
+    riskScore: number,
   ): 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL' {
     if (riskScore >= this.config.thresholds.critical) {
       return 'CRITICAL';
@@ -905,7 +905,7 @@ export class RiskScoringEngine {
   }
 
   private async getPatientAppointmentHistory(
-    patientId: string
+    patientId: string,
   ): Promise<any[]> {
     const { data } = await this.supabase
       .from('appointments')
@@ -917,7 +917,7 @@ export class RiskScoringEngine {
   }
 
   private async getPatientDemographics(
-    _patientId: string
+    _patientId: string,
   ): Promise<DemographicRiskFactors> {
     // Placeholder implementation
     return {
@@ -938,14 +938,14 @@ export class RiskScoringEngine {
   }
 
   private async getInterventionHistory(
-    _patientId: string
+    _patientId: string,
   ): Promise<InterventionOutcome[]> {
     // Placeholder implementation
     return [];
   }
 
   private async calculateSeasonalPatterns(
-    _appointmentHistory: any[]
+    _appointmentHistory: any[],
   ): Promise<Record<string, number>> {
     // Placeholder implementation
     return {
@@ -961,7 +961,7 @@ export class RiskScoringEngine {
    */
   async updateRiskProfile(
     _patientId: string,
-    _appointmentOutcome: 'ATTENDED' | 'NO_SHOW' | 'CANCELLED' | 'RESCHEDULED'
+    _appointmentOutcome: 'ATTENDED' | 'NO_SHOW' | 'CANCELLED' | 'RESCHEDULED',
   ): Promise<void> {}
 
   /**
@@ -1008,7 +1008,7 @@ export function getRiskTrendIcon(trend: string): string {
 
 export function calculateRiskReduction(
   baseRisk: number,
-  interventionEffectiveness: number
+  interventionEffectiveness: number,
 ): number {
   return Math.round(baseRisk * (1 - interventionEffectiveness));
 }

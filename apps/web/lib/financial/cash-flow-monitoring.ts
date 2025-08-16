@@ -90,7 +90,7 @@ export class CashFlowMonitoringEngine {
    */
   async getCashFlowSummary(
     period: 'daily' | 'weekly' | 'monthly',
-    date?: Date
+    date?: Date,
   ): Promise<CashFlowSummary> {
     const targetDate = date || new Date();
     let startDate: Date;
@@ -140,7 +140,7 @@ export class CashFlowMonitoringEngine {
     // Calculate growth rate by comparing with previous period
     const previousPeriodSummary = await this.getPreviousPeriodSummary(
       period,
-      targetDate
+      targetDate,
     );
     const growthRate =
       previousPeriodSummary.net_flow === 0
@@ -195,12 +195,12 @@ export class CashFlowMonitoringEngine {
       const recentAvgIncome = this.calculateRecentAverage(
         historicalData,
         'total_income',
-        14
+        14,
       );
       const recentAvgExpense = this.calculateRecentAverage(
         historicalData,
         'total_expense',
-        14
+        14,
       );
 
       // Apply seasonal and weekly patterns
@@ -267,7 +267,7 @@ export class CashFlowMonitoringEngine {
     ) {
       await this.triggerAlert(
         'LOW_BALANCE',
-        `Daily net flow (${today.net_flow}) is below threshold`
+        `Daily net flow (${today.net_flow}) is below threshold`,
       );
     }
 
@@ -278,7 +278,7 @@ export class CashFlowMonitoringEngine {
     ) {
       await this.triggerAlert(
         'HIGH_EXPENSES',
-        `Daily expenses (${today.total_expense}) exceed threshold`
+        `Daily expenses (${today.total_expense}) exceed threshold`,
       );
     }
 
@@ -291,7 +291,7 @@ export class CashFlowMonitoringEngine {
       ) {
         await this.triggerAlert(
           'NEGATIVE_FLOW_STREAK',
-          `${consecutiveNegativeDays} consecutive days of negative cash flow`
+          `${consecutiveNegativeDays} consecutive days of negative cash flow`,
         );
       }
     }
@@ -319,7 +319,7 @@ export class CashFlowMonitoringEngine {
 
   private async getPreviousPeriodSummary(
     period: 'daily' | 'weekly' | 'monthly',
-    currentDate: Date
+    currentDate: Date,
   ): Promise<CashFlowSummary> {
     let previousDate: Date;
 
@@ -343,12 +343,12 @@ export class CashFlowMonitoringEngine {
   private calculateRecentAverage(
     data: CashFlowSummary[],
     field: keyof CashFlowSummary,
-    days: number
+    days: number,
   ): number {
     const recentData = data.slice(-days);
     const sum = recentData.reduce(
       (total, item) => total + (Number(item[field]) || 0),
-      0
+      0,
     );
     return sum / recentData.length;
   }
@@ -371,7 +371,7 @@ export class CashFlowMonitoringEngine {
 
   private calculateConfidenceLevel(
     data: CashFlowSummary[],
-    daysAhead: number
+    daysAhead: number,
   ): number {
     // Confidence decreases with time and increases with data consistency
     const baseConfidence = 0.95;
@@ -391,7 +391,7 @@ export class CashFlowMonitoringEngine {
 
   private getPredictionFactors(
     seasonalFactor: number,
-    weeklyFactor: number
+    weeklyFactor: number,
   ): string[] {
     const factors: string[] = [];
 
@@ -439,7 +439,7 @@ export class CashFlowMonitoringEngine {
   }
 
   private getAlertSeverity(
-    type: string
+    type: string,
   ): 'low' | 'medium' | 'high' | 'critical' {
     const severityMap: Record<string, 'low' | 'medium' | 'high' | 'critical'> =
       {

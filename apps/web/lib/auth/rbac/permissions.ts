@@ -54,7 +54,7 @@ export async function hasPermission(
   user: AuthUser,
   permission: Permission,
   resourceId?: string,
-  context?: Record<string, any>
+  context?: Record<string, any>,
 ): Promise<PermissionResult> {
   const check: PermissionCheck = {
     userId: user.id,
@@ -92,7 +92,7 @@ export async function hasPermission(
  */
 async function validatePermission(
   check: PermissionCheck,
-  user: AuthUser
+  user: AuthUser,
 ): Promise<PermissionResult> {
   try {
     // Get user role definition
@@ -107,7 +107,7 @@ async function validatePermission(
 
     // Check if role has the permission
     const hasRolePermission = roleDefinition.permissions.includes(
-      check.permission
+      check.permission,
     );
     if (!hasRolePermission) {
       return {
@@ -165,7 +165,7 @@ async function validatePermission(
  */
 async function checkResourceAccess(
   check: PermissionCheck,
-  user: AuthUser
+  user: AuthUser,
 ): Promise<PermissionResult> {
   // For patient data access, check if user can access specific patient
   if (check.permission.startsWith('patients.') && check.resourceId) {
@@ -194,7 +194,7 @@ async function checkResourceAccess(
  */
 async function checkPatientAccess(
   patientId: string,
-  user: AuthUser
+  user: AuthUser,
 ): Promise<PermissionResult> {
   try {
     const supabase = createClient();
@@ -237,7 +237,7 @@ async function checkPatientAccess(
  */
 async function checkAppointmentAccess(
   appointmentId: string,
-  user: AuthUser
+  user: AuthUser,
 ): Promise<PermissionResult> {
   try {
     const supabase = createClient();
@@ -308,7 +308,7 @@ async function checkFinancialAccess(user: AuthUser): Promise<PermissionResult> {
 async function logPermissionCheck(
   check: PermissionCheck,
   user: AuthUser,
-  granted: boolean
+  granted: boolean,
 ): Promise<void> {
   try {
     const supabase = createClient();
@@ -343,7 +343,7 @@ export async function hasAnyPermission(
   user: AuthUser,
   permissions: Permission[],
   resourceId?: string,
-  context?: Record<string, any>
+  context?: Record<string, any>,
 ): Promise<PermissionResult> {
   for (const permission of permissions) {
     const result = await hasPermission(user, permission, resourceId, context);
@@ -366,7 +366,7 @@ export async function hasAllPermissions(
   user: AuthUser,
   permissions: Permission[],
   resourceId?: string,
-  context?: Record<string, any>
+  context?: Record<string, any>,
 ): Promise<PermissionResult> {
   for (const permission of permissions) {
     const result = await hasPermission(user, permission, resourceId, context);

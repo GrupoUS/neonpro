@@ -146,7 +146,7 @@ export class RecoveryManager {
   constructor() {
     this.supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
     );
 
     this.auditLogger = new AuditLogger();
@@ -160,7 +160,7 @@ export class RecoveryManager {
    */
   async createRecoveryPlan(
     planData: Omit<RecoveryPlan, 'id'>,
-    userId: string
+    userId: string,
   ): Promise<string> {
     try {
       const planId = this.generatePlanId();
@@ -208,7 +208,7 @@ export class RecoveryManager {
       skip_validation?: boolean;
       force_execution?: boolean;
       custom_parameters?: Record<string, any>;
-    }
+    },
   ): Promise<string> {
     try {
       // Obter plano
@@ -225,7 +225,7 @@ export class RecoveryManager {
       const executionId = this.generateExecutionId();
       const estimatedCompletion = new Date();
       estimatedCompletion.setMinutes(
-        estimatedCompletion.getMinutes() + plan.estimated_duration_minutes
+        estimatedCompletion.getMinutes() + plan.estimated_duration_minutes,
       );
 
       const execution: RecoveryExecution = {
@@ -278,7 +278,7 @@ export class RecoveryManager {
    * Obtém status de uma execução
    */
   async getRecoveryExecutionStatus(
-    executionId: string
+    executionId: string,
   ): Promise<RecoveryExecution | null> {
     try {
       // Verificar se está em execução
@@ -312,7 +312,7 @@ export class RecoveryManager {
    */
   async cancelRecoveryExecution(
     executionId: string,
-    userId: string
+    userId: string,
   ): Promise<void> {
     try {
       const execution = this.activeExecutions.get(executionId);
@@ -329,7 +329,7 @@ export class RecoveryManager {
       execution.completed_at = new Date();
       execution.actual_duration_minutes = Math.floor(
         (execution.completed_at.getTime() - execution.started_at.getTime()) /
-          60_000
+          60_000,
       );
 
       // Remover da lista ativa
@@ -406,7 +406,7 @@ export class RecoveryManager {
     pagination?: {
       page: number;
       limit: number;
-    }
+    },
   ): Promise<{
     plans: RecoveryPlan[];
     total: number;
@@ -465,7 +465,7 @@ export class RecoveryManager {
     pagination?: {
       page: number;
       limit: number;
-    }
+    },
   ): Promise<{
     executions: RecoveryExecution[];
     total: number;
@@ -526,7 +526,7 @@ export class RecoveryManager {
    * Obtém métricas de recuperação
    */
   async getRecoveryMetrics(
-    period: 'day' | 'week' | 'month' = 'month'
+    period: 'day' | 'week' | 'month' = 'month',
   ): Promise<RecoveryMetrics> {
     try {
       const startDate = new Date();
@@ -553,10 +553,10 @@ export class RecoveryManager {
 
       const totalRecoveries = executions.length;
       const successfulRecoveries = executions.filter(
-        (e) => e.status === 'completed'
+        (e) => e.status === 'completed',
       ).length;
       const failedRecoveries = executions.filter(
-        (e) => e.status === 'failed'
+        (e) => e.status === 'failed',
       ).length;
       const successRate =
         totalRecoveries > 0
@@ -565,13 +565,13 @@ export class RecoveryManager {
 
       // Calcular duração média
       const completedExecutions = executions.filter(
-        (e) => e.actual_duration_minutes
+        (e) => e.actual_duration_minutes,
       );
       const averageDuration =
         completedExecutions.length > 0
           ? completedExecutions.reduce(
               (sum, e) => sum + e.actual_duration_minutes,
-              0
+              0,
             ) / completedExecutions.length
           : 0;
 
@@ -619,7 +619,7 @@ export class RecoveryManager {
    */
   async testRecoveryPlan(
     planId: string,
-    userId: string
+    userId: string,
   ): Promise<{
     success: boolean;
     issues: string[];
@@ -648,7 +648,7 @@ export class RecoveryManager {
 
       // Verificar dependências
       const dependencyValidation = await this.validateStepDependencies(
-        plan.recovery_steps
+        plan.recovery_steps,
       );
       if (!dependencyValidation.valid) {
         issues.push(...dependencyValidation.errors);
@@ -686,7 +686,7 @@ export class RecoveryManager {
   // Métodos privados
   private async executeRecoverySteps(
     executionId: string,
-    plan: RecoveryPlan
+    plan: RecoveryPlan,
   ): Promise<void> {
     const execution = this.activeExecutions.get(executionId);
     if (!execution) {
@@ -708,7 +708,7 @@ export class RecoveryManager {
           await this.executeRecoveryStep(step, execution, plan);
           execution.steps_completed++;
           execution.progress_percentage = Math.floor(
-            (execution.steps_completed / execution.steps_total) * 100
+            (execution.steps_completed / execution.steps_total) * 100,
           );
 
           await this.updateRecoveryExecution(execution);
@@ -743,7 +743,7 @@ export class RecoveryManager {
       execution.progress_percentage = 100;
       execution.actual_duration_minutes = Math.floor(
         (execution.completed_at.getTime() - execution.started_at.getTime()) /
-          60_000
+          60_000,
       );
 
       await this.updateRecoveryExecution(execution);
@@ -753,7 +753,7 @@ export class RecoveryManager {
       execution.completed_at = new Date();
       execution.actual_duration_minutes = Math.floor(
         (execution.completed_at.getTime() - execution.started_at.getTime()) /
-          60_000
+          60_000,
       );
 
       await this.updateRecoveryExecution(execution);
@@ -766,7 +766,7 @@ export class RecoveryManager {
   private async executeRecoveryStep(
     step: RecoveryStep,
     execution: RecoveryExecution,
-    _plan: RecoveryPlan
+    _plan: RecoveryPlan,
   ): Promise<void> {
     const strategy = this.strategyManager.getStrategy(step.data_source);
     if (!strategy) {
@@ -801,7 +801,7 @@ export class RecoveryManager {
 
   private async executeRollbackSteps(
     rollbackSteps: RollbackStep[],
-    _execution: RecoveryExecution
+    _execution: RecoveryExecution,
   ): Promise<void> {
     for (const step of rollbackSteps.sort((a, b) => a.order - b.order)) {
       try {
@@ -833,7 +833,7 @@ export class RecoveryManager {
 
   private async executeValidationChecks(
     checks: ValidationCheck[],
-    execution: RecoveryExecution
+    execution: RecoveryExecution,
   ): Promise<void> {
     for (const check of checks) {
       try {
@@ -863,7 +863,7 @@ export class RecoveryManager {
   }
 
   private async executeValidationCheck(
-    check: ValidationCheck
+    check: ValidationCheck,
   ): Promise<ValidationResult> {
     // Implementar diferentes tipos de validação
     let actualResult: any;
@@ -926,7 +926,7 @@ export class RecoveryManager {
   }
 
   private async validateRecoveryPlan(
-    plan: RecoveryPlan
+    plan: RecoveryPlan,
   ): Promise<{ valid: boolean; errors: string[] }> {
     const errors: string[] = [];
 
@@ -961,16 +961,16 @@ export class RecoveryManager {
 
   private async prepareRecoveryStep(
     _step: RecoveryStep,
-    _execution: RecoveryExecution
+    _execution: RecoveryExecution,
   ): Promise<void> {}
 
   private async cleanupRecoveryStep(
     _step: RecoveryStep,
-    _execution: RecoveryExecution
+    _execution: RecoveryExecution,
   ): Promise<void> {}
 
   private async validateRecoveryStep(
-    step: RecoveryStep
+    step: RecoveryStep,
   ): Promise<{ valid: boolean; errors: string[]; warnings: string[] }> {
     const errors: string[] = [];
     const warnings: string[] = [];
@@ -989,7 +989,7 @@ export class RecoveryManager {
   }
 
   private async validateStepDependencies(
-    steps: RecoveryStep[]
+    steps: RecoveryStep[],
   ): Promise<{ valid: boolean; errors: string[] }> {
     const errors: string[] = [];
     const stepIds = new Set(steps.map((s) => s.id));
@@ -998,7 +998,7 @@ export class RecoveryManager {
       for (const dependency of step.dependencies) {
         if (!stepIds.has(dependency)) {
           errors.push(
-            `Dependência não encontrada: ${dependency} para step ${step.id}`
+            `Dependência não encontrada: ${dependency} para step ${step.id}`,
           );
         }
       }
@@ -1008,7 +1008,7 @@ export class RecoveryManager {
   }
 
   private async validateBackupAvailability(
-    plan: RecoveryPlan
+    plan: RecoveryPlan,
   ): Promise<{ valid: boolean; errors: string[] }> {
     const errors: string[] = [];
 
@@ -1031,7 +1031,7 @@ export class RecoveryManager {
   }
 
   private async getRecoveryTrends(
-    period: string
+    period: string,
   ): Promise<Array<{ date: string; count: number; success_rate: number }>> {
     // Implementar cálculo de tendências
     const trends = [];
@@ -1131,7 +1131,7 @@ export class RecoveryManager {
   }
 
   private async saveRecoveryExecution(
-    execution: RecoveryExecution
+    execution: RecoveryExecution,
   ): Promise<void> {
     const { error } = await this.supabase.from('recovery_executions').insert({
       id: execution.id,
@@ -1159,7 +1159,7 @@ export class RecoveryManager {
   }
 
   private async updateRecoveryExecution(
-    execution: RecoveryExecution
+    execution: RecoveryExecution,
   ): Promise<void> {
     const { error } = await this.supabase
       .from('recovery_executions')

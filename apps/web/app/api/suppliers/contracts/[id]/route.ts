@@ -25,7 +25,7 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
     if (!contract) {
       return NextResponse.json(
         { error: 'Contrato não encontrado' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -33,7 +33,7 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -50,20 +50,20 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     if (!validationResult.success) {
       return NextResponse.json(
         { error: 'Dados inválidos', details: validationResult.error.issues },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     const contract = await supplierService.updateContract(
       params.id,
-      validationResult.data
+      validationResult.data,
     );
 
     return NextResponse.json(contract);
   } catch (_error) {
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -174,7 +174,7 @@ export class InventoryTrackingEngine {
       const alertsCreated = await this.checkAndCreateAlerts(
         itemId,
         locationId,
-        updatedStock
+        updatedStock,
       );
 
       return {
@@ -502,7 +502,7 @@ export class InventoryTrackingEngine {
   private async checkAndCreateAlerts(
     itemId: string,
     locationId: string,
-    stockLevel: StockLevel
+    stockLevel: StockLevel,
   ): Promise<StockAlert[]> {
     try {
       const supabase = await this.getSupabase();
@@ -530,7 +530,7 @@ export class InventoryTrackingEngine {
         .eq('status', 'active');
 
       const activeAlertTypes = new Set(
-        existingAlerts?.map((a: any) => a.alert_type) || []
+        existingAlerts?.map((a: any) => a.alert_type) || [],
       );
 
       // Zero stock alert
@@ -578,7 +578,7 @@ export class InventoryTrackingEngine {
         const expirationDate = new Date(stockLevel.expiration_date);
         const today = new Date();
         const daysToExpiry = Math.ceil(
-          (expirationDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24)
+          (expirationDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24),
         );
 
         if (daysToExpiry <= 0 && !activeAlertTypes.has('expired')) {
@@ -708,7 +708,7 @@ export class InventoryTrackingEngine {
       reason?: string;
       batchNumber?: string;
     }>,
-    userId: string
+    userId: string,
   ): Promise<{
     successful: number;
     failed: number;
@@ -734,7 +734,7 @@ export class InventoryTrackingEngine {
       } catch (error) {
         failed++;
         errors.push(
-          `Batch update failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+          `Batch update failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
         );
       }
     }
@@ -758,7 +758,7 @@ export class InventoryTrackingEngine {
         `
         *,
         location:inventory_locations(*)
-      `
+      `,
       )
       .eq('item_id', itemId)
       .gt('current_quantity', 0);
@@ -838,7 +838,7 @@ export class InventoryTrackingEngine {
  */
 export function calculateStockAccuracy(
   systemQuantity: number,
-  physicalQuantity: number
+  physicalQuantity: number,
 ): number {
   if (systemQuantity === 0 && physicalQuantity === 0) {
     return 100;
@@ -859,7 +859,7 @@ export function calculateAlertPriority(
   currentQuantity: number,
   reorderLevel: number,
   minStock: number,
-  isCriticalItem = false
+  isCriticalItem = false,
 ): { level: AlertLevel; escalationTime: number } {
   if (currentQuantity === 0) {
     return { level: 'urgent', escalationTime: 5 }; // 5 minutes
@@ -885,7 +885,7 @@ export function calculateAlertPriority(
 export function validateStockOperation(
   currentQuantity: number,
   quantityChange: number,
-  operation: TransactionType
+  operation: TransactionType,
 ): { valid: boolean; errors: string[] } {
   const errors: string[] = [];
 

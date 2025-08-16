@@ -31,7 +31,7 @@ export class BudgetApprovalService {
   async createBudget(
     request: CreateBudgetRequest,
     clinicId: string,
-    userId: string
+    userId: string,
   ): Promise<InventoryBudget> {
     const supabase = await this.getSupabaseClient();
 
@@ -81,7 +81,7 @@ export class BudgetApprovalService {
 
   async updateBudget(
     budgetId: string,
-    updates: Partial<InventoryBudget>
+    updates: Partial<InventoryBudget>,
   ): Promise<InventoryBudget> {
     const supabase = await this.getSupabaseClient();
 
@@ -105,7 +105,7 @@ export class BudgetApprovalService {
       fiscalYear?: number;
       budgetType?: string;
       costCenterId?: string;
-    }
+    },
   ): Promise<InventoryBudget[]> {
     const supabase = await this.getSupabaseClient();
 
@@ -137,7 +137,7 @@ export class BudgetApprovalService {
 
   async approveBudget(
     budgetId: string,
-    approverId: string
+    approverId: string,
   ): Promise<InventoryBudget> {
     const supabase = await this.getSupabaseClient();
 
@@ -203,11 +203,11 @@ export class BudgetApprovalService {
     if (utilizationRate > 90) {
       warnings.push('Budget utilization is above 90%');
       recommendations.push(
-        'Consider reallocating funds or requesting budget increase'
+        'Consider reallocating funds or requesting budget increase',
       );
     } else if (utilizationRate < 50) {
       recommendations.push(
-        'Budget utilization is low - consider reallocating unused funds'
+        'Budget utilization is low - consider reallocating unused funds',
       );
     }
 
@@ -225,7 +225,7 @@ export class BudgetApprovalService {
 
   async createBudgetAllocations(
     budgetId: string,
-    allocations: Omit<BudgetAllocationRequest, 'budget_id'>[]
+    allocations: Omit<BudgetAllocationRequest, 'budget_id'>[],
   ): Promise<BudgetAllocation[]> {
     const supabase = await this.getSupabaseClient();
 
@@ -248,7 +248,7 @@ export class BudgetApprovalService {
     // Update budget allocated amount
     const totalAllocated = allocations.reduce(
       (sum, allocation) => sum + allocation.allocated_amount,
-      0
+      0,
     );
     await this.updateBudgetAllocatedAmount(budgetId, totalAllocated);
 
@@ -272,7 +272,7 @@ export class BudgetApprovalService {
 
   async updateBudgetAllocation(
     allocationId: string,
-    updates: Partial<BudgetAllocation>
+    updates: Partial<BudgetAllocation>,
   ): Promise<BudgetAllocation> {
     const supabase = await this.getSupabaseClient();
 
@@ -291,7 +291,7 @@ export class BudgetApprovalService {
 
   private async updateBudgetAllocatedAmount(
     budgetId: string,
-    additionalAmount: number
+    additionalAmount: number,
   ): Promise<void> {
     const supabase = await this.getSupabaseClient();
 
@@ -302,7 +302,7 @@ export class BudgetApprovalService {
 
     if (error) {
       throw new Error(
-        `Failed to update budget allocated amount: ${error.message}`
+        `Failed to update budget allocated amount: ${error.message}`,
       );
     }
   }
@@ -313,7 +313,7 @@ export class BudgetApprovalService {
 
   async createCostCenter(
     costCenter: Omit<CostCenter, 'id' | 'created_at' | 'updated_at'>,
-    clinicId: string
+    clinicId: string,
   ): Promise<CostCenter> {
     const supabase = await this.getSupabaseClient();
 
@@ -350,7 +350,7 @@ export class BudgetApprovalService {
   // =====================================================================================
 
   async createApprovalRequest(
-    request: CreateApprovalRequest
+    request: CreateApprovalRequest,
   ): Promise<PurchaseOrderApproval[]> {
     const supabase = await this.getSupabaseClient();
 
@@ -376,7 +376,7 @@ export class BudgetApprovalService {
   }
 
   async processApproval(
-    _request: ProcessApprovalRequest
+    _request: ProcessApprovalRequest,
   ): Promise<PurchaseOrderApproval> {
     const supabase = await this.getSupabaseClient();
 
@@ -400,7 +400,7 @@ export class BudgetApprovalService {
   }
 
   async checkApprovalEligibility(
-    purchaseOrderId: string
+    purchaseOrderId: string,
   ): Promise<ApprovalEligibility> {
     const supabase = await this.getSupabaseClient();
 
@@ -446,7 +446,7 @@ export class BudgetApprovalService {
   async createWorkflowRule(
     request: CreateWorkflowRuleRequest,
     clinicId: string,
-    userId: string
+    userId: string,
   ): Promise<ApprovalWorkflowRule> {
     const supabase = await this.getSupabaseClient();
 
@@ -471,7 +471,7 @@ export class BudgetApprovalService {
   // =====================================================================================
 
   async getBudgetUtilization(
-    budgetId: string
+    budgetId: string,
   ): Promise<BudgetUtilizationSummary> {
     const _supabase = await this.getSupabaseClient();
 
@@ -515,7 +515,7 @@ export class BudgetApprovalService {
   async getApprovalWorkflowPerformance(
     _workflowId: string,
     periodStart: string,
-    periodEnd: string
+    periodEnd: string,
   ): Promise<ApprovalWorkflowPerformance> {
     const _supabase = await this.getSupabaseClient();
 
@@ -538,7 +538,7 @@ export class BudgetApprovalService {
   }
 
   async generateBudgetOptimizationRecommendations(
-    budgetId: string
+    budgetId: string,
   ): Promise<BudgetOptimizationRecommendation[]> {
     const budget = await this.getBudget(budgetId);
     if (!budget) {
@@ -594,7 +594,7 @@ export class BudgetApprovalService {
 
   async generateBudgetForecast(
     budgetId: string,
-    forecastMonths = 3
+    forecastMonths = 3,
   ): Promise<BudgetForecast[]> {
     const budget = await this.getBudget(budgetId);
     if (!budget) {
@@ -641,7 +641,7 @@ export class BudgetApprovalService {
   // =====================================================================================
 
   async createBudgetNotification(
-    notification: Omit<BudgetNotification, 'id' | 'created_at'>
+    notification: Omit<BudgetNotification, 'id' | 'created_at'>,
   ): Promise<BudgetNotification> {
     const supabase = await this.getSupabaseClient();
 
@@ -658,7 +658,7 @@ export class BudgetApprovalService {
   }
 
   async getBudgetNotifications(
-    budgetId: string
+    budgetId: string,
   ): Promise<BudgetNotification[]> {
     const supabase = await this.getSupabaseClient();
 
@@ -676,7 +676,7 @@ export class BudgetApprovalService {
 
   async acknowledgeNotification(
     notificationId: string,
-    userId: string
+    userId: string,
   ): Promise<BudgetNotification> {
     const supabase = await this.getSupabaseClient();
 

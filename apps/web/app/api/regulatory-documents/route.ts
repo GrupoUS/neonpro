@@ -69,7 +69,7 @@ export async function GET(request: NextRequest) {
         *,
         regulation_categories!inner(name, authority_name),
         document_versions(id, version, created_at)
-      `
+      `,
       )
       .order('created_at', { ascending: false });
 
@@ -84,7 +84,7 @@ export async function GET(request: NextRequest) {
 
     if (search) {
       query = query.or(
-        `document_type.ilike.%${search}%,document_number.ilike.%${search}%,file_name.ilike.%${search}%`
+        `document_type.ilike.%${search}%,document_number.ilike.%${search}%,file_name.ilike.%${search}%`,
       );
     }
 
@@ -97,7 +97,7 @@ export async function GET(request: NextRequest) {
     if (error) {
       return NextResponse.json(
         { error: 'Failed to fetch documents' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -121,12 +121,12 @@ export async function GET(request: NextRequest) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Invalid query parameters', details: error.errors },
-        { status: 400 }
+        { status: 400 },
       );
     }
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -159,7 +159,7 @@ export async function POST(request: NextRequest) {
     if (!profile?.clinic_id) {
       return NextResponse.json(
         { error: 'User not associated with clinic' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -176,14 +176,14 @@ export async function POST(request: NextRequest) {
         `
         *,
         regulation_categories!inner(name, authority_name)
-      `
+      `,
       )
       .single();
 
     if (error) {
       return NextResponse.json(
         { error: 'Failed to create document' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -203,12 +203,12 @@ export async function POST(request: NextRequest) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Invalid document data', details: error.errors },
-        { status: 400 }
+        { status: 400 },
       );
     }
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

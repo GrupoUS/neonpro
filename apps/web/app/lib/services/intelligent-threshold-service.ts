@@ -22,7 +22,7 @@ export class IntelligentThresholdService {
 
   // Core threshold management
   async createThreshold(
-    threshold: Omit<ReorderThreshold, 'id' | 'created_at' | 'updated_at'>
+    threshold: Omit<ReorderThreshold, 'id' | 'created_at' | 'updated_at'>,
   ): Promise<ReorderThreshold> {
     const supabase = await this.getSupabaseClient();
 
@@ -35,7 +35,7 @@ export class IntelligentThresholdService {
         safety_stock: threshold.safety_stock,
         demand_forecast_weekly: threshold.demand_forecast_weekly || 0,
         lead_time_days: threshold.lead_time_days || 7,
-      }
+      },
     );
 
     const { data, error } = await supabase
@@ -56,7 +56,7 @@ export class IntelligentThresholdService {
 
   async updateThreshold(
     id: string,
-    updates: Partial<ReorderThreshold>
+    updates: Partial<ReorderThreshold>,
   ): Promise<ReorderThreshold> {
     const supabase = await this.getSupabaseClient();
 
@@ -82,7 +82,7 @@ export class IntelligentThresholdService {
               0,
             lead_time_days:
               updates.lead_time_days || existing.lead_time_days || 7,
-          }
+          },
         );
       }
     }
@@ -130,7 +130,7 @@ export class IntelligentThresholdService {
       item_category?: string[];
       auto_reorder_enabled?: boolean;
       needs_optimization?: boolean;
-    }
+    },
   ): Promise<ReorderThreshold[]> {
     const supabase = await this.getSupabaseClient();
 
@@ -147,7 +147,7 @@ export class IntelligentThresholdService {
           unit,
           current_stock
         )
-      `
+      `,
       )
       .eq('clinic_id', clinicId)
       .eq('is_active', true);
@@ -177,7 +177,7 @@ export class IntelligentThresholdService {
       safety_stock: number;
       demand_forecast_weekly: number;
       lead_time_days: number;
-    }
+    },
   ): Promise<{
     calculated_reorder_point: number;
     calculated_safety_stock: number;
@@ -192,7 +192,7 @@ export class IntelligentThresholdService {
     // Get seasonal factors
     const seasonalFactor = await this.calculateSeasonalAdjustment(
       itemId,
-      clinicId
+      clinicId,
     );
 
     // Calculate lead time variability
@@ -205,26 +205,26 @@ export class IntelligentThresholdService {
     // Apply variability and seasonal factors
     const variabilityFactor = Math.sqrt(
       demandStats.variance * baseParams.lead_time_days +
-        avgDailyDemand ** 2 * leadTimeVariability
+        avgDailyDemand ** 2 * leadTimeVariability,
     );
 
     // Service level of 95% (z-score = 1.645)
     const serviceLevel = 1.645;
     const calculatedSafetyStock = Math.ceil(
-      serviceLevel * variabilityFactor * seasonalFactor
+      serviceLevel * variabilityFactor * seasonalFactor,
     );
     const calculatedReorderPoint = Math.ceil(
-      demandDuringLeadTime * seasonalFactor + calculatedSafetyStock
+      demandDuringLeadTime * seasonalFactor + calculatedSafetyStock,
     );
 
     return {
       calculated_reorder_point: Math.max(
         calculatedReorderPoint,
-        baseParams.reorder_point
+        baseParams.reorder_point,
       ),
       calculated_safety_stock: Math.max(
         calculatedSafetyStock,
-        baseParams.safety_stock
+        baseParams.safety_stock,
       ),
       seasonal_adjustment_factor: seasonalFactor,
     };
@@ -235,7 +235,7 @@ export class IntelligentThresholdService {
     itemId: string,
     clinicId: string,
     forecastPeriod: 'daily' | 'weekly' | 'monthly' | 'quarterly',
-    forecastDate: Date
+    forecastDate: Date,
   ): Promise<DemandForecast> {
     const supabase = await this.getSupabaseClient();
 
@@ -243,21 +243,21 @@ export class IntelligentThresholdService {
     const historicalData = await this.getHistoricalDemand(
       itemId,
       clinicId,
-      365
+      365,
     );
 
     // Calculate base forecast
     const forecast = await this.calculatePredictiveForecast(
       historicalData,
       forecastPeriod,
-      forecastDate
+      forecastDate,
     );
 
     // Apply seasonal adjustments
     const seasonalFactor = await this.calculateSeasonalAdjustment(
       itemId,
       clinicId,
-      forecastDate
+      forecastDate,
     );
     const adjustedDemand = forecast.predicted_demand * seasonalFactor;
 
@@ -265,7 +265,7 @@ export class IntelligentThresholdService {
     const appointmentDemand = await this.getAppointmentBasedDemand(
       itemId,
       clinicId,
-      forecastDate
+      forecastDate,
     );
 
     const demandForecast: Omit<DemandForecast, 'id' | 'created_at'> = {
@@ -300,13 +300,13 @@ export class IntelligentThresholdService {
 
   // Alert management
   async createAlert(
-    alert: Omit<ReorderAlert, 'id' | 'created_at' | 'updated_at'>
+    alert: Omit<ReorderAlert, 'id' | 'created_at' | 'updated_at'>,
   ): Promise<ReorderAlert> {
     const supabase = await this.getSupabaseClient();
 
     // Calculate delivery time estimate
     const deliveryTime = this.estimateNotificationDeliveryTime(
-      alert.notification_channels || ['dashboard']
+      alert.notification_channels || ['dashboard'],
     );
 
     const { data, error } = await supabase
@@ -332,7 +332,7 @@ export class IntelligentThresholdService {
 
   async updateAlert(
     id: string,
-    updates: Partial<ReorderAlert>
+    updates: Partial<ReorderAlert>,
   ): Promise<ReorderAlert> {
     const supabase = await this.getSupabaseClient();
 
@@ -355,7 +355,7 @@ export class IntelligentThresholdService {
   async acknowledgeAlert(
     id: string,
     userId: string,
-    notes?: string
+    notes?: string,
   ): Promise<ReorderAlert> {
     return this.updateAlert(id, {
       status: 'acknowledged',
@@ -368,7 +368,7 @@ export class IntelligentThresholdService {
   async resolveAlert(
     id: string,
     userId: string,
-    notes?: string
+    notes?: string,
   ): Promise<ReorderAlert> {
     return this.updateAlert(id, {
       status: 'resolved',
@@ -381,7 +381,7 @@ export class IntelligentThresholdService {
   async escalateAlert(
     id: string,
     escalateTo: string,
-    level: number
+    level: number,
   ): Promise<ReorderAlert> {
     return this.updateAlert(id, {
       status: 'escalated',
@@ -393,7 +393,7 @@ export class IntelligentThresholdService {
 
   // Analytics and optimization
   async analyzeThresholdOptimization(
-    clinicId: string
+    clinicId: string,
   ): Promise<ThresholdOptimization[]> {
     const _supabase = await this.getSupabaseClient();
 
@@ -422,13 +422,13 @@ export class IntelligentThresholdService {
     }
 
     return optimizations.sort(
-      (a, b) => b.potential_savings - a.potential_savings
+      (a, b) => b.potential_savings - a.potential_savings,
     );
   }
 
   async getAlertStats(
     clinicId: string,
-    dateRange?: { start: Date; end: Date }
+    dateRange?: { start: Date; end: Date },
   ) {
     const supabase = await this.getSupabaseClient();
 
@@ -452,13 +452,13 @@ export class IntelligentThresholdService {
       total_alerts: alerts.length,
       pending_alerts: alerts.filter((a) => a.status === 'pending').length,
       critical_alerts: alerts.filter(
-        (a) => a.priority === 'critical' || a.priority === 'emergency'
+        (a) => a.priority === 'critical' || a.priority === 'emergency',
       ).length,
       emergency_alerts: alerts.filter((a) => a.priority === 'emergency').length,
       resolved_today: alerts.filter(
         (a) =>
           a.status === 'resolved' &&
-          new Date(a.resolved_at!).toDateString() === new Date().toDateString()
+          new Date(a.resolved_at!).toDateString() === new Date().toDateString(),
       ).length,
       average_resolution_time_hours:
         this.calculateAverageResolutionTime(alerts),
@@ -473,7 +473,7 @@ export class IntelligentThresholdService {
   private async getHistoricalDemand(
     _itemId: string,
     _clinicId: string,
-    days: number
+    days: number,
   ) {
     const _supabase = await this.getSupabaseClient();
     const startDate = new Date();
@@ -502,7 +502,7 @@ export class IntelligentThresholdService {
   private async calculateSeasonalAdjustment(
     _itemId: string,
     _clinicId: string,
-    date?: Date
+    date?: Date,
   ): Promise<number> {
     // Calculate seasonal factors based on historical patterns
     // This would analyze usage patterns by month/season
@@ -552,7 +552,7 @@ export class IntelligentThresholdService {
   private async calculatePredictiveForecast(
     historicalData: any[],
     _period: string,
-    _date: Date
+    _date: Date,
   ) {
     // Simple moving average with trend (would be enhanced with ML models)
     const recentData = historicalData.slice(-30); // Last 30 data points
@@ -574,7 +574,7 @@ export class IntelligentThresholdService {
   private async getAppointmentBasedDemand(
     _itemId: string,
     _clinicId: string,
-    _date: Date
+    _date: Date,
   ): Promise<number> {
     // Calculate demand based on scheduled appointments
     // This would integrate with appointment system
@@ -626,7 +626,7 @@ export class IntelligentThresholdService {
 
   private calculateAverageResolutionTime(alerts: any[]): number {
     const resolvedAlerts = alerts.filter(
-      (a) => a.status === 'resolved' && a.resolved_at
+      (a) => a.status === 'resolved' && a.resolved_at,
     );
     if (resolvedAlerts.length === 0) {
       return 0;
@@ -648,7 +648,7 @@ export class IntelligentThresholdService {
         groups[value] = (groups[value] || 0) + 1;
         return groups;
       },
-      {} as Record<string, number>
+      {} as Record<string, number>,
     );
   }
 }

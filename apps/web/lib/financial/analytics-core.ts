@@ -28,7 +28,7 @@ export class FinancialAnalyticsCore {
    */
   async calculateFinancialKPIs(
     clinicId: string,
-    parameters: ReportParameters
+    parameters: ReportParameters,
   ): Promise<KPICalculation> {
     const { period_start, period_end } = parameters;
 
@@ -174,7 +174,7 @@ export class FinancialAnalyticsCore {
    */
   async calculatePerformanceMetrics(
     clinicId: string,
-    parameters: ReportParameters
+    parameters: ReportParameters,
   ): Promise<PerformanceMetrics> {
     const { period_start, period_end } = parameters;
 
@@ -190,7 +190,7 @@ export class FinancialAnalyticsCore {
       clinicId,
       'revenue',
       period_start,
-      period_end
+      period_end,
     );
     const averageTransactionValue =
       revenueData.total_revenue / (appointmentData.total_appointments || 1);
@@ -199,7 +199,7 @@ export class FinancialAnalyticsCore {
     // Calculate operational metrics
     const patientRetentionRate = await this.calculatePatientRetentionRate(
       clinicId,
-      parameters
+      parameters,
     );
     const appointmentUtilizationRate = appointmentData.utilization_rate;
     const averageWaitTime = appointmentData.average_wait_time;
@@ -210,7 +210,7 @@ export class FinancialAnalyticsCore {
       clinicId,
       'expenses',
       period_start,
-      period_end
+      period_end,
     );
     const costPerPatient = expenseData.cost_per_patient;
     const costPerAppointment =
@@ -259,7 +259,7 @@ export class FinancialAnalyticsCore {
         peer_comparisons: [], // TODO: Implement peer analysis
         historical_performance: await this.getHistoricalPerformance(
           clinicId,
-          parameters
+          parameters,
         ),
       },
     };
@@ -269,7 +269,7 @@ export class FinancialAnalyticsCore {
    * Generate comprehensive dashboard data with real-time insights
    */
   async generateDashboardData(
-    clinicId: string
+    clinicId: string,
   ): Promise<FinancialDashboardData> {
     const now = new Date();
     const currentMonth = {
@@ -309,11 +309,11 @@ export class FinancialAnalyticsCore {
     // Generate alerts and recommendations
     const alerts = this.generateFinancialAlerts(
       currentKPIs,
-      performanceMetrics
+      performanceMetrics,
     );
     const recommendations = this.generateRecommendations(
       currentKPIs,
-      performanceMetrics
+      performanceMetrics,
     );
 
     return {
@@ -393,7 +393,7 @@ export class FinancialAnalyticsCore {
    */
   private async fetchAppointmentMetrics(
     clinicId: string,
-    parameters: ReportParameters
+    parameters: ReportParameters,
   ): Promise<{
     total_appointments: number;
     utilization_rate: number;
@@ -434,7 +434,7 @@ export class FinancialAnalyticsCore {
     _clinicId: string,
     _metricType: 'revenue' | 'expenses',
     _periodStart: string,
-    _periodEnd: string
+    _periodEnd: string,
   ): Promise<number> {
     // TODO: Implement growth rate calculation with historical data comparison
     return 0;
@@ -445,7 +445,7 @@ export class FinancialAnalyticsCore {
    */
   private async calculatePatientRetentionRate(
     _clinicId: string,
-    _parameters: ReportParameters
+    _parameters: ReportParameters,
   ): Promise<number> {
     // TODO: Implement patient retention calculation
     return 0;
@@ -456,7 +456,7 @@ export class FinancialAnalyticsCore {
    */
   private calculateKPIChanges(
     current: KPICalculation,
-    previous: KPICalculation
+    previous: KPICalculation,
   ) {
     return {
       revenue_change: 0, // TODO: Implement revenue comparison
@@ -473,7 +473,7 @@ export class FinancialAnalyticsCore {
    */
   private generateFinancialAlerts(
     kpis: KPICalculation,
-    _performance: PerformanceMetrics
+    _performance: PerformanceMetrics,
   ) {
     const alerts: Array<{
       type: 'warning' | 'danger' | 'info';
@@ -523,7 +523,7 @@ export class FinancialAnalyticsCore {
    */
   private generateRecommendations(
     kpis: KPICalculation,
-    performance: PerformanceMetrics
+    performance: PerformanceMetrics,
   ) {
     const recommendations: Array<{
       category: string;
@@ -577,7 +577,7 @@ export class FinancialAnalyticsCore {
    */
   private async getHistoricalPerformance(
     _clinicId: string,
-    _parameters: ReportParameters
+    _parameters: ReportParameters,
   ) {
     // TODO: Implement historical performance analysis
     return {};

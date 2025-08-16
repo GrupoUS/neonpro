@@ -15,7 +15,7 @@ class Logger {
   private formatMessage(
     level: LogLevel,
     message: string,
-    context?: Record<string, any>
+    context?: Record<string, any>,
   ): string {
     const timestamp = new Date().toISOString();
     const contextStr = context ? ` ${JSON.stringify(context)}` : '';
@@ -33,7 +33,7 @@ class Logger {
   error(
     message: string,
     error?: Error | unknown,
-    context?: Record<string, any>
+    context?: Record<string, any>,
   ): void {
     const errorContext =
       error instanceof Error
@@ -59,7 +59,7 @@ class Logger {
       error: (
         message: string,
         error?: Error | unknown,
-        context?: Record<string, any>
+        context?: Record<string, any>,
       ) => this.error(message, error, { ...defaultContext, ...context }),
       debug: (message: string, context?: Record<string, any>) =>
         this.debug(message, { ...defaultContext, ...context }),

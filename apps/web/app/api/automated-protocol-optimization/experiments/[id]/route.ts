@@ -11,7 +11,7 @@ const service = new AutomatedProtocolOptimizationService();
 // PUT: Update protocol experiment
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const { id } = params;
@@ -20,7 +20,7 @@ export async function PUT(
     if (!id) {
       return NextResponse.json(
         { success: false, error: 'Experiment ID is required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -33,13 +33,13 @@ export async function PUT(
           error: 'Validation failed',
           details: validation.error.format(),
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     const updatedExperiment = await service.updateProtocolExperiment(
       id,
-      validation.data
+      validation.data,
     );
 
     return NextResponse.json({
@@ -54,7 +54,7 @@ export async function PUT(
         error: 'Failed to update protocol experiment',
         details: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

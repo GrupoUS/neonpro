@@ -15,7 +15,7 @@
       "tools/**/*.ts",
       "tools/**/*.tsx",
       "tools/**/*.js",
-      "tools/**/*.jsx",
+      "tools/**/*.jsx"
     ],
     "experimentalScannerIgnores": [
       "tools/**/*",
@@ -26,8 +26,8 @@
       "**/build/**/*",
       "**/temp/**/*",
       "jest-cleanup-backup/**/*",
-      "backup-configs-*/**/*",
-    ],
+      "backup-configs-*/**/*"
+    ]
   },
   "linter": {
     "enabled": true,
@@ -41,7 +41,7 @@
         "useKeyWithClickEvents": "warn",
         "noLabelWithoutControl": "warn",
         "useGenericFontNames": "warn",
-        "useFocusableInteractive": "warn",
+        "useFocusableInteractive": "warn"
       },
       "style": {
         "noNonNullAssertion": "warn",
@@ -58,14 +58,14 @@
         "useCollapsedElseIf": "warn",
         "noNamespace": "off",
         "useForOf": "warn",
-        "noDescendingSpecificity": "off",
+        "noDescendingSpecificity": "off"
       },
       "nursery": {
         "useConsistentTypeDefinitions": "warn",
         "noShadow": "warn",
         "useMaxParams": "off",
         "noUnnecessaryConditions": "warn",
-        "useImageSize": "off",
+        "useImageSize": "off"
       },
       "correctness": {
         "noUndeclaredVariables": "error",
@@ -76,7 +76,7 @@
         "noUnusedFunctionParameters": "warn",
         "noInvalidUseBeforeDeclaration": "error",
         "useHookAtTopLevel": "error",
-        "noReactPropAssignments": "error",
+        "noReactPropAssignments": "error"
       },
       "suspicious": {
         "noExplicitAny": "warn",
@@ -98,7 +98,7 @@
         "useAdjacentOverloadSignatures": "warn",
         "useErrorMessage": "warn",
         "noMisleadingCharacterClass": "error",
-        "noFallthroughSwitchClause": "error",
+        "noFallthroughSwitchClause": "error"
       },
       "complexity": {
         "noExcessiveLinesPerFunction": "warn",
@@ -108,21 +108,21 @@
         "noStaticOnlyClass": "warn",
         "noVoid": "off",
         "noBannedTypes": "warn",
-        "useArrowFunction": "warn",
+        "useArrowFunction": "warn"
       },
       "performance": {
         "useTopLevelRegex": "warn",
         "noNamespaceImport": "off",
         "noAccumulatingSpread": "warn",
-        "noImgElement": "off",
+        "noImgElement": "off"
       },
       "security": {
         "noDangerouslySetInnerHtml": "error",
-        "noDangerouslySetInnerHtmlWithChildren": "error",
-      },
-    },
+        "noDangerouslySetInnerHtmlWithChildren": "error"
+      }
+    }
   },
   "formatter": {
-    "enabled": false,
-  },
+    "enabled": false
+  }
 }

@@ -41,7 +41,7 @@ export class SessionManager {
 
     this.supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     );
   }
 
@@ -49,7 +49,7 @@ export class SessionManager {
    * Create a new session
    */
   async createSession(
-    request: SessionCreateRequest
+    request: SessionCreateRequest,
   ): Promise<AuthenticationResponse> {
     try {
       // Validate input
@@ -77,7 +77,7 @@ export class SessionManager {
 
       // Check concurrent session limits
       const concurrentCheck = await this.checkConcurrentSessionLimit(
-        request.userId
+        request.userId,
       );
       if (!concurrentCheck.success) {
         return concurrentCheck;
@@ -326,7 +326,7 @@ export class SessionManager {
    */
   async updateActivity(
     sessionId: string,
-    activity?: SessionActivityUpdate
+    activity?: SessionActivityUpdate,
   ): Promise<AuthenticationResponse> {
     try {
       if (!validateUUID(sessionId)) {
@@ -413,7 +413,7 @@ export class SessionManager {
    */
   async extendSession(
     sessionId: string,
-    newExpiresAt: string
+    newExpiresAt: string,
   ): Promise<AuthenticationResponse> {
     try {
       if (!validateUUID(sessionId)) {
@@ -491,7 +491,7 @@ export class SessionManager {
    */
   async terminateSession(
     sessionId: string,
-    reason = 'user_logout'
+    reason = 'user_logout',
   ): Promise<AuthenticationResponse> {
     try {
       if (!validateUUID(sessionId)) {
@@ -640,7 +640,7 @@ export class SessionManager {
    */
   async terminateAllUserSessions(
     userId: string,
-    reason = 'admin_action'
+    reason = 'admin_action',
   ): Promise<AuthenticationResponse> {
     try {
       if (!validateUUID(userId)) {
@@ -732,7 +732,7 @@ export class SessionManager {
       // Then delete old terminated sessions (older than retention period)
       const retentionDate = new Date();
       retentionDate.setDate(
-        retentionDate.getDate() - this.config.retentionDays
+        retentionDate.getDate() - this.config.retentionDays,
       );
 
       const { data: deletedSessions, error: deleteError } = await this.supabase
@@ -796,16 +796,16 @@ export class SessionManager {
 
       const now = new Date();
       const activeSessions = allSessions.filter(
-        (s) => !s.terminated_at && new Date(s.expires_at) > now
+        (s) => !s.terminated_at && new Date(s.expires_at) > now,
       );
       const expiredSessions = allSessions.filter(
-        (s) => !s.terminated_at && new Date(s.expires_at) <= now
+        (s) => !s.terminated_at && new Date(s.expires_at) <= now,
       );
       const terminatedSessions = allSessions.filter((s) => s.terminated_at);
 
       // Calculate average session duration
       const completedSessions = terminatedSessions.filter(
-        (s) => s.terminated_at
+        (s) => s.terminated_at,
       );
       const totalDuration = completedSessions.reduce((sum, session) => {
         const start = new Date(session.created_at).getTime();
@@ -824,7 +824,7 @@ export class SessionManager {
           acc[reason] = (acc[reason] || 0) + 1;
           return acc;
         },
-        {} as Record<string, number>
+        {} as Record<string, number>,
       );
 
       return {
@@ -838,7 +838,7 @@ export class SessionManager {
       };
     } catch (error) {
       throw new Error(
-        `Error generating session metrics: ${error instanceof Error ? error.message : 'Unknown error'}`
+        `Error generating session metrics: ${error instanceof Error ? error.message : 'Unknown error'}`,
       );
     }
   }
@@ -847,7 +847,7 @@ export class SessionManager {
    * Private helper methods
    */
   private async checkConcurrentSessionLimit(
-    userId: string
+    userId: string,
   ): Promise<AuthenticationResponse> {
     try {
       const { data: activeSessions, error } = await this.supabase

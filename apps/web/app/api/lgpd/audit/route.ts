@@ -87,7 +87,7 @@ export async function GET(request: NextRequest) {
     if (!isAdmin) {
       return NextResponse.json(
         { error: 'Forbidden - Admin access required' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -134,7 +134,7 @@ export async function GET(request: NextRequest) {
 
     if (validatedQuery.search) {
       query = query.or(
-        `description.ilike.%${validatedQuery.search}%,details.ilike.%${validatedQuery.search}%`
+        `description.ilike.%${validatedQuery.search}%,details.ilike.%${validatedQuery.search}%`,
       );
     }
 
@@ -145,7 +145,7 @@ export async function GET(request: NextRequest) {
       })
       .range(
         (validatedQuery.page - 1) * validatedQuery.limit,
-        validatedQuery.page * validatedQuery.limit - 1
+        validatedQuery.page * validatedQuery.limit - 1,
       );
 
     if (auditError) {
@@ -181,7 +181,7 @@ export async function GET(request: NextRequest) {
       .select('event_type')
       .gte(
         'created_at',
-        new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
+        new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
       ); // Last 30 days
 
     const eventTypeStats =
@@ -220,13 +220,13 @@ export async function GET(request: NextRequest) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Invalid query parameters', details: error.errors },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -254,7 +254,7 @@ export async function POST(request: NextRequest) {
     if (profile?.role !== 'admin') {
       return NextResponse.json(
         { error: 'Forbidden - Admin access required' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -277,19 +277,19 @@ export async function POST(request: NextRequest) {
         success: true,
         data: auditEvent,
       },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Invalid request data', details: error.errors },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -298,7 +298,7 @@ export async function POST(request: NextRequest) {
 async function handleAuditExport(
   supabase: any,
   queryParams: z.infer<typeof auditQuerySchema>,
-  adminUserId: string
+  adminUserId: string,
 ) {
   const exportParams = exportSchema.parse(queryParams);
 
@@ -338,7 +338,7 @@ async function handleAuditExport(
 
   if (auditError) {
     throw new Error(
-      `Failed to fetch audit events for export: ${auditError.message}`
+      `Failed to fetch audit events for export: ${auditError.message}`,
     );
   }
 

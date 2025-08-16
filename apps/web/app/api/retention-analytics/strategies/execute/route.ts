@@ -41,7 +41,7 @@ export async function POST(request: NextRequest) {
           error: 'Invalid execution data',
           details: validation.error.issues,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -76,14 +76,14 @@ export async function POST(request: NextRequest) {
     if (profileError || !userProfile) {
       return NextResponse.json(
         { error: 'User profile not found' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
     if (userProfile.clinic_id !== clinicId) {
       return NextResponse.json(
         { error: 'Access denied to clinic data' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -92,7 +92,7 @@ export async function POST(request: NextRequest) {
     if (!allowedRoles.includes(userProfile.role)) {
       return NextResponse.json(
         { error: 'Insufficient permissions to execute strategies' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -104,14 +104,14 @@ export async function POST(request: NextRequest) {
     if (!strategy) {
       return NextResponse.json(
         { error: 'Strategy not found or does not belong to clinic' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
     if (!strategy.is_active) {
       return NextResponse.json(
         { error: 'Cannot execute inactive strategy' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -124,20 +124,20 @@ export async function POST(request: NextRequest) {
 
     if (validationError) {
       throw new Error(
-        `Failed to validate patients: ${validationError.message}`
+        `Failed to validate patients: ${validationError.message}`,
       );
     }
 
     if (validPatients.length !== patientIds.length) {
       const invalidIds = patientIds.filter(
-        (id) => !validPatients.some((p) => p.id === id)
+        (id) => !validPatients.some((p) => p.id === id),
       );
       return NextResponse.json(
         {
           error: 'Some patients do not belong to the specified clinic',
           invalidPatientIds: invalidIds,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -149,7 +149,7 @@ export async function POST(request: NextRequest) {
       if (scheduledDate <= now) {
         return NextResponse.json(
           { error: 'Scheduled execution time must be in the future' },
-          { status: 400 }
+          { status: 400 },
         );
       }
     }
@@ -181,7 +181,7 @@ export async function POST(request: NextRequest) {
           total_actions: strategy.action_sequence.length * validPatients.length,
           estimated_duration: strategy.action_sequence.reduce(
             (sum, action) => sum + (action.delay_minutes || 0),
-            0
+            0,
           ),
           scheduled_for:
             scheduledAt || (executeImmediately ? 'Immediate' : 'Not scheduled'),
@@ -201,7 +201,7 @@ export async function POST(request: NextRequest) {
     // Actual execution
     const executionResult = await retentionService.executeRetentionStrategy(
       strategyId,
-      patientIds
+      patientIds,
     );
 
     // Log the execution
@@ -250,7 +250,7 @@ export async function POST(request: NextRequest) {
         error: 'Internal server error',
         message: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

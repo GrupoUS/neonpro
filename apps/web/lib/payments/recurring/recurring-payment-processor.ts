@@ -65,7 +65,7 @@ export class RecurringPaymentProcessor {
   constructor(config?: Partial<RecurringPaymentConfig>) {
     this.supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
     );
 
     this.stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
@@ -111,14 +111,14 @@ export class RecurringPaymentProcessor {
       result.processed_subscriptions = dueSubscriptions.length;
 
       logger.info(
-        `Found ${dueSubscriptions.length} subscriptions due for billing`
+        `Found ${dueSubscriptions.length} subscriptions due for billing`,
       );
 
       // Process each subscription
       for (const subscription of dueSubscriptions) {
         try {
           const paymentResult = await this.processSubscriptionPayment(
-            subscription.id
+            subscription.id,
           );
 
           if (paymentResult.success) {
@@ -133,7 +133,7 @@ export class RecurringPaymentProcessor {
             } else {
               await this.handleFinalPaymentFailure(
                 subscription.id,
-                paymentResult
+                paymentResult,
               );
             }
           }
@@ -161,7 +161,7 @@ export class RecurringPaymentProcessor {
 
   // Process individual subscription payment
   async processSubscriptionPayment(
-    subscriptionId: string
+    subscriptionId: string,
   ): Promise<PaymentAttemptResult> {
     try {
       const subscription =
@@ -171,7 +171,7 @@ export class RecurringPaymentProcessor {
       }
 
       const plan = await subscriptionManager.getSubscriptionPlan(
-        subscription.plan_id
+        subscription.plan_id,
       );
       if (!plan) {
         throw new Error('Subscription plan not found');
@@ -187,7 +187,7 @@ export class RecurringPaymentProcessor {
     } catch (error) {
       logger.error(
         `Error processing payment for subscription ${subscriptionId}:`,
-        error
+        error,
       );
       return {
         success: false,
@@ -200,13 +200,13 @@ export class RecurringPaymentProcessor {
   // Process Stripe-based payment
   private async processStripePayment(
     subscription: any,
-    _plan: any
+    _plan: any,
   ): Promise<PaymentAttemptResult> {
     try {
       // Retrieve Stripe subscription
       const stripeSubscription = await this.stripe.subscriptions.retrieve(
         subscription.stripe_subscription_id,
-        { expand: ['latest_invoice', 'latest_invoice.payment_intent'] }
+        { expand: ['latest_invoice', 'latest_invoice.payment_intent'] },
       );
 
       const latestInvoice = stripeSubscription.latest_invoice as Stripe.Invoice;
@@ -234,7 +234,7 @@ export class RecurringPaymentProcessor {
         ) {
           // Try to confirm payment with default payment method
           const customer = (await this.stripe.customers.retrieve(
-            stripeSubscription.customer as string
+            stripeSubscription.customer as string,
           )) as Stripe.Customer;
 
           if (customer.invoice_settings?.default_payment_method) {
@@ -247,7 +247,7 @@ export class RecurringPaymentProcessor {
 
         // Refresh payment intent status
         const updatedPaymentIntent = await this.stripe.paymentIntents.retrieve(
-          paymentIntent.id
+          paymentIntent.id,
         );
 
         if (updatedPaymentIntent.status === 'succeeded') {
@@ -263,7 +263,7 @@ export class RecurringPaymentProcessor {
             updatedPaymentIntent.last_payment_error?.message ||
             'Payment failed',
           requires_retry: this.shouldRetryPayment(
-            updatedPaymentIntent.last_payment_error
+            updatedPaymentIntent.last_payment_error,
           ),
         };
       }
@@ -287,7 +287,7 @@ export class RecurringPaymentProcessor {
   // Process manual payment (non-Stripe)
   private async processManualPayment(
     subscription: any,
-    plan: any
+    plan: any,
   ): Promise<PaymentAttemptResult> {
     try {
       // Get customer's default payment method
@@ -297,7 +297,7 @@ export class RecurringPaymentProcessor {
           `
           *,
           payment_methods(*)
-        `
+        `,
         )
         .eq('id', subscription.customer_id)
         .single();
@@ -353,7 +353,7 @@ export class RecurringPaymentProcessor {
   // Payment Retry Management
   async schedulePaymentRetry(
     subscriptionId: string,
-    paymentResult: PaymentAttemptResult
+    paymentResult: PaymentAttemptResult,
   ): Promise<void> {
     try {
       // Get current retry count
@@ -395,12 +395,12 @@ export class RecurringPaymentProcessor {
         await this.sendPaymentRetryNotification(
           subscriptionId,
           nextAttempt,
-          nextRetryDate
+          nextRetryDate,
         );
       }
 
       logger.info(
-        `Payment retry scheduled for subscription ${subscriptionId}, attempt ${nextAttempt}`
+        `Payment retry scheduled for subscription ${subscriptionId}, attempt ${nextAttempt}`,
       );
     } catch (error) {
       logger.error('Error scheduling payment retry:', error);
@@ -432,7 +432,7 @@ export class RecurringPaymentProcessor {
 
           // Attempt payment
           const paymentResult = await this.processSubscriptionPayment(
-            retry.subscription_id
+            retry.subscription_id,
           );
 
           if (paymentResult.success) {
@@ -448,7 +448,7 @@ export class RecurringPaymentProcessor {
             result.successful_payments++;
             await this.handleSuccessfulPayment(
               retry.subscription_id,
-              paymentResult
+              paymentResult,
             );
           } else {
             // Mark retry as failed
@@ -466,13 +466,13 @@ export class RecurringPaymentProcessor {
             if (paymentResult.requires_retry) {
               await this.schedulePaymentRetry(
                 retry.subscription_id,
-                paymentResult
+                paymentResult,
               );
               result.retry_scheduled++;
             } else {
               await this.handleFinalPaymentFailure(
                 retry.subscription_id,
-                paymentResult
+                paymentResult,
               );
             }
           }
@@ -501,7 +501,7 @@ export class RecurringPaymentProcessor {
   // Success and Failure Handlers
   private async handleSuccessfulPayment(
     subscriptionId: string,
-    paymentResult: PaymentAttemptResult
+    paymentResult: PaymentAttemptResult,
   ): Promise<void> {
     try {
       const subscription =
@@ -511,7 +511,7 @@ export class RecurringPaymentProcessor {
       }
 
       const plan = await subscriptionManager.getSubscriptionPlan(
-        subscription.plan_id
+        subscription.plan_id,
       );
       if (!plan) {
         return;
@@ -521,7 +521,7 @@ export class RecurringPaymentProcessor {
       const nextPeriodStart = new Date(subscription.current_period_end);
       const nextPeriodEnd = this.calculateNextBillingDate(
         nextPeriodStart,
-        plan.billing_cycle
+        plan.billing_cycle,
       );
 
       await this.supabase
@@ -538,14 +538,14 @@ export class RecurringPaymentProcessor {
       await this.createPaymentRecord(
         subscriptionId,
         paymentResult,
-        'completed'
+        'completed',
       );
 
       // Reset usage tracking for new period
       await this.resetUsageTracking(
         subscriptionId,
         nextPeriodStart,
-        nextPeriodEnd
+        nextPeriodEnd,
       );
 
       // Send success notification
@@ -554,7 +554,7 @@ export class RecurringPaymentProcessor {
       }
 
       logger.info(
-        `Successful payment processed for subscription ${subscriptionId}`
+        `Successful payment processed for subscription ${subscriptionId}`,
       );
     } catch (error) {
       logger.error('Error handling successful payment:', error);
@@ -563,7 +563,7 @@ export class RecurringPaymentProcessor {
 
   private async handleFinalPaymentFailure(
     subscriptionId: string,
-    paymentResult: PaymentAttemptResult
+    paymentResult: PaymentAttemptResult,
   ): Promise<void> {
     try {
       // Update subscription status to past_due
@@ -582,12 +582,12 @@ export class RecurringPaymentProcessor {
       if (this.config.notification_settings.payment_failed) {
         await this.sendPaymentFailureNotification(
           subscriptionId,
-          paymentResult.error_message
+          paymentResult.error_message,
         );
       }
 
       logger.info(
-        `Final payment failure handled for subscription ${subscriptionId}`
+        `Final payment failure handled for subscription ${subscriptionId}`,
       );
     } catch (error) {
       logger.error('Error handling final payment failure:', error);
@@ -600,7 +600,11 @@ export class RecurringPaymentProcessor {
       const now = new Date();
       const _gracePeriodDate = new Date(
         now.getTime() -
-          this.config.dunning_management.grace_period_days * 24 * 60 * 60 * 1000
+          this.config.dunning_management.grace_period_days *
+            24 *
+            60 *
+            60 *
+            1000,
       );
       const suspensionDate = new Date(
         now.getTime() -
@@ -608,7 +612,7 @@ export class RecurringPaymentProcessor {
             24 *
             60 *
             60 *
-            1000
+            1000,
       );
       const cancellationDate = new Date(
         now.getTime() -
@@ -616,7 +620,7 @@ export class RecurringPaymentProcessor {
             24 *
             60 *
             60 *
-            1000
+            1000,
       );
 
       // Cancel subscriptions that have been past due for too long
@@ -657,7 +661,7 @@ export class RecurringPaymentProcessor {
       }
 
       logger.info(
-        'Subscription statuses updated based on dunning management rules'
+        'Subscription statuses updated based on dunning management rules',
       );
     } catch (error) {
       logger.error('Error updating subscription statuses:', error);
@@ -674,7 +678,7 @@ export class RecurringPaymentProcessor {
           *,
           plan:subscription_plans(*),
           customer:customers(*)
-        `
+        `,
         )
         .in('status', ['active', 'trialing'])
         .lte('current_period_end', new Date().toISOString());
@@ -693,26 +697,26 @@ export class RecurringPaymentProcessor {
 
   private calculateNextBillingDate(
     startDate: Date,
-    billingCycle: string
+    billingCycle: string,
   ): Date {
     switch (billingCycle) {
       case 'monthly':
         return new Date(
           startDate.getFullYear(),
           startDate.getMonth() + 1,
-          startDate.getDate()
+          startDate.getDate(),
         );
       case 'quarterly':
         return new Date(
           startDate.getFullYear(),
           startDate.getMonth() + 3,
-          startDate.getDate()
+          startDate.getDate(),
         );
       case 'annual':
         return new Date(
           startDate.getFullYear() + 1,
           startDate.getMonth(),
-          startDate.getDate()
+          startDate.getDate(),
         );
       default:
         throw new Error(`Invalid billing cycle: ${billingCycle}`);
@@ -720,7 +724,7 @@ export class RecurringPaymentProcessor {
   }
 
   private shouldRetryPayment(
-    error: Stripe.PaymentIntent.LastPaymentError | null
+    error: Stripe.PaymentIntent.LastPaymentError | null,
   ): boolean {
     if (!error) {
       return true;
@@ -755,13 +759,13 @@ export class RecurringPaymentProcessor {
   private async createPaymentRecord(
     subscriptionId: string,
     paymentResult: PaymentAttemptResult,
-    status: string
+    status: string,
   ): Promise<void> {
     try {
       const subscription =
         await subscriptionManager.getSubscription(subscriptionId);
       const plan = await subscriptionManager.getSubscriptionPlan(
-        subscription?.plan_id
+        subscription?.plan_id,
       );
 
       if (!(subscription && plan)) {
@@ -789,7 +793,7 @@ export class RecurringPaymentProcessor {
   private async resetUsageTracking(
     subscriptionId: string,
     periodStart: Date,
-    periodEnd: Date
+    periodEnd: Date,
   ): Promise<void> {
     try {
       // Get current usage records
@@ -818,7 +822,7 @@ export class RecurringPaymentProcessor {
   private async sendPaymentRetryNotification(
     subscriptionId: string,
     attemptNumber: number,
-    nextRetryDate: Date
+    nextRetryDate: Date,
   ): Promise<void> {
     try {
       const subscription =
@@ -844,7 +848,7 @@ export class RecurringPaymentProcessor {
 
   private async sendPaymentSuccessNotification(
     subscriptionId: string,
-    amount: number
+    amount: number,
   ): Promise<void> {
     try {
       const subscription =
@@ -862,7 +866,7 @@ export class RecurringPaymentProcessor {
           plan_name: subscription.plan?.name,
           next_billing_date: format(
             new Date(subscription.current_period_end),
-            'PPP'
+            'PPP',
           ),
         },
       });
@@ -873,7 +877,7 @@ export class RecurringPaymentProcessor {
 
   private async sendPaymentFailureNotification(
     subscriptionId: string,
-    errorMessage?: string
+    errorMessage?: string,
   ): Promise<void> {
     try {
       const subscription =
@@ -897,7 +901,7 @@ export class RecurringPaymentProcessor {
   }
 
   private async sendSubscriptionSuspendedNotification(
-    subscriptionId: string
+    subscriptionId: string,
   ): Promise<void> {
     try {
       const subscription =
@@ -920,7 +924,7 @@ export class RecurringPaymentProcessor {
   }
 
   private async sendSubscriptionCanceledNotification(
-    subscriptionId: string
+    subscriptionId: string,
   ): Promise<void> {
     try {
       const subscription =

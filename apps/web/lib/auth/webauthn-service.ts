@@ -95,7 +95,7 @@ class WebAuthnService {
     await this.storeChallenge(
       options.userId,
       registrationOptions.challenge,
-      'registration'
+      'registration',
     );
 
     // Log analytics
@@ -114,7 +114,7 @@ class WebAuthnService {
   async verifyRegistrationResponse(
     userId: string,
     response: RegistrationResponseJSON,
-    deviceName?: string
+    deviceName?: string,
   ) {
     return trackMFAVerification(
       async () => {
@@ -166,7 +166,7 @@ class WebAuthnService {
 
         if (error) {
           throw new Error(
-            `Failed to store WebAuthn credential: ${error.message}`
+            `Failed to store WebAuthn credential: ${error.message}`,
           );
         }
 
@@ -186,7 +186,7 @@ class WebAuthnService {
         userId,
         method: 'webauthn',
         additionalData: { deviceName, operation: 'registration' },
-      }
+      },
     );
   }
 
@@ -194,7 +194,7 @@ class WebAuthnService {
    * Generate authentication options for WebAuthn login
    */
   async generateAuthenticationOptions(
-    options: WebAuthnAuthenticationOptions = {}
+    options: WebAuthnAuthenticationOptions = {},
   ) {
     const supabase = await createClient();
     let allowCredentials;
@@ -227,7 +227,7 @@ class WebAuthnService {
     await this.storeChallenge(
       challengeKey,
       authenticationOptions.challenge,
-      'authentication'
+      'authentication',
     );
 
     await logAnalyticsEvent('webauthn_authentication_started', {
@@ -244,7 +244,7 @@ class WebAuthnService {
    */
   async verifyAuthenticationResponse(
     response: AuthenticationResponseJSON,
-    userId?: string
+    userId?: string,
   ) {
     return trackMFAVerification(
       async () => {
@@ -266,7 +266,7 @@ class WebAuthnService {
         const challengeKey = userId || credential.user_id;
         const challenge = await this.getChallenge(
           challengeKey,
-          'authentication'
+          'authentication',
         );
         if (!challenge) {
           throw new Error('No authentication challenge found');
@@ -325,7 +325,7 @@ class WebAuthnService {
         userId: userId || credential?.user_id,
         method: 'webauthn',
         additionalData: { operation: 'authentication' },
-      }
+      },
     );
   }
 
@@ -378,7 +378,7 @@ class WebAuthnService {
   private async storeChallenge(
     userId: string,
     challenge: string,
-    type: 'registration' | 'authentication'
+    type: 'registration' | 'authentication',
   ): Promise<void> {
     // For now, using simple in-memory storage
     // In production, use Redis or secure session storage
@@ -398,7 +398,7 @@ class WebAuthnService {
    */
   private async getChallenge(
     userId: string,
-    type: 'registration' | 'authentication'
+    type: 'registration' | 'authentication',
   ): Promise<string | null> {
     if (typeof globalThis !== 'undefined' && globalThis.webauthnChallenges) {
       const data = globalThis.webauthnChallenges.get(`${userId}:${type}`);
@@ -415,7 +415,7 @@ class WebAuthnService {
    */
   private async removeChallenge(
     userId: string,
-    type: 'registration' | 'authentication'
+    type: 'registration' | 'authentication',
   ): Promise<void> {
     if (typeof globalThis !== 'undefined' && globalThis.webauthnChallenges) {
       globalThis.webauthnChallenges.delete(`${userId}:${type}`);

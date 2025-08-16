@@ -34,7 +34,7 @@ type PatientAuthContextType = {
 };
 
 const PatientAuthContext = createContext<PatientAuthContextType | undefined>(
-  undefined
+  undefined,
 );
 
 export function PatientAuthProvider({
@@ -189,7 +189,7 @@ export function PatientAuthProvider({
   return React.createElement(
     PatientAuthContext.Provider,
     { value: contextValue },
-    children
+    children,
   );
 }
 

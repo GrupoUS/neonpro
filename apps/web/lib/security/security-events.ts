@@ -10,7 +10,7 @@ export type SecurityEvent = {
 };
 
 export function logSecurityEvent(
-  event: Omit<SecurityEvent, 'id' | 'timestamp'>
+  event: Omit<SecurityEvent, 'id' | 'timestamp'>,
 ) {
   return {
     id: Math.random().toString(36),

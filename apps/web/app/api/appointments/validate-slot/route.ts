@@ -32,7 +32,7 @@ export async function POST(request: NextRequest) {
     if (authError || !user?.id) {
       return NextResponse.json(
         { error: 'Unauthorized', details: 'Authentication required' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -49,7 +49,7 @@ export async function POST(request: NextRequest) {
           error: 'Profile not found',
           details: 'User profile or clinic not found',
         },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -75,7 +75,7 @@ export async function POST(request: NextRequest) {
           details: validationError.message,
           code: 'VALIDATION_PROCEDURE_ERROR',
         },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -112,7 +112,7 @@ export async function POST(request: NextRequest) {
           validation_errors: error.errors,
           code: 'INVALID_REQUEST_PARAMETERS',
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -124,7 +124,7 @@ export async function POST(request: NextRequest) {
           details: 'Request body contains invalid JSON',
           code: 'INVALID_JSON',
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -138,7 +138,7 @@ export async function POST(request: NextRequest) {
           validation_time_ms: Date.now() - startTime,
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -188,7 +188,7 @@ export async function GET(request: NextRequest) {
           details:
             'professional_id, service_type_id, start_time, and end_time are required',
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -220,7 +220,7 @@ export async function GET(request: NextRequest) {
           error: 'Validation failed',
           details: validationError.message,
         },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -245,7 +245,7 @@ export async function GET(request: NextRequest) {
           error: 'Invalid parameters',
           validation_errors: error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -257,7 +257,7 @@ export async function GET(request: NextRequest) {
           validation_time_ms: Date.now() - startTime,
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

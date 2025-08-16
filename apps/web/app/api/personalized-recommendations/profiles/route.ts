@@ -37,7 +37,7 @@ export async function GET(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to fetch recommendation profiles', success: false },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -57,7 +57,7 @@ export async function POST(request: NextRequest) {
           details: validationResult.error.issues,
           success: false,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -71,12 +71,12 @@ export async function POST(request: NextRequest) {
         profile,
         success: true,
       },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to create recommendation profile', success: false },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -96,7 +96,7 @@ export async function PUT(request: NextRequest) {
           details: validationResult.error.issues,
           success: false,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -104,13 +104,13 @@ export async function PUT(request: NextRequest) {
       validationResult.data;
     const profile = await personalizedRecommendationsService.updateProfile(
       id,
-      updateData
+      updateData,
     );
 
     if (!profile) {
       return NextResponse.json(
         { error: 'Recommendation profile not found', success: false },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -121,7 +121,7 @@ export async function PUT(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to update recommendation profile', success: false },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

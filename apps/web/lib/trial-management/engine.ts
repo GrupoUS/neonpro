@@ -65,7 +65,7 @@ export class TrialManagementEngine {
   async updateTrialStage(
     trialId: string,
     newStage: TrialStage,
-    trigger = 'manual'
+    trigger = 'manual',
   ): Promise<Trial> {
     const { data: currentTrial, error: fetchError } = await this.supabase
       .from('trial_analytics')
@@ -81,7 +81,7 @@ export class TrialManagementEngine {
     const journey = await this.getUserJourney(trialId);
     const conversionProbability = await this.calculateConversionProbability(
       this.mapDatabaseToTrial(currentTrial),
-      journey
+      journey,
     );
 
     // Update trial in database
@@ -105,7 +105,7 @@ export class TrialManagementEngine {
       trialId,
       currentTrial.trial_status,
       newStage,
-      trigger
+      trigger,
     );
 
     // Trigger appropriate campaign if needed
@@ -163,13 +163,13 @@ export class TrialManagementEngine {
     // AI-powered probability calculation based on multiple factors
     const probability = await this.calculateConversionProbability(
       trial,
-      journey
+      journey,
     );
     const confidence = this.calculatePredictionConfidence(factors);
 
     const recommendations = await this.generateConversionRecommendations(
       trial,
-      factors
+      factors,
     );
     const optimalStrategy = this.determineOptimalStrategy(trial, factors);
 
@@ -183,7 +183,7 @@ export class TrialManagementEngine {
       optimalStrategy,
       timeToConversion: this.estimateTimeToConversion(
         probability,
-        trial.daysRemaining
+        trial.daysRemaining,
       ),
       predictedRevenue: probability * 99, // Assuming $99 subscription
       riskLevel: this.assessRiskLevel(probability, trial.daysRemaining),
@@ -192,7 +192,7 @@ export class TrialManagementEngine {
 
   private async calculateConversionProbability(
     trial: Trial,
-    journey: UserJourney
+    journey: UserJourney,
   ): Promise<number> {
     // Multi-factor AI algorithm inspired by BPR (Bayesian Personalized Ranking)
     const factors = await this.calculateConversionFactors(trial, journey);
@@ -225,7 +225,7 @@ export class TrialManagementEngine {
 
     // Apply collaborative filtering boost based on similar users
     const collaborativeBoost = await this.getCollaborativeFilteringBoost(
-      trial.userId
+      trial.userId,
     );
     probability = Math.min(probability * (1 + collaborativeBoost), 0.95);
 
@@ -233,13 +233,13 @@ export class TrialManagementEngine {
   }
   private async calculateConversionFactors(
     trial: Trial,
-    journey: UserJourney
+    journey: UserJourney,
   ): Promise<ConversionFactor[]> {
     const factors: ConversionFactor[] = [];
 
     // Engagement factor
     const engagementEvents = journey.events.filter(
-      (e) => e.type === 'feature_usage'
+      (e) => e.type === 'feature_usage',
     );
     const engagementScore = Math.min(engagementEvents.length * 10, 100);
     factors.push({
@@ -259,7 +259,7 @@ export class TrialManagementEngine {
     const uniqueFeatures = new Set(
       journey.events
         .filter((e) => e.type === 'feature_usage')
-        .map((e) => e.data.featureId)
+        .map((e) => e.data.featureId),
     ).size;
     const featureAdoptionScore = Math.min(uniqueFeatures * 20, 100);
     factors.push({
@@ -292,7 +292,7 @@ export class TrialManagementEngine {
 
     // Support interaction factor
     const supportEvents = journey.events.filter(
-      (e) => e.type === 'support_contact'
+      (e) => e.type === 'support_contact',
     );
     const supportScore = Math.min(supportEvents.length * 25, 100);
     factors.push({
@@ -305,7 +305,7 @@ export class TrialManagementEngine {
 
     // Email engagement factor
     const emailEvents = journey.events.filter(
-      (e) => e.type === 'email_interaction'
+      (e) => e.type === 'email_interaction',
     );
     const emailScore = Math.min(emailEvents.length * 15, 100);
     factors.push({
@@ -325,7 +325,7 @@ export class TrialManagementEngine {
   }
   private async generateConversionRecommendations(
     trial: Trial,
-    factors: ConversionFactor[]
+    factors: ConversionFactor[],
   ): Promise<ConversionRecommendation[]> {
     const recommendations: ConversionRecommendation[] = [];
 
@@ -416,7 +416,7 @@ export class TrialManagementEngine {
   }
   private determineOptimalStrategy(
     trial: Trial,
-    factors: ConversionFactor[]
+    factors: ConversionFactor[],
   ): ConversionStrategy {
     const engagementValue =
       factors.find((f) => f.name === 'engagement')?.value || 0;
@@ -453,13 +453,13 @@ export class TrialManagementEngine {
 
   private calculateFactorConsistency(factors: ConversionFactor[]): number {
     const positiveFactors = factors.filter(
-      (f) => f.impact === 'positive'
+      (f) => f.impact === 'positive',
     ).length;
     const negativeFactors = factors.filter(
-      (f) => f.impact === 'negative'
+      (f) => f.impact === 'negative',
     ).length;
     const _neutralFactors = factors.filter(
-      (f) => f.impact === 'neutral'
+      (f) => f.impact === 'neutral',
     ).length;
 
     // Higher consistency when factors point in same direction
@@ -474,7 +474,7 @@ export class TrialManagementEngine {
 
   private estimateTimeToConversion(
     probability: number,
-    daysRemaining: number
+    daysRemaining: number,
   ): number {
     if (probability > 0.8) {
       return Math.min(2, daysRemaining);
@@ -490,7 +490,7 @@ export class TrialManagementEngine {
 
   private assessRiskLevel(
     probability: number,
-    daysRemaining: number
+    daysRemaining: number,
   ): 'low' | 'medium' | 'high' {
     if (probability > 0.7) {
       return 'low';
@@ -502,12 +502,12 @@ export class TrialManagementEngine {
   }
 
   private async getCollaborativeFilteringBoost(
-    userId: string
+    userId: string,
   ): Promise<number> {
     // Simplified collaborative filtering - in production, use more sophisticated algorithm
     const { data: similarUsers } = await this.supabase.rpc(
       'get_similar_trial_users',
-      { target_user_id: userId }
+      { target_user_id: userId },
     );
 
     if (!similarUsers || similarUsers.length === 0) {
@@ -517,7 +517,7 @@ export class TrialManagementEngine {
     const avgConversionRate =
       similarUsers.reduce(
         (sum: number, user: any) => sum + (user.converted ? 1 : 0),
-        0
+        0,
       ) / similarUsers.length;
 
     return Math.min(avgConversionRate * 0.2, 0.1); // max 10% boost
@@ -529,7 +529,7 @@ export class TrialManagementEngine {
     trialId: string,
     eventType: JourneyEvent['type'],
     data: Record<string, any>,
-    source = 'webapp'
+    source = 'webapp',
   ): Promise<void> {
     const event: Omit<JourneyEvent, 'id'> = {
       type: eventType,
@@ -558,7 +558,7 @@ export class TrialManagementEngine {
 
   private calculateEventScore(
     eventType: JourneyEvent['type'],
-    data: Record<string, any>
+    data: Record<string, any>,
   ): number {
     const scoreMap = {
       feature_usage: 10,
@@ -620,7 +620,7 @@ export class TrialManagementEngine {
 
     const engagementScore = Math.min(
       weightSum > 0 ? totalScore / weightSum : 0,
-      100
+      100,
     );
 
     // Update trial with new engagement score
@@ -649,12 +649,12 @@ export class TrialManagementEngine {
   private determineTrialStage(trial: Trial, journey: UserJourney): TrialStage {
     const eventCount = journey.events.length;
     const featureUsageEvents = journey.events.filter(
-      (e) => e.type === 'feature_usage'
+      (e) => e.type === 'feature_usage',
     ).length;
     const uniqueFeatures = new Set(
       journey.events
         .filter((e) => e.type === 'feature_usage')
-        .map((e) => e.data.featureId)
+        .map((e) => e.data.featureId),
     ).size;
 
     // Stage determination logic
@@ -729,7 +729,7 @@ export class TrialManagementEngine {
 
   private async initializeUserJourney(
     trialId: string,
-    _userId: string
+    _userId: string,
   ): Promise<void> {
     // Create initial signup event
     await this.trackEvent(
@@ -739,7 +739,7 @@ export class TrialManagementEngine {
         page: 'signup_complete',
         source: 'trial_creation',
       },
-      'system'
+      'system',
     );
   }
 
@@ -747,7 +747,7 @@ export class TrialManagementEngine {
     trialId: string,
     fromStage: string,
     toStage: string,
-    trigger: string
+    trigger: string,
   ): Promise<void> {
     await this.supabase.from('trial_stage_transitions').insert({
       trial_id: trialId,
@@ -760,7 +760,7 @@ export class TrialManagementEngine {
 
   private async triggerAutomatedCampaign(
     _trial: any,
-    newStage: TrialStage
+    newStage: TrialStage,
   ): Promise<void> {
     // Trigger appropriate automated campaigns based on stage
     const campaignTriggers = {
@@ -781,10 +781,10 @@ export class TrialManagementEngine {
         name: 'First Login',
         description: 'User logged in for the first time',
         completed: events.some(
-          (e) => e.type === 'page_view' && e.data.page === 'dashboard'
+          (e) => e.type === 'page_view' && e.data.page === 'dashboard',
         ),
         completedAt: events.find(
-          (e) => e.type === 'page_view' && e.data.page === 'dashboard'
+          (e) => e.type === 'page_view' && e.data.page === 'dashboard',
         )?.timestamp,
         importance: 0.8,
         category: 'onboarding' as const,
@@ -804,7 +804,7 @@ export class TrialManagementEngine {
           new Set(
             events
               .filter((e) => e.type === 'feature_usage')
-              .map((e) => e.data.featureId)
+              .map((e) => e.data.featureId),
           ).size >= 3,
         completedAt:
           events.filter((e) => e.type === 'feature_usage').length >= 3
@@ -829,16 +829,16 @@ export class TrialManagementEngine {
 
   private calculateProgressScore(
     _events: JourneyEvent[],
-    milestones: any[]
+    milestones: any[],
   ): number {
     const completedMilestones = milestones.filter((m) => m.completed);
     const totalImportance = milestones.reduce(
       (sum, m) => sum + m.importance,
-      0
+      0,
     );
     const completedImportance = completedMilestones.reduce(
       (sum, m) => sum + m.importance,
-      0
+      0,
     );
 
     return totalImportance > 0
@@ -876,8 +876,8 @@ export class TrialManagementEngine {
         0,
         Math.ceil(
           (new Date(data.end_date).getTime() - Date.now()) /
-            (1000 * 60 * 60 * 24)
-        )
+            (1000 * 60 * 60 * 24),
+        ),
       ),
       conversionProbability: data.conversion_probability || 0.1,
       engagementScore: data.engagement_score || 0,

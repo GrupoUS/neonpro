@@ -31,7 +31,7 @@ export type RoutePermission = {
   auditLevel?: 'none' | 'basic' | 'detailed';
   customValidator?: (
     req: NextRequest,
-    context: UserRouteContext
+    context: UserRouteContext,
   ) => Promise<ValidationResult>;
 };
 
@@ -297,7 +297,7 @@ export class RouteProtector {
    */
   async checkAccess(
     req: NextRequest,
-    context: UserRouteContext
+    context: UserRouteContext,
   ): Promise<ValidationResult> {
     const startTime = Date.now();
     const route = req.nextUrl.pathname;
@@ -311,7 +311,7 @@ export class RouteProtector {
           false,
           'Route not found',
           '/dashboard',
-          'ROUTE_NOT_FOUND'
+          'ROUTE_NOT_FOUND',
         );
       }
 
@@ -321,7 +321,7 @@ export class RouteProtector {
           false,
           'Authentication required',
           '/login',
-          'AUTH_REQUIRED'
+          'AUTH_REQUIRED',
         );
       }
 
@@ -363,7 +363,7 @@ export class RouteProtector {
         true,
         'Access granted',
         undefined,
-        'ACCESS_GRANTED'
+        'ACCESS_GRANTED',
       );
 
       // Log access if audit level requires it
@@ -375,7 +375,7 @@ export class RouteProtector {
         false,
         'System error during access check',
         '/dashboard',
-        'SYSTEM_ERROR'
+        'SYSTEM_ERROR',
       );
       this.logAccess(req, context, null, result, Date.now() - startTime);
       return result;
@@ -400,7 +400,7 @@ export class RouteProtector {
    */
   private checkSubscription(
     context: UserRouteContext,
-    permission: RoutePermission
+    permission: RoutePermission,
   ): ValidationResult {
     // Check minimum tier requirement
     if (permission.minimumTier) {
@@ -412,7 +412,7 @@ export class RouteProtector {
           false,
           `Subscription tier ${permission.minimumTier} required`,
           '/dashboard/subscription',
-          'TIER_REQUIRED'
+          'TIER_REQUIRED',
         );
       }
     }
@@ -430,7 +430,7 @@ export class RouteProtector {
             true,
             'Access granted (grace period)',
             undefined,
-            'GRACE_PERIOD'
+            'GRACE_PERIOD',
           );
         }
       }
@@ -439,7 +439,7 @@ export class RouteProtector {
         false,
         'Active subscription required',
         '/dashboard/subscription',
-        'SUBSCRIPTION_REQUIRED'
+        'SUBSCRIPTION_REQUIRED',
       );
     }
 
@@ -447,7 +447,7 @@ export class RouteProtector {
       true,
       'Subscription check passed',
       undefined,
-      'SUBSCRIPTION_OK'
+      'SUBSCRIPTION_OK',
     );
   }
 
@@ -456,7 +456,7 @@ export class RouteProtector {
    */
   private checkRolePermissions(
     context: UserRouteContext,
-    permission: RoutePermission
+    permission: RoutePermission,
   ): ValidationResult {
     // Check allowed roles
     if (
@@ -467,14 +467,14 @@ export class RouteProtector {
         false,
         `Role ${context.userRole} not allowed for this resource`,
         '/dashboard',
-        'ROLE_NOT_ALLOWED'
+        'ROLE_NOT_ALLOWED',
       );
     }
 
     // Check required permissions
     if (permission.requiredPermissions) {
       const hasRequiredPermissions = permission.requiredPermissions.every(
-        (required) => context.permissions.includes(required)
+        (required) => context.permissions.includes(required),
       );
 
       if (!hasRequiredPermissions) {
@@ -482,7 +482,7 @@ export class RouteProtector {
           false,
           'Insufficient permissions',
           '/dashboard',
-          'INSUFFICIENT_PERMISSIONS'
+          'INSUFFICIENT_PERMISSIONS',
         );
       }
     }
@@ -495,14 +495,14 @@ export class RouteProtector {
    */
   private checkFeatureFlags(
     context: UserRouteContext,
-    permission: RoutePermission
+    permission: RoutePermission,
   ): ValidationResult {
     if (!permission.featureFlags) {
       return this.createResult(
         true,
         'No feature flags required',
         undefined,
-        'NO_FLAGS'
+        'NO_FLAGS',
       );
     }
 
@@ -517,7 +517,7 @@ export class RouteProtector {
         false,
         `Feature not available: ${missingFlags.join(', ')}`,
         '/dashboard',
-        'FEATURE_DISABLED'
+        'FEATURE_DISABLED',
       );
     }
 
@@ -525,7 +525,7 @@ export class RouteProtector {
       true,
       'Feature flags check passed',
       undefined,
-      'FLAGS_OK'
+      'FLAGS_OK',
     );
   }
 
@@ -534,14 +534,14 @@ export class RouteProtector {
    */
   private checkRateLimit(
     userId: string,
-    permission: RoutePermission
+    permission: RoutePermission,
   ): ValidationResult {
     if (!permission.rateLimitRpm) {
       return this.createResult(
         true,
         'No rate limit',
         undefined,
-        'NO_RATE_LIMIT'
+        'NO_RATE_LIMIT',
       );
     }
 
@@ -558,7 +558,7 @@ export class RouteProtector {
         true,
         'Rate limit OK',
         undefined,
-        'RATE_LIMIT_OK'
+        'RATE_LIMIT_OK',
       );
     }
 
@@ -567,7 +567,7 @@ export class RouteProtector {
         false,
         'Rate limit exceeded',
         '/dashboard',
-        'RATE_LIMIT_EXCEEDED'
+        'RATE_LIMIT_EXCEEDED',
       );
     }
 
@@ -582,7 +582,7 @@ export class RouteProtector {
     allowed: boolean,
     reason?: string,
     redirectTo?: string,
-    errorCode?: string
+    errorCode?: string,
   ): ValidationResult {
     return {
       allowed,
@@ -603,7 +603,7 @@ export class RouteProtector {
     context: UserRouteContext,
     permission: RoutePermission | null,
     result: ValidationResult,
-    duration: number
+    duration: number,
   ): void {
     if (!permission || permission.auditLevel === 'none') {
       return;

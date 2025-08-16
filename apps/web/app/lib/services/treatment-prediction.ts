@@ -85,7 +85,7 @@ export class TreatmentPredictionService {
   }
 
   async createModel(
-    model: Omit<PredictionModel, 'id' | 'created_at' | 'updated_at'>
+    model: Omit<PredictionModel, 'id' | 'created_at' | 'updated_at'>,
   ) {
     const { data, error } = await this.supabase
       .from('prediction_models')
@@ -119,7 +119,7 @@ export class TreatmentPredictionService {
     predictionData: Omit<
       TreatmentPrediction,
       'id' | 'created_at' | 'updated_at'
-    >
+    >,
   ) {
     const { data, error } = await this.supabase
       .from('treatment_predictions')
@@ -141,7 +141,7 @@ export class TreatmentPredictionService {
         *,
         prediction_models(name, version, accuracy, algorithm_type),
         patients(name, email)
-      `
+      `,
       )
       .order('prediction_date', { ascending: false });
 
@@ -188,7 +188,7 @@ export class TreatmentPredictionService {
   async updatePredictionOutcome(
     id: string,
     outcome: string,
-    outcomeDate: string
+    outcomeDate: string,
   ) {
     const { data, error } = await this.supabase
       .from('treatment_predictions')
@@ -228,7 +228,7 @@ export class TreatmentPredictionService {
   }
 
   async upsertPatientFactors(
-    factors: Omit<PatientFactors, 'id' | 'created_at' | 'updated_at'>
+    factors: Omit<PatientFactors, 'id' | 'created_at' | 'updated_at'>,
   ) {
     const { data, error } = await this.supabase
       .from('patient_factors')
@@ -265,7 +265,7 @@ export class TreatmentPredictionService {
     characteristics: Omit<
       TreatmentCharacteristics,
       'id' | 'created_at' | 'updated_at'
-    >
+    >,
   ) {
     const { data, error } = await this.supabase
       .from('treatment_characteristics')
@@ -282,7 +282,7 @@ export class TreatmentPredictionService {
   // ==================== PREDICTION ENGINE ====================
 
   async generatePrediction(
-    request: PredictionRequest
+    request: PredictionRequest,
   ): Promise<PredictionResponse> {
     // Get active model
     const model = await this.getActiveModel();
@@ -294,27 +294,27 @@ export class TreatmentPredictionService {
     const patientFactors = await this.getPatientFactors(request.patient_id);
     if (!patientFactors) {
       throw new Error(
-        'Patient factors not found. Please complete patient assessment first.'
+        'Patient factors not found. Please complete patient assessment first.',
       );
     }
 
     // Get treatment characteristics
     const treatmentChars = await this.getTreatmentCharacteristics(
-      request.treatment_type
+      request.treatment_type,
     );
     const treatmentChar = treatmentChars.find(
-      (t) => t.treatment_type === request.treatment_type
+      (t) => t.treatment_type === request.treatment_type,
     );
     if (!treatmentChar) {
       throw new Error(
-        'Treatment characteristics not found for this treatment type'
+        'Treatment characteristics not found for this treatment type',
       );
     }
 
     // Build feature vector for prediction
     const features = await this.buildFeatureVector(
       patientFactors,
-      treatmentChar
+      treatmentChar,
     );
 
     // Generate prediction using ML model
@@ -338,7 +338,7 @@ export class TreatmentPredictionService {
     const recommendations = await this.generateRecommendations(
       prediction,
       patientFactors,
-      treatmentChar
+      treatmentChar,
     );
 
     // Generate alternative treatments if requested
@@ -346,14 +346,14 @@ export class TreatmentPredictionService {
       ? await this.generateAlternativeTreatments(
           request.patient_id,
           request.treatment_type,
-          features
+          features,
         )
       : [];
 
     // Generate risk factors
     const riskFactors = await this.generateRiskFactors(
       features,
-      predictionResult.explainability_data
+      predictionResult.explainability_data,
     );
 
     return {
@@ -365,7 +365,7 @@ export class TreatmentPredictionService {
   }
 
   async generateBatchPredictions(
-    request: BatchPredictionRequest
+    request: BatchPredictionRequest,
   ): Promise<BatchPredictionResponse> {
     const startTime = Date.now();
     const predictions: PredictionResponse[] = [];
@@ -404,7 +404,7 @@ export class TreatmentPredictionService {
 
   private async buildFeatureVector(
     patientFactors: PatientFactors,
-    treatmentChar: TreatmentCharacteristics
+    treatmentChar: TreatmentCharacteristics,
   ): Promise<PredictionFeatures> {
     // Build comprehensive feature vector for ML prediction
     const features: PredictionFeatures = {
@@ -456,7 +456,7 @@ export class TreatmentPredictionService {
 
   private async runPredictionModel(
     model: PredictionModel,
-    features: PredictionFeatures
+    features: PredictionFeatures,
   ) {
     // Simplified ML prediction logic
     // In production, this would call an actual ML model service
@@ -588,7 +588,7 @@ export class TreatmentPredictionService {
   private async generateRecommendations(
     prediction: TreatmentPrediction,
     patientFactors: PatientFactors,
-    _treatmentChar: TreatmentCharacteristics
+    _treatmentChar: TreatmentCharacteristics,
   ): Promise<TreatmentRecommendation[]> {
     const recommendations: TreatmentRecommendation[] = [];
 
@@ -670,12 +670,12 @@ export class TreatmentPredictionService {
   private async generateAlternativeTreatments(
     patientId: string,
     currentTreatment: string,
-    _features: PredictionFeatures
+    _features: PredictionFeatures,
   ): Promise<AlternativeTreatment[]> {
     // Get all treatment characteristics except current
     const allTreatments = await this.getTreatmentCharacteristics();
     const alternatives = allTreatments.filter(
-      (t) => t.treatment_type !== currentTreatment
+      (t) => t.treatment_type !== currentTreatment,
     );
 
     const alternativeTreatments: AlternativeTreatment[] = [];
@@ -702,12 +702,12 @@ export class TreatmentPredictionService {
     }
 
     return alternativeTreatments.sort(
-      (a, b) => b.prediction_score - a.prediction_score
+      (a, b) => b.prediction_score - a.prediction_score,
     );
   }
 
   private getTreatmentAdvantages(
-    treatment: TreatmentCharacteristics
+    treatment: TreatmentCharacteristics,
   ): string[] {
     const advantages = [];
 
@@ -731,7 +731,7 @@ export class TreatmentPredictionService {
   }
 
   private getTreatmentDisadvantages(
-    treatment: TreatmentCharacteristics
+    treatment: TreatmentCharacteristics,
   ): string[] {
     const disadvantages = [];
 
@@ -753,13 +753,13 @@ export class TreatmentPredictionService {
 
   private async generateRiskFactors(
     _features: PredictionFeatures,
-    explainability: ExplainabilityData
+    explainability: ExplainabilityData,
   ): Promise<RiskFactor[]> {
     const riskFactors: RiskFactor[] = [];
 
     // Add risk factors based on feature importance
     for (const [factor, impact] of Object.entries(
-      explainability.feature_importance
+      explainability.feature_importance,
     )) {
       if (Math.abs(impact) > 0.05) {
         // Only significant factors
@@ -805,7 +805,7 @@ export class TreatmentPredictionService {
 
   private getFactorRecommendation(
     factor: string,
-    impact: number
+    impact: number,
   ): string | undefined {
     if (!this.isModifiableFactor(factor)) {
       return;
@@ -828,22 +828,22 @@ export class TreatmentPredictionService {
   private generatePredictionSummary(predictions: PredictionResponse[]) {
     const total = predictions.length;
     const highSuccess = predictions.filter(
-      (p) => p.prediction.prediction_score >= 0.8
+      (p) => p.prediction.prediction_score >= 0.8,
     ).length;
     const mediumSuccess = predictions.filter(
       (p) =>
         p.prediction.prediction_score >= 0.6 &&
-        p.prediction.prediction_score < 0.8
+        p.prediction.prediction_score < 0.8,
     ).length;
     const lowSuccess = predictions.filter(
-      (p) => p.prediction.prediction_score < 0.6
+      (p) => p.prediction.prediction_score < 0.6,
     ).length;
     const avgConfidence =
       predictions.reduce((sum, p) => sum + p.prediction.prediction_score, 0) /
       total;
     const totalRecommendations = predictions.reduce(
       (sum, p) => sum + p.recommendations.length,
-      0
+      0,
     );
 
     return {
@@ -880,7 +880,7 @@ export class TreatmentPredictionService {
       if (filters.improvement_percentage_min) {
         query = query.gte(
           'improvement_percentage',
-          filters.improvement_percentage_min
+          filters.improvement_percentage_min,
         );
       }
     }
@@ -940,7 +940,7 @@ export class TreatmentPredictionService {
   // ==================== PREDICTION FEEDBACK ====================
 
   async createFeedback(
-    feedback: Omit<PredictionFeedback, 'id' | 'created_at'>
+    feedback: Omit<PredictionFeedback, 'id' | 'created_at'>,
   ) {
     const { data, error } = await this.supabase
       .from('prediction_feedback')
@@ -974,7 +974,7 @@ export class TreatmentPredictionService {
   // ==================== MODEL TRAINING ====================
 
   async startModelTraining(
-    request: TrainingRequest
+    request: TrainingRequest,
   ): Promise<TrainingResponse> {
     // Create new model record
     const newModel = await this.createModel({
@@ -1056,7 +1056,7 @@ export class TreatmentPredictionService {
       outcome_distribution: {
         success: data.filter((p) => p.predicted_outcome === 'success').length,
         partial_success: data.filter(
-          (p) => p.predicted_outcome === 'partial_success'
+          (p) => p.predicted_outcome === 'partial_success',
         ).length,
         failure: data.filter((p) => p.predicted_outcome === 'failure').length,
       },
@@ -1065,10 +1065,10 @@ export class TreatmentPredictionService {
           acc[p.treatment_type] = (acc[p.treatment_type] || 0) + 1;
           return acc;
         },
-        {} as Record<string, number>
+        {} as Record<string, number>,
       ),
       model_accuracy: this.calculateOverallAccuracy(
-        data.filter((p) => p.accuracy_validated)
+        data.filter((p) => p.accuracy_validated),
       ),
     };
 

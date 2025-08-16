@@ -45,7 +45,7 @@ export class LGPDEncryptionService {
       salt,
       LGPDEncryptionService.DEFAULT_CONFIG.iterations,
       LGPDEncryptionService.DEFAULT_CONFIG.keySize,
-      'sha512'
+      'sha512',
     );
   }
 
@@ -55,16 +55,16 @@ export class LGPDEncryptionService {
   static encrypt(data: string, masterKey: string): EncryptedData {
     try {
       const salt = crypto.randomBytes(
-        LGPDEncryptionService.DEFAULT_CONFIG.saltSize
+        LGPDEncryptionService.DEFAULT_CONFIG.saltSize,
       );
       const iv = crypto.randomBytes(
-        LGPDEncryptionService.DEFAULT_CONFIG.ivSize
+        LGPDEncryptionService.DEFAULT_CONFIG.ivSize,
       );
       const key = LGPDEncryptionService.getEncryptionKey(masterKey, salt);
 
       const cipher = crypto.createCipher(
         LGPDEncryptionService.DEFAULT_CONFIG.algorithm,
-        key
+        key,
       );
       cipher.setAAD(Buffer.from('lgpd-compliance'));
 
@@ -135,7 +135,7 @@ export class LGPDConsentService {
   constructor() {
     this.supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
     );
   }
 
@@ -148,7 +148,7 @@ export class LGPDConsentService {
     legalBasis: LegalBasis,
     purpose: string,
     description: string,
-    expiresAt?: Date
+    expiresAt?: Date,
   ): Promise<ConsentRecord> {
     const consentRecord: Omit<ConsentRecord, 'id' | 'createdAt' | 'updatedAt'> =
       {
@@ -198,7 +198,7 @@ export class LGPDConsentService {
    */
   async withdrawConsent(
     context: LGPDContext,
-    consentId: string
+    consentId: string,
   ): Promise<ConsentRecord> {
     const { data, error } = await this.supabase
       .from('lgpd_consent_records')
@@ -240,7 +240,7 @@ export class LGPDConsentService {
   async checkConsent(
     userId: string,
     clinicId: string,
-    consentType: ConsentType
+    consentType: ConsentType,
   ): Promise<ConsentCheckResult> {
     const { data, error } = await this.supabase
       .from('lgpd_consent_records')
@@ -282,7 +282,7 @@ export class LGPDConsentService {
    */
   async getUserConsents(
     userId: string,
-    clinicId: string
+    clinicId: string,
   ): Promise<ConsentRecord[]> {
     const { data, error } = await this.supabase
       .from('lgpd_consent_records')
@@ -302,7 +302,7 @@ export class LGPDConsentService {
    * Registra evento de auditoria
    */
   private async logAuditEvent(
-    auditLog: Omit<LGPDAuditLog, 'id' | 'createdAt'>
+    auditLog: Omit<LGPDAuditLog, 'id' | 'createdAt'>,
   ): Promise<void> {
     const { error } = await this.supabase
       .from('lgpd_audit_logs')
@@ -323,7 +323,7 @@ export class LGPDDataSubjectService {
   constructor() {
     this.supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
     );
     this.encryptionService = LGPDEncryptionService;
   }
@@ -334,7 +334,7 @@ export class LGPDDataSubjectService {
   async submitRequest(
     context: LGPDContext,
     requestType: DataSubjectRight,
-    description: string
+    description: string,
   ): Promise<DataSubjectRequest> {
     const request: Omit<DataSubjectRequest, 'id' | 'createdAt' | 'updatedAt'> =
       {
@@ -364,7 +364,7 @@ export class LGPDDataSubjectService {
    */
   async processErasureRequest(
     requestId: string,
-    processorId: string
+    processorId: string,
   ): Promise<void> {
     // Buscar solicitação
     const { data: request, error: requestError } = await this.supabase
@@ -398,7 +398,7 @@ export class LGPDDataSubjectService {
    */
   private async anonymizeUserData(
     userId: string,
-    clinicId: string
+    clinicId: string,
   ): Promise<void> {
     const anonymizedData = {
       name: 'ANONIMIZADO',
@@ -434,7 +434,7 @@ export class LGPDDataSubjectService {
    */
   async exportUserData(
     userId: string,
-    clinicId: string
+    clinicId: string,
   ): Promise<Record<string, any>> {
     const userData: Record<string, any> = {};
 
@@ -517,7 +517,7 @@ export class LGPDComplianceService {
       processed: boolean;
       auditLogged: boolean;
       consentVerified: boolean;
-    }
+    },
   ): LGPDApiResponse<T> {
     return {
       success: true,

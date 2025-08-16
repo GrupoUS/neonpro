@@ -75,7 +75,7 @@ function getClientIP(request: NextRequest): string {
 
 async function validateReportAccess(
   supabase: any,
-  userId: string
+  userId: string,
 ): Promise<boolean> {
   try {
     const { data: profile } = await supabase
@@ -164,7 +164,7 @@ async function generateReportData(supabase: any, filters: any) {
 async function createReportRecord(
   supabase: any,
   reportData: any,
-  userId: string
+  userId: string,
 ) {
   const { data: report, error } = await supabase
     .from('audit_reports')
@@ -205,7 +205,7 @@ export async function GET(request: NextRequest) {
     if (!rateLimitResult.success) {
       return NextResponse.json(
         { error: 'Rate limit exceeded' },
-        { status: 429 }
+        { status: 429 },
       );
     }
 
@@ -235,7 +235,7 @@ export async function GET(request: NextRequest) {
 
       return NextResponse.json(
         { error: 'Insufficient permissions' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -250,7 +250,7 @@ export async function GET(request: NextRequest) {
           error: 'Invalid query parameters',
           details: validationResult.error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -326,7 +326,7 @@ export async function GET(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -348,7 +348,7 @@ export async function POST(request: NextRequest) {
     if (!rateLimitResult.success) {
       return NextResponse.json(
         { error: 'Rate limit exceeded' },
-        { status: 429 }
+        { status: 429 },
       );
     }
 
@@ -377,7 +377,7 @@ export async function POST(request: NextRequest) {
 
       return NextResponse.json(
         { error: 'CSRF validation failed' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -386,7 +386,7 @@ export async function POST(request: NextRequest) {
     if (!hasAccess) {
       return NextResponse.json(
         { error: 'Insufficient permissions' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -400,7 +400,7 @@ export async function POST(request: NextRequest) {
           error: 'Invalid request body',
           details: validationResult.error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -413,7 +413,7 @@ export async function POST(request: NextRequest) {
     if (startDate >= endDate) {
       return NextResponse.json(
         { error: 'Start date must be before end date' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -422,7 +422,7 @@ export async function POST(request: NextRequest) {
     if (endDate.getTime() - startDate.getTime() > maxPeriod) {
       return NextResponse.json(
         { error: 'Report period cannot exceed 1 year' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -479,7 +479,7 @@ export async function POST(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

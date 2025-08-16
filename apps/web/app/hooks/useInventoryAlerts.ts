@@ -73,7 +73,7 @@ export function useInventoryAlerts(): UseAlertsResult {
 
   const unreadCount = alerts.filter((alert) => !alert.is_read).length;
   const criticalCount = alerts.filter(
-    (alert) => alert.severity === 'critical' || alert.severity === 'high'
+    (alert) => alert.severity === 'critical' || alert.severity === 'high',
   ).length;
 
   // =====================================================================================
@@ -107,7 +107,7 @@ export function useInventoryAlerts(): UseAlertsResult {
       }
 
       const response = await fetch(
-        `/api/inventory/alerts?${searchParams.toString()}`
+        `/api/inventory/alerts?${searchParams.toString()}`,
       );
 
       if (!response.ok) {
@@ -140,8 +140,8 @@ export function useInventoryAlerts(): UseAlertsResult {
 
       setAlerts((prev) =>
         prev.map((alert) =>
-          alert.id === alertId ? { ...alert, is_read: true } : alert
-        )
+          alert.id === alertId ? { ...alert, is_read: true } : alert,
+        ),
       );
 
       toast.success('Alert marked as read');
@@ -224,7 +224,7 @@ export function useInventoryAlerts(): UseAlertsResult {
         toast.error('Failed to create alert');
       }
     },
-    []
+    [],
   );
 
   // =====================================================================================

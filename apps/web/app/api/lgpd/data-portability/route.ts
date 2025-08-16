@@ -43,7 +43,7 @@ const PortabilityRequestSchema = z.object({
         'communications',
         'preferences',
         'all',
-      ])
+      ]),
     )
     .default(['all']),
   includeMetadata: z.boolean().default(true),
@@ -290,7 +290,7 @@ async function extractPortabilityData(
   userId: string,
   categories: string[],
   format: string,
-  standard: string
+  standard: string,
 ) {
   const exportData: any = {
     metadata: {
@@ -332,7 +332,7 @@ async function extractPortabilityData(
         `
         *,
         treatment_plans (*)
-      `
+      `,
       )
       .eq('patient_id', userId)
       .order('appointment_date', { ascending: false });
@@ -354,7 +354,7 @@ async function extractPortabilityData(
         `
         *,
         treatment_sessions (*)
-      `
+      `,
       )
       .eq('patient_id', userId)
       .order('start_date', { ascending: false });
@@ -390,7 +390,7 @@ async function extractPortabilityData(
         `
         *,
         payment_installments (*)
-      `
+      `,
       )
       .eq('patient_id', userId)
       .order('payment_date', { ascending: false });
@@ -467,7 +467,7 @@ function convertToCSV(data: any): string {
         csvContent += `${headers.join(',')}\n`;
         flattened.forEach((record) => {
           const values = headers.map(
-            (header) => `"${String(record[header] || '').replace(/"/g, '""')}"`
+            (header) => `"${String(record[header] || '').replace(/"/g, '""')}"`,
           );
           csvContent += `${values.join(',')}\n`;
         });
@@ -534,7 +534,7 @@ async function logPortabilityRequest(
   supabase: any,
   userId: string,
   exportData: any,
-  success: boolean
+  success: boolean,
 ) {
   try {
     await supabase.from('lgpd_portability_logs').insert([
@@ -570,7 +570,7 @@ export async function POST(request: NextRequest) {
     if (authError || !user) {
       return NextResponse.json(
         { error: 'Unauthorized. Please log in to export your data.' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -593,7 +593,7 @@ export async function POST(request: NextRequest) {
       user.id,
       categories,
       format,
-      standard
+      standard,
     );
 
     let responseData: string | object = exportData;
@@ -696,13 +696,13 @@ export async function POST(request: NextRequest) {
           error: 'Invalid request parameters',
           details: error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     return NextResponse.json(
       { error: 'Internal server error during data export' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -810,7 +810,7 @@ export async function GET(_request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

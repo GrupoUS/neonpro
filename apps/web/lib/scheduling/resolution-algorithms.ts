@@ -36,7 +36,7 @@ export class MIPOptimizationAlgorithm implements ResolutionAlgorithm {
 
   async execute(
     conflict: SchedulingConflict,
-    context: ResolutionContext
+    context: ResolutionContext,
   ): Promise<ResolutionResult> {
     const startTime = performance.now();
 
@@ -51,13 +51,13 @@ export class MIPOptimizationAlgorithm implements ResolutionAlgorithm {
       const proposedChanges = this.convertSolutionToChanges(
         solution,
         conflict,
-        context
+        context,
       );
 
       // Calculate satisfaction scores
       const satisfaction = this.calculateStakeholderSatisfaction(
         proposedChanges,
-        context
+        context,
       );
 
       const executionTime = performance.now() - startTime;
@@ -71,7 +71,7 @@ export class MIPOptimizationAlgorithm implements ResolutionAlgorithm {
         executionTimeMs: executionTime,
         explanation: `MIP optimization found ${solution.feasible ? 'optimal' : 'infeasible'} solution with ${proposedChanges.length} changes`,
         alternatives: solution.alternativeSolutions?.map((alt) =>
-          this.convertAlternativeToResult(alt, conflict, context)
+          this.convertAlternativeToResult(alt, conflict, context),
         ),
       };
     } catch (error) {
@@ -80,7 +80,7 @@ export class MIPOptimizationAlgorithm implements ResolutionAlgorithm {
         this.type,
         conflict.id,
         performance.now() - startTime,
-        { originalError: error }
+        { originalError: error },
       );
     }
   }
@@ -94,14 +94,14 @@ export class MIPOptimizationAlgorithm implements ResolutionAlgorithm {
 
   calculateSuccessProbability(
     conflict: SchedulingConflict,
-    context: ResolutionContext
+    context: ResolutionContext,
   ): number {
     // Higher success probability for resource conflicts, lower for complex scenarios
     const baseProbability = 0.85;
     const severityPenalty = (conflict.severityLevel - 1) * 0.05;
     const constraintPenalty = Math.max(
       0,
-      (context.systemConstraints.resourceCapacityLimits.length - 5) * 0.02
+      (context.systemConstraints.resourceCapacityLimits.length - 5) * 0.02,
     );
 
     return Math.max(0.3, baseProbability - severityPenalty - constraintPenalty);
@@ -109,7 +109,7 @@ export class MIPOptimizationAlgorithm implements ResolutionAlgorithm {
 
   private formulateOptimizationProblem(
     conflict: SchedulingConflict,
-    context: ResolutionContext
+    context: ResolutionContext,
   ) {
     // Simplified MIP formulation
     return {
@@ -122,7 +122,7 @@ export class MIPOptimizationAlgorithm implements ResolutionAlgorithm {
 
   private defineDecisionVariables(
     _conflict: SchedulingConflict,
-    context: ResolutionContext
+    context: ResolutionContext,
   ) {
     // Binary variables for appointment slot assignments
     const variables = new Map();
@@ -144,7 +144,7 @@ export class MIPOptimizationAlgorithm implements ResolutionAlgorithm {
 
   private defineConstraints(
     _conflict: SchedulingConflict,
-    context: ResolutionContext
+    context: ResolutionContext,
   ) {
     const constraints = [];
 
@@ -155,7 +155,7 @@ export class MIPOptimizationAlgorithm implements ResolutionAlgorithm {
         value: 1,
         variables: Array.from(
           { length: 48 },
-          (_, slot) => `x_${appointment.id}_${slot}`
+          (_, slot) => `x_${appointment.id}_${slot}`,
         ),
       };
       constraints.push(constraint);
@@ -170,7 +170,7 @@ export class MIPOptimizationAlgorithm implements ResolutionAlgorithm {
 
   private defineObjectiveFunction(
     _conflict: SchedulingConflict,
-    _context: ResolutionContext
+    _context: ResolutionContext,
   ) {
     // Minimize total disruption and maximize satisfaction
     return {
@@ -185,7 +185,7 @@ export class MIPOptimizationAlgorithm implements ResolutionAlgorithm {
 
   private defineVariableBounds(
     _conflict: SchedulingConflict,
-    _context: ResolutionContext
+    _context: ResolutionContext,
   ) {
     // All binary variables bounded between 0 and 1
     return { lower: 0, upper: 1 };
@@ -207,7 +207,7 @@ export class MIPOptimizationAlgorithm implements ResolutionAlgorithm {
   private convertSolutionToChanges(
     solution: any,
     _conflict: SchedulingConflict,
-    context: ResolutionContext
+    context: ResolutionContext,
   ): AppointmentChange[] {
     const changes: AppointmentChange[] = [];
 
@@ -219,12 +219,12 @@ export class MIPOptimizationAlgorithm implements ResolutionAlgorithm {
         const slot = Number.parseInt(slotStr, 10);
 
         const originalAppointment = context.availableAppointments.find(
-          (a) => a.id === appointmentId
+          (a) => a.id === appointmentId,
         );
         if (originalAppointment) {
           const newTime = this.slotToDateTime(
             slot,
-            originalAppointment.appointmentDate
+            originalAppointment.appointmentDate,
           );
 
           changes.push({
@@ -236,7 +236,7 @@ export class MIPOptimizationAlgorithm implements ResolutionAlgorithm {
               stakeholder: 'patient',
               severity: this.calculateChangeImpact(
                 originalAppointment.appointmentDate,
-                newTime
+                newTime,
               ),
               description: `Rescheduled from ${originalAppointment.appointmentDate} to ${newTime}`,
             },
@@ -262,7 +262,7 @@ export class MIPOptimizationAlgorithm implements ResolutionAlgorithm {
 
   private calculateStakeholderSatisfaction(
     changes: AppointmentChange[],
-    _context: ResolutionContext
+    _context: ResolutionContext,
   ): StakeholderSatisfaction {
     // Calculate satisfaction based on change impact and preferences
     let patientSatisfaction = 1.0;
@@ -293,7 +293,7 @@ export class MIPOptimizationAlgorithm implements ResolutionAlgorithm {
   }
 
   private determineResolutionMethod(
-    changes: AppointmentChange[]
+    changes: AppointmentChange[],
   ): ResolutionMethod {
     if (changes.length === 0) {
       return 'manual_override';
@@ -310,7 +310,7 @@ export class MIPOptimizationAlgorithm implements ResolutionAlgorithm {
   private convertAlternativeToResult(
     _alternative: any,
     _conflict: SchedulingConflict,
-    _context: ResolutionContext
+    _context: ResolutionContext,
   ): ResolutionResult {
     // Convert alternative solution to ResolutionResult format
     return {
@@ -345,7 +345,7 @@ export class ConstraintProgrammingAlgorithm implements ResolutionAlgorithm {
 
   async execute(
     conflict: SchedulingConflict,
-    context: ResolutionContext
+    context: ResolutionContext,
   ): Promise<ResolutionResult> {
     const startTime = performance.now();
 
@@ -359,11 +359,11 @@ export class ConstraintProgrammingAlgorithm implements ResolutionAlgorithm {
       const proposedChanges = this.extractChangesFromSolution(
         solution,
         conflict,
-        context
+        context,
       );
       const satisfaction = this.calculateStakeholderSatisfaction(
         proposedChanges,
-        context
+        context,
       );
 
       return {
@@ -381,7 +381,7 @@ export class ConstraintProgrammingAlgorithm implements ResolutionAlgorithm {
         this.type,
         conflict.id,
         performance.now() - startTime,
-        { originalError: error }
+        { originalError: error },
       );
     }
   }
@@ -392,20 +392,20 @@ export class ConstraintProgrammingAlgorithm implements ResolutionAlgorithm {
 
   calculateSuccessProbability(
     _conflict: SchedulingConflict,
-    context: ResolutionContext
+    context: ResolutionContext,
   ): number {
     // CP works well for heavily constrained problems
     const baseProb = 0.82;
     const constraintBonus = Math.min(
       0.1,
-      context.systemConstraints.resourceCapacityLimits.length * 0.02
+      context.systemConstraints.resourceCapacityLimits.length * 0.02,
     );
     return Math.min(0.95, baseProb + constraintBonus);
   }
 
   private defineConstraintSatisfactionProblem(
     conflict: SchedulingConflict,
-    context: ResolutionContext
+    context: ResolutionContext,
   ) {
     return {
       variables: this.defineCSPVariables(conflict, context),
@@ -416,7 +416,7 @@ export class ConstraintProgrammingAlgorithm implements ResolutionAlgorithm {
 
   private defineCSPVariables(
     _conflict: SchedulingConflict,
-    context: ResolutionContext
+    context: ResolutionContext,
   ) {
     // Variables for appointment scheduling
     const variables = new Set();
@@ -432,7 +432,7 @@ export class ConstraintProgrammingAlgorithm implements ResolutionAlgorithm {
 
   private defineVariableDomains(
     _conflict: SchedulingConflict,
-    context: ResolutionContext
+    context: ResolutionContext,
   ) {
     const domains = new Map();
 
@@ -440,7 +440,7 @@ export class ConstraintProgrammingAlgorithm implements ResolutionAlgorithm {
       // Time slot domains (0-47 for 30-minute slots)
       domains.set(
         `start_${appointment.id}`,
-        Array.from({ length: 48 }, (_, i) => i)
+        Array.from({ length: 48 }, (_, i) => i),
       );
 
       // Professional domains
@@ -458,7 +458,7 @@ export class ConstraintProgrammingAlgorithm implements ResolutionAlgorithm {
 
   private defineCSPConstraints(
     _conflict: SchedulingConflict,
-    context: ResolutionContext
+    context: ResolutionContext,
   ) {
     const constraints = [];
 
@@ -502,7 +502,7 @@ export class ConstraintProgrammingAlgorithm implements ResolutionAlgorithm {
   private extractChangesFromSolution(
     solution: any,
     _conflict: SchedulingConflict,
-    context: ResolutionContext
+    context: ResolutionContext,
   ): AppointmentChange[] {
     const changes: AppointmentChange[] = [];
 
@@ -511,13 +511,13 @@ export class ConstraintProgrammingAlgorithm implements ResolutionAlgorithm {
         if (variable.startsWith('start_')) {
           const appointmentId = variable.split('_')[1];
           const originalAppointment = context.availableAppointments.find(
-            (a) => a.id === appointmentId
+            (a) => a.id === appointmentId,
           );
 
           if (originalAppointment) {
             const newTime = this.slotToDateTime(
               value,
-              originalAppointment.appointmentDate
+              originalAppointment.appointmentDate,
             );
 
             changes.push({
@@ -531,8 +531,8 @@ export class ConstraintProgrammingAlgorithm implements ResolutionAlgorithm {
                   5,
                   Math.abs(
                     value -
-                      this.dateTimeToSlot(originalAppointment.appointmentDate)
-                  )
+                      this.dateTimeToSlot(originalAppointment.appointmentDate),
+                  ),
                 ),
                 description: 'CP rescheduling to resolve conflict',
               },
@@ -557,7 +557,7 @@ export class ConstraintProgrammingAlgorithm implements ResolutionAlgorithm {
 
   private calculateStakeholderSatisfaction(
     changes: AppointmentChange[],
-    _context: ResolutionContext
+    _context: ResolutionContext,
   ): StakeholderSatisfaction {
     // Simplified satisfaction calculation
     const impactFactor = changes.length > 0 ? 0.85 : 1.0;
@@ -587,7 +587,7 @@ export class GeneticAlgorithmOptimizer implements ResolutionAlgorithm {
 
   async execute(
     conflict: SchedulingConflict,
-    context: ResolutionContext
+    context: ResolutionContext,
   ): Promise<ResolutionResult> {
     const startTime = performance.now();
 
@@ -599,19 +599,19 @@ export class GeneticAlgorithmOptimizer implements ResolutionAlgorithm {
       const bestSolution = await this.evolvePopulation(
         population,
         conflict,
-        context
+        context,
       );
 
       // Extract changes from best solution
       const proposedChanges = this.solutionToChanges(
         bestSolution,
         conflict,
-        context
+        context,
       );
       const satisfaction = this.evaluateFitness(
         bestSolution,
         conflict,
-        context
+        context,
       );
 
       return {
@@ -634,7 +634,7 @@ export class GeneticAlgorithmOptimizer implements ResolutionAlgorithm {
         this.type,
         conflict.id,
         performance.now() - startTime,
-        { originalError: error }
+        { originalError: error },
       );
     }
   }
@@ -645,7 +645,7 @@ export class GeneticAlgorithmOptimizer implements ResolutionAlgorithm {
 
   calculateSuccessProbability(
     _conflict: SchedulingConflict,
-    context: ResolutionContext
+    context: ResolutionContext,
   ): number {
     // GA good for complex multi-objective problems
     return 0.78 + (context.availableAppointments.length > 5 ? 0.1 : 0);
@@ -653,7 +653,7 @@ export class GeneticAlgorithmOptimizer implements ResolutionAlgorithm {
 
   private initializePopulation(
     conflict: SchedulingConflict,
-    context: ResolutionContext
+    context: ResolutionContext,
   ) {
     const population = [];
 
@@ -667,7 +667,7 @@ export class GeneticAlgorithmOptimizer implements ResolutionAlgorithm {
 
   private createRandomIndividual(
     _conflict: SchedulingConflict,
-    context: ResolutionContext
+    context: ResolutionContext,
   ) {
     const genes = new Map();
 
@@ -685,14 +685,14 @@ export class GeneticAlgorithmOptimizer implements ResolutionAlgorithm {
   private async evolvePopulation(
     population: any[],
     conflict: SchedulingConflict,
-    context: ResolutionContext
+    context: ResolutionContext,
   ) {
     // Evaluate initial fitness
     population.forEach((individual) => {
       individual.fitness = this.evaluateFitness(
         individual,
         conflict,
-        context
+        context,
       ).overall;
     });
 
@@ -705,7 +705,7 @@ export class GeneticAlgorithmOptimizer implements ResolutionAlgorithm {
       const newPopulation = this.createNextGeneration(
         population,
         conflict,
-        context
+        context,
       );
 
       // Evaluate fitness for new population
@@ -713,7 +713,7 @@ export class GeneticAlgorithmOptimizer implements ResolutionAlgorithm {
         individual.fitness = this.evaluateFitness(
           individual,
           conflict,
-          context
+          context,
         ).overall;
       });
 
@@ -722,14 +722,14 @@ export class GeneticAlgorithmOptimizer implements ResolutionAlgorithm {
 
     // Return best individual
     return population.reduce((best, current) =>
-      current.fitness > best.fitness ? current : best
+      current.fitness > best.fitness ? current : best,
     );
   }
 
   private createNextGeneration(
     population: any[],
     conflict: SchedulingConflict,
-    context: ResolutionContext
+    context: ResolutionContext,
   ) {
     const newPopulation = [];
 
@@ -755,11 +755,11 @@ export class GeneticAlgorithmOptimizer implements ResolutionAlgorithm {
     const tournament = [];
     for (let i = 0; i < tournamentSize; i++) {
       tournament.push(
-        population[Math.floor(Math.random() * population.length)]
+        population[Math.floor(Math.random() * population.length)],
       );
     }
     return tournament.reduce((best, current) =>
-      current.fitness > best.fitness ? current : best
+      current.fitness > best.fitness ? current : best,
     );
   }
 
@@ -785,7 +785,7 @@ export class GeneticAlgorithmOptimizer implements ResolutionAlgorithm {
   private mutate(
     individual: any,
     _conflict: SchedulingConflict,
-    _context: ResolutionContext
+    _context: ResolutionContext,
   ) {
     const mutated = { genes: new Map(individual.genes), fitness: 0 };
 
@@ -802,7 +802,7 @@ export class GeneticAlgorithmOptimizer implements ResolutionAlgorithm {
   private evaluateFitness(
     individual: any,
     _conflict: SchedulingConflict,
-    context: ResolutionContext
+    context: ResolutionContext,
   ): StakeholderSatisfaction {
     // Multi-objective fitness evaluation
     let conflictResolution = 1.0;
@@ -846,7 +846,7 @@ export class GeneticAlgorithmOptimizer implements ResolutionAlgorithm {
   private solutionToChanges(
     solution: any,
     _conflict: SchedulingConflict,
-    context: ResolutionContext
+    context: ResolutionContext,
   ): AppointmentChange[] {
     const changes: AppointmentChange[] = [];
 
@@ -857,7 +857,7 @@ export class GeneticAlgorithmOptimizer implements ResolutionAlgorithm {
       if (newSlot !== originalSlot) {
         const newTime = this.slotToDateTime(
           newSlot,
-          appointment.appointmentDate
+          appointment.appointmentDate,
         );
 
         changes.push({
@@ -903,7 +903,7 @@ export class RuleBasedAlgorithm implements ResolutionAlgorithm {
 
   async execute(
     conflict: SchedulingConflict,
-    context: ResolutionContext
+    context: ResolutionContext,
   ): Promise<ResolutionResult> {
     const startTime = performance.now();
 
@@ -926,7 +926,7 @@ export class RuleBasedAlgorithm implements ResolutionAlgorithm {
         this.type,
         conflict.id,
         performance.now() - startTime,
-        { originalError: error }
+        { originalError: error },
       );
     }
   }
@@ -937,7 +937,7 @@ export class RuleBasedAlgorithm implements ResolutionAlgorithm {
 
   calculateSuccessProbability(
     conflict: SchedulingConflict,
-    _context: ResolutionContext
+    _context: ResolutionContext,
   ): number {
     // Higher success for simple conflicts
     return conflict.severityLevel <= 2 ? 0.9 : 0.6;
@@ -945,16 +945,16 @@ export class RuleBasedAlgorithm implements ResolutionAlgorithm {
 
   private applyResolutionRules(
     conflict: SchedulingConflict,
-    context: ResolutionContext
+    context: ResolutionContext,
   ): AppointmentChange[] {
     const changes: AppointmentChange[] = [];
 
     // Rule 1: Reschedule lower priority appointment first
     const appointment1 = context.availableAppointments.find(
-      (a) => a.id === conflict.appointmentAId
+      (a) => a.id === conflict.appointmentAId,
     );
     const appointment2 = context.availableAppointments.find(
-      (a) => a.id === conflict.appointmentBId
+      (a) => a.id === conflict.appointmentBId,
     );
 
     if (!(appointment1 && appointment2)) {
@@ -979,7 +979,7 @@ export class RuleBasedAlgorithm implements ResolutionAlgorithm {
           stakeholder: 'patient',
           severity: this.calculateImpactSeverity(
             targetAppointment.appointmentDate,
-            newTime
+            newTime,
           ),
           description: 'Rule-based automatic rescheduling',
         },
@@ -991,7 +991,7 @@ export class RuleBasedAlgorithm implements ResolutionAlgorithm {
 
   private findNextAvailableSlot(
     appointment: EnhancedAppointment,
-    context: ResolutionContext
+    context: ResolutionContext,
   ): Date | null {
     const baseTime = new Date(appointment.appointmentDate);
     const maxHours = this.parameters.maxReschedulingHours;
@@ -1012,7 +1012,7 @@ export class RuleBasedAlgorithm implements ResolutionAlgorithm {
   private isSlotAvailable(
     time: Date,
     appointment: EnhancedAppointment,
-    context: ResolutionContext
+    context: ResolutionContext,
   ): boolean {
     // Check against business hours
     const hour = time.getHours();
@@ -1052,7 +1052,7 @@ export class RuleBasedAlgorithm implements ResolutionAlgorithm {
 
   private estimateSatisfaction(
     changes: AppointmentChange[],
-    _context: ResolutionContext
+    _context: ResolutionContext,
   ): StakeholderSatisfaction {
     if (changes.length === 0) {
       return { patient: 0.5, professional: 0.5, clinic: 0.5, overall: 0.5 };
@@ -1071,7 +1071,7 @@ export class RuleBasedAlgorithm implements ResolutionAlgorithm {
   }
 
   private determineResolutionMethod(
-    changes: AppointmentChange[]
+    changes: AppointmentChange[],
   ): ResolutionMethod {
     if (changes.length === 0) {
       return 'manual_override';
@@ -1106,7 +1106,7 @@ export class ResolutionAlgorithmFactory {
 
   recommendStrategy(
     conflict: SchedulingConflict,
-    context: ResolutionContext
+    context: ResolutionContext,
   ): StrategyType {
     // Simple recommendation logic - would be ML-powered in production
     if (conflict.severityLevel <= 2) {

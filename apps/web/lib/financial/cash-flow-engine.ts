@@ -170,10 +170,10 @@ export class CashFlowEngine {
 
       // Calculate changes and trends
       const yesterdayData = historicalData.find(
-        (d) => d.date === yesterday.toISOString().split('T')[0]
+        (d) => d.date === yesterday.toISOString().split('T')[0],
       );
       const weekAgoData = historicalData.find(
-        (d) => d.date === weekAgo.toISOString().split('T')[0]
+        (d) => d.date === weekAgo.toISOString().split('T')[0],
       );
       const monthAgoData = historicalData[0];
 
@@ -197,7 +197,7 @@ export class CashFlowEngine {
       const avgDailyOutflow =
         historicalData.reduce(
           (sum, d) => sum + Math.abs(Math.min(d.net_cash_flow, 0)),
-          0
+          0,
         ) / historicalData.length;
       const runwayDays =
         avgDailyOutflow > 0
@@ -363,13 +363,13 @@ export class CashFlowEngine {
     const investing =
       expenses
         ?.filter(
-          (e) => e.category === 'equipment' || e.category === 'technology'
+          (e) => e.category === 'equipment' || e.category === 'technology',
         )
         .reduce((sum, e) => sum + e.amount, 0) || 0;
     const financing =
       expenses
         ?.filter(
-          (e) => e.category === 'loan_payment' || e.category === 'interest'
+          (e) => e.category === 'loan_payment' || e.category === 'interest',
         )
         .reduce((sum, e) => sum + e.amount, 0) || 0;
 
@@ -395,7 +395,7 @@ export class CashFlowEngine {
    */
   private async projectCashFlow(
     clinicId: string,
-    days: number
+    days: number,
   ): Promise<number> {
     try {
       // Get historical average daily cash flow
@@ -426,7 +426,7 @@ export class CashFlowEngine {
    */
   async getCashFlowMetrics(
     clinicId: string,
-    days = 30
+    days = 30,
   ): Promise<CashFlowMetrics> {
     try {
       const endDate = new Date();
@@ -463,7 +463,7 @@ export class CashFlowEngine {
       const variance =
         dailyChanges.reduce(
           (sum, val) => sum + (val - avgDailyChange) ** 2,
-          0
+          0,
         ) / dailyChanges.length;
       const weeklyVolatility = Math.sqrt(variance) * Math.sqrt(7); // Annualized to weekly
 

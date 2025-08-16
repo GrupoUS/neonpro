@@ -81,7 +81,7 @@ export async function GET(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error while fetching security events' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -98,7 +98,7 @@ export async function POST(request: NextRequest) {
           error:
             'Session ID, event type, severity, and description are required',
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -124,7 +124,7 @@ export async function POST(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error during security event creation' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

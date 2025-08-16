@@ -78,7 +78,7 @@ export function AppointmentCancellation({
 
   // Check if selected reason is emergency
   const selectedReasonData = CANCELLATION_REASONS.find(
-    (r) => r.value === selectedReason
+    (r) => r.value === selectedReason,
   );
   const isEmergencyReason = selectedReasonData?.emergency;
 
@@ -130,7 +130,7 @@ export function AppointmentCancellation({
 
   const { date, time } = formatAppointmentDateTime(
     appointment.appointment_date,
-    appointment.appointment_time
+    appointment.appointment_time,
   );
 
   return (

@@ -31,7 +31,7 @@ export async function GET(request: NextRequest) {
     if (!(profile && ['admin', 'manager', 'staff'].includes(profile.role))) {
       return NextResponse.json(
         { error: 'Acesso negado: permissões insuficientes' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -46,7 +46,7 @@ export async function GET(request: NextRequest) {
         quickAccessData = await systemIntegrationManager.getQuickAccessPatients(
           'recent',
           user.id,
-          limit
+          limit,
         );
         break;
 
@@ -54,7 +54,7 @@ export async function GET(request: NextRequest) {
         quickAccessData = await systemIntegrationManager.getQuickAccessPatients(
           'favorites',
           user.id,
-          limit
+          limit,
         );
         break;
 
@@ -62,7 +62,7 @@ export async function GET(request: NextRequest) {
         quickAccessData = await systemIntegrationManager.getQuickAccessPatients(
           'high-risk',
           user.id,
-          limit
+          limit,
         );
         break;
 
@@ -70,7 +70,7 @@ export async function GET(request: NextRequest) {
         quickAccessData = await systemIntegrationManager.getQuickAccessPatients(
           'upcoming-appointments',
           user.id,
-          limit
+          limit,
         );
         break;
 
@@ -78,7 +78,7 @@ export async function GET(request: NextRequest) {
         quickAccessData = await systemIntegrationManager.getQuickAccessPatients(
           'pending-verification',
           user.id,
-          limit
+          limit,
         );
         break;
 
@@ -86,14 +86,14 @@ export async function GET(request: NextRequest) {
         quickAccessData = await systemIntegrationManager.getQuickAccessPatients(
           'frequent',
           user.id,
-          limit
+          limit,
         );
         break;
 
       default:
         return NextResponse.json(
           { error: 'Tipo de lista inválido' },
-          { status: 400 }
+          { status: 400 },
         );
     }
 
@@ -133,7 +133,7 @@ export async function GET(request: NextRequest) {
         error: 'Erro interno do servidor',
         details: error instanceof Error ? error.message : 'Erro desconhecido',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -164,7 +164,7 @@ export async function POST(request: NextRequest) {
     if (!(profile && ['admin', 'manager', 'staff'].includes(profile.role))) {
       return NextResponse.json(
         { error: 'Acesso negado: permissões insuficientes' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -175,14 +175,14 @@ export async function POST(request: NextRequest) {
     if (!(patientId && action)) {
       return NextResponse.json(
         { error: 'Campos obrigatórios: patientId, action' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     if (!['add', 'remove'].includes(action)) {
       return NextResponse.json(
         { error: 'Ação inválida: deve ser "add" ou "remove"' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -196,7 +196,7 @@ export async function POST(request: NextRequest) {
     if (patientError || !patient) {
       return NextResponse.json(
         { error: 'Paciente não encontrado' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -261,7 +261,7 @@ export async function POST(request: NextRequest) {
         error: 'Erro interno do servidor',
         details: error instanceof Error ? error.message : 'Erro desconhecido',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

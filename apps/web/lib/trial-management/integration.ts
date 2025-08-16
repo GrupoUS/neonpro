@@ -24,7 +24,7 @@ export class TrialAnalyticsIntegration {
       campaign?: string;
       feature?: string;
       amount?: number;
-    }
+    },
   ) {
     await this.analytics.trackConversion({
       userId: trial.userId,
@@ -94,7 +94,7 @@ export class TrialAnalyticsIntegration {
       trialId: string;
       action: 'opened' | 'clicked' | 'converted' | 'ignored';
       value?: number;
-    }
+    },
   ) {
     await this.analytics.trackEvent({
       eventType: 'campaign_outcome',
@@ -121,7 +121,7 @@ export class TrialAnalyticsIntegration {
     const prediction = await this.trialManager.predictConversion(trialId);
     const journey = await this.trialManager.getUserJourney(trialId);
     const _analyticsData = await this.analytics.getUserAnalytics(
-      journey.userId
+      journey.userId,
     );
 
     return {
@@ -156,11 +156,11 @@ export class TrialAnalyticsIntegration {
       trends: {
         conversionTrend: this.calculateTrend(
           daily.conversionRate,
-          weekly.conversionRate
+          weekly.conversionRate,
         ),
         trialVolumeTrend: this.calculateTrend(
           daily.totalTrials,
-          weekly.totalTrials
+          weekly.totalTrials,
         ),
         engagementTrend: await this.calculateEngagementTrend(last7d),
       },
@@ -171,14 +171,14 @@ export class TrialAnalyticsIntegration {
   // Helper methods
   private calculateTrialDays(trial: Trial): number {
     return Math.floor(
-      (Date.now() - trial.startDate.getTime()) / (1000 * 60 * 60 * 24)
+      (Date.now() - trial.startDate.getTime()) / (1000 * 60 * 60 * 24),
     );
   }
 
   private async updateCampaignMetrics(
     _campaignId: string,
     _trial: Trial,
-    _action: string
+    _action: string,
   ) {
     // Implementation would update campaign performance metrics
     // This would integrate with the campaigns system
@@ -188,7 +188,8 @@ export class TrialAnalyticsIntegration {
     return {
       engagementScore: this.calculateEngagementScore(journey.events),
       criticalEvents: journey.events.filter(
-        (e) => e.type === 'feature_discovered' || e.type === 'milestone_reached'
+        (e) =>
+          e.type === 'feature_discovered' || e.type === 'milestone_reached',
       ),
       timeToValue: this.calculateTimeToValue(journey),
       dropOffPoints: this.identifyDropOffPoints(journey),
@@ -221,7 +222,7 @@ export class TrialAnalyticsIntegration {
 
   private calculateTimeToValue(journey: UserJourney): number {
     const firstValueEvent = journey.events.find(
-      (e) => e.type === 'feature_used' || e.type === 'milestone_reached'
+      (e) => e.type === 'feature_used' || e.type === 'milestone_reached',
     );
 
     if (!firstValueEvent) {
@@ -234,7 +235,7 @@ export class TrialAnalyticsIntegration {
   private identifyDropOffPoints(journey: UserJourney): string[] {
     const dropOffs: string[] = [];
     const events = journey.events.sort(
-      (a, b) => a.timestamp.getTime() - b.timestamp.getTime()
+      (a, b) => a.timestamp.getTime() - b.timestamp.getTime(),
     );
 
     for (let i = 1; i < events.length; i++) {

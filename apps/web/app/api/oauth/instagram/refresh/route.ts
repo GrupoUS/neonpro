@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
     if (!session) {
       return NextResponse.json(
         { error: 'Authentication required' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -29,7 +29,7 @@ export async function POST(request: NextRequest) {
     if (!accountId) {
       return NextResponse.json(
         { error: 'Account ID is required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -46,7 +46,7 @@ export async function POST(request: NextRequest) {
     if (accountError || !account) {
       return NextResponse.json(
         { error: 'Instagram account not found or not accessible' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -61,7 +61,7 @@ export async function POST(request: NextRequest) {
 
     // Encrypt new tokens
     const newEncryptedAccessToken = TokenEncryptionService.encryptToken(
-      newTokens.accessToken
+      newTokens.accessToken,
     );
 
     // Update account with new tokens
@@ -103,7 +103,7 @@ export async function POST(request: NextRequest) {
         error: 'Failed to refresh Instagram tokens',
         details: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -122,7 +122,7 @@ export async function GET(request: NextRequest) {
     if (!session) {
       return NextResponse.json(
         { error: 'Authentication required' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -132,7 +132,7 @@ export async function GET(request: NextRequest) {
     if (!accountId) {
       return NextResponse.json(
         { error: 'Account ID is required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -149,7 +149,7 @@ export async function GET(request: NextRequest) {
     if (error || !account) {
       return NextResponse.json(
         { error: 'Instagram account not found' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -170,7 +170,7 @@ export async function GET(request: NextRequest) {
         error: 'Failed to check Instagram token status',
         details: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

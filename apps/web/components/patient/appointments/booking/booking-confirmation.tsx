@@ -108,7 +108,7 @@ export function BookingConfirmation({
   const handleConfirm = async () => {
     if (!agreedToTerms) {
       setConfirmationError(
-        'Você deve aceitar os termos e condições para prosseguir.'
+        'Você deve aceitar os termos e condições para prosseguir.',
       );
       return;
     }
@@ -127,7 +127,7 @@ export function BookingConfirmation({
 
   const handleNotificationChange = (
     key: keyof NotificationPreferences,
-    value: boolean
+    value: boolean,
   ) => {
     setNotificationPrefs((prev) => ({
       ...prev,
@@ -299,7 +299,7 @@ export function BookingConfirmation({
                     onCheckedChange={(checked) =>
                       handleNotificationChange(
                         'emailConfirmation',
-                        checked as boolean
+                        checked as boolean,
                       )
                     }
                   />
@@ -318,7 +318,7 @@ export function BookingConfirmation({
                     onCheckedChange={(checked) =>
                       handleNotificationChange(
                         'smsConfirmation',
-                        checked as boolean
+                        checked as boolean,
                       )
                     }
                   />
@@ -346,7 +346,7 @@ export function BookingConfirmation({
                     onCheckedChange={(checked) =>
                       handleNotificationChange(
                         'emailReminder',
-                        checked as boolean
+                        checked as boolean,
                       )
                     }
                   />
@@ -365,7 +365,7 @@ export function BookingConfirmation({
                     onCheckedChange={(checked) =>
                       handleNotificationChange(
                         'smsReminder',
-                        checked as boolean
+                        checked as boolean,
                       )
                     }
                   />

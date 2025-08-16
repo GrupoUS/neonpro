@@ -105,18 +105,18 @@ class AISchedulingCore {
    * Analyzes multiple factors to recommend optimal appointment slots
    */
   async generateSchedulingRecommendations(
-    criteria: SchedulingCriteria
+    criteria: SchedulingCriteria,
   ): Promise<SchedulingRecommendation[]> {
     try {
       // 1. Load patient preferences and history
       const patientPreferences = await this.loadPatientPreferences(
-        criteria.patientId
+        criteria.patientId,
       );
 
       // 2. Get available time slots
       const availableSlots = await this.getAvailableTimeSlots(
         criteria.treatmentId,
-        criteria.maxWaitDays
+        criteria.maxWaitDays,
       );
 
       // 3. Load staff efficiency patterns
@@ -129,9 +129,9 @@ class AISchedulingCore {
             slot,
             criteria,
             patientPreferences,
-            staffEfficiencyData
-          )
-        )
+            staffEfficiencyData,
+          ),
+        ),
       );
 
       // 5. Sort by optimization score and return top recommendations
@@ -155,7 +155,7 @@ class AISchedulingCore {
     slot: TimeSlot,
     criteria: SchedulingCriteria,
     patientPreferences: PatientPreference,
-    staffEfficiency: Map<string, StaffEfficiencyPattern[]>
+    staffEfficiency: Map<string, StaffEfficiencyPattern[]>,
   ): Promise<SchedulingRecommendation> {
     const scores = {
       staffEfficiency: 0,
@@ -173,49 +173,49 @@ class AISchedulingCore {
     if (staffPattern) {
       scores.staffEfficiency = this.calculateStaffEfficiencyScore(
         slot,
-        staffPattern
+        staffPattern,
       );
       reasoning.push(
-        `Staff efficiency: ${(scores.staffEfficiency * 100).toFixed(1)}%`
+        `Staff efficiency: ${(scores.staffEfficiency * 100).toFixed(1)}%`,
       );
     }
 
     // 2. Patient Preference Score
     scores.patientPreference = this.calculatePatientPreferenceScore(
       slot,
-      patientPreferences
+      patientPreferences,
     );
     reasoning.push(
-      `Patient preference match: ${(scores.patientPreference * 100).toFixed(1)}%`
+      `Patient preference match: ${(scores.patientPreference * 100).toFixed(1)}%`,
     );
 
     // 3. Revenue Optimization Score
     scores.revenueOptimization = await this.calculateRevenueScore(
       slot,
-      criteria
+      criteria,
     );
     reasoning.push(
-      `Revenue optimization: ${(scores.revenueOptimization * 100).toFixed(1)}%`
+      `Revenue optimization: ${(scores.revenueOptimization * 100).toFixed(1)}%`,
     );
 
     // 4. Treatment Sequencing Score
     if (criteria.isFollowUp || criteria.packageId) {
       scores.treatmentSequencing = await this.calculateSequencingScore(
         slot,
-        criteria
+        criteria,
       );
       reasoning.push(
-        `Treatment sequencing: ${(scores.treatmentSequencing * 100).toFixed(1)}%`
+        `Treatment sequencing: ${(scores.treatmentSequencing * 100).toFixed(1)}%`,
       );
     }
 
     // 5. Workload Balance Score
     scores.workloadBalance = await this.calculateWorkloadBalanceScore(
       slot,
-      staffId
+      staffId,
     );
     reasoning.push(
-      `Workload balance: ${(scores.workloadBalance * 100).toFixed(1)}%`
+      `Workload balance: ${(scores.workloadBalance * 100).toFixed(1)}%`,
     );
 
     // Calculate weighted final score
@@ -230,7 +230,7 @@ class AISchedulingCore {
     const confidence = this.calculateConfidence(
       scores,
       patientPreferences,
-      staffPattern
+      staffPattern,
     );
 
     // Estimate revenue and satisfaction
@@ -238,7 +238,7 @@ class AISchedulingCore {
     const patientSatisfactionPrediction = this.predictPatientSatisfaction(
       slot,
       patientPreferences,
-      scores
+      scores,
     );
 
     return {
@@ -257,7 +257,7 @@ class AISchedulingCore {
    * Load patient preferences from historical data and learning algorithms
    */
   private async loadPatientPreferences(
-    patientId: string
+    patientId: string,
   ): Promise<PatientPreference> {
     // Check cache first
     if (this.patientPreferenceCache.has(patientId)) {
@@ -292,7 +292,7 @@ class AISchedulingCore {
    * Learn patient preferences from historical appointment data
    */
   private async learnPatientPreferences(
-    patientId: string
+    patientId: string,
   ): Promise<PatientPreference> {
     try {
       const { data: appointments } = await this.supabase
@@ -301,7 +301,7 @@ class AISchedulingCore {
           `
           *,
           appointment_feedback(*)
-        `
+        `,
         )
         .eq('patient_id', patientId)
         .order('created_at', { ascending: false })
@@ -342,7 +342,7 @@ class AISchedulingCore {
    */
   private async getAvailableTimeSlots(
     treatmentId: string,
-    maxWaitDays: number
+    maxWaitDays: number,
   ): Promise<TimeSlot[]> {
     try {
       const endDate = new Date();
@@ -388,7 +388,7 @@ class AISchedulingCore {
             checkDate,
             dayHours,
             treatment.duration_minutes,
-            existingAppointments || []
+            existingAppointments || [],
           );
           availableSlots.push(...slots);
         }
@@ -407,7 +407,7 @@ class AISchedulingCore {
     date: Date,
     dayHours: any,
     durationMinutes: number,
-    existingAppointments: any[]
+    existingAppointments: any[],
   ): TimeSlot[] {
     const slots: TimeSlot[] = [];
     const slotInterval = 30; // 30-minute intervals
@@ -456,7 +456,7 @@ class AISchedulingCore {
   // Helper methods for scoring calculations
   private calculateStaffEfficiencyScore(
     _slot: TimeSlot,
-    pattern: StaffEfficiencyPattern
+    pattern: StaffEfficiencyPattern,
   ): number {
     // Implementation for staff efficiency scoring
     const hourScore = pattern.efficiencyScore;
@@ -466,7 +466,7 @@ class AISchedulingCore {
 
   private calculatePatientPreferenceScore(
     slot: TimeSlot,
-    preferences: PatientPreference
+    preferences: PatientPreference,
   ): number {
     let score = 0;
 
@@ -492,7 +492,7 @@ class AISchedulingCore {
 
   private async calculateRevenueScore(
     _slot: TimeSlot,
-    _criteria: SchedulingCriteria
+    _criteria: SchedulingCriteria,
   ): Promise<number> {
     // Implementation for revenue optimization scoring
     // Consider peak hours, treatment pricing, package deals, etc.
@@ -501,7 +501,7 @@ class AISchedulingCore {
 
   private async calculateSequencingScore(
     _slot: TimeSlot,
-    _criteria: SchedulingCriteria
+    _criteria: SchedulingCriteria,
   ): Promise<number> {
     // Implementation for treatment sequencing optimization
     return 0.8; // Placeholder
@@ -509,7 +509,7 @@ class AISchedulingCore {
 
   private async calculateWorkloadBalanceScore(
     _slot: TimeSlot,
-    _staffId: string
+    _staffId: string,
   ): Promise<number> {
     // Implementation for workload balance scoring
     return 0.6; // Placeholder
@@ -518,7 +518,7 @@ class AISchedulingCore {
   private calculateConfidence(
     _scores: any,
     patientPreferences: PatientPreference,
-    staffPattern?: StaffEfficiencyPattern
+    staffPattern?: StaffEfficiencyPattern,
   ): number {
     // Calculate confidence based on data quality and score consistency
     let confidence = 0.5; // Base confidence
@@ -541,7 +541,7 @@ class AISchedulingCore {
 
   private async estimateSlotRevenue(
     _slot: TimeSlot,
-    _criteria: SchedulingCriteria
+    _criteria: SchedulingCriteria,
   ): Promise<number> {
     // Implementation for revenue estimation
     return 150; // Placeholder
@@ -550,7 +550,7 @@ class AISchedulingCore {
   private predictPatientSatisfaction(
     _slot: TimeSlot,
     _preferences: PatientPreference,
-    scores: any
+    scores: any,
   ): number {
     // Implementation for satisfaction prediction
     return scores.patientPreference * 0.6 + scores.staffEfficiency * 0.4;
@@ -559,7 +559,7 @@ class AISchedulingCore {
   // Additional helper methods
   private async findOptimalStaff(
     _slot: TimeSlot,
-    _treatmentId: string
+    _treatmentId: string,
   ): Promise<string> {
     // Implementation to find the best staff member for the slot
     return 'staff-id-placeholder';
@@ -581,11 +581,11 @@ class AISchedulingCore {
   }
 
   private analyzeTimePreferences(
-    appointments: any[]
+    appointments: any[],
   ): { start: string; end: string }[] {
     // Analyze preferred time ranges
     const hours = appointments.map((apt) =>
-      new Date(apt.start_time).getHours()
+      new Date(apt.start_time).getHours(),
     );
     const avgHour = hours.reduce((sum, hour) => sum + hour, 0) / hours.length;
 
@@ -621,7 +621,7 @@ class AISchedulingCore {
   private analyzeCancellationPattern(appointments: any[]): number {
     // Analyze cancellation rate
     const cancelled = appointments.filter(
-      (apt) => apt.status === 'cancelled'
+      (apt) => apt.status === 'cancelled',
     ).length;
     return appointments.length > 0 ? cancelled / appointments.length : 0;
   }
@@ -660,7 +660,7 @@ class AISchedulingCore {
 
   private async logRecommendation(
     criteria: SchedulingCriteria,
-    recommendations: SchedulingRecommendation[]
+    recommendations: SchedulingRecommendation[],
   ): Promise<void> {
     // Log recommendations for learning and improvement
     try {

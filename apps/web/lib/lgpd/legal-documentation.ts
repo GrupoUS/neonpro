@@ -363,7 +363,7 @@ export class LegalDocumentationManager extends EventEmitter {
       approvalRequired: true,
       versionControl: true,
       notificationEnabled: true,
-    }
+    },
   ) {
     super();
     this.setMaxListeners(50);
@@ -397,7 +397,7 @@ export class LegalDocumentationManager extends EventEmitter {
       });
     } catch (error) {
       throw new Error(
-        `Failed to initialize legal documentation system: ${error}`
+        `Failed to initialize legal documentation system: ${error}`,
       );
     }
   }
@@ -406,7 +406,7 @@ export class LegalDocumentationManager extends EventEmitter {
    * Create document template
    */
   async createTemplate(
-    templateData: Omit<DocumentTemplate, 'id' | 'createdAt' | 'updatedAt'>
+    templateData: Omit<DocumentTemplate, 'id' | 'createdAt' | 'updatedAt'>,
   ): Promise<DocumentTemplate> {
     if (!this.isInitialized) {
       await this.initialize();
@@ -444,7 +444,7 @@ export class LegalDocumentationManager extends EventEmitter {
    */
   async generateDocument(
     request: DocumentGenerationRequest,
-    createdBy: string
+    createdBy: string,
   ): Promise<LegalDocument> {
     if (!this.isInitialized) {
       await this.initialize();
@@ -479,7 +479,7 @@ export class LegalDocumentationManager extends EventEmitter {
         framework: template.framework,
         requirements: [],
         nextReview: new Date(
-          Date.now() + this.config.reviewFrequencyDays * 24 * 60 * 60 * 1000
+          Date.now() + this.config.reviewFrequencyDays * 24 * 60 * 60 * 1000,
         ),
       },
       createdBy,
@@ -492,7 +492,7 @@ export class LegalDocumentationManager extends EventEmitter {
 
     // Set up compliance requirements
     document.compliance.requirements = this.generateComplianceRequirements(
-      template.framework
+      template.framework,
     );
 
     // Set up approval workflow if required
@@ -523,7 +523,7 @@ export class LegalDocumentationManager extends EventEmitter {
   private async generateDocumentContent(
     document: LegalDocument,
     template: DocumentTemplate,
-    options?: DocumentGenerationRequest['options']
+    options?: DocumentGenerationRequest['options'],
   ): Promise<void> {
     let html = '';
     let markdown = '';
@@ -533,7 +533,7 @@ export class LegalDocumentationManager extends EventEmitter {
       const headerHtml = this.processTemplate(
         template.content.header,
         document.data.variables,
-        document.data
+        document.data,
       );
       html += headerHtml;
       markdown += this.htmlToMarkdown(headerHtml);
@@ -548,10 +548,10 @@ export class LegalDocumentationManager extends EventEmitter {
 
     // Process sections
     for (const section of template.structure.sections.sort(
-      (a, b) => a.order - b.order
+      (a, b) => a.order - b.order,
     )) {
       const sectionContent = template.content.sections.find(
-        (s) => s.sectionId === section.id
+        (s) => s.sectionId === section.id,
       );
       if (!sectionContent) {
         continue;
@@ -564,7 +564,7 @@ export class LegalDocumentationManager extends EventEmitter {
       const processedContent = this.processTemplate(
         sectionContent.content,
         document.data.variables,
-        document.data
+        document.data,
       );
       sectionHtml += processedContent;
       sectionMarkdown += this.htmlToMarkdown(processedContent);
@@ -576,13 +576,13 @@ export class LegalDocumentationManager extends EventEmitter {
             this.evaluateCondition(
               conditional.condition,
               document.data.variables,
-              document.data
+              document.data,
             )
           ) {
             const conditionalHtml = this.processTemplate(
               conditional.content,
               document.data.variables,
-              document.data
+              document.data,
             );
             sectionHtml += conditionalHtml;
             sectionMarkdown += this.htmlToMarkdown(conditionalHtml);
@@ -602,7 +602,7 @@ export class LegalDocumentationManager extends EventEmitter {
       const footerHtml = this.processTemplate(
         template.content.footer,
         document.data.variables,
-        document.data
+        document.data,
       );
       html += footerHtml;
       markdown += this.htmlToMarkdown(footerHtml);
@@ -642,7 +642,7 @@ export class LegalDocumentationManager extends EventEmitter {
   private processTemplate(
     template: string,
     variables: Record<string, any>,
-    context: LegalDocument['data']
+    context: LegalDocument['data'],
   ): string {
     let processed = template;
 
@@ -656,42 +656,42 @@ export class LegalDocumentationManager extends EventEmitter {
     const orgInfo = context.organizationInfo;
     processed = processed.replace(
       /{{\s*organization\.name\s*}}/g,
-      orgInfo.name || ''
+      orgInfo.name || '',
     );
     processed = processed.replace(
       /{{\s*organization\.legalName\s*}}/g,
-      orgInfo.legalName || ''
+      orgInfo.legalName || '',
     );
     processed = processed.replace(
       /{{\s*organization\.cnpj\s*}}/g,
-      orgInfo.cnpj || ''
+      orgInfo.cnpj || '',
     );
     processed = processed.replace(
       /{{\s*organization\.email\s*}}/g,
-      orgInfo.contact.email || ''
+      orgInfo.contact.email || '',
     );
     processed = processed.replace(
       /{{\s*organization\.phone\s*}}/g,
-      orgInfo.contact.phone || ''
+      orgInfo.contact.phone || '',
     );
     processed = processed.replace(
       /{{\s*organization\.website\s*}}/g,
-      orgInfo.contact.website || ''
+      orgInfo.contact.website || '',
     );
 
     // Replace DPO info if available
     if (orgInfo.dpo) {
       processed = processed.replace(
         /{{\s*dpo\.name\s*}}/g,
-        orgInfo.dpo.name || ''
+        orgInfo.dpo.name || '',
       );
       processed = processed.replace(
         /{{\s*dpo\.email\s*}}/g,
-        orgInfo.dpo.email || ''
+        orgInfo.dpo.email || '',
       );
       processed = processed.replace(
         /{{\s*dpo\.phone\s*}}/g,
-        orgInfo.dpo.phone || ''
+        orgInfo.dpo.phone || '',
       );
     }
 
@@ -699,23 +699,23 @@ export class LegalDocumentationManager extends EventEmitter {
     const address = orgInfo.address;
     processed = processed.replace(
       /{{\s*address\.street\s*}}/g,
-      address.street || ''
+      address.street || '',
     );
     processed = processed.replace(
       /{{\s*address\.city\s*}}/g,
-      address.city || ''
+      address.city || '',
     );
     processed = processed.replace(
       /{{\s*address\.state\s*}}/g,
-      address.state || ''
+      address.state || '',
     );
     processed = processed.replace(
       /{{\s*address\.zipCode\s*}}/g,
-      address.zipCode || ''
+      address.zipCode || '',
     );
     processed = processed.replace(
       /{{\s*address\.country\s*}}/g,
-      address.country || ''
+      address.country || '',
     );
 
     // Replace processing activities if available
@@ -723,12 +723,12 @@ export class LegalDocumentationManager extends EventEmitter {
       const activitiesList = context.processingActivities
         .map(
           (activity) =>
-            `<li><strong>${activity.name}</strong>: ${activity.purpose}</li>`
+            `<li><strong>${activity.name}</strong>: ${activity.purpose}</li>`,
         )
         .join('\n');
       processed = processed.replace(
         /{{\s*processingActivities\s*}}/g,
-        `<ul>\n${activitiesList}\n</ul>`
+        `<ul>\n${activitiesList}\n</ul>`,
       );
     }
 
@@ -736,11 +736,11 @@ export class LegalDocumentationManager extends EventEmitter {
     const now = new Date();
     processed = processed.replace(
       /{{\s*currentDate\s*}}/g,
-      now.toLocaleDateString('pt-BR')
+      now.toLocaleDateString('pt-BR'),
     );
     processed = processed.replace(
       /{{\s*currentYear\s*}}/g,
-      now.getFullYear().toString()
+      now.getFullYear().toString(),
     );
 
     return processed;
@@ -752,7 +752,7 @@ export class LegalDocumentationManager extends EventEmitter {
   private evaluateCondition(
     condition: string,
     variables: Record<string, any>,
-    context: LegalDocument['data']
+    context: LegalDocument['data'],
   ): boolean {
     try {
       // Create safe evaluation context
@@ -768,7 +768,7 @@ export class LegalDocumentationManager extends EventEmitter {
       // Simple condition evaluation (in production, use a safer expression evaluator)
       const func = new Function(
         ...Object.keys(evalContext),
-        `return ${condition}`
+        `return ${condition}`,
       );
       return func(...Object.values(evalContext));
     } catch (_error) {
@@ -880,7 +880,7 @@ ${orgInfo.dpo ? `<p><strong>Encarregado de Dados:</strong> ${orgInfo.dpo.name}</
    * Generate compliance requirements
    */
   private generateComplianceRequirements(
-    framework: LegalFramework
+    framework: LegalFramework,
   ): LegalDocument['compliance']['requirements'] {
     const requirements: Record<
       LegalFramework,
@@ -958,7 +958,7 @@ ${orgInfo.dpo ? `<p><strong>Encarregado de Dados:</strong> ${orgInfo.dpo.name}</
    * Get default reviewers for document type
    */
   private getDefaultReviewers(
-    type: DocumentType
+    type: DocumentType,
   ): LegalDocument['workflow']['reviewers'] {
     const reviewerMap: Record<
       DocumentType,
@@ -1019,7 +1019,7 @@ ${orgInfo.dpo ? `<p><strong>Encarregado de Dados:</strong> ${orgInfo.dpo.name}</
    */
   async generateComplianceReport(
     reportData: Omit<ComplianceReport, 'id' | 'generatedAt' | 'generatedBy'>,
-    generatedBy: string
+    generatedBy: string,
   ): Promise<ComplianceReport> {
     if (!this.isInitialized) {
       await this.initialize();
@@ -1056,7 +1056,7 @@ ${orgInfo.dpo ? `<p><strong>Encarregado de Dados:</strong> ${orgInfo.dpo.name}</
     // Check if default templates already exist
     const existingTemplates = Array.from(this.templates.values());
     const hasPrivacyPolicy = existingTemplates.some(
-      (t) => t.type === DocumentType.PRIVACY_POLICY
+      (t) => t.type === DocumentType.PRIVACY_POLICY,
     );
 
     if (!hasPrivacyPolicy) {
@@ -1244,7 +1244,7 @@ ${orgInfo.dpo ? `<p><strong>Encarregado de Dados:</strong> ${orgInfo.dpo.name}</
    */
   private validateGenerationRequest(
     request: DocumentGenerationRequest,
-    template: DocumentTemplate
+    template: DocumentTemplate,
   ): void {
     // Check required variables
     for (const variable of template.structure.variables) {
@@ -1271,7 +1271,7 @@ ${orgInfo.dpo ? `<p><strong>Encarregado de Dados:</strong> ${orgInfo.dpo.name}</
       async () => {
         await this.checkDueReviews();
       },
-      24 * 60 * 60 * 1000
+      24 * 60 * 60 * 1000,
     ); // Daily check
   }
 
@@ -1323,13 +1323,13 @@ ${orgInfo.dpo ? `<p><strong>Encarregado de Dados:</strong> ${orgInfo.dpo.name}</
       }
       if (filters.framework) {
         documents = documents.filter(
-          (d) => d.compliance.framework === filters.framework
+          (d) => d.compliance.framework === filters.framework,
         );
       }
     }
 
     return documents.sort(
-      (a, b) => b.updatedAt.getTime() - a.updatedAt.getTime()
+      (a, b) => b.updatedAt.getTime() - a.updatedAt.getTime(),
     );
   }
 
@@ -1356,7 +1356,7 @@ ${orgInfo.dpo ? `<p><strong>Encarregado de Dados:</strong> ${orgInfo.dpo.name}</
     }
 
     return templates.sort(
-      (a, b) => b.updatedAt.getTime() - a.updatedAt.getTime()
+      (a, b) => b.updatedAt.getTime() - a.updatedAt.getTime(),
     );
   }
 
@@ -1381,13 +1381,13 @@ ${orgInfo.dpo ? `<p><strong>Encarregado de Dados:</strong> ${orgInfo.dpo.name}</
         reports = reports.filter(
           (r) =>
             r.generatedAt >= filters.dateRange?.start &&
-            r.generatedAt <= filters.dateRange?.end
+            r.generatedAt <= filters.dateRange?.end,
         );
       }
     }
 
     return reports.sort(
-      (a, b) => b.generatedAt.getTime() - a.generatedAt.getTime()
+      (a, b) => b.generatedAt.getTime() - a.generatedAt.getTime(),
     );
   }
 
@@ -1446,7 +1446,7 @@ ${orgInfo.dpo ? `<p><strong>Encarregado de Dados:</strong> ${orgInfo.dpo.name}</
   private logActivity(
     _actor: string,
     _action: string,
-    _details: Record<string, any>
+    _details: Record<string, any>,
   ): void {}
 
   /**
@@ -1486,7 +1486,7 @@ ${orgInfo.dpo ? `<p><strong>Encarregado de Dados:</strong> ${orgInfo.dpo.name}</
     const dueReviews = Array.from(this.documents.values()).filter(
       (d) =>
         d.compliance.nextReview <= new Date() &&
-        d.status === DocumentStatus.PUBLISHED
+        d.status === DocumentStatus.PUBLISHED,
     );
 
     if (dueReviews.length > 0) {

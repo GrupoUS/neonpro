@@ -191,7 +191,7 @@ class LGPDComplianceManager {
     type: ConsentType,
     purpose: DataProcessingPurpose,
     granted: boolean,
-    version = '1.0'
+    version = '1.0',
   ): Promise<ConsentRecord> {
     try {
       const consent: ConsentRecord = {
@@ -223,7 +223,7 @@ class LGPDComplianceManager {
           purpose,
           version,
         },
-        userId
+        userId,
       );
 
       return consent;
@@ -238,7 +238,7 @@ class LGPDComplianceManager {
   async processDataSubjectRequest(
     userId: string,
     type: LGPDRights,
-    description?: string
+    description?: string,
   ): Promise<DataSubjectRequest> {
     try {
       const request: DataSubjectRequest = {
@@ -263,7 +263,7 @@ class LGPDComplianceManager {
           requestType: type,
           description,
         },
-        userId
+        userId,
       );
 
       // Process request based on type
@@ -322,7 +322,7 @@ class LGPDComplianceManager {
    */
   async updatePrivacySettings(
     userId: string,
-    settings: Partial<PrivacySettings>
+    settings: Partial<PrivacySettings>,
   ): Promise<void> {
     try {
       const currentSettings = await this.getPrivacySettings(userId);
@@ -335,7 +335,7 @@ class LGPDComplianceManager {
       // Store settings
       localStorage.setItem(
         `privacy_settings_${userId}`,
-        JSON.stringify(updatedSettings)
+        JSON.stringify(updatedSettings),
       );
 
       // Record consent changes
@@ -346,7 +346,7 @@ class LGPDComplianceManager {
               userId,
               type as ConsentType,
               this.getDefaultPurpose(type as ConsentType),
-              granted
+              granted,
             );
           }
         }
@@ -359,7 +359,7 @@ class LGPDComplianceManager {
           action: 'privacy_settings_updated',
           changes: Object.keys(settings),
         },
-        userId
+        userId,
       );
     } catch (_error) {
       throw new Error('Falha ao atualizar configurações de privacidade');
@@ -389,7 +389,7 @@ class LGPDComplianceManager {
           action: 'data_export',
           dataTypes: Object.keys(userData),
         },
-        userId
+        userId,
       );
 
       return userData;
@@ -417,7 +417,7 @@ class LGPDComplianceManager {
           action: retainMedical ? 'data_anonymized' : 'data_deleted',
           retainMedical,
         },
-        userId
+        userId,
       );
     } catch (_error) {
       throw new Error('Falha ao excluir dados do usuário');
@@ -467,7 +467,7 @@ class LGPDComplianceManager {
   // Private methods
 
   private async executeDataSubjectRequest(
-    request: DataSubjectRequest
+    request: DataSubjectRequest,
   ): Promise<void> {
     try {
       let response = '';
@@ -561,7 +561,7 @@ class LGPDComplianceManager {
   }
 
   private async storeDataSubjectRequest(
-    request: DataSubjectRequest
+    request: DataSubjectRequest,
   ): Promise<void> {
     const requests = this.getStoredRequests();
     requests.push(request);
@@ -569,7 +569,7 @@ class LGPDComplianceManager {
   }
 
   private async updateDataSubjectRequest(
-    request: DataSubjectRequest
+    request: DataSubjectRequest,
   ): Promise<void> {
     const requests = this.getStoredRequests();
     const index = requests.findIndex((r) => r.id === request.id);
@@ -676,26 +676,26 @@ export async function recordConsent(
   userId: string,
   type: ConsentType,
   purpose: DataProcessingPurpose,
-  granted: boolean
+  granted: boolean,
 ): Promise<ConsentRecord> {
   return lgpdComplianceManager.recordConsent(userId, type, purpose, granted);
 }
 
 export async function requestDataAccess(
-  userId: string
+  userId: string,
 ): Promise<DataSubjectRequest> {
   return lgpdComplianceManager.processDataSubjectRequest(
     userId,
-    LGPDRights.ACCESS
+    LGPDRights.ACCESS,
   );
 }
 
 export async function requestDataDeletion(
-  userId: string
+  userId: string,
 ): Promise<DataSubjectRequest> {
   return lgpdComplianceManager.processDataSubjectRequest(
     userId,
-    LGPDRights.DELETION
+    LGPDRights.DELETION,
   );
 }
 
@@ -704,14 +704,14 @@ export async function exportUserData(userId: string): Promise<any> {
 }
 
 export async function getPrivacySettings(
-  userId: string
+  userId: string,
 ): Promise<PrivacySettings> {
   return lgpdComplianceManager.getPrivacySettings(userId);
 }
 
 export async function updatePrivacySettings(
   userId: string,
-  settings: Partial<PrivacySettings>
+  settings: Partial<PrivacySettings>,
 ): Promise<void> {
   return lgpdComplianceManager.updatePrivacySettings(userId, settings);
 }

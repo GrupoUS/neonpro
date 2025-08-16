@@ -51,7 +51,7 @@ export class MarketingROIService {
   async createMarketingCampaign(
     clinicId: string,
     campaignData: CreateMarketingCampaignRequest,
-    userId: string
+    userId: string,
   ): Promise<MarketingCampaign> {
     try {
       const campaign: Partial<MarketingCampaign> = {
@@ -103,7 +103,7 @@ export class MarketingROIService {
    */
   async updateCampaignMetrics(
     campaignId: string,
-    metrics: UpdateCampaignMetricsRequest
+    metrics: UpdateCampaignMetricsRequest,
   ): Promise<MarketingCampaign> {
     try {
       // First get current campaign data
@@ -149,7 +149,7 @@ export class MarketingROIService {
    */
   private async calculateCampaignROI(
     campaign: MarketingCampaign,
-    newMetrics: UpdateCampaignMetricsRequest
+    newMetrics: UpdateCampaignMetricsRequest,
   ): Promise<Partial<MarketingCampaign>> {
     const actualSpend = newMetrics.actual_spend ?? campaign.actual_spend;
     const revenueGenerated =
@@ -172,7 +172,7 @@ export class MarketingROIService {
     // Estimate LTV for new customers (simplified - in real implementation, use historical data)
     const estimatedLTV = await this.estimateCustomerLTV(
       campaign.clinic_id,
-      campaign.channel
+      campaign.channel,
     );
     const ltvCacRatio = cac > 0 ? estimatedLTV / cac : 0;
 
@@ -199,7 +199,7 @@ export class MarketingROIService {
     clinicId: string,
     filters?: MarketingROIFilters,
     page = 1,
-    limit = 20
+    limit = 20,
   ): Promise<{ campaigns: MarketingCampaign[]; total: number }> {
     try {
       let query = this.supabase
@@ -259,14 +259,14 @@ export class MarketingROIService {
     clinicId: string,
     treatmentId: string,
     periodStart: Date,
-    periodEnd: Date
+    periodEnd: Date,
   ): Promise<TreatmentROI> {
     try {
       // Get treatment data and costs
       const treatmentData = await this.getTreatmentFinancialData(
         treatmentId,
         periodStart,
-        periodEnd
+        periodEnd,
       );
 
       // Calculate costs
@@ -295,15 +295,15 @@ export class MarketingROIService {
       const clinicAverageROI = await this.getClinicAverageROI(
         clinicId,
         periodStart,
-        periodEnd
+        periodEnd,
       );
       const industryBenchmarkROI = await this.getIndustryBenchmarkROI(
-        treatmentData.treatment_name
+        treatmentData.treatment_name,
       );
       const ranking = await this.getTreatmentRanking(
         clinicId,
         treatmentId,
-        roiPercentage
+        roiPercentage,
       );
 
       // Calculate optimization potential
@@ -353,7 +353,7 @@ export class MarketingROIService {
    */
   async getTreatmentProfitabilityAnalysis(
     clinicId: string,
-    filters?: TreatmentROIFilters
+    filters?: TreatmentROIFilters,
   ): Promise<TreatmentROI[]> {
     try {
       let query = this.supabase
@@ -403,7 +403,7 @@ export class MarketingROIService {
     clinicId: string,
     channel: MarketingChannel,
     periodStart: Date,
-    periodEnd: Date
+    periodEnd: Date,
   ): Promise<CustomerAcquisitionCost> {
     try {
       // Get marketing spend for the channel and period
@@ -442,7 +442,7 @@ export class MarketingROIService {
         clinicId,
         channel,
         previousPeriodStart,
-        previousPeriodEnd
+        previousPeriodEnd,
       );
       const cacChangePercentage =
         previousCAC > 0 ? ((cac - previousCAC) / previousCAC) * 100 : 0;
@@ -451,7 +451,7 @@ export class MarketingROIService {
       const clinicAverageCAC = await this.getClinicAverageCAC(
         clinicId,
         periodStart,
-        periodEnd
+        periodEnd,
       );
       const industryBenchmarkCAC = await this.getIndustryBenchmarkCAC(channel);
 
@@ -460,7 +460,7 @@ export class MarketingROIService {
         clinicId,
         channel,
         periodStart,
-        periodEnd
+        periodEnd,
       );
 
       const cacAnalysis: CustomerAcquisitionCost = {
@@ -507,7 +507,7 @@ export class MarketingROIService {
   async calculateLTV(
     clinicId: string,
     patientId?: string,
-    acquisitionChannel?: MarketingChannel
+    acquisitionChannel?: MarketingChannel,
   ): Promise<CustomerLifetimeValue> {
     try {
       let ltvData;
@@ -519,14 +519,14 @@ export class MarketingROIService {
         // Calculate aggregate LTV for channel or clinic
         ltvData = await this.calculateAggregateLTV(
           clinicId,
-          acquisitionChannel
+          acquisitionChannel,
         );
       }
 
       // Get CAC for LTV/CAC ratio calculation
       const cac = await this.getCAC(
         clinicId,
-        acquisitionChannel || MarketingChannel.DIRECT
+        acquisitionChannel || MarketingChannel.DIRECT,
       );
       const ltvCacRatio = cac > 0 ? ltvData.lifetime_value / cac : 0;
       const paybackPeriodMonths =
@@ -538,7 +538,7 @@ export class MarketingROIService {
       const predictiveMetrics = await this.calculateLTVPredictiveMetrics(
         clinicId,
         patientId,
-        acquisitionChannel
+        acquisitionChannel,
       );
 
       const ltvAnalysis: CustomerLifetimeValue = {
@@ -580,7 +580,7 @@ export class MarketingROIService {
   async getCACLTVAnalysis(
     clinicId: string,
     periodStart: Date,
-    periodEnd: Date
+    periodEnd: Date,
   ): Promise<{
     cac_analysis: CustomerAcquisitionCost[];
     ltv_analysis: CustomerLifetimeValue[];
@@ -599,13 +599,13 @@ export class MarketingROIService {
       // Calculate CAC for all channels
       const channels = Object.values(MarketingChannel);
       const cacPromises = channels.map((channel) =>
-        this.calculateCAC(clinicId, channel, periodStart, periodEnd)
+        this.calculateCAC(clinicId, channel, periodStart, periodEnd),
       );
       const cacAnalysis = await Promise.all(cacPromises);
 
       // Calculate LTV for all channels
       const ltvPromises = channels.map((channel) =>
-        this.calculateLTV(clinicId, undefined, channel)
+        this.calculateLTV(clinicId, undefined, channel),
       );
       const ltvAnalysis = await Promise.all(ltvPromises);
 
@@ -633,7 +633,7 @@ export class MarketingROIService {
       const paybackAnalysis = await this.calculatePaybackAnalysis(
         clinicId,
         periodStart,
-        periodEnd
+        periodEnd,
       );
 
       return {
@@ -681,7 +681,7 @@ export class MarketingROIService {
    */
   async createROIAlert(
     clinicId: string,
-    alertData: CreateROIAlertRequest
+    alertData: CreateROIAlertRequest,
   ): Promise<ROIAlert> {
     try {
       const alert: Partial<ROIAlert> = {
@@ -741,7 +741,7 @@ export class MarketingROIService {
    */
   async generateOptimizationRecommendations(
     clinicId: string,
-    userId: string
+    userId: string,
   ): Promise<OptimizationRecommendation[]> {
     try {
       const recommendations: OptimizationRecommendation[] = [];
@@ -749,28 +749,28 @@ export class MarketingROIService {
       // Analyze campaign performance for optimization opportunities
       const campaignRecommendations = await this.analyzeCampaignOptimizations(
         clinicId,
-        userId
+        userId,
       );
       recommendations.push(...campaignRecommendations);
 
       // Analyze treatment profitability for optimization opportunities
       const treatmentRecommendations = await this.analyzeTreatmentOptimizations(
         clinicId,
-        userId
+        userId,
       );
       recommendations.push(...treatmentRecommendations);
 
       // Analyze budget allocation for optimization opportunities
       const budgetRecommendations = await this.analyzeBudgetOptimizations(
         clinicId,
-        userId
+        userId,
       );
       recommendations.push(...budgetRecommendations);
 
       // Analyze channel mix for optimization opportunities
       const channelRecommendations = await this.analyzeChannelOptimizations(
         clinicId,
-        userId
+        userId,
       );
       recommendations.push(...channelRecommendations);
 
@@ -793,7 +793,7 @@ export class MarketingROIService {
   async createOptimizationRecommendation(
     clinicId: string,
     recommendationData: CreateOptimizationRecommendationRequest,
-    userId: string
+    userId: string,
   ): Promise<OptimizationRecommendation> {
     try {
       const recommendation: Partial<OptimizationRecommendation> = {
@@ -830,7 +830,7 @@ export class MarketingROIService {
   async getROIDashboardMetrics(
     clinicId: string,
     periodStart: Date,
-    periodEnd: Date
+    periodEnd: Date,
   ): Promise<ROIDashboardMetrics> {
     try {
       // Get campaign performance data
@@ -876,14 +876,14 @@ export class MarketingROIService {
       const channelPerformance = await this.getChannelPerformance(
         clinicId,
         periodStart,
-        periodEnd
+        periodEnd,
       );
 
       // CAC & LTV metrics
       const cacLtvMetrics = await this.getCACLTVMetrics(
         clinicId,
         periodStart,
-        periodEnd
+        periodEnd,
       );
 
       // Treatment profitability
@@ -891,7 +891,7 @@ export class MarketingROIService {
         await this.getTreatmentProfitabilityMetrics(
           clinicId,
           periodStart,
-          periodEnd
+          periodEnd,
         );
 
       // Alerts and opportunities
@@ -938,7 +938,7 @@ export class MarketingROIService {
         optimization_opportunities_count: optimizationOpportunities.length,
         potential_roi_improvement: optimizationOpportunities.reduce(
           (sum, o) => sum + o.roi_improvement_percentage,
-          0
+          0,
         ),
         roi_trend_percentage: trends.roiTrend,
         cac_trend_percentage: trends.cacTrend,
@@ -959,7 +959,7 @@ export class MarketingROIService {
     clinicId: string,
     periodStart: Date,
     periodEnd: Date,
-    _granularity: 'daily' | 'weekly' | 'monthly' = 'daily'
+    _granularity: 'daily' | 'weekly' | 'monthly' = 'daily',
   ): Promise<ROITrendData[]> {
     try {
       // Implementation would depend on your specific requirements
@@ -993,21 +993,21 @@ export class MarketingROIService {
     entityId: string | undefined,
     forecastPeriodStart: Date,
     forecastPeriodEnd: Date,
-    userId: string
+    userId: string,
   ): Promise<ROIForecast> {
     try {
       // Get historical data for forecasting
       const historicalData = await this.getHistoricalROIData(
         clinicId,
         forecastType,
-        entityId
+        entityId,
       );
 
       // Apply forecasting algorithms (simplified here - in real implementation, use ML models)
       const forecast = await this.applyForecastingModel(
         historicalData,
         forecastPeriodStart,
-        forecastPeriodEnd
+        forecastPeriodEnd,
       );
 
       const roiForecast: ROIForecast = {
@@ -1060,7 +1060,7 @@ export class MarketingROIService {
    */
   private async estimateCustomerLTV(
     _clinicId: string,
-    channel: MarketingChannel
+    channel: MarketingChannel,
   ): Promise<number> {
     // This would use historical data to estimate LTV
     // For now, return a default value based on channel
@@ -1085,7 +1085,7 @@ export class MarketingROIService {
   private async createCampaignMonitoringRules(
     campaignId: string,
     clinicId: string,
-    userId: string
+    userId: string,
   ): Promise<void> {
     const rules = [
       {
@@ -1125,7 +1125,7 @@ export class MarketingROIService {
    */
   private async evaluateMonitoringRule(
     rule: ROIMonitoringRule,
-    campaign: MarketingCampaign
+    campaign: MarketingCampaign,
   ): Promise<boolean> {
     // Simplified evaluation logic
     if (rule.metric_type === ROIMetricType.REVENUE_ROI) {

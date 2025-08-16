@@ -72,7 +72,7 @@ export async function POST(request: NextRequest) {
     ) {
       return NextResponse.json(
         { error: 'Missing required fields' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -80,12 +80,12 @@ export async function POST(request: NextRequest) {
     const hasManagerPermission = await checkManagerPermissions(
       supabase,
       user.id,
-      clinic_id
+      clinic_id,
     );
     if (!hasManagerPermission) {
       return NextResponse.json(
         { error: 'Insufficient permissions. Manager access required.' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -108,7 +108,7 @@ export async function POST(request: NextRequest) {
     if (transactionError) {
       return NextResponse.json(
         { error: 'Failed to process override request' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -120,7 +120,7 @@ export async function POST(request: NextRequest) {
       patient_id,
       user.email || 'Unknown Manager',
       override_reason,
-      conflicts
+      conflicts,
     );
 
     const response: ConflictOverrideResponse = {
@@ -134,7 +134,7 @@ export async function POST(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -149,7 +149,7 @@ export async function GET(request: NextRequest) {
     if (!(appointmentId && clinicId)) {
       return NextResponse.json(
         { error: 'Missing appointment_id or clinic_id parameter' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -184,7 +184,7 @@ export async function GET(request: NextRequest) {
         profiles!manager_id (
           full_name
         )
-      `
+      `,
       )
       .eq('appointment_id', appointmentId)
       .order('override_timestamp', { ascending: false });
@@ -192,7 +192,7 @@ export async function GET(request: NextRequest) {
     if (error) {
       return NextResponse.json(
         { error: 'Failed to fetch override history' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -200,7 +200,7 @@ export async function GET(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -208,7 +208,7 @@ export async function GET(request: NextRequest) {
 async function checkManagerPermissions(
   supabase: any,
   userId: string,
-  clinicId: string
+  clinicId: string,
 ): Promise<boolean> {
   const { data, error } = await supabase
     .from('clinic_users')
@@ -228,7 +228,7 @@ async function checkManagerPermissions(
 async function checkClinicAccess(
   supabase: any,
   userId: string,
-  clinicId: string
+  clinicId: string,
 ): Promise<boolean> {
   const { data, error } = await supabase
     .from('clinic_users')
@@ -248,7 +248,7 @@ async function sendOverrideNotifications(
   patientId: string,
   managerEmail: string,
   overrideReason: string,
-  conflicts: any[]
+  conflicts: any[],
 ) {
   try {
     // Get appointment details for notification
@@ -267,7 +267,7 @@ async function sendOverrideNotifications(
           full_name,
           email
         )
-      `
+      `,
       )
       .eq('id', appointmentId)
       .single();

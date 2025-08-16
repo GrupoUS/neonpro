@@ -46,7 +46,7 @@ async function logJobActivity(
   supabase: any,
   activityType: string,
   stats: JobProcessingStats,
-  details?: any
+  details?: any,
 ) {
   try {
     await supabase.from('job_processing_logs').insert({
@@ -81,7 +81,7 @@ export async function GET(request: NextRequest) {
           .select('status, count(*)', { count: 'exact' })
           .gte(
             'created_at',
-            new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()
+            new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
           ); // Last 24 hours
 
         const { data: processingLogs } = await supabase
@@ -89,7 +89,7 @@ export async function GET(request: NextRequest) {
           .select('*')
           .gte(
             'created_at',
-            new Date(Date.now() - 60 * 60 * 1000).toISOString()
+            new Date(Date.now() - 60 * 60 * 1000).toISOString(),
           ) // Last hour
           .order('created_at', { ascending: false })
           .limit(10);
@@ -109,7 +109,7 @@ export async function GET(request: NextRequest) {
           .eq('status', 'failed')
           .gte(
             'created_at',
-            new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()
+            new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
           );
 
         const { data: pendingJobs } = await supabase
@@ -130,13 +130,13 @@ export async function GET(request: NextRequest) {
       default:
         return NextResponse.json(
           { error: 'Invalid action parameter' },
-          { status: 400 }
+          { status: 400 },
         );
     }
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -191,7 +191,7 @@ export async function POST(request: NextRequest) {
         await logJobActivity(
           supabase,
           'token_refresh_scheduling',
-          refreshStats
+          refreshStats,
         );
 
         return NextResponse.json({
@@ -225,7 +225,7 @@ export async function POST(request: NextRequest) {
       case 'cleanup': {
         // Cleanup old completed jobs
         const cutoffDate = new Date(
-          Date.now() - 7 * 24 * 60 * 60 * 1000
+          Date.now() - 7 * 24 * 60 * 60 * 1000,
         ).toISOString(); // 7 days ago
 
         const { data: deletedJobs, error: cleanupError } = await supabase
@@ -259,7 +259,7 @@ export async function POST(request: NextRequest) {
         // Retry failed jobs
         const { maxAge = 24 } = params; // Hours
         const retryDate = new Date(
-          Date.now() - maxAge * 60 * 60 * 1000
+          Date.now() - maxAge * 60 * 60 * 1000,
         ).toISOString();
 
         const { data: retriedJobs, error: retryError } = await supabase
@@ -300,7 +300,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     return NextResponse.json(
       { error: error.message || 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -373,7 +373,7 @@ export async function PUT(request: NextRequest) {
   } catch (error) {
     return NextResponse.json(
       { error: error.message || 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -412,7 +412,7 @@ export async function DELETE(request: NextRequest) {
   } catch (error) {
     return NextResponse.json(
       { error: error.message || 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

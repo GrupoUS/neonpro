@@ -66,7 +66,7 @@ export async function GET(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to generate marketing insights' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -88,7 +88,7 @@ export async function POST(request: NextRequest) {
     if (!requestData.timeframe) {
       return NextResponse.json(
         { error: 'Timeframe is required for detailed insights generation' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -134,7 +134,7 @@ export async function POST(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to generate comprehensive marketing insights' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -155,7 +155,7 @@ export async function PUT(request: NextRequest) {
     if (!insightId) {
       return NextResponse.json(
         { error: 'Insight ID is required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -167,13 +167,13 @@ export async function PUT(request: NextRequest) {
         rating,
         implemented,
         updatedAt: new Date().toISOString(),
-      }
+      },
     );
 
     // Learn from feedback to improve future insights
     const learningResult = await marketingROIService.improveInsightAccuracy(
       insightId,
-      { feedback, rating, implemented }
+      { feedback, rating, implemented },
     );
 
     return NextResponse.json({
@@ -184,7 +184,7 @@ export async function PUT(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to update marketing insight' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -206,7 +206,7 @@ export async function DELETE(request: NextRequest) {
     if (!insightId) {
       return NextResponse.json(
         { error: 'Insight ID is required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -220,7 +220,7 @@ export async function DELETE(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to delete marketing insight' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

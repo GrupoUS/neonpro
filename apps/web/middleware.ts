@@ -4,7 +4,7 @@ export async function middleware(request: NextRequest) {
   // Protected routes that require authentication
   const protectedPaths = ['/dashboard', '/patients', '/appointments', '/admin'];
   const isProtectedPath = protectedPaths.some((path) =>
-    request.nextUrl.pathname.startsWith(path)
+    request.nextUrl.pathname.startsWith(path),
   );
 
   // For protected paths, check if user has auth cookies
@@ -17,7 +17,7 @@ export async function middleware(request: NextRequest) {
     ];
 
     const hasAuthCookie = authCookies.some((cookieName) =>
-      request.cookies.has(cookieName)
+      request.cookies.has(cookieName),
     );
 
     if (!hasAuthCookie) {

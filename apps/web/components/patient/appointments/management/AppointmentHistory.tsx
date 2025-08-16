@@ -257,7 +257,7 @@ export function AppointmentHistory({
           {filteredAppointments.map((appointment) => {
             const { date, time, fullDate } = formatAppointmentDateTime(
               appointment.appointment_date,
-              appointment.appointment_time
+              appointment.appointment_time,
             );
 
             return (
@@ -309,7 +309,7 @@ export function AppointmentHistory({
                                 {format(
                                   parseISO(appointment.cancellation_date),
                                   'dd/MM/yyyy HH:mm',
-                                  { locale: ptBR }
+                                  { locale: ptBR },
                                 )}
                               </div>
                             )}
@@ -350,7 +350,7 @@ export function AppointmentHistory({
             <span>
               Taxa de comparecimento:{' '}
               {Math.round(
-                (stats.completed / (stats.total - stats.cancelled)) * 100
+                (stats.completed / (stats.total - stats.cancelled)) * 100,
               )}
               %
             </span>

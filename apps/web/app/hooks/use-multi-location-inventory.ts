@@ -153,7 +153,7 @@ export function useCreateStockTransfer() {
       queryClient.invalidateQueries({ queryKey: ['stock-transfers'] });
       queryClient.invalidateQueries({ queryKey: ['inventory-stock'] });
       toast.success(
-        `Transferência ${data.transfer_number} criada com sucesso!`
+        `Transferência ${data.transfer_number} criada com sucesso!`,
       );
     },
     onError: (_error) => {
@@ -182,7 +182,7 @@ export function useUpdateStockTransfer() {
 
       toast.success(
         statusMessages[data.status as keyof typeof statusMessages] ||
-          'Transferência atualizada!'
+          'Transferência atualizada!',
       );
     },
     onError: (_error) => {
@@ -211,7 +211,7 @@ export function useTransferStock() {
         params.quantity,
         params.from_room_id,
         params.to_room_id,
-        params.notes
+        params.notes,
       ),
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['stock-transfers'] });
@@ -290,7 +290,7 @@ export function useRealtimeInventoryStock(clinic_id?: string) {
           queryClient.invalidateQueries({ queryKey: ['inventory-stock'] });
           queryClient.invalidateQueries({ queryKey: ['stock-by-location'] });
           queryClient.invalidateQueries({ queryKey: ['low-stock-alerts'] });
-        }
+        },
       )
       .subscribe();
 
@@ -335,7 +335,7 @@ export function useRealtimeStockTransfers(clinic_id?: string) {
               toast.info(statusMessages[status as keyof typeof statusMessages]);
             }
           }
-        }
+        },
       )
       .subscribe();
 

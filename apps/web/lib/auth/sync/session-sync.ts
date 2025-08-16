@@ -308,7 +308,7 @@ export class SessionSyncManager {
     // Update sync state
     syncState.lastSyncTimestamp = Math.max(
       syncState.lastSyncTimestamp,
-      event.timestamp
+      event.timestamp,
     );
     syncState.syncVersion++;
 
@@ -324,7 +324,7 @@ export class SessionSyncManager {
    */
   private async detectConflict(
     event: SyncEvent,
-    syncState: SyncState
+    syncState: SyncState,
   ): Promise<SyncConflict | null> {
     // Check version conflicts
     const deviceState = syncState.deviceStates.get(event.deviceId);
@@ -345,7 +345,7 @@ export class SessionSyncManager {
     const recentEvents = syncState.pendingEvents.filter(
       (e) =>
         e.sessionId === event.sessionId &&
-        Math.abs(e.timestamp - event.timestamp) < 5000 // 5 seconds
+        Math.abs(e.timestamp - event.timestamp) < 5000, // 5 seconds
     );
 
     if (recentEvents.length > 0) {
@@ -394,7 +394,7 @@ export class SessionSyncManager {
    * Resolve sync conflict
    */
   private async resolveConflict(
-    conflict: SyncConflict
+    conflict: SyncConflict,
   ): Promise<SyncEvent | null> {
     switch (conflict.resolutionStrategy) {
       case 'last_write_wins':
@@ -423,25 +423,25 @@ export class SessionSyncManager {
   private resolveLastWriteWins(conflict: SyncConflict): SyncEvent {
     const allEvents = [conflict.localVersion, ...conflict.remoteVersions];
     return allEvents.reduce((latest, current) =>
-      current.timestamp > latest.timestamp ? current : latest
+      current.timestamp > latest.timestamp ? current : latest,
     );
   }
 
   private resolveFirstWriteWins(conflict: SyncConflict): SyncEvent {
     const allEvents = [conflict.localVersion, ...conflict.remoteVersions];
     return allEvents.reduce((earliest, current) =>
-      current.timestamp < earliest.timestamp ? current : earliest
+      current.timestamp < earliest.timestamp ? current : earliest,
     );
   }
 
   private async resolveMergeChanges(
-    conflict: SyncConflict
+    conflict: SyncConflict,
   ): Promise<SyncEvent | null> {
     try {
       // Merge data from conflicting events
       const mergedData = this.mergeEventData(
         conflict.localVersion.data,
-        conflict.remoteVersions.map((e) => e.data)
+        conflict.remoteVersions.map((e) => e.data),
       );
 
       // Create merged event
@@ -456,7 +456,7 @@ export class SessionSyncManager {
         version:
           Math.max(
             conflict.localVersion.version,
-            ...conflict.remoteVersions.map((e) => e.version)
+            ...conflict.remoteVersions.map((e) => e.version),
           ) + 1,
         checksum: this.calculateChecksum(mergedData),
       };
@@ -630,7 +630,7 @@ export class SessionSyncManager {
   public async broadcastSyncEvent(
     type: SyncEventType,
     sessionId: string,
-    data: any
+    data: any,
   ): Promise<void> {
     if (!(this.userId && this.isConnected)) {
       return;
@@ -817,7 +817,7 @@ export class SessionSyncManager {
       const syncState = this.syncStates.get(this.userId);
       if (syncState) {
         syncState.pendingEvents = syncState.pendingEvents.filter(
-          (e) => e.id !== message.payload.eventId
+          (e) => e.id !== message.payload.eventId,
         );
       }
     }
@@ -841,7 +841,7 @@ export class SessionSyncManager {
 
   private async applyConflictResolution(
     conflict: SyncConflict,
-    resolution: SyncEvent
+    resolution: SyncEvent,
   ): Promise<void> {
     try {
       // Apply resolution
@@ -857,7 +857,7 @@ export class SessionSyncManager {
         const syncState = this.syncStates.get(this.userId);
         if (syncState) {
           syncState.conflictQueue = syncState.conflictQueue.filter(
-            (c) => c.id !== conflict.id
+            (c) => c.id !== conflict.id,
           );
         }
       }
@@ -915,7 +915,7 @@ export class SessionSyncManager {
 
   public async resolveConflictManually(
     conflictId: string,
-    resolution: SyncEvent
+    resolution: SyncEvent,
   ): Promise<boolean> {
     if (!this.userId) {
       return false;
@@ -943,12 +943,12 @@ export class SessionSyncManager {
     for (const [_userId, syncState] of this.syncStates.entries()) {
       // Clean up old pending events
       syncState.pendingEvents = syncState.pendingEvents.filter(
-        (e) => now - e.timestamp < maxAge
+        (e) => now - e.timestamp < maxAge,
       );
 
       // Clean up resolved conflicts
       syncState.conflictQueue = syncState.conflictQueue.filter(
-        (c) => !c.resolvedAt || now - c.resolvedAt < maxAge
+        (c) => !c.resolvedAt || now - c.resolvedAt < maxAge,
       );
     }
   }

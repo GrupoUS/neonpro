@@ -111,7 +111,7 @@ class IntelligentSessionTimeout {
     sessionId: string,
     userId: string,
     userRole: UserRole,
-    customConfig?: Partial<SessionTimeoutConfig>
+    customConfig?: Partial<SessionTimeoutConfig>,
   ): Promise<void> {
     try {
       const config = this.getTimeoutConfig(userRole, customConfig);
@@ -132,7 +132,7 @@ class IntelligentSessionTimeout {
       await this.logSessionEvent(sessionId, 'timeout_initialized', {
         config,
         expiresAt: new Date(
-          Date.now() + config.defaultTimeoutMinutes * 60 * 1000
+          Date.now() + config.defaultTimeoutMinutes * 60 * 1000,
         ),
       });
     } catch (_error) {
@@ -146,7 +146,7 @@ class IntelligentSessionTimeout {
   public async recordActivity(
     sessionId: string,
     activityType: SessionActivity['activityType'],
-    metadata?: Record<string, any>
+    metadata?: Record<string, any>,
   ): Promise<boolean> {
     try {
       const session = await this.getSessionData(sessionId);
@@ -166,7 +166,7 @@ class IntelligentSessionTimeout {
         sessionId,
         session.user_id,
         activityType,
-        metadata
+        metadata,
       );
 
       // Check if session should be extended
@@ -191,7 +191,7 @@ class IntelligentSessionTimeout {
    */
   public async extendSession(
     sessionId: string,
-    extensionMinutes: number
+    extensionMinutes: number,
   ): Promise<boolean> {
     try {
       const session = await this.getSessionData(sessionId);
@@ -213,7 +213,7 @@ class IntelligentSessionTimeout {
       if (newDuration > maxDuration) {
         const remainingMinutes = Math.max(
           0,
-          (maxDuration - currentDuration) / (60 * 1000)
+          (maxDuration - currentDuration) / (60 * 1000),
         );
         extensionMinutes = Math.floor(remainingMinutes);
       }
@@ -251,7 +251,7 @@ class IntelligentSessionTimeout {
    */
   public async showTimeoutWarning(
     sessionId: string,
-    warningType: SessionTimeoutWarning['warningType']
+    warningType: SessionTimeoutWarning['warningType'],
   ): Promise<void> {
     try {
       const session = await this.getSessionData(sessionId);
@@ -289,7 +289,7 @@ class IntelligentSessionTimeout {
    */
   public async expireSession(
     sessionId: string,
-    preserveData = true
+    preserveData = true,
   ): Promise<void> {
     try {
       const session = await this.getSessionData(sessionId);
@@ -357,10 +357,10 @@ class IntelligentSessionTimeout {
 
       const totalDuration = Date.now() - new Date(session.created_at).getTime();
       const extensionCount = events.filter(
-        (e) => e.event_type === 'session_extended'
+        (e) => e.event_type === 'session_extended',
       ).length;
       const warningCount = events.filter(
-        (e) => e.event_type === 'timeout_warning'
+        (e) => e.event_type === 'timeout_warning',
       ).length;
 
       const activityPattern = activities.reduce(
@@ -368,7 +368,7 @@ class IntelligentSessionTimeout {
           acc[activity.activity_type] = (acc[activity.activity_type] || 0) + 1;
           return acc;
         },
-        {} as Record<string, number>
+        {} as Record<string, number>,
       );
 
       const lastActivity =
@@ -399,7 +399,7 @@ class IntelligentSessionTimeout {
 
   private getTimeoutConfig(
     userRole: UserRole,
-    customConfig?: Partial<SessionTimeoutConfig>
+    customConfig?: Partial<SessionTimeoutConfig>,
   ): SessionTimeoutConfig {
     const defaultConfig =
       this.timeoutConfigs.get(userRole) || DEFAULT_TIMEOUT_CONFIGS.staff;
@@ -411,7 +411,7 @@ class IntelligentSessionTimeout {
       () => {
         this.expireSession(sessionId, true);
       },
-      timeoutMinutes * 60 * 1000
+      timeoutMinutes * 60 * 1000,
     );
 
     this.activeTimers.set(sessionId, timer);
@@ -420,7 +420,7 @@ class IntelligentSessionTimeout {
   private setupWarningTimers(
     sessionId: string,
     config: SessionTimeoutConfig,
-    customTimeoutMinutes?: number
+    customTimeoutMinutes?: number,
   ): void {
     const timeoutMinutes = customTimeoutMinutes || config.defaultTimeoutMinutes;
     const timers: NodeJS.Timeout[] = [];
@@ -510,7 +510,7 @@ class IntelligentSessionTimeout {
   private shouldExtendSession(
     session: any,
     now: Date,
-    _config: SessionTimeoutConfig
+    _config: SessionTimeoutConfig,
   ): boolean {
     const lastActivity = new Date(session.last_activity);
     const timeSinceActivity = now.getTime() - lastActivity.getTime();
@@ -521,7 +521,7 @@ class IntelligentSessionTimeout {
 
   private canExtendSession(
     session: any,
-    config: SessionTimeoutConfig
+    config: SessionTimeoutConfig,
   ): boolean {
     const sessionDuration = Date.now() - new Date(session.created_at).getTime();
     const maxDuration = config.maxTimeoutMinutes * 60 * 1000;
@@ -542,7 +542,7 @@ class IntelligentSessionTimeout {
 
   private async preserveAllSessionData(): Promise<void> {
     const promises = Array.from(this.preservationData.keys()).map((sessionId) =>
-      this.preserveSessionData(sessionId)
+      this.preserveSessionData(sessionId),
     );
     await Promise.all(promises);
   }
@@ -554,7 +554,7 @@ class IntelligentSessionTimeout {
       this.recordActivity(sessionId, 'page_navigation', {
         global: true,
         type: activityType,
-      })
+      }),
     );
     await Promise.all(promises);
   }
@@ -564,7 +564,7 @@ class IntelligentSessionTimeout {
   private async storeSessionConfig(
     sessionId: string,
     userId: string,
-    config: SessionTimeoutConfig
+    config: SessionTimeoutConfig,
   ): Promise<void> {
     await this.supabase.from('session_timeout_configs').upsert({
       session_id: sessionId,
@@ -578,7 +578,7 @@ class IntelligentSessionTimeout {
     sessionId: string,
     userId: string,
     activityType: SessionActivity['activityType'],
-    metadata?: Record<string, any>
+    metadata?: Record<string, any>,
   ): Promise<void> {
     await this.supabase.from('session_activities').insert({
       session_id: sessionId,
@@ -591,7 +591,7 @@ class IntelligentSessionTimeout {
 
   private async updateLastActivity(
     sessionId: string,
-    timestamp: Date
+    timestamp: Date,
   ): Promise<void> {
     await this.supabase
       .from('user_sessions')
@@ -601,7 +601,7 @@ class IntelligentSessionTimeout {
 
   private async updateSessionExpiry(
     sessionId: string,
-    expiresAt: Date
+    expiresAt: Date,
   ): Promise<void> {
     await this.supabase
       .from('user_sessions')
@@ -632,7 +632,7 @@ class IntelligentSessionTimeout {
   private async logSessionEvent(
     sessionId: string,
     eventType: string,
-    metadata: Record<string, any>
+    metadata: Record<string, any>,
   ): Promise<void> {
     await this.supabase.from('session_events').insert({
       session_id: sessionId,
@@ -649,20 +649,20 @@ class IntelligentSessionTimeout {
       window.dispatchEvent(
         new CustomEvent('session-timeout-warning', {
           detail: warning,
-        })
+        }),
       );
     }
   }
 
   private emitSessionExpiredEvent(
     sessionId: string,
-    dataPreserved: boolean
+    dataPreserved: boolean,
   ): void {
     if (typeof window !== 'undefined') {
       window.dispatchEvent(
         new CustomEvent('session-expired', {
           detail: { sessionId, dataPreserved },
-        })
+        }),
       );
     }
   }
@@ -672,7 +672,7 @@ class IntelligentSessionTimeout {
    */
   public updateTimeoutConfig(
     role: UserRole,
-    config: Partial<SessionTimeoutConfig>
+    config: Partial<SessionTimeoutConfig>,
   ): void {
     const currentConfig =
       this.timeoutConfigs.get(role) || DEFAULT_TIMEOUT_CONFIGS[role];
@@ -693,7 +693,7 @@ class IntelligentSessionTimeout {
     // Clear all timers
     this.activeTimers.forEach((timer) => clearTimeout(timer));
     this.warningTimers.forEach((timers) =>
-      timers.forEach((timer) => clearTimeout(timer))
+      timers.forEach((timer) => clearTimeout(timer)),
     );
 
     // Remove all activity listeners

@@ -35,7 +35,7 @@ export async function POST(request: Request) {
     if (clinicError || !clinic) {
       return NextResponse.json(
         { error: 'Clinic not found or access denied' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -104,13 +104,13 @@ export async function POST(request: Request) {
     if (error instanceof Error && error.name === 'ZodError') {
       return NextResponse.json(
         { error: 'Invalid request data', details: error.message },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

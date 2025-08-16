@@ -25,7 +25,7 @@ export async function POST(request: NextRequest) {
     if (!session?.user) {
       return NextResponse.json(
         { error: 'Unauthorized - Please log in to refresh tokens' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -35,7 +35,7 @@ export async function POST(request: NextRequest) {
     if (!accountId) {
       return NextResponse.json(
         { error: 'Account ID is required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -52,7 +52,7 @@ export async function POST(request: NextRequest) {
     if (accountError || !account) {
       return NextResponse.json(
         { error: 'Facebook account not found or access denied' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -69,7 +69,7 @@ export async function POST(request: NextRequest) {
 
     // Encrypt new tokens
     const newEncryptedAccessToken = TokenEncryptionService.encryptToken(
-      newTokens.accessToken
+      newTokens.accessToken,
     );
 
     // Update account with new tokens
@@ -95,7 +95,7 @@ export async function POST(request: NextRequest) {
         platform: 'facebook',
         last_token_refresh: new Date().toISOString(),
       },
-      { onConflict: 'platform' }
+      { onConflict: 'platform' },
     );
 
     return NextResponse.json({
@@ -128,7 +128,7 @@ export async function POST(request: NextRequest) {
         error: 'Failed to refresh Facebook tokens',
         details: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

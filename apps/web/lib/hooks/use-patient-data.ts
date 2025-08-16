@@ -86,7 +86,7 @@ export function usePatientData(): PatientDataContextType {
   const { patient } = usePatientAuth();
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [treatmentHistory, setTreatmentHistory] = useState<TreatmentHistory[]>(
-    []
+    [],
   );
   const [documents, setDocuments] = useState<Document[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -119,7 +119,7 @@ export function usePatientData(): PatientDataContextType {
           *,
           service:services(id, name, category, price),
           professional:users(id, name, role)
-        `
+        `,
         )
         .eq('patient_id', patient.id)
         .order('scheduled_at', { ascending: true });

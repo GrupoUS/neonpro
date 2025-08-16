@@ -87,7 +87,7 @@ class UserAnalytics {
    */
   async trackEvent(
     eventType: string,
-    eventData?: Record<string, any>
+    eventData?: Record<string, any>,
   ): Promise<void> {
     if (!this.currentSession) {
       return;
@@ -137,7 +137,7 @@ class UserAnalytics {
     featureName: string,
     epicName: string,
     actionType: 'view' | 'click' | 'complete' | 'error',
-    metadata?: Record<string, any>
+    metadata?: Record<string, any>,
   ): Promise<void> {
     await this.trackEvent('feature_usage', {
       feature_name: featureName,
@@ -156,7 +156,7 @@ class UserAnalytics {
     epicName: string,
     completionTimeMs: number,
     success: boolean,
-    errorMessage?: string
+    errorMessage?: string,
   ): Promise<void> {
     await this.trackEvent('task_completion', {
       task_name: taskName,
@@ -175,7 +175,7 @@ class UserAnalytics {
     surveyType: 'nps' | 'task_satisfaction' | 'feature_feedback',
     score: number,
     feedback?: string,
-    context?: Record<string, any>
+    context?: Record<string, any>,
   ): Promise<void> {
     await this.trackEvent('user_satisfaction', {
       survey_type: surveyType,
@@ -193,7 +193,7 @@ class UserAnalytics {
     interactionType: 'click' | 'scroll' | 'form_input' | 'hover' | 'focus',
     elementId?: string,
     elementType?: string,
-    position?: { x: number; y: number }
+    position?: { x: number; y: number },
   ): Promise<void> {
     await this.trackEvent('user_interaction', {
       interaction_type: interactionType,
@@ -216,7 +216,7 @@ class UserAnalytics {
    */
   async getFeatureAdoptionMetrics(
     epicName?: string,
-    days = 30
+    days = 30,
   ): Promise<FeatureAdoptionMetric[]> {
     try {
       const startDate = new Date();
@@ -367,7 +367,7 @@ class UserAnalytics {
     window.addEventListener('load', () => {
       setTimeout(() => {
         const navigationTiming = performance.getEntriesByType(
-          'navigation'
+          'navigation',
         )[0] as PerformanceNavigationTiming;
 
         this.trackEvent('page_performance', {
@@ -403,7 +403,7 @@ export const userAnalytics = new UserAnalytics();
 // Export logAnalyticsEvent function for compatibility
 export function logAnalyticsEvent(
   eventType: string,
-  eventData?: Record<string, any>
+  eventData?: Record<string, any>,
 ): Promise<void> {
   return userAnalytics.trackEvent(eventType, eventData);
 }

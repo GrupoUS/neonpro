@@ -85,7 +85,7 @@ describe('ConsentService', () => {
       };
 
       await expect(
-        consentService.createConsentForm(mockFormData)
+        consentService.createConsentForm(mockFormData),
       ).rejects.toThrow('Failed to create consent form');
     });
   });
@@ -173,7 +173,7 @@ describe('ConsentService', () => {
 
       const result = await consentService.grantPatientConsent(
         'patient-1',
-        'form-1'
+        'form-1',
       );
 
       expect(result).toEqual(mockResult.data[0]);
@@ -203,7 +203,7 @@ describe('ConsentService', () => {
 
       const result = await consentService.revokePatientConsent(
         'consent-1',
-        'Test reason'
+        'Test reason',
       );
 
       expect(result).toEqual(mockResult.data[0]);

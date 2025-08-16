@@ -85,7 +85,7 @@ type UsePermissionsReturn = {
 export function usePermissions(): UsePermissionsReturn {
   const { user, isAuthenticated } = useAuth();
   const [permissions, setPermissions] = useState<PermissionSet>(
-    {} as PermissionSet
+    {} as PermissionSet,
   );
   const [isLoading, setIsLoading] = useState(true);
   const supabase = createClientComponentClient();
@@ -118,7 +118,7 @@ export function usePermissions(): UsePermissionsReturn {
           lgpd_compliant,
           anvisa_required,
           cfm_required
-        `
+        `,
         )
         .eq('role', user.role)
         .eq('tenant_id', user.tenantId);
@@ -136,7 +136,7 @@ export function usePermissions(): UsePermissionsReturn {
           granted,
           conditions,
           expires_at
-        `
+        `,
         )
         .eq('user_id', user.id)
         .eq('tenant_id', user.tenantId);
@@ -145,7 +145,7 @@ export function usePermissions(): UsePermissionsReturn {
       const permissionSet = buildHealthcarePermissions(
         user.role!,
         rolePermissions || [],
-        userPermissions || []
+        userPermissions || [],
       );
 
       setPermissions(permissionSet);
@@ -170,7 +170,7 @@ export function usePermissions(): UsePermissionsReturn {
   const buildHealthcarePermissions = (
     role: string,
     rolePermissions: any[],
-    userPermissions: any[]
+    userPermissions: any[],
   ): PermissionSet => {
     // Base permissions by healthcare role
     const basePermissions: Record<string, Partial<PermissionSet>> = {
@@ -289,13 +289,13 @@ export function usePermissions(): UsePermissionsReturn {
   };
 
   const hasAnyPermission = (
-    permissionList: (keyof PermissionSet)[]
+    permissionList: (keyof PermissionSet)[],
   ): boolean => {
     return permissionList.some((permission) => hasPermission(permission));
   };
 
   const hasAllPermissions = (
-    permissionList: (keyof PermissionSet)[]
+    permissionList: (keyof PermissionSet)[],
   ): boolean => {
     return permissionList.every((permission) => hasPermission(permission));
   };

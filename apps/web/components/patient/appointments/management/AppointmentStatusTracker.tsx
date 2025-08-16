@@ -60,7 +60,7 @@ export function AppointmentStatusTracker({
   const attendanceRate = Math.max(0, 100 - noShowPattern.rate);
   const reliabilityScore = Math.max(
     0,
-    100 - cancellationStats.rate - noShowPattern.rate
+    100 - cancellationStats.rate - noShowPattern.rate,
   );
 
   // Health score calculation (based on Tavily research benchmarks)
@@ -320,7 +320,7 @@ export function AppointmentStatusTracker({
                     </div>
                     <Progress className="h-1" value={percentage} />
                   </div>
-                )
+                ),
               )}
             </CardContent>
           </Card>

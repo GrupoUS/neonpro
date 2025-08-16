@@ -8,7 +8,7 @@ import { NOTIFICATION_CONFIG } from './config';
 
 const client = new Twilio(
   process.env.TWILIO_ACCOUNT_SID,
-  process.env.TWILIO_AUTH_TOKEN
+  process.env.TWILIO_AUTH_TOKEN,
 );
 
 type SMSPayload = {
@@ -41,7 +41,7 @@ export class SMSService {
       // Validate required environment variables
       if (!(process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN)) {
         throw new Error(
-          'Twilio credentials are required (TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)'
+          'Twilio credentials are required (TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)',
         );
       }
 
@@ -59,7 +59,7 @@ export class SMSService {
       const messageContent = this.generateSMSContent(
         payload.type,
         payload.content,
-        payload.templateData
+        payload.templateData,
       );
 
       // Send SMS via Twilio
@@ -128,7 +128,7 @@ export class SMSService {
   private generateSMSContent(
     type: string,
     baseContent: string,
-    templateData?: any
+    templateData?: any,
   ): string {
     try {
       // SMS templates optimized for healthcare (160-320 characters)

@@ -91,7 +91,7 @@ export class PerformanceMonitor {
   recordClientPerformance(
     name: string,
     value: number,
-    metadata?: Record<string, any>
+    metadata?: Record<string, any>,
   ): void {
     const metric: PerformanceMetric = {
       name: `client.${name}`,
@@ -110,7 +110,7 @@ export class PerformanceMonitor {
   recordDatabasePerformance(
     operation: string,
     duration: number,
-    metadata?: Record<string, any>
+    metadata?: Record<string, any>,
   ): void {
     const metric: PerformanceMetric = {
       name: `db.${operation}`,
@@ -140,13 +140,13 @@ export class PerformanceMonitor {
 
     const now = Date.now();
     const recentMetrics = this.metrics.filter(
-      (m) => now - m.timestamp <= timeWindow
+      (m) => now - m.timestamp <= timeWindow,
     );
 
     const apiMetrics = recentMetrics.filter((m) => m.name.startsWith('api.'));
     const dbMetrics = recentMetrics.filter((m) => m.name.startsWith('db.'));
     const clientMetrics = recentMetrics.filter((m) =>
-      m.name.startsWith('client.')
+      m.name.startsWith('client.'),
     );
 
     const summary = {
@@ -165,7 +165,7 @@ export class PerformanceMonitor {
    */
   getRoutePerformance(
     route: string,
-    timeWindow: number = 30 * 60 * 1000
+    timeWindow: number = 30 * 60 * 1000,
   ): {
     p50: number;
     p90: number;
@@ -177,7 +177,7 @@ export class PerformanceMonitor {
   } {
     const now = Date.now();
     const routeMetrics = this.metrics.filter(
-      (m) => m.route === route && now - m.timestamp <= timeWindow
+      (m) => m.route === route && now - m.timestamp <= timeWindow,
     );
 
     if (routeMetrics.length === 0) {
@@ -194,7 +194,7 @@ export class PerformanceMonitor {
 
     const values = routeMetrics.map((m) => m.value).sort((a, b) => a - b);
     const errors = routeMetrics.filter(
-      (m) => m.metadata?.statusCode >= 400
+      (m) => m.metadata?.statusCode >= 400,
     ).length;
 
     return {
@@ -221,7 +221,7 @@ export class PerformanceMonitor {
       if (slowAPIs.length > apiMetrics.length * 0.05) {
         // >5% slow
         alerts.push(
-          `High API latency detected: ${slowAPIs.length}/${apiMetrics.length} requests >1s`
+          `High API latency detected: ${slowAPIs.length}/${apiMetrics.length} requests >1s`,
         );
       }
 
@@ -238,7 +238,7 @@ export class PerformanceMonitor {
       if (slowQueries.length > dbMetrics.length * 0.1) {
         // >10% slow
         alerts.push(
-          `Slow database queries detected: ${slowQueries.length}/${dbMetrics.length} queries >500ms`
+          `Slow database queries detected: ${slowQueries.length}/${dbMetrics.length} queries >500ms`,
         );
       }
     }

@@ -9,7 +9,7 @@ import type { Database } from '@/types/supabase';
  */
 export async function GET(
   _request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const supabase = createRouteHandlerClient<Database>({ cookies });
@@ -34,7 +34,7 @@ export async function GET(
     if (!(userRole && ['admin', 'doctor', 'nurse'].includes(userRole.role))) {
       return NextResponse.json(
         { error: 'Insufficient permissions' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -47,7 +47,7 @@ export async function GET(
         patient_documents(*),
         emergency_contacts(*),
         patient_care_team(*)
-      `
+      `,
       )
       .eq('patient_id', patientId)
       .single();
@@ -55,7 +55,7 @@ export async function GET(
     if (profileError) {
       return NextResponse.json(
         { error: 'Failed to fetch patient profile' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -66,7 +66,7 @@ export async function GET(
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -77,7 +77,7 @@ export async function GET(
  */
 export async function PUT(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const supabase = createRouteHandlerClient<Database>({ cookies });
@@ -103,7 +103,7 @@ export async function PUT(
     if (!(userRole && ['admin', 'doctor', 'nurse'].includes(userRole.role))) {
       return NextResponse.json(
         { error: 'Insufficient permissions' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -141,7 +141,7 @@ export async function PUT(
     if (updateError) {
       return NextResponse.json(
         { error: 'Failed to update patient profile' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -160,7 +160,7 @@ export async function PUT(
           emergency_contacts.map((contact: any) => ({
             patient_id: patientId,
             ...contact,
-          }))
+          })),
         );
 
       if (contactsError) {
@@ -174,7 +174,7 @@ export async function PUT(
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

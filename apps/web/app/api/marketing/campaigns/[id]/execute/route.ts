@@ -9,7 +9,7 @@ import { marketingCampaignsService } from '@/app/lib/services/marketing-campaign
 // POST /api/marketing/campaigns/[id]/execute - Execute campaign
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const { id } = params;
@@ -18,7 +18,7 @@ export async function POST(
     if (!id) {
       return NextResponse.json(
         { success: false, error: 'Campaign ID is required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -27,7 +27,7 @@ export async function POST(
     if (!campaign) {
       return NextResponse.json(
         { success: false, error: 'Campaign not found' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -38,7 +38,7 @@ export async function POST(
           success: false,
           error: `Cannot execute campaign with status: ${campaign.status}`,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -56,7 +56,7 @@ export async function POST(
         data: execution,
         message: 'Campaign execution started successfully',
       },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (error) {
     return NextResponse.json(
@@ -65,7 +65,7 @@ export async function POST(
         error: 'Failed to execute campaign',
         message: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

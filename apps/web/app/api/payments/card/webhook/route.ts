@@ -18,7 +18,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 // Initialize Supabase client
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
+  process.env.SUPABASE_SERVICE_ROLE_KEY!,
 );
 
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET!;
@@ -58,25 +58,25 @@ export async function POST(request: NextRequest) {
     switch (event.type) {
       case 'payment_intent.succeeded':
         await handlePaymentIntentSucceeded(
-          event.data.object as Stripe.PaymentIntent
+          event.data.object as Stripe.PaymentIntent,
         );
         break;
 
       case 'payment_intent.payment_failed':
         await handlePaymentIntentFailed(
-          event.data.object as Stripe.PaymentIntent
+          event.data.object as Stripe.PaymentIntent,
         );
         break;
 
       case 'payment_intent.requires_action':
         await handlePaymentIntentRequiresAction(
-          event.data.object as Stripe.PaymentIntent
+          event.data.object as Stripe.PaymentIntent,
         );
         break;
 
       case 'payment_intent.canceled':
         await handlePaymentIntentCanceled(
-          event.data.object as Stripe.PaymentIntent
+          event.data.object as Stripe.PaymentIntent,
         );
         break;
 
@@ -86,7 +86,7 @@ export async function POST(request: NextRequest) {
 
       case 'invoice.payment_succeeded':
         await handleInvoicePaymentSucceeded(
-          event.data.object as Stripe.Invoice
+          event.data.object as Stripe.Invoice,
         );
         break;
 
@@ -107,7 +107,7 @@ export async function POST(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Webhook processing failed' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -116,7 +116,7 @@ export async function POST(request: NextRequest) {
  * Handle successful payment intent
  */
 async function handlePaymentIntentSucceeded(
-  paymentIntent: Stripe.PaymentIntent
+  paymentIntent: Stripe.PaymentIntent,
 ) {
   try {
     // Update card payment status
@@ -262,7 +262,7 @@ async function handlePaymentIntentFailed(paymentIntent: Stripe.PaymentIntent) {
  * Handle payment intent requiring action
  */
 async function handlePaymentIntentRequiresAction(
-  paymentIntent: Stripe.PaymentIntent
+  paymentIntent: Stripe.PaymentIntent,
 ) {
   try {
     // Update card payment status
@@ -280,7 +280,7 @@ async function handlePaymentIntentRequiresAction(
  * Handle canceled payment intent
  */
 async function handlePaymentIntentCanceled(
-  paymentIntent: Stripe.PaymentIntent
+  paymentIntent: Stripe.PaymentIntent,
 ) {
   try {
     // Update card payment status
@@ -328,7 +328,7 @@ async function handleChargeDisputeCreated(dispute: Stripe.Dispute) {
         reason: dispute.reason,
         status: dispute.status,
         evidence_due_by: new Date(
-          dispute.evidence_details.due_by * 1000
+          dispute.evidence_details.due_by * 1000,
         ).toISOString(),
         created_at: new Date(dispute.created * 1000).toISOString(),
       });

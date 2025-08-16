@@ -100,7 +100,7 @@ export class PortalAuthManager {
     auditLogger: AuditLogger,
     encryptionService: EncryptionService,
     lgpdManager: LGPDManager,
-    config?: Partial<PortalAuthConfig>
+    config?: Partial<PortalAuthConfig>,
   ) {
     this.supabase = createClient(supabaseUrl, supabaseKey);
     this.auditLogger = auditLogger;
@@ -134,7 +134,7 @@ export class PortalAuthManager {
     password: string,
     ipAddress: string,
     userAgent: string,
-    deviceFingerprint?: string
+    deviceFingerprint?: string,
   ): Promise<AuthResult> {
     try {
       // Verificar se IP está bloqueado
@@ -181,7 +181,7 @@ export class PortalAuthManager {
           is_active,
           last_login,
           failed_login_attempts
-        `
+        `,
         )
         .eq('email', email.toLowerCase())
         .eq('is_active', true)
@@ -206,7 +206,7 @@ export class PortalAuthManager {
       // Verificar senha
       const passwordValid = await this.verifyPassword(
         password,
-        patient.password_hash
+        patient.password_hash,
       );
       if (!passwordValid) {
         await this.recordLoginAttempt({
@@ -340,13 +340,13 @@ export class PortalAuthManager {
     twoFactorToken: string,
     code: string,
     ipAddress: string,
-    userAgent: string
+    userAgent: string,
   ): Promise<AuthResult> {
     try {
       // Verificar token 2FA
       const isValidToken = await this.verifyTwoFactorToken(
         twoFactorToken,
-        code
+        code,
       );
       if (!isValidToken) {
         return {
@@ -400,7 +400,7 @@ export class PortalAuthManager {
    */
   async validateSession(
     sessionToken: string,
-    _ipAddress: string
+    _ipAddress: string,
   ): Promise<AuthResult> {
     try {
       // Buscar sessão no banco
@@ -417,7 +417,7 @@ export class PortalAuthManager {
             clinic_id,
             is_active
           )
-        `
+        `,
         )
         .eq('session_token', sessionToken)
         .single();
@@ -444,7 +444,7 @@ export class PortalAuthManager {
       // Verificar inatividade
       const lastActivity = new Date(session.last_activity);
       const inactivityLimit = new Date(
-        Date.now() - this.config.sessionInactivityTimeout * 60 * 1000
+        Date.now() - this.config.sessionInactivityTimeout * 60 * 1000,
       );
 
       if (lastActivity < inactivityLimit) {
@@ -534,7 +534,7 @@ export class PortalAuthManager {
   }): Promise<PortalSession> {
     const sessionToken = this.generateSessionToken();
     const expiresAt = new Date(
-      Date.now() + this.config.sessionDuration * 60 * 1000
+      Date.now() + this.config.sessionDuration * 60 * 1000,
     );
 
     const { data, error } = await this.supabase
@@ -579,7 +579,7 @@ export class PortalAuthManager {
 
   private async verifyPassword(
     password: string,
-    hash: string
+    hash: string,
   ): Promise<boolean> {
     // Implementar verificação de senha com bcrypt ou similar
     const bcrypt = require('bcrypt');
@@ -588,7 +588,7 @@ export class PortalAuthManager {
 
   private async verifyTwoFactorToken(
     _token: string,
-    code: string
+    code: string,
   ): Promise<boolean> {
     // Implementar verificação de código 2FA
     // Por enquanto, simulação simples
@@ -597,7 +597,7 @@ export class PortalAuthManager {
 
   private async sendTwoFactorCode(
     _patient: any,
-    _token: string
+    _token: string,
   ): Promise<void> {}
 
   private async getActiveSessionsCount(patientId: string): Promise<number> {
@@ -646,7 +646,7 @@ export class PortalAuthManager {
   }
 
   private async getSessionByToken(
-    sessionToken: string
+    sessionToken: string,
   ): Promise<PortalSession | null> {
     const cached = this.activeSessions.get(sessionToken);
     if (cached) {
@@ -677,7 +677,7 @@ export class PortalAuthManager {
 
   private getRecentLoginAttempts(
     email: string,
-    ipAddress: string
+    ipAddress: string,
   ): LoginAttempt[] {
     const key = `${email}:${ipAddress}`;
     const attempts = this.loginAttempts.get(key) || [];
@@ -687,7 +687,7 @@ export class PortalAuthManager {
   }
 
   private async recordLoginAttempt(
-    attempt: Omit<LoginAttempt, 'id' | 'blocked'>
+    attempt: Omit<LoginAttempt, 'id' | 'blocked'>,
   ): Promise<void> {
     const loginAttempt: LoginAttempt = {
       id: crypto.randomUUID(),
@@ -714,7 +714,7 @@ export class PortalAuthManager {
 
   private async blockIpAddress(
     ipAddress: string,
-    reason: string
+    reason: string,
   ): Promise<void> {
     this.blockedIps.add(ipAddress);
 
@@ -723,7 +723,7 @@ export class PortalAuthManager {
       () => {
         this.blockedIps.delete(ipAddress);
       },
-      15 * 60 * 1000
+      15 * 60 * 1000,
     );
 
     await this.auditLogger.log({
@@ -786,7 +786,7 @@ export class PortalAuthManager {
       async () => {
         await this.cleanupExpiredSessions();
       },
-      30 * 60 * 1000
+      30 * 60 * 1000,
     );
   }
 
@@ -796,7 +796,7 @@ export class PortalAuthManager {
   async changePassword(
     patientId: string,
     currentPassword: string,
-    newPassword: string
+    newPassword: string,
   ): Promise<{ success: boolean; error?: string }> {
     try {
       // Validar senha atual
@@ -812,7 +812,7 @@ export class PortalAuthManager {
 
       const isCurrentPasswordValid = await this.verifyPassword(
         currentPassword,
-        patient.password_hash
+        patient.password_hash,
       );
       if (!isCurrentPasswordValid) {
         return { success: false, error: 'Senha atual incorreta' };
@@ -915,7 +915,7 @@ export class PortalAuthManager {
 
   async terminateSession(
     patientId: string,
-    sessionId: string
+    sessionId: string,
   ): Promise<boolean> {
     try {
       const { data } = await this.supabase
@@ -937,7 +937,7 @@ export class PortalAuthManager {
 
   async terminateAllSessions(
     patientId: string,
-    exceptSessionToken?: string
+    exceptSessionToken?: string,
   ): Promise<number> {
     try {
       let query = this.supabase

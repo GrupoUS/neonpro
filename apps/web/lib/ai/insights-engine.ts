@@ -135,7 +135,7 @@ export class AIInsightsEngine {
    * Gera recomendações clínicas personalizadas
    */
   async generateClinicalRecommendations(
-    _patientId: string
+    _patientId: string,
   ): Promise<ClinicalRecommendation[]> {
     try {
       const recommendations: ClinicalRecommendation[] = [
@@ -190,7 +190,7 @@ export class AIInsightsEngine {
    */
   async analyzeTrends(
     _patientId: string,
-    _timeframe = '6months'
+    _timeframe = '6months',
   ): Promise<any> {
     try {
       // Simular análise de tendências
@@ -299,7 +299,7 @@ export class AIInsightsEngine {
         summary: {
           totalInsights: insights.length,
           highPriorityInsights: insights.filter(
-            (i) => i.priority === 'high' || i.priority === 'critical'
+            (i) => i.priority === 'high' || i.priority === 'critical',
           ).length,
           overallRiskLevel:
             riskAssessment.overall > 0.7
@@ -308,7 +308,7 @@ export class AIInsightsEngine {
                 ? 'medium'
                 : 'low',
           urgentRecommendations: recommendations.filter(
-            (r) => r.urgency === 'urgent' || r.urgency === 'immediate'
+            (r) => r.urgency === 'urgent' || r.urgency === 'immediate',
           ).length,
           activeAnomalies: anomalies.filter((a) => a.severity !== 'low').length,
         },

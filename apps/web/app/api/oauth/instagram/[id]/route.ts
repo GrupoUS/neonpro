@@ -11,7 +11,7 @@ import { TokenEncryptionService } from '@/lib/oauth/token-encryption';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const supabase = await createClient();
@@ -23,7 +23,7 @@ export async function GET(
     if (!session) {
       return NextResponse.json(
         { error: 'Authentication required' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -45,7 +45,7 @@ export async function GET(
     if (accountError || !account) {
       return NextResponse.json(
         { error: 'Instagram account not found or not accessible' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -88,7 +88,7 @@ export async function GET(
           (searchParams.get('period') as 'day' | 'week' | 'days_28') || 'day';
         const insights = await instagramHandler.getAccountInsights(
           accessToken,
-          period
+          period,
         );
         return NextResponse.json({
           success: true,
@@ -102,7 +102,7 @@ export async function GET(
           accessToken,
           tokenType: 'Bearer',
           expiresIn: Math.floor(
-            (new Date(account.token_expires_at).getTime() - Date.now()) / 1000
+            (new Date(account.token_expires_at).getTime() - Date.now()) / 1000,
           ),
           expiresAt: new Date(account.token_expires_at),
         });
@@ -116,7 +116,7 @@ export async function GET(
       default:
         return NextResponse.json(
           { error: 'Invalid action specified' },
-          { status: 400 }
+          { status: 400 },
         );
     }
   } catch (error) {
@@ -125,7 +125,7 @@ export async function GET(
         error: 'Failed to process Instagram account request',
         details: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -135,7 +135,7 @@ export async function GET(
  */
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const supabase = await createClient();
@@ -147,7 +147,7 @@ export async function PATCH(
     if (!session) {
       return NextResponse.json(
         { error: 'Authentication required' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -170,7 +170,7 @@ export async function PATCH(
     if (Object.keys(updateData).length === 0) {
       return NextResponse.json(
         { error: 'No valid update fields provided' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -211,7 +211,7 @@ export async function PATCH(
         error: 'Failed to update Instagram account',
         details: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -221,7 +221,7 @@ export async function PATCH(
  */
 export async function DELETE(
   _request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const { id } = await params;
@@ -235,7 +235,7 @@ export async function DELETE(
     if (!session) {
       return NextResponse.json(
         { error: 'Authentication required' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -288,7 +288,7 @@ export async function DELETE(
         error: 'Failed to disconnect Instagram account',
         details: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

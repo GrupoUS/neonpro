@@ -10,7 +10,7 @@ const patientInsights = new PatientInsightsIntegration();
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { patientId: string } }
+  { params }: { params: { patientId: string } },
 ) {
   try {
     const supabase = createRouteHandlerClient({ cookies });
@@ -60,14 +60,14 @@ export async function GET(
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to generate comprehensive insights' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { patientId: string } }
+  { params }: { params: { patientId: string } },
 ) {
   try {
     const supabase = createRouteHandlerClient({ cookies });
@@ -106,7 +106,7 @@ export async function POST(
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to generate comprehensive insights' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

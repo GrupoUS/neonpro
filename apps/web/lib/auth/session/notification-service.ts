@@ -99,7 +99,7 @@ export class NotificationService {
       priority?: NotificationPriority;
       scheduledAt?: Date;
       channels?: NotificationChannel[];
-    } = {}
+    } = {},
   ): Promise<Notification[]> {
     // Get user preferences
     const preferences = await this.getUserPreferences(userId);
@@ -160,7 +160,7 @@ export class NotificationService {
       priority?: NotificationPriority;
       scheduledAt?: Date;
       channels?: NotificationChannel[];
-    } = {}
+    } = {},
   ): Promise<Notification[]> {
     const allNotifications: Notification[] = [];
 
@@ -169,7 +169,7 @@ export class NotificationService {
     for (let i = 0; i < userIds.length; i += batchSize) {
       const batch = userIds.slice(i, i + batchSize);
       const batchPromises = batch.map((userId) =>
-        this.sendNotification(userId, type, data, options)
+        this.sendNotification(userId, type, data, options),
       );
 
       const batchResults = await Promise.allSettled(batchPromises);
@@ -191,10 +191,10 @@ export class NotificationService {
   async sendSessionExpiryWarning(
     userId: string,
     sessionId: string,
-    expiresAt: Date
+    expiresAt: Date,
   ): Promise<Notification[]> {
     const minutesUntilExpiry = Math.floor(
-      (expiresAt.getTime() - Date.now()) / (1000 * 60)
+      (expiresAt.getTime() - Date.now()) / (1000 * 60),
     );
 
     return this.sendNotification(
@@ -208,7 +208,7 @@ export class NotificationService {
       },
       {
         priority: 'high',
-      }
+      },
     );
   }
 
@@ -222,7 +222,7 @@ export class NotificationService {
       location?: string;
       ipAddress: string;
       userAgent: string;
-    }
+    },
   ): Promise<Notification[]> {
     return this.sendNotification(
       userId,
@@ -236,7 +236,7 @@ export class NotificationService {
       },
       {
         priority: 'high',
-      }
+      },
     );
   }
 
@@ -246,7 +246,7 @@ export class NotificationService {
   async sendSecurityAlert(
     userId: string,
     alertType: string,
-    details: Record<string, any>
+    details: Record<string, any>,
   ): Promise<Notification[]> {
     return this.sendNotification(
       userId,
@@ -260,7 +260,7 @@ export class NotificationService {
       },
       {
         priority: 'urgent',
-      }
+      },
     );
   }
 
@@ -272,7 +272,7 @@ export class NotificationService {
    * Create a notification record
    */
   async createNotification(
-    notification: Omit<Notification, 'id' | 'createdAt' | 'updatedAt'>
+    notification: Omit<Notification, 'id' | 'createdAt' | 'updatedAt'>,
   ): Promise<Notification> {
     const { data, error } = await this.supabase
       .from('session_notifications')
@@ -308,7 +308,7 @@ export class NotificationService {
       offset?: number;
       unreadOnly?: boolean;
       type?: NotificationType;
-    } = {}
+    } = {},
   ): Promise<Notification[]> {
     try {
       let query = this.supabase
@@ -331,7 +331,7 @@ export class NotificationService {
       if (options.offset) {
         query = query.range(
           options.offset,
-          options.offset + (options.limit || 50) - 1
+          options.offset + (options.limit || 50) - 1,
         );
       }
 
@@ -439,7 +439,7 @@ export class NotificationService {
    */
   async updateUserPreferences(
     userId: string,
-    preferences: Partial<NotificationPreference>[]
+    preferences: Partial<NotificationPreference>[],
   ): Promise<NotificationPreference[]> {
     const updates = preferences.map((pref) => ({
       user_id: userId,
@@ -500,13 +500,13 @@ export class NotificationService {
       await this.updateNotificationStatus(
         notification.id!,
         delivered ? 'delivered' : 'failed',
-        errorMessage
+        errorMessage,
       );
     } catch (error) {
       await this.updateNotificationStatus(
         notification.id!,
         'failed',
-        error instanceof Error ? error.message : 'Unknown error'
+        error instanceof Error ? error.message : 'Unknown error',
       );
     }
   }
@@ -541,7 +541,7 @@ export class NotificationService {
    * Send push notification
    */
   private async sendPushNotification(
-    _notification: Notification
+    _notification: Notification,
   ): Promise<boolean> {
     try {
       // Simulate push notification sending
@@ -558,7 +558,7 @@ export class NotificationService {
   private async updateNotificationStatus(
     notificationId: string,
     status: Notification['status'],
-    errorMessage?: string
+    errorMessage?: string,
   ): Promise<void> {
     try {
       const updates: any = {
@@ -635,7 +635,7 @@ export class NotificationService {
    */
   private getTemplate(
     type: NotificationType,
-    channel: NotificationChannel
+    channel: NotificationChannel,
   ): NotificationTemplate | undefined {
     return this.templates.get(`${type}_${channel}`);
   }
@@ -662,7 +662,7 @@ export class NotificationService {
    * Check if current time is in user's quiet hours
    */
   private isInQuietHours(
-    quietHours?: NotificationPreference['quietHours']
+    quietHours?: NotificationPreference['quietHours'],
   ): boolean {
     if (!quietHours) {
       return false;
@@ -697,7 +697,7 @@ export class NotificationService {
    * Get next available time outside quiet hours
    */
   private getNextAvailableTime(
-    quietHours?: NotificationPreference['quietHours']
+    quietHours?: NotificationPreference['quietHours'],
   ): Date {
     if (!quietHours) {
       return new Date();
@@ -771,7 +771,7 @@ export class NotificationService {
   async getNotificationStats(
     userId?: string,
     startDate?: Date,
-    endDate?: Date
+    endDate?: Date,
   ): Promise<NotificationStats> {
     try {
       const start = startDate || new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
@@ -796,14 +796,14 @@ export class NotificationService {
       const notifications = data.map(this.mapNotification);
 
       const totalSent = notifications.filter(
-        (n) => n.status !== 'pending'
+        (n) => n.status !== 'pending',
       ).length;
       const totalDelivered = notifications.filter(
-        (n) => n.status === 'delivered' || n.status === 'read'
+        (n) => n.status === 'delivered' || n.status === 'read',
       ).length;
       const totalRead = notifications.filter((n) => n.status === 'read').length;
       const totalFailed = notifications.filter(
-        (n) => n.status === 'failed'
+        (n) => n.status === 'failed',
       ).length;
 
       const byType: Record<NotificationType, number> = {

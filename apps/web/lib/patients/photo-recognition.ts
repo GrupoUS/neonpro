@@ -69,7 +69,7 @@ export class PhotoRecognitionSystem {
   async uploadPatientPhoto(
     patientId: string,
     photoFile: File,
-    uploadedBy: string
+    uploadedBy: string,
   ): Promise<PhotoData> {
     try {
       // Simular upload e processamento da foto
@@ -138,7 +138,7 @@ export class PhotoRecognitionSystem {
   private async updatePhotoStatus(
     _photoId: string,
     _status: PhotoData['status'],
-    verificationScore?: number
+    verificationScore?: number,
   ): Promise<void> {
     try {
       if (verificationScore) {
@@ -151,7 +151,7 @@ export class PhotoRecognitionSystem {
    */
   async verifyPatientIdentity(
     patientId: string,
-    _photoFile: File
+    _photoFile: File,
   ): Promise<VerificationResult> {
     try {
       // Simular verificação de identidade
@@ -188,7 +188,7 @@ export class PhotoRecognitionSystem {
    */
   async findSimilarPatients(
     _photoFile: File,
-    threshold = 0.7
+    threshold = 0.7,
   ): Promise<
     Array<{
       patientId: string;
@@ -220,7 +220,7 @@ export class PhotoRecognitionSystem {
       ];
 
       return similarPatients.filter(
-        (patient) => patient.similarity >= threshold
+        (patient) => patient.similarity >= threshold,
       );
     } catch (_error) {
       throw new Error('Falha na busca de pacientes similares');
@@ -232,7 +232,7 @@ export class PhotoRecognitionSystem {
    */
   async generateBiometricTemplate(
     _photoId: string,
-    algorithm = 'facenet'
+    algorithm = 'facenet',
   ): Promise<BiometricTemplate> {
     try {
       // Simular geração de template biométrico
@@ -256,7 +256,7 @@ export class PhotoRecognitionSystem {
    */
   async comparePhotos(
     _photo1Id: string,
-    _photo2Id: string
+    _photo2Id: string,
   ): Promise<{
     similarity: number;
     confidence: number;
@@ -311,7 +311,7 @@ export class PhotoRecognitionSystem {
         validation.isValid = false;
         validation.issues.push('Arquivo muito pequeno');
         validation.recommendations.push(
-          'Use foto com resolução mínima de 800x600'
+          'Use foto com resolução mínima de 800x600',
         );
       }
 
@@ -369,7 +369,7 @@ export class PhotoRecognitionSystem {
    */
   async deletePatientPhoto(
     _photoId: string,
-    _deletedBy: string
+    _deletedBy: string,
   ): Promise<boolean> {
     try {
       return true;

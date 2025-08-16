@@ -35,7 +35,7 @@ export async function GET(request: NextRequest) {
             message: 'Authentication required',
           },
         },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -65,7 +65,7 @@ export async function GET(request: NextRequest) {
               : 0,
         },
       },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
     return NextResponse.json(
@@ -77,7 +77,7 @@ export async function GET(request: NextRequest) {
           details: process.env.NODE_ENV === 'development' ? error : undefined,
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -102,7 +102,7 @@ export async function POST(request: NextRequest) {
             message: 'Authentication required',
           },
         },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -123,7 +123,7 @@ export async function POST(request: NextRequest) {
           user_id: session.user.id,
         },
       },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
     // Handle validation errors
@@ -137,7 +137,7 @@ export async function POST(request: NextRequest) {
             details: error.errors,
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -152,7 +152,7 @@ export async function POST(request: NextRequest) {
             details: process.env.NODE_ENV === 'development' ? error : undefined,
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -166,7 +166,7 @@ export async function POST(request: NextRequest) {
           details: process.env.NODE_ENV === 'development' ? error : undefined,
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -191,7 +191,7 @@ export async function PUT(request: NextRequest) {
             message: 'Authentication required',
           },
         },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -208,7 +208,7 @@ export async function PUT(request: NextRequest) {
             message: 'Provider ID and test phone number are required',
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -230,7 +230,7 @@ export async function PUT(request: NextRequest) {
           user_id: session.user.id,
         },
       },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
     return NextResponse.json(
@@ -242,7 +242,7 @@ export async function PUT(request: NextRequest) {
           details: process.env.NODE_ENV === 'development' ? error : undefined,
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -267,7 +267,7 @@ export async function DELETE(request: NextRequest) {
             message: 'Authentication required',
           },
         },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -284,7 +284,7 @@ export async function DELETE(request: NextRequest) {
             message: 'Provider ID is required',
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -305,7 +305,7 @@ export async function DELETE(request: NextRequest) {
             message: 'Cannot delete provider with active messages',
           },
         },
-        { status: 409 }
+        { status: 409 },
       );
     }
 
@@ -332,7 +332,7 @@ export async function DELETE(request: NextRequest) {
           user_id: session.user.id,
         },
       },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
     return NextResponse.json(
@@ -344,7 +344,7 @@ export async function DELETE(request: NextRequest) {
           details: process.env.NODE_ENV === 'development' ? error : undefined,
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

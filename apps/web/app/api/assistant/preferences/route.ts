@@ -24,7 +24,7 @@ export async function GET(_request: NextRequest) {
     if (error && error.code !== 'PGRST116') {
       return NextResponse.json(
         { error: 'Failed to fetch preferences' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -49,7 +49,7 @@ export async function GET(_request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -82,14 +82,14 @@ export async function POST(request: NextRequest) {
     if (temperature !== undefined && (temperature < 0 || temperature > 2)) {
       return NextResponse.json(
         { error: 'Temperature must be between 0 and 2' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     if (max_tokens !== undefined && (max_tokens < 1 || max_tokens > 4000)) {
       return NextResponse.json(
         { error: 'Max tokens must be between 1 and 4000' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -99,7 +99,7 @@ export async function POST(request: NextRequest) {
     ) {
       return NextResponse.json(
         { error: 'Invalid preferred model' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -129,7 +129,7 @@ export async function POST(request: NextRequest) {
     if (error) {
       return NextResponse.json(
         { error: 'Failed to save preferences' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -137,7 +137,7 @@ export async function POST(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -64,7 +64,7 @@ function getClientInfo(request: NextRequest) {
 async function validateUserAccess(
   supabase: any,
   userId: string,
-  clinicId: string
+  clinicId: string,
 ): Promise<boolean> {
   const { data: userClinic } = await supabase
     .from('user_clinics')
@@ -91,7 +91,7 @@ export async function GET(request: NextRequest) {
     if (!rateLimitResult.success) {
       return NextResponse.json(
         { error: 'Rate limit exceeded' },
-        { status: 429 }
+        { status: 429 },
       );
     }
 
@@ -120,7 +120,7 @@ export async function GET(request: NextRequest) {
     if (!hasAccess) {
       return NextResponse.json(
         { error: 'Access denied to clinic' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -147,7 +147,7 @@ export async function GET(request: NextRequest) {
         `
         *,
         user:users(id, email, full_name)
-      `
+      `,
       )
       .match(filters)
       .order('created_at', { ascending: false })
@@ -194,13 +194,13 @@ export async function GET(request: NextRequest) {
           error: 'Invalid query parameters',
           details: error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -220,7 +220,7 @@ export async function POST(request: NextRequest) {
     if (!rateLimitResult.success) {
       return NextResponse.json(
         { error: 'Rate limit exceeded' },
-        { status: 429 }
+        { status: 429 },
       );
     }
 
@@ -229,7 +229,7 @@ export async function POST(request: NextRequest) {
     if (!csrfValid) {
       return NextResponse.json(
         { error: 'CSRF token invalid' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -262,7 +262,7 @@ export async function POST(request: NextRequest) {
     if (!clinicId) {
       return NextResponse.json(
         { error: 'Clinic ID required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -271,7 +271,7 @@ export async function POST(request: NextRequest) {
     if (!hasAccess) {
       return NextResponse.json(
         { error: 'Access denied to clinic' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -318,13 +318,13 @@ export async function POST(request: NextRequest) {
           error: 'Invalid request data',
           details: error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -344,7 +344,7 @@ export async function DELETE(request: NextRequest) {
     if (!rateLimitResult.success) {
       return NextResponse.json(
         { error: 'Rate limit exceeded' },
-        { status: 429 }
+        { status: 429 },
       );
     }
 
@@ -353,7 +353,7 @@ export async function DELETE(request: NextRequest) {
     if (!csrfValid) {
       return NextResponse.json(
         { error: 'CSRF token invalid' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -385,7 +385,7 @@ export async function DELETE(request: NextRequest) {
     if (consentError || !consent) {
       return NextResponse.json(
         { error: 'Consent not found or access denied' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -424,13 +424,13 @@ export async function DELETE(request: NextRequest) {
           error: 'Invalid request data',
           details: error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

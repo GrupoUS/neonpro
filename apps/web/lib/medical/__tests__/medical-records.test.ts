@@ -135,7 +135,7 @@ describe('MedicalRecordsManager', () => {
 
         const result = await manager.createMedicalRecord(
           createData,
-          mockUserId
+          mockUserId,
         );
 
         expect(result.success).toBe(true);
@@ -166,7 +166,7 @@ describe('MedicalRecordsManager', () => {
 
         const result = await manager.createMedicalRecord(
           createData,
-          mockUserId
+          mockUserId,
         );
 
         expect(result.success).toBe(false);
@@ -187,7 +187,7 @@ describe('MedicalRecordsManager', () => {
 
         const result = await manager.createMedicalRecord(
           invalidData,
-          mockUserId
+          mockUserId,
         );
 
         expect(result.success).toBe(false);
@@ -252,7 +252,7 @@ describe('MedicalRecordsManager', () => {
         const result = await manager.updateMedicalRecord(
           'record-1',
           updateData,
-          mockUserId
+          mockUserId,
         );
 
         expect(result.success).toBe(true);
@@ -278,7 +278,7 @@ describe('MedicalRecordsManager', () => {
         const result = await manager.updateMedicalRecord(
           'record-1',
           updateData,
-          mockUserId
+          mockUserId,
         );
 
         expect(result.success).toBe(false);
@@ -300,12 +300,12 @@ describe('MedicalRecordsManager', () => {
 
         const result = await manager.deleteMedicalRecord(
           'record-1',
-          mockUserId
+          mockUserId,
         );
 
         expect(result.success).toBe(true);
         expect(mockSupabase.from().update).toHaveBeenCalledWith(
-          expect.objectContaining({ isDeleted: true })
+          expect.objectContaining({ isDeleted: true }),
         );
       });
     });
@@ -325,7 +325,7 @@ describe('MedicalRecordsManager', () => {
         expect(result.data).toEqual(mockRecords);
         expect(mockSupabase.from().select().eq).toHaveBeenCalledWith(
           'patient_id',
-          mockPatientId
+          mockPatientId,
         );
       });
 
@@ -391,7 +391,7 @@ describe('MedicalRecordsManager', () => {
 
         const result = await manager.createMedicalHistory(
           createData,
-          mockUserId
+          mockUserId,
         );
 
         expect(result.success).toBe(true);
@@ -415,7 +415,7 @@ describe('MedicalRecordsManager', () => {
 
         const result = await manager.createMedicalHistory(
           invalidData,
-          mockUserId
+          mockUserId,
         );
 
         expect(result.success).toBe(false);
@@ -518,13 +518,13 @@ describe('MedicalRecordsManager', () => {
             description: 'Test document',
             tags: ['test'],
           },
-          mockUserId
+          mockUserId,
         );
 
         expect(result.success).toBe(true);
         expect(result.data).toEqual(mockAttachment);
         expect(mockSupabase.storage.from).toHaveBeenCalledWith(
-          'medical-attachments'
+          'medical-attachments',
         );
       });
 
@@ -545,7 +545,7 @@ describe('MedicalRecordsManager', () => {
             category: 'document',
             description: 'Test document',
           },
-          mockUserId
+          mockUserId,
         );
 
         expect(result.success).toBe(false);
@@ -556,7 +556,7 @@ describe('MedicalRecordsManager', () => {
         const largeFile = new File(
           ['x'.repeat(11 * 1024 * 1024)],
           'large.pdf',
-          { type: 'application/pdf' }
+          { type: 'application/pdf' },
         );
 
         const result = await manager.uploadAttachment(
@@ -566,7 +566,7 @@ describe('MedicalRecordsManager', () => {
             category: 'document',
             description: 'Large document',
           },
-          mockUserId
+          mockUserId,
         );
 
         expect(result.success).toBe(false);
@@ -585,7 +585,7 @@ describe('MedicalRecordsManager', () => {
             category: 'document',
             description: 'Invalid file',
           },
-          mockUserId
+          mockUserId,
         );
 
         expect(result.success).toBe(false);
@@ -687,7 +687,7 @@ describe('MedicalRecordsManager', () => {
 
         const result = await manager.deleteAttachment(
           'attachment-1',
-          mockUserId
+          mockUserId,
         );
 
         expect(result.success).toBe(true);
@@ -798,7 +798,7 @@ describe('MedicalRecordsManager', () => {
             drawImage: jest.fn(),
             canvas: {
               toBlob: jest.fn((callback) =>
-                callback(new Blob(['thumbnail'], { type: 'image/jpeg' }))
+                callback(new Blob(['thumbnail'], { type: 'image/jpeg' })),
               ),
             },
           })),
@@ -835,7 +835,7 @@ describe('MedicalRecordsManager', () => {
         expect(manager.validateFileType('application/pdf')).toBe(true);
         expect(manager.validateFileType('text/plain')).toBe(true);
         expect(manager.validateFileType('application/x-executable')).toBe(
-          false
+          false,
         );
         expect(manager.validateFileType('application/javascript')).toBe(false);
       });
@@ -926,7 +926,7 @@ describe('MedicalRecordsManager', () => {
 
       const recordResult = await manager.createMedicalRecord(
         createData,
-        mockUserId
+        mockUserId,
       );
       expect(recordResult.success).toBe(true);
 
@@ -963,7 +963,7 @@ describe('MedicalRecordsManager', () => {
         'record-1',
         mockFile,
         { category: 'document' },
-        mockUserId
+        mockUserId,
       );
 
       expect(attachmentResult.success).toBe(true);

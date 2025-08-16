@@ -279,7 +279,7 @@ export const PREDEFINED_ROUTES: RoutePermission[] = [
 
   createRoute(
     '^/dashboard/settings/(security|integrations|api)$',
-    'admin_settings'
+    'admin_settings',
   )
     .description('Advanced system settings')
     .preset('PREMIUM_TIER')
@@ -353,7 +353,7 @@ export class ConfigValidator {
           errors[`route_${index}_${route.name}`] = [];
         }
         errors[`route_${index}_${route.name}`].push(
-          'Duplicate pattern detected'
+          'Duplicate pattern detected',
         );
         hasErrors = true;
       }
@@ -382,7 +382,7 @@ export class RouteConfigManager {
     const validation = ConfigValidator.validateRoute(route);
     if (!validation.valid) {
       throw new Error(
-        `Invalid route configuration: ${validation.errors.join(', ')}`
+        `Invalid route configuration: ${validation.errors.join(', ')}`,
       );
     }
     this.routes.push(route);
@@ -404,7 +404,7 @@ export class RouteConfigManager {
       const validation = ConfigValidator.validateRoute(updatedRoute);
       if (!validation.valid) {
         throw new Error(
-          `Invalid route update: ${validation.errors.join(', ')}`
+          `Invalid route update: ${validation.errors.join(', ')}`,
         );
       }
       this.routes[index] = updatedRoute;

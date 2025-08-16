@@ -68,7 +68,7 @@ export async function GET(request: NextRequest) {
     if (!clinicUser) {
       return NextResponse.json(
         { error: 'Usuário não associado a uma clínica' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -108,7 +108,7 @@ export async function GET(request: NextRequest) {
           } catch (_error) {
             return { ...widget, data: null, error: 'Erro ao carregar dados' };
           }
-        })
+        }),
       );
       return NextResponse.json({ widgets: widgetsWithData });
     }
@@ -117,7 +117,7 @@ export async function GET(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -146,7 +146,7 @@ export async function POST(request: NextRequest) {
     if (!clinicUser) {
       return NextResponse.json(
         { error: 'Usuário não associado a uma clínica' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -162,12 +162,12 @@ export async function POST(request: NextRequest) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Dados inválidos', details: error.errors },
-        { status: 400 }
+        { status: 400 },
       );
     }
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

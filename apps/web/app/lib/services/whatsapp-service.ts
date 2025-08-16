@@ -40,7 +40,7 @@ class WhatsAppService {
   }
 
   async updateConfig(
-    config: Omit<WhatsAppConfig, 'id' | 'createdAt' | 'updatedAt'>
+    config: Omit<WhatsAppConfig, 'id' | 'createdAt' | 'updatedAt'>,
   ): Promise<WhatsAppConfig> {
     const { data, error } = await this.supabase
       .from('whatsapp_config')
@@ -64,7 +64,7 @@ class WhatsAppService {
     content: string,
     type: WhatsAppMessageType = WhatsAppMessageType.TEXT,
     patientId?: string,
-    templateName?: string
+    templateName?: string,
   ): Promise<string> {
     const config = await this.getConfig();
     if (!config?.isActive) {
@@ -105,13 +105,13 @@ class WhatsAppService {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify(messageRequest),
-        }
+        },
       );
 
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(
-          `WhatsApp API error: ${errorData.error?.message || 'Unknown error'}`
+          `WhatsApp API error: ${errorData.error?.message || 'Unknown error'}`,
         );
       }
 
@@ -155,7 +155,7 @@ class WhatsAppService {
     phoneNumber: string,
     templateName: string,
     parameters: Record<string, string> = {},
-    patientId?: string
+    patientId?: string,
   ): Promise<string> {
     const config = await this.getConfig();
     if (!config?.isActive) {
@@ -194,13 +194,13 @@ class WhatsAppService {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify(messageRequest),
-        }
+        },
       );
 
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(
-          `WhatsApp API error: ${errorData.error?.message || 'Unknown error'}`
+          `WhatsApp API error: ${errorData.error?.message || 'Unknown error'}`,
         );
       }
 
@@ -241,7 +241,7 @@ class WhatsAppService {
   }
 
   private async storeMessage(
-    message: Omit<WhatsAppMessage, 'id' | 'createdAt' | 'updatedAt'>
+    message: Omit<WhatsAppMessage, 'id' | 'createdAt' | 'updatedAt'>,
   ): Promise<void> {
     try {
       const { error } = await this.supabase.from('whatsapp_messages').insert({
@@ -289,7 +289,7 @@ class WhatsAppService {
 
   private buildTemplateComponents(
     template: WhatsAppTemplate,
-    parameters: Record<string, string>
+    parameters: Record<string, string>,
   ): any[] {
     return template.components.map((component) => {
       if (component.type === 'BODY' && component.text) {
@@ -332,7 +332,7 @@ class WhatsAppService {
         await this.updateMessageStatus(
           status.id,
           status.status,
-          status.timestamp
+          status.timestamp,
         );
       }
     }
@@ -348,7 +348,7 @@ class WhatsAppService {
   private async updateMessageStatus(
     whatsappMessageId: string,
     status: string,
-    timestamp: string
+    timestamp: string,
   ): Promise<void> {
     try {
       const updateData: any = {
@@ -358,11 +358,11 @@ class WhatsAppService {
 
       if (status === 'delivered') {
         updateData.delivered_at = new Date(
-          Number.parseInt(timestamp, 10) * 1000
+          Number.parseInt(timestamp, 10) * 1000,
         ).toISOString();
       } else if (status === 'read') {
         updateData.read_at = new Date(
-          Number.parseInt(timestamp, 10) * 1000
+          Number.parseInt(timestamp, 10) * 1000,
         ).toISOString();
       }
 
@@ -413,7 +413,7 @@ class WhatsAppService {
     patientId: string,
     phoneNumber: string,
     source = 'manual',
-    consentMessage?: string
+    consentMessage?: string,
   ): Promise<void> {
     const { error } = await this.supabase.from('whatsapp_opt_ins').upsert({
       patient_id: patientId,
@@ -434,7 +434,7 @@ class WhatsAppService {
   // Analytics
   async getAnalytics(
     startDate: Date,
-    endDate: Date
+    endDate: Date,
   ): Promise<WhatsAppAnalytics[]> {
     const { data, error } = await this.supabase
       .from('whatsapp_analytics')
@@ -454,7 +454,7 @@ class WhatsAppService {
   async sendBulkMessages(
     phoneNumbers: string[],
     templateName: string,
-    parameters: Record<string, string> = {}
+    parameters: Record<string, string> = {},
   ): Promise<{ sent: number; failed: number; errors: string[] }> {
     const results = { sent: 0, failed: 0, errors: [] as string[] };
 
@@ -465,7 +465,7 @@ class WhatsAppService {
         if (!isOptedIn) {
           results.failed++;
           results.errors.push(
-            `${phoneNumber}: Not opted in for WhatsApp communications`
+            `${phoneNumber}: Not opted in for WhatsApp communications`,
           );
           continue;
         }
@@ -478,7 +478,7 @@ class WhatsAppService {
       } catch (error) {
         results.failed++;
         results.errors.push(
-          `${phoneNumber}: ${error instanceof Error ? error.message : 'Unknown error'}`
+          `${phoneNumber}: ${error instanceof Error ? error.message : 'Unknown error'}`,
         );
       }
     }

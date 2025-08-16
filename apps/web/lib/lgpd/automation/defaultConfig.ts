@@ -348,7 +348,7 @@ export const productionLGPDAutomationConfig: LGPDAutomationConfig = {
  * Helper function to get configuration based on environment
  */
 export function getLGPDAutomationConfig(
-  environment: 'development' | 'production' | 'default' = 'default'
+  environment: 'development' | 'production' | 'default' = 'default',
 ): LGPDAutomationConfig {
   switch (environment) {
     case 'development':

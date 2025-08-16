@@ -15,7 +15,7 @@ type LocalizationContextValue = {
 };
 
 const LocalizationContext = createContext<LocalizationContextValue | undefined>(
-  undefined
+  undefined,
 );
 
 type LocalizationProviderProps = {
@@ -111,7 +111,7 @@ export function useLocalization() {
   const context = useContext(LocalizationContext);
   if (context === undefined) {
     throw new Error(
-      'useLocalization must be used within a LocalizationProvider'
+      'useLocalization must be used within a LocalizationProvider',
     );
   }
   return context;

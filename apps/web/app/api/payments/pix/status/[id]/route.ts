@@ -8,7 +8,7 @@ import { createClient } from '@/lib/supabase/server';
  */
 export async function GET(
   _request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const supabase = createClient();
@@ -27,7 +27,7 @@ export async function GET(
     if (!paymentId) {
       return NextResponse.json(
         { error: 'Payment ID is required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -63,7 +63,7 @@ export async function GET(
     if (!isAuthorized) {
       return NextResponse.json(
         { error: 'Insufficient permissions' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -74,7 +74,7 @@ export async function GET(
         error: 'Internal server error',
         message: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

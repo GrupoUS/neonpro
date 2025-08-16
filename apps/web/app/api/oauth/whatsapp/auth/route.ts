@@ -31,12 +31,12 @@ export async function GET(request: NextRequest) {
           requestId,
           provider: 'whatsapp',
           error: sessionError?.message,
-        }
+        },
       );
 
       return NextResponse.json(
         { error: 'Authentication required' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -62,7 +62,7 @@ export async function GET(request: NextRequest) {
           connectionId: existingConnection.id,
           connectedAt: existingConnection.connected_at,
         },
-        { status: 409 }
+        { status: 409 },
       );
     }
 
@@ -91,7 +91,7 @@ export async function GET(request: NextRequest) {
 
       return NextResponse.json(
         { error: 'Failed to initialize OAuth flow' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -141,7 +141,7 @@ export async function GET(request: NextRequest) {
         error: 'Failed to initiate WhatsApp OAuth flow',
         requestId,
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

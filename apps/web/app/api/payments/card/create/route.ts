@@ -15,7 +15,7 @@ import { CardPaymentService } from '@/lib/payments/card/card-payment-service';
 // Initialize Supabase client
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
+  process.env.SUPABASE_SERVICE_ROLE_KEY!,
 );
 
 // Validation schema
@@ -122,7 +122,7 @@ export async function POST(request: NextRequest) {
     if (!session?.user?.id) {
       return NextResponse.json(
         { error: 'Unauthorized', message: 'User not authenticated' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -136,7 +136,7 @@ export async function POST(request: NextRequest) {
     if (profileError || !profile) {
       return NextResponse.json(
         { error: 'Forbidden', message: 'User profile not found' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -145,7 +145,7 @@ export async function POST(request: NextRequest) {
     if (!allowedRoles.includes(profile.role)) {
       return NextResponse.json(
         { error: 'Forbidden', message: 'Insufficient permissions' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -157,7 +157,7 @@ export async function POST(request: NextRequest) {
     if (!isValidDocument(validatedData.customer.document)) {
       return NextResponse.json(
         { error: 'Validation Error', message: 'Invalid CPF/CNPJ' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -168,7 +168,7 @@ export async function POST(request: NextRequest) {
       const interestRate = 0.0299;
       totalAmount = Math.ceil(
         validatedData.amount *
-          (1 + (validatedData.installments - 1) * interestRate)
+          (1 + (validatedData.installments - 1) * interestRate),
       );
     }
 
@@ -248,7 +248,7 @@ export async function POST(request: NextRequest) {
             total_amount: totalAmount,
             installments: validatedData.installments,
             installment_amount: Math.ceil(
-              totalAmount / validatedData.installments
+              totalAmount / validatedData.installments,
             ),
             interest_rate: validatedData.installments > 1 ? 0.0299 : 0,
             status: 'active',
@@ -260,7 +260,7 @@ export async function POST(request: NextRequest) {
           // Create individual installment payments
           const installmentPayments = [];
           const installmentAmount = Math.ceil(
-            totalAmount / validatedData.installments
+            totalAmount / validatedData.installments,
           );
 
           for (let i = 1; i <= validatedData.installments; i++) {
@@ -321,7 +321,7 @@ export async function POST(request: NextRequest) {
           message: 'Invalid request data',
           details: error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -331,7 +331,7 @@ export async function POST(request: NextRequest) {
         message:
           error instanceof Error ? error.message : 'Unknown error occurred',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

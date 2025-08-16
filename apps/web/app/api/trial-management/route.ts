@@ -5,7 +5,7 @@ import { z } from 'zod';
 // Initialize Supabase client
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
+  process.env.SUPABASE_SERVICE_ROLE_KEY!,
 );
 
 // Validation schemas
@@ -70,7 +70,7 @@ export async function GET(request: NextRequest) {
     if (!userId) {
       return NextResponse.json(
         { error: 'Authentication required' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -84,7 +84,7 @@ export async function GET(request: NextRequest) {
     if (targetUserId && targetUserId !== userId && userRole !== 'admin') {
       return NextResponse.json(
         { error: 'Insufficient permissions' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -96,7 +96,7 @@ export async function GET(request: NextRequest) {
         if (userRole !== 'admin') {
           return NextResponse.json(
             { error: 'Admin access required' },
-            { status: 403 }
+            { status: 403 },
           );
         }
         return await getCampaigns();
@@ -108,7 +108,7 @@ export async function GET(request: NextRequest) {
         if (userRole !== 'admin') {
           return NextResponse.json(
             { error: 'Admin access required' },
-            { status: 403 }
+            { status: 403 },
           );
         }
         return await getAIInsights();
@@ -116,13 +116,13 @@ export async function GET(request: NextRequest) {
       default:
         return NextResponse.json(
           { error: 'Invalid action parameter' },
-          { status: 400 }
+          { status: 400 },
         );
     }
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -138,7 +138,7 @@ export async function POST(request: NextRequest) {
     if (!userId) {
       return NextResponse.json(
         { error: 'Authentication required' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -153,7 +153,7 @@ export async function POST(request: NextRequest) {
         if (userRole !== 'admin') {
           return NextResponse.json(
             { error: 'Admin access required' },
-            { status: 403 }
+            { status: 403 },
           );
         }
         return await createCampaign(body, userId);
@@ -162,7 +162,7 @@ export async function POST(request: NextRequest) {
         if (userRole !== 'admin') {
           return NextResponse.json(
             { error: 'Admin access required' },
-            { status: 403 }
+            { status: 403 },
           );
         }
         return await triggerAIOptimization(body, userId);
@@ -170,24 +170,23 @@ export async function POST(request: NextRequest) {
       default:
         return NextResponse.json(
           { error: 'Invalid action parameter' },
-          { status: 400 }
+          { status: 400 },
         );
     }
   } catch (error) {
-
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {
           error: 'Invalid request data',
           details: error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -203,7 +202,7 @@ export async function PUT(request: NextRequest) {
     if (!userId) {
       return NextResponse.json(
         { error: 'Authentication required' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -224,7 +223,7 @@ export async function PUT(request: NextRequest) {
     if (trial.user_id !== userId && userRole !== 'admin') {
       return NextResponse.json(
         { error: 'Insufficient permissions' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -255,7 +254,7 @@ export async function PUT(request: NextRequest) {
       if (currentTrial) {
         const newEndDate = new Date(currentTrial.end_date);
         newEndDate.setDate(
-          newEndDate.getDate() + validatedUpdate.extended_days
+          newEndDate.getDate() + validatedUpdate.extended_days,
         );
         updateData.end_date = newEndDate.toISOString();
         updateData.extended_days = validatedUpdate.extended_days;
@@ -272,7 +271,7 @@ export async function PUT(request: NextRequest) {
     if (error) {
       return NextResponse.json(
         { error: 'Failed to update trial' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -292,20 +291,19 @@ export async function PUT(request: NextRequest) {
       message: 'Trial updated successfully',
     });
   } catch (error) {
-
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {
           error: 'Invalid update data',
           details: error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -315,7 +313,7 @@ export async function PUT(request: NextRequest) {
 async function getTrials(
   userId: string,
   status?: string | null,
-  campaignId?: string | null
+  campaignId?: string | null,
 ) {
   let query = supabase
     .from('trials')
@@ -324,7 +322,7 @@ async function getTrials(
       *,
       campaigns(name, description),
       users(email, created_at)
-    `
+    `,
     )
     .eq('user_id', userId)
     .order('created_at', { ascending: false });
@@ -357,7 +355,7 @@ async function getCampaigns() {
       `
       *,
       trials(count)
-    `
+    `,
     )
     .order('created_at', { ascending: false });
 
@@ -408,7 +406,7 @@ async function createTrial(body: any, userId: string, userRole: string | null) {
   if (validatedTrial.user_id !== userId && userRole !== 'admin') {
     return NextResponse.json(
       { error: 'Cannot create trial for other users' },
-      { status: 403 }
+      { status: 403 },
     );
   }
 
@@ -423,7 +421,7 @@ async function createTrial(body: any, userId: string, userRole: string | null) {
   if (existingTrial) {
     return NextResponse.json(
       { error: 'User already has an active trial' },
-      { status: 409 }
+      { status: 409 },
     );
   }
 
@@ -457,7 +455,7 @@ async function createTrial(body: any, userId: string, userRole: string | null) {
   if (error) {
     return NextResponse.json(
       { error: 'Failed to create trial' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 
@@ -496,7 +494,7 @@ async function createCampaign(body: any, userId: string) {
   if (error) {
     return NextResponse.json(
       { error: 'Failed to create campaign' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 
@@ -527,7 +525,7 @@ async function triggerAIOptimization(body: any, userId: string) {
   if (error) {
     return NextResponse.json(
       { error: 'Failed to trigger AI optimization' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 

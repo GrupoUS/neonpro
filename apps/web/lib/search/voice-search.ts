@@ -309,7 +309,7 @@ export class VoiceSearch {
 
       const totalConfidence = session.queries.reduce(
         (sum, q) => sum + q.confidence,
-        0
+        0,
       );
       session.averageConfidence = totalConfidence / session.queries.length;
     }
@@ -370,7 +370,7 @@ export class VoiceSearch {
    * Handle speech recognition result
    */
   private async handleRecognitionResult(
-    event: SpeechRecognitionEvent
+    event: SpeechRecognitionEvent,
   ): Promise<void> {
     const result = event.results[event.resultIndex];
     const transcript = result[0].transcript.trim();
@@ -401,7 +401,7 @@ export class VoiceSearch {
       await this.processVoiceInput(
         transcript,
         confidence,
-        alternatives.map((a) => a.transcript)
+        alternatives.map((a) => a.transcript),
       );
     }
 
@@ -455,7 +455,7 @@ export class VoiceSearch {
   private async processVoiceInput(
     transcript: string,
     confidence: number,
-    alternatives: string[]
+    alternatives: string[],
   ): Promise<void> {
     if (!this.currentSession) {
       throw new Error('No active voice search session');
@@ -543,7 +543,7 @@ export class VoiceSearch {
   private async executeCommand(
     command: VoiceCommand,
     transcript: string,
-    query: VoiceQuery
+    query: VoiceQuery,
   ): Promise<void> {
     // Track command usage
     if (
@@ -558,7 +558,7 @@ export class VoiceSearch {
         // Extract search terms after command pattern
         const searchTerms = this.extractSearchTerms(
           transcript,
-          command.patterns
+          command.patterns,
         );
         if (searchTerms) {
           query.processedQuery = searchTerms;
@@ -599,7 +599,7 @@ export class VoiceSearch {
    */
   private extractSearchTerms(
     transcript: string,
-    patterns: string[]
+    patterns: string[],
   ): string | null {
     const normalizedTranscript = transcript.toLowerCase();
 
@@ -625,7 +625,7 @@ export class VoiceSearch {
   private async executeSearch(
     searchQuery: string,
     query: VoiceQuery,
-    parameters?: Record<string, any>
+    parameters?: Record<string, any>,
   ): Promise<void> {
     try {
       // Process with NLP
@@ -679,7 +679,7 @@ export class VoiceSearch {
    */
   getCommandsByCategory(category: VoiceCommand['category']): VoiceCommand[] {
     return Array.from(this.commands.values()).filter(
-      (cmd) => cmd.category === category
+      (cmd) => cmd.category === category,
     );
   }
 
@@ -724,7 +724,7 @@ export class VoiceSearch {
    */
   async getAnalytics(
     _userId?: string,
-    _dateRange?: { start: Date; end: Date }
+    _dateRange?: { start: Date; end: Date },
   ): Promise<VoiceSearchAnalytics> {
     // This would typically query from Supabase
     // Placeholder implementation

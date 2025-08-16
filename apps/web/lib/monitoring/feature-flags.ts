@@ -55,7 +55,7 @@ class FeatureFlagManager {
   async isFeatureEnabled(
     flagName: string,
     userId?: string,
-    context?: Record<string, any>
+    context?: Record<string, any>,
   ): Promise<FeatureFlagEvaluation> {
     try {
       // Check cache first
@@ -99,7 +99,7 @@ class FeatureFlagManager {
   private evaluateFlag(
     flag: FeatureFlag,
     userId?: string,
-    context?: Record<string, any>
+    context?: Record<string, any>,
   ): FeatureFlagEvaluation {
     // If flag is globally disabled
     if (!flag.is_enabled) {
@@ -115,7 +115,7 @@ class FeatureFlagManager {
       const isTargeted = this.evaluateTargetAudience(
         flag.target_audience,
         userId,
-        context
+        context,
       );
       if (isTargeted !== null) {
         return {
@@ -132,7 +132,7 @@ class FeatureFlagManager {
       const isInRollout = this.evaluatePercentageRollout(
         flag.flag_name,
         flag.rollout_percentage,
-        userId
+        userId,
       );
 
       return {
@@ -157,7 +157,7 @@ class FeatureFlagManager {
   private evaluateTargetAudience(
     targetAudience: Record<string, any>,
     userId: string,
-    context?: Record<string, any>
+    context?: Record<string, any>,
   ): boolean | null {
     // Check user ID targeting
     if (targetAudience.userIds && Array.isArray(targetAudience.userIds)) {
@@ -193,7 +193,7 @@ class FeatureFlagManager {
   private evaluatePercentageRollout(
     flagName: string,
     percentage: number,
-    userId?: string
+    userId?: string,
   ): boolean {
     if (percentage <= 0) {
       return false;
@@ -233,7 +233,7 @@ class FeatureFlagManager {
       rolloutPercentage?: number;
       targetAudience?: Record<string, any>;
       description?: string;
-    }
+    },
   ): Promise<FeatureFlag | null> {
     try {
       const { data, error } = await this.supabase
@@ -249,7 +249,7 @@ class FeatureFlagManager {
           },
           {
             onConflict: 'flag_name',
-          }
+          },
         )
         .select()
         .single();
@@ -274,7 +274,7 @@ class FeatureFlagManager {
     flagName: string,
     targetPercentage: number,
     incrementStep = 10,
-    intervalMinutes = 15
+    intervalMinutes = 15,
   ): Promise<void> {
     const flag = await this.getFeatureFlag(flagName);
     if (!flag) {
@@ -289,7 +289,7 @@ class FeatureFlagManager {
 
     const nextPercentage = Math.min(
       currentPercentage + incrementStep,
-      targetPercentage
+      targetPercentage,
     );
 
     await this.updateFeatureFlagPercentage(flagName, nextPercentage);
@@ -302,10 +302,10 @@ class FeatureFlagManager {
             flagName,
             targetPercentage,
             incrementStep,
-            intervalMinutes
+            intervalMinutes,
           );
         },
-        intervalMinutes * 60 * 1000
+        intervalMinutes * 60 * 1000,
       );
     }
   }
@@ -315,7 +315,7 @@ class FeatureFlagManager {
    */
   async emergencyRollback(
     flagName: string,
-    _reason?: string
+    _reason?: string,
   ): Promise<boolean> {
     try {
       const { error } = await this.supabase
@@ -386,7 +386,7 @@ class FeatureFlagManager {
    */
   async updateFeatureFlagPercentage(
     flagName: string,
-    percentage: number
+    percentage: number,
   ): Promise<boolean> {
     try {
       const { error } = await this.supabase
@@ -447,7 +447,7 @@ export const featureFlagManager = new FeatureFlagManager();
 //React Hook for feature flag usage
 export function useFeatureFlag(
   flagName: string,
-  context?: Record<string, any>
+  context?: Record<string, any>,
 ) {
   const [evaluation, setEvaluation] = useState<FeatureFlagEvaluation>({
     flagName,
@@ -464,7 +464,7 @@ export function useFeatureFlag(
       const result = await featureFlagManager.isFeatureEnabled(
         flagName,
         userId,
-        context
+        context,
       );
       setEvaluation(result);
       setLoading(false);
@@ -484,7 +484,7 @@ export function useFeatureFlag(
 export async function checkFeatureFlagServer(
   flagName: string,
   userId?: string,
-  context?: Record<string, any>
+  context?: Record<string, any>,
 ): Promise<FeatureFlagEvaluation> {
   const supabase = createServerClient();
   const manager = new FeatureFlagManager();

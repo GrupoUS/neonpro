@@ -99,7 +99,7 @@ export class ConcurrentSessionManager {
   constructor(
     supabaseUrl: string,
     supabaseKey: string,
-    customLimits?: Partial<Record<UserRole, ConcurrentSessionLimits>>
+    customLimits?: Partial<Record<UserRole, ConcurrentSessionLimits>>,
   ) {
     this.supabase = createClient(supabaseUrl, supabaseKey);
     this.auditLogger = new SecurityAuditLogger(supabaseUrl, supabaseKey);
@@ -123,7 +123,7 @@ export class ConcurrentSessionManager {
       userAgent: string;
       location?: SessionInfo['location'];
     },
-    metadata?: Record<string, any>
+    metadata?: Record<string, any>,
   ): Promise<{ sessionId: string; terminatedSessions?: string[] }> {
     const sessionId = this.generateSessionId();
     const now = new Date();
@@ -138,7 +138,7 @@ export class ConcurrentSessionManager {
       userRole,
       deviceInfo.deviceId,
       activeSessions,
-      limits
+      limits,
     );
 
     // Create new session record
@@ -208,7 +208,7 @@ export class ConcurrentSessionManager {
    */
   async updateSessionActivity(
     sessionId: string,
-    metadata?: Record<string, any>
+    metadata?: Record<string, any>,
   ): Promise<void> {
     const now = new Date();
 
@@ -232,7 +232,7 @@ export class ConcurrentSessionManager {
   async terminateSession(
     sessionId: string,
     reason: SessionTerminationReason,
-    terminatedBy?: string
+    terminatedBy?: string,
   ): Promise<void> {
     // Get session info before termination
     const session = await this.getSessionInfo(sessionId);
@@ -283,7 +283,7 @@ export class ConcurrentSessionManager {
     userId: string,
     reason: SessionTerminationReason,
     excludeSessionId?: string,
-    terminatedBy?: string
+    terminatedBy?: string,
   ): Promise<string[]> {
     const activeSessions = await this.getActiveSessions(userId);
     const sessionsToTerminate = excludeSessionId
@@ -381,7 +381,7 @@ export class ConcurrentSessionManager {
 
     if (terminationError) {
       throw new Error(
-        `Failed to get recent terminations: ${terminationError.message}`
+        `Failed to get recent terminations: ${terminationError.message}`,
       );
     }
 
@@ -424,7 +424,7 @@ export class ConcurrentSessionManager {
    */
   updateSessionLimits(
     role: UserRole,
-    limits: Partial<ConcurrentSessionLimits>
+    limits: Partial<ConcurrentSessionLimits>,
   ): void {
     this.sessionLimits[role] = {
       ...this.sessionLimits[role],
@@ -455,7 +455,7 @@ export class ConcurrentSessionManager {
 
     if (selectError) {
       throw new Error(
-        `Failed to find expired sessions: ${selectError.message}`
+        `Failed to find expired sessions: ${selectError.message}`,
       );
     }
 
@@ -474,12 +474,12 @@ export class ConcurrentSessionManager {
       })
       .in(
         'session_id',
-        expiredSessions.map((s) => s.session_id)
+        expiredSessions.map((s) => s.session_id),
       );
 
     if (updateError) {
       throw new Error(
-        `Failed to cleanup expired sessions: ${updateError.message}`
+        `Failed to cleanup expired sessions: ${updateError.message}`,
       );
     }
 
@@ -516,14 +516,14 @@ export class ConcurrentSessionManager {
     _userRole: UserRole,
     deviceId: string,
     activeSessions: SessionInfo[],
-    limits: ConcurrentSessionLimits
+    limits: ConcurrentSessionLimits,
   ): Promise<string[]> {
     const terminatedSessions: string[] = [];
 
     // Check device-specific limits
     if (!limits.allowMultipleDevices) {
       const otherDeviceSessions = activeSessions.filter(
-        (s) => s.deviceId !== deviceId
+        (s) => s.deviceId !== deviceId,
       );
       for (const session of otherDeviceSessions) {
         await this.terminateSession(session.sessionId, {
@@ -536,7 +536,7 @@ export class ConcurrentSessionManager {
 
     // Check sessions per device limit
     const deviceSessions = activeSessions.filter(
-      (s) => s.deviceId === deviceId
+      (s) => s.deviceId === deviceId,
     );
     if (deviceSessions.length >= limits.maxSessionsPerDevice) {
       const sessionsToTerminate = deviceSessions
@@ -554,7 +554,7 @@ export class ConcurrentSessionManager {
 
     // Check total session limit
     const remainingSessions = activeSessions.filter(
-      (s) => !terminatedSessions.includes(s.sessionId)
+      (s) => !terminatedSessions.includes(s.sessionId),
     );
 
     if (remainingSessions.length >= limits.maxSessions) {
@@ -600,13 +600,13 @@ export class ConcurrentSessionManager {
           await this.cleanupExpiredSessions();
         } catch (_error) {}
       },
-      5 * 60 * 1000
+      5 * 60 * 1000,
     ); // Every 5 minutes
   }
 
   private async notifyNewSession(
     userId: string,
-    session: SessionInfo
+    session: SessionInfo,
   ): Promise<void> {
     try {
       // This would integrate with your notification system
@@ -628,7 +628,7 @@ export class ConcurrentSessionManager {
 
   private async notifySessionTermination(
     session: SessionInfo,
-    reason: SessionTerminationReason
+    reason: SessionTerminationReason,
   ): Promise<void> {
     try {
       // This would integrate with your notification system

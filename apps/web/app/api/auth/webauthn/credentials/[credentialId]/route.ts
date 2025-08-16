@@ -11,7 +11,7 @@ import { webAuthnService } from '@/lib/auth/webauthn-service';
 
 export async function DELETE(
   _request: NextRequest,
-  { params }: { params: Promise<{ credentialId: string }> }
+  { params }: { params: Promise<{ credentialId: string }> },
 ) {
   try {
     const supabase = await createClient();
@@ -25,7 +25,7 @@ export async function DELETE(
     if (sessionError || !session?.user) {
       return NextResponse.json(
         { error: 'Authentication required' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -35,7 +35,7 @@ export async function DELETE(
     if (!credentialId) {
       return NextResponse.json(
         { error: 'Credential ID required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -54,7 +54,7 @@ export async function DELETE(
             ? error.message
             : 'Failed to remove credential',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

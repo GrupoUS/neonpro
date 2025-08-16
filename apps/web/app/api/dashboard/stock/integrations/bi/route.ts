@@ -38,7 +38,7 @@ export async function GET() {
           created_at,
           user_id
         )
-      `
+      `,
       )
       .order('created_at', { ascending: false });
 
@@ -52,7 +52,7 @@ export async function GET() {
       totalValue:
         biMetrics?.reduce(
           (acc, item) => acc + item.current_quantity * item.unit_price,
-          0
+          0,
         ) || 0,
       lowStockItems:
         biMetrics?.filter((item) => item.current_quantity <= item.min_threshold)
@@ -66,7 +66,7 @@ export async function GET() {
             acc[item.category] = (acc[item.category] || 0) + 1;
             return acc;
           },
-          {} as Record<string, number>
+          {} as Record<string, number>,
         ) || {},
       movementsTrend:
         biMetrics
@@ -79,7 +79,7 @@ export async function GET() {
               acc[date] = (acc[date] || 0) + movement.quantity;
               return acc;
             },
-            {} as Record<string, number>
+            {} as Record<string, number>,
           ) || {},
     };
 
@@ -91,7 +91,7 @@ export async function GET() {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -148,7 +148,7 @@ export async function POST(request: NextRequest) {
         totalValue:
           exportData?.reduce(
             (acc, item) => acc + item.current_quantity * item.unit_price,
-            0
+            0,
           ) || 0,
       },
     };
@@ -160,7 +160,7 @@ export async function POST(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -10,7 +10,7 @@ export async function GET(request: NextRequest) {
     if (!clinicId) {
       return NextResponse.json(
         { error: 'clinic_id é obrigatório' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -38,14 +38,14 @@ export async function GET(request: NextRequest) {
 
     const alerts = await equipmentMaintenanceService.getActiveAlerts(
       clinicId,
-      Object.keys(filters).length ? filters : undefined
+      Object.keys(filters).length ? filters : undefined,
     );
 
     return NextResponse.json(alerts);
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

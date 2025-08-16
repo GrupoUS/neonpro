@@ -71,7 +71,7 @@ export class LGPDAutomationOrchestrator {
   constructor() {
     this.supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
     );
 
     this.consentService = new LGPDAutoConsentService();
@@ -142,7 +142,7 @@ export class LGPDAutomationOrchestrator {
    * Executa verificação de saúde do compliance
    */
   private async executeHealthCheck(
-    clinicId: string
+    clinicId: string,
   ): Promise<AutomationResult> {
     const startTime = new Date();
 
@@ -180,7 +180,7 @@ export class LGPDAutomationOrchestrator {
    * Executa automação de consentimentos
    */
   private async executeConsentAutomation(
-    clinicId: string
+    clinicId: string,
   ): Promise<AutomationResult> {
     const startTime = new Date();
 
@@ -219,7 +219,7 @@ export class LGPDAutomationOrchestrator {
    * Executa automação de direitos do titular
    */
   private async executeDataSubjectRightsAutomation(
-    clinicId: string
+    clinicId: string,
   ): Promise<AutomationResult> {
     const startTime = new Date();
 
@@ -235,7 +235,7 @@ export class LGPDAutomationOrchestrator {
         endTime: new Date(),
         itemsProcessed: processedRequests.length,
         itemsSuccessful: processedRequests.filter(
-          (r) => r.status === 'completed'
+          (r) => r.status === 'completed',
         ).length,
         errors: [],
         details: { processedRequests },
@@ -259,7 +259,7 @@ export class LGPDAutomationOrchestrator {
    * Executa automação de auditoria
    */
   private async executeAuditAutomation(
-    clinicId: string
+    clinicId: string,
   ): Promise<AutomationResult> {
     const startTime = new Date();
 
@@ -299,7 +299,7 @@ export class LGPDAutomationOrchestrator {
    * Executa automação de relatórios
    */
   private async executeReportingAutomation(
-    clinicId: string
+    clinicId: string,
   ): Promise<AutomationResult> {
     const startTime = new Date();
 
@@ -312,7 +312,7 @@ export class LGPDAutomationOrchestrator {
 
       const reports = await this.reportingService.generateComplianceReports(
         clinicId,
-        reportTypes
+        reportTypes,
       );
 
       return {
@@ -345,7 +345,7 @@ export class LGPDAutomationOrchestrator {
    * Executa automação de anonimização
    */
   private async executeAnonymizationAutomation(
-    clinicId: string
+    clinicId: string,
   ): Promise<AutomationResult> {
     const startTime = new Date();
 
@@ -426,7 +426,7 @@ export class LGPDAutomationOrchestrator {
    */
   async configureAutomation(
     clinicId: string,
-    config: AutomationConfig
+    config: AutomationConfig,
   ): Promise<void> {
     await this.supabase.from('lgpd_automation_config').upsert({
       clinic_id: clinicId,
@@ -489,7 +489,7 @@ export class LGPDAutomationOrchestrator {
   }
 
   private async getScheduledTasks(
-    clinicId: string
+    clinicId: string,
   ): Promise<AutomationSchedule[]> {
     const { data } = await this.supabase
       .from('lgpd_automation_schedules')
@@ -511,7 +511,7 @@ export class LGPDAutomationOrchestrator {
   private async logAutomationExecution(
     clinicId: string,
     results: AutomationResult[],
-    startTime: Date
+    startTime: Date,
   ): Promise<void> {
     const auditLog: LGPDAuditLog = {
       id: crypto.randomUUID(),
@@ -529,11 +529,11 @@ export class LGPDAutomationOrchestrator {
         results,
         totalItemsProcessed: results.reduce(
           (sum, r) => sum + r.itemsProcessed,
-          0
+          0,
         ),
         totalItemsSuccessful: results.reduce(
           (sum, r) => sum + r.itemsSuccessful,
-          0
+          0,
         ),
         totalErrors: results.reduce((sum, r) => sum + r.errors.length, 0),
       },
@@ -547,7 +547,7 @@ export class LGPDAutomationOrchestrator {
 
   private async updateAutomationSchedules(
     _clinicId: string,
-    _config: AutomationConfig
+    _config: AutomationConfig,
   ): Promise<void> {
     // Implementar lógica de atualização de agendamentos
     // baseada na configuração fornecida

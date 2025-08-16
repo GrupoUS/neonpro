@@ -35,7 +35,7 @@ self.addEventListener('install', (event) => {
       .then(() => {
         // Force the new service worker to activate immediately
         return self.skipWaiting();
-      })
+      }),
   );
 });
 
@@ -50,13 +50,13 @@ self.addEventListener('activate', (event) => {
             if (cacheName !== CACHE_NAME) {
               return caches.delete(cacheName);
             }
-          })
+          }),
         );
       })
       .then(() => {
         // Take control of all pages immediately
         return self.clients.claim();
-      })
+      }),
   );
 });
 
@@ -197,7 +197,7 @@ async function handleAPIRequest(request) {
         headers: {
           'Content-Type': 'application/json',
         },
-      }
+      },
     );
   }
 }
@@ -263,8 +263,8 @@ self.addEventListener('push', (event) => {
     event.waitUntil(
       self.registration.showNotification(
         data.title || 'Portal NeonPro',
-        options
-      )
+        options,
+      ),
     );
   } catch (_error) {}
 });
@@ -306,7 +306,7 @@ self.addEventListener('notificationclick', (event) => {
         if (clients.openWindow) {
           return clients.openWindow(targetUrl);
         }
-      })
+      }),
   );
 });
 

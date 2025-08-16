@@ -67,7 +67,7 @@ export class LGPDComplianceManager {
   async getDashboardMetrics(): Promise<LGPDMetrics> {
     try {
       const { data, error } = await this.supabase.rpc(
-        'get_lgpd_dashboard_metrics'
+        'get_lgpd_dashboard_metrics',
       );
 
       if (error) {
@@ -99,7 +99,7 @@ export class LGPDComplianceManager {
       granted?: boolean;
       page?: number;
       limit?: number;
-    } = {}
+    } = {},
   ) {
     try {
       let query = this.supabase.from('lgpd_user_consents').select(`
@@ -271,7 +271,7 @@ export class LGPDComplianceManager {
       status?: string;
       page?: number;
       limit?: number;
-    } = {}
+    } = {},
   ) {
     try {
       let query = this.supabase.from('lgpd_data_subject_requests').select('*');
@@ -357,7 +357,7 @@ export class LGPDComplianceManager {
       response_data?: any;
       notes?: string;
       processed_by?: string;
-    }
+    },
   ) {
     try {
       const updateFields: any = {
@@ -409,7 +409,7 @@ export class LGPDComplianceManager {
       status?: string;
       page?: number;
       limit?: number;
-    } = {}
+    } = {},
   ) {
     try {
       let query = this.supabase.from('lgpd_breach_incidents').select('*');
@@ -500,7 +500,7 @@ export class LGPDComplianceManager {
       authority_notified?: boolean;
       users_notified?: boolean;
       mitigation_steps?: string;
-    }
+    },
   ) {
     try {
       const updateFields: any = {
@@ -554,7 +554,7 @@ export class LGPDComplianceManager {
       end_date?: string;
       page?: number;
       limit?: number;
-    } = {}
+    } = {},
   ) {
     try {
       let query = this.supabase.from('lgpd_audit_trail').select('*');
@@ -637,7 +637,7 @@ export class LGPDComplianceManager {
       status?: string;
       page?: number;
       limit?: number;
-    } = {}
+    } = {},
   ) {
     try {
       let query = this.supabase.from('lgpd_compliance_assessments').select('*');
@@ -718,7 +718,7 @@ export class LGPDComplianceManager {
     try {
       // Call the stored procedure for automated assessment
       const { data, error } = await this.supabase.rpc(
-        'run_compliance_assessment'
+        'run_compliance_assessment',
       );
 
       if (error) {
@@ -743,7 +743,7 @@ export class LGPDComplianceManager {
 
   // Utility Methods
   async getAuditStatistics(
-    filters: { start_date?: string; end_date?: string } = {}
+    filters: { start_date?: string; end_date?: string } = {},
   ) {
     try {
       let query = this.supabase

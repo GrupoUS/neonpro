@@ -174,7 +174,7 @@ class HealthcareQueryStrategies {
    */
   public async executeQuery<T = any>(
     queryFn: (client: SupabaseClient<Database>) => Promise<T>,
-    context: QueryContext
+    context: QueryContext,
   ): Promise<QueryResult<T>> {
     const startTime = Date.now();
     const strategy = this.strategies[context.queryType];
@@ -191,7 +191,7 @@ class HealthcareQueryStrategies {
       const timeoutPromise = new Promise<never>((_, reject) => {
         setTimeout(
           () => reject(new Error(`Query timeout after ${strategy.timeout}ms`)),
-          strategy.timeout
+          strategy.timeout,
         );
       });
 
@@ -200,7 +200,7 @@ class HealthcareQueryStrategies {
         queryFn,
         client,
         strategy.retryAttempts,
-        context
+        context,
       );
       const data = await Promise.race([queryPromise, timeoutPromise]);
 
@@ -252,7 +252,7 @@ class HealthcareQueryStrategies {
     queryFn: (client: SupabaseClient<Database>) => Promise<T>,
     client: SupabaseClient<Database>,
     maxRetries: number,
-    _context: QueryContext
+    _context: QueryContext,
   ): Promise<T> {
     let lastError: Error | null = null;
 
@@ -292,7 +292,7 @@ class HealthcareQueryStrategies {
     ];
 
     return nonRetryablePatterns.some(
-      (pattern) => error.message.includes(pattern) || error.code === pattern
+      (pattern) => error.message.includes(pattern) || error.code === pattern,
     );
   }
 
@@ -301,24 +301,24 @@ class HealthcareQueryStrategies {
    */
   private getOptimalClient(
     context: QueryContext,
-    strategy: QueryStrategy
+    strategy: QueryStrategy,
   ): SupabaseClient<Database> {
     switch (strategy.poolType) {
       case 'critical':
         return this.poolManager.getHealthcareClient(
           context.clinicId,
-          'critical'
+          'critical',
         );
 
       case 'standard':
         return this.poolManager.getHealthcareClient(
           context.clinicId,
-          'standard'
+          'standard',
         );
       default:
         return this.poolManager.getHealthcareClient(
           context.clinicId,
-          'standard'
+          'standard',
         );
     }
   }
@@ -382,7 +382,7 @@ class HealthcareQueryStrategies {
   private async createAuditTrail(
     context: QueryContext,
     success: boolean,
-    _executionTime: number
+    _executionTime: number,
   ): Promise<AuditEntry> {
     const auditEntry: AuditEntry = {
       timestamp: new Date(),
@@ -431,7 +431,7 @@ class HealthcareQueryStrategies {
    */
   private verifyFinancialCompliance<T>(
     _context: QueryContext,
-    _data: T
+    _data: T,
   ): boolean {
     // Implement financial compliance verification
     // Check encryption, access controls, audit requirements
@@ -474,7 +474,7 @@ class HealthcareQueryStrategies {
    */
   private generateOptimizations(
     queryType: HealthcareQueryType,
-    _strategy: QueryStrategy
+    _strategy: QueryStrategy,
   ): string[] {
     const optimizations: string[] = [];
 
@@ -483,7 +483,7 @@ class HealthcareQueryStrategies {
         optimizations.push(
           'Use indexed queries for emergency patient lookup',
           'Minimize data fetched to essential fields only',
-          'Consider real-time subscriptions for critical monitoring'
+          'Consider real-time subscriptions for critical monitoring',
         );
         break;
 
@@ -491,7 +491,7 @@ class HealthcareQueryStrategies {
         optimizations.push(
           'Use read replicas for heavy analytical queries',
           'Implement query result caching',
-          'Consider materialized views for complex aggregations'
+          'Consider materialized views for complex aggregations',
         );
         break;
 
@@ -499,7 +499,7 @@ class HealthcareQueryStrategies {
         optimizations.push(
           'Batch related operations in single transaction',
           'Use optimistic locking for concurrent updates',
-          'Implement efficient scheduling algorithms'
+          'Implement efficient scheduling algorithms',
         );
         break;
 
@@ -507,7 +507,7 @@ class HealthcareQueryStrategies {
         optimizations.push(
           'Review query patterns for optimization opportunities',
           'Consider connection pooling benefits',
-          'Monitor query performance metrics'
+          'Monitor query performance metrics',
         );
     }
 
@@ -526,7 +526,7 @@ class HealthcareQueryStrategies {
    */
   public updateStrategy(
     queryType: HealthcareQueryType,
-    updates: Partial<QueryStrategy>
+    updates: Partial<QueryStrategy>,
   ): void {
     this.strategies[queryType] = {
       ...this.strategies[queryType],
@@ -552,7 +552,7 @@ export const createQueryContext = (
   clinicId: string,
   userId: string,
   queryType: HealthcareQueryType,
-  options: Partial<QueryContext> = {}
+  options: Partial<QueryContext> = {},
 ): QueryContext => ({
   clinicId,
   userId,

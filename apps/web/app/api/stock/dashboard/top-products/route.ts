@@ -63,7 +63,7 @@ export async function GET(request: NextRequest) {
     if (clinicError || !clinic) {
       return NextResponse.json(
         { error: 'Clínica não encontrada' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -81,7 +81,7 @@ export async function GET(request: NextRequest) {
           category_id,
           product_categories (name)
         )
-      `
+      `,
       )
       .eq('clinic_id', params.clinicId)
       .eq('movement_type', 'out')
@@ -91,7 +91,7 @@ export async function GET(request: NextRequest) {
     if (topProductsError) {
       return NextResponse.json(
         { error: 'Erro ao buscar produtos mais consumidos' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -138,11 +138,11 @@ export async function GET(request: NextRequest) {
     // Calculate additional metrics
     const totalConsumption = topProducts.reduce(
       (sum, product) => sum + product.consumption,
-      0
+      0,
     );
     const totalValue = topProducts.reduce(
       (sum, product) => sum + product.value,
-      0
+      0,
     );
 
     const productsWithPercentages = topProducts.map((product) => ({
@@ -172,13 +172,13 @@ export async function GET(request: NextRequest) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Parâmetros inválidos', details: error.errors },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

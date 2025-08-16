@@ -45,12 +45,12 @@ type AuthContextType = {
   loading: boolean;
   signIn: (
     email: string,
-    password: string
+    password: string,
   ) => Promise<{ error: AuthError | null }>;
   signUp: (
     email: string,
     password: string,
-    name?: string
+    name?: string,
   ) => Promise<{ error: AuthError | null }>;
   signOut: () => Promise<void>;
   signInWithGoogle: () => Promise<{ error: AuthError | null }>;
@@ -117,7 +117,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           setUser(null);
         }
         setLoading(false);
-      }
+      },
     );
 
     return () => subscription.unsubscribe();
@@ -238,7 +238,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const popup = window.open(
           data.url,
           'neonpro-google-oauth',
-          `popup=yes,width=${width},height=${height},left=${left},top=${top},scrollbars=no,resizable=no,status=no,location=no,toolbar=no,menubar=no`
+          `popup=yes,width=${width},height=${height},left=${left},top=${top},scrollbars=no,resizable=no,status=no,location=no,toolbar=no,menubar=no`,
         );
 
         if (!popup) {
@@ -416,7 +416,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // Permission validation methods
   const checkPermission = async (
     resource: string,
-    action: string
+    action: string,
   ): Promise<boolean> => {
     if (!user) {
       return false;
@@ -426,7 +426,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const result = await permissionValidator.checkPermission(
         user.id,
         resource,
-        action
+        action,
       );
       return result.granted;
     } catch (_error) {

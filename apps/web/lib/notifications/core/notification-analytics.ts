@@ -97,7 +97,7 @@ export class NotificationAnalytics {
   constructor() {
     this.supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
     );
     this.auditLogger = new AuditLogger();
   }
@@ -106,7 +106,7 @@ export class NotificationAnalytics {
    * Obtém métricas gerais de notificações
    */
   async getOverallMetrics(
-    filters?: AnalyticsFilters
+    filters?: AnalyticsFilters,
   ): Promise<NotificationMetrics> {
     const cacheKey = `overall_metrics_${JSON.stringify(filters)}`;
     const cached = this.getFromCache(cacheKey);
@@ -135,7 +135,7 @@ export class NotificationAnalytics {
    * Obtém métricas por canal
    */
   async getChannelMetrics(
-    filters?: AnalyticsFilters
+    filters?: AnalyticsFilters,
   ): Promise<ChannelMetrics[]> {
     const cacheKey = `channel_metrics_${JSON.stringify(filters)}`;
     const cached = this.getFromCache(cacheKey);
@@ -166,7 +166,7 @@ export class NotificationAnalytics {
         // Tendência de performance
         const performanceTrend = await this.getPerformanceTrend(
           channel,
-          filters
+          filters,
         );
 
         channelMetrics.push({
@@ -189,7 +189,7 @@ export class NotificationAnalytics {
    */
   async getUserEngagementMetrics(
     userId?: string,
-    filters?: AnalyticsFilters
+    filters?: AnalyticsFilters,
   ): Promise<UserEngagementMetrics[]> {
     try {
       let query = this.supabase.from('notification_logs').select(`
@@ -229,7 +229,7 @@ export class NotificationAnalytics {
           groups[userId].push(notification);
           return groups;
         },
-        {} as Record<string, any[]>
+        {} as Record<string, any[]>,
       );
 
       const userMetrics: UserEngagementMetrics[] = [];
@@ -240,7 +240,7 @@ export class NotificationAnalytics {
       }
 
       return userMetrics.sort(
-        (a, b) => b.engagement_score - a.engagement_score
+        (a, b) => b.engagement_score - a.engagement_score,
       );
     } catch (error) {
       throw new Error(`Erro ao obter métricas de engajamento: ${error}`);
@@ -251,7 +251,7 @@ export class NotificationAnalytics {
    * Obtém métricas de templates
    */
   async getTemplateMetrics(
-    filters?: AnalyticsFilters
+    filters?: AnalyticsFilters,
   ): Promise<TemplateMetrics[]> {
     try {
       let query = this.supabase
@@ -266,7 +266,7 @@ export class NotificationAnalytics {
           opened_at,
           clicked_at,
           cost
-        `
+        `,
         )
         .not('template_id', 'is', null);
 
@@ -300,7 +300,7 @@ export class NotificationAnalytics {
           groups[templateId].notifications.push(notification);
           return groups;
         },
-        {} as Record<string, any>
+        {} as Record<string, any>,
       );
 
       const templateMetrics: TemplateMetrics[] = [];
@@ -327,7 +327,7 @@ export class NotificationAnalytics {
    */
   async getCampaignMetrics(
     campaignId?: string,
-    filters?: AnalyticsFilters
+    filters?: AnalyticsFilters,
   ): Promise<CampaignMetrics[]> {
     try {
       let query = this.supabase
@@ -344,7 +344,7 @@ export class NotificationAnalytics {
           clicked_at,
           cost,
           user_metadata
-        `
+        `,
         )
         .not('campaign_id', 'is', null);
 
@@ -378,7 +378,7 @@ export class NotificationAnalytics {
           groups[campaignId].notifications.push(notification);
           return groups;
         },
-        {} as Record<string, any>
+        {} as Record<string, any>,
       );
 
       const campaignMetrics: CampaignMetrics[] = [];
@@ -569,7 +569,7 @@ export class NotificationAnalytics {
 
     // Tempo médio de entrega
     const deliveredNotifications = data.filter(
-      (n) => n.sent_at && n.delivered_at
+      (n) => n.sent_at && n.delivered_at,
     );
     let average_delivery_time_minutes = 0;
 
@@ -606,7 +606,7 @@ export class NotificationAnalytics {
 
   private calculateUserEngagement(
     userId: string,
-    notifications: any[]
+    notifications: any[],
   ): UserEngagementMetrics {
     const total_received = notifications.length;
     const total_opened = notifications.filter((n) => n.opened_at).length;
@@ -626,7 +626,7 @@ export class NotificationAnalytics {
 
     const preferred_channel =
       Object.entries(channelCounts).sort(
-        ([, a], [, b]) => (b as number) - (a as number)
+        ([, a], [, b]) => (b as number) - (a as number),
       )[0]?.[0] || 'email';
 
     // Horário preferido (simulado)
@@ -634,16 +634,16 @@ export class NotificationAnalytics {
 
     // Última interação
     const interactions = notifications.filter(
-      (n) => n.opened_at || n.clicked_at
+      (n) => n.opened_at || n.clicked_at,
     );
     const last_interaction =
       interactions.length > 0
         ? new Date(
             Math.max(
               ...interactions.map((n) =>
-                new Date(n.clicked_at || n.opened_at).getTime()
-              )
-            )
+                new Date(n.clicked_at || n.opened_at).getTime(),
+              ),
+            ),
           )
         : new Date(0);
 
@@ -662,7 +662,7 @@ export class NotificationAnalytics {
 
   private async getVolumeTrend(
     _channel: string,
-    _filters?: AnalyticsFilters
+    _filters?: AnalyticsFilters,
   ): Promise<Array<{ date: string; count: number }>> {
     // Implementação simplificada - retorna dados dos últimos 30 dias
     const trend = [];
@@ -682,7 +682,7 @@ export class NotificationAnalytics {
 
   private async getPerformanceTrend(
     _channel: string,
-    _filters?: AnalyticsFilters
+    _filters?: AnalyticsFilters,
   ): Promise<
     Array<{ date: string; delivery_rate: number; open_rate: number }>
   > {
@@ -705,7 +705,7 @@ export class NotificationAnalytics {
   }
 
   private calculateChannelBreakdown(
-    notifications: any[]
+    notifications: any[],
   ): Record<string, NotificationMetrics> {
     const breakdown: Record<string, NotificationMetrics> = {};
 
@@ -713,7 +713,7 @@ export class NotificationAnalytics {
 
     for (const channel of channels) {
       const channelNotifications = notifications.filter(
-        (n) => n.channel === channel
+        (n) => n.channel === channel,
       );
       breakdown[channel] = this.calculateMetrics(channelNotifications);
     }
@@ -722,41 +722,41 @@ export class NotificationAnalytics {
   }
 
   private calculateGeographicBreakdown(
-    notifications: any[]
+    notifications: any[],
   ): Record<string, NotificationMetrics> {
     // Implementação simplificada - seria baseada em dados do usuário
     return {
       BR: this.calculateMetrics(
-        notifications.slice(0, Math.floor(notifications.length * 0.8))
+        notifications.slice(0, Math.floor(notifications.length * 0.8)),
       ),
       US: this.calculateMetrics(
-        notifications.slice(Math.floor(notifications.length * 0.8))
+        notifications.slice(Math.floor(notifications.length * 0.8)),
       ),
     };
   }
 
   private calculateDemographicBreakdown(
-    notifications: any[]
+    notifications: any[],
   ): Record<string, NotificationMetrics> {
     // Implementação simplificada - seria baseada em dados do usuário
     return {
       '18-25': this.calculateMetrics(
-        notifications.slice(0, Math.floor(notifications.length * 0.3))
+        notifications.slice(0, Math.floor(notifications.length * 0.3)),
       ),
       '26-35': this.calculateMetrics(
         notifications.slice(
           Math.floor(notifications.length * 0.3),
-          Math.floor(notifications.length * 0.7)
-        )
+          Math.floor(notifications.length * 0.7),
+        ),
       ),
       '36+': this.calculateMetrics(
-        notifications.slice(Math.floor(notifications.length * 0.7))
+        notifications.slice(Math.floor(notifications.length * 0.7)),
       ),
     };
   }
 
   private async getMetricsTrends(
-    _filters?: AnalyticsFilters
+    _filters?: AnalyticsFilters,
   ): Promise<Array<{ date: string; metrics: NotificationMetrics }>> {
     // Implementação simplificada
     const trends = [];
@@ -790,40 +790,40 @@ export class NotificationAnalytics {
 
   private generateRecommendations(
     summary: NotificationMetrics,
-    channels: ChannelMetrics[]
+    channels: ChannelMetrics[],
   ): string[] {
     const recommendations: string[] = [];
 
     if (summary.delivery_rate < 90) {
       recommendations.push(
-        'Taxa de entrega baixa. Verifique a qualidade das listas de contatos.'
+        'Taxa de entrega baixa. Verifique a qualidade das listas de contatos.',
       );
     }
 
     if (summary.open_rate < 20) {
       recommendations.push(
-        'Taxa de abertura baixa. Considere melhorar os assuntos das mensagens.'
+        'Taxa de abertura baixa. Considere melhorar os assuntos das mensagens.',
       );
     }
 
     if (summary.click_rate < 5) {
       recommendations.push(
-        'Taxa de clique baixa. Revise o conteúdo e calls-to-action.'
+        'Taxa de clique baixa. Revise o conteúdo e calls-to-action.',
       );
     }
 
     const bestChannel = channels.sort(
-      (a, b) => b.metrics.open_rate - a.metrics.open_rate
+      (a, b) => b.metrics.open_rate - a.metrics.open_rate,
     )[0];
     if (bestChannel) {
       recommendations.push(
-        `Canal ${bestChannel.channel} tem melhor performance. Considere aumentar seu uso.`
+        `Canal ${bestChannel.channel} tem melhor performance. Considere aumentar seu uso.`,
       );
     }
 
     if (summary.cost_per_notification > 0.1) {
       recommendations.push(
-        'Custo por notificação alto. Avalie otimizações de canal e segmentação.'
+        'Custo por notificação alto. Avalie otimizações de canal e segmentação.',
       );
     }
 

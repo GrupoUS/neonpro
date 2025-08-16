@@ -1,16 +1,24 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
+  "version": 2,
+  "name": "neonpro-healthcare",
+  "framework": "nextjs",
   "buildCommand": "pnpm build",
-  "devCommand": "pnpm dev",
+  "outputDirectory": "apps/web/.next",
+  "installCommand": "pnpm install",
+  "functions": {
+    "apps/web/app/api/**/*.ts": {
+      "runtime": "edge",
+      "regions": ["gru1"],
+      "memory": 1024,
+      "maxDuration": 30
+    }
+  },
   "regions": ["gru1"],
   "headers": [
     {
       "source": "/(.*)",
       "headers": [
-        {
-          "key": "X-Healthcare-Compliance",
-          "value": "LGPD-ANVISA-CFM"
-        },
         {
           "key": "X-Content-Type-Options",
           "value": "nosniff"
@@ -20,69 +28,32 @@
           "value": "DENY"
         },
         {
-          "key": "Strict-Transport-Security",
-          "value": "max-age=31536000; includeSubDomains"
-        }
-      ]
-    },
-    {
-      "source": "/api/patients/(.*)",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "no-store, no-cache, must-revalidate"
+          "key": "X-XSS-Protection",
+          "value": "1; mode=block"
         },
         {
-          "key": "X-Patient-Data-Protection",
-          "value": "LGPD-Compliant"
-        }
-      ]
-    }
-  ],
-  "installCommand": "pnpm install",
-  "framework": "nextjs",
-  "regions": ["iad1", "gru1"],
-  "functions": {
-    "app/auth/popup-callback/route.ts": {
-      "maxDuration": 30
-    },
-    "app/auth/callback/route.ts": {
-      "maxDuration": 30
-    },
-    "app/api/cron/evaluate-alerts/route.ts": {
-      "maxDuration": 60
-    },
-    "app/api/trigger/route.ts": {
-      "maxDuration": 300,
-      "memory": 1024,
-      "runtime": "nodejs20.x"
-    },
-    "app/api/appointments/enhanced/route.ts": {
-      "maxDuration": 30,
-      "memory": 512
-    },
-    "app/api/monitoring/*/route.ts": {
-      "maxDuration": 15,
-      "memory": 256
-    }
-  },
-  "crons": [
-    {
-      "path": "/api/cron/evaluate-alerts",
-      "schedule": "*/15 * * * *"
-    },
-    {
-      "path": "/api/cron/cleanup-metrics",
-      "schedule": "0 2 * * *"
-    }
-  ],
-  "headers": [
-    {
-      "source": "/auth/(.*)",
-      "headers": [
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
         {
-          "key": "Cache-Control",
-          "value": "no-cache, no-store, must-revalidate"
+          "key": "Permissions-Policy",
+          "value": "camera=(), microphone=(), geolocation=()"
+        },
+        {
+          "key": "Strict-Transport-Security",
+          "value": "max-age=63072000; includeSubDomains; preload"
+        },
+        {
+          "key": "Content-Security-Policy",
+          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://vercel.live https://va.vercel-scripts.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https: blob:; font-src 'self' data:; connect-src 'self' https://api.supabase.co https://*.supabase.co wss://*.supabase.co https://vercel.live; media-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none';"
+        },
+        {
+          "key": "X-Healthcare-Privacy",
+          "value": "LGPD-Compliant"
+        },
+        {
+          "key": "X-Medical-Grade",
+          "value": "Healthcare-Validated"
         }
       ]
     }
@@ -93,12 +64,15 @@
       "destination": "/api/health"
     },
     {
-      "source": "/metrics",
-      "destination": "/api/monitoring/performance"
+      "source": "/monitoring",
+      "destination": "/api/monitoring/health"
     }
   ],
   "env": {
-    "VERCEL_ENV": "production",
-    "NODE_ENV": "production"
+    "NODE_ENV": "production",
+    "NEXT_TELEMETRY_DISABLED": "1",
+    "HEALTHCARE_MODE": "production",
+    "LGPD_COMPLIANCE": "enabled",
+    "EMERGENCY_ALERTS": "enabled"
   }
 }

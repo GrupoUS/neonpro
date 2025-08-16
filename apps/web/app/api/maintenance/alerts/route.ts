@@ -11,7 +11,7 @@ export async function GET(request: NextRequest) {
     if (!clinicId) {
       return NextResponse.json(
         { error: 'clinic_id é obrigatório' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -47,14 +47,14 @@ export async function GET(request: NextRequest) {
     const result = await equipmentMaintenanceService.getMaintenanceAlerts(
       clinicId,
       Object.keys(filters).length ? filters : undefined,
-      { page, limit }
+      { page, limit },
     );
 
     return NextResponse.json(result);
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -74,13 +74,13 @@ export async function POST(request: NextRequest) {
     if (error instanceof Error && error.message.includes('validation')) {
       return NextResponse.json(
         { error: 'Invalid alert data', details: error.message },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     return NextResponse.json(
       { error: 'Failed to create maintenance alert' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -96,7 +96,7 @@ export async function PUT(request: NextRequest) {
     if (!(alertId && action)) {
       return NextResponse.json(
         { error: 'alert_id e action são obrigatórios' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -109,7 +109,7 @@ export async function PUT(request: NextRequest) {
       result = await equipmentMaintenanceService.acknowledgeAlert(
         alertId,
         acknowledged_by,
-        notes
+        notes,
       );
     } else if (action === 'resolve') {
       const { resolved_by, notes } = body;
@@ -118,18 +118,18 @@ export async function PUT(request: NextRequest) {
           {
             error: 'resolved_by e notes são obrigatórios para resolver alertas',
           },
-          { status: 400 }
+          { status: 400 },
         );
       }
       result = await equipmentMaintenanceService.resolveAlert(
         alertId,
         resolved_by,
-        notes
+        notes,
       );
     } else {
       return NextResponse.json(
         { error: 'action deve ser "acknowledge" ou "resolve"' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -137,7 +137,7 @@ export async function PUT(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to update maintenance alert' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

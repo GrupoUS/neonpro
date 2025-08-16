@@ -183,7 +183,7 @@ export function AlertsPanel({ alerts, isLoading }: AlertsPanelProps) {
         info: summary.info + (alert.severity === 'info' ? 1 : 0),
         acknowledged: summary.acknowledged + (alert.acknowledged ? 1 : 0),
       }),
-      { total: 0, critical: 0, warning: 0, info: 0, acknowledged: 0 }
+      { total: 0, critical: 0, warning: 0, info: 0, acknowledged: 0 },
     );
   }, [processedAlerts]);
 

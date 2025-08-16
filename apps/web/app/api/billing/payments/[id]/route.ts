@@ -14,7 +14,7 @@ const UpdatePaymentSchema = z.object({
 
 export async function GET(
   _request: Request,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const resolvedParams = await params;
@@ -61,7 +61,7 @@ export async function GET(
           payment_date,
           notes
         )
-      `
+      `,
       )
       .eq('id', resolvedParams.id)
       .single();
@@ -74,14 +74,14 @@ export async function GET(
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal Server Error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
 
 export async function PUT(
   request: Request,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const resolvedParams = await params;
@@ -138,14 +138,14 @@ export async function PUT(
             email
           )
         )
-      `
+      `,
       )
       .single();
 
     if (error) {
       return NextResponse.json(
         { error: 'Failed to update payment' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -164,7 +164,7 @@ export async function PUT(
       if (!paymentsError && completedPayments) {
         const totalPaid = completedPayments.reduce(
           (sum, p) => sum + p.amount,
-          0
+          0,
         );
 
         if (totalPaid >= currentPayment.invoice.total_amount) {
@@ -181,19 +181,19 @@ export async function PUT(
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Validation failed', details: error.errors },
-        { status: 400 }
+        { status: 400 },
       );
     }
     return NextResponse.json(
       { error: 'Internal Server Error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
 
 export async function DELETE(
   _request: Request,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const resolvedParams = await params;
@@ -222,7 +222,7 @@ export async function DELETE(
     if (payment.status === 'completed') {
       return NextResponse.json(
         { error: 'Cannot delete completed payments' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -235,7 +235,7 @@ export async function DELETE(
     if (installmentsError) {
       return NextResponse.json(
         { error: 'Failed to delete payment installments' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -248,7 +248,7 @@ export async function DELETE(
     if (error) {
       return NextResponse.json(
         { error: 'Failed to delete payment' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -275,7 +275,7 @@ export async function DELETE(
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal Server Error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -283,7 +283,7 @@ export async function DELETE(
 // Refund payment
 export async function POST(
   request: Request,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const resolvedParams = await params;
@@ -314,21 +314,21 @@ export async function POST(
       if (paymentError || !payment) {
         return NextResponse.json(
           { error: 'Payment not found' },
-          { status: 404 }
+          { status: 404 },
         );
       }
 
       if (payment.status !== 'completed') {
         return NextResponse.json(
           { error: 'Can only refund completed payments' },
-          { status: 400 }
+          { status: 400 },
         );
       }
 
       if (refundAmount > payment.amount) {
         return NextResponse.json(
           { error: 'Refund amount cannot exceed payment amount' },
-          { status: 400 }
+          { status: 400 },
         );
       }
 
@@ -358,7 +358,7 @@ export async function POST(
       if (refundError) {
         return NextResponse.json(
           { error: 'Failed to create refund' },
-          { status: 500 }
+          { status: 500 },
         );
       }
 
@@ -399,7 +399,7 @@ export async function POST(
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal Server Error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

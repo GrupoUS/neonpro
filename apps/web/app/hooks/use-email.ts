@@ -68,7 +68,7 @@ export function useCreateEmailTemplate() {
 
   return useMutation({
     mutationFn: async (
-      template: Omit<EmailTemplate, 'id' | 'createdAt' | 'updatedAt'>
+      template: Omit<EmailTemplate, 'id' | 'createdAt' | 'updatedAt'>,
     ) => {
       const response = await fetch('/api/email/templates', {
         method: 'POST',
@@ -694,7 +694,7 @@ export function useRemoveEmailSuppression() {
         `/api/email/suppressions/${encodeURIComponent(email)}`,
         {
           method: 'DELETE',
-        }
+        },
       );
 
       if (!response.ok) {

@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
               message: err.message,
             })),
           },
-          { status: 400 }
+          { status: 400 },
         );
       }
       throw validationError;
@@ -63,7 +63,7 @@ export async function POST(request: NextRequest) {
     if (!providerConfigs || providerConfigs.length === 0) {
       return NextResponse.json(
         { error: 'No email providers configured' },
-        { status: 503 }
+        { status: 503 },
       );
     }
 
@@ -78,7 +78,7 @@ export async function POST(request: NextRequest) {
         dailyLimit: config.daily_limit,
         monthlyLimit: config.monthly_limit,
         rateLimit: config.rate_limit,
-      }))
+      })),
     );
 
     // Send email
@@ -113,7 +113,7 @@ export async function POST(request: NextRequest) {
         success: false,
         error: error instanceof Error ? error.message : 'Internal server error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -147,7 +147,7 @@ export async function GET(request: NextRequest) {
     if (!messageId) {
       return NextResponse.json(
         { error: 'Message ID is required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -181,7 +181,7 @@ export async function GET(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

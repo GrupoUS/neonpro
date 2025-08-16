@@ -138,7 +138,7 @@ export const CreatePredictionModelSchema = z
       .max(100, 'Model name too long')
       .regex(
         /^[a-zA-Z0-9_-]+$/,
-        'Model name can only contain letters, numbers, hyphens, and underscores'
+        'Model name can only contain letters, numbers, hyphens, and underscores',
       ),
 
     model_type: ModelTypeSchema,
@@ -175,7 +175,7 @@ export const CreatePredictionModelSchema = z
     {
       message: 'Training period end must be after start date',
       path: ['training_period_end'],
-    }
+    },
   );
 
 export const UpdatePredictionModelSchema = z
@@ -186,7 +186,7 @@ export const UpdatePredictionModelSchema = z
       .max(100, 'Model name too long')
       .regex(
         /^[a-zA-Z0-9_-]+$/,
-        'Model name can only contain letters, numbers, hyphens, and underscores'
+        'Model name can only contain letters, numbers, hyphens, and underscores',
       )
       .optional(),
 
@@ -208,7 +208,7 @@ export const UpdatePredictionModelSchema = z
       .string()
       .regex(
         /^\d+\.\d+\.\d+$/,
-        'Model version must be in semantic version format (x.y.z)'
+        'Model version must be in semantic version format (x.y.z)',
       )
       .optional(),
 
@@ -237,7 +237,7 @@ export const UpdatePredictionModelSchema = z
     {
       message: 'Production-ready models must have at least 75% accuracy',
       path: ['accuracy_rate'],
-    }
+    },
   );
 
 // =====================================================================================
@@ -295,7 +295,7 @@ export const CreateCashFlowPredictionSchema = z
     {
       message: 'End date must be after start date',
       path: ['end_date'],
-    }
+    },
   )
   .refine(
     (data) => {
@@ -305,7 +305,7 @@ export const CreateCashFlowPredictionSchema = z
       message:
         'Confidence interval upper bound must be greater than or equal to lower bound',
       path: ['confidence_interval_upper'],
-    }
+    },
   )
   .refine(
     (data) => {
@@ -318,7 +318,7 @@ export const CreateCashFlowPredictionSchema = z
     {
       message: 'Predicted net amount must equal inflow minus outflow',
       path: ['predicted_net_amount'],
-    }
+    },
   )
   .refine(
     (data) => {
@@ -343,7 +343,7 @@ export const CreateCashFlowPredictionSchema = z
     {
       message: 'Confidence score must align with confidence interval width',
       path: ['confidence_score'],
-    }
+    },
   );
 
 export const UpdateCashFlowPredictionSchema = z
@@ -380,7 +380,7 @@ export const UpdateCashFlowPredictionSchema = z
       message:
         'Confidence interval upper bound must be greater than or equal to lower bound',
       path: ['confidence_interval_upper'],
-    }
+    },
   );
 
 // =====================================================================================
@@ -421,7 +421,7 @@ export const CreateForecastingScenarioSchema = z
     {
       message: 'Forecast end date must be after start date',
       path: ['forecast_end_date'],
-    }
+    },
   )
   .refine(
     (data) => {
@@ -435,7 +435,7 @@ export const CreateForecastingScenarioSchema = z
     {
       message: 'Forecast period cannot exceed 5 years',
       path: ['forecast_end_date'],
-    }
+    },
   );
 
 export const UpdateForecastingScenarioSchema = z
@@ -484,7 +484,7 @@ export const UpdateForecastingScenarioSchema = z
     {
       message: 'Forecast end date must be after start date',
       path: ['forecast_end_date'],
-    }
+    },
   )
   .refine(
     (data) => {
@@ -505,7 +505,7 @@ export const UpdateForecastingScenarioSchema = z
     {
       message: 'Total predicted profit must equal revenue minus expenses',
       path: ['total_predicted_profit'],
-    }
+    },
   );
 
 // =====================================================================================
@@ -555,7 +555,7 @@ export const CreatePredictionAccuracySchema = z
     {
       message: 'Actual net amount must equal inflow minus outflow',
       path: ['actual_net_amount'],
-    }
+    },
   )
   .refine(
     (data) => {
@@ -580,7 +580,7 @@ export const CreatePredictionAccuracySchema = z
     {
       message: 'Error magnitude must align with accuracy percentage',
       path: ['error_magnitude'],
-    }
+    },
   );
 
 // =====================================================================================
@@ -645,7 +645,7 @@ export const CreatePredictionAlertSchema = z
       message:
         'Threshold-based alerts must have either amount or percentage threshold',
       path: ['threshold_amount'],
-    }
+    },
   );
 
 export const UpdatePredictionAlertSchema = z
@@ -680,7 +680,7 @@ export const UpdatePredictionAlertSchema = z
     {
       message: 'Status change requires corresponding timestamp',
       path: ['status'],
-    }
+    },
   );
 
 // =====================================================================================
@@ -708,7 +708,7 @@ export const PredictionFiltersSchema = z
     {
       message: 'End date must be after start date',
       path: ['end_date'],
-    }
+    },
   );
 
 export const ModelFiltersSchema = z.object({
@@ -737,7 +737,7 @@ export const ScenarioFiltersSchema = z.object({
       {
         message: 'End date must be after start date',
         path: ['end'],
-      }
+      },
     )
     .optional(),
 });
@@ -760,7 +760,7 @@ export const AlertFiltersSchema = z.object({
       {
         message: 'End date must be after start date',
         path: ['end'],
-      }
+      },
     )
     .optional(),
 });
@@ -799,7 +799,7 @@ export const DateRangeSchema = z
     {
       message: 'End date must be after start date',
       path: ['end_date'],
-    }
+    },
   );
 
 export const AmountRangeSchema = z
@@ -814,7 +814,7 @@ export const AmountRangeSchema = z
     {
       message: 'Maximum amount must be greater than or equal to minimum amount',
       path: ['max_amount'],
-    }
+    },
   );
 
 export const ConfidenceRangeSchema = z
@@ -830,5 +830,5 @@ export const ConfidenceRangeSchema = z
       message:
         'Maximum confidence must be greater than or equal to minimum confidence',
       path: ['max_confidence'],
-    }
+    },
   );

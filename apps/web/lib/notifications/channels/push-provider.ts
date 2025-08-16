@@ -222,7 +222,7 @@ class FCMPushProvider implements PushProvider {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify(fcmPayload),
-        }
+        },
       );
 
       const responseData = await response.json();
@@ -230,7 +230,7 @@ class FCMPushProvider implements PushProvider {
 
       if (!response.ok) {
         throw new Error(
-          `FCM API error: ${responseData.error?.message || response.statusText}`
+          `FCM API error: ${responseData.error?.message || response.statusText}`,
         );
       }
 
@@ -280,7 +280,7 @@ class FCMPushProvider implements PushProvider {
           body: notification.body,
           data: notification.data,
           metadata: notification.metadata,
-        })
+        }),
       );
 
       const batchResults = await Promise.allSettled(batchPromises);
@@ -363,7 +363,7 @@ class FCMPushProvider implements PushProvider {
               dry_run: true, // Validation without sending
             },
           }),
-        }
+        },
       );
 
       return response.ok;
@@ -398,7 +398,7 @@ class FCMPushProvider implements PushProvider {
 
       if (!response.ok) {
         throw new Error(
-          `OAuth2 error: ${data.error_description || response.statusText}`
+          `OAuth2 error: ${data.error_description || response.statusText}`,
         );
       }
 
@@ -442,7 +442,7 @@ class FCMPushProvider implements PushProvider {
   }
 
   private async validateLGPDCompliance(
-    lgpdData: LGPDCompliantData
+    lgpdData: LGPDCompliantData,
   ): Promise<void> {
     if (!lgpdData.consentGiven) {
       throw new Error('LGPD: Push notification consent not provided');

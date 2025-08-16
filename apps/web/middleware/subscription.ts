@@ -39,7 +39,7 @@ export type {
  * Integrates advanced route protection system for subscription-based access control
  */
 export async function subscriptionMiddleware(
-  req: NextRequest
+  req: NextRequest,
 ): Promise<NextResponse> {
   const startTime = Date.now();
   const _pathname = req.nextUrl.pathname;
@@ -55,7 +55,7 @@ export async function subscriptionMiddleware(
           set: () => {}, // Not needed for middleware
           remove: () => {}, // Not needed for middleware
         },
-      }
+      },
     );
 
     // Get user session
@@ -78,7 +78,7 @@ export async function subscriptionMiddleware(
         .select(
           `
           id, role, permissions, clinic_id, clinic_role
-        `
+        `,
         )
         .eq('id', session.user.id)
         .single();
@@ -90,7 +90,7 @@ export async function subscriptionMiddleware(
           `
           status, tier, current_period_end, 
           plan:subscription_plans(name, features)
-        `
+        `,
         )
         .eq('user_id', session.user.id)
         .order('created_at', { ascending: false })
@@ -109,7 +109,7 @@ export async function subscriptionMiddleware(
         gracePeriodEndsAt: subscription?.current_period_end
           ? calculateGracePeriodEnd(
               new Date(subscription.current_period_end),
-              3
+              3,
             )
           : undefined,
         permissions: Array.isArray(profile?.permissions)
@@ -137,7 +137,7 @@ export async function subscriptionMiddleware(
           if (accessResult.reason) {
             redirectUrl.searchParams.set(
               'message',
-              encodeURIComponent(accessResult.reason)
+              encodeURIComponent(accessResult.reason),
             );
           }
 
@@ -154,7 +154,7 @@ export async function subscriptionMiddleware(
           {
             status: 403,
             headers: { 'Content-Type': 'application/json' },
-          }
+          },
         );
       }
     }
@@ -166,7 +166,7 @@ export async function subscriptionMiddleware(
     const processingTime = Date.now() - startTime;
     response.headers.set(
       'x-subscription-check-time',
-      processingTime.toString()
+      processingTime.toString(),
     );
     response.headers.set('x-subscription-middleware-version', '2.0.0');
 
@@ -184,7 +184,7 @@ export async function subscriptionMiddleware(
     errorUrl.searchParams.set('error', 'MIDDLEWARE_ERROR');
     errorUrl.searchParams.set(
       'message',
-      'System error during access validation'
+      'System error during access validation',
     );
 
     const response = NextResponse.redirect(errorUrl);
@@ -199,7 +199,7 @@ export async function subscriptionMiddleware(
  */
 async function getUserFeatureFlags(
   userId: string,
-  supabase: any
+  supabase: any,
 ): Promise<Record<string, boolean>> {
   try {
     const { data } = await supabase
@@ -250,7 +250,7 @@ async function getUserFeatureFlags(
 // Utility functions for external use
 export async function validateUserAccess(
   req: NextRequest,
-  userId: string
+  userId: string,
 ): Promise<boolean> {
   try {
     const supabase = createServerClient(
@@ -262,7 +262,7 @@ export async function validateUserAccess(
           set: () => {},
           remove: () => {},
         },
-      }
+      },
     );
 
     const { data: profile } = await supabase

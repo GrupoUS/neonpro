@@ -39,7 +39,7 @@ export class StockAlertService {
    */
   async createAlertConfig(
     request: CreateAlertConfigRequest,
-    userId: string
+    userId: string,
   ): Promise<StockAlertConfig> {
     try {
       // Validate request using Zod schema
@@ -74,7 +74,7 @@ export class StockAlertService {
         throw new StockAlertError(
           'Failed to create alert configuration',
           'CREATE_CONFIG_FAILED',
-          { error: error.message, request }
+          { error: error.message, request },
         );
       }
 
@@ -95,7 +95,7 @@ export class StockAlertService {
       throw new StockAlertError(
         'Unexpected error creating alert configuration',
         'INTERNAL_ERROR',
-        { error: error instanceof Error ? error.message : 'Unknown error' }
+        { error: error instanceof Error ? error.message : 'Unknown error' },
       );
     }
   }
@@ -106,7 +106,7 @@ export class StockAlertService {
   async updateAlertConfig(
     configId: string,
     updates: Partial<CreateAlertConfigRequest>,
-    userId: string
+    userId: string,
   ): Promise<StockAlertConfig> {
     const { data, error } = await this.supabase
       .from('stock_alert_configs')
@@ -123,7 +123,7 @@ export class StockAlertService {
       throw new StockAlertError(
         'Failed to update alert configuration',
         'UPDATE_CONFIG_FAILED',
-        { configId, error: error.message }
+        { configId, error: error.message },
       );
     }
 
@@ -155,7 +155,7 @@ export class StockAlertService {
       throw new StockAlertError(
         'Failed to delete alert configuration',
         'DELETE_CONFIG_FAILED',
-        { configId, error: error.message }
+        { configId, error: error.message },
       );
     }
 
@@ -196,7 +196,7 @@ export class StockAlertService {
    * Evaluates a specific configuration and generates alerts if needed
    */
   private async evaluateConfigAndGenerateAlerts(
-    config: StockAlertConfig
+    config: StockAlertConfig,
   ): Promise<StockAlert[]> {
     const products = await this.getProductsForConfig(config);
     const alerts: StockAlert[] = [];
@@ -207,7 +207,7 @@ export class StockAlertService {
         const alert = await this.generateAlert(
           config,
           product,
-          shouldAlert.message
+          shouldAlert.message,
         );
         alerts.push(alert);
       }
@@ -221,7 +221,7 @@ export class StockAlertService {
    */
   private async shouldGenerateAlert(
     config: StockAlertConfig,
-    product: any
+    product: any,
   ): Promise<{ generate: boolean; message: string }> {
     switch (config.alertType) {
       case 'low_stock':
@@ -242,7 +242,7 @@ export class StockAlertService {
    */
   private async evaluateLowStockAlert(
     config: StockAlertConfig,
-    product: any
+    product: any,
   ): Promise<{ generate: boolean; message: string }> {
     const currentStock = product.current_stock || 0;
     const threshold = config.thresholdValue;
@@ -274,7 +274,7 @@ export class StockAlertService {
     if (shouldAlert) {
       const existingAlert = await this.getActiveAlertForProduct(
         product.id,
-        config.alertType
+        config.alertType,
       );
       if (existingAlert) {
         return { generate: false, message: '' }; // Don't duplicate active alerts
@@ -289,7 +289,7 @@ export class StockAlertService {
    */
   private async evaluateExpiringAlert(
     config: StockAlertConfig,
-    product: any
+    product: any,
   ): Promise<{ generate: boolean; message: string }> {
     if (!product.expiration_date) {
       return { generate: false, message: '' };
@@ -298,7 +298,7 @@ export class StockAlertService {
     const expirationDate = new Date(product.expiration_date);
     const now = new Date();
     const daysUntilExpiration = Math.ceil(
-      (expirationDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)
+      (expirationDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24),
     );
 
     const shouldAlert =
@@ -315,7 +315,7 @@ export class StockAlertService {
    */
   private async evaluateExpiredAlert(
     _config: StockAlertConfig,
-    product: any
+    product: any,
   ): Promise<{ generate: boolean; message: string }> {
     if (!product.expiration_date) {
       return { generate: false, message: '' };
@@ -337,7 +337,7 @@ export class StockAlertService {
    */
   private async evaluateOverstockAlert(
     config: StockAlertConfig,
-    product: any
+    product: any,
   ): Promise<{ generate: boolean; message: string }> {
     const currentStock = product.current_stock || 0;
     const maxStock = product.max_stock || product.min_stock * 10;
@@ -371,7 +371,7 @@ export class StockAlertService {
    */
   async acknowledgeAlert(
     request: AcknowledgeAlertRequest,
-    userId: string
+    userId: string,
   ): Promise<StockAlert> {
     const { data, error } = await this.supabase
       .from('stock_alerts_history')
@@ -389,7 +389,7 @@ export class StockAlertService {
       throw new StockAlertError(
         'Failed to acknowledge alert',
         'ACKNOWLEDGE_FAILED',
-        { alertId: request.alertId, error: error.message }
+        { alertId: request.alertId, error: error.message },
       );
     }
 
@@ -409,7 +409,7 @@ export class StockAlertService {
    */
   async resolveAlert(
     request: ResolveAlertRequest,
-    userId: string
+    userId: string,
   ): Promise<StockAlert> {
     const { data, error } = await this.supabase
       .from('stock_alerts_history')
@@ -453,7 +453,7 @@ export class StockAlertService {
   private async generateAlert(
     config: StockAlertConfig,
     product: any,
-    message: string
+    message: string,
   ): Promise<StockAlert> {
     const alertData = {
       clinic_id: this.clinicId,
@@ -477,7 +477,7 @@ export class StockAlertService {
       throw new StockAlertError(
         'Failed to generate alert',
         'GENERATE_ALERT_FAILED',
-        { config: config.id, product: product.id, error: error.message }
+        { config: config.id, product: product.id, error: error.message },
       );
     }
 
@@ -497,7 +497,7 @@ export class StockAlertService {
    */
   private getCurrentValueForAlert(
     config: StockAlertConfig,
-    product: any
+    product: any,
   ): number {
     switch (config.alertType) {
       case 'low_stock':
@@ -511,7 +511,7 @@ export class StockAlertService {
         const expirationDate = new Date(product.expiration_date);
         const now = new Date();
         return Math.ceil(
-          (expirationDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)
+          (expirationDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24),
         );
       }
       default:
@@ -531,7 +531,7 @@ export class StockAlertService {
       .eq('movement_type', 'out')
       .gte(
         'created_at',
-        new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
+        new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
       );
 
     if (error || !data || data.length === 0) {
@@ -540,7 +540,7 @@ export class StockAlertService {
 
     const totalConsumption = data.reduce(
       (sum, movement) => sum + Math.abs(movement.quantity),
-      0
+      0,
     );
     const averageDailyConsumption = totalConsumption / 30;
 
@@ -574,7 +574,7 @@ export class StockAlertService {
       throw new StockAlertError(
         'Failed to fetch alert configurations',
         'FETCH_CONFIGS_FAILED',
-        { error: error.message }
+        { error: error.message },
       );
     }
 
@@ -600,7 +600,7 @@ export class StockAlertService {
       throw new StockAlertError(
         'Failed to fetch products for alert evaluation',
         'FETCH_PRODUCTS_FAILED',
-        { configId: config.id, error: error.message }
+        { configId: config.id, error: error.message },
       );
     }
 
@@ -609,7 +609,7 @@ export class StockAlertService {
 
   private async getActiveAlertForProduct(
     productId: string,
-    alertType: string
+    alertType: string,
   ): Promise<StockAlert | null> {
     const { data, error } = await this.supabase
       .from('stock_alerts_history')
@@ -630,7 +630,7 @@ export class StockAlertService {
   }
 
   private async validateUniqueAlertConfig(
-    config: StockAlertConfig
+    config: StockAlertConfig,
   ): Promise<void> {
     let query = this.supabase
       .from('stock_alert_configs')
@@ -651,7 +651,7 @@ export class StockAlertService {
       throw new StockAlertError(
         'Failed to validate alert configuration',
         'VALIDATION_FAILED',
-        { error: error.message }
+        { error: error.message },
       );
     }
 
@@ -659,13 +659,13 @@ export class StockAlertService {
       throw new StockAlertError(
         'Alert configuration already exists for this product/category and type',
         'DUPLICATE_CONFIG',
-        { existingId: data[0].id }
+        { existingId: data[0].id },
       );
     }
   }
 
   private async logStockEvent(
-    event: Omit<StockEvent, 'id' | 'timestamp' | 'clinicId'>
+    event: Omit<StockEvent, 'id' | 'timestamp' | 'clinicId'>,
   ): Promise<void> {
     try {
       await this.supabase.from('stock_events').insert([
@@ -733,7 +733,7 @@ export class StockAlertService {
  * Creates a StockAlertService instance with proper Supabase client
  */
 export async function createStockAlertService(
-  clinicId: string
+  clinicId: string,
 ): Promise<StockAlertService> {
   const supabase = await createClient();
   return new StockAlertService(supabase, clinicId);

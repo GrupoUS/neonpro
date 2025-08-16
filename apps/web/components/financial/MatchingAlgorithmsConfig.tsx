@@ -178,7 +178,7 @@ export const MatchingAlgorithmsConfig: React.FC<
 
   const updateAlgorithm = (id: string, updates: Partial<AlgorithmConfig>) => {
     setAlgorithms((prev) =>
-      prev.map((algo) => (algo.id === id ? { ...algo, ...updates } : algo))
+      prev.map((algo) => (algo.id === id ? { ...algo, ...updates } : algo)),
     );
     setHasChanges(true);
   };

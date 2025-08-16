@@ -90,7 +90,7 @@ export default function AppointmentBookingFlow({
   const [selectedProfessional, setSelectedProfessional] =
     useState<Professional | null>(null);
   const [selectedTimeSlot, setSelectedTimeSlot] = useState<TimeSlot | null>(
-    null
+    null,
   );
   const [appointmentNotes, setAppointmentNotes] = useState('');
   const [specialRequests, setSpecialRequests] = useState<string[]>([]);
@@ -186,7 +186,7 @@ export default function AppointmentBookingFlow({
 
       if (!availabilityCheck?.is_available) {
         setError(
-          'Este horário não está mais disponível. Por favor, escolha outro horário.'
+          'Este horário não está mais disponível. Por favor, escolha outro horário.',
         );
         setCurrentStep('time');
         return;
@@ -221,7 +221,7 @@ export default function AppointmentBookingFlow({
 
       // Redirect to success page
       router.push(
-        `/patient/appointments/booking/success?appointment_id=${appointment.id}`
+        `/patient/appointments/booking/success?appointment_id=${appointment.id}`,
       );
     } catch (_err) {
       setError('Erro ao confirmar agendamento. Tente novamente.');
@@ -288,7 +288,7 @@ export default function AppointmentBookingFlow({
                       notes: appointmentNotes,
                       special_requests: specialRequests,
                     },
-                  }
+                  },
                 );
 
                 if (error) {

@@ -56,11 +56,11 @@ export class ComplicationAlertSystem {
    * Process detection result and trigger alerts if necessary
    */
   async processDetectionResult(
-    result: ComplicationDetectionResult
+    result: ComplicationDetectionResult,
   ): Promise<ComplicationAlert[]> {
     try {
       logger.info(
-        `Processing detection result ${result.id} for alert evaluation`
+        `Processing detection result ${result.id} for alert evaluation`,
       );
 
       const alerts: ComplicationAlert[] = [];
@@ -81,20 +81,20 @@ export class ComplicationAlertSystem {
         if (this.shouldCreateIndividualAlert(complication)) {
           const individualAlert = await this.createComplicationAlert(
             result,
-            complication
+            complication,
           );
           alerts.push(individualAlert);
         }
       }
 
       logger.info(
-        `Created ${alerts.length} alerts for detection result ${result.id}`
+        `Created ${alerts.length} alerts for detection result ${result.id}`,
       );
       return alerts;
     } catch (error) {
       logger.error(
         `Failed to process detection result ${result.id} for alerts:`,
-        error
+        error,
       );
       throw error;
     }
@@ -104,7 +104,7 @@ export class ComplicationAlertSystem {
    * Create main alert for detection result
    */
   private async createAlert(
-    result: ComplicationDetectionResult
+    result: ComplicationDetectionResult,
   ): Promise<ComplicationAlert> {
     const alertId = `alert_${result.id}_${Date.now()}`;
 
@@ -140,7 +140,7 @@ export class ComplicationAlertSystem {
    */
   private async createComplicationAlert(
     result: ComplicationDetectionResult,
-    complication: DetectedComplication
+    complication: DetectedComplication,
   ): Promise<ComplicationAlert> {
     const alertId = `comp_alert_${result.id}_${complication.type}_${Date.now()}`;
 
@@ -185,7 +185,7 @@ export class ComplicationAlertSystem {
           const notification = await this.sendNotification(
             alert,
             target,
-            method
+            method,
           );
           notifications.push(notification);
         }
@@ -196,12 +196,12 @@ export class ComplicationAlertSystem {
       await this.updateAlert(alert);
 
       logger.info(
-        `Sent ${notifications.length} notifications for alert ${alert.id}`
+        `Sent ${notifications.length} notifications for alert ${alert.id}`,
       );
     } catch (error) {
       logger.error(
         `Failed to send notifications for alert ${alert.id}:`,
-        error
+        error,
       );
       throw error;
     }
@@ -213,7 +213,7 @@ export class ComplicationAlertSystem {
   private async sendNotification(
     alert: ComplicationAlert,
     target: NotificationTarget,
-    method: 'email' | 'sms' | 'push' | 'call'
+    method: 'email' | 'sms' | 'push' | 'call',
   ): Promise<AlertNotification> {
     const notificationId = `notif_${alert.id}_${target}_${method}_${Date.now()}`;
 
@@ -254,7 +254,7 @@ export class ComplicationAlertSystem {
     } catch (error) {
       logger.error(
         `Failed to send ${method} notification to ${target}:`,
-        error
+        error,
       );
       notification.status = 'failed';
 
@@ -274,11 +274,11 @@ export class ComplicationAlertSystem {
    */
   private async activateEmergencyProtocol(
     alert: ComplicationAlert,
-    protocol: EmergencyProtocol
+    protocol: EmergencyProtocol,
   ): Promise<void> {
     try {
       logger.warn(
-        `Activating emergency protocol for critical alert ${alert.id}`
+        `Activating emergency protocol for critical alert ${alert.id}`,
       );
 
       // Mark alert as escalated
@@ -311,7 +311,7 @@ export class ComplicationAlertSystem {
     } catch (error) {
       logger.error(
         `Failed to activate emergency protocol for alert ${alert.id}:`,
-        error
+        error,
       );
       throw error;
     }
@@ -323,7 +323,7 @@ export class ComplicationAlertSystem {
   async acknowledgeAlert(
     alertId: string,
     acknowledgedBy: string,
-    notes?: string
+    notes?: string,
   ): Promise<void> {
     try {
       const alert = this.activeAlerts.get(alertId);
@@ -360,7 +360,7 @@ export class ComplicationAlertSystem {
   async resolveAlert(
     alertId: string,
     resolvedBy: string,
-    notes?: string
+    notes?: string,
   ): Promise<void> {
     try {
       const alert = this.activeAlerts.get(alertId);
@@ -427,10 +427,10 @@ export class ComplicationAlertSystem {
    * Get active alerts for patient
    */
   async getActiveAlertsForPatient(
-    patientId: string
+    patientId: string,
   ): Promise<ComplicationAlert[]> {
     return Array.from(this.activeAlerts.values()).filter(
-      (alert) => alert.patientId === patientId && alert.status !== 'resolved'
+      (alert) => alert.patientId === patientId && alert.status !== 'resolved',
     );
   }
 
@@ -439,7 +439,7 @@ export class ComplicationAlertSystem {
    */
   async getActiveAlerts(): Promise<ComplicationAlert[]> {
     return Array.from(this.activeAlerts.values()).filter(
-      (alert) => alert.status !== 'resolved'
+      (alert) => alert.status !== 'resolved',
     );
   }
 
@@ -447,7 +447,7 @@ export class ComplicationAlertSystem {
    * Helper methods
    */
   private shouldCreateIndividualAlert(
-    complication: DetectedComplication
+    complication: DetectedComplication,
   ): boolean {
     // Create individual alerts for high-severity complications
     return (
@@ -456,7 +456,7 @@ export class ComplicationAlertSystem {
   }
 
   private calculateComplicationAlertLevel(
-    complication: DetectedComplication
+    complication: DetectedComplication,
   ): AlertLevel {
     const confidenceLevel = complication.confidence;
     const severityMultiplier = {
@@ -472,7 +472,7 @@ export class ComplicationAlertSystem {
 
   private getNotificationMethods(
     alertLevel: AlertLevel,
-    _target: NotificationTarget
+    _target: NotificationTarget,
   ): Array<'email' | 'sms' | 'push' | 'call'> {
     const baseMethods: Array<'email' | 'sms' | 'push' | 'call'> = [
       'email',
@@ -492,7 +492,7 @@ export class ComplicationAlertSystem {
 
   private async getContactInfo(
     _patientId: string,
-    target: NotificationTarget
+    target: NotificationTarget,
   ): Promise<any> {
     // This would fetch contact information from the database
     // For now, returning mock data
@@ -568,7 +568,7 @@ Para emergências, ligue: 192 (SAMU)
   private async sendEmailNotification(
     email: string,
     _content: any,
-    alert: ComplicationAlert
+    alert: ComplicationAlert,
   ): Promise<void> {
     // Implementation would use actual email service (SendGrid, SES, etc.)
     logger.info(`Email notification sent to ${email} for alert ${alert.id}`);
@@ -577,7 +577,7 @@ Para emergências, ligue: 192 (SAMU)
   private async sendSMSNotification(
     phone: string,
     _content: any,
-    alert: ComplicationAlert
+    alert: ComplicationAlert,
   ): Promise<void> {
     // Implementation would use SMS service (Twilio, AWS SNS, etc.)
     logger.info(`SMS notification sent to ${phone} for alert ${alert.id}`);
@@ -586,18 +586,18 @@ Para emergências, ligue: 192 (SAMU)
   private async sendPushNotification(
     userId: string,
     _content: any,
-    alert: ComplicationAlert
+    alert: ComplicationAlert,
   ): Promise<void> {
     // Implementation would use push notification service
     logger.info(
-      `Push notification sent to user ${userId} for alert ${alert.id}`
+      `Push notification sent to user ${userId} for alert ${alert.id}`,
     );
   }
 
   private async initiatePhoneCall(
     phone: string,
     _content: any,
-    alert: ComplicationAlert
+    alert: ComplicationAlert,
   ): Promise<void> {
     // Implementation would use voice call service (Twilio Voice, etc.)
     logger.info(`Phone call initiated to ${phone} for alert ${alert.id}`);
@@ -637,7 +637,7 @@ Para emergências, ligue: 192 (SAMU)
 
   private async executeEmergencyAction(
     action: string,
-    alert: ComplicationAlert
+    alert: ComplicationAlert,
   ): Promise<void> {
     logger.info(`Executing emergency action: ${action} for alert ${alert.id}`);
     // Implementation would depend on specific emergency actions
@@ -645,7 +645,7 @@ Para emergências, ligue: 192 (SAMU)
 
   private async contactEmergencyServices(
     alert: ComplicationAlert,
-    _protocol: EmergencyProtocol
+    _protocol: EmergencyProtocol,
   ): Promise<void> {
     logger.warn(`Contacting emergency services for alert ${alert.id}`);
     // Implementation would contact emergency services
@@ -653,21 +653,21 @@ Para emergências, ligue: 192 (SAMU)
 
   private async sendEscalationNotifications(
     alert: ComplicationAlert,
-    escalatedTo: string
+    escalatedTo: string,
   ): Promise<void> {
     // Send notifications to escalated target
     logger.info(
-      `Sending escalation notifications to ${escalatedTo} for alert ${alert.id}`
+      `Sending escalation notifications to ${escalatedTo} for alert ${alert.id}`,
     );
   }
 
   private async retryNotification(
     notification: AlertNotification,
-    _alert: ComplicationAlert
+    _alert: ComplicationAlert,
   ): Promise<void> {
     notification.retryCount++;
     logger.info(
-      `Retrying notification ${notification.id} (attempt ${notification.retryCount})`
+      `Retrying notification ${notification.id} (attempt ${notification.retryCount})`,
     );
     // Re-attempt notification
   }
@@ -734,7 +734,7 @@ Para emergências, ligue: 192 (SAMU)
     alertId: string,
     action: string,
     userId: string,
-    notes?: string
+    notes?: string,
   ): Promise<void> {
     const { error } = await this.supabase.from('alert_logs').insert({
       alert_id: alertId,
@@ -751,7 +751,7 @@ Para emergências, ligue: 192 (SAMU)
 
   private async logEmergencyActivation(
     alert: ComplicationAlert,
-    protocol: EmergencyProtocol
+    protocol: EmergencyProtocol,
   ): Promise<void> {
     const { error } = await this.supabase.from('emergency_logs').insert({
       alert_id: alert.id,

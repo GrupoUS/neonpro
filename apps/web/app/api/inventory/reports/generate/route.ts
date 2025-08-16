@@ -30,7 +30,7 @@ export async function POST(request: NextRequest) {
           error: 'Invalid request parameters',
           details: validationResult.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -58,7 +58,7 @@ export async function POST(request: NextRequest) {
       // Excel export would go here
       return NextResponse.json(
         { error: 'Excel format not yet implemented' },
-        { status: 501 }
+        { status: 501 },
       );
     }
 
@@ -73,7 +73,7 @@ export async function POST(request: NextRequest) {
         error: 'Failed to generate report',
         message: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -96,7 +96,7 @@ export async function GET(request: NextRequest) {
     if (!reportType) {
       return NextResponse.json(
         { error: 'Report type is required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -149,7 +149,7 @@ export async function GET(request: NextRequest) {
         error: 'Failed to fetch report',
         message: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -183,7 +183,7 @@ function validateGenerateReportRequest(body: any): ValidationResult {
 
   if (body.type && !validTypes.includes(body.type)) {
     errors.push(
-      `Invalid report type. Must be one of: ${validTypes.join(', ')}`
+      `Invalid report type. Must be one of: ${validTypes.join(', ')}`,
     );
   }
 
@@ -203,13 +203,13 @@ function validateGenerateReportRequest(body: any): ValidationResult {
   // Validate date formats in filters
   if (body.filters?.start_date && !isValidDate(body.filters.start_date)) {
     errors.push(
-      'Invalid start_date format. Use ISO 8601 format (YYYY-MM-DD or YYYY-MM-DDTHH:mm:ss)'
+      'Invalid start_date format. Use ISO 8601 format (YYYY-MM-DD or YYYY-MM-DDTHH:mm:ss)',
     );
   }
 
   if (body.filters?.end_date && !isValidDate(body.filters.end_date)) {
     errors.push(
-      'Invalid end_date format. Use ISO 8601 format (YYYY-MM-DD or YYYY-MM-DDTHH:mm:ss)'
+      'Invalid end_date format. Use ISO 8601 format (YYYY-MM-DD or YYYY-MM-DDTHH:mm:ss)',
     );
   }
 
@@ -273,7 +273,7 @@ function convertToCSV(data: any[], _reportType: ReportType): string {
           }
           return value !== null && value !== undefined ? value.toString() : '';
         })
-        .join(',')
+        .join(','),
     ),
   ].join('\n');
 

@@ -92,7 +92,7 @@ export class ConflictDetectionEngine {
    */
   async detectConflictsForNewAppointment(
     appointmentData: Partial<Appointment>,
-    clinicId: string
+    clinicId: string,
   ): Promise<ConflictDetectionResult> {
     try {
       logger.info('Starting conflict detection for new appointment', {
@@ -118,7 +118,7 @@ export class ConflictDetectionEngine {
           startTime,
           endTime,
           clinicId,
-          appointmentData.id
+          appointmentData.id,
         );
         conflicts.push(...staffConflicts.conflicts);
         affectedResources.push(...staffConflicts.resources);
@@ -131,7 +131,7 @@ export class ConflictDetectionEngine {
           startTime,
           endTime,
           clinicId,
-          appointmentData.id
+          appointmentData.id,
         );
         conflicts.push(...roomConflicts.conflicts);
         affectedResources.push(...roomConflicts.resources);
@@ -147,7 +147,7 @@ export class ConflictDetectionEngine {
           startTime,
           endTime,
           clinicId,
-          appointmentData.id
+          appointmentData.id,
         );
         conflicts.push(...equipmentConflicts.conflicts);
         affectedResources.push(...equipmentConflicts.resources);
@@ -162,7 +162,7 @@ export class ConflictDetectionEngine {
         const skillConflicts = await this.detectSkillMismatch(
           appointmentData.staff_id,
           appointmentData.service_id,
-          clinicId
+          clinicId,
         );
         conflicts.push(...skillConflicts);
       }
@@ -173,7 +173,7 @@ export class ConflictDetectionEngine {
           appointmentData.staff_id,
           startTime,
           endTime,
-          clinicId
+          clinicId,
         );
         conflicts.push(...breakConflicts);
       }
@@ -218,7 +218,7 @@ export class ConflictDetectionEngine {
     startTime: Date,
     endTime: Date,
     clinicId: string,
-    excludeAppointmentId?: string
+    excludeAppointmentId?: string,
   ): Promise<{ conflicts: DetectedConflict[]; resources: AffectedResource[] }> {
     const conflicts: DetectedConflict[] = [];
     const resources: AffectedResource[] = [];
@@ -232,13 +232,13 @@ export class ConflictDetectionEngine {
           id, start_time, end_time, service_id,
           staff:staff_id(id, name, specialties),
           service:service_id(name, duration_minutes)
-        `
+        `,
         )
         .eq('staff_id', staffId)
         .eq('clinic_id', clinicId)
         .neq('status', 'cancelled')
         .or(
-          `and(start_time.lte.${endTime.toISOString()},end_time.gte.${startTime.toISOString()})`
+          `and(start_time.lte.${endTime.toISOString()},end_time.gte.${startTime.toISOString()})`,
         );
 
       if (excludeAppointmentId) {
@@ -309,7 +309,7 @@ export class ConflictDetectionEngine {
     startTime: Date,
     endTime: Date,
     clinicId: string,
-    excludeAppointmentId?: string
+    excludeAppointmentId?: string,
   ): Promise<{ conflicts: DetectedConflict[]; resources: AffectedResource[] }> {
     const conflicts: DetectedConflict[] = [];
     const resources: AffectedResource[] = [];
@@ -322,13 +322,13 @@ export class ConflictDetectionEngine {
           `
           id, start_time, end_time,
           room:room_id(id, name, capacity)
-        `
+        `,
         )
         .eq('room_id', roomId)
         .eq('clinic_id', clinicId)
         .neq('status', 'cancelled')
         .or(
-          `and(start_time.lte.${endTime.toISOString()},end_time.gte.${startTime.toISOString()})`
+          `and(start_time.lte.${endTime.toISOString()},end_time.gte.${startTime.toISOString()})`,
         );
 
       if (excludeAppointmentId) {
@@ -399,7 +399,7 @@ export class ConflictDetectionEngine {
     startTime: Date,
     endTime: Date,
     clinicId: string,
-    excludeAppointmentId?: string
+    excludeAppointmentId?: string,
   ): Promise<{ conflicts: DetectedConflict[]; resources: AffectedResource[] }> {
     const conflicts: DetectedConflict[] = [];
     const resources: AffectedResource[] = [];
@@ -412,7 +412,7 @@ export class ConflictDetectionEngine {
           .select('*')
           .eq('equipment_id', equipmentId)
           .or(
-            `and(start_time.lte.${endTime.toISOString()},end_time.gte.${startTime.toISOString()})`
+            `and(start_time.lte.${endTime.toISOString()},end_time.gte.${startTime.toISOString()})`,
           )
           .eq('status', 'active');
 
@@ -451,13 +451,13 @@ export class ConflictDetectionEngine {
             `
             id, start_time, end_time, required_equipment,
             equipment:required_equipment(id, name)
-          `
+          `,
           )
           .eq('clinic_id', clinicId)
           .neq('status', 'cancelled')
           .contains('required_equipment', [equipmentId])
           .or(
-            `and(start_time.lte.${endTime.toISOString()},end_time.gte.${startTime.toISOString()})`
+            `and(start_time.lte.${endTime.toISOString()},end_time.gte.${startTime.toISOString()})`,
           );
 
         if (excludeAppointmentId) {
@@ -532,7 +532,7 @@ export class ConflictDetectionEngine {
   private async detectSkillMismatch(
     staffId: string,
     serviceId: string,
-    _clinicId: string
+    _clinicId: string,
   ): Promise<DetectedConflict[]> {
     const conflicts: DetectedConflict[] = [];
 
@@ -557,7 +557,7 @@ export class ConflictDetectionEngine {
           (serviceData.required_specialties as string[]) || [];
 
         const missingSpecialties = requiredSpecialties.filter(
-          (specialty) => !staffSpecialties.includes(specialty)
+          (specialty) => !staffSpecialties.includes(specialty),
         );
 
         if (missingSpecialties.length > 0) {
@@ -599,7 +599,7 @@ export class ConflictDetectionEngine {
     staffId: string,
     startTime: Date,
     endTime: Date,
-    clinicId: string
+    clinicId: string,
   ): Promise<DetectedConflict[]> {
     const conflicts: DetectedConflict[] = [];
 
@@ -656,7 +656,7 @@ export class ConflictDetectionEngine {
    * Calcula severidade geral dos conflitos
    */
   private calculateOverallSeverity(
-    conflicts: DetectedConflict[]
+    conflicts: DetectedConflict[],
   ): 'low' | 'medium' | 'high' | 'critical' {
     if (conflicts.length === 0) {
       return 'low';
@@ -670,10 +670,10 @@ export class ConflictDetectionEngine {
     };
 
     const maxSeverity = Math.max(
-      ...conflicts.map((c) => severityScores[c.severity])
+      ...conflicts.map((c) => severityScores[c.severity]),
     );
     const criticalCount = conflicts.filter(
-      (c) => c.severity === 'critical'
+      (c) => c.severity === 'critical',
     ).length;
     const highCount = conflicts.filter((c) => c.severity === 'high').length;
 
@@ -734,7 +734,7 @@ export class ConflictDetectionEngine {
    */
   async detectBatchConflicts(
     appointments: Partial<Appointment>[],
-    clinicId: string
+    clinicId: string,
   ): Promise<ConflictDetectionResult[]> {
     const results: ConflictDetectionResult[] = [];
 
@@ -742,7 +742,7 @@ export class ConflictDetectionEngine {
       try {
         const result = await this.detectConflictsForNewAppointment(
           appointment,
-          clinicId
+          clinicId,
         );
         results.push(result);
       } catch (error) {
@@ -797,7 +797,7 @@ export const conflictDetectionEngine = new ConflictDetectionEngine();
 export async function detectConflicts(
   appointmentData: Partial<Appointment>,
   clinicId: string,
-  config?: Partial<ConflictDetectionConfig>
+  config?: Partial<ConflictDetectionConfig>,
 ): Promise<ConflictDetectionResult> {
   const engine = config
     ? new ConflictDetectionEngine(config)

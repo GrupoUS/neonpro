@@ -55,7 +55,7 @@ export class EmailService {
       const TemplateComponent = this.getTemplateComponent(payload.type);
       if (!TemplateComponent) {
         throw new Error(
-          `No template found for notification type: ${payload.type}`
+          `No template found for notification type: ${payload.type}`,
         );
       }
 
@@ -65,7 +65,7 @@ export class EmailService {
           ...payload.templateData,
           recipientEmail: payload.recipientEmail,
           timezone: payload.timezone || 'UTC',
-        })
+        }),
       );
 
       // Prepare email data

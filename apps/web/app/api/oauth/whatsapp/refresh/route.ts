@@ -31,12 +31,12 @@ export async function POST(request: NextRequest) {
           requestId,
           provider: 'whatsapp',
           error: sessionError?.message,
-        }
+        },
       );
 
       return NextResponse.json(
         { error: 'Authentication required' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -58,7 +58,7 @@ export async function POST(request: NextRequest) {
 
       return NextResponse.json(
         { error: 'WhatsApp connection not found' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -71,12 +71,12 @@ export async function POST(request: NextRequest) {
           userId: session.user.id,
           connectionId: connection.id,
           status: connection.status,
-        }
+        },
       );
 
       return NextResponse.json(
         { error: 'WhatsApp account not connected' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -106,7 +106,7 @@ export async function POST(request: NextRequest) {
     // Refresh the token
     const oauthHandler = new WhatsAppOAuthHandler();
     const newEncryptedToken = await oauthHandler.refreshToken(
-      connection.encrypted_token
+      connection.encrypted_token,
     );
 
     // Update connection with new token
@@ -128,12 +128,12 @@ export async function POST(request: NextRequest) {
           userId: session.user.id,
           connectionId: connection.id,
           error: updateError.message,
-        }
+        },
       );
 
       return NextResponse.json(
         { error: 'Failed to save refreshed token' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -180,7 +180,7 @@ export async function POST(request: NextRequest) {
         error: 'Failed to refresh WhatsApp token',
         requestId,
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

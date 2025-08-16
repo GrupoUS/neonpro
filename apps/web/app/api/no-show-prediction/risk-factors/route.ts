@@ -69,7 +69,7 @@ export async function GET(request: NextRequest) {
     if (error) {
       return NextResponse.json(
         { error: 'Failed to fetch risk factors' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -90,7 +90,7 @@ export async function GET(request: NextRequest) {
           acc[type].average_impact = acc[type].total_impact / acc[type].count;
           return acc;
         },
-        {} as Record<string, any>
+        {} as Record<string, any>,
       ) || {};
 
     return NextResponse.json({
@@ -105,7 +105,7 @@ export async function GET(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

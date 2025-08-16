@@ -95,13 +95,13 @@ export async function GET(request: NextRequest) {
         metadata,
         created_at,
         updated_at
-      `
+      `,
       )
       .eq('user_id', targetUserId)
       .order('created_at', { ascending: false })
       .range(
         (validatedQuery.page - 1) * validatedQuery.limit,
-        validatedQuery.page * validatedQuery.limit - 1
+        validatedQuery.page * validatedQuery.limit - 1,
       );
 
     if (consentsError) {
@@ -144,13 +144,13 @@ export async function GET(request: NextRequest) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Invalid query parameters', details: error.errors },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -180,7 +180,7 @@ export async function POST(request: NextRequest) {
       {
         consentType: validatedData.consentType,
         metadata: validatedData.metadata,
-      }
+      },
     );
 
     return NextResponse.json(
@@ -188,19 +188,19 @@ export async function POST(request: NextRequest) {
         success: true,
         data: consent,
       },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Invalid request data', details: error.errors },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -226,7 +226,7 @@ export async function PUT(request: NextRequest) {
     if (!consentId) {
       return NextResponse.json(
         { error: 'Consent ID is required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -252,7 +252,7 @@ export async function PUT(request: NextRequest) {
     if (!isAdmin && existingConsent.user_id !== user.id) {
       return NextResponse.json(
         { error: 'Forbidden - Can only modify own consents' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -262,7 +262,7 @@ export async function PUT(request: NextRequest) {
     if (validatedData.status === 'withdrawn') {
       const withdrawnConsent = await complianceManager.withdrawConsent(
         existingConsent.user_id,
-        validatedData.purposes || []
+        validatedData.purposes || [],
       );
 
       return NextResponse.json({
@@ -321,13 +321,13 @@ export async function PUT(request: NextRequest) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Invalid request data', details: error.errors },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -351,7 +351,7 @@ export async function DELETE(request: NextRequest) {
     if (purposes.length === 0) {
       return NextResponse.json(
         { error: 'At least one purpose must be specified' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -367,7 +367,7 @@ export async function DELETE(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

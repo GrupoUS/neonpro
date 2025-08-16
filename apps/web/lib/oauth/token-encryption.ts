@@ -61,7 +61,7 @@ export class TokenEncryptionService {
       };
     } catch (error) {
       throw new Error(
-        `Token encryption failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+        `Token encryption failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
       );
     }
   }
@@ -87,7 +87,7 @@ export class TokenEncryptionService {
       return decrypted;
     } catch (error) {
       throw new Error(
-        `Token decryption failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+        `Token decryption failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
       );
     }
   }

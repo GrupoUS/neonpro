@@ -34,7 +34,7 @@ export class EmailService {
 
   constructor(
     private readonly supabase: any,
-    private readonly clinicId: string
+    private readonly clinicId: string,
   ) {}
 
   // =======================================
@@ -57,7 +57,7 @@ export class EmailService {
   }
 
   private async createProvider(
-    config: EmailProviderConfig
+    config: EmailProviderConfig,
   ): Promise<EmailServiceInterface | null> {
     switch (config.provider) {
       case 'smtp':
@@ -83,7 +83,7 @@ export class EmailService {
 
   async sendEmail(
     message: EmailMessage,
-    providerPreference?: EmailProvider
+    providerPreference?: EmailProvider,
   ): Promise<EmailServiceResponse> {
     try {
       // Select best provider
@@ -96,7 +96,7 @@ export class EmailService {
       const validationResult = await this.validateMessage(message);
       if (!validationResult.isValid) {
         throw new Error(
-          `Message validation failed: ${validationResult.reason}`
+          `Message validation failed: ${validationResult.reason}`,
         );
       }
 
@@ -134,7 +134,7 @@ export class EmailService {
   async sendBulkEmail(
     messages: EmailMessage[],
     providerPreference?: EmailProvider,
-    batchSize = 10
+    batchSize = 10,
   ): Promise<BulkEmailResponse> {
     try {
       const provider = this.selectProvider(providerPreference);
@@ -219,7 +219,7 @@ export class EmailService {
   // =======================================
 
   async createTemplate(
-    template: Omit<EmailTemplate, 'id' | 'createdAt' | 'updatedAt'>
+    template: Omit<EmailTemplate, 'id' | 'createdAt' | 'updatedAt'>,
   ): Promise<EmailTemplate> {
     const { data, error } = await this.supabase
       .from('email_templates')
@@ -243,7 +243,7 @@ export class EmailService {
 
   async updateTemplate(
     id: string,
-    updates: Partial<EmailTemplate>
+    updates: Partial<EmailTemplate>,
   ): Promise<EmailTemplate> {
     const { data, error } = await this.supabase
       .from('email_templates')
@@ -314,7 +314,7 @@ export class EmailService {
 
     if (filters?.search) {
       query = query.or(
-        `name.ilike.%${filters.search}%,subject.ilike.%${filters.search}%`
+        `name.ilike.%${filters.search}%,subject.ilike.%${filters.search}%`,
       );
     }
 
@@ -333,7 +333,7 @@ export class EmailService {
 
   async previewTemplate(
     templateId: string,
-    variables: Record<string, any>
+    variables: Record<string, any>,
   ): Promise<EmailPreview> {
     const template = await this.getTemplate(templateId);
     if (!template) {
@@ -424,7 +424,7 @@ export class EmailService {
   }
 
   async getDeliveryReport(
-    messageId: string
+    messageId: string,
   ): Promise<EmailDeliveryReport | null> {
     const { data, error } = await this.supabase
       .from('email_events')
@@ -466,7 +466,7 @@ export class EmailService {
   // =======================================
 
   private selectProvider(
-    preference?: EmailProvider
+    preference?: EmailProvider,
   ): EmailServiceInterface | null {
     if (preference && this.providers.has(preference)) {
       return this.providers.get(preference)!;
@@ -487,7 +487,7 @@ export class EmailService {
   }
 
   private async validateMessage(
-    message: EmailMessage
+    message: EmailMessage,
   ): Promise<{ isValid: boolean; reason?: string }> {
     if (!message.to || message.to.length === 0) {
       return { isValid: false, reason: 'No recipients specified' };
@@ -551,7 +551,7 @@ export class EmailService {
 
   private interpolateTemplate(
     template: string,
-    variables: Record<string, any>
+    variables: Record<string, any>,
   ): string {
     return template.replace(/\{\{(\w+)\}\}/g, (match, key) => {
       return variables[key] !== undefined ? String(variables[key]) : match;
@@ -597,7 +597,7 @@ export class EmailService {
         acc[event.event] = (acc[event.event] || 0) + 1;
         return acc;
       },
-      {} as Record<string, number>
+      {} as Record<string, number>,
     );
 
     const totalSent = eventCounts.sent || 0;

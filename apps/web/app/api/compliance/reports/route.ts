@@ -88,7 +88,7 @@ type ComplianceReport = {
 function initializeServices() {
   const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
   );
 
   const auditTrail = new LGPDAuditTrail(supabase);
@@ -100,7 +100,7 @@ function initializeServices() {
 async function generateComplianceReport(
   clinicId: string,
   request: z.infer<typeof ReportRequestSchema>,
-  userId: string
+  userId: string,
 ) {
   const { supabase, auditTrail, lgpdCore } = initializeServices();
 
@@ -114,7 +114,7 @@ async function generateComplianceReport(
     const baseReport = await auditTrail.generateComplianceReport(
       clinicId,
       period,
-      userId
+      userId,
     );
 
     // Add specific report type data
@@ -126,7 +126,7 @@ async function generateComplianceReport(
           auditTrail,
           clinicId,
           period,
-          request.filters
+          request.filters,
         );
         break;
       case 'consent':
@@ -136,7 +136,7 @@ async function generateComplianceReport(
         reportData = await generateDataSubjectReport(
           lgpdCore,
           clinicId,
-          period
+          period,
         );
         break;
       case 'security':
@@ -160,7 +160,7 @@ async function generateAuditReport(
   auditTrail: LGPDAuditTrail,
   clinicId: string,
   period: { start: Date; end: Date },
-  filters?: any
+  filters?: any,
 ) {
   const query = {
     clinicId,
@@ -183,14 +183,14 @@ async function generateAuditReport(
           acc[event.eventType] = (acc[event.eventType] || 0) + 1;
           return acc;
         },
-        {} as Record<string, number>
+        {} as Record<string, number>,
       ),
       eventsBySeverity: events.reduce(
         (acc, event) => {
           acc[event.severity] = (acc[event.severity] || 0) + 1;
           return acc;
         },
-        {} as Record<string, number>
+        {} as Record<string, number>,
       ),
       uniqueUsers: new Set(events.map((e) => e.userId)).size,
       timeRange: {
@@ -206,7 +206,7 @@ async function generateAuditReport(
 async function generateConsentReport(
   _lgpdCore: LGPDCore,
   _clinicId: string,
-  period: { start: Date; end: Date }
+  period: { start: Date; end: Date },
 ) {
   // This would integrate with the consent management system
   return {
@@ -229,7 +229,7 @@ async function generateConsentReport(
 async function generateDataSubjectReport(
   _lgpdCore: LGPDCore,
   _clinicId: string,
-  period: { start: Date; end: Date }
+  period: { start: Date; end: Date },
 ) {
   // This would integrate with data subject rights system
   return {
@@ -252,7 +252,7 @@ async function generateDataSubjectReport(
 async function generateSecurityReport(
   auditTrail: LGPDAuditTrail,
   clinicId: string,
-  period: { start: Date; end: Date }
+  period: { start: Date; end: Date },
 ) {
   const securityEvents = await auditTrail.queryEvents({
     clinicId,
@@ -280,7 +280,7 @@ async function generateSecurityReport(
       unauthorizedAccess: securityEvents.events.length,
       dataBreaches: breachEvents.events.length,
       criticalEvents: [...securityEvents.events, ...breachEvents.events].filter(
-        (e) => e.severity === 'critical'
+        (e) => e.severity === 'critical',
       ).length,
       riskLevel:
         breachEvents.events.length > 0
@@ -344,7 +344,7 @@ function convertToCSV(data: any): string {
     const csvRows = [
       headers.join(','),
       ...data.events.map((event: any) =>
-        headers.map((header) => JSON.stringify(event[header] || '')).join(',')
+        headers.map((header) => JSON.stringify(event[header] || '')).join(','),
       ),
     ];
     return csvRows.join('\n');
@@ -372,7 +372,7 @@ export async function GET(request: NextRequest) {
     if (!rateLimitResult.success) {
       return NextResponse.json(
         { error: 'Rate limit exceeded' },
-        { status: 429 }
+        { status: 429 },
       );
     }
 
@@ -381,7 +381,7 @@ export async function GET(request: NextRequest) {
     if (!(authResult.success && authResult.user)) {
       return NextResponse.json(
         { error: 'Authentication required' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -391,13 +391,13 @@ export async function GET(request: NextRequest) {
     const hasAccess = await hasPermission(
       user.id,
       user.clinicId,
-      'compliance.reports.read'
+      'compliance.reports.read',
     );
 
     if (!hasAccess) {
       return NextResponse.json(
         { error: 'Insufficient permissions' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -440,7 +440,7 @@ export async function GET(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -460,7 +460,7 @@ export async function POST(request: NextRequest) {
     if (!rateLimitResult.success) {
       return NextResponse.json(
         { error: 'Rate limit exceeded' },
-        { status: 429 }
+        { status: 429 },
       );
     }
 
@@ -469,7 +469,7 @@ export async function POST(request: NextRequest) {
     if (!csrfValid) {
       return NextResponse.json(
         { error: 'CSRF validation failed' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -478,7 +478,7 @@ export async function POST(request: NextRequest) {
     if (!(authResult.success && authResult.user)) {
       return NextResponse.json(
         { error: 'Authentication required' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -488,13 +488,13 @@ export async function POST(request: NextRequest) {
     const hasAccess = await hasPermission(
       user.id,
       user.clinicId,
-      'compliance.reports.create'
+      'compliance.reports.create',
     );
 
     if (!hasAccess) {
       return NextResponse.json(
         { error: 'Insufficient permissions' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -551,7 +551,7 @@ export async function POST(request: NextRequest) {
       const reportData = await generateComplianceReport(
         user.clinicId,
         reportRequest,
-        user.id
+        user.id,
       );
 
       // Update report with generated data
@@ -595,13 +595,13 @@ export async function POST(request: NextRequest) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Invalid request data', details: error.errors },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

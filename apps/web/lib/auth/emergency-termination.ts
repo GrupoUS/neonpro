@@ -267,7 +267,7 @@ export class EmergencyTermination {
     supabaseUrl: string,
     supabaseKey: string,
     sessionPreservation: SessionPreservation,
-    customConfig?: Partial<EmergencyConfig>
+    customConfig?: Partial<EmergencyConfig>,
   ) {
     this.supabase = createClient(supabaseUrl, supabaseKey);
     this.auditLogger = new SecurityAuditLogger(supabaseUrl, supabaseKey);
@@ -302,7 +302,7 @@ export class EmergencyTermination {
    * Request emergency termination
    */
   async requestTermination(
-    request: Omit<EmergencyTerminationRequest, 'requestId' | 'timestamp'>
+    request: Omit<EmergencyTerminationRequest, 'requestId' | 'timestamp'>,
   ): Promise<TerminationResult> {
     const startTime = Date.now();
 
@@ -343,7 +343,7 @@ export class EmergencyTermination {
     protocolId: string,
     initiatedBy: string,
     initiatorRole: UserRole,
-    context?: Record<string, any>
+    context?: Record<string, any>,
   ): Promise<TerminationResult> {
     const protocol = this.protocols.get(protocolId);
     if (!protocol) {
@@ -399,7 +399,7 @@ export class EmergencyTermination {
     // Execute additional protocol actions
     if (protocol.actions.lockAccounts) {
       await this.lockUserAccounts(
-        result.terminatedSessions.map((s) => s.userId)
+        result.terminatedSessions.map((s) => s.userId),
       );
     }
 
@@ -421,7 +421,7 @@ export class EmergencyTermination {
     sessionId: string,
     initiatedBy: string,
     reason: string,
-    preserveData = true
+    preserveData = true,
   ): Promise<TerminationResult> {
     const session = this.activeSessions.get(sessionId);
     if (!session) {
@@ -452,7 +452,7 @@ export class EmergencyTermination {
     userId: string,
     initiatedBy: string,
     reason: string,
-    preserveData = true
+    preserveData = true,
   ): Promise<TerminationResult> {
     const terminationRequest: EmergencyTerminationRequest = {
       requestId: `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
@@ -477,7 +477,7 @@ export class EmergencyTermination {
   async terminateAllSessions(
     initiatedBy: string,
     reason: string,
-    preserveData = true
+    preserveData = true,
   ): Promise<TerminationResult> {
     const terminationRequest: EmergencyTerminationRequest = {
       requestId: `all_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
@@ -550,7 +550,7 @@ export class EmergencyTermination {
    * Add custom emergency protocol
    */
   async addProtocol(
-    protocol: Omit<EmergencyProtocol, 'createdAt'>
+    protocol: Omit<EmergencyProtocol, 'createdAt'>,
   ): Promise<void> {
     const newProtocol: EmergencyProtocol = {
       ...protocol,
@@ -667,14 +667,14 @@ export class EmergencyTermination {
           },
           (payload) => {
             this.handleSessionChange(payload);
-          }
+          },
         )
         .subscribe();
     } catch (_error) {}
   }
 
   private async validateTerminationRequest(
-    request: EmergencyTerminationRequest
+    request: EmergencyTerminationRequest,
   ): Promise<void> {
     // Validate termination type and target
     switch (request.terminationType) {
@@ -707,7 +707,7 @@ export class EmergencyTermination {
     if (
       !this.hasTerminationPermission(
         request.initiatorRole,
-        request.terminationType
+        request.terminationType,
       )
     ) {
       throw new Error('Insufficient permissions for termination type');
@@ -757,7 +757,7 @@ export class EmergencyTermination {
   }
 
   private async requestApproval(
-    request: EmergencyTerminationRequest
+    request: EmergencyTerminationRequest,
   ): Promise<TerminationResult> {
     // Store pending request
     this.pendingRequests.set(request.requestId, request);
@@ -781,7 +781,7 @@ export class EmergencyTermination {
   }
 
   private async executeTermination(
-    request: EmergencyTerminationRequest
+    request: EmergencyTerminationRequest,
   ): Promise<TerminationResult> {
     const result: TerminationResult = {
       requestId: request.requestId,
@@ -810,7 +810,7 @@ export class EmergencyTermination {
           if (request.preserveData) {
             const backup = await this.sessionPreservation.createEmergencyBackup(
               session.session_id,
-              `Emergency termination: ${request.reason}`
+              `Emergency termination: ${request.reason}`,
             );
             preservationBackupId = backup.backupId;
           }
@@ -844,7 +844,7 @@ export class EmergencyTermination {
       if (request.notifyUsers) {
         await this.notifyAffectedUsers(
           result.terminatedSessions,
-          request.reason
+          request.reason,
         );
       }
 
@@ -858,7 +858,7 @@ export class EmergencyTermination {
   }
 
   private async getTargetSessions(
-    request: EmergencyTerminationRequest
+    request: EmergencyTerminationRequest,
   ): Promise<any[]> {
     let query = this.supabase
       .from('user_sessions')
@@ -906,7 +906,7 @@ export class EmergencyTermination {
 
   private async logTermination(
     request: EmergencyTerminationRequest,
-    result: TerminationResult
+    result: TerminationResult,
   ): Promise<void> {
     try {
       // Log each terminated session
@@ -960,7 +960,7 @@ export class EmergencyTermination {
   }
 
   private async storeAuditLog(
-    auditLog: Omit<TerminationAuditLog, 'logId'>
+    auditLog: Omit<TerminationAuditLog, 'logId'>,
   ): Promise<void> {
     try {
       await this.supabase.from('termination_audit_logs').insert({
@@ -986,12 +986,12 @@ export class EmergencyTermination {
   }
 
   private async notifyApprovers(
-    _request: EmergencyTerminationRequest
+    _request: EmergencyTerminationRequest,
   ): Promise<void> {}
 
   private async notifyAffectedUsers(
     _terminatedSessions: TerminationResult['terminatedSessions'],
-    _reason: string
+    _reason: string,
   ): Promise<void> {}
 
   private async lockUserAccounts(_userIds: string[]): Promise<void> {}
@@ -1000,12 +1000,12 @@ export class EmergencyTermination {
 
   private async escalateToSecurity(
     _request: EmergencyTerminationRequest,
-    _result: TerminationResult
+    _result: TerminationResult,
   ): Promise<void> {}
 
   private hasTerminationPermission(
     role: UserRole,
-    terminationType: string
+    terminationType: string,
   ): boolean {
     const permissions = {
       owner: [

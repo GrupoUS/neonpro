@@ -321,7 +321,7 @@ export class SessionPreservationManager {
   public async createSnapshot(
     sessionId: string,
     userId: string,
-    deviceId: string
+    deviceId: string,
   ): Promise<SessionSnapshot> {
     const state = await this.captureSessionState(sessionId);
     const metadata = await this.captureSessionMetadata();
@@ -353,7 +353,7 @@ export class SessionPreservationManager {
    */
   public async restoreSession(
     sessionId: string,
-    snapshotId?: string
+    snapshotId?: string,
   ): Promise<SessionState | null> {
     try {
       const snapshot = snapshotId
@@ -395,7 +395,7 @@ export class SessionPreservationManager {
         this.captureCacheState(),
         this.capturePermissionState(sessionId),
         this.captureActivityState(sessionId),
-      ]
+      ],
     );
 
     return {
@@ -413,7 +413,7 @@ export class SessionPreservationManager {
    * Capture authentication state
    */
   private async captureAuthenticationState(
-    sessionId: string
+    sessionId: string,
   ): Promise<AuthenticationState> {
     try {
       const response = await fetch(`/api/session/${sessionId}/auth-state`);
@@ -442,7 +442,7 @@ export class SessionPreservationManager {
    * Capture user preferences
    */
   private async captureUserPreferences(
-    sessionId: string
+    sessionId: string,
   ): Promise<UserPreferences> {
     try {
       const response = await fetch(`/api/session/${sessionId}/preferences`);
@@ -552,7 +552,7 @@ export class SessionPreservationManager {
    * Capture permission state
    */
   private async capturePermissionState(
-    sessionId: string
+    sessionId: string,
   ): Promise<PermissionState> {
     try {
       const response = await fetch(`/api/session/${sessionId}/permissions`);
@@ -573,7 +573,7 @@ export class SessionPreservationManager {
    * Capture activity state
    */
   private async captureActivityState(
-    sessionId: string
+    sessionId: string,
   ): Promise<ActivityState> {
     try {
       const response = await fetch(`/api/session/${sessionId}/activity`);
@@ -614,7 +614,7 @@ export class SessionPreservationManager {
    */
   private async applySessionState(
     sessionId: string,
-    state: SessionState
+    state: SessionState,
   ): Promise<void> {
     // Apply authentication state
     await this.applyAuthenticationState(sessionId, state.authentication);
@@ -691,7 +691,7 @@ export class SessionPreservationManager {
    * Get latest snapshot
    */
   private async getLatestSnapshot(
-    sessionId: string
+    sessionId: string,
   ): Promise<SessionSnapshot | null> {
     const sessionSnapshots = this.snapshots.get(sessionId);
     if (!sessionSnapshots || sessionSnapshots.length === 0) {
@@ -706,7 +706,7 @@ export class SessionPreservationManager {
    */
   private async getSnapshot(
     sessionId: string,
-    snapshotId: string
+    snapshotId: string,
   ): Promise<SessionSnapshot | null> {
     const sessionSnapshots = this.snapshots.get(sessionId);
     if (!sessionSnapshots) {
@@ -842,7 +842,7 @@ export class SessionPreservationManager {
 
   private getPerformanceInfo(): PerformanceInfo {
     const navigation = performance.getEntriesByType(
-      'navigation'
+      'navigation',
     )[0] as PerformanceNavigationTiming;
     return {
       loadTime: navigation?.loadEventEnd - navigation?.loadEventStart || 0,
@@ -865,7 +865,7 @@ export class SessionPreservationManager {
     }
     if (
       /mobile|iphone|ipod|android|blackberry|opera|mini|windows\sce|palm|smartphone|iemobile/i.test(
-        userAgent
+        userAgent,
       )
     ) {
       return 'mobile';
@@ -930,7 +930,7 @@ export class SessionPreservationManager {
    */
   private async storeInLocalStorage(
     sessionId: string,
-    data: any
+    data: any,
   ): Promise<void> {
     const key = `neonpro_snapshot_${sessionId}`;
     localStorage.setItem(key, JSON.stringify(data));
@@ -963,7 +963,7 @@ export class SessionPreservationManager {
 
   private async storeInSessionStorage(
     sessionId: string,
-    data: any
+    data: any,
   ): Promise<void> {
     const key = `neonpro_snapshot_${sessionId}`;
     sessionStorage.setItem(key, JSON.stringify(data));
@@ -1001,7 +1001,7 @@ export class SessionPreservationManager {
    */
   private async applyAuthenticationState(
     sessionId: string,
-    auth: AuthenticationState
+    auth: AuthenticationState,
   ): Promise<void> {
     await fetch(`/api/session/${sessionId}/restore-auth`, {
       method: 'POST',
@@ -1012,7 +1012,7 @@ export class SessionPreservationManager {
 
   private async applyUserPreferences(
     sessionId: string,
-    prefs: UserPreferences
+    prefs: UserPreferences,
   ): Promise<void> {
     await fetch(`/api/session/${sessionId}/restore-preferences`, {
       method: 'POST',
@@ -1032,12 +1032,12 @@ export class SessionPreservationManager {
   private applyFormStates(forms: FormState[]): void {
     forms.forEach((formState) => {
       const form = document.querySelector(
-        `form[data-preserve="${formState.formId}"]`
+        `form[data-preserve="${formState.formId}"]`,
       ) as HTMLFormElement;
       if (form) {
         Object.entries(formState.fields).forEach(([name, value]) => {
           const field = form.querySelector(
-            `[name="${name}"]`
+            `[name="${name}"]`,
           ) as HTMLInputElement;
           if (field) {
             field.value = value as string;
@@ -1057,7 +1057,7 @@ export class SessionPreservationManager {
 
   private async applyPermissionState(
     sessionId: string,
-    perms: PermissionState
+    perms: PermissionState,
   ): Promise<void> {
     await fetch(`/api/session/${sessionId}/restore-permissions`, {
       method: 'POST',
@@ -1220,7 +1220,7 @@ export class SessionPreservationManager {
             await this.createSnapshot(
               sessionId,
               session.userId,
-              session.deviceId
+              session.deviceId,
             );
           }
         } catch (_error) {}
@@ -1239,7 +1239,7 @@ export class SessionPreservationManager {
             await this.createSnapshot(
               sessionId,
               session.userId,
-              session.deviceId
+              session.deviceId,
             );
           }
         } catch (_error) {}
@@ -1291,7 +1291,7 @@ export class SessionPreservationManager {
    * Public API methods
    */
   public async manualSnapshot(
-    sessionId: string
+    sessionId: string,
   ): Promise<SessionSnapshot | null> {
     try {
       const response = await fetch(`/api/session/${sessionId}`);
@@ -1300,7 +1300,7 @@ export class SessionPreservationManager {
         return await this.createSnapshot(
           sessionId,
           session.userId,
-          session.deviceId
+          session.deviceId,
         );
       }
     } catch (_error) {}

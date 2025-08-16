@@ -151,7 +151,7 @@ export class ResourceManager {
   // =====================================================
 
   async createResource(
-    resourceData: Omit<Resource, 'id' | 'created_at' | 'updated_at'>
+    resourceData: Omit<Resource, 'id' | 'created_at' | 'updated_at'>,
   ): Promise<Resource> {
     try {
       const { data, error } = await this.supabase
@@ -175,7 +175,7 @@ export class ResourceManager {
       type?: ResourceType;
       status?: ResourceStatus;
       category?: string;
-    }
+    },
   ): Promise<Resource[]> {
     try {
       let query = this.supabase
@@ -224,7 +224,7 @@ export class ResourceManager {
 
   async updateResource(
     resourceId: string,
-    updates: Partial<Resource>
+    updates: Partial<Resource>,
   ): Promise<Resource> {
     try {
       const { data, error } = await this.supabase
@@ -245,7 +245,7 @@ export class ResourceManager {
 
   async updateResourceStatus(
     resourceId: string,
-    status: ResourceStatus
+    status: ResourceStatus,
   ): Promise<void> {
     try {
       const { error } = await this.supabase
@@ -285,18 +285,18 @@ export class ResourceManager {
 
   async createAllocation(
     allocationData: AllocationRequest,
-    userId: string
+    userId: string,
   ): Promise<ResourceAllocation> {
     // Check for conflicts first
     const conflicts = await this.detectConflicts(
       allocationData.resource_id,
       allocationData.start_time,
-      allocationData.end_time
+      allocationData.end_time,
     );
 
     if (conflicts.length > 0) {
       throw new Error(
-        `Resource conflict detected. ${conflicts.length} overlapping allocations found.`
+        `Resource conflict detected. ${conflicts.length} overlapping allocations found.`,
       );
     }
 
@@ -323,7 +323,7 @@ export class ResourceManager {
   async getAllocations(
     resourceId: string,
     startDate?: string,
-    endDate?: string
+    endDate?: string,
   ): Promise<ResourceAllocation[]> {
     try {
       let query = this.supabase
@@ -351,7 +351,7 @@ export class ResourceManager {
 
   async updateAllocationStatus(
     allocationId: string,
-    status: AllocationStatus
+    status: AllocationStatus,
   ): Promise<void> {
     try {
       const { error } = await this.supabase
@@ -386,7 +386,7 @@ export class ResourceManager {
     resourceId: string,
     startTime: string,
     endTime: string,
-    excludeAllocationId?: string
+    excludeAllocationId?: string,
   ): Promise<ResourceAllocation[]> {
     try {
       let query = this.supabase
@@ -423,7 +423,7 @@ export class ResourceManager {
       impact_score?: number;
       revenue_impact?: number;
     },
-    userId: string
+    userId: string,
   ): Promise<ResourceConflict> {
     try {
       const { data, error } = await this.supabase
@@ -455,7 +455,7 @@ export class ResourceManager {
       strategy: string;
       details?: Record<string, any>;
     },
-    userId: string
+    userId: string,
   ): Promise<void> {
     try {
       const { error } = await this.supabase
@@ -487,7 +487,7 @@ export class ResourceManager {
     startTime: string,
     endTime: string,
     resourceType?: ResourceType,
-    requirements?: Record<string, any>
+    requirements?: Record<string, any>,
   ): Promise<Resource[]> {
     try {
       // Get all resources of the specified type
@@ -503,7 +503,7 @@ export class ResourceManager {
         const conflicts = await this.detectConflicts(
           resource.id,
           startTime,
-          endTime
+          endTime,
         );
         if (conflicts.length === 0) {
           // Check if resource meets requirements
@@ -521,7 +521,7 @@ export class ResourceManager {
 
   private meetsRequirements(
     resource: Resource,
-    requirements: Record<string, any>
+    requirements: Record<string, any>,
   ): boolean {
     // Simple requirement matching - can be extended based on needs
     if (requirements.category && resource.category !== requirements.category) {
@@ -544,7 +544,7 @@ export class ResourceManager {
     originalResourceId: string,
     startTime: string,
     endTime: string,
-    requirements?: Record<string, any>
+    requirements?: Record<string, any>,
   ): Promise<Resource[]> {
     try {
       // Get the original resource to understand its type and clinic
@@ -559,12 +559,12 @@ export class ResourceManager {
         startTime,
         endTime,
         originalResource.type,
-        requirements
+        requirements,
       );
 
       // Filter out the original resource
       return alternatives.filter(
-        (resource) => resource.id !== originalResourceId
+        (resource) => resource.id !== originalResourceId,
       );
     } catch (_error) {
       throw new Error('Failed to suggest alternative resources');
@@ -573,7 +573,7 @@ export class ResourceManager {
 
   async optimizeResourceAllocation(
     clinicId: string,
-    date: string
+    date: string,
   ): Promise<{
     recommendations: Array<{
       resource_id: string;
@@ -592,7 +592,7 @@ export class ResourceManager {
         const allocations = await this.getAllocations(
           resource.id,
           `${date}T00:00:00Z`,
-          `${date}T23:59:59Z`
+          `${date}T23:59:59Z`,
         );
 
         // Calculate utilization
@@ -612,12 +612,12 @@ export class ResourceManager {
 
         if (utilization < 50) {
           actions.push(
-            'Consider reducing operating hours or finding additional bookings'
+            'Consider reducing operating hours or finding additional bookings',
           );
           potentialSavings += (resource.cost_per_hour || 0) * 2;
         } else if (utilization > 90) {
           actions.push(
-            'Consider adding additional resources or extending hours'
+            'Consider adding additional resources or extending hours',
           );
         }
 
@@ -626,7 +626,7 @@ export class ResourceManager {
           const today = new Date(date);
           const daysUntilMaintenance = Math.ceil(
             (maintenanceDate.getTime() - today.getTime()) /
-              (1000 * 60 * 60 * 24)
+              (1000 * 60 * 60 * 24),
           );
 
           if (daysUntilMaintenance <= 7) {
@@ -658,7 +658,7 @@ export class ResourceManager {
   async getResourceUtilization(
     resourceId: string,
     startDate: string,
-    endDate: string
+    endDate: string,
   ): Promise<
     Array<{
       date: string;
@@ -671,7 +671,7 @@ export class ResourceManager {
       const { data, error } = await this.supabase
         .from('resource_analytics')
         .select(
-          'date, utilization_percentage, revenue_generated, appointment_count'
+          'date, utilization_percentage, revenue_generated, appointment_count',
         )
         .eq('resource_id', resourceId)
         .gte('date', startDate)
@@ -696,7 +696,7 @@ export class ResourceManager {
 
   async getConflictHistory(
     resourceId: string,
-    limit = 50
+    limit = 50,
   ): Promise<ResourceConflict[]> {
     try {
       const { data, error } = await this.supabase

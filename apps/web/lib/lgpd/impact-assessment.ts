@@ -447,7 +447,7 @@ export class ImpactAssessmentManager extends EventEmitter {
       reviewFrequencyMonths: 12,
       approvalWorkflowEnabled: true,
       notificationEnabled: true,
-    }
+    },
   ) {
     super();
     this.setMaxListeners(50);
@@ -476,7 +476,7 @@ export class ImpactAssessmentManager extends EventEmitter {
       });
     } catch (error) {
       throw new Error(
-        `Failed to initialize impact assessment system: ${error}`
+        `Failed to initialize impact assessment system: ${error}`,
       );
     }
   }
@@ -486,7 +486,7 @@ export class ImpactAssessmentManager extends EventEmitter {
    */
   async createAssessment(
     assessmentData: Omit<ImpactAssessment, 'id' | 'createdAt' | 'updatedAt'>,
-    templateId?: string
+    templateId?: string,
   ): Promise<ImpactAssessment> {
     if (!this.isInitialized) {
       await this.initialize();
@@ -510,13 +510,13 @@ export class ImpactAssessmentManager extends EventEmitter {
     // Perform initial risk analysis
     if (this.config.autoRiskCalculation) {
       assessment.riskAnalysis = await this.performRiskAnalysis(
-        assessment.scope.processingContext
+        assessment.scope.processingContext,
       );
     }
 
     // Perform compliance analysis
     assessment.complianceAnalysis = await this.performComplianceAnalysis(
-      assessment.scope.processingContext
+      assessment.scope.processingContext,
     );
 
     // Validate assessment
@@ -542,7 +542,7 @@ export class ImpactAssessmentManager extends EventEmitter {
    * Perform automated risk analysis
    */
   async performRiskAnalysis(
-    context: ProcessingContext
+    context: ProcessingContext,
   ): Promise<ImpactAssessment['riskAnalysis']> {
     const risks: RiskAssessment[] = [];
 
@@ -559,7 +559,7 @@ export class ImpactAssessmentManager extends EventEmitter {
     const acceptableRiskThreshold = this.config.defaultRiskThreshold;
     const riskAcceptable = this.isRiskAcceptable(
       overallRiskLevel,
-      acceptableRiskThreshold
+      acceptableRiskThreshold,
     );
 
     return {
@@ -576,13 +576,13 @@ export class ImpactAssessmentManager extends EventEmitter {
    */
   private async assessRisk(
     category: RiskCategory,
-    context: ProcessingContext
+    context: ProcessingContext,
   ): Promise<RiskAssessment | null> {
     const riskFactors = this.calculateRiskFactors(context);
     const likelihood = this.assessRiskLikelihood(
       category,
       context,
-      riskFactors
+      riskFactors,
     );
     const impact = this.assessRiskImpact(category, context, riskFactors);
 
@@ -599,7 +599,7 @@ export class ImpactAssessmentManager extends EventEmitter {
     const mitigationMeasures = this.recommendMitigationMeasures(
       category,
       overallRisk,
-      existingControls
+      existingControls,
     );
 
     return {
@@ -622,7 +622,7 @@ export class ImpactAssessmentManager extends EventEmitter {
    * Calculate risk factors
    */
   private calculateRiskFactors(
-    context: ProcessingContext
+    context: ProcessingContext,
   ): RiskAssessment['factors'] {
     // Data volume assessment
     const totalVolume = context.dataTypes.reduce((sum, dt) => {
@@ -633,16 +633,16 @@ export class ImpactAssessmentManager extends EventEmitter {
     }, 0);
     const dataVolume = Math.min(
       5,
-      Math.ceil(totalVolume / context.dataTypes.length)
+      Math.ceil(totalVolume / context.dataTypes.length),
     );
 
     // Data sensitivity assessment
     const sensitiveDataCount = context.dataTypes.filter(
-      (dt) => dt.sensitive
+      (dt) => dt.sensitive,
     ).length;
     const dataSensitivity = Math.min(
       5,
-      Math.ceil((sensitiveDataCount / context.dataTypes.length) * 5)
+      Math.ceil((sensitiveDataCount / context.dataTypes.length) * 5),
     );
 
     // Vulnerable subjects assessment
@@ -657,22 +657,22 @@ export class ImpactAssessmentManager extends EventEmitter {
 
     // Technical complexity assessment
     const techMeasures = Object.values(context.technicalMeasures).filter(
-      Boolean
+      Boolean,
     ).length;
     const maxTechMeasures = Object.keys(context.technicalMeasures).length;
     const technicalComplexity = Math.max(
       1,
-      6 - Math.ceil((techMeasures / maxTechMeasures) * 5)
+      6 - Math.ceil((techMeasures / maxTechMeasures) * 5),
     );
 
     // Organizational maturity assessment
     const orgMeasures = Object.values(context.organizationalMeasures).filter(
-      Boolean
+      Boolean,
     ).length;
     const maxOrgMeasures = Object.keys(context.organizationalMeasures).length;
     const organizationalMaturity = Math.max(
       1,
-      6 - Math.ceil((orgMeasures / maxOrgMeasures) * 5)
+      6 - Math.ceil((orgMeasures / maxOrgMeasures) * 5),
     );
 
     return {
@@ -690,7 +690,7 @@ export class ImpactAssessmentManager extends EventEmitter {
   private assessRiskLikelihood(
     category: RiskCategory,
     context: ProcessingContext,
-    factors: RiskAssessment['factors']
+    factors: RiskAssessment['factors'],
   ): RiskLikelihood {
     let score = 0;
 
@@ -715,7 +715,7 @@ export class ImpactAssessmentManager extends EventEmitter {
     // Adjust based on risk factors
     score +=
       Math.floor(
-        (factors.technicalComplexity + factors.organizationalMaturity) / 2
+        (factors.technicalComplexity + factors.organizationalMaturity) / 2,
       ) - 2;
 
     // Adjust for external processors
@@ -753,7 +753,7 @@ export class ImpactAssessmentManager extends EventEmitter {
   private assessRiskImpact(
     category: RiskCategory,
     context: ProcessingContext,
-    factors: RiskAssessment['factors']
+    factors: RiskAssessment['factors'],
   ): RiskSeverity {
     let score = 0;
 
@@ -815,7 +815,7 @@ export class ImpactAssessmentManager extends EventEmitter {
    */
   private calculateRiskLevel(
     likelihood: RiskLikelihood,
-    impact: RiskSeverity
+    impact: RiskSeverity,
   ): RiskSeverity {
     const likelihoodScore = {
       [RiskLikelihood.VERY_UNLIKELY]: 1,
@@ -897,7 +897,7 @@ export class ImpactAssessmentManager extends EventEmitter {
    */
   private isRiskAcceptable(
     riskLevel: RiskSeverity,
-    threshold: RiskSeverity
+    threshold: RiskSeverity,
   ): boolean {
     const scores = {
       [RiskSeverity.VERY_LOW]: 1,
@@ -916,7 +916,7 @@ export class ImpactAssessmentManager extends EventEmitter {
    */
   private identifyExistingControls(
     _category: RiskCategory,
-    context: ProcessingContext
+    context: ProcessingContext,
   ): RiskAssessment['existingControls'] {
     const technical: string[] = [];
     const organizational: string[] = [];
@@ -989,7 +989,7 @@ export class ImpactAssessmentManager extends EventEmitter {
   private recommendMitigationMeasures(
     category: RiskCategory,
     riskLevel: RiskSeverity,
-    existingControls: RiskAssessment['existingControls']
+    existingControls: RiskAssessment['existingControls'],
   ): RiskAssessment['mitigationMeasures'] {
     const recommended: RiskAssessment['mitigationMeasures']['recommended'] = [];
 
@@ -1027,7 +1027,7 @@ export class ImpactAssessmentManager extends EventEmitter {
     // Calculate residual risk
     const residualRisk = this.calculateResidualRisk(
       riskLevel,
-      recommended.length
+      recommended.length,
     );
 
     return {
@@ -1040,7 +1040,7 @@ export class ImpactAssessmentManager extends EventEmitter {
    * Get category-specific recommendations
    */
   private getCategoryRecommendations(
-    category: RiskCategory
+    category: RiskCategory,
   ): RiskAssessment['mitigationMeasures']['recommended'] {
     const recommendations: Record<
       RiskCategory,
@@ -1120,7 +1120,7 @@ export class ImpactAssessmentManager extends EventEmitter {
    */
   private calculateResidualRisk(
     originalRisk: RiskSeverity,
-    mitigationCount: number
+    mitigationCount: number,
   ): RiskSeverity {
     const riskScores = {
       [RiskSeverity.VERY_LOW]: 1,
@@ -1153,7 +1153,7 @@ export class ImpactAssessmentManager extends EventEmitter {
    * Perform compliance analysis
    */
   async performComplianceAnalysis(
-    context: ProcessingContext
+    context: ProcessingContext,
   ): Promise<ImpactAssessment['complianceAnalysis']> {
     const gaps: ComplianceGap[] = [];
 
@@ -1168,7 +1168,7 @@ export class ImpactAssessmentManager extends EventEmitter {
     }
 
     const criticalGaps = gaps.filter(
-      (g) => g.gapSeverity === 'critical'
+      (g) => g.gapSeverity === 'critical',
     ).length;
     const totalRequirements = lgpdRequirements.length;
     const compliantRequirements = totalRequirements - gaps.length;
@@ -1225,7 +1225,7 @@ export class ImpactAssessmentManager extends EventEmitter {
    */
   private async assessComplianceGap(
     requirement: { article: string; requirement: string; description: string },
-    context: ProcessingContext
+    context: ProcessingContext,
   ): Promise<ComplianceGap | null> {
     // Simplified gap assessment - in a real implementation this would be more sophisticated
     const currentState = this.assessCurrentCompliance(requirement, context);
@@ -1258,7 +1258,7 @@ export class ImpactAssessmentManager extends EventEmitter {
    */
   private assessCurrentCompliance(
     requirement: { article: string; requirement: string; description: string },
-    context: ProcessingContext
+    context: ProcessingContext,
   ): {
     compliant: boolean;
     description: string;
@@ -1340,13 +1340,13 @@ export class ImpactAssessmentManager extends EventEmitter {
    */
   private applyTemplate(
     assessment: ImpactAssessment,
-    template: AssessmentTemplate
+    template: AssessmentTemplate,
   ): ImpactAssessment {
     // Apply template defaults
     assessment.riskAnalysis.acceptableRiskThreshold =
       template.defaults.riskThreshold;
     assessment.scope.nextReviewDate = new Date(
-      Date.now() + template.defaults.reviewFrequency * 30 * 24 * 60 * 60 * 1000
+      Date.now() + template.defaults.reviewFrequency * 30 * 24 * 60 * 60 * 1000,
     );
 
     // Set up workflow
@@ -1355,7 +1355,7 @@ export class ImpactAssessmentManager extends EventEmitter {
         role: approver,
         name: '',
         status: 'pending',
-      })
+      }),
     );
 
     // Set consultation requirement
@@ -1424,7 +1424,7 @@ export class ImpactAssessmentManager extends EventEmitter {
       async () => {
         await this.checkDueReviews();
       },
-      24 * 60 * 60 * 1000
+      24 * 60 * 60 * 1000,
     ); // Daily check
   }
 
@@ -1469,20 +1469,20 @@ export class ImpactAssessmentManager extends EventEmitter {
       }
       if (filters.riskLevel) {
         assessments = assessments.filter(
-          (a) => a.riskAnalysis.overallRiskLevel === filters.riskLevel
+          (a) => a.riskAnalysis.overallRiskLevel === filters.riskLevel,
         );
       }
       if (filters.dateRange) {
         assessments = assessments.filter(
           (a) =>
             a.createdAt >= filters.dateRange?.start &&
-            a.createdAt <= filters.dateRange?.end
+            a.createdAt <= filters.dateRange?.end,
         );
       }
     }
 
     return assessments.sort(
-      (a, b) => b.updatedAt.getTime() - a.updatedAt.getTime()
+      (a, b) => b.updatedAt.getTime() - a.updatedAt.getTime(),
     );
   }
 
@@ -1520,7 +1520,7 @@ export class ImpactAssessmentManager extends EventEmitter {
   private logActivity(
     _actor: string,
     _action: string,
-    _details: Record<string, any>
+    _details: Record<string, any>,
   ): void {}
 
   /**
@@ -1560,7 +1560,7 @@ export class ImpactAssessmentManager extends EventEmitter {
     const dueReviews = Array.from(this.assessments.values()).filter(
       (a) =>
         a.scope.nextReviewDate <= new Date() &&
-        a.status === AssessmentStatus.APPROVED
+        a.status === AssessmentStatus.APPROVED,
     );
 
     if (dueReviews.length > 0) {

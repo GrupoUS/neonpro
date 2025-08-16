@@ -21,7 +21,7 @@ const fhirIdSchema = z
   .max(255, 'FHIR ID deve ter no máximo 255 caracteres')
   .regex(
     /^[a-zA-Z0-9\-._]+$/,
-    'FHIR ID deve conter apenas letras, números, hífens, pontos e sublinhados'
+    'FHIR ID deve conter apenas letras, números, hífens, pontos e sublinhados',
   );
 
 const isoDateTimeSchema = z
@@ -60,7 +60,7 @@ const lgpdConsentSchema = z
       message:
         'Data de consentimento é obrigatória quando consentimento é dado',
       path: ['data_consent_date'],
-    }
+    },
   );
 
 // ===============================================
@@ -79,14 +79,14 @@ const treatmentPlanStatusSchema = z.enum(
   ] as const,
   {
     errorMap: () => ({ message: 'Status do plano de tratamento inválido' }),
-  }
+  },
 );
 
 const treatmentPlanIntentSchema = z.enum(
   ['proposal', 'plan', 'order', 'option', 'directive'] as const,
   {
     errorMap: () => ({ message: 'Intenção do plano de tratamento inválida' }),
-  }
+  },
 );
 
 export const treatmentPlanActivitySchema = z.object({
@@ -159,7 +159,7 @@ export const treatmentPlanSchema = z
     category: z.array(z.any()).default([]), // FHIRCodeableConcept[]
     title: nonEmptyStringSchema.max(
       255,
-      'Título deve ter no máximo 255 caracteres'
+      'Título deve ter no máximo 255 caracteres',
     ),
     description: z
       .string()
@@ -202,7 +202,7 @@ export const treatmentPlanSchema = z
     {
       message: 'Data de início deve ser anterior à data de fim',
       path: ['period_end'],
-    }
+    },
   );
 
 // Form data schema for treatment plan creation/editing
@@ -210,7 +210,7 @@ export const treatmentPlanFormSchema = z
   .object({
     title: nonEmptyStringSchema.max(
       255,
-      'Título deve ter no máximo 255 caracteres'
+      'Título deve ter no máximo 255 caracteres',
     ),
     description: z
       .string()
@@ -238,7 +238,7 @@ export const treatmentPlanFormSchema = z
     {
       message: 'Data de início deve ser anterior à data de fim',
       path: ['period_end'],
-    }
+    },
   );
 
 // ===============================================
@@ -258,7 +258,7 @@ const procedureStatusSchema = z.enum(
   ] as const,
   {
     errorMap: () => ({ message: 'Status do procedimento inválido' }),
-  }
+  },
 );
 
 export const procedurePerformerSchema = z.object({
@@ -334,7 +334,7 @@ export const procedureSchema = z
     {
       message: 'Data de início deve ser anterior à data de fim',
       path: ['performed_period_end'],
-    }
+    },
   );
 
 // Form data schema for procedure creation/editing
@@ -342,11 +342,11 @@ export const procedureFormSchema = z
   .object({
     code: nonEmptyStringSchema.max(
       50,
-      'Código deve ter no máximo 50 caracteres'
+      'Código deve ter no máximo 50 caracteres',
     ),
     code_display: nonEmptyStringSchema.max(
       255,
-      'Nome do procedimento deve ter no máximo 255 caracteres'
+      'Nome do procedimento deve ter no máximo 255 caracteres',
     ),
     patient_id: uuidSchema,
     treatment_plan_id: uuidSchema.optional(),
@@ -385,7 +385,7 @@ export const procedureFormSchema = z
     {
       message: 'Data de início deve ser anterior à data de fim',
       path: ['performed_period_end'],
-    }
+    },
   );
 
 // ===============================================
@@ -396,14 +396,14 @@ const clinicalNoteStatusSchema = z.enum(
   ['current', 'superseded', 'entered-in-error'] as const,
   {
     errorMap: () => ({ message: 'Status da nota clínica inválido' }),
-  }
+  },
 );
 
 const confidentialityLevelSchema = z.enum(
   ['U', 'L', 'M', 'N', 'R', 'V'] as const,
   {
     errorMap: () => ({ message: 'Nível de confidencialidade inválido' }),
-  }
+  },
 );
 
 export const clinicalNoteRelatesToSchema = z.object({
@@ -431,11 +431,11 @@ export const clinicalNoteSchema = z.object({
   // Note Content
   title: nonEmptyStringSchema.max(
     255,
-    'Título deve ter no máximo 255 caracteres'
+    'Título deve ter no máximo 255 caracteres',
   ),
   content: nonEmptyStringSchema.max(
     10_000,
-    'Conteúdo deve ter no máximo 10000 caracteres'
+    'Conteúdo deve ter no máximo 10000 caracteres',
   ),
   content_type: z.string().default('text/plain'),
 
@@ -470,11 +470,11 @@ export const clinicalNoteSchema = z.object({
 export const clinicalNoteFormSchema = z.object({
   title: nonEmptyStringSchema.max(
     255,
-    'Título deve ter no máximo 255 caracteres'
+    'Título deve ter no máximo 255 caracteres',
   ),
   content: nonEmptyStringSchema.max(
     10_000,
-    'Conteúdo deve ter no máximo 10000 caracteres'
+    'Conteúdo deve ter no máximo 10000 caracteres',
   ),
   content_type: z.string().default('text/plain'),
   patient_id: uuidSchema,
@@ -483,7 +483,7 @@ export const clinicalNoteFormSchema = z.object({
   type: nonEmptyStringSchema.max(50, 'Tipo deve ter no máximo 50 caracteres'),
   type_display: nonEmptyStringSchema.max(
     255,
-    'Nome do tipo deve ter no máximo 255 caracteres'
+    'Nome do tipo deve ter no máximo 255 caracteres',
   ),
   category: z
     .string()

@@ -261,7 +261,7 @@ export class FinancialDashboardEngine {
    */
   async getDashboardData(
     clinicId: string,
-    config?: DashboardConfig
+    config?: DashboardConfig,
   ): Promise<FinancialDashboardData> {
     try {
       const cacheKey = `dashboard_${clinicId}`;
@@ -284,7 +284,7 @@ export class FinancialDashboardEngine {
       // Calculate performance indicators
       const performanceIndicators = await this.calculatePerformanceIndicators(
         clinicId,
-        metrics
+        metrics,
       );
 
       // Analyze trends
@@ -328,7 +328,7 @@ export class FinancialDashboardEngine {
    * Calculate comprehensive financial metrics
    */
   private async calculateFinancialMetrics(
-    clinicId: string
+    clinicId: string,
   ): Promise<FinancialMetrics> {
     try {
       // Get base cash flow metrics
@@ -344,13 +344,13 @@ export class FinancialDashboardEngine {
       // Calculate profitability metrics
       const profitabilityMetrics = this.calculateProfitabilityMetrics(
         revenueData,
-        expenseData
+        expenseData,
       );
 
       // Calculate efficiency metrics
       const efficiencyMetrics = await this.calculateEfficiencyMetrics(
         clinicId,
-        revenueData
+        revenueData,
       );
 
       // Calculate activity metrics
@@ -404,7 +404,7 @@ export class FinancialDashboardEngine {
    * Generate dashboard-specific forecasts
    */
   private async generateDashboardForecasts(
-    clinicId: string
+    clinicId: string,
   ): Promise<DashboardForecast[]> {
     try {
       const forecasts: DashboardForecast[] = [];
@@ -414,7 +414,7 @@ export class FinancialDashboardEngine {
         await this.predictiveEngine.generateFinancialForecast(
           clinicId,
           'revenue_forecast',
-          3 // 3 months
+          3, // 3 months
         );
 
       // Generate cash flow forecast
@@ -422,7 +422,7 @@ export class FinancialDashboardEngine {
         await this.predictiveEngine.generateFinancialForecast(
           clinicId,
           'cash_flow_prediction',
-          3 // 3 months
+          3, // 3 months
         );
 
       // Convert to dashboard format
@@ -482,7 +482,7 @@ export class FinancialDashboardEngine {
    */
   private async calculatePerformanceIndicators(
     clinicId: string,
-    metrics: FinancialMetrics
+    metrics: FinancialMetrics,
   ): Promise<PerformanceIndicators> {
     try {
       // Calculate individual scores (0-100)
@@ -509,7 +509,7 @@ export class FinancialDashboardEngine {
           efficiencyScore,
           riskScore,
         },
-        metrics
+        metrics,
       );
 
       return {
@@ -541,7 +541,7 @@ export class FinancialDashboardEngine {
           'date',
           new Date(Date.now() - 90 * 24 * 60 * 60 * 1000)
             .toISOString()
-            .split('T')[0]
+            .split('T')[0],
         )
         .order('date', { ascending: true });
 
@@ -552,19 +552,19 @@ export class FinancialDashboardEngine {
       // Analyze different trend components
       const revenueTrend = this.analyzeTrendComponent(
         historicalData,
-        'total_inflows'
+        'total_inflows',
       );
       const expenseTrend = this.analyzeTrendComponent(
         historicalData,
-        'total_outflows'
+        'total_outflows',
       );
       const profitTrend = this.analyzeTrendComponent(
         historicalData,
-        'net_cash_flow'
+        'net_cash_flow',
       );
       const cashFlowTrend = this.analyzeTrendComponent(
         historicalData,
-        'closing_balance'
+        'closing_balance',
       );
 
       // Get patient volume data for trend analysis
@@ -592,7 +592,7 @@ export class FinancialDashboardEngine {
       alerts: FinancialAlert[];
       riskAssessment: RiskAssessment;
       trends: TrendAnalysis;
-    }
+    },
   ): Promise<Recommendation[]> {
     const recommendations: Recommendation[] = [];
 
@@ -780,7 +780,7 @@ export class FinancialDashboardEngine {
 
   private calculateProfitabilityMetrics(
     revenueData: any,
-    expenseData: any
+    expenseData: any,
   ): any {
     const grossProfit = revenueData.total_revenue - expenseData.total_expenses;
     return {
@@ -795,7 +795,7 @@ export class FinancialDashboardEngine {
 
   private async calculateEfficiencyMetrics(
     _clinicId: string,
-    _revenueData: any
+    _revenueData: any,
   ): Promise<any> {
     // Simplified implementation
     return {
@@ -931,7 +931,7 @@ export class FinancialDashboardEngine {
   }
 
   private async analyzePatientVolumeTrend(
-    _clinicId: string
+    _clinicId: string,
   ): Promise<TrendData> {
     // Simplified patient volume trend
     return {
@@ -946,7 +946,7 @@ export class FinancialDashboardEngine {
 
   private async generateComparisons(
     _clinicId: string,
-    _metrics: FinancialMetrics
+    _metrics: FinancialMetrics,
   ): Promise<ComparisonData> {
     // Simplified comparison data
     return {

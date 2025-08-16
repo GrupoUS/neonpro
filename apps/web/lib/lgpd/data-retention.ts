@@ -301,7 +301,7 @@ export class DataRetentionManager extends EventEmitter {
       notificationEnabled: true,
       dryRunMode: false,
       gracePeriodDays: 30,
-    }
+    },
   ) {
     super();
     this.setMaxListeners(100);
@@ -345,7 +345,7 @@ export class DataRetentionManager extends EventEmitter {
    * Create retention policy
    */
   async createPolicy(
-    policyData: Omit<DataRetentionPolicy, 'id' | 'createdAt' | 'updatedAt'>
+    policyData: Omit<DataRetentionPolicy, 'id' | 'createdAt' | 'updatedAt'>,
   ): Promise<DataRetentionPolicy> {
     if (!this.isInitialized) {
       await this.initialize();
@@ -384,7 +384,7 @@ export class DataRetentionManager extends EventEmitter {
    */
   async updatePolicy(
     policyId: string,
-    updates: Partial<DataRetentionPolicy>
+    updates: Partial<DataRetentionPolicy>,
   ): Promise<DataRetentionPolicy> {
     const policy = this.policies.get(policyId);
     if (!policy) {
@@ -428,12 +428,12 @@ export class DataRetentionManager extends EventEmitter {
       (s) =>
         s.policyId === policyId &&
         s.status !== 'completed' &&
-        s.status !== 'cancelled'
+        s.status !== 'cancelled',
     );
 
     if (activeSchedules.length > 0) {
       throw new Error(
-        `Cannot delete policy with ${activeSchedules.length} active schedules`
+        `Cannot delete policy with ${activeSchedules.length} active schedules`,
       );
     }
 
@@ -459,7 +459,7 @@ export class DataRetentionManager extends EventEmitter {
       recordCount?: number;
       relatedData?: string[];
       dependencies?: string[];
-    }
+    },
   ): Promise<DataRetentionSchedule> {
     if (!this.isInitialized) {
       await this.initialize();
@@ -475,7 +475,7 @@ export class DataRetentionManager extends EventEmitter {
     const triggerDate = this.calculateTriggerDate(creationDate, policy.trigger);
     const scheduledDeletionDate = this.calculateDeletionDate(
       triggerDate,
-      policy.retentionPeriod
+      policy.retentionPeriod,
     );
 
     const schedule: DataRetentionSchedule = {
@@ -497,7 +497,7 @@ export class DataRetentionManager extends EventEmitter {
     // Check for legal holds
     const applicableHold = this.findApplicableLegalHold(
       dataIdentifier,
-      category
+      category,
     );
     if (applicableHold) {
       schedule.status = 'on_hold';
@@ -527,7 +527,7 @@ export class DataRetentionManager extends EventEmitter {
     holdData: Omit<
       LegalHold,
       'id' | 'createdAt' | 'updatedAt' | 'affectedSchedules' | 'notifications'
-    >
+    >,
   ): Promise<LegalHold> {
     if (!this.isInitialized) {
       await this.initialize();
@@ -547,7 +547,7 @@ export class DataRetentionManager extends EventEmitter {
       (s) =>
         (hold.dataCategories.includes(s.category) ||
           hold.dataIdentifiers.includes(s.dataIdentifier)) &&
-        s.status === 'scheduled'
+        s.status === 'scheduled',
     );
 
     // Put schedules on hold
@@ -584,7 +584,7 @@ export class DataRetentionManager extends EventEmitter {
   async releaseLegalHold(
     holdId: string,
     releaseReason: string,
-    releasedBy: string
+    releasedBy: string,
   ): Promise<LegalHold> {
     const hold = this.legalHolds.get(holdId);
     if (!hold) {
@@ -644,18 +644,18 @@ export class DataRetentionManager extends EventEmitter {
 
     const now = new Date();
     const gracePeriod = new Date(
-      now.getTime() - this.config.gracePeriodDays * 24 * 60 * 60 * 1000
+      now.getTime() - this.config.gracePeriodDays * 24 * 60 * 60 * 1000,
     );
 
     // Find schedules ready for processing
     const readySchedules = Array.from(this.schedules.values())
       .filter(
         (s) =>
-          s.status === 'scheduled' && s.scheduledDeletionDate <= gracePeriod
+          s.status === 'scheduled' && s.scheduledDeletionDate <= gracePeriod,
       )
       .sort(
         (a, b) =>
-          a.scheduledDeletionDate.getTime() - b.scheduledDeletionDate.getTime()
+          a.scheduledDeletionDate.getTime() - b.scheduledDeletionDate.getTime(),
       )
       .slice(0, this.config.batchSize);
 
@@ -671,7 +671,7 @@ export class DataRetentionManager extends EventEmitter {
         // Check for last-minute legal holds
         const hold = this.findApplicableLegalHold(
           schedule.dataIdentifier,
-          schedule.category
+          schedule.category,
         );
         if (hold) {
           schedule.status = 'on_hold';
@@ -748,7 +748,7 @@ export class DataRetentionManager extends EventEmitter {
    */
   getRetentionPolicies(): DataRetentionPolicy[] {
     return Array.from(this.policies.values()).sort(
-      (a, b) => b.priority - a.priority
+      (a, b) => b.priority - a.priority,
     );
   }
 
@@ -776,7 +776,7 @@ export class DataRetentionManager extends EventEmitter {
 
     return schedules.sort(
       (a, b) =>
-        a.scheduledDeletionDate.getTime() - b.scheduledDeletionDate.getTime()
+        a.scheduledDeletionDate.getTime() - b.scheduledDeletionDate.getTime(),
     );
   }
 
@@ -785,7 +785,7 @@ export class DataRetentionManager extends EventEmitter {
    */
   getLegalHolds(): LegalHold[] {
     return Array.from(this.legalHolds.values()).sort(
-      (a, b) => b.createdAt.getTime() - a.createdAt.getTime()
+      (a, b) => b.createdAt.getTime() - a.createdAt.getTime(),
     );
   }
 
@@ -795,15 +795,15 @@ export class DataRetentionManager extends EventEmitter {
   async generateRetentionReport(
     reportType: 'summary' | 'detailed' | 'compliance' | 'exceptions',
     period: { startDate: Date; endDate: Date },
-    generatedBy: string
+    generatedBy: string,
   ): Promise<RetentionReport> {
     const schedules = Array.from(this.schedules.values()).filter(
-      (s) => s.createdAt >= period.startDate && s.createdAt <= period.endDate
+      (s) => s.createdAt >= period.startDate && s.createdAt <= period.endDate,
     );
 
     const policies = Array.from(this.policies.values());
     const holds = Array.from(this.legalHolds.values()).filter(
-      (h) => h.createdAt >= period.startDate && h.createdAt <= period.endDate
+      (h) => h.createdAt >= period.startDate && h.createdAt <= period.endDate,
     );
 
     // Calculate summary statistics
@@ -839,7 +839,7 @@ export class DataRetentionManager extends EventEmitter {
         .filter((s) => s.actualDeletionDate)
         .map(
           (s) =>
-            s.actualDeletionDate?.getTime() - s.scheduledDeletionDate.getTime()
+            s.actualDeletionDate?.getTime() - s.scheduledDeletionDate.getTime(),
         );
 
       const averageProcessingTime =
@@ -859,7 +859,7 @@ export class DataRetentionManager extends EventEmitter {
         completedCount: completed.length,
         failedCount: failed.length,
         averageProcessingTime: Math.round(
-          averageProcessingTime / (1000 * 60 * 60 * 24)
+          averageProcessingTime / (1000 * 60 * 60 * 24),
         ), // Convert to days
       };
     });
@@ -871,7 +871,7 @@ export class DataRetentionManager extends EventEmitter {
         .length,
       affectedData: holds.reduce(
         (sum, h) => sum + h.affectedSchedules.length,
-        0
+        0,
       ),
     };
 
@@ -884,7 +884,7 @@ export class DataRetentionManager extends EventEmitter {
           .filter((s) => s.status === 'failed')
           .map(
             (s) =>
-              `${s.dataIdentifier}: ${s.executionLog.at(-1)?.details || 'Unknown error'}`
+              `${s.dataIdentifier}: ${s.executionLog.at(-1)?.details || 'Unknown error'}`,
           ),
       },
       {
@@ -894,8 +894,8 @@ export class DataRetentionManager extends EventEmitter {
             s.status === 'scheduled' &&
             s.scheduledDeletionDate <
               new Date(
-                Date.now() - this.config.gracePeriodDays * 24 * 60 * 60 * 1000
-              )
+                Date.now() - this.config.gracePeriodDays * 24 * 60 * 60 * 1000,
+              ),
         ).length,
         details: schedules
           .filter(
@@ -903,12 +903,13 @@ export class DataRetentionManager extends EventEmitter {
               s.status === 'scheduled' &&
               s.scheduledDeletionDate <
                 new Date(
-                  Date.now() - this.config.gracePeriodDays * 24 * 60 * 60 * 1000
-                )
+                  Date.now() -
+                    this.config.gracePeriodDays * 24 * 60 * 60 * 1000,
+                ),
           )
           .map(
             (s) =>
-              `${s.dataIdentifier}: ${Math.floor((Date.now() - s.scheduledDeletionDate.getTime()) / (1000 * 60 * 60 * 24))} days overdue`
+              `${s.dataIdentifier}: ${Math.floor((Date.now() - s.scheduledDeletionDate.getTime()) / (1000 * 60 * 60 * 24))} days overdue`,
           ),
       },
     ];
@@ -917,7 +918,7 @@ export class DataRetentionManager extends EventEmitter {
     const recommendations = this.generateRetentionRecommendations(
       summary,
       policyCompliance,
-      exceptions
+      exceptions,
     );
 
     const report: RetentionReport = {
@@ -942,7 +943,7 @@ export class DataRetentionManager extends EventEmitter {
    * Find applicable policy for data category
    */
   private findApplicablePolicy(
-    category: DataCategory
+    category: DataCategory,
   ): DataRetentionPolicy | undefined {
     return Array.from(this.policies.values())
       .filter((p) => p.category === category && p.isActive)
@@ -954,13 +955,13 @@ export class DataRetentionManager extends EventEmitter {
    */
   private findApplicableLegalHold(
     dataIdentifier: string,
-    category: DataCategory
+    category: DataCategory,
   ): LegalHold | undefined {
     return Array.from(this.legalHolds.values()).find(
       (h) =>
         h.status === LegalHoldStatus.ACTIVE &&
         (h.dataCategories.includes(category) ||
-          h.dataIdentifiers.includes(dataIdentifier))
+          h.dataIdentifiers.includes(dataIdentifier)),
     );
   }
 
@@ -969,7 +970,7 @@ export class DataRetentionManager extends EventEmitter {
    */
   private calculateTriggerDate(
     creationDate: Date,
-    _trigger: RetentionTrigger
+    _trigger: RetentionTrigger,
   ): Date {
     // For most triggers, the trigger date is the creation date
     // In a real implementation, this would be more sophisticated
@@ -981,7 +982,7 @@ export class DataRetentionManager extends EventEmitter {
    */
   private calculateDeletionDate(
     triggerDate: Date,
-    retentionPeriod: { value: number; unit: RetentionUnit }
+    retentionPeriod: { value: number; unit: RetentionUnit },
   ): Date {
     const deletionDate = new Date(triggerDate);
 
@@ -991,7 +992,7 @@ export class DataRetentionManager extends EventEmitter {
         break;
       case RetentionUnit.WEEKS:
         deletionDate.setDate(
-          deletionDate.getDate() + retentionPeriod.value * 7
+          deletionDate.getDate() + retentionPeriod.value * 7,
         );
         break;
       case RetentionUnit.MONTHS:
@@ -999,7 +1000,7 @@ export class DataRetentionManager extends EventEmitter {
         break;
       case RetentionUnit.YEARS:
         deletionDate.setFullYear(
-          deletionDate.getFullYear() + retentionPeriod.value
+          deletionDate.getFullYear() + retentionPeriod.value,
         );
         break;
     }
@@ -1070,7 +1071,7 @@ export class DataRetentionManager extends EventEmitter {
    */
   private async archiveData(
     schedule: DataRetentionSchedule,
-    policy: DataRetentionPolicy
+    policy: DataRetentionPolicy,
   ): Promise<void> {
     // In a real implementation, this would archive the data
     // For now, we'll just mark it as archived
@@ -1111,7 +1112,7 @@ export class DataRetentionManager extends EventEmitter {
    * Pseudonymize data
    */
   private async pseudonymizeData(
-    schedule: DataRetentionSchedule
+    schedule: DataRetentionSchedule,
   ): Promise<void> {
     // In a real implementation, this would pseudonymize the data
     // For now, we'll just simulate
@@ -1146,7 +1147,7 @@ export class DataRetentionManager extends EventEmitter {
    * Create schedules for policy
    */
   private async createSchedulesForPolicy(
-    policy: DataRetentionPolicy
+    policy: DataRetentionPolicy,
   ): Promise<void> {
     // In a real implementation, this would find existing data and create schedules
     // For now, we'll just log the action
@@ -1160,17 +1161,17 @@ export class DataRetentionManager extends EventEmitter {
    * Update schedules for policy
    */
   private async updateSchedulesForPolicy(
-    policy: DataRetentionPolicy
+    policy: DataRetentionPolicy,
   ): Promise<void> {
     const affectedSchedules = Array.from(this.schedules.values()).filter(
-      (s) => s.policyId === policy.id && s.status === 'scheduled'
+      (s) => s.policyId === policy.id && s.status === 'scheduled',
     );
 
     for (const schedule of affectedSchedules) {
       // Recalculate deletion date
       const newDeletionDate = this.calculateDeletionDate(
         schedule.triggerDate,
-        policy.retentionPeriod
+        policy.retentionPeriod,
       );
 
       schedule.scheduledDeletionDate = newDeletionDate;
@@ -1190,7 +1191,7 @@ export class DataRetentionManager extends EventEmitter {
    */
   private async sendLegalHoldNotifications(
     hold: LegalHold,
-    type: 'creation' | 'update' | 'release' | 'reminder'
+    type: 'creation' | 'update' | 'release' | 'reminder',
   ): Promise<void> {
     // In a real implementation, this would send actual notifications
     // For now, we'll just log and add to notifications array
@@ -1216,51 +1217,51 @@ export class DataRetentionManager extends EventEmitter {
   private generateRetentionRecommendations(
     summary: any,
     policyCompliance: any[],
-    exceptions: any[]
+    exceptions: any[],
   ): string[] {
     const recommendations: string[] = [];
 
     // Check for failed deletions
     if (summary.failedDeletions > 0) {
       recommendations.push(
-        `Review and resolve ${summary.failedDeletions} failed deletion(s) to maintain compliance`
+        `Review and resolve ${summary.failedDeletions} failed deletion(s) to maintain compliance`,
       );
     }
 
     // Check for low compliance rates
     const lowCompliancePolicies = policyCompliance.filter(
-      (p) => p.complianceRate < 90
+      (p) => p.complianceRate < 90,
     );
     if (lowCompliancePolicies.length > 0) {
       recommendations.push(
-        `Investigate ${lowCompliancePolicies.length} policy(ies) with compliance rates below 90%`
+        `Investigate ${lowCompliancePolicies.length} policy(ies) with compliance rates below 90%`,
       );
     }
 
     // Check for long processing times
     const slowPolicies = policyCompliance.filter(
-      (p) => p.averageProcessingTime > 7
+      (p) => p.averageProcessingTime > 7,
     );
     if (slowPolicies.length > 0) {
       recommendations.push(
-        `Optimize processing for ${slowPolicies.length} policy(ies) with average processing time > 7 days`
+        `Optimize processing for ${slowPolicies.length} policy(ies) with average processing time > 7 days`,
       );
     }
 
     // Check for overdue deletions
     const overdueException = exceptions.find(
-      (e) => e.type === 'Overdue Deletions'
+      (e) => e.type === 'Overdue Deletions',
     );
     if (overdueException && overdueException.count > 0) {
       recommendations.push(
-        `Address ${overdueException.count} overdue deletion(s) to prevent compliance violations`
+        `Address ${overdueException.count} overdue deletion(s) to prevent compliance violations`,
       );
     }
 
     // General recommendations
     if (recommendations.length === 0) {
       recommendations.push(
-        'Retention policies are performing well. Continue monitoring for optimal compliance.'
+        'Retention policies are performing well. Continue monitoring for optimal compliance.',
       );
     }
 
@@ -1275,7 +1276,7 @@ export class DataRetentionManager extends EventEmitter {
       async () => {
         await this.processScheduledDeletions();
       },
-      this.config.processingIntervalHours * 60 * 60 * 1000
+      this.config.processingIntervalHours * 60 * 60 * 1000,
     );
   }
 
@@ -1287,7 +1288,7 @@ export class DataRetentionManager extends EventEmitter {
       async () => {
         await this.performPeriodicReview();
       },
-      this.config.reviewIntervalDays * 24 * 60 * 60 * 1000
+      this.config.reviewIntervalDays * 24 * 60 * 60 * 1000,
     );
   }
 
@@ -1298,7 +1299,7 @@ export class DataRetentionManager extends EventEmitter {
     try {
       // Review legal holds
       const activeHolds = Array.from(this.legalHolds.values()).filter(
-        (h) => h.status === LegalHoldStatus.ACTIVE
+        (h) => h.status === LegalHoldStatus.ACTIVE,
       );
 
       for (const hold of activeHolds) {
@@ -1319,10 +1320,10 @@ export class DataRetentionManager extends EventEmitter {
         (p) => {
           const lastUpdate = p.updatedAt;
           const updateThreshold = new Date(
-            Date.now() - 365 * 24 * 60 * 60 * 1000
+            Date.now() - 365 * 24 * 60 * 60 * 1000,
           ); // 1 year
           return lastUpdate < updateThreshold;
-        }
+        },
       );
 
       if (outdatedPolicies.length > 0) {
@@ -1482,7 +1483,7 @@ export class DataRetentionManager extends EventEmitter {
   private logActivity(
     _actor: string,
     _action: string,
-    _details: Record<string, any>
+    _details: Record<string, any>,
   ): void {}
 
   /**
@@ -1536,14 +1537,14 @@ export class DataRetentionManager extends EventEmitter {
     }
 
     const activePolicies = Array.from(this.policies.values()).filter(
-      (p) => p.isActive
+      (p) => p.isActive,
     );
     if (activePolicies.length === 0) {
       issues.push('No active retention policies');
     }
 
     const failedSchedules = Array.from(this.schedules.values()).filter(
-      (s) => s.status === 'failed'
+      (s) => s.status === 'failed',
     ).length;
 
     if (failedSchedules > 10) {

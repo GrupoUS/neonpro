@@ -70,7 +70,7 @@ export function ConsentManager({
 }: ConsentManagerProps) {
   const [_showDetails, _setShowDetails] = useState(false);
   const [selectedConsent, setSelectedConsent] = useState<ConsentRecord | null>(
-    null
+    null,
   );
 
   const form = useForm<ConsentFormData>({
@@ -516,7 +516,7 @@ export function ConsentManager({
                 <div className="flex items-center gap-2">
                   {getStatusBadge(
                     selectedConsent.status,
-                    selectedConsent.consent_given
+                    selectedConsent.consent_given,
                   )}
                 </div>
               </div>

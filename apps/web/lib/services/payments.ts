@@ -125,7 +125,7 @@ export class PaymentsService {
             vendor_name,
             net_amount
           )
-        `
+        `,
         )
         .order('payment_date', { ascending: false });
 
@@ -158,7 +158,7 @@ export class PaymentsService {
             vendor_name,
             net_amount
           )
-        `
+        `,
         )
         .eq('id', id)
         .single();
@@ -328,7 +328,7 @@ export class PaymentsService {
 
   async getPaymentSummary(
     dateFrom?: string,
-    dateTo?: string
+    dateTo?: string,
   ): Promise<PaymentSummary> {
     try {
       let query = this.supabase.from('ap_payments').select('*');
@@ -348,14 +348,14 @@ export class PaymentsService {
 
       const payments = data || [];
       const completedPayments = payments.filter(
-        (p) => p.status === 'completed'
+        (p) => p.status === 'completed',
       );
       const pendingPayments = payments.filter((p) => p.status === 'pending');
       const failedPayments = payments.filter((p) => p.status === 'failed');
 
       const totalAmount = completedPayments.reduce(
         (sum, p) => sum + p.amount_paid,
-        0
+        0,
       );
       const averageAmount =
         completedPayments.length > 0
@@ -396,7 +396,7 @@ export class PaymentsService {
             vendor_name,
             net_amount
           )
-        `
+        `,
         )
         .or(`reference_number.ilike.%${query}%,notes.ilike.%${query}%`)
         .order('payment_date', { ascending: false });
@@ -439,7 +439,7 @@ export class PaymentsService {
 
   async getPaymentsByDateRange(
     startDate: string,
-    endDate: string
+    endDate: string,
   ): Promise<PaymentWithDetails[]> {
     try {
       const { data, error } = await this.supabase
@@ -453,7 +453,7 @@ export class PaymentsService {
             vendor_name,
             net_amount
           )
-        `
+        `,
         )
         .gte('payment_date', startDate)
         .lte('payment_date', endDate)

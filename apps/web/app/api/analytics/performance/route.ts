@@ -69,13 +69,13 @@ export async function POST(request: NextRequest) {
       (metric) =>
         metric.name &&
         typeof metric.value === 'number' &&
-        (SUPPORTED_METRICS as readonly string[]).includes(metric.name)
+        (SUPPORTED_METRICS as readonly string[]).includes(metric.name),
     );
 
     if (validMetrics.length === 0) {
       return NextResponse.json(
         { error: 'No valid metrics provided' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -110,7 +110,7 @@ export async function POST(request: NextRequest) {
     if (error) {
       return NextResponse.json(
         { error: 'Failed to store metrics' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -134,7 +134,7 @@ export async function POST(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -151,7 +151,7 @@ export async function GET(request: NextRequest) {
     if (!session) {
       return NextResponse.json(
         { error: 'Authentication required' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -186,7 +186,7 @@ export async function GET(request: NextRequest) {
     if (error) {
       return NextResponse.json(
         { error: 'Failed to fetch metrics' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -210,7 +210,7 @@ export async function GET(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -237,7 +237,7 @@ function getClientIP(request: NextRequest): string {
 
 function calculateGrade(
   metric: MetricType,
-  value: number
+  value: number,
 ): 'good' | 'needs-improvement' | 'poor' {
   const thresholds =
     PERFORMANCE_ALERTS[metric as keyof typeof PERFORMANCE_ALERTS];

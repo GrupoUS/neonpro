@@ -9,7 +9,7 @@ import { marketingCampaignsService } from '@/app/lib/services/marketing-campaign
 // GET /api/marketing/campaigns/[id]/analytics - Get campaign analytics
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const { id } = params;
@@ -18,7 +18,7 @@ export async function GET(
     if (!id) {
       return NextResponse.json(
         { success: false, error: 'Campaign ID is required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -27,7 +27,7 @@ export async function GET(
     if (!campaign) {
       return NextResponse.json(
         { success: false, error: 'Campaign not found' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -89,7 +89,7 @@ export async function GET(
         error: 'Failed to fetch campaign analytics',
         message: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -26,7 +26,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     if (!(body.actual_outcome && body.outcome_date)) {
       return NextResponse.json(
         { error: 'Missing required fields: actual_outcome, outcome_date' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -38,7 +38,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
           error:
             'Invalid outcome. Must be: success, partial_success, or failure',
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -52,7 +52,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     if (!prediction) {
       return NextResponse.json(
         { error: 'Prediction not found' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -60,7 +60,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     const updatedPrediction = await predictionService.updatePredictionOutcome(
       params.id,
       body.actual_outcome,
-      body.outcome_date
+      body.outcome_date,
     );
 
     return NextResponse.json({
@@ -70,7 +70,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to update prediction outcome' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

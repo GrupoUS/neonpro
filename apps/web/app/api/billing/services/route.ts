@@ -50,7 +50,7 @@ export async function GET(request: Request) {
     if (error) {
       return NextResponse.json(
         { error: 'Failed to fetch services' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -58,7 +58,7 @@ export async function GET(request: Request) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal Server Error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -90,7 +90,7 @@ export async function POST(request: Request) {
     if (error) {
       return NextResponse.json(
         { error: 'Failed to create service' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -99,12 +99,12 @@ export async function POST(request: Request) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Validation failed', details: error.errors },
-        { status: 400 }
+        { status: 400 },
       );
     }
     return NextResponse.json(
       { error: 'Internal Server Error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

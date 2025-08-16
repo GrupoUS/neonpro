@@ -40,7 +40,7 @@ export class RLSPerformanceMonitor {
    */
   async getPerformanceMetrics(): Promise<RLSPerformanceMetrics[]> {
     const { data, error } = await this.supabase.rpc(
-      'benchmark_rls_performance'
+      'benchmark_rls_performance',
     );
 
     if (error) {
@@ -56,7 +56,7 @@ export class RLSPerformanceMonitor {
    */
   async validateOptimization(): Promise<HealthCheckResult[]> {
     const { data, error } = await this.supabase.rpc(
-      'validate_rls_optimization'
+      'validate_rls_optimization',
     );
 
     if (error) {
@@ -156,19 +156,19 @@ export class RLSPerformanceMonitor {
 
       if (patientAccessTime > 100) {
         alerts.push(
-          `CRITICAL: Patient data access time ${patientAccessTime.toFixed(2)}ms exceeds 100ms target`
+          `CRITICAL: Patient data access time ${patientAccessTime.toFixed(2)}ms exceeds 100ms target`,
         );
       }
 
       const healthStatus = await this.validateOptimization();
       const failedSystems = healthStatus.filter(
         (system) =>
-          system.status !== 'OPTIMIZED' && system.status !== 'VALIDATED'
+          system.status !== 'OPTIMIZED' && system.status !== 'VALIDATED',
       );
 
       if (failedSystems.length > 0) {
         alerts.push(
-          `WARNING: ${failedSystems.length} systems not fully optimized`
+          `WARNING: ${failedSystems.length} systems not fully optimized`,
         );
       }
 
@@ -192,7 +192,7 @@ export class RLSPerformanceMonitor {
  * LGPD/ANVISA/CFM validated implementation
  */
 export function useRLSPerformanceMonitoring(
-  supabaseClient: ReturnType<typeof createClient>
+  supabaseClient: ReturnType<typeof createClient>,
 ) {
   const monitor = new RLSPerformanceMonitor(supabaseClient);
 

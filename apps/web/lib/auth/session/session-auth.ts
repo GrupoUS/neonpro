@@ -102,7 +102,7 @@ export class SessionAuthService {
     email: string,
     password: string,
     deviceInfo: DeviceInfo,
-    request: NextRequest
+    request: NextRequest,
   ): Promise<AuthenticationResult> {
     try {
       // Extract request metadata
@@ -161,7 +161,7 @@ export class SessionAuthService {
         await this.deviceManager.registerOrUpdateDevice(
           userData.id,
           deviceInfo,
-          ipAddress
+          ipAddress,
         );
 
       // Check device trust status
@@ -186,21 +186,21 @@ export class SessionAuthService {
         userData.id,
         deviceInfo.fingerprint,
         ipAddress,
-        location
+        location,
       );
 
       // Check concurrent session limits
       const canCreateSession =
         await this.sessionManager.checkConcurrentSessionLimit(
           userData.id,
-          userData.role
+          userData.role,
         );
 
       if (!canCreateSession) {
         // Enforce session limits by terminating oldest sessions
         await this.sessionManager.enforceSessionLimits(
           userData.id,
-          userData.role
+          userData.role,
         );
       }
 
@@ -244,7 +244,7 @@ export class SessionAuthService {
             securityScore,
             deviceTrusted: deviceRegistration.trusted,
             location,
-          }
+          },
         );
       }
 
@@ -253,7 +253,7 @@ export class SessionAuthService {
         await this.notificationService.sendDeviceRegistrationNotification(
           userData.id,
           session.id,
-          deviceInfo
+          deviceInfo,
         );
       }
 
@@ -278,7 +278,7 @@ export class SessionAuthService {
   async authenticateWithOAuth(
     provider: 'google' | 'github' | 'azure',
     _deviceInfo: DeviceInfo,
-    request: NextRequest
+    request: NextRequest,
   ): Promise<AuthenticationResult> {
     try {
       const { data, error } = await this.supabase.auth.signInWithOAuth({
@@ -313,7 +313,7 @@ export class SessionAuthService {
   async handleOAuthCallback(
     code: string,
     deviceInfo: DeviceInfo,
-    request: NextRequest
+    request: NextRequest,
   ): Promise<AuthenticationResult> {
     try {
       const { data, error } =
@@ -343,14 +343,14 @@ export class SessionAuthService {
       await this.deviceManager.registerOrUpdateDevice(
         userData.id,
         deviceInfo,
-        ipAddress
+        ipAddress,
       );
 
       const securityScore = await this.calculateSecurityScore(
         userData.id,
         deviceInfo.fingerprint,
         ipAddress,
-        location
+        location,
       );
 
       const session = await this.sessionManager.createSession({
@@ -383,7 +383,7 @@ export class SessionAuthService {
     userId: string,
     token: string,
     deviceInfo: DeviceInfo,
-    request: NextRequest
+    request: NextRequest,
   ): Promise<AuthenticationResult> {
     try {
       // Verify MFA token with Supabase
@@ -427,14 +427,14 @@ export class SessionAuthService {
       await this.deviceManager.registerOrUpdateDevice(
         userData.id,
         deviceInfo,
-        ipAddress
+        ipAddress,
       );
 
       const securityScore = await this.calculateSecurityScore(
         userData.id,
         deviceInfo.fingerprint,
         ipAddress,
-        location
+        location,
       );
 
       const session = await this.sessionManager.createSession({
@@ -469,7 +469,7 @@ export class SessionAuthService {
    */
   async validateSession(
     sessionId: string,
-    request: NextRequest
+    request: NextRequest,
   ): Promise<AuthenticationResult> {
     try {
       const session = await this.sessionManager.getSession(sessionId);
@@ -491,7 +491,7 @@ export class SessionAuthService {
 
       // Validate device fingerprint
       const currentDeviceFingerprint = request.headers.get(
-        'x-device-fingerprint'
+        'x-device-fingerprint',
       );
       if (
         currentDeviceFingerprint &&
@@ -512,7 +512,7 @@ export class SessionAuthService {
 
         await this.sessionManager.terminateSession(
           sessionId,
-          'security_violation'
+          'security_violation',
         );
         return {
           success: false,
@@ -550,7 +550,7 @@ export class SessionAuthService {
    */
   async refreshSession(
     sessionId: string,
-    request: NextRequest
+    request: NextRequest,
   ): Promise<AuthenticationResult> {
     try {
       const validation = await this.validateSession(sessionId, request);
@@ -561,7 +561,7 @@ export class SessionAuthService {
       // Extend session expiry
       const extendedSession = await this.sessionManager.extendSession(
         sessionId,
-        validation.user?.role
+        validation.user?.role,
       );
 
       return {
@@ -585,7 +585,7 @@ export class SessionAuthService {
    * Logout user and terminate session
    */
   async logout(
-    sessionId: string
+    sessionId: string,
   ): Promise<{ success: boolean; error?: string }> {
     try {
       // Terminate session
@@ -607,13 +607,13 @@ export class SessionAuthService {
    * Logout from all devices
    */
   async logoutAllDevices(
-    userId: string
+    userId: string,
   ): Promise<{ success: boolean; error?: string }> {
     try {
       // Terminate all user sessions
       await this.sessionManager.terminateAllUserSessions(
         userId,
-        'user_logout_all'
+        'user_logout_all',
       );
 
       // Sign out from Supabase
@@ -649,7 +649,7 @@ export class SessionAuthService {
           phone_verified,
           mfa_enabled,
           last_login_at
-        `
+        `,
         )
         .eq('id', userId)
         .single();
@@ -700,7 +700,7 @@ export class SessionAuthService {
    * Extract location from request (simplified)
    */
   private async extractLocation(
-    request: NextRequest
+    request: NextRequest,
   ): Promise<LocationData | undefined> {
     if (!this.config.enableLocationTracking) {
       return;
@@ -733,7 +733,7 @@ export class SessionAuthService {
     userId: string,
     deviceFingerprint: string,
     ipAddress: string,
-    location?: LocationData
+    location?: LocationData,
   ): Promise<number> {
     try {
       const { data, error } = await this.supabase.rpc(
@@ -743,7 +743,7 @@ export class SessionAuthService {
           device_fingerprint_param: deviceFingerprint,
           ip_address_param: ipAddress,
           location_param: location || null,
-        }
+        },
       );
 
       if (error) {
@@ -804,7 +804,7 @@ export class SessionAuthService {
 
       if (!validation.success) {
         const response = NextResponse.redirect(
-          new URL('/auth/login', request.url)
+          new URL('/auth/login', request.url),
         );
         response.cookies.delete('session-id');
         return response;
@@ -830,7 +830,7 @@ export class SessionAuthService {
   setSessionCookie(
     response: NextResponse,
     sessionId: string,
-    expiresAt: Date
+    expiresAt: Date,
   ): void {
     response.cookies.set('session-id', sessionId, {
       httpOnly: true,

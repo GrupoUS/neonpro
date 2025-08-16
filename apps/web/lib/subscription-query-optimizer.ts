@@ -64,7 +64,7 @@ export class SubscriptionQueryOptimizer {
    */
   async getSubscriptionStatus(
     userId: string,
-    options: OptimizedQueryOptions = {}
+    options: OptimizedQueryOptions = {},
   ): Promise<SubscriptionValidationResult> {
     const startTime = performance.now();
     const queryId = `subscription_status_${userId}`;
@@ -80,7 +80,7 @@ export class SubscriptionQueryOptimizer {
             queryId,
             performance.now() - startTime,
             1,
-            true
+            true,
           );
           return cached;
         }
@@ -90,7 +90,7 @@ export class SubscriptionQueryOptimizer {
       const result = await this.executeOptimizedQuery(
         this.buildSubscriptionStatusQuery(),
         [userId],
-        options
+        options,
       );
 
       // Process and cache result
@@ -101,7 +101,7 @@ export class SubscriptionQueryOptimizer {
         await enhancedSubscriptionCache.set(
           cacheKey,
           validationResult,
-          options.cacheTTL
+          options.cacheTTL,
         );
       }
 
@@ -109,7 +109,7 @@ export class SubscriptionQueryOptimizer {
         queryId,
         performance.now() - startTime,
         result.length,
-        false
+        false,
       );
       return validationResult;
     } catch (error) {
@@ -123,7 +123,7 @@ export class SubscriptionQueryOptimizer {
    */
   async getBatchSubscriptionStatus(
     userIds: string[],
-    options: OptimizedQueryOptions = {}
+    options: OptimizedQueryOptions = {},
   ): Promise<Map<string, SubscriptionValidationResult>> {
     const startTime = performance.now();
     const queryId = `batch_subscription_status_${userIds.length}`;
@@ -153,14 +153,14 @@ export class SubscriptionQueryOptimizer {
         const batchResults = await this.executeBatchQuery(
           this.buildBatchSubscriptionStatusQuery(uncachedUserIds.length),
           uncachedUserIds,
-          options
+          options,
         );
 
         // Process and cache results
         for (let i = 0; i < uncachedUserIds.length; i++) {
           const userId = uncachedUserIds[i];
           const validationResult = this.processSubscriptionResult(
-            batchResults[i]
+            batchResults[i],
           );
 
           results.set(userId, validationResult);
@@ -170,7 +170,7 @@ export class SubscriptionQueryOptimizer {
             await enhancedSubscriptionCache.set(
               cacheKey,
               validationResult,
-              options.cacheTTL
+              options.cacheTTL,
             );
           }
         }
@@ -180,7 +180,7 @@ export class SubscriptionQueryOptimizer {
         queryId,
         performance.now() - startTime,
         results.size,
-        false
+        false,
       );
       return results;
     } catch (error) {
@@ -194,7 +194,7 @@ export class SubscriptionQueryOptimizer {
    */
   async getUserPlans(
     filters: { active?: boolean; tier?: string[] } = {},
-    options: OptimizedQueryOptions = {}
+    options: OptimizedQueryOptions = {},
   ): Promise<any[]> {
     const startTime = performance.now();
     const cacheKey = `user_plans_${JSON.stringify(filters)}`;
@@ -209,7 +209,7 @@ export class SubscriptionQueryOptimizer {
             queryId,
             performance.now() - startTime,
             (cached as any).data.length,
-            true
+            true,
           );
           return (cached as any).data;
         }
@@ -220,7 +220,7 @@ export class SubscriptionQueryOptimizer {
       const result = await this.executeOptimizedQuery(
         query.sql,
         query.params,
-        options
+        options,
       );
 
       // Cache result with proper structure
@@ -241,7 +241,7 @@ export class SubscriptionQueryOptimizer {
         await enhancedSubscriptionCache.set(
           cacheKey,
           cacheData,
-          options.cacheTTL || 300_000
+          options.cacheTTL || 300_000,
         ); // 5 min default
       }
 
@@ -249,7 +249,7 @@ export class SubscriptionQueryOptimizer {
         queryId,
         performance.now() - startTime,
         result.length,
-        false
+        false,
       );
       return result;
     } catch (error) {
@@ -264,7 +264,7 @@ export class SubscriptionQueryOptimizer {
   async getSubscriptionAnalytics(
     dateRange: { start: Date; end: Date },
     aggregation: 'daily' | 'weekly' | 'monthly' = 'daily',
-    options: OptimizedQueryOptions = {}
+    options: OptimizedQueryOptions = {},
   ): Promise<any[]> {
     const startTime = performance.now();
     const cacheKey = `analytics_${dateRange.start.toISOString()}_${dateRange.end.toISOString()}_${aggregation}`;
@@ -279,7 +279,7 @@ export class SubscriptionQueryOptimizer {
             queryId,
             performance.now() - startTime,
             (cached as any).data.length,
-            true
+            true,
           );
           return (cached as any).data;
         }
@@ -290,7 +290,7 @@ export class SubscriptionQueryOptimizer {
       const result = await this.executeOptimizedQuery(
         query.sql,
         query.params,
-        options
+        options,
       );
 
       // Cache with longer TTL for analytics with proper structure
@@ -311,7 +311,7 @@ export class SubscriptionQueryOptimizer {
         await enhancedSubscriptionCache.set(
           cacheKey,
           cacheData,
-          options.cacheTTL || 1_800_000
+          options.cacheTTL || 1_800_000,
         ); // 30 min default
       }
 
@@ -319,7 +319,7 @@ export class SubscriptionQueryOptimizer {
         queryId,
         performance.now() - startTime,
         result.length,
-        false
+        false,
       );
       return result;
     } catch (error) {
@@ -334,7 +334,7 @@ export class SubscriptionQueryOptimizer {
   private async executeOptimizedQuery(
     sql: string,
     params: any[] = [],
-    options: OptimizedQueryOptions = {}
+    options: OptimizedQueryOptions = {},
   ): Promise<any[]> {
     const startTime = performance.now();
     const supabase = await createClient();
@@ -348,7 +348,7 @@ export class SubscriptionQueryOptimizer {
     try {
       // Monitor query execution
       const timerId = subscriptionPerformanceMonitor.startTimer(
-        `query_${sql.substring(0, 20)}`
+        `query_${sql.substring(0, 20)}`,
       );
 
       // Execute query based on type
@@ -381,7 +381,7 @@ export class SubscriptionQueryOptimizer {
               max_patients,
               max_clinics
             )
-          `
+          `,
           )
           .eq('user_id', params[0])
           .single();
@@ -401,7 +401,7 @@ export class SubscriptionQueryOptimizer {
       return result || [];
     } catch (error) {
       subscriptionPerformanceMonitor.recordDatabaseOperation(
-        performance.now() - startTime
+        performance.now() - startTime,
       );
       throw error;
     }
@@ -413,7 +413,7 @@ export class SubscriptionQueryOptimizer {
   private async executeBatchQuery(
     _sql: string,
     params: any[],
-    _options: OptimizedQueryOptions = {}
+    _options: OptimizedQueryOptions = {},
   ): Promise<any[]> {
     const startTime = performance.now();
 
@@ -436,7 +436,7 @@ export class SubscriptionQueryOptimizer {
             max_patients,
             max_clinics
           )
-        `
+        `,
         )
         .in('user_id', params);
 
@@ -454,7 +454,7 @@ export class SubscriptionQueryOptimizer {
       return params.map((userId) => resultMap.get(userId) || null);
     } catch (error) {
       subscriptionPerformanceMonitor.recordDatabaseOperation(
-        performance.now() - startTime
+        performance.now() - startTime,
       );
       throw error;
     }
@@ -490,7 +490,7 @@ export class SubscriptionQueryOptimizer {
   private buildBatchSubscriptionStatusQuery(count: number): string {
     const placeholders = Array.from(
       { length: count },
-      (_, i) => `$${i + 1}`
+      (_, i) => `$${i + 1}`,
     ).join(', ');
 
     return `
@@ -552,7 +552,7 @@ export class SubscriptionQueryOptimizer {
    */
   private buildAnalyticsQuery(
     dateRange: { start: Date; end: Date },
-    aggregation: 'daily' | 'weekly' | 'monthly'
+    aggregation: 'daily' | 'weekly' | 'monthly',
   ): { sql: string; params: any[] } {
     const timeFormat = {
       daily: `date_trunc('day', created_at)`,
@@ -697,7 +697,7 @@ export class SubscriptionQueryOptimizer {
   private getAccessMessage(
     subscription: UserSubscription,
     hasAccess: boolean,
-    gracePeriod: boolean
+    gracePeriod: boolean,
   ): string {
     if (!subscription) {
       return 'No subscription found';
@@ -729,7 +729,7 @@ export class SubscriptionQueryOptimizer {
     queryType: string,
     executionTime: number,
     resultCount: number,
-    fromCache: boolean
+    fromCache: boolean,
   ): void {
     let stats = this.queryStats.get(queryType);
     if (!stats) {
@@ -757,7 +757,7 @@ export class SubscriptionQueryOptimizer {
   private handleQueryError(
     _error: any,
     _queryId: string,
-    startTime: number
+    startTime: number,
   ): void {
     const duration = performance.now() - startTime;
 
@@ -816,7 +816,7 @@ export class SubscriptionQueryOptimizer {
    */
   private async executePendingBatch(
     _batchType: string,
-    queries: BatchQuery[]
+    queries: BatchQuery[],
   ): Promise<void> {
     try {
       // Execute batch query
@@ -835,7 +835,7 @@ export class SubscriptionQueryOptimizer {
    * Execute batch optimization
    */
   private async executeBatchOptimization(
-    queries: BatchQuery[]
+    queries: BatchQuery[],
   ): Promise<any[]> {
     // Group similar queries and execute them together
     const results: any[] = [];
@@ -845,7 +845,7 @@ export class SubscriptionQueryOptimizer {
         const result = await this.executeOptimizedQuery(
           query.query,
           query.params,
-          query.options
+          query.options,
         );
         results.push(result);
       } catch (error) {

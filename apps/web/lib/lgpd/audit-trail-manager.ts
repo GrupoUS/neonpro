@@ -127,7 +127,7 @@ export class AuditTrailManager {
    * Log LGPD audit event
    */
   async logAuditEvent(
-    event: Omit<LGPDAuditRecord, 'id' | 'timestamp'>
+    event: Omit<LGPDAuditRecord, 'id' | 'timestamp'>,
   ): Promise<LGPDAuditRecord> {
     try {
       const auditRecord: Partial<LGPDAuditRecord> = {
@@ -163,7 +163,7 @@ export class AuditTrailManager {
       }
 
       logger.info(
-        `LGPD audit event logged: ${event.eventType} - ${event.severity}`
+        `LGPD audit event logged: ${event.eventType} - ${event.severity}`,
       );
       return data;
     } catch (error) {
@@ -183,7 +183,7 @@ export class AuditTrailManager {
     dataSubjectId: string,
     accessDetails: Record<string, any>,
     ipAddress?: string,
-    userAgent?: string
+    userAgent?: string,
   ): Promise<void> {
     await this.logAuditEvent({
       eventType: LGPDAuditEventType.DATA_ACCESS,
@@ -217,7 +217,7 @@ export class AuditTrailManager {
     dataSubjectId: string,
     modifications: Record<string, any>,
     ipAddress?: string,
-    userAgent?: string
+    userAgent?: string,
   ): Promise<void> {
     await this.logAuditEvent({
       eventType: LGPDAuditEventType.DATA_MODIFICATION,
@@ -252,7 +252,7 @@ export class AuditTrailManager {
     deletionReason: string,
     deletionDetails: Record<string, any>,
     ipAddress?: string,
-    userAgent?: string
+    userAgent?: string,
   ): Promise<void> {
     await this.logAuditEvent({
       eventType: LGPDAuditEventType.DATA_DELETION,
@@ -296,7 +296,7 @@ export class AuditTrailManager {
       notificationRequired: boolean;
       riskLevel: 'low' | 'medium' | 'high' | 'critical';
     },
-    ipAddress?: string
+    ipAddress?: string,
   ): Promise<void> {
     await this.logAuditEvent({
       eventType: LGPDAuditEventType.DATA_BREACH,
@@ -324,7 +324,7 @@ export class AuditTrailManager {
    * Create data subject request
    */
   async createDataSubjectRequest(
-    request: Omit<DataSubjectRequest, 'id' | 'submittedAt' | 'status'>
+    request: Omit<DataSubjectRequest, 'id' | 'submittedAt' | 'status'>,
   ): Promise<DataSubjectRequest> {
     try {
       const dataSubjectRequest: Partial<DataSubjectRequest> = {
@@ -342,7 +342,7 @@ export class AuditTrailManager {
       if (error) {
         logger.error('Error creating data subject request:', error);
         throw new Error(
-          `Failed to create data subject request: ${error.message}`
+          `Failed to create data subject request: ${error.message}`,
         );
       }
 
@@ -365,7 +365,7 @@ export class AuditTrailManager {
       });
 
       logger.info(
-        `Data subject request created: ${data.id} - ${request.requestType}`
+        `Data subject request created: ${data.id} - ${request.requestType}`,
       );
       return data;
     } catch (error) {
@@ -381,7 +381,7 @@ export class AuditTrailManager {
     requestId: string,
     status: DataSubjectRequest['status'],
     responseDetails?: string,
-    assignedTo?: string
+    assignedTo?: string,
   ): Promise<boolean> {
     try {
       const updateData: Partial<DataSubjectRequest> = {
@@ -404,7 +404,7 @@ export class AuditTrailManager {
       if (error) {
         logger.error('Error updating data subject request:', error);
         throw new Error(
-          `Failed to update data subject request: ${error.message}`
+          `Failed to update data subject request: ${error.message}`,
         );
       }
 
@@ -451,7 +451,7 @@ export class AuditTrailManager {
       complianceStatus?: 'compliant' | 'non_compliant' | 'pending_review';
     },
     limit = 100,
-    offset = 0
+    offset = 0,
   ): Promise<LGPDAuditRecord[]> {
     try {
       let query = this.supabase
@@ -508,14 +508,14 @@ export class AuditTrailManager {
   async getAuditAnalytics(
     clinicId: string,
     startDate?: Date,
-    endDate?: Date
+    endDate?: Date,
   ): Promise<AuditTrailAnalytics> {
     try {
       // Get audit events
       const auditEvents = await this.getAuditTrail(
         clinicId,
         { startDate, endDate },
-        1000
+        1000,
       );
 
       // Get data subject requests
@@ -536,7 +536,7 @@ export class AuditTrailManager {
       if (requestError) {
         logger.error('Error fetching data subject requests:', requestError);
         throw new Error(
-          `Failed to fetch data subject requests: ${requestError.message}`
+          `Failed to fetch data subject requests: ${requestError.message}`,
         );
       }
 
@@ -547,10 +547,10 @@ export class AuditTrailManager {
 
       // Initialize counters
       Object.values(LGPDAuditEventType).forEach(
-        (type) => (eventsByType[type] = 0)
+        (type) => (eventsByType[type] = 0),
       );
       Object.values(LGPDAuditSeverity).forEach(
-        (severity) => (eventsBySeverity[severity] = 0)
+        (severity) => (eventsBySeverity[severity] = 0),
       );
       Object.values(LGPDDataType).forEach((type) => (dataTypeCounts[type] = 0));
 
@@ -563,7 +563,7 @@ export class AuditTrailManager {
 
       // Calculate compliance rate
       const compliantEvents = auditEvents.filter(
-        (e) => e.complianceStatus === 'compliant'
+        (e) => e.complianceStatus === 'compliant',
       ).length;
       const complianceRate =
         auditEvents.length > 0
@@ -633,7 +633,7 @@ export class AuditTrailManager {
   async generateComplianceReport(
     clinicId: string,
     startDate: Date,
-    endDate: Date
+    endDate: Date,
   ): Promise<{
     reportId: string;
     generatedAt: Date;
@@ -646,7 +646,7 @@ export class AuditTrailManager {
       const analytics = await this.getAuditAnalytics(
         clinicId,
         startDate,
-        endDate
+        endDate,
       );
       const recommendations = this.generateComplianceRecommendations(analytics);
       const complianceScore = this.calculateComplianceScore(analytics);
@@ -708,13 +708,13 @@ export class AuditTrailManager {
    */
   private calculateRiskScore(
     auditEvents: LGPDAuditRecord[],
-    dataSubjectRequests: DataSubjectRequest[]
+    dataSubjectRequests: DataSubjectRequest[],
   ): number {
     let riskScore = 0;
 
     // Base risk from non-compliant events
     const nonCompliantEvents = auditEvents.filter(
-      (e) => e.complianceStatus === 'non_compliant'
+      (e) => e.complianceStatus === 'non_compliant',
     );
     riskScore += nonCompliantEvents.length * 10;
 
@@ -722,7 +722,7 @@ export class AuditTrailManager {
     const criticalEvents = auditEvents.filter(
       (e) =>
         e.severity === LGPDAuditSeverity.CRITICAL ||
-        e.severity === LGPDAuditSeverity.ERROR
+        e.severity === LGPDAuditSeverity.ERROR,
     );
     riskScore += criticalEvents.length * 5;
 
@@ -766,37 +766,37 @@ export class AuditTrailManager {
    * Generate compliance recommendations
    */
   private generateComplianceRecommendations(
-    analytics: AuditTrailAnalytics
+    analytics: AuditTrailAnalytics,
   ): string[] {
     const recommendations: string[] = [];
 
     if (analytics.complianceRate < 95) {
       recommendations.push(
-        'Revisar processos de conformidade para reduzir eventos não conformes'
+        'Revisar processos de conformidade para reduzir eventos não conformes',
       );
     }
 
     if (analytics.riskScore > 30) {
       recommendations.push(
-        'Implementar medidas adicionais de mitigação de riscos'
+        'Implementar medidas adicionais de mitigação de riscos',
       );
     }
 
     if (analytics.dataSubjectRequests.pending > 5) {
       recommendations.push(
-        'Acelerar processamento de solicitações de titulares de dados'
+        'Acelerar processamento de solicitações de titulares de dados',
       );
     }
 
     if (analytics.dataSubjectRequests.averageResponseTime > 10) {
       recommendations.push(
-        'Otimizar tempo de resposta para solicitações de titulares (meta: <10 dias)'
+        'Otimizar tempo de resposta para solicitações de titulares (meta: <10 dias)',
       );
     }
 
     if (analytics.eventsBySeverity[LGPDAuditSeverity.CRITICAL] > 0) {
       recommendations.push(
-        'Investigar e resolver eventos críticos de segurança imediatamente'
+        'Investigar e resolver eventos críticos de segurança imediatamente',
       );
     }
 
@@ -812,13 +812,13 @@ export class AuditTrailManager {
    */
   private async triggerBreachResponse(
     clinicId: string,
-    breachDetails: any
+    breachDetails: any,
   ): Promise<void> {
     try {
       // This would integrate with incident response systems
       logger.warn(
         `Data breach response triggered for clinic ${clinicId}:`,
-        breachDetails
+        breachDetails,
       );
 
       // Log the breach response initiation

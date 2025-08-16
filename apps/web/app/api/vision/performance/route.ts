@@ -52,7 +52,7 @@ export const GET = withErrorMonitoring(async (request: NextRequest) => {
     };
 
     const startTime = new Date(
-      now.getTime() - timeRangeMap[validatedParams.timeRange]
+      now.getTime() - timeRangeMap[validatedParams.timeRange],
     );
 
     // Get performance metrics
@@ -67,7 +67,7 @@ export const GET = withErrorMonitoring(async (request: NextRequest) => {
           status,
           created_at
         )
-      `
+      `,
       )
       .gte('created_at', startTime.toISOString())
       .order('created_at', { ascending: false });
@@ -87,14 +87,14 @@ export const GET = withErrorMonitoring(async (request: NextRequest) => {
       totalAnalyses > 0
         ? performanceData.reduce(
             (sum, item) => sum + item.processing_time_ms,
-            0
+            0,
           ) / totalAnalyses
         : 0;
     const avgConfidence =
       totalAnalyses > 0
         ? performanceData.reduce(
             (sum, item) => sum + item.confidence_score,
-            0
+            0,
           ) / totalAnalyses
         : 0;
 
@@ -105,13 +105,13 @@ export const GET = withErrorMonitoring(async (request: NextRequest) => {
     const accuracyCompliance =
       totalAnalyses > 0
         ? performanceData.filter(
-            (item) => item.accuracy_score >= accuracyTarget
+            (item) => item.accuracy_score >= accuracyTarget,
           ).length / totalAnalyses
         : 0;
     const timeCompliance =
       totalAnalyses > 0
         ? performanceData.filter(
-            (item) => item.processing_time_ms <= timeTarget
+            (item) => item.processing_time_ms <= timeTarget,
           ).length / totalAnalyses
         : 0;
 
@@ -221,7 +221,7 @@ export const GET = withErrorMonitoring(async (request: NextRequest) => {
         accuracyCompliance:
           stats.count > 0 ? stats.accuracyCompliant / stats.count : 0,
         timeCompliance: stats.count > 0 ? stats.timeCompliant / stats.count : 0,
-      })
+      }),
     );
 
     return NextResponse.json({
@@ -247,14 +247,13 @@ export const GET = withErrorMonitoring(async (request: NextRequest) => {
       },
     });
   } catch (error) {
-
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {
           error: 'Parâmetros de consulta inválidos',
           details: error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -263,7 +262,7 @@ export const GET = withErrorMonitoring(async (request: NextRequest) => {
         error: 'Erro interno do servidor',
         details: error instanceof Error ? error.message : 'Erro desconhecido',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 });
@@ -303,7 +302,7 @@ export const POST = withErrorMonitoring(async (request: NextRequest) => {
           error:
             'Campos obrigatórios: analysisId, processingTimeMs, accuracyScore',
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -337,7 +336,7 @@ export const POST = withErrorMonitoring(async (request: NextRequest) => {
         error: 'Erro interno do servidor',
         details: error instanceof Error ? error.message : 'Erro desconhecido',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 });

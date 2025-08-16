@@ -83,12 +83,12 @@ export class ForecastingEngine {
     // Get historical data
     const historicalData = await this.getHistoricalData(
       validConfig.metric,
-      validConfig.frequency
+      validConfig.frequency,
     );
 
     if (historicalData.length < 10) {
       throw new Error(
-        'Insufficient historical data for forecasting (minimum 10 data points required)'
+        'Insufficient historical data for forecasting (minimum 10 data points required)',
       );
     }
 
@@ -105,7 +105,7 @@ export class ForecastingEngine {
       historicalData,
       features,
       validConfig.horizon,
-      validConfig.confidenceLevel
+      validConfig.confidenceLevel,
     );
 
     return forecasts;
@@ -117,7 +117,7 @@ export class ForecastingEngine {
    */
   async forecastMultipleSeries(
     metrics: string[],
-    config: Omit<ForecastConfig, 'metric'>
+    config: Omit<ForecastConfig, 'metric'>,
   ): Promise<Record<string, ForecastResult[]>> {
     const results: Record<string, ForecastResult[]> = {};
 
@@ -153,7 +153,7 @@ export class ForecastingEngine {
         seasonality_factor?: number;
         external_factors?: Record<string, number>;
       };
-    }>
+    }>,
   ): Promise<Record<string, ForecastResult[]>> {
     const scenarioResults: Record<string, ForecastResult[]> = {};
 
@@ -165,7 +165,7 @@ export class ForecastingEngine {
     for (const scenario of scenarios) {
       const adjustedForecast = this.applyScenarioAdjustments(
         baselineForecast,
-        scenario.adjustments
+        scenario.adjustments,
       );
       scenarioResults[scenario.name] = adjustedForecast;
     }
@@ -179,7 +179,7 @@ export class ForecastingEngine {
    */
   async evaluateForecastAccuracy(
     config: ForecastConfig,
-    backtestPeriods = 4
+    backtestPeriods = 4,
   ): Promise<{
     mae: number; // Mean Absolute Error
     mape: number; // Mean Absolute Percentage Error
@@ -191,7 +191,7 @@ export class ForecastingEngine {
     const historicalData = await this.getHistoricalData(
       config.metric,
       config.frequency,
-      true // extended data
+      true, // extended data
     );
 
     const predictions = [];
@@ -204,7 +204,7 @@ export class ForecastingEngine {
       const trainData = historicalData.slice(0, splitPoint);
       const testData = historicalData.slice(
         splitPoint,
-        splitPoint + config.horizon
+        splitPoint + config.horizon,
       );
 
       if (trainData.length < 10 || testData.length === 0) {
@@ -221,7 +221,7 @@ export class ForecastingEngine {
         trainData,
         features,
         testData.length,
-        config.confidenceLevel
+        config.confidenceLevel,
       );
 
       // Compare predictions with actual values
@@ -335,13 +335,13 @@ export class ForecastingEngine {
    */
   private prepareTrainingData(
     data: TimeSeriesData[],
-    features: ModelFeatures
+    features: ModelFeatures,
   ): Array<{ target: number; features: Record<string, number> }> {
     const trainingData = [];
     const maxLag = Math.max(...features.lags, 0);
     const maxWindow = Math.max(
       ...features.rolling_stats.map((rs) => rs.window),
-      0
+      0,
     );
     const startIndex = Math.max(maxLag, maxWindow);
 
@@ -372,7 +372,7 @@ export class ForecastingEngine {
                 windowData.reduce((sum, v) => sum + v, 0) / windowData.length;
               value = Math.sqrt(
                 windowData.reduce((sum, v) => sum + (v - mean) ** 2, 0) /
-                  windowData.length
+                  windowData.length,
               );
             } else if (stat === 'min') {
               value = Math.min(...windowData);
@@ -390,20 +390,20 @@ export class ForecastingEngine {
       if (features.seasonality.weekly) {
         featureVector.day_of_week = date.getDay();
         featureVector.day_of_week_sin = Math.sin(
-          (2 * Math.PI * date.getDay()) / 7
+          (2 * Math.PI * date.getDay()) / 7,
         );
         featureVector.day_of_week_cos = Math.cos(
-          (2 * Math.PI * date.getDay()) / 7
+          (2 * Math.PI * date.getDay()) / 7,
         );
       }
       if (features.seasonality.monthly) {
         featureVector.day_of_month = date.getDate();
         featureVector.month = date.getMonth();
         featureVector.month_sin = Math.sin(
-          (2 * Math.PI * date.getMonth()) / 12
+          (2 * Math.PI * date.getMonth()) / 12,
         );
         featureVector.month_cos = Math.cos(
-          (2 * Math.PI * date.getMonth()) / 12
+          (2 * Math.PI * date.getMonth()) / 12,
         );
       }
       if (features.seasonality.quarterly) {
@@ -442,7 +442,7 @@ export class ForecastingEngine {
   private async getHistoricalData(
     metric: string,
     frequency: string,
-    extended = false
+    extended = false,
   ): Promise<TimeSeriesData[]> {
     const { data, error } = await this.supabase.rpc('get_forecasting_data', {
       p_metric: metric,
@@ -462,7 +462,7 @@ export class ForecastingEngine {
    */
   private async getOrTrainModel(
     config: ForecastConfig,
-    trainingData: Array<{ target: number; features: Record<string, number> }>
+    trainingData: Array<{ target: number; features: Record<string, number> }>,
   ): Promise<any> {
     const cacheKey = this.generateModelCacheKey(config);
 
@@ -487,7 +487,7 @@ export class ForecastingEngine {
    */
   private async trainModel(
     config: ForecastConfig,
-    trainingData: Array<{ target: number; features: Record<string, number> }>
+    trainingData: Array<{ target: number; features: Record<string, number> }>,
   ): Promise<any> {
     // Simple linear regression implementation
     // In production, could integrate with ML services or more sophisticated models
@@ -529,7 +529,7 @@ export class ForecastingEngine {
     historicalData: TimeSeriesData[],
     features: ModelFeatures,
     horizon: number,
-    confidenceLevel: number
+    confidenceLevel: number,
   ): ForecastResult[] {
     const predictions: ForecastResult[] = [];
     const extendedData = [...historicalData];
@@ -539,7 +539,7 @@ export class ForecastingEngine {
       const featureVector = this.prepareFeatureVector(
         extendedData,
         features,
-        extendedData.length - 1 + i
+        extendedData.length - 1 + i,
       );
 
       // Make prediction
@@ -549,7 +549,7 @@ export class ForecastingEngine {
       const { lower_bound, upper_bound } = this.calculateConfidenceInterval(
         predicted,
         model.residualStd || predicted * 0.1, // fallback to 10% of prediction
-        confidenceLevel
+        confidenceLevel,
       );
 
       // Generate future date
@@ -557,7 +557,7 @@ export class ForecastingEngine {
       const nextDate = this.getNextDate(
         lastDate,
         features,
-        model.config.frequency
+        model.config.frequency,
       );
 
       const result: ForecastResult = {
@@ -597,7 +597,7 @@ export class ForecastingEngine {
     // Simple gradient descent approximation
     for (let iter = 0; iter < 1000; iter++) {
       const predictions = XWithBias.map((row) =>
-        row.reduce((sum, xi, i) => sum + xi * weights[i], 0)
+        row.reduce((sum, xi, i) => sum + xi * weights[i], 0),
       );
 
       const errors = predictions.map((pred, i) => pred - y[i]);
@@ -613,11 +613,11 @@ export class ForecastingEngine {
 
     // Calculate residual standard deviation
     const finalPredictions = XWithBias.map((row) =>
-      row.reduce((sum, xi, i) => sum + xi * weights[i], 0)
+      row.reduce((sum, xi, i) => sum + xi * weights[i], 0),
     );
     const residuals = finalPredictions.map((pred, i) => (pred - y[i]) ** 2);
     const residualStd = Math.sqrt(
-      residuals.reduce((sum, r) => sum + r, 0) / (n - 1)
+      residuals.reduce((sum, r) => sum + r, 0) / (n - 1),
     );
 
     return {
@@ -630,7 +630,7 @@ export class ForecastingEngine {
   private trainPolynomialRegression(
     X: number[][],
     y: number[],
-    degree: number
+    degree: number,
   ) {
     // Transform features to polynomial features
     const polyX = X.map((row) => {
@@ -653,7 +653,7 @@ export class ForecastingEngine {
     // Use linear regression on polynomial features
     return this.trainLinearRegression(
       polyX.map((row) => row.slice(1)),
-      y
+      y,
     );
   }
 
@@ -670,7 +670,7 @@ export class ForecastingEngine {
 
     const residuals = y.map((actual, i) => (actual - smoothedValues[i]) ** 2);
     const residualStd = Math.sqrt(
-      residuals.reduce((sum, r) => sum + r, 0) / (y.length - 1)
+      residuals.reduce((sum, r) => sum + r, 0) / (y.length - 1),
     );
 
     return {
@@ -692,7 +692,7 @@ export class ForecastingEngine {
 
     // Deseasonalize the data
     const deseasonalized = y.map(
-      (value, i) => value - seasonal[i % seasonalPeriod]
+      (value, i) => value - seasonal[i % seasonalPeriod],
     );
 
     // Train linear model on deseasonalized data
@@ -729,7 +729,7 @@ export class ForecastingEngine {
   private prepareFeatureVector(
     data: TimeSeriesData[],
     features: ModelFeatures,
-    index: number
+    index: number,
   ): Record<string, number> {
     const featureVector: Record<string, number> = {};
 
@@ -760,7 +760,7 @@ export class ForecastingEngine {
               windowData.reduce((sum, v) => sum + v, 0) / windowData.length;
             value = Math.sqrt(
               windowData.reduce((sum, v) => sum + (v - mean) ** 2, 0) /
-                windowData.length
+                windowData.length,
             );
           } else if (stat === 'min') {
             value = Math.min(...windowData);
@@ -780,13 +780,13 @@ export class ForecastingEngine {
 
   private makePrediction(
     model: any,
-    featureVector: Record<string, number>
+    featureVector: Record<string, number>,
   ): number {
     if (model.type === 'linear' || model.type === 'polynomial') {
       const features = [1, ...model.features.map((f) => featureVector[f] || 0)];
       return features.reduce(
         (sum, xi, i) => sum + xi * (model.weights[i] || 0),
-        0
+        0,
       );
     }
     if (model.type === 'exponential') {
@@ -804,7 +804,7 @@ export class ForecastingEngine {
   private calculateConfidenceInterval(
     prediction: number,
     standardError: number,
-    confidenceLevel: number
+    confidenceLevel: number,
   ): { lower_bound: number; upper_bound: number } {
     // Z-scores for common confidence levels
     const zScores: Record<number, number> = {
@@ -825,7 +825,7 @@ export class ForecastingEngine {
   private getNextDate(
     lastDate: Date,
     _features: ModelFeatures,
-    frequency: string
+    frequency: string,
   ): Date {
     const nextDate = new Date(lastDate);
 
@@ -847,7 +847,7 @@ export class ForecastingEngine {
       growth_rate?: number;
       seasonality_factor?: number;
       external_factors?: Record<string, number>;
-    }
+    },
   ): ForecastResult[] {
     return baselineForecast.map((forecast, i) => {
       let adjusted = forecast.predicted;
@@ -867,7 +867,7 @@ export class ForecastingEngine {
       if (adjustments.external_factors) {
         const factorSum = Object.values(adjustments.external_factors).reduce(
           (sum, factor) => sum + factor,
-          0
+          0,
         );
         adjusted *= 1 + factorSum / 100;
       }
@@ -909,7 +909,7 @@ export const forecastUtils = {
     const absoluteErrors = errors.map((e) => Math.abs(e));
     const squaredErrors = errors.map((e) => e * e);
     const percentageErrors = actual.map((a, i) =>
-      a !== 0 ? Math.abs((a - predicted[i]) / a) * 100 : 0
+      a !== 0 ? Math.abs((a - predicted[i]) / a) * 100 : 0,
     );
 
     return {
@@ -925,7 +925,7 @@ export const forecastUtils = {
    */
   formatForChart: (
     historical: TimeSeriesData[],
-    forecasts: ForecastResult[]
+    forecasts: ForecastResult[],
   ) => {
     return [
       ...historical.map((h) => ({
@@ -950,7 +950,7 @@ export const forecastUtils = {
     const errors = actual.map((a, i) => a - predicted[i]);
     const meanError = errors.reduce((sum, e) => sum + e, 0) / errors.length;
     const stdError = Math.sqrt(
-      errors.reduce((sum, e) => sum + (e - meanError) ** 2, 0) / errors.length
+      errors.reduce((sum, e) => sum + (e - meanError) ** 2, 0) / errors.length,
     );
 
     return errors.map((error, i) => ({

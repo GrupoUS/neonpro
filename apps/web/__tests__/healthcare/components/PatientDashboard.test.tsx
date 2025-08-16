@@ -1,0 +1,78 @@
+/**
+ * 🏥 Patient Dashboard Component - Healthcare Unit Tests
+ * ≥90% Coverage with Medical Workflow Focus & Patient Data Protection
+ * Constitutional Healthcare Compliance Testing
+ */
+
+import { jest } from '@jest/globals';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import React from 'react';
+import '@testing-library/jest-dom';
+import { PatientDashboard } from '@/components/patient/PatientDashboard';
+import { HealthcareDataAnonymizer } from '../../../../playwright/utils/healthcare-testing-utils';
+
+// Mock healthcare services with patient data protection
+jest.mock('@/lib/services/patient-service', () => ({
+  getPatientData: jest.fn(),
+  updatePatientConsent: jest.fn(),
+  getPatientTreatments: jest.fn(),
+}));
+
+jest.mock('@/lib/auth/patient-auth', () => ({
+  validatePatientAccess: jest.fn(),
+  auditPatientDataAccess: jest.fn(),
+}));
+
+describe('🏥 PatientDashboard Component - Healthcare Testing', () => {
+  const mockPatientData = HealthcareDataAnonymizer.generateAnonymousPatient();
+
+  beforeEach(() => {
+    // Reset mocks and ensure patient data protection
+    jest.clearAllMocks();
+
+    // Mock authenticated patient session
+    const mockAuth = {
+      user: {
+        id: mockPatientData.id,
+        email: mockPatientData.email,
+        role: 'patient',
+        isTestData: true,
+      },
+    };
+
+    (global as any).mockAuthContext = mockAuth;
+  });
+
+  afterEach(() => {
+    // Validate no real patient data was exposed during testing
+    const testContent = document.body.textContent || '';
+    expect(testContent).not.toMatch(/\d{3}\.\d{3}\.\d{3}-\d{2}/); // No real CPF
+    expect(testContent).not.toMatch(/\(\d{2}\)\s*9\d{4}-\d{4}/); // No real phone
+  });
+
+  test('should render patient dashboard with healthcare security measures', async () => {
+    // Render with anonymous patient data
+    render(<PatientDashboard patientData={mockPatientData} />);
+
+    // Verify healthcare dashboard components
+    expect(screen.getByTestId('patient-dashboard')).toBeInTheDocument();
+    expect(screen.getByTestId('patient-welcome-section')).toBeInTheDocument();
+    expect(screen.getByTestId('upcoming-appointments')).toBeInTheDocument();
+    expect(screen.getByTestId('treatment-history')).toBeInTheDocument();
+    expect(screen.getByTestId('privacy-settings')).toBeInTheDocument();
+
+    // Verify healthcare security indicators
+    expect(screen.getByTestId('data-encryption-indicator')).toBeInTheDocument();
+    expect(screen.getByTestId('lgpd-compliance-badge')).toBeInTheDocument();
+
+    // Validate healthcare accessibility
+    expect(screen.getByRole('main')).toBeInTheDocument();
+    expect(
+      screen.getByLabelText('Patient Dashboard Navigation'),
+    ).toBeInTheDocument();
+
+    // Verify patient anxiety reduction elements
+    expect(screen.getByTestId('help-support-section')).toBeInTheDocument();
+    expect(screen.getByTestId('progress-indicators')).toBeInTheDocument();
+  });
+});

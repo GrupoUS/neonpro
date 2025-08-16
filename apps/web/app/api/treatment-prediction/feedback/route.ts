@@ -23,7 +23,7 @@ export async function GET(request: NextRequest) {
 
     const predictionService = new TreatmentPredictionService();
     const feedback = await predictionService.getFeedback(
-      predictionId || undefined
+      predictionId || undefined,
     );
 
     return NextResponse.json({
@@ -33,7 +33,7 @@ export async function GET(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to fetch prediction feedback' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -62,7 +62,7 @@ export async function POST(request: NextRequest) {
           error:
             'Missing required fields: prediction_id, feedback_type, rating',
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -70,7 +70,7 @@ export async function POST(request: NextRequest) {
     if (body.rating < 1 || body.rating > 5) {
       return NextResponse.json(
         { error: 'Rating must be between 1 and 5' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -84,7 +84,7 @@ export async function POST(request: NextRequest) {
     if (!prediction) {
       return NextResponse.json(
         { error: 'Prediction not found' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -102,12 +102,12 @@ export async function POST(request: NextRequest) {
         feedback,
         message: 'Prediction feedback created successfully',
       },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to create prediction feedback' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

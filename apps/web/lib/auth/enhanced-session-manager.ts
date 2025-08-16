@@ -54,7 +54,7 @@ class EnhancedSessionManager {
    */
   async storeTokensSecurely(
     sessionId: string,
-    tokens: SecureTokenStorage
+    tokens: SecureTokenStorage,
   ): Promise<boolean> {
     const startTime = Date.now();
 
@@ -85,7 +85,7 @@ class EnhancedSessionManager {
 
       performanceTracker.recordMetric(
         'secure_token_storage',
-        Date.now() - startTime
+        Date.now() - startTime,
       );
       return true;
     } catch (_error) {
@@ -97,7 +97,7 @@ class EnhancedSessionManager {
    * Retrieve and decrypt stored tokens
    */
   async retrieveTokensSecurely(
-    sessionId: string
+    sessionId: string,
   ): Promise<SecureTokenStorage | null> {
     const startTime = Date.now();
 
@@ -120,7 +120,7 @@ class EnhancedSessionManager {
 
       performanceTracker.recordMetric(
         'secure_token_retrieval',
-        Date.now() - startTime
+        Date.now() - startTime,
       );
       return tokens;
     } catch (_error) {
@@ -134,7 +134,7 @@ class EnhancedSessionManager {
   initializeSessionTimeout(
     sessionId: string,
     userId: string,
-    options: Partial<SessionTimeout> = {}
+    options: Partial<SessionTimeout> = {},
   ): void {
     const timeout: SessionTimeout = {
       idleTimeout: options.idleTimeout || 30, // 30 minutes default
@@ -152,7 +152,7 @@ class EnhancedSessionManager {
    */
   async updateSessionActivity(
     sessionId: string,
-    activity: Omit<SessionActivity, 'sessionId' | 'timestamp'>
+    activity: Omit<SessionActivity, 'sessionId' | 'timestamp'>,
   ): Promise<void> {
     const timeout = this.sessionTimeouts.get(sessionId);
     if (!timeout) {
@@ -294,7 +294,7 @@ class EnhancedSessionManager {
       for (const session of suspiciousSessions) {
         await this.forceSessionTimeout(
           session.session_id,
-          'suspicious_activity'
+          'suspicious_activity',
         );
       }
 
@@ -314,7 +314,7 @@ class EnhancedSessionManager {
   }
 
   private async decryptTokenData(
-    encryptedData: string
+    encryptedData: string,
   ): Promise<SecureTokenStorage> {
     // In production, use proper decryption
     // For now, using base64 decoding as placeholder
@@ -364,7 +364,7 @@ class EnhancedSessionManager {
       window.dispatchEvent(
         new CustomEvent('session-timeout-warning', {
           detail: { sessionId },
-        })
+        }),
       );
     }
   }
@@ -424,7 +424,7 @@ class EnhancedSessionManager {
   private async logSecurityEvent(
     sessionId: string,
     event: string,
-    metadata: Record<string, any>
+    metadata: Record<string, any>,
   ): Promise<void> {
     try {
       const supabase = await createClient();

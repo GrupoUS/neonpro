@@ -154,20 +154,20 @@ class BaselineManager {
   async establishBaseline(
     metricName: string,
     metricUnit: string,
-    measurementPeriod: 'daily' | 'weekly' | 'monthly' = 'daily'
+    measurementPeriod: 'daily' | 'weekly' | 'monthly' = 'daily',
   ): Promise<BaselineMetric | null> {
     try {
       // Collect current measurements for baseline calculation
       const measurements = await this.collectCurrentMeasurements(
         metricName,
-        measurementPeriod
+        measurementPeriod,
       );
 
       if (measurements.length === 0) {
         return await this.createDefaultBaseline(
           metricName,
           metricUnit,
-          measurementPeriod
+          measurementPeriod,
         );
       }
 
@@ -176,7 +176,7 @@ class BaselineManager {
         metricName,
         metricUnit,
         measurementPeriod,
-        measurements
+        measurements,
       );
 
       // Store baseline in database
@@ -196,7 +196,7 @@ class BaselineManager {
    */
   private async collectCurrentMeasurements(
     metricName: string,
-    measurementPeriod: string
+    measurementPeriod: string,
   ): Promise<number[]> {
     try {
       // Define collection period based on measurement period
@@ -236,7 +236,7 @@ class BaselineManager {
     metricName: string,
     metricUnit: string,
     measurementPeriod: string,
-    measurements: number[]
+    measurements: number[],
   ): BaselineMetric {
     // Calculate statistical measures
     const sorted = [...measurements].sort((a, b) => a - b);
@@ -262,8 +262,8 @@ class BaselineManager {
       0.95,
       Math.max(
         0.5,
-        (measurements.length / 100) * (1 - Math.min(1, coefficientOfVariation))
-      )
+        (measurements.length / 100) * (1 - Math.min(1, coefficientOfVariation)),
+      ),
     );
 
     return {
@@ -292,7 +292,7 @@ class BaselineManager {
   private async createDefaultBaseline(
     metricName: string,
     metricUnit: string,
-    measurementPeriod: string
+    measurementPeriod: string,
   ): Promise<BaselineMetric> {
     const defaultValues: Record<string, number> = {
       page_load_time: 1000,
@@ -364,7 +364,7 @@ class BaselineManager {
    */
   async compareToBaseline(
     metricName: string,
-    currentValue: number
+    currentValue: number,
   ): Promise<BaselineComparison | null> {
     const baseline = this.baselineMetrics.get(metricName);
     if (!baseline) {
@@ -377,13 +377,13 @@ class BaselineManager {
     // Determine change direction based on metric type
     const changeDirection = this.determineChangeDirection(
       metricName,
-      changePercentage
+      changePercentage,
     );
 
     // Determine significance level
     const significanceLevel = this.determineSignificanceLevel(
       Math.abs(changePercentage),
-      baseline.confidence_level
+      baseline.confidence_level,
     );
 
     const comparison: BaselineComparison = {
@@ -410,7 +410,7 @@ class BaselineManager {
    */
   private determineChangeDirection(
     metricName: string,
-    changePercentage: number
+    changePercentage: number,
   ): 'improvement' | 'regression' | 'neutral' {
     // Define metrics where lower values are better
     const lowerIsBetter = [
@@ -447,7 +447,7 @@ class BaselineManager {
    */
   private determineSignificanceLevel(
     absoluteChangePercentage: number,
-    confidenceLevel: number
+    confidenceLevel: number,
   ): 'low' | 'medium' | 'high' {
     // Adjust significance thresholds based on confidence level
     const confidenceMultiplier = Math.max(0.5, confidenceLevel);
@@ -488,7 +488,7 @@ class BaselineManager {
    * Generate comprehensive baseline report
    */
   async generateBaselineReport(
-    measurementPeriod: 'daily' | 'weekly' | 'monthly' = 'daily'
+    measurementPeriod: 'daily' | 'weekly' | 'monthly' = 'daily',
   ): Promise<BaselineReport> {
     const comparisons: BaselineComparison[] = [];
     const recommendations: string[] = [];
@@ -502,7 +502,7 @@ class BaselineManager {
         if (currentValue !== null) {
           const comparison = await this.compareToBaseline(
             metricName,
-            currentValue
+            currentValue,
           );
           if (comparison) {
             comparisons.push(comparison);
@@ -521,16 +521,16 @@ class BaselineManager {
 
     // Calculate summary statistics
     const significantChanges = comparisons.filter(
-      (c) => c.significance_level === 'high'
+      (c) => c.significance_level === 'high',
     ).length;
     const regressions = comparisons.filter(
-      (c) => c.change_direction === 'regression'
+      (c) => c.change_direction === 'regression',
     ).length;
     const improvements = comparisons.filter(
-      (c) => c.change_direction === 'improvement'
+      (c) => c.change_direction === 'improvement',
     ).length;
     const neutralChanges = comparisons.filter(
-      (c) => c.change_direction === 'neutral'
+      (c) => c.change_direction === 'neutral',
     ).length;
 
     const report: BaselineReport = {
@@ -555,7 +555,7 @@ class BaselineManager {
    * Get current value for a metric
    */
   private async getCurrentMetricValue(
-    metricName: string
+    metricName: string,
   ): Promise<number | null> {
     try {
       const { data, error } = await this.supabase
@@ -624,7 +624,7 @@ class BaselineManager {
           await this.runPeriodicMeasurement();
         } catch (_error) {}
       },
-      60 * 60 * 1000
+      60 * 60 * 1000,
     ); // Every hour
   }
 
@@ -692,7 +692,7 @@ class BaselineManager {
     return await this.establishBaseline(
       metricName,
       existingBaseline.metric_unit,
-      existingBaseline.measurement_period
+      existingBaseline.measurement_period,
     );
   }
 
@@ -713,24 +713,24 @@ export const baselineManager = new BaselineManager();
 export async function establishBaseline(
   metricName: string,
   metricUnit: string,
-  measurementPeriod?: 'daily' | 'weekly' | 'monthly'
+  measurementPeriod?: 'daily' | 'weekly' | 'monthly',
 ): Promise<BaselineMetric | null> {
   return baselineManager.establishBaseline(
     metricName,
     metricUnit,
-    measurementPeriod
+    measurementPeriod,
   );
 }
 
 export async function compareToBaseline(
   metricName: string,
-  currentValue: number
+  currentValue: number,
 ): Promise<BaselineComparison | null> {
   return baselineManager.compareToBaseline(metricName, currentValue);
 }
 
 export async function generateBaselineReport(
-  measurementPeriod?: 'daily' | 'weekly' | 'monthly'
+  measurementPeriod?: 'daily' | 'weekly' | 'monthly',
 ): Promise<BaselineReport> {
   return baselineManager.generateBaselineReport(measurementPeriod);
 }

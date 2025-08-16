@@ -164,7 +164,7 @@ export function useDemandForecasting() {
 
         const { successful, failed } = result.data.summary;
         toast.success(
-          `Generated ${successful} forecasts successfully${failed > 0 ? ` (${failed} failed)` : ''}`
+          `Generated ${successful} forecasts successfully${failed > 0 ? ` (${failed} failed)` : ''}`,
         );
 
         return result.data;
@@ -179,7 +179,7 @@ export function useDemandForecasting() {
         setIsLoading(false);
       }
     },
-    []
+    [],
   );
 
   // Analyze seasonal patterns
@@ -197,7 +197,7 @@ export function useDemandForecasting() {
 
         if (!response.ok) {
           throw new Error(
-            result.error || 'Failed to analyze seasonal patterns'
+            result.error || 'Failed to analyze seasonal patterns',
           );
         }
 
@@ -215,7 +215,7 @@ export function useDemandForecasting() {
         setIsLoading(false);
       }
     },
-    []
+    [],
   );
 
   // Get forecast accuracy analysis
@@ -224,7 +224,7 @@ export function useDemandForecasting() {
       clinicId: string,
       itemId?: string,
       period = '30d',
-      modelType?: string
+      modelType?: string,
     ) => {
       setIsLoading(true);
       try {
@@ -236,7 +236,7 @@ export function useDemandForecasting() {
         });
 
         const response = await fetch(
-          `/api/inventory/forecasting/accuracy?${params}`
+          `/api/inventory/forecasting/accuracy?${params}`,
         );
         const result = await response.json();
 
@@ -257,7 +257,7 @@ export function useDemandForecasting() {
         setIsLoading(false);
       }
     },
-    []
+    [],
   );
 
   // Log forecast accuracy
@@ -290,13 +290,13 @@ export function useDemandForecasting() {
 
       return result.data;
     },
-    []
+    [],
   );
 
   // Get forecasting capabilities
   const getCapabilities = useCallback(async (clinicId: string) => {
     const response = await fetch(
-      `/api/inventory/forecasting/demand?clinicId=${clinicId}`
+      `/api/inventory/forecasting/demand?clinicId=${clinicId}`,
     );
     const result = await response.json();
 
@@ -351,30 +351,30 @@ export function useDemandForecasting() {
 
       return Math.min(1, Math.max(0, score));
     },
-    []
+    [],
   );
 
   // Get forecast recommendations
   const getForecastRecommendations = useCallback(
     (
       forecastResult: ForecastResult,
-      seasonalData?: SeasonalAnalysis
+      seasonalData?: SeasonalAnalysis,
     ): string[] => {
       const recommendations = [...forecastResult.recommendations];
 
       if (seasonalData) {
         const strongPatterns = seasonalData.seasonalPatterns.filter(
-          (p) => p.strength > 0.5
+          (p) => p.strength > 0.5,
         );
         if (strongPatterns.length > 0) {
           recommendations.push(
-            'Strong seasonal patterns detected - consider seasonal inventory adjustments'
+            'Strong seasonal patterns detected - consider seasonal inventory adjustments',
           );
         }
 
         if (seasonalData.demandDrivers.appointmentBased) {
           recommendations.push(
-            'Demand is appointment-driven - link inventory planning to appointment schedules'
+            'Demand is appointment-driven - link inventory planning to appointment schedules',
           );
         }
       }
@@ -382,17 +382,17 @@ export function useDemandForecasting() {
       const confidenceScore = calculateConfidenceScore(forecastResult);
       if (confidenceScore < 0.6) {
         recommendations.push(
-          'Low forecast confidence - increase monitoring frequency and safety stock'
+          'Low forecast confidence - increase monitoring frequency and safety stock',
         );
       } else if (confidenceScore > 0.8) {
         recommendations.push(
-          'High forecast confidence - suitable for automated reordering'
+          'High forecast confidence - suitable for automated reordering',
         );
       }
 
       return recommendations;
     },
-    [calculateConfidenceScore]
+    [calculateConfidenceScore],
   );
 
   return {

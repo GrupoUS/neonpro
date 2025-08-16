@@ -122,7 +122,7 @@ export const AnalyticsUtils = {
    */
   calculateHealthScore: (
     metrics: Record<string, number>,
-    weights?: Record<string, number>
+    weights?: Record<string, number>,
   ): number => {
     const totalWeight =
       Object.values(weights || {}).reduce((sum, w) => sum + w, 0) ||
@@ -140,7 +140,7 @@ export const AnalyticsUtils = {
    * Determine status from health score
    */
   getStatusFromScore: (
-    score: number
+    score: number,
   ): 'optimal' | 'good' | 'degraded' | 'critical' | 'failed' => {
     if (score >= 90) {
       return 'optimal';
@@ -204,7 +204,7 @@ export const AnalyticsUtils = {
    * Calculate trend direction from data points
    */
   calculateTrendDirection: (
-    values: number[]
+    values: number[],
   ): 'up' | 'down' | 'stable' | 'volatile' => {
     if (values.length < 2) {
       return 'stable';
@@ -261,7 +261,7 @@ export const AnalyticsUtils = {
   checkThreshold: (
     value: number,
     thresholds: { warning: number; critical: number; emergency: number },
-    operator: 'gt' | 'gte' | 'lt' | 'lte' = 'gte'
+    operator: 'gt' | 'gte' | 'lt' | 'lte' = 'gte',
   ): AlertSeverity => {
     const checkValue = (threshold: number): boolean => {
       switch (operator) {
@@ -295,7 +295,7 @@ export const AnalyticsUtils = {
    */
   calculateConfidenceInterval: (
     values: number[],
-    confidence = 0.95
+    confidence = 0.95,
   ): { lower: number; upper: number } => {
     if (values.length === 0) {
       return { lower: 0, upper: 0 };
@@ -335,7 +335,7 @@ export const AnalyticsUtils = {
    */
   detectAnomalies: (
     values: number[],
-    threshold = 2
+    threshold = 2,
   ): { indices: number[]; values: number[] } => {
     if (values.length < 3) {
       return { indices: [], values: [] };
@@ -400,21 +400,21 @@ export const AnalyticsUtils = {
 
     if (trend.confidence < 0.5) {
       insights.push(
-        'Trend analysis has low confidence due to data variability'
+        'Trend analysis has low confidence due to data variability',
       );
     }
 
     if (trend.direction === 'up' && trend.magnitude > 20) {
       insights.push(
-        `Strong upward trend detected (${trend.magnitude.toFixed(1)}% increase)`
+        `Strong upward trend detected (${trend.magnitude.toFixed(1)}% increase)`,
       );
     } else if (trend.direction === 'down' && trend.magnitude > 20) {
       insights.push(
-        `Strong downward trend detected (${trend.magnitude.toFixed(1)}% decrease)`
+        `Strong downward trend detected (${trend.magnitude.toFixed(1)}% decrease)`,
       );
     } else if (trend.direction === 'volatile') {
       insights.push(
-        'High volatility detected - consider investigating root causes'
+        'High volatility detected - consider investigating root causes',
       );
     } else if (trend.direction === 'stable') {
       insights.push('Metrics remain stable within expected ranges');
@@ -429,7 +429,7 @@ export const AnalyticsUtils = {
   calculateEfficiencyScore: (
     actualValue: number,
     optimalValue: number,
-    maxValue: number
+    maxValue: number,
   ): number => {
     if (maxValue === 0) {
       return 0;
@@ -441,8 +441,8 @@ export const AnalyticsUtils = {
         0,
         Math.min(
           100,
-          ((maxValue - actualValue) / (maxValue - optimalValue)) * 100
-        )
+          ((maxValue - actualValue) / (maxValue - optimalValue)) * 100,
+        ),
       );
     }
 
@@ -458,7 +458,7 @@ export const AnalyticsUtils = {
     thresholds: Record<
       string,
       { optimal: number; warning: number; critical: number }
-    >
+    >,
   ): Array<{
     metric: string;
     recommendation: string;

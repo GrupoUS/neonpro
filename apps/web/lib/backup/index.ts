@@ -124,7 +124,7 @@ export class BackupRecoverySystem {
       compression_enabled?: boolean;
       retention_days?: number;
     },
-    userId: string
+    userId: string,
   ): Promise<string> {
     try {
       this.ensureInitialized();
@@ -171,7 +171,7 @@ export class BackupRecoverySystem {
       compression_enabled?: boolean;
       retention_days?: number;
     },
-    userId: string
+    userId: string,
   ): Promise<string> {
     try {
       this.ensureInitialized();
@@ -224,7 +224,7 @@ export class BackupRecoverySystem {
       rollback_plan?: any[];
       validation_checks?: any[];
     },
-    userId: string
+    userId: string,
   ): Promise<string> {
     try {
       this.ensureInitialized();
@@ -262,14 +262,14 @@ export class BackupRecoverySystem {
       skip_validation?: boolean;
       force_execution?: boolean;
       custom_parameters?: Record<string, any>;
-    }
+    },
   ): Promise<string> {
     try {
       this.ensureInitialized();
       return await this.recoveryManager.executeRecoveryPlan(
         planId,
         userId,
-        options
+        options,
       );
     } catch (error) {
       throw new Error(`Erro ao executar recuperação: ${error}`);
@@ -315,7 +315,7 @@ export class BackupRecoverySystem {
     pagination?: {
       page: number;
       limit: number;
-    }
+    },
   ): Promise<any> {
     try {
       this.ensureInitialized();
@@ -337,7 +337,7 @@ export class BackupRecoverySystem {
     pagination?: {
       page: number;
       limit: number;
-    }
+    },
   ): Promise<any> {
     try {
       this.ensureInitialized();
@@ -361,13 +361,13 @@ export class BackupRecoverySystem {
     pagination?: {
       page: number;
       limit: number;
-    }
+    },
   ): Promise<any> {
     try {
       this.ensureInitialized();
       return await this.recoveryManager.listRecoveryExecutions(
         filters,
-        pagination
+        pagination,
       );
     } catch (error) {
       throw new Error(`Erro ao listar execuções de recuperação: ${error}`);
@@ -378,7 +378,7 @@ export class BackupRecoverySystem {
    * Obtém métricas de backup
    */
   async getBackupMetrics(
-    period: 'day' | 'week' | 'month' = 'month'
+    period: 'day' | 'week' | 'month' = 'month',
   ): Promise<any> {
     try {
       this.ensureInitialized();
@@ -392,7 +392,7 @@ export class BackupRecoverySystem {
    * Obtém métricas de recuperação
    */
   async getRecoveryMetrics(
-    period: 'day' | 'week' | 'month' = 'month'
+    period: 'day' | 'week' | 'month' = 'month',
   ): Promise<any> {
     try {
       this.ensureInitialized();
@@ -459,7 +459,7 @@ export class BackupRecoverySystem {
       deep_verification?: boolean;
       check_encryption?: boolean;
       validate_checksums?: boolean;
-    }
+    },
   ): Promise<any> {
     try {
       this.ensureInitialized();
@@ -478,7 +478,7 @@ export class BackupRecoverySystem {
         try {
           const result = await this.backupManager.verifyBackup(
             backup.id,
-            options
+            options,
           );
           verificationResults.push({
             job_id: backup.id,
@@ -605,7 +605,7 @@ export class BackupRecoverySystem {
 
       // Determinar status do sistema
       const allConnectionsHealthy = Object.values(storageConnections).every(
-        (connected) => connected
+        (connected) => connected,
       );
       const backupSuccessRate = backupMetrics.success_rate || 0;
       const recoverySuccessRate = recoveryMetrics.success_rate || 0;
@@ -627,34 +627,34 @@ export class BackupRecoverySystem {
 
       if (backupSuccessRate < 95) {
         recommendations.push(
-          'Taxa de sucesso de backup abaixo do ideal. Verificar configurações e conectividade.'
+          'Taxa de sucesso de backup abaixo do ideal. Verificar configurações e conectividade.',
         );
       }
 
       if (recoverySuccessRate < 95) {
         recommendations.push(
-          'Taxa de sucesso de recuperação abaixo do ideal. Revisar planos de recuperação.'
+          'Taxa de sucesso de recuperação abaixo do ideal. Revisar planos de recuperação.',
         );
       }
 
       if (!allConnectionsHealthy) {
         recommendations.push(
-          'Alguns provedores de armazenamento estão inacessíveis. Verificar conectividade.'
+          'Alguns provedores de armazenamento estão inacessíveis. Verificar conectividade.',
         );
       }
 
       const totalStorageUsed = storageMetrics.reduce(
         (sum, metric) => sum + metric.used_storage_gb,
-        0
+        0,
       );
       const totalStorageAvailable = storageMetrics.reduce(
         (sum, metric) => sum + metric.total_storage_gb,
-        0
+        0,
       );
 
       if (totalStorageUsed / totalStorageAvailable > 0.8) {
         recommendations.push(
-          'Uso de armazenamento acima de 80%. Considerar limpeza ou expansão.'
+          'Uso de armazenamento acima de 80%. Considerar limpeza ou expansão.',
         );
       }
 
@@ -690,7 +690,7 @@ export class BackupRecoverySystem {
   private ensureInitialized(): void {
     if (!this.isInitialized) {
       throw new Error(
-        'Sistema não foi inicializado. Chame initialize() primeiro.'
+        'Sistema não foi inicializado. Chame initialize() primeiro.',
       );
     }
   }
@@ -736,7 +736,7 @@ export function getBackupRecoverySystem(): BackupRecoverySystem {
  * Inicializa o sistema de backup e recovery
  */
 export async function initializeBackupSystem(
-  config?: any
+  config?: any,
 ): Promise<BackupRecoverySystem> {
   const system = getBackupRecoverySystem();
   await system.initialize(config);

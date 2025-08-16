@@ -408,7 +408,7 @@ class BreachDetectionSystem {
   // Detect failed login patterns
   private detectFailedLogins(
     rule: BreachDetectionRule,
-    events: any[]
+    events: any[],
   ): any | null {
     const failedLogins = events.filter((e) => e.outcome === 'failure');
     const groupedByUser = this.groupEventsByUser(failedLogins);
@@ -418,7 +418,7 @@ class BreachDetectionSystem {
         const timeSpan =
           new Date((userEvents as any[])[0].created_at).getTime() -
           new Date(
-            (userEvents as any[])[(userEvents as any[]).length - 1].created_at
+            (userEvents as any[])[(userEvents as any[]).length - 1].created_at,
           ).getTime();
 
         if (timeSpan <= rule.thresholds.time_window * 1000) {
@@ -438,10 +438,10 @@ class BreachDetectionSystem {
   // Detect unusual data access
   private detectUnusualAccess(
     rule: BreachDetectionRule,
-    events: any[]
+    events: any[],
   ): any | null {
     const accessEvents = events.filter(
-      (e) => e.action === 'read' || e.action === 'access'
+      (e) => e.action === 'read' || e.action === 'access',
     );
     const groupedByUser = this.groupEventsByUser(accessEvents);
 
@@ -461,7 +461,7 @@ class BreachDetectionSystem {
   // Detect data export anomalies
   private detectExportAnomaly(
     rule: BreachDetectionRule,
-    events: any[]
+    events: any[],
   ): any | null {
     const exportEvents = events.filter((e) => e.action === 'export');
 
@@ -485,7 +485,7 @@ class BreachDetectionSystem {
   // Detect unauthorized access
   private detectUnauthorizedAccess(
     _rule: BreachDetectionRule,
-    events: any[]
+    events: any[],
   ): any | null {
     // This would typically check against known IP ranges, device fingerprints, etc.
     // For now, we'll check for suspicious patterns in the metadata
@@ -510,7 +510,7 @@ class BreachDetectionSystem {
   // Detect database query anomalies
   private detectQueryAnomaly(
     rule: BreachDetectionRule,
-    events: any[]
+    events: any[],
   ): any | null {
     const queryEvents = events.filter((e) => e.action === 'query');
 

@@ -42,7 +42,7 @@ export async function GET(request: NextRequest) {
     if (!(authResult.success && authResult.user)) {
       return NextResponse.json(
         { error: 'Authentication required' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -55,7 +55,7 @@ export async function GET(request: NextRequest) {
           error: 'Insufficient permissions',
           reason: 'Manager or owner role required to view user roles',
         },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -76,7 +76,7 @@ export async function GET(request: NextRequest) {
           error: 'Invalid query parameters',
           details: validationResult.error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -97,7 +97,7 @@ export async function GET(request: NextRequest) {
         updated_at,
         last_login,
         is_active
-      `
+      `,
       )
       .range(offset, offset + limit - 1)
       .order('created_at', { ascending: false });
@@ -121,7 +121,7 @@ export async function GET(request: NextRequest) {
     if (error) {
       return NextResponse.json(
         { error: 'Failed to fetch users' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -137,7 +137,7 @@ export async function GET(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -156,7 +156,7 @@ export async function PUT(request: NextRequest) {
     if (!(authResult.success && authResult.user)) {
       return NextResponse.json(
         { error: 'Authentication required' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -167,7 +167,7 @@ export async function PUT(request: NextRequest) {
     } catch (_error) {
       return NextResponse.json(
         { error: 'Invalid JSON in request body' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -179,7 +179,7 @@ export async function PUT(request: NextRequest) {
           error: 'Invalid request format',
           details: validationResult.error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -195,7 +195,7 @@ export async function PUT(request: NextRequest) {
           error: 'Insufficient permissions',
           reason: 'Manager or owner role required to update user roles',
         },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -240,7 +240,7 @@ export async function PUT(request: NextRequest) {
             error: 'Insufficient permissions',
             reason: 'Cannot modify users with equal or higher role',
           },
-          { status: 403 }
+          { status: 403 },
         );
       }
 
@@ -251,7 +251,7 @@ export async function PUT(request: NextRequest) {
             error: 'Insufficient permissions',
             reason: 'Cannot assign roles equal or higher than your own',
           },
-          { status: 403 }
+          { status: 403 },
         );
       }
 
@@ -265,7 +265,7 @@ export async function PUT(request: NextRequest) {
             error: 'Insufficient permissions',
             reason: 'Can only modify users within your clinic',
           },
-          { status: 403 }
+          { status: 403 },
         );
       }
     }
@@ -281,7 +281,7 @@ export async function PUT(request: NextRequest) {
           error: 'Invalid operation',
           reason: 'Owners cannot demote themselves. Transfer ownership first.',
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -297,7 +297,7 @@ export async function PUT(request: NextRequest) {
     if (updateError) {
       return NextResponse.json(
         { error: 'Failed to update user role' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -335,7 +335,7 @@ export async function PUT(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -18,7 +18,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 // Initialize Supabase
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
+  process.env.SUPABASE_SERVICE_ROLE_KEY!,
 );
 
 // Validation schemas
@@ -160,7 +160,7 @@ export class CardPaymentService {
    * Create a payment intent for card payment
    */
   static async createPayment(
-    data: CardPaymentData
+    data: CardPaymentData,
   ): Promise<CardPaymentResult> {
     try {
       // Validate input data
@@ -168,7 +168,7 @@ export class CardPaymentService {
 
       // Create or retrieve Stripe customer
       const customer = await CardPaymentService.createOrGetCustomer(
-        validatedData.customer
+        validatedData.customer,
       );
 
       // Create payment method
@@ -253,7 +253,7 @@ export class CardPaymentService {
       };
     } catch (error) {
       throw new Error(
-        `Failed to create card payment: ${error instanceof Error ? error.message : 'Unknown error'}`
+        `Failed to create card payment: ${error instanceof Error ? error.message : 'Unknown error'}`,
       );
     }
   }
@@ -262,7 +262,7 @@ export class CardPaymentService {
    * Confirm a payment intent (for 3D Secure or other authentication)
    */
   static async confirmPayment(
-    paymentIntentId: string
+    paymentIntentId: string,
   ): Promise<CardPaymentResult> {
     try {
       const paymentIntent =
@@ -271,7 +271,7 @@ export class CardPaymentService {
       // Update payment status in database
       await CardPaymentService.updatePaymentStatus(
         paymentIntentId,
-        paymentIntent.status
+        paymentIntent.status,
       );
 
       return {
@@ -288,7 +288,7 @@ export class CardPaymentService {
       };
     } catch (error) {
       throw new Error(
-        `Failed to confirm payment: ${error instanceof Error ? error.message : 'Unknown error'}`
+        `Failed to confirm payment: ${error instanceof Error ? error.message : 'Unknown error'}`,
       );
     }
   }
@@ -298,20 +298,20 @@ export class CardPaymentService {
    */
   static async capturePayment(
     paymentIntentId: string,
-    amount?: number
+    amount?: number,
   ): Promise<CardPaymentResult> {
     try {
       const paymentIntent = await stripe.paymentIntents.capture(
         paymentIntentId,
         {
           amount_to_capture: amount,
-        }
+        },
       );
 
       // Update payment status in database
       await CardPaymentService.updatePaymentStatus(
         paymentIntentId,
-        paymentIntent.status
+        paymentIntent.status,
       );
 
       return {
@@ -327,7 +327,7 @@ export class CardPaymentService {
       };
     } catch (error) {
       throw new Error(
-        `Failed to capture payment: ${error instanceof Error ? error.message : 'Unknown error'}`
+        `Failed to capture payment: ${error instanceof Error ? error.message : 'Unknown error'}`,
       );
     }
   }
@@ -336,7 +336,7 @@ export class CardPaymentService {
    * Get payment status
    */
   static async getPaymentStatus(
-    paymentIntentId: string
+    paymentIntentId: string,
   ): Promise<PaymentStatus> {
     try {
       const validatedData = paymentIntentSchema.parse({
@@ -347,7 +347,7 @@ export class CardPaymentService {
         validatedData.payment_intent_id,
         {
           expand: ['payment_method'],
-        }
+        },
       );
 
       const paymentMethod =
@@ -378,7 +378,7 @@ export class CardPaymentService {
       };
     } catch (error) {
       throw new Error(
-        `Failed to get payment status: ${error instanceof Error ? error.message : 'Unknown error'}`
+        `Failed to get payment status: ${error instanceof Error ? error.message : 'Unknown error'}`,
       );
     }
   }
@@ -397,7 +397,7 @@ export class CardPaymentService {
 
       // Get the payment intent to find the charge
       const paymentIntent = await stripe.paymentIntents.retrieve(
-        validatedData.payment_intent_id
+        validatedData.payment_intent_id,
       );
       const chargeId = paymentIntent.charges.data[0]?.id;
 
@@ -415,7 +415,7 @@ export class CardPaymentService {
       // Update payment status in database
       await CardPaymentService.updatePaymentStatus(
         validatedData.payment_intent_id,
-        'refunded'
+        'refunded',
       );
 
       // Store refund in database
@@ -441,7 +441,7 @@ export class CardPaymentService {
       };
     } catch (error) {
       throw new Error(
-        `Failed to process refund: ${error instanceof Error ? error.message : 'Unknown error'}`
+        `Failed to process refund: ${error instanceof Error ? error.message : 'Unknown error'}`,
       );
     }
   }
@@ -453,22 +453,22 @@ export class CardPaymentService {
     switch (event.type) {
       case 'payment_intent.succeeded':
         await CardPaymentService.handlePaymentSucceeded(
-          event.data.object as Stripe.PaymentIntent
+          event.data.object as Stripe.PaymentIntent,
         );
         break;
       case 'payment_intent.payment_failed':
         await CardPaymentService.handlePaymentFailed(
-          event.data.object as Stripe.PaymentIntent
+          event.data.object as Stripe.PaymentIntent,
         );
         break;
       case 'payment_intent.canceled':
         await CardPaymentService.handlePaymentCanceled(
-          event.data.object as Stripe.PaymentIntent
+          event.data.object as Stripe.PaymentIntent,
         );
         break;
       case 'charge.dispute.created':
         await CardPaymentService.handleChargeDispute(
-          event.data.object as Stripe.Dispute
+          event.data.object as Stripe.Dispute,
         );
         break;
       default:
@@ -485,7 +485,7 @@ export class CardPaymentService {
 
   // Private helper methods
   private static async createOrGetCustomer(
-    customerData: CardPaymentData['customer']
+    customerData: CardPaymentData['customer'],
   ): Promise<Stripe.Customer> {
     // Check if customer already exists
     const existingCustomers = await stripe.customers.list({
@@ -542,7 +542,7 @@ export class CardPaymentService {
 
   private static async updatePaymentStatus(
     paymentIntentId: string,
-    status: string
+    status: string,
   ): Promise<void> {
     const { error } = await supabase
       .from('card_payments')
@@ -569,7 +569,7 @@ export class CardPaymentService {
   }
 
   private static async handlePaymentSucceeded(
-    paymentIntent: Stripe.PaymentIntent
+    paymentIntent: Stripe.PaymentIntent,
   ): Promise<void> {
     await CardPaymentService.updatePaymentStatus(paymentIntent.id, 'succeeded');
 
@@ -588,19 +588,19 @@ export class CardPaymentService {
   }
 
   private static async handlePaymentFailed(
-    paymentIntent: Stripe.PaymentIntent
+    paymentIntent: Stripe.PaymentIntent,
   ): Promise<void> {
     await CardPaymentService.updatePaymentStatus(paymentIntent.id, 'failed');
   }
 
   private static async handlePaymentCanceled(
-    paymentIntent: Stripe.PaymentIntent
+    paymentIntent: Stripe.PaymentIntent,
   ): Promise<void> {
     await CardPaymentService.updatePaymentStatus(paymentIntent.id, 'canceled');
   }
 
   private static async handleChargeDispute(
-    dispute: Stripe.Dispute
+    dispute: Stripe.Dispute,
   ): Promise<void> {
     // Store dispute information
     const { error } = await supabase.from('card_disputes').insert({
@@ -611,7 +611,7 @@ export class CardPaymentService {
       reason: dispute.reason,
       status: dispute.status,
       evidence_due_by: new Date(
-        dispute.evidence_details.due_by * 1000
+        dispute.evidence_details.due_by * 1000,
       ).toISOString(),
       created_at: new Date(dispute.created * 1000).toISOString(),
     });

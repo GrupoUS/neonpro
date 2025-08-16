@@ -22,7 +22,7 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const timeWindow = Number.parseInt(
       searchParams.get('timeWindow') || '1800000',
-      10
+      10,
     ); // 30min default
     const errorId = searchParams.get('errorId');
 
@@ -50,7 +50,7 @@ export async function GET(request: Request) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 } /**
@@ -73,7 +73,7 @@ export async function POST(request: Request) {
     if (!message) {
       return NextResponse.json(
         { error: 'Error message is required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -97,7 +97,7 @@ export async function POST(request: Request) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to report error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 } /**
@@ -120,7 +120,7 @@ export async function PATCH(request: Request) {
     if (!errorId) {
       return NextResponse.json(
         { error: 'Error ID is required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -134,7 +134,7 @@ export async function PATCH(request: Request) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to resolve error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

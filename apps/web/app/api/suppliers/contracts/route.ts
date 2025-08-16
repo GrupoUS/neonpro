@@ -22,18 +22,18 @@ export async function GET(request: NextRequest) {
     if (!clinicId) {
       return NextResponse.json(
         { error: 'clinic_id é obrigatório' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     if (action === 'renewal-alerts') {
       const daysAhead = Number.parseInt(
         searchParams.get('days_ahead') || '90',
-        10
+        10,
       );
       const alerts = await supplierService.getContractRenewalAlerts(
         clinicId,
-        daysAhead
+        daysAhead,
       );
       return NextResponse.json({ alerts });
     }
@@ -45,12 +45,12 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(
       { error: 'supplier_id é obrigatório quando action não é renewal-alerts' },
-      { status: 400 }
+      { status: 400 },
     );
   } catch (_error) {
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -67,12 +67,12 @@ export async function POST(request: NextRequest) {
     if (!validationResult.success) {
       return NextResponse.json(
         { error: 'Dados inválidos', details: validationResult.error.issues },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     const contract = await supplierService.createContract(
-      validationResult.data
+      validationResult.data,
     );
 
     return NextResponse.json(contract, { status: 201 });
@@ -83,7 +83,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

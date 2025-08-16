@@ -134,7 +134,7 @@ class SecurityAuditLogger {
     type: AuditEventType,
     details: Record<string, any> = {},
     userId?: string,
-    sessionId?: string
+    sessionId?: string,
   ): Promise<void> {
     try {
       const event: AuditEvent = {
@@ -182,7 +182,7 @@ class SecurityAuditLogger {
   async logLoginSuccess(
     userId: string,
     sessionId: string,
-    method = 'oauth'
+    method = 'oauth',
   ): Promise<void> {
     await this.logEvent(
       AuditEventType.LOGIN_SUCCESS,
@@ -191,7 +191,7 @@ class SecurityAuditLogger {
         loginDuration: performance.now(),
       },
       userId,
-      sessionId
+      sessionId,
     );
   }
 
@@ -201,7 +201,7 @@ class SecurityAuditLogger {
   async logLoginFailure(
     email: string,
     reason: string,
-    method = 'oauth'
+    method = 'oauth',
   ): Promise<void> {
     await this.logEvent(AuditEventType.LOGIN_FAILURE, {
       email,
@@ -221,7 +221,7 @@ class SecurityAuditLogger {
         sessionTimeout: 120, // minutes
       },
       userId,
-      sessionId
+      sessionId,
     );
   }
 
@@ -231,7 +231,7 @@ class SecurityAuditLogger {
   async logSessionTerminated(
     userId: string,
     sessionId: string,
-    reason: string
+    reason: string,
   ): Promise<void> {
     await this.logEvent(
       AuditEventType.SESSION_TERMINATED,
@@ -240,7 +240,7 @@ class SecurityAuditLogger {
         sessionDuration: this.calculateSessionDuration(sessionId),
       },
       userId,
-      sessionId
+      sessionId,
     );
   }
 
@@ -249,7 +249,7 @@ class SecurityAuditLogger {
    */
   async logOAuthFlow(
     stage: 'start' | 'success' | 'failure',
-    details: Record<string, any>
+    details: Record<string, any>,
   ): Promise<void> {
     const eventType =
       stage === 'start'
@@ -271,7 +271,7 @@ class SecurityAuditLogger {
   async logPermissionDenied(
     userId: string,
     resource: string,
-    action: string
+    action: string,
   ): Promise<void> {
     await this.logEvent(
       AuditEventType.PERMISSION_DENIED,
@@ -280,7 +280,7 @@ class SecurityAuditLogger {
         action,
         requiredRole: this.getRequiredRole(resource, action),
       },
-      userId
+      userId,
     );
   }
 
@@ -293,22 +293,22 @@ class SecurityAuditLogger {
 
       // Get events from local storage for now (in production, query database)
       const events = this.getStoredEvents().filter(
-        (event) => event.timestamp > cutoffTime
+        (event) => event.timestamp > cutoffTime,
       );
 
       const metrics: SecurityMetrics = {
         totalEvents: events.length,
         successfulLogins: events.filter(
-          (e) => e.type === AuditEventType.LOGIN_SUCCESS
+          (e) => e.type === AuditEventType.LOGIN_SUCCESS,
         ).length,
         failedLogins: events.filter(
-          (e) => e.type === AuditEventType.LOGIN_FAILURE
+          (e) => e.type === AuditEventType.LOGIN_FAILURE,
         ).length,
         suspiciousActivities: events.filter(
-          (e) => e.type === AuditEventType.SUSPICIOUS_ACTIVITY
+          (e) => e.type === AuditEventType.SUSPICIOUS_ACTIVITY,
         ).length,
         accountLockouts: events.filter(
-          (e) => e.type === AuditEventType.ACCOUNT_LOCKOUT
+          (e) => e.type === AuditEventType.ACCOUNT_LOCKOUT,
         ).length,
         uniqueUsers: new Set(events.map((e) => e.userId).filter(Boolean)).size,
         uniqueIPs: new Set(events.map((e) => e.ipAddress)).size,
@@ -340,7 +340,7 @@ class SecurityAuditLogger {
               Date.now() -
                 SUSPICIOUS_PATTERNS.MULTIPLE_FAILED_LOGINS.timeWindowMinutes *
                   60 *
-                  1000
+                  1000,
         );
 
         if (
@@ -371,7 +371,7 @@ class SecurityAuditLogger {
             Date.now() -
               SUSPICIOUS_PATTERNS.RAPID_LOGIN_ATTEMPTS.timeWindowMinutes *
                 60 *
-                1000
+                1000,
       );
 
       if (
@@ -426,7 +426,7 @@ class SecurityAuditLogger {
     const suspiciousPatterns = await this.getSuspiciousPatterns(hoursBack);
     const recommendations = this.generateRecommendations(
       metrics,
-      suspiciousPatterns
+      suspiciousPatterns,
     );
 
     return {
@@ -459,7 +459,7 @@ class SecurityAuditLogger {
 
       localStorage.setItem(
         'security_audit_events',
-        JSON.stringify(storedEvents)
+        JSON.stringify(storedEvents),
       );
 
       // In production, also send to monitoring service
@@ -480,7 +480,7 @@ class SecurityAuditLogger {
 
   private determineSeverity(
     type: AuditEventType,
-    _details: Record<string, any>
+    _details: Record<string, any>,
   ): AuditSeverity {
     switch (type) {
       case AuditEventType.SUSPICIOUS_ACTIVITY:
@@ -499,7 +499,7 @@ class SecurityAuditLogger {
 
   private assessRiskLevel(
     type: AuditEventType,
-    details: Record<string, any>
+    details: Record<string, any>,
   ): RiskLevel {
     if (type === AuditEventType.SUSPICIOUS_ACTIVITY) {
       return details.riskLevel || RiskLevel.HIGH;
@@ -521,7 +521,7 @@ class SecurityAuditLogger {
 
   private determineOutcome(
     type: AuditEventType,
-    _details: Record<string, any>
+    _details: Record<string, any>,
   ): 'success' | 'failure' | 'pending' {
     if (type.includes('SUCCESS') || type === AuditEventType.LOGIN_SUCCESS) {
       return 'success';
@@ -611,7 +611,7 @@ class SecurityAuditLogger {
     const events = this.getStoredEvents();
     const createdEvent = events.find(
       (e) =>
-        e.sessionId === sessionId && e.type === AuditEventType.SESSION_CREATED
+        e.sessionId === sessionId && e.type === AuditEventType.SESSION_CREATED,
     );
     return createdEvent ? Date.now() - createdEvent.timestamp : 0;
   }
@@ -622,7 +622,7 @@ class SecurityAuditLogger {
   }
 
   private calculateRiskDistribution(
-    events: AuditEvent[]
+    events: AuditEvent[],
   ): Record<RiskLevel, number> {
     const distribution = {
       [RiskLevel.LOW]: 0,
@@ -658,7 +658,7 @@ class SecurityAuditLogger {
   }
 
   private async getSuspiciousPatterns(
-    hoursBack: number
+    hoursBack: number,
   ): Promise<SuspiciousPattern[]> {
     const events = this.getRecentEvents(hoursBack * 60);
     return events
@@ -678,25 +678,25 @@ class SecurityAuditLogger {
 
   private generateRecommendations(
     metrics: SecurityMetrics,
-    patterns: SuspiciousPattern[]
+    patterns: SuspiciousPattern[],
   ): string[] {
     const recommendations: string[] = [];
 
     if (metrics.failedLogins > metrics.successfulLogins * 0.1) {
       recommendations.push(
-        'Alto número de logins falhados detectado. Considere implementar CAPTCHA.'
+        'Alto número de logins falhados detectado. Considere implementar CAPTCHA.',
       );
     }
 
     if (patterns.some((p) => p.riskLevel === RiskLevel.HIGH)) {
       recommendations.push(
-        'Atividades suspeitas detectadas. Revise logs de segurança.'
+        'Atividades suspeitas detectadas. Revise logs de segurança.',
       );
     }
 
     if (metrics.uniqueIPs > metrics.uniqueUsers * 2) {
       recommendations.push(
-        'Múltiplos IPs por usuário. Considere autenticação de dois fatores.'
+        'Múltiplos IPs por usuário. Considere autenticação de dois fatores.',
       );
     }
 
@@ -724,13 +724,13 @@ export async function logAuthEvent(
   type: AuditEventType,
   details?: Record<string, any>,
   userId?: string,
-  sessionId?: string
+  sessionId?: string,
 ): Promise<void> {
   return securityAuditLogger.logEvent(type, details, userId, sessionId);
 }
 
 export async function getSecurityMetrics(
-  hoursBack?: number
+  hoursBack?: number,
 ): Promise<SecurityMetrics> {
   return securityAuditLogger.getSecurityMetrics(hoursBack);
 }

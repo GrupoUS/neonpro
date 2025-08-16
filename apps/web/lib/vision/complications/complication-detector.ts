@@ -26,7 +26,7 @@ const ComplicationDetectionRequestSchema = z.object({
   imageId: z.string().uuid(),
   patientId: z.string().uuid(),
   treatmentType: z.enum(
-    Object.values(TREATMENT_TYPES) as [string, ...string[]]
+    Object.values(TREATMENT_TYPES) as [string, ...string[]],
   ),
   previousAnalysisId: z.string().uuid().optional(),
   clinicianId: z.string().uuid(),
@@ -113,7 +113,7 @@ export class ComplicationDetector {
 
         this.models.set(modelType, modelConfig);
         logger.info(
-          `Loaded model: ${modelType} (accuracy: ${modelConfig.accuracy})`
+          `Loaded model: ${modelType} (accuracy: ${modelConfig.accuracy})`,
         );
       } catch (error) {
         logger.error(`Failed to load model ${modelType}:`, error);
@@ -170,7 +170,7 @@ export class ComplicationDetector {
    * Analyzes image for potential complications with ≥90% accuracy
    */
   async detectComplications(
-    request: ComplicationDetectionRequest
+    request: ComplicationDetectionRequest,
   ): Promise<ComplicationDetectionResult> {
     try {
       // Validate request
@@ -182,7 +182,7 @@ export class ComplicationDetector {
       }
 
       logger.info(
-        `Starting complication detection for patient ${validatedRequest.patientId}`
+        `Starting complication detection for patient ${validatedRequest.patientId}`,
       );
 
       const startTime = Date.now();
@@ -194,13 +194,13 @@ export class ComplicationDetector {
       // Run detection across all models
       const detectionResults = await this.runMultiModelDetection(
         preprocessedImage,
-        validatedRequest
+        validatedRequest,
       );
 
       // Analyze and aggregate results
       const analysis = await this.analyzeDetectionResults(
         detectionResults,
-        validatedRequest
+        validatedRequest,
       );
 
       // Calculate processing time
@@ -229,7 +229,7 @@ export class ComplicationDetector {
               type,
               version: model.version,
               accuracy: model.accuracy,
-            })
+            }),
           ),
           qualityMetrics: analysis.qualityMetrics,
           processingMetadata: {
@@ -252,7 +252,7 @@ export class ComplicationDetector {
       await this.validateQualityStandards(result);
 
       logger.info(
-        `Complication detection completed for patient ${validatedRequest.patientId} in ${processingTime}ms`
+        `Complication detection completed for patient ${validatedRequest.patientId} in ${processingTime}ms`,
       );
 
       return result;
@@ -303,7 +303,7 @@ export class ComplicationDetector {
    */
   private async runMultiModelDetection(
     image: any,
-    _request: ComplicationDetectionRequest
+    _request: ComplicationDetectionRequest,
   ): Promise<any[]> {
     const results = [];
 
@@ -313,7 +313,7 @@ export class ComplicationDetector {
         const prediction = await this.runModelInference(
           image,
           model,
-          modelType
+          modelType,
         );
         results.push({
           modelType,
@@ -336,11 +336,11 @@ export class ComplicationDetector {
   private async runModelInference(
     _image: any,
     model: any,
-    modelType: string
+    modelType: string,
   ): Promise<any> {
     // Simulate processing delay
     await new Promise((resolve) =>
-      setTimeout(resolve, Math.random() * 1000 + 200)
+      setTimeout(resolve, Math.random() * 1000 + 200),
     );
 
     // Generate realistic predictions based on model type
@@ -353,7 +353,7 @@ export class ComplicationDetector {
         class: cls,
         probability: Math.min(
           0.99,
-          Math.max(0.01, baseProb + randomFactor - 0.15)
+          Math.max(0.01, baseProb + randomFactor - 0.15),
         ),
       };
     });
@@ -379,7 +379,7 @@ export class ComplicationDetector {
    */
   private async analyzeDetectionResults(
     detectionResults: any[],
-    _request: ComplicationDetectionRequest
+    _request: ComplicationDetectionRequest,
   ): Promise<any> {
     const complications = [];
     let overallRiskScore = 0;
@@ -417,13 +417,13 @@ export class ComplicationDetector {
     // Determine alert level
     const alertLevel = this.determineAlertLevel(
       overallRiskScore,
-      complications
+      complications,
     );
 
     // Determine if emergency protocol needed
     const emergencyProtocol = this.getEmergencyProtocol(
       alertLevel,
-      complications
+      complications,
     );
 
     return {
@@ -434,7 +434,7 @@ export class ComplicationDetector {
       emergencyProtocol,
       recommendations: this.generateRecommendations(
         complications,
-        overallRiskScore
+        overallRiskScore,
       ),
       requiresManualReview: overallRiskScore > 0.6 || alertLevel !== 'none',
       detectionAccuracy,
@@ -479,7 +479,7 @@ export class ComplicationDetector {
    * Calculate complication severity
    */
   private calculateSeverity(
-    probability: number
+    probability: number,
   ): 'low' | 'moderate' | 'high' | 'critical' {
     if (probability >= 0.9) {
       return 'critical';
@@ -544,13 +544,13 @@ export class ComplicationDetector {
    */
   private determineAlertLevel(
     riskScore: number,
-    complications: any[]
+    complications: any[],
   ): AlertLevel {
     const criticalComplications = complications.filter(
-      (c) => c.severity === 'critical'
+      (c) => c.severity === 'critical',
     );
     const highComplications = complications.filter(
-      (c) => c.severity === 'high'
+      (c) => c.severity === 'high',
     );
 
     if (criticalComplications.length > 0 || riskScore >= 0.9) {
@@ -577,7 +577,7 @@ export class ComplicationDetector {
    */
   private getEmergencyProtocol(
     alertLevel: AlertLevel,
-    _complications: any[]
+    _complications: any[],
   ): EmergencyProtocol | null {
     if (alertLevel === 'critical') {
       return {
@@ -625,7 +625,7 @@ export class ComplicationDetector {
    */
   private generateRecommendations(
     complications: any[],
-    riskScore: number
+    riskScore: number,
   ): string[] {
     const recommendations = [];
 
@@ -644,7 +644,7 @@ export class ComplicationDetector {
 
     // Specific recommendations based on complication types
     const infectionComplications = complications.filter(
-      (c) => c.type === 'infection'
+      (c) => c.type === 'infection',
     );
     if (infectionComplications.length > 0) {
       recommendations.push('Consider antibiotic prophylaxis or treatment');
@@ -653,18 +653,18 @@ export class ComplicationDetector {
     }
 
     const healingComplications = complications.filter(
-      (c) => c.type === 'healing_issue'
+      (c) => c.type === 'healing_issue',
     );
     if (healingComplications.length > 0) {
       recommendations.push('Optimize wound healing environment');
       recommendations.push('Consider nutritional supplementation');
       recommendations.push(
-        'Review patient compliance with post-care instructions'
+        'Review patient compliance with post-care instructions',
       );
     }
 
     const adverseReactions = complications.filter(
-      (c) => c.type === 'adverse_reaction'
+      (c) => c.type === 'adverse_reaction',
     );
     if (adverseReactions.length > 0) {
       recommendations.push('Review patient allergy history');
@@ -697,7 +697,7 @@ export class ComplicationDetector {
    * Store detection result in database
    */
   private async storeDetectionResult(
-    result: ComplicationDetectionResult
+    result: ComplicationDetectionResult,
   ): Promise<void> {
     try {
       const { error } = await supabase.from('complication_detections').insert({
@@ -731,12 +731,12 @@ export class ComplicationDetector {
    * Trigger alerts based on detection results
    */
   private async triggerAlerts(
-    result: ComplicationDetectionResult
+    result: ComplicationDetectionResult,
   ): Promise<void> {
     try {
       // This would integrate with the notification system
       logger.info(
-        `Triggering ${result.alertLevel} alert for patient ${result.patientId}`
+        `Triggering ${result.alertLevel} alert for patient ${result.patientId}`,
       );
 
       // For now, log the alert - in production this would send notifications
@@ -760,7 +760,7 @@ export class ComplicationDetector {
    * Validate VOIDBEAST quality standards
    */
   private async validateQualityStandards(
-    result: ComplicationDetectionResult
+    result: ComplicationDetectionResult,
   ): Promise<void> {
     const qualityScore = result.metadata.qualityMetrics.processing_quality;
     const accuracy = result.metadata.qualityMetrics.accuracy;
@@ -792,11 +792,11 @@ export class ComplicationDetector {
    */
   private handleDetectionError(
     error: any,
-    request: ComplicationDetectionRequest
+    request: ComplicationDetectionRequest,
   ): Error {
     if (error instanceof z.ZodError) {
       return new Error(
-        `Invalid request: ${error.errors.map((e) => e.message).join(', ')}`
+        `Invalid request: ${error.errors.map((e) => e.message).join(', ')}`,
       );
     }
 
@@ -834,7 +834,7 @@ export class ComplicationDetector {
         .select('*')
         .gte(
           'created_at',
-          new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()
+          new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
         );
 
       if (error) {
@@ -844,7 +844,7 @@ export class ComplicationDetector {
       return {
         totalDetections: data.length,
         complicationsDetected: data.filter(
-          (d) => d.detected_complications?.length > 0
+          (d) => d.detected_complications?.length > 0,
         ).length,
         averageProcessingTime:
           data.reduce((sum, d) => sum + d.processing_time_ms, 0) / data.length,

@@ -61,7 +61,7 @@ class WebAuthnClient {
    * Register a new WebAuthn credential
    */
   async registerCredential(
-    deviceName?: string
+    deviceName?: string,
   ): Promise<WebAuthnRegistrationResult> {
     try {
       // Check browser support
@@ -82,7 +82,7 @@ class WebAuthnClient {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({ deviceName }),
-        }
+        },
       );
 
       if (!optionsResponse.ok) {
@@ -110,7 +110,7 @@ class WebAuthnClient {
             response: registrationResponse,
             deviceName,
           }),
-        }
+        },
       );
 
       if (!verificationResponse.ok) {
@@ -155,7 +155,7 @@ class WebAuthnClient {
    * Authenticate with WebAuthn credential
    */
   async authenticateWithCredential(
-    userIdentifier?: string
+    userIdentifier?: string,
   ): Promise<WebAuthnAuthenticationResult> {
     try {
       // Check browser support
@@ -176,7 +176,7 @@ class WebAuthnClient {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({ userIdentifier }),
-        }
+        },
       );
 
       if (!optionsResponse.ok) {
@@ -204,7 +204,7 @@ class WebAuthnClient {
             response: authenticationResponse,
             userIdentifier,
           }),
-        }
+        },
       );
 
       if (!verificationResponse.ok) {
@@ -267,7 +267,7 @@ class WebAuthnClient {
 
     if (capabilities.platformAuthenticatorAvailable) {
       reasons.push(
-        'Platform authenticator (Touch ID, Face ID, Windows Hello) available'
+        'Platform authenticator (Touch ID, Face ID, Windows Hello) available',
       );
       return {
         recommended: 'webauthn',

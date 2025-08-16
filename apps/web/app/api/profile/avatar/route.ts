@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
     if (userError || !user) {
       return NextResponse.json(
         { error: 'Unauthorized', message: 'User not authenticated' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -48,7 +48,7 @@ export async function POST(request: NextRequest) {
     if (profileError) {
       return NextResponse.json(
         { error: 'Profile not found', message: profileError.message },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -66,7 +66,7 @@ export async function POST(request: NextRequest) {
           const response = await fetch(google_picture_url);
           if (!response.ok) {
             throw new Error(
-              `Failed to fetch Google avatar: ${response.statusText}`
+              `Failed to fetch Google avatar: ${response.statusText}`,
             );
           }
 
@@ -146,7 +146,7 @@ export async function POST(request: NextRequest) {
     if (updateError) {
       return NextResponse.json(
         { error: 'Update failed', message: updateError.message },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -183,7 +183,7 @@ export async function POST(request: NextRequest) {
         error: 'Internal server error',
         message: 'Avatar synchronization failed',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -201,7 +201,7 @@ export async function GET(_request: NextRequest) {
     if (userError || !user) {
       return NextResponse.json(
         { error: 'Unauthorized', message: 'User not authenticated' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -209,7 +209,7 @@ export async function GET(_request: NextRequest) {
     const { data: profile, error: profileError } = await supabase
       .from('profiles')
       .select(
-        'avatar_url, google_picture, google_sync_enabled, last_google_sync'
+        'avatar_url, google_picture, google_sync_enabled, last_google_sync',
       )
       .eq('id', user.id)
       .single();
@@ -217,7 +217,7 @@ export async function GET(_request: NextRequest) {
     if (profileError) {
       return NextResponse.json(
         { error: 'Profile not found', message: profileError.message },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -261,7 +261,7 @@ export async function GET(_request: NextRequest) {
         error: 'Internal server error',
         message: 'Could not fetch avatar information',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -11,7 +11,7 @@ const service = new AutomatedProtocolOptimizationService();
 // GET: Fetch single protocol version by ID
 export async function GET(
   _request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const { id } = params;
@@ -19,7 +19,7 @@ export async function GET(
     if (!id) {
       return NextResponse.json(
         { success: false, error: 'Protocol version ID is required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -28,7 +28,7 @@ export async function GET(
     if (!protocolVersion) {
       return NextResponse.json(
         { success: false, error: 'Protocol version not found' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -43,7 +43,7 @@ export async function GET(
         error: 'Failed to fetch protocol version',
         details: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -51,7 +51,7 @@ export async function GET(
 // PUT: Update protocol version
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const { id } = params;
@@ -60,7 +60,7 @@ export async function PUT(
     if (!id) {
       return NextResponse.json(
         { success: false, error: 'Protocol version ID is required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -73,13 +73,13 @@ export async function PUT(
           error: 'Validation failed',
           details: validation.error.format(),
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     const updatedProtocolVersion = await service.updateProtocolVersion(
       id,
-      validation.data
+      validation.data,
     );
 
     return NextResponse.json({
@@ -94,7 +94,7 @@ export async function PUT(
         error: 'Failed to update protocol version',
         details: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -102,7 +102,7 @@ export async function PUT(
 // DELETE: Delete protocol version
 export async function DELETE(
   _request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const { id } = params;
@@ -110,7 +110,7 @@ export async function DELETE(
     if (!id) {
       return NextResponse.json(
         { success: false, error: 'Protocol version ID is required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -127,7 +127,7 @@ export async function DELETE(
         error: 'Failed to delete protocol version',
         details: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

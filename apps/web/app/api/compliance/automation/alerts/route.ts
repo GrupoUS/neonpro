@@ -110,7 +110,7 @@ export async function GET(request: NextRequest) {
         error: 'Erro interno do servidor',
         details: error instanceof Error ? error.message : 'Erro desconhecido',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -138,7 +138,7 @@ export async function POST(request: NextRequest) {
           error: 'Dados inválidos',
           details: validationResult.error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -149,7 +149,7 @@ export async function POST(request: NextRequest) {
     let autoResolveAt = null;
     if (alertData.auto_resolve && alertData.resolve_after_hours) {
       autoResolveAt = new Date(
-        Date.now() + alertData.resolve_after_hours * 60 * 60 * 1000
+        Date.now() + alertData.resolve_after_hours * 60 * 60 * 1000,
       ).toISOString();
     }
 
@@ -200,7 +200,7 @@ export async function POST(request: NextRequest) {
         error: 'Erro interno do servidor',
         details: error instanceof Error ? error.message : 'Erro desconhecido',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -224,7 +224,7 @@ export async function PUT(request: NextRequest) {
     if (!alertId) {
       return NextResponse.json(
         { error: 'ID do alerta é obrigatório' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -238,7 +238,7 @@ export async function PUT(request: NextRequest) {
           error: 'Dados inválidos',
           details: validationResult.error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -256,7 +256,7 @@ export async function PUT(request: NextRequest) {
     if (fetchError || !existingAlert) {
       return NextResponse.json(
         { error: 'Alerta não encontrado' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -317,7 +317,7 @@ export async function PUT(request: NextRequest) {
         error: 'Erro interno do servidor',
         details: error instanceof Error ? error.message : 'Erro desconhecido',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -43,7 +43,7 @@ export class StressTester {
    */
   async executeStressTest(
     scenario: StressTestScenario,
-    testFn: () => Promise<boolean>
+    testFn: () => Promise<boolean>,
   ): Promise<StressTestReport> {
     const startTime = Date.now();
     const baselineMetrics = performanceMonitor.generateReport();
@@ -58,7 +58,7 @@ export class StressTester {
     // Execute load test
     const loadResult = await this.loadTester.executeLoadTest(
       testFn,
-      scenario.config
+      scenario.config,
     );
 
     // Wait for system recovery
@@ -83,7 +83,7 @@ export class StressTester {
       criticalFailures: loadResult.failedRequests,
       performanceDegradation: this.calculatePerformanceDegradation(
         baselineMetrics,
-        postTestMetrics
+        postTestMetrics,
       ),
     };
 
@@ -184,7 +184,7 @@ export class StressTester {
    * Wait for system recovery
    */
   private async waitForSystemRecovery(
-    testFn: () => Promise<boolean>
+    testFn: () => Promise<boolean>,
   ): Promise<void> {
     const maxWaitTime = 30_000; // 30 seconds
     const checkInterval = 1000; // 1 second
@@ -229,7 +229,7 @@ export class StressTester {
       loadResult.totalRequests;
     const responseTimeScore = Math.max(
       0,
-      100 - loadResult.averageResponseTime / 10
+      100 - loadResult.averageResponseTime / 10,
     );
 
     return Math.round(successRate * 70 + responseTimeScore * 0.3);
@@ -248,7 +248,7 @@ export class StressTester {
 
     return Math.max(
       0,
-      Math.round(((baselineScore - currentScore) / baselineScore) * 100)
+      Math.round(((baselineScore - currentScore) / baselineScore) * 100),
     );
   }
 
@@ -288,7 +288,7 @@ export class StressTester {
       totalTests;
     const totalFailures = this.reports.reduce(
       (sum, report) => sum + report.criticalFailures,
-      0
+      0,
     );
 
     return {

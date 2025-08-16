@@ -48,7 +48,7 @@ export async function GET(request: NextRequest) {
     const assessments = await riskAssessmentService.getAllRiskAssessments(
       filters,
       limit,
-      offset
+      offset,
     );
 
     return NextResponse.json({
@@ -67,7 +67,7 @@ export async function GET(request: NextRequest) {
         error: 'Failed to fetch risk assessments',
         details: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -89,7 +89,7 @@ export async function POST(request: NextRequest) {
           error: 'Validation failed',
           details: validationResult.error.flatten(),
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -105,7 +105,7 @@ export async function POST(request: NextRequest) {
         data: assessment,
         message: 'Risk assessment created successfully',
       },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (error) {
     return NextResponse.json(
@@ -114,7 +114,7 @@ export async function POST(request: NextRequest) {
         error: 'Failed to create risk assessment',
         details: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

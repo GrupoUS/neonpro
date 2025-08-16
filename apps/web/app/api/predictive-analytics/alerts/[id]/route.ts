@@ -5,7 +5,7 @@ const service = new PredictiveAnalyticsService();
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const body = await request.json();
@@ -16,14 +16,14 @@ export async function PUT(
   } catch (_error) {
     return NextResponse.json(
       { error: 'Erro ao atualizar alerta' },
-      { status: 400 }
+      { status: 400 },
     );
   }
 }
 
 export async function DELETE(
   _request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     await service.deleteAlert(params.id);
@@ -32,7 +32,7 @@ export async function DELETE(
   } catch (_error) {
     return NextResponse.json(
       { error: 'Erro ao deletar alerta' },
-      { status: 400 }
+      { status: 400 },
     );
   }
 }

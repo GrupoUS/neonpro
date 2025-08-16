@@ -182,7 +182,7 @@ export class AIBehaviorAnalysisEngine {
     patient: Patient,
     appointments: Appointment[],
     treatments: TreatmentHistory[],
-    communications: CommunicationLog[]
+    communications: CommunicationLog[],
   ): Promise<BehaviorAnalysis> {
     try {
       // Build comprehensive behavior profile
@@ -190,41 +190,41 @@ export class AIBehaviorAnalysisEngine {
         patient,
         appointments,
         treatments,
-        communications
+        communications,
       );
 
       // Identify engagement patterns
       const engagementPatterns = this.identifyEngagementPatterns(
         appointments,
         treatments,
-        communications
+        communications,
       );
 
       // Assess behavioral risk indicators
       const riskIndicators = this.assessBehaviorRisks(
         behaviorProfile,
         engagementPatterns,
-        patient
+        patient,
       );
 
       // Generate personalized recommendations
       const recommendations = this.generateBehaviorRecommendations(
         behaviorProfile,
         riskIndicators,
-        patient
+        patient,
       );
 
       // Calculate analysis confidence
       const confidenceScore = this.calculateAnalysisConfidence(
         appointments,
         treatments,
-        communications
+        communications,
       );
 
       // Determine next analysis date
       const nextAnalysisDate = this.calculateNextAnalysisDate(
         behaviorProfile,
-        riskIndicators
+        riskIndicators,
       );
 
       const analysis: BehaviorAnalysis = {
@@ -254,7 +254,7 @@ export class AIBehaviorAnalysisEngine {
   async predictBehavior(
     patient: Patient,
     scenario: string,
-    context: any
+    context: any,
   ): Promise<BehaviorPrediction[]> {
     const behaviorHistory = this.behaviorHistory.get(patient.id) || [];
     const latestAnalysis = behaviorHistory.at(-1);
@@ -268,28 +268,28 @@ export class AIBehaviorAnalysisEngine {
     // Predict appointment adherence
     if (scenario === 'appointment_scheduling' || scenario === 'all') {
       predictions.push(
-        await this.predictAppointmentBehavior(latestAnalysis, context)
+        await this.predictAppointmentBehavior(latestAnalysis, context),
       );
     }
 
     // Predict treatment compliance
     if (scenario === 'treatment_compliance' || scenario === 'all') {
       predictions.push(
-        await this.predictTreatmentCompliance(latestAnalysis, context)
+        await this.predictTreatmentCompliance(latestAnalysis, context),
       );
     }
 
     // Predict communication responsiveness
     if (scenario === 'communication' || scenario === 'all') {
       predictions.push(
-        await this.predictCommunicationBehavior(latestAnalysis, context)
+        await this.predictCommunicationBehavior(latestAnalysis, context),
       );
     }
 
     // Predict satisfaction outcomes
     if (scenario === 'satisfaction' || scenario === 'all') {
       predictions.push(
-        await this.predictSatisfactionBehavior(latestAnalysis, context)
+        await this.predictSatisfactionBehavior(latestAnalysis, context),
       );
     }
 
@@ -301,7 +301,7 @@ export class AIBehaviorAnalysisEngine {
    */
   async segmentPatient(
     _patient: Patient,
-    behaviorAnalysis: BehaviorAnalysis
+    behaviorAnalysis: BehaviorAnalysis,
   ): Promise<PatientSegment> {
     const profile = behaviorAnalysis.behavior_profile;
 
@@ -310,7 +310,7 @@ export class AIBehaviorAnalysisEngine {
     const complianceScore = this.calculateComplianceScore(profile);
     const communicationScore = this.calculateCommunicationScore(profile);
     const riskScore = this.calculateBehaviorRiskScore(
-      behaviorAnalysis.risk_indicators
+      behaviorAnalysis.risk_indicators,
     );
 
     // Determine segment based on scores
@@ -318,7 +318,7 @@ export class AIBehaviorAnalysisEngine {
       engagementScore,
       complianceScore,
       communicationScore,
-      riskScore
+      riskScore,
     );
 
     return this.segmentationModels.get(segmentId) || this.getDefaultSegment();
@@ -330,23 +330,23 @@ export class AIBehaviorAnalysisEngine {
   async generateEngagementStrategy(
     _patient: Patient,
     behaviorAnalysis: BehaviorAnalysis,
-    segment: PatientSegment
+    segment: PatientSegment,
   ): Promise<any> {
     const profile = behaviorAnalysis.behavior_profile;
 
     return {
       communication_strategy: this.buildCommunicationStrategy(
-        profile.communication_style
+        profile.communication_style,
       ),
       appointment_strategy: this.buildAppointmentStrategy(
-        profile.appointment_behavior
+        profile.appointment_behavior,
       ),
       treatment_strategy: this.buildTreatmentStrategy(
-        profile.treatment_compliance
+        profile.treatment_compliance,
       ),
       engagement_tactics: this.selectEngagementTactics(segment, profile),
       monitoring_plan: this.createMonitoringPlan(
-        behaviorAnalysis.risk_indicators
+        behaviorAnalysis.risk_indicators,
       ),
       success_metrics: this.defineSuccessMetrics(segment, profile),
     };
@@ -358,19 +358,19 @@ export class AIBehaviorAnalysisEngine {
   async analyzeCommunicationEffectiveness(
     _patient: Patient,
     communications: CommunicationLog[],
-    outcomes: any[]
+    outcomes: any[],
   ): Promise<any> {
     const communicationAnalysis = {
       response_rates: this.calculateResponseRates(communications),
       engagement_metrics: this.calculateEngagementMetrics(communications),
       channel_effectiveness: this.analyzeChannelEffectiveness(
         communications,
-        outcomes
+        outcomes,
       ),
       timing_optimization: this.analyzeOptimalTiming(communications),
       content_effectiveness: this.analyzeContentEffectiveness(
         communications,
-        outcomes
+        outcomes,
       ),
       recommendations:
         this.generateCommunicationRecommendations(communications),
@@ -385,7 +385,7 @@ export class AIBehaviorAnalysisEngine {
   async detectBehaviorAnomalies(
     _patient: Patient,
     recentBehavior: any,
-    historicalPattern: BehaviorAnalysis[]
+    historicalPattern: BehaviorAnalysis[],
   ): Promise<any[]> {
     const anomalies = [];
 
@@ -399,12 +399,12 @@ export class AIBehaviorAnalysisEngine {
         type: 'engagement_deviation',
         severity: this.calculateAnomalySeverity(
           currentEngagement,
-          baselineEngagement
+          baselineEngagement,
         ),
         description: 'Significant change in engagement pattern detected',
         recommendations: this.getEngagementAnomalyRecommendations(
           currentEngagement,
-          baselineEngagement
+          baselineEngagement,
         ),
       });
     }
@@ -412,14 +412,14 @@ export class AIBehaviorAnalysisEngine {
     // Check for appointment behavior changes
     const appointmentAnomalies = this.detectAppointmentAnomalies(
       recentBehavior,
-      historicalPattern
+      historicalPattern,
     );
     anomalies.push(...appointmentAnomalies);
 
     // Check for communication pattern changes
     const communicationAnomalies = this.detectCommunicationAnomalies(
       recentBehavior,
-      historicalPattern
+      historicalPattern,
     );
     anomalies.push(...communicationAnomalies);
 
@@ -432,7 +432,7 @@ export class AIBehaviorAnalysisEngine {
     patient: Patient,
     appointments: Appointment[],
     treatments: TreatmentHistory[],
-    communications: CommunicationLog[]
+    communications: CommunicationLog[],
   ): Promise<BehaviorProfile> {
     // Analyze communication style
     const communicationStyle = this.analyzeCommunicationStyle(communications);
@@ -447,26 +447,26 @@ export class AIBehaviorAnalysisEngine {
     const decisionMakingPattern = this.analyzeDecisionMaking(
       patient,
       appointments,
-      treatments
+      treatments,
     );
 
     // Identify satisfaction drivers
     const satisfactionDrivers = this.identifySatisfactionDrivers(
       treatments,
-      communications
+      communications,
     );
 
     // Identify behavioral triggers
     const behavioralTriggers = this.identifyBehavioralTriggers(
       appointments,
-      communications
+      communications,
     );
 
     // Calculate overall engagement level
     const engagementLevel = this.calculateOverallEngagement(
       communicationStyle,
       appointmentBehavior,
-      treatmentCompliance
+      treatmentCompliance,
     );
 
     return {
@@ -481,7 +481,7 @@ export class AIBehaviorAnalysisEngine {
   }
 
   private analyzeCommunicationStyle(
-    communications: CommunicationLog[]
+    communications: CommunicationLog[],
   ): CommunicationStyle {
     if (communications.length === 0) {
       return this.getDefaultCommunicationStyle();
@@ -493,7 +493,7 @@ export class AIBehaviorAnalysisEngine {
         acc[comm.channel] = (acc[comm.channel] || 0) + 1;
         return acc;
       },
-      {} as Record<string, number>
+      {} as Record<string, number>,
     );
 
     const preferredChannels = Object.entries(channelCounts)
@@ -512,7 +512,7 @@ export class AIBehaviorAnalysisEngine {
 
     // Analyze communication frequency
     const communicationFrequency = this.categorizeCommunicationFrequency(
-      communications.length
+      communications.length,
     );
 
     // Analyze tone and information preferences (simplified)
@@ -531,7 +531,7 @@ export class AIBehaviorAnalysisEngine {
   }
 
   private analyzeAppointmentBehavior(
-    appointments: Appointment[]
+    appointments: Appointment[],
   ): AppointmentBehavior {
     if (appointments.length === 0) {
       return this.getDefaultAppointmentBehavior();
@@ -553,18 +553,18 @@ export class AIBehaviorAnalysisEngine {
 
     // Analyze cancellation and rescheduling
     const cancellations = appointments.filter(
-      (apt) => apt.status === 'cancelled'
+      (apt) => apt.status === 'cancelled',
     ).length;
     const reschedules = appointments.filter(
-      (apt) => apt.status === 'rescheduled'
+      (apt) => apt.status === 'rescheduled',
     ).length;
     const total = appointments.length;
 
     const cancellationTendency = this.categorizeCancellationTendency(
-      cancellations / total
+      cancellations / total,
     );
     const reschedulingPattern = this.categorizeReschedulingPattern(
-      reschedules / total
+      reschedules / total,
     );
 
     // Analyze punctuality (simplified)
@@ -572,7 +572,7 @@ export class AIBehaviorAnalysisEngine {
 
     // Calculate no-show risk
     const noShows = appointments.filter(
-      (apt) => apt.status === 'no_show'
+      (apt) => apt.status === 'no_show',
     ).length;
     const noShowRisk = this.categorizeNoShowRisk(noShows / total);
 
@@ -590,7 +590,7 @@ export class AIBehaviorAnalysisEngine {
   }
 
   private analyzeTreatmentCompliance(
-    treatments: TreatmentHistory[]
+    treatments: TreatmentHistory[],
   ): TreatmentCompliance {
     if (treatments.length === 0) {
       return this.getDefaultTreatmentCompliance();
@@ -598,10 +598,10 @@ export class AIBehaviorAnalysisEngine {
 
     // Analyze adherence levels
     const completedTreatments = treatments.filter(
-      (t) => t.status === 'completed'
+      (t) => t.status === 'completed',
     ).length;
     const adherenceLevel = this.categorizeAdherence(
-      completedTreatments / treatments.length
+      completedTreatments / treatments.length,
     );
 
     // Analyze follow-up compliance
@@ -632,7 +632,7 @@ export class AIBehaviorAnalysisEngine {
   private identifyEngagementPatterns(
     appointments: Appointment[],
     treatments: TreatmentHistory[],
-    communications: CommunicationLog[]
+    communications: CommunicationLog[],
   ): EngagementPattern[] {
     const patterns: EngagementPattern[] = [];
 
@@ -662,7 +662,7 @@ export class AIBehaviorAnalysisEngine {
   private assessBehaviorRisks(
     profile: BehaviorProfile,
     _patterns: EngagementPattern[],
-    _patient: Patient
+    _patient: Patient,
   ): BehaviorRiskIndicator[] {
     const risks: BehaviorRiskIndicator[] = [];
 
@@ -743,7 +743,7 @@ export class AIBehaviorAnalysisEngine {
   private generateBehaviorRecommendations(
     profile: BehaviorProfile,
     _risks: BehaviorRiskIndicator[],
-    _patient: Patient
+    _patient: Patient,
   ): BehaviorRecommendation[] {
     const recommendations: BehaviorRecommendation[] = [];
 
@@ -804,7 +804,7 @@ export class AIBehaviorAnalysisEngine {
   // Utility methods for categorization and analysis
 
   private categorizeResponseTime(
-    avgHours: number
+    avgHours: number,
   ): 'immediate' | 'same_day' | 'delayed' | 'inconsistent' {
     if (avgHours <= 1) {
       return 'immediate';
@@ -819,7 +819,7 @@ export class AIBehaviorAnalysisEngine {
   }
 
   private categorizeCommunicationFrequency(
-    count: number
+    count: number,
   ): 'minimal' | 'moderate' | 'frequent' | 'excessive' {
     if (count <= 5) {
       return 'minimal';
@@ -834,7 +834,7 @@ export class AIBehaviorAnalysisEngine {
   }
 
   private categorizeSchedulingPattern(
-    avgDays: number
+    avgDays: number,
   ): 'advance_planner' | 'last_minute' | 'flexible' | 'rigid' {
     if (avgDays >= 14) {
       return 'advance_planner';
@@ -849,7 +849,7 @@ export class AIBehaviorAnalysisEngine {
   }
 
   private categorizeCancellationTendency(
-    rate: number
+    rate: number,
   ): 'rare' | 'occasional' | 'frequent' | 'chronic' {
     if (rate <= 0.1) {
       return 'rare';
@@ -864,7 +864,7 @@ export class AIBehaviorAnalysisEngine {
   }
 
   private categorizeReschedulingPattern(
-    rate: number
+    rate: number,
   ): 'minimal' | 'moderate' | 'frequent' {
     if (rate <= 0.15) {
       return 'minimal';
@@ -876,7 +876,7 @@ export class AIBehaviorAnalysisEngine {
   }
 
   private categorizeNoShowRisk(
-    rate: number
+    rate: number,
   ): 'low' | 'moderate' | 'high' | 'critical' {
     if (rate <= 0.05) {
       return 'low';
@@ -891,7 +891,7 @@ export class AIBehaviorAnalysisEngine {
   }
 
   private categorizeAdherence(
-    rate: number
+    rate: number,
   ): 'poor' | 'fair' | 'good' | 'excellent' {
     if (rate <= 0.5) {
       return 'poor';
@@ -908,7 +908,7 @@ export class AIBehaviorAnalysisEngine {
   private calculateOverallEngagement(
     communication: CommunicationStyle,
     appointment: AppointmentBehavior,
-    treatment: TreatmentCompliance
+    treatment: TreatmentCompliance,
   ): 'low' | 'moderate' | 'high' | 'very_high' {
     // Simplified engagement calculation
     let score = 0;
@@ -1058,61 +1058,61 @@ export class AIBehaviorAnalysisEngine {
 
   // Simplified implementations for complex analysis methods
   private analyzeTonePreference(
-    _communications: CommunicationLog[]
+    _communications: CommunicationLog[],
   ): 'formal' | 'casual' | 'technical' | 'empathetic' {
     return 'formal'; // Simplified
   }
 
   private analyzeInformationDepth(
-    _communications: CommunicationLog[]
+    _communications: CommunicationLog[],
   ): 'brief' | 'detailed' | 'comprehensive' {
     return 'detailed'; // Simplified
   }
 
   private analyzeQuestionTendency(
-    _communications: CommunicationLog[]
+    _communications: CommunicationLog[],
   ): 'low' | 'moderate' | 'high' {
     return 'moderate'; // Simplified
   }
 
   private analyzePunctuality(
-    _appointments: Appointment[]
+    _appointments: Appointment[],
   ): 'early' | 'on_time' | 'slightly_late' | 'chronically_late' {
     return 'on_time'; // Simplified
   }
 
   private analyzePreferredTimes(
-    _appointments: Appointment[]
+    _appointments: Appointment[],
   ): TimePreference[] {
     return []; // Simplified
   }
 
   private analyzeFollowUpCompliance(
-    _treatments: TreatmentHistory[]
+    _treatments: TreatmentHistory[],
   ): 'poor' | 'fair' | 'good' | 'excellent' {
     return 'good'; // Simplified
   }
 
   private analyzeAftercareAdherence(
-    _treatments: TreatmentHistory[]
+    _treatments: TreatmentHistory[],
   ): 'poor' | 'fair' | 'good' | 'excellent' {
     return 'good'; // Simplified
   }
 
   private analyzeMedicationCompliance(
-    _treatments: TreatmentHistory[]
+    _treatments: TreatmentHistory[],
   ): 'poor' | 'fair' | 'good' | 'excellent' {
     return 'good'; // Simplified
   }
 
   private analyzeLifestyleModification(
-    _treatments: TreatmentHistory[]
+    _treatments: TreatmentHistory[],
   ): 'resistant' | 'selective' | 'cooperative' | 'proactive' {
     return 'cooperative'; // Simplified
   }
 
   private identifyComplianceBarriers(
-    _treatments: TreatmentHistory[]
+    _treatments: TreatmentHistory[],
   ): ComplianceBarrier[] {
     return []; // Simplified
   }
@@ -1120,7 +1120,7 @@ export class AIBehaviorAnalysisEngine {
   private analyzeDecisionMaking(
     _patient: Patient,
     _appointments: Appointment[],
-    _treatments: TreatmentHistory[]
+    _treatments: TreatmentHistory[],
   ): DecisionMakingPattern {
     return {
       decision_speed: 'deliberate',
@@ -1134,32 +1134,32 @@ export class AIBehaviorAnalysisEngine {
 
   private identifySatisfactionDrivers(
     _treatments: TreatmentHistory[],
-    _communications: CommunicationLog[]
+    _communications: CommunicationLog[],
   ): SatisfactionDriver[] {
     return [];
   }
 
   private identifyBehavioralTriggers(
     _appointments: Appointment[],
-    _communications: CommunicationLog[]
+    _communications: CommunicationLog[],
   ): BehaviorTrigger[] {
     return [];
   }
 
   private analyzeAppointmentEngagementPattern(
-    _appointments: Appointment[]
+    _appointments: Appointment[],
   ): EngagementPattern | null {
     return null; // Simplified
   }
 
   private analyzeTreatmentEngagementPattern(
-    _treatments: TreatmentHistory[]
+    _treatments: TreatmentHistory[],
   ): EngagementPattern | null {
     return null; // Simplified
   }
 
   private analyzeCommunicationEngagementPattern(
-    _communications: CommunicationLog[]
+    _communications: CommunicationLog[],
   ): EngagementPattern | null {
     return null; // Simplified
   }
@@ -1167,7 +1167,7 @@ export class AIBehaviorAnalysisEngine {
   private calculateAnalysisConfidence(
     appointments: Appointment[],
     treatments: TreatmentHistory[],
-    communications: CommunicationLog[]
+    communications: CommunicationLog[],
   ): number {
     // Calculate confidence based on data availability
     const dataPoints =
@@ -1177,13 +1177,13 @@ export class AIBehaviorAnalysisEngine {
 
   private calculateNextAnalysisDate(
     profile: BehaviorProfile,
-    risks: BehaviorRiskIndicator[]
+    risks: BehaviorRiskIndicator[],
   ): Date {
     const nextDate = new Date();
 
     // Determine analysis frequency based on risk level
     const highRisks = risks.filter(
-      (r) => r.severity === 'high' || r.severity === 'critical'
+      (r) => r.severity === 'high' || r.severity === 'critical',
     ).length;
 
     if (highRisks > 0) {
@@ -1199,7 +1199,7 @@ export class AIBehaviorAnalysisEngine {
 
   private storeBehaviorAnalysis(
     patientId: string,
-    analysis: BehaviorAnalysis
+    analysis: BehaviorAnalysis,
   ): void {
     const history = this.behaviorHistory.get(patientId) || [];
     history.push(analysis);
@@ -1215,7 +1215,7 @@ export class AIBehaviorAnalysisEngine {
   // Additional prediction methods (simplified implementations)
   private async predictAppointmentBehavior(
     _analysis: BehaviorAnalysis,
-    _context: any
+    _context: any,
   ): Promise<BehaviorPrediction> {
     return {
       prediction_type: 'appointment_adherence',
@@ -1229,7 +1229,7 @@ export class AIBehaviorAnalysisEngine {
 
   private async predictTreatmentCompliance(
     _analysis: BehaviorAnalysis,
-    _context: any
+    _context: any,
   ): Promise<BehaviorPrediction> {
     return {
       prediction_type: 'treatment_compliance',
@@ -1243,7 +1243,7 @@ export class AIBehaviorAnalysisEngine {
 
   private async predictCommunicationBehavior(
     _analysis: BehaviorAnalysis,
-    _context: any
+    _context: any,
   ): Promise<BehaviorPrediction> {
     return {
       prediction_type: 'communication_responsiveness',
@@ -1260,7 +1260,7 @@ export class AIBehaviorAnalysisEngine {
 
   private async predictSatisfactionBehavior(
     _analysis: BehaviorAnalysis,
-    _context: any
+    _context: any,
   ): Promise<BehaviorPrediction> {
     return {
       prediction_type: 'satisfaction_outcome',
@@ -1328,7 +1328,7 @@ export class AIBehaviorAnalysisEngine {
     engagement: number,
     compliance: number,
     communication: number,
-    risk: number
+    risk: number,
   ): string {
     const overallScore = (engagement + compliance + communication - risk) / 3;
 
@@ -1372,7 +1372,7 @@ export class AIBehaviorAnalysisEngine {
 
   private selectEngagementTactics(
     segment: PatientSegment,
-    _profile: BehaviorProfile
+    _profile: BehaviorProfile,
   ): string[] {
     return segment.engagement_strategies;
   }
@@ -1387,7 +1387,7 @@ export class AIBehaviorAnalysisEngine {
 
   private defineSuccessMetrics(
     segment: PatientSegment,
-    _profile: BehaviorProfile
+    _profile: BehaviorProfile,
   ): string[] {
     return segment.success_metrics;
   }
@@ -1403,7 +1403,7 @@ export class AIBehaviorAnalysisEngine {
 
   private analyzeChannelEffectiveness(
     _communications: CommunicationLog[],
-    _outcomes: any[]
+    _outcomes: any[],
   ): any {
     return { most_effective: 'email', least_effective: 'sms' };
   }
@@ -1414,13 +1414,13 @@ export class AIBehaviorAnalysisEngine {
 
   private analyzeContentEffectiveness(
     _communications: CommunicationLog[],
-    _outcomes: any[]
+    _outcomes: any[],
   ): any {
     return { effective_content_types: ['educational', 'reminder'] };
   }
 
   private generateCommunicationRecommendations(
-    _communications: CommunicationLog[]
+    _communications: CommunicationLog[],
   ): string[] {
     return ['Use preferred channels', 'Optimize timing', 'Personalize content'];
   }
@@ -1445,7 +1445,7 @@ export class AIBehaviorAnalysisEngine {
 
   private calculateAnomalySeverity(
     current: number,
-    baseline: number
+    baseline: number,
   ): 'low' | 'moderate' | 'high' {
     const deviation = Math.abs(current - baseline);
     if (deviation > 0.4) {
@@ -1459,7 +1459,7 @@ export class AIBehaviorAnalysisEngine {
 
   private getEngagementAnomalyRecommendations(
     current: number,
-    baseline: number
+    baseline: number,
   ): string[] {
     if (current < baseline) {
       return [
@@ -1473,14 +1473,14 @@ export class AIBehaviorAnalysisEngine {
 
   private detectAppointmentAnomalies(
     _recent: any,
-    _history: BehaviorAnalysis[]
+    _history: BehaviorAnalysis[],
   ): any[] {
     return []; // Simplified
   }
 
   private detectCommunicationAnomalies(
     _recent: any,
-    _history: BehaviorAnalysis[]
+    _history: BehaviorAnalysis[],
   ): any[] {
     return []; // Simplified
   }

@@ -18,7 +18,7 @@ export async function GET(request: NextRequest) {
     if (authError || !user) {
       return NextResponse.json(
         { error: 'Authentication required' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -37,7 +37,7 @@ export async function GET(request: NextRequest) {
     if (!clinicId) {
       return NextResponse.json(
         { error: 'clinic_id parameter is required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -52,7 +52,7 @@ export async function GET(request: NextRequest) {
     if (!professional) {
       return NextResponse.json(
         { error: 'Access denied to this clinic' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -62,7 +62,7 @@ export async function GET(request: NextRequest) {
       periodType,
       kpiNames,
       customStart,
-      customEnd
+      customEnd,
     );
 
     return NextResponse.json({
@@ -82,7 +82,7 @@ export async function GET(request: NextRequest) {
         error: 'Failed to fetch KPI data',
         details: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -99,7 +99,7 @@ export async function POST(request: NextRequest) {
     if (authError || !user) {
       return NextResponse.json(
         { error: 'Authentication required' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -120,7 +120,7 @@ export async function POST(request: NextRequest) {
           error:
             'Missing required fields: clinic_id, kpi_name, kpi_value, period_type',
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -135,7 +135,7 @@ export async function POST(request: NextRequest) {
     if (!professional) {
       return NextResponse.json(
         { error: 'Access denied to this clinic' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -153,7 +153,7 @@ export async function POST(request: NextRequest) {
         error: 'Failed to save KPI data',
         details: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

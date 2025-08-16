@@ -99,7 +99,7 @@ export class IntegratedSessionSecurity {
     sessionId: string,
     userId: string,
     request: NextRequest,
-    config: Partial<SecurityConfig> = {}
+    config: Partial<SecurityConfig> = {},
   ): Promise<boolean> {
     try {
       const fullConfig = {
@@ -114,7 +114,7 @@ export class IntegratedSessionSecurity {
         await SessionHijackingProtection.storeSessionFingerprint(
           sessionId,
           userId,
-          fingerprint
+          fingerprint,
         );
       }
 
@@ -129,7 +129,7 @@ export class IntegratedSessionSecurity {
             extendOnActivity: fullConfig.timeout.extendOnActivity,
             requireReauthForSensitive: true,
             gracePeriodMinutes: 2,
-          }
+          },
         );
       }
 
@@ -139,7 +139,7 @@ export class IntegratedSessionSecurity {
           await SessionHijackingProtection.detectConcurrentSessions(
             userId,
             sessionId,
-            fullConfig.concurrentSessions.maxSessions
+            fullConfig.concurrentSessions.maxSessions,
           );
 
         if (
@@ -147,7 +147,7 @@ export class IntegratedSessionSecurity {
           fullConfig.concurrentSessions.terminateOldest
         ) {
           await SessionHijackingProtection.terminateSessions(
-            concurrentCheck.sessionsToTerminate
+            concurrentCheck.sessionsToTerminate,
           );
         }
       }
@@ -155,7 +155,7 @@ export class IntegratedSessionSecurity {
       // Store security configuration
       await IntegratedSessionSecurity.storeSecurityConfig(
         sessionId,
-        fullConfig
+        fullConfig,
       );
 
       return true;
@@ -169,7 +169,7 @@ export class IntegratedSessionSecurity {
    */
   static async performSecurityCheck(
     request: NextRequest,
-    sessionId?: string
+    sessionId?: string,
   ): Promise<SecurityCheckResult> {
     try {
       let riskScore = 0;
@@ -212,7 +212,7 @@ export class IntegratedSessionSecurity {
         const hijackingCheck =
           await SessionHijackingProtection.validateSessionFingerprint(
             sessionId,
-            fingerprint
+            fingerprint,
           );
 
         riskScore += hijackingCheck.riskScore;
@@ -233,7 +233,7 @@ export class IntegratedSessionSecurity {
         ) {
           requiresReauth = true;
           warnings.push(
-            'Session security risk detected - reauthentication required'
+            'Session security risk detected - reauthentication required',
           );
         } else if (
           hijackingCheck.riskScore >= config.hijackingProtection.riskThreshold
@@ -260,7 +260,7 @@ export class IntegratedSessionSecurity {
         if (timeoutCheck.requiresReauth) {
           requiresReauth = true;
           warnings.push(
-            'Session approaching timeout - reauthentication recommended'
+            'Session approaching timeout - reauthentication recommended',
           );
         }
 
@@ -321,7 +321,7 @@ export class IntegratedSessionSecurity {
       const securityResult =
         await IntegratedSessionSecurity.performSecurityCheck(
           request,
-          sessionId
+          sessionId,
         );
 
       // Handle security decision
@@ -336,7 +336,7 @@ export class IntegratedSessionSecurity {
           {
             status: securityResult.action === 'terminate' ? 401 : 403,
             headers: { 'Content-Type': 'application/json' },
-          }
+          },
         );
 
         return response;
@@ -354,7 +354,7 @@ export class IntegratedSessionSecurity {
       if (securityResult.warnings) {
         response.headers.set(
           'X-Security-Warnings',
-          securityResult.warnings.join('; ')
+          securityResult.warnings.join('; '),
         );
       }
 
@@ -362,7 +362,7 @@ export class IntegratedSessionSecurity {
       if (process.env.NODE_ENV === 'development') {
         response.headers.set(
           'X-Security-Risk-Score',
-          securityResult.riskScore.toString()
+          securityResult.riskScore.toString(),
         );
       }
 
@@ -374,7 +374,7 @@ export class IntegratedSessionSecurity {
    * Get session security context
    */
   static async getSessionSecurityContext(
-    sessionId: string
+    sessionId: string,
   ): Promise<SessionSecurityContext | null> {
     try {
       const supabase = createClient();
@@ -428,7 +428,7 @@ export class IntegratedSessionSecurity {
    */
   private static async storeSecurityConfig(
     sessionId: string,
-    config: SecurityConfig
+    config: SecurityConfig,
   ): Promise<void> {
     try {
       const supabase = createClient();
@@ -445,7 +445,7 @@ export class IntegratedSessionSecurity {
    * Get security configuration
    */
   private static async getSecurityConfig(
-    sessionId: string
+    sessionId: string,
   ): Promise<SecurityConfig> {
     try {
       const supabase = createClient();
@@ -473,7 +473,7 @@ export class IntegratedSessionSecurity {
       // Cleanup old security events (older than 90 days)
       const supabase = createClient();
       const ninetyDaysAgo = new Date(
-        Date.now() - 90 * 24 * 60 * 60 * 1000
+        Date.now() - 90 * 24 * 60 * 60 * 1000,
       ).toISOString();
 
       await supabase

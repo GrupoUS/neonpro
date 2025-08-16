@@ -104,14 +104,14 @@ type ComplianceMetrics = {
 const ComplianceReports: React.FC = () => {
   const [reports, setReports] = useState<ComplianceReport[]>([]);
   const [filteredReports, setFilteredReports] = useState<ComplianceReport[]>(
-    []
+    [],
   );
   const [templates, setTemplates] = useState<ComplianceTemplate[]>([]);
   const [metrics, setMetrics] = useState<ComplianceMetrics | null>(null);
   const [loading, setLoading] = useState(true);
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const [selectedReport, setSelectedReport] = useState<ComplianceReport | null>(
-    null
+    null,
   );
   const [showDetailsDialog, setShowDetailsDialog] = useState(false);
   const [filters, setFilters] = useState({
@@ -187,14 +187,14 @@ const ComplianceReports: React.FC = () => {
     if (filters.dateFrom) {
       const fromDate = new Date(filters.dateFrom);
       filtered = filtered.filter(
-        (report) => new Date(report.created_at) >= fromDate
+        (report) => new Date(report.created_at) >= fromDate,
       );
     }
 
     if (filters.dateTo) {
       const toDate = new Date(filters.dateTo);
       filtered = filtered.filter(
-        (report) => new Date(report.created_at) <= toDate
+        (report) => new Date(report.created_at) <= toDate,
       );
     }
 
@@ -203,7 +203,7 @@ const ComplianceReports: React.FC = () => {
       filtered = filtered.filter(
         (report) =>
           report.title.toLowerCase().includes(term) ||
-          report.id.toLowerCase().includes(term)
+          report.id.toLowerCase().includes(term),
       );
     }
 
@@ -247,7 +247,7 @@ const ComplianceReports: React.FC = () => {
         `/api/backup/compliance/reports/${reportId}/generate`,
         {
           method: 'POST',
-        }
+        },
       );
 
       if (response.ok) {
@@ -263,11 +263,11 @@ const ComplianceReports: React.FC = () => {
 
   const handleDownloadReport = async (
     reportId: string,
-    format: 'PDF' | 'XLSX' = 'PDF'
+    format: 'PDF' | 'XLSX' = 'PDF',
   ) => {
     try {
       const response = await fetch(
-        `/api/backup/compliance/reports/${reportId}/download?format=${format}`
+        `/api/backup/compliance/reports/${reportId}/download?format=${format}`,
       );
 
       if (response.ok) {

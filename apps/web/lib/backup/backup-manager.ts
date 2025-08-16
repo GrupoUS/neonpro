@@ -41,7 +41,7 @@ export class BackupManager {
   constructor() {
     this.supabase = createClient(
       process.env.SUPABASE_URL!,
-      process.env.SUPABASE_ANON_KEY!
+      process.env.SUPABASE_ANON_KEY!,
     );
 
     this.storageProvider = new StorageProvider();
@@ -58,7 +58,7 @@ export class BackupManager {
    * Criar nova configuração de backup
    */
   async createBackupConfig(
-    config: Omit<BackupConfig, 'id' | 'createdAt' | 'updatedAt'>
+    config: Omit<BackupConfig, 'id' | 'createdAt' | 'updatedAt'>,
   ): Promise<ApiResponse<BackupConfig>> {
     try {
       // Validar configuração
@@ -113,7 +113,7 @@ export class BackupManager {
    */
   async updateBackupConfig(
     id: string,
-    updates: Partial<BackupConfig>
+    updates: Partial<BackupConfig>,
   ): Promise<ApiResponse<BackupConfig>> {
     try {
       const updatedConfig = {
@@ -162,7 +162,7 @@ export class BackupManager {
    * Listar configurações de backup
    */
   async listBackupConfigs(
-    options?: PaginationOptions
+    options?: PaginationOptions,
   ): Promise<ApiResponse<PaginatedResult<BackupConfig>>> {
     try {
       const {
@@ -213,7 +213,7 @@ export class BackupManager {
    */
   async executeBackup(
     configId: string,
-    userId: string
+    userId: string,
   ): Promise<ApiResponse<BackupRecord>> {
     try {
       // Buscar configuração
@@ -295,7 +295,7 @@ export class BackupManager {
    */
   private async performBackup(
     record: BackupRecord,
-    config: BackupConfig
+    config: BackupConfig,
   ): Promise<void> {
     const progress: BackupProgress = {
       backupId: record.id,
@@ -330,7 +330,7 @@ export class BackupManager {
           status: BackupStatus.COMPLETED,
           endTime: new Date(),
           duration: Math.floor(
-            (Date.now() - record.startTime.getTime()) / 1000
+            (Date.now() - record.startTime.getTime()) / 1000,
           ),
           size: backupResult.size,
           compressedSize: backupResult.compressedSize,
@@ -359,7 +359,7 @@ export class BackupManager {
         details: {
           size: backupResult.size,
           duration: Math.floor(
-            (Date.now() - record.startTime.getTime()) / 1000
+            (Date.now() - record.startTime.getTime()) / 1000,
           ),
           filesCount: backupResult.filesCount,
         },
@@ -370,14 +370,14 @@ export class BackupManager {
       await this.updateBackupStatus(
         record.id,
         BackupStatus.FAILED,
-        error.message
+        error.message,
       );
 
       // Notificar falha
       await this.monitoring.notifyBackupFailure(
         record.id,
         config,
-        error.message
+        error.message,
       );
 
       await auditLogger.log({
@@ -397,7 +397,7 @@ export class BackupManager {
    */
   private async executeBackupByType(
     config: BackupConfig,
-    progress: BackupProgress
+    progress: BackupProgress,
   ): Promise<{
     path: string;
     size: number;
@@ -461,7 +461,7 @@ export class BackupManager {
     if (config.compression.enabled) {
       const compressedResult = await this.compressBackup(
         results.path,
-        config.compression
+        config.compression,
       );
       results.compressedSize = compressedResult.size;
       results.path = compressedResult.path;
@@ -471,7 +471,7 @@ export class BackupManager {
     if (config.encryption.enabled) {
       const encryptedResult = await this.encryptBackup(
         results.path,
-        config.encryption
+        config.encryption,
       );
       results.path = encryptedResult.path;
     }
@@ -485,7 +485,7 @@ export class BackupManager {
 
   private async backupDatabase(
     _config: BackupConfig,
-    _progress: BackupProgress
+    _progress: BackupProgress,
   ) {
     // Implementar backup do banco de dados
     // Usar pg_dump para PostgreSQL/Supabase
@@ -514,7 +514,7 @@ export class BackupManager {
 
   private async backupDocuments(
     _config: BackupConfig,
-    _progress: BackupProgress
+    _progress: BackupProgress,
   ) {
     // Implementar backup de documentos
     return { size: 0, filesCount: 0 };
@@ -528,7 +528,7 @@ export class BackupManager {
    * Solicitar recuperação
    */
   async requestRecovery(
-    request: Omit<RecoveryRequest, 'id' | 'requestedAt' | 'status'>
+    request: Omit<RecoveryRequest, 'id' | 'requestedAt' | 'status'>,
   ): Promise<ApiResponse<RecoveryRequest>> {
     try {
       const recoveryRequest: RecoveryRequest = {
@@ -577,12 +577,12 @@ export class BackupManager {
    */
   async getBackupMetrics(
     startDate?: Date,
-    endDate?: Date
+    endDate?: Date,
   ): Promise<ApiResponse<BackupMetrics>> {
     try {
       const metrics = await this.monitoring.calculateMetrics(
         startDate,
-        endDate
+        endDate,
       );
 
       return {
@@ -601,7 +601,7 @@ export class BackupManager {
    */
   async listBackups(
     filter?: BackupFilter,
-    options?: PaginationOptions
+    options?: PaginationOptions,
   ): Promise<ApiResponse<PaginatedResult<BackupRecord>>> {
     try {
       const {
@@ -693,7 +693,7 @@ export class BackupManager {
   private async updateBackupStatus(
     backupId: string,
     status: BackupStatus,
-    error?: string
+    error?: string,
   ): Promise<void> {
     const updates: any = {
       status,
@@ -745,12 +745,12 @@ export class BackupManager {
     const retention = config.retention;
     const now = new Date();
     const cutoffDate = new Date(
-      now.getTime() - retention.maxAge * 24 * 60 * 60 * 1000
+      now.getTime() - retention.maxAge * 24 * 60 * 60 * 1000,
     );
 
     // Remover backups antigos
     const toDelete = oldBackups.filter(
-      (backup) => new Date(backup.startTime) < cutoffDate
+      (backup) => new Date(backup.startTime) < cutoffDate,
     );
 
     for (const backup of toDelete) {
@@ -791,7 +791,7 @@ export class BackupManager {
       const progress = this.activeBackups.get(configId);
       if (!progress) {
         throw new Error(
-          'Nenhum backup ativo encontrado para esta configuração'
+          'Nenhum backup ativo encontrado para esta configuração',
         );
       }
 

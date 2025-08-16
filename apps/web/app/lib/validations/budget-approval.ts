@@ -150,7 +150,7 @@ export const createBudgetRequestSchema = z.object({
           .enum(['low', 'medium', 'high', 'critical'])
           .default('medium'),
         notes: z.string().optional(),
-      })
+      }),
     )
     .optional(),
 });
@@ -180,7 +180,7 @@ export const createApprovalRequestSchema = z.object({
       total_price: z.number().positive(),
       category: z.string().optional(),
       urgency: z.enum(['low', 'medium', 'high', 'critical']).default('medium'),
-    })
+    }),
   ),
   justification: z
     .string()
@@ -286,7 +286,7 @@ export const budgetUtilizationSummarySchema = z.object({
       spent: z.number(),
       available: z.number(),
       utilization: z.number(),
-    })
+    }),
   ),
   period_start: z.string().datetime(),
   period_end: z.string().datetime(),
@@ -310,7 +310,7 @@ export const approvalWorkflowPerformanceSchema = z.object({
       approver: z.string(),
       avg_time_hours: z.number(),
       pending_count: z.number().int(),
-    })
+    }),
   ),
   period_start: z.string().datetime(),
   period_end: z.string().datetime(),

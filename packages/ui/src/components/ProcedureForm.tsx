@@ -17,7 +17,7 @@ import {
 import { Textarea } from './Textarea';
 import { TimePicker } from './TimePicker';
 
-export type ProcedureFormProps = {
+type ProcedureFormProps = {
   procedure?: Partial<ProcedureData>;
   availablePractitioners: PractitionerData[];
   availableTreatments: TreatmentData[];
@@ -543,4 +543,3 @@ const ListField: React.FC<ListFieldProps> = ({
 ProcedureForm.displayName = 'ProcedureForm';
 
 export { ProcedureForm };
-export type { ProcedureFormProps };

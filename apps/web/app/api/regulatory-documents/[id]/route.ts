@@ -22,7 +22,7 @@ const UpdateDocumentSchema = z.object({
 // GET /api/regulatory-documents/[id] - Get single document by ID
 export async function GET(
   _request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const supabase = await createClient();
@@ -63,7 +63,7 @@ export async function GET(
         ),
         profiles!regulatory_documents_created_by_fkey(full_name),
         profiles!regulatory_documents_updated_by_fkey(full_name)
-      `
+      `,
       )
       .eq('id', id)
       .single();
@@ -72,12 +72,12 @@ export async function GET(
       if (error.code === 'PGRST116') {
         return NextResponse.json(
           { error: 'Document not found' },
-          { status: 404 }
+          { status: 404 },
         );
       }
       return NextResponse.json(
         { error: 'Failed to fetch document' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -85,7 +85,7 @@ export async function GET(
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -93,7 +93,7 @@ export async function GET(
 // PUT /api/regulatory-documents/[id] - Update document
 export async function PUT(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const supabase = await createClient();
@@ -124,12 +124,12 @@ export async function PUT(
       if (fetchError.code === 'PGRST116') {
         return NextResponse.json(
           { error: 'Document not found' },
-          { status: 404 }
+          { status: 404 },
         );
       }
       return NextResponse.json(
         { error: 'Failed to fetch document' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -146,14 +146,14 @@ export async function PUT(
         `
         *,
         regulation_categories!inner(name, authority_name)
-      `
+      `,
       )
       .single();
 
     if (error) {
       return NextResponse.json(
         { error: 'Failed to update document' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -176,12 +176,12 @@ export async function PUT(
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Invalid document data', details: error.errors },
-        { status: 400 }
+        { status: 400 },
       );
     }
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -189,7 +189,7 @@ export async function PUT(
 // DELETE /api/regulatory-documents/[id] - Delete document
 export async function DELETE(
   _request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const supabase = await createClient();
@@ -216,12 +216,12 @@ export async function DELETE(
       if (fetchError.code === 'PGRST116') {
         return NextResponse.json(
           { error: 'Document not found' },
-          { status: 404 }
+          { status: 404 },
         );
       }
       return NextResponse.json(
         { error: 'Failed to fetch document' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -234,7 +234,7 @@ export async function DELETE(
     if (error) {
       return NextResponse.json(
         { error: 'Failed to delete document' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -242,7 +242,7 @@ export async function DELETE(
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

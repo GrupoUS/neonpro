@@ -1,39 +1,38 @@
 /**
  * 🔐 HEALTHCARE FIELD-LEVEL ENCRYPTION SYSTEM
- * 
+ *
  * Constitutional LGPD compliance for Brazilian healthcare with:
  * - Healthcare data classification system (Highly Sensitive, Sensitive, Standard, Public)
  * - AES-256 encryption for sensitive patient medical information
  * - Secure encryption key management and rotation
  * - Performance optimization: Encryption/decryption <500ms
  * - Data sovereignty: São Paulo region compliance
- * 
+ *
  * Quality Standard: ≥9.9/10 (Healthcare Regulatory Compliance)
  * Compliance: LGPD + ANVISA + CFM + Brazilian Constitutional Requirements
  */
 
-
 // 🏥 HEALTHCARE DATA CLASSIFICATION (Constitutional Privacy Protection)
 export enum HealthcareDataClassification {
   // 🚨 HIGHLY SENSITIVE - Maximum Protection Required
-  HIGHLY_SENSITIVE = 'highly_sensitive',  // Medical history, treatment details, diagnostic images
-  
-  // 🔒 SENSITIVE - Strong Protection Required  
-  SENSITIVE = 'sensitive',                // Personal identification (CPF), contact information
-  
+  HIGHLY_SENSITIVE = 'highly_sensitive', // Medical history, treatment details, diagnostic images
+
+  // 🔒 SENSITIVE - Strong Protection Required
+  SENSITIVE = 'sensitive', // Personal identification (CPF), contact information
+
   // 📋 STANDARD - Standard Protection
-  STANDARD = 'standard',                  // Appointment scheduling, clinic preferences
-  
+  STANDARD = 'standard', // Appointment scheduling, clinic preferences
+
   // 🌐 PUBLIC - No encryption required
-  PUBLIC = 'public'                       // Clinic information, general procedures
+  PUBLIC = 'public', // Clinic information, general procedures
 }
 
 // 🔐 ENCRYPTION ALGORITHMS (Constitutional Security Standards)
 export enum EncryptionAlgorithm {
-  AES_256_GCM = 'aes-256-gcm',           // For highly sensitive data
-  AES_256_CBC = 'aes-256-cbc',           // For sensitive data  
-  AES_128_GCM = 'aes-128-gcm',           // For standard data
-  NONE = 'none'                          // For public data
+  AES_256_GCM = 'aes-256-gcm', // For highly sensitive data
+  AES_256_CBC = 'aes-256-cbc', // For sensitive data
+  AES_128_GCM = 'aes-128-gcm', // For standard data
+  NONE = 'none', // For public data
 }
 
 // 🔑 ENCRYPTION CONFIGURATION (Constitutional Data Protection)
@@ -43,29 +42,29 @@ export const ENCRYPTION_CONFIG = {
     keyLength: 32,
     ivLength: 16,
     tagLength: 16,
-    performanceTarget: 300 // ms - strictest performance for medical workflows
+    performanceTarget: 300, // ms - strictest performance for medical workflows
   },
   [HealthcareDataClassification.SENSITIVE]: {
     algorithm: EncryptionAlgorithm.AES_256_CBC,
     keyLength: 32,
     ivLength: 16,
     tagLength: 0,
-    performanceTarget: 400 // ms
+    performanceTarget: 400, // ms
   },
   [HealthcareDataClassification.STANDARD]: {
     algorithm: EncryptionAlgorithm.AES_128_GCM,
     keyLength: 16,
     ivLength: 12,
     tagLength: 16,
-    performanceTarget: 500 // ms
+    performanceTarget: 500, // ms
   },
   [HealthcareDataClassification.PUBLIC]: {
     algorithm: EncryptionAlgorithm.NONE,
     keyLength: 0,
     ivLength: 0,
     tagLength: 0,
-    performanceTarget: 50 // ms - minimal processing
-  }
+    performanceTarget: 50, // ms - minimal processing
+  },
 };
 
 // 📋 FIELD ENCRYPTION SCHEMA (Constitutional Patient Data Mapping)
@@ -77,8 +76,8 @@ export const HEALTHCARE_FIELD_CLASSIFICATION = {
   prescription_details: HealthcareDataClassification.HIGHLY_SENSITIVE,
   mental_health_notes: HealthcareDataClassification.HIGHLY_SENSITIVE,
   genetic_information: HealthcareDataClassification.HIGHLY_SENSITIVE,
-  
-  // 🔒 SENSITIVE FIELDS  
+
+  // 🔒 SENSITIVE FIELDS
   cpf: HealthcareDataClassification.SENSITIVE,
   rg: HealthcareDataClassification.SENSITIVE,
   email: HealthcareDataClassification.SENSITIVE,
@@ -87,26 +86,27 @@ export const HEALTHCARE_FIELD_CLASSIFICATION = {
   address_line1: HealthcareDataClassification.SENSITIVE,
   address_line2: HealthcareDataClassification.SENSITIVE,
   birth_date: HealthcareDataClassification.SENSITIVE,
-  
+
   // 📋 STANDARD FIELDS
   appointment_preferences: HealthcareDataClassification.STANDARD,
   communication_preferences: HealthcareDataClassification.STANDARD,
   insurance_provider: HealthcareDataClassification.STANDARD,
   emergency_contact_name: HealthcareDataClassification.STANDARD,
-  
+
   // 🌐 PUBLIC FIELDS (No encryption)
   clinic_id: HealthcareDataClassification.PUBLIC,
   appointment_status: HealthcareDataClassification.PUBLIC,
-  procedure_category: HealthcareDataClassification.PUBLIC
+  procedure_category: HealthcareDataClassification.PUBLIC,
 };
 
 /**
  * 🔐 HEALTHCARE FIELD-LEVEL ENCRYPTION MANAGER
- * 
+ *
  * Constitutional LGPD compliance with healthcare-specific requirements
- */export class HealthcareFieldEncryption {
-
-  constructor(readonly _masterKey: string,readonly _dataRegion: string = 'sa-east-1' // São Paulo region for data sovereignty
+ */ export class HealthcareFieldEncryption {
+  constructor(
+    readonly _masterKey: string,
+    readonly _dataRegion: string = 'sa-east-1', // São Paulo region for data sovereignty
   ) {
     this.validateDataSovereignty();
   }
@@ -118,58 +118,81 @@ export const HEALTHCARE_FIELD_CLASSIFICATION = {
     fieldName: string,
     value: string,
     patientId: string,
-    clinicId: string
-  ): Promise<{ success: boolean; encryptedValue?: string; error?: string; performanceMs?: number }> {
+    clinicId: string,
+  ): Promise<{
+    success: boolean;
+    encryptedValue?: string;
+    error?: string;
+    performanceMs?: number;
+  }> {
     const startTime = Date.now();
 
     try {
       if (!value || value.trim() === '') {
-        return { success: true, encryptedValue: '', performanceMs: Date.now() - startTime };
+        return {
+          success: true,
+          encryptedValue: '',
+          performanceMs: Date.now() - startTime,
+        };
       }
 
       // 🏥 Determine data classification for field
-      const classification = HEALTHCARE_FIELD_CLASSIFICATION[fieldName as keyof typeof HEALTHCARE_FIELD_CLASSIFICATION] 
-        || HealthcareDataClassification.STANDARD;
+      const classification =
+        HEALTHCARE_FIELD_CLASSIFICATION[
+          fieldName as keyof typeof HEALTHCARE_FIELD_CLASSIFICATION
+        ] || HealthcareDataClassification.STANDARD;
 
       // 🌐 Skip encryption for public fields
       if (classification === HealthcareDataClassification.PUBLIC) {
-        return { 
-          success: true, 
-          encryptedValue: value, 
-          performanceMs: Date.now() - startTime 
+        return {
+          success: true,
+          encryptedValue: value,
+          performanceMs: Date.now() - startTime,
         };
       }
 
       // 🔑 Get or generate field-specific encryption key
-      const fieldKey = await this.getFieldEncryptionKey(fieldName, patientId, clinicId, classification);
-      
+      const fieldKey = await this.getFieldEncryptionKey(
+        fieldName,
+        patientId,
+        clinicId,
+        classification,
+      );
+
       // 🔐 Encrypt based on classification level
-      const encryptedData = await this.performEncryption(value, fieldKey, classification);
-      
+      const encryptedData = await this.performEncryption(
+        value,
+        fieldKey,
+        classification,
+      );
+
       // 📊 Performance monitoring (<500ms constitutional requirement)
       const duration = Date.now() - startTime;
       this.trackPerformance(fieldName, duration);
-      
+
       const config = ENCRYPTION_CONFIG[classification];
       if (duration > config.performanceTarget) {
       }
 
       // 📋 Format encrypted value with metadata for constitutional compliance
-      const encryptedValue = this.formatEncryptedValue(encryptedData, classification, fieldName);
+      const encryptedValue = this.formatEncryptedValue(
+        encryptedData,
+        classification,
+        fieldName,
+      );
 
-      return { 
-        success: true, 
-        encryptedValue, 
-        performanceMs: duration 
+      return {
+        success: true,
+        encryptedValue,
+        performanceMs: duration,
       };
-
     } catch (error) {
       const duration = Date.now() - startTime;
-      
-      return { 
-        success: false, 
+
+      return {
+        success: false,
         error: error instanceof Error ? error.message : 'Encryption failed',
-        performanceMs: duration
+        performanceMs: duration,
       };
     }
   }
@@ -181,25 +204,36 @@ export const HEALTHCARE_FIELD_CLASSIFICATION = {
     fieldName: string,
     encryptedValue: string,
     patientId: string,
-    clinicId: string
-  ): Promise<{ success: boolean; decryptedValue?: string; error?: string; performanceMs?: number }> {
+    clinicId: string,
+  ): Promise<{
+    success: boolean;
+    decryptedValue?: string;
+    error?: string;
+    performanceMs?: number;
+  }> {
     const startTime = Date.now();
 
     try {
       if (!encryptedValue || encryptedValue.trim() === '') {
-        return { success: true, decryptedValue: '', performanceMs: Date.now() - startTime };
+        return {
+          success: true,
+          decryptedValue: '',
+          performanceMs: Date.now() - startTime,
+        };
       }
 
       // 🏥 Determine data classification for field
-      const classification = HEALTHCARE_FIELD_CLASSIFICATION[fieldName as keyof typeof HEALTHCARE_FIELD_CLASSIFICATION] 
-        || HealthcareDataClassification.STANDARD;
+      const classification =
+        HEALTHCARE_FIELD_CLASSIFICATION[
+          fieldName as keyof typeof HEALTHCARE_FIELD_CLASSIFICATION
+        ] || HealthcareDataClassification.STANDARD;
 
       // 🌐 Return as-is for public fields
       if (classification === HealthcareDataClassification.PUBLIC) {
-        return { 
-          success: true, 
-          decryptedValue: encryptedValue, 
-          performanceMs: Date.now() - startTime 
+        return {
+          success: true,
+          decryptedValue: encryptedValue,
+          performanceMs: Date.now() - startTime,
         };
       }
 
@@ -210,45 +244,53 @@ export const HEALTHCARE_FIELD_CLASSIFICATION = {
       }
 
       // 🔑 Get field-specific encryption key
-      const fieldKey = await this.getFieldEncryptionKey(fieldName, patientId, clinicId, classification);
-      
+      const fieldKey = await this.getFieldEncryptionKey(
+        fieldName,
+        patientId,
+        clinicId,
+        classification,
+      );
+
       // 🔓 Decrypt based on classification level
-      const decryptedValue = await this.performDecryption(encryptedData, fieldKey, classification);
-      
+      const decryptedValue = await this.performDecryption(
+        encryptedData,
+        fieldKey,
+        classification,
+      );
+
       // 📊 Performance monitoring
       const duration = Date.now() - startTime;
       this.trackPerformance(`${fieldName}_decrypt`, duration);
-      
+
       const config = ENCRYPTION_CONFIG[classification];
       if (duration > config.performanceTarget) {
       }
 
-      return { 
-        success: true, 
-        decryptedValue, 
-        performanceMs: duration 
+      return {
+        success: true,
+        decryptedValue,
+        performanceMs: duration,
       };
-
     } catch (error) {
       const duration = Date.now() - startTime;
-      
-      return { 
-        success: false, 
+
+      return {
+        success: false,
         error: error instanceof Error ? error.message : 'Decryption failed',
-        performanceMs: duration
+        performanceMs: duration,
       };
     }
-  }  /**
+  } /**
    * 🔑 GET FIELD ENCRYPTION KEY - Constitutional Key Management
    */
   private async getFieldEncryptionKey(
     fieldName: string,
     patientId: string,
     clinicId: string,
-    classification: HealthcareDataClassification
+    classification: HealthcareDataClassification,
   ): Promise<Buffer> {
     const keyIdentifier = `${clinicId}:${patientId}:${fieldName}:${classification}`;
-    
+
     // 🚀 Performance: Check key cache first
     if (this.keyCache.has(keyIdentifier)) {
       return this.keyCache.get(keyIdentifier)!;
@@ -262,18 +304,21 @@ export const HEALTHCARE_FIELD_CLASSIFICATION = {
         .digest();
 
       const config = ENCRYPTION_CONFIG[classification];
-      const derivedKey = await this.scryptAsync(this.masterKey, salt, config.keyLength) as Buffer;
+      const derivedKey = (await this.scryptAsync(
+        this.masterKey,
+        salt,
+        config.keyLength,
+      )) as Buffer;
 
       // 🚀 Cache the key for performance (constitutional requirement <500ms)
       this.keyCache.set(keyIdentifier, derivedKey);
-      
+
       // 🔄 Automatic cache cleanup to prevent memory issues
       if (this.keyCache.size > 1000) {
         this.cleanupKeyCache();
       }
 
       return derivedKey;
-
     } catch (error) {
       console.error('Key derivation failed:', error);
       throw new Error('Failed to derive encryption key');
@@ -286,21 +331,26 @@ export const HEALTHCARE_FIELD_CLASSIFICATION = {
   private async performEncryption(
     plaintext: string,
     key: Buffer,
-    classification: HealthcareDataClassification
-  ): Promise<{ encrypted: Buffer; iv: Buffer; tag?: Buffer; algorithm: string }> {
+    classification: HealthcareDataClassification,
+  ): Promise<{
+    encrypted: Buffer;
+    iv: Buffer;
+    tag?: Buffer;
+    algorithm: string;
+  }> {
     const config = ENCRYPTION_CONFIG[classification];
-    
+
     try {
       // 🎲 Generate cryptographically secure random IV
       const iv = randomBytes(config.ivLength);
-      
+
       // 🔐 Create cipher based on algorithm
       const cipher = createCipheriv(config.algorithm, key, iv);
-      
+
       // 🔒 Encrypt the data
-      let encrypted = Buffer.concat([
+      const encrypted = Buffer.concat([
         cipher.update(plaintext, 'utf8'),
-        cipher.final()
+        cipher.final(),
       ]);
 
       // 🏷️ Handle authentication tag for GCM modes (constitutional integrity)
@@ -313,9 +363,8 @@ export const HEALTHCARE_FIELD_CLASSIFICATION = {
         encrypted,
         iv,
         tag,
-        algorithm: config.algorithm
+        algorithm: config.algorithm,
       };
-
     } catch (error) {
       console.error('Encryption operation failed:', error);
       throw new Error('Failed to encrypt data');
@@ -326,14 +375,23 @@ export const HEALTHCARE_FIELD_CLASSIFICATION = {
    * 🔓 PERFORM DECRYPTION - Constitutional Data Access
    */
   private async performDecryption(
-    encryptedData: { encrypted: Buffer; iv: Buffer; tag?: Buffer; algorithm: string },
+    encryptedData: {
+      encrypted: Buffer;
+      iv: Buffer;
+      tag?: Buffer;
+      algorithm: string;
+    },
     key: Buffer,
-    classification: HealthcareDataClassification
+    classification: HealthcareDataClassification,
   ): Promise<string> {
     try {
       // 🔓 Create decipher
-      const decipher = createDecipheriv(encryptedData.algorithm, key, encryptedData.iv);
-      
+      const decipher = createDecipheriv(
+        encryptedData.algorithm,
+        key,
+        encryptedData.iv,
+      );
+
       // 🏷️ Set authentication tag for GCM modes (constitutional integrity)
       if (encryptedData.tag && encryptedData.algorithm.includes('gcm')) {
         (decipher as any).setAuthTag(encryptedData.tag);
@@ -342,14 +400,15 @@ export const HEALTHCARE_FIELD_CLASSIFICATION = {
       // 🔓 Decrypt the data
       const decrypted = Buffer.concat([
         decipher.update(encryptedData.encrypted),
-        decipher.final()
+        decipher.final(),
       ]);
 
       return decrypted.toString('utf8');
-
     } catch (error) {
       console.error('Decryption operation failed:', error);
-      throw new Error('Failed to decrypt data - data may be corrupted or key invalid');
+      throw new Error(
+        'Failed to decrypt data - data may be corrupted or key invalid',
+      );
     }
   }
 
@@ -357,9 +416,14 @@ export const HEALTHCARE_FIELD_CLASSIFICATION = {
    * 📋 FORMAT ENCRYPTED VALUE - Constitutional Compliance Format
    */
   private formatEncryptedValue(
-    encryptedData: { encrypted: Buffer; iv: Buffer; tag?: Buffer; algorithm: string },
+    encryptedData: {
+      encrypted: Buffer;
+      iv: Buffer;
+      tag?: Buffer;
+      algorithm: string;
+    },
     classification: HealthcareDataClassification,
-    fieldName: string
+    fieldName: string,
   ): string {
     // 🏥 Constitutional compliance format: algorithm:classification:iv:tag:encrypted
     const components = [
@@ -367,11 +431,14 @@ export const HEALTHCARE_FIELD_CLASSIFICATION = {
       classification,
       encryptedData.iv.toString('base64'),
       encryptedData.tag ? encryptedData.tag.toString('base64') : '',
-      encryptedData.encrypted.toString('base64')
+      encryptedData.encrypted.toString('base64'),
     ];
 
     // 🔐 Add field name hash for integrity verification
-    const fieldHash = createHash('sha256').update(fieldName).digest('hex').substring(0, 8);
+    const fieldHash = createHash('sha256')
+      .update(fieldName)
+      .digest('hex')
+      .substring(0, 8);
     components.push(fieldHash);
 
     return `enc:${components.join(':')}`;
@@ -397,27 +464,27 @@ export const HEALTHCARE_FIELD_CLASSIFICATION = {
         return null;
       }
 
-      const [algorithm, classification, ivBase64, tagBase64, encryptedBase64] = components;
+      const [algorithm, classification, ivBase64, tagBase64, encryptedBase64] =
+        components;
 
       return {
         algorithm,
         classification: classification as HealthcareDataClassification,
         iv: Buffer.from(ivBase64, 'base64'),
         tag: tagBase64 ? Buffer.from(tagBase64, 'base64') : undefined,
-        encrypted: Buffer.from(encryptedBase64, 'base64')
+        encrypted: Buffer.from(encryptedBase64, 'base64'),
       };
-
     } catch (error) {
       console.error('Failed to parse encrypted value:', error);
       return null;
     }
-  }  /**
+  } /**
    * 🔄 ROTATE ENCRYPTION KEYS - Constitutional Key Management
    */
   async rotateKeys(
     patientId: string,
     clinicId: string,
-    fieldNames: string[]
+    fieldNames: string[],
   ): Promise<{ success: boolean; rotatedFields: string[]; errors: string[] }> {
     const rotatedFields: string[] = [];
     const errors: string[] = [];
@@ -425,34 +492,40 @@ export const HEALTHCARE_FIELD_CLASSIFICATION = {
     try {
       for (const fieldName of fieldNames) {
         try {
-          const classification = HEALTHCARE_FIELD_CLASSIFICATION[fieldName as keyof typeof HEALTHCARE_FIELD_CLASSIFICATION];
-          if (!classification || classification === HealthcareDataClassification.PUBLIC) {
+          const classification =
+            HEALTHCARE_FIELD_CLASSIFICATION[
+              fieldName as keyof typeof HEALTHCARE_FIELD_CLASSIFICATION
+            ];
+          if (
+            !classification ||
+            classification === HealthcareDataClassification.PUBLIC
+          ) {
             continue; // Skip public fields
           }
 
           // 🗑️ Remove old key from cache to force regeneration
           const keyIdentifier = `${clinicId}:${patientId}:${fieldName}:${classification}`;
           this.keyCache.delete(keyIdentifier);
-          
-          rotatedFields.push(fieldName);
 
+          rotatedFields.push(fieldName);
         } catch (error) {
-          errors.push(`Failed to rotate key for ${fieldName}: ${error instanceof Error ? error.message : 'Unknown error'}`);
+          errors.push(
+            `Failed to rotate key for ${fieldName}: ${error instanceof Error ? error.message : 'Unknown error'}`,
+          );
         }
       }
 
       return {
         success: errors.length === 0,
         rotatedFields,
-        errors
+        errors,
       };
-
     } catch (error) {
       console.error('Key rotation failed:', error);
       return {
         success: false,
         rotatedFields,
-        errors: ['Key rotation system failure']
+        errors: ['Key rotation system failure'],
       };
     }
   }
@@ -491,7 +564,6 @@ export const HEALTHCARE_FIELD_CLASSIFICATION = {
       }
 
       this.performanceMetrics.set(operation, metrics);
-
     } catch (error) {
       console.error('Performance tracking failed:', error);
     }
@@ -500,8 +572,14 @@ export const HEALTHCARE_FIELD_CLASSIFICATION = {
   /**
    * 📈 GET PERFORMANCE METRICS - Constitutional Monitoring
    */
-  getPerformanceMetrics(): Record<string, { avg: number; max: number; min: number; count: number }> {
-    const result: Record<string, { avg: number; max: number; min: number; count: number }> = {};
+  getPerformanceMetrics(): Record<
+    string,
+    { avg: number; max: number; min: number; count: number }
+  > {
+    const result: Record<
+      string,
+      { avg: number; max: number; min: number; count: number }
+    > = {};
 
     try {
       for (const [operation, durations] of this.performanceMetrics.entries()) {
@@ -515,12 +593,11 @@ export const HEALTHCARE_FIELD_CLASSIFICATION = {
           avg: Math.round(avg * 100) / 100,
           max,
           min,
-          count: durations.length
+          count: durations.length,
         };
       }
 
       return result;
-
     } catch (error) {
       console.error('Failed to get performance metrics:', error);
       return {};
@@ -533,13 +610,28 @@ export const HEALTHCARE_FIELD_CLASSIFICATION = {
   private validateDataSovereignty(): void {
     // 🇧🇷 Ensure data processing occurs in São Paulo region for constitutional compliance
     if (this.dataRegion !== 'sa-east-1') {
-      console.warn(`Data sovereignty warning: Expected sa-east-1 (São Paulo), got ${this.dataRegion}`);
+      console.warn(
+        `Data sovereignty warning: Expected sa-east-1 (São Paulo), got ${this.dataRegion}`,
+      );
     }
 
     // 🔍 Additional sovereignty validations can be added here
-    const allowedRegions = ['sa-east-1', 'sa-east-1a', 'sa-east-1b', 'sa-east-1c'];
-    if (!allowedRegions.some(region => this.dataRegion.startsWith(region.split('-')[0] + '-' + region.split('-')[1]))) {
-      throw new Error(`Constitutional violation: Data processing must occur in Brazil (São Paulo region). Current: ${this.dataRegion}`);
+    const allowedRegions = [
+      'sa-east-1',
+      'sa-east-1a',
+      'sa-east-1b',
+      'sa-east-1c',
+    ];
+    if (
+      !allowedRegions.some((region) =>
+        this.dataRegion.startsWith(
+          region.split('-')[0] + '-' + region.split('-')[1],
+        ),
+      )
+    ) {
+      throw new Error(
+        `Constitutional violation: Data processing must occur in Brazil (São Paulo region). Current: ${this.dataRegion}`,
+      );
     }
   }
 
@@ -549,8 +641,12 @@ export const HEALTHCARE_FIELD_CLASSIFICATION = {
   async encryptPatientRecord(
     patientData: Record<string, any>,
     patientId: string,
-    clinicId: string
-  ): Promise<{ success: boolean; encryptedData?: Record<string, any>; errors?: string[] }> {
+    clinicId: string,
+  ): Promise<{
+    success: boolean;
+    encryptedData?: Record<string, any>;
+    errors?: string[];
+  }> {
     const encryptedData: Record<string, any> = {};
     const errors: string[] = [];
 
@@ -561,8 +657,13 @@ export const HEALTHCARE_FIELD_CLASSIFICATION = {
           continue;
         }
 
-        const result = await this.encryptField(fieldName, String(value), patientId, clinicId);
-        
+        const result = await this.encryptField(
+          fieldName,
+          String(value),
+          patientId,
+          clinicId,
+        );
+
         if (result.success) {
           encryptedData[fieldName] = result.encryptedValue;
         } else {
@@ -574,14 +675,15 @@ export const HEALTHCARE_FIELD_CLASSIFICATION = {
       return {
         success: errors.length === 0,
         encryptedData,
-        errors: errors.length > 0 ? errors : undefined
+        errors: errors.length > 0 ? errors : undefined,
       };
-
     } catch (error) {
       console.error('Patient record encryption failed:', error);
       return {
         success: false,
-        errors: [`Record encryption failed: ${error instanceof Error ? error.message : 'Unknown error'}`]
+        errors: [
+          `Record encryption failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        ],
       };
     }
   }
@@ -592,8 +694,12 @@ export const HEALTHCARE_FIELD_CLASSIFICATION = {
   async decryptPatientRecord(
     encryptedData: Record<string, any>,
     patientId: string,
-    clinicId: string
-  ): Promise<{ success: boolean; decryptedData?: Record<string, any>; errors?: string[] }> {
+    clinicId: string,
+  ): Promise<{
+    success: boolean;
+    decryptedData?: Record<string, any>;
+    errors?: string[];
+  }> {
     const decryptedData: Record<string, any> = {};
     const errors: string[] = [];
 
@@ -604,8 +710,13 @@ export const HEALTHCARE_FIELD_CLASSIFICATION = {
           continue;
         }
 
-        const result = await this.decryptField(fieldName, String(value), patientId, clinicId);
-        
+        const result = await this.decryptField(
+          fieldName,
+          String(value),
+          patientId,
+          clinicId,
+        );
+
         if (result.success) {
           decryptedData[fieldName] = result.decryptedValue;
         } else {
@@ -617,14 +728,15 @@ export const HEALTHCARE_FIELD_CLASSIFICATION = {
       return {
         success: errors.length === 0,
         decryptedData,
-        errors: errors.length > 0 ? errors : undefined
+        errors: errors.length > 0 ? errors : undefined,
       };
-
     } catch (error) {
       console.error('Patient record decryption failed:', error);
       return {
         success: false,
-        errors: [`Record decryption failed: ${error instanceof Error ? error.message : 'Unknown error'}`]
+        errors: [
+          `Record decryption failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        ],
       };
     }
   }
@@ -636,30 +748,48 @@ export const HEALTHCARE_FIELD_CLASSIFICATION = {
     fieldName: string,
     originalValue: string,
     patientId: string,
-    clinicId: string
+    clinicId: string,
   ): Promise<{ valid: boolean; error?: string }> {
     try {
       // 🔐 Encrypt then decrypt to verify integrity
-      const encryptResult = await this.encryptField(fieldName, originalValue, patientId, clinicId);
+      const encryptResult = await this.encryptField(
+        fieldName,
+        originalValue,
+        patientId,
+        clinicId,
+      );
       if (!encryptResult.success) {
-        return { valid: false, error: `Encryption failed: ${encryptResult.error}` };
+        return {
+          valid: false,
+          error: `Encryption failed: ${encryptResult.error}`,
+        };
       }
 
-      const decryptResult = await this.decryptField(fieldName, encryptResult.encryptedValue!, patientId, clinicId);
+      const decryptResult = await this.decryptField(
+        fieldName,
+        encryptResult.encryptedValue!,
+        patientId,
+        clinicId,
+      );
       if (!decryptResult.success) {
-        return { valid: false, error: `Decryption failed: ${decryptResult.error}` };
+        return {
+          valid: false,
+          error: `Decryption failed: ${decryptResult.error}`,
+        };
       }
 
       const valid = decryptResult.decryptedValue === originalValue;
-      return { 
-        valid, 
-        error: valid ? undefined : 'Decrypted value does not match original' 
+      return {
+        valid,
+        error: valid ? undefined : 'Decrypted value does not match original',
       };
-
     } catch (error) {
-      return { 
-        valid: false, 
-        error: error instanceof Error ? error.message : 'Integrity validation failed' 
+      return {
+        valid: false,
+        error:
+          error instanceof Error
+            ? error.message
+            : 'Integrity validation failed',
       };
     }
   }

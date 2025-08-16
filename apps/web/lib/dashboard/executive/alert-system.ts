@@ -167,7 +167,7 @@ export class AlertSystem {
    * Create a new alert rule
    */
   async createAlertRule(
-    rule: Omit<AlertRule, 'id' | 'createdAt' | 'updatedAt'>
+    rule: Omit<AlertRule, 'id' | 'createdAt' | 'updatedAt'>,
   ): Promise<AlertRule | null> {
     try {
       const ruleId = crypto.randomUUID();
@@ -229,7 +229,7 @@ export class AlertSystem {
    */
   async updateAlertRule(
     ruleId: string,
-    updates: Partial<AlertRule>
+    updates: Partial<AlertRule>,
   ): Promise<AlertRule | null> {
     try {
       const { data, error } = await this.supabase
@@ -313,7 +313,7 @@ export class AlertSystem {
    */
   async getActiveAlerts(
     clinicId: string,
-    limit = 50
+    limit = 50,
   ): Promise<AlertInstance[]> {
     try {
       const { data, error } = await this.supabase
@@ -513,10 +513,10 @@ export class AlertSystem {
 
       // Get current KPI value
       const kpiResults = await kpiCalculationService.calculateClinicKPIs(
-        rule.clinicId
+        rule.clinicId,
       );
       const targetKPI = kpiResults.find(
-        (kpi) => kpi.kpi.id === rule.conditions.kpiId
+        (kpi) => kpi.kpi.id === rule.conditions.kpiId,
       );
 
       if (!targetKPI) {
@@ -526,7 +526,7 @@ export class AlertSystem {
       // Check if condition is violated
       const isViolated = this.evaluateCondition(
         targetKPI.currentValue,
-        rule.conditions
+        rule.conditions,
       );
 
       if (isViolated) {
@@ -587,7 +587,7 @@ export class AlertSystem {
    */
   private evaluateCondition(
     value: number,
-    conditions: AlertRule['conditions']
+    conditions: AlertRule['conditions'],
   ): boolean {
     const { operator, threshold, secondaryThreshold } = conditions;
 
@@ -619,7 +619,7 @@ export class AlertSystem {
    * Get existing active alert for a rule
    */
   private async getExistingActiveAlert(
-    ruleId: string
+    ruleId: string,
   ): Promise<AlertInstance | null> {
     try {
       const { data, error } = await this.supabase
@@ -661,7 +661,7 @@ export class AlertSystem {
    */
   private async createAlert(
     rule: AlertRule,
-    kpiResult: KPICalculationResult
+    kpiResult: KPICalculationResult,
   ): Promise<void> {
     try {
       const alertId = crypto.randomUUID();
@@ -732,7 +732,7 @@ export class AlertSystem {
    */
   private generateAlertMessage(
     rule: AlertRule,
-    kpiResult: KPICalculationResult
+    kpiResult: KPICalculationResult,
   ): string {
     const kpiName = kpiResult.kpi.name;
     const currentValue = kpiResult.formattedValue;
@@ -803,7 +803,7 @@ export class AlertSystem {
    */
   private async sendAlertNotifications(
     alert: AlertInstance,
-    rule: AlertRule
+    rule: AlertRule,
   ): Promise<void> {
     try {
       const actions = rule.actions;
@@ -836,7 +836,7 @@ export class AlertSystem {
    */
   private async sendEmailNotification(
     alert: AlertInstance,
-    email: string
+    email: string,
   ): Promise<void> {
     // Implementation would depend on email service (SendGrid, AWS SES, etc.)
     logger.info(`Sending email notification to ${email} for alert ${alert.id}`);
@@ -847,7 +847,7 @@ export class AlertSystem {
    */
   private async sendSMSNotification(
     alert: AlertInstance,
-    phone: string
+    phone: string,
   ): Promise<void> {
     // Implementation would depend on SMS service (Twilio, AWS SNS, etc.)
     logger.info(`Sending SMS notification to ${phone} for alert ${alert.id}`);
@@ -873,7 +873,7 @@ export class AlertSystem {
           logger.error('Error during periodic cleanup:', error);
         }
       },
-      24 * 60 * 60 * 1000
+      24 * 60 * 60 * 1000,
     ); // Daily cleanup
   }
 
@@ -915,7 +915,7 @@ export class AlertSystem {
         .eq('clinic_id', clinicId)
         .gte(
           'triggered_at',
-          new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()
+          new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
         ); // Last 7 days
 
       if (error) {

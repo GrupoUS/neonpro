@@ -81,7 +81,7 @@ export class PatientInsightsEngine {
    * Generate comprehensive patient insights
    */
   async generatePatientInsights(
-    patientId: string
+    patientId: string,
   ): Promise<PatientInsights | null> {
     try {
       // Get patient profile and history
@@ -129,7 +129,7 @@ export class PatientInsightsEngine {
    */
   async assessPatientRisk(
     profile: PatientProfile,
-    timeline: any[]
+    timeline: any[],
   ): Promise<RiskAssessment> {
     try {
       const riskFactors: RiskFactor[] = [];
@@ -211,7 +211,7 @@ export class PatientInsightsEngine {
         risk_factors: riskFactors,
         recommendations: this.generateRiskRecommendations(
           riskLevel,
-          riskFactors
+          riskFactors,
         ),
         confidence: this.calculateConfidence(profile, timeline),
         last_updated: new Date().toISOString(),
@@ -240,7 +240,7 @@ export class PatientInsightsEngine {
             value: e.outcome_score,
           }))
           .sort(
-            (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+            (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
           );
 
         if (outcomeScores.length >= 3) {
@@ -265,7 +265,7 @@ export class PatientInsightsEngine {
    */
   async identifyBehavioralPatterns(
     _patientId: string,
-    timeline: any[]
+    timeline: any[],
   ): Promise<BehavioralPattern[]> {
     const patterns: BehavioralPattern[] = [];
 
@@ -293,7 +293,7 @@ export class PatientInsightsEngine {
    */
   async predictTreatmentOutcomes(
     profile: PatientProfile,
-    _timeline: any[]
+    _timeline: any[],
   ): Promise<TreatmentPrediction[]> {
     const predictions: TreatmentPrediction[] = [];
 
@@ -317,7 +317,7 @@ export class PatientInsightsEngine {
    */
   async generateOptimizationSuggestions(
     profile: PatientProfile,
-    _timeline: any[]
+    _timeline: any[],
   ): Promise<OptimizationSuggestion[]> {
     const suggestions: OptimizationSuggestion[] = [];
 
@@ -338,7 +338,7 @@ export class PatientInsightsEngine {
 
   // Helper methods
   private async getPatientProfile(
-    patientId: string
+    patientId: string,
   ): Promise<PatientProfile | null> {
     const { data, error } = await this.supabase
       .from('patient_profiles_extended')
@@ -361,7 +361,7 @@ export class PatientInsightsEngine {
 
   private async updatePatientAIInsights(
     patientId: string,
-    insights: PatientInsights
+    insights: PatientInsights,
   ): Promise<void> {
     await this.supabase
       .from('patient_profiles_extended')
@@ -407,7 +407,7 @@ export class PatientInsightsEngine {
 
   private generateRiskRecommendations(
     riskLevel: string,
-    _riskFactors: RiskFactor[]
+    _riskFactors: RiskFactor[],
   ): string[] {
     const recommendations: string[] = [];
 
@@ -430,7 +430,7 @@ export class PatientInsightsEngine {
 
   private calculateConfidence(
     profile: PatientProfile,
-    timeline: any[]
+    timeline: any[],
   ): number {
     let confidence = 0.5;
     confidence += Math.min(timeline.length * 0.05, 0.3);

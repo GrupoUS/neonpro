@@ -58,7 +58,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
           error:
             'Missing required fields: appointmentId, treatmentType, professionalId',
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -72,7 +72,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     if (authError || !user) {
       return NextResponse.json(
         { success: false, error: 'Authentication required' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -87,7 +87,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     if (roleError || !userRole) {
       return NextResponse.json(
         { success: false, error: 'Insufficient permissions' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -118,7 +118,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       try {
         const prediction = await aiService.predictDuration(
           body.appointmentId,
-          features
+          features,
         );
 
         return NextResponse.json({
@@ -177,7 +177,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         error:
           'Internal server error occurred while processing prediction request',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -203,20 +203,20 @@ function getFallbackDuration(treatmentType: string): number {
 export async function GET() {
   return NextResponse.json(
     { success: false, error: 'Method not allowed. Use POST.' },
-    { status: 405 }
+    { status: 405 },
   );
 }
 
 export async function PUT() {
   return NextResponse.json(
     { success: false, error: 'Method not allowed. Use POST.' },
-    { status: 405 }
+    { status: 405 },
   );
 }
 
 export async function DELETE() {
   return NextResponse.json(
     { success: false, error: 'Method not allowed. Use POST.' },
-    { status: 405 }
+    { status: 405 },
   );
 }

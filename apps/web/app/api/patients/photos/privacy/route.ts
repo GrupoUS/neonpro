@@ -17,7 +17,7 @@ import { LGPDManager } from '../../../../../lib/security/lgpd-manager';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
+  process.env.SUPABASE_SERVICE_ROLE_KEY!,
 );
 
 const auditLogger = new AuditLogger(supabase);
@@ -26,7 +26,7 @@ const photoManager = new PhotoRecognitionManager(
   supabase,
   auditLogger,
   lgpdManager,
-  defaultPhotoRecognitionConfig
+  defaultPhotoRecognitionConfig,
 );
 
 // GET - Retrieve privacy controls
@@ -37,7 +37,7 @@ export async function GET(request: NextRequest) {
     if (!authHeader) {
       return NextResponse.json(
         { error: 'Authorization required' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -50,7 +50,7 @@ export async function GET(request: NextRequest) {
     if (authError || !user) {
       return NextResponse.json(
         { error: 'Invalid authentication' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -61,7 +61,7 @@ export async function GET(request: NextRequest) {
     if (!patientId) {
       return NextResponse.json(
         { error: 'Patient ID is required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -90,7 +90,7 @@ export async function GET(request: NextRequest) {
         error: 'Failed to get privacy controls',
         details: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -103,7 +103,7 @@ export async function PUT(request: NextRequest) {
     if (!authHeader) {
       return NextResponse.json(
         { error: 'Authorization required' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -116,7 +116,7 @@ export async function PUT(request: NextRequest) {
     if (authError || !user) {
       return NextResponse.json(
         { error: 'Invalid authentication' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -127,7 +127,7 @@ export async function PUT(request: NextRequest) {
     if (!(patientId && privacyControls)) {
       return NextResponse.json(
         { error: 'Patient ID and privacy controls are required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -141,7 +141,7 @@ export async function PUT(request: NextRequest) {
       if (!(field in privacyControls)) {
         return NextResponse.json(
           { error: `Missing required field: ${field}` },
-          { status: 400 }
+          { status: 400 },
         );
       }
     }
@@ -161,7 +161,7 @@ export async function PUT(request: NextRequest) {
     const updatedControls = await photoManager.updatePatientPrivacyControls(
       patientId,
       privacyControls,
-      user.id
+      user.id,
     );
 
     return NextResponse.json({
@@ -174,7 +174,7 @@ export async function PUT(request: NextRequest) {
         error: 'Failed to update privacy controls',
         details: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -187,7 +187,7 @@ export async function DELETE(request: NextRequest) {
     if (!authHeader) {
       return NextResponse.json(
         { error: 'Authorization required' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -200,7 +200,7 @@ export async function DELETE(request: NextRequest) {
     if (authError || !user) {
       return NextResponse.json(
         { error: 'Invalid authentication' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -212,7 +212,7 @@ export async function DELETE(request: NextRequest) {
     if (!photoId) {
       return NextResponse.json(
         { error: 'Photo ID is required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -220,7 +220,7 @@ export async function DELETE(request: NextRequest) {
     const result = await photoManager.deletePatientPhoto(
       photoId,
       user.id,
-      reason
+      reason,
     );
 
     return NextResponse.json({
@@ -236,7 +236,7 @@ export async function DELETE(request: NextRequest) {
         error: 'Failed to delete photo',
         details: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

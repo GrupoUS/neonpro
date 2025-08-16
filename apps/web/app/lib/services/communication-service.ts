@@ -41,7 +41,7 @@ export class CommunicationService {
       if (this.requiresConsent(request.channel, request.type)) {
         const hasConsent = await this.checkPatientConsent(
           request.patient_id,
-          request.channel
+          request.channel,
         );
         if (!hasConsent) {
           return {
@@ -57,7 +57,7 @@ export class CommunicationService {
       if (!threadId) {
         threadId = await this.createMessageThread(
           request.patient_id,
-          request.subject
+          request.subject,
         );
       }
 
@@ -70,11 +70,11 @@ export class CommunicationService {
         if (template) {
           processedContent = this.processTemplate(
             template.content_template,
-            request.template_variables
+            request.template_variables,
           );
           processedSubject = this.processTemplate(
             template.subject_template,
-            request.template_variables
+            request.template_variables,
           );
         }
       }
@@ -126,7 +126,7 @@ export class CommunicationService {
         estimated_delivery: this.calculateDeliveryTime(request.channel),
         cost: this.calculateMessageCost(
           request.channel,
-          processedContent.length
+          processedContent.length,
         ),
       };
     } catch (error) {
@@ -172,7 +172,7 @@ export class CommunicationService {
     }
     if (request.search) {
       query = query.or(
-        `content.ilike.%${request.search}%,subject.ilike.%${request.search}%`
+        `content.ilike.%${request.search}%,subject.ilike.%${request.search}%`,
       );
     }
 
@@ -208,7 +208,7 @@ export class CommunicationService {
    */
   async getMessageThreads(
     patientId?: string,
-    includeArchived = false
+    includeArchived = false,
   ): Promise<MessageThreadWithLastMessage[]> {
     let query = this.supabase
       .from('communication_threads')
@@ -221,7 +221,7 @@ export class CommunicationService {
           participants:communication_thread_participants(
             user_id, role, name, avatar, joined_at, last_read_at
           )
-        `
+        `,
       )
       .order('last_message_at', { ascending: false });
 
@@ -247,7 +247,7 @@ export class CommunicationService {
           ...thread,
           unread_count: unreadCount,
         };
-      })
+      }),
     );
 
     return threadsWithUnread;
@@ -262,7 +262,7 @@ export class CommunicationService {
    */
   async getMessageTemplates(
     category?: TemplateCategory,
-    channel?: CommunicationChannel
+    channel?: CommunicationChannel,
   ): Promise<MessageTemplate[]> {
     let query = this.supabase
       .from('communication_templates')
@@ -294,7 +294,7 @@ export class CommunicationService {
     template: Omit<
       MessageTemplate,
       'id' | 'created_at' | 'updated_at' | 'usage_count' | 'last_used_at'
-    >
+    >,
   ): Promise<MessageTemplate> {
     const { data, error } = await this.supabase
       .from('communication_templates')
@@ -317,7 +317,7 @@ export class CommunicationService {
    */
   async updateMessageTemplate(
     id: string,
-    updates: Partial<MessageTemplate>
+    updates: Partial<MessageTemplate>,
   ): Promise<MessageTemplate> {
     const { data, error } = await this.supabase
       .from('communication_templates')
@@ -341,7 +341,7 @@ export class CommunicationService {
    * Get communication campaigns
    */
   async getCommunicationCampaigns(
-    status?: CampaignStatus
+    status?: CampaignStatus,
   ): Promise<CommunicationCampaign[]> {
     let query = this.supabase
       .from('communication_campaigns')
@@ -349,7 +349,7 @@ export class CommunicationService {
         `
           *,
           template:communication_templates(name, subject_template, content_template)
-        `
+        `,
       )
       .order('created_at', { ascending: false });
 
@@ -382,11 +382,11 @@ export class CommunicationService {
       | 'failed_count'
       | 'response_count'
       | 'unsubscribe_count'
-    >
+    >,
   ): Promise<CommunicationCampaign> {
     // Estimate audience size
     const estimatedSize = await this.estimateAudienceSize(
-      campaign.target_audience
+      campaign.target_audience,
     );
 
     const { data, error } = await this.supabase
@@ -416,7 +416,7 @@ export class CommunicationService {
    * Execute a communication campaign
    */
   async executeCampaign(
-    request: CampaignExecutionRequest
+    request: CampaignExecutionRequest,
   ): Promise<CampaignExecutionResponse> {
     try {
       const campaign = await this.getCampaign(request.campaign_id);
@@ -439,12 +439,12 @@ export class CommunicationService {
       const queuedMessages = await this.queueCampaignMessages(
         campaign,
         recipients,
-        executionId
+        executionId,
       );
 
       const estimatedCost = this.calculateCampaignCost(
         campaign.channel,
-        queuedMessages.length
+        queuedMessages.length,
       );
 
       return {
@@ -474,7 +474,7 @@ export class CommunicationService {
    */
   async checkPatientConsent(
     patientId: string,
-    channel: CommunicationChannel
+    channel: CommunicationChannel,
   ): Promise<boolean> {
     try {
       const { data: consent, error } = await this.supabase
@@ -508,7 +508,7 @@ export class CommunicationService {
    * Update patient communication consent
    */
   async updatePatientConsent(
-    consent: Omit<CommunicationConsent, 'id' | 'created_at' | 'updated_at'>
+    consent: Omit<CommunicationConsent, 'id' | 'created_at' | 'updated_at'>,
   ): Promise<CommunicationConsent> {
     const { data, error } = await this.supabase
       .from('communication_consent')
@@ -530,7 +530,7 @@ export class CommunicationService {
    * Get patient communication preferences
    */
   async getPatientPreferences(
-    patientId: string
+    patientId: string,
   ): Promise<CommunicationPreferences | null> {
     try {
       const { data: preferences, error } = await this.supabase
@@ -557,7 +557,7 @@ export class CommunicationService {
    * Get communication statistics
    */
   async getCommunicationStats(
-    period: 'today' | 'week' | 'month' | 'quarter' | 'year'
+    period: 'today' | 'week' | 'month' | 'quarter' | 'year',
   ): Promise<CommunicationStats> {
     const dateRange = this.getDateRange(period);
 
@@ -625,7 +625,7 @@ export class CommunicationService {
 
   private requiresConsent(
     channel: CommunicationChannel,
-    type: MessageType
+    type: MessageType,
   ): boolean {
     // Marketing messages always require consent
     if (type === 'alert' && channel !== 'portal') {
@@ -642,7 +642,7 @@ export class CommunicationService {
 
   private async createMessageThread(
     patientId: string,
-    subject?: string
+    subject?: string,
   ): Promise<string> {
     const { data, error } = await this.supabase
       .from('communication_threads')
@@ -663,7 +663,7 @@ export class CommunicationService {
   }
 
   private async getMessageTemplate(
-    templateId: string
+    templateId: string,
   ): Promise<MessageTemplate | null> {
     const { data, error } = await this.supabase
       .from('communication_templates')
@@ -679,7 +679,7 @@ export class CommunicationService {
 
   private processTemplate(
     template: string,
-    variables: Record<string, any>
+    variables: Record<string, any>,
   ): string {
     let processed = template;
 
@@ -693,7 +693,7 @@ export class CommunicationService {
 
   private async deliverMessage(
     messageId: string,
-    _channel: CommunicationChannel
+    _channel: CommunicationChannel,
   ): Promise<void> {
     // In a real implementation, this would integrate with external providers
     // For now, we'll just update the message status
@@ -738,7 +738,7 @@ export class CommunicationService {
 
   private calculateMessageCost(
     channel: CommunicationChannel,
-    contentLength: number
+    contentLength: number,
   ): number {
     // Simplified cost calculation
     const baseCosts = {
@@ -772,7 +772,7 @@ export class CommunicationService {
   }
 
   private async getCampaign(
-    campaignId: string
+    campaignId: string,
   ): Promise<CommunicationCampaign | null> {
     const { data, error } = await this.supabase
       .from('communication_campaigns')
@@ -797,7 +797,7 @@ export class CommunicationService {
 
   private async updateCampaignStatus(
     campaignId: string,
-    status: CampaignStatus
+    status: CampaignStatus,
   ): Promise<void> {
     await this.supabase
       .from('communication_campaigns')
@@ -808,7 +808,7 @@ export class CommunicationService {
   private async queueCampaignMessages(
     _campaign: CommunicationCampaign,
     _recipients: string[],
-    _executionId: string
+    _executionId: string,
   ): Promise<any[]> {
     // In real implementation, would queue messages for batch processing
     return [];
@@ -816,7 +816,7 @@ export class CommunicationService {
 
   private calculateCampaignCost(
     channel: CommunicationChannel,
-    messageCount: number
+    messageCount: number,
   ): number {
     return this.calculateMessageCost(channel, 160) * messageCount;
   }
@@ -889,7 +889,7 @@ export class CommunicationService {
   }
 
   private async calculateAutomationSuccessRate(
-    _dateRange: any
+    _dateRange: any,
   ): Promise<number> {
     // Simplified calculation
     return 0.95; // 95% success rate

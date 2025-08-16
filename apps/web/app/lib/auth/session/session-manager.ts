@@ -67,7 +67,7 @@ class SessionManager {
    */
   async createSession(
     user: User,
-    _additionalData?: Record<string, any>
+    _additionalData?: Record<string, any>,
   ): Promise<SessionData> {
     const now = Date.now();
     const sessionData: SessionData = {
@@ -105,7 +105,7 @@ class SessionManager {
    */
   async updateActivity(
     action = 'activity',
-    metadata?: Record<string, any>
+    metadata?: Record<string, any>,
   ): Promise<void> {
     const session = await this.getCurrentSession();
     if (!session) {
@@ -130,14 +130,14 @@ class SessionManager {
   async getCurrentSession(): Promise<SessionData | null> {
     try {
       const encryptedData = localStorage.getItem(
-        `${SESSION_CONFIG.STORAGE_KEY_PREFIX}current`
+        `${SESSION_CONFIG.STORAGE_KEY_PREFIX}current`,
       );
       if (!encryptedData) {
         return null;
       }
 
       const sessionData = JSON.parse(
-        this.decrypt(encryptedData)
+        this.decrypt(encryptedData),
       ) as SessionData;
 
       // Check if session is expired
@@ -233,7 +233,7 @@ class SessionManager {
       const allKeys = Object.keys(localStorage).filter(
         (key) =>
           key.startsWith(SESSION_CONFIG.STORAGE_KEY_PREFIX) &&
-          key !== `${SESSION_CONFIG.STORAGE_KEY_PREFIX}current`
+          key !== `${SESSION_CONFIG.STORAGE_KEY_PREFIX}current`,
       );
 
       const sessions: SessionData[] = [];
@@ -242,7 +242,7 @@ class SessionManager {
           const encryptedData = localStorage.getItem(key);
           if (encryptedData) {
             const sessionData = JSON.parse(
-              this.decrypt(encryptedData)
+              this.decrypt(encryptedData),
             ) as SessionData;
             if (Date.now() <= sessionData.expiresAt) {
               sessions.push(sessionData);
@@ -316,7 +316,7 @@ class SessionManager {
         () => {
           this.updateActivity(`user_${event}`);
         },
-        { passive: true, once: false }
+        { passive: true, once: false },
       );
     });
   }
@@ -332,7 +332,7 @@ class SessionManager {
         await this.destroySession();
         window.location.href = '/auth/login?reason=timeout';
       },
-      SESSION_CONFIG.ACTIVITY_TIMEOUT_MINUTES * 60 * 1000
+      SESSION_CONFIG.ACTIVITY_TIMEOUT_MINUTES * 60 * 1000,
     );
   }
 
@@ -357,18 +357,18 @@ class SessionManager {
       const encryptedData = this.encrypt(JSON.stringify(session));
       localStorage.setItem(
         `${SESSION_CONFIG.STORAGE_KEY_PREFIX}current`,
-        encryptedData
+        encryptedData,
       );
       localStorage.setItem(
         `${SESSION_CONFIG.STORAGE_KEY_PREFIX}${session.sessionId}`,
-        encryptedData
+        encryptedData,
       );
     } catch (_error) {}
   }
 
   private clearSessionStorage(): void {
     const allKeys = Object.keys(localStorage).filter((key) =>
-      key.startsWith(SESSION_CONFIG.STORAGE_KEY_PREFIX)
+      key.startsWith(SESSION_CONFIG.STORAGE_KEY_PREFIX),
     );
     allKeys.forEach((key) => localStorage.removeItem(key));
   }
@@ -380,7 +380,7 @@ class SessionManager {
     if (userSessions.length >= SESSION_CONFIG.MAX_CONCURRENT_SESSIONS) {
       // Remove oldest session
       const oldestSession = userSessions.sort(
-        (a, b) => a.lastActivity - b.lastActivity
+        (a, b) => a.lastActivity - b.lastActivity,
       )[0];
       await this.terminateSession(oldestSession.sessionId);
     }
@@ -412,7 +412,7 @@ class SessionManager {
 
   private async logActivity(
     action: string,
-    metadata?: Record<string, any>
+    metadata?: Record<string, any>,
   ): Promise<void> {
     try {
       const activity: SessionActivity = {
@@ -424,7 +424,7 @@ class SessionManager {
 
       // Store activity in localStorage for now - send to server in production
       const activities = JSON.parse(
-        localStorage.getItem('session_activities') || '[]'
+        localStorage.getItem('session_activities') || '[]',
       );
       activities.push(activity);
 

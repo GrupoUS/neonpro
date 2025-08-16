@@ -67,7 +67,7 @@ function getClientIP(request: NextRequest): string {
 
 async function validateSecurityAccess(
   supabase: any,
-  userId: string
+  userId: string,
 ): Promise<boolean> {
   try {
     const { data: profile } = await supabase
@@ -134,7 +134,7 @@ export async function GET(request: NextRequest) {
     if (!rateLimitResult.success) {
       return NextResponse.json(
         { error: 'Rate limit exceeded' },
-        { status: 429 }
+        { status: 429 },
       );
     }
 
@@ -163,7 +163,7 @@ export async function GET(request: NextRequest) {
 
       return NextResponse.json(
         { error: 'Insufficient permissions' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -178,7 +178,7 @@ export async function GET(request: NextRequest) {
           error: 'Invalid query parameters',
           details: validationResult.error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -254,7 +254,7 @@ export async function GET(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -276,7 +276,7 @@ export async function PATCH(request: NextRequest) {
     if (!rateLimitResult.success) {
       return NextResponse.json(
         { error: 'Rate limit exceeded' },
-        { status: 429 }
+        { status: 429 },
       );
     }
 
@@ -305,7 +305,7 @@ export async function PATCH(request: NextRequest) {
 
       return NextResponse.json(
         { error: 'CSRF validation failed' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -314,7 +314,7 @@ export async function PATCH(request: NextRequest) {
     if (!hasAccess) {
       return NextResponse.json(
         { error: 'Insufficient permissions' },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -328,7 +328,7 @@ export async function PATCH(request: NextRequest) {
           error: 'Invalid request body',
           details: validationResult.error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -395,7 +395,7 @@ export async function PATCH(request: NextRequest) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

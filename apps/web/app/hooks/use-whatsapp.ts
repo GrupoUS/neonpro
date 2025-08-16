@@ -73,7 +73,7 @@ export function useSendWhatsAppMessage() {
         content,
         type,
         patientId,
-        templateName
+        templateName,
       );
     },
     onSuccess: () => {
@@ -102,7 +102,7 @@ export function useSendWhatsAppTemplate() {
         phoneNumber,
         templateName,
         parameters,
-        patientId
+        patientId,
       );
     },
     onSuccess: () => {
@@ -128,12 +128,12 @@ export function useSendBulkWhatsAppMessages() {
       return whatsAppService.sendBulkMessages(
         phoneNumbers,
         templateName,
-        parameters
+        parameters,
       );
     },
     onSuccess: (results) => {
       toast.success(
-        `Envio em massa concluído: ${results.sent} enviadas, ${results.failed} falharam`
+        `Envio em massa concluído: ${results.sent} enviadas, ${results.failed} falharam`,
       );
     },
     onError: (error: Error) => {
@@ -171,13 +171,13 @@ export function useRecordWhatsAppOptIn() {
         patientId,
         phoneNumber,
         source,
-        consentMessage
+        consentMessage,
       );
     },
     onSuccess: (_, variables) => {
       queryClient.setQueryData(
         ['whatsapp-opt-in', variables.phoneNumber],
-        true
+        true,
       );
       toast.success('Consentimento WhatsApp registrado com sucesso!');
     },
@@ -211,7 +211,7 @@ export function useWhatsAppStatus() {
     config?.phoneNumberId &&
       config?.accessToken &&
       config?.webhookVerifyToken &&
-      config?.isActive
+      config?.isActive,
   );
 
   const hasTemplates = Boolean(templates && templates.length > 0);
@@ -304,7 +304,7 @@ export function useWhatsAppNotifications() {
     phoneNumber: string,
     appointmentDate: string,
     appointmentTime: string,
-    doctorName: string
+    doctorName: string,
   ) => {
     const isOptedIn = await whatsAppService.checkOptIn(phoneNumber);
     if (!isOptedIn) {
@@ -328,7 +328,7 @@ export function useWhatsAppNotifications() {
     phoneNumber: string,
     treatmentName: string,
     doctorName: string,
-    daysAfterTreatment: number
+    daysAfterTreatment: number,
   ) => {
     const isOptedIn = await whatsAppService.checkOptIn(phoneNumber);
     if (!isOptedIn) {

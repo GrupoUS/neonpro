@@ -119,7 +119,7 @@ class RealTimeAdaptiveScheduling {
 
   constructor(
     aiCore: AISchedulingCore,
-    optimizationEngine: OptimizationEngine
+    optimizationEngine: OptimizationEngine,
   ) {
     this.aiCore = aiCore;
     this.optimizationEngine = optimizationEngine;
@@ -146,7 +146,7 @@ class RealTimeAdaptiveScheduling {
             schema: 'public',
             table: 'appointments',
           },
-          (payload) => this.handleAppointmentChange(payload)
+          (payload) => this.handleAppointmentChange(payload),
         )
         .on(
           'postgres_changes',
@@ -155,7 +155,7 @@ class RealTimeAdaptiveScheduling {
             schema: 'public',
             table: 'staff_availability',
           },
-          (payload) => this.handleStaffAvailabilityChange(payload)
+          (payload) => this.handleStaffAvailabilityChange(payload),
         )
         .on(
           'postgres_changes',
@@ -164,7 +164,7 @@ class RealTimeAdaptiveScheduling {
             schema: 'public',
             table: 'equipment_status',
           },
-          (payload) => this.handleEquipmentStatusChange(payload)
+          (payload) => this.handleEquipmentStatusChange(payload),
         )
         .subscribe();
 
@@ -211,7 +211,7 @@ class RealTimeAdaptiveScheduling {
         // New appointment created - check for conflicts
         event = await this.createEventFromAppointment(
           'appointment_created',
-          newRecord
+          newRecord,
         );
         break;
 
@@ -221,12 +221,12 @@ class RealTimeAdaptiveScheduling {
           if (newRecord.status === 'cancelled') {
             event = await this.createEventFromAppointment(
               'appointment_cancelled',
-              newRecord
+              newRecord,
             );
           } else if (newRecord.status === 'rescheduled') {
             event = await this.createEventFromAppointment(
               'appointment_rescheduled',
-              newRecord
+              newRecord,
             );
           }
         }
@@ -236,7 +236,7 @@ class RealTimeAdaptiveScheduling {
         // Appointment deleted
         event = await this.createEventFromAppointment(
           'appointment_cancelled',
-          oldRecord
+          oldRecord,
         );
         break;
     }
@@ -363,7 +363,7 @@ class RealTimeAdaptiveScheduling {
    * Determine adaptive actions based on the event
    */
   private async determineAdaptiveActions(
-    event: ScheduleEventData
+    event: ScheduleEventData,
   ): Promise<AdaptiveAction[]> {
     const actions: AdaptiveAction[] = [];
 
@@ -581,7 +581,7 @@ class RealTimeAdaptiveScheduling {
    * Detect and resolve scheduling conflicts
    */
   private async detectAndResolveConflicts(
-    _event: ScheduleEventData
+    _event: ScheduleEventData,
   ): Promise<void> {
     const conflicts = await this.conflictResolver.detectConflicts();
 
@@ -629,7 +629,7 @@ class RealTimeAdaptiveScheduling {
    * Execute predictive adjustment
    */
   private async executePredictiveAdjustment(
-    _adjustment: PredictiveAdjustment
+    _adjustment: PredictiveAdjustment,
   ): Promise<void> {
     // Implementation for executing predictive adjustments
     // This would involve proactive scheduling changes based on predictions
@@ -640,7 +640,7 @@ class RealTimeAdaptiveScheduling {
    */
   private async createEventFromAppointment(
     type: ScheduleEvent,
-    appointmentData: any
+    appointmentData: any,
   ): Promise<ScheduleEventData> {
     return {
       id: `${type}-${appointmentData.id}-${Date.now()}`,
@@ -696,7 +696,7 @@ class RealTimeAdaptiveScheduling {
         .select('status')
         .gte(
           'executed_at',
-          new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()
+          new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
         );
 
       const autoResolutions =

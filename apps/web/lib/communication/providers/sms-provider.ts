@@ -17,7 +17,7 @@ export class SMSProvider {
     _options?: {
       from?: string;
       priority?: 'low' | 'medium' | 'high' | 'urgent';
-    }
+    },
   ): Promise<SMSResult> {
     // Mock implementation for testing
     return {

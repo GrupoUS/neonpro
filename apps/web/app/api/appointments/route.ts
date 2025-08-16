@@ -17,7 +17,7 @@ export async function POST(request: Request) {
     if (!user) {
       return NextResponse.json(
         { success: false, error_message: 'Unauthorized' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -39,7 +39,7 @@ export async function POST(request: Request) {
           success: false,
           error_message: 'Dados obrigatórios não fornecidos',
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -56,7 +56,7 @@ export async function POST(request: Request) {
           success: false,
           error_message: 'Perfil de usuário não encontrado',
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -73,7 +73,7 @@ export async function POST(request: Request) {
         p_notes: body.notes || null,
         p_internal_notes: body.internal_notes || null,
         p_created_by: user.id,
-      }
+      },
     );
 
     if (bookingError) {
@@ -85,7 +85,7 @@ export async function POST(request: Request) {
             error_message: 'Conflito de horário detectado',
             error_details: bookingError.message,
           },
-          { status: 409 }
+          { status: 409 },
         );
       }
 
@@ -95,7 +95,7 @@ export async function POST(request: Request) {
           error_message: 'Erro ao agendar',
           error_details: bookingError.message,
         },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -106,7 +106,7 @@ export async function POST(request: Request) {
           error_message:
             bookingResult?.error_message || 'Erro desconhecido ao agendar',
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -124,7 +124,7 @@ export async function POST(request: Request) {
         success: false,
         error_message: 'Erro interno do servidor',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -193,7 +193,7 @@ export async function GET(request: Request) {
           duration_minutes,
           price
         )
-      `
+      `,
       )
       .eq('clinic_id', profile.clinic_id);
 
@@ -258,7 +258,7 @@ export async function GET(request: Request) {
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal Server Error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -55,7 +55,7 @@ export const ReportTemplateSchema = z.object({
             margin: z.number().optional(),
           })
           .optional(),
-      })
+      }),
     ),
     layout: z.object({
       orientation: z.enum(['portrait', 'landscape']).default('portrait'),
@@ -208,7 +208,7 @@ export class ReportSystem {
    * Create a new report template
    */
   async createReportTemplate(
-    template: Omit<ReportTemplate, 'id' | 'createdAt' | 'updatedAt'>
+    template: Omit<ReportTemplate, 'id' | 'createdAt' | 'updatedAt'>,
   ): Promise<ReportTemplate | null> {
     try {
       const templateId = crypto.randomUUID();
@@ -256,14 +256,17 @@ export class ReportSystem {
    * Create a new report schedule
    */
   async createReportSchedule(
-    schedule: Omit<ReportSchedule, 'id' | 'createdAt' | 'updatedAt' | 'nextRun'>
+    schedule: Omit<
+      ReportSchedule,
+      'id' | 'createdAt' | 'updatedAt' | 'nextRun'
+    >,
   ): Promise<ReportSchedule | null> {
     try {
       const scheduleId = crypto.randomUUID();
       const now = new Date().toISOString();
       const nextRun = this.calculateNextRun(
         schedule.frequency,
-        schedule.schedule
+        schedule.schedule,
       );
 
       const { data, error } = await this.supabase
@@ -320,7 +323,7 @@ export class ReportSystem {
     templateId: string,
     format: ReportFormat,
     parameters: Record<string, any> = {},
-    userId?: string
+    userId?: string,
   ): Promise<ReportInstance | null> {
     try {
       // Get template
@@ -418,7 +421,7 @@ export class ReportSystem {
    */
   async getReportInstances(
     clinicId: string,
-    limit = 50
+    limit = 50,
   ): Promise<ReportInstance[]> {
     try {
       const { data, error } = await this.supabase
@@ -506,7 +509,7 @@ export class ReportSystem {
    * Execute a scheduled report
    */
   private async executeScheduledReport(
-    schedule: ReportSchedule
+    schedule: ReportSchedule,
   ): Promise<void> {
     try {
       logger.info(`Executing scheduled report: ${schedule.name}`);
@@ -515,7 +518,7 @@ export class ReportSystem {
       const reportInstance = await this.generateReport(
         schedule.templateId,
         schedule.format,
-        schedule.parameters || {}
+        schedule.parameters || {},
       );
 
       if (!reportInstance) {
@@ -526,7 +529,7 @@ export class ReportSystem {
       // Update schedule
       const nextRun = this.calculateNextRun(
         schedule.frequency,
-        schedule.schedule
+        schedule.schedule,
       );
 
       await this.supabase
@@ -554,7 +557,7 @@ export class ReportSystem {
    */
   private async generateReportAsync(
     reportInstance: any,
-    template: ReportTemplate
+    template: ReportTemplate,
   ): Promise<void> {
     try {
       // Update status to generating
@@ -568,14 +571,14 @@ export class ReportSystem {
       // Collect data for all sections
       const reportData = await this.collectReportData(
         template,
-        reportInstance.parameters
+        reportInstance.parameters,
       );
 
       // Generate the report file
       const filePath = await this.generateReportFile(
         reportInstance,
         template,
-        reportData
+        reportData,
       );
 
       const endTime = Date.now();
@@ -622,7 +625,7 @@ export class ReportSystem {
    */
   private async collectReportData(
     template: ReportTemplate,
-    parameters: Record<string, any>
+    parameters: Record<string, any>,
   ): Promise<Record<string, any>> {
     const data: Record<string, any> = {};
 
@@ -633,7 +636,7 @@ export class ReportSystem {
             data[section.id] = await this.collectKPIData(
               template.clinicId,
               section.dataSource,
-              parameters
+              parameters,
             );
             break;
 
@@ -642,14 +645,14 @@ export class ReportSystem {
             data[section.id] = await this.collectChartTableData(
               template.clinicId,
               section.dataSource,
-              parameters
+              parameters,
             );
             break;
 
           case 'text':
             data[section.id] = await this.collectTextData(
               section.dataSource,
-              parameters
+              parameters,
             );
             break;
 
@@ -671,7 +674,7 @@ export class ReportSystem {
   private async collectKPIData(
     clinicId: string,
     dataSource: string,
-    parameters: Record<string, any>
+    parameters: Record<string, any>,
   ): Promise<any> {
     const periodStart = parameters.periodStart
       ? new Date(parameters.periodStart)
@@ -685,14 +688,14 @@ export class ReportSystem {
         return await kpiCalculationService.calculateClinicKPIs(
           clinicId,
           periodStart,
-          periodEnd
+          periodEnd,
         );
 
       case 'financial_kpis': {
         const allKPIs = await kpiCalculationService.calculateClinicKPIs(
           clinicId,
           periodStart,
-          periodEnd
+          periodEnd,
         );
         return allKPIs.filter((kpi) => kpi.kpi.category === 'financial');
       }
@@ -708,7 +711,7 @@ export class ReportSystem {
   private async collectChartTableData(
     _clinicId: string,
     _dataSource: string,
-    _parameters: Record<string, any>
+    _parameters: Record<string, any>,
   ): Promise<any> {
     // This would use the same data sources as widgets
     // For now, return mock data
@@ -728,7 +731,7 @@ export class ReportSystem {
    */
   private async collectTextData(
     _dataSource: string,
-    _parameters: Record<string, any>
+    _parameters: Record<string, any>,
   ): Promise<string> {
     // This would generate dynamic text content
     return `Report generated on ${new Date().toLocaleDateString('pt-BR')}`;
@@ -740,7 +743,7 @@ export class ReportSystem {
   private async generateReportFile(
     reportInstance: any,
     template: ReportTemplate,
-    data: Record<string, any>
+    data: Record<string, any>,
   ): Promise<string> {
     const fileName = `${reportInstance.id}.${reportInstance.format}`;
     const filePath = `/reports/${reportInstance.clinicId}/${fileName}`;
@@ -769,7 +772,7 @@ export class ReportSystem {
   private async generatePDFReport(
     filePath: string,
     _template: ReportTemplate,
-    _data: Record<string, any>
+    _data: Record<string, any>,
   ): Promise<string> {
     // Implementation would use a PDF library like puppeteer, jsPDF, or PDFKit
     logger.info(`Generating PDF report: ${filePath}`);
@@ -784,7 +787,7 @@ export class ReportSystem {
   private async generateExcelReport(
     filePath: string,
     _template: ReportTemplate,
-    _data: Record<string, any>
+    _data: Record<string, any>,
   ): Promise<string> {
     // Implementation would use a library like ExcelJS
     logger.info(`Generating Excel report: ${filePath}`);
@@ -799,7 +802,7 @@ export class ReportSystem {
   private async generateCSVReport(
     filePath: string,
     _template: ReportTemplate,
-    _data: Record<string, any>
+    _data: Record<string, any>,
   ): Promise<string> {
     // Implementation would generate CSV content
     logger.info(`Generating CSV report: ${filePath}`);
@@ -814,7 +817,7 @@ export class ReportSystem {
   private async generateJSONReport(
     filePath: string,
     _template: ReportTemplate,
-    _data: Record<string, any>
+    _data: Record<string, any>,
   ): Promise<string> {
     // Implementation would serialize data to JSON
     logger.info(`Generating JSON report: ${filePath}`);

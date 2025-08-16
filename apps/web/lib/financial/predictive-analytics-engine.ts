@@ -169,7 +169,7 @@ export class PredictiveAnalyticsEngine {
   async generateFinancialForecast(
     clinicId: string,
     forecastType: ModelType,
-    periodMonths = 12
+    periodMonths = 12,
   ): Promise<FinancialForecast> {
     try {
       const model = this.models.get(`${clinicId}_${forecastType}`);
@@ -180,26 +180,26 @@ export class PredictiveAnalyticsEngine {
       // Get historical data for prediction
       const historicalData = await this.getHistoricalData(
         clinicId,
-        forecastType
+        forecastType,
       );
 
       // Generate predictions based on model type
       const predictions = await this.generatePredictions(
         model,
         historicalData,
-        periodMonths
+        periodMonths,
       );
 
       // Calculate confidence intervals
       const predictionsWithConfidence = await this.calculateConfidenceIntervals(
         predictions,
-        model
+        model,
       );
 
       // Identify contributing factors
       const factors = await this.identifyContributingFactors(
         clinicId,
-        forecastType
+        forecastType,
       );
 
       const forecast: FinancialForecast = {
@@ -208,7 +208,7 @@ export class PredictiveAnalyticsEngine {
         forecast_type: forecastType,
         period_start: new Date().toISOString().split('T')[0],
         period_end: new Date(
-          Date.now() + periodMonths * 30 * 24 * 60 * 60 * 1000
+          Date.now() + periodMonths * 30 * 24 * 60 * 60 * 1000,
         )
           .toISOString()
           .split('T')[0],
@@ -247,13 +247,13 @@ export class PredictiveAnalyticsEngine {
           'date',
           new Date(Date.now() - 2 * 365 * 24 * 60 * 60 * 1000)
             .toISOString()
-            .split('T')[0]
+            .split('T')[0],
         )
         .order('date', { ascending: true });
 
       if (!historicalData || historicalData.length < 365) {
         throw new Error(
-          'Insufficient data for seasonal analysis (need 1+ years)'
+          'Insufficient data for seasonal analysis (need 1+ years)',
         );
       }
 
@@ -267,7 +267,7 @@ export class PredictiveAnalyticsEngine {
         weeklyPattern,
         monthlyPattern,
         quarterlyPattern,
-        yearlyPattern
+        yearlyPattern,
       );
 
       // Save patterns to database
@@ -281,7 +281,7 @@ export class PredictiveAnalyticsEngine {
           average_variation: pattern.average_variation,
           confidence: pattern.confidence,
           analyzed_at: new Date().toISOString(),
-        }))
+        })),
       );
 
       return patterns;
@@ -307,7 +307,7 @@ export class PredictiveAnalyticsEngine {
       // Generate recommendations
       const recommendations = this.generateRiskRecommendations(
         riskFactors,
-        scenarios
+        scenarios,
       );
 
       const riskAssessment: RiskAssessment = {
@@ -337,13 +337,13 @@ export class PredictiveAnalyticsEngine {
    */
   async predictPatientLTV(
     clinicId: string,
-    patientId: string
+    patientId: string,
   ): Promise<PatientLTVPrediction> {
     try {
       // Get patient historical data
       const patientData = await this.getPatientHistoricalData(
         clinicId,
-        patientId
+        patientId,
       );
 
       // Get clinic averages for comparison
@@ -408,7 +408,7 @@ export class PredictiveAnalyticsEngine {
    */
   private async trainModel(
     clinicId: string,
-    modelType: ModelType
+    modelType: ModelType,
   ): Promise<void> {
     try {
       // Get training data
@@ -425,7 +425,7 @@ export class PredictiveAnalyticsEngine {
       const model = await this.performModelTraining(
         trainingData,
         algorithm,
-        modelType
+        modelType,
       );
 
       // Validate model
@@ -470,7 +470,7 @@ export class PredictiveAnalyticsEngine {
 
   private async getHistoricalData(
     clinicId: string,
-    forecastType: ModelType
+    forecastType: ModelType,
   ): Promise<any[]> {
     // Get relevant historical data based on forecast type
     switch (forecastType) {
@@ -500,7 +500,7 @@ export class PredictiveAnalyticsEngine {
   private async generatePredictions(
     _model: PredictionModel,
     data: any[],
-    months: number
+    months: number,
   ): Promise<PredictionPoint[]> {
     // Simplified prediction generation
     const predictions: PredictionPoint[] = [];
@@ -540,7 +540,7 @@ export class PredictiveAnalyticsEngine {
 
   private async calculateConfidenceIntervals(
     predictions: PredictionPoint[],
-    model: PredictionModel
+    model: PredictionModel,
   ): Promise<PredictionPoint[]> {
     // Calculate confidence intervals based on model accuracy
     const errorMargin = (1 - model.accuracy) * 0.5;
@@ -556,7 +556,7 @@ export class PredictiveAnalyticsEngine {
 
   private async identifyContributingFactors(
     _clinicId: string,
-    forecastType: ModelType
+    forecastType: ModelType,
   ): Promise<string[]> {
     // Identify factors that contribute to the forecast
     const commonFactors = [
@@ -673,7 +673,7 @@ export class PredictiveAnalyticsEngine {
   }
 
   private async generateScenarioAnalyses(
-    _clinicId: string
+    _clinicId: string,
   ): Promise<ScenarioAnalysis[]> {
     // Generate scenario analyses
     return [
@@ -697,7 +697,7 @@ export class PredictiveAnalyticsEngine {
     return (
       (riskFactors.reduce(
         (score, factor) => score + factor.impact_score * factor.probability,
-        0
+        0,
       ) /
         riskFactors.length) *
       10
@@ -706,7 +706,7 @@ export class PredictiveAnalyticsEngine {
 
   private generateRiskRecommendations(
     _riskFactors: RiskFactor[],
-    _scenarios: ScenarioAnalysis[]
+    _scenarios: ScenarioAnalysis[],
   ): string[] {
     return [
       'Monitor cash flow weekly',
@@ -728,7 +728,7 @@ export class PredictiveAnalyticsEngine {
   // Additional simplified implementations for other methods...
   private async getPatientHistoricalData(
     _clinicId: string,
-    _patientId: string
+    _patientId: string,
   ): Promise<any> {
     return {};
   }
@@ -749,14 +749,14 @@ export class PredictiveAnalyticsEngine {
 
   private calculatePredictedLTV(
     _factors: any,
-    _model: PredictionModel
+    _model: PredictionModel,
   ): number {
     return 5000; // Simplified
   }
 
   private calculateLTVConfidence(
     _factors: any,
-    _model: PredictionModel
+    _model: PredictionModel,
   ): number {
     return 0.85; // Simplified
   }
@@ -775,14 +775,14 @@ export class PredictiveAnalyticsEngine {
 
   private async getTrainingData(
     _clinicId: string,
-    _modelType: ModelType
+    _modelType: ModelType,
   ): Promise<any[]> {
     return []; // Simplified
   }
 
   private selectBestAlgorithm(
     _data: any[],
-    _modelType: ModelType
+    _modelType: ModelType,
   ): AlgorithmType {
     return 'linear_regression'; // Simplified
   }
@@ -790,7 +790,7 @@ export class PredictiveAnalyticsEngine {
   private async performModelTraining(
     data: any[],
     algorithm: AlgorithmType,
-    modelType: ModelType
+    modelType: ModelType,
   ): Promise<PredictionModel> {
     return {
       id: `model_${Date.now()}`,
@@ -813,7 +813,7 @@ export class PredictiveAnalyticsEngine {
 
   private async validateModel(
     _model: PredictionModel,
-    _data: any[]
+    _data: any[],
   ): Promise<ValidationMetrics> {
     return {
       mape: 0.1,

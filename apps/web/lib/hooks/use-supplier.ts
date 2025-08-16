@@ -41,7 +41,7 @@ export function useSuppliers(
     category?: SupplierCategory[];
     search?: string;
     riskLevel?: RiskLevel[];
-  }
+  },
 ) {
   const queryClient = useQueryClient();
   const supabase = createClient();
@@ -67,7 +67,7 @@ export function useSuppliers(
           products:supplier_products(*),
           contracts:supplier_contracts(*),
           performance:supplier_performance_metrics(*)
-        `
+        `,
         )
         .eq('clinic_id', effectiveClinicId)
         .order('name');
@@ -84,7 +84,7 @@ export function useSuppliers(
       }
       if (filters?.search) {
         query = query.or(
-          `name.ilike.%${filters.search}%,legal_name.ilike.%${filters.search}%`
+          `name.ilike.%${filters.search}%,legal_name.ilike.%${filters.search}%`,
         );
       }
 
@@ -101,7 +101,7 @@ export function useSuppliers(
   // Create supplier mutation
   const createSupplier = useMutation({
     mutationFn: async (
-      supplierData: Omit<SupplierFormData, 'id' | 'created_at' | 'updated_at'>
+      supplierData: Omit<SupplierFormData, 'id' | 'created_at' | 'updated_at'>,
     ) => {
       const { data, error } = await supabase
         .from('suppliers')
@@ -155,7 +155,7 @@ export function useSuppliers(
         queryKey: ['supplier', updatedSupplier.id],
       });
       toast.success(
-        `Fornecedor ${updatedSupplier.name} atualizado com sucesso!`
+        `Fornecedor ${updatedSupplier.name} atualizado com sucesso!`,
       );
     },
     onError: (_error) => {
@@ -216,7 +216,7 @@ export function useSuppliers(
           ? 'ativado'
           : 'desativado';
       toast.success(
-        `Fornecedor ${updatedSupplier.name} ${statusText} com sucesso!`
+        `Fornecedor ${updatedSupplier.name} ${statusText} com sucesso!`,
       );
     },
     onError: (_error) => {
@@ -264,7 +264,7 @@ export function useSupplier(supplierId: string) {
           contracts:supplier_contracts(*),
           performance:supplier_performance_metrics(*),
           communications:supplier_communications(*)
-        `
+        `,
         )
         .eq('id', supplierId)
         .single();
@@ -331,7 +331,7 @@ export function useSupplierPerformance(supplierId: string, period?: string) {
   // Create performance evaluation
   const createPerformanceEvaluation = useMutation({
     mutationFn: async (
-      performanceData: Omit<SupplierPerformance, 'id' | 'created_at'>
+      performanceData: Omit<SupplierPerformance, 'id' | 'created_at'>,
     ) => {
       const { data, error } = await supabase
         .from('supplier_performance_metrics')
@@ -407,7 +407,7 @@ export function useSupplierAnalytics(
     period?: string;
     category?: SupplierCategory;
     compareWith?: 'industry' | 'category' | 'previous';
-  }
+  },
 ) {
   const supabase = createClient();
   const effectiveClinicId = clinicId || '89084c3a-9200-4058-a15a-b440d3c60687';
@@ -457,7 +457,7 @@ export function useProcurementRequests(
     status?: string[];
     category?: SupplierCategory[];
     dateRange?: { start: string; end: string };
-  }
+  },
 ) {
   const queryClient = useQueryClient();
   const supabase = createClient();
@@ -477,7 +477,7 @@ export function useProcurementRequests(
           *,
           items:procurement_items(*),
           bids:supplier_bids(*)
-        `
+        `,
         )
         .eq('clinic_id', effectiveClinicId)
         .order('created_at', { ascending: false });
@@ -507,7 +507,7 @@ export function useProcurementRequests(
   // Create procurement request
   const createProcurementRequest = useMutation({
     mutationFn: async (
-      requestData: Omit<ProcurementRequest, 'id' | 'created_at'>
+      requestData: Omit<ProcurementRequest, 'id' | 'created_at'>,
     ) => {
       const { data, error } = await supabase
         .from('procurement_requests')
@@ -564,7 +564,7 @@ export function useSupplierBids(procurementRequestId: string) {
           supplier:suppliers(*),
           bid_items:bid_items(*),
           documents:bid_documents(*)
-        `
+        `,
         )
         .eq('procurement_request_id', procurementRequestId)
         .order('submitted_at', { ascending: false });
@@ -643,7 +643,7 @@ export function useQualityIssues(
     status?: IssueStatus[];
     severity?: string[];
     type?: QualityIssueType[];
-  }
+  },
 ) {
   const queryClient = useQueryClient();
   const supabase = createClient();
@@ -664,7 +664,7 @@ export function useQualityIssues(
           supplier:suppliers(*),
           corrective_actions:corrective_actions(*),
           documents:quality_documents(*)
-        `
+        `,
         )
         .eq('clinic_id', effectiveClinicId)
         .order('reported_date', { ascending: false });
@@ -698,7 +698,7 @@ export function useQualityIssues(
       issueData: Omit<
         QualityIssue,
         'id' | 'reported_date' | 'created_at' | 'updated_at'
-      >
+      >,
     ) => {
       const { data, error } = await supabase
         .from('quality_issues')
@@ -720,7 +720,7 @@ export function useQualityIssues(
     onSuccess: (newIssue) => {
       queryClient.invalidateQueries({ queryKey: ['quality-issues'] });
       toast.success(
-        `Problema de qualidade #${newIssue.issue_number} registrado com sucesso!`
+        `Problema de qualidade #${newIssue.issue_number} registrado com sucesso!`,
       );
     },
     onError: (_error) => {
@@ -769,7 +769,7 @@ export function useQualityIssues(
     onSuccess: (updatedIssue) => {
       queryClient.invalidateQueries({ queryKey: ['quality-issues'] });
       toast.success(
-        `Status do problema #${updatedIssue.issue_number} atualizado!`
+        `Status do problema #${updatedIssue.issue_number} atualizado!`,
       );
     },
     onError: (_error) => {
@@ -802,7 +802,7 @@ export function useSupplierContracts(
     status?: string[];
     type?: ContractType[];
     expiringIn?: number; // days
-  }
+  },
 ) {
   const _queryClient = useQueryClient();
   const supabase = createClient();
@@ -822,7 +822,7 @@ export function useSupplierContracts(
           *,
           supplier:suppliers(*),
           amendments:contract_amendments(*)
-        `
+        `,
         )
         .eq('clinic_id', effectiveClinicId)
         .order('start_date', { ascending: false });
@@ -861,7 +861,7 @@ export function useSupplierContracts(
       (contract) =>
         contract.end_date &&
         new Date(contract.end_date) <= thirtyDaysFromNow &&
-        contract.status === 'active'
+        contract.status === 'active',
     );
   }, [contracts]);
 
@@ -897,7 +897,7 @@ export function useSupplierCommunications(supplierId: string) {
           `
           *,
           attachments:communication_attachments(*)
-        `
+        `,
         )
         .eq('supplier_id', supplierId)
         .order('timestamp', { ascending: false });
@@ -914,7 +914,7 @@ export function useSupplierCommunications(supplierId: string) {
   // Create communication record
   const createCommunication = useMutation({
     mutationFn: async (
-      communicationData: Omit<SupplierCommunication, 'id' | 'timestamp'>
+      communicationData: Omit<SupplierCommunication, 'id' | 'timestamp'>,
     ) => {
       const { data, error } = await supabase
         .from('supplier_communications')
@@ -961,7 +961,7 @@ export function useSupplierSearch() {
     SupplierCategory[]
   >([]);
   const [selectedStatuses, setSelectedStatuses] = useState<SupplierStatus[]>(
-    []
+    [],
   );
   const [selectedRiskLevels, setSelectedRiskLevels] = useState<RiskLevel[]>([]);
 
@@ -972,7 +972,7 @@ export function useSupplierSearch() {
       status: selectedStatuses.length > 0 ? selectedStatuses : undefined,
       riskLevel: selectedRiskLevels.length > 0 ? selectedRiskLevels : undefined,
     }),
-    [searchTerm, selectedCategories, selectedStatuses, selectedRiskLevels]
+    [searchTerm, selectedCategories, selectedStatuses, selectedRiskLevels],
   );
 
   const clearFilters = useCallback(() => {
@@ -1042,7 +1042,7 @@ export function useSupplierProcurement(supplierId: string, clinicId?: string) {
           `
           *,
           supplier_contracts!inner(*)
-        `
+        `,
         )
         .eq('supplier_id', supplierId);
 
@@ -1052,7 +1052,7 @@ export function useSupplierProcurement(supplierId: string, clinicId?: string) {
         totalValue:
           procurements?.reduce(
             (sum, p) => sum + p.unit_price * p.minimum_order_quantity,
-            0
+            0,
           ) || 0,
         averageOrderTime: 7, // placeholder
         onTimeDeliveryRate: 0.85, // placeholder
@@ -1129,7 +1129,7 @@ export function useSupplierStats(clinicId?: string) {
             acc[s.category] = (acc[s.category] || 0) + 1;
             return acc;
           },
-          {} as Record<string, number>
+          {} as Record<string, number>,
         ) || {};
 
       return {

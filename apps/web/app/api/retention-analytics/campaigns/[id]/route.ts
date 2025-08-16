@@ -56,7 +56,7 @@ const UpdateCampaignSchema = z.object({
           'booking_scheduled',
           'payment_made',
           'engagement_rate',
-        ])
+        ]),
       ),
       trackingPeriodDays: z.number().min(1).max(365).default(30),
       abtestEnabled: z.boolean().default(false),
@@ -75,7 +75,7 @@ const UpdateCampaignSchema = z.object({
 
 export async function GET(
   _request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const campaignId = params.id;
@@ -97,7 +97,7 @@ export async function GET(
           status,
           execution_summary
         )
-      `
+      `,
       )
       .eq('id', campaignId)
       .single();
@@ -105,7 +105,7 @@ export async function GET(
     if (error) {
       return NextResponse.json(
         { error: 'Campaign not found' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -133,7 +133,7 @@ export async function GET(
       .eq('clinic_id', campaign.clinic_id)
       .gte(
         'churn_probability',
-        campaign.trigger_conditions.churnProbabilityThreshold
+        campaign.trigger_conditions.churnProbabilityThreshold,
       )
       .eq('risk_level', campaign.trigger_conditions.riskLevel);
 
@@ -152,7 +152,7 @@ export async function GET(
         error: 'Failed to fetch campaign details',
         message: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -163,7 +163,7 @@ export async function GET(
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const campaignId = params.id;
@@ -176,7 +176,7 @@ export async function PATCH(
           error: 'Invalid campaign data',
           details: validation.error.issues,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -210,7 +210,7 @@ export async function PATCH(
         error: 'Failed to update campaign',
         message: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -221,7 +221,7 @@ export async function PATCH(
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const campaignId = params.id;
@@ -234,7 +234,7 @@ export async function POST(
           error: 'Invalid execution data',
           details: validation.error.issues,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -252,14 +252,14 @@ export async function POST(
     if (campaignError || !campaign) {
       return NextResponse.json(
         { error: 'Campaign not found' },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
     if (!(campaign.is_active || overrideConditions)) {
       return NextResponse.json(
         { error: 'Campaign is not active' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -275,7 +275,7 @@ export async function POST(
 
       if (patientsError) {
         throw new Error(
-          `Failed to fetch target patients: ${patientsError.message}`
+          `Failed to fetch target patients: ${patientsError.message}`,
         );
       }
 
@@ -291,18 +291,18 @@ export async function POST(
           risk_level,
           predicted_churn_date,
           patients!inner(id, name, email, phone, clinic_id)
-        `
+        `,
         )
         .eq('clinic_id', campaign.clinic_id)
         .gte(
           'churn_probability',
-          campaign.trigger_conditions.churnProbabilityThreshold
+          campaign.trigger_conditions.churnProbabilityThreshold,
         )
         .eq('risk_level', campaign.trigger_conditions.riskLevel);
 
       if (patientsError) {
         throw new Error(
-          `Failed to fetch eligible patients: ${patientsError.message}`
+          `Failed to fetch eligible patients: ${patientsError.message}`,
         );
       }
 
@@ -346,7 +346,7 @@ export async function POST(
 
     if (executionError) {
       throw new Error(
-        `Failed to create execution record: ${executionError.message}`
+        `Failed to create execution record: ${executionError.message}`,
       );
     }
 
@@ -393,7 +393,7 @@ export async function POST(
         error: 'Failed to execute campaign',
         message: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -404,7 +404,7 @@ export async function POST(
 
 export async function DELETE(
   _request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const campaignId = params.id;
@@ -420,7 +420,7 @@ export async function DELETE(
 
     if (executionsError) {
       throw new Error(
-        `Failed to check active executions: ${executionsError.message}`
+        `Failed to check active executions: ${executionsError.message}`,
       );
     }
 
@@ -430,7 +430,7 @@ export async function DELETE(
           error:
             'Cannot delete campaign with active executions. Archive it instead.',
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -455,7 +455,7 @@ export async function DELETE(
         error: 'Failed to delete campaign',
         message: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -360,8 +360,8 @@ export function CohortHeatmap({
                       ? Math.round(
                           cohorts.reduce(
                             (sum, c) => sum + c.periods.length,
-                            0
-                          ) / cohorts.length
+                            0,
+                          ) / cohorts.length,
                         )
                       : 0}
                   </p>

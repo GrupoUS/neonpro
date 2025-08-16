@@ -42,7 +42,7 @@ export async function GET(request: NextRequest) {
         error:
           error instanceof Error ? error.message : 'Failed to fetch reports',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -61,7 +61,7 @@ export async function POST(request: NextRequest) {
           error: 'Invalid request data',
           details: validationResult.error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -72,7 +72,7 @@ export async function POST(request: NextRequest) {
         success: true,
         data: report,
       },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (error) {
     return NextResponse.json(
@@ -81,7 +81,7 @@ export async function POST(request: NextRequest) {
         error:
           error instanceof Error ? error.message : 'Failed to create report',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

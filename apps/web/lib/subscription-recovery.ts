@@ -71,7 +71,7 @@ export class SubscriptionRecoveryManager {
   async executeWithRecovery<T>(
     operation: () => Promise<T>,
     error: SubscriptionError,
-    context: ErrorContext
+    context: ErrorContext,
   ): Promise<RecoveryResult<T>> {
     const startTime = Date.now();
     const strategy = error.recoveryStrategy;
@@ -84,28 +84,28 @@ export class SubscriptionRecoveryManager {
           operation,
           error,
           context,
-          startTime
+          startTime,
         );
       case 'graceful_degrade':
         return this.executeGracefulDegradationStrategy(
           operation,
           error,
           context,
-          startTime
+          startTime,
         );
       case 'circuit_break':
         return this.executeCircuitBreakerStrategy(
           operation,
           error,
           context,
-          startTime
+          startTime,
         );
       default:
         return this.executeDefaultStrategy(
           operation,
           error,
           context,
-          startTime
+          startTime,
         );
     }
   }
@@ -114,7 +114,7 @@ export class SubscriptionRecoveryManager {
     operation: () => Promise<T>,
     error: SubscriptionError,
     _context: ErrorContext,
-    startTime: number
+    startTime: number,
   ): Promise<RecoveryResult<T>> {
     let attempts = 0;
     let lastError = error;
@@ -158,7 +158,7 @@ export class SubscriptionRecoveryManager {
     _operation: () => Promise<T>,
     error: SubscriptionError,
     _context: ErrorContext,
-    startTime: number
+    startTime: number,
   ): Promise<RecoveryResult<T>> {
     // Implement fallback strategy
     return {
@@ -176,7 +176,7 @@ export class SubscriptionRecoveryManager {
     _operation: () => Promise<T>,
     error: SubscriptionError,
     _context: ErrorContext,
-    startTime: number
+    startTime: number,
   ): Promise<RecoveryResult<T>> {
     // Implement graceful degradation
     return {
@@ -194,7 +194,7 @@ export class SubscriptionRecoveryManager {
     _operation: () => Promise<T>,
     error: SubscriptionError,
     _context: ErrorContext,
-    startTime: number
+    startTime: number,
   ): Promise<RecoveryResult<T>> {
     // Implement circuit breaker strategy
     return {
@@ -212,7 +212,7 @@ export class SubscriptionRecoveryManager {
     operation: () => Promise<T>,
     error: SubscriptionError,
     context: ErrorContext,
-    startTime: number
+    startTime: number,
   ): Promise<RecoveryResult<T>> {
     // Default strategy - simple retry
     return this.executeRetryStrategy(operation, error, context, startTime);

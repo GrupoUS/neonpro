@@ -48,7 +48,7 @@ export function TimeSlotDisplay({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>('');
   const [selectedDate, setSelectedDate] = useState<string>(
-    format(new Date(), 'yyyy-MM-dd')
+    format(new Date(), 'yyyy-MM-dd'),
   );
 
   useEffect(() => {
@@ -73,7 +73,7 @@ export function TimeSlotDisplay({
           p_professional_id: professionalId || null,
           p_start_date: startDate.toISOString(),
           p_end_date: endDate.toISOString(),
-        }
+        },
       );
 
       if (fetchError) {
@@ -101,12 +101,12 @@ export function TimeSlotDisplay({
         date,
         slots: slots.sort(
           (a, b) =>
-            new Date(a.datetime).getTime() - new Date(b.datetime).getTime()
+            new Date(a.datetime).getTime() - new Date(b.datetime).getTime(),
         ),
       }));
 
       setAvailableSlots(
-        slotsArray.sort((a, b) => a.date.localeCompare(b.date))
+        slotsArray.sort((a, b) => a.date.localeCompare(b.date)),
       );
     } catch (_err) {
       setError('Erro ao carregar horários disponíveis. Tente novamente.');

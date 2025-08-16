@@ -332,7 +332,7 @@ export function AnalyticsFilters({
 
       onFiltersChange(updatedFilters);
     },
-    [filters, onFiltersChange]
+    [filters, onFiltersChange],
   );
 
   /**
@@ -341,7 +341,7 @@ export function AnalyticsFilters({
   const handleCustomDateRange = useCallback(() => {
     if (customDateRange.start && customDateRange.end) {
       const updatedFilters = filters.filter(
-        (f) => f.category !== 'custom_date_range'
+        (f) => f.category !== 'custom_date_range',
       );
       updatedFilters.push({
         category: 'custom_date_range',
@@ -363,7 +363,7 @@ export function AnalyticsFilters({
       const updatedFilters = filters.filter((f) => f.category !== category);
       onFiltersChange(updatedFilters);
     },
-    [filters, onFiltersChange]
+    [filters, onFiltersChange],
   );
 
   /**
@@ -384,7 +384,7 @@ export function AnalyticsFilters({
     const selectedValues = currentFilter?.values || [];
 
     const filteredOptions = category.options.filter((option) =>
-      option.label.toLowerCase().includes(searchTerm.toLowerCase())
+      option.label.toLowerCase().includes(searchTerm.toLowerCase()),
     );
 
     return (
@@ -464,7 +464,7 @@ export function AnalyticsFilters({
                     } else {
                       handleFilterChange(
                         category.id,
-                        selectedValues.filter((v) => v !== option.value)
+                        selectedValues.filter((v) => v !== option.value),
                       );
                     }
                   }}

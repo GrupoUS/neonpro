@@ -39,7 +39,7 @@ export async function POST(request: NextRequest) {
           success: false,
           error: authResult.error,
         },
-        { status: authResult.status }
+        { status: authResult.status },
       );
     }
 
@@ -56,7 +56,7 @@ export async function POST(request: NextRequest) {
             message: 'Tasks must be an array',
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -73,7 +73,7 @@ export async function POST(request: NextRequest) {
                 'Cleanup is already in progress. Use force=true to override.',
             },
           },
-          { status: 409 }
+          { status: 409 },
         );
       }
     }
@@ -94,7 +94,7 @@ export async function POST(request: NextRequest) {
           message: 'Internal server error during cleanup',
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -113,7 +113,7 @@ export async function GET(request: NextRequest) {
           success: false,
           error: authResult.error,
         },
-        { status: authResult.status }
+        { status: authResult.status },
       );
     }
 
@@ -132,7 +132,7 @@ export async function GET(request: NextRequest) {
           message: 'Internal server error getting cleanup status',
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -151,7 +151,7 @@ export async function DELETE(request: NextRequest) {
           success: false,
           error: authResult.error,
         },
-        { status: authResult.status }
+        { status: authResult.status },
       );
     }
 
@@ -163,7 +163,7 @@ export async function DELETE(request: NextRequest) {
         message: 'All scheduled cleanup tasks stopped',
         timestamp: new Date().toISOString(),
       },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (_error) {
     return NextResponse.json(
@@ -174,7 +174,7 @@ export async function DELETE(request: NextRequest) {
           message: 'Internal server error stopping cleanup tasks',
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -184,7 +184,7 @@ export async function DELETE(request: NextRequest) {
  */
 async function verifyCleanupPermissions(
   request: NextRequest,
-  requireAdmin = false
+  requireAdmin = false,
 ): Promise<{
   success: boolean;
   error?: any;
@@ -210,7 +210,7 @@ async function verifyCleanupPermissions(
     // Verify JWT token with Supabase
     const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     );
 
     const {
@@ -309,7 +309,7 @@ const rateLimitMap = new Map<string, { count: number; resetTime: number }>();
 function _checkRateLimit(
   identifier: string,
   maxRequests = 10,
-  windowMs = 60_000
+  windowMs = 60_000,
 ): boolean {
   const now = Date.now();
   const userLimit = rateLimitMap.get(identifier);

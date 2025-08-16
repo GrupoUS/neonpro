@@ -121,7 +121,7 @@ export default function LGPDTransparencyPortal({
 
   const handleConsentAction = async (
     _consentId: string,
-    _action: 'grant' | 'withdraw'
+    _action: 'grant' | 'withdraw',
   ) => {
     try {
       await loadPortalData(); // Recarregar dados
@@ -165,11 +165,11 @@ export default function LGPDTransparencyPortal({
 
   const calculateComplianceScore = (): number => {
     const activeConsents = consents.filter(
-      (c) => c.status === ConsentStatus.GRANTED
+      (c) => c.status === ConsentStatus.GRANTED,
     ).length;
     const totalConsents = consents.length;
     const completedRequests = requests.filter(
-      (r) => r.status === RequestStatus.COMPLETED
+      (r) => r.status === RequestStatus.COMPLETED,
     ).length;
     const totalRequests = requests.length;
 
@@ -792,7 +792,7 @@ export default function LGPDTransparencyPortal({
                         <span className="font-medium">Período:</span>
                         <div>
                           {new Date(
-                            report.period.startDate
+                            report.period.startDate,
                           ).toLocaleDateString()}{' '}
                           -
                           {new Date(report.period.endDate).toLocaleDateString()}

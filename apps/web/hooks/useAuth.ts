@@ -2,9 +2,10 @@
 
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import type { Session, User } from '@supabase/supabase-js';
-import {
+import React, {
   createContext,
   type ReactNode,
+  useCallback,
   useContext,
   useEffect,
   useState,
@@ -37,7 +38,7 @@ type AuthContextType = {
   signUp: (
     email: string,
     password: string,
-    metadata?: any
+    metadata?: any,
   ) => Promise<{ error?: any }>;
   refreshSession: () => Promise<void>;
   requireMFA: () => boolean;
@@ -106,12 +107,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => subscription.unsubscribe();
   }, [supabase.auth, loadUserProfile]);
 
-  const loadUserProfile = async (authUser: User) => {
-    try {
-      // Load healthcare-specific user profile with LGPD compliance
-      const { data: profile, error } = await supabase
-        .from('profiles')
-        .select(`
+  const loadUserProfile = useCallback(
+    async (authUser: User) => {
+      try {
+        // Load healthcare-specific user profile with LGPD compliance
+        const { data: profile, error } = await supabase
+          .from('profiles')
+          .select(`
           *,
           user_tenants (
             tenant_id,
@@ -132,50 +134,52 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             status
           )
         `)
-        .eq('id', authUser.id)
-        .single();
+          .eq('id', authUser.id)
+          .single();
 
-      if (error) {
+        if (error) {
+          setUser(authUser as AuthUser);
+          return;
+        }
+
+        // Construct healthcare user object with privacy protection
+        const healthcareUser: AuthUser = {
+          ...authUser,
+          role: profile.user_tenants?.[0]?.role || 'patient',
+          tenantId: profile.user_tenants?.[0]?.tenant_id,
+          clinicId: profile.user_tenants?.[0]?.tenants?.id,
+          permissions: profile.user_tenants?.[0]?.permissions || [],
+          cfmRegistration: profile.professional_registrations?.[0]?.cfm_number,
+          mfaEnabled: profile.mfa_enabled,
+          lastLoginAt: profile.last_login_at,
+          healthcareProfile: {
+            specialization: profile.professional_registrations?.[0]?.specialty,
+            licenseNumber: profile.professional_registrations?.[0]?.cfm_number,
+            licenseExpiry:
+              profile.professional_registrations?.[0]?.license_expiry,
+            anvisaRegistration:
+              profile.professional_registrations?.[0]?.anvisa_registration,
+          },
+        };
+
+        setUser(healthcareUser);
+
+        // Log access for LGPD compliance
+        await supabase.from('access_audit_log').insert({
+          user_id: authUser.id,
+          action: 'profile_access',
+          tenant_id: healthcareUser.tenantId,
+          metadata: {
+            user_agent: navigator.userAgent,
+            timestamp: new Date().toISOString(),
+          },
+        });
+      } catch (_err) {
         setUser(authUser as AuthUser);
-        return;
       }
-
-      // Construct healthcare user object with privacy protection
-      const healthcareUser: AuthUser = {
-        ...authUser,
-        role: profile.user_tenants?.[0]?.role || 'patient',
-        tenantId: profile.user_tenants?.[0]?.tenant_id,
-        clinicId: profile.user_tenants?.[0]?.tenants?.id,
-        permissions: profile.user_tenants?.[0]?.permissions || [],
-        cfmRegistration: profile.professional_registrations?.[0]?.cfm_number,
-        mfaEnabled: profile.mfa_enabled,
-        lastLoginAt: profile.last_login_at,
-        healthcareProfile: {
-          specialization: profile.professional_registrations?.[0]?.specialty,
-          licenseNumber: profile.professional_registrations?.[0]?.cfm_number,
-          licenseExpiry:
-            profile.professional_registrations?.[0]?.license_expiry,
-          anvisaRegistration:
-            profile.professional_registrations?.[0]?.anvisa_registration,
-        },
-      };
-
-      setUser(healthcareUser);
-
-      // Log access for LGPD compliance
-      await supabase.from('access_audit_log').insert({
-        user_id: authUser.id,
-        action: 'profile_access',
-        tenant_id: healthcareUser.tenantId,
-        metadata: {
-          user_agent: navigator.userAgent,
-          timestamp: new Date().toISOString(),
-        },
-      });
-    } catch (_err) {
-      setUser(authUser as AuthUser);
-    }
-  };
+    },
+    [supabase],
+  );
 
   const signIn = async (email: string, password: string) => {
     try {
@@ -263,8 +267,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const { data, error } = await supabase.auth.refreshSession();
       if (error) {
       }
-    } catch (_err) {
-    }
+    } catch (_err) {}
   };
 
   const requireMFA = (): boolean => {
@@ -294,8 +297,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     hasTenantAccess,
   };
 
-  return (<AuthContext.Provider value =
-    { value } > { children } < /.>ACPdeehinoorrtttuvx);
+  return React.createElement(AuthContext.Provider, { value }, children);
 }
 
 /**

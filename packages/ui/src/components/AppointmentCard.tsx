@@ -68,7 +68,41 @@ const formatTime = (dateString: string): string => {
     minute: '2-digit',
   });
 };
-const AppointmentCard = React.forwardRef<HTMLDivElement, AppointmentCardProps>(
+
+// Helper function to get status variant for badge
+const getStatusVariant = (appointmentStatus: string) => {
+  switch (appointmentStatus) {
+    case 'scheduled':
+      return 'pending';
+    case 'confirmed':
+      return 'confirmed';
+    case 'in-progress':
+      return 'processing';
+    case 'completed':
+      return 'confirmed';
+    case 'cancelled':
+      return 'cancelled';
+    case 'no-show':
+      return 'cancelled';
+    default:
+      return 'default';
+  }
+};
+
+// Helper function to get type icon
+const getTypeIcon = (appointmentType: string) => {
+  switch (appointmentType) {
+    case 'emergency':
+      return <AlertCircle className="h-4 w-4" />;
+    case 'procedure':
+      return <Calendar className="h-4 w-4" />;
+    case 'follow-up':
+      return <Clock className="h-4 w-4" />;
+    default:
+      return <User className="h-4 w-4" />;
+  }
+};
+const AppointmentCard = React.forwardRef<HTMLButtonElement, AppointmentCardProps>(
   (
     {
       appointment,
@@ -101,25 +135,6 @@ const AppointmentCard = React.forwardRef<HTMLDivElement, AppointmentCardProps>(
       urgency = 'medium',
     } = appointment;
 
-    const getStatusVariant = (status: string) => {
-      switch (status) {
-        case 'scheduled':
-          return 'pending';
-        case 'confirmed':
-          return 'confirmed';
-        case 'in-progress':
-          return 'processing';
-        case 'completed':
-          return 'confirmed';
-        case 'cancelled':
-          return 'cancelled';
-        case 'no-show':
-          return 'cancelled';
-        default:
-          return 'default';
-      }
-    };
-
     const statusVariant = getStatusVariant(status);
     const isUrgent = urgency === 'urgent' || urgency === 'high';
 
@@ -133,18 +148,7 @@ const AppointmentCard = React.forwardRef<HTMLDivElement, AppointmentCardProps>(
     const isPast = startDate < new Date();
     const isInProgress = status === 'in-progress';
 
-    const getTypeIcon = () => {
-      switch (type) {
-        case 'emergency':
-          return <AlertCircle className="h-4 w-4" />;
-        case 'procedure':
-          return <User className="h-4 w-4" />;
-        case 'follow-up':
-          return <Calendar className="h-4 w-4" />;
-        default:
-          return <Clock className="h-4 w-4" />;
-      }
-    };
+    const typeIcon = getTypeIcon(type);
 
     const getTypeColor = () => {
       switch (type) {
@@ -159,8 +163,8 @@ const AppointmentCard = React.forwardRef<HTMLDivElement, AppointmentCardProps>(
       }
     };
 
-    const getTypeLabel = (type: string) => {
-      switch (type) {
+    const getTypeLabel = (appointmentType: string) => {
+      switch (appointmentType) {
         case 'consultation':
           return 'Consulta';
         case 'procedure':
@@ -170,12 +174,12 @@ const AppointmentCard = React.forwardRef<HTMLDivElement, AppointmentCardProps>(
         case 'emergency':
           return 'Emergência';
         default:
-          return type;
+          return appointmentType;
       }
     };
 
-    const getStatusLabel = (status: string) => {
-      switch (status) {
+    const getStatusLabel = (appointmentStatus: string) => {
+      switch (appointmentStatus) {
         case 'scheduled':
           return 'Agendada';
         case 'confirmed':
@@ -189,13 +193,13 @@ const AppointmentCard = React.forwardRef<HTMLDivElement, AppointmentCardProps>(
         case 'no-show':
           return 'Não compareceu';
         default:
-          return status;
+          return appointmentStatus;
       }
     };
     return (
-      <div
+      <button
         className={cn(
-          'rounded-lg border bg-card p-4 text-card-foreground transition-shadow hover:shadow-md',
+          'w-full rounded-lg border bg-card p-4 text-left text-card-foreground transition-shadow hover:shadow-md focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2',
           isInProgress && 'ring-2 ring-blue-500 ring-opacity-50',
           isUrgent && 'border-red-200',
           onClick && 'cursor-pointer',
@@ -203,6 +207,7 @@ const AppointmentCard = React.forwardRef<HTMLDivElement, AppointmentCardProps>(
         )}
         onClick={onClick}
         ref={ref}
+        type="button"
         {...props}
       >
         {/* Header */}
@@ -262,7 +267,7 @@ const AppointmentCard = React.forwardRef<HTMLDivElement, AppointmentCardProps>(
 
             <div className="flex items-center gap-2">
               <Badge size="sm" variant={getTypeColor()}>
-                {getTypeIcon()}
+                {typeIcon}
                 <span className="ml-1">{getTypeLabel(type)}</span>
               </Badge>
             </div>
@@ -390,7 +395,7 @@ const AppointmentCard = React.forwardRef<HTMLDivElement, AppointmentCardProps>(
             {formatDate(startTime)}
           </div>
         )}
-      </div>
+      </button>
     );
   }
 );
