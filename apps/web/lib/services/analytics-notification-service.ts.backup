@@ -1,0 +1,19 @@
+// Analyticsnotificationservice Module
+export interface AnalyticsnotificationserviceConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Analyticsnotificationservice_DEFAULT: AnalyticsnotificationserviceConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createAnalyticsnotificationservice() {
+  return Analyticsnotificationservice_DEFAULT;
+}
+
+export default {
+  config: Analyticsnotificationservice_DEFAULT,
+  create: createAnalyticsnotificationservice
+};

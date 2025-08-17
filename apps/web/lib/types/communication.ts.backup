@@ -1,0 +1,19 @@
+// Communication Module
+export interface CommunicationConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Communication_DEFAULT: CommunicationConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createCommunication() {
+  return Communication_DEFAULT;
+}
+
+export default {
+  config: Communication_DEFAULT,
+  create: createCommunication
+};

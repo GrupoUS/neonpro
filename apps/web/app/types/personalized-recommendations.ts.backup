@@ -1,0 +1,446 @@
+// Story 9.2: Personalized Treatment Recommendations - TypeScript Types// Comprehensive type definitions for AI-powered personalized treatment recommendations
+export type RecommendationProfile = {
+  id: string;
+  patient_id: string;
+  profile_data: Record<string, any>;
+  preference_weights: Record<string, number>;
+  lifestyle_factors: Record<string, any>;
+  medical_preferences: Record<string, any>;
+  communication_preferences: Record<string, any>;
+  last_updated: string;
+  created_at: string;
+  updated_at: string;
+};
+
+export type TreatmentRecommendation = {
+  id: string;
+  patient_id: string;
+  provider_id: string;
+  recommendation_type: RecommendationType;
+  treatment_options: Array<TreatmentOption>;
+  ranking_scores: Record<string, number>;
+  rationale: string;
+  success_probabilities: Record<string, number>;
+  risk_assessments: Record<string, RiskAssessment>;
+  contraindications: Array<Contraindication>;
+  alternatives: Array<TreatmentAlternative>;
+  status: RecommendationStatus;
+  approved_by: string;
+  approved_at: string;
+  expires_at: string;
+  created_at: string;
+  updated_at: string;
+};
+
+export type RecommendationFeedback = {
+  id: string;
+  recommendation_id: string;
+  provider_id: string;
+  feedback_type: FeedbackType;
+  adoption_status: AdoptionStatus;
+  quality_rating: number;
+  usefulness_rating: number;
+  accuracy_rating: number;
+  comments: string;
+  improvement_suggestions: string;
+  would_recommend: boolean;
+  created_at: string;
+};
+
+export type PersonalizationFactor = {
+  id: string;
+  patient_id: string;
+  factor_type: FactorType;
+  factor_category: FactorCategory;
+  factor_value: Record<string, any>;
+  weight: number;
+  source: DataSource;
+  confidence_score: number;
+  last_verified: string;
+  created_at: string;
+  updated_at: string;
+};
+
+export type SafetyProfile = {
+  id: string;
+  patient_id: string;
+  allergies: Array<Allergy>;
+  contraindications: Array<Contraindication>;
+  drug_interactions: Array<DrugInteraction>;
+  medical_conditions: Array<MedicalCondition>;
+  risk_factors: Array<RiskFactor>;
+  safety_alerts: Array<SafetyAlert>;
+  last_reviewed: string;
+  reviewed_by: string;
+  created_at: string;
+  updated_at: string;
+};
+
+export type ProtocolCustomization = {
+  id: string;
+  patient_id: string;
+  protocol_id: string;
+  customizations: Record<string, any>;
+  personalization_rules: Record<string, any>;
+  modifications: Array<ProtocolModification>;
+  approval_status: ApprovalStatus;
+  customized_by: string;
+  approved_by: string;
+  effective_date: string;
+  created_at: string;
+  updated_at: string;
+};
+
+export type RecommendationPerformance = {
+  id: string;
+  recommendation_id: string;
+  patient_id: string;
+  adoption_rate: number;
+  effectiveness_score: number;
+  patient_satisfaction: number;
+  provider_satisfaction: number;
+  outcome_quality: number;
+  time_to_adoption: string;
+  success_indicators: Record<string, any>;
+  measured_at: string;
+  created_at: string;
+};
+
+// Supporting Typesexport type TreatmentOption = {
+  id: string;
+  name: string;
+  type: TreatmentType;
+  description: string;
+  duration: string;
+  intensity: TreatmentIntensity;
+  cost_estimate: number;
+  success_probability: number;
+  risk_level: RiskLevel;
+  contraindications: Array<string>;
+  requirements: Array<string>;
+  alternatives: Array<string>;
+};
+
+export type TreatmentAlternative = {
+  option: TreatmentOption;
+  ranking_score: number;
+  comparison_rationale: string;
+  pros: Array<string>;
+  cons: Array<string>;
+  suitability_score: number;
+};
+
+export type RiskAssessment = {
+  risk_level: RiskLevel;
+  risk_factors: Array<RiskFactor>;
+  mitigation_strategies: Array<string>;
+  monitoring_requirements: Array<string>;
+  safety_precautions: Array<string>;
+};
+
+export type Contraindication = {
+  id: string;
+  type: ContraindicationType;
+  severity: SeverityLevel;
+  description: string;
+  reason: string;
+  alternatives: Array<string>;
+};
+
+export type Allergy = {
+  id: string;
+  allergen: string;
+  type: AllergyType;
+  severity: SeverityLevel;
+  symptoms: Array<string>;
+  cross_reactions: Array<string>;
+  avoidance_instructions: Array<string>;
+};
+
+export type DrugInteraction = {
+  id: string;
+  drug_a: string;
+  drug_b: string;
+  interaction_type: InteractionType;
+  severity: SeverityLevel;
+  description: string;
+  management: string;
+};
+
+export type MedicalCondition = {
+  id: string;
+  condition: string;
+  icd_code: string;
+  status: ConditionStatus;
+  severity: SeverityLevel;
+  onset_date: string;
+  notes: string;
+  relevant_factors: Array<string>;
+};
+
+export type RiskFactor = {
+  id: string;
+  factor_name: string;
+  factor_type: RiskFactorType;
+  risk_level: RiskLevel;
+  description: string;
+  mitigation_strategies: Array<string>;
+};
+
+export type SafetyAlert = {
+  id: string;
+  alert_type: AlertType;
+  severity: SeverityLevel;
+  message: string;
+  recommendations: Array<string>;
+  expires_at: string;
+};
+
+export type ProtocolModification = {
+  modification_type: ModificationType;
+  original_value: any;
+  modified_value: any;
+  rationale: string;
+  approval_required: boolean;
+};
+
+// Enums and Unionsexport type RecommendationType =
+  | 'primary_treatment'
+  | 'alternative_therapy'
+  | 'combination_therapy'
+  | "preventive_care" | "maintenance_therapy" | "adjuvant_treatment";
+
+export type RecommendationStatus =
+  | 'pending'
+  | 'approved'
+  | 'rejected'
+  | "implemented" | "completed" | "expired";
+
+export type TreatmentType =
+  | 'aesthetic'
+  | 'dermatological'
+  | 'cosmetic'
+  | "therapeutic" | "preventive" | "maintenance";
+
+export type TreatmentIntensity =
+  | 'minimal'
+  | 'mild'
+  | "moderate" | "intensive" | "aggressive";
+
+export type RiskLevel = 'very_low' | 'low' | "moderate" | "high" | "very_high";
+
+export type FeedbackType =
+  | 'accuracy'
+  | 'usefulness'
+  | 'adoption'
+  | "quality" | "improvement" | "general";
+
+export type AdoptionStatus =
+  | 'adopted'
+  | 'modified'
+  | "rejected" | "pending" | "partially_adopted";
+
+export type FactorType =
+  | 'demographic'
+  | 'medical_history'
+  | 'lifestyle'
+  | 'preference'
+  | "behavioral" | "genetic" | "environmental";
+
+export type FactorCategory =
+  | 'age_related'
+  | 'gender_specific'
+  | 'medical_condition'
+  | 'treatment_history'
+  | 'lifestyle_choice'
+  | "patient_preference" | "risk_factor" | "compliance_indicator";
+
+export type DataSource =
+  | 'medical_record'
+  | 'patient_survey'
+  | 'clinical_assessment'
+  | 'lab_results'
+  | 'imaging_study'
+  | "family_history" | "lifestyle_assessment" | "behavioral_analysis";
+
+export type ContraindicationType =
+  | 'absolute'
+  | "relative" | "temporary" | "conditional";
+
+export type SeverityLevel = 'mild' | "moderate" | "severe" | "critical";
+
+export type AllergyType =
+  | 'drug'
+  | 'environmental'
+  | "food" | "contact" | "seasonal";
+
+export type InteractionType =
+  | 'antagonistic'
+  | 'synergistic'
+  | "additive" | "competitive" | "incompatible";
+
+export type ConditionStatus =
+  | 'active'
+  | 'inactive'
+  | 'resolved'
+  | "chronic" | "acute" | "managed";
+
+export type RiskFactorType =
+  | 'genetic'
+  | 'environmental'
+  | 'behavioral'
+  | "medical" | "social" | "occupational";
+
+export type AlertType =
+  | 'contraindication'
+  | 'allergy'
+  | 'interaction'
+  | "safety" | "monitoring" | "dose_adjustment";
+
+export type ApprovalStatus =
+  | 'pending'
+  | 'approved'
+  | "rejected" | "requires_review" | "expired";
+
+export type ModificationType =
+  | 'dose_adjustment'
+  | 'frequency_change'
+  | 'duration_modification'
+  | "technique_alteration" | "timing_adjustment" | "intensity_modification";
+
+// Request/Response Typesexport type CreateRecommendationProfileRequest = {
+  patient_id: string;
+  profile_data: Record<string, any>;
+  preference_weights: Record<string, number>;
+  lifestyle_factors: Record<string, any>;
+  medical_preferences: Record<string, any>;
+  communication_preferences: Record<string, any>;
+};
+
+export type UpdateRecommendationProfileRequest = {
+  profile_data: Record<string, any>;
+  preference_weights: Record<string, number>;
+  lifestyle_factors: Record<string, any>;
+  medical_preferences: Record<string, any>;
+  communication_preferences: Record<string, any>;
+};
+
+export type CreateTreatmentRecommendationRequest = {
+  patient_id: string;
+  recommendation_type: RecommendationType;
+  treatment_options: Array<TreatmentOption>;
+  rationale: string;
+};
+
+export type ApproveRecommendationRequest = {
+  approved_by: string;
+  approval_notes: string;
+  modifications: Record<string, any>;
+};
+
+export type CreateRecommendationFeedbackRequest = {
+  recommendation_id: string;
+  feedback_type: FeedbackType;
+  adoption_status: AdoptionStatus;
+  quality_rating: number;
+  usefulness_rating: number;
+  accuracy_rating: number;
+  comments: string;
+  improvement_suggestions: string;
+  would_recommend: boolean;
+};
+
+export type CreatePersonalizationFactorRequest = {
+  patient_id: string;
+  factor_type: FactorType;
+  factor_category: FactorCategory;
+  factor_value: Record<string, any>;
+  weight: number;
+  source: DataSource;
+  confidence_score: number;
+};
+
+export type UpdateSafetyProfileRequest = {
+  allergies: Array<Allergy>;
+  contraindications: Array<Contraindication>;
+  drug_interactions: Array<DrugInteraction>;
+  medical_conditions: Array<MedicalCondition>;
+  risk_factors: Array<RiskFactor>;
+  safety_alerts: Array<SafetyAlert>;
+};
+
+export type CreateProtocolCustomizationRequest = {
+  patient_id: string;
+  protocol_id: string;
+  customizations: Record<string, any>;
+  personalization_rules: Record<string, any>;
+  modifications: Array<ProtocolModification>;
+};
+
+export type RecordPerformanceRequest = {
+  recommendation_id: string;
+  patient_id: string;
+  adoption_rate: number;
+  effectiveness_score: number;
+  patient_satisfaction: number;
+  provider_satisfaction: number;
+  outcome_quality: number;
+  time_to_adoption: string;
+  success_indicators: Record<string, any>;
+};
+
+// Analytics and Reporting Typesexport type RecommendationAnalytics = {
+  total_recommendations: number;
+  adoption_rate: number;
+  average_quality_rating: number;
+  average_usefulness_rating: number;
+  average_accuracy_rating: number;
+  most_recommended_treatments: Array<string>;
+  highest_success_rates: Array<TreatmentOption>;
+  user_acceptance_rate: number;
+  performance_trends: Array<PerformanceTrend>;
+};
+
+export type PerformanceTrend = {
+  period: string;
+  metric: string;
+  value: number;
+  change_percentage: number;
+};
+
+export type PersonalizationInsights = {
+  most_influential_factors: Array<PersonalizationFactor>;
+  patient_preferences_distribution: Record<string, number>;
+  safety_profile_statistics: Record<string, number>;
+  customization_patterns: Record<string, number>;
+};
+
+// Utility Typesexport type RecommendationWithDetails = TreatmentRecommendation & {
+  {;
+    id: string;
+    name: string;
+    email: string;
+  };
+  {;
+    id: string;
+    name: string;
+    role: string;
+  };
+  feedback: Array<RecommendationFeedback>;
+  performance: RecommendationPerformance;
+};
+
+export type SafetyProfileWithAlerts = SafetyProfile & {
+  active_alerts: Array<SafetyAlert>;
+  critical_contraindications: Array<Contraindication>;
+  high_risk_interactions: Array<DrugInteraction>;
+};
+
+export type PersonalizedRecommendationResult = {
+  recommendations: Array<TreatmentRecommendation>;
+  personalization_score: number;
+  safety_assessment: SafetyProfile;
+  confidence_level: number;
+  explanation: string;
+  alternative_options: Array<TreatmentAlternative>;
+};

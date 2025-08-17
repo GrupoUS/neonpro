@@ -1,0 +1,19 @@
+// Patients.Test Module
+export interface Patients.TestConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Patients.Test_DEFAULT: Patients.TestConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createPatients.Test() {
+  return Patients.Test_DEFAULT;
+}
+
+export default {
+  config: Patients.Test_DEFAULT,
+  create: createPatients.Test
+};

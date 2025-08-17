@@ -1,0 +1,18 @@
+"use client";
+
+import React from 'react';
+
+interface MatchingalgorithmsconfigProps {
+  children?: React.ReactNode;
+  className?: string;
+}
+
+export function Matchingalgorithmsconfig({ children, className = "" }: MatchingalgorithmsconfigProps) {
+  return (
+    <div className={className}>
+      {children || "Matchingalgorithmsconfig Component"}
+    </div>
+  );
+}
+
+export default Matchingalgorithmsconfig;

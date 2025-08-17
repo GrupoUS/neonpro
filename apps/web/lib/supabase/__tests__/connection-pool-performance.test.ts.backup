@@ -1,0 +1,19 @@
+// Connectionpoolperformance.Test Module
+export interface Connectionpoolperformance.TestConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Connectionpoolperformance.Test_DEFAULT: Connectionpoolperformance.TestConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createConnectionpoolperformance.Test() {
+  return Connectionpoolperformance.Test_DEFAULT;
+}
+
+export default {
+  config: Connectionpoolperformance.Test_DEFAULT,
+  create: createConnectionpoolperformance.Test
+};

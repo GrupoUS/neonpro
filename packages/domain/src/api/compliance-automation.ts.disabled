@@ -1,0 +1,757 @@
+// ================================================
+// STORY 4.1: COMPLIANCE AUTOMATION API
+// Advanced REST API for healthcare compliance automation
+// ================================================
+
+import { createClient } from '@neonpro/db';
+import { type NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
+
+// ================================================
+// VALIDATION SCHEMAS
+// ================================================
+
+const DataClassificationSchema = z.object({
+  tableName: z.string().min(1),
+  columnName: z.string().min(1),
+  sampleData: z.string().optional(),
+  overrideClassification: z
+    .object({
+      category: z.enum(['public', 'internal', 'personal', 'sensitive']).optional(),
+      sensitivity: z.number().min(1).max(5).optional(),
+      encryptionRequired: z.boolean().optional(),
+      retentionDays: z.number().min(1).optional(),
+    })
+    .optional(),
+});
+
+const DataSubjectRequestSchema = z.object({
+  requestType: z.enum(['access', 'rectification', 'erasure', 'portability', 'objection']),
+  dataSubjectId: z.string().uuid(),
+  clinicId: z.string().uuid(),
+  identityVerificationData: z.object({
+    documentType: z.string(),
+    documentNumber: z.string(),
+    verificationMethod: z.enum(['in_person', 'video_call', 'digital_signature']),
+  }),
+  requestDetails: z.record(z.any()).optional(),
+  urgency: z.enum(['normal', 'urgent', 'critical']).default('normal'),
+});
+
+const ComplianceAlertSchema = z.object({
+  alertType: z.string(),
+  severity: z.enum(['low', 'medium', 'high', 'critical']),
+  clinicId: z.string().uuid().optional(),
+  description: z.string(),
+  affectedSystems: z.array(z.string()).default([]),
+  autoResolve: z.boolean().default(false),
+});
+
+const SoftwareValidationSchema = z.object({
+  softwareItemName: z.string().min(1),
+  softwareVersion: z.string().min(1),
+  changeDescription: z.string().optional(),
+  safetyClassification: z.enum(['A', 'B', 'C']).optional(),
+  riskAssessmentRequired: z.boolean().default(false),
+});
+
+const ProfessionalValidationSchema = z.object({
+  professionalId: z.string().uuid(),
+  validationType: z
+    .enum(['license', 'credentials', 'ethics', 'comprehensive'])
+    .default('comprehensive'),
+  includeRecommendations: z.boolean().default(true),
+});
+
+// ================================================
+// UTILITY FUNCTIONS
+// ================================================
+
+async function getSupabaseClient(_req: NextRequest) {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+  const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+
+  return createClient(supabaseUrl, supabaseServiceKey, {
+    auth: {
+      autoRefreshToken: false,
+      persistSession: false,
+    },
+  });
+}
+
+async function validateRequest(req: NextRequest, schema: z.ZodSchema) {
+  try {
+    const body = await req.json();
+    return { success: true, data: schema.parse(body) };
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return {
+        success: false,
+        error: 'Validation failed',
+        details: error.errors,
+      };
+    }
+    return {
+      success: false,
+      error: 'Invalid JSON',
+    };
+  }
+}
+
+async function handleApiError(error: unknown, _context: string) {
+  if (error.code === 'PGRST116') {
+    return NextResponse.json(
+      { success: false, error: 'Database function not found' },
+      { status: 404 }
+    );
+  }
+
+  if (error.code === '42501') {
+    return NextResponse.json(
+      { success: false, error: 'Insufficient permissions' },
+      { status: 403 }
+    );
+  }
+
+  return NextResponse.json({ success: false, error: 'Internal server error' }, { status: 500 });
+}
+
+// ================================================
+// LGPD COMPLIANCE ENDPOINTS
+// ================================================
+
+// POST /api/compliance/lgpd/data-classification
+export async function classifyData(req: NextRequest) {
+  try {
+    const validation = await validateRequest(req, DataClassificationSchema);
+    if (!validation.success) {
+      return NextResponse.json(validation, { status: 400 });
+    }
+
+    const { tableName, columnName, sampleData, overrideClassification } = validation.data;
+    const supabase = await getSupabaseClient(req);
+
+    // Call auto-classification function
+    const { data: classificationResult, error } = await supabase.rpc('auto_classify_data_element', {
+      p_table_name: tableName,
+      p_column_name: columnName,
+      p_sample_data: sampleData || '',
+    });
+
+    if (error) {
+      return handleApiError(error, 'data classification');
+    }
+
+    let finalClassification = classificationResult;
+
+    // Apply manual overrides if provided
+    if (overrideClassification) {
+      finalClassification = {
+        ...finalClassification,
+        ...overrideClassification,
+        manual_override: true,
+        override_timestamp: new Date().toISOString(),
+      };
+    }
+
+    // Store classification in database
+    const { data: storedClassification, error: storeError } = await supabase
+      .from('compliance_data_classification')
+      .upsert({
+        table_name: tableName,
+        column_name: columnName,
+        data_category: finalClassification.suggested_category || 'personal',
+        sensitivity_level: finalClassification.sensitivity_score || 1,
+        encryption_required: finalClassification.encryption_required,
+        retention_period_days: finalClassification.recommended_retention_days || 1095,
+        legal_basis: finalClassification.recommended_legal_basis || 'consent',
+        classification_details: finalClassification,
+        classification_timestamp: new Date().toISOString(),
+      })
+      .select()
+      .single();
+
+    if (storeError) {
+    }
+
+    return NextResponse.json({
+      success: true,
+      classification: finalClassification,
+      stored: !storeError,
+      recommendation: generateLGPDRecommendations(finalClassification),
+    });
+  } catch (error) {
+    return handleApiError(error, 'data classification');
+  }
+}
+
+// POST /api/compliance/lgpd/data-subject-request
+export async function createDataSubjectRequest(req: NextRequest) {
+  try {
+    const validation = await validateRequest(req, DataSubjectRequestSchema);
+    if (!validation.success) {
+      return NextResponse.json(validation, { status: 400 });
+    }
+
+    const requestData = validation.data;
+    const supabase = await getSupabaseClient(req);
+
+    // Create data subject request
+    const { data: request, error: createError } = await supabase
+      .from('compliance_data_subject_requests')
+      .insert({
+        request_type: requestData.requestType,
+        data_subject_id: requestData.dataSubjectId,
+        clinic_id: requestData.clinicId,
+        request_details: requestData.requestDetails || {},
+        identity_verification_data: requestData.identityVerificationData,
+        urgency_level: requestData.urgency,
+        processing_status: 'received',
+        request_date: new Date().toISOString(),
+        target_completion_date: calculateCompletionDate(
+          requestData.requestType,
+          requestData.urgency
+        ),
+      })
+      .select()
+      .single();
+
+    if (createError) {
+      return handleApiError(createError, 'data subject request creation');
+    }
+
+    // If identity verification is digital, mark as verified
+    if (requestData.identityVerificationData.verificationMethod === 'digital_signature') {
+      const { error: verifyError } = await supabase
+        .from('compliance_data_subject_requests')
+        .update({
+          identity_verification_status: 'verified',
+          verification_timestamp: new Date().toISOString(),
+        })
+        .eq('id', request.id);
+
+      if (!verifyError) {
+        // Auto-process if possible
+        const { data: processResult, error: processError } = await supabase.rpc(
+          'process_data_subject_request',
+          {
+            p_request_id: request.id,
+          }
+        );
+
+        if (!processError && processResult?.success) {
+          return NextResponse.json({
+            success: true,
+            request: { ...request, processing_status: 'completed' },
+            result: processResult.result,
+            automated: true,
+          });
+        }
+      }
+    }
+
+    return NextResponse.json({
+      success: true,
+      request,
+      estimated_completion: request.target_completion_date,
+      next_steps: generateNextSteps(
+        requestData.requestType,
+        requestData.identityVerificationData.verificationMethod
+      ),
+    });
+  } catch (error) {
+    return handleApiError(error, 'data subject request');
+  }
+}
+
+// GET /api/compliance/lgpd/consent/{dataSubjectId}
+export async function getConsentStatus(
+  req: NextRequest,
+  { params }: { params: { dataSubjectId: string } }
+) {
+  try {
+    const { dataSubjectId } = params;
+    const supabase = await getSupabaseClient(req);
+
+    const { data: consents, error } = await supabase
+      .from('compliance_consent_records')
+      .select('*')
+      .eq('data_subject_id', dataSubjectId)
+      .order('granted_at', { ascending: false });
+
+    if (error) {
+      return handleApiError(error, 'consent status retrieval');
+    }
+
+    const consentSummary = {
+      total_consents: consents.length,
+      active_consents: consents.filter((c) => c.granted && !c.withdrawn).length,
+      withdrawn_consents: consents.filter((c) => c.withdrawn).length,
+      consent_coverage: calculateConsentCoverage(consents),
+      latest_consents: consents.slice(0, 10),
+      compliance_status: assessConsentCompliance(consents),
+    };
+
+    return NextResponse.json({
+      success: true,
+      data_subject_id: dataSubjectId,
+      consent_summary: consentSummary,
+      consents,
+    });
+  } catch (error) {
+    return handleApiError(error, 'consent status');
+  }
+}
+
+// ================================================
+// ANVISA COMPLIANCE ENDPOINTS
+// ================================================
+
+// POST /api/compliance/anvisa/software-validation
+export async function validateSoftware(req: NextRequest) {
+  try {
+    const validation = await validateRequest(req, SoftwareValidationSchema);
+    if (!validation.success) {
+      return NextResponse.json(validation, { status: 400 });
+    }
+
+    const { softwareItemName, softwareVersion, changeDescription } = validation.data;
+    const supabase = await getSupabaseClient(req);
+
+    // Validate IEC 62304 compliance
+    const { data: validationResult, error } = await supabase.rpc('validate_iec62304_compliance', {
+      p_software_item_name: softwareItemName,
+      p_software_version: softwareVersion,
+      p_change_description: changeDescription,
+    });
+
+    if (error) {
+      return handleApiError(error, 'software validation');
+    }
+
+    // Generate validation certificate if compliant
+    let certificate = null;
+    if (validationResult.compliant) {
+      certificate = await generateValidationCertificate(
+        softwareItemName,
+        softwareVersion,
+        validationResult
+      );
+    }
+
+    return NextResponse.json({
+      success: true,
+      validation_result: validationResult,
+      certificate,
+      recommendations: validationResult.recommendations || [],
+      next_actions: generateSoftwareValidationActions(validationResult),
+    });
+  } catch (error) {
+    return handleApiError(error, 'software validation');
+  }
+}
+
+// GET /api/compliance/anvisa/software-lifecycle/{itemName}
+export async function getSoftwareLifecycle(
+  req: NextRequest,
+  { params }: { params: { itemName: string } }
+) {
+  try {
+    const { itemName } = params;
+    const supabase = await getSupabaseClient(req);
+
+    const { data: lifecycle, error } = await supabase
+      .from('compliance_software_lifecycle')
+      .select('*')
+      .eq('software_item_name', itemName)
+      .order('version', { ascending: false });
+
+    if (error) {
+      return handleApiError(error, 'software lifecycle retrieval');
+    }
+
+    const lifecycleSummary = {
+      software_item: itemName,
+      versions_tracked: lifecycle.length,
+      current_version: lifecycle[0]?.version || null,
+      safety_classification: lifecycle[0]?.safety_classification || null,
+      compliance_status: lifecycle[0]?.compliance_status || 'unknown',
+      last_updated: lifecycle[0]?.last_updated || null,
+      validation_history: lifecycle.map((v) => ({
+        version: v.version,
+        validation_date: v.validation_date,
+        compliance_status: v.compliance_status,
+        safety_classification: v.safety_classification,
+      })),
+    };
+
+    return NextResponse.json({
+      success: true,
+      lifecycle_summary: lifecycleSummary,
+      full_lifecycle: lifecycle,
+    });
+  } catch (error) {
+    return handleApiError(error, 'software lifecycle');
+  }
+}
+
+// ================================================
+// CFM COMPLIANCE ENDPOINTS
+// ================================================
+
+// POST /api/compliance/cfm/professional-validation
+export async function validateProfessional(req: NextRequest) {
+  try {
+    const validation = await validateRequest(req, ProfessionalValidationSchema);
+    if (!validation.success) {
+      return NextResponse.json(validation, { status: 400 });
+    }
+
+    const { professionalId, validationType, includeRecommendations } = validation.data;
+    const supabase = await getSupabaseClient(req);
+
+    // Validate CFM professional status
+    const { data: validationResult, error } = await supabase.rpc(
+      'validate_cfm_professional_status',
+      {
+        p_professional_id: professionalId,
+      }
+    );
+
+    if (error) {
+      return handleApiError(error, 'professional validation');
+    }
+
+    let recommendations = [];
+    if (
+      includeRecommendations &&
+      (!validationResult.valid || validationResult.warnings?.length > 0)
+    ) {
+      recommendations = generateProfessionalRecommendations(validationResult);
+    }
+
+    return NextResponse.json({
+      success: true,
+      validation_result: validationResult,
+      validation_type: validationType,
+      recommendations,
+      certificate: validationResult.valid
+        ? await generateProfessionalCertificate(professionalId, validationResult)
+        : null,
+    });
+  } catch (error) {
+    return handleApiError(error, 'professional validation');
+  }
+}
+
+// GET /api/compliance/cfm/professional-status/{professionalId}
+export async function getProfessionalStatus(
+  req: NextRequest,
+  { params }: { params: { professionalId: string } }
+) {
+  try {
+    const { professionalId } = params;
+    const supabase = await getSupabaseClient(req);
+
+    const { data: professional, error } = await supabase
+      .from('compliance_medical_professionals')
+      .select('*')
+      .eq('professional_id', professionalId)
+      .single();
+
+    if (error) {
+      return handleApiError(error, 'professional status retrieval');
+    }
+
+    return NextResponse.json({
+      success: true,
+      professional_status: professional,
+      quick_validation: {
+        license_valid:
+          professional.license_status === 'active' &&
+          professional.license_expiry_date > new Date().toISOString(),
+        continuing_education_current: professional.continuing_education_status === 'current',
+        ethics_training_current: professional.ethics_training_status === 'current',
+        telemedicine_authorized: professional.telemedicine_authorization,
+        electronic_prescription_authorized: professional.electronic_prescription_authorization,
+      },
+    });
+  } catch (error) {
+    return handleApiError(error, 'professional status');
+  }
+}
+
+// ================================================
+// GENERAL COMPLIANCE MONITORING ENDPOINTS
+// ================================================
+
+// GET /api/compliance/monitor/status
+export async function getComplianceStatus(req: NextRequest) {
+  try {
+    const url = new URL(req.url);
+    const clinicId = url.searchParams.get('clinicId');
+    const supabase = await getSupabaseClient(req);
+
+    const { data: complianceStatus, error } = await supabase.rpc(
+      'monitor_overall_compliance_status',
+      {
+        p_clinic_id: clinicId,
+      }
+    );
+
+    if (error) {
+      return handleApiError(error, 'compliance status monitoring');
+    }
+
+    // Get recent alerts
+    const { data: recentAlerts, error: alertsError } = await supabase
+      .from('compliance_alerts')
+      .select('*')
+      .eq('alert_status', 'active')
+      .order('created_at', { ascending: false })
+      .limit(10);
+
+    return NextResponse.json({
+      success: true,
+      compliance_status: complianceStatus,
+      recent_alerts: recentAlerts || [],
+      dashboard_data: {
+        overall_health: complianceStatus.overall_status,
+        critical_issues: complianceStatus.critical_alerts,
+        pending_actions: complianceStatus.pending_requests,
+        last_assessment: complianceStatus.assessed_at,
+      },
+    });
+  } catch (error) {
+    return handleApiError(error, 'compliance monitoring');
+  }
+}
+
+// POST /api/compliance/alerts
+export async function createComplianceAlert(req: NextRequest) {
+  try {
+    const validation = await validateRequest(req, ComplianceAlertSchema);
+    if (!validation.success) {
+      return NextResponse.json(validation, { status: 400 });
+    }
+
+    const alertData = validation.data;
+    const supabase = await getSupabaseClient(req);
+
+    const { data: alert, error } = await supabase
+      .from('compliance_alerts')
+      .insert({
+        alert_type: alertData.alertType,
+        severity: alertData.severity,
+        clinic_id: alertData.clinicId,
+        description: alertData.description,
+        affected_systems: alertData.affectedSystems,
+        alert_status: 'active',
+        auto_resolve: alertData.autoResolve,
+        created_at: new Date().toISOString(),
+        resolution_target_date: calculateAlertResolutionDate(alertData.severity),
+      })
+      .select()
+      .single();
+
+    if (error) {
+      return handleApiError(error, 'alert creation');
+    }
+
+    return NextResponse.json({
+      success: true,
+      alert,
+      escalation_required: alertData.severity === 'critical',
+      estimated_resolution: alert.resolution_target_date,
+    });
+  } catch (error) {
+    return handleApiError(error, 'alert creation');
+  }
+}
+
+// ================================================
+// HELPER FUNCTIONS
+// ================================================
+
+function calculateCompletionDate(requestType: string, urgency: string): string {
+  let days = 30; // Default LGPD requirement
+
+  switch (requestType) {
+    case 'access':
+      days = urgency === 'urgent' ? 3 : 15;
+      break;
+    case 'erasure':
+      days = urgency === 'urgent' ? 7 : 30;
+      break;
+    case 'portability':
+      days = urgency === 'urgent' ? 7 : 30;
+      break;
+    case 'rectification':
+      days = urgency === 'urgent' ? 3 : 15;
+      break;
+  }
+
+  const completion = new Date();
+  completion.setDate(completion.getDate() + days);
+  return completion.toISOString();
+}
+
+function calculateAlertResolutionDate(severity: string): string {
+  let hours = 24;
+
+  switch (severity) {
+    case 'critical':
+      hours = 2;
+      break;
+    case 'high':
+      hours = 8;
+      break;
+    case 'medium':
+      hours = 24;
+      break;
+    case 'low':
+      hours = 72;
+      break;
+  }
+
+  const resolution = new Date();
+  resolution.setHours(resolution.getHours() + hours);
+  return resolution.toISOString();
+}
+
+function generateLGPDRecommendations(classification: any) {
+  const recommendations = [];
+
+  if (classification.sensitivity_score >= 4) {
+    recommendations.push({
+      priority: 'high',
+      category: 'encryption',
+      action: 'Implement field-level encryption for this sensitive data',
+    });
+  }
+
+  if (classification.privacy_impact_required) {
+    recommendations.push({
+      priority: 'medium',
+      category: 'privacy_impact',
+      action: 'Conduct Privacy Impact Assessment (DPIA) for this data processing',
+    });
+  }
+
+  return recommendations;
+}
+
+function generateNextSteps(requestType: string, verificationMethod: string) {
+  const steps = [];
+
+  if (verificationMethod !== 'digital_signature') {
+    steps.push('Complete identity verification');
+  }
+
+  steps.push(`Process ${requestType} request`);
+  steps.push('Notify data subject of completion');
+
+  return steps;
+}
+
+function calculateConsentCoverage(consents: any[]) {
+  const purposes = new Set(consents.map((c) => c.processing_purpose));
+  const activePurposes = new Set(
+    consents.filter((c) => c.granted && !c.withdrawn).map((c) => c.processing_purpose)
+  );
+
+  return {
+    total_purposes: purposes.size,
+    covered_purposes: activePurposes.size,
+    coverage_percentage: purposes.size > 0 ? (activePurposes.size / purposes.size) * 100 : 0,
+  };
+}
+
+function assessConsentCompliance(consents: any[]) {
+  const activeConsents = consents.filter((c) => c.granted && !c.withdrawn);
+  const expiredConsents = activeConsents.filter((c) => {
+    return c.consent_expiry_date && new Date(c.consent_expiry_date) < new Date();
+  });
+
+  return {
+    status: expiredConsents.length === 0 ? 'compliant' : 'requires_attention',
+    active_consents: activeConsents.length,
+    expired_consents: expiredConsents.length,
+    compliance_percentage:
+      activeConsents.length > 0
+        ? ((activeConsents.length - expiredConsents.length) / activeConsents.length) * 100
+        : 100,
+  };
+}
+
+async function generateValidationCertificate(itemName: string, version: string, validation: any) {
+  return {
+    certificate_id: `IEC62304-${itemName}-${version}-${Date.now()}`,
+    software_item: itemName,
+    version,
+    validation_date: new Date().toISOString(),
+    compliance_score: validation.compliance_score,
+    safety_classification: validation.safety_classification,
+    valid_until: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString(), // 1 year
+  };
+}
+
+async function generateProfessionalCertificate(professionalId: string, validation: any) {
+  return {
+    certificate_id: `CFM-${professionalId}-${Date.now()}`,
+    professional_id: professionalId,
+    validation_date: new Date().toISOString(),
+    cfm_registration: validation.cfm_registration,
+    license_status: validation.license_status,
+    compliance_score: validation.compliance_score,
+    valid_until: validation.license_expiry,
+  };
+}
+
+function generateSoftwareValidationActions(validation: any) {
+  const actions = [];
+
+  if (!validation.compliant) {
+    actions.push('Address compliance violations before deployment');
+  }
+
+  if (validation.violations?.length > 0) {
+    actions.push('Implement recommended improvements');
+  }
+
+  if (validation.compliance_score < 90) {
+    actions.push('Consider additional testing and documentation');
+  }
+
+  return actions;
+}
+
+function generateProfessionalRecommendations(validation: any) {
+  const recommendations = [];
+
+  if (validation.violations?.includes('Medical license has expired')) {
+    recommendations.push({
+      priority: 'critical',
+      category: 'license',
+      action: 'Renew medical license immediately',
+    });
+  }
+
+  if (validation.warnings?.includes('Medical license expires within 30 days')) {
+    recommendations.push({
+      priority: 'high',
+      category: 'license',
+      action: 'Initiate license renewal process',
+    });
+  }
+
+  if (validation.violations?.includes('Continuing education requirements not current')) {
+    recommendations.push({
+      priority: 'high',
+      category: 'education',
+      action: 'Complete required continuing education credits',
+    });
+  }
+
+  return recommendations;
+}

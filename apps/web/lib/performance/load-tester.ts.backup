@@ -1,0 +1,19 @@
+// Loadtester Module
+export interface LoadtesterConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Loadtester_DEFAULT: LoadtesterConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createLoadtester() {
+  return Loadtester_DEFAULT;
+}
+
+export default {
+  config: Loadtester_DEFAULT,
+  create: createLoadtester
+};

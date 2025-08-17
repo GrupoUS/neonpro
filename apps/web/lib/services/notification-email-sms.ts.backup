@@ -1,0 +1,19 @@
+// Notificationemailsms Module
+export interface NotificationemailsmsConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Notificationemailsms_DEFAULT: NotificationemailsmsConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createNotificationemailsms() {
+  return Notificationemailsms_DEFAULT;
+}
+
+export default {
+  config: Notificationemailsms_DEFAULT,
+  create: createNotificationemailsms
+};

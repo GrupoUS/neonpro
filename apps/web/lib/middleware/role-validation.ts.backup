@@ -1,0 +1,19 @@
+// Rolevalidation Module
+export interface RolevalidationConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Rolevalidation_DEFAULT: RolevalidationConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createRolevalidation() {
+  return Rolevalidation_DEFAULT;
+}
+
+export default {
+  config: Rolevalidation_DEFAULT,
+  create: createRolevalidation
+};

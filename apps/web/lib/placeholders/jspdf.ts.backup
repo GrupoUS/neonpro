@@ -1,0 +1,19 @@
+// Jspdf Module
+export interface JspdfConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Jspdf_DEFAULT: JspdfConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createJspdf() {
+  return Jspdf_DEFAULT;
+}
+
+export default {
+  config: Jspdf_DEFAULT,
+  create: createJspdf
+};

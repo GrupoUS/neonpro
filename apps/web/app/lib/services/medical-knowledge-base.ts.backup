@@ -1,0 +1,19 @@
+// Medicalknowledgebase Module
+export interface MedicalknowledgebaseConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Medicalknowledgebase_DEFAULT: MedicalknowledgebaseConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createMedicalknowledgebase() {
+  return Medicalknowledgebase_DEFAULT;
+}
+
+export default {
+  config: Medicalknowledgebase_DEFAULT,
+  create: createMedicalknowledgebase
+};

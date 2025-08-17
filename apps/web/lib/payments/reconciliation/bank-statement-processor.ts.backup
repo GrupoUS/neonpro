@@ -1,0 +1,19 @@
+// Bankstatementprocessor Module
+export interface BankstatementprocessorConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Bankstatementprocessor_DEFAULT: BankstatementprocessorConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createBankstatementprocessor() {
+  return Bankstatementprocessor_DEFAULT;
+}
+
+export default {
+  config: Bankstatementprocessor_DEFAULT,
+  create: createBankstatementprocessor
+};

@@ -1,0 +1,18 @@
+"use client";
+
+import React from 'react';
+
+interface BackupschedulerProps {
+  children?: React.ReactNode;
+  className?: string;
+}
+
+export function Backupscheduler({ children, className = "" }: BackupschedulerProps) {
+  return (
+    <div className={className}>
+      {children || "Backupscheduler Component"}
+    </div>
+  );
+}
+
+export default Backupscheduler;

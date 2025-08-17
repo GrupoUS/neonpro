@@ -1,0 +1,19 @@
+// Schemas Module
+export interface SchemasConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Schemas_DEFAULT: SchemasConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createSchemas() {
+  return Schemas_DEFAULT;
+}
+
+export default {
+  config: Schemas_DEFAULT,
+  create: createSchemas
+};

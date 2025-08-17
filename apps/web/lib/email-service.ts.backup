@@ -1,0 +1,19 @@
+// Emailservice Module
+export interface EmailserviceConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Emailservice_DEFAULT: EmailserviceConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createEmailservice() {
+  return Emailservice_DEFAULT;
+}
+
+export default {
+  config: Emailservice_DEFAULT,
+  create: createEmailservice
+};

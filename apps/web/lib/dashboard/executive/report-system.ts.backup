@@ -1,0 +1,19 @@
+// Reportsystem Module
+export interface ReportsystemConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Reportsystem_DEFAULT: ReportsystemConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createReportsystem() {
+  return Reportsystem_DEFAULT;
+}
+
+export default {
+  config: Reportsystem_DEFAULT,
+  create: createReportsystem
+};

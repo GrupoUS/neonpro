@@ -1,0 +1,19 @@
+// Subscriptionservice Module
+export interface SubscriptionserviceConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Subscriptionservice_DEFAULT: SubscriptionserviceConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createSubscriptionservice() {
+  return Subscriptionservice_DEFAULT;
+}
+
+export default {
+  config: Subscriptionservice_DEFAULT,
+  create: createSubscriptionservice
+};

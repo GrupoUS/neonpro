@@ -1,0 +1,19 @@
+// Intelligenttimeout Module
+export interface IntelligenttimeoutConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Intelligenttimeout_DEFAULT: IntelligenttimeoutConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createIntelligenttimeout() {
+  return Intelligenttimeout_DEFAULT;
+}
+
+export default {
+  config: Intelligenttimeout_DEFAULT,
+  create: createIntelligenttimeout
+};

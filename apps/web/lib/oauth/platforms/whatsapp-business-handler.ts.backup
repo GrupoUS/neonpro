@@ -1,0 +1,19 @@
+// Whatsappbusinesshandler Module
+export interface WhatsappbusinesshandlerConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Whatsappbusinesshandler_DEFAULT: WhatsappbusinesshandlerConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createWhatsappbusinesshandler() {
+  return Whatsappbusinesshandler_DEFAULT;
+}
+
+export default {
+  config: Whatsappbusinesshandler_DEFAULT,
+  create: createWhatsappbusinesshandler
+};

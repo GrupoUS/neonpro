@@ -1,0 +1,19 @@
+// Inventoryreports Module
+export interface InventoryreportsConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Inventoryreports_DEFAULT: InventoryreportsConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createInventoryreports() {
+  return Inventoryreports_DEFAULT;
+}
+
+export default {
+  config: Inventoryreports_DEFAULT,
+  create: createInventoryreports
+};

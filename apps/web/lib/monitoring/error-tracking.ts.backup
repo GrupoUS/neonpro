@@ -1,0 +1,19 @@
+// Errortracking Module
+export interface ErrortrackingConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Errortracking_DEFAULT: ErrortrackingConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createErrortracking() {
+  return Errortracking_DEFAULT;
+}
+
+export default {
+  config: Errortracking_DEFAULT,
+  create: createErrortracking
+};

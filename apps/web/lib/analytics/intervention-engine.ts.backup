@@ -1,0 +1,19 @@
+// Interventionengine Module
+export interface InterventionengineConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Interventionengine_DEFAULT: InterventionengineConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createInterventionengine() {
+  return Interventionengine_DEFAULT;
+}
+
+export default {
+  config: Interventionengine_DEFAULT,
+  create: createInterventionengine
+};

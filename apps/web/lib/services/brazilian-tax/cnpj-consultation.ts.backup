@@ -1,0 +1,19 @@
+// Cnpjconsultation Module
+export interface CnpjconsultationConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Cnpjconsultation_DEFAULT: CnpjconsultationConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createCnpjconsultation() {
+  return Cnpjconsultation_DEFAULT;
+}
+
+export default {
+  config: Cnpjconsultation_DEFAULT,
+  create: createCnpjconsultation
+};

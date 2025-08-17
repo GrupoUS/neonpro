@@ -1,0 +1,623 @@
+/**
+ * Enhanced Subscription Hook v2 - Performance Optimized
+ *
+ * High-performance React hook for subscription status management:
+ * - Intelligent caching with automatic invalidation
+ * - Real-time updates with optimized WebSocket connections
+ * - Background synchronization and prefetching
+ * - Error handling with exponential backoff
+ * - Memory-efficient state management
+ * - Performance monitoring and metrics
+ *
+ * @author NeonPro Development Team
+ * @version 2.0.0 - Performance Optimized
+ */
+
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { enhancedSubscriptionCache } // Missing module - placeholder needed
+import { subscriptionPerformanceMonitor } // Missing module - placeholder needed
+import { subscriptionQueryOptimizer } // Missing module - placeholder needed
+import type {
+  SubscriptionStatus,
+  SubscriptionValidationResult,
+  UserSubscription,
+} // Missing module - placeholder needed
+
+// Hook configuration interface
+type UseSubscriptionConfig = {
+  enableRealtime?: boolean;
+  enableCaching?: boolean;
+  enablePrefetching?: boolean;
+  enableBackgroundSync?: boolean;
+  cacheStrategy?: 'aggressive' | 'conservative' | 'adaptive';
+  refetchInterval?: number;
+  staleTime?: number;
+  retryAttempts?: number;
+  retryDelay?: number;
+  onError?: (error: Error) => void;
+  onStatusChange?: (status: SubscriptionStatus) => void;
+};
+
+// Hook state interface
+type UseSubscriptionState = {
+  data: SubscriptionValidationResult | null;
+  isLoading: boolean;
+  isError: boolean;
+  error: Error | null;
+  isFetching: boolean;
+  isStale: boolean;
+  lastUpdated: number;
+  cacheHit: boolean;
+  performance: {
+    lastFetchTime: number;
+    totalFetches: number;
+    cacheHitRate: number;
+    averageResponseTime: number;
+  };
+};
+
+// Hook return interface
+interface UseSubscriptionReturn extends UseSubscriptionState {
+  refetch: () => Promise<SubscriptionValidationResult | null>;
+  invalidate: () => void;
+  prefetch: () => Promise<void>;
+  hasAccess: boolean;
+  subscription: UserSubscription | null;
+  status: SubscriptionStatus | null;
+  isActive: boolean;
+  isExpired: boolean;
+  isInGracePeriod: boolean;
+  daysUntilExpiration: number | null;
+  canAccessFeature: (feature: string) => boolean;
+  getUsageLimit: (resource: string) => number | null;
+}
+
+// Global state for cross-hook coordination
+const globalHookState = new Map<
+  string,
+  {
+    subscribers: Set<(data: SubscriptionValidationResult | null) => void>;
+    lastFetch: number;
+    data: SubscriptionValidationResult | null;
+    promise: Promise<SubscriptionValidationResult | null> | null;
+  }
+>();
+
+// Default configuration
+const defaultConfig: Required<UseSubscriptionConfig> = {
+  enableRealtime: true,
+  enableCaching: true,
+  enablePrefetching: true,
+  enableBackgroundSync: true,
+  cacheStrategy: 'adaptive',
+  refetchInterval: 5 * 60 * 1000, // 5 minutes
+  staleTime: 2 * 60 * 1000, // 2 minutes
+  retryAttempts: 3,
+  retryDelay: 1000,
+  onError: () => {},
+  onStatusChange: () => {},
+};
+
+/**
+ * Enhanced subscription hook with performance optimizations
+ */
+export function useSubscription(
+  userId?: string,
+  config: UseSubscriptionConfig = {}
+): UseSubscriptionReturn {
+  const mergedConfig = useMemo(() => ({ ...defaultConfig, ...config }), [config]);
+  const [state, setState] = useState<UseSubscriptionState>({
+    data: null,
+    isLoading: true,
+    isError: false,
+    error: null,
+    isFetching: false,
+    isStale: false,
+    lastUpdated: 0,
+    cacheHit: false,
+    performance: {
+      lastFetchTime: 0,
+      totalFetches: 0,
+      cacheHitRate: 0,
+      averageResponseTime: 0,
+    },
+  });
+
+  // Refs for performance and cleanup
+  const abortControllerRef = useRef<AbortController | null>(null);
+  const retryTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const backgroundSyncRef = useRef<NodeJS.Timeout | null>(null);
+  const performanceTimerRef = useRef<string | null>(null);
+  const subscriptionRef = useRef<any>(null);
+
+  // Get current user from Supabase auth
+  const supabase = createClientComponentClient();
+  const [currentUserId, setCurrentUserId] = useState<string | null>(userId || null);
+
+  // Get user ID if not provided
+  useEffect(() => {
+    if (!userId) {
+      supabase.auth.getUser().then(({ data: { user } }) => {
+        setCurrentUserId(user?.id || null);
+      });
+    }
+  }, [userId, supabase.auth]);
+
+  // Memoized cache key
+  const cacheKey = useMemo(
+    () => (currentUserId ? `subscription_${currentUserId}` : null),
+    [currentUserId]
+  );
+
+  // Memoized global state key
+  const globalStateKey = useMemo(
+    () => (currentUserId ? `hook_${currentUserId}` : null),
+    [currentUserId]
+  );
+
+  /**
+   * Fetch subscription data with performance optimizations
+   */
+  const fetchSubscription = useCallback(
+    async (
+      force = false,
+      backgroundUpdate = false
+    ): Promise<SubscriptionValidationResult | null> => {
+      if (!currentUserId) {
+        return null;
+      }
+
+      try {
+        // Set loading state (only if not background update)
+        if (!backgroundUpdate) {
+          setState((prev) => ({ ...prev, isFetching: true, error: null }));
+        }
+
+        // Start performance monitoring
+        const timerId = subscriptionPerformanceMonitor.startTimer(`hook_fetch_${currentUserId}`);
+        const startTime = performance.now();
+
+        // Check global state for ongoing requests
+        if (!force && globalStateKey) {
+          const globalState = globalHookState.get(globalStateKey);
+          if (globalState?.promise && !backgroundUpdate) {
+            return await globalState.promise;
+          }
+        }
+
+        // Check cache first
+        let result: SubscriptionValidationResult | null = null;
+        let fromCache = false;
+
+        if (mergedConfig.enableCaching && !force && cacheKey) {
+          result = await enhancedSubscriptionCache.get(cacheKey);
+          if (result) {
+            fromCache = true;
+
+            // Check if data is stale
+            const isStale =
+              result.performance &&
+              Date.now() - result.performance.validationTime > mergedConfig.staleTime;
+
+            if (!isStale || backgroundUpdate) {
+              const endTime = performance.now();
+              const duration = endTime - startTime;
+
+              subscriptionPerformanceMonitor.endTimer(timerId, true);
+
+              // Update state
+              setState((prev) => ({
+                ...prev,
+                data: result,
+                isLoading: false,
+                isFetching: false,
+                isError: false,
+                error: null,
+                lastUpdated: Date.now(),
+                cacheHit: true,
+                isStale,
+                performance: {
+                  ...prev.performance,
+                  lastFetchTime: duration,
+                  cacheHitRate:
+                    (prev.performance.cacheHitRate * prev.performance.totalFetches + 1) /
+                    (prev.performance.totalFetches + 1),
+                },
+              }));
+
+              return result;
+            }
+          }
+        }
+
+        // Create abort controller for request cancellation
+        abortControllerRef.current = new AbortController();
+
+        // Fetch from database with optimizations
+        const fetchPromise = subscriptionQueryOptimizer.getSubscriptionStatus(currentUserId, {
+          useCache: mergedConfig.enableCaching,
+          forceRefresh: force,
+          cacheTTL: getCacheTTL(mergedConfig.cacheStrategy),
+          priority: 'high',
+          timeout: 10_000, // 10 second timeout
+        });
+
+        // Store promise in global state
+        if (globalStateKey) {
+          const globalState = globalHookState.get(globalStateKey) || {
+            subscribers: new Set(),
+            lastFetch: 0,
+            data: null,
+            promise: null,
+          };
+          globalState.promise = fetchPromise;
+          globalState.lastFetch = Date.now();
+          globalHookState.set(globalStateKey, globalState);
+        }
+
+        result = await fetchPromise;
+
+        // Clear promise from global state
+        if (globalStateKey) {
+          const globalState = globalHookState.get(globalStateKey);
+          if (globalState) {
+            globalState.promise = null;
+            globalState.data = result;
+          }
+        }
+
+        const endTime = performance.now();
+        const duration = endTime - startTime;
+
+        subscriptionPerformanceMonitor.endTimer(timerId, true);
+
+        // Update state
+        setState((prev) => {
+          const newTotalFetches = prev.performance.totalFetches + 1;
+          const newAverageResponseTime =
+            (prev.performance.averageResponseTime * prev.performance.totalFetches + duration) /
+            newTotalFetches;
+
+          return {
+            ...prev,
+            data: result,
+            isLoading: false,
+            isFetching: false,
+            isError: false,
+            error: null,
+            lastUpdated: Date.now(),
+            cacheHit: fromCache,
+            isStale: false,
+            performance: {
+              lastFetchTime: duration,
+              totalFetches: newTotalFetches,
+              cacheHitRate: fromCache
+                ? (prev.performance.cacheHitRate * prev.performance.totalFetches + 1) /
+                  newTotalFetches
+                : (prev.performance.cacheHitRate * prev.performance.totalFetches) / newTotalFetches,
+              averageResponseTime: newAverageResponseTime,
+            },
+          };
+        });
+
+        // Trigger status change callback
+        if (result?.status && mergedConfig.onStatusChange) {
+          mergedConfig.onStatusChange(result.status);
+        }
+
+        return result;
+      } catch (error) {
+        const fetchError = error as Error;
+
+        if (performanceTimerRef.current) {
+          subscriptionPerformanceMonitor.endTimer(performanceTimerRef.current, false);
+        }
+
+        // Don't update state if request was aborted
+        if (fetchError.name === 'AbortError') {
+          return null;
+        }
+
+        setState((prev) => ({
+          ...prev,
+          isLoading: false,
+          isFetching: false,
+          isError: true,
+          error: fetchError,
+          lastUpdated: Date.now(),
+        }));
+
+        mergedConfig.onError(fetchError);
+
+        // Clear promise from global state
+        if (globalStateKey) {
+          const globalState = globalHookState.get(globalStateKey);
+          if (globalState) {
+            globalState.promise = null;
+          }
+        }
+
+        throw fetchError;
+      }
+    },
+    [
+      currentUserId,
+      cacheKey,
+      globalStateKey,
+      mergedConfig.enableCaching,
+      mergedConfig.staleTime,
+      mergedConfig.cacheStrategy,
+      mergedConfig.onStatusChange,
+      mergedConfig.onError,
+      getCacheTTL,
+    ]
+  );
+
+  /**
+   * Fetch with retry logic
+   */
+  const fetchWithRetry = useCallback(
+    async (
+      attempt = 1,
+      force = false,
+      backgroundUpdate = false
+    ): Promise<SubscriptionValidationResult | null> => {
+      try {
+        return await fetchSubscription(force, backgroundUpdate);
+      } catch (error) {
+        if (attempt < mergedConfig.retryAttempts) {
+          const delay = mergedConfig.retryDelay * 2 ** (attempt - 1); // Exponential backoff
+
+          retryTimeoutRef.current = setTimeout(() => {
+            fetchWithRetry(attempt + 1, force, backgroundUpdate);
+          }, delay);
+
+          return null;
+        }
+        throw error;
+      }
+    },
+    [fetchSubscription, mergedConfig.retryAttempts, mergedConfig.retryDelay]
+  );
+
+  /**
+   * Manual refetch function
+   */
+  const refetch = useCallback(async (): Promise<SubscriptionValidationResult | null> => {
+    return fetchWithRetry(1, true, false);
+  }, [fetchWithRetry]);
+
+  /**
+   * Invalidate cache
+   */
+  const invalidate = useCallback(() => {
+    if (cacheKey) {
+      enhancedSubscriptionCache.delete(cacheKey);
+    }
+    setState((prev) => ({ ...prev, isStale: true }));
+  }, [cacheKey]);
+
+  /**
+   * Prefetch subscription data
+   */
+  const prefetch = useCallback(async (): Promise<void> => {
+    if (!(mergedConfig.enablePrefetching && currentUserId)) {
+      return;
+    }
+
+    try {
+      await fetchSubscription(false, true);
+    } catch (_error) {}
+  }, [fetchSubscription, mergedConfig.enablePrefetching, currentUserId]);
+
+  /**
+   * Get cache TTL based on strategy
+   */
+  const getCacheTTL = useCallback(
+    (strategy: string): number => {
+      switch (strategy) {
+        case 'aggressive':
+          return 10 * 60 * 1000; // 10 minutes
+        case 'conservative':
+          return 2 * 60 * 1000; // 2 minutes
+        case 'adaptive':
+          return state.data?.hasAccess ? 5 * 60 * 1000 : 1 * 60 * 1000; // 5 min if active, 1 min if not
+        default:
+          return 3 * 60 * 1000; // 3 minutes
+      }
+    },
+    [state.data?.hasAccess]
+  );
+
+  // Initial fetch
+  useEffect(() => {
+    if (currentUserId) {
+      fetchWithRetry(1, false, false);
+    }
+  }, [currentUserId, fetchWithRetry]);
+
+  // Setup real-time subscription
+  useEffect(() => {
+    if (!(mergedConfig.enableRealtime && currentUserId)) {
+      return;
+    }
+
+    const channel = supabase
+      .channel(`subscription_${currentUserId}`)
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'user_subscriptions',
+          filter: `user_id=eq.${currentUserId}`,
+        },
+        (_payload) => {
+          // Invalidate cache and refetch
+          invalidate();
+          fetchWithRetry(1, true, true);
+        }
+      )
+      .subscribe();
+
+    subscriptionRef.current = channel;
+
+    return () => {
+      if (subscriptionRef.current) {
+        supabase.removeChannel(subscriptionRef.current);
+        subscriptionRef.current = null;
+      }
+    };
+  }, [mergedConfig.enableRealtime, currentUserId, supabase, invalidate, fetchWithRetry]);
+
+  // Setup background sync
+  useEffect(() => {
+    if (!mergedConfig.enableBackgroundSync || mergedConfig.refetchInterval <= 0) {
+      return;
+    }
+
+    backgroundSyncRef.current = setInterval(() => {
+      if (currentUserId && !state.isFetching) {
+        fetchWithRetry(1, false, true); // Background update
+      }
+    }, mergedConfig.refetchInterval);
+
+    return () => {
+      if (backgroundSyncRef.current) {
+        clearInterval(backgroundSyncRef.current);
+        backgroundSyncRef.current = null;
+      }
+    };
+  }, [
+    mergedConfig.enableBackgroundSync,
+    mergedConfig.refetchInterval,
+    currentUserId,
+    state.isFetching,
+    fetchWithRetry,
+  ]);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+      if (retryTimeoutRef.current) {
+        clearTimeout(retryTimeoutRef.current);
+      }
+      if (backgroundSyncRef.current) {
+        clearInterval(backgroundSyncRef.current);
+      }
+      if (subscriptionRef.current) {
+        supabase.removeChannel(subscriptionRef.current);
+      }
+    };
+  }, [supabase]);
+
+  // Derived values with memoization
+  const derivedValues = useMemo(() => {
+    const data = state.data;
+    const subscription = data?.subscription || null;
+    const status = data?.status || null;
+    const hasAccess = data?.hasAccess;
+    const isActive = status === 'active' || status === 'trialing';
+    const isExpired = status === 'expired' || status === 'canceled';
+    const isInGracePeriod = data?.gracePeriod;
+
+    // Calculate days until expiration
+    let daysUntilExpiration: number | null = null;
+    if (subscription?.current_period_end) {
+      const endDate = new Date(subscription.current_period_end);
+      const now = new Date();
+      const diffTime = endDate.getTime() - now.getTime();
+      daysUntilExpiration = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    }
+
+    // Feature access check
+    const canAccessFeature = (feature: string): boolean => {
+      if (!(hasAccess && subscription?.plan?.features)) {
+        return false;
+      }
+      return subscription.plan.features.includes(feature);
+    };
+
+    // Usage limit check
+    const getUsageLimit = (resource: string): number | null => {
+      if (!subscription?.plan) {
+        return null;
+      }
+
+      const limits = {
+        patients: subscription.plan.max_patients,
+        clinics: subscription.plan.max_clinics,
+      };
+
+      return (limits as any)[resource] || null;
+    };
+
+    return {
+      subscription,
+      status,
+      hasAccess,
+      isActive,
+      isExpired,
+      isInGracePeriod,
+      daysUntilExpiration,
+      canAccessFeature,
+      getUsageLimit,
+    };
+  }, [state.data]);
+
+  return {
+    ...state,
+    ...derivedValues,
+    refetch,
+    invalidate,
+    prefetch,
+  };
+}
+
+// Export hook variants for specific use cases
+export function useSubscriptionStatus(userId?: string): {
+  status: SubscriptionStatus | null;
+  isLoading: boolean;
+  isActive: boolean;
+  refetch: () => Promise<SubscriptionValidationResult | null>;
+} {
+  const { status, isLoading, isActive, refetch } = useSubscription(userId, {
+    enableRealtime: false,
+    enablePrefetching: false,
+    cacheStrategy: 'conservative',
+  });
+
+  return { status, isLoading, isActive, refetch };
+}
+
+export function useSubscriptionAccess(userId?: string): {
+  hasAccess: boolean;
+  isLoading: boolean;
+  canAccessFeature: (feature: string) => boolean;
+  refetch: () => Promise<SubscriptionValidationResult | null>;
+} {
+  const { hasAccess, isLoading, canAccessFeature, refetch } = useSubscription(userId, {
+    enableBackgroundSync: true,
+    cacheStrategy: 'adaptive',
+  });
+
+  return { hasAccess, isLoading, canAccessFeature, refetch };
+}
+
+export function useSubscriptionLimits(userId?: string): {
+  getUsageLimit: (resource: string) => number | null;
+  subscription: UserSubscription | null;
+  isLoading: boolean;
+  refetch: () => Promise<SubscriptionValidationResult | null>;
+} {
+  const { getUsageLimit, subscription, isLoading, refetch } = useSubscription(userId, {
+    enableRealtime: true,
+    cacheStrategy: 'aggressive',
+  });
+
+  return { getUsageLimit, subscription, isLoading, refetch };
+}

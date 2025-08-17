@@ -1,0 +1,19 @@
+// Consentmanagementenhanced Module
+export interface ConsentmanagementenhancedConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Consentmanagementenhanced_DEFAULT: ConsentmanagementenhancedConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createConsentmanagementenhanced() {
+  return Consentmanagementenhanced_DEFAULT;
+}
+
+export default {
+  config: Consentmanagementenhanced_DEFAULT,
+  create: createConsentmanagementenhanced
+};

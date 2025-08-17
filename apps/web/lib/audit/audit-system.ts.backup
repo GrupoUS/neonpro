@@ -1,0 +1,19 @@
+// Auditsystem Module
+export interface AuditsystemConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Auditsystem_DEFAULT: AuditsystemConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createAuditsystem() {
+  return Auditsystem_DEFAULT;
+}
+
+export default {
+  config: Auditsystem_DEFAULT,
+  create: createAuditsystem
+};

@@ -1,0 +1,19 @@
+// Durationprediction Module
+export interface DurationpredictionConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Durationprediction_DEFAULT: DurationpredictionConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createDurationprediction() {
+  return Durationprediction_DEFAULT;
+}
+
+export default {
+  config: Durationprediction_DEFAULT,
+  create: createDurationprediction
+};

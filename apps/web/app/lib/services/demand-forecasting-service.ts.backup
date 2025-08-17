@@ -1,0 +1,19 @@
+// Demandforecastingservice Module
+export interface DemandforecastingserviceConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Demandforecastingservice_DEFAULT: DemandforecastingserviceConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createDemandforecastingservice() {
+  return Demandforecastingservice_DEFAULT;
+}
+
+export default {
+  config: Demandforecastingservice_DEFAULT,
+  create: createDemandforecastingservice
+};

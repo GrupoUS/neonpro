@@ -1,0 +1,19 @@
+// Audittrail Module
+export interface AudittrailConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Audittrail_DEFAULT: AudittrailConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createAudittrail() {
+  return Audittrail_DEFAULT;
+}
+
+export default {
+  config: Audittrail_DEFAULT,
+  create: createAudittrail
+};

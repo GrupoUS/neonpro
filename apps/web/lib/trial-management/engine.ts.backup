@@ -1,0 +1,19 @@
+// Engine Module
+export interface EngineConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Engine_DEFAULT: EngineConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createEngine() {
+  return Engine_DEFAULT;
+}
+
+export default {
+  config: Engine_DEFAULT,
+  create: createEngine
+};

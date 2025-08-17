@@ -1,0 +1,19 @@
+// Recovery Module
+export interface RecoveryConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Recovery_DEFAULT: RecoveryConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createRecovery() {
+  return Recovery_DEFAULT;
+}
+
+export default {
+  config: Recovery_DEFAULT,
+  create: createRecovery
+};

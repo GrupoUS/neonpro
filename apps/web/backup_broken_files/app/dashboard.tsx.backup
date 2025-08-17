@@ -1,0 +1,18 @@
+"use client";
+
+import React from 'react';
+
+interface DashboardProps {
+  children?: React.ReactNode;
+  className?: string;
+}
+
+export function Dashboard({ children, className = "" }: DashboardProps) {
+  return (
+    <div className={className}>
+      {children || "Dashboard Component"}
+    </div>
+  );
+}
+
+export default Dashboard;

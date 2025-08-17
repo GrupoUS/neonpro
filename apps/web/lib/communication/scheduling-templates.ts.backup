@@ -1,0 +1,19 @@
+// Schedulingtemplates Module
+export interface SchedulingtemplatesConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Schedulingtemplates_DEFAULT: SchedulingtemplatesConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createSchedulingtemplates() {
+  return Schedulingtemplates_DEFAULT;
+}
+
+export default {
+  config: Schedulingtemplates_DEFAULT,
+  create: createSchedulingtemplates
+};

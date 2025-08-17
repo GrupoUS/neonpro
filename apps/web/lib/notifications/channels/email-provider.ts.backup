@@ -1,0 +1,19 @@
+// Emailprovider Module
+export interface EmailproviderConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Emailprovider_DEFAULT: EmailproviderConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createEmailprovider() {
+  return Emailprovider_DEFAULT;
+}
+
+export default {
+  config: Emailprovider_DEFAULT,
+  create: createEmailprovider
+};

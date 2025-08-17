@@ -1,0 +1,19 @@
+// Widgetservice Module
+export interface WidgetserviceConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Widgetservice_DEFAULT: WidgetserviceConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createWidgetservice() {
+  return Widgetservice_DEFAULT;
+}
+
+export default {
+  config: Widgetservice_DEFAULT,
+  create: createWidgetservice
+};

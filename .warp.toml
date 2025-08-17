@@ -1,0 +1,62 @@
+# Warp Configuration File
+# This ensures automatic loading of warp.md and MCP initialization
+
+[agent]
+name = "NeonPro Master Agent"
+description = "Healthcare Development Orchestrator with Full MCP Integration"
+version = "1.0.0"
+auto_load = true
+priority = "high"
+
+[mcp]
+auto_initialize = true
+healthcare_specialization = true
+
+[mcps.sequential_thinking]
+auto_activate = true
+priority = "high"
+use_cases = ["complexity >= L3", "healthcare analysis", "constitutional reasoning"]
+
+[mcps.context7]
+auto_activate = true
+priority = "high"
+use_cases = ["technical documentation", "healthcare standards", "framework references"]
+
+[mcps.tavily]
+auto_activate = true
+priority = "high"
+use_cases = ["research", "compliance validation", "brazilian regulations"]
+
+[mcps.exa]
+auto_activate = true
+priority = "medium"
+use_cases = ["deep research", "implementation patterns", "medical standards"]
+
+[mcps.desktop_commander]
+auto_activate = true
+priority = "high"
+use_cases = ["file operations", "project management", "system integration"]
+
+[mcps.supabase_mcp]
+auto_activate = "on_database_operations"
+project_id = "ownkoxryswokcdanrdgj"
+region = "sa-east-1"
+compliance = "lgpd_enabled"
+
+[triggers]
+healthcare = ["patient", "treatment", "medical", "clinic", "aesthetic", "lgpd", "anvisa", "cfm"]
+technical = ["next.js", "supabase", "typescript", "react", "monorepo", "pnpm"]
+compliance = ["compliance", "security", "audit", "privacy", "consent"]
+
+[quality]
+healthcare_standard = 9.9
+general_standard = 9.6
+constitutional_ai = true
+progressive_complexity = true
+
+[project]
+name = "NeonPro"
+type = "healthcare_saas"
+domain = "brazilian_aesthetic_clinics"
+compliance = ["LGPD", "ANVISA", "CFM"]
+technology_stack = "Next.js 15 + Supabase + TypeScript + Monorepo"

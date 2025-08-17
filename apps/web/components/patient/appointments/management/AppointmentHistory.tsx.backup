@@ -1,0 +1,18 @@
+"use client";
+
+import React from 'react';
+
+interface AppointmenthistoryProps {
+  children?: React.ReactNode;
+  className?: string;
+}
+
+export function Appointmenthistory({ children, className = "" }: AppointmenthistoryProps) {
+  return (
+    <div className={className}>
+      {children || "Appointmenthistory Component"}
+    </div>
+  );
+}
+
+export default Appointmenthistory;

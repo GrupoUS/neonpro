@@ -1,0 +1,19 @@
+// Server Module
+export interface ServerConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Server_DEFAULT: ServerConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createServer() {
+  return Server_DEFAULT;
+}
+
+export default {
+  config: Server_DEFAULT,
+  create: createServer
+};

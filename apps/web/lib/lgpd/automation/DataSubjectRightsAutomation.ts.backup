@@ -1,0 +1,19 @@
+// Datasubjectrightsautomation Module
+export interface DatasubjectrightsautomationConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Datasubjectrightsautomation_DEFAULT: DatasubjectrightsautomationConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createDatasubjectrightsautomation() {
+  return Datasubjectrightsautomation_DEFAULT;
+}
+
+export default {
+  config: Datasubjectrightsautomation_DEFAULT,
+  create: createDatasubjectrightsautomation
+};

@@ -1,0 +1,74 @@
+// API Route: [reportId]
+import { NextRequest, NextResponse } from "next/server";
+
+// GET handler
+export async function GET(request: NextRequest) {
+  try {
+    // TODO: Implement GET logic for [reportId]
+    return NextResponse.json({ 
+      message: "GET [reportId] endpoint", 
+      timestamp: new Date().toISOString() 
+    });
+  } catch (error) {
+    console.error("GET [reportId] error:", error);
+    return NextResponse.json(
+      { error: "Internal server error" }, 
+      { status: 500 }
+    );
+  }
+}
+
+// POST handler
+export async function POST(request: NextRequest) {
+  try {
+    const body = await request.json();
+    // TODO: Implement POST logic for [reportId]
+    return NextResponse.json({ 
+      message: "POST [reportId] endpoint",
+      received: body,
+      timestamp: new Date().toISOString() 
+    });
+  } catch (error) {
+    console.error("POST [reportId] error:", error);
+    return NextResponse.json(
+      { error: "Internal server error" }, 
+      { status: 500 }
+    );
+  }
+}
+
+// PUT handler  
+export async function PUT(request: NextRequest) {
+  try {
+    const body = await request.json();
+    // TODO: Implement PUT logic for [reportId]
+    return NextResponse.json({ 
+      message: "PUT [reportId] endpoint",
+      updated: body,
+      timestamp: new Date().toISOString() 
+    });
+  } catch (error) {
+    console.error("PUT [reportId] error:", error);
+    return NextResponse.json(
+      { error: "Internal server error" }, 
+      { status: 500 }
+    );
+  }
+}
+
+// DELETE handler
+export async function DELETE(request: NextRequest) {
+  try {
+    // TODO: Implement DELETE logic for [reportId]
+    return NextResponse.json({ 
+      message: "DELETE [reportId] endpoint",
+      timestamp: new Date().toISOString() 
+    });
+  } catch (error) {
+    console.error("DELETE [reportId] error:", error);
+    return NextResponse.json(
+      { error: "Internal server error" }, 
+      { status: 500 }
+    );
+  }
+}

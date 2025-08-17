@@ -1,0 +1,19 @@
+// Realtimesecuritymonitor Module
+export interface RealtimesecuritymonitorConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Realtimesecuritymonitor_DEFAULT: RealtimesecuritymonitorConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createRealtimesecuritymonitor() {
+  return Realtimesecuritymonitor_DEFAULT;
+}
+
+export default {
+  config: Realtimesecuritymonitor_DEFAULT,
+  create: createRealtimesecuritymonitor
+};

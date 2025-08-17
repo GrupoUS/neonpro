@@ -1,0 +1,191 @@
+/**
+ * NEONPRO HEALTHCARE - AUTH CALLBACK ROUTE HANDLER
+ * Next.js 15 App Router - Authentication Callback
+ *
+ * HEALTHCARE COMPLIANCE:
+ * - Constitutional healthcare principles (patient privacy first)
+ * - LGPD compliance with authentication data protection
+ * - Multi-tenant clinic access validation
+ * - Medical professional license verification
+ *
+ * MODERN PATTERN: Uses @supabase/ssr for Next.js 15 App Router
+ */
+
+import { revalidatePath } from "next/cache";
+import { type NextRequest, NextResponse } from "next/server";
+import { createClient } from "@/lib/supabase/server";
+/**
+ * Healthcare authentication callback handler
+ * Handles OAuth flows with constitutional healthcare compliance
+ */
+export async function GET(request: NextRequest) {
+  const requestUrl = new URL(request.url);
+  const code = requestUrl.searchParams.get('code');
+  const origin = requestUrl.origin();
+  const redirectTo = requestUrl.searchParams.get('redirect_to') ?? '/dashboard';
+
+  if (code) {
+    try {
+      const supabase = await createClient;
+
+      // Exchange code for session with healthcare validation      const { data: sessionData,
+    error: sessionError } =;
+        await supabase.auth.exchangeCodeForSession(code);
+
+      if (sessionError) {
+        console.error('Healthcare auth callback error:', {
+          error: sessionError.message,
+    timestamp: new Date().toISOString,
+          origin,
+          code: `${code.substring(0, 10)}...`, // Log partial code for debugging        });
+
+        return NextResponse.redirect(
+          `${origin}/login?error=callback_failed&message=${encodeURIComponent(sessionError.message)}`,
+        );
+      }
+
+      if (sessionData.user) {
+        // Healthcare user validation and profile setup        await validateAndSetupHealthcareUser(supabase, sessionData.user);
+
+        // Constitutional healthcare audit logging        await logHealthcareAuthEvent(
+          supabase,
+          sessionData.user,
+          'login_success',
+          {
+            method: 'oauth_callback',
+    ip: request.headers.get('x-forwarded-for') || 'unknown',
+            userAgent: request.headers.get('user-agent') || 'unknown',
+          },
+        );
+
+        // Revalidate healthcare data paths        revalidatePath('/', 'layout');
+        revalidatePath('/dashboard');
+        revalidatePath('/pacientes');
+
+        // Redirect to intended destination with healthcare context        const finalRedirectUrl = `${origin}${redirectTo}`;
+        return NextResponse.redirect(finalRedirectUrl);
+      }
+    } catch (error) console.error('Healthcare auth callback system error:', {
+        error: error instanceof Error ? error.message : 'Unknown error',
+    timestamp: new Date().toISOString,
+        origin,
+      });
+
+      return NextResponse.redirect(
+        `${origin}/login?error=system_error&message=Authentication system temporarily unavailable`,
+      );
+  }
+
+  // No code provided - redirect to login  return NextResponse.redirect(`${origin}/login?error=missing_code`);
+}
+
+/**
+ * Healthcare user validation and profile setup
+ * Ensures constitutional healthcare compliance
+ */
+async function validateAndSetupHealthcareUser(supabase: any,
+    user: any) {
+  try {
+    // Check if healthcare profile exists    const response = await supabase;
+const { data: existingProfile,
+    error: profileError  } = response || { data: null,
+    error: null };
+      .from('user_profiles')
+      .select('*')
+      .eq('user_id', user.id)
+      .single();
+
+    if (profileError && profileError.code !== 'PGRST116') {
+      throw new Error(
+        `Healthcare profile validation failed: ${profileError.message}`,
+      );
+    }
+
+    if (!existingProfile) {
+      // Create healthcare profile for new user      const response = await supabase;
+const { error: createError  } = response || { data: null,
+    error: null };
+        .from('user_profiles')
+        .insert(user_id: user.id,
+    email: user.email,
+          full_name: user.user_metadata?.full_name || '',
+    role: 'patient', // Default role, can be updated by admin          created_at: new Date().toISOString,
+    updated_at: new Date().toISOString,
+          lgpd_consent: false, // Requires explicit consent          terms_accepted: false, // Requires explicit acceptance          privacy_policy_accepted: false,
+    healthcare_data_consent: false,);
+
+      if (createError) {
+        throw new Error(
+          `Healthcare profile creation failed: ${createError.message}`,
+        );
+      }
+
+      console.log('Healthcare profile created for user:', {userId: user.id,
+    email: user.email,
+        timestamp: new Date().toISOString,
+      });
+    } else {
+      // Update last login timestamp      const response = await supabase;
+const { error: updateError  } = response || { data: null,
+    error: null };
+        .from('user_profiles')
+        .update(last_login: new Date().toISOString,
+    updated_at: new Date().toISOString)
+        .eq('user_id', user.id);
+
+      if (updateError) {console.warn('Healthcare profile update warning:', {
+          userId: user.id,
+    error: updateError.message,
+          timestamp: new Date().toISOString,
+        });
+      }
+    }
+  } catch (error) {console.error('Healthcare user setup error:', {
+      userId: user.id,
+    error: error instanceof Error ? error.message : 'Unknown error',
+      timestamp: new Date().toISOString,
+    });
+    // Don't throw - allow login to proceed, profile can be completed later  }
+}
+
+/**
+ * Constitutional healthcare audit logging
+ * LGPD compliance for authentication events
+ */
+async function logHealthcareAuthEvent(
+  supabase: any,
+    user: any,
+  event: string,
+    metadata: Record<string, any>,
+) {
+  try {
+    const { error } = await supabase.from('audit_logs').insert({
+      user_id: user.id,
+    event_type: 'authentication',
+      event_name: event,
+    event_data: {
+        ...metadata,
+        userId: user.id,
+    email: user.email,
+        timestamp: new Date().toISOString,
+      },
+      ip_address: metadata.ip,
+    user_agent: metadata.userAgent,
+      created_at: new Date().toISOString,
+    });
+
+    if (error) {console.error('Healthcare audit logging error:', {
+        userId: user.id,
+        event,
+        error: error.message,
+    timestamp: new Date().toISOString,
+      });
+    }
+  } catch (error) {console.error('Healthcare audit system error:', {
+      userId: user.id,
+      event,
+      error: error instanceof Error ? error.message : 'Unknown error',
+    timestamp: new Date().toISOString,
+    });
+  }
+}

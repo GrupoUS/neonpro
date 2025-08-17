@@ -1,0 +1,18 @@
+"use client";
+
+import React from 'react';
+
+interface ProfessionalselectionProps {
+  children?: React.ReactNode;
+  className?: string;
+}
+
+export function Professionalselection({ children, className = "" }: ProfessionalselectionProps) {
+  return (
+    <div className={className}>
+      {children || "Professionalselection Component"}
+    </div>
+  );
+}
+
+export default Professionalselection;

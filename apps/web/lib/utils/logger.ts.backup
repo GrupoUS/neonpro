@@ -1,0 +1,19 @@
+// Logger Module
+export interface LoggerConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Logger_DEFAULT: LoggerConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createLogger() {
+  return Logger_DEFAULT;
+}
+
+export default {
+  config: Logger_DEFAULT,
+  create: createLogger
+};

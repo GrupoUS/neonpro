@@ -1,0 +1,19 @@
+// Fifomanagement Module
+export interface FifomanagementConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Fifomanagement_DEFAULT: FifomanagementConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createFifomanagement() {
+  return Fifomanagement_DEFAULT;
+}
+
+export default {
+  config: Fifomanagement_DEFAULT,
+  create: createFifomanagement
+};

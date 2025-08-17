@@ -1,0 +1,18 @@
+"use client";
+
+import React from 'react';
+
+interface ExportdashboardProps {
+  children?: React.ReactNode;
+  className?: string;
+}
+
+export function Exportdashboard({ children, className = "" }: ExportdashboardProps) {
+  return (
+    <div className={className}>
+      {children || "Exportdashboard Component"}
+    </div>
+  );
+}
+
+export default Exportdashboard;

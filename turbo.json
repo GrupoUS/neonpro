@@ -1,0 +1,131 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "ui": "tui",
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build", "type-check", "lint:biome"],
+      "outputs": [".next/**", "!.next/cache/**", "dist/**"],
+      "env": [
+        "NEXT_PUBLIC_SUPABASE_URL",
+        "NEXT_PUBLIC_SUPABASE_ANON_KEY",
+        "NEXT_PUBLIC_APP_URL",
+        "NODE_ENV",
+        "VERCEL_ENV",
+        "NEXT_TELEMETRY_DISABLED"
+      ]
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true,
+      "env": [
+        "NEXT_PUBLIC_SUPABASE_URL",
+        "NEXT_PUBLIC_SUPABASE_ANON_KEY",
+        "NEXT_PUBLIC_APP_URL"
+      ]
+    },
+    "lint": {
+      "dependsOn": ["^build"],
+      "outputs": []
+    },
+    "lint:biome": {
+      "outputs": [],
+      "inputs": ["**/*.{js,ts,jsx,tsx,json}"]
+    },
+    "format": {
+      "outputs": [],
+      "inputs": ["**/*.{js,ts,jsx,tsx,json,md}"]
+    },
+    "format:check": {
+      "outputs": [],
+      "inputs": ["**/*.{js,ts,jsx,tsx,json,md}"]
+    },
+    "type-check": {
+      "dependsOn": ["^build"],
+      "outputs": [],
+      "inputs": ["**/*.{ts,tsx}", "tsconfig.json"]
+    },
+    "test": {
+      "dependsOn": ["^build"],
+      "outputs": ["coverage/**"],
+      "inputs": [
+        "**/*.{js,ts,jsx,tsx}",
+        "**/*.test.*",
+        "**/*.spec.*",
+        "jest.config.*"
+      ]
+    },
+    "test:unit": {
+      "dependsOn": ["^build"],
+      "outputs": ["coverage/**"],
+      "inputs": ["**/*.{js,ts,jsx,tsx}", "**/*.test.*", "**/*.spec.*"]
+    },
+    "test:integration": {
+      "dependsOn": ["^build"],
+      "outputs": [],
+      "inputs": ["**/*.{js,ts,jsx,tsx}", "**/*.test.*", "**/*.spec.*"]
+    },
+    "test:healthcare": {
+      "dependsOn": ["^build"],
+      "outputs": [],
+      "inputs": ["**/*.{js,ts,jsx,tsx}", "**/*.test.*", "**/*.spec.*"]
+    },
+    "test:coverage": {
+      "dependsOn": ["^build"],
+      "outputs": ["coverage/**"],
+      "inputs": ["**/*.{js,ts,jsx,tsx}", "**/*.test.*", "**/*.spec.*"]
+    },
+    "analyze": {
+      "dependsOn": ["build"],
+      "outputs": [".next/analyze/**"]
+    },
+    "clean": {
+      "cache": false,
+      "outputs": []
+    },
+    "security:audit": {
+      "outputs": [],
+      "cache": false
+    },
+    "quality:check": {
+      "dependsOn": ["format:check", "lint:biome", "type-check", "test:unit"],
+      "outputs": []
+    },
+    "quality:fix": {
+      "dependsOn": ["format", "lint:biome:fix"],
+      "outputs": []
+    },
+    "db:generate": {
+      "cache": false,
+      "outputs": ["node_modules/.prisma/**"]
+    },
+    "db:migrate": {
+      "cache": false,
+      "outputs": []
+    },
+    "db:seed": {
+      "dependsOn": ["db:generate"],
+      "cache": false,
+      "outputs": []
+    },
+    "db:studio": {
+      "cache": false,
+      "persistent": true
+    }
+  },
+  "globalDependencies": [
+    "**/.env",
+    "**/.env.local",
+    "**/.env.production",
+    "**/.env.test",
+    "tsconfig.json",
+    "tailwind.config.*",
+    "next.config.*",
+    "biome.jsonc",
+    "jest.config.*",
+    "package.json",
+    "pnpm-lock.yaml"
+  ],
+  "remoteCache": {
+    "signature": true
+  }
+}

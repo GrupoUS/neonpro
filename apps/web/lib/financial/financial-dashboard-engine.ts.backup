@@ -1,0 +1,19 @@
+// Financialdashboardengine Module
+export interface FinancialdashboardengineConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Financialdashboardengine_DEFAULT: FinancialdashboardengineConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createFinancialdashboardengine() {
+  return Financialdashboardengine_DEFAULT;
+}
+
+export default {
+  config: Financialdashboardengine_DEFAULT,
+  create: createFinancialdashboardengine
+};

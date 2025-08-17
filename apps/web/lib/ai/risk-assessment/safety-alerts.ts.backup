@@ -1,0 +1,19 @@
+// Safetyalerts Module
+export interface SafetyalertsConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Safetyalerts_DEFAULT: SafetyalertsConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createSafetyalerts() {
+  return Safetyalerts_DEFAULT;
+}
+
+export default {
+  config: Safetyalerts_DEFAULT,
+  create: createSafetyalerts
+};

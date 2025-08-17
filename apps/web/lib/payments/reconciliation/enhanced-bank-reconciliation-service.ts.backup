@@ -1,0 +1,19 @@
+// Enhancedbankreconciliationservice Module
+export interface EnhancedbankreconciliationserviceConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Enhancedbankreconciliationservice_DEFAULT: EnhancedbankreconciliationserviceConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createEnhancedbankreconciliationservice() {
+  return Enhancedbankreconciliationservice_DEFAULT;
+}
+
+export default {
+  config: Enhancedbankreconciliationservice_DEFAULT,
+  create: createEnhancedbankreconciliationservice
+};

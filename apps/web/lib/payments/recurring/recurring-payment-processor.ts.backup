@@ -1,0 +1,19 @@
+// Recurringpaymentprocessor Module
+export interface RecurringpaymentprocessorConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Recurringpaymentprocessor_DEFAULT: RecurringpaymentprocessorConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createRecurringpaymentprocessor() {
+  return Recurringpaymentprocessor_DEFAULT;
+}
+
+export default {
+  config: Recurringpaymentprocessor_DEFAULT,
+  create: createRecurringpaymentprocessor
+};

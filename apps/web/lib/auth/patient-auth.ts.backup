@@ -1,0 +1,19 @@
+// Patientauth Module
+export interface PatientauthConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Patientauth_DEFAULT: PatientauthConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createPatientauth() {
+  return Patientauth_DEFAULT;
+}
+
+export default {
+  config: Patientauth_DEFAULT,
+  create: createPatientauth
+};

@@ -1,0 +1,19 @@
+// Riskassessmentautomation Module
+export interface RiskassessmentautomationConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Riskassessmentautomation_DEFAULT: RiskassessmentautomationConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createRiskassessmentautomation() {
+  return Riskassessmentautomation_DEFAULT;
+}
+
+export default {
+  config: Riskassessmentautomation_DEFAULT,
+  create: createRiskassessmentautomation
+};

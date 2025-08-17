@@ -1,0 +1,19 @@
+// Performance Module
+export interface PerformanceConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Performance_DEFAULT: PerformanceConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createPerformance() {
+  return Performance_DEFAULT;
+}
+
+export default {
+  config: Performance_DEFAULT,
+  create: createPerformance
+};

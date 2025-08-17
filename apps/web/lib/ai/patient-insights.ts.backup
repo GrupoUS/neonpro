@@ -1,0 +1,19 @@
+// Patientinsights Module
+export interface PatientinsightsConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Patientinsights_DEFAULT: PatientinsightsConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createPatientinsights() {
+  return Patientinsights_DEFAULT;
+}
+
+export default {
+  config: Patientinsights_DEFAULT,
+  create: createPatientinsights
+};

@@ -1,0 +1,19 @@
+// Dashboardlayoutengine Module
+export interface DashboardlayoutengineConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Dashboardlayoutengine_DEFAULT: DashboardlayoutengineConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createDashboardlayoutengine() {
+  return Dashboardlayoutengine_DEFAULT;
+}
+
+export default {
+  config: Dashboardlayoutengine_DEFAULT,
+  create: createDashboardlayoutengine
+};

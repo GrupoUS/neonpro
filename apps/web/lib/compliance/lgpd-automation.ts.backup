@@ -1,0 +1,19 @@
+// Lgpdautomation Module
+export interface LgpdautomationConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Lgpdautomation_DEFAULT: LgpdautomationConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createLgpdautomation() {
+  return Lgpdautomation_DEFAULT;
+}
+
+export default {
+  config: Lgpdautomation_DEFAULT,
+  create: createLgpdautomation
+};

@@ -1,0 +1,19 @@
+// Paymentprocessor Module
+export interface PaymentprocessorConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Paymentprocessor_DEFAULT: PaymentprocessorConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createPaymentprocessor() {
+  return Paymentprocessor_DEFAULT;
+}
+
+export default {
+  config: Paymentprocessor_DEFAULT,
+  create: createPaymentprocessor
+};

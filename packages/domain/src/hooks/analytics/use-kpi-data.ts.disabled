@@ -1,0 +1,252 @@
+// Hook para gerenciar dados KPI com cache e refresh automático
+// Integra com o KPI Engine para dados reais do Supabase
+
+import { useCallback, useEffect, useState } from 'react';
+import type {
+  DrillDownRequest,
+  DrillDownResult,
+  KPICalculationRequest,
+  KPICalculationResult,
+} // Missing module - placeholder needed
+
+export type UseKPIDataOptions = {
+  dateRange: string;
+  autoRefresh?: boolean;
+  refreshInterval?: number;
+  filters?: any;
+};
+
+export type KPIDataState = {
+  kpis: KPICalculationResult[];
+  loading: boolean;
+  error: string | null;
+  lastUpdated: Date | null;
+};
+
+export function useKPIData(options: UseKPIDataOptions) {
+  const [state, setState] = useState<KPIDataState>({
+    kpis: [],
+    loading: true,
+    error: null,
+    lastUpdated: null,
+  });
+
+  const { dateRange, autoRefresh = true, refreshInterval = 30_000, filters } = options;
+
+  const calculateDateRange = useCallback((range: string) => {
+    const end = new Date();
+    const start = new Date();
+
+    switch (range) {
+      case '7d':
+        start.setDate(end.getDate() - 7);
+        break;
+      case '30d':
+        start.setDate(end.getDate() - 30);
+        break;
+      case '90d':
+        start.setDate(end.getDate() - 90);
+        break;
+      case '12m':
+        start.setFullYear(end.getFullYear() - 1);
+        break;
+      case 'ytd':
+        start.setMonth(0, 1);
+        break;
+      default:
+        start.setDate(end.getDate() - 30);
+    }
+
+    return {
+      start_date: start.toISOString().split('T')[0],
+      end_date: end.toISOString().split('T')[0],
+    };
+  }, []);
+
+  const fetchKPIData = useCallback(async () => {
+    setState((prev) => ({ ...prev, loading: true, error: null }));
+
+    try {
+      const timePeriod = calculateDateRange(dateRange);
+
+      const request: KPICalculationRequest = {
+        time_period: timePeriod,
+        force_recalculation: false,
+        filters,
+      };
+
+      const response = await fetch('/api/analytics/kpis', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(request),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      setState({
+        kpis: data.results || [],
+        loading: false,
+        error: null,
+        lastUpdated: new Date(),
+      });
+    } catch (error) {
+      setState((prev) => ({
+        ...prev,
+        loading: false,
+        error: error instanceof Error ? error.message : 'Erro ao carregar dados KPI',
+      }));
+    }
+  }, [dateRange, filters, calculateDateRange]);
+
+  // Refresh manual
+  const refresh = useCallback(() => {
+    fetchKPIData();
+  }, [fetchKPIData]);
+
+  // Fetch inicial e quando dependências mudam
+  useEffect(() => {
+    fetchKPIData();
+  }, [fetchKPIData]);
+
+  // Auto-refresh
+  useEffect(() => {
+    if (!autoRefresh) {
+      return;
+    }
+
+    const interval = setInterval(() => {
+      fetchKPIData();
+    }, refreshInterval);
+
+    return () => clearInterval(interval);
+  }, [autoRefresh, refreshInterval, fetchKPIData]);
+
+  return {
+    ...state,
+    refresh,
+  };
+}
+
+// Hook para dados de drill-down
+export function useDrillDownData() {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const getDrillDownData = useCallback(
+    async (request: DrillDownRequest): Promise<DrillDownResult | null> => {
+      setLoading(true);
+      setError(null);
+
+      try {
+        const response = await fetch('/api/analytics/drill-down', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(request),
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        setLoading(false);
+        return data;
+      } catch (error) {
+        setError(error instanceof Error ? error.message : 'Erro ao carregar análise detalhada');
+        setLoading(false);
+        return null;
+      }
+    },
+    []
+  );
+
+  return {
+    getDrillDownData,
+    loading,
+    error,
+  };
+}
+
+// Hook para métricas profissionais
+export function useProfessionalMetrics(dateRange: string) {
+  const [metrics, setMetrics] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchProfessionalMetrics = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const timePeriod = calculateDateRange(dateRange);
+
+      const response = await fetch('/api/analytics/professional-metrics', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ time_period: timePeriod }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      setMetrics(data.metrics || []);
+      setLoading(false);
+    } catch (error) {
+      setError(error instanceof Error ? error.message : 'Erro ao carregar métricas profissionais');
+      setLoading(false);
+    }
+  }, [dateRange, calculateDateRange]);
+
+  useEffect(() => {
+    fetchProfessionalMetrics();
+  }, [fetchProfessionalMetrics]);
+
+  const calculateDateRange = useCallback((range: string) => {
+    const end = new Date();
+    const start = new Date();
+
+    switch (range) {
+      case '7d':
+        start.setDate(end.getDate() - 7);
+        break;
+      case '30d':
+        start.setDate(end.getDate() - 30);
+        break;
+      case '90d':
+        start.setDate(end.getDate() - 90);
+        break;
+      case '12m':
+        start.setFullYear(end.getFullYear() - 1);
+        break;
+      case 'ytd':
+        start.setMonth(0, 1);
+        break;
+      default:
+        start.setDate(end.getDate() - 30);
+    }
+
+    return {
+      start_date: start.toISOString().split('T')[0],
+      end_date: end.toISOString().split('T')[0],
+    };
+  }, []);
+
+  return {
+    metrics,
+    loading,
+    error,
+    refresh: fetchProfessionalMetrics,
+  };
+}

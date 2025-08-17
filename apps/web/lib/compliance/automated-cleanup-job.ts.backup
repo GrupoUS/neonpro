@@ -1,0 +1,19 @@
+// Automatedcleanupjob Module
+export interface AutomatedcleanupjobConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Automatedcleanupjob_DEFAULT: AutomatedcleanupjobConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createAutomatedcleanupjob() {
+  return Automatedcleanupjob_DEFAULT;
+}
+
+export default {
+  config: Automatedcleanupjob_DEFAULT,
+  create: createAutomatedcleanupjob
+};

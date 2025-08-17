@@ -1,0 +1,19 @@
+// Delinquencymanager Module
+export interface DelinquencymanagerConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Delinquencymanager_DEFAULT: DelinquencymanagerConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createDelinquencymanager() {
+  return Delinquencymanager_DEFAULT;
+}
+
+export default {
+  config: Delinquencymanager_DEFAULT,
+  create: createDelinquencymanager
+};

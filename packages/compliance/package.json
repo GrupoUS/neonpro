@@ -1,0 +1,96 @@
+{
+  "name": "@neonpro/compliance",
+  "version": "0.1.0",
+  "private": true,
+  "description": "NeonPro Healthcare Compliance Utilities - Constitutional Brazilian Healthcare Compliance (LGPD + ANVISA + CFM)",
+  "keywords": [
+    "healthcare",
+    "compliance",
+    "lgpd",
+    "anvisa",
+    "cfm",
+    "brazilian-regulations",
+    "constitutional-healthcare",
+    "medical-ethics",
+    "data-protection",
+    "audit-system"
+  ],
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.js"
+    },
+    "./lgpd": {
+      "types": "./dist/lgpd/index.d.ts",
+      "import": "./dist/lgpd/index.js",
+      "require": "./dist/lgpd/index.js"
+    },
+    "./anvisa": {
+      "types": "./dist/anvisa/index.d.ts",
+      "import": "./dist/anvisa/index.js", 
+      "require": "./dist/anvisa/index.js"
+    },
+    "./cfm": {
+      "types": "./dist/cfm/index.d.ts",
+      "import": "./dist/cfm/index.js",
+      "require": "./dist/cfm/index.js"
+    },
+    "./audit": {
+      "types": "./dist/audit/index.d.ts",
+      "import": "./dist/audit/index.js",
+      "require": "./dist/audit/index.js"
+    },
+    "./analytics": {
+      "types": "./dist/analytics/index.d.ts",
+      "import": "./dist/analytics/index.js",
+      "require": "./dist/analytics/index.js"
+    },
+    "./enterprise": {
+      "types": "./dist/enterprise/index.d.ts",
+      "import": "./dist/enterprise/index.js",
+      "require": "./dist/enterprise/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "clean": "rm -rf dist",
+    "type-check": "tsc --noEmit",
+    "lint": "eslint src --ext .ts,.tsx",
+    "test": "vitest",
+    "test:coverage": "vitest --coverage",
+    "compliance:validate": "node scripts/validate-compliance.js",
+    "lgpd:audit": "node scripts/lgpd-audit.js",
+    "anvisa:check": "node scripts/anvisa-check.js",
+    "cfm:validate": "node scripts/cfm-validate.js"
+  },
+  "dependencies": {
+    "@neonpro/db": "workspace:*",
+    "@neonpro/types": "workspace:*",
+    "@neonpro/utils": "workspace:*",
+    "@supabase/supabase-js": "^2.39.0",
+    "zod": "^3.22.4",
+    "date-fns": "^3.0.6",
+    "crypto-js": "^4.2.0",
+    "jsonwebtoken": "^9.0.2",
+    "nanoid": "^5.0.4"
+  },
+  "devDependencies": {
+    "@types/crypto-js": "^4.2.1",
+    "@types/jsonwebtoken": "^9.0.5",
+    "@types/node": "^20.10.0",
+    "typescript": "^5.3.0",
+    "vitest": "^1.0.0",
+    "@vitest/coverage-v8": "^1.0.0",
+    "eslint": "^8.55.0",
+    "@typescript-eslint/eslint-plugin": "^6.14.0",
+    "@typescript-eslint/parser": "^6.14.0"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0",
+    "next": "^14.0.0"
+  }
+}

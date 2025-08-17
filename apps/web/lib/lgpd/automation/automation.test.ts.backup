@@ -1,0 +1,19 @@
+// Automation.Test Module
+export interface Automation.TestConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Automation.Test_DEFAULT: Automation.TestConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createAutomation.Test() {
+  return Automation.Test_DEFAULT;
+}
+
+export default {
+  config: Automation.Test_DEFAULT,
+  create: createAutomation.Test
+};

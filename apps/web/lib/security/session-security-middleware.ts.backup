@@ -1,0 +1,19 @@
+// Sessionsecuritymiddleware Module
+export interface SessionsecuritymiddlewareConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Sessionsecuritymiddleware_DEFAULT: SessionsecuritymiddlewareConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createSessionsecuritymiddleware() {
+  return Sessionsecuritymiddleware_DEFAULT;
+}
+
+export default {
+  config: Sessionsecuritymiddleware_DEFAULT,
+  create: createSessionsecuritymiddleware
+};

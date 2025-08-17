@@ -1,0 +1,18 @@
+"use client";
+
+import React from 'react';
+
+interface ProgressProps {
+  children?: React.ReactNode;
+  className?: string;
+}
+
+export function Progress({ children, className = "" }: ProgressProps) {
+  return (
+    <div className={className}>
+      {children || "Progress Component"}
+    </div>
+  );
+}
+
+export default Progress;

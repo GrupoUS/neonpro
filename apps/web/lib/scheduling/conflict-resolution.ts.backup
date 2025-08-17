@@ -1,0 +1,19 @@
+// Conflictresolution Module
+export interface ConflictresolutionConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Conflictresolution_DEFAULT: ConflictresolutionConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createConflictresolution() {
+  return Conflictresolution_DEFAULT;
+}
+
+export default {
+  config: Conflictresolution_DEFAULT,
+  create: createConflictresolution
+};

@@ -1,0 +1,19 @@
+// Digitalsignature Module
+export interface DigitalsignatureConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Digitalsignature_DEFAULT: DigitalsignatureConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createDigitalsignature() {
+  return Digitalsignature_DEFAULT;
+}
+
+export default {
+  config: Digitalsignature_DEFAULT,
+  create: createDigitalsignature
+};

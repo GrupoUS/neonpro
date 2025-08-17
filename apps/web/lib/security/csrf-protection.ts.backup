@@ -1,0 +1,19 @@
+// Csrfprotection Module
+export interface CsrfprotectionConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Csrfprotection_DEFAULT: CsrfprotectionConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createCsrfprotection() {
+  return Csrfprotection_DEFAULT;
+}
+
+export default {
+  config: Csrfprotection_DEFAULT,
+  create: createCsrfprotection
+};

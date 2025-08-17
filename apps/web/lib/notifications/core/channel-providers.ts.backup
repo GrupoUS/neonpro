@@ -1,0 +1,19 @@
+// Channelproviders Module
+export interface ChannelprovidersConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Channelproviders_DEFAULT: ChannelprovidersConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createChannelproviders() {
+  return Channelproviders_DEFAULT;
+}
+
+export default {
+  config: Channelproviders_DEFAULT,
+  create: createChannelproviders
+};

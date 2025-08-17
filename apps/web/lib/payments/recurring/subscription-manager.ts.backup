@@ -1,0 +1,19 @@
+// Subscriptionmanager Module
+export interface SubscriptionmanagerConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Subscriptionmanager_DEFAULT: SubscriptionmanagerConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createSubscriptionmanager() {
+  return Subscriptionmanager_DEFAULT;
+}
+
+export default {
+  config: Subscriptionmanager_DEFAULT,
+  create: createSubscriptionmanager
+};

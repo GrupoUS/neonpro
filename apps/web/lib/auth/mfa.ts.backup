@@ -1,0 +1,19 @@
+// Mfa Module
+export interface MfaConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Mfa_DEFAULT: MfaConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createMfa() {
+  return Mfa_DEFAULT;
+}
+
+export default {
+  config: Mfa_DEFAULT,
+  create: createMfa
+};

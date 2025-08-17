@@ -1,0 +1,64 @@
+// Placeholder for date-fns packageexport const addDays = (date: Date,
+    amount: number): Date => {
+  const result = new Date(date);
+  result.setDate(result.getDate+ amount);
+  return result;
+};
+
+export const subDays = (date: Date,
+    amount: number): Date => {
+  const result = new Date(date);
+  result.setDate(result.getDate- amount);
+  return result;
+};
+
+export const format = (date: Date,
+    formatStr: string): string => {
+  return date.toISOString.split('T')[0]; // Simple placeholder formatting};
+
+export const parseISO = (dateString: string): Date => {
+  return new Date(dateString);
+};
+
+export const isAfter = (date: Date,
+    dateToCompare: Date): boolean => {
+  return date.getTime() > dateToCompare.getTime;
+};
+
+export const isBefore = (date: Date,
+    dateToCompare: Date): boolean => {
+  return date.getTime() < dateToCompare.getTime;
+};
+
+export const startOfDay = (date: Date): Date => {
+  const result = new Date(date);
+  result.setHours(0, 0, 0, 0);
+  return result;
+};
+
+export const endOfDay = (date: Date): Date => {
+  const result = new Date(date);
+  result.setHours(23, 59, 59, 999);
+  return result;
+};
+
+export const differenceInDays = (dateLeft: Date,
+    dateRight: Date): number => {
+  const diffTime = Math.abs(dateLeft.getTime() - dateRight.getTime);
+  return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+};
+export const validateCSRF = () => true;
+
+export const rateLimit = () => ({});
+
+export const createBackupConfig = () => ({});
+
+export const sessionConfig = {};
+
+export class UnifiedSessionSystem {}
+
+export const trackLoginPerformance = () => {};
+
+export type PermissionContext = any;
+
+export type SessionValidationResult = any;

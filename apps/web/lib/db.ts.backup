@@ -1,0 +1,19 @@
+// Db Module
+export interface DbConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Db_DEFAULT: DbConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createDb() {
+  return Db_DEFAULT;
+}
+
+export default {
+  config: Db_DEFAULT,
+  create: createDb
+};

@@ -1,0 +1,19 @@
+// Templateengine Module
+export interface TemplateengineConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Templateengine_DEFAULT: TemplateengineConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createTemplateengine() {
+  return Templateengine_DEFAULT;
+}
+
+export default {
+  config: Templateengine_DEFAULT,
+  create: createTemplateengine
+};

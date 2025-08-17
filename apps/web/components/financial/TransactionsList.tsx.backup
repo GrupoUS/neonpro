@@ -1,0 +1,18 @@
+"use client";
+
+import React from 'react';
+
+interface TransactionslistProps {
+  children?: React.ReactNode;
+  className?: string;
+}
+
+export function Transactionslist({ children, className = "" }: TransactionslistProps) {
+  return (
+    <div className={className}>
+      {children || "Transactionslist Component"}
+    </div>
+  );
+}
+
+export default Transactionslist;

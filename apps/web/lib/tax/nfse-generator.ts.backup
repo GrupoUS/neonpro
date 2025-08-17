@@ -1,0 +1,19 @@
+// Nfsegenerator Module
+export interface NfsegeneratorConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Nfsegenerator_DEFAULT: NfsegeneratorConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createNfsegenerator() {
+  return Nfsegenerator_DEFAULT;
+}
+
+export default {
+  config: Nfsegenerator_DEFAULT,
+  create: createNfsegenerator
+};

@@ -1,0 +1,12 @@
+// Service/API placeholder
+export class PlaceholderService {
+  static async getData(): Promise<unknown[]> {
+    return [];
+  }
+  
+  static async postData(data: unknown): Promise<unknown> {
+    return data;
+  }
+}
+
+export default PlaceholderService;

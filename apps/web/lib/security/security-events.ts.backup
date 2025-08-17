@@ -1,0 +1,19 @@
+// Securityevents Module
+export interface SecurityeventsConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Securityevents_DEFAULT: SecurityeventsConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createSecurityevents() {
+  return Securityevents_DEFAULT;
+}
+
+export default {
+  config: Securityevents_DEFAULT,
+  create: createSecurityevents
+};

@@ -1,0 +1,13 @@
+// Placeholder types for appointments
+export type PlaceholderType = {
+  id: string
+  name: string
+  created_at: string
+  updated_at: string
+}
+
+export interface IAppointmentsPlaceholder {
+  placeholder: boolean
+}
+
+export default PlaceholderType

@@ -1,0 +1,18 @@
+"use client";
+
+import React from 'react';
+
+interface ConsentmanagementwidgetProps {
+  children?: React.ReactNode;
+  className?: string;
+}
+
+export function Consentmanagementwidget({ children, className = "" }: ConsentmanagementwidgetProps) {
+  return (
+    <div className={className}>
+      {children || "Consentmanagementwidget Component"}
+    </div>
+  );
+}
+
+export default Consentmanagementwidget;

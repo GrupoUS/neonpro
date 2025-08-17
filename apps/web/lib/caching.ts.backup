@@ -1,0 +1,19 @@
+// Caching Module
+export interface CachingConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Caching_DEFAULT: CachingConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createCaching() {
+  return Caching_DEFAULT;
+}
+
+export default {
+  config: Caching_DEFAULT,
+  create: createCaching
+};

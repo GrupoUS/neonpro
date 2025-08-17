@@ -1,0 +1,19 @@
+// Pushnotificationservice Module
+export interface PushnotificationserviceConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Pushnotificationservice_DEFAULT: PushnotificationserviceConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createPushnotificationservice() {
+  return Pushnotificationservice_DEFAULT;
+}
+
+export default {
+  config: Pushnotificationservice_DEFAULT,
+  create: createPushnotificationservice
+};

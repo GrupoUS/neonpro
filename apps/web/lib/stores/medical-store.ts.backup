@@ -1,0 +1,19 @@
+// Medicalstore Module
+export interface MedicalstoreConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Medicalstore_DEFAULT: MedicalstoreConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createMedicalstore() {
+  return Medicalstore_DEFAULT;
+}
+
+export default {
+  config: Medicalstore_DEFAULT,
+  create: createMedicalstore
+};

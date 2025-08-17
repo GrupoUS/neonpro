@@ -1,0 +1,19 @@
+// Inappprovider Module
+export interface InappproviderConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Inappprovider_DEFAULT: InappproviderConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createInappprovider() {
+  return Inappprovider_DEFAULT;
+}
+
+export default {
+  config: Inappprovider_DEFAULT,
+  create: createInappprovider
+};

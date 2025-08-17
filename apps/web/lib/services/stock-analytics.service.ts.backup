@@ -1,0 +1,19 @@
+// Stockanalytics.Service Module
+export interface Stockanalytics.ServiceConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Stockanalytics.Service_DEFAULT: Stockanalytics.ServiceConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createStockanalytics.Service() {
+  return Stockanalytics.Service_DEFAULT;
+}
+
+export default {
+  config: Stockanalytics.Service_DEFAULT,
+  create: createStockanalytics.Service
+};

@@ -1,0 +1,19 @@
+// Appointmentmanager Module
+export interface AppointmentmanagerConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Appointmentmanager_DEFAULT: AppointmentmanagerConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createAppointmentmanager() {
+  return Appointmentmanager_DEFAULT;
+}
+
+export default {
+  config: Appointmentmanager_DEFAULT,
+  create: createAppointmentmanager
+};

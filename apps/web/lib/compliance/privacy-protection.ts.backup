@@ -1,0 +1,19 @@
+// Privacyprotection Module
+export interface PrivacyprotectionConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Privacyprotection_DEFAULT: PrivacyprotectionConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createPrivacyprotection() {
+  return Privacyprotection_DEFAULT;
+}
+
+export default {
+  config: Privacyprotection_DEFAULT,
+  create: createPrivacyprotection
+};

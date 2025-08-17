@@ -1,0 +1,19 @@
+// Duplicatedetection Module
+export interface DuplicatedetectionConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Duplicatedetection_DEFAULT: DuplicatedetectionConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createDuplicatedetection() {
+  return Duplicatedetection_DEFAULT;
+}
+
+export default {
+  config: Duplicatedetection_DEFAULT,
+  create: createDuplicatedetection
+};

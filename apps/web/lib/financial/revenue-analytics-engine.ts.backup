@@ -1,0 +1,19 @@
+// Revenueanalyticsengine Module
+export interface RevenueanalyticsengineConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Revenueanalyticsengine_DEFAULT: RevenueanalyticsengineConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createRevenueanalyticsengine() {
+  return Revenueanalyticsengine_DEFAULT;
+}
+
+export default {
+  config: Revenueanalyticsengine_DEFAULT,
+  create: createRevenueanalyticsengine
+};

@@ -1,0 +1,19 @@
+// Riskassessment Module
+export interface RiskassessmentConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Riskassessment_DEFAULT: RiskassessmentConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createRiskassessment() {
+  return Riskassessment_DEFAULT;
+}
+
+export default {
+  config: Riskassessment_DEFAULT,
+  create: createRiskassessment
+};

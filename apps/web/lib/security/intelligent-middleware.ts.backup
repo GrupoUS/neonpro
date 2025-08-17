@@ -1,0 +1,19 @@
+// Intelligentmiddleware Module
+export interface IntelligentmiddlewareConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Intelligentmiddleware_DEFAULT: IntelligentmiddlewareConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createIntelligentmiddleware() {
+  return Intelligentmiddleware_DEFAULT;
+}
+
+export default {
+  config: Intelligentmiddleware_DEFAULT,
+  create: createIntelligentmiddleware
+};

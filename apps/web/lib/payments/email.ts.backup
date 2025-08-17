@@ -1,0 +1,19 @@
+// Email Module
+export interface EmailConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Email_DEFAULT: EmailConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createEmail() {
+  return Email_DEFAULT;
+}
+
+export default {
+  config: Email_DEFAULT,
+  create: createEmail
+};

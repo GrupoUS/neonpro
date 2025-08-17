@@ -1,0 +1,19 @@
+// Subscriptionrecovery Module
+export interface SubscriptionrecoveryConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Subscriptionrecovery_DEFAULT: SubscriptionrecoveryConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createSubscriptionrecovery() {
+  return Subscriptionrecovery_DEFAULT;
+}
+
+export default {
+  config: Subscriptionrecovery_DEFAULT,
+  create: createSubscriptionrecovery
+};

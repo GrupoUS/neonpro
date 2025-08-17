@@ -1,0 +1,19 @@
+// Schedulingworkflow Module
+export interface SchedulingworkflowConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Schedulingworkflow_DEFAULT: SchedulingworkflowConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createSchedulingworkflow() {
+  return Schedulingworkflow_DEFAULT;
+}
+
+export default {
+  config: Schedulingworkflow_DEFAULT,
+  create: createSchedulingworkflow
+};

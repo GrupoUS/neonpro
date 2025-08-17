@@ -1,0 +1,19 @@
+// Inventorytrackingengine Module
+export interface InventorytrackingengineConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Inventorytrackingengine_DEFAULT: InventorytrackingengineConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createInventorytrackingengine() {
+  return Inventorytrackingengine_DEFAULT;
+}
+
+export default {
+  config: Inventorytrackingengine_DEFAULT,
+  create: createInventorytrackingengine
+};

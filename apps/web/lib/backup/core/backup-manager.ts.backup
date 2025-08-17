@@ -1,0 +1,19 @@
+// Backupmanager Module
+export interface BackupmanagerConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Backupmanager_DEFAULT: BackupmanagerConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createBackupmanager() {
+  return Backupmanager_DEFAULT;
+}
+
+export default {
+  config: Backupmanager_DEFAULT,
+  create: createBackupmanager
+};

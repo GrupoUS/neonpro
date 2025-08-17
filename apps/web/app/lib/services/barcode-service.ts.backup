@@ -1,0 +1,19 @@
+// Barcodeservice Module
+export interface BarcodeserviceConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Barcodeservice_DEFAULT: BarcodeserviceConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createBarcodeservice() {
+  return Barcodeservice_DEFAULT;
+}
+
+export default {
+  config: Barcodeservice_DEFAULT,
+  create: createBarcodeservice
+};

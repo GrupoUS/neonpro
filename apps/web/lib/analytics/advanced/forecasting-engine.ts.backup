@@ -1,0 +1,19 @@
+// Forecastingengine Module
+export interface ForecastingengineConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Forecastingengine_DEFAULT: ForecastingengineConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createForecastingengine() {
+  return Forecastingengine_DEFAULT;
+}
+
+export default {
+  config: Forecastingengine_DEFAULT,
+  create: createForecastingengine
+};

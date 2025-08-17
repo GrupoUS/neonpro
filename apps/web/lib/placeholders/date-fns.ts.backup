@@ -1,0 +1,19 @@
+// Datefns Module
+export interface DatefnsConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Datefns_DEFAULT: DatefnsConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createDatefns() {
+  return Datefns_DEFAULT;
+}
+
+export default {
+  config: Datefns_DEFAULT,
+  create: createDatefns
+};

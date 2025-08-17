@@ -1,0 +1,74 @@
+// API Route: schedules
+import { NextRequest, NextResponse } from "next/server";
+
+// GET handler
+export async function GET(request: NextRequest) {
+  try {
+    // TODO: Implement GET logic for schedules
+    return NextResponse.json({ 
+      message: "GET schedules endpoint", 
+      timestamp: new Date().toISOString() 
+    });
+  } catch (error) {
+    console.error("GET schedules error:", error);
+    return NextResponse.json(
+      { error: "Internal server error" }, 
+      { status: 500 }
+    );
+  }
+}
+
+// POST handler
+export async function POST(request: NextRequest) {
+  try {
+    const body = await request.json();
+    // TODO: Implement POST logic for schedules
+    return NextResponse.json({ 
+      message: "POST schedules endpoint",
+      received: body,
+      timestamp: new Date().toISOString() 
+    });
+  } catch (error) {
+    console.error("POST schedules error:", error);
+    return NextResponse.json(
+      { error: "Internal server error" }, 
+      { status: 500 }
+    );
+  }
+}
+
+// PUT handler  
+export async function PUT(request: NextRequest) {
+  try {
+    const body = await request.json();
+    // TODO: Implement PUT logic for schedules
+    return NextResponse.json({ 
+      message: "PUT schedules endpoint",
+      updated: body,
+      timestamp: new Date().toISOString() 
+    });
+  } catch (error) {
+    console.error("PUT schedules error:", error);
+    return NextResponse.json(
+      { error: "Internal server error" }, 
+      { status: 500 }
+    );
+  }
+}
+
+// DELETE handler
+export async function DELETE(request: NextRequest) {
+  try {
+    // TODO: Implement DELETE logic for schedules
+    return NextResponse.json({ 
+      message: "DELETE schedules endpoint",
+      timestamp: new Date().toISOString() 
+    });
+  } catch (error) {
+    console.error("DELETE schedules error:", error);
+    return NextResponse.json(
+      { error: "Internal server error" }, 
+      { status: 500 }
+    );
+  }
+}

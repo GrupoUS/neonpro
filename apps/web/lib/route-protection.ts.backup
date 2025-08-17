@@ -1,0 +1,19 @@
+// Routeprotection Module
+export interface RouteprotectionConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Routeprotection_DEFAULT: RouteprotectionConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createRouteprotection() {
+  return Routeprotection_DEFAULT;
+}
+
+export default {
+  config: Routeprotection_DEFAULT,
+  create: createRouteprotection
+};

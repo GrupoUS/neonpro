@@ -1,0 +1,19 @@
+// Legaldocumentation Module
+export interface LegaldocumentationConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Legaldocumentation_DEFAULT: LegaldocumentationConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createLegaldocumentation() {
+  return Legaldocumentation_DEFAULT;
+}
+
+export default {
+  config: Legaldocumentation_DEFAULT,
+  create: createLegaldocumentation
+};

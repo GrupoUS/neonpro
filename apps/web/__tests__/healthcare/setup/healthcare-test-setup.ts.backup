@@ -1,0 +1,211 @@
+/**
+ * 🏥 Healthcare Test Setup - NeonPro
+ * Patient Data Protection & Constitutional Healthcare Compliance
+ * LGPD + ANVISA + CFM Testing Standards
+ */
+
+import '@testing-library/jest-dom';
+import { TextDecoder, TextEncoder } from 'node:util';
+import { jest } from '@jest/globals';
+
+// Polyfills for healthcare testing environment
+global.TextEncoder = TextEncoder;
+global.TextDecoder = TextDecoder;
+
+// Healthcare global test configuration
+declare global {
+  var HEALTHCARE_TEST_MODE: boolean;
+  var PATIENT_DATA_PROTECTION: boolean;
+  var LGPD_COMPLIANCE_REQUIRED: boolean;
+  var ANVISA_COMPLIANCE_REQUIRED: boolean;
+  var CFM_COMPLIANCE_REQUIRED: boolean;
+}
+
+// Set healthcare test mode globals
+global.HEALTHCARE_TEST_MODE = true;
+global.PATIENT_DATA_PROTECTION = true;
+global.LGPD_COMPLIANCE_REQUIRED = true;
+global.ANVISA_COMPLIANCE_REQUIRED = true;
+global.CFM_COMPLIANCE_REQUIRED = true;
+
+// Mock healthcare environment variables
+process.env.NODE_ENV = 'test';
+process.env.NEXT_PUBLIC_SUPABASE_URL = 'https://test.supabase.co';
+process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = 'test-anon-key';
+process.env.HEALTHCARE_TEST_MODE = 'true';
+process.env.PATIENT_DATA_ANONYMIZATION = 'required';
+
+// Healthcare-specific console override for security
+const originalConsole = global.console;
+global.console = {
+  ...originalConsole,
+  warn: (message: any, ...args: any[]) => {
+    // Suppress non-critical warnings in healthcare tests
+    if (typeof message === 'string' && message.includes('Warning:')) {
+      return;
+    }
+    originalConsole.warn(message, ...args);
+  },
+  error: (message: any, ...args: any[]) => {
+    // Always show errors in healthcare testing
+    originalConsole.error('🚨 Healthcare Test Error:', message, ...args);
+  },
+  log: (message: any, ...args: any[]) => {
+    // Filter out potential sensitive data in logs
+    if (typeof message === 'string') {
+      const sensitivePatterns = [
+        /\d{3}\.\d{3}\.\d{3}-\d{2}/, // CPF pattern
+        /\(\d{2}\)\s*9\d{4}-\d{4}/, // Phone pattern
+        /@(?!teste|test|example).*\.com/, // Real email pattern
+      ];
+
+      for (const pattern of sensitivePatterns) {
+        if (pattern.test(message)) {
+          originalConsole.warn(
+            '🛡️ Potential sensitive data detected in test logs',
+          );
+          return;
+        }
+      }
+    }
+    originalConsole.log(message, ...args);
+  },
+};
+
+// Mock healthcare APIs and services
+jest.mock('@/lib/supabase/client', () => ({
+  createClient: jest.fn(() => ({
+    auth: {
+      getUser: jest.fn(() =>
+        Promise.resolve({
+          data: {
+            user: {
+              id: 'test-user-id',
+              email: 'test@neonpro.com',
+              user_metadata: { role: 'patient', isTestData: true },
+            },
+          },
+        }),
+      ),
+      signOut: jest.fn(() => Promise.resolve()),
+    },
+    from: jest.fn(() => ({
+      select: jest.fn(() => Promise.resolve({ data: [], error: null })),
+      insert: jest.fn(() => Promise.resolve({ data: {}, error: null })),
+      update: jest.fn(() => Promise.resolve({ data: {}, error: null })),
+      delete: jest.fn(() => Promise.resolve({ data: {}, error: null })),
+    })),
+  })),
+}));
+
+// Mock healthcare authentication
+jest.mock('@/lib/auth/patient-auth', () => ({
+  validatePatientAccess: jest.fn(() => Promise.resolve(true)),
+  auditPatientDataAccess: jest.fn(() => Promise.resolve()),
+  checkDataConsent: jest.fn(() => Promise.resolve(true)),
+  validateLGPDCompliance: jest.fn(() => Promise.resolve(true)),
+}));
+
+// Mock healthcare notifications
+jest.mock('@/lib/notifications/notification-service', () => ({
+  sendHealthcareNotification: jest.fn(() => Promise.resolve()),
+  validateNotificationConsent: jest.fn(() => Promise.resolve(true)),
+}));
+
+// Healthcare test utilities
+export const healthcareTestUtils = {
+  // Validate test data anonymization
+  validateDataAnonymization: (data: any) => {
+    const dataString = JSON.stringify(data);
+    const sensitivePatterns = [
+      /\d{3}\.\d{3}\.\d{3}-\d{2}/, // CPF
+      /\(\d{2}\)\s*9\d{4}-\d{4}/, // Phone
+      /@(?!teste|test|example).*\.com/, // Real email
+    ];
+
+    for (const pattern of sensitivePatterns) {
+      if (pattern.test(dataString)) {
+        throw new Error(
+          '🚨 Real patient data detected in test - Use anonymized data only',
+        );
+      }
+    }
+    return true;
+  },
+
+  // Mock healthcare performance timing
+  mockPerformanceTiming: () => {
+    Object.defineProperty(window, 'performance', {
+      value: {
+        now: jest.fn(() => Date.now()),
+        mark: jest.fn(),
+        measure: jest.fn(),
+        getEntriesByType: jest.fn(() => []),
+        getEntriesByName: jest.fn(() => []),
+      },
+      writable: true,
+    });
+  },
+
+  // Mock healthcare Web APIs
+  mockHealthcareWebAPIs: () => {
+    // Mock IntersectionObserver for accessibility testing
+    global.IntersectionObserver = jest.fn(() => ({
+      observe: jest.fn(),
+      disconnect: jest.fn(),
+      unobserve: jest.fn(),
+    }));
+
+    // Mock ResizeObserver for responsive healthcare UI
+    global.ResizeObserver = jest.fn(() => ({
+      observe: jest.fn(),
+      disconnect: jest.fn(),
+      unobserve: jest.fn(),
+    }));
+
+    // Mock matchMedia for mobile healthcare testing
+    Object.defineProperty(window, 'matchMedia', {
+      writable: true,
+      value: jest.fn().mockImplementation((query) => ({
+        matches: false,
+        media: query,
+        onchange: null,
+        addListener: jest.fn(),
+        removeListener: jest.fn(),
+        addEventListener: jest.fn(),
+        removeEventListener: jest.fn(),
+        dispatchEvent: jest.fn(),
+      })),
+    });
+  },
+};
+
+// Initialize healthcare test setup
+beforeAll(() => {
+  healthcareTestUtils.mockPerformanceTiming();
+  healthcareTestUtils.mockHealthcareWebAPIs();
+});
+
+// Healthcare test cleanup
+afterEach(() => {
+  // Clear all mocks to prevent patient data leakage between tests
+  jest.clearAllMocks();
+
+  // Validate no sensitive data in DOM
+  if (typeof document !== 'undefined') {
+    const domContent = document.body.textContent || '';
+    healthcareTestUtils.validateDataAnonymization({ domContent });
+  }
+});
+
+// Global error handler for healthcare tests
+process.on('unhandledRejection', (reason, promise) => {
+  console.error(
+    '🚨 Unhandled Rejection in Healthcare Test:',
+    promise,
+    'reason:',
+    reason,
+  );
+});
+
+export default healthcareTestUtils;

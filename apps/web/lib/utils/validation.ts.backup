@@ -1,0 +1,19 @@
+// Validation Module
+export interface ValidationConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Validation_DEFAULT: ValidationConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createValidation() {
+  return Validation_DEFAULT;
+}
+
+export default {
+  config: Validation_DEFAULT,
+  create: createValidation
+};

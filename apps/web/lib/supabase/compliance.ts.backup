@@ -1,0 +1,19 @@
+// Compliance Module
+export interface ComplianceConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Compliance_DEFAULT: ComplianceConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createCompliance() {
+  return Compliance_DEFAULT;
+}
+
+export default {
+  config: Compliance_DEFAULT,
+  create: createCompliance
+};

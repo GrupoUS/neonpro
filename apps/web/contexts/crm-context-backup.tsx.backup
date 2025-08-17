@@ -1,0 +1,18 @@
+"use client";
+
+import React from 'react';
+
+interface CrmcontextbackupProps {
+  children?: React.ReactNode;
+  className?: string;
+}
+
+export function Crmcontextbackup({ children, className = "" }: CrmcontextbackupProps) {
+  return (
+    <div className={className}>
+      {children || "Crmcontextbackup Component"}
+    </div>
+  );
+}
+
+export default Crmcontextbackup;

@@ -1,0 +1,19 @@
+// Types Module
+export interface TypesConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Types_DEFAULT: TypesConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createTypes() {
+  return Types_DEFAULT;
+}
+
+export default {
+  config: Types_DEFAULT,
+  create: createTypes
+};

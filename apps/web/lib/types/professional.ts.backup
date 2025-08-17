@@ -1,0 +1,19 @@
+// Professional Module
+export interface ProfessionalConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Professional_DEFAULT: ProfessionalConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createProfessional() {
+  return Professional_DEFAULT;
+}
+
+export default {
+  config: Professional_DEFAULT,
+  create: createProfessional
+};

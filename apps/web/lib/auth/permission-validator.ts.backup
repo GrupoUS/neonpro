@@ -1,0 +1,19 @@
+// Permissionvalidator Module
+export interface PermissionvalidatorConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Permissionvalidator_DEFAULT: PermissionvalidatorConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createPermissionvalidator() {
+  return Permissionvalidator_DEFAULT;
+}
+
+export default {
+  config: Permissionvalidator_DEFAULT,
+  create: createPermissionvalidator
+};

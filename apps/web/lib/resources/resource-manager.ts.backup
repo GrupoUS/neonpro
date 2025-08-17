@@ -1,0 +1,19 @@
+// Resourcemanager Module
+export interface ResourcemanagerConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Resourcemanager_DEFAULT: ResourcemanagerConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createResourcemanager() {
+  return Resourcemanager_DEFAULT;
+}
+
+export default {
+  config: Resourcemanager_DEFAULT,
+  create: createResourcemanager
+};

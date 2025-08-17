@@ -1,0 +1,19 @@
+// Riskscoringalgorithm Module
+export interface RiskscoringalgorithmConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Riskscoringalgorithm_DEFAULT: RiskscoringalgorithmConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createRiskscoringalgorithm() {
+  return Riskscoringalgorithm_DEFAULT;
+}
+
+export default {
+  config: Riskscoringalgorithm_DEFAULT,
+  create: createRiskscoringalgorithm
+};

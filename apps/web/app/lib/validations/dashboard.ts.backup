@@ -1,0 +1,19 @@
+// Dashboard Module
+export interface DashboardConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Dashboard_DEFAULT: DashboardConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createDashboard() {
+  return Dashboard_DEFAULT;
+}
+
+export default {
+  config: Dashboard_DEFAULT,
+  create: createDashboard
+};

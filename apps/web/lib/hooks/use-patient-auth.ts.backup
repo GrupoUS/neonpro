@@ -1,0 +1,19 @@
+// Usepatientauth Module
+export interface UsepatientauthConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Usepatientauth_DEFAULT: UsepatientauthConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createUsepatientauth() {
+  return Usepatientauth_DEFAULT;
+}
+
+export default {
+  config: Usepatientauth_DEFAULT,
+  create: createUsepatientauth
+};

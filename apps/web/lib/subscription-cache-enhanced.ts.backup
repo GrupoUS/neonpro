@@ -1,0 +1,19 @@
+// Subscriptioncacheenhanced Module
+export interface SubscriptioncacheenhancedConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Subscriptioncacheenhanced_DEFAULT: SubscriptioncacheenhancedConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createSubscriptioncacheenhanced() {
+  return Subscriptioncacheenhanced_DEFAULT;
+}
+
+export default {
+  config: Subscriptioncacheenhanced_DEFAULT,
+  create: createSubscriptioncacheenhanced
+};

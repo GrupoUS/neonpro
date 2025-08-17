@@ -1,0 +1,19 @@
+// Chatengine Module
+export interface ChatengineConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Chatengine_DEFAULT: ChatengineConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createChatengine() {
+  return Chatengine_DEFAULT;
+}
+
+export default {
+  config: Chatengine_DEFAULT,
+  create: createChatengine
+};

@@ -1,0 +1,19 @@
+// Taxcalculator Module
+export interface TaxcalculatorConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Taxcalculator_DEFAULT: TaxcalculatorConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createTaxcalculator() {
+  return Taxcalculator_DEFAULT;
+}
+
+export default {
+  config: Taxcalculator_DEFAULT,
+  create: createTaxcalculator
+};

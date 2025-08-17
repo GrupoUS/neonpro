@@ -1,0 +1,19 @@
+// Realtimeadaptive Module
+export interface RealtimeadaptiveConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Realtimeadaptive_DEFAULT: RealtimeadaptiveConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createRealtimeadaptive() {
+  return Realtimeadaptive_DEFAULT;
+}
+
+export default {
+  config: Realtimeadaptive_DEFAULT,
+  create: createRealtimeadaptive
+};

@@ -1,0 +1,19 @@
+// Stockalerts Module
+export interface StockalertsConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Stockalerts_DEFAULT: StockalertsConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createStockalerts() {
+  return Stockalerts_DEFAULT;
+}
+
+export default {
+  config: Stockalerts_DEFAULT,
+  create: createStockalerts
+};

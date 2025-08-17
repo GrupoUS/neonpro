@@ -1,0 +1,19 @@
+// Channelorchestrator Module
+export interface ChannelorchestratorConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Channelorchestrator_DEFAULT: ChannelorchestratorConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createChannelorchestrator() {
+  return Channelorchestrator_DEFAULT;
+}
+
+export default {
+  config: Channelorchestrator_DEFAULT,
+  create: createChannelorchestrator
+};

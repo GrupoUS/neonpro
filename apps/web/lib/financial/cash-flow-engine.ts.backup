@@ -1,0 +1,19 @@
+// Cashflowengine Module
+export interface CashflowengineConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Cashflowengine_DEFAULT: CashflowengineConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createCashflowengine() {
+  return Cashflowengine_DEFAULT;
+}
+
+export default {
+  config: Cashflowengine_DEFAULT,
+  create: createCashflowengine
+};

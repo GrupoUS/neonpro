@@ -1,0 +1,19 @@
+// Wcagcompliance Module
+export interface WcagcomplianceConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Wcagcompliance_DEFAULT: WcagcomplianceConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createWcagcompliance() {
+  return Wcagcompliance_DEFAULT;
+}
+
+export default {
+  config: Wcagcompliance_DEFAULT,
+  create: createWcagcompliance
+};

@@ -1,0 +1,18 @@
+"use client";
+
+import React from 'react';
+
+interface AnalyticsProps {
+  children?: React.ReactNode;
+  className?: string;
+}
+
+export function Analytics({ children, className = "" }: AnalyticsProps) {
+  return (
+    <div className={className}>
+      {children || "Analytics Component"}
+    </div>
+  );
+}
+
+export default Analytics;

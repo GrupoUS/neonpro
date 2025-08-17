@@ -1,0 +1,19 @@
+// Consentforms Module
+export interface ConsentformsConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Consentforms_DEFAULT: ConsentformsConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createConsentforms() {
+  return Consentforms_DEFAULT;
+}
+
+export default {
+  config: Consentforms_DEFAULT,
+  create: createConsentforms
+};

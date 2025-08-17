@@ -1,0 +1,19 @@
+// Interoperability Module
+export interface InteroperabilityConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Interoperability_DEFAULT: InteroperabilityConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createInteroperability() {
+  return Interoperability_DEFAULT;
+}
+
+export default {
+  config: Interoperability_DEFAULT,
+  create: createInteroperability
+};

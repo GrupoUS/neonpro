@@ -1,0 +1,19 @@
+// Useprivacycontrols Module
+export interface UseprivacycontrolsConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Useprivacycontrols_DEFAULT: UseprivacycontrolsConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createUseprivacycontrols() {
+  return Useprivacycontrols_DEFAULT;
+}
+
+export default {
+  config: Useprivacycontrols_DEFAULT,
+  create: createUseprivacycontrols
+};

@@ -1,0 +1,19 @@
+// Analyticscore Module
+export interface AnalyticscoreConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Analyticscore_DEFAULT: AnalyticscoreConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createAnalyticscore() {
+  return Analyticscore_DEFAULT;
+}
+
+export default {
+  config: Analyticscore_DEFAULT,
+  create: createAnalyticscore
+};

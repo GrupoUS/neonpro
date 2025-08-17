@@ -1,0 +1,19 @@
+// Patientsegmentation Module
+export interface PatientsegmentationConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Patientsegmentation_DEFAULT: PatientsegmentationConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createPatientsegmentation() {
+  return Patientsegmentation_DEFAULT;
+}
+
+export default {
+  config: Patientsegmentation_DEFAULT,
+  create: createPatientsegmentation
+};

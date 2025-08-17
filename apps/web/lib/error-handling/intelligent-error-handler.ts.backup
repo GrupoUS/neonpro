@@ -1,0 +1,19 @@
+// Intelligenterrorhandler Module
+export interface IntelligenterrorhandlerConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Intelligenterrorhandler_DEFAULT: IntelligenterrorhandlerConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createIntelligenterrorhandler() {
+  return Intelligenterrorhandler_DEFAULT;
+}
+
+export default {
+  config: Intelligenterrorhandler_DEFAULT,
+  create: createIntelligenterrorhandler
+};

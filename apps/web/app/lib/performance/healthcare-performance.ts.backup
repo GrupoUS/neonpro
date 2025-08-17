@@ -1,0 +1,19 @@
+// Healthcareperformance Module
+export interface HealthcareperformanceConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Healthcareperformance_DEFAULT: HealthcareperformanceConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createHealthcareperformance() {
+  return Healthcareperformance_DEFAULT;
+}
+
+export default {
+  config: Healthcareperformance_DEFAULT,
+  create: createHealthcareperformance
+};

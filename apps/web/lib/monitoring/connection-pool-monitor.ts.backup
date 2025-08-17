@@ -1,0 +1,19 @@
+// Connectionpoolmonitor Module
+export interface ConnectionpoolmonitorConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Connectionpoolmonitor_DEFAULT: ConnectionpoolmonitorConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createConnectionpoolmonitor() {
+  return Connectionpoolmonitor_DEFAULT;
+}
+
+export default {
+  config: Connectionpoolmonitor_DEFAULT,
+  create: createConnectionpoolmonitor
+};

@@ -1,0 +1,19 @@
+// Treatmentfollowupservice Module
+export interface TreatmentfollowupserviceConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Treatmentfollowupservice_DEFAULT: TreatmentfollowupserviceConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createTreatmentfollowupservice() {
+  return Treatmentfollowupservice_DEFAULT;
+}
+
+export default {
+  config: Treatmentfollowupservice_DEFAULT,
+  create: createTreatmentfollowupservice
+};

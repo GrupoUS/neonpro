@@ -1,0 +1,18 @@
+"use client";
+
+import React from 'react';
+
+interface StaffworkflowpanelProps {
+  children?: React.ReactNode;
+  className?: string;
+}
+
+export function Staffworkflowpanel({ children, className = "" }: StaffworkflowpanelProps) {
+  return (
+    <div className={className}>
+      {children || "Staffworkflowpanel Component"}
+    </div>
+  );
+}
+
+export default Staffworkflowpanel;

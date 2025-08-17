@@ -1,0 +1,19 @@
+// Dataminimization Module
+export interface DataminimizationConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Dataminimization_DEFAULT: DataminimizationConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createDataminimization() {
+  return Dataminimization_DEFAULT;
+}
+
+export default {
+  config: Dataminimization_DEFAULT,
+  create: createDataminimization
+};

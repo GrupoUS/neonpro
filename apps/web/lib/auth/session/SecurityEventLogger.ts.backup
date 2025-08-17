@@ -1,0 +1,19 @@
+// Securityeventlogger Module
+export interface SecurityeventloggerConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Securityeventlogger_DEFAULT: SecurityeventloggerConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createSecurityeventlogger() {
+  return Securityeventlogger_DEFAULT;
+}
+
+export default {
+  config: Securityeventlogger_DEFAULT,
+  create: createSecurityeventlogger
+};

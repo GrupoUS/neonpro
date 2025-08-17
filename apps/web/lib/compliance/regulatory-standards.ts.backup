@@ -1,0 +1,19 @@
+// Regulatorystandards Module
+export interface RegulatorystandardsConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Regulatorystandards_DEFAULT: RegulatorystandardsConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createRegulatorystandards() {
+  return Regulatorystandards_DEFAULT;
+}
+
+export default {
+  config: Regulatorystandards_DEFAULT,
+  create: createRegulatorystandards
+};

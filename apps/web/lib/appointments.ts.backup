@@ -1,0 +1,19 @@
+// Appointments Module
+export interface AppointmentsConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Appointments_DEFAULT: AppointmentsConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createAppointments() {
+  return Appointments_DEFAULT;
+}
+
+export default {
+  config: Appointments_DEFAULT,
+  create: createAppointments
+};

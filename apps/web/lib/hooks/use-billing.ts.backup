@@ -1,0 +1,19 @@
+// Usebilling Module
+export interface UsebillingConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Usebilling_DEFAULT: UsebillingConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createUsebilling() {
+  return Usebilling_DEFAULT;
+}
+
+export default {
+  config: Usebilling_DEFAULT,
+  create: createUsebilling
+};

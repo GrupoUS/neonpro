@@ -1,0 +1,18 @@
+"use client";
+
+import React from 'react';
+
+interface AuthProps {
+  children?: React.ReactNode;
+  className?: string;
+}
+
+export function Auth({ children, className = "" }: AuthProps) {
+  return (
+    <div className={className}>
+      {children || "Auth Component"}
+    </div>
+  );
+}
+
+export default Auth;

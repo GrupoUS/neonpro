@@ -1,0 +1,19 @@
+// Comprehensivesearch Module
+export interface ComprehensivesearchConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Comprehensivesearch_DEFAULT: ComprehensivesearchConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createComprehensivesearch() {
+  return Comprehensivesearch_DEFAULT;
+}
+
+export default {
+  config: Comprehensivesearch_DEFAULT,
+  create: createComprehensivesearch
+};

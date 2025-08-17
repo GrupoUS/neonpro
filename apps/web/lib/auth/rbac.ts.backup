@@ -1,0 +1,19 @@
+// Rbac Module
+export interface RbacConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Rbac_DEFAULT: RbacConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createRbac() {
+  return Rbac_DEFAULT;
+}
+
+export default {
+  config: Rbac_DEFAULT,
+  create: createRbac
+};

@@ -1,0 +1,19 @@
+// Storage Module
+export interface StorageConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Storage_DEFAULT: StorageConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createStorage() {
+  return Storage_DEFAULT;
+}
+
+export default {
+  config: Storage_DEFAULT,
+  create: createStorage
+};

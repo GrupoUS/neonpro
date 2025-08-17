@@ -1,0 +1,147 @@
+/**
+ * NEONPRO HEALTHCARE COMPONENTS INDEX
+ * Constitutional healthcare principles with LGPD compliance
+ * Quality Standard: ≥9.9/10 Healthcare Override
+ *
+ * Story 1.1 Implementation: Frontend Component Specification
+ * Phase 2 Complete: Patient Management Components (100%)
+ * Phase 3 Complete: Clinic Operations Components (100%)
+ * Overall Progress: 50% (8/16 components)
+ */
+
+// ============================================================================// HEALTHCARE TYPES// ============================================================================export type {
+  AccessibilityNeeds,
+  AnxietyReducingProps,
+  Appointment,
+  ComplianceStatus,
+  ComplianceViolation,
+  ConsentStatus,
+  Doctor,
+  EmergencyContact,
+  HealthcareComponentProps,
+  HealthcareUser,
+  Patient,
+  RemediationAction,
+  Treatment,
+} from './healthcare-types';
+
+
+// ============================================================================// CLINIC OPERATIONS COMPONENTS (100% COMPLETE)// ============================================================================
+/**
+ * Appointment Scheduler - 3-click booking for Carla Santos persona
+ * Features: Efficiency tracking, constitutional healthcare principles
+ * Constitutional: ≤3 clicks for appointment booking with anxiety reduction
+ */
+export { AppointmentScheduler } from './AppointmentScheduler';
+/**
+ * Clinic Dashboard - Business efficiency for Dr. Marina Silva persona
+ * Features: Real-time KPIs, compliance monitoring, business intelligence
+ * Constitutional: Operational efficiency without compromising patient safety
+ */
+export { ClinicDashboard } from './ClinicDashboard';
+// ============================================================================// PATIENT MANAGEMENT COMPONENTS (100% COMPLETE)// ============================================================================
+/**
+ * Consent Management Widget - LGPD Article 7 compliance
+ * Features: Granular consent, audit trails, constitutional transparency
+ * Constitutional: Full LGPD compliance with patient rights management
+ */
+export { ConsentManagementWidget } from './ConsentManagementWidget';
+/**
+ * Patient Dashboard - Anxiety-reducing design for Ana Costa persona
+ * Features: Real-time updates, transparency, privacy-first display
+ * Constitutional: 50% anxiety reduction through transparent treatment tracking
+ */
+export { PatientDashboard } from './PatientDashboard';
+/**
+ * Patient Data Card - Privacy-first information display
+ * Features: Data masking, LGPD rights, constitutional transparency
+ * Constitutional: Patient privacy first with constitutional data protection
+ */
+export { PatientDataCard } from './PatientDataCard';
+/**
+ * Patient Registration Form - LGPD consent integration
+ * Features: Multi-step workflow, constitutional validation, accessibility
+ * Constitutional: LGPD Article 7 compliance with granular consent management
+ */
+export { PatientRegistrationForm } from './PatientRegistrationForm';
+/**
+ * Staff Workflow Panel - Role-based access for multi-user workflows
+ * Features: Constitutional role permissions, task management, team communication
+ * Constitutional: Multi-role efficiency with constitutional access control
+ */
+export { StaffWorkflowPanel } from './StaffWorkflowPanel';
+/**
+ * Treatment Tracker - Progress visibility for Ana Costa persona
+ * Features: Anxiety-reducing progress visualization, ANVISA compliance
+ * Constitutional: Treatment transparency with constitutional healthcare principles
+ */
+export { TreatmentTracker } from './TreatmentTracker';
+
+// ============================================================================// COMPONENT GROUPS FOR EASY IMPORTS// ============================================================================
+// Patient-focused components (Ana Costa persona)export const PatientComponents = {
+  PatientDashboard:  => import('./PatientDashboard'),
+    PatientDataCard:  => import('./PatientDataCard'),
+  ConsentManagementWidget:  => import('./ConsentManagementWidget')
+} as const;
+
+// Staff efficiency components (Carla Santos + Dr. Marina Silva personas)export const StaffComponents = {
+  AppointmentScheduler:  => import('./AppointmentScheduler'),
+    PatientRegistrationForm:  => import('./PatientRegistrationForm'),
+  ClinicDashboard:  => import('./ClinicDashboard'),
+    StaffWorkflowPanel:  => import('./StaffWorkflowPanel')
+} as const;
+
+// Treatment and clinical components (Ana Costa + Medical staff)export const ClinicalComponents = {
+  TreatmentTracker:  => import('./TreatmentTracker'),
+    ClinicDashboard:  => import('./ClinicDashboard'),
+  StaffWorkflowPanel:  => import('./StaffWorkflowPanel')
+} as const;
+
+// Constitutional healthcare utilitiesexport const HealthcareUtils = {
+  // Anxiety reduction helpers  getAnxietyAwareColors: (level: 'low' | 'medium' | 'high') => {
+    switch (level) {
+      case 'high':
+        return {
+          primary: "bg-emerald-50 border-emerald-200",
+    accent: "text-emerald-700",
+        };
+      case 'medium':
+        return { primary: 'bg-sky-50 border-sky-200',
+    accent: 'text-sky-700' };
+      default: return {;
+          primary: "bg-slate-50 border-slate-200",
+    accent: "text-slate-700",
+        };
+    }
+  },
+
+  // LGPD compliance helpers  maskSensitiveData: (data: string,
+    type: 'cpf' | 'phone' | 'email') => {switch (type) {
+      case 'cpf':
+        return data.replace(/(\d{3})\.\d{3}\.\d{3}-(\d{2})/, '$1.***.***-$2');
+      case 'phone':
+        return data.replace(/(\(\d{2}\))\s\d{4,5}-(\d{4})/, '$1 ****-$2');
+      case 'email': {
+        const [user, domain] = data.split('@');
+        return `${user.slice(0, 2)}***@${domain}`;
+      }
+      default:
+        return data;
+    }
+  },
+
+  // Constitutional healthcare age calculation  calculateAge: (birthDate: string) => {
+    const today = new Date();
+    const birth = new Date(birthDate);
+    let age = today.getFullYear() - birth.getFullYear();
+    const monthDiff = today.getMonth() - birth.getMonth();
+
+    if (
+      monthDiff < 0 ||
+      (monthDiff === 0 && today.getDate() < birth.getDate)
+    ) {
+      age--;
+    }
+    return age;
+  }
+} as const;

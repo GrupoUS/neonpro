@@ -1,0 +1,335 @@
+'use client';
+
+import React, {
+  createContext,
+  type ReactNode,
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
+
+// =====================================================================================
+// TYPES
+// =====================================================================================
+
+export type GlobalStateSubscriber<T = any> = (newValue: T, oldValue: T) => void;
+
+export type GlobalStateStore = {
+  [key: string]: any;
+};
+
+export type GlobalStateContextType = {
+  state: GlobalStateStore;
+  setState: <T>(key: string, value: T) => void;
+  getState: <T>(key: string) => T | undefined;
+  subscribe: <T>(key: string, callback: GlobalStateSubscriber<T>) => () => void;
+  clearState: (key: string) => void;
+  clearAllState: () => void;
+};
+
+// =====================================================================================
+// GLOBAL STATE STORE
+// =====================================================================================
+
+class GlobalStore {
+  private readonly state: GlobalStateStore = {};
+  private readonly subscribers: Map<string, Set<GlobalStateSubscriber>> = new Map();
+
+  setState<T>(key: string, value: T): void {
+    const oldValue = this.state[key];
+    this.state[key] = value;
+
+    // Notify subscribers
+    const keySubscribers = this.subscribers.get(key);
+    if (keySubscribers) {
+      keySubscribers.forEach((callback) => {
+        try {
+          callback(value, oldValue);
+        } catch (_error) {}
+      });
+    }
+  }
+
+  getState<T>(key: string): T | undefined {
+    return this.state[key] as T;
+  }
+
+  subscribe<T>(key: string, callback: GlobalStateSubscriber<T>): () => void {
+    if (!this.subscribers.has(key)) {
+      this.subscribers.set(key, new Set());
+    }
+
+    const keySubscribers = this.subscribers.get(key)!;
+    keySubscribers.add(callback as GlobalStateSubscriber);
+
+    // Return unsubscribe function
+    return () => {
+      keySubscribers.delete(callback as GlobalStateSubscriber);
+      if (keySubscribers.size === 0) {
+        this.subscribers.delete(key);
+      }
+    };
+  }
+
+  clearState(key: string): void {
+    const oldValue = this.state[key];
+    delete this.state[key];
+
+    // Notify subscribers of the deletion
+    const keySubscribers = this.subscribers.get(key);
+    if (keySubscribers) {
+      keySubscribers.forEach((callback) => {
+        try {
+          callback(undefined, oldValue);
+        } catch (_error) {}
+      });
+    }
+  }
+
+  clearAllState(): void {
+    const keys = Object.keys(this.state);
+    keys.forEach((key) => this.clearState(key));
+  }
+
+  getAllState(): GlobalStateStore {
+    return { ...this.state };
+  }
+}
+
+// =====================================================================================
+// GLOBAL STORE INSTANCE
+// =====================================================================================
+
+const globalStore = new GlobalStore();
+
+// =====================================================================================
+// CONTEXT
+// =====================================================================================
+
+const GlobalStateContext = createContext<GlobalStateContextType | null>(null);
+
+export function GlobalStateProvider({ children }: { children: ReactNode }) {
+  const [, forceUpdate] = useState({});
+
+  const setState = useCallback(<T>(key: string, value: T) => {
+    globalStore.setState(key, value);
+    forceUpdate({}); // Force re-render for context consumers
+  }, []);
+
+  const getState = useCallback(<T>(key: string): T | undefined => {
+    return globalStore.getState<T>(key);
+  }, []);
+
+  const subscribe = useCallback(<T>(key: string, callback: GlobalStateSubscriber<T>) => {
+    return globalStore.subscribe(key, callback);
+  }, []);
+
+  const clearState = useCallback((key: string) => {
+    globalStore.clearState(key);
+    forceUpdate({}); // Force re-render for context consumers
+  }, []);
+
+  const clearAllState = useCallback(() => {
+    globalStore.clearAllState();
+    forceUpdate({}); // Force re-render for context consumers
+  }, []);
+
+  const contextValue: GlobalStateContextType = {
+    state: globalStore.getAllState(),
+    setState,
+    getState,
+    subscribe,
+    clearState,
+    clearAllState,
+  };
+
+  return React.createElement(GlobalStateContext.Provider, { value: contextValue }, children);
+}
+
+// =====================================================================================
+// GLOBAL STATE HOOK
+// =====================================================================================
+
+export function useGlobalState<T>(
+  key: string,
+  initialValue?: T
+): [T | undefined, (value: T) => void, () => void] {
+  const context = useContext(GlobalStateContext);
+
+  if (!context) {
+    // If no context provider, use the global store directly
+    const [localState, setLocalState] = useState<T | undefined>(() => {
+      const stored = globalStore.getState<T>(key);
+      if (stored === undefined && initialValue !== undefined) {
+        globalStore.setState(key, initialValue);
+        return initialValue;
+      }
+      return stored;
+    });
+
+    const updateValue = useCallback(
+      (value: T) => {
+        globalStore.setState(key, value);
+        setLocalState(value);
+      },
+      [key]
+    );
+
+    const clearValue = useCallback(() => {
+      globalStore.clearState(key);
+      setLocalState(undefined);
+    }, [key]);
+
+    useEffect(() => {
+      const unsubscribe = globalStore.subscribe<T>(key, (newValue) => {
+        setLocalState(newValue);
+      });
+
+      return unsubscribe;
+    }, [key]);
+
+    return [localState, updateValue, clearValue];
+  }
+
+  // Use context if available
+  const { state, setState, clearState } = context;
+  const currentValue = state[key] as T | undefined;
+
+  const updateValue = useCallback(
+    (value: T) => {
+      setState(key, value);
+    },
+    [key, setState]
+  );
+
+  const clearValue = useCallback(() => {
+    clearState(key);
+  }, [key, clearState]);
+
+  // Set initial value if not exists
+  useEffect(() => {
+    if (currentValue === undefined && initialValue !== undefined) {
+      setState(key, initialValue);
+    }
+  }, [key, currentValue, initialValue, setState]);
+
+  return [currentValue, updateValue, clearValue];
+}
+
+// =====================================================================================
+// SUBSCRIBE TO CHANGES HOOK
+// =====================================================================================
+
+export function useGlobalStateSubscription<T>(
+  key: string,
+  callback: GlobalStateSubscriber<T>,
+  deps: any[] = []
+): void {
+  const context = useContext(GlobalStateContext);
+  const callbackRef = useRef(callback);
+
+  // Update callback ref when deps change
+  useEffect(() => {
+    callbackRef.current = callback;
+  }, deps);
+
+  useEffect(() => {
+    const stableCallback = (newValue: T, oldValue: T) => {
+      callbackRef.current(newValue, oldValue);
+    };
+
+    if (context) {
+      return context.subscribe<T>(key, stableCallback);
+    }
+    return globalStore.subscribe<T>(key, stableCallback);
+  }, [key, context]);
+}
+
+// =====================================================================================
+// BATCH STATE UPDATES HOOK
+// =====================================================================================
+
+export function useBatchGlobalState() {
+  const context = useContext(GlobalStateContext);
+
+  const batchUpdate = useCallback(
+    (updates: Record<string, any>) => {
+      Object.entries(updates).forEach(([key, value]) => {
+        if (context) {
+          context.setState(key, value);
+        } else {
+          globalStore.setState(key, value);
+        }
+      });
+    },
+    [context]
+  );
+
+  const batchClear = useCallback(
+    (keys: string[]) => {
+      keys.forEach((key) => {
+        if (context) {
+          context.clearState(key);
+        } else {
+          globalStore.clearState(key);
+        }
+      });
+    },
+    [context]
+  );
+
+  return {
+    batchUpdate,
+    batchClear,
+  };
+}
+
+// =====================================================================================
+// COMPUTED STATE HOOK
+// =====================================================================================
+
+export function useComputedGlobalState<T, R>(
+  keys: string[],
+  computeFn: (values: (T | undefined)[]) => R,
+  deps: any[] = []
+): R {
+  const [computedValue, setComputedValue] = useState<R>(() => {
+    const values = keys.map((key) => globalStore.getState<T>(key));
+    return computeFn(values);
+  });
+
+  useEffect(() => {
+    const unsubscribers = keys.map((key) =>
+      globalStore.subscribe<T>(key, () => {
+        const values = keys.map((k) => globalStore.getState<T>(k));
+        const newValue = computeFn(values);
+        setComputedValue(newValue);
+      })
+    );
+
+    // Compute initial value
+    const values = keys.map((key) => globalStore.getState<T>(key));
+    const initialValue = computeFn(values);
+    setComputedValue(initialValue);
+
+    return () => {
+      unsubscribers.forEach((unsub) => unsub());
+    };
+  }, [...keys, ...deps, computeFn, keys.map]);
+
+  return computedValue;
+}
+
+// =====================================================================================
+// EXPORTS
+// =====================================================================================
+
+export default {
+  GlobalStateProvider,
+  useGlobalState,
+  useGlobalStateSubscription,
+  useBatchGlobalState,
+  useComputedGlobalState,
+};

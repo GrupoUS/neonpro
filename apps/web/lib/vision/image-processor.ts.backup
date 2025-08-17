@@ -1,0 +1,19 @@
+// Imageprocessor Module
+export interface ImageprocessorConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Imageprocessor_DEFAULT: ImageprocessorConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createImageprocessor() {
+  return Imageprocessor_DEFAULT;
+}
+
+export default {
+  config: Imageprocessor_DEFAULT,
+  create: createImageprocessor
+};

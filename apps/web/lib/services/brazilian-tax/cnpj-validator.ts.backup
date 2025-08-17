@@ -1,0 +1,19 @@
+// Cnpjvalidator Module
+export interface CnpjvalidatorConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Cnpjvalidator_DEFAULT: CnpjvalidatorConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createCnpjvalidator() {
+  return Cnpjvalidator_DEFAULT;
+}
+
+export default {
+  config: Cnpjvalidator_DEFAULT,
+  create: createCnpjvalidator
+};

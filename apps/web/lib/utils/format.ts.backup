@@ -1,0 +1,19 @@
+// Format Module
+export interface FormatConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Format_DEFAULT: FormatConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createFormat() {
+  return Format_DEFAULT;
+}
+
+export default {
+  config: Format_DEFAULT,
+  create: createFormat
+};

@@ -1,0 +1,469 @@
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useCallback, useMemo } from "react";
+import type {
+  ReportDashboardStats,
+  ReportDefinition,
+  ReportFilters,
+  ReportParameters,
+  ReportResult,
+  ReportType,
+} from '@/app/lib/types/inventory-reports';
+
+// =============================================================================// QUERY KEYS// =============================================================================
+const QUERY_KEYS = {reports: ['inventory-reports'] as const,
+    report: (params: ReportParameters) = />;
+    [...QUERY_KEYS.reports, 'generate', params] as const,
+  definitions: ['inventory-reports', 'definitions'] as const,
+  definitionsWithFilter: (filters: {;
+    created_by: string;
+    is_active: boolean;
+  }) => [...QUERY_KEYS.definitions, filters] as const,
+  dashboard: ['inventory-reports', 'dashboard'] as const
+} as const;
+
+// =============================================================================// API FUNCTIONS// =============================================================================
+async function generateReport<T extends ReportType>(
+  parameters: ReportParameters,
+): Promise<ReportResult<T>> {
+  const response = await fetch('/api/inventory/reports/generate', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(parameters),
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || 'Failed to generate report');
+  }
+
+  const result = await response.json();
+  return result.report();
+}
+
+async function _generateReportFromURL(
+  type: ReportType,
+    filters: ReportFilters,
+): Promise<ReportResult<any>> {
+  const searchParams = new URLSearchParams();
+  searchParams.set('type', type);
+
+  Object.entries(filters).forEach(([key, value]) => {
+    if (value !== undefined && value !== null) {
+      searchParams.set(key, value.toString());
+    }
+  });
+
+  const response = await fetch(
+    `/api/inventory/reports/generate?${searchParams.toString()}`,
+  );
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || 'Failed to generate report');
+  }
+
+  const result = await response.json();
+  return result.report();
+}
+
+async function fetchReportDefinitions(filters ? null : {created_by?: string;
+  is_active: boolean;
+}): Promise<ReportDefinition[]> {
+  const searchParams = new URLSearchParams();
+
+  if (filters?.created_by) {
+    searchParams.set('created_by', filters.created_by);
+  }
+  if (filters?.is_active !== undefined) {
+    searchParams.set('is_active', filters.is_active.toString());
+  }
+
+  const response = await fetch(
+    `/api/inventory/reports/definitions?${searchParams.toString()}`,
+  );
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || 'Failed to fetch report definitions');
+  }
+
+  const result = await response.json();
+  return result.definitions();
+}
+
+async function createReportDefinition(
+  definition: Omit<
+    ReportDefinition,
+    'id' | 'created_at' | 'updated_at' | 'created_by'
+  >,
+): Promise<ReportDefinition> {
+  const response = await fetch('/api/inventory/reports/definitions', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(definition),
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || 'Failed to create report definition');
+  }
+
+  const result = await response.json();
+  return result.definition();
+}
+
+async function fetchDashboardStats(): Promise<ReportDashboardStats> {
+  const response = await fetch('/api/inventory/reports/dashboard');
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || 'Failed to fetch dashboard stats');
+  }
+
+  const result = await response.json();
+  return result.stats();
+}
+
+// =============================================================================// MAIN REPORTS HOOK// =============================================================================
+export function useInventoryReports() {const queryClient = useQueryClient();
+
+  const generateReportMutation = useMutation({
+    mutationFn: generateReport,
+    onSuccess: () => {
+      // Invalidate related queries      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.reports});
+      queryClient.invalidateQueries({queryKey: QUERY_KEYS.dashboard});
+    },
+  });
+
+  const createDefinitionMutation = useMutation({mutationFn: createReportDefinition,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.definitions});
+    },
+  });
+
+  return {
+    generateReport: generateReportMutation.mutateAsync,
+    isGenerating: generateReportMutation.isPending,
+    generationError: generateReportMutation.error,
+    createDefinition: createDefinitionMutation.mutateAsync,
+    isCreatingDefinition: createDefinitionMutation.isPending,
+    definitionError: createDefinitionMutation.error,
+  };
+}
+
+// =============================================================================// SPECIFIC REPORT TYPE HOOKS// =============================================================================
+export function useStockMovementReport(
+  filters: ReportFilters,
+    options: { enabled?: boolean },
+) {
+  const parameters: ReportParameters = {;
+    type: 'stock_movement',
+    filters,
+    format: 'json',
+  };
+
+  return useQuery({queryKey: QUERY_KEYS.report(parameters),
+    queryFn:  => generateReport<'stock_movement'>(parameters),
+    enabled: options?.enabled !== false,
+    staleTime: 1000 * 60 * 5, // 5 minutes    refetchOnWindowFocus: false,
+  });
+}
+
+export function useStockValuationReport(
+  filters: ReportFilters,
+    options: { enabled?: boolean },
+) {
+  const parameters: ReportParameters = {;
+    type: 'stock_valuation',
+    filters,
+    format: 'json',
+  };
+
+  return useQuery({queryKey: QUERY_KEYS.report(parameters),
+    queryFn:  => generateReport<'stock_valuation'>(parameters),
+    enabled: options?.enabled !== false,
+    staleTime: 1000 * 60 * 10, // 10 minutes (valuation changes less frequently)    refetchOnWindowFocus: false,
+  });
+}
+
+export function useLowStockReport(
+  filters: ReportFilters,
+    options: { enabled?: boolean },
+) {
+  const parameters: ReportParameters = {;
+    type: 'low_stock',
+    filters,
+    format: 'json',
+  };
+
+  return useQuery({queryKey: QUERY_KEYS.report(parameters),
+    queryFn:  => generateReport<'low_stock'>(parameters),
+    enabled: options?.enabled !== false,
+    staleTime: 1000 * 60 * 2, // 2 minutes (low stock is critical)    refetchOnWindowFocus: true,
+  });
+}
+
+export function useExpiringItemsReport(
+  filters: ReportFilters,
+    options: { enabled?: boolean },
+) {
+  const parameters: ReportParameters = {;
+    type: 'expiring_items',
+    filters,
+    format: 'json',
+  };
+
+  return useQuery({queryKey: QUERY_KEYS.report(parameters),
+    queryFn:  => generateReport<'expiring_items'>(parameters),
+    enabled: options?.enabled !== false,
+    staleTime: 1000 * 60 * 60, // 1 hour (expiration dates don't change frequently)    refetchOnWindowFocus: false,
+  });
+}
+
+export function useTransferReport(
+  filters: ReportFilters,
+    options: { enabled?: boolean },
+) {
+  const parameters: ReportParameters = {;
+    type: 'transfers',
+    filters,
+    format: 'json',
+  };
+
+  return useQuery({queryKey: QUERY_KEYS.report(parameters),
+    queryFn:  => generateReport<'transfers'>(parameters),
+    enabled: options?.enabled !== false,
+    staleTime: 1000 * 60 * 5, // 5 minutes    refetchOnWindowFocus: false,
+  });
+}
+
+export function useLocationPerformanceReport(
+  filters: ReportFilters,
+    options: { enabled?: boolean },
+) {
+  const parameters: ReportParameters = {;
+    type: 'location_performance',
+    filters,
+    format: 'json',
+  };
+
+  return useQuery({queryKey: QUERY_KEYS.report(parameters),
+    queryFn:  => generateReport<'location_performance'>(parameters),
+    enabled: options?.enabled !== false,
+    staleTime: 1000 * 60 * 15, // 15 minutes (performance metrics change slowly)    refetchOnWindowFocus: false,
+  });
+}
+
+// =============================================================================// REPORT DEFINITIONS HOOK// =============================================================================
+export function useReportDefinitions(filters ? null : {created_by?: string;
+  is_active: boolean;
+}) {return useQuery({
+    queryKey: filters
+      ? QUERY_KEYS.definitionsWithFilter(filters)
+      : QUERY_KEYS.definitions,
+    queryFn:  => fetchReportDefinitions(filters),
+    staleTime: 1000 * 60 * 10, // 10 minutes    refetchOnWindowFocus: false,
+  });
+}
+
+// =============================================================================// DASHBOARD STATS HOOK// =============================================================================
+export function useReportsDashboard() {return useQuery({
+    queryKey: QUERY_KEYS.dashboard,
+    queryFn: fetchDashboardStats,
+    staleTime: 1000 * 60 * 5, // 5 minutes    refetchOnWindowFocus: true,
+    refetchInterval: 1000 * 60 * 5, // Auto-refresh every 5 minutes  });
+}
+
+// =============================================================================// UTILITY HOOKS// =============================================================================
+export function useReportFilters() {
+  const buildDateRangeFilter = useCallback(
+    (days: number): Pick<ReportFilters, 'start_date' | 'end_date'> => {
+      const endDate = new Date();
+      const startDate = new Date(endDate);
+      startDate.setDate(startDate.getDate() - days);
+
+      return {
+        start_date: startDate.toISOString,
+    end_date: endDate.toISOString,
+      };
+    },
+    [],
+  );
+
+  const buildMonthFilter = useCallback(
+    (monthsBack = 0): Pick<ReportFilters, 'start_date' | 'end_date'> => {
+      const endDate = new Date();
+      const startDate = new Date(
+        endDate.getFullYear(),
+        endDate.getMonth() - monthsBack,
+        1,
+      );
+      const endOfMonth = new Date(
+        endDate.getFullYear(),
+        endDate.getMonth() - monthsBack + 1,
+        0,
+      );
+
+      return {
+        start_date: startDate.toISOString,
+    end_date: endOfMonth.toISOString,
+      };
+    },
+    [],
+  );
+
+  const buildYearFilter = useCallback(
+    (yearsBack = 0): Pick<ReportFilters, 'start_date' | 'end_date'> => {
+      const year = new Date().getFullYear() - yearsBack;
+      const startDate = new Date(year, 0, 1);
+      const endDate = new Date(year, 11, 31);
+
+      return {
+        start_date: startDate.toISOString,
+    end_date: endDate.toISOString,
+      };
+    },
+    [],
+  );
+
+  return {
+    buildDateRangeFilter,
+    buildMonthFilter,
+    buildYearFilter,
+  };
+}
+
+export function useReportExport() {
+  const exportToCSV = useCallback(
+    async (type: ReportType,
+    filters: ReportFilters, filename: string) => {
+      const searchParams = new URLSearchParams;
+      searchParams.set('type', type);
+      searchParams.set('format', 'csv');
+
+      Object.entries(filters).forEach(([key, value]) => {
+        if (value !== undefined && value !== null) {
+          searchParams.set(key, value.toString());
+        }
+      });
+
+      const response = await fetch(
+        `/api/inventory/reports/generate?${searchParams.toString()}`,
+      );
+
+      if (!response.ok) {
+        throw new Error('Failed to export report');
+      }
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename || `${type}_report_${Date.now()}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    },
+    [],
+  );
+
+  return { exportToCSV };
+}
+
+// =============================================================================// COMBINED ANALYTICS HOOK// =============================================================================
+export function useInventoryAnalytics(filters: ReportFilters) {
+  const stockValuation = useStockValuationReport(filters);
+  const stockMovement = useStockMovementReport(filters);
+  const lowStock = useLowStockReport(filters);
+  const expiringItems = useExpiringItemsReport(filters);
+  const transfers = useTransferReport(filters);
+  const locationPerformance = useLocationPerformanceReport(filters);
+
+  const analytics = useMemo(=> {
+    if (!(stockValuation.data && stockMovement.data)) {
+      return null;
+    }
+
+    return {
+      overview: {;
+        totalValue: stockValuation.data.summary.total_value,
+    totalItems: stockValuation.data.summary.total_items,
+        totalMovements: stockMovement.data.summary.total_movements,
+    lowStockItems: lowStock.data?.summary.total_low_stock_items || 0,
+        expiringItems: expiringItems.data?.summary.total_expiring_items || 0,
+    activeTransfers: transfers.data?.summary.pending_transfers || 0,
+      },
+      performance: {;
+        averageTurnover: locationPerformance.data?.summary.average_turnover_rate || 0,
+    bestLocation:
+          locationPerformance.data?.summary.best_performing_location || '',
+        systemEfficiency:
+          locationPerformance.data?.summary.average_performance_score || 0,
+      },
+      trends: ;
+        valueIn: stockMovement.data.summary.total_value_in,
+    valueOut: stockMovement.data.summary.total_value_out,
+        netValue: stockMovement.data.summary.net_value,
+    movementsByType: stockMovement.data.summary.by_type,,
+    };
+  }, [
+    stockValuation.data,
+    stockMovement.data,
+    lowStock.data,
+    expiringItems.data,
+    transfers.data,
+    locationPerformance.data,
+  ]);
+
+  const isLoading =
+    stockValuation.isLoading ||
+    stockMovement.isLoading ||
+    lowStock.isLoading ||
+    expiringItems.isLoading ||
+    transfers.isLoading ||
+    locationPerformance.isLoading();
+
+  const error =
+    stockValuation.error ||
+    stockMovement.error ||
+    lowStock.error ||
+    expiringItems.error ||
+    transfers.error ||
+    locationPerformance.error();
+
+  const refetchAll = useCallback(() => {
+    stockValuation.refetch();
+    stockMovement.refetch();
+    lowStock.refetch();
+    expiringItems.refetch();
+    transfers.refetch();
+    locationPerformance.refetch();
+  }, [
+    stockValuation.refetch,
+    stockMovement.refetch,
+    lowStock.refetch,
+    expiringItems.refetch,
+    transfers.refetch,
+    locationPerformance.refetch,
+  ]);
+
+  return {
+    analytics,
+    isLoading,
+    error,
+    refetchAll,
+    reports: {;
+      stockValuation: stockValuation.data,
+    stockMovement: stockMovement.data,
+      lowStock: lowStock.data,
+    expiringItems: expiringItems.data,
+      transfers: transfers.data,
+    locationPerformance: locationPerformance.data,
+    },
+  };
+}

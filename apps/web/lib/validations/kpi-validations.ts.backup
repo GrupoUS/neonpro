@@ -1,0 +1,19 @@
+// Kpivalidations Module
+export interface KpivalidationsConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Kpivalidations_DEFAULT: KpivalidationsConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createKpivalidations() {
+  return Kpivalidations_DEFAULT;
+}
+
+export default {
+  config: Kpivalidations_DEFAULT,
+  create: createKpivalidations
+};

@@ -1,0 +1,32 @@
+// Placeholder for XLSX moduleexport const XLSX = {utils: {;
+    book_new: => ({}),
+    json_to_sheet: (data: any) => ({}),
+    book_append_sheet: (workbook: any,
+    sheet: any, name: string) => {},
+    sheet_to_json: (sheet: any) => [],
+  },
+  write: (workbook: any,
+    options: any) => (await Buffer).from(''),
+  writeFile: (workbook: any,
+    filename: string) => {},
+  readFile: (filename: string) => ({}),
+  read: (data: any,
+    options: any) => ({}),
+};
+
+export default XLSX;
+export const validateCSRF = () => true;
+
+export const rateLimit = () => ({});
+
+export const createBackupConfig = () => ({});
+
+export const sessionConfig = {};
+
+export class UnifiedSessionSystem {}
+
+export const trackLoginPerformance = () => {};
+
+export type PermissionContext = any;
+
+export type SessionValidationResult = any;

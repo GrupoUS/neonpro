@@ -1,0 +1,368 @@
+/**
+ * React Hook for Permission Management
+ *
+ * Provides permission checking, role management, and access control
+ * functionality for React components in the NeonPro application.
+ */
+
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import {
+  checkMultiplePermissions,
+  hasPermission,
+  type Permission,
+  type PermissionResult,
+  permissionValidator,
+  type ResourceType,
+  SystemRole,
+  type UserPermissions,
+} from './permission-validator';
+
+export interface UsePermissionsResult {
+  userPermissions: UserPermissions | null;
+  roles: SystemRole[];
+  isLoading: boolean;
+  error?: string;
+  checkPermission: (
+    resource: ResourceType,
+    action: Permission,
+    resourceId?: string
+  ) => Promise<boolean>;
+  hasRole: (role: SystemRole) => boolean;
+  hasAnyRole: (roles: SystemRole[]) => boolean;
+  hasHigherRole: (targetRole: SystemRole) => boolean;
+  canAccess: (
+    resource: ResourceType,
+    action: Permission,
+    resourceId?: string
+  ) => Promise<boolean>;
+  refresh: () => Promise<void>;
+}
+
+export function usePermissions(userId: string): UsePermissionsResult {
+  const [userPermissions, setUserPermissions] =
+    useState<UserPermissions | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string>();
+
+  // Load user permissions
+  const loadPermissions = useCallback(async () => {
+    if (!userId) {
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      setError(undefined);
+
+      const permissions = await permissionValidator.getUserPermissions(userId);
+      setUserPermissions(permissions);
+    } catch (err) {
+      console.error('Error loading permissions:', err);
+      setError('Falha ao carregar permissões do usuário');
+    } finally {
+      setIsLoading(false);
+    }
+  }, [userId]);
+
+  // Check permission
+  const checkPermission = useCallback(
+    async (
+      resource: ResourceType,
+      action: Permission,
+      resourceId?: string
+    ): Promise<boolean> => {
+      if (!userId) {
+        return false;
+      }
+
+      try {
+        return await hasPermission(userId, resource, action, resourceId);
+      } catch (err) {
+        console.error('Error checking permission:', err);
+        return false;
+      }
+    },
+    [userId]
+  );
+
+  // Check if user has specific role
+  const hasRole = useCallback(
+    (role: SystemRole): boolean => {
+      return userPermissions?.roles.includes(role);
+    },
+    [userPermissions]
+  );
+
+  // Check if user has any of the specified roles
+  const hasAnyRole = useCallback(
+    (roles: SystemRole[]): boolean => {
+      if (!userPermissions) {
+        return false;
+      }
+      return roles.some((role) => userPermissions.roles.includes(role));
+    },
+    [userPermissions]
+  );
+
+  // Check if user has higher role than target
+  const hasHigherRole = useCallback(
+    (targetRole: SystemRole): boolean => {
+      if (!userPermissions) {
+        return false;
+      }
+
+      return userPermissions.roles.some((userRole) =>
+        permissionValidator.isHigherRole(userRole, targetRole)
+      );
+    },
+    [userPermissions]
+  );
+
+  // Alias for checkPermission for better readability
+  const canAccess = checkPermission;
+
+  // Refresh permissions
+  const refresh = useCallback(async () => {
+    await loadPermissions();
+  }, [loadPermissions]);
+
+  // Get user roles
+  const roles = useMemo(() => {
+    return userPermissions?.roles || [];
+  }, [userPermissions]);
+
+  // Load permissions on mount and when userId changes
+  useEffect(() => {
+    loadPermissions();
+  }, [loadPermissions]);
+
+  return {
+    userPermissions,
+    roles,
+    isLoading,
+    error,
+    checkPermission,
+    hasRole,
+    hasAnyRole,
+    hasHigherRole,
+    canAccess,
+    refresh,
+  };
+}
+
+// Hook for checking specific permissions with automatic refresh
+export function usePermissionCheck(
+  userId: string,
+  resource: ResourceType,
+  action: Permission,
+  resourceId?: string
+) {
+  const [result, setResult] = useState<PermissionResult | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const checkPermission = useCallback(async () => {
+    if (!userId) {
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      const permissionResult = await permissionValidator.checkPermission({
+        userId,
+        resource,
+        action,
+        resourceId,
+      });
+      setResult(permissionResult);
+    } catch (err) {
+      console.error('Error checking permission:', err);
+      setResult({
+        allowed: false,
+        reason: 'Error checking permission',
+        timestamp: Date.now(),
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  }, [userId, resource, action, resourceId]);
+
+  useEffect(() => {
+    checkPermission();
+  }, [checkPermission]);
+
+  return {
+    allowed: result?.allowed,
+    reason: result?.reason,
+    role: result?.role,
+    conditions: result?.conditions,
+    isLoading,
+    refresh: checkPermission,
+  };
+}
+
+// Hook for checking multiple permissions
+export function useMultiplePermissions(
+  userId: string,
+  permissions: Array<{
+    resource: ResourceType;
+    action: Permission;
+    resourceId?: string;
+    key?: string; // Optional key for identification
+  }>
+) {
+  const [results, setResults] = useState<Record<string, boolean>>({});
+  const [isLoading, setIsLoading] = useState(true);
+
+  const checkPermissions = useCallback(async () => {
+    if (!userId || permissions.length === 0) {
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+
+      const permissionResults = await checkMultiplePermissions(
+        userId,
+        permissions
+      );
+
+      const resultMap: Record<string, boolean> = {};
+      permissions.forEach((permission, index) => {
+        const key =
+          permission.key ||
+          `${permission.resource}:${permission.action}:${permission.resourceId || 'none'}`;
+        resultMap[key] = permissionResults[index];
+      });
+
+      setResults(resultMap);
+    } catch (err) {
+      console.error('Error checking multiple permissions:', err);
+
+      // Set all to false on error
+      const errorResults: Record<string, boolean> = {};
+      permissions.forEach((permission) => {
+        const key =
+          permission.key ||
+          `${permission.resource}:${permission.action}:${permission.resourceId || 'none'}`;
+        errorResults[key] = false;
+      });
+      setResults(errorResults);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [userId, permissions]);
+
+  useEffect(() => {
+    checkPermissions();
+  }, [checkPermissions]);
+
+  return {
+    results,
+    isLoading,
+    refresh: checkPermissions,
+    can: (key: string) => results[key],
+  };
+}
+
+// Hook for role-based component rendering
+export function useRoleAccess(userId: string, allowedRoles: SystemRole[]) {
+  const { roles, isLoading } = usePermissions(userId);
+
+  const hasAccess = useMemo(() => {
+    if (isLoading || !roles.length) {
+      return false;
+    }
+    return allowedRoles.some((role) => roles.includes(role));
+  }, [roles, allowedRoles, isLoading]);
+
+  return {
+    hasAccess,
+    roles,
+    isLoading,
+  };
+}
+
+// HOC for permission-based component protection
+export function withPermissionCheck<T extends object>(
+  _Component: React.ComponentType<T>,
+  resource: ResourceType,
+  action: Permission,
+  fallback?: React.ComponentType
+) {
+  return function PermissionProtectedComponent(
+    props: T & { userId: string; resourceId?: string }
+  ) {
+    const { userId, resourceId, ...componentProps } = props;
+    const { allowed, isLoading } = usePermissionCheck(
+      userId,
+      resource,
+      action,
+      resourceId
+    );
+
+    if (isLoading) {
+      return <div>Verificando permissões...</div>
+    }
+
+    if (!allowed) {
+      if (fallback) {
+        const FallbackComponent = fallback;
+        return <FallbackComponent />
+      }
+      return <div>Acesso negado</div>
+    }
+
+    return <Component {...(componentProps as T)} />
+  };
+}
+
+// Hook for admin access checking
+export function useAdminAccess(userId: string) {
+  const { roles, isLoading } = usePermissions(userId);
+
+  const isAdmin = useMemo(() => {
+    return (
+      roles.includes(SystemRole.ADMIN) || roles.includes(SystemRole.SUPER_ADMIN)
+    );
+  }, [roles]);
+
+  const isSuperAdmin = useMemo(() => {
+    return roles.includes(SystemRole.SUPER_ADMIN);
+  }, [roles]);
+
+  return {
+    isAdmin,
+    isSuperAdmin,
+    isLoading,
+    roles,
+  };
+}
+
+// Hook for medical staff access
+export function useMedicalAccess(userId: string) {
+  const { roles, isLoading } = usePermissions(userId);
+
+  const isMedicalStaff = useMemo(() => {
+    return roles.some((role) =>
+      [SystemRole.DOCTOR, SystemRole.NURSE, SystemRole.TECHNICIAN].includes(
+        role
+      )
+    );
+  }, [roles]);
+
+  const isDoctor = useMemo(() => {
+    return roles.includes(SystemRole.DOCTOR);
+  }, [roles]);
+
+  const isNurse = useMemo(() => {
+    return roles.includes(SystemRole.NURSE);
+  }, [roles]);
+
+  return {
+    isMedicalStaff,
+    isDoctor,
+    isNurse,
+    isLoading,
+    roles,
+  };
+}

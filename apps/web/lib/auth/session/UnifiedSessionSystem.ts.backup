@@ -1,0 +1,19 @@
+// Unifiedsessionsystem Module
+export interface UnifiedsessionsystemConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Unifiedsessionsystem_DEFAULT: UnifiedsessionsystemConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createUnifiedsessionsystem() {
+  return Unifiedsessionsystem_DEFAULT;
+}
+
+export default {
+  config: Unifiedsessionsystem_DEFAULT,
+  create: createUnifiedsessionsystem
+};

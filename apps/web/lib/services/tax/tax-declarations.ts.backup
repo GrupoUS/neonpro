@@ -1,0 +1,19 @@
+// Taxdeclarations Module
+export interface TaxdeclarationsConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Taxdeclarations_DEFAULT: TaxdeclarationsConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createTaxdeclarations() {
+  return Taxdeclarations_DEFAULT;
+}
+
+export default {
+  config: Taxdeclarations_DEFAULT,
+  create: createTaxdeclarations
+};

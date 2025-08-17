@@ -1,0 +1,18 @@
+"use client";
+
+import React from 'react';
+
+interface PatientdashboardProps {
+  children?: React.ReactNode;
+  className?: string;
+}
+
+export function Patientdashboard({ children, className = "" }: PatientdashboardProps) {
+  return (
+    <div className={className}>
+      {children || "Patientdashboard Component"}
+    </div>
+  );
+}
+
+export default Patientdashboard;

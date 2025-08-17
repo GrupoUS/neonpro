@@ -1,0 +1,19 @@
+// Config Module
+export interface ConfigConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Config_DEFAULT: ConfigConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createConfig() {
+  return Config_DEFAULT;
+}
+
+export default {
+  config: Config_DEFAULT,
+  create: createConfig
+};

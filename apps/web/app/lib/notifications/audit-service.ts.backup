@@ -1,0 +1,19 @@
+// Auditservice Module
+export interface AuditserviceConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Auditservice_DEFAULT: AuditserviceConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createAuditservice() {
+  return Auditservice_DEFAULT;
+}
+
+export default {
+  config: Auditservice_DEFAULT,
+  create: createAuditservice
+};

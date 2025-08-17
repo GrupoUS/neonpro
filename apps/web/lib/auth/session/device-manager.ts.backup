@@ -1,0 +1,19 @@
+// Devicemanager Module
+export interface DevicemanagerConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Devicemanager_DEFAULT: DevicemanagerConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createDevicemanager() {
+  return Devicemanager_DEFAULT;
+}
+
+export default {
+  config: Devicemanager_DEFAULT,
+  create: createDevicemanager
+};

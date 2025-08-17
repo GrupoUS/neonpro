@@ -1,0 +1,19 @@
+// Healthcareclient Module
+export interface HealthcareclientConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Healthcareclient_DEFAULT: HealthcareclientConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createHealthcareclient() {
+  return Healthcareclient_DEFAULT;
+}
+
+export default {
+  config: Healthcareclient_DEFAULT,
+  create: createHealthcareclient
+};

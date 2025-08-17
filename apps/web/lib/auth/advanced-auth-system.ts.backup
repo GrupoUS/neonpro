@@ -1,0 +1,19 @@
+// Advancedauthsystem Module
+export interface AdvancedauthsystemConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Advancedauthsystem_DEFAULT: AdvancedauthsystemConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createAdvancedauthsystem() {
+  return Advancedauthsystem_DEFAULT;
+}
+
+export default {
+  config: Advancedauthsystem_DEFAULT,
+  create: createAdvancedauthsystem
+};

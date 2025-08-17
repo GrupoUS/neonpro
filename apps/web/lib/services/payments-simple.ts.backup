@@ -1,0 +1,19 @@
+// Paymentssimple Module
+export interface PaymentssimpleConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Paymentssimple_DEFAULT: PaymentssimpleConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createPaymentssimple() {
+  return Paymentssimple_DEFAULT;
+}
+
+export default {
+  config: Paymentssimple_DEFAULT,
+  create: createPaymentssimple
+};

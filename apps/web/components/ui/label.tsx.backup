@@ -1,0 +1,18 @@
+"use client";
+
+import React from 'react';
+
+interface LabelProps {
+  children?: React.ReactNode;
+  className?: string;
+}
+
+export function Label({ children, className = "" }: LabelProps) {
+  return (
+    <div className={className}>
+      {children || "Label Component"}
+    </div>
+  );
+}
+
+export default Label;

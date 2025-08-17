@@ -1,0 +1,19 @@
+// Plans Module
+export interface PlansConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Plans_DEFAULT: PlansConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createPlans() {
+  return Plans_DEFAULT;
+}
+
+export default {
+  config: Plans_DEFAULT,
+  create: createPlans
+};

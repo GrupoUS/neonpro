@@ -1,0 +1,19 @@
+// Consentautomationmanager Module
+export interface ConsentautomationmanagerConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Consentautomationmanager_DEFAULT: ConsentautomationmanagerConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createConsentautomationmanager() {
+  return Consentautomationmanager_DEFAULT;
+}
+
+export default {
+  config: Consentautomationmanager_DEFAULT,
+  create: createConsentautomationmanager
+};

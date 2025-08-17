@@ -1,0 +1,19 @@
+// Resolutionalgorithms Module
+export interface ResolutionalgorithmsConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Resolutionalgorithms_DEFAULT: ResolutionalgorithmsConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createResolutionalgorithms() {
+  return Resolutionalgorithms_DEFAULT;
+}
+
+export default {
+  config: Resolutionalgorithms_DEFAULT,
+  create: createResolutionalgorithms
+};

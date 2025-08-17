@@ -1,0 +1,19 @@
+// Useauth Module
+export interface UseauthConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Useauth_DEFAULT: UseauthConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createUseauth() {
+  return Useauth_DEFAULT;
+}
+
+export default {
+  config: Useauth_DEFAULT,
+  create: createUseauth
+};

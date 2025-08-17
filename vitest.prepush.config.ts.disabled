@@ -1,0 +1,90 @@
+import { defineConfig } from 'vitest/config';
+import react from '@vitejs/plugin-react';
+import { resolve } from 'node:path';
+
+/**
+ * 🏥 NEONPRO - Minimal Vitest Configuration for Pre-push Hook
+ * 
+ * This configuration runs ONLY essential healthcare compliance tests
+ * to ensure fast pre-push validation without discovering thousands of 
+ * tests from node_modules and tools directories.
+ */
+export default defineConfig({
+  plugins: [react()],
+  test: {
+    // Environment configuration
+    env: {
+      LANG: 'en_US.UTF-8',
+      LC_ALL: 'en_US.UTF-8',
+      NODE_ENV: 'test',
+      TZ: 'UTC'
+    },
+    
+    environment: 'jsdom',
+    globals: true,
+    
+    // CRITICAL: Only test these specific files - nothing else
+    include: [
+      'test/compliance/lgpd.test.ts',
+      'test/compliance/anvisa.test.ts', 
+      'test/compliance/cfm.test.ts',
+      'test/compliance/rls-security.test.ts',
+    ],
+    
+    // Aggressive exclusion of everything else
+    exclude: [
+      '**/node_modules/**',
+      '**/tools/**',
+      '**/apps/**',
+      '**/packages/**',
+      '**/src/**',
+      '**/lib/**',
+      '**/docs/**',
+      '**/coverage/**',
+      '**/dist/**',
+      '**/build/**',
+      '**/.next/**',
+      '**/playwright/**',
+      '**/cypress/**',
+      '**/e2e/**',
+      '**/__tests__/**',
+      '**/*.removed',
+      '**/*.backup',
+      '**/*.skip',
+      '**/*.config.*',
+      '**/*.d.ts',
+    ],
+    
+    setupFiles: ['./vitest.prepush.setup.ts'],
+    
+    // Fast execution settings
+    pool: 'threads',
+    poolOptions: {
+      threads: {
+        singleThread: true,
+      },
+    },
+    
+    testTimeout: 10000,
+    hookTimeout: 10000,
+    
+    // Minimal reporting for fast execution
+    reporters: ['basic'],
+    
+    // Skip coverage for speed
+    coverage: {
+      enabled: false,
+    },
+  },
+  
+  resolve: {
+    alias: {
+      '@': resolve(__dirname, './'),
+      '@/lib': resolve(__dirname, './lib'),
+    },
+  },
+  
+  esbuild: {
+    target: 'node14',
+  },
+});

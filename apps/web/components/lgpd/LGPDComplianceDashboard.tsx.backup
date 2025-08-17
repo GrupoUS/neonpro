@@ -1,0 +1,18 @@
+"use client";
+
+import React from 'react';
+
+interface LgpdcompliancedashboardProps {
+  children?: React.ReactNode;
+  className?: string;
+}
+
+export function Lgpdcompliancedashboard({ children, className = "" }: LgpdcompliancedashboardProps) {
+  return (
+    <div className={className}>
+      {children || "Lgpdcompliancedashboard Component"}
+    </div>
+  );
+}
+
+export default Lgpdcompliancedashboard;

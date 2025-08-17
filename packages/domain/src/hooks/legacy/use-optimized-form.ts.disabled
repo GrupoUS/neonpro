@@ -1,0 +1,534 @@
+'use client';
+
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { z } from 'zod';
+
+// =====================================================================================
+// OPTIMIZED FORM HOOK
+// Advanced form management with validation, performance optimization, and error handling
+// =====================================================================================
+
+type ValidationMode = 'onChange' | 'onBlur' | 'onSubmit' | 'all';
+type FieldValue = string | number | boolean | Date | null | undefined;
+type FormValues = Record<string, FieldValue>;
+type FormErrors = Record<string, string | undefined>;
+type FormTouched = Record<string, boolean>;
+
+type FormField = {
+  value: FieldValue;
+  error?: string;
+  touched: boolean;
+  dirty: boolean;
+};
+
+type FormState = {
+  values: FormValues;
+  errors: FormErrors;
+  touched: FormTouched;
+  isSubmitting: boolean;
+  isValidating: boolean;
+  isValid: boolean;
+  isDirty: boolean;
+  submitCount: number;
+};
+
+type UseOptimizedFormOptions<T extends FormValues> = {
+  initialValues: T;
+  validationSchema?: z.ZodSchema<T>;
+  validationMode?: ValidationMode;
+  validateOnMount?: boolean;
+  enableReinitialize?: boolean;
+  onSubmit?: (values: T, helpers: FormHelpers<T>) => Promise<void> | void;
+  onValidationError?: (errors: FormErrors) => void;
+  debounceMs?: number;
+};
+
+type FormHelpers<T extends FormValues> = {
+  setFieldValue: (field: keyof T, value: FieldValue) => void;
+  setFieldError: (field: keyof T, error: string | undefined) => void;
+  setFieldTouched: (field: keyof T, touched: boolean) => void;
+  setValues: (values: Partial<T>) => void;
+  setErrors: (errors: Partial<FormErrors>) => void;
+  setTouched: (touched: Partial<FormTouched>) => void;
+  resetForm: (newValues?: Partial<T>) => void;
+  validateField: (field: keyof T) => Promise<string | undefined>;
+  validateForm: () => Promise<FormErrors>;
+  setSubmitting: (isSubmitting: boolean) => void;
+};
+
+type FormFieldHelpers = {
+  onChange: (value: FieldValue) => void;
+  onBlur: () => void;
+  onFocus: () => void;
+};
+
+type UseOptimizedFormReturn<T extends FormValues> = {
+  values: T;
+  errors: FormErrors;
+  touched: FormTouched;
+  isSubmitting: boolean;
+  isValidating: boolean;
+  isValid: boolean;
+  isDirty: boolean;
+  submitCount: number;
+  getFieldProps: (field: keyof T) => FormField;
+  getFieldHelpers: (field: keyof T) => FormFieldHelpers;
+  handleSubmit: (e?: React.FormEvent) => Promise<void>;
+  helpers: FormHelpers<T>;
+};
+
+export function useOptimizedForm<T extends FormValues>(
+  options: UseOptimizedFormOptions<T>
+): UseOptimizedFormReturn<T> {
+  const {
+    initialValues,
+    validationSchema,
+    validationMode = 'onBlur',
+    validateOnMount = false,
+    enableReinitialize = false,
+    onSubmit,
+    onValidationError,
+    debounceMs = 300,
+  } = options;
+
+  // =====================================================================================
+  // STATE MANAGEMENT
+  // =====================================================================================
+
+  const [state, setState] = useState<FormState>(() => ({
+    values: { ...initialValues },
+    errors: {},
+    touched: {},
+    isSubmitting: false,
+    isValidating: false,
+    isValid: true,
+    isDirty: false,
+    submitCount: 0,
+  }));
+
+  const initialValuesRef = useRef(initialValues);
+  const validationTimeoutRef = useRef<NodeJS.Timeout>();
+  const mountedRef = useRef(true);
+
+  // Update initial values if enableReinitialize is true
+  useEffect(() => {
+    if (enableReinitialize && initialValues !== initialValuesRef.current) {
+      initialValuesRef.current = initialValues;
+      setState((prev) => ({
+        ...prev,
+        values: { ...initialValues },
+        errors: {},
+        touched: {},
+        isDirty: false,
+      }));
+    }
+  }, [initialValues, enableReinitialize]);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      mountedRef.current = false;
+      if (validationTimeoutRef.current) {
+        clearTimeout(validationTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  // =====================================================================================
+  // VALIDATION FUNCTIONS
+  // =====================================================================================
+
+  const validateField = useCallback(
+    async (field: keyof T): Promise<string | undefined> => {
+      if (!validationSchema) {
+        return;
+      }
+
+      try {
+        const fieldSchema = validationSchema.shape?.[field as string];
+        if (!fieldSchema) {
+          return;
+        }
+
+        await fieldSchema.parseAsync(state.values[field]);
+        return;
+      } catch (error) {
+        if (error instanceof z.ZodError) {
+          return error.errors[0]?.message || 'Validation error';
+        }
+        return 'Validation error';
+      }
+    },
+    [validationSchema, state.values]
+  );
+
+  const validateForm = useCallback(async (): Promise<FormErrors> => {
+    if (!validationSchema) {
+      return {};
+    }
+
+    try {
+      await validationSchema.parseAsync(state.values);
+      return {};
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        const errors: FormErrors = {};
+        error.errors.forEach((err) => {
+          const path = err.path.join('.');
+          if (!errors[path]) {
+            errors[path] = err.message;
+          }
+        });
+        return errors;
+      }
+      return {};
+    }
+  }, [validationSchema, state.values]);
+
+  const debouncedValidation = useCallback(
+    (field?: keyof T) => {
+      if (validationTimeoutRef.current) {
+        clearTimeout(validationTimeoutRef.current);
+      }
+
+      validationTimeoutRef.current = setTimeout(async () => {
+        if (!mountedRef.current) {
+          return;
+        }
+
+        setState((prev) => ({ ...prev, isValidating: true }));
+
+        try {
+          if (field) {
+            const error = await validateField(field);
+            if (mountedRef.current) {
+              setState((prev) => ({
+                ...prev,
+                errors: { ...prev.errors, [field]: error },
+                isValidating: false,
+              }));
+            }
+          } else {
+            const errors = await validateForm();
+            if (mountedRef.current) {
+              setState((prev) => ({
+                ...prev,
+                errors,
+                isValid: Object.keys(errors).length === 0,
+                isValidating: false,
+              }));
+
+              if (Object.keys(errors).length > 0) {
+                onValidationError?.(errors);
+              }
+            }
+          }
+        } catch (_error) {
+          if (mountedRef.current) {
+            setState((prev) => ({ ...prev, isValidating: false }));
+          }
+        }
+      }, debounceMs);
+    },
+    [validateField, validateForm, debounceMs, onValidationError]
+  );
+
+  // =====================================================================================
+  // FORM HELPERS
+  // =====================================================================================
+
+  const setFieldValue = useCallback(
+    (field: keyof T, value: FieldValue) => {
+      setState((prev) => {
+        const newValues = { ...prev.values, [field]: value };
+        const isDirty = JSON.stringify(newValues) !== JSON.stringify(initialValuesRef.current);
+
+        return {
+          ...prev,
+          values: newValues,
+          isDirty,
+        };
+      });
+
+      // Trigger validation based on mode
+      if (validationMode === 'onChange' || validationMode === 'all') {
+        debouncedValidation(field);
+      }
+    },
+    [validationMode, debouncedValidation]
+  );
+
+  const setFieldError = useCallback((field: keyof T, error: string | undefined) => {
+    setState((prev) => ({
+      ...prev,
+      errors: { ...prev.errors, [field]: error },
+    }));
+  }, []);
+
+  const setFieldTouched = useCallback(
+    (field: keyof T, touched: boolean) => {
+      setState((prev) => ({
+        ...prev,
+        touched: { ...prev.touched, [field]: touched },
+      }));
+
+      // Trigger validation on blur if field is touched
+      if (touched && (validationMode === 'onBlur' || validationMode === 'all')) {
+        debouncedValidation(field);
+      }
+    },
+    [validationMode, debouncedValidation]
+  );
+
+  const setValues = useCallback(
+    (values: Partial<T>) => {
+      setState((prev) => {
+        const newValues = { ...prev.values, ...values };
+        const isDirty = JSON.stringify(newValues) !== JSON.stringify(initialValuesRef.current);
+
+        return {
+          ...prev,
+          values: newValues,
+          isDirty,
+        };
+      });
+
+      if (validationMode === 'onChange' || validationMode === 'all') {
+        debouncedValidation();
+      }
+    },
+    [validationMode, debouncedValidation]
+  );
+
+  const setErrors = useCallback((errors: Partial<FormErrors>) => {
+    setState((prev) => ({
+      ...prev,
+      errors: { ...prev.errors, ...errors },
+    }));
+  }, []);
+
+  const setTouched = useCallback((touched: Partial<FormTouched>) => {
+    setState((prev) => ({
+      ...prev,
+      touched: { ...prev.touched, ...touched },
+    }));
+  }, []);
+
+  const resetForm = useCallback(
+    (newValues?: Partial<T>) => {
+      const resetValues = newValues ? { ...initialValues, ...newValues } : initialValues;
+
+      setState({
+        values: resetValues,
+        errors: {},
+        touched: {},
+        isSubmitting: false,
+        isValidating: false,
+        isValid: true,
+        isDirty: false,
+        submitCount: 0,
+      });
+
+      if (newValues) {
+        initialValuesRef.current = resetValues;
+      }
+    },
+    [initialValues]
+  );
+
+  const setSubmitting = useCallback((isSubmitting: boolean) => {
+    setState((prev) => ({ ...prev, isSubmitting }));
+  }, []);
+
+  // =====================================================================================
+  // FIELD HELPERS
+  // =====================================================================================
+
+  const getFieldProps = useCallback(
+    (field: keyof T): FormField => {
+      return {
+        value: state.values[field],
+        error: state.errors[field],
+        touched: state.touched[field],
+        dirty: state.values[field] !== initialValuesRef.current[field],
+      };
+    },
+    [state.values, state.errors, state.touched]
+  );
+
+  const getFieldHelpers = useCallback(
+    (field: keyof T): FormFieldHelpers => {
+      return {
+        onChange: (value: FieldValue) => setFieldValue(field, value),
+        onBlur: () => setFieldTouched(field, true),
+        onFocus: () => {
+          // Clear field error on focus if needed
+          if (state.errors[field]) {
+            setFieldError(field, undefined);
+          }
+        },
+      };
+    },
+    [setFieldValue, setFieldTouched, setFieldError, state.errors]
+  );
+
+  // =====================================================================================
+  // FORM SUBMISSION
+  // =====================================================================================
+
+  const handleSubmit = useCallback(
+    async (e?: React.FormEvent) => {
+      e?.preventDefault();
+
+      setState((prev) => ({
+        ...prev,
+        isSubmitting: true,
+        submitCount: prev.submitCount + 1,
+      }));
+
+      try {
+        // Validate form before submission
+        const errors = await validateForm();
+
+        if (Object.keys(errors).length > 0) {
+          setState((prev) => ({
+            ...prev,
+            errors,
+            isValid: false,
+            isSubmitting: false,
+          }));
+          onValidationError?.(errors);
+          return;
+        }
+
+        // Mark all fields as touched
+        const allTouched = Object.keys(state.values).reduce((acc, key) => {
+          acc[key] = true;
+          return acc;
+        }, {} as FormTouched);
+
+        setState((prev) => ({
+          ...prev,
+          touched: allTouched,
+          errors: {},
+          isValid: true,
+        }));
+
+        // Call onSubmit handler
+        if (onSubmit) {
+          await onSubmit(state.values as T, helpers);
+        }
+      } catch (_error) {
+      } finally {
+        if (mountedRef.current) {
+          setState((prev) => ({ ...prev, isSubmitting: false }));
+        }
+      }
+    },
+    [state.values, validateForm, onValidationError, onSubmit, helpers]
+  );
+
+  // =====================================================================================
+  // HELPERS OBJECT
+  // =====================================================================================
+
+  const helpers: FormHelpers<T> = useMemo(
+    () => ({
+      setFieldValue,
+      setFieldError,
+      setFieldTouched,
+      setValues,
+      setErrors,
+      setTouched,
+      resetForm,
+      validateField,
+      validateForm,
+      setSubmitting,
+    }),
+    [
+      setFieldValue,
+      setFieldError,
+      setFieldTouched,
+      setValues,
+      setErrors,
+      setTouched,
+      resetForm,
+      validateField,
+      validateForm,
+      setSubmitting,
+    ]
+  );
+
+  // =====================================================================================
+  // INITIAL VALIDATION
+  // =====================================================================================
+
+  useEffect(() => {
+    if (validateOnMount) {
+      debouncedValidation();
+    }
+  }, [validateOnMount, debouncedValidation]);
+
+  // =====================================================================================
+  // RETURN INTERFACE
+  // =====================================================================================
+
+  return {
+    values: state.values as T,
+    errors: state.errors,
+    touched: state.touched,
+    isSubmitting: state.isSubmitting,
+    isValidating: state.isValidating,
+    isValid: state.isValid,
+    isDirty: state.isDirty,
+    submitCount: state.submitCount,
+    getFieldProps,
+    getFieldHelpers,
+    handleSubmit,
+    helpers,
+  };
+}
+
+// =====================================================================================
+// SPECIALIZED FORM HOOKS
+// =====================================================================================
+
+// Patient form hook
+export function usePatientForm(initialValues: any) {
+  const patientSchema = z.object({
+    name: z.string().min(2, 'Nome deve ter pelo menos 2 caracteres'),
+    email: z.string().email('Email inválido').optional().or(z.literal('')),
+    phone: z.string().min(10, 'Telefone deve ter pelo menos 10 dígitos'),
+    birthDate: z.date().optional(),
+    cpf: z.string().min(11, 'CPF inválido').optional().or(z.literal('')),
+    address: z.string().optional(),
+  });
+
+  return useOptimizedForm({
+    initialValues,
+    validationSchema: patientSchema,
+    validationMode: 'onBlur',
+    debounceMs: 300,
+  });
+}
+
+// Appointment form hook
+export function useAppointmentForm(initialValues: any) {
+  const appointmentSchema = z.object({
+    patientId: z.string().min(1, 'Paciente é obrigatório'),
+    professionalId: z.string().min(1, 'Profissional é obrigatório'),
+    serviceId: z.string().min(1, 'Serviço é obrigatório'),
+    date: z.date({ required_error: 'Data é obrigatória' }),
+    time: z.string().min(1, 'Horário é obrigatório'),
+    notes: z.string().optional(),
+  });
+
+  return useOptimizedForm({
+    initialValues,
+    validationSchema: appointmentSchema,
+    validationMode: 'onBlur',
+    debounceMs: 500,
+  });
+}
+
+export default useOptimizedForm;

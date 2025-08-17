@@ -1,0 +1,19 @@
+// Useoptimizedsupabase Module
+export interface UseoptimizedsupabaseConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Useoptimizedsupabase_DEFAULT: UseoptimizedsupabaseConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createUseoptimizedsupabase() {
+  return Useoptimizedsupabase_DEFAULT;
+}
+
+export default {
+  config: Useoptimizedsupabase_DEFAULT,
+  create: createUseoptimizedsupabase
+};

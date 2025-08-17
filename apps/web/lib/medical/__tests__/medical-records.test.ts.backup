@@ -1,0 +1,19 @@
+// Medicalrecords.Test Module
+export interface Medicalrecords.TestConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Medicalrecords.Test_DEFAULT: Medicalrecords.TestConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createMedicalrecords.Test() {
+  return Medicalrecords.Test_DEFAULT;
+}
+
+export default {
+  config: Medicalrecords.Test_DEFAULT,
+  create: createMedicalrecords.Test
+};

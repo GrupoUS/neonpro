@@ -1,0 +1,9 @@
+// Type definitions placeholder
+export interface PlaceholderInterface {
+  id?: string;
+  [key: string]: unknown;
+}
+
+export type PlaceholderType = PlaceholderInterface;
+
+export default PlaceholderInterface;

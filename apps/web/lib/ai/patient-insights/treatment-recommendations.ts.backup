@@ -1,0 +1,19 @@
+// Treatmentrecommendations Module
+export interface TreatmentrecommendationsConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Treatmentrecommendations_DEFAULT: TreatmentrecommendationsConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createTreatmentrecommendations() {
+  return Treatmentrecommendations_DEFAULT;
+}
+
+export default {
+  config: Treatmentrecommendations_DEFAULT,
+  create: createTreatmentrecommendations
+};

@@ -1,0 +1,19 @@
+// Retentionnew Module
+export interface RetentionnewConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Retentionnew_DEFAULT: RetentionnewConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createRetentionnew() {
+  return Retentionnew_DEFAULT;
+}
+
+export default {
+  config: Retentionnew_DEFAULT,
+  create: createRetentionnew
+};

@@ -1,0 +1,18 @@
+"use client";
+
+import React from 'react';
+
+interface FinancialdashboardProps {
+  children?: React.ReactNode;
+  className?: string;
+}
+
+export function Financialdashboard({ children, className = "" }: FinancialdashboardProps) {
+  return (
+    <div className={className}>
+      {children || "Financialdashboard Component"}
+    </div>
+  );
+}
+
+export default Financialdashboard;

@@ -1,0 +1,19 @@
+// Authstore Module
+export interface AuthstoreConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Authstore_DEFAULT: AuthstoreConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createAuthstore() {
+  return Authstore_DEFAULT;
+}
+
+export default {
+  config: Authstore_DEFAULT,
+  create: createAuthstore
+};

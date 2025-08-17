@@ -1,0 +1,19 @@
+// Usesupplier Module
+export interface UsesupplierConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Usesupplier_DEFAULT: UsesupplierConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createUsesupplier() {
+  return Usesupplier_DEFAULT;
+}
+
+export default {
+  config: Usesupplier_DEFAULT,
+  create: createUsesupplier
+};

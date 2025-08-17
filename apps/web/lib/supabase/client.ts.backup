@@ -1,0 +1,19 @@
+// Client Module
+export interface ClientConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Client_DEFAULT: ClientConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createClient() {
+  return Client_DEFAULT;
+}
+
+export default {
+  config: Client_DEFAULT,
+  create: createClient
+};

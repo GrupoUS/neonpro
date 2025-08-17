@@ -1,0 +1,19 @@
+// Concurrentsessionmanager Module
+export interface ConcurrentsessionmanagerConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Concurrentsessionmanager_DEFAULT: ConcurrentsessionmanagerConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createConcurrentsessionmanager() {
+  return Concurrentsessionmanager_DEFAULT;
+}
+
+export default {
+  config: Concurrentsessionmanager_DEFAULT,
+  create: createConcurrentsessionmanager
+};

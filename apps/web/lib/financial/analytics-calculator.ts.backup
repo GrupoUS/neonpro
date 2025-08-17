@@ -1,0 +1,19 @@
+// Analyticscalculator Module
+export interface AnalyticscalculatorConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Analyticscalculator_DEFAULT: AnalyticscalculatorConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createAnalyticscalculator() {
+  return Analyticscalculator_DEFAULT;
+}
+
+export default {
+  config: Analyticscalculator_DEFAULT,
+  create: createAnalyticscalculator
+};

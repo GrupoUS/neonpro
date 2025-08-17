@@ -1,0 +1,19 @@
+// Voicesearch Module
+export interface VoicesearchConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Voicesearch_DEFAULT: VoicesearchConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createVoicesearch() {
+  return Voicesearch_DEFAULT;
+}
+
+export default {
+  config: Voicesearch_DEFAULT,
+  create: createVoicesearch
+};

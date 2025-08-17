@@ -1,0 +1,19 @@
+// Bankreconciliationservice Module
+export interface BankreconciliationserviceConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Bankreconciliationservice_DEFAULT: BankreconciliationserviceConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createBankreconciliationservice() {
+  return Bankreconciliationservice_DEFAULT;
+}
+
+export default {
+  config: Bankreconciliationservice_DEFAULT,
+  create: createBankreconciliationservice
+};

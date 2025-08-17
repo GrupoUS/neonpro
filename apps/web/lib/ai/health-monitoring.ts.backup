@@ -1,0 +1,19 @@
+// Healthmonitoring Module
+export interface HealthmonitoringConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Healthmonitoring_DEFAULT: HealthmonitoringConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createHealthmonitoring() {
+  return Healthmonitoring_DEFAULT;
+}
+
+export default {
+  config: Healthmonitoring_DEFAULT,
+  create: createHealthmonitoring
+};

@@ -1,0 +1,19 @@
+// Xlsx Module
+export interface XlsxConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Xlsx_DEFAULT: XlsxConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createXlsx() {
+  return Xlsx_DEFAULT;
+}
+
+export default {
+  config: Xlsx_DEFAULT,
+  create: createXlsx
+};

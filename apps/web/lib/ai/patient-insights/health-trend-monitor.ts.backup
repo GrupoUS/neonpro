@@ -1,0 +1,19 @@
+// Healthtrendmonitor Module
+export interface HealthtrendmonitorConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Healthtrendmonitor_DEFAULT: HealthtrendmonitorConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createHealthtrendmonitor() {
+  return Healthtrendmonitor_DEFAULT;
+}
+
+export default {
+  config: Healthtrendmonitor_DEFAULT,
+  create: createHealthtrendmonitor
+};

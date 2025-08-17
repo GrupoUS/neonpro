@@ -1,0 +1,19 @@
+// Dataretention Module
+export interface DataretentionConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Dataretention_DEFAULT: DataretentionConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createDataretention() {
+  return Dataretention_DEFAULT;
+}
+
+export default {
+  config: Dataretention_DEFAULT,
+  create: createDataretention
+};

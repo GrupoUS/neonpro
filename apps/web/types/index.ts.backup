@@ -1,0 +1,13 @@
+// Placeholder types for NeonPro
+export interface User {
+  id: string;
+  email: string;
+  name?: string;
+}
+
+export interface Session {
+  user: User;
+  expires: string;
+}
+
+export type Role = 'ADMIN' | 'USER' | 'DOCTOR' | 'NURSE';

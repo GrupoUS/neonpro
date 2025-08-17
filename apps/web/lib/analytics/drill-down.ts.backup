@@ -1,0 +1,19 @@
+// Drilldown Module
+export interface DrilldownConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Drilldown_DEFAULT: DrilldownConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createDrilldown() {
+  return Drilldown_DEFAULT;
+}
+
+export default {
+  config: Drilldown_DEFAULT,
+  create: createDrilldown
+};

@@ -1,0 +1,19 @@
+// Unifiedsearch Module
+export interface UnifiedsearchConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Unifiedsearch_DEFAULT: UnifiedsearchConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createUnifiedsearch() {
+  return Unifiedsearch_DEFAULT;
+}
+
+export default {
+  config: Unifiedsearch_DEFAULT,
+  create: createUnifiedsearch
+};

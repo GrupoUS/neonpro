@@ -1,0 +1,463 @@
+'use client';
+
+import { useCallback, useState } from 'react';
+import type { DateRange } from 'react-day-picker';
+import { toast } from 'react-hot-toast';
+
+type ReportFilters = {
+  dateRange?: DateRange;
+  category?: string;
+  supplier?: string;
+  includeCharts?: boolean;
+  includeKPIs?: boolean;
+};
+
+type ReportData = {
+  stockTurnover: Array<{
+    product: string;
+    turnoverRate: number;
+    daysInStock: number;
+    value: number;
+  }>;
+  categoryPerformance: Array<{
+    category: string;
+    revenue: number;
+    volume: number;
+    margin: number;
+    growth: number;
+  }>;
+  movementAnalysis: Array<{
+    date: string;
+    stockIn: number;
+    stockOut: number;
+    netMovement: number;
+  }>;
+  abcAnalysis: Array<{
+    category: 'A' | 'B' | 'C';
+    products: number;
+    revenue: number;
+    percentage: number;
+  }>;
+  supplierMetrics: Array<{
+    supplier: string;
+    deliveryTime: number;
+    qualityScore: number;
+    costEfficiency: number;
+    reliability: number;
+  }>;
+  kpiSummary: {
+    turnoverRate: number;
+    stockAccuracy: number;
+    carryingCost: number;
+    stockoutRate: number;
+    fillRate: number;
+    avgLeadTime: number;
+  };
+  insights: Array<{
+    type: 'warning' | 'opportunity' | 'success';
+    title: string;
+    description: string;
+    impact: 'high' | 'medium' | 'low';
+    action?: string;
+  }>;
+};
+
+type AnalyticsMetrics = {
+  totalValue: number;
+  totalItems: number;
+  avgTurnover: number;
+  topPerformers: Array<{
+    product: string;
+    performance: number;
+  }>;
+  bottomPerformers: Array<{
+    product: string;
+    performance: number;
+  }>;
+  seasonalTrends: Array<{
+    month: string;
+    demand: number;
+    supply: number;
+  }>;
+  alertsCount: {
+    critical: number;
+    warning: number;
+    info: number;
+  };
+};
+
+export function useReports() {
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
+
+  const generateAnalytics = useCallback(
+    async (_filters: ReportFilters = {}): Promise<ReportData | null> => {
+      setIsGenerating(true);
+
+      try {
+        // Simulate API call with realistic data generation
+        await new Promise((resolve) => setTimeout(resolve, 1500));
+
+        const mockData: ReportData = {
+          stockTurnover: [
+            {
+              product: 'Produto A',
+              turnoverRate: 12.5,
+              daysInStock: 29,
+              value: 85_000,
+            },
+            {
+              product: 'Produto B',
+              turnoverRate: 8.2,
+              daysInStock: 44,
+              value: 62_000,
+            },
+            {
+              product: 'Produto C',
+              turnoverRate: 15.8,
+              daysInStock: 23,
+              value: 78_000,
+            },
+            {
+              product: 'Produto D',
+              turnoverRate: 6.1,
+              daysInStock: 60,
+              value: 45_000,
+            },
+            {
+              product: 'Produto E',
+              turnoverRate: 11.3,
+              daysInStock: 32,
+              value: 69_000,
+            },
+          ],
+          categoryPerformance: [
+            {
+              category: 'Medicamentos',
+              revenue: 450_000,
+              volume: 2800,
+              margin: 32,
+              growth: 15.8,
+            },
+            {
+              category: 'Materiais',
+              revenue: 280_000,
+              volume: 1900,
+              margin: 28,
+              growth: 8.2,
+            },
+            {
+              category: 'Equipamentos',
+              revenue: 150_000,
+              volume: 680,
+              margin: 45,
+              growth: -2.1,
+            },
+            {
+              category: 'Consumíveis',
+              revenue: 120_000,
+              volume: 1200,
+              margin: 18,
+              growth: 12.4,
+            },
+          ],
+          movementAnalysis: [
+            {
+              date: '2025-01-01',
+              stockIn: 850,
+              stockOut: 720,
+              netMovement: 130,
+            },
+            {
+              date: '2025-01-02',
+              stockIn: 920,
+              stockOut: 890,
+              netMovement: 30,
+            },
+            {
+              date: '2025-01-03',
+              stockIn: 780,
+              stockOut: 950,
+              netMovement: -170,
+            },
+            {
+              date: '2025-01-04',
+              stockIn: 1100,
+              stockOut: 820,
+              netMovement: 280,
+            },
+            {
+              date: '2025-01-05',
+              stockIn: 890,
+              stockOut: 1050,
+              netMovement: -160,
+            },
+          ],
+          abcAnalysis: [
+            { category: 'A', products: 15, revenue: 75, percentage: 75 },
+            { category: 'B', products: 35, revenue: 20, percentage: 20 },
+            { category: 'C', products: 50, revenue: 5, percentage: 5 },
+          ],
+          supplierMetrics: [
+            {
+              supplier: 'Fornecedor Alpha',
+              deliveryTime: 12,
+              qualityScore: 92,
+              costEfficiency: 78,
+              reliability: 90,
+            },
+            {
+              supplier: 'Fornecedor Beta',
+              deliveryTime: 8,
+              qualityScore: 88,
+              costEfficiency: 85,
+              reliability: 85,
+            },
+            {
+              supplier: 'Fornecedor Gamma',
+              deliveryTime: 15,
+              qualityScore: 78,
+              costEfficiency: 92,
+              reliability: 80,
+            },
+          ],
+          kpiSummary: {
+            turnoverRate: 11.2,
+            stockAccuracy: 98.7,
+            carryingCost: 485_200,
+            stockoutRate: 2.3,
+            fillRate: 97.8,
+            avgLeadTime: 12.5,
+          },
+          insights: [
+            {
+              type: 'warning',
+              title: 'Produto A com risco de ruptura',
+              description:
+                'Estoque atual permite apenas 7 dias de operação baseado na demanda média.',
+              impact: 'high',
+              action: 'Aumentar pedido de compra em 150%',
+            },
+            {
+              type: 'opportunity',
+              title: 'Oportunidade de otimização',
+              description: 'Categoria C tem baixa rotação e alto custo de carregamento.',
+              impact: 'medium',
+              action: 'Revisar política de estoque mínimo',
+            },
+            {
+              type: 'success',
+              title: 'Performance excepcional',
+              description: 'Fornecedor Beta mantém 98% de pontualidade nas entregas.',
+              impact: 'low',
+              action: 'Considerar ampliar parceria',
+            },
+          ],
+        };
+
+        toast.success('Analytics gerados com sucesso!');
+        return mockData;
+      } catch (_error) {
+        toast.error('Erro ao gerar relatório de analytics');
+        return null;
+      } finally {
+        setIsGenerating(false);
+      }
+    },
+    []
+  );
+
+  const generateMetrics = useCallback(
+    async (_filters: ReportFilters = {}): Promise<AnalyticsMetrics | null> => {
+      setIsGenerating(true);
+
+      try {
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+
+        const mockMetrics: AnalyticsMetrics = {
+          totalValue: 1_250_000,
+          totalItems: 3456,
+          avgTurnover: 10.8,
+          topPerformers: [
+            { product: 'Produto C', performance: 95.8 },
+            { product: 'Produto A', performance: 89.2 },
+            { product: 'Produto E', performance: 82.1 },
+          ],
+          bottomPerformers: [
+            { product: 'Produto D', performance: 42.8 },
+            { product: 'Material X', performance: 38.5 },
+            { product: 'Equipamento Y', performance: 35.2 },
+          ],
+          seasonalTrends: [
+            { month: 'Jan', demand: 85, supply: 90 },
+            { month: 'Fev', demand: 92, supply: 88 },
+            { month: 'Mar', demand: 78, supply: 95 },
+            { month: 'Abr', demand: 105, supply: 82 },
+            { month: 'Mai', demand: 98, supply: 105 },
+            { month: 'Jun', demand: 112, supply: 98 },
+          ],
+          alertsCount: {
+            critical: 3,
+            warning: 8,
+            info: 12,
+          },
+        };
+
+        return mockMetrics;
+      } catch (_error) {
+        toast.error('Erro ao gerar métricas');
+        return null;
+      } finally {
+        setIsGenerating(false);
+      }
+    },
+    []
+  );
+
+  const exportReport = useCallback(
+    async (options: {
+      type: 'pdf' | 'excel' | 'csv';
+      filters?: ReportFilters;
+      templateType?: 'executive' | 'detailed' | 'operational';
+    }) => {
+      setIsExporting(true);
+
+      try {
+        const { type, filters = {}, templateType = 'detailed' } = options;
+
+        // Simulate report generation and download
+        await new Promise((resolve) => setTimeout(resolve, 2000));
+
+        // Generate filename with timestamp
+        const timestamp = new Date().toISOString().slice(0, 10);
+        const filename = `inventory-analytics-${templateType}-${timestamp}.${type}`;
+
+        // Mock file download - in production, this would trigger actual file download
+        const blob = new Blob(['Mock report content'], {
+          type:
+            type === 'pdf'
+              ? 'application/pdf'
+              : type === 'excel'
+                ? 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+                : 'text/csv',
+        });
+
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+
+        toast.success(`Relatório ${type.toUpperCase()} exportado com sucesso!`);
+      } catch (_error) {
+        toast.error('Erro ao exportar relatório');
+      } finally {
+        setIsExporting(false);
+      }
+    },
+    []
+  );
+
+  const generatePredictiveAnalysis = useCallback(async (_filters: ReportFilters = {}) => {
+    setIsGenerating(true);
+
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 2500));
+
+      const predictiveData = {
+        demandForecast: [
+          { period: 'Próxima semana', demand: 1250, confidence: 92 },
+          { period: 'Próximo mês', demand: 5200, confidence: 87 },
+          { period: 'Próximo trimestre', demand: 18_500, confidence: 73 },
+        ],
+        stockRecommendations: [
+          {
+            product: 'Produto A',
+            currentStock: 150,
+            recommendedStock: 280,
+            reason: 'Aumento de demanda esperado',
+          },
+          {
+            product: 'Produto B',
+            currentStock: 320,
+            recommendedStock: 180,
+            reason: 'Sazonalidade baixa',
+          },
+        ],
+        riskAnalysis: [
+          {
+            type: 'Ruptura de estoque',
+            probability: 15,
+            impact: 'Alto',
+            products: ['Produto A', 'Material X'],
+          },
+          {
+            type: 'Excesso de estoque',
+            probability: 8,
+            impact: 'Médio',
+            products: ['Produto D'],
+          },
+        ],
+      };
+
+      toast.success('Análise preditiva gerada!');
+      return predictiveData;
+    } catch (_error) {
+      toast.error('Erro ao gerar análise preditiva');
+      return null;
+    } finally {
+      setIsGenerating(false);
+    }
+  }, []);
+
+  const generateCustomReport = useCallback(
+    async (config: {
+      sections: string[];
+      dateRange?: DateRange;
+      groupBy?: 'category' | 'supplier' | 'product';
+      metrics: string[];
+    }) => {
+      setIsGenerating(true);
+
+      try {
+        await new Promise((resolve) => setTimeout(resolve, 1800));
+
+        // Custom report generation logic would go here
+        const customData = {
+          title: 'Relatório Personalizado de Estoque',
+          sections: config.sections,
+          data: {}, // Populated based on selected sections
+          generatedAt: new Date().toISOString(),
+          filters: config,
+        };
+
+        toast.success('Relatório personalizado gerado!');
+        return customData;
+      } catch (_error) {
+        toast.error('Erro ao gerar relatório personalizado');
+        return null;
+      } finally {
+        setIsGenerating(false);
+      }
+    },
+    []
+  );
+
+  return {
+    // Generation functions
+    generateAnalytics,
+    generateMetrics,
+    generatePredictiveAnalysis,
+    generateCustomReport,
+
+    // Export functions
+    exportReport,
+
+    // State
+    isGenerating,
+    isExporting,
+  };
+}

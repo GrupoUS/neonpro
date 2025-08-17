@@ -1,0 +1,19 @@
+// Securityauditlogger Module
+export interface SecurityauditloggerConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Securityauditlogger_DEFAULT: SecurityauditloggerConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createSecurityauditlogger() {
+  return Securityauditlogger_DEFAULT;
+}
+
+export default {
+  config: Securityauditlogger_DEFAULT,
+  create: createSecurityauditlogger
+};

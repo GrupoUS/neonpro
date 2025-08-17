@@ -1,0 +1,19 @@
+// Financialreporting Module
+export interface FinancialreportingConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Financialreporting_DEFAULT: FinancialreportingConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createFinancialreporting() {
+  return Financialreporting_DEFAULT;
+}
+
+export default {
+  config: Financialreporting_DEFAULT,
+  create: createFinancialreporting
+};

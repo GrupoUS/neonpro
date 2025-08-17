@@ -1,0 +1,19 @@
+// Healthcarequalitycertification Module
+export interface HealthcarequalitycertificationConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Healthcarequalitycertification_DEFAULT: HealthcarequalitycertificationConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createHealthcarequalitycertification() {
+  return Healthcarequalitycertification_DEFAULT;
+}
+
+export default {
+  config: Healthcarequalitycertification_DEFAULT,
+  create: createHealthcarequalitycertification
+};

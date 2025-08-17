@@ -1,0 +1,19 @@
+// Compliancestore Module
+export interface CompliancestoreConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Compliancestore_DEFAULT: CompliancestoreConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createCompliancestore() {
+  return Compliancestore_DEFAULT;
+}
+
+export default {
+  config: Compliancestore_DEFAULT,
+  create: createCompliancestore
+};

@@ -1,0 +1,19 @@
+// Zustandimmer Module
+export interface ZustandimmerConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Zustandimmer_DEFAULT: ZustandimmerConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createZustandimmer() {
+  return Zustandimmer_DEFAULT;
+}
+
+export default {
+  config: Zustandimmer_DEFAULT,
+  create: createZustandimmer
+};

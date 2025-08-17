@@ -1,0 +1,19 @@
+// Datasubjectrights Module
+export interface DatasubjectrightsConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Datasubjectrights_DEFAULT: DatasubjectrightsConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createDatasubjectrights() {
+  return Datasubjectrights_DEFAULT;
+}
+
+export default {
+  config: Datasubjectrights_DEFAULT,
+  create: createDatasubjectrights
+};

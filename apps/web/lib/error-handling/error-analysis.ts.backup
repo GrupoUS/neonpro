@@ -1,0 +1,19 @@
+// Erroranalysis Module
+export interface ErroranalysisConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Erroranalysis_DEFAULT: ErroranalysisConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createErroranalysis() {
+  return Erroranalysis_DEFAULT;
+}
+
+export default {
+  config: Erroranalysis_DEFAULT,
+  create: createErroranalysis
+};

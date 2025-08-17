@@ -1,0 +1,19 @@
+// Notificationsecurity Module
+export interface NotificationsecurityConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Notificationsecurity_DEFAULT: NotificationsecurityConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createNotificationsecurity() {
+  return Notificationsecurity_DEFAULT;
+}
+
+export default {
+  config: Notificationsecurity_DEFAULT,
+  create: createNotificationsecurity
+};

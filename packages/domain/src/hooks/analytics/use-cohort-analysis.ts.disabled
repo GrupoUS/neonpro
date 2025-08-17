@@ -1,0 +1,420 @@
+/**
+ * Advanced Cohort Analysis React Hook for NeonPro
+ *
+ * Custom hook providing comprehensive cohort analysis capabilities including:
+ * - Cohort generation and definition
+ * - Retention rate calculations with heatmap data
+ * - Revenue cohort analysis and lifetime value tracking
+ * - Statistical insights and trend analysis
+ * - Real-time data updates with optimized caching
+ *
+ * Integrates with CohortAnalyzer service and provides UI-ready data formats.
+ */
+
+import { useMutation, useQuery, useQueryClient } from '../placeholders/react-query';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import {
+  type CohortAnalysisConfig,
+  type CohortDefinition,
+  type CohortMetrics,
+  cohortUtils,
+  createCohortAnalyzer,
+} // Missing module - placeholder needed
+import { createClient } // Missing module - placeholder needed
+
+// Types for hook configuration and state
+export type CohortAnalysisHookConfig = {
+  cohortType: 'subscription' | 'trial' | 'revenue';
+  granularity: 'daily' | 'weekly' | 'monthly';
+  periods: number;
+  startDate: string;
+  endDate: string;
+  autoRefresh?: boolean;
+  refreshInterval?: number;
+};
+
+export type CohortAnalysisState = {
+  cohorts: CohortDefinition[];
+  metrics: CohortMetrics[];
+  heatmapData: any[];
+  statistics: any;
+  insights: any[];
+  isLoading: boolean;
+  error: string | null;
+  lastUpdated: Date | null;
+};
+
+export type CohortAnalysisActions = {
+  generateAnalysis: (config: CohortAnalysisConfig) => Promise<void>;
+  refreshData: () => Promise<void>;
+  exportData: (format: 'csv' | 'excel' | 'pdf') => Promise<void>;
+  updateConfig: (newConfig: Partial<CohortAnalysisHookConfig>) => void;
+};
+
+/**
+ * Main cohort analysis hook
+ */
+export function useCohortAnalysis(
+  initialConfig: CohortAnalysisHookConfig
+): CohortAnalysisState & CohortAnalysisActions {
+  const queryClient = useQueryClient();
+  const _supabase = createClient();
+  const [config, setConfig] = useState<CohortAnalysisHookConfig>(initialConfig);
+  const [error, setError] = useState<string | null>(null);
+
+  // Initialize cohort analyzer
+  const cohortAnalyzer = useMemo(() => createCohortAnalyzer(), []);
+
+  // Query key for caching
+  const queryKey = useMemo(
+    () => [
+      'cohort-analysis',
+      config.cohortType,
+      config.granularity,
+      config.startDate,
+      config.endDate,
+      config.periods,
+    ],
+    [config]
+  );
+
+  // Main data fetching query
+  const {
+    data: analysisData,
+    isLoading,
+    refetch: refreshData,
+  } = useQuery({
+    queryKey,
+    queryFn: async () => {
+      const analysisConfig: CohortAnalysisConfig = {
+        cohortType: config.cohortType,
+        granularity: config.granularity,
+        periods: config.periods,
+        startDate: config.startDate,
+        endDate: config.endDate,
+        includeRevenue: true,
+        includeChurn: true,
+      };
+
+      // Generate cohorts
+      const cohorts = await cohortAnalyzer.generateCohorts(analysisConfig);
+
+      if (cohorts.length === 0) {
+        throw new Error('No cohorts found for the specified date range');
+      }
+
+      // Calculate retention metrics
+      const metrics = await cohortAnalyzer.calculateCohortRetention(cohorts, analysisConfig);
+
+      // Calculate revenue cohorts
+      const revenueCohorts = await cohortAnalyzer.calculateRevenueCohorts(cohorts, analysisConfig);
+
+      // Generate statistical analysis
+      const statistics = await cohortAnalyzer.analyzeCohortStatistics(metrics);
+
+      // Format data for visualization
+      const heatmapData = cohortUtils.formatForHeatmap(metrics);
+      const comparisonData = cohortUtils.generateComparisonData(metrics);
+      const cohortSizes = cohortUtils.calculateCohortSizes(cohorts);
+
+      return {
+        cohorts,
+        metrics,
+        revenueCohorts,
+        statistics,
+        heatmapData,
+        comparisonData,
+        cohortSizes,
+        insights: statistics.predictiveInsights || [],
+      };
+    },
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    cacheTime: 30 * 60 * 1000, // 30 minutes
+    retry: 2,
+    refetchOnWindowFocus: false,
+    enabled: Boolean(config.startDate) && Boolean(config.endDate),
+  });
+
+  // Auto-refresh effect
+  useEffect(() => {
+    if (!(config.autoRefresh && config.refreshInterval)) {
+      return;
+    }
+
+    const interval = setInterval(() => {
+      refreshData();
+    }, config.refreshInterval * 1000);
+
+    return () => clearInterval(interval);
+  }, [config.autoRefresh, config.refreshInterval, refreshData]);
+
+  // Generate analysis mutation
+  const generateAnalysisMutation = useMutation({
+    mutationFn: async (newConfig: CohortAnalysisConfig) => {
+      const cohorts = await cohortAnalyzer.generateCohorts(newConfig);
+      const metrics = await cohortAnalyzer.calculateCohortRetention(cohorts, newConfig);
+      const statistics = await cohortAnalyzer.analyzeCohortStatistics(metrics);
+
+      return { cohorts, metrics, statistics };
+    },
+    onSuccess: (data) => {
+      queryClient.setQueryData(queryKey, data);
+      setError(null);
+    },
+    onError: (err) => {
+      setError(err instanceof Error ? err.message : 'Analysis generation failed');
+    },
+  });
+
+  // Export data mutation
+  const exportDataMutation = useMutation({
+    mutationFn: async (format: 'csv' | 'excel' | 'pdf') => {
+      if (!analysisData) {
+        throw new Error('No data to export');
+      }
+
+      const response = await fetch('/api/analytics/export', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'cohort-analysis',
+          format,
+          data: {
+            cohorts: analysisData.cohorts,
+            metrics: analysisData.metrics,
+            statistics: analysisData.statistics,
+          },
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Export failed');
+      }
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `cohort-analysis-${new Date().toISOString().split('T')[0]}.${format}`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    },
+    onError: (err) => {
+      setError(err instanceof Error ? err.message : 'Export failed');
+    },
+  });
+
+  // Actions
+  const generateAnalysis = useCallback(
+    async (newConfig: CohortAnalysisConfig) => {
+      await generateAnalysisMutation.mutateAsync(newConfig);
+    },
+    [generateAnalysisMutation]
+  );
+
+  const exportData = useCallback(
+    async (format: 'csv' | 'excel' | 'pdf') => {
+      await exportDataMutation.mutateAsync(format);
+    },
+    [exportDataMutation]
+  );
+
+  const updateConfig = useCallback((newConfig: Partial<CohortAnalysisHookConfig>) => {
+    setConfig((prev) => ({ ...prev, ...newConfig }));
+    setError(null);
+  }, []);
+
+  // Return hook interface
+  return {
+    // State
+    cohorts: analysisData?.cohorts || [],
+    metrics: analysisData?.metrics || [],
+    heatmapData: analysisData?.heatmapData || [],
+    statistics: analysisData?.statistics || null,
+    insights: analysisData?.insights || [],
+    isLoading: isLoading || generateAnalysisMutation.isPending,
+    error: error || generateAnalysisMutation.error?.message || null,
+    lastUpdated: analysisData ? new Date() : null,
+
+    // Actions
+    generateAnalysis,
+    refreshData,
+    exportData,
+    updateConfig,
+  };
+}
+
+/**
+ * Hook for cohort comparison analysis
+ */
+export function useCohortComparison(cohortIds: string[]) {
+  const _queryClient = useQueryClient();
+
+  return useQuery({
+    queryKey: ['cohort-comparison', cohortIds],
+    queryFn: async () => {
+      const response = await fetch('/api/analytics/advanced?type=cohort-analysis', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'compare',
+          cohortIds,
+          includeStatistics: true,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Cohort comparison failed');
+      }
+      return response.json();
+    },
+    enabled: cohortIds.length > 1,
+    staleTime: 10 * 60 * 1000, // 10 minutes
+  });
+}
+
+/**
+ * Hook for real-time cohort metrics
+ */
+export function useRealTimeCohortMetrics(cohortId: string, enabled = true) {
+  const [metrics, setMetrics] = useState<CohortMetrics[]>([]);
+  const supabase = createClient();
+
+  useEffect(() => {
+    if (!(enabled && cohortId)) {
+      return;
+    }
+
+    // Subscribe to real-time updates
+    const subscription = supabase
+      .channel(`cohort-metrics-${cohortId}`)
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'subscription_cohorts',
+          filter: `cohort_month=eq.${cohortId}`,
+        },
+        (payload) => {
+          // Update metrics when data changes
+          setMetrics((prev) => {
+            const updated = [...prev];
+            const index = updated.findIndex((m) => m.cohortId === cohortId);
+
+            if (index >= 0) {
+              // Update existing metric
+              updated[index] = { ...updated[index], ...payload.new };
+            } else {
+              // Add new metric
+              updated.push(payload.new as CohortMetrics);
+            }
+
+            return updated;
+          });
+        }
+      )
+      .subscribe();
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [cohortId, enabled, supabase]);
+
+  return metrics;
+}
+
+/**
+ * Hook for cohort performance insights
+ */
+export function useCohortInsights(config: CohortAnalysisHookConfig) {
+  return useQuery({
+    queryKey: ['cohort-insights', config],
+    queryFn: async () => {
+      const response = await fetch('/api/analytics/insights', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'cohort',
+          config,
+          analysisDepth: 'comprehensive',
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to generate insights');
+      }
+      return response.json();
+    },
+    staleTime: 15 * 60 * 1000, // 15 minutes
+    enabled: Boolean(config.startDate) && Boolean(config.endDate),
+  });
+}
+
+/**
+ * Utility hook for cohort data formatting
+ */
+export function useCohortDataFormatters() {
+  return useMemo(
+    () => ({
+      formatRetentionRate: (rate: number): string => {
+        return `${Math.round(rate * 100) / 100}%`;
+      },
+
+      formatRevenue: (amount: number): string => {
+        return new Intl.NumberFormat('en-US', {
+          style: 'currency',
+          currency: 'USD',
+        }).format(amount);
+      },
+
+      formatCohortName: (date: string, granularity: string): string => {
+        const d = new Date(date);
+        if (granularity === 'daily') {
+          return d.toLocaleDateString('en-US', {
+            month: 'short',
+            day: 'numeric',
+          });
+        }
+        if (granularity === 'weekly') {
+          return `Week of ${d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`;
+        }
+        return d.toLocaleDateString('en-US', {
+          month: 'long',
+          year: 'numeric',
+        });
+      },
+
+      formatPeriodLabel: (period: number, granularity: string): string => {
+        if (period === 0) {
+          return 'Initial';
+        }
+        const unit = granularity === 'daily' ? 'day' : granularity === 'weekly' ? 'week' : 'month';
+        return `${period} ${unit}${period > 1 ? 's' : ''}`;
+      },
+
+      getRetentionColor: (rate: number): string => {
+        if (rate >= 80) {
+          return 'text-green-600';
+        }
+        if (rate >= 60) {
+          return 'text-yellow-600';
+        }
+        return 'text-red-600';
+      },
+
+      getRetentionBadgeVariant: (rate: number): 'default' | 'secondary' | 'destructive' => {
+        if (rate >= 80) {
+          return 'default';
+        }
+        if (rate >= 60) {
+          return 'secondary';
+        }
+        return 'destructive';
+      },
+    }),
+    []
+  );
+}

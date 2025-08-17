@@ -1,0 +1,19 @@
+// Notifications Module
+export interface NotificationsConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Notifications_DEFAULT: NotificationsConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createNotifications() {
+  return Notifications_DEFAULT;
+}
+
+export default {
+  config: Notifications_DEFAULT,
+  create: createNotifications
+};

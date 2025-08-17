@@ -1,0 +1,19 @@
+// Securemessagetracking Module
+export interface SecuremessagetrackingConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Securemessagetracking_DEFAULT: SecuremessagetrackingConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createSecuremessagetracking() {
+  return Securemessagetracking_DEFAULT;
+}
+
+export default {
+  config: Securemessagetracking_DEFAULT,
+  create: createSecuremessagetracking
+};

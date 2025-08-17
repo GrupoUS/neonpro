@@ -1,0 +1,18 @@
+"use client";
+
+import React from 'react';
+
+interface FormProps {
+  children?: React.ReactNode;
+  className?: string;
+}
+
+export function Form({ children, className = "" }: FormProps) {
+  return (
+    <div className={className}>
+      {children || "Form Component"}
+    </div>
+  );
+}
+
+export default Form;

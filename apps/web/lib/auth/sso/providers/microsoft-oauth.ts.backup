@@ -1,0 +1,19 @@
+// Microsoftoauth Module
+export interface MicrosoftoauthConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Microsoftoauth_DEFAULT: MicrosoftoauthConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createMicrosoftoauth() {
+  return Microsoftoauth_DEFAULT;
+}
+
+export default {
+  config: Microsoftoauth_DEFAULT,
+  create: createMicrosoftoauth
+};

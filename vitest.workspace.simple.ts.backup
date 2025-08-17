@@ -1,0 +1,30 @@
+/**
+ * Vitest Workspace Configuration for NeonPro Monorepo
+ * Simplified version to resolve VS Code extension conflicts
+ */
+
+import { defineWorkspace } from 'vitest/config'
+
+export default defineWorkspace([
+  // Main application tests
+  './vitest.config.ts',
+  
+  // UI Package tests  
+  {
+    test: {
+      name: 'ui-package',
+      environment: 'jsdom',
+      setupFiles: ['./packages/ui/vitest.setup.ts'],
+      globals: true,
+      include: [
+        'packages/ui/src/**/*.{test,spec}.{ts,tsx}',
+      ],
+      exclude: [
+        'node_modules/',
+        'packages/ui/dist/',
+        '**/*.stories.*',
+        '**/*.d.ts',
+      ],
+    },
+  },
+])

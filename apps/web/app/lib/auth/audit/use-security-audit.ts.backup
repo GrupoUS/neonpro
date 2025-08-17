@@ -1,0 +1,19 @@
+// Usesecurityaudit Module
+export interface UsesecurityauditConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Usesecurityaudit_DEFAULT: UsesecurityauditConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createUsesecurityaudit() {
+  return Usesecurityaudit_DEFAULT;
+}
+
+export default {
+  config: Usesecurityaudit_DEFAULT,
+  create: createUsesecurityaudit
+};

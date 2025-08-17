@@ -1,0 +1,18 @@
+"use client";
+
+import React from 'react';
+
+interface SubscriptiondashboardwidgetProps {
+  children?: React.ReactNode;
+  className?: string;
+}
+
+export function Subscriptiondashboardwidget({ children, className = "" }: SubscriptiondashboardwidgetProps) {
+  return (
+    <div className={className}>
+      {children || "Subscriptiondashboardwidget Component"}
+    </div>
+  );
+}
+
+export default Subscriptiondashboardwidget;

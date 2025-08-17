@@ -1,0 +1,19 @@
+// Supabase Module
+export interface SupabaseConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Supabase_DEFAULT: SupabaseConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createSupabase() {
+  return Supabase_DEFAULT;
+}
+
+export default {
+  config: Supabase_DEFAULT,
+  create: createSupabase
+};

@@ -1,0 +1,12 @@
+// Clean library module
+export interface CleanInterface {
+  id: string;
+  name: string;
+}
+
+export const cleanFunction = (): CleanInterface => ({
+  id: 'clean',
+  name: 'Clean Function'
+});
+
+export default cleanFunction;

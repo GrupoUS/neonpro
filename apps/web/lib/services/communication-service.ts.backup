@@ -1,0 +1,19 @@
+// Communicationservice Module
+export interface CommunicationserviceConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Communicationservice_DEFAULT: CommunicationserviceConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createCommunicationservice() {
+  return Communicationservice_DEFAULT;
+}
+
+export default {
+  config: Communicationservice_DEFAULT,
+  create: createCommunicationservice
+};

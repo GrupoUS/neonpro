@@ -1,0 +1,19 @@
+// Rlspolicies Module
+export interface RlspoliciesConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Rlspolicies_DEFAULT: RlspoliciesConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createRlspolicies() {
+  return Rlspolicies_DEFAULT;
+}
+
+export default {
+  config: Rlspolicies_DEFAULT,
+  create: createRlspolicies
+};

@@ -1,0 +1,19 @@
+// Whatsappprovider Module
+export interface WhatsappproviderConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Whatsappprovider_DEFAULT: WhatsappproviderConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createWhatsappprovider() {
+  return Whatsappprovider_DEFAULT;
+}
+
+export default {
+  config: Whatsappprovider_DEFAULT,
+  create: createWhatsappprovider
+};

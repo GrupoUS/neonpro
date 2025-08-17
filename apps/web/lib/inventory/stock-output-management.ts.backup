@@ -1,0 +1,19 @@
+// Stockoutputmanagement Module
+export interface StockoutputmanagementConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Stockoutputmanagement_DEFAULT: StockoutputmanagementConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createStockoutputmanagement() {
+  return Stockoutputmanagement_DEFAULT;
+}
+
+export default {
+  config: Stockoutputmanagement_DEFAULT,
+  create: createStockoutputmanagement
+};

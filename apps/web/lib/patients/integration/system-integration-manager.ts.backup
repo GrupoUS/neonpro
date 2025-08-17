@@ -1,0 +1,19 @@
+// Systemintegrationmanager Module
+export interface SystemintegrationmanagerConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Systemintegrationmanager_DEFAULT: SystemintegrationmanagerConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createSystemintegrationmanager() {
+  return Systemintegrationmanager_DEFAULT;
+}
+
+export default {
+  config: Systemintegrationmanager_DEFAULT,
+  create: createSystemintegrationmanager
+};

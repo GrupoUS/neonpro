@@ -1,0 +1,19 @@
+// Subscriptionerrorlogger Module
+export interface SubscriptionerrorloggerConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Subscriptionerrorlogger_DEFAULT: SubscriptionerrorloggerConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createSubscriptionerrorlogger() {
+  return Subscriptionerrorlogger_DEFAULT;
+}
+
+export default {
+  config: Subscriptionerrorlogger_DEFAULT,
+  create: createSubscriptionerrorlogger
+};

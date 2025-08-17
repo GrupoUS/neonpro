@@ -1,0 +1,17 @@
+// Placeholder for zustand/middleware/immerexport const immer = <T>(config: any) => config;
+export default immer;
+export const validateCSRF = () => true;
+
+export const rateLimit = => ({});
+
+export const createBackupConfig = () => ({});
+
+export const sessionConfig = {};
+
+export class UnifiedSessionSystem {}
+
+export const trackLoginPerformance = () => {};
+
+export type PermissionContext = any;
+
+export type SessionValidationResult = any;

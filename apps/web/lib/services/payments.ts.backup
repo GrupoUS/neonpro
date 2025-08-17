@@ -1,0 +1,19 @@
+// Payments Module
+export interface PaymentsConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Payments_DEFAULT: PaymentsConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createPayments() {
+  return Payments_DEFAULT;
+}
+
+export default {
+  config: Payments_DEFAULT,
+  create: createPayments
+};

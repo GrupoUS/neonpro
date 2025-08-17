@@ -1,0 +1,19 @@
+// Clinicstore Module
+export interface ClinicstoreConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Clinicstore_DEFAULT: ClinicstoreConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createClinicstore() {
+  return Clinicstore_DEFAULT;
+}
+
+export default {
+  config: Clinicstore_DEFAULT,
+  create: createClinicstore
+};

@@ -1,0 +1,18 @@
+"use client";
+
+import React from 'react';
+
+interface UsagelimitgateProps {
+  children?: React.ReactNode;
+  className?: string;
+}
+
+export function Usagelimitgate({ children, className = "" }: UsagelimitgateProps) {
+  return (
+    <div className={className}>
+      {children || "Usagelimitgate Component"}
+    </div>
+  );
+}
+
+export default Usagelimitgate;

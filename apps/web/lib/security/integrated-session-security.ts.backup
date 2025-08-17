@@ -1,0 +1,19 @@
+// Integratedsessionsecurity Module
+export interface IntegratedsessionsecurityConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Integratedsessionsecurity_DEFAULT: IntegratedsessionsecurityConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createIntegratedsessionsecurity() {
+  return Integratedsessionsecurity_DEFAULT;
+}
+
+export default {
+  config: Integratedsessionsecurity_DEFAULT,
+  create: createIntegratedsessionsecurity
+};

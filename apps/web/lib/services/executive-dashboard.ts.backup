@@ -1,0 +1,19 @@
+// Executivedashboard Module
+export interface ExecutivedashboardConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Executivedashboard_DEFAULT: ExecutivedashboardConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createExecutivedashboard() {
+  return Executivedashboard_DEFAULT;
+}
+
+export default {
+  config: Executivedashboard_DEFAULT,
+  create: createExecutivedashboard
+};

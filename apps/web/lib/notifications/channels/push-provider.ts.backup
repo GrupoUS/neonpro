@@ -1,0 +1,19 @@
+// Pushprovider Module
+export interface PushproviderConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Pushprovider_DEFAULT: PushproviderConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createPushprovider() {
+  return Pushprovider_DEFAULT;
+}
+
+export default {
+  config: Pushprovider_DEFAULT,
+  create: createPushprovider
+};

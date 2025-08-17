@@ -1,0 +1,19 @@
+// Compliancemanager Module
+export interface CompliancemanagerConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Compliancemanager_DEFAULT: CompliancemanagerConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createCompliancemanager() {
+  return Compliancemanager_DEFAULT;
+}
+
+export default {
+  config: Compliancemanager_DEFAULT,
+  create: createCompliancemanager
+};

@@ -1,0 +1,19 @@
+// Cacheoptimization Module
+export interface CacheoptimizationConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Cacheoptimization_DEFAULT: CacheoptimizationConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createCacheoptimization() {
+  return Cacheoptimization_DEFAULT;
+}
+
+export default {
+  config: Cacheoptimization_DEFAULT,
+  create: createCacheoptimization
+};

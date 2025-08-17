@@ -1,0 +1,19 @@
+// Sessionutils Module
+export interface SessionutilsConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Sessionutils_DEFAULT: SessionutilsConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createSessionutils() {
+  return Sessionutils_DEFAULT;
+}
+
+export default {
+  config: Sessionutils_DEFAULT,
+  create: createSessionutils
+};

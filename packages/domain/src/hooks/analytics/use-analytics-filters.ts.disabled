@@ -1,0 +1,418 @@
+/**
+ * Analytics Filters Utility Hook for NeonPro
+ *
+ * Centralized hook for managing analytics filters across all dashboard components:
+ * - Date range selection with presets
+ * - Metric filtering and segmentation
+ * - Customer segment filters
+ * - Subscription tier filters
+ * - Geographic and demographic filters
+ *
+ * Provides consistent filtering interface for all analytics hooks.
+ */
+
+import { useSearchParams } from '../placeholders/next-navigation';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+
+// Types for filter configuration
+export type DateRangeFilter = {
+  start: string;
+  end: string;
+  preset?: 'today' | '7d' | '30d' | '90d' | '1y' | 'custom';
+};
+
+export type SegmentFilter = {
+  type: 'subscription_tier' | 'customer_segment' | 'geographic' | 'demographic';
+  values: string[];
+};
+
+export type MetricFilter = {
+  metrics: string[];
+  aggregation: 'sum' | 'avg' | 'count' | 'distinct';
+  groupBy?: string[];
+};
+
+export type AnalyticsFilters = {
+  dateRange: DateRangeFilter;
+  segments: SegmentFilter[];
+  metrics: MetricFilter;
+  customFilters: { [key: string]: any };
+};
+
+export type FilterState = {
+  filters: AnalyticsFilters;
+  isValid: boolean;
+  errors: string[];
+  appliedFilters: AnalyticsFilters | null;
+  hasChanges: boolean;
+};
+
+export type FilterActions = {
+  updateDateRange: (dateRange: DateRangeFilter) => void;
+  addSegmentFilter: (segment: SegmentFilter) => void;
+  removeSegmentFilter: (type: string) => void;
+  updateMetricFilter: (metrics: MetricFilter) => void;
+  setCustomFilter: (key: string, value: unknown) => void;
+  clearCustomFilter: (key: string) => void;
+  applyFilters: () => void;
+  resetFilters: () => void;
+  saveFilterSet: (name: string) => void;
+  loadFilterSet: (name: string) => void;
+  getFilterSummary: () => string;
+};
+
+// Default filter configuration
+const DEFAULT_FILTERS: AnalyticsFilters = {
+  dateRange: {
+    start: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+    end: new Date().toISOString().split('T')[0],
+    preset: '30d',
+  },
+  segments: [],
+  metrics: {
+    metrics: ['revenue', 'subscriptions', 'churn'],
+    aggregation: 'sum',
+  },
+  customFilters: {},
+};
+
+/**
+ * Main analytics filters hook
+ */
+export function useAnalyticsFilters(
+  initialFilters?: Partial<AnalyticsFilters>
+): FilterState & FilterActions {
+  const searchParams = useSearchParams();
+  const [filters, setFilters] = useState<AnalyticsFilters>({
+    ...DEFAULT_FILTERS,
+    ...initialFilters,
+  });
+  const [appliedFilters, setAppliedFilters] = useState<AnalyticsFilters | null>(null);
+  const [savedFilterSets, setSavedFilterSets] = useState<{
+    [name: string]: AnalyticsFilters;
+  }>({});
+
+  // Load filters from URL on mount
+  useEffect(() => {
+    const urlFilters = parseFiltersFromURL(searchParams);
+    if (urlFilters) {
+      setFilters((prev) => ({ ...prev, ...urlFilters }));
+    }
+  }, [searchParams]);
+
+  // Validate filters
+  const validation = useMemo(() => {
+    const errors: string[] = [];
+    let isValid = true;
+
+    // Validate date range
+    if (new Date(filters.dateRange.start) > new Date(filters.dateRange.end)) {
+      errors.push('Start date must be before end date');
+      isValid = false;
+    }
+
+    // Validate metrics
+    if (filters.metrics.metrics.length === 0) {
+      errors.push('At least one metric must be selected');
+      isValid = false;
+    }
+
+    // Validate date range span (not too large)
+    const daysDiff =
+      (new Date(filters.dateRange.end).getTime() - new Date(filters.dateRange.start).getTime()) /
+      (1000 * 60 * 60 * 24);
+    if (daysDiff > 365) {
+      errors.push('Date range cannot exceed 365 days');
+      isValid = false;
+    }
+
+    return { isValid, errors };
+  }, [filters]);
+
+  // Check if filters have changed since last applied
+  const hasChanges = useMemo(() => {
+    if (!appliedFilters) {
+      return true;
+    }
+    return JSON.stringify(filters) !== JSON.stringify(appliedFilters);
+  }, [filters, appliedFilters]);
+
+  // Actions
+  const updateDateRange = useCallback((dateRange: DateRangeFilter) => {
+    setFilters((prev) => ({
+      ...prev,
+      dateRange: {
+        ...dateRange,
+        // Auto-calculate dates for presets
+        ...(dateRange.preset && dateRange.preset !== 'custom'
+          ? getPresetDateRange(dateRange.preset)
+          : {}),
+      },
+    }));
+  }, []);
+
+  const addSegmentFilter = useCallback((segment: SegmentFilter) => {
+    setFilters((prev) => ({
+      ...prev,
+      segments: [...prev.segments.filter((s) => s.type !== segment.type), segment],
+    }));
+  }, []);
+
+  const removeSegmentFilter = useCallback((type: string) => {
+    setFilters((prev) => ({
+      ...prev,
+      segments: prev.segments.filter((s) => s.type !== type),
+    }));
+  }, []);
+
+  const updateMetricFilter = useCallback((metricFilter: MetricFilter) => {
+    setFilters((prev) => ({
+      ...prev,
+      metrics: metricFilter,
+    }));
+  }, []);
+
+  const setCustomFilter = useCallback((key: string, value: unknown) => {
+    setFilters((prev) => ({
+      ...prev,
+      customFilters: {
+        ...prev.customFilters,
+        [key]: value,
+      },
+    }));
+  }, []);
+
+  const clearCustomFilter = useCallback((key: string) => {
+    setFilters((prev) => ({
+      ...prev,
+      customFilters: Object.fromEntries(
+        Object.entries(prev.customFilters).filter(([k]) => k !== key)
+      ),
+    }));
+  }, []);
+
+  const applyFilters = useCallback(() => {
+    if (validation.isValid) {
+      setAppliedFilters({ ...filters });
+      // Update URL with current filters
+      updateURLWithFilters(filters);
+    }
+  }, [filters, validation.isValid]);
+
+  const resetFilters = useCallback(() => {
+    setFilters(DEFAULT_FILTERS);
+    setAppliedFilters(null);
+  }, []);
+
+  const saveFilterSet = useCallback(
+    (name: string) => {
+      const newFilterSets = {
+        ...savedFilterSets,
+        [name]: { ...filters },
+      };
+      setSavedFilterSets(newFilterSets);
+
+      // Save to localStorage
+      try {
+        localStorage.setItem('neonpro-analytics-filters', JSON.stringify(newFilterSets));
+      } catch (_error) {}
+    },
+    [filters, savedFilterSets]
+  );
+
+  const loadFilterSet = useCallback(
+    (name: string) => {
+      const filterSet = savedFilterSets[name];
+      if (filterSet) {
+        setFilters(filterSet);
+      }
+    },
+    [savedFilterSets]
+  );
+
+  const getFilterSummary = useCallback(() => {
+    const parts: string[] = [];
+
+    // Date range
+    if (filters.dateRange.preset && filters.dateRange.preset !== 'custom') {
+      parts.push(`Last ${getPresetLabel(filters.dateRange.preset)}`);
+    } else {
+      parts.push(`${filters.dateRange.start} to ${filters.dateRange.end}`);
+    }
+
+    // Metrics
+    parts.push(
+      `${filters.metrics.metrics.length} metric${filters.metrics.metrics.length > 1 ? 's' : ''}`
+    );
+
+    // Segments
+    if (filters.segments.length > 0) {
+      parts.push(`${filters.segments.length} segment${filters.segments.length > 1 ? 's' : ''}`);
+    }
+
+    // Custom filters
+    const customCount = Object.keys(filters.customFilters).length;
+    if (customCount > 0) {
+      parts.push(`${customCount} custom filter${customCount > 1 ? 's' : ''}`);
+    }
+
+    return parts.join(', ');
+  }, [filters]);
+
+  // Load saved filter sets on mount
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('neonpro-analytics-filters');
+      if (saved) {
+        setSavedFilterSets(JSON.parse(saved));
+      }
+    } catch (_error) {}
+  }, []);
+
+  return {
+    // State
+    filters,
+    isValid: validation.isValid,
+    errors: validation.errors,
+    appliedFilters,
+    hasChanges,
+
+    // Actions
+    updateDateRange,
+    addSegmentFilter,
+    removeSegmentFilter,
+    updateMetricFilter,
+    setCustomFilter,
+    clearCustomFilter,
+    applyFilters,
+    resetFilters,
+    saveFilterSet,
+    loadFilterSet,
+    getFilterSummary,
+  };
+}
+
+// Utility functions
+function getPresetDateRange(preset: string): { start: string; end: string } {
+  const end = new Date();
+  const start = new Date();
+
+  switch (preset) {
+    case 'today':
+      // Today only
+      break;
+    case '7d':
+      start.setDate(end.getDate() - 7);
+      break;
+    case '30d':
+      start.setDate(end.getDate() - 30);
+      break;
+    case '90d':
+      start.setDate(end.getDate() - 90);
+      break;
+    case '1y':
+      start.setFullYear(end.getFullYear() - 1);
+      break;
+    default:
+      start.setDate(end.getDate() - 30);
+  }
+
+  return {
+    start: start.toISOString().split('T')[0],
+    end: end.toISOString().split('T')[0],
+  };
+}
+
+function getPresetLabel(preset: string): string {
+  switch (preset) {
+    case 'today':
+      return 'Today';
+    case '7d':
+      return '7 days';
+    case '30d':
+      return '30 days';
+    case '90d':
+      return '90 days';
+    case '1y':
+      return 'year';
+    default:
+      return preset;
+  }
+}
+
+function parseFiltersFromURL(searchParams: URLSearchParams): Partial<AnalyticsFilters> | null {
+  try {
+    const filtersParam = searchParams.get('filters');
+    if (filtersParam) {
+      return JSON.parse(decodeURIComponent(filtersParam));
+    }
+  } catch (_error) {}
+  return null;
+}
+
+function updateURLWithFilters(filters: AnalyticsFilters) {
+  try {
+    const url = new URL(window.location.href);
+    url.searchParams.set('filters', encodeURIComponent(JSON.stringify(filters)));
+    window.history.replaceState({}, '', url.toString());
+  } catch (_error) {}
+}
+
+/**
+ * Hook for common filter presets
+ */
+export function useFilterPresets() {
+  return useMemo(
+    () => ({
+      // Date range presets
+      datePresets: [
+        { label: 'Today', value: 'today' },
+        { label: 'Last 7 days', value: '7d' },
+        { label: 'Last 30 days', value: '30d' },
+        { label: 'Last 90 days', value: '90d' },
+        { label: 'Last year', value: '1y' },
+        { label: 'Custom range', value: 'custom' },
+      ],
+
+      // Metric presets
+      metricPresets: [
+        {
+          label: 'Core Metrics',
+          metrics: ['revenue', 'subscriptions', 'churn'],
+        },
+        {
+          label: 'Growth Metrics',
+          metrics: ['new_subscriptions', 'conversion_rate', 'growth_rate'],
+        },
+        {
+          label: 'Retention Metrics',
+          metrics: ['retention_rate', 'churn_rate', 'ltv'],
+        },
+        {
+          label: 'Trial Metrics',
+          metrics: ['trial_conversions', 'trial_duration', 'trial_to_paid'],
+        },
+      ],
+
+      // Segment presets
+      segmentPresets: [
+        {
+          label: 'Subscription Tiers',
+          type: 'subscription_tier',
+          values: ['basic', 'pro', 'enterprise'],
+        },
+        {
+          label: 'Customer Segments',
+          type: 'customer_segment',
+          values: ['new', 'existing', 'churned'],
+        },
+        {
+          label: 'Geographic Regions',
+          type: 'geographic',
+          values: ['north_america', 'europe', 'asia_pacific'],
+        },
+      ],
+    }),
+    []
+  );
+}

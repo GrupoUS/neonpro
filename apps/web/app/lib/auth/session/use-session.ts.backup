@@ -1,0 +1,19 @@
+// Usesession Module
+export interface UsesessionConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Usesession_DEFAULT: UsesessionConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createUsesession() {
+  return Usesession_DEFAULT;
+}
+
+export default {
+  config: Usesession_DEFAULT,
+  create: createUsesession
+};

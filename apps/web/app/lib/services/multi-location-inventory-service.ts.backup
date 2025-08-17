@@ -1,0 +1,19 @@
+// Multilocationinventoryservice Module
+export interface MultilocationinventoryserviceConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Multilocationinventoryservice_DEFAULT: MultilocationinventoryserviceConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createMultilocationinventoryservice() {
+  return Multilocationinventoryservice_DEFAULT;
+}
+
+export default {
+  config: Multilocationinventoryservice_DEFAULT,
+  create: createMultilocationinventoryservice
+};

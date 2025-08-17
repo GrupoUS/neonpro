@@ -1,0 +1,19 @@
+// Lgpdcore Module
+export interface LgpdcoreConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Lgpdcore_DEFAULT: LgpdcoreConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createLgpdcore() {
+  return Lgpdcore_DEFAULT;
+}
+
+export default {
+  config: Lgpdcore_DEFAULT,
+  create: createLgpdcore
+};

@@ -1,0 +1,19 @@
+// Databaseoptimizer Module
+export interface DatabaseoptimizerConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Databaseoptimizer_DEFAULT: DatabaseoptimizerConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createDatabaseoptimizer() {
+  return Databaseoptimizer_DEFAULT;
+}
+
+export default {
+  config: Databaseoptimizer_DEFAULT,
+  create: createDatabaseoptimizer
+};

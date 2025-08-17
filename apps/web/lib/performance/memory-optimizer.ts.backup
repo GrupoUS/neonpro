@@ -1,0 +1,19 @@
+// Memoryoptimizer Module
+export interface MemoryoptimizerConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Memoryoptimizer_DEFAULT: MemoryoptimizerConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createMemoryoptimizer() {
+  return Memoryoptimizer_DEFAULT;
+}
+
+export default {
+  config: Memoryoptimizer_DEFAULT,
+  create: createMemoryoptimizer
+};

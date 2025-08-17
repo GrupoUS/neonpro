@@ -1,0 +1,19 @@
+// Automatedprotocoloptimization Module
+export interface AutomatedprotocoloptimizationConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Automatedprotocoloptimization_DEFAULT: AutomatedprotocoloptimizationConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createAutomatedprotocoloptimization() {
+  return Automatedprotocoloptimization_DEFAULT;
+}
+
+export default {
+  config: Automatedprotocoloptimization_DEFAULT,
+  create: createAutomatedprotocoloptimization
+};

@@ -1,0 +1,19 @@
+// I18N Module
+export interface I18NConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const I18N_DEFAULT: I18NConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createI18N() {
+  return I18N_DEFAULT;
+}
+
+export default {
+  config: I18N_DEFAULT,
+  create: createI18N
+};

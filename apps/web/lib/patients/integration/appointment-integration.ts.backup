@@ -1,0 +1,19 @@
+// Appointmentintegration Module
+export interface AppointmentintegrationConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Appointmentintegration_DEFAULT: AppointmentintegrationConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createAppointmentintegration() {
+  return Appointmentintegration_DEFAULT;
+}
+
+export default {
+  config: Appointmentintegration_DEFAULT,
+  create: createAppointmentintegration
+};

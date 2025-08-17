@@ -1,0 +1,30 @@
+// Placeholder for jsPDF moduleexport class jsPDF {
+  constructor(options ? null : any) {}
+  
+  setFontSize(size: number) {}
+  text(text: string,
+    x: number, y: number) {}
+  setFont(font: string, style?: string) {}
+  addPage() {}
+  save(filename: string) {}
+  output(type: string) { return ''; }
+  
+  autoTable(options: any) {}
+}
+
+export default jsPDF;
+export const validateCSRF = () => true;
+
+export const rateLimit = () => ({});
+
+export const createBackupConfig = () => ({});
+
+export const sessionConfig = {};
+
+export class UnifiedSessionSystem {}
+
+export const trackLoginPerformance = () => {};
+
+export type PermissionContext = any;
+
+export type SessionValidationResult = any;

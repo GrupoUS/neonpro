@@ -1,0 +1,19 @@
+// Schedulingoptimized Module
+export interface SchedulingoptimizedConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Schedulingoptimized_DEFAULT: SchedulingoptimizedConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createSchedulingoptimized() {
+  return Schedulingoptimized_DEFAULT;
+}
+
+export default {
+  config: Schedulingoptimized_DEFAULT,
+  create: createSchedulingoptimized
+};

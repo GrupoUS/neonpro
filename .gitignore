@@ -1,0 +1,76 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+node_modules/
+**/node_modules/
+/node_modules
+
+# next.js
+.next/
+**/.next/
+/out/
+**/out/
+
+# production
+/build
+build/
+**/build/
+dist/
+**/dist/
+out/
+**/out/
+
+# cache and temporary files
+.turbo/
+**/.turbo/
+.cache/
+**/.cache/
+
+# temporary upload files (Google Drive sync)
+.tmp.driveupload/
+**/.tmp.driveupload/
+tmp.driveupload/
+**/tmp.driveupload/
+.tmp.drivedownload/
+**/.tmp.drivedownload/
+tmp.drivedownload/
+**/tmp.drivedownload/
+
+# IDE and tooling
+.vscode/
+.claude/
+.qwen/
+.trae/
+.bmad-core/
+
+# logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+**/*.log
+
+# env files
+.env*
+.mcp.json
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# testing
+tools/testing/reports/
+**/coverage/
+**/test-results/
+**/playwright-report/
+**/.nyc_output/
+**/allure-results/
+**/allure-report/
+
+# test artifacts
+tools/testing/reports/**/*
+!tools/testing/reports/.gitkeep

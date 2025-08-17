@@ -1,0 +1,18 @@
+"use client";
+
+import React from 'react';
+
+interface ScrollareaProps {
+  children?: React.ReactNode;
+  className?: string;
+}
+
+export function Scrollarea({ children, className = "" }: ScrollareaProps) {
+  return (
+    <div className={className}>
+      {children || "Scrollarea Component"}
+    </div>
+  );
+}
+
+export default Scrollarea;

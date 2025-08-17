@@ -1,0 +1,19 @@
+// Kpitypes Module
+export interface KpitypesConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Kpitypes_DEFAULT: KpitypesConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createKpitypes() {
+  return Kpitypes_DEFAULT;
+}
+
+export default {
+  config: Kpitypes_DEFAULT,
+  create: createKpitypes
+};

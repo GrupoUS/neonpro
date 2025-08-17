@@ -1,0 +1,19 @@
+// Personalizedrecommendations Module
+export interface PersonalizedrecommendationsConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Personalizedrecommendations_DEFAULT: PersonalizedrecommendationsConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createPersonalizedrecommendations() {
+  return Personalizedrecommendations_DEFAULT;
+}
+
+export default {
+  config: Personalizedrecommendations_DEFAULT,
+  create: createPersonalizedrecommendations
+};

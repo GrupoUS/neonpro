@@ -1,0 +1,19 @@
+// Medicaltimeline Module
+export interface MedicaltimelineConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Medicaltimeline_DEFAULT: MedicaltimelineConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createMedicaltimeline() {
+  return Medicaltimeline_DEFAULT;
+}
+
+export default {
+  config: Medicaltimeline_DEFAULT,
+  create: createMedicaltimeline
+};

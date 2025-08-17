@@ -1,0 +1,19 @@
+// Stock Module
+export interface StockConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Stock_DEFAULT: StockConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createStock() {
+  return Stock_DEFAULT;
+}
+
+export default {
+  config: Stock_DEFAULT,
+  create: createStock
+};

@@ -1,0 +1,18 @@
+"use client";
+
+import React from 'react';
+
+interface ForecastingchartsProps {
+  children?: React.ReactNode;
+  className?: string;
+}
+
+export function Forecastingcharts({ children, className = "" }: ForecastingchartsProps) {
+  return (
+    <div className={className}>
+      {children || "Forecastingcharts Component"}
+    </div>
+  );
+}
+
+export default Forecastingcharts;

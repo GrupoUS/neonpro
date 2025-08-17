@@ -1,0 +1,19 @@
+// Lrucache Module
+export interface LrucacheConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Lrucache_DEFAULT: LrucacheConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createLrucache() {
+  return Lrucache_DEFAULT;
+}
+
+export default {
+  config: Lrucache_DEFAULT,
+  create: createLrucache
+};

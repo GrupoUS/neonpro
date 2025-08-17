@@ -1,0 +1,61 @@
+// Subscription Types// Common types used across subscription components
+export type SubscriptionPlan = 'free' | 'pro' | 'enterprise';
+
+export type SubscriptionStatus =
+  | 'active'
+  | 'inactive'
+  | 'canceled'
+  | 'past_due'
+  | 'trialing'
+  | "incomplete" | "incomplete_expired" | "unpaid";
+
+export interface SubscriptionFeature {
+  id: string;
+  name: string;
+  description: string;
+  enabled: boolean;
+  plan: SubscriptionPlan;
+  category: string;
+}
+
+export interface UsageLimit {
+  feature: string;
+  current: number;
+  limit: number;
+  unit: string;
+  resetDate: Date;
+}
+
+export interface FeatureAccess {
+  hasAccess: boolean;
+  reason: string;
+  upgradeRequired: boolean;
+  requiredPlan: SubscriptionPlan;
+}
+
+export interface SubscriptionData {
+  id: string;
+  plan: SubscriptionPlan;
+  status: SubscriptionStatus;
+  currentPeriodStart: Date;
+  currentPeriodEnd: Date;
+  cancelAtPeriodEnd: boolean;
+  trialEnd: Date;
+  features: Array<SubscriptionFeature>;
+  usage: Array<UsageLimit>;
+}
+
+export interface SubscriptionWidgetProps {
+  subscription: SubscriptionData;
+  onUpgrade: () => void;
+  onManage: => void;
+  className: string;
+}
+
+export interface FeatureGateProps {
+  feature: string;
+  plan: SubscriptionPlan;
+  fallback: React.ReactNode();
+  children: React.ReactNode;
+  showUpgradePrompt: boolean;
+}

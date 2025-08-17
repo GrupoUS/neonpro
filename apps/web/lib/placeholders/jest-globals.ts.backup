@@ -1,0 +1,19 @@
+// Jestglobals Module
+export interface JestglobalsConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Jestglobals_DEFAULT: JestglobalsConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createJestglobals() {
+  return Jestglobals_DEFAULT;
+}
+
+export default {
+  config: Jestglobals_DEFAULT,
+  create: createJestglobals
+};

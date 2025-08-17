@@ -1,0 +1,19 @@
+// Marketingcampaignservice Module
+export interface MarketingcampaignserviceConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Marketingcampaignservice_DEFAULT: MarketingcampaignserviceConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createMarketingcampaignservice() {
+  return Marketingcampaignservice_DEFAULT;
+}
+
+export default {
+  config: Marketingcampaignservice_DEFAULT,
+  create: createMarketingcampaignservice
+};

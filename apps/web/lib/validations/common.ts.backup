@@ -1,0 +1,19 @@
+// Common Module
+export interface CommonConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Common_DEFAULT: CommonConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createCommon() {
+  return Common_DEFAULT;
+}
+
+export default {
+  config: Common_DEFAULT,
+  create: createCommon
+};

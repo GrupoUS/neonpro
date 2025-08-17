@@ -1,0 +1,19 @@
+// Sessionmanager Module
+export interface SessionmanagerConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Sessionmanager_DEFAULT: SessionmanagerConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createSessionmanager() {
+  return Sessionmanager_DEFAULT;
+}
+
+export default {
+  config: Sessionmanager_DEFAULT,
+  create: createSessionmanager
+};

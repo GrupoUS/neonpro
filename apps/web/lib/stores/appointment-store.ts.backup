@@ -1,0 +1,19 @@
+// Appointmentstore Module
+export interface AppointmentstoreConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Appointmentstore_DEFAULT: AppointmentstoreConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createAppointmentstore() {
+  return Appointmentstore_DEFAULT;
+}
+
+export default {
+  config: Appointmentstore_DEFAULT,
+  create: createAppointmentstore
+};

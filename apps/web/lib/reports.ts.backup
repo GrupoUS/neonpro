@@ -1,0 +1,19 @@
+// Reports Module
+export interface ReportsConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Reports_DEFAULT: ReportsConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createReports() {
+  return Reports_DEFAULT;
+}
+
+export default {
+  config: Reports_DEFAULT,
+  create: createReports
+};

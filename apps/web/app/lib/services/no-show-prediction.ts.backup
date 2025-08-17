@@ -1,0 +1,19 @@
+// Noshowprediction Module
+export interface NoshowpredictionConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Noshowprediction_DEFAULT: NoshowpredictionConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createNoshowprediction() {
+  return Noshowprediction_DEFAULT;
+}
+
+export default {
+  config: Noshowprediction_DEFAULT,
+  create: createNoshowprediction
+};

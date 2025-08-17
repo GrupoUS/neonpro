@@ -1,0 +1,18 @@
+"use client";
+
+import React from 'react';
+
+interface NeongradientcardProps {
+  children?: React.ReactNode;
+  className?: string;
+}
+
+export function Neongradientcard({ children, className = "" }: NeongradientcardProps) {
+  return (
+    <div className={className}>
+      {children || "Neongradientcard Component"}
+    </div>
+  );
+}
+
+export default Neongradientcard;

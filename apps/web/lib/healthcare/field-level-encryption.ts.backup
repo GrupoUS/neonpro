@@ -1,0 +1,19 @@
+// Fieldlevelencryption Module
+export interface FieldlevelencryptionConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Fieldlevelencryption_DEFAULT: FieldlevelencryptionConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createFieldlevelencryption() {
+  return Fieldlevelencryption_DEFAULT;
+}
+
+export default {
+  config: Fieldlevelencryption_DEFAULT,
+  create: createFieldlevelencryption
+};

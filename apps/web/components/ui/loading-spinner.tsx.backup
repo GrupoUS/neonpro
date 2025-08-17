@@ -1,0 +1,18 @@
+"use client";
+
+import React from 'react';
+
+interface LoadingspinnerProps {
+  children?: React.ReactNode;
+  className?: string;
+}
+
+export function Loadingspinner({ children, className = "" }: LoadingspinnerProps) {
+  return (
+    <div className={className}>
+      {children || "Loadingspinner Component"}
+    </div>
+  );
+}
+
+export default Loadingspinner;

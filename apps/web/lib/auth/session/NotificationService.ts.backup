@@ -1,0 +1,19 @@
+// Notificationservice Module
+export interface NotificationserviceConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Notificationservice_DEFAULT: NotificationserviceConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createNotificationservice() {
+  return Notificationservice_DEFAULT;
+}
+
+export default {
+  config: Notificationservice_DEFAULT,
+  create: createNotificationservice
+};

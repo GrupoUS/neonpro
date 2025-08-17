@@ -1,0 +1,19 @@
+// Testing Module
+export interface TestingConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Testing_DEFAULT: TestingConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createTesting() {
+  return Testing_DEFAULT;
+}
+
+export default {
+  config: Testing_DEFAULT,
+  create: createTesting
+};

@@ -1,0 +1,19 @@
+// Suppliers Module
+export interface SuppliersConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Suppliers_DEFAULT: SuppliersConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createSuppliers() {
+  return Suppliers_DEFAULT;
+}
+
+export default {
+  config: Suppliers_DEFAULT,
+  create: createSuppliers
+};

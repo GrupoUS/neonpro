@@ -1,0 +1,19 @@
+// Triggerjobs Module
+export interface TriggerjobsConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Triggerjobs_DEFAULT: TriggerjobsConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createTriggerjobs() {
+  return Triggerjobs_DEFAULT;
+}
+
+export default {
+  config: Triggerjobs_DEFAULT,
+  create: createTriggerjobs
+};

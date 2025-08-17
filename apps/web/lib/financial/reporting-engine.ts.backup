@@ -1,0 +1,19 @@
+// Reportingengine Module
+export interface ReportingengineConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Reportingengine_DEFAULT: ReportingengineConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createReportingengine() {
+  return Reportingengine_DEFAULT;
+}
+
+export default {
+  config: Reportingengine_DEFAULT,
+  create: createReportingengine
+};

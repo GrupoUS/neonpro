@@ -1,0 +1,19 @@
+// Zustand Module
+export interface ZustandConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Zustand_DEFAULT: ZustandConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createZustand() {
+  return Zustand_DEFAULT;
+}
+
+export default {
+  config: Zustand_DEFAULT,
+  create: createZustand
+};

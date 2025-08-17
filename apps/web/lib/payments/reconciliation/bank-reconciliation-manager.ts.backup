@@ -1,0 +1,19 @@
+// Bankreconciliationmanager Module
+export interface BankreconciliationmanagerConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Bankreconciliationmanager_DEFAULT: BankreconciliationmanagerConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createBankreconciliationmanager() {
+  return Bankreconciliationmanager_DEFAULT;
+}
+
+export default {
+  config: Bankreconciliationmanager_DEFAULT,
+  create: createBankreconciliationmanager
+};

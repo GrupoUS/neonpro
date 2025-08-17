@@ -1,0 +1,19 @@
+// Constants Module
+export interface ConstantsConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Constants_DEFAULT: ConstantsConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createConstants() {
+  return Constants_DEFAULT;
+}
+
+export default {
+  config: Constants_DEFAULT,
+  create: createConstants
+};

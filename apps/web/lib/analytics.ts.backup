@@ -1,0 +1,19 @@
+// Analytics Module
+export interface AnalyticsConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Analytics_DEFAULT: AnalyticsConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createAnalytics() {
+  return Analytics_DEFAULT;
+}
+
+export default {
+  config: Analytics_DEFAULT,
+  create: createAnalytics
+};

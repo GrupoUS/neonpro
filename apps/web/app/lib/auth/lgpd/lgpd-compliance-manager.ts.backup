@@ -1,0 +1,19 @@
+// Lgpdcompliancemanager Module
+export interface LgpdcompliancemanagerConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Lgpdcompliancemanager_DEFAULT: LgpdcompliancemanagerConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createLgpdcompliancemanager() {
+  return Lgpdcompliancemanager_DEFAULT;
+}
+
+export default {
+  config: Lgpdcompliancemanager_DEFAULT,
+  create: createLgpdcompliancemanager
+};

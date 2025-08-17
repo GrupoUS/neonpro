@@ -1,0 +1,19 @@
+// Timelinemanager Module
+export interface TimelinemanagerConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Timelinemanager_DEFAULT: TimelinemanagerConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createTimelinemanager() {
+  return Timelinemanager_DEFAULT;
+}
+
+export default {
+  config: Timelinemanager_DEFAULT,
+  create: createTimelinemanager
+};

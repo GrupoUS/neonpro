@@ -1,0 +1,19 @@
+// Cfmprofessionalstandards Module
+export interface CfmprofessionalstandardsConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Cfmprofessionalstandards_DEFAULT: CfmprofessionalstandardsConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createCfmprofessionalstandards() {
+  return Cfmprofessionalstandards_DEFAULT;
+}
+
+export default {
+  config: Cfmprofessionalstandards_DEFAULT,
+  create: createCfmprofessionalstandards
+};

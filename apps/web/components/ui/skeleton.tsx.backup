@@ -1,0 +1,18 @@
+"use client";
+
+import React from 'react';
+
+interface SkeletonProps {
+  children?: React.ReactNode;
+  className?: string;
+}
+
+export function Skeleton({ children, className = "" }: SkeletonProps) {
+  return (
+    <div className={className}>
+      {children || "Skeleton Component"}
+    </div>
+  );
+}
+
+export default Skeleton;

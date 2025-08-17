@@ -1,0 +1,19 @@
+// Cashflowmonitoring Module
+export interface CashflowmonitoringConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Cashflowmonitoring_DEFAULT: CashflowmonitoringConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createCashflowmonitoring() {
+  return Cashflowmonitoring_DEFAULT;
+}
+
+export default {
+  config: Cashflowmonitoring_DEFAULT,
+  create: createCashflowmonitoring
+};

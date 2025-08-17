@@ -1,0 +1,19 @@
+// Installmentmanager Module
+export interface InstallmentmanagerConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Installmentmanager_DEFAULT: InstallmentmanagerConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createInstallmentmanager() {
+  return Installmentmanager_DEFAULT;
+}
+
+export default {
+  config: Installmentmanager_DEFAULT,
+  create: createInstallmentmanager
+};

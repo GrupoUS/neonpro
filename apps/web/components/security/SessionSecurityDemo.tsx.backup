@@ -1,0 +1,18 @@
+"use client";
+
+import React from 'react';
+
+interface SessionsecuritydemoProps {
+  children?: React.ReactNode;
+  className?: string;
+}
+
+export function Sessionsecuritydemo({ children, className = "" }: SessionsecuritydemoProps) {
+  return (
+    <div className={className}>
+      {children || "Sessionsecuritydemo Component"}
+    </div>
+  );
+}
+
+export default Sessionsecuritydemo;

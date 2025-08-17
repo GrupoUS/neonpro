@@ -1,0 +1,19 @@
+// Ssomanager Module
+export interface SsomanagerConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Ssomanager_DEFAULT: SsomanagerConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createSsomanager() {
+  return Ssomanager_DEFAULT;
+}
+
+export default {
+  config: Ssomanager_DEFAULT,
+  create: createSsomanager
+};

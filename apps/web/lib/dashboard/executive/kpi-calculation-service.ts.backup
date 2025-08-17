@@ -1,0 +1,19 @@
+// Kpicalculationservice Module
+export interface KpicalculationserviceConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Kpicalculationservice_DEFAULT: KpicalculationserviceConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createKpicalculationservice() {
+  return Kpicalculationservice_DEFAULT;
+}
+
+export default {
+  config: Kpicalculationservice_DEFAULT,
+  create: createKpicalculationservice
+};

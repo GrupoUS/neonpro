@@ -1,0 +1,19 @@
+// Treatmentsuccess Module
+export interface TreatmentsuccessConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Treatmentsuccess_DEFAULT: TreatmentsuccessConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createTreatmentsuccess() {
+  return Treatmentsuccess_DEFAULT;
+}
+
+export default {
+  config: Treatmentsuccess_DEFAULT,
+  create: createTreatmentsuccess
+};

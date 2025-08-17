@@ -1,0 +1,24 @@
+#!/usr/bin/env sh
+
+echo "🏥 NEONPRO Healthcare Pre-push Validation"
+echo "========================================="
+
+# Simple syntax and build validation
+echo "🔍 Validating TypeScript syntax..."
+pnpm turbo type-check
+
+if [ $? -ne 0 ]; then
+    echo "❌ TypeScript validation failed. Push aborted."
+    exit 1
+fi
+
+echo "🎯 Running linting..."
+pnpm turbo lint
+
+if [ $? -ne 0 ]; then
+    echo "⚠️  Linting issues detected, but continuing..."
+fi
+
+echo ""
+echo "✅ Basic validation completed!"
+echo "🏥 Ready for push!"

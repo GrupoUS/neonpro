@@ -1,0 +1,19 @@
+// Sessionpreservation Module
+export interface SessionpreservationConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Sessionpreservation_DEFAULT: SessionpreservationConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createSessionpreservation() {
+  return Sessionpreservation_DEFAULT;
+}
+
+export default {
+  config: Sessionpreservation_DEFAULT,
+  create: createSessionpreservation
+};

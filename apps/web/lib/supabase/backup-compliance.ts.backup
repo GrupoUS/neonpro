@@ -1,0 +1,19 @@
+// Backupcompliance Module
+export interface BackupcomplianceConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Backupcompliance_DEFAULT: BackupcomplianceConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createBackupcompliance() {
+  return Backupcompliance_DEFAULT;
+}
+
+export default {
+  config: Backupcompliance_DEFAULT,
+  create: createBackupcompliance
+};

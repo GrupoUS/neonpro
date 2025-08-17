@@ -1,0 +1,19 @@
+// Equipmentmaintenanceservice Module
+export interface EquipmentmaintenanceserviceConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Equipmentmaintenanceservice_DEFAULT: EquipmentmaintenanceserviceConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createEquipmentmaintenanceservice() {
+  return Equipmentmaintenanceservice_DEFAULT;
+}
+
+export default {
+  config: Equipmentmaintenanceservice_DEFAULT,
+  create: createEquipmentmaintenanceservice
+};

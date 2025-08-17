@@ -1,0 +1,19 @@
+// Ptbrxps13 Module
+export interface Ptbrxps13Config {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Ptbrxps13_DEFAULT: Ptbrxps13Config = {
+  enabled: true,
+  data: null
+};
+
+export function createPtbrxps13() {
+  return Ptbrxps13_DEFAULT;
+}
+
+export default {
+  config: Ptbrxps13_DEFAULT,
+  create: createPtbrxps13
+};

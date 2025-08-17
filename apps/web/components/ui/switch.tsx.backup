@@ -1,0 +1,18 @@
+"use client";
+
+import React from 'react';
+
+interface SwitchProps {
+  children?: React.ReactNode;
+  className?: string;
+}
+
+export function Switch({ children, className = "" }: SwitchProps) {
+  return (
+    <div className={className}>
+      {children || "Switch Component"}
+    </div>
+  );
+}
+
+export default Switch;

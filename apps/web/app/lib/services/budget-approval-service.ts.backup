@@ -1,0 +1,19 @@
+// Budgetapprovalservice Module
+export interface BudgetapprovalserviceConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Budgetapprovalservice_DEFAULT: BudgetapprovalserviceConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createBudgetapprovalservice() {
+  return Budgetapprovalservice_DEFAULT;
+}
+
+export default {
+  config: Budgetapprovalservice_DEFAULT,
+  create: createBudgetapprovalservice
+};

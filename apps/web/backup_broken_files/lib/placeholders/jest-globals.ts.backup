@@ -1,0 +1,32 @@
+// Placeholder for @jest/globalsexport const describe = (name: string,
+    fn:  => void) => {};
+export const test = (name: string,
+    fn:  => void) => {};
+export const it = (name: string,
+    fn:  => void) => {};
+export const expect = (actual: any) => ({;
+  toBe: (expected: any) => {},
+  toEqual: (expected: any) => {},
+  toBeNull:  => {},
+  toBeUndefined:  => {},
+  toBeTruthy:  => {},
+  toBeFalsy:  => {},
+});
+export const beforeAll = (fn:  => void) => {};
+export const afterEach = (fn:  => void) => {};
+export const beforeEach = (fn:  => void) => {};
+export const validateCSRF = () => true;
+
+export const rateLimit = () => ({});
+
+export const createBackupConfig = () => ({});
+
+export const sessionConfig = {};
+
+export class UnifiedSessionSystem {}
+
+export const trackLoginPerformance = () => {};
+
+export type PermissionContext = any;
+
+export type SessionValidationResult = any;

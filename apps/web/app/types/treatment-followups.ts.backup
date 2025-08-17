@@ -1,0 +1,324 @@
+// =====================================================================================// TREATMENT FOLLOW-UP AUTOMATION TYPES// Epic 7.3: Comprehensive TypeScript definitions for follow-up system// =====================================================================================
+// Core Follow-up Typesexport type FollowupType =
+  | 'post_treatment'
+  | 'progress_check'
+  | 'satisfaction'
+  | "maintenance" | "care_instructions" | "warning_check";
+
+export type CommunicationMethod =
+  | 'sms'
+  | 'email'
+  | "whatsapp" | "call" | "in_person";
+
+export type FollowupStatus =
+  | 'pending'
+  | 'sent'
+  | 'completed'
+  | "failed" | "cancelled" | "rescheduled";
+
+export type ResponseType =
+  | 'satisfaction_rating'
+  | 'yes_no'
+  | 'text'
+  | "photo" | "scale_1_10" | "multiple_choice";
+
+export type Priority = 'low' | "normal" | "high" | "urgent";
+
+export type AttachmentType =
+  | 'before_photo'
+  | 'after_photo'
+  | "progress_photo" | "document" | "report";
+
+// Follow-up Template Interfaceexport type FollowupTemplate = {
+  id: string;
+  name: string;
+  description: string;
+  treatment_type: string;
+  followup_type: FollowupType;
+  timing_days: number;
+  timing_hours: number;
+  message_content: string;
+  communication_method: CommunicationMethod;
+  requires_response: boolean;
+  response_type: ResponseType;
+  active: boolean;
+  clinic_id: string;
+  created_by: string;
+  created_at: string;
+  updated_at: string;
+};
+
+// Treatment Protocol Interfaceexport type TreatmentProtocol = {
+  id: string;
+  treatment_type: string;
+  protocol_name: string;
+  description: string;
+  followup_schedule: Array<FollowupScheduleItem>;
+  care_instructions: string;
+  warning_signs: string;
+  expected_results: string;
+  next_appointment_suggestion: number; // Days  active: boolean;
+  clinic_id: string;
+  created_by: string;
+  created_at: string;
+  updated_at: string;
+};
+
+// Follow-up Schedule Itemexport type FollowupScheduleItem = {
+  type: FollowupType;
+  days: number;
+  hours: number;
+  priority: Priority;
+  required: boolean;
+  conditions: Array<string>; // Optional conditions for triggering};
+
+// Treatment Follow-up Interfaceexport type TreatmentFollowup = {
+  id: string;
+  treatment_id: string;
+  patient_id: string;
+  clinic_id: string;
+  followup_type: FollowupType;
+  scheduled_date: string;
+  completed_date: string;
+  status: FollowupStatus;
+  communication_method: CommunicationMethod;
+  template_id: string;
+  message_content: string;
+  automated: boolean;
+  priority: Priority;
+  assigned_to: string;
+  notes: string;
+  created_at: string;
+  updated_at: string;
+
+  // Relationships  template: FollowupTemplate;
+  {;
+    id: string;
+    name: string;
+    phone: string;
+    email: string;
+    whatsapp: string;
+  };
+  responses: Array<FollowupResponse>;
+  attachments: Array<FollowupAttachment>;
+};
+
+// Follow-up Response Interfaceexport type FollowupResponse = {
+  id: string;
+  followup_id: string;
+  response_type: ResponseType;
+  response_value: string;
+  response_data: Record<string, any>;
+  satisfaction_score: number;
+  received_at: string;
+  processed: boolean;
+  created_at: string;
+};
+
+// Follow-up Attachment Interfaceexport type FollowupAttachment = {
+  id: string;
+  followup_id: string;
+  response_id: string;
+  attachment_type: AttachmentType;
+  file_path: string;
+  file_name: string;
+  file_size: number;
+  mime_type: string;
+  uploaded_by: string;
+  created_at: string;
+};
+
+// Create Follow-up Template Dataexport type CreateFollowupTemplateData = {
+  name: string;
+  description: string;
+  treatment_type: string;
+  followup_type: FollowupType;
+  timing_days: number;
+  timing_hours: number;
+  message_content: string;
+  communication_method: CommunicationMethod;
+  requires_response: boolean;
+  response_type: ResponseType;
+  active: boolean;
+  clinic_id: string;
+  created_by: string;
+};
+
+// Create Treatment Protocol Dataexport type CreateTreatmentProtocolData = {
+  treatment_type: string;
+  protocol_name: string;
+  description: string;
+  followup_schedule: Array<FollowupScheduleItem>;
+  care_instructions: string;
+  warning_signs: string;
+  expected_results: string;
+  next_appointment_suggestion: number;
+  active: boolean;
+  clinic_id: string;
+  created_by: string;
+};
+
+// Create Follow-up Dataexport type CreateFollowupData = {
+  treatment_id: string;
+  patient_id: string;
+  clinic_id: string;
+  followup_type: FollowupType;
+  scheduled_date: Date;
+  communication_method: CommunicationMethod;
+  template_id: string;
+  message_content: string;
+  automated: boolean;
+  priority: Priority;
+  assigned_to: string;
+  notes: string;
+};
+
+// Follow-up Filtersexport type FollowupFilters = {
+  status: Array<FollowupStatus>;
+  followup_type: Array<FollowupType>;
+  communication_method: Array<CommunicationMethod>;
+  priority: Array<Priority>;
+  clinic_id: string;
+  patient_id: string;
+  assigned_to: string;
+  date_from: string;
+  date_to: string;
+  automated: boolean;
+  limit: number;
+  offset: number;
+};
+
+// Template Filtersexport type TemplateFilters = {
+  treatment_type: Array<string>;
+  followup_type: Array<FollowupType>;
+  communication_method: Array<CommunicationMethod>;
+  active: boolean;
+  clinic_id: string;
+  created_by: string;
+  limit: number;
+  offset: number;
+};
+
+// Protocol Filtersexport type ProtocolFilters = {
+  treatment_type: Array<string>;
+  active: boolean;
+  clinic_id: string;
+  created_by: string;
+  limit: number;
+  offset: number;
+};
+
+// Follow-up Analyticsexport type FollowupAnalytics = {
+  total_followups: number;
+  completed_followups: number;
+  pending_followups: number;
+  response_rate: number;
+  satisfaction_average: number;
+  communication_method_stats: Record<CommunicationMethod, number>;
+  followup_type_stats: Record<FollowupType, number>;
+  monthly_trends: Array<{;
+    month: string;
+    total: number;
+    completed: number;
+    response_rate: number;
+  }>;
+};
+
+// Treatment Outcome Trackingexport type TreatmentOutcome = {
+  treatment_id: string;
+  patient_id: string;
+  treatment_type: string;
+  completion_date: string;
+  followup_completion_rate: number;
+  patient_satisfaction_score: number;
+  compliance_score: number;
+  next_appointment_scheduled: boolean;
+  concerns_reported: Array<string>;
+  photos_uploaded: number;
+  overall_success_rating: number;
+};
+
+// Automation Rulesexport type AutomationRule = {
+  id: string;
+  name: string;
+  description: string;
+  trigger_condition: string; // JSON rule  action_type:
+    | 'create_followup'
+    | "send_reminder" | "escalate" | "schedule_appointment";
+  action_config: Record<string, any>;
+  active: boolean;
+  clinic_id: string;
+  created_by: string;
+  created_at: string;
+  updated_at: string;
+};
+
+// Bulk Operationsexport type BulkFollowupOperation = {
+  operation: 'create' | "update" | "delete" | "reschedule";
+  filters: FollowupFilters;
+  data: Partial<TreatmentFollowup>;
+  scheduled_date: string;
+};
+
+// Communication Preferencesexport type PatientCommunicationPreferences = {
+  patient_id: string;
+  preferred_method: CommunicationMethod;
+  alternative_methods: Array<CommunicationMethod>;
+  timezone: string;
+  preferred_time_start: string; // HH:MM  preferred_time_end: string; // HH:MM  preferred_days: Array<number>; // 0-6 (Sunday-Saturday)  opt_out_automated: boolean;
+  language_preference: string;
+  created_at: string;
+  updated_at: string;
+};
+
+// API Response Typesexport type FollowupApiResponse<T = any> = {
+  success: boolean;
+  data: T;
+  error: string;
+  message: string;
+  {;
+    total: number;
+    limit: number;
+    offset: number;
+    has_more: boolean;
+  };
+};
+
+export type FollowupListResponse = {
+  followups: Array<TreatmentFollowup>;
+  total: number;
+  filters: FollowupFilters;
+};
+
+export type TemplateListResponse = {
+  templates: Array<FollowupTemplate>;
+  total: number;
+  filters: TemplateFilters;
+};
+
+export type ProtocolListResponse = {
+  protocols: Array<TreatmentProtocol>;
+  total: number;
+  filters: ProtocolFilters;
+};
+
+// Form Validation Typesexport type FollowupFormData = {
+  template: CreateFollowupTemplateData;
+  protocol: CreateTreatmentProtocolData;
+  followup: CreateFollowupData;
+};
+
+// Dashboard Summaryexport type FollowupDashboardSummary = {
+  today_followups: number;
+  pending_responses: number;
+  overdue_followups: number;
+  satisfaction_average: number;
+  upcoming_this_week: number;
+  automation_success_rate: number;
+  recent_activities: Array<{;
+    id: string;
+    type: 'followup_sent' | 'response_received' | 'template_created';
+    description: string;
+    timestamp: string;
+  }>;
+};

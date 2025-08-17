@@ -1,0 +1,18 @@
+"use client";
+
+import React from 'react';
+
+interface BackupconfigformProps {
+  children?: React.ReactNode;
+  className?: string;
+}
+
+export function Backupconfigform({ children, className = "" }: BackupconfigformProps) {
+  return (
+    <div className={className}>
+      {children || "Backupconfigform Component"}
+    </div>
+  );
+}
+
+export default Backupconfigform;

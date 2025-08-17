@@ -1,0 +1,19 @@
+// Memorylimiter Module
+export interface MemorylimiterConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Memorylimiter_DEFAULT: MemorylimiterConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createMemorylimiter() {
+  return Memorylimiter_DEFAULT;
+}
+
+export default {
+  config: Memorylimiter_DEFAULT,
+  create: createMemorylimiter
+};

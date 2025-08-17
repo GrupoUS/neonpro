@@ -1,0 +1,19 @@
+// Monitoring Module
+export interface MonitoringConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Monitoring_DEFAULT: MonitoringConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createMonitoring() {
+  return Monitoring_DEFAULT;
+}
+
+export default {
+  config: Monitoring_DEFAULT,
+  create: createMonitoring
+};

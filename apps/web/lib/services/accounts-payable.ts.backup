@@ -1,0 +1,19 @@
+// Accountspayable Module
+export interface AccountspayableConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Accountspayable_DEFAULT: AccountspayableConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createAccountspayable() {
+  return Accountspayable_DEFAULT;
+}
+
+export default {
+  config: Accountspayable_DEFAULT,
+  create: createAccountspayable
+};

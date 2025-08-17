@@ -1,0 +1,19 @@
+// Analysisengine Module
+export interface AnalysisengineConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Analysisengine_DEFAULT: AnalysisengineConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createAnalysisengine() {
+  return Analysisengine_DEFAULT;
+}
+
+export default {
+  config: Analysisengine_DEFAULT,
+  create: createAnalysisengine
+};

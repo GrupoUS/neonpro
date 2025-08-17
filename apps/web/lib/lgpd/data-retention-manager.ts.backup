@@ -1,0 +1,19 @@
+// Dataretentionmanager Module
+export interface DataretentionmanagerConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Dataretentionmanager_DEFAULT: DataretentionmanagerConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createDataretentionmanager() {
+  return Dataretentionmanager_DEFAULT;
+}
+
+export default {
+  config: Dataretentionmanager_DEFAULT,
+  create: createDataretentionmanager
+};

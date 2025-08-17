@@ -1,0 +1,231 @@
+{
+  "timestamp": "2025-08-15T07:14:24.274Z",
+  "testFiles": [
+    {
+      "path": "tests/integration/bank-reconciliation-api.test.ts",
+      "fullPath": "E:\\neonpro\\tests\\integration\\bank-reconciliation-api.test.ts",
+      "type": "INTEGRATION",
+      "exists": true,
+      "size": 9000
+    },
+    {
+      "path": "tests/security/security-audit.test.ts",
+      "fullPath": "E:\\neonpro\\tests\\security\\security-audit.test.ts",
+      "type": "SECURITY",
+      "exists": true,
+      "size": 15738
+    },
+    {
+      "path": "tests/performance/load-testing.test.ts",
+      "fullPath": "E:\\neonpro\\tests\\performance\\load-testing.test.ts",
+      "type": "PERFORMANCE",
+      "exists": true,
+      "size": 13158
+    },
+    {
+      "path": "playwright/tests/bank-reconciliation.spec.ts",
+      "fullPath": "E:\\neonpro\\playwright\\tests\\bank-reconciliation.spec.ts",
+      "type": "E2E",
+      "exists": true,
+      "size": 13827
+    }
+  ],
+  "analysisResults": {
+    "syntaxValidation": {
+      "tests/integration/bank-reconciliation-api.test.ts": {
+        "quality": 100,
+        "checks": {
+          "hasImports": true,
+          "hasDescribe": true,
+          "hasTests": true,
+          "hasExpects": true,
+          "hasValidComments": true,
+          "noSyntaxErrors": true
+        },
+        "passed": true
+      },
+      "tests/security/security-audit.test.ts": {
+        "quality": 100,
+        "checks": {
+          "hasImports": true,
+          "hasDescribe": true,
+          "hasTests": true,
+          "hasExpects": true,
+          "hasValidComments": true,
+          "noSyntaxErrors": true
+        },
+        "passed": true
+      },
+      "tests/performance/load-testing.test.ts": {
+        "quality": 100,
+        "checks": {
+          "hasImports": true,
+          "hasDescribe": true,
+          "hasTests": true,
+          "hasExpects": true,
+          "hasValidComments": true,
+          "noSyntaxErrors": true
+        },
+        "passed": true
+      },
+      "playwright/tests/bank-reconciliation.spec.ts": {
+        "quality": 83.33333333333334,
+        "checks": {
+          "hasImports": true,
+          "hasDescribe": true,
+          "hasTests": true,
+          "hasExpects": true,
+          "hasValidComments": true,
+          "noSyntaxErrors": false
+        },
+        "passed": true
+      }
+    },
+    "coverageAnalysis": {
+      "coverageByType": {
+        "INTEGRATION": {
+          "totalLines": 285,
+          "testSuites": 6,
+          "testCases": 15,
+          "asyncTests": 15,
+          "expectations": 42,
+          "lgpdCompliance": true,
+          "anvisaCompliance": false,
+          "cfmCompliance": false,
+          "auditTrail": true,
+          "authenticationTests": true,
+          "authorizationTests": false,
+          "encryptionTests": false,
+          "sqlInjectionTests": false,
+          "performanceTests": true,
+          "concurrencyTests": true,
+          "timeoutValidation": true,
+          "errorHandling": 26,
+          "cleanup": true,
+          "mockingPatterns": false,
+          "patientDataProtection": false,
+          "clinicIsolation": true,
+          "medicalCompliance": true
+        },
+        "SECURITY": {
+          "totalLines": 483,
+          "testSuites": 7,
+          "testCases": 20,
+          "asyncTests": 19,
+          "expectations": 50,
+          "lgpdCompliance": true,
+          "anvisaCompliance": true,
+          "cfmCompliance": true,
+          "auditTrail": true,
+          "authenticationTests": true,
+          "authorizationTests": false,
+          "encryptionTests": true,
+          "sqlInjectionTests": true,
+          "performanceTests": false,
+          "concurrencyTests": false,
+          "timeoutValidation": true,
+          "errorHandling": 52,
+          "cleanup": true,
+          "mockingPatterns": false,
+          "patientDataProtection": false,
+          "clinicIsolation": false,
+          "medicalCompliance": true
+        },
+        "PERFORMANCE": {
+          "totalLines": 355,
+          "testSuites": 6,
+          "testCases": 11,
+          "asyncTests": 13,
+          "expectations": 19,
+          "lgpdCompliance": false,
+          "anvisaCompliance": false,
+          "cfmCompliance": false,
+          "auditTrail": false,
+          "authenticationTests": true,
+          "authorizationTests": false,
+          "encryptionTests": false,
+          "sqlInjectionTests": false,
+          "performanceTests": true,
+          "concurrencyTests": true,
+          "timeoutValidation": false,
+          "errorHandling": 0,
+          "cleanup": true,
+          "mockingPatterns": false,
+          "patientDataProtection": false,
+          "clinicIsolation": false,
+          "medicalCompliance": false
+        },
+        "E2E": {
+          "totalLines": 315,
+          "testSuites": 1,
+          "testCases": 1,
+          "asyncTests": 12,
+          "expectations": 61,
+          "lgpdCompliance": true,
+          "anvisaCompliance": false,
+          "cfmCompliance": false,
+          "auditTrail": true,
+          "authenticationTests": true,
+          "authorizationTests": false,
+          "encryptionTests": true,
+          "sqlInjectionTests": false,
+          "performanceTests": true,
+          "concurrencyTests": false,
+          "timeoutValidation": true,
+          "errorHandling": 5,
+          "cleanup": false,
+          "mockingPatterns": false,
+          "patientDataProtection": false,
+          "clinicIsolation": false,
+          "medicalCompliance": false
+        }
+      },
+      "totalTests": 47,
+      "totalExpectations": 172
+    },
+    "complianceValidation": {
+      "complianceResults": {
+        "INTEGRATION": {
+          "score": 4,
+          "percentage": 44.44444444444444,
+          "passed": false
+        },
+        "SECURITY": {
+          "score": 6,
+          "percentage": 66.66666666666666,
+          "passed": false
+        },
+        "PERFORMANCE": {
+          "score": 1,
+          "percentage": 11.11111111111111,
+          "passed": false
+        },
+        "E2E": {
+          "score": 4,
+          "percentage": 44.44444444444444,
+          "passed": false
+        }
+      },
+      "avgCompliance": 41.666666666666664
+    },
+    "qualityMetrics": {},
+    "productionReadiness": {
+      "metrics": {
+        "testFilesComplete": 1,
+        "syntaxQuality": 95.83333333333334,
+        "complianceScore": 41.666666666666664,
+        "totalTestCount": 47,
+        "totalExpectations": 172
+      },
+      "readinessScore": 80.25833333333334
+    }
+  },
+  "summary": {
+    "filesAnalyzed": 4,
+    "totalTests": 47,
+    "totalExpectations": 172,
+    "complianceScore": 41.666666666666664,
+    "readinessScore": 80.25833333333334,
+    "productionReady": true
+  }
+}

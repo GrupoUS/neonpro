@@ -1,0 +1,18 @@
+"use client";
+
+import React from 'react';
+
+interface MonitorProps {
+  children?: React.ReactNode;
+  className?: string;
+}
+
+export function Monitor({ children, className = "" }: MonitorProps) {
+  return (
+    <div className={className}>
+      {children || "Monitor Component"}
+    </div>
+  );
+}
+
+export default Monitor;

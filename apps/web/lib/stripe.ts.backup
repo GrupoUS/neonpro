@@ -1,0 +1,19 @@
+// Stripe Module
+export interface StripeConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Stripe_DEFAULT: StripeConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createStripe() {
+  return Stripe_DEFAULT;
+}
+
+export default {
+  config: Stripe_DEFAULT,
+  create: createStripe
+};

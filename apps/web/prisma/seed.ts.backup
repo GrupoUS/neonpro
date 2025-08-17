@@ -1,0 +1,29 @@
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient();
+
+async function main() {
+  console.log('Database seeding started...');
+  
+  // Create admin user
+  const adminUser = await prisma.user.upsert({
+    where: { email: 'admin@neonpro.com' },
+    update: {},
+    create: {
+      email: 'admin@neonpro.com',
+      name: 'NeonPro Admin',
+      role: 'ADMIN',
+    },
+  });
+
+  console.log('Seeding completed:', { adminUser });
+}
+
+main()
+  .catch((e) => {
+    console.error(e);
+    process.exit(1);
+  })
+  .finally(async () => {
+    await prisma.$disconnect();
+  });

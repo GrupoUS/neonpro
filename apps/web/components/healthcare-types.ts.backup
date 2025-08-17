@@ -1,0 +1,143 @@
+/**
+ * NEONPRO HEALTHCARE - TypeScript Types
+ * Constitutional healthcare principles with LGPD compliance
+ * Quality Standard: ≥9.9/10 Healthcare Override
+ */
+
+// ============================================================================// CONSTITUTIONAL HEALTHCARE TYPES// ============================================================================
+export interface HealthcareUser {
+  id: string;
+  role: 'patient' | 'doctor' | "admin" | "nurse" | "receptionist";
+  clinic_id: string;
+  name: string;
+  email: string;
+  phone: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Patient extends HealthcareUser {
+  role: 'patient';
+  cpf: string; // LGPD protected  birth_date: string; // LGPD protected  medical_record_number: string;
+  emergency_contact: EmergencyContact;
+  consent_status: ConsentStatus;
+  accessibility_needs: AccessibilityNeeds;
+  anxiety_level: 'low' | 'medium' | 'high'; // Constitutional anxiety reduction}
+
+export interface Doctor extends HealthcareUser {
+  role: 'doctor';
+  crm: string; // CFM compliance  specialty: string;
+  license_status: 'active' | 'suspended' | 'expired';
+  digital_signature_key: string; // CFM digital signature} // ============================================================================// LGPD COMPLIANCE TYPES// ============================================================================;
+export interface ConsentStatus {
+  data_processing: boolean;
+  marketing: boolean;
+  third_party_sharing: boolean;
+  medical_research: boolean;
+  given_at: string;
+  expires_at: string;
+  withdrawn_at: string;
+  legal_basis: any;
+  | 'consent'
+  | "legitimate_interest" | "vital_interest" | "legal_obligation";
+}
+
+export interface EmergencyContact {
+  name: string;
+  relationship: string;
+  phone: string;
+  email: string;
+}
+
+export interface AccessibilityNeeds {
+  visual_impairment: boolean;
+  hearing_impairment: boolean;
+  mobility_assistance: boolean;
+  cognitive_assistance: boolean;
+  language_preference: 'pt-BR' | 'en-US' | 'es-ES';
+  font_size_preference: 'small' | "medium" | "large" | "extra-large";
+  high_contrast: boolean;
+  screen_reader_compatible: boolean;
+}
+
+// ============================================================================// APPOINTMENT & TREATMENT TYPES// ============================================================================
+export interface Appointment {
+  id: string;
+  patient_id: string;
+  doctor_id: string;
+  clinic_id: string;
+  treatment_type: string;
+  scheduled_at: string;
+  duration_minutes: number;
+  status: any;
+  | 'scheduled'
+  | 'confirmed'
+  | 'in_progress'
+  | "completed" | "cancelled" | "no_show";
+  notes: string;
+  anxiety_reduction_notes: string; // Constitutional anxiety reduction  accessibility_accommodations: Array<string>;
+  created_at: string;
+  updated_at: string;
+}
+export interface Treatment {
+  id: string;
+  patient_id: string;
+  doctor_id: string;
+  clinic_id: string;
+  appointment_id: string;
+  name: string;
+  description: string;
+  category: 'aesthetic' | "dermatological" | "wellness" | "medical";
+  status: 'planned' | 'in_progress' | "completed" | "suspended" | "cancelled";
+  start_date: string;
+  estimated_completion: string;
+  actual_completion: string;
+  progress_percentage: number;
+  anvisa_product_codes: Array<string>; // ANVISA compliance  side_effects_reported: Array<string>;
+  patient_satisfaction_score: number; // 1-10 scale  constitutional_notes: string; // Constitutional transparency  created_at: string;
+  updated_at: string;
+}
+
+// ============================================================================// COMPLIANCE & AUDIT TYPES// ============================================================================
+export interface ComplianceStatus {
+  lgpd_compliant: boolean;
+  anvisa_compliant: boolean;
+  cfm_compliant: boolean;
+  last_audit_date: string;
+  next_audit_due: string;
+  compliance_score: number; // 0-100  violations: Array<ComplianceViolation>;
+  remediation_actions: Array<RemediationAction>;
+}
+
+export interface ComplianceViolation {
+  id: string;
+  type: 'lgpd' | "anvisa" | "cfm" | "accessibility";
+  severity: 'low' | "medium" | "high" | "critical";
+  description: string;
+  detected_at: string;
+  resolved_at: string;
+  responsible_party: string;
+}
+
+export interface RemediationAction {
+  id: string;
+  violation_id: string;
+  action_description: string;
+  deadline: string;
+  status: 'pending' | "in_progress" | "completed" | "overdue";
+  assigned_to: string;
+}
+
+// ============================================================================// UI COMPONENT PROPS TYPES// ============================================================================
+export interface HealthcareComponentProps {
+  className: string;
+  'aria-label' ? null : string;
+  'data-testid' ? null : string;
+}
+
+export interface AnxietyReducingProps extends HealthcareComponentProps {
+  anxietyLevel: 'low' | 'medium' | 'high';
+  showProgressIndicators: boolean;
+  includeCalming_colors: boolean;
+  enableSmoothTransitions: boolean;
+}

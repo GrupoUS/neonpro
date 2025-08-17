@@ -1,0 +1,19 @@
+// Visionanalytics Module
+export interface VisionanalyticsConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Visionanalytics_DEFAULT: VisionanalyticsConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createVisionanalytics() {
+  return Visionanalytics_DEFAULT;
+}
+
+export default {
+  config: Visionanalytics_DEFAULT,
+  create: createVisionanalytics
+};

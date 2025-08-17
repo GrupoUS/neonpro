@@ -1,0 +1,19 @@
+// Cohortanalyzer Module
+export interface CohortanalyzerConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Cohortanalyzer_DEFAULT: CohortanalyzerConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createCohortanalyzer() {
+  return Cohortanalyzer_DEFAULT;
+}
+
+export default {
+  config: Cohortanalyzer_DEFAULT,
+  create: createCohortanalyzer
+};

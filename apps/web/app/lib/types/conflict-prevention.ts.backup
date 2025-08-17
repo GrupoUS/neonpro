@@ -1,0 +1,19 @@
+// Conflictprevention Module
+export interface ConflictpreventionConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Conflictprevention_DEFAULT: ConflictpreventionConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createConflictprevention() {
+  return Conflictprevention_DEFAULT;
+}
+
+export default {
+  config: Conflictprevention_DEFAULT,
+  create: createConflictprevention
+};

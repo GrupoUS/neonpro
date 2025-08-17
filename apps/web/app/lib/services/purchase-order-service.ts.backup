@@ -1,0 +1,19 @@
+// Purchaseorderservice Module
+export interface PurchaseorderserviceConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Purchaseorderservice_DEFAULT: PurchaseorderserviceConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createPurchaseorderservice() {
+  return Purchaseorderservice_DEFAULT;
+}
+
+export default {
+  config: Purchaseorderservice_DEFAULT,
+  create: createPurchaseorderservice
+};

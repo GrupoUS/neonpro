@@ -1,0 +1,358 @@
+// =====================================================================================// NeonPro Budget & Approval Workflow Types// Epic 6: Story 6.2 - Task 5: Budget & Approval Workflow// Created: 2025-01-26// =====================================================================================
+// =====================================================================================// BUDGET MANAGEMENT TYPES// =====================================================================================
+export type InventoryBudget = {
+  id: string;
+  clinic_id: string;
+  name: string;
+  category: string; // 'monthly', 'quarterly', 'annual', 'project'  budget_type: string; // 'operational', 'expansion', 'emergency'  total_amount: number;
+  allocated_amount: number;
+  spent_amount: number;
+  remaining_amount: number; // Generated field  currency: string;
+  start_date: string;
+  end_date: string;
+  status: string; // 'active', 'paused', 'exhausted', 'expired'  auto_approval_limit: number;
+  approval_required_above: number;
+  cost_center: string;
+  department: string;
+  responsible_user_id: string;
+  metadata: Record<string, any>;
+  created_at: string;
+  updated_at: string;
+};
+
+export type BudgetAllocation = {
+  id: string;
+  budget_id: string;
+  category: string;
+  subcategory: string;
+  allocated_amount: number;
+  spent_amount: number;
+  reserved_amount: number; // for pending orders  allocation_percentage: number;
+  description: string;
+  created_at: string;
+  updated_at: string;
+};
+
+export type BudgetVariance = {
+  id: string;
+  budget_id: string;
+  allocation_id: string;
+  variance_type: string; // 'overspend', 'underspend', 'forecast_variance'  variance_amount: number;
+  variance_percentage: number;
+  period_start: string;
+  period_end: string;
+  description: string;
+  impact_analysis: string;
+  corrective_action: string;
+  severity: string; // 'low', 'medium', 'high', 'critical'  status: string; // 'active', 'acknowledged', 'resolved'  acknowledged_by: string;
+  acknowledged_at: string;
+  resolved_at: string;
+  metadata: Record<string, any>;
+  created_at: string;
+  updated_at: string;
+};
+
+export type CostCenter = {
+  id: string;
+  clinic_id: string;
+  code: string;
+  name: string;
+  department: string;
+  manager_user_id: string;
+  budget_limit: number;
+  is_active: boolean;
+  parent_cost_center_id: string;
+  description: string;
+  metadata: Record<string, any>;
+  created_at: string;
+  updated_at: string;
+};
+
+// =====================================================================================// APPROVAL WORKFLOW TYPES// =====================================================================================
+export type PurchaseOrderApproval = {
+  id: string;
+  purchase_order_id: string;
+  budget_id: string;
+  approval_level: number;
+  approval_type: string; // 'budget', 'manager', 'director', 'automatic'  required_role: string;
+  required_amount_threshold: number;
+  approver_user_id: string;
+  approved_at: string;
+  rejected_at: string;
+  status: string; // 'pending', 'approved', 'rejected', 'escalated'  approval_reason: string;
+  rejection_reason: string;
+  escalation_reason: string;
+  auto_approved: boolean;
+  approval_deadline: string;
+  metadata: Record<string, any>;
+  created_at: string;
+  updated_at: string;
+};
+
+export type ApprovalWorkflowRule = {
+  id: string;
+  clinic_id: string;
+  rule_name: string;
+  rule_type: string; // 'amount_based', 'category_based', 'department_based'  category: string;
+  department: string;
+  cost_center: string;
+  min_amount: number;
+  max_amount: number;
+  required_approvers: number;
+  approval_levels: Array<ApprovalLevel>;
+  auto_approval_enabled: boolean;
+  auto_approval_conditions: Record<string, any>;
+  escalation_hours: number;
+  is_active: boolean;
+  priority: number;
+  metadata: Record<string, any>;
+  created_at: string;
+  updated_at: string;
+};
+
+export type ApprovalLevel = {
+  level: number;
+  role: string;
+  amount_threshold: number;
+  required_approvers: number;
+  escalation_hours: number;
+  conditions: Record<string, any>;
+};
+
+// =====================================================================================// VIEW AND SUMMARY TYPES// =====================================================================================
+export type BudgetUtilizationSummary = {
+  id: string;
+  clinic_id: string;
+  name: string;
+  budget_type: string;
+  total_amount: number;
+  spent_amount: number;
+  remaining_amount: number;
+  utilization_percentage: number;
+  utilization_status: string; // 'over_budget', 'high_utilization', 'medium_utilization', 'low_utilization'  start_date: string;
+  end_date: string;
+  period_status: string; // 'expired', 'future', 'active'  status: string;
+  variance_count: number;
+};
+
+export type ApprovalWorkflowPerformance = {
+  budget_id: string;
+  approval_type: string;
+  total_approvals: number;
+  approved_count: number;
+  rejected_count: number;
+  pending_count: number;
+  avg_approval_time_hours: number;
+  auto_approved_count: number;
+};
+
+// =====================================================================================// REQUEST AND RESPONSE TYPES// =====================================================================================
+export type CreateBudgetRequest = {
+  name: string;
+  budget_type: string;
+  total_amount: number;
+  start_date: string;
+  end_date: string;
+  category: string;
+  auto_approval_limit: number;
+  approval_required_above: number;
+  cost_center: string;
+  department: string;
+  responsible_user_id: string;
+  allocations: Array<BudgetAllocationRequest>;
+};
+
+export type BudgetAllocationRequest = {
+  category: string;
+  subcategory: string;
+  allocated_amount: number;
+  allocation_percentage: number;
+  description: string;
+};
+
+export type UpdateBudgetRequest = {
+  name: string;
+  total_amount: number;
+  status: string;
+  auto_approval_limit: number;
+  approval_required_above: number;
+  responsible_user_id: string;
+};
+
+export type CreateApprovalRequest = {
+  purchase_order_id: string;
+  budget_id: string;
+  approval_type: string;
+  required_amount_threshold: number;
+  approver_user_id: string;
+  approval_deadline: string;
+};
+
+export type ProcessApprovalRequest = {
+  action: 'approve' | 'reject' | 'escalate';
+  reason: string;
+  escalation_reason: string;
+};
+
+export type CreateWorkflowRuleRequest = {
+  rule_name: string;
+  rule_type: string;
+  category: string;
+  department: string;
+  cost_center: string;
+  min_amount: number;
+  max_amount: number;
+  required_approvers: number;
+  approval_levels: Array<ApprovalLevel>;
+  auto_approval_enabled: boolean;
+  auto_approval_conditions: Record<string, any>;
+  escalation_hours: number;
+};
+
+export type BudgetAnalyticsRequest = {
+  period_start: string;
+  period_end: string;
+  budget_types: Array<string>;
+  departments: Array<string>;
+  cost_centers: Array<string>;
+  include_variances: boolean;
+  include_forecasts: boolean;
+};
+
+// =====================================================================================// ANALYTICS AND REPORTING TYPES// =====================================================================================
+export type BudgetAnalytics = {
+  summary: {;
+    total_budgets: number;
+    total_allocated: number;
+    total_spent: number;
+    total_remaining: number;
+    average_utilization: number;
+    budgets_over_threshold: number;
+  };
+  by_type: Array<{;
+    budget_type: string;
+    count: number;
+    total_amount: number;
+    spent_amount: number;
+    utilization_percentage: number;
+  }>;
+  by_department: Array<{;
+    department: string;
+    count: number;
+    total_amount: number;
+    spent_amount: number;
+    utilization_percentage: number;
+  }>;
+  top_variances: Array<BudgetVariance>;
+  {;
+    total_approvals: number;
+    pending_approvals: number;
+    average_approval_time_hours: number;
+    auto_approval_rate: number;
+  };
+  {;
+    spending_trend: Array<{;
+      period: string;
+      amount: number;
+    }>;
+    variance_trend: Array<{;
+      period: string;
+      variance_count: number;
+      total_variance_amount: number;
+    }>;
+  };
+};
+
+export type ApprovalWorkflowAnalytics = {
+  workflow_efficiency: {;
+    total_workflows: number;
+    average_approval_time: number;
+    auto_approval_rate: number;
+    escalation_rate: number;
+    rejection_rate: number;
+  };
+  by_approval_type: Array<{;
+    approval_type: string;
+    count: number;
+    avg_time_hours: number;
+    success_rate: number;
+  }>;
+  bottlenecks: Array<{;
+    stage: string;
+    avg_delay_hours: number;
+    pending_count: number;
+  }>;
+  user_performance: Array<{;
+    user_id: string;
+    user_name: string;
+    approvals_processed: number;
+    avg_processing_time: number;
+    approval_rate: number;
+  }>;
+};
+
+// =====================================================================================// BUDGET OPTIMIZATION TYPES// =====================================================================================
+export type BudgetOptimizationRecommendation = {
+  type: 'reallocation' | "increase" | "decrease" | "consolidation";
+  priority: 'high' | 'medium' | 'low';
+  budget_id: string;
+  budget_name: string;
+  current_allocation: number;
+  recommended_allocation: number;
+  potential_savings: number;
+  reasoning: string;
+  impact_analysis: string;
+  implementation_effort: 'low' | 'medium' | 'high';
+  risk_level: 'low' | 'medium' | 'high';
+  confidence_score: number; // 0-1};
+
+export type BudgetForecast = {
+  budget_id: string;
+  forecast_period: number; // days  predicted_spend: number;
+  confidence_interval: {;
+    lower: number;
+    upper: number;
+    level: number;
+  };
+  projected_variance: number;
+  risk_factors: Array<string>;
+  recommendations: Array<string>;
+  forecast_accuracy: number;
+};
+
+// =====================================================================================// NOTIFICATION TYPES// =====================================================================================
+export type BudgetNotification = {
+  id: string;
+  type:
+    | 'budget_alert'
+    | "approval_request" | "variance_alert" | "budget_exhausted";
+  severity: 'info' | "warning" | "error" | "critical";
+  title: string;
+  message: string;
+  budget_id: string;
+  approval_id: string;
+  variance_id: string;
+  action_required: boolean;
+  action_url: string;
+  created_at: string;
+  read_at: string;
+  metadata: Record<string, any>;
+};
+
+// =====================================================================================// UTILITY TYPES// =====================================================================================
+export type BudgetValidationResult = {
+  is_valid: boolean;
+  errors: Array<string>;
+  warnings: Array<string>;
+  recommendations: Array<string>;
+};
+
+export type ApprovalEligibility = {
+  is_eligible: boolean;
+  required_approvals: number;
+  current_approvals: number;
+  missing_approvals: Array<ApprovalLevel>;
+  auto_approval_possible: boolean;
+  escalation_required: boolean;
+  blocking_factors: Array<string>;
+};

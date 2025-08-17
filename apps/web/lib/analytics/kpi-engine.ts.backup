@@ -1,0 +1,19 @@
+// Kpiengine Module
+export interface KpiengineConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Kpiengine_DEFAULT: KpiengineConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createKpiengine() {
+  return Kpiengine_DEFAULT;
+}
+
+export default {
+  config: Kpiengine_DEFAULT,
+  create: createKpiengine
+};

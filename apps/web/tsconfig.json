@@ -1,0 +1,129 @@
+{
+  "compilerOptions": {
+    // NEONPRO HEALTHCARE - Strict TypeScript for Medical Accuracy
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "target": "es2015",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "es6"
+    ],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "incremental": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "baseUrl": ".",
+    "paths": {
+      "@/*": [
+        "./src/*",
+        "./*"
+      ],
+      "@/components/*": [
+        "./src/components/*",
+        "./components/*"
+      ],
+      "@/lib/*": [
+        "./src/lib/*",
+        "./lib/*"
+      ],
+      "@/styles/*": [
+        "./src/styles/*",
+        "./styles/*"
+      ],
+      "@/types/*": [
+        "./src/types/*",
+        "./types/*"
+      ],
+      "@/hooks/*": [
+        "./src/hooks/*",
+        "./hooks/*"
+      ],
+      "@/utils/*": [
+        "./src/utils/*",
+        "./utils/*"
+      ],
+      "@/app/*": [
+        "./src/app/*",
+        "./app/*"
+      ],
+      "@neonpro/ui": [
+        "../../packages/ui/src"
+      ],
+      "@neonpro/ui/*": [
+        "../../packages/ui/src/*"
+      ],
+      "@neonpro/utils": [
+        "../../packages/utils/src"
+      ],
+      "@neonpro/utils/*": [
+        "../../packages/utils/src/*"
+      ],
+      "@neonpro/domain": [
+        "../../packages/domain/src"
+      ],
+      "@neonpro/domain/*": [
+        "../../packages/domain/src/*"
+      ],
+      "@neonpro/db": [
+        "../../packages/db/src"
+      ],
+      "@neonpro/db/*": [
+        "../../packages/db/src/*"
+      ],
+      "date-fns": [
+        "./lib/placeholders/date-fns"
+      ],
+      "zustand": [
+        "./lib/placeholders/zustand"
+      ],
+      "zustand/middleware": [
+        "./lib/placeholders/zustand-middleware"
+      ],
+      "zustand/middleware/immer": [
+        "./lib/placeholders/zustand-immer"
+      ],
+      "@jest/globals": [
+        "./lib/placeholders/jest-globals"
+      ],
+      "xlsx": [
+        "./lib/placeholders/xlsx"
+      ],
+      "jspdf": [
+        "./lib/placeholders/jspdf"
+      ],
+      "lru-cache": [
+        "./lib/placeholders/lru-cache"
+      ]
+    }
+  },
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    "next-env.d.ts",
+    ".next/types/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    ".next/types/**/*",
+    "__tests__/**/*",
+    "**/*.test.ts",
+    "**/*.test.tsx"
+  ]
+}

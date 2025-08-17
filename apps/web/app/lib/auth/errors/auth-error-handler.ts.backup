@@ -1,0 +1,19 @@
+// Autherrorhandler Module
+export interface AutherrorhandlerConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Autherrorhandler_DEFAULT: AutherrorhandlerConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createAutherrorhandler() {
+  return Autherrorhandler_DEFAULT;
+}
+
+export default {
+  config: Autherrorhandler_DEFAULT,
+  create: createAutherrorhandler
+};

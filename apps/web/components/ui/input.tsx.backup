@@ -1,0 +1,18 @@
+"use client";
+
+import React from 'react';
+
+interface InputProps {
+  children?: React.ReactNode;
+  className?: string;
+}
+
+export function Input({ children, className = "" }: InputProps) {
+  return (
+    <div className={className}>
+      {children || "Input Component"}
+    </div>
+  );
+}
+
+export default Input;

@@ -1,0 +1,19 @@
+// Performancemonitor Module
+export interface PerformancemonitorConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Performancemonitor_DEFAULT: PerformancemonitorConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createPerformancemonitor() {
+  return Performancemonitor_DEFAULT;
+}
+
+export default {
+  config: Performancemonitor_DEFAULT,
+  create: createPerformancemonitor
+};

@@ -1,0 +1,310 @@
+'use server';
+
+/**
+ * NEONPRO HEALTHCARE - AUTHENTICATION SERVER ACTIONS
+ * Next.js 15 App Router - Server-Side Authentication
+ *
+ * HEALTHCARE COMPLIANCE:
+ * - Constitutional healthcare principles (patient privacy first)
+ * - LGPD compliance with authentication data protection
+ * - Multi-tenant clinic access validation
+ * - Medical professional license verification
+ *
+ * MODERN PATTERN: Server Actions with @supabase/ssr
+ */
+
+import { revalidatePath } from "next/cache";
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
+import { createClient } from "@/lib/supabase/server";
+/**
+ * Healthcare login server action
+ * Handles authentication with constitutional compliance
+ */
+export async function login(formData: FormData) {
+  const supabase = await createClient;
+
+  // Extract form data with validation  const email = formData.get('email') as string;
+  const password = formData.get('password') as string;
+  const redirectTo = (formData.get('redirect_to') as string) || '/dashboard';
+
+  // Basic validation  if (!email || !password) {
+    redirect(
+      '/login?error=missing_credentials&message=Email e senha são obrigatórios',
+    );
+  }
+
+  // Email format validation  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    redirect('/login?error=invalid_email&message=Formato de email inválido');
+  }
+
+  try {
+    // Attempt healthcare authentication    const { data, error } = await supabase.auth.signInWithPassword({email,
+      password,
+    });
+
+    if (error) {console.error('Healthcare login error:', {
+        error: error.message,
+    email: email.replace(/(.{2}).*@/, '$1***@'), // LGPD: mask email        timestamp: new Date().toISOString,
+      });
+
+      // User-friendly error messages      let errorMessage = 'Erro na autenticação';
+      if (error.message.includes('Invalid login credentials')) {
+        errorMessage = 'Email ou senha incorretos';
+      } else if (error.message.includes('Email not confirmed')) {
+        errorMessage = 'Email não confirmado. Verifique sua caixa de entrada';
+      } else if (error.message.includes('Too many requests')) {
+        errorMessage = 'Muitas tentativas. Tente novamente em alguns minutos';
+      }
+
+      redirect(
+        `/login?error=auth_failed&message=${encodeURIComponent(errorMessage)}`,
+      );
+    }
+
+    if (data.user) {
+      // Healthcare user validation and profile loading      await validateHealthcareUserLogin(supabase, data.user);
+
+      // Constitutional healthcare audit logging      await logHealthcareLoginEvent(supabase, data.user, 'login_success');
+
+      // Revalidate healthcare paths      revalidatePath('/', 'layout');
+      revalidatePath('/dashboard');
+      revalidatePath('/pacientes');
+      revalidatePath('/agenda');
+
+      // Redirect to intended destination      redirect(redirectTo);
+    }
+  } catch (error) {console.error('Healthcare login system error:', {
+      error: error instanceof Error ? error.message : 'Unknown error',
+    email: email.replace(/(.{2}).*@/, '$1***@'), // LGPD: mask email      timestamp: new Date().toISOString,
+    });
+
+    redirect(
+      '/login?error=system_error&message=Sistema temporariamente indisponível',
+    );
+  }
+}
+
+/**
+ * Healthcare signup server action
+ * Handles user registration with constitutional compliance
+ */
+export async function signup(formData: FormData) {
+  const supabase = await createClient();
+  const headersList = await headers();
+  const origin = headersList.get('origin') || process.env.NEXT_PUBLIC_SITE_URL;
+
+  // Extract form data with validation  const email = formData.get('email') as string;
+  const password = formData.get('password') as string;
+  const fullName = formData.get('full_name') as string;
+  const acceptTerms = formData.get('accept_terms') === 'on';
+  const lgpdConsent = formData.get('lgpd_consent') === 'on';
+
+  // Comprehensive validation  if (!email || !password || !fullName) {
+    redirect(
+      '/login?error=missing_fields&message=Todos os campos são obrigatórios',
+    );
+  }
+
+  if (!acceptTerms || !lgpdConsent) {
+    redirect(
+      '/login?error=missing_consent&message=É necessário aceitar os termos e fornecer consentimento LGPD',
+    );
+  }
+
+  // Password strength validation  if (password.length < 8) {
+    redirect(
+      '/login?error=weak_password&message=Senha deve ter pelo menos 8 caracteres',
+    );
+  }
+
+  try {
+    // Attempt healthcare user creation    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: ;
+        emailRedirectTo: `${origin}/auth/callback`,
+        data: ;
+          full_name: fullName,
+    accept_terms: acceptTerms,
+          lgpd_consent: lgpdConsent,
+    signup_timestamp: new Date().toISOString,,,
+    });
+
+    if (error) {console.error('Healthcare signup error:', {
+        error: error.message,
+    email: email.replace(/(.{2}).*@/, '$1***@'), // LGPD: mask email        timestamp: new Date().toISOString,
+      });
+
+      // User-friendly error messages      let errorMessage = 'Erro no cadastro';
+      if (error.message.includes('User already registered')) {
+        errorMessage = 'Email já cadastrado. Tente fazer login';
+      } else if (error.message.includes('Password should be at least')) {
+        errorMessage = 'Senha muito fraca. Use pelo menos 8 caracteres';
+      } else if (error.message.includes('Invalid email')) {
+        errorMessage = 'Formato de email inválido';
+      }
+
+      redirect(
+        `/login?error=signup_failed&message=${encodeURIComponent(errorMessage)}`,
+      );
+    }
+
+    if (data.user) {// Create healthcare profile      await createHealthcareProfile(supabase, data.user, {
+        fullName,
+        acceptTerms,
+        lgpdConsent,
+      });
+
+      // Constitutional healthcare audit logging      await logHealthcareLoginEvent(supabase, data.user, 'signup_success');
+
+      // Revalidate paths      revalidatePath('/', 'layout');
+
+      // Redirect with success message      redirect(
+        '/login?success=signup_complete&message=Cadastro realizado! Verifique seu email para confirmar a conta',
+      );
+    }
+  } catch (error) {console.error('Healthcare signup system error:', {
+      error: error instanceof Error ? error.message : 'Unknown error',
+    email: email.replace(/(.{2}).*@/, '$1***@'), // LGPD: mask email      timestamp: new Date().toISOString,
+    });
+
+    redirect(
+      '/login?error=system_error&message=Sistema temporariamente indisponível',
+    );
+  }
+}
+
+/**
+ * Healthcare logout server action
+ * Handles secure logout with audit trail
+ */
+export async function logout() {
+  const supabase = await createClient();
+
+  try {user ,
+    } = await supabase.auth.getUser();
+
+    if (user) {
+      // Log healthcare logout event      await logHealthcareLoginEvent(supabase, user, 'logout');
+    }
+
+    // Perform logout    const { error } = await supabase.auth.signOut();
+
+    if (error) {
+      console.error('Healthcare logout error:', error);
+    }
+
+    // Revalidate all paths to clear cached data    revalidatePath('/', 'layout');
+  } catch (error) {
+    console.error('Healthcare logout system error:', error);
+  } finally {
+    // Always redirect to home after logout attempt    redirect('/');
+  }
+}
+
+/**
+ * Validate healthcare user during login
+ */
+async function validateHealthcareUserLogin(supabase: any,
+    user: any) {
+  try {
+    // Check if user profile exists and is active    const response = await supabase;
+const { data: profile, error  } = response || { data: null,
+    error: null };
+      .from('user_profiles')
+      .select('id, role, status, tenant_id, lgpd_consent')
+      .eq('user_id', user.id)
+      .single();
+
+    if (error && error.code !== 'PGRST116') {
+      throw new Error(`Healthcare profile validation failed: ${error.message}`);
+    }
+
+    // Check user status    if (profile?.status === 'suspended') {
+      throw new Error('Conta suspensa. Entre em contato com o suporte');
+    }
+
+    if (profile?.status === 'inactive') {
+      throw new Error('Conta inativa. Entre em contato com o administrador');
+    }
+
+    // Update last login timestamp    if (profile) {await supabase
+        .from('user_profiles')
+        .update(
+          last_login: new Date().toISOString,
+    updated_at: new Date().toISOString)
+        .eq('user_id', user.id);
+    }
+  } catch (error) {
+    console.error('Healthcare user validation error:', error);
+    throw error;
+  }
+}
+
+/**
+ * Create healthcare profile for new users
+ */
+async function createHealthcareProfile(
+  supabase: any,
+    user: any,
+  profileData: {;
+    fullName: string;
+    acceptTerms: boolean;
+    lgpdConsent: boolean;
+  },
+) {
+  try {
+    const { error } = await supabase.from('user_profiles').insert({user_id: user.id,
+    email: user.email,
+      full_name: profileData.fullName,
+    role: 'patient', // Default role      status: 'active',
+    lgpd_consent: profileData.lgpdConsent,
+      terms_accepted: profileData.acceptTerms,
+    privacy_policy_accepted: profileData.acceptTerms,
+      healthcare_data_consent: profileData.lgpdConsent,
+    created_at: new Date().toISOString,
+      updated_at: new Date().toISOString,
+    });
+
+    if (error) {
+      throw new Error(`Healthcare profile creation failed: ${error.message}`);
+    }
+
+    console.log('Healthcare profile created:', {userId: user.id,
+    email: user.email.replace(/(.{2}).*@/, '$1***@'), // LGPD: mask email      role: 'patient',
+    timestamp: new Date().toISOString,
+    });
+  } catch (error) {
+    console.error('Healthcare profile creation error:', error);
+    throw error;
+  }
+}
+
+/**
+ * Constitutional healthcare audit logging
+ */
+async function logHealthcareLoginEvent(
+  supabase: any,
+    user: any,
+  event: string,
+) {
+  try {
+    const { error } = await supabase.from('audit_logs').insert({user_id: user.id,
+    event_type: 'authentication',
+      event_name: event,
+    event_data: {;
+        email: user.email.replace(/(.{2}).*@/, '$1***@'), // LGPD: mask email        timestamp: new Date().toISOString,
+    user_agent: 'server_action', // Server-side action        ip_address: 'server_side',
+      },
+      created_at: new Date().toISOString,
+    });
+
+    if (error) {
+      console.error('Healthcare audit logging error:', error);
+    }
+  } catch (error) {
+    console.error('Healthcare audit system error:', error);
+    // Don't throw - audit logging failure shouldn't prevent authentication  }
+}

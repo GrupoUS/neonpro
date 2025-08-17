@@ -1,0 +1,19 @@
+// Treatment Module
+export interface TreatmentConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Treatment_DEFAULT: TreatmentConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createTreatment() {
+  return Treatment_DEFAULT;
+}
+
+export default {
+  config: Treatment_DEFAULT,
+  create: createTreatment
+};

@@ -1,0 +1,19 @@
+// Pixintegration Module
+export interface PixintegrationConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Pixintegration_DEFAULT: PixintegrationConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createPixintegration() {
+  return Pixintegration_DEFAULT;
+}
+
+export default {
+  config: Pixintegration_DEFAULT,
+  create: createPixintegration
+};

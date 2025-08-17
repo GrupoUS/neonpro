@@ -1,0 +1,18 @@
+"use client";
+
+import React from 'react';
+
+interface AuthmessagesProps {
+  children?: React.ReactNode;
+  className?: string;
+}
+
+export function Authmessages({ children, className = "" }: AuthmessagesProps) {
+  return (
+    <div className={className}>
+      {children || "Authmessages Component"}
+    </div>
+  );
+}
+
+export default Authmessages;

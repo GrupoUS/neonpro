@@ -1,0 +1,18 @@
+"use client";
+
+import React from 'react';
+
+interface AuditdashboardProps {
+  children?: React.ReactNode;
+  className?: string;
+}
+
+export function Auditdashboard({ children, className = "" }: AuditdashboardProps) {
+  return (
+    <div className={className}>
+      {children || "Auditdashboard Component"}
+    </div>
+  );
+}
+
+export default Auditdashboard;

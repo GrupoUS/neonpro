@@ -1,0 +1,19 @@
+// Searchindexer Module
+export interface SearchindexerConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Searchindexer_DEFAULT: SearchindexerConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createSearchindexer() {
+  return Searchindexer_DEFAULT;
+}
+
+export default {
+  config: Searchindexer_DEFAULT,
+  create: createSearchindexer
+};

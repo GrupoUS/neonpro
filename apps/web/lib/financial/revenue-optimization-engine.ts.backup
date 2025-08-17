@@ -1,0 +1,19 @@
+// Revenueoptimizationengine Module
+export interface RevenueoptimizationengineConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Revenueoptimizationengine_DEFAULT: RevenueoptimizationengineConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createRevenueoptimizationengine() {
+  return Revenueoptimizationengine_DEFAULT;
+}
+
+export default {
+  config: Revenueoptimizationengine_DEFAULT,
+  create: createRevenueoptimizationengine
+};

@@ -1,0 +1,19 @@
+// Routeconfig Module
+export interface RouteconfigConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Routeconfig_DEFAULT: RouteconfigConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createRouteconfig() {
+  return Routeconfig_DEFAULT;
+}
+
+export default {
+  config: Routeconfig_DEFAULT,
+  create: createRouteconfig
+};

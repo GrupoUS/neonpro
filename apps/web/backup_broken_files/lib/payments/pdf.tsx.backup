@@ -1,0 +1,18 @@
+"use client";
+
+import React from 'react';
+
+interface PdfProps {
+  children?: React.ReactNode;
+  className?: string;
+}
+
+export function Pdf({ children, className = "" }: PdfProps) {
+  return (
+    <div className={className}>
+      {children || "Pdf Component"}
+    </div>
+  );
+}
+
+export default Pdf;

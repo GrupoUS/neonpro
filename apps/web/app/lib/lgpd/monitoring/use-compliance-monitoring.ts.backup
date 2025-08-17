@@ -1,0 +1,19 @@
+// Usecompliancemonitoring Module
+export interface UsecompliancemonitoringConfig {
+  enabled: boolean;
+  data?: any;
+}
+
+export const Usecompliancemonitoring_DEFAULT: UsecompliancemonitoringConfig = {
+  enabled: true,
+  data: null
+};
+
+export function createUsecompliancemonitoring() {
+  return Usecompliancemonitoring_DEFAULT;
+}
+
+export default {
+  config: Usecompliancemonitoring_DEFAULT,
+  create: createUsecompliancemonitoring
+};
