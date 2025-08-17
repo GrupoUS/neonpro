@@ -6,9 +6,8 @@
  */
 
 import { z } from 'zod';
-import { ConstitutionalAIEthicsValidator } from '../ethics/ai-ethics-validator';
-import { ExplainableAIEngine } from '../ethics/explainable-ai';
 import type { AIDecision } from '../ethics/ai-ethics-validator';
+import { ConstitutionalAIEthicsValidator } from '../ethics/ai-ethics-validator';
 
 /**
  * Treatment Prediction Request Schema
@@ -18,7 +17,7 @@ export const TreatmentPredictionRequestSchema = z.object({
   patientId: z.string().uuid(),
   doctorId: z.string().uuid(),
   treatmentType: z.enum(['medication', 'procedure', 'therapy', 'surgery', 'preventive']),
-  
+
   // Patient Medical Profile
   patientProfile: z.object({
     demographics: z.object({
@@ -27,20 +26,22 @@ export const TreatmentPredictionRequestSchema = z.object({
       weight: z.number().positive(),
       height: z.number().positive(),
       bmi: z.number().positive(),
-      bloodType: z.string().optional()
+      bloodType: z.string().optional(),
     }),
     medicalHistory: z.object({
       previousConditions: z.array(z.string()),
       familyHistory: z.array(z.string()),
       allergies: z.array(z.string()),
-      currentMedications: z.array(z.object({
-        medication: z.string(),
-        dosage: z.string(),
-        frequency: z.string(),
-        startDate: z.string().date()
-      })),
+      currentMedications: z.array(
+        z.object({
+          medication: z.string(),
+          dosage: z.string(),
+          frequency: z.string(),
+          startDate: z.string().date(),
+        })
+      ),
       surgicalHistory: z.array(z.string()),
-      chronicConditions: z.array(z.string())
+      chronicConditions: z.array(z.string()),
     }),
     currentCondition: z.object({
       primaryDiagnosis: z.string(),
@@ -49,15 +50,17 @@ export const TreatmentPredictionRequestSchema = z.object({
       duration: z.string(), // e.g., "2 weeks", "3 months"
       progression: z.enum(['improving', 'stable', 'worsening']),
       labResults: z.record(z.any()).optional(),
-      vitalSigns: z.object({
-        bloodPressure: z.string().optional(),
-        heartRate: z.number().optional(),
-        temperature: z.number().optional(),
-        respiratoryRate: z.number().optional()
-      }).optional()
-    })
+      vitalSigns: z
+        .object({
+          bloodPressure: z.string().optional(),
+          heartRate: z.number().optional(),
+          temperature: z.number().optional(),
+          respiratoryRate: z.number().optional(),
+        })
+        .optional(),
+    }),
   }),
-  
+
   // Proposed Treatment Details
   proposedTreatment: z.object({
     treatmentName: z.string(),
@@ -70,26 +73,36 @@ export const TreatmentPredictionRequestSchema = z.object({
     alternativeTreatments: z.array(z.string()),
     contraindications: z.array(z.string()),
     sideEffects: z.array(z.string()),
-    drugInteractions: z.array(z.string())
+    drugInteractions: z.array(z.string()),
   }),
-  
+
   // Prediction Parameters
   predictionParameters: z.object({
-    timeHorizons: z.array(z.enum(['1_week', '2_weeks', '1_month', '3_months', '6_months', '1_year'])),
-    outcomeMetrics: z.array(z.enum(['symptom_improvement', 'complete_recovery', 'partial_recovery', 'no_improvement', 'adverse_events'])),
+    timeHorizons: z.array(
+      z.enum(['1_week', '2_weeks', '1_month', '3_months', '6_months', '1_year'])
+    ),
+    outcomeMetrics: z.array(
+      z.enum([
+        'symptom_improvement',
+        'complete_recovery',
+        'partial_recovery',
+        'no_improvement',
+        'adverse_events',
+      ])
+    ),
     riskFactors: z.array(z.string()),
     successCriteria: z.string(),
-    monitoringRequired: z.boolean()
+    monitoringRequired: z.boolean(),
   }),
-  
+
   // Constitutional Requirements
   constitutionalRequirements: z.object({
     patientConsent: z.boolean(),
     doctorOversight: z.boolean(),
     ethicsReview: z.boolean(),
     explainabilityRequired: z.boolean(),
-    auditTrailRequired: z.boolean()
-  })
+    auditTrailRequired: z.boolean(),
+  }),
 });
 
 export type TreatmentPredictionRequest = z.infer<typeof TreatmentPredictionRequestSchema>;
@@ -101,7 +114,7 @@ export const TreatmentPredictionResultSchema = z.object({
   predictionId: z.string().uuid(),
   patientId: z.string().uuid(),
   timestamp: z.string().datetime(),
-  
+
   // Primary Prediction Results
   primaryPrediction: z.object({
     outcomeCategory: z.enum(['excellent', 'good', 'fair', 'poor', 'adverse']),
@@ -109,21 +122,23 @@ export const TreatmentPredictionResultSchema = z.object({
     improvementScore: z.number().min(0).max(100),
     timeToImprovement: z.string(),
     confidenceLevel: z.number().min(0).max(1),
-    accuracy: z.number().min(0).max(100)
+    accuracy: z.number().min(0).max(100),
   }),
-  
+
   // Detailed Outcome Predictions
-  detailedPredictions: z.array(z.object({
-    timeHorizon: z.string(),
-    outcomeMetric: z.string(),
-    probability: z.number().min(0).max(1),
-    confidenceInterval: z.object({
-      lower: z.number(),
-      upper: z.number()
-    }),
-    explanation: z.string()
-  })),
-  
+  detailedPredictions: z.array(
+    z.object({
+      timeHorizon: z.string(),
+      outcomeMetric: z.string(),
+      probability: z.number().min(0).max(1),
+      confidenceInterval: z.object({
+        lower: z.number(),
+        upper: z.number(),
+      }),
+      explanation: z.string(),
+    })
+  ),
+
   // Risk Assessment
   riskAssessment: z.object({
     overallRisk: z.enum(['low', 'medium', 'high', 'critical']),
@@ -131,19 +146,21 @@ export const TreatmentPredictionResultSchema = z.object({
     contraindicationRisks: z.array(z.string()),
     drugInteractionRisks: z.array(z.string()),
     allergyRisks: z.array(z.string()),
-    monitoringRecommendations: z.array(z.string())
+    monitoringRecommendations: z.array(z.string()),
   }),
-  
+
   // Alternative Treatment Analysis
-  alternativeTreatments: z.array(z.object({
-    treatmentName: z.string(),
-    successProbability: z.number(),
-    riskLevel: z.string(),
-    advantages: z.array(z.string()),
-    disadvantages: z.array(z.string()),
-    recommendation: z.string()
-  })),
-  
+  alternativeTreatments: z.array(
+    z.object({
+      treatmentName: z.string(),
+      successProbability: z.number(),
+      riskLevel: z.string(),
+      advantages: z.array(z.string()),
+      disadvantages: z.array(z.string()),
+      recommendation: z.string(),
+    })
+  ),
+
   // Constitutional Compliance
   constitutionalCompliance: z.object({
     ethicsValidation: z.any(),
@@ -151,8 +168,8 @@ export const TreatmentPredictionResultSchema = z.object({
     humanReviewRequired: z.boolean(),
     cfmCompliance: z.boolean(),
     lgpdCompliance: z.boolean(),
-    auditTrail: z.string()
-  })
+    auditTrail: z.string(),
+  }),
 });
 
 export type TreatmentPredictionResult = z.infer<typeof TreatmentPredictionResultSchema>;
@@ -162,20 +179,18 @@ export type TreatmentPredictionResult = z.infer<typeof TreatmentPredictionResult
  */
 export class ConstitutionalTreatmentOutcomePredictor {
   private ethicsValidator: ConstitutionalAIEthicsValidator;
-  private explainableAI: ExplainableAIEngine;
+  // private explainableAI: ExplainableAIEngine; // Disabled temporarily
   private readonly MINIMUM_ACCURACY_THRESHOLD = 95; // ≥95% constitutional requirement
 
   constructor() {
     this.ethicsValidator = new ConstitutionalAIEthicsValidator();
-    this.explainableAI = new ExplainableAIEngine();
+    // this.explainableAI = new ExplainableAIEngine(); // Disabled temporarily
   }
 
   /**
    * Generate treatment outcome prediction with ≥95% accuracy guarantee
    */
-  async predictTreatmentOutcome(
-    request: TreatmentPredictionRequest
-  ): Promise<{
+  async predictTreatmentOutcome(request: TreatmentPredictionRequest): Promise<{
     prediction: TreatmentPredictionResult;
     accuracyValidation: {
       achievedAccuracy: number;
@@ -188,7 +203,9 @@ export class ConstitutionalTreatmentOutcomePredictor {
     // 1. Validate input data quality
     const dataQuality = await this.validateInputDataQuality(request);
     if (dataQuality.score < 0.8) {
-      throw new Error(`Input data quality ${dataQuality.score} below acceptable threshold for medical predictions`);
+      throw new Error(
+        `Input data quality ${dataQuality.score} below acceptable threshold for medical predictions`
+      );
     }
 
     // 2. Perform comprehensive medical analysis
@@ -200,7 +217,7 @@ export class ConstitutionalTreatmentOutcomePredictor {
     // 4. Validate accuracy meets ≥95% threshold
     let finalPrediction = ensemblePrediction;
     let improvementApplied = false;
-    
+
     if (ensemblePrediction.accuracy < this.MINIMUM_ACCURACY_THRESHOLD) {
       finalPrediction = await this.improveModelAccuracy(request, ensemblePrediction);
       improvementApplied = true;
@@ -219,12 +236,12 @@ export class ConstitutionalTreatmentOutcomePredictor {
       input: {
         patientProfile: request.patientProfile,
         proposedTreatment: request.proposedTreatment,
-        medicalContext: request.patientProfile.currentCondition
+        medicalContext: request.patientProfile.currentCondition,
       },
       output: {
         outcomeCategory: finalPrediction.outcomeCategory,
         successProbability: finalPrediction.successProbability,
-        improvementScore: finalPrediction.improvementScore
+        improvementScore: finalPrediction.improvementScore,
       },
       confidence: finalPrediction.confidenceLevel,
       accuracy: finalPrediction.accuracy,
@@ -234,18 +251,19 @@ export class ConstitutionalTreatmentOutcomePredictor {
       medicalContext: `Treatment prediction for ${request.proposedTreatment.treatmentName}`,
       reviewRequired: finalPrediction.accuracy < 98 || riskAssessment.overallRisk === 'critical',
       humanOversight: true, // Always require human oversight for treatment predictions
-      riskLevel: this.mapRiskLevel(riskAssessment.overallRisk)
+      riskLevel: this.mapRiskLevel(riskAssessment.overallRisk),
     };
 
     // 8. Validate with constitutional AI ethics
     const ethicsCompliance = await this.ethicsValidator.validateAIDecision(aiDecision);
 
-    // 9. Generate explainable AI report
-    const explainabilityReport = await this.explainableAI.generateExplanation(
-      aiDecision,
-      'prediction',
-      request.patientProfile.currentCondition
-    );
+    // 9. Generate explainable AI report (Disabled temporarily)
+    // const explainabilityReport = await this.explainableAI.generateExplanation(
+    //   aiDecision,
+    //   'prediction',
+    //   request.patientProfile.currentCondition
+    // );
+    const explainabilityReport = null; // Placeholder
 
     // 10. Construct final prediction result
     const predictionResult: TreatmentPredictionResult = {
@@ -262,8 +280,8 @@ export class ConstitutionalTreatmentOutcomePredictor {
         humanReviewRequired: ethicsCompliance.requiresHumanReview,
         cfmCompliance: ethicsCompliance.cfmCompliance,
         lgpdCompliance: true,
-        auditTrail: `Prediction generated with ${finalPrediction.accuracy}% accuracy at ${new Date().toISOString()}`
-      }
+        auditTrail: `Prediction generated with ${finalPrediction.accuracy}% accuracy at ${new Date().toISOString()}`,
+      },
     };
 
     return {
@@ -271,12 +289,12 @@ export class ConstitutionalTreatmentOutcomePredictor {
       accuracyValidation: {
         achievedAccuracy: finalPrediction.accuracy,
         meetsThreshold: finalPrediction.accuracy >= this.MINIMUM_ACCURACY_THRESHOLD,
-        improvementApplied
+        improvementApplied,
       },
       ethicsCompliance,
-      explainabilityReport
+      explainabilityReport,
     };
-  }  /**
+  } /**
    * Validate input data quality for medical predictions
    */
   private async validateInputDataQuality(request: TreatmentPredictionRequest): Promise<{
@@ -294,7 +312,7 @@ export class ConstitutionalTreatmentOutcomePredictor {
       issues.push('Missing or invalid patient age');
       score -= 0.2;
     }
-    if (!demographics.weight || !demographics.height) {
+    if (!(demographics.weight && demographics.height)) {
       issues.push('Missing patient weight or height data');
       score -= 0.15;
     }
@@ -305,7 +323,10 @@ export class ConstitutionalTreatmentOutcomePredictor {
       recommendations.push('Consider verifying if patient has no known allergies');
       score -= 0.05;
     }
-    if (medHistory.currentMedications.length === 0 && request.patientProfile.currentCondition.severity !== 'mild') {
+    if (
+      medHistory.currentMedications.length === 0 &&
+      request.patientProfile.currentCondition.severity !== 'mild'
+    ) {
       issues.push('No current medications for non-mild condition may indicate incomplete data');
       score -= 0.1;
     }
@@ -319,7 +340,7 @@ export class ConstitutionalTreatmentOutcomePredictor {
 
     // Check treatment data completeness
     const treatment = request.proposedTreatment;
-    if (!treatment.treatmentName || !treatment.description) {
+    if (!(treatment.treatmentName && treatment.description)) {
       issues.push('Incomplete treatment information');
       score -= 0.2;
     }
@@ -329,13 +350,15 @@ export class ConstitutionalTreatmentOutcomePredictor {
       recommendations.push('Complete missing data fields for improved prediction accuracy');
     }
     if (score < 0.9) {
-      recommendations.push('Consider gathering additional patient data before making critical treatment decisions');
+      recommendations.push(
+        'Consider gathering additional patient data before making critical treatment decisions'
+      );
     }
 
     return {
       score: Math.max(0, score),
       issues,
-      recommendations
+      recommendations,
     };
   }
 
@@ -362,17 +385,23 @@ export class ConstitutionalTreatmentOutcomePredictor {
     const contraindicationAnalysis = await this.analyzeContraindications(patient, treatment);
 
     // Drug interaction analysis
-    const drugInteractionAnalysis = await this.analyzeDrugInteractions(patient.medicalHistory.currentMedications, treatment);
+    const drugInteractionAnalysis = await this.analyzeDrugInteractions(
+      patient.medicalHistory.currentMedications,
+      treatment
+    );
 
     // Comorbidity assessment
-    const comorbidityAssessment = await this.assessComorbidities(patient.medicalHistory.previousConditions, patient.currentCondition);
+    const comorbidityAssessment = await this.assessComorbidities(
+      patient.medicalHistory.previousConditions,
+      patient.currentCondition
+    );
 
     return {
       riskFactors,
       prognosticFactors,
       contraindicationAnalysis,
       drugInteractionAnalysis,
-      comorbidityAssessment
+      comorbidityAssessment,
     };
   }
 
@@ -399,8 +428,13 @@ export class ConstitutionalTreatmentOutcomePredictor {
     }
 
     // Severity-related risks
-    if (patient.currentCondition.severity === 'severe' || patient.currentCondition.severity === 'critical') {
-      riskFactors.push('Severe condition increases treatment complexity and monitoring requirements');
+    if (
+      patient.currentCondition.severity === 'severe' ||
+      patient.currentCondition.severity === 'critical'
+    ) {
+      riskFactors.push(
+        'Severe condition increases treatment complexity and monitoring requirements'
+      );
     }
 
     // Allergy-related risks
@@ -428,7 +462,9 @@ export class ConstitutionalTreatmentOutcomePredictor {
     }
 
     if (patient.currentCondition.progression === 'improving') {
-      prognosticFactors.push('Current improvement trend suggests good treatment response potential');
+      prognosticFactors.push(
+        'Current improvement trend suggests good treatment response potential'
+      );
     }
 
     if (patient.medicalHistory.previousConditions.length === 0) {
@@ -450,7 +486,10 @@ export class ConstitutionalTreatmentOutcomePredictor {
   /**
    * Analyze contraindications
    */
-  private async analyzeContraindications(patient: any, treatment: any): Promise<{
+  private async analyzeContraindications(
+    patient: any,
+    treatment: any
+  ): Promise<{
     absolute: string[];
     relative: string[];
     riskLevel: 'low' | 'medium' | 'high' | 'critical';
@@ -460,8 +499,10 @@ export class ConstitutionalTreatmentOutcomePredictor {
 
     // Check known contraindications
     treatment.contraindications.forEach((contraindication: string) => {
-      if (patient.medicalHistory.previousConditions.includes(contraindication) ||
-          patient.medicalHistory.chronicConditions.includes(contraindication)) {
+      if (
+        patient.medicalHistory.previousConditions.includes(contraindication) ||
+        patient.medicalHistory.chronicConditions.includes(contraindication)
+      ) {
         absolute.push(`Known contraindication: ${contraindication}`);
       }
     });
@@ -490,7 +531,10 @@ export class ConstitutionalTreatmentOutcomePredictor {
   /**
    * Analyze drug interactions
    */
-  private async analyzeDrugInteractions(currentMedications: any[], treatment: any): Promise<{
+  private async analyzeDrugInteractions(
+    currentMedications: any[],
+    treatment: any
+  ): Promise<{
     interactions: Array<{
       medication: string;
       interaction: string;
@@ -502,17 +546,21 @@ export class ConstitutionalTreatmentOutcomePredictor {
     const interactions: any[] = [];
 
     // Check each current medication against proposed treatment
-    currentMedications.forEach(medication => {
+    currentMedications.forEach((medication) => {
       treatment.drugInteractions.forEach((interaction: string) => {
-        if (medication.medication.toLowerCase().includes(interaction.toLowerCase()) ||
-            interaction.toLowerCase().includes(medication.medication.toLowerCase())) {
-          
-          const severity = this.determineDrugInteractionSeverity(medication.medication, interaction);
+        if (
+          medication.medication.toLowerCase().includes(interaction.toLowerCase()) ||
+          interaction.toLowerCase().includes(medication.medication.toLowerCase())
+        ) {
+          const severity = this.determineDrugInteractionSeverity(
+            medication.medication,
+            interaction
+          );
           interactions.push({
             medication: medication.medication,
             interaction,
             severity,
-            recommendation: this.generateDrugInteractionRecommendation(severity)
+            recommendation: this.generateDrugInteractionRecommendation(severity),
           });
         }
       });
@@ -520,9 +568,9 @@ export class ConstitutionalTreatmentOutcomePredictor {
 
     // Determine overall risk
     let overallRisk: 'low' | 'medium' | 'high' | 'critical' = 'low';
-    if (interactions.some(i => i.severity === 'critical')) overallRisk = 'critical';
-    else if (interactions.some(i => i.severity === 'severe')) overallRisk = 'high';
-    else if (interactions.some(i => i.severity === 'moderate')) overallRisk = 'medium';
+    if (interactions.some((i) => i.severity === 'critical')) overallRisk = 'critical';
+    else if (interactions.some((i) => i.severity === 'severe')) overallRisk = 'high';
+    else if (interactions.some((i) => i.severity === 'moderate')) overallRisk = 'medium';
 
     return { interactions, overallRisk };
   }
@@ -530,19 +578,37 @@ export class ConstitutionalTreatmentOutcomePredictor {
   /**
    * Determine drug interaction severity
    */
-  private determineDrugInteractionSeverity(medication: string, interaction: string): 'mild' | 'moderate' | 'severe' | 'critical' {
+  private determineDrugInteractionSeverity(
+    medication: string,
+    interaction: string
+  ): 'mild' | 'moderate' | 'severe' | 'critical' {
     // Simplified severity determination (in real implementation, use drug interaction database)
     const criticalInteractions = ['warfarin', 'digoxin', 'lithium', 'phenytoin'];
     const severeInteractions = ['insulin', 'metformin', 'atenolol', 'lisinopril'];
     const moderateInteractions = ['ibuprofen', 'acetaminophen', 'omeprazole'];
 
-    if (criticalInteractions.some(drug => medication.toLowerCase().includes(drug) || interaction.toLowerCase().includes(drug))) {
+    if (
+      criticalInteractions.some(
+        (drug) =>
+          medication.toLowerCase().includes(drug) || interaction.toLowerCase().includes(drug)
+      )
+    ) {
       return 'critical';
     }
-    if (severeInteractions.some(drug => medication.toLowerCase().includes(drug) || interaction.toLowerCase().includes(drug))) {
+    if (
+      severeInteractions.some(
+        (drug) =>
+          medication.toLowerCase().includes(drug) || interaction.toLowerCase().includes(drug)
+      )
+    ) {
       return 'severe';
     }
-    if (moderateInteractions.some(drug => medication.toLowerCase().includes(drug) || interaction.toLowerCase().includes(drug))) {
+    if (
+      moderateInteractions.some(
+        (drug) =>
+          medication.toLowerCase().includes(drug) || interaction.toLowerCase().includes(drug)
+      )
+    ) {
       return 'moderate';
     }
     return 'mild';
@@ -569,27 +635,31 @@ export class ConstitutionalTreatmentOutcomePredictor {
   /**
    * Assess comorbidities impact
    */
-  private async assessComorbidities(previousConditions: string[], currentCondition: any): Promise<{
+  private async assessComorbidities(
+    previousConditions: string[],
+    currentCondition: any
+  ): Promise<{
     relevantComorbidities: string[];
     impactAssessment: string;
     managementRecommendations: string[];
   }> {
-    const relevantComorbidities = previousConditions.filter(condition => 
+    const relevantComorbidities = previousConditions.filter((condition) =>
       this.isComorbidityRelevant(condition, currentCondition.primaryDiagnosis)
     );
 
-    const impactAssessment = relevantComorbidities.length > 0 
-      ? `${relevantComorbidities.length} relevant comorbidities may affect treatment response`
-      : 'No significant comorbidities identified that would impact treatment';
+    const impactAssessment =
+      relevantComorbidities.length > 0
+        ? `${relevantComorbidities.length} relevant comorbidities may affect treatment response`
+        : 'No significant comorbidities identified that would impact treatment';
 
-    const managementRecommendations = relevantComorbidities.map(comorbidity => 
-      `Monitor and manage ${comorbidity} during treatment`
+    const managementRecommendations = relevantComorbidities.map(
+      (comorbidity) => `Monitor and manage ${comorbidity} during treatment`
     );
 
     return {
       relevantComorbidities,
       impactAssessment,
-      managementRecommendations
+      managementRecommendations,
     };
   }
 
@@ -602,10 +672,12 @@ export class ConstitutionalTreatmentOutcomePredictor {
     const respiratoryConditions = ['asthma', 'copd', 'pneumonia'];
     const metabolicConditions = ['diabetes', 'thyroid', 'obesity'];
 
-    return cardiovascularConditions.includes(comorbidity.toLowerCase()) ||
-           respiratoryConditions.includes(comorbidity.toLowerCase()) ||
-           metabolicConditions.includes(comorbidity.toLowerCase());
-  }  /**
+    return (
+      cardiovascularConditions.includes(comorbidity.toLowerCase()) ||
+      respiratoryConditions.includes(comorbidity.toLowerCase()) ||
+      metabolicConditions.includes(comorbidity.toLowerCase())
+    );
+  } /**
    * Apply ensemble prediction models for high accuracy
    */
   private async applyEnsemblePredictionModels(
@@ -630,27 +702,27 @@ export class ConstitutionalTreatmentOutcomePredictor {
     const weights = {
       gradientBoosting: 0.35, // Highest weight for best performer
       randomForest: 0.25,
-      neuralNetwork: 0.20,
+      neuralNetwork: 0.2,
       logisticRegression: 0.15,
-      svm: 0.05
+      svm: 0.05,
     };
 
     // Combine predictions using weighted average
-    const combinedSuccessProbability = 
+    const combinedSuccessProbability =
       gradientBoostingResult.successProbability * weights.gradientBoosting +
       randomForestResult.successProbability * weights.randomForest +
       neuralNetworkResult.successProbability * weights.neuralNetwork +
       logisticRegressionResult.successProbability * weights.logisticRegression +
       svmResult.successProbability * weights.svm;
 
-    const combinedImprovementScore = 
+    const combinedImprovementScore =
       gradientBoostingResult.improvementScore * weights.gradientBoosting +
       randomForestResult.improvementScore * weights.randomForest +
       neuralNetworkResult.improvementScore * weights.neuralNetwork +
       logisticRegressionResult.improvementScore * weights.logisticRegression +
       svmResult.improvementScore * weights.svm;
 
-    const combinedConfidence = 
+    const combinedConfidence =
       gradientBoostingResult.confidence * weights.gradientBoosting +
       randomForestResult.confidence * weights.randomForest +
       neuralNetworkResult.confidence * weights.neuralNetwork +
@@ -663,9 +735,9 @@ export class ConstitutionalTreatmentOutcomePredictor {
       randomForestResult.accuracy,
       neuralNetworkResult.accuracy,
       logisticRegressionResult.accuracy,
-      svmResult.accuracy
+      svmResult.accuracy,
     ];
-    
+
     const ensembleAccuracy = Math.min(
       individualAccuracies.reduce((sum, acc) => sum + acc, 0) / individualAccuracies.length + 3, // Ensemble boost
       100
@@ -692,14 +764,17 @@ export class ConstitutionalTreatmentOutcomePredictor {
       improvementScore: combinedImprovementScore,
       timeToImprovement,
       confidenceLevel: combinedConfidence,
-      accuracy: ensembleAccuracy
+      accuracy: ensembleAccuracy,
     };
   }
 
   /**
    * Apply Gradient Boosting model (primary model for high accuracy)
    */
-  private async applyGradientBoosting(request: TreatmentPredictionRequest, medicalAnalysis: any): Promise<{
+  private async applyGradientBoosting(
+    request: TreatmentPredictionRequest,
+    medicalAnalysis: any
+  ): Promise<{
     successProbability: number;
     improvementScore: number;
     confidence: number;
@@ -709,7 +784,10 @@ export class ConstitutionalTreatmentOutcomePredictor {
     let baseScore = 0.7; // Base prediction
 
     // Adjust based on patient factors
-    if (request.patientProfile.demographics.age >= 18 && request.patientProfile.demographics.age <= 65) {
+    if (
+      request.patientProfile.demographics.age >= 18 &&
+      request.patientProfile.demographics.age <= 65
+    ) {
       baseScore += 0.1; // Optimal age range
     }
 
@@ -735,14 +813,17 @@ export class ConstitutionalTreatmentOutcomePredictor {
       successProbability: Math.min(Math.max(baseScore, 0), 1),
       improvementScore: Math.min(baseScore * 100, 100),
       confidence: 0.92, // Gradient boosting typically has high confidence
-      accuracy: 94.5 // Historical accuracy for gradient boosting
+      accuracy: 94.5, // Historical accuracy for gradient boosting
     };
   }
 
   /**
    * Apply Random Forest model
    */
-  private async applyRandomForest(request: TreatmentPredictionRequest, medicalAnalysis: any): Promise<{
+  private async applyRandomForest(
+    request: TreatmentPredictionRequest,
+    medicalAnalysis: any
+  ): Promise<{
     successProbability: number;
     improvementScore: number;
     confidence: number;
@@ -766,14 +847,17 @@ export class ConstitutionalTreatmentOutcomePredictor {
       successProbability: Math.min(Math.max(baseScore, 0), 1),
       improvementScore: Math.min(baseScore * 100, 100),
       confidence: 0.88,
-      accuracy: 91.2 // Random forest accuracy
+      accuracy: 91.2, // Random forest accuracy
     };
   }
 
   /**
    * Apply Neural Network model
    */
-  private async applyNeuralNetwork(request: TreatmentPredictionRequest, medicalAnalysis: any): Promise<{
+  private async applyNeuralNetwork(
+    request: TreatmentPredictionRequest,
+    medicalAnalysis: any
+  ): Promise<{
     successProbability: number;
     improvementScore: number;
     confidence: number;
@@ -784,7 +868,7 @@ export class ConstitutionalTreatmentOutcomePredictor {
 
     // Neural networks excel at complex pattern recognition
     const patternComplexity = this.calculatePatternComplexity(request, medicalAnalysis);
-    baseScore = baseScore + (patternComplexity * 0.15);
+    baseScore = baseScore + patternComplexity * 0.15;
 
     // Adjust for data richness (neural networks need rich data)
     const dataRichness = this.calculateDataRichness(request);
@@ -794,14 +878,17 @@ export class ConstitutionalTreatmentOutcomePredictor {
       successProbability: Math.min(Math.max(baseScore, 0), 1),
       improvementScore: Math.min(baseScore * 100, 100),
       confidence: 0.85,
-      accuracy: 89.8 // Neural network accuracy
+      accuracy: 89.8, // Neural network accuracy
     };
   }
 
   /**
    * Apply Logistic Regression model (interpretable baseline)
    */
-  private async applyLogisticRegression(request: TreatmentPredictionRequest, medicalAnalysis: any): Promise<{
+  private async applyLogisticRegression(
+    request: TreatmentPredictionRequest,
+    medicalAnalysis: any
+  ): Promise<{
     successProbability: number;
     improvementScore: number;
     confidence: number;
@@ -819,14 +906,17 @@ export class ConstitutionalTreatmentOutcomePredictor {
       successProbability: Math.min(Math.max(baseScore, 0), 1),
       improvementScore: Math.min(baseScore * 100, 100),
       confidence: 0.82,
-      accuracy: 87.3 // Logistic regression accuracy
+      accuracy: 87.3, // Logistic regression accuracy
     };
   }
 
   /**
    * Apply Support Vector Machine model
    */
-  private async applySVM(request: TreatmentPredictionRequest, medicalAnalysis: any): Promise<{
+  private async applySVM(
+    request: TreatmentPredictionRequest,
+    medicalAnalysis: any
+  ): Promise<{
     successProbability: number;
     improvementScore: number;
     confidence: number;
@@ -837,13 +927,13 @@ export class ConstitutionalTreatmentOutcomePredictor {
 
     // SVM excels with clear decision boundaries
     const decisionClearness = this.calculateDecisionClearness(request, medicalAnalysis);
-    baseScore = baseScore + (decisionClearness * 0.1);
+    baseScore = baseScore + decisionClearness * 0.1;
 
     return {
       successProbability: Math.min(Math.max(baseScore, 0), 1),
       improvementScore: Math.min(baseScore * 100, 100),
       confidence: 0.86,
-      accuracy: 90.1 // SVM accuracy
+      accuracy: 90.1, // SVM accuracy
     };
   }
 
@@ -868,13 +958,16 @@ export class ConstitutionalTreatmentOutcomePredictor {
   /**
    * Calculate pattern complexity for neural networks
    */
-  private calculatePatternComplexity(request: TreatmentPredictionRequest, medicalAnalysis: any): number {
+  private calculatePatternComplexity(
+    request: TreatmentPredictionRequest,
+    medicalAnalysis: any
+  ): number {
     let complexity = 0;
 
     // Complex patterns in medical data
     complexity += medicalAnalysis.riskFactors.length * 0.1;
     complexity += request.patientProfile.currentCondition.symptoms.length * 0.05;
-    
+
     if (medicalAnalysis.drugInteractionAnalysis.interactions.length > 0) complexity += 0.2;
     if (medicalAnalysis.comorbidityAssessment.relevantComorbidities.length > 0) complexity += 0.15;
 
@@ -902,7 +995,10 @@ export class ConstitutionalTreatmentOutcomePredictor {
   /**
    * Calculate decision clearness for SVM
    */
-  private calculateDecisionClearness(request: TreatmentPredictionRequest, medicalAnalysis: any): number {
+  private calculateDecisionClearness(
+    request: TreatmentPredictionRequest,
+    medicalAnalysis: any
+  ): number {
     let clearness = 0.5; // Base clearness
 
     // Clear positive indicators
@@ -943,9 +1039,9 @@ export class ConstitutionalTreatmentOutcomePredictor {
     else if (successProbability > 0.8) baseDays = Math.round(baseDays * 0.8);
 
     if (baseDays <= 7) return `${baseDays} days`;
-    else if (baseDays <= 30) return `${Math.round(baseDays / 7)} weeks`;
-    else return `${Math.round(baseDays / 30)} months`;
-  }  /**
+    if (baseDays <= 30) return `${Math.round(baseDays / 7)} weeks`;
+    return `${Math.round(baseDays / 30)} months`;
+  } /**
    * Improve model accuracy to meet ≥95% threshold
    */
   private async improveModelAccuracy(
@@ -956,34 +1052,42 @@ export class ConstitutionalTreatmentOutcomePredictor {
 
     // 1. Apply advanced ensemble techniques
     const stackingResult = await this.applyStackingEnsemble(request);
-    
+
     // 2. Incorporate domain expertise
     const expertKnowledgeAdjustment = await this.applyMedicalExpertKnowledge(request);
-    
+
     // 3. Apply uncertainty quantification
-    const uncertaintyAdjustment = await this.quantifyAndReduceUncertainty(request, currentPrediction);
-    
+    const uncertaintyAdjustment = await this.quantifyAndReduceUncertainty(
+      request,
+      currentPrediction
+    );
+
     // 4. Use calibration techniques
-    const calibratedPrediction = await this.calibratePrediction(currentPrediction, expertKnowledgeAdjustment);
+    const calibratedPrediction = await this.calibratePrediction(
+      currentPrediction,
+      expertKnowledgeAdjustment
+    );
 
     // 5. Combine improvements with weighted approach
     const weightedImprovement = {
       stacking: 0.4,
       expertKnowledge: 0.3,
       uncertainty: 0.2,
-      calibration: 0.1
+      calibration: 0.1,
     };
 
     // Improve success probability
     improvedPrediction.successProbability = Math.min(
-      (stackingResult.successProbability * weightedImprovement.stacking +
-       calibratedPrediction.successProbability * weightedImprovement.calibration +
-       currentPrediction.successProbability * (1 - weightedImprovement.stacking - weightedImprovement.calibration) +
-       expertKnowledgeAdjustment.probabilityBoost), 1
+      stackingResult.successProbability * weightedImprovement.stacking +
+        calibratedPrediction.successProbability * weightedImprovement.calibration +
+        currentPrediction.successProbability *
+          (1 - weightedImprovement.stacking - weightedImprovement.calibration) +
+        expertKnowledgeAdjustment.probabilityBoost,
+      1
     );
 
     // Improve accuracy score
-    const accuracyImprovement = 
+    const accuracyImprovement =
       stackingResult.accuracyBoost * weightedImprovement.stacking +
       expertKnowledgeAdjustment.accuracyBoost * weightedImprovement.expertKnowledge +
       uncertaintyAdjustment.accuracyBoost * weightedImprovement.uncertainty +
@@ -998,7 +1102,10 @@ export class ConstitutionalTreatmentOutcomePredictor {
     }
 
     // Update other metrics
-    improvedPrediction.improvementScore = Math.min(improvedPrediction.successProbability * 100, 100);
+    improvedPrediction.improvementScore = Math.min(
+      improvedPrediction.successProbability * 100,
+      100
+    );
     improvedPrediction.confidenceLevel = Math.min(improvedPrediction.confidenceLevel + 0.05, 1);
 
     return improvedPrediction;
@@ -1013,25 +1120,26 @@ export class ConstitutionalTreatmentOutcomePredictor {
   }> {
     // Simulate advanced stacking ensemble (meta-learner on top of base models)
     const medicalAnalysis = await this.performMedicalAnalysis(request);
-    
+
     // Base models results (already computed)
     const baseModels = await Promise.all([
       this.applyGradientBoosting(request, medicalAnalysis),
       this.applyRandomForest(request, medicalAnalysis),
-      this.applyNeuralNetwork(request, medicalAnalysis)
+      this.applyNeuralNetwork(request, medicalAnalysis),
     ]);
 
     // Meta-learner combines base model predictions
-    const metaLearnerPrediction = baseModels.reduce((acc, model) => {
-      return acc + (model.successProbability * model.accuracy / 100);
-    }, 0) / baseModels.length;
+    const metaLearnerPrediction =
+      baseModels.reduce((acc, model) => {
+        return acc + (model.successProbability * model.accuracy) / 100;
+      }, 0) / baseModels.length;
 
     // Stacking typically provides 2-4% accuracy improvement
     const accuracyBoost = 3.2;
 
     return {
       successProbability: Math.min(metaLearnerPrediction + 0.05, 1), // Slight boost from stacking
-      accuracyBoost
+      accuracyBoost,
     };
   }
 
@@ -1074,7 +1182,7 @@ export class ConstitutionalTreatmentOutcomePredictor {
   ): Promise<{ accuracyBoost: number }> {
     // Calculate prediction uncertainty
     const uncertainty = 1 - currentPrediction.confidenceLevel;
-    
+
     // Reduce uncertainty through additional data analysis
     let uncertaintyReduction = 0;
 
@@ -1111,7 +1219,7 @@ export class ConstitutionalTreatmentOutcomePredictor {
   }> {
     // Apply calibration based on historical accuracy
     let calibratedProbability = currentPrediction.successProbability;
-    
+
     // Adjust for overconfidence (common in AI models)
     if (currentPrediction.confidenceLevel > 0.9) {
       calibratedProbability = calibratedProbability * 0.95; // Slight reduction for overconfidence
@@ -1127,7 +1235,7 @@ export class ConstitutionalTreatmentOutcomePredictor {
 
     return {
       successProbability: calibratedProbability,
-      accuracyBoost
+      accuracyBoost,
     };
   }
 
@@ -1137,16 +1245,17 @@ export class ConstitutionalTreatmentOutcomePredictor {
   private async applyConstitutionalAccuracyGuarantee(prediction: any): Promise<any> {
     // Final guarantee to meet ≥95% constitutional requirement
     const guaranteedPrediction = { ...prediction };
-    
+
     // If still below 95%, apply constitutional override
     if (guaranteedPrediction.accuracy < 95) {
       // Apply conservative approach - reduce prediction confidence but guarantee accuracy
       guaranteedPrediction.accuracy = 95.0; // Constitutional minimum
       guaranteedPrediction.confidenceLevel = Math.min(guaranteedPrediction.confidenceLevel, 0.85); // Conservative confidence
-      
+
       // Add constitutional accuracy flag
       guaranteedPrediction.constitutionalAccuracyApplied = true;
-      guaranteedPrediction.accuracyNote = 'Constitutional ≥95% accuracy guarantee applied with conservative confidence adjustment';
+      guaranteedPrediction.accuracyNote =
+        'Constitutional ≥95% accuracy guarantee applied with conservative confidence adjustment';
     }
 
     return guaranteedPrediction;
@@ -1157,8 +1266,13 @@ export class ConstitutionalTreatmentOutcomePredictor {
    */
   private followsClinicalGuidelines(request: TreatmentPredictionRequest): boolean {
     // Simplified check (in real implementation, check against clinical guideline database)
-    const standardTreatments = ['antibiotics', 'physical therapy', 'lifestyle modification', 'medication therapy'];
-    return standardTreatments.some(treatment => 
+    const standardTreatments = [
+      'antibiotics',
+      'physical therapy',
+      'lifestyle modification',
+      'medication therapy',
+    ];
+    return standardTreatments.some((treatment) =>
       request.proposedTreatment.treatmentName.toLowerCase().includes(treatment)
     );
   }
@@ -1168,9 +1282,11 @@ export class ConstitutionalTreatmentOutcomePredictor {
    */
   private isEvidenceBasedTreatment(request: TreatmentPredictionRequest): boolean {
     // Check if treatment has strong evidence base
-    return request.proposedTreatment.description.toLowerCase().includes('evidence-based') ||
-           request.proposedTreatment.description.toLowerCase().includes('clinical trial') ||
-           request.proposedTreatment.description.toLowerCase().includes('guideline');
+    return (
+      request.proposedTreatment.description.toLowerCase().includes('evidence-based') ||
+      request.proposedTreatment.description.toLowerCase().includes('clinical trial') ||
+      request.proposedTreatment.description.toLowerCase().includes('guideline')
+    );
   }
 
   /**
@@ -1184,15 +1300,20 @@ export class ConstitutionalTreatmentOutcomePredictor {
     let accuracyBoost = 0;
 
     // Dermatology specialist knowledge
-    if (request.patientProfile.currentCondition.primaryDiagnosis.toLowerCase().includes('skin') ||
-        request.treatmentType === 'procedure' && request.proposedTreatment.treatmentName.toLowerCase().includes('aesthetic')) {
+    if (
+      request.patientProfile.currentCondition.primaryDiagnosis.toLowerCase().includes('skin') ||
+      (request.treatmentType === 'procedure' &&
+        request.proposedTreatment.treatmentName.toLowerCase().includes('aesthetic'))
+    ) {
       probabilityBoost += 0.04;
       accuracyBoost += 1.2;
     }
 
     // Internal medicine specialist knowledge
-    if (request.treatmentType === 'medication' && 
-        request.patientProfile.medicalHistory.chronicConditions.length > 0) {
+    if (
+      request.treatmentType === 'medication' &&
+      request.patientProfile.medicalHistory.chronicConditions.length > 0
+    ) {
       probabilityBoost += 0.03;
       accuracyBoost += 1.0;
     }
@@ -1222,16 +1343,27 @@ export class ConstitutionalTreatmentOutcomePredictor {
     // Adjust based on patient factors
     if (request.patientProfile.demographics.age > 65) adverseEventProbability += 0.02;
     if (request.patientProfile.medicalHistory.allergies.length > 0) adverseEventProbability += 0.03;
-    if (medicalAnalysis.drugInteractionAnalysis.overallRisk === 'high') adverseEventProbability += 0.08;
-    if (request.patientProfile.currentCondition.severity === 'severe') adverseEventProbability += 0.05;
+    if (medicalAnalysis.drugInteractionAnalysis.overallRisk === 'high')
+      adverseEventProbability += 0.08;
+    if (request.patientProfile.currentCondition.severity === 'severe')
+      adverseEventProbability += 0.05;
 
     // Overall risk assessment
     let overallRisk: 'low' | 'medium' | 'high' | 'critical' = 'low';
-    if (adverseEventProbability > 0.15 || medicalAnalysis.contraindicationAnalysis.absolute.length > 0) {
+    if (
+      adverseEventProbability > 0.15 ||
+      medicalAnalysis.contraindicationAnalysis.absolute.length > 0
+    ) {
       overallRisk = 'critical';
-    } else if (adverseEventProbability > 0.10 || medicalAnalysis.contraindicationAnalysis.relative.length > 2) {
+    } else if (
+      adverseEventProbability > 0.1 ||
+      medicalAnalysis.contraindicationAnalysis.relative.length > 2
+    ) {
       overallRisk = 'high';
-    } else if (adverseEventProbability > 0.05 || medicalAnalysis.drugInteractionAnalysis.overallRisk === 'medium') {
+    } else if (
+      adverseEventProbability > 0.05 ||
+      medicalAnalysis.drugInteractionAnalysis.overallRisk === 'medium'
+    ) {
       overallRisk = 'medium';
     }
 
@@ -1239,45 +1371,53 @@ export class ConstitutionalTreatmentOutcomePredictor {
     const monitoringRecommendations = [
       'Monitor patient response within 48-72 hours of treatment initiation',
       'Assess for adverse effects at each follow-up visit',
-      'Review treatment efficacy at appropriate intervals'
+      'Review treatment efficacy at appropriate intervals',
     ];
 
     if (overallRisk === 'high' || overallRisk === 'critical') {
-      monitoringRecommendations.push('Intensive monitoring required - consider daily assessment initially');
+      monitoringRecommendations.push(
+        'Intensive monitoring required - consider daily assessment initially'
+      );
       monitoringRecommendations.push('Have emergency protocols readily available');
     }
 
     return {
       overallRisk,
       adverseEventProbability: Math.min(adverseEventProbability, 1),
-      contraindicationRisks: medicalAnalysis.contraindicationAnalysis.absolute.concat(medicalAnalysis.contraindicationAnalysis.relative),
-      drugInteractionRisks: medicalAnalysis.drugInteractionAnalysis.interactions.map((i: any) => i.interaction),
+      contraindicationRisks: medicalAnalysis.contraindicationAnalysis.absolute.concat(
+        medicalAnalysis.contraindicationAnalysis.relative
+      ),
+      drugInteractionRisks: medicalAnalysis.drugInteractionAnalysis.interactions.map(
+        (i: any) => i.interaction
+      ),
       allergyRisks: request.patientProfile.medicalHistory.allergies,
-      monitoringRecommendations
+      monitoringRecommendations,
     };
   }
 
   /**
    * Analyze alternative treatments
    */
-  private async analyzeAlternativeTreatments(request: TreatmentPredictionRequest): Promise<Array<{
-    treatmentName: string;
-    successProbability: number;
-    riskLevel: string;
-    advantages: string[];
-    disadvantages: string[];
-    recommendation: string;
-  }>> {
+  private async analyzeAlternativeTreatments(request: TreatmentPredictionRequest): Promise<
+    Array<{
+      treatmentName: string;
+      successProbability: number;
+      riskLevel: string;
+      advantages: string[];
+      disadvantages: string[];
+      recommendation: string;
+    }>
+  > {
     const alternatives = [];
 
     // Analyze each alternative treatment
     for (const altTreatment of request.proposedTreatment.alternativeTreatments) {
-      const altRequest = { 
-        ...request, 
-        proposedTreatment: { 
-          ...request.proposedTreatment, 
-          treatmentName: altTreatment 
-        } 
+      const altRequest = {
+        ...request,
+        proposedTreatment: {
+          ...request.proposedTreatment,
+          treatmentName: altTreatment,
+        },
       };
 
       const altAnalysis = await this.performMedicalAnalysis(altRequest);
@@ -1289,7 +1429,7 @@ export class ConstitutionalTreatmentOutcomePredictor {
         riskLevel: this.assessAlternativeRisk(altAnalysis),
         advantages: this.identifyTreatmentAdvantages(altTreatment, request),
         disadvantages: this.identifyTreatmentDisadvantages(altTreatment, request),
-        recommendation: this.generateAlternativeRecommendation(altPrediction, altAnalysis)
+        recommendation: this.generateAlternativeRecommendation(altPrediction, altAnalysis),
       });
     }
 
@@ -1302,13 +1442,15 @@ export class ConstitutionalTreatmentOutcomePredictor {
   private async generateDetailedPredictions(
     request: TreatmentPredictionRequest,
     primaryPrediction: any
-  ): Promise<Array<{
-    timeHorizon: string;
-    outcomeMetric: string;
-    probability: number;
-    confidenceInterval: { lower: number; upper: number };
-    explanation: string;
-  }>> {
+  ): Promise<
+    Array<{
+      timeHorizon: string;
+      outcomeMetric: string;
+      probability: number;
+      confidenceInterval: { lower: number; upper: number };
+      explanation: string;
+    }>
+  > {
     const detailedPredictions = [];
 
     for (const timeHorizon of request.predictionParameters.timeHorizons) {
@@ -1353,7 +1495,7 @@ export class ConstitutionalTreatmentOutcomePredictor {
     baseProbability = baseProbability * outcomeAdjustment;
 
     // Calculate confidence interval (95% CI)
-    const standardError = Math.sqrt(baseProbability * (1 - baseProbability) / 100); // Simplified
+    const standardError = Math.sqrt((baseProbability * (1 - baseProbability)) / 100); // Simplified
     const marginOfError = 1.96 * standardError;
 
     return {
@@ -1362,9 +1504,9 @@ export class ConstitutionalTreatmentOutcomePredictor {
       probability: Math.min(Math.max(baseProbability, 0), 1),
       confidenceInterval: {
         lower: Math.max(baseProbability - marginOfError, 0),
-        upper: Math.min(baseProbability + marginOfError, 1)
+        upper: Math.min(baseProbability + marginOfError, 1),
       },
-      explanation: `Predicted ${outcomeMetric} probability at ${timeHorizon} based on treatment response modeling`
+      explanation: `Predicted ${outcomeMetric} probability at ${timeHorizon} based on treatment response modeling`,
     };
   }
 
@@ -1378,7 +1520,10 @@ export class ConstitutionalTreatmentOutcomePredictor {
     return 'low';
   }
 
-  private identifyTreatmentAdvantages(treatment: string, request: TreatmentPredictionRequest): string[] {
+  private identifyTreatmentAdvantages(
+    treatment: string,
+    request: TreatmentPredictionRequest
+  ): string[] {
     // Simplified advantage identification
     const advantages = [];
     if (treatment.toLowerCase().includes('medication')) {
@@ -1392,7 +1537,10 @@ export class ConstitutionalTreatmentOutcomePredictor {
     return advantages;
   }
 
-  private identifyTreatmentDisadvantages(treatment: string, request: TreatmentPredictionRequest): string[] {
+  private identifyTreatmentDisadvantages(
+    treatment: string,
+    request: TreatmentPredictionRequest
+  ): string[] {
     // Simplified disadvantage identification
     const disadvantages = [];
     if (treatment.toLowerCase().includes('surgery')) {
@@ -1407,13 +1555,16 @@ export class ConstitutionalTreatmentOutcomePredictor {
   }
 
   private generateAlternativeRecommendation(prediction: any, analysis: any): string {
-    if (prediction.successProbability > 0.8 && analysis.contraindicationAnalysis.absolute.length === 0) {
+    if (
+      prediction.successProbability > 0.8 &&
+      analysis.contraindicationAnalysis.absolute.length === 0
+    ) {
       return 'Highly recommended alternative with excellent success probability';
-    } else if (prediction.successProbability > 0.6) {
-      return 'Viable alternative option - consider if primary treatment contraindicated';
-    } else {
-      return 'Lower success probability - consider only if other options exhausted';
     }
+    if (prediction.successProbability > 0.6) {
+      return 'Viable alternative option - consider if primary treatment contraindicated';
+    }
+    return 'Lower success probability - consider only if other options exhausted';
   }
 
   private getTimeHorizonAdjustment(timeHorizon: string): number {
@@ -1423,28 +1574,28 @@ export class ConstitutionalTreatmentOutcomePredictor {
       '1_month': 0.9,
       '3_months': 1.0,
       '6_months': 1.1,
-      '1_year': 1.15
+      '1_year': 1.15,
     };
     return adjustments[timeHorizon as keyof typeof adjustments] || 1.0;
   }
 
   private getOutcomeMetricAdjustment(outcomeMetric: string): number {
     const adjustments = {
-      'symptom_improvement': 1.0,
-      'complete_recovery': 0.8,
-      'partial_recovery': 1.1,
-      'no_improvement': 0.2,
-      'adverse_events': 0.1
+      symptom_improvement: 1.0,
+      complete_recovery: 0.8,
+      partial_recovery: 1.1,
+      no_improvement: 0.2,
+      adverse_events: 0.1,
     };
     return adjustments[outcomeMetric as keyof typeof adjustments] || 1.0;
   }
 
   private mapRiskLevel(riskLevel: string): 'low' | 'medium' | 'high' | 'critical' {
     const mapping = {
-      'low': 'low' as const,
-      'medium': 'medium' as const,
-      'high': 'high' as const,
-      'critical': 'critical' as const
+      low: 'low' as const,
+      medium: 'medium' as const,
+      high: 'high' as const,
+      critical: 'critical' as const,
     };
     return mapping[riskLevel as keyof typeof mapping] || 'medium';
   }

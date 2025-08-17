@@ -23,7 +23,7 @@ export const AIDecisionSchema = z.object({
   medicalContext: z.string(),
   reviewRequired: z.boolean(),
   humanOversight: z.boolean(),
-  riskLevel: z.enum(['low', 'medium', 'high', 'critical'])
+  riskLevel: z.enum(['low', 'medium', 'high', 'critical']),
 });
 
 export type AIDecision = z.infer<typeof AIDecisionSchema>;
@@ -76,7 +76,8 @@ export class ConstitutionalAIEthicsValidator {
         description: `AI accuracy ${decision.accuracy}% below constitutional requirement of ≥95%`,
         recommendation: 'Retrain model or require human review for all decisions below threshold',
         cfmStandard: 'CFM Resolution 2273/2020 - AI in Medicine',
-        patientImpact: 'CRITICAL: Low accuracy AI decisions can lead to medical errors and patient harm'
+        patientImpact:
+          'CRITICAL: Low accuracy AI decisions can lead to medical errors and patient harm',
       });
       score -= 30;
     }
@@ -89,7 +90,7 @@ export class ConstitutionalAIEthicsValidator {
         description: 'AI decision lacks adequate explanation for medical professionals',
         recommendation: 'Implement detailed explanation generation for all AI decisions',
         cfmStandard: 'CFM Resolution 2273/2020 - Transparency in AI',
-        patientImpact: 'HIGH: Unexplained AI decisions undermine medical professional judgment'
+        patientImpact: 'HIGH: Unexplained AI decisions undermine medical professional judgment',
       });
       score -= 20;
     }
@@ -102,7 +103,7 @@ export class ConstitutionalAIEthicsValidator {
         description: `${decision.riskLevel} risk AI decision lacks required human oversight`,
         recommendation: 'Implement mandatory human review for medium/high/critical risk decisions',
         cfmStandard: 'CFM Resolution 2273/2020 - Human Supervision',
-        patientImpact: 'HIGH: Unsupervised AI decisions in healthcare can lead to medical errors'
+        patientImpact: 'HIGH: Unsupervised AI decisions in healthcare can lead to medical errors',
       });
       score -= 25;
     }
@@ -115,7 +116,8 @@ export class ConstitutionalAIEthicsValidator {
         description: 'Critical risk decision with insufficient confidence level',
         recommendation: 'Require ≥99% confidence for critical patient safety decisions',
         cfmStandard: 'Hippocratic Oath - First, do no harm',
-        patientImpact: 'CRITICAL: Low confidence critical decisions pose immediate patient safety risk'
+        patientImpact:
+          'CRITICAL: Low confidence critical decisions pose immediate patient safety risk',
       });
       score -= 35;
     }
@@ -128,49 +130,51 @@ export class ConstitutionalAIEthicsValidator {
         description: 'AI processing includes excessive personal data beyond medical necessity',
         recommendation: 'Implement data minimization and privacy-preserving AI techniques',
         cfmStandard: 'LGPD Art. 6 - Data Minimization Principle',
-        patientImpact: 'MEDIUM: Excessive data processing violates patient privacy rights'
+        patientImpact: 'MEDIUM: Excessive data processing violates patient privacy rights',
       });
       score -= 15;
     }
 
     // 6. Validate Bias Detection
     const biasScore = await this.detectAlgorithmicBias(decision);
-    if (biasScore > 0.1) { // >10% bias threshold
+    if (biasScore > 0.1) {
+      // >10% bias threshold
       violations.push({
         principle: 'Algorithmic Fairness',
         severity: 'serious',
         description: `Detected algorithmic bias score: ${(biasScore * 100).toFixed(1)}%`,
         recommendation: 'Implement bias mitigation techniques and diverse training data',
         cfmStandard: 'CFM Code of Ethics - Equality in Healthcare',
-        patientImpact: 'HIGH: Biased AI decisions can lead to unequal healthcare treatment'
+        patientImpact: 'HIGH: Biased AI decisions can lead to unequal healthcare treatment',
       });
       score -= 20;
     }
 
     // Determine compliance status
     const complianceStatus = this.determineComplianceStatus(violations);
-    const cfmCompliance = violations.every(v => v.severity !== 'critical');
+    const cfmCompliance = violations.every((v) => v.severity !== 'critical');
     const patientSafetyRisk = this.assessPatientSafetyRisk(violations);
-    const requiresHumanReview = violations.some(v => v.severity === 'critical') || 
-                               decision.riskLevel === 'critical' ||
-                               decision.accuracy < this.MINIMUM_ACCURACY_THRESHOLD;
+    const requiresHumanReview =
+      violations.some((v) => v.severity === 'critical') ||
+      decision.riskLevel === 'critical' ||
+      decision.accuracy < this.MINIMUM_ACCURACY_THRESHOLD;
 
     return {
-      isValid: violations.length === 0 || violations.every(v => v.severity === 'minor'),
+      isValid: violations.length === 0 || violations.every((v) => v.severity === 'minor'),
       score: Math.max(0, score),
       violations,
       recommendations: this.generateRecommendations(violations),
       requiresHumanReview,
       complianceStatus,
       cfmCompliance,
-      patientSafetyRisk
+      patientSafetyRisk,
     };
-  }  /**
+  } /**
    * Check if input contains personal data
    */
   private containsPersonalData(input: Record<string, any>): boolean {
     const personalDataFields = ['cpf', 'email', 'phone', 'address', 'name', 'birthDate'];
-    return personalDataFields.some(field => field in input);
+    return personalDataFields.some((field) => field in input);
   }
 
   /**
@@ -179,9 +183,9 @@ export class ConstitutionalAIEthicsValidator {
   private isDataMinimized(input: Record<string, any>): boolean {
     const necessaryFields = ['age', 'symptoms', 'medical_history', 'allergies', 'medications'];
     const unnecessaryFields = ['social_media', 'income', 'education', 'occupation'];
-    
+
     // Check if only necessary fields are present
-    const hasUnnecessaryData = unnecessaryFields.some(field => field in input);
+    const hasUnnecessaryData = unnecessaryFields.some((field) => field in input);
     return !hasUnnecessaryData;
   }
 
@@ -225,12 +229,14 @@ export class ConstitutionalAIEthicsValidator {
   /**
    * Determine overall compliance status
    */
-  private determineComplianceStatus(violations: EthicsViolation[]): 'compliant' | 'partial' | 'non_compliant' {
+  private determineComplianceStatus(
+    violations: EthicsViolation[]
+  ): 'compliant' | 'partial' | 'non_compliant' {
     if (violations.length === 0) return 'compliant';
-    
-    const hasCritical = violations.some(v => v.severity === 'critical');
-    const hasSerious = violations.some(v => v.severity === 'serious');
-    
+
+    const hasCritical = violations.some((v) => v.severity === 'critical');
+    const hasSerious = violations.some((v) => v.severity === 'serious');
+
     if (hasCritical) return 'non_compliant';
     if (hasSerious) return 'partial';
     return 'compliant';
@@ -239,12 +245,14 @@ export class ConstitutionalAIEthicsValidator {
   /**
    * Assess patient safety risk from violations
    */
-  private assessPatientSafetyRisk(violations: EthicsViolation[]): 'none' | 'low' | 'medium' | 'high' | 'critical' {
+  private assessPatientSafetyRisk(
+    violations: EthicsViolation[]
+  ): 'none' | 'low' | 'medium' | 'high' | 'critical' {
     if (violations.length === 0) return 'none';
-    
-    const criticalViolations = violations.filter(v => v.severity === 'critical');
-    const seriousViolations = violations.filter(v => v.severity === 'serious');
-    
+
+    const criticalViolations = violations.filter((v) => v.severity === 'critical');
+    const seriousViolations = violations.filter((v) => v.severity === 'serious');
+
     if (criticalViolations.length > 0) return 'critical';
     if (seriousViolations.length > 2) return 'high';
     if (seriousViolations.length > 0) return 'medium';
@@ -260,26 +268,26 @@ export class ConstitutionalAIEthicsValidator {
     }
 
     const recommendations = new Set<string>();
-    
-    violations.forEach(violation => {
+
+    violations.forEach((violation) => {
       recommendations.add(violation.recommendation);
-      
+
       // Add specific constitutional healthcare recommendations
       if (violation.severity === 'critical') {
         recommendations.add('IMMEDIATE ACTION: Stop AI system and require manual medical review');
         recommendations.add('Implement emergency fallback procedures for patient safety');
       }
-      
+
       if (violation.principle.includes('Accuracy')) {
         recommendations.add('Retrain AI model with larger, more diverse medical dataset');
         recommendations.add('Implement ensemble methods to improve prediction accuracy');
       }
-      
+
       if (violation.principle.includes('Explainable')) {
         recommendations.add('Implement LIME/SHAP explainability techniques');
         recommendations.add('Create medical professional-friendly explanation interfaces');
       }
-      
+
       if (violation.principle.includes('Privacy')) {
         recommendations.add('Implement differential privacy and federated learning');
         recommendations.add('Review and minimize data collection to medical necessity only');
@@ -304,39 +312,50 @@ export class ConstitutionalAIEthicsValidator {
     summary: string;
   }> {
     const validationResults = await Promise.all(
-      decisions.map(decision => this.validateAIDecision(decision))
+      decisions.map((decision) => this.validateAIDecision(decision))
     );
 
     const totalDecisions = decisions.length;
-    const compliantDecisions = validationResults.filter(r => r.isValid).length;
-    const criticalViolations = validationResults.reduce((sum, r) => 
-      sum + r.violations.filter(v => v.severity === 'critical').length, 0
+    const compliantDecisions = validationResults.filter((r) => r.isValid).length;
+    const criticalViolations = validationResults.reduce(
+      (sum, r) => sum + r.violations.filter((v) => v.severity === 'critical').length,
+      0
     );
-    
+
     const averageAccuracy = decisions.reduce((sum, d) => sum + d.accuracy, 0) / totalDecisions;
-    const cfmCompliantDecisions = validationResults.filter(r => r.cfmCompliance).length;
+    const cfmCompliantDecisions = validationResults.filter((r) => r.cfmCompliance).length;
     const cfmComplianceRate = (cfmCompliantDecisions / totalDecisions) * 100;
-    
+
     // Patient safety score based on risk levels
-    const patientSafetyScore = validationResults.reduce((sum, r) => {
-      const riskScore = r.patientSafetyRisk === 'none' ? 100 :
-                       r.patientSafetyRisk === 'low' ? 80 :
-                       r.patientSafetyRisk === 'medium' ? 60 :
-                       r.patientSafetyRisk === 'high' ? 40 : 0;
-      return sum + riskScore;
-    }, 0) / totalDecisions;
+    const patientSafetyScore =
+      validationResults.reduce((sum, r) => {
+        const riskScore =
+          r.patientSafetyRisk === 'none'
+            ? 100
+            : r.patientSafetyRisk === 'low'
+              ? 80
+              : r.patientSafetyRisk === 'medium'
+                ? 60
+                : r.patientSafetyRisk === 'high'
+                  ? 40
+                  : 0;
+        return sum + riskScore;
+      }, 0) / totalDecisions;
 
     const overallCompliance = (compliantDecisions / totalDecisions) * 100;
 
     // Generate comprehensive recommendations
     const allRecommendations = new Set<string>();
-    validationResults.forEach(r => r.recommendations.forEach(rec => allRecommendations.add(rec)));
+    validationResults.forEach((r) =>
+      r.recommendations.forEach((rec) => allRecommendations.add(rec))
+    );
 
-    const summary = `Constitutional AI Ethics Audit: ${compliantDecisions}/${totalDecisions} decisions compliant | ` +
-                   `Average Accuracy: ${averageAccuracy.toFixed(1)}% | ` +
-                   `CFM Compliance: ${cfmComplianceRate.toFixed(1)}% | ` +
-                   `Critical Issues: ${criticalViolations} | ` +
-                   `Patient Safety Score: ${patientSafetyScore.toFixed(1)}/100`;
+    const summary =
+      `Constitutional AI Ethics Audit: ${compliantDecisions}/${totalDecisions} decisions compliant | ` +
+      `Average Accuracy: ${averageAccuracy.toFixed(1)}% | ` +
+      `CFM Compliance: ${cfmComplianceRate.toFixed(1)}% | ` +
+      `Critical Issues: ${criticalViolations} | ` +
+      `Patient Safety Score: ${patientSafetyScore.toFixed(1)}/100`;
 
     return {
       overallCompliance,
@@ -347,7 +366,7 @@ export class ConstitutionalAIEthicsValidator {
       cfmComplianceRate,
       patientSafetyScore,
       recommendations: Array.from(allRecommendations),
-      summary
+      summary,
     };
   }
 
@@ -356,14 +375,18 @@ export class ConstitutionalAIEthicsValidator {
    */
   async validateCriticalOperation(
     decision: AIDecision,
-    operationType: 'emergency_triage' | 'drug_interaction' | 'allergy_alert' | 'vital_signs_critical'
+    operationType:
+      | 'emergency_triage'
+      | 'drug_interaction'
+      | 'allergy_alert'
+      | 'vital_signs_critical'
   ): Promise<EthicsValidationResult> {
     // Enhanced validation for critical operations
     const baseValidation = await this.validateAIDecision(decision);
-    
+
     // Additional critical operation checks
     const additionalViolations: EthicsViolation[] = [];
-    
+
     // Critical operations require 99% accuracy
     if (decision.accuracy < 99) {
       additionalViolations.push({
@@ -372,7 +395,7 @@ export class ConstitutionalAIEthicsValidator {
         description: `Critical ${operationType} requires ≥99% accuracy, got ${decision.accuracy}%`,
         recommendation: 'Use ensemble methods and require dual AI system validation',
         cfmStandard: 'Patient Safety in Critical Care',
-        patientImpact: 'CRITICAL: Inaccurate critical decisions can be life-threatening'
+        patientImpact: 'CRITICAL: Inaccurate critical decisions can be life-threatening',
       });
     }
 
@@ -384,7 +407,7 @@ export class ConstitutionalAIEthicsValidator {
         description: `Critical ${operationType} must require immediate human review`,
         recommendation: 'Enable mandatory human review for all critical operations',
         cfmStandard: 'Human Oversight in Critical Care',
-        patientImpact: 'CRITICAL: Unreviewed critical decisions pose immediate patient risk'
+        patientImpact: 'CRITICAL: Unreviewed critical decisions pose immediate patient risk',
       });
     }
 
@@ -392,7 +415,8 @@ export class ConstitutionalAIEthicsValidator {
       ...baseValidation,
       violations: [...baseValidation.violations, ...additionalViolations],
       requiresHumanReview: true, // Always require human review for critical operations
-      patientSafetyRisk: additionalViolations.length > 0 ? 'critical' : baseValidation.patientSafetyRisk
+      patientSafetyRisk:
+        additionalViolations.length > 0 ? 'critical' : baseValidation.patientSafetyRisk,
     };
   }
 }

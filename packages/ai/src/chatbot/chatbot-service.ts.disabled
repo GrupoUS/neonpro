@@ -1,0 +1,569 @@
+/**
+ * @fileoverview Healthcare Chatbot Service with LGPD Privacy Protection
+ * @description Core chatbot service with constitutional healthcare compliance
+ */
+
+import { z } from 'zod';
+import { v4 as uuidv4 } from 'uuid';
+import CryptoJS from 'crypto-js';
+import natural from 'natural';
+import compromise from 'compromise';
+import type { Database } from '@neonpro/db';
+import type { LGPDConsent } from '../types';
+
+// ============================================================================
+// CHATBOT TYPES WITH LGPD COMPLIANCE
+// ============================================================================
+
+export const ChatbotMessageSchema = z.object({
+  id: z.string().uuid(),
+  conversationId: z.string().uuid(),
+  senderId: z.string().uuid(),
+  senderType: z.enum(['patient', 'chatbot', 'doctor', 'nurse']),
+  content: z.string().max(2000),
+  encryptedContent: z.string().optional(),
+  intent: z.string().optional(),
+  confidence: z.number().min(0).max(1).optional(),
+  sentiment: z.enum(['positive', 'neutral', 'negative']).optional(),
+  containsPersonalData: z.boolean(),
+  anonymized: z.boolean(),
+  timestamp: z.date(),
+  isRead: z.boolean(),
+  escalationRequired: z.boolean()
+});
+
+export type ChatbotMessage = z.infer<typeof ChatbotMessageSchema>;
+
+export const ChatbotConversationSchema = z.object({
+  id: z.string().uuid(),
+  patientId: z.string().uuid(),
+  sessionId: z.string().uuid(),
+  status: z.enum(['active', 'escalated', 'completed', 'abandoned']),
+  topic: z.string().optional(),
+  intent: z.string().optional(),
+  lgpdConsent: z.object({
+    consentGranted: z.boolean(),
+    consentDate: z.date(),
+    dataRetentionPeriod: z.number(), // days
+    anonymizationRequired: z.boolean(),
+    deletionScheduled: z.date().optional()
+  }),
+  privacySettings: z.object({
+    encryptionEnabled: z.boolean(),
+    dataMinimization: z.boolean(),
+    automaticDeletion: z.boolean(),
+    shareWithProfessionals: z.boolean()
+  }),
+  escalatedTo: z.string().uuid().optional(),
+  escalatedAt: z.date().optional(),
+  escalationReason: z.string().optional(),
+  startedAt: z.date(),
+  endedAt: z.date().optional(),
+  totalMessages: z.number(),
+  satisfactionScore: z.number().min(1).max(5).optional()
+});
+
+export type ChatbotConversation = z.infer<typeof ChatbotConversationSchema>;// ============================================================================
+// HEALTHCARE CHATBOT SERVICE
+// ============================================================================
+
+export class HealthcareChatbotService {
+  private database: Database;
+  private nlpProcessor: natural.TfIdf;
+  private encryptionKey: string;
+  private medicalKnowledgeBase: Map<string, any>;
+
+  constructor(database: Database, encryptionKey: string) {
+    this.database = database;
+    this.encryptionKey = encryptionKey;
+    this.nlpProcessor = new natural.TfIdf();
+    this.medicalKnowledgeBase = new Map();
+    this.initializeMedicalKnowledgeBase();
+  }
+
+  /**
+   * Start new chatbot conversation with LGPD compliance
+   */
+  async startConversation(
+    patientId: string,
+    lgpdConsent: boolean,
+    privacySettings: any
+  ): Promise<ChatbotConversation> {
+    // 1. Validate LGPD consent
+    if (!lgpdConsent) {
+      throw new Error('LGPD consent required for chatbot interaction');
+    }
+
+    // 2. Create conversation with privacy settings
+    const conversation: ChatbotConversation = {
+      id: uuidv4(),
+      patientId,
+      sessionId: uuidv4(),
+      status: 'active',
+      lgpdConsent: {
+        consentGranted: lgpdConsent,
+        consentDate: new Date(),
+        dataRetentionPeriod: 30, // days
+        anonymizationRequired: true,
+        deletionScheduled: this.calculateDeletionDate()
+      },
+      privacySettings: {
+        encryptionEnabled: true,
+        dataMinimization: true,
+        automaticDeletion: true,
+        shareWithProfessionals: privacySettings.shareWithProfessionals || false
+      },
+      startedAt: new Date(),
+      totalMessages: 0
+    };
+
+    // 3. Store in database with encryption
+    await this.storeConversation(conversation);
+
+    // 4. Send welcome message
+    await this.sendWelcomeMessage(conversation.id);
+
+    return conversation;
+  }  /**
+   * Process patient message with NLP and generate response
+   */
+  async processMessage(
+    conversationId: string,
+    patientMessage: string
+  ): Promise<ChatbotMessage> {
+    try {
+      // 1. Get conversation and validate privacy settings
+      const conversation = await this.getConversation(conversationId);
+      
+      // 2. Analyze message with NLP
+      const analysis = await this.analyzeMessage(patientMessage);
+      
+      // 3. Check for personal data and apply LGPD protection
+      const containsPersonalData = this.detectPersonalData(patientMessage);
+      const anonymizedContent = containsPersonalData ? 
+        this.anonymizePersonalData(patientMessage) : patientMessage;
+      
+      // 4. Encrypt content if required
+      const encryptedContent = conversation.privacySettings.encryptionEnabled ?
+        this.encryptMessage(anonymizedContent) : undefined;
+      
+      // 5. Store patient message
+      const patientMsg: ChatbotMessage = {
+        id: uuidv4(),
+        conversationId,
+        senderId: conversation.patientId,
+        senderType: 'patient',
+        content: anonymizedContent,
+        encryptedContent,
+        intent: analysis.intent,
+        confidence: analysis.confidence,
+        sentiment: analysis.sentiment,
+        containsPersonalData,
+        anonymized: containsPersonalData,
+        timestamp: new Date(),
+        isRead: false,
+        escalationRequired: analysis.escalationRequired
+      };
+      
+      await this.storeMessage(patientMsg);
+      
+      // 6. Generate AI response
+      const aiResponse = await this.generateAIResponse(analysis, conversation);
+      
+      // 7. Check if escalation is needed
+      if (analysis.escalationRequired || this.shouldEscalate(analysis)) {
+        await this.escalateConversation(conversationId, analysis.intent);
+      }
+      
+      return aiResponse;
+    } catch (error) {
+      console.error('Message processing failed:', error);
+      throw new Error(`Failed to process message: ${error.message}`);
+    }
+  }
+
+  /**
+   * Analyze message with Natural Language Processing
+   */
+  private async analyzeMessage(message: string): Promise<any> {
+    // Tokenize and analyze
+    const tokens = natural.WordTokenizer.tokenize(message.toLowerCase());
+    const doc = compromise(message);
+    
+    // Intent classification
+    const intent = this.classifyIntent(tokens);
+    
+    // Sentiment analysis
+    const sentiment = natural.SentimentAnalyzer.getSentiment(
+      tokens.map(token => natural.PorterStemmer.stem(token))
+    );
+    
+    // Medical topic detection
+    const medicalTopics = this.detectMedicalTopics(tokens);
+    
+    // Emergency detection
+    const escalationRequired = this.detectEmergencyKeywords(tokens);
+    
+    return {
+      intent,
+      confidence: this.calculateConfidence(intent, tokens),
+      sentiment: sentiment > 0 ? 'positive' : sentiment < 0 ? 'negative' : 'neutral',
+      medicalTopics,
+      escalationRequired,
+      tokens
+    };
+  }  /**
+   * Classify message intent
+   */
+  private classifyIntent(tokens: string[]): string {
+    const intents = {
+      'appointment_booking': ['agendar', 'marcar', 'consulta', 'appointment', 'schedule'],
+      'treatment_info': ['tratamento', 'procedimento', 'treatment', 'procedure', 'price', 'preço'],
+      'post_care': ['cuidados', 'pós', 'aftercare', 'recovery', 'healing'],
+      'emergency': ['urgente', 'dor', 'emergency', 'pain', 'problema', 'problem'],
+      'general_info': ['informação', 'dúvida', 'question', 'info', 'help', 'ajuda']
+    };
+
+    let bestIntent = 'general_info';
+    let maxScore = 0;
+
+    for (const [intent, keywords] of Object.entries(intents)) {
+      const score = keywords.reduce((acc, keyword) => 
+        acc + (tokens.includes(keyword) ? 1 : 0), 0);
+      
+      if (score > maxScore) {
+        maxScore = score;
+        bestIntent = intent;
+      }
+    }
+
+    return bestIntent;
+  }
+
+  /**
+   * Detect medical topics in conversation
+   */
+  private detectMedicalTopics(tokens: string[]): string[] {
+    const medicalKeywords = {
+      'aesthetic': ['botox', 'preenchimento', 'laser', 'peeling'],
+      'dermatology': ['acne', 'manchas', 'rugas', 'melasma'],
+      'general': ['pele', 'rosto', 'skin', 'face']
+    };
+
+    const topics: string[] = [];
+    for (const [topic, keywords] of Object.entries(medicalKeywords)) {
+      if (keywords.some(keyword => tokens.includes(keyword))) {
+        topics.push(topic);
+      }
+    }
+
+    return topics;
+  }
+
+  /**
+   * Detect emergency keywords requiring escalation
+   */
+  private detectEmergencyKeywords(tokens: string[]): boolean {
+    const emergencyKeywords = [
+      'urgente', 'emergency', 'dor', 'pain', 'sangramento', 'bleeding',
+      'infecção', 'infection', 'alergia', 'allergy', 'problema', 'problem'
+    ];
+
+    return emergencyKeywords.some(keyword => tokens.includes(keyword));
+  }
+
+  /**
+   * Calculate confidence score for intent classification
+   */
+  private calculateConfidence(intent: string, tokens: string[]): number {
+    // Simple confidence calculation based on keyword matches
+    return Math.min(0.95, 0.6 + (tokens.length * 0.05));
+  }  /**
+   * Generate AI response based on analysis
+   */
+  private async generateAIResponse(analysis: any, conversation: ChatbotConversation): Promise<ChatbotMessage> {
+    let responseContent = '';
+
+    switch (analysis.intent) {
+      case 'appointment_booking':
+        responseContent = 'Posso ajudá-lo a agendar uma consulta. Para sua segurança e privacidade, ' +
+                         'vou transferir você para nossa equipe especializada que poderá verificar ' +
+                         'sua agenda e confirmar o melhor horário.';
+        break;
+      
+      case 'treatment_info':
+        responseContent = 'Temos diversos tratamentos estéticos disponíveis. Para informações ' +
+                         'específicas sobre procedimentos e valores, recomendo uma avaliação ' +
+                         'personalizada com nossos profissionais. Gostaria que eu conecte você ' +
+                         'com nossa equipe médica?';
+        break;
+      
+      case 'post_care':
+        responseContent = 'Os cuidados pós-tratamento são fundamentais para o sucesso do procedimento. ' +
+                         'Cada tratamento tem orientações específicas. Para orientações personalizadas ' +
+                         'sobre seu caso, vou conectar você com nossa equipe de enfermagem.';
+        break;
+      
+      case 'emergency':
+        responseContent = 'Detectei que você pode estar relatando uma situação que requer atenção ' +
+                         'médica imediata. Vou transferir você imediatamente para nossa equipe médica. ' +
+                         'Se for uma emergência grave, procure atendimento médico presencial.';
+        break;
+      
+      default:
+        responseContent = 'Entendo sua dúvida. Para oferecer a melhor orientação e garantir ' +
+                         'informações médicas precisas, vou conectar você com um de nossos ' +
+                         'profissionais especializados.';
+    }
+
+    // Add CFM disclaimer
+    responseContent += '\n\n⚠️ IMPORTANTE: Este chatbot é uma ferramenta de suporte e não substitui ' +
+                      'a consulta médica. Todas as informações médicas devem ser validadas por ' +
+                      'profissionais qualificados.';
+
+    const response: ChatbotMessage = {
+      id: uuidv4(),
+      conversationId: conversation.id,
+      senderId: 'system',
+      senderType: 'chatbot',
+      content: responseContent,
+      encryptedContent: conversation.privacySettings.encryptionEnabled ?
+        this.encryptMessage(responseContent) : undefined,
+      intent: analysis.intent,
+      confidence: 0.95,
+      sentiment: 'neutral',
+      containsPersonalData: false,
+      anonymized: false,
+      timestamp: new Date(),
+      isRead: false,
+      escalationRequired: analysis.escalationRequired
+    };
+
+    await this.storeMessage(response);
+    return response;
+  }  /**
+   * Detect personal data in message (LGPD compliance)
+   */
+  private detectPersonalData(message: string): boolean {
+    // CPF pattern
+    const cpfPattern = /\d{3}\.?\d{3}\.?\d{3}-?\d{2}/;
+    
+    // Phone pattern
+    const phonePattern = /\(?\d{2}\)?\s?\d{4,5}-?\d{4}/;
+    
+    // Email pattern
+    const emailPattern = /[\w.-]+@[\w.-]+\.\w+/;
+    
+    // Address patterns
+    const addressKeywords = ['rua', 'avenida', 'av', 'street', 'endereço', 'address'];
+    
+    return cpfPattern.test(message) ||
+           phonePattern.test(message) ||
+           emailPattern.test(message) ||
+           addressKeywords.some(keyword => message.toLowerCase().includes(keyword));
+  }
+
+  /**
+   * Anonymize personal data (LGPD compliance)
+   */
+  private anonymizePersonalData(message: string): string {
+    let anonymized = message;
+    
+    // Replace CPF
+    anonymized = anonymized.replace(/\d{3}\.?\d{3}\.?\d{3}-?\d{2}/g, '[CPF REMOVIDO]');
+    
+    // Replace phone numbers
+    anonymized = anonymized.replace(/\(?\d{2}\)?\s?\d{4,5}-?\d{4}/g, '[TELEFONE REMOVIDO]');
+    
+    // Replace emails
+    anonymized = anonymized.replace(/[\w.-]+@[\w.-]+\.\w+/g, '[EMAIL REMOVIDO]');
+    
+    // Replace potential names (simplified)
+    const namePattern = /\b[A-Z][a-z]+ [A-Z][a-z]+/g;
+    anonymized = anonymized.replace(namePattern, '[NOME REMOVIDO]');
+    
+    return anonymized;
+  }
+
+  /**
+   * Encrypt message content (LGPD compliance)
+   */
+  private encryptMessage(content: string): string {
+    return CryptoJS.AES.encrypt(content, this.encryptionKey).toString();
+  }
+
+  /**
+   * Decrypt message content (LGPD compliance)
+   */
+  private decryptMessage(encryptedContent: string): string {
+    const bytes = CryptoJS.AES.decrypt(encryptedContent, this.encryptionKey);
+    return bytes.toString(CryptoJS.enc.Utf8);
+  }
+
+  /**
+   * Calculate deletion date based on LGPD retention period
+   */
+  private calculateDeletionDate(): Date {
+    const now = new Date();
+    now.setDate(now.getDate() + 30); // 30 days retention
+    return now;
+  }  /**
+   * Initialize medical knowledge base
+   */
+  private initializeMedicalKnowledgeBase(): void {
+    // Basic medical information (non-diagnostic)
+    this.medicalKnowledgeBase.set('botox', {
+      description: 'Toxina botulínica para tratamento de rugas dinâmicas',
+      duration: '4-6 meses',
+      care: 'Evitar exercícios físicos por 24h'
+    });
+    
+    this.medicalKnowledgeBase.set('preenchimento', {
+      description: 'Ácido hialurônico para restauração de volume facial',
+      duration: '12-18 meses',
+      care: 'Evitar massagens locais por 2 semanas'
+    });
+    
+    this.medicalKnowledgeBase.set('laser', {
+      description: 'Tecnologia para rejuvenescimento e tratamento de manchas',
+      duration: 'Múltiplas sessões',
+      care: 'Uso obrigatório de protetor solar'
+    });
+  }
+
+  /**
+   * Store conversation in database
+   */
+  private async storeConversation(conversation: ChatbotConversation): Promise<void> {
+    const { error } = await this.database
+      .from('chatbot_conversations')
+      .insert({
+        id: conversation.id,
+        patient_id: conversation.patientId,
+        session_id: conversation.sessionId,
+        status: conversation.status,
+        topic: conversation.topic,
+        intent: conversation.intent,
+        lgpd_consent: conversation.lgpdConsent,
+        privacy_settings: conversation.privacySettings,
+        escalated_to: conversation.escalatedTo,
+        escalated_at: conversation.escalatedAt?.toISOString(),
+        escalation_reason: conversation.escalationReason,
+        started_at: conversation.startedAt.toISOString(),
+        ended_at: conversation.endedAt?.toISOString(),
+        total_messages: conversation.totalMessages,
+        satisfaction_score: conversation.satisfactionScore
+      });
+
+    if (error) {
+      throw new Error(`Failed to store conversation: ${error.message}`);
+    }
+  }
+
+  /**
+   * Get conversation from database
+   */
+  private async getConversation(conversationId: string): Promise<ChatbotConversation> {
+    const { data, error } = await this.database
+      .from('chatbot_conversations')
+      .select('*')
+      .eq('id', conversationId)
+      .single();
+
+    if (error || !data) {
+      throw new Error('Conversation not found');
+    }
+
+    return {
+      id: data.id,
+      patientId: data.patient_id,
+      sessionId: data.session_id,
+      status: data.status,
+      topic: data.topic,
+      intent: data.intent,
+      lgpdConsent: data.lgpd_consent,
+      privacySettings: data.privacy_settings,
+      escalatedTo: data.escalated_to,
+      escalatedAt: data.escalated_at ? new Date(data.escalated_at) : undefined,
+      escalationReason: data.escalation_reason,
+      startedAt: new Date(data.started_at),
+      endedAt: data.ended_at ? new Date(data.ended_at) : undefined,
+      totalMessages: data.total_messages,
+      satisfactionScore: data.satisfaction_score
+    };
+  }  /**
+   * Store message in database
+   */
+  private async storeMessage(message: ChatbotMessage): Promise<void> {
+    const { error } = await this.database
+      .from('chatbot_messages')
+      .insert({
+        id: message.id,
+        conversation_id: message.conversationId,
+        sender_id: message.senderId,
+        sender_type: message.senderType,
+        content: message.content,
+        encrypted_content: message.encryptedContent,
+        intent: message.intent,
+        confidence: message.confidence,
+        sentiment: message.sentiment,
+        contains_personal_data: message.containsPersonalData,
+        anonymized: message.anonymized,
+        timestamp: message.timestamp.toISOString(),
+        is_read: message.isRead,
+        escalation_required: message.escalationRequired
+      });
+
+    if (error) {
+      throw new Error(`Failed to store message: ${error.message}`);
+    }
+  }
+
+  /**
+   * Send welcome message
+   */
+  private async sendWelcomeMessage(conversationId: string): Promise<void> {
+    const welcomeMessage: ChatbotMessage = {
+      id: uuidv4(),
+      conversationId,
+      senderId: 'system',
+      senderType: 'chatbot',
+      content: '👋 Olá! Sou o assistente virtual da NeonPro. Estou aqui para ajudá-lo com ' +
+               'informações gerais sobre nossos tratamentos e serviços. Para questões médicas ' +
+               'específicas, conectarei você com nossa equipe especializada. Como posso ajudar?',
+      intent: 'welcome',
+      confidence: 1.0,
+      sentiment: 'positive',
+      containsPersonalData: false,
+      anonymized: false,
+      timestamp: new Date(),
+      isRead: false,
+      escalationRequired: false
+    };
+
+    await this.storeMessage(welcomeMessage);
+  }
+
+  /**
+   * Escalate conversation to human staff
+   */
+  private async escalateConversation(conversationId: string, reason: string): Promise<void> {
+    await this.database
+      .from('chatbot_conversations')
+      .update({
+        status: 'escalated',
+        escalated_at: new Date().toISOString(),
+        escalation_reason: reason
+      })
+      .eq('id', conversationId);
+  }
+
+  /**
+   * Determine if conversation should be escalated
+   */
+  private shouldEscalate(analysis: any): boolean {
+    return analysis.escalationRequired || 
+           analysis.intent === 'emergency' ||
+           analysis.confidence < 0.7;
+  }
+}
