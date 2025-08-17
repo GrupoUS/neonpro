@@ -1,5 +1,5 @@
-import { type NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/app/utils/supabase/server";
+import { type NextRequest, NextResponse } from 'next/server';
+import { createClient } from '@/app/utils/supabase/server';
 export async function GET(request: NextRequest) {
   try {
     const supabase = await createClient();
@@ -8,7 +8,7 @@ export async function GET(request: NextRequest) {
       error: authError,
     } = await supabase.auth.getUser();
     if (authError || !user) {
-      return NextResponse.json({ error: 'Unauthorized' }, {status: 401 });
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const { searchParams } = new URL(request.url);
@@ -21,9 +21,8 @@ export async function GET(request: NextRequest) {
       0,
     );
 
-    // Buscar conversas do usuário com contagem de mensagens    const response = await supabase;
-const { data: conversations, error  } = response || { data: null,
-    error: null };
+    // Buscar conversas do usuário com contagem de mensagens
+    const { data: conversations, error } = await supabase
       .from('assistant_conversations')
       .select(
         `
@@ -37,7 +36,7 @@ const { data: conversations, error  } = response || { data: null,
       `,
       )
       .eq('user_id', user.id)
-      .order('updated_at', ascending: false )
+      .order('updated_at', { ascending: false })
       .range(offset, offset + limit - 1);
 
     if (error) {
@@ -48,18 +47,19 @@ const { data: conversations, error  } = response || { data: null,
     }
 
     // Formatar resposta    const formattedConversations =
-      conversations?.map((conv) => ({id: conv.id,
-    title: conv.title,
-        model_used: conv.model_used,
-    is_active: conv.is_active,
-        created_at: conv.created_at,
-    updated_at: conv.updated_at,
-        message_count: conv.assistant_messages?.[0]?.count || 0,
-      })) || [];
+    conversations?.map((conv) => ({
+      id: conv.id,
+      title: conv.title,
+      model_used: conv.model_used,
+      is_active: conv.is_active,
+      created_at: conv.created_at,
+      updated_at: conv.updated_at,
+      message_count: conv.assistant_messages?.[0]?.count || 0,
+    })) || [];
 
     return NextResponse.json({
       conversations: formattedConversations,
-    pagination: {
+      pagination: {
         limit,
         offset,
         total: formattedConversations.length,
@@ -75,27 +75,30 @@ const { data: conversations, error  } = response || { data: null,
 
 export async function POST(request: NextRequest) {
   try {
-    const supabase = await createClient;user ,
+    const supabase = await createClient();
+    const {
+      data: { user },
       error: authError,
-    } = await (await supabase).auth.getUser();
+    } = await supabase.auth.getUser();
     if (authError || !user) {
-      return NextResponse.json({ error: 'Unauthorized' }, {status: 401 });
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const { title, model = 'gpt4' } = await request.json();
 
     if (!title || title.trim().length === 0) {
-      return NextResponse.json({ error: 'Title is required' }, {status: 400 });
+      return NextResponse.json({ error: 'Title is required' }, { status: 400 });
     }
 
-    // Criar nova conversa    const response = await supabase;
-const { data: conversation, error  } = response || { data: null,
-    error: null };
+    // Criar nova conversa
+    const { data: conversation, error } = await supabase
       .from('assistant_conversations')
-      .insert(user_id: user.id,
-    title: title.trim,
+      .insert({
+        user_id: user.id,
+        title: title.trim(),
         model_used: model,
-    is_active: true)
+        is_active: true,
+      })
       .select()
       .single();
 
@@ -106,7 +109,7 @@ const { data: conversation, error  } = response || { data: null,
       );
     }
 
-    return NextResponse.json({conversation });
+    return NextResponse.json({ conversation });
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },

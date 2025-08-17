@@ -37,10 +37,7 @@ export async function PUT(
     const body = await request.json();
     const validatedData = updateForecastingModelSchema.parse(body);
 
-    const model = await service.updateForecastingModel(
-      id,
-      validatedData,
-    );
+    const model = await service.updateForecastingModel(id, validatedData);
 
     return NextResponse.json(model);
   } catch (_error) {

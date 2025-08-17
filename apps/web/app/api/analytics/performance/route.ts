@@ -5,8 +5,8 @@
  * Based on 2025 performance monitoring best practices
  */
 
-import { type NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/app/utils/supabase/server";
+import { type NextRequest, NextResponse } from 'next/server';
+import { createClient } from '@/app/utils/supabase/server';
 
 // Performance metric interface
 type PerformanceMetric = {
@@ -48,28 +48,28 @@ type MetricType = (typeof SUPPORTED_METRICS)[number];
 const PERFORMANCE_ALERTS = {
   LCP: {
     critical: 4000,
-    warning: 2500
+    warning: 2500,
   },
   FID: {
     critical: 300,
-    warning: 100
+    warning: 100,
   },
   CLS: {
     critical: 0.25,
-    warning: 0.1
+    warning: 0.1,
   },
   FCP: {
     critical: 3000,
-    warning: 1800
+    warning: 1800,
   },
   TTFB: {
     critical: 1800,
-    warning: 800
+    warning: 800,
   },
   INP: {
     critical: 500,
-    warning: 200
-  }
+    warning: 200,
+  },
 } as const;
 
 export async function POST(request: NextRequest) {
@@ -96,21 +96,25 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { data: { session } } = await (await supabase).auth.getSession();
+    const {
+      data: { session },
+    } = await (await supabase).auth.getSession();
     const userId = session?.user?.id;
 
     // Enrich metrics with additional context
-    const enrichedMetrics = validMetrics.map((metric) => ({...metric,
+    const enrichedMetrics = validMetrics.map((metric) => ({
+      ...metric,
       userId: userId || null,
-    sessionId: generateSessionId(request),
+      sessionId: generateSessionId(request),
       url: metric.url || request.headers.get('referer') || 'unknown',
-    userAgent:
+      userAgent:
         metric.userAgent || request.headers.get('user-agent') || 'unknown',
       timestamp: metric.timestamp || Date.now,
-    grade:
-        metric.grade || calculateGrade((metric as any).name as MetricType, metric.value),
+      grade:
+        metric.grade ||
+        calculateGrade((metric as any).name as MetricType, metric.value),
       ip_address: getClientIP(request),
-    country: (request as any).geo?.country || 'unknown',
+      country: (request as any).geo?.country || 'unknown',
       city: (request as any).geo?.city || 'unknown',
     }));
 
@@ -137,8 +141,8 @@ export async function POST(request: NextRequest) {
       metrics: data?.map((d) => ({
         id: d.id,
         name: (d as any).name,
-        grade: d.grade
-      }))
+        grade: d.grade,
+      })),
     });
 
     // Add cache headers (no caching for this endpoint)
@@ -160,7 +164,9 @@ export async function GET(request: NextRequest) {
   try {
     const supabase = await createClient;
     const { searchParams } = new URL(request.url);
-    const { data: { session } } = await (await supabase).auth.getSession();
+    const {
+      data: { session },
+    } = await (await supabase).auth.getSession();
     if (!session) {
       return NextResponse.json(
         { error: 'Authentication required' },
@@ -180,7 +186,7 @@ export async function GET(request: NextRequest) {
       .eq('userId', userId)
       .order('timestamp', { ascending: false })
       .limit(Math.min(limit, 1000)); // Cap at 1000 records
-    
+
     // Filter by metric type
     if (metric && (SUPPORTED_METRICS as readonly string[]).includes(metric)) {
       query = query.eq('name', metric);
@@ -203,14 +209,16 @@ export async function GET(request: NextRequest) {
 
     // Calculate aggregated statistics    const stats = calculateAggregatedStats(data || []);
 
-    const response = NextResponse.json({metrics: data || [],
-    count: data?.length || 0,
+    const response = NextResponse.json({
+      metrics: data || [],
+      count: data?.length || 0,
       timeRange,
       stats,
     });
 
     // Add cache headers (5 minute cache for aggregated data)    const headers = CacheHeaders.apiResponse();
-    headers.forEach((value, key) => {response.headers.set(key, value);
+    headers.forEach((value, key) => {
+      response.headers.set(key, value);
     });
 
     return response;
@@ -243,7 +251,7 @@ function getClientIP(request: NextRequest): string {
 
 function calculateGrade(
   metric: MetricType,
-    value: number,
+  value: number,
 ): 'good' | 'needs-improvement' | 'poor' {
   const thresholds =
     PERFORMANCE_ALERTS[metric as keyof typeof PERFORMANCE_ALERTS];
@@ -283,7 +291,7 @@ function calculateAggregatedStats(metrics: any[]) {
     if (!statsByMetric[(metric as any).name]) {
       statsByMetric[(metric as any).name] = {
         count: 0,
-    values: [],
+        values: [],
         grades: { good: 0, 'needs-improvement': 0, poor: 0 },
       };
     }
@@ -294,44 +302,47 @@ function calculateAggregatedStats(metrics: any[]) {
   }
 
   // Calculate percentiles and averages  for (const [metricName, stats] of Object.entries(statsByMetric)) {
-    const values = stats.values.sort((a: number,
-    b: number) => a - b);
-    const count = values.length;
+  const values = stats.values.sort((a: number, b: number) => a - b);
+  const count = values.length;
 
-    statsByMetric[metricName] = {
-      ...stats,
-      min: values[0],
+  statsByMetric[metricName] = {
+    ...stats,
+    min: values[0],
     max: values[count - 1],
-      average: values.reduce((sum: number,
-    val: number) => sum + val, 0) / count,
-      median: values[Math.floor(count / 2)],
+    average: values.reduce((sum: number, val: number) => sum + val, 0) / count,
+    median: values[Math.floor(count / 2)],
     p75: values[Math.floor(count * 0.75)],
-      p95: values[Math.floor(count * 0.95)],
+    p95: values[Math.floor(count * 0.95)],
     p99: values[Math.floor(count * 0.99)],
-    };
+  };
 
-    statsByMetric[metricName].values = undefined; // Remove raw values to reduce response size  }
+  statsByMetric[metricName].values = undefined; // Remove raw values to reduce response size  }
 
   return statsByMetric;
 }
 
-async function checkPerformanceAlerts(metrics: any[],
-    supabase: any) {for (const metric of metrics) {
+async function checkPerformanceAlerts(metrics: any[], supabase: any) {
+  for (const metric of metrics) {
     const threshold =
-      PERFORMANCE_ALERTS[(metric as any).name as keyof typeof PERFORMANCE_ALERTS];
+      PERFORMANCE_ALERTS[
+        (metric as any).name as keyof typeof PERFORMANCE_ALERTS
+      ];
 
     if (threshold && metric.grade === 'poor') {
-      // Store alert (you could extend this to send notifications)      try {
+      // Store alert (you could extend this to send notifications)
+      try {
         await (await supabase).from('performance_alerts').insert({
           metric_name: (metric as any).name,
-    metric_value: metric.value,
+          metric_value: metric.value,
           threshold: threshold.critical,
-    user_id: metric.userId,
+          user_id: metric.userId,
           url: metric.url,
-    severity: 'critical',
+          severity: 'critical',
           timestamp: metric.timestamp,
         });
-      } catch (_error) 
+      } catch (_error) {
+        // Silently ignore alert creation errors
+      }
     }
   }
 }

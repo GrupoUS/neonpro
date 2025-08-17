@@ -1,6 +1,6 @@
-import { createClient } from "@supabase/supabase-js";
-import { type NextRequest, NextResponse } from "next/server";
-import { z } from "zod";
+import { createClient } from '@supabase/supabase-js';
+import { type NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 
 // Initialize Supabase client with service role key for server-side operations
 const supabase = createClient(
@@ -20,13 +20,14 @@ const analyticsQuerySchema = z.object({
     .optional()
     .default('day'),
   userId: z.string().optional,
-    subscriptionTier: z.enum(['free', 'pro', 'enterprise']).optional(),
+  subscriptionTier: z.enum(['free', 'pro', 'enterprise']).optional(),
 });
 
-const eventTrackingSchema = z.object({event_type: z.string,
-    user_id: z.string,
+const eventTrackingSchema = z.object({
+  event_type: z.string,
+  user_id: z.string,
   properties: z.record(z.any()).optional,
-    timestamp: z.string().optional,
+  timestamp: z.string().optional,
 });
 
 /**
@@ -48,11 +49,11 @@ export async function GET(request: NextRequest) {
     // Parse query parameters    const { searchParams } = new URL(request.url);
     const queryParams = {
       startDate: searchParams.get('startDate'),
-    endDate: searchParams.get('endDate'),
+      endDate: searchParams.get('endDate'),
       metric: searchParams.get('metric'),
-    granularity: searchParams.get('granularity') || 'day',
+      granularity: searchParams.get('granularity') || 'day',
       userId: searchParams.get('userId'),
-    subscriptionTier: searchParams.get('subscriptionTier'),
+      subscriptionTier: searchParams.get('subscriptionTier'),
     };
 
     // Validate query parameters    const validatedParams = analyticsQuerySchema.parse(queryParams);
@@ -62,14 +63,14 @@ export async function GET(request: NextRequest) {
       validatedParams.userId &&
       validatedParams.userId !== userId &&
       userRole !== 'admin'
-    ) 
+    )
       return NextResponse.json(
         { error: 'Insufficient permissions' },
         { status: 403 },
       );
 
     // Set default date range if not provided (last 30 days)    const endDate =
-      validatedParams.endDate || new Date().toISOString().split('T')[0];
+    validatedParams.endDate || new Date().toISOString().split('T')[0];
     const startDate =
       validatedParams.startDate ||
       new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
@@ -137,7 +138,7 @@ export async function GET(request: NextRequest) {
         startDate,
         endDate,
         granularity: validatedParams.granularity,
-    generatedAt: new Date().toISOString,
+        generatedAt: new Date().toISOString,
       },
     });
   } catch (error) {
@@ -145,7 +146,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json(
         {
           error: 'Invalid query parameters',
-    details: error.errors,
+          details: error.errors,
         },
         { status: 400 },
       );
@@ -202,8 +203,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    return NextResponse.json({success: true,
-    eventId: data.id,
+    return NextResponse.json({
+      success: true,
+      eventId: data.id,
       message: 'Event tracked successfully',
     });
   } catch (error) {
@@ -211,7 +213,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           error: 'Invalid event data',
-    details: error.errors,
+          details: error.errors,
         },
         { status: 400 },
       );
@@ -227,11 +229,12 @@ export async function POST(request: NextRequest) {
 // Helper functions for different analytics queries
 async function getRevenueAnalytics(
   startDate: string,
-    endDate: string,
+  endDate: string,
   granularity: string,
-    userId: string,
+  userId: string,
 ) {
-  const { data, error } = await (await supabase).rpc('get_revenue_analytics', {start_date: startDate,
+  const { data, error } = await (await supabase).rpc('get_revenue_analytics', {
+    start_date: startDate,
     end_date: endDate,
     granularity,
     user_id: userId,
@@ -245,15 +248,14 @@ async function getRevenueAnalytics(
 
 async function getSubscriptionAnalytics(
   startDate: string,
-    endDate: string,
+  endDate: string,
   granularity: string,
-    userId: string,
+  userId: string,
 ) {
-  const { data, error } = await (await supabase).rpc('get_subscription_analytics', {start_date: startDate,
-    end_date: endDate,
-    granularity,
-    user_id: userId,
-  });
+  const { data, error } = await (await supabase).rpc(
+    'get_subscription_analytics',
+    { start_date: startDate, end_date: endDate, granularity, user_id: userId },
+  );
 
   if (error) {
     throw error;
@@ -263,11 +265,12 @@ async function getSubscriptionAnalytics(
 
 async function getTrialAnalytics(
   startDate: string,
-    endDate: string,
+  endDate: string,
   granularity: string,
-    userId: string,
+  userId: string,
 ) {
-  const { data, error } = await (await supabase).rpc('get_trial_analytics', {start_date: startDate,
+  const { data, error } = await (await supabase).rpc('get_trial_analytics', {
+    start_date: startDate,
     end_date: endDate,
     granularity,
     user_id: userId,
@@ -281,15 +284,14 @@ async function getTrialAnalytics(
 
 async function getConversionAnalytics(
   startDate: string,
-    endDate: string,
+  endDate: string,
   granularity: string,
-    userId: string,
+  userId: string,
 ) {
-  const { data, error } = await (await supabase).rpc('get_conversion_analytics', {start_date: startDate,
-    end_date: endDate,
-    granularity,
-    user_id: userId,
-  });
+  const { data, error } = await (await supabase).rpc(
+    'get_conversion_analytics',
+    { start_date: startDate, end_date: endDate, granularity, user_id: userId },
+  );
 
   if (error) {
     throw error;
@@ -299,11 +301,12 @@ async function getConversionAnalytics(
 
 async function getChurnAnalytics(
   startDate: string,
-    endDate: string,
+  endDate: string,
   granularity: string,
-    userId: string,
+  userId: string,
 ) {
-  const { data, error } = await (await supabase).rpc('get_churn_analytics', {start_date: startDate,
+  const { data, error } = await (await supabase).rpc('get_churn_analytics', {
+    start_date: startDate,
     end_date: endDate,
     granularity,
     user_id: userId,
@@ -317,9 +320,9 @@ async function getChurnAnalytics(
 
 async function getDashboardAnalytics(
   startDate: string,
-    endDate: string,
+  endDate: string,
   userId: string,
-    _userRole: string | null,
+  _userRole: string | null,
 ) {
   // Get comprehensive dashboard data
   const [revenue, subscriptions, trials, conversions] = await Promise.all([
@@ -337,12 +340,11 @@ async function getDashboardAnalytics(
     summary: {
       totalRevenue:
         revenue?.reduce(
-          (sum: number,
-    item: any) => sum + (item.revenue || 0),
+          (sum: number, item: any) => sum + (item.revenue || 0),
           0,
         ) || 0,
       totalSubscriptions: subscriptions?.length || 0,
-    totalTrials: trials?.length || 0,
+      totalTrials: trials?.length || 0,
       conversionRate: conversions?.conversion_rate || 0,
     },
   };

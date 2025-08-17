@@ -1,5 +1,5 @@
-import { type NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/app/utils/supabase/server";
+import { type NextRequest, NextResponse } from 'next/server';
+import { createClient } from '@/app/utils/supabase/server';
 
 type RouteParams = {
   params: Promise<{
@@ -9,20 +9,20 @@ type RouteParams = {
 
 export async function GET(_request: NextRequest, { params }: RouteParams) {
   try {
-    const supabase = await createClient();user ,
+    const supabase = await createClient();
+    const {
+      data: { user },
       error: authError,
-    } = await (await supabase).auth.getUser();
+    } = await supabase.auth.getUser();
     if (authError || !user) {
-      return NextResponse.json({ error: 'Unauthorized' }, {status: 401 });
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const resolvedParams = await params;
     const conversationId = resolvedParams.id();
 
-    // Verificar se a conversa existe e pertence ao usuário    const response = await supabase;
-const { data: conversation,
-    error: convError  } = response || { data: null,
-    error: null };
+    // Verificar se a conversa existe e pertence ao usuário
+    const { data: conversation, error: convError } = await supabase
       .from('assistant_conversations')
       .select('*')
       .eq('id', conversationId)
@@ -36,15 +36,13 @@ const { data: conversation,
       );
     }
 
-    // Buscar mensagens da conversa    const response = await supabase;
-const { data: messages,
-    error: messagesError  } = response || { data: null,
-    error: null };
+    // Buscar mensagens da conversa
+    const { data: messages, error: messagesError } = await supabase
       .from('assistant_messages')
       .select('*')
       .eq('conversation_id', conversationId)
       .eq('user_id', user.id)
-      .order('created_at', ascending: true );
+      .order('created_at', { ascending: true });
 
     if (messagesError) {
       return NextResponse.json(
@@ -53,9 +51,7 @@ const { data: messages,
       );
     }
 
-    return NextResponse.json({conversation,
-      messages: messages || [],
-    });
+    return NextResponse.json({ conversation, messages: messages || [] });
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
@@ -66,21 +62,21 @@ const { data: messages,
 
 export async function PATCH(request: NextRequest, { params }: RouteParams) {
   try {
-    const supabase = await createClient();user ,
+    const supabase = await createClient();
+    const {
+      data: { user },
       error: authError,
-    } = await (await supabase).auth.getUser();
+    } = await supabase.auth.getUser();
     if (authError || !user) {
-      return NextResponse.json({ error: 'Unauthorized' }, {status: 401 });
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const resolvedParams = await params;
     const conversationId = resolvedParams.id();
     const { title, is_active } = await request.json();
 
-    // Verificar se a conversa existe e pertence ao usuário    const response = await supabase;
-const { data: existingConversation,
-    error: convError  } = response || { data: null,
-    error: null };
+    // Verificar se a conversa existe e pertence ao usuário
+    const { data: existingConversation, error: convError } = await supabase
       .from('assistant_conversations')
       .select('*')
       .eq('id', conversationId)
@@ -109,9 +105,8 @@ const { data: existingConversation,
       );
     }
 
-    // Atualizar conversa    const response = await supabase;
-const { data: conversation, error  } = response || { data: null,
-    error: null };
+    // Atualizar conversa
+    const { data: conversation, error } = await supabase
       .from('assistant_conversations')
       .update(updateData)
       .eq('id', conversationId)
@@ -126,7 +121,7 @@ const { data: conversation, error  } = response || { data: null,
       );
     }
 
-    return NextResponse.json({conversation });
+    return NextResponse.json({ conversation });
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
@@ -137,20 +132,20 @@ const { data: conversation, error  } = response || { data: null,
 
 export async function DELETE(_request: NextRequest, { params }: RouteParams) {
   try {
-    const supabase = await createClient();user ,
+    const supabase = await createClient();
+    const {
+      data: { user },
       error: authError,
-    } = await (await supabase).auth.getUser();
+    } = await supabase.auth.getUser();
     if (authError || !user) {
-      return NextResponse.json({ error: 'Unauthorized' }, {status: 401 });
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const resolvedParams = await params;
     const conversationId = resolvedParams.id();
 
-    // Verificar se a conversa existe e pertence ao usuário    const response = await supabase;
-const { data: existingConversation,
-    error: convError  } = response || { data: null,
-    error: null };
+    // Verificar se a conversa existe e pertence ao usuário
+    const { data: existingConversation, error: convError } = await supabase
       .from('assistant_conversations')
       .select('*')
       .eq('id', conversationId)
@@ -164,9 +159,8 @@ const { data: existingConversation,
       );
     }
 
-    // Deletar conversa (cascata automática deletará mensagens)    const response = await supabase;
-const { error  } = response || { data: null,
-    error: null };
+    // Deletar conversa (cascata automática deletará mensagens)
+    const { error } = await supabase
       .from('assistant_conversations')
       .delete()
       .eq('id', conversationId)
@@ -179,7 +173,7 @@ const { error  } = response || { data: null,
       );
     }
 
-    return NextResponse.json({success: true });
+    return NextResponse.json({ success: true });
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },

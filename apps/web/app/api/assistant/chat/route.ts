@@ -1,14 +1,14 @@
-import { anthropic } from "@ai-sdk/anthropic";
-import { openai } from "@ai-sdk/openai";
-import { convertToCoreMessages, streamText } from "ai";
-import { type NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/app/utils/supabase/server";
+import { anthropic } from '@ai-sdk/anthropic';
+import { openai } from '@ai-sdk/openai';
+import { convertToCoreMessages, streamText } from 'ai';
+import { type NextRequest, NextResponse } from 'next/server';
+import { createClient } from '@/app/utils/supabase/server';
 
 // Configuração dos modelos
 const MODELS = {
   gpt4: openai('gpt-4o'),
   claude: anthropic('claude-3-5-sonnet-20241022'),
-  gpt35: openai('gpt-3.5-turbo')
+  gpt35: openai('gpt-3.5-turbo'),
 } as const;
 
 type ModelType = keyof typeof MODELS;
@@ -21,13 +21,14 @@ export async function POST(request: NextRequest) {
       error: authError,
     } = await supabase.auth.getUser();
     if (authError || !user) {
-      return NextResponse.json({ error: 'Unauthorized' }, {status: 401 });
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const { messages, conversationId, model = 'gpt4' } = await request.json();
 
-    // Validar modelo    if (!MODELS[model as ModelType]) {
-      return NextResponse.json({ error: 'Invalid model' }, {status: 400 });
+    // Validar modelo
+    if (!MODELS[model as ModelType]) {
+      return NextResponse.json({ error: 'Invalid model' }, { status: 400 });
     }
 
     // Buscar ou criar conversa
@@ -55,7 +56,7 @@ export async function POST(request: NextRequest) {
           user_id: user.id,
           title: messages[0]?.content?.substring(0, 50) || 'Nova Conversa',
           model_used: model,
-          is_active: true
+          is_active: true,
         })
         .select()
         .single();
@@ -94,10 +95,10 @@ export async function POST(request: NextRequest) {
         service,
         notes,
         patients(name, phone)
-      `
+      `,
       )
       .eq('user_id', user.id)
-      .order('date_time', {ascending: false })
+      .order('date_time', { ascending: false })
       .limit(5);
 
     // Construir prompt do sistema com contexto personalizado
@@ -115,16 +116,16 @@ PREFERÊNCIAS DO ASSISTENTE:
 - Idioma: ${preferences?.language || 'pt-BR'}
 
 CONTEXTO RECENTE: ${
-  recentAppointments && recentAppointments.length > 0
-    ? `Últimos agendamentos:
+      recentAppointments && recentAppointments.length > 0
+        ? `Últimos agendamentos:
 ${recentAppointments
   .map(
     (apt) =>
       `- ${apt.date_time}: ${apt.patients?.name} - ${apt.service} (${apt.status})`,
   )
   .join('\n')}`
-    : 'Nenhum agendamento recente encontrado.'
-}
+        : 'Nenhum agendamento recente encontrado.'
+    }
 
 INSTRUÇÕES:
 1. Sempre responda em português brasileiro
@@ -140,30 +141,34 @@ Seja sempre útil, preciso e contextualmente relevante para a gestão de clínic
     // Converter mensagens para o formato do AI SDK    const coreMessages = convertToCoreMessages(messages);
 
     // Salvar mensagem do usuário    const userMessage = messages.at(-1);
-    await (await supabase).from('assistant_messages').insert({conversation_id: conversation.id,
-    user_id: user.id,
+    await (await supabase).from('assistant_messages').insert({
+      conversation_id: conversation.id,
+      user_id: user.id,
       role: 'user',
-    content: userMessage.content,
+      content: userMessage.content,
       model_used: model,
     });
 
-    // Gerar resposta com streaming    const result = await streamText({model: MODELS[model as ModelType],
-    system: systemPrompt,
+    // Gerar resposta com streaming
+    const result = await streamText({
+      model: MODELS[model as ModelType],
+      system: systemPrompt,
       messages: coreMessages,
-    temperature: preferences?.temperature || 0.7,
+      temperature: preferences?.temperature || 0.7,
       maxTokens: preferences?.max_tokens || 2000,
     });
 
-    // Log da interação    await (await supabase).from('assistant_logs').insert({
+    // Log da interação
+    await (await supabase).from('assistant_logs').insert({
       user_id: user.id,
-    conversation_id: conversation.id,
+      conversation_id: conversation.id,
       action: 'chat_request',
-    details: {
+      details: {
         model,
         message_count: messages.length,
-    context_used: {;
+        context_used: {
           has_preferences: Boolean(preferences),
-    has_profile: Boolean(profile),
+          has_profile: Boolean(profile),
           recent_appointments_count: recentAppointments?.length || 0,
         },
       },
