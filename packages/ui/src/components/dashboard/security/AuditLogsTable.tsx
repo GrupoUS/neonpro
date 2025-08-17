@@ -1,17 +1,34 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { Badge } from '@neonpro/ui/badge';
-import { Button } from '@neonpro/ui/button';
-import { Input } from '@neonpro/ui/input';
-import { Label } from '@neonpro/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@neonpro/ui/select';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@neonpro/ui/table';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@neonpro/ui/dialog';
-import { Eye, Search, RefreshCw, Filter, Download, Calendar, User, Database, Shield } from 'lucide-react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import {
+  Calendar,
+  Database,
+  Download,
+  Eye,
+  Filter,
+  RefreshCw,
+  Search,
+  Shield,
+  User,
+} from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
+import { Badge } from '../../ui/badge';
+import { Button } from '../../ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '../../ui/dialog';
+import { Input } from '../../ui/input';
+import { Label } from '../../ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../ui/select';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../../ui/table';
 
 interface AuditLog {
   id: string;
@@ -97,7 +114,7 @@ export function AuditLogsTable() {
       document.body.appendChild(a);
       a.click();
       window.URL.revokeObjectURL(url);
-      
+
       toast.success('Logs de auditoria exportados com sucesso');
     } catch (error) {
       console.error('Error exporting audit logs:', error);
@@ -140,13 +157,13 @@ export function AuditLogsTable() {
   };
 
   const filteredLogs = logs.filter((log) => {
-    const matchesSearch = 
+    const matchesSearch =
       log.action.toLowerCase().includes(searchTerm.toLowerCase()) ||
       log.resource_type.toLowerCase().includes(searchTerm.toLowerCase()) ||
       log.user_id?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       log.ip_address?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       log.table_name?.toLowerCase().includes(searchTerm.toLowerCase());
-    
+
     const matchesAction = actionFilter === 'all' || log.action.toLowerCase().includes(actionFilter);
     const matchesResource = resourceFilter === 'all' || log.resource_type === resourceFilter;
     const matchesRisk = riskFilter === 'all' || log.risk_level === riskFilter;
@@ -166,69 +183,69 @@ export function AuditLogsTable() {
   return (
     <div className="space-y-4">
       {/* Summary Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="bg-blue-50 p-4 rounded-lg">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
+        <div className="rounded-lg bg-blue-50 p-4">
           <div className="flex items-center space-x-2">
             <Database className="h-5 w-5 text-blue-600" />
             <div>
-              <div className="text-2xl font-bold text-blue-600">{logs.length}</div>
-              <div className="text-sm text-blue-600">Total de Logs</div>
+              <div className="font-bold text-2xl text-blue-600">{logs.length}</div>
+              <div className="text-blue-600 text-sm">Total de Logs</div>
             </div>
           </div>
         </div>
-        <div className="bg-green-50 p-4 rounded-lg">
+        <div className="rounded-lg bg-green-50 p-4">
           <div className="flex items-center space-x-2">
             <User className="h-5 w-5 text-green-600" />
             <div>
-              <div className="text-2xl font-bold text-green-600">
-                {new Set(logs.map(l => l.user_id).filter(Boolean)).size}
+              <div className="font-bold text-2xl text-green-600">
+                {new Set(logs.map((l) => l.user_id).filter(Boolean)).size}
               </div>
-              <div className="text-sm text-green-600">Usuários Únicos</div>
+              <div className="text-green-600 text-sm">Usuários Únicos</div>
             </div>
           </div>
         </div>
-        <div className="bg-yellow-50 p-4 rounded-lg">
+        <div className="rounded-lg bg-yellow-50 p-4">
           <div className="flex items-center space-x-2">
             <Shield className="h-5 w-5 text-yellow-600" />
             <div>
-              <div className="text-2xl font-bold text-yellow-600">
-                {logs.filter(l => l.risk_level === 'high' || l.risk_level === 'critical').length}
+              <div className="font-bold text-2xl text-yellow-600">
+                {logs.filter((l) => l.risk_level === 'high' || l.risk_level === 'critical').length}
               </div>
               <div className="text-sm text-yellow-600">Alto Risco</div>
             </div>
           </div>
         </div>
-        <div className="bg-purple-50 p-4 rounded-lg">
+        <div className="rounded-lg bg-purple-50 p-4">
           <div className="flex items-center space-x-2">
             <Database className="h-5 w-5 text-purple-600" />
             <div>
-              <div className="text-2xl font-bold text-purple-600">
-                {new Set(logs.map(l => l.resource_type)).size}
+              <div className="font-bold text-2xl text-purple-600">
+                {new Set(logs.map((l) => l.resource_type)).size}
               </div>
-              <div className="text-sm text-purple-600">Tipos de Recurso</div>
+              <div className="text-purple-600 text-sm">Tipos de Recurso</div>
             </div>
           </div>
         </div>
       </div>
 
       {/* Filters */}
-      <div className="flex flex-col sm:flex-row gap-4">
+      <div className="flex flex-col gap-4 sm:flex-row">
         <div className="flex-1">
           <Label htmlFor="search">Buscar logs</Label>
           <div className="relative">
-            <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Search className="-translate-y-1/2 absolute top-1/2 left-2 h-4 w-4 transform text-muted-foreground" />
             <Input
+              className="pl-8"
               id="search"
+              onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Buscar por ação, recurso, usuário, IP ou tabela..."
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-8"
             />
           </div>
         </div>
         <div className="min-w-[120px]">
           <Label htmlFor="action-filter">Ação</Label>
-          <Select value={actionFilter} onValueChange={setActionFilter}>
+          <Select onValueChange={setActionFilter} value={actionFilter}>
             <SelectTrigger>
               <SelectValue placeholder="Todas" />
             </SelectTrigger>
@@ -244,7 +261,7 @@ export function AuditLogsTable() {
         </div>
         <div className="min-w-[120px]">
           <Label htmlFor="resource-filter">Recurso</Label>
-          <Select value={resourceFilter} onValueChange={setResourceFilter}>
+          <Select onValueChange={setResourceFilter} value={resourceFilter}>
             <SelectTrigger>
               <SelectValue placeholder="Todos" />
             </SelectTrigger>
@@ -260,7 +277,7 @@ export function AuditLogsTable() {
         </div>
         <div className="min-w-[120px]">
           <Label htmlFor="risk-filter">Risco</Label>
-          <Select value={riskFilter} onValueChange={setRiskFilter}>
+          <Select onValueChange={setRiskFilter} value={riskFilter}>
             <SelectTrigger>
               <SelectValue placeholder="Todos" />
             </SelectTrigger>
@@ -274,12 +291,12 @@ export function AuditLogsTable() {
           </Select>
         </div>
         <div className="flex items-end space-x-2">
-          <Button onClick={fetchLogs} variant="outline" size="sm">
-            <RefreshCw className="h-4 w-4 mr-2" />
+          <Button onClick={fetchLogs} size="sm" variant="outline">
+            <RefreshCw className="mr-2 h-4 w-4" />
             Atualizar
           </Button>
-          <Button onClick={handleExportLogs} variant="outline" size="sm">
-            <Download className="h-4 w-4 mr-2" />
+          <Button onClick={handleExportLogs} size="sm" variant="outline">
+            <Download className="mr-2 h-4 w-4" />
             Exportar
           </Button>
         </div>
@@ -303,7 +320,7 @@ export function AuditLogsTable() {
           <TableBody>
             {filteredLogs.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={8} className="text-center text-muted-foreground py-8">
+                <TableCell className="py-8 text-center text-muted-foreground" colSpan={8}>
                   Nenhum log de auditoria encontrado
                 </TableCell>
               </TableRow>
@@ -316,7 +333,7 @@ export function AuditLogsTable() {
                       <div>
                         <div className="font-medium text-sm">{log.action}</div>
                         {log.http_method && (
-                          <Badge variant="outline" className="text-xs">
+                          <Badge className="text-xs" variant="outline">
                             {log.http_method}
                           </Badge>
                         )}
@@ -327,10 +344,10 @@ export function AuditLogsTable() {
                     <div>
                       <div className="font-medium">{log.resource_type}</div>
                       {log.table_name && (
-                        <div className="text-sm text-muted-foreground">{log.table_name}</div>
+                        <div className="text-muted-foreground text-sm">{log.table_name}</div>
                       )}
                       {log.resource_id && (
-                        <code className="text-xs bg-muted px-1 py-0.5 rounded">
+                        <code className="rounded bg-muted px-1 py-0.5 text-xs">
                           {log.resource_id}
                         </code>
                       )}
@@ -339,14 +356,14 @@ export function AuditLogsTable() {
                   <TableCell>
                     <div className="text-sm">
                       {log.user_id ? (
-                        <code className="bg-muted px-1 py-0.5 rounded">{log.user_id}</code>
+                        <code className="rounded bg-muted px-1 py-0.5">{log.user_id}</code>
                       ) : (
                         <span className="text-muted-foreground">Sistema</span>
                       )}
                     </div>
                   </TableCell>
                   <TableCell>
-                    <code className="text-sm bg-muted px-1 py-0.5 rounded">
+                    <code className="rounded bg-muted px-1 py-0.5 text-sm">
                       {log.ip_address || 'N/A'}
                     </code>
                   </TableCell>
@@ -361,12 +378,12 @@ export function AuditLogsTable() {
                   <TableCell>
                     <div className="flex flex-wrap gap-1">
                       {log.compliance_flags.slice(0, 2).map((flag, index) => (
-                        <Badge key={index} variant="outline" className="text-xs">
+                        <Badge className="text-xs" key={index} variant="outline">
                           {flag}
                         </Badge>
                       ))}
                       {log.compliance_flags.length > 2 && (
-                        <Badge variant="outline" className="text-xs">
+                        <Badge className="text-xs" variant="outline">
                           +{log.compliance_flags.length - 2}
                         </Badge>
                       )}
@@ -380,11 +397,7 @@ export function AuditLogsTable() {
                   <TableCell className="text-right">
                     <Dialog>
                       <DialogTrigger asChild>
-                        <Button 
-                          variant="ghost" 
-                          size="sm"
-                          onClick={() => setSelectedLog(log)}
-                        >
+                        <Button onClick={() => setSelectedLog(log)} size="sm" variant="ghost">
                           <Eye className="h-4 w-4" />
                         </Button>
                       </DialogTrigger>
@@ -397,9 +410,7 @@ export function AuditLogsTable() {
                               {log.risk_level.toUpperCase()}
                             </Badge>
                           </DialogTitle>
-                          <DialogDescription>
-                            Detalhes completos do log #{log.id}
-                          </DialogDescription>
+                          <DialogDescription>Detalhes completos do log #{log.id}</DialogDescription>
                         </DialogHeader>
                         {selectedLog && (
                           <div className="space-y-4">
@@ -415,19 +426,21 @@ export function AuditLogsTable() {
                               <div>
                                 <Label>ID do Recurso</Label>
                                 <div className="mt-1">
-                                  <code className="text-sm bg-muted px-2 py-1 rounded">
+                                  <code className="rounded bg-muted px-2 py-1 text-sm">
                                     {selectedLog.resource_id || 'N/A'}
                                   </code>
                                 </div>
                               </div>
                               <div>
                                 <Label>Tabela</Label>
-                                <div className="mt-1 text-sm">{selectedLog.table_name || 'N/A'}</div>
+                                <div className="mt-1 text-sm">
+                                  {selectedLog.table_name || 'N/A'}
+                                </div>
                               </div>
                               <div>
                                 <Label>Usuário</Label>
                                 <div className="mt-1">
-                                  <code className="text-sm bg-muted px-2 py-1 rounded">
+                                  <code className="rounded bg-muted px-2 py-1 text-sm">
                                     {selectedLog.user_id || 'Sistema'}
                                   </code>
                                 </div>
@@ -435,7 +448,7 @@ export function AuditLogsTable() {
                               <div>
                                 <Label>IP Address</Label>
                                 <div className="mt-1">
-                                  <code className="text-sm bg-muted px-2 py-1 rounded">
+                                  <code className="rounded bg-muted px-2 py-1 text-sm">
                                     {selectedLog.ip_address || 'N/A'}
                                   </code>
                                 </div>
@@ -463,112 +476,121 @@ export function AuditLogsTable() {
                               <div>
                                 <Label>Data/Hora</Label>
                                 <div className="mt-1 text-sm">
-                                  {format(new Date(selectedLog.created_at), 'dd/MM/yyyy HH:mm:ss', { locale: ptBR })}
+                                  {format(new Date(selectedLog.created_at), 'dd/MM/yyyy HH:mm:ss', {
+                                    locale: ptBR,
+                                  })}
                                 </div>
                               </div>
                             </div>
 
-                            {selectedLog.compliance_flags && selectedLog.compliance_flags.length > 0 && (
-                              <div>
-                                <Label>Flags de Compliance</Label>
-                                <div className="mt-1 flex flex-wrap gap-2">
-                                  {selectedLog.compliance_flags.map((flag, index) => (
-                                    <Badge key={index} variant="outline">
-                                      {flag}
-                                    </Badge>
-                                  ))}
-                                </div>
-                              </div>
-                            )}
-
-                            {selectedLog.security_flags && selectedLog.security_flags.length > 0 && (
-                              <div>
-                                <Label>Flags de Segurança</Label>
-                                <div className="mt-1 flex flex-wrap gap-2">
-                                  {selectedLog.security_flags.map((flag, index) => (
-                                    <Badge key={index} variant="outline">
-                                      {flag}
-                                    </Badge>
-                                  ))}
-                                </div>
-                              </div>
-                            )}
-
-                            {selectedLog.changed_fields && selectedLog.changed_fields.length > 0 && (
-                              <div>
-                                <Label>Campos Alterados</Label>
-                                <div className="mt-1 flex flex-wrap gap-2">
-                                  {selectedLog.changed_fields.map((field, index) => (
-                                    <Badge key={index} variant="secondary">
-                                      {field}
-                                    </Badge>
-                                  ))}
-                                </div>
-                              </div>
-                            )}
-
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                              {selectedLog.old_values && Object.keys(selectedLog.old_values).length > 0 && (
+                            {selectedLog.compliance_flags &&
+                              selectedLog.compliance_flags.length > 0 && (
                                 <div>
-                                  <Label>Valores Anteriores</Label>
+                                  <Label>Flags de Compliance</Label>
+                                  <div className="mt-1 flex flex-wrap gap-2">
+                                    {selectedLog.compliance_flags.map((flag, index) => (
+                                      <Badge key={index} variant="outline">
+                                        {flag}
+                                      </Badge>
+                                    ))}
+                                  </div>
+                                </div>
+                              )}
+
+                            {selectedLog.security_flags &&
+                              selectedLog.security_flags.length > 0 && (
+                                <div>
+                                  <Label>Flags de Segurança</Label>
+                                  <div className="mt-1 flex flex-wrap gap-2">
+                                    {selectedLog.security_flags.map((flag, index) => (
+                                      <Badge key={index} variant="outline">
+                                        {flag}
+                                      </Badge>
+                                    ))}
+                                  </div>
+                                </div>
+                              )}
+
+                            {selectedLog.changed_fields &&
+                              selectedLog.changed_fields.length > 0 && (
+                                <div>
+                                  <Label>Campos Alterados</Label>
+                                  <div className="mt-1 flex flex-wrap gap-2">
+                                    {selectedLog.changed_fields.map((field, index) => (
+                                      <Badge key={index} variant="secondary">
+                                        {field}
+                                      </Badge>
+                                    ))}
+                                  </div>
+                                </div>
+                              )}
+
+                            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                              {selectedLog.old_values &&
+                                Object.keys(selectedLog.old_values).length > 0 && (
+                                  <div>
+                                    <Label>Valores Anteriores</Label>
+                                    <div className="mt-1">
+                                      <pre className="max-h-40 overflow-auto rounded bg-muted p-3 text-xs">
+                                        {JSON.stringify(selectedLog.old_values, null, 2)}
+                                      </pre>
+                                    </div>
+                                  </div>
+                                )}
+
+                              {selectedLog.new_values &&
+                                Object.keys(selectedLog.new_values).length > 0 && (
+                                  <div>
+                                    <Label>Valores Novos</Label>
+                                    <div className="mt-1">
+                                      <pre className="max-h-40 overflow-auto rounded bg-muted p-3 text-xs">
+                                        {JSON.stringify(selectedLog.new_values, null, 2)}
+                                      </pre>
+                                    </div>
+                                  </div>
+                                )}
+                            </div>
+
+                            {selectedLog.compliance_context &&
+                              Object.keys(selectedLog.compliance_context).length > 0 && (
+                                <div>
+                                  <Label>Contexto de Compliance</Label>
                                   <div className="mt-1">
-                                    <pre className="text-xs bg-muted p-3 rounded overflow-auto max-h-40">
-                                      {JSON.stringify(selectedLog.old_values, null, 2)}
+                                    <pre className="max-h-40 overflow-auto rounded bg-muted p-3 text-xs">
+                                      {JSON.stringify(selectedLog.compliance_context, null, 2)}
                                     </pre>
                                   </div>
                                 </div>
                               )}
 
-                              {selectedLog.new_values && Object.keys(selectedLog.new_values).length > 0 && (
+                            {selectedLog.metadata &&
+                              Object.keys(selectedLog.metadata).length > 0 && (
                                 <div>
-                                  <Label>Valores Novos</Label>
+                                  <Label>Metadados</Label>
                                   <div className="mt-1">
-                                    <pre className="text-xs bg-muted p-3 rounded overflow-auto max-h-40">
-                                      {JSON.stringify(selectedLog.new_values, null, 2)}
+                                    <pre className="max-h-40 overflow-auto rounded bg-muted p-3 text-xs">
+                                      {JSON.stringify(selectedLog.metadata, null, 2)}
                                     </pre>
                                   </div>
                                 </div>
                               )}
-                            </div>
-
-                            {selectedLog.compliance_context && Object.keys(selectedLog.compliance_context).length > 0 && (
-                              <div>
-                                <Label>Contexto de Compliance</Label>
-                                <div className="mt-1">
-                                  <pre className="text-xs bg-muted p-3 rounded overflow-auto max-h-40">
-                                    {JSON.stringify(selectedLog.compliance_context, null, 2)}
-                                  </pre>
-                                </div>
-                              </div>
-                            )}
-
-                            {selectedLog.metadata && Object.keys(selectedLog.metadata).length > 0 && (
-                              <div>
-                                <Label>Metadados</Label>
-                                <div className="mt-1">
-                                  <pre className="text-xs bg-muted p-3 rounded overflow-auto max-h-40">
-                                    {JSON.stringify(selectedLog.metadata, null, 2)}
-                                  </pre>
-                                </div>
-                              </div>
-                            )}
 
                             {selectedLog.user_agent && (
                               <div>
                                 <Label>User Agent</Label>
-                                <div className="mt-1 text-xs bg-muted p-2 rounded">
+                                <div className="mt-1 rounded bg-muted p-2 text-xs">
                                   {selectedLog.user_agent}
                                 </div>
                               </div>
                             )}
 
                             {(selectedLog.checksum || selectedLog.signature) && (
-                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                                 {selectedLog.checksum && (
                                   <div>
                                     <Label>Checksum</Label>
                                     <div className="mt-1">
-                                      <code className="text-xs bg-muted px-2 py-1 rounded break-all">
+                                      <code className="break-all rounded bg-muted px-2 py-1 text-xs">
                                         {selectedLog.checksum}
                                       </code>
                                     </div>
@@ -578,7 +600,7 @@ export function AuditLogsTable() {
                                   <div>
                                     <Label>Assinatura Digital</Label>
                                     <div className="mt-1">
-                                      <code className="text-xs bg-muted px-2 py-1 rounded break-all">
+                                      <code className="break-all rounded bg-muted px-2 py-1 text-xs">
                                         {selectedLog.signature}
                                       </code>
                                     </div>
@@ -599,7 +621,7 @@ export function AuditLogsTable() {
       </div>
 
       {/* Summary */}
-      <div className="text-sm text-muted-foreground">
+      <div className="text-muted-foreground text-sm">
         Mostrando {filteredLogs.length} de {logs.length} logs de auditoria
       </div>
     </div>

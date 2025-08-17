@@ -6,20 +6,20 @@
 
 'use client';
 
-import { Card, CardContent, CardHeader, CardTitle } from '@neonpro/ui/card';
-import { Badge } from '@neonpro/ui/badge';
-import { Progress } from '@neonpro/ui/progress';
-import { 
-  Shield, 
-  Users, 
-  AlertTriangle, 
-  Activity, 
-  Clock, 
-  TrendingUp,
+import {
+  Activity,
+  AlertTriangle,
   CheckCircle2,
-  XCircle
+  Clock,
+  Shield,
+  TrendingUp,
+  Users,
+  XCircle,
 } from 'lucide-react';
-import { SecurityMetrics } from '@neonpro/utils';
+import type { SecurityMetrics } from '../../../lib/utils';
+import { Badge } from '../../ui/badge';
+import { Card, CardContent, CardHeader, CardTitle } from '../../ui/card';
+import { Progress } from '../../ui/progress';
 
 interface SecurityMetricsOverviewProps {
   metrics: SecurityMetrics;
@@ -28,11 +28,16 @@ interface SecurityMetricsOverviewProps {
 export function SecurityMetricsOverview({ metrics }: SecurityMetricsOverviewProps) {
   const getThreatLevelColor = (level: string) => {
     switch (level) {
-      case 'low': return 'text-green-600';
-      case 'medium': return 'text-yellow-600';
-      case 'high': return 'text-orange-600';
-      case 'critical': return 'text-red-600';
-      default: return 'text-gray-600';
+      case 'low':
+        return 'text-green-600';
+      case 'medium':
+        return 'text-yellow-600';
+      case 'high':
+        return 'text-orange-600';
+      case 'critical':
+        return 'text-red-600';
+      default:
+        return 'text-gray-600';
     }
   };
 
@@ -51,21 +56,19 @@ export function SecurityMetricsOverview({ metrics }: SecurityMetricsOverviewProp
   };
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
       {/* Threat Level */}
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Threat Level</CardTitle>
+          <CardTitle className="font-medium text-sm">Threat Level</CardTitle>
           <Shield className={`h-4 w-4 ${getThreatLevelColor(metrics.threat_level)}`} />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold capitalize">
-            {metrics.threat_level}
-          </div>
-          <div className="flex items-center space-x-2 mt-2">
-            <Badge 
-              variant={metrics.threat_level === 'low' ? 'default' : 'destructive'}
+          <div className="font-bold text-2xl capitalize">{metrics.threat_level}</div>
+          <div className="mt-2 flex items-center space-x-2">
+            <Badge
               className="text-xs"
+              variant={metrics.threat_level === 'low' ? 'default' : 'destructive'}
             >
               {metrics.unresolved_alerts} unresolved alerts
             </Badge>
@@ -76,16 +79,16 @@ export function SecurityMetricsOverview({ metrics }: SecurityMetricsOverviewProp
       {/* Active Sessions */}
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Active Sessions</CardTitle>
+          <CardTitle className="font-medium text-sm">Active Sessions</CardTitle>
           <Users className="h-4 w-4 text-blue-600" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">{metrics.active_sessions}</div>
-          <div className="flex items-center justify-between mt-2">
-            <span className="text-xs text-gray-600">High risk:</span>
-            <Badge 
-              variant={metrics.high_risk_sessions > 0 ? 'destructive' : 'secondary'}
+          <div className="font-bold text-2xl">{metrics.active_sessions}</div>
+          <div className="mt-2 flex items-center justify-between">
+            <span className="text-gray-600 text-xs">High risk:</span>
+            <Badge
               className="text-xs"
+              variant={metrics.high_risk_sessions > 0 ? 'destructive' : 'secondary'}
             >
               {metrics.high_risk_sessions}
             </Badge>
@@ -96,16 +99,16 @@ export function SecurityMetricsOverview({ metrics }: SecurityMetricsOverviewProp
       {/* Security Events (24h) */}
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Events (24h)</CardTitle>
+          <CardTitle className="font-medium text-sm">Events (24h)</CardTitle>
           <Activity className="h-4 w-4 text-purple-600" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">{metrics.security_events_24h}</div>
-          <div className="flex items-center justify-between mt-2">
-            <span className="text-xs text-gray-600">Failed logins:</span>
-            <Badge 
-              variant={metrics.failed_attempts_24h > 10 ? 'destructive' : 'secondary'}
+          <div className="font-bold text-2xl">{metrics.security_events_24h}</div>
+          <div className="mt-2 flex items-center justify-between">
+            <span className="text-gray-600 text-xs">Failed logins:</span>
+            <Badge
               className="text-xs"
+              variant={metrics.failed_attempts_24h > 10 ? 'destructive' : 'secondary'}
             >
               {metrics.failed_attempts_24h}
             </Badge>
@@ -116,7 +119,7 @@ export function SecurityMetricsOverview({ metrics }: SecurityMetricsOverviewProp
       {/* Compliance Score */}
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Compliance Score</CardTitle>
+          <CardTitle className="font-medium text-sm">Compliance Score</CardTitle>
           {metrics.compliance_score >= 95 ? (
             <CheckCircle2 className="h-4 w-4 text-green-600" />
           ) : (
@@ -124,14 +127,11 @@ export function SecurityMetricsOverview({ metrics }: SecurityMetricsOverviewProp
           )}
         </CardHeader>
         <CardContent>
-          <div className={`text-2xl font-bold ${getComplianceColor(metrics.compliance_score)}`}>
+          <div className={`font-bold text-2xl ${getComplianceColor(metrics.compliance_score)}`}>
             {metrics.compliance_score}%
           </div>
           <div className="mt-2">
-            <Progress 
-              value={metrics.compliance_score} 
-              className="h-2"
-            />
+            <Progress className="h-2" value={metrics.compliance_score} />
           </div>
         </CardContent>
       </Card>
@@ -139,23 +139,25 @@ export function SecurityMetricsOverview({ metrics }: SecurityMetricsOverviewProp
       {/* Response Time */}
       <Card className="md:col-span-2 lg:col-span-2">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Average Response Time</CardTitle>
+          <CardTitle className="font-medium text-sm">Average Response Time</CardTitle>
           <Clock className="h-4 w-4 text-indigo-600" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">
+          <div className="font-bold text-2xl">
             {metrics.avg_response_time_minutes}
-            <span className="text-sm font-normal text-gray-600 ml-1">minutes</span>
+            <span className="ml-1 font-normal text-gray-600 text-sm">minutes</span>
           </div>
-          <div className="flex items-center space-x-4 mt-2 text-sm text-gray-600">
+          <div className="mt-2 flex items-center space-x-4 text-gray-600 text-sm">
             <div className="flex items-center space-x-1">
-              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+              <div className="h-2 w-2 rounded-full bg-green-500" />
               <span>Target: &lt; 30 min</span>
             </div>
             <div className="flex items-center space-x-1">
-              <div className={`w-2 h-2 rounded-full ${
-                metrics.avg_response_time_minutes <= 30 ? 'bg-green-500' : 'bg-red-500'
-              }`}></div>
+              <div
+                className={`h-2 w-2 rounded-full ${
+                  metrics.avg_response_time_minutes <= 30 ? 'bg-green-500' : 'bg-red-500'
+                }`}
+              />
               <span>Current: {metrics.avg_response_time_minutes}m</span>
             </div>
           </div>
@@ -165,30 +167,30 @@ export function SecurityMetricsOverview({ metrics }: SecurityMetricsOverviewProp
       {/* Security Status Summary */}
       <Card className="md:col-span-2 lg:col-span-2">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Security Status</CardTitle>
+          <CardTitle className="font-medium text-sm">Security Status</CardTitle>
           <TrendingUp className="h-4 w-4 text-emerald-600" />
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-3 gap-4 text-center">
             <div>
-              <div className="text-lg font-semibold text-green-600">
+              <div className="font-semibold text-green-600 text-lg">
                 {metrics.compliance_score >= 95 ? '✓' : '⚠'}
               </div>
-              <div className="text-xs text-gray-600">Compliance</div>
+              <div className="text-gray-600 text-xs">Compliance</div>
             </div>
             <div>
-              <div className="text-lg font-semibold text-blue-600">
-                {metrics.active_sessions}
-              </div>
-              <div className="text-xs text-gray-600">Sessions</div>
+              <div className="font-semibold text-blue-600 text-lg">{metrics.active_sessions}</div>
+              <div className="text-gray-600 text-xs">Sessions</div>
             </div>
             <div>
-              <div className={`text-lg font-semibold ${
-                metrics.unresolved_alerts === 0 ? 'text-green-600' : 'text-red-600'
-              }`}>
+              <div
+                className={`font-semibold text-lg ${
+                  metrics.unresolved_alerts === 0 ? 'text-green-600' : 'text-red-600'
+                }`}
+              >
                 {metrics.unresolved_alerts === 0 ? '✓' : metrics.unresolved_alerts}
               </div>
-              <div className="text-xs text-gray-600">Alerts</div>
+              <div className="text-gray-600 text-xs">Alerts</div>
             </div>
           </div>
         </CardContent>

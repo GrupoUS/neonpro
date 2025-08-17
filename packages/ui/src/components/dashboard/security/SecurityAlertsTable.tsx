@@ -1,18 +1,25 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { Badge } from '@neonpro/ui/badge';
-import { Button } from '@neonpro/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@neonpro/ui/card';
-import { Input } from '@neonpro/ui/input';
-import { Label } from '@neonpro/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@neonpro/ui/select';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@neonpro/ui/table';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@neonpro/ui/dialog';
-import { AlertTriangle, Eye, Search, RefreshCw, Clock, CheckCircle2, XCircle } from 'lucide-react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { AlertTriangle, CheckCircle2, Clock, Eye, RefreshCw, Search, XCircle } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
+import { Badge } from '../../ui/badge';
+import { Button } from '../../ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../ui/card';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '../../ui/dialog';
+import { Input } from '../../ui/input';
+import { Label } from '../../ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../ui/select';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../../ui/table';
 
 interface SecurityAlert {
   id: string;
@@ -157,12 +164,12 @@ export function SecurityAlertsTable() {
   };
 
   const filteredAlerts = alerts.filter((alert) => {
-    const matchesSearch = 
+    const matchesSearch =
       alert.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       alert.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       alert.alert_type.toLowerCase().includes(searchTerm.toLowerCase()) ||
       alert.source_ip?.toLowerCase().includes(searchTerm.toLowerCase());
-    
+
     const matchesSeverity = severityFilter === 'all' || alert.severity === severityFilter;
     const matchesStatus = statusFilter === 'all' || alert.status === statusFilter;
 
@@ -181,23 +188,23 @@ export function SecurityAlertsTable() {
   return (
     <div className="space-y-4">
       {/* Filters */}
-      <div className="flex flex-col sm:flex-row gap-4">
+      <div className="flex flex-col gap-4 sm:flex-row">
         <div className="flex-1">
           <Label htmlFor="search">Buscar alertas</Label>
           <div className="relative">
-            <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Search className="-translate-y-1/2 absolute top-1/2 left-2 h-4 w-4 transform text-muted-foreground" />
             <Input
+              className="pl-8"
               id="search"
+              onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Buscar por título, descrição, tipo ou IP..."
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-8"
             />
           </div>
         </div>
         <div className="min-w-[140px]">
           <Label htmlFor="severity-filter">Severidade</Label>
-          <Select value={severityFilter} onValueChange={setSeverityFilter}>
+          <Select onValueChange={setSeverityFilter} value={severityFilter}>
             <SelectTrigger>
               <SelectValue placeholder="Todas" />
             </SelectTrigger>
@@ -212,7 +219,7 @@ export function SecurityAlertsTable() {
         </div>
         <div className="min-w-[140px]">
           <Label htmlFor="status-filter">Status</Label>
-          <Select value={statusFilter} onValueChange={setStatusFilter}>
+          <Select onValueChange={setStatusFilter} value={statusFilter}>
             <SelectTrigger>
               <SelectValue placeholder="Todos" />
             </SelectTrigger>
@@ -226,8 +233,8 @@ export function SecurityAlertsTable() {
           </Select>
         </div>
         <div className="flex items-end">
-          <Button onClick={fetchAlerts} variant="outline" size="sm">
-            <RefreshCw className="h-4 w-4 mr-2" />
+          <Button onClick={fetchAlerts} size="sm" variant="outline">
+            <RefreshCw className="mr-2 h-4 w-4" />
             Atualizar
           </Button>
         </div>
@@ -250,13 +257,16 @@ export function SecurityAlertsTable() {
           <TableBody>
             {filteredAlerts.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={7} className="text-center text-muted-foreground py-8">
+                <TableCell className="py-8 text-center text-muted-foreground" colSpan={7}>
                   Nenhum alerta de segurança encontrado
                 </TableCell>
               </TableRow>
             ) : (
               filteredAlerts.map((alert) => (
-                <TableRow key={alert.id} className={alert.status === 'active' ? 'bg-red-50/50' : ''}>
+                <TableRow
+                  className={alert.status === 'active' ? 'bg-red-50/50' : ''}
+                  key={alert.id}
+                >
                   <TableCell>
                     <div className="flex items-center space-x-2">
                       {getPriorityIcon(alert.priority)}
@@ -270,18 +280,17 @@ export function SecurityAlertsTable() {
                   </TableCell>
                   <TableCell>
                     <div>
-                      <div className="font-medium flex items-center space-x-2">
+                      <div className="flex items-center space-x-2 font-medium">
                         {alert.response_required && (
                           <AlertTriangle className="h-4 w-4 text-red-500" />
                         )}
                         <span>{alert.title}</span>
                       </div>
                       {alert.description && (
-                        <div className="text-sm text-muted-foreground">
-                          {alert.description.length > 50 
+                        <div className="text-muted-foreground text-sm">
+                          {alert.description.length > 50
                             ? `${alert.description.substring(0, 50)}...`
-                            : alert.description
-                          }
+                            : alert.description}
                         </div>
                       )}
                     </div>
@@ -317,11 +326,7 @@ export function SecurityAlertsTable() {
                     <div className="flex items-center justify-end space-x-2">
                       <Dialog>
                         <DialogTrigger asChild>
-                          <Button 
-                            variant="ghost" 
-                            size="sm"
-                            onClick={() => setSelectedAlert(alert)}
-                          >
+                          <Button onClick={() => setSelectedAlert(alert)} size="sm" variant="ghost">
                             <Eye className="h-4 w-4" />
                           </Button>
                         </DialogTrigger>
@@ -385,7 +390,7 @@ export function SecurityAlertsTable() {
                                 <div>
                                   <Label>IP de Origem</Label>
                                   <div className="mt-1">
-                                    <code className="text-sm bg-muted px-2 py-1 rounded">
+                                    <code className="rounded bg-muted px-2 py-1 text-sm">
                                       {selectedAlert.source_ip || 'N/A'}
                                     </code>
                                   </div>
@@ -393,20 +398,30 @@ export function SecurityAlertsTable() {
                                 <div>
                                   <Label>Nível de Escalação</Label>
                                   <div className="mt-1">
-                                    <Badge variant="outline">Nível {selectedAlert.escalation_level}</Badge>
+                                    <Badge variant="outline">
+                                      Nível {selectedAlert.escalation_level}
+                                    </Badge>
                                   </div>
                                 </div>
                                 <div>
                                   <Label>Criado em</Label>
                                   <div className="mt-1 text-sm">
-                                    {format(new Date(selectedAlert.created_at), 'dd/MM/yyyy HH:mm:ss', { locale: ptBR })}
+                                    {format(
+                                      new Date(selectedAlert.created_at),
+                                      'dd/MM/yyyy HH:mm:ss',
+                                      { locale: ptBR }
+                                    )}
                                   </div>
                                 </div>
                                 {selectedAlert.acknowledged_at && (
                                   <div>
                                     <Label>Reconhecido em</Label>
                                     <div className="mt-1 text-sm">
-                                      {format(new Date(selectedAlert.acknowledged_at), 'dd/MM/yyyy HH:mm:ss', { locale: ptBR })}
+                                      {format(
+                                        new Date(selectedAlert.acknowledged_at),
+                                        'dd/MM/yyyy HH:mm:ss',
+                                        { locale: ptBR }
+                                      )}
                                     </div>
                                   </div>
                                 )}
@@ -414,59 +429,63 @@ export function SecurityAlertsTable() {
                                   <div>
                                     <Label>Resolvido em</Label>
                                     <div className="mt-1 text-sm">
-                                      {format(new Date(selectedAlert.resolved_at), 'dd/MM/yyyy HH:mm:ss', { locale: ptBR })}
+                                      {format(
+                                        new Date(selectedAlert.resolved_at),
+                                        'dd/MM/yyyy HH:mm:ss',
+                                        { locale: ptBR }
+                                      )}
                                     </div>
                                   </div>
                                 )}
                                 {selectedAlert.assigned_to && (
                                   <div>
                                     <Label>Atribuído para</Label>
-                                    <div className="mt-1 text-sm">
-                                      {selectedAlert.assigned_to}
-                                    </div>
+                                    <div className="mt-1 text-sm">{selectedAlert.assigned_to}</div>
                                   </div>
                                 )}
                               </div>
-                              
+
                               {selectedAlert.description && (
                                 <div>
                                   <Label>Descrição</Label>
-                                  <div className="mt-1 text-sm bg-muted p-3 rounded">
+                                  <div className="mt-1 rounded bg-muted p-3 text-sm">
                                     {selectedAlert.description}
                                   </div>
                                 </div>
                               )}
 
-                              {selectedAlert.alert_data && Object.keys(selectedAlert.alert_data).length > 0 && (
-                                <div>
-                                  <Label>Dados do Alerta</Label>
-                                  <div className="mt-1">
-                                    <pre className="text-xs bg-muted p-3 rounded overflow-auto max-h-40">
-                                      {JSON.stringify(selectedAlert.alert_data, null, 2)}
-                                    </pre>
+                              {selectedAlert.alert_data &&
+                                Object.keys(selectedAlert.alert_data).length > 0 && (
+                                  <div>
+                                    <Label>Dados do Alerta</Label>
+                                    <div className="mt-1">
+                                      <pre className="max-h-40 overflow-auto rounded bg-muted p-3 text-xs">
+                                        {JSON.stringify(selectedAlert.alert_data, null, 2)}
+                                      </pre>
+                                    </div>
                                   </div>
-                                </div>
-                              )}
+                                )}
 
-                              {selectedAlert.affected_resources && Object.keys(selectedAlert.affected_resources).length > 0 && (
-                                <div>
-                                  <Label>Recursos Afetados</Label>
-                                  <div className="mt-1">
-                                    <pre className="text-xs bg-muted p-3 rounded overflow-auto max-h-40">
-                                      {JSON.stringify(selectedAlert.affected_resources, null, 2)}
-                                    </pre>
+                              {selectedAlert.affected_resources &&
+                                Object.keys(selectedAlert.affected_resources).length > 0 && (
+                                  <div>
+                                    <Label>Recursos Afetados</Label>
+                                    <div className="mt-1">
+                                      <pre className="max-h-40 overflow-auto rounded bg-muted p-3 text-xs">
+                                        {JSON.stringify(selectedAlert.affected_resources, null, 2)}
+                                      </pre>
+                                    </div>
                                   </div>
-                                </div>
-                              )}
+                                )}
 
                               <div className="flex items-center space-x-2 pt-4">
                                 <Label>Atualizar Status:</Label>
                                 <Select
-                                  value={selectedAlert.status}
                                   onValueChange={(value) => {
                                     handleUpdateStatus(selectedAlert.id, value);
                                     setSelectedAlert({ ...selectedAlert, status: value as any });
                                   }}
+                                  value={selectedAlert.status}
                                 >
                                   <SelectTrigger className="w-40">
                                     <SelectValue />
@@ -493,16 +512,18 @@ export function SecurityAlertsTable() {
       </div>
 
       {/* Summary */}
-      <div className="flex justify-between items-center text-sm text-muted-foreground">
-        <span>Mostrando {filteredAlerts.length} de {alerts.length} alertas de segurança</span>
+      <div className="flex items-center justify-between text-muted-foreground text-sm">
+        <span>
+          Mostrando {filteredAlerts.length} de {alerts.length} alertas de segurança
+        </span>
         <div className="flex items-center space-x-4">
           <span className="flex items-center space-x-1">
-            <div className="w-2 h-2 bg-red-500 rounded-full"></div>
-            <span>Ativos: {alerts.filter(a => a.status === 'active').length}</span>
+            <div className="h-2 w-2 rounded-full bg-red-500" />
+            <span>Ativos: {alerts.filter((a) => a.status === 'active').length}</span>
           </span>
           <span className="flex items-center space-x-1">
-            <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-            <span>Resolvidos: {alerts.filter(a => a.status === 'resolved').length}</span>
+            <div className="h-2 w-2 rounded-full bg-green-500" />
+            <span>Resolvidos: {alerts.filter((a) => a.status === 'resolved').length}</span>
           </span>
         </div>
       </div>

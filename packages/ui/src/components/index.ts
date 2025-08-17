@@ -53,6 +53,8 @@ export type { HealthRecordViewerProps } from './HealthRecordViewer';
 export { HealthRecordViewer } from './HealthRecordViewer';
 export type { InputProps } from './Input';
 export { Input } from './Input';
+export type { LabelProps } from './Label';
+export { Label } from './Label';
 export type { PatientCardProps, PatientData } from './PatientCard';
 export { PatientCard } from './PatientCard';
 export type {
@@ -92,6 +94,9 @@ export {
   SelectTrigger,
   SelectValue,
 } from './Select';
+export { Sonner, Toaster } from './Sonner';
+export type { SwitchProps } from './Switch';
+export { Switch } from './Switch';
 export { Tabs, TabsContent, TabsList, TabsTrigger } from './Tabs';
 export type { TextareaProps } from './Textarea';
 export { Textarea } from './Textarea';

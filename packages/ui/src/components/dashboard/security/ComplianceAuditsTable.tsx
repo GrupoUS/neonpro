@@ -1,18 +1,36 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { Badge } from '@neonpro/ui/badge';
-import { Button } from '@neonpro/ui/button';
-import { Input } from '@neonpro/ui/input';
-import { Label } from '@neonpro/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@neonpro/ui/select';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@neonpro/ui/table';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@neonpro/ui/dialog';
-import { Progress } from '@neonpro/ui/progress';
-import { Eye, Search, RefreshCw, Download, CheckCircle2, XCircle, AlertTriangle, Clock, FileText, Shield } from 'lucide-react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import {
+  AlertTriangle,
+  CheckCircle2,
+  Clock,
+  Download,
+  Eye,
+  FileText,
+  RefreshCw,
+  Search,
+  Shield,
+  XCircle,
+} from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
+import { Badge } from '../../ui/badge';
+import { Button } from '../../ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '../../ui/dialog';
+import { Input } from '../../ui/input';
+import { Label } from '../../ui/label';
+import { Progress } from '../../ui/progress';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../ui/select';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../../ui/table';
 
 interface ComplianceAudit {
   id: string;
@@ -127,7 +145,7 @@ export function ComplianceAuditsTable() {
       document.body.appendChild(a);
       a.click();
       window.URL.revokeObjectURL(url);
-      
+
       toast.success('Relatório baixado com sucesso');
     } catch (error) {
       console.error('Error downloading report:', error);
@@ -194,11 +212,11 @@ export function ComplianceAuditsTable() {
   };
 
   const filteredAudits = audits.filter((audit) => {
-    const matchesSearch = 
+    const matchesSearch =
       audit.audit_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       audit.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       audit.audit_type.toLowerCase().includes(searchTerm.toLowerCase());
-    
+
     const matchesType = typeFilter === 'all' || audit.audit_type === typeFilter;
     const matchesStatus = statusFilter === 'all' || audit.status === statusFilter;
 
@@ -217,46 +235,46 @@ export function ComplianceAuditsTable() {
   return (
     <div className="space-y-4">
       {/* Summary Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="bg-blue-50 p-4 rounded-lg">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
+        <div className="rounded-lg bg-blue-50 p-4">
           <div className="flex items-center space-x-2">
             <FileText className="h-5 w-5 text-blue-600" />
             <div>
-              <div className="text-2xl font-bold text-blue-600">{audits.length}</div>
-              <div className="text-sm text-blue-600">Total de Auditorias</div>
+              <div className="font-bold text-2xl text-blue-600">{audits.length}</div>
+              <div className="text-blue-600 text-sm">Total de Auditorias</div>
             </div>
           </div>
         </div>
-        <div className="bg-green-50 p-4 rounded-lg">
+        <div className="rounded-lg bg-green-50 p-4">
           <div className="flex items-center space-x-2">
             <CheckCircle2 className="h-5 w-5 text-green-600" />
             <div>
-              <div className="text-2xl font-bold text-green-600">
-                {audits.filter(a => a.status === 'completed').length}
+              <div className="font-bold text-2xl text-green-600">
+                {audits.filter((a) => a.status === 'completed').length}
               </div>
-              <div className="text-sm text-green-600">Concluídas</div>
+              <div className="text-green-600 text-sm">Concluídas</div>
             </div>
           </div>
         </div>
-        <div className="bg-yellow-50 p-4 rounded-lg">
+        <div className="rounded-lg bg-yellow-50 p-4">
           <div className="flex items-center space-x-2">
             <Clock className="h-5 w-5 text-yellow-600" />
             <div>
-              <div className="text-2xl font-bold text-yellow-600">
-                {audits.filter(a => a.status === 'in_progress').length}
+              <div className="font-bold text-2xl text-yellow-600">
+                {audits.filter((a) => a.status === 'in_progress').length}
               </div>
               <div className="text-sm text-yellow-600">Em Progresso</div>
             </div>
           </div>
         </div>
-        <div className="bg-red-50 p-4 rounded-lg">
+        <div className="rounded-lg bg-red-50 p-4">
           <div className="flex items-center space-x-2">
             <AlertTriangle className="h-5 w-5 text-red-600" />
             <div>
-              <div className="text-2xl font-bold text-red-600">
+              <div className="font-bold text-2xl text-red-600">
                 {audits.reduce((acc, audit) => acc + (audit.critical_issues || 0), 0)}
               </div>
-              <div className="text-sm text-red-600">Issues Críticos</div>
+              <div className="text-red-600 text-sm">Issues Críticos</div>
             </div>
           </div>
         </div>
@@ -264,42 +282,42 @@ export function ComplianceAuditsTable() {
 
       {/* Action Buttons */}
       <div className="flex flex-wrap gap-2">
-        <Button onClick={() => handleStartAudit('lgpd')} variant="outline" size="sm">
-          <Shield className="h-4 w-4 mr-2" />
+        <Button onClick={() => handleStartAudit('lgpd')} size="sm" variant="outline">
+          <Shield className="mr-2 h-4 w-4" />
           Auditoria LGPD
         </Button>
-        <Button onClick={() => handleStartAudit('anvisa')} variant="outline" size="sm">
-          <Shield className="h-4 w-4 mr-2" />
+        <Button onClick={() => handleStartAudit('anvisa')} size="sm" variant="outline">
+          <Shield className="mr-2 h-4 w-4" />
           Auditoria ANVISA
         </Button>
-        <Button onClick={() => handleStartAudit('cfm')} variant="outline" size="sm">
-          <Shield className="h-4 w-4 mr-2" />
+        <Button onClick={() => handleStartAudit('cfm')} size="sm" variant="outline">
+          <Shield className="mr-2 h-4 w-4" />
           Auditoria CFM
         </Button>
-        <Button onClick={() => handleStartAudit('comprehensive')} variant="outline" size="sm">
-          <Shield className="h-4 w-4 mr-2" />
+        <Button onClick={() => handleStartAudit('comprehensive')} size="sm" variant="outline">
+          <Shield className="mr-2 h-4 w-4" />
           Auditoria Completa
         </Button>
       </div>
 
       {/* Filters */}
-      <div className="flex flex-col sm:flex-row gap-4">
+      <div className="flex flex-col gap-4 sm:flex-row">
         <div className="flex-1">
           <Label htmlFor="search">Buscar auditorias</Label>
           <div className="relative">
-            <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Search className="-translate-y-1/2 absolute top-1/2 left-2 h-4 w-4 transform text-muted-foreground" />
             <Input
+              className="pl-8"
               id="search"
+              onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Buscar por nome, descrição ou tipo..."
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-8"
             />
           </div>
         </div>
         <div className="min-w-[140px]">
           <Label htmlFor="type-filter">Tipo</Label>
-          <Select value={typeFilter} onValueChange={setTypeFilter}>
+          <Select onValueChange={setTypeFilter} value={typeFilter}>
             <SelectTrigger>
               <SelectValue placeholder="Todos" />
             </SelectTrigger>
@@ -315,7 +333,7 @@ export function ComplianceAuditsTable() {
         </div>
         <div className="min-w-[140px]">
           <Label htmlFor="status-filter">Status</Label>
-          <Select value={statusFilter} onValueChange={setStatusFilter}>
+          <Select onValueChange={setStatusFilter} value={statusFilter}>
             <SelectTrigger>
               <SelectValue placeholder="Todos" />
             </SelectTrigger>
@@ -330,8 +348,8 @@ export function ComplianceAuditsTable() {
           </Select>
         </div>
         <div className="flex items-end">
-          <Button onClick={fetchAudits} variant="outline" size="sm">
-            <RefreshCw className="h-4 w-4 mr-2" />
+          <Button onClick={fetchAudits} size="sm" variant="outline">
+            <RefreshCw className="mr-2 h-4 w-4" />
             Atualizar
           </Button>
         </div>
@@ -355,7 +373,7 @@ export function ComplianceAuditsTable() {
           <TableBody>
             {filteredAudits.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={8} className="text-center text-muted-foreground py-8">
+                <TableCell className="py-8 text-center text-muted-foreground" colSpan={8}>
                   Nenhuma auditoria de compliance encontrada
                 </TableCell>
               </TableRow>
@@ -366,11 +384,10 @@ export function ComplianceAuditsTable() {
                     <div>
                       <div className="font-medium">{audit.audit_name}</div>
                       {audit.description && (
-                        <div className="text-sm text-muted-foreground">
-                          {audit.description.length > 50 
+                        <div className="text-muted-foreground text-sm">
+                          {audit.description.length > 50
                             ? `${audit.description.substring(0, 50)}...`
-                            : audit.description
-                          }
+                            : audit.description}
                         </div>
                       )}
                     </div>
@@ -378,9 +395,7 @@ export function ComplianceAuditsTable() {
                   <TableCell>
                     <div className="flex items-center space-x-2">
                       {getTypeIcon(audit.audit_type)}
-                      <Badge variant="outline">
-                        {audit.audit_type.toUpperCase()}
-                      </Badge>
+                      <Badge variant="outline">{audit.audit_type.toUpperCase()}</Badge>
                     </div>
                   </TableCell>
                   <TableCell>
@@ -399,9 +414,11 @@ export function ComplianceAuditsTable() {
                     {audit.compliance_score !== undefined ? (
                       <div className="flex items-center space-x-2">
                         <div className="w-16">
-                          <Progress value={audit.compliance_score} className="h-2" />
+                          <Progress className="h-2" value={audit.compliance_score} />
                         </div>
-                        <span className={`text-sm font-medium ${getComplianceScoreColor(audit.compliance_score)}`}>
+                        <span
+                          className={`font-medium text-sm ${getComplianceScoreColor(audit.compliance_score)}`}
+                        >
                           {audit.compliance_score}%
                         </span>
                       </div>
@@ -419,7 +436,7 @@ export function ComplianceAuditsTable() {
                         <AlertTriangle className="h-3 w-3 text-yellow-500" />
                         <span>{audit.warning_checks}</span>
                       </div>
-                      <div className="text-xs text-muted-foreground">
+                      <div className="text-muted-foreground text-xs">
                         Total: {audit.total_checks}
                       </div>
                     </div>
@@ -427,12 +444,12 @@ export function ComplianceAuditsTable() {
                   <TableCell>
                     <div className="flex space-x-1">
                       {audit.critical_issues > 0 && (
-                        <Badge variant="destructive" className="text-xs">
+                        <Badge className="text-xs" variant="destructive">
                           {audit.critical_issues} críticos
                         </Badge>
                       )}
                       {audit.high_issues > 0 && (
-                        <Badge variant="secondary" className="text-xs">
+                        <Badge className="text-xs" variant="secondary">
                           {audit.high_issues} altos
                         </Badge>
                       )}
@@ -440,23 +457,18 @@ export function ComplianceAuditsTable() {
                   </TableCell>
                   <TableCell>
                     <div className="text-sm">
-                      {audit.completed_at 
+                      {audit.completed_at
                         ? format(new Date(audit.completed_at), 'dd/MM/yyyy', { locale: ptBR })
                         : audit.started_at
-                        ? format(new Date(audit.started_at), 'dd/MM/yyyy', { locale: ptBR })
-                        : format(new Date(audit.created_at), 'dd/MM/yyyy', { locale: ptBR })
-                      }
+                          ? format(new Date(audit.started_at), 'dd/MM/yyyy', { locale: ptBR })
+                          : format(new Date(audit.created_at), 'dd/MM/yyyy', { locale: ptBR })}
                     </div>
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex items-center justify-end space-x-2">
                       <Dialog>
                         <DialogTrigger asChild>
-                          <Button 
-                            variant="ghost" 
-                            size="sm"
-                            onClick={() => setSelectedAudit(audit)}
-                          >
+                          <Button onClick={() => setSelectedAudit(audit)} size="sm" variant="ghost">
                             <Eye className="h-4 w-4" />
                           </Button>
                         </DialogTrigger>
@@ -506,9 +518,14 @@ export function ComplianceAuditsTable() {
                                     <Label>Pontuação de Compliance</Label>
                                     <div className="mt-1 flex items-center space-x-2">
                                       <div className="w-24">
-                                        <Progress value={selectedAudit.compliance_score} className="h-2" />
+                                        <Progress
+                                          className="h-2"
+                                          value={selectedAudit.compliance_score}
+                                        />
                                       </div>
-                                      <span className={`text-sm font-medium ${getComplianceScoreColor(selectedAudit.compliance_score)}`}>
+                                      <span
+                                        className={`font-medium text-sm ${getComplianceScoreColor(selectedAudit.compliance_score)}`}
+                                      >
                                         {selectedAudit.compliance_score}%
                                       </span>
                                     </div>
@@ -543,7 +560,11 @@ export function ComplianceAuditsTable() {
                                   <div>
                                     <Label>Iniciada em</Label>
                                     <div className="mt-1 text-sm">
-                                      {format(new Date(selectedAudit.started_at), 'dd/MM/yyyy HH:mm:ss', { locale: ptBR })}
+                                      {format(
+                                        new Date(selectedAudit.started_at),
+                                        'dd/MM/yyyy HH:mm:ss',
+                                        { locale: ptBR }
+                                      )}
                                     </div>
                                   </div>
                                 )}
@@ -551,7 +572,11 @@ export function ComplianceAuditsTable() {
                                   <div>
                                     <Label>Concluída em</Label>
                                     <div className="mt-1 text-sm">
-                                      {format(new Date(selectedAudit.completed_at), 'dd/MM/yyyy HH:mm:ss', { locale: ptBR })}
+                                      {format(
+                                        new Date(selectedAudit.completed_at),
+                                        'dd/MM/yyyy HH:mm:ss',
+                                        { locale: ptBR }
+                                      )}
                                     </div>
                                   </div>
                                 )}
@@ -560,7 +585,7 @@ export function ComplianceAuditsTable() {
                               {selectedAudit.description && (
                                 <div>
                                   <Label>Descrição</Label>
-                                  <div className="mt-1 text-sm bg-muted p-3 rounded">
+                                  <div className="mt-1 rounded bg-muted p-3 text-sm">
                                     {selectedAudit.description}
                                   </div>
                                 </div>
@@ -568,48 +593,64 @@ export function ComplianceAuditsTable() {
 
                               {/* Issues Summary */}
                               <div className="grid grid-cols-4 gap-4">
-                                <div className="bg-red-50 p-3 rounded-lg">
-                                  <div className="text-red-600 font-semibold">{selectedAudit.critical_issues}</div>
-                                  <div className="text-sm text-red-600">Issues Críticos</div>
+                                <div className="rounded-lg bg-red-50 p-3">
+                                  <div className="font-semibold text-red-600">
+                                    {selectedAudit.critical_issues}
+                                  </div>
+                                  <div className="text-red-600 text-sm">Issues Críticos</div>
                                 </div>
-                                <div className="bg-orange-50 p-3 rounded-lg">
-                                  <div className="text-orange-600 font-semibold">{selectedAudit.high_issues}</div>
-                                  <div className="text-sm text-orange-600">Issues Altos</div>
+                                <div className="rounded-lg bg-orange-50 p-3">
+                                  <div className="font-semibold text-orange-600">
+                                    {selectedAudit.high_issues}
+                                  </div>
+                                  <div className="text-orange-600 text-sm">Issues Altos</div>
                                 </div>
-                                <div className="bg-yellow-50 p-3 rounded-lg">
-                                  <div className="text-yellow-600 font-semibold">{selectedAudit.medium_issues}</div>
+                                <div className="rounded-lg bg-yellow-50 p-3">
+                                  <div className="font-semibold text-yellow-600">
+                                    {selectedAudit.medium_issues}
+                                  </div>
                                   <div className="text-sm text-yellow-600">Issues Médios</div>
                                 </div>
-                                <div className="bg-blue-50 p-3 rounded-lg">
-                                  <div className="text-blue-600 font-semibold">{selectedAudit.low_issues}</div>
-                                  <div className="text-sm text-blue-600">Issues Baixos</div>
+                                <div className="rounded-lg bg-blue-50 p-3">
+                                  <div className="font-semibold text-blue-600">
+                                    {selectedAudit.low_issues}
+                                  </div>
+                                  <div className="text-blue-600 text-sm">Issues Baixos</div>
                                 </div>
                               </div>
 
                               {selectedAudit.findings && selectedAudit.findings.length > 0 && (
                                 <div>
                                   <Label>Achados da Auditoria</Label>
-                                  <div className="mt-1 space-y-3 max-h-60 overflow-auto">
+                                  <div className="mt-1 max-h-60 space-y-3 overflow-auto">
                                     {selectedAudit.findings.slice(0, 5).map((finding, index) => (
-                                      <div key={index} className="border p-3 rounded">
-                                        <div className="flex items-center justify-between mb-2">
+                                      <div className="rounded border p-3" key={index}>
+                                        <div className="mb-2 flex items-center justify-between">
                                           <Badge variant="outline">{finding.category}</Badge>
-                                          <Badge variant={
-                                            finding.severity === 'critical' ? 'destructive' :
-                                            finding.severity === 'high' ? 'destructive' :
-                                            finding.severity === 'medium' ? 'secondary' : 'outline'
-                                          }>
+                                          <Badge
+                                            variant={
+                                              finding.severity === 'critical'
+                                                ? 'destructive'
+                                                : finding.severity === 'high'
+                                                  ? 'destructive'
+                                                  : finding.severity === 'medium'
+                                                    ? 'secondary'
+                                                    : 'outline'
+                                            }
+                                          >
                                             {finding.severity.toUpperCase()}
                                           </Badge>
                                         </div>
                                         <div className="text-sm">
-                                          <div className="font-medium mb-1">{finding.issue}</div>
-                                          <div className="text-muted-foreground">{finding.recommendation}</div>
+                                          <div className="mb-1 font-medium">{finding.issue}</div>
+                                          <div className="text-muted-foreground">
+                                            {finding.recommendation}
+                                          </div>
                                         </div>
                                       </div>
                                     ))}
                                     {selectedAudit.findings.length > 5 && (
-                                      <div className="text-sm text-muted-foreground text-center">
+                                      <div className="text-center text-muted-foreground text-sm">
                                         E mais {selectedAudit.findings.length - 5} achados...
                                       </div>
                                     )}
@@ -617,24 +658,29 @@ export function ComplianceAuditsTable() {
                                 </div>
                               )}
 
-                              {selectedAudit.recommendations && selectedAudit.recommendations.length > 0 && (
-                                <div>
-                                  <Label>Recomendações</Label>
-                                  <div className="mt-1 space-y-2">
-                                    {selectedAudit.recommendations.slice(0, 5).map((recommendation, index) => (
-                                      <div key={index} className="text-sm bg-muted p-2 rounded">
-                                        {recommendation}
-                                      </div>
-                                    ))}
+                              {selectedAudit.recommendations &&
+                                selectedAudit.recommendations.length > 0 && (
+                                  <div>
+                                    <Label>Recomendações</Label>
+                                    <div className="mt-1 space-y-2">
+                                      {selectedAudit.recommendations
+                                        .slice(0, 5)
+                                        .map((recommendation, index) => (
+                                          <div className="rounded bg-muted p-2 text-sm" key={index}>
+                                            {recommendation}
+                                          </div>
+                                        ))}
+                                    </div>
                                   </div>
-                                </div>
-                              )}
+                                )}
 
                               {selectedAudit.next_audit_date && (
                                 <div>
                                   <Label>Próxima Auditoria</Label>
                                   <div className="mt-1 text-sm">
-                                    {format(new Date(selectedAudit.next_audit_date), 'dd/MM/yyyy', { locale: ptBR })}
+                                    {format(new Date(selectedAudit.next_audit_date), 'dd/MM/yyyy', {
+                                      locale: ptBR,
+                                    })}
                                   </div>
                                 </div>
                               )}
@@ -642,12 +688,12 @@ export function ComplianceAuditsTable() {
                           )}
                         </DialogContent>
                       </Dialog>
-                      
+
                       {audit.status === 'completed' && (
-                        <Button 
-                          variant="outline" 
-                          size="sm"
+                        <Button
                           onClick={() => handleDownloadReport(audit.id)}
+                          size="sm"
+                          variant="outline"
                         >
                           <Download className="h-4 w-4" />
                         </Button>
@@ -662,7 +708,7 @@ export function ComplianceAuditsTable() {
       </div>
 
       {/* Summary */}
-      <div className="text-sm text-muted-foreground">
+      <div className="text-muted-foreground text-sm">
         Mostrando {filteredAudits.length} de {audits.length} auditorias de compliance
       </div>
     </div>
