@@ -1,114 +1,89 @@
 {
   "name": "@neonpro/ai",
   "version": "0.1.0",
-  "private": true,
-  "description": "NeonPro AI Healthcare Features - Constitutional AI Ethics with ≥95% Medical Accuracy",
-  "keywords": [
-    "healthcare",
-    "artificial-intelligence",
-    "medical-ai",
-    "constitutional-ethics",
-    "explainable-ai",
-    "treatment-prediction",
-    "patient-risk-assessment",
-    "intelligent-scheduling",
-    "healthcare-chatbot",
-    "medical-accuracy"
-  ],
+  "description": "AI Healthcare Features with Constitutional Compliance",
   "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.js",
+      "import": "./dist/index.mjs",
       "require": "./dist/index.js"
     },
-    "./scheduling": {
-      "types": "./dist/scheduling/index.d.ts",
-      "import": "./dist/scheduling/index.js",
-      "require": "./dist/scheduling/index.js"
-    },
-    "./prediction": {
-      "types": "./dist/prediction/index.d.ts",
-      "import": "./dist/prediction/index.js",
-      "require": "./dist/prediction/index.js"
-    },
-    "./risk-assessment": {
-      "types": "./dist/risk-assessment/index.d.ts",
-      "import": "./dist/risk-assessment/index.js",
-      "require": "./dist/risk-assessment/index.js"
-    },
-    "./recommendations": {
-      "types": "./dist/recommendations/index.d.ts",
-      "import": "./dist/recommendations/index.js",
-      "require": "./dist/recommendations/index.js"
+    "./follow-up": {
+      "types": "./dist/follow-up/index.d.ts",
+      "import": "./dist/follow-up/index.mjs",
+      "require": "./dist/follow-up/index.js"
     },
     "./chatbot": {
       "types": "./dist/chatbot/index.d.ts",
-      "import": "./dist/chatbot/index.js",
+      "import": "./dist/chatbot/index.mjs",
       "require": "./dist/chatbot/index.js"
+    },
+    "./workflow": {
+      "types": "./dist/workflow/index.d.ts",
+      "import": "./dist/workflow/index.mjs",
+      "require": "./dist/workflow/index.js"
+    },
+    "./ml": {
+      "types": "./dist/ml/index.d.ts",
+      "import": "./dist/ml/index.mjs",
+      "require": "./dist/ml/index.js"
     },
     "./ethics": {
       "types": "./dist/ethics/index.d.ts",
-      "import": "./dist/ethics/index.js",
+      "import": "./dist/ethics/index.mjs",
       "require": "./dist/ethics/index.js"
-    },
-    "./utils": {
-      "types": "./dist/utils/index.d.ts",
-      "import": "./dist/utils/index.js",
-      "require": "./dist/utils/index.js"
     }
-  },  "scripts": {
+  },
+  "scripts": {
     "build": "tsc",
-    "dev": "tsc --watch",
-    "clean": "rm -rf dist",
-    "type-check": "tsc --noEmit",
-    "lint": "biome lint src --write",
-    "test": "vitest",
-    "test:coverage": "vitest --coverage",
-    "test:medical-accuracy": "vitest --testNamePattern=\"medical.*accuracy|prediction.*accuracy|≥95\"",
-    "validate:ai-ethics": "node scripts/validate-ai-ethics.js",
-    "validate:medical-accuracy": "node scripts/validate-medical-accuracy.js",
-    "test:constitutional-ai": "vitest --testNamePattern=\"constitutional|ethics|explainable\"",
-    "benchmark:accuracy": "node scripts/benchmark-accuracy.js",
-    "audit:ai-compliance": "node scripts/ai-compliance-audit.js"
+    "dev": "tsup --watch",
+    "lint": "eslint src/",
+    "typecheck": "tsc --noEmit",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage"
   },
   "dependencies": {
-    "@neonpro/compliance": "workspace:*",
     "@neonpro/db": "workspace:*",
-    "@neonpro/domain": "workspace:*",
     "@neonpro/types": "workspace:*",
-    "@neonpro/utils": "workspace:*",
-    "@neonpro/devops": "workspace:*",
-    "openai": "^4.52.7",
-    "@azure/openai": "^1.0.0-beta.12",
-    "langchain": "^0.3.2",
-    "@langchain/openai": "^0.3.0",
-    "zod": "^3.22.4",
-    "date-fns": "^3.0.6",
-    "lodash": "^4.17.21",
-    "uuid": "^9.0.1",
+    "@neonpro/ui": "workspace:*",
+    "@supabase/supabase-js": "^2.45.4",
+    "zod": "^3.23.8",
+    "date-fns": "^3.6.0",
+    "@tensorflow/tfjs": "^4.21.0",
+    "@tensorflow/tfjs-node": "^4.21.0",
+    "natural": "^6.12.0",
+    "compromise": "^14.14.0",
+    "openai": "^4.63.0",
     "crypto-js": "^4.2.0",
-    "jsonwebtoken": "^9.0.2",
-    "ml-matrix": "^6.10.9",
-    "simple-statistics": "^7.8.3",
-    "tensorflow": "^4.17.0",
-    "@tensorflow/tfjs-node": "^4.17.0"
+    "uuid": "^10.0.0"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.2.0",
-    "@types/lodash": "^4.17.7",
-    "@types/uuid": "^9.0.7",
-    "@types/crypto-js": "^4.2.1",
-    "@types/jsonwebtoken": "^9.0.5",
-    "@types/node": "^22.10.2",
-    "typescript": "^5.7.2",
-    "vitest": "^2.1.8",
-    "@vitest/coverage-v8": "^2.1.8"
+    "@types/crypto-js": "^4.2.2",
+    "@types/jest": "^29.5.12",
+    "@types/natural": "^5.1.5",
+    "@types/node": "^22.7.4",
+    "@types/uuid": "^10.0.0",
+    "eslint": "^9.11.1",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.2.5",
+    "tsup": "^8.3.0",
+    "typescript": "^5.6.2"
   },
-  "peerDependencies": {
-    "react": "^18.0.0",
-    "next": "^15.0.0",
-    "@supabase/supabase-js": "^2.55.0"
-  }
+  "keywords": [
+    "healthcare",
+    "ai",
+    "machine-learning",
+    "medical",
+    "neonpro",
+    "lgpd",
+    "anvisa",
+    "cfm"
+  ],
+  "author": "NeonPro Healthcare Team",
+  "license": "PROPRIETARY",
+  "private": true
 }

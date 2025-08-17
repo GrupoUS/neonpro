@@ -30,7 +30,7 @@
     },
     "./anvisa": {
       "types": "./dist/anvisa/index.d.ts",
-      "import": "./dist/anvisa/index.js", 
+      "import": "./dist/anvisa/index.js",
       "require": "./dist/anvisa/index.js"
     },
     "./cfm": {
@@ -57,7 +57,7 @@
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",
-    "clean": "rm -rf dist",
+    "clean": "if exist dist rmdir /s /q dist",
     "type-check": "tsc --noEmit",
     "lint": "eslint src --ext .ts,.tsx",
     "test": "vitest",
