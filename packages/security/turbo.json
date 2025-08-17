@@ -1,14 +1,8 @@
 {
   "extends": ["//"],
   "tasks": {
-    "build": {
-      "tags": ["security", "shared", "healthcare"]
-    },
-    "test": {
-      "tags": ["security", "shared", "healthcare"]
-    },
-    "security:scan": {
-      "tags": ["security", "audit"]
-    }
+    "build": {},
+    "test": {},
+    "security:scan": {}
   }
 }

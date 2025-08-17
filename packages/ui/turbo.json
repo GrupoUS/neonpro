@@ -1,11 +1,7 @@
 {
   "extends": ["//"],
   "tasks": {
-    "build": {
-      "tags": ["ui", "shared", "frontend"]
-    },
-    "test": {
-      "tags": ["ui", "shared", "frontend"]
-    }
+    "build": {},
+    "test": {}
   }
 }

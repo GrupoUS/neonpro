@@ -1,3 +1,4 @@
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   createCriticalPatientData,
   createHighRiskPatientData,
@@ -15,7 +16,7 @@ describe('Patient Risk Assessment System - End-to-End Workflow', () => {
   let riskAssessmentService: any;
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
 
     // Create service with test configuration
     riskAssessmentService = createRiskAssessmentService({

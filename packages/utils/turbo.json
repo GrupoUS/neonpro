@@ -1,11 +1,7 @@
 {
   "extends": ["//"],
   "tasks": {
-    "build": {
-      "tags": ["utils", "shared"]
-    },
-    "test": {
-      "tags": ["utils", "shared"]
-    }
+    "build": {},
+    "test": {}
   }
 }

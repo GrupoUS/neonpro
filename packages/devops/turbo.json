@@ -1,11 +1,7 @@
 {
   "extends": ["//"],
   "tasks": {
-    "build": {
-      "tags": ["tools", "devops", "healthcare"]
-    },
-    "test": {
-      "tags": ["tools", "devops", "healthcare"]
-    }
+    "build": {},
+    "test": {}
   }
 }

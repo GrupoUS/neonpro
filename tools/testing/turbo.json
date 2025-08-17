@@ -1,8 +1,6 @@
 {
   "extends": ["//"],
   "tasks": {
-    "test": {
-      "tags": ["tools", "testing"]
-    }
+    "test": {}
   }
 }

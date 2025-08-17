@@ -1,40 +1,6 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "ui": "tui",
-  "experimentalUI": true,
-  "experimentalSpaces": true,
-  "boundaries": {
-    "rules": [
-      {
-        "tag": "app",
-        "dependsOn": [
-          "shared",
-          "ui",
-          "types",
-          "utils",
-          "domain",
-          "security",
-          "compliance"
-        ]
-      },
-      {
-        "tag": "shared",
-        "dependsOn": ["shared", "types"]
-      },
-      {
-        "tag": "ui",
-        "dependsOn": ["shared", "types", "utils"]
-      },
-      {
-        "tag": "tools",
-        "dependsOn": ["shared", "types", "utils"]
-      },
-      {
-        "tag": "domain",
-        "dependsOn": ["shared", "types", "utils", "compliance"]
-      }
-    ]
-  },
   "globalDependencies": [
     ".env",
     ".env.local",
@@ -272,8 +238,7 @@
   },
   "cacheDir": ".turbo/cache",
   "daemon": true,
-  "logOrder": "grouped",
-  "experimentalGlobalPassThroughEnv": [
+  "globalPassThroughEnv": [
     "NODE_ENV",
     "CI",
     "VERCEL",

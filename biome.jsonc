@@ -1,6 +1,5 @@
 {
   "$schema": "https://biomejs.dev/schemas/2.2.0/schema.json",
-  "extends": ["ultracite"],
   "files": {
     "maxSize": 10485760,
     "experimentalScannerIgnores": [
@@ -16,6 +15,9 @@
       "**/pnpm-lock.yaml",
       "**/*.d.ts"
     ]
+  },
+  "organizeImports": {
+    "enabled": true
   },
   "linter": {
     "enabled": true,
