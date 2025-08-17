@@ -1,7 +1,7 @@
 'use client';
 
 import { AlertTriangle, CheckCircle, Clock, FileText, Lock, Shield, Users } from 'lucide-react';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Alert, AlertDescription } from '../ui/alert';
 import { Badge } from '../ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
@@ -11,7 +11,7 @@ import { Progress } from '../ui/progress';
 // TYPES
 // ============================================================================
 
-interface ComplianceStatus {
+type ComplianceStatus = {
   userId: string;
   consentCompliance: {
     hasAllRequiredConsents: boolean;
@@ -25,7 +25,7 @@ interface ComplianceStatus {
     recentRequests: any[];
   };
   lastUpdated: string;
-}
+};
 
 // ============================================================================
 // COMPLIANCE DASHBOARD COMPONENT
@@ -37,7 +37,7 @@ export function ComplianceDashboard() {
 
   useEffect(() => {
     loadComplianceStatus();
-  }, []);
+  }, [loadComplianceStatus]);
 
   const loadComplianceStatus = async () => {
     try {
@@ -48,8 +48,7 @@ export function ComplianceDashboard() {
 
       const data: ComplianceStatus = await response.json();
       setComplianceStatus(data);
-    } catch (error) {
-      console.error('Load compliance status error:', error);
+    } catch (_error) {
     } finally {
       setLoading(false);
     }

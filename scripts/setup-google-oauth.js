@@ -65,9 +65,7 @@ if (currentConfig.googleClientId === 'your_google_client_id_here') {
   console.log(`     • ${currentConfig.appUrl}/auth/callback`);
   console.log('');
   console.log('3. Configure no Supabase:');
-  console.log(
-    '   https://supabase.com/dashboard/project/gfkskrkbnawkuppazkpt/auth/providers'
-  );
+  console.log('   https://supabase.com/dashboard/project/gfkskrkbnawkuppazkpt/auth/providers');
   console.log('');
   console.log('4. Atualize .env.local com as chaves reais');
 } else {
@@ -75,9 +73,7 @@ if (currentConfig.googleClientId === 'your_google_client_id_here') {
 }
 
 console.log('\n🌐 URLS IMPORTANTES:');
-console.log(
-  '📋 Supabase Dashboard: https://supabase.com/dashboard/project/gfkskrkbnawkuppazkpt'
-);
+console.log('📋 Supabase Dashboard: https://supabase.com/dashboard/project/gfkskrkbnawkuppazkpt');
 console.log(
   '🔐 Auth Providers: https://supabase.com/dashboard/project/gfkskrkbnawkuppazkpt/auth/providers'
 );

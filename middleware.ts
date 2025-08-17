@@ -1,4 +1,4 @@
-import { NextRequest } from 'next/server';
+import type { NextRequest } from 'next/server';
 import { securityMiddleware } from '@/lib/security/middleware';
 
 export async function middleware(request: NextRequest) {
@@ -10,7 +10,7 @@ export async function middleware(request: NextRequest) {
   }
 
   // Continue to next middleware or route
-  return undefined;
+  return;
 }
 
 export const config = {

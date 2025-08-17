@@ -28,12 +28,28 @@
     "format": "npx ultracite format",
     "format:check": "npx ultracite check",
     "format:biome": "biome format --write .",
+    "performance:analyze": "pnpm --filter @neonpro/performance run analyze:bundle && pnpm --filter @neonpro/performance run analyze:performance",
+    "performance:optimize": "pnpm --filter @neonpro/performance run optimize:bundles && pnpm --filter @neonpro/performance run optimize:assets",
+    "performance:validate": "pnpm --filter @neonpro/performance run validate:performance",
+    "performance:report": "pnpm performance:analyze && pnpm performance:validate",
     "lint:biome": "biome lint .",
     "lint:biome:fix": "biome lint --write .",
     "check": "biome check .",
     "check:fix": "biome check --write .",
     "ci": "biome ci .",
     "test:healthcare": "vitest run --config vitest.config.ts --testNamePattern=\"LGPD|ANVISA|CFM|healthcare|patient|medical\"",
+    "docs:generate": "pnpm --filter @neonpro/docs run generate:openapi && pnpm --filter @neonpro/docs run generate:adrs",
+    "docs:validate": "pnpm --filter @neonpro/docs run validate:api && pnpm --filter @neonpro/docs run validate:schemas",
+    "docs:full": "pnpm docs:generate && pnpm docs:validate",
+    "deploy:blue-green": "pnpm --filter @neonpro/deployment run deploy:blue-green",
+    "deploy:health-check": "pnpm --filter @neonpro/deployment run health:check",
+    "deploy:pre-checks": "pnpm --filter @neonpro/deployment run validate:pre-deploy",
+    "deploy:post-validation": "pnpm --filter @neonpro/deployment run validate:post-deploy",
+    "go-live:validate": "tsx scripts/go-live/go-live-checklist.ts",
+    "go-live:security": "tsx scripts/go-live/security-audit.ts",
+    "go-live:performance": "tsx scripts/go-live/performance-benchmark.ts",
+    "go-live:compliance": "tsx scripts/go-live/compliance-check.ts",
+    "go-live:full": "pnpm go-live:security && pnpm go-live:performance && pnpm go-live:compliance && pnpm go-live:validate",
     "test:ai-healthcare": "pnpm --filter @neonpro/ai test",
     "test:integrations": "pnpm --filter @neonpro/integrations test",
     "test:devops": "pnpm --filter @neonpro/devops test",
@@ -83,7 +99,24 @@
     "workspace:update": "pnpm update --recursive",
     "health": "node tools/migration-validator.cjs",
     "validate": "turbo format:check lint type-check test",
-    "ci:cache": "turbo format:check lint type-check test build --cache-dir=.turbo"
+    "ci:cache": "turbo format:check lint type-check test build --cache-dir=.turbo",
+    "prune:web": "turbo prune @neonpro/web --docker",
+    "prune:production": "turbo prune @neonpro/web --out-dir=out",
+    "build:analyze": "turbo build --summarize",
+    "perf:trace": "turbo build --experimental-space-id=neonpro",
+    "deps:update": "pnpm up --recursive",
+    "deps:audit": "pnpm audit --recursive",
+    "deps:outdated": "pnpm outdated --recursive",
+    "workspace:affected": "turbo ls --affected",
+    "cache:stats": "turbo build --dry --summarize",
+    "gen:component": "turbo gen healthcare-component",
+    "gen:api": "turbo gen api-endpoint",
+    "gen:package": "turbo gen package",
+    "gen:migration": "turbo gen migration",
+    "boundaries:check": "turbo boundaries",
+    "db:migrate": "turbo db:migrate",
+    "db:seed": "turbo db:seed",
+    "security:audit": "turbo security:audit"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.2.0",
@@ -96,6 +129,7 @@
     "lint-staged": "^16.1.5",
     "msw": "^2.6.6",
     "turbo": "^2.5.6",
+    "@turbo/gen": "^2.5.6",
     "typescript": "^5.7.2",
     "ultracite": "^5.1.5",
     "vitest": "^2.1.8"
@@ -104,6 +138,11 @@
     "node": ">=18.17.0",
     "pnpm": ">=8.0.0"
   },
+  "workspaces": [
+    "apps/*",
+    "packages/*",
+    "tests/*"
+  ],
   "keywords": [
     "clinic-management",
     "healthcare",
@@ -111,12 +150,6 @@
     "nextjs",
     "supabase"
   ],
-  "dependencies": {
-    "@supabase/auth-helpers-nextjs": "^0.10.0",
-    "@supabase/ssr": "^0.6.1",
-    "@supabase/supabase-js": "^2.55.0",
-    "dotenv": "^17.2.1"
-  },
   "lint-staged": {
     "*.{js,jsx,ts,tsx,json,jsonc,css,scss,md,mdx}": [
       "npx ultracite format"

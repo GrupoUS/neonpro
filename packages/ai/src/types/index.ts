@@ -4,29 +4,29 @@
  */
 
 // Core AI Configuration Types
-export interface AIConfig {
+export type AIConfig = {
   version: string;
   features: string[];
   status: 'development' | 'production';
-}
+};
 
 // Healthcare AI Status
-export interface HealthcareAIStatus {
+export type HealthcareAIStatus = {
   chatbot: AIConfig;
   followUp: AIConfig;
   scheduling: AIConfig;
   workflow: AIConfig;
   ethics: AIConfig;
-}
+};
 
 // Basic AI Response Type
-export interface AIResponse {
+export type AIResponse = {
   id: string;
   timestamp: string;
   confidence: number;
   recommendation: string;
   reasoning: string;
-}
+};
 
 // Export default configuration
 export const AI_PACKAGE_CONFIG: HealthcareAIStatus = {

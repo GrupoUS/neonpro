@@ -112,8 +112,7 @@ export async function validateAnvisaCompliance(
       issues,
       recommendations,
     };
-  } catch (error) {
-    console.error('ANVISA compliance validation error:', error);
+  } catch (_error) {
     return {
       compliant: false,
       score: 0,

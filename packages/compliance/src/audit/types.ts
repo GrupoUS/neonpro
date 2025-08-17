@@ -59,7 +59,7 @@ export enum AuditSeverity {
 /**
  * Audit Log Entry
  */
-export interface AuditLog {
+export type AuditLog = {
   id: string;
   tenantId: string;
   eventType: AuditEventType;
@@ -76,12 +76,12 @@ export interface AuditLog {
   timestamp: Date;
   regulation: HealthcareRegulation;
   complianceScore: ComplianceScore;
-}
+};
 
 /**
  * Audit Event for Real-time Processing
  */
-export interface AuditEvent {
+export type AuditEvent = {
   eventType: AuditEventType;
   severity: AuditSeverity;
   userId?: string;
@@ -94,12 +94,12 @@ export interface AuditEvent {
   ipAddress?: string;
   userAgent?: string;
   regulation: HealthcareRegulation;
-}
+};
 
 /**
  * Audit Filters for Querying
  */
-export interface AuditFilters {
+export type AuditFilters = {
   tenantId?: string;
   eventTypes?: AuditEventType[];
   severities?: AuditSeverity[];
@@ -112,12 +112,12 @@ export interface AuditFilters {
   minComplianceScore?: number;
   limit?: number;
   offset?: number;
-}
+};
 
 /**
  * Audit Configuration
  */
-export interface AuditConfig {
+export type AuditConfig = {
   tenantId: string;
   retentionPeriodDays: number;
   enableRealTimeMonitoring: boolean;
@@ -130,7 +130,7 @@ export interface AuditConfig {
   regulations: HealthcareRegulation[];
   autoArchiveEnabled: boolean;
   encryptionEnabled: boolean;
-}
+};
 
 // =============================================================================
 // COMPLIANCE AUDIT TYPES
@@ -139,7 +139,7 @@ export interface AuditConfig {
 /**
  * Compliance Audit Report
  */
-export interface ComplianceAuditReport {
+export type ComplianceAuditReport = {
   id: string;
   tenantId: string;
   auditDate: Date;
@@ -153,12 +153,12 @@ export interface ComplianceAuditReport {
   nextAuditDue: Date;
   status: 'DRAFT' | 'FINAL' | 'APPROVED';
   metadata: Record<string, any>;
-}
+};
 
 /**
  * Compliance Audit Finding
  */
-export interface ComplianceAuditFinding {
+export type ComplianceAuditFinding = {
   id: string;
   category: string;
   severity: AuditSeverity;
@@ -168,12 +168,12 @@ export interface ComplianceAuditFinding {
   complianceScore: ComplianceScore;
   remediation?: string;
   status: 'OPEN' | 'IN_PROGRESS' | 'RESOLVED' | 'ACCEPTED_RISK';
-}
+};
 
 /**
  * Compliance Action Item
  */
-export interface ComplianceActionItem {
+export type ComplianceActionItem = {
   id: string;
   title: string;
   description: string;
@@ -183,19 +183,19 @@ export interface ComplianceActionItem {
   status: 'PENDING' | 'IN_PROGRESS' | 'COMPLETED' | 'OVERDUE';
   regulation: HealthcareRegulation;
   relatedFindingId?: string;
-}
+};
 
 /**
  * Audit Trail Validation Result
  */
-export interface AuditTrailValidation {
+export type AuditTrailValidation = {
   isComplete: boolean;
   missingEvents: string[];
   integrityScore: ComplianceScore;
   lastValidation: Date;
   violations: string[];
   recommendations: string[];
-}
+};
 
 // =============================================================================
 // ZOD SCHEMAS FOR VALIDATION

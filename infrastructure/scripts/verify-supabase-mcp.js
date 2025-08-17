@@ -60,9 +60,7 @@ if (fs.existsSync(packageJsonPath)) {
   }
 
   if (packageJson.dependencies['@supabase/ssr']) {
-    console.log(
-      `   ✅ Supabase SSR support: v${packageJson.dependencies['@supabase/ssr']}`
-    );
+    console.log(`   ✅ Supabase SSR support: v${packageJson.dependencies['@supabase/ssr']}`);
   }
 }
 
@@ -120,6 +118,4 @@ console.log('• Manage authentication via MCP');
 console.log('• Use real-time features');
 console.log('• Handle file storage operations');
 
-console.log(
-  '\n📖 See docs/supabase-mcp-setup.md for detailed usage instructions.'
-);
+console.log('\n📖 See docs/supabase-mcp-setup.md for detailed usage instructions.');

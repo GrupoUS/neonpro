@@ -1,6 +1,7 @@
 // Migrated from src/services/auth.ts
+
+import type { Session, User } from '@supabase/supabase-js';
 import { supabase } from '@/lib/supabase';
-import type { User, Session } from '@supabase/supabase-js';
 
 export interface AuthUser extends User {
   tenant_id?: string;
@@ -51,8 +52,8 @@ export class AuthService {
 
       return { user: authUser, session: data.session };
     } catch (error) {
-      return { 
-        error: error instanceof Error ? error.message : 'Login failed' 
+      return {
+        error: error instanceof Error ? error.message : 'Login failed',
       };
     }
   }
@@ -96,8 +97,8 @@ export class AuthService {
 
       return { user: data.user as AuthUser };
     } catch (error) {
-      return { 
-        error: error instanceof Error ? error.message : 'Registration failed' 
+      return {
+        error: error instanceof Error ? error.message : 'Registration failed',
       };
     }
   }
@@ -110,16 +111,19 @@ export class AuthService {
       }
       return {};
     } catch (error) {
-      return { 
-        error: error instanceof Error ? error.message : 'Logout failed' 
+      return {
+        error: error instanceof Error ? error.message : 'Logout failed',
       };
     }
   }
 
   async getCurrentUser(): Promise<{ user?: AuthUser; error?: string }> {
     try {
-      const { data: { user }, error } = await supabase.auth.getUser();
-      
+      const {
+        data: { user },
+        error,
+      } = await supabase.auth.getUser();
+
       if (error || !user) {
         return { error: error?.message || 'No user found' };
       }
@@ -139,8 +143,8 @@ export class AuthService {
 
       return { user: authUser };
     } catch (error) {
-      return { 
-        error: error instanceof Error ? error.message : 'Failed to get user' 
+      return {
+        error: error instanceof Error ? error.message : 'Failed to get user',
       };
     }
   }
@@ -157,14 +161,14 @@ export class AuthService {
 
       return {};
     } catch (error) {
-      return { 
-        error: error instanceof Error ? error.message : 'Reset failed' 
+      return {
+        error: error instanceof Error ? error.message : 'Reset failed',
       };
     }
   }
 
   onAuthStateChange(callback: (user: AuthUser | null) => void) {
-    return supabase.auth.onAuthStateChange(async (event, session) => {
+    return supabase.auth.onAuthStateChange(async (_event, session) => {
       if (session?.user) {
         const { data: userProfile } = await supabase
           .from('user_profiles')

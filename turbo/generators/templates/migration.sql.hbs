@@ -1,0 +1,239 @@
+-- Migration: {{titleCase name}}
+-- Created: {{timestamp}}
+-- Type: {{type}}
+-- Healthcare Compliance: ✅ LGPD | ✅ ANVISA | ✅ CFM
+
+{{#eq type 'create_table'}}
+-- Create table with healthcare compliance
+CREATE TABLE IF NOT EXISTS {{snakeCase name}} (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW(),
+  
+  -- Add your columns here
+  
+  -- Healthcare audit columns
+  created_by UUID REFERENCES auth.users(id),
+  updated_by UUID REFERENCES auth.users(id),
+  
+  -- LGPD compliance
+  data_consent_given BOOLEAN DEFAULT FALSE,
+  data_retention_until TIMESTAMPTZ,
+  
+  -- Soft delete for audit trail
+  deleted_at TIMESTAMPTZ NULL,
+  deleted_by UUID REFERENCES auth.users(id)
+);
+
+-- Enable RLS for patient data protection
+ALTER TABLE {{snakeCase name}} ENABLE ROW LEVEL SECURITY;
+
+-- Create updated_at trigger
+CREATE OR REPLACE FUNCTION update_updated_at_column()
+RETURNS TRIGGER AS $$
+BEGIN
+  NEW.updated_at = NOW();
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER update_{{snakeCase name}}_updated_at
+  BEFORE UPDATE ON {{snakeCase name}}
+  FOR EACH ROW
+  EXECUTE FUNCTION update_updated_at_column();
+
+-- Create indexes for performance
+CREATE INDEX IF NOT EXISTS idx_{{snakeCase name}}_created_at ON {{snakeCase name}}(created_at);
+CREATE INDEX IF NOT EXISTS idx_{{snakeCase name}}_updated_at ON {{snakeCase name}}(updated_at);
+CREATE INDEX IF NOT EXISTS idx_{{snakeCase name}}_deleted_at ON {{snakeCase name}}(deleted_at);
+{{/eq}}
+
+{{#eq type 'alter_table'}}
+-- Alter table: {{snakeCase name}}
+-- Add your ALTER TABLE statements here
+
+-- Example:
+-- ALTER TABLE {{snakeCase name}} ADD COLUMN new_column TEXT;
+-- ALTER TABLE {{snakeCase name}} ADD COLUMN lgpd_consent_date TIMESTAMPTZ;
+{{/eq}}
+
+{{#eq type 'create_function'}}
+-- Create function: {{snakeCase name}}
+CREATE OR REPLACE FUNCTION {{snakeCase name}}()
+RETURNS TRIGGER AS $$
+BEGIN
+  -- Add your function logic here
+  
+  -- Healthcare compliance logging
+  INSERT INTO audit_logs (
+    table_name,
+    operation,
+    old_data,
+    new_data,
+    user_id,
+    timestamp
+  ) VALUES (
+    TG_TABLE_NAME,
+    TG_OP,
+    row_to_json(OLD),
+    row_to_json(NEW),
+    auth.uid(),
+    NOW()
+  );
+  
+  RETURN COALESCE(NEW, OLD);
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+{{/eq}}
+
+{{#eq type 'create_policy'}}
+-- Create RLS policy: {{snakeCase name}}
+CREATE POLICY "{{titleCase name}}" ON {{snakeCase name}}
+  FOR ALL
+  USING (
+    -- Add your policy conditions here
+    auth.uid() = created_by
+    OR
+    -- Healthcare staff can access patient data with proper role
+    EXISTS (
+      SELECT 1 FROM user_roles 
+      WHERE user_id = auth.uid() 
+      AND role IN ('doctor', 'nurse', 'admin')
+    )
+  );
+{{/eq}}
+
+{{#eq type 'lgpd_compliance'}}
+-- LGPD Compliance Migration: {{titleCase name}}
+
+-- Create consent tracking table
+CREATE TABLE IF NOT EXISTS lgpd_consent_{{snakeCase name}} (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  patient_id UUID NOT NULL,
+  purpose TEXT NOT NULL,
+  consent_given BOOLEAN DEFAULT FALSE,
+  consent_date TIMESTAMPTZ,
+  consent_withdrawn_date TIMESTAMPTZ,
+  retention_period INTERVAL,
+  data_categories TEXT[],
+  legal_basis TEXT,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Enable RLS
+ALTER TABLE lgpd_consent_{{snakeCase name}} ENABLE ROW LEVEL SECURITY;
+
+-- Create policy for patient data access
+CREATE POLICY "lgpd_consent_{{snakeCase name}}_policy" ON lgpd_consent_{{snakeCase name}}
+  FOR ALL
+  USING (
+    auth.uid() = patient_id
+    OR
+    EXISTS (
+      SELECT 1 FROM user_roles 
+      WHERE user_id = auth.uid() 
+      AND role IN ('doctor', 'nurse', 'admin', 'dpo')
+    )
+  );
+
+-- Create audit function for LGPD compliance
+CREATE OR REPLACE FUNCTION lgpd_audit_{{snakeCase name}}()
+RETURNS TRIGGER AS $$
+BEGIN
+  INSERT INTO lgpd_audit_log (
+    table_name,
+    operation,
+    patient_id,
+    data_accessed,
+    user_id,
+    timestamp,
+    legal_basis
+  ) VALUES (
+    '{{snakeCase name}}',
+    TG_OP,
+    COALESCE(NEW.patient_id, OLD.patient_id),
+    row_to_json(COALESCE(NEW, OLD)),
+    auth.uid(),
+    NOW(),
+    'Legitimate interest - Healthcare'
+  );
+  
+  RETURN COALESCE(NEW, OLD);
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Create trigger
+CREATE TRIGGER lgpd_audit_{{snakeCase name}}_trigger
+  AFTER INSERT OR UPDATE OR DELETE ON {{snakeCase name}}
+  FOR EACH ROW
+  EXECUTE FUNCTION lgpd_audit_{{snakeCase name}}();
+{{/eq}}
+
+{{#eq type 'anvisa_compliance'}}
+-- ANVISA Compliance Migration: {{titleCase name}}
+
+-- Create ANVISA device tracking table
+CREATE TABLE IF NOT EXISTS anvisa_devices_{{snakeCase name}} (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  device_name TEXT NOT NULL,
+  anvisa_registration_number TEXT UNIQUE,
+  manufacturer TEXT NOT NULL,
+  model TEXT,
+  serial_number TEXT,
+  regulatory_class TEXT CHECK (regulatory_class IN ('I', 'II', 'III', 'IV')),
+  registration_status TEXT CHECK (registration_status IN ('active', 'expired', 'suspended', 'cancelled')),
+  registration_date DATE,
+  expiration_date DATE,
+  last_maintenance_date DATE,
+  next_maintenance_due DATE,
+  clinic_location TEXT,
+  responsible_professional UUID REFERENCES auth.users(id),
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Enable RLS
+ALTER TABLE anvisa_devices_{{snakeCase name}} ENABLE ROW LEVEL SECURITY;
+
+-- Create policy for device access
+CREATE POLICY "anvisa_devices_{{snakeCase name}}_policy" ON anvisa_devices_{{snakeCase name}}
+  FOR ALL
+  USING (
+    auth.uid() = responsible_professional
+    OR
+    EXISTS (
+      SELECT 1 FROM user_roles 
+      WHERE user_id = auth.uid() 
+      AND role IN ('doctor', 'admin', 'regulatory_officer')
+    )
+  );
+
+-- Create adverse event tracking
+CREATE TABLE IF NOT EXISTS anvisa_adverse_events_{{snakeCase name}} (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  device_id UUID REFERENCES anvisa_devices_{{snakeCase name}}(id),
+  patient_id UUID,
+  event_date DATE NOT NULL,
+  event_description TEXT NOT NULL,
+  severity TEXT CHECK (severity IN ('low', 'medium', 'high', 'critical')),
+  reported_to_anvisa BOOLEAN DEFAULT FALSE,
+  anvisa_report_number TEXT,
+  report_date DATE,
+  follow_up_required BOOLEAN DEFAULT TRUE,
+  status TEXT CHECK (status IN ('open', 'investigating', 'resolved', 'closed')),
+  created_by UUID REFERENCES auth.users(id),
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Enable RLS for adverse events
+ALTER TABLE anvisa_adverse_events_{{snakeCase name}} ENABLE ROW LEVEL SECURITY;
+
+-- Create indexes
+CREATE INDEX IF NOT EXISTS idx_anvisa_devices_registration ON anvisa_devices_{{snakeCase name}}(anvisa_registration_number);
+CREATE INDEX IF NOT EXISTS idx_anvisa_devices_expiration ON anvisa_devices_{{snakeCase name}}(expiration_date);
+CREATE INDEX IF NOT EXISTS idx_anvisa_events_device ON anvisa_adverse_events_{{snakeCase name}}(device_id);
+{{/eq}}
+
+-- Migration completed: {{titleCase name}}
+-- Timestamp: {{timestamp}}

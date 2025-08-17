@@ -1,7 +1,8 @@
 /// <reference types="vitest" />
-import { defineConfig } from 'vitest/config'
-import react from '@vitejs/plugin-react'
-import path from 'path'
+
+import react from '@vitejs/plugin-react';
+import path from 'path';
+import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
   plugins: [react()],
@@ -9,7 +10,7 @@ export default defineConfig({
     globals: true,
     environment: 'jsdom',
     setupFiles: ['./test/setup.ts'],
-    
+
     // Incluir todos os testes que existem
     include: [
       '**/*.{test,spec}.{ts,tsx}',
@@ -20,7 +21,7 @@ export default defineConfig({
       '!**/e2e/**',
       '!**/cypress/**',
     ],
-    
+
     // Configuração abrangente de exclusões apenas para arquivos problemáticos
     exclude: [
       '**/node_modules/**',
@@ -29,7 +30,7 @@ export default defineConfig({
       '**/.next/**',
       '**/.vercel/**',
       '**/.nuxt/**',
-      
+
       // Excluir TODOS os testes Playwright e E2E
       '**/playwright/**',
       '**/*.spec.ts',
@@ -38,12 +39,12 @@ export default defineConfig({
       '**/*.e2e.test.tsx',
       '**/e2e/**',
       '**/cypress/**',
-      
+
       // Excluir testes que requerem servidor ativo
       '**/performance/**',
       '**/load-testing/**',
     ],
-    
+
     // Resolver aliases
     alias: {
       '@': path.resolve(__dirname, './apps/web'),
@@ -55,30 +56,27 @@ export default defineConfig({
       '@neonpro/utils': path.resolve(__dirname, './packages/utils/src'),
       '@neonpro/types': path.resolve(__dirname, './packages/types/src'),
     },
-    
+
     // Pool de workers otimizado
     pool: 'threads',
     poolOptions: {
       threads: {
-        singleThread: true
-      }
+        singleThread: true,
+      },
     },
-    
+
     // Timeouts apropriados para healthcare
-    testTimeout: 30000,
-    hookTimeout: 30000,
-    
+    testTimeout: 30_000,
+    hookTimeout: 30_000,
+
     // Configuração de reporter
     reporter: ['basic'],
-    
+
     // Otimização de deps
     deps: {
-      inline: [
-        '@testing-library/react',
-        '@testing-library/jest-dom',
-      ]
+      inline: ['@testing-library/react', '@testing-library/jest-dom'],
     },
-    
+
     // Configuração de coverage apenas para arquivos válidos
     coverage: {
       provider: 'v8',
@@ -94,11 +92,11 @@ export default defineConfig({
         '**/e2e/**',
         'coverage/',
         '.next/',
-        'vitest.config.ts'
-      ]
-    }
+        'vitest.config.ts',
+      ],
+    },
   },
-  
+
   // Configuração do Vite
   resolve: {
     alias: {
@@ -110,11 +108,11 @@ export default defineConfig({
       '@neonpro/ui': path.resolve(__dirname, './packages/ui/src'),
       '@neonpro/utils': path.resolve(__dirname, './packages/utils/src'),
       '@neonpro/types': path.resolve(__dirname, './packages/types/src'),
-    }
+    },
   },
-  
+
   // Configuração específica para monorepo
   optimizeDeps: {
-    include: ['react', 'react-dom', '@testing-library/react']
+    include: ['react', 'react-dom', '@testing-library/react'],
   },
-})
+});

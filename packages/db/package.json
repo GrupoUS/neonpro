@@ -15,10 +15,10 @@
     }
   },
   "scripts": {
-    "build": "tsc",
-    "dev": "tsc --watch",
+    "build": "npx tsc",
+    "dev": "npx tsc --watch",
     "clean": "if exist dist rmdir /s /q dist",
-    "type-check": "tsc --noEmit",
+    "type-check": "npx tsc --noEmit",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "prisma:migrate:deploy": "prisma migrate deploy",
@@ -57,8 +57,9 @@
   "license": "PROPRIETARY",
   "private": true,
   "dependencies": {
-    "@prisma/client": "^5.22.0",
-    "@supabase/supabase-js": "^2.39.0"
+    "@supabase/ssr": "^0.5.1",
+    "@supabase/supabase-js": "^2.45.4",
+    "@prisma/client": "^5.22.0"
   },
   "devDependencies": {
     "prisma": "^5.22.0",

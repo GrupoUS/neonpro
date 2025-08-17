@@ -122,13 +122,9 @@ async function testAPIConnectivity() {
 
   if (response.status === 404) {
     // Health endpoint não existe, vamos testar uma rota que sabemos que existe
-    const pingResponse = await makeRequest(
-      `${BASE_URL}/api/subscription/current`
-    );
+    const pingResponse = await makeRequest(`${BASE_URL}/api/subscription/current`);
     if (pingResponse.status >= 200 && pingResponse.status < 500) {
-      console.log(
-        '   ✓ API está respondendo (health endpoint não implementado)'
-      );
+      console.log('   ✓ API está respondendo (health endpoint não implementado)');
       return;
     }
   }
@@ -156,16 +152,12 @@ async function testStripeEndpoints() {
 
     // Para endpoints que requerem autenticação, 401 é esperado
     if (response.status === 401 || response.status === 405) {
-      console.log(
-        `   ✓ Endpoint ${endpoint} está configurado (requer auth/método correto)`
-      );
+      console.log(`   ✓ Endpoint ${endpoint} está configurado (requer auth/método correto)`);
       continue;
     }
 
     if (response.status >= 500) {
-      throw new Error(
-        `Endpoint ${endpoint} retornou erro de servidor: ${response.status}`
-      );
+      throw new Error(`Endpoint ${endpoint} retornou erro de servidor: ${response.status}`);
     }
 
     console.log(`   ✓ Endpoint ${endpoint} está funcionando`);
@@ -229,9 +221,7 @@ async function testSubscriptionPlans() {
       throw new Error('Nenhum plano de assinatura encontrado no Stripe');
     }
 
-    console.log(
-      `   ✓ ${foundPrices}/${expectedPrices.length} planos encontrados`
-    );
+    console.log(`   ✓ ${foundPrices}/${expectedPrices.length} planos encontrados`);
   } catch (error) {
     throw new Error(`Erro ao verificar planos: ${error.message}`);
   }
@@ -243,9 +233,7 @@ async function testDatabaseSchema() {
   const response = await makeRequest(`${BASE_URL}/api/subscription/current`);
 
   if (response.status === 500) {
-    throw new Error(
-      'Possível erro de schema do banco - endpoint retornando 500'
-    );
+    throw new Error('Possível erro de schema do banco - endpoint retornando 500');
   }
 
   console.log('   ✓ Endpoints que dependem do banco estão respondendo');
@@ -269,15 +257,11 @@ async function testStripeWebhook() {
 
   // Esperamos 400 porque não temos assinatura válida, mas o endpoint deve estar ativo
   if (response.status >= 500) {
-    throw new Error(
-      `Webhook endpoint retornando erro de servidor: ${response.status}`
-    );
+    throw new Error(`Webhook endpoint retornando erro de servidor: ${response.status}`);
   }
 
   console.log('   ✓ Webhook endpoint está configurado');
-  console.log(
-    '   ℹ️  Para testar webhooks reais, configure ngrok e teste no Stripe Dashboard'
-  );
+  console.log('   ℹ️  Para testar webhooks reais, configure ngrok e teste no Stripe Dashboard');
 }
 
 // 8. Teste de Interface de Usuário
@@ -293,19 +277,13 @@ async function testUserInterface() {
     try {
       const response = await makeRequest(`${BASE_URL}${page}`);
 
-      if (
-        response.status === 200 ||
-        response.status === 401 ||
-        response.status === 302
-      ) {
+      if (response.status === 200 || response.status === 401 || response.status === 302) {
         console.log(`   ✓ Página ${page} está acessível`);
       } else if (response.status >= 500) {
         throw new Error(`Página ${page} retornando erro: ${response.status}`);
       }
     } catch (error) {
-      console.log(
-        `   ⚠️  Página ${page} pode estar inacessível: ${error.message}`
-      );
+      console.log(`   ⚠️  Página ${page} pode estar inacessível: ${error.message}`);
     }
   }
 }

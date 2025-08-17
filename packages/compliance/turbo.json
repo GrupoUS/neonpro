@@ -1,0 +1,14 @@
+{
+  "extends": ["//"],
+  "tasks": {
+    "build": {
+      "tags": ["compliance", "shared", "healthcare"]
+    },
+    "test": {
+      "tags": ["compliance", "shared", "healthcare"]
+    },
+    "test:compliance": {
+      "tags": ["compliance", "healthcare", "regulatory"]
+    }
+  }
+}

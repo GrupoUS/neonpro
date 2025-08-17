@@ -5,17 +5,17 @@
  * @quality ≥9.9/10 Healthcare Excellence Standard
  */
 
-import { render, screen, fireEvent, waitFor, type RenderOptions } from '@testing-library/react';
+import type { SupabaseClient } from '@supabase/supabase-js';
+import { type RenderOptions, render } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import type { ReactElement } from 'react';
-import { vi, type MockedFunction } from 'vitest';
-import type { SupabaseClient } from '@supabase/supabase-js';
+import { vi } from 'vitest';
 
 /**
  * Healthcare Test User Simulation
  * Simulates different healthcare personas for comprehensive testing
  */
-export interface HealthcareTestUser {
+export type HealthcareTestUser = {
   id: string;
   role: 'patient' | 'doctor' | 'nurse' | 'admin' | 'receptionist';
   permissions: string[];
@@ -23,7 +23,7 @@ export interface HealthcareTestUser {
   isActive: boolean;
   medicalLicense?: string; // For CFM compliance
   specialization?: string;
-}
+};
 
 /**
  * Patient Test Data Generator
@@ -42,7 +42,7 @@ export const generateTestPatient = () => ({
     city: 'São Paulo',
     state: 'SP',
     zipCode: '00000-000',
-    country: 'BR'
+    country: 'BR',
   },
   medicalHistory: 'Test medical history - no real patient data',
   allergies: ['none'],
@@ -50,7 +50,7 @@ export const generateTestPatient = () => ({
   emergencyContact: {
     name: 'Test Emergency Contact',
     phone: '(11) 00000-0001',
-    relationship: 'family'
+    relationship: 'family',
   },
   // LGPD Compliance Fields
   consentGiven: true,
@@ -58,13 +58,13 @@ export const generateTestPatient = () => ({
   dataRetentionPeriod: '5 years',
   privacyPolicyAccepted: true,
   createdAt: new Date().toISOString(),
-  updatedAt: new Date().toISOString()
+  updatedAt: new Date().toISOString(),
 });
 
 /**
  * Healthcare Component Render with Context
  * Enhanced render function with healthcare context providers
- */interface HealthcareRenderOptions extends Omit<RenderOptions, 'wrapper'> {
+ */ interface HealthcareRenderOptions extends Omit<RenderOptions, 'wrapper'> {
   user?: HealthcareTestUser;
   tenantId?: string;
   initialRoute?: string;
@@ -84,15 +84,12 @@ export function renderWithHealthcareContext(
   } = options;
 
   // Mock healthcare context providers
-  const HealthcareWrapper = ({ children }: { children: React.ReactNode }) => (
-    <div data-testid="healthcare-context">
-      {children}
-    </div>
-  );
+  const HealthcareWrapper = ({ children }: { children: React.ReactNode }) =>
+    (<div data-testid = { children } < 'healthcare-context' < />div);
 
   return {
     user: userEvent.setup(),
-    ...render(ui, { wrapper: HealthcareWrapper, ...renderOptions })
+    ...render(ui, { wrapper: HealthcareWrapper, ...renderOptions }),
   };
 }
 
@@ -111,30 +108,35 @@ export function generateTestUser(role: HealthcareTestUser['role']): HealthcareTe
       return {
         ...baseUser,
         role: 'doctor',
-        permissions: ['patients:read', 'patients:write', 'appointments:manage', 'treatments:manage'],
+        permissions: [
+          'patients:read',
+          'patients:write',
+          'appointments:manage',
+          'treatments:manage',
+        ],
         medicalLicense: 'CRM-SP-123456',
-        specialization: 'Dermatologia'
+        specialization: 'Dermatologia',
       };
     case 'patient':
       return {
         ...baseUser,
         role: 'patient',
-        permissions: ['appointments:read', 'treatments:read', 'profile:read', 'profile:write']
+        permissions: ['appointments:read', 'treatments:read', 'profile:read', 'profile:write'],
       };
     case 'nurse':
       return {
         ...baseUser,
         role: 'nurse',
-        permissions: ['patients:read', 'appointments:read', 'treatments:assist']
+        permissions: ['patients:read', 'appointments:read', 'treatments:assist'],
       };
     default:
       return {
         ...baseUser,
         role,
-        permissions: []
+        permissions: [],
       };
   }
-}/**
+} /**
  * Mock Supabase Client for Healthcare Testing
  */
 export function createMockSupabaseClient(): SupabaseClient {
@@ -159,31 +161,31 @@ export function createMockSupabaseClient(): SupabaseClient {
       range: vi.fn().mockReturnThis(),
       single: vi.fn().mockResolvedValue({ data: null, error: null }),
       maybeSingle: vi.fn().mockResolvedValue({ data: null, error: null }),
-      then: vi.fn().mockResolvedValue({ data: [], error: null })
+      then: vi.fn().mockResolvedValue({ data: [], error: null }),
     })),
     auth: {
-      getUser: vi.fn().mockResolvedValue({ 
-        data: { user: generateTestUser('doctor') }, 
-        error: null 
+      getUser: vi.fn().mockResolvedValue({
+        data: { user: generateTestUser('doctor') },
+        error: null,
       }),
-      getSession: vi.fn().mockResolvedValue({ 
-        data: { session: { user: generateTestUser('doctor') } }, 
-        error: null 
+      getSession: vi.fn().mockResolvedValue({
+        data: { session: { user: generateTestUser('doctor') } },
+        error: null,
       }),
-      signInWithPassword: vi.fn().mockResolvedValue({ 
-        data: { user: generateTestUser('doctor'), session: {} }, 
-        error: null 
+      signInWithPassword: vi.fn().mockResolvedValue({
+        data: { user: generateTestUser('doctor'), session: {} },
+        error: null,
       }),
       signOut: vi.fn().mockResolvedValue({ error: null }),
-      onAuthStateChange: vi.fn()
+      onAuthStateChange: vi.fn(),
     },
     storage: {
       from: vi.fn(() => ({
         upload: vi.fn().mockResolvedValue({ data: null, error: null }),
         download: vi.fn().mockResolvedValue({ data: null, error: null }),
         list: vi.fn().mockResolvedValue({ data: [], error: null }),
-        remove: vi.fn().mockResolvedValue({ data: null, error: null })
-      }))
-    }
+        remove: vi.fn().mockResolvedValue({ data: null, error: null }),
+      })),
+    },
   } as any;
 }

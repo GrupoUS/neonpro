@@ -37,7 +37,6 @@ export {
 export {
   type AuditTrailConfiguration,
   type AuditTrailEntry,
-  type AuditTrailGeneratorAudit,
   AuditTrailGeneratorService,
   type AuditTrailReport,
   type ComplianceAlert,
@@ -52,8 +51,7 @@ export {
   ENTERPRISE_AUDIT_CONFIGS,
   ENTERPRISE_AUDIT_MODULE,
   type MonitoringConfiguration,
-  type RealTimeComplianceMonitorAudit,
-  RealTimeComplianceMonitorService,
+  RealTimeComplianceMonitor,
   type RiskFactor,
   type ScoringMethodologyConfig,
   validateAuditTrailGenerator,
@@ -73,6 +71,27 @@ export {
   type TenantManagement,
   validateMultiClinicManagement,
 } from './management/multi-clinic-management';
+
+// Import validation functions for internal use
+import type { createClient } from '@supabase/supabase-js';
+import {
+  type createComplianceDashboardService,
+  createEnterpriseAnalyticsServices,
+  type createHealthcareIntelligenceService,
+  type createPrivacyPreservingAnalyticsService,
+  validateEnterpriseAnalyticsCompliance,
+} from './analytics';
+import { createEnterpriseAuditServices, validateEnterpriseAuditCompliance } from './audit';
+import {
+  createMultiClinicManagementService,
+  validateMultiClinicManagement,
+} from './management/multi-clinic-management';
+import {
+  type createApiRateLimitingService,
+  createEnterpriseSecurityServices,
+  type createHealthcareRbacService,
+  validateEnterpriseSecurityCompliance,
+} from './security';
 
 // Enterprise Security Module
 export {
@@ -103,11 +122,7 @@ export {
  * Creates all enterprise services with constitutional compliance
  */
 export function createEnterpriseHealthcareServices(config: {
-  audit: {
-    realTimeMonitor: Parameters<typeof createRealTimeComplianceMonitorService>[0];
-    complianceScoring: Parameters<typeof createComplianceScoringService>[0];
-    auditTrailGenerator: Parameters<typeof createAuditTrailGeneratorService>[0];
-  };
+  supabaseClient: ReturnType<typeof createClient>;
   analytics: {
     privacyAnalytics: Parameters<typeof createPrivacyPreservingAnalyticsService>[0];
     complianceDashboard: Parameters<typeof createComplianceDashboardService>[0];
@@ -122,7 +137,7 @@ export function createEnterpriseHealthcareServices(config: {
   };
 }) {
   return {
-    audit: createEnterpriseAuditServices(config.audit),
+    audit: createEnterpriseAuditServices(config.supabaseClient),
     analytics: createEnterpriseAnalyticsServices(config.analytics),
     management: {
       multiClinic: createMultiClinicManagementService(config.management.multiClinic),
@@ -136,10 +151,19 @@ export function createEnterpriseHealthcareServices(config: {
  * Validates all enterprise services for constitutional healthcare compliance
  */
 export async function validateEnterpriseHealthcareCompliance(
-  auditConfig: Parameters<typeof validateEnterpriseAuditCompliance>[0],
-  analyticsConfig: Parameters<typeof validateEnterpriseAnalyticsCompliance>[0],
+  supabaseClient: ReturnType<typeof createClient>,
+  analyticsConfig: {
+    privacyQuery: Parameters<typeof validateEnterpriseAnalyticsCompliance>[0];
+    privacyConfig: Parameters<typeof validateEnterpriseAnalyticsCompliance>[1];
+    dashboardConfig: Parameters<typeof validateEnterpriseAnalyticsCompliance>[2];
+    intelligenceQuery: Parameters<typeof validateEnterpriseAnalyticsCompliance>[3];
+    intelligenceConfig: Parameters<typeof validateEnterpriseAnalyticsCompliance>[4];
+  },
   managementConfig: Parameters<typeof validateMultiClinicManagement>[0],
-  securityConfig: Parameters<typeof validateEnterpriseSecurityCompliance>[0]
+  securityConfig: {
+    rbac: Parameters<typeof validateEnterpriseSecurityCompliance>[0];
+    rateLimiting: Parameters<typeof validateEnterpriseSecurityCompliance>[1];
+  }
 ): Promise<{
   valid: boolean;
   violations: string[];
@@ -156,15 +180,11 @@ export async function validateEnterpriseHealthcareCompliance(
 
   // Validate Enterprise Audit compliance
   try {
-    const auditValidation = await validateEnterpriseAuditCompliance(
-      auditConfig.realTimeMonitor,
-      auditConfig.complianceScoring,
-      auditConfig.auditTrailGenerator
-    );
-    if (!auditValidation.valid) {
-      violations.push(...auditValidation.violations.map((v) => `Enterprise Audit: ${v}`));
+    const auditValidation = validateEnterpriseAuditCompliance(supabaseClient);
+    if (!auditValidation) {
+      violations.push('Enterprise Audit: Configuration validation failed');
     }
-    moduleScores.audit = auditValidation.compliance_score;
+    moduleScores.audit = auditValidation ? 10 : 0;
   } catch (error) {
     violations.push(`Enterprise Audit: Validation error - ${error}`);
     moduleScores.audit = 0;
@@ -180,7 +200,9 @@ export async function validateEnterpriseHealthcareCompliance(
       analyticsConfig.intelligenceConfig
     );
     if (!analyticsValidation.valid) {
-      violations.push(...analyticsValidation.violations.map((v) => `Enterprise Analytics: ${v}`));
+      violations.push(
+        ...analyticsValidation.violations.map((v: string) => `Enterprise Analytics: ${v}`)
+      );
     }
     moduleScores.analytics = analyticsValidation.compliance_score;
   } catch (error) {
@@ -192,7 +214,9 @@ export async function validateEnterpriseHealthcareCompliance(
   try {
     const managementValidation = await validateMultiClinicManagement(managementConfig);
     if (!managementValidation.valid) {
-      violations.push(...managementValidation.violations.map((v) => `Enterprise Management: ${v}`));
+      violations.push(
+        ...managementValidation.violations.map((v: string) => `Enterprise Management: ${v}`)
+      );
     }
     moduleScores.management = managementValidation.valid ? 10 : 8;
   } catch (error) {
@@ -203,11 +227,13 @@ export async function validateEnterpriseHealthcareCompliance(
   // Validate Enterprise Security compliance
   try {
     const securityValidation = await validateEnterpriseSecurityCompliance(
-      securityConfig.rbacConfig,
-      securityConfig.rateLimitConfig
+      securityConfig.rbac,
+      securityConfig.rateLimiting
     );
     if (!securityValidation.valid) {
-      violations.push(...securityValidation.violations.map((v) => `Enterprise Security: ${v}`));
+      violations.push(
+        ...securityValidation.violations.map((v: string) => `Enterprise Security: ${v}`)
+      );
     }
     moduleScores.security = securityValidation.compliance_score;
   } catch (error) {

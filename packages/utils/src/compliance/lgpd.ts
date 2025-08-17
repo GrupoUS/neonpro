@@ -6,16 +6,11 @@
  */
 
 import { z } from 'zod';
-import type {
-  ComplianceScore,
-  HealthcareRegulation,
-  ComplianceStatus,
-  ConsentRecord,
-  AuditTrailEntry,
-} from './types';
+import type { ComplianceScore, ConsentRecord } from './types';
 import {
-  LGPDDataSubjectRights,
+  ComplianceStatus,
   HealthcareConsentType,
+  LGPDDataSubjectRights,
   PatientDataClassification,
 } from './types';
 
@@ -36,7 +31,7 @@ export enum LGPDLegalBasis {
 /**
  * LGPD Consent Request
  */
-export interface LGPDConsentRequest {
+export type LGPDConsentRequest = {
   patientId: string;
   consentType: HealthcareConsentType;
   legalBasis: LGPDLegalBasis;
@@ -46,12 +41,12 @@ export interface LGPDConsentRequest {
   thirdPartySharing: boolean;
   automatedDecisionMaking: boolean;
   locale: 'pt-BR' | 'en-US';
-}
+};
 
 /**
  * LGPD Data Subject Request
  */
-export interface LGPDDataSubjectRequest {
+export type LGPDDataSubjectRequest = {
   id: string;
   patientId: string;
   requestType: LGPDDataSubjectRights;
@@ -61,12 +56,12 @@ export interface LGPDDataSubjectRequest {
   reason?: string;
   requestData?: any;
   responseData?: any;
-}
+};
 
 /**
  * LGPD Breach Notification
  */
-export interface LGPDBreachNotification {
+export type LGPDBreachNotification = {
   id: string;
   incidentId: string;
   severity: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
@@ -79,7 +74,7 @@ export interface LGPDBreachNotification {
   anpdNotificationDate?: Date;
   mitigationActions: string[];
   status: 'OPEN' | 'INVESTIGATING' | 'MITIGATED' | 'CLOSED';
-}
+};
 
 /**
  * LGPD Compliance Service
@@ -87,7 +82,6 @@ export interface LGPDBreachNotification {
 export class LGPDComplianceService {
   private readonly constitutionalQualityStandard = 9.9;
   private readonly consentExpiryMonths = 24; // LGPD Art. 8º § 5º
-  private readonly breachNotificationHours = 72; // LGPD Art. 48
 
   /**
    * Validate LGPD Consent Request
@@ -119,11 +113,12 @@ export class LGPDComplianceService {
     }
 
     // Validate legal basis for health data (Art. 11º)
-    if (request.consentType === HealthcareConsentType.TREATMENT) {
-      if (![LGPDLegalBasis.HEALTH_PROTECTION, LGPDLegalBasis.CONSENT].includes(request.legalBasis)) {
-        violations.push('Invalid legal basis for health data processing');
-        score -= 3;
-      }
+    if (
+      request.consentType === HealthcareConsentType.TREATMENT &&
+      ![LGPDLegalBasis.HEALTH_PROTECTION, LGPDLegalBasis.CONSENT].includes(request.legalBasis)
+    ) {
+      violations.push('Invalid legal basis for health data processing');
+      score -= 3;
     }
 
     return {
@@ -178,7 +173,7 @@ export class LGPDComplianceService {
 
     // Check if ANPD notification is required
     const requiresANPDNotification = this.requiresANPDNotification(notification);
-    
+
     if (requiresANPDNotification) {
       // Schedule ANPD notification within 72 hours
       notification.anpdNotified = false;
@@ -200,7 +195,8 @@ export class LGPDComplianceService {
 
     const now = new Date();
     const expired = now > expiresAt;
-    const renewalRequired = expired || (expiresAt.getTime() - now.getTime()) < (30 * 24 * 60 * 60 * 1000); // 30 days
+    const renewalRequired =
+      expired || expiresAt.getTime() - now.getTime() < 30 * 24 * 60 * 60 * 1000; // 30 days
 
     return {
       expired,
@@ -212,7 +208,7 @@ export class LGPDComplianceService {
   /**
    * Generate LGPD Compliance Report
    */
-  async generateComplianceReport(tenantId: string): Promise<{
+  async generateComplianceReport(_tenantId: string): Promise<{
     score: ComplianceScore;
     status: ComplianceStatus;
     metrics: {
@@ -243,25 +239,33 @@ export class LGPDComplianceService {
   }
 
   // Private helper methods
-  private async processAccessRequest(request: LGPDDataSubjectRequest): Promise<LGPDDataSubjectRequest> {
+  private async processAccessRequest(
+    request: LGPDDataSubjectRequest
+  ): Promise<LGPDDataSubjectRequest> {
     request.status = 'IN_PROGRESS';
     // Implementation would gather patient data
     return request;
   }
 
-  private async processRectificationRequest(request: LGPDDataSubjectRequest): Promise<LGPDDataSubjectRequest> {
+  private async processRectificationRequest(
+    request: LGPDDataSubjectRequest
+  ): Promise<LGPDDataSubjectRequest> {
     request.status = 'IN_PROGRESS';
     // Implementation would update patient data
     return request;
   }
 
-  private async processErasureRequest(request: LGPDDataSubjectRequest): Promise<LGPDDataSubjectRequest> {
+  private async processErasureRequest(
+    request: LGPDDataSubjectRequest
+  ): Promise<LGPDDataSubjectRequest> {
     request.status = 'IN_PROGRESS';
     // Implementation would delete patient data
     return request;
   }
 
-  private async processPortabilityRequest(request: LGPDDataSubjectRequest): Promise<LGPDDataSubjectRequest> {
+  private async processPortabilityRequest(
+    request: LGPDDataSubjectRequest
+  ): Promise<LGPDDataSubjectRequest> {
     request.status = 'IN_PROGRESS';
     // Implementation would export patient data
     return request;

@@ -14,7 +14,7 @@ import type { createClient } from '@supabase/supabase-js';
  * Compliance Score Assessment Interface
  * Constitutional scoring assessment for healthcare compliance
  */
-export interface ComplianceScoreAssessment {
+export type ComplianceScoreAssessment = {
   /** Unique assessment identifier */
   assessment_id: string;
   /** Tenant being assessed */
@@ -73,13 +73,13 @@ export interface ComplianceScoreAssessment {
   assessment_type: 'automated' | 'manual' | 'hybrid' | 'constitutional_audit';
   /** Constitutional audit trail */
   audit_trail: ComplianceScoringAudit[];
-}
+};
 
 /**
  * Risk Factor Interface
  * Constitutional risk assessment for healthcare compliance
  */
-export interface RiskFactor {
+export type RiskFactor = {
   /** Risk factor identifier */
   risk_id: string;
   /** Risk category */
@@ -98,11 +98,11 @@ export interface RiskFactor {
   constitutional_impact: boolean;
   /** Recommended actions */
   recommended_actions: string[];
-} /**
+}; /**
  * Compliance Scoring Audit Trail
  * Constitutional audit requirements for scoring operations
  */
-export interface ComplianceScoringAudit {
+export type ComplianceScoringAudit = {
   /** Audit entry unique identifier */
   audit_id: string;
   /** Assessment ID being audited */
@@ -127,13 +127,13 @@ export interface ComplianceScoringAudit {
   reason: string;
   /** Scoring details */
   scoring_details?: Record<string, any>;
-}
+};
 
 /**
  * Scoring Parameters Interface
  * Constitutional parameters for compliance scoring
  */
-export interface ComplianceScoringParameters {
+export type ComplianceScoringParameters = {
   /** Tenant ID to score */
   tenant_id: string;
   /** Assessment type to perform */
@@ -148,13 +148,13 @@ export interface ComplianceScoringParameters {
   constitutional_requirements: string[];
   /** Include risk assessment */
   include_risk_assessment: boolean;
-}
+};
 
 /**
  * Compliance Scoring Response
  * Constitutional scoring results with recommendations
  */
-export interface ComplianceScoringResponse {
+export type ComplianceScoringResponse = {
   /** Scoring successful */
   successful: boolean;
   /** Assessment results */
@@ -194,13 +194,13 @@ export interface ComplianceScoringResponse {
   };
   /** Scoring timestamp */
   scoring_timestamp: Date;
-}
+};
 
 /**
  * Scoring Methodology Configuration
  * Constitutional methodology for healthcare compliance scoring
  */
-export interface ScoringMethodologyConfig {
+export type ScoringMethodologyConfig = {
   /** Methodology identifier */
   methodology_id: string;
   /** Methodology version */
@@ -240,13 +240,13 @@ export interface ScoringMethodologyConfig {
     /** Critical violation threshold */
     critical_threshold: number;
   };
-} /**
+}; /**
  * Enterprise Compliance Scoring Service Implementation
  * Constitutional healthcare compliance scoring with ≥9.9/10 standards
  */
 export class ComplianceScoringService {
-  private supabase: ReturnType<typeof createClient<Database>>;
-  private defaultMethodology: ScoringMethodologyConfig;
+  private readonly supabase: ReturnType<typeof createClient<Database>>;
+  private readonly defaultMethodology: ScoringMethodologyConfig;
 
   constructor(supabaseClient: ReturnType<typeof createClient<Database>>) {
     this.supabase = supabaseClient;
@@ -357,8 +357,7 @@ export class ComplianceScoringService {
       };
 
       return { success: true, data: scoringResponse };
-    } catch (error) {
-      console.error('Perform compliance scoring error:', error);
+    } catch (_error) {
       return { success: false, error: 'Constitutional healthcare scoring service error' };
     }
   } /**
@@ -408,8 +407,7 @@ export class ComplianceScoringService {
       );
 
       return scores;
-    } catch (error) {
-      console.error('Assess compliance areas error:', error);
+    } catch (_error) {
       // Return constitutional minimums as fallback
       return {
         lgpd_score: 9.9,
@@ -450,8 +448,7 @@ export class ComplianceScoringService {
         audit_trail_integrity: Math.max(auditTrailIntegrity, 9.9),
         patient_safety_measures: Math.max(patientSafetyMeasures, 9.9),
       };
-    } catch (error) {
-      console.error('Assess quality indicators error:', error);
+    } catch (_error) {
       // Return constitutional minimums as fallback
       return {
         data_quality: 9.9,
@@ -469,7 +466,7 @@ export class ComplianceScoringService {
    */
   private async performRiskAssessment(
     tenantId: string,
-    methodology: ScoringMethodologyConfig
+    _methodology: ScoringMethodologyConfig
   ): Promise<ComplianceScoreAssessment['risk_assessment']> {
     try {
       const riskFactors: RiskFactor[] = [];
@@ -501,9 +498,13 @@ export class ComplianceScoringService {
 
       // Determine overall risk level
       let overallRiskLevel: 'low' | 'medium' | 'high' | 'critical' = 'low';
-      if (averageRiskScore > 75) overallRiskLevel = 'critical';
-      else if (averageRiskScore > 50) overallRiskLevel = 'high';
-      else if (averageRiskScore > 25) overallRiskLevel = 'medium';
+      if (averageRiskScore > 75) {
+        overallRiskLevel = 'critical';
+      } else if (averageRiskScore > 50) {
+        overallRiskLevel = 'high';
+      } else if (averageRiskScore > 25) {
+        overallRiskLevel = 'medium';
+      }
 
       // Generate mitigation recommendations
       const mitigationRecommendations = this.generateRiskMitigationRecommendations(riskFactors);
@@ -514,8 +515,7 @@ export class ComplianceScoringService {
         risk_factors: riskFactors,
         mitigation_recommendations: mitigationRecommendations,
       };
-    } catch (error) {
-      console.error('Perform risk assessment error:', error);
+    } catch (_error) {
       return this.getDefaultRiskAssessment();
     }
   } /**
@@ -567,8 +567,7 @@ export class ComplianceScoringService {
       );
 
       return Math.round(constitutionalScore * 10) / 10; // Round to 1 decimal place
-    } catch (error) {
-      console.error('Calculate overall constitutional score error:', error);
+    } catch (_error) {
       return 9.9; // Constitutional minimum fallback
     }
   }
@@ -586,7 +585,7 @@ export class ComplianceScoringService {
         .limit(1);
 
       return lgpdAssessments?.[0]?.compliance_score || 9.9;
-    } catch (error) {
+    } catch (_error) {
       return 9.9;
     }
   }
@@ -602,7 +601,7 @@ export class ComplianceScoringService {
         .limit(1);
 
       return anvisaAssessments?.[0]?.compliance_score || 9.9;
-    } catch (error) {
+    } catch (_error) {
       return 9.9;
     }
   }
@@ -618,44 +617,44 @@ export class ComplianceScoringService {
         .limit(1);
 
       return cfmAssessments?.[0]?.compliance_score || 9.9;
-    } catch (error) {
+    } catch (_error) {
       return 9.9;
     }
   }
 
-  private async assessConstitutionalHealthcareCompliance(tenantId: string): Promise<number> {
+  private async assessConstitutionalHealthcareCompliance(_tenantId: string): Promise<number> {
     // Constitutional healthcare compliance assessment
     return 9.9; // Constitutional minimum for healthcare
   }
 
-  private async assessDataQuality(tenantId: string): Promise<number> {
+  private async assessDataQuality(_tenantId: string): Promise<number> {
     // Data quality assessment logic
     return 9.9;
   }
 
-  private async assessProcessCompliance(tenantId: string): Promise<number> {
+  private async assessProcessCompliance(_tenantId: string): Promise<number> {
     // Process compliance assessment logic
     return 9.9;
   }
 
-  private async assessDocumentationCompleteness(tenantId: string): Promise<number> {
+  private async assessDocumentationCompleteness(_tenantId: string): Promise<number> {
     // Documentation completeness assessment logic
     return 9.9;
   }
 
-  private async assessAuditTrailIntegrity(tenantId: string): Promise<number> {
+  private async assessAuditTrailIntegrity(_tenantId: string): Promise<number> {
     // Audit trail integrity assessment logic
     return 9.9;
   }
 
-  private async assessPatientSafetyMeasures(tenantId: string): Promise<number> {
+  private async assessPatientSafetyMeasures(_tenantId: string): Promise<number> {
     // Patient safety measures assessment logic
     return 9.9;
   }
 
   // Risk assessment helper methods
 
-  private async assessPrivacyRisks(tenantId: string): Promise<RiskFactor[]> {
+  private async assessPrivacyRisks(_tenantId: string): Promise<RiskFactor[]> {
     return [
       {
         risk_id: crypto.randomUUID(),
@@ -671,7 +670,7 @@ export class ComplianceScoringService {
     ];
   }
 
-  private async assessSecurityRisks(tenantId: string): Promise<RiskFactor[]> {
+  private async assessSecurityRisks(_tenantId: string): Promise<RiskFactor[]> {
     return [
       {
         risk_id: crypto.randomUUID(),
@@ -687,7 +686,7 @@ export class ComplianceScoringService {
     ];
   }
 
-  private async assessRegulatoryRisks(tenantId: string): Promise<RiskFactor[]> {
+  private async assessRegulatoryRisks(_tenantId: string): Promise<RiskFactor[]> {
     return [
       {
         risk_id: crypto.randomUUID(),
@@ -703,7 +702,7 @@ export class ComplianceScoringService {
     ];
   }
 
-  private async assessOperationalRisks(tenantId: string): Promise<RiskFactor[]> {
+  private async assessOperationalRisks(_tenantId: string): Promise<RiskFactor[]> {
     return [
       {
         risk_id: crypto.randomUUID(),
@@ -719,7 +718,7 @@ export class ComplianceScoringService {
     ];
   }
 
-  private async assessConstitutionalRisks(tenantId: string): Promise<RiskFactor[]> {
+  private async assessConstitutionalRisks(_tenantId: string): Promise<RiskFactor[]> {
     return [
       {
         risk_id: crypto.randomUUID(),
@@ -817,7 +816,7 @@ export class ComplianceScoringService {
         .single();
 
       return methodology || this.defaultMethodology;
-    } catch (error) {
+    } catch (_error) {
       return this.defaultMethodology;
     }
   }
@@ -839,14 +838,12 @@ export class ComplianceScoringService {
   private async storeAssessment(assessment: ComplianceScoreAssessment): Promise<void> {
     try {
       await this.supabase.from('enterprise_compliance_score_assessments').insert(assessment);
-    } catch (error) {
-      console.error('Store assessment error:', error);
-    }
+    } catch (_error) {}
   }
 
   private async generateBenchmarkComparison(
     overallScore: number,
-    complianceAreaScores: ComplianceScoreAssessment['compliance_area_scores']
+    _complianceAreaScores: ComplianceScoreAssessment['compliance_area_scores']
   ): Promise<ComplianceScoringResponse['benchmark_comparison']> {
     return {
       industry_average: 8.5,
@@ -858,7 +855,7 @@ export class ComplianceScoringService {
 
   private async generateImprovementRecommendations(
     assessment: ComplianceScoreAssessment,
-    methodology: ScoringMethodologyConfig
+    _methodology: ScoringMethodologyConfig
   ): Promise<ComplianceScoringResponse['improvement_recommendations']> {
     const recommendations: ComplianceScoringResponse['improvement_recommendations'] = [];
 

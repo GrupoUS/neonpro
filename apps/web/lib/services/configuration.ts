@@ -27,11 +27,11 @@ export class ConfigurationService {
 
   async getConfiguration(
     tenantId: string,
-    key: string
+    key: string,
   ): Promise<{ value?: unknown; error?: string }> {
     try {
       const cacheKey = `${tenantId}:${key}`;
-      
+
       // Check cache first
       if (this.isValidCache(cacheKey)) {
         const cached = this.cache.get(cacheKey);
@@ -60,14 +60,17 @@ export class ConfigurationService {
       return { value: this.parseConfigValue(data) };
     } catch (error) {
       return {
-        error: error instanceof Error ? error.message : 'Failed to get configuration',
+        error:
+          error instanceof Error
+            ? error.message
+            : 'Failed to get configuration',
       };
     }
   }
 
   async setConfiguration(
     tenantId: string,
-    config: ConfigurationUpdate
+    config: ConfigurationUpdate,
   ): Promise<{ success?: boolean; error?: string }> {
     try {
       const configData: Partial<TenantConfiguration> = {
@@ -99,14 +102,17 @@ export class ConfigurationService {
       return { success: true };
     } catch (error) {
       return {
-        error: error instanceof Error ? error.message : 'Failed to set configuration',
+        error:
+          error instanceof Error
+            ? error.message
+            : 'Failed to set configuration',
       };
     }
   }
 
   async getAllConfigurations(
     tenantId: string,
-    category?: string
+    category?: string,
   ): Promise<{ configurations?: TenantConfiguration[]; error?: string }> {
     try {
       let query = supabase
@@ -129,14 +135,17 @@ export class ConfigurationService {
       return { configurations: data };
     } catch (error) {
       return {
-        error: error instanceof Error ? error.message : 'Failed to get configurations',
+        error:
+          error instanceof Error
+            ? error.message
+            : 'Failed to get configurations',
       };
     }
   }
 
   async deleteConfiguration(
     tenantId: string,
-    key: string
+    key: string,
   ): Promise<{ success?: boolean; error?: string }> {
     try {
       const { error } = await supabase
@@ -157,7 +166,10 @@ export class ConfigurationService {
       return { success: true };
     } catch (error) {
       return {
-        error: error instanceof Error ? error.message : 'Failed to delete configuration',
+        error:
+          error instanceof Error
+            ? error.message
+            : 'Failed to delete configuration',
       };
     }
   }
@@ -169,7 +181,7 @@ export class ConfigurationService {
   }> {
     const { configurations, error } = await this.getAllConfigurations(
       tenantId,
-      'healthcare'
+      'healthcare',
     );
 
     if (error) {
@@ -177,7 +189,7 @@ export class ConfigurationService {
     }
 
     const settings: Record<string, unknown> = {};
-    configurations?.forEach(config => {
+    configurations?.forEach((config) => {
       settings[config.key] = this.parseConfigValue(config);
     });
 
@@ -188,7 +200,7 @@ export class ConfigurationService {
     tenantId: string,
     key: string,
     value: unknown,
-    description?: string
+    description?: string,
   ): Promise<{ success?: boolean; error?: string }> {
     return this.setConfiguration(tenantId, {
       key,
@@ -205,7 +217,7 @@ export class ConfigurationService {
   }> {
     const { configurations, error } = await this.getAllConfigurations(
       tenantId,
-      'compliance'
+      'compliance',
     );
 
     if (error) {
@@ -213,7 +225,7 @@ export class ConfigurationService {
     }
 
     const settings: Record<string, unknown> = {};
-    configurations?.forEach(config => {
+    configurations?.forEach((config) => {
       settings[config.key] = this.parseConfigValue(config);
     });
 
@@ -227,7 +239,7 @@ export class ConfigurationService {
   }> {
     const { configurations, error } = await this.getAllConfigurations(
       tenantId,
-      'ui'
+      'ui',
     );
 
     if (error) {
@@ -235,7 +247,7 @@ export class ConfigurationService {
     }
 
     const settings: Record<string, unknown> = {};
-    configurations?.forEach(config => {
+    configurations?.forEach((config) => {
       settings[config.key] = this.parseConfigValue(config);
     });
 
@@ -289,9 +301,9 @@ export class ConfigurationService {
       'credential',
       'private_key',
     ];
-    
-    return sensitiveKeys.some(sensitive => 
-      key.toLowerCase().includes(sensitive)
+
+    return sensitiveKeys.some((sensitive) =>
+      key.toLowerCase().includes(sensitive),
     );
   }
 

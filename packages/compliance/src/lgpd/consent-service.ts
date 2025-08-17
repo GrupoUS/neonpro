@@ -7,13 +7,8 @@
  */
 
 import { z } from 'zod';
-import type {
-  ComplianceScore,
-  Consent,
-  ConstitutionalResponse,
-  LGPDLegalBasis,
-  PatientDataClassification,
-} from '../types';
+import type { ComplianceScore, Consent, ConstitutionalResponse } from '../types';
+import { LGPDLegalBasis, PatientDataClassification } from '../types';
 
 /**
  * Consent Request Schema with Constitutional Validation
@@ -71,7 +66,6 @@ export type ConsentWithdrawal = z.infer<typeof ConsentWithdrawalSchema>;
  * Constitutional Consent Service for Healthcare LGPD Compliance
  */
 export class ConsentService {
-  private readonly constitutionalQualityStandard = 9.9;
   private readonly consentExpiryMonths = 24; // LGPD Art. 8º § 5º
 
   /**
@@ -239,7 +233,7 @@ export class ConsentService {
       const auditTrail = await this.createAuditEvent('CONSENT_GRANTED', {
         consentId,
         confirmationMethod,
-        biometricUsed: !!biometricConfirmation,
+        biometricUsed: Boolean(biometricConfirmation),
       });
 
       // Step 7: Send confirmation notification (accessibility-compliant)
@@ -467,7 +461,7 @@ Sua privacidade é nossa prioridade máxima.
     `.trim();
 
     const legalTerms = `
-Base Legal: ${request.legalBasis.join(', ')}
+Base Legal: ${request.legalBasis}
 Fundamento Constitucional: Proteção da privacidade e dignidade humana
 Regulamentação: LGPD Art. 7º, 8º, 9º, 11º
 Finalidade: ${request.purpose}
@@ -526,54 +520,43 @@ Categorias de Dados: ${request.dataCategories.join(', ')}
   /**
    * Database and external service methods (stubs for now)
    */
-  private async storeConsentRequest(consent: Consent, terms: any): Promise<void> {
-    console.log('Storing consent request:', consent.id);
-  }
+  private async storeConsentRequest(_consent: Consent, _terms: any): Promise<void> {}
 
-  private async getConsentRecord(consentId: string, tenantId: string): Promise<Consent | null> {
+  private async getConsentRecord(_consentId: string, _tenantId: string): Promise<Consent | null> {
     return null; // Would query Supabase database
   }
 
-  private async updateConsentRecord(consent: Consent): Promise<void> {
-    console.log('Updating consent record:', consent.id);
-  }
+  private async updateConsentRecord(_consent: Consent): Promise<void> {}
 
-  private async getPatientConsents(patientId: string, tenantId: string): Promise<Consent[]> {
+  private async getPatientConsents(_patientId: string, _tenantId: string): Promise<Consent[]> {
     return []; // Would query Supabase database
   }
 
   private async ceaseDataProcessing(
-    consent: Consent,
-    withdrawal: ConsentWithdrawal
-  ): Promise<void> {
-    console.log('Ceasing data processing for consent:', consent.id);
-  }
+    _consent: Consent,
+    _withdrawal: ConsentWithdrawal
+  ): Promise<void> {}
 
-  private async triggerDataErasure(consent: Consent, withdrawal: ConsentWithdrawal): Promise<void> {
-    console.log('Triggering data erasure for consent:', consent.id);
-  }
+  private async triggerDataErasure(
+    _consent: Consent,
+    _withdrawal: ConsentWithdrawal
+  ): Promise<void> {}
 
   private async sendConsentNotification(
-    consent: Consent,
-    terms: any,
-    accessibility?: any
-  ): Promise<void> {
-    console.log('Sending consent notification:', consent.id);
-  }
+    _consent: Consent,
+    _terms: any,
+    _accessibility?: any
+  ): Promise<void> {}
 
-  private async sendConsentConfirmation(consent: Consent, method: string): Promise<void> {
-    console.log('Sending consent confirmation:', consent.id);
-  }
+  private async sendConsentConfirmation(_consent: Consent, _method: string): Promise<void> {}
 
   private async sendWithdrawalConfirmation(
-    consent: Consent,
-    withdrawal: ConsentWithdrawal
-  ): Promise<void> {
-    console.log('Sending withdrawal confirmation:', consent.id);
-  }
+    _consent: Consent,
+    _withdrawal: ConsentWithdrawal
+  ): Promise<void> {}
 
   private async validateConsentWithdrawal(
-    withdrawal: ConsentWithdrawal
+    _withdrawal: ConsentWithdrawal
   ): Promise<{ score: ComplianceScore }> {
     return { score: 9.9 };
   }

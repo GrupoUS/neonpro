@@ -30,12 +30,8 @@ if (fs.existsSync(envFile)) {
 }
 
 console.log('\n🔧 1. VERIFICANDO VARIÁVEIS DE AMBIENTE');
-console.log(
-  `Supabase URL: ${supabaseUrl ? '✅ Configurada' : '❌ Não encontrada'}`
-);
-console.log(
-  `Supabase Key: ${supabaseKey ? '✅ Configurada' : '❌ Não encontrada'}`
-);
+console.log(`Supabase URL: ${supabaseUrl ? '✅ Configurada' : '❌ Não encontrada'}`);
+console.log(`Supabase Key: ${supabaseKey ? '✅ Configurada' : '❌ Não encontrada'}`);
 
 // Função para testar URL
 function testUrl(url, description) {
@@ -93,9 +89,7 @@ async function runTests() {
   );
 
   console.log('\n✅ TESTE CONCLUÍDO');
-  console.log(
-    '\n🔄 PRÓXIMO PASSO: Configure as URLs acima e faça redeploy no Vercel'
-  );
+  console.log('\n🔄 PRÓXIMO PASSO: Configure as URLs acima e faça redeploy no Vercel');
 }
 
 runTests().catch(console.error);

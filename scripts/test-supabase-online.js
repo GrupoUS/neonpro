@@ -27,10 +27,7 @@ async function testConnection() {
     console.log('🧪 Testing connection...');
 
     // Test basic connectivity
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('count')
-      .limit(1);
+    const { data, error } = await supabase.from('profiles').select('count').limit(1);
 
     if (error) {
       console.log('⚠️  Error accessing profiles table:', error.message);
@@ -42,10 +39,7 @@ async function testConnection() {
 
     // Check which tables exist
     console.log('\n📋 Checking existing tables...');
-    const { data: tables, error: tablesError } = await supabase.rpc(
-      'get_table_list',
-      {}
-    );
+    const { data: tables, error: tablesError } = await supabase.rpc('get_table_list', {});
 
     if (tablesError) {
       console.log('⚠️  Could not fetch table list:', tablesError.message);
@@ -60,10 +54,7 @@ async function testConnection() {
       if (altError) {
         console.log('⚠️  Alternative method failed:', altError.message);
       } else {
-        console.log(
-          '📊 Found tables:',
-          altCheck?.map((t) => t.table_name) || 'None'
-        );
+        console.log('📊 Found tables:', altCheck?.map((t) => t.table_name) || 'None');
       }
     } else {
       console.log('📊 Available tables:', tables);
@@ -81,15 +72,9 @@ async function testConnection() {
 
     for (const tableName of apTables) {
       try {
-        const { data, error } = await supabase
-          .from(tableName)
-          .select('count')
-          .limit(1);
+        const { data, error } = await supabase.from(tableName).select('count').limit(1);
         if (error) {
-          console.log(
-            `❌ Table '${tableName}' not found or accessible:`,
-            error.message
-          );
+          console.log(`❌ Table '${tableName}' not found or accessible:`, error.message);
         } else {
           console.log(`✅ Table '${tableName}' exists and accessible`);
         }

@@ -7,31 +7,51 @@
 ```
 neonpro/
 ├── apps/                           # Aplicações deployáveis
-│   ├── web/                        # Next.js 15 main app (healthcare dashboard)
-│   ├── admin/                      # Admin dashboard (opcional futuro)
-│   ├── mobile/                     # React Native app (futuro)
-│   └── docs/                       # Documentation site (Nextra)
+│   └── web/                        # Next.js 15 App Router (Principal)
 │
 ├── packages/                       # Packages compartilhados
 │   ├── ui/                        # Design system & components
 │   ├── shared/                    # Business logic compartilhada
-│   ├── config/                    # Configurações compartilhadas
 │   ├── types/                     # TypeScript types globais
-│   └── utils/                     # Utilities & helpers
+│   ├── config/                    # Configurações compartilhadas
+│   ├── utils/                     # Utilities & helpers
+│   └── core-services/             # 🆕 Serviços centralizados (hooks, services)
 │
-├── tools/                         # Ferramentas de desenvolvimento
-│   ├── eslint-config/            # ESLint configurations
-│   ├── tsconfig/                 # TypeScript configurations
-│   └── scripts/                  # Build & deployment scripts
+├── tools/                         # 🆕 Ferramentas de desenvolvimento centralizadas
+│   ├── testing/                   # Testes, mocks, relatórios centralizados
+│   │   ├── unit/                  # Testes unitários
+│   │   ├── integration/           # Testes de integração
+│   │   ├── e2e/                   # Testes end-to-end (Playwright)
+│   │   ├── mocks/                 # Dados mock centralizados
+│   │   ├── reports/               # Relatórios de teste e análise
+│   │   ├── fixtures/              # Dados de teste fixos
+│   │   ├── coverage/              # Relatórios de cobertura
+│   │   └── legacy-tests/          # Testes migrados do antigo src/
+│   ├── scripts/                   # Scripts de build & deployment
+│   └── config/                    # Configurações de ferramentas
+│
+├── infrastructure/                # 🆕 Infraestrutura e automação
+│   └── automation/                # Jobs do Trigger.dev e automações
+│       ├── client.ts              # Cliente Trigger.dev
+│       ├── jobs/                  # Definições de jobs
+│       │   ├── appointment-reminders.ts
+│       │   ├── compliance-reports.ts
+│       │   └── patient-followup.ts
+│       └── config/                # Configurações de infraestrutura
 │
 ├── docs/                          # Documentação do projeto
-│   ├── architecture/             # Architectural decisions
-│   ├── guides/                   # Development guides
-│   └── api/                      # API documentation
+│   ├── shards/                    # Documentação modular
+│   │   ├── architecture/          # Decisões arquiteturais
+│   │   └── stories/               # User stories e especificações
+│   ├── guides/                    # Guias de desenvolvimento
+│   ├── api/                       # Documentação da API
+│   └── archive/                   # 🆕 Código legado arquivado
+│       └── legacy-app-structure/  # Estrutura antiga do src/app
 │
 ├── turbo.json                     # Turborepo pipeline configuration
 ├── pnpm-workspace.yaml           # pnpm workspace configuration
-└── package.json                   # Root package.json
+├── package.json                   # Root package.json
+└── playwright.config.ts           # Configuração global do Playwright
 ```
 
 ## 📱 **Apps Structure (Feature-based)**
@@ -109,16 +129,6 @@ apps/web/
 │   ├── validations.ts            # Zod schemas
 │   └── utils.ts                  # App-specific utilities
 │
-├── hooks/                        # Custom React hooks
-│   ├── use-auth.ts
-│   ├── use-patients.ts
-│   └── use-appointments.ts
-│
-├── types/                        # App-specific types
-│   ├── auth.ts
-│   ├── database.ts
-│   └── api.ts
-│
 ├── middleware.ts                 # Next.js middleware
 ├── next.config.js               # Next.js configuration
 ├── tailwind.config.js           # Tailwind configuration
@@ -189,6 +199,28 @@ packages/shared/
 └── package.json
 ```
 
+### **packages/core-services/ - 🆕 Serviços Centralizados**
+```
+packages/core-services/
+├── src/
+│   ├── hooks/                    # React hooks centralizados
+│   │   ├── usePatients.ts
+│   │   ├── useAppointments.ts
+│   │   ├── useAnalytics.ts
+│   │   └── index.ts
+│   │
+│   ├── services/                 # Serviços de negócio centralizados
+│   │   ├── api-client.ts
+│   │   ├── data-fetcher.ts
+│   │   ├── cache-manager.ts
+│   │   └── index.ts
+│   │
+│   └── index.ts                  # Exports principais
+│
+├── tsconfig.json
+└── package.json
+```
+
 ### **packages/types/ - Global Types**
 ```
 packages/types/
@@ -219,24 +251,103 @@ packages/config/
 └── package.json
 ```
 
-## 🛠️ **Tools Structure**
+## 🛠️ **Tools Structure - 🆕 Centralizado**
 
-### **tools/eslint-config/**
+### **tools/testing/ - Testing Centralizados**
 ```
-tools/eslint-config/
-├── base.js                       # Base ESLint config
-├── nextjs.js                     # Next.js specific rules
-├── react.js                      # React specific rules
-└── package.json
+tools/testing/
+├── unit/                         # Testes unitários
+│   ├── components/
+│   ├── services/
+│   ├── utils/
+│   └── __mocks__/
+│
+├── integration/                  # Testes de integração
+│   ├── api/
+│   ├── database/
+│   └── auth/
+│
+├── e2e/                         # Testes end-to-end (Playwright)
+│   ├── specs/
+│   │   ├── patient-flow.spec.ts
+│   │   ├── appointment-flow.spec.ts
+│   │   └── compliance.spec.ts
+│   ├── fixtures/
+│   ├── page-objects/
+│   └── utils/
+│
+├── mocks/                       # Dados mock centralizados
+│   ├── patients.json
+│   ├── appointments.json
+│   ├── users.json
+│   └── services.json
+│
+├── reports/                     # Relatórios de teste e análise
+│   ├── coverage/
+│   ├── performance/
+│   ├── accessibility/
+│   └── security/
+│
+├── fixtures/                    # Dados de teste fixos
+│   ├── database-seeds/
+│   ├── test-images/
+│   └── sample-documents/
+│
+├── coverage/                    # Relatórios de cobertura
+│   ├── unit/
+│   ├── integration/
+│   └── combined/
+│
+└── legacy-tests/                # 🆕 Testes migrados do antigo src/
+    └── archived-test-files/
 ```
 
-### **tools/tsconfig/**
+### **tools/scripts/ - Scripts de Desenvolvimento**
 ```
-tools/tsconfig/
-├── base.json                     # Base TypeScript config
-├── nextjs.json                   # Next.js specific config
-├── library.json                  # Library config
-└── package.json
+tools/scripts/
+├── build/                       # Scripts de build
+├── deploy/                      # Scripts de deployment
+├── database/                    # Scripts de database
+├── quality/                     # Scripts de qualidade
+└── maintenance/                 # Scripts de manutenção
+```
+
+## 🏗️ **Infrastructure Structure - 🆕 Infraestrutura Centralizada**
+
+### **infrastructure/automation/ - Trigger.dev e Automações**
+```
+infrastructure/automation/
+├── client.ts                    # Cliente Trigger.dev configurado
+├── trigger.config.ts            # Configuração do Trigger.dev
+│
+├── jobs/                        # Definições de jobs
+│   ├── appointment-reminders.ts # Lembretes de consulta
+│   ├── compliance-reports.ts    # Relatórios de conformidade
+│   ├── patient-followup.ts      # Follow-up de pacientes
+│   ├── backup-automation.ts     # Backup automatizado
+│   └── analytics-processing.ts  # Processamento de analytics
+│
+├── config/                      # Configurações de infraestrutura
+│   ├── environments.ts
+│   ├── schedules.ts
+│   └── notifications.ts
+│
+└── utils/                       # Utilities para automação
+    ├── email-templates.ts
+    ├── notification-helpers.ts
+    └── compliance-validators.ts
+```
+
+## 📚 **Documentation Structure - 🆕 Documentação Reorganizada**
+
+### **docs/archive/ - Código Legado Arquivado**
+```
+docs/archive/
+└── legacy-app-structure/        # 🆕 Estrutura antiga do src/app
+    ├── components/              # Componentes antigos
+    ├── pages/                   # Páginas antigas
+    ├── styles/                  # Estilos antigos
+    └── README.md                # Documentação do que foi arquivado
 ```
 
 ## ⚙️ **Configuration Files**
@@ -261,6 +372,10 @@ tools/tsconfig/
     "test": {
       "dependsOn": ["^build"],
       "outputs": ["coverage/**"]
+    },
+    "test:e2e": {
+      "dependsOn": ["^build"],
+      "outputs": ["tools/testing/reports/**"]
     }
   },
   "remoteCache": {
@@ -275,6 +390,31 @@ packages:
   - "apps/*"
   - "packages/*"
   - "tools/*"
+  - "infrastructure/*"
+```
+
+### **playwright.config.ts - Configuração Global**
+```typescript
+import { defineConfig } from '@playwright/test';
+
+export default defineConfig({
+  testDir: './tools/testing/e2e/specs',
+  outputDir: './tools/testing/reports/e2e-results',
+  reporter: [
+    ['html', { outputFolder: './tools/testing/reports/html' }],
+    ['json', { outputFile: './tools/testing/reports/results.json' }]
+  ],
+  use: {
+    baseURL: process.env.BASE_URL || 'http://localhost:3000',
+    trace: 'on-first-retry',
+    screenshot: 'only-on-failure'
+  },
+  projects: [
+    { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
+    { name: 'firefox', use: { ...devices['Desktop Firefox'] } },
+    { name: 'webkit', use: { ...devices['Desktop Safari'] } }
+  ]
+});
 ```
 
 ## 🔄 **Package Dependencies Strategy**
@@ -286,15 +426,26 @@ apps/web
 ├── @neonpro/shared
 ├── @neonpro/types
 ├── @neonpro/config
-└── @neonpro/eslint-config
+├── @neonpro/core-services    # 🆕
+└── @neonpro/utils
 
 packages/ui
 ├── @neonpro/types
-└── @neonpro/config (design tokens)
+└── @neonpro/config
 
 packages/shared
 ├── @neonpro/types
 └── @neonpro/config
+
+packages/core-services        # 🆕
+├── @neonpro/types
+├── @neonpro/shared
+└── @neonpro/utils
+
+infrastructure/automation
+├── @neonpro/types
+├── @neonpro/shared
+└── @neonpro/core-services    # 🆕
 ```
 
 ### **Workspace Protocol Usage**
@@ -303,33 +454,39 @@ packages/shared
   "dependencies": {
     "@neonpro/ui": "workspace:*",
     "@neonpro/shared": "workspace:*",
-    "@neonpro/types": "workspace:*"
+    "@neonpro/types": "workspace:*",
+    "@neonpro/core-services": "workspace:*"
   }
 }
 ```
 
-## 🎯 **Benefits desta Estrutura**
+## 🎯 **Benefits desta Nova Estrutura**
 
-### **✅ Vantagens**
-- **Feature Independence**: Cada feature é autocontida
-- **Code Sharing**: Packages compartilhados reduzem duplicação
-- **Type Safety**: Types centralizados garantem consistência
-- **Build Optimization**: Turborepo otimiza builds baseado em dependências
-- **Team Scalability**: Times podem trabalhar independentemente em features
-- **Testing Isolation**: Testes podem ser executados por feature/package
+### **✅ Vantagens da Reorganização**
+- **Testing Centralizado**: Todos os testes, mocks e relatórios em `tools/testing/`
+- **Infrastructure Isolation**: Automações Trigger.dev organizadas em `infrastructure/automation/`
+- **Legacy Management**: Código antigo arquivado de forma organizada em `docs/archive/`
+- **Core Services**: Hooks e serviços reutilizáveis centralizados em `packages/core-services/`
+- **Clean Structure**: Estrutura mais limpa e profissional seguindo best practices
 
 ### **📊 Performance Benefits**
-- **Incremental Builds**: Apenas código alterado é reconstruído
-- **Parallel Execution**: Tasks executam em paralelo quando possível
-- **Remote Caching**: Builds são compartilhados entre desenvolvedores
-- **Tree Shaking**: Bundle optimization automático
+- **Reduced Bundle Size**: Eliminação de código legado desnecessário
+- **Centralized Caching**: Cache centralizado para testes e builds
+- **Optimized Dependencies**: Dependências organizadas por responsabilidade
+- **Parallel Testing**: Testes executam em paralelo de forma mais eficiente
 
-### **🔧 Developer Experience**
-- **Hot Reload**: Mudanças refletem instantaneamente
-- **IntelliSense**: Autocomplete funciona entre packages
-- **Refactoring**: Rename/move funciona através do monorepo
-- **Debugging**: Source maps funcionam seamlessly
+### **🔧 Developer Experience Melhorado**
+- **Clear Separation**: Separação clara entre app logic, infra e testes
+- **Easy Navigation**: Estrutura intuitiva para encontrar arquivos
+- **Maintenance**: Manutenção simplificada com responsabilidades bem definidas
+- **Onboarding**: Novo developers entendem a estrutura rapidamente
+
+### **🏗️ Architectural Benefits**
+- **Scalability**: Estrutura preparada para crescimento do time e funcionalidades
+- **Modularity**: Cada package tem responsabilidade bem definida
+- **Reusability**: Componentes e serviços facilmente reutilizáveis
+- **Professional Standard**: Segue padrões da indústria para monorepos enterprise
 
 ---
 
-> **📝 Nota**: Esta estrutura evolui baseada no crescimento do projeto e feedback do time. Novas features seguem o padrão feature-based estabelecido.
+> **📝 Nota**: Esta estrutura reorganizada reflete o estado atual do projeto após cleanup abrangente. A organização centralizada de testes, infraestrutura e serviços melhora significativamente a maintainability e developer experience.

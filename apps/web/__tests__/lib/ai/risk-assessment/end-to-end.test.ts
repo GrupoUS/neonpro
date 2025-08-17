@@ -5,7 +5,6 @@ import {
   createMockPatientData,
 } from '@/__tests__/utils/mock-supabase';
 import { createRiskAssessmentService } from '@/app/lib/services/risk-assessment-automation';
-import type { RiskLevel } from '@/app/types/risk-assessment-automation';
 import { RiskAssessmentIntegration } from '@/lib/ai/patient-insights/risk-assessment';
 
 // ============================================================================
@@ -274,7 +273,7 @@ describe('Patient Risk Assessment System - End-to-End Workflow', () => {
       );
 
       expect(highComplexityTreatment?.riskAdjustedOutcome).toBeLessThan(
-        lowComplexityTreatment!.riskAdjustedOutcome,
+        lowComplexityTreatment?.riskAdjustedOutcome,
       );
     });
   });

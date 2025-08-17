@@ -137,7 +137,7 @@ export type HealthcareIntelligenceConfig = z.infer<typeof HealthcareIntelligence
 export type HealthcareIntelligenceQuery = z.infer<typeof HealthcareIntelligenceQuerySchema>;
 export type HealthcareIntelligenceResults = z.infer<typeof HealthcareIntelligenceResultsSchema>;
 
-export interface HealthcareIntelligenceAudit {
+export type HealthcareIntelligenceAudit = {
   audit_id: string;
   query_id: string;
   analysis_type: string;
@@ -150,15 +150,15 @@ export interface HealthcareIntelligenceAudit {
   created_by: string;
   reviewed_by_physician: boolean;
   cfm_ethics_approval: boolean;
-}
+};
 
 /**
  * Healthcare Intelligence Service
  * Constitutional AI-driven healthcare insights with medical ethics compliance
  */
 export class HealthcareIntelligenceService {
-  private config: HealthcareIntelligenceConfig;
-  private auditTrail: HealthcareIntelligenceAudit[] = [];
+  private readonly config: HealthcareIntelligenceConfig;
+  private readonly auditTrail: HealthcareIntelligenceAudit[] = [];
   private privacyBudgetUsed = 0;
 
   constructor(config: HealthcareIntelligenceConfig) {
@@ -339,7 +339,9 @@ export class HealthcareIntelligenceService {
     data: any[],
     query: HealthcareIntelligenceQuery
   ): Promise<void> {
-    if (!this.config.bias_detection_enabled) return;
+    if (!this.config.bias_detection_enabled) {
+      return;
+    }
 
     // Demographic bias detection
     const demographicBias = await this.detectDemographicBias(data);
@@ -385,8 +387,8 @@ export class HealthcareIntelligenceService {
    * Generate treatment predictions with medical accuracy validation
    */
   private async generateTreatmentPredictions(
-    data: any[],
-    query: HealthcareIntelligenceQuery
+    _data: any[],
+    _query: HealthcareIntelligenceQuery
   ): Promise<any> {
     // Mock advanced AI treatment prediction
     const predictions = {
@@ -428,8 +430,8 @@ export class HealthcareIntelligenceService {
    * Generate outcome analysis with statistical validation
    */
   private async generateOutcomeAnalysis(
-    data: any[],
-    query: HealthcareIntelligenceQuery
+    _data: any[],
+    _query: HealthcareIntelligenceQuery
   ): Promise<any> {
     return {
       primary_findings: [
@@ -452,8 +454,8 @@ export class HealthcareIntelligenceService {
    * Generate resource optimization insights
    */
   private async generateResourceOptimization(
-    data: any[],
-    query: HealthcareIntelligenceQuery
+    _data: any[],
+    _query: HealthcareIntelligenceQuery
   ): Promise<any> {
     return {
       primary_findings: [
@@ -476,8 +478,8 @@ export class HealthcareIntelligenceService {
    * Generate risk assessment with constitutional compliance
    */
   private async generateRiskAssessment(
-    data: any[],
-    query: HealthcareIntelligenceQuery
+    _data: any[],
+    _query: HealthcareIntelligenceQuery
   ): Promise<any> {
     return {
       primary_findings: [
@@ -507,8 +509,8 @@ export class HealthcareIntelligenceService {
    * Generate wellness insights
    */
   private async generateWellnessInsights(
-    data: any[],
-    query: HealthcareIntelligenceQuery
+    _data: any[],
+    _query: HealthcareIntelligenceQuery
   ): Promise<any> {
     return {
       primary_findings: [
@@ -531,8 +533,8 @@ export class HealthcareIntelligenceService {
    * Generate population health insights
    */
   private async generatePopulationHealthInsights(
-    data: any[],
-    query: HealthcareIntelligenceQuery
+    _data: any[],
+    _query: HealthcareIntelligenceQuery
   ): Promise<any> {
     return {
       primary_findings: [
@@ -555,8 +557,8 @@ export class HealthcareIntelligenceService {
    * Generate clinical decision support
    */
   private async generateClinicalDecisionSupport(
-    data: any[],
-    query: HealthcareIntelligenceQuery
+    _data: any[],
+    _query: HealthcareIntelligenceQuery
   ): Promise<any> {
     return {
       primary_findings: [
@@ -580,7 +582,7 @@ export class HealthcareIntelligenceService {
    */
   private async validateMedicalAccuracy(
     insights: any,
-    query: HealthcareIntelligenceQuery
+    _query: HealthcareIntelligenceQuery
   ): Promise<any> {
     // Medical accuracy validation against clinical guidelines
     const validatedInsights = { ...insights };
@@ -598,9 +600,11 @@ export class HealthcareIntelligenceService {
    */
   private async performHumanOversightReview(
     insights: any,
-    query: HealthcareIntelligenceQuery
+    _query: HealthcareIntelligenceQuery
   ): Promise<any> {
-    if (!this.config.human_oversight_required) return insights;
+    if (!this.config.human_oversight_required) {
+      return insights;
+    }
 
     // Mock human physician review
     // In production, this would integrate with physician review workflow
@@ -621,8 +625,8 @@ export class HealthcareIntelligenceService {
    * Generate explainability report
    */
   private async generateExplainabilityReport(
-    insights: any,
-    query: HealthcareIntelligenceQuery
+    _insights: any,
+    _query: HealthcareIntelligenceQuery
   ): Promise<any> {
     return {
       model_explanation:
@@ -670,8 +674,8 @@ export class HealthcareIntelligenceService {
    * Validate results ethics
    */
   private async validateResultsEthics(
-    insights: any,
-    query: HealthcareIntelligenceQuery
+    _insights: any,
+    _query: HealthcareIntelligenceQuery
   ): Promise<any> {
     return {
       cfm_ethics_score: 9.8,
@@ -733,8 +737,8 @@ export class HealthcareIntelligenceService {
   private async applyBasicAnonymization(data: any[]): Promise<any[]> {
     return data.map((record) => ({
       ...record,
-      name: record.name ? record.name.substring(0, 2) + '***' : undefined,
-      cpf: record.cpf ? record.cpf.substring(0, 3) + '*******' : undefined,
+      name: record.name ? `${record.name.substring(0, 2)}***` : undefined,
+      cpf: record.cpf ? `${record.cpf.substring(0, 3)}*******` : undefined,
     }));
   }
 
@@ -772,19 +776,19 @@ export class HealthcareIntelligenceService {
   }
 
   // Helper methods for bias detection
-  private async detectDemographicBias(data: any[]): Promise<{ bias_score: number }> {
+  private async detectDemographicBias(_data: any[]): Promise<{ bias_score: number }> {
     // Mock demographic bias detection
     return { bias_score: 0.15 };
   }
 
-  private async detectTreatmentBias(data: any[]): Promise<{ bias_score: number }> {
+  private async detectTreatmentBias(_data: any[]): Promise<{ bias_score: number }> {
     // Mock treatment bias detection
     return { bias_score: 0.12 };
   }
 
   private async applyBiasMitigation(
-    data: any[],
-    query: HealthcareIntelligenceQuery
+    _data: any[],
+    _query: HealthcareIntelligenceQuery
   ): Promise<void> {
     // Mock bias mitigation techniques
     // In production, this would apply sophisticated bias mitigation algorithms

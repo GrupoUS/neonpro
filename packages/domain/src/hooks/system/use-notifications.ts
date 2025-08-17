@@ -190,7 +190,7 @@ export function useNotifications({
       .subscribe();
 
     setSubscription(channel);
-  }, [userId, realtime, subscription, supabase, autoMarkAsRead, limit]);
+  }, [userId, realtime, subscription, supabase, autoMarkAsRead, limit, markAsRead]);
 
   // Mark notification as read
   const markAsRead = useCallback(

@@ -269,7 +269,7 @@ function calculateGrade(
   return 'poor';
 }
 
-function parseTimeRange(timeRange: string): number {
+function _parseTimeRange(timeRange: string): number {
   const ranges: Record<string, number> = {
     '1h': 60 * 60 * 1000,
     '24h': 24 * 60 * 60 * 1000,
@@ -280,7 +280,7 @@ function parseTimeRange(timeRange: string): number {
   return ranges[timeRange] || 0;
 }
 
-function calculateAggregatedStats(metrics: any[]) {
+function _calculateAggregatedStats(metrics: any[]) {
   if (metrics.length === 0) {
     return {};
   }

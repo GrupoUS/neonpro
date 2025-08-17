@@ -16,12 +16,7 @@ import {
   Shield,
 } from 'lucide-react';
 import type React from 'react';
-import {
-  useComplianceAlerts,
-  useComplianceReports,
-  useComplianceScore,
-  useRealTimeCompliance,
-} from '../../lib/utils';
+import { useComplianceAlerts, useComplianceScore } from '../../lib/utils';
 import { Alert, AlertDescription, AlertTitle } from '../ui/alert';
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
@@ -33,23 +28,23 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
 // TYPES AND INTERFACES
 // ================================================
 
-interface ComplianceAutomationDashboardProps {
+type ComplianceAutomationDashboardProps = {
   clinicId?: string;
-}
+};
 
-interface StatusCardProps {
+type StatusCardProps = {
   title: string;
   value: number;
   status: string;
   icon: React.ReactNode;
   color: 'success' | 'warning' | 'error' | 'info';
-}
+};
 
 // ================================================
 // UTILITY FUNCTIONS
 // ================================================
 
-const getStatusColor = (status: string): string => {
+const _getStatusColor = (status: string): string => {
   switch (status.toLowerCase()) {
     case 'compliant':
     case 'active':
@@ -141,30 +136,30 @@ export const ComplianceAutomationDashboard: React.FC<ComplianceAutomationDashboa
     refresh: () => {},
   });
   const useDataClassification = () => ({
-    classifyData: (data: any) => Promise.resolve(),
+    classifyData: (_data: any) => Promise.resolve(),
     loading: false,
   });
   const useDataSubjectRequests = () => ({
-    createRequest: (request: any) => Promise.resolve(),
+    createRequest: (_request: any) => Promise.resolve(),
     loading: false,
   });
   const useSoftwareValidation = () => ({
-    validateSoftware: (software: any) => Promise.resolve(),
+    validateSoftware: (_software: any) => Promise.resolve(),
     loading: false,
   });
   const useProfessionalValidation = () => ({
-    validateProfessional: (professional: any) => Promise.resolve(),
+    validateProfessional: (_professional: any) => Promise.resolve(),
     loading: false,
   });
   const useComplianceAlertsLocal = () => ({
-    createAlert: (alert: any) => Promise.resolve(),
+    createAlert: (_alert: any) => Promise.resolve(),
     loading: false,
   });
   const useComplianceReportLocal = () => ({
-    generateReport: (type: string, filters?: any) => Promise.resolve(),
-    scheduleReport: (type: string, schedule: any) => Promise.resolve(),
-    downloadReport: (reportId: string, format?: string) => Promise.resolve(),
-    deleteReport: (reportId: string) => Promise.resolve(),
+    generateReport: (_type: string, _filters?: any) => Promise.resolve(),
+    scheduleReport: (_type: string, _schedule: any) => Promise.resolve(),
+    downloadReport: (_reportId: string, _format?: string) => Promise.resolve(),
+    deleteReport: (_reportId: string) => Promise.resolve(),
     loading: false,
   });
 
@@ -200,9 +195,7 @@ export const ComplianceAutomationDashboard: React.FC<ComplianceAutomationDashboa
       });
 
       await refresh(); // Refresh status after operation
-    } catch (err) {
-      console.error('Failed to classify data:', err);
-    }
+    } catch (_err) {}
   };
 
   const handleQuickSoftwareValidation = async () => {
@@ -216,9 +209,7 @@ export const ComplianceAutomationDashboard: React.FC<ComplianceAutomationDashboa
       });
 
       await refresh(); // Refresh status after operation
-    } catch (err) {
-      console.error('Failed to validate software:', err);
-    }
+    } catch (_err) {}
   };
 
   const handleCreateTestAlert = async () => {
@@ -233,17 +224,13 @@ export const ComplianceAutomationDashboard: React.FC<ComplianceAutomationDashboa
       });
 
       await refresh(); // Refresh status after operation
-    } catch (err) {
-      console.error('Failed to create test alert:', err);
-    }
+    } catch (_err) {}
   };
 
   const handleGenerateComprehensiveReport = async () => {
     try {
       await generateReport('comprehensive', clinicId);
-    } catch (err) {
-      console.error('Failed to generate report:', err);
-    }
+    } catch (_err) {}
   };
 
   // ================================================

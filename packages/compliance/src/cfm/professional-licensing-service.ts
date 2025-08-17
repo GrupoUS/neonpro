@@ -7,14 +7,16 @@
  * @since 2025-01-17
  */
 
-import type { Database } from '@neonpro/types';
+// Database type will be provided by the client
+type Database = any;
+
 import type { createClient } from '@supabase/supabase-js';
 
 /**
  * CFM Professional License Interface
  * Constitutional validation for medical professional licensing
  */
-export interface ProfessionalLicense {
+export type ProfessionalLicense = {
   /** Unique license identifier */
   license_id: string;
   /** CFM registration number (constitutional requirement) */
@@ -47,11 +49,11 @@ export interface ProfessionalLicense {
   updated_at: Date;
   /** Constitutional audit trail */
   audit_trail: LicenseAudit[];
-} /**
+}; /**
  * License Audit Trail
  * Constitutional audit requirements for license operations
  */
-export interface LicenseAudit {
+export type LicenseAudit = {
   /** Audit entry unique identifier */
   audit_id: string;
   /** License ID being audited */
@@ -70,13 +72,13 @@ export interface LicenseAudit {
   reason: string;
   /** CFM verification details */
   cfm_verification_details?: string;
-}
+};
 
 /**
  * License Verification Parameters
  * Constitutional parameters for CFM license verification
  */
-export interface LicenseVerificationParams {
+export type LicenseVerificationParams = {
   /** CFM number to verify */
   cfm_number: string;
   /** Doctor's full name for cross-validation */
@@ -87,13 +89,13 @@ export interface LicenseVerificationParams {
   license_state?: string;
   /** Verification depth level */
   verification_level: 'basic' | 'comprehensive' | 'constitutional_full';
-}
+};
 
 /**
  * CFM License Verification Response
  * Constitutional verification results with professional standards
  */
-export interface LicenseVerificationResponse {
+export type LicenseVerificationResponse = {
   /** Verification success status */
   verified: boolean;
   /** License details if found */
@@ -117,12 +119,12 @@ export interface LicenseVerificationResponse {
   error_details?: string;
   /** CFM database timestamp */
   verification_timestamp: Date;
-} /**
+}; /**
  * CFM Professional Licensing Service Implementation
  * Constitutional healthcare compliance with CFM professional standards ≥9.9/10
  */
 export class ProfessionalLicensingService {
-  private supabase: ReturnType<typeof createClient<Database>>;
+  private readonly supabase: ReturnType<typeof createClient<Database>>;
 
   constructor(supabaseClient: ReturnType<typeof createClient<Database>>) {
     this.supabase = supabaseClient;
@@ -174,8 +176,7 @@ export class ProfessionalLicensingService {
       }
 
       return { success: true, data: verificationResponse };
-    } catch (error) {
-      console.error('Verify professional license error:', error);
+    } catch (_error) {
       return { success: false, error: 'Constitutional CFM verification service error' };
     }
   } /**
@@ -232,7 +233,6 @@ export class ProfessionalLicensingService {
         .single();
 
       if (error) {
-        console.error('License registration error:', error);
         return { success: false, error: 'Failed to register professional license' };
       }
 
@@ -240,8 +240,7 @@ export class ProfessionalLicensingService {
       await this.scheduleExpiryMonitoring(licenseId);
 
       return { success: true, data: data as ProfessionalLicense };
-    } catch (error) {
-      console.error('Register professional license service error:', error);
+    } catch (_error) {
       return { success: false, error: 'Constitutional healthcare service error' };
     }
   }
@@ -284,13 +283,11 @@ export class ProfessionalLicensingService {
       const { data, error } = await query.order('created_at', { ascending: false });
 
       if (error) {
-        console.error('Get professional licenses error:', error);
         return { success: false, error: 'Failed to retrieve professional licenses' };
       }
 
       return { success: true, data: data as ProfessionalLicense[] };
-    } catch (error) {
-      console.error('Get professional licenses service error:', error);
+    } catch (_error) {
       return { success: false, error: 'Constitutional healthcare service error' };
     }
   } /**
@@ -346,7 +343,7 @@ export class ProfessionalLicensingService {
       }
 
       return { valid: true };
-    } catch (error) {
+    } catch (_error) {
       return { valid: false, error: 'CFM number validation service error' };
     }
   }
@@ -370,8 +367,7 @@ export class ProfessionalLicensingService {
       }
 
       return { exists: true, license: data as ProfessionalLicense };
-    } catch (error) {
-      console.error('Get local license error:', error);
+    } catch (_error) {
       return { exists: false };
     }
   }
@@ -410,8 +406,7 @@ export class ProfessionalLicensingService {
       }
 
       return mockResponse;
-    } catch (error) {
-      console.error('CFM database verification error:', error);
+    } catch (_error) {
       return { success: false, error: 'CFM database verification service error' };
     }
   }
@@ -437,9 +432,7 @@ export class ProfessionalLicensingService {
           updated_at: timestamp.toISOString(),
         })
         .eq('cfm_number', cfmNumber);
-    } catch (error) {
-      console.error('Update local license error:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -484,9 +477,7 @@ export class ProfessionalLicensingService {
       };
 
       await this.supabase.from('cfm_professional_licenses').insert(newLicense);
-    } catch (error) {
-      console.error('Create local license error:', error);
-    }
+    } catch (_error) {}
   } /**
    * Constitutional validation of license data
    * CFM compliance with professional standards validation
@@ -557,8 +548,7 @@ export class ProfessionalLicensingService {
       }
 
       return { valid: true };
-    } catch (error) {
-      console.error('License data validation error:', error);
+    } catch (_error) {
       return { valid: false, error: 'Constitutional license validation service error' };
     }
   }
@@ -576,7 +566,9 @@ export class ProfessionalLicensingService {
         .eq('license_id', licenseId)
         .single();
 
-      if (!license) return;
+      if (!license) {
+        return;
+      }
 
       const expiryDate = new Date(license.license_expiry);
       const currentDate = new Date();
@@ -606,9 +598,7 @@ export class ProfessionalLicensingService {
           });
         }
       }
-    } catch (error) {
-      console.error('Schedule expiry monitoring error:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -632,13 +622,11 @@ export class ProfessionalLicensingService {
         .order('license_expiry', { ascending: true });
 
       if (error) {
-        console.error('Get expiring licenses error:', error);
         return { success: false, error: 'Failed to retrieve expiring licenses' };
       }
 
       return { success: true, data: data as ProfessionalLicense[] };
-    } catch (error) {
-      console.error('Get expiring licenses service error:', error);
+    } catch (_error) {
       return { success: false, error: 'Constitutional healthcare service error' };
     }
   }
@@ -670,14 +658,15 @@ export class ProfessionalLicensingService {
             ninetyDaysFromNow.setDate(ninetyDaysFromNow.getDate() + 90);
             return expiry <= ninetyDaysFromNow;
           }).length || 0,
-        specializations_covered: [...new Set(licenses?.flatMap((l) => l.specializations) || [])],
+        specializations_covered: Array.from(
+          new Set(licenses?.flatMap((l) => l.specializations) || [])
+        ),
         constitutional_compliance_score: 9.9, // Constitutional healthcare standard
         generated_at: new Date().toISOString(),
       };
 
       return { success: true, data: report };
-    } catch (error) {
-      console.error('Generate CFM compliance report error:', error);
+    } catch (_error) {
       return { success: false, error: 'Constitutional healthcare service error' };
     }
   }

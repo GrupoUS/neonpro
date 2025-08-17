@@ -31,7 +31,7 @@ export type AIDecision = z.infer<typeof AIDecisionSchema>;
 /**
  * Ethics Validation Result
  */
-export interface EthicsValidationResult {
+export type EthicsValidationResult = {
   isValid: boolean;
   score: number; // 0-100
   violations: EthicsViolation[];
@@ -40,26 +40,25 @@ export interface EthicsValidationResult {
   complianceStatus: 'compliant' | 'partial' | 'non_compliant';
   cfmCompliance: boolean;
   patientSafetyRisk: 'none' | 'low' | 'medium' | 'high' | 'critical';
-}
+};
 
 /**
  * Ethics Violation
  */
-export interface EthicsViolation {
+export type EthicsViolation = {
   principle: string;
   severity: 'minor' | 'moderate' | 'serious' | 'critical';
   description: string;
   recommendation: string;
   cfmStandard?: string;
   patientImpact: string;
-}
+};
 
 /**
  * Constitutional AI Ethics Validator
  */
 export class ConstitutionalAIEthicsValidator {
   private readonly MINIMUM_ACCURACY_THRESHOLD = 95; // ≥95% for healthcare AI
-  private readonly CRITICAL_OPERATIONS = ['emergency', 'triage', 'drug_interaction', 'allergy'];
 
   /**
    * Validate AI decision against constitutional healthcare principles
@@ -181,7 +180,7 @@ export class ConstitutionalAIEthicsValidator {
    * Check if data is minimized according to LGPD principles
    */
   private isDataMinimized(input: Record<string, any>): boolean {
-    const necessaryFields = ['age', 'symptoms', 'medical_history', 'allergies', 'medications'];
+    const _necessaryFields = ['age', 'symptoms', 'medical_history', 'allergies', 'medications'];
     const unnecessaryFields = ['social_media', 'income', 'education', 'occupation'];
 
     // Check if only necessary fields are present
@@ -210,7 +209,7 @@ export class ConstitutionalAIEthicsValidator {
     }
 
     // Geographic bias detection
-    if (input.location && input.location.includes('rural')) {
+    if (input.location?.includes('rural')) {
       biasScore += 0.05;
     }
 
@@ -221,8 +220,12 @@ export class ConstitutionalAIEthicsValidator {
    * Calculate confidence drop based on age bias
    */
   private calculateConfidenceDrop(age: number): number {
-    if (age < 18) return 0.2; // 20% confidence drop for minors
-    if (age > 65) return 0.15; // 15% confidence drop for elderly
+    if (age < 18) {
+      return 0.2; // 20% confidence drop for minors
+    }
+    if (age > 65) {
+      return 0.15; // 15% confidence drop for elderly
+    }
     return 0;
   }
 
@@ -232,13 +235,19 @@ export class ConstitutionalAIEthicsValidator {
   private determineComplianceStatus(
     violations: EthicsViolation[]
   ): 'compliant' | 'partial' | 'non_compliant' {
-    if (violations.length === 0) return 'compliant';
+    if (violations.length === 0) {
+      return 'compliant';
+    }
 
     const hasCritical = violations.some((v) => v.severity === 'critical');
     const hasSerious = violations.some((v) => v.severity === 'serious');
 
-    if (hasCritical) return 'non_compliant';
-    if (hasSerious) return 'partial';
+    if (hasCritical) {
+      return 'non_compliant';
+    }
+    if (hasSerious) {
+      return 'partial';
+    }
     return 'compliant';
   }
 
@@ -248,14 +257,22 @@ export class ConstitutionalAIEthicsValidator {
   private assessPatientSafetyRisk(
     violations: EthicsViolation[]
   ): 'none' | 'low' | 'medium' | 'high' | 'critical' {
-    if (violations.length === 0) return 'none';
+    if (violations.length === 0) {
+      return 'none';
+    }
 
     const criticalViolations = violations.filter((v) => v.severity === 'critical');
     const seriousViolations = violations.filter((v) => v.severity === 'serious');
 
-    if (criticalViolations.length > 0) return 'critical';
-    if (seriousViolations.length > 2) return 'high';
-    if (seriousViolations.length > 0) return 'medium';
+    if (criticalViolations.length > 0) {
+      return 'critical';
+    }
+    if (seriousViolations.length > 2) {
+      return 'high';
+    }
+    if (seriousViolations.length > 0) {
+      return 'medium';
+    }
     return 'low';
   }
 

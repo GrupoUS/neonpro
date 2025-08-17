@@ -6,7 +6,7 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 // Mock SecurityMetrics type - Complete interface
-export interface SecurityMetrics {
+export type SecurityMetrics = {
   id: number;
   threat_level: 'low' | 'medium' | 'high' | 'critical';
   unresolved_alerts: number;
@@ -30,7 +30,7 @@ export interface SecurityMetrics {
   securityScore: number;
   lastScan: string;
   vulnerabilities: number;
-}
+};
 
 // Mock compliance hooks
 export const useComplianceScore = () => ({
@@ -57,10 +57,10 @@ export const useComplianceAlerts = () => [
 ];
 
 export const useComplianceReports = () => ({
-  generateReport: (type: string, filters: any) => Promise.resolve(),
-  scheduleReport: (type: string, schedule: any) => Promise.resolve(),
-  downloadReport: (reportId: string, format: string) => Promise.resolve(),
-  deleteReport: (reportId: string) => Promise.resolve(),
+  generateReport: (_type: string, _filters: any) => Promise.resolve(),
+  scheduleReport: (_type: string, _schedule: any) => Promise.resolve(),
+  downloadReport: (_reportId: string, _format: string) => Promise.resolve(),
+  deleteReport: (_reportId: string) => Promise.resolve(),
 });
 
 export const useRealTimeCompliance = () => ({

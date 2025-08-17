@@ -1,8 +1,4 @@
-import type {
-  EscalationPriority,
-  RiskAssessmentInput,
-  RiskLevel,
-} from '@/app/types/risk-assessment-automation';
+import type { RiskAssessmentInput } from '@/app/types/risk-assessment-automation';
 import {
   calculateComprehensiveRiskAssessment,
   calculateCurrentConditionRisk,

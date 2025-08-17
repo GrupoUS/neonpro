@@ -2,12 +2,11 @@
 
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import { AlertTriangle, ExternalLink, Eye, Filter, RefreshCw, Search } from 'lucide-react';
+import { AlertTriangle, Eye, RefreshCw, Search } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { Badge } from '../../ui/badge';
 import { Button } from '../../ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../ui/card';
 import {
   Dialog,
   DialogContent,
@@ -21,7 +20,7 @@ import { Label } from '../../ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../../ui/table';
 
-interface SecurityEvent {
+type SecurityEvent = {
   id: string;
   event_type: string;
   severity: 'info' | 'warning' | 'error' | 'critical';
@@ -39,7 +38,7 @@ interface SecurityEvent {
   resolved_at?: string;
   created_at: string;
   updated_at: string;
-}
+};
 
 export function SecurityEventsTable() {
   const [events, setEvents] = useState<SecurityEvent[]>([]);
@@ -65,8 +64,7 @@ export function SecurityEventsTable() {
 
       const data = await response.json();
       setEvents(data.events || []);
-    } catch (error) {
-      console.error('Error fetching security events:', error);
+    } catch (_error) {
       toast.error('Erro ao carregar eventos de segurança');
     } finally {
       setLoading(false);
@@ -75,7 +73,7 @@ export function SecurityEventsTable() {
 
   useEffect(() => {
     fetchEvents();
-  }, []);
+  }, [fetchEvents]);
 
   const handleUpdateStatus = async (eventId: string, newStatus: string) => {
     try {
@@ -93,8 +91,7 @@ export function SecurityEventsTable() {
 
       await fetchEvents();
       toast.success('Status do evento atualizado com sucesso');
-    } catch (error) {
-      console.error('Error updating event status:', error);
+    } catch (_error) {
       toast.error('Erro ao atualizar status do evento');
     }
   };

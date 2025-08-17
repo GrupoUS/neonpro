@@ -15,7 +15,7 @@ export const config: TriggerConfig = {
     },
   },
   // Integração com sistema NeonPro existente
-  dirs: ['./trigger'],
+  dirs: ['./infrastructure/automation'],
   // Vercel compatível
   build: {
     external: ['@supabase/supabase-js'],

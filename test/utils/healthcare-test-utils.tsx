@@ -1,21 +1,22 @@
-import React, { ReactElement } from 'react'
-import { render, RenderOptions } from '@testing-library/react'
-import { vi } from 'vitest'
+import { type RenderOptions, render } from '@testing-library/react';
+import type React from 'react';
+import type { ReactElement } from 'react';
+import { vi } from 'vitest';
 
 // Healthcare-specific test context providers
 interface HealthcareTestProviderProps {
-  children: React.ReactNode
-  initialPatient?: any
-  initialDoctor?: any
-  initialClinicSettings?: any
+  children: React.ReactNode;
+  initialPatient?: any;
+  initialDoctor?: any;
+  initialClinicSettings?: any;
 }
 
 // Mock healthcare context provider for testing
-export function HealthcareTestProvider({ 
-  children, 
-  initialPatient = null, 
+export function HealthcareTestProvider({
+  children,
+  initialPatient = null,
   initialDoctor = null,
-  initialClinicSettings = {}
+  initialClinicSettings = {},
 }: HealthcareTestProviderProps) {
   const mockHealthcareContext = {
     patient: initialPatient,
@@ -26,55 +27,43 @@ export function HealthcareTestProvider({
       appointmentDuration: 60,
       lgpdCompliance: true,
       anvisaCompliance: true,
-      ...initialClinicSettings
+      ...initialClinicSettings,
     },
-    
+
     // Mock functions for healthcare operations
     updatePatient: vi.fn(),
     createAppointment: vi.fn(),
     updateTreatment: vi.fn(),
     recordConsent: vi.fn(),
-    generateAuditLog: vi.fn()
-  }
+    generateAuditLog: vi.fn(),
+  };
 
-  return (
-    <div data-testid="healthcare-provider">
-      {children}
-    </div>
-  )
+  return <div data-testid="healthcare-provider">{children}</div>;
 }
 
 // Custom render function with healthcare providers
 interface CustomRenderOptions extends Omit<RenderOptions, 'wrapper'> {
-  initialPatient?: any
-  initialDoctor?: any
-  initialClinicSettings?: any
+  initialPatient?: any;
+  initialDoctor?: any;
+  initialClinicSettings?: any;
 }
 
-export function renderWithHealthcareProvider(
-  ui: ReactElement,
-  options: CustomRenderOptions = {}
-) {
-  const { 
-    initialPatient, 
-    initialDoctor, 
-    initialClinicSettings, 
-    ...renderOptions 
-  } = options
+export function renderWithHealthcareProvider(ui: ReactElement, options: CustomRenderOptions = {}) {
+  const { initialPatient, initialDoctor, initialClinicSettings, ...renderOptions } = options;
 
   function Wrapper({ children }: { children: React.ReactNode }) {
     return (
       <HealthcareTestProvider
-        initialPatient={initialPatient}
-        initialDoctor={initialDoctor}
         initialClinicSettings={initialClinicSettings}
+        initialDoctor={initialDoctor}
+        initialPatient={initialPatient}
       >
         {children}
       </HealthcareTestProvider>
-    )
+    );
   }
 
-  return render(ui, { wrapper: Wrapper, ...renderOptions })
+  return render(ui, { wrapper: Wrapper, ...renderOptions });
 }
 
 // Healthcare data generators for testing
@@ -92,22 +81,22 @@ export const healthcareTestData = {
       city: 'São Paulo',
       state: 'SP',
       zipCode: '01310-100',
-      country: 'BR'
+      country: 'BR',
     },
     emergencyContact: {
       name: 'João Silva',
       relationship: 'spouse',
-      phone: '+55 11 88888-8888'
+      phone: '+55 11 88888-8888',
     },
     lgpdConsent: {
       granted: true,
       grantedAt: new Date().toISOString(),
-      purposes: ['medical-treatment', 'communication']
+      purposes: ['medical-treatment', 'communication'],
     },
     medicalHistory: [],
     allergies: ['Látex'],
     medications: [],
-    ...overrides
+    ...overrides,
   }),
 
   createMockDoctor: (overrides = {}) => ({
@@ -126,9 +115,9 @@ export const healthcareTestData = {
       tuesday: { start: '08:00', end: '17:00' },
       wednesday: { start: '08:00', end: '17:00' },
       thursday: { start: '08:00', end: '17:00' },
-      friday: { start: '08:00', end: '17:00' }
+      friday: { start: '08:00', end: '17:00' },
     },
-    ...overrides
+    ...overrides,
   }),
 
   createMockAppointment: (overrides = {}) => ({
@@ -142,7 +131,7 @@ export const healthcareTestData = {
     notes: 'Consulta de rotina',
     reminderSent: false,
     lgpdConsentConfirmed: true,
-    ...overrides
+    ...overrides,
   }),
 
   createMockTreatment: (overrides = {}) => ({
@@ -160,14 +149,14 @@ export const healthcareTestData = {
         batch: 'BATCH-2024-001',
         expiryDate: '2025-06-30',
         quantity: 50,
-        unit: 'UI'
-      }
+        unit: 'UI',
+      },
     ],
     contraindications: [],
     sideEffects: [],
     followUpRequired: true,
     followUpDate: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000).toISOString(), // 15 days later
-    ...overrides
+    ...overrides,
   }),
 
   createMockMedicalRecord: (overrides = {}) => ({
@@ -186,85 +175,85 @@ export const healthcareTestData = {
     nextVisit: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000).toISOString(),
     digitalSignature: 'record-signature-123',
     attachments: [],
-    ...overrides
-  })
-}
+    ...overrides,
+  }),
+};
 
 // Healthcare-specific assertions
 export const healthcareAssertions = {
   expectCPFToBeValid: (cpf: string) => {
-    const cleanCPF = cpf.replace(/\D/g, '')
-    expect(cleanCPF).toHaveLength(11)
-    expect(cleanCPF).not.toBe('00000000000')
-    expect(cleanCPF).not.toBe('11111111111')
+    const cleanCPF = cpf.replace(/\D/g, '');
+    expect(cleanCPF).toHaveLength(11);
+    expect(cleanCPF).not.toBe('00000000000');
+    expect(cleanCPF).not.toBe('11111111111');
   },
 
   expectLGPDConsentToBeRecorded: (consent: any) => {
-    expect(consent).toHaveProperty('granted', true)
-    expect(consent).toHaveProperty('grantedAt')
-    expect(consent).toHaveProperty('purposes')
-    expect(Array.isArray(consent.purposes)).toBe(true)
-    expect(consent.purposes.length).toBeGreaterThan(0)
+    expect(consent).toHaveProperty('granted', true);
+    expect(consent).toHaveProperty('grantedAt');
+    expect(consent).toHaveProperty('purposes');
+    expect(Array.isArray(consent.purposes)).toBe(true);
+    expect(consent.purposes.length).toBeGreaterThan(0);
   },
 
   expectANVISAComplianceToBeValid: (product: any) => {
-    expect(product).toHaveProperty('anvisaCode')
-    expect(product.anvisaCode).toMatch(/^ANVISA-/)
-    expect(product).toHaveProperty('batch')
-    expect(product).toHaveProperty('expiryDate')
-    expect(new Date(product.expiryDate)).toBeInstanceOf(Date)
+    expect(product).toHaveProperty('anvisaCode');
+    expect(product.anvisaCode).toMatch(/^ANVISA-/);
+    expect(product).toHaveProperty('batch');
+    expect(product).toHaveProperty('expiryDate');
+    expect(new Date(product.expiryDate)).toBeInstanceOf(Date);
   },
 
   expectDigitalSignatureToBePresent: (record: any) => {
-    expect(record).toHaveProperty('digitalSignature')
-    expect(record.digitalSignature).toBeTruthy()
-    expect(typeof record.digitalSignature).toBe('string')
+    expect(record).toHaveProperty('digitalSignature');
+    expect(record.digitalSignature).toBeTruthy();
+    expect(typeof record.digitalSignature).toBe('string');
   },
 
   expectAuditTrailToBeComplete: (auditLog: any) => {
-    expect(auditLog).toHaveProperty('action')
-    expect(auditLog).toHaveProperty('userId')
-    expect(auditLog).toHaveProperty('timestamp')
-    expect(auditLog).toHaveProperty('ipAddress')
-    expect(auditLog).toHaveProperty('userAgent')
-  }
-}
+    expect(auditLog).toHaveProperty('action');
+    expect(auditLog).toHaveProperty('userId');
+    expect(auditLog).toHaveProperty('timestamp');
+    expect(auditLog).toHaveProperty('ipAddress');
+    expect(auditLog).toHaveProperty('userAgent');
+  },
+};
 
 // Healthcare form testing utilities
 export const healthcareFormUtils = {
   fillPatientForm: async (user: any, patientData: any) => {
-    const nameInput = document.querySelector('input[name="name"]') as HTMLInputElement
-    const cpfInput = document.querySelector('input[name="cpf"]') as HTMLInputElement
-    const emailInput = document.querySelector('input[name="email"]') as HTMLInputElement
-    const phoneInput = document.querySelector('input[name="phone"]') as HTMLInputElement
+    const nameInput = document.querySelector('input[name="name"]') as HTMLInputElement;
+    const cpfInput = document.querySelector('input[name="cpf"]') as HTMLInputElement;
+    const emailInput = document.querySelector('input[name="email"]') as HTMLInputElement;
+    const phoneInput = document.querySelector('input[name="phone"]') as HTMLInputElement;
 
-    if (nameInput) await user.type(nameInput, patientData.name)
-    if (cpfInput) await user.type(cpfInput, patientData.cpf)
-    if (emailInput) await user.type(emailInput, patientData.email)
-    if (phoneInput) await user.type(phoneInput, patientData.phone)
+    if (nameInput) await user.type(nameInput, patientData.name);
+    if (cpfInput) await user.type(cpfInput, patientData.cpf);
+    if (emailInput) await user.type(emailInput, patientData.email);
+    if (phoneInput) await user.type(phoneInput, patientData.phone);
   },
 
   submitFormWithLGPDConsent: async (user: any) => {
-    const lgpdCheckbox = document.querySelector('input[name="lgpdConsent"]') as HTMLInputElement
-    const submitButton = document.querySelector('button[type="submit"]') as HTMLButtonElement
+    const lgpdCheckbox = document.querySelector('input[name="lgpdConsent"]') as HTMLInputElement;
+    const submitButton = document.querySelector('button[type="submit"]') as HTMLButtonElement;
 
-    if (lgpdCheckbox) await user.click(lgpdCheckbox)
-    if (submitButton) await user.click(submitButton)
+    if (lgpdCheckbox) await user.click(lgpdCheckbox);
+    if (submitButton) await user.click(submitButton);
   },
 
   expectFormValidationErrors: (requiredFields: string[]) => {
-    requiredFields.forEach(field => {
-      const errorElement = document.querySelector(`[data-testid="${field}-error"]`)
-      expect(errorElement).toBeInTheDocument()
-    })
-  }
-}
+    requiredFields.forEach((field) => {
+      const errorElement = document.querySelector(`[data-testid="${field}-error"]`);
+      expect(errorElement).toBeInTheDocument();
+    });
+  },
+};
 
 // Mock healthcare API responses
 export const mockHealthcareAPI = {
   validateCPF: vi.fn(async (cpf: string) => ({
     isValid: !['00000000000', '11111111111'].includes(cpf.replace(/\D/g, '')),
-    formatted: cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4')
+    formatted: cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4'),
   })),
 
   checkANVISACompliance: vi.fn(async (productCode: string) => ({
@@ -272,24 +261,24 @@ export const mockHealthcareAPI = {
     productInfo: {
       name: 'Test Medical Product',
       registrationStatus: 'active',
-      expiryDate: '2025-12-31'
-    }
+      expiryDate: '2025-12-31',
+    },
   })),
 
   recordLGPDConsent: vi.fn(async (consentData: any) => ({
     success: true,
     consentId: 'consent-123',
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   })),
 
   generateAuditLog: vi.fn(async (action: string, resourceId: string) => ({
     auditId: 'audit-123',
     action,
     resourceId,
-    timestamp: new Date().toISOString()
-  }))
-}
+    timestamp: new Date().toISOString(),
+  })),
+};
 
 // Re-export everything for convenience
-export * from '@testing-library/react'
-export { vi } from 'vitest'
+export * from '@testing-library/react';
+export { vi } from 'vitest';

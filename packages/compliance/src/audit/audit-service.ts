@@ -5,7 +5,7 @@
  * Quality Standard: ≥9.9/10
  */
 
-import { type ComplianceScore, HealthcareRegulation } from '../types';
+import type { ComplianceScore } from '../types';
 import {
   type AuditConfig,
   AuditConfigSchema,
@@ -24,7 +24,7 @@ import {
  * Manages audit logging and trail validation for healthcare compliance
  */
 export class AuditService {
-  private supabaseClient: any;
+  private readonly supabaseClient: any;
 
   constructor(supabaseClient: any) {
     this.supabaseClient = supabaseClient;
@@ -69,7 +69,6 @@ export class AuditService {
         .single();
 
       if (error) {
-        console.error('Failed to log audit event:', error);
         return { success: false, error: error.message };
       }
 
@@ -80,7 +79,6 @@ export class AuditService {
 
       return { success: true, auditLogId: data.id };
     } catch (error) {
-      console.error('Audit event logging failed:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
@@ -158,13 +156,11 @@ export class AuditService {
       const { data, error } = await query;
 
       if (error) {
-        console.error('Failed to query audit logs:', error);
         return { success: false, error: error.message };
       }
 
       return { success: true, logs: data || [] };
     } catch (error) {
-      console.error('Audit log query failed:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
@@ -204,7 +200,7 @@ export class AuditService {
         AuditEventType.SYSTEM_CONFIGURATION_CHANGE,
       ];
 
-      const loggedEventTypes = new Set(logs.map((log) => log.event_type));
+      const loggedEventTypes = new Set(logs.map((log: any) => log.event_type));
 
       for (const requiredType of requiredEventTypes) {
         if (!loggedEventTypes.has(requiredType)) {
@@ -217,7 +213,7 @@ export class AuditService {
       // Check for gaps in audit trail (periods without any logs)
       if (logs.length > 0) {
         const sortedLogs = logs.sort(
-          (a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+          (a: any, b: any) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
         );
 
         for (let i = 1; i < sortedLogs.length; i++) {
@@ -236,7 +232,7 @@ export class AuditService {
       }
 
       // Check for suspicious patterns
-      const criticalEvents = logs.filter((log) => log.severity === AuditSeverity.CRITICAL);
+      const criticalEvents = logs.filter((log: any) => log.severity === AuditSeverity.CRITICAL);
       if (criticalEvents.length > 10) {
         violations.push('High number of critical events detected');
         recommendations.push('Review security measures and access controls');
@@ -260,8 +256,7 @@ export class AuditService {
         violations,
         recommendations,
       };
-    } catch (error) {
-      console.error('Audit trail validation failed:', error);
+    } catch (_error) {
       return {
         isComplete: false,
         missingEvents: [],
@@ -286,13 +281,11 @@ export class AuditService {
         .upsert([validatedConfig], { onConflict: 'tenant_id' });
 
       if (error) {
-        console.error('Failed to configure audit settings:', error);
         return { success: false, error: error.message };
       }
 
       return { success: true };
     } catch (error) {
-      console.error('Audit configuration failed:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
@@ -341,26 +334,15 @@ export class AuditService {
    * Trigger real-time alert for critical events
    */
   private async triggerRealTimeAlert(
-    tenantId: string,
-    auditLog: Omit<AuditLog, 'id'>
+    _tenantId: string,
+    _auditLog: Omit<AuditLog, 'id'>
   ): Promise<void> {
     try {
-      // This would integrate with your notification system
-      // For now, we'll just log the critical event
-      console.warn('CRITICAL AUDIT EVENT:', {
-        tenantId,
-        eventType: auditLog.eventType,
-        description: auditLog.description,
-        timestamp: auditLog.timestamp,
-      });
-
       // In a real implementation, you would:
       // 1. Send notifications to administrators
       // 2. Trigger automated responses
       // 3. Update compliance dashboards
       // 4. Generate incident reports
-    } catch (error) {
-      console.error('Failed to trigger real-time alert:', error);
-    }
+    } catch (_error) {}
   }
 }

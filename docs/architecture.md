@@ -100,13 +100,47 @@ neonpro/
 │   │   │   ├── appointment.ts # Appointment types
 │   │   │   └── index.ts     # Package exports
 │   │   └── package.json
+│   ├── shared/           # @neonpro/shared - Business logic
+│   │   ├── src/
+│   │   │   ├── services/    # Business services
+│   │   │   ├── validations/ # Zod schemas
+│   │   │   └── constants/   # Business constants
+│   │   └── package.json
+│   ├── core-services/    # @neonpro/core-services - Centralized services
+│   │   ├── src/
+│   │   │   ├── hooks/       # React hooks
+│   │   │   ├── services/    # Core business services
+│   │   │   └── index.ts     # Package exports
+│   │   └── package.json
 │   └── config/           # @neonpro/config - Shared configurations
 │       ├── eslint-config.js # ESLint shared config
 │       ├── tailwind.config.js # Tailwind shared config
 │       ├── tsconfig.json    # TypeScript shared config
 │       └── package.json
+├── tools/                 # 🆕 Development tools (centralized)
+│   ├── testing/          # Centralized testing (unit, e2e, mocks)
+│   │   ├── unit/         # Unit tests
+│   │   ├── integration/  # Integration tests
+│   │   ├── e2e/          # End-to-end tests (Playwright)
+│   │   ├── mocks/        # Mock data
+│   │   ├── reports/      # Test reports
+│   │   └── legacy-tests/ # Migrated legacy tests
+│   ├── scripts/          # Build & deployment scripts
+│   └── config/           # Tool configurations
+├── infrastructure/       # 🆕 Infrastructure and automation
+│   └── automation/       # Trigger.dev jobs and automation
+│       ├── client.ts     # Trigger.dev client
+│       ├── jobs/         # Job definitions
+│       └── config/       # Infrastructure configs
+├── docs/                 # Documentation
+│   ├── shards/           # Modular documentation
+│   ├── guides/           # Development guides
+│   ├── api/              # API documentation
+│   └── archive/          # 🆕 Archived legacy code
+│       └── legacy-app-structure/ # Old src/app structure
 ├── pnpm-workspace.yaml   # PNPM workspace configuration
 ├── turbo.json           # Turborepo pipeline configuration
+├── playwright.config.ts  # Global Playwright configuration
 └── package.json         # Root package.json with workspace scripts
 ```
 
@@ -115,7 +149,15 @@ neonpro/
 - **@neonpro/ui**: Reusable UI components built with shadcn/ui and Radix UI
 - **@neonpro/utils**: Common utility functions for date handling, validation, and formatting
 - **@neonpro/types**: Shared TypeScript interfaces and types for healthcare entities
+- **@neonpro/shared**: Business logic and domain services
+- **@neonpro/core-services**: 🆕 Centralized React hooks and core services
 - **@neonpro/config**: Shared configuration files for ESLint, Tailwind, and TypeScript
+
+**Centralized Infrastructure:**
+
+- **tools/testing/**: 🆕 All tests, mocks, and reports centralized for better organization
+- **infrastructure/automation/**: 🆕 Trigger.dev automation jobs for clinic workflows
+- **docs/archive/**: 🆕 Legacy code archived for historical reference
 
 ### High Level Architecture Diagram
 
@@ -296,6 +338,30 @@ catalog:
 **Dependency Management**: PNPM's catalog ensures consistent package versions
 **Scalability**: Easy addition of new applications and packages as the system grows
 
+### Recent Architecture Reorganization (2025-01)
+
+**Centralized Testing Strategy**: All tests, mocks, fixtures and reports have been consolidated into `tools/testing/` for better organization and maintainability. This includes:
+- Unit tests in `tools/testing/unit/`
+- Integration tests in `tools/testing/integration/`
+- End-to-end Playwright tests in `tools/testing/e2e/`
+- Centralized mock data in `tools/testing/mocks/`
+- Test reports and coverage in `tools/testing/reports/`
+
+**Infrastructure Automation**: Trigger.dev jobs and automation workflows moved to `infrastructure/automation/` providing clear separation between application code and infrastructure concerns:
+- Background job definitions for appointment reminders, compliance reports, patient follow-ups
+- Centralized configuration for automation workflows
+- Clear deployment and maintenance patterns
+
+**Legacy Code Management**: Old source code structure archived in `docs/archive/legacy-app-structure/` maintaining historical reference while cleaning up active development structure:
+- Previous component structures preserved for reference
+- Migration documentation for understanding architectural evolution
+- Clean separation between active and legacy code
+
+**Core Services Package**: New `@neonpro/core-services` package centralizes React hooks and business services previously scattered across the application:
+- Centralized data fetching hooks (`usePatients`, `useAppointments`, etc.)
+- Core business services and API clients
+- Shared state management patterns
+
 ### Development Workflow
 
 ```bash
@@ -311,12 +377,37 @@ pnpm build
 # Lint all packages
 pnpm lint
 
+# Run tests (centralized in tools/testing/)
+pnpm test                              # Unit tests
+pnpm test:integration                  # Integration tests  
+pnpm test:e2e                         # End-to-end tests
+
 # Build specific package
 pnpm --filter @neonpro/ui build
 
 # Add dependency to specific package
 pnpm --filter @neonpro/web add lodash
+
+# Run Trigger.dev automation jobs
+pnpm --filter infrastructure/automation dev
+
+# Generate test reports
+pnpm test:coverage                     # Coverage report in tools/testing/reports/
 ```
+
+### Monorepo Quality Gates
+
+**Pre-commit Hooks**: Automated quality checks before code commits
+- Biome formatting and linting
+- TypeScript type checking
+- Unit test execution
+- Security vulnerability scanning
+
+**CI/CD Pipeline Integration**: Turborepo optimized build pipeline
+- Incremental builds based on package dependencies
+- Parallel test execution across packages
+- Centralized test reporting from tools/testing/
+- Automated deployment of infrastructure/automation jobs
 
 ## Data Models
 

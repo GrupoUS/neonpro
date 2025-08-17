@@ -1,26 +1,26 @@
 import { LRUCache } from 'lru-cache';
 
 // Healthcare-compliant cache configuration
-interface CacheOptions {
+type CacheOptions = {
   maxItems?: number;
   ttl?: number; // Time to live in milliseconds
   updateAgeOnGet?: boolean;
   allowStale?: boolean;
   encryptSensitiveData?: boolean;
-}
+};
 
 // LGPD-compliant cache for patient data
-interface SensitiveDataCache {
+type SensitiveDataCache = {
   data: any;
   encrypted: boolean;
   patientConsent: boolean;
   expiresAt: number;
   auditLog: string[];
-}
+};
 
 class HealthcareCacheManager {
-  private memoryCache: LRUCache<string, any>;
-  private sensitiveCache: LRUCache<string, SensitiveDataCache>;
+  private readonly memoryCache: LRUCache<string, any>;
+  private readonly sensitiveCache: LRUCache<string, SensitiveDataCache>;
 
   constructor(options: CacheOptions = {}) {
     // Memory cache for non-sensitive data
@@ -71,7 +71,6 @@ class HealthcareCacheManager {
     ttl: number = 1000 * 60 * 5 // 5 minutes default
   ): void {
     if (!patientConsent) {
-      console.warn('[LGPD] Attempted to cache sensitive data without patient consent');
       return;
     }
 
@@ -117,7 +116,6 @@ class HealthcareCacheManager {
   // Clear all sensitive data (LGPD compliance)
   clearSensitiveData(): void {
     this.sensitiveCache.clear();
-    console.log('[LGPD] All sensitive cache data cleared');
   }
 
   // Get cache statistics for monitoring
@@ -147,17 +145,12 @@ class HealthcareCacheManager {
       this.memoryCache.delete(key);
       this.sensitiveCache.delete(key);
     });
-
-    console.log(
-      `[Healthcare Cache] Invalidated ${keys.length} cache entries for patient ${patientId}`
-    );
   }
 
   // ANVISA compliance: Clear cache on audit request
   auditClearance(): void {
     this.memoryCache.clear();
     this.sensitiveCache.clear();
-    console.log('[ANVISA Compliance] All cache data cleared for audit');
   }
 }
 

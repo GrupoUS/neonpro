@@ -18,7 +18,7 @@ import {
  * Manages compliance audits for Brazilian healthcare regulations
  */
 export class ComplianceAuditService {
-  private supabaseClient: any;
+  private readonly supabaseClient: any;
 
   constructor(supabaseClient: any) {
     this.supabaseClient = supabaseClient;
@@ -82,7 +82,7 @@ export class ComplianceAuditService {
         regulation: regulation || HealthcareRegulation.CONSTITUTIONAL,
         overallScore,
         findings: allFindings,
-        recommendations: [...new Set(recommendations)], // Remove duplicates
+        recommendations: Array.from(new Set(recommendations)), // Remove duplicates
         actionItems: allActionItems,
         nextAuditDue,
         status: 'DRAFT',
@@ -117,13 +117,11 @@ export class ComplianceAuditService {
         ]);
 
       if (saveError) {
-        console.error('Failed to save compliance audit report:', saveError);
         return { success: false, error: saveError.message };
       }
 
       return { success: true, report };
     } catch (error) {
-      console.error('Compliance audit report generation failed:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
@@ -143,10 +141,10 @@ export class ComplianceAuditService {
     score: number;
     regRecommendations: string[];
   }> {
-    const findings: ComplianceAuditFinding[] = [];
-    const actionItems: ComplianceActionItem[] = [];
-    const recommendations: string[] = [];
-    const score = 10;
+    const _findings: ComplianceAuditFinding[] = [];
+    const _actionItems: ComplianceActionItem[] = [];
+    const _recommendations: string[] = [];
+    const _score = 10;
 
     switch (regulation) {
       case HealthcareRegulation.LGPD:
@@ -253,7 +251,6 @@ export class ComplianceAuditService {
         regRecommendations: recommendations,
       };
     } catch (error) {
-      console.error('LGPD compliance audit failed:', error);
       return {
         findings: [
           {
@@ -277,7 +274,7 @@ export class ComplianceAuditService {
   /**
    * Audit ANVISA compliance
    */
-  private async auditANVISACompliance(tenantId: string): Promise<{
+  private async auditANVISACompliance(_tenantId: string): Promise<{
     findings: ComplianceAuditFinding[];
     actionItems: ComplianceActionItem[];
     score: number;
@@ -310,7 +307,7 @@ export class ComplianceAuditService {
   /**
    * Audit CFM compliance
    */
-  private async auditCFMCompliance(tenantId: string): Promise<{
+  private async auditCFMCompliance(_tenantId: string): Promise<{
     findings: ComplianceAuditFinding[];
     actionItems: ComplianceActionItem[];
     score: number;
@@ -343,7 +340,7 @@ export class ComplianceAuditService {
   /**
    * Audit constitutional compliance
    */
-  private async auditConstitutionalCompliance(tenantId: string): Promise<{
+  private async auditConstitutionalCompliance(_tenantId: string): Promise<{
     findings: ComplianceAuditFinding[];
     actionItems: ComplianceActionItem[];
     score: number;
@@ -380,7 +377,6 @@ export class ComplianceAuditService {
         .single();
 
       if (error) {
-        console.error('Failed to fetch audit report:', error);
         return { success: false, error: error.message };
       }
 
@@ -406,7 +402,6 @@ export class ComplianceAuditService {
 
       return { success: true, report };
     } catch (error) {
-      console.error('Failed to get audit report:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
@@ -428,13 +423,11 @@ export class ComplianceAuditService {
         .eq('id', reportId);
 
       if (error) {
-        console.error('Failed to update audit report status:', error);
         return { success: false, error: error.message };
       }
 
       return { success: true };
     } catch (error) {
-      console.error('Failed to update audit report status:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',

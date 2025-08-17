@@ -13,7 +13,7 @@ import { Button } from '../Button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../Card';
 import { Progress } from '../Progress';
 
-export interface AnvisaDashboardProps {
+export type AnvisaDashboardProps = {
   stats: {
     activeRegistrations: number;
     pendingApprovals: number;
@@ -27,7 +27,7 @@ export interface AnvisaDashboardProps {
     timestamp: string;
     status: 'pending' | 'approved' | 'rejected';
   }>;
-}
+};
 
 export function AnvisaDashboard({
   stats,

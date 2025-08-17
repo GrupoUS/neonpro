@@ -61,7 +61,7 @@ export enum PatientDataClassification {
 /**
  * Base Entity with Compliance Metadata
  */
-export interface BaseComplianceEntity {
+export type BaseComplianceEntity = {
   id: string;
   createdAt: Date;
   updatedAt: Date;
@@ -69,12 +69,12 @@ export interface BaseComplianceEntity {
   regulation: HealthcareRegulation;
   status: ComplianceStatus;
   auditTrail: AuditTrailEntry[];
-}
+};
 
 /**
  * Audit Trail Entry
  */
-export interface AuditTrailEntry {
+export type AuditTrailEntry = {
   id: string;
   timestamp: Date;
   action: string;
@@ -84,7 +84,7 @@ export interface AuditTrailEntry {
   userAgent: string;
   changes: Record<string, any>;
   complianceImpact: ComplianceScore;
-}
+};
 
 /**
  * LGPD Data Subject Rights
@@ -123,19 +123,19 @@ export enum CFMProfessionalCategory {
 /**
  * Compliance Validation Result
  */
-export interface ComplianceValidationResult {
+export type ComplianceValidationResult = {
   isCompliant: boolean;
   score: ComplianceScore;
   violations: ComplianceViolation[];
   recommendations: string[];
   validatedAt: Date;
   validatedBy: string;
-}
+};
 
 /**
  * Compliance Violation
  */
-export interface ComplianceViolation {
+export type ComplianceViolation = {
   id: string;
   regulation: HealthcareRegulation;
   severity: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
@@ -143,7 +143,7 @@ export interface ComplianceViolation {
   article: string;
   remediation: string;
   deadline: Date;
-}
+};
 
 /**
  * Healthcare Consent Types
@@ -160,7 +160,7 @@ export enum HealthcareConsentType {
 /**
  * Consent Record
  */
-export interface ConsentRecord {
+export type ConsentRecord = {
   id: string;
   patientId: string;
   consentType: HealthcareConsentType;
@@ -173,7 +173,7 @@ export interface ConsentRecord {
   digitalSignature: string;
   ipAddress: string;
   userAgent: string;
-}
+};
 
 // Zod Schemas for Runtime Validation
 export const AuditTrailEntrySchema = z.object({

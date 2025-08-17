@@ -1,7 +1,5 @@
-import { z } from 'zod';
 import type {
   RiskAssessmentInput,
-  RiskFactorCategory,
   RiskLevel,
   RiskScoreBreakdown,
 } from '@/app/types/risk-assessment-automation';

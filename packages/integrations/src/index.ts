@@ -27,20 +27,20 @@ export const IntegrationConfig = {
 } as const;
 
 // Integration Types
-export interface IntegrationStatus {
+export type IntegrationStatus = {
   ehr: boolean;
   laboratory: boolean;
   insurance: boolean;
   pharmacy: boolean;
   government: boolean;
-}
+};
 
-export interface IntegrationHealth {
+export type IntegrationHealth = {
   status: 'healthy' | 'degraded' | 'unhealthy';
   lastCheck: string;
   endpoints: number;
   errors: number;
-}
+};
 
 export const DefaultIntegrationStatus: IntegrationStatus = {
   ehr: false,

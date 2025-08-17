@@ -10,7 +10,6 @@ import {
   Activity,
   AlertTriangle,
   CheckCircle,
-  Clock,
   Eye,
   RefreshCw,
   Shield,
@@ -32,9 +31,9 @@ import { SecurityAlertsTable } from './SecurityAlertsTable';
 import { SecurityEventsTable } from './SecurityEventsTable';
 import { SecurityMetricsOverview } from './SecurityMetricsOverview';
 
-interface SecurityDashboardProps {
+type SecurityDashboardProps = {
   className?: string;
-}
+};
 
 export function SecurityDashboard({ className }: SecurityDashboardProps) {
   const [metrics, setMetrics] = useState<SecurityMetrics | null>(null);
@@ -54,7 +53,6 @@ export function SecurityDashboard({ className }: SecurityDashboardProps) {
       const data = await response.json();
       setMetrics(data);
     } catch (err) {
-      console.error('Error loading security metrics:', err);
       setError(err instanceof Error ? err.message : 'Failed to load metrics');
     } finally {
       setLoading(false);
@@ -73,7 +71,7 @@ export function SecurityDashboard({ className }: SecurityDashboardProps) {
     // Auto-refresh every 30 seconds
     const interval = setInterval(loadMetrics, 30_000);
     return () => clearInterval(interval);
-  }, []);
+  }, [loadMetrics]);
 
   const getThreatLevelColor = (level: string) => {
     switch (level) {
@@ -110,7 +108,7 @@ export function SecurityDashboard({ className }: SecurityDashboardProps) {
       <div className={`space-y-6 ${className}`}>
         <div className="animate-pulse">
           <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-            {[...Array(4)].map((_, i) => (
+            {[...new Array(4)].map((_, i) => (
               <Card key={i}>
                 <CardHeader className="pb-2">
                   <div className="h-4 w-3/4 rounded bg-gray-200" />

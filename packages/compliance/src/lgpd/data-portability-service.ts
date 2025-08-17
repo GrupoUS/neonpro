@@ -12,7 +12,8 @@
  */
 
 import { z } from 'zod';
-import type { ComplianceScore, ConstitutionalResponse, PatientDataClassification } from '../types';
+import type { ComplianceScore, ConstitutionalResponse } from '../types';
+import { PatientDataClassification } from '../types';
 
 /**
  * Data Portability Request Schema
@@ -81,7 +82,7 @@ export type DataPortabilityRequest = z.infer<typeof DataPortabilityRequestSchema
 /**
  * Portability Export Result
  */
-export interface PortabilityResult {
+export type PortabilityResult = {
   requestId: string;
   status: 'COMPLETED' | 'PARTIAL' | 'FAILED' | 'PROCESSING';
   exportedData: {
@@ -129,14 +130,12 @@ export interface PortabilityResult {
     details: string;
     dataCategories: string[];
   }>;
-}
+};
 
 /**
  * Constitutional Data Portability Service for Healthcare LGPD Compliance
  */
 export class DataPortabilityService {
-  private readonly constitutionalQualityStandard = 9.9;
-  private readonly maxExportTimeHours = 30; // Constitutional healthcare requirement (LGPD Art. 19)
   private readonly exportExpiryDays = 30; // Secure download expiry
 
   /**
@@ -239,18 +238,20 @@ export class DataPortabilityService {
 
     // Healthcare-specific validations
     if (
-      (request.dataCategories.includes('HEALTH') || request.dataCategories.includes('GENETIC')) &&
+      (request.dataCategories.includes(PatientDataClassification.HEALTH) ||
+        request.dataCategories.includes(PatientDataClassification.GENETIC)) &&
       (request.exportFormat === 'JSON' || request.exportFormat === 'XML')
     ) {
-      // Ensure FHIR compliance for medical data
-      if (request.exportFormat !== 'FHIR') {
-        violations.push('Medical data export should use FHIR standard for interoperability');
-        score -= 0.5;
-      }
+      // Recommend FHIR compliance for medical data
+      violations.push('Medical data export should use FHIR standard for interoperability');
+      score -= 0.5;
     }
 
     // Child data protection (Art. 14 LGPD)
-    if (request.dataCategories.includes('CHILD') && !request.guardianConsent) {
+    if (
+      request.dataCategories.includes(PatientDataClassification.CHILD) &&
+      !request.guardianConsent
+    ) {
       violations.push('Guardian consent required for child data portability');
       score -= 2;
     }
@@ -262,7 +263,10 @@ export class DataPortabilityService {
     }
 
     // Security requirements validation
-    if (request.dataCategories.includes('SENSITIVE') || request.dataCategories.includes('HEALTH')) {
+    if (
+      request.dataCategories.includes(PatientDataClassification.SENSITIVE) ||
+      request.dataCategories.includes(PatientDataClassification.HEALTH)
+    ) {
       if (!request.encryptionRequired) {
         violations.push('Encryption required for sensitive healthcare data');
         score -= 2;
@@ -288,7 +292,7 @@ export class DataPortabilityService {
   } /**
    * Analyze Exportable Data and Legal Restrictions
    */
-  private async analyzeExportableData(request: DataPortabilityRequest): Promise<{
+  private async analyzeExportableData(_request: DataPortabilityRequest): Promise<{
     exportableData: {
       table: string;
       records: number;
@@ -380,7 +384,7 @@ export class DataPortabilityService {
 
     try {
       // Step 1: Prepare export data structure
-      const exportData: any = {
+      let exportData: any = {
         metadata: {
           exportedAt: new Date().toISOString(),
           patientId: request.patientId,
@@ -544,7 +548,7 @@ export class DataPortabilityService {
         break;
 
       case 'SECURE_PORTAL': {
-        const portalAccess = await this.createPortalAccess(result, request);
+        const _portalAccess = await this.createPortalAccess(result, request);
         updatedResult.deliveryInfo.accessInstructions =
           'Access your exported data through the patient portal using your secure credentials.';
         break;
@@ -585,19 +589,30 @@ export class DataPortabilityService {
     }
 
     // Security compliance
-    if (request.encryptionRequired) score += 0.2;
-    if (request.passwordProtection) score += 0.2;
+    if (request.encryptionRequired) {
+      score += 0.2;
+    }
+    if (request.passwordProtection) {
+      score += 0.2;
+    }
 
     // Accessibility compliance
-    if (request.accessibilityRequirements) score += 0.3;
+    if (request.accessibilityRequirements) {
+      score += 0.3;
+    }
 
     // Healthcare standards compliance
-    if (request.exportFormat === 'FHIR' && request.dataCategories.includes('HEALTH')) {
+    if (
+      request.exportFormat === 'FHIR' &&
+      request.dataCategories.includes(PatientDataClassification.HEALTH)
+    ) {
       score += 0.3; // Bonus for healthcare interoperability standard
     }
 
     // Transparency compliance
-    if (auditTrail.length > 0) score += 0.2;
+    if (auditTrail.length > 0) {
+      score += 0.2;
+    }
 
     return Math.max(0, Math.min(10, score)) as ComplianceScore;
   }
@@ -607,32 +622,31 @@ export class DataPortabilityService {
   // ============================================================================
 
   private async exportTableData(
-    table: string,
-    patientId: string,
-    format: string
+    _table: string,
+    _patientId: string,
+    _format: string
   ): Promise<{ records: any[] }> {
-    console.log(`Exporting data from ${table} for patient ${patientId} in ${format} format`);
     return { records: [] }; // Would query Supabase database
   }
 
-  private async convertToFHIRFormat(data: any, request: DataPortabilityRequest): Promise<any> {
-    console.log('Converting data to FHIR format');
+  private async convertToFHIRFormat(data: any, _request: DataPortabilityRequest): Promise<any> {
     return data; // Would implement FHIR conversion
   }
 
-  private async generateHumanReadablePDF(data: any, request: DataPortabilityRequest): Promise<any> {
-    console.log('Generating human-readable PDF');
+  private async generateHumanReadablePDF(
+    data: any,
+    _request: DataPortabilityRequest
+  ): Promise<any> {
     return data; // Would implement PDF generation
   }
 
-  private async generateExportFile(data: any, format: string): Promise<any> {
-    console.log(`Generating export file in ${format} format`);
+  private async generateExportFile(data: any, _format: string): Promise<any> {
     return data;
   }
 
   private async encryptExportData(
-    result: PortabilityResult,
-    request: DataPortabilityRequest
+    _result: PortabilityResult,
+    _request: DataPortabilityRequest
   ): Promise<{ key: string }> {
     return { key: 'encrypted_key_placeholder' };
   }
@@ -642,57 +656,48 @@ export class DataPortabilityService {
   }
 
   private async applyPasswordProtection(
-    result: PortabilityResult,
-    password: string
-  ): Promise<void> {
-    console.log('Applying password protection');
-  }
+    _result: PortabilityResult,
+    _password: string
+  ): Promise<void> {}
 
-  private async generateDigitalSignature(result: PortabilityResult): Promise<string> {
+  private async generateDigitalSignature(_result: PortabilityResult): Promise<string> {
     return 'digital_signature_placeholder';
   }
 
-  private async createSecureDownloadLink(result: PortabilityResult): Promise<string> {
+  private async createSecureDownloadLink(_result: PortabilityResult): Promise<string> {
     return 'https://secure.neonpro.com/download/encrypted_export_placeholder';
   }
 
   private async sendEncryptedEmail(
-    result: PortabilityResult,
-    request: DataPortabilityRequest
-  ): Promise<void> {
-    console.log('Sending encrypted email');
-  }
+    _result: PortabilityResult,
+    _request: DataPortabilityRequest
+  ): Promise<void> {}
 
   private async createPortalAccess(
-    result: PortabilityResult,
-    request: DataPortabilityRequest
-  ): Promise<void> {
-    console.log('Creating portal access');
-  }
+    _result: PortabilityResult,
+    _request: DataPortabilityRequest
+  ): Promise<void> {}
 
-  private async executeDirectTransfer(result: PortabilityResult, destination: any): Promise<void> {
-    console.log('Executing direct transfer');
-  }
+  private async executeDirectTransfer(
+    _result: PortabilityResult,
+    _destination: any
+  ): Promise<void> {}
 
   private async schedulePhysicalDelivery(
-    result: PortabilityResult,
-    request: DataPortabilityRequest
-  ): Promise<void> {
-    console.log('Scheduling physical delivery');
-  }
+    _result: PortabilityResult,
+    _request: DataPortabilityRequest
+  ): Promise<void> {}
 
   private async requestPatientConfirmation(
-    request: DataPortabilityRequest
+    _request: DataPortabilityRequest
   ): Promise<{ confirmed: boolean }> {
     return { confirmed: true }; // Would implement confirmation workflow
   }
 
   private async sendPortabilityCompletionNotification(
-    request: DataPortabilityRequest,
-    result: PortabilityResult
-  ): Promise<void> {
-    console.log(`Sending portability completion notification for request ${result.requestId}`);
-  }
+    _request: DataPortabilityRequest,
+    _result: PortabilityResult
+  ): Promise<void> {}
 
   private async createAuditEvent(action: string, data: any): Promise<any> {
     return {
@@ -709,7 +714,7 @@ export class DataPortabilityService {
    */
   async getPortabilityStatus(
     requestId: string,
-    tenantId: string
+    _tenantId: string
   ): Promise<ConstitutionalResponse<PortabilityResult | null>> {
     try {
       // Would query database for portability status

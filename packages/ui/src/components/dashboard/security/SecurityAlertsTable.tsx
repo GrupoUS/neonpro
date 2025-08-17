@@ -7,7 +7,6 @@ import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { Badge } from '../../ui/badge';
 import { Button } from '../../ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../ui/card';
 import {
   Dialog,
   DialogContent,
@@ -21,7 +20,7 @@ import { Label } from '../../ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../../ui/table';
 
-interface SecurityAlert {
+type SecurityAlert = {
   id: string;
   alert_type: string;
   severity: 'low' | 'medium' | 'high' | 'critical';
@@ -43,7 +42,7 @@ interface SecurityAlert {
   resolved_at?: string;
   created_at: string;
   updated_at: string;
-}
+};
 
 export function SecurityAlertsTable() {
   const [alerts, setAlerts] = useState<SecurityAlert[]>([]);
@@ -69,8 +68,7 @@ export function SecurityAlertsTable() {
 
       const data = await response.json();
       setAlerts(data.alerts || []);
-    } catch (error) {
-      console.error('Error fetching security alerts:', error);
+    } catch (_error) {
       toast.error('Erro ao carregar alertas de segurança');
     } finally {
       setLoading(false);
@@ -79,7 +77,7 @@ export function SecurityAlertsTable() {
 
   useEffect(() => {
     fetchAlerts();
-  }, []);
+  }, [fetchAlerts]);
 
   const handleUpdateStatus = async (alertId: string, newStatus: string) => {
     try {
@@ -97,8 +95,7 @@ export function SecurityAlertsTable() {
 
       await fetchAlerts();
       toast.success('Status do alerta atualizado com sucesso');
-    } catch (error) {
-      console.error('Error updating alert status:', error);
+    } catch (_error) {
       toast.error('Erro ao atualizar status do alerta');
     }
   };

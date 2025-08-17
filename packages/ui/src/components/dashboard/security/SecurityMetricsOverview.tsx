@@ -6,24 +6,15 @@
 
 'use client';
 
-import {
-  Activity,
-  AlertTriangle,
-  CheckCircle2,
-  Clock,
-  Shield,
-  TrendingUp,
-  Users,
-  XCircle,
-} from 'lucide-react';
+import { Activity, CheckCircle2, Clock, Shield, TrendingUp, Users, XCircle } from 'lucide-react';
 import type { SecurityMetrics } from '../../../lib/utils';
 import { Badge } from '../../ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '../../ui/card';
 import { Progress } from '../../ui/progress';
 
-interface SecurityMetricsOverviewProps {
+type SecurityMetricsOverviewProps = {
   metrics: SecurityMetrics;
-}
+};
 
 export function SecurityMetricsOverview({ metrics }: SecurityMetricsOverviewProps) {
   const getThreatLevelColor = (level: string) => {
@@ -42,16 +33,28 @@ export function SecurityMetricsOverview({ metrics }: SecurityMetricsOverviewProp
   };
 
   const getComplianceColor = (score: number) => {
-    if (score >= 95) return 'text-green-600';
-    if (score >= 85) return 'text-yellow-600';
-    if (score >= 70) return 'text-orange-600';
+    if (score >= 95) {
+      return 'text-green-600';
+    }
+    if (score >= 85) {
+      return 'text-yellow-600';
+    }
+    if (score >= 70) {
+      return 'text-orange-600';
+    }
     return 'text-red-600';
   };
 
-  const getComplianceVariant = (score: number) => {
-    if (score >= 95) return 'default';
-    if (score >= 85) return 'secondary';
-    if (score >= 70) return 'outline';
+  const _getComplianceVariant = (score: number) => {
+    if (score >= 95) {
+      return 'default';
+    }
+    if (score >= 85) {
+      return 'secondary';
+    }
+    if (score >= 70) {
+      return 'outline';
+    }
     return 'destructive';
   };
 

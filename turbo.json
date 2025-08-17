@@ -1,132 +1,289 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "ui": "tui",
+  "experimentalUI": true,
+  "experimentalSpaces": true,
+  "boundaries": {
+    "rules": [
+      {
+        "tag": "app",
+        "dependsOn": [
+          "shared",
+          "ui",
+          "types",
+          "utils",
+          "domain",
+          "security",
+          "compliance"
+        ]
+      },
+      {
+        "tag": "shared",
+        "dependsOn": ["shared", "types"]
+      },
+      {
+        "tag": "ui",
+        "dependsOn": ["shared", "types", "utils"]
+      },
+      {
+        "tag": "tools",
+        "dependsOn": ["shared", "types", "utils"]
+      },
+      {
+        "tag": "domain",
+        "dependsOn": ["shared", "types", "utils", "compliance"]
+      }
+    ]
+  },
+  "globalDependencies": [
+    ".env",
+    ".env.local",
+    ".env.production",
+    ".env.test",
+    "tsconfig.json",
+    "package.json",
+    "pnpm-workspace.yaml",
+    "biome.jsonc",
+    "jest.config.js",
+    "vitest.config.ts",
+    "playwright.config.ts",
+    "turbo.json"
+  ],
   "tasks": {
     "build": {
-      "dependsOn": ["^build", "type-check", "lint:biome"],
-      "outputs": [".next/**", "!.next/cache/**", "dist/**"],
+      "dependsOn": ["^build", "type-check"],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        ".env*",
+        "next.config.*",
+        "tsconfig.json",
+        "tailwind.config.*",
+        "postcss.config.*"
+      ],
+      "outputs": [
+        ".next/**",
+        "!.next/cache/**",
+        "dist/**",
+        "build/**",
+        ".vercel/**"
+      ],
       "env": [
-        "NEXT_PUBLIC_SUPABASE_URL",
-        "NEXT_PUBLIC_SUPABASE_ANON_KEY",
-        "NEXT_PUBLIC_APP_URL",
         "NODE_ENV",
-        "VERCEL_ENV",
-        "NEXT_TELEMETRY_DISABLED"
+        "NEXT_PUBLIC_*",
+        "SUPABASE_*",
+        "DATABASE_URL",
+        "VERCEL_*"
       ]
     },
     "dev": {
       "cache": false,
       "persistent": true,
-      "env": [
-        "NEXT_PUBLIC_SUPABASE_URL",
-        "NEXT_PUBLIC_SUPABASE_ANON_KEY",
-        "NEXT_PUBLIC_APP_URL"
-      ]
-    },
-    "lint": {
       "dependsOn": ["^build"],
-      "outputs": []
-    },
-    "lint:biome": {
-      "outputs": [],
-      "inputs": ["**/*.{js,ts,jsx,tsx,json}"]
-    },
-    "format": {
-      "outputs": [],
-      "inputs": ["**/*.{js,ts,jsx,tsx,json,md}"]
-    },
-    "format:check": {
-      "outputs": [],
-      "inputs": ["**/*.{js,ts,jsx,tsx,json,md}"]
-    },
-    "type-check": {
-      "dependsOn": ["^build"],
-      "outputs": [],
-      "inputs": ["**/*.{ts,tsx}", "tsconfig.json"]
+      "env": ["NODE_ENV", "NEXT_PUBLIC_*", "SUPABASE_*", "DATABASE_URL"]
     },
     "test": {
-      "dependsOn": ["^build"],
-      "outputs": ["coverage/**"],
+      "dependsOn": ["build"],
       "inputs": [
-        "**/*.{js,ts,jsx,tsx}",
+        "$TURBO_DEFAULT$",
+        "vitest.config.*",
+        "jest.config.*",
         "**/*.test.*",
         "**/*.spec.*",
-        "jest.config.*"
-      ]
-    },
-    "test:unit": {
-      "dependsOn": ["^build"],
-      "outputs": ["coverage/**"],
-      "inputs": ["**/*.{js,ts,jsx,tsx}", "**/*.test.*", "**/*.spec.*"]
-    },
-    "test:integration": {
-      "dependsOn": ["^build"],
-      "outputs": [],
-      "inputs": ["**/*.{js,ts,jsx,tsx}", "**/*.test.*", "**/*.spec.*"]
+        "__tests__/**",
+        "tests/**"
+      ],
+      "outputs": ["coverage/**", "test-results/**", ".nyc_output/**"],
+      "env": ["NODE_ENV", "TEST_*", "CI"]
     },
     "test:healthcare": {
-      "dependsOn": ["^build"],
-      "outputs": [],
-      "inputs": ["**/*.{js,ts,jsx,tsx}", "**/*.test.*", "**/*.spec.*"]
+      "dependsOn": ["build", "test"],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "packages/devops/src/testing/**",
+        "**/*.healthcare.test.*",
+        "**/*.compliance.test.*"
+      ],
+      "outputs": ["coverage/healthcare/**", "test-results/healthcare/**"],
+      "env": [
+        "NODE_ENV",
+        "HEALTHCARE_TEST_MODE",
+        "LGPD_COMPLIANCE_MODE",
+        "ANVISA_COMPLIANCE_MODE",
+        "CFM_COMPLIANCE_MODE"
+      ]
     },
-    "test:coverage": {
-      "dependsOn": ["^build"],
-      "outputs": ["coverage/**"],
-      "inputs": ["**/*.{js,ts,jsx,tsx}", "**/*.test.*", "**/*.spec.*"]
-    },
-    "analyze": {
+    "test:compliance": {
       "dependsOn": ["build"],
-      "outputs": [".next/analyze/**"]
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "packages/devops/src/testing/**",
+        "**/*.lgpd.test.*",
+        "**/*.anvisa.test.*",
+        "**/*.cfm.test.*"
+      ],
+      "outputs": ["compliance-reports/**", "audit-trails/**"],
+      "env": ["NODE_ENV", "COMPLIANCE_VALIDATION_MODE", "AUDIT_TRAIL_ENABLED"]
     },
-    "clean": {
-      "cache": false,
+    "test:e2e": {
+      "dependsOn": ["build"],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "playwright.config.*",
+        "**/*.e2e.*",
+        "tests/e2e/**"
+      ],
+      "outputs": ["playwright-report/**", "test-results/**"],
+      "env": ["NODE_ENV", "E2E_BASE_URL", "PLAYWRIGHT_*"]
+    },
+    "lint": {
+      "dependsOn": ["^lint"],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "biome.jsonc",
+        ".eslintrc.*",
+        "**/*.{js,jsx,ts,tsx,vue,svelte}"
+      ],
+      "outputs": ["lint-results/**"]
+    },
+    "lint:healthcare": {
+      "dependsOn": ["lint"],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "packages/devops/**",
+        "apps/web/app/**",
+        "packages/compliance/**"
+      ],
+      "outputs": ["lint-results/healthcare/**"]
+    },
+    "type-check": {
+      "dependsOn": ["^type-check"],
+      "inputs": ["$TURBO_DEFAULT$", "tsconfig.json", "**/*.{ts,tsx}"],
+      "outputs": ["**/*.tsbuildinfo"]
+    },
+    "format": {
+      "inputs": ["$TURBO_DEFAULT$", "biome.jsonc", ".prettierrc.*"],
       "outputs": []
     },
-    "security:audit": {
+    "clean": {
+      "inputs": [],
       "outputs": [],
       "cache": false
     },
-    "quality:check": {
-      "dependsOn": ["format:check", "lint:biome", "type-check", "test:unit"],
-      "outputs": []
-    },
-    "quality:fix": {
-      "dependsOn": ["format", "lint:biome:fix"],
-      "outputs": []
+    "clean:healthcare": {
+      "inputs": [],
+      "outputs": [],
+      "cache": false,
+      "dependsOn": ["clean"]
     },
     "db:generate": {
-      "cache": false,
-      "outputs": ["node_modules/.prisma/**"]
+      "inputs": [
+        "packages/db/prisma/schema.prisma",
+        "infrastructure/database/migrations/**"
+      ],
+      "outputs": ["packages/db/prisma/generated/**", "types/supabase.ts"],
+      "cache": false
+    },
+    "db:push": {
+      "inputs": [
+        "packages/db/prisma/schema.prisma",
+        "infrastructure/database/migrations/**"
+      ],
+      "outputs": [],
+      "cache": false
     },
     "db:migrate": {
-      "cache": false,
-      "outputs": []
+      "inputs": ["infrastructure/database/migrations/**"],
+      "outputs": [],
+      "cache": false
     },
-    "db:seed": {
-      "dependsOn": ["db:generate"],
-      "cache": false,
-      "outputs": []
+    "healthcare:validate": {
+      "dependsOn": [
+        "build",
+        "test:healthcare",
+        "test:compliance",
+        "lint:healthcare"
+      ],
+      "inputs": ["$TURBO_DEFAULT$", "packages/devops/src/testing/**"],
+      "outputs": [
+        "healthcare-validation-report.json",
+        "compliance-certification.json"
+      ],
+      "env": ["NODE_ENV", "HEALTHCARE_VALIDATION_MODE", "QUALITY_THRESHOLD"]
     },
-    "db:studio": {
-      "cache": false,
-      "persistent": true
+    "healthcare:audit": {
+      "dependsOn": ["healthcare:validate"],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "packages/compliance/**",
+        "audit-trails/**"
+      ],
+      "outputs": [
+        "healthcare-audit-report.json",
+        "regulatory-compliance-report.json"
+      ],
+      "cache": false
+    },
+    "security:scan": {
+      "inputs": ["$TURBO_DEFAULT$", "package.json", "pnpm-lock.yaml"],
+      "outputs": ["security-scan-results.json", "vulnerability-report.json"]
+    },
+    "performance:test": {
+      "dependsOn": ["build"],
+      "inputs": ["$TURBO_DEFAULT$", "performance/**"],
+      "outputs": ["performance-reports/**", "lighthouse-reports/**"]
+    },
+    "accessibility:test": {
+      "dependsOn": ["build"],
+      "inputs": ["$TURBO_DEFAULT$", "accessibility/**"],
+      "outputs": ["accessibility-reports/**", "wcag-compliance-report.json"]
+    },
+    "quality:gate": {
+      "dependsOn": [
+        "healthcare:validate",
+        "security:scan",
+        "performance:test",
+        "accessibility:test"
+      ],
+      "inputs": ["$TURBO_DEFAULT$"],
+      "outputs": ["quality-gate-report.json", "overall-quality-score.json"],
+      "env": ["QUALITY_THRESHOLD", "HEALTHCARE_QUALITY_MODE"]
+    },
+    "deploy:prepare": {
+      "dependsOn": ["quality:gate"],
+      "inputs": ["$TURBO_DEFAULT$", "vercel.json", "Dockerfile*"],
+      "outputs": ["deployment-artifacts/**"]
+    },
+    "docker:build": {
+      "dependsOn": ["build"],
+      "inputs": ["$TURBO_DEFAULT$", "Dockerfile*", ".dockerignore"],
+      "outputs": [],
+      "cache": false
+    },
+    "docker:prune": {
+      "inputs": ["$TURBO_DEFAULT$"],
+      "outputs": ["out/**"]
     }
   },
-  "globalDependencies": [
-    "**/.env",
-    "**/.env.local",
-    "**/.env.production",
-    "**/.env.test",
-    "tsconfig.json",
-    "tailwind.config.*",
-    "next.config.*",
-    "biome.jsonc",
-    "jest.config.*",
-    "package.json",
-    "pnpm-lock.yaml"
-  ],
-  "globalEnv": ["NODE_ENV", "CI", "VERCEL", "VERCEL_ENV"],
   "remoteCache": {
-    "signature": true
-  }
+    "signature": true,
+    "preflight": true,
+    "timeout": 30,
+    "uploadTimeout": 60
+  },
+  "cacheDir": ".turbo/cache",
+  "daemon": true,
+  "logOrder": "grouped",
+  "experimentalGlobalPassThroughEnv": [
+    "NODE_ENV",
+    "CI",
+    "VERCEL",
+    "NEXT_PUBLIC_*",
+    "SUPABASE_*",
+    "DATABASE_URL",
+    "HEALTHCARE_*",
+    "LGPD_*",
+    "ANVISA_*",
+    "CFM_*",
+    "QUALITY_*"
+  ]
 }

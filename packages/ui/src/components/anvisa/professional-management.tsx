@@ -22,10 +22,8 @@ import { Alert, AlertDescription } from '../Alert';
 import { Badge } from '../Badge';
 import { Button } from '../Button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../Card';
-import { Input } from '../Input';
-import { Label } from '../Label';
 
-interface Professional {
+type Professional = {
   id: string;
   name: string;
   crm_number: string;
@@ -36,25 +34,25 @@ interface Professional {
   authorized_procedures: string[];
   certification_expiry: string;
   created_at: string;
-}
+};
 
-interface ProfessionalFormData {
+type ProfessionalFormData = {
   name: string;
   crm_number: string;
   specialty: string;
   certification_level: string;
   authorized_procedures: string[];
-}
+};
 
-interface ANVISAProfessionalManagementProps {
+type ANVISAProfessionalManagementProps = {
   clinicId: string;
-}
+};
 
 export function ANVISAProfessionalManagement({ clinicId }: ANVISAProfessionalManagementProps) {
   const [professionals, setProfessionals] = useState<Professional[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
-  const [formData, setFormData] = useState<ProfessionalFormData>({
+  const [_formData, _setFormData] = useState<ProfessionalFormData>({
     name: '',
     crm_number: '',
     specialty: '',
@@ -66,7 +64,7 @@ export function ANVISAProfessionalManagement({ clinicId }: ANVISAProfessionalMan
 
   useEffect(() => {
     fetchProfessionals();
-  }, [clinicId]);
+  }, [fetchProfessionals]);
 
   const fetchProfessionals = async () => {
     try {
@@ -76,14 +74,14 @@ export function ANVISAProfessionalManagement({ clinicId }: ANVISAProfessionalMan
         const data = await response.json();
         setProfessionals(data.data);
       }
-    } catch (error) {
+    } catch (_error) {
       setError('Erro ao carregar profissionais');
     } finally {
       setLoading(false);
     }
   };
 
-  const verifyAuthorization = async (professionalId: string, procedureCode: string) => {
+  const _verifyAuthorization = async (professionalId: string, procedureCode: string) => {
     try {
       const response = await fetch(
         `/api/anvisa/professionals?clinic_id=${clinicId}&action=verify_authorization&professional_id=${professionalId}&procedure_code=${procedureCode}`
@@ -92,9 +90,7 @@ export function ANVISAProfessionalManagement({ clinicId }: ANVISAProfessionalMan
         const data = await response.json();
         return data.data.is_authorized;
       }
-    } catch (error) {
-      console.error('Error verifying authorization:', error);
-    }
+    } catch (_error) {}
     return false;
   };
 
@@ -114,7 +110,7 @@ export function ANVISAProfessionalManagement({ clinicId }: ANVISAProfessionalMan
         );
         setSuccess(`Score de conformidade atualizado: ${data.data.compliance_score}%`);
       }
-    } catch (error) {
+    } catch (_error) {
       setError('Erro ao atualizar score de conformidade');
     }
   };
@@ -150,9 +146,15 @@ export function ANVISAProfessionalManagement({ clinicId }: ANVISAProfessionalMan
   };
 
   const getComplianceColor = (score: number) => {
-    if (score >= 90) return 'text-green-600';
-    if (score >= 75) return 'text-blue-600';
-    if (score >= 60) return 'text-yellow-600';
+    if (score >= 90) {
+      return 'text-green-600';
+    }
+    if (score >= 75) {
+      return 'text-blue-600';
+    }
+    if (score >= 60) {
+      return 'text-yellow-600';
+    }
     return 'text-red-600';
   };
 
@@ -171,7 +173,7 @@ export function ANVISAProfessionalManagement({ clinicId }: ANVISAProfessionalMan
           <div className="h-10 w-40 animate-pulse rounded bg-gray-200" />
         </div>
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {[...Array(6)].map((_, i) => (
+          {[...new Array(6)].map((_, i) => (
             <Card className="animate-pulse" key={i}>
               <CardHeader>
                 <div className="h-4 w-32 rounded bg-gray-200" />

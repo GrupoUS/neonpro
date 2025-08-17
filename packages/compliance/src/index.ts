@@ -24,11 +24,34 @@ export * from './enterprise';
 // LGPD (Lei Geral de Proteção de Dados) - Brazilian Data Protection Law
 export * from './lgpd';
 
-// Core Types and Interfaces
-export * from './types';
+// Core Types and Interfaces (excluding audit types to avoid conflicts)
+export {
+  AdverseEventType,
+  ANVISADeviceCategory,
+  CFMLicenseStatus,
+  CFMProfessionalCategory,
+  type ComplianceScore,
+  ComplianceScoreSchema,
+  ComplianceStatus,
+  type Consent,
+  ConsentSchema,
+  type ConstitutionalResponse,
+  type DPIAAssessment,
+  DPIAAssessmentSchema,
+  type HealthcareAnalytics,
+  HealthcareAnalyticsMetric,
+  HealthcareAnalyticsSchema,
+  HealthcareRegulation,
+  LGPDLegalBasis,
+  PatientDataClassification,
+  type ProfessionalValidation,
+  ProfessionalValidationSchema,
+  type RegulatoryEvent,
+  RegulatoryEventSchema,
+} from './types';
 
 // Utilities and Helpers
-export * from './utils';
+// export * from './utils'; // TODO: Create utils if needed
 
 /**
  * Constitutional Healthcare Compliance Configuration

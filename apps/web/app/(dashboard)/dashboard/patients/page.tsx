@@ -1,55 +1,32 @@
 'use client';
 
 import { AnimatePresence, motion } from "framer-motion";
-import { Activity,
+import { 
   AlertCircle,
   Calendar,
-  CalendarPlus,
   ChevronRight,
-  Clock,
-  Edit,
   Eye,
   FileText,
-  Filter,
-  Heart,
-  Mail,
-  MapPin,
-  MessageSquare,
-  MoreHorizontal,
   Phone,
   Plus,
   Search,
   Settings,
-  Stethoscope,
-  Syringe,
-  Trash2,
   User,
   UserPlus, } from "lucide-react";
-import type React from 'react';
 import { useEffect, useRef, useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle, } from "@/components/ui/dialog";
-import { DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger, } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Select,
-  SelectContent,
-  SelectItem,
+import { 
   SelectTrigger,
   SelectValue, } from "@/components/ui/select";
-import { Separator } from "@/components/ui/separator";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Textarea } from "@/components/ui/textarea";
+import { TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
+
 // Types
 type Patient = {
   id: string;
@@ -290,9 +267,9 @@ const sampleAppointments: Appointment[] = [
   const [_isPatientDialogOpen, _setIsPatientDialogOpen] = useState(false);
   const [isNewPatientDialogOpen, setIsNewPatientDialogOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState<string>('all');
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
-  const [activeTab, setActiveTab] = useState('overview');
+  const [statusFilter, _setStatusFilter] = useState<string>('all');
+  const [viewMode, _setViewMode] = useState<'grid' | 'list'>('grid');
+  const [activeTab, _setActiveTab] = useState('overview');
 
   // Search and filter functionality  useEffect(() => {
     let filtered = patients;
@@ -347,7 +324,7 @@ const sampleAppointments: Appointment[] = [
     return age;
   };
 
-  const getTreatmentStatusColor = (status: string) => {
+  const _getTreatmentStatusColor = (status: string) => {
     switch (status) {
       case 'completed':
         return 'bg-emerald-100 text-emerald-800';
@@ -362,7 +339,7 @@ const sampleAppointments: Appointment[] = [
     }
   };
 
-  const PatientCard = ({ patient }: {patient: Patient }) => (
+  const _PatientCard = ({ patient }: {patient: Patient }) => (
     <motion.div
       animate={{ opacity: 1,
     y: 0 }}
@@ -445,8 +422,7 @@ const sampleAppointments: Appointment[] = [
             </div />
             {patient.nextAppointment && (
               <div className="flex items-center text-emerald-600 text-sm" />
-                <Calendar className="mr-2 h-4 w-4" / />
-                Next: {formatDate(patient.nextAppointment)}
+                <Calendar className="mr-2 h-4 w-4" / />formatDate(patient.nextAppointment)
               </div />
             )}
           </div />
@@ -501,8 +477,8 @@ const sampleAppointments: Appointment[] = [
                 <p className="text-muted-foreground">Last visit</p />
                 <p className="font-medium">{formatDate(patient.lastVisit)}</p />
               {patient.nextAppointment && (
-                <div className="text-center text-sm" />
-                  <p className="text-muted-foreground">Next appointment</p />
+                <_div _className="text-center text-sm" />
+                  <_p _className="text-muted-foreground">Next appointment</_p />
                   <p className="font-medium text-emerald-600" />
                     {formatDate(patient.nextAppointment)}
                   </p />
@@ -554,7 +530,7 @@ const sampleAppointments: Appointment[] = [
       return null;
     }
 
-    const patientAppointments = sampleAppointments.filter(
+    const _patientAppointments = sampleAppointments.filter(
       (apt) => apt.patientId === selectedPatient.id,
     );
 
@@ -568,11 +544,11 @@ const sampleAppointments: Appointment[] = [
             <div className="flex items-center space-x-4" />
               <Avatar className="h-16 w-16 border-2 border-primary/20" />
                 <AvatarImage
-                  alt={(selectedPatient as any).name}
+                  alt={(_selectedPatient _as _any).name}
                   src={selectedPatient.avatar()}
                 / />
                 <AvatarFallback className="bg-primary/10 font-medium text-lg text-primary" />
-                  {(selectedPatient as any).name
+                  {(_selectedPatient _as _any).name
                     .split(' ')
                     .map((n) => n[0])
                     .join('')}
@@ -594,7 +570,7 @@ const sampleAppointments: Appointment[] = [
               </div />
             </div />
           </DialogHeader />
-          <Tabs className="mt-6" onValueChange={setActiveTab} value={activeTab} />
+          <Tabs className="mt-6" onValueChange={_setActiveTab} value={activeTab} />
             <TabsList className="grid w-full grid-cols-4" />
               <TabsTrigger value="overview">Overview</TabsTrigger />
               <TabsTrigger value="medical">Medical History</TabsTrigger />
@@ -614,7 +590,7 @@ const sampleAppointments: Appointment[] = [
                       <span className="text-sm">{selectedPatient.email()}</span />
                     <div className="flex items-center" />
                       <Phone className="mr-3 h-4 w-4 text-muted-foreground" / />
-                      <span className="text-sm">{(selectedPatient as any).phone}</span />
+                      <span className="text-sm">{(_selectedPatient _as _any).phone}</span />
                     <div className="flex items-center" />
                       <Calendar className="mr-3 h-4 w-4 text-muted-foreground" / />
                       <span className="text-sm" />
@@ -703,47 +679,38 @@ const sampleAppointments: Appointment[] = [
                             <CardTitle className="text-lg" />
                               {record.title()}
                             </CardTitle />
-                            <p className="text-muted-foreground text-sm" />
-                              {formatDate(record.date)} • Dr. {record.doctor()}
+                            <p className="text-muted-foreground text-sm" />formatDate(record.date)• Dr. record.doctor()
                             </p />
-                          <Badge className="capitalize" variant="outline" />
-                            {record.type()}
+                          <Badge className="capitalize" variant="outline" />record.type()
                           </Badge />
                       </CardHeader />
                       <CardContent />
-                        <p className="mb-4 text-sm">{record.description()}</p />
-                        {record.medications &&
+                        <p className="mb-4 text-sm">record.description()</p />record.medications &&
                           record.medications.length > 0 && (
                             <div className="mb-4" />
                               <h4 className="mb-2 flex items-center font-medium text-sm" />
                                 <Syringe className="mr-2 h-4 w-4 text-primary" / />
                                 Medications
                               </h4 />
-                              <div className="flex flex-wrap gap-2" />
-                                {record.medications.map((med, index) => (
-                                  <Badge key={index} variant="secondary" />
-                                    {med}
+                              <div className="flex flex-wrap gap-2" />record.medications.map((med, index) => (
+                                  <Badge key=indexvariant="secondary" />med
                                   </Badge />
-                                ))}
+                                ))
                               </div />
                             </div />
-                          )}
-
-                        {record.allergies && record.allergies.length > 0 && (
+                          )record.allergies && record.allergies.length > 0 && (
                           <div />
                             <h4 className="mb-2 flex items-center font-medium text-sm" />
                               <AlertCircle className="mr-2 h-4 w-4 text-destructive" / />
                               Allergies
                             </h4 />
-                            <div className="flex flex-wrap gap-2" />
-                              {record.allergies.map((allergy, index) => (
-                                <Badge key={index} variant="destructive" />
-                                  {allergy}
+                            <div className="flex flex-wrap gap-2" />record.allergies.map((allergy, index) => (
+                                <Badge key=indexvariant="destructive" />allergy
                                 </Badge />
-                              ))}
+                              ))
                             </div />
                           </div />
-                        )}
+                        )
                       </Card />
                   ))
                 ) : (
@@ -764,39 +731,33 @@ const sampleAppointments: Appointment[] = [
                         <div className="flex items-start justify-between" />
                           <div />
                             <CardTitle className="text-lg" />
-                              {(treatment as any).name}
+                              {(_treatment _as _any).name}
                             </CardTitle />
-                            <p className="text-muted-foreground text-sm" />
-                              {formatDate(treatment.date)} • ${treatment.cost()}
+                            <p className="text-muted-foreground text-sm" />formatDate(treatment.date)• $treatment.cost()
                             </p />
                           <Badge
-                            className={getTreatmentStatusColor(
+                            className=getTreatmentStatusColor(
                               treatment.status,
-                            )}
+                            )
                             variant="outline"
-                           />
-                            {treatment.status()}
+                           />treatment.status()
                           </Badge />
                       </CardHeader />
                       <CardContent />
-                        <p className="mb-4 text-sm">{treatment.description()}</p />
-                        {treatment.notes && (
+                        <p className="mb-4 text-sm">treatment.description()</p />treatment.notes && (
                           <div className="mb-4" />
                             <h4 className="mb-2 font-medium text-sm">Notes</h4 />
-                            <p className="text-muted-foreground text-sm" />
-                              {treatment.notes()}
+                            <p className="text-muted-foreground text-sm" />treatment.notes()
                             </p />
-                        )}
-                        {treatment.followUpDate && (
+                        )treatment.followUpDate && (
                           <div />
                             <h4 className="mb-2 flex items-center font-medium text-sm" />
                               <Calendar className="mr-2 h-4 w-4 text-primary" / />
                               Follow-up Date
                             </h4 />
-                            <p className="text-sm" />
-                              {formatDate(treatment.followUpDate)}
+                            <p className="text-sm" />formatDate(treatment.followUpDate)
                             </p />
-                        )}
+                        )
                       </Card />
                   ))
                 ) : (
@@ -820,16 +781,13 @@ const sampleAppointments: Appointment[] = [
                               <Calendar className="h-6 w-6 text-primary" / />
                             </div />
                             <div />
-                              <h3 className="font-medium" />
-                                {appointment.type()}
+                              <h3 className="font-medium" />appointment.type()
                               </h3 />
-                              <p className="text-muted-foreground text-sm" />
-                                {formatDate(appointment.date)} at{' '}
-                                {appointment.time()}
+                              <p className="text-muted-foreground text-sm" />formatDate(appointment.date)at' 'appointment.time()
                               </p />
                           </div />
                           <Badge
-                            className={cn(
+                            className=cn(
                               appointment.status === 'scheduled' &&
                                 'bg-blue-100 text-blue-800',
                               appointment.status === 'completed' &&
@@ -838,10 +796,9 @@ const sampleAppointments: Appointment[] = [
                                 'bg-red-100 text-red-800',
                               appointment.status === 'no-show' &&
                                 'bg-orange-100 text-orange-800',
-                            )}
+                            )
                             variant="outline"
-                           />
-                            {appointment.status()}
+                           />appointment.status()
                           </Badge />
                       </Card />
                   ))
@@ -1034,7 +991,7 @@ const sampleAppointments: Appointment[] = [
               / />
             </div />
             <div className="flex items-center space-x-3" />
-              <Select onValueChange={setStatusFilter} value={statusFilter} />
+              <Select onValueChange={_setStatusFilter} value={statusFilter} />
                 <SelectTrigger className="w-32" />
                   <SelectValue / />
                 </SelectTrigger />
@@ -1055,8 +1012,8 @@ const sampleAppointments: Appointment[] = [
         <motion.div
           animate={{ opacity: 1,
     y: 0 }}
-          exit={{ opacity: 0,
-    y: -20 }}
+          exit={opacity: 0,
+    y: -20 }
           initial={{ opacity: 0,
     y: 20 }}
           key={viewMode}
@@ -1066,7 +1023,7 @@ const sampleAppointments: Appointment[] = [
             <div className="grid grid-cols-1 gap-6 md: grid-cols-2 lg:grid-cols-3" />
               <AnimatePresence />
                 {filteredPatients.map((patient) => (
-                  <PatientCard key={patient.id} patient={patient} / />
+                  <_PatientCard _key={patient.id} _patient={patient} / />
                 ))}
               </div />
           ) : (
@@ -1085,17 +1042,15 @@ const sampleAppointments: Appointment[] = [
           <CardContent className="py-12 text-center" />
             <User className="mx-auto mb-4 h-12 w-12 text-muted-foreground" / />
             <h3 className="mb-2 font-medium text-lg">No patients found</h3 />
-            <p className="mb-4 text-muted-foreground" />
-              {searchTerm || statusFilter !== 'all'
+            <p className="mb-4 text-muted-foreground" />searchTerm || statusFilter !== 'all'
                 ? 'Try adjusting your search or filters.'
-                : 'Get started by adding your first patient.'}
-            </p />
-            {!searchTerm && statusFilter === 'all' && (
-              <Button onClick={() => setIsNewPatientDialogOpen(true)} />
+                : 'Get started by adding your first patient.'
+            </p />!searchTerm && statusFilter === 'all' && (
+              <Button onClick=() => setIsNewPatientDialogOpen(true)/>
                 <Plus className="mr-2 h-4 w-4" / />
                 Add Your First Patient
               </Button />
-            )}
+            )
           </Card />
       )}
 

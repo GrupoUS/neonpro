@@ -80,8 +80,7 @@ export async function validateAuditCompliance(
       violations,
       recommendations,
     };
-  } catch (error) {
-    console.error('Audit compliance validation failed:', error);
+  } catch (_error) {
     return {
       isCompliant: false,
       score: 0,

@@ -43,16 +43,10 @@ console.log(`\n${'='.repeat(50)}`);
 if (allFilesExist) {
   console.log('\n✅ Todos os arquivos foram criados com sucesso!');
   console.log('\n📋 Próximos passos:');
-  console.log(
-    '1. Configure as variáveis em .env.local com suas chaves do Supabase'
-  );
+  console.log('1. Configure as variáveis em .env.local com suas chaves do Supabase');
   console.log('2. Siga o checklist em docs/oauth-setup-checklist.md');
-  console.log(
-    '3. Configure o Supabase e Google Cloud Console conforme documentado'
-  );
-  console.log(
-    '4. Execute npm run dev e teste o login em http://localhost:3000/login'
-  );
+  console.log('3. Configure o Supabase e Google Cloud Console conforme documentado');
+  console.log('4. Execute npm run dev e teste o login em http://localhost:3000/login');
 } else {
   console.log('\n❌ Alguns arquivos estão faltando!');
   console.log('Execute novamente o processo de configuração.');
@@ -60,14 +54,9 @@ if (allFilesExist) {
 
 // Verificar se .env.local tem placeholders
 if (fs.existsSync(path.join(projectRoot, '.env.local'))) {
-  const envContent = fs.readFileSync(
-    path.join(projectRoot, '.env.local'),
-    'utf8'
-  );
+  const envContent = fs.readFileSync(path.join(projectRoot, '.env.local'), 'utf8');
   if (envContent.includes('your_supabase_anon_key_here')) {
-    console.log(
-      '\n⚠️  ATENÇÃO: Não esqueça de atualizar as chaves em .env.local!'
-    );
+    console.log('\n⚠️  ATENÇÃO: Não esqueça de atualizar as chaves em .env.local!');
   }
 }
 

@@ -1,0 +1,128 @@
+import { vi } from 'vitest';
+
+// Supabase Mock for Healthcare Testing
+// LGPD-compliant data mocking and healthcare-specific scenarios
+
+export const createSupabaseMock = () => {
+  const supabaseMock = {
+    auth: {
+      getUser: vi.fn(),
+      signIn: vi.fn(),
+      signOut: vi.fn(),
+      onAuthStateChange: vi.fn(),
+    },
+    from: vi.fn(() => ({
+      select: vi.fn().mockReturnThis(),
+      insert: vi.fn().mockReturnThis(),
+      update: vi.fn().mockReturnThis(),
+      delete: vi.fn().mockReturnThis(),
+      eq: vi.fn().mockReturnThis(),
+      filter: vi.fn().mockReturnThis(),
+      order: vi.fn().mockReturnThis(),
+      limit: vi.fn().mockReturnThis(),
+      single: vi.fn(),
+      maybeSingle: vi.fn(),
+    })),
+    storage: {
+      from: vi.fn(() => ({
+        upload: vi.fn(),
+        download: vi.fn(),
+        remove: vi.fn(),
+        list: vi.fn(),
+      })),
+    },
+    realtime: {
+      channel: vi.fn(() => ({
+        on: vi.fn().mockReturnThis(),
+        subscribe: vi.fn(),
+        unsubscribe: vi.fn(),
+      })),
+    },
+  };
+
+  return supabaseMock;
+};
+
+export const setupSupabaseMock = async () => {
+  const mock = createSupabaseMock();
+
+  // Setup healthcare-specific mock data
+  setupPatientDataMocks(mock);
+  setupAnvisaDataMocks(mock);
+  setupCFMDataMocks(mock);
+  setupAuditTrailMocks(mock);
+  return mock;
+};
+
+function setupPatientDataMocks(mock: any) {
+  // Mock LGPD-compliant patient data
+  const mockPatients = [
+    {
+      id: 'test-patient-1',
+      name: 'João Test Silva',
+      cpf: '123.456.789-00',
+      consent_given: true,
+      data_processing_consent: new Date().toISOString(),
+    },
+    {
+      id: 'test-patient-2',
+      name: 'Maria Test Santos',
+      cpf: '987.654.321-00',
+      consent_given: true,
+      data_processing_consent: new Date().toISOString(),
+    },
+  ];
+
+  mock.from.mockImplementation((table: string) => {
+    if (table === 'patients') {
+      return {
+        select: () => ({ data: mockPatients, error: null }),
+        insert: () => ({ data: mockPatients[0], error: null }),
+        update: () => ({ data: mockPatients[0], error: null }),
+        delete: () => ({ data: null, error: null }),
+      };
+    }
+    return mock.from();
+  });
+}
+
+function setupAnvisaDataMocks(_mock: any) {
+  // Mock ANVISA device registration data
+  const _mockDevices = [
+    {
+      id: 'device-001',
+      name: 'Test Medical Device',
+      anvisa_registration: 'REG-001-2024',
+      status: 'approved',
+      validation_date: new Date().toISOString(),
+    },
+  ];
+}
+
+function setupCFMDataMocks(_mock: any) {
+  // Mock CFM professional validation data
+  const _mockProfessionals = [
+    {
+      id: 'prof-001',
+      name: 'Dr. Test Professional',
+      cfm_license: 'CRM-12345',
+      specialty: 'Dermatologia',
+      status: 'active',
+      validation_date: new Date().toISOString(),
+    },
+  ];
+}
+
+function setupAuditTrailMocks(_mock: any) {
+  // Mock audit trail for compliance
+  const _mockAuditLogs = [
+    {
+      id: 'audit-001',
+      action: 'patient_data_access',
+      user_id: 'user-001',
+      timestamp: new Date().toISOString(),
+      ip_address: '127.0.0.1',
+      compliance_validated: true,
+    },
+  ];
+}

@@ -6,6 +6,7 @@
  */
 
 import { z } from 'zod';
+import type { AuditEvent } from '../audit/types';
 
 // =============================================================================
 // CONSTITUTIONAL HEALTHCARE BASE TYPES
@@ -218,52 +219,10 @@ export const ProfessionalValidationSchema = z.object({
 });
 
 export type ProfessionalValidation = z.infer<typeof ProfessionalValidationSchema>; // =============================================================================
-// AUDIT SYSTEM TYPES
+// AUDIT SYSTEM TYPES (Re-exported from ./audit)
 // =============================================================================
 
-/**
- * Constitutional Audit Event Types
- */
-export enum AuditEventType {
-  PATIENT_ACCESS = 'PATIENT_ACCESS', // Acesso a dados do paciente
-  DATA_MODIFICATION = 'DATA_MODIFICATION', // Modificação de dados
-  CONSENT_CHANGE = 'CONSENT_CHANGE', // Alteração de consentimento
-  REGULATORY_EVENT = 'REGULATORY_EVENT', // Evento regulatório
-  COMPLIANCE_VIOLATION = 'COMPLIANCE_VIOLATION', // Violação de compliance
-  PROFESSIONAL_ACTION = 'PROFESSIONAL_ACTION', // Ação profissional
-  SYSTEM_ACCESS = 'SYSTEM_ACCESS', // Acesso ao sistema
-  DATA_EXPORT = 'DATA_EXPORT', // Exportação de dados
-  SECURITY_INCIDENT = 'SECURITY_INCIDENT', // Incidente de segurança
-}
-
-/**
- * Constitutional Audit Event Schema
- */
-export const AuditEventSchema = z.object({
-  id: z.string().uuid(),
-  tenantId: z.string().uuid(),
-  eventType: z.nativeEnum(AuditEventType),
-  userId: z.string().uuid(),
-  patientId: z.string().uuid().optional(),
-  resourceId: z.string().uuid().optional(),
-  resourceType: z.string().optional(),
-  action: z.string().min(3).max(100),
-  description: z.string().max(1000),
-  ipAddress: z.string().ip(),
-  userAgent: z.string(),
-  timestamp: z.date(),
-  metadata: z.record(z.unknown()).optional(),
-  riskLevel: z.enum(['LOW', 'MEDIUM', 'HIGH', 'CRITICAL']),
-  complianceImpact: z.array(z.nativeEnum(HealthcareRegulation)),
-  constitutionalValidation: z.object({
-    patientPrivacy: ComplianceScoreSchema,
-    medicalEthics: ComplianceScoreSchema,
-    regulatoryCompliance: ComplianceScoreSchema,
-    overallScore: ComplianceScoreSchema,
-  }),
-});
-
-export type AuditEvent = z.infer<typeof AuditEventSchema>;
+// Note: AuditEventType, AuditEventSchema, and AuditEvent are exported from ./audit module
 
 // =============================================================================
 // ANALYTICS TYPES (PRIVACY-PRESERVING)
@@ -318,7 +277,7 @@ export type HealthcareAnalytics = z.infer<typeof HealthcareAnalyticsSchema>;
 /**
  * Constitutional Healthcare Response
  */
-export interface ConstitutionalResponse<T = unknown> {
+export type ConstitutionalResponse<T = unknown> = {
   success: boolean;
   data?: T;
   error?: string;
@@ -330,7 +289,7 @@ export interface ConstitutionalResponse<T = unknown> {
   };
   auditTrail: AuditEvent;
   timestamp: Date;
-}
+};
 
 /**
  * DPIA (Data Protection Impact Assessment) Types

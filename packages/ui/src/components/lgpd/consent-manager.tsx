@@ -1,7 +1,7 @@
 'use client';
 
 import { AlertTriangle, Check, Clock, Shield, X } from 'lucide-react';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { Alert, AlertDescription } from '../Alert';
 import { Badge } from '../Badge';
@@ -13,7 +13,7 @@ import { Switch } from '../Switch';
 // TYPES
 // ============================================================================
 
-interface ConsentPurpose {
+type ConsentPurpose = {
   purpose: string;
   description: string;
   category: string;
@@ -21,11 +21,11 @@ interface ConsentPurpose {
   granted: boolean;
   grantedAt: string | null;
   version: string | null;
-}
+};
 
-interface ConsentData {
+type ConsentData = {
   consents: ConsentPurpose[];
-}
+};
 
 // ============================================================================
 // CONSENT MANAGEMENT COMPONENT
@@ -38,7 +38,7 @@ export function ConsentManager() {
 
   useEffect(() => {
     loadConsentStatus();
-  }, []);
+  }, [loadConsentStatus]);
 
   const loadConsentStatus = async () => {
     try {
@@ -49,8 +49,7 @@ export function ConsentManager() {
 
       const data: ConsentData = await response.json();
       setConsents(data.consents);
-    } catch (error) {
-      console.error('Load consent status error:', error);
+    } catch (_error) {
       toast.error('Erro ao carregar status de consentimento');
     } finally {
       setLoading(false);
@@ -85,8 +84,7 @@ export function ConsentManager() {
           ? `Consentimento concedido para ${purposeName}`
           : `Consentimento negado para ${purposeName}`
       );
-    } catch (error) {
-      console.error('Update consent error:', error);
+    } catch (_error) {
       toast.error('Erro ao atualizar consentimento');
     } finally {
       setUpdating(null);
@@ -113,13 +111,12 @@ export function ConsentManager() {
 
       await loadConsentStatus();
       toast.success(`Consentimento retirado para ${purposeName}`);
-    } catch (error) {
-      console.error('Withdraw consent error:', error);
+    } catch (_error) {
       toast.error('Erro ao retirar consentimento');
     }
   };
 
-  const getCategoryIcon = (category: string) => {
+  const _getCategoryIcon = (category: string) => {
     switch (category.toLowerCase()) {
       case 'essential':
         return <Shield className="h-4 w-4 text-green-600" />;
@@ -134,7 +131,7 @@ export function ConsentManager() {
     }
   };
 
-  const getCategoryColor = (category: string) => {
+  const _getCategoryColor = (category: string) => {
     switch (category.toLowerCase()) {
       case 'essential':
         return 'bg-green-100 text-green-800';
@@ -244,12 +241,12 @@ export function ConsentManager() {
 // CONSENT CARD COMPONENT
 // ============================================================================
 
-interface ConsentCardProps {
+type ConsentCardProps = {
   consent: ConsentPurpose;
   updating: boolean;
   onUpdate: (purposeName: string, granted: boolean) => Promise<void>;
   onWithdraw: (purposeName: string) => Promise<void>;
-}
+};
 
 function ConsentCard({ consent, updating, onUpdate, onWithdraw }: ConsentCardProps) {
   return (

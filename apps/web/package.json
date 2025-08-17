@@ -21,6 +21,8 @@
     "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
   },
   "dependencies": {
+    "@supabase/ssr": "^0.5.1",
+    "@supabase/supabase-js": "^2.45.4",
     "@neonpro/ui": "workspace:*",
     "@neonpro/utils": "workspace:*",
     "@neonpro/domain": "workspace:*",
@@ -56,6 +58,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.0.0",
     "csv-parse": "^6.1.0",
+    "dotenv": "^17.2.1",
     "framer-motion": "^12.23.12",
     "ioredis": "^5.7.0",
     "jspdf": "^3.0.1",

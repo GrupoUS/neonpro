@@ -9,7 +9,7 @@ const supabase = createClient(
 );
 
 // Validation schemas
-const analyticsQuerySchema = z.object({
+const _analyticsQuerySchema = z.object({
   startDate: z.string().optional(),
   endDate: z.string().optional(),
   metric: z
@@ -47,7 +47,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Parse query parameters    const { searchParams } = new URL(request.url);
-    const queryParams = {
+    const _queryParams = {
       startDate: searchParams.get('startDate'),
       endDate: searchParams.get('endDate'),
       metric: searchParams.get('metric'),
@@ -77,7 +77,7 @@ export async function GET(request: NextRequest) {
         .toISOString()
         .split('T')[0];
 
-    const analyticsData: any = {};
+    let analyticsData: any = {};
 
     // Fetch different metrics based on request
     switch (validatedParams.metric) {

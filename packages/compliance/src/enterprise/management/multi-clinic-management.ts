@@ -121,7 +121,7 @@ export type MultiClinicConfig = z.infer<typeof MultiClinicConfigSchema>;
 export type ClinicOperations = z.infer<typeof ClinicOperationsSchema>;
 export type TenantManagement = z.infer<typeof TenantManagementSchema>;
 
-export interface MultiClinicManagementAudit {
+export type MultiClinicManagementAudit = {
   audit_id: string;
   tenant_id: string;
   clinic_id?: string;
@@ -137,17 +137,17 @@ export interface MultiClinicManagementAudit {
     cfm_approval: boolean;
     lgpd_compliance: boolean;
   };
-}
+};
 
 /**
  * Multi-Clinic Management Service
  * Constitutional healthcare multi-clinic and tenant management with regulatory compliance
  */
 export class MultiClinicManagementService {
-  private config: MultiClinicConfig;
-  private tenants: Map<string, TenantManagement> = new Map();
-  private clinics: Map<string, Clinic> = new Map();
-  private auditTrail: MultiClinicManagementAudit[] = [];
+  private readonly config: MultiClinicConfig;
+  private readonly tenants: Map<string, TenantManagement> = new Map();
+  private readonly clinics: Map<string, Clinic> = new Map();
+  private readonly auditTrail: MultiClinicManagementAudit[] = [];
 
   constructor(config: MultiClinicConfig) {
     this.config = MultiClinicConfigSchema.parse(config);
@@ -375,7 +375,7 @@ export class MultiClinicManagementService {
     const privacyProtection = await this.applyOperationPrivacyProtection(validatedOperation);
 
     // Execute operation based on type
-    const operationResult = await this.executeOperationByType(validatedOperation, clinic, tenant);
+    const _operationResult = await this.executeOperationByType(validatedOperation, clinic, tenant);
 
     // Mark operation as completed
     validatedOperation.execution_status = 'completed';
@@ -571,7 +571,9 @@ export class MultiClinicManagementService {
   // Helper methods for validation and compliance
 
   private async validateTenantConstitutionalCompliance(tenant: TenantManagement): Promise<void> {
-    if (!this.config.constitutional_validation) return;
+    if (!this.config.constitutional_validation) {
+      return;
+    }
 
     // Validate compliance profile completeness
     const profile = tenant.compliance_profile;
@@ -603,7 +605,9 @@ export class MultiClinicManagementService {
   private async initializeTenantWithPrivacyByDesign(
     tenant: TenantManagement
   ): Promise<TenantManagement> {
-    if (!this.config.privacy_by_design) return tenant;
+    if (!this.config.privacy_by_design) {
+      return tenant;
+    }
 
     // Apply privacy-by-design principles
     const enhancedTenant = { ...tenant };
@@ -738,8 +742,8 @@ export class MultiClinicManagementService {
 
   private async executeOperationByType(
     operation: ClinicOperations,
-    clinic: Clinic,
-    tenant: TenantManagement
+    _clinic: Clinic,
+    _tenant: TenantManagement
   ): Promise<any> {
     // Mock operation execution based on type
     switch (operation.operation_type) {
@@ -809,7 +813,9 @@ export class MultiClinicManagementService {
   }
 
   private calculateOverallComplianceScore(clinicDetails: any[]): number {
-    if (clinicDetails.length === 0) return 10;
+    if (clinicDetails.length === 0) {
+      return 10;
+    }
 
     const totalScore = clinicDetails.reduce((sum, clinic) => sum + clinic.compliance_score, 0);
     return Math.round((totalScore / clinicDetails.length) * 100) / 100;
@@ -843,9 +849,9 @@ export class MultiClinicManagementService {
 
   private async applyResourceSharingPrivacyProtection(
     resourceType: string,
-    resourceData: any,
-    sourceClinic: Clinic,
-    targetClinic: Clinic
+    _resourceData: any,
+    _sourceClinic: Clinic,
+    _targetClinic: Clinic
   ): Promise<Record<string, any>> {
     return {
       protection_level: 'enhanced',

@@ -53,7 +53,7 @@ yarn-error.log*
 
 # env files
 .env*
-.mcp.json
+mcp.json
 
 # vercel
 .vercel

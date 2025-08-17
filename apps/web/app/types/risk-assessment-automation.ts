@@ -1,5 +1,3 @@
-import { z } from 'zod';
-
 // ============================================================================
 // PATIENT RISK ASSESSMENT TYPES - CONSTITUTIONAL HEALTHCARE COMPLIANCE
 // ============================================================================
@@ -9,10 +7,10 @@ import { z } from 'zod';
  * Based on Brazilian healthcare standards (CFM/ANVISA compliance)
  */
 export enum RiskLevel {
-  LOW = 'LOW',           // 0-30: Minimal intervention required
-  MEDIUM = 'MEDIUM',     // 31-70: Standard monitoring
-  HIGH = 'HIGH',         // 71-85: Enhanced monitoring + professional review
-  CRITICAL = 'CRITICAL'  // 86-100: Immediate escalation + emergency protocols
+  LOW = 'LOW', // 0-30: Minimal intervention required
+  MEDIUM = 'MEDIUM', // 31-70: Standard monitoring
+  HIGH = 'HIGH', // 71-85: Enhanced monitoring + professional review
+  CRITICAL = 'CRITICAL', // 86-100: Immediate escalation + emergency protocols
 }
 
 /**
@@ -20,12 +18,12 @@ export enum RiskLevel {
  * Multi-dimensional analysis for comprehensive patient assessment
  */
 export enum RiskFactorCategory {
-  DEMOGRAPHIC = 'DEMOGRAPHIC',           // Age, gender, BMI, genetic factors
-  MEDICAL_HISTORY = 'MEDICAL_HISTORY',   // Previous conditions, treatments, allergies
+  DEMOGRAPHIC = 'DEMOGRAPHIC', // Age, gender, BMI, genetic factors
+  MEDICAL_HISTORY = 'MEDICAL_HISTORY', // Previous conditions, treatments, allergies
   CURRENT_CONDITION = 'CURRENT_CONDITION', // Vital signs, symptoms, medications
   PROCEDURE_SPECIFIC = 'PROCEDURE_SPECIFIC', // Treatment complexity, anesthesia needs
-  ENVIRONMENTAL = 'ENVIRONMENTAL',        // Support system, compliance history
-  PSYCHOSOCIAL = 'PSYCHOSOCIAL'          // Mental health, stress factors
+  ENVIRONMENTAL = 'ENVIRONMENTAL', // Support system, compliance history
+  PSYCHOSOCIAL = 'PSYCHOSOCIAL', // Mental health, stress factors
 }
 
 /**
@@ -33,10 +31,10 @@ export enum RiskFactorCategory {
  * CFM compliance for medical professional oversight
  */
 export enum EscalationPriority {
-  ROUTINE = 'ROUTINE',           // Standard professional review
-  URGENT = 'URGENT',             // Within 4 hours
-  IMMEDIATE = 'IMMEDIATE',       // Within 30 minutes
-  EMERGENCY = 'EMERGENCY'        // Immediate action required
+  ROUTINE = 'ROUTINE', // Standard professional review
+  URGENT = 'URGENT', // Within 4 hours
+  IMMEDIATE = 'IMMEDIATE', // Within 30 minutes
+  EMERGENCY = 'EMERGENCY', // Immediate action required
 }
 
 /**
@@ -83,12 +81,15 @@ export interface MedicalHistoryRiskFactors {
     startDate: Date;
     indication: string;
   }>;
-  immunizationStatus: Record<string, {
-    vaccinated: boolean;
-    lastDose?: Date;
-    boosterRequired?: boolean;
-  }>;
-}/**
+  immunizationStatus: Record<
+    string,
+    {
+      vaccinated: boolean;
+      lastDose?: Date;
+      boosterRequired?: boolean;
+    }
+  >;
+} /**
  * Current Health Status Assessment
  * Real-time monitoring with vital signs integration
  */
@@ -126,7 +127,7 @@ export interface CurrentConditionRiskFactors {
   painLevel: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
   mentalStatus: 'ALERT' | 'CONFUSED' | 'DROWSY' | 'UNCONSCIOUS';
   mobilityStatus: 'AMBULATORY' | 'ASSISTED' | 'WHEELCHAIR' | 'BEDRIDDEN';
-}/**
+} /**
  * Procedure-Specific Risk Factors
  * Treatment complexity assessment with ANVISA compliance
  */
@@ -175,7 +176,7 @@ export interface EnvironmentalRiskFactors {
     medicationCompliance: 'EXCELLENT' | 'GOOD' | 'FAIR' | 'POOR';
     followUpCompliance: 'EXCELLENT' | 'GOOD' | 'FAIR' | 'POOR';
   };
-}/**
+} /**
  * Comprehensive Risk Assessment Input
  * Complete patient risk profile for ML analysis
  */
@@ -183,13 +184,17 @@ export interface RiskAssessmentInput {
   patientId: string;
   tenantId: string;
   assessmentDate: Date;
-  assessmentType: 'PRE_PROCEDURE' | 'ONGOING_CARE' | 'POST_PROCEDURE' | 'EMERGENCY';
+  assessmentType:
+    | 'PRE_PROCEDURE'
+    | 'ONGOING_CARE'
+    | 'POST_PROCEDURE'
+    | 'EMERGENCY';
   demographicFactors: DemographicRiskFactors;
   medicalHistory: MedicalHistoryRiskFactors;
   currentCondition: CurrentConditionRiskFactors;
   procedureSpecific?: ProcedureSpecificRiskFactors;
   environmental: EnvironmentalRiskFactors;
-  
+
   // LGPD Compliance
   consentGiven: boolean;
   consentDate: Date;
@@ -223,7 +228,7 @@ export interface RiskScoreBreakdown {
     upper: number;
     confidence: number; // percentage
   };
-}/**
+} /**
  * Professional Oversight Requirements
  * CFM compliance for medical professional review
  */
@@ -284,13 +289,13 @@ export interface RiskAssessmentResult {
     rationale: string;
     timeframe: string;
   }>;
-  
+
   // Model Information for Explainable AI
   modelVersion: string;
   algorithmUsed: string;
   trainingDataDate: Date;
   accuracy: number;
-  
+
   // Audit Trail for Regulatory Compliance
   createdBy: string;
   createdAt: Date;
@@ -303,7 +308,7 @@ export interface RiskAssessmentResult {
     comments: string;
     digitalSignature: string;
   }>;
-}/**
+} /**
  * Audit Trail Entry
  * Constitutional healthcare compliance with LGPD requirements
  */
@@ -311,7 +316,13 @@ export interface AuditTrailEntry {
   id: string;
   patientId: string;
   assessmentId: string;
-  action: 'CREATED' | 'VIEWED' | 'MODIFIED' | 'DELETED' | 'ESCALATED' | 'REVIEWED';
+  action:
+    | 'CREATED'
+    | 'VIEWED'
+    | 'MODIFIED'
+    | 'DELETED'
+    | 'ESCALATED'
+    | 'REVIEWED';
   performedBy: string;
   performedAt: Date;
   ipAddress: string;
@@ -320,9 +331,13 @@ export interface AuditTrailEntry {
   dataModified: string[];
   justification: string;
   digitalSignature: string;
-  
+
   // LGPD Compliance
-  legalBasis: 'CONSENT' | 'LEGITIMATE_INTEREST' | 'VITAL_INTEREST' | 'LEGAL_OBLIGATION';
+  legalBasis:
+    | 'CONSENT'
+    | 'LEGITIMATE_INTEREST'
+    | 'VITAL_INTEREST'
+    | 'LEGAL_OBLIGATION';
   dataSubjectNotified: boolean;
   retentionExpiry: Date;
 }
@@ -337,14 +352,17 @@ export interface RiskAssessmentMetrics {
   averageProcessingTime: number; // milliseconds
   escalationRate: number; // percentage
   professionalOverrideRate: number; // percentage
-  
-  performanceByRiskLevel: Record<RiskLevel, {
-    count: number;
-    accuracy: number;
-    avgProcessingTime: number;
-    escalationRate: number;
-  }>;
-  
+
+  performanceByRiskLevel: Record<
+    RiskLevel,
+    {
+      count: number;
+      accuracy: number;
+      avgProcessingTime: number;
+      escalationRate: number;
+    }
+  >;
+
   // Constitutional Healthcare Quality Metrics
   patientSafetyIncidents: number;
   regulatoryCompliance: {
@@ -352,7 +370,7 @@ export interface RiskAssessmentMetrics {
     anvisaCompliance: number; // percentage
     cfmCompliance: number; // percentage
   };
-  
+
   lastUpdated: Date;
 }
 
@@ -363,21 +381,21 @@ export interface RiskAssessmentMetrics {
 export interface RiskAssessmentConfig {
   modelVersion: string;
   accuracyThreshold: number; // minimum required accuracy
-  
+
   riskThresholds: {
     low: { min: number; max: number };
     medium: { min: number; max: number };
     high: { min: number; max: number };
     critical: { min: number; max: number };
   };
-  
+
   escalationRules: Array<{
     condition: string;
     threshold: number;
     action: string;
     timeframe: number; // minutes
   }>;
-  
+
   weightings: {
     demographic: number;
     medicalHistory: number;
@@ -386,7 +404,7 @@ export interface RiskAssessmentConfig {
     environmental: number;
     psychosocial: number;
   };
-  
+
   lastUpdated: Date;
   updatedBy: string;
 }

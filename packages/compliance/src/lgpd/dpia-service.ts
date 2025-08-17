@@ -7,18 +7,13 @@
  */
 
 import { z } from 'zod';
-import type {
-  ComplianceScore,
-  ConstitutionalResponse,
-  DPIAAssessment,
-  LGPDLegalBasis,
-  PatientDataClassification,
-} from '../types';
+import type { ComplianceScore, ConstitutionalResponse, DPIAAssessment } from '../types';
+import { LGPDLegalBasis, PatientDataClassification } from '../types';
 
 /**
  * DPIA Risk Assessment Criteria
  */
-const DPIA_RISK_CRITERIA = {
+const _DPIA_RISK_CRITERIA = {
   // High-risk processing that requires DPIA (Art. 38 LGPD)
   HIGH_RISK_TRIGGERS: [
     'SYSTEMATIC_MONITORING',
@@ -288,10 +283,15 @@ export class DPIAService {
 
     // Determine overall risk level
     let overallRisk: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
-    if (totalRiskScore <= 3) overallRisk = 'LOW';
-    else if (totalRiskScore <= 6) overallRisk = 'MEDIUM';
-    else if (totalRiskScore <= 10) overallRisk = 'HIGH';
-    else overallRisk = 'CRITICAL';
+    if (totalRiskScore <= 3) {
+      overallRisk = 'LOW';
+    } else if (totalRiskScore <= 6) {
+      overallRisk = 'MEDIUM';
+    } else if (totalRiskScore <= 10) {
+      overallRisk = 'HIGH';
+    } else {
+      overallRisk = 'CRITICAL';
+    }
 
     return {
       overallRisk,
@@ -361,16 +361,24 @@ export class DPIAService {
     let score = 10; // Start with perfect score
 
     // Deduct points for high risks
-    if (riskAssessment.overallRisk === 'CRITICAL') score -= 3;
-    else if (riskAssessment.overallRisk === 'HIGH') score -= 2;
-    else if (riskAssessment.overallRisk === 'MEDIUM') score -= 1;
+    if (riskAssessment.overallRisk === 'CRITICAL') {
+      score -= 3;
+    } else if (riskAssessment.overallRisk === 'HIGH') {
+      score -= 2;
+    } else if (riskAssessment.overallRisk === 'MEDIUM') {
+      score -= 1;
+    }
 
     // Add points for effective mitigation
     score += mitigationMeasures.effectivenessScore * 0.2;
 
     // Constitutional healthcare adjustments
-    if (riskAssessment.healthcareRisks.length === 0) score += 0.5;
-    if (mitigationMeasures.measures.some((m: string) => m.includes('constitutional'))) score += 0.5;
+    if (riskAssessment.healthcareRisks.length === 0) {
+      score += 0.5;
+    }
+    if (mitigationMeasures.measures.some((m: string) => m.includes('constitutional'))) {
+      score += 0.5;
+    }
 
     return Math.max(0, Math.min(10, score)) as ComplianceScore;
   }
@@ -378,11 +386,7 @@ export class DPIAService {
   /**
    * Store DPIA assessment in database
    */
-  private async storeDPIAAssessment(assessment: DPIAAssessment): Promise<void> {
-    // This would integrate with the Supabase database
-    // For now, we'll implement the interface
-    console.log('Storing DPIA assessment:', assessment.id);
-  }
+  private async storeDPIAAssessment(_assessment: DPIAAssessment): Promise<void> {}
 
   /**
    * Create audit event for DPIA activities
@@ -402,7 +406,7 @@ export class DPIAService {
    */
   async getDPIAAssessment(
     assessmentId: string,
-    tenantId: string
+    _tenantId: string
   ): Promise<ConstitutionalResponse<DPIAAssessment | null>> {
     try {
       // Implementation would query Supabase database

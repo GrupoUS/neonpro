@@ -150,7 +150,7 @@ export type HealthcareUser = z.infer<typeof HealthcareUserSchema>;
 export type AccessRequest = z.infer<typeof AccessRequestSchema>;
 export type RbacConfig = z.infer<typeof RbacConfigSchema>;
 
-export interface HealthcareRbacAudit {
+export type HealthcareRbacAudit = {
   audit_id: string;
   user_id: string;
   action: string;
@@ -165,19 +165,19 @@ export interface HealthcareRbacAudit {
   created_at: string;
   ip_address?: string;
   user_agent?: string;
-}
+};
 
 /**
  * Healthcare Role-Based Access Control Service
  * Constitutional healthcare access control with comprehensive compliance
  */
 export class HealthcareRbacService {
-  private config: RbacConfig;
-  private roles: Map<string, HealthcareRole> = new Map();
-  private users: Map<string, HealthcareUser> = new Map();
-  private accessRequests: Map<string, AccessRequest> = new Map();
-  private auditTrail: HealthcareRbacAudit[] = [];
-  private activeSessions: Map<string, any> = new Map();
+  private readonly config: RbacConfig;
+  private readonly roles: Map<string, HealthcareRole> = new Map();
+  private readonly users: Map<string, HealthcareUser> = new Map();
+  private readonly accessRequests: Map<string, AccessRequest> = new Map();
+  private readonly auditTrail: HealthcareRbacAudit[] = [];
+  private readonly activeSessions: Map<string, any> = new Map();
 
   constructor(config: RbacConfig) {
     this.config = RbacConfigSchema.parse(config);
@@ -338,7 +338,7 @@ export class HealthcareRbacService {
   }> {
     // Get user
     const user = this.users.get(userId);
-    if (!(user && user.active)) {
+    if (!user?.active) {
       return this.denyAccess(
         userId,
         resourceType,
@@ -387,7 +387,7 @@ export class HealthcareRbacService {
           resourceType,
           resourceId,
           action,
-          constitutionalValidation.reason
+          constitutionalValidation.reason || 'Access denied'
         );
       }
     }
@@ -588,6 +588,9 @@ export class HealthcareRbacService {
           lgpd_compliance_validated: true,
           cfm_ethics_approved: true,
         },
+        active: true,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
       },
       {
         role_name: 'Physician',
@@ -617,6 +620,9 @@ export class HealthcareRbacService {
           lgpd_compliance_validated: true,
           cfm_ethics_approved: true,
         },
+        active: true,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
       },
       {
         role_name: 'Nurse',
@@ -641,6 +647,9 @@ export class HealthcareRbacService {
           lgpd_compliance_validated: true,
           cfm_ethics_approved: true,
         },
+        active: true,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
       },
       {
         role_name: 'Receptionist',
@@ -664,6 +673,9 @@ export class HealthcareRbacService {
           lgpd_compliance_validated: true,
           cfm_ethics_approved: true,
         },
+        active: true,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
       },
       {
         role_name: 'Data Protection Officer',
@@ -692,6 +704,9 @@ export class HealthcareRbacService {
           lgpd_compliance_validated: true,
           cfm_ethics_approved: true,
         },
+        active: true,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
       },
     ];
 
@@ -703,7 +718,9 @@ export class HealthcareRbacService {
   // Helper methods for access control validation
 
   private async validateRoleConstitutionalCompliance(role: HealthcareRole): Promise<void> {
-    if (!this.config.constitutional_validation) return;
+    if (!this.config.constitutional_validation) {
+      return;
+    }
 
     // Validate patient autonomy consideration
     if (!role.constitutional_compliance.patient_autonomy_respected) {
@@ -722,7 +739,9 @@ export class HealthcareRbacService {
   }
 
   private async validateCfmProfessionalRole(role: HealthcareRole): Promise<void> {
-    if (!this.config.cfm_ethics_validation) return;
+    if (!this.config.cfm_ethics_validation) {
+      return;
+    }
 
     // Validate CFM professional type matches role permissions
     if (
@@ -738,7 +757,9 @@ export class HealthcareRbacService {
   }
 
   private async validateRoleLgpdCompliance(role: HealthcareRole): Promise<void> {
-    if (!this.config.lgpd_compliance_mode) return;
+    if (!this.config.lgpd_compliance_mode) {
+      return;
+    }
 
     // Validate consent requirements for patient data access
     if (
@@ -760,7 +781,9 @@ export class HealthcareRbacService {
   }
 
   private async validateProfessionalCredentials(user: HealthcareUser): Promise<void> {
-    if (!this.config.credential_verification_required) return;
+    if (!this.config.credential_verification_required) {
+      return;
+    }
 
     // Check for required professional credentials based on assigned roles
     const userRoles = await this.getUserRoles(user.user_id);
@@ -783,7 +806,7 @@ export class HealthcareRbacService {
     // Validate all assigned roles exist
     for (const roleId of user.assigned_roles) {
       const role = this.roles.get(roleId);
-      if (!(role && role.active)) {
+      if (!role?.active) {
         throw new Error(`Invalid or inactive role assignment: ${roleId}`);
       }
     }
@@ -799,7 +822,9 @@ export class HealthcareRbacService {
   }
 
   private async validateSecurityClearance(user: HealthcareUser): Promise<void> {
-    if (!this.config.strict_mode_enabled) return;
+    if (!this.config.strict_mode_enabled) {
+      return;
+    }
 
     const clearance = user.security_clearance;
 
@@ -826,7 +851,9 @@ export class HealthcareRbacService {
   }
 
   private async validateUserConstitutionalCompliance(user: HealthcareUser): Promise<void> {
-    if (!this.config.constitutional_validation) return;
+    if (!this.config.constitutional_validation) {
+      return;
+    }
 
     // Validate session management settings
     if (this.config.session_management_strict) {
@@ -854,12 +881,16 @@ export class HealthcareRbacService {
   ): Promise<boolean> {
     // Mock session validation - in production, this would check actual session store
     const session = this.activeSessions.get(userId);
-    if (!session) return false;
+    if (!session) {
+      return false;
+    }
 
     // Check session timeout
     const sessionAge = Date.now() - session.created_at;
     const user = this.users.get(userId);
-    if (!user) return false;
+    if (!user) {
+      return false;
+    }
 
     const timeoutMs = user.session_management.session_timeout_minutes * 60 * 1000;
     if (sessionAge > timeoutMs) {
@@ -880,11 +911,13 @@ export class HealthcareRbacService {
 
   private async getUserRoles(userId: string): Promise<HealthcareRole[]> {
     const user = this.users.get(userId);
-    if (!user) return [];
+    if (!user) {
+      return [];
+    }
 
     return user.assigned_roles
       .map((roleId) => this.roles.get(roleId))
-      .filter((role): role is HealthcareRole => role !== undefined && role.active);
+      .filter((role): role is HealthcareRole => role?.active);
   }
 
   private async getUserPermissions(roles: HealthcareRole[]): Promise<string[]> {
@@ -922,7 +955,9 @@ export class HealthcareRbacService {
     };
 
     const requiredPermission = permissionMap[resourceType]?.[action];
-    if (!requiredPermission) return false;
+    if (!requiredPermission) {
+      return false;
+    }
 
     return permissions.includes(requiredPermission);
   }
@@ -934,7 +969,7 @@ export class HealthcareRbacService {
   private async validatePatientDataAccess(
     user: HealthcareUser,
     roles: HealthcareRole[],
-    resourceType: string,
+    _resourceType: string,
     resourceId: string | undefined,
     action: string,
     context?: Record<string, any>
@@ -972,8 +1007,8 @@ export class HealthcareRbacService {
 
   private async validateEmergencyAccess(
     user: HealthcareUser,
-    resourceType: string,
-    action: string,
+    _resourceType: string,
+    _action: string,
     context: Record<string, any>
   ): Promise<{ valid: boolean; reason?: string }> {
     if (!this.config.emergency_access_enabled) {
@@ -1127,16 +1162,18 @@ export class HealthcareRbacService {
       restrictions.push('data_minimization_applied');
     }
 
-    return [...new Set(restrictions)]; // Remove duplicates
+    return Array.from(new Set(restrictions)); // Remove duplicates
   }
 
   // Helper methods for access request management
 
   private async validateAccessRequestConstitutional(
     request: AccessRequest,
-    user: HealthcareUser
+    _user: HealthcareUser
   ): Promise<void> {
-    if (!this.config.constitutional_validation) return;
+    if (!this.config.constitutional_validation) {
+      return;
+    }
 
     // Validate constitutional basis is provided
     if (!request.constitutional_basis.legal_basis) {
@@ -1202,11 +1239,11 @@ export class HealthcareRbacService {
 
   private hasProfessionalCredentials(user: HealthcareUser): boolean {
     const creds = user.professional_credentials;
-    return !!(
+    return Boolean(
       creds.cfm_registration ||
-      creds.coren_registration ||
-      creds.crefito_registration ||
-      creds.crp_registration
+        creds.coren_registration ||
+        creds.crefito_registration ||
+        creds.crp_registration
     );
   }
 

@@ -12,8 +12,6 @@ import type {
 import {
   calculateComprehensiveRiskAssessment,
   determineEmergencyEscalation,
-  RISK_THRESHOLDS,
-  type RiskFactorWeights,
   validateModelAccuracy,
 } from './ml-risk-models';
 
@@ -560,7 +558,7 @@ export class RiskScoringEngine {
 
   private determineRequiredSpecialty(
     conditions: string[],
-    input: RiskAssessmentInput,
+    _input: RiskAssessmentInput,
   ): string {
     // Map conditions to medical specialties
     const specialtyMap: Record<string, string> = {
@@ -753,7 +751,7 @@ export class RiskScoringEngine {
   }
 
   private handleError(
-    error: unknown,
+    _error: unknown,
     input: RiskAssessmentInput,
     requestId: string,
     performedBy: string,

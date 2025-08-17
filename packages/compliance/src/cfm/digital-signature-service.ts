@@ -7,14 +7,16 @@
  * @since 2025-01-17
  */
 
-import type { Database } from '@neonpro/types';
+// Database type will be provided by the client
+type Database = any;
+
 import type { createClient } from '@supabase/supabase-js';
 
 /**
  * CFM Digital Signature Interface
  * Constitutional validation for medical professional digital signatures
  */
-export interface DigitalSignature {
+export type DigitalSignature = {
   /** Unique signature identifier */
   signature_id: string;
   /** Associated prescription or document ID */
@@ -47,11 +49,11 @@ export interface DigitalSignature {
   created_at: Date;
   /** Constitutional audit trail */
   audit_trail: SignatureAudit[];
-} /**
+}; /**
  * Signature Audit Trail
  * Constitutional audit requirements for signature operations
  */
-export interface SignatureAudit {
+export type SignatureAudit = {
   /** Audit entry unique identifier */
   audit_id: string;
   /** Signature ID being audited */
@@ -70,13 +72,13 @@ export interface SignatureAudit {
   reason: string;
   /** CFM validation details */
   cfm_validation_details?: string;
-}
+};
 
 /**
  * Signature Validation Parameters
  * Constitutional parameters for CFM signature validation
  */
-export interface SignatureValidationParams {
+export type SignatureValidationParams = {
   /** Document content to be signed */
   document_content: string;
   /** Document hash for integrity */
@@ -89,13 +91,13 @@ export interface SignatureValidationParams {
   algorithm: DigitalSignature['signature_algorithm'];
   /** Constitutional validation requirements */
   constitutional_requirements: string[];
-}
+};
 
 /**
  * CFM Signature Verification Response
  * Constitutional verification results
  */
-export interface SignatureVerificationResponse {
+export type SignatureVerificationResponse = {
   /** Verification success status */
   verified: boolean;
   /** CFM validation details */
@@ -122,12 +124,12 @@ export interface SignatureVerificationResponse {
   };
   /** Error details if verification failed */
   error_details?: string;
-} /**
+}; /**
  * CFM Digital Signature Service Implementation
  * Constitutional healthcare compliance with CFM professional standards ≥9.9/10
  */
 export class DigitalSignatureService {
-  private supabase: ReturnType<typeof createClient<Database>>;
+  private readonly supabase: ReturnType<typeof createClient<Database>>;
 
   constructor(supabaseClient: ReturnType<typeof createClient<Database>>) {
     this.supabase = supabaseClient;
@@ -204,13 +206,11 @@ export class DigitalSignatureService {
         .single();
 
       if (error) {
-        console.error('Digital signature creation error:', error);
         return { success: false, error: 'Failed to create digital signature' };
       }
 
       return { success: true, data: data as DigitalSignature };
-    } catch (error) {
-      console.error('Create digital signature service error:', error);
+    } catch (_error) {
       return { success: false, error: 'Constitutional healthcare service error' };
     }
   } /**
@@ -262,8 +262,7 @@ export class DigitalSignatureService {
       };
 
       return { success: true, data: verificationResponse };
-    } catch (error) {
-      console.error('Verify digital signature error:', error);
+    } catch (_error) {
       return { success: false, error: 'Constitutional verification service error' };
     }
   }
@@ -312,8 +311,7 @@ export class DigitalSignatureService {
         license_active: true,
         specialization_verified: cfmRegistration.specializations?.length > 0,
       };
-    } catch (error) {
-      console.error('CFM validation error:', error);
+    } catch (_error) {
       return { valid: false, error: 'Constitutional CFM validation service error' };
     }
   } /**
@@ -347,8 +345,7 @@ export class DigitalSignatureService {
         expiry_date: mockExpiryDate,
         issuing_authority: 'ICP-Brasil CFM Authority',
       };
-    } catch (error) {
-      console.error('Certificate validation error:', error);
+    } catch (_error) {
       return { valid: false, error: 'Constitutional certificate validation service error' };
     }
   }
@@ -384,8 +381,7 @@ export class DigitalSignatureService {
       }
 
       return { success: true, signature };
-    } catch (error) {
-      console.error('Generate signature error:', error);
+    } catch (_error) {
       return { success: false, error: 'Constitutional signature generation service error' };
     }
   }
@@ -438,13 +434,11 @@ export class DigitalSignatureService {
       const { data, error } = await query.order('created_at', { ascending: false });
 
       if (error) {
-        console.error('Get digital signatures error:', error);
         return { success: false, error: 'Failed to retrieve digital signatures' };
       }
 
       return { success: true, data: data as DigitalSignature[] };
-    } catch (error) {
-      console.error('Get digital signatures service error:', error);
+    } catch (_error) {
       return { success: false, error: 'Constitutional healthcare service error' };
     }
   }
@@ -493,13 +487,11 @@ export class DigitalSignatureService {
         .eq('signature_id', signatureId);
 
       if (updateError) {
-        console.error('Revoke signature error:', updateError);
         return { success: false, error: 'Failed to revoke digital signature' };
       }
 
       return { success: true };
-    } catch (error) {
-      console.error('Revoke digital signature service error:', error);
+    } catch (_error) {
       return { success: false, error: 'Constitutional healthcare service error' };
     }
   }

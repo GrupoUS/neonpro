@@ -59,10 +59,7 @@ async function validateCampaignAPIs() {
         if (analyticsResponse.ok) {
           console.log('✅ GET /campaigns/analytics - Analytics funcionando');
         } else {
-          console.log(
-            '❌ GET /campaigns/analytics - Erro:',
-            analyticsResponse.status
-          );
+          console.log('❌ GET /campaigns/analytics - Erro:', analyticsResponse.status);
         }
 
         // 4. Test A/B Testing
@@ -79,24 +76,16 @@ async function validateCampaignAPIs() {
         if (abTestResponse.ok) {
           console.log('✅ POST /campaigns/analytics - A/B Testing funcionando');
         } else {
-          console.log(
-            '❌ POST /campaigns/analytics - Erro:',
-            abTestResponse.status
-          );
+          console.log('❌ POST /campaigns/analytics - Erro:', abTestResponse.status);
         }
       }
     } else {
-      console.log(
-        '❌ POST /campaigns - Erro na criação:',
-        createResponse.status
-      );
+      console.log('❌ POST /campaigns - Erro na criação:', createResponse.status);
     }
 
     // 5. Test Campaign List
     console.log('5. Testando listagem de campanhas...');
-    const listResponse = await fetch(
-      `${API_BASE}?clinic_id=${testCampaign.clinic_id}`
-    );
+    const listResponse = await fetch(`${API_BASE}?clinic_id=${testCampaign.clinic_id}`);
     if (listResponse.ok) {
       console.log('✅ GET /campaigns - Listagem funcionando');
     } else {
@@ -105,29 +94,15 @@ async function validateCampaignAPIs() {
 
     console.log('\n✅ VALIDAÇÃO CONCLUÍDA - Task 5 implementada com sucesso!');
     console.log('\nEndpoints implementados:');
-    console.log(
-      '- POST /api/retention-analytics/campaigns - Criação de campanhas'
-    );
-    console.log(
-      '- GET /api/retention-analytics/campaigns - Listagem de campanhas'
-    );
-    console.log(
-      '- GET /api/retention-analytics/campaigns/[id] - Detalhes da campanha'
-    );
-    console.log(
-      '- PUT /api/retention-analytics/campaigns/[id] - Execução de campanha'
-    );
-    console.log(
-      '- GET /api/retention-analytics/campaigns/analytics - Analytics de campanhas'
-    );
-    console.log(
-      '- POST /api/retention-analytics/campaigns/analytics - A/B Testing'
-    );
+    console.log('- POST /api/retention-analytics/campaigns - Criação de campanhas');
+    console.log('- GET /api/retention-analytics/campaigns - Listagem de campanhas');
+    console.log('- GET /api/retention-analytics/campaigns/[id] - Detalhes da campanha');
+    console.log('- PUT /api/retention-analytics/campaigns/[id] - Execução de campanha');
+    console.log('- GET /api/retention-analytics/campaigns/analytics - Analytics de campanhas');
+    console.log('- POST /api/retention-analytics/campaigns/analytics - A/B Testing');
   } catch (error) {
     console.error('❌ Erro na validação:', error.message);
-    console.log(
-      '\n⚠️  Nota: Para testar as APIs, execute o servidor de desenvolvimento:'
-    );
+    console.log('\n⚠️  Nota: Para testar as APIs, execute o servidor de desenvolvimento:');
     console.log('   pnpm dev');
   }
 }

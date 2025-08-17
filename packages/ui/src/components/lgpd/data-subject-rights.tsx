@@ -24,14 +24,14 @@ type RequestType =
   | 'portability'
   | 'objection';
 
-interface DataSubjectRequest {
+type DataSubjectRequest = {
   id: string;
   requestType: RequestType;
   status: 'pending' | 'processing' | 'completed' | 'denied';
   requestedAt: string;
   completedAt?: string;
   details?: any;
-}
+};
 
 // ============================================================================
 // DATA SUBJECT RIGHTS COMPONENT
@@ -45,7 +45,7 @@ export function DataSubjectRights() {
   const [rectificationNewValue, setRectificationNewValue] = useState('');
   const [rectificationReason, setRectificationReason] = useState('');
   const [loading, setLoading] = useState(false);
-  const [requests, setRequests] = useState<DataSubjectRequest[]>([]);
+  const [requests, _setRequests] = useState<DataSubjectRequest[]>([]);
 
   const requestTypes = [
     {
@@ -143,8 +143,7 @@ export function DataSubjectRights() {
 
       // Refresh requests list (would need to implement this)
       // loadUserRequests();
-    } catch (error) {
-      console.error('Submit request error:', error);
+    } catch (_error) {
       toast.error('Erro ao criar solicitação');
     } finally {
       setLoading(false);
@@ -324,9 +323,9 @@ export function DataSubjectRights() {
 // REQUEST HISTORY CARD COMPONENT
 // ============================================================================
 
-interface RequestHistoryCardProps {
+type RequestHistoryCardProps = {
   request: DataSubjectRequest;
-}
+};
 
 function RequestHistoryCard({ request }: RequestHistoryCardProps) {
   const getStatusColor = (status: string) => {

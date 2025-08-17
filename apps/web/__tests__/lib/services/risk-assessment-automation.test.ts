@@ -3,10 +3,7 @@ import {
   createRiskAssessmentService,
   type PatientRiskAssessmentService,
 } from '@/app/lib/services/risk-assessment-automation';
-import type {
-  RiskAssessmentInput,
-  RiskLevel,
-} from '@/app/types/risk-assessment-automation';
+import type { RiskAssessmentInput } from '@/app/types/risk-assessment-automation';
 
 // ============================================================================
 // SERVICE LAYER INTEGRATION TESTS - CONSTITUTIONAL HEALTHCARE COMPLIANCE
@@ -19,7 +16,13 @@ jest.mock('@supabase/supabase-js', () => ({
 
 describe('Patient Risk Assessment Service - Integration Tests', () => {
   let service: PatientRiskAssessmentService;
-  let mockSupabase: any;
+  let mockSupabase: {
+    from: jest.Mock;
+    select: jest.Mock;
+    insert: jest.Mock;
+    update: jest.Mock;
+    delete: jest.Mock;
+  };
 
   const mockPatientData: RiskAssessmentInput = {
     patientId: '12345678-1234-1234-1234-123456789012',

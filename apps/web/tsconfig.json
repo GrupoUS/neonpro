@@ -32,35 +32,27 @@
     "baseUrl": ".",
     "paths": {
       "@/*": [
-        "./src/*",
         "./*"
       ],
       "@/components/*": [
-        "./src/components/*",
         "./components/*"
       ],
       "@/lib/*": [
-        "./src/lib/*",
         "./lib/*"
       ],
       "@/styles/*": [
-        "./src/styles/*",
         "./styles/*"
       ],
       "@/types/*": [
-        "./src/types/*",
         "./types/*"
       ],
       "@/hooks/*": [
-        "./src/hooks/*",
         "./hooks/*"
       ],
       "@/utils/*": [
-        "./src/utils/*",
         "./utils/*"
       ],
       "@/app/*": [
-        "./src/app/*",
         "./app/*"
       ],
       "@neonpro/ui": [

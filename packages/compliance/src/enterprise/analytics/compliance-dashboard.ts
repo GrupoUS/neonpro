@@ -106,7 +106,7 @@ export type ComplianceDashboardMetrics = z.infer<typeof ComplianceDashboardMetri
 export type ComplianceAlert = z.infer<typeof ComplianceAlertSchema>;
 export type ComplianceDashboardReport = z.infer<typeof ComplianceDashboardReportSchema>;
 
-export interface ComplianceDashboardAudit {
+export type ComplianceDashboardAudit = {
   audit_id: string;
   dashboard_action: string;
   metrics_snapshot: ComplianceDashboardMetrics;
@@ -115,18 +115,18 @@ export interface ComplianceDashboardAudit {
   privacy_impact_assessment: Record<string, any>;
   created_at: string;
   created_by: string;
-}
+};
 
 /**
  * Compliance Dashboard Service
  * Real-time constitutional compliance monitoring with regulatory oversight
  */
 export class ComplianceDashboardService {
-  private config: ComplianceDashboardConfig;
+  private readonly config: ComplianceDashboardConfig;
   private currentMetrics: ComplianceDashboardMetrics | null = null;
-  private activeAlerts: ComplianceAlert[] = [];
-  private auditTrail: ComplianceDashboardAudit[] = [];
-  private monitoringInterval: NodeJS.Timeout | null = null;
+  private readonly activeAlerts: ComplianceAlert[] = [];
+  private readonly auditTrail: ComplianceDashboardAudit[] = [];
+  private readonly monitoringInterval: NodeJS.Timeout | null = null;
 
   constructor(config: ComplianceDashboardConfig) {
     this.config = ComplianceDashboardConfigSchema.parse(config);
@@ -179,8 +179,7 @@ export class ComplianceDashboardService {
         dashboard_url: '/dashboard/compliance',
         initial_metrics: initialMetrics,
       };
-    } catch (error) {
-      console.error('Failed to start compliance monitoring:', error);
+    } catch (_error) {
       throw new Error('Constitutional compliance monitoring startup failed');
     }
   }
@@ -207,8 +206,7 @@ export class ComplianceDashboardService {
         success: true,
         final_report: finalReport,
       };
-    } catch (error) {
-      console.error('Failed to stop compliance monitoring:', error);
+    } catch (_error) {
       throw new Error('Constitutional compliance monitoring shutdown failed');
     }
   }
@@ -295,9 +293,7 @@ export class ComplianceDashboardService {
 
       // Update metrics
       this.currentMetrics = metrics;
-    } catch (error) {
-      console.error('Compliance check failed:', error);
-
+    } catch (_error) {
       // Generate critical alert for monitoring failure
       const criticalAlert: ComplianceAlert = {
         alert_id: crypto.randomUUID(),
@@ -664,11 +660,17 @@ export class ComplianceDashboardService {
     const score = metrics.overall_compliance_score;
     let rating: 'excellent' | 'good' | 'fair' | 'poor' | 'critical';
 
-    if (score >= 9.5) rating = 'excellent';
-    else if (score >= 8.5) rating = 'good';
-    else if (score >= 7.5) rating = 'fair';
-    else if (score >= 6.0) rating = 'poor';
-    else rating = 'critical';
+    if (score >= 9.5) {
+      rating = 'excellent';
+    } else if (score >= 8.5) {
+      rating = 'good';
+    } else if (score >= 7.5) {
+      rating = 'fair';
+    } else if (score >= 6.0) {
+      rating = 'poor';
+    } else {
+      rating = 'critical';
+    }
 
     const keyAchievements = [
       `Constitutional compliance score: ${metrics.constitutional_compliance_score}/10`,

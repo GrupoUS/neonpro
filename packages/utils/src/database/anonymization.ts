@@ -15,7 +15,6 @@ export type AnonymizationConfig = {
 
 export class DataAnonymizer {
   private static instance: DataAnonymizer;
-  private config: any;
 
   private constructor() {
     this.config = {

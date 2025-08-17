@@ -95,7 +95,7 @@ export type ProcedureClassification = z.infer<typeof ProcedureClassificationSche
 /**
  * Classification Validation Result
  */
-export interface ClassificationValidationResult {
+export type ClassificationValidationResult = {
   classificationId: string;
   isValid: boolean;
   constitutionalCompliance: {
@@ -120,7 +120,7 @@ export interface ClassificationValidationResult {
   }>;
   requiredUpdates: string[];
   nextReviewDate: Date;
-}
+};
 
 /**
  * Constitutional Procedure Classification Service for ANVISA Compliance
@@ -417,13 +417,13 @@ export class ProcedureClassificationService {
 
   // Additional helper methods (implementation stubs)
   private async validateProfessionalRequirements(
-    classification: ProcedureClassification
+    _classification: ProcedureClassification
   ): Promise<{ valid: boolean; score: ComplianceScore }> {
     return { valid: true, score: 9.5 };
   }
 
   private async assessPatientSafety(
-    classification: ProcedureClassification
+    _classification: ProcedureClassification
   ): Promise<{ safe: boolean; score: ComplianceScore }> {
     return { safe: true, score: 9.8 };
   }
@@ -437,13 +437,12 @@ export class ProcedureClassificationService {
   private async storeProcedureClassification(
     classification: ProcedureClassification
   ): Promise<ProcedureClassification> {
-    console.log('Storing procedure classification:', classification.classificationId);
     return classification;
   }
 
   private async getProcedureClassification(
-    id: string,
-    tenantId: string
+    _id: string,
+    _tenantId: string
   ): Promise<ProcedureClassification | null> {
     return null; // Would query database
   }
@@ -475,17 +474,13 @@ export class ProcedureClassificationService {
   }
 
   private async generateComplianceDocumentation(
-    classification: ProcedureClassification
-  ): Promise<void> {
-    console.log('Generating compliance documentation');
-  }
+    _classification: ProcedureClassification
+  ): Promise<void> {}
 
   private async sendClassificationNotification(
-    classification: ProcedureClassification,
-    score: ComplianceScore
-  ): Promise<void> {
-    console.log('Sending classification notification');
-  }
+    _classification: ProcedureClassification,
+    _score: ComplianceScore
+  ): Promise<void> {}
 
   private async createAuditEvent(action: string, data: any): Promise<any> {
     return {

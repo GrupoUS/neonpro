@@ -11,9 +11,9 @@
     "src"
   ],
   "scripts": {
-    "build": "tsc",
-    "dev": "tsc --watch",
-    "type-check": "tsc --noEmit"
+    "build": "npx tsc",
+    "dev": "npx tsc --watch",
+    "type-check": "npx tsc --noEmit"
   },
   "dependencies": {
     "@neonpro/db": "workspace:*",

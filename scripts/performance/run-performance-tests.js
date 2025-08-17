@@ -92,15 +92,11 @@ async function _runPerformanceTests() {
       mockSubscriptionCheck,
       TEST_CONFIG.subscription_check
     );
-    console.log(
-      `✅ Subscription checks: ${subscriptionResult.throughput.toFixed(2)} req/s`
-    );
+    console.log(`✅ Subscription checks: ${subscriptionResult.throughput.toFixed(2)} req/s`);
     console.log(
       `   Success rate: ${((subscriptionResult.successfulRequests / subscriptionResult.totalRequests) * 100).toFixed(2)}%`
     );
-    console.log(
-      `   Avg response: ${subscriptionResult.avgResponseTime.toFixed(2)}ms\n`
-    );
+    console.log(`   Avg response: ${subscriptionResult.avgResponseTime.toFixed(2)}ms\n`);
 
     // Run subscription update load test
     console.log('Testing subscription updates...');
@@ -108,15 +104,11 @@ async function _runPerformanceTests() {
       mockSubscriptionUpdate,
       TEST_CONFIG.subscription_update
     );
-    console.log(
-      `✅ Subscription updates: ${updateResult.throughput.toFixed(2)} req/s`
-    );
+    console.log(`✅ Subscription updates: ${updateResult.throughput.toFixed(2)} req/s`);
     console.log(
       `   Success rate: ${((updateResult.successfulRequests / updateResult.totalRequests) * 100).toFixed(2)}%`
     );
-    console.log(
-      `   Avg response: ${updateResult.avgResponseTime.toFixed(2)}ms\n`
-    ); // Run real-time sync load test
+    console.log(`   Avg response: ${updateResult.avgResponseTime.toFixed(2)}ms\n`); // Run real-time sync load test
     console.log('Testing real-time synchronization...');
     const syncResult = await loadTester.executeLoadTest(
       mockRealTimeSync,
@@ -126,9 +118,7 @@ async function _runPerformanceTests() {
     console.log(
       `   Success rate: ${((syncResult.successfulRequests / syncResult.totalRequests) * 100).toFixed(2)}%`
     );
-    console.log(
-      `   Avg response: ${syncResult.avgResponseTime.toFixed(2)}ms\n`
-    );
+    console.log(`   Avg response: ${syncResult.avgResponseTime.toFixed(2)}ms\n`);
 
     // Generate performance report
     console.log('📈 Generating Performance Report...\n');
@@ -154,9 +144,7 @@ async function _runPerformanceTests() {
     console.log(`System Stability: ${stressReport.systemStability}%`);
     console.log(`Recovery Time: ${stressReport.recoveryTime}ms`);
     console.log(`Critical Failures: ${stressReport.criticalFailures}`);
-    console.log(
-      `Performance Degradation: ${stressReport.performanceDegradation}%\n`
-    );
+    console.log(`Performance Degradation: ${stressReport.performanceDegradation}%\n`);
 
     // Final assessment
     const overallScore = calculateOverallScore(report, stressReport);
@@ -166,9 +154,7 @@ async function _runPerformanceTests() {
     if (overallScore >= 80) {
       console.log('🎉 EXCELLENT: System meets performance requirements');
     } else if (overallScore >= 60) {
-      console.log(
-        '⚠️  GOOD: System performance is acceptable with room for improvement'
-      );
+      console.log('⚠️  GOOD: System performance is acceptable with room for improvement');
     } else {
       console.log('❌ POOR: System requires optimization before production');
     }

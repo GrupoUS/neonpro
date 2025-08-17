@@ -1,24 +1,35 @@
 {
-  "name": "@neonpro/eslint-config",
-  "version": "0.0.0",
-  "type": "module",
-  "private": true,
-  "exports": {
-    "./base": "./base.js",
-    "./next-js": "./next.js",
-    "./react-internal": "./react-internal.js"
+  "name": "@neonpro/eslint-config-healthcare",
+  "version": "1.0.0",
+  "description": "ESLint configuration for healthcare applications with LGPD, ANVISA, and CFM compliance",
+  "main": "index.js",
+  "files": [
+    "index.js",
+    "healthcare.js",
+    "security.js",
+    "accessibility.js"
+  ],
+  "keywords": [
+    "eslint",
+    "eslintconfig",
+    "healthcare",
+    "lgpd",
+    "anvisa",
+    "cfm",
+    "security",
+    "accessibility"
+  ],
+  "peerDependencies": {
+    "@typescript-eslint/eslint-plugin": "^7.0.0",
+    "@typescript-eslint/parser": "^7.0.0",
+    "eslint": "^8.0.0",
+    "eslint-plugin-react": "^7.34.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-jsx-a11y": "^6.8.0",
+    "eslint-plugin-security": "^2.1.0",
+    "eslint-plugin-sonarjs": "^0.24.0"
   },
-  "devDependencies": {
-    "@eslint/js": "^9.33.0",
-    "@next/eslint-plugin-next": "^15.4.2",
-    "eslint": "^9.33.0",
-    "eslint-config-prettier": "^10.1.1",
-    "eslint-plugin-only-warn": "^1.1.0",
-    "eslint-plugin-react": "^7.37.5",
-    "eslint-plugin-react-hooks": "^5.2.0",
-    "eslint-plugin-turbo": "^2.5.0",
-    "globals": "^16.3.0",
-    "typescript": "^5.9.2",
-    "typescript-eslint": "^8.39.0"
+  "dependencies": {
+    "@next/eslint-plugin-next": "^14.0.0"
   }
 }

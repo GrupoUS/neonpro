@@ -7,26 +7,20 @@
  * @quality ≥9.9/10 Healthcare Excellence Standard
  */
 
-// Testing utilities and healthcare-specific test frameworks
-export * from './testing';
-
 // CI/CD configurations with constitutional validation
 export * from './ci-cd';
-
-// Monitoring and observability for healthcare systems
-export * from './monitoring';
-
-// Infrastructure as code for healthcare compliance
-export * from './infrastructure';
-
-// Security automation and compliance tools
-export * from './security';
-
-// Performance monitoring and optimization
-export * from './performance';
-
 // Production deployment with healthcare standards
 export * from './deployment';
+// Infrastructure as code for healthcare compliance
+export * from './infrastructure';
+// Monitoring and observability for healthcare systems
+export * from './monitoring';
+// Performance monitoring and optimization
+export * from './performance';
+// Security automation and compliance tools
+export * from './security';
+// Testing utilities and healthcare-specific test frameworks
+export * from './testing';
 
 /**
  * DevOps Configuration for Constitutional Healthcare
@@ -35,7 +29,7 @@ export const NEONPRO_DEVOPS_CONFIG = {
   name: '@neonpro/devops',
   version: '1.0.0',
   description: 'NeonPro Healthcare DevOps Excellence - Constitutional Healthcare Infrastructure',
-  
+
   // Healthcare Quality Standards (PROJECT OVERRIDE)
   qualityStandards: {
     healthcareOperations: '≥9.9/10',
@@ -43,9 +37,9 @@ export const NEONPRO_DEVOPS_CONFIG = {
     apiResponseTime: '≤200ms',
     securityCompliance: '100%',
     accessibilityCompliance: 'WCAG 2.1 AA+',
-    regulatoryCompliance: 'LGPD + ANVISA + CFM'
+    regulatoryCompliance: 'LGPD + ANVISA + CFM',
   },
-  
+
   // Constitutional Healthcare Principles
   constitutionalPrinciples: {
     patientPrivacyFirst: true,
@@ -53,9 +47,9 @@ export const NEONPRO_DEVOPS_CONFIG = {
     explainableAI: true,
     transparencyMandate: true,
     regulatoryCompliance: true,
-    holisticWellness: true
+    holisticWellness: true,
   },
-  
+
   // DevOps Excellence Standards
   devopsStandards: {
     zeroDowntimeDeployment: true,
@@ -63,8 +57,8 @@ export const NEONPRO_DEVOPS_CONFIG = {
     healthcareMonitoring: true,
     complianceAutomation: true,
     securityFirst: true,
-    performanceOptimized: true
-  }
+    performanceOptimized: true,
+  },
 } as const;
 
 export type NeonProDevOpsConfig = typeof NEONPRO_DEVOPS_CONFIG;

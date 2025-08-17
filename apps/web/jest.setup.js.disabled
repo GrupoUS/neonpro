@@ -1,0 +1,345 @@
+/**
+ * Jest Setup for NeonPro Web Application
+ *
+ * Next.js 15 + Healthcare Testing Setup
+ * Brazilian Healthcare Compliance Extensions
+ */
+
+// Import base healthcare setup
+import '@testing-library/jest-dom';
+
+// Next.js specific mocks
+import { jest } from '@jest/globals';
+
+// Mock Next.js router
+jest.mock('next/router', () => ({
+  useRouter() {
+    return {
+      route: '/',
+      pathname: '/',
+      query: {},
+      asPath: '/',
+      push: jest.fn(),
+      pop: jest.fn(),
+      reload: jest.fn(),
+      back: jest.fn(),
+      prefetch: jest.fn(),
+      beforePopState: jest.fn(),
+      events: {
+        on: jest.fn(),
+        off: jest.fn(),
+        emit: jest.fn(),
+      },
+      isFallback: false,
+    };
+  },
+}));
+
+// Mock Next.js navigation (App Router)
+jest.mock('next/navigation', () => ({
+  useRouter() {
+    return {
+      push: jest.fn(),
+      replace: jest.fn(),
+      prefetch: jest.fn(),
+      back: jest.fn(),
+      forward: jest.fn(),
+      refresh: jest.fn(),
+    };
+  },
+  useSearchParams() {
+    return new URLSearchParams();
+  },
+  usePathname() {
+    return '/';
+  },
+}));
+
+// Mock Next.js Image component
+jest.mock('next/image', () => ({
+  __esModule: true,
+  default: (props) => {
+    // eslint-disable-next-line @next/next/no-img-element
+    return <img {...props} />;
+  },
+}));
+
+// Mock Next.js Link component
+jest.mock('next/link', () => ({
+  __esModule: true,
+  default: ({ children, ...props }) => {
+    return <a {...props}>{children}</a>;
+  },
+}));
+
+// Mock Next.js dynamic imports
+jest.mock('next/dynamic', () => () => {
+  const DynamicComponent = () => null;
+  DynamicComponent.displayName = 'LoadableComponent';
+  DynamicComponent.preload = jest.fn();
+  return DynamicComponent;
+});
+
+// Mock Supabase client for Next.js
+jest.mock('@/lib/supabase', () => ({
+  supabase: {
+    auth: {
+      getSession: jest.fn(() =>
+        Promise.resolve({ data: { session: null }, error: null }),
+      ),
+      getUser: jest.fn(() =>
+        Promise.resolve({ data: { user: null }, error: null }),
+      ),
+      signInWithPassword: jest.fn(),
+      signOut: jest.fn(),
+      onAuthStateChange: jest.fn(() => ({
+        data: { subscription: { unsubscribe: jest.fn() } },
+      })),
+    },
+    from: jest.fn(() => ({
+      select: jest.fn().mockReturnThis(),
+      insert: jest.fn().mockReturnThis(),
+      update: jest.fn().mockReturnThis(),
+      delete: jest.fn().mockReturnThis(),
+      eq: jest.fn().mockReturnThis(),
+      neq: jest.fn().mockReturnThis(),
+      gt: jest.fn().mockReturnThis(),
+      lt: jest.fn().mockReturnThis(),
+      gte: jest.fn().mockReturnThis(),
+      lte: jest.fn().mockReturnThis(),
+      like: jest.fn().mockReturnThis(),
+      ilike: jest.fn().mockReturnThis(),
+      is: jest.fn().mockReturnThis(),
+      in: jest.fn().mockReturnThis(),
+      contains: jest.fn().mockReturnThis(),
+      containedBy: jest.fn().mockReturnThis(),
+      rangeGt: jest.fn().mockReturnThis(),
+      rangeLt: jest.fn().mockReturnThis(),
+      rangeGte: jest.fn().mockReturnThis(),
+      rangeLte: jest.fn().mockReturnThis(),
+      rangeAdjacent: jest.fn().mockReturnThis(),
+      overlaps: jest.fn().mockReturnThis(),
+      textSearch: jest.fn().mockReturnThis(),
+      match: jest.fn().mockReturnThis(),
+      not: jest.fn().mockReturnThis(),
+      or: jest.fn().mockReturnThis(),
+      filter: jest.fn().mockReturnThis(),
+      order: jest.fn().mockReturnThis(),
+      limit: jest.fn().mockReturnThis(),
+      range: jest.fn().mockReturnThis(),
+      single: jest.fn().mockReturnThis(),
+      maybeSingle: jest.fn().mockReturnThis(),
+      csv: jest.fn().mockReturnThis(),
+      explain: jest.fn().mockReturnThis(),
+      then: jest.fn((callback) => callback({ data: [], error: null })),
+    })),
+    rpc: jest.fn(() => Promise.resolve({ data: null, error: null })),
+    storage: {
+      from: jest.fn(() => ({
+        upload: jest.fn(() => Promise.resolve({ data: null, error: null })),
+        download: jest.fn(() => Promise.resolve({ data: null, error: null })),
+        remove: jest.fn(() => Promise.resolve({ data: null, error: null })),
+        list: jest.fn(() => Promise.resolve({ data: [], error: null })),
+        getPublicUrl: jest.fn(() => ({
+          data: { publicUrl: 'http://test.com/file.jpg' },
+        })),
+      })),
+    },
+  },
+}));
+
+// Mock healthcare-specific modules
+jest.mock('@/lib/healthcare/patient-data', () => ({
+  encryptPatientData: jest.fn((data) => ({ ...data, encrypted: true })),
+  decryptPatientData: jest.fn((data) => ({ ...data, encrypted: false })),
+  validateLGPDCompliance: jest.fn(() => true),
+  generateAuditTrail: jest.fn(() => ({
+    id: 'audit_test',
+    timestamp: new Date().toISOString(),
+    action: 'test_action',
+    lgpd_compliant: true,
+  })),
+}));
+
+// Mock LGPD compliance module
+jest.mock('@/lib/compliance/lgpd', () => ({
+  checkDataSubjectRights: jest.fn(() => true),
+  generateConsentRecord: jest.fn(() => ({
+    id: 'consent_test',
+    timestamp: new Date().toISOString(),
+    purposes: ['medical_treatment'],
+    consent_given: true,
+  })),
+  validateCrossBorderTransfer: jest.fn(() => false), // Brazilian data stays in Brazil
+  processDataDeletionRequest: jest.fn(() => Promise.resolve({ success: true })),
+}));
+
+// Mock medical workflow modules
+jest.mock('@/lib/medical/appointments', () => ({
+  scheduleAppointment: jest.fn(() =>
+    Promise.resolve({ id: 'appointment_test' }),
+  ),
+  validateAppointmentAccess: jest.fn(() => true),
+  checkDoctorAvailability: jest.fn(() => true),
+  sendAppointmentReminder: jest.fn(() => Promise.resolve({ sent: true })),
+}));
+
+// Mock accessibility helpers
+jest.mock('@/lib/accessibility/wcag', () => ({
+  validateColorContrast: jest.fn(() => true),
+  checkKeyboardNavigation: jest.fn(() => true),
+  validateScreenReaderSupport: jest.fn(() => true),
+  checkAnxietyReducingPatterns: jest.fn(() => true),
+}));
+
+// Healthcare testing utilities for React components
+global.healthcareComponentUtils = {
+  /**
+   * Render component with healthcare context
+   */
+  renderWithHealthcareContext(component, options = {}) {
+    const {
+      user = {
+        id: 'test_user',
+        role: 'healthcare_professional',
+        clinic_id: 'test_clinic',
+      },
+      clinic = {
+        id: 'test_clinic',
+        name: 'Test Clinic',
+        lgpd_compliant: true,
+      },
+      lgpdConfig = {
+        consentRequired: true,
+        auditTrailEnabled: true,
+        dataMinimization: true,
+      },
+    } = options;
+
+    // Set up healthcare context
+    const _healthcareContext = {
+      user,
+      clinic,
+      lgpdConfig,
+    };
+
+    // Mock context providers
+    const HealthcareProvider = ({ children }) => {
+      return <div data-testid="healthcare-context">{children}</div>;
+    };
+
+    return render(<HealthcareProvider>{component}</HealthcareProvider>);
+  },
+
+  /**
+   * Test patient form with LGPD validation
+   */
+  testPatientFormLGPD(formComponent, _expectedData) {
+    const { getByTestId, getByRole } =
+      this.renderWithHealthcareContext(formComponent);
+
+    // Check LGPD consent checkbox
+    const consentCheckbox = getByRole('checkbox', { name: /lgpd.*consent/i });
+    expect(consentCheckbox).toBeInTheDocument();
+
+    // Check privacy notice link
+    const privacyNotice = getByRole('link', {
+      name: /privacy.*notice|política.*privacidade/i,
+    });
+    expect(privacyNotice).toBeInTheDocument();
+
+    return { getByTestId, getByRole, consentCheckbox, privacyNotice };
+  },
+
+  /**
+   * Test multi-tenant data isolation
+   */
+  testMultiTenantIsolation(component, clinicId) {
+    const { container } = this.renderWithHealthcareContext(component, {
+      clinic: { id: clinicId },
+    });
+
+    // Check that all data elements have proper clinic isolation
+    const dataElements = container.querySelectorAll('[data-clinic-id]');
+    dataElements.forEach((element) => {
+      expect(element.getAttribute('data-clinic-id')).toBe(clinicId);
+    });
+
+    return { container, dataElements };
+  },
+
+  /**
+   * Test accessibility compliance
+   */
+  async testAccessibilityCompliance(component, level = 'AA') {
+    const { container } = this.renderWithHealthcareContext(component);
+
+    // Run axe accessibility tests
+    const results = await axe(container);
+    expect(results).toHaveNoViolations();
+
+    // Test healthcare-specific accessibility
+    expect(container).toBeHealthcareAccessible({
+      level,
+      healthcareRules: true,
+      anxietyReduction: true,
+    });
+
+    return results;
+  },
+};
+
+// Environment variables for testing
+process.env.NODE_ENV = 'test';
+process.env.NEXT_PUBLIC_APP_ENV = 'test';
+process.env.NEXT_PUBLIC_HEALTHCARE_MODE = 'true';
+process.env.NEXT_PUBLIC_LGPD_COMPLIANCE = 'true';
+process.env.NEXT_PUBLIC_ANVISA_VALIDATION = 'true';
+process.env.NEXT_PUBLIC_CFM_STANDARDS = 'true';
+
+// Global test configuration
+window.scrollTo = jest.fn();
+window.matchMedia = jest.fn().mockImplementation((query) => ({
+  matches: false,
+  media: query,
+  onchange: null,
+  addListener: jest.fn(),
+  removeListener: jest.fn(),
+  addEventListener: jest.fn(),
+  removeEventListener: jest.fn(),
+  dispatchEvent: jest.fn(),
+}));
+
+// Resize Observer mock
+global.ResizeObserver = jest.fn().mockImplementation(() => ({
+  observe: jest.fn(),
+  unobserve: jest.fn(),
+  disconnect: jest.fn(),
+}));
+
+// Intersection Observer mock
+global.IntersectionObserver = jest.fn().mockImplementation(() => ({
+  observe: jest.fn(),
+  unobserve: jest.fn(),
+  disconnect: jest.fn(),
+}));
+
+// Console configuration for cleaner test output
+const originalError = console.error;
+beforeAll(() => {
+  console.error = (...args) => {
+    if (
+      typeof args[0] === 'string' &&
+      (args[0].includes('Warning: ReactDOM.render is no longer supported') ||
+        args[0].includes('Warning: An invalid form control') ||
+        args[0].includes('Warning: validateDOMNesting'))
+    ) {
+      return;
+    }
+    originalError.call(console, ...args);
+  };
+});
+
+afterAll(() => {
+  console.error = originalError;
+});

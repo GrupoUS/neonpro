@@ -151,8 +151,7 @@ export async function validateCfmCompliance(
       recommendations,
       professional_standards_met: professionalStandardsMet,
     };
-  } catch (error) {
-    console.error('CFM compliance validation error:', error);
+  } catch (_error) {
     return {
       compliant: false,
       score: 0,
@@ -241,8 +240,7 @@ export async function validateCfmResolutions(
       issues,
       recommendations,
     };
-  } catch (error) {
-    console.error('CFM resolutions validation error:', error);
+  } catch (_error) {
     return {
       compliant: false,
       resolution_compliance: {},

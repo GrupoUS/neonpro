@@ -7,7 +7,7 @@
  */
 
 // Base LGPD Types
-export interface LGPDSubject {
+export type LGPDSubject = {
   id: string;
   name: string;
   email: string;
@@ -15,9 +15,9 @@ export interface LGPDSubject {
   document: string; // CPF/CNPJ
   createdAt: Date;
   updatedAt: Date;
-}
+};
 
-export interface LGPDConsent {
+export type LGPDConsent = {
   id: string;
   subjectId: string;
   purpose: string;
@@ -28,16 +28,16 @@ export interface LGPDConsent {
   expiresAt?: Date;
   version: string;
   metadata?: Record<string, any>;
-}
+};
 
-export interface LGPDDataCategory {
+export type LGPDDataCategory = {
   id: string;
   name: string;
   description: string;
   sensitivity: 'low' | 'medium' | 'high' | 'critical';
   retention: number; // days
   lawfulBasis: LGPDLawfulBasis;
-}
+};
 
 export type LGPDLawfulBasis =
   | 'consent'
@@ -47,7 +47,7 @@ export type LGPDLawfulBasis =
   | 'public_task'
   | 'legitimate_interests';
 
-export interface LGPDProcessingActivity {
+export type LGPDProcessingActivity = {
   id: string;
   name: string;
   description: string;
@@ -59,26 +59,26 @@ export interface LGPDProcessingActivity {
   transfers: LGPDDataTransfer[];
   retention: number;
   security: LGPDSecurityMeasure[];
-}
+};
 
-export interface LGPDDataTransfer {
+export type LGPDDataTransfer = {
   id: string;
   recipient: string;
   country: string;
   adequacyDecision?: boolean;
   safeguards: string[];
   purpose: string;
-}
+};
 
-export interface LGPDSecurityMeasure {
+export type LGPDSecurityMeasure = {
   id: string;
   type: 'technical' | 'organizational';
   description: string;
   implemented: boolean;
   implementedAt?: Date;
-}
+};
 
-export interface LGPDDataBreach {
+export type LGPDDataBreach = {
   id: string;
   detectedAt: Date;
   reportedAt?: Date;
@@ -89,9 +89,9 @@ export interface LGPDDataBreach {
   consequences: string[];
   measures: string[];
   status: 'detected' | 'investigating' | 'reported' | 'resolved';
-}
+};
 
-export interface LGPDSubjectRequest {
+export type LGPDSubjectRequest = {
   id: string;
   subjectId: string;
   type: 'access' | 'rectification' | 'erasure' | 'portability' | 'objection';
@@ -101,9 +101,9 @@ export interface LGPDSubjectRequest {
   completedAt?: Date;
   status: 'pending' | 'processing' | 'completed' | 'rejected';
   response?: string;
-}
+};
 
-export interface LGPDDPIA {
+export type LGPDDPIA = {
   id: string;
   name: string;
   description: string;
@@ -113,26 +113,26 @@ export interface LGPDDPIA {
   assessment: LGPDRiskAssessment;
   reviewDate: Date;
   status: 'draft' | 'review' | 'approved' | 'rejected';
-}
+};
 
-export interface LGPDRisk {
+export type LGPDRisk = {
   id: string;
   description: string;
   likelihood: 'low' | 'medium' | 'high';
   impact: 'low' | 'medium' | 'high';
   category: 'confidentiality' | 'integrity' | 'availability';
   mitigation: string[];
-}
+};
 
-export interface LGPDRiskAssessment {
+export type LGPDRiskAssessment = {
   overallRisk: 'low' | 'medium' | 'high';
   recommendation: 'proceed' | 'proceed_with_measures' | 'reject';
   justification: string;
   assessedBy: string;
   assessedAt: Date;
-}
+};
 
-export interface LGPDAuditLog {
+export type LGPDAuditLog = {
   id: string;
   timestamp: Date;
   action: string;
@@ -141,9 +141,9 @@ export interface LGPDAuditLog {
   details: Record<string, any>;
   ipAddress?: string;
   userAgent?: string;
-}
+};
 
-export interface LGPDReport {
+export type LGPDReport = {
   id: string;
   type: 'compliance' | 'breach' | 'dpia' | 'audit';
   period: {
@@ -153,10 +153,10 @@ export interface LGPDReport {
   data: Record<string, any>;
   generatedAt: Date;
   generatedBy: string;
-}
+};
 
 // Configuration Types
-export interface LGPDConfig {
+export type LGPDConfig = {
   controller: {
     name: string;
     contact: string;
@@ -180,7 +180,7 @@ export interface LGPDConfig {
     pseudonymization: boolean;
     accessControls: boolean;
   };
-}
+};
 
 // Utility Types
 export type LGPDValidationResult = {
@@ -191,18 +191,18 @@ export type LGPDValidationResult = {
 
 export type LGPDExportFormat = 'json' | 'xml' | 'csv' | 'pdf';
 
-export interface LGPDExportOptions {
+export type LGPDExportOptions = {
   format: LGPDExportFormat;
   includeMetadata: boolean;
   anonymize: boolean;
   categories?: string[];
-}
+};
 
 // Event Types
-export interface LGPDEvent {
+export type LGPDEvent = {
   type: string;
   timestamp: Date;
   data: Record<string, any>;
-}
+};
 
 export type LGPDEventHandler = (event: LGPDEvent) => void | Promise<void>;

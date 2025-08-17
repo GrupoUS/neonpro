@@ -138,9 +138,7 @@ if (violations.length > 0) {
   });
 
   console.log('❌ SCAN FALHOU - API KEYS EXPOSTAS DETECTADAS!');
-  console.log(
-    '💡 AÇÃO: Mova as keys para .env.local ou use variáveis de ambiente'
-  );
+  console.log('💡 AÇÃO: Mova as keys para .env.local ou use variáveis de ambiente');
   process.exit(1);
 } else {
   console.log('✅ SCAN COMPLETO - NENHUMA VULNERABILIDADE DETECTADA');

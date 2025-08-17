@@ -19,11 +19,21 @@ const _colors = {
 };
 
 const log = {
-  success: (_msg) => { /* intentionally empty */ },
-  error: (_msg) => { /* intentionally empty */ },
-  warning: (_msg) => { /* intentionally empty */ },
-  info: (_msg) => { /* intentionally empty */ },
-  header: (_msg) => { /* intentionally empty */ },
+  success: (_msg) => {
+    /* intentionally empty */
+  },
+  error: (_msg) => {
+    /* intentionally empty */
+  },
+  warning: (_msg) => {
+    /* intentionally empty */
+  },
+  info: (_msg) => {
+    /* intentionally empty */
+  },
+  header: (_msg) => {
+    /* intentionally empty */
+  },
 };
 
 class MigrationValidator {

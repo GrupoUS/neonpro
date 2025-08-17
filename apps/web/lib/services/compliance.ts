@@ -41,11 +41,15 @@ export class ComplianceService {
     try {
       // Check LGPD compliance requirements
       const lgpdData: LGPDComplianceData = {
-        data_processing_consent: await this.verifyDataProcessingConsent(tenantId),
+        data_processing_consent:
+          await this.verifyDataProcessingConsent(tenantId),
         privacy_policy_updated: await this.verifyPrivacyPolicyUpdated(tenantId),
-        data_retention_compliant: await this.verifyDataRetentionCompliance(tenantId),
-        breach_notification_process: await this.verifyBreachNotificationProcess(tenantId),
-        data_subject_rights_enabled: await this.verifyDataSubjectRights(tenantId),
+        data_retention_compliant:
+          await this.verifyDataRetentionCompliance(tenantId),
+        breach_notification_process:
+          await this.verifyBreachNotificationProcess(tenantId),
+        data_subject_rights_enabled:
+          await this.verifyDataSubjectRights(tenantId),
       };
 
       const isCompliant = Object.values(lgpdData).every(Boolean);
@@ -56,7 +60,9 @@ export class ComplianceService {
         status: isCompliant ? 'compliant' : 'non_compliant',
         details: lgpdData,
         checked_at: new Date().toISOString(),
-        expires_at: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString(), // 90 days
+        expires_at: new Date(
+          Date.now() + 90 * 24 * 60 * 60 * 1000,
+        ).toISOString(), // 90 days
       };
 
       // Store compliance check result
@@ -73,7 +79,10 @@ export class ComplianceService {
       return { compliance: data };
     } catch (error) {
       return {
-        error: error instanceof Error ? error.message : 'LGPD compliance check failed',
+        error:
+          error instanceof Error
+            ? error.message
+            : 'LGPD compliance check failed',
       };
     }
   }
@@ -84,10 +93,13 @@ export class ComplianceService {
   }> {
     try {
       const anvisaData: ANVISAComplianceData = {
-        product_registration_valid: await this.verifyProductRegistration(tenantId),
-        adverse_event_reporting: await this.verifyAdverseEventReporting(tenantId),
+        product_registration_valid:
+          await this.verifyProductRegistration(tenantId),
+        adverse_event_reporting:
+          await this.verifyAdverseEventReporting(tenantId),
         quality_management_system: await this.verifyQualityManagement(tenantId),
-        professional_licensing_valid: await this.verifyProfessionalLicensing(tenantId),
+        professional_licensing_valid:
+          await this.verifyProfessionalLicensing(tenantId),
       };
 
       const isCompliant = Object.values(anvisaData).every(Boolean);
@@ -98,7 +110,9 @@ export class ComplianceService {
         status: isCompliant ? 'compliant' : 'non_compliant',
         details: anvisaData,
         checked_at: new Date().toISOString(),
-        expires_at: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString(), // 1 year
+        expires_at: new Date(
+          Date.now() + 365 * 24 * 60 * 60 * 1000,
+        ).toISOString(), // 1 year
       };
 
       const { data, error } = await supabase
@@ -114,7 +128,10 @@ export class ComplianceService {
       return { compliance: data };
     } catch (error) {
       return {
-        error: error instanceof Error ? error.message : 'ANVISA compliance check failed',
+        error:
+          error instanceof Error
+            ? error.message
+            : 'ANVISA compliance check failed',
       };
     }
   }
@@ -126,7 +143,8 @@ export class ComplianceService {
     try {
       const cfmData: CFMComplianceData = {
         medical_license_valid: await this.verifyMedicalLicense(tenantId),
-        continuing_education_current: await this.verifyContinuingEducation(tenantId),
+        continuing_education_current:
+          await this.verifyContinuingEducation(tenantId),
         ethical_compliance: await this.verifyEthicalCompliance(tenantId),
         telemedicine_authorization: await this.verifyTelemedicineAuth(tenantId),
       };
@@ -139,7 +157,9 @@ export class ComplianceService {
         status: isCompliant ? 'compliant' : 'non_compliant',
         details: cfmData,
         checked_at: new Date().toISOString(),
-        expires_at: new Date(Date.now() + 180 * 24 * 60 * 60 * 1000).toISOString(), // 6 months
+        expires_at: new Date(
+          Date.now() + 180 * 24 * 60 * 60 * 1000,
+        ).toISOString(), // 6 months
       };
 
       const { data, error } = await supabase
@@ -155,19 +175,24 @@ export class ComplianceService {
       return { compliance: data };
     } catch (error) {
       return {
-        error: error instanceof Error ? error.message : 'CFM compliance check failed',
+        error:
+          error instanceof Error
+            ? error.message
+            : 'CFM compliance check failed',
       };
     }
   }
 
-  private async verifyDataProcessingConsent(tenantId: string): Promise<boolean> {
+  private async verifyDataProcessingConsent(
+    tenantId: string,
+  ): Promise<boolean> {
     const { data } = await supabase
       .from('patient_consents')
       .select('count')
       .eq('tenant_id', tenantId)
       .eq('consent_type', 'data_processing')
       .eq('status', 'active');
-    
+
     return (data?.[0]?.count || 0) > 0;
   }
 
@@ -177,31 +202,35 @@ export class ComplianceService {
       .select('privacy_policy_updated_at')
       .eq('id', tenantId)
       .single();
-    
+
     const lastUpdate = new Date(data?.privacy_policy_updated_at || 0);
     const oneYearAgo = new Date(Date.now() - 365 * 24 * 60 * 60 * 1000);
-    
+
     return lastUpdate > oneYearAgo;
   }
 
-  private async verifyDataRetentionCompliance(tenantId: string): Promise<boolean> {
+  private async verifyDataRetentionCompliance(
+    tenantId: string,
+  ): Promise<boolean> {
     // Check if data retention policies are implemented
     const { data } = await supabase
       .from('tenant_settings')
       .select('data_retention_policy')
       .eq('id', tenantId)
       .single();
-    
+
     return !!data?.data_retention_policy;
   }
 
-  private async verifyBreachNotificationProcess(tenantId: string): Promise<boolean> {
+  private async verifyBreachNotificationProcess(
+    tenantId: string,
+  ): Promise<boolean> {
     const { data } = await supabase
       .from('tenant_settings')
       .select('breach_notification_enabled')
       .eq('id', tenantId)
       .single();
-    
+
     return data?.breach_notification_enabled === true;
   }
 
@@ -211,7 +240,7 @@ export class ComplianceService {
       .select('data_subject_rights_enabled')
       .eq('id', tenantId)
       .single();
-    
+
     return data?.data_subject_rights_enabled === true;
   }
 
@@ -221,17 +250,19 @@ export class ComplianceService {
       .select('count')
       .eq('tenant_id', tenantId)
       .eq('registration_status', 'active');
-    
+
     return (data?.[0]?.count || 0) > 0;
   }
 
-  private async verifyAdverseEventReporting(tenantId: string): Promise<boolean> {
+  private async verifyAdverseEventReporting(
+    tenantId: string,
+  ): Promise<boolean> {
     const { data } = await supabase
       .from('tenant_settings')
       .select('adverse_event_reporting_enabled')
       .eq('id', tenantId)
       .single();
-    
+
     return data?.adverse_event_reporting_enabled === true;
   }
 
@@ -241,17 +272,19 @@ export class ComplianceService {
       .select('count')
       .eq('tenant_id', tenantId)
       .eq('status', 'active');
-    
+
     return (data?.[0]?.count || 0) > 0;
   }
 
-  private async verifyProfessionalLicensing(tenantId: string): Promise<boolean> {
+  private async verifyProfessionalLicensing(
+    tenantId: string,
+  ): Promise<boolean> {
     const { data } = await supabase
       .from('professional_licenses')
       .select('count')
       .eq('tenant_id', tenantId)
       .gt('expires_at', new Date().toISOString());
-    
+
     return (data?.[0]?.count || 0) > 0;
   }
 
@@ -262,7 +295,7 @@ export class ComplianceService {
       .eq('tenant_id', tenantId)
       .eq('status', 'active')
       .gt('expires_at', new Date().toISOString());
-    
+
     return (data?.[0]?.count || 0) > 0;
   }
 
@@ -272,8 +305,11 @@ export class ComplianceService {
       .select('count')
       .eq('tenant_id', tenantId)
       .eq('status', 'completed')
-      .gte('completed_at', new Date(Date.now() - 2 * 365 * 24 * 60 * 60 * 1000).toISOString());
-    
+      .gte(
+        'completed_at',
+        new Date(Date.now() - 2 * 365 * 24 * 60 * 60 * 1000).toISOString(),
+      );
+
     return (data?.[0]?.count || 0) > 0;
   }
 
@@ -283,7 +319,7 @@ export class ComplianceService {
       .select('count')
       .eq('tenant_id', tenantId)
       .eq('status', 'compliant');
-    
+
     return (data?.[0]?.count || 0) > 0;
   }
 
@@ -294,7 +330,7 @@ export class ComplianceService {
       .eq('tenant_id', tenantId)
       .eq('status', 'active')
       .gt('expires_at', new Date().toISOString());
-    
+
     return (data?.[0]?.count || 0) > 0;
   }
 }

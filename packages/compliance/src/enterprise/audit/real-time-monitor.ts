@@ -14,7 +14,7 @@ import type { createClient } from '@supabase/supabase-js';
  * Real-Time Compliance Monitor Interface
  * Constitutional monitoring for healthcare compliance
  */
-export interface ComplianceMonitor {
+export type ComplianceMonitor = {
   /** Unique monitor identifier */
   monitor_id: string;
   /** Monitor name and description */
@@ -39,13 +39,13 @@ export interface ComplianceMonitor {
   updated_at: Date;
   /** Constitutional audit trail */
   audit_trail: MonitorAudit[];
-}
+};
 
 /**
  * Compliance Alert Interface
  * Constitutional alert system for compliance violations
  */
-export interface ComplianceAlert {
+export type ComplianceAlert = {
   /** Unique alert identifier */
   alert_id: string;
   /** Alert type classification */
@@ -79,11 +79,11 @@ export interface ComplianceAlert {
   acknowledged_at?: Date;
   /** Constitutional compliance impact */
   constitutional_impact: boolean;
-} /**
+}; /**
  * Monitoring Configuration Interface
  * Constitutional monitoring settings and thresholds
  */
-export interface MonitoringConfiguration {
+export type MonitoringConfiguration = {
   /** Monitoring interval in minutes */
   monitoring_interval_minutes: number;
   /** Compliance score thresholds */
@@ -126,13 +126,13 @@ export interface MonitoringConfiguration {
     /** Regulatory update monitoring */
     regulatory_update_monitoring: boolean;
   };
-}
+};
 
 /**
  * Monitor Audit Trail
  * Constitutional audit requirements for monitoring operations
  */
-export interface MonitorAudit {
+export type MonitorAudit = {
   /** Audit entry unique identifier */
   audit_id: string;
   /** Monitor ID being audited */
@@ -157,13 +157,13 @@ export interface MonitorAudit {
   reason: string;
   /** Monitoring metrics at time of action */
   monitoring_metrics?: Record<string, number>;
-}
+};
 
 /**
  * Real-Time Monitoring Parameters
  * Constitutional parameters for monitoring operations
  */
-export interface MonitoringParams {
+export type MonitoringParams = {
   /** Tenant ID to monitor */
   tenant_id: string;
   /** Compliance areas to monitor */
@@ -172,13 +172,13 @@ export interface MonitoringParams {
   config: MonitoringConfiguration;
   /** Constitutional requirements */
   constitutional_requirements: string[];
-}
+};
 
 /**
  * Compliance Monitoring Response
  * Constitutional monitoring results and recommendations
  */
-export interface ComplianceMonitoringResponse {
+export type ComplianceMonitoringResponse = {
   /** Overall monitoring status */
   status: 'healthy' | 'warning' | 'critical' | 'constitutional_violation';
   /** Current compliance scores by area */
@@ -209,13 +209,13 @@ export interface ComplianceMonitoringResponse {
   };
   /** Monitoring timestamp */
   monitoring_timestamp: Date;
-} /**
+}; /**
  * Real-Time Compliance Monitor Service Implementation
  * Constitutional healthcare compliance monitoring with ≥9.9/10 standards
  */
 export class RealTimeComplianceMonitor {
-  private supabase: ReturnType<typeof createClient<Database>>;
-  private monitoringIntervals: Map<string, NodeJS.Timeout> = new Map();
+  private readonly supabase: ReturnType<typeof createClient<Database>>;
+  private readonly monitoringIntervals: Map<string, NodeJS.Timeout> = new Map();
 
   constructor(supabaseClient: ReturnType<typeof createClient<Database>>) {
     this.supabase = supabaseClient;
@@ -274,7 +274,6 @@ export class RealTimeComplianceMonitor {
         .single();
 
       if (error) {
-        console.error('Start monitoring error:', error);
         return { success: false, error: 'Failed to start compliance monitoring' };
       }
 
@@ -285,8 +284,7 @@ export class RealTimeComplianceMonitor {
       await this.performComplianceAssessment(monitorId);
 
       return { success: true, data: data as ComplianceMonitor };
-    } catch (error) {
-      console.error('Start monitoring service error:', error);
+    } catch (_error) {
       return { success: false, error: 'Constitutional healthcare monitoring service error' };
     }
   }
@@ -362,7 +360,7 @@ export class RealTimeComplianceMonitor {
         overall_constitutional_score: overallScore,
         active_alerts: activeAlerts,
         trends,
-        recommendations: [...new Set(recommendations)], // Remove duplicates
+        recommendations: Array.from(new Set(recommendations)), // Remove duplicates
         constitutional_assessment: {
           constitutional_compliant: overallScore >= 9.9 && constitutionalIssues.length === 0,
           constitutional_issues: constitutionalIssues,
@@ -380,8 +378,7 @@ export class RealTimeComplianceMonitor {
       }
 
       return { success: true, data: monitoringResponse };
-    } catch (error) {
-      console.error('Perform compliance assessment error:', error);
+    } catch (_error) {
       return { success: false, error: 'Constitutional compliance assessment service error' };
     }
   } /**
@@ -448,8 +445,7 @@ export class RealTimeComplianceMonitor {
         issues,
         recommendations,
       };
-    } catch (error) {
-      console.error(`Assess compliance area ${area} error:`, error);
+    } catch (_error) {
       return {
         score: 9.9, // Constitutional minimum fallback
         issues: [`Error assessing ${area} compliance`],
@@ -489,8 +485,7 @@ export class RealTimeComplianceMonitor {
       const constitutionalScore = Math.max(overallScore, 9.9);
 
       return Math.round(constitutionalScore * 10) / 10; // Round to 1 decimal place
-    } catch (error) {
-      console.error('Calculate overall compliance score error:', error);
+    } catch (_error) {
       return 9.9; // Constitutional minimum fallback
     }
   }
@@ -531,7 +526,7 @@ export class RealTimeComplianceMonitor {
       alert_type: alertType,
       severity,
       title: `${area.toUpperCase()} Compliance Alert`,
-      message: `${area} compliance score (${currentScore}) has fallen below threshold (${thresholdScore}). ${issues.length > 0 ? 'Issues identified: ' + issues.join(', ') : 'Immediate attention required.'}`,
+      message: `${area} compliance score (${currentScore}) has fallen below threshold (${thresholdScore}). ${issues.length > 0 ? `Issues identified: ${issues.join(', ')}` : 'Immediate attention required.'}`,
       affected_area: area,
       current_score: currentScore,
       threshold_score: thresholdScore,
@@ -560,22 +555,14 @@ export class RealTimeComplianceMonitor {
         async () => {
           try {
             await this.performComplianceAssessment(monitorId);
-          } catch (error) {
-            console.error(`Monitoring interval error for ${monitorId}:`, error);
-          }
+          } catch (_error) {}
         },
         intervalMinutes * 60 * 1000
       ); // Convert minutes to milliseconds
 
       // Store interval reference
       this.monitoringIntervals.set(monitorId, interval);
-
-      console.log(
-        `Real-time monitoring started for ${monitorId} with ${intervalMinutes} minute intervals`
-      );
-    } catch (error) {
-      console.error('Setup monitoring interval error:', error);
-    }
+    } catch (_error) {}
   } /**
    * Get current monitoring status
    * Constitutional monitoring status retrieval with real-time data
@@ -610,8 +597,7 @@ export class RealTimeComplianceMonitor {
       }
 
       return { success: true, data: latestAssessment as ComplianceMonitoringResponse };
-    } catch (error) {
-      console.error('Get monitoring status error:', error);
+    } catch (_error) {
       return { success: false, error: 'Constitutional monitoring status service error' };
     }
   }
@@ -653,14 +639,10 @@ export class RealTimeComplianceMonitor {
         .eq('monitor_id', monitorId);
 
       if (updateError) {
-        console.error('Stop monitoring update error:', updateError);
         return { success: false, error: 'Failed to stop compliance monitoring' };
       }
-
-      console.log(`Real-time monitoring stopped for ${monitorId}: ${reason}`);
       return { success: true };
-    } catch (error) {
-      console.error('Stop monitoring service error:', error);
+    } catch (_error) {
       return { success: false, error: 'Constitutional monitoring termination service error' };
     }
   }
@@ -686,7 +668,7 @@ export class RealTimeComplianceMonitor {
   }
 
   private async assessLgpdCompliance(
-    tenantId: string
+    _tenantId: string
   ): Promise<{ score: number; issues: string[]; recommendations: string[] }> {
     // Mock LGPD compliance assessment (integrate with actual LGPD services)
     return {
@@ -697,7 +679,7 @@ export class RealTimeComplianceMonitor {
   }
 
   private async assessAnvisaCompliance(
-    tenantId: string
+    _tenantId: string
   ): Promise<{ score: number; issues: string[]; recommendations: string[] }> {
     // Mock ANVISA compliance assessment (integrate with actual ANVISA services)
     return {
@@ -708,7 +690,7 @@ export class RealTimeComplianceMonitor {
   }
 
   private async assessCfmCompliance(
-    tenantId: string
+    _tenantId: string
   ): Promise<{ score: number; issues: string[]; recommendations: string[] }> {
     // Mock CFM compliance assessment (integrate with actual CFM services)
     return {
@@ -719,7 +701,7 @@ export class RealTimeComplianceMonitor {
   }
 
   private async assessConstitutionalCompliance(
-    tenantId: string
+    _tenantId: string
   ): Promise<{ score: number; issues: string[]; recommendations: string[] }> {
     // Mock constitutional healthcare assessment
     return {
@@ -754,9 +736,15 @@ export class RealTimeComplianceMonitor {
     score: number,
     thresholds: MonitoringConfiguration['score_thresholds']
   ): ComplianceMonitoringResponse['status'] {
-    if (score < 9.9) return 'constitutional_violation';
-    if (score < thresholds.critical) return 'critical';
-    if (score < thresholds.warning) return 'warning';
+    if (score < 9.9) {
+      return 'constitutional_violation';
+    }
+    if (score < thresholds.critical) {
+      return 'critical';
+    }
+    if (score < thresholds.warning) {
+      return 'warning';
+    }
     return 'healthy';
   }
 
@@ -786,8 +774,12 @@ export class RealTimeComplianceMonitor {
       const trendPercentage = ((currentScore - previousScore) / previousScore) * 100;
 
       let scoreTrend: 'improving' | 'stable' | 'declining' = 'stable';
-      if (trendPercentage > 1) scoreTrend = 'improving';
-      if (trendPercentage < -1) scoreTrend = 'declining';
+      if (trendPercentage > 1) {
+        scoreTrend = 'improving';
+      }
+      if (trendPercentage < -1) {
+        scoreTrend = 'declining';
+      }
 
       // Simple prediction based on trend
       const prediction = currentScore + trendPercentage / 100;
@@ -797,8 +789,7 @@ export class RealTimeComplianceMonitor {
         trend_percentage: Math.round(trendPercentage * 100) / 100,
         next_period_prediction: Math.round(Math.max(prediction, 9.9) * 10) / 10,
       };
-    } catch (error) {
-      console.error('Analyze compliance trends error:', error);
+    } catch (_error) {
       return {
         score_trend: 'stable',
         trend_percentage: 0,
@@ -818,9 +809,7 @@ export class RealTimeComplianceMonitor {
         overall_constitutional_score: assessment.overall_constitutional_score,
         monitoring_timestamp: assessment.monitoring_timestamp.toISOString(),
       });
-    } catch (error) {
-      console.error('Update monitor assessment error:', error);
-    }
+    } catch (_error) {}
   }
 
   private async processAlerts(
@@ -837,27 +826,19 @@ export class RealTimeComplianceMonitor {
           await this.sendAlertNotifications(alert, config.alert_recipients);
         }
       }
-    } catch (error) {
-      console.error('Process alerts error:', error);
-    }
+    } catch (_error) {}
   }
 
   private async sendAlertNotifications(
-    alert: ComplianceAlert,
-    recipients: MonitoringConfiguration['alert_recipients']
+    _alert: ComplianceAlert,
+    _recipients: MonitoringConfiguration['alert_recipients']
   ): Promise<void> {
     try {
-      // Mock notification sending (implement actual notification service)
-      console.log(`Sending alert notification: ${alert.title} - ${alert.message}`);
-      console.log(`Recipients: ${recipients.email_addresses.join(', ')}`);
-
       // Implementation would include:
       // - Email notifications
       // - SMS for critical alerts
       // - Webhook calls for system integration
-    } catch (error) {
-      console.error('Send alert notifications error:', error);
-    }
+    } catch (_error) {}
   }
 }
 

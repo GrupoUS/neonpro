@@ -178,7 +178,7 @@ export type TreatmentPredictionResult = z.infer<typeof TreatmentPredictionResult
  * Constitutional Treatment Outcome Predictor with ≥95% Accuracy
  */
 export class ConstitutionalTreatmentOutcomePredictor {
-  private ethicsValidator: ConstitutionalAIEthicsValidator;
+  private readonly ethicsValidator: ConstitutionalAIEthicsValidator;
   // private explainableAI: ExplainableAIEngine; // Disabled temporarily
   private readonly MINIMUM_ACCURACY_THRESHOLD = 95; // ≥95% constitutional requirement
 
@@ -408,7 +408,7 @@ export class ConstitutionalTreatmentOutcomePredictor {
   /**
    * Analyze patient risk factors
    */
-  private async analyzeRiskFactors(patient: any, treatment: any): Promise<string[]> {
+  private async analyzeRiskFactors(patient: any, _treatment: any): Promise<string[]> {
     const riskFactors: string[] = [];
 
     // Age-related risks
@@ -521,9 +521,13 @@ export class ConstitutionalTreatmentOutcomePredictor {
 
     // Determine overall risk level
     let riskLevel: 'low' | 'medium' | 'high' | 'critical' = 'low';
-    if (absolute.length > 0) riskLevel = 'critical';
-    else if (relative.length > 2) riskLevel = 'high';
-    else if (relative.length > 0) riskLevel = 'medium';
+    if (absolute.length > 0) {
+      riskLevel = 'critical';
+    } else if (relative.length > 2) {
+      riskLevel = 'high';
+    } else if (relative.length > 0) {
+      riskLevel = 'medium';
+    }
 
     return { absolute, relative, riskLevel };
   }
@@ -568,9 +572,13 @@ export class ConstitutionalTreatmentOutcomePredictor {
 
     // Determine overall risk
     let overallRisk: 'low' | 'medium' | 'high' | 'critical' = 'low';
-    if (interactions.some((i) => i.severity === 'critical')) overallRisk = 'critical';
-    else if (interactions.some((i) => i.severity === 'severe')) overallRisk = 'high';
-    else if (interactions.some((i) => i.severity === 'moderate')) overallRisk = 'medium';
+    if (interactions.some((i) => i.severity === 'critical')) {
+      overallRisk = 'critical';
+    } else if (interactions.some((i) => i.severity === 'severe')) {
+      overallRisk = 'high';
+    } else if (interactions.some((i) => i.severity === 'moderate')) {
+      overallRisk = 'medium';
+    }
 
     return { interactions, overallRisk };
   }
@@ -666,7 +674,7 @@ export class ConstitutionalTreatmentOutcomePredictor {
   /**
    * Check if comorbidity is relevant to current condition
    */
-  private isComorbidityRelevant(comorbidity: string, primaryDiagnosis: string): boolean {
+  private isComorbidityRelevant(comorbidity: string, _primaryDiagnosis: string): boolean {
     // Simplified relevance check (in real implementation, use medical knowledge base)
     const cardiovascularConditions = ['hypertension', 'heart disease', 'diabetes'];
     const respiratoryConditions = ['asthma', 'copd', 'pneumonia'];
@@ -745,11 +753,17 @@ export class ConstitutionalTreatmentOutcomePredictor {
 
     // Determine outcome category based on success probability
     let outcomeCategory: 'excellent' | 'good' | 'fair' | 'poor' | 'adverse';
-    if (combinedSuccessProbability >= 0.9) outcomeCategory = 'excellent';
-    else if (combinedSuccessProbability >= 0.75) outcomeCategory = 'good';
-    else if (combinedSuccessProbability >= 0.6) outcomeCategory = 'fair';
-    else if (combinedSuccessProbability >= 0.4) outcomeCategory = 'poor';
-    else outcomeCategory = 'adverse';
+    if (combinedSuccessProbability >= 0.9) {
+      outcomeCategory = 'excellent';
+    } else if (combinedSuccessProbability >= 0.75) {
+      outcomeCategory = 'good';
+    } else if (combinedSuccessProbability >= 0.6) {
+      outcomeCategory = 'fair';
+    } else if (combinedSuccessProbability >= 0.4) {
+      outcomeCategory = 'poor';
+    } else {
+      outcomeCategory = 'adverse';
+    }
 
     // Estimate time to improvement based on treatment type and severity
     const timeToImprovement = this.estimateTimeToImprovement(
@@ -807,7 +821,7 @@ export class ConstitutionalTreatmentOutcomePredictor {
 
     // Apply boosting for medical complexity
     const complexityFactor = this.calculateMedicalComplexity(request);
-    baseScore = baseScore * (1 - complexityFactor * 0.2);
+    baseScore *= 1 - complexityFactor * 0.2;
 
     return {
       successProbability: Math.min(Math.max(baseScore, 0), 1),
@@ -822,7 +836,7 @@ export class ConstitutionalTreatmentOutcomePredictor {
    */
   private async applyRandomForest(
     request: TreatmentPredictionRequest,
-    medicalAnalysis: any
+    _medicalAnalysis: any
   ): Promise<{
     successProbability: number;
     improvementScore: number;
@@ -834,7 +848,7 @@ export class ConstitutionalTreatmentOutcomePredictor {
 
     // Random forest handles missing data well
     const dataQuality = await this.validateInputDataQuality(request);
-    baseScore = baseScore * dataQuality.score;
+    baseScore *= dataQuality.score;
 
     // Adjust for treatment type
     if (request.treatmentType === 'medication') {
@@ -868,11 +882,11 @@ export class ConstitutionalTreatmentOutcomePredictor {
 
     // Neural networks excel at complex pattern recognition
     const patternComplexity = this.calculatePatternComplexity(request, medicalAnalysis);
-    baseScore = baseScore + patternComplexity * 0.15;
+    baseScore += patternComplexity * 0.15;
 
     // Adjust for data richness (neural networks need rich data)
     const dataRichness = this.calculateDataRichness(request);
-    baseScore = baseScore * (0.8 + dataRichness * 0.2);
+    baseScore *= 0.8 + dataRichness * 0.2;
 
     return {
       successProbability: Math.min(Math.max(baseScore, 0), 1),
@@ -898,9 +912,15 @@ export class ConstitutionalTreatmentOutcomePredictor {
     let baseScore = 0.65;
 
     // Linear relationship modeling
-    if (request.patientProfile.demographics.age <= 50) baseScore += 0.1;
-    if (request.patientProfile.currentCondition.severity === 'mild') baseScore += 0.12;
-    if (medicalAnalysis.riskFactors.length <= 2) baseScore += 0.08;
+    if (request.patientProfile.demographics.age <= 50) {
+      baseScore += 0.1;
+    }
+    if (request.patientProfile.currentCondition.severity === 'mild') {
+      baseScore += 0.12;
+    }
+    if (medicalAnalysis.riskFactors.length <= 2) {
+      baseScore += 0.08;
+    }
 
     return {
       successProbability: Math.min(Math.max(baseScore, 0), 1),
@@ -927,7 +947,7 @@ export class ConstitutionalTreatmentOutcomePredictor {
 
     // SVM excels with clear decision boundaries
     const decisionClearness = this.calculateDecisionClearness(request, medicalAnalysis);
-    baseScore = baseScore + decisionClearness * 0.1;
+    baseScore += decisionClearness * 0.1;
 
     return {
       successProbability: Math.min(Math.max(baseScore, 0), 1),
@@ -949,8 +969,12 @@ export class ConstitutionalTreatmentOutcomePredictor {
     complexity += request.patientProfile.medicalHistory.allergies.length * 0.03;
 
     // Add complexity for severe conditions
-    if (request.patientProfile.currentCondition.severity === 'severe') complexity += 0.2;
-    if (request.patientProfile.currentCondition.severity === 'critical') complexity += 0.3;
+    if (request.patientProfile.currentCondition.severity === 'severe') {
+      complexity += 0.2;
+    }
+    if (request.patientProfile.currentCondition.severity === 'critical') {
+      complexity += 0.3;
+    }
 
     return Math.min(complexity, 1);
   }
@@ -968,8 +992,12 @@ export class ConstitutionalTreatmentOutcomePredictor {
     complexity += medicalAnalysis.riskFactors.length * 0.1;
     complexity += request.patientProfile.currentCondition.symptoms.length * 0.05;
 
-    if (medicalAnalysis.drugInteractionAnalysis.interactions.length > 0) complexity += 0.2;
-    if (medicalAnalysis.comorbidityAssessment.relevantComorbidities.length > 0) complexity += 0.15;
+    if (medicalAnalysis.drugInteractionAnalysis.interactions.length > 0) {
+      complexity += 0.2;
+    }
+    if (medicalAnalysis.comorbidityAssessment.relevantComorbidities.length > 0) {
+      complexity += 0.15;
+    }
 
     return Math.min(complexity, 1);
   }
@@ -981,11 +1009,21 @@ export class ConstitutionalTreatmentOutcomePredictor {
     let richness = 0;
 
     // Count available data points
-    if (request.patientProfile.demographics.bloodType) richness += 0.1;
-    if (request.patientProfile.currentCondition.labResults) richness += 0.2;
-    if (request.patientProfile.currentCondition.vitalSigns) richness += 0.15;
-    if (request.patientProfile.medicalHistory.familyHistory.length > 0) richness += 0.1;
-    if (request.proposedTreatment.alternativeTreatments.length > 0) richness += 0.1;
+    if (request.patientProfile.demographics.bloodType) {
+      richness += 0.1;
+    }
+    if (request.patientProfile.currentCondition.labResults) {
+      richness += 0.2;
+    }
+    if (request.patientProfile.currentCondition.vitalSigns) {
+      richness += 0.15;
+    }
+    if (request.patientProfile.medicalHistory.familyHistory.length > 0) {
+      richness += 0.1;
+    }
+    if (request.proposedTreatment.alternativeTreatments.length > 0) {
+      richness += 0.1;
+    }
 
     richness += Math.min(request.patientProfile.currentCondition.symptoms.length * 0.05, 0.3);
 
@@ -1002,13 +1040,23 @@ export class ConstitutionalTreatmentOutcomePredictor {
     let clearness = 0.5; // Base clearness
 
     // Clear positive indicators
-    if (request.patientProfile.currentCondition.severity === 'mild') clearness += 0.2;
-    if (medicalAnalysis.contraindicationAnalysis.absolute.length === 0) clearness += 0.2;
-    if (medicalAnalysis.drugInteractionAnalysis.overallRisk === 'low') clearness += 0.1;
+    if (request.patientProfile.currentCondition.severity === 'mild') {
+      clearness += 0.2;
+    }
+    if (medicalAnalysis.contraindicationAnalysis.absolute.length === 0) {
+      clearness += 0.2;
+    }
+    if (medicalAnalysis.drugInteractionAnalysis.overallRisk === 'low') {
+      clearness += 0.1;
+    }
 
     // Clear negative indicators
-    if (request.patientProfile.currentCondition.severity === 'critical') clearness -= 0.2;
-    if (medicalAnalysis.contraindicationAnalysis.riskLevel === 'critical') clearness -= 0.3;
+    if (request.patientProfile.currentCondition.severity === 'critical') {
+      clearness -= 0.2;
+    }
+    if (medicalAnalysis.contraindicationAnalysis.riskLevel === 'critical') {
+      clearness -= 0.3;
+    }
 
     return Math.min(Math.max(clearness, 0), 1);
   }
@@ -1024,22 +1072,38 @@ export class ConstitutionalTreatmentOutcomePredictor {
     let baseDays = 14; // Default 2 weeks
 
     // Adjust based on treatment type
-    if (treatmentName.toLowerCase().includes('antibiotic')) baseDays = 7;
-    else if (treatmentName.toLowerCase().includes('surgery')) baseDays = 30;
-    else if (treatmentName.toLowerCase().includes('therapy')) baseDays = 21;
-    else if (treatmentName.toLowerCase().includes('medication')) baseDays = 10;
+    if (treatmentName.toLowerCase().includes('antibiotic')) {
+      baseDays = 7;
+    } else if (treatmentName.toLowerCase().includes('surgery')) {
+      baseDays = 30;
+    } else if (treatmentName.toLowerCase().includes('therapy')) {
+      baseDays = 21;
+    } else if (treatmentName.toLowerCase().includes('medication')) {
+      baseDays = 10;
+    }
 
     // Adjust based on severity
-    if (severity === 'mild') baseDays = Math.round(baseDays * 0.7);
-    else if (severity === 'severe') baseDays = Math.round(baseDays * 1.5);
-    else if (severity === 'critical') baseDays = Math.round(baseDays * 2);
+    if (severity === 'mild') {
+      baseDays = Math.round(baseDays * 0.7);
+    } else if (severity === 'severe') {
+      baseDays = Math.round(baseDays * 1.5);
+    } else if (severity === 'critical') {
+      baseDays = Math.round(baseDays * 2);
+    }
 
     // Adjust based on success probability
-    if (successProbability < 0.5) baseDays = Math.round(baseDays * 1.3);
-    else if (successProbability > 0.8) baseDays = Math.round(baseDays * 0.8);
+    if (successProbability < 0.5) {
+      baseDays = Math.round(baseDays * 1.3);
+    } else if (successProbability > 0.8) {
+      baseDays = Math.round(baseDays * 0.8);
+    }
 
-    if (baseDays <= 7) return `${baseDays} days`;
-    if (baseDays <= 30) return `${Math.round(baseDays / 7)} weeks`;
+    if (baseDays <= 7) {
+      return `${baseDays} days`;
+    }
+    if (baseDays <= 30) {
+      return `${Math.round(baseDays / 7)} weeks`;
+    }
     return `${Math.round(baseDays / 30)} months`;
   } /**
    * Improve model accuracy to meet ≥95% threshold
@@ -1222,12 +1286,12 @@ export class ConstitutionalTreatmentOutcomePredictor {
 
     // Adjust for overconfidence (common in AI models)
     if (currentPrediction.confidenceLevel > 0.9) {
-      calibratedProbability = calibratedProbability * 0.95; // Slight reduction for overconfidence
+      calibratedProbability *= 0.95; // Slight reduction for overconfidence
     }
 
     // Adjust for underconfidence
     if (currentPrediction.confidenceLevel < 0.7 && expertKnowledge.accuracyBoost > 0) {
-      calibratedProbability = calibratedProbability * 1.05; // Slight boost for underconfidence with expert support
+      calibratedProbability *= 1.05; // Slight boost for underconfidence with expert support
     }
 
     // Calibration typically provides 1-2% accuracy improvement
@@ -1326,7 +1390,7 @@ export class ConstitutionalTreatmentOutcomePredictor {
    */
   private async performRiskAssessment(
     request: TreatmentPredictionRequest,
-    prediction: any
+    _prediction: any
   ): Promise<{
     overallRisk: 'low' | 'medium' | 'high' | 'critical';
     adverseEventProbability: number;
@@ -1341,12 +1405,18 @@ export class ConstitutionalTreatmentOutcomePredictor {
     let adverseEventProbability = 0.05; // Base 5% risk
 
     // Adjust based on patient factors
-    if (request.patientProfile.demographics.age > 65) adverseEventProbability += 0.02;
-    if (request.patientProfile.medicalHistory.allergies.length > 0) adverseEventProbability += 0.03;
-    if (medicalAnalysis.drugInteractionAnalysis.overallRisk === 'high')
+    if (request.patientProfile.demographics.age > 65) {
+      adverseEventProbability += 0.02;
+    }
+    if (request.patientProfile.medicalHistory.allergies.length > 0) {
+      adverseEventProbability += 0.03;
+    }
+    if (medicalAnalysis.drugInteractionAnalysis.overallRisk === 'high') {
       adverseEventProbability += 0.08;
-    if (request.patientProfile.currentCondition.severity === 'severe')
+    }
+    if (request.patientProfile.currentCondition.severity === 'severe') {
       adverseEventProbability += 0.05;
+    }
 
     // Overall risk assessment
     let overallRisk: 'low' | 'medium' | 'high' | 'critical' = 'low';
@@ -1473,7 +1543,7 @@ export class ConstitutionalTreatmentOutcomePredictor {
    * Predict specific outcome for time horizon
    */
   private async predictSpecificOutcome(
-    request: TreatmentPredictionRequest,
+    _request: TreatmentPredictionRequest,
     timeHorizon: string,
     outcomeMetric: string,
     primaryPrediction: any
@@ -1488,11 +1558,11 @@ export class ConstitutionalTreatmentOutcomePredictor {
 
     // Adjust probability based on time horizon
     const timeAdjustment = this.getTimeHorizonAdjustment(timeHorizon);
-    baseProbability = baseProbability * timeAdjustment;
+    baseProbability *= timeAdjustment;
 
     // Adjust for specific outcome metric
     const outcomeAdjustment = this.getOutcomeMetricAdjustment(outcomeMetric);
-    baseProbability = baseProbability * outcomeAdjustment;
+    baseProbability *= outcomeAdjustment;
 
     // Calculate confidence interval (95% CI)
     const standardError = Math.sqrt((baseProbability * (1 - baseProbability)) / 100); // Simplified
@@ -1514,15 +1584,21 @@ export class ConstitutionalTreatmentOutcomePredictor {
    * Helper methods for risk assessment and alternative analysis
    */
   private assessAlternativeRisk(analysis: any): string {
-    if (analysis.contraindicationAnalysis.absolute.length > 0) return 'critical';
-    if (analysis.drugInteractionAnalysis.overallRisk === 'high') return 'high';
-    if (analysis.contraindicationAnalysis.relative.length > 1) return 'medium';
+    if (analysis.contraindicationAnalysis.absolute.length > 0) {
+      return 'critical';
+    }
+    if (analysis.drugInteractionAnalysis.overallRisk === 'high') {
+      return 'high';
+    }
+    if (analysis.contraindicationAnalysis.relative.length > 1) {
+      return 'medium';
+    }
     return 'low';
   }
 
   private identifyTreatmentAdvantages(
     treatment: string,
-    request: TreatmentPredictionRequest
+    _request: TreatmentPredictionRequest
   ): string[] {
     // Simplified advantage identification
     const advantages = [];
@@ -1539,7 +1615,7 @@ export class ConstitutionalTreatmentOutcomePredictor {
 
   private identifyTreatmentDisadvantages(
     treatment: string,
-    request: TreatmentPredictionRequest
+    _request: TreatmentPredictionRequest
   ): string[] {
     // Simplified disadvantage identification
     const disadvantages = [];

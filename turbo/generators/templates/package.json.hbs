@@ -1,0 +1,66 @@
+{
+  "name": "@neonpro/{{kebabCase name}}",
+  "version": "0.0.1",
+  "private": true,
+  "description": "{{description}}",
+  {{#if healthcare}}
+  "keywords": ["healthcare", "lgpd", "compliance", "{{kebabCase name}}"],
+  {{else}}
+  "keywords": ["{{kebabCase name}}"],
+  {{/if}}
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist/**"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "lint": "biome lint .",
+    "lint:fix": "biome lint --write .",
+    "format": "biome format --write .",
+    "type-check": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    {{#if healthcare}}
+    "test:compliance": "vitest run --testNamePattern=\"LGPD|ANVISA|CFM|compliance\"",
+    "test:healthcare": "vitest run --testNamePattern=\"healthcare|patient|medical\"",
+    "validate:healthcare": "pnpm test:compliance && pnpm test:healthcare && pnpm type-check",
+    {{/if}}
+    "clean": "rm -rf dist .turbo"
+  },
+  "dependencies": {
+    {{#if healthcare}}
+    "@neonpro/types": "workspace:*",
+    "@neonpro/utils": "workspace:*",
+    "@neonpro/compliance": "workspace:*"
+    {{else}}
+    "@neonpro/types": "workspace:*"
+    {{/if}}
+  },
+  "devDependencies": {
+    "@neonpro/typescript-config": "workspace:*",
+    "@biomejs/biome": "^2.2.0",
+    "tsup": "^8.3.5",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
+    {{#if healthcare}}
+    ,
+    "@testing-library/react": "^16.1.0",
+    "@types/node": "^22.10.2"
+    {{/if}}
+  },
+  "publishConfig": {
+    "access": "restricted"
+  }
+}

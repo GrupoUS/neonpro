@@ -1,0 +1,14 @@
+This is an invalid format file for testing error handling.
+It contains no structured data and should trigger validation errors.
+
+Healthcare Test Data - Invalid Format
+=====================================
+
+This file is used to test how the system handles invalid file formats
+when users try to upload documents for:
+- LGPD compliance documentation
+- ANVISA device registration files  
+- CFM professional licensing documents
+
+The system should reject this file and provide clear error messages
+to users about the expected file formats and requirements.

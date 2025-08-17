@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 
 interface ComplianceAutomationState {
@@ -17,8 +17,8 @@ export const useComplianceAutomation = () => {
   });
 
   const checkCompliance = useCallback(async () => {
-    setState(prev => ({ ...prev, isLoading: true }));
-    
+    setState((prev) => ({ ...prev, isLoading: true }));
+
     try {
       // Healthcare compliance checks for NeonPro
       const { data: complianceData, error } = await supabase
@@ -30,17 +30,17 @@ export const useComplianceAutomation = () => {
       if (error) throw error;
 
       const violations: string[] = [];
-      
+
       // LGPD compliance checks
       if (!complianceData?.[0]?.lgpd_compliant) {
         violations.push('LGPD compliance violation detected');
       }
-      
-      // ANVISA compliance checks  
+
+      // ANVISA compliance checks
       if (!complianceData?.[0]?.anvisa_compliant) {
         violations.push('ANVISA compliance violation detected');
       }
-      
+
       // CFM compliance checks
       if (!complianceData?.[0]?.cfm_compliant) {
         violations.push('CFM compliance violation detected');
@@ -52,10 +52,9 @@ export const useComplianceAutomation = () => {
         lastCheck: new Date(),
         isLoading: false,
       });
-      
     } catch (error) {
       console.error('Compliance check failed:', error);
-      setState(prev => ({
+      setState((prev) => ({
         ...prev,
         isLoading: false,
         violations: ['Compliance check system error'],

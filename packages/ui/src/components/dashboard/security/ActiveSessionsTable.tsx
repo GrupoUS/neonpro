@@ -31,7 +31,7 @@ import { Label } from '../../ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../../ui/table';
 
-interface ActiveSession {
+type ActiveSession = {
   id: string;
   user_id: string;
   user_email?: string;
@@ -54,7 +54,7 @@ interface ActiveSession {
   session_data?: Record<string, any>;
   security_flags: string[];
   risk_score: number;
-}
+};
 
 export function ActiveSessionsTable() {
   const [sessions, setSessions] = useState<ActiveSession[]>([]);
@@ -79,8 +79,7 @@ export function ActiveSessionsTable() {
 
       const data = await response.json();
       setSessions(data.sessions || []);
-    } catch (error) {
-      console.error('Error fetching active sessions:', error);
+    } catch (_error) {
       toast.error('Erro ao carregar sessões ativas');
     } finally {
       setLoading(false);
@@ -92,7 +91,7 @@ export function ActiveSessionsTable() {
     // Auto-refresh every 30 seconds
     const interval = setInterval(fetchSessions, 30_000);
     return () => clearInterval(interval);
-  }, []);
+  }, [fetchSessions]);
 
   const handleTerminateSession = async (sessionId: string) => {
     if (!confirm('Tem certeza que deseja encerrar esta sessão?')) {
@@ -113,23 +112,34 @@ export function ActiveSessionsTable() {
 
       await fetchSessions();
       toast.success('Sessão encerrada com sucesso');
-    } catch (error) {
-      console.error('Error terminating session:', error);
+    } catch (_error) {
       toast.error('Erro ao encerrar sessão');
     }
   };
 
   const getRiskColor = (riskScore: number) => {
-    if (riskScore >= 80) return 'destructive';
-    if (riskScore >= 60) return 'secondary';
-    if (riskScore >= 40) return 'outline';
+    if (riskScore >= 80) {
+      return 'destructive';
+    }
+    if (riskScore >= 60) {
+      return 'secondary';
+    }
+    if (riskScore >= 40) {
+      return 'outline';
+    }
     return 'default';
   };
 
   const getRiskLevel = (riskScore: number) => {
-    if (riskScore >= 80) return 'Alto';
-    if (riskScore >= 60) return 'Médio';
-    if (riskScore >= 40) return 'Baixo';
+    if (riskScore >= 80) {
+      return 'Alto';
+    }
+    if (riskScore >= 60) {
+      return 'Médio';
+    }
+    if (riskScore >= 40) {
+      return 'Baixo';
+    }
     return 'Mínimo';
   };
 
@@ -139,7 +149,6 @@ export function ActiveSessionsTable() {
         return <Smartphone className="h-4 w-4" />;
       case 'tablet':
         return <Monitor className="h-4 w-4" />;
-      case 'desktop':
       default:
         return <Monitor className="h-4 w-4" />;
     }

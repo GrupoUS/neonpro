@@ -13,7 +13,8 @@
  */
 
 import { z } from 'zod';
-import type { ComplianceScore, ConstitutionalResponse, PatientDataClassification } from '../types';
+import type { ComplianceScore, ConstitutionalResponse } from '../types';
+import { PatientDataClassification } from '../types';
 
 /**
  * Breach Severity Classification
@@ -84,7 +85,7 @@ export type BreachDetection = z.infer<typeof BreachDetectionSchema>;
 /**
  * Breach Notification Result
  */
-export interface BreachNotificationResult {
+export type BreachNotificationResult = {
   incidentId: string;
   notificationStatus: 'COMPLETED' | 'PARTIAL' | 'FAILED' | 'IN_PROGRESS';
   breachSeverity: BreachSeverity;
@@ -136,7 +137,7 @@ export interface BreachNotificationResult {
     details: string;
     complianceImpact: string[];
   }>;
-}
+};
 
 /**
  * Constitutional Breach Notification Service for Healthcare LGPD Compliance
@@ -144,7 +145,6 @@ export interface BreachNotificationResult {
 export class BreachNotificationService {
   private readonly constitutionalQualityStandard = 9.9;
   private readonly constitutionalTimelineHours = 72; // Constitutional healthcare requirement
-  private readonly anpdNotificationHours = 72; // ANPD notification timeline
 
   /**
    * Process Breach Detection and Initiate Constitutional Notification
@@ -249,39 +249,46 @@ export class BreachNotificationService {
 
     // Healthcare data severity escalation
     if (
-      detection.dataTypesAffected.includes('HEALTH') ||
-      detection.dataTypesAffected.includes('GENETIC')
+      detection.dataTypesAffected.includes(PatientDataClassification.HEALTH) ||
+      detection.dataTypesAffected.includes(PatientDataClassification.GENETIC)
     ) {
-      if (severity === 'LOW') severity = 'MEDIUM';
-      else if (severity === 'MEDIUM') severity = 'HIGH';
+      if (severity === BreachSeverity.LOW) {
+        severity = BreachSeverity.MEDIUM;
+      } else if (severity === BreachSeverity.MEDIUM) {
+        severity = BreachSeverity.HIGH;
+      }
       patientImpact.push('Health data compromised - patient privacy violated');
       riskScore += 1;
     }
 
     // Child data severity escalation
-    if (detection.dataTypesAffected.includes('CHILD')) {
-      if (severity === 'LOW' || severity === 'MEDIUM') severity = 'HIGH';
+    if (detection.dataTypesAffected.includes(PatientDataClassification.CHILD)) {
+      if (severity === BreachSeverity.LOW || severity === BreachSeverity.MEDIUM) {
+        severity = BreachSeverity.HIGH;
+      }
       constitutionalViolations.push('Child data protection violated (Art. 14 LGPD)');
       riskScore += 1.5;
     }
 
     // Constitutional violation assessment
     if (detection.constitutionalViolation) {
-      severity = 'CRITICAL';
+      severity = BreachSeverity.CRITICAL;
       constitutionalViolations.push('Direct constitutional healthcare violation detected');
       riskScore += 2;
     }
 
     // Patient safety risk assessment
     if (detection.patientSafetyRisk) {
-      severity = 'CRITICAL';
+      severity = BreachSeverity.CRITICAL;
       patientImpact.push('Immediate patient safety risk identified');
       riskScore += 2;
     }
 
     // Scale of impact assessment
     if (detection.estimatedAffectedPatients > 1000) {
-      if (severity !== 'CRITICAL') severity = 'HIGH';
+      if (severity !== BreachSeverity.CRITICAL) {
+        severity = BreachSeverity.HIGH;
+      }
       regulatoryImpact.push('Large-scale patient data breach');
       riskScore += 1;
     }
@@ -296,10 +303,13 @@ export class BreachNotificationService {
 
     // Determine notification requirements based on severity
     const notificationRequirements = {
-      anpd: severity === 'HIGH' || severity === 'CRITICAL',
-      patients: severity === 'MEDIUM' || severity === 'HIGH' || severity === 'CRITICAL',
-      authorities: severity === 'CRITICAL' || detection.constitutionalViolation,
-      immediateAction: severity === 'CRITICAL' || detection.patientSafetyRisk,
+      anpd: severity === BreachSeverity.HIGH || severity === BreachSeverity.CRITICAL,
+      patients:
+        severity === BreachSeverity.MEDIUM ||
+        severity === BreachSeverity.HIGH ||
+        severity === BreachSeverity.CRITICAL,
+      authorities: severity === BreachSeverity.CRITICAL || detection.constitutionalViolation,
+      immediateAction: severity === BreachSeverity.CRITICAL || detection.patientSafetyRisk,
     };
 
     return {
@@ -317,7 +327,7 @@ export class BreachNotificationService {
     detection: BreachDetection,
     severityAssessment: any
   ): Promise<BreachNotificationResult> {
-    const startTime = new Date();
+    const _startTime = new Date();
     const auditTrail: Array<{
       action: string;
       timestamp: Date;
@@ -672,43 +682,34 @@ export class BreachNotificationService {
   }
 
   private async initiateRemediationMeasures(
-    detection: BreachDetection,
-    severityAssessment: any
-  ): Promise<void> {
-    console.log('Initiating remediation measures for incident:', detection.incidentId);
-  }
+    _detection: BreachDetection,
+    _severityAssessment: any
+  ): Promise<void> {}
 
-  private async escalateToEmergencyResponse(detection: BreachDetection, error: any): Promise<void> {
-    console.log('Escalating to emergency response for critical breach notification failure');
-  }
+  private async escalateToEmergencyResponse(
+    _detection: BreachDetection,
+    _error: any
+  ): Promise<void> {}
 
-  private async notifyDPO(detection: BreachDetection): Promise<void> {
-    console.log('Notifying DPO of breach incident');
-  }
+  private async notifyDPO(_detection: BreachDetection): Promise<void> {}
 
-  private async notifyExecutiveTeam(detection: BreachDetection): Promise<void> {
-    console.log('Notifying executive team of breach incident');
-  }
+  private async notifyExecutiveTeam(_detection: BreachDetection): Promise<void> {}
 
-  private async notifyLegalTeam(detection: BreachDetection): Promise<void> {
-    console.log('Notifying legal team of breach incident');
-  }
+  private async notifyLegalTeam(_detection: BreachDetection): Promise<void> {}
 
-  private async notifyITTeam(detection: BreachDetection): Promise<void> {
-    console.log('Notifying IT team for technical remediation');
-  }
+  private async notifyITTeam(_detection: BreachDetection): Promise<void> {}
 
-  private async submitToANPD(data: any): Promise<{ protocol: string }> {
+  private async submitToANPD(_data: any): Promise<{ protocol: string }> {
     return { protocol: `ANPD-${Date.now()}` };
   }
 
-  private async getAffectedPatients(detection: BreachDetection): Promise<any[]> {
+  private async getAffectedPatients(_detection: BreachDetection): Promise<any[]> {
     return []; // Would query database for affected patients
   }
 
   private async createPatientNotification(
-    detection: BreachDetection,
-    assessment: any,
+    _detection: BreachDetection,
+    _assessment: any,
     patient: any
   ): Promise<any> {
     return {
@@ -719,18 +720,16 @@ export class BreachNotificationService {
     };
   }
 
-  private async sendPatientNotification(patient: any, notification: any): Promise<string> {
+  private async sendPatientNotification(_patient: any, _notification: any): Promise<string> {
     return 'EMAIL'; // Would send via patient's preferred method
   }
 
   private async notifyHealthcareAuthorities(
-    detection: BreachDetection,
-    assessment: any,
-    result: BreachNotificationResult,
-    auditTrail: any[]
-  ): Promise<void> {
-    console.log('Notifying healthcare authorities of critical breach');
-  }
+    _detection: BreachDetection,
+    _assessment: any,
+    _result: BreachNotificationResult,
+    _auditTrail: any[]
+  ): Promise<void> {}
 
   private async createAuditEvent(action: string, data: any): Promise<any> {
     return {
@@ -747,7 +746,7 @@ export class BreachNotificationService {
    */
   async getBreachNotificationStatus(
     incidentId: string,
-    tenantId: string
+    _tenantId: string
   ): Promise<ConstitutionalResponse<BreachNotificationResult | null>> {
     try {
       const auditTrail = await this.createAuditEvent('BREACH_STATUS_ACCESSED', { incidentId });

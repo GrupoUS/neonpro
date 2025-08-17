@@ -13,7 +13,8 @@
  */
 
 import { z } from 'zod';
-import type { ANVISADeviceCategory, ComplianceScore, ConstitutionalResponse } from '../types';
+import type { ComplianceScore, ConstitutionalResponse } from '../types';
+import { ANVISADeviceCategory } from '../types';
 
 /**
  * Medical Device Registration Schema
@@ -80,7 +81,7 @@ export type MedicalDeviceRegistration = z.infer<typeof MedicalDeviceRegistration
 /**
  * Device Compliance Monitoring Result
  */
-export interface DeviceComplianceResult {
+export type DeviceComplianceResult = {
   deviceId: string;
   complianceStatus:
     | 'FULLY_COMPLIANT'
@@ -129,15 +130,12 @@ export interface DeviceComplianceResult {
     performedBy: string;
     evidence: string[];
   }>;
-}
+};
 
 /**
  * Constitutional Medical Device Service for ANVISA Compliance
  */
 export class MedicalDeviceService {
-  private readonly constitutionalQualityStandard = 9.9;
-  private readonly deviceInspectionFrequencyMonths = 12; // Annual inspection for constitutional compliance
-
   /**
    * Register Medical Device with Constitutional ANVISA Compliance
    * Implements ANVISA RDC 185/2001 with constitutional healthcare validation
@@ -567,9 +565,9 @@ export class MedicalDeviceService {
    */
   private async performComplianceChecks(registration: MedicalDeviceRegistration): Promise<{
     summary: DeviceComplianceResult['complianceChecks'];
-    auditTrail: Array<any>;
+    auditTrail: any[];
   }> {
-    const auditTrail: Array<any> = [];
+    const auditTrail: any[] = [];
     const checks = {
       anvisaRegistrationValid: false,
       qualityAssuranceCurrent: false,
@@ -664,16 +662,28 @@ export class MedicalDeviceService {
     let qualityScore = 10;
 
     // Patient safety assessment
-    if (!complianceChecks.summary.maintenanceUpToDate) patientSafetyScore -= 2;
-    if (!complianceChecks.summary.calibrationCurrent) patientSafetyScore -= 1.5;
-    if (!complianceChecks.summary.professionalQualificationValid) patientSafetyScore -= 2;
+    if (!complianceChecks.summary.maintenanceUpToDate) {
+      patientSafetyScore -= 2;
+    }
+    if (!complianceChecks.summary.calibrationCurrent) {
+      patientSafetyScore -= 1.5;
+    }
+    if (!complianceChecks.summary.professionalQualificationValid) {
+      patientSafetyScore -= 2;
+    }
 
     // Regulatory compliance assessment
-    if (!complianceChecks.summary.anvisaRegistrationValid) regulatoryScore -= 3;
-    if (!complianceChecks.summary.usageWithinSpecifications) regulatoryScore -= 1.5;
+    if (!complianceChecks.summary.anvisaRegistrationValid) {
+      regulatoryScore -= 3;
+    }
+    if (!complianceChecks.summary.usageWithinSpecifications) {
+      regulatoryScore -= 1.5;
+    }
 
     // Quality assurance assessment
-    if (!complianceChecks.summary.qualityAssuranceCurrent) qualityScore -= 2;
+    if (!complianceChecks.summary.qualityAssuranceCurrent) {
+      qualityScore -= 2;
+    }
 
     // Constitutional adjustments
     if (registration.deviceCategory === 'CLASS_IV') {
@@ -709,103 +719,97 @@ export class MedicalDeviceService {
   private async storeDeviceRegistration(
     registration: MedicalDeviceRegistration
   ): Promise<MedicalDeviceRegistration> {
-    console.log('Storing device registration:', registration.deviceId);
     return registration;
   }
 
   private async getDeviceRegistration(
-    deviceId: string,
-    tenantId: string
+    _deviceId: string,
+    _tenantId: string
   ): Promise<MedicalDeviceRegistration | null> {
-    console.log(`Retrieving device registration: ${deviceId}`);
     return null; // Would query Supabase database
   }
 
-  private async validateManufacturerWithANVISA(manufacturer: string): Promise<boolean> {
-    console.log(`Validating manufacturer with ANVISA: ${manufacturer}`);
+  private async validateManufacturerWithANVISA(_manufacturer: string): Promise<boolean> {
     return true; // Would integrate with ANVISA API
   }
 
   private async checkProfessionalQualifications(
-    professionalId: string,
-    deviceCategory: ANVISADeviceCategory
+    _professionalId: string,
+    _deviceCategory: ANVISADeviceCategory
   ): Promise<{ qualified: boolean }> {
-    console.log(`Checking professional qualifications: ${professionalId} for ${deviceCategory}`);
     return { qualified: true };
   }
 
   private async checkMaintenanceStatus(
-    registration: MedicalDeviceRegistration
+    _registration: MedicalDeviceRegistration
   ): Promise<{ upToDate: boolean; issues: string[] }> {
     return { upToDate: true, issues: [] };
   }
 
   private async checkCalibrationStatus(
-    registration: MedicalDeviceRegistration
+    _registration: MedicalDeviceRegistration
   ): Promise<{ current: boolean; issues: string[] }> {
     return { current: true, issues: [] };
   }
 
   private async checkUsageCompliance(
-    registration: MedicalDeviceRegistration
+    _registration: MedicalDeviceRegistration
   ): Promise<{ compliant: boolean; violations: string[] }> {
     return { compliant: true, violations: [] };
   }
 
   private async scheduleComplianceMonitoring(
-    registration: MedicalDeviceRegistration
-  ): Promise<void> {
-    console.log('Scheduling compliance monitoring for device:', registration.deviceId);
-  }
+    _registration: MedicalDeviceRegistration
+  ): Promise<void> {}
 
   private async updateDeviceComplianceStatus(
-    deviceId: string,
-    result: DeviceComplianceResult
-  ): Promise<void> {
-    console.log('Updating device compliance status:', deviceId);
-  }
+    _deviceId: string,
+    _result: DeviceComplianceResult
+  ): Promise<void> {}
 
   private async sendComplianceNotification(
-    registration: MedicalDeviceRegistration,
-    score: ComplianceScore
-  ): Promise<void> {
-    console.log('Sending compliance notification for device:', registration.deviceId);
-  }
+    _registration: MedicalDeviceRegistration,
+    _score: ComplianceScore
+  ): Promise<void> {}
 
   private async sendComplianceAlert(
-    registration: MedicalDeviceRegistration,
-    result: DeviceComplianceResult
-  ): Promise<void> {
-    console.log('Sending compliance alert for device:', registration.deviceId);
-  }
+    _registration: MedicalDeviceRegistration,
+    _result: DeviceComplianceResult
+  ): Promise<void> {}
 
   private determineComplianceStatus(
     assessment: any,
     violations: any[]
   ): DeviceComplianceResult['complianceStatus'] {
-    if (violations.some((v) => v.severity === 'CRITICAL')) return 'CRITICAL_VIOLATION';
-    if (assessment.overallScore < 7) return 'NON_COMPLIANT';
-    if (assessment.overallScore < 9) return 'PARTIALLY_COMPLIANT';
+    if (violations.some((v) => v.severity === 'CRITICAL')) {
+      return 'CRITICAL_VIOLATION';
+    }
+    if (assessment.overallScore < 7) {
+      return 'NON_COMPLIANT';
+    }
+    if (assessment.overallScore < 9) {
+      return 'PARTIALLY_COMPLIANT';
+    }
     return 'FULLY_COMPLIANT';
   }
 
   private async identifyViolations(
-    checks: any,
-    assessment: any
+    _checks: any,
+    _assessment: any
   ): Promise<DeviceComplianceResult['violations']> {
     return []; // Would implement violation identification logic
   }
 
   private async generateRecommendations(
-    checks: any,
-    assessment: any
+    _checks: any,
+    _assessment: any
   ): Promise<DeviceComplianceResult['recommendations']> {
     return []; // Would implement recommendation generation logic
   }
 
   private async generateNextActions(
-    violations: any[],
-    recommendations: any[]
+    _violations: any[],
+    _recommendations: any[]
   ): Promise<DeviceComplianceResult['nextActions']> {
     return {
       immediateActions: [],
@@ -830,7 +834,7 @@ export class MedicalDeviceService {
    */
   async getDeviceComplianceStatus(
     deviceId: string,
-    tenantId: string
+    _tenantId: string
   ): Promise<ConstitutionalResponse<DeviceComplianceResult | null>> {
     try {
       const auditTrail = await this.createAuditEvent('DEVICE_STATUS_ACCESSED', { deviceId });

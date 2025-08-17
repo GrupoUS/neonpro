@@ -11,14 +11,14 @@ export async function register() {
 
   try {
     console.log('🔧 Registering NeonPro instrumentation...');
-    
+
     // Initialize OpenTelemetry only if explicitly enabled
     if (process.env.OTEL_ENABLED === 'true') {
       const { SimpleTelemetry } = await import('./lib/observability/opentelemetry-setup');
       await SimpleTelemetry.initialize();
       console.log('🔧 OpenTelemetry initialized');
     }
-    
+
     console.log('🔧 Instrumentation initialized successfully');
   } catch (error) {
     console.error('🚨 Instrumentation failed:', error);

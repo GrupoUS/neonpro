@@ -157,7 +157,7 @@ export type EndpointRateLimit = z.infer<typeof EndpointRateLimitSchema>;
 export type ClientRateLimit = z.infer<typeof ClientRateLimitSchema>;
 export type RateLimitViolation = z.infer<typeof RateLimitViolationSchema>;
 
-export interface ApiRateLimitingAudit {
+export type ApiRateLimitingAudit = {
   audit_id: string;
   client_id?: string;
   ip_address: string;
@@ -171,24 +171,24 @@ export interface ApiRateLimitingAudit {
   created_at: string;
   user_agent?: string;
   authentication_status?: string;
-}
+};
 
 /**
  * API Rate Limiting Service
  * Constitutional healthcare API protection with intelligent throttling
  */
 export class ApiRateLimitingService {
-  private config: RateLimitConfig;
-  private endpointLimits: Map<string, EndpointRateLimit> = new Map();
-  private clientLimits: Map<string, ClientRateLimit> = new Map();
-  private violations: Map<string, RateLimitViolation> = new Map();
-  private auditTrail: ApiRateLimitingAudit[] = [];
+  private readonly config: RateLimitConfig;
+  private readonly endpointLimits: Map<string, EndpointRateLimit> = new Map();
+  private readonly clientLimits: Map<string, ClientRateLimit> = new Map();
+  private readonly violations: Map<string, RateLimitViolation> = new Map();
+  private readonly auditTrail: ApiRateLimitingAudit[] = [];
 
   // Rate limiting tracking
-  private requestCounters: Map<string, any> = new Map();
-  private blacklistedIps: Set<string> = new Set();
-  private whitelistedIps: Set<string> = new Set();
-  private emergencyBypassTokens: Set<string> = new Set();
+  private readonly requestCounters: Map<string, any> = new Map();
+  private readonly blacklistedIps: Set<string> = new Set();
+  private readonly whitelistedIps: Set<string> = new Set();
+  private readonly emergencyBypassTokens: Set<string> = new Set();
 
   constructor(config: RateLimitConfig) {
     this.config = RateLimitConfigSchema.parse(config);
@@ -244,7 +244,7 @@ export class ApiRateLimitingService {
         if (!constitutionalValidation.allowed) {
           return this.blockRequest(
             request,
-            constitutionalValidation.reason,
+            constitutionalValidation.reason || 'Constitutional protection violation',
             'constitutional_violation'
           );
         }
@@ -258,14 +258,19 @@ export class ApiRateLimitingService {
       const limitCheck = this.checkLimitsAgainstUsage(limits, usage);
 
       if (!limitCheck.allowed) {
-        return this.handleRateLimitExceeded(request, limits, usage, limitCheck.retry_after_seconds);
+        return this.handleRateLimitExceeded(
+          request,
+          limits,
+          usage,
+          limitCheck.retry_after_seconds || 60
+        );
       }
 
       // Intelligent throttling check
       if (this.config.intelligent_throttling) {
         const throttlingDecision = await this.applyIntelligentThrottling(request, usage, limits);
         if (throttlingDecision.should_throttle) {
-          return this.throttleRequest(request, throttlingDecision.delay_ms);
+          return this.throttleRequest(request, throttlingDecision.delay_ms || 1000);
         }
       }
 
@@ -273,7 +278,6 @@ export class ApiRateLimitingService {
       this.updateRequestCounters(requestKey, now);
       return this.allowRequest(request, limits);
     } catch (error) {
-      console.error('Rate limiting error:', error);
       // Fail open for healthcare systems in case of service errors
       return this.allowRequestWithError(request, error as Error);
     }
@@ -416,7 +420,7 @@ export class ApiRateLimitingService {
     const mitigationResult = await this.applyViolationMitigation(validatedViolation);
 
     // Constitutional impact assessment
-    const constitutionalImpact = await this.assessConstitutionalImpact(validatedViolation);
+    const _constitutionalImpact = await this.assessConstitutionalImpact(validatedViolation);
 
     // Store violation
     this.violations.set(validatedViolation.violation_id, validatedViolation);
@@ -481,7 +485,7 @@ export class ApiRateLimitingService {
     }
 
     // Generate secure bypass token
-    const bypassToken = crypto.randomUUID() + '-emergency-' + Date.now();
+    const bypassToken = `${crypto.randomUUID()}-emergency-${Date.now()}`;
 
     // Set expiration based on urgency and duration
     const maxDurationMinutes = this.getMaxEmergencyDuration(request.urgency_level);
@@ -508,7 +512,7 @@ export class ApiRateLimitingService {
       constitutional_validation_result: {
         medical_justification_provided: true,
         urgency_level: request.urgency_level,
-        supervising_physician_involved: !!request.supervising_physician_id,
+        supervising_physician_involved: Boolean(request.supervising_physician_id),
         constitutional_emergency_exception: true,
       },
       patient_data_protection_applied: true,
@@ -689,7 +693,7 @@ export class ApiRateLimitingService {
     // Find matching endpoint configuration
     let endpointConfig: EndpointRateLimit | null = null;
 
-    for (const [pattern, config] of this.endpointLimits) {
+    for (const [pattern, config] of Array.from(this.endpointLimits)) {
       if (this.matchesEndpointPattern(request.endpoint, pattern)) {
         endpointConfig = config;
         break;
@@ -700,7 +704,7 @@ export class ApiRateLimitingService {
     const clientConfig = request.client_id ? this.clientLimits.get(request.client_id) : null;
 
     // Combine limits with priority to most restrictive
-    const limits = {
+    let limits = {
       requests_per_minute: Math.min(
         endpointConfig?.rate_limits.requests_per_minute || this.config.default_requests_per_minute,
         clientConfig?.custom_limits.requests_per_minute || this.config.default_requests_per_minute
@@ -722,7 +726,11 @@ export class ApiRateLimitingService {
 
     // Apply healthcare priority adjustments
     if (this.config.healthcare_priority_routing && endpointConfig) {
-      limits = this.applyHealthcarePriorityAdjustments(limits, endpointConfig, clientConfig);
+      limits = this.applyHealthcarePriorityAdjustments(
+        limits,
+        endpointConfig,
+        clientConfig || null
+      );
     }
 
     return { limits, endpointConfig, clientConfig };
@@ -785,7 +793,7 @@ export class ApiRateLimitingService {
   }
 
   private async applyIntelligentThrottling(
-    request: any,
+    _request: any,
     usage: any,
     limitsConfig: any
   ): Promise<{ should_throttle: boolean; delay_ms?: number }> {

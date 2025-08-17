@@ -4,7 +4,26 @@
  * Compliance: LGPD + Constitutional Privacy + AI Ethics + ≥9.9/10 Standards
  */
 
-// Compliance Dashboard Service
+// Import types and functions for internal use
+import {
+  type ComplianceDashboardConfig,
+  createComplianceDashboardService,
+  validateComplianceDashboard,
+} from './compliance-dashboard';
+import {
+  createHealthcareIntelligenceService,
+  type HealthcareIntelligenceConfig,
+  type HealthcareIntelligenceQuery,
+  validateHealthcareIntelligence,
+} from './healthcare-intelligence';
+import {
+  createPrivacyPreservingAnalyticsService,
+  type PrivacyPreservingAnalyticsConfig,
+  type PrivacyPreservingQuery,
+  validatePrivacyPreservingAnalytics,
+} from './privacy-preserving-analytics';
+
+// Re-export all types and services
 export {
   type ComplianceAlert,
   type ComplianceDashboardAudit,
@@ -15,7 +34,6 @@ export {
   createComplianceDashboardService,
   validateComplianceDashboard,
 } from './compliance-dashboard';
-// Healthcare Intelligence Service
 export {
   createHealthcareIntelligenceService,
   type HealthcareIntelligenceAudit,
@@ -25,7 +43,6 @@ export {
   HealthcareIntelligenceService,
   validateHealthcareIntelligence,
 } from './healthcare-intelligence';
-// Privacy-Preserving Analytics Service
 export {
   createPrivacyPreservingAnalyticsService,
   type PrivacyPreservingAnalyticsAudit,
@@ -87,7 +104,7 @@ export async function validateEnterpriseAnalyticsCompliance(
   );
   if (!intelligenceValidation.valid) {
     violations.push(
-      ...intelligenceValidation.violations.map((v) => `Healthcare Intelligence: ${v}`)
+      ...intelligenceValidation.violations.map((v: string) => `Healthcare Intelligence: ${v}`)
     );
   }
 

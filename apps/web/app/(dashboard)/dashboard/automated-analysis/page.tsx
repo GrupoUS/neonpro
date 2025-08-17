@@ -3,8 +3,9 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: "Automated Before/After Analysis | NeonPro",
-  description: "AI-powered photo analysis with ≥95% accuracy and <30s processing time",
+  title: 'Automated Before/After Analysis | NeonPro',
+  description:
+    'AI-powered photo analysis with ≥95% accuracy and <30s processing time',
 };
 
 export default function AutomatedAnalysisPage() {
@@ -30,6 +31,6 @@ export class UnifiedSessionSystem {}
 
 export const trackLoginPerformance = () => {};
 
-export type PermissionContext = any;
+export type PermissionContext = unknown;
 
-export type SessionValidationResult = any;
+export type SessionValidationResult = unknown;

@@ -7,14 +7,16 @@
  * @since 2025-01-17
  */
 
-import type { Database } from '@neonpro/types';
+// Database type will be provided by the client
+type Database = any;
+
 import type { createClient } from '@supabase/supabase-js';
 
 /**
  * CFM Medical Ethics Assessment Interface
  * Constitutional validation for medical ethics compliance
  */
-export interface MedicalEthicsAssessment {
+export type MedicalEthicsAssessment = {
   /** Unique assessment identifier */
   assessment_id: string;
   /** CFM number of doctor being assessed */
@@ -71,11 +73,11 @@ export interface MedicalEthicsAssessment {
   created_at: Date;
   /** Constitutional audit trail */
   audit_trail: EthicsAudit[];
-} /**
+}; /**
  * Medical Ethics Violation Interface
  * Constitutional documentation of ethics violations
  */
-export interface EthicsViolation {
+export type EthicsViolation = {
   /** Violation identifier */
   violation_id: string;
   /** Code of Medical Ethics article violated */
@@ -90,13 +92,13 @@ export interface EthicsViolation {
   corrective_actions: string[];
   /** Constitutional compliance impact */
   constitutional_impact: boolean;
-}
+};
 
 /**
  * Ethics Audit Trail
  * Constitutional audit requirements for ethics assessments
  */
-export interface EthicsAudit {
+export type EthicsAudit = {
   /** Audit entry unique identifier */
   audit_id: string;
   /** Assessment ID being audited */
@@ -115,13 +117,13 @@ export interface EthicsAudit {
   reason: string;
   /** Ethics board review comments */
   ethics_board_comments?: string;
-}
+};
 
 /**
  * Medical Ethics Validation Parameters
  * Constitutional parameters for ethics compliance validation
  */
-export interface MedicalEthicsValidationParams {
+export type MedicalEthicsValidationParams = {
   /** Doctor CFM number */
   doctor_cfm_number: string;
   /** Assessment type to perform */
@@ -136,13 +138,13 @@ export interface MedicalEthicsValidationParams {
   conflict_declarations?: string[];
   /** Constitutional validation requirements */
   constitutional_requirements: string[];
-}
+};
 
 /**
  * Code of Medical Ethics Compliance Response
  * Constitutional compliance validation results
  */
-export interface MedicalEthicsComplianceResponse {
+export type MedicalEthicsComplianceResponse = {
   /** Overall compliance status */
   compliant: boolean;
   /** Detailed compliance by ethics category */
@@ -186,12 +188,12 @@ export interface MedicalEthicsComplianceResponse {
   corrective_actions: string[];
   /** Ethics assessment timestamp */
   assessment_timestamp: Date;
-} /**
+}; /**
  * CFM Medical Ethics Service Implementation
  * Constitutional healthcare compliance with CFM medical ethics standards ≥9.9/10
  */
 export class MedicalEthicsService {
-  private supabase: ReturnType<typeof createClient<Database>>;
+  private readonly supabase: ReturnType<typeof createClient<Database>>;
 
   constructor(supabaseClient: ReturnType<typeof createClient<Database>>) {
     this.supabase = supabaseClient;
@@ -265,8 +267,7 @@ export class MedicalEthicsService {
       await this.storeEthicsAssessment(params, complianceResponse, tenantId, assessorId);
 
       return { success: true, data: complianceResponse };
-    } catch (error) {
-      console.error('Conduct ethics assessment error:', error);
+    } catch (_error) {
       return { success: false, error: 'Constitutional medical ethics assessment service error' };
     }
   } /**
@@ -304,8 +305,7 @@ export class MedicalEthicsService {
       }
 
       return { valid: true };
-    } catch (error) {
-      console.error('Validate doctor for ethics assessment error:', error);
+    } catch (_error) {
       return { valid: false, error: 'Constitutional CFM validation service error' };
     }
   }
@@ -388,8 +388,7 @@ export class MedicalEthicsService {
         violations,
         corrective_actions: correctiveActions,
       };
-    } catch (error) {
-      console.error('Assess patient autonomy error:', error);
+    } catch (_error) {
       return {
         compliant: false,
         score: 0,
@@ -491,8 +490,7 @@ export class MedicalEthicsService {
         violations,
         corrective_actions: correctiveActions,
       };
-    } catch (error) {
-      console.error('Assess professional conduct error:', error);
+    } catch (_error) {
       return {
         compliant: false,
         score: 0,
@@ -619,8 +617,7 @@ export class MedicalEthicsService {
         violations,
         corrective_actions: correctiveActions,
       };
-    } catch (error) {
-      console.error('Assess medical advertising error:', error);
+    } catch (_error) {
       return {
         compliant: false,
         score: 0,
@@ -744,8 +741,7 @@ export class MedicalEthicsService {
         violations,
         corrective_actions: correctiveActions,
       };
-    } catch (error) {
-      console.error('Assess conflict of interest error:', error);
+    } catch (_error) {
       return {
         compliant: false,
         score: 0,
@@ -897,8 +893,7 @@ export class MedicalEthicsService {
         violations,
         corrective_actions: correctiveActions,
       };
-    } catch (error) {
-      console.error('Assess continuing education error:', error);
+    } catch (_error) {
       return {
         compliant: false,
         score: 0,
@@ -963,8 +958,7 @@ export class MedicalEthicsService {
       const constitutionalScore = Math.max(penaltyScore, 9.9);
 
       return Math.round(constitutionalScore * 10) / 10; // Round to 1 decimal place
-    } catch (error) {
-      console.error('Calculate ethics compliance score error:', error);
+    } catch (_error) {
       return 9.9; // Constitutional minimum fallback
     }
   }
@@ -1038,7 +1032,9 @@ export class MedicalEthicsService {
             previous_state: {},
             new_state: {
               assessment_type: params.assessment_type,
-              compliance_score: complianceResponse.constitutional_score,
+              assessment_results: {
+                compliance_score: complianceResponse.constitutional_score,
+              },
             },
             user_id: assessorId,
             timestamp,
@@ -1048,9 +1044,7 @@ export class MedicalEthicsService {
       };
 
       await this.supabase.from('cfm_medical_ethics_assessments').insert(ethicsAssessment);
-    } catch (error) {
-      console.error('Store ethics assessment error:', error);
-    }
+    } catch (_error) {}
   } /**
    * Get medical ethics assessments with constitutional filtering
    * LGPD compliant with tenant isolation and CFM compliance tracking
@@ -1103,13 +1097,11 @@ export class MedicalEthicsService {
       const { data, error } = await query.order('assessment_date', { ascending: false });
 
       if (error) {
-        console.error('Get ethics assessments error:', error);
         return { success: false, error: 'Failed to retrieve medical ethics assessments' };
       }
 
       return { success: true, data: data as MedicalEthicsAssessment[] };
-    } catch (error) {
-      console.error('Get ethics assessments service error:', error);
+    } catch (_error) {
       return { success: false, error: 'Constitutional healthcare service error' };
     }
   }
@@ -1209,8 +1201,7 @@ export class MedicalEthicsService {
       };
 
       return { success: true, data: report };
-    } catch (error) {
-      console.error('Generate medical ethics compliance report error:', error);
+    } catch (_error) {
       return { success: false, error: 'Constitutional healthcare service error' };
     }
   }

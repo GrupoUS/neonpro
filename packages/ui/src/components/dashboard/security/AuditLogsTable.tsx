@@ -2,17 +2,7 @@
 
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import {
-  Calendar,
-  Database,
-  Download,
-  Eye,
-  Filter,
-  RefreshCw,
-  Search,
-  Shield,
-  User,
-} from 'lucide-react';
+import { Database, Download, Eye, RefreshCw, Search, Shield, User } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { Badge } from '../../ui/badge';
@@ -30,7 +20,7 @@ import { Label } from '../../ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../../ui/table';
 
-interface AuditLog {
+type AuditLog = {
   id: string;
   user_id?: string;
   session_id?: string;
@@ -53,7 +43,7 @@ interface AuditLog {
   metadata?: Record<string, any>;
   checksum?: string;
   signature?: string;
-}
+};
 
 export function AuditLogsTable() {
   const [logs, setLogs] = useState<AuditLog[]>([]);
@@ -80,8 +70,7 @@ export function AuditLogsTable() {
 
       const data = await response.json();
       setLogs(data.logs || []);
-    } catch (error) {
-      console.error('Error fetching audit logs:', error);
+    } catch (_error) {
       toast.error('Erro ao carregar logs de auditoria');
     } finally {
       setLoading(false);
@@ -90,7 +79,7 @@ export function AuditLogsTable() {
 
   useEffect(() => {
     fetchLogs();
-  }, []);
+  }, [fetchLogs]);
 
   const handleExportLogs = async () => {
     try {
@@ -116,8 +105,7 @@ export function AuditLogsTable() {
       window.URL.revokeObjectURL(url);
 
       toast.success('Logs de auditoria exportados com sucesso');
-    } catch (error) {
-      console.error('Error exporting audit logs:', error);
+    } catch (_error) {
       toast.error('Erro ao exportar logs de auditoria');
     }
   };

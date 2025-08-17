@@ -27,7 +27,7 @@ import { Label } from '../Label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../Select';
 import { Textarea } from '../Textarea';
 
-interface Product {
+type Product = {
   id: string;
   name: string;
   registration_number: string;
@@ -37,9 +37,9 @@ interface Product {
   expiry_date: string;
   compliance_score: number;
   created_at: string;
-}
+};
 
-interface ProductFormData {
+type ProductFormData = {
   name: string;
   registration_number: string;
   manufacturer: string;
@@ -48,17 +48,17 @@ interface ProductFormData {
   expiry_date: string;
   batch_number: string;
   lot_size: number;
-}
+};
 
-interface ANVISAProductRegistrationProps {
+type ANVISAProductRegistrationProps = {
   clinicId: string;
-}
+};
 
 export function ANVISAProductRegistration({ clinicId }: ANVISAProductRegistrationProps) {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
-  const [editingProduct, setEditingProduct] = useState<string | null>(null);
+  const [_editingProduct, _setEditingProduct] = useState<string | null>(null);
   const [formData, setFormData] = useState<ProductFormData>({
     name: '',
     registration_number: '',
@@ -74,7 +74,7 @@ export function ANVISAProductRegistration({ clinicId }: ANVISAProductRegistratio
 
   useEffect(() => {
     fetchProducts();
-  }, [clinicId]);
+  }, [fetchProducts]);
 
   const fetchProducts = async () => {
     try {
@@ -84,7 +84,7 @@ export function ANVISAProductRegistration({ clinicId }: ANVISAProductRegistratio
         const data = await response.json();
         setProducts(data.data);
       }
-    } catch (error) {
+    } catch (_error) {
       setError('Erro ao carregar produtos');
     } finally {
       setLoading(false);
@@ -127,7 +127,7 @@ export function ANVISAProductRegistration({ clinicId }: ANVISAProductRegistratio
         const errorData = await response.json();
         setError(errorData.error || 'Erro ao registrar produto');
       }
-    } catch (error) {
+    } catch (_error) {
       setError('Erro ao registrar produto');
     }
   };
@@ -148,9 +148,15 @@ export function ANVISAProductRegistration({ clinicId }: ANVISAProductRegistratio
   };
 
   const getComplianceColor = (score: number) => {
-    if (score >= 90) return 'text-green-600';
-    if (score >= 75) return 'text-blue-600';
-    if (score >= 60) return 'text-yellow-600';
+    if (score >= 90) {
+      return 'text-green-600';
+    }
+    if (score >= 75) {
+      return 'text-blue-600';
+    }
+    if (score >= 60) {
+      return 'text-yellow-600';
+    }
     return 'text-red-600';
   };
 
@@ -162,7 +168,7 @@ export function ANVISAProductRegistration({ clinicId }: ANVISAProductRegistratio
           <div className="h-10 w-32 animate-pulse rounded bg-gray-200" />
         </div>
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {[...Array(6)].map((_, i) => (
+          {[...new Array(6)].map((_, i) => (
             <Card className="animate-pulse" key={i}>
               <CardHeader>
                 <div className="h-4 w-32 rounded bg-gray-200" />

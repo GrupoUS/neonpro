@@ -64,7 +64,12 @@ self.addEventListener('activate', (event) => {
     Promise.all([
       caches.keys().then((cacheNames) => {
         return Promise.all(
-          cacheNames.map((cacheName) => { if (!cacheName.includes(CACHE_VERSION)) { return caches.delete(cacheName); } return Promise.resolve(); }),
+          cacheNames.map((cacheName) => {
+            if (!cacheName.includes(CACHE_VERSION)) {
+              return caches.delete(cacheName);
+            }
+            return Promise.resolve();
+          }),
         );
       }),
       self.clients.claim(),

@@ -1,0 +1,14 @@
+{
+  "extends": ["//"],
+  "tasks": {
+    "build": {
+      "tags": ["app", "frontend", "healthcare"]
+    },
+    "dev": {
+      "tags": ["app", "frontend", "healthcare"]
+    },
+    "test": {
+      "tags": ["app", "frontend", "healthcare"]
+    }
+  }
+}

@@ -25,12 +25,16 @@ if (fs.existsSync(packagePath)) {
   console.log('\nSupabase packages:');
   Object.keys(pkg.dependencies || {})
     .filter((dep) => dep.includes('supabase'))
-    .forEach((dep) => { console.log(`  ${dep}: ${pkg.dependencies[dep]}`); });
+    .forEach((dep) => {
+      console.log(`  ${dep}: ${pkg.dependencies[dep]}`);
+    });
 
   console.log('\nAuth packages:');
   Object.keys(pkg.dependencies || {})
     .filter((dep) => dep.includes('auth') || dep.includes('clerk'))
-    .forEach((dep) => { console.log(`  ${dep}: ${pkg.dependencies[dep]}`); });
+    .forEach((dep) => {
+      console.log(`  ${dep}: ${pkg.dependencies[dep]}`);
+    });
   console.log('');
 }
 

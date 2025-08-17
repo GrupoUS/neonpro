@@ -36,7 +36,7 @@ export async function POST(
       );
     }
 
-    const result = await service.trainModel(resolvedParams.id, data);
+    const _result = await service.trainModel(resolvedParams.id, data);
 
     return NextResponse.json({ success: true });
   } catch (_error) {

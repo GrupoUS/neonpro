@@ -13,12 +13,7 @@
  */
 
 import { z } from 'zod';
-import type {
-  AdverseEventType,
-  ANVISADeviceCategory,
-  ComplianceScore,
-  ConstitutionalResponse,
-} from '../types';
+import type { AdverseEventType, ComplianceScore, ConstitutionalResponse } from '../types';
 
 /**
  * Adverse Event Report Schema
@@ -101,9 +96,49 @@ export const AdverseEventReportSchema = z.object({
 export type AdverseEventReport = z.infer<typeof AdverseEventReportSchema>;
 
 /**
+ * Adverse Event Severity Levels
+ */
+export enum AdverseEventSeverity {
+  MILD = 'MILD',
+  MODERATE = 'MODERATE',
+  SEVERE = 'SEVERE',
+  LIFE_THREATENING = 'LIFE_THREATENING',
+  DEATH = 'DEATH',
+}
+
+/**
+ * Adverse Event Base Type
+ */
+export type AdverseEvent = {
+  id: string;
+  tenantId: string;
+  patientId: string;
+  eventType: AdverseEventType;
+  severity: AdverseEventSeverity;
+  description: string;
+  reportedAt: Date;
+  reportedBy: string;
+  anvisaNotified: boolean;
+  status: 'PENDING' | 'INVESTIGATING' | 'RESOLVED' | 'CLOSED';
+};
+
+/**
+ * Adverse Event Filters
+ */
+export type AdverseEventFilters = {
+  tenantId?: string;
+  severity?: AdverseEventSeverity;
+  eventType?: AdverseEventType;
+  dateFrom?: Date;
+  dateTo?: Date;
+  anvisaNotified?: boolean;
+  status?: AdverseEvent['status'];
+};
+
+/**
  * Event Classification Result
  */
-export interface EventClassificationResult {
+export type EventClassificationResult = {
   eventId: string;
   severity: AdverseEventType;
   urgency: 'IMMEDIATE' | 'URGENT' | 'STANDARD' | 'ROUTINE';
@@ -135,17 +170,12 @@ export interface EventClassificationResult {
     institutionalReport: boolean;
     manufacturerNotification: boolean;
   };
-}
+};
 
 /**
  * Constitutional Adverse Event Service for ANVISA Compliance
  */
 export class AdverseEventService {
-  private readonly constitutionalQualityStandard = 9.9;
-  private readonly immediateNotificationMinutes = 60; // Constitutional: 1 hour for critical events
-  private readonly urgentNotificationHours = 24; // ANVISA: 24 hours for serious events
-  private readonly regularNotificationDays = 15; // ANVISA: 15 days for standard events
-
   /**
    * Report Adverse Event with Constitutional Healthcare Validation
    * Implements ANVISA requirements with constitutional patient safety protocols
@@ -190,7 +220,7 @@ export class AdverseEventService {
       });
 
       // Step 6: Execute constitutional notification workflow
-      const notificationResult = await this.executeConstitutionalNotification(
+      const _notificationResult = await this.executeConstitutionalNotification(
         storedReport,
         eventClassification
       );
@@ -291,7 +321,7 @@ export class AdverseEventService {
     }
 
     // Timeline validation
-    const hoursFromEvent = (new Date().getTime() - report.eventDate.getTime()) / (1000 * 60 * 60);
+    const hoursFromEvent = (Date.now() - report.eventDate.getTime()) / (1000 * 60 * 60);
     if (
       (report.eventSeverity === 'DEATH' || report.eventSeverity === 'LIFE_THREATENING') &&
       hoursFromEvent > 24
@@ -353,7 +383,8 @@ export class AdverseEventService {
     const requiredActions = {
       immediateActions: report.immediateActions,
       investigationRequired: urgency === 'IMMEDIATE' || urgency === 'URGENT',
-      deviceQuarantine: !!report.deviceId && (urgency === 'IMMEDIATE' || urgency === 'URGENT'),
+      deviceQuarantine:
+        Boolean(report.deviceId) && (urgency === 'IMMEDIATE' || urgency === 'URGENT'),
       procedureSuspension:
         report.eventSeverity === 'DEATH' || report.eventSeverity === 'LIFE_THREATENING',
       staffRetraining: urgency === 'IMMEDIATE' || urgency === 'URGENT',
@@ -387,7 +418,7 @@ export class AdverseEventService {
         urgency === 'IMMEDIATE' || report.constitutionalAssessment.constitutionalViolation,
       institutionalReport: urgency === 'IMMEDIATE' || urgency === 'URGENT',
       manufacturerNotification:
-        !!report.deviceId && (urgency === 'IMMEDIATE' || urgency === 'URGENT'),
+        Boolean(report.deviceId) && (urgency === 'IMMEDIATE' || urgency === 'URGENT'),
     };
 
     return {
@@ -410,18 +441,28 @@ export class AdverseEventService {
     let score = 10;
 
     // Timeline compliance
-    const hoursFromEvent = (new Date().getTime() - report.eventDate.getTime()) / (1000 * 60 * 60);
-    if (urgency === 'IMMEDIATE' && hoursFromEvent > 1) score -= 2;
-    if (urgency === 'URGENT' && hoursFromEvent > 24) score -= 1.5;
+    const hoursFromEvent = (Date.now() - report.eventDate.getTime()) / (1000 * 60 * 60);
+    if (urgency === 'IMMEDIATE' && hoursFromEvent > 1) {
+      score -= 2;
+    }
+    if (urgency === 'URGENT' && hoursFromEvent > 24) {
+      score -= 1.5;
+    }
 
     // Action completeness
-    if (requiredActions.immediateActions.length === 0 && urgency === 'IMMEDIATE') score -= 2;
+    if (requiredActions.immediateActions.length === 0 && urgency === 'IMMEDIATE') {
+      score -= 2;
+    }
 
     // Patient safety focus
-    if (report.constitutionalAssessment.patientSafetyImpact === 'CRITICAL') score += 0.5;
+    if (report.constitutionalAssessment.patientSafetyImpact === 'CRITICAL') {
+      score += 0.5;
+    }
 
     // Medical ethics compliance
-    if (report.followUpRequired && urgency !== 'ROUTINE') score += 0.3;
+    if (report.followUpRequired && urgency !== 'ROUTINE') {
+      score += 0.3;
+    }
 
     return Math.max(0, Math.min(10, score)) as ComplianceScore;
   }
@@ -433,9 +474,6 @@ export class AdverseEventService {
     report: AdverseEventReport,
     classification: EventClassificationResult
   ): Promise<void> {
-    // Constitutional emergency protocol
-    console.log(`Executing immediate response for critical event: ${report.eventId}`);
-
     // 1. Alert medical director
     await this.alertMedicalDirector(report, classification);
 
@@ -480,39 +518,32 @@ export class AdverseEventService {
    */
   private async submitToANVISA(
     report: AdverseEventReport,
-    classification: EventClassificationResult
+    _classification: EventClassificationResult
   ): Promise<void> {
-    try {
-      const anvisaReport = {
-        eventId: report.eventId,
-        institutionCNPJ: process.env.COMPANY_CNPJ,
-        eventType: report.eventType,
-        eventSeverity: report.eventSeverity,
-        eventDescription: report.eventDescription,
-        patientInformation: {
-          age: report.clinicalContext.patientAge,
-          gender: report.clinicalContext.patientGender,
-          medicalHistory: report.clinicalContext.medicalHistory,
-        },
-        deviceInformation: report.deviceInformation,
-        procedureInformation: report.procedureInformation,
-        immediateActions: report.immediateActions,
-        clinicalOutcome: report.clinicalOutcome,
-        reporterInformation: report.reporterInformation,
-        constitutionalAssessment: report.constitutionalAssessment,
-      };
+    const anvisaReport = {
+      eventId: report.eventId,
+      institutionCNPJ: process.env.COMPANY_CNPJ,
+      eventType: report.eventType,
+      eventSeverity: report.eventSeverity,
+      eventDescription: report.eventDescription,
+      patientInformation: {
+        age: report.clinicalContext.patientAge,
+        gender: report.clinicalContext.patientGender,
+        medicalHistory: report.clinicalContext.medicalHistory,
+      },
+      deviceInformation: report.deviceInformation,
+      procedureInformation: report.procedureInformation,
+      immediateActions: report.immediateActions,
+      clinicalOutcome: report.clinicalOutcome,
+      reporterInformation: report.reporterInformation,
+      constitutionalAssessment: report.constitutionalAssessment,
+    };
 
-      // Submit to ANVISA portal (would integrate with actual ANVISA API)
-      const anvisaResponse = await this.submitToANVISAPortal(anvisaReport);
+    // Submit to ANVISA portal (would integrate with actual ANVISA API)
+    const anvisaResponse = await this.submitToANVISAPortal(anvisaReport);
 
-      // Update report with ANVISA protocol
-      await this.updateReportWithANVISAProtocol(report.eventId!, anvisaResponse.protocol);
-
-      console.log(`ANVISA notification submitted - Protocol: ${anvisaResponse.protocol}`);
-    } catch (error) {
-      console.error('Failed to submit to ANVISA:', error);
-      throw error;
-    }
+    // Update report with ANVISA protocol
+    await this.updateReportWithANVISAProtocol(report.eventId!, anvisaResponse.protocol);
   }
 
   // ============================================================================
@@ -563,78 +594,61 @@ export class AdverseEventService {
   // ============================================================================
 
   private async storeAdverseEventReport(report: AdverseEventReport): Promise<AdverseEventReport> {
-    console.log('Storing adverse event report:', report.eventId);
     return report;
   }
 
   private async alertMedicalDirector(
-    report: AdverseEventReport,
-    classification: EventClassificationResult
-  ): Promise<void> {
-    console.log('Alerting medical director of critical adverse event');
-  }
+    _report: AdverseEventReport,
+    _classification: EventClassificationResult
+  ): Promise<void> {}
 
-  private async quarantineDevice(deviceId: string, tenantId: string): Promise<void> {
-    console.log(`Quarantining device: ${deviceId}`);
-  }
+  private async quarantineDevice(_deviceId: string, _tenantId: string): Promise<void> {}
 
-  private async suspendProcedure(procedureId: string | undefined, tenantId: string): Promise<void> {
-    console.log(`Suspending procedure: ${procedureId}`);
-  }
+  private async suspendProcedure(
+    _procedureId: string | undefined,
+    _tenantId: string
+  ): Promise<void> {}
 
-  private async escalatePatientCare(patientId: string, severity: string): Promise<void> {
-    console.log(`Escalating patient care for: ${patientId}, severity: ${severity}`);
-  }
+  private async escalatePatientCare(_patientId: string, _severity: string): Promise<void> {}
 
   private async notifyInternalTeams(
-    report: AdverseEventReport,
-    classification: EventClassificationResult
-  ): Promise<void> {
-    console.log('Notifying internal teams of adverse event');
-  }
+    _report: AdverseEventReport,
+    _classification: EventClassificationResult
+  ): Promise<void> {}
 
   private async notifyPatientAndFamily(
-    report: AdverseEventReport,
-    classification: EventClassificationResult
-  ): Promise<void> {
-    console.log('Notifying patient and family of adverse event');
-  }
+    _report: AdverseEventReport,
+    _classification: EventClassificationResult
+  ): Promise<void> {}
 
   private async notifyResponsibleProfessional(
-    report: AdverseEventReport,
-    classification: EventClassificationResult
-  ): Promise<void> {
-    console.log('Notifying responsible professional of adverse event');
-  }
+    _report: AdverseEventReport,
+    _classification: EventClassificationResult
+  ): Promise<void> {}
 
   private async notifyEthicsCommittee(
-    report: AdverseEventReport,
-    classification: EventClassificationResult
-  ): Promise<void> {
-    console.log('Notifying ethics committee of adverse event');
-  }
+    _report: AdverseEventReport,
+    _classification: EventClassificationResult
+  ): Promise<void> {}
 
-  private async submitToANVISAPortal(report: any): Promise<{ protocol: string }> {
+  private async submitToANVISAPortal(_report: any): Promise<{ protocol: string }> {
     return { protocol: `ANVISA-AE-${Date.now()}` };
   }
 
-  private async updateReportWithANVISAProtocol(eventId: string, protocol: string): Promise<void> {
-    console.log(`Updating report ${eventId} with ANVISA protocol: ${protocol}`);
-  }
+  private async updateReportWithANVISAProtocol(
+    _eventId: string,
+    _protocol: string
+  ): Promise<void> {}
 
   private async scheduleFollowUpActions(
-    report: AdverseEventReport,
-    classification: EventClassificationResult
-  ): Promise<void> {
-    console.log('Scheduling follow-up actions for adverse event');
-  }
+    _report: AdverseEventReport,
+    _classification: EventClassificationResult
+  ): Promise<void> {}
 
   private async sendReportingCompletionNotification(
-    report: AdverseEventReport,
-    classification: EventClassificationResult
-  ): Promise<void> {
-    console.log('Sending adverse event reporting completion notification');
-  }
+    _report: AdverseEventReport,
+    _classification: EventClassificationResult
+  ): Promise<void> {}
 
   private async createAuditEvent(action: string, data: any): Promise<any> {
     return {
@@ -651,7 +665,7 @@ export class AdverseEventService {
    */
   async getAdverseEventStatus(
     eventId: string,
-    tenantId: string
+    _tenantId: string
   ): Promise<ConstitutionalResponse<EventClassificationResult | null>> {
     try {
       const auditTrail = await this.createAuditEvent('ADVERSE_EVENT_STATUS_ACCESSED', { eventId });

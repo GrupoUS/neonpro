@@ -67,7 +67,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const body = await request.json();
+    const _body = await request.json();
 
     // Validate request body    const validatedData = validationSchemas.createAnalysisSession.parse(body);
 

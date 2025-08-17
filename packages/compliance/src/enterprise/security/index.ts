@@ -4,6 +4,11 @@
  * Compliance: LGPD + CFM + Constitutional Healthcare + ≥9.9/10 Standards
  */
 
+import type { RateLimitConfig } from './api-rate-limiting';
+import { createApiRateLimitingService, validateApiRateLimiting } from './api-rate-limiting';
+import type { RbacConfig } from './healthcare-rbac';
+import { createHealthcareRbacService, validateHealthcareRbac } from './healthcare-rbac';
+
 // API Rate Limiting Service
 export {
   type ApiRateLimitingAudit,

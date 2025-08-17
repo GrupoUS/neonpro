@@ -115,8 +115,7 @@ class RBACSetup {
         throw error;
       }
 
-      const tablesWithRLS =
-        rlsStatus?.filter((table) => table.rowsecurity) || [];
+      const tablesWithRLS = rlsStatus?.filter((table) => table.rowsecurity) || [];
 
       console.log(`✅ RLS enabled on ${tablesWithRLS.length} tables`);
 
@@ -207,24 +206,22 @@ class RBACSetup {
       console.log('🧪 Testing RBAC permissions...');
 
       // Test basic role functions
-      const { data: roleTest, error: roleError } = await this.supabase.rpc(
-        'has_role',
-        { required_role: 'owner' }
-      );
+      const { data: roleTest, error: roleError } = await this.supabase.rpc('has_role', {
+        required_role: 'owner',
+      });
 
       if (roleError) {
         console.warn('⚠️  Role function test warning:', roleError.message);
       }
 
       // Test minimum role functions
-      const { data: minRoleTest, error: minRoleError } =
-        await this.supabase.rpc('has_minimum_role', { required_role: 'staff' });
+      const { data: minRoleTest, error: minRoleError } = await this.supabase.rpc(
+        'has_minimum_role',
+        { required_role: 'staff' }
+      );
 
       if (minRoleError) {
-        console.warn(
-          '⚠️  Minimum role function test warning:',
-          minRoleError.message
-        );
+        console.warn('⚠️  Minimum role function test warning:', minRoleError.message);
       }
 
       console.log('✅ RBAC functions are callable');
@@ -257,9 +254,7 @@ class RBACSetup {
 
     // Step 1: Execute RLS policies migration
     console.log('\n📋 Step 1: Setting up RLS policies');
-    const migrationResult = await this.executeMigration(
-      '001_setup_rbac_policies.sql'
-    );
+    const migrationResult = await this.executeMigration('001_setup_rbac_policies.sql');
     results.push(migrationResult);
 
     if (!migrationResult.success) {
@@ -303,16 +298,12 @@ class RBACSetup {
     if (successCount === totalSteps) {
       console.log('🎉 RBAC Setup completed successfully!');
       console.log('\n📋 Next steps:');
-      console.log(
-        '   1. Update your application to use the new RBAC middleware'
-      );
+      console.log('   1. Update your application to use the new RBAC middleware');
       console.log('   2. Test permission checks in your frontend components');
       console.log('   3. Review audit logs for permission usage');
       console.log('   4. Configure role assignments for existing users');
     } else {
-      console.log(
-        `⚠️  RBAC Setup completed with ${totalSteps - successCount} warnings/errors`
-      );
+      console.log(`⚠️  RBAC Setup completed with ${totalSteps - successCount} warnings/errors`);
       console.log('   Please review the errors above and fix any issues');
     }
 

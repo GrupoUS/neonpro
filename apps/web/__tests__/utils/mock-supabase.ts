@@ -19,17 +19,21 @@ export function createMockSupabaseClient() {
 
   const mockQueryBuilder = {
     insert: mockInsert.mockReturnValue({
-      then: (callback: Function) => callback({ error: null }),
+      then: (callback: (result: { error: null }) => void) =>
+        callback({ error: null }),
     }),
     select: mockSelect.mockReturnValue({
       eq: mockEq.mockReturnValue({
         single: mockSingle.mockReturnValue({
-          then: (callback: Function) =>
-            callback({ data: null, error: { code: 'PGRST116' } }),
+          then: (
+            callback: (result: { data: null; error: { code: string } }) => void,
+          ) => callback({ data: null, error: { code: 'PGRST116' } }),
         }),
         order: mockOrder.mockReturnValue({
           limit: mockLimit.mockReturnValue({
-            then: (callback: Function) => callback({ data: [], error: null }),
+            then: (
+              callback: (result: { data: unknown[]; error: null }) => void,
+            ) => callback({ data: [], error: null }),
           }),
         }),
       }),
@@ -51,7 +55,9 @@ export function createMockSupabaseClient() {
 }
 
 // Mock patient data generators for testing
-export const createMockPatientData = (overrides: any = {}) => ({
+export const createMockPatientData = (
+  overrides: Record<string, unknown> = {},
+) => ({
   patientId: '12345678-1234-1234-1234-123456789012',
   tenantId: '87654321-4321-4321-4321-210987654321',
   assessmentDate: new Date(),

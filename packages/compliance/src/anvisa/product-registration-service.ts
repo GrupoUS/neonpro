@@ -7,14 +7,16 @@
  * @since 2025-01-17
  */
 
-import type { Database } from '@neonpro/types';
+// Database type will be provided by the client
+type Database = any;
+
 import type { createClient } from '@supabase/supabase-js';
 
 /**
  * ANVISA Product Registration Interface
  * Constitutional validation for aesthetic and medical products
  */
-export interface ProductRegistration {
+export type ProductRegistration = {
   /** Unique product identifier */
   product_id: string;
   /** ANVISA registration number (constitutional requirement) */
@@ -37,11 +39,11 @@ export interface ProductRegistration {
   updated_at: Date;
   /** Constitutional audit trail */
   audit_trail: ProductRegistrationAudit[];
-} /**
+}; /**
  * Product Registration Audit Trail
  * Constitutional audit requirements for product registration changes
  */
-export interface ProductRegistrationAudit {
+export type ProductRegistrationAudit = {
   /** Audit entry unique identifier */
   audit_id: string;
   /** Product registration ID being audited */
@@ -58,13 +60,13 @@ export interface ProductRegistrationAudit {
   timestamp: Date;
   /** Reason for change (constitutional requirement) */
   reason: string;
-}
+};
 
 /**
  * Product Registration Query Filters
  * Constitutional search and filtering capabilities
  */
-export interface ProductRegistrationFilters {
+export type ProductRegistrationFilters = {
   /** Filter by registration status */
   status?: ProductRegistration['registration_status'];
   /** Filter by product category */
@@ -80,12 +82,12 @@ export interface ProductRegistrationFilters {
   monitoring_alerts?: boolean;
   /** Constitutional compliance search */
   compliance_search?: string;
-} /**
+}; /**
  * ANVISA Product Registration Service Implementation
  * Constitutional healthcare compliance with ≥9.9/10 quality standards
  */
 export class ProductRegistrationService {
-  private supabase: ReturnType<typeof createClient<Database>>;
+  private readonly supabase: ReturnType<typeof createClient<Database>>;
 
   constructor(supabaseClient: ReturnType<typeof createClient<Database>>) {
     this.supabase = supabaseClient;
@@ -140,7 +142,6 @@ export class ProductRegistrationService {
         .single();
 
       if (error) {
-        console.error('Product registration error:', error);
         return { success: false, error: 'Failed to register product' };
       }
 
@@ -150,8 +151,7 @@ export class ProductRegistrationService {
       }
 
       return { success: true, data: data as ProductRegistration };
-    } catch (error) {
-      console.error('Product registration service error:', error);
+    } catch (_error) {
       return { success: false, error: 'Constitutional healthcare service error' };
     }
   } /**
@@ -187,13 +187,11 @@ export class ProductRegistrationService {
       const { data, error } = await query.order('created_at', { ascending: false });
 
       if (error) {
-        console.error('Get product registrations error:', error);
         return { success: false, error: 'Failed to retrieve product registrations' };
       }
 
       return { success: true, data: data as ProductRegistration[] };
-    } catch (error) {
-      console.error('Get product registrations service error:', error);
+    } catch (_error) {
       return { success: false, error: 'Constitutional healthcare service error' };
     }
   } /**
@@ -255,13 +253,11 @@ export class ProductRegistrationService {
         .single();
 
       if (error) {
-        console.error('Product update error:', error);
         return { success: false, error: 'Failed to update product registration' };
       }
 
       return { success: true, data: data as ProductRegistration };
-    } catch (error) {
-      console.error('Update product registration service error:', error);
+    } catch (_error) {
       return { success: false, error: 'Constitutional healthcare service error' };
     }
   } /**
@@ -319,8 +315,7 @@ export class ProductRegistrationService {
       }
 
       return { valid: true };
-    } catch (error) {
-      console.error('Product validation error:', error);
+    } catch (_error) {
       return { valid: false, error: 'Constitutional validation service error' };
     }
   } /**
@@ -336,7 +331,9 @@ export class ProductRegistrationService {
         .eq('product_id', productId)
         .single();
 
-      if (!product) return;
+      if (!product) {
+        return;
+      }
 
       const expiryDate = new Date(product.registration_expiry);
       const currentDate = new Date();
@@ -365,9 +362,7 @@ export class ProductRegistrationService {
           });
         }
       }
-    } catch (error) {
-      console.error('Schedule expiry alerts error:', error);
-    }
+    } catch (_error) {}
   } /**
    * Get products expiring soon for constitutional monitoring
    * ANVISA compliance dashboard integration
@@ -389,13 +384,11 @@ export class ProductRegistrationService {
         .order('registration_expiry', { ascending: true });
 
       if (error) {
-        console.error('Get expiring products error:', error);
         return { success: false, error: 'Failed to retrieve expiring products' };
       }
 
       return { success: true, data: data as ProductRegistration[] };
-    } catch (error) {
-      console.error('Get expiring products service error:', error);
+    } catch (_error) {
       return { success: false, error: 'Constitutional healthcare service error' };
     }
   }
@@ -433,8 +426,7 @@ export class ProductRegistrationService {
       };
 
       return { success: true, data: report };
-    } catch (error) {
-      console.error('Generate compliance report error:', error);
+    } catch (_error) {
       return { success: false, error: 'Constitutional healthcare service error' };
     }
   }

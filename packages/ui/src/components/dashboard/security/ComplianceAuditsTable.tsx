@@ -32,7 +32,7 @@ import { Progress } from '../../ui/progress';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../../ui/table';
 
-interface ComplianceAudit {
+type ComplianceAudit = {
   id: string;
   audit_type: 'lgpd' | 'anvisa' | 'cfm' | 'iso27001' | 'comprehensive';
   audit_name: string;
@@ -63,7 +63,7 @@ interface ComplianceAudit {
   report_url?: string;
   created_at: string;
   updated_at: string;
-}
+};
 
 export function ComplianceAuditsTable() {
   const [audits, setAudits] = useState<ComplianceAudit[]>([]);
@@ -89,8 +89,7 @@ export function ComplianceAuditsTable() {
 
       const data = await response.json();
       setAudits(data.audits || []);
-    } catch (error) {
-      console.error('Error fetching compliance audits:', error);
+    } catch (_error) {
       toast.error('Erro ao carregar auditorias de compliance');
     } finally {
       setLoading(false);
@@ -99,7 +98,7 @@ export function ComplianceAuditsTable() {
 
   useEffect(() => {
     fetchAudits();
-  }, []);
+  }, [fetchAudits]);
 
   const handleStartAudit = async (auditType: string) => {
     try {
@@ -117,8 +116,7 @@ export function ComplianceAuditsTable() {
 
       await fetchAudits();
       toast.success('Auditoria iniciada com sucesso');
-    } catch (error) {
-      console.error('Error starting audit:', error);
+    } catch (_error) {
       toast.error('Erro ao iniciar auditoria');
     }
   };
@@ -147,8 +145,7 @@ export function ComplianceAuditsTable() {
       window.URL.revokeObjectURL(url);
 
       toast.success('Relatório baixado com sucesso');
-    } catch (error) {
-      console.error('Error downloading report:', error);
+    } catch (_error) {
       toast.error('Erro ao baixar relatório');
     }
   };
@@ -205,9 +202,15 @@ export function ComplianceAuditsTable() {
   };
 
   const getComplianceScoreColor = (score: number) => {
-    if (score >= 90) return 'text-green-600';
-    if (score >= 80) return 'text-blue-600';
-    if (score >= 70) return 'text-yellow-600';
+    if (score >= 90) {
+      return 'text-green-600';
+    }
+    if (score >= 80) {
+      return 'text-blue-600';
+    }
+    if (score >= 70) {
+      return 'text-yellow-600';
+    }
     return 'text-red-600';
   };
 

@@ -65,7 +65,7 @@ export type PrivacyPreservingAnalyticsResults = z.infer<
   typeof PrivacyPreservingAnalyticsResultsSchema
 >;
 
-export interface PrivacyPreservingAnalyticsAudit {
+export type PrivacyPreservingAnalyticsAudit = {
   audit_id: string;
   query_id: string;
   privacy_technique: string;
@@ -75,14 +75,14 @@ export interface PrivacyPreservingAnalyticsAudit {
   lgpd_compliance_score: number;
   created_at: string;
   created_by: string;
-}
+};
 
 /**
  * Privacy-Preserving Analytics Service
  * Constitutional healthcare analytics with patient privacy protection
  */
 export class PrivacyPreservingAnalyticsService {
-  private config: PrivacyPreservingAnalyticsConfig;
+  private readonly config: PrivacyPreservingAnalyticsConfig;
   private privacyBudgetUsed = 0;
   private auditTrail: PrivacyPreservingAnalyticsAudit[] = [];
 
@@ -251,12 +251,12 @@ export class PrivacyPreservingAnalyticsService {
       if (!groups.has(key)) {
         groups.set(key, []);
       }
-      groups.get(key)!.push(row);
+      groups.get(key)?.push(row);
     }
 
     // Filter groups that meet k-anonymity requirement
     const anonymizedData: any[] = [];
-    for (const [key, group] of groups) {
+    for (const [_key, group] of Array.from(groups)) {
       if (group.length >= k) {
         // Apply generalization to all rows in the group
         const generalizedGroup = group.map((row) => {
@@ -289,12 +289,12 @@ export class PrivacyPreservingAnalyticsService {
       if (!groups.has(key)) {
         groups.set(key, []);
       }
-      groups.get(key)!.push(row);
+      groups.get(key)?.push(row);
     }
 
     // Filter groups that meet l-diversity requirement
     const diverseData: any[] = [];
-    for (const [key, group] of groups) {
+    for (const [_key, group] of Array.from(groups)) {
       // Check if group has at least l distinct values for sensitive attributes
       const distinctValues = new Set(
         group.map((row) => sensitiveColumns.map((col) => row[col]).join('|'))
@@ -349,13 +349,13 @@ export class PrivacyPreservingAnalyticsService {
     if (typeof value === 'string') {
       // Generalize string values
       if (column.includes('zip') || column.includes('cep')) {
-        return value.substring(0, 3) + 'XX';
+        return `${value.substring(0, 3)}XX`;
       }
       if (column.includes('email')) {
         const [local, domain] = value.split('@');
         return `${local.substring(0, 2)}****@${domain}`;
       }
-      return value.substring(0, 2) + '***';
+      return `${value.substring(0, 2)}***`;
     }
     return value;
   }
@@ -364,8 +364,8 @@ export class PrivacyPreservingAnalyticsService {
    * Calculate privacy metrics for high privacy level
    */
   private async calculateHighPrivacyMetrics(
-    data: any[],
-    query: PrivacyPreservingQuery
+    _data: any[],
+    _query: PrivacyPreservingQuery
   ): Promise<any> {
     return {
       epsilon_used: this.config.differential_privacy_epsilon,
@@ -379,8 +379,8 @@ export class PrivacyPreservingAnalyticsService {
    * Calculate privacy metrics for medium privacy level
    */
   private async calculateMediumPrivacyMetrics(
-    data: any[],
-    query: PrivacyPreservingQuery
+    _data: any[],
+    _query: PrivacyPreservingQuery
   ): Promise<any> {
     return {
       epsilon_used: this.config.differential_privacy_epsilon * 1.5,
@@ -394,8 +394,8 @@ export class PrivacyPreservingAnalyticsService {
    * Calculate privacy metrics for standard privacy level
    */
   private async calculateStandardPrivacyMetrics(
-    data: any[],
-    query: PrivacyPreservingQuery
+    _data: any[],
+    _query: PrivacyPreservingQuery
   ): Promise<any> {
     return {
       epsilon_used: 0, // No differential privacy
@@ -481,10 +481,10 @@ export class PrivacyPreservingAnalyticsService {
       for (let j = 0; j < numericColumns.length; j++) {
         const col1Values = data
           .map((row) => Number(row[numericColumns[i]]))
-          .filter((val) => !isNaN(val));
+          .filter((val) => !Number.isNaN(val));
         const col2Values = data
           .map((row) => Number(row[numericColumns[j]]))
-          .filter((val) => !isNaN(val));
+          .filter((val) => !Number.isNaN(val));
 
         if (col1Values.length > 1 && col2Values.length > 1) {
           const correlation = this.calculatePearsonCorrelation(col1Values, col2Values);
@@ -504,7 +504,9 @@ export class PrivacyPreservingAnalyticsService {
    */
   private calculatePearsonCorrelation(x: number[], y: number[]): number {
     const n = Math.min(x.length, y.length);
-    if (n === 0) return 0;
+    if (n === 0) {
+      return 0;
+    }
 
     const sumX = x.slice(0, n).reduce((a, b) => a + b, 0);
     const sumY = y.slice(0, n).reduce((a, b) => a + b, 0);
@@ -563,7 +565,9 @@ export class PrivacyPreservingAnalyticsService {
     }
 
     for (const column of columns) {
-      if (column === timeColumn) continue;
+      if (column === timeColumn) {
+        continue;
+      }
 
       const timeGroups = new Map<string, any[]>();
 
@@ -572,7 +576,7 @@ export class PrivacyPreservingAnalyticsService {
         if (!timeGroups.has(timeKey)) {
           timeGroups.set(timeKey, []);
         }
-        timeGroups.get(timeKey)!.push(row[column]);
+        timeGroups.get(timeKey)?.push(row[column]);
       }
 
       // Calculate trend data

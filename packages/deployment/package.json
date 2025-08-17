@@ -1,0 +1,92 @@
+{
+  "name": "@neonpro/deployment",
+  "version": "1.0.0",
+  "description": "NeonPro Production Deployment Suite - Blue-green deployment, monitoring, and automation for healthcare applications",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "bin": {
+    "neonpro-deploy": "./dist/cli.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "clean": "rm -rf dist",
+    "deploy:blue-green": "tsx src/blue-green/deployer.ts",
+    "health:check": "tsx src/blue-green/health-checker.ts",
+    "migration:run": "tsx src/database/migration-runner.ts",
+    "rollback:execute": "tsx src/blue-green/rollback-manager.ts",
+    "monitor:deployment": "tsx src/monitoring/deployment-monitor.ts",
+    "validate:pre-deploy": "tsx src/automation/pre-deploy-checks.ts",
+    "validate:post-deploy": "tsx src/automation/post-deploy-validation.ts"
+  },
+  "dependencies": {
+    "@octokit/rest": "^20.0.2",
+    "@vercel/node": "^3.0.21",
+    "docker": "^1.0.0",
+    "dockerode": "^4.0.2",
+    "kubernetes-client": "^9.0.0",
+    "node-ssh": "^13.1.0",
+    "pg": "^8.11.3",
+    "redis": "^4.6.12",
+    "axios": "^1.6.2",
+    "chalk": "^5.3.0",
+    "ora": "^8.0.1",
+    "inquirer": "^9.2.12",
+    "yaml": "^2.3.4",
+    "fs-extra": "^11.2.0",
+    "glob": "^10.3.10",
+    "dotenv": "^16.3.1",
+    "winston": "^3.11.0"
+  },
+  "devDependencies": {
+    "@types/inquirer": "^9.0.7",
+    "@types/pg": "^8.10.9",
+    "@types/fs-extra": "^11.0.4",
+    "@types/node": "^20.10.5",
+    "tsx": "^4.6.2",
+    "typescript": "^5.3.3"
+  },
+  "keywords": [
+    "deployment",
+    "blue-green",
+    "healthcare",
+    "production",
+    "automation",
+    "neonpro"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/GrupoUS/neonpro",
+    "directory": "packages/deployment"
+  },
+  "license": "MIT",
+  "author": "GrupoUS <dev@grupous.com>",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.js"
+    },
+    "./blue-green": {
+      "types": "./dist/blue-green/index.d.ts",
+      "import": "./dist/blue-green/index.js"
+    },
+    "./monitoring": {
+      "types": "./dist/monitoring/index.d.ts",
+      "import": "./dist/monitoring/index.js"
+    },
+    "./automation": {
+      "types": "./dist/automation/index.d.ts",
+      "import": "./dist/automation/index.js"
+    },
+    "./database": {
+      "types": "./dist/database/index.d.ts",
+      "import": "./dist/database/index.js"
+    }
+  },
+  "files": [
+    "dist/**/*",
+    "templates/**/*",
+    "README.md"
+  ]
+}

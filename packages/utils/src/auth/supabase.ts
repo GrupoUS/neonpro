@@ -44,7 +44,6 @@ export type AuthConfig = {
  */
 export class HealthcareAuth {
   private static instance: HealthcareAuth;
-  private config: any;
 
   private constructor() {
     this.config = {
