@@ -1,16 +1,10 @@
 'use client';
 
-import { AlertTriangle, Shield } from "lucide-react";
-import { Suspense } from "react";
-import { ImportStatementButton } from "@/components/financial/ImportStatementButton";
-import { MatchingAlgorithmsConfig } from "@/components/financial/MatchingAlgorithmsConfig";
-import { ReconciliationDashboard } from "@/components/financial/ReconciliationDashboard";
-import { ReconciliationSummary } from "@/components/financial/ReconciliationSummary";
-import { TransactionsList } from "@/components/financial/TransactionsList";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { LoadingSpinner } from "@/components/ui/loading-spinner";
-import { useAuth } from "@/hooks/useAuth";
-import { usePermissions } from "@/hooks/usePermissions";
+import { AlertTriangle, Shield } from 'lucide-react';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { LoadingSpinner } from '@/components/ui/loading-spinner';
+import { useAuth } from '@/hooks/useAuth';
+import { usePermissions } from '@/hooks/usePermissions';
 /**
  * Healthcare Financial Reconciliation Page
  *
@@ -25,10 +19,10 @@ export default function ReconciliationPage() {
   const { hasPermission, isLoading: permissionsLoading } = usePermissions();
 
   // Healthcare role-based access control  const canAccessFinancial = hasPermission('financial.reconciliation.view');
-  const canManageReconciliation = hasPermission(
+  const _canManageReconciliation = hasPermission(
     'financial.reconciliation.manage',
   );
-  const canConfigureAlgorithms = hasPermission(
+  const _canConfigureAlgorithms = hasPermission(
     'financial.algorithms.configure',
   );
 
@@ -74,49 +68,56 @@ export default function ReconciliationPage() {
     <div
       className="container mx-auto space-y-6 p-6"
       data-testid="reconciliation-page"
-     />{/* Page Header with Healthcare Context */}
-      <div className="flex flex-col space-y-2" /><h1
+    >
+      <div className="flex flex-col space-y-2">
+        <h1
           className="font-bold text-3xl tracking-tight"
           data-testid="page-title"
-         />
+        >
           Reconciliação Financeira
-        </h1 />
-        <p className="text-muted-foreground" data-testid="page-description" />
+        </h1>
+        <p className="text-muted-foreground" data-testid="page-description">
           Conciliação de pagamentos e procedimentos médicos com conformidade
           LGPD
-        </p />
-      {/* Import Controls */}
-      <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center" /><div className="flex gap-2" /><ImportStatementButton
+        </p>
+      </div>
+      <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
+        <div className="flex gap-2">
+          <ImportStatementButton
             canImport={canManageReconciliation}
             data-testid="import-statement-button"
-          / />
-        </div />
-      </div />
-      {/* Main Dashboard */}
+          />
+        </div>
+      </div>
       <Suspense
-        fallback={<LoadingSpinner data-testid="dashboard-loading" size="lg" / />}
-       />
-        <ReconciliationDashboard data-testid="reconciliation-dashboard" / />
-      </Suspense />
-      {/* Summary and Transactions */}
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2" /><div className="space-y-4" /><Suspense fallback={<LoadingSpinner data-testid="summary-loading" / />} />
-            <ReconciliationSummary data-testid="reconciliation-summary" / />
-          </div />
-        <div className="space-y-4" /><Suspense
-            fallback={<LoadingSpinner data-testid="transactions-loading" / />}
-           />
-            <TransactionsList data-testid="transactions-list" / />
-          </div />
-      </div />
-      {/* Algorithm Configuration - Admin Only */}
+        fallback={<LoadingSpinner data-testid="dashboard-loading" size="lg" />}
+      >
+        <ReconciliationDashboard data-testid="reconciliation-dashboard" />
+      </Suspense>
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        <div className="space-y-4">
+          <Suspense fallback={<LoadingSpinner data-testid="summary-loading" />}>
+            <ReconciliationSummary data-testid="reconciliation-summary" />
+          </Suspense>
+        </div>
+        <div className="space-y-4">
+          <Suspense
+            fallback={<LoadingSpinner data-testid="transactions-loading" />}
+          >
+            <TransactionsList data-testid="transactions-list" />
+          </Suspense>
+        </div>
+      </div>
       {canConfigureAlgorithms && (
-        <div className="mt-8" /><Suspense
-            fallback={<LoadingSpinner data-testid="algorithms-loading" / />}
-           />
-            <MatchingAlgorithmsConfig data-testid="matching-algorithms-config" / />
-          </div />
+        <div className="mt-8">
+          <Suspense
+            fallback={<LoadingSpinner data-testid="algorithms-loading" />}
+          >
+            <MatchingAlgorithmsConfig data-testid="matching-algorithms-config" />
+          </Suspense>
+        </div>
       )}
-    </div />
+    </div>
   );
 }
 
@@ -132,6 +133,6 @@ export class UnifiedSessionSystem {}
 
 export const trackLoginPerformance = () => {};
 
-export type PermissionContext = any;
+export type PermissionContext = unknown;
 
-export type SessionValidationResult = any;
+export type SessionValidationResult = unknown;

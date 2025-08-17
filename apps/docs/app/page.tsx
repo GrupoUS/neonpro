@@ -95,19 +95,21 @@ export default function Home() {
             <div className="mt-4 flex items-center space-x-6 md:mt-0">
               <a
                 className="text-slate-600 text-sm hover:text-blue-600 dark:text-slate-300"
-                href="#"
+                href="https://github.com"
+                rel="noopener noreferrer"
+                target="_blank"
               >
                 GitHub
               </a>
               <a
                 className="text-slate-600 text-sm hover:text-blue-600 dark:text-slate-300"
-                href="#"
+                href="/api/health"
               >
                 API Status
               </a>
               <a
                 className="text-slate-600 text-sm hover:text-blue-600 dark:text-slate-300"
-                href="#"
+                href="/support"
               >
                 Support
               </a>
