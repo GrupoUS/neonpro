@@ -1,14 +1,14 @@
 /**
  * CFM Medical Records Service
  * Constitutional healthcare compliance for medical record validation
- * 
+ *
  * @fileoverview CFM medical record constitutional validation and management
  * @version 1.0.0
  * @since 2025-01-17
  */
 
 import type { Database } from '@neonpro/types';
-import { createClient } from '@supabase/supabase-js';
+import type { createClient } from '@supabase/supabase-js';
 
 /**
  * CFM Medical Record Validation Interface
@@ -70,7 +70,7 @@ export interface MedicalRecordValidation {
   created_at: Date;
   /** Constitutional audit trail */
   audit_trail: MedicalRecordAudit[];
-}/**
+} /**
  * Record Completeness Assessment Interface
  * Constitutional assessment of medical record completeness
  */
@@ -208,7 +208,7 @@ export interface MedicalRecordComplianceResponse {
   corrective_actions: string[];
   /** Validation timestamp */
   validation_timestamp: Date;
-}/**
+} /**
  * CFM Medical Records Service Implementation
  * Constitutional healthcare compliance with CFM medical record standards ≥9.9/10
  */
@@ -230,7 +230,10 @@ export class MedicalRecordsService {
   ): Promise<{ success: boolean; data?: MedicalRecordComplianceResponse; error?: string }> {
     try {
       // Constitutional validation of medical record access
-      const accessValidation = await this.validateRecordAccess(params.medical_record_id, params.doctor_cfm_number);
+      const accessValidation = await this.validateRecordAccess(
+        params.medical_record_id,
+        params.doctor_cfm_number
+      );
       if (!accessValidation.valid) {
         return { success: false, error: accessValidation.error };
       }
@@ -258,7 +261,7 @@ export class MedicalRecordsService {
         completeness: completenessAssessment,
         legal_compliance: legalComplianceAssessment,
         data_quality: dataQualityAssessment,
-        security_privacy: securityPrivacyAssessment
+        security_privacy: securityPrivacyAssessment,
       });
 
       // Compile all issues and corrective actions
@@ -266,14 +269,14 @@ export class MedicalRecordsService {
         ...completenessAssessment.missing_elements,
         ...legalComplianceAssessment.non_compliant_areas,
         ...dataQualityAssessment.quality_issues,
-        ...securityPrivacyAssessment.security_issues
+        ...securityPrivacyAssessment.security_issues,
       ];
 
       const allCorrectiveActions = [
         ...completenessAssessment.recommendations,
         ...legalComplianceAssessment.corrective_actions,
         ...dataQualityAssessment.improvement_recommendations,
-        ...securityPrivacyAssessment.privacy_improvements
+        ...securityPrivacyAssessment.privacy_improvements,
       ];
 
       const complianceResponse: MedicalRecordComplianceResponse = {
@@ -282,12 +285,12 @@ export class MedicalRecordsService {
           completeness: completenessAssessment,
           legal_compliance: legalComplianceAssessment,
           data_quality: dataQualityAssessment,
-          security_privacy: securityPrivacyAssessment
+          security_privacy: securityPrivacyAssessment,
         },
         constitutional_score: constitutionalScore,
         compliance_issues: allIssues,
         corrective_actions: allCorrectiveActions,
-        validation_timestamp: new Date()
+        validation_timestamp: new Date(),
       };
 
       // Store validation record
@@ -298,7 +301,7 @@ export class MedicalRecordsService {
       console.error('Validate medical record error:', error);
       return { success: false, error: 'Constitutional medical record validation service error' };
     }
-  }  /**
+  } /**
    * Validate record access permissions
    * Constitutional access control validation
    */
@@ -328,7 +331,10 @@ export class MedicalRecordsService {
         .single();
 
       if (accessError || !accessRecord) {
-        return { valid: false, error: 'Doctor does not have access permission for this medical record' };
+        return {
+          valid: false,
+          error: 'Doctor does not have access permission for this medical record',
+        };
       }
 
       return { valid: true };
@@ -357,7 +363,13 @@ export class MedicalRecordsService {
 
     try {
       // Patient identification completeness
-      if (!medicalRecord.patient_name || !medicalRecord.patient_cpf || !medicalRecord.patient_birth_date) {
+      if (
+        !(
+          medicalRecord.patient_name &&
+          medicalRecord.patient_cpf &&
+          medicalRecord.patient_birth_date
+        )
+      ) {
         missingElements.push('Incomplete patient identification');
         score -= 1.5;
         recommendations.push('Complete patient identification data (name, CPF, birth date)');
@@ -406,14 +418,14 @@ export class MedicalRecordsService {
       }
 
       // Doctor identification and signature
-      if (!medicalRecord.doctor_cfm_number || !medicalRecord.doctor_signature) {
+      if (!(medicalRecord.doctor_cfm_number && medicalRecord.doctor_signature)) {
         missingElements.push('Missing doctor identification or signature');
         score -= 2.0;
         recommendations.push('Ensure doctor identification and digital signature are present');
       }
 
       // Timestamps
-      if (!medicalRecord.consultation_date || !medicalRecord.record_created_at) {
+      if (!(medicalRecord.consultation_date && medicalRecord.record_created_at)) {
         missingElements.push('Missing consultation or record creation timestamps');
         score -= 0.5;
         recommendations.push('Ensure all timestamps are properly recorded');
@@ -433,7 +445,7 @@ export class MedicalRecordsService {
         compliant,
         score: finalScore,
         missing_elements: missingElements,
-        recommendations
+        recommendations,
       };
     } catch (error) {
       console.error('Assess record completeness error:', error);
@@ -441,10 +453,10 @@ export class MedicalRecordsService {
         compliant: false,
         score: 0,
         missing_elements: ['Record completeness assessment service error'],
-        recommendations: ['Contact technical support for assessment']
+        recommendations: ['Contact technical support for assessment'],
       };
     }
-  }  /**
+  } /**
    * Assess legal compliance requirements
    * Constitutional legal validation per CFM Resolution 2.227/2018 and LGPD
    */
@@ -470,7 +482,7 @@ export class MedicalRecordsService {
       }
 
       // LGPD compliance
-      if (!medicalRecord.lgpd_compliant || !medicalRecord.patient_consent_lgpd) {
+      if (!(medicalRecord.lgpd_compliant && medicalRecord.patient_consent_lgpd)) {
         nonCompliantAreas.push('LGPD compliance requirements not met');
         score -= 2.0;
         correctiveActions.push('Implement LGPD compliance measures and obtain patient consent');
@@ -480,7 +492,7 @@ export class MedicalRecordsService {
       const recordDate = new Date(medicalRecord.consultation_date);
       const currentDate = new Date();
       const yearsOld = (currentDate.getTime() - recordDate.getTime()) / (1000 * 60 * 60 * 24 * 365);
-      
+
       // CFM requires 20-year retention for medical records
       if (yearsOld > 20 && !medicalRecord.retention_period_extended) {
         nonCompliantAreas.push('Record retention period exceeded without proper documentation');
@@ -489,7 +501,7 @@ export class MedicalRecordsService {
       }
 
       // Access control implementation
-      if (!medicalRecord.access_controls_implemented || !medicalRecord.access_log_maintained) {
+      if (!(medicalRecord.access_controls_implemented && medicalRecord.access_log_maintained)) {
         nonCompliantAreas.push('Inadequate access control implementation');
         score -= 1.5;
         correctiveActions.push('Implement proper access controls and maintain access logs');
@@ -513,7 +525,9 @@ export class MedicalRecordsService {
       if (!medicalRecord.data_subject_rights_implemented) {
         nonCompliantAreas.push('Data subject rights not properly implemented');
         score -= 1.0;
-        correctiveActions.push('Implement data subject rights (access, rectification, deletion, portability)');
+        correctiveActions.push(
+          'Implement data subject rights (access, rectification, deletion, portability)'
+        );
       }
 
       const finalScore = Math.max(score, 0);
@@ -523,7 +537,7 @@ export class MedicalRecordsService {
         compliant,
         score: finalScore,
         non_compliant_areas: nonCompliantAreas,
-        corrective_actions: correctiveActions
+        corrective_actions: correctiveActions,
       };
     } catch (error) {
       console.error('Assess legal compliance error:', error);
@@ -531,7 +545,7 @@ export class MedicalRecordsService {
         compliant: false,
         score: 0,
         non_compliant_areas: ['Legal compliance assessment service error'],
-        corrective_actions: ['Contact technical support for assessment']
+        corrective_actions: ['Contact technical support for assessment'],
       };
     }
   }
@@ -586,14 +600,15 @@ export class MedicalRecordsService {
       }
 
       // Calculate overall quality score
-      const overallQualityScore = (legibilityScore + completenessScore + accuracyScore + timelinessScore) / 4;
+      const overallQualityScore =
+        (legibilityScore + completenessScore + accuracyScore + timelinessScore) / 4;
       const compliant = overallQualityScore >= 9.0 && qualityIssues.length === 0;
 
       return {
         compliant,
         overall_quality_score: Math.round(overallQualityScore * 10) / 10,
         quality_issues: qualityIssues,
-        improvement_recommendations: improvementRecommendations
+        improvement_recommendations: improvementRecommendations,
       };
     } catch (error) {
       console.error('Assess data quality error:', error);
@@ -601,10 +616,10 @@ export class MedicalRecordsService {
         compliant: false,
         overall_quality_score: 0,
         quality_issues: ['Data quality assessment service error'],
-        improvement_recommendations: ['Contact technical support for assessment']
+        improvement_recommendations: ['Contact technical support for assessment'],
       };
     }
-  }  /**
+  } /**
    * Assess security and privacy compliance
    * Constitutional security and privacy validation for medical records
    */
@@ -623,35 +638,35 @@ export class MedicalRecordsService {
 
     try {
       // Encryption validation
-      if (!medicalRecord.data_encrypted || !medicalRecord.encryption_verified) {
+      if (!(medicalRecord.data_encrypted && medicalRecord.encryption_verified)) {
         securityIssues.push('Data encryption not properly implemented');
         score -= 2.0;
         privacyImprovements.push('Implement end-to-end data encryption');
       }
 
       // Access control validation
-      if (!medicalRecord.access_controls_verified || !medicalRecord.role_based_access) {
+      if (!(medicalRecord.access_controls_verified && medicalRecord.role_based_access)) {
         securityIssues.push('Access controls not properly implemented');
         score -= 1.5;
         privacyImprovements.push('Implement role-based access control system');
       }
 
       // Audit trail validation
-      if (!medicalRecord.audit_trail_complete || !medicalRecord.access_logging_enabled) {
+      if (!(medicalRecord.audit_trail_complete && medicalRecord.access_logging_enabled)) {
         securityIssues.push('Incomplete audit trail or access logging');
         score -= 1.0;
         privacyImprovements.push('Implement comprehensive audit trail and access logging');
       }
 
       // LGPD privacy compliance
-      if (!medicalRecord.lgpd_privacy_compliant || !medicalRecord.data_minimization_applied) {
+      if (!(medicalRecord.lgpd_privacy_compliant && medicalRecord.data_minimization_applied)) {
         securityIssues.push('LGPD privacy requirements not fully met');
         score -= 1.5;
         privacyImprovements.push('Ensure full LGPD privacy compliance and data minimization');
       }
 
       // Data backup and recovery
-      if (!medicalRecord.backup_verified || !medicalRecord.recovery_plan_tested) {
+      if (!(medicalRecord.backup_verified && medicalRecord.recovery_plan_tested)) {
         securityIssues.push('Data backup and recovery not properly verified');
         score -= 1.0;
         privacyImprovements.push('Verify data backup and test recovery procedures');
@@ -671,7 +686,7 @@ export class MedicalRecordsService {
         compliant,
         score: finalScore,
         security_issues: securityIssues,
-        privacy_improvements: privacyImprovements
+        privacy_improvements: privacyImprovements,
       };
     } catch (error) {
       console.error('Assess security privacy error:', error);
@@ -679,7 +694,7 @@ export class MedicalRecordsService {
         compliant: false,
         score: 0,
         security_issues: ['Security privacy assessment service error'],
-        privacy_improvements: ['Contact technical support for assessment']
+        privacy_improvements: ['Contact technical support for assessment'],
       };
     }
   }
@@ -697,10 +712,10 @@ export class MedicalRecordsService {
     try {
       // Weighted scoring based on constitutional importance
       const weights = {
-        completeness: 0.30,        // 30% - Record completeness critical for medical care
-        legal_compliance: 0.30,    // 30% - Legal compliance critical for constitutional standards
-        data_quality: 0.25,        // 25% - Data quality essential for patient safety
-        security_privacy: 0.15     // 15% - Security and privacy protection
+        completeness: 0.3, // 30% - Record completeness critical for medical care
+        legal_compliance: 0.3, // 30% - Legal compliance critical for constitutional standards
+        data_quality: 0.25, // 25% - Data quality essential for patient safety
+        security_privacy: 0.15, // 15% - Security and privacy protection
       };
 
       let weightedScore = 0;
@@ -720,7 +735,7 @@ export class MedicalRecordsService {
 
       // Apply constitutional penalties for non-compliance
       let penaltyScore = finalScore;
-      
+
       // Critical penalty for legal compliance issues
       if (!assessmentResults.legal_compliance.compliant) {
         penaltyScore -= 2.0; // Significant penalty for legal non-compliance
@@ -733,7 +748,7 @@ export class MedicalRecordsService {
 
       // Ensure constitutional minimum score for medical records
       const constitutionalScore = Math.max(penaltyScore, 9.9);
-      
+
       return Math.round(constitutionalScore * 10) / 10; // Round to 1 decimal place
     } catch (error) {
       console.error('Calculate record compliance score error:', error);
@@ -764,7 +779,8 @@ export class MedicalRecordsService {
         validation_results: {
           valid: complianceResponse.compliant,
           compliance_score: complianceResponse.constitutional_score,
-          cfm_resolution_2227_compliant: complianceResponse.compliance_details.legal_compliance.compliant,
+          cfm_resolution_2227_compliant:
+            complianceResponse.compliance_details.legal_compliance.compliant,
           completeness_assessment: {
             patient_identification_complete: true,
             medical_history_documented: true,
@@ -775,55 +791,58 @@ export class MedicalRecordsService {
             followup_instructions_provided: true,
             doctor_identification_complete: true,
             timestamps_complete: true,
-            informed_consent_documented: true
+            informed_consent_documented: true,
           },
           legal_compliance: {
-            cfm_resolution_compliance: complianceResponse.compliance_details.legal_compliance.compliant,
+            cfm_resolution_compliance:
+              complianceResponse.compliance_details.legal_compliance.compliant,
             lgpd_requirements_met: complianceResponse.compliance_details.security_privacy.compliant,
             retention_period_compliant: true,
-            access_control_compliant: complianceResponse.compliance_details.security_privacy.compliant,
+            access_control_compliant:
+              complianceResponse.compliance_details.security_privacy.compliant,
             patient_consent_documented: true,
-            constitutional_standards_met: complianceResponse.constitutional_score >= 9.9
+            constitutional_standards_met: complianceResponse.constitutional_score >= 9.9,
           },
-          constitutional_compliance: complianceResponse.constitutional_score >= 9.9
+          constitutional_compliance: complianceResponse.constitutional_score >= 9.9,
         },
         data_integrity: {
           authenticity_verified: true,
           digital_signature_present: true,
           audit_trail_complete: true,
-          lgpd_compliance_verified: complianceResponse.compliance_details.security_privacy.compliant
+          lgpd_compliance_verified:
+            complianceResponse.compliance_details.security_privacy.compliant,
         },
         quality_indicators: {
           legibility_score: 10.0,
           completeness_score: complianceResponse.compliance_details.completeness.score,
           accuracy_score: complianceResponse.compliance_details.data_quality.overall_quality_score,
-          timeliness_score: 10.0
+          timeliness_score: 10.0,
         },
         tenant_id: tenantId,
         validated_by: validatorId,
         created_at: timestamp,
-        audit_trail: [{
-          audit_id: crypto.randomUUID(),
-          validation_id: validationId,
-          action: 'created',
-          previous_state: {},
-          new_state: {
-            validation_scope: params.validation_scope,
-            compliance_score: complianceResponse.constitutional_score
+        audit_trail: [
+          {
+            audit_id: crypto.randomUUID(),
+            validation_id: validationId,
+            action: 'created',
+            previous_state: {},
+            new_state: {
+              validation_scope: params.validation_scope,
+              compliance_score: complianceResponse.constitutional_score,
+            },
+            user_id: validatorId,
+            timestamp,
+            reason: 'Medical record validation conducted',
           },
-          user_id: validatorId,
-          timestamp,
-          reason: 'Medical record validation conducted'
-        }]
+        ],
       };
 
-      await this.supabase
-        .from('cfm_medical_record_validations')
-        .insert(recordValidation);
+      await this.supabase.from('cfm_medical_record_validations').insert(recordValidation);
     } catch (error) {
       console.error('Store medical record validation error:', error);
     }
-  }  /**
+  } /**
    * Get medical record validations with constitutional filtering
    * LGPD compliant with tenant isolation and CFM compliance tracking
    */
@@ -859,7 +878,10 @@ export class MedicalRecordsService {
         query = query.eq('validation_results.valid', filters.compliant_only);
       }
       if (filters?.constitutional_compliance !== undefined) {
-        query = query.eq('validation_results.constitutional_compliance', filters.constitutional_compliance);
+        query = query.eq(
+          'validation_results.constitutional_compliance',
+          filters.constitutional_compliance
+        );
       }
       if (filters?.minimum_score) {
         query = query.gte('validation_results.compliance_score', filters.minimum_score);
@@ -902,46 +924,65 @@ export class MedicalRecordsService {
       }
 
       const validationStats = validations || [];
-      
+
       // Calculate compliance statistics
       const totalValidations = validationStats.length;
-      const compliantValidations = validationStats.filter(v => v.validation_results?.valid).length;
-      const highScoreValidations = validationStats.filter(v => v.validation_results?.compliance_score >= 9.5).length;
+      const compliantValidations = validationStats.filter(
+        (v) => v.validation_results?.valid
+      ).length;
+      const highScoreValidations = validationStats.filter(
+        (v) => v.validation_results?.compliance_score >= 9.5
+      ).length;
 
       // Analyze by validation scope
       const byValidationScope = {
-        basic: validationStats.filter(v => v.validation_scope === 'basic').length,
-        comprehensive: validationStats.filter(v => v.validation_scope === 'comprehensive').length,
-        constitutional_audit: validationStats.filter(v => v.validation_scope === 'constitutional_audit').length
+        basic: validationStats.filter((v) => v.validation_scope === 'basic').length,
+        comprehensive: validationStats.filter((v) => v.validation_scope === 'comprehensive').length,
+        constitutional_audit: validationStats.filter(
+          (v) => v.validation_scope === 'constitutional_audit'
+        ).length,
       };
 
       // Quality indicators analysis
-      const qualityScores = validationStats.map(v => v.quality_indicators || {});
+      const qualityScores = validationStats.map((v) => v.quality_indicators || {});
       const averageQualityScores = {
-        legibility: qualityScores.reduce((sum, q) => sum + (q.legibility_score || 0), 0) / totalValidations,
-        completeness: qualityScores.reduce((sum, q) => sum + (q.completeness_score || 0), 0) / totalValidations,
-        accuracy: qualityScores.reduce((sum, q) => sum + (q.accuracy_score || 0), 0) / totalValidations,
-        timeliness: qualityScores.reduce((sum, q) => sum + (q.timeliness_score || 0), 0) / totalValidations
+        legibility:
+          qualityScores.reduce((sum, q) => sum + (q.legibility_score || 0), 0) / totalValidations,
+        completeness:
+          qualityScores.reduce((sum, q) => sum + (q.completeness_score || 0), 0) / totalValidations,
+        accuracy:
+          qualityScores.reduce((sum, q) => sum + (q.accuracy_score || 0), 0) / totalValidations,
+        timeliness:
+          qualityScores.reduce((sum, q) => sum + (q.timeliness_score || 0), 0) / totalValidations,
       };
 
       // Legal compliance analysis
       const legalComplianceStats = {
-        cfm_resolution_compliant: validationStats.filter(v => v.validation_results?.cfm_resolution_2227_compliant).length,
-        lgpd_compliant: validationStats.filter(v => v.data_integrity?.lgpd_compliance_verified).length,
-        constitutional_compliant: validationStats.filter(v => v.validation_results?.constitutional_compliance).length
+        cfm_resolution_compliant: validationStats.filter(
+          (v) => v.validation_results?.cfm_resolution_2227_compliant
+        ).length,
+        lgpd_compliant: validationStats.filter((v) => v.data_integrity?.lgpd_compliance_verified)
+          .length,
+        constitutional_compliant: validationStats.filter(
+          (v) => v.validation_results?.constitutional_compliance
+        ).length,
       };
 
       // Calculate average compliance score
-      const scoresSum = validationStats.reduce((sum, v) => sum + (v.validation_results?.compliance_score || 0), 0);
+      const scoresSum = validationStats.reduce(
+        (sum, v) => sum + (v.validation_results?.compliance_score || 0),
+        0
+      );
       const averageScore = totalValidations > 0 ? scoresSum / totalValidations : 0;
 
       const report = {
         summary: {
           total_validations: totalValidations,
           compliant_validations: compliantValidations,
-          compliance_rate: totalValidations > 0 ? (compliantValidations / totalValidations) * 100 : 0,
+          compliance_rate:
+            totalValidations > 0 ? (compliantValidations / totalValidations) * 100 : 0,
           high_score_validations: highScoreValidations,
-          average_compliance_score: Math.round(averageScore * 10) / 10
+          average_compliance_score: Math.round(averageScore * 10) / 10,
         },
         validation_breakdown: byValidationScope,
         quality_indicators: {
@@ -949,19 +990,25 @@ export class MedicalRecordsService {
             legibility: Math.round(averageQualityScores.legibility * 10) / 10,
             completeness: Math.round(averageQualityScores.completeness * 10) / 10,
             accuracy: Math.round(averageQualityScores.accuracy * 10) / 10,
-            timeliness: Math.round(averageQualityScores.timeliness * 10) / 10
-          }
+            timeliness: Math.round(averageQualityScores.timeliness * 10) / 10,
+          },
         },
         legal_compliance: {
-          cfm_resolution_compliance_rate: totalValidations > 0 ? 
-            (legalComplianceStats.cfm_resolution_compliant / totalValidations) * 100 : 0,
-          lgpd_compliance_rate: totalValidations > 0 ? 
-            (legalComplianceStats.lgpd_compliant / totalValidations) * 100 : 0,
-          constitutional_compliance_rate: totalValidations > 0 ? 
-            (legalComplianceStats.constitutional_compliant / totalValidations) * 100 : 0
+          cfm_resolution_compliance_rate:
+            totalValidations > 0
+              ? (legalComplianceStats.cfm_resolution_compliant / totalValidations) * 100
+              : 0,
+          lgpd_compliance_rate:
+            totalValidations > 0
+              ? (legalComplianceStats.lgpd_compliant / totalValidations) * 100
+              : 0,
+          constitutional_compliance_rate:
+            totalValidations > 0
+              ? (legalComplianceStats.constitutional_compliant / totalValidations) * 100
+              : 0,
         },
         constitutional_compliance_score: 9.9, // Constitutional healthcare standard
-        generated_at: new Date().toISOString()
+        generated_at: new Date().toISOString(),
       };
 
       return { success: true, data: report };

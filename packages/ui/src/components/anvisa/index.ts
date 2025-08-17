@@ -3,6 +3,6 @@
  * Central export file for all ANVISA-related components
  */
 
-export { ANVISADashboard } from './anvisa-dashboard';
-export { ANVISAProductRegistration } from './product-registration';
-export { ANVISAProfessionalManagement } from './professional-management';
+export { AnvisaDashboard } from './anvisa-dashboard';
+export { ANVISAProductRegistration as AnvisaProductRegistration } from './product-registration';
+export { ANVISAProfessionalManagement as AnvisaProfessionalManagement } from './professional-management';

@@ -1,7 +1,7 @@
 /**
  * @fileoverview Core Types for NeonPro Healthcare Compliance
  * Constitutional Brazilian Healthcare Compliance Types (LGPD + ANVISA + CFM)
- * 
+ *
  * Quality Standard: ≥9.9/10
  */
 
@@ -15,10 +15,13 @@ import { z } from 'zod';
  * Constitutional Compliance Score
  * Represents compliance level with Brazilian healthcare regulations
  */
-export const ComplianceScoreSchema = z.number().min(0).max(10).refine(
-  (score) => score >= 9.9,
-  { message: "Healthcare compliance must meet ≥9.9/10 constitutional standard" }
-);
+export const ComplianceScoreSchema = z
+  .number()
+  .min(0)
+  .max(10)
+  .refine((score) => score >= 9.9, {
+    message: 'Healthcare compliance must meet ≥9.9/10 constitutional standard',
+  });
 
 export type ComplianceScore = z.infer<typeof ComplianceScoreSchema>;
 
@@ -26,10 +29,10 @@ export type ComplianceScore = z.infer<typeof ComplianceScoreSchema>;
  * Brazilian Healthcare Regulatory Framework
  */
 export enum HealthcareRegulation {
-  LGPD = 'LGPD',           // Lei Geral de Proteção de Dados
-  ANVISA = 'ANVISA',       // Agência Nacional de Vigilância Sanitária  
-  CFM = 'CFM',             // Conselho Federal de Medicina
-  CONSTITUTIONAL = 'CONSTITUTIONAL' // Constitutional Healthcare Principles
+  LGPD = 'LGPD', // Lei Geral de Proteção de Dados
+  ANVISA = 'ANVISA', // Agência Nacional de Vigilância Sanitária
+  CFM = 'CFM', // Conselho Federal de Medicina
+  CONSTITUTIONAL = 'CONSTITUTIONAL', // Constitutional Healthcare Principles
 }
 
 /**
@@ -37,22 +40,22 @@ export enum HealthcareRegulation {
  */
 export enum ComplianceStatus {
   COMPLIANT = 'COMPLIANT',
-  NON_COMPLIANT = 'NON_COMPLIANT', 
+  NON_COMPLIANT = 'NON_COMPLIANT',
   UNDER_REVIEW = 'UNDER_REVIEW',
   PENDING_VALIDATION = 'PENDING_VALIDATION',
-  CONSTITUTIONAL_VIOLATION = 'CONSTITUTIONAL_VIOLATION'
+  CONSTITUTIONAL_VIOLATION = 'CONSTITUTIONAL_VIOLATION',
 }
 
 /**
  * Patient Data Classification for LGPD Compliance
  */
 export enum PatientDataClassification {
-  PERSONAL = 'PERSONAL',               // Dados pessoais (Art. 5º, I LGPD)
-  SENSITIVE = 'SENSITIVE',             // Dados pessoais sensíveis (Art. 5º, II LGPD)
-  HEALTH = 'HEALTH',                   // Dados de saúde (constitutional protection)
-  GENETIC = 'GENETIC',                 // Dados genéticos (extra protection)
-  BIOMETRIC = 'BIOMETRIC',             // Dados biométricos (identification)
-  CHILD = 'CHILD'                      // Dados de criança/adolescente (Art. 14 LGPD)
+  PERSONAL = 'PERSONAL', // Dados pessoais (Art. 5º, I LGPD)
+  SENSITIVE = 'SENSITIVE', // Dados pessoais sensíveis (Art. 5º, II LGPD)
+  HEALTH = 'HEALTH', // Dados de saúde (constitutional protection)
+  GENETIC = 'GENETIC', // Dados genéticos (extra protection)
+  BIOMETRIC = 'BIOMETRIC', // Dados biométricos (identification)
+  CHILD = 'CHILD', // Dados de criança/adolescente (Art. 14 LGPD)
 }
 
 // =============================================================================
@@ -63,16 +66,16 @@ export enum PatientDataClassification {
  * LGPD Legal Basis (Base Legal) - Art. 7º and 11º LGPD
  */
 export enum LGPDLegalBasis {
-  CONSENT = 'CONSENT',                         // Consentimento (Art. 7º, I)
-  LEGAL_OBLIGATION = 'LEGAL_OBLIGATION',       // Cumprimento de obrigação legal (Art. 7º, II)
+  CONSENT = 'CONSENT', // Consentimento (Art. 7º, I)
+  LEGAL_OBLIGATION = 'LEGAL_OBLIGATION', // Cumprimento de obrigação legal (Art. 7º, II)
   PUBLIC_ADMINISTRATION = 'PUBLIC_ADMINISTRATION', // Execução de políticas públicas (Art. 7º, III)
-  RESEARCH = 'RESEARCH',                       // Realização de estudos (Art. 7º, IV)
-  CONTRACT_EXECUTION = 'CONTRACT_EXECUTION',   // Execução de contrato (Art. 7º, V)
-  JUDICIAL_PROCESS = 'JUDICIAL_PROCESS',       // Processo judicial (Art. 7º, VI)
+  RESEARCH = 'RESEARCH', // Realização de estudos (Art. 7º, IV)
+  CONTRACT_EXECUTION = 'CONTRACT_EXECUTION', // Execução de contrato (Art. 7º, V)
+  JUDICIAL_PROCESS = 'JUDICIAL_PROCESS', // Processo judicial (Art. 7º, VI)
   LEGITIMATE_INTEREST = 'LEGITIMATE_INTEREST', // Interesse legítimo (Art. 7º, IX)
-  VITAL_INTEREST = 'VITAL_INTEREST',          // Proteção da vida (Art. 7º, VII)
-  HEALTH_PROTECTION = 'HEALTH_PROTECTION',     // Tutela da saúde (Art. 11º, II)
-  HEALTH_PROCEDURES = 'HEALTH_PROCEDURES'      // Procedimentos de saúde (Art. 11º, I)
+  VITAL_INTEREST = 'VITAL_INTEREST', // Proteção da vida (Art. 7º, VII)
+  HEALTH_PROTECTION = 'HEALTH_PROTECTION', // Tutela da saúde (Art. 11º, II)
+  HEALTH_PROCEDURES = 'HEALTH_PROCEDURES', // Procedimentos de saúde (Art. 11º, I)
 }
 
 /**
@@ -94,22 +97,24 @@ export const ConsentSchema = z.object({
   withdrawnAt: z.date().nullable().default(null),
   expiresAt: z.date().nullable().default(null),
   isActive: z.boolean().default(true),
-  auditTrail: z.array(z.object({
-    action: z.string(),
-    timestamp: z.date(),
-    userId: z.string().uuid(),
-    ipAddress: z.string().ip().optional(),
-    userAgent: z.string().optional()
-  })),
+  auditTrail: z.array(
+    z.object({
+      action: z.string(),
+      timestamp: z.date(),
+      userId: z.string().uuid(),
+      ipAddress: z.string().ip().optional(),
+      userAgent: z.string().optional(),
+    })
+  ),
   constitutionalValidation: z.object({
     validated: z.boolean(),
     validatedAt: z.date(),
     validatedBy: z.string().uuid(),
-    complianceScore: ComplianceScoreSchema
-  })
+    complianceScore: ComplianceScoreSchema,
+  }),
 });
 
-export type Consent = z.infer<typeof ConsentSchema>;// =============================================================================
+export type Consent = z.infer<typeof ConsentSchema>; // =============================================================================
 // ANVISA COMPLIANCE TYPES
 // =============================================================================
 
@@ -117,22 +122,22 @@ export type Consent = z.infer<typeof ConsentSchema>;// =========================
  * ANVISA Medical Device Categories
  */
 export enum ANVISADeviceCategory {
-  CLASS_I = 'CLASS_I',           // Classe I - Baixo risco
-  CLASS_II = 'CLASS_II',         // Classe II - Médio risco  
-  CLASS_III = 'CLASS_III',       // Classe III - Alto risco
-  CLASS_IV = 'CLASS_IV'          // Classe IV - Máximo risco
+  CLASS_I = 'CLASS_I', // Classe I - Baixo risco
+  CLASS_II = 'CLASS_II', // Classe II - Médio risco
+  CLASS_III = 'CLASS_III', // Classe III - Alto risco
+  CLASS_IV = 'CLASS_IV', // Classe IV - Máximo risco
 }
 
 /**
  * ANVISA Adverse Event Types
  */
 export enum AdverseEventType {
-  MILD = 'MILD',                 // Evento adverso leve
-  MODERATE = 'MODERATE',         // Evento adverso moderado
-  SEVERE = 'SEVERE',             // Evento adverso grave
+  MILD = 'MILD', // Evento adverso leve
+  MODERATE = 'MODERATE', // Evento adverso moderado
+  SEVERE = 'SEVERE', // Evento adverso grave
   LIFE_THREATENING = 'LIFE_THREATENING', // Ameaça à vida
-  DEATH = 'DEATH',               // Óbito
-  HOSPITALIZATION = 'HOSPITALIZATION'    // Hospitalização
+  DEATH = 'DEATH', // Óbito
+  HOSPITALIZATION = 'HOSPITALIZATION', // Hospitalização
 }
 
 /**
@@ -157,36 +162,36 @@ export const RegulatoryEventSchema = z.object({
   constitutionalValidation: z.object({
     medicalAccuracy: ComplianceScoreSchema,
     regulatoryCompliance: ComplianceScoreSchema,
-    patientSafety: ComplianceScoreSchema
-  })
+    patientSafety: ComplianceScoreSchema,
+  }),
 });
 
 export type RegulatoryEvent = z.infer<typeof RegulatoryEventSchema>;
 
 // =============================================================================
-// CFM COMPLIANCE TYPES  
+// CFM COMPLIANCE TYPES
 // =============================================================================
 
 /**
  * CFM Professional Categories
  */
 export enum CFMProfessionalCategory {
-  PHYSICIAN = 'PHYSICIAN',               // Médico
-  SPECIALIST = 'SPECIALIST',             // Especialista
-  RESIDENT = 'RESIDENT',                 // Residente
-  MEDICAL_STUDENT = 'MEDICAL_STUDENT',   // Estudante de medicina
-  FOREIGN_PHYSICIAN = 'FOREIGN_PHYSICIAN' // Médico estrangeiro
+  PHYSICIAN = 'PHYSICIAN', // Médico
+  SPECIALIST = 'SPECIALIST', // Especialista
+  RESIDENT = 'RESIDENT', // Residente
+  MEDICAL_STUDENT = 'MEDICAL_STUDENT', // Estudante de medicina
+  FOREIGN_PHYSICIAN = 'FOREIGN_PHYSICIAN', // Médico estrangeiro
 }
 
 /**
  * CFM License Status
  */
 export enum CFMLicenseStatus {
-  ACTIVE = 'ACTIVE',                     // Ativo
-  SUSPENDED = 'SUSPENDED',               // Suspenso
-  REVOKED = 'REVOKED',                   // Cassado
-  EXPIRED = 'EXPIRED',                   // Expirado
-  UNDER_INVESTIGATION = 'UNDER_INVESTIGATION' // Em investigação
+  ACTIVE = 'ACTIVE', // Ativo
+  SUSPENDED = 'SUSPENDED', // Suspenso
+  REVOKED = 'REVOKED', // Cassado
+  EXPIRED = 'EXPIRED', // Expirado
+  UNDER_INVESTIGATION = 'UNDER_INVESTIGATION', // Em investigação
 }
 
 /**
@@ -196,8 +201,8 @@ export const ProfessionalValidationSchema = z.object({
   id: z.string().uuid(),
   professionalId: z.string().uuid(),
   tenantId: z.string().uuid(),
-  crmNumber: z.string().regex(/^\d{4,6}$/, "CRM must be 4-6 digits"),
-  crmState: z.string().length(2, "State code must be 2 characters"),
+  crmNumber: z.string().regex(/^\d{4,6}$/, 'CRM must be 4-6 digits'),
+  crmState: z.string().length(2, 'State code must be 2 characters'),
   category: z.nativeEnum(CFMProfessionalCategory),
   licenseStatus: z.nativeEnum(CFMLicenseStatus),
   validatedAt: z.date(),
@@ -208,11 +213,11 @@ export const ProfessionalValidationSchema = z.object({
   constitutionalValidation: z.object({
     professionalEthics: ComplianceScoreSchema,
     medicalCompetence: ComplianceScoreSchema,
-    regulatoryCompliance: ComplianceScoreSchema
-  })
+    regulatoryCompliance: ComplianceScoreSchema,
+  }),
 });
 
-export type ProfessionalValidation = z.infer<typeof ProfessionalValidationSchema>;// =============================================================================
+export type ProfessionalValidation = z.infer<typeof ProfessionalValidationSchema>; // =============================================================================
 // AUDIT SYSTEM TYPES
 // =============================================================================
 
@@ -220,15 +225,15 @@ export type ProfessionalValidation = z.infer<typeof ProfessionalValidationSchema
  * Constitutional Audit Event Types
  */
 export enum AuditEventType {
-  PATIENT_ACCESS = 'PATIENT_ACCESS',         // Acesso a dados do paciente
-  DATA_MODIFICATION = 'DATA_MODIFICATION',   // Modificação de dados
-  CONSENT_CHANGE = 'CONSENT_CHANGE',         // Alteração de consentimento
-  REGULATORY_EVENT = 'REGULATORY_EVENT',     // Evento regulatório
+  PATIENT_ACCESS = 'PATIENT_ACCESS', // Acesso a dados do paciente
+  DATA_MODIFICATION = 'DATA_MODIFICATION', // Modificação de dados
+  CONSENT_CHANGE = 'CONSENT_CHANGE', // Alteração de consentimento
+  REGULATORY_EVENT = 'REGULATORY_EVENT', // Evento regulatório
   COMPLIANCE_VIOLATION = 'COMPLIANCE_VIOLATION', // Violação de compliance
-  PROFESSIONAL_ACTION = 'PROFESSIONAL_ACTION',   // Ação profissional
-  SYSTEM_ACCESS = 'SYSTEM_ACCESS',           // Acesso ao sistema
-  DATA_EXPORT = 'DATA_EXPORT',               // Exportação de dados
-  SECURITY_INCIDENT = 'SECURITY_INCIDENT'    // Incidente de segurança
+  PROFESSIONAL_ACTION = 'PROFESSIONAL_ACTION', // Ação profissional
+  SYSTEM_ACCESS = 'SYSTEM_ACCESS', // Acesso ao sistema
+  DATA_EXPORT = 'DATA_EXPORT', // Exportação de dados
+  SECURITY_INCIDENT = 'SECURITY_INCIDENT', // Incidente de segurança
 }
 
 /**
@@ -254,8 +259,8 @@ export const AuditEventSchema = z.object({
     patientPrivacy: ComplianceScoreSchema,
     medicalEthics: ComplianceScoreSchema,
     regulatoryCompliance: ComplianceScoreSchema,
-    overallScore: ComplianceScoreSchema
-  })
+    overallScore: ComplianceScoreSchema,
+  }),
 });
 
 export type AuditEvent = z.infer<typeof AuditEventSchema>;
@@ -275,7 +280,7 @@ export enum HealthcareAnalyticsMetric {
   PROFESSIONAL_PERFORMANCE = 'PROFESSIONAL_PERFORMANCE',
   SYSTEM_USAGE = 'SYSTEM_USAGE',
   SECURITY_INCIDENTS = 'SECURITY_INCIDENTS',
-  CONSENT_MANAGEMENT = 'CONSENT_MANAGEMENT'
+  CONSENT_MANAGEMENT = 'CONSENT_MANAGEMENT',
 }
 
 /**
@@ -289,7 +294,7 @@ export const HealthcareAnalyticsSchema = z.object({
   unit: z.string(),
   period: z.object({
     start: z.date(),
-    end: z.date()
+    end: z.date(),
   }),
   anonymized: z.boolean().default(true),
   aggregationLevel: z.enum(['INDIVIDUAL', 'GROUP', 'CLINIC', 'TENANT']),
@@ -298,10 +303,10 @@ export const HealthcareAnalyticsSchema = z.object({
     dataMinimization: z.boolean(),
     purposeLimitation: z.boolean(),
     consentBased: z.boolean(),
-    transparencyProvided: z.boolean()
+    transparencyProvided: z.boolean(),
   }),
   createdAt: z.date(),
-  validUntil: z.date()
+  validUntil: z.date(),
 });
 
 export type HealthcareAnalytics = z.infer<typeof HealthcareAnalyticsSchema>;
@@ -345,7 +350,7 @@ export const DPIAAssessmentSchema = z.object({
   approved: z.boolean(),
   approvedBy: z.string().uuid().optional(),
   approvedAt: z.date().optional(),
-  constitutionalScore: ComplianceScoreSchema
+  constitutionalScore: ComplianceScoreSchema,
 });
 
 export type DPIAAssessment = z.infer<typeof DPIAAssessmentSchema>;

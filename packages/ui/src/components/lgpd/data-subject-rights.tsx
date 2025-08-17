@@ -1,34 +1,16 @@
 'use client';
 
-import React, { useState } from 'react';
-import { Button } from '@neonpro/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@neonpro/ui/card';
-import { Input } from '@neonpro/ui/input';
-import { Label } from '@neonpro/ui/label';
-import { Textarea } from '@neonpro/ui/textarea';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@neonpro/ui/select';
-import { Alert, AlertDescription } from '@neonpro/ui/alert';
+import { AlertCircle, Download, Edit, FileText, Settings, Trash2 } from 'lucide-react';
+import type React from 'react';
+import { useState } from 'react';
 import { toast } from 'sonner';
-import {
-  Download,
-  FileText,
-  Settings,
-  Trash2,
-  Edit,
-  AlertCircle,
-} from 'lucide-react';
+import { Alert, AlertDescription } from '../Alert';
+import { Button } from '../Button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../Card';
+import { Input } from '../Input';
+import { Label } from '../Label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../Select';
+import { Textarea } from '../Textarea';
 
 // ============================================================================
 // TYPES
@@ -56,9 +38,7 @@ interface DataSubjectRequest {
 // ============================================================================
 
 export function DataSubjectRights() {
-  const [selectedRequestType, setSelectedRequestType] = useState<
-    RequestType | ''
-  >('');
+  const [selectedRequestType, setSelectedRequestType] = useState<RequestType | ''>('');
   const [requestDetails, setRequestDetails] = useState('');
   const [rectificationField, setRectificationField] = useState('');
   const [rectificationOldValue, setRectificationOldValue] = useState('');
@@ -72,38 +52,37 @@ export function DataSubjectRights() {
       value: 'access',
       label: 'Acesso aos Dados',
       description: 'Solicitar acesso a todos os seus dados pessoais',
-      icon: <FileText className="w-4 h-4" />,
+      icon: <FileText className="h-4 w-4" />,
     },
     {
       value: 'rectification',
       label: 'Retificação de Dados',
       description: 'Solicitar correção de dados incorretos ou incompletos',
-      icon: <Edit className="w-4 h-4" />,
+      icon: <Edit className="h-4 w-4" />,
     },
     {
       value: 'erasure',
       label: 'Eliminação de Dados',
       description: 'Solicitar a eliminação dos seus dados pessoais',
-      icon: <Trash2 className="w-4 h-4" />,
+      icon: <Trash2 className="h-4 w-4" />,
     },
     {
       value: 'restriction',
       label: 'Limitação do Tratamento',
       description: 'Solicitar limitação do processamento dos seus dados',
-      icon: <Settings className="w-4 h-4" />,
+      icon: <Settings className="h-4 w-4" />,
     },
     {
       value: 'portability',
       label: 'Portabilidade de Dados',
-      description:
-        'Solicitar seus dados em formato estruturado e interoperável',
-      icon: <Download className="w-4 h-4" />,
+      description: 'Solicitar seus dados em formato estruturado e interoperável',
+      icon: <Download className="h-4 w-4" />,
     },
     {
       value: 'objection',
       label: 'Oposição ao Tratamento',
       description: 'Opor-se ao tratamento dos seus dados pessoais',
-      icon: <AlertCircle className="w-4 h-4" />,
+      icon: <AlertCircle className="h-4 w-4" />,
     },
   ];
 
@@ -116,18 +95,14 @@ export function DataSubjectRights() {
     setLoading(true);
 
     try {
-      let requestData: any = {
+      const requestData: any = {
         requestType: selectedRequestType,
         reason: requestDetails,
       };
 
       // Special handling for rectification requests
       if (selectedRequestType === 'rectification') {
-        if (
-          !rectificationField ||
-          !rectificationNewValue ||
-          !rectificationReason
-        ) {
+        if (!(rectificationField && rectificationNewValue && rectificationReason)) {
           toast.error('Preencha todos os campos obrigatórios para retificação');
           setLoading(false);
           return;
@@ -176,21 +151,18 @@ export function DataSubjectRights() {
     }
   };
 
-  const selectedRequest = requestTypes.find(
-    (rt) => rt.value === selectedRequestType
-  );
+  const selectedRequest = requestTypes.find((rt) => rt.value === selectedRequestType);
 
   return (
     <div className="space-y-6">
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <FileText className="w-5 h-5" />
+            <FileText className="h-5 w-5" />
             Direitos do Titular dos Dados - LGPD
           </CardTitle>
           <CardDescription>
-            Exerça seus direitos previstos na Lei Geral de Proteção de Dados
-            (LGPD)
+            Exerça seus direitos previstos na Lei Geral de Proteção de Dados (LGPD)
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
@@ -198,10 +170,8 @@ export function DataSubjectRights() {
           <div>
             <Label htmlFor="request-type">Tipo de Solicitação</Label>
             <Select
+              onValueChange={(value: RequestType) => setSelectedRequestType(value)}
               value={selectedRequestType}
-              onValueChange={(value: RequestType) =>
-                setSelectedRequestType(value)
-              }
             >
               <SelectTrigger>
                 <SelectValue placeholder="Selecione o tipo de solicitação" />
@@ -213,9 +183,7 @@ export function DataSubjectRights() {
                       {type.icon}
                       <div>
                         <div className="font-medium">{type.label}</div>
-                        <div className="text-xs text-gray-500">
-                          {type.description}
-                        </div>
+                        <div className="text-gray-500 text-xs">{type.description}</div>
                       </div>
                     </div>
                   </SelectItem>
@@ -229,28 +197,25 @@ export function DataSubjectRights() {
             <Alert>
               <AlertCircle className="h-4 w-4" />
               <AlertDescription>
-                <strong>{selectedRequest.label}:</strong>{' '}
-                {selectedRequest.description}
+                <strong>{selectedRequest.label}:</strong> {selectedRequest.description}
               </AlertDescription>
             </Alert>
           )}
 
           {/* Rectification Specific Fields */}
           {selectedRequestType === 'rectification' && (
-            <div className="space-y-4 p-4 bg-blue-50 rounded-lg">
-              <h4 className="font-medium text-blue-900">
-                Detalhes da Retificação
-              </h4>
+            <div className="space-y-4 rounded-lg bg-blue-50 p-4">
+              <h4 className="font-medium text-blue-900">Detalhes da Retificação</h4>
 
               <div>
-                <Label htmlFor="rectification-field">
-                  Campo a ser Corrigido *
-                </Label>
+                <Label htmlFor="rectification-field">Campo a ser Corrigido *</Label>
                 <Input
                   id="rectification-field"
-                  value={rectificationField}
-                  onChange={(e) => setRectificationField(e.target.value)}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                    setRectificationField(e.target.value)
+                  }
                   placeholder="Ex: Nome, Email, Telefone..."
+                  value={rectificationField}
                 />
               </div>
 
@@ -258,9 +223,11 @@ export function DataSubjectRights() {
                 <Label htmlFor="rectification-old-value">Valor Atual</Label>
                 <Input
                   id="rectification-old-value"
-                  value={rectificationOldValue}
-                  onChange={(e) => setRectificationOldValue(e.target.value)}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                    setRectificationOldValue(e.target.value)
+                  }
                   placeholder="Valor atualmente registrado (opcional)"
+                  value={rectificationOldValue}
                 />
               </div>
 
@@ -268,22 +235,24 @@ export function DataSubjectRights() {
                 <Label htmlFor="rectification-new-value">Valor Correto *</Label>
                 <Input
                   id="rectification-new-value"
-                  value={rectificationNewValue}
-                  onChange={(e) => setRectificationNewValue(e.target.value)}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                    setRectificationNewValue(e.target.value)
+                  }
                   placeholder="Valor correto que deve ser registrado"
+                  value={rectificationNewValue}
                 />
               </div>
 
               <div>
-                <Label htmlFor="rectification-reason">
-                  Motivo da Correção *
-                </Label>
+                <Label htmlFor="rectification-reason">Motivo da Correção *</Label>
                 <Textarea
                   id="rectification-reason"
-                  value={rectificationReason}
-                  onChange={(e) => setRectificationReason(e.target.value)}
+                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                    setRectificationReason(e.target.value)
+                  }
                   placeholder="Explique por que esta correção é necessária..."
                   rows={3}
+                  value={rectificationReason}
                 />
               </div>
             </div>
@@ -292,24 +261,24 @@ export function DataSubjectRights() {
           {/* General Request Details */}
           {selectedRequestType && selectedRequestType !== 'rectification' && (
             <div>
-              <Label htmlFor="request-details">
-                Detalhes Adicionais (Opcional)
-              </Label>
+              <Label htmlFor="request-details">Detalhes Adicionais (Opcional)</Label>
               <Textarea
                 id="request-details"
-                value={requestDetails}
-                onChange={(e) => setRequestDetails(e.target.value)}
+                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                  setRequestDetails(e.target.value)
+                }
                 placeholder="Forneça detalhes adicionais sobre sua solicitação..."
                 rows={4}
+                value={requestDetails}
               />
             </div>
           )}
 
           {/* Submit Button */}
           <Button
-            onClick={submitRequest}
-            disabled={loading || !selectedRequestType}
             className="w-full"
+            disabled={loading || !selectedRequestType}
+            onClick={submitRequest}
           >
             {loading ? 'Enviando...' : 'Enviar Solicitação'}
           </Button>
@@ -318,9 +287,8 @@ export function DataSubjectRights() {
           <Alert>
             <AlertCircle className="h-4 w-4" />
             <AlertDescription>
-              <strong>Importante:</strong> Suas solicitações serão processadas
-              em até 15 dias úteis, conforme previsto na LGPD. Você receberá
-              atualizações sobre o status por email.
+              <strong>Importante:</strong> Suas solicitações serão processadas em até 15 dias úteis,
+              conforme previsto na LGPD. Você receberá atualizações sobre o status por email.
             </AlertDescription>
           </Alert>
         </CardContent>
@@ -330,18 +298,14 @@ export function DataSubjectRights() {
       <Card>
         <CardHeader>
           <CardTitle>Histórico de Solicitações</CardTitle>
-          <CardDescription>
-            Acompanhe o status das suas solicitações anteriores
-          </CardDescription>
+          <CardDescription>Acompanhe o status das suas solicitações anteriores</CardDescription>
         </CardHeader>
         <CardContent>
           {requests.length === 0 ? (
-            <div className="text-center py-8 text-gray-500">
-              <FileText className="w-12 h-12 mx-auto mb-4 opacity-50" />
+            <div className="py-8 text-center text-gray-500">
+              <FileText className="mx-auto mb-4 h-12 w-12 opacity-50" />
               <p>Nenhuma solicitação encontrada</p>
-              <p className="text-sm">
-                Suas solicitações aparecerão aqui após serem criadas
-              </p>
+              <p className="text-sm">Suas solicitações aparecerão aqui após serem criadas</p>
             </div>
           ) : (
             <div className="space-y-4">
@@ -401,19 +365,17 @@ function RequestHistoryCard({ request }: RequestHistoryCardProps) {
         <div className="flex items-start justify-between">
           <div>
             <h4 className="font-medium">{request.requestType}</h4>
-            <p className="text-sm text-gray-600">
-              Solicitado em:{' '}
-              {new Date(request.requestedAt).toLocaleString('pt-BR')}
+            <p className="text-gray-600 text-sm">
+              Solicitado em: {new Date(request.requestedAt).toLocaleString('pt-BR')}
             </p>
             {request.completedAt && (
-              <p className="text-sm text-gray-600">
-                Concluído em:{' '}
-                {new Date(request.completedAt).toLocaleString('pt-BR')}
+              <p className="text-gray-600 text-sm">
+                Concluído em: {new Date(request.completedAt).toLocaleString('pt-BR')}
               </p>
             )}
           </div>
           <div
-            className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(request.status)}`}
+            className={`rounded-full px-2 py-1 font-medium text-xs ${getStatusColor(request.status)}`}
           >
             {getStatusLabel(request.status)}
           </div>

@@ -9,8 +9,8 @@ import { z } from 'zod';
 // Constitutional API Rate Limiting Schemas
 const RateLimitConfigSchema = z.object({
   default_requests_per_minute: z.number().min(1).max(1000).default(60),
-  default_requests_per_hour: z.number().min(10).max(10000).default(1000),
-  default_requests_per_day: z.number().min(100).max(100000).default(10000),
+  default_requests_per_hour: z.number().min(10).max(10_000).default(1000),
+  default_requests_per_day: z.number().min(100).max(100_000).default(10_000),
   burst_allowance: z.number().min(1).max(100).default(10),
   sliding_window_minutes: z.number().min(1).max(60).default(15),
   constitutional_protection_enabled: z.boolean().default(true),
@@ -22,7 +22,7 @@ const RateLimitConfigSchema = z.object({
   blacklist_enabled: z.boolean().default(true),
   whitelist_enabled: z.boolean().default(true),
   geographic_restrictions: z.boolean().default(false),
-  healthcare_priority_routing: z.boolean().default(true)
+  healthcare_priority_routing: z.boolean().default(true),
 });
 
 const EndpointRateLimitSchema = z.object({
@@ -36,35 +36,35 @@ const EndpointRateLimitSchema = z.object({
     'admin_api',
     'compliance_api',
     'analytics_api',
-    'emergency_api'
+    'emergency_api',
   ]),
   security_level: z.enum(['public', 'protected', 'sensitive', 'confidential', 'emergency']),
   rate_limits: z.object({
     requests_per_minute: z.number().min(1).max(1000),
-    requests_per_hour: z.number().min(10).max(10000),
-    requests_per_day: z.number().min(100).max(100000),
+    requests_per_hour: z.number().min(10).max(10_000),
+    requests_per_day: z.number().min(100).max(100_000),
     concurrent_requests: z.number().min(1).max(100).default(10),
-    burst_allowance: z.number().min(1).max(50).default(5)
+    burst_allowance: z.number().min(1).max(50).default(5),
   }),
   constitutional_protections: z.object({
     patient_privacy_enforcement: z.boolean(),
     medical_secrecy_protection: z.boolean(),
     lgpd_compliance_required: z.boolean(),
     cfm_ethics_validation: z.boolean(),
-    emergency_access_allowed: z.boolean()
+    emergency_access_allowed: z.boolean(),
   }),
   throttling_behavior: z.object({
     gradual_slowdown: z.boolean().default(true),
     temporary_blocking: z.boolean().default(true),
     permanent_blocking: z.boolean().default(false),
-    warning_notifications: z.boolean().default(true)
+    warning_notifications: z.boolean().default(true),
   }),
   priority_rules: z.object({
     healthcare_professional_priority: z.boolean().default(true),
     emergency_access_priority: z.boolean().default(true),
     patient_self_access_priority: z.boolean().default(true),
-    administrative_access_priority: z.boolean().default(false)
-  })
+    administrative_access_priority: z.boolean().default(false),
+  }),
 });
 
 const ClientRateLimitSchema = z.object({
@@ -76,32 +76,32 @@ const ClientRateLimitSchema = z.object({
     'healthcare_system',
     'third_party_service',
     'internal_service',
-    'emergency_service'
+    'emergency_service',
   ]),
   trust_level: z.enum(['untrusted', 'basic', 'trusted', 'verified', 'emergency']),
   custom_limits: z.object({
     requests_per_minute: z.number().min(1).max(2000),
-    requests_per_hour: z.number().min(10).max(20000),
-    requests_per_day: z.number().min(100).max(200000),
+    requests_per_hour: z.number().min(10).max(20_000),
+    requests_per_day: z.number().min(100).max(200_000),
     concurrent_requests: z.number().min(1).max(200),
-    priority_weight: z.number().min(0.1).max(10).default(1)
+    priority_weight: z.number().min(0.1).max(10).default(1),
   }),
   security_settings: z.object({
     require_authentication: z.boolean().default(true),
     require_encryption: z.boolean().default(true),
     allowed_ip_ranges: z.array(z.string()).optional(),
     blocked_ip_ranges: z.array(z.string()).optional(),
-    user_agent_restrictions: z.array(z.string()).optional()
+    user_agent_restrictions: z.array(z.string()).optional(),
   }),
   constitutional_compliance: z.object({
     lgpd_compliance_verified: z.boolean(),
     cfm_authorization: z.boolean().optional(),
     patient_consent_management: z.boolean(),
-    healthcare_professional_verified: z.boolean().optional()
+    healthcare_professional_verified: z.boolean().optional(),
   }),
   active: z.boolean().default(true),
   created_at: z.string().datetime(),
-  updated_at: z.string().datetime()
+  updated_at: z.string().datetime(),
 });
 
 const RateLimitViolationSchema = z.object({
@@ -117,7 +117,7 @@ const RateLimitViolationSchema = z.object({
     'suspicious_activity',
     'potential_abuse',
     'security_threat',
-    'constitutional_violation'
+    'constitutional_violation',
   ]),
   severity: z.enum(['low', 'medium', 'high', 'critical', 'emergency']),
   request_details: z.object({
@@ -127,22 +127,28 @@ const RateLimitViolationSchema = z.object({
     response_status: z.number(),
     response_time_ms: z.number(),
     data_accessed: z.string().optional(),
-    patient_data_involved: z.boolean()
+    patient_data_involved: z.boolean(),
   }),
   constitutional_impact: z.object({
     patient_privacy_risk: z.enum(['none', 'low', 'medium', 'high', 'critical']),
     medical_secrecy_risk: z.enum(['none', 'low', 'medium', 'high', 'critical']),
     lgpd_compliance_risk: z.enum(['none', 'low', 'medium', 'high', 'critical']),
-    immediate_action_required: z.boolean()
+    immediate_action_required: z.boolean(),
   }),
   mitigation_action: z.object({
-    action_taken: z.enum(['warning', 'temporary_block', 'permanent_block', 'escalation', 'manual_review']),
+    action_taken: z.enum([
+      'warning',
+      'temporary_block',
+      'permanent_block',
+      'escalation',
+      'manual_review',
+    ]),
     block_duration_minutes: z.number().optional(),
     notification_sent: z.boolean(),
-    incident_reported: z.boolean()
+    incident_reported: z.boolean(),
   }),
   created_at: z.string().datetime(),
-  resolved_at: z.string().datetime().optional()
+  resolved_at: z.string().datetime().optional(),
 });
 
 // Type definitions
@@ -177,7 +183,7 @@ export class ApiRateLimitingService {
   private clientLimits: Map<string, ClientRateLimit> = new Map();
   private violations: Map<string, RateLimitViolation> = new Map();
   private auditTrail: ApiRateLimitingAudit[] = [];
-  
+
   // Rate limiting tracking
   private requestCounters: Map<string, any> = new Map();
   private blacklistedIps: Set<string> = new Set();
@@ -215,7 +221,10 @@ export class ApiRateLimitingService {
 
     try {
       // Emergency bypass check
-      if (request.emergency_bypass_token && this.emergencyBypassTokens.has(request.emergency_bypass_token)) {
+      if (
+        request.emergency_bypass_token &&
+        this.emergencyBypassTokens.has(request.emergency_bypass_token)
+      ) {
         return this.allowRequestWithEmergencyBypass(request);
       }
 
@@ -233,7 +242,11 @@ export class ApiRateLimitingService {
       if (this.config.constitutional_protection_enabled) {
         const constitutionalValidation = await this.validateConstitutionalProtection(request);
         if (!constitutionalValidation.allowed) {
-          return this.blockRequest(request, constitutionalValidation.reason, 'constitutional_violation');
+          return this.blockRequest(
+            request,
+            constitutionalValidation.reason,
+            'constitutional_violation'
+          );
         }
       }
 
@@ -259,7 +272,6 @@ export class ApiRateLimitingService {
       // Allow request and update counters
       this.updateRequestCounters(requestKey, now);
       return this.allowRequest(request, limits);
-
     } catch (error) {
       console.error('Rate limiting error:', error);
       // Fail open for healthcare systems in case of service errors
@@ -293,19 +305,21 @@ export class ApiRateLimitingService {
       action: 'endpoint_registered',
       rate_limit_status: 'allowed',
       constitutional_validation_result: {
-        patient_privacy_protection: validatedEndpoint.constitutional_protections.patient_privacy_enforcement,
-        medical_secrecy_enforcement: validatedEndpoint.constitutional_protections.medical_secrecy_protection,
+        patient_privacy_protection:
+          validatedEndpoint.constitutional_protections.patient_privacy_enforcement,
+        medical_secrecy_enforcement:
+          validatedEndpoint.constitutional_protections.medical_secrecy_protection,
         lgpd_compliance: validatedEndpoint.constitutional_protections.lgpd_compliance_required,
-        cfm_ethics_validation: validatedEndpoint.constitutional_protections.cfm_ethics_validation
+        cfm_ethics_validation: validatedEndpoint.constitutional_protections.cfm_ethics_validation,
       },
       patient_data_protection_applied: validatedEndpoint.endpoint_type === 'patient_data',
       security_measures_triggered: ['constitutional_validation', 'endpoint_registration'],
       performance_impact: {
         requests_per_minute_limit: validatedEndpoint.rate_limits.requests_per_minute,
-        concurrent_requests_limit: validatedEndpoint.rate_limits.concurrent_requests
+        concurrent_requests_limit: validatedEndpoint.rate_limits.concurrent_requests,
       },
       created_at: new Date().toISOString(),
-      ip_address: 'system'
+      ip_address: 'system',
     };
 
     this.auditTrail.push(auditEntry);
@@ -313,7 +327,7 @@ export class ApiRateLimitingService {
     return {
       success: true,
       endpoint_id: validatedEndpoint.endpoint_pattern,
-      constitutional_validation: auditEntry.constitutional_validation_result
+      constitutional_validation: auditEntry.constitutional_validation_result,
     };
   }
 
@@ -329,7 +343,7 @@ export class ApiRateLimitingService {
     const fullClientData: ClientRateLimit = {
       ...client,
       created_at: now,
-      updated_at: now
+      updated_at: now,
     };
 
     const validatedClient = ClientRateLimitSchema.parse(fullClientData);
@@ -353,19 +367,21 @@ export class ApiRateLimitingService {
       action: 'client_registered',
       rate_limit_status: 'allowed',
       constitutional_validation_result: {
-        lgpd_compliance_verified: validatedClient.constitutional_compliance.lgpd_compliance_verified,
-        cfm_authorization: validatedClient.constitutional_compliance.cfm_authorization || false,
-        patient_consent_management: validatedClient.constitutional_compliance.patient_consent_management,
-        trust_level: validatedClient.trust_level
+        lgpd_compliance_verified:
+          validatedClient.constitutional_compliance.lgpd_compliance_verified,
+        cfm_authorization: validatedClient.constitutional_compliance.cfm_authorization,
+        patient_consent_management:
+          validatedClient.constitutional_compliance.patient_consent_management,
+        trust_level: validatedClient.trust_level,
       },
       patient_data_protection_applied: true,
       security_measures_triggered: ['client_registration', 'constitutional_validation'],
       performance_impact: {
         custom_limits_applied: true,
-        priority_weight: validatedClient.custom_limits.priority_weight
+        priority_weight: validatedClient.custom_limits.priority_weight,
       },
       created_at: now,
-      ip_address: 'registration'
+      ip_address: 'registration',
     };
 
     this.auditTrail.push(auditEntry);
@@ -373,7 +389,7 @@ export class ApiRateLimitingService {
     return {
       success: true,
       client_id: validatedClient.client_id,
-      compliance_validation: auditEntry.constitutional_validation_result
+      compliance_validation: auditEntry.constitutional_validation_result,
     };
   }
 
@@ -391,7 +407,7 @@ export class ApiRateLimitingService {
     const fullViolationData: RateLimitViolation = {
       violation_id: crypto.randomUUID(),
       ...violationData,
-      created_at: now
+      created_at: now,
     };
 
     const validatedViolation = RateLimitViolationSchema.parse(fullViolationData);
@@ -417,17 +433,18 @@ export class ApiRateLimitingService {
         constitutional_impact_assessed: true,
         patient_privacy_risk: validatedViolation.constitutional_impact.patient_privacy_risk,
         medical_secrecy_risk: validatedViolation.constitutional_impact.medical_secrecy_risk,
-        immediate_action_required: validatedViolation.constitutional_impact.immediate_action_required
+        immediate_action_required:
+          validatedViolation.constitutional_impact.immediate_action_required,
       },
       patient_data_protection_applied: validatedViolation.request_details.patient_data_involved,
       security_measures_triggered: [
         'violation_detection',
         'mitigation_applied',
-        'constitutional_impact_assessment'
+        'constitutional_impact_assessment',
       ],
       performance_impact: mitigationResult,
       created_at: now,
-      user_agent: validatedViolation.user_agent
+      user_agent: validatedViolation.user_agent,
     };
 
     this.auditTrail.push(auditEntry);
@@ -435,7 +452,7 @@ export class ApiRateLimitingService {
     return {
       success: true,
       violation_id: validatedViolation.violation_id,
-      mitigation_applied: mitigationResult
+      mitigation_applied: mitigationResult,
     };
   }
 
@@ -465,7 +482,7 @@ export class ApiRateLimitingService {
 
     // Generate secure bypass token
     const bypassToken = crypto.randomUUID() + '-emergency-' + Date.now();
-    
+
     // Set expiration based on urgency and duration
     const maxDurationMinutes = this.getMaxEmergencyDuration(request.urgency_level);
     const durationMinutes = Math.min(request.estimated_duration_minutes, maxDurationMinutes);
@@ -473,11 +490,14 @@ export class ApiRateLimitingService {
 
     // Store bypass token temporarily
     this.emergencyBypassTokens.add(bypassToken);
-    
+
     // Auto-remove token after expiration
-    setTimeout(() => {
-      this.emergencyBypassTokens.delete(bypassToken);
-    }, durationMinutes * 60 * 1000);
+    setTimeout(
+      () => {
+        this.emergencyBypassTokens.delete(bypassToken);
+      },
+      durationMinutes * 60 * 1000
+    );
 
     // Create audit entry for emergency bypass
     const auditEntry: ApiRateLimitingAudit = {
@@ -489,17 +509,17 @@ export class ApiRateLimitingService {
         medical_justification_provided: true,
         urgency_level: request.urgency_level,
         supervising_physician_involved: !!request.supervising_physician_id,
-        constitutional_emergency_exception: true
+        constitutional_emergency_exception: true,
       },
       patient_data_protection_applied: true,
       security_measures_triggered: ['emergency_bypass', 'constitutional_validation', 'audit_trail'],
       performance_impact: {
         bypass_token_generated: true,
         duration_minutes: durationMinutes,
-        expires_at: expiresAt
+        expires_at: expiresAt,
       },
       created_at: new Date().toISOString(),
-      ip_address: 'emergency_system'
+      ip_address: 'emergency_system',
     };
 
     this.auditTrail.push(auditEntry);
@@ -512,8 +532,8 @@ export class ApiRateLimitingService {
         emergency_medical_necessity: true,
         constitutional_exception_applied: true,
         audit_trail_complete: true,
-        expires_at: expiresAt
-      }
+        expires_at: expiresAt,
+      },
     };
   }
 
@@ -531,27 +551,27 @@ export class ApiRateLimitingService {
           requests_per_hour: 500,
           requests_per_day: 2000,
           concurrent_requests: 5,
-          burst_allowance: 3
+          burst_allowance: 3,
         },
         constitutional_protections: {
           patient_privacy_enforcement: true,
           medical_secrecy_protection: true,
           lgpd_compliance_required: true,
           cfm_ethics_validation: true,
-          emergency_access_allowed: true
+          emergency_access_allowed: true,
         },
         throttling_behavior: {
           gradual_slowdown: true,
           temporary_blocking: true,
           permanent_blocking: false,
-          warning_notifications: true
+          warning_notifications: true,
         },
         priority_rules: {
           healthcare_professional_priority: true,
           emergency_access_priority: true,
           patient_self_access_priority: true,
-          administrative_access_priority: false
-        }
+          administrative_access_priority: false,
+        },
       },
       {
         endpoint_pattern: '/api/v1/auth/*',
@@ -562,27 +582,27 @@ export class ApiRateLimitingService {
           requests_per_hour: 100,
           requests_per_day: 500,
           concurrent_requests: 3,
-          burst_allowance: 2
+          burst_allowance: 2,
         },
         constitutional_protections: {
           patient_privacy_enforcement: true,
           medical_secrecy_protection: false,
           lgpd_compliance_required: true,
           cfm_ethics_validation: false,
-          emergency_access_allowed: false
+          emergency_access_allowed: false,
         },
         throttling_behavior: {
           gradual_slowdown: true,
           temporary_blocking: true,
           permanent_blocking: true,
-          warning_notifications: true
+          warning_notifications: true,
         },
         priority_rules: {
           healthcare_professional_priority: false,
           emergency_access_priority: false,
           patient_self_access_priority: false,
-          administrative_access_priority: false
-        }
+          administrative_access_priority: false,
+        },
       },
       {
         endpoint_pattern: '/api/v1/emergency/*',
@@ -593,28 +613,28 @@ export class ApiRateLimitingService {
           requests_per_hour: 1000,
           requests_per_day: 5000,
           concurrent_requests: 20,
-          burst_allowance: 50
+          burst_allowance: 50,
         },
         constitutional_protections: {
           patient_privacy_enforcement: true,
           medical_secrecy_protection: true,
           lgpd_compliance_required: true,
           cfm_ethics_validation: true,
-          emergency_access_allowed: true
+          emergency_access_allowed: true,
         },
         throttling_behavior: {
           gradual_slowdown: false,
           temporary_blocking: false,
           permanent_blocking: false,
-          warning_notifications: true
+          warning_notifications: true,
         },
         priority_rules: {
           healthcare_professional_priority: true,
           emergency_access_priority: true,
           patient_self_access_priority: true,
-          administrative_access_priority: true
-        }
-      }
+          administrative_access_priority: true,
+        },
+      },
     ];
 
     for (const endpoint of defaultEndpoints) {
@@ -626,13 +646,20 @@ export class ApiRateLimitingService {
     this.whitelistedIps.add('::1'); // IPv6 localhost
   }
 
-  private generateRequestKey(request: { ip_address: string; client_id?: string; user_id?: string }): string {
+  private generateRequestKey(request: {
+    ip_address: string;
+    client_id?: string;
+    user_id?: string;
+  }): string {
     // Use client_id if available, otherwise IP address
     const identifier = request.client_id || request.user_id || request.ip_address;
     return `rate_limit:${identifier}`;
   }
 
-  private getCurrentUsage(requestKey: string, now: number): {
+  private getCurrentUsage(
+    requestKey: string,
+    now: number
+  ): {
     requests_last_minute: number;
     requests_last_hour: number;
     requests_last_day: number;
@@ -640,7 +667,7 @@ export class ApiRateLimitingService {
   } {
     const counter = this.requestCounters.get(requestKey) || {
       requests: [],
-      concurrent: 0
+      concurrent: 0,
     };
 
     // Clean old requests outside time windows
@@ -654,14 +681,14 @@ export class ApiRateLimitingService {
       requests_last_minute: counter.requests.filter((t: number) => t > oneMinuteAgo).length,
       requests_last_hour: counter.requests.filter((t: number) => t > oneHourAgo).length,
       requests_last_day: counter.requests.length,
-      concurrent_requests: counter.concurrent || 0
+      concurrent_requests: counter.concurrent || 0,
     };
   }
 
   private async getApplicableLimits(request: any): Promise<any> {
     // Find matching endpoint configuration
     let endpointConfig: EndpointRateLimit | null = null;
-    
+
     for (const [pattern, config] of this.endpointLimits) {
       if (this.matchesEndpointPattern(request.endpoint, pattern)) {
         endpointConfig = config;
@@ -690,7 +717,7 @@ export class ApiRateLimitingService {
         endpointConfig?.rate_limits.concurrent_requests || 10,
         clientConfig?.custom_limits.concurrent_requests || 10
       ),
-      burst_allowance: endpointConfig?.rate_limits.burst_allowance || this.config.burst_allowance
+      burst_allowance: endpointConfig?.rate_limits.burst_allowance || this.config.burst_allowance,
     };
 
     // Apply healthcare priority adjustments
@@ -719,7 +746,7 @@ export class ApiRateLimitingService {
 
     // Check day limit
     if (usage.requests_last_day >= limits.requests_per_day) {
-      return { allowed: false, retry_after_seconds: 86400 };
+      return { allowed: false, retry_after_seconds: 86_400 };
     }
 
     // Check concurrent requests
@@ -730,12 +757,16 @@ export class ApiRateLimitingService {
     return { allowed: true };
   }
 
-  private async validateConstitutionalProtection(request: any): Promise<{ allowed: boolean; reason?: string }> {
+  private async validateConstitutionalProtection(
+    request: any
+  ): Promise<{ allowed: boolean; reason?: string }> {
     // Patient data protection validation
-    if (this.config.patient_data_protection && request.patient_data_involved) {
-      if (!request.authentication_token) {
-        return { allowed: false, reason: 'Authentication required for patient data access' };
-      }
+    if (
+      this.config.patient_data_protection &&
+      request.patient_data_involved &&
+      !request.authentication_token
+    ) {
+      return { allowed: false, reason: 'Authentication required for patient data access' };
     }
 
     // Geographic restrictions for LGPD compliance
@@ -743,7 +774,10 @@ export class ApiRateLimitingService {
       // Mock geographic validation - in production, use actual IP geolocation
       const isFromBrazil = this.isRequestFromBrazil(request.ip_address);
       if (!isFromBrazil && request.patient_data_involved) {
-        return { allowed: false, reason: 'Geographic restriction: Patient data access limited to Brazil' };
+        return {
+          allowed: false,
+          reason: 'Geographic restriction: Patient data access limited to Brazil',
+        };
       }
     }
 
@@ -778,7 +812,7 @@ export class ApiRateLimitingService {
   private updateRequestCounters(requestKey: string, now: number): void {
     const counter = this.requestCounters.get(requestKey) || {
       requests: [],
-      concurrent: 0
+      concurrent: 0,
     };
 
     counter.requests.push(now);
@@ -801,15 +835,15 @@ export class ApiRateLimitingService {
       action: 'request_allowed',
       rate_limit_status: 'allowed',
       constitutional_validation_result: {
-        patient_data_protection_applied: request.patient_data_involved || false,
-        constitutional_compliance_verified: true
+        patient_data_protection_applied: request.patient_data_involved,
+        constitutional_compliance_verified: true,
       },
-      patient_data_protection_applied: request.patient_data_involved || false,
+      patient_data_protection_applied: request.patient_data_involved,
       security_measures_triggered: ['rate_limit_check', 'constitutional_validation'],
       performance_impact: limits,
       created_at: new Date().toISOString(),
       user_agent: request.user_agent,
-      authentication_status: request.authentication_token ? 'authenticated' : 'anonymous'
+      authentication_status: request.authentication_token ? 'authenticated' : 'anonymous',
     };
 
     this.auditTrail.push(auditEntry);
@@ -819,7 +853,7 @@ export class ApiRateLimitingService {
       rate_limit_status: 'allowed',
       limits: limits.limits,
       constitutional_protection_applied: this.config.constitutional_protection_enabled,
-      audit_trail_id: auditEntry.audit_id
+      audit_trail_id: auditEntry.audit_id,
     };
   }
 
@@ -834,13 +868,13 @@ export class ApiRateLimitingService {
       constitutional_validation_result: {
         block_reason: reason,
         constitutional_protection_applied: true,
-        patient_data_protected: true
+        patient_data_protected: true,
       },
       patient_data_protection_applied: true,
       security_measures_triggered: ['request_blocking', 'constitutional_protection'],
       performance_impact: { blocked: true, reason },
       created_at: new Date().toISOString(),
-      user_agent: request.user_agent
+      user_agent: request.user_agent,
     };
 
     this.auditTrail.push(auditEntry);
@@ -851,11 +885,16 @@ export class ApiRateLimitingService {
       limits: {},
       constitutional_protection_applied: true,
       retry_after_seconds: undefined,
-      audit_trail_id: auditEntry.audit_id
+      audit_trail_id: auditEntry.audit_id,
     };
   }
 
-  private handleRateLimitExceeded(request: any, limits: any, usage: any, retryAfterSeconds: number): any {
+  private handleRateLimitExceeded(
+    request: any,
+    limits: any,
+    usage: any,
+    retryAfterSeconds: number
+  ): any {
     const auditEntry: ApiRateLimitingAudit = {
       audit_id: crypto.randomUUID(),
       client_id: request.client_id,
@@ -866,17 +905,17 @@ export class ApiRateLimitingService {
       constitutional_validation_result: {
         rate_limit_protection_applied: true,
         current_usage: usage,
-        constitutional_compliance_maintained: true
+        constitutional_compliance_maintained: true,
       },
-      patient_data_protection_applied: request.patient_data_involved || false,
+      patient_data_protection_applied: request.patient_data_involved,
       security_measures_triggered: ['rate_limit_exceeded', 'request_blocking'],
       performance_impact: {
         limits_exceeded: true,
         retry_after_seconds: retryAfterSeconds,
-        current_usage: usage
+        current_usage: usage,
       },
       created_at: new Date().toISOString(),
-      user_agent: request.user_agent
+      user_agent: request.user_agent,
     };
 
     this.auditTrail.push(auditEntry);
@@ -887,7 +926,7 @@ export class ApiRateLimitingService {
       limits: limits.limits,
       constitutional_protection_applied: this.config.constitutional_protection_enabled,
       retry_after_seconds: retryAfterSeconds,
-      audit_trail_id: auditEntry.audit_id
+      audit_trail_id: auditEntry.audit_id,
     };
   }
 
@@ -901,16 +940,16 @@ export class ApiRateLimitingService {
       rate_limit_status: 'throttled',
       constitutional_validation_result: {
         intelligent_throttling_applied: true,
-        constitutional_compliance_maintained: true
+        constitutional_compliance_maintained: true,
       },
-      patient_data_protection_applied: request.patient_data_involved || false,
+      patient_data_protection_applied: request.patient_data_involved,
       security_measures_triggered: ['intelligent_throttling'],
       performance_impact: {
         throttled: true,
-        delay_ms: delayMs
+        delay_ms: delayMs,
       },
       created_at: new Date().toISOString(),
-      user_agent: request.user_agent
+      user_agent: request.user_agent,
     };
 
     this.auditTrail.push(auditEntry);
@@ -921,7 +960,7 @@ export class ApiRateLimitingService {
       limits: {},
       constitutional_protection_applied: this.config.constitutional_protection_enabled,
       retry_after_seconds: Math.ceil(delayMs / 1000),
-      audit_trail_id: auditEntry.audit_id
+      audit_trail_id: auditEntry.audit_id,
     };
   }
 
@@ -936,16 +975,16 @@ export class ApiRateLimitingService {
       constitutional_validation_result: {
         emergency_bypass_applied: true,
         constitutional_emergency_exception: true,
-        medical_necessity_validated: true
+        medical_necessity_validated: true,
       },
       patient_data_protection_applied: true,
       security_measures_triggered: ['emergency_bypass', 'constitutional_validation'],
       performance_impact: {
         emergency_bypass: true,
-        bypass_token_used: true
+        bypass_token_used: true,
       },
       created_at: new Date().toISOString(),
-      user_agent: request.user_agent
+      user_agent: request.user_agent,
     };
 
     this.auditTrail.push(auditEntry);
@@ -955,7 +994,7 @@ export class ApiRateLimitingService {
       rate_limit_status: 'allowed',
       limits: {},
       constitutional_protection_applied: true,
-      audit_trail_id: auditEntry.audit_id
+      audit_trail_id: auditEntry.audit_id,
     };
   }
 
@@ -969,16 +1008,16 @@ export class ApiRateLimitingService {
       rate_limit_status: 'allowed',
       constitutional_validation_result: {
         whitelist_priority_applied: true,
-        trusted_source_verified: true
+        trusted_source_verified: true,
       },
-      patient_data_protection_applied: request.patient_data_involved || false,
+      patient_data_protection_applied: request.patient_data_involved,
       security_measures_triggered: ['whitelist_check', 'priority_routing'],
       performance_impact: {
         whitelist_priority: true,
-        rate_limits_bypassed: true
+        rate_limits_bypassed: true,
       },
       created_at: new Date().toISOString(),
-      user_agent: request.user_agent
+      user_agent: request.user_agent,
     };
 
     this.auditTrail.push(auditEntry);
@@ -988,7 +1027,7 @@ export class ApiRateLimitingService {
       rate_limit_status: 'allowed',
       limits: {},
       constitutional_protection_applied: this.config.constitutional_protection_enabled,
-      audit_trail_id: auditEntry.audit_id
+      audit_trail_id: auditEntry.audit_id,
     };
   }
 
@@ -1003,17 +1042,17 @@ export class ApiRateLimitingService {
       constitutional_validation_result: {
         service_error_occurred: true,
         fail_open_policy_applied: true,
-        constitutional_protection_maintained: true
+        constitutional_protection_maintained: true,
       },
-      patient_data_protection_applied: request.patient_data_involved || false,
+      patient_data_protection_applied: request.patient_data_involved,
       security_measures_triggered: ['error_handling', 'fail_open_policy'],
       performance_impact: {
         service_error: true,
         error_message: error.message,
-        fail_open_applied: true
+        fail_open_applied: true,
       },
       created_at: new Date().toISOString(),
-      user_agent: request.user_agent
+      user_agent: request.user_agent,
     };
 
     this.auditTrail.push(auditEntry);
@@ -1023,41 +1062,53 @@ export class ApiRateLimitingService {
       rate_limit_status: 'allowed',
       limits: {},
       constitutional_protection_applied: true,
-      audit_trail_id: auditEntry.audit_id
+      audit_trail_id: auditEntry.audit_id,
     };
   }
 
   // Additional helper methods
   private matchesEndpointPattern(endpoint: string, pattern: string): boolean {
     // Simple pattern matching - in production, use more sophisticated matching
-    return pattern.includes('*') 
+    return pattern.includes('*')
       ? endpoint.startsWith(pattern.replace('*', ''))
       : endpoint === pattern;
   }
 
-  private applyHealthcarePriorityAdjustments(limits: any, endpointConfig: EndpointRateLimit, clientConfig: ClientRateLimit | null): any {
-    if (endpointConfig.priority_rules.healthcare_professional_priority && clientConfig?.trust_level === 'verified') {
+  private applyHealthcarePriorityAdjustments(
+    limits: any,
+    endpointConfig: EndpointRateLimit,
+    clientConfig: ClientRateLimit | null
+  ): any {
+    if (
+      endpointConfig.priority_rules.healthcare_professional_priority &&
+      clientConfig?.trust_level === 'verified'
+    ) {
       return {
         ...limits,
         requests_per_minute: Math.floor(limits.requests_per_minute * 1.5),
         requests_per_hour: Math.floor(limits.requests_per_hour * 1.5),
-        concurrent_requests: Math.floor(limits.concurrent_requests * 1.3)
+        concurrent_requests: Math.floor(limits.concurrent_requests * 1.3),
       };
     }
 
-    if (endpointConfig.priority_rules.emergency_access_priority && endpointConfig.endpoint_type === 'emergency_api') {
+    if (
+      endpointConfig.priority_rules.emergency_access_priority &&
+      endpointConfig.endpoint_type === 'emergency_api'
+    ) {
       return {
         ...limits,
         requests_per_minute: Math.floor(limits.requests_per_minute * 3),
         requests_per_hour: Math.floor(limits.requests_per_hour * 3),
-        concurrent_requests: Math.floor(limits.concurrent_requests * 2)
+        concurrent_requests: Math.floor(limits.concurrent_requests * 2),
       };
     }
 
     return limits;
   }
 
-  private async validateEndpointConstitutionalCompliance(endpoint: EndpointRateLimit): Promise<void> {
+  private async validateEndpointConstitutionalCompliance(
+    endpoint: EndpointRateLimit
+  ): Promise<void> {
     // Validate patient data endpoints have proper protections
     if (endpoint.endpoint_type === 'patient_data') {
       if (!endpoint.constitutional_protections.patient_privacy_enforcement) {
@@ -1069,26 +1120,29 @@ export class ApiRateLimitingService {
     }
 
     // Validate medical record endpoints have medical secrecy protection
-    if (endpoint.endpoint_type === 'medical_records') {
-      if (!endpoint.constitutional_protections.medical_secrecy_protection) {
-        throw new Error('Medical record endpoints must enforce medical secrecy');
-      }
+    if (
+      endpoint.endpoint_type === 'medical_records' &&
+      !endpoint.constitutional_protections.medical_secrecy_protection
+    ) {
+      throw new Error('Medical record endpoints must enforce medical secrecy');
     }
   }
 
   private async validateHealthcareEndpointRequirements(endpoint: EndpointRateLimit): Promise<void> {
     // Validate emergency endpoints allow emergency access
-    if (endpoint.endpoint_type === 'emergency_api') {
-      if (!endpoint.constitutional_protections.emergency_access_allowed) {
-        throw new Error('Emergency endpoints must allow emergency access');
-      }
+    if (
+      endpoint.endpoint_type === 'emergency_api' &&
+      !endpoint.constitutional_protections.emergency_access_allowed
+    ) {
+      throw new Error('Emergency endpoints must allow emergency access');
     }
 
     // Validate authentication endpoints have appropriate throttling
-    if (endpoint.endpoint_type === 'authentication') {
-      if (endpoint.rate_limits.requests_per_minute > 30) {
-        throw new Error('Authentication endpoints should have stricter rate limits');
-      }
+    if (
+      endpoint.endpoint_type === 'authentication' &&
+      endpoint.rate_limits.requests_per_minute > 30
+    ) {
+      throw new Error('Authentication endpoints should have stricter rate limits');
     }
   }
 
@@ -1104,7 +1158,10 @@ export class ApiRateLimitingService {
     }
 
     // Validate healthcare professional verification for medical systems
-    if (client.client_type === 'healthcare_system' && !client.constitutional_compliance.healthcare_professional_verified) {
+    if (
+      client.client_type === 'healthcare_system' &&
+      !client.constitutional_compliance.healthcare_professional_verified
+    ) {
       throw new Error('Healthcare professional verification required for healthcare systems');
     }
   }
@@ -1121,10 +1178,12 @@ export class ApiRateLimitingService {
     }
   }
 
-  private async applyViolationMitigation(violation: RateLimitViolation): Promise<Record<string, any>> {
+  private async applyViolationMitigation(
+    violation: RateLimitViolation
+  ): Promise<Record<string, any>> {
     const mitigation: Record<string, any> = {
       action_taken: violation.mitigation_action.action_taken,
-      constitutional_compliance_maintained: true
+      constitutional_compliance_maintained: true,
     };
 
     switch (violation.mitigation_action.action_taken) {
@@ -1132,9 +1191,12 @@ export class ApiRateLimitingService {
         if (violation.client_id) {
           // Add to temporary blacklist
           this.blacklistedIps.add(violation.ip_address);
-          setTimeout(() => {
-            this.blacklistedIps.delete(violation.ip_address);
-          }, (violation.mitigation_action.block_duration_minutes || 15) * 60 * 1000);
+          setTimeout(
+            () => {
+              this.blacklistedIps.delete(violation.ip_address);
+            },
+            (violation.mitigation_action.block_duration_minutes || 15) * 60 * 1000
+          );
         }
         mitigation.temporary_block_applied = true;
         break;
@@ -1152,28 +1214,34 @@ export class ApiRateLimitingService {
     return mitigation;
   }
 
-  private async assessConstitutionalImpact(violation: RateLimitViolation): Promise<Record<string, any>> {
+  private async assessConstitutionalImpact(
+    violation: RateLimitViolation
+  ): Promise<Record<string, any>> {
     return {
       patient_privacy_protected: true,
       medical_secrecy_maintained: true,
       lgpd_compliance_preserved: true,
       constitutional_rights_respected: true,
-      impact_level: violation.constitutional_impact.patient_privacy_risk
+      impact_level: violation.constitutional_impact.patient_privacy_risk,
     };
   }
 
   private getMaxEmergencyDuration(urgencyLevel: string): number {
     const durationMap = {
-      'high': 60, // 1 hour
-      'critical': 120, // 2 hours
-      'life_threatening': 240 // 4 hours
+      high: 60, // 1 hour
+      critical: 120, // 2 hours
+      life_threatening: 240, // 4 hours
     };
     return durationMap[urgencyLevel as keyof typeof durationMap] || 60;
   }
 
   private isRequestFromBrazil(ipAddress: string): boolean {
     // Mock geographic check - in production, use actual IP geolocation service
-    return !ipAddress.startsWith('192.168.') && !ipAddress.startsWith('10.') && !ipAddress.startsWith('172.');
+    return !(
+      ipAddress.startsWith('192.168.') ||
+      ipAddress.startsWith('10.') ||
+      ipAddress.startsWith('172.')
+    );
   }
 
   /**
@@ -1188,10 +1256,14 @@ export class ApiRateLimitingService {
     emergency_bypasses_active: number;
   } {
     const totalRequests = this.auditTrail.length;
-    const allowedRequests = this.auditTrail.filter(a => a.rate_limit_status === 'allowed').length;
-    const throttledRequests = this.auditTrail.filter(a => a.rate_limit_status === 'throttled').length;
-    const blockedRequests = this.auditTrail.filter(a => a.rate_limit_status === 'blocked').length;
-    const activeViolations = Array.from(this.violations.values()).filter(v => !v.resolved_at).length;
+    const allowedRequests = this.auditTrail.filter((a) => a.rate_limit_status === 'allowed').length;
+    const throttledRequests = this.auditTrail.filter(
+      (a) => a.rate_limit_status === 'throttled'
+    ).length;
+    const blockedRequests = this.auditTrail.filter((a) => a.rate_limit_status === 'blocked').length;
+    const activeViolations = Array.from(this.violations.values()).filter(
+      (v) => !v.resolved_at
+    ).length;
     const emergencyBypasses = this.emergencyBypassTokens.size;
 
     return {
@@ -1200,7 +1272,7 @@ export class ApiRateLimitingService {
       requests_throttled: throttledRequests,
       requests_blocked: blockedRequests,
       active_violations: activeViolations,
-      emergency_bypasses_active: emergencyBypasses
+      emergency_bypasses_active: emergencyBypasses,
     };
   }
 
@@ -1215,7 +1287,7 @@ export class ApiRateLimitingService {
    * Get active violations for monitoring
    */
   getActiveViolations(): RateLimitViolation[] {
-    return Array.from(this.violations.values()).filter(v => !v.resolved_at);
+    return Array.from(this.violations.values()).filter((v) => !v.resolved_at);
   }
 
   /**
@@ -1262,7 +1334,7 @@ export class ApiRateLimitingService {
     return {
       compliant: score >= 9.9 && issues.length === 0,
       score: Math.max(score, 0),
-      issues
+      issues,
     };
   }
 }
@@ -1277,7 +1349,9 @@ export function createApiRateLimitingService(config: RateLimitConfig): ApiRateLi
 /**
  * Constitutional validation for API rate limiting configuration
  */
-export async function validateApiRateLimiting(config: RateLimitConfig): Promise<{ valid: boolean; violations: string[] }> {
+export async function validateApiRateLimiting(
+  config: RateLimitConfig
+): Promise<{ valid: boolean; violations: string[] }> {
   const violations: string[] = [];
 
   // Validate constitutional protection requirement
@@ -1312,6 +1386,6 @@ export async function validateApiRateLimiting(config: RateLimitConfig): Promise<
 
   return {
     valid: violations.length === 0,
-    violations
+    violations,
   };
 }

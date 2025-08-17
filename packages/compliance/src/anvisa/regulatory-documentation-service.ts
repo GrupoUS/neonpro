@@ -1,14 +1,14 @@
 /**
  * ANVISA Regulatory Documentation Service
  * Constitutional healthcare compliance for automated regulatory documentation
- * 
+ *
  * @fileoverview Automated ANVISA regulatory documentation generation and management
  * @version 1.0.0
  * @since 2025-01-17
  */
 
 import type { Database } from '@neonpro/types';
-import { createClient } from '@supabase/supabase-js';
+import type { createClient } from '@supabase/supabase-js';
 
 /**
  * ANVISA Regulatory Document Interface
@@ -18,7 +18,12 @@ export interface RegulatoryDocument {
   /** Unique document identifier */
   document_id: string;
   /** Type of regulatory document */
-  document_type: 'compliance_report' | 'adverse_event_report' | 'inspection_response' | 'renewal_application' | 'safety_assessment';
+  document_type:
+    | 'compliance_report'
+    | 'adverse_event_report'
+    | 'inspection_response'
+    | 'renewal_application'
+    | 'safety_assessment';
   /** Document title (constitutional requirement) */
   title: string;
   /** Generated document content */
@@ -39,7 +44,7 @@ export interface RegulatoryDocument {
   updated_at: Date;
   /** Constitutional audit trail */
   audit_trail: DocumentAudit[];
-}/**
+} /**
  * Document Audit Trail
  * Constitutional audit requirements for document changes
  */
@@ -88,7 +93,7 @@ export interface DocumentGenerationParams {
   compliance_requirements: string[];
   /** Target audience (ANVISA, internal, clinic) */
   target_audience: 'anvisa' | 'internal' | 'clinic_management';
-}/**
+} /**
  * ANVISA Regulatory Documentation Service Implementation
  * Constitutional healthcare compliance with automated document generation ≥9.9/10
  */
@@ -143,16 +148,18 @@ export class RegulatoryDocumentationService {
         created_by: userId,
         created_at: timestamp,
         updated_at: timestamp,
-        audit_trail: [{
-          audit_id: crypto.randomUUID(),
-          document_id: documentId,
-          action: 'created',
-          previous_state: {},
-          new_state: { document_type: params.document_type, status: 'draft' },
-          user_id: userId,
-          timestamp,
-          reason: 'Initial document generation'
-        }]
+        audit_trail: [
+          {
+            audit_id: crypto.randomUUID(),
+            document_id: documentId,
+            action: 'created',
+            previous_state: {},
+            new_state: { document_type: params.document_type, status: 'draft' },
+            user_id: userId,
+            timestamp,
+            reason: 'Initial document generation',
+          },
+        ],
       };
 
       // Store document with constitutional compliance
@@ -172,7 +179,7 @@ export class RegulatoryDocumentationService {
       console.error('Generate document service error:', error);
       return { success: false, error: 'Constitutional healthcare service error' };
     }
-  }  /**
+  } /**
    * Generate document content based on type and parameters
    * Constitutional ANVISA documentation standards
    */
@@ -199,11 +206,17 @@ export class RegulatoryDocumentationService {
           content = await this.generateSafetyAssessmentContent(params);
           break;
         default:
-          return { success: false, error: 'Unsupported document type for constitutional compliance' };
+          return {
+            success: false,
+            error: 'Unsupported document type for constitutional compliance',
+          };
       }
 
       if (!content || content.length < 100) {
-        return { success: false, error: 'Generated content does not meet constitutional minimum requirements' };
+        return {
+          success: false,
+          error: 'Generated content does not meet constitutional minimum requirements',
+        };
       }
 
       return { success: true, content };
@@ -220,7 +233,7 @@ export class RegulatoryDocumentationService {
   private async generateComplianceReportContent(params: DocumentGenerationParams): Promise<string> {
     const currentDate = new Date().toLocaleDateString('pt-BR');
     const clinicName = params.template_params.clinic_name || 'Clínica';
-    
+
     return `
 RELATÓRIO DE CONFORMIDADE ANVISA
 Data: ${currentDate}
@@ -246,13 +259,15 @@ Declaramos que este estabelecimento opera em conformidade com a legislação san
 Responsável Técnico: ${params.template_params.technical_responsible || '[Nome do RT]'}
 CRF/CRM: ${params.template_params.professional_license || '[Número do registro]'}
 `;
-  }  /**
+  } /**
    * Generate adverse event report content
    * Constitutional patient safety reporting
    */
-  private async generateAdverseEventReportContent(params: DocumentGenerationParams): Promise<string> {
+  private async generateAdverseEventReportContent(
+    params: DocumentGenerationParams
+  ): Promise<string> {
     const currentDate = new Date().toLocaleDateString('pt-BR');
-    
+
     return `
 RELATÓRIO DE EVENTO ADVERSO - ANVISA
 Data: ${currentDate}
@@ -287,7 +302,10 @@ Este relatório foi elaborado em conformidade com os princípios constitucionais
 
       // Validate template parameters
       if (!params.template_params || Object.keys(params.template_params).length === 0) {
-        return { valid: false, error: 'Template parameters required for constitutional documentation' };
+        return {
+          valid: false,
+          error: 'Template parameters required for constitutional documentation',
+        };
       }
 
       // Validate source data based on document type
@@ -298,7 +316,10 @@ Este relatório foi elaborado em conformidade com os princípios constitucionais
           }
           break;
         case 'adverse_event_report':
-          if (!params.source_data.adverse_events || params.source_data.adverse_events.length === 0) {
+          if (
+            !params.source_data.adverse_events ||
+            params.source_data.adverse_events.length === 0
+          ) {
             return { valid: false, error: 'Adverse events data required for event report' };
           }
           break;
@@ -319,7 +340,7 @@ Este relatório foi elaborado em conformidade com os princípios constitucionais
       console.error('Validation parameters error:', error);
       return { valid: false, error: 'Constitutional validation service error' };
     }
-  }  /**
+  } /**
    * Calculate constitutional compliance score for generated document
    * Healthcare quality standards ≥9.9/10
    */
@@ -329,7 +350,7 @@ Este relatório foi elaborado em conformidade com os princípios constitucionais
   ): Promise<number> {
     try {
       let score = 10.0; // Start with perfect score
-      
+
       // Constitutional content validation criteria
       const validationCriteria = {
         // Minimum content length requirements
@@ -340,10 +361,10 @@ Este relatório foi elaborado em conformidade com os princípios constitucionais
           'constitucion',
           'anvisa',
           'saúde pública',
-          'responsável técnico'
+          'responsável técnico',
         ],
         // Required regulatory references
-        regulatoryReferences: this.getRequiredReferences(documentType)
+        regulatoryReferences: this.getRequiredReferences(documentType),
       };
 
       // Validate content length (constitutional completeness)
@@ -353,19 +374,19 @@ Este relatório foi elaborado em conformidade com os princípios constitucionais
 
       // Validate constitutional elements presence
       const missingElements = validationCriteria.constitutionalElements.filter(
-        element => !content.toLowerCase().includes(element.toLowerCase())
+        (element) => !content.toLowerCase().includes(element.toLowerCase())
       );
       score -= missingElements.length * 0.1;
 
       // Validate regulatory references
       const missingReferences = validationCriteria.regulatoryReferences.filter(
-        ref => !content.includes(ref)
+        (ref) => !content.includes(ref)
       );
       score -= missingReferences.length * 0.1;
 
       // Ensure constitutional minimum score
       const finalScore = Math.max(score, 9.9);
-      
+
       return Math.round(finalScore * 10) / 10; // Round to 1 decimal place
     } catch (error) {
       console.error('Calculate compliance score error:', error);
@@ -381,43 +402,43 @@ Este relatório foi elaborado em conformidade com os princípios constitucionais
     documentType: RegulatoryDocument['document_type']
   ): Promise<string[]> {
     const referenceMap: Record<RegulatoryDocument['document_type'], string[]> = {
-      'compliance_report': [
+      compliance_report: [
         'RDC nº 302/2005 - Regulamento Técnico para funcionamento de Laboratórios Clínicos',
         'RDC nº 63/2011 - Requisitos de Boas Práticas de Funcionamento',
         'Lei nº 6.360/1976 - Vigilância Sanitária',
-        'Constituição Federal Art. 196 - Direito à Saúde'
+        'Constituição Federal Art. 196 - Direito à Saúde',
       ],
-      'adverse_event_report': [
+      adverse_event_report: [
         'RDC nº 4/2009 - Notificação de Eventos Adversos',
         'Lei nº 6.360/1976 - Vigilância Sanitária',
         'Portaria nº 1.660/2009 - Sistema de Notificação e Investigação',
-        'Constituição Federal Art. 196 - Proteção à Saúde Pública'
+        'Constituição Federal Art. 196 - Proteção à Saúde Pública',
       ],
-      'inspection_response': [
+      inspection_response: [
         'Lei nº 9.782/1999 - Sistema Nacional de Vigilância Sanitária',
         'RDC nº 302/2005 - Funcionamento de Laboratórios',
-        'Constituição Federal Art. 200 - Competências do SUS'
+        'Constituição Federal Art. 200 - Competências do SUS',
       ],
-      'renewal_application': [
+      renewal_application: [
         'Lei nº 6.360/1976 - Registro de Produtos',
         'RDC nº 7/2015 - Produtos de Higiene Pessoal',
-        'Constituição Federal Art. 196 - Direito à Saúde'
+        'Constituição Federal Art. 196 - Direito à Saúde',
       ],
-      'safety_assessment': [
+      safety_assessment: [
         'RDC nº 7/2015 - Segurança de Produtos Cosméticos',
         'RDC nº 4/2009 - Eventos Adversos',
-        'Constituição Federal Art. 196 - Proteção à Saúde'
-      ]
+        'Constituição Federal Art. 196 - Proteção à Saúde',
+      ],
     };
 
     return referenceMap[documentType] || [];
-  }  /**
+  } /**
    * Get required regulatory references for document type
    * Constitutional reference validation
    */
   private getRequiredReferences(documentType: RegulatoryDocument['document_type']): string[] {
     const baseReferences = ['RDC', 'Lei', 'Constituição Federal'];
-    
+
     switch (documentType) {
       case 'adverse_event_report':
         return [...baseReferences, 'RDC nº 4/2009', 'Portaria nº 1.660/2009'];
@@ -440,11 +461,11 @@ Este relatório foi elaborado em conformidade com os princípios constitucionais
     const clinicName = templateParams.clinic_name || 'Estabelecimento';
 
     const titleMap: Record<RegulatoryDocument['document_type'], string> = {
-      'compliance_report': `Relatório de Conformidade ANVISA - ${clinicName} - ${currentDate}`,
-      'adverse_event_report': `Relatório de Evento Adverso - ${clinicName} - ${currentDate}`,
-      'inspection_response': `Resposta à Inspeção ANVISA - ${clinicName} - ${currentDate}`,
-      'renewal_application': `Solicitação de Renovação de Registro - ${clinicName} - ${currentDate}`,
-      'safety_assessment': `Avaliação de Segurança - ${clinicName} - ${currentDate}`
+      compliance_report: `Relatório de Conformidade ANVISA - ${clinicName} - ${currentDate}`,
+      adverse_event_report: `Relatório de Evento Adverso - ${clinicName} - ${currentDate}`,
+      inspection_response: `Resposta à Inspeção ANVISA - ${clinicName} - ${currentDate}`,
+      renewal_application: `Solicitação de Renovação de Registro - ${clinicName} - ${currentDate}`,
+      safety_assessment: `Avaliação de Segurança - ${clinicName} - ${currentDate}`,
     };
 
     return titleMap[documentType];
@@ -459,13 +480,17 @@ Este relatório foi elaborado em conformidade com os princípios constitucionais
       return 'Nenhum produto registrado encontrado.';
     }
 
-    return products.map((product, index) => `
+    return products
+      .map(
+        (product, index) => `
 ${index + 1}. ${product.name || 'Produto'}
    - Registro ANVISA: ${product.anvisa_registration_number || 'N/A'}
    - Categoria: ${product.product_category || 'N/A'}
    - Status: ${product.registration_status || 'N/A'}
    - Validade: ${product.registration_expiry ? new Date(product.registration_expiry).toLocaleDateString('pt-BR') : 'N/A'}
-`).join('\n');
+`
+      )
+      .join('\n');
   }
 
   /**
@@ -477,13 +502,17 @@ ${index + 1}. ${product.name || 'Produto'}
       return 'Nenhum evento adverso reportado no período.';
     }
 
-    return adverseEvents.map((event, index) => `
+    return adverseEvents
+      .map(
+        (event, index) => `
 Evento ${index + 1}:
 - Data: ${event.occurred_at ? new Date(event.occurred_at).toLocaleDateString('pt-BR') : 'N/A'}
 - Gravidade: ${event.severity || 'N/A'}
 - Descrição: ${event.description || 'N/A'}
 - Produto Relacionado: ${event.related_product || 'N/A'}
-`).join('\n');
+`
+      )
+      .join('\n');
   }
 
   /**
@@ -500,17 +529,19 @@ Evento ${index + 1}:
       '2. Treinamento adicional da equipe técnica',
       '3. Monitoramento intensificado dos procedimentos',
       '4. Comunicação com fornecedores sobre qualidade dos produtos',
-      '5. Implementação de checklist de segurança constitucional'
+      '5. Implementação de checklist de segurança constitucional',
     ];
 
     return standardMeasures.join('\n');
-  }  /**
+  } /**
    * Generate inspection response content
    * Constitutional response to ANVISA inspections
    */
-  private async generateInspectionResponseContent(params: DocumentGenerationParams): Promise<string> {
+  private async generateInspectionResponseContent(
+    params: DocumentGenerationParams
+  ): Promise<string> {
     const currentDate = new Date().toLocaleDateString('pt-BR');
-    
+
     return `
 RESPOSTA À INSPEÇÃO ANVISA
 Data: ${currentDate}
@@ -537,9 +568,11 @@ Comprometemo-nos a implementar todas as medidas necessárias para assegurar a co
    * Generate renewal application content
    * Constitutional product registration renewal
    */
-  private async generateRenewalApplicationContent(params: DocumentGenerationParams): Promise<string> {
+  private async generateRenewalApplicationContent(
+    params: DocumentGenerationParams
+  ): Promise<string> {
     const currentDate = new Date().toLocaleDateString('pt-BR');
-    
+
     return `
 SOLICITAÇÃO DE RENOVAÇÃO DE REGISTRO ANVISA
 Data: ${currentDate}
@@ -570,7 +603,7 @@ Declaramos que todos os produtos atendem aos requisitos constitucionais de prote
    */
   private async generateSafetyAssessmentContent(params: DocumentGenerationParams): Promise<string> {
     const currentDate = new Date().toLocaleDateString('pt-BR');
-    
+
     return `
 AVALIAÇÃO DE SEGURANÇA - ANVISA
 Data: ${currentDate}
@@ -594,7 +627,7 @@ Todos os produtos avaliados demonstram perfil de segurança adequado para uso em
 - Monitoramento contínuo de eventos adversos
 - Revisão periódica dos procedimentos de segurança
 `;
-  }  /**
+  } /**
    * Update regulatory document with constitutional audit trail
    * ANVISA compliance with change tracking
    */
@@ -625,14 +658,14 @@ Todos os produtos avaliados demonstram perfil de segurança adequado para uso em
         new_state: updates,
         user_id: userId,
         timestamp,
-        reason
+        reason,
       };
 
       const updatedDocument = {
         ...currentDoc,
         ...updates,
         updated_at: timestamp,
-        audit_trail: [...(currentDoc.audit_trail || []), auditEntry]
+        audit_trail: [...(currentDoc.audit_trail || []), auditEntry],
       };
 
       const { data, error } = await this.supabase
@@ -698,7 +731,7 @@ Todos os produtos avaliados demonstram perfil de segurança adequado para uso em
       console.error('Get documents service error:', error);
       return { success: false, error: 'Constitutional healthcare service error' };
     }
-  }  /**
+  } /**
    * Submit document to ANVISA for regulatory review
    * Constitutional submission process with audit trail
    */
@@ -724,15 +757,18 @@ Todos os produtos avaliados demonstram perfil de segurança adequado para uso em
       }
 
       if (document.compliance_score < 9.9) {
-        return { success: false, error: 'Document does not meet constitutional compliance standards for submission' };
+        return {
+          success: false,
+          error: 'Document does not meet constitutional compliance standards for submission',
+        };
       }
 
       // Update document status to submitted
       const submissionResult = await this.updateDocument(
         documentId,
-        { 
+        {
           status: 'submitted_to_anvisa',
-          updated_at: new Date()
+          updated_at: new Date(),
         },
         userId,
         'Document submitted to ANVISA for regulatory review'
@@ -750,16 +786,16 @@ Todos os produtos avaliados demonstram perfil de segurança adequado para uso em
         submitted_by: userId,
         submitted_at: new Date().toISOString(),
         status: 'submitted',
-        constitutional_compliance: true
+        constitutional_compliance: true,
       });
 
-      return { 
-        success: true, 
-        data: { 
+      return {
+        success: true,
+        data: {
           submission_id: crypto.randomUUID(),
           status: 'submitted_to_anvisa',
-          message: 'Document successfully submitted to ANVISA for review'
-        }
+          message: 'Document successfully submitted to ANVISA for review',
+        },
       };
     } catch (error) {
       console.error('Submit to ANVISA error:', error);
@@ -770,15 +806,19 @@ Todos os produtos avaliados demonstram perfil de segurança adequado para uso em
   // Helper methods for content generation
 
   private formatInspectionItems(inspectionData: any): string {
-    if (!inspectionData || !inspectionData.items) {
+    if (!(inspectionData && inspectionData.items)) {
       return 'Itens de inspeção não especificados.';
     }
-    
-    return inspectionData.items.map((item: any, index: number) => `
+
+    return inspectionData.items
+      .map(
+        (item: any, index: number) => `
 ${index + 1}. ${item.description || 'Item de inspeção'}
    Status: ${item.status || 'Em análise'}
    Observações: ${item.observations || 'Nenhuma observação'}
-`).join('\n');
+`
+      )
+      .join('\n');
   }
 
   private generateCorrectiveActionPlan(inspectionData: any): string {
@@ -804,12 +844,16 @@ Fase 3 (90 dias): Auditoria interna e confirmação de conformidade constitucion
       return 'Nenhum produto especificado para renovação.';
     }
 
-    return products.map((product, index) => `
+    return products
+      .map(
+        (product, index) => `
 ${index + 1}. ${product.name || 'Produto'}
    Registro Atual: ${product.anvisa_registration_number || 'N/A'}
    Categoria: ${product.product_category || 'N/A'}
    Validade Atual: ${product.registration_expiry ? new Date(product.registration_expiry).toLocaleDateString('pt-BR') : 'N/A'}
-`).join('\n');
+`
+      )
+      .join('\n');
   }
 
   private formatSafetyAssessmentProducts(assessments: any[] = []): string {
@@ -817,12 +861,16 @@ ${index + 1}. ${product.name || 'Produto'}
       return 'Nenhum produto avaliado especificado.';
     }
 
-    return assessments.map((assessment, index) => `
+    return assessments
+      .map(
+        (assessment, index) => `
 ${index + 1}. ${assessment.product_name || 'Produto'}
    Categoria de Risco: ${assessment.risk_category || 'Baixo'}
    Resultado: ${assessment.safety_result || 'Aprovado'}
    Observações: ${assessment.observations || 'Conforme padrões de segurança'}
-`).join('\n');
+`
+      )
+      .join('\n');
   }
 }
 

@@ -1,14 +1,14 @@
 /**
  * ANVISA Product Registration Service
  * Constitutional healthcare compliance for product registration monitoring
- * 
+ *
  * @fileoverview ANVISA product registration validation and monitoring
  * @version 1.0.0
  * @since 2025-01-17
  */
 
 import type { Database } from '@neonpro/types';
-import { createClient } from '@supabase/supabase-js';
+import type { createClient } from '@supabase/supabase-js';
 
 /**
  * ANVISA Product Registration Interface
@@ -37,7 +37,7 @@ export interface ProductRegistration {
   updated_at: Date;
   /** Constitutional audit trail */
   audit_trail: ProductRegistrationAudit[];
-}/**
+} /**
  * Product Registration Audit Trail
  * Constitutional audit requirements for product registration changes
  */
@@ -80,7 +80,7 @@ export interface ProductRegistrationFilters {
   monitoring_alerts?: boolean;
   /** Constitutional compliance search */
   compliance_search?: string;
-}/**
+} /**
  * ANVISA Product Registration Service Implementation
  * Constitutional healthcare compliance with ≥9.9/10 quality standards
  */
@@ -96,7 +96,10 @@ export class ProductRegistrationService {
    * Constitutional healthcare validation with audit trail
    */
   async registerProduct(
-    productData: Omit<ProductRegistration, 'product_id' | 'created_at' | 'updated_at' | 'audit_trail'>,
+    productData: Omit<
+      ProductRegistration,
+      'product_id' | 'created_at' | 'updated_at' | 'audit_trail'
+    >,
     userId: string
   ): Promise<{ success: boolean; data?: ProductRegistration; error?: string }> {
     try {
@@ -115,16 +118,18 @@ export class ProductRegistrationService {
         product_id: productId,
         created_at: timestamp,
         updated_at: timestamp,
-        audit_trail: [{
-          audit_id: crypto.randomUUID(),
-          product_id: productId,
-          action: 'created',
-          previous_values: {},
-          new_values: productData,
-          user_id: userId,
-          timestamp,
-          reason: 'Initial product registration'
-        }]
+        audit_trail: [
+          {
+            audit_id: crypto.randomUUID(),
+            product_id: productId,
+            action: 'created',
+            previous_values: {},
+            new_values: productData,
+            user_id: userId,
+            timestamp,
+            reason: 'Initial product registration',
+          },
+        ],
       };
 
       // Store in database with constitutional compliance
@@ -149,7 +154,7 @@ export class ProductRegistrationService {
       console.error('Product registration service error:', error);
       return { success: false, error: 'Constitutional healthcare service error' };
     }
-  }  /**
+  } /**
    * Get product registrations with constitutional filtering
    * LGPD compliant with tenant isolation
    */
@@ -191,7 +196,7 @@ export class ProductRegistrationService {
       console.error('Get product registrations service error:', error);
       return { success: false, error: 'Constitutional healthcare service error' };
     }
-  }  /**
+  } /**
    * Update product registration with constitutional audit trail
    * ANVISA compliance with change tracking
    */
@@ -216,7 +221,7 @@ export class ProductRegistrationService {
       // Constitutional validation of updates
       const validationResult = await this.validateProductRegistration({
         ...currentProduct,
-        ...updates
+        ...updates,
       });
       if (!validationResult.valid) {
         return { success: false, error: validationResult.error };
@@ -231,7 +236,7 @@ export class ProductRegistrationService {
         new_values: updates,
         user_id: userId,
         timestamp,
-        reason
+        reason,
       };
 
       // Update with constitutional compliance
@@ -239,7 +244,7 @@ export class ProductRegistrationService {
         ...currentProduct,
         ...updates,
         updated_at: timestamp,
-        audit_trail: [...(currentProduct.audit_trail || []), auditEntry]
+        audit_trail: [...(currentProduct.audit_trail || []), auditEntry],
       };
 
       const { data, error } = await this.supabase
@@ -259,7 +264,7 @@ export class ProductRegistrationService {
       console.error('Update product registration service error:', error);
       return { success: false, error: 'Constitutional healthcare service error' };
     }
-  }  /**
+  } /**
    * Constitutional validation for product registration
    * ANVISA compliance with healthcare standards ≥9.9/10
    */
@@ -269,7 +274,10 @@ export class ProductRegistrationService {
     try {
       // Constitutional validation rules
       if (!productData.anvisa_registration_number) {
-        return { valid: false, error: 'ANVISA registration number is mandatory for constitutional compliance' };
+        return {
+          valid: false,
+          error: 'ANVISA registration number is mandatory for constitutional compliance',
+        };
       }
 
       // ANVISA registration number format validation
@@ -280,20 +288,33 @@ export class ProductRegistrationService {
 
       // Constitutional expiry date validation
       if (!productData.registration_expiry) {
-        return { valid: false, error: 'Registration expiry date is required for constitutional monitoring' };
+        return {
+          valid: false,
+          error: 'Registration expiry date is required for constitutional monitoring',
+        };
       }
 
       const expiryDate = new Date(productData.registration_expiry);
       const currentDate = new Date();
-      
+
       // Warn if already expired
       if (expiryDate < currentDate) {
-        return { valid: false, error: 'Registration has expired - renewal required for constitutional compliance' };
+        return {
+          valid: false,
+          error: 'Registration has expired - renewal required for constitutional compliance',
+        };
       }
 
       // Constitutional category validation
-      const validCategories = ['medical_device', 'cosmetic', 'pharmaceutical', 'aesthetic_equipment'];
-      if (!productData.product_category || !validCategories.includes(productData.product_category)) {
+      const validCategories = [
+        'medical_device',
+        'cosmetic',
+        'pharmaceutical',
+        'aesthetic_equipment',
+      ];
+      if (
+        !(productData.product_category && validCategories.includes(productData.product_category))
+      ) {
         return { valid: false, error: 'Valid product category required for ANVISA classification' };
       }
 
@@ -302,7 +323,7 @@ export class ProductRegistrationService {
       console.error('Product validation error:', error);
       return { valid: false, error: 'Constitutional validation service error' };
     }
-  }  /**
+  } /**
    * Schedule constitutional expiry alerts for product registration
    * ANVISA compliance monitoring with proactive notifications
    */
@@ -324,8 +345,8 @@ export class ProductRegistrationService {
       const alertDates = [
         new Date(expiryDate.getTime() - 90 * 24 * 60 * 60 * 1000), // 90 days before
         new Date(expiryDate.getTime() - 30 * 24 * 60 * 60 * 1000), // 30 days before
-        new Date(expiryDate.getTime() - 7 * 24 * 60 * 60 * 1000),  // 7 days before
-        expiryDate // On expiry date
+        new Date(expiryDate.getTime() - 7 * 24 * 60 * 60 * 1000), // 7 days before
+        expiryDate, // On expiry date
       ];
 
       // Schedule alerts for future dates
@@ -340,20 +361,20 @@ export class ProductRegistrationService {
             alert_status: 'scheduled',
             priority: alertDate.getTime() === expiryDate.getTime() ? 'critical' : 'warning',
             message: `ANVISA product registration expires on ${expiryDate.toLocaleDateString('pt-BR')}`,
-            constitutional_compliance: true
+            constitutional_compliance: true,
           });
         }
       }
     } catch (error) {
       console.error('Schedule expiry alerts error:', error);
     }
-  }  /**
+  } /**
    * Get products expiring soon for constitutional monitoring
    * ANVISA compliance dashboard integration
    */
   async getExpiringProducts(
     tenantId: string,
-    daysThreshold: number = 30
+    daysThreshold = 30
   ): Promise<{ success: boolean; data?: ProductRegistration[]; error?: string }> {
     try {
       const thresholdDate = new Date();
@@ -398,15 +419,17 @@ export class ProductRegistrationService {
 
       const report = {
         total_products: products?.length || 0,
-        active_registrations: products?.filter(p => p.registration_status === 'active').length || 0,
-        expiring_soon: products?.filter(p => {
-          const expiry = new Date(p.registration_expiry);
-          const thirtyDaysFromNow = new Date();
-          thirtyDaysFromNow.setDate(thirtyDaysFromNow.getDate() + 30);
-          return expiry <= thirtyDaysFromNow;
-        }).length || 0,
+        active_registrations:
+          products?.filter((p) => p.registration_status === 'active').length || 0,
+        expiring_soon:
+          products?.filter((p) => {
+            const expiry = new Date(p.registration_expiry);
+            const thirtyDaysFromNow = new Date();
+            thirtyDaysFromNow.setDate(thirtyDaysFromNow.getDate() + 30);
+            return expiry <= thirtyDaysFromNow;
+          }).length || 0,
         constitutional_compliance_score: 9.9, // Constitutional healthcare standard
-        generated_at: new Date().toISOString()
+        generated_at: new Date().toISOString(),
       };
 
       return { success: true, data: report };

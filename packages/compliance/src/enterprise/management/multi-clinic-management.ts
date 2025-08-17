@@ -18,7 +18,7 @@ const ClinicSchema = z.object({
     anvisa_license: z.string(),
     cfm_registration: z.string(),
     municipal_license: z.string(),
-    valid_until: z.string().datetime()
+    valid_until: z.string().datetime(),
   }),
   contact_information: z.object({
     address: z.string(),
@@ -27,7 +27,7 @@ const ClinicSchema = z.object({
     zip_code: z.string().regex(/^\d{5}-?\d{3}$/),
     phone: z.string(),
     email: z.string().email(),
-    website: z.string().url().optional()
+    website: z.string().url().optional(),
   }),
   operational_status: z.enum(['active', 'inactive', 'suspended', 'pending_approval']),
   compliance_status: z.object({
@@ -36,10 +36,10 @@ const ClinicSchema = z.object({
     cfm_compliant: z.boolean(),
     constitutional_compliant: z.boolean(),
     last_audit_date: z.string().datetime().optional(),
-    next_audit_due: z.string().datetime()
+    next_audit_due: z.string().datetime(),
   }),
   created_at: z.string().datetime(),
-  updated_at: z.string().datetime()
+  updated_at: z.string().datetime(),
 });
 
 const MultiClinicConfigSchema = z.object({
@@ -52,7 +52,7 @@ const MultiClinicConfigSchema = z.object({
   automatic_compliance_sync: z.boolean().default(true),
   audit_trail_enabled: z.boolean().default(true),
   privacy_by_design: z.boolean().default(true),
-  max_clinics_per_tenant: z.number().min(1).max(100).default(10)
+  max_clinics_per_tenant: z.number().min(1).max(100).default(10),
 });
 
 const ClinicOperationsSchema = z.object({
@@ -66,23 +66,23 @@ const ClinicOperationsSchema = z.object({
     'resource_allocation',
     'staff_management',
     'inventory_management',
-    'financial_management'
+    'financial_management',
   ]),
   operation_parameters: z.record(z.any()),
   privacy_requirements: z.object({
     patient_data_involved: z.boolean(),
     anonymization_required: z.boolean(),
     cross_clinic_sharing: z.boolean(),
-    lgpd_consent_required: z.boolean()
+    lgpd_consent_required: z.boolean(),
   }),
   compliance_validation: z.object({
     anvisa_approval_required: z.boolean(),
     cfm_validation_required: z.boolean(),
-    constitutional_review_needed: z.boolean()
+    constitutional_review_needed: z.boolean(),
   }),
   execution_status: z.enum(['pending', 'in_progress', 'completed', 'failed', 'cancelled']),
   created_at: z.string().datetime(),
-  completed_at: z.string().datetime().optional()
+  completed_at: z.string().datetime().optional(),
 });
 
 const TenantManagementSchema = z.object({
@@ -96,23 +96,23 @@ const TenantManagementSchema = z.object({
     backup_frequency: z.enum(['daily', 'weekly', 'real_time']),
     compliance_level: z.enum(['standard', 'enhanced', 'maximum']),
     privacy_protection_level: z.enum(['basic', 'advanced', 'maximum']),
-    audit_frequency: z.enum(['monthly', 'quarterly', 'semi_annual', 'annual'])
+    audit_frequency: z.enum(['monthly', 'quarterly', 'semi_annual', 'annual']),
   }),
   compliance_profile: z.object({
     lgpd_data_controller: z.string(),
     lgpd_data_protection_officer: z.string(),
     anvisa_responsible_technical: z.string(),
     cfm_medical_director: z.string(),
-    constitutional_compliance_officer: z.string()
+    constitutional_compliance_officer: z.string(),
   }),
   operational_metrics: z.object({
     total_patients: z.number().min(0),
     active_professionals: z.number().min(0),
     monthly_appointments: z.number().min(0),
-    compliance_score: z.number().min(0).max(10)
+    compliance_score: z.number().min(0).max(10),
   }),
   created_at: z.string().datetime(),
-  updated_at: z.string().datetime()
+  updated_at: z.string().datetime(),
 });
 
 // Type definitions
@@ -166,7 +166,7 @@ export class MultiClinicManagementService {
     const fullTenantData: TenantManagement = {
       ...tenantData,
       created_at: now,
-      updated_at: now
+      updated_at: now,
     };
 
     const validatedTenant = TenantManagementSchema.parse(fullTenantData);
@@ -192,19 +192,19 @@ export class MultiClinicManagementService {
         tenant_name: tenant.tenant_name,
         tenant_type: tenant.tenant_type,
         subscription_plan: tenant.subscription_plan,
-        initial_clinics_count: tenant.clinics.length
+        initial_clinics_count: tenant.clinics.length,
       },
       compliance_validation_result: {
         lgpd_compliant: true,
         anvisa_compliant: true,
         cfm_compliant: true,
-        constitutional_compliant: true
+        constitutional_compliant: true,
       },
       privacy_impact_assessment: {
         data_types_processed: ['tenant_metadata', 'clinic_information'],
         privacy_protection_level: tenant.tenant_settings.privacy_protection_level,
         anonymization_applied: this.config.privacy_by_design,
-        consent_required: false // Tenant setup does not require patient consent
+        consent_required: false, // Tenant setup does not require patient consent
       },
       constitutional_compliance_score: 9.9,
       created_at: now,
@@ -212,8 +212,8 @@ export class MultiClinicManagementService {
       regulatory_approvals: {
         anvisa_approval: true,
         cfm_approval: true,
-        lgpd_compliance: true
-      }
+        lgpd_compliance: true,
+      },
     };
 
     this.auditTrail.push(auditEntry);
@@ -221,7 +221,7 @@ export class MultiClinicManagementService {
     return {
       success: true,
       tenant_id: tenant.tenant_id,
-      compliance_validation: auditEntry.compliance_validation_result
+      compliance_validation: auditEntry.compliance_validation_result,
     };
   }
 
@@ -244,7 +244,9 @@ export class MultiClinicManagementService {
 
     // Check clinic limit
     if (tenant.clinics.length >= this.config.max_clinics_per_tenant) {
-      throw new Error(`Maximum clinics per tenant (${this.config.max_clinics_per_tenant}) exceeded`);
+      throw new Error(
+        `Maximum clinics per tenant (${this.config.max_clinics_per_tenant}) exceeded`
+      );
     }
 
     // Validate clinic data
@@ -252,7 +254,7 @@ export class MultiClinicManagementService {
     const fullClinicData: Clinic = {
       ...clinicData,
       created_at: now,
-      updated_at: now
+      updated_at: now,
     };
 
     const validatedClinic = ClinicSchema.parse(fullClinicData);
@@ -289,13 +291,13 @@ export class MultiClinicManagementService {
         clinic_name: validatedClinic.clinic_name,
         cnpj: validatedClinic.cnpj,
         cnes_code: validatedClinic.cnes_code,
-        primary_specialty: validatedClinic.primary_specialty
+        primary_specialty: validatedClinic.primary_specialty,
       },
       compliance_validation_result: regulatoryApprovals,
       privacy_impact_assessment: {
         tenant_isolation_maintained: this.config.tenant_isolation_enabled,
         data_sharing_configured: this.config.cross_clinic_data_sharing,
-        privacy_by_design_applied: this.config.privacy_by_design
+        privacy_by_design_applied: this.config.privacy_by_design,
       },
       constitutional_compliance_score: 9.9,
       created_at: now,
@@ -303,8 +305,8 @@ export class MultiClinicManagementService {
       regulatory_approvals: {
         anvisa_approval: regulatoryApprovals.anvisa_compliant,
         cfm_approval: regulatoryApprovals.cfm_compliant,
-        lgpd_compliance: regulatoryApprovals.lgpd_compliant
-      }
+        lgpd_compliance: regulatoryApprovals.lgpd_compliant,
+      },
     };
 
     this.auditTrail.push(auditEntry);
@@ -312,7 +314,7 @@ export class MultiClinicManagementService {
     return {
       success: true,
       clinic_id: validatedClinic.clinic_id,
-      regulatory_approvals: auditEntry.regulatory_approvals
+      regulatory_approvals: auditEntry.regulatory_approvals,
     };
   }
 
@@ -321,7 +323,10 @@ export class MultiClinicManagementService {
    */
   async executeCrossClinicOperation(
     tenantId: string,
-    operation: Omit<ClinicOperations, 'operation_id' | 'created_at' | 'completed_at' | 'execution_status'>
+    operation: Omit<
+      ClinicOperations,
+      'operation_id' | 'created_at' | 'completed_at' | 'execution_status'
+    >
   ): Promise<{
     success: boolean;
     operation_id: string;
@@ -334,7 +339,7 @@ export class MultiClinicManagementService {
     }
 
     // Validate clinic exists within tenant
-    const clinic = tenant.clinics.find(c => c.clinic_id === operation.clinic_id);
+    const clinic = tenant.clinics.find((c) => c.clinic_id === operation.clinic_id);
     if (!clinic) {
       throw new Error('Clinic not found in tenant');
     }
@@ -345,7 +350,7 @@ export class MultiClinicManagementService {
       operation_id: crypto.randomUUID(),
       ...operation,
       execution_status: 'pending',
-      created_at: now
+      created_at: now,
     };
 
     const validatedOperation = ClinicOperationsSchema.parse(fullOperation);
@@ -356,7 +361,10 @@ export class MultiClinicManagementService {
     }
 
     // Cross-clinic data sharing validation
-    if (validatedOperation.privacy_requirements.cross_clinic_sharing && !this.config.cross_clinic_data_sharing) {
+    if (
+      validatedOperation.privacy_requirements.cross_clinic_sharing &&
+      !this.config.cross_clinic_data_sharing
+    ) {
       throw new Error('Cross-clinic data sharing not enabled for this tenant');
     }
 
@@ -383,12 +391,13 @@ export class MultiClinicManagementService {
         operation_type: validatedOperation.operation_type,
         operation_id: validatedOperation.operation_id,
         patient_data_involved: validatedOperation.privacy_requirements.patient_data_involved,
-        cross_clinic_sharing: validatedOperation.privacy_requirements.cross_clinic_sharing
+        cross_clinic_sharing: validatedOperation.privacy_requirements.cross_clinic_sharing,
       },
       compliance_validation_result: {
         anvisa_approval: !validatedOperation.compliance_validation.anvisa_approval_required,
         cfm_validation: !validatedOperation.compliance_validation.cfm_validation_required,
-        constitutional_review: !validatedOperation.compliance_validation.constitutional_review_needed
+        constitutional_review:
+          !validatedOperation.compliance_validation.constitutional_review_needed,
       },
       privacy_impact_assessment: privacyProtection,
       constitutional_compliance_score: 9.9,
@@ -397,8 +406,8 @@ export class MultiClinicManagementService {
       regulatory_approvals: {
         anvisa_approval: true,
         cfm_approval: true,
-        lgpd_compliance: true
-      }
+        lgpd_compliance: true,
+      },
     };
 
     this.auditTrail.push(auditEntry);
@@ -406,7 +415,7 @@ export class MultiClinicManagementService {
     return {
       success: true,
       operation_id: validatedOperation.operation_id,
-      privacy_protection_applied: privacyProtection
+      privacy_protection_applied: privacyProtection,
     };
   }
 
@@ -432,12 +441,12 @@ export class MultiClinicManagementService {
       total_clinics: tenant.clinics.length,
       subscription_plan: tenant.subscription_plan,
       operational_metrics: tenant.operational_metrics,
-      compliance_profile: tenant.compliance_profile
+      compliance_profile: tenant.compliance_profile,
     };
 
     // Generate clinic compliance details
     const clinicComplianceDetails = await Promise.all(
-      tenant.clinics.map(async clinic => {
+      tenant.clinics.map(async (clinic) => {
         const complianceAssessment = await this.assessClinicCompliance(clinic);
         return {
           clinic_id: clinic.clinic_id,
@@ -445,7 +454,7 @@ export class MultiClinicManagementService {
           compliance_status: clinic.compliance_status,
           compliance_score: complianceAssessment.overall_score,
           areas_of_concern: complianceAssessment.areas_of_concern,
-          recommendations: complianceAssessment.recommendations
+          recommendations: complianceAssessment.recommendations,
         };
       })
     );
@@ -464,7 +473,7 @@ export class MultiClinicManagementService {
       constitutional_standards_met: overallScore >= 9.9,
       privacy_by_design_implemented: this.config.privacy_by_design,
       tenant_isolation_maintained: this.config.tenant_isolation_enabled,
-      audit_trail_complete: this.auditTrail.length > 0
+      audit_trail_complete: this.auditTrail.length > 0,
     };
 
     return {
@@ -472,7 +481,7 @@ export class MultiClinicManagementService {
       clinic_compliance_details: clinicComplianceDetails,
       overall_compliance_score: overallScore,
       recommendations,
-      constitutional_certification: constitutionalCertification
+      constitutional_certification: constitutionalCertification,
     };
   }
 
@@ -500,10 +509,10 @@ export class MultiClinicManagementService {
       throw new Error('Resource sharing not enabled for this tenant');
     }
 
-    const sourceClinic = tenant.clinics.find(c => c.clinic_id === sourceClinicId);
-    const targetClinic = tenant.clinics.find(c => c.clinic_id === targetClinicId);
+    const sourceClinic = tenant.clinics.find((c) => c.clinic_id === sourceClinicId);
+    const targetClinic = tenant.clinics.find((c) => c.clinic_id === targetClinicId);
 
-    if (!sourceClinic || !targetClinic) {
+    if (!(sourceClinic && targetClinic)) {
       throw new Error('Source or target clinic not found in tenant');
     }
 
@@ -532,12 +541,12 @@ export class MultiClinicManagementService {
         resource_type: resourceType,
         source_clinic: sourceClinic.clinic_name,
         target_clinic: targetClinic.clinic_name,
-        privacy_protection_level: privacyProtection.protection_level
+        privacy_protection_level: privacyProtection.protection_level,
       },
       compliance_validation_result: {
         constitutional_sharing_approved: true,
         privacy_protection_adequate: true,
-        tenant_isolation_maintained: true
+        tenant_isolation_maintained: true,
       },
       privacy_impact_assessment: privacyProtection,
       constitutional_compliance_score: 9.9,
@@ -546,8 +555,8 @@ export class MultiClinicManagementService {
       regulatory_approvals: {
         anvisa_approval: true,
         cfm_approval: true,
-        lgpd_compliance: true
-      }
+        lgpd_compliance: true,
+      },
     };
 
     this.auditTrail.push(auditEntry);
@@ -555,7 +564,7 @@ export class MultiClinicManagementService {
     return {
       success: true,
       sharing_id: sharingId,
-      privacy_protection_applied: privacyProtection
+      privacy_protection_applied: privacyProtection,
     };
   }
 
@@ -566,7 +575,7 @@ export class MultiClinicManagementService {
 
     // Validate compliance profile completeness
     const profile = tenant.compliance_profile;
-    if (!profile.lgpd_data_controller || !profile.lgpd_data_protection_officer) {
+    if (!(profile.lgpd_data_controller && profile.lgpd_data_protection_officer)) {
       throw new Error('LGPD compliance profile incomplete');
     }
 
@@ -577,17 +586,23 @@ export class MultiClinicManagementService {
 
   private async validateTenantLgpdCompliance(tenant: TenantManagement): Promise<void> {
     // Validate data retention settings
-    if (tenant.tenant_settings.data_retention_days < 1095) { // Minimum 3 years for medical records
+    if (tenant.tenant_settings.data_retention_days < 1095) {
+      // Minimum 3 years for medical records
       throw new Error('Data retention period below legal minimum for medical records');
     }
 
     // Validate privacy protection level
-    if (tenant.tenant_settings.privacy_protection_level === 'basic' && tenant.tenant_type === 'healthcare_network') {
+    if (
+      tenant.tenant_settings.privacy_protection_level === 'basic' &&
+      tenant.tenant_type === 'healthcare_network'
+    ) {
       throw new Error('Healthcare networks require advanced privacy protection');
     }
   }
 
-  private async initializeTenantWithPrivacyByDesign(tenant: TenantManagement): Promise<TenantManagement> {
+  private async initializeTenantWithPrivacyByDesign(
+    tenant: TenantManagement
+  ): Promise<TenantManagement> {
     if (!this.config.privacy_by_design) return tenant;
 
     // Apply privacy-by-design principles
@@ -602,18 +617,20 @@ export class MultiClinicManagementService {
     return enhancedTenant;
   }
 
-  private async validateClinicRegulatoryCompliance(clinic: Clinic): Promise<Record<string, boolean>> {
+  private async validateClinicRegulatoryCompliance(
+    clinic: Clinic
+  ): Promise<Record<string, boolean>> {
     const validations = {
       lgpd_compliant: true,
       anvisa_compliant: clinic.compliance_status.anvisa_compliant,
       cfm_compliant: clinic.compliance_status.cfm_compliant,
       constitutional_compliant: clinic.compliance_status.constitutional_compliant,
       cnes_valid: clinic.cnes_code.length === 7,
-      license_valid: new Date(clinic.license_details.valid_until) > new Date()
+      license_valid: new Date(clinic.license_details.valid_until) > new Date(),
     };
 
     // Check if all validations pass
-    const allValid = Object.values(validations).every(v => v === true);
+    const allValid = Object.values(validations).every((v) => v === true);
     if (!allValid) {
       const failedValidations = Object.entries(validations)
         .filter(([_, valid]) => !valid)
@@ -647,41 +664,66 @@ export class MultiClinicManagementService {
     }
   }
 
-  private async validatePatientDataPrivacy(operation: ClinicOperations, tenant: TenantManagement): Promise<void> {
+  private async validatePatientDataPrivacy(
+    operation: ClinicOperations,
+    tenant: TenantManagement
+  ): Promise<void> {
     if (operation.privacy_requirements.patient_data_involved) {
-      if (operation.privacy_requirements.lgpd_consent_required && !operation.privacy_requirements.anonymization_required) {
+      if (
+        operation.privacy_requirements.lgpd_consent_required &&
+        !operation.privacy_requirements.anonymization_required
+      ) {
         throw new Error('Patient consent or anonymization required for patient data operations');
       }
 
-      if (tenant.tenant_settings.privacy_protection_level === 'maximum' && !operation.privacy_requirements.anonymization_required) {
-        throw new Error('Maximum privacy protection requires anonymization for patient data operations');
+      if (
+        tenant.tenant_settings.privacy_protection_level === 'maximum' &&
+        !operation.privacy_requirements.anonymization_required
+      ) {
+        throw new Error(
+          'Maximum privacy protection requires anonymization for patient data operations'
+        );
       }
     }
   }
 
-  private async validateOperationCompliance(operation: ClinicOperations, clinic: Clinic): Promise<void> {
+  private async validateOperationCompliance(
+    operation: ClinicOperations,
+    clinic: Clinic
+  ): Promise<void> {
     // Validate ANVISA compliance if required
-    if (operation.compliance_validation.anvisa_approval_required && !clinic.compliance_status.anvisa_compliant) {
+    if (
+      operation.compliance_validation.anvisa_approval_required &&
+      !clinic.compliance_status.anvisa_compliant
+    ) {
       throw new Error('ANVISA compliance required for this operation');
     }
 
     // Validate CFM compliance if required
-    if (operation.compliance_validation.cfm_validation_required && !clinic.compliance_status.cfm_compliant) {
+    if (
+      operation.compliance_validation.cfm_validation_required &&
+      !clinic.compliance_status.cfm_compliant
+    ) {
       throw new Error('CFM compliance required for this operation');
     }
 
     // Validate constitutional compliance
-    if (operation.compliance_validation.constitutional_review_needed && !clinic.compliance_status.constitutional_compliant) {
+    if (
+      operation.compliance_validation.constitutional_review_needed &&
+      !clinic.compliance_status.constitutional_compliant
+    ) {
       throw new Error('Constitutional compliance required for this operation');
     }
   }
 
-  private async applyOperationPrivacyProtection(operation: ClinicOperations): Promise<Record<string, any>> {
+  private async applyOperationPrivacyProtection(
+    operation: ClinicOperations
+  ): Promise<Record<string, any>> {
     const protection = {
       protection_level: 'standard',
       anonymization_applied: false,
       tenant_isolation_maintained: this.config.tenant_isolation_enabled,
-      audit_trail_created: this.config.audit_trail_enabled
+      audit_trail_created: this.config.audit_trail_enabled,
     };
 
     if (operation.privacy_requirements.patient_data_involved) {
@@ -732,30 +774,37 @@ export class MultiClinicManagementService {
       anvisa: clinic.compliance_status.anvisa_compliant ? 10 : 5,
       cfm: clinic.compliance_status.cfm_compliant ? 10 : 5,
       constitutional: clinic.compliance_status.constitutional_compliant ? 10 : 5,
-      operational: clinic.operational_status === 'active' ? 10 : 7
+      operational: clinic.operational_status === 'active' ? 10 : 7,
     };
 
-    const overallScore = Object.values(scores).reduce((sum, score) => sum + score, 0) / Object.keys(scores).length;
+    const overallScore =
+      Object.values(scores).reduce((sum, score) => sum + score, 0) / Object.keys(scores).length;
 
     const areasOfConcern = Object.entries(scores)
       .filter(([_, score]) => score < 9)
       .map(([area, _]) => area);
 
-    const recommendations = areasOfConcern.map(area => {
+    const recommendations = areasOfConcern.map((area) => {
       switch (area) {
-        case 'lgpd': return 'Update LGPD compliance procedures and staff training';
-        case 'anvisa': return 'Renew ANVISA license and update safety protocols';
-        case 'cfm': return 'Ensure CFM registration is current and medical standards are met';
-        case 'constitutional': return 'Review constitutional healthcare compliance and patient rights procedures';
-        case 'operational': return 'Address operational status issues and resume normal operations';
-        default: return `Improve ${area} compliance standards`;
+        case 'lgpd':
+          return 'Update LGPD compliance procedures and staff training';
+        case 'anvisa':
+          return 'Renew ANVISA license and update safety protocols';
+        case 'cfm':
+          return 'Ensure CFM registration is current and medical standards are met';
+        case 'constitutional':
+          return 'Review constitutional healthcare compliance and patient rights procedures';
+        case 'operational':
+          return 'Address operational status issues and resume normal operations';
+        default:
+          return `Improve ${area} compliance standards`;
       }
     });
 
     return {
       overall_score: Math.round(overallScore * 100) / 100,
       areas_of_concern: areasOfConcern,
-      recommendations
+      recommendations,
     };
   }
 
@@ -766,17 +815,22 @@ export class MultiClinicManagementService {
     return Math.round((totalScore / clinicDetails.length) * 100) / 100;
   }
 
-  private generateComplianceRecommendations(clinicDetails: any[], tenant: TenantManagement): string[] {
+  private generateComplianceRecommendations(
+    clinicDetails: any[],
+    tenant: TenantManagement
+  ): string[] {
     const recommendations = [
       'Maintain regular compliance audits across all clinics',
       'Ensure unified staff training on constitutional healthcare standards',
-      'Implement centralized compliance monitoring dashboard'
+      'Implement centralized compliance monitoring dashboard',
     ];
 
     // Add specific recommendations based on compliance scores
-    const lowScoreClinics = clinicDetails.filter(clinic => clinic.compliance_score < 9.5);
+    const lowScoreClinics = clinicDetails.filter((clinic) => clinic.compliance_score < 9.5);
     if (lowScoreClinics.length > 0) {
-      recommendations.push(`Focus immediate attention on ${lowScoreClinics.length} clinic(s) with compliance scores below 9.5`);
+      recommendations.push(
+        `Focus immediate attention on ${lowScoreClinics.length} clinic(s) with compliance scores below 9.5`
+      );
     }
 
     // Add tenant-specific recommendations
@@ -799,7 +853,7 @@ export class MultiClinicManagementService {
       source_clinic_isolation_maintained: true,
       target_clinic_isolation_maintained: true,
       audit_trail_created: true,
-      constitutional_compliance_verified: true
+      constitutional_compliance_verified: true,
     };
   }
 
@@ -809,11 +863,22 @@ export class MultiClinicManagementService {
     targetClinic: Clinic
   ): Promise<void> {
     // Ensure both clinics are compliant before allowing resource sharing
-    if (!sourceClinic.compliance_status.constitutional_compliant || !targetClinic.compliance_status.constitutional_compliant) {
+    if (
+      !(
+        sourceClinic.compliance_status.constitutional_compliant &&
+        targetClinic.compliance_status.constitutional_compliant
+      )
+    ) {
       throw new Error('Both clinics must be constitutionally compliant for resource sharing');
     }
 
-    if (resourceType.includes('patient') && (!sourceClinic.compliance_status.lgpd_compliant || !targetClinic.compliance_status.lgpd_compliant)) {
+    if (
+      resourceType.includes('patient') &&
+      !(
+        sourceClinic.compliance_status.lgpd_compliant &&
+        targetClinic.compliance_status.lgpd_compliant
+      )
+    ) {
       throw new Error('Both clinics must be LGPD compliant for patient data sharing');
     }
   }
@@ -885,7 +950,7 @@ export class MultiClinicManagementService {
     return {
       compliant: score >= 9.9 && issues.length === 0,
       score: Math.max(score, 0),
-      issues
+      issues,
     };
   }
 }
@@ -934,6 +999,6 @@ export async function validateMultiClinicManagement(
 
   return {
     valid: violations.length === 0,
-    violations
+    violations,
   };
 }

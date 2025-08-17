@@ -1,18 +1,18 @@
 /**
  * @fileoverview LGPD Consent Lifecycle Management Service
  * Constitutional Brazilian Healthcare Consent Management (LGPD Art. 8º, 9º, 11º)
- * 
+ *
  * Constitutional Healthcare Principle: Patient Privacy First + Informed Consent
  * Quality Standard: ≥9.9/10
  */
 
 import { z } from 'zod';
-import type { 
-  Consent, 
-  PatientDataClassification, 
-  LGPDLegalBasis,
+import type {
+  ComplianceScore,
+  Consent,
   ConstitutionalResponse,
-  ComplianceScore 
+  LGPDLegalBasis,
+  PatientDataClassification,
 } from '../types';
 
 /**
@@ -32,12 +32,14 @@ export const ConsentRequestSchema = z.object({
   automatedDecisionMaking: z.boolean().default(false),
   requestedBy: z.string().uuid(),
   locale: z.enum(['pt-BR', 'en-US']).default('pt-BR'),
-  accessibilityRequirements: z.object({
-    screenReader: z.boolean().default(false),
-    largeText: z.boolean().default(false),
-    highContrast: z.boolean().default(false),
-    audioConsent: z.boolean().default(false)
-  }).optional()
+  accessibilityRequirements: z
+    .object({
+      screenReader: z.boolean().default(false),
+      largeText: z.boolean().default(false),
+      highContrast: z.boolean().default(false),
+      audioConsent: z.boolean().default(false),
+    })
+    .optional(),
 });
 
 export type ConsentRequest = z.infer<typeof ConsentRequestSchema>;
@@ -55,12 +57,12 @@ export const ConsentWithdrawalSchema = z.object({
     'PURPOSE_CHANGE',
     'RETENTION_EXPIRED',
     'LEGAL_REQUIREMENT',
-    'CONSTITUTIONAL_VIOLATION'
+    'CONSTITUTIONAL_VIOLATION',
   ]),
   withdrawalDetails: z.string().max(1000).optional(),
   withdrawnBy: z.string().uuid(),
   immediateEffect: z.boolean().default(true),
-  dataErasureRequested: z.boolean().default(false)
+  dataErasureRequested: z.boolean().default(false),
 });
 
 export type ConsentWithdrawal = z.infer<typeof ConsentWithdrawalSchema>;
@@ -80,24 +82,28 @@ export class ConsentService {
     try {
       // Step 1: Validate consent request
       const validatedRequest = ConsentRequestSchema.parse(request);
-      
+
       // Step 2: Constitutional healthcare validation
-      const constitutionalValidation = await this.validateConstitutionalRequirements(validatedRequest);
-      
+      const constitutionalValidation =
+        await this.validateConstitutionalRequirements(validatedRequest);
+
       if (!constitutionalValidation.valid) {
         return {
           success: false,
           error: `Constitutional validation failed: ${constitutionalValidation.violations.join(', ')}`,
           complianceScore: constitutionalValidation.score,
           regulatoryValidation: { lgpd: false, anvisa: true, cfm: true },
-          auditTrail: await this.createAuditEvent('CONSENT_CONSTITUTIONAL_VIOLATION', validatedRequest),
-          timestamp: new Date()
+          auditTrail: await this.createAuditEvent(
+            'CONSENT_CONSTITUTIONAL_VIOLATION',
+            validatedRequest
+          ),
+          timestamp: new Date(),
         };
       }
 
       // Step 3: Generate consent terms in accessible format
       const consentTerms = await this.generateConsentTerms(validatedRequest);
-      
+
       // Step 4: Create consent record with constitutional compliance
       const consent: Consent = {
         id: crypto.randomUUID(),
@@ -115,29 +121,35 @@ export class ConsentService {
         withdrawnAt: null,
         expiresAt: new Date(Date.now() + this.consentExpiryMonths * 30 * 24 * 60 * 60 * 1000),
         isActive: false, // Becomes active only after patient confirmation
-        auditTrail: [{
-          action: 'CONSENT_REQUESTED',
-          timestamp: new Date(),
-          userId: validatedRequest.requestedBy,
-          ipAddress: undefined, // Would be captured from request context
-          userAgent: undefined  // Would be captured from request context
-        }],
+        auditTrail: [
+          {
+            action: 'CONSENT_REQUESTED',
+            timestamp: new Date(),
+            userId: validatedRequest.requestedBy,
+            ipAddress: undefined, // Would be captured from request context
+            userAgent: undefined, // Would be captured from request context
+          },
+        ],
         constitutionalValidation: {
           validated: true,
           validatedAt: new Date(),
           validatedBy: validatedRequest.requestedBy,
-          complianceScore: constitutionalValidation.score
-        }
+          complianceScore: constitutionalValidation.score,
+        },
       };
 
       // Step 5: Store consent request in database
       await this.storeConsentRequest(consent, consentTerms);
-      
+
       // Step 6: Generate audit trail
       const auditTrail = await this.createAuditEvent('CONSENT_REQUESTED', validatedRequest);
-      
+
       // Step 7: Send consent notification to patient (accessibility-compliant)
-      await this.sendConsentNotification(consent, consentTerms, validatedRequest.accessibilityRequirements);
+      await this.sendConsentNotification(
+        consent,
+        consentTerms,
+        validatedRequest.accessibilityRequirements
+      );
 
       return {
         success: true,
@@ -145,19 +157,18 @@ export class ConsentService {
         complianceScore: constitutionalValidation.score,
         regulatoryValidation: { lgpd: true, anvisa: true, cfm: true },
         auditTrail,
-        timestamp: new Date()
+        timestamp: new Date(),
       };
-
     } catch (error) {
       const auditTrail = await this.createAuditEvent('CONSENT_REQUEST_ERROR', request);
-      
+
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown consent request error',
         complianceScore: 0,
         regulatoryValidation: { lgpd: false, anvisa: false, cfm: false },
         auditTrail,
-        timestamp: new Date()
+        timestamp: new Date(),
       };
     }
   }
@@ -167,8 +178,8 @@ export class ConsentService {
    * Constitutional healthcare consent confirmation with accessibility support
    */
   async grantConsent(
-    consentId: string, 
-    patientId: string, 
+    consentId: string,
+    patientId: string,
     tenantId: string,
     confirmationMethod: 'WEB' | 'MOBILE' | 'PHONE' | 'IN_PERSON' | 'ACCESSIBLE_INTERFACE',
     biometricConfirmation?: string
@@ -176,7 +187,7 @@ export class ConsentService {
     try {
       // Step 1: Retrieve and validate consent record
       const consentRecord = await this.getConsentRecord(consentId, tenantId);
-      
+
       if (!consentRecord || consentRecord.patientId !== patientId) {
         throw new Error('Invalid consent record or unauthorized access');
       }
@@ -192,7 +203,7 @@ export class ConsentService {
 
       // Step 3: Constitutional validation of grant process
       const grantValidation = await this.validateConsentGrant(consentRecord, confirmationMethod);
-      
+
       if (!grantValidation.valid) {
         return {
           success: false,
@@ -200,7 +211,7 @@ export class ConsentService {
           complianceScore: grantValidation.score,
           regulatoryValidation: { lgpd: false, anvisa: true, cfm: true },
           auditTrail: await this.createAuditEvent('CONSENT_GRANT_VIOLATION', { consentId }),
-          timestamp: new Date()
+          timestamp: new Date(),
         };
       }
 
@@ -216,21 +227,21 @@ export class ConsentService {
             timestamp: new Date(),
             userId: patientId,
             ipAddress: undefined, // Would be captured from request context
-            userAgent: undefined  // Would be captured from request context
-          }
-        ]
+            userAgent: undefined, // Would be captured from request context
+          },
+        ],
       };
 
       // Step 5: Update consent in database
       await this.updateConsentRecord(updatedConsent);
-      
+
       // Step 6: Generate audit trail
-      const auditTrail = await this.createAuditEvent('CONSENT_GRANTED', { 
-        consentId, 
+      const auditTrail = await this.createAuditEvent('CONSENT_GRANTED', {
+        consentId,
         confirmationMethod,
-        biometricUsed: !!biometricConfirmation 
+        biometricUsed: !!biometricConfirmation,
       });
-      
+
       // Step 7: Send confirmation notification (accessibility-compliant)
       await this.sendConsentConfirmation(updatedConsent, confirmationMethod);
 
@@ -240,22 +251,21 @@ export class ConsentService {
         complianceScore: grantValidation.score,
         regulatoryValidation: { lgpd: true, anvisa: true, cfm: true },
         auditTrail,
-        timestamp: new Date()
+        timestamp: new Date(),
       };
-
     } catch (error) {
       const auditTrail = await this.createAuditEvent('CONSENT_GRANT_ERROR', { consentId });
-      
+
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Failed to grant consent',
         complianceScore: 0,
         regulatoryValidation: { lgpd: false, anvisa: false, cfm: false },
         auditTrail,
-        timestamp: new Date()
+        timestamp: new Date(),
       };
     }
-  }  /**
+  } /**
    * Withdraw Consent (LGPD Art. 8º § 5º)
    * Constitutional right to withdraw consent with immediate effect
    */
@@ -263,10 +273,13 @@ export class ConsentService {
     try {
       // Step 1: Validate withdrawal request
       const validatedWithdrawal = ConsentWithdrawalSchema.parse(withdrawal);
-      
+
       // Step 2: Retrieve consent record
-      const consentRecord = await this.getConsentRecord(validatedWithdrawal.consentId, validatedWithdrawal.tenantId);
-      
+      const consentRecord = await this.getConsentRecord(
+        validatedWithdrawal.consentId,
+        validatedWithdrawal.tenantId
+      );
+
       if (!consentRecord || consentRecord.patientId !== validatedWithdrawal.patientId) {
         throw new Error('Invalid consent record or unauthorized withdrawal');
       }
@@ -277,7 +290,7 @@ export class ConsentService {
 
       // Step 3: Constitutional validation of withdrawal
       const withdrawalValidation = await this.validateConsentWithdrawal(validatedWithdrawal);
-      
+
       // Step 4: Withdraw consent with constitutional compliance
       const withdrawnConsent: Consent = {
         ...consentRecord,
@@ -290,25 +303,25 @@ export class ConsentService {
             timestamp: new Date(),
             userId: validatedWithdrawal.withdrawnBy,
             ipAddress: undefined,
-            userAgent: undefined
-          }
-        ]
+            userAgent: undefined,
+          },
+        ],
       };
 
       // Step 5: Update consent in database
       await this.updateConsentRecord(withdrawnConsent);
-      
+
       // Step 6: Trigger data processing cessation
       await this.ceaseDataProcessing(withdrawnConsent, validatedWithdrawal);
-      
+
       // Step 7: Trigger data erasure if requested
       if (validatedWithdrawal.dataErasureRequested) {
         await this.triggerDataErasure(withdrawnConsent, validatedWithdrawal);
       }
-      
+
       // Step 8: Generate audit trail
       const auditTrail = await this.createAuditEvent('CONSENT_WITHDRAWN', validatedWithdrawal);
-      
+
       // Step 9: Send withdrawal confirmation
       await this.sendWithdrawalConfirmation(withdrawnConsent, validatedWithdrawal);
 
@@ -318,19 +331,18 @@ export class ConsentService {
         complianceScore: withdrawalValidation.score,
         regulatoryValidation: { lgpd: true, anvisa: true, cfm: true },
         auditTrail,
-        timestamp: new Date()
+        timestamp: new Date(),
       };
-
     } catch (error) {
       const auditTrail = await this.createAuditEvent('CONSENT_WITHDRAWAL_ERROR', withdrawal);
-      
+
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Failed to withdraw consent',
         complianceScore: 0,
         regulatoryValidation: { lgpd: false, anvisa: false, cfm: false },
         auditTrail,
-        timestamp: new Date()
+        timestamp: new Date(),
       };
     }
   }
@@ -340,31 +352,31 @@ export class ConsentService {
    * Constitutional transparency mandate - patients can access their consent status
    */
   async getPatientConsentStatus(
-    patientId: string, 
+    patientId: string,
     tenantId: string
   ): Promise<ConstitutionalResponse<Consent[]>> {
     try {
       const consents = await this.getPatientConsents(patientId, tenantId);
       const auditTrail = await this.createAuditEvent('CONSENT_STATUS_ACCESSED', { patientId });
-      
+
       return {
         success: true,
         data: consents,
         complianceScore: 9.9,
         regulatoryValidation: { lgpd: true, anvisa: true, cfm: true },
         auditTrail,
-        timestamp: new Date()
+        timestamp: new Date(),
       };
     } catch (error) {
       const auditTrail = await this.createAuditEvent('CONSENT_STATUS_ERROR', { patientId });
-      
+
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Failed to retrieve consent status',
         complianceScore: 0,
         regulatoryValidation: { lgpd: false, anvisa: false, cfm: false },
         auditTrail,
-        timestamp: new Date()
+        timestamp: new Date(),
       };
     }
   }
@@ -385,11 +397,15 @@ export class ConsentService {
     let score = 10;
 
     // Healthcare-specific validations
-    if (request.consentType === 'HEALTH' || request.consentType === 'SENSITIVE') {
-      if (!request.legalBasis.includes('HEALTH_PROTECTION') && !request.legalBasis.includes('HEALTH_PROCEDURES')) {
-        violations.push('Health data requires appropriate legal basis (Art. 11 LGPD)');
-        score -= 2;
-      }
+    if (
+      (request.consentType === 'HEALTH' || request.consentType === 'SENSITIVE') &&
+      !(
+        request.legalBasis.includes('HEALTH_PROTECTION') ||
+        request.legalBasis.includes('HEALTH_PROCEDURES')
+      )
+    ) {
+      violations.push('Health data requires appropriate legal basis (Art. 11 LGPD)');
+      score -= 2;
     }
 
     // Child data protection (Art. 14 LGPD)
@@ -400,7 +416,9 @@ export class ConsentService {
 
     // Purpose limitation validation
     if (request.purpose.length < 20) {
-      violations.push('Consent purpose must be specific and detailed (constitutional transparency)');
+      violations.push(
+        'Consent purpose must be specific and detailed (constitutional transparency)'
+      );
       score -= 1;
     }
 
@@ -411,11 +429,11 @@ export class ConsentService {
     }
 
     const finalScore = Math.max(0, Math.min(10, score)) as ComplianceScore;
-    
+
     return {
       valid: violations.length === 0 || score >= 8, // Allow minor violations if score is still high
       score: finalScore,
-      violations
+      violations,
     };
   }
 
@@ -464,8 +482,8 @@ Categorias de Dados: ${request.dataCategories.join(', ')}
         screenReaderFriendly: true,
         contrastRatio: 'AAA',
         fontSize: request.accessibilityRequirements?.largeText ? 'large' : 'normal',
-        languageLevel: 'B1' // Simple Portuguese for accessibility
-      }
+        languageLevel: 'B1', // Simple Portuguese for accessibility
+      },
     };
   }
 
@@ -473,7 +491,7 @@ Categorias de Dados: ${request.dataCategories.join(', ')}
    * Validate consent grant process
    */
   private async validateConsentGrant(
-    consent: Consent, 
+    consent: Consent,
     confirmationMethod: string
   ): Promise<{ valid: boolean; score: ComplianceScore; violations: string[] }> {
     const violations: string[] = [];
@@ -497,11 +515,11 @@ Categorias de Dados: ${request.dataCategories.join(', ')}
     }
 
     const finalScore = Math.max(0, Math.min(10, score)) as ComplianceScore;
-    
+
     return {
       valid: violations.length === 0,
       score: finalScore,
-      violations
+      violations,
     };
   }
 
@@ -524,7 +542,10 @@ Categorias de Dados: ${request.dataCategories.join(', ')}
     return []; // Would query Supabase database
   }
 
-  private async ceaseDataProcessing(consent: Consent, withdrawal: ConsentWithdrawal): Promise<void> {
+  private async ceaseDataProcessing(
+    consent: Consent,
+    withdrawal: ConsentWithdrawal
+  ): Promise<void> {
     console.log('Ceasing data processing for consent:', consent.id);
   }
 
@@ -532,7 +553,11 @@ Categorias de Dados: ${request.dataCategories.join(', ')}
     console.log('Triggering data erasure for consent:', consent.id);
   }
 
-  private async sendConsentNotification(consent: Consent, terms: any, accessibility?: any): Promise<void> {
+  private async sendConsentNotification(
+    consent: Consent,
+    terms: any,
+    accessibility?: any
+  ): Promise<void> {
     console.log('Sending consent notification:', consent.id);
   }
 
@@ -540,11 +565,16 @@ Categorias de Dados: ${request.dataCategories.join(', ')}
     console.log('Sending consent confirmation:', consent.id);
   }
 
-  private async sendWithdrawalConfirmation(consent: Consent, withdrawal: ConsentWithdrawal): Promise<void> {
+  private async sendWithdrawalConfirmation(
+    consent: Consent,
+    withdrawal: ConsentWithdrawal
+  ): Promise<void> {
     console.log('Sending withdrawal confirmation:', consent.id);
   }
 
-  private async validateConsentWithdrawal(withdrawal: ConsentWithdrawal): Promise<{ score: ComplianceScore }> {
+  private async validateConsentWithdrawal(
+    withdrawal: ConsentWithdrawal
+  ): Promise<{ score: ComplianceScore }> {
     return { score: 9.9 };
   }
 
@@ -554,7 +584,7 @@ Categorias de Dados: ${request.dataCategories.join(', ')}
       eventType: 'CONSENT_MANAGEMENT',
       action,
       timestamp: new Date(),
-      metadata: data
+      metadata: data,
     };
   }
 }

@@ -4,29 +4,28 @@
  * Compliance: LGPD + CFM + Constitutional Healthcare + ≥9.9/10 Standards
  */
 
-// Healthcare Role-Based Access Control Service
-export {
-  HealthcareRbacService,
-  createHealthcareRbacService,
-  validateHealthcareRbac,
-  type HealthcareRole,
-  type HealthcareUser,
-  type AccessRequest,
-  type RbacConfig,
-  type HealthcareRbacAudit
-} from './healthcare-rbac';
-
 // API Rate Limiting Service
 export {
+  type ApiRateLimitingAudit,
   ApiRateLimitingService,
-  createApiRateLimitingService,
-  validateApiRateLimiting,
-  type RateLimitConfig,
-  type EndpointRateLimit,
   type ClientRateLimit,
+  createApiRateLimitingService,
+  type EndpointRateLimit,
+  type RateLimitConfig,
   type RateLimitViolation,
-  type ApiRateLimitingAudit
+  validateApiRateLimiting,
 } from './api-rate-limiting';
+// Healthcare Role-Based Access Control Service
+export {
+  type AccessRequest,
+  createHealthcareRbacService,
+  type HealthcareRbacAudit,
+  HealthcareRbacService,
+  type HealthcareRole,
+  type HealthcareUser,
+  type RbacConfig,
+  validateHealthcareRbac,
+} from './healthcare-rbac';
 
 /**
  * Enterprise Security Service Factory
@@ -38,7 +37,7 @@ export function createEnterpriseSecurityServices(config: {
 }) {
   return {
     rbac: createHealthcareRbacService(config.rbac),
-    rateLimiting: createApiRateLimitingService(config.rateLimiting)
+    rateLimiting: createApiRateLimitingService(config.rateLimiting),
   };
 }
 
@@ -54,29 +53,28 @@ export async function validateEnterpriseSecurityCompliance(
   compliance_score: number;
 }> {
   const violations: string[] = [];
-  
+
   // Validate RBAC compliance
   const rbacValidation = await validateHealthcareRbac(rbacConfig);
   if (!rbacValidation.valid) {
-    violations.push(...rbacValidation.violations.map(v => `RBAC: ${v}`));
+    violations.push(...rbacValidation.violations.map((v) => `RBAC: ${v}`));
   }
-  
+
   // Validate rate limiting compliance
   const rateLimitValidation = await validateApiRateLimiting(rateLimitConfig);
   if (!rateLimitValidation.valid) {
-    violations.push(...rateLimitValidation.violations.map(v => `Rate Limiting: ${v}`));
+    violations.push(...rateLimitValidation.violations.map((v) => `Rate Limiting: ${v}`));
   }
-  
+
   // Calculate overall compliance score
-  const validationsPassing = [rbacValidation, rateLimitValidation]
-    .filter(v => v.valid).length;
+  const validationsPassing = [rbacValidation, rateLimitValidation].filter((v) => v.valid).length;
   const totalValidations = 2;
   const complianceScore = (validationsPassing / totalValidations) * 10;
-  
+
   return {
     valid: violations.length === 0 && complianceScore >= 9.9,
     violations,
-    compliance_score: Math.round(complianceScore * 100) / 100
+    compliance_score: Math.round(complianceScore * 100) / 100,
   };
 }
 
@@ -101,9 +99,9 @@ export const ENTERPRISE_SECURITY_CONFIGS = {
       session_management_strict: true,
       multi_factor_required: true,
       ip_restriction_enabled: true,
-      credential_verification_required: true
+      credential_verification_required: true,
     } as RbacConfig,
-    
+
     rateLimiting: {
       default_requests_per_minute: 30,
       default_requests_per_hour: 500,
@@ -119,10 +117,10 @@ export const ENTERPRISE_SECURITY_CONFIGS = {
       blacklist_enabled: true,
       whitelist_enabled: true,
       geographic_restrictions: true,
-      healthcare_priority_routing: true
-    } as RateLimitConfig
+      healthcare_priority_routing: true,
+    } as RateLimitConfig,
   },
-  
+
   /**
    * Standard security configuration for general healthcare operations
    */
@@ -139,13 +137,13 @@ export const ENTERPRISE_SECURITY_CONFIGS = {
       session_management_strict: true,
       multi_factor_required: true,
       ip_restriction_enabled: false,
-      credential_verification_required: true
+      credential_verification_required: true,
     } as RbacConfig,
-    
+
     rateLimiting: {
       default_requests_per_minute: 60,
       default_requests_per_hour: 1000,
-      default_requests_per_day: 10000,
+      default_requests_per_day: 10_000,
       burst_allowance: 10,
       sliding_window_minutes: 15,
       constitutional_protection_enabled: true,
@@ -157,9 +155,9 @@ export const ENTERPRISE_SECURITY_CONFIGS = {
       blacklist_enabled: true,
       whitelist_enabled: true,
       geographic_restrictions: false,
-      healthcare_priority_routing: true
-    } as RateLimitConfig
-  }
+      healthcare_priority_routing: true,
+    } as RateLimitConfig,
+  },
 };
 
 /**
@@ -175,19 +173,29 @@ export const ENTERPRISE_SECURITY_MODULE = {
     {
       name: 'Healthcare RBAC',
       description: 'Constitutional healthcare access control with patient privacy protection',
-      compliance_features: ['Role-Based Access Control', 'CFM Professional Validation', 'Patient Consent Management', 'Emergency Access Protocols']
+      compliance_features: [
+        'Role-Based Access Control',
+        'CFM Professional Validation',
+        'Patient Consent Management',
+        'Emergency Access Protocols',
+      ],
     },
     {
       name: 'API Rate Limiting',
       description: 'Constitutional healthcare API protection with intelligent throttling',
-      compliance_features: ['Intelligent Throttling', 'Healthcare Priority Routing', 'Emergency Bypass', 'Abuse Detection']
-    }
+      compliance_features: [
+        'Intelligent Throttling',
+        'Healthcare Priority Routing',
+        'Emergency Bypass',
+        'Abuse Detection',
+      ],
+    },
   ],
   constitutional_guarantees: [
     'Patient privacy protection through role-based access control',
     'Medical professional standards validation with CFM compliance',
     'Emergency access protocols for critical healthcare situations',
     'API protection with healthcare-specific priorities',
-    'Comprehensive audit trails for regulatory compliance'
-  ]
+    'Comprehensive audit trails for regulatory compliance',
+  ],
 } as const;

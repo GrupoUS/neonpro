@@ -1,7 +1,7 @@
 /**
  * ANVISA Regulatory Services
  * Constitutional healthcare compliance for Brazilian aesthetic clinics
- * 
+ *
  * @fileoverview Complete ANVISA regulatory compliance module
  * @version 1.0.0
  * @since 2025-01-17
@@ -9,42 +9,42 @@
 
 // ANVISA Adverse Event Services
 export {
-  AdverseEventService,
   type AdverseEvent,
   type AdverseEventFilters,
-  type AdverseEventSeverity
+  AdverseEventService,
+  type AdverseEventSeverity,
 } from './adverse-event-service';
 
-// ANVISA Medical Device Services  
+// ANVISA Medical Device Services
 export {
-  MedicalDeviceService,
+  type DeviceClassification,
   type MedicalDevice,
   type MedicalDeviceFilters,
-  type DeviceClassification
+  MedicalDeviceService,
 } from './medical-device-service';
 
 // ANVISA Procedure Classification Services
 export {
-  ProcedureClassificationService,
+  type ClassificationLevel,
   type ProcedureClassification,
+  ProcedureClassificationService,
   type ProcedureFilters,
-  type ClassificationLevel
 } from './procedure-classification-service';
 
 // ANVISA Product Registration Services (NEW - Phase 5)
 export {
-  ProductRegistrationService,
   type ProductRegistration,
   type ProductRegistrationAudit,
-  type ProductRegistrationFilters
+  type ProductRegistrationFilters,
+  ProductRegistrationService,
 } from './product-registration-service';
 
 // ANVISA Regulatory Documentation Services (NEW - Phase 5)
 export {
-  RegulatoryDocumentationService,
-  type RegulatoryDocument,
   type DocumentAudit,
-  type DocumentGenerationParams
+  type DocumentGenerationParams,
+  type RegulatoryDocument,
+  RegulatoryDocumentationService,
 } from './regulatory-documentation-service';
 
 // ANVISA Utilities and Constants
@@ -61,7 +61,7 @@ export function createAnvisaServices(supabaseClient: any) {
     medicalDevice: new MedicalDeviceService(supabaseClient),
     procedureClassification: new ProcedureClassificationService(supabaseClient),
     productRegistration: new ProductRegistrationService(supabaseClient),
-    regulatoryDocumentation: new RegulatoryDocumentationService(supabaseClient)
+    regulatoryDocumentation: new RegulatoryDocumentationService(supabaseClient),
   };
 }
 
@@ -92,7 +92,10 @@ export async function validateAnvisaCompliance(
     }
 
     // Check for expiring registrations
-    const { data: expiringProducts } = await services.productRegistration.getExpiringProducts(tenantId, 30);
+    const { data: expiringProducts } = await services.productRegistration.getExpiringProducts(
+      tenantId,
+      30
+    );
     if (expiringProducts && expiringProducts.length > 0) {
       issues.push(`${expiringProducts.length} products expiring within 30 days`);
       totalScore -= 0.5;
@@ -107,7 +110,7 @@ export async function validateAnvisaCompliance(
       compliant,
       score: finalScore,
       issues,
-      recommendations
+      recommendations,
     };
   } catch (error) {
     console.error('ANVISA compliance validation error:', error);
@@ -115,7 +118,7 @@ export async function validateAnvisaCompliance(
       compliant: false,
       score: 0,
       issues: ['Failed to validate ANVISA compliance'],
-      recommendations: ['Contact technical support for compliance validation']
+      recommendations: ['Contact technical support for compliance validation'],
     };
   }
 }

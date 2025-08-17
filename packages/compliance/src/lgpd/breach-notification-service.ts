@@ -1,10 +1,10 @@
 /**
  * @fileoverview LGPD Breach Notification Service (Art. 48 LGPD)
  * Constitutional Brazilian Healthcare Breach Notification Implementation
- * 
+ *
  * Constitutional Healthcare Principle: Patient Safety First + Immediate Transparency
  * Quality Standard: ≥9.9/10
- * 
+ *
  * LGPD Article 48 - Security Incident Notification:
  * - Notification to ANPD within reasonable timeframe
  * - Notification may include risk assessment
@@ -13,35 +13,31 @@
  */
 
 import { z } from 'zod';
-import type { 
-  PatientDataClassification, 
-  ConstitutionalResponse,
-  ComplianceScore 
-} from '../types';
+import type { ComplianceScore, ConstitutionalResponse, PatientDataClassification } from '../types';
 
 /**
  * Breach Severity Classification
  */
 export enum BreachSeverity {
-  LOW = 'LOW',               // Minimal impact, unlikely to cause harm
-  MEDIUM = 'MEDIUM',         // Some risk to patient rights
-  HIGH = 'HIGH',             // Significant risk to patient rights and freedoms
-  CRITICAL = 'CRITICAL'      // Constitutional violation, immediate patient danger
+  LOW = 'LOW', // Minimal impact, unlikely to cause harm
+  MEDIUM = 'MEDIUM', // Some risk to patient rights
+  HIGH = 'HIGH', // Significant risk to patient rights and freedoms
+  CRITICAL = 'CRITICAL', // Constitutional violation, immediate patient danger
 }
 
 /**
  * Breach Category Classification
  */
 export enum BreachCategory {
-  UNAUTHORIZED_ACCESS = 'UNAUTHORIZED_ACCESS',         // Acesso não autorizado
-  DATA_THEFT = 'DATA_THEFT',                          // Roubo de dados
-  SYSTEM_INTRUSION = 'SYSTEM_INTRUSION',              // Invasão de sistema
-  ACCIDENTAL_DISCLOSURE = 'ACCIDENTAL_DISCLOSURE',    // Divulgação acidental
-  DATA_CORRUPTION = 'DATA_CORRUPTION',                // Corrupção de dados
-  RANSOMWARE_ATTACK = 'RANSOMWARE_ATTACK',            // Ataque de ransomware
-  INSIDER_THREAT = 'INSIDER_THREAT',                  // Ameaça interna
-  VENDOR_BREACH = 'VENDOR_BREACH',                    // Violação de fornecedor
-  CONSTITUTIONAL_VIOLATION = 'CONSTITUTIONAL_VIOLATION' // Violação constitucional
+  UNAUTHORIZED_ACCESS = 'UNAUTHORIZED_ACCESS', // Acesso não autorizado
+  DATA_THEFT = 'DATA_THEFT', // Roubo de dados
+  SYSTEM_INTRUSION = 'SYSTEM_INTRUSION', // Invasão de sistema
+  ACCIDENTAL_DISCLOSURE = 'ACCIDENTAL_DISCLOSURE', // Divulgação acidental
+  DATA_CORRUPTION = 'DATA_CORRUPTION', // Corrupção de dados
+  RANSOMWARE_ATTACK = 'RANSOMWARE_ATTACK', // Ataque de ransomware
+  INSIDER_THREAT = 'INSIDER_THREAT', // Ameaça interna
+  VENDOR_BREACH = 'VENDOR_BREACH', // Violação de fornecedor
+  CONSTITUTIONAL_VIOLATION = 'CONSTITUTIONAL_VIOLATION', // Violação constitucional
 }
 
 /**
@@ -52,12 +48,12 @@ export const BreachDetectionSchema = z.object({
   detectedAt: z.date(),
   detectedBy: z.string().uuid(),
   detectionMethod: z.enum([
-    'AUTOMATED_MONITORING',    // Sistema de monitoramento
-    'MANUAL_DISCOVERY',        // Descoberta manual
-    'THIRD_PARTY_REPORT',      // Relatório de terceiros
-    'PATIENT_COMPLAINT',       // Reclamação de paciente
-    'AUDIT_FINDING',           // Achado de auditoria
-    'PENETRATION_TEST'         // Teste de penetração
+    'AUTOMATED_MONITORING', // Sistema de monitoramento
+    'MANUAL_DISCOVERY', // Descoberta manual
+    'THIRD_PARTY_REPORT', // Relatório de terceiros
+    'PATIENT_COMPLAINT', // Reclamação de paciente
+    'AUDIT_FINDING', // Achado de auditoria
+    'PENETRATION_TEST', // Teste de penetração
   ]),
   tenantId: z.string().uuid(),
   affectedSystems: z.array(z.string()),
@@ -79,8 +75,8 @@ export const BreachDetectionSchema = z.object({
     internalTeamNotified: z.boolean().default(false),
     dpoNotified: z.boolean().default(false),
     executiveTeamNotified: z.boolean().default(false),
-    legalTeamNotified: z.boolean().default(false)
-  })
+    legalTeamNotified: z.boolean().default(false),
+  }),
 });
 
 export type BreachDetection = z.infer<typeof BreachDetectionSchema>;
@@ -154,17 +150,19 @@ export class BreachNotificationService {
    * Process Breach Detection and Initiate Constitutional Notification
    * Implements LGPD Art. 48 with constitutional healthcare validation
    */
-  async processBreachDetection(detection: BreachDetection): Promise<ConstitutionalResponse<BreachNotificationResult>> {
+  async processBreachDetection(
+    detection: BreachDetection
+  ): Promise<ConstitutionalResponse<BreachNotificationResult>> {
     try {
       // Step 1: Validate breach detection data
       const validatedDetection = BreachDetectionSchema.parse(detection);
-      
+
       // Step 2: Constitutional healthcare validation and severity assessment
       const severityAssessment = await this.assessConstitutionalSeverity(validatedDetection);
-      
+
       // Step 3: Immediate containment validation
       const containmentStatus = await this.validateImmediateContainment(validatedDetection);
-      
+
       if (!containmentStatus.adequate) {
         return {
           success: false,
@@ -172,22 +170,25 @@ export class BreachNotificationService {
           complianceScore: containmentStatus.score,
           regulatoryValidation: { lgpd: false, anvisa: false, cfm: false },
           auditTrail: await this.createAuditEvent('BREACH_CONTAINMENT_FAILURE', validatedDetection),
-          timestamp: new Date()
+          timestamp: new Date(),
         };
       }
 
       // Step 4: Execute constitutional notification workflow
       const notificationResult = await this.executeConstitutionalNotification(
-        validatedDetection, 
+        validatedDetection,
         severityAssessment
       );
-      
+
       // Step 5: Monitor constitutional timeline compliance
       const timelineCompliance = await this.monitorConstitutionalTimeline(notificationResult);
-      
+
       // Step 6: Generate comprehensive audit trail
-      const auditTrail = await this.createAuditEvent('BREACH_NOTIFICATION_COMPLETED', validatedDetection);
-      
+      const auditTrail = await this.createAuditEvent(
+        'BREACH_NOTIFICATION_COMPLETED',
+        validatedDetection
+      );
+
       // Step 7: Initiate remediation and prevention measures
       await this.initiateRemediationMeasures(validatedDetection, severityAssessment);
 
@@ -195,29 +196,31 @@ export class BreachNotificationService {
         success: true,
         data: notificationResult,
         complianceScore: timelineCompliance.complianceScore,
-        regulatoryValidation: { 
+        regulatoryValidation: {
           lgpd: timelineCompliance.lgpdCompliant,
           anvisa: timelineCompliance.anvisaCompliant,
-          cfm: timelineCompliance.cfmCompliant 
+          cfm: timelineCompliance.cfmCompliant,
         },
         auditTrail,
-        timestamp: new Date()
+        timestamp: new Date(),
       };
-
     } catch (error) {
       // Critical error handling for breach notifications
-      const emergencyAudit = await this.createAuditEvent('BREACH_NOTIFICATION_CRITICAL_ERROR', detection);
-      
+      const emergencyAudit = await this.createAuditEvent(
+        'BREACH_NOTIFICATION_CRITICAL_ERROR',
+        detection
+      );
+
       // Escalate to constitutional emergency response
       await this.escalateToEmergencyResponse(detection, error);
-      
+
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Critical breach notification error',
         complianceScore: 0,
         regulatoryValidation: { lgpd: false, anvisa: false, cfm: false },
         auditTrail: emergencyAudit,
-        timestamp: new Date()
+        timestamp: new Date(),
       };
     }
   }
@@ -245,7 +248,10 @@ export class BreachNotificationService {
     const constitutionalViolations: string[] = [];
 
     // Healthcare data severity escalation
-    if (detection.dataTypesAffected.includes('HEALTH') || detection.dataTypesAffected.includes('GENETIC')) {
+    if (
+      detection.dataTypesAffected.includes('HEALTH') ||
+      detection.dataTypesAffected.includes('GENETIC')
+    ) {
       if (severity === 'LOW') severity = 'MEDIUM';
       else if (severity === 'MEDIUM') severity = 'HIGH';
       patientImpact.push('Health data compromised - patient privacy violated');
@@ -293,7 +299,7 @@ export class BreachNotificationService {
       anpd: severity === 'HIGH' || severity === 'CRITICAL',
       patients: severity === 'MEDIUM' || severity === 'HIGH' || severity === 'CRITICAL',
       authorities: severity === 'CRITICAL' || detection.constitutionalViolation,
-      immediateAction: severity === 'CRITICAL' || detection.patientSafetyRisk
+      immediateAction: severity === 'CRITICAL' || detection.patientSafetyRisk,
     };
 
     return {
@@ -302,9 +308,9 @@ export class BreachNotificationService {
       patientImpact,
       regulatoryImpact,
       constitutionalViolations,
-      notificationRequirements
+      notificationRequirements,
     };
-  }  /**
+  } /**
    * Execute Constitutional Notification Workflow
    */
   private async executeConstitutionalNotification(
@@ -312,8 +318,14 @@ export class BreachNotificationService {
     severityAssessment: any
   ): Promise<BreachNotificationResult> {
     const startTime = new Date();
-    const auditTrail: Array<{ action: string; timestamp: Date; performedBy: string; details: string; complianceImpact: string[] }> = [];
-    
+    const auditTrail: Array<{
+      action: string;
+      timestamp: Date;
+      performedBy: string;
+      details: string;
+      complianceImpact: string[];
+    }> = [];
+
     // Initialize notification result
     const result: BreachNotificationResult = {
       incidentId: detection.incidentId || crypto.randomUUID(),
@@ -324,82 +336,87 @@ export class BreachNotificationService {
         notificationQuality: 0,
         patientRightsHonored: false,
         transparencyProvided: false,
-        complianceScore: 0
+        complianceScore: 0,
       },
       anpdNotification: {
         required: severityAssessment.notificationRequirements.anpd,
-        sent: false
+        sent: false,
       },
       patientNotifications: {
         required: severityAssessment.notificationRequirements.patients,
         totalPatients: detection.estimatedAffectedPatients,
         notified: 0,
-        notificationMethods: []
+        notificationMethods: [],
       },
       internalNotifications: {
         dpo: { notified: false },
         executive: { notified: false },
         legal: { notified: false },
-        it: { notified: false }
+        it: { notified: false },
       },
       remediation: {
         immediateActions: detection.immediateActions,
         longTermActions: [],
         preventiveMeasures: [],
-        completionEstimate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) // 30 days
+        completionEstimate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days
       },
       timeline: {
         detectedAt: detection.detectedAt,
-        totalHours: 0
+        totalHours: 0,
       },
-      auditTrail
+      auditTrail,
     };
 
     try {
       // Step 1: Immediate internal notifications (Constitutional requirement: immediate)
       await this.executeInternalNotifications(detection, result, auditTrail);
-      
+
       // Step 2: ANPD notification (if required - 72 hours maximum)
       if (severityAssessment.notificationRequirements.anpd) {
         await this.notifyANPD(detection, severityAssessment, result, auditTrail);
       }
-      
+
       // Step 3: Patient notifications (Constitutional transparency mandate)
       if (severityAssessment.notificationRequirements.patients) {
         await this.notifyAffectedPatients(detection, severityAssessment, result, auditTrail);
       }
-      
+
       // Step 4: Authority notifications (for critical/constitutional violations)
       if (severityAssessment.notificationRequirements.authorities) {
         await this.notifyHealthcareAuthorities(detection, severityAssessment, result, auditTrail);
       }
-      
+
       // Step 5: Calculate final timeline and compliance
       result.timeline.notificationsCompletedAt = new Date();
-      result.timeline.totalHours = (result.timeline.notificationsCompletedAt.getTime() - detection.detectedAt.getTime()) / (1000 * 60 * 60);
-      
+      result.timeline.totalHours =
+        (result.timeline.notificationsCompletedAt.getTime() - detection.detectedAt.getTime()) /
+        (1000 * 60 * 60);
+
       // Step 6: Assess constitutional compliance
-      result.constitutionalCompliance = this.assessConstitutionalCompliance(result, severityAssessment);
-      
+      result.constitutionalCompliance = this.assessConstitutionalCompliance(
+        result,
+        severityAssessment
+      );
+
       // Step 7: Update final status
-      result.notificationStatus = result.constitutionalCompliance.complianceScore >= this.constitutionalQualityStandard 
-        ? 'COMPLETED' 
-        : 'PARTIAL';
+      result.notificationStatus =
+        result.constitutionalCompliance.complianceScore >= this.constitutionalQualityStandard
+          ? 'COMPLETED'
+          : 'PARTIAL';
 
       return result;
-
     } catch (error) {
       result.notificationStatus = 'FAILED';
       result.constitutionalCompliance.complianceScore = 0;
-      
+
       auditTrail.push({
         action: 'NOTIFICATION_FAILURE',
         timestamp: new Date(),
         performedBy: 'SYSTEM',
         details: `Notification execution failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
-        complianceImpact: ['CONSTITUTIONAL_VIOLATION', 'PATIENT_RIGHTS_VIOLATION']
+        complianceImpact: ['CONSTITUTIONAL_VIOLATION', 'PATIENT_RIGHTS_VIOLATION'],
       });
-      
+
       throw error;
     }
   }
@@ -408,8 +425,8 @@ export class BreachNotificationService {
    * Execute Internal Notifications (Immediate Constitutional Requirement)
    */
   private async executeInternalNotifications(
-    detection: BreachDetection, 
-    result: BreachNotificationResult, 
+    detection: BreachDetection,
+    result: BreachNotificationResult,
     auditTrail: any[]
   ): Promise<void> {
     const notificationTime = new Date();
@@ -418,13 +435,13 @@ export class BreachNotificationService {
     if (!detection.reportingMetadata.dpoNotified) {
       await this.notifyDPO(detection);
       result.internalNotifications.dpo = { notified: true, notifiedAt: notificationTime };
-      
+
       auditTrail.push({
         action: 'DPO_NOTIFIED',
         timestamp: notificationTime,
         performedBy: detection.detectedBy,
         details: 'Data Protection Officer notified of breach incident',
-        complianceImpact: ['LGPD_COMPLIANCE']
+        complianceImpact: ['LGPD_COMPLIANCE'],
       });
     }
 
@@ -432,13 +449,13 @@ export class BreachNotificationService {
     if (!detection.reportingMetadata.executiveTeamNotified) {
       await this.notifyExecutiveTeam(detection);
       result.internalNotifications.executive = { notified: true, notifiedAt: notificationTime };
-      
+
       auditTrail.push({
         action: 'EXECUTIVE_NOTIFIED',
         timestamp: notificationTime,
         performedBy: detection.detectedBy,
         details: 'Executive team notified for constitutional healthcare compliance',
-        complianceImpact: ['CONSTITUTIONAL_COMPLIANCE']
+        complianceImpact: ['CONSTITUTIONAL_COMPLIANCE'],
       });
     }
 
@@ -457,9 +474,9 @@ export class BreachNotificationService {
    * Notify ANPD (Brazilian Data Protection Authority)
    */
   private async notifyANPD(
-    detection: BreachDetection, 
-    severityAssessment: any, 
-    result: BreachNotificationResult, 
+    detection: BreachDetection,
+    severityAssessment: any,
+    result: BreachNotificationResult,
     auditTrail: any[]
   ): Promise<void> {
     try {
@@ -474,32 +491,31 @@ export class BreachNotificationService {
         remedialActions: detection.immediateActions,
         contactInformation: {
           dpo: process.env.DPO_EMAIL,
-          legal: process.env.LEGAL_EMAIL
-        }
+          legal: process.env.LEGAL_EMAIL,
+        },
       };
 
       // Submit to ANPD portal (would integrate with actual ANPD API)
       const anpdResponse = await this.submitToANPD(notificationData);
-      
+
       result.anpdNotification.sent = true;
       result.anpdNotification.sentAt = new Date();
       result.anpdNotification.protocolNumber = anpdResponse.protocol;
-      
+
       auditTrail.push({
         action: 'ANPD_NOTIFIED',
         timestamp: new Date(),
         performedBy: 'SYSTEM',
         details: `ANPD notification submitted - Protocol: ${anpdResponse.protocol}`,
-        complianceImpact: ['LGPD_REGULATORY_COMPLIANCE']
+        complianceImpact: ['LGPD_REGULATORY_COMPLIANCE'],
       });
-
     } catch (error) {
       auditTrail.push({
         action: 'ANPD_NOTIFICATION_FAILED',
         timestamp: new Date(),
         performedBy: 'SYSTEM',
         details: `Failed to notify ANPD: ${error instanceof Error ? error.message : 'Unknown error'}`,
-        complianceImpact: ['REGULATORY_NON_COMPLIANCE']
+        complianceImpact: ['REGULATORY_NON_COMPLIANCE'],
       });
       throw error;
     }
@@ -509,48 +525,51 @@ export class BreachNotificationService {
    * Notify Affected Patients (Constitutional Transparency Mandate)
    */
   private async notifyAffectedPatients(
-    detection: BreachDetection, 
-    severityAssessment: any, 
-    result: BreachNotificationResult, 
+    detection: BreachDetection,
+    severityAssessment: any,
+    result: BreachNotificationResult,
     auditTrail: any[]
   ): Promise<void> {
     try {
       // Get list of affected patients
       const affectedPatients = await this.getAffectedPatients(detection);
-      
+
       let notifiedCount = 0;
       const notificationMethods = new Set<string>();
 
       // Constitutional requirement: Clear, accessible communication
       for (const patient of affectedPatients) {
-        const patientNotification = await this.createPatientNotification(detection, severityAssessment, patient);
-        
+        const patientNotification = await this.createPatientNotification(
+          detection,
+          severityAssessment,
+          patient
+        );
+
         // Send via preferred method with accessibility support
         const notificationMethod = await this.sendPatientNotification(patient, patientNotification);
         notificationMethods.add(notificationMethod);
         notifiedCount++;
-        
+
         // Constitutional audit trail for each patient notification
         auditTrail.push({
           action: 'PATIENT_NOTIFIED',
           timestamp: new Date(),
           performedBy: 'SYSTEM',
           details: `Patient ${patient.id} notified via ${notificationMethod}`,
-          complianceImpact: ['PATIENT_RIGHTS', 'TRANSPARENCY_MANDATE']
+          complianceImpact: ['PATIENT_RIGHTS', 'TRANSPARENCY_MANDATE'],
         });
       }
 
       result.patientNotifications.notified = notifiedCount;
       result.patientNotifications.notificationMethods = Array.from(notificationMethods);
       result.patientNotifications.completedAt = new Date();
-
     } catch (error) {
       auditTrail.push({
         action: 'PATIENT_NOTIFICATION_FAILED',
         timestamp: new Date(),
         performedBy: 'SYSTEM',
         details: `Failed to notify patients: ${error instanceof Error ? error.message : 'Unknown error'}`,
-        complianceImpact: ['PATIENT_RIGHTS_VIOLATION', 'TRANSPARENCY_FAILURE']
+        complianceImpact: ['PATIENT_RIGHTS_VIOLATION', 'TRANSPARENCY_FAILURE'],
       });
       throw error;
     }
@@ -560,7 +579,7 @@ export class BreachNotificationService {
    * Assess Constitutional Compliance
    */
   private assessConstitutionalCompliance(
-    result: BreachNotificationResult, 
+    result: BreachNotificationResult,
     severityAssessment: any
   ): BreachNotificationResult['constitutionalCompliance'] {
     let complianceScore = 10;
@@ -587,7 +606,11 @@ export class BreachNotificationService {
     }
 
     // Internal notification compliance
-    if (!result.internalNotifications.dpo.notified || !result.internalNotifications.executive.notified) {
+    if (
+      !(
+        result.internalNotifications.dpo.notified && result.internalNotifications.executive.notified
+      )
+    ) {
       complianceScore -= 1;
     }
 
@@ -603,7 +626,7 @@ export class BreachNotificationService {
       notificationQuality: finalScore,
       patientRightsHonored,
       transparencyProvided,
-      complianceScore: finalScore
+      complianceScore: finalScore,
     };
   }
 
@@ -611,7 +634,9 @@ export class BreachNotificationService {
   // HELPER METHODS (Implementation Stubs)
   // ============================================================================
 
-  private async validateImmediateContainment(detection: BreachDetection): Promise<{ adequate: boolean; score: ComplianceScore; issues: string[] }> {
+  private async validateImmediateContainment(
+    detection: BreachDetection
+  ): Promise<{ adequate: boolean; score: ComplianceScore; issues: string[] }> {
     const issues: string[] = [];
     let score = 10;
 
@@ -628,7 +653,7 @@ export class BreachNotificationService {
     return {
       adequate: issues.length === 0,
       score: Math.max(0, score) as ComplianceScore,
-      issues
+      issues,
     };
   }
 
@@ -642,11 +667,14 @@ export class BreachNotificationService {
       complianceScore: result.constitutionalCompliance.complianceScore,
       lgpdCompliant: result.constitutionalCompliance.timelineMet,
       anvisaCompliant: true,
-      cfmCompliant: result.constitutionalCompliance.patientRightsHonored
+      cfmCompliant: result.constitutionalCompliance.patientRightsHonored,
     };
   }
 
-  private async initiateRemediationMeasures(detection: BreachDetection, severityAssessment: any): Promise<void> {
+  private async initiateRemediationMeasures(
+    detection: BreachDetection,
+    severityAssessment: any
+  ): Promise<void> {
     console.log('Initiating remediation measures for incident:', detection.incidentId);
   }
 
@@ -678,12 +706,16 @@ export class BreachNotificationService {
     return []; // Would query database for affected patients
   }
 
-  private async createPatientNotification(detection: BreachDetection, assessment: any, patient: any): Promise<any> {
+  private async createPatientNotification(
+    detection: BreachDetection,
+    assessment: any,
+    patient: any
+  ): Promise<any> {
     return {
       subject: 'Importante: Notificação sobre Seus Dados de Saúde',
       content: `Prezado(a) ${patient.name}, informamos sobre um incidente que pode ter afetado seus dados...`,
       accessibility: true,
-      plainLanguage: true
+      plainLanguage: true,
     };
   }
 
@@ -691,7 +723,12 @@ export class BreachNotificationService {
     return 'EMAIL'; // Would send via patient's preferred method
   }
 
-  private async notifyHealthcareAuthorities(detection: BreachDetection, assessment: any, result: BreachNotificationResult, auditTrail: any[]): Promise<void> {
+  private async notifyHealthcareAuthorities(
+    detection: BreachDetection,
+    assessment: any,
+    result: BreachNotificationResult,
+    auditTrail: any[]
+  ): Promise<void> {
     console.log('Notifying healthcare authorities of critical breach');
   }
 
@@ -701,35 +738,39 @@ export class BreachNotificationService {
       eventType: 'BREACH_NOTIFICATION',
       action,
       timestamp: new Date(),
-      metadata: data
+      metadata: data,
     };
   }
 
   /**
    * Get Breach Notification Status
    */
-  async getBreachNotificationStatus(incidentId: string, tenantId: string): Promise<ConstitutionalResponse<BreachNotificationResult | null>> {
+  async getBreachNotificationStatus(
+    incidentId: string,
+    tenantId: string
+  ): Promise<ConstitutionalResponse<BreachNotificationResult | null>> {
     try {
       const auditTrail = await this.createAuditEvent('BREACH_STATUS_ACCESSED', { incidentId });
-      
+
       return {
         success: true,
         data: null, // Would be actual status from database
         complianceScore: 9.9,
         regulatoryValidation: { lgpd: true, anvisa: true, cfm: true },
         auditTrail,
-        timestamp: new Date()
+        timestamp: new Date(),
       };
     } catch (error) {
       const auditTrail = await this.createAuditEvent('BREACH_STATUS_ERROR', { incidentId });
-      
+
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Failed to retrieve breach notification status',
+        error:
+          error instanceof Error ? error.message : 'Failed to retrieve breach notification status',
         complianceScore: 0,
         regulatoryValidation: { lgpd: false, anvisa: false, cfm: false },
         auditTrail,
-        timestamp: new Date()
+        timestamp: new Date(),
       };
     }
   }

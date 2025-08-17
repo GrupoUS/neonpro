@@ -15,7 +15,7 @@ const PrivacyPreservingAnalyticsConfigSchema = z.object({
   noise_multiplier: z.number().min(0.1).max(5),
   constitutional_validation: z.boolean().default(true),
   audit_trail_enabled: z.boolean().default(true),
-  lgpd_compliance_mode: z.boolean().default(true)
+  lgpd_compliance_mode: z.boolean().default(true),
 });
 
 const PrivacyPreservingQuerySchema = z.object({
@@ -23,12 +23,14 @@ const PrivacyPreservingQuerySchema = z.object({
   query_type: z.enum(['aggregation', 'correlation', 'distribution', 'trend_analysis']),
   target_columns: z.array(z.string()).min(1),
   filters: z.record(z.any()).optional(),
-  time_range: z.object({
-    start_date: z.string().datetime(),
-    end_date: z.string().datetime()
-  }).optional(),
+  time_range: z
+    .object({
+      start_date: z.string().datetime(),
+      end_date: z.string().datetime(),
+    })
+    .optional(),
   privacy_level: z.enum(['high', 'medium', 'standard']),
-  constitutional_approval: z.boolean().default(true)
+  constitutional_approval: z.boolean().default(true),
 });
 
 const PrivacyPreservingAnalyticsResultsSchema = z.object({
@@ -38,26 +40,30 @@ const PrivacyPreservingAnalyticsResultsSchema = z.object({
     epsilon_used: z.number(),
     k_anonymity_achieved: z.number(),
     data_utility_score: z.number().min(0).max(10),
-    constitutional_compliance_score: z.number().min(9.9).max(10)
+    constitutional_compliance_score: z.number().min(9.9).max(10),
   }),
   audit_trail: z.object({
     query_executed_at: z.string().datetime(),
     privacy_techniques_applied: z.array(z.string()),
     data_subjects_count: z.number(),
-    constitutional_validation_result: z.boolean()
+    constitutional_validation_result: z.boolean(),
   }),
   constitutional_certification: z.object({
     privacy_officer_approval: z.boolean(),
     lgpd_compliance_verified: z.boolean(),
     patient_consent_validated: z.boolean(),
-    audit_trail_complete: z.boolean()
-  })
+    audit_trail_complete: z.boolean(),
+  }),
 });
 
 // Type definitions
-export type PrivacyPreservingAnalyticsConfig = z.infer<typeof PrivacyPreservingAnalyticsConfigSchema>;
+export type PrivacyPreservingAnalyticsConfig = z.infer<
+  typeof PrivacyPreservingAnalyticsConfigSchema
+>;
 export type PrivacyPreservingQuery = z.infer<typeof PrivacyPreservingQuerySchema>;
-export type PrivacyPreservingAnalyticsResults = z.infer<typeof PrivacyPreservingAnalyticsResultsSchema>;
+export type PrivacyPreservingAnalyticsResults = z.infer<
+  typeof PrivacyPreservingAnalyticsResultsSchema
+>;
 
 export interface PrivacyPreservingAnalyticsAudit {
   audit_id: string;
@@ -77,7 +83,7 @@ export interface PrivacyPreservingAnalyticsAudit {
  */
 export class PrivacyPreservingAnalyticsService {
   private config: PrivacyPreservingAnalyticsConfig;
-  private privacyBudgetUsed: number = 0;
+  private privacyBudgetUsed = 0;
   private auditTrail: PrivacyPreservingAnalyticsAudit[] = [];
 
   constructor(config: PrivacyPreservingAnalyticsConfig) {
@@ -93,7 +99,7 @@ export class PrivacyPreservingAnalyticsService {
   ): Promise<PrivacyPreservingAnalyticsResults> {
     // Validate query
     const validatedQuery = PrivacyPreservingQuerySchema.parse(query);
-    
+
     // Check privacy budget
     if (this.privacyBudgetUsed >= this.config.max_privacy_budget) {
       throw new Error('Privacy budget exhausted - constitutional privacy protection');
@@ -133,13 +139,13 @@ export class PrivacyPreservingAnalyticsService {
       parameters_used: {
         epsilon: this.config.differential_privacy_epsilon,
         k_anonymity: this.config.k_anonymity_k,
-        noise_multiplier: this.config.noise_multiplier
+        noise_multiplier: this.config.noise_multiplier,
       },
       privacy_budget_consumed: privacyMetrics.epsilon_used,
       constitutional_validation: true,
       lgpd_compliance_score: 9.9,
       created_at: new Date().toISOString(),
-      created_by: 'privacy-preserving-analytics-service'
+      created_by: 'privacy-preserving-analytics-service',
     };
 
     this.auditTrail.push(auditEntry);
@@ -153,20 +159,20 @@ export class PrivacyPreservingAnalyticsService {
         epsilon_used: privacyMetrics.epsilon_used,
         k_anonymity_achieved: privacyMetrics.k_anonymity_achieved,
         data_utility_score: privacyMetrics.data_utility_score,
-        constitutional_compliance_score: 9.9
+        constitutional_compliance_score: 9.9,
       },
       audit_trail: {
         query_executed_at: new Date().toISOString(),
         privacy_techniques_applied: [this.getPrivacyTechnique(validatedQuery.privacy_level)],
         data_subjects_count: rawData.length,
-        constitutional_validation_result: true
+        constitutional_validation_result: true,
       },
       constitutional_certification: {
         privacy_officer_approval: true,
         lgpd_compliance_verified: true,
         patient_consent_validated: true,
-        audit_trail_complete: true
-      }
+        audit_trail_complete: true,
+      },
     };
 
     return PrivacyPreservingAnalyticsResultsSchema.parse(results);
@@ -180,14 +186,25 @@ export class PrivacyPreservingAnalyticsService {
     query: PrivacyPreservingQuery
   ): Promise<any[]> {
     // Step 1: Apply k-anonymity
-    let processedData = await this.applyKAnonymity(rawData, query.target_columns, this.config.k_anonymity_k);
-    
+    let processedData = await this.applyKAnonymity(
+      rawData,
+      query.target_columns,
+      this.config.k_anonymity_k
+    );
+
     // Step 2: Apply l-diversity
-    processedData = await this.applyLDiversity(processedData, query.target_columns, this.config.l_diversity_l);
-    
+    processedData = await this.applyLDiversity(
+      processedData,
+      query.target_columns,
+      this.config.l_diversity_l
+    );
+
     // Step 3: Apply differential privacy
-    processedData = await this.applyDifferentialPrivacy(processedData, this.config.differential_privacy_epsilon);
-    
+    processedData = await this.applyDifferentialPrivacy(
+      processedData,
+      this.config.differential_privacy_epsilon
+    );
+
     return processedData;
   }
 
@@ -199,12 +216,16 @@ export class PrivacyPreservingAnalyticsService {
     query: PrivacyPreservingQuery
   ): Promise<any[]> {
     // Step 1: Apply k-anonymity
-    let processedData = await this.applyKAnonymity(rawData, query.target_columns, this.config.k_anonymity_k);
-    
+    let processedData = await this.applyKAnonymity(
+      rawData,
+      query.target_columns,
+      this.config.k_anonymity_k
+    );
+
     // Step 2: Apply differential privacy with higher epsilon (less noise)
     const relaxedEpsilon = this.config.differential_privacy_epsilon * 1.5;
     processedData = await this.applyDifferentialPrivacy(processedData, relaxedEpsilon);
-    
+
     return processedData;
   }
 
@@ -224,9 +245,9 @@ export class PrivacyPreservingAnalyticsService {
   private async applyKAnonymity(data: any[], columns: string[], k: number): Promise<any[]> {
     // Group data by quasi-identifier combinations
     const groups = new Map<string, any[]>();
-    
+
     for (const row of data) {
-      const key = columns.map(col => this.generalize(row[col], col)).join('|');
+      const key = columns.map((col) => this.generalize(row[col], col)).join('|');
       if (!groups.has(key)) {
         groups.set(key, []);
       }
@@ -238,7 +259,7 @@ export class PrivacyPreservingAnalyticsService {
     for (const [key, group] of groups) {
       if (group.length >= k) {
         // Apply generalization to all rows in the group
-        const generalizedGroup = group.map(row => {
+        const generalizedGroup = group.map((row) => {
           const generalizedRow = { ...row };
           for (const col of columns) {
             generalizedRow[col] = this.generalize(row[col], col);
@@ -255,12 +276,16 @@ export class PrivacyPreservingAnalyticsService {
   /**
    * Apply l-diversity for additional privacy protection
    */
-  private async applyLDiversity(data: any[], sensitiveColumns: string[], l: number): Promise<any[]> {
+  private async applyLDiversity(
+    data: any[],
+    sensitiveColumns: string[],
+    l: number
+  ): Promise<any[]> {
     // Group by quasi-identifiers and check l-diversity for sensitive attributes
     const groups = new Map<string, any[]>();
-    
+
     for (const row of data) {
-      const key = sensitiveColumns.map(col => row[col]).join('|');
+      const key = sensitiveColumns.map((col) => row[col]).join('|');
       if (!groups.has(key)) {
         groups.set(key, []);
       }
@@ -271,10 +296,10 @@ export class PrivacyPreservingAnalyticsService {
     const diverseData: any[] = [];
     for (const [key, group] of groups) {
       // Check if group has at least l distinct values for sensitive attributes
-      const distinctValues = new Set(group.map(row => 
-        sensitiveColumns.map(col => row[col]).join('|')
-      ));
-      
+      const distinctValues = new Set(
+        group.map((row) => sensitiveColumns.map((col) => row[col]).join('|'))
+      );
+
       if (distinctValues.size >= l) {
         diverseData.push(...group);
       }
@@ -287,7 +312,7 @@ export class PrivacyPreservingAnalyticsService {
    * Apply differential privacy with Laplace noise
    */
   private async applyDifferentialPrivacy(data: any[], epsilon: number): Promise<any[]> {
-    return data.map(row => {
+    return data.map((row) => {
       const noisyRow = { ...row };
       // Add Laplace noise to numeric columns
       for (const [key, value] of Object.entries(row)) {
@@ -318,19 +343,19 @@ export class PrivacyPreservingAnalyticsService {
       // Generalize numeric values to ranges
       if (column.includes('age')) {
         return `${Math.floor(value / 10) * 10}-${Math.floor(value / 10) * 10 + 9}`;
-      } else {
-        return Math.round(value / 10) * 10;
       }
-    } else if (typeof value === 'string') {
+      return Math.round(value / 10) * 10;
+    }
+    if (typeof value === 'string') {
       // Generalize string values
       if (column.includes('zip') || column.includes('cep')) {
         return value.substring(0, 3) + 'XX';
-      } else if (column.includes('email')) {
+      }
+      if (column.includes('email')) {
         const [local, domain] = value.split('@');
         return `${local.substring(0, 2)}****@${domain}`;
-      } else {
-        return value.substring(0, 2) + '***';
       }
+      return value.substring(0, 2) + '***';
     }
     return value;
   }
@@ -338,36 +363,45 @@ export class PrivacyPreservingAnalyticsService {
   /**
    * Calculate privacy metrics for high privacy level
    */
-  private async calculateHighPrivacyMetrics(data: any[], query: PrivacyPreservingQuery): Promise<any> {
+  private async calculateHighPrivacyMetrics(
+    data: any[],
+    query: PrivacyPreservingQuery
+  ): Promise<any> {
     return {
       epsilon_used: this.config.differential_privacy_epsilon,
       k_anonymity_achieved: this.config.k_anonymity_k,
       data_utility_score: 7.5, // Lower utility due to high privacy
-      l_diversity_achieved: this.config.l_diversity_l
+      l_diversity_achieved: this.config.l_diversity_l,
     };
   }
 
   /**
    * Calculate privacy metrics for medium privacy level
    */
-  private async calculateMediumPrivacyMetrics(data: any[], query: PrivacyPreservingQuery): Promise<any> {
+  private async calculateMediumPrivacyMetrics(
+    data: any[],
+    query: PrivacyPreservingQuery
+  ): Promise<any> {
     return {
       epsilon_used: this.config.differential_privacy_epsilon * 1.5,
       k_anonymity_achieved: this.config.k_anonymity_k,
       data_utility_score: 8.5, // Higher utility than high privacy
-      l_diversity_achieved: null
+      l_diversity_achieved: null,
     };
   }
 
   /**
    * Calculate privacy metrics for standard privacy level
    */
-  private async calculateStandardPrivacyMetrics(data: any[], query: PrivacyPreservingQuery): Promise<any> {
+  private async calculateStandardPrivacyMetrics(
+    data: any[],
+    query: PrivacyPreservingQuery
+  ): Promise<any> {
     return {
       epsilon_used: 0, // No differential privacy
       k_anonymity_achieved: this.config.k_anonymity_k,
       data_utility_score: 9.0, // Highest utility
-      l_diversity_achieved: null
+      l_diversity_achieved: null,
     };
   }
 
@@ -394,10 +428,12 @@ export class PrivacyPreservingAnalyticsService {
    */
   private calculateAggregations(data: any[], columns: string[]): any {
     const results: Record<string, any> = {};
-    
+
     for (const column of columns) {
-      const values = data.map(row => row[column]).filter(val => val !== null && val !== undefined);
-      
+      const values = data
+        .map((row) => row[column])
+        .filter((val) => val !== null && val !== undefined);
+
       if (values.length === 0) {
         results[column] = { count: 0, mean: null, sum: null };
         continue;
@@ -405,25 +441,25 @@ export class PrivacyPreservingAnalyticsService {
 
       // Calculate basic aggregations
       const count = values.length;
-      const numericValues = values.filter(val => typeof val === 'number');
-      
+      const numericValues = values.filter((val) => typeof val === 'number');
+
       if (numericValues.length > 0) {
         const sum = numericValues.reduce((acc, val) => acc + val, 0);
         const mean = sum / numericValues.length;
-        
+
         results[column] = {
           count,
           sum: Math.round(sum),
           mean: Math.round(mean * 100) / 100,
           min: Math.min(...numericValues),
-          max: Math.max(...numericValues)
+          max: Math.max(...numericValues),
         };
       } else {
         // For non-numeric columns, just provide count
         results[column] = { count };
       }
     }
-    
+
     return results;
   }
 
@@ -432,29 +468,34 @@ export class PrivacyPreservingAnalyticsService {
    */
   private calculateCorrelations(data: any[], columns: string[]): any {
     const correlations: Record<string, Record<string, number>> = {};
-    
+
     // Only calculate for numeric columns
-    const numericColumns = columns.filter(col => {
-      const values = data.map(row => row[col]);
-      return values.some(val => typeof val === 'number');
+    const numericColumns = columns.filter((col) => {
+      const values = data.map((row) => row[col]);
+      return values.some((val) => typeof val === 'number');
     });
 
     for (let i = 0; i < numericColumns.length; i++) {
       correlations[numericColumns[i]] = {};
-      
+
       for (let j = 0; j < numericColumns.length; j++) {
-        const col1Values = data.map(row => Number(row[numericColumns[i]])).filter(val => !isNaN(val));
-        const col2Values = data.map(row => Number(row[numericColumns[j]])).filter(val => !isNaN(val));
-        
+        const col1Values = data
+          .map((row) => Number(row[numericColumns[i]]))
+          .filter((val) => !isNaN(val));
+        const col2Values = data
+          .map((row) => Number(row[numericColumns[j]]))
+          .filter((val) => !isNaN(val));
+
         if (col1Values.length > 1 && col2Values.length > 1) {
           const correlation = this.calculatePearsonCorrelation(col1Values, col2Values);
-          correlations[numericColumns[i]][numericColumns[j]] = Math.round(correlation * 1000) / 1000;
+          correlations[numericColumns[i]][numericColumns[j]] =
+            Math.round(correlation * 1000) / 1000;
         } else {
           correlations[numericColumns[i]][numericColumns[j]] = 0;
         }
       }
     }
-    
+
     return correlations;
   }
 
@@ -482,23 +523,29 @@ export class PrivacyPreservingAnalyticsService {
    */
   private calculateDistributions(data: any[], columns: string[]): any {
     const distributions: Record<string, any> = {};
-    
+
     for (const column of columns) {
-      const values = data.map(row => row[column]).filter(val => val !== null && val !== undefined);
+      const values = data
+        .map((row) => row[column])
+        .filter((val) => val !== null && val !== undefined);
       const valueFrequency = new Map<any, number>();
-      
+
       // Count frequency of each value
       for (const value of values) {
         const key = typeof value === 'number' ? Math.floor(value / 10) * 10 : value;
         valueFrequency.set(key, (valueFrequency.get(key) || 0) + 1);
       }
-      
+
       // Convert to array format
       distributions[column] = Array.from(valueFrequency.entries())
-        .map(([value, count]) => ({ value, count, percentage: Math.round((count / values.length) * 10000) / 100 }))
+        .map(([value, count]) => ({
+          value,
+          count,
+          percentage: Math.round((count / values.length) * 10_000) / 100,
+        }))
         .sort((a, b) => b.count - a.count);
     }
-    
+
     return distributions;
   }
 
@@ -508,18 +555,18 @@ export class PrivacyPreservingAnalyticsService {
   private calculateTrends(data: any[], columns: string[]): any {
     // For trend analysis, we need time-based data
     const trends: Record<string, any> = {};
-    
+
     // Group data by time periods (assuming created_at or date column exists)
     const timeColumn = 'created_at';
-    if (!data.some(row => row[timeColumn])) {
+    if (!data.some((row) => row[timeColumn])) {
       return { error: 'No time column found for trend analysis' };
     }
-    
+
     for (const column of columns) {
       if (column === timeColumn) continue;
-      
+
       const timeGroups = new Map<string, any[]>();
-      
+
       for (const row of data) {
         const timeKey = new Date(row[timeColumn]).toISOString().substring(0, 7); // YYYY-MM format
         if (!timeGroups.has(timeKey)) {
@@ -527,26 +574,27 @@ export class PrivacyPreservingAnalyticsService {
         }
         timeGroups.get(timeKey)!.push(row[column]);
       }
-      
+
       // Calculate trend data
       const trendData = Array.from(timeGroups.entries())
         .map(([period, values]) => {
-          const numericValues = values.filter(val => typeof val === 'number');
-          const average = numericValues.length > 0 
-            ? numericValues.reduce((sum, val) => sum + val, 0) / numericValues.length
-            : 0;
-          
+          const numericValues = values.filter((val) => typeof val === 'number');
+          const average =
+            numericValues.length > 0
+              ? numericValues.reduce((sum, val) => sum + val, 0) / numericValues.length
+              : 0;
+
           return {
             period,
             average: Math.round(average * 100) / 100,
-            count: values.length
+            count: values.length,
           };
         })
         .sort((a, b) => a.period.localeCompare(b.period));
-      
+
       trends[column] = trendData;
     }
-    
+
     return trends;
   }
 
@@ -555,9 +603,12 @@ export class PrivacyPreservingAnalyticsService {
    */
   private getPrivacyTechnique(privacyLevel: string): string {
     switch (privacyLevel) {
-      case 'high': return 'k-anonymity + l-diversity + differential privacy';
-      case 'medium': return 'k-anonymity + differential privacy';
-      default: return 'k-anonymity';
+      case 'high':
+        return 'k-anonymity + l-diversity + differential privacy';
+      case 'medium':
+        return 'k-anonymity + differential privacy';
+      default:
+        return 'k-anonymity';
     }
   }
 
@@ -568,7 +619,7 @@ export class PrivacyPreservingAnalyticsService {
     return {
       used: this.privacyBudgetUsed,
       total: this.config.max_privacy_budget,
-      remaining: this.config.max_privacy_budget - this.privacyBudgetUsed
+      remaining: this.config.max_privacy_budget - this.privacyBudgetUsed,
     };
   }
 
@@ -619,7 +670,7 @@ export class PrivacyPreservingAnalyticsService {
     return {
       compliant: score >= 9.9,
       score: Math.max(score, 0),
-      issues
+      issues,
     };
   }
 }
@@ -664,6 +715,6 @@ export async function validatePrivacyPreservingAnalytics(
 
   return {
     valid: violations.length === 0,
-    violations
+    violations,
   };
 }

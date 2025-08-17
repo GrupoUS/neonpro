@@ -1,19 +1,13 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { Button } from '@neonpro/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@neonpro/ui/card';
-import { Badge } from '@neonpro/ui/badge';
-import { Switch } from '@neonpro/ui/switch';
-import { Alert, AlertDescription } from '@neonpro/ui/alert';
+import { AlertTriangle, Check, Clock, Shield, X } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
 import { toast } from 'sonner';
-import { Shield, Check, X, Clock, AlertTriangle } from 'lucide-react';
+import { Alert, AlertDescription } from '../Alert';
+import { Badge } from '../Badge';
+import { Button } from '../Button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../Card';
+import { Switch } from '../Switch';
 
 // ============================================================================
 // TYPES
@@ -128,15 +122,15 @@ export function ConsentManager() {
   const getCategoryIcon = (category: string) => {
     switch (category.toLowerCase()) {
       case 'essential':
-        return <Shield className="w-4 h-4 text-green-600" />;
+        return <Shield className="h-4 w-4 text-green-600" />;
       case 'functional':
-        return <Check className="w-4 h-4 text-blue-600" />;
+        return <Check className="h-4 w-4 text-blue-600" />;
       case 'analytics':
-        return <Clock className="w-4 h-4 text-yellow-600" />;
+        return <Clock className="h-4 w-4 text-yellow-600" />;
       case 'marketing':
-        return <AlertTriangle className="w-4 h-4 text-orange-600" />;
+        return <AlertTriangle className="h-4 w-4 text-orange-600" />;
       default:
-        return <Shield className="w-4 h-4 text-gray-600" />;
+        return <Shield className="h-4 w-4 text-gray-600" />;
     }
   };
 
@@ -160,17 +154,15 @@ export function ConsentManager() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Shield className="w-5 h-5" />
+            <Shield className="h-5 w-5" />
             Gerenciamento de Consentimento
           </CardTitle>
-          <CardDescription>
-            Carregando suas preferências de privacidade...
-          </CardDescription>
+          <CardDescription>Carregando suas preferências de privacidade...</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="animate-pulse space-y-4">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="h-20 bg-gray-200 rounded-lg" />
+              <div className="h-20 rounded-lg bg-gray-200" key={i} />
             ))}
           </div>
         </CardContent>
@@ -187,12 +179,11 @@ export function ConsentManager() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Shield className="w-5 h-5" />
+            <Shield className="h-5 w-5" />
             Gerenciamento de Consentimento - LGPD
           </CardTitle>
           <CardDescription>
-            Gerencie suas preferências de privacidade e consentimentos de acordo
-            com a LGPD
+            Gerencie suas preferências de privacidade e consentimentos de acordo com a LGPD
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -200,8 +191,8 @@ export function ConsentManager() {
             <Alert className="mb-6">
               <AlertTriangle className="h-4 w-4" />
               <AlertDescription>
-                Alguns consentimentos obrigatórios não foram concedidos. Isso
-                pode afetar o funcionamento completo da plataforma.
+                Alguns consentimentos obrigatórios não foram concedidos. Isso pode afetar o
+                funcionamento completo da plataforma.
               </AlertDescription>
             </Alert>
           )}
@@ -209,17 +200,17 @@ export function ConsentManager() {
           {/* Required Consents */}
           {requiredConsents.length > 0 && (
             <div className="mb-8">
-              <h3 className="text-lg font-semibold mb-4 text-red-600">
+              <h3 className="mb-4 font-semibold text-lg text-red-600">
                 Consentimentos Obrigatórios
               </h3>
               <div className="space-y-4">
                 {requiredConsents.map((consent) => (
                   <ConsentCard
-                    key={consent.purpose}
                     consent={consent}
-                    updating={updating === consent.purpose}
+                    key={consent.purpose}
                     onUpdate={updateConsent}
                     onWithdraw={withdrawConsent}
+                    updating={updating === consent.purpose}
                   />
                 ))}
               </div>
@@ -229,17 +220,15 @@ export function ConsentManager() {
           {/* Optional Consents */}
           {optionalConsents.length > 0 && (
             <div>
-              <h3 className="text-lg font-semibold mb-4 text-blue-600">
-                Consentimentos Opcionais
-              </h3>
+              <h3 className="mb-4 font-semibold text-blue-600 text-lg">Consentimentos Opcionais</h3>
               <div className="space-y-4">
                 {optionalConsents.map((consent) => (
                   <ConsentCard
-                    key={consent.purpose}
                     consent={consent}
-                    updating={updating === consent.purpose}
+                    key={consent.purpose}
                     onUpdate={updateConsent}
                     onWithdraw={withdrawConsent}
+                    updating={updating === consent.purpose}
                   />
                 ))}
               </div>
@@ -262,12 +251,7 @@ interface ConsentCardProps {
   onWithdraw: (purposeName: string) => Promise<void>;
 }
 
-function ConsentCard({
-  consent,
-  updating,
-  onUpdate,
-  onWithdraw,
-}: ConsentCardProps) {
+function ConsentCard({ consent, updating, onUpdate, onWithdraw }: ConsentCardProps) {
   return (
     <Card
       className={`transition-all duration-200 ${
@@ -277,50 +261,47 @@ function ConsentCard({
       <CardContent className="p-4">
         <div className="flex items-start justify-between">
           <div className="flex-1">
-            <div className="flex items-center gap-3 mb-2">
+            <div className="mb-2 flex items-center gap-3">
               <div className="flex items-center gap-2">
                 {consent.granted ? (
-                  <Check className="w-4 h-4 text-green-600" />
+                  <Check className="h-4 w-4 text-green-600" />
                 ) : (
-                  <X className="w-4 h-4 text-red-600" />
+                  <X className="h-4 w-4 text-red-600" />
                 )}
                 <h4 className="font-medium">{consent.purpose}</h4>
               </div>
-              <Badge className={getCategoryColor(consent.category)}>
-                {consent.category}
-              </Badge>
+              <Badge className={getCategoryColor(consent.category)}>{consent.category}</Badge>
               {consent.required && (
-                <Badge variant="destructive" className="text-xs">
+                <Badge className="text-xs" variant="destructive">
                   Obrigatório
                 </Badge>
               )}
             </div>
 
-            <p className="text-sm text-gray-600 mb-3">{consent.description}</p>
+            <p className="mb-3 text-gray-600 text-sm">{consent.description}</p>
 
             {consent.granted && consent.grantedAt && (
-              <p className="text-xs text-gray-500">
-                Consentido em:{' '}
-                {new Date(consent.grantedAt).toLocaleString('pt-BR')}
+              <p className="text-gray-500 text-xs">
+                Consentido em: {new Date(consent.grantedAt).toLocaleString('pt-BR')}
                 {consent.version && ` (v${consent.version})`}
               </p>
             )}
           </div>
 
-          <div className="flex items-center gap-2 ml-4">
+          <div className="ml-4 flex items-center gap-2">
             <Switch
               checked={consent.granted}
-              onCheckedChange={(checked) => onUpdate(consent.purpose, checked)}
               disabled={updating}
+              onCheckedChange={(checked: boolean) => onUpdate(consent.purpose, checked)}
             />
 
             {consent.granted && !consent.required && (
               <Button
-                variant="outline"
-                size="sm"
-                onClick={() => onWithdraw(consent.purpose)}
-                disabled={updating}
                 className="text-red-600 hover:text-red-700"
+                disabled={updating}
+                onClick={() => onWithdraw(consent.purpose)}
+                size="sm"
+                variant="outline"
               >
                 Retirar
               </Button>

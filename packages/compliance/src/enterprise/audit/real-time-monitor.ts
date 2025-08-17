@@ -1,14 +1,14 @@
 /**
  * Enterprise Real-Time Compliance Monitor
  * Constitutional healthcare compliance monitoring system
- * 
+ *
  * @fileoverview Real-time constitutional compliance monitoring with ≥9.9/10 standards
  * @version 1.0.0
  * @since 2025-01-17
  */
 
 import type { Database } from '@neonpro/types';
-import { createClient } from '@supabase/supabase-js';
+import type { createClient } from '@supabase/supabase-js';
 
 /**
  * Real-Time Compliance Monitor Interface
@@ -49,7 +49,12 @@ export interface ComplianceAlert {
   /** Unique alert identifier */
   alert_id: string;
   /** Alert type classification */
-  alert_type: 'compliance_drop' | 'violation_detected' | 'threshold_breach' | 'constitutional_issue' | 'regulatory_update';
+  alert_type:
+    | 'compliance_drop'
+    | 'violation_detected'
+    | 'threshold_breach'
+    | 'constitutional_issue'
+    | 'regulatory_update';
   /** Alert severity level */
   severity: 'info' | 'warning' | 'error' | 'critical' | 'constitutional_violation';
   /** Alert title */
@@ -74,7 +79,7 @@ export interface ComplianceAlert {
   acknowledged_at?: Date;
   /** Constitutional compliance impact */
   constitutional_impact: boolean;
-}/**
+} /**
  * Monitoring Configuration Interface
  * Constitutional monitoring settings and thresholds
  */
@@ -133,7 +138,13 @@ export interface MonitorAudit {
   /** Monitor ID being audited */
   monitor_id: string;
   /** Action performed on monitor */
-  action: 'created' | 'updated' | 'paused' | 'resumed' | 'alert_triggered' | 'configuration_changed';
+  action:
+    | 'created'
+    | 'updated'
+    | 'paused'
+    | 'resumed'
+    | 'alert_triggered'
+    | 'configuration_changed';
   /** Previous monitor state */
   previous_state: Partial<ComplianceMonitor>;
   /** New monitor state */
@@ -198,7 +209,7 @@ export interface ComplianceMonitoringResponse {
   };
   /** Monitoring timestamp */
   monitoring_timestamp: Date;
-}/**
+} /**
  * Real-Time Compliance Monitor Service Implementation
  * Constitutional healthcare compliance monitoring with ≥9.9/10 standards
  */
@@ -241,16 +252,18 @@ export class RealTimeComplianceMonitor {
         status: 'active',
         created_at: timestamp,
         updated_at: timestamp,
-        audit_trail: [{
-          audit_id: crypto.randomUUID(),
-          monitor_id: monitorId,
-          action: 'created',
-          previous_state: {},
-          new_state: { status: 'active', compliance_areas: params.compliance_areas },
-          user_id: userId,
-          timestamp,
-          reason: 'Real-time compliance monitoring initiated'
-        }]
+        audit_trail: [
+          {
+            audit_id: crypto.randomUUID(),
+            monitor_id: monitorId,
+            action: 'created',
+            previous_state: {},
+            new_state: { status: 'active', compliance_areas: params.compliance_areas },
+            user_id: userId,
+            timestamp,
+            reason: 'Real-time compliance monitoring initiated',
+          },
+        ],
       };
 
       // Store monitor configuration
@@ -325,7 +338,9 @@ export class RealTimeComplianceMonitor {
         // Check constitutional compliance
         if (areaAssessment.score < 9.9) {
           constitutionalIssues.push(`${area} compliance below constitutional standard`);
-          constitutionalRecommendations.push(`Improve ${area} compliance to meet constitutional healthcare standards`);
+          constitutionalRecommendations.push(
+            `Improve ${area} compliance to meet constitutional healthcare standards`
+          );
         }
       }
 
@@ -333,7 +348,10 @@ export class RealTimeComplianceMonitor {
       const overallScore = this.calculateOverallComplianceScore(complianceScores);
 
       // Determine overall status
-      const status = this.determineComplianceStatus(overallScore, monitor.monitoring_config.score_thresholds);
+      const status = this.determineComplianceStatus(
+        overallScore,
+        monitor.monitoring_config.score_thresholds
+      );
 
       // Analyze trends
       const trends = await this.analyzeComplianceTrends(monitorId, overallScore);
@@ -348,9 +366,9 @@ export class RealTimeComplianceMonitor {
         constitutional_assessment: {
           constitutional_compliant: overallScore >= 9.9 && constitutionalIssues.length === 0,
           constitutional_issues: constitutionalIssues,
-          constitutional_recommendations: constitutionalRecommendations
+          constitutional_recommendations: constitutionalRecommendations,
         },
-        monitoring_timestamp: new Date()
+        monitoring_timestamp: new Date(),
       };
 
       // Update monitor with latest assessment
@@ -366,7 +384,7 @@ export class RealTimeComplianceMonitor {
       console.error('Perform compliance assessment error:', error);
       return { success: false, error: 'Constitutional compliance assessment service error' };
     }
-  }  /**
+  } /**
    * Assess compliance for specific area
    * Constitutional assessment with area-specific validation
    */
@@ -384,33 +402,37 @@ export class RealTimeComplianceMonitor {
 
     try {
       switch (area) {
-        case 'lgpd':
+        case 'lgpd': {
           const lgpdAssessment = await this.assessLgpdCompliance(tenantId);
           score = lgpdAssessment.score;
           issues.push(...lgpdAssessment.issues);
           recommendations.push(...lgpdAssessment.recommendations);
           break;
+        }
 
-        case 'anvisa':
+        case 'anvisa': {
           const anvisaAssessment = await this.assessAnvisaCompliance(tenantId);
           score = anvisaAssessment.score;
           issues.push(...anvisaAssessment.issues);
           recommendations.push(...anvisaAssessment.recommendations);
           break;
+        }
 
-        case 'cfm':
+        case 'cfm': {
           const cfmAssessment = await this.assessCfmCompliance(tenantId);
           score = cfmAssessment.score;
           issues.push(...cfmAssessment.issues);
           recommendations.push(...cfmAssessment.recommendations);
           break;
+        }
 
-        case 'constitutional_healthcare':
+        case 'constitutional_healthcare': {
           const constitutionalAssessment = await this.assessConstitutionalCompliance(tenantId);
           score = constitutionalAssessment.score;
           issues.push(...constitutionalAssessment.issues);
           recommendations.push(...constitutionalAssessment.recommendations);
           break;
+        }
 
         default:
           score = 9.9; // Constitutional minimum for unknown areas
@@ -424,14 +446,14 @@ export class RealTimeComplianceMonitor {
       return {
         score: finalScore,
         issues,
-        recommendations
+        recommendations,
       };
     } catch (error) {
       console.error(`Assess compliance area ${area} error:`, error);
       return {
         score: 9.9, // Constitutional minimum fallback
         issues: [`Error assessing ${area} compliance`],
-        recommendations: [`Contact technical support for ${area} compliance assessment`]
+        recommendations: [`Contact technical support for ${area} compliance assessment`],
       };
     }
   }
@@ -440,16 +462,14 @@ export class RealTimeComplianceMonitor {
    * Calculate overall compliance score
    * Constitutional scoring algorithm with weighted areas
    */
-  private calculateOverallComplianceScore(
-    complianceScores: Record<string, number>
-  ): number {
+  private calculateOverallComplianceScore(complianceScores: Record<string, number>): number {
     try {
       // Weighted scoring based on constitutional importance
       const weights = {
-        'constitutional_healthcare': 0.35, // 35% - Constitutional healthcare principles
-        'lgpd': 0.25,                     // 25% - Patient privacy protection
-        'cfm': 0.25,                      // 25% - Professional medical standards
-        'anvisa': 0.15                    // 15% - Regulatory compliance
+        constitutional_healthcare: 0.35, // 35% - Constitutional healthcare principles
+        lgpd: 0.25, // 25% - Patient privacy protection
+        cfm: 0.25, // 25% - Professional medical standards
+        anvisa: 0.15, // 15% - Regulatory compliance
       };
 
       let weightedScore = 0;
@@ -518,7 +538,7 @@ export class RealTimeComplianceMonitor {
       recommended_actions: recommendedActions,
       triggered_at: timestamp,
       acknowledged: false,
-      constitutional_impact: currentScore < 9.9
+      constitutional_impact: currentScore < 9.9,
     };
 
     return alert;
@@ -528,10 +548,7 @@ export class RealTimeComplianceMonitor {
    * Setup monitoring interval for real-time assessment
    * Constitutional real-time monitoring with automated intervals
    */
-  private async setupMonitoringInterval(
-    monitorId: string,
-    intervalMinutes: number
-  ): Promise<void> {
+  private async setupMonitoringInterval(monitorId: string, intervalMinutes: number): Promise<void> {
     try {
       // Clear existing interval if any
       if (this.monitoringIntervals.has(monitorId)) {
@@ -539,22 +556,27 @@ export class RealTimeComplianceMonitor {
       }
 
       // Setup new monitoring interval
-      const interval = setInterval(async () => {
-        try {
-          await this.performComplianceAssessment(monitorId);
-        } catch (error) {
-          console.error(`Monitoring interval error for ${monitorId}:`, error);
-        }
-      }, intervalMinutes * 60 * 1000); // Convert minutes to milliseconds
+      const interval = setInterval(
+        async () => {
+          try {
+            await this.performComplianceAssessment(monitorId);
+          } catch (error) {
+            console.error(`Monitoring interval error for ${monitorId}:`, error);
+          }
+        },
+        intervalMinutes * 60 * 1000
+      ); // Convert minutes to milliseconds
 
       // Store interval reference
       this.monitoringIntervals.set(monitorId, interval);
 
-      console.log(`Real-time monitoring started for ${monitorId} with ${intervalMinutes} minute intervals`);
+      console.log(
+        `Real-time monitoring started for ${monitorId} with ${intervalMinutes} minute intervals`
+      );
     } catch (error) {
       console.error('Setup monitoring interval error:', error);
     }
-  }  /**
+  } /**
    * Get current monitoring status
    * Constitutional monitoring status retrieval with real-time data
    */
@@ -625,8 +647,8 @@ export class RealTimeComplianceMonitor {
             new_state: { status: 'paused' },
             user_id: userId,
             timestamp: timestamp.toISOString(),
-            reason
-          }
+            reason,
+          },
         })
         .eq('monitor_id', monitorId);
 
@@ -645,7 +667,9 @@ export class RealTimeComplianceMonitor {
 
   // Private helper methods
 
-  private async validateMonitoringParams(params: MonitoringParams): Promise<{ valid: boolean; error?: string }> {
+  private async validateMonitoringParams(
+    params: MonitoringParams
+  ): Promise<{ valid: boolean; error?: string }> {
     if (!params.tenant_id) {
       return { valid: false, error: 'Tenant ID required for constitutional monitoring' };
     }
@@ -661,39 +685,47 @@ export class RealTimeComplianceMonitor {
     return { valid: true };
   }
 
-  private async assessLgpdCompliance(tenantId: string): Promise<{ score: number; issues: string[]; recommendations: string[] }> {
+  private async assessLgpdCompliance(
+    tenantId: string
+  ): Promise<{ score: number; issues: string[]; recommendations: string[] }> {
     // Mock LGPD compliance assessment (integrate with actual LGPD services)
     return {
       score: 9.8,
       issues: [],
-      recommendations: ['Continue monitoring LGPD compliance']
+      recommendations: ['Continue monitoring LGPD compliance'],
     };
   }
 
-  private async assessAnvisaCompliance(tenantId: string): Promise<{ score: number; issues: string[]; recommendations: string[] }> {
+  private async assessAnvisaCompliance(
+    tenantId: string
+  ): Promise<{ score: number; issues: string[]; recommendations: string[] }> {
     // Mock ANVISA compliance assessment (integrate with actual ANVISA services)
     return {
       score: 9.9,
       issues: [],
-      recommendations: ['Maintain ANVISA compliance standards']
+      recommendations: ['Maintain ANVISA compliance standards'],
     };
   }
 
-  private async assessCfmCompliance(tenantId: string): Promise<{ score: number; issues: string[]; recommendations: string[] }> {
+  private async assessCfmCompliance(
+    tenantId: string
+  ): Promise<{ score: number; issues: string[]; recommendations: string[] }> {
     // Mock CFM compliance assessment (integrate with actual CFM services)
     return {
       score: 9.9,
       issues: [],
-      recommendations: ['Continue CFM professional standards compliance']
+      recommendations: ['Continue CFM professional standards compliance'],
     };
   }
 
-  private async assessConstitutionalCompliance(tenantId: string): Promise<{ score: number; issues: string[]; recommendations: string[] }> {
+  private async assessConstitutionalCompliance(
+    tenantId: string
+  ): Promise<{ score: number; issues: string[]; recommendations: string[] }> {
     // Mock constitutional healthcare assessment
     return {
       score: 9.9,
       issues: [],
-      recommendations: ['Maintain constitutional healthcare standards']
+      recommendations: ['Maintain constitutional healthcare standards'],
     };
   }
 
@@ -745,7 +777,7 @@ export class RealTimeComplianceMonitor {
         return {
           score_trend: 'stable',
           trend_percentage: 0,
-          next_period_prediction: currentScore
+          next_period_prediction: currentScore,
         };
       }
 
@@ -758,19 +790,19 @@ export class RealTimeComplianceMonitor {
       if (trendPercentage < -1) scoreTrend = 'declining';
 
       // Simple prediction based on trend
-      const prediction = currentScore + (trendPercentage / 100);
+      const prediction = currentScore + trendPercentage / 100;
 
       return {
         score_trend: scoreTrend,
         trend_percentage: Math.round(trendPercentage * 100) / 100,
-        next_period_prediction: Math.round(Math.max(prediction, 9.9) * 10) / 10
+        next_period_prediction: Math.round(Math.max(prediction, 9.9) * 10) / 10,
       };
     } catch (error) {
       console.error('Analyze compliance trends error:', error);
       return {
         score_trend: 'stable',
         trend_percentage: 0,
-        next_period_prediction: currentScore
+        next_period_prediction: currentScore,
       };
     }
   }
@@ -780,14 +812,12 @@ export class RealTimeComplianceMonitor {
     assessment: ComplianceMonitoringResponse
   ): Promise<void> {
     try {
-      await this.supabase
-        .from('compliance_monitoring_assessments')
-        .insert({
-          monitor_id: monitorId,
-          assessment_data: assessment,
-          overall_constitutional_score: assessment.overall_constitutional_score,
-          monitoring_timestamp: assessment.monitoring_timestamp.toISOString()
-        });
+      await this.supabase.from('compliance_monitoring_assessments').insert({
+        monitor_id: monitorId,
+        assessment_data: assessment,
+        overall_constitutional_score: assessment.overall_constitutional_score,
+        monitoring_timestamp: assessment.monitoring_timestamp.toISOString(),
+      });
     } catch (error) {
       console.error('Update monitor assessment error:', error);
     }
@@ -800,9 +830,7 @@ export class RealTimeComplianceMonitor {
     try {
       for (const alert of alerts) {
         // Store alert in database
-        await this.supabase
-          .from('compliance_alerts')
-          .insert(alert);
+        await this.supabase.from('compliance_alerts').insert(alert);
 
         // Send notifications if enabled
         if (config.automated_actions.notifications_enabled) {
@@ -822,7 +850,7 @@ export class RealTimeComplianceMonitor {
       // Mock notification sending (implement actual notification service)
       console.log(`Sending alert notification: ${alert.title} - ${alert.message}`);
       console.log(`Recipients: ${recipients.email_addresses.join(', ')}`);
-      
+
       // Implementation would include:
       // - Email notifications
       // - SMS for critical alerts

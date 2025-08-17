@@ -1,10 +1,10 @@
 /**
  * @fileoverview LGPD Data Erasure Service (Right to Erasure - Art. 18 LGPD)
  * Constitutional Brazilian Healthcare Data Erasure Implementation
- * 
+ *
  * Constitutional Healthcare Principle: Patient Privacy First + Right to be Forgotten
  * Quality Standard: ≥9.9/10
- * 
+ *
  * LGPD Article 18 - Data Subject Rights:
  * - Right to confirmation of processing
  * - Right to access data
@@ -17,11 +17,7 @@
  */
 
 import { z } from 'zod';
-import type { 
-  PatientDataClassification, 
-  ConstitutionalResponse,
-  ComplianceScore 
-} from '../types';
+import type { ComplianceScore, ConstitutionalResponse, PatientDataClassification } from '../types';
 
 /**
  * Data Erasure Request Schema
@@ -31,21 +27,21 @@ export const DataErasureRequestSchema = z.object({
   patientId: z.string().uuid(),
   tenantId: z.string().uuid(),
   requestType: z.enum([
-    'FULL_ERASURE',           // Complete data deletion
-    'PARTIAL_ERASURE',        // Specific data categories
-    'ANONYMIZATION',          // Convert to anonymous data
-    'PSEUDONYMIZATION',       // Remove direct identifiers
-    'BLOCKING'                // Block processing while maintaining data
+    'FULL_ERASURE', // Complete data deletion
+    'PARTIAL_ERASURE', // Specific data categories
+    'ANONYMIZATION', // Convert to anonymous data
+    'PSEUDONYMIZATION', // Remove direct identifiers
+    'BLOCKING', // Block processing while maintaining data
   ]),
   dataCategories: z.array(z.nativeEnum(PatientDataClassification)),
   erasureReason: z.enum([
-    'CONSENT_WITHDRAWN',      // Art. 18, V LGPD
-    'PURPOSE_FULFILLED',      // Art. 18, VI LGPD  
-    'UNLAWFUL_PROCESSING',    // Art. 18, II LGPD
-    'DATA_INACCURACY',        // Art. 18, III LGPD
-    'PATIENT_REQUEST',        // General data subject right
-    'LEGAL_OBLIGATION',       // Court order or legal requirement
-    'CONSTITUTIONAL_VIOLATION' // Constitutional healthcare violation
+    'CONSENT_WITHDRAWN', // Art. 18, V LGPD
+    'PURPOSE_FULFILLED', // Art. 18, VI LGPD
+    'UNLAWFUL_PROCESSING', // Art. 18, II LGPD
+    'DATA_INACCURACY', // Art. 18, III LGPD
+    'PATIENT_REQUEST', // General data subject right
+    'LEGAL_OBLIGATION', // Court order or legal requirement
+    'CONSTITUTIONAL_VIOLATION', // Constitutional healthcare violation
   ]),
   urgency: z.enum(['NORMAL', 'HIGH', 'CRITICAL']),
   retainForLegal: z.boolean().default(false), // Retain for legal/regulatory purposes
@@ -54,11 +50,13 @@ export const DataErasureRequestSchema = z.object({
   requestedAt: z.date(),
   patientConfirmation: z.boolean().default(false),
   guardianConsent: z.boolean().default(false), // For minors
-  accessibilityRequirements: z.object({
-    confirmationMethod: z.enum(['EMAIL', 'SMS', 'MAIL', 'IN_PERSON', 'ACCESSIBLE_INTERFACE']),
-    languagePreference: z.enum(['pt-BR', 'en-US']).default('pt-BR'),
-    specialNeeds: z.array(z.string()).optional()
-  }).optional()
+  accessibilityRequirements: z
+    .object({
+      confirmationMethod: z.enum(['EMAIL', 'SMS', 'MAIL', 'IN_PERSON', 'ACCESSIBLE_INTERFACE']),
+      languagePreference: z.enum(['pt-BR', 'en-US']).default('pt-BR'),
+      specialNeeds: z.array(z.string()).optional(),
+    })
+    .optional(),
 });
 
 export type DataErasureRequest = z.infer<typeof DataErasureRequestSchema>;
@@ -112,22 +110,27 @@ export class DataErasureService {
    * Process Data Erasure Request
    * Implements LGPD Art. 18 with constitutional healthcare validation
    */
-  async processErasureRequest(request: DataErasureRequest): Promise<ConstitutionalResponse<ErasureResult>> {
+  async processErasureRequest(
+    request: DataErasureRequest
+  ): Promise<ConstitutionalResponse<ErasureResult>> {
     try {
       // Step 1: Validate erasure request
       const validatedRequest = DataErasureRequestSchema.parse(request);
-      
+
       // Step 2: Constitutional healthcare validation
       const constitutionalValidation = await this.validateConstitutionalErasure(validatedRequest);
-      
+
       if (!constitutionalValidation.valid) {
         return {
           success: false,
           error: `Constitutional erasure validation failed: ${constitutionalValidation.violations.join(', ')}`,
           complianceScore: constitutionalValidation.score,
           regulatoryValidation: { lgpd: false, anvisa: true, cfm: true },
-          auditTrail: await this.createAuditEvent('ERASURE_CONSTITUTIONAL_VIOLATION', validatedRequest),
-          timestamp: new Date()
+          auditTrail: await this.createAuditEvent(
+            'ERASURE_CONSTITUTIONAL_VIOLATION',
+            validatedRequest
+          ),
+          timestamp: new Date(),
         };
       }
 
@@ -140,24 +143,27 @@ export class DataErasureService {
             error: 'Patient confirmation required for data erasure',
             complianceScore: 8.0,
             regulatoryValidation: { lgpd: true, anvisa: true, cfm: true },
-            auditTrail: await this.createAuditEvent('ERASURE_CONFIRMATION_PENDING', validatedRequest),
-            timestamp: new Date()
+            auditTrail: await this.createAuditEvent(
+              'ERASURE_CONFIRMATION_PENDING',
+              validatedRequest
+            ),
+            timestamp: new Date(),
           };
         }
       }
 
       // Step 4: Analyze data dependencies and legal retention requirements
       const dataAnalysis = await this.analyzeDataDependencies(validatedRequest);
-      
+
       // Step 5: Execute constitutional erasure
       const erasureResult = await this.executeConstitutionalErasure(validatedRequest, dataAnalysis);
-      
+
       // Step 6: Validate erasure completion
       const validationResult = await this.validateErasureCompletion(erasureResult);
-      
+
       // Step 7: Generate audit trail
       const auditTrail = await this.createAuditEvent('ERASURE_COMPLETED', validatedRequest);
-      
+
       // Step 8: Send completion notification
       await this.sendErasureCompletionNotification(validatedRequest, erasureResult);
 
@@ -165,25 +171,24 @@ export class DataErasureService {
         success: true,
         data: erasureResult,
         complianceScore: validationResult.complianceScore,
-        regulatoryValidation: { 
+        regulatoryValidation: {
           lgpd: validationResult.lgpdCompliant,
           anvisa: validationResult.anvisaCompliant,
-          cfm: validationResult.cfmCompliant 
+          cfm: validationResult.cfmCompliant,
         },
         auditTrail,
-        timestamp: new Date()
+        timestamp: new Date(),
       };
-
     } catch (error) {
       const auditTrail = await this.createAuditEvent('ERASURE_ERROR', request);
-      
+
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown erasure error',
         complianceScore: 0,
         regulatoryValidation: { lgpd: false, anvisa: false, cfm: false },
         auditTrail,
-        timestamp: new Date()
+        timestamp: new Date(),
       };
     }
   }
@@ -231,13 +236,13 @@ export class DataErasureService {
     }
 
     const finalScore = Math.max(0, Math.min(10, score)) as ComplianceScore;
-    
+
     return {
       valid: violations.length === 0,
       score: finalScore,
-      violations
+      violations,
     };
-  }  /**
+  } /**
    * Analyze Data Dependencies and Legal Retention Requirements
    */
   private async analyzeDataDependencies(request: DataErasureRequest): Promise<{
@@ -248,46 +253,50 @@ export class DataErasureService {
   }> {
     // This would query the database to analyze data dependencies
     // For now, implementing the interface structure
-    
+
     const erasableData = [
       { table: 'patient_analytics', records: 0, dataType: 'PERSONAL' as PatientDataClassification },
       { table: 'patient_uploads', records: 0, dataType: 'PERSONAL' as PatientDataClassification },
-      { table: 'communication_messages', records: 0, dataType: 'PERSONAL' as PatientDataClassification }
+      {
+        table: 'communication_messages',
+        records: 0,
+        dataType: 'PERSONAL' as PatientDataClassification,
+      },
     ];
 
     const retainedData = [
-      { 
-        table: 'medical_records', 
-        records: 0, 
-        reason: 'Medical record retention required by CFM', 
-        legalBasis: 'LEGAL_OBLIGATION' 
+      {
+        table: 'medical_records',
+        records: 0,
+        reason: 'Medical record retention required by CFM',
+        legalBasis: 'LEGAL_OBLIGATION',
       },
-      { 
-        table: 'audit_logs', 
-        records: 0, 
-        reason: 'Audit trail retention required by LGPD', 
-        legalBasis: 'LEGAL_OBLIGATION' 
-      }
+      {
+        table: 'audit_logs',
+        records: 0,
+        reason: 'Audit trail retention required by LGPD',
+        legalBasis: 'LEGAL_OBLIGATION',
+      },
     ];
 
     const dependencies = [
-      { 
-        table: 'patients', 
-        dependentTables: ['appointments', 'treatments', 'medical_records'], 
-        cascadeEffect: true 
-      }
+      {
+        table: 'patients',
+        dependentTables: ['appointments', 'treatments', 'medical_records'],
+        cascadeEffect: true,
+      },
     ];
 
     const medicalRetentionRequired = [
       { table: 'medical_records', retentionYears: 20, regulation: 'CFM Resolution 2217/2018' },
-      { table: 'prescriptions', retentionYears: 5, regulation: 'CFM Resolution 2227/2018' }
+      { table: 'prescriptions', retentionYears: 5, regulation: 'CFM Resolution 2227/2018' },
     ];
 
     return {
       erasableData,
       retainedData,
       dependencies,
-      medicalRetentionRequired
+      medicalRetentionRequired,
     };
   }
 
@@ -295,12 +304,17 @@ export class DataErasureService {
    * Execute Constitutional Erasure with Healthcare Compliance
    */
   private async executeConstitutionalErasure(
-    request: DataErasureRequest, 
+    request: DataErasureRequest,
     dataAnalysis: any
   ): Promise<ErasureResult> {
     const startTime = new Date();
-    const auditTrail: Array<{ action: string; timestamp: Date; details: string; affectedRecords: number }> = [];
-    
+    const auditTrail: Array<{
+      action: string;
+      timestamp: Date;
+      details: string;
+      affectedRecords: number;
+    }> = [];
+
     let totalErased = 0;
     let totalRetained = 0;
     let anonymizationApplied = false;
@@ -317,75 +331,87 @@ export class DataErasureService {
             erasureMethod = 'DELETE';
             recordsAffected = await this.deletePatientData(erasableItem.table, request.patientId);
             break;
-            
+
           case 'ANONYMIZATION':
             erasureMethod = 'ANONYMIZE';
-            recordsAffected = await this.anonymizePatientData(erasableItem.table, request.patientId);
+            recordsAffected = await this.anonymizePatientData(
+              erasableItem.table,
+              request.patientId
+            );
             anonymizationApplied = true;
             break;
-            
+
           case 'PSEUDONYMIZATION':
             erasureMethod = 'PSEUDONYMIZE';
-            recordsAffected = await this.pseudonymizePatientData(erasableItem.table, request.patientId);
+            recordsAffected = await this.pseudonymizePatientData(
+              erasableItem.table,
+              request.patientId
+            );
             pseudonymizationApplied = true;
             break;
-            
+
           case 'BLOCKING':
             erasureMethod = 'BLOCK';
             recordsAffected = await this.blockPatientData(erasableItem.table, request.patientId);
             break;
-            
+
           default:
             erasureMethod = 'PARTIAL_DELETE';
             recordsAffected = await this.partialDeletePatientData(
-              erasableItem.table, 
-              request.patientId, 
+              erasableItem.table,
+              request.patientId,
               request.dataCategories
             );
         }
 
         totalErased += recordsAffected;
-        
+
         auditTrail.push({
           action: `${erasureMethod}_${erasableItem.table}`,
           timestamp: new Date(),
           details: `Applied ${erasureMethod} to ${erasableItem.table}`,
-          affectedRecords: recordsAffected
+          affectedRecords: recordsAffected,
         });
       }
 
       // Step 2: Handle retained data with appropriate justification
       for (const retainedItem of dataAnalysis.retainedData) {
-        const recordsRetained = await this.countPatientDataRecords(retainedItem.table, request.patientId);
+        const recordsRetained = await this.countPatientDataRecords(
+          retainedItem.table,
+          request.patientId
+        );
         totalRetained += recordsRetained;
-        
+
         auditTrail.push({
           action: `RETAIN_${retainedItem.table}`,
           timestamp: new Date(),
           details: `Data retained: ${retainedItem.reason}`,
-          affectedRecords: recordsRetained
+          affectedRecords: recordsRetained,
         });
       }
 
       // Step 3: Handle medical records with constitutional healthcare compliance
       if (request.dataCategories.includes('HEALTH') || request.dataCategories.includes('GENETIC')) {
-        const medicalRecordsHandling = await this.handleMedicalRecordsErasure(request, dataAnalysis);
-        
+        const medicalRecordsHandling = await this.handleMedicalRecordsErasure(
+          request,
+          dataAnalysis
+        );
+
         auditTrail.push({
           action: 'MEDICAL_RECORDS_HANDLING',
           timestamp: new Date(),
           details: `Medical records: ${medicalRecordsHandling.action}`,
-          affectedRecords: medicalRecordsHandling.recordsAffected
+          affectedRecords: medicalRecordsHandling.recordsAffected,
         });
       }
 
       const endTime = new Date();
-      
+
       // Step 4: Calculate constitutional compliance score
       const complianceScore = this.calculateErasureComplianceScore(
-        request, 
-        totalErased, 
-        totalRetained, 
+        request,
+        totalErased,
+        totalRetained,
         auditTrail
       );
 
@@ -395,13 +421,13 @@ export class DataErasureService {
         dataErased: {
           tables: dataAnalysis.erasableData.map((item: any) => item.table),
           records: totalErased,
-          dataTypes: request.dataCategories
+          dataTypes: request.dataCategories,
         },
         dataRetained: {
           reason: 'Legal and medical retention requirements',
           tables: dataAnalysis.retainedData.map((item: any) => item.table),
           records: totalRetained,
-          legalBasis: dataAnalysis.retainedData.map((item: any) => item.legalBasis)
+          legalBasis: dataAnalysis.retainedData.map((item: any) => item.legalBasis),
         },
         anonymizationApplied,
         pseudonymizationApplied,
@@ -409,20 +435,21 @@ export class DataErasureService {
           patientRightsHonored: true,
           medicalRecordsHandling: request.retainForLegal ? 'RETAINED' : 'ANONYMIZED',
           legalRetentionJustified: !!request.legalRetentionReason,
-          complianceScore
+          complianceScore,
         },
         executionTime: {
           startedAt: startTime,
           completedAt: endTime,
-          durationMs: endTime.getTime() - startTime.getTime()
+          durationMs: endTime.getTime() - startTime.getTime(),
         },
-        auditTrail
+        auditTrail,
       };
 
       return result;
-
     } catch (error) {
-      throw new Error(`Erasure execution failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(
+        `Erasure execution failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
     }
   }
 
@@ -448,7 +475,11 @@ export class DataErasureService {
     }
 
     // Medical ethics compliance
-    if (request.dataCategories.includes('HEALTH') && totalRetained === 0 && !request.retainForLegal) {
+    if (
+      request.dataCategories.includes('HEALTH') &&
+      totalRetained === 0 &&
+      !request.retainForLegal
+    ) {
       score += 0.5; // Bonus for proper medical data handling
     }
 
@@ -493,8 +524,14 @@ export class DataErasureService {
     return 0;
   }
 
-  private async partialDeletePatientData(table: string, patientId: string, categories: PatientDataClassification[]): Promise<number> {
-    console.log(`Partial delete from ${table} for patient ${patientId}, categories: ${categories.join(', ')}`);
+  private async partialDeletePatientData(
+    table: string,
+    patientId: string,
+    categories: PatientDataClassification[]
+  ): Promise<number> {
+    console.log(
+      `Partial delete from ${table} for patient ${patientId}, categories: ${categories.join(', ')}`
+    );
     return 0;
   }
 
@@ -503,15 +540,22 @@ export class DataErasureService {
     return 0;
   }
 
-  private async handleMedicalRecordsErasure(request: DataErasureRequest, analysis: any): Promise<{ action: string; recordsAffected: number }> {
+  private async handleMedicalRecordsErasure(
+    request: DataErasureRequest,
+    analysis: any
+  ): Promise<{ action: string; recordsAffected: number }> {
     return { action: 'ANONYMIZED', recordsAffected: 0 };
   }
 
-  private async requestPatientConfirmation(request: DataErasureRequest): Promise<{ confirmed: boolean }> {
+  private async requestPatientConfirmation(
+    request: DataErasureRequest
+  ): Promise<{ confirmed: boolean }> {
     return { confirmed: true }; // Would implement confirmation workflow
   }
 
-  private async checkMedicalRetentionRequirements(request: DataErasureRequest): Promise<{ required: boolean; reason: string }> {
+  private async checkMedicalRetentionRequirements(
+    request: DataErasureRequest
+  ): Promise<{ required: boolean; reason: string }> {
     return { required: false, reason: '' };
   }
 
@@ -525,11 +569,14 @@ export class DataErasureService {
       complianceScore: result.constitutionalCompliance.complianceScore,
       lgpdCompliant: true,
       anvisaCompliant: true,
-      cfmCompliant: true
+      cfmCompliant: true,
     };
   }
 
-  private async sendErasureCompletionNotification(request: DataErasureRequest, result: ErasureResult): Promise<void> {
+  private async sendErasureCompletionNotification(
+    request: DataErasureRequest,
+    result: ErasureResult
+  ): Promise<void> {
     console.log(`Sending erasure completion notification for request ${result.requestId}`);
   }
 
@@ -539,36 +586,39 @@ export class DataErasureService {
       eventType: 'DATA_ERASURE',
       action,
       timestamp: new Date(),
-      metadata: data
+      metadata: data,
     };
   }
 
   /**
    * Get Erasure Request Status
    */
-  async getErasureStatus(requestId: string, tenantId: string): Promise<ConstitutionalResponse<ErasureResult | null>> {
+  async getErasureStatus(
+    requestId: string,
+    tenantId: string
+  ): Promise<ConstitutionalResponse<ErasureResult | null>> {
     try {
       // Would query database for erasure status
       const auditTrail = await this.createAuditEvent('ERASURE_STATUS_ACCESSED', { requestId });
-      
+
       return {
         success: true,
         data: null, // Would be actual status from database
         complianceScore: 9.9,
         regulatoryValidation: { lgpd: true, anvisa: true, cfm: true },
         auditTrail,
-        timestamp: new Date()
+        timestamp: new Date(),
       };
     } catch (error) {
       const auditTrail = await this.createAuditEvent('ERASURE_STATUS_ERROR', { requestId });
-      
+
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Failed to retrieve erasure status',
         complianceScore: 0,
         regulatoryValidation: { lgpd: false, anvisa: false, cfm: false },
         auditTrail,
-        timestamp: new Date()
+        timestamp: new Date(),
       };
     }
   }

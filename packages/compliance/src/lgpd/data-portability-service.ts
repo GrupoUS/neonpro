@@ -1,10 +1,10 @@
 /**
  * @fileoverview LGPD Data Portability Service (Art. 18, V LGPD)
  * Constitutional Brazilian Healthcare Data Portability Implementation
- * 
+ *
  * Constitutional Healthcare Principle: Patient Data Ownership + Transparency
  * Quality Standard: ≥9.9/10
- * 
+ *
  * LGPD Article 18, V - Right to Data Portability:
  * - Right to receive personal data in structured, commonly used format
  * - Right to transmit data to another controller
@@ -12,11 +12,7 @@
  */
 
 import { z } from 'zod';
-import type { 
-  PatientDataClassification, 
-  ConstitutionalResponse,
-  ComplianceScore 
-} from '../types';
+import type { ComplianceScore, ConstitutionalResponse, PatientDataClassification } from '../types';
 
 /**
  * Data Portability Request Schema
@@ -26,49 +22,58 @@ export const DataPortabilityRequestSchema = z.object({
   patientId: z.string().uuid(),
   tenantId: z.string().uuid(),
   portabilityType: z.enum([
-    'EXPORT_ONLY',            // Export data for patient
-    'DIRECT_TRANSFER',        // Direct transfer to another clinic
-    'STRUCTURED_EXPORT',      // Machine-readable structured export
-    'HUMAN_READABLE_EXPORT',  // Human-readable format
-    'FULL_MEDICAL_RECORDS'    // Complete medical history export
+    'EXPORT_ONLY', // Export data for patient
+    'DIRECT_TRANSFER', // Direct transfer to another clinic
+    'STRUCTURED_EXPORT', // Machine-readable structured export
+    'HUMAN_READABLE_EXPORT', // Human-readable format
+    'FULL_MEDICAL_RECORDS', // Complete medical history export
   ]),
   dataCategories: z.array(z.nativeEnum(PatientDataClassification)),
   exportFormat: z.enum([
-    'JSON',                   // Machine-readable JSON
-    'XML',                    // Machine-readable XML
-    'PDF',                    // Human-readable PDF
-    'CSV',                    // Spreadsheet format
-    'FHIR',                   // Healthcare interoperability standard
-    'DICOM'                   // Medical imaging standard
+    'JSON', // Machine-readable JSON
+    'XML', // Machine-readable XML
+    'PDF', // Human-readable PDF
+    'CSV', // Spreadsheet format
+    'FHIR', // Healthcare interoperability standard
+    'DICOM', // Medical imaging standard
   ]),
-  destinationController: z.object({
-    name: z.string().min(2).max(100),
-    cnpj: z.string().regex(/^\d{14}$/).optional(),
-    contact: z.string().email(),
-    address: z.string().max(500),
-    privacyOfficer: z.string().max(100),
-    dataProtectionMeasures: z.string().max(1000)
-  }).optional(),
+  destinationController: z
+    .object({
+      name: z.string().min(2).max(100),
+      cnpj: z
+        .string()
+        .regex(/^\d{14}$/)
+        .optional(),
+      contact: z.string().email(),
+      address: z.string().max(500),
+      privacyOfficer: z.string().max(100),
+      dataProtectionMeasures: z.string().max(1000),
+    })
+    .optional(),
   encryptionRequired: z.boolean().default(true),
   passwordProtection: z.boolean().default(true),
-  accessibilityRequirements: z.object({
-    screenReaderCompatible: z.boolean().default(false),
-    largeText: z.boolean().default(false),
-    audioDescription: z.boolean().default(false),
-    brailleFormat: z.boolean().default(false)
-  }).optional(),
+  accessibilityRequirements: z
+    .object({
+      screenReaderCompatible: z.boolean().default(false),
+      largeText: z.boolean().default(false),
+      audioDescription: z.boolean().default(false),
+      brailleFormat: z.boolean().default(false),
+    })
+    .optional(),
   urgency: z.enum(['NORMAL', 'HIGH', 'URGENT']).default('NORMAL'),
   requestedBy: z.string().uuid(),
   requestedAt: z.date(),
   patientConfirmation: z.boolean().default(false),
   guardianConsent: z.boolean().default(false), // For minors
-  deliveryMethod: z.enum([
-    'SECURE_DOWNLOAD',        // Encrypted download link
-    'ENCRYPTED_EMAIL',        // Password-protected email
-    'SECURE_PORTAL',          // Patient portal access
-    'PHYSICAL_MEDIA',         // USB/CD delivery
-    'DIRECT_API_TRANSFER'     // API-to-API transfer
-  ]).default('SECURE_DOWNLOAD')
+  deliveryMethod: z
+    .enum([
+      'SECURE_DOWNLOAD', // Encrypted download link
+      'ENCRYPTED_EMAIL', // Password-protected email
+      'SECURE_PORTAL', // Patient portal access
+      'PHYSICAL_MEDIA', // USB/CD delivery
+      'DIRECT_API_TRANSFER', // API-to-API transfer
+    ])
+    .default('SECURE_DOWNLOAD'),
 });
 
 export type DataPortabilityRequest = z.infer<typeof DataPortabilityRequestSchema>;
@@ -138,22 +143,28 @@ export class DataPortabilityService {
    * Process Data Portability Request
    * Implements LGPD Art. 18, V with constitutional healthcare validation
    */
-  async processPortabilityRequest(request: DataPortabilityRequest): Promise<ConstitutionalResponse<PortabilityResult>> {
+  async processPortabilityRequest(
+    request: DataPortabilityRequest
+  ): Promise<ConstitutionalResponse<PortabilityResult>> {
     try {
       // Step 1: Validate portability request
       const validatedRequest = DataPortabilityRequestSchema.parse(request);
-      
+
       // Step 2: Constitutional healthcare validation
-      const constitutionalValidation = await this.validateConstitutionalPortability(validatedRequest);
-      
+      const constitutionalValidation =
+        await this.validateConstitutionalPortability(validatedRequest);
+
       if (!constitutionalValidation.valid) {
         return {
           success: false,
           error: `Constitutional portability validation failed: ${constitutionalValidation.violations.join(', ')}`,
           complianceScore: constitutionalValidation.score,
           regulatoryValidation: { lgpd: false, anvisa: true, cfm: true },
-          auditTrail: await this.createAuditEvent('PORTABILITY_CONSTITUTIONAL_VIOLATION', validatedRequest),
-          timestamp: new Date()
+          auditTrail: await this.createAuditEvent(
+            'PORTABILITY_CONSTITUTIONAL_VIOLATION',
+            validatedRequest
+          ),
+          timestamp: new Date(),
         };
       }
 
@@ -166,27 +177,30 @@ export class DataPortabilityService {
             error: 'Patient confirmation required for data portability',
             complianceScore: 8.0,
             regulatoryValidation: { lgpd: true, anvisa: true, cfm: true },
-            auditTrail: await this.createAuditEvent('PORTABILITY_CONFIRMATION_PENDING', validatedRequest),
-            timestamp: new Date()
+            auditTrail: await this.createAuditEvent(
+              'PORTABILITY_CONFIRMATION_PENDING',
+              validatedRequest
+            ),
+            timestamp: new Date(),
           };
         }
       }
 
       // Step 4: Analyze exportable data and restrictions
       const dataAnalysis = await this.analyzeExportableData(validatedRequest);
-      
+
       // Step 5: Execute constitutional data export
       const exportResult = await this.executeConstitutionalExport(validatedRequest, dataAnalysis);
-      
+
       // Step 6: Apply security measures
       const securedResult = await this.applySecurityMeasures(exportResult, validatedRequest);
-      
+
       // Step 7: Deliver data according to specified method
       const deliveryResult = await this.deliverExportedData(securedResult, validatedRequest);
-      
+
       // Step 8: Generate audit trail
       const auditTrail = await this.createAuditEvent('PORTABILITY_COMPLETED', validatedRequest);
-      
+
       // Step 9: Send completion notification
       await this.sendPortabilityCompletionNotification(validatedRequest, deliveryResult);
 
@@ -196,19 +210,18 @@ export class DataPortabilityService {
         complianceScore: constitutionalValidation.score,
         regulatoryValidation: { lgpd: true, anvisa: true, cfm: true },
         auditTrail,
-        timestamp: new Date()
+        timestamp: new Date(),
       };
-
     } catch (error) {
       const auditTrail = await this.createAuditEvent('PORTABILITY_ERROR', request);
-      
+
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown portability error',
         complianceScore: 0,
         regulatoryValidation: { lgpd: false, anvisa: false, cfm: false },
         auditTrail,
-        timestamp: new Date()
+        timestamp: new Date(),
       };
     }
   }
@@ -225,13 +238,14 @@ export class DataPortabilityService {
     let score = 10;
 
     // Healthcare-specific validations
-    if (request.dataCategories.includes('HEALTH') || request.dataCategories.includes('GENETIC')) {
-      if (request.exportFormat === 'JSON' || request.exportFormat === 'XML') {
-        // Ensure FHIR compliance for medical data
-        if (request.exportFormat !== 'FHIR') {
-          violations.push('Medical data export should use FHIR standard for interoperability');
-          score -= 0.5;
-        }
+    if (
+      (request.dataCategories.includes('HEALTH') || request.dataCategories.includes('GENETIC')) &&
+      (request.exportFormat === 'JSON' || request.exportFormat === 'XML')
+    ) {
+      // Ensure FHIR compliance for medical data
+      if (request.exportFormat !== 'FHIR') {
+        violations.push('Medical data export should use FHIR standard for interoperability');
+        score -= 0.5;
       }
     }
 
@@ -265,17 +279,22 @@ export class DataPortabilityService {
     }
 
     const finalScore = Math.max(0, Math.min(10, score)) as ComplianceScore;
-    
+
     return {
       valid: violations.length === 0,
       score: finalScore,
-      violations
+      violations,
     };
-  }  /**
+  } /**
    * Analyze Exportable Data and Legal Restrictions
    */
   private async analyzeExportableData(request: DataPortabilityRequest): Promise<{
-    exportableData: { table: string; records: number; dataType: PatientDataClassification; size: number }[];
+    exportableData: {
+      table: string;
+      records: number;
+      dataType: PatientDataClassification;
+      size: number;
+    }[];
     excludedData: { table: string; records: number; reason: string; legalBasis: string }[];
     totalSizeBytes: number;
     estimatedExportTime: number;
@@ -283,33 +302,53 @@ export class DataPortabilityService {
   }> {
     // This would query the database to analyze exportable data
     const exportableData = [
-      { table: 'patients', records: 1, dataType: 'PERSONAL' as PatientDataClassification, size: 1024 },
-      { table: 'appointments', records: 0, dataType: 'PERSONAL' as PatientDataClassification, size: 2048 },
-      { table: 'medical_records', records: 0, dataType: 'HEALTH' as PatientDataClassification, size: 5120 },
-      { table: 'patient_uploads', records: 0, dataType: 'PERSONAL' as PatientDataClassification, size: 10240 }
+      {
+        table: 'patients',
+        records: 1,
+        dataType: 'PERSONAL' as PatientDataClassification,
+        size: 1024,
+      },
+      {
+        table: 'appointments',
+        records: 0,
+        dataType: 'PERSONAL' as PatientDataClassification,
+        size: 2048,
+      },
+      {
+        table: 'medical_records',
+        records: 0,
+        dataType: 'HEALTH' as PatientDataClassification,
+        size: 5120,
+      },
+      {
+        table: 'patient_uploads',
+        records: 0,
+        dataType: 'PERSONAL' as PatientDataClassification,
+        size: 10_240,
+      },
     ];
 
     const excludedData = [
-      { 
-        table: 'audit_logs', 
-        records: 0, 
-        reason: 'System logs not subject to portability (internal processing)', 
-        legalBasis: 'LEGITIMATE_INTEREST' 
+      {
+        table: 'audit_logs',
+        records: 0,
+        reason: 'System logs not subject to portability (internal processing)',
+        legalBasis: 'LEGITIMATE_INTEREST',
       },
       {
         table: 'payment_transactions',
         records: 0,
         reason: 'Financial data retention required by law',
-        legalBasis: 'LEGAL_OBLIGATION'
-      }
+        legalBasis: 'LEGAL_OBLIGATION',
+      },
     ];
 
     const requiresSpecialHandling = [
       {
         table: 'medical_records',
         reason: 'Contains sensitive health data',
-        measures: ['HIPAA_ANONYMIZATION', 'MEDICAL_ACCURACY_VALIDATION', 'STRUCTURED_FORMAT']
-      }
+        measures: ['HIPAA_ANONYMIZATION', 'MEDICAL_ACCURACY_VALIDATION', 'STRUCTURED_FORMAT'],
+      },
     ];
 
     const totalSizeBytes = exportableData.reduce((sum, item) => sum + item.size, 0);
@@ -320,7 +359,7 @@ export class DataPortabilityService {
       excludedData,
       totalSizeBytes,
       estimatedExportTime,
-      requiresSpecialHandling
+      requiresSpecialHandling,
     };
   }
 
@@ -332,8 +371,13 @@ export class DataPortabilityService {
     dataAnalysis: any
   ): Promise<PortabilityResult> {
     const startTime = new Date();
-    const auditTrail: Array<{ action: string; timestamp: Date; details: string; dataCategories: string[] }> = [];
-    
+    const auditTrail: Array<{
+      action: string;
+      timestamp: Date;
+      details: string;
+      dataCategories: string[];
+    }> = [];
+
     try {
       // Step 1: Prepare export data structure
       const exportData: any = {
@@ -344,9 +388,9 @@ export class DataPortabilityService {
           exportFormat: request.exportFormat,
           constitutionalCompliance: true,
           lgpdArticle: 'Art. 18, V',
-          dataClassifications: request.dataCategories
+          dataClassifications: request.dataCategories,
         },
-        patientData: {}
+        patientData: {},
       };
 
       let totalRecords = 0;
@@ -355,18 +399,22 @@ export class DataPortabilityService {
       // Step 2: Export data by category with constitutional validation
       for (const dataItem of dataAnalysis.exportableData) {
         if (request.dataCategories.includes(dataItem.dataType)) {
-          const tableData = await this.exportTableData(dataItem.table, request.patientId, request.exportFormat);
-          
+          const tableData = await this.exportTableData(
+            dataItem.table,
+            request.patientId,
+            request.exportFormat
+          );
+
           if (tableData.records.length > 0) {
             exportData.patientData[dataItem.table] = tableData.records;
             totalRecords += tableData.records.length;
             exportedTables.push(dataItem.table);
-            
+
             auditTrail.push({
               action: `EXPORT_${dataItem.table}`,
               timestamp: new Date(),
               details: `Exported ${tableData.records.length} records from ${dataItem.table}`,
-              dataCategories: [dataItem.dataType]
+              dataCategories: [dataItem.dataType],
             });
           }
         }
@@ -391,44 +439,52 @@ export class DataPortabilityService {
           records: totalRecords,
           tables: exportedTables,
           fileSizeBytes,
-          format: request.exportFormat
+          format: request.exportFormat,
         },
         excludedData: {
           reason: 'Legal restrictions and system data',
           categories: [],
-          records: dataAnalysis.excludedData.reduce((sum: number, item: any) => sum + item.records, 0),
-          legalBasis: dataAnalysis.excludedData.map((item: any) => item.legalBasis)
+          records: dataAnalysis.excludedData.reduce(
+            (sum: number, item: any) => sum + item.records,
+            0
+          ),
+          legalBasis: dataAnalysis.excludedData.map((item: any) => item.legalBasis),
         },
         securityMeasures: {
           encrypted: false, // Will be applied in next step
           passwordProtected: false, // Will be applied in next step
           accessControlApplied: true,
-          auditTrailIncluded: true
+          auditTrailIncluded: true,
         },
         constitutionalCompliance: {
           patientRightsHonored: true,
           medicalAccuracyValidated: true,
           privacyPreserved: true,
           transparencyProvided: true,
-          complianceScore: this.calculatePortabilityComplianceScore(request, totalRecords, auditTrail)
+          complianceScore: this.calculatePortabilityComplianceScore(
+            request,
+            totalRecords,
+            auditTrail
+          ),
         },
         deliveryInfo: {
           method: request.deliveryMethod,
           expiresAt: new Date(Date.now() + this.exportExpiryDays * 24 * 60 * 60 * 1000),
-          accessInstructions: 'Constitutional healthcare data export - Handle with care'
+          accessInstructions: 'Constitutional healthcare data export - Handle with care',
         },
         executionTime: {
           startedAt: startTime,
           completedAt: new Date(),
-          durationMs: Date.now() - startTime.getTime()
+          durationMs: Date.now() - startTime.getTime(),
         },
-        auditTrail
+        auditTrail,
       };
 
       return result;
-
     } catch (error) {
-      throw new Error(`Export execution failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(
+        `Export execution failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
     }
   }
 
@@ -473,36 +529,38 @@ export class DataPortabilityService {
     const updatedResult = { ...result };
 
     switch (request.deliveryMethod) {
-      case 'SECURE_DOWNLOAD':
+      case 'SECURE_DOWNLOAD': {
         const downloadUrl = await this.createSecureDownloadLink(result);
         updatedResult.deliveryInfo.downloadUrl = downloadUrl;
-        updatedResult.deliveryInfo.accessInstructions = 
+        updatedResult.deliveryInfo.accessInstructions =
           'Click the secure download link and enter the provided password. Link expires in 30 days.';
         break;
+      }
 
       case 'ENCRYPTED_EMAIL':
         await this.sendEncryptedEmail(result, request);
-        updatedResult.deliveryInfo.accessInstructions = 
+        updatedResult.deliveryInfo.accessInstructions =
           'Encrypted export sent to registered email address. Check your inbox for delivery confirmation.';
         break;
 
-      case 'SECURE_PORTAL':
+      case 'SECURE_PORTAL': {
         const portalAccess = await this.createPortalAccess(result, request);
-        updatedResult.deliveryInfo.accessInstructions = 
-          `Access your exported data through the patient portal using your secure credentials.`;
+        updatedResult.deliveryInfo.accessInstructions =
+          'Access your exported data through the patient portal using your secure credentials.';
         break;
+      }
 
       case 'DIRECT_API_TRANSFER':
         if (request.destinationController) {
           await this.executeDirectTransfer(result, request.destinationController);
-          updatedResult.deliveryInfo.accessInstructions = 
+          updatedResult.deliveryInfo.accessInstructions =
             'Data transferred directly to destination controller via secure API.';
         }
         break;
 
       case 'PHYSICAL_MEDIA':
         await this.schedulePhysicalDelivery(result, request);
-        updatedResult.deliveryInfo.accessInstructions = 
+        updatedResult.deliveryInfo.accessInstructions =
           'Encrypted USB drive will be delivered to registered address within 5 business days.';
         break;
     }
@@ -548,7 +606,11 @@ export class DataPortabilityService {
   // HELPER METHODS (Implementation Stubs)
   // ============================================================================
 
-  private async exportTableData(table: string, patientId: string, format: string): Promise<{ records: any[] }> {
+  private async exportTableData(
+    table: string,
+    patientId: string,
+    format: string
+  ): Promise<{ records: any[] }> {
     console.log(`Exporting data from ${table} for patient ${patientId} in ${format} format`);
     return { records: [] }; // Would query Supabase database
   }
@@ -568,7 +630,10 @@ export class DataPortabilityService {
     return data;
   }
 
-  private async encryptExportData(result: PortabilityResult, request: DataPortabilityRequest): Promise<{ key: string }> {
+  private async encryptExportData(
+    result: PortabilityResult,
+    request: DataPortabilityRequest
+  ): Promise<{ key: string }> {
     return { key: 'encrypted_key_placeholder' };
   }
 
@@ -576,7 +641,10 @@ export class DataPortabilityService {
     return 'secure_password_placeholder';
   }
 
-  private async applyPasswordProtection(result: PortabilityResult, password: string): Promise<void> {
+  private async applyPasswordProtection(
+    result: PortabilityResult,
+    password: string
+  ): Promise<void> {
     console.log('Applying password protection');
   }
 
@@ -588,11 +656,17 @@ export class DataPortabilityService {
     return 'https://secure.neonpro.com/download/encrypted_export_placeholder';
   }
 
-  private async sendEncryptedEmail(result: PortabilityResult, request: DataPortabilityRequest): Promise<void> {
+  private async sendEncryptedEmail(
+    result: PortabilityResult,
+    request: DataPortabilityRequest
+  ): Promise<void> {
     console.log('Sending encrypted email');
   }
 
-  private async createPortalAccess(result: PortabilityResult, request: DataPortabilityRequest): Promise<void> {
+  private async createPortalAccess(
+    result: PortabilityResult,
+    request: DataPortabilityRequest
+  ): Promise<void> {
     console.log('Creating portal access');
   }
 
@@ -600,15 +674,23 @@ export class DataPortabilityService {
     console.log('Executing direct transfer');
   }
 
-  private async schedulePhysicalDelivery(result: PortabilityResult, request: DataPortabilityRequest): Promise<void> {
+  private async schedulePhysicalDelivery(
+    result: PortabilityResult,
+    request: DataPortabilityRequest
+  ): Promise<void> {
     console.log('Scheduling physical delivery');
   }
 
-  private async requestPatientConfirmation(request: DataPortabilityRequest): Promise<{ confirmed: boolean }> {
+  private async requestPatientConfirmation(
+    request: DataPortabilityRequest
+  ): Promise<{ confirmed: boolean }> {
     return { confirmed: true }; // Would implement confirmation workflow
   }
 
-  private async sendPortabilityCompletionNotification(request: DataPortabilityRequest, result: PortabilityResult): Promise<void> {
+  private async sendPortabilityCompletionNotification(
+    request: DataPortabilityRequest,
+    result: PortabilityResult
+  ): Promise<void> {
     console.log(`Sending portability completion notification for request ${result.requestId}`);
   }
 
@@ -618,36 +700,39 @@ export class DataPortabilityService {
       eventType: 'DATA_PORTABILITY',
       action,
       timestamp: new Date(),
-      metadata: data
+      metadata: data,
     };
   }
 
   /**
    * Get Portability Request Status
    */
-  async getPortabilityStatus(requestId: string, tenantId: string): Promise<ConstitutionalResponse<PortabilityResult | null>> {
+  async getPortabilityStatus(
+    requestId: string,
+    tenantId: string
+  ): Promise<ConstitutionalResponse<PortabilityResult | null>> {
     try {
       // Would query database for portability status
       const auditTrail = await this.createAuditEvent('PORTABILITY_STATUS_ACCESSED', { requestId });
-      
+
       return {
         success: true,
         data: null, // Would be actual status from database
         complianceScore: 9.9,
         regulatoryValidation: { lgpd: true, anvisa: true, cfm: true },
         auditTrail,
-        timestamp: new Date()
+        timestamp: new Date(),
       };
     } catch (error) {
       const auditTrail = await this.createAuditEvent('PORTABILITY_STATUS_ERROR', { requestId });
-      
+
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Failed to retrieve portability status',
         complianceScore: 0,
         regulatoryValidation: { lgpd: false, anvisa: false, cfm: false },
         auditTrail,
-        timestamp: new Date()
+        timestamp: new Date(),
       };
     }
   }

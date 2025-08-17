@@ -8,19 +8,19 @@ import { z } from 'zod';
 
 // Constitutional Compliance Dashboard Schemas
 const ComplianceDashboardConfigSchema = z.object({
-  refresh_interval_ms: z.number().min(5000).max(300000), // 5 seconds to 5 minutes
+  refresh_interval_ms: z.number().min(5000).max(300_000), // 5 seconds to 5 minutes
   alert_thresholds: z.object({
     critical_compliance_score: z.number().min(9.5).max(10),
     warning_compliance_score: z.number().min(8.0).max(9.5),
     privacy_budget_warning: z.number().min(0.7).max(0.9),
-    audit_trail_gap_hours: z.number().min(1).max(24)
+    audit_trail_gap_hours: z.number().min(1).max(24),
   }),
   real_time_monitoring: z.boolean().default(true),
   constitutional_validation: z.boolean().default(true),
   lgpd_tracking_enabled: z.boolean().default(true),
   anvisa_tracking_enabled: z.boolean().default(true),
   cfm_tracking_enabled: z.boolean().default(true),
-  automated_reporting: z.boolean().default(true)
+  automated_reporting: z.boolean().default(true),
 });
 
 const ComplianceDashboardMetricsSchema = z.object({
@@ -33,27 +33,35 @@ const ComplianceDashboardMetricsSchema = z.object({
     privacy_budget_utilization: z.number().min(0).max(1),
     active_anonymization_processes: z.number().min(0),
     privacy_violations_count: z.number().min(0),
-    data_subject_requests_pending: z.number().min(0)
+    data_subject_requests_pending: z.number().min(0),
   }),
   security_metrics: z.object({
     failed_authentication_attempts: z.number().min(0),
     unauthorized_access_attempts: z.number().min(0),
     data_breach_incidents: z.number().min(0),
-    encryption_coverage_percentage: z.number().min(0).max(100)
+    encryption_coverage_percentage: z.number().min(0).max(100),
   }),
   operational_metrics: z.object({
     system_uptime_percentage: z.number().min(0).max(100),
     response_time_p95_ms: z.number().min(0),
     error_rate_percentage: z.number().min(0).max(100),
-    concurrent_users: z.number().min(0)
+    concurrent_users: z.number().min(0),
   }),
-  last_updated: z.string().datetime()
+  last_updated: z.string().datetime(),
 });
 
 const ComplianceAlertSchema = z.object({
   alert_id: z.string().uuid(),
   alert_type: z.enum(['critical', 'warning', 'info']),
-  category: z.enum(['lgpd', 'anvisa', 'cfm', 'constitutional', 'privacy', 'security', 'operational']),
+  category: z.enum([
+    'lgpd',
+    'anvisa',
+    'cfm',
+    'constitutional',
+    'privacy',
+    'security',
+    'operational',
+  ]),
   title: z.string().min(1).max(200),
   description: z.string().min(1).max(1000),
   severity_score: z.number().min(1).max(10),
@@ -61,12 +69,12 @@ const ComplianceAlertSchema = z.object({
     affects_patient_privacy: z.boolean(),
     affects_regulatory_compliance: z.boolean(),
     affects_constitutional_rights: z.boolean(),
-    affects_medical_accuracy: z.boolean()
+    affects_medical_accuracy: z.boolean(),
   }),
   resolution_required: z.boolean(),
   estimated_resolution_time: z.string().optional(),
   created_at: z.string().datetime(),
-  resolved_at: z.string().datetime().optional()
+  resolved_at: z.string().datetime().optional(),
 });
 
 const ComplianceDashboardReportSchema = z.object({
@@ -75,21 +83,21 @@ const ComplianceDashboardReportSchema = z.object({
   generated_at: z.string().datetime(),
   reporting_period: z.object({
     start_date: z.string().datetime(),
-    end_date: z.string().datetime()
+    end_date: z.string().datetime(),
   }),
   executive_summary: z.object({
     overall_compliance_rating: z.enum(['excellent', 'good', 'fair', 'poor', 'critical']),
     key_achievements: z.array(z.string()),
     critical_issues: z.array(z.string()),
-    recommendations: z.array(z.string())
+    recommendations: z.array(z.string()),
   }),
   detailed_metrics: z.record(z.any()),
   constitutional_certification: z.object({
     privacy_officer_review: z.boolean(),
     regulatory_compliance_verified: z.boolean(),
     constitutional_standards_met: z.boolean(),
-    audit_trail_complete: z.boolean()
-  })
+    audit_trail_complete: z.boolean(),
+  }),
 });
 
 // Type definitions
@@ -135,7 +143,7 @@ export class ComplianceDashboardService {
     try {
       // Initialize monitoring
       await this.initializeDashboard();
-      
+
       // Start real-time monitoring
       if (this.config.real_time_monitoring) {
         this.monitoringInterval = setInterval(
@@ -146,7 +154,7 @@ export class ComplianceDashboardService {
 
       // Get initial metrics
       const initialMetrics = await this.collectComplianceMetrics();
-      
+
       // Create audit entry
       const auditEntry: ComplianceDashboardAudit = {
         audit_id: crypto.randomUUID(),
@@ -158,10 +166,10 @@ export class ComplianceDashboardService {
           monitoring_type: 'constitutional_compliance',
           data_accessed: 'aggregated_compliance_metrics',
           privacy_protection: 'differential_privacy_applied',
-          patient_impact: 'minimal_privacy_preserving'
+          patient_impact: 'minimal_privacy_preserving',
         },
         created_at: new Date().toISOString(),
-        created_by: 'compliance-dashboard-service'
+        created_by: 'compliance-dashboard-service',
       };
 
       this.auditTrail.push(auditEntry);
@@ -169,9 +177,8 @@ export class ComplianceDashboardService {
       return {
         success: true,
         dashboard_url: '/dashboard/compliance',
-        initial_metrics: initialMetrics
+        initial_metrics: initialMetrics,
       };
-
     } catch (error) {
       console.error('Failed to start compliance monitoring:', error);
       throw new Error('Constitutional compliance monitoring startup failed');
@@ -193,14 +200,13 @@ export class ComplianceDashboardService {
       const finalReport = await this.generateComplianceReport('incident', {
         reason: 'monitoring_stopped',
         include_active_alerts: true,
-        include_metrics_history: true
+        include_metrics_history: true,
       });
 
       return {
         success: true,
-        final_report: finalReport
+        final_report: finalReport,
       };
-
     } catch (error) {
       console.error('Failed to stop compliance monitoring:', error);
       throw new Error('Constitutional compliance monitoring shutdown failed');
@@ -213,19 +219,19 @@ export class ComplianceDashboardService {
   async collectComplianceMetrics(): Promise<ComplianceDashboardMetrics> {
     // Collect LGPD compliance metrics
     const lgpdMetrics = await this.collectLgpdMetrics();
-    
+
     // Collect ANVISA compliance metrics
     const anvisaMetrics = await this.collectAnvisaMetrics();
-    
+
     // Collect CFM compliance metrics
     const cfmMetrics = await this.collectCfmMetrics();
-    
+
     // Collect privacy metrics
     const privacyMetrics = await this.collectPrivacyMetrics();
-    
+
     // Collect security metrics
     const securityMetrics = await this.collectSecurityMetrics();
-    
+
     // Collect operational metrics
     const operationalMetrics = await this.collectOperationalMetrics();
 
@@ -236,7 +242,7 @@ export class ComplianceDashboardService {
       cfm: cfmMetrics.score,
       privacy: privacyMetrics.score,
       security: securityMetrics.score,
-      operational: operationalMetrics.score
+      operational: operationalMetrics.score,
     });
 
     const metrics: ComplianceDashboardMetrics = {
@@ -249,21 +255,21 @@ export class ComplianceDashboardService {
         privacy_budget_utilization: privacyMetrics.budget_utilization,
         active_anonymization_processes: privacyMetrics.active_processes,
         privacy_violations_count: privacyMetrics.violations_count,
-        data_subject_requests_pending: privacyMetrics.pending_requests
+        data_subject_requests_pending: privacyMetrics.pending_requests,
       },
       security_metrics: {
         failed_authentication_attempts: securityMetrics.failed_auth_attempts,
         unauthorized_access_attempts: securityMetrics.unauthorized_attempts,
         data_breach_incidents: securityMetrics.breach_incidents,
-        encryption_coverage_percentage: securityMetrics.encryption_coverage
+        encryption_coverage_percentage: securityMetrics.encryption_coverage,
       },
       operational_metrics: {
         system_uptime_percentage: operationalMetrics.uptime_percentage,
         response_time_p95_ms: operationalMetrics.response_time_p95,
         error_rate_percentage: operationalMetrics.error_rate,
-        concurrent_users: operationalMetrics.concurrent_users
+        concurrent_users: operationalMetrics.concurrent_users,
       },
-      last_updated: new Date().toISOString()
+      last_updated: new Date().toISOString(),
     };
 
     this.currentMetrics = ComplianceDashboardMetricsSchema.parse(metrics);
@@ -277,22 +283,21 @@ export class ComplianceDashboardService {
     try {
       // Collect current metrics
       const metrics = await this.collectComplianceMetrics();
-      
+
       // Check for compliance violations and generate alerts
       const newAlerts = await this.checkComplianceViolations(metrics);
-      
+
       // Add new alerts to active alerts
       this.activeAlerts.push(...newAlerts);
-      
+
       // Remove resolved alerts
-      this.activeAlerts = this.activeAlerts.filter(alert => !alert.resolved_at);
-      
+      this.activeAlerts = this.activeAlerts.filter((alert) => !alert.resolved_at);
+
       // Update metrics
       this.currentMetrics = metrics;
-      
     } catch (error) {
       console.error('Compliance check failed:', error);
-      
+
       // Generate critical alert for monitoring failure
       const criticalAlert: ComplianceAlert = {
         alert_id: crypto.randomUUID(),
@@ -305,13 +310,13 @@ export class ComplianceDashboardService {
           affects_patient_privacy: true,
           affects_regulatory_compliance: true,
           affects_constitutional_rights: true,
-          affects_medical_accuracy: false
+          affects_medical_accuracy: false,
         },
         resolution_required: true,
         estimated_resolution_time: '1 hour',
-        created_at: new Date().toISOString()
+        created_at: new Date().toISOString(),
       };
-      
+
       this.activeAlerts.push(criticalAlert);
     }
   }
@@ -319,7 +324,9 @@ export class ComplianceDashboardService {
   /**
    * Check for compliance violations and generate alerts
    */
-  private async checkComplianceViolations(metrics: ComplianceDashboardMetrics): Promise<ComplianceAlert[]> {
+  private async checkComplianceViolations(
+    metrics: ComplianceDashboardMetrics
+  ): Promise<ComplianceAlert[]> {
     const alerts: ComplianceAlert[] = [];
 
     // Check critical compliance score threshold
@@ -335,16 +342,19 @@ export class ComplianceDashboardService {
           affects_patient_privacy: true,
           affects_regulatory_compliance: true,
           affects_constitutional_rights: true,
-          affects_medical_accuracy: true
+          affects_medical_accuracy: true,
         },
         resolution_required: true,
         estimated_resolution_time: '2 hours',
-        created_at: new Date().toISOString()
+        created_at: new Date().toISOString(),
       });
     }
 
     // Check privacy budget warning threshold
-    if (metrics.privacy_metrics.privacy_budget_utilization > this.config.alert_thresholds.privacy_budget_warning) {
+    if (
+      metrics.privacy_metrics.privacy_budget_utilization >
+      this.config.alert_thresholds.privacy_budget_warning
+    ) {
       alerts.push({
         alert_id: crypto.randomUUID(),
         alert_type: 'warning',
@@ -356,11 +366,11 @@ export class ComplianceDashboardService {
           affects_patient_privacy: true,
           affects_regulatory_compliance: false,
           affects_constitutional_rights: true,
-          affects_medical_accuracy: false
+          affects_medical_accuracy: false,
         },
         resolution_required: true,
         estimated_resolution_time: '30 minutes',
-        created_at: new Date().toISOString()
+        created_at: new Date().toISOString(),
       });
     }
 
@@ -377,11 +387,11 @@ export class ComplianceDashboardService {
           affects_patient_privacy: true,
           affects_regulatory_compliance: true,
           affects_constitutional_rights: true,
-          affects_medical_accuracy: false
+          affects_medical_accuracy: false,
         },
         resolution_required: true,
         estimated_resolution_time: '1 hour',
-        created_at: new Date().toISOString()
+        created_at: new Date().toISOString(),
       });
     }
 
@@ -398,11 +408,11 @@ export class ComplianceDashboardService {
           affects_patient_privacy: true,
           affects_regulatory_compliance: true,
           affects_constitutional_rights: true,
-          affects_medical_accuracy: false
+          affects_medical_accuracy: false,
         },
         resolution_required: true,
         estimated_resolution_time: '30 minutes',
-        created_at: new Date().toISOString()
+        created_at: new Date().toISOString(),
       });
     }
 
@@ -419,11 +429,11 @@ export class ComplianceDashboardService {
           affects_patient_privacy: true,
           affects_regulatory_compliance: true,
           affects_constitutional_rights: true,
-          affects_medical_accuracy: false
+          affects_medical_accuracy: false,
         },
         resolution_required: true,
         estimated_resolution_time: '4 hours',
-        created_at: new Date().toISOString()
+        created_at: new Date().toISOString(),
       });
     }
 
@@ -435,29 +445,35 @@ export class ComplianceDashboardService {
    */
   async generateComplianceReport(
     reportType: 'daily' | 'weekly' | 'monthly' | 'quarterly' | 'annual' | 'incident',
-    options?: { reason?: string; include_active_alerts?: boolean; include_metrics_history?: boolean }
+    options?: {
+      reason?: string;
+      include_active_alerts?: boolean;
+      include_metrics_history?: boolean;
+    }
   ): Promise<ComplianceDashboardReport> {
     const reportId = crypto.randomUUID();
     const generatedAt = new Date().toISOString();
-    
+
     // Calculate reporting period
     const reportingPeriod = this.calculateReportingPeriod(reportType);
-    
+
     // Get current metrics
-    const currentMetrics = this.currentMetrics || await this.collectComplianceMetrics();
-    
+    const currentMetrics = this.currentMetrics || (await this.collectComplianceMetrics());
+
     // Generate executive summary
     const executiveSummary = this.generateExecutiveSummary(currentMetrics);
-    
+
     // Collect detailed metrics
     const detailedMetrics = {
       current_metrics: currentMetrics,
       active_alerts: options?.include_active_alerts ? this.activeAlerts : [],
       audit_trail_summary: {
         total_entries: this.auditTrail.length,
-        compliance_checks_performed: this.auditTrail.filter(a => a.dashboard_action === 'compliance_check').length,
-        alerts_generated: this.auditTrail.reduce((sum, a) => sum + a.alerts_generated.length, 0)
-      }
+        compliance_checks_performed: this.auditTrail.filter(
+          (a) => a.dashboard_action === 'compliance_check'
+        ).length,
+        alerts_generated: this.auditTrail.reduce((sum, a) => sum + a.alerts_generated.length, 0),
+      },
     };
 
     const report: ComplianceDashboardReport = {
@@ -471,8 +487,8 @@ export class ComplianceDashboardService {
         privacy_officer_review: true,
         regulatory_compliance_verified: currentMetrics.overall_compliance_score >= 9.5,
         constitutional_standards_met: currentMetrics.constitutional_compliance_score >= 9.9,
-        audit_trail_complete: this.auditTrail.length > 0
-      }
+        audit_trail_complete: this.auditTrail.length > 0,
+      },
     };
 
     return ComplianceDashboardReportSchema.parse(report);
@@ -489,21 +505,21 @@ export class ComplianceDashboardService {
    * Get active compliance alerts
    */
   getActiveAlerts(): ComplianceAlert[] {
-    return this.activeAlerts.filter(alert => !alert.resolved_at);
+    return this.activeAlerts.filter((alert) => !alert.resolved_at);
   }
 
   /**
    * Resolve compliance alert
    */
   async resolveAlert(alertId: string, resolution: string): Promise<{ success: boolean }> {
-    const alertIndex = this.activeAlerts.findIndex(alert => alert.alert_id === alertId);
-    
+    const alertIndex = this.activeAlerts.findIndex((alert) => alert.alert_id === alertId);
+
     if (alertIndex === -1) {
       throw new Error('Alert not found');
     }
 
     this.activeAlerts[alertIndex].resolved_at = new Date().toISOString();
-    
+
     // Create audit entry for alert resolution
     const auditEntry: ComplianceDashboardAudit = {
       audit_id: crypto.randomUUID(),
@@ -514,10 +530,10 @@ export class ComplianceDashboardService {
       privacy_impact_assessment: {
         action_type: 'alert_resolution',
         resolution_details: resolution,
-        compliance_impact: 'positive'
+        compliance_impact: 'positive',
       },
       created_at: new Date().toISOString(),
-      created_by: 'compliance-dashboard-service'
+      created_by: 'compliance-dashboard-service',
     };
 
     this.auditTrail.push(auditEntry);
@@ -554,7 +570,7 @@ export class ComplianceDashboardService {
       budget_utilization: 0.65,
       active_processes: 3,
       violations_count: 0,
-      pending_requests: 2
+      pending_requests: 2,
     };
   }
 
@@ -570,7 +586,7 @@ export class ComplianceDashboardService {
       failed_auth_attempts: 5,
       unauthorized_attempts: 0,
       breach_incidents: 0,
-      encryption_coverage: 100
+      encryption_coverage: 100,
     };
   }
 
@@ -586,22 +602,22 @@ export class ComplianceDashboardService {
       uptime_percentage: 99.9,
       response_time_p95: 150,
       error_rate: 0.1,
-      concurrent_users: 45
+      concurrent_users: 45,
     };
   }
 
   private calculateOverallComplianceScore(scores: Record<string, number>): number {
     const weights = {
       lgpd: 0.25,
-      anvisa: 0.20,
-      cfm: 0.20,
+      anvisa: 0.2,
+      cfm: 0.2,
       privacy: 0.15,
       security: 0.15,
-      operational: 0.05
+      operational: 0.05,
     };
 
     const weightedSum = Object.entries(scores).reduce(
-      (sum, [key, score]) => sum + (score * (weights[key as keyof typeof weights] || 0)),
+      (sum, [key, score]) => sum + score * (weights[key as keyof typeof weights] || 0),
       0
     );
 
@@ -611,7 +627,7 @@ export class ComplianceDashboardService {
   private calculateReportingPeriod(reportType: string): { start_date: string; end_date: string } {
     const now = new Date();
     const endDate = now.toISOString();
-    
+
     let startDate: Date;
     switch (reportType) {
       case 'daily':
@@ -635,7 +651,7 @@ export class ComplianceDashboardService {
 
     return {
       start_date: startDate.toISOString(),
-      end_date: endDate
+      end_date: endDate,
     };
   }
 
@@ -647,7 +663,7 @@ export class ComplianceDashboardService {
   } {
     const score = metrics.overall_compliance_score;
     let rating: 'excellent' | 'good' | 'fair' | 'poor' | 'critical';
-    
+
     if (score >= 9.5) rating = 'excellent';
     else if (score >= 8.5) rating = 'good';
     else if (score >= 7.5) rating = 'fair';
@@ -657,26 +673,26 @@ export class ComplianceDashboardService {
     const keyAchievements = [
       `Constitutional compliance score: ${metrics.constitutional_compliance_score}/10`,
       `System uptime: ${metrics.operational_metrics.system_uptime_percentage}%`,
-      `Zero data breach incidents`,
-      `LGPD compliance maintained above 9.5/10`
+      'Zero data breach incidents',
+      'LGPD compliance maintained above 9.5/10',
     ];
 
     const criticalIssues = this.activeAlerts
-      .filter(alert => alert.alert_type === 'critical')
-      .map(alert => alert.title);
+      .filter((alert) => alert.alert_type === 'critical')
+      .map((alert) => alert.title);
 
     const recommendations = [
       'Continue monitoring privacy budget utilization',
       'Maintain regular compliance assessments',
       'Update incident response procedures',
-      'Enhance staff training on constitutional healthcare compliance'
+      'Enhance staff training on constitutional healthcare compliance',
     ];
 
     return {
       overall_compliance_rating: rating,
       key_achievements: keyAchievements,
       critical_issues: criticalIssues,
-      recommendations: recommendations
+      recommendations,
     };
   }
 
@@ -710,7 +726,7 @@ export class ComplianceDashboardService {
     }
 
     // Check for critical alerts
-    const criticalAlerts = this.activeAlerts.filter(alert => alert.alert_type === 'critical');
+    const criticalAlerts = this.activeAlerts.filter((alert) => alert.alert_type === 'critical');
     if (criticalAlerts.length > 0) {
       issues.push(`${criticalAlerts.length} critical alerts require immediate attention`);
       score -= criticalAlerts.length * 0.1;
@@ -725,7 +741,7 @@ export class ComplianceDashboardService {
     return {
       compliant: score >= 9.9 && issues.length === 0,
       score: Math.max(score, 0),
-      issues
+      issues,
     };
   }
 }
@@ -769,6 +785,6 @@ export async function validateComplianceDashboard(
 
   return {
     valid: violations.length === 0,
-    violations
+    violations,
   };
 }

@@ -5,31 +5,25 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@neonpro/ui/card';
-import { Button } from '@neonpro/ui/button';
-import { Input } from '@neonpro/ui/input';
-import { Label } from '@neonpro/ui/label';
-import { Badge } from '@neonpro/ui/badge';
-import { Alert, AlertDescription } from '@neonpro/ui/alert';
-import {
-  Plus,
-  Users,
-  CheckCircle,
-  XCircle,
-  Clock,
   AlertTriangle,
-  Shield,
   Award,
+  CheckCircle,
+  Clock,
   FileText,
+  Plus,
+  Shield,
+  Users,
+  XCircle,
 } from 'lucide-react';
-import { cn } from '@neonpro/utils';
+import { useEffect, useState } from 'react';
+import { cn } from '../../lib/utils';
+import { Alert, AlertDescription } from '../Alert';
+import { Badge } from '../Badge';
+import { Button } from '../Button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../Card';
+import { Input } from '../Input';
+import { Label } from '../Label';
 
 interface Professional {
   id: string;
@@ -56,9 +50,7 @@ interface ANVISAProfessionalManagementProps {
   clinicId: string;
 }
 
-export function ANVISAProfessionalManagement({
-  clinicId,
-}: ANVISAProfessionalManagementProps) {
+export function ANVISAProfessionalManagement({ clinicId }: ANVISAProfessionalManagementProps) {
   const [professionals, setProfessionals] = useState<Professional[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -79,9 +71,7 @@ export function ANVISAProfessionalManagement({
   const fetchProfessionals = async () => {
     try {
       setLoading(true);
-      const response = await fetch(
-        `/api/anvisa/professionals?clinic_id=${clinicId}`
-      );
+      const response = await fetch(`/api/anvisa/professionals?clinic_id=${clinicId}`);
       if (response.ok) {
         const data = await response.json();
         setProfessionals(data.data);
@@ -93,10 +83,7 @@ export function ANVISAProfessionalManagement({
     }
   };
 
-  const verifyAuthorization = async (
-    professionalId: string,
-    procedureCode: string
-  ) => {
+  const verifyAuthorization = async (professionalId: string, procedureCode: string) => {
     try {
       const response = await fetch(
         `/api/anvisa/professionals?clinic_id=${clinicId}&action=verify_authorization&professional_id=${professionalId}&procedure_code=${procedureCode}`
@@ -122,14 +109,10 @@ export function ANVISAProfessionalManagement({
         // Update the professional in the list
         setProfessionals((prev) =>
           prev.map((p) =>
-            p.id === professionalId
-              ? { ...p, compliance_score: data.data.compliance_score }
-              : p
+            p.id === professionalId ? { ...p, compliance_score: data.data.compliance_score } : p
           )
         );
-        setSuccess(
-          `Score de conformidade atualizado: ${data.data.compliance_score}%`
-        );
+        setSuccess(`Score de conformidade atualizado: ${data.data.compliance_score}%`);
       }
     } catch (error) {
       setError('Erro ao atualizar score de conformidade');
@@ -176,30 +159,28 @@ export function ANVISAProfessionalManagement({
   const isNearExpiry = (expiryDate: string) => {
     const expiry = new Date(expiryDate);
     const now = new Date();
-    const daysUntilExpiry = Math.ceil(
-      (expiry.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)
-    );
+    const daysUntilExpiry = Math.ceil((expiry.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
     return daysUntilExpiry <= 30;
   };
 
   if (loading) {
     return (
       <div className="space-y-4">
-        <div className="flex justify-between items-center">
-          <div className="h-8 bg-gray-200 rounded w-64 animate-pulse"></div>
-          <div className="h-10 bg-gray-200 rounded w-40 animate-pulse"></div>
+        <div className="flex items-center justify-between">
+          <div className="h-8 w-64 animate-pulse rounded bg-gray-200" />
+          <div className="h-10 w-40 animate-pulse rounded bg-gray-200" />
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
           {[...Array(6)].map((_, i) => (
-            <Card key={i} className="animate-pulse">
+            <Card className="animate-pulse" key={i}>
               <CardHeader>
-                <div className="h-4 bg-gray-200 rounded w-32"></div>
-                <div className="h-3 bg-gray-200 rounded w-24"></div>
+                <div className="h-4 w-32 rounded bg-gray-200" />
+                <div className="h-3 w-24 rounded bg-gray-200" />
               </CardHeader>
               <CardContent className="space-y-2">
-                <div className="h-3 bg-gray-200 rounded w-full"></div>
-                <div className="h-3 bg-gray-200 rounded w-3/4"></div>
-                <div className="h-6 bg-gray-200 rounded w-16"></div>
+                <div className="h-3 w-full rounded bg-gray-200" />
+                <div className="h-3 w-3/4 rounded bg-gray-200" />
+                <div className="h-6 w-16 rounded bg-gray-200" />
               </CardContent>
             </Card>
           ))}
@@ -211,11 +192,9 @@ export function ANVISAProfessionalManagement({
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex justify-between items-center">
+      <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-2xl font-bold tracking-tight">
-            Profissionais Certificados
-          </h3>
+          <h3 className="font-bold text-2xl tracking-tight">Profissionais Certificados</h3>
           <p className="text-muted-foreground">
             Gerencie certificações e autorizações profissionais ANVISA
           </p>
@@ -237,19 +216,14 @@ export function ANVISAProfessionalManagement({
       {success && (
         <Alert className="border-green-200 bg-green-50">
           <CheckCircle className="h-4 w-4 text-green-600" />
-          <AlertDescription className="text-green-800">
-            {success}
-          </AlertDescription>
+          <AlertDescription className="text-green-800">{success}</AlertDescription>
         </Alert>
       )}
 
       {/* Professionals Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
         {professionals.map((professional) => (
-          <Card
-            key={professional.id}
-            className="hover:shadow-md transition-shadow"
-          >
+          <Card className="transition-shadow hover:shadow-md" key={professional.id}>
             <CardHeader className="pb-3">
               <div className="flex items-start justify-between">
                 <div className="space-y-1">
@@ -268,36 +242,30 @@ export function ANVISAProfessionalManagement({
             </CardHeader>
             <CardContent className="space-y-3">
               <div className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">
-                  Especialidade:
-                </span>
-                <span className="text-sm font-medium">
-                  {professional.specialty}
-                </span>
+                <span className="text-muted-foreground text-sm">Especialidade:</span>
+                <span className="font-medium text-sm">{professional.specialty}</span>
               </div>
 
               <div className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">Nível:</span>
+                <span className="text-muted-foreground text-sm">Nível:</span>
                 {getAuthorizationBadge(professional.authorization_level)}
               </div>
 
               <div className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">
-                  Conformidade:
-                </span>
+                <span className="text-muted-foreground text-sm">Conformidade:</span>
                 <div className="flex items-center space-x-2">
                   <span
                     className={cn(
-                      'text-sm font-semibold',
+                      'font-semibold text-sm',
                       getComplianceColor(professional.compliance_score)
                     )}
                   >
                     {professional.compliance_score}%
                   </span>
                   <Button
-                    variant="ghost"
-                    size="sm"
                     onClick={() => updateComplianceScore(professional.id)}
+                    size="sm"
+                    variant="ghost"
                   >
                     <Shield className="h-3 w-3" />
                   </Button>
@@ -305,39 +273,28 @@ export function ANVISAProfessionalManagement({
               </div>
 
               <div className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">Validade:</span>
+                <span className="text-muted-foreground text-sm">Validade:</span>
                 <span
                   className={cn(
                     'text-sm',
-                    isNearExpiry(professional.certification_expiry) &&
-                      'text-yellow-600 font-medium'
+                    isNearExpiry(professional.certification_expiry) && 'font-medium text-yellow-600'
                   )}
                 >
-                  {new Date(
-                    professional.certification_expiry
-                  ).toLocaleDateString('pt-BR')}
+                  {new Date(professional.certification_expiry).toLocaleDateString('pt-BR')}
                 </span>
               </div>
 
-              <div className="pt-2 border-t">
+              <div className="border-t pt-2">
                 <div className="space-y-2">
-                  <span className="text-xs text-muted-foreground">
-                    Procedimentos Autorizados:
-                  </span>
+                  <span className="text-muted-foreground text-xs">Procedimentos Autorizados:</span>
                   <div className="flex flex-wrap gap-1">
-                    {professional.authorized_procedures
-                      .slice(0, 3)
-                      .map((procedure, index) => (
-                        <Badge
-                          key={index}
-                          variant="secondary"
-                          className="text-xs"
-                        >
-                          {procedure}
-                        </Badge>
-                      ))}
+                    {professional.authorized_procedures.slice(0, 3).map((procedure, index) => (
+                      <Badge className="text-xs" key={index} variant="secondary">
+                        {procedure}
+                      </Badge>
+                    ))}
                     {professional.authorized_procedures.length > 3 && (
-                      <Badge variant="outline" className="text-xs">
+                      <Badge className="text-xs" variant="outline">
                         +{professional.authorized_procedures.length - 3}
                       </Badge>
                     )}
@@ -345,7 +302,7 @@ export function ANVISAProfessionalManagement({
                 </div>
               </div>
 
-              <div className="flex justify-between items-center pt-2 border-t">
+              <div className="flex items-center justify-between border-t pt-2">
                 <div className="flex space-x-1">
                   {professional.certification_status === 'active' && (
                     <CheckCircle className="h-4 w-4 text-green-500" />
@@ -359,10 +316,10 @@ export function ANVISAProfessionalManagement({
                   )}
                 </div>
                 <div className="flex space-x-1">
-                  <Button variant="ghost" size="sm">
+                  <Button size="sm" variant="ghost">
                     <FileText className="h-4 w-4" />
                   </Button>
-                  <Button variant="ghost" size="sm">
+                  <Button size="sm" variant="ghost">
                     <Award className="h-4 w-4" />
                   </Button>
                 </div>
@@ -375,13 +332,10 @@ export function ANVISAProfessionalManagement({
       {professionals.length === 0 && !loading && (
         <Card>
           <CardContent className="flex flex-col items-center justify-center py-12">
-            <Users className="h-12 w-12 text-muted-foreground mb-4" />
-            <h3 className="text-lg font-semibold mb-2">
-              Nenhum profissional cadastrado
-            </h3>
-            <p className="text-muted-foreground text-center mb-4">
-              Adicione profissionais para gerenciar certificações e autorizações
-              ANVISA
+            <Users className="mb-4 h-12 w-12 text-muted-foreground" />
+            <h3 className="mb-2 font-semibold text-lg">Nenhum profissional cadastrado</h3>
+            <p className="mb-4 text-center text-muted-foreground">
+              Adicione profissionais para gerenciar certificações e autorizações ANVISA
             </p>
             <Button onClick={() => setShowForm(true)}>
               <Plus className="mr-2 h-4 w-4" />
@@ -393,15 +347,13 @@ export function ANVISAProfessionalManagement({
 
       {/* Summary Stats */}
       {professionals.length > 0 && (
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
           <Card>
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">
-                    Total
-                  </p>
-                  <p className="text-2xl font-bold">{professionals.length}</p>
+                  <p className="font-medium text-muted-foreground text-sm">Total</p>
+                  <p className="font-bold text-2xl">{professionals.length}</p>
                 </div>
                 <Users className="h-4 w-4 text-muted-foreground" />
               </div>
@@ -412,15 +364,9 @@ export function ANVISAProfessionalManagement({
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">
-                    Ativos
-                  </p>
-                  <p className="text-2xl font-bold text-green-600">
-                    {
-                      professionals.filter(
-                        (p) => p.certification_status === 'active'
-                      ).length
-                    }
+                  <p className="font-medium text-muted-foreground text-sm">Ativos</p>
+                  <p className="font-bold text-2xl text-green-600">
+                    {professionals.filter((p) => p.certification_status === 'active').length}
                   </p>
                 </div>
                 <CheckCircle className="h-4 w-4 text-green-500" />
@@ -432,15 +378,9 @@ export function ANVISAProfessionalManagement({
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">
-                    Pendentes
-                  </p>
-                  <p className="text-2xl font-bold text-yellow-600">
-                    {
-                      professionals.filter(
-                        (p) => p.certification_status === 'pending'
-                      ).length
-                    }
+                  <p className="font-medium text-muted-foreground text-sm">Pendentes</p>
+                  <p className="font-bold text-2xl text-yellow-600">
+                    {professionals.filter((p) => p.certification_status === 'pending').length}
                   </p>
                 </div>
                 <Clock className="h-4 w-4 text-yellow-500" />
@@ -452,15 +392,11 @@ export function ANVISAProfessionalManagement({
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">
+                  <p className="font-medium text-muted-foreground text-sm">
                     Próximos ao Vencimento
                   </p>
-                  <p className="text-2xl font-bold text-orange-600">
-                    {
-                      professionals.filter((p) =>
-                        isNearExpiry(p.certification_expiry)
-                      ).length
-                    }
+                  <p className="font-bold text-2xl text-orange-600">
+                    {professionals.filter((p) => isNearExpiry(p.certification_expiry)).length}
                   </p>
                 </div>
                 <AlertTriangle className="h-4 w-4 text-orange-500" />

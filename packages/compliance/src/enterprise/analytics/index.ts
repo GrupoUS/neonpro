@@ -4,39 +4,37 @@
  * Compliance: LGPD + Constitutional Privacy + AI Ethics + ≥9.9/10 Standards
  */
 
-// Privacy-Preserving Analytics Service
-export {
-  PrivacyPreservingAnalyticsService,
-  createPrivacyPreservingAnalyticsService,
-  validatePrivacyPreservingAnalytics,
-  type PrivacyPreservingAnalyticsConfig,
-  type PrivacyPreservingQuery,
-  type PrivacyPreservingAnalyticsResults,
-  type PrivacyPreservingAnalyticsAudit
-} from './privacy-preserving-analytics';
-
 // Compliance Dashboard Service
 export {
+  type ComplianceAlert,
+  type ComplianceDashboardAudit,
+  type ComplianceDashboardConfig,
+  type ComplianceDashboardMetrics,
+  type ComplianceDashboardReport,
   ComplianceDashboardService,
   createComplianceDashboardService,
   validateComplianceDashboard,
-  type ComplianceDashboardConfig,
-  type ComplianceDashboardMetrics,
-  type ComplianceAlert,
-  type ComplianceDashboardReport,
-  type ComplianceDashboardAudit
 } from './compliance-dashboard';
-
 // Healthcare Intelligence Service
 export {
-  HealthcareIntelligenceService,
   createHealthcareIntelligenceService,
-  validateHealthcareIntelligence,
+  type HealthcareIntelligenceAudit,
   type HealthcareIntelligenceConfig,
   type HealthcareIntelligenceQuery,
   type HealthcareIntelligenceResults,
-  type HealthcareIntelligenceAudit
+  HealthcareIntelligenceService,
+  validateHealthcareIntelligence,
 } from './healthcare-intelligence';
+// Privacy-Preserving Analytics Service
+export {
+  createPrivacyPreservingAnalyticsService,
+  type PrivacyPreservingAnalyticsAudit,
+  type PrivacyPreservingAnalyticsConfig,
+  type PrivacyPreservingAnalyticsResults,
+  PrivacyPreservingAnalyticsService,
+  type PrivacyPreservingQuery,
+  validatePrivacyPreservingAnalytics,
+} from './privacy-preserving-analytics';
 
 /**
  * Enterprise Analytics Service Factory
@@ -50,7 +48,7 @@ export function createEnterpriseAnalyticsServices(config: {
   return {
     privacyAnalytics: createPrivacyPreservingAnalyticsService(config.privacyAnalytics),
     complianceDashboard: createComplianceDashboardService(config.complianceDashboard),
-    healthcareIntelligence: createHealthcareIntelligenceService(config.healthcareIntelligence)
+    healthcareIntelligence: createHealthcareIntelligenceService(config.healthcareIntelligence),
   };
 }
 
@@ -69,35 +67,43 @@ export async function validateEnterpriseAnalyticsCompliance(
   compliance_score: number;
 }> {
   const violations: string[] = [];
-  
+
   // Validate privacy-preserving analytics
   const privacyValidation = await validatePrivacyPreservingAnalytics(privacyQuery, privacyConfig);
   if (!privacyValidation.valid) {
-    violations.push(...privacyValidation.violations.map(v => `Privacy Analytics: ${v}`));
+    violations.push(...privacyValidation.violations.map((v) => `Privacy Analytics: ${v}`));
   }
-  
+
   // Validate compliance dashboard
   const dashboardValidation = await validateComplianceDashboard(dashboardConfig);
   if (!dashboardValidation.valid) {
-    violations.push(...dashboardValidation.violations.map(v => `Compliance Dashboard: ${v}`));
+    violations.push(...dashboardValidation.violations.map((v) => `Compliance Dashboard: ${v}`));
   }
-  
+
   // Validate healthcare intelligence
-  const intelligenceValidation = await validateHealthcareIntelligence(intelligenceQuery, intelligenceConfig);
+  const intelligenceValidation = await validateHealthcareIntelligence(
+    intelligenceQuery,
+    intelligenceConfig
+  );
   if (!intelligenceValidation.valid) {
-    violations.push(...intelligenceValidation.violations.map(v => `Healthcare Intelligence: ${v}`));
+    violations.push(
+      ...intelligenceValidation.violations.map((v) => `Healthcare Intelligence: ${v}`)
+    );
   }
-  
+
   // Calculate overall compliance score
-  const validationsPassing = [privacyValidation, dashboardValidation, intelligenceValidation]
-    .filter(v => v.valid).length;
+  const validationsPassing = [
+    privacyValidation,
+    dashboardValidation,
+    intelligenceValidation,
+  ].filter((v) => v.valid).length;
   const totalValidations = 3;
   const complianceScore = (validationsPassing / totalValidations) * 10;
-  
+
   return {
     valid: violations.length === 0 && complianceScore >= 9.9,
     violations,
-    compliance_score: Math.round(complianceScore * 100) / 100
+    compliance_score: Math.round(complianceScore * 100) / 100,
   };
 }
 
@@ -118,25 +124,25 @@ export const ENTERPRISE_ANALYTICS_CONFIGS = {
       noise_multiplier: 2.0,
       constitutional_validation: true,
       audit_trail_enabled: true,
-      lgpd_compliance_mode: true
+      lgpd_compliance_mode: true,
     } as PrivacyPreservingAnalyticsConfig,
-    
+
     complianceDashboard: {
-      refresh_interval_ms: 30000, // 30 seconds
+      refresh_interval_ms: 30_000, // 30 seconds
       alert_thresholds: {
         critical_compliance_score: 9.5,
         warning_compliance_score: 8.5,
         privacy_budget_warning: 0.8,
-        audit_trail_gap_hours: 2
+        audit_trail_gap_hours: 2,
       },
       real_time_monitoring: true,
       constitutional_validation: true,
       lgpd_tracking_enabled: true,
       anvisa_tracking_enabled: true,
       cfm_tracking_enabled: true,
-      automated_reporting: true
+      automated_reporting: true,
     } as ComplianceDashboardConfig,
-    
+
     healthcareIntelligence: {
       ai_ethics_enabled: true,
       explainable_ai_required: true,
@@ -148,10 +154,10 @@ export const ENTERPRISE_ANALYTICS_CONFIGS = {
       patient_privacy_protection: true,
       anonymization_required: true,
       differential_privacy_epsilon: 0.5,
-      max_prediction_confidence: 0.90
-    } as HealthcareIntelligenceConfig
+      max_prediction_confidence: 0.9,
+    } as HealthcareIntelligenceConfig,
   },
-  
+
   /**
    * Standard configuration for general healthcare analytics
    */
@@ -164,25 +170,25 @@ export const ENTERPRISE_ANALYTICS_CONFIGS = {
       noise_multiplier: 1.5,
       constitutional_validation: true,
       audit_trail_enabled: true,
-      lgpd_compliance_mode: true
+      lgpd_compliance_mode: true,
     } as PrivacyPreservingAnalyticsConfig,
-    
+
     complianceDashboard: {
-      refresh_interval_ms: 60000, // 1 minute
+      refresh_interval_ms: 60_000, // 1 minute
       alert_thresholds: {
         critical_compliance_score: 9.5,
         warning_compliance_score: 8.0,
         privacy_budget_warning: 0.85,
-        audit_trail_gap_hours: 4
+        audit_trail_gap_hours: 4,
       },
       real_time_monitoring: true,
       constitutional_validation: true,
       lgpd_tracking_enabled: true,
       anvisa_tracking_enabled: true,
       cfm_tracking_enabled: true,
-      automated_reporting: true
+      automated_reporting: true,
     } as ComplianceDashboardConfig,
-    
+
     healthcareIntelligence: {
       ai_ethics_enabled: true,
       explainable_ai_required: true,
@@ -194,9 +200,9 @@ export const ENTERPRISE_ANALYTICS_CONFIGS = {
       patient_privacy_protection: true,
       anonymization_required: true,
       differential_privacy_epsilon: 1.0,
-      max_prediction_confidence: 0.92
-    } as HealthcareIntelligenceConfig
-  }
+      max_prediction_confidence: 0.92,
+    } as HealthcareIntelligenceConfig,
+  },
 };
 
 /**
@@ -212,24 +218,39 @@ export const ENTERPRISE_ANALYTICS_MODULE = {
     {
       name: 'Privacy-Preserving Analytics',
       description: 'Patient privacy-preserving analytics with constitutional compliance',
-      compliance_features: ['Differential Privacy', 'K-Anonymity', 'L-Diversity', 'LGPD Compliance']
+      compliance_features: [
+        'Differential Privacy',
+        'K-Anonymity',
+        'L-Diversity',
+        'LGPD Compliance',
+      ],
     },
     {
       name: 'Compliance Dashboard',
       description: 'Real-time compliance monitoring dashboard for regulatory oversight',
-      compliance_features: ['Real-time Monitoring', 'Alert Management', 'Regulatory Reporting', 'Executive Dashboards']
+      compliance_features: [
+        'Real-time Monitoring',
+        'Alert Management',
+        'Regulatory Reporting',
+        'Executive Dashboards',
+      ],
     },
     {
       name: 'Healthcare Intelligence',
       description: 'AI-driven healthcare insights with constitutional medical ethics',
-      compliance_features: ['Explainable AI', 'Bias Detection', 'Human Oversight', 'CFM Ethics Validation']
-    }
+      compliance_features: [
+        'Explainable AI',
+        'Bias Detection',
+        'Human Oversight',
+        'CFM Ethics Validation',
+      ],
+    },
   ],
   constitutional_guarantees: [
     'Patient privacy protection through advanced anonymization',
     'AI ethics compliance with human oversight validation',
     'Comprehensive audit trails for regulatory compliance',
     'Real-time compliance monitoring with constitutional standards',
-    'Explainable AI with clinical decision transparency'
-  ]
+    'Explainable AI with clinical decision transparency',
+  ],
 } as const;

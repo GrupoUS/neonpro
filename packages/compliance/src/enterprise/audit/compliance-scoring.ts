@@ -1,14 +1,14 @@
 /**
  * Enterprise Compliance Scoring Service
  * Constitutional healthcare compliance scoring with ≥9.9/10 standards
- * 
+ *
  * @fileoverview Automated compliance scoring system for constitutional healthcare
  * @version 1.0.0
  * @since 2025-01-17
  */
 
 import type { Database } from '@neonpro/types';
-import { createClient } from '@supabase/supabase-js';
+import type { createClient } from '@supabase/supabase-js';
 
 /**
  * Compliance Score Assessment Interface
@@ -98,7 +98,7 @@ export interface RiskFactor {
   constitutional_impact: boolean;
   /** Recommended actions */
   recommended_actions: string[];
-}/**
+} /**
  * Compliance Scoring Audit Trail
  * Constitutional audit requirements for scoring operations
  */
@@ -108,7 +108,13 @@ export interface ComplianceScoringAudit {
   /** Assessment ID being audited */
   assessment_id: string;
   /** Action performed on assessment */
-  action: 'created' | 'updated' | 'reviewed' | 'approved' | 'methodology_changed' | 'score_recalculated';
+  action:
+    | 'created'
+    | 'updated'
+    | 'reviewed'
+    | 'approved'
+    | 'methodology_changed'
+    | 'score_recalculated';
   /** Previous assessment state */
   previous_state: Partial<ComplianceScoreAssessment>;
   /** New assessment state */
@@ -234,7 +240,7 @@ export interface ScoringMethodologyConfig {
     /** Critical violation threshold */
     critical_threshold: number;
   };
-}/**
+} /**
  * Enterprise Compliance Scoring Service Implementation
  * Constitutional healthcare compliance scoring with ≥9.9/10 standards
  */
@@ -266,13 +272,16 @@ export class ComplianceScoringService {
       const methodology = await this.getScoringMethodology(params.methodology_version);
 
       // Perform compliance area assessments
-      const complianceAreaScores = await this.assessComplianceAreas(params.tenant_id, params.compliance_areas);
+      const complianceAreaScores = await this.assessComplianceAreas(
+        params.tenant_id,
+        params.compliance_areas
+      );
 
       // Assess quality indicators
       const qualityIndicators = await this.assessQualityIndicators(params.tenant_id);
 
       // Perform risk assessment if requested
-      const riskAssessment = params.include_risk_assessment 
+      const riskAssessment = params.include_risk_assessment
         ? await this.performRiskAssessment(params.tenant_id, methodology)
         : this.getDefaultRiskAssessment();
 
@@ -299,27 +308,35 @@ export class ComplianceScoringService {
         scoring_methodology: {
           version: methodology.version,
           constitutional_standards: methodology.constitutional_standards_basis,
-          weighting_factors: { ...methodology.area_weights, ...methodology.quality_weights }
+          weighting_factors: { ...methodology.area_weights, ...methodology.quality_weights },
         },
         assessed_by: assessorId,
         assessment_type: params.assessment_type,
-        audit_trail: [{
-          audit_id: crypto.randomUUID(),
-          assessment_id: assessmentId,
-          action: 'created',
-          previous_state: {},
-          new_state: { overall_constitutional_score: overallScore, assessment_type: params.assessment_type },
-          user_id: assessorId,
-          timestamp,
-          reason: 'Compliance scoring assessment performed'
-        }]
+        audit_trail: [
+          {
+            audit_id: crypto.randomUUID(),
+            assessment_id: assessmentId,
+            action: 'created',
+            previous_state: {},
+            new_state: {
+              overall_constitutional_score: overallScore,
+              assessment_type: params.assessment_type,
+            },
+            user_id: assessorId,
+            timestamp,
+            reason: 'Compliance scoring assessment performed',
+          },
+        ],
       };
 
       // Store assessment
       await this.storeAssessment(scoreAssessment);
 
       // Generate benchmark comparison
-      const benchmarkComparison = await this.generateBenchmarkComparison(overallScore, complianceAreaScores);
+      const benchmarkComparison = await this.generateBenchmarkComparison(
+        overallScore,
+        complianceAreaScores
+      );
 
       // Generate improvement recommendations
       const improvementRecommendations = await this.generateImprovementRecommendations(
@@ -336,7 +353,7 @@ export class ComplianceScoringService {
         benchmark_comparison: benchmarkComparison,
         improvement_recommendations: improvementRecommendations,
         next_assessment: nextAssessment,
-        scoring_timestamp: timestamp
+        scoring_timestamp: timestamp,
       };
 
       return { success: true, data: scoringResponse };
@@ -344,7 +361,7 @@ export class ComplianceScoringService {
       console.error('Perform compliance scoring error:', error);
       return { success: false, error: 'Constitutional healthcare scoring service error' };
     }
-  }  /**
+  } /**
    * Assess compliance areas with constitutional validation
    * Area-specific scoring with healthcare standards
    */
@@ -357,7 +374,7 @@ export class ComplianceScoringService {
         lgpd_score: 10.0,
         anvisa_score: 10.0,
         cfm_score: 10.0,
-        constitutional_healthcare_score: 10.0
+        constitutional_healthcare_score: 10.0,
       };
 
       // LGPD Assessment
@@ -377,14 +394,18 @@ export class ComplianceScoringService {
 
       // Constitutional Healthcare Assessment
       if (complianceAreas.includes('constitutional_healthcare')) {
-        scores.constitutional_healthcare_score = await this.assessConstitutionalHealthcareCompliance(tenantId);
+        scores.constitutional_healthcare_score =
+          await this.assessConstitutionalHealthcareCompliance(tenantId);
       }
 
       // Ensure constitutional minimums
       scores.lgpd_score = Math.max(scores.lgpd_score, 9.9);
       scores.anvisa_score = Math.max(scores.anvisa_score, 9.9);
       scores.cfm_score = Math.max(scores.cfm_score, 9.9);
-      scores.constitutional_healthcare_score = Math.max(scores.constitutional_healthcare_score, 9.9);
+      scores.constitutional_healthcare_score = Math.max(
+        scores.constitutional_healthcare_score,
+        9.9
+      );
 
       return scores;
     } catch (error) {
@@ -394,7 +415,7 @@ export class ComplianceScoringService {
         lgpd_score: 9.9,
         anvisa_score: 9.9,
         cfm_score: 9.9,
-        constitutional_healthcare_score: 9.9
+        constitutional_healthcare_score: 9.9,
       };
     }
   }
@@ -409,16 +430,16 @@ export class ComplianceScoringService {
     try {
       // Data quality assessment
       const dataQuality = await this.assessDataQuality(tenantId);
-      
+
       // Process compliance assessment
       const processCompliance = await this.assessProcessCompliance(tenantId);
-      
+
       // Documentation completeness assessment
       const documentationCompleteness = await this.assessDocumentationCompleteness(tenantId);
-      
+
       // Audit trail integrity assessment
       const auditTrailIntegrity = await this.assessAuditTrailIntegrity(tenantId);
-      
+
       // Patient safety measures assessment
       const patientSafetyMeasures = await this.assessPatientSafetyMeasures(tenantId);
 
@@ -427,7 +448,7 @@ export class ComplianceScoringService {
         process_compliance: Math.max(processCompliance, 9.9),
         documentation_completeness: Math.max(documentationCompleteness, 9.9),
         audit_trail_integrity: Math.max(auditTrailIntegrity, 9.9),
-        patient_safety_measures: Math.max(patientSafetyMeasures, 9.9)
+        patient_safety_measures: Math.max(patientSafetyMeasures, 9.9),
       };
     } catch (error) {
       console.error('Assess quality indicators error:', error);
@@ -437,7 +458,7 @@ export class ComplianceScoringService {
         process_compliance: 9.9,
         documentation_completeness: 9.9,
         audit_trail_integrity: 9.9,
-        patient_safety_measures: 9.9
+        patient_safety_measures: 9.9,
       };
     }
   }
@@ -491,13 +512,13 @@ export class ComplianceScoringService {
         overall_risk_level: overallRiskLevel,
         risk_score: Math.round(averageRiskScore),
         risk_factors: riskFactors,
-        mitigation_recommendations: mitigationRecommendations
+        mitigation_recommendations: mitigationRecommendations,
       };
     } catch (error) {
       console.error('Perform risk assessment error:', error);
       return this.getDefaultRiskAssessment();
     }
-  }  /**
+  } /**
    * Calculate overall constitutional compliance score
    * Constitutional scoring algorithm with weighted healthcare standards
    */
@@ -510,33 +531,40 @@ export class ComplianceScoringService {
     try {
       // Weighted compliance area scores (60% weight)
       const complianceWeight = 0.6;
-      const complianceScore = 
-        (complianceAreaScores.lgpd_score * methodology.area_weights.lgpd) +
-        (complianceAreaScores.anvisa_score * methodology.area_weights.anvisa) +
-        (complianceAreaScores.cfm_score * methodology.area_weights.cfm) +
-        (complianceAreaScores.constitutional_healthcare_score * methodology.area_weights.constitutional_healthcare);
+      const complianceScore =
+        complianceAreaScores.lgpd_score * methodology.area_weights.lgpd +
+        complianceAreaScores.anvisa_score * methodology.area_weights.anvisa +
+        complianceAreaScores.cfm_score * methodology.area_weights.cfm +
+        complianceAreaScores.constitutional_healthcare_score *
+          methodology.area_weights.constitutional_healthcare;
 
       // Weighted quality indicators (30% weight)
       const qualityWeight = 0.3;
-      const qualityScore = 
-        (qualityIndicators.data_quality * methodology.quality_weights.data_quality) +
-        (qualityIndicators.process_compliance * methodology.quality_weights.process_compliance) +
-        (qualityIndicators.documentation_completeness * methodology.quality_weights.documentation_completeness) +
-        (qualityIndicators.audit_trail_integrity * methodology.quality_weights.audit_trail_integrity) +
-        (qualityIndicators.patient_safety_measures * methodology.quality_weights.patient_safety_measures);
+      const qualityScore =
+        qualityIndicators.data_quality * methodology.quality_weights.data_quality +
+        qualityIndicators.process_compliance * methodology.quality_weights.process_compliance +
+        qualityIndicators.documentation_completeness *
+          methodology.quality_weights.documentation_completeness +
+        qualityIndicators.audit_trail_integrity *
+          methodology.quality_weights.audit_trail_integrity +
+        qualityIndicators.patient_safety_measures *
+          methodology.quality_weights.patient_safety_measures;
 
       // Risk adjustment (10% weight)
       const riskWeight = 0.1;
       const riskAdjustment = Math.max(0, (100 - riskAssessment.risk_score) / 10); // Convert risk score to positive adjustment
 
       // Calculate weighted overall score
-      const overallScore = 
-        (complianceScore * complianceWeight) +
-        (qualityScore * qualityWeight) +
-        (riskAdjustment * riskWeight);
+      const overallScore =
+        complianceScore * complianceWeight +
+        qualityScore * qualityWeight +
+        riskAdjustment * riskWeight;
 
       // Ensure constitutional minimum
-      const constitutionalScore = Math.max(overallScore, methodology.constitutional_thresholds.minimum_score);
+      const constitutionalScore = Math.max(
+        overallScore,
+        methodology.constitutional_thresholds.minimum_score
+      );
 
       return Math.round(constitutionalScore * 10) / 10; // Round to 1 decimal place
     } catch (error) {
@@ -628,80 +656,90 @@ export class ComplianceScoringService {
   // Risk assessment helper methods
 
   private async assessPrivacyRisks(tenantId: string): Promise<RiskFactor[]> {
-    return [{
-      risk_id: crypto.randomUUID(),
-      category: 'privacy',
-      description: 'Patient data privacy protection',
-      impact_level: 'medium',
-      probability: 'possible',
-      calculated_risk_score: 25,
-      affected_areas: ['lgpd'],
-      constitutional_impact: true,
-      recommended_actions: ['Enhance privacy protection measures']
-    }];
+    return [
+      {
+        risk_id: crypto.randomUUID(),
+        category: 'privacy',
+        description: 'Patient data privacy protection',
+        impact_level: 'medium',
+        probability: 'possible',
+        calculated_risk_score: 25,
+        affected_areas: ['lgpd'],
+        constitutional_impact: true,
+        recommended_actions: ['Enhance privacy protection measures'],
+      },
+    ];
   }
 
   private async assessSecurityRisks(tenantId: string): Promise<RiskFactor[]> {
-    return [{
-      risk_id: crypto.randomUUID(),
-      category: 'security',
-      description: 'Data security and access control',
-      impact_level: 'medium',
-      probability: 'possible',
-      calculated_risk_score: 20,
-      affected_areas: ['lgpd', 'constitutional_healthcare'],
-      constitutional_impact: true,
-      recommended_actions: ['Strengthen security controls']
-    }];
+    return [
+      {
+        risk_id: crypto.randomUUID(),
+        category: 'security',
+        description: 'Data security and access control',
+        impact_level: 'medium',
+        probability: 'possible',
+        calculated_risk_score: 20,
+        affected_areas: ['lgpd', 'constitutional_healthcare'],
+        constitutional_impact: true,
+        recommended_actions: ['Strengthen security controls'],
+      },
+    ];
   }
 
   private async assessRegulatoryRisks(tenantId: string): Promise<RiskFactor[]> {
-    return [{
-      risk_id: crypto.randomUUID(),
-      category: 'regulatory',
-      description: 'Regulatory compliance adherence',
-      impact_level: 'low',
-      probability: 'unlikely',
-      calculated_risk_score: 15,
-      affected_areas: ['anvisa', 'cfm'],
-      constitutional_impact: false,
-      recommended_actions: ['Monitor regulatory updates']
-    }];
+    return [
+      {
+        risk_id: crypto.randomUUID(),
+        category: 'regulatory',
+        description: 'Regulatory compliance adherence',
+        impact_level: 'low',
+        probability: 'unlikely',
+        calculated_risk_score: 15,
+        affected_areas: ['anvisa', 'cfm'],
+        constitutional_impact: false,
+        recommended_actions: ['Monitor regulatory updates'],
+      },
+    ];
   }
 
   private async assessOperationalRisks(tenantId: string): Promise<RiskFactor[]> {
-    return [{
-      risk_id: crypto.randomUUID(),
-      category: 'operational',
-      description: 'Operational process compliance',
-      impact_level: 'low',
-      probability: 'possible',
-      calculated_risk_score: 20,
-      affected_areas: ['constitutional_healthcare'],
-      constitutional_impact: false,
-      recommended_actions: ['Improve operational procedures']
-    }];
+    return [
+      {
+        risk_id: crypto.randomUUID(),
+        category: 'operational',
+        description: 'Operational process compliance',
+        impact_level: 'low',
+        probability: 'possible',
+        calculated_risk_score: 20,
+        affected_areas: ['constitutional_healthcare'],
+        constitutional_impact: false,
+        recommended_actions: ['Improve operational procedures'],
+      },
+    ];
   }
 
   private async assessConstitutionalRisks(tenantId: string): Promise<RiskFactor[]> {
-    return [{
-      risk_id: crypto.randomUUID(),
-      category: 'constitutional',
-      description: 'Constitutional healthcare standards',
-      impact_level: 'low',
-      probability: 'unlikely',
-      calculated_risk_score: 10,
-      affected_areas: ['constitutional_healthcare'],
-      constitutional_impact: true,
-      recommended_actions: ['Maintain constitutional compliance']
-    }];
+    return [
+      {
+        risk_id: crypto.randomUUID(),
+        category: 'constitutional',
+        description: 'Constitutional healthcare standards',
+        impact_level: 'low',
+        probability: 'unlikely',
+        calculated_risk_score: 10,
+        affected_areas: ['constitutional_healthcare'],
+        constitutional_impact: true,
+        recommended_actions: ['Maintain constitutional compliance'],
+      },
+    ];
   }
 
   private generateRiskMitigationRecommendations(riskFactors: RiskFactor[]): string[] {
     const recommendations = new Set<string>();
-    
-    riskFactors.forEach(risk => {
-      risk.recommended_actions.forEach(action => recommendations.add(action));
+
+    riskFactors.forEach((risk) => {
+      risk.recommended_actions.forEach((action) => recommendations.add(action));
     });
 
     return Array.from(recommendations);
@@ -712,7 +750,7 @@ export class ComplianceScoringService {
       overall_risk_level: 'low',
       risk_score: 15,
       risk_factors: [],
-      mitigation_recommendations: ['Continue monitoring risk factors']
+      mitigation_recommendations: ['Continue monitoring risk factors'],
     };
   }
 
@@ -726,41 +764,47 @@ export class ComplianceScoringService {
         'Brazilian Constitution Article 196',
         'LGPD Law 13.709/2018',
         'CFM Resolution 2.227/2018',
-        'ANVISA Regulatory Framework'
+        'ANVISA Regulatory Framework',
       ],
       area_weights: {
         lgpd: 0.25,
-        anvisa: 0.20,
+        anvisa: 0.2,
         cfm: 0.25,
-        constitutional_healthcare: 0.30
+        constitutional_healthcare: 0.3,
       },
       quality_weights: {
         data_quality: 0.25,
-        process_compliance: 0.20,
-        documentation_completeness: 0.20,
+        process_compliance: 0.2,
+        documentation_completeness: 0.2,
         audit_trail_integrity: 0.15,
-        patient_safety_measures: 0.20
+        patient_safety_measures: 0.2,
       },
       risk_assessment_config: {
-        risk_factors_to_evaluate: ['privacy', 'security', 'regulatory', 'operational', 'constitutional'],
+        risk_factors_to_evaluate: [
+          'privacy',
+          'security',
+          'regulatory',
+          'operational',
+          'constitutional',
+        ],
         risk_scoring_matrix: {
-          'low': { 'unlikely': 5, 'possible': 10, 'likely': 15, 'almost_certain': 20 },
-          'medium': { 'unlikely': 15, 'possible': 25, 'likely': 35, 'almost_certain': 45 },
-          'high': { 'unlikely': 35, 'possible': 50, 'likely': 65, 'almost_certain': 80 },
-          'critical': { 'unlikely': 60, 'possible': 75, 'likely': 90, 'almost_certain': 100 }
+          low: { unlikely: 5, possible: 10, likely: 15, almost_certain: 20 },
+          medium: { unlikely: 15, possible: 25, likely: 35, almost_certain: 45 },
+          high: { unlikely: 35, possible: 50, likely: 65, almost_certain: 80 },
+          critical: { unlikely: 60, possible: 75, likely: 90, almost_certain: 100 },
         },
         constitutional_risk_thresholds: {
-          'low': 25,
-          'medium': 50,
-          'high': 75,
-          'critical': 90
-        }
+          low: 25,
+          medium: 50,
+          high: 75,
+          critical: 90,
+        },
       },
       constitutional_thresholds: {
         minimum_score: 9.9,
         target_score: 10.0,
-        critical_threshold: 9.0
-      }
+        critical_threshold: 9.0,
+      },
     };
   }
 
@@ -778,7 +822,9 @@ export class ComplianceScoringService {
     }
   }
 
-  private async validateScoringParameters(params: ComplianceScoringParameters): Promise<{ valid: boolean; error?: string }> {
+  private async validateScoringParameters(
+    params: ComplianceScoringParameters
+  ): Promise<{ valid: boolean; error?: string }> {
     if (!params.tenant_id) {
       return { valid: false, error: 'Tenant ID required for constitutional scoring' };
     }
@@ -792,9 +838,7 @@ export class ComplianceScoringService {
 
   private async storeAssessment(assessment: ComplianceScoreAssessment): Promise<void> {
     try {
-      await this.supabase
-        .from('enterprise_compliance_score_assessments')
-        .insert(assessment);
+      await this.supabase.from('enterprise_compliance_score_assessments').insert(assessment);
     } catch (error) {
       console.error('Store assessment error:', error);
     }
@@ -808,7 +852,7 @@ export class ComplianceScoringService {
       industry_average: 8.5,
       constitutional_minimum: 9.9,
       best_practice_score: 10.0,
-      performance_percentile: overallScore >= 9.9 ? 95 : 70
+      performance_percentile: overallScore >= 9.9 ? 95 : 70,
     };
   }
 
@@ -826,7 +870,7 @@ export class ComplianceScoringService {
           description: `Improve ${area} compliance from ${score} to achieve constitutional excellence`,
           expected_improvement: 10.0 - score,
           implementation_timeframe: score < 9.9 ? 'Immediate' : '30 days',
-          constitutional_impact: score < 9.9
+          constitutional_impact: score < 9.9,
         });
       }
     });
@@ -838,11 +882,11 @@ export class ComplianceScoringService {
     assessment: ComplianceScoreAssessment
   ): ComplianceScoringResponse['next_assessment'] {
     const timeframe = assessment.overall_constitutional_score < 9.9 ? '30 days' : '90 days';
-    
+
     return {
       recommended_timeframe: timeframe,
       focus_areas: ['constitutional_healthcare', 'lgpd'],
-      constitutional_monitoring: ['Patient safety measures', 'Data protection compliance']
+      constitutional_monitoring: ['Patient safety measures', 'Data protection compliance'],
     };
   }
 }
