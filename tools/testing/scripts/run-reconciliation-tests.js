@@ -6,7 +6,9 @@ const path = require('node:path');
  * Healthcare-Grade Test Execution for Bank Reconciliation System
  */
 
-console.log('🚀 NEONPRO RECONCILIATION TEST SUITE - Healthcare Excellence Validation');
+console.log(
+  '🚀 NEONPRO RECONCILIATION TEST SUITE - Healthcare Excellence Validation'
+);
 console.log('='.repeat(80));
 
 const RECONCILIATION_TESTS = [

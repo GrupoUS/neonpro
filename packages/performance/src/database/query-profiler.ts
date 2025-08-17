@@ -3,7 +3,10 @@
  * Monitors Supabase/PostgreSQL queries with healthcare-specific insights
  */
 
-import type { DatabaseOptimizationSuggestion, DatabasePerformanceMetric } from '../types';
+import type {
+  DatabaseOptimizationSuggestion,
+  DatabasePerformanceMetric,
+} from '../types';
 
 type QueryExecutionPlan = {
   nodeType: string;
@@ -97,7 +100,8 @@ export class HealthcareDatabaseMonitor {
   } {
     const slowQueries = this.metrics.filter((m) => m.isSlowQuery);
     const tablePerformance = this.analyzeTablePerformance();
-    const optimizationSuggestions = this.generateOptimizationSuggestions(tablePerformance);
+    const optimizationSuggestions =
+      this.generateOptimizationSuggestions(tablePerformance);
 
     return {
       slowQueries,
@@ -169,7 +173,9 @@ export class HealthcareDatabaseMonitor {
           description: `Table "${table}" has slow average query time (${Math.round(stats.avgExecutionTime)}ms). Consider adding indexes on frequently queried columns.`,
           expectedImprovement: Math.min(
             90,
-            Math.round(((stats.avgExecutionTime - 100) / stats.avgExecutionTime) * 100)
+            Math.round(
+              ((stats.avgExecutionTime - 100) / stats.avgExecutionTime) * 100
+            )
           ),
           healthcareImpact: this.getHealthcareImpact(
             stats.healthcareDataType,
@@ -190,7 +196,10 @@ export class HealthcareDatabaseMonitor {
       }
 
       // Suggest query rewriting for medical records with many slow queries
-      if (stats.slowQueryCount > 5 && stats.healthcareDataType === 'medical-record') {
+      if (
+        stats.slowQueryCount > 5 &&
+        stats.healthcareDataType === 'medical-record'
+      ) {
         suggestions.push({
           table,
           type: 'query-rewrite',
@@ -216,7 +225,9 @@ export class HealthcareDatabaseMonitor {
     return suggestions.sort((a, b) => {
       const impactOrder = { critical: 3, important: 2, minor: 1 };
       if (impactOrder[a.healthcareImpact] !== impactOrder[b.healthcareImpact]) {
-        return impactOrder[b.healthcareImpact] - impactOrder[a.healthcareImpact];
+        return (
+          impactOrder[b.healthcareImpact] - impactOrder[a.healthcareImpact]
+        );
       }
       return b.expectedImprovement - a.expectedImprovement;
     });
@@ -247,7 +258,10 @@ export class HealthcareDatabaseMonitor {
   getPerformanceReport(): string {
     const analysis = this.analyzePerformance();
     const totalQueries = this.metrics.length;
-    const slowQueryPercentage = ((analysis.slowQueries.length / totalQueries) * 100).toFixed(2);
+    const slowQueryPercentage = (
+      (analysis.slowQueries.length / totalQueries) *
+      100
+    ).toFixed(2);
 
     const report = `
 🏥 HEALTHCARE DATABASE PERFORMANCE REPORT
@@ -299,17 +313,22 @@ ${
    * Get healthcare-specific insights
    */
   private getHealthcareInsights(_analysis: any): string {
-    const patientQueries = this.metrics.filter((m) => m.healthcareDataType === 'patient');
+    const patientQueries = this.metrics.filter(
+      (m) => m.healthcareDataType === 'patient'
+    );
     const medicalRecordQueries = this.metrics.filter(
       (m) => m.healthcareDataType === 'medical-record'
     );
-    const appointmentQueries = this.metrics.filter((m) => m.healthcareDataType === 'appointment');
+    const appointmentQueries = this.metrics.filter(
+      (m) => m.healthcareDataType === 'appointment'
+    );
 
     let insights = '';
 
     if (patientQueries.length > 0) {
       const avgPatientQueryTime =
-        patientQueries.reduce((sum, q) => sum + q.executionTime, 0) / patientQueries.length;
+        patientQueries.reduce((sum, q) => sum + q.executionTime, 0) /
+        patientQueries.length;
       insights += `- Patient Data Access: ${Math.round(avgPatientQueryTime)}ms avg (target: <500ms)\n`;
     }
 
@@ -322,7 +341,8 @@ ${
 
     if (appointmentQueries.length > 0) {
       const avgAppointmentQueryTime =
-        appointmentQueries.reduce((sum, q) => sum + q.executionTime, 0) / appointmentQueries.length;
+        appointmentQueries.reduce((sum, q) => sum + q.executionTime, 0) /
+        appointmentQueries.length;
       insights += `- Appointment Scheduling: ${Math.round(avgAppointmentQueryTime)}ms avg (target: <600ms)\n`;
     }
 
@@ -332,7 +352,9 @@ ${
   /**
    * Generate SQL optimization queries
    */
-  generateOptimizationSQL(suggestions: DatabaseOptimizationSuggestion[]): string {
+  generateOptimizationSQL(
+    suggestions: DatabaseOptimizationSuggestion[]
+  ): string {
     const sqlCommands: string[] = [
       '-- Healthcare Database Optimization SQL',
       `-- Generated on ${new Date().toISOString()}`,

@@ -3,7 +3,8 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Headers':
+    'authorization, x-client-info, apikey, content-type',
 };
 
 interface ReportConfig {
@@ -76,13 +77,19 @@ serve(async (req) => {
           break;
 
         case 'weekly':
-          if (schedule.dayOfWeek !== undefined && currentDay === schedule.dayOfWeek) {
+          if (
+            schedule.dayOfWeek !== undefined &&
+            currentDay === schedule.dayOfWeek
+          ) {
             shouldGenerate = true;
           }
           break;
 
         case 'monthly':
-          if (schedule.dayOfMonth !== undefined && currentDate === schedule.dayOfMonth) {
+          if (
+            schedule.dayOfMonth !== undefined &&
+            currentDate === schedule.dayOfMonth
+          ) {
             shouldGenerate = true;
           }
           break;
@@ -91,7 +98,9 @@ serve(async (req) => {
       // Check time (simplified - just check hour)
       const scheduleHour = Number.parseInt(schedule.time.split(':')[0], 10);
       if (shouldGenerate && currentHour === scheduleHour) {
-        console.log(`Generating report: ${config.report_name} for clinic ${config.clinic_id}`);
+        console.log(
+          `Generating report: ${config.report_name} for clinic ${config.clinic_id}`
+        );
 
         try {
           const reportData = await generateReport(supabase, config);
@@ -112,7 +121,10 @@ serve(async (req) => {
             .single();
 
           if (reportError) {
-            console.error(`Error storing report ${config.report_name}:`, reportError);
+            console.error(
+              `Error storing report ${config.report_name}:`,
+              reportError
+            );
             continue;
           }
 
@@ -133,7 +145,10 @@ serve(async (req) => {
             });
           }
         } catch (error) {
-          console.error(`Error generating report ${config.report_name}:`, error);
+          console.error(
+            `Error generating report ${config.report_name}:`,
+            error
+          );
         }
       }
     }
@@ -202,16 +217,40 @@ async function generateReport(supabase: any, config: ReportConfig) {
 
   switch (config.report_type) {
     case 'consumption':
-      return await generateConsumptionReport(supabase, clinicId, filters, startDate, endDate);
+      return await generateConsumptionReport(
+        supabase,
+        clinicId,
+        filters,
+        startDate,
+        endDate
+      );
 
     case 'valuation':
-      return await generateValuationReport(supabase, clinicId, filters, startDate, endDate);
+      return await generateValuationReport(
+        supabase,
+        clinicId,
+        filters,
+        startDate,
+        endDate
+      );
 
     case 'movement':
-      return await generateMovementReport(supabase, clinicId, filters, startDate, endDate);
+      return await generateMovementReport(
+        supabase,
+        clinicId,
+        filters,
+        startDate,
+        endDate
+      );
 
     default:
-      return await generateCustomReport(supabase, clinicId, filters, startDate, endDate);
+      return await generateCustomReport(
+        supabase,
+        clinicId,
+        filters,
+        startDate,
+        endDate
+      );
   }
 }
 
@@ -269,7 +308,8 @@ async function generateConsumptionReport(
       consumptionByProduct.set(productId, {
         productId,
         productName: movement.products?.name || 'Produto sem nome',
-        category: movement.products?.product_categories?.name || 'Sem categoria',
+        category:
+          movement.products?.product_categories?.name || 'Sem categoria',
         quantity,
         value,
         transactions: 1,
@@ -331,7 +371,8 @@ async function generateValuationReport(
 
   const totalValue =
     inventory?.reduce(
-      (sum: number, item: any) => sum + item.quantity_available * item.unit_cost,
+      (sum: number, item: any) =>
+        sum + item.quantity_available * item.unit_cost,
       0
     ) || 0;
 

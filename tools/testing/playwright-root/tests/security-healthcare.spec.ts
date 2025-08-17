@@ -56,7 +56,8 @@ test.describe('🔐 Healthcare Security Testing - Patient Data Protection', () =
     // Test 4: Secure Cookie Configuration
     const cookies = await page.context().cookies();
     const sessionCookies = cookies.filter(
-      (cookie) => cookie.name.includes('session') || cookie.name.includes('auth')
+      (cookie) =>
+        cookie.name.includes('session') || cookie.name.includes('auth')
     );
 
     sessionCookies.forEach((cookie) => {
@@ -89,7 +90,9 @@ test.describe('🔐 Healthcare Security Testing - Patient Data Protection', () =
     await HealthcareWorkflowHelper.validatePatientDataProtection(page);
   });
 
-  test('should validate LGPD compliance with automated testing', async ({ page }) => {
+  test('should validate LGPD compliance with automated testing', async ({
+    page,
+  }) => {
     // Comprehensive LGPD compliance validation
     await LGPDComplianceHelper.validateConsentManagement(page);
 
@@ -102,7 +105,9 @@ test.describe('🔐 Healthcare Security Testing - Patient Data Protection', () =
     await expect(page.getByTestId('analytics-consent')).toBeVisible();
 
     // Test granular consent options
-    const consentOptions = await page.locator('[data-testid*="consent"]').count();
+    const consentOptions = await page
+      .locator('[data-testid*="consent"]')
+      .count();
     expect(consentOptions).toBeGreaterThanOrEqual(3);
 
     // Test 2: Data Subject Rights Implementation (LGPD Articles 15-22)
@@ -116,14 +121,20 @@ test.describe('🔐 Healthcare Security Testing - Patient Data Protection', () =
     // Test rectification right (Article 16)
     await page.goto('/privacy/data-rectification');
     await page.getByTestId('request-data-correction').click();
-    await expect(page.getByTestId('correction-request-confirmation')).toBeVisible();
+    await expect(
+      page.getByTestId('correction-request-confirmation')
+    ).toBeVisible();
 
     // Test deletion right (Article 18 - Right to be forgotten)
     await page.goto('/privacy/data-deletion');
     await page.getByTestId('request-data-deletion').click();
-    await page.getByTestId('deletion-reason-select').selectOption('withdrawal_of_consent');
+    await page
+      .getByTestId('deletion-reason-select')
+      .selectOption('withdrawal_of_consent');
     await page.getByTestId('confirm-deletion-request').click();
-    await expect(page.getByTestId('deletion-request-confirmation')).toBeVisible();
+    await expect(
+      page.getByTestId('deletion-request-confirmation')
+    ).toBeVisible();
 
     // Test portability right (Article 20)
     await page.goto('/privacy/data-portability');
@@ -146,11 +157,15 @@ test.describe('🔐 Healthcare Security Testing - Patient Data Protection', () =
     await expect(page.getByTestId('notification-timeline')).toBeVisible();
 
     // Verify 72-hour notification requirement
-    const notificationTime = await page.getByTestId('notification-deadline').textContent();
+    const notificationTime = await page
+      .getByTestId('notification-deadline')
+      .textContent();
     expect(notificationTime).toContain('72 hours');
   });
 
-  test('should perform penetration testing for healthcare vulnerabilities', async ({ page }) => {
+  test('should perform penetration testing for healthcare vulnerabilities', async ({
+    page,
+  }) => {
     // Test 1: SQL Injection Prevention
     await page.goto('/dashboard/patients');
 
@@ -195,7 +210,9 @@ test.describe('🔐 Healthcare Security Testing - Patient Data Protection', () =
       expect(alertTriggered).toBe(true); // Alert should not be overridden
 
       // Verify input sanitization
-      const searchResults = await page.getByTestId('search-results').textContent();
+      const searchResults = await page
+        .getByTestId('search-results')
+        .textContent();
       expect(searchResults).not.toContain('<script>');
       expect(searchResults).not.toContain('<img');
       expect(searchResults).not.toContain('javascript:');
@@ -218,7 +235,9 @@ test.describe('🔐 Healthcare Security Testing - Patient Data Protection', () =
         // Check for CSRF protection in headers
         await page.route('**/api/**', (route) => {
           const headers = route.request().headers();
-          expect(headers['x-csrf-token'] || headers['x-requested-with']).toBeDefined();
+          expect(
+            headers['x-csrf-token'] || headers['x-requested-with']
+          ).toBeDefined();
           route.continue();
         });
       }
@@ -274,14 +293,18 @@ test.describe('🔐 Healthcare Security Testing - Patient Data Protection', () =
     await expect(page.getByTestId('file-type-error')).not.toBeVisible();
   });
 
-  test('should validate healthcare audit trail without PHI exposure', async ({ page }) => {
+  test('should validate healthcare audit trail without PHI exposure', async ({
+    page,
+  }) => {
     // Navigate to audit trail with healthcare authentication
     await page.goto('/admin/audit-trail');
 
     // Test 1: Comprehensive Audit Log Validation
     await expect(page.getByTestId('audit-trail-dashboard')).toBeVisible();
 
-    const auditEntries = await page.locator('[data-testid="audit-entry"]').count();
+    const auditEntries = await page
+      .locator('[data-testid="audit-entry"]')
+      .count();
     expect(auditEntries).toBeGreaterThan(0);
 
     // Test 2: PHI Protection in Audit Logs
@@ -329,7 +352,9 @@ test.describe('🔐 Healthcare Security Testing - Patient Data Protection', () =
     await page.goto('/admin/audit-trail');
 
     // Verify new audit entry was created
-    const updatedEntries = await page.locator('[data-testid="audit-entry"]').count();
+    const updatedEntries = await page
+      .locator('[data-testid="audit-entry"]')
+      .count();
     expect(updatedEntries).toBeGreaterThan(auditEntries);
 
     // Test 5: Audit Trail Export with Data Protection
@@ -348,13 +373,17 @@ test.describe('🔐 Healthcare Security Testing - Patient Data Protection', () =
     await HealthcareWorkflowHelper.validatePatientDataProtection(page);
   });
 
-  test('should validate session security and timeout for healthcare users', async ({ page }) => {
+  test('should validate session security and timeout for healthcare users', async ({
+    page,
+  }) => {
     // Test 1: Session Timeout Configuration
     await page.goto('/dashboard');
 
     // Check session timeout configuration
     const sessionTimeout = await page.evaluate(() => {
-      return Number.parseInt(localStorage.getItem('session_timeout_minutes') || '30');
+      return Number.parseInt(
+        localStorage.getItem('session_timeout_minutes') || '30'
+      );
     });
 
     // Healthcare should have stricter session timeout (≤30 minutes)
@@ -369,7 +398,9 @@ test.describe('🔐 Healthcare Security Testing - Patient Data Protection', () =
     await secondPage.getByTestId('login-button').click();
 
     // Verify concurrent session warning
-    await expect(secondPage.getByTestId('concurrent-session-warning')).toBeVisible();
+    await expect(
+      secondPage.getByTestId('concurrent-session-warning')
+    ).toBeVisible();
 
     // Test 3: Session Invalidation on Suspicious Activity
     await page.evaluate(() => {
@@ -386,7 +417,9 @@ test.describe('🔐 Healthcare Security Testing - Patient Data Protection', () =
       .catch(() => false);
 
     if (securityWarning) {
-      await expect(page.getByTestId('additional-verification-required')).toBeVisible();
+      await expect(
+        page.getByTestId('additional-verification-required')
+      ).toBeVisible();
     }
 
     // Test 4: Secure Logout Process
@@ -396,7 +429,10 @@ test.describe('🔐 Healthcare Security Testing - Patient Data Protection', () =
     // Verify complete session cleanup
     const sessionData = await page.evaluate(() => {
       const sessionKeys = Object.keys(localStorage).filter(
-        (key) => key.includes('session') || key.includes('auth') || key.includes('token')
+        (key) =>
+          key.includes('session') ||
+          key.includes('auth') ||
+          key.includes('token')
       );
       return sessionKeys;
     });

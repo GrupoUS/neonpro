@@ -206,13 +206,19 @@ export class AuditHashService {
     };
 
     const data = JSON.stringify(canonical, Object.keys(canonical).sort());
-    return crypto.createHash(AuditHashService.ALGORITHM).update(data).digest('hex');
+    return crypto
+      .createHash(AuditHashService.ALGORITHM)
+      .update(data)
+      .digest('hex');
   }
 
   /**
    * Verify audit chain integrity
    */
-  static verifyChain(events: AuditEvent[]): { valid: boolean; brokenAt?: number } {
+  static verifyChain(events: AuditEvent[]): {
+    valid: boolean;
+    brokenAt?: number;
+  } {
     if (events.length === 0) {
       return { valid: true };
     }
@@ -259,7 +265,8 @@ export class AuditService {
 
     // Check minimum severity
     if (
-      this.getSeverityLevel(eventData.severity) < this.getSeverityLevel(this.config.minSeverity)
+      this.getSeverityLevel(eventData.severity) <
+      this.getSeverityLevel(this.config.minSeverity)
     ) {
       return null;
     }
@@ -349,7 +356,8 @@ export class AuditService {
 
     return this.logEvent({
       eventType: eventTypeMap[action],
-      severity: action === 'delete' ? AuditSeverity.WARNING : AuditSeverity.INFO,
+      severity:
+        action === 'delete' ? AuditSeverity.WARNING : AuditSeverity.INFO,
       outcome: AuditOutcome.SUCCESS,
       userId,
       resourceId: patientId,
@@ -373,7 +381,9 @@ export class AuditService {
     ipAddress: string
   ): Promise<string | null> {
     const eventType =
-      action === 'given' ? AuditEventType.CONSENT_GIVEN : AuditEventType.CONSENT_WITHDRAWN;
+      action === 'given'
+        ? AuditEventType.CONSENT_GIVEN
+        : AuditEventType.CONSENT_WITHDRAWN;
 
     return this.logEvent({
       eventType,
@@ -556,7 +566,11 @@ export class MemoryAuditStore implements AuditStore {
   }
 
   async count(filters: AuditFilters): Promise<number> {
-    const events = await this.retrieve({ ...filters, limit: undefined, offset: undefined });
+    const events = await this.retrieve({
+      ...filters,
+      limit: undefined,
+      offset: undefined,
+    });
     return events.length;
   }
 

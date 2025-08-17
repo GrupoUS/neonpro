@@ -35,14 +35,16 @@ export class LGPDConsentManager {
     {
       id: 'essential',
       name: 'Funcionamento Essencial',
-      description: 'Dados necessários para operação básica da plataforma médica',
+      description:
+        'Dados necessários para operação básica da plataforma médica',
       required: true,
       category: 'essential',
     },
     {
       id: 'medical_treatment',
       name: 'Atendimento Médico',
-      description: 'Processamento de dados médicos para consultas e tratamentos',
+      description:
+        'Processamento de dados médicos para consultas e tratamentos',
       required: true,
       category: 'essential',
     },

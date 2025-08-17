@@ -150,9 +150,10 @@ const PatientTable = React.forwardRef<HTMLDivElement, PatientTableProps>(
     ref
   ) => {
     // Internal state management
-    const [sort, setSort] = React.useState<{ column: string; direction: 'asc' | 'desc' } | null>(
-      null
-    );
+    const [sort, setSort] = React.useState<{
+      column: string;
+      direction: 'asc' | 'desc';
+    } | null>(null);
     const [searchTerm, setSearchTerm] = React.useState(searchValue);
     const [internalSelectedPatients, setSelectedPatients] =
       React.useState<string[]>(selectedPatients);
@@ -185,7 +186,8 @@ const PatientTable = React.forwardRef<HTMLDivElement, PatientTableProps>(
         return filteredData;
       }
 
-      const startIndex = ((internalPagination.page || 1) - 1) * internalPagination.pageSize;
+      const startIndex =
+        ((internalPagination.page || 1) - 1) * internalPagination.pageSize;
       const endIndex = startIndex + internalPagination.pageSize;
       return filteredData.slice(startIndex, endIndex);
     }, [filteredData, internalPagination]);
@@ -211,20 +213,26 @@ const PatientTable = React.forwardRef<HTMLDivElement, PatientTableProps>(
     const handleSort = (column: string) => {
       setSort((prev) => {
         if (prev?.column === column) {
-          return { column, direction: prev.direction === 'asc' ? 'desc' : 'asc' };
+          return {
+            column,
+            direction: prev.direction === 'asc' ? 'desc' : 'asc',
+          };
         }
         return { column, direction: 'asc' };
       });
 
       if (onSort) {
-        const newDirection = sort?.column === column && sort?.direction === 'asc' ? 'desc' : 'asc';
+        const newDirection =
+          sort?.column === column && sort?.direction === 'asc' ? 'desc' : 'asc';
         onSort(column, newDirection);
       }
     };
 
     const handleSelectAll = () => {
       const newSelected =
-        internalSelectedPatients.length === patients.length ? [] : patients.map((p) => p.id);
+        internalSelectedPatients.length === patients.length
+          ? []
+          : patients.map((p) => p.id);
       setSelectedPatients(newSelected);
 
       if (onSelectionChange) {
@@ -263,7 +271,10 @@ const PatientTable = React.forwardRef<HTMLDivElement, PatientTableProps>(
     };
 
     // Render cell content
-    const renderCellContent = (patient: PatientData, column: PatientTableColumn) => {
+    const renderCellContent = (
+      patient: PatientData,
+      column: PatientTableColumn
+    ) => {
       if (column.render) {
         return column.render(patient);
       }
@@ -274,11 +285,15 @@ const PatientTable = React.forwardRef<HTMLDivElement, PatientTableProps>(
             <div className="flex items-center gap-3">
               <Avatar size="sm">
                 <AvatarImage alt={patient.name} src={patient.avatar} />
-                <AvatarFallback>{getInitials(patient.name || 'Unknown')}</AvatarFallback>
+                <AvatarFallback>
+                  {getInitials(patient.name || 'Unknown')}
+                </AvatarFallback>
               </Avatar>
               <div>
                 <div className="font-medium">{patient.name}</div>
-                <div className="text-muted-foreground text-sm">{patient.email}</div>
+                <div className="text-muted-foreground text-sm">
+                  {patient.email}
+                </div>
               </div>
             </div>
           );
@@ -369,8 +384,15 @@ const PatientTable = React.forwardRef<HTMLDivElement, PatientTableProps>(
 
           <div className="flex items-center gap-2">
             {onRefresh && (
-              <Button disabled={loading} onClick={onRefresh} size="sm" variant="outline">
-                <RefreshCw className={cn('h-4 w-4', loading && 'animate-spin')} />
+              <Button
+                disabled={loading}
+                onClick={onRefresh}
+                size="sm"
+                variant="outline"
+              >
+                <RefreshCw
+                  className={cn('h-4 w-4', loading && 'animate-spin')}
+                />
               </Button>
             )}
 
@@ -404,8 +426,8 @@ const PatientTable = React.forwardRef<HTMLDivElement, PatientTableProps>(
                       <th className="w-12 px-4 py-3 text-left">
                         <Checkbox
                           checked={
-                            internalSelectedPatients.length === patients.length &&
-                            patients.length > 0
+                            internalSelectedPatients.length ===
+                              patients.length && patients.length > 0
                           }
                           onCheckedChange={handleSelectAll}
                         />
@@ -415,11 +437,14 @@ const PatientTable = React.forwardRef<HTMLDivElement, PatientTableProps>(
                       <th
                         className={cn(
                           'px-4 py-3 text-left font-medium text-muted-foreground text-xs uppercase tracking-wider',
-                          column.sortable && 'cursor-pointer hover:text-foreground',
+                          column.sortable &&
+                            'cursor-pointer hover:text-foreground',
                           column.width && `w-[${column.width}]`
                         )}
                         key={column.key}
-                        onClick={() => column.sortable && handleSort(column.key as string)}
+                        onClick={() =>
+                          column.sortable && handleSort(column.key as string)
+                        }
                       >
                         <div className="flex items-center gap-2">
                           {column.label}
@@ -447,8 +472,12 @@ const PatientTable = React.forwardRef<HTMLDivElement, PatientTableProps>(
                       {enableSelection && (
                         <td className="w-12 px-4 py-3">
                           <Checkbox
-                            checked={internalSelectedPatients.includes(patient.id)}
-                            onCheckedChange={() => handleSelectPatient(patient.id)}
+                            checked={internalSelectedPatients.includes(
+                              patient.id
+                            )}
+                            onCheckedChange={() =>
+                              handleSelectPatient(patient.id)
+                            }
                             onClick={(e) => e.stopPropagation()}
                           />
                         </td>
@@ -484,7 +513,11 @@ const PatientTable = React.forwardRef<HTMLDivElement, PatientTableProps>(
         {internalPagination && internalPagination.totalPages > 1 && (
           <div className="flex items-center justify-between">
             <div className="text-muted-foreground text-sm">
-              Mostrando {((internalPagination.page || 1) - 1) * internalPagination.pageSize + 1} a{' '}
+              Mostrando{' '}
+              {((internalPagination.page || 1) - 1) *
+                internalPagination.pageSize +
+                1}{' '}
+              a{' '}
               {Math.min(
                 (internalPagination.page || 1) * internalPagination.pageSize,
                 internalPagination.totalItems
@@ -495,7 +528,9 @@ const PatientTable = React.forwardRef<HTMLDivElement, PatientTableProps>(
             <div className="flex items-center gap-2">
               <Button
                 disabled={(internalPagination.page || 1) <= 1}
-                onClick={() => handlePaginationChange((internalPagination.page || 1) - 1)}
+                onClick={() =>
+                  handlePaginationChange((internalPagination.page || 1) - 1)
+                }
                 size="sm"
                 variant="outline"
               >
@@ -504,12 +539,18 @@ const PatientTable = React.forwardRef<HTMLDivElement, PatientTableProps>(
               </Button>
 
               <span className="text-sm">
-                Página {internalPagination.page || 1} de {internalPagination.totalPages}
+                Página {internalPagination.page || 1} de{' '}
+                {internalPagination.totalPages}
               </span>
 
               <Button
-                disabled={(internalPagination.page || 1) >= internalPagination.totalPages}
-                onClick={() => handlePaginationChange((internalPagination.page || 1) + 1)}
+                disabled={
+                  (internalPagination.page || 1) >=
+                  internalPagination.totalPages
+                }
+                onClick={() =>
+                  handlePaginationChange((internalPagination.page || 1) + 1)
+                }
                 size="sm"
                 variant="outline"
               >
@@ -524,7 +565,9 @@ const PatientTable = React.forwardRef<HTMLDivElement, PatientTableProps>(
         {filteredData.length === 0 && !loading && (
           <div className="flex flex-col items-center justify-center py-12 text-center">
             <Users className="mb-4 h-12 w-12 text-muted-foreground" />
-            <h3 className="mb-2 font-semibold text-lg">Nenhum paciente encontrado</h3>
+            <h3 className="mb-2 font-semibold text-lg">
+              Nenhum paciente encontrado
+            </h3>
             <p className="text-muted-foreground text-sm">
               {searchTerm
                 ? 'Tente ajustar os filtros de busca.'

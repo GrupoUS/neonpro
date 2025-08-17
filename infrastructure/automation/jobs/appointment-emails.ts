@@ -147,7 +147,8 @@ export const appointmentConfirmationEmail = task({
         .from('appointments')
         .update({
           confirmation_sent_at: new Date().toISOString(),
-          status: appointment.status === 'pending' ? 'confirmed' : appointment.status,
+          status:
+            appointment.status === 'pending' ? 'confirmed' : appointment.status,
         })
         .eq('id', payload.appointmentId);
 

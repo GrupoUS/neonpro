@@ -184,7 +184,10 @@ export class HealthcareTestFramework {
   }
 
   // Quality Gates Test Suite
-  createQualityGatesTestSuite(testName: string, testFn: () => void | Promise<void>) {
+  createQualityGatesTestSuite(
+    testName: string,
+    testFn: () => void | Promise<void>
+  ) {
     return describe(`Quality Gates: ${testName}`, () => {
       test('Performance Validation', async () => {
         if (!this.config.qualityGates.enablePerformanceTests) {
@@ -192,7 +195,9 @@ export class HealthcareTestFramework {
         }
 
         const performanceScore = await this.validatePerformance();
-        expect(performanceScore).toBeGreaterThanOrEqual(this.config.qualityGates.minimumScore);
+        expect(performanceScore).toBeGreaterThanOrEqual(
+          this.config.qualityGates.minimumScore
+        );
       });
 
       test('Security Validation', async () => {
@@ -201,7 +206,9 @@ export class HealthcareTestFramework {
         }
 
         const securityScore = await this.validateSecurity();
-        expect(securityScore).toBeGreaterThanOrEqual(this.config.qualityGates.minimumScore);
+        expect(securityScore).toBeGreaterThanOrEqual(
+          this.config.qualityGates.minimumScore
+        );
       });
 
       test('Accessibility Validation', async () => {
@@ -210,7 +217,9 @@ export class HealthcareTestFramework {
         }
 
         const accessibilityScore = await this.validateAccessibility();
-        expect(accessibilityScore).toBeGreaterThanOrEqual(this.config.qualityGates.minimumScore);
+        expect(accessibilityScore).toBeGreaterThanOrEqual(
+          this.config.qualityGates.minimumScore
+        );
       });
 
       test(testName, testFn);
@@ -218,7 +227,10 @@ export class HealthcareTestFramework {
   }
 
   // Healthcare E2E Test Suite
-  createHealthcareE2ETestSuite(testName: string, testFn: () => void | Promise<void>) {
+  createHealthcareE2ETestSuite(
+    testName: string,
+    testFn: () => void | Promise<void>
+  ) {
     return describe(`Healthcare E2E: ${testName}`, () => {
       beforeEach(async () => {
         await this.setupHealthcareE2EEnvironment();
@@ -240,7 +252,9 @@ export class HealthcareTestFramework {
 
       test('Clinic Operations Validation', async () => {
         await this.validateClinicOperations();
-        expect(this.getOperationalEfficiencyScore()).toBeGreaterThanOrEqual(9.9);
+        expect(this.getOperationalEfficiencyScore()).toBeGreaterThanOrEqual(
+          9.9
+        );
       });
 
       test(testName, testFn);
@@ -537,14 +551,16 @@ export class HealthcareTestFramework {
       status: lgpdResults.every(([, result]) => result.status === 'passed')
         ? 'compliant'
         : 'non-compliant',
-      score: lgpdResults.reduce((sum, [, result]) => sum + result.score, 0) / lgpdResults.length,
+      score:
+        lgpdResults.reduce((sum, [, result]) => sum + result.score, 0) /
+        lgpdResults.length,
       details: lgpdResults.map(([key, result]) => ({ test: key, ...result })),
     };
   }
 
   private getANVISAComplianceStatus(): ComplianceStatus {
-    const anvisaResults = Array.from(this.testResults.entries()).filter(([key]) =>
-      key.startsWith('anvisa_')
+    const anvisaResults = Array.from(this.testResults.entries()).filter(
+      ([key]) => key.startsWith('anvisa_')
     );
 
     return {
@@ -552,7 +568,8 @@ export class HealthcareTestFramework {
         ? 'compliant'
         : 'non-compliant',
       score:
-        anvisaResults.reduce((sum, [, result]) => sum + result.score, 0) / anvisaResults.length,
+        anvisaResults.reduce((sum, [, result]) => sum + result.score, 0) /
+        anvisaResults.length,
       details: anvisaResults.map(([key, result]) => ({ test: key, ...result })),
     };
   }
@@ -566,7 +583,9 @@ export class HealthcareTestFramework {
       status: cfmResults.every(([, result]) => result.status === 'passed')
         ? 'compliant'
         : 'non-compliant',
-      score: cfmResults.reduce((sum, [, result]) => sum + result.score, 0) / cfmResults.length,
+      score:
+        cfmResults.reduce((sum, [, result]) => sum + result.score, 0) /
+        cfmResults.length,
       details: cfmResults.map(([key, result]) => ({ test: key, ...result })),
     };
   }
@@ -622,7 +641,12 @@ type TestResult = {
 type ComplianceStatus = {
   status: 'compliant' | 'non-compliant' | 'partial';
   score: number;
-  details: Array<{ test: string; score: number; status: string; timestamp: Date }>;
+  details: Array<{
+    test: string;
+    score: number;
+    status: string;
+    timestamp: Date;
+  }>;
 };
 
 type HealthcareComplianceReport = {
@@ -640,13 +664,19 @@ type HealthcareComplianceReport = {
 export const healthcareTestFramework = new HealthcareTestFramework();
 
 // Export test creation utilities
-export const createLGPDTest =
-  healthcareTestFramework.createLGPDTestSuite.bind(healthcareTestFramework);
+export const createLGPDTest = healthcareTestFramework.createLGPDTestSuite.bind(
+  healthcareTestFramework
+);
 export const createANVISATest =
   healthcareTestFramework.createANVISATestSuite.bind(healthcareTestFramework);
-export const createCFMTest =
-  healthcareTestFramework.createCFMTestSuite.bind(healthcareTestFramework);
+export const createCFMTest = healthcareTestFramework.createCFMTestSuite.bind(
+  healthcareTestFramework
+);
 export const createQualityGatesTest =
-  healthcareTestFramework.createQualityGatesTestSuite.bind(healthcareTestFramework);
+  healthcareTestFramework.createQualityGatesTestSuite.bind(
+    healthcareTestFramework
+  );
 export const createHealthcareE2ETest =
-  healthcareTestFramework.createHealthcareE2ETestSuite.bind(healthcareTestFramework);
+  healthcareTestFramework.createHealthcareE2ETestSuite.bind(
+    healthcareTestFramework
+  );

@@ -63,9 +63,15 @@ export function createEnterpriseAnalyticsServices(config: {
   healthcareIntelligence: HealthcareIntelligenceConfig;
 }) {
   return {
-    privacyAnalytics: createPrivacyPreservingAnalyticsService(config.privacyAnalytics),
-    complianceDashboard: createComplianceDashboardService(config.complianceDashboard),
-    healthcareIntelligence: createHealthcareIntelligenceService(config.healthcareIntelligence),
+    privacyAnalytics: createPrivacyPreservingAnalyticsService(
+      config.privacyAnalytics
+    ),
+    complianceDashboard: createComplianceDashboardService(
+      config.complianceDashboard
+    ),
+    healthcareIntelligence: createHealthcareIntelligenceService(
+      config.healthcareIntelligence
+    ),
   };
 }
 
@@ -86,15 +92,23 @@ export async function validateEnterpriseAnalyticsCompliance(
   const violations: string[] = [];
 
   // Validate privacy-preserving analytics
-  const privacyValidation = await validatePrivacyPreservingAnalytics(privacyQuery, privacyConfig);
+  const privacyValidation = await validatePrivacyPreservingAnalytics(
+    privacyQuery,
+    privacyConfig
+  );
   if (!privacyValidation.valid) {
-    violations.push(...privacyValidation.violations.map((v) => `Privacy Analytics: ${v}`));
+    violations.push(
+      ...privacyValidation.violations.map((v) => `Privacy Analytics: ${v}`)
+    );
   }
 
   // Validate compliance dashboard
-  const dashboardValidation = await validateComplianceDashboard(dashboardConfig);
+  const dashboardValidation =
+    await validateComplianceDashboard(dashboardConfig);
   if (!dashboardValidation.valid) {
-    violations.push(...dashboardValidation.violations.map((v) => `Compliance Dashboard: ${v}`));
+    violations.push(
+      ...dashboardValidation.violations.map((v) => `Compliance Dashboard: ${v}`)
+    );
   }
 
   // Validate healthcare intelligence
@@ -104,7 +118,9 @@ export async function validateEnterpriseAnalyticsCompliance(
   );
   if (!intelligenceValidation.valid) {
     violations.push(
-      ...intelligenceValidation.violations.map((v: string) => `Healthcare Intelligence: ${v}`)
+      ...intelligenceValidation.violations.map(
+        (v: string) => `Healthcare Intelligence: ${v}`
+      )
     );
   }
 
@@ -229,12 +245,18 @@ export const ENTERPRISE_ANALYTICS_CONFIGS = {
 export const ENTERPRISE_ANALYTICS_MODULE = {
   name: 'Enterprise Analytics',
   version: '1.0.0',
-  compliance_standards: ['LGPD', 'Constitutional Privacy', 'AI Ethics', 'CFM Medical Ethics'],
+  compliance_standards: [
+    'LGPD',
+    'Constitutional Privacy',
+    'AI Ethics',
+    'CFM Medical Ethics',
+  ],
   quality_score: 9.9,
   services: [
     {
       name: 'Privacy-Preserving Analytics',
-      description: 'Patient privacy-preserving analytics with constitutional compliance',
+      description:
+        'Patient privacy-preserving analytics with constitutional compliance',
       compliance_features: [
         'Differential Privacy',
         'K-Anonymity',
@@ -244,7 +266,8 @@ export const ENTERPRISE_ANALYTICS_MODULE = {
     },
     {
       name: 'Compliance Dashboard',
-      description: 'Real-time compliance monitoring dashboard for regulatory oversight',
+      description:
+        'Real-time compliance monitoring dashboard for regulatory oversight',
       compliance_features: [
         'Real-time Monitoring',
         'Alert Management',
@@ -254,7 +277,8 @@ export const ENTERPRISE_ANALYTICS_MODULE = {
     },
     {
       name: 'Healthcare Intelligence',
-      description: 'AI-driven healthcare insights with constitutional medical ethics',
+      description:
+        'AI-driven healthcare insights with constitutional medical ethics',
       compliance_features: [
         'Explainable AI',
         'Bias Detection',

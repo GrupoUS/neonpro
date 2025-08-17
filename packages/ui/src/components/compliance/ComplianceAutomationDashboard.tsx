@@ -20,7 +20,13 @@ import { useComplianceAlerts, useComplianceScore } from '../../lib/utils';
 import { Alert, AlertDescription, AlertTitle } from '../ui/alert';
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '../ui/card';
 import { Progress } from '../ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
 
@@ -95,7 +101,13 @@ const formatDate = (dateString: string): string => {
 // STATUS CARD COMPONENT
 // ================================================
 
-const StatusCard: React.FC<StatusCardProps> = ({ title, value, status, icon, color }) => {
+const StatusCard: React.FC<StatusCardProps> = ({
+  title,
+  value,
+  status,
+  icon,
+  color,
+}) => {
   const colorClasses = {
     success: 'border-green-200 bg-green-50',
     warning: 'border-yellow-200 bg-yellow-50',
@@ -106,7 +118,9 @@ const StatusCard: React.FC<StatusCardProps> = ({ title, value, status, icon, col
   return (
     <Card className={`${colorClasses[color]} transition-all hover:shadow-md`}>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="font-medium text-gray-600 text-sm">{title}</CardTitle>
+        <CardTitle className="font-medium text-gray-600 text-sm">
+          {title}
+        </CardTitle>
         <div className="h-4 w-4 text-gray-500">{icon}</div>
       </CardHeader>
       <CardContent>
@@ -123,9 +137,9 @@ const StatusCard: React.FC<StatusCardProps> = ({ title, value, status, icon, col
 // MAIN COMPONENT
 // ================================================
 
-export const ComplianceAutomationDashboard: React.FC<ComplianceAutomationDashboardProps> = ({
-  clinicId,
-}) => {
+export const ComplianceAutomationDashboard: React.FC<
+  ComplianceAutomationDashboardProps
+> = ({ clinicId }) => {
   // Mock hooks for compliance status and operations using imported stubs
   const useComplianceStatus = () => ({
     status: useComplianceScore(),
@@ -163,11 +177,14 @@ export const ComplianceAutomationDashboard: React.FC<ComplianceAutomationDashboa
     loading: false,
   });
 
-  const { status, alerts, loading, error, lastRefresh, refresh } = useComplianceStatus();
+  const { status, alerts, loading, error, lastRefresh, refresh } =
+    useComplianceStatus();
   const { classifyData, loading: classifyLoading } = useDataClassification();
   const { createRequest, loading: requestLoading } = useDataSubjectRequests();
-  const { validateSoftware, loading: softwareLoading } = useSoftwareValidation();
-  const { validateProfessional, loading: professionalLoading } = useProfessionalValidation();
+  const { validateSoftware, loading: softwareLoading } =
+    useSoftwareValidation();
+  const { validateProfessional, loading: professionalLoading } =
+    useProfessionalValidation();
   const { createAlert, loading: alertLoading } = useComplianceAlertsLocal();
   const {
     generateReport,
@@ -242,7 +259,9 @@ export const ComplianceAutomationDashboard: React.FC<ComplianceAutomationDashboa
       <div className="space-y-6">
         <div className="flex items-center justify-center py-12">
           <RefreshCw className="h-8 w-8 animate-spin text-blue-500" />
-          <span className="ml-2 text-gray-600 text-lg">Carregando status de compliance...</span>
+          <span className="ml-2 text-gray-600 text-lg">
+            Carregando status de compliance...
+          </span>
         </div>
       </div>
     );
@@ -255,7 +274,12 @@ export const ComplianceAutomationDashboard: React.FC<ComplianceAutomationDashboa
         <AlertTitle>Erro no Sistema de Compliance</AlertTitle>
         <AlertDescription>
           {error}
-          <Button className="mt-2" onClick={refresh} size="sm" variant="outline">
+          <Button
+            className="mt-2"
+            onClick={refresh}
+            size="sm"
+            variant="outline"
+          >
             <RefreshCw className="mr-2 h-4 w-4" />
             Tentar Novamente
           </Button>
@@ -270,7 +294,8 @@ export const ComplianceAutomationDashboard: React.FC<ComplianceAutomationDashboa
         <AlertCircle className="h-4 w-4" />
         <AlertTitle>Nenhum Dado de Compliance</AlertTitle>
         <AlertDescription>
-          Não foi possível carregar os dados de compliance. Verifique a configuração do sistema.
+          Não foi possível carregar os dados de compliance. Verifique a
+          configuração do sistema.
         </AlertDescription>
       </Alert>
     );
@@ -296,8 +321,15 @@ export const ComplianceAutomationDashboard: React.FC<ComplianceAutomationDashboa
           <Badge className="text-xs" variant="outline">
             Última atualização: {formatDate(lastRefresh)}
           </Badge>
-          <Button disabled={loading} onClick={refresh} size="sm" variant="outline">
-            <RefreshCw className={`mr-2 h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
+          <Button
+            disabled={loading}
+            onClick={refresh}
+            size="sm"
+            variant="outline"
+          >
+            <RefreshCw
+              className={`mr-2 h-4 w-4 ${loading ? 'animate-spin' : ''}`}
+            />
             Atualizar
           </Button>
         </div>
@@ -320,7 +352,11 @@ export const ComplianceAutomationDashboard: React.FC<ComplianceAutomationDashboa
         />
         <StatusCard
           color={
-            status.lgpd_score >= 80 ? 'success' : status.lgpd_score >= 60 ? 'warning' : 'error'
+            status.lgpd_score >= 80
+              ? 'success'
+              : status.lgpd_score >= 60
+                ? 'warning'
+                : 'error'
           }
           icon={<Shield />}
           status="Monitorado"
@@ -329,7 +365,11 @@ export const ComplianceAutomationDashboard: React.FC<ComplianceAutomationDashboa
         />
         <StatusCard
           color={
-            status.anvisa_score >= 80 ? 'success' : status.anvisa_score >= 60 ? 'warning' : 'error'
+            status.anvisa_score >= 80
+              ? 'success'
+              : status.anvisa_score >= 60
+                ? 'warning'
+                : 'error'
           }
           icon={<Activity />}
           status="Ativo"
@@ -337,7 +377,13 @@ export const ComplianceAutomationDashboard: React.FC<ComplianceAutomationDashboa
           value={status.anvisa_score}
         />
         <StatusCard
-          color={status.cfm_score >= 80 ? 'success' : status.cfm_score >= 60 ? 'warning' : 'error'}
+          color={
+            status.cfm_score >= 80
+              ? 'success'
+              : status.cfm_score >= 60
+                ? 'warning'
+                : 'error'
+          }
           icon={<CheckCircle />}
           status="Validado"
           title="CFM"
@@ -429,24 +475,35 @@ export const ComplianceAutomationDashboard: React.FC<ComplianceAutomationDashboa
                 <AlertCircle className="mr-2 h-5 w-5" />
                 Alertas de Compliance ({alerts.length})
               </CardTitle>
-              <CardDescription>Alertas críticos e avisos do sistema de compliance</CardDescription>
+              <CardDescription>
+                Alertas críticos e avisos do sistema de compliance
+              </CardDescription>
             </CardHeader>
             <CardContent>
               {alerts.length === 0 ? (
                 <div className="py-6 text-center">
                   <CheckCircle className="mx-auto mb-4 h-12 w-12 text-green-500" />
-                  <p className="text-gray-500">Nenhum alerta ativo no momento</p>
+                  <p className="text-gray-500">
+                    Nenhum alerta ativo no momento
+                  </p>
                 </div>
               ) : (
                 <div className="space-y-3">
                   {alerts.map((alert) => (
-                    <div className="space-y-2 rounded-lg border p-4" key={alert.id}>
+                    <div
+                      className="space-y-2 rounded-lg border p-4"
+                      key={alert.id}
+                    >
                       <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-2">
-                          <Badge variant={getSeverityColor(alert.severity) as any}>
+                          <Badge
+                            variant={getSeverityColor(alert.severity) as any}
+                          >
                             {alert.severity.toUpperCase()}
                           </Badge>
-                          <span className="font-medium">{alert.alert_type}</span>
+                          <span className="font-medium">
+                            {alert.alert_type}
+                          </span>
                         </div>
                         <span className="text-gray-500 text-sm">
                           {formatDate(alert.created_at)}
@@ -455,9 +512,15 @@ export const ComplianceAutomationDashboard: React.FC<ComplianceAutomationDashboa
                       <p className="text-gray-700">{alert.description}</p>
                       {alert.affected_systems.length > 0 && (
                         <div className="flex items-center space-x-2">
-                          <span className="text-gray-500 text-sm">Sistemas afetados:</span>
+                          <span className="text-gray-500 text-sm">
+                            Sistemas afetados:
+                          </span>
                           {alert.affected_systems.map((system) => (
-                            <Badge className="text-xs" key={system} variant="outline">
+                            <Badge
+                              className="text-xs"
+                              key={system}
+                              variant="outline"
+                            >
                               {system}
                             </Badge>
                           ))}
@@ -509,25 +572,39 @@ export const ComplianceAutomationDashboard: React.FC<ComplianceAutomationDashboa
               <CardContent className="space-y-4">
                 <div className="flex justify-between">
                   <span className="text-gray-600">Alertas Críticos:</span>
-                  <Badge variant={status.critical_alerts > 0 ? 'destructive' : 'outline'}>
+                  <Badge
+                    variant={
+                      status.critical_alerts > 0 ? 'destructive' : 'outline'
+                    }
+                  >
                     {status.critical_alerts}
                   </Badge>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Solicitações Pendentes:</span>
-                  <Badge variant={status.pending_requests > 0 ? 'secondary' : 'outline'}>
+                  <Badge
+                    variant={
+                      status.pending_requests > 0 ? 'secondary' : 'outline'
+                    }
+                  >
                     {status.pending_requests}
                   </Badge>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Requer Atenção:</span>
-                  <Badge variant={status.requires_attention ? 'destructive' : 'outline'}>
+                  <Badge
+                    variant={
+                      status.requires_attention ? 'destructive' : 'outline'
+                    }
+                  >
                     {status.requires_attention ? 'Sim' : 'Não'}
                   </Badge>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Última Avaliação:</span>
-                  <span className="text-gray-500 text-sm">{formatDate(status.assessed_at)}</span>
+                  <span className="text-gray-500 text-sm">
+                    {formatDate(status.assessed_at)}
+                  </span>
                 </div>
               </CardContent>
             </Card>

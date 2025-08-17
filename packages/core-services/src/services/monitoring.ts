@@ -137,15 +137,27 @@ export class MonitoringService {
     this.recordMetric(name, 1, 'count', tags);
   }
 
-  recordTimer(name: string, duration: number, tags: Record<string, string> = {}): void {
+  recordTimer(
+    name: string,
+    duration: number,
+    tags: Record<string, string> = {}
+  ): void {
     this.recordMetric(name, duration, 'milliseconds', tags);
   }
 
-  recordGauge(name: string, value: number, tags: Record<string, string> = {}): void {
+  recordGauge(
+    name: string,
+    value: number,
+    tags: Record<string, string> = {}
+  ): void {
     this.recordMetric(name, value, 'count', tags);
   }
 
-  recordHistogram(name: string, value: number, tags: Record<string, string> = {}): void {
+  recordHistogram(
+    name: string,
+    value: number,
+    tags: Record<string, string> = {}
+  ): void {
     this.recordMetric(`${name}.count`, 1, 'count', tags);
     this.recordMetric(`${name}.sum`, value, 'count', tags);
     this.recordMetric(`${name}.avg`, value, 'count', tags);
@@ -159,7 +171,9 @@ export class MonitoringService {
     level: LogEntry['level'],
     message: string,
     service: string,
-    metadata: Partial<Omit<LogEntry, 'level' | 'message' | 'service' | 'timestamp'>> = {}
+    metadata: Partial<
+      Omit<LogEntry, 'level' | 'message' | 'service' | 'timestamp'>
+    > = {}
   ): void {
     const logEntry: LogEntry = {
       level,
@@ -172,8 +186,15 @@ export class MonitoringService {
     // Console output for development
     if (process.env.NODE_ENV === 'development') {
       const logMethod =
-        level === 'error' || level === 'critical' ? 'error' : level === 'warn' ? 'warn' : 'log';
-      console[logMethod](`[${level.toUpperCase()}] ${service}: ${message}`, metadata);
+        level === 'error' || level === 'critical'
+          ? 'error'
+          : level === 'warn'
+            ? 'warn'
+            : 'log';
+      console[logMethod](
+        `[${level.toUpperCase()}] ${service}: ${message}`,
+        metadata
+      );
     }
 
     this.logsBuffer.push(logEntry);
@@ -200,7 +221,12 @@ export class MonitoringService {
     });
   }
 
-  critical(message: string, service: string, error?: Error, metadata?: any): void {
+  critical(
+    message: string,
+    service: string,
+    error?: Error,
+    metadata?: any
+  ): void {
     this.log('critical', message, service, {
       ...metadata,
       stack: error?.stack,
@@ -215,7 +241,10 @@ export class MonitoringService {
   // PERFORMANCE MONITORING
   // ================================================
 
-  async startTransaction(name: string, tags: Record<string, string> = {}): Promise<string> {
+  async startTransaction(
+    name: string,
+    tags: Record<string, string> = {}
+  ): Promise<string> {
     const transactionId = `txn_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
     this.recordMetric('transaction.started', 1, 'count', {
@@ -267,7 +296,10 @@ export class MonitoringService {
     } catch (error) {
       const duration = Date.now() - startTime;
       await this.endTransaction(transactionId, name, false, tags);
-      this.recordTimer(`operation.${name}`, duration, { ...tags, error: 'true' });
+      this.recordTimer(`operation.${name}`, duration, {
+        ...tags,
+        error: 'true',
+      });
 
       this.error(`Operation ${name} failed`, 'monitoring', error as Error, {
         transactionId,
@@ -290,7 +322,10 @@ export class MonitoringService {
     try {
       // Database connectivity check
       const dbStart = Date.now();
-      const { error: dbError } = await this.supabase.from('health_check').select('id').limit(1);
+      const { error: dbError } = await this.supabase
+        .from('health_check')
+        .select('id')
+        .limit(1);
 
       checks.database = {
         status: dbError ? 'fail' : 'pass',
@@ -300,7 +335,8 @@ export class MonitoringService {
 
       // Memory usage check
       const memoryUsage = process.memoryUsage();
-      const memoryUsagePercent = (memoryUsage.heapUsed / memoryUsage.heapTotal) * 100;
+      const memoryUsagePercent =
+        (memoryUsage.heapUsed / memoryUsage.heapTotal) * 100;
 
       checks.memory = {
         status: memoryUsagePercent > 90 ? 'fail' : 'pass',
@@ -316,7 +352,9 @@ export class MonitoringService {
       }
 
       const latency = Date.now() - startTime;
-      const hasFailures = Object.values(checks).some((check) => check.status === 'fail');
+      const hasFailures = Object.values(checks).some(
+        (check) => check.status === 'fail'
+      );
 
       const healthCheck: HealthCheck = {
         service,
@@ -329,8 +367,12 @@ export class MonitoringService {
       };
 
       // Record health check metrics
-      this.recordMetric('health_check.latency', latency, 'milliseconds', { service });
-      this.recordMetric('health_check.status', hasFailures ? 0 : 1, 'count', { service });
+      this.recordMetric('health_check.latency', latency, 'milliseconds', {
+        service,
+      });
+      this.recordMetric('health_check.status', hasFailures ? 0 : 1, 'count', {
+        service,
+      });
 
       return healthCheck;
     } catch (error) {
@@ -403,7 +445,10 @@ export class MonitoringService {
     }
   }
 
-  async acknowledgeAlert(alertId: string, acknowledgedBy: string): Promise<boolean> {
+  async acknowledgeAlert(
+    alertId: string,
+    acknowledgedBy: string
+  ): Promise<boolean> {
     try {
       const { error } = await this.supabase
         .from('alerts')
@@ -415,11 +460,17 @@ export class MonitoringService {
         .eq('id', alertId);
 
       if (error) {
-        this.error('Failed to acknowledge alert', 'monitoring', new Error(error.message));
+        this.error(
+          'Failed to acknowledge alert',
+          'monitoring',
+          new Error(error.message)
+        );
         return false;
       }
 
-      this.info(`Alert acknowledged: ${alertId}`, 'monitoring', { acknowledgedBy });
+      this.info(`Alert acknowledged: ${alertId}`, 'monitoring', {
+        acknowledgedBy,
+      });
       return true;
     } catch (error) {
       this.error('Failed to acknowledge alert', 'monitoring', error as Error);
@@ -460,7 +511,11 @@ export class MonitoringService {
         queueDepth: this.getLatestValue(metrics, 'queue.depth'),
       };
     } catch (error) {
-      this.error('Failed to get performance metrics', 'monitoring', error as Error);
+      this.error(
+        'Failed to get performance metrics',
+        'monitoring',
+        error as Error
+      );
 
       return {
         requestsPerSecond: 0,
@@ -496,9 +551,21 @@ export class MonitoringService {
     try {
       const memoryUsage = process.memoryUsage();
 
-      this.recordMetric('system.memory.heap_used', memoryUsage.heapUsed, 'bytes');
-      this.recordMetric('system.memory.heap_total', memoryUsage.heapTotal, 'bytes');
-      this.recordMetric('system.memory.external', memoryUsage.external, 'bytes');
+      this.recordMetric(
+        'system.memory.heap_used',
+        memoryUsage.heapUsed,
+        'bytes'
+      );
+      this.recordMetric(
+        'system.memory.heap_total',
+        memoryUsage.heapTotal,
+        'bytes'
+      );
+      this.recordMetric(
+        'system.memory.external',
+        memoryUsage.external,
+        'bytes'
+      );
       this.recordMetric('system.uptime', process.uptime(), 'count');
 
       // CPU usage (simplified)
@@ -506,7 +573,11 @@ export class MonitoringService {
       this.recordMetric('system.cpu.user', cpuUsage.user, 'count');
       this.recordMetric('system.cpu.system', cpuUsage.system, 'count');
     } catch (error) {
-      this.error('Failed to collect system metrics', 'monitoring', error as Error);
+      this.error(
+        'Failed to collect system metrics',
+        'monitoring',
+        error as Error
+      );
     }
   }
 
@@ -584,7 +655,9 @@ export class MonitoringService {
       const routes = ['/api/health', '/api/auth/session'];
 
       for (const route of routes) {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}${route}`);
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_APP_URL}${route}`
+        );
         if (!response.ok) {
           return {
             status: 'fail',
@@ -701,13 +774,18 @@ export function logOperation(
 export function Monitor(metricName?: string) {
   return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
     const originalMethod = descriptor.value;
-    const finalMetricName = metricName || `${target.constructor.name}.${propertyKey}`;
+    const finalMetricName =
+      metricName || `${target.constructor.name}.${propertyKey}`;
 
     descriptor.value = async function (...args: any[]) {
-      return monitoring.measureOperation(finalMetricName, () => originalMethod.apply(this, args), {
-        class: target.constructor.name,
-        method: propertyKey,
-      });
+      return monitoring.measureOperation(
+        finalMetricName,
+        () => originalMethod.apply(this, args),
+        {
+          class: target.constructor.name,
+          method: propertyKey,
+        }
+      );
     };
 
     return descriptor;
@@ -731,7 +809,12 @@ export function LogExecution(service?: string) {
         return result;
       } catch (error) {
         const duration = Date.now() - startTime;
-        monitoring.error(`Failed ${propertyKey}`, finalService, error as Error, { duration });
+        monitoring.error(
+          `Failed ${propertyKey}`,
+          finalService,
+          error as Error,
+          { duration }
+        );
         throw error;
       }
     };

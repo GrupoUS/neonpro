@@ -61,9 +61,14 @@ export const invoiceEmailDelivery = task({
 
       // Calcular informações da fatura
       const services = invoice.billing_services || [];
-      const _subtotal = services.reduce((sum, service) => sum + service.total_price, 0);
+      const _subtotal = services.reduce(
+        (sum, service) => sum + service.total_price,
+        0
+      );
       const dueDate = new Date(invoice.due_date).toLocaleDateString('pt-BR');
-      const invoiceDate = new Date(invoice.created_at).toLocaleDateString('pt-BR');
+      const invoiceDate = new Date(invoice.created_at).toLocaleDateString(
+        'pt-BR'
+      );
 
       // Template de email profissional para fatura
       const invoiceHtml = `
@@ -287,7 +292,9 @@ export const paymentReminderEmail = task({
       // Calcular dias em atraso
       const dueDate = new Date(invoice?.due_date || payload.dueDate);
       const today = new Date();
-      const daysOverdue = Math.ceil((today.getTime() - dueDate.getTime()) / (1000 * 60 * 60 * 24));
+      const daysOverdue = Math.ceil(
+        (today.getTime() - dueDate.getTime()) / (1000 * 60 * 60 * 24)
+      );
 
       // Template de lembrete amigável mas firme
       const reminderHtml = `

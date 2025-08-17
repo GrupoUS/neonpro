@@ -7,7 +7,9 @@
 
 const fs = require('fs');
 const path = require('path');
-const { HealthcareBundleAnalyzer } = require('../dist/bundle-analysis/bundle-analyzer');
+const {
+  HealthcareBundleAnalyzer,
+} = require('../dist/bundle-analysis/bundle-analyzer');
 
 async function analyzeBundles() {
   try {
@@ -41,14 +43,22 @@ async function analyzeBundles() {
 
     // Generate optimization script
     const optimizationScript = analyzer.generateOptimizationScript(analysis);
-    const optimizationPath = path.join(process.cwd(), 'webpack.healthcare-optimization.js');
+    const optimizationPath = path.join(
+      process.cwd(),
+      'webpack.healthcare-optimization.js'
+    );
     fs.writeFileSync(optimizationPath, optimizationScript);
 
     // Save detailed analysis
-    const analysisPath = path.join(process.cwd(), 'healthcare-bundle-analysis.json');
+    const analysisPath = path.join(
+      process.cwd(),
+      'healthcare-bundle-analysis.json'
+    );
     fs.writeFileSync(analysisPath, JSON.stringify(analysis, null, 2));
 
-    const highPriorityRecs = analysis.recommendations.filter((r) => r.priority === 'high');
+    const highPriorityRecs = analysis.recommendations.filter(
+      (r) => r.priority === 'high'
+    );
     if (highPriorityRecs.length > 0) {
       highPriorityRecs.forEach((_rec, _index) => {});
     }

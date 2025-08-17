@@ -23,7 +23,10 @@ export type {
   WebVitalsMetric,
 } from './types';
 // Core exports
-export { HEALTHCARE_THRESHOLDS, HealthcareWebVitals } from './web-vitals/core-web-vitals';
+export {
+  HEALTHCARE_THRESHOLDS,
+  HealthcareWebVitals,
+} from './web-vitals/core-web-vitals';
 
 import HealthcareBundleAnalyzer from './bundle-analysis/bundle-analyzer';
 import HealthcareDatabaseMonitor from './database/query-profiler';
@@ -117,7 +120,13 @@ export class HealthcarePerformanceMonitor {
     rowsAffected?: number
   ): void {
     if (this.config.enableDatabaseMonitoring) {
-      this.databaseMonitor.recordQuery(query, executionTime, table, queryType, rowsAffected);
+      this.databaseMonitor.recordQuery(
+        query,
+        executionTime,
+        table,
+        queryType,
+        rowsAffected
+      );
     }
   }
 

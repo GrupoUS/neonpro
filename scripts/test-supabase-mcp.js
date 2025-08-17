@@ -66,7 +66,9 @@ async function testSupabaseMCP() {
     if (error) {
       console.log(`   ⚠️ Database query: ${error.message}`);
       if (error.message.includes('relation "profiles" does not exist')) {
-        console.log("   ℹ️ This is expected if profiles table hasn't been created yet");
+        console.log(
+          "   ℹ️ This is expected if profiles table hasn't been created yet"
+        );
       }
     } else {
       console.log('   ✅ Database connection: OK');
@@ -76,7 +78,8 @@ async function testSupabaseMCP() {
     // Test auth configuration
     console.log('\n🔐 4. Testing auth configuration...');
 
-    const { data: authConfig, error: authError } = await supabase.auth.getUser();
+    const { data: authConfig, error: authError } =
+      await supabase.auth.getUser();
 
     if (authError) {
       console.log(`   ⚠️ Auth config: ${authError.message}`);

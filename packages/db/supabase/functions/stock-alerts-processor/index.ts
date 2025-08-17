@@ -7,7 +7,8 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Headers':
+    'authorization, x-client-info, apikey, content-type',
 };
 
 type StockAlert = {
@@ -159,7 +160,10 @@ serve(async (req) => {
         const alerts: Partial<StockAlert>[] = [];
 
         // Check for low stock
-        if (item.current_stock <= item.minimum_threshold && item.current_stock > 0) {
+        if (
+          item.current_stock <= item.minimum_threshold &&
+          item.current_stock > 0
+        ) {
           alerts.push({
             tenant_id: tenantId,
             item_id: item.id,
@@ -203,7 +207,9 @@ serve(async (req) => {
 
       // Insert new alerts
       if (newAlerts.length > 0) {
-        const { error: insertError } = await supabaseClient.from('stock_alerts').insert(newAlerts);
+        const { error: insertError } = await supabaseClient
+          .from('stock_alerts')
+          .insert(newAlerts);
 
         if (insertError) {
           throw insertError;

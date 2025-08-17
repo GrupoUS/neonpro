@@ -212,7 +212,9 @@ describe('/api/analytics/export', () => {
       })
     );
 
-    const responses = await Promise.all(requests.map(({ req, res }) => handler(req, res)));
+    const responses = await Promise.all(
+      requests.map(({ req, res }) => handler(req, res))
+    );
 
     // Should have some rate limited responses
     const rateLimitedResponses = responses.filter(

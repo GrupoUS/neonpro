@@ -90,9 +90,12 @@ export const mockSupabaseClient = {
       single: vi.fn(async () => {
         // Check if this is a duplicate check for createPatient
         // Duplicate check happens when we query by medical_record_number AND clinic_id
-        const hasMedicalRecord = mockContext.queryConditions.has('medical_record_number');
+        const hasMedicalRecord = mockContext.queryConditions.has(
+          'medical_record_number'
+        );
         const hasClinicId = mockContext.queryConditions.has('clinic_id');
-        const isDuplicateCheck = table === 'patients' && hasMedicalRecord && hasClinicId;
+        const isDuplicateCheck =
+          table === 'patients' && hasMedicalRecord && hasClinicId;
 
         if (isDuplicateCheck) {
           // For createPatient duplicate checks, return null (no duplicate found)
@@ -391,7 +394,11 @@ export const testDatabaseUtils = {
     return { data: treatment, error: null };
   },
 
-  createTestMedicalRecord: async (patientId: string, treatmentId: string, data?: Partial<any>) => {
+  createTestMedicalRecord: async (
+    patientId: string,
+    treatmentId: string,
+    data?: Partial<any>
+  ) => {
     const record = {
       ...getMockData('medical_records'),
       patient_id: patientId,
@@ -405,14 +412,18 @@ export const testDatabaseUtils = {
   simulateRLS: {
     patientCanOnlyAccessOwnData: vi.fn((userId: string, patientId: string) => {
       return (
-        userId === `patient-${patientId}` || userId.includes('doctor') || userId.includes('admin')
+        userId === `patient-${patientId}` ||
+        userId.includes('doctor') ||
+        userId.includes('admin')
       );
     }),
 
-    doctorCanAccessAssignedPatients: vi.fn((doctorId: string, patientId: string) => {
-      // Mock logic: doctors can access patients they have treatments with
-      return true; // Simplified for testing
-    }),
+    doctorCanAccessAssignedPatients: vi.fn(
+      (doctorId: string, patientId: string) => {
+        // Mock logic: doctors can access patients they have treatments with
+        return true; // Simplified for testing
+      }
+    ),
 
     adminCanAccessAllData: vi.fn((userId: string) => {
       return userId.includes('admin');

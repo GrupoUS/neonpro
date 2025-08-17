@@ -337,7 +337,7 @@ describe('Patient Risk Assessment Service - Integration Tests', () => {
       const health = await service.getServiceHealth();
 
       expect(health).toHaveProperty('status');
-      expect(health.status).toBeOneOf(['healthy', 'degraded', 'unhealthy']);
+      expect(['healthy', 'degraded', 'unhealthy']).toContain(health.status);
       expect(health).toHaveProperty('metrics');
       expect(health.metrics).toHaveProperty('totalAssessments');
       expect(health.metrics).toHaveProperty('averageAccuracy');

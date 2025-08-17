@@ -14,7 +14,9 @@ export async function register() {
 
     // Initialize OpenTelemetry only if explicitly enabled
     if (process.env.OTEL_ENABLED === 'true') {
-      const { SimpleTelemetry } = await import('./lib/observability/opentelemetry-setup');
+      const { SimpleTelemetry } = await import(
+        './lib/observability/opentelemetry-setup'
+      );
       await SimpleTelemetry.initialize();
       console.log('🔧 OpenTelemetry initialized');
     }

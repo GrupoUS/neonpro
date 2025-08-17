@@ -54,14 +54,20 @@ vi.Mock('date-fns', () => ({
     }
     return d.toISOString().split('T')[0];
   }),
-  subDays: jest.fn((date, days) => new Date(date.getTime() - days * 24 * 60 * 60 * 1000)),
+  subDays: jest.fn(
+    (date, days) => new Date(date.getTime() - days * 24 * 60 * 60 * 1000)
+  ),
   subMonths: jest.fn((date, months) => {
     const newDate = new Date(date);
     newDate.setMonth(newDate.getMonth() - months);
     return newDate;
   }),
-  startOfMonth: jest.fn((date) => new Date(date.getFullYear(), date.getMonth(), 1)),
-  endOfMonth: jest.fn((date) => new Date(date.getFullYear(), date.getMonth() + 1, 0)),
+  startOfMonth: jest.fn(
+    (date) => new Date(date.getFullYear(), date.getMonth(), 1)
+  ),
+  endOfMonth: jest.fn(
+    (date) => new Date(date.getFullYear(), date.getMonth() + 1, 0)
+  ),
   isValid: jest.fn(() => true),
   parseISO: jest.fn((dateStr) => new Date(dateStr)),
   differenceInDays: jest.fn(() => 30),
@@ -426,7 +432,9 @@ describe('Analytics Utils', () => {
         start_date: 'invalid_date',
       });
 
-      expect(() => parseAnalyticsFilters(params)).toThrow('Invalid filter parameters');
+      expect(() => parseAnalyticsFilters(params)).toThrow(
+        'Invalid filter parameters'
+      );
     });
 
     test('should handle complex filters', () => {

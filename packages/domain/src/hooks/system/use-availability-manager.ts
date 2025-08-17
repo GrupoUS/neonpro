@@ -58,35 +58,43 @@ export function useAvailabilityManager(
 
       setSlots(mockSlots);
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to refresh slots';
+      const errorMessage =
+        err instanceof Error ? err.message : 'Failed to refresh slots';
       setError(errorMessage);
     } finally {
       setIsLoading(false);
     }
   }, [options.professionalId, options.serviceId]);
 
-  const createSlot = useCallback(async (slot: Omit<TimeSlot, 'id'>): Promise<string | null> => {
-    try {
-      const newId = `slot-${Date.now()}`;
-      const newSlot: TimeSlot = { ...slot, id: newId };
-      setSlots((prev) => [...prev, newSlot]);
-      return newId;
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to create slot';
-      setError(errorMessage);
-      return null;
-    }
-  }, []);
+  const createSlot = useCallback(
+    async (slot: Omit<TimeSlot, 'id'>): Promise<string | null> => {
+      try {
+        const newId = `slot-${Date.now()}`;
+        const newSlot: TimeSlot = { ...slot, id: newId };
+        setSlots((prev) => [...prev, newSlot]);
+        return newId;
+      } catch (err) {
+        const errorMessage =
+          err instanceof Error ? err.message : 'Failed to create slot';
+        setError(errorMessage);
+        return null;
+      }
+    },
+    []
+  );
 
   const updateSlot = useCallback(
     async (slotId: string, updates: Partial<TimeSlot>): Promise<boolean> => {
       try {
         setSlots((prev) =>
-          prev.map((slot) => (slot.id === slotId ? { ...slot, ...updates } : slot))
+          prev.map((slot) =>
+            slot.id === slotId ? { ...slot, ...updates } : slot
+          )
         );
         return true;
       } catch (err) {
-        const errorMessage = err instanceof Error ? err.message : 'Failed to update slot';
+        const errorMessage =
+          err instanceof Error ? err.message : 'Failed to update slot';
         setError(errorMessage);
         return false;
       }
@@ -99,7 +107,8 @@ export function useAvailabilityManager(
       setSlots((prev) => prev.filter((slot) => slot.id !== slotId));
       return true;
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to delete slot';
+      const errorMessage =
+        err instanceof Error ? err.message : 'Failed to delete slot';
       setError(errorMessage);
       return false;
     }
@@ -125,7 +134,8 @@ export function useAvailabilityManager(
         setSlots((prev) => [...prev, ...generatedSlots]);
         return generatedSlots;
       } catch (err) {
-        const errorMessage = err instanceof Error ? err.message : 'Failed to generate slots';
+        const errorMessage =
+          err instanceof Error ? err.message : 'Failed to generate slots';
         setError(errorMessage);
         return [];
       }

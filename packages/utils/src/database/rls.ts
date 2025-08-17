@@ -39,7 +39,8 @@ export class DatabaseRLS {
         table: 'appointments',
         policy: 'Appointment access control',
         roles: ['patient', 'doctor', 'receptionist'],
-        condition: 'patient_id IN (SELECT id FROM patients WHERE user_id = auth.uid())',
+        condition:
+          'patient_id IN (SELECT id FROM patients WHERE user_id = auth.uid())',
       },
       {
         table: 'medical_records',

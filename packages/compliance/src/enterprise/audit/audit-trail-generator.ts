@@ -106,7 +106,11 @@ export type AuditTrailConfiguration = {
     patient_interaction_events: boolean;
   };
   /** Audit detail level */
-  audit_detail_level: 'minimal' | 'standard' | 'comprehensive' | 'constitutional_full';
+  audit_detail_level:
+    | 'minimal'
+    | 'standard'
+    | 'comprehensive'
+    | 'constitutional_full';
   /** Real-time monitoring */
   real_time_monitoring: boolean;
   /** Automated alerts configuration */
@@ -327,26 +331,33 @@ export class AuditTrailGeneratorService {
       }
 
       // Execute query
-      const { data: auditEntries, error: queryError } = await query.order('event_timestamp', {
-        ascending: true,
-      });
+      const { data: auditEntries, error: queryError } = await query.order(
+        'event_timestamp',
+        {
+          ascending: true,
+        }
+      );
 
       if (queryError) {
-        return { success: false, error: 'Failed to retrieve audit trail entries' };
+        return {
+          success: false,
+          error: 'Failed to retrieve audit trail entries',
+        };
       }
 
       // Process entries and verify integrity
-      const processedEntries = await this.processAuditEntries(auditEntries || []);
-      const integrityVerification = await this.verifyEntriesIntegrity(processedEntries);
+      const processedEntries = await this.processAuditEntries(
+        auditEntries || []
+      );
+      const integrityVerification =
+        await this.verifyEntriesIntegrity(processedEntries);
 
       // Generate report metadata
       const metadata = this.generateReportMetadata(processedEntries);
 
       // Perform constitutional compliance assessment
-      const constitutionalAssessment = await this.assessConstitutionalCompliance(
-        processedEntries,
-        params
-      );
+      const constitutionalAssessment =
+        await this.assessConstitutionalCompliance(processedEntries, params);
 
       // Create audit trail report
       const reportId = crypto.randomUUID();
@@ -390,7 +401,10 @@ export class AuditTrailGeneratorService {
 
       return { success: true, data: auditTrailReport };
     } catch (_error) {
-      return { success: false, error: 'Constitutional audit trail generation service error' };
+      return {
+        success: false,
+        error: 'Constitutional audit trail generation service error',
+      };
     }
   }
 
@@ -415,7 +429,9 @@ export class AuditTrailGeneratorService {
       const auditEntryId = crypto.randomUUID();
 
       // Get next sequence number for the trail
-      const sequenceNumber = await this.getNextSequenceNumber(eventData.tenant_id);
+      const sequenceNumber = await this.getNextSequenceNumber(
+        eventData.tenant_id
+      );
 
       // Create audit trail entry
       const auditEntry: AuditTrailEntry = {
@@ -458,7 +474,10 @@ export class AuditTrailGeneratorService {
 
       return { success: true, data: data as unknown as AuditTrailEntry };
     } catch (_error) {
-      return { success: false, error: 'Constitutional audit entry generation service error' };
+      return {
+        success: false,
+        error: 'Constitutional audit entry generation service error',
+      };
     }
   } /**
    * Configure audit trail settings for tenant
@@ -468,10 +487,15 @@ export class AuditTrailGeneratorService {
     tenantId: string,
     configuration: Omit<AuditTrailConfiguration, 'config_id' | 'tenant_id'>,
     userId: string
-  ): Promise<{ success: boolean; data?: AuditTrailConfiguration; error?: string }> {
+  ): Promise<{
+    success: boolean;
+    data?: AuditTrailConfiguration;
+    error?: string;
+  }> {
     try {
       // Validate configuration
-      const validationResult = await this.validateAuditConfiguration(configuration);
+      const validationResult =
+        await this.validateAuditConfiguration(configuration);
       if (!validationResult.valid) {
         return { success: false, error: validationResult.error };
       }
@@ -517,15 +541,24 @@ export class AuditTrailGeneratorService {
         new_state: auditConfig,
       });
 
-      return { success: true, data: data as unknown as AuditTrailConfiguration };
+      return {
+        success: true,
+        data: data as unknown as AuditTrailConfiguration,
+      };
     } catch (_error) {
-      return { success: false, error: 'Constitutional audit trail configuration service error' };
+      return {
+        success: false,
+        error: 'Constitutional audit trail configuration service error',
+      };
     }
   }
 
   // Private helper methods
 
-  private applyFilters(query: any, filters: AuditTrailGenerationParams['filters']): any {
+  private applyFilters(
+    query: any,
+    filters: AuditTrailGenerationParams['filters']
+  ): any {
     if (!filters) {
       return query;
     }
@@ -543,11 +576,17 @@ export class AuditTrailGeneratorService {
     }
 
     if (filters.resource_types && filters.resource_types.length > 0) {
-      query = query.in('resource_affected->resource_type', filters.resource_types);
+      query = query.in(
+        'resource_affected->resource_type',
+        filters.resource_types
+      );
     }
 
     if (filters.constitutional_events_only) {
-      query = query.eq('constitutional_context->constitutional_requirement', true);
+      query = query.eq(
+        'constitutional_context->constitutional_requirement',
+        true
+      );
     }
 
     if (filters.patient_data_events_only) {
@@ -557,7 +596,9 @@ export class AuditTrailGeneratorService {
     return query;
   }
 
-  private async processAuditEntries(entries: any[]): Promise<AuditTrailEntry[]> {
+  private async processAuditEntries(
+    entries: any[]
+  ): Promise<AuditTrailEntry[]> {
     return entries.map((entry) => ({
       ...entry,
       event_timestamp: new Date(entry.event_timestamp),
@@ -584,7 +625,9 @@ export class AuditTrailGeneratorService {
     };
   }
 
-  private generateReportMetadata(entries: AuditTrailEntry[]): AuditTrailReport['metadata'] {
+  private generateReportMetadata(
+    entries: AuditTrailEntry[]
+  ): AuditTrailReport['metadata'] {
     const entriesByType: Record<string, number> = {};
     const entriesByUser: Record<string, number> = {};
     let constitutionalEventsCount = 0;
@@ -592,7 +635,8 @@ export class AuditTrailGeneratorService {
 
     entries.forEach((entry) => {
       // Count by type
-      entriesByType[entry.event_type] = (entriesByType[entry.event_type] || 0) + 1;
+      entriesByType[entry.event_type] =
+        (entriesByType[entry.event_type] || 0) + 1;
 
       // Count by user
       entriesByUser[entry.user_id] = (entriesByUser[entry.user_id] || 0) + 1;
@@ -625,15 +669,25 @@ export class AuditTrailGeneratorService {
     const recommendations: string[] = [];
 
     // Check audit trail completeness
-    const expectedEventTypes = ['data_access', 'data_modification', 'system_access'];
-    const presentEventTypes = Array.from(new Set(entries.map((e) => e.event_type)));
+    const expectedEventTypes = [
+      'data_access',
+      'data_modification',
+      'system_access',
+    ];
+    const presentEventTypes = Array.from(
+      new Set(entries.map((e) => e.event_type))
+    );
     const missingEventTypes = expectedEventTypes.filter(
       (type) => !presentEventTypes.includes(type as any)
     );
 
     if (missingEventTypes.length > 0) {
-      issues.push(`Missing event types in audit trail: ${missingEventTypes.join(', ')}`);
-      recommendations.push('Configure audit trail to capture all required event types');
+      issues.push(
+        `Missing event types in audit trail: ${missingEventTypes.join(', ')}`
+      );
+      recommendations.push(
+        'Configure audit trail to capture all required event types'
+      );
     }
 
     // Check constitutional event coverage
@@ -642,16 +696,24 @@ export class AuditTrailGeneratorService {
     );
     if (constitutionalEvents.length === 0 && entries.length > 0) {
       issues.push('No constitutional events found in audit trail');
-      recommendations.push('Ensure constitutional events are properly captured and marked');
+      recommendations.push(
+        'Ensure constitutional events are properly captured and marked'
+      );
     }
 
     // Check LGPD compliance
-    const lgpdEvents = entries.filter((e) => e.constitutional_context.lgpd_relevant);
-    const patientDataEvents = entries.filter((e) => e.constitutional_context.patient_data_involved);
+    const lgpdEvents = entries.filter(
+      (e) => e.constitutional_context.lgpd_relevant
+    );
+    const patientDataEvents = entries.filter(
+      (e) => e.constitutional_context.patient_data_involved
+    );
 
     if (patientDataEvents.length > 0 && lgpdEvents.length === 0) {
       issues.push('Patient data events not marked as LGPD relevant');
-      recommendations.push('Review LGPD compliance marking for patient data events');
+      recommendations.push(
+        'Review LGPD compliance marking for patient data events'
+      );
     }
 
     return {
@@ -769,7 +831,9 @@ export class AuditTrailGeneratorService {
     entry_id: string;
   }): Promise<void> {}
 
-  private async checkUnauthorizedAccessPattern(_entry: AuditTrailEntry): Promise<void> {
+  private async checkUnauthorizedAccessPattern(
+    _entry: AuditTrailEntry
+  ): Promise<void> {
     // Mock unauthorized access pattern detection
     // Implementation would check for suspicious access patterns
   }
@@ -785,7 +849,10 @@ export class AuditTrailGeneratorService {
     }
 
     if (!(params.time_range.start_date && params.time_range.end_date)) {
-      return { valid: false, error: 'Valid time range required for audit trail generation' };
+      return {
+        valid: false,
+        error: 'Valid time range required for audit trail generation',
+      };
     }
 
     if (params.time_range.start_date >= params.time_range.end_date) {
@@ -801,14 +868,16 @@ export class AuditTrailGeneratorService {
     if ((config.retention_period_days as number) < 30) {
       return {
         valid: false,
-        error: 'Minimum retention period is 30 days for constitutional compliance',
+        error:
+          'Minimum retention period is 30 days for constitutional compliance',
       };
     }
 
     if (!(config.constitutional_compliance as any).constitutional_monitoring) {
       return {
         valid: false,
-        error: 'Constitutional monitoring must be enabled for healthcare compliance',
+        error:
+          'Constitutional monitoring must be enabled for healthcare compliance',
       };
     }
 

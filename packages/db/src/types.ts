@@ -4,7 +4,13 @@
  * LGPD + ANVISA + CFM + Multi-tenant support
  */
 
-export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[];
+export type Json =
+  | string
+  | number
+  | boolean
+  | null
+  | { [key: string]: Json | undefined }
+  | Json[];
 
 export type Database = {
   public: {
@@ -134,7 +140,13 @@ export type Database = {
           appointment_time: string;
           duration_minutes: number;
           treatment_type: string;
-          status: 'scheduled' | 'confirmed' | 'in_progress' | 'completed' | 'cancelled' | 'no_show';
+          status:
+            | 'scheduled'
+            | 'confirmed'
+            | 'in_progress'
+            | 'completed'
+            | 'cancelled'
+            | 'no_show';
           notes: string | null;
           price: number;
           payment_status: 'pending' | 'paid' | 'partial' | 'cancelled';
@@ -307,16 +319,19 @@ export type HealthcareProfessional =
 export type Patient = Database['public']['Tables']['patients']['Row'];
 export type Appointment = Database['public']['Tables']['appointments']['Row'];
 export type Clinic = Database['public']['Tables']['clinics']['Row'];
-export type HealthcareAuditLog = Database['public']['Tables']['healthcare_audit_logs']['Row'];
+export type HealthcareAuditLog =
+  Database['public']['Tables']['healthcare_audit_logs']['Row'];
 
 // Insert types for forms
 export type PatientInsert = Database['public']['Tables']['patients']['Insert'];
-export type AppointmentInsert = Database['public']['Tables']['appointments']['Insert'];
+export type AppointmentInsert =
+  Database['public']['Tables']['appointments']['Insert'];
 export type HealthcareProfessionalInsert =
   Database['public']['Tables']['healthcare_professionals']['Insert'];
 
 // Update types for edits
 export type PatientUpdate = Database['public']['Tables']['patients']['Update'];
-export type AppointmentUpdate = Database['public']['Tables']['appointments']['Update'];
+export type AppointmentUpdate =
+  Database['public']['Tables']['appointments']['Update'];
 export type HealthcareProfessionalUpdate =
   Database['public']['Tables']['healthcare_professionals']['Update'];

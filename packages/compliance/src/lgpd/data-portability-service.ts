@@ -77,7 +77,9 @@ export const DataPortabilityRequestSchema = z.object({
     .default('SECURE_DOWNLOAD'),
 });
 
-export type DataPortabilityRequest = z.infer<typeof DataPortabilityRequestSchema>;
+export type DataPortabilityRequest = z.infer<
+  typeof DataPortabilityRequestSchema
+>;
 
 /**
  * Portability Export Result
@@ -169,7 +171,8 @@ export class DataPortabilityService {
 
       // Step 3: Patient confirmation (if not already confirmed)
       if (!validatedRequest.patientConfirmation) {
-        const confirmationResult = await this.requestPatientConfirmation(validatedRequest);
+        const confirmationResult =
+          await this.requestPatientConfirmation(validatedRequest);
         if (!confirmationResult.confirmed) {
           return {
             success: false,
@@ -189,19 +192,34 @@ export class DataPortabilityService {
       const dataAnalysis = await this.analyzeExportableData(validatedRequest);
 
       // Step 5: Execute constitutional data export
-      const exportResult = await this.executeConstitutionalExport(validatedRequest, dataAnalysis);
+      const exportResult = await this.executeConstitutionalExport(
+        validatedRequest,
+        dataAnalysis
+      );
 
       // Step 6: Apply security measures
-      const securedResult = await this.applySecurityMeasures(exportResult, validatedRequest);
+      const securedResult = await this.applySecurityMeasures(
+        exportResult,
+        validatedRequest
+      );
 
       // Step 7: Deliver data according to specified method
-      const deliveryResult = await this.deliverExportedData(securedResult, validatedRequest);
+      const deliveryResult = await this.deliverExportedData(
+        securedResult,
+        validatedRequest
+      );
 
       // Step 8: Generate audit trail
-      const auditTrail = await this.createAuditEvent('PORTABILITY_COMPLETED', validatedRequest);
+      const auditTrail = await this.createAuditEvent(
+        'PORTABILITY_COMPLETED',
+        validatedRequest
+      );
 
       // Step 9: Send completion notification
-      await this.sendPortabilityCompletionNotification(validatedRequest, deliveryResult);
+      await this.sendPortabilityCompletionNotification(
+        validatedRequest,
+        deliveryResult
+      );
 
       return {
         success: true,
@@ -212,11 +230,15 @@ export class DataPortabilityService {
         timestamp: new Date(),
       };
     } catch (error) {
-      const auditTrail = await this.createAuditEvent('PORTABILITY_ERROR', request);
+      const auditTrail = await this.createAuditEvent(
+        'PORTABILITY_ERROR',
+        request
+      );
 
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown portability error',
+        error:
+          error instanceof Error ? error.message : 'Unknown portability error',
         complianceScore: 0,
         regulatoryValidation: { lgpd: false, anvisa: false, cfm: false },
         auditTrail,
@@ -228,7 +250,9 @@ export class DataPortabilityService {
   /**
    * Validate Constitutional Healthcare Portability Requirements
    */
-  private async validateConstitutionalPortability(request: DataPortabilityRequest): Promise<{
+  private async validateConstitutionalPortability(
+    request: DataPortabilityRequest
+  ): Promise<{
     valid: boolean;
     score: ComplianceScore;
     violations: string[];
@@ -243,7 +267,9 @@ export class DataPortabilityService {
       (request.exportFormat === 'JSON' || request.exportFormat === 'XML')
     ) {
       // Recommend FHIR compliance for medical data
-      violations.push('Medical data export should use FHIR standard for interoperability');
+      violations.push(
+        'Medical data export should use FHIR standard for interoperability'
+      );
       score -= 0.5;
     }
 
@@ -257,8 +283,13 @@ export class DataPortabilityService {
     }
 
     // Destination controller validation for direct transfer
-    if (request.portabilityType === 'DIRECT_TRANSFER' && !request.destinationController) {
-      violations.push('Destination controller information required for direct transfer');
+    if (
+      request.portabilityType === 'DIRECT_TRANSFER' &&
+      !request.destinationController
+    ) {
+      violations.push(
+        'Destination controller information required for direct transfer'
+      );
       score -= 1;
     }
 
@@ -272,7 +303,9 @@ export class DataPortabilityService {
         score -= 2;
       }
       if (!request.passwordProtection) {
-        violations.push('Password protection required for sensitive healthcare data');
+        violations.push(
+          'Password protection required for sensitive healthcare data'
+        );
         score -= 1;
       }
     }
@@ -292,17 +325,28 @@ export class DataPortabilityService {
   } /**
    * Analyze Exportable Data and Legal Restrictions
    */
-  private async analyzeExportableData(_request: DataPortabilityRequest): Promise<{
+  private async analyzeExportableData(
+    _request: DataPortabilityRequest
+  ): Promise<{
     exportableData: {
       table: string;
       records: number;
       dataType: PatientDataClassification;
       size: number;
     }[];
-    excludedData: { table: string; records: number; reason: string; legalBasis: string }[];
+    excludedData: {
+      table: string;
+      records: number;
+      reason: string;
+      legalBasis: string;
+    }[];
     totalSizeBytes: number;
     estimatedExportTime: number;
-    requiresSpecialHandling: { table: string; reason: string; measures: string[] }[];
+    requiresSpecialHandling: {
+      table: string;
+      reason: string;
+      measures: string[];
+    }[];
   }> {
     // This would query the database to analyze exportable data
     const exportableData = [
@@ -351,12 +395,22 @@ export class DataPortabilityService {
       {
         table: 'medical_records',
         reason: 'Contains sensitive health data',
-        measures: ['HIPAA_ANONYMIZATION', 'MEDICAL_ACCURACY_VALIDATION', 'STRUCTURED_FORMAT'],
+        measures: [
+          'HIPAA_ANONYMIZATION',
+          'MEDICAL_ACCURACY_VALIDATION',
+          'STRUCTURED_FORMAT',
+        ],
       },
     ];
 
-    const totalSizeBytes = exportableData.reduce((sum, item) => sum + item.size, 0);
-    const estimatedExportTime = Math.max(5, Math.ceil(totalSizeBytes / (1024 * 1024)) * 2); // 2 minutes per MB
+    const totalSizeBytes = exportableData.reduce(
+      (sum, item) => sum + item.size,
+      0
+    );
+    const estimatedExportTime = Math.max(
+      5,
+      Math.ceil(totalSizeBytes / (1024 * 1024)) * 2
+    ); // 2 minutes per MB
 
     return {
       exportableData,
@@ -432,8 +486,14 @@ export class DataPortabilityService {
       }
 
       // Step 4: Generate file and calculate size
-      const exportFile = await this.generateExportFile(exportData, request.exportFormat);
-      const fileSizeBytes = Buffer.byteLength(JSON.stringify(exportFile), 'utf8');
+      const exportFile = await this.generateExportFile(
+        exportData,
+        request.exportFormat
+      );
+      const fileSizeBytes = Buffer.byteLength(
+        JSON.stringify(exportFile),
+        'utf8'
+      );
 
       const result: PortabilityResult = {
         requestId: request.requestId || crypto.randomUUID(),
@@ -452,7 +512,9 @@ export class DataPortabilityService {
             (sum: number, item: any) => sum + item.records,
             0
           ),
-          legalBasis: dataAnalysis.excludedData.map((item: any) => item.legalBasis),
+          legalBasis: dataAnalysis.excludedData.map(
+            (item: any) => item.legalBasis
+          ),
         },
         securityMeasures: {
           encrypted: false, // Will be applied in next step
@@ -473,8 +535,11 @@ export class DataPortabilityService {
         },
         deliveryInfo: {
           method: request.deliveryMethod,
-          expiresAt: new Date(Date.now() + this.exportExpiryDays * 24 * 60 * 60 * 1000),
-          accessInstructions: 'Constitutional healthcare data export - Handle with care',
+          expiresAt: new Date(
+            Date.now() + this.exportExpiryDays * 24 * 60 * 60 * 1000
+          ),
+          accessInstructions:
+            'Constitutional healthcare data export - Handle with care',
         },
         executionTime: {
           startedAt: startTime,
@@ -556,7 +621,10 @@ export class DataPortabilityService {
 
       case 'DIRECT_API_TRANSFER':
         if (request.destinationController) {
-          await this.executeDirectTransfer(result, request.destinationController);
+          await this.executeDirectTransfer(
+            result,
+            request.destinationController
+          );
           updatedResult.deliveryInfo.accessInstructions =
             'Data transferred directly to destination controller via secure API.';
         }
@@ -629,7 +697,10 @@ export class DataPortabilityService {
     return { records: [] }; // Would query Supabase database
   }
 
-  private async convertToFHIRFormat(data: any, _request: DataPortabilityRequest): Promise<any> {
+  private async convertToFHIRFormat(
+    data: any,
+    _request: DataPortabilityRequest
+  ): Promise<any> {
     return data; // Would implement FHIR conversion
   }
 
@@ -660,11 +731,15 @@ export class DataPortabilityService {
     _password: string
   ): Promise<void> {}
 
-  private async generateDigitalSignature(_result: PortabilityResult): Promise<string> {
+  private async generateDigitalSignature(
+    _result: PortabilityResult
+  ): Promise<string> {
     return 'digital_signature_placeholder';
   }
 
-  private async createSecureDownloadLink(_result: PortabilityResult): Promise<string> {
+  private async createSecureDownloadLink(
+    _result: PortabilityResult
+  ): Promise<string> {
     return 'https://secure.neonpro.com/download/encrypted_export_placeholder';
   }
 
@@ -718,7 +793,10 @@ export class DataPortabilityService {
   ): Promise<ConstitutionalResponse<PortabilityResult | null>> {
     try {
       // Would query database for portability status
-      const auditTrail = await this.createAuditEvent('PORTABILITY_STATUS_ACCESSED', { requestId });
+      const auditTrail = await this.createAuditEvent(
+        'PORTABILITY_STATUS_ACCESSED',
+        { requestId }
+      );
 
       return {
         success: true,
@@ -729,11 +807,17 @@ export class DataPortabilityService {
         timestamp: new Date(),
       };
     } catch (error) {
-      const auditTrail = await this.createAuditEvent('PORTABILITY_STATUS_ERROR', { requestId });
+      const auditTrail = await this.createAuditEvent(
+        'PORTABILITY_STATUS_ERROR',
+        { requestId }
+      );
 
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Failed to retrieve portability status',
+        error:
+          error instanceof Error
+            ? error.message
+            : 'Failed to retrieve portability status',
         complianceScore: 0,
         regulatoryValidation: { lgpd: false, anvisa: false, cfm: false },
         auditTrail,

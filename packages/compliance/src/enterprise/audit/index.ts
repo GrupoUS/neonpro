@@ -70,7 +70,9 @@ export function createComplianceScoringService(
  * Enterprise Audit Services Factory
  * Creates comprehensive audit services with constitutional compliance
  */
-export function createEnterpriseAuditServices(supabaseClient: ReturnType<typeof createClient>) {
+export function createEnterpriseAuditServices(
+  supabaseClient: ReturnType<typeof createClient>
+) {
   return {
     auditTrail: createAuditTrailGeneratorService(supabaseClient),
     realTimeMonitor: createRealTimeComplianceMonitorService(supabaseClient),
@@ -98,15 +100,21 @@ export function validateEnterpriseAuditCompliance(
   }
 }
 
-export function validateAuditTrailGenerator(config: AuditTrailConfiguration): boolean {
+export function validateAuditTrailGenerator(
+  config: AuditTrailConfiguration
+): boolean {
   return Boolean(config?.retention_period_days);
 }
 
-export function validateRealTimeComplianceMonitor(config: MonitoringConfiguration): boolean {
+export function validateRealTimeComplianceMonitor(
+  config: MonitoringConfiguration
+): boolean {
   return Boolean(config?.automated_actions);
 }
 
-export function validateComplianceScoring(config: ScoringMethodologyConfig): boolean {
+export function validateComplianceScoring(
+  config: ScoringMethodologyConfig
+): boolean {
   return Boolean(config?.constitutional_thresholds);
 }
 
@@ -251,7 +259,8 @@ export const ENTERPRISE_AUDIT_MODULE = {
   services: {
     auditTrail: {
       name: 'Audit Trail Generator',
-      description: 'Comprehensive audit trail generation with cryptographic integrity',
+      description:
+        'Comprehensive audit trail generation with cryptographic integrity',
       constitutional_features: [
         'Immutable audit logs with cryptographic signatures',
         'Constitutional compliance tracking',

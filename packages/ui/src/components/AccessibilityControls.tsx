@@ -89,7 +89,9 @@ const _defaultPreferences: AccessibilityPreferences = {
   enhancedTooltips: false,
 };
 
-const getWCAGComplianceLevel = (preferences: AccessibilityPreferences): 'AA' | 'AAA' => {
+const getWCAGComplianceLevel = (
+  preferences: AccessibilityPreferences
+): 'AA' | 'AAA' => {
   // AAA level criteria
   const aaaFeatures = [
     preferences.highContrast,
@@ -102,7 +104,10 @@ const getWCAGComplianceLevel = (preferences: AccessibilityPreferences): 'AA' | '
   return activeAAAFeatures >= 2 ? 'AAA' : 'AA';
 };
 
-export const AccessibilityControls = React.forwardRef<HTMLDivElement, AccessibilityControlsProps>(
+export const AccessibilityControls = React.forwardRef<
+  HTMLDivElement,
+  AccessibilityControlsProps
+>(
   (
     {
       preferences,
@@ -127,7 +132,10 @@ export const AccessibilityControls = React.forwardRef<HTMLDivElement, Accessibil
     };
 
     const handleFontSizeChange = (delta: number) => {
-      const newSize = Math.max(0.8, Math.min(2.0, preferences.fontSize + delta));
+      const newSize = Math.max(
+        0.8,
+        Math.min(2.0, preferences.fontSize + delta)
+      );
       updatePreference('fontSize', Number(newSize.toFixed(1)));
     };
 
@@ -178,14 +186,20 @@ export const AccessibilityControls = React.forwardRef<HTMLDivElement, Accessibil
             <h3 className="font-semibold text-lg" id="accessibility-title">
               Acessibilidade
             </h3>
-            <p className="text-muted-foreground text-sm" id="accessibility-description">
+            <p
+              className="text-muted-foreground text-sm"
+              id="accessibility-description"
+            >
               Personalize sua experiência
             </p>
           </div>
 
           <div className="flex items-center gap-2">
             {showComplianceStatus && (
-              <Badge size="sm" variant={complianceLevel === 'AAA' ? 'confirmed' : 'medium'}>
+              <Badge
+                size="sm"
+                variant={complianceLevel === 'AAA' ? 'confirmed' : 'medium'}
+              >
                 WCAG {complianceLevel}
               </Badge>
             )}
@@ -221,7 +235,9 @@ export const AccessibilityControls = React.forwardRef<HTMLDivElement, Accessibil
                 <Minus className="h-4 w-4" />
               </Button>
 
-              <span className="font-medium text-sm">{Math.round(preferences.fontSize * 100)}%</span>
+              <span className="font-medium text-sm">
+                {Math.round(preferences.fontSize * 100)}%
+              </span>
 
               <Button
                 aria-label="Aumentar tamanho da fonte"
@@ -277,11 +293,16 @@ export const AccessibilityControls = React.forwardRef<HTMLDivElement, Accessibil
                   aria-describedby="high-contrast-description"
                   checked={preferences.highContrast}
                   id="high-contrast-checkbox"
-                  onCheckedChange={(checked) => updatePreference('highContrast', Boolean(checked))}
+                  onCheckedChange={(checked) =>
+                    updatePreference('highContrast', Boolean(checked))
+                  }
                 />
                 <div className="flex-1">
                   <span className="font-medium text-sm">Alto Contraste</span>
-                  <p className="text-muted-foreground text-xs" id="high-contrast-description">
+                  <p
+                    className="text-muted-foreground text-xs"
+                    id="high-contrast-description"
+                  >
                     Melhora a visibilidade para baixa visão
                   </p>
                 </div>
@@ -301,7 +322,10 @@ export const AccessibilityControls = React.forwardRef<HTMLDivElement, Accessibil
                 />
                 <div className="flex-1">
                   <span className="font-medium text-sm">Cores Acessíveis</span>
-                  <p className="text-muted-foreground text-xs" id="color-blind-description">
+                  <p
+                    className="text-muted-foreground text-xs"
+                    id="color-blind-description"
+                  >
                     Paleta otimizada para daltonismo
                   </p>
                 </div>
@@ -315,11 +339,18 @@ export const AccessibilityControls = React.forwardRef<HTMLDivElement, Accessibil
                   aria-describedby="dyslexia-font-description"
                   checked={preferences.dyslexiaFont}
                   id="dyslexia-font-checkbox"
-                  onCheckedChange={(checked) => updatePreference('dyslexiaFont', Boolean(checked))}
+                  onCheckedChange={(checked) =>
+                    updatePreference('dyslexiaFont', Boolean(checked))
+                  }
                 />
                 <div className="flex-1">
-                  <span className="font-medium text-sm">Fonte para Dislexia</span>
-                  <p className="text-muted-foreground text-xs" id="dyslexia-font-description">
+                  <span className="font-medium text-sm">
+                    Fonte para Dislexia
+                  </span>
+                  <p
+                    className="text-muted-foreground text-xs"
+                    id="dyslexia-font-description"
+                  >
                     Fonte otimizada para leitura
                   </p>
                 </div>
@@ -342,11 +373,16 @@ export const AccessibilityControls = React.forwardRef<HTMLDivElement, Accessibil
                   aria-describedby="reduced-motion-description"
                   checked={preferences.reducedMotion}
                   id="reduced-motion-checkbox"
-                  onCheckedChange={(checked) => updatePreference('reducedMotion', Boolean(checked))}
+                  onCheckedChange={(checked) =>
+                    updatePreference('reducedMotion', Boolean(checked))
+                  }
                 />
                 <div className="flex-1">
                   <span className="font-medium text-sm">Reduzir Animações</span>
-                  <p className="text-muted-foreground text-xs" id="reduced-motion-description">
+                  <p
+                    className="text-muted-foreground text-xs"
+                    id="reduced-motion-description"
+                  >
                     Minimiza movimento para sensibilidade vestibular
                   </p>
                 </div>
@@ -365,7 +401,9 @@ export const AccessibilityControls = React.forwardRef<HTMLDivElement, Accessibil
                   }
                 />
                 <div className="flex-1">
-                  <span className="font-medium text-sm">Interface Simplificada</span>
+                  <span className="font-medium text-sm">
+                    Interface Simplificada
+                  </span>
                   <p
                     className="text-muted-foreground text-xs"
                     id="simplified-interface-description"
@@ -389,7 +427,10 @@ export const AccessibilityControls = React.forwardRef<HTMLDivElement, Accessibil
                 />
                 <div className="flex-1">
                   <span className="font-medium text-sm">Dicas Detalhadas</span>
-                  <p className="text-muted-foreground text-xs" id="enhanced-tooltips-description">
+                  <p
+                    className="text-muted-foreground text-xs"
+                    id="enhanced-tooltips-description"
+                  >
                     Explicações adicionais para reduzir ansiedade
                   </p>
                 </div>
@@ -412,11 +453,18 @@ export const AccessibilityControls = React.forwardRef<HTMLDivElement, Accessibil
                   aria-describedby="screen-reader-description"
                   checked={preferences.screenReader}
                   id="screen-reader-checkbox"
-                  onCheckedChange={(checked) => updatePreference('screenReader', Boolean(checked))}
+                  onCheckedChange={(checked) =>
+                    updatePreference('screenReader', Boolean(checked))
+                  }
                 />
                 <div className="flex-1">
-                  <span className="font-medium text-sm">Otimizar para Leitor de Tela</span>
-                  <p className="text-muted-foreground text-xs" id="screen-reader-description">
+                  <span className="font-medium text-sm">
+                    Otimizar para Leitor de Tela
+                  </span>
+                  <p
+                    className="text-muted-foreground text-xs"
+                    id="screen-reader-description"
+                  >
                     Melhora compatibilidade com NVDA, JAWS, etc.
                   </p>
                 </div>
@@ -430,11 +478,16 @@ export const AccessibilityControls = React.forwardRef<HTMLDivElement, Accessibil
                   aria-describedby="audio-feedback-description"
                   checked={preferences.audioFeedback}
                   id="audio-feedback-checkbox"
-                  onCheckedChange={(checked) => updatePreference('audioFeedback', Boolean(checked))}
+                  onCheckedChange={(checked) =>
+                    updatePreference('audioFeedback', Boolean(checked))
+                  }
                 />
                 <div className="flex-1">
                   <span className="font-medium text-sm">Feedback Sonoro</span>
-                  <p className="text-muted-foreground text-xs" id="audio-feedback-description">
+                  <p
+                    className="text-muted-foreground text-xs"
+                    id="audio-feedback-description"
+                  >
                     Sons para confirmação de ações
                   </p>
                 </div>
@@ -453,8 +506,13 @@ export const AccessibilityControls = React.forwardRef<HTMLDivElement, Accessibil
                   }
                 />
                 <div className="flex-1">
-                  <span className="font-medium text-sm">Indicadores de Foco</span>
-                  <p className="text-muted-foreground text-xs" id="focus-indicators-description">
+                  <span className="font-medium text-sm">
+                    Indicadores de Foco
+                  </span>
+                  <p
+                    className="text-muted-foreground text-xs"
+                    id="focus-indicators-description"
+                  >
                     Destaque visual para navegação por teclado
                   </p>
                 </div>
@@ -466,7 +524,8 @@ export const AccessibilityControls = React.forwardRef<HTMLDivElement, Accessibil
           <div className="space-y-3 border-t pt-4">
             <div className="flex items-center justify-between text-sm">
               <span className="text-muted-foreground">
-                {activeFeatures} de {Object.keys(preferences).length} recursos ativos
+                {activeFeatures} de {Object.keys(preferences).length} recursos
+                ativos
               </span>
               <Badge size="sm" variant="outline">
                 WCAG {complianceLevel}

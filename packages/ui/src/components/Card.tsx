@@ -1,7 +1,8 @@
 import type React from 'react';
 
 // Placeholder import for @neonpro/utils
-const cn = (...classes: (string | undefined)[]) => classes.filter(Boolean).join(' ');
+const cn = (...classes: (string | undefined)[]) =>
+  classes.filter(Boolean).join(' ');
 
 type CardProps = {
   className?: string;
@@ -11,7 +12,10 @@ type CardProps = {
 export function Card({ className, children, ...props }: CardProps) {
   return (
     <div
-      className={cn('rounded-lg border bg-card text-card-foreground shadow-sm', className)}
+      className={cn(
+        'rounded-lg border bg-card text-card-foreground shadow-sm',
+        className
+      )}
       {...props}
     >
       {children}
@@ -29,7 +33,13 @@ export function CardHeader({ className, children, ...props }: CardProps) {
 
 export function CardTitle({ className, children, ...props }: CardProps) {
   return (
-    <h3 className={cn('font-semibold text-2xl leading-none tracking-tight', className)} {...props}>
+    <h3
+      className={cn(
+        'font-semibold text-2xl leading-none tracking-tight',
+        className
+      )}
+      {...props}
+    >
       {children}
     </h3>
   );

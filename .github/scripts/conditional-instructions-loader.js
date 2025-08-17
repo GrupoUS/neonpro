@@ -22,7 +22,8 @@ class ConditionalInstructionsLoader {
       },
       'security authentication': {
         name: 'Security & Authentication',
-        instructions: 'Focus on LGPD compliance, security patterns, authentication flows',
+        instructions:
+          'Focus on LGPD compliance, security patterns, authentication flows',
         priority: 8,
       },
       base: {
@@ -76,7 +77,9 @@ class ConditionalInstructionsLoader {
    * @returns {boolean}
    */
   hasFiles(files) {
-    return files.some((file) => fs.existsSync(path.join(this.projectRoot, file)));
+    return files.some((file) =>
+      fs.existsSync(path.join(this.projectRoot, file))
+    );
   }
 
   /**
@@ -166,7 +169,9 @@ class ConditionalInstructionsLoader {
 
         default:
           console.log('📖 Usage:');
-          console.log('  node conditional-instructions-loader.js analyze [context]');
+          console.log(
+            '  node conditional-instructions-loader.js analyze [context]'
+          );
           console.log('  node conditional-instructions-loader.js reset');
           console.log('  node conditional-instructions-loader.js test');
           console.log('');

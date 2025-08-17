@@ -79,7 +79,9 @@ export class LGPDValidator {
   /**
    * Validate data processing activity
    */
-  async validateDataProcessing(processingActivity: any): Promise<LGPDValidationResult> {
+  async validateDataProcessing(
+    processingActivity: any
+  ): Promise<LGPDValidationResult> {
     const validationId = `lgpd_validation_${Date.now()}`;
 
     const violations = [];
@@ -98,7 +100,10 @@ export class LGPDValidator {
     }
 
     // Validate purpose limitation
-    if (!processingActivity.purpose || processingActivity.purpose.length === 0) {
+    if (
+      !processingActivity.purpose ||
+      processingActivity.purpose.length === 0
+    ) {
       violations.push({
         category: 'Purpose Limitation',
         description: 'Processing purpose not clearly defined',
@@ -191,7 +196,8 @@ export class LGPDValidator {
       });
     }
 
-    const constitutionalValidation = await this.validateConstitutionalCompliance(consentData);
+    const constitutionalValidation =
+      await this.validateConstitutionalCompliance(consentData);
     const complianceScore = Math.max(0, 10 - violations.length * 2);
 
     return {
@@ -237,7 +243,10 @@ export class LGPDValidator {
     const violations = [];
 
     // Validate international transfer safeguards
-    if (transferData.international_transfer && !transferData.adequacy_decision) {
+    if (
+      transferData.international_transfer &&
+      !transferData.adequacy_decision
+    ) {
       violations.push({
         category: 'International Transfer',
         description:
@@ -249,7 +258,8 @@ export class LGPDValidator {
       });
     }
 
-    const constitutionalValidation = await this.validateConstitutionalCompliance(transferData);
+    const constitutionalValidation =
+      await this.validateConstitutionalCompliance(transferData);
     const complianceScore = Math.max(0, 10 - violations.length * 2);
 
     return {
@@ -277,14 +287,19 @@ export class LGPDValidator {
 /**
  * Create LGPD Validator service
  */
-export function createLGPDValidator(config: LGPDValidationConfig, db: Database): LGPDValidator {
+export function createLGPDValidator(
+  config: LGPDValidationConfig,
+  db: Database
+): LGPDValidator {
   return new LGPDValidator(config, db);
 }
 
 /**
  * Validate LGPD validation configuration
  */
-export async function validateLGPDValidationConfig(config: LGPDValidationConfig): Promise<{
+export async function validateLGPDValidationConfig(
+  config: LGPDValidationConfig
+): Promise<{
   valid: boolean;
   violations: string[];
 }> {
@@ -294,7 +309,9 @@ export async function validateLGPDValidationConfig(config: LGPDValidationConfig)
     LGPDValidationConfigSchema.parse(config);
   } catch (error) {
     if (error instanceof z.ZodError) {
-      violations.push(...error.errors.map((e) => `${e.path.join('.')}: ${e.message}`));
+      violations.push(
+        ...error.errors.map((e) => `${e.path.join('.')}: ${e.message}`)
+      );
     }
   }
 

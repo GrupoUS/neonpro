@@ -9,7 +9,10 @@ export type QueryResult<T> = {
   refetch: () => Promise<void>;
 };
 
-export const useQuery = <T>(_key: string | string[], fn: () => Promise<T>): QueryResult<T> => {
+export const useQuery = <T>(
+  _key: string | string[],
+  fn: () => Promise<T>
+): QueryResult<T> => {
   const [data, setData] = useState<T>();
   const [error, setError] = useState<Error>();
   const [isLoading, setIsLoading] = useState(false);

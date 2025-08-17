@@ -35,7 +35,10 @@ type PatientDetailLayoutProps = {
   className?: string;
 };
 
-const PatientDetailLayout = React.forwardRef<HTMLDivElement, PatientDetailLayoutProps>(
+const PatientDetailLayout = React.forwardRef<
+  HTMLDivElement,
+  PatientDetailLayoutProps
+>(
   (
     {
       patient,
@@ -55,7 +58,9 @@ const PatientDetailLayout = React.forwardRef<HTMLDivElement, PatientDetailLayout
     },
     ref
   ) => {
-    const [currentTab, setCurrentTab] = React.useState(activeTab || tabs[0]?.id);
+    const [currentTab, setCurrentTab] = React.useState(
+      activeTab || tabs[0]?.id
+    );
 
     React.useEffect(() => {
       if (activeTab && activeTab !== currentTab) {
@@ -69,7 +74,11 @@ const PatientDetailLayout = React.forwardRef<HTMLDivElement, PatientDetailLayout
     };
 
     return (
-      <div className={cn('min-h-screen bg-background', className)} ref={ref} {...props}>
+      <div
+        className={cn('min-h-screen bg-background', className)}
+        ref={ref}
+        {...props}
+      >
         {/* Header */}
         <header className="border-b bg-card">
           {/* Top Bar */}
@@ -86,7 +95,9 @@ const PatientDetailLayout = React.forwardRef<HTMLDivElement, PatientDetailLayout
                 <div className="flex items-center gap-3">
                   <Avatar size="lg">
                     <AvatarImage alt={patient.name} src={patient.avatar} />
-                    <AvatarFallback>{formatters.initials(patient.name)}</AvatarFallback>
+                    <AvatarFallback>
+                      {formatters.initials(patient.name)}
+                    </AvatarFallback>
                   </Avatar>
 
                   <div>
@@ -96,7 +107,11 @@ const PatientDetailLayout = React.forwardRef<HTMLDivElement, PatientDetailLayout
                       <span>•</span>
                       <span>{formatters.age(patient.birthDate)} anos</span>
                       <span>•</span>
-                      <Badge variant={patient.status === 'active' ? 'confirmed' : 'pending'}>
+                      <Badge
+                        variant={
+                          patient.status === 'active' ? 'confirmed' : 'pending'
+                        }
+                      >
                         {patient.status === 'active' ? 'Ativo' : 'Inativo'}
                       </Badge>
                     </div>
@@ -107,21 +122,33 @@ const PatientDetailLayout = React.forwardRef<HTMLDivElement, PatientDetailLayout
                 {/* Quick Actions */}
                 <div className="flex items-center gap-1">
                   {patient.phone && (
-                    <Button onClick={() => onCall?.(patient.phone!)} size="sm" variant="outline">
+                    <Button
+                      onClick={() => onCall?.(patient.phone!)}
+                      size="sm"
+                      variant="outline"
+                    >
                       <Phone className="mr-2 h-4 w-4" />
                       Ligar
                     </Button>
                   )}
 
                   {patient.email && (
-                    <Button onClick={() => onEmail?.(patient.email!)} size="sm" variant="outline">
+                    <Button
+                      onClick={() => onEmail?.(patient.email!)}
+                      size="sm"
+                      variant="outline"
+                    >
                       <Mail className="mr-2 h-4 w-4" />
                       Email
                     </Button>
                   )}
 
                   {onScheduleAppointment && (
-                    <Button onClick={onScheduleAppointment} size="sm" variant="default">
+                    <Button
+                      onClick={onScheduleAppointment}
+                      size="sm"
+                      variant="default"
+                    >
                       <Calendar className="mr-2 h-4 w-4" />
                       Agendar
                     </Button>
@@ -144,24 +171,36 @@ const PatientDetailLayout = React.forwardRef<HTMLDivElement, PatientDetailLayout
           <div className="px-6 py-4">
             <div className="grid grid-cols-1 gap-6 md:grid-cols-4">
               <div>
-                <div className="font-medium text-muted-foreground text-sm">Contato</div>
+                <div className="font-medium text-muted-foreground text-sm">
+                  Contato
+                </div>
                 <div className="mt-1 space-y-1">
                   {patient.phone && (
-                    <div className="text-sm">{formatters.phone(patient.phone)}</div>
+                    <div className="text-sm">
+                      {formatters.phone(patient.phone)}
+                    </div>
                   )}
-                  {patient.email && <div className="text-sm">{patient.email}</div>}
+                  {patient.email && (
+                    <div className="text-sm">{patient.email}</div>
+                  )}
                 </div>
               </div>
 
               <div>
-                <div className="font-medium text-muted-foreground text-sm">Última Consulta</div>
+                <div className="font-medium text-muted-foreground text-sm">
+                  Última Consulta
+                </div>
                 <div className="mt-1 text-sm">
-                  {patient.lastVisit ? formatters.relativeTime(patient.lastVisit) : 'Nenhuma'}
+                  {patient.lastVisit
+                    ? formatters.relativeTime(patient.lastVisit)
+                    : 'Nenhuma'}
                 </div>
               </div>
 
               <div>
-                <div className="font-medium text-muted-foreground text-sm">Próxima Consulta</div>
+                <div className="font-medium text-muted-foreground text-sm">
+                  Próxima Consulta
+                </div>
                 <div className="mt-1 text-sm">
                   {patient.nextAppointment ? (
                     <span className="font-medium text-primary">
@@ -174,8 +213,12 @@ const PatientDetailLayout = React.forwardRef<HTMLDivElement, PatientDetailLayout
               </div>
 
               <div>
-                <div className="font-medium text-muted-foreground text-sm">Total de Consultas</div>
-                <div className="mt-1 text-sm">{patient.totalAppointments || 0} consultas</div>
+                <div className="font-medium text-muted-foreground text-sm">
+                  Total de Consultas
+                </div>
+                <div className="mt-1 text-sm">
+                  {patient.totalAppointments || 0} consultas
+                </div>
               </div>
             </div>
           </div>{' '}
@@ -187,7 +230,11 @@ const PatientDetailLayout = React.forwardRef<HTMLDivElement, PatientDetailLayout
                 style={{ gridTemplateColumns: `repeat(${tabs.length}, 1fr)` }}
               >
                 {tabs.map((tab) => (
-                  <TabsTrigger className="flex items-center gap-2" key={tab.id} value={tab.id}>
+                  <TabsTrigger
+                    className="flex items-center gap-2"
+                    key={tab.id}
+                    value={tab.id}
+                  >
                     {tab.icon}
                     <span>{tab.label}</span>
                     {tab.badge && (
@@ -203,7 +250,12 @@ const PatientDetailLayout = React.forwardRef<HTMLDivElement, PatientDetailLayout
         </header>
 
         {/* Content */}
-        <div className={cn('flex flex-1 overflow-hidden', showSidebar && 'gap-6 p-6')}>
+        <div
+          className={cn(
+            'flex flex-1 overflow-hidden',
+            showSidebar && 'gap-6 p-6'
+          )}
+        >
           {/* Main Content */}
           <div className={cn('flex-1 overflow-auto', !showSidebar && 'p-6')}>
             <Tabs onValueChange={handleTabChange} value={currentTab}>
@@ -218,7 +270,9 @@ const PatientDetailLayout = React.forwardRef<HTMLDivElement, PatientDetailLayout
           {/* Sidebar */}
           {showSidebar && sidebarContent && (
             <div className="w-80 flex-shrink-0">
-              <div className="space-y-4 rounded-lg border bg-card p-4">{sidebarContent}</div>
+              <div className="space-y-4 rounded-lg border bg-card p-4">
+                {sidebarContent}
+              </div>
             </div>
           )}
         </div>

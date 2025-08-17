@@ -5,9 +5,15 @@
  */
 
 import type { RateLimitConfig } from './api-rate-limiting';
-import { createApiRateLimitingService, validateApiRateLimiting } from './api-rate-limiting';
+import {
+  createApiRateLimitingService,
+  validateApiRateLimiting,
+} from './api-rate-limiting';
 import type { RbacConfig } from './healthcare-rbac';
-import { createHealthcareRbacService, validateHealthcareRbac } from './healthcare-rbac';
+import {
+  createHealthcareRbacService,
+  validateHealthcareRbac,
+} from './healthcare-rbac';
 
 // API Rate Limiting Service
 export {
@@ -68,11 +74,15 @@ export async function validateEnterpriseSecurityCompliance(
   // Validate rate limiting compliance
   const rateLimitValidation = await validateApiRateLimiting(rateLimitConfig);
   if (!rateLimitValidation.valid) {
-    violations.push(...rateLimitValidation.violations.map((v) => `Rate Limiting: ${v}`));
+    violations.push(
+      ...rateLimitValidation.violations.map((v) => `Rate Limiting: ${v}`)
+    );
   }
 
   // Calculate overall compliance score
-  const validationsPassing = [rbacValidation, rateLimitValidation].filter((v) => v.valid).length;
+  const validationsPassing = [rbacValidation, rateLimitValidation].filter(
+    (v) => v.valid
+  ).length;
   const totalValidations = 2;
   const complianceScore = (validationsPassing / totalValidations) * 10;
 
@@ -172,12 +182,18 @@ export const ENTERPRISE_SECURITY_CONFIGS = {
 export const ENTERPRISE_SECURITY_MODULE = {
   name: 'Enterprise Security',
   version: '1.0.0',
-  compliance_standards: ['LGPD', 'CFM', 'Constitutional Healthcare', 'API Security'],
+  compliance_standards: [
+    'LGPD',
+    'CFM',
+    'Constitutional Healthcare',
+    'API Security',
+  ],
   quality_score: 9.9,
   services: [
     {
       name: 'Healthcare RBAC',
-      description: 'Constitutional healthcare access control with patient privacy protection',
+      description:
+        'Constitutional healthcare access control with patient privacy protection',
       compliance_features: [
         'Role-Based Access Control',
         'CFM Professional Validation',
@@ -187,7 +203,8 @@ export const ENTERPRISE_SECURITY_MODULE = {
     },
     {
       name: 'API Rate Limiting',
-      description: 'Constitutional healthcare API protection with intelligent throttling',
+      description:
+        'Constitutional healthcare API protection with intelligent throttling',
       compliance_features: [
         'Intelligent Throttling',
         'Healthcare Priority Routing',

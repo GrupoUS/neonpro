@@ -40,8 +40,14 @@ export const CACHE_CONFIG = {
 
 // Cache key generators
 export class CacheKeyGenerator {
-  static analytics(userId: string, dateRange: string, filters?: Record<string, any>): string {
-    const filterHash = filters ? CacheKeyGenerator.hashObject(filters) : 'no-filters';
+  static analytics(
+    userId: string,
+    dateRange: string,
+    filters?: Record<string, any>
+  ): string {
+    const filterHash = filters
+      ? CacheKeyGenerator.hashObject(filters)
+      : 'no-filters';
     return `analytics:${userId}:${dateRange}:${filterHash}`;
   }
 
@@ -54,7 +60,9 @@ export class CacheKeyGenerator {
   }
 
   static apiResponse(endpoint: string, params?: Record<string, any>): string {
-    const paramHash = params ? CacheKeyGenerator.hashObject(params) : 'no-params';
+    const paramHash = params
+      ? CacheKeyGenerator.hashObject(params)
+      : 'no-params';
     return `api:${endpoint}:${paramHash}`;
   }
 
@@ -72,7 +80,10 @@ export class CacheKeyGenerator {
 
 // Multi-level cache manager
 export class CacheManager {
-  private readonly memoryCache = new Map<string, { data: any; expires: number; tags: string[] }>();
+  private readonly memoryCache = new Map<
+    string,
+    { data: any; expires: number; tags: string[] }
+  >();
   private readonly DEFAULT_TTL = 300_000; // 5 minutes
 
   // Set cache with TTL and tags
@@ -157,7 +168,10 @@ if (typeof window === 'undefined') {
 export class CacheHeaders {
   static staticAsset(): Headers {
     const headers = new Headers();
-    headers.set('Cache-Control', `public, max-age=${CACHE_CONFIG.STATIC_ASSETS.maxAge}, immutable`);
+    headers.set(
+      'Cache-Control',
+      `public, max-age=${CACHE_CONFIG.STATIC_ASSETS.maxAge}, immutable`
+    );
     headers.set('ETag', `"${Date.now()}"`);
     return headers;
   }
@@ -195,7 +209,8 @@ export class CacheHeaders {
     const headers = new Headers();
 
     // Check if user is authenticated
-    const isAuthenticated = request.headers.get('authorization') || request.cookies.get('session');
+    const isAuthenticated =
+      request.headers.get('authorization') || request.cookies.get('session');
 
     if (isAuthenticated) {
       // Private cache for authenticated users
@@ -213,7 +228,11 @@ export class CacheHeaders {
 export class CacheInvalidation {
   // Invalidate user-specific caches
   static async invalidateUser(userId: string): Promise<void> {
-    const tags = [`user:${userId}`, `analytics:${userId}`, `subscription:${userId}`];
+    const tags = [
+      `user:${userId}`,
+      `analytics:${userId}`,
+      `subscription:${userId}`,
+    ];
     const _invalidated = cacheManager.invalidateByTags(tags);
   }
 
@@ -293,7 +312,9 @@ export class CDNOptimization {
 
   // Generate resource hints
   static generateResourceHints(domains: string[]): string {
-    return domains.map((domain) => `<link rel="dns-prefetch" href="//${domain}">`).join('\n');
+    return domains
+      .map((domain) => `<link rel="dns-prefetch" href="//${domain}">`)
+      .join('\n');
   }
 }
 
@@ -318,7 +339,10 @@ export function withCache(
     // Generate cache key
     const cacheKey = keyGenerator
       ? keyGenerator(req)
-      : CacheKeyGenerator.apiResponse(req.url, Object.fromEntries(req.nextUrl.searchParams));
+      : CacheKeyGenerator.apiResponse(
+          req.url,
+          Object.fromEntries(req.nextUrl.searchParams)
+        );
 
     // Try to get from cache
     const cached = cacheManager.get(cacheKey);
@@ -358,7 +382,8 @@ export class CachePerformanceMonitor {
 
   static getStats() {
     const total = CachePerformanceMonitor.hits + CachePerformanceMonitor.misses;
-    const hitRate = total > 0 ? (CachePerformanceMonitor.hits / total) * 100 : 0;
+    const hitRate =
+      total > 0 ? (CachePerformanceMonitor.hits / total) * 100 : 0;
     const uptime = Date.now() - CachePerformanceMonitor.startTime;
 
     return {

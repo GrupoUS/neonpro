@@ -41,11 +41,19 @@ export class MedicalAccuracyTester {
     prescription: DigitalPrescription
   ): Promise<PrescriptionValidationResult> {
     const validationChecks = {
-      professionalLicense: await this.validateProfessionalLicense(prescription.professionalCrm),
+      professionalLicense: await this.validateProfessionalLicense(
+        prescription.professionalCrm
+      ),
       digitalSignature: await this.validateDigitalSignature(prescription),
-      drugInformation: await this.validateDrugInformation(prescription.medications),
-      dosageAccuracy: await this.validateDosageAccuracy(prescription.medications),
-      drugInteractions: await this.validateDrugInteractions(prescription.medications),
+      drugInformation: await this.validateDrugInformation(
+        prescription.medications
+      ),
+      dosageAccuracy: await this.validateDosageAccuracy(
+        prescription.medications
+      ),
+      drugInteractions: await this.validateDrugInteractions(
+        prescription.medications
+      ),
       patientAllergies: await this.validatePatientAllergies(
         prescription.patientId,
         prescription.medications
@@ -54,7 +62,9 @@ export class MedicalAccuracyTester {
     };
 
     const allChecksPass = Object.values(validationChecks).every(Boolean);
-    const score = allChecksPass ? 9.9 : this.calculatePartialScore(validationChecks);
+    const score = allChecksPass
+      ? 9.9
+      : this.calculatePartialScore(validationChecks);
 
     this.testResults.set('digital_prescription', {
       score,
@@ -80,16 +90,22 @@ export class MedicalAccuracyTester {
       professionalRegistration: await this.validateTelemedicineProfessional(
         consultation.professionalId
       ),
-      patientConsent: this.validatePatientConsentTelemedicine(consultation.patientConsent),
+      patientConsent: this.validatePatientConsentTelemedicine(
+        consultation.patientConsent
+      ),
       consultationRecording: this.validateConsultationRecording(consultation),
       dataPrivacy: await this.validateTelemedicinePrivacy(consultation),
       emergencyProtocol: this.validateEmergencyProtocol(consultation),
       followUpProcedure: this.validateFollowUpProcedure(consultation),
-      technicalRequirements: this.validateTechnicalRequirements(consultation.platform),
+      technicalRequirements: this.validateTechnicalRequirements(
+        consultation.platform
+      ),
     };
 
     const isCompliant = Object.values(validationChecks).every(Boolean);
-    const score = isCompliant ? 9.9 : this.calculatePartialScore(validationChecks);
+    const score = isCompliant
+      ? 9.9
+      : this.calculatePartialScore(validationChecks);
 
     this.testResults.set('telemedicine_consultation', {
       score,
@@ -108,13 +124,17 @@ export class MedicalAccuracyTester {
   }
 
   // Medical Diagnosis Accuracy Validation
-  async validateDiagnosisAccuracy(diagnosis: MedicalDiagnosis): Promise<DiagnosisValidationResult> {
+  async validateDiagnosisAccuracy(
+    diagnosis: MedicalDiagnosis
+  ): Promise<DiagnosisValidationResult> {
     if (!this.config.enableDiagnosisValidation) {
       return { isAccurate: true, score: 9.9, details: {} };
     }
 
     const validationChecks = {
-      icd11Compliance: await this.validateICD11Classification(diagnosis.icdCode),
+      icd11Compliance: await this.validateICD11Classification(
+        diagnosis.icdCode
+      ),
       symptomConsistency: await this.validateSymptomConsistency(diagnosis),
       differentialDiagnosis: this.validateDifferentialDiagnosis(diagnosis),
       evidenceSupport: await this.validateEvidenceSupport(diagnosis),
@@ -122,7 +142,9 @@ export class MedicalAccuracyTester {
     };
 
     const isAccurate = Object.values(validationChecks).every(Boolean);
-    const score = isAccurate ? 9.9 : this.calculatePartialScore(validationChecks);
+    const score = isAccurate
+      ? 9.9
+      : this.calculatePartialScore(validationChecks);
 
     this.testResults.set('diagnosis_accuracy', {
       score,
@@ -141,18 +163,22 @@ export class MedicalAccuracyTester {
   }
 
   // Treatment Plan Validation
-  async validateTreatmentPlan(treatmentPlan: TreatmentPlan): Promise<TreatmentValidationResult> {
+  async validateTreatmentPlan(
+    treatmentPlan: TreatmentPlan
+  ): Promise<TreatmentValidationResult> {
     if (!this.config.enableTreatmentValidation) {
       return { isValid: true, score: 9.9, details: {} };
     }
 
     const validationChecks = {
-      evidenceBasedMedicine: await this.validateEvidenceBasedTreatment(treatmentPlan),
+      evidenceBasedMedicine:
+        await this.validateEvidenceBasedTreatment(treatmentPlan),
       guidelineCompliance: await this.validateClinicalGuidelines(treatmentPlan),
       contraindications: await this.validateContraindications(treatmentPlan),
       drugDosages: await this.validateTreatmentDosages(treatmentPlan),
       monitoringPlan: this.validateMonitoringPlan(treatmentPlan),
-      patientSpecificFactors: await this.validatePatientSpecificFactors(treatmentPlan),
+      patientSpecificFactors:
+        await this.validatePatientSpecificFactors(treatmentPlan),
     };
 
     const isValid = Object.values(validationChecks).every(Boolean);
@@ -187,7 +213,10 @@ export class MedicalAccuracyTester {
           medications[j].activeIngredient
         );
 
-        if (interaction.severity === 'major' || interaction.severity === 'contraindicated') {
+        if (
+          interaction.severity === 'major' ||
+          interaction.severity === 'contraindicated'
+        ) {
           return false;
         }
       }
@@ -197,12 +226,16 @@ export class MedicalAccuracyTester {
   }
 
   // Allergy Validation
-  async validatePatientAllergies(patientId: string, medications: Medication[]): Promise<boolean> {
+  async validatePatientAllergies(
+    patientId: string,
+    medications: Medication[]
+  ): Promise<boolean> {
     if (!this.config.enableAllergyValidation) {
       return true;
     }
 
-    const patientAllergies = await this.medicalDatabase.getPatientAllergies(patientId);
+    const patientAllergies =
+      await this.medicalDatabase.getPatientAllergies(patientId);
 
     for (const medication of medications) {
       for (const allergy of patientAllergies) {
@@ -252,7 +285,9 @@ export class MedicalAccuracyTester {
   }
 
   // Medical Ethics Validation
-  async validateMedicalEthics(action: MedicalAction): Promise<EthicsValidationResult> {
+  async validateMedicalEthics(
+    action: MedicalAction
+  ): Promise<EthicsValidationResult> {
     const ethicsChecks = {
       autonomy: this.validatePatientAutonomy(action),
       beneficence: this.validateBeneficence(action),
@@ -282,9 +317,13 @@ export class MedicalAccuracyTester {
   }
 
   // Clinical Decision Support Validation
-  async validateClinicalDecisionSupport(decision: ClinicalDecision): Promise<CDSValidationResult> {
+  async validateClinicalDecisionSupport(
+    decision: ClinicalDecision
+  ): Promise<CDSValidationResult> {
     const validationChecks = {
-      evidenceQuality: await this.validateEvidenceQuality(decision.evidenceSources),
+      evidenceQuality: await this.validateEvidenceQuality(
+        decision.evidenceSources
+      ),
       guidelineAdherence: await this.validateGuidelineAdherence(decision),
       riskAssessment: this.validateRiskAssessment(decision),
       alternativeOptions: this.validateAlternativeOptions(decision),
@@ -312,7 +351,9 @@ export class MedicalAccuracyTester {
   }
 
   // Private helper methods
-  private async validateDigitalSignature(prescription: DigitalPrescription): Promise<boolean> {
+  private async validateDigitalSignature(
+    prescription: DigitalPrescription
+  ): Promise<boolean> {
     return (
       prescription.digitalSignature !== null &&
       prescription.digitalSignature.algorithm === 'RSA-2048' &&
@@ -320,9 +361,13 @@ export class MedicalAccuracyTester {
     );
   }
 
-  private async validateDrugInformation(medications: Medication[]): Promise<boolean> {
+  private async validateDrugInformation(
+    medications: Medication[]
+  ): Promise<boolean> {
     for (const medication of medications) {
-      const drugInfo = await this.medicalDatabase.getDrugInformation(medication.activeIngredient);
+      const drugInfo = await this.medicalDatabase.getDrugInformation(
+        medication.activeIngredient
+      );
       if (!drugInfo?.approved) {
         return false;
       }
@@ -330,7 +375,9 @@ export class MedicalAccuracyTester {
     return true;
   }
 
-  private validatePrescriptionFormat(prescription: DigitalPrescription): boolean {
+  private validatePrescriptionFormat(
+    prescription: DigitalPrescription
+  ): boolean {
     return (
       prescription.patientId !== null &&
       prescription.professionalCrm !== null &&
@@ -344,8 +391,12 @@ export class MedicalAccuracyTester {
     return validCodes.includes(icdCode);
   }
 
-  private async validateSymptomConsistency(diagnosis: MedicalDiagnosis): Promise<boolean> {
-    const expectedSymptoms = await this.medicalDatabase.getSymptomsForDiagnosis(diagnosis.icdCode);
+  private async validateSymptomConsistency(
+    diagnosis: MedicalDiagnosis
+  ): Promise<boolean> {
+    const expectedSymptoms = await this.medicalDatabase.getSymptomsForDiagnosis(
+      diagnosis.icdCode
+    );
     const patientSymptoms = diagnosis.presentingSymptoms;
 
     // At least 70% of key symptoms should be present
@@ -357,32 +408,48 @@ export class MedicalAccuracyTester {
   }
 
   private validateDifferentialDiagnosis(diagnosis: MedicalDiagnosis): boolean {
-    return diagnosis.differentialDiagnoses.length >= 2 && diagnosis.excludedDiagnoses.length >= 1;
+    return (
+      diagnosis.differentialDiagnoses.length >= 2 &&
+      diagnosis.excludedDiagnoses.length >= 1
+    );
   }
 
-  private async validateEvidenceSupport(diagnosis: MedicalDiagnosis): Promise<boolean> {
+  private async validateEvidenceSupport(
+    diagnosis: MedicalDiagnosis
+  ): Promise<boolean> {
     return (
       diagnosis.supportingEvidence.length > 0 &&
-      diagnosis.supportingEvidence.some((evidence) => evidence.type === 'laboratory') &&
-      diagnosis.supportingEvidence.some((evidence) => evidence.type === 'clinical')
+      diagnosis.supportingEvidence.some(
+        (evidence) => evidence.type === 'laboratory'
+      ) &&
+      diagnosis.supportingEvidence.some(
+        (evidence) => evidence.type === 'clinical'
+      )
     );
   }
 
-  private async validateSpecialtyAccuracy(diagnosis: MedicalDiagnosis): Promise<boolean> {
-    const specialtyForDiagnosis = await this.medicalDatabase.getSpecialtyForDiagnosis(
-      diagnosis.icdCode
-    );
+  private async validateSpecialtyAccuracy(
+    diagnosis: MedicalDiagnosis
+  ): Promise<boolean> {
+    const specialtyForDiagnosis =
+      await this.medicalDatabase.getSpecialtyForDiagnosis(diagnosis.icdCode);
     return diagnosis.specialtyArea === specialtyForDiagnosis;
   }
 
-  private checkAllergyConflict(medication: Medication, allergy: PatientAllergy): boolean {
+  private checkAllergyConflict(
+    medication: Medication,
+    allergy: PatientAllergy
+  ): boolean {
     return (
       medication.activeIngredient === allergy.allergen ||
       medication.drugClass === allergy.allergenClass
     );
   }
 
-  private isDosageWithinRange(actualDosage: Dosage, standardDosage: DosageRange): boolean {
+  private isDosageWithinRange(
+    actualDosage: Dosage,
+    standardDosage: DosageRange
+  ): boolean {
     return (
       actualDosage.amount >= standardDosage.min &&
       actualDosage.amount <= standardDosage.max &&
@@ -393,7 +460,8 @@ export class MedicalAccuracyTester {
 
   private hasActiveSanctions(professional: MedicalProfessional): boolean {
     return professional.sanctions.some(
-      (sanction) => sanction.status === 'active' && sanction.endDate > new Date()
+      (sanction) =>
+        sanction.status === 'active' && sanction.endDate > new Date()
     );
   }
 
@@ -405,7 +473,10 @@ export class MedicalAccuracyTester {
 
   // Ethics validation methods
   private validatePatientAutonomy(action: MedicalAction): boolean {
-    return action.patientConsent === 'informed' && action.patientDecision === 'voluntary';
+    return (
+      action.patientConsent === 'informed' &&
+      action.patientDecision === 'voluntary'
+    );
   }
 
   private validateBeneficence(action: MedicalAction): boolean {
@@ -419,11 +490,15 @@ export class MedicalAccuracyTester {
   }
 
   private validateJustice(action: MedicalAction): boolean {
-    return action.accessEquality === true && action.resourceAllocation === 'fair';
+    return (
+      action.accessEquality === true && action.resourceAllocation === 'fair'
+    );
   }
 
   private validateConfidentiality(action: MedicalAction): boolean {
-    return action.dataProtection === 'encrypted' && action.accessControls.length > 0;
+    return (
+      action.dataProtection === 'encrypted' && action.accessControls.length > 0
+    );
   }
 
   private validateInformedConsent(action: MedicalAction): boolean {
@@ -437,7 +512,8 @@ export class MedicalAccuracyTester {
   // Public reporting methods
   generateMedicalAccuracyReport(): MedicalAccuracyReport {
     const results = Array.from(this.testResults.values());
-    const averageScore = results.reduce((sum, r) => sum + r.score, 0) / results.length;
+    const averageScore =
+      results.reduce((sum, r) => sum + r.score, 0) / results.length;
     const allPassed = results.every((r) => r.passed);
 
     return {
@@ -458,7 +534,9 @@ export class MedicalAccuracyTester {
       if (!result.passed) {
         switch (testName) {
           case 'digital_prescription':
-            recommendations.push('Review digital prescription validation process');
+            recommendations.push(
+              'Review digital prescription validation process'
+            );
             break;
           case 'telemedicine_consultation':
             recommendations.push('Improve telemedicine compliance procedures');
@@ -482,7 +560,10 @@ export class MedicalAccuracyTester {
 
 // Mock Medical Database Class
 class MedicalDatabase {
-  async checkDrugInteraction(_drug1: string, _drug2: string): Promise<DrugInteraction> {
+  async checkDrugInteraction(
+    _drug1: string,
+    _drug2: string
+  ): Promise<DrugInteraction> {
     // Mock implementation - would connect to actual drug interaction database
     return {
       severity: 'minor',
@@ -496,7 +577,10 @@ class MedicalDatabase {
     return [];
   }
 
-  async getStandardDosage(_activeIngredient: string, _indication: string): Promise<DosageRange> {
+  async getStandardDosage(
+    _activeIngredient: string,
+    _indication: string
+  ): Promise<DosageRange> {
     // Mock implementation - would fetch from medical database
     return {
       min: 10,
@@ -585,7 +669,8 @@ export function createMedicalAccuracyTestSuite(
         },
       };
 
-      const result = await medicalTester.validateDigitalPrescription(mockPrescription);
+      const result =
+        await medicalTester.validateDigitalPrescription(mockPrescription);
       expect(result.isValid).toBe(true);
       expect(result.score).toBeGreaterThanOrEqual(9.9);
     });
@@ -604,7 +689,8 @@ export function createMedicalAccuracyTestSuite(
         specialtyArea: 'Internal Medicine',
       };
 
-      const result = await medicalTester.validateDiagnosisAccuracy(mockDiagnosis);
+      const result =
+        await medicalTester.validateDiagnosisAccuracy(mockDiagnosis);
       expect(result.isAccurate).toBe(true);
       expect(result.score).toBeGreaterThanOrEqual(9.9);
     });
@@ -620,7 +706,9 @@ export async function validateMedicalInformation(
   const tester = new MedicalAccuracyTester();
 
   if (medicalData.type === 'diagnosis') {
-    const result = await tester.validateDiagnosisAccuracy(medicalData as MedicalDiagnosis);
+    const result = await tester.validateDiagnosisAccuracy(
+      medicalData as MedicalDiagnosis
+    );
     return result.isAccurate;
   }
 
@@ -639,7 +727,8 @@ export async function testClinicalAccuracy(
   ]);
 
   const scores = results.map((r) => r.score);
-  const averageScore = scores.reduce((sum, score) => sum + score, 0) / scores.length;
+  const averageScore =
+    scores.reduce((sum, score) => sum + score, 0) / scores.length;
 
   return {
     professionalLicense: scores[0],

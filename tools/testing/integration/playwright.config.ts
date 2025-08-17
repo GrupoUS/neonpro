@@ -159,7 +159,8 @@ export default defineConfig({
         timeout: 120 * 1000, // 2 minutes for healthcare app to start
         env: {
           NODE_ENV: 'test',
-          DATABASE_URL: process.env.TEST_DATABASE_URL || process.env.DATABASE_URL,
+          DATABASE_URL:
+            process.env.TEST_DATABASE_URL || process.env.DATABASE_URL,
         },
       },
 

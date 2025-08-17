@@ -379,9 +379,14 @@ export class FinancialService {
 
       return transaction;
     } catch (error) {
-      monitoring.error('Transaction creation error', 'financial-service', error as Error, {
-        tenantId: request.tenantId,
-      });
+      monitoring.error(
+        'Transaction creation error',
+        'financial-service',
+        error as Error,
+        {
+          tenantId: request.tenantId,
+        }
+      );
       throw error;
     }
   }
@@ -406,9 +411,14 @@ export class FinancialService {
 
       return this.mapTransactionFromDb(data);
     } catch (error) {
-      monitoring.error('Get transaction error', 'financial-service', error as Error, {
-        transactionId,
-      });
+      monitoring.error(
+        'Get transaction error',
+        'financial-service',
+        error as Error,
+        {
+          transactionId,
+        }
+      );
       return null;
     }
   }
@@ -465,10 +475,15 @@ export class FinancialService {
 
       return transaction;
     } catch (error) {
-      monitoring.error('Update transaction status error', 'financial-service', error as Error, {
-        transactionId,
-        status,
-      });
+      monitoring.error(
+        'Update transaction status error',
+        'financial-service',
+        error as Error,
+        {
+          transactionId,
+          status,
+        }
+      );
       throw error;
     }
   }
@@ -478,14 +493,18 @@ export class FinancialService {
     userId: string
   ): Promise<{ transactions: FinancialTransaction[]; total: number }> {
     try {
-      monitoring.debug('Searching transactions', 'financial-service', { filters });
+      monitoring.debug('Searching transactions', 'financial-service', {
+        filters,
+      });
 
       // Validate tenant access if specified
       if (filters.tenantId) {
         await this.validateTenantAccess(userId, filters.tenantId);
       }
 
-      let query = this.supabase.from('financial_transactions').select('*', { count: 'exact' });
+      let query = this.supabase
+        .from('financial_transactions')
+        .select('*', { count: 'exact' });
 
       // Apply filters
       if (filters.tenantId) {
@@ -548,9 +567,14 @@ export class FinancialService {
 
       return { transactions, total: count || 0 };
     } catch (error) {
-      monitoring.error('Search transactions error', 'financial-service', error as Error, {
-        filters,
-      });
+      monitoring.error(
+        'Search transactions error',
+        'financial-service',
+        error as Error,
+        {
+          filters,
+        }
+      );
       throw error;
     }
   }
@@ -559,7 +583,10 @@ export class FinancialService {
   // PAYMENT PLAN MANAGEMENT
   // ================================================
 
-  async createPaymentPlan(request: CreatePaymentPlanRequest, userId: string): Promise<PaymentPlan> {
+  async createPaymentPlan(
+    request: CreatePaymentPlanRequest,
+    userId: string
+  ): Promise<PaymentPlan> {
     try {
       monitoring.info('Creating payment plan', 'financial-service', {
         tenantId: request.tenantId,
@@ -571,7 +598,8 @@ export class FinancialService {
       await this.validateTenantAccess(userId, request.tenantId);
 
       // Calculate installment amount
-      const installmentAmount = request.totalAmount / request.numberOfInstallments;
+      const installmentAmount =
+        request.totalAmount / request.numberOfInstallments;
 
       // Create payment plan
       const paymentPlanData = {
@@ -632,10 +660,11 @@ export class FinancialService {
         status: installment.status,
       }));
 
-      const { data: installmentRows, error: installmentError } = await this.supabase
-        .from('payment_installments')
-        .insert(installmentData)
-        .select();
+      const { data: installmentRows, error: installmentError } =
+        await this.supabase
+          .from('payment_installments')
+          .insert(installmentData)
+          .select();
 
       if (installmentError) {
         throw new Error(installmentError.message);
@@ -643,22 +672,34 @@ export class FinancialService {
 
       const paymentPlan = this.mapPaymentPlanFromDb(planData, installmentRows);
 
-      monitoring.info('Payment plan created successfully', 'financial-service', {
-        paymentPlanId: paymentPlan.id,
-        numberOfInstallments: request.numberOfInstallments,
-      });
+      monitoring.info(
+        'Payment plan created successfully',
+        'financial-service',
+        {
+          paymentPlanId: paymentPlan.id,
+          numberOfInstallments: request.numberOfInstallments,
+        }
+      );
 
       return paymentPlan;
     } catch (error) {
-      monitoring.error('Payment plan creation error', 'financial-service', error as Error, {
-        tenantId: request.tenantId,
-        patientId: request.patientId,
-      });
+      monitoring.error(
+        'Payment plan creation error',
+        'financial-service',
+        error as Error,
+        {
+          tenantId: request.tenantId,
+          patientId: request.patientId,
+        }
+      );
       throw error;
     }
   }
 
-  async getPaymentPlan(paymentPlanId: string, userId: string): Promise<PaymentPlan | null> {
+  async getPaymentPlan(
+    paymentPlanId: string,
+    userId: string
+  ): Promise<PaymentPlan | null> {
     try {
       const { data: planData, error: planError } = await this.supabase
         .from('payment_plans')
@@ -673,11 +714,12 @@ export class FinancialService {
       // Validate tenant access
       await this.validateTenantAccess(userId, planData.tenant_id);
 
-      const { data: installmentData, error: installmentError } = await this.supabase
-        .from('payment_installments')
-        .select('*')
-        .eq('payment_plan_id', paymentPlanId)
-        .order('installment_number');
+      const { data: installmentData, error: installmentError } =
+        await this.supabase
+          .from('payment_installments')
+          .select('*')
+          .eq('payment_plan_id', paymentPlanId)
+          .order('installment_number');
 
       if (installmentError) {
         throw new Error(installmentError.message);
@@ -685,9 +727,14 @@ export class FinancialService {
 
       return this.mapPaymentPlanFromDb(planData, installmentData);
     } catch (error) {
-      monitoring.error('Get payment plan error', 'financial-service', error as Error, {
-        paymentPlanId,
-      });
+      monitoring.error(
+        'Get payment plan error',
+        'financial-service',
+        error as Error,
+        {
+          paymentPlanId,
+        }
+      );
       return null;
     }
   }
@@ -705,45 +752,54 @@ export class FinancialService {
       });
 
       // Get installment
-      const { data: installmentData, error: installmentError } = await this.supabase
-        .from('payment_installments')
-        .select(`
+      const { data: installmentData, error: installmentError } =
+        await this.supabase
+          .from('payment_installments')
+          .select(`
           *,
           payment_plans!inner(tenant_id, paid_amount, total_amount)
         `)
-        .eq('id', installmentId)
-        .single();
+          .eq('id', installmentId)
+          .single();
 
       if (installmentError || !installmentData) {
         throw new Error('Installment not found');
       }
 
       // Validate tenant access
-      await this.validateTenantAccess(userId, installmentData.payment_plans.tenant_id);
+      await this.validateTenantAccess(
+        userId,
+        installmentData.payment_plans.tenant_id
+      );
 
       // Update installment
       const paymentDate = paidDate || new Date();
-      const { data: updatedInstallment, error: updateError } = await this.supabase
-        .from('payment_installments')
-        .update({
-          status: InstallmentStatus.PAID,
-          paid_date: paymentDate.toISOString(),
-          payment_method: paymentMethod,
-        })
-        .eq('id', installmentId)
-        .select()
-        .single();
+      const { data: updatedInstallment, error: updateError } =
+        await this.supabase
+          .from('payment_installments')
+          .update({
+            status: InstallmentStatus.PAID,
+            paid_date: paymentDate.toISOString(),
+            payment_method: paymentMethod,
+          })
+          .eq('id', installmentId)
+          .select()
+          .single();
 
       if (updateError) {
         throw new Error(updateError.message);
       }
 
       // Update payment plan totals
-      const newPaidAmount = installmentData.payment_plans.paid_amount + installmentData.amount;
-      const newRemainingAmount = installmentData.payment_plans.total_amount - newPaidAmount;
+      const newPaidAmount =
+        installmentData.payment_plans.paid_amount + installmentData.amount;
+      const newRemainingAmount =
+        installmentData.payment_plans.total_amount - newPaidAmount;
 
       const planStatus =
-        newRemainingAmount <= 0 ? PaymentPlanStatus.COMPLETED : PaymentPlanStatus.ACTIVE;
+        newRemainingAmount <= 0
+          ? PaymentPlanStatus.COMPLETED
+          : PaymentPlanStatus.ACTIVE;
 
       await this.supabase
         .from('payment_plans')
@@ -780,10 +836,15 @@ export class FinancialService {
 
       return installment;
     } catch (error) {
-      monitoring.error('Pay installment error', 'financial-service', error as Error, {
-        installmentId,
-        paymentMethod,
-      });
+      monitoring.error(
+        'Pay installment error',
+        'financial-service',
+        error as Error,
+        {
+          installmentId,
+          paymentMethod,
+        }
+      );
       throw error;
     }
   }
@@ -792,7 +853,10 @@ export class FinancialService {
   // INVOICE MANAGEMENT
   // ================================================
 
-  async createInvoice(request: CreateInvoiceRequest, userId: string): Promise<Invoice> {
+  async createInvoice(
+    request: CreateInvoiceRequest,
+    userId: string
+  ): Promise<Invoice> {
     try {
       monitoring.info('Creating invoice', 'financial-service', {
         tenantId: request.tenantId,
@@ -867,10 +931,15 @@ export class FinancialService {
 
       return invoice;
     } catch (error) {
-      monitoring.error('Invoice creation error', 'financial-service', error as Error, {
-        tenantId: request.tenantId,
-        patientId: request.patientId,
-      });
+      monitoring.error(
+        'Invoice creation error',
+        'financial-service',
+        error as Error,
+        {
+          tenantId: request.tenantId,
+          patientId: request.patientId,
+        }
+      );
       throw error;
     }
   }
@@ -892,7 +961,12 @@ export class FinancialService {
 
       return this.mapInvoiceFromDb(data);
     } catch (error) {
-      monitoring.error('Get invoice error', 'financial-service', error as Error, { invoiceId });
+      monitoring.error(
+        'Get invoice error',
+        'financial-service',
+        error as Error,
+        { invoiceId }
+      );
       return null;
     }
   }
@@ -954,10 +1028,15 @@ export class FinancialService {
 
       return invoice;
     } catch (error) {
-      monitoring.error('Pay invoice error', 'financial-service', error as Error, {
-        invoiceId,
-        paymentMethod,
-      });
+      monitoring.error(
+        'Pay invoice error',
+        'financial-service',
+        error as Error,
+        {
+          invoiceId,
+          paymentMethod,
+        }
+      );
       throw error;
     }
   }
@@ -989,26 +1068,54 @@ export class FinancialService {
 
       switch (reportType) {
         case ReportType.REVENUE:
-          reportData = await this.generateRevenueReport(tenantId, periodStart, periodEnd);
+          reportData = await this.generateRevenueReport(
+            tenantId,
+            periodStart,
+            periodEnd
+          );
           break;
         case ReportType.EXPENSES:
-          reportData = await this.generateExpenseReport(tenantId, periodStart, periodEnd);
+          reportData = await this.generateExpenseReport(
+            tenantId,
+            periodStart,
+            periodEnd
+          );
           break;
         case ReportType.PROFIT_LOSS:
-          reportData = await this.generateProfitLossReport(tenantId, periodStart, periodEnd);
+          reportData = await this.generateProfitLossReport(
+            tenantId,
+            periodStart,
+            periodEnd
+          );
           break;
         case ReportType.CASH_FLOW:
-          reportData = await this.generateCashFlowReport(tenantId, periodStart, periodEnd);
+          reportData = await this.generateCashFlowReport(
+            tenantId,
+            periodStart,
+            periodEnd
+          );
           break;
         case ReportType.RECEIVABLES:
-          reportData = await this.generateReceivablesReport(tenantId, periodStart, periodEnd);
+          reportData = await this.generateReceivablesReport(
+            tenantId,
+            periodStart,
+            periodEnd
+          );
           break;
         case ReportType.TAX:
-          reportData = await this.generateTaxReport(tenantId, periodStart, periodEnd);
+          reportData = await this.generateTaxReport(
+            tenantId,
+            periodStart,
+            periodEnd
+          );
           break;
         case ReportType.COMPREHENSIVE:
         default:
-          reportData = await this.generateComprehensiveReport(tenantId, periodStart, periodEnd);
+          reportData = await this.generateComprehensiveReport(
+            tenantId,
+            periodStart,
+            periodEnd
+          );
           break;
       }
 
@@ -1041,10 +1148,15 @@ export class FinancialService {
 
       return report;
     } catch (error) {
-      monitoring.error('Generate financial report error', 'financial-service', error as Error, {
-        tenantId,
-        reportType,
-      });
+      monitoring.error(
+        'Generate financial report error',
+        'financial-service',
+        error as Error,
+        {
+          tenantId,
+          reportType,
+        }
+      );
       throw error;
     }
   }
@@ -1067,7 +1179,10 @@ export class FinancialService {
     );
   }
 
-  private async validateTenantAccess(userId: string, tenantId: string): Promise<void> {
+  private async validateTenantAccess(
+    userId: string,
+    tenantId: string
+  ): Promise<void> {
     // Implementation would validate user has access to tenant
     // For now, we'll assume the auth service handles this
   }
@@ -1170,7 +1285,10 @@ export class FinancialService {
     };
   }
 
-  private mapPaymentPlanFromDb(planData: any, installmentData: any[]): PaymentPlan {
+  private mapPaymentPlanFromDb(
+    planData: any,
+    installmentData: any[]
+  ): PaymentPlan {
     return {
       id: planData.id,
       tenantId: planData.tenant_id,

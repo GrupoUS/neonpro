@@ -43,7 +43,9 @@ const SearchBox = React.forwardRef<HTMLDivElement, SearchBoxProps>(
   ) => {
     const [searchValue, setSearchValue] = React.useState(value);
     const [showFilters, setShowFilters] = React.useState(false);
-    const debounceRef = React.useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+    const debounceRef = React.useRef<ReturnType<typeof setTimeout> | undefined>(
+      undefined
+    );
 
     React.useEffect(() => {
       setSearchValue(value);
@@ -116,7 +118,12 @@ const SearchBox = React.forwardRef<HTMLDivElement, SearchBoxProps>(
               onClick={handleClearSearch}
               type="button"
             >
-              <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg
+                className="h-4 w-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
                 <path
                   d="M6 18L18 6M6 6l12 12"
                   strokeLinecap="round"
@@ -137,7 +144,11 @@ const SearchBox = React.forwardRef<HTMLDivElement, SearchBoxProps>(
         {/* Filter Toggle and Clear */}
         {hasFilters && (
           <div className="flex items-center gap-2">
-            <Button onClick={() => setShowFilters(!showFilters)} size="sm" variant="outline">
+            <Button
+              onClick={() => setShowFilters(!showFilters)}
+              size="sm"
+              variant="outline"
+            >
               Filtros
               {hasActiveFilters && (
                 <Badge className="ml-2" variant="secondary">
@@ -161,7 +172,10 @@ const SearchBox = React.forwardRef<HTMLDivElement, SearchBoxProps>(
               const isActive = activeFilters?.includes(filter.id);
               return (
                 <Button
-                  className={cn('justify-start', isActive && 'bg-primary text-primary-foreground')}
+                  className={cn(
+                    'justify-start',
+                    isActive && 'bg-primary text-primary-foreground'
+                  )}
                   key={filter.id}
                   onClick={() => handleFilterToggle(filter.id)}
                   size="sm"

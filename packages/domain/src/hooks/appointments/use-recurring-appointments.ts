@@ -47,7 +47,10 @@ export type UseRecurringAppointmentsReturn = {
   createRecurring: (
     appointment: Omit<RecurringAppointment, 'id' | 'created_at' | 'is_active'>
   ) => Promise<string | null>;
-  updateRecurring: (id: string, updates: Partial<RecurringAppointment>) => Promise<boolean>;
+  updateRecurring: (
+    id: string,
+    updates: Partial<RecurringAppointment>
+  ) => Promise<boolean>;
   cancelRecurring: (id: string) => Promise<boolean>;
   createException: (
     recurringId: string,
@@ -64,7 +67,9 @@ export type UseRecurringAppointmentsReturn = {
 export function useRecurringAppointments(
   options: UseRecurringAppointmentsOptions = {}
 ): UseRecurringAppointmentsReturn {
-  const [recurringAppointments, setRecurringAppointments] = useState<RecurringAppointment[]>([]);
+  const [recurringAppointments, setRecurringAppointments] = useState<
+    RecurringAppointment[]
+  >([]);
   const [instances, setInstances] = useState<AppointmentInstance[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -109,7 +114,8 @@ export function useRecurringAppointments(
       setRecurringAppointments(mockRecurring);
       setInstances(mockInstances);
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to refresh data';
+      const errorMessage =
+        err instanceof Error ? err.message : 'Failed to refresh data';
       setError(errorMessage);
     } finally {
       setIsLoading(false);
@@ -133,7 +139,9 @@ export function useRecurringAppointments(
         return newId;
       } catch (err) {
         const errorMessage =
-          err instanceof Error ? err.message : 'Failed to create recurring appointment';
+          err instanceof Error
+            ? err.message
+            : 'Failed to create recurring appointment';
         setError(errorMessage);
         return null;
       }
@@ -142,7 +150,10 @@ export function useRecurringAppointments(
   );
 
   const updateRecurring = useCallback(
-    async (id: string, updates: Partial<RecurringAppointment>): Promise<boolean> => {
+    async (
+      id: string,
+      updates: Partial<RecurringAppointment>
+    ): Promise<boolean> => {
       try {
         setRecurringAppointments((prev) =>
           prev.map((appointment) =>
@@ -153,7 +164,9 @@ export function useRecurringAppointments(
         return true;
       } catch (err) {
         const errorMessage =
-          err instanceof Error ? err.message : 'Failed to update recurring appointment';
+          err instanceof Error
+            ? err.message
+            : 'Failed to update recurring appointment';
         setError(errorMessage);
         return false;
       }
@@ -165,14 +178,18 @@ export function useRecurringAppointments(
     try {
       setRecurringAppointments((prev) =>
         prev.map((appointment) =>
-          appointment.id === id ? { ...appointment, is_active: false } : appointment
+          appointment.id === id
+            ? { ...appointment, is_active: false }
+            : appointment
         )
       );
 
       return true;
     } catch (err) {
       const errorMessage =
-        err instanceof Error ? err.message : 'Failed to cancel recurring appointment';
+        err instanceof Error
+          ? err.message
+          : 'Failed to cancel recurring appointment';
       setError(errorMessage);
       return false;
     }
@@ -200,7 +217,8 @@ export function useRecurringAppointments(
         setInstances((prev) => [...prev, exception]);
         return newId;
       } catch (err) {
-        const errorMessage = err instanceof Error ? err.message : 'Failed to create exception';
+        const errorMessage =
+          err instanceof Error ? err.message : 'Failed to create exception';
         setError(errorMessage);
         return null;
       }
@@ -229,7 +247,8 @@ export function useRecurringAppointments(
 
         return mockInstances;
       } catch (err) {
-        const errorMessage = err instanceof Error ? err.message : 'Failed to generate instances';
+        const errorMessage =
+          err instanceof Error ? err.message : 'Failed to generate instances';
         setError(errorMessage);
         return [];
       }

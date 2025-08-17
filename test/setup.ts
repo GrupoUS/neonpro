@@ -8,6 +8,14 @@ global.console = {
   error: vi.fn(),
 };
 
+// Mock console for cleaner test output
+global.console = {
+  ...console,
+  log: vi.fn(),
+  warn: vi.fn(),
+  error: vi.fn(),
+};
+
 // Mock environment variables
 process.env = {
   ...process.env,

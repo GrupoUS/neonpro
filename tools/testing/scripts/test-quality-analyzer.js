@@ -44,7 +44,9 @@ class TestQualityAnalyzer {
           exists: true,
           size: fs.statSync(fullPath).size,
         });
-        console.log(`✅ Found: ${testPath} (${Math.round(fs.statSync(fullPath).size / 1024)}KB)`);
+        console.log(
+          `✅ Found: ${testPath} (${Math.round(fs.statSync(fullPath).size / 1024)}KB)`
+        );
       } else {
         console.log(`❌ Missing: ${testPath}`);
         this.testFiles.push({
@@ -94,20 +96,28 @@ class TestQualityAnalyzer {
 
       // Healthcare compliance patterns
       lgpdCompliance: content.includes('lgpd') || content.includes('LGPD'),
-      anvisaCompliance: content.includes('anvisa') || content.includes('ANVISA'),
+      anvisaCompliance:
+        content.includes('anvisa') || content.includes('ANVISA'),
       cfmCompliance: content.includes('cfm') || content.includes('CFM'),
       auditTrail: content.includes('audit') || content.includes('Audit'),
 
       // Security patterns
-      authenticationTests: content.includes('authentication') || content.includes('auth'),
-      authorizationTests: content.includes('authorization') || content.includes('rbac'),
-      encryptionTests: content.includes('encryption') || content.includes('encrypt'),
-      sqlInjectionTests: content.includes('injection') || content.includes('malicious'),
+      authenticationTests:
+        content.includes('authentication') || content.includes('auth'),
+      authorizationTests:
+        content.includes('authorization') || content.includes('rbac'),
+      encryptionTests:
+        content.includes('encryption') || content.includes('encrypt'),
+      sqlInjectionTests:
+        content.includes('injection') || content.includes('malicious'),
 
       // Performance patterns
-      performanceTests: content.includes('performance') || content.includes('load'),
-      concurrencyTests: content.includes('concurrent') || content.includes('parallel'),
-      timeoutValidation: content.includes('timeout') || content.includes('executionTime'),
+      performanceTests:
+        content.includes('performance') || content.includes('load'),
+      concurrencyTests:
+        content.includes('concurrent') || content.includes('parallel'),
+      timeoutValidation:
+        content.includes('timeout') || content.includes('executionTime'),
 
       // Quality patterns
       errorHandling: (content.match(/catch|error|Error/g) || []).length,
@@ -115,9 +125,12 @@ class TestQualityAnalyzer {
       mockingPatterns: content.includes('mock') || content.includes('jest.fn'),
 
       // Healthcare-specific patterns
-      patientDataProtection: content.includes('patient') && content.includes('privacy'),
-      clinicIsolation: content.includes('clinic') && content.includes('isolation'),
-      medicalCompliance: content.includes('medical') || content.includes('healthcare'),
+      patientDataProtection:
+        content.includes('patient') && content.includes('privacy'),
+      clinicIsolation:
+        content.includes('clinic') && content.includes('isolation'),
+      medicalCompliance:
+        content.includes('medical') || content.includes('healthcare'),
     };
 
     return analysis;
@@ -224,9 +237,18 @@ class TestQualityAnalyzer {
         tests: 5,
         expectations: 10,
       };
-      const suiteScore = Math.min(100, (analysis.testSuites / expected.suites) * 100);
-      const testScore = Math.min(100, (analysis.testCases / expected.tests) * 100);
-      const expectScore = Math.min(100, (analysis.expectations / expected.expectations) * 100);
+      const suiteScore = Math.min(
+        100,
+        (analysis.testSuites / expected.suites) * 100
+      );
+      const testScore = Math.min(
+        100,
+        (analysis.testCases / expected.tests) * 100
+      );
+      const expectScore = Math.min(
+        100,
+        (analysis.expectations / expected.expectations) * 100
+      );
       const avgScore = (suiteScore + testScore + expectScore) / 3;
 
       console.log(
@@ -243,7 +265,9 @@ class TestQualityAnalyzer {
       );
     });
 
-    console.log(`\n🎯 TOTAL COVERAGE: ${totalTests} tests, ${totalExpectations} expectations`);
+    console.log(
+      `\n🎯 TOTAL COVERAGE: ${totalTests} tests, ${totalExpectations} expectations`
+    );
 
     this.analysisResults.coverageAnalysis = {
       coverageByType,
@@ -324,8 +348,10 @@ class TestQualityAnalyzer {
     });
 
     const avgCompliance =
-      Object.values(complianceResults).reduce((sum, result) => sum + result.percentage, 0) /
-      Object.keys(complianceResults).length;
+      Object.values(complianceResults).reduce(
+        (sum, result) => sum + result.percentage,
+        0
+      ) / Object.keys(complianceResults).length;
 
     console.log(`\n🏆 OVERALL COMPLIANCE SCORE: ${avgCompliance.toFixed(1)}%`);
 
@@ -341,7 +367,8 @@ class TestQualityAnalyzer {
     console.log('-'.repeat(40));
 
     const metrics = {
-      testFilesComplete: this.testFiles.filter((f) => f.exists).length / this.testFiles.length,
+      testFilesComplete:
+        this.testFiles.filter((f) => f.exists).length / this.testFiles.length,
       syntaxQuality:
         Object.values(this.analysisResults.syntaxValidation).reduce(
           (sum, result) => sum + result.quality,
@@ -349,7 +376,8 @@ class TestQualityAnalyzer {
         ) / this.testFiles.filter((f) => f.exists).length,
       complianceScore: this.analysisResults.complianceValidation.avgCompliance,
       totalTestCount: this.analysisResults.coverageAnalysis.totalTests,
-      totalExpectations: this.analysisResults.coverageAnalysis.totalExpectations,
+      totalExpectations:
+        this.analysisResults.coverageAnalysis.totalExpectations,
     };
 
     const readinessScore =
@@ -359,14 +387,20 @@ class TestQualityAnalyzer {
       Math.min(100, metrics.totalTestCount * 2) * 0.2;
 
     console.log('📊 READINESS METRICS:');
-    console.log(`   Test Files Complete: ${(metrics.testFilesComplete * 100).toFixed(1)}%`);
+    console.log(
+      `   Test Files Complete: ${(metrics.testFilesComplete * 100).toFixed(1)}%`
+    );
     console.log(`   Syntax Quality: ${metrics.syntaxQuality.toFixed(1)}%`);
-    console.log(`   Healthcare Compliance: ${metrics.complianceScore.toFixed(1)}%`);
+    console.log(
+      `   Healthcare Compliance: ${metrics.complianceScore.toFixed(1)}%`
+    );
     console.log(
       `   Test Coverage: ${metrics.totalTestCount} tests, ${metrics.totalExpectations} assertions`
     );
 
-    console.log(`\n🎯 PRODUCTION READINESS SCORE: ${readinessScore.toFixed(1)}%`);
+    console.log(
+      `\n🎯 PRODUCTION READINESS SCORE: ${readinessScore.toFixed(1)}%`
+    );
 
     if (readinessScore >= 85) {
       console.log('✅ READY FOR PRODUCTION DEPLOYMENT');
@@ -401,16 +435,24 @@ class TestQualityAnalyzer {
       summary: {
         filesAnalyzed: this.testFiles.filter((f) => f.exists).length,
         totalTests: this.analysisResults.coverageAnalysis.totalTests,
-        totalExpectations: this.analysisResults.coverageAnalysis.totalExpectations,
-        complianceScore: this.analysisResults.complianceValidation.avgCompliance,
+        totalExpectations:
+          this.analysisResults.coverageAnalysis.totalExpectations,
+        complianceScore:
+          this.analysisResults.complianceValidation.avgCompliance,
         readinessScore: this.analysisResults.productionReadiness.readinessScore,
-        productionReady: this.analysisResults.productionReadiness.readinessScore >= 70,
+        productionReady:
+          this.analysisResults.productionReadiness.readinessScore >= 70,
       },
     };
 
-    fs.writeFileSync('test-quality-analysis-report.json', JSON.stringify(reportData, null, 2));
+    fs.writeFileSync(
+      'test-quality-analysis-report.json',
+      JSON.stringify(reportData, null, 2)
+    );
 
-    console.log('\n📄 Detailed analysis saved to: test-quality-analysis-report.json');
+    console.log(
+      '\n📄 Detailed analysis saved to: test-quality-analysis-report.json'
+    );
     console.log('='.repeat(80));
 
     return reportData;

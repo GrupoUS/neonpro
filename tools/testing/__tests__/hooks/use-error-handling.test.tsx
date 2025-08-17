@@ -263,7 +263,9 @@ describe('useErrorHandling', () => {
 
     const ids = result.current.errors.map((e) => e.id);
     expect(new Set(ids).size).toBe(2); // All IDs should be unique
-    expect(ids.every((id) => typeof id === 'string' && id.length > 0)).toBe(true);
+    expect(ids.every((id) => typeof id === 'string' && id.length > 0)).toBe(
+      true
+    );
   });
 
   it('handles dismissible errors', () => {
@@ -333,14 +335,17 @@ describe('useErrorHandling', () => {
   });
 
   it('handles configuration changes', () => {
-    const { result, rerender } = renderHook(({ config }) => useErrorHandling(config), {
-      initialProps: {
-        config: {
-          showTechnicalDetails: false,
-          maxRetryAttempts: 3,
+    const { result, rerender } = renderHook(
+      ({ config }) => useErrorHandling(config),
+      {
+        initialProps: {
+          config: {
+            showTechnicalDetails: false,
+            maxRetryAttempts: 3,
+          },
         },
-      },
-    });
+      }
+    );
 
     // Test with initial config
     act(() => {

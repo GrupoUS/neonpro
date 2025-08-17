@@ -201,7 +201,9 @@ function checkGitStatus() {
 
     return {
       success: true,
-      message: hasChanges ? 'Git repository has uncommitted changes' : 'Git repository clean',
+      message: hasChanges
+        ? 'Git repository has uncommitted changes'
+        : 'Git repository clean',
     };
   } catch (error) {
     return {
@@ -246,22 +248,36 @@ function displayResults() {
   }
 
   if (percentage >= 95) {
-    console.log('\n🎉 Excellent! Your healthcare development environment is in perfect condition.');
+    console.log(
+      '\n🎉 Excellent! Your healthcare development environment is in perfect condition.'
+    );
   } else if (percentage >= 80) {
-    console.log('\n✅ Good! Your environment is mostly healthy. Address the issues above.');
+    console.log(
+      '\n✅ Good! Your environment is mostly healthy. Address the issues above.'
+    );
   } else {
-    console.log('\n⚠️  Warning! Your environment needs attention. Please resolve the issues above.');
+    console.log(
+      '\n⚠️  Warning! Your environment needs attention. Please resolve the issues above.'
+    );
   }
 
   console.log('\n🏥 Healthcare Compliance Status:');
-  console.log(`LGPD Compliance: ${percentage >= 90 ? '✅ Ready' : '❌ Needs attention'}`);
-  console.log(`ANVISA Compliance: ${percentage >= 90 ? '✅ Ready' : '❌ Needs attention'}`);
-  console.log(`CFM Compliance: ${percentage >= 90 ? '✅ Ready' : '❌ Needs attention'}`);
+  console.log(
+    `LGPD Compliance: ${percentage >= 90 ? '✅ Ready' : '❌ Needs attention'}`
+  );
+  console.log(
+    `ANVISA Compliance: ${percentage >= 90 ? '✅ Ready' : '❌ Needs attention'}`
+  );
+  console.log(
+    `CFM Compliance: ${percentage >= 90 ? '✅ Ready' : '❌ Needs attention'}`
+  );
 
   console.log('\n💡 Quick Fixes:');
   console.log('• Run: pnpm dev:setup    - Setup development environment');
   console.log('• Run: pnpm dev:clean    - Clean and reinstall dependencies');
-  console.log('• Run: pnpm validate:healthcare - Validate healthcare compliance');
+  console.log(
+    '• Run: pnpm validate:healthcare - Validate healthcare compliance'
+  );
 }
 
 function getHealthGrade(percentage) {

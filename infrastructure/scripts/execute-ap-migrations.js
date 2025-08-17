@@ -61,14 +61,19 @@ async function executeMigrations() {
         }
 
         try {
-          console.log(`⏳ Executing statement ${index + 1}/${statements.length}...`);
+          console.log(
+            `⏳ Executing statement ${index + 1}/${statements.length}...`
+          );
           const { error } = await supabase.rpc('exec_sql', {
             sql_query: statement,
           });
 
           if (error) {
             // Try direct SQL execution via REST API
-            const { data, error: directError } = await supabase.from('_dummy').select('*').limit(0);
+            const { data, error: directError } = await supabase
+              .from('_dummy')
+              .select('*')
+              .limit(0);
             if (directError) {
               console.log(`⚠️  Statement ${index + 1} failed:`, error.message);
               // Continue with next statement for now
@@ -79,7 +84,10 @@ async function executeMigrations() {
             console.log(`✅ Statement ${index + 1} executed successfully`);
           }
         } catch (execError) {
-          console.log(`⚠️  Statement ${index + 1} execution error:`, execError.message);
+          console.log(
+            `⚠️  Statement ${index + 1} execution error:`,
+            execError.message
+          );
           // Continue with next statement
         }
       }
@@ -93,9 +101,15 @@ async function executeMigrations() {
 
     for (const tableName of apTables) {
       try {
-        const { data, error } = await supabase.from(tableName).select('count').limit(1);
+        const { data, error } = await supabase
+          .from(tableName)
+          .select('count')
+          .limit(1);
         if (error) {
-          console.log(`❌ Table '${tableName}' verification failed:`, error.message);
+          console.log(
+            `❌ Table '${tableName}' verification failed:`,
+            error.message
+          );
         } else {
           console.log(`✅ Table '${tableName}' is accessible`);
         }
@@ -105,12 +119,18 @@ async function executeMigrations() {
     }
 
     console.log('\n🎯 Migration execution completed!');
-    console.log('📋 Please check the Supabase dashboard to verify table creation:');
-    console.log('🔗 https://supabase.com/dashboard/project/gfkskrkbnawkuppazkpt/editor');
+    console.log(
+      '📋 Please check the Supabase dashboard to verify table creation:'
+    );
+    console.log(
+      '🔗 https://supabase.com/dashboard/project/gfkskrkbnawkuppazkpt/editor'
+    );
   } catch (error) {
     console.error('❌ Migration execution failed:', error.message);
     console.log('\n💡 Manual execution may be required via Supabase dashboard');
-    console.log('📋 Copy the SQL from migration files to the SQL Editor in Supabase dashboard');
+    console.log(
+      '📋 Copy the SQL from migration files to the SQL Editor in Supabase dashboard'
+    );
     process.exit(1);
   }
 }

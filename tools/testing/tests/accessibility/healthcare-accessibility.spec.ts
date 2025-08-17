@@ -113,7 +113,9 @@ class ScreenReaderSimulator {
       await expect(row).toHaveAttribute('aria-label');
 
       // Test healthcare-specific data announcements
-      const cpfCell = row.locator('text=/[0-9]{3}\\.[0-9]{3}\\.[0-9]{3}-[0-9]{2}/');
+      const cpfCell = row.locator(
+        'text=/[0-9]{3}\\.[0-9]{3}\\.[0-9]{3}-[0-9]{2}/'
+      );
       if ((await cpfCell.count()) > 0) {
         await expect(cpfCell).toBeVisible();
       }
@@ -130,7 +132,9 @@ class HealthcareFormTester {
    */
   async testBrazilianHealthcareForms() {
     // Test CPF field accessibility
-    const cpfField = this.page.locator('input[name="cpf"], input[aria-label*="CPF"]');
+    const cpfField = this.page.locator(
+      'input[name="cpf"], input[aria-label*="CPF"]'
+    );
     if ((await cpfField.count()) > 0) {
       await cpfField.first().focus();
       await expect(cpfField.first()).toHaveAttribute('aria-label');
@@ -140,14 +144,18 @@ class HealthcareFormTester {
       await cpfField.first().fill('12345678900');
       await this.page.keyboard.press('Tab');
 
-      const errorMessage = this.page.locator('[role="alert"], [aria-live="polite"]');
+      const errorMessage = this.page.locator(
+        '[role="alert"], [aria-live="polite"]'
+      );
       if ((await errorMessage.count()) > 0) {
         await expect(errorMessage.first()).toBeVisible();
       }
     }
 
     // Test phone field accessibility
-    const phoneField = this.page.locator('input[type="tel"], input[aria-label*="telefone"]');
+    const phoneField = this.page.locator(
+      'input[type="tel"], input[aria-label*="telefone"]'
+    );
     if ((await phoneField.count()) > 0) {
       await phoneField.first().focus();
       await expect(phoneField.first()).toHaveAttribute('aria-label');
@@ -156,9 +164,14 @@ class HealthcareFormTester {
     // Test healthcare-specific required fields
     const healthcareFields = ['nome', 'cpf', 'telefone', 'email'];
     for (const field of healthcareFields) {
-      const fieldElement = this.page.locator(`[name="${field}"], [aria-label*="${field}"]`);
+      const fieldElement = this.page.locator(
+        `[name="${field}"], [aria-label*="${field}"]`
+      );
       if ((await fieldElement.count()) > 0) {
-        await expect(fieldElement.first()).toHaveAttribute('aria-required', 'true');
+        await expect(fieldElement.first()).toHaveAttribute(
+          'aria-required',
+          'true'
+        );
       }
     }
   }
@@ -175,7 +188,9 @@ class HealthcareFormTester {
     }
 
     // Test individual field errors
-    const errorFields = this.page.locator('[aria-invalid="true"], .field-error');
+    const errorFields = this.page.locator(
+      '[aria-invalid="true"], .field-error'
+    );
     for (let i = 0; i < (await errorFields.count()); i++) {
       const field = errorFields.nth(i);
       await expect(field).toHaveAttribute('aria-describedby');
@@ -204,7 +219,9 @@ test.describe('Healthcare Accessibility Compliance - WCAG 2.1 AA', () => {
   });
 
   test.describe('Patients Portal Accessibility', () => {
-    test('should pass WCAG 2.1 AA compliance for patients page', async ({ page }) => {
+    test('should pass WCAG 2.1 AA compliance for patients page', async ({
+      page,
+    }) => {
       await page.goto('/dashboard/patients');
 
       // Run automated accessibility scan
@@ -215,7 +232,9 @@ test.describe('Healthcare Accessibility Compliance - WCAG 2.1 AA', () => {
       expect(accessibilityScanResults.violations).toEqual([]);
     });
 
-    test('should support keyboard navigation in patients table', async ({ page }) => {
+    test('should support keyboard navigation in patients table', async ({
+      page,
+    }) => {
       await page.goto('/dashboard/patients');
 
       // Test skip links
@@ -250,7 +269,9 @@ test.describe('Healthcare Accessibility Compliance - WCAG 2.1 AA', () => {
       await firstPatientRow.focus();
 
       // Verify aria-label for patient information
-      await expect(firstPatientRow.locator('a')).toHaveAttribute('aria-describedby');
+      await expect(firstPatientRow.locator('a')).toHaveAttribute(
+        'aria-describedby'
+      );
     });
 
     test('should work with JAWS screen reader', async ({ page }) => {
@@ -272,13 +293,17 @@ test.describe('Healthcare Accessibility Compliance - WCAG 2.1 AA', () => {
       await screenReader.simulateVoiceOver();
 
       // Test VoiceOver rotor compatibility
-      const landmarks = page.locator('[role="main"], [role="navigation"], [role="banner"]');
+      const landmarks = page.locator(
+        '[role="main"], [role="navigation"], [role="banner"]'
+      );
       expect(await landmarks.count()).toBeGreaterThan(0);
     });
   });
 
   test.describe('Healthcare Forms Accessibility', () => {
-    test('should support Brazilian healthcare form patterns', async ({ page }) => {
+    test('should support Brazilian healthcare form patterns', async ({
+      page,
+    }) => {
       await page.goto('/dashboard/patients/new');
 
       await formTester.testBrazilianHealthcareForms();
@@ -292,11 +317,15 @@ test.describe('Healthcare Accessibility Compliance - WCAG 2.1 AA', () => {
       await page.keyboard.type('(11) 99999-9999');
     });
 
-    test('should handle healthcare form errors accessibly', async ({ page }) => {
+    test('should handle healthcare form errors accessibly', async ({
+      page,
+    }) => {
       await page.goto('/dashboard/patients/new');
 
       // Trigger form validation errors
-      const submitButton = page.locator('button[type="submit"], input[type="submit"]');
+      const submitButton = page.locator(
+        'button[type="submit"], input[type="submit"]'
+      );
       if ((await submitButton.count()) > 0) {
         await submitButton.click();
 
@@ -309,7 +338,9 @@ test.describe('Healthcare Accessibility Compliance - WCAG 2.1 AA', () => {
     test('should meet WCAG AA color contrast ratios', async ({ page }) => {
       await page.goto('/dashboard/patients');
 
-      const axeResults = await new AxeBuilder({ page }).withTags(['color-contrast']).analyze();
+      const axeResults = await new AxeBuilder({ page })
+        .withTags(['color-contrast'])
+        .analyze();
 
       expect(axeResults.violations).toEqual([]);
     });
@@ -329,7 +360,9 @@ test.describe('Healthcare Accessibility Compliance - WCAG 2.1 AA', () => {
   });
 
   test.describe('Portuguese Localization Accessibility', () => {
-    test('should provide proper Portuguese language declarations', async ({ page }) => {
+    test('should provide proper Portuguese language declarations', async ({
+      page,
+    }) => {
       await page.goto('/dashboard/patients');
 
       // Check HTML lang attribute
@@ -346,17 +379,23 @@ test.describe('Healthcare Accessibility Compliance - WCAG 2.1 AA', () => {
       }
     });
 
-    test('should format Brazilian data correctly for screen readers', async ({ page }) => {
+    test('should format Brazilian data correctly for screen readers', async ({
+      page,
+    }) => {
       await page.goto('/dashboard/patients');
 
       // Test CPF formatting announcement
-      const cpfElements = page.locator('text=/[0-9]{3}\\.[0-9]{3}\\.[0-9]{3}-[0-9]{2}/');
+      const cpfElements = page.locator(
+        'text=/[0-9]{3}\\.[0-9]{3}\\.[0-9]{3}-[0-9]{2}/'
+      );
       if ((await cpfElements.count()) > 0) {
         await expect(cpfElements.first()).toBeVisible();
       }
 
       // Test phone formatting announcement
-      const phoneElements = page.locator('text=/\\([0-9]{2}\\) [0-9]{4,5}-[0-9]{4}/');
+      const phoneElements = page.locator(
+        'text=/\\([0-9]{2}\\) [0-9]{4,5}-[0-9]{4}/'
+      );
       if ((await phoneElements.count()) > 0) {
         await expect(phoneElements.first()).toBeVisible();
       }
@@ -364,7 +403,9 @@ test.describe('Healthcare Accessibility Compliance - WCAG 2.1 AA', () => {
   });
 
   test.describe('Healthcare-Specific Accessibility Patterns', () => {
-    test('should announce patient status changes appropriately', async ({ page }) => {
+    test('should announce patient status changes appropriately', async ({
+      page,
+    }) => {
       await page.goto('/dashboard/patients');
 
       // Test status badge accessibility
@@ -375,7 +416,9 @@ test.describe('Healthcare Accessibility Compliance - WCAG 2.1 AA', () => {
       }
     });
 
-    test('should provide appropriate healthcare data context', async ({ page }) => {
+    test('should provide appropriate healthcare data context', async ({
+      page,
+    }) => {
       await page.goto('/dashboard/patients');
 
       // Test patient data table headers

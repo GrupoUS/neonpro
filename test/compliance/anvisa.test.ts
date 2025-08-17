@@ -1,5 +1,9 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { mockANVISACompliance, mockAuditLogger, mockPatientData } from '../healthcare-setup';
+import {
+  mockANVISACompliance,
+  mockAuditLogger,
+  mockPatientData,
+} from '../healthcare-setup';
 
 describe('ANVISA Compliance Tests', () => {
   beforeEach(() => {
@@ -31,7 +35,8 @@ describe('ANVISA Compliance Tests', () => {
         registrationStatus: 'not_found',
       });
 
-      const validation = await mockANVISACompliance.validateProduct(invalidProduct);
+      const validation =
+        await mockANVISACompliance.validateProduct(invalidProduct);
 
       expect(validation.isValid).toBe(false);
       expect(validation.reason).toBe('Product not found in ANVISA registry');
@@ -77,7 +82,8 @@ describe('ANVISA Compliance Tests', () => {
     it('should validate ANVISA authorization for aesthetic procedures', async () => {
       const procedureCode = 'PROC-BOTOX-001';
 
-      const validation = await mockANVISACompliance.validateProcedure(procedureCode);
+      const validation =
+        await mockANVISACompliance.validateProcedure(procedureCode);
 
       expect(validation).toHaveProperty('isAuthorized', true);
       expect(validation).toHaveProperty('procedureName');
@@ -94,7 +100,10 @@ describe('ANVISA Compliance Tests', () => {
         performedBy: 'nurse-001', // Nurse attempting to perform
       };
 
-      const validateProfessionalLicense = (procedure: any, professional: any) => {
+      const validateProfessionalLicense = (
+        procedure: any,
+        professional: any
+      ) => {
         const validLicenses = {
           medical: ['doctor', 'dermatologist'],
           nursing: ['nurse'],
@@ -102,7 +111,9 @@ describe('ANVISA Compliance Tests', () => {
         };
 
         const requiredLicenses =
-          validLicenses[procedure.requiredLicense as keyof typeof validLicenses];
+          validLicenses[
+            procedure.requiredLicense as keyof typeof validLicenses
+          ];
         return requiredLicenses.includes(professional.type);
       };
 
@@ -130,7 +141,9 @@ describe('ANVISA Compliance Tests', () => {
       };
 
       const validateProtocols = (required: string[], implemented: string[]) => {
-        const missingProtocols = required.filter((protocol) => !implemented.includes(protocol));
+        const missingProtocols = required.filter(
+          (protocol) => !implemented.includes(protocol)
+        );
         return {
           isCompliant: missingProtocols.length === 0,
           missingProtocols,
@@ -160,7 +173,8 @@ describe('ANVISA Compliance Tests', () => {
         reportedBy: 'doctor-123',
       };
 
-      const report = await mockANVISACompliance.reportAdverseEvent(adverseEvent);
+      const report =
+        await mockANVISACompliance.reportAdverseEvent(adverseEvent);
 
       expect(report).toHaveProperty('reportId');
       expect(report).toHaveProperty('status', 'submitted');
@@ -254,8 +268,16 @@ describe('ANVISA Compliance Tests', () => {
     it('should validate storage condition compliance', () => {
       const storageRequirements = {
         botox: { temperature: '2-8°C', humidity: '<60%', light: 'protected' },
-        hyaluronic_acid: { temperature: '15-25°C', humidity: '<75%', light: 'protected' },
-        vitamins: { temperature: '15-25°C', humidity: '<60%', light: 'protected' },
+        hyaluronic_acid: {
+          temperature: '15-25°C',
+          humidity: '<75%',
+          light: 'protected',
+        },
+        vitamins: {
+          temperature: '15-25°C',
+          humidity: '<60%',
+          light: 'protected',
+        },
       };
 
       const actualConditions = {
@@ -265,13 +287,15 @@ describe('ANVISA Compliance Tests', () => {
       };
 
       const validateStorage = (product: string, conditions: any) => {
-        const requirements = storageRequirements[product as keyof typeof storageRequirements];
+        const requirements =
+          storageRequirements[product as keyof typeof storageRequirements];
         if (!requirements) return false;
 
         // Simplified validation for temperature (should be more sophisticated)
         const tempInRange = conditions.temperature.includes('°C');
         const humidityOk =
-          Number.parseInt(conditions.humidity) < Number.parseInt(requirements.humidity);
+          Number.parseInt(conditions.humidity) <
+          Number.parseInt(requirements.humidity);
         const lightOk = conditions.light === requirements.light;
 
         return tempInRange && humidityOk && lightOk;
@@ -302,7 +326,9 @@ describe('ANVISA Compliance Tests', () => {
         'professional_training_certificates',
       ];
 
-      const missingDocuments = requiredDocuments.filter((doc) => !clinicDocuments.includes(doc));
+      const missingDocuments = requiredDocuments.filter(
+        (doc) => !clinicDocuments.includes(doc)
+      );
 
       expect(missingDocuments).toContain('adverse_event_reports');
       expect(missingDocuments).toHaveLength(1);
@@ -311,8 +337,16 @@ describe('ANVISA Compliance Tests', () => {
     it('should validate document expiration dates', () => {
       const documents = [
         { type: 'import_license', expirationDate: '2025-12-31', isValid: true },
-        { type: 'quality_certificate', expirationDate: '2024-06-30', isValid: false },
-        { type: 'training_certificate', expirationDate: '2025-03-15', isValid: true },
+        {
+          type: 'quality_certificate',
+          expirationDate: '2024-06-30',
+          isValid: false,
+        },
+        {
+          type: 'training_certificate',
+          expirationDate: '2025-03-15',
+          isValid: true,
+        },
       ];
 
       const validateDocuments = (docs: any[]) => {
@@ -320,7 +354,8 @@ describe('ANVISA Compliance Tests', () => {
           ...doc,
           isExpired: new Date(doc.expirationDate) < new Date(),
           needsRenewal:
-            new Date(doc.expirationDate) < new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days
+            new Date(doc.expirationDate) <
+            new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days
         }));
       };
 

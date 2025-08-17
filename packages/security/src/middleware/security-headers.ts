@@ -53,8 +53,19 @@ const DEFAULT_SECURITY_CONFIG: Required<SecurityHeadersConfig> = {
       "'unsafe-inline'", // Required for Tailwind CSS
       'https://fonts.googleapis.com',
     ],
-    imgSrc: ["'self'", 'data:', 'blob:', 'https://*.supabase.co', 'https://images.unsplash.com'],
-    connectSrc: ["'self'", 'https://*.supabase.co', 'wss://*.supabase.co', 'https://vercel.live'],
+    imgSrc: [
+      "'self'",
+      'data:',
+      'blob:',
+      'https://*.supabase.co',
+      'https://images.unsplash.com',
+    ],
+    connectSrc: [
+      "'self'",
+      'https://*.supabase.co',
+      'wss://*.supabase.co',
+      'https://vercel.live',
+    ],
     fontSrc: ["'self'", 'https://fonts.gstatic.com'],
     objectSrc: ["'none'"],
     mediaSrc: ["'self'"],
@@ -155,7 +166,10 @@ export function applySecurityHeaders(
 /**
  * Validates if a request origin is trusted
  */
-export function isTrustedOrigin(origin: string, trustedDomains: string[]): boolean {
+export function isTrustedOrigin(
+  origin: string,
+  trustedDomains: string[]
+): boolean {
   if (!origin) {
     return false;
   }

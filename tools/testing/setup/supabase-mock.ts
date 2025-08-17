@@ -27,8 +27,12 @@ const createMockSupabaseClient = () => {
 
   singletonMockSupabaseClient = {
     auth: {
-      getSession: jest.fn(() => Promise.resolve({ data: { session: null }, error: null })),
-      getUser: jest.fn(() => Promise.resolve({ data: { user: null }, error: null })),
+      getSession: jest.fn(() =>
+        Promise.resolve({ data: { session: null }, error: null })
+      ),
+      getUser: jest.fn(() =>
+        Promise.resolve({ data: { user: null }, error: null })
+      ),
       signIn: jest.fn(),
       signOut: jest.fn(),
       onAuthStateChange: jest.fn(() => ({
@@ -90,8 +94,12 @@ jest.mock('@supabase/auth-js', () => {
         onAuthStateChange: jest.fn().mockReturnValue({
           data: { subscription: { unsubscribe: jest.fn() } },
         }),
-        getUser: jest.fn().mockResolvedValue({ data: { user: null }, error: null }),
-        getSession: jest.fn().mockResolvedValue({ data: { session: null }, error: null }),
+        getUser: jest
+          .fn()
+          .mockResolvedValue({ data: { user: null }, error: null }),
+        getSession: jest
+          .fn()
+          .mockResolvedValue({ data: { session: null }, error: null }),
         signInWithPassword: jest.fn().mockResolvedValue({
           data: { user: null, session: null },
           error: null,
@@ -118,4 +126,6 @@ jest.mock('@supabase/auth-js', () => {
 // Export the singleton for use in tests
 export const mockSupabaseClient = createMockSupabaseClient();
 
-console.log('🔧 Supabase singleton mock initialized - preventing multiple client instances');
+console.log(
+  '🔧 Supabase singleton mock initialized - preventing multiple client instances'
+);

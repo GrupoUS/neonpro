@@ -2,7 +2,15 @@
 
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import { AlertTriangle, CheckCircle2, Clock, Eye, RefreshCw, Search, XCircle } from 'lucide-react';
+import {
+  AlertTriangle,
+  CheckCircle2,
+  Clock,
+  Eye,
+  RefreshCw,
+  Search,
+  XCircle,
+} from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { Badge } from '../../ui/badge';
@@ -17,8 +25,21 @@ import {
 } from '../../ui/dialog';
 import { Input } from '../../ui/input';
 import { Label } from '../../ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../ui/select';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../../ui/table';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '../../ui/select';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '../../ui/table';
 
 type SecurityAlert = {
   id: string;
@@ -50,7 +71,9 @@ export function SecurityAlertsTable() {
   const [searchTerm, setSearchTerm] = useState('');
   const [severityFilter, setSeverityFilter] = useState<string>('all');
   const [statusFilter, setStatusFilter] = useState<string>('all');
-  const [selectedAlert, setSelectedAlert] = useState<SecurityAlert | null>(null);
+  const [selectedAlert, setSelectedAlert] = useState<SecurityAlert | null>(
+    null
+  );
 
   const fetchAlerts = async () => {
     try {
@@ -167,8 +190,10 @@ export function SecurityAlertsTable() {
       alert.alert_type.toLowerCase().includes(searchTerm.toLowerCase()) ||
       alert.source_ip?.toLowerCase().includes(searchTerm.toLowerCase());
 
-    const matchesSeverity = severityFilter === 'all' || alert.severity === severityFilter;
-    const matchesStatus = statusFilter === 'all' || alert.status === statusFilter;
+    const matchesSeverity =
+      severityFilter === 'all' || alert.severity === severityFilter;
+    const matchesStatus =
+      statusFilter === 'all' || alert.status === statusFilter;
 
     return matchesSearch && matchesSeverity && matchesStatus;
   });
@@ -254,7 +279,10 @@ export function SecurityAlertsTable() {
           <TableBody>
             {filteredAlerts.length === 0 ? (
               <TableRow>
-                <TableCell className="py-8 text-center text-muted-foreground" colSpan={7}>
+                <TableCell
+                  className="py-8 text-center text-muted-foreground"
+                  colSpan={7}
+                >
                   Nenhum alerta de segurança encontrado
                 </TableCell>
               </TableRow>
@@ -316,14 +344,20 @@ export function SecurityAlertsTable() {
                   </TableCell>
                   <TableCell>
                     <div className="text-sm">
-                      {format(new Date(alert.created_at), 'dd/MM/yyyy HH:mm', { locale: ptBR })}
+                      {format(new Date(alert.created_at), 'dd/MM/yyyy HH:mm', {
+                        locale: ptBR,
+                      })}
                     </div>
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex items-center justify-end space-x-2">
                       <Dialog>
                         <DialogTrigger asChild>
-                          <Button onClick={() => setSelectedAlert(alert)} size="sm" variant="ghost">
+                          <Button
+                            onClick={() => setSelectedAlert(alert)}
+                            size="sm"
+                            variant="ghost"
+                          >
                             <Eye className="h-4 w-4" />
                           </Button>
                         </DialogTrigger>
@@ -333,7 +367,9 @@ export function SecurityAlertsTable() {
                               {getPriorityIcon(alert.priority)}
                               <span>{alert.title}</span>
                               {alert.response_required && (
-                                <Badge variant="destructive">Resposta Necessária</Badge>
+                                <Badge variant="destructive">
+                                  Resposta Necessária
+                                </Badge>
                               )}
                             </DialogTitle>
                             <DialogDescription>
@@ -346,17 +382,27 @@ export function SecurityAlertsTable() {
                                 <div>
                                   <Label>Tipo de Alerta</Label>
                                   <div className="mt-1">
-                                    <Badge variant="outline">{selectedAlert.alert_type}</Badge>
+                                    <Badge variant="outline">
+                                      {selectedAlert.alert_type}
+                                    </Badge>
                                   </div>
                                 </div>
                                 <div>
                                   <Label>Severidade</Label>
                                   <div className="mt-1">
-                                    <Badge variant={getSeverityColor(selectedAlert.severity)}>
-                                      {selectedAlert.severity === 'critical' && 'CRÍTICA'}
-                                      {selectedAlert.severity === 'high' && 'ALTA'}
-                                      {selectedAlert.severity === 'medium' && 'MÉDIA'}
-                                      {selectedAlert.severity === 'low' && 'BAIXA'}
+                                    <Badge
+                                      variant={getSeverityColor(
+                                        selectedAlert.severity
+                                      )}
+                                    >
+                                      {selectedAlert.severity === 'critical' &&
+                                        'CRÍTICA'}
+                                      {selectedAlert.severity === 'high' &&
+                                        'ALTA'}
+                                      {selectedAlert.severity === 'medium' &&
+                                        'MÉDIA'}
+                                      {selectedAlert.severity === 'low' &&
+                                        'BAIXA'}
                                     </Badge>
                                   </div>
                                 </div>
@@ -364,11 +410,19 @@ export function SecurityAlertsTable() {
                                   <Label>Prioridade</Label>
                                   <div className="mt-1 flex items-center space-x-2">
                                     {getPriorityIcon(selectedAlert.priority)}
-                                    <Badge variant={getSeverityColor(selectedAlert.priority)}>
-                                      {selectedAlert.priority === 'urgent' && 'URGENTE'}
-                                      {selectedAlert.priority === 'high' && 'ALTA'}
-                                      {selectedAlert.priority === 'medium' && 'MÉDIA'}
-                                      {selectedAlert.priority === 'low' && 'BAIXA'}
+                                    <Badge
+                                      variant={getSeverityColor(
+                                        selectedAlert.priority
+                                      )}
+                                    >
+                                      {selectedAlert.priority === 'urgent' &&
+                                        'URGENTE'}
+                                      {selectedAlert.priority === 'high' &&
+                                        'ALTA'}
+                                      {selectedAlert.priority === 'medium' &&
+                                        'MÉDIA'}
+                                      {selectedAlert.priority === 'low' &&
+                                        'BAIXA'}
                                     </Badge>
                                   </div>
                                 </div>
@@ -376,11 +430,19 @@ export function SecurityAlertsTable() {
                                   <Label>Status</Label>
                                   <div className="mt-1 flex items-center space-x-2">
                                     {getStatusIcon(selectedAlert.status)}
-                                    <Badge variant={getStatusColor(selectedAlert.status)}>
-                                      {selectedAlert.status === 'active' && 'Ativo'}
-                                      {selectedAlert.status === 'acknowledged' && 'Reconhecido'}
-                                      {selectedAlert.status === 'resolved' && 'Resolvido'}
-                                      {selectedAlert.status === 'dismissed' && 'Descartado'}
+                                    <Badge
+                                      variant={getStatusColor(
+                                        selectedAlert.status
+                                      )}
+                                    >
+                                      {selectedAlert.status === 'active' &&
+                                        'Ativo'}
+                                      {selectedAlert.status ===
+                                        'acknowledged' && 'Reconhecido'}
+                                      {selectedAlert.status === 'resolved' &&
+                                        'Resolvido'}
+                                      {selectedAlert.status === 'dismissed' &&
+                                        'Descartado'}
                                     </Badge>
                                   </div>
                                 </div>
@@ -437,7 +499,9 @@ export function SecurityAlertsTable() {
                                 {selectedAlert.assigned_to && (
                                   <div>
                                     <Label>Atribuído para</Label>
-                                    <div className="mt-1 text-sm">{selectedAlert.assigned_to}</div>
+                                    <div className="mt-1 text-sm">
+                                      {selectedAlert.assigned_to}
+                                    </div>
                                   </div>
                                 )}
                               </div>
@@ -452,24 +516,34 @@ export function SecurityAlertsTable() {
                               )}
 
                               {selectedAlert.alert_data &&
-                                Object.keys(selectedAlert.alert_data).length > 0 && (
+                                Object.keys(selectedAlert.alert_data).length >
+                                  0 && (
                                   <div>
                                     <Label>Dados do Alerta</Label>
                                     <div className="mt-1">
                                       <pre className="max-h-40 overflow-auto rounded bg-muted p-3 text-xs">
-                                        {JSON.stringify(selectedAlert.alert_data, null, 2)}
+                                        {JSON.stringify(
+                                          selectedAlert.alert_data,
+                                          null,
+                                          2
+                                        )}
                                       </pre>
                                     </div>
                                   </div>
                                 )}
 
                               {selectedAlert.affected_resources &&
-                                Object.keys(selectedAlert.affected_resources).length > 0 && (
+                                Object.keys(selectedAlert.affected_resources)
+                                  .length > 0 && (
                                   <div>
                                     <Label>Recursos Afetados</Label>
                                     <div className="mt-1">
                                       <pre className="max-h-40 overflow-auto rounded bg-muted p-3 text-xs">
-                                        {JSON.stringify(selectedAlert.affected_resources, null, 2)}
+                                        {JSON.stringify(
+                                          selectedAlert.affected_resources,
+                                          null,
+                                          2
+                                        )}
                                       </pre>
                                     </div>
                                   </div>
@@ -480,7 +554,10 @@ export function SecurityAlertsTable() {
                                 <Select
                                   onValueChange={(value) => {
                                     handleUpdateStatus(selectedAlert.id, value);
-                                    setSelectedAlert({ ...selectedAlert, status: value as any });
+                                    setSelectedAlert({
+                                      ...selectedAlert,
+                                      status: value as any,
+                                    });
                                   }}
                                   value={selectedAlert.status}
                                 >
@@ -488,10 +565,18 @@ export function SecurityAlertsTable() {
                                     <SelectValue />
                                   </SelectTrigger>
                                   <SelectContent>
-                                    <SelectItem value="active">Ativo</SelectItem>
-                                    <SelectItem value="acknowledged">Reconhecido</SelectItem>
-                                    <SelectItem value="resolved">Resolvido</SelectItem>
-                                    <SelectItem value="dismissed">Descartado</SelectItem>
+                                    <SelectItem value="active">
+                                      Ativo
+                                    </SelectItem>
+                                    <SelectItem value="acknowledged">
+                                      Reconhecido
+                                    </SelectItem>
+                                    <SelectItem value="resolved">
+                                      Resolvido
+                                    </SelectItem>
+                                    <SelectItem value="dismissed">
+                                      Descartado
+                                    </SelectItem>
                                   </SelectContent>
                                 </Select>
                               </div>
@@ -511,16 +596,21 @@ export function SecurityAlertsTable() {
       {/* Summary */}
       <div className="flex items-center justify-between text-muted-foreground text-sm">
         <span>
-          Mostrando {filteredAlerts.length} de {alerts.length} alertas de segurança
+          Mostrando {filteredAlerts.length} de {alerts.length} alertas de
+          segurança
         </span>
         <div className="flex items-center space-x-4">
           <span className="flex items-center space-x-1">
             <div className="h-2 w-2 rounded-full bg-red-500" />
-            <span>Ativos: {alerts.filter((a) => a.status === 'active').length}</span>
+            <span>
+              Ativos: {alerts.filter((a) => a.status === 'active').length}
+            </span>
           </span>
           <span className="flex items-center space-x-1">
             <div className="h-2 w-2 rounded-full bg-green-500" />
-            <span>Resolvidos: {alerts.filter((a) => a.status === 'resolved').length}</span>
+            <span>
+              Resolvidos: {alerts.filter((a) => a.status === 'resolved').length}
+            </span>
           </span>
         </div>
       </div>

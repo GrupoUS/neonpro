@@ -32,10 +32,19 @@ async function main() {
 
   // Add basic healthcare specialties
   const specialties = [
-    { name: 'Dermatologia Estética', description: 'Tratamentos estéticos dermatológicos' },
-    { name: 'Harmonização Facial', description: 'Procedimentos de harmonização facial' },
+    {
+      name: 'Dermatologia Estética',
+      description: 'Tratamentos estéticos dermatológicos',
+    },
+    {
+      name: 'Harmonização Facial',
+      description: 'Procedimentos de harmonização facial',
+    },
     { name: 'Tricologia', description: 'Tratamentos capilares especializados' },
-    { name: 'Estética Corporal', description: 'Procedimentos estéticos corporais' },
+    {
+      name: 'Estética Corporal',
+      description: 'Procedimentos estéticos corporais',
+    },
   ];
 
   for (const specialty of specialties) {
@@ -48,7 +57,10 @@ async function main() {
 
   // Add sample procedure categories
   const categories = [
-    { name: 'Injetáveis', description: 'Procedimentos com substâncias injetáveis' },
+    {
+      name: 'Injetáveis',
+      description: 'Procedimentos com substâncias injetáveis',
+    },
     { name: 'Laser', description: 'Tratamentos a laser' },
     { name: 'Radiofrequência', description: 'Tratamentos com radiofrequência' },
     { name: 'Peeling', description: 'Procedimentos de peeling' },

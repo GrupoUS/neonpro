@@ -1,7 +1,11 @@
 import type {
   RiskAssessmentInput,
-  RiskLevel,
   RiskScoreBreakdown,
+} from '@/app/types/risk-assessment-automation';
+import {
+  EscalationPriority,
+  RiskFactorCategory,
+  RiskLevel,
 } from '@/app/types/risk-assessment-automation';
 
 // ============================================================================
@@ -245,12 +249,13 @@ export function calculateDemographicRisk(
   }
 
   // Genetic Predispositions
-  const geneticScore = demographic.geneticPredispositions.length * 5;
+  const geneticPredispositions = demographic.geneticPredispositions || [];
+  const geneticScore = geneticPredispositions.length * 5;
   if (geneticScore > 0) {
     factors.push({
       factor: 'Predisposições genéticas',
       impact: geneticScore,
-      explanation: `${demographic.geneticPredispositions.length} predisposições genéticas identificadas`,
+      explanation: `${geneticPredispositions.length} predisposições genéticas identificadas`,
     });
   }
 
@@ -297,9 +302,10 @@ export function calculateMedicalHistoryRisk(
   ];
 
   let chronicScore = 0;
-  const conditionCount = medicalHistory.chronicConditions.length;
+  const chronicConditions = medicalHistory.chronicConditions || [];
+  const conditionCount = chronicConditions.length;
 
-  medicalHistory.chronicConditions.forEach((condition) => {
+  chronicConditions.forEach((condition) => {
     const isHighRisk = highRiskConditions.some((risk) =>
       condition.toLowerCase().includes(risk),
     );
@@ -335,7 +341,8 @@ export function calculateMedicalHistoryRisk(
 
   // Previous Surgeries Risk Assessment
   let surgicalScore = 0;
-  const complicatedSurgeries = medicalHistory.previousSurgeries.filter(
+  const previousSurgeries = medicalHistory.previousSurgeries || [];
+  const complicatedSurgeries = previousSurgeries.filter(
     (surgery) =>
       surgery.outcome === 'COMPLICATED' || surgery.outcome === 'FAILED',
   );
@@ -350,19 +357,20 @@ export function calculateMedicalHistoryRisk(
   }
 
   // Multiple surgeries assessment
-  if (medicalHistory.previousSurgeries.length > 5) {
+  if (previousSurgeries.length > 5) {
     const additionalScore = 10;
     surgicalScore += additionalScore;
     factors.push({
       factor: 'Múltiplas cirurgias anteriores',
       impact: additionalScore,
-      explanation: `${medicalHistory.previousSurgeries.length} cirurgias anteriores indicam complexidade`,
+      explanation: `${previousSurgeries.length} cirurgias anteriores indicam complexidade`,
     });
   }
 
   // Allergies Risk Assessment
   let allergyScore = 0;
-  const severeAllergies = medicalHistory.allergies.filter(
+  const allergies = medicalHistory.allergies || [];
+  const severeAllergies = allergies.filter(
     (allergy) =>
       allergy.severity === 'SEVERE' || allergy.severity === 'ANAPHYLACTIC',
   );
@@ -377,7 +385,7 @@ export function calculateMedicalHistoryRisk(
   }
 
   // Drug allergies special consideration
-  const drugAllergies = medicalHistory.allergies.filter(
+  const drugAllergies = allergies.filter(
     (allergy) =>
       allergy.allergen.toLowerCase().includes('medicamento') ||
       allergy.allergen.toLowerCase().includes('anestesia') ||
@@ -396,7 +404,8 @@ export function calculateMedicalHistoryRisk(
 
   // Current Medications Risk Assessment
   let medicationScore = 0;
-  const medicationCount = medicalHistory.currentMedications.length;
+  const currentMedications = medicalHistory.currentMedications || [];
+  const medicationCount = currentMedications.length;
 
   // Polypharmacy risk (Brazilian geriatric medicine standards)
   if (medicationCount > 5) {
@@ -420,7 +429,7 @@ export function calculateMedicalHistoryRisk(
     'digoxina',
   ];
 
-  medicalHistory.currentMedications.forEach((medication) => {
+  currentMedications.forEach((medication) => {
     const isHighRisk = highRiskMeds.some((risk) =>
       medication.name.toLowerCase().includes(risk),
     );
@@ -446,7 +455,8 @@ export function calculateMedicalHistoryRisk(
     'anestesia',
   ];
 
-  medicalHistory.familyHistory.forEach((history) => {
+  const familyHistory = medicalHistory.familyHistory || [];
+  familyHistory.forEach((history) => {
     const isHighRisk = highRiskFamilyConditions.some((risk) =>
       history.condition.toLowerCase().includes(risk),
     );
@@ -1332,6 +1342,36 @@ function calculateModelUncertainty(score: number, factorCount: number): number {
 }
 
 /**
+ * Get escalation priority level as number for comparison
+ */
+function getEscalationPriorityLevel(priority: EscalationPriority): number {
+  switch (priority) {
+    case EscalationPriority.ROUTINE:
+      return 0;
+    case EscalationPriority.URGENT:
+      return 1;
+    case EscalationPriority.IMMEDIATE:
+      return 2;
+    case EscalationPriority.EMERGENCY:
+      return 3;
+    default:
+      return 0;
+  }
+}
+
+/**
+ * Get higher priority between two escalation priorities
+ */
+function getHigherPriority(
+  priority1: EscalationPriority,
+  priority2: EscalationPriority,
+): EscalationPriority {
+  return getEscalationPriorityLevel(priority1) > getEscalationPriorityLevel(priority2)
+    ? priority1
+    : priority2;
+}
+
+/**
  * Risk Level Classification Helper
  * Determine risk level with emergency escalation flags
  */
@@ -1383,10 +1423,10 @@ export function determineEmergencyEscalation(
     scoreBreakdown.categoryScores.medicalHistory > 60
   ) {
     requiresEscalation = true;
-    escalationPriority = Math.max(
-      escalationPriority as number,
-      EscalationPriority.URGENT as number,
-    ) as EscalationPriority;
+    escalationPriority = getHigherPriority(
+      escalationPriority,
+      EscalationPriority.URGENT,
+    );
     reasons.push(
       'Combinação de alto risco: condição atual crítica + histórico médico complexo',
     );
@@ -1398,10 +1438,10 @@ export function determineEmergencyEscalation(
   );
   if (criticalFactors.length >= 3) {
     requiresEscalation = true;
-    escalationPriority = Math.max(
-      escalationPriority as number,
-      EscalationPriority.URGENT as number,
-    ) as EscalationPriority;
+    escalationPriority = getHigherPriority(
+      escalationPriority,
+      EscalationPriority.URGENT,
+    );
     reasons.push(`${criticalFactors.length} fatores críticos identificados`);
   }
 

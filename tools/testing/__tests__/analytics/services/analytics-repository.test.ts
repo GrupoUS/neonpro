@@ -100,9 +100,9 @@ describe('AnalyticsRepository', () => {
       mockSupabase.from.mockReturnValue(mockFrom as any);
 
       // Act & Assert
-      await expect(repository.getSubscriptionMetrics('monthly')).rejects.toThrow(
-        'Database connection failed'
-      );
+      await expect(
+        repository.getSubscriptionMetrics('monthly')
+      ).rejects.toThrow('Database connection failed');
     });
 
     test('should handle missing data gracefully', async () => {
@@ -116,9 +116,9 @@ describe('AnalyticsRepository', () => {
       mockSupabase.from.mockReturnValue(mockFrom as any);
 
       // Act & Assert
-      await expect(repository.getSubscriptionMetrics('monthly')).rejects.toThrow(
-        'No subscription metrics found for period: monthly'
-      );
+      await expect(
+        repository.getSubscriptionMetrics('monthly')
+      ).rejects.toThrow('No subscription metrics found for period: monthly');
     });
   });
 
@@ -191,13 +191,17 @@ describe('AnalyticsRepository', () => {
       mockSupabase.rpc.mockResolvedValue(mockRpcResult);
 
       // Act
-      const result = await repository.calculateTrialConversionProbability('user123');
+      const result =
+        await repository.calculateTrialConversionProbability('user123');
 
       // Assert
       expect(result).toEqual(mockRpcResult.data);
-      expect(mockSupabase.rpc).toHaveBeenCalledWith('calculate_trial_conversion_ai', {
-        user_id: 'user123',
-      });
+      expect(mockSupabase.rpc).toHaveBeenCalledWith(
+        'calculate_trial_conversion_ai',
+        {
+          user_id: 'user123',
+        }
+      );
     });
   });
 
@@ -281,7 +285,9 @@ describe('AnalyticsRepository', () => {
       expect(result.predictions).toBeDefined();
       expect(result.predictions).toHaveLength(1);
       expect(result.predictions[0].value).toBe(16_000);
-      expect(result.predictions[0].confidence.lower).toBeLessThan(result.predictions[0].value);
+      expect(result.predictions[0].confidence.lower).toBeLessThan(
+        result.predictions[0].value
+      );
       expect(result.modelVersion).toBe('v2.1');
     });
   });
@@ -336,9 +342,9 @@ describe('AnalyticsRepository', () => {
       mockSupabase.from.mockReturnValue(mockFrom as any);
 
       // Act & Assert
-      await expect(repository.getSubscriptionMetrics('monthly')).rejects.toThrow(
-        'Invalid subscription metrics data format'
-      );
+      await expect(
+        repository.getSubscriptionMetrics('monthly')
+      ).rejects.toThrow('Invalid subscription metrics data format');
     });
 
     test('should validate date ranges for cohort analysis', async () => {
@@ -347,9 +353,9 @@ describe('AnalyticsRepository', () => {
       const endDate = new Date('2024-01-31');
 
       // Act & Assert
-      await expect(repository.getCohortAnalysis(startDate, endDate)).rejects.toThrow(
-        'Invalid date range provided'
-      );
+      await expect(
+        repository.getCohortAnalysis(startDate, endDate)
+      ).rejects.toThrow('Invalid date range provided');
     });
   });
 

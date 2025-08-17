@@ -8,9 +8,12 @@
 import { createClient } from '@supabase/supabase-js';
 
 // Default/mock values for testing and build environments
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://mock.supabase.co';
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'mock-anon-key';
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || 'mock-service-key';
+const supabaseUrl =
+  process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://mock.supabase.co';
+const supabaseAnonKey =
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'mock-anon-key';
+const supabaseServiceKey =
+  process.env.SUPABASE_SERVICE_ROLE_KEY || 'mock-service-key';
 
 // Healthcare user interface
 export type HealthcareUser = {
@@ -79,7 +82,10 @@ export class HealthcareAuth {
   /**
    * Healthcare-compliant user authentication
    */
-  async authenticateUser(email: string, _password: string): Promise<HealthcareUser | null> {
+  async authenticateUser(
+    email: string,
+    _password: string
+  ): Promise<HealthcareUser | null> {
     // Mock authentication for build/test environments
     if (supabaseUrl === 'https://mock.supabase.co') {
       return {
@@ -137,5 +143,7 @@ export class HealthcareAuth {
 }
 
 // Convenient exports for backward compatibility
-export const createSupabaseClient = () => HealthcareAuth.getInstance().createClient();
-export const createSupabaseAdminClient = () => HealthcareAuth.getInstance().createAdminClient();
+export const createSupabaseClient = () =>
+  HealthcareAuth.getInstance().createClient();
+export const createSupabaseAdminClient = () =>
+  HealthcareAuth.getInstance().createAdminClient();

@@ -134,7 +134,9 @@ export const usePatientSearch = (
    * Levenshtein distance for fuzzy matching
    */
   const levenshteinDistance = useCallback((a: string, b: string): number => {
-    const matrix = new Array(b.length + 1).fill(null).map(() => new Array(a.length + 1).fill(null));
+    const matrix = new Array(b.length + 1)
+      .fill(null)
+      .map(() => new Array(a.length + 1).fill(null));
 
     for (let i = 0; i <= a.length; i++) {
       matrix[0][i] = i;
@@ -212,7 +214,9 @@ export const usePatientSearch = (
         ];
 
         // Check basic fields
-        const basicMatch = basicFields.some((field) => fuzzyMatch(field, debouncedSearchTerm));
+        const basicMatch = basicFields.some((field) =>
+          fuzzyMatch(field, debouncedSearchTerm)
+        );
 
         if (basicMatch) {
           return true;
@@ -225,7 +229,9 @@ export const usePatientSearch = (
           ...(patient.medications || []),
         ];
 
-        const medicalMatch = medicalFields.some((field) => fuzzyMatch(field, debouncedSearchTerm));
+        const medicalMatch = medicalFields.some((field) =>
+          fuzzyMatch(field, debouncedSearchTerm)
+        );
 
         return medicalMatch;
       })

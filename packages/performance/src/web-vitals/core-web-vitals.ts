@@ -125,9 +125,15 @@ class HealthcareWebVitals {
    * Check if this is a critical healthcare path
    */
   private isCriticalHealthcarePath(_metricName: string): boolean {
-    const criticalWorkflows = ['patient-registration', 'medical-form', 'real-time-update'];
+    const criticalWorkflows = [
+      'patient-registration',
+      'medical-form',
+      'real-time-update',
+    ];
 
-    return criticalWorkflows.includes(this.healthcareContext.workflowType || '');
+    return criticalWorkflows.includes(
+      this.healthcareContext.workflowType || ''
+    );
   }
 
   /**
@@ -153,7 +159,10 @@ class HealthcareWebVitals {
   private monitorPatientLookup(): void {
     const observer = new PerformanceObserver((list) => {
       list.getEntries().forEach((entry) => {
-        if (entry.name.includes('patient-lookup') || entry.name.includes('/api/patients')) {
+        if (
+          entry.name.includes('patient-lookup') ||
+          entry.name.includes('/api/patients')
+        ) {
           const metric: HealthcareVitalsMetric = {
             name: 'TTFB',
             value: entry.duration,
@@ -193,7 +202,10 @@ class HealthcareWebVitals {
           mutation.addedNodes.forEach((node) => {
             if (node.nodeType === Node.ELEMENT_NODE) {
               const element = node as Element;
-              if (element.tagName === 'FORM' || element.classList.contains('medical-form')) {
+              if (
+                element.tagName === 'FORM' ||
+                element.classList.contains('medical-form')
+              ) {
                 const renderTime = performance.now();
                 const metric: HealthcareVitalsMetric = {
                   name: 'LCP',
@@ -270,7 +282,10 @@ class HealthcareWebVitals {
     // Monitor calendar and scheduling interactions
     document.addEventListener('click', (event) => {
       const target = event.target as Element;
-      if (target.closest('.scheduling-calendar') || target.closest('.appointment-form')) {
+      if (
+        target.closest('.scheduling-calendar') ||
+        target.closest('.appointment-form')
+      ) {
         const interactionTime = performance.now();
 
         setTimeout(() => {

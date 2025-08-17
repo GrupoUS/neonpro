@@ -243,7 +243,9 @@ export class HealthcareMonitoringDashboard {
     const alerts: Alert[] = [];
 
     // Evaluate system health alerts
-    if (this.metrics.systemHealth.errorRate > this.alertThresholds.maxErrorRate) {
+    if (
+      this.metrics.systemHealth.errorRate > this.alertThresholds.maxErrorRate
+    ) {
       alerts.push({
         type: 'CRITICAL',
         category: 'SYSTEM_HEALTH',

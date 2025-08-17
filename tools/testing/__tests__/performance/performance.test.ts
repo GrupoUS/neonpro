@@ -30,7 +30,8 @@ describe('Subscription System Performance', () => {
 
       // Simulate subscription validation
       const subscription = createMockSubscription({ status: 'active' });
-      const isValid = subscription.status === 'active' && subscription.endDate > new Date();
+      const isValid =
+        subscription.status === 'active' && subscription.endDate > new Date();
 
       const endTime = performance.now();
       const responseTime = endTime - startTime;
@@ -96,8 +97,12 @@ describe('Subscription System Performance', () => {
       const startTime = performance.now();
 
       // Simulate filtering operations
-      const activeSubscriptions = largeDataset.filter((sub) => sub.status === 'active');
-      const _premiumSubscriptions = activeSubscriptions.filter((sub) => sub.tier === 'premium');
+      const activeSubscriptions = largeDataset.filter(
+        (sub) => sub.status === 'active'
+      );
+      const _premiumSubscriptions = activeSubscriptions.filter(
+        (sub) => sub.tier === 'premium'
+      );
 
       const endTime = performance.now();
       const processingTime = endTime - startTime;
@@ -172,7 +177,8 @@ describe('Subscription System Performance', () => {
       }
 
       // Performance should remain consistent (standard deviation < 50% of mean)
-      const mean = performanceResults.reduce((a, b) => a + b) / performanceResults.length;
+      const mean =
+        performanceResults.reduce((a, b) => a + b) / performanceResults.length;
       const variance =
         performanceResults.reduce((acc, time) => acc + (time - mean) ** 2, 0) /
         performanceResults.length;

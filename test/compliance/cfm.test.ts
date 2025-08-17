@@ -1,5 +1,9 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { mockAuditLogger, mockCFMValidation, mockMedicalEncryption } from '../healthcare-setup';
+import {
+  mockAuditLogger,
+  mockCFMValidation,
+  mockMedicalEncryption,
+} from '../healthcare-setup';
 
 describe('CFM (Medical Council) Compliance Tests', () => {
   beforeEach(() => {
@@ -39,21 +43,36 @@ describe('CFM (Medical Council) Compliance Tests', () => {
 
     it('should validate specialty authorization for procedures', () => {
       const procedureSpecialtyMap = {
-        botox_application: ['dermatology', 'plastic_surgery', 'aesthetic_medicine'],
+        botox_application: [
+          'dermatology',
+          'plastic_surgery',
+          'aesthetic_medicine',
+        ],
         surgical_procedure: ['plastic_surgery', 'general_surgery'],
         laser_treatment: ['dermatology', 'aesthetic_medicine'],
         chemical_peel: ['dermatology', 'aesthetic_medicine'],
       };
 
-      const validateSpecialtyAuthorization = (procedure: string, doctorSpecialty: string) => {
+      const validateSpecialtyAuthorization = (
+        procedure: string,
+        doctorSpecialty: string
+      ) => {
         const authorizedSpecialties =
-          procedureSpecialtyMap[procedure as keyof typeof procedureSpecialtyMap];
+          procedureSpecialtyMap[
+            procedure as keyof typeof procedureSpecialtyMap
+          ];
         return authorizedSpecialties?.includes(doctorSpecialty);
       };
 
-      expect(validateSpecialtyAuthorization('botox_application', 'dermatology')).toBe(true);
-      expect(validateSpecialtyAuthorization('surgical_procedure', 'dermatology')).toBe(false);
-      expect(validateSpecialtyAuthorization('laser_treatment', 'aesthetic_medicine')).toBe(true);
+      expect(
+        validateSpecialtyAuthorization('botox_application', 'dermatology')
+      ).toBe(true);
+      expect(
+        validateSpecialtyAuthorization('surgical_procedure', 'dermatology')
+      ).toBe(false);
+      expect(
+        validateSpecialtyAuthorization('laser_treatment', 'aesthetic_medicine')
+      ).toBe(true);
     });
 
     it('should validate continuing medical education requirements', () => {
@@ -74,7 +93,8 @@ describe('CFM (Medical Council) Compliance Tests', () => {
           cmeValid,
           hoursCompleted,
           expiresIn: Math.ceil(
-            (new Date(doc.cmeValidUntil).getTime() - Date.now()) / (1000 * 60 * 60 * 24)
+            (new Date(doc.cmeValidUntil).getTime() - Date.now()) /
+              (1000 * 60 * 60 * 24)
           ),
         };
       };
@@ -91,7 +111,8 @@ describe('CFM (Medical Council) Compliance Tests', () => {
     it('should validate digital signatures for medical documents', async () => {
       const signature = 'digital-signature-hash-123';
 
-      const validation = await mockCFMValidation.validateDigitalSignature(signature);
+      const validation =
+        await mockCFMValidation.validateDigitalSignature(signature);
 
       expect(validation).toHaveProperty('isValid', true);
       expect(validation).toHaveProperty('signatureId', signature);
@@ -135,10 +156,14 @@ describe('CFM (Medical Council) Compliance Tests', () => {
       const currentTime = new Date();
 
       // Signature should be after document creation
-      expect(signatureTime.getTime()).toBeGreaterThan(documentCreatedTime.getTime());
+      expect(signatureTime.getTime()).toBeGreaterThan(
+        documentCreatedTime.getTime()
+      );
 
       // Signature should not be in the future
-      expect(signatureTime.getTime()).toBeLessThanOrEqual(currentTime.getTime());
+      expect(signatureTime.getTime()).toBeLessThanOrEqual(
+        currentTime.getTime()
+      );
     });
   });
 
@@ -162,7 +187,8 @@ describe('CFM (Medical Council) Compliance Tests', () => {
         prescriptionType: 'aesthetic_treatment',
       };
 
-      const validation = await mockCFMValidation.validatePrescription(prescription);
+      const validation =
+        await mockCFMValidation.validatePrescription(prescription);
 
       expect(validation).toHaveProperty('isValid', true);
       expect(validation).toHaveProperty('prescriptionId');
@@ -179,7 +205,8 @@ describe('CFM (Medical Council) Compliance Tests', () => {
       };
 
       const validateControlledSubstance = (medication: string) => {
-        const substance = controlledSubstances[medication as keyof typeof controlledSubstances];
+        const substance =
+          controlledSubstances[medication as keyof typeof controlledSubstances];
         return {
           isControlled: !!substance,
           schedule: substance?.schedule,
@@ -240,12 +267,19 @@ describe('CFM (Medical Council) Compliance Tests', () => {
       const retentionPolicies = {
         adult_patient: { years: 20, legal_basis: 'CFM_Resolution_1821_2007' },
         minor_patient: { years: 25, legal_basis: 'CFM_Resolution_1821_2007' }, // Until 18 + 20 years
-        aesthetic_procedure: { years: 15, legal_basis: 'CFM_Resolution_2217_2018' },
+        aesthetic_procedure: {
+          years: 15,
+          legal_basis: 'CFM_Resolution_2217_2018',
+        },
         controlled_substance: { years: 30, legal_basis: 'ANVISA_RDC_344_1998' },
       };
 
-      const calculateRetentionPeriod = (recordType: string, patientAge?: number) => {
-        const policy = retentionPolicies[recordType as keyof typeof retentionPolicies];
+      const calculateRetentionPeriod = (
+        recordType: string,
+        patientAge?: number
+      ) => {
+        const policy =
+          retentionPolicies[recordType as keyof typeof retentionPolicies];
 
         if (recordType === 'minor_patient' && patientAge) {
           const yearsUntil18 = Math.max(0, 18 - patientAge);
@@ -278,7 +312,9 @@ describe('CFM (Medical Council) Compliance Tests', () => {
         digitalSignature: 'tele-signature-123',
       };
 
-      const validateTelemedicine = (consultation: typeof telemedicineConsultation) => {
+      const validateTelemedicine = (
+        consultation: typeof telemedicineConsultation
+      ) => {
         const requiredFields = [
           'consultationId',
           'doctorId',
@@ -303,10 +339,13 @@ describe('CFM (Medical Council) Compliance Tests', () => {
         ];
 
         return {
-          isCompliant: missingFields.length === 0 && securityRequirements.every(Boolean),
+          isCompliant:
+            missingFields.length === 0 && securityRequirements.every(Boolean),
           missingFields,
           securityScore:
-            (securityRequirements.filter(Boolean).length / securityRequirements.length) * 100,
+            (securityRequirements.filter(Boolean).length /
+              securityRequirements.length) *
+            100,
         };
       };
 
@@ -319,15 +358,33 @@ describe('CFM (Medical Council) Compliance Tests', () => {
 
     it('should restrict telemedicine for certain procedures', () => {
       const procedureRestrictions = {
-        initial_consultation: { telemedicine_allowed: true, restrictions: 'follow_up_required' },
-        follow_up_consultation: { telemedicine_allowed: true, restrictions: 'none' },
-        botox_application: { telemedicine_allowed: false, restrictions: 'in_person_required' },
-        surgical_procedure: { telemedicine_allowed: false, restrictions: 'in_person_required' },
-        prescription_renewal: { telemedicine_allowed: true, restrictions: 'prior_in_person_exam' },
+        initial_consultation: {
+          telemedicine_allowed: true,
+          restrictions: 'follow_up_required',
+        },
+        follow_up_consultation: {
+          telemedicine_allowed: true,
+          restrictions: 'none',
+        },
+        botox_application: {
+          telemedicine_allowed: false,
+          restrictions: 'in_person_required',
+        },
+        surgical_procedure: {
+          telemedicine_allowed: false,
+          restrictions: 'in_person_required',
+        },
+        prescription_renewal: {
+          telemedicine_allowed: true,
+          restrictions: 'prior_in_person_exam',
+        },
       };
 
       const canUseTelemedine = (procedure: string) => {
-        const restriction = procedureRestrictions[procedure as keyof typeof procedureRestrictions];
+        const restriction =
+          procedureRestrictions[
+            procedure as keyof typeof procedureRestrictions
+          ];
         return restriction?.telemedicine_allowed;
       };
 
@@ -379,7 +436,8 @@ describe('CFM (Medical Council) Compliance Tests', () => {
           isValid:
             completedElements.length === requiredElements.length &&
             presentSignatures.length === requiredSignatures.length,
-          completionRate: (completedElements.length / requiredElements.length) * 100,
+          completionRate:
+            (completedElements.length / requiredElements.length) * 100,
           missingElements: requiredElements.filter(
             (element) => consent[element as keyof typeof consent] !== true
           ),
@@ -408,7 +466,11 @@ describe('CFM (Medical Council) Compliance Tests', () => {
       };
 
       // Test audit logging
-      await mockAuditLogger.logAccess('view_patient_data', 'patient-123', 'doctor-123');
+      await mockAuditLogger.logAccess(
+        'view_patient_data',
+        'patient-123',
+        'doctor-123'
+      );
 
       expect(mockAuditLogger.logAccess).toHaveBeenCalledWith(
         'view_patient_data',
@@ -417,7 +479,9 @@ describe('CFM (Medical Council) Compliance Tests', () => {
       );
 
       // Validate all measures are in place
-      const allMeasuresImplemented = Object.values(confidentialityMeasures).every(Boolean);
+      const allMeasuresImplemented = Object.values(
+        confidentialityMeasures
+      ).every(Boolean);
       expect(allMeasuresImplemented).toBe(true);
     });
   });

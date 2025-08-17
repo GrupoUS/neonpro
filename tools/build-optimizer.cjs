@@ -56,7 +56,8 @@ class BuildOptimizer {
         validate: 'turbo format:check lint type-check test',
 
         // CI/CD optimized
-        'ci:cache': 'turbo format:check lint type-check test build --cache-dir=.turbo',
+        'ci:cache':
+          'turbo format:check lint type-check test build --cache-dir=.turbo',
       };
 
       // Adicionar apenas scripts que não existem

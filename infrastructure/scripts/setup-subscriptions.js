@@ -107,7 +107,10 @@ async function checkSupabaseConnection() {
     );
 
     // Teste básico de conexão
-    const { error } = await supabase.from('auth.users').select('count').limit(1);
+    const { error } = await supabase
+      .from('auth.users')
+      .select('count')
+      .limit(1);
 
     if (error && !error.message.includes('permission denied')) {
       throw new Error(`Conexão falhou: ${error.message}`);
@@ -121,7 +124,8 @@ async function checkSupabaseConnection() {
 
 // 4. Aplicar Migration do Banco de Dados
 async function applyDatabaseMigration() {
-  const migrationPath = 'supabase/migrations/20250721130000_create_subscriptions_schema.sql';
+  const migrationPath =
+    'supabase/migrations/20250721130000_create_subscriptions_schema.sql';
 
   if (!fs.existsSync(migrationPath)) {
     throw new Error('Arquivo de migration não encontrado');
@@ -159,7 +163,9 @@ async function applyDatabaseMigration() {
     console.log('   2. Vá para SQL Editor');
     console.log('   3. Execute o conteúdo do arquivo:');
     console.log(`      ${migrationPath}`);
-    console.log('   4. Ou use: npx supabase db push (se CLI estiver configurado)');
+    console.log(
+      '   4. Ou use: npx supabase db push (se CLI estiver configurado)'
+    );
   } catch (error) {
     throw new Error(`Erro ao aplicar migration: ${error.message}`);
   }
@@ -188,7 +194,9 @@ async function checkStripeConfiguration() {
     console.log(`   Preços encontrados: ${prices.data.length}`);
 
     if (prices.data.length === 0) {
-      console.log('   ⚠️  Nenhum preço encontrado - configure no Stripe Dashboard');
+      console.log(
+        '   ⚠️  Nenhum preço encontrado - configure no Stripe Dashboard'
+      );
     }
   } catch (error) {
     throw new Error(`Erro na configuração Stripe: ${error.message}`);
@@ -220,7 +228,9 @@ async function setupDevelopmentScripts() {
 
   const expectedScripts = ['test:stripe', 'test:db', 'test:subscriptions'];
 
-  const missingScripts = expectedScripts.filter((script) => !packageJson.scripts[script]);
+  const missingScripts = expectedScripts.filter(
+    (script) => !packageJson.scripts[script]
+  );
 
   if (missingScripts.length > 0) {
     console.log(`   ⚠️  Scripts faltando: ${missingScripts.join(', ')}`);
@@ -274,7 +284,9 @@ async function generateSetupReport() {
     report.nextSteps.push('Aplicar migration do banco de dados manualmente');
   }
 
-  report.nextSteps.push('Executar npm run test:subscriptions para validação completa');
+  report.nextSteps.push(
+    'Executar npm run test:subscriptions para validação completa'
+  );
   report.nextSteps.push('Iniciar desenvolvimento com npm run dev');
 
   fs.writeFileSync('.setup-report.json', JSON.stringify(report, null, 2));

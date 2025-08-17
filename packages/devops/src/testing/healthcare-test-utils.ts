@@ -96,7 +96,9 @@ export function renderWithHealthcareContext(
 /**
  * Generate Test Healthcare Users
  */
-export function generateTestUser(role: HealthcareTestUser['role']): HealthcareTestUser {
+export function generateTestUser(
+  role: HealthcareTestUser['role']
+): HealthcareTestUser {
   const baseUser = {
     id: `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
     tenantId: 'test-tenant',
@@ -121,13 +123,22 @@ export function generateTestUser(role: HealthcareTestUser['role']): HealthcareTe
       return {
         ...baseUser,
         role: 'patient',
-        permissions: ['appointments:read', 'treatments:read', 'profile:read', 'profile:write'],
+        permissions: [
+          'appointments:read',
+          'treatments:read',
+          'profile:read',
+          'profile:write',
+        ],
       };
     case 'nurse':
       return {
         ...baseUser,
         role: 'nurse',
-        permissions: ['patients:read', 'appointments:read', 'treatments:assist'],
+        permissions: [
+          'patients:read',
+          'appointments:read',
+          'treatments:assist',
+        ],
       };
     default:
       return {

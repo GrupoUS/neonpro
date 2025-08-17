@@ -34,7 +34,9 @@ test.describe('NeonPro Application', () => {
     await page.waitForLoadState('networkidle');
 
     // Take mobile screenshot
-    await page.screenshot({ path: 'tools/testing/reports/mobile-homepage.png' });
+    await page.screenshot({
+      path: 'tools/testing/reports/mobile-homepage.png',
+    });
 
     // Verify mobile responsive behavior
     await expect(page.locator('body')).toBeVisible();

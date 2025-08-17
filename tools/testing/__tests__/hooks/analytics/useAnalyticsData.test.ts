@@ -7,7 +7,10 @@ import {
 import { renderHook, waitFor } from '@testing-library/react';
 import React from 'react';
 import { vi } from 'vitest';
-import { mockAnalyticsData, mockErrorResponse } from '@/../../__tests__/utils/mockData';
+import {
+  mockAnalyticsData,
+  mockErrorResponse,
+} from '@/../../__tests__/utils/mockData';
 import { useAnalyticsData } from '@/hooks/analytics/useAnalyticsData';
 
 // Mock Supabase client
@@ -43,7 +46,8 @@ describe('useAnalyticsData', () => {
 
   it('should return analytics data successfully', async () => {
     // Mock successful API response
-    const mockSupabase = require('@/utils/supabase/client').createSupabaseClient();
+    const mockSupabase =
+      require('@/utils/supabase/client').createSupabaseClient();
     mockSupabase.select.mockResolvedValueOnce({
       data: mockAnalyticsData,
       error: null,
@@ -76,7 +80,8 @@ describe('useAnalyticsData', () => {
 
   it('should handle API errors gracefully', async () => {
     // Mock error response
-    const mockSupabase = require('@/utils/supabase/client').createSupabaseClient();
+    const mockSupabase =
+      require('@/utils/supabase/client').createSupabaseClient();
     mockSupabase.select.mockResolvedValueOnce(mockErrorResponse);
 
     const { result } = renderHook(
@@ -98,18 +103,22 @@ describe('useAnalyticsData', () => {
   });
 
   it('should refetch data when filters change', async () => {
-    const mockSupabase = require('@/utils/supabase/client').createSupabaseClient();
+    const mockSupabase =
+      require('@/utils/supabase/client').createSupabaseClient();
     mockSupabase.select.mockResolvedValue({
       data: mockAnalyticsData,
       error: null,
     });
 
-    const { result, rerender } = renderHook(({ filters }) => useAnalyticsData(filters), {
-      wrapper: createWrapper(),
-      initialProps: {
-        filters: { dateRange: { start: '2024-01-01', end: '2024-01-31' } },
-      },
-    });
+    const { result, rerender } = renderHook(
+      ({ filters }) => useAnalyticsData(filters),
+      {
+        wrapper: createWrapper(),
+        initialProps: {
+          filters: { dateRange: { start: '2024-01-01', end: '2024-01-31' } },
+        },
+      }
+    );
 
     await waitFor(() => {
       expect(result.current.isSuccess).toBe(true);
@@ -132,7 +141,8 @@ describe('useAnalyticsData', () => {
   });
 
   it('should cache data properly', async () => {
-    const mockSupabase = require('@/utils/supabase/client').createSupabaseClient();
+    const mockSupabase =
+      require('@/utils/supabase/client').createSupabaseClient();
     mockSupabase.select.mockResolvedValue({
       data: mockAnalyticsData,
       error: null,

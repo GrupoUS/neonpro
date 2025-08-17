@@ -2,7 +2,16 @@
 // Story 11.4: Alertas e Relatórios de Estoque
 // Integration tests covering API endpoints with database operations
 
-import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
+import {
+  afterAll,
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi,
+} from 'vitest';
 
 // Mock Next.js request/response for testing
 const mockRequest = (method: string, url: string, body?: any) =>
@@ -189,7 +198,10 @@ describe('GET /api/stock/alerts', () => {
     expect(responseData.success).toBe(true);
 
     // Verify that the filter was applied
-    expect(mockSupabaseClient.eq).toHaveBeenCalledWith('severity_level', 'critical');
+    expect(mockSupabaseClient.eq).toHaveBeenCalledWith(
+      'severity_level',
+      'critical'
+    );
   });
 
   it('should handle authentication errors', async () => {
@@ -246,7 +258,10 @@ describe('GET /api/stock/alerts', () => {
   });
 
   it('should apply proper sorting', async () => {
-    const request = mockRequest('GET', '/api/stock/alerts?sortBy=severity_level&sortOrder=asc');
+    const request = mockRequest(
+      'GET',
+      '/api/stock/alerts?sortBy=severity_level&sortOrder=asc'
+    );
 
     const response = await GET(request);
 
@@ -286,7 +301,11 @@ describe('POST /api/stock/alerts', () => {
   });
 
   it('should create alert configuration successfully', async () => {
-    const request = mockRequest('POST', '/api/stock/alerts', validCreateRequest);
+    const request = mockRequest(
+      'POST',
+      '/api/stock/alerts',
+      validCreateRequest
+    );
 
     const response = await POST(request);
     const responseData = await response.json();
@@ -360,7 +379,11 @@ describe('POST /api/stock/alerts', () => {
       }),
     });
 
-    const request = mockRequest('POST', '/api/stock/alerts', validCreateRequest);
+    const request = mockRequest(
+      'POST',
+      '/api/stock/alerts',
+      validCreateRequest
+    );
 
     const response = await POST(request);
     const responseData = await response.json();
@@ -405,7 +428,11 @@ describe('POST /api/stock/alerts/acknowledge', () => {
   });
 
   it('should acknowledge alert successfully', async () => {
-    const request = mockRequest('POST', '/api/stock/alerts/acknowledge', validAcknowledgeRequest);
+    const request = mockRequest(
+      'POST',
+      '/api/stock/alerts/acknowledge',
+      validAcknowledgeRequest
+    );
 
     const response = await acknowledgePost(request);
     const responseData = await response.json();
@@ -421,7 +448,11 @@ describe('POST /api/stock/alerts/acknowledge', () => {
       alertId: 'invalid-uuid',
     };
 
-    const request = mockRequest('POST', '/api/stock/alerts/acknowledge', invalidRequest);
+    const request = mockRequest(
+      'POST',
+      '/api/stock/alerts/acknowledge',
+      invalidRequest
+    );
 
     const response = await acknowledgePost(request);
     const responseData = await response.json();
@@ -444,7 +475,11 @@ describe('POST /api/stock/alerts/acknowledge', () => {
       }),
     });
 
-    const request = mockRequest('POST', '/api/stock/alerts/acknowledge', validAcknowledgeRequest);
+    const request = mockRequest(
+      'POST',
+      '/api/stock/alerts/acknowledge',
+      validAcknowledgeRequest
+    );
 
     const response = await acknowledgePost(request);
     const responseData = await response.json();
@@ -467,7 +502,11 @@ describe('POST /api/stock/alerts/acknowledge', () => {
       }),
     });
 
-    const request = mockRequest('POST', '/api/stock/alerts/acknowledge', validAcknowledgeRequest);
+    const request = mockRequest(
+      'POST',
+      '/api/stock/alerts/acknowledge',
+      validAcknowledgeRequest
+    );
 
     const response = await acknowledgePost(request);
     const responseData = await response.json();
@@ -513,7 +552,11 @@ describe('POST /api/stock/alerts/resolve', () => {
   });
 
   it('should resolve alert successfully', async () => {
-    const request = mockRequest('POST', '/api/stock/alerts/resolve', validResolveRequest);
+    const request = mockRequest(
+      'POST',
+      '/api/stock/alerts/resolve',
+      validResolveRequest
+    );
 
     const response = await resolvePost(request);
     const responseData = await response.json();
@@ -529,7 +572,11 @@ describe('POST /api/stock/alerts/resolve', () => {
       resolution: '',
     };
 
-    const request = mockRequest('POST', '/api/stock/alerts/resolve', invalidRequest);
+    const request = mockRequest(
+      'POST',
+      '/api/stock/alerts/resolve',
+      invalidRequest
+    );
 
     const response = await resolvePost(request);
     const responseData = await response.json();
@@ -552,7 +599,11 @@ describe('POST /api/stock/alerts/resolve', () => {
       }),
     });
 
-    const request = mockRequest('POST', '/api/stock/alerts/resolve', validResolveRequest);
+    const request = mockRequest(
+      'POST',
+      '/api/stock/alerts/resolve',
+      validResolveRequest
+    );
 
     const response = await resolvePost(request);
     const responseData = await response.json();
@@ -567,7 +618,11 @@ describe('POST /api/stock/alerts/resolve', () => {
       resolution: 'a'.repeat(1001), // Too long
     };
 
-    const request = mockRequest('POST', '/api/stock/alerts/resolve', invalidRequest);
+    const request = mockRequest(
+      'POST',
+      '/api/stock/alerts/resolve',
+      invalidRequest
+    );
 
     const response = await resolvePost(request);
     const responseData = await response.json();
@@ -641,10 +696,12 @@ describe('Edge Cases and Error Handling', () => {
 describe('Performance Tests', () => {
   it('should handle large result sets efficiently', async () => {
     // Mock large dataset
-    const largeDataset = new Array(1000).fill(mockAlert).map((alert, index) => ({
-      ...alert,
-      id: `alert-${index}`,
-    }));
+    const largeDataset = new Array(1000)
+      .fill(mockAlert)
+      .map((alert, index) => ({
+        ...alert,
+        id: `alert-${index}`,
+      }));
 
     mockSupabaseClient.from.mockReturnValue({
       select: vi.fn().mockReturnValue({

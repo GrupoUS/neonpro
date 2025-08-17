@@ -58,7 +58,14 @@ export type PerformanceReport = {
 
 export type PerformanceRecommendation = {
   type: 'critical' | 'important' | 'suggestion';
-  category: 'bundle' | 'images' | 'fonts' | 'javascript' | 'css' | 'network' | 'caching';
+  category:
+    | 'bundle'
+    | 'images'
+    | 'fonts'
+    | 'javascript'
+    | 'css'
+    | 'network'
+    | 'caching';
   description: string;
   impact: 'high' | 'medium' | 'low';
   effort: 'high' | 'medium' | 'low';
@@ -107,7 +114,12 @@ export type DatabasePerformanceMetric = {
   queryPlan?: string;
   timestamp: number;
   isSlowQuery: boolean;
-  healthcareDataType?: 'patient' | 'medical-record' | 'appointment' | 'billing' | 'audit';
+  healthcareDataType?:
+    | 'patient'
+    | 'medical-record'
+    | 'appointment'
+    | 'billing'
+    | 'audit';
 };
 
 export type DatabaseOptimizationSuggestion = {

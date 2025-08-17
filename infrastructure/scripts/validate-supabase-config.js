@@ -24,7 +24,10 @@ const FILES_TO_CHECK = [
   {
     path: '.env.local',
     type: 'env',
-    required_vars: ['NEXT_PUBLIC_SUPABASE_URL', 'NEXT_PUBLIC_SUPABASE_ANON_KEY'],
+    required_vars: [
+      'NEXT_PUBLIC_SUPABASE_URL',
+      'NEXT_PUBLIC_SUPABASE_ANON_KEY',
+    ],
   },
   {
     path: 'supabase-url-config.json',
@@ -83,7 +86,9 @@ class SupabaseConfigValidator {
     // Check SUPABASE_URL
     const urlMatch = content.match(/NEXT_PUBLIC_SUPABASE_URL=(.+)/);
     if (!urlMatch || urlMatch[1] !== TARGET_CONFIG.url) {
-      this.errors.push(`Incorrect SUPABASE_URL in ${filePath}. Expected: ${TARGET_CONFIG.url}`);
+      this.errors.push(
+        `Incorrect SUPABASE_URL in ${filePath}. Expected: ${TARGET_CONFIG.url}`
+      );
       return false;
     }
 
@@ -114,7 +119,9 @@ class SupabaseConfigValidator {
         for (const [key, value] of Object.entries(obj)) {
           if (typeof value === 'string' && value.includes('supabase.co')) {
             if (!value.includes(TARGET_CONFIG.project_id)) {
-              this.warnings.push(`URL in ${filePath}.${key} may be incorrect: ${value}`);
+              this.warnings.push(
+                `URL in ${filePath}.${key} may be incorrect: ${value}`
+              );
             }
           } else if (typeof value === 'object' && value !== null) {
             checkUrls(value);
@@ -125,7 +132,9 @@ class SupabaseConfigValidator {
                 item.includes('supabase.co') &&
                 !item.includes(TARGET_CONFIG.project_id)
               ) {
-                this.warnings.push(`URL in ${filePath} array may be incorrect: ${item}`);
+                this.warnings.push(
+                  `URL in ${filePath} array may be incorrect: ${item}`
+                );
               }
             });
           }
@@ -153,12 +162,16 @@ class SupabaseConfigValidator {
 
     // Check for correct environment variable usage
     if (!content.includes('process.env.NEXT_PUBLIC_SUPABASE_URL')) {
-      this.errors.push(`${filePath} not using NEXT_PUBLIC_SUPABASE_URL environment variable`);
+      this.errors.push(
+        `${filePath} not using NEXT_PUBLIC_SUPABASE_URL environment variable`
+      );
       return false;
     }
 
     if (!content.includes('process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY')) {
-      this.errors.push(`${filePath} not using NEXT_PUBLIC_SUPABASE_ANON_KEY environment variable`);
+      this.errors.push(
+        `${filePath} not using NEXT_PUBLIC_SUPABASE_ANON_KEY environment variable`
+      );
       return false;
     }
 
@@ -204,7 +217,9 @@ class SupabaseConfigValidator {
 
     if (this.warnings.length > 0) {
       this.log(`Found ${this.warnings.length} warning(s):`, 'warning');
-      this.warnings.forEach((warning) => console.log(chalk.yellow(`  • ${warning}`)));
+      this.warnings.forEach((warning) =>
+        console.log(chalk.yellow(`  • ${warning}`))
+      );
     }
 
     console.log(`\n${'='.repeat(60)}`);
@@ -213,7 +228,10 @@ class SupabaseConfigValidator {
 
   async fixConfiguration() {
     if (this.errors.length === 0) {
-      this.log('No fixes needed - configuration is already correct!', 'success');
+      this.log(
+        'No fixes needed - configuration is already correct!',
+        'success'
+      );
       return;
     }
 

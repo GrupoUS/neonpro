@@ -11,7 +11,9 @@ export class HealthcareTestUtils {
     await this.page.goto(`/patients/${patientId}`);
 
     // Check consent status
-    const consentElement = this.page.locator('[data-testid="lgpd-consent-status"]');
+    const consentElement = this.page.locator(
+      '[data-testid="lgpd-consent-status"]'
+    );
     await expect(consentElement).toBeVisible();
 
     const consentStatus = await consentElement.textContent();
@@ -26,16 +28,24 @@ export class HealthcareTestUtils {
     await this.page.goto(`/patients/${patientId}/data-rights`);
 
     // Test data access request
-    await expect(this.page.locator('[data-testid="data-access-request"]')).toBeVisible();
+    await expect(
+      this.page.locator('[data-testid="data-access-request"]')
+    ).toBeVisible();
 
     // Test data rectification
-    await expect(this.page.locator('[data-testid="data-rectification"]')).toBeVisible();
+    await expect(
+      this.page.locator('[data-testid="data-rectification"]')
+    ).toBeVisible();
 
     // Test data deletion
-    await expect(this.page.locator('[data-testid="data-deletion"]')).toBeVisible();
+    await expect(
+      this.page.locator('[data-testid="data-deletion"]')
+    ).toBeVisible();
 
     // Test data portability
-    await expect(this.page.locator('[data-testid="data-portability"]')).toBeVisible();
+    await expect(
+      this.page.locator('[data-testid="data-portability"]')
+    ).toBeVisible();
   }
 
   // ANVISA Compliance Utilities
@@ -43,7 +53,9 @@ export class HealthcareTestUtils {
     await this.page.goto(`/devices/${deviceId}`);
 
     // Check ANVISA registration status
-    const registrationElement = this.page.locator('[data-testid="anvisa-registration"]');
+    const registrationElement = this.page.locator(
+      '[data-testid="anvisa-registration"]'
+    );
     await expect(registrationElement).toBeVisible();
 
     // Validate registration number format
@@ -56,16 +68,23 @@ export class HealthcareTestUtils {
 
     // Test adverse event form
     await this.page.click('[data-testid="new-adverse-event"]');
-    await expect(this.page.locator('[data-testid="adverse-event-form"]')).toBeVisible();
+    await expect(
+      this.page.locator('[data-testid="adverse-event-form"]')
+    ).toBeVisible();
 
     // Fill required fields
-    await this.page.fill('[data-testid="event-description"]', 'Test adverse event');
+    await this.page.fill(
+      '[data-testid="event-description"]',
+      'Test adverse event'
+    );
     await this.page.select('[data-testid="severity-level"]', 'moderate');
     await this.page.fill('[data-testid="device-involved"]', 'Device-001');
 
     // Submit and validate
     await this.page.click('[data-testid="submit-event"]');
-    await expect(this.page.locator('[data-testid="submission-success"]')).toBeVisible();
+    await expect(
+      this.page.locator('[data-testid="submission-success"]')
+    ).toBeVisible();
   }
 
   // CFM Compliance Utilities
@@ -85,11 +104,15 @@ export class HealthcareTestUtils {
     await this.page.goto('/prescriptions/new');
 
     // Test digital signature component
-    await expect(this.page.locator('[data-testid="digital-signature-pad"]')).toBeVisible();
+    await expect(
+      this.page.locator('[data-testid="digital-signature-pad"]')
+    ).toBeVisible();
 
     // Test signature validation
     await this.page.click('[data-testid="validate-signature"]');
-    await expect(this.page.locator('[data-testid="signature-status"]')).toBeVisible();
+    await expect(
+      this.page.locator('[data-testid="signature-status"]')
+    ).toBeVisible();
   }
 
   async testElectronicPrescription() {
@@ -105,7 +128,9 @@ export class HealthcareTestUtils {
 
     // Test CFM validation
     await this.page.click('[data-testid="cfm-validate"]');
-    await expect(this.page.locator('[data-testid="cfm-validation-success"]')).toBeVisible();
+    await expect(
+      this.page.locator('[data-testid="cfm-validation-success"]')
+    ).toBeVisible();
   }
 
   // Audit Trail Utilities
@@ -122,9 +147,15 @@ export class HealthcareTestUtils {
     await expect(auditEntry).toBeVisible();
 
     // Validate audit details
-    await expect(auditEntry.locator('[data-testid="audit-action"]')).toContainText(action);
-    await expect(auditEntry.locator('[data-testid="audit-user"]')).toContainText(userId);
-    await expect(auditEntry.locator('[data-testid="audit-timestamp"]')).toBeVisible();
+    await expect(
+      auditEntry.locator('[data-testid="audit-action"]')
+    ).toContainText(action);
+    await expect(
+      auditEntry.locator('[data-testid="audit-user"]')
+    ).toContainText(userId);
+    await expect(
+      auditEntry.locator('[data-testid="audit-timestamp"]')
+    ).toBeVisible();
   }
 
   // General Healthcare Testing Utilities
@@ -136,10 +167,15 @@ export class HealthcareTestUtils {
 
     // Wait for dashboard and validate professional status
     await this.page.waitForURL('/dashboard');
-    await expect(this.page.locator('[data-testid="professional-status"]')).toBeVisible();
+    await expect(
+      this.page.locator('[data-testid="professional-status"]')
+    ).toBeVisible();
   }
 
-  async validateHealthcareData(dataType: 'patient' | 'device' | 'professional', id: string) {
+  async validateHealthcareData(
+    dataType: 'patient' | 'device' | 'professional',
+    id: string
+  ) {
     switch (dataType) {
       case 'patient':
         await this.validateLGPDConsent(id);
@@ -163,7 +199,11 @@ export class HealthcareTestUtils {
     await this.page.waitForSelector('[data-testid="report-ready"]');
 
     // Validate report content
-    await expect(this.page.locator('[data-testid="report-summary"]')).toBeVisible();
-    await expect(this.page.locator('[data-testid="compliance-score"]')).toBeVisible();
+    await expect(
+      this.page.locator('[data-testid="report-summary"]')
+    ).toBeVisible();
+    await expect(
+      this.page.locator('[data-testid="compliance-score"]')
+    ).toBeVisible();
   }
 }

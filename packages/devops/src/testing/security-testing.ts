@@ -57,7 +57,9 @@ export class SecurityTester {
   private async validateAuthentication(): Promise<boolean> {
     // Check authentication mechanisms
     return (
-      this.checkMultiFactorAuth() && this.checkPasswordPolicies() && this.checkSessionManagement()
+      this.checkMultiFactorAuth() &&
+      this.checkPasswordPolicies() &&
+      this.checkSessionManagement()
     );
   }
 
@@ -73,13 +75,19 @@ export class SecurityTester {
   private async validateDataIntegrity(): Promise<boolean> {
     // Check data integrity mechanisms
     return (
-      this.checkDataValidation() && this.checkIntegrityChecking() && this.checkBackupIntegrity()
+      this.checkDataValidation() &&
+      this.checkIntegrityChecking() &&
+      this.checkBackupIntegrity()
     );
   }
 
   private async validateAuditLogging(): Promise<boolean> {
     // Check comprehensive audit logging
-    return this.checkAuditCoverage() && this.checkLogIntegrity() && this.checkLogRetention();
+    return (
+      this.checkAuditCoverage() &&
+      this.checkLogIntegrity() &&
+      this.checkLogRetention()
+    );
   }
 
   private async runVulnerabilityAssessment(): Promise<boolean> {
@@ -186,7 +194,10 @@ export class SecurityTester {
   }
 }
 
-export function createSecurityTestSuite(testName: string, testFn: () => void | Promise<void>) {
+export function createSecurityTestSuite(
+  testName: string,
+  testFn: () => void | Promise<void>
+) {
   return describe(`Security: ${testName}`, () => {
     let securityTester: SecurityTester;
 

@@ -83,7 +83,12 @@ export type RealTimeNotificationsProps = {
   /**
    * Position of notifications on screen
    */
-  position?: 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left' | 'top-center';
+  position?:
+    | 'top-right'
+    | 'top-left'
+    | 'bottom-right'
+    | 'bottom-left'
+    | 'top-center';
   /**
    * Show notification badge/counter
    */
@@ -204,7 +209,14 @@ const NotificationCard: React.FC<{
   onAction?: (notificationId: string, actionId: string) => void;
   allowDismiss?: boolean;
   showAvatar?: boolean;
-}> = ({ notification, onDismiss, onClick, onAction, allowDismiss = true, showAvatar = true }) => {
+}> = ({
+  notification,
+  onDismiss,
+  onClick,
+  onAction,
+  allowDismiss = true,
+  showAvatar = true,
+}) => {
   const Icon = notificationIcons[notification.type];
   const [isVisible, setIsVisible] = React.useState(true);
 
@@ -241,7 +253,9 @@ const NotificationCard: React.FC<{
         'cursor-pointer rounded-lg border p-4 shadow-lg transition-all duration-300',
         getPriorityColor(notification.priority),
         !notification.read && 'ring-2 ring-primary/20',
-        isVisible ? 'translate-x-0 transform opacity-100' : 'translate-x-full transform opacity-0',
+        isVisible
+          ? 'translate-x-0 transform opacity-100'
+          : 'translate-x-full transform opacity-0',
         onClick && 'hover:shadow-xl'
       )}
       onClick={handleClick}
@@ -250,10 +264,13 @@ const NotificationCard: React.FC<{
       <div className="flex items-start gap-3">
         {/* Icon/Avatar */}
         <div className="flex-shrink-0">
-          {showAvatar && (notification.patientAvatar || notification.staffAvatar) ? (
+          {showAvatar &&
+          (notification.patientAvatar || notification.staffAvatar) ? (
             <Avatar size="sm">
               <AvatarImage
-                alt={notification.patientName || notification.staffName || 'User'}
+                alt={
+                  notification.patientName || notification.staffName || 'User'
+                }
                 src={notification.patientAvatar || notification.staffAvatar}
               />
               <AvatarFallback>
@@ -269,9 +286,12 @@ const NotificationCard: React.FC<{
             <div
               className={cn(
                 'flex h-8 w-8 items-center justify-center rounded-full',
-                notification.priority === 'critical' && 'bg-red-100 text-red-700',
-                notification.priority === 'high' && 'bg-orange-100 text-orange-700',
-                notification.priority === 'medium' && 'bg-yellow-100 text-yellow-700',
+                notification.priority === 'critical' &&
+                  'bg-red-100 text-red-700',
+                notification.priority === 'high' &&
+                  'bg-orange-100 text-orange-700',
+                notification.priority === 'medium' &&
+                  'bg-yellow-100 text-yellow-700',
                 notification.priority === 'low' && 'bg-green-100 text-green-700'
               )}
             >
@@ -291,7 +311,10 @@ const NotificationCard: React.FC<{
                 >
                   {notification.title}
                 </h4>
-                <Badge size="sm" variant={getPriorityVariant(notification.priority)}>
+                <Badge
+                  size="sm"
+                  variant={getPriorityVariant(notification.priority)}
+                >
                   {getTypeLabel(notification.type)}
                 </Badge>
               </div>
@@ -306,7 +329,8 @@ const NotificationCard: React.FC<{
               {/* Patient/Staff Info */}
               {(notification.patientName || notification.staffName) && (
                 <p className="mt-1 text-muted-foreground text-xs">
-                  {notification.patientName && `Paciente: ${notification.patientName}`}
+                  {notification.patientName &&
+                    `Paciente: ${notification.patientName}`}
                   {notification.patientName && notification.staffName && ' • '}
                   {notification.staffName && `Staff: ${notification.staffName}`}
                 </p>
@@ -316,7 +340,9 @@ const NotificationCard: React.FC<{
               {notification.lgpdRelevant && (
                 <div className="mt-2 flex items-center gap-1">
                   <Shield className="h-3 w-3 text-blue-600" />
-                  <span className="text-blue-600 text-xs">Dados protegidos pela LGPD</span>
+                  <span className="text-blue-600 text-xs">
+                    Dados protegidos pela LGPD
+                  </span>
                 </div>
               )}
 
@@ -446,7 +472,10 @@ const NotificationBell: React.FC<{
   );
 };
 
-export const RealTimeNotifications = React.forwardRef<HTMLDivElement, RealTimeNotificationsProps>(
+export const RealTimeNotifications = React.forwardRef<
+  HTMLDivElement,
+  RealTimeNotificationsProps
+>(
   (
     {
       notifications,
@@ -467,8 +496,11 @@ export const RealTimeNotifications = React.forwardRef<HTMLDivElement, RealTimeNo
     },
     ref
   ) => {
-    const [localSoundEnabled, setLocalSoundEnabled] = React.useState(soundEnabled);
-    const [visibleNotifications, setVisibleNotifications] = React.useState<string[]>([]);
+    const [localSoundEnabled, setLocalSoundEnabled] =
+      React.useState(soundEnabled);
+    const [visibleNotifications, setVisibleNotifications] = React.useState<
+      string[]
+    >([]);
 
     const unreadNotifications = notifications.filter((n) => !n.read);
     const unreadCount = unreadNotifications.length;
@@ -489,11 +521,15 @@ export const RealTimeNotifications = React.forwardRef<HTMLDivElement, RealTimeNo
 
       if (newNotifications.length > 0) {
         const newIds = newNotifications.slice(0, maxVisible).map((n) => n.id);
-        setVisibleNotifications((prev) => [...prev, ...newIds].slice(-maxVisible));
+        setVisibleNotifications((prev) =>
+          [...prev, ...newIds].slice(-maxVisible)
+        );
 
         // Play sound for critical notifications if enabled
         if (localSoundEnabled) {
-          const criticalNotifications = newNotifications.filter((n) => n.priority === 'critical');
+          const criticalNotifications = newNotifications.filter(
+            (n) => n.priority === 'critical'
+          );
           if (criticalNotifications.length > 0) {
           }
         }
@@ -505,7 +541,9 @@ export const RealTimeNotifications = React.forwardRef<HTMLDivElement, RealTimeNo
     };
 
     const handleDismiss = (notificationId: string) => {
-      setVisibleNotifications((prev) => prev.filter((id) => id !== notificationId));
+      setVisibleNotifications((prev) =>
+        prev.filter((id) => id !== notificationId)
+      );
       onNotificationDismiss?.(notificationId);
     };
 
@@ -569,7 +607,11 @@ export const RealTimeNotifications = React.forwardRef<HTMLDivElement, RealTimeNo
 
         {/* Floating Notifications */}
         <div
-          className={cn('pointer-events-none fixed z-40', positionClasses[position], className)}
+          className={cn(
+            'pointer-events-none fixed z-40',
+            positionClasses[position],
+            className
+          )}
           ref={ref}
           {...props}
         >

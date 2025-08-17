@@ -32,32 +32,48 @@ async function testEmailAutomation() {
     console.log('📧 Testing appointment confirmation...');
 
     // Teste apenas em desenvolvimento ou com flag especial
-    if (process.env.NODE_ENV === 'development' && process.env.ENABLE_TEST_JOBS === 'true') {
+    if (
+      process.env.NODE_ENV === 'development' &&
+      process.env.ENABLE_TEST_JOBS === 'true'
+    ) {
       const confirmationResult =
-        await NeonProAutomation.sendAppointmentConfirmation(testAppointmentData);
+        await NeonProAutomation.sendAppointmentConfirmation(
+          testAppointmentData
+        );
       console.log('✅ Confirmation job triggered:', confirmationResult);
 
       const reminderResult =
-        await NeonProAutomation.scheduleAppointmentReminder(testAppointmentData);
+        await NeonProAutomation.scheduleAppointmentReminder(
+          testAppointmentData
+        );
       console.log('✅ Reminder job scheduled:', reminderResult);
 
       console.log('\n🎯 Full automation test...');
-      const fullResult = await NeonProAutomation.onNewAppointmentCreated(testAppointmentData);
+      const fullResult =
+        await NeonProAutomation.onNewAppointmentCreated(testAppointmentData);
       console.log('✅ Full automation completed:', {
         confirmationJobId: fullResult.confirmation?.jobId,
         reminderJobId: fullResult.reminder?.jobId,
       });
     } else {
-      console.log('⚠️ Skipping live job triggers (set ENABLE_TEST_JOBS=true to test)');
+      console.log(
+        '⚠️ Skipping live job triggers (set ENABLE_TEST_JOBS=true to test)'
+      );
       console.log('✅ Job classes and methods are properly structured');
     }
 
     console.log('\n🔧 Testing configuration...');
 
     // Verifica se as variáveis de ambiente estão definidas
-    const requiredEnvVars = ['TRIGGER_SECRET_KEY', 'TRIGGER_PROJECT_ID', 'RESEND_API_KEY'];
+    const requiredEnvVars = [
+      'TRIGGER_SECRET_KEY',
+      'TRIGGER_PROJECT_ID',
+      'RESEND_API_KEY',
+    ];
 
-    const missingVars = requiredEnvVars.filter((envVar) => !process.env[envVar]);
+    const missingVars = requiredEnvVars.filter(
+      (envVar) => !process.env[envVar]
+    );
 
     if (missingVars.length > 0) {
       console.log('⚠️ Missing environment variables:', missingVars);
@@ -70,7 +86,10 @@ async function testEmailAutomation() {
 
     try {
       const supabase = await createClient();
-      const { data, error } = await supabase.from('appointments').select('count').limit(1);
+      const { data, error } = await supabase
+        .from('appointments')
+        .select('count')
+        .limit(1);
 
       if (error) {
         console.log('⚠️ Supabase connection issue:', error.message);
@@ -113,7 +132,9 @@ async function testEmailAutomation() {
       console.log('   2. Deploy to Vercel: vercel --prod');
       console.log('   3. Test live endpoints after deployment');
     } else {
-      console.log('\n❌ Some components are missing. Check the failed items above.');
+      console.log(
+        '\n❌ Some components are missing. Check the failed items above.'
+      );
     }
   } catch (error) {
     console.error('❌ Test failed:', error);

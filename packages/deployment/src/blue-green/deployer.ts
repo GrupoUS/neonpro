@@ -157,7 +157,9 @@ export class BlueGreenDeployer {
       this.logDeploymentSuccess(result);
     } catch (error) {
       this.spinner.fail(`Deployment failed: ${error}`);
-      result.errors?.push(error instanceof Error ? error.message : String(error));
+      result.errors?.push(
+        error instanceof Error ? error.message : String(error)
+      );
 
       // Rollback if enabled
       if (this.config.deployment.rollbackOnFailure) {
@@ -198,7 +200,10 @@ export class BlueGreenDeployer {
 
     const results = await Promise.allSettled(checks);
     const failures = results
-      .filter((result): result is PromiseRejectedResult => result.status === 'rejected')
+      .filter(
+        (result): result is PromiseRejectedResult =>
+          result.status === 'rejected'
+      )
       .map((result) => result.reason);
 
     if (failures.length > 0) {
@@ -224,7 +229,9 @@ export class BlueGreenDeployer {
   /**
    * Deploy application to specified environment
    */
-  private async deployToEnvironment(environment: 'blue' | 'green'): Promise<void> {
+  private async deployToEnvironment(
+    environment: 'blue' | 'green'
+  ): Promise<void> {
     const _envConfig = this.config.environments[environment];
 
     try {
@@ -247,7 +254,9 @@ export class BlueGreenDeployer {
   /**
    * Deploy healthcare-compliant version
    */
-  private async deployHealthcareCompliantVersion(environment: string): Promise<void> {
+  private async deployHealthcareCompliantVersion(
+    environment: string
+  ): Promise<void> {
     // HIPAA compliance check
     await this.verifyHIPAACompliance();
 
@@ -258,13 +267,17 @@ export class BlueGreenDeployer {
     await this.verifyANVISACompliance();
 
     // Deploy with healthcare-specific configurations
-    await execAsync(`docker deploy --health-check --hipaa-compliant ${environment}`);
+    await execAsync(
+      `docker deploy --health-check --hipaa-compliant ${environment}`
+    );
   }
 
   /**
    * Run comprehensive health checks
    */
-  private async runHealthChecks(environment: 'blue' | 'green'): Promise<boolean> {
+  private async runHealthChecks(
+    environment: 'blue' | 'green'
+  ): Promise<boolean> {
     const envConfig = this.config.environments[environment];
 
     // Basic health check
@@ -291,7 +304,9 @@ export class BlueGreenDeployer {
   /**
    * Switch production traffic to new environment
    */
-  private async switchTraffic(targetEnvironment: 'blue' | 'green'): Promise<void> {
+  private async switchTraffic(
+    targetEnvironment: 'blue' | 'green'
+  ): Promise<void> {
     try {
       // Gradual traffic switch for healthcare applications
       await this.trafficManager.gradualSwitch(targetEnvironment, {
@@ -318,11 +333,16 @@ export class BlueGreenDeployer {
 
     const results = await Promise.allSettled(validations);
     const failures = results
-      .filter((result): result is PromiseRejectedResult => result.status === 'rejected')
+      .filter(
+        (result): result is PromiseRejectedResult =>
+          result.status === 'rejected'
+      )
       .map((result) => result.reason);
 
     if (failures.length > 0) {
-      throw new Error(`Post-deployment validation failed: ${failures.join(', ')}`);
+      throw new Error(
+        `Post-deployment validation failed: ${failures.join(', ')}`
+      );
     }
   }
 
@@ -350,7 +370,10 @@ export class BlueGreenDeployer {
 
   private async checkExternalServices(): Promise<void> {
     // Check external service dependencies
-    const services = ['https://api.exemplo.com/health', 'https://auth.exemplo.com/health'];
+    const services = [
+      'https://api.exemplo.com/health',
+      'https://auth.exemplo.com/health',
+    ];
 
     for (const service of services) {
       try {
@@ -390,7 +413,9 @@ export class BlueGreenDeployer {
 
   private async updateEnvironmentVariables(environment: string): Promise<void> {
     // Update environment-specific variables
-    await execAsync(`kubectl set env deployment/${environment} VERSION=${this.config.version}`);
+    await execAsync(
+      `kubectl set env deployment/${environment} VERSION=${this.config.version}`
+    );
   }
 
   private async deployApplication(environment: string): Promise<void> {

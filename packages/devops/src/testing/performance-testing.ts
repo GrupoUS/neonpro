@@ -20,12 +20,17 @@ export class PerformanceTester {
   }
 
   async testClinicWorkflowPerformance(): Promise<WorkflowPerformanceResult> {
-    const workflows = ['patient_check_in', 'appointment_scheduling', 'medical_records'];
+    const workflows = [
+      'patient_check_in',
+      'appointment_scheduling',
+      'medical_records',
+    ];
     const results = await Promise.all(
       workflows.map((workflow) => this.measureWorkflowPerformance(workflow))
     );
 
-    const averageScore = results.reduce((sum, r) => sum + r.score, 0) / results.length;
+    const averageScore =
+      results.reduce((sum, r) => sum + r.score, 0) / results.length;
 
     return {
       workflows: Object.fromEntries(workflows.map((w, i) => [w, results[i]])),
@@ -73,12 +78,15 @@ export class PerformanceTester {
     return Math.max(0, score);
   }
 
-  private async measureWorkflowPerformance(workflow: string): Promise<WorkflowMetric> {
+  private async measureWorkflowPerformance(
+    workflow: string
+  ): Promise<WorkflowMetric> {
     const startTime = Date.now();
     await this.simulateWorkflow(workflow);
     const duration = Date.now() - startTime;
 
-    const score = duration < 2000 ? 9.9 : Math.max(0, 9.9 - (duration - 2000) / 100);
+    const score =
+      duration < 2000 ? 9.9 : Math.max(0, 9.9 - (duration - 2000) / 100);
 
     return {
       duration,
@@ -93,7 +101,10 @@ export class PerformanceTester {
   }
 }
 
-export function createPerformanceTestSuite(testName: string, testFn: () => void | Promise<void>) {
+export function createPerformanceTestSuite(
+  testName: string,
+  testFn: () => void | Promise<void>
+) {
   return describe(`Performance: ${testName}`, () => {
     let performanceTester: PerformanceTester;
 

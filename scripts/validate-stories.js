@@ -99,7 +99,9 @@ class StoryValidator {
     const declaredStatus = this.extractStatus(statusLine);
 
     // Extrair título
-    const titleLine = lines.find((line) => line.startsWith('# ') || line.startsWith('## '));
+    const titleLine = lines.find(
+      (line) => line.startsWith('# ') || line.startsWith('## ')
+    );
     const title = titleLine ? titleLine.replace(/^#+\s*/, '') : filename;
 
     // Extrair epic
@@ -174,7 +176,8 @@ class StoryValidator {
       }
     });
 
-    results.score = results.total > 0 ? (results.existing / results.total) * 100 : 0;
+    results.score =
+      results.total > 0 ? (results.existing / results.total) * 100 : 0;
 
     return results;
   }
@@ -329,7 +332,10 @@ class StoryValidator {
       .filter((file) => file.endsWith('.story.md'))
       .sort();
 
-    this.log(`📚 Encontradas ${storyFiles.length} stories para validar`, 'blue');
+    this.log(
+      `📚 Encontradas ${storyFiles.length} stories para validar`,
+      'blue'
+    );
 
     for (const storyFile of storyFiles) {
       this.log(`\n📖 Validando ${storyFile}...`, 'yellow');
@@ -386,7 +392,9 @@ class StoryValidator {
     this.log('='.repeat(60), 'bold');
 
     const total =
-      this.results.completed.length + this.results.inProgress.length + this.results.pending.length;
+      this.results.completed.length +
+      this.results.inProgress.length +
+      this.results.pending.length;
 
     this.log('\n📈 RESUMO GERAL:', 'blue');
     this.log(`  Total de stories: ${total}`);
@@ -415,21 +423,34 @@ class StoryValidator {
     ].filter((story) => story.declaredStatus !== story.validation.finalStatus);
 
     if (discrepancies.length > 0) {
-      this.log(`\n⚠️  DISCREPÂNCIAS ENCONTRADAS (${discrepancies.length}):`, 'yellow');
+      this.log(
+        `\n⚠️  DISCREPÂNCIAS ENCONTRADAS (${discrepancies.length}):`,
+        'yellow'
+      );
       discrepancies.forEach((story) => {
-        this.log(`  ${story.filename}: ${story.declaredStatus} → ${story.validation.finalStatus}`);
+        this.log(
+          `  ${story.filename}: ${story.declaredStatus} → ${story.validation.finalStatus}`
+        );
       });
     }
 
     // Top stories por implementação
-    const topImplemented = [...this.results.completed, ...this.results.inProgress]
-      .sort((a, b) => b.validation.implementation.score - a.validation.implementation.score)
+    const topImplemented = [
+      ...this.results.completed,
+      ...this.results.inProgress,
+    ]
+      .sort(
+        (a, b) =>
+          b.validation.implementation.score - a.validation.implementation.score
+      )
       .slice(0, 5);
 
     if (topImplemented.length > 0) {
       this.log('\n🏆 TOP 5 STORIES MAIS IMPLEMENTADAS:', 'green');
       topImplemented.forEach((story, index) => {
-        this.log(`  ${index + 1}. ${story.filename} (${story.validation.implementation.score}%)`);
+        this.log(
+          `  ${index + 1}. ${story.filename} (${story.validation.implementation.score}%)`
+        );
       });
     }
 

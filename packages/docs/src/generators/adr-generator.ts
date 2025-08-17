@@ -193,7 +193,10 @@ export class ADRGenerator {
       let updatedContent = content;
 
       // Update status
-      updatedContent = updatedContent.replace(/^## Status\n\[.*?\]/m, `## Status\n[${newStatus}]`);
+      updatedContent = updatedContent.replace(
+        /^## Status\n\[.*?\]/m,
+        `## Status\n[${newStatus}]`
+      );
 
       // Add superseded information if applicable
       if (newStatus === 'Superseded' && supersededBy) {
@@ -250,7 +253,9 @@ export class ADRGenerator {
 
       adrs.forEach((adr) => {
         const link = `[ADR-${adr.number.toString().padStart(3, '0')}](${this.getADRFilename(adr.number)})`;
-        const status = adr.supersededBy ? `Superseded by ADR-${adr.supersededBy}` : adr.status;
+        const status = adr.supersededBy
+          ? `Superseded by ADR-${adr.supersededBy}`
+          : adr.status;
         indexContent += `| ${link} | ${adr.title} | ${status} | ${adr.date} | ${adr.author} |\n`;
       });
 
@@ -291,7 +296,9 @@ export class ADRGenerator {
       .filter((file) => file.match(/^adr-\d{3}-.*\.md$/))
       .sort();
 
-    return files.map((file) => this.parseADRMetadata(file)).filter(Boolean) as ADRMetadata[];
+    return files
+      .map((file) => this.parseADRMetadata(file))
+      .filter(Boolean) as ADRMetadata[];
   }
 
   /**
@@ -375,7 +382,9 @@ export class ADRGenerator {
    */
   private getADRFilename(adrNumber: number): string {
     const files = readdirSync(this.adrDirectory);
-    const pattern = new RegExp(`^adr-${adrNumber.toString().padStart(3, '0')}-.*\\.md$`);
+    const pattern = new RegExp(
+      `^adr-${adrNumber.toString().padStart(3, '0')}-.*\\.md$`
+    );
     const found = files.find((file) => pattern.test(file));
 
     if (!found) {
@@ -394,16 +403,28 @@ export class ADRGenerator {
       : this.getDefaultTemplate();
 
     let adrContent = template
-      .replace(/ADR-XXX/g, `ADR-${content.metadata.number.toString().padStart(3, '0')}`)
+      .replace(
+        /ADR-XXX/g,
+        `ADR-${content.metadata.number.toString().padStart(3, '0')}`
+      )
       .replace(/\[Short Title of Decision\]/g, content.metadata.title)
       .replace(
         /\[Proposed \| Accepted \| Rejected \| Deprecated \| Superseded by ADR-YYY\]/g,
         content.metadata.status
       )
       .replace(/\[Describe the forces at play[\s\S]*?\]/g, content.context)
-      .replace(/\[Describe our response to these forces[\s\S]*?\]/g, content.decision)
-      .replace(/\[Describe the resulting context[\s\S]*?\]/g, content.consequences)
-      .replace(/\[List the alternative solutions[\s\S]*?\]/g, content.alternatives)
+      .replace(
+        /\[Describe our response to these forces[\s\S]*?\]/g,
+        content.decision
+      )
+      .replace(
+        /\[Describe the resulting context[\s\S]*?\]/g,
+        content.consequences
+      )
+      .replace(
+        /\[List the alternative solutions[\s\S]*?\]/g,
+        content.alternatives
+      )
       .replace(/\[YYYY-MM-DD\]/g, content.metadata.date)
       .replace(/\[Names and roles\]/g, content.metadata.author);
 
@@ -516,8 +537,12 @@ if (require.main === module) {
     case 'update': {
       const adrNumber = Number.parseInt(process.argv[3], 10);
       const newStatus = process.argv[4] as ADRMetadata['status'];
-      const supersededBy = process.argv[5] ? Number.parseInt(process.argv[5], 10) : undefined;
-      generator.updateADRStatus(adrNumber, newStatus, supersededBy).catch(console.error);
+      const supersededBy = process.argv[5]
+        ? Number.parseInt(process.argv[5], 10)
+        : undefined;
+      generator
+        .updateADRStatus(adrNumber, newStatus, supersededBy)
+        .catch(console.error);
       break;
     }
     default:

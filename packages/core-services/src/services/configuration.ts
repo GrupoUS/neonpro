@@ -147,7 +147,9 @@ export class ConfigurationService {
         query = query.is('tenant_id', null);
       }
 
-      const { data, error } = await query.order('tenant_id', { ascending: false }).limit(1);
+      const { data, error } = await query
+        .order('tenant_id', { ascending: false })
+        .limit(1);
 
       if (error) {
         console.error('Configuration fetch error:', error);
@@ -190,9 +192,11 @@ export class ConfigurationService {
       };
 
       // Upsert configuration
-      const { error } = await this.supabase.from('configurations').upsert(configValue, {
-        onConflict: 'key,environment,tenant_id',
-      });
+      const { error } = await this.supabase
+        .from('configurations')
+        .upsert(configValue, {
+          onConflict: 'key,environment,tenant_id',
+        });
 
       if (error) {
         console.error('Configuration update error:', error);
@@ -239,7 +243,10 @@ export class ConfigurationService {
       }
 
       // Log the change
-      await this.logConfigurationChange(key, null, { ...update, reason: 'Configuration deleted' });
+      await this.logConfigurationChange(key, null, {
+        ...update,
+        reason: 'Configuration deleted',
+      });
 
       // Invalidate cache
       const cacheKey = this.buildCacheKey(key, context);
@@ -256,7 +263,10 @@ export class ConfigurationService {
   // FEATURE FLAGS
   // ================================================
 
-  async isFeatureEnabled(featureKey: string, context: ConfigurationContext): Promise<boolean> {
+  async isFeatureEnabled(
+    featureKey: string,
+    context: ConfigurationContext
+  ): Promise<boolean> {
     const cacheKey = `feature:${this.buildCacheKey(featureKey, context)}`;
 
     // Try cache first
@@ -363,7 +373,9 @@ export class ConfigurationService {
     return results;
   }
 
-  async getAllConfigurations(context: ConfigurationContext): Promise<ConfigurationValue[]> {
+  async getAllConfigurations(
+    context: ConfigurationContext
+  ): Promise<ConfigurationValue[]> {
     try {
       let query = this.supabase
         .from('configurations')
@@ -439,7 +451,10 @@ export class ConfigurationService {
     return secretPatterns.some((pattern) => pattern.test(key));
   }
 
-  private evaluateFeatureFlag(flag: FeatureFlag, context: ConfigurationContext): boolean {
+  private evaluateFeatureFlag(
+    flag: FeatureFlag,
+    context: ConfigurationContext
+  ): boolean {
     // Check date range
     const now = new Date();
     if (flag.startDate && now < flag.startDate) return false;
@@ -458,7 +473,10 @@ export class ConfigurationService {
     if (
       flag.userRoles &&
       flag.userRoles.length > 0 &&
-      !(context.userRoles && context.userRoles.some((role) => flag.userRoles!.includes(role)))
+      !(
+        context.userRoles &&
+        context.userRoles.some((role) => flag.userRoles!.includes(role))
+      )
     ) {
       return false;
     }
@@ -516,7 +534,11 @@ export class ConfigurationService {
         { event: '*', schema: 'public', table: 'configurations' },
         (payload) => {
           // Invalidate relevant cache entries
-          if (payload.new && typeof payload.new === 'object' && 'key' in payload.new) {
+          if (
+            payload.new &&
+            typeof payload.new === 'object' &&
+            'key' in payload.new
+          ) {
             const config = payload.new as ConfigurationValue;
             const keyPattern = `*:*:${config.key}`;
 
@@ -538,14 +560,21 @@ export class ConfigurationService {
         { event: '*', schema: 'public', table: 'feature_flags' },
         (payload) => {
           // Invalidate relevant cache entries
-          if (payload.new && typeof payload.new === 'object' && 'key' in payload.new) {
+          if (
+            payload.new &&
+            typeof payload.new === 'object' &&
+            'key' in payload.new
+          ) {
             const flag = payload.new as FeatureFlag;
             const keyPattern = `feature:*:*:${flag.key}`;
 
             // Invalidate all cache entries for this feature flag
             this.cache
               .keys()
-              .filter((key) => key.includes('feature:') && key.endsWith(`:${flag.key}`))
+              .filter(
+                (key) =>
+                  key.includes('feature:') && key.endsWith(`:${flag.key}`)
+              )
               .forEach((key) => this.cache.invalidate(key));
           }
         }

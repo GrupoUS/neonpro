@@ -69,9 +69,15 @@ googleOAuthConfig.redirectUris.forEach((uri) => {
 });
 
 console.log('\n⚠️  IMPORTANTE:');
-console.log(`1. Acesse: https://app.supabase.com/project/${SUPABASE_PROJECT_ID}`);
+console.log(
+  `1. Acesse: https://app.supabase.com/project/${SUPABASE_PROJECT_ID}`
+);
 console.log('2. Vá para Authentication > URL Configuration');
 console.log(`3. Configure Site URL como: ${PRODUCTION_URL}`);
 console.log('4. Adicione TODAS as Redirect URLs listadas acima');
-console.log('5. Em Authentication > Providers > Google, adicione Client ID e Secret');
-console.log('\n✨ Após configurar, teste o login em: http://localhost:3000/login');
+console.log(
+  '5. Em Authentication > Providers > Google, adicione Client ID e Secret'
+);
+console.log(
+  '\n✨ Após configurar, teste o login em: http://localhost:3000/login'
+);

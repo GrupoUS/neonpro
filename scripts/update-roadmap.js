@@ -113,14 +113,20 @@ class RoadmapUpdater {
       // Detectar fim de uma story (próxima story ou seção)
       if (
         inStorySection &&
-        (line.startsWith('###') || line.startsWith('##') || line.startsWith('#'))
+        (line.startsWith('###') ||
+          line.startsWith('##') ||
+          line.startsWith('#'))
       ) {
         inStorySection = false;
         currentStoryNumber = null;
       }
 
       // Atualizar status se estivermos em uma story
-      if (inStorySection && currentStoryNumber && storyMap.has(currentStoryNumber)) {
+      if (
+        inStorySection &&
+        currentStoryNumber &&
+        storyMap.has(currentStoryNumber)
+      ) {
         const story = storyMap.get(currentStoryNumber);
         const updatedLine = this.updateStoryLine(line, story);
 
@@ -140,7 +146,10 @@ class RoadmapUpdater {
     }
 
     // Atualizar estatísticas gerais
-    const updatedContent = this.updateGeneralStatistics(updatedLines.join('\n'), validationResults);
+    const updatedContent = this.updateGeneralStatistics(
+      updatedLines.join('\n'),
+      validationResults
+    );
 
     this.log(
       `📝 ${changesMade} alterações de status identificadas`,
@@ -173,9 +182,12 @@ class RoadmapUpdater {
 
         if (pattern.source.includes('Priority')) {
           // Linha com Priority e Status
-          updatedLine = line.replace(pattern, (_match, priority, _oldStatus) => {
-            return `**Priority**: ${priority.trim()} | **Status**: ${statusInfo.text}`;
-          });
+          updatedLine = line.replace(
+            pattern,
+            (_match, priority, _oldStatus) => {
+              return `**Priority**: ${priority.trim()} | **Status**: ${statusInfo.text}`;
+            }
+          );
         } else {
           // Linha só com Status
           updatedLine = line.replace(pattern, `**Status**: ${statusInfo.text}`);
@@ -224,9 +236,18 @@ class RoadmapUpdater {
       validationResults.completed.length +
       validationResults.inProgress.length +
       validationResults.pending.length;
-    const completedPercent = ((validationResults.completed.length / total) * 100).toFixed(1);
-    const inProgressPercent = ((validationResults.inProgress.length / total) * 100).toFixed(1);
-    const pendingPercent = ((validationResults.pending.length / total) * 100).toFixed(1);
+    const completedPercent = (
+      (validationResults.completed.length / total) *
+      100
+    ).toFixed(1);
+    const inProgressPercent = (
+      (validationResults.inProgress.length / total) *
+      100
+    ).toFixed(1);
+    const pendingPercent = (
+      (validationResults.pending.length / total) *
+      100
+    ).toFixed(1);
 
     // Atualizar seção de estatísticas
     const statsPattern = /(## 📊 Status Geral do Projeto[\s\S]*?)(## |$)/;
@@ -279,7 +300,10 @@ class RoadmapUpdater {
    */
   showChangesSummary() {
     if (this.changes.length === 0) {
-      this.log('✅ Nenhuma alteração necessária - roadmap já está atualizado!', 'green');
+      this.log(
+        '✅ Nenhuma alteração necessária - roadmap já está atualizado!',
+        'green'
+      );
       return;
     }
 
@@ -326,12 +350,21 @@ class RoadmapUpdater {
         validationResults.pending.length;
       this.log('\n📊 ESTATÍSTICAS FINAIS:', 'bold');
       this.log(`   Total: ${total} stories`);
-      this.log(`   ✅ Completed: ${validationResults.completed.length}`, 'green');
-      this.log(`   🔄 In Progress: ${validationResults.inProgress.length}`, 'yellow');
+      this.log(
+        `   ✅ Completed: ${validationResults.completed.length}`,
+        'green'
+      );
+      this.log(
+        `   🔄 In Progress: ${validationResults.inProgress.length}`,
+        'yellow'
+      );
       this.log(`   ⏳ Pending: ${validationResults.pending.length}`, 'red');
 
       if (this.dryRun) {
-        this.log('\n🔍 Modo DRY RUN - Execute sem --dry-run para aplicar as alterações', 'yellow');
+        this.log(
+          '\n🔍 Modo DRY RUN - Execute sem --dry-run para aplicar as alterações',
+          'yellow'
+        );
       } else {
         this.log('\n✅ Roadmap atualizado com sucesso!', 'green');
       }
@@ -348,7 +381,9 @@ if (require.main === module) {
   const dryRun = args.includes('--dry-run');
 
   if (dryRun) {
-    console.log('🔍 Executando em modo DRY RUN - nenhuma alteração será salva\n');
+    console.log(
+      '🔍 Executando em modo DRY RUN - nenhuma alteração será salva\n'
+    );
   }
 
   const updater = new RoadmapUpdater(dryRun);

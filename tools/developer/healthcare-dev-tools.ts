@@ -100,7 +100,12 @@ export class HealthcareDeveloperTools {
       'typescript.preferences.includePackageJsonAutoImports': 'on',
       'healthcare.mode': true,
       'lgpd.compliance': true,
-      'eslint.validate': ['javascript', 'javascriptreact', 'typescript', 'typescriptreact'],
+      'eslint.validate': [
+        'javascript',
+        'javascriptreact',
+        'typescript',
+        'typescriptreact',
+      ],
       'editor.rulers': [100], // Healthcare code line limit
       'files.exclude': {
         '**/.turbo': true,
@@ -116,7 +121,10 @@ export class HealthcareDeveloperTools {
       },
     };
 
-    await fs.writeFile(join(vscodeDir, 'settings.json'), JSON.stringify(vscodeSettings, null, 2));
+    await fs.writeFile(
+      join(vscodeDir, 'settings.json'),
+      JSON.stringify(vscodeSettings, null, 2)
+    );
 
     // Create recommended extensions for healthcare development
     const extensions = {
@@ -133,7 +141,10 @@ export class HealthcareDeveloperTools {
       ],
     };
 
-    await fs.writeFile(join(vscodeDir, 'extensions.json'), JSON.stringify(extensions, null, 2));
+    await fs.writeFile(
+      join(vscodeDir, 'extensions.json'),
+      JSON.stringify(extensions, null, 2)
+    );
   }
 
   private async configureProductivityTools(): Promise<void> {
@@ -161,7 +172,8 @@ export class HealthcareDeveloperTools {
           '  );',
           '};',
         ],
-        description: 'Create a healthcare patient component with LGPD compliance',
+        description:
+          'Create a healthcare patient component with LGPD compliance',
       },
 
       'LGPD Consent Hook': {
@@ -241,8 +253,10 @@ export class HealthcareDeveloperTools {
       'healthcare:test:watch': 'turbo test:healthcare --watch',
       'healthcare:validate:quick': 'turbo typecheck lint:healthcare --parallel',
       'healthcare:validate:full': 'turbo healthcare:full-validation',
-      'healthcare:build:analyze': 'turbo build:healthcare --summarize --dry=json',
-      'healthcare:performance': 'artillery run tools/testing/configs/artillery-healthcare.yml',
+      'healthcare:build:analyze':
+        'turbo build:healthcare --summarize --dry=json',
+      'healthcare:performance':
+        'artillery run tools/testing/configs/artillery-healthcare.yml',
       'healthcare:compliance': 'turbo validate:lgpd',
       'healthcare:db:reset': 'supabase db reset',
       'healthcare:db:migrate': 'supabase db push',
@@ -313,7 +327,10 @@ pnpm healthcare:validate:quick
 - [ ] Data retention policies implemented
 `;
 
-    await fs.writeFile(join(this.rootPath, 'HEALTHCARE-DEV-GUIDE.md'), devReadme);
+    await fs.writeFile(
+      join(this.rootPath, 'HEALTHCARE-DEV-GUIDE.md'),
+      devReadme
+    );
   }
 
   async generateOptimizationReport(): Promise<void> {}

@@ -14,7 +14,10 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { createMockSubscription } from '../utils/testUtils';
 
 // Mock API handler (to be imported when it exists)
-const mockSubscriptionHandler = async (req: NextApiRequest, res: NextApiResponse) => {
+const mockSubscriptionHandler = async (
+  req: NextApiRequest,
+  res: NextApiResponse
+) => {
   if (req.method === 'GET') {
     const subscription = createMockSubscription();
     res.status(200).json(subscription);
@@ -63,7 +66,10 @@ describe('Subscription API Routes', () => {
       });
 
       // Mock unauthenticated handler
-      const unauthenticatedHandler = async (_req: NextApiRequest, res: NextApiResponse) => {
+      const unauthenticatedHandler = async (
+        _req: NextApiRequest,
+        res: NextApiResponse
+      ) => {
         res.status(401).json({ error: 'Unauthorized' });
       };
 
@@ -83,7 +89,10 @@ describe('Subscription API Routes', () => {
       });
 
       // Mock error handler
-      const errorHandler = async (_req: NextApiRequest, res: NextApiResponse) => {
+      const errorHandler = async (
+        _req: NextApiRequest,
+        res: NextApiResponse
+      ) => {
         res.status(500).json({ error: 'Internal server error' });
       };
 
@@ -129,7 +138,10 @@ describe('Subscription API Routes', () => {
       });
 
       // Mock validation error handler
-      const validationHandler = async (_req: NextApiRequest, res: NextApiResponse) => {
+      const validationHandler = async (
+        _req: NextApiRequest,
+        res: NextApiResponse
+      ) => {
         res.status(400).json({ error: 'Missing required fields' });
       };
 
@@ -162,7 +174,10 @@ describe('Subscription API Routes', () => {
       });
 
       // Mock OPTIONS handler
-      const optionsHandler = async (_req: NextApiRequest, res: NextApiResponse) => {
+      const optionsHandler = async (
+        _req: NextApiRequest,
+        res: NextApiResponse
+      ) => {
         res.setHeader('Allow', ['GET', 'POST']);
         res.status(200).end();
       };

@@ -88,7 +88,11 @@ export class HealthcareCIPipeline {
     this.config = { ...DEFAULT_CI_CONFIG, ...config };
   }
 
-  async validateQualityGates(): Promise<{ passed: boolean; score: number; results: any[] }> {
+  async validateQualityGates(): Promise<{
+    passed: boolean;
+    score: number;
+    results: any[];
+  }> {
     const results = [];
     let totalScore = 0;
     let maxScore = 0;

@@ -42,7 +42,10 @@ export class AuditService {
       const validatedEvent = AuditEventSchema.parse(event);
 
       // Calculate compliance score based on event type and severity
-      const complianceScore = this.calculateComplianceScore(event.eventType, event.severity);
+      const complianceScore = this.calculateComplianceScore(
+        event.eventType,
+        event.severity
+      );
 
       const auditLog: Omit<AuditLog, 'id'> = {
         tenantId,
@@ -106,11 +109,17 @@ export class AuditService {
         query = query.eq('tenant_id', validatedFilters.tenantId);
       }
 
-      if (validatedFilters.eventTypes && validatedFilters.eventTypes.length > 0) {
+      if (
+        validatedFilters.eventTypes &&
+        validatedFilters.eventTypes.length > 0
+      ) {
         query = query.in('event_type', validatedFilters.eventTypes);
       }
 
-      if (validatedFilters.severities && validatedFilters.severities.length > 0) {
+      if (
+        validatedFilters.severities &&
+        validatedFilters.severities.length > 0
+      ) {
         query = query.in('severity', validatedFilters.severities);
       }
 
@@ -127,7 +136,10 @@ export class AuditService {
       }
 
       if (validatedFilters.startDate) {
-        query = query.gte('timestamp', validatedFilters.startDate.toISOString());
+        query = query.gte(
+          'timestamp',
+          validatedFilters.startDate.toISOString()
+        );
       }
 
       if (validatedFilters.endDate) {
@@ -139,7 +151,10 @@ export class AuditService {
       }
 
       if (validatedFilters.minComplianceScore !== undefined) {
-        query = query.gte('compliance_score', validatedFilters.minComplianceScore);
+        query = query.gte(
+          'compliance_score',
+          validatedFilters.minComplianceScore
+        );
       }
 
       if (validatedFilters.limit) {
@@ -213,7 +228,8 @@ export class AuditService {
       // Check for gaps in audit trail (periods without any logs)
       if (logs.length > 0) {
         const sortedLogs = logs.sort(
-          (a: any, b: any) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+          (a: any, b: any) =>
+            new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
         );
 
         for (let i = 1; i < sortedLogs.length; i++) {
@@ -232,7 +248,9 @@ export class AuditService {
       }
 
       // Check for suspicious patterns
-      const criticalEvents = logs.filter((log: any) => log.severity === AuditSeverity.CRITICAL);
+      const criticalEvents = logs.filter(
+        (log: any) => log.severity === AuditSeverity.CRITICAL
+      );
       if (criticalEvents.length > 10) {
         violations.push('High number of critical events detected');
         recommendations.push('Review security measures and access controls');
@@ -241,11 +259,15 @@ export class AuditService {
 
       // Generate recommendations
       if (missingEvents.length > 0) {
-        recommendations.push('Ensure all required healthcare operations are properly logged');
+        recommendations.push(
+          'Ensure all required healthcare operations are properly logged'
+        );
       }
 
       if (violations.length === 0) {
-        recommendations.push('Audit trail integrity is maintained - continue current practices');
+        recommendations.push(
+          'Audit trail integrity is maintained - continue current practices'
+        );
       }
 
       return {
@@ -263,7 +285,9 @@ export class AuditService {
         integrityScore: 0 as ComplianceScore,
         lastValidation: new Date(),
         violations: ['Audit trail validation system failure'],
-        recommendations: ['Contact system administrator to resolve audit validation issues'],
+        recommendations: [
+          'Contact system administrator to resolve audit validation issues',
+        ],
       };
     }
   }
@@ -271,7 +295,9 @@ export class AuditService {
   /**
    * Configure audit settings
    */
-  async configureAudit(config: AuditConfig): Promise<{ success: boolean; error?: string }> {
+  async configureAudit(
+    config: AuditConfig
+  ): Promise<{ success: boolean; error?: string }> {
     try {
       // Validate configuration
       const validatedConfig = AuditConfigSchema.parse(config);

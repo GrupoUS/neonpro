@@ -42,7 +42,9 @@ export type BundleAnalysis = {
 };
 
 // Analyze webpack bundle stats
-export async function analyzeBundleStats(statsPath: string): Promise<BundleAnalysis> {
+export async function analyzeBundleStats(
+  statsPath: string
+): Promise<BundleAnalysis> {
   try {
     const statsContent = await fs.readFile(statsPath, 'utf-8');
     const stats = JSON.parse(statsContent);
@@ -174,13 +176,19 @@ function generateRecommendations(analysis: BundleAnalysis): string[] {
 
   // Bundle size recommendations
   if (analysis.totalSize > BUNDLE_THRESHOLDS.TOTAL_ERROR) {
-    recommendations.push('🚨 Total bundle size exceeds 2MB - implement aggressive code splitting');
+    recommendations.push(
+      '🚨 Total bundle size exceeds 2MB - implement aggressive code splitting'
+    );
   } else if (analysis.totalSize > BUNDLE_THRESHOLDS.TOTAL_WARNING) {
-    recommendations.push('⚠️ Total bundle size exceeds 1MB - consider code splitting');
+    recommendations.push(
+      '⚠️ Total bundle size exceeds 1MB - consider code splitting'
+    );
   }
 
   // Large chunk recommendations
-  const largeChunks = analysis.chunks.filter((chunk) => chunk.status === 'error');
+  const largeChunks = analysis.chunks.filter(
+    (chunk) => chunk.status === 'error'
+  );
   if (largeChunks.length > 0) {
     recommendations.push(
       `🔄 ${largeChunks.length} chunks exceed 250KB - split into smaller chunks`
@@ -189,7 +197,10 @@ function generateRecommendations(analysis: BundleAnalysis): string[] {
 
   // Duplicate module recommendations
   if (analysis.duplicates.length > 0) {
-    const totalWasted = analysis.duplicates.reduce((sum, dup) => sum + dup.wastedBytes, 0);
+    const totalWasted = analysis.duplicates.reduce(
+      (sum, dup) => sum + dup.wastedBytes,
+      0
+    );
     recommendations.push(
       `📦 ${analysis.duplicates.length} duplicate modules waste ${formatBytes(totalWasted)} - optimize imports`
     );
@@ -203,7 +214,9 @@ function generateRecommendations(analysis: BundleAnalysis): string[] {
   }
 
   // Specific library recommendations
-  const recharts = analysis.largeModules.find((m) => m.name.includes('recharts'));
+  const recharts = analysis.largeModules.find((m) =>
+    m.name.includes('recharts')
+  );
   if (recharts) {
     recommendations.push(
       '📊 Recharts detected - use selective imports: import { LineChart } from "recharts"'
@@ -257,7 +270,8 @@ export function generateBundleReport(analysis: BundleAnalysis): string {
   // Chunk details
   report += '## Chunks\n';
   analysis.chunks.forEach((chunk) => {
-    const status = chunk.status === 'error' ? '🚨' : chunk.status === 'warning' ? '⚠️' : '✅';
+    const status =
+      chunk.status === 'error' ? '🚨' : chunk.status === 'warning' ? '⚠️' : '✅';
     report += `- ${status} **${chunk.name}**: ${formatBytes(chunk.size)}\n`;
   });
   report += '\n';
@@ -284,7 +298,12 @@ export function generateBundleReport(analysis: BundleAnalysis): string {
 
 // CLI utility for bundle analysis
 export async function runBundleAnalysis(statsPath?: string) {
-  const defaultStatsPath = path.join(process.cwd(), '.next', 'analyze', 'stats.json');
+  const defaultStatsPath = path.join(
+    process.cwd(),
+    '.next',
+    'analyze',
+    'stats.json'
+  );
   const finalStatsPath = statsPath || defaultStatsPath;
 
   try {

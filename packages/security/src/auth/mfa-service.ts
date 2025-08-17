@@ -21,7 +21,9 @@ export enum MfaMethod {
  */
 export const mfaSetupSchema = z.object({
   userId: z.string().uuid('User ID deve ser um UUID válido'),
-  method: z.nativeEnum(MfaMethod, { errorMap: () => ({ message: 'Método MFA inválido' }) }),
+  method: z.nativeEnum(MfaMethod, {
+    errorMap: () => ({ message: 'Método MFA inválido' }),
+  }),
   phoneNumber: z
     .string()
     .regex(/^\+?[\d\s\-()]{10,20}$/)
@@ -35,7 +37,11 @@ export const mfaSetupSchema = z.object({
 export const mfaVerificationSchema = z.object({
   userId: z.string().uuid('User ID deve ser um UUID válido'),
   method: z.nativeEnum(MfaMethod),
-  code: z.string().min(6).max(8).regex(/^\d+$/, 'Código deve conter apenas dígitos'),
+  code: z
+    .string()
+    .min(6)
+    .max(8)
+    .regex(/^\d+$/, 'Código deve conter apenas dígitos'),
   sessionId: z.string().uuid('Session ID deve ser um UUID válido'),
 });
 
@@ -110,7 +116,9 @@ export class TotpService {
    * Generate TOTP code for current time
    */
   static generateCode(secret: string, timestamp?: number): string {
-    const time = Math.floor((timestamp || Date.now()) / 1000 / TotpService.PERIOD);
+    const time = Math.floor(
+      (timestamp || Date.now()) / 1000 / TotpService.PERIOD
+    );
     return TotpService.generateHotp(secret, time);
   }
 
@@ -118,7 +126,9 @@ export class TotpService {
    * Verify TOTP code with time window tolerance
    */
   static verifyCode(secret: string, code: string, timestamp?: number): boolean {
-    const time = Math.floor((timestamp || Date.now()) / 1000 / TotpService.PERIOD);
+    const time = Math.floor(
+      (timestamp || Date.now()) / 1000 / TotpService.PERIOD
+    );
 
     // Check current time and adjacent windows
     for (let i = -TotpService.WINDOW; i <= TotpService.WINDOW; i++) {
@@ -157,7 +167,9 @@ export class TotpService {
       ((digest[offset + 2] & 0xff) << 8) |
       (digest[offset + 3] & 0xff);
 
-    return (code % 10 ** TotpService.DIGITS).toString().padStart(TotpService.DIGITS, '0');
+    return (code % 10 ** TotpService.DIGITS)
+      .toString()
+      .padStart(TotpService.DIGITS, '0');
   }
 
   /**
@@ -373,7 +385,8 @@ export class MfaService {
           success: false,
           method,
           lockoutUntil: lockoutStatus.lockoutUntil,
-          message: 'Conta temporariamente bloqueada devido a tentativas excessivas',
+          message:
+            'Conta temporariamente bloqueada devido a tentativas excessivas',
         };
       }
 
@@ -420,7 +433,8 @@ export class MfaService {
           method,
           remainingAttempts: 0,
           lockoutUntil: new Date(Date.now() + MfaService.LOCKOUT_DURATION),
-          message: 'Muitas tentativas incorretas. Conta bloqueada temporariamente.',
+          message:
+            'Muitas tentativas incorretas. Conta bloqueada temporariamente.',
         };
       }
 
@@ -453,7 +467,9 @@ export class MfaService {
   /**
    * Get user's TOTP secret from secure storage
    */
-  private static async getUserTotpSecret(_userId: string): Promise<string | null> {
+  private static async getUserTotpSecret(
+    _userId: string
+  ): Promise<string | null> {
     // In production, retrieve from encrypted database storage
     // Mock implementation
     return 'MOCK_SECRET_KEY_FOR_DEVELOPMENT';
@@ -462,7 +478,10 @@ export class MfaService {
   /**
    * Verify SMS code from temporary storage
    */
-  private static async verifySmsCode(_userId: string, code: string): Promise<boolean> {
+  private static async verifySmsCode(
+    _userId: string,
+    code: string
+  ): Promise<boolean> {
     // In production, verify against temporarily stored SMS code
     // Mock implementation
     return code === '123456';
@@ -471,7 +490,10 @@ export class MfaService {
   /**
    * Verify backup code and mark as used
    */
-  private static async verifyBackupCode(_userId: string, code: string): Promise<boolean> {
+  private static async verifyBackupCode(
+    _userId: string,
+    code: string
+  ): Promise<boolean> {
     // In production, check database and mark code as used
     // Mock implementation
     return BackupCodesService.validateBackupCode(code);
@@ -505,5 +527,8 @@ export class MfaService {
   /**
    * Record successful MFA authentication
    */
-  private static async recordSuccessfulMfa(_userId: string, _method: MfaMethod): Promise<void> {}
+  private static async recordSuccessfulMfa(
+    _userId: string,
+    _method: MfaMethod
+  ): Promise<void> {}
 }

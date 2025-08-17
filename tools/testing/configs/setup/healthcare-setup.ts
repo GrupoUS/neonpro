@@ -35,7 +35,8 @@ export type HealthcareTestAppointment = {
 // Healthcare Mock Client (Medplum-inspired pattern)
 export class HealthcareMockClient {
   private readonly patients: Map<string, HealthcareTestPatient> = new Map();
-  private readonly appointments: Map<string, HealthcareTestAppointment> = new Map();
+  private readonly appointments: Map<string, HealthcareTestAppointment> =
+    new Map();
   private readonly tenantId: string;
   constructor(tenantId = 'test-tenant-healthcare') {
     this.tenantId = tenantId;
@@ -63,7 +64,9 @@ export class HealthcareMockClient {
     return this.patients.get(id) || null;
   }
 
-  async queryPatients(filters: Partial<HealthcareTestPatient>): Promise<HealthcareTestPatient[]> {
+  async queryPatients(
+    filters: Partial<HealthcareTestPatient>
+  ): Promise<HealthcareTestPatient[]> {
     return Array.from(this.patients.values()).filter((patient) => {
       return Object.entries(filters).every(
         ([key, value]) => patient[key as keyof HealthcareTestPatient] === value

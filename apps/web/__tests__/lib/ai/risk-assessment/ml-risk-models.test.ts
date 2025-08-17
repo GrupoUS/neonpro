@@ -504,7 +504,7 @@ describe('ML Risk Models - Constitutional Healthcare Tests', () => {
 
       expect(result.overallScore).toBeGreaterThanOrEqual(0);
       expect(result.overallScore).toBeLessThanOrEqual(100);
-      expect(result.riskLevel).toBeOneOf(['LOW', 'MEDIUM', 'HIGH', 'CRITICAL']);
+      expect(['LOW', 'MEDIUM', 'HIGH', 'CRITICAL']).toContain(result.riskLevel);
       expect(result.categoryScores).toHaveProperty('demographic');
       expect(result.categoryScores).toHaveProperty('medicalHistory');
       expect(result.categoryScores).toHaveProperty('currentCondition');
@@ -638,10 +638,7 @@ describe('ML Risk Models - Constitutional Healthcare Tests', () => {
       );
 
       expect(escalation.requiresEscalation).toBe(true);
-      expect(escalation.escalationPriority).toBeOneOf([
-        'IMMEDIATE',
-        'EMERGENCY',
-      ]);
+      expect(['IMMEDIATE', 'EMERGENCY']).toContain(escalation.escalationPriority);
       expect(escalation.escalationReasons.length).toBeGreaterThan(0);
     });
 

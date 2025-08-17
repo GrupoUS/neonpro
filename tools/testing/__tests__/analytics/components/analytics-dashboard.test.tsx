@@ -71,7 +71,13 @@ vi.mock('@/lib/analytics/service', () => ({
 
 // Mock UI components
 vi.mock('@/components/ui/card', () => ({
-  Card: ({ children, className }: { children: React.ReactNode; className?: string }) => (
+  Card: ({
+    children,
+    className,
+  }: {
+    children: React.ReactNode;
+    className?: string;
+  }) => (
     <div className={className} data-testid="card">
       {children}
     </div>
@@ -89,7 +95,12 @@ vi.mock('@/components/ui/card', () => ({
 
 vi.mock('@/components/ui/button', () => ({
   Button: ({ children, onClick, variant, size }: any) => (
-    <button data-size={size} data-testid="button" data-variant={variant} onClick={onClick}>
+    <button
+      data-size={size}
+      data-testid="button"
+      data-variant={variant}
+      onClick={onClick}
+    >
       {children}
     </button>
   ),
@@ -104,7 +115,13 @@ vi.mock('@/components/ui/select', () => ({
   SelectContent: ({ children }: { children: React.ReactNode }) => (
     <div data-testid="select-content">{children}</div>
   ),
-  SelectItem: ({ children, value }: { children: React.ReactNode; value: string }) => (
+  SelectItem: ({
+    children,
+    value,
+  }: {
+    children: React.ReactNode;
+    value: string;
+  }) => (
     <div data-testid="select-item" data-value={value}>
       {children}
     </div>
@@ -140,7 +157,11 @@ describe('AnalyticsDashboard Component', () => {
   });
 
   const renderWithQueryClient = (component: React.ReactElement) => {
-    return render(<QueryClientProvider client={queryClient}>{component}</QueryClientProvider>);
+    return render(
+      <QueryClientProvider client={queryClient}>
+        {component}
+      </QueryClientProvider>
+    );
   };
 
   describe('rendering and layout', () => {
@@ -197,14 +218,18 @@ describe('AnalyticsDashboard Component', () => {
 
     test('should display error state when data fetch fails', async () => {
       // Arrange
-      analyticsService.getDashboardMetrics.mockRejectedValue(new Error('Failed to fetch data'));
+      analyticsService.getDashboardMetrics.mockRejectedValue(
+        new Error('Failed to fetch data')
+      );
 
       // Act
       renderWithQueryClient(<AnalyticsDashboard />);
 
       // Assert
       await waitFor(() => {
-        expect(screen.getByText('Error loading analytics data')).toBeInTheDocument();
+        expect(
+          screen.getByText('Error loading analytics data')
+        ).toBeInTheDocument();
         expect(screen.getByText('Failed to fetch data')).toBeInTheDocument();
         expect(screen.getByText('Retry')).toBeInTheDocument();
       });
@@ -508,8 +533,12 @@ describe('AnalyticsDashboard Component', () => {
       // Assert
       await waitFor(() => {
         // Detailed metrics should be hidden on smaller screens
-        expect(screen.queryByText('Average Subscription Value')).not.toBeInTheDocument();
-        expect(screen.queryByText('Customer Lifetime Value')).not.toBeInTheDocument();
+        expect(
+          screen.queryByText('Average Subscription Value')
+        ).not.toBeInTheDocument();
+        expect(
+          screen.queryByText('Customer Lifetime Value')
+        ).not.toBeInTheDocument();
       });
     });
   });
@@ -532,10 +561,18 @@ describe('AnalyticsDashboard Component', () => {
 
       // Assert
       await waitFor(() => {
-        expect(screen.getByRole('main', { name: 'Analytics Dashboard' })).toBeInTheDocument();
-        expect(screen.getByRole('region', { name: 'Subscription Metrics' })).toBeInTheDocument();
-        expect(screen.getByRole('region', { name: 'Trial Metrics' })).toBeInTheDocument();
-        expect(screen.getByRole('region', { name: 'Revenue Charts' })).toBeInTheDocument();
+        expect(
+          screen.getByRole('main', { name: 'Analytics Dashboard' })
+        ).toBeInTheDocument();
+        expect(
+          screen.getByRole('region', { name: 'Subscription Metrics' })
+        ).toBeInTheDocument();
+        expect(
+          screen.getByRole('region', { name: 'Trial Metrics' })
+        ).toBeInTheDocument();
+        expect(
+          screen.getByRole('region', { name: 'Revenue Charts' })
+        ).toBeInTheDocument();
       });
     });
 

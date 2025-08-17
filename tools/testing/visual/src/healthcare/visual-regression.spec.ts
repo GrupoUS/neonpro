@@ -51,9 +51,9 @@ test.describe('Healthcare Dashboard Visuals', () => {
     await page.waitForSelector('[data-testid="patient-registration-form"]');
 
     // Empty form state
-    await expect(page.locator('[data-testid="patient-registration-form"]')).toHaveScreenshot(
-      'registration-form-empty.png'
-    );
+    await expect(
+      page.locator('[data-testid="patient-registration-form"]')
+    ).toHaveScreenshot('registration-form-empty.png');
 
     // Filled form state
     await page.fill('[data-testid="patient-name"]', 'Maria Silva Santos');
@@ -62,18 +62,18 @@ test.describe('Healthcare Dashboard Visuals', () => {
     await page.fill('[data-testid="patient-phone"]', '(11) 99999-9999');
     await page.fill('[data-testid="patient-birthdate"]', '1990-01-15');
 
-    await expect(page.locator('[data-testid="patient-registration-form"]')).toHaveScreenshot(
-      'registration-form-filled.png'
-    );
+    await expect(
+      page.locator('[data-testid="patient-registration-form"]')
+    ).toHaveScreenshot('registration-form-filled.png');
 
     // Error state
     await page.fill('[data-testid="patient-cpf"]', '123.456.789-99'); // Invalid CPF
     await page.click('[data-testid="validate-form"]');
     await page.waitForSelector('[data-testid="cpf-error"]');
 
-    await expect(page.locator('[data-testid="patient-registration-form"]')).toHaveScreenshot(
-      'registration-form-error.png'
-    );
+    await expect(
+      page.locator('[data-testid="patient-registration-form"]')
+    ).toHaveScreenshot('registration-form-error.png');
   });
 
   test('Medical Appointment Calendar', async ({ page }) => {
@@ -87,25 +87,25 @@ test.describe('Healthcare Dashboard Visuals', () => {
       window.__TEST_DATE__ = today;
     });
 
-    await expect(page.locator('[data-testid="appointment-calendar"]')).toHaveScreenshot(
-      'appointment-calendar.png'
-    );
+    await expect(
+      page.locator('[data-testid="appointment-calendar"]')
+    ).toHaveScreenshot('appointment-calendar.png');
 
     // Day view
     await page.click('[data-testid="calendar-day-view"]');
     await page.waitForSelector('[data-testid="day-view-container"]');
 
-    await expect(page.locator('[data-testid="day-view-container"]')).toHaveScreenshot(
-      'appointment-day-view.png'
-    );
+    await expect(
+      page.locator('[data-testid="day-view-container"]')
+    ).toHaveScreenshot('appointment-day-view.png');
 
     // Week view
     await page.click('[data-testid="calendar-week-view"]');
     await page.waitForSelector('[data-testid="week-view-container"]');
 
-    await expect(page.locator('[data-testid="week-view-container"]')).toHaveScreenshot(
-      'appointment-week-view.png'
-    );
+    await expect(
+      page.locator('[data-testid="week-view-container"]')
+    ).toHaveScreenshot('appointment-week-view.png');
   });
 
   test('Medical Records Interface', async ({ page }) => {
@@ -114,25 +114,25 @@ test.describe('Healthcare Dashboard Visuals', () => {
     await page.waitForSelector('[data-testid="medical-records-container"]');
 
     // Records list view
-    await expect(page.locator('[data-testid="medical-records-list"]')).toHaveScreenshot(
-      'medical-records-list.png'
-    );
+    await expect(
+      page.locator('[data-testid="medical-records-list"]')
+    ).toHaveScreenshot('medical-records-list.png');
 
     // Individual record view
     await page.click('[data-testid="record-item-1"]');
     await page.waitForSelector('[data-testid="record-detail-view"]');
 
-    await expect(page.locator('[data-testid="record-detail-view"]')).toHaveScreenshot(
-      'medical-record-detail.png'
-    );
+    await expect(
+      page.locator('[data-testid="record-detail-view"]')
+    ).toHaveScreenshot('medical-record-detail.png');
 
     // Prescription view
     await page.click('[data-testid="view-prescription"]');
     await page.waitForSelector('[data-testid="prescription-viewer"]');
 
-    await expect(page.locator('[data-testid="prescription-viewer"]')).toHaveScreenshot(
-      'prescription-detail.png'
-    );
+    await expect(
+      page.locator('[data-testid="prescription-viewer"]')
+    ).toHaveScreenshot('prescription-detail.png');
   });
 
   test('Professional Dashboard', async ({ page }) => {
@@ -145,9 +145,11 @@ test.describe('Healthcare Dashboard Visuals', () => {
     await page.waitForSelector('[data-testid="professional-dashboard"]');
 
     // Hide dynamic content
-    await page.locator('[data-testid="current-patients-count"]').evaluate((el) => {
-      el.textContent = '12';
-    });
+    await page
+      .locator('[data-testid="current-patients-count"]')
+      .evaluate((el) => {
+        el.textContent = '12';
+      });
 
     await page.locator('[data-testid="todays-appointments"]').evaluate((el) => {
       el.textContent = '8';
@@ -158,14 +160,14 @@ test.describe('Healthcare Dashboard Visuals', () => {
     });
 
     // Sidebar navigation
-    await expect(page.locator('[data-testid="professional-sidebar"]')).toHaveScreenshot(
-      'professional-sidebar.png'
-    );
+    await expect(
+      page.locator('[data-testid="professional-sidebar"]')
+    ).toHaveScreenshot('professional-sidebar.png');
 
     // Patient queue
-    await expect(page.locator('[data-testid="patient-queue"]')).toHaveScreenshot(
-      'patient-queue.png'
-    );
+    await expect(
+      page.locator('[data-testid="patient-queue"]')
+    ).toHaveScreenshot('patient-queue.png');
   });
 });
 
@@ -176,25 +178,25 @@ test.describe('Healthcare Forms and Components', () => {
     await page.waitForSelector('[data-testid="lgpd-consent-form"]');
 
     // Initial consent form
-    await expect(page.locator('[data-testid="lgpd-consent-form"]')).toHaveScreenshot(
-      'lgpd-consent-initial.png'
-    );
+    await expect(
+      page.locator('[data-testid="lgpd-consent-form"]')
+    ).toHaveScreenshot('lgpd-consent-initial.png');
 
     // Data processing details
     await page.click('[data-testid="show-data-processing-details"]');
     await page.waitForSelector('[data-testid="data-processing-details"]');
 
-    await expect(page.locator('[data-testid="lgpd-consent-form"]')).toHaveScreenshot(
-      'lgpd-consent-details.png'
-    );
+    await expect(
+      page.locator('[data-testid="lgpd-consent-form"]')
+    ).toHaveScreenshot('lgpd-consent-details.png');
 
     // Consent granted state
     await page.check('[data-testid="consent-data-processing"]');
     await page.check('[data-testid="consent-marketing"]');
 
-    await expect(page.locator('[data-testid="lgpd-consent-form"]')).toHaveScreenshot(
-      'lgpd-consent-granted.png'
-    );
+    await expect(
+      page.locator('[data-testid="lgpd-consent-form"]')
+    ).toHaveScreenshot('lgpd-consent-granted.png');
   });
 
   test('Medical Procedure Forms', async ({ page }) => {
@@ -203,27 +205,30 @@ test.describe('Healthcare Forms and Components', () => {
     await page.waitForSelector('[data-testid="procedure-form"]');
 
     // Empty procedure form
-    await expect(page.locator('[data-testid="procedure-form"]')).toHaveScreenshot(
-      'procedure-form-empty.png'
-    );
+    await expect(
+      page.locator('[data-testid="procedure-form"]')
+    ).toHaveScreenshot('procedure-form-empty.png');
 
     // Filled procedure form
     await page.selectOption('[data-testid="procedure-type"]', 'botox_facial');
-    await page.fill('[data-testid="treatment-area"]', 'Região frontal e glabelar');
+    await page.fill(
+      '[data-testid="treatment-area"]',
+      'Região frontal e glabelar'
+    );
     await page.fill('[data-testid="dosage"]', '20 unidades');
     await page.check('[data-testid="patient-consent"]');
 
-    await expect(page.locator('[data-testid="procedure-form"]')).toHaveScreenshot(
-      'procedure-form-filled.png'
-    );
+    await expect(
+      page.locator('[data-testid="procedure-form"]')
+    ).toHaveScreenshot('procedure-form-filled.png');
 
     // Risk assessment section
     await page.click('[data-testid="show-risk-assessment"]');
     await page.waitForSelector('[data-testid="risk-assessment-section"]');
 
-    await expect(page.locator('[data-testid="procedure-form"]')).toHaveScreenshot(
-      'procedure-form-with-risks.png'
-    );
+    await expect(
+      page.locator('[data-testid="procedure-form"]')
+    ).toHaveScreenshot('procedure-form-with-risks.png');
   });
 
   test('Medication Management', async ({ page }) => {
@@ -232,17 +237,17 @@ test.describe('Healthcare Forms and Components', () => {
     await page.waitForSelector('[data-testid="medication-management"]');
 
     // Current medications list
-    await expect(page.locator('[data-testid="current-medications"]')).toHaveScreenshot(
-      'current-medications.png'
-    );
+    await expect(
+      page.locator('[data-testid="current-medications"]')
+    ).toHaveScreenshot('current-medications.png');
 
     // Add new medication form
     await page.click('[data-testid="add-medication-btn"]');
     await page.waitForSelector('[data-testid="add-medication-form"]');
 
-    await expect(page.locator('[data-testid="add-medication-form"]')).toHaveScreenshot(
-      'add-medication-form.png'
-    );
+    await expect(
+      page.locator('[data-testid="add-medication-form"]')
+    ).toHaveScreenshot('add-medication-form.png');
 
     // Drug interaction warning
     await page.fill('[data-testid="medication-name"]', 'Warfarina');
@@ -250,9 +255,9 @@ test.describe('Healthcare Forms and Components', () => {
     await page.click('[data-testid="check-interactions"]');
     await page.waitForSelector('[data-testid="interaction-warning"]');
 
-    await expect(page.locator('[data-testid="medication-management"]')).toHaveScreenshot(
-      'medication-interaction-warning.png'
-    );
+    await expect(
+      page.locator('[data-testid="medication-management"]')
+    ).toHaveScreenshot('medication-interaction-warning.png');
   });
 });
 
@@ -300,9 +305,9 @@ test.describe('Accessibility Visual Validation', () => {
     );
 
     await page.focus('[data-testid="submit-registration"]');
-    await expect(page.locator('[data-testid="submit-registration"]')).toHaveScreenshot(
-      'button-focus-state.png'
-    );
+    await expect(
+      page.locator('[data-testid="submit-registration"]')
+    ).toHaveScreenshot('button-focus-state.png');
   });
 });
 

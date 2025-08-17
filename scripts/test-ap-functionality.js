@@ -76,7 +76,9 @@ async function testAPFunctionality() {
     }
 
     console.log('\n💸 4. TESTANDO PAGAMENTOS...');
-    const { data: payments, error: paymentsError } = await supabase.from('ap_payments').select(`
+    const { data: payments, error: paymentsError } = await supabase
+      .from('ap_payments')
+      .select(`
         *,
         vendors:vendor_id(company_name),
         accounts_payable:accounts_payable_id(invoice_number)
@@ -123,7 +125,10 @@ async function testAPFunctionality() {
       .in('status', ['pending', 'approved', 'overdue']);
 
     const totalOpen =
-      openPayables?.reduce((sum, p) => sum + Number.parseFloat(p.net_amount), 0) || 0;
+      openPayables?.reduce(
+        (sum, p) => sum + Number.parseFloat(p.net_amount),
+        0
+      ) || 0;
     console.log(`✅ Total em aberto: R$ ${totalOpen.toFixed(2)}`);
 
     // Contas vencidas
@@ -144,7 +149,9 @@ async function testAPFunctionality() {
       .lte('due_date', thirtyDaysFromNow.toISOString().split('T')[0])
       .in('status', ['pending', 'approved']);
 
-    console.log(`📅 Vencimentos próximos (30 dias): ${upcomingPayables?.length || 0}`);
+    console.log(
+      `📅 Vencimentos próximos (30 dias): ${upcomingPayables?.length || 0}`
+    );
 
     console.log('\n🎯 RESUMO DOS TESTES:');
     console.log('✅ Conexão com Supabase Online: OK');

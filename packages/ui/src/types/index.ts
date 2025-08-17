@@ -43,7 +43,13 @@ export type AppointmentData = {
   description?: string;
   startTime: Date;
   endTime: Date;
-  status: 'scheduled' | 'confirmed' | 'in-progress' | 'completed' | 'cancelled' | 'no-show';
+  status:
+    | 'scheduled'
+    | 'confirmed'
+    | 'in-progress'
+    | 'completed'
+    | 'cancelled'
+    | 'no-show';
   type: 'consultation' | 'procedure' | 'follow-up' | 'emergency';
   location?: string;
   notes?: string;
@@ -204,7 +210,12 @@ export interface FormComponentProps extends BaseComponentProps {
 }
 
 // Status and variant types
-export type StatusVariant = 'default' | 'confirmed' | 'pending' | 'cancelled' | 'destructive';
+export type StatusVariant =
+  | 'default'
+  | 'confirmed'
+  | 'pending'
+  | 'cancelled'
+  | 'destructive';
 export type SizeVariant = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 export type ButtonVariant =
   | 'default'
@@ -382,7 +393,15 @@ export type FormValidation = {
 export type FormField = {
   name: string;
   label: string;
-  type: 'text' | 'email' | 'tel' | 'date' | 'time' | 'select' | 'textarea' | 'checkbox';
+  type:
+    | 'text'
+    | 'email'
+    | 'tel'
+    | 'date'
+    | 'time'
+    | 'select'
+    | 'textarea'
+    | 'checkbox';
   validation?: FormValidation;
   options?: { value: string; label: string }[];
   placeholder?: string;

@@ -92,13 +92,16 @@ async function testPerformanceAPI() {
   info('Testing Performance API Endpoint...');
 
   try {
-    const response = await fetch('http://localhost:3000/api/analytics/performance', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(sampleMetrics),
-    });
+    const response = await fetch(
+      'http://localhost:3000/api/analytics/performance',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(sampleMetrics),
+      }
+    );
 
     if (response.ok) {
       const result = await response.json();
@@ -147,7 +150,9 @@ function testPerformanceUtils() {
     const endTime = performance.now();
     const duration = endTime - startTime;
 
-    success(`Performance measurement test completed in ${duration.toFixed(2)}ms`);
+    success(
+      `Performance measurement test completed in ${duration.toFixed(2)}ms`
+    );
     info(`Processed ${processed.length} items`);
 
     return true;
@@ -234,7 +239,10 @@ async function runPerformanceTests() {
     }
   });
 
-  log(`\nTotal: ${passed}/${total} tests passed`, passed === total ? colors.green : colors.yellow);
+  log(
+    `\nTotal: ${passed}/${total} tests passed`,
+    passed === total ? colors.green : colors.yellow
+  );
 
   if (passed === total) {
     success('\n🎉 All performance integration tests passed!');

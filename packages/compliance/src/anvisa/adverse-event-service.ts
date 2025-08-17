@@ -13,7 +13,11 @@
  */
 
 import { z } from 'zod';
-import type { AdverseEventType, ComplianceScore, ConstitutionalResponse } from '../types';
+import type {
+  AdverseEventType,
+  ComplianceScore,
+  ConstitutionalResponse,
+} from '../types';
 
 /**
  * Adverse Event Report Schema
@@ -59,9 +63,22 @@ export const AdverseEventReportSchema = z.object({
       complications: z.array(z.string()).optional(),
     })
     .optional(),
-  eventSeverity: z.enum(['MILD', 'MODERATE', 'SEVERE', 'LIFE_THREATENING', 'DEATH']),
+  eventSeverity: z.enum([
+    'MILD',
+    'MODERATE',
+    'SEVERE',
+    'LIFE_THREATENING',
+    'DEATH',
+  ]),
   immediateActions: z.array(z.string()),
-  clinicalOutcome: z.enum(['RESOLVED', 'IMPROVED', 'UNCHANGED', 'WORSENED', 'DEATH', 'UNKNOWN']),
+  clinicalOutcome: z.enum([
+    'RESOLVED',
+    'IMPROVED',
+    'UNCHANGED',
+    'WORSENED',
+    'DEATH',
+    'UNKNOWN',
+  ]),
   followUpRequired: z.boolean().default(false),
   followUpPlan: z.string().max(500).optional(),
   reportingSource: z.enum([
@@ -78,14 +95,25 @@ export const AdverseEventReportSchema = z.object({
     institution: z.string().min(2).max(100),
   }),
   constitutionalAssessment: z.object({
-    patientSafetyImpact: z.enum(['NONE', 'MINIMAL', 'MODERATE', 'SIGNIFICANT', 'CRITICAL']),
+    patientSafetyImpact: z.enum([
+      'NONE',
+      'MINIMAL',
+      'MODERATE',
+      'SIGNIFICANT',
+      'CRITICAL',
+    ]),
     constitutionalViolation: z.boolean().default(false),
     immediateResponseRequired: z.boolean().default(false),
     regulatoryNotificationRequired: z.boolean().default(false),
     publicHealthImpact: z.boolean().default(false),
   }),
   anvisaReporting: z.object({
-    reportingTimeline: z.enum(['IMMEDIATE', 'URGENT_24H', 'REGULAR_15D', 'QUARTERLY']),
+    reportingTimeline: z.enum([
+      'IMMEDIATE',
+      'URGENT_24H',
+      'REGULAR_15D',
+      'QUARTERLY',
+    ]),
     anvisaNotified: z.boolean().default(false),
     anvisaProtocol: z.string().optional(),
     anvisaResponse: z.string().optional(),
@@ -206,11 +234,15 @@ export class AdverseEventService {
       }
 
       // Step 3: Classify event severity and urgency
-      const eventClassification = await this.classifyAdverseEvent(validatedReport);
+      const eventClassification =
+        await this.classifyAdverseEvent(validatedReport);
 
       // Step 4: Immediate response for critical events
       if (eventClassification.urgency === 'IMMEDIATE') {
-        await this.executeImmediateResponse(validatedReport, eventClassification);
+        await this.executeImmediateResponse(
+          validatedReport,
+          eventClassification
+        );
       }
 
       // Step 5: Store adverse event report
@@ -234,10 +266,16 @@ export class AdverseEventService {
       await this.scheduleFollowUpActions(storedReport, eventClassification);
 
       // Step 9: Generate audit trail
-      const auditTrail = await this.createAuditEvent('ADVERSE_EVENT_REPORTED', storedReport);
+      const auditTrail = await this.createAuditEvent(
+        'ADVERSE_EVENT_REPORTED',
+        storedReport
+      );
 
       // Step 10: Send completion notification
-      await this.sendReportingCompletionNotification(storedReport, eventClassification);
+      await this.sendReportingCompletionNotification(
+        storedReport,
+        eventClassification
+      );
 
       return {
         success: true,
@@ -248,11 +286,17 @@ export class AdverseEventService {
         timestamp: new Date(),
       };
     } catch (error) {
-      const auditTrail = await this.createAuditEvent('ADVERSE_EVENT_REPORTING_ERROR', report);
+      const auditTrail = await this.createAuditEvent(
+        'ADVERSE_EVENT_REPORTING_ERROR',
+        report
+      );
 
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown adverse event reporting error',
+        error:
+          error instanceof Error
+            ? error.message
+            : 'Unknown adverse event reporting error',
         complianceScore: 0,
         regulatoryValidation: { lgpd: false, anvisa: false, cfm: false },
         auditTrail,
@@ -264,7 +308,9 @@ export class AdverseEventService {
   /**
    * Validate Constitutional Healthcare Requirements for Adverse Events
    */
-  private async validateConstitutionalRequirements(report: AdverseEventReport): Promise<{
+  private async validateConstitutionalRequirements(
+    report: AdverseEventReport
+  ): Promise<{
     valid: boolean;
     score: ComplianceScore;
     violations: string[];
@@ -273,14 +319,21 @@ export class AdverseEventService {
     let score = 10;
 
     // Patient safety validation
-    if (report.eventSeverity === 'DEATH' || report.eventSeverity === 'LIFE_THREATENING') {
+    if (
+      report.eventSeverity === 'DEATH' ||
+      report.eventSeverity === 'LIFE_THREATENING'
+    ) {
       if (report.immediateActions.length === 0) {
-        violations.push('Immediate actions required for life-threatening events');
+        violations.push(
+          'Immediate actions required for life-threatening events'
+        );
         score -= 3;
       }
 
       if (!report.constitutionalAssessment.immediateResponseRequired) {
-        violations.push('Constitutional immediate response required for critical events');
+        violations.push(
+          'Constitutional immediate response required for critical events'
+        );
         score -= 2;
       }
     }
@@ -292,7 +345,9 @@ export class AdverseEventService {
         report.eventSeverity === 'DEATH') &&
       !report.followUpRequired
     ) {
-      violations.push('Follow-up required for serious adverse events (medical ethics)');
+      violations.push(
+        'Follow-up required for serious adverse events (medical ethics)'
+      );
       score -= 1.5;
     }
 
@@ -301,13 +356,17 @@ export class AdverseEventService {
       report.constitutionalAssessment.patientSafetyImpact === 'CRITICAL' &&
       !report.constitutionalAssessment.publicHealthImpact
     ) {
-      violations.push('Public health impact assessment required for critical safety events');
+      violations.push(
+        'Public health impact assessment required for critical safety events'
+      );
       score -= 1;
     }
 
     // Device-related event validation
     if (report.deviceId && !report.deviceInformation) {
-      violations.push('Device information required for device-related adverse events');
+      violations.push(
+        'Device information required for device-related adverse events'
+      );
       score -= 1;
     }
 
@@ -316,14 +375,18 @@ export class AdverseEventService {
       !report.reporterInformation.professionalRegistration &&
       report.reportingSource === 'HEALTHCARE_PROFESSIONAL'
     ) {
-      violations.push('Professional registration required for healthcare professional reports');
+      violations.push(
+        'Professional registration required for healthcare professional reports'
+      );
       score -= 1;
     }
 
     // Timeline validation
-    const hoursFromEvent = (Date.now() - report.eventDate.getTime()) / (1000 * 60 * 60);
+    const hoursFromEvent =
+      (Date.now() - report.eventDate.getTime()) / (1000 * 60 * 60);
     if (
-      (report.eventSeverity === 'DEATH' || report.eventSeverity === 'LIFE_THREATENING') &&
+      (report.eventSeverity === 'DEATH' ||
+        report.eventSeverity === 'LIFE_THREATENING') &&
       hoursFromEvent > 24
     ) {
       violations.push(
@@ -373,10 +436,13 @@ export class AdverseEventService {
         now.getTime() + this.getInternalDeadlineMinutes(urgency) * 60 * 1000
       ),
       patientNotificationDeadline: new Date(
-        now.getTime() + this.getPatientNotificationHours(urgency) * 60 * 60 * 1000
+        now.getTime() +
+          this.getPatientNotificationHours(urgency) * 60 * 60 * 1000
       ),
       familyNotificationDeadline:
-        urgency === 'IMMEDIATE' ? new Date(now.getTime() + 2 * 60 * 60 * 1000) : undefined, // 2 hours for critical events
+        urgency === 'IMMEDIATE'
+          ? new Date(now.getTime() + 2 * 60 * 60 * 1000)
+          : undefined, // 2 hours for critical events
     };
 
     // Determine required actions
@@ -384,9 +450,11 @@ export class AdverseEventService {
       immediateActions: report.immediateActions,
       investigationRequired: urgency === 'IMMEDIATE' || urgency === 'URGENT',
       deviceQuarantine:
-        Boolean(report.deviceId) && (urgency === 'IMMEDIATE' || urgency === 'URGENT'),
+        Boolean(report.deviceId) &&
+        (urgency === 'IMMEDIATE' || urgency === 'URGENT'),
       procedureSuspension:
-        report.eventSeverity === 'DEATH' || report.eventSeverity === 'LIFE_THREATENING',
+        report.eventSeverity === 'DEATH' ||
+        report.eventSeverity === 'LIFE_THREATENING',
       staffRetraining: urgency === 'IMMEDIATE' || urgency === 'URGENT',
       anvisaNotification:
         urgency === 'IMMEDIATE' ||
@@ -415,10 +483,12 @@ export class AdverseEventService {
       anvisaReport: requiredActions.anvisaNotification,
       internalReport: true,
       ethicsCommitteeReport:
-        urgency === 'IMMEDIATE' || report.constitutionalAssessment.constitutionalViolation,
+        urgency === 'IMMEDIATE' ||
+        report.constitutionalAssessment.constitutionalViolation,
       institutionalReport: urgency === 'IMMEDIATE' || urgency === 'URGENT',
       manufacturerNotification:
-        Boolean(report.deviceId) && (urgency === 'IMMEDIATE' || urgency === 'URGENT'),
+        Boolean(report.deviceId) &&
+        (urgency === 'IMMEDIATE' || urgency === 'URGENT'),
     };
 
     return {
@@ -441,7 +511,8 @@ export class AdverseEventService {
     let score = 10;
 
     // Timeline compliance
-    const hoursFromEvent = (Date.now() - report.eventDate.getTime()) / (1000 * 60 * 60);
+    const hoursFromEvent =
+      (Date.now() - report.eventDate.getTime()) / (1000 * 60 * 60);
     if (urgency === 'IMMEDIATE' && hoursFromEvent > 1) {
       score -= 2;
     }
@@ -450,7 +521,10 @@ export class AdverseEventService {
     }
 
     // Action completeness
-    if (requiredActions.immediateActions.length === 0 && urgency === 'IMMEDIATE') {
+    if (
+      requiredActions.immediateActions.length === 0 &&
+      urgency === 'IMMEDIATE'
+    ) {
       score -= 2;
     }
 
@@ -543,7 +617,10 @@ export class AdverseEventService {
     const anvisaResponse = await this.submitToANVISAPortal(anvisaReport);
 
     // Update report with ANVISA protocol
-    await this.updateReportWithANVISAProtocol(report.eventId!, anvisaResponse.protocol);
+    await this.updateReportWithANVISAProtocol(
+      report.eventId!,
+      anvisaResponse.protocol
+    );
   }
 
   // ============================================================================
@@ -593,7 +670,9 @@ export class AdverseEventService {
   // DATABASE AND EXTERNAL SERVICE METHODS (Implementation Stubs)
   // ============================================================================
 
-  private async storeAdverseEventReport(report: AdverseEventReport): Promise<AdverseEventReport> {
+  private async storeAdverseEventReport(
+    report: AdverseEventReport
+  ): Promise<AdverseEventReport> {
     return report;
   }
 
@@ -602,14 +681,20 @@ export class AdverseEventService {
     _classification: EventClassificationResult
   ): Promise<void> {}
 
-  private async quarantineDevice(_deviceId: string, _tenantId: string): Promise<void> {}
+  private async quarantineDevice(
+    _deviceId: string,
+    _tenantId: string
+  ): Promise<void> {}
 
   private async suspendProcedure(
     _procedureId: string | undefined,
     _tenantId: string
   ): Promise<void> {}
 
-  private async escalatePatientCare(_patientId: string, _severity: string): Promise<void> {}
+  private async escalatePatientCare(
+    _patientId: string,
+    _severity: string
+  ): Promise<void> {}
 
   private async notifyInternalTeams(
     _report: AdverseEventReport,
@@ -631,7 +716,9 @@ export class AdverseEventService {
     _classification: EventClassificationResult
   ): Promise<void> {}
 
-  private async submitToANVISAPortal(_report: any): Promise<{ protocol: string }> {
+  private async submitToANVISAPortal(
+    _report: any
+  ): Promise<{ protocol: string }> {
     return { protocol: `ANVISA-AE-${Date.now()}` };
   }
 
@@ -668,7 +755,10 @@ export class AdverseEventService {
     _tenantId: string
   ): Promise<ConstitutionalResponse<EventClassificationResult | null>> {
     try {
-      const auditTrail = await this.createAuditEvent('ADVERSE_EVENT_STATUS_ACCESSED', { eventId });
+      const auditTrail = await this.createAuditEvent(
+        'ADVERSE_EVENT_STATUS_ACCESSED',
+        { eventId }
+      );
 
       return {
         success: true,
@@ -679,11 +769,17 @@ export class AdverseEventService {
         timestamp: new Date(),
       };
     } catch (error) {
-      const auditTrail = await this.createAuditEvent('ADVERSE_EVENT_STATUS_ERROR', { eventId });
+      const auditTrail = await this.createAuditEvent(
+        'ADVERSE_EVENT_STATUS_ERROR',
+        { eventId }
+      );
 
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Failed to retrieve adverse event status',
+        error:
+          error instanceof Error
+            ? error.message
+            : 'Failed to retrieve adverse event status',
         complianceScore: 0,
         regulatoryValidation: { lgpd: false, anvisa: false, cfm: false },
         auditTrail,

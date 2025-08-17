@@ -26,7 +26,9 @@ test.describe('🏥 Healthcare Bank Reconciliation System E2E', () => {
     await HealthcareWorkflowHelper.validatePatientDataProtection(page);
   });
 
-  test('should load reconciliation dashboard with healthcare security', async ({ page }) => {
+  test('should load reconciliation dashboard with healthcare security', async ({
+    page,
+  }) => {
     // Verify healthcare security measures
     await HealthcareSecurityHelper.validateDataEncryption(page);
 
@@ -46,41 +48,61 @@ test.describe('🏥 Healthcare Bank Reconciliation System E2E', () => {
     await HealthcarePerformanceHelper.validatePerformanceRequirements(page);
   });
 
-  test('should import bank statement with healthcare data anonymization', async ({ page }) => {
+  test('should import bank statement with healthcare data anonymization', async ({
+    page,
+  }) => {
     // Generate anonymous financial data for testing
-    const testFinancialData = HealthcareDataAnonymizer.generateAnonymousFinancialData();
+    const testFinancialData =
+      HealthcareDataAnonymizer.generateAnonymousFinancialData();
 
     // Start file import process with performance validation
-    await HealthcarePerformanceHelper.validateRoutineOperationPerformance(page, async () => {
-      await page.getByTestId('import-statement-button').click();
-    });
+    await HealthcarePerformanceHelper.validateRoutineOperationPerformance(
+      page,
+      async () => {
+        await page.getByTestId('import-statement-button').click();
+      }
+    );
 
     // Upload CSV file with healthcare data protection
     const fileInput = page.getByTestId('file-upload-input');
     await expect(fileInput).toBeVisible();
-    await fileInput.setInputFiles('playwright/fixtures/bank-statement-sample.csv');
+    await fileInput.setInputFiles(
+      'playwright/fixtures/bank-statement-sample.csv'
+    );
 
     // Configure import settings with Brazilian standards
     await page.getByTestId('date-format-select').selectOption('DD/MM/YYYY');
     await page.getByTestId('amount-column-select').selectOption('valor');
-    await page.getByTestId('description-column-select').selectOption('descricao');
+    await page
+      .getByTestId('description-column-select')
+      .selectOption('descricao');
 
     // Start import with progress tracking
     await page.getByTestId('start-import-button').click();
 
     // Wait for import to complete with healthcare timeout standards
-    await expect(page.getByTestId('import-progress')).toBeVisible({ timeout: 10_000 });
-    await expect(page.getByTestId('import-success-message')).toBeVisible({ timeout: 30_000 });
+    await expect(page.getByTestId('import-progress')).toBeVisible({
+      timeout: 10_000,
+    });
+    await expect(page.getByTestId('import-success-message')).toBeVisible({
+      timeout: 30_000,
+    });
 
     // Verify imported transactions with data protection
-    await expect(page.getByTestId('transactions-list')).toContainText('Imported');
+    await expect(page.getByTestId('transactions-list')).toContainText(
+      'Imported'
+    );
 
     // Validate no sensitive data exposed
     await HealthcareWorkflowHelper.validatePatientDataProtection(page);
 
     // Check summary updated with healthcare metrics
-    const totalTransactions = await page.getByTestId('total-transactions-count').textContent();
-    expect(Number(totalTransactions?.replace(/\D/g, '') || 0)).toBeGreaterThan(0);
+    const totalTransactions = await page
+      .getByTestId('total-transactions-count')
+      .textContent();
+    expect(Number(totalTransactions?.replace(/\D/g, '') || 0)).toBeGreaterThan(
+      0
+    );
   });
 
   test('should perform intelligent transaction matching with healthcare validation', async ({
@@ -89,16 +111,23 @@ test.describe('🏥 Healthcare Bank Reconciliation System E2E', () => {
     // First import sample data with healthcare data protection
     await page.getByTestId('import-statement-button').click();
     const fileInput = page.getByTestId('file-upload-input');
-    await fileInput.setInputFiles('playwright/fixtures/bank-statement-sample.csv');
+    await fileInput.setInputFiles(
+      'playwright/fixtures/bank-statement-sample.csv'
+    );
     await page.getByTestId('start-import-button').click();
 
     // Wait for import completion
-    await expect(page.getByTestId('import-success-message')).toBeVisible({ timeout: 30_000 });
+    await expect(page.getByTestId('import-success-message')).toBeVisible({
+      timeout: 30_000,
+    });
 
     // Start automatic matching with healthcare performance standards
-    await HealthcarePerformanceHelper.validateRoutineOperationPerformance(page, async () => {
-      await page.getByTestId('start-matching-button').click();
-    });
+    await HealthcarePerformanceHelper.validateRoutineOperationPerformance(
+      page,
+      async () => {
+        await page.getByTestId('start-matching-button').click();
+      }
+    );
 
     // Configure matching parameters with healthcare precision
     await page.getByTestId('amount-tolerance-input').fill('0.01'); // Higher precision for healthcare
@@ -110,14 +139,20 @@ test.describe('🏥 Healthcare Bank Reconciliation System E2E', () => {
 
     // Wait for matching completion with healthcare timeout
     await expect(page.getByTestId('matching-progress')).toBeVisible();
-    await expect(page.getByTestId('matching-success-message')).toBeVisible({ timeout: 60_000 });
+    await expect(page.getByTestId('matching-success-message')).toBeVisible({
+      timeout: 60_000,
+    });
 
     // Verify matching results with healthcare accuracy standards
-    const matchedCount = await page.getByTestId('matched-transactions-count').textContent();
+    const matchedCount = await page
+      .getByTestId('matched-transactions-count')
+      .textContent();
     expect(Number(matchedCount?.replace(/\D/g, '') || 0)).toBeGreaterThan(0);
 
     // Check accuracy rate meets healthcare standards (≥95%)
-    const accuracyElement = await page.getByTestId('accuracy-rate-value').textContent();
+    const accuracyElement = await page
+      .getByTestId('accuracy-rate-value')
+      .textContent();
     const accuracyRate = Number(accuracyElement?.replace('%', '') || 0);
     expect(accuracyRate).toBeGreaterThan(95); // Healthcare accuracy requirement
 
@@ -129,9 +164,12 @@ test.describe('🏥 Healthcare Bank Reconciliation System E2E', () => {
     page,
   }) => {
     // Navigate to manual matching with performance validation
-    await HealthcarePerformanceHelper.validateRoutineOperationPerformance(page, async () => {
-      await page.getByTestId('manual-matching-tab').click();
-    });
+    await HealthcarePerformanceHelper.validateRoutineOperationPerformance(
+      page,
+      async () => {
+        await page.getByTestId('manual-matching-tab').click();
+      }
+    );
 
     // Select unmatched transaction with healthcare data protection
     const unMatchedList = page.getByTestId('unmatched-transactions-list');
@@ -147,7 +185,9 @@ test.describe('🏥 Healthcare Bank Reconciliation System E2E', () => {
       await expect(page.getByTestId('potential-matches-list')).toBeVisible();
 
       // Select a match with healthcare validation
-      const potentialMatches = page.getByTestId('potential-matches-list').locator('.match-item');
+      const potentialMatches = page
+        .getByTestId('potential-matches-list')
+        .locator('.match-item');
       if ((await potentialMatches.count()) > 0) {
         await potentialMatches.first().click();
 
@@ -167,7 +207,9 @@ test.describe('🏥 Healthcare Bank Reconciliation System E2E', () => {
   });
 });
 
-test('should export reconciliation report with healthcare compliance', async ({ page }) => {
+test('should export reconciliation report with healthcare compliance', async ({
+  page,
+}) => {
   // Setup: ensure we have test data with healthcare anonymization
   const testData = HealthcareDataAnonymizer.generateAnonymousFinancialData();
 
@@ -177,12 +219,17 @@ test('should export reconciliation report with healthcare compliance', async ({ 
     .getByTestId('file-upload-input')
     .setInputFiles('playwright/fixtures/bank-statement-sample.csv');
   await page.getByTestId('start-import-button').click();
-  await expect(page.getByTestId('import-success-message')).toBeVisible({ timeout: 30_000 });
+  await expect(page.getByTestId('import-success-message')).toBeVisible({
+    timeout: 30_000,
+  });
 
   // Navigate to reports section with healthcare performance
-  await HealthcarePerformanceHelper.validateRoutineOperationPerformance(page, async () => {
-    await page.getByTestId('reports-tab').click();
-  });
+  await HealthcarePerformanceHelper.validateRoutineOperationPerformance(
+    page,
+    async () => {
+      await page.getByTestId('reports-tab').click();
+    }
+  );
 
   // Configure report parameters with Brazilian date format
   await page.getByTestId('report-type-select').selectOption('detailed');
@@ -211,7 +258,9 @@ test('should export reconciliation report with healthcare compliance', async ({ 
   expect(download2.suggestedFilename()).toContain('.xlsx');
 });
 
-test('should handle large dataset with healthcare performance standards', async ({ page }) => {
+test('should handle large dataset with healthcare performance standards', async ({
+  page,
+}) => {
   // Import large dataset with performance monitoring
   await page.getByTestId('import-statement-button').click();
   await page
@@ -223,21 +272,27 @@ test('should handle large dataset with healthcare performance standards', async 
 
   // Execute import with healthcare timeout standards
   await page.getByTestId('start-import-button').click();
-  await expect(page.getByTestId('import-success-message')).toBeVisible({ timeout: 120_000 });
+  await expect(page.getByTestId('import-success-message')).toBeVisible({
+    timeout: 120_000,
+  });
 
   // Check performance meets healthcare standards (<60s)
   const importTime = Date.now() - startTime;
   expect(importTime).toBeLessThan(60_000); // Healthcare performance requirement
 
   // Verify all transactions imported with data protection
-  const totalCount = await page.getByTestId('total-transactions-count').textContent();
+  const totalCount = await page
+    .getByTestId('total-transactions-count')
+    .textContent();
   expect(Number(totalCount?.replace(/\D/g, '') || 0)).toBeGreaterThan(1000);
 
   // Test matching performance with healthcare standards
   const matchingStartTime = Date.now();
   await page.getByTestId('start-matching-button').click();
   await page.getByTestId('execute-matching-button').click();
-  await expect(page.getByTestId('matching-success-message')).toBeVisible({ timeout: 180_000 });
+  await expect(page.getByTestId('matching-success-message')).toBeVisible({
+    timeout: 180_000,
+  });
 
   const matchingTime = Date.now() - matchingStartTime;
   expect(matchingTime).toBeLessThan(120_000); // Healthcare matching performance
@@ -259,12 +314,17 @@ test('should maintain healthcare audit trail with constitutional compliance', as
     .getByTestId('file-upload-input')
     .setInputFiles('playwright/fixtures/bank-statement-sample.csv');
   await page.getByTestId('start-import-button').click();
-  await expect(page.getByTestId('import-success-message')).toBeVisible({ timeout: 30_000 });
+  await expect(page.getByTestId('import-success-message')).toBeVisible({
+    timeout: 30_000,
+  });
 
   // Navigate to audit trail with healthcare performance
-  await HealthcarePerformanceHelper.validateRoutineOperationPerformance(page, async () => {
-    await page.getByTestId('audit-trail-tab').click();
-  });
+  await HealthcarePerformanceHelper.validateRoutineOperationPerformance(
+    page,
+    async () => {
+      await page.getByTestId('audit-trail-tab').click();
+    }
+  );
 
   // Verify audit entries exist with healthcare standards
   await expect(page.getByTestId('audit-trail-list')).toBeVisible();
@@ -276,16 +336,22 @@ test('should maintain healthcare audit trail with constitutional compliance', as
   const firstEntry = auditEntries.first();
   await expect(firstEntry).toContainText('Bank statement imported');
   await expect(firstEntry).toContainText('admin.test@neonpro.com');
-  await expect(firstEntry).toContainText(new Date().toISOString().split('T')[0]);
+  await expect(firstEntry).toContainText(
+    new Date().toISOString().split('T')[0]
+  );
 
   // Verify detailed audit information without PHI exposure
   await firstEntry.click();
   await expect(page.getByTestId('audit-details-modal')).toBeVisible();
-  await expect(page.getByTestId('operation-type')).toContainText('Import Bank Statement');
+  await expect(page.getByTestId('operation-type')).toContainText(
+    'Import Bank Statement'
+  );
   await expect(page.getByTestId('operation-status')).toContainText('Success');
 
   // Validate no sensitive healthcare data in audit logs
-  const auditContent = await page.getByTestId('audit-details-modal').textContent();
+  const auditContent = await page
+    .getByTestId('audit-details-modal')
+    .textContent();
   expect(auditContent).not.toMatch(/\d{3}\.\d{3}\.\d{3}-\d{2}/); // No CPF in logs
   expect(auditContent).not.toMatch(/\(\d{2}\)\s*9\d{4}-\d{4}/); // No phone numbers
 }
@@ -306,7 +372,9 @@ test('should handle errors gracefully with healthcare standards', async (
 
   // Verify healthcare-compliant error messages
   await expect(page.getByTestId('error-message')).toBeVisible();
-  await expect(page.getByTestId('error-message')).toContainText('Invalid file format');
+  await expect(page.getByTestId('error-message')).toContainText(
+    'Invalid file format'
+  );
   await expect(page.getByTestId('error-description')).toContainText(
     'Please upload a valid CSV or Excel file'
   );
@@ -329,11 +397,16 @@ test('should handle errors gracefully with healthcare standards', async (
 
   // Test retry functionality with healthcare performance standards
   await page.unroute('**/api/bank-reconciliation/import');
-  await HealthcarePerformanceHelper.validateRoutineOperationPerformance(page, async () => {
-    await page.getByTestId('retry-button').click();
-  });
+  await HealthcarePerformanceHelper.validateRoutineOperationPerformance(
+    page,
+    async () => {
+      await page.getByTestId('retry-button').click();
+    }
+  );
 
-  await expect(page.getByTestId('import-success-message')).toBeVisible({ timeout: 30_000 });
+  await expect(page.getByTestId('import-success-message')).toBeVisible({
+    timeout: 30_000,
+  });
 
   // Validate error recovery maintains data protection
   await HealthcareWorkflowHelper.validatePatientDataProtection(page);
@@ -352,7 +425,9 @@ test('should validate LGPD compliance features in financial operations', async (
   await page.getByTestId('privacy-settings-tab').click();
 
   // Verify LGPD compliance features for financial data
-  await expect(page.getByTestId('financial-data-retention-settings')).toBeVisible();
+  await expect(
+    page.getByTestId('financial-data-retention-settings')
+  ).toBeVisible();
   await expect(page.getByTestId('consent-management-financial')).toBeVisible();
   await expect(page.getByTestId('data-export-financial')).toBeVisible();
   await expect(page.getByTestId('data-deletion-financial')).toBeVisible();
@@ -488,9 +563,12 @@ test('should validate healthcare performance benchmarks', async (
   await HealthcarePerformanceHelper.validatePerformanceRequirements(page);
 
   // Test routine financial operations performance (<500ms)
-  await HealthcarePerformanceHelper.validateRoutineOperationPerformance(page, async () => {
-    await page.getByTestId('transactions-list').click();
-  });
+  await HealthcarePerformanceHelper.validateRoutineOperationPerformance(
+    page,
+    async () => {
+      await page.getByTestId('transactions-list').click();
+    }
+  );
 
   // Test healthcare-specific emergency access patterns
   const testPatient = HealthcareDataAnonymizer.generateAnonymousPatient();
@@ -502,7 +580,10 @@ test('should validate healthcare performance benchmarks', async (
       .isVisible({ timeout: 1000 })
       .catch(() => false)
   ) {
-    await HealthcareWorkflowHelper.validateEmergencyAccess(page, testPatient.id);
+    await HealthcareWorkflowHelper.validateEmergencyAccess(
+      page,
+      testPatient.id
+    );
   }
 
   // Validate anxiety reduction patterns for financial interfaces

@@ -10,7 +10,10 @@ async function testSupabaseClient() {
 
   console.log('📊 Variáveis de Ambiente:');
   console.log('SUPABASE_URL:', supabaseUrl ? '✅ Configurada' : '❌ Ausente');
-  console.log('SUPABASE_ANON_KEY:', supabaseKey ? '✅ Configurada' : '❌ Ausente');
+  console.log(
+    'SUPABASE_ANON_KEY:',
+    supabaseKey ? '✅ Configurada' : '❌ Ausente'
+  );
 
   if (!(supabaseUrl && supabaseKey)) {
     console.error('❌ Variáveis Supabase não configuradas!');
@@ -43,7 +46,13 @@ async function testSupabaseClient() {
     // Testar acesso às tabelas principais (se existirem)
     console.log('\n🏥 Testando acesso às tabelas do sistema...');
 
-    const tablesToTest = ['tenants', 'profiles', 'products', 'appointments', 'patients'];
+    const tablesToTest = [
+      'tenants',
+      'profiles',
+      'products',
+      'appointments',
+      'patients',
+    ];
 
     for (const tableName of tablesToTest) {
       try {
@@ -65,7 +74,9 @@ async function testSupabaseClient() {
   }
 
   console.log('\n🎯 RESULTADO:');
-  console.log('- Se conexão funcionou: ✅ Supabase OK, problema pode ser no Prisma');
+  console.log(
+    '- Se conexão funcionou: ✅ Supabase OK, problema pode ser no Prisma'
+  );
   console.log('- Se falhou: ❌ Problema nas configurações do Supabase');
   console.log('- Próximo passo: Configurar senha do banco para usar Prisma');
 }

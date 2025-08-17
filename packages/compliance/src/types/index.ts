@@ -218,7 +218,9 @@ export const ProfessionalValidationSchema = z.object({
   }),
 });
 
-export type ProfessionalValidation = z.infer<typeof ProfessionalValidationSchema>; // =============================================================================
+export type ProfessionalValidation = z.infer<
+  typeof ProfessionalValidationSchema
+>; // =============================================================================
 // AUDIT SYSTEM TYPES (Re-exported from ./audit)
 // =============================================================================
 

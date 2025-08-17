@@ -31,7 +31,11 @@ export class ComplianceAuditService {
     tenantId: string,
     auditorId: string,
     regulation?: HealthcareRegulation
-  ): Promise<{ success: boolean; report?: ComplianceAuditReport; error?: string }> {
+  ): Promise<{
+    success: boolean;
+    report?: ComplianceAuditReport;
+    error?: string;
+  }> {
     try {
       const auditDate = new Date();
       const reportId = `audit_${tenantId}_${auditDate.getTime()}`;
@@ -50,17 +54,17 @@ export class ComplianceAuditService {
         : undefined;
 
       // Perform compliance checks for each regulation
-      const regulations = regulation ? [regulation] : Object.values(HealthcareRegulation);
+      const regulations = regulation
+        ? [regulation]
+        : Object.values(HealthcareRegulation);
       const allFindings: ComplianceAuditFinding[] = [];
       const allActionItems: ComplianceActionItem[] = [];
       const recommendations: string[] = [];
       let totalScore = 0;
 
       for (const reg of regulations) {
-        const { findings, actionItems, score, regRecommendations } = await this.auditRegulation(
-          tenantId,
-          reg
-        );
+        const { findings, actionItems, score, regRecommendations } =
+          await this.auditRegulation(tenantId, reg);
         allFindings.push(...findings);
         allActionItems.push(...actionItems);
         recommendations.push(...regRecommendations);
@@ -89,7 +93,9 @@ export class ComplianceAuditService {
         metadata: {
           regulationsAudited: regulations,
           totalFindings: allFindings.length,
-          criticalFindings: allFindings.filter((f) => f.severity === AuditSeverity.CRITICAL).length,
+          criticalFindings: allFindings.filter(
+            (f) => f.severity === AuditSeverity.CRITICAL
+          ).length,
           auditDuration: 'Generated automatically',
           complianceThreshold: 9.9,
         },
@@ -258,7 +264,9 @@ export class ComplianceAuditService {
             category: 'System Error',
             severity: AuditSeverity.CRITICAL,
             description: 'Failed to audit LGPD compliance',
-            evidence: [error instanceof Error ? error.message : 'Unknown error'],
+            evidence: [
+              error instanceof Error ? error.message : 'Unknown error',
+            ],
             regulation: HealthcareRegulation.LGPD,
             complianceScore: 0 as ComplianceScore,
             status: 'OPEN',
@@ -366,9 +374,11 @@ export class ComplianceAuditService {
   /**
    * Get compliance audit report by ID
    */
-  async getAuditReport(
-    reportId: string
-  ): Promise<{ success: boolean; report?: ComplianceAuditReport; error?: string }> {
+  async getAuditReport(reportId: string): Promise<{
+    success: boolean;
+    report?: ComplianceAuditReport;
+    error?: string;
+  }> {
     try {
       const { data, error } = await this.supabaseClient
         .from('compliance_audit_reports')
@@ -388,7 +398,9 @@ export class ComplianceAuditService {
         id: data.id,
         tenantId: data.tenant_id,
         auditDate: new Date(data.audit_date),
-        lastAuditDate: data.last_audit_date ? new Date(data.last_audit_date) : undefined,
+        lastAuditDate: data.last_audit_date
+          ? new Date(data.last_audit_date)
+          : undefined,
         auditorId: data.auditor_id,
         regulation: data.regulation,
         overallScore: data.overall_score,

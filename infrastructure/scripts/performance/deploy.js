@@ -277,7 +277,10 @@ async function deployPerformanceOptimization() {
     success('✨ NeonPro performance monitoring system is production-ready!');
 
     log('\n🚀 Next Steps:', colors.bold);
-    log('1. Access performance dashboard at /dashboard/performance', colors.cyan);
+    log(
+      '1. Access performance dashboard at /dashboard/performance',
+      colors.cyan
+    );
     log('2. Monitor Web Vitals in real-time', colors.cyan);
     log('3. Use bundle analyzer with ANALYZE=true pnpm build', colors.cyan);
     log('4. Set up database migration for metric storage', colors.cyan);

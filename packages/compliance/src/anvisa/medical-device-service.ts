@@ -37,7 +37,12 @@ export const MedicalDeviceRegistrationSchema = z.object({
   expirationDate: z.date(),
   lastInspectionDate: z.date().optional(),
   nextInspectionDate: z.date(),
-  complianceStatus: z.enum(['COMPLIANT', 'NON_COMPLIANT', 'PENDING_REVIEW', 'SUSPENDED']),
+  complianceStatus: z.enum([
+    'COMPLIANT',
+    'NON_COMPLIANT',
+    'PENDING_REVIEW',
+    'SUSPENDED',
+  ]),
   qualityAssurance: z.object({
     iso13485Certified: z.boolean().default(false),
     goodManufacturingPractices: z.boolean().default(false),
@@ -55,7 +60,9 @@ export const MedicalDeviceRegistrationSchema = z.object({
   maintenanceSchedule: z.object({
     preventiveMaintenance: z.boolean().default(true),
     calibrationRequired: z.boolean().default(false),
-    calibrationFrequency: z.enum(['MONTHLY', 'QUARTERLY', 'SEMI_ANNUAL', 'ANNUAL']).optional(),
+    calibrationFrequency: z
+      .enum(['MONTHLY', 'QUARTERLY', 'SEMI_ANNUAL', 'ANNUAL'])
+      .optional(),
     lastCalibrationDate: z.date().optional(),
     nextCalibrationDate: z.date().optional(),
     maintenanceRecords: z.array(
@@ -76,7 +83,9 @@ export const MedicalDeviceRegistrationSchema = z.object({
   }),
 });
 
-export type MedicalDeviceRegistration = z.infer<typeof MedicalDeviceRegistrationSchema>;
+export type MedicalDeviceRegistration = z.infer<
+  typeof MedicalDeviceRegistrationSchema
+>;
 
 /**
  * Device Compliance Monitoring Result
@@ -145,7 +154,8 @@ export class MedicalDeviceService {
   ): Promise<ConstitutionalResponse<MedicalDeviceRegistration>> {
     try {
       // Step 1: Validate device registration data
-      const validatedRegistration = MedicalDeviceRegistrationSchema.parse(registration);
+      const validatedRegistration =
+        MedicalDeviceRegistrationSchema.parse(registration);
 
       // Step 2: Constitutional healthcare validation
       const constitutionalValidation =
@@ -166,7 +176,9 @@ export class MedicalDeviceService {
       }
 
       // Step 3: ANVISA registration verification
-      const anvisaVerification = await this.verifyANVISARegistration(validatedRegistration);
+      const anvisaVerification = await this.verifyANVISARegistration(
+        validatedRegistration
+      );
 
       if (!anvisaVerification.valid) {
         return {
@@ -183,7 +195,9 @@ export class MedicalDeviceService {
       }
 
       // Step 4: Quality assurance validation
-      const qualityValidation = await this.validateQualityAssurance(validatedRegistration);
+      const qualityValidation = await this.validateQualityAssurance(
+        validatedRegistration
+      );
 
       // Step 5: Professional qualification validation
       const professionalValidation =
@@ -206,7 +220,8 @@ export class MedicalDeviceService {
           medicalAccuracyConfirmed: true,
           regulatoryComplianceScore: complianceScore,
           lastValidationDate: new Date(),
-          validatedBy: validatedRegistration.constitutionalValidation.validatedBy,
+          validatedBy:
+            validatedRegistration.constitutionalValidation.validatedBy,
         },
       });
 
@@ -214,7 +229,10 @@ export class MedicalDeviceService {
       await this.scheduleComplianceMonitoring(registeredDevice);
 
       // Step 9: Generate audit trail
-      const auditTrail = await this.createAuditEvent('DEVICE_REGISTERED', registeredDevice);
+      const auditTrail = await this.createAuditEvent(
+        'DEVICE_REGISTERED',
+        registeredDevice
+      );
 
       // Step 10: Send compliance notification
       await this.sendComplianceNotification(registeredDevice, complianceScore);
@@ -228,11 +246,17 @@ export class MedicalDeviceService {
         timestamp: new Date(),
       };
     } catch (error) {
-      const auditTrail = await this.createAuditEvent('DEVICE_REGISTRATION_ERROR', registration);
+      const auditTrail = await this.createAuditEvent(
+        'DEVICE_REGISTRATION_ERROR',
+        registration
+      );
 
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown device registration error',
+        error:
+          error instanceof Error
+            ? error.message
+            : 'Unknown device registration error',
         complianceScore: 0,
         regulatoryValidation: { lgpd: false, anvisa: false, cfm: false },
         auditTrail,
@@ -250,35 +274,49 @@ export class MedicalDeviceService {
   ): Promise<ConstitutionalResponse<DeviceComplianceResult>> {
     try {
       // Step 1: Retrieve device registration
-      const deviceRegistration = await this.getDeviceRegistration(deviceId, tenantId);
+      const deviceRegistration = await this.getDeviceRegistration(
+        deviceId,
+        tenantId
+      );
 
       if (!deviceRegistration) {
         throw new Error('Device registration not found');
       }
 
       // Step 2: Perform comprehensive compliance checks
-      const complianceChecks = await this.performComplianceChecks(deviceRegistration);
+      const complianceChecks =
+        await this.performComplianceChecks(deviceRegistration);
 
       // Step 3: Assess constitutional compliance
-      const constitutionalAssessment = await this.assessConstitutionalCompliance(
-        deviceRegistration,
-        complianceChecks
-      );
+      const constitutionalAssessment =
+        await this.assessConstitutionalCompliance(
+          deviceRegistration,
+          complianceChecks
+        );
 
       // Step 4: Identify violations and recommendations
-      const violations = await this.identifyViolations(complianceChecks, constitutionalAssessment);
+      const violations = await this.identifyViolations(
+        complianceChecks,
+        constitutionalAssessment
+      );
       const recommendations = await this.generateRecommendations(
         complianceChecks,
         constitutionalAssessment
       );
 
       // Step 5: Generate next actions
-      const nextActions = await this.generateNextActions(violations, recommendations);
+      const nextActions = await this.generateNextActions(
+        violations,
+        recommendations
+      );
 
       // Step 6: Create compliance result
       const complianceResult: DeviceComplianceResult = {
         deviceId,
-        complianceStatus: this.determineComplianceStatus(constitutionalAssessment, violations),
+        complianceStatus: this.determineComplianceStatus(
+          constitutionalAssessment,
+          violations
+        ),
         constitutionalCompliance: constitutionalAssessment,
         complianceChecks: complianceChecks.summary,
         violations,
@@ -291,13 +329,20 @@ export class MedicalDeviceService {
       await this.updateDeviceComplianceStatus(deviceId, complianceResult);
 
       // Step 8: Generate audit trail
-      const auditTrail = await this.createAuditEvent('DEVICE_COMPLIANCE_MONITORED', {
-        deviceId,
-        complianceResult,
-      });
+      const auditTrail = await this.createAuditEvent(
+        'DEVICE_COMPLIANCE_MONITORED',
+        {
+          deviceId,
+          complianceResult,
+        }
+      );
 
       // Step 9: Send compliance alerts if necessary
-      if (violations.some((v) => v.severity === 'CRITICAL' || v.severity === 'HIGH')) {
+      if (
+        violations.some(
+          (v) => v.severity === 'CRITICAL' || v.severity === 'HIGH'
+        )
+      ) {
         await this.sendComplianceAlert(deviceRegistration, complianceResult);
       }
 
@@ -314,13 +359,19 @@ export class MedicalDeviceService {
         timestamp: new Date(),
       };
     } catch (error) {
-      const auditTrail = await this.createAuditEvent('DEVICE_COMPLIANCE_MONITORING_ERROR', {
-        deviceId,
-      });
+      const auditTrail = await this.createAuditEvent(
+        'DEVICE_COMPLIANCE_MONITORING_ERROR',
+        {
+          deviceId,
+        }
+      );
 
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Failed to monitor device compliance',
+        error:
+          error instanceof Error
+            ? error.message
+            : 'Failed to monitor device compliance',
         complianceScore: 0,
         regulatoryValidation: { lgpd: false, anvisa: false, cfm: false },
         auditTrail,
@@ -334,7 +385,9 @@ export class MedicalDeviceService {
   /**
    * Validate Constitutional Healthcare Compliance for Medical Device
    */
-  private async validateConstitutionalCompliance(registration: MedicalDeviceRegistration): Promise<{
+  private async validateConstitutionalCompliance(
+    registration: MedicalDeviceRegistration
+  ): Promise<{
     valid: boolean;
     score: ComplianceScore;
     violations: string[];
@@ -347,7 +400,9 @@ export class MedicalDeviceService {
       registration.deviceCategory === 'CLASS_IV' &&
       !registration.qualityAssurance.iso13485Certified
     ) {
-      violations.push('Class IV devices require ISO 13485 certification for patient safety');
+      violations.push(
+        'Class IV devices require ISO 13485 certification for patient safety'
+      );
       score -= 2;
     }
 
@@ -361,7 +416,8 @@ export class MedicalDeviceService {
 
     // Risk management validation
     if (
-      (registration.deviceCategory === 'CLASS_III' || registration.deviceCategory === 'CLASS_IV') &&
+      (registration.deviceCategory === 'CLASS_III' ||
+        registration.deviceCategory === 'CLASS_IV') &&
       !registration.qualityAssurance.riskManagementPlan
     ) {
       violations.push('High-risk devices require formal risk management plan');
@@ -370,13 +426,17 @@ export class MedicalDeviceService {
 
     // Constitutional maintenance requirements
     if (!registration.maintenanceSchedule.preventiveMaintenance) {
-      violations.push('Preventive maintenance required for constitutional patient safety');
+      violations.push(
+        'Preventive maintenance required for constitutional patient safety'
+      );
       score -= 1;
     }
 
     // Expiration validation
     if (registration.expirationDate < new Date()) {
-      violations.push('Device registration expired - constitutional healthcare violation');
+      violations.push(
+        'Device registration expired - constitutional healthcare violation'
+      );
       score -= 3;
     }
 
@@ -392,7 +452,9 @@ export class MedicalDeviceService {
   /**
    * Verify ANVISA Registration Status
    */
-  private async verifyANVISARegistration(registration: MedicalDeviceRegistration): Promise<{
+  private async verifyANVISARegistration(
+    registration: MedicalDeviceRegistration
+  ): Promise<{
     valid: boolean;
     score: ComplianceScore;
     issues: string[];
@@ -418,12 +480,16 @@ export class MedicalDeviceService {
       registration.deviceCategory === 'CLASS_IV' &&
       !registration.anvisaRegistrationNumber.includes('-04')
     ) {
-      issues.push('Class IV device registration number does not match device category');
+      issues.push(
+        'Class IV device registration number does not match device category'
+      );
       score -= 2;
     }
 
     // Manufacturer validation (would integrate with ANVISA database)
-    const manufacturerValid = await this.validateManufacturerWithANVISA(registration.manufacturer);
+    const manufacturerValid = await this.validateManufacturerWithANVISA(
+      registration.manufacturer
+    );
     if (!manufacturerValid) {
       issues.push('Manufacturer not registered with ANVISA');
       score -= 2;
@@ -441,7 +507,9 @@ export class MedicalDeviceService {
   /**
    * Validate Quality Assurance Requirements
    */
-  private async validateQualityAssurance(registration: MedicalDeviceRegistration): Promise<{
+  private async validateQualityAssurance(
+    registration: MedicalDeviceRegistration
+  ): Promise<{
     compliant: boolean;
     score: ComplianceScore;
     gaps: string[];
@@ -454,7 +522,8 @@ export class MedicalDeviceService {
     // ISO 13485 requirement for medical devices
     if (
       !qa.iso13485Certified &&
-      (registration.deviceCategory === 'CLASS_III' || registration.deviceCategory === 'CLASS_IV')
+      (registration.deviceCategory === 'CLASS_III' ||
+        registration.deviceCategory === 'CLASS_IV')
     ) {
       gaps.push('ISO 13485 certification required for Class III/IV devices');
       score -= 2;
@@ -475,7 +544,8 @@ export class MedicalDeviceService {
     // Risk Management Plan for high-risk devices
     if (
       !qa.riskManagementPlan &&
-      (registration.deviceCategory === 'CLASS_III' || registration.deviceCategory === 'CLASS_IV')
+      (registration.deviceCategory === 'CLASS_III' ||
+        registration.deviceCategory === 'CLASS_IV')
     ) {
       gaps.push('Risk Management Plan required for high-risk devices');
       score -= 1.5;
@@ -520,9 +590,12 @@ export class MedicalDeviceService {
     // Safety certification requirements
     if (
       registration.clinicalUsage.safetyCertifications.length === 0 &&
-      (registration.deviceCategory === 'CLASS_III' || registration.deviceCategory === 'CLASS_IV')
+      (registration.deviceCategory === 'CLASS_III' ||
+        registration.deviceCategory === 'CLASS_IV')
     ) {
-      issues.push('Safety certifications required for high-risk device operation');
+      issues.push(
+        'Safety certifications required for high-risk device operation'
+      );
       score -= 1;
     }
 
@@ -563,7 +636,9 @@ export class MedicalDeviceService {
   /**
    * Perform Comprehensive Compliance Checks
    */
-  private async performComplianceChecks(registration: MedicalDeviceRegistration): Promise<{
+  private async performComplianceChecks(
+    registration: MedicalDeviceRegistration
+  ): Promise<{
     summary: DeviceComplianceResult['complianceChecks'];
     auditTrail: any[];
   }> {
@@ -626,7 +701,8 @@ export class MedicalDeviceService {
     }
 
     // Professional qualification check
-    const professionalCheck = await this.validateProfessionalQualifications(registration);
+    const professionalCheck =
+      await this.validateProfessionalQualifications(registration);
     checks.professionalQualificationValid = professionalCheck.valid;
     auditTrail.push({
       checkType: 'PROFESSIONAL_QUALIFICATION',
@@ -688,13 +764,25 @@ export class MedicalDeviceService {
     // Constitutional adjustments
     if (registration.deviceCategory === 'CLASS_IV') {
       // Maximum risk devices require perfect scores
-      patientSafetyScore = Math.min(patientSafetyScore, patientSafetyScore * 0.9);
+      patientSafetyScore = Math.min(
+        patientSafetyScore,
+        patientSafetyScore * 0.9
+      );
     }
 
     const scores = {
-      patientSafetyScore: Math.max(0, Math.min(10, patientSafetyScore)) as ComplianceScore,
-      regulatoryComplianceScore: Math.max(0, Math.min(10, regulatoryScore)) as ComplianceScore,
-      qualityAssuranceScore: Math.max(0, Math.min(10, qualityScore)) as ComplianceScore,
+      patientSafetyScore: Math.max(
+        0,
+        Math.min(10, patientSafetyScore)
+      ) as ComplianceScore,
+      regulatoryComplianceScore: Math.max(
+        0,
+        Math.min(10, regulatoryScore)
+      ) as ComplianceScore,
+      qualityAssuranceScore: Math.max(
+        0,
+        Math.min(10, qualityScore)
+      ) as ComplianceScore,
       overallScore: 0 as ComplianceScore,
     };
 
@@ -729,7 +817,9 @@ export class MedicalDeviceService {
     return null; // Would query Supabase database
   }
 
-  private async validateManufacturerWithANVISA(_manufacturer: string): Promise<boolean> {
+  private async validateManufacturerWithANVISA(
+    _manufacturer: string
+  ): Promise<boolean> {
     return true; // Would integrate with ANVISA API
   }
 
@@ -837,7 +927,9 @@ export class MedicalDeviceService {
     _tenantId: string
   ): Promise<ConstitutionalResponse<DeviceComplianceResult | null>> {
     try {
-      const auditTrail = await this.createAuditEvent('DEVICE_STATUS_ACCESSED', { deviceId });
+      const auditTrail = await this.createAuditEvent('DEVICE_STATUS_ACCESSED', {
+        deviceId,
+      });
 
       return {
         success: true,
@@ -848,12 +940,16 @@ export class MedicalDeviceService {
         timestamp: new Date(),
       };
     } catch (error) {
-      const auditTrail = await this.createAuditEvent('DEVICE_STATUS_ERROR', { deviceId });
+      const auditTrail = await this.createAuditEvent('DEVICE_STATUS_ERROR', {
+        deviceId,
+      });
 
       return {
         success: false,
         error:
-          error instanceof Error ? error.message : 'Failed to retrieve device compliance status',
+          error instanceof Error
+            ? error.message
+            : 'Failed to retrieve device compliance status',
         complianceScore: 0,
         regulatoryValidation: { lgpd: false, anvisa: false, cfm: false },
         auditTrail,

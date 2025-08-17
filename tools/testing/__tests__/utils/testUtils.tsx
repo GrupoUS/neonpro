@@ -20,7 +20,9 @@ import type { SubscriptionStatus, UserProfile } from '@/types/subscription';
 /**
  * Factory for creating mock user profiles
  */
-export const createMockUserProfile = (overrides: Partial<UserProfile> = {}): UserProfile => ({
+export const createMockUserProfile = (
+  overrides: Partial<UserProfile> = {}
+): UserProfile => ({
   id: 'test-user-123',
   email: 'test@example.com',
   name: 'Test User',
@@ -94,7 +96,9 @@ export const AllTheProviders: React.FC<AllTheProvidersProps> = ({
   children,
   queryClient = createTestQueryClient(),
 }) => {
-  return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
+  return (
+    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+  );
 }; // ============================================================================
 // Custom Render Function
 // ============================================================================
@@ -106,7 +110,10 @@ interface CustomRenderOptions extends Omit<RenderOptions, 'wrapper'> {
   queryClient?: QueryClient;
 }
 
-export const renderWithProviders = (ui: React.ReactElement, options: CustomRenderOptions = {}) => {
+export const renderWithProviders = (
+  ui: React.ReactElement,
+  options: CustomRenderOptions = {}
+) => {
   const { queryClient, ...renderOptions } = options;
 
   const Wrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (
@@ -123,7 +130,9 @@ export const renderWithProviders = (ui: React.ReactElement, options: CustomRende
 /**
  * Creates a mock implementation for subscription hooks
  */
-export const createMockSubscriptionHook = (subscription: Partial<SubscriptionStatus> = {}) => ({
+export const createMockSubscriptionHook = (
+  subscription: Partial<SubscriptionStatus> = {}
+) => ({
   data: createMockSubscription(subscription),
   isLoading: false,
   isError: false,

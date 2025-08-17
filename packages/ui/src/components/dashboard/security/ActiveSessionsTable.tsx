@@ -28,8 +28,21 @@ import {
 } from '../../ui/dialog';
 import { Input } from '../../ui/input';
 import { Label } from '../../ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../ui/select';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../../ui/table';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '../../ui/select';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '../../ui/table';
 
 type ActiveSession = {
   id: string;
@@ -61,7 +74,9 @@ export function ActiveSessionsTable() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [riskFilter, setRiskFilter] = useState<string>('all');
-  const [selectedSession, setSelectedSession] = useState<ActiveSession | null>(null);
+  const [selectedSession, setSelectedSession] = useState<ActiveSession | null>(
+    null
+  );
 
   const fetchSessions = async () => {
     try {
@@ -99,12 +114,15 @@ export function ActiveSessionsTable() {
     }
 
     try {
-      const response = await fetch(`/api/security/sessions/${sessionId}/terminate`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
+      const response = await fetch(
+        `/api/security/sessions/${sessionId}/terminate`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
 
       if (!response.ok) {
         throw new Error('Failed to terminate session');
@@ -165,7 +183,9 @@ export function ActiveSessionsTable() {
     const matchesRisk =
       riskFilter === 'all' ||
       (riskFilter === 'high' && session.risk_score >= 80) ||
-      (riskFilter === 'medium' && session.risk_score >= 60 && session.risk_score < 80) ||
+      (riskFilter === 'medium' &&
+        session.risk_score >= 60 &&
+        session.risk_score < 80) ||
       (riskFilter === 'low' && session.risk_score < 60) ||
       (riskFilter === 'suspicious' && session.is_suspicious);
 
@@ -189,7 +209,9 @@ export function ActiveSessionsTable() {
           <div className="flex items-center space-x-2">
             <Users className="h-5 w-5 text-blue-600" />
             <div>
-              <div className="font-bold text-2xl text-blue-600">{sessions.length}</div>
+              <div className="font-bold text-2xl text-blue-600">
+                {sessions.length}
+              </div>
               <div className="text-blue-600 text-sm">Sessões Ativas</div>
             </div>
           </div>
@@ -284,7 +306,10 @@ export function ActiveSessionsTable() {
           <TableBody>
             {filteredSessions.length === 0 ? (
               <TableRow>
-                <TableCell className="py-8 text-center text-muted-foreground" colSpan={7}>
+                <TableCell
+                  className="py-8 text-center text-muted-foreground"
+                  colSpan={7}
+                >
                   Nenhuma sessão ativa encontrada
                 </TableCell>
               </TableRow>
@@ -355,14 +380,20 @@ export function ActiveSessionsTable() {
                       <Badge variant={getRiskColor(session.risk_score)}>
                         {getRiskLevel(session.risk_score)}
                       </Badge>
-                      <span className="text-muted-foreground text-xs">{session.risk_score}%</span>
+                      <span className="text-muted-foreground text-xs">
+                        {session.risk_score}%
+                      </span>
                     </div>
                   </TableCell>
                   <TableCell>
                     <div className="text-sm">
-                      {format(new Date(session.last_activity_at), 'dd/MM/yyyy HH:mm', {
-                        locale: ptBR,
-                      })}
+                      {format(
+                        new Date(session.last_activity_at),
+                        'dd/MM/yyyy HH:mm',
+                        {
+                          locale: ptBR,
+                        }
+                      )}
                     </div>
                   </TableCell>
                   <TableCell className="text-right">
@@ -396,7 +427,8 @@ export function ActiveSessionsTable() {
                                 <div>
                                   <Label>Usuário</Label>
                                   <div className="mt-1 text-sm">
-                                    {selectedSession.user_name || selectedSession.user_email}
+                                    {selectedSession.user_name ||
+                                      selectedSession.user_email}
                                   </div>
                                 </div>
                                 <div>
@@ -442,9 +474,13 @@ export function ActiveSessionsTable() {
                                 <div>
                                   <Label>Pontuação de Risco</Label>
                                   <div className="mt-1">
-                                    <Badge variant={getRiskColor(selectedSession.risk_score)}>
-                                      {getRiskLevel(selectedSession.risk_score)} (
-                                      {selectedSession.risk_score}%)
+                                    <Badge
+                                      variant={getRiskColor(
+                                        selectedSession.risk_score
+                                      )}
+                                    >
+                                      {getRiskLevel(selectedSession.risk_score)}{' '}
+                                      ({selectedSession.risk_score}%)
                                     </Badge>
                                   </div>
                                 </div>
@@ -462,7 +498,9 @@ export function ActiveSessionsTable() {
                                   <Label>Última Atividade</Label>
                                   <div className="mt-1 text-sm">
                                     {format(
-                                      new Date(selectedSession.last_activity_at),
+                                      new Date(
+                                        selectedSession.last_activity_at
+                                      ),
                                       'dd/MM/yyyy HH:mm:ss',
                                       { locale: ptBR }
                                     )}
@@ -485,11 +523,13 @@ export function ActiveSessionsTable() {
                                   <div>
                                     <Label>Flags de Segurança</Label>
                                     <div className="mt-1 flex flex-wrap gap-2">
-                                      {selectedSession.security_flags.map((flag, index) => (
-                                        <Badge key={index} variant="outline">
-                                          {flag}
-                                        </Badge>
-                                      ))}
+                                      {selectedSession.security_flags.map(
+                                        (flag, index) => (
+                                          <Badge key={index} variant="outline">
+                                            {flag}
+                                          </Badge>
+                                        )
+                                      )}
                                     </div>
                                   </div>
                                 )}
@@ -498,19 +538,24 @@ export function ActiveSessionsTable() {
                                 <Alert>
                                   <AlertTriangle className="h-4 w-4" />
                                   <AlertDescription>
-                                    Esta sessão foi marcada como suspeita devido a atividade
-                                    incomum.
+                                    Esta sessão foi marcada como suspeita devido
+                                    a atividade incomum.
                                   </AlertDescription>
                                 </Alert>
                               )}
 
                               {selectedSession.session_data &&
-                                Object.keys(selectedSession.session_data).length > 0 && (
+                                Object.keys(selectedSession.session_data)
+                                  .length > 0 && (
                                   <div>
                                     <Label>Dados da Sessão</Label>
                                     <div className="mt-1">
                                       <pre className="max-h-40 overflow-auto rounded bg-muted p-3 text-xs">
-                                        {JSON.stringify(selectedSession.session_data, null, 2)}
+                                        {JSON.stringify(
+                                          selectedSession.session_data,
+                                          null,
+                                          2
+                                        )}
                                       </pre>
                                     </div>
                                   </div>
@@ -543,7 +588,8 @@ export function ActiveSessionsTable() {
         Mostrando {filteredSessions.length} de {sessions.length} sessões ativas
         {sessions.filter((s) => s.is_suspicious).length > 0 && (
           <span className="ml-2 text-red-600">
-            • {sessions.filter((s) => s.is_suspicious).length} sessões suspeitas detectadas
+            • {sessions.filter((s) => s.is_suspicious).length} sessões suspeitas
+            detectadas
           </span>
         )}
       </div>

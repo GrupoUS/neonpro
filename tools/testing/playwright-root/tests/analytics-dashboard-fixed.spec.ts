@@ -26,12 +26,16 @@ test.describe('🏥 Healthcare Analytics Dashboard E2E', () => {
     await HealthcareWorkflowHelper.validatePatientDataProtection(page);
   });
 
-  test('should load and display healthcare analytics dashboard with security', async ({ page }) => {
+  test('should load and display healthcare analytics dashboard with security', async ({
+    page,
+  }) => {
     // Validate healthcare security measures
     await HealthcareSecurityHelper.validateDataEncryption(page);
 
     // Wait for dashboard to load with healthcare performance standards
-    await expect(page.getByTestId('analytics-dashboard')).toBeVisible({ timeout: 15_000 });
+    await expect(page.getByTestId('analytics-dashboard')).toBeVisible({
+      timeout: 15_000,
+    });
 
     // Check healthcare-specific key metrics are displayed
     await expect(page.getByTestId('total-patients-metric')).toBeVisible();
@@ -52,27 +56,36 @@ test.describe('🏥 Healthcare Analytics Dashboard E2E', () => {
     await HealthcareWorkflowHelper.validatePatientDataProtection(page);
   });
 
-  test('should filter healthcare data by date range with LGPD compliance', async ({ page }) => {
+  test('should filter healthcare data by date range with LGPD compliance', async ({
+    page,
+  }) => {
     // Wait for dashboard to load
     await expect(page.getByTestId('analytics-dashboard')).toBeVisible();
 
     // Get initial patient count with healthcare data protection
-    const initialCount = await page.getByTestId('total-patients-value').textContent();
+    const initialCount = await page
+      .getByTestId('total-patients-value')
+      .textContent();
 
     // Open date filters with Brazilian date format
     await page.getByTestId('start-date-input').fill('01/02/2024'); // DD/MM/YYYY
     await page.getByTestId('end-date-input').fill('29/02/2024');
 
     // Apply filters with healthcare performance validation
-    await HealthcarePerformanceHelper.validateRoutineOperationPerformance(page, async () => {
-      await page.getByTestId('apply-filters-button').click();
-    });
+    await HealthcarePerformanceHelper.validateRoutineOperationPerformance(
+      page,
+      async () => {
+        await page.getByTestId('apply-filters-button').click();
+      }
+    );
 
     // Wait for data to update with healthcare timeout standards
     await page.waitForResponse('**/api/analytics/data**', { timeout: 10_000 });
 
     // Verify data has changed with patient data protection
-    const newCount = await page.getByTestId('total-patients-value').textContent();
+    const newCount = await page
+      .getByTestId('total-patients-value')
+      .textContent();
     expect(newCount).not.toBe(initialCount);
 
     // Validate LGPD compliance in filtered data
@@ -82,7 +95,9 @@ test.describe('🏥 Healthcare Analytics Dashboard E2E', () => {
     await HealthcareWorkflowHelper.validatePatientDataProtection(page);
   });
 
-  test('should export healthcare analytics data with LGPD compliance', async ({ page }) => {
+  test('should export healthcare analytics data with LGPD compliance', async ({
+    page,
+  }) => {
     // Wait for dashboard to load with patient data protection
     await expect(page.getByTestId('analytics-dashboard')).toBeVisible();
 
@@ -111,7 +126,9 @@ test.describe('🏥 Healthcare Analytics Dashboard E2E', () => {
     await expect(page.getByTestId('export-compliance-notice')).toBeVisible();
   });
 
-  test('should handle mobile healthcare analytics with accessibility', async ({ page }) => {
+  test('should handle mobile healthcare analytics with accessibility', async ({
+    page,
+  }) => {
     // Set mobile viewport for patient accessibility
     await page.setViewportSize({ width: 375, height: 667 });
 
@@ -137,7 +154,9 @@ test.describe('🏥 Healthcare Analytics Dashboard E2E', () => {
     await HealthcareWorkflowHelper.validatePatientDataProtection(page);
   });
 
-  test('should handle error states gracefully with healthcare support', async ({ page }) => {
+  test('should handle error states gracefully with healthcare support', async ({
+    page,
+  }) => {
     // Mock API error for healthcare error handling testing
     await page.route('**/api/analytics/data', async (route) => {
       await route.fulfill({
@@ -156,22 +175,29 @@ test.describe('🏥 Healthcare Analytics Dashboard E2E', () => {
 
     // Verify healthcare-compliant error state is displayed
     await expect(page.getByTestId('analytics-error-panel')).toBeVisible();
-    await expect(page.getByTestId('error-message')).toContainText('Database connection failed');
+    await expect(page.getByTestId('error-message')).toContainText(
+      'Database connection failed'
+    );
 
     // Verify healthcare support information
     await expect(page.getByTestId('support-contact-info')).toBeVisible();
     await expect(page.getByTestId('error-guidance')).toBeVisible();
 
     // Test retry functionality with healthcare performance standards
-    await HealthcarePerformanceHelper.validateRoutineOperationPerformance(page, async () => {
-      await page.getByTestId('retry-button').click();
-    });
+    await HealthcarePerformanceHelper.validateRoutineOperationPerformance(
+      page,
+      async () => {
+        await page.getByTestId('retry-button').click();
+      }
+    );
 
     // Verify patient anxiety reduction in error handling
     await HealthcareAccessibilityHelper.validateAnxietyReduction(page);
   });
 
-  test('should handle loading states with healthcare performance standards', async ({ page }) => {
+  test('should handle loading states with healthcare performance standards', async ({
+    page,
+  }) => {
     // Slow down API response to test loading state
     await page.route('**/api/analytics/data', async (route) => {
       await new Promise((resolve) => setTimeout(resolve, 3000)); // 3 second delay
@@ -183,15 +209,25 @@ test.describe('🏥 Healthcare Analytics Dashboard E2E', () => {
 
     // Verify healthcare-compliant loading state is shown
     await expect(page.getByTestId('analytics-loading-panel')).toBeVisible();
-    await expect(page.getByTestId('loading-message')).toContainText('Loading analytics...');
+    await expect(page.getByTestId('loading-message')).toContainText(
+      'Loading analytics...'
+    );
     await expect(page.getByTestId('loading-progress-bar')).toBeVisible();
 
     // Verify healthcare loading accessibility
-    await expect(page.getByTestId('loading-panel')).toHaveAttribute('role', 'status');
-    await expect(page.getByTestId('loading-panel')).toHaveAttribute('aria-live', 'polite');
+    await expect(page.getByTestId('loading-panel')).toHaveAttribute(
+      'role',
+      'status'
+    );
+    await expect(page.getByTestId('loading-panel')).toHaveAttribute(
+      'aria-live',
+      'polite'
+    );
 
     // Wait for data to load with healthcare timeout
-    await expect(page.getByTestId('analytics-dashboard')).toBeVisible({ timeout: 15_000 });
+    await expect(page.getByTestId('analytics-dashboard')).toBeVisible({
+      timeout: 15_000,
+    });
     await expect(page.getByTestId('analytics-loading-panel')).not.toBeVisible();
 
     // Validate performance after loading
@@ -205,13 +241,20 @@ test.describe('🏥 Healthcare Analytics Dashboard E2E', () => {
     await expect(page.getByTestId('analytics-dashboard')).toBeVisible();
 
     // Get initial values with patient data protection
-    const initialPatients = await page.getByTestId('total-patients-value').textContent();
-    const initialRevenue = await page.getByTestId('total-revenue-value').textContent();
+    const initialPatients = await page
+      .getByTestId('total-patients-value')
+      .textContent();
+    const initialRevenue = await page
+      .getByTestId('total-revenue-value')
+      .textContent();
 
     // Click refresh with healthcare performance validation
-    await HealthcarePerformanceHelper.validateRoutineOperationPerformance(page, async () => {
-      await page.getByTestId('refresh-data-button').click();
-    });
+    await HealthcarePerformanceHelper.validateRoutineOperationPerformance(
+      page,
+      async () => {
+        await page.getByTestId('refresh-data-button').click();
+      }
+    );
 
     // Wait for refresh to complete
     await page.waitForResponse('**/api/analytics/data**');
@@ -240,9 +283,12 @@ test.describe('🏥 Healthcare Analytics Dashboard E2E', () => {
     await page.getByRole('option', { name: 'Tratamento Facial' }).click();
 
     // Apply filters with performance validation
-    await HealthcarePerformanceHelper.validateRoutineOperationPerformance(page, async () => {
-      await page.getByTestId('apply-filters-button').click();
-    });
+    await HealthcarePerformanceHelper.validateRoutineOperationPerformance(
+      page,
+      async () => {
+        await page.getByTestId('apply-filters-button').click();
+      }
+    );
 
     // Wait for filtered data
     await page.waitForResponse('**/api/analytics/data**');
@@ -251,9 +297,13 @@ test.describe('🏥 Healthcare Analytics Dashboard E2E', () => {
     await page.reload();
 
     // Verify filters are maintained with healthcare session management
-    await expect(page.getByTestId('start-date-input')).toHaveValue('01/02/2024');
+    await expect(page.getByTestId('start-date-input')).toHaveValue(
+      '01/02/2024'
+    );
     await expect(page.getByTestId('end-date-input')).toHaveValue('29/02/2024');
-    await expect(page.getByTestId('treatments-filter-select')).toContainText('Tratamento Facial');
+    await expect(page.getByTestId('treatments-filter-select')).toContainText(
+      'Tratamento Facial'
+    );
 
     // Validate session security and patient data protection
     await HealthcareSecurityHelper.validateDataEncryption(page);
@@ -272,7 +322,9 @@ test.describe('🏥 Healthcare Analytics Dashboard E2E', () => {
 
     // Check for proper healthcare heading structure
     await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
-    await expect(page.getByRole('heading', { level: 1 })).toContainText('Analytics Dashboard');
+    await expect(page.getByRole('heading', { level: 1 })).toContainText(
+      'Analytics Dashboard'
+    );
 
     const h2Count = await page.locator('h2').count();
     expect(h2Count).toBeGreaterThan(0); // Section headings exist
@@ -288,7 +340,9 @@ test.describe('🏥 Healthcare Analytics Dashboard E2E', () => {
     await page.keyboard.press('Enter');
 
     // Verify focus management for healthcare accessibility
-    const focusedElement = await page.evaluate(() => document.activeElement?.tagName);
+    const focusedElement = await page.evaluate(
+      () => document.activeElement?.tagName
+    );
     expect(['BUTTON', 'INPUT', 'SELECT', 'A']).toContain(focusedElement);
 
     // Test screen reader compatibility for medical data
@@ -320,11 +374,19 @@ test.describe('🏥 Healthcare Analytics Dashboard E2E', () => {
     });
 
     // Validate healthcare KPIs accuracy
-    const totalPatients = await page.getByTestId('total-patients-value').textContent();
-    const totalRevenue = await page.getByTestId('total-revenue-value').textContent();
-    const averageTicket = await page.getByTestId('average-ticket-value').textContent();
+    const totalPatients = await page
+      .getByTestId('total-patients-value')
+      .textContent();
+    const totalRevenue = await page
+      .getByTestId('total-revenue-value')
+      .textContent();
+    const averageTicket = await page
+      .getByTestId('average-ticket-value')
+      .textContent();
 
-    expect(Number(totalPatients?.replace(/\D/g, '') || 0)).toBeGreaterThanOrEqual(0);
+    expect(
+      Number(totalPatients?.replace(/\D/g, '') || 0)
+    ).toBeGreaterThanOrEqual(0);
     expect(
       Number(totalRevenue?.replace(/[^\d.,]/g, '').replace(',', '.') || 0)
     ).toBeGreaterThanOrEqual(0);
@@ -337,7 +399,9 @@ test.describe('🏥 Healthcare Analytics Dashboard E2E', () => {
     await expect(page.getByTestId('lgpd-compliance-indicator')).toBeVisible();
   });
 
-  test('should maintain healthcare security throughout analytics workflow', async ({ page }) => {
+  test('should maintain healthcare security throughout analytics workflow', async ({
+    page,
+  }) => {
     // Comprehensive healthcare security validation
     await HealthcareSecurityHelper.validateDataEncryption(page);
 
@@ -373,7 +437,9 @@ test.describe('🏥 Healthcare Analytics Dashboard E2E', () => {
     await expect(page.getByTestId('audit-trail-modal')).toBeVisible();
 
     // Validate audit trail doesn't expose PHI
-    const auditContent = await page.getByTestId('audit-trail-content').textContent();
+    const auditContent = await page
+      .getByTestId('audit-trail-content')
+      .textContent();
     expect(auditContent).not.toMatch(/\d{3}\.\d{3}\.\d{3}-\d{2}/); // No CPF in audit
     expect(auditContent).toMatch(/\*{3,}/); // Anonymized data present
 
@@ -381,19 +447,27 @@ test.describe('🏥 Healthcare Analytics Dashboard E2E', () => {
     await HealthcareWorkflowHelper.validatePatientDataProtection(page);
   });
 
-  test('should validate healthcare performance benchmarks for analytics', async ({ page }) => {
+  test('should validate healthcare performance benchmarks for analytics', async ({
+    page,
+  }) => {
     // Test analytics performance with healthcare standards
     await HealthcarePerformanceHelper.validatePerformanceRequirements(page);
 
     // Test chart rendering performance
-    await HealthcarePerformanceHelper.validateRoutineOperationPerformance(page, async () => {
-      await page.getByTestId('refresh-charts-button').click();
-    });
+    await HealthcarePerformanceHelper.validateRoutineOperationPerformance(
+      page,
+      async () => {
+        await page.getByTestId('refresh-charts-button').click();
+      }
+    );
 
     // Test data filtering performance
-    await HealthcarePerformanceHelper.validateRoutineOperationPerformance(page, async () => {
-      await page.getByTestId('apply-filters-button').click();
-    });
+    await HealthcarePerformanceHelper.validateRoutineOperationPerformance(
+      page,
+      async () => {
+        await page.getByTestId('apply-filters-button').click();
+      }
+    );
 
     // Generate test patient for emergency access validation
     const testPatient = HealthcareDataAnonymizer.generateAnonymousPatient();
@@ -405,7 +479,10 @@ test.describe('🏥 Healthcare Analytics Dashboard E2E', () => {
         .isVisible({ timeout: 1000 })
         .catch(() => false)
     ) {
-      await HealthcareWorkflowHelper.validateEmergencyAccess(page, testPatient.id);
+      await HealthcareWorkflowHelper.validateEmergencyAccess(
+        page,
+        testPatient.id
+      );
     }
 
     // Validate final healthcare compliance

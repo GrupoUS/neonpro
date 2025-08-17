@@ -148,7 +148,9 @@ export class HealthcareDirectoryCleanup {
         }
 
         // Check if file matches removal patterns
-        const shouldRemove = this.config.patternsToRemove.some((pattern) => pattern.test(filename));
+        const shouldRemove = this.config.patternsToRemove.some((pattern) =>
+          pattern.test(filename)
+        );
 
         if (shouldRemove) {
           const filepath = join(this.config.rootPath, filename);
@@ -161,7 +163,10 @@ export class HealthcareDirectoryCleanup {
               console.log(`   ✓ Pattern removal: ${filename}`);
             }
           } catch (error) {
-            this.errors.push({ file: filename, error: (error as Error).message });
+            this.errors.push({
+              file: filename,
+              error: (error as Error).message,
+            });
           }
         }
       }
@@ -208,7 +213,9 @@ export class HealthcareDirectoryCleanup {
 
     if (this.errors.length > 0) {
       console.log('\n❌ Errors:');
-      this.errors.forEach(({ file, error }) => console.log(`   - ${file}: ${error}`));
+      this.errors.forEach(({ file, error }) =>
+        console.log(`   - ${file}: ${error}`)
+      );
     }
 
     console.log('\n🏥 Healthcare directory cleanup completed successfully!');

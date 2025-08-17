@@ -12,7 +12,10 @@ export type FormFieldProps = {
 };
 
 const FormField = React.forwardRef<HTMLDivElement, FormFieldProps>(
-  ({ label, description, error, required, children, className, htmlFor }, ref) => {
+  (
+    { label, description, error, required, children, className, htmlFor },
+    ref
+  ) => {
     const generatedId = React.useId();
     const fieldId = htmlFor || generatedId;
     return (
@@ -29,7 +32,9 @@ const FormField = React.forwardRef<HTMLDivElement, FormFieldProps>(
 
         {children}
 
-        {description && <p className="text-muted-foreground text-sm">{description}</p>}
+        {description && (
+          <p className="text-muted-foreground text-sm">{description}</p>
+        )}
 
         {error && <p className="text-red-600 text-sm">{error}</p>}
       </div>

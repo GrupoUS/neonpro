@@ -306,7 +306,10 @@ export class HealthcareCircuitBreakerManager {
   /**
    * Get or create circuit breaker for healthcare service
    */
-  getCircuitBreaker(serviceKey: string, config?: Partial<CircuitBreakerConfig>): CircuitBreaker {
+  getCircuitBreaker(
+    serviceKey: string,
+    config?: Partial<CircuitBreakerConfig>
+  ): CircuitBreaker {
     if (!this.circuitBreakers.has(serviceKey)) {
       this.circuitBreakers.set(serviceKey, new CircuitBreaker(config));
     }

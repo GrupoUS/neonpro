@@ -7,7 +7,11 @@ export type {
   AuditFilters,
 } from './audit/audit-service';
 export * from './audit/audit-service';
-export { AuditEventType, AuditOutcome, AuditSeverity } from './audit/audit-service';
+export {
+  AuditEventType,
+  AuditOutcome,
+  AuditSeverity,
+} from './audit/audit-service';
 export type {
   MfaConfig,
   MfaVerificationResult,

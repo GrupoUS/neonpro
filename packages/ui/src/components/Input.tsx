@@ -93,7 +93,9 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 
         case 'phone':
           if (cleaned.length <= 10) {
-            return cleaned.replace(PHONE_REGEX_1, '($1) $2').replace(PHONE_REGEX_2, '$1-$2');
+            return cleaned
+              .replace(PHONE_REGEX_1, '($1) $2')
+              .replace(PHONE_REGEX_2, '$1-$2');
           }
           return cleaned
             .slice(0, 11)
@@ -108,7 +110,10 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         }
 
         case 'date':
-          return cleaned.slice(0, 8).replace(DATE_REGEX_1, '$1/$2').replace(DATE_REGEX_2, '$1/$2');
+          return cleaned
+            .slice(0, 8)
+            .replace(DATE_REGEX_1, '$1/$2')
+            .replace(DATE_REGEX_2, '$1/$2');
 
         default:
           return inputValue;
@@ -176,7 +181,9 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 
         {error && <p className="text-destructive text-sm">{error}</p>}
 
-        {helperText && !error && <p className="text-muted-foreground text-sm">{helperText}</p>}
+        {helperText && !error && (
+          <p className="text-muted-foreground text-sm">{helperText}</p>
+        )}
       </div>
     );
   }

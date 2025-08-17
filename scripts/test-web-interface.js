@@ -33,7 +33,9 @@ async function testRoute(path) {
         console.log(`✅ ${path} - Status: ${statusCode} (OK)`);
         resolve({ path, status: statusCode, success: true });
       } else if (statusCode === 302 || statusCode === 307) {
-        console.log(`🔄 ${path} - Status: ${statusCode} (Redirect - provavelmente auth)`);
+        console.log(
+          `🔄 ${path} - Status: ${statusCode} (Redirect - provavelmente auth)`
+        );
         resolve({
           path,
           status: statusCode,
@@ -111,14 +113,22 @@ async function runWebInterfaceTests() {
   console.log('\n🎯 RECOMENDAÇÕES:');
 
   if (successful.length === results.length) {
-    console.log('🚀 Todas as rotas estão funcionando! Interface web está operacional.');
+    console.log(
+      '🚀 Todas as rotas estão funcionando! Interface web está operacional.'
+    );
   } else if (successful.length > 0) {
-    console.log('⚠️  Algumas rotas precisam de verificação manual ou implementação adicional.');
+    console.log(
+      '⚠️  Algumas rotas precisam de verificação manual ou implementação adicional.'
+    );
   } else {
-    console.log('❌ Problemas graves detectados. Verificar servidor e configurações.');
+    console.log(
+      '❌ Problemas graves detectados. Verificar servidor e configurações.'
+    );
   }
 
-  console.log(`\n🌐 Para testar manualmente, acesse: ${baseUrl}/dashboard/accounts-payable`);
+  console.log(
+    `\n🌐 Para testar manualmente, acesse: ${baseUrl}/dashboard/accounts-payable`
+  );
   console.log('🔐 Note: Algumas rotas podem requerer autenticação.');
 
   return results;

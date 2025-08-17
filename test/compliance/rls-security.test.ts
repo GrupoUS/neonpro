@@ -1,5 +1,9 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { mockAuditLogger, mockSupabaseHealthcare, testDatabaseUtils } from '../supabase-setup';
+import {
+  mockAuditLogger,
+  mockSupabaseHealthcare,
+  testDatabaseUtils,
+} from '../supabase-setup';
 
 describe('Row Level Security (RLS) Compliance Tests', () => {
   beforeEach(() => {
@@ -12,15 +16,17 @@ describe('Row Level Security (RLS) Compliance Tests', () => {
       const otherPatientId = 'patient-456';
 
       // Mock RLS policy simulation
-      const canPatientAccessData = testDatabaseUtils.simulateRLS.patientCanOnlyAccessOwnData(
-        patientUserId,
-        patientUserId.replace('patient-', '')
-      );
+      const canPatientAccessData =
+        testDatabaseUtils.simulateRLS.patientCanOnlyAccessOwnData(
+          patientUserId,
+          patientUserId.replace('patient-', '')
+        );
 
-      const canPatientAccessOtherData = testDatabaseUtils.simulateRLS.patientCanOnlyAccessOwnData(
-        patientUserId,
-        otherPatientId.replace('patient-', '')
-      );
+      const canPatientAccessOtherData =
+        testDatabaseUtils.simulateRLS.patientCanOnlyAccessOwnData(
+          patientUserId,
+          otherPatientId.replace('patient-', '')
+        );
 
       expect(canPatientAccessData).toBe(true);
       expect(canPatientAccessOtherData).toBe(false);
@@ -31,10 +37,11 @@ describe('Row Level Security (RLS) Compliance Tests', () => {
       const assignedPatientId = 'patient-123';
       const unassignedPatientId = 'patient-456';
 
-      const canAccessAssigned = testDatabaseUtils.simulateRLS.doctorCanAccessAssignedPatients(
-        doctorId,
-        assignedPatientId
-      );
+      const canAccessAssigned =
+        testDatabaseUtils.simulateRLS.doctorCanAccessAssignedPatients(
+          doctorId,
+          assignedPatientId
+        );
 
       // In a real scenario, this would check appointment/treatment assignments
       expect(canAccessAssigned).toBe(true);
@@ -43,12 +50,17 @@ describe('Row Level Security (RLS) Compliance Tests', () => {
     it('should allow admins to access all data with proper audit logging', async () => {
       const adminUserId = 'admin-123';
 
-      const hasAdminAccess = testDatabaseUtils.simulateRLS.adminCanAccessAllData(adminUserId);
+      const hasAdminAccess =
+        testDatabaseUtils.simulateRLS.adminCanAccessAllData(adminUserId);
 
       expect(hasAdminAccess).toBe(true);
 
       // Admin access should be logged
-      await mockAuditLogger.logAccess('admin_data_access', 'all_patients', adminUserId);
+      await mockAuditLogger.logAccess(
+        'admin_data_access',
+        'all_patients',
+        adminUserId
+      );
       expect(mockAuditLogger.logAccess).toHaveBeenCalledWith(
         'admin_data_access',
         'all_patients',
@@ -68,7 +80,8 @@ describe('Row Level Security (RLS) Compliance Tests', () => {
         treatment: 'Test treatment',
       };
 
-      const record = await mockSupabaseHealthcare.medicalRecords.create(medicalRecordData);
+      const record =
+        await mockSupabaseHealthcare.medicalRecords.create(medicalRecordData);
 
       expect(record.data).toHaveProperty('patient_id', patientId);
       expect(record.data).toHaveProperty('doctor_id', doctorId);
@@ -84,7 +97,9 @@ describe('Row Level Security (RLS) Compliance Tests', () => {
         throw new Error('RLS policy violation: Insufficient privileges');
       });
 
-      expect(mockUnauthorizedAccess).toThrow('RLS policy violation: Insufficient privileges');
+      expect(mockUnauthorizedAccess).toThrow(
+        'RLS policy violation: Insufficient privileges'
+      );
     });
 
     it('should audit all medical record access attempts', async () => {
@@ -94,7 +109,11 @@ describe('Row Level Security (RLS) Compliance Tests', () => {
       await mockSupabaseHealthcare.medicalRecords.findByPatient(patientId);
 
       // In a real implementation, this would be triggered by RLS policy
-      await mockAuditLogger.logAccess('view_medical_records', patientId, doctorId);
+      await mockAuditLogger.logAccess(
+        'view_medical_records',
+        patientId,
+        doctorId
+      );
 
       expect(mockAuditLogger.logAccess).toHaveBeenCalledWith(
         'view_medical_records',
@@ -123,7 +142,8 @@ describe('Row Level Security (RLS) Compliance Tests', () => {
       };
 
       const validateAccess = (userRole: string, action: string) => {
-        const allowedActions = accessLevels[userRole as keyof typeof accessLevels] || [];
+        const allowedActions =
+          accessLevels[userRole as keyof typeof accessLevels] || [];
         return allowedActions.includes(action);
       };
 
@@ -207,10 +227,18 @@ describe('Row Level Security (RLS) Compliance Tests', () => {
         }
       };
 
-      expect(canAccessAppointment('patient-123', 'patient', appointmentData)).toBe(true);
-      expect(canAccessAppointment('patient-456', 'patient', appointmentData)).toBe(false);
-      expect(canAccessAppointment('doctor-123', 'doctor', appointmentData)).toBe(true);
-      expect(canAccessAppointment('nurse-123', 'nurse', appointmentData)).toBe(true);
+      expect(
+        canAccessAppointment('patient-123', 'patient', appointmentData)
+      ).toBe(true);
+      expect(
+        canAccessAppointment('patient-456', 'patient', appointmentData)
+      ).toBe(false);
+      expect(
+        canAccessAppointment('doctor-123', 'doctor', appointmentData)
+      ).toBe(true);
+      expect(canAccessAppointment('nurse-123', 'nurse', appointmentData)).toBe(
+        true
+      );
     });
   });
 
@@ -238,7 +266,11 @@ describe('Row Level Security (RLS) Compliance Tests', () => {
 
       // Only certain roles can read audit logs
       const canReadAuditLogs = (userRole: string) => {
-        const authorizedRoles = ['admin', 'compliance_officer', 'security_manager'];
+        const authorizedRoles = [
+          'admin',
+          'compliance_officer',
+          'security_manager',
+        ];
         return authorizedRoles.includes(userRole);
       };
 
@@ -251,13 +283,21 @@ describe('Row Level Security (RLS) Compliance Tests', () => {
       const dataAccessEvents = [
         { action: 'login', user: 'doctor-123', resource: 'system' },
         { action: 'view_patient', user: 'doctor-123', resource: 'patient-123' },
-        { action: 'create_treatment', user: 'doctor-123', resource: 'treatment-456' },
+        {
+          action: 'create_treatment',
+          user: 'doctor-123',
+          resource: 'treatment-456',
+        },
         { action: 'logout', user: 'doctor-123', resource: 'system' },
       ];
 
       // All events should be logged
       for (const event of dataAccessEvents) {
-        await mockAuditLogger.logAccess(event.action, event.resource, event.user);
+        await mockAuditLogger.logAccess(
+          event.action,
+          event.resource,
+          event.user
+        );
       }
 
       expect(mockAuditLogger.logAccess).toHaveBeenCalledTimes(4);
@@ -294,7 +334,11 @@ describe('Row Level Security (RLS) Compliance Tests', () => {
         if (!value) return true; // No data to protect
 
         // Check for encryption markers or masking
-        return value.includes('***') || value.includes('[ENCRYPTED]') || value.includes('####');
+        return (
+          value.includes('***') ||
+          value.includes('[ENCRYPTED]') ||
+          value.includes('####')
+        );
       };
 
       sensitiveFields.forEach((field) => {
@@ -316,15 +360,21 @@ describe('Row Level Security (RLS) Compliance Tests', () => {
       const encryptedData = await Promise.all([
         {
           field: 'diagnosis',
-          encrypted: await mockMedicalEncryption.encryptPatientData(medicalData.diagnosis),
+          encrypted: await mockMedicalEncryption.encryptPatientData(
+            medicalData.diagnosis
+          ),
         },
         {
           field: 'treatment_plan',
-          encrypted: await mockMedicalEncryption.encryptPatientData(medicalData.treatment_plan),
+          encrypted: await mockMedicalEncryption.encryptPatientData(
+            medicalData.treatment_plan
+          ),
         },
         {
           field: 'medical_notes',
-          encrypted: await mockMedicalEncryption.encryptPatientData(medicalData.medical_notes),
+          encrypted: await mockMedicalEncryption.encryptPatientData(
+            medicalData.medical_notes
+          ),
         },
       ]);
 
@@ -352,7 +402,10 @@ describe('Row Level Security (RLS) Compliance Tests', () => {
       };
 
       // RLS should prevent cross-clinic data access
-      const canAccessCrossClinic = (userClinicId: string, dataClinicId: string) => {
+      const canAccessCrossClinic = (
+        userClinicId: string,
+        dataClinicId: string
+      ) => {
         return userClinicId === dataClinicId;
       };
 

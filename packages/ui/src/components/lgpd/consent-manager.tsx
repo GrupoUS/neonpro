@@ -6,7 +6,13 @@ import { toast } from 'sonner';
 import { Alert, AlertDescription } from '../Alert';
 import { Badge } from '../Badge';
 import { Button } from '../Button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../Card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '../Card';
 import { Switch } from '../Switch';
 
 // ============================================================================
@@ -154,7 +160,9 @@ export function ConsentManager() {
             <Shield className="h-5 w-5" />
             Gerenciamento de Consentimento
           </CardTitle>
-          <CardDescription>Carregando suas preferências de privacidade...</CardDescription>
+          <CardDescription>
+            Carregando suas preferências de privacidade...
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="animate-pulse space-y-4">
@@ -180,7 +188,8 @@ export function ConsentManager() {
             Gerenciamento de Consentimento - LGPD
           </CardTitle>
           <CardDescription>
-            Gerencie suas preferências de privacidade e consentimentos de acordo com a LGPD
+            Gerencie suas preferências de privacidade e consentimentos de acordo
+            com a LGPD
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -188,8 +197,8 @@ export function ConsentManager() {
             <Alert className="mb-6">
               <AlertTriangle className="h-4 w-4" />
               <AlertDescription>
-                Alguns consentimentos obrigatórios não foram concedidos. Isso pode afetar o
-                funcionamento completo da plataforma.
+                Alguns consentimentos obrigatórios não foram concedidos. Isso
+                pode afetar o funcionamento completo da plataforma.
               </AlertDescription>
             </Alert>
           )}
@@ -217,7 +226,9 @@ export function ConsentManager() {
           {/* Optional Consents */}
           {optionalConsents.length > 0 && (
             <div>
-              <h3 className="mb-4 font-semibold text-blue-600 text-lg">Consentimentos Opcionais</h3>
+              <h3 className="mb-4 font-semibold text-blue-600 text-lg">
+                Consentimentos Opcionais
+              </h3>
               <div className="space-y-4">
                 {optionalConsents.map((consent) => (
                   <ConsentCard
@@ -248,7 +259,12 @@ type ConsentCardProps = {
   onWithdraw: (purposeName: string) => Promise<void>;
 };
 
-function ConsentCard({ consent, updating, onUpdate, onWithdraw }: ConsentCardProps) {
+function ConsentCard({
+  consent,
+  updating,
+  onUpdate,
+  onWithdraw,
+}: ConsentCardProps) {
   return (
     <Card
       className={`transition-all duration-200 ${
@@ -267,7 +283,9 @@ function ConsentCard({ consent, updating, onUpdate, onWithdraw }: ConsentCardPro
                 )}
                 <h4 className="font-medium">{consent.purpose}</h4>
               </div>
-              <Badge className={getCategoryColor(consent.category)}>{consent.category}</Badge>
+              <Badge className={getCategoryColor(consent.category)}>
+                {consent.category}
+              </Badge>
               {consent.required && (
                 <Badge className="text-xs" variant="destructive">
                   Obrigatório
@@ -279,7 +297,8 @@ function ConsentCard({ consent, updating, onUpdate, onWithdraw }: ConsentCardPro
 
             {consent.granted && consent.grantedAt && (
               <p className="text-gray-500 text-xs">
-                Consentido em: {new Date(consent.grantedAt).toLocaleString('pt-BR')}
+                Consentido em:{' '}
+                {new Date(consent.grantedAt).toLocaleString('pt-BR')}
                 {consent.version && ` (v${consent.version})`}
               </p>
             )}
@@ -289,7 +308,9 @@ function ConsentCard({ consent, updating, onUpdate, onWithdraw }: ConsentCardPro
             <Switch
               checked={consent.granted}
               disabled={updating}
-              onCheckedChange={(checked: boolean) => onUpdate(consent.purpose, checked)}
+              onCheckedChange={(checked: boolean) =>
+                onUpdate(consent.purpose, checked)
+              }
             />
 
             {consent.granted && !consent.required && (

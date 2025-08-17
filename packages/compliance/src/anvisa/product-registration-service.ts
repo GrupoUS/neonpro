@@ -24,7 +24,11 @@ export type ProductRegistration = {
   /** Current registration status with ANVISA */
   registration_status: 'active' | 'suspended' | 'cancelled' | 'pending';
   /** Product category for regulatory classification */
-  product_category: 'medical_device' | 'cosmetic' | 'pharmaceutical' | 'aesthetic_equipment';
+  product_category:
+    | 'medical_device'
+    | 'cosmetic'
+    | 'pharmaceutical'
+    | 'aesthetic_equipment';
   /** Registration expiry date (constitutional monitoring) */
   registration_expiry: Date;
   /** Constitutional compliance requirements */
@@ -106,7 +110,8 @@ export class ProductRegistrationService {
   ): Promise<{ success: boolean; data?: ProductRegistration; error?: string }> {
     try {
       // Constitutional validation
-      const validationResult = await this.validateProductRegistration(productData);
+      const validationResult =
+        await this.validateProductRegistration(productData);
       if (!validationResult.valid) {
         return { success: false, error: validationResult.error };
       }
@@ -152,7 +157,10 @@ export class ProductRegistrationService {
 
       return { success: true, data: data as ProductRegistration };
     } catch (_error) {
-      return { success: false, error: 'Constitutional healthcare service error' };
+      return {
+        success: false,
+        error: 'Constitutional healthcare service error',
+      };
     }
   } /**
    * Get product registrations with constitutional filtering
@@ -161,7 +169,11 @@ export class ProductRegistrationService {
   async getProductRegistrations(
     tenantId: string,
     filters?: ProductRegistrationFilters
-  ): Promise<{ success: boolean; data?: ProductRegistration[]; error?: string }> {
+  ): Promise<{
+    success: boolean;
+    data?: ProductRegistration[];
+    error?: string;
+  }> {
     try {
       let query = this.supabase
         .from('anvisa_product_registrations')
@@ -177,22 +189,36 @@ export class ProductRegistrationService {
       }
       if (filters?.expiry_date_range) {
         query = query
-          .gte('registration_expiry', filters.expiry_date_range.start.toISOString())
-          .lte('registration_expiry', filters.expiry_date_range.end.toISOString());
+          .gte(
+            'registration_expiry',
+            filters.expiry_date_range.start.toISOString()
+          )
+          .lte(
+            'registration_expiry',
+            filters.expiry_date_range.end.toISOString()
+          );
       }
       if (filters?.monitoring_alerts !== undefined) {
         query = query.eq('monitoring_alerts', filters.monitoring_alerts);
       }
 
-      const { data, error } = await query.order('created_at', { ascending: false });
+      const { data, error } = await query.order('created_at', {
+        ascending: false,
+      });
 
       if (error) {
-        return { success: false, error: 'Failed to retrieve product registrations' };
+        return {
+          success: false,
+          error: 'Failed to retrieve product registrations',
+        };
       }
 
       return { success: true, data: data as ProductRegistration[] };
     } catch (_error) {
-      return { success: false, error: 'Constitutional healthcare service error' };
+      return {
+        success: false,
+        error: 'Constitutional healthcare service error',
+      };
     }
   } /**
    * Update product registration with constitutional audit trail
@@ -253,12 +279,18 @@ export class ProductRegistrationService {
         .single();
 
       if (error) {
-        return { success: false, error: 'Failed to update product registration' };
+        return {
+          success: false,
+          error: 'Failed to update product registration',
+        };
       }
 
       return { success: true, data: data as ProductRegistration };
     } catch (_error) {
-      return { success: false, error: 'Constitutional healthcare service error' };
+      return {
+        success: false,
+        error: 'Constitutional healthcare service error',
+      };
     }
   } /**
    * Constitutional validation for product registration
@@ -272,21 +304,26 @@ export class ProductRegistrationService {
       if (!productData.anvisa_registration_number) {
         return {
           valid: false,
-          error: 'ANVISA registration number is mandatory for constitutional compliance',
+          error:
+            'ANVISA registration number is mandatory for constitutional compliance',
         };
       }
 
       // ANVISA registration number format validation
       const anvisaNumberRegex = /^[0-9]{8}[.][0-9]{3}[.][0-9]{3}[-][0-9]{1}$/;
       if (!anvisaNumberRegex.test(productData.anvisa_registration_number)) {
-        return { valid: false, error: 'Invalid ANVISA registration number format' };
+        return {
+          valid: false,
+          error: 'Invalid ANVISA registration number format',
+        };
       }
 
       // Constitutional expiry date validation
       if (!productData.registration_expiry) {
         return {
           valid: false,
-          error: 'Registration expiry date is required for constitutional monitoring',
+          error:
+            'Registration expiry date is required for constitutional monitoring',
         };
       }
 
@@ -297,7 +334,8 @@ export class ProductRegistrationService {
       if (expiryDate < currentDate) {
         return {
           valid: false,
-          error: 'Registration has expired - renewal required for constitutional compliance',
+          error:
+            'Registration has expired - renewal required for constitutional compliance',
         };
       }
 
@@ -309,9 +347,15 @@ export class ProductRegistrationService {
         'aesthetic_equipment',
       ];
       if (
-        !(productData.product_category && validCategories.includes(productData.product_category))
+        !(
+          productData.product_category &&
+          validCategories.includes(productData.product_category)
+        )
       ) {
-        return { valid: false, error: 'Valid product category required for ANVISA classification' };
+        return {
+          valid: false,
+          error: 'Valid product category required for ANVISA classification',
+        };
       }
 
       return { valid: true };
@@ -356,7 +400,10 @@ export class ProductRegistrationService {
             tenant_id: product.tenant_id,
             scheduled_date: alertDate.toISOString(),
             alert_status: 'scheduled',
-            priority: alertDate.getTime() === expiryDate.getTime() ? 'critical' : 'warning',
+            priority:
+              alertDate.getTime() === expiryDate.getTime()
+                ? 'critical'
+                : 'warning',
             message: `ANVISA product registration expires on ${expiryDate.toLocaleDateString('pt-BR')}`,
             constitutional_compliance: true,
           });
@@ -370,7 +417,11 @@ export class ProductRegistrationService {
   async getExpiringProducts(
     tenantId: string,
     daysThreshold = 30
-  ): Promise<{ success: boolean; data?: ProductRegistration[]; error?: string }> {
+  ): Promise<{
+    success: boolean;
+    data?: ProductRegistration[];
+    error?: string;
+  }> {
     try {
       const thresholdDate = new Date();
       thresholdDate.setDate(thresholdDate.getDate() + daysThreshold);
@@ -384,12 +435,18 @@ export class ProductRegistrationService {
         .order('registration_expiry', { ascending: true });
 
       if (error) {
-        return { success: false, error: 'Failed to retrieve expiring products' };
+        return {
+          success: false,
+          error: 'Failed to retrieve expiring products',
+        };
       }
 
       return { success: true, data: data as ProductRegistration[] };
     } catch (_error) {
-      return { success: false, error: 'Constitutional healthcare service error' };
+      return {
+        success: false,
+        error: 'Constitutional healthcare service error',
+      };
     }
   }
 
@@ -407,13 +464,17 @@ export class ProductRegistrationService {
         .eq('tenant_id', tenantId);
 
       if (error) {
-        return { success: false, error: 'Failed to generate compliance report' };
+        return {
+          success: false,
+          error: 'Failed to generate compliance report',
+        };
       }
 
       const report = {
         total_products: products?.length || 0,
         active_registrations:
-          products?.filter((p) => p.registration_status === 'active').length || 0,
+          products?.filter((p) => p.registration_status === 'active').length ||
+          0,
         expiring_soon:
           products?.filter((p) => {
             const expiry = new Date(p.registration_expiry);
@@ -427,7 +488,10 @@ export class ProductRegistrationService {
 
       return { success: true, data: report };
     } catch (_error) {
-      return { success: false, error: 'Constitutional healthcare service error' };
+      return {
+        success: false,
+        error: 'Constitutional healthcare service error',
+      };
     }
   }
 }

@@ -9,13 +9,20 @@ import { z } from 'zod';
 
 // Report Configuration Schema
 export const LGPDReportConfigSchema = z.object({
-  report_type: z.enum(['compliance_audit', 'data_mapping', 'consent_status', 'breach_report']),
+  report_type: z.enum([
+    'compliance_audit',
+    'data_mapping',
+    'consent_status',
+    'breach_report',
+  ]),
   date_range: z.object({
     start_date: z.string(),
     end_date: z.string(),
   }),
   include_personal_data: z.boolean().default(false),
-  anonymization_level: z.enum(['basic', 'advanced', 'k_anonymity']).default('advanced'),
+  anonymization_level: z
+    .enum(['basic', 'advanced', 'k_anonymity'])
+    .default('advanced'),
   constitutional_validation: z.boolean().default(true),
   audit_trail: z.boolean().default(true),
 });
@@ -80,7 +87,8 @@ export class LGPDReportGenerator {
     const reportId = `lgpd_report_${Date.now()}`;
 
     // Validate constitutional compliance
-    const constitutionalValidation = await this.validateConstitutionalCompliance();
+    const constitutionalValidation =
+      await this.validateConstitutionalCompliance();
 
     // Generate report summary
     const summary = await this.generateSummary();
@@ -142,7 +150,8 @@ export class LGPDReportGenerator {
     return [
       {
         category: 'Data Protection',
-        description: 'All personal data processing activities comply with LGPD requirements',
+        description:
+          'All personal data processing activities comply with LGPD requirements',
         severity: 'low' as const,
         recommendation: 'Continue current practices',
         constitutional_impact: false,
@@ -153,7 +162,10 @@ export class LGPDReportGenerator {
   /**
    * Export report to different formats
    */
-  async exportReport(report: LGPDReport, format: 'json' | 'pdf' | 'csv'): Promise<string> {
+  async exportReport(
+    report: LGPDReport,
+    format: 'json' | 'pdf' | 'csv'
+  ): Promise<string> {
     switch (format) {
       case 'json':
         return JSON.stringify(report, null, 2);
@@ -180,7 +192,9 @@ export function createLGPDReportGenerator(
 /**
  * Validate LGPD report configuration
  */
-export async function validateLGPDReportConfig(config: LGPDReportConfig): Promise<{
+export async function validateLGPDReportConfig(
+  config: LGPDReportConfig
+): Promise<{
   valid: boolean;
   violations: string[];
 }> {
@@ -190,7 +204,9 @@ export async function validateLGPDReportConfig(config: LGPDReportConfig): Promis
     LGPDReportConfigSchema.parse(config);
   } catch (error) {
     if (error instanceof z.ZodError) {
-      violations.push(...error.errors.map((e) => `${e.path.join('.')}: ${e.message}`));
+      violations.push(
+        ...error.errors.map((e) => `${e.path.join('.')}: ${e.message}`)
+      );
     }
   }
 

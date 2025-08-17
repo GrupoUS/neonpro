@@ -81,12 +81,15 @@ describe('Analytics Dashboard API Routes', () => {
         error: null,
       });
 
-      const request = new NextRequest('http://localhost:3000/api/analytics/dashboard', {
-        method: 'GET',
-        headers: {
-          Authorization: 'Bearer mock-token',
-        },
-      });
+      const request = new NextRequest(
+        'http://localhost:3000/api/analytics/dashboard',
+        {
+          method: 'GET',
+          headers: {
+            Authorization: 'Bearer mock-token',
+          },
+        }
+      );
 
       // Act
       const response = await GET(request);
@@ -106,9 +109,12 @@ describe('Analytics Dashboard API Routes', () => {
         error: { message: 'Invalid token' },
       });
 
-      const request = new NextRequest('http://localhost:3000/api/analytics/dashboard', {
-        method: 'GET',
-      });
+      const request = new NextRequest(
+        'http://localhost:3000/api/analytics/dashboard',
+        {
+          method: 'GET',
+        }
+      );
 
       // Act
       const response = await GET(request);
@@ -137,9 +143,12 @@ describe('Analytics Dashboard API Routes', () => {
         error: { message: 'Database connection failed' },
       });
 
-      const request = new NextRequest('http://localhost:3000/api/analytics/dashboard', {
-        method: 'GET',
-      });
+      const request = new NextRequest(
+        'http://localhost:3000/api/analytics/dashboard',
+        {
+          method: 'GET',
+        }
+      );
 
       // Act
       const response = await GET(request);
@@ -159,12 +168,15 @@ describe('Analytics Dashboard API Routes', () => {
         error: null,
       });
 
-      const request = new NextRequest('http://localhost:3000/api/analytics/dashboard', {
-        method: 'GET',
-        headers: {
-          'x-forwarded-for': '127.0.0.1',
-        },
-      });
+      const request = new NextRequest(
+        'http://localhost:3000/api/analytics/dashboard',
+        {
+          method: 'GET',
+          headers: {
+            'x-forwarded-for': '127.0.0.1',
+          },
+        }
+      );
 
       // Simulate rate limit exceeded
       // This would depend on your actual rate limiting implementation
@@ -231,13 +243,16 @@ describe('Analytics Dashboard API Routes', () => {
 
       mockSupabase.from.mockReturnValue(mockFrom);
 
-      const request = new NextRequest('http://localhost:3000/api/analytics/dashboard', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(dashboardConfig),
-      });
+      const request = new NextRequest(
+        'http://localhost:3000/api/analytics/dashboard',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(dashboardConfig),
+        }
+      );
 
       // Act
       const response = await POST(request);
@@ -247,7 +262,9 @@ describe('Analytics Dashboard API Routes', () => {
       expect(response.status).toBe(201);
       expect(responseData.success).toBe(true);
       expect(responseData.data.widgets).toEqual(dashboardConfig.widgets);
-      expect(mockSupabase.from).toHaveBeenCalledWith('dashboard_configurations');
+      expect(mockSupabase.from).toHaveBeenCalledWith(
+        'dashboard_configurations'
+      );
     });
 
     test('should validate dashboard configuration schema', async () => {
@@ -264,13 +281,16 @@ describe('Analytics Dashboard API Routes', () => {
         error: null,
       });
 
-      const request = new NextRequest('http://localhost:3000/api/analytics/dashboard', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(invalidConfig),
-      });
+      const request = new NextRequest(
+        'http://localhost:3000/api/analytics/dashboard',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(invalidConfig),
+        }
+      );
 
       // Act
       const response = await POST(request);
@@ -299,9 +319,12 @@ describe('Analytics Dashboard API Routes', () => {
         error: null,
       });
 
-      const request = new NextRequest('http://localhost:3000/api/analytics/dashboard', {
-        method: 'GET',
-      });
+      const request = new NextRequest(
+        'http://localhost:3000/api/analytics/dashboard',
+        {
+          method: 'GET',
+        }
+      );
 
       // Act
       const response1 = await GET(request);
@@ -330,9 +353,12 @@ describe('Analytics Dashboard API Routes', () => {
         error: null,
       });
 
-      const request = new NextRequest('http://localhost:3000/api/analytics/dashboard', {
-        method: 'GET',
-      });
+      const request = new NextRequest(
+        'http://localhost:3000/api/analytics/dashboard',
+        {
+          method: 'GET',
+        }
+      );
 
       // Act
       const response = await GET(request);
@@ -353,9 +379,12 @@ describe('Analytics Dashboard API Routes', () => {
         error: null,
       });
 
-      const request = new NextRequest('http://localhost:3000/api/analytics/dashboard', {
-        method: 'GET',
-      });
+      const request = new NextRequest(
+        'http://localhost:3000/api/analytics/dashboard',
+        {
+          method: 'GET',
+        }
+      );
 
       // Act
       const response = await GET(request);
@@ -379,9 +408,12 @@ describe('Analytics Dashboard API Routes', () => {
         error: null,
       });
 
-      const request = new NextRequest('http://localhost:3000/api/analytics/dashboard?admin=true', {
-        method: 'GET',
-      });
+      const request = new NextRequest(
+        'http://localhost:3000/api/analytics/dashboard?admin=true',
+        {
+          method: 'GET',
+        }
+      );
 
       // Act
       const response = await GET(request);
@@ -404,13 +436,16 @@ describe('Analytics Dashboard API Routes', () => {
         error: null,
       });
 
-      const request = new NextRequest('http://localhost:3000/api/analytics/dashboard', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: 'invalid json{',
-      });
+      const request = new NextRequest(
+        'http://localhost:3000/api/analytics/dashboard',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: 'invalid json{',
+        }
+      );
 
       // Act
       const response = await POST(request);
@@ -424,11 +459,16 @@ describe('Analytics Dashboard API Routes', () => {
 
     test('should handle unexpected server errors', async () => {
       // Arrange
-      mockSupabase.auth.getUser.mockRejectedValue(new Error('Unexpected error'));
+      mockSupabase.auth.getUser.mockRejectedValue(
+        new Error('Unexpected error')
+      );
 
-      const request = new NextRequest('http://localhost:3000/api/analytics/dashboard', {
-        method: 'GET',
-      });
+      const request = new NextRequest(
+        'http://localhost:3000/api/analytics/dashboard',
+        {
+          method: 'GET',
+        }
+      );
 
       // Act
       const response = await GET(request);

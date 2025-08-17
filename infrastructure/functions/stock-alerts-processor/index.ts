@@ -3,7 +3,8 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Headers':
+    'authorization, x-client-info, apikey, content-type',
 };
 
 interface AlertConfig {
@@ -66,18 +67,23 @@ serve(async (req) => {
       throw configError;
     }
 
-    console.log(`Found ${alertConfigs?.length || 0} active alert configurations`);
+    console.log(
+      `Found ${alertConfigs?.length || 0} active alert configurations`
+    );
 
     const generatedAlerts: GeneratedAlert[] = [];
     const notificationQueue: any[] = [];
 
     // Process each clinic
-    const clinicIds = [...new Set(alertConfigs?.map((config) => config.clinic_id) || [])];
+    const clinicIds = [
+      ...new Set(alertConfigs?.map((config) => config.clinic_id) || []),
+    ];
 
     for (const clinicId of clinicIds) {
       console.log(`Processing alerts for clinic: ${clinicId}`);
 
-      const clinicConfigs = alertConfigs?.filter((config) => config.clinic_id === clinicId) || [];
+      const clinicConfigs =
+        alertConfigs?.filter((config) => config.clinic_id === clinicId) || [];
 
       // Get current stock inventory for the clinic
       const { data: inventory, error: inventoryError } = await supabase
@@ -99,11 +105,16 @@ serve(async (req) => {
         .eq('is_active', true);
 
       if (inventoryError) {
-        console.error(`Error fetching inventory for clinic ${clinicId}:`, inventoryError);
+        console.error(
+          `Error fetching inventory for clinic ${clinicId}:`,
+          inventoryError
+        );
         continue;
       }
 
-      console.log(`Found ${inventory?.length || 0} products in inventory for clinic ${clinicId}`);
+      console.log(
+        `Found ${inventory?.length || 0} products in inventory for clinic ${clinicId}`
+      );
 
       // Process each alert configuration
       for (const config of clinicConfigs) {
@@ -144,13 +155,17 @@ serve(async (req) => {
 
       const existingKeys = new Set(
         existingAlerts?.map(
-          (alert) => `${alert.clinic_id}-${alert.product_id}-${alert.alert_type}`
+          (alert) =>
+            `${alert.clinic_id}-${alert.product_id}-${alert.alert_type}`
         ) || []
       );
 
       // Filter out duplicates
       const newAlerts = generatedAlerts.filter(
-        (alert) => !existingKeys.has(`${alert.clinic_id}-${alert.product_id}-${alert.alert_type}`)
+        (alert) =>
+          !existingKeys.has(
+            `${alert.clinic_id}-${alert.product_id}-${alert.alert_type}`
+          )
       );
 
       console.log(
@@ -158,7 +173,9 @@ serve(async (req) => {
       );
 
       if (newAlerts.length > 0) {
-        const { error: insertError } = await supabase.from('stock_alerts').insert(newAlerts);
+        const { error: insertError } = await supabase
+          .from('stock_alerts')
+          .insert(newAlerts);
 
         if (insertError) {
           console.error('Error inserting alerts:', insertError);
@@ -167,8 +184,13 @@ serve(async (req) => {
 
         // Queue notifications for new alerts
         for (const alert of newAlerts) {
-          const config = alertConfigs?.find((c) => c.id === alert.alert_config_id);
-          if (config?.notification_channels && config.notification_channels.length > 0) {
+          const config = alertConfigs?.find(
+            (c) => c.id === alert.alert_config_id
+          );
+          if (
+            config?.notification_channels &&
+            config.notification_channels.length > 0
+          ) {
             notificationQueue.push({
               alert,
               channels: config.notification_channels,
@@ -336,7 +358,8 @@ async function updatePerformanceMetrics(supabase: any, clinicIds: string[]) {
       }
 
       const totalValue = inventory.reduce(
-        (sum: number, item: any) => sum + item.quantity_available * item.unit_cost,
+        (sum: number, item: any) =>
+          sum + item.quantity_available * item.unit_cost,
         0
       );
 
@@ -347,24 +370,29 @@ async function updatePerformanceMetrics(supabase: any, clinicIds: string[]) {
       const accuracyPercentage = (productsInRange / inventory.length) * 100;
 
       // Insert or update daily metrics
-      const { error: metricsError } = await supabase.from('stock_performance_metrics').upsert(
-        {
-          clinic_id: clinicId,
-          metric_date: today,
-          total_value: totalValue,
-          turnover_rate: 0, // Would need historical data
-          days_coverage: 30, // Default value
-          accuracy_percentage: accuracyPercentage,
-          waste_value: 0, // Would need waste movement data
-          waste_percentage: 0,
-        },
-        {
-          onConflict: 'clinic_id,metric_date',
-        }
-      );
+      const { error: metricsError } = await supabase
+        .from('stock_performance_metrics')
+        .upsert(
+          {
+            clinic_id: clinicId,
+            metric_date: today,
+            total_value: totalValue,
+            turnover_rate: 0, // Would need historical data
+            days_coverage: 30, // Default value
+            accuracy_percentage: accuracyPercentage,
+            waste_value: 0, // Would need waste movement data
+            waste_percentage: 0,
+          },
+          {
+            onConflict: 'clinic_id,metric_date',
+          }
+        );
 
       if (metricsError) {
-        console.error(`Error updating metrics for clinic ${clinicId}:`, metricsError);
+        console.error(
+          `Error updating metrics for clinic ${clinicId}:`,
+          metricsError
+        );
       }
     } catch (error) {
       console.error(`Error processing metrics for clinic ${clinicId}:`, error);

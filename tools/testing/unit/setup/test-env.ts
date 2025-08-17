@@ -49,9 +49,12 @@ function setupCFMEnvironment() {
 async function setupDatabaseEnvironment() {
   // Database test configuration
   process.env.DATABASE_URL =
-    process.env.TEST_DATABASE_URL || 'postgresql://test:test@localhost:5432/neonpro_test';
-  process.env.SUPABASE_URL = process.env.TEST_SUPABASE_URL || 'https://test.supabase.co';
-  process.env.SUPABASE_ANON_KEY = process.env.TEST_SUPABASE_ANON_KEY || 'test-anon-key';
+    process.env.TEST_DATABASE_URL ||
+    'postgresql://test:test@localhost:5432/neonpro_test';
+  process.env.SUPABASE_URL =
+    process.env.TEST_SUPABASE_URL || 'https://test.supabase.co';
+  process.env.SUPABASE_ANON_KEY =
+    process.env.TEST_SUPABASE_ANON_KEY || 'test-anon-key';
   process.env.SUPABASE_SERVICE_ROLE_KEY =
     process.env.TEST_SUPABASE_SERVICE_KEY || 'test-service-key';
 

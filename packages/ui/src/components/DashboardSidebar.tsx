@@ -47,7 +47,10 @@ type DashboardSidebarProps = {
   className?: string;
 };
 
-export const DashboardSidebar = React.forwardRef<HTMLDivElement, DashboardSidebarProps>(
+export const DashboardSidebar = React.forwardRef<
+  HTMLDivElement,
+  DashboardSidebarProps
+>(
   (
     {
       user,
@@ -61,7 +64,9 @@ export const DashboardSidebar = React.forwardRef<HTMLDivElement, DashboardSideba
     },
     ref
   ) => {
-    const [expandedItems, setExpandedItems] = React.useState<Set<string>>(new Set());
+    const [expandedItems, setExpandedItems] = React.useState<Set<string>>(
+      new Set()
+    );
     const [showUserMenu, setShowUserMenu] = React.useState(false);
 
     const getInitials = (name: string) => {
@@ -131,7 +136,9 @@ export const DashboardSidebar = React.forwardRef<HTMLDivElement, DashboardSideba
 
           {hasChildren && !collapsed && isExpanded && (
             <div className="mt-1 space-y-1">
-              {item.children?.map((child) => renderSidebarItem(child, level + 1))}
+              {item.children?.map((child) =>
+                renderSidebarItem(child, level + 1)
+              )}
             </div>
           )}
         </div>
@@ -162,7 +169,11 @@ export const DashboardSidebar = React.forwardRef<HTMLDivElement, DashboardSideba
             size="sm"
             variant="ghost"
           >
-            {collapsed ? <Menu className="h-4 w-4" /> : <X className="h-4 w-4" />}
+            {collapsed ? (
+              <Menu className="h-4 w-4" />
+            ) : (
+              <X className="h-4 w-4" />
+            )}
           </Button>
         </div>
 
@@ -218,11 +229,18 @@ export const DashboardSidebar = React.forwardRef<HTMLDivElement, DashboardSideba
             {!collapsed && (
               <>
                 <div className="min-w-0 flex-1">
-                  <div className="truncate font-medium text-sm">{user.name}</div>
-                  <div className="truncate text-muted-foreground text-xs">{user.role}</div>
+                  <div className="truncate font-medium text-sm">
+                    {user.name}
+                  </div>
+                  <div className="truncate text-muted-foreground text-xs">
+                    {user.role}
+                  </div>
                 </div>
                 <ChevronDown
-                  className={cn('h-4 w-4 transition-transform', showUserMenu && 'rotate-180')}
+                  className={cn(
+                    'h-4 w-4 transition-transform',
+                    showUserMenu && 'rotate-180'
+                  )}
                 />
               </>
             )}

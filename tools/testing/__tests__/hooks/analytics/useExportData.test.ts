@@ -35,7 +35,8 @@ describe('useExportData', () => {
     const mockFetch = fetch as vi.MockedFunction<typeof fetch>;
     mockFetch.mockResolvedValueOnce({
       ok: true,
-      blob: () => Promise.resolve(new Blob(['PDF content'], { type: 'application/pdf' })),
+      blob: () =>
+        Promise.resolve(new Blob(['PDF content'], { type: 'application/pdf' })),
     } as Response);
 
     const { result } = renderHook(() => useExportData(), {
@@ -139,7 +140,10 @@ describe('useExportData', () => {
     act(() => {
       resolvePromise?.({
         ok: true,
-        blob: () => Promise.resolve(new Blob(['PDF content'], { type: 'application/pdf' })),
+        blob: () =>
+          Promise.resolve(
+            new Blob(['PDF content'], { type: 'application/pdf' })
+          ),
       });
     });
 
@@ -152,7 +156,8 @@ describe('useExportData', () => {
     const mockFetch = fetch as vi.MockedFunction<typeof fetch>;
     mockFetch.mockResolvedValue({
       ok: true,
-      blob: () => Promise.resolve(new Blob(['content'], { type: 'application/pdf' })),
+      blob: () =>
+        Promise.resolve(new Blob(['content'], { type: 'application/pdf' })),
     } as Response);
 
     const { result } = renderHook(() => useExportData(), {

@@ -123,7 +123,9 @@ export class AnvisaService {
       const validatedProduct = AnvisaProductSchema.parse(productData);
 
       // Validate registration number with ANVISA format
-      if (!this.validateRegistrationNumber(validatedProduct.registrationNumber)) {
+      if (
+        !this.validateRegistrationNumber(validatedProduct.registrationNumber)
+      ) {
         return {
           success: false,
           error: 'Invalid ANVISA registration number format',
@@ -150,7 +152,10 @@ export class AnvisaService {
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Product registration failed',
+        error:
+          error instanceof Error
+            ? error.message
+            : 'Product registration failed',
       };
     }
   }
@@ -178,7 +183,9 @@ export class AnvisaService {
       }
 
       // Validate professional credentials
-      const professionalValid = await this.validateProfessional(validatedProcedure.professionalId);
+      const professionalValid = await this.validateProfessional(
+        validatedProcedure.professionalId
+      );
       if (!professionalValid) {
         return {
           success: false,
@@ -199,7 +206,8 @@ export class AnvisaService {
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Procedure recording failed',
+        error:
+          error instanceof Error ? error.message : 'Procedure recording failed',
       };
     }
   }
@@ -256,7 +264,10 @@ export class AnvisaService {
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Adverse event reporting failed',
+        error:
+          error instanceof Error
+            ? error.message
+            : 'Adverse event reporting failed',
       };
     }
   }
@@ -264,7 +275,10 @@ export class AnvisaService {
   /**
    * Generate compliance report for ANVISA audit
    */
-  async generateComplianceReport(dateRange: { startDate: Date; endDate: Date }): Promise<{
+  async generateComplianceReport(dateRange: {
+    startDate: Date;
+    endDate: Date;
+  }): Promise<{
     success: boolean;
     report?: {
       totalProcedures: number;
@@ -315,7 +329,8 @@ export class AnvisaService {
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Report generation failed',
+        error:
+          error instanceof Error ? error.message : 'Report generation failed',
       };
     }
   }
@@ -328,12 +343,16 @@ export class AnvisaService {
     return /^\d{13}$/.test(regNumber);
   }
 
-  private async validateProductRegistration(_productId: string): Promise<boolean> {
+  private async validateProductRegistration(
+    _productId: string
+  ): Promise<boolean> {
     // Mock validation - would check against ANVISA database
     return true;
   }
 
-  private async validateProfessional(_professionalId: string): Promise<boolean> {
+  private async validateProfessional(
+    _professionalId: string
+  ): Promise<boolean> {
     // Mock validation - would check CFM credentials
     return true;
   }
@@ -342,7 +361,10 @@ export class AnvisaService {
     // Generate ANVISA-compliant report number
     const year = new Date().getFullYear();
     const month = String(new Date().getMonth() + 1).padStart(2, '0');
-    const sequence = String(Math.floor(Math.random() * 999_999)).padStart(6, '0');
+    const sequence = String(Math.floor(Math.random() * 999_999)).padStart(
+      6,
+      '0'
+    );
     return `AE${year}${month}${sequence}`;
   }
 
@@ -392,7 +414,9 @@ export class AnvisaService {
     let score = 100;
 
     // Deduct points for unreported adverse events
-    const unreportedEvents = data.adverseEvents.filter((e) => !e.reportedToAnvisa);
+    const unreportedEvents = data.adverseEvents.filter(
+      (e) => !e.reportedToAnvisa
+    );
     score -= unreportedEvents.length * 10;
 
     // Deduct points for severe adverse events
@@ -416,7 +440,9 @@ export class AnvisaService {
     }
 
     if (data.adverseEvents.length > 0) {
-      recommendations.push('Review procedure protocols to minimize adverse events');
+      recommendations.push(
+        'Review procedure protocols to minimize adverse events'
+      );
     }
 
     recommendations.push('Maintain regular compliance training for all staff');
@@ -425,7 +451,10 @@ export class AnvisaService {
     return recommendations;
   }
 
-  private async auditLog(_logData: { action: string; [key: string]: any }): Promise<void> {}
+  private async auditLog(_logData: {
+    action: string;
+    [key: string]: any;
+  }): Promise<void> {}
 }
 
 /**
@@ -468,7 +497,12 @@ export const anvisaUtils = {
       case AnvisaDeviceClass.CLASS_III:
         return ['General controls', 'Registration', 'Premarket approval'];
       case AnvisaDeviceClass.CLASS_IV:
-        return ['General controls', 'Registration', 'Premarket approval', 'Clinical trials'];
+        return [
+          'General controls',
+          'Registration',
+          'Premarket approval',
+          'Clinical trials',
+        ];
       default:
         return [];
     }

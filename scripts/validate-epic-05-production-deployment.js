@@ -227,7 +227,10 @@ function testQualityCertificationSystem() {
     process.cwd(),
     'apps/web/app/lib/quality/healthcare-quality-certification.ts'
   );
-  const qualityApiPath = path.join(process.cwd(), 'apps/web/app/api/quality/assessment/route.ts');
+  const qualityApiPath = path.join(
+    process.cwd(),
+    'apps/web/app/api/quality/assessment/route.ts'
+  );
 
   if (!fs.existsSync(qualityPath)) {
     throw new Error('Healthcare quality certification system not found');
@@ -265,7 +268,9 @@ function testQualityCertificationSystem() {
   }
 
   console.log('  ✓ ≥9.9/10 quality certification system');
-  console.log('  ✓ Brazilian regulatory compliance (LGPD + ANVISA + CFM + SBIS)');
+  console.log(
+    '  ✓ Brazilian regulatory compliance (LGPD + ANVISA + CFM + SBIS)'
+  );
   console.log('  ✓ Constitutional patient safety validation');
   console.log('  ✓ Quality assessment API endpoint');
 
@@ -315,23 +320,40 @@ async function runAllValidationTests() {
   console.log('🚀 STARTING EPIC-05 COMPREHENSIVE VALIDATION\n');
 
   // Execute all validation tests
-  runValidationTest('1. Vercel São Paulo Production Configuration', testVercelConfiguration);
-  runValidationTest('2. Healthcare Monitoring & Alerting System', testHealthcareMonitoring);
+  runValidationTest(
+    '1. Vercel São Paulo Production Configuration',
+    testVercelConfiguration
+  );
+  runValidationTest(
+    '2. Healthcare Monitoring & Alerting System',
+    testHealthcareMonitoring
+  );
   runValidationTest(
     '3. Healthcare Error Boundaries & Safety Protocols',
     testHealthcareErrorBoundaries
   );
-  runValidationTest('4. Performance Optimization & Core Web Vitals', testPerformanceOptimization);
-  runValidationTest('5. Quality Certification System & Compliance', testQualityCertificationSystem);
-  runValidationTest('6. Production Environment Configuration', testProductionEnvironment);
+  runValidationTest(
+    '4. Performance Optimization & Core Web Vitals',
+    testPerformanceOptimization
+  );
+  runValidationTest(
+    '5. Quality Certification System & Compliance',
+    testQualityCertificationSystem
+  );
+  runValidationTest(
+    '6. Production Environment Configuration',
+    testProductionEnvironment
+  );
 
   // Calculate quality score
-  const successRate = validationResults.passedTests / validationResults.totalTests;
+  const successRate =
+    validationResults.passedTests / validationResults.totalTests;
   validationResults.qualityScore = Math.round(successRate * 10 * 10) / 10; // Scale to 10
 
   // Determine production readiness (requires ≥9.9/10 for healthcare)
   validationResults.productionReady =
-    validationResults.qualityScore >= 9.9 && validationResults.criticalIssues.length === 0;
+    validationResults.qualityScore >= 9.9 &&
+    validationResults.criticalIssues.length === 0;
 
   // Display final results
   console.log('🏥 EPIC-05 HEALTHCARE DEPLOYMENT VALIDATION RESULTS');
@@ -340,7 +362,9 @@ async function runAllValidationTests() {
   console.log(`✅ Passed: ${validationResults.passedTests}`);
   console.log(`❌ Failed: ${validationResults.failedTests}`);
   console.log(`🎖️ Quality Score: ${validationResults.qualityScore}/10`);
-  console.log(`🏥 Production Ready: ${validationResults.productionReady ? '✅ YES' : '❌ NO'}`);
+  console.log(
+    `🏥 Production Ready: ${validationResults.productionReady ? '✅ YES' : '❌ NO'}`
+  );
 
   if (validationResults.criticalIssues.length > 0) {
     console.log('\n🚨 CRITICAL ISSUES:');
@@ -353,7 +377,9 @@ async function runAllValidationTests() {
     console.log('\n🎉 HEALTHCARE EXCELLENCE ACHIEVED!');
     console.log('✅ NeonPro healthcare system ready for production deployment');
     console.log('✅ ≥9.9/10 quality certification achieved');
-    console.log('✅ Brazilian regulatory compliance validated (LGPD + ANVISA + CFM + SBIS)');
+    console.log(
+      '✅ Brazilian regulatory compliance validated (LGPD + ANVISA + CFM + SBIS)'
+    );
     console.log('✅ Constitutional patient safety protocols operational');
     console.log('✅ São Paulo deployment ready with medical-grade security');
     console.log('\n🚀 Ready to deploy to Vercel São Paulo region!');
@@ -362,11 +388,16 @@ async function runAllValidationTests() {
     console.log(
       `❌ Quality score ${validationResults.qualityScore}/10 below healthcare requirement (≥9.9/10)`
     );
-    console.log('❌ Critical issues must be resolved before production deployment');
+    console.log(
+      '❌ Critical issues must be resolved before production deployment'
+    );
   }
 
   // Save validation results
-  const resultsPath = path.join(process.cwd(), '.claude/validation/epic-05-results.json');
+  const resultsPath = path.join(
+    process.cwd(),
+    '.claude/validation/epic-05-results.json'
+  );
   const resultsDir = path.dirname(resultsPath);
 
   if (!fs.existsSync(resultsDir)) {

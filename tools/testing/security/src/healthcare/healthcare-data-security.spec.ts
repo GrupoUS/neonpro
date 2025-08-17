@@ -160,7 +160,10 @@ test.describe('Healthcare Data Encryption Tests', () => {
     // Login as doctor to access patient data
     await page.goto('/auth/professional-login');
     await page.fill('[data-testid="professional-registration"]', '123456-SP');
-    await page.fill('[data-testid="professional-password"]', 'ValidPassword123!');
+    await page.fill(
+      '[data-testid="professional-password"]',
+      'ValidPassword123!'
+    );
     await page.click('[data-testid="login-button"]');
 
     await page.waitForSelector('[data-testid="professional-dashboard"]');
@@ -174,7 +177,10 @@ test.describe('Healthcare Data Encryption Tests', () => {
         if (testCase.field === 'cpf') {
           await page.fill('[data-testid="patient-cpf"]', testCase.testValue);
         } else if (testCase.field === 'medicalHistory') {
-          await page.fill('[data-testid="medical-history"]', testCase.testValue);
+          await page.fill(
+            '[data-testid="medical-history"]',
+            testCase.testValue
+          );
         } else if (testCase.field === 'phoneNumber') {
           await page.fill('[data-testid="patient-phone"]', testCase.testValue);
         } else if (testCase.field === 'email') {
@@ -186,7 +192,10 @@ test.describe('Healthcare Data Encryption Tests', () => {
         // Intercept the API call to check if data is encrypted
         let apiRequestData: any = null;
         page.on('request', (request) => {
-          if (request.url().includes('/api/patients') && request.method() === 'POST') {
+          if (
+            request.url().includes('/api/patients') &&
+            request.method() === 'POST'
+          ) {
             apiRequestData = request.postDataJSON();
           }
         });
@@ -238,7 +247,10 @@ test.describe('Healthcare Data Encryption Tests', () => {
     // Login and navigate through healthcare workflows
     await page.goto('/auth/professional-login');
     await page.fill('[data-testid="professional-registration"]', '123456-SP');
-    await page.fill('[data-testid="professional-password"]', 'ValidPassword123!');
+    await page.fill(
+      '[data-testid="professional-password"]',
+      'ValidPassword123!'
+    );
     await page.click('[data-testid="login-button"]');
 
     await page.waitForSelector('[data-testid="professional-dashboard"]');
@@ -249,7 +261,10 @@ test.describe('Healthcare Data Encryption Tests', () => {
 
     // Create new procedure
     await page.goto('/procedures/create');
-    await page.fill('[data-testid="procedure-notes"]', 'Sensitive medical procedure notes');
+    await page.fill(
+      '[data-testid="procedure-notes"]',
+      'Sensitive medical procedure notes'
+    );
     await page.click('[data-testid="save-procedure"]');
 
     // Validate all healthcare API requests use HTTPS
@@ -285,7 +300,10 @@ test.describe('Healthcare Data Encryption Tests', () => {
     // Intercept upload request
     let uploadData: any = null;
     page.on('request', (request) => {
-      if (request.url().includes('/api/upload') && request.method() === 'POST') {
+      if (
+        request.url().includes('/api/upload') &&
+        request.method() === 'POST'
+      ) {
         uploadData = request.postData();
       }
     });
@@ -379,7 +397,10 @@ test.describe('Role-Based Access Control Tests', () => {
     // Login as nurse (limited access)
     await page.goto('/auth/professional-login');
     await page.fill('[data-testid="professional-registration"]', '789012-SP');
-    await page.fill('[data-testid="professional-password"]', 'NursePassword123!');
+    await page.fill(
+      '[data-testid="professional-password"]',
+      'NursePassword123!'
+    );
     await page.click('[data-testid="login-button"]');
 
     await page.waitForSelector('[data-testid="professional-dashboard"]');
@@ -439,7 +460,10 @@ test.describe('Role-Based Access Control Tests', () => {
     // Login as doctor assigned to specific patients
     await page.goto('/auth/professional-login');
     await page.fill('[data-testid="professional-registration"]', '123456-SP');
-    await page.fill('[data-testid="professional-password"]', 'DoctorPassword123!');
+    await page.fill(
+      '[data-testid="professional-password"]',
+      'DoctorPassword123!'
+    );
     await page.click('[data-testid="login-button"]');
 
     await page.waitForSelector('[data-testid="professional-dashboard"]');
@@ -521,7 +545,9 @@ test.describe('Healthcare Compliance Security Tests', () => {
     await page.fill('[data-testid="professional-registration"]', 'INVALID-CFM');
     await page.fill('[data-testid="professional-password"]', 'Password123!');
 
-    const response = page.waitForResponse((res) => res.url().includes('/api/auth/cfm-validate'));
+    const response = page.waitForResponse((res) =>
+      res.url().includes('/api/auth/cfm-validate')
+    );
     await page.click('[data-testid="login-button"]');
     const cfmResponse = await response;
 
@@ -529,7 +555,9 @@ test.describe('Healthcare Compliance Security Tests', () => {
     expect(cfmResponse.status()).not.toBe(200);
 
     // Should show CFM validation error
-    const cfmError = await page.locator('[data-testid="cfm-validation-error"]').count();
+    const cfmError = await page
+      .locator('[data-testid="cfm-validation-error"]')
+      .count();
     expect(cfmError).toBeGreaterThan(0);
   });
 
@@ -564,14 +592,19 @@ test.describe('Healthcare Compliance Security Tests', () => {
     }
 
     // Should have medical device specific security headers
-    expect(deviceDataResponse.headers['x-medical-device-security']).toBeDefined();
+    expect(
+      deviceDataResponse.headers['x-medical-device-security']
+    ).toBeDefined();
   });
 
   test('Audit Trail Integrity', async ({ page }) => {
     // Login and perform actions that should be audited
     await page.goto('/auth/professional-login');
     await page.fill('[data-testid="professional-registration"]', '123456-SP');
-    await page.fill('[data-testid="professional-password"]', 'ValidPassword123!');
+    await page.fill(
+      '[data-testid="professional-password"]',
+      'ValidPassword123!'
+    );
     await page.click('[data-testid="login-button"]');
 
     await page.waitForSelector('[data-testid="professional-dashboard"]');
@@ -607,8 +640,12 @@ test.describe('Healthcare Compliance Security Tests', () => {
       const logs = auditResponse.data.logs || auditResponse.data;
 
       // Should have audit entries for our actions
-      const accessLog = logs.find((log: any) => log.action === 'PATIENT_DATA_ACCESS');
-      const modifyLog = logs.find((log: any) => log.action === 'PATIENT_DATA_MODIFY');
+      const accessLog = logs.find(
+        (log: any) => log.action === 'PATIENT_DATA_ACCESS'
+      );
+      const modifyLog = logs.find(
+        (log: any) => log.action === 'PATIENT_DATA_MODIFY'
+      );
 
       expect(accessLog).toBeDefined();
       expect(modifyLog).toBeDefined();

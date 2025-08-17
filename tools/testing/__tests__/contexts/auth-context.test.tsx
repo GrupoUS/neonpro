@@ -35,7 +35,8 @@ vi.mock('@/app/utils/supabase/client', () => ({
 
 // Test component to access auth context
 const TestComponent = () => {
-  const { user, session, loading, signIn, signUp, signOut, signInWithGoogle } = useAuth();
+  const { user, session, loading, signIn, signUp, signOut, signInWithGoogle } =
+    useAuth();
 
   return (
     <div>
@@ -43,7 +44,10 @@ const TestComponent = () => {
       <div data-testid="user">{user ? user.email : 'no-user'}</div>
       <div data-testid="session">{session ? 'has-session' : 'no-session'}</div>
 
-      <button data-testid="signin-btn" onClick={() => signIn('test@example.com', 'password')}>
+      <button
+        data-testid="signin-btn"
+        onClick={() => signIn('test@example.com', 'password')}
+      >
         Sign In
       </button>
 
@@ -58,7 +62,10 @@ const TestComponent = () => {
         Sign Out
       </button>
 
-      <button data-testid="google-signin-btn" onClick={() => signInWithGoogle()}>
+      <button
+        data-testid="google-signin-btn"
+        onClick={() => signInWithGoogle()}
+      >
         Sign In with Google
       </button>
     </div>

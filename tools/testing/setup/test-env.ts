@@ -25,20 +25,26 @@ const mockAsyncLocalStorage = {
 };
 
 // Mock Next.js server context to prevent "outside request scope" errors
-jest.mock('next/dist/server/app-render/work-unit-async-storage.external', () => ({
-  workUnitAsyncStorage: mockAsyncLocalStorage,
-}));
+jest.mock(
+  'next/dist/server/app-render/work-unit-async-storage.external',
+  () => ({
+    workUnitAsyncStorage: mockAsyncLocalStorage,
+  })
+);
 
-jest.mock('next/dist/server/web/spec-extension/adapters/request-cookies', () => ({
-  RequestCookies: jest.fn().mockImplementation(() => ({
-    get: jest.fn(() => ({ name: 'test', value: 'test-value' })),
-    set: jest.fn(),
-    delete: jest.fn(),
-    has: jest.fn(() => false),
-    getAll: jest.fn(() => []),
-    toString: jest.fn(() => ''),
-  })),
-}));
+jest.mock(
+  'next/dist/server/web/spec-extension/adapters/request-cookies',
+  () => ({
+    RequestCookies: jest.fn().mockImplementation(() => ({
+      get: jest.fn(() => ({ name: 'test', value: 'test-value' })),
+      set: jest.fn(),
+      delete: jest.fn(),
+      has: jest.fn(() => false),
+      getAll: jest.fn(() => []),
+      toString: jest.fn(() => ''),
+    })),
+  })
+);
 
 // Mock the entire Next.js cache system
 jest.mock('next/cache', () => ({

@@ -5,7 +5,14 @@
  * Based on latest 2025 performance optimization patterns
  */
 
-import { getCLS, getFCP, getFID, getLCP, getTTFB, type Metric } from 'web-vitals';
+import {
+  getCLS,
+  getFCP,
+  getFID,
+  getLCP,
+  getTTFB,
+  type Metric,
+} from 'web-vitals';
 
 // Performance thresholds based on Core Web Vitals 2025 standards
 export const PERFORMANCE_THRESHOLDS = {
@@ -41,7 +48,8 @@ export function getPerformanceGrade(
   metric: string,
   value: number
 ): 'good' | 'needs-improvement' | 'poor' {
-  const thresholds = PERFORMANCE_THRESHOLDS[metric as keyof typeof PERFORMANCE_THRESHOLDS];
+  const thresholds =
+    PERFORMANCE_THRESHOLDS[metric as keyof typeof PERFORMANCE_THRESHOLDS];
 
   if (!thresholds) {
     return 'poor';
@@ -212,7 +220,10 @@ export function usePerformanceMonitoring() {
 // Advanced performance utilities
 export const PerformanceUtils = {
   // Measure function execution time
-  measureFunction: async <T>(name: string, fn: () => Promise<T> | T): Promise<T> => {
+  measureFunction: async <T>(
+    name: string,
+    fn: () => Promise<T> | T
+  ): Promise<T> => {
     const start = performance.now();
     const result = await fn();
     const duration = performance.now() - start;

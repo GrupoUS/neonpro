@@ -116,7 +116,9 @@ describe('Export API Routes', () => {
       // Assert
       expect(response.status).toBe(200);
       expect(response.headers.get('content-type')).toBe('text/csv');
-      expect(response.headers.get('content-disposition')).toContain('attachment');
+      expect(response.headers.get('content-disposition')).toContain(
+        'attachment'
+      );
       expect(mockSupabase.from).toHaveBeenCalledWith('subscriptions');
     });
 
@@ -161,7 +163,9 @@ describe('Export API Routes', () => {
       // Assert
       expect(response.status).toBe(200);
       expect(response.headers.get('content-type')).toBe('application/pdf');
-      expect(response.headers.get('content-disposition')).toContain('attachment');
+      expect(response.headers.get('content-disposition')).toContain(
+        'attachment'
+      );
     });
 
     test('should export trial data as Excel', async () => {
@@ -202,9 +206,12 @@ describe('Export API Routes', () => {
 
       mockSupabase.from.mockReturnValue(mockFrom);
 
-      const request = new NextRequest('http://localhost:3000/api/export?type=trials&format=xlsx', {
-        method: 'GET',
-      });
+      const request = new NextRequest(
+        'http://localhost:3000/api/export?type=trials&format=xlsx',
+        {
+          method: 'GET',
+        }
+      );
 
       // Act
       const response = await GET(request);
@@ -214,7 +221,9 @@ describe('Export API Routes', () => {
       expect(response.headers.get('content-type')).toBe(
         'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
       );
-      expect(response.headers.get('content-disposition')).toContain('attachment');
+      expect(response.headers.get('content-disposition')).toContain(
+        'attachment'
+      );
     });
 
     test('should return 401 for unauthenticated requests', async () => {
@@ -536,13 +545,18 @@ describe('Export API Routes', () => {
 
       const requests = new Array(5).fill(null).map(
         () =>
-          new NextRequest('http://localhost:3000/api/export?type=subscriptions&format=csv', {
-            method: 'GET',
-          })
+          new NextRequest(
+            'http://localhost:3000/api/export?type=subscriptions&format=csv',
+            {
+              method: 'GET',
+            }
+          )
       );
 
       // Act
-      const responses = await Promise.all(requests.map((request) => GET(request)));
+      const responses = await Promise.all(
+        requests.map((request) => GET(request))
+      );
 
       // Assert
       responses.forEach((response) => {

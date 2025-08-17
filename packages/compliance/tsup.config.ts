@@ -7,7 +7,12 @@ export default defineConfig({
   splitting: false,
   sourcemap: true,
   clean: true,
-  external: ['@supabase/supabase-js', '@neonpro/types', '@neonpro/config', '@neonpro/security'],
+  external: [
+    '@supabase/supabase-js',
+    '@neonpro/types',
+    '@neonpro/config',
+    '@neonpro/security',
+  ],
   esbuildOptions: (options) => {
     options.banner = {
       js: '"use strict";',

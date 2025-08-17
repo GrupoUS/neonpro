@@ -55,7 +55,11 @@ export class AdvancedTurboOptimizer {
       },
 
       experimentalFeatures: {
-        enabled: ['persistent-workers', 'task-scheduling', 'parallel-execution'],
+        enabled: [
+          'persistent-workers',
+          'task-scheduling',
+          'parallel-execution',
+        ],
       },
 
       globalDependencies: [
@@ -84,7 +88,11 @@ export class AdvancedTurboOptimizer {
             '.env.test*',
           ],
           outputs: ['test-results/healthcare-**', 'coverage/healthcare-**'],
-          env: ['HEALTHCARE_TEST_MODE', 'LGPD_COMPLIANCE_MODE', 'TEST_TENANT_ID'],
+          env: [
+            'HEALTHCARE_TEST_MODE',
+            'LGPD_COMPLIANCE_MODE',
+            'TEST_TENANT_ID',
+          ],
           outputMode: 'hash-only',
         },
 
@@ -136,7 +144,10 @@ export class AdvancedTurboOptimizer {
       download: true,
     };
 
-    await fs.writeFile(join(turboDir, 'config.json'), JSON.stringify(cacheConfig, null, 2));
+    await fs.writeFile(
+      join(turboDir, 'config.json'),
+      JSON.stringify(cacheConfig, null, 2)
+    );
   }
 
   private async optimizePipelineDependencies(): Promise<void> {
@@ -168,7 +179,8 @@ export class AdvancedTurboOptimizer {
     const healthcareScripts = {
       'healthcare:full-validation': {
         description: 'Complete healthcare validation pipeline',
-        command: 'turbo typecheck lint:healthcare test:healthcare validate:lgpd --parallel',
+        command:
+          'turbo typecheck lint:healthcare test:healthcare validate:lgpd --parallel',
       },
       'healthcare:build-optimized': {
         description: 'Optimized healthcare build with caching',
@@ -195,7 +207,11 @@ export class AdvancedTurboOptimizer {
     const cacheStrategy = {
       healthcare: {
         // High cache hit rate for healthcare components
-        patterns: ['packages/compliance/**', 'packages/types/**', 'apps/web/lib/compliance/**'],
+        patterns: [
+          'packages/compliance/**',
+          'packages/types/**',
+          'apps/web/lib/compliance/**',
+        ],
         ttl: this.config.cacheOptions.ttl,
         compression: true,
         encryption: true, // Healthcare data requires encryption

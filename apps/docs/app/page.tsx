@@ -33,14 +33,17 @@ export default function Home() {
             Welcome to NeonPro Documentation
           </h2>
           <p className="mx-auto mb-12 max-w-2xl text-slate-600 text-xl dark:text-slate-300">
-            Comprehensive documentation for the NeonPro healthcare platform, including API
-            references, component guides, and compliance documentation.
+            Comprehensive documentation for the NeonPro healthcare platform,
+            including API references, component guides, and compliance
+            documentation.
           </p>
 
           <div className="mt-16 grid gap-8 md:grid-cols-3">
             <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-800">
               <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-blue-100 dark:bg-blue-900">
-                <span className="text-blue-600 text-xl dark:text-blue-400">📚</span>
+                <span className="text-blue-600 text-xl dark:text-blue-400">
+                  📚
+                </span>
               </div>
               <h3 className="mb-2 font-semibold text-lg text-slate-900 dark:text-white">
                 API Documentation
@@ -52,7 +55,9 @@ export default function Home() {
 
             <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-800">
               <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-green-100 dark:bg-green-900">
-                <span className="text-green-600 text-xl dark:text-green-400">🧩</span>
+                <span className="text-green-600 text-xl dark:text-green-400">
+                  🧩
+                </span>
               </div>
               <h3 className="mb-2 font-semibold text-lg text-slate-900 dark:text-white">
                 Component Library
@@ -64,7 +69,9 @@ export default function Home() {
 
             <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-800">
               <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-purple-100 dark:bg-purple-900">
-                <span className="text-purple-600 text-xl dark:text-purple-400">🏥</span>
+                <span className="text-purple-600 text-xl dark:text-purple-400">
+                  🏥
+                </span>
               </div>
               <h3 className="mb-2 font-semibold text-lg text-slate-900 dark:text-white">
                 Healthcare Compliance

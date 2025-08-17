@@ -14,7 +14,12 @@ export const useBackupSystem = () => {
       setIsLoading(true);
       setTimeout(() => {
         setBackups([
-          { id: '1', date: new Date().toISOString(), size: '1.2GB', status: 'completed' },
+          {
+            id: '1',
+            date: new Date().toISOString(),
+            size: '1.2GB',
+            status: 'completed',
+          },
         ]);
         setIsLoading(false);
       }, 1000);

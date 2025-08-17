@@ -9,7 +9,12 @@ export type Permission = {
   conditions?: Record<string, any>;
 };
 
-export type HealthcareRole = 'admin' | 'doctor' | 'nurse' | 'receptionist' | 'patient';
+export type HealthcareRole =
+  | 'admin'
+  | 'doctor'
+  | 'nurse'
+  | 'receptionist'
+  | 'patient';
 
 export type UserPermissions = {
   userId: string;
@@ -46,7 +51,10 @@ export type UsePermissionsReturn = {
   hasAllRoles: (roles: HealthcareRole[]) => boolean;
   isAdmin: boolean;
   isHealthcareProfessional: boolean;
-  grantPermission: (userId: string, permission: Omit<Permission, 'id'>) => Promise<boolean>;
+  grantPermission: (
+    userId: string,
+    permission: Omit<Permission, 'id'>
+  ) => Promise<boolean>;
   revokePermission: (userId: string, permissionId: string) => Promise<boolean>;
   assignRole: (userId: string, role: HealthcareRole) => Promise<boolean>;
   removeRole: (userId: string, role: HealthcareRole) => Promise<boolean>;
@@ -60,7 +68,9 @@ const toast = {
   success: () => {},
 };
 
-export function usePermissions(options: UsePermissionsOptions = {}): UsePermissionsReturn {
+export function usePermissions(
+  options: UsePermissionsOptions = {}
+): UsePermissionsReturn {
   const [permissions, setPermissions] = useState<Permission[]>([]);
   const [roles, setRoles] = useState<HealthcareRole[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -92,7 +102,8 @@ export function usePermissions(options: UsePermissionsOptions = {}): UsePermissi
       setPermissions(mockPermissions);
       setRoles(mockRoles);
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to refresh permissions';
+      const errorMessage =
+        err instanceof Error ? err.message : 'Failed to refresh permissions';
       setError(errorMessage);
     } finally {
       setIsLoading(false);
@@ -119,12 +130,22 @@ export function usePermissions(options: UsePermissionsOptions = {}): UsePermissi
     return () => {};
   }, []);
 
-  const logDataAccess = useCallback((_action: string, _resource: string) => {}, []);
+  const logDataAccess = useCallback(
+    (_action: string, _resource: string) => {},
+    []
+  );
 
-  const _logDataModification = useCallback((_action: string, _resource: string) => {}, []);
+  const _logDataModification = useCallback(
+    (_action: string, _resource: string) => {},
+    []
+  );
 
   const hasPermission = useCallback(
-    (resource: string, action: string, _context?: Record<string, any>): PermissionCheckResult => {
+    (
+      resource: string,
+      action: string,
+      _context?: Record<string, any>
+    ): PermissionCheckResult => {
       try {
         if (!user?.id) {
           return {
@@ -135,7 +156,9 @@ export function usePermissions(options: UsePermissionsOptions = {}): UsePermissi
 
         logDataAccess('permission_check', resource);
 
-        const permission = permissions.find((p) => p.resource === resource && p.action === action);
+        const permission = permissions.find(
+          (p) => p.resource === resource && p.action === action
+        );
 
         if (!permission) {
           return {
@@ -148,7 +171,8 @@ export function usePermissions(options: UsePermissionsOptions = {}): UsePermissi
           hasPermission: true,
         };
       } catch (err) {
-        const errorMessage = err instanceof Error ? err.message : 'Permission check failed';
+        const errorMessage =
+          err instanceof Error ? err.message : 'Permission check failed';
         setError(errorMessage);
         return {
           hasPermission: false,
@@ -210,7 +234,10 @@ export function usePermissions(options: UsePermissionsOptions = {}): UsePermissi
   );
 
   const grantPermission = useCallback(
-    async (_userId: string, permission: Omit<Permission, 'id'>): Promise<boolean> => {
+    async (
+      _userId: string,
+      permission: Omit<Permission, 'id'>
+    ): Promise<boolean> => {
       try {
         if (!user?.id) {
           toast.error();
@@ -226,7 +253,8 @@ export function usePermissions(options: UsePermissionsOptions = {}): UsePermissi
         toast.success();
         return true;
       } catch (err) {
-        const errorMessage = err instanceof Error ? err.message : 'Failed to grant permission';
+        const errorMessage =
+          err instanceof Error ? err.message : 'Failed to grant permission';
         setError(errorMessage);
         toast.error();
         return false;
@@ -249,7 +277,8 @@ export function usePermissions(options: UsePermissionsOptions = {}): UsePermissi
         toast.success();
         return true;
       } catch (err) {
-        const errorMessage = err instanceof Error ? err.message : 'Failed to revoke permission';
+        const errorMessage =
+          err instanceof Error ? err.message : 'Failed to revoke permission';
         setError(errorMessage);
         toast.error();
         return false;
@@ -268,7 +297,8 @@ export function usePermissions(options: UsePermissionsOptions = {}): UsePermissi
         clearCache();
         return true;
       } catch (err) {
-        const errorMessage = err instanceof Error ? err.message : 'Failed to assign role';
+        const errorMessage =
+          err instanceof Error ? err.message : 'Failed to assign role';
         setError(errorMessage);
         return false;
       }
@@ -291,7 +321,8 @@ export function usePermissions(options: UsePermissionsOptions = {}): UsePermissi
 
         return true;
       } catch (err) {
-        const errorMessage = err instanceof Error ? err.message : 'Failed to remove role';
+        const errorMessage =
+          err instanceof Error ? err.message : 'Failed to remove role';
         setError(errorMessage);
         return false;
       }

@@ -115,14 +115,17 @@ export class LGPDComplianceService {
     // Validate legal basis for health data (Art. 11º)
     if (
       request.consentType === HealthcareConsentType.TREATMENT &&
-      ![LGPDLegalBasis.HEALTH_PROTECTION, LGPDLegalBasis.CONSENT].includes(request.legalBasis)
+      ![LGPDLegalBasis.HEALTH_PROTECTION, LGPDLegalBasis.CONSENT].includes(
+        request.legalBasis
+      )
     ) {
       violations.push('Invalid legal basis for health data processing');
       score -= 3;
     }
 
     return {
-      valid: violations.length === 0 && score >= this.constitutionalQualityStandard,
+      valid:
+        violations.length === 0 && score >= this.constitutionalQualityStandard,
       score: Math.max(0, score) as ComplianceScore,
       violations,
     };
@@ -172,7 +175,8 @@ export class LGPDComplianceService {
     };
 
     // Check if ANPD notification is required
-    const requiresANPDNotification = this.requiresANPDNotification(notification);
+    const requiresANPDNotification =
+      this.requiresANPDNotification(notification);
 
     if (requiresANPDNotification) {
       // Schedule ANPD notification within 72 hours
@@ -277,7 +281,9 @@ export class LGPDComplianceService {
       breach.severity === 'HIGH' ||
       breach.severity === 'CRITICAL' ||
       breach.affectedDataSubjects > 100 ||
-      breach.dataCategories.includes(PatientDataClassification.SENSITIVE_PERSONAL) ||
+      breach.dataCategories.includes(
+        PatientDataClassification.SENSITIVE_PERSONAL
+      ) ||
       breach.dataCategories.includes(PatientDataClassification.HEALTH_DATA)
     );
   }

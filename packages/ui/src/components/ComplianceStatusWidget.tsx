@@ -1,10 +1,21 @@
-import { AlertCircle, AlertTriangle, CheckCircle, Clock, Shield } from 'lucide-react';
+import {
+  AlertCircle,
+  AlertTriangle,
+  CheckCircle,
+  Clock,
+  Shield,
+} from 'lucide-react';
 import * as React from 'react';
 import { cn } from '../utils/cn';
 import { Badge } from './Badge';
 import { Button } from './Button';
 
-export type ComplianceStatus = 'compliant' | 'warning' | 'non_compliant' | 'pending' | 'unknown';
+export type ComplianceStatus =
+  | 'compliant'
+  | 'warning'
+  | 'non_compliant'
+  | 'pending'
+  | 'unknown';
 
 export type ComplianceCheck = {
   id: string;
@@ -164,14 +175,19 @@ const ComplianceSection: React.FC<{
                     {getStatusText(check.status)}
                   </Badge>
                 </div>
-                <p className="mt-1 text-muted-foreground" id={`check-${check.id}-description`}>
+                <p
+                  className="mt-1 text-muted-foreground"
+                  id={`check-${check.id}-description`}
+                >
                   {check.description}
                 </p>
                 <p className="mt-1 text-muted-foreground text-xs">
                   Última verificação: {formatDate(check.lastChecked)}
                 </p>
                 {check.details && (
-                  <p className="mt-1 text-muted-foreground text-xs">{check.details}</p>
+                  <p className="mt-1 text-muted-foreground text-xs">
+                    {check.details}
+                  </p>
                 )}
               </div>
 
@@ -193,7 +209,10 @@ const ComplianceSection: React.FC<{
   );
 };
 
-export const ComplianceStatusWidget = React.forwardRef<HTMLDivElement, ComplianceStatusWidgetProps>(
+export const ComplianceStatusWidget = React.forwardRef<
+  HTMLDivElement,
+  ComplianceStatusWidgetProps
+>(
   (
     {
       lgpdChecks,
@@ -232,7 +251,10 @@ export const ComplianceStatusWidget = React.forwardRef<HTMLDivElement, Complianc
 
     return (
       <div
-        className={cn('rounded-lg border bg-card p-6 text-card-foreground shadow-sm', className)}
+        className={cn(
+          'rounded-lg border bg-card p-6 text-card-foreground shadow-sm',
+          className
+        )}
         ref={ref}
         {...props}
         aria-describedby="compliance-status-description"
@@ -245,7 +267,10 @@ export const ComplianceStatusWidget = React.forwardRef<HTMLDivElement, Complianc
             <h3 className="font-semibold text-lg" id="compliance-status-title">
               Status de Conformidade
             </h3>
-            <p className="text-muted-foreground text-sm" id="compliance-status-description">
+            <p
+              className="text-muted-foreground text-sm"
+              id="compliance-status-description"
+            >
               Monitoramento constitucional de conformidade healthcare
             </p>
           </div>
@@ -269,7 +294,11 @@ export const ComplianceStatusWidget = React.forwardRef<HTMLDivElement, Complianc
         </div>
 
         {/* Compliance Sections */}
-        <div aria-label="Seções de conformidade" className="space-y-6" role="list">
+        <div
+          aria-label="Seções de conformidade"
+          className="space-y-6"
+          role="list"
+        >
           <ComplianceSection
             checks={lgpdChecks}
             onAddressIssue={onAddressIssue}

@@ -39,7 +39,12 @@ export type RegulatoryDocument = {
   /** Associated tenant/clinic */
   tenant_id: string;
   /** Document status */
-  status: 'draft' | 'under_review' | 'approved' | 'submitted_to_anvisa' | 'rejected';
+  status:
+    | 'draft'
+    | 'under_review'
+    | 'approved'
+    | 'submitted_to_anvisa'
+    | 'rejected';
   /** Creation metadata */
   created_by: string;
   created_at: Date;
@@ -56,7 +61,13 @@ export type DocumentAudit = {
   /** Document ID being audited */
   document_id: string;
   /** Action performed on document */
-  action: 'created' | 'updated' | 'reviewed' | 'approved' | 'submitted' | 'rejected';
+  action:
+    | 'created'
+    | 'updated'
+    | 'reviewed'
+    | 'approved'
+    | 'submitted'
+    | 'rejected';
   /** Previous document state */
   previous_state: Partial<RegulatoryDocument>;
   /** New document state */
@@ -140,9 +151,14 @@ export class RegulatoryDocumentationService {
       const newDocument: RegulatoryDocument = {
         document_id: documentId,
         document_type: params.document_type,
-        title: this.generateDocumentTitle(params.document_type, params.template_params),
+        title: this.generateDocumentTitle(
+          params.document_type,
+          params.template_params
+        ),
         generated_content: generatedContent.content!,
-        regulatory_references: await this.extractRegulatoryReferences(params.document_type),
+        regulatory_references: await this.extractRegulatoryReferences(
+          params.document_type
+        ),
         compliance_score: complianceScore,
         constitutional_validation: complianceScore >= 9.9,
         tenant_id: tenantId,
@@ -172,12 +188,18 @@ export class RegulatoryDocumentationService {
         .single();
 
       if (error) {
-        return { success: false, error: 'Failed to create regulatory document' };
+        return {
+          success: false,
+          error: 'Failed to create regulatory document',
+        };
       }
 
       return { success: true, data: data as RegulatoryDocument };
     } catch (_error) {
-      return { success: false, error: 'Constitutional healthcare service error' };
+      return {
+        success: false,
+        error: 'Constitutional healthcare service error',
+      };
     }
   } /**
    * Generate document content based on type and parameters
@@ -215,13 +237,17 @@ export class RegulatoryDocumentationService {
       if (!content || content.length < 100) {
         return {
           success: false,
-          error: 'Generated content does not meet constitutional minimum requirements',
+          error:
+            'Generated content does not meet constitutional minimum requirements',
         };
       }
 
       return { success: true, content };
     } catch (_error) {
-      return { success: false, error: 'Constitutional content generation service error' };
+      return {
+        success: false,
+        error: 'Constitutional content generation service error',
+      };
     }
   }
 
@@ -229,7 +255,9 @@ export class RegulatoryDocumentationService {
    * Generate compliance report content
    * Constitutional healthcare compliance reporting
    */
-  private async generateComplianceReportContent(params: DocumentGenerationParams): Promise<string> {
+  private async generateComplianceReportContent(
+    params: DocumentGenerationParams
+  ): Promise<string> {
     const currentDate = new Date().toLocaleDateString('pt-BR');
     const clinicName = params.template_params.clinic_name || 'Clínica';
 
@@ -296,22 +324,35 @@ Este relatório foi elaborado em conformidade com os princípios constitucionais
     try {
       // Constitutional validation rules
       if (!params.document_type) {
-        return { valid: false, error: 'Document type is mandatory for constitutional compliance' };
+        return {
+          valid: false,
+          error: 'Document type is mandatory for constitutional compliance',
+        };
       }
 
       // Validate template parameters
-      if (!params.template_params || Object.keys(params.template_params).length === 0) {
+      if (
+        !params.template_params ||
+        Object.keys(params.template_params).length === 0
+      ) {
         return {
           valid: false,
-          error: 'Template parameters required for constitutional documentation',
+          error:
+            'Template parameters required for constitutional documentation',
         };
       }
 
       // Validate source data based on document type
       switch (params.document_type) {
         case 'compliance_report':
-          if (!params.source_data.products || params.source_data.products.length === 0) {
-            return { valid: false, error: 'Products data required for compliance report' };
+          if (
+            !params.source_data.products ||
+            params.source_data.products.length === 0
+          ) {
+            return {
+              valid: false,
+              error: 'Products data required for compliance report',
+            };
           }
           break;
         case 'adverse_event_report':
@@ -319,19 +360,31 @@ Este relatório foi elaborado em conformidade com os princípios constitucionais
             !params.source_data.adverse_events ||
             params.source_data.adverse_events.length === 0
           ) {
-            return { valid: false, error: 'Adverse events data required for event report' };
+            return {
+              valid: false,
+              error: 'Adverse events data required for event report',
+            };
           }
           break;
         case 'inspection_response':
           if (!params.source_data.inspection_data) {
-            return { valid: false, error: 'Inspection data required for response document' };
+            return {
+              valid: false,
+              error: 'Inspection data required for response document',
+            };
           }
           break;
       }
 
       // Constitutional compliance requirements validation
-      if (!params.compliance_requirements || params.compliance_requirements.length === 0) {
-        return { valid: false, error: 'Constitutional compliance requirements must be specified' };
+      if (
+        !params.compliance_requirements ||
+        params.compliance_requirements.length === 0
+      ) {
+        return {
+          valid: false,
+          error: 'Constitutional compliance requirements must be specified',
+        };
       }
 
       return { valid: true };
@@ -398,42 +451,45 @@ Este relatório foi elaborado em conformidade com os princípios constitucionais
   private async extractRegulatoryReferences(
     documentType: RegulatoryDocument['document_type']
   ): Promise<string[]> {
-    const referenceMap: Record<RegulatoryDocument['document_type'], string[]> = {
-      compliance_report: [
-        'RDC nº 302/2005 - Regulamento Técnico para funcionamento de Laboratórios Clínicos',
-        'RDC nº 63/2011 - Requisitos de Boas Práticas de Funcionamento',
-        'Lei nº 6.360/1976 - Vigilância Sanitária',
-        'Constituição Federal Art. 196 - Direito à Saúde',
-      ],
-      adverse_event_report: [
-        'RDC nº 4/2009 - Notificação de Eventos Adversos',
-        'Lei nº 6.360/1976 - Vigilância Sanitária',
-        'Portaria nº 1.660/2009 - Sistema de Notificação e Investigação',
-        'Constituição Federal Art. 196 - Proteção à Saúde Pública',
-      ],
-      inspection_response: [
-        'Lei nº 9.782/1999 - Sistema Nacional de Vigilância Sanitária',
-        'RDC nº 302/2005 - Funcionamento de Laboratórios',
-        'Constituição Federal Art. 200 - Competências do SUS',
-      ],
-      renewal_application: [
-        'Lei nº 6.360/1976 - Registro de Produtos',
-        'RDC nº 7/2015 - Produtos de Higiene Pessoal',
-        'Constituição Federal Art. 196 - Direito à Saúde',
-      ],
-      safety_assessment: [
-        'RDC nº 7/2015 - Segurança de Produtos Cosméticos',
-        'RDC nº 4/2009 - Eventos Adversos',
-        'Constituição Federal Art. 196 - Proteção à Saúde',
-      ],
-    };
+    const referenceMap: Record<RegulatoryDocument['document_type'], string[]> =
+      {
+        compliance_report: [
+          'RDC nº 302/2005 - Regulamento Técnico para funcionamento de Laboratórios Clínicos',
+          'RDC nº 63/2011 - Requisitos de Boas Práticas de Funcionamento',
+          'Lei nº 6.360/1976 - Vigilância Sanitária',
+          'Constituição Federal Art. 196 - Direito à Saúde',
+        ],
+        adverse_event_report: [
+          'RDC nº 4/2009 - Notificação de Eventos Adversos',
+          'Lei nº 6.360/1976 - Vigilância Sanitária',
+          'Portaria nº 1.660/2009 - Sistema de Notificação e Investigação',
+          'Constituição Federal Art. 196 - Proteção à Saúde Pública',
+        ],
+        inspection_response: [
+          'Lei nº 9.782/1999 - Sistema Nacional de Vigilância Sanitária',
+          'RDC nº 302/2005 - Funcionamento de Laboratórios',
+          'Constituição Federal Art. 200 - Competências do SUS',
+        ],
+        renewal_application: [
+          'Lei nº 6.360/1976 - Registro de Produtos',
+          'RDC nº 7/2015 - Produtos de Higiene Pessoal',
+          'Constituição Federal Art. 196 - Direito à Saúde',
+        ],
+        safety_assessment: [
+          'RDC nº 7/2015 - Segurança de Produtos Cosméticos',
+          'RDC nº 4/2009 - Eventos Adversos',
+          'Constituição Federal Art. 196 - Proteção à Saúde',
+        ],
+      };
 
     return referenceMap[documentType] || [];
   } /**
    * Get required regulatory references for document type
    * Constitutional reference validation
    */
-  private getRequiredReferences(documentType: RegulatoryDocument['document_type']): string[] {
+  private getRequiredReferences(
+    documentType: RegulatoryDocument['document_type']
+  ): string[] {
     const baseReferences = ['RDC', 'Lei', 'Constituição Federal'];
 
     switch (documentType) {
@@ -598,7 +654,9 @@ Declaramos que todos os produtos atendem aos requisitos constitucionais de prote
    * Generate safety assessment content
    * Constitutional product safety evaluation
    */
-  private async generateSafetyAssessmentContent(params: DocumentGenerationParams): Promise<string> {
+  private async generateSafetyAssessmentContent(
+    params: DocumentGenerationParams
+  ): Promise<string> {
     const currentDate = new Date().toLocaleDateString('pt-BR');
 
     return `
@@ -673,12 +731,18 @@ Todos os produtos avaliados demonstram perfil de segurança adequado para uso em
         .single();
 
       if (error) {
-        return { success: false, error: 'Failed to update regulatory document' };
+        return {
+          success: false,
+          error: 'Failed to update regulatory document',
+        };
       }
 
       return { success: true, data: data as RegulatoryDocument };
     } catch (_error) {
-      return { success: false, error: 'Constitutional healthcare service error' };
+      return {
+        success: false,
+        error: 'Constitutional healthcare service error',
+      };
     }
   }
 
@@ -694,7 +758,11 @@ Todos os produtos avaliados demonstram perfil de segurança adequado para uso em
       created_after?: Date;
       created_before?: Date;
     }
-  ): Promise<{ success: boolean; data?: RegulatoryDocument[]; error?: string }> {
+  ): Promise<{
+    success: boolean;
+    data?: RegulatoryDocument[];
+    error?: string;
+  }> {
     try {
       let query = this.supabase
         .from('anvisa_regulatory_documents')
@@ -714,15 +782,23 @@ Todos os produtos avaliados demonstram perfil de segurança adequado para uso em
         query = query.lte('created_at', filters.created_before.toISOString());
       }
 
-      const { data, error } = await query.order('created_at', { ascending: false });
+      const { data, error } = await query.order('created_at', {
+        ascending: false,
+      });
 
       if (error) {
-        return { success: false, error: 'Failed to retrieve regulatory documents' };
+        return {
+          success: false,
+          error: 'Failed to retrieve regulatory documents',
+        };
       }
 
       return { success: true, data: data as RegulatoryDocument[] };
     } catch (_error) {
-      return { success: false, error: 'Constitutional healthcare service error' };
+      return {
+        success: false,
+        error: 'Constitutional healthcare service error',
+      };
     }
   } /**
    * Submit document to ANVISA for regulatory review
@@ -746,13 +822,17 @@ Todos os produtos avaliados demonstram perfil de segurança adequado para uso em
 
       // Constitutional validation before submission
       if (document.status !== 'approved') {
-        return { success: false, error: 'Document must be approved before ANVISA submission' };
+        return {
+          success: false,
+          error: 'Document must be approved before ANVISA submission',
+        };
       }
 
       if (document.compliance_score < 9.9) {
         return {
           success: false,
-          error: 'Document does not meet constitutional compliance standards for submission',
+          error:
+            'Document does not meet constitutional compliance standards for submission',
         };
       }
 
@@ -768,7 +848,10 @@ Todos os produtos avaliados demonstram perfil de segurança adequado para uso em
       );
 
       if (!submissionResult.success) {
-        return { success: false, error: 'Failed to update document submission status' };
+        return {
+          success: false,
+          error: 'Failed to update document submission status',
+        };
       }
 
       // Log submission for constitutional audit trail
@@ -791,7 +874,10 @@ Todos os produtos avaliados demonstram perfil de segurança adequado para uso em
         },
       };
     } catch (_error) {
-      return { success: false, error: 'Constitutional submission service error' };
+      return {
+        success: false,
+        error: 'Constitutional submission service error',
+      };
     }
   }
 

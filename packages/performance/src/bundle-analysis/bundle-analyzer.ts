@@ -3,7 +3,11 @@
  * Analyzes webpack bundles for healthcare-specific optimizations
  */
 
-import type { BundleAnalysisResult, BundleChunk, BundleRecommendation } from '../types';
+import type {
+  BundleAnalysisResult,
+  BundleChunk,
+  BundleRecommendation,
+} from '../types';
 
 type WebpackStats = {
   chunks: Array<{
@@ -125,7 +129,9 @@ export class HealthcareBundleAnalyzer {
   /**
    * Generate optimization recommendations
    */
-  private generateRecommendations(chunks: BundleChunk[]): BundleRecommendation[] {
+  private generateRecommendations(
+    chunks: BundleChunk[]
+  ): BundleRecommendation[] {
     const recommendations: BundleRecommendation[] = [];
 
     // Check for large chunks
@@ -140,7 +146,11 @@ export class HealthcareBundleAnalyzer {
         });
       }
 
-      if (chunk.size > 200_000 && chunk.isInitial && !chunk.healthcareCritical) {
+      if (
+        chunk.size > 200_000 &&
+        chunk.isInitial &&
+        !chunk.healthcareCritical
+      ) {
         recommendations.push({
           type: 'lazy-loading',
           description: `Chunk "${chunk.name}" could be lazy-loaded to improve initial bundle size.`,
@@ -196,7 +206,10 @@ export class HealthcareBundleAnalyzer {
     );
 
     if (nonHealthcareChunks.length > 0 && healthcareChunks.length > 0) {
-      const nonHealthcareSize = nonHealthcareChunks.reduce((sum, chunk) => sum + chunk.size, 0);
+      const nonHealthcareSize = nonHealthcareChunks.reduce(
+        (sum, chunk) => sum + chunk.size,
+        0
+      );
       if (nonHealthcareSize > 300_000) {
         // 300KB
         recommendations.push({
@@ -213,7 +226,9 @@ export class HealthcareBundleAnalyzer {
     const hasFormComponents = chunks.some((chunk) =>
       chunk.modules.some(
         (module) =>
-          module.includes('form') || module.includes('input') || module.includes('medical')
+          module.includes('form') ||
+          module.includes('input') ||
+          module.includes('medical')
       )
     );
 
@@ -233,7 +248,10 @@ export class HealthcareBundleAnalyzer {
    */
   private assessHealthcareOptimization(chunks: BundleChunk[]): boolean {
     const healthcareChunks = chunks.filter((chunk) => chunk.healthcareCritical);
-    const totalHealthcareSize = healthcareChunks.reduce((sum, chunk) => sum + chunk.size, 0);
+    const totalHealthcareSize = healthcareChunks.reduce(
+      (sum, chunk) => sum + chunk.size,
+      0
+    );
     const totalSize = chunks.reduce((sum, chunk) => sum + chunk.size, 0);
 
     // Healthcare modules should not dominate the initial bundle

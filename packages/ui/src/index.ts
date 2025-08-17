@@ -77,7 +77,10 @@ export type {
   LoadingStage,
   LoadingStep,
 } from './components/HealthcareLoadingStates';
-export { defaultSteps, HealthcareLoadingStates } from './components/HealthcareLoadingStates';
+export {
+  defaultSteps,
+  HealthcareLoadingStates,
+} from './components/HealthcareLoadingStates';
 export type { HealthRecordViewerProps } from './components/HealthRecordViewer';
 export { HealthRecordViewer } from './components/HealthRecordViewer';
 export type { InputProps } from './components/Input';

@@ -41,7 +41,13 @@ export const ProcedureClassificationSchema = z.object({
     'MODERATELY_INVASIVE',
     'HIGHLY_INVASIVE',
   ]),
-  anesthesiaRequired: z.enum(['NONE', 'TOPICAL', 'LOCAL', 'REGIONAL', 'GENERAL']),
+  anesthesiaRequired: z.enum([
+    'NONE',
+    'TOPICAL',
+    'LOCAL',
+    'REGIONAL',
+    'GENERAL',
+  ]),
   specialistRequired: z.boolean().default(false),
   requiredCertifications: z.array(z.string()),
   contraindications: z.array(z.string()),
@@ -90,7 +96,9 @@ export const ProcedureClassificationSchema = z.object({
   nextReviewDate: z.date(),
 });
 
-export type ProcedureClassification = z.infer<typeof ProcedureClassificationSchema>;
+export type ProcedureClassification = z.infer<
+  typeof ProcedureClassificationSchema
+>;
 
 /**
  * Classification Validation Result
@@ -138,7 +146,8 @@ export class ProcedureClassificationService {
   ): Promise<ConstitutionalResponse<ProcedureClassification>> {
     try {
       // Step 1: Validate procedure classification data
-      const validatedClassification = ProcedureClassificationSchema.parse(classification);
+      const validatedClassification =
+        ProcedureClassificationSchema.parse(classification);
 
       // Step 2: Constitutional healthcare validation
       const constitutionalValidation =
@@ -159,7 +168,9 @@ export class ProcedureClassificationService {
       }
 
       // Step 3: ANVISA RDC 67/2007 compliance validation
-      const anvisaValidation = await this.validateANVISACompliance(validatedClassification);
+      const anvisaValidation = await this.validateANVISACompliance(
+        validatedClassification
+      );
 
       if (!anvisaValidation.compliant) {
         return {
@@ -180,7 +191,9 @@ export class ProcedureClassificationService {
         await this.validateProfessionalRequirements(validatedClassification);
 
       // Step 5: Patient safety assessment
-      const safetyAssessment = await this.assessPatientSafety(validatedClassification);
+      const safetyAssessment = await this.assessPatientSafety(
+        validatedClassification
+      );
 
       // Step 6: Calculate constitutional compliance score
       const complianceScore = this.calculateComplianceScore(
@@ -193,17 +206,21 @@ export class ProcedureClassificationService {
       // Step 7: Store procedure classification
       const classifiedProcedure = await this.storeProcedureClassification({
         ...validatedClassification,
-        classificationId: validatedClassification.classificationId || crypto.randomUUID(),
+        classificationId:
+          validatedClassification.classificationId || crypto.randomUUID(),
         constitutionalValidation: {
           patientSafetyValidated: true,
           medicalEthicsCompliant: true,
-          qualityStandardsMet: complianceScore >= this.constitutionalQualityStandard,
+          qualityStandardsMet:
+            complianceScore >= this.constitutionalQualityStandard,
           regulatoryComplianceScore: complianceScore,
           lastValidationDate: new Date(),
-          validatedBy: validatedClassification.constitutionalValidation.validatedBy,
+          validatedBy:
+            validatedClassification.constitutionalValidation.validatedBy,
         },
         nextReviewDate: new Date(
-          Date.now() + this.classificationReviewMonths * 30 * 24 * 60 * 60 * 1000
+          Date.now() +
+            this.classificationReviewMonths * 30 * 24 * 60 * 60 * 1000
         ),
       });
 
@@ -211,10 +228,16 @@ export class ProcedureClassificationService {
       await this.generateComplianceDocumentation(classifiedProcedure);
 
       // Step 9: Generate audit trail
-      const auditTrail = await this.createAuditEvent('PROCEDURE_CLASSIFIED', classifiedProcedure);
+      const auditTrail = await this.createAuditEvent(
+        'PROCEDURE_CLASSIFIED',
+        classifiedProcedure
+      );
 
       // Step 10: Send classification notification
-      await this.sendClassificationNotification(classifiedProcedure, complianceScore);
+      await this.sendClassificationNotification(
+        classifiedProcedure,
+        complianceScore
+      );
 
       return {
         success: true,
@@ -232,7 +255,10 @@ export class ProcedureClassificationService {
 
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown procedure classification error',
+        error:
+          error instanceof Error
+            ? error.message
+            : 'Unknown procedure classification error',
         complianceScore: 0,
         regulatoryValidation: { lgpd: false, anvisa: false, cfm: false },
         auditTrail,
@@ -250,20 +276,27 @@ export class ProcedureClassificationService {
   ): Promise<ConstitutionalResponse<ClassificationValidationResult>> {
     try {
       // Step 1: Retrieve procedure classification
-      const classification = await this.getProcedureClassification(classificationId, tenantId);
+      const classification = await this.getProcedureClassification(
+        classificationId,
+        tenantId
+      );
 
       if (!classification) {
         throw new Error('Procedure classification not found');
       }
 
       // Step 2: Perform comprehensive validation
-      const validationResult = await this.performClassificationValidation(classification);
+      const validationResult =
+        await this.performClassificationValidation(classification);
 
       // Step 3: Generate audit trail
-      const auditTrail = await this.createAuditEvent('CLASSIFICATION_VALIDATED', {
-        classificationId,
-        validationResult,
-      });
+      const auditTrail = await this.createAuditEvent(
+        'CLASSIFICATION_VALIDATED',
+        {
+          classificationId,
+          validationResult,
+        }
+      );
 
       return {
         success: true,
@@ -278,13 +311,19 @@ export class ProcedureClassificationService {
         timestamp: new Date(),
       };
     } catch (error) {
-      const auditTrail = await this.createAuditEvent('CLASSIFICATION_VALIDATION_ERROR', {
-        classificationId,
-      });
+      const auditTrail = await this.createAuditEvent(
+        'CLASSIFICATION_VALIDATION_ERROR',
+        {
+          classificationId,
+        }
+      );
 
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Failed to validate classification',
+        error:
+          error instanceof Error
+            ? error.message
+            : 'Failed to validate classification',
         complianceScore: 0,
         regulatoryValidation: { lgpd: false, anvisa: false, cfm: false },
         auditTrail,
@@ -334,25 +373,33 @@ export class ProcedureClassificationService {
       classification.patientEligibility.minimumAge < 18 &&
       !classification.patientEligibility.parentalConsentAge
     ) {
-      violations.push('Parental consent age must be specified for minor procedures');
+      violations.push(
+        'Parental consent age must be specified for minor procedures'
+      );
       score -= 1;
     }
 
     // High-risk procedure validation
     if (
-      (classification.riskLevel === 'HIGH' || classification.riskLevel === 'CRITICAL') &&
+      (classification.riskLevel === 'HIGH' ||
+        classification.riskLevel === 'CRITICAL') &&
       !classification.requirementsForExecution.preOperativeAssessment
     ) {
-      violations.push('Pre-operative assessment required for high-risk procedures');
+      violations.push(
+        'Pre-operative assessment required for high-risk procedures'
+      );
       score -= 1.5;
     }
 
     // Professional qualification validation
     if (
       classification.riskLevel === 'HIGH' &&
-      classification.requirementsForExecution.minimumProfessionalLevel === 'TECHNICIAN'
+      classification.requirementsForExecution.minimumProfessionalLevel ===
+        'TECHNICIAN'
     ) {
-      violations.push('High-risk procedures require physician-level professionals');
+      violations.push(
+        'High-risk procedures require physician-level professionals'
+      );
       score -= 2;
     }
 
@@ -368,7 +415,9 @@ export class ProcedureClassificationService {
   /**
    * Validate ANVISA RDC 67/2007 Compliance
    */
-  private async validateANVISACompliance(classification: ProcedureClassification): Promise<{
+  private async validateANVISACompliance(
+    classification: ProcedureClassification
+  ): Promise<{
     compliant: boolean;
     score: ComplianceScore;
     issues: string[];
@@ -381,18 +430,28 @@ export class ProcedureClassificationService {
       classification.invasivenessLevel === 'HIGHLY_INVASIVE' &&
       classification.riskLevel === 'LOW'
     ) {
-      issues.push('Highly invasive procedures cannot be classified as low risk');
+      issues.push(
+        'Highly invasive procedures cannot be classified as low risk'
+      );
       score -= 2;
     }
 
     // Anesthesia requirements validation
-    if (classification.anesthesiaRequired === 'GENERAL' && classification.riskLevel === 'LOW') {
-      issues.push('General anesthesia procedures require higher risk classification');
+    if (
+      classification.anesthesiaRequired === 'GENERAL' &&
+      classification.riskLevel === 'LOW'
+    ) {
+      issues.push(
+        'General anesthesia procedures require higher risk classification'
+      );
       score -= 1.5;
     }
 
     // Specialist requirement validation
-    if (classification.riskLevel === 'HIGH' && !classification.specialistRequired) {
+    if (
+      classification.riskLevel === 'HIGH' &&
+      !classification.specialistRequired
+    ) {
       issues.push('High-risk procedures require specialist oversight');
       score -= 2;
     }
@@ -402,7 +461,9 @@ export class ProcedureClassificationService {
       classification.riskLevel === 'HIGH' &&
       classification.requirementsForExecution.facilityRequirements.length === 0
     ) {
-      issues.push('High-risk procedures require specific facility requirements');
+      issues.push(
+        'High-risk procedures require specific facility requirements'
+      );
       score -= 1;
     }
 
@@ -430,7 +491,8 @@ export class ProcedureClassificationService {
 
   private calculateComplianceScore(...validations: any[]): ComplianceScore {
     const scores = validations.map((v) => v.score || 9.0);
-    const average = scores.reduce((sum, score) => sum + score, 0) / scores.length;
+    const average =
+      scores.reduce((sum, score) => sum + score, 0) / scores.length;
     return Math.min(10, Math.max(0, average)) as ComplianceScore;
   }
 

@@ -14,7 +14,16 @@ export type DatePickerProps = {
 };
 
 const DatePicker = React.forwardRef<HTMLButtonElement, DatePickerProps>(
-  ({ date, onDateChange, placeholder = 'Selecione uma data', disabled, className }, ref) => {
+  (
+    {
+      date,
+      onDateChange,
+      placeholder = 'Selecione uma data',
+      disabled,
+      className,
+    },
+    ref
+  ) => {
     const [open, setOpen] = React.useState(false);
 
     return (

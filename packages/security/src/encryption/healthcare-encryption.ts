@@ -9,7 +9,13 @@
  * @quality ≥9.8/10 Healthcare Grade
  */
 
-import { createCipheriv, createDecipheriv, pbkdf2Sync, randomBytes, timingSafeEqual } from 'crypto';
+import {
+  createCipheriv,
+  createDecipheriv,
+  pbkdf2Sync,
+  randomBytes,
+  timingSafeEqual,
+} from 'crypto';
 
 // Encryption configuration
 const ALGORITHM = 'aes-256-gcm';
@@ -123,7 +129,9 @@ export class HealthcareEncryption {
       // Parse components
       const iv = Buffer.from(options.iv, 'base64');
       const tag = Buffer.from(options.tag, 'base64');
-      const salt = options.salt ? Buffer.from(options.salt, 'base64') : Buffer.alloc(0);
+      const salt = options.salt
+        ? Buffer.from(options.salt, 'base64')
+        : Buffer.alloc(0);
 
       // Derive decryption key
       const key = this.deriveEncryptionKey(classification, salt);
@@ -177,7 +185,13 @@ export class HealthcareEncryption {
    */
   verifyHash(data: string, hash: string, salt: string): boolean {
     const saltBuffer = Buffer.from(salt, 'base64');
-    const expectedHash = pbkdf2Sync(data, saltBuffer, PBKDF2_ITERATIONS, 64, 'sha512');
+    const expectedHash = pbkdf2Sync(
+      data,
+      saltBuffer,
+      PBKDF2_ITERATIONS,
+      64,
+      'sha512'
+    );
     const actualHash = Buffer.from(hash, 'base64');
 
     return timingSafeEqual(expectedHash, actualHash);
@@ -187,22 +201,37 @@ export class HealthcareEncryption {
 
   private deriveKeyFromEnvironment(): Buffer {
     // In production, this would use a proper key management system (HSM, AWS KMS, etc.)
-    const envKey = process.env.ENCRYPTION_MASTER_KEY || 'default-dev-key-change-in-production';
+    const envKey =
+      process.env.ENCRYPTION_MASTER_KEY ||
+      'default-dev-key-change-in-production';
 
     // Derive key from environment variable
     const salt = Buffer.from('neonpro-healthcare-encryption', 'utf8');
     return pbkdf2Sync(envKey, salt, PBKDF2_ITERATIONS, KEY_LENGTH, 'sha256');
   }
 
-  private deriveEncryptionKey(classification: DataClassification, salt: Buffer): Buffer {
+  private deriveEncryptionKey(
+    classification: DataClassification,
+    salt: Buffer
+  ): Buffer {
     // Use different key derivation for different classifications
     const context = `neonpro-${classification.toLowerCase()}`;
     const contextBuffer = Buffer.from(context, 'utf8');
 
     // Combine master key with classification context and salt
-    const derivationInput = Buffer.concat([this.masterKey, contextBuffer, salt]);
+    const derivationInput = Buffer.concat([
+      this.masterKey,
+      contextBuffer,
+      salt,
+    ]);
 
-    return pbkdf2Sync(derivationInput, salt, PBKDF2_ITERATIONS, KEY_LENGTH, 'sha256');
+    return pbkdf2Sync(
+      derivationInput,
+      salt,
+      PBKDF2_ITERATIONS,
+      KEY_LENGTH,
+      'sha256'
+    );
   }
 
   private async auditEncryption(
@@ -225,7 +254,9 @@ export class HealthcareEncryption {
 /**
  * Factory function to create encryption service
  */
-export function createHealthcareEncryption(masterKey?: Buffer): HealthcareEncryption {
+export function createHealthcareEncryption(
+  masterKey?: Buffer
+): HealthcareEncryption {
   return new HealthcareEncryption(masterKey);
 }
 
@@ -244,7 +275,9 @@ export const encryptionUtils = {
   /**
    * Encrypt medical record number
    */
-  async encryptMedicalRecordNumber(recordNumber: string): Promise<EncryptionResult> {
+  async encryptMedicalRecordNumber(
+    recordNumber: string
+  ): Promise<EncryptionResult> {
     const encryption = createHealthcareEncryption();
     return encryption.encrypt(recordNumber, DataClassification.MEDICAL);
   },
@@ -261,7 +294,8 @@ export const encryptionUtils = {
    * Generate secure random password for key derivation
    */
   generateSecurePassword(length = 32): string {
-    const charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*';
+    const charset =
+      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*';
     let password = '';
 
     for (let i = 0; i < length; i++) {

@@ -204,7 +204,10 @@ export class PatientService {
   // PATIENT CRUD OPERATIONS
   // ================================================
 
-  async createPatient(request: PatientCreateRequest, userId: string): Promise<Patient> {
+  async createPatient(
+    request: PatientCreateRequest,
+    userId: string
+  ): Promise<Patient> {
     try {
       monitoring.info('Creating patient', 'patient-service', {
         tenantId: request.tenantId,
@@ -222,7 +225,8 @@ export class PatientService {
       }
 
       // Generate full name
-      const fullName = `${request.personalInfo.firstName} ${request.personalInfo.lastName}`.trim();
+      const fullName =
+        `${request.personalInfo.firstName} ${request.personalInfo.lastName}`.trim();
 
       // Prepare patient data
       const patientData = {
@@ -272,7 +276,8 @@ export class PatientService {
         // Preferences
         language: request.preferences?.language || 'pt-BR',
         timezone: request.preferences?.timezone || 'America/Sao_Paulo',
-        communication_preferences: request.preferences?.communicationPreferences || {
+        communication_preferences: request.preferences
+          ?.communicationPreferences || {
           appointmentReminders: true,
           promotionalEmails: false,
           treatmentUpdates: true,
@@ -305,17 +310,29 @@ export class PatientService {
         .single();
 
       if (error) {
-        monitoring.error('Patient creation failed', 'patient-service', new Error(error.message), {
-          tenantId: request.tenantId,
-          email: request.contactInfo.email,
-        });
+        monitoring.error(
+          'Patient creation failed',
+          'patient-service',
+          new Error(error.message),
+          {
+            tenantId: request.tenantId,
+            email: request.contactInfo.email,
+          }
+        );
         throw new Error(error.message);
       }
 
       const patient = this.mapPatientFromDb(data);
 
       // Log patient creation
-      await this.logPatientHistory(patient.id, 'created', undefined, undefined, undefined, userId);
+      await this.logPatientHistory(
+        patient.id,
+        'created',
+        undefined,
+        undefined,
+        undefined,
+        userId
+      );
 
       monitoring.info('Patient created successfully', 'patient-service', {
         patientId: patient.id,
@@ -325,10 +342,15 @@ export class PatientService {
 
       return patient;
     } catch (error) {
-      monitoring.error('Patient creation error', 'patient-service', error as Error, {
-        tenantId: request.tenantId,
-        email: request.contactInfo.email,
-      });
+      monitoring.error(
+        'Patient creation error',
+        'patient-service',
+        error as Error,
+        {
+          tenantId: request.tenantId,
+          email: request.contactInfo.email,
+        }
+      );
       throw error;
     }
   }
@@ -352,7 +374,9 @@ export class PatientService {
 
       return this.mapPatientFromDb(data);
     } catch (error) {
-      monitoring.error('Get patient error', 'patient-service', error as Error, { patientId });
+      monitoring.error('Get patient error', 'patient-service', error as Error, {
+        patientId,
+      });
       return null;
     }
   }
@@ -382,18 +406,28 @@ export class PatientService {
 
       // Personal info updates
       if (updates.personalInfo) {
-        if (updates.personalInfo.firstName) updateData.first_name = updates.personalInfo.firstName;
-        if (updates.personalInfo.lastName) updateData.last_name = updates.personalInfo.lastName;
+        if (updates.personalInfo.firstName)
+          updateData.first_name = updates.personalInfo.firstName;
+        if (updates.personalInfo.lastName)
+          updateData.last_name = updates.personalInfo.lastName;
         if (updates.personalInfo.firstName || updates.personalInfo.lastName) {
-          const firstName = updates.personalInfo.firstName || currentPatient.personalInfo.firstName;
-          const lastName = updates.personalInfo.lastName || currentPatient.personalInfo.lastName;
+          const firstName =
+            updates.personalInfo.firstName ||
+            currentPatient.personalInfo.firstName;
+          const lastName =
+            updates.personalInfo.lastName ||
+            currentPatient.personalInfo.lastName;
           updateData.full_name = `${firstName} ${lastName}`.trim();
         }
         if (updates.personalInfo.dateOfBirth)
-          updateData.date_of_birth = updates.personalInfo.dateOfBirth.toISOString();
-        if (updates.personalInfo.gender) updateData.gender = updates.personalInfo.gender;
-        if (updates.personalInfo.cpf !== undefined) updateData.cpf = updates.personalInfo.cpf;
-        if (updates.personalInfo.rg !== undefined) updateData.rg = updates.personalInfo.rg;
+          updateData.date_of_birth =
+            updates.personalInfo.dateOfBirth.toISOString();
+        if (updates.personalInfo.gender)
+          updateData.gender = updates.personalInfo.gender;
+        if (updates.personalInfo.cpf !== undefined)
+          updateData.cpf = updates.personalInfo.cpf;
+        if (updates.personalInfo.rg !== undefined)
+          updateData.rg = updates.personalInfo.rg;
         if (updates.personalInfo.nationality !== undefined)
           updateData.nationality = updates.personalInfo.nationality;
         if (updates.personalInfo.maritalStatus !== undefined)
@@ -406,12 +440,15 @@ export class PatientService {
 
       // Contact info updates
       if (updates.contactInfo) {
-        if (updates.contactInfo.email) updateData.email = updates.contactInfo.email;
-        if (updates.contactInfo.phone) updateData.phone = updates.contactInfo.phone;
+        if (updates.contactInfo.email)
+          updateData.email = updates.contactInfo.email;
+        if (updates.contactInfo.phone)
+          updateData.phone = updates.contactInfo.phone;
         if (updates.contactInfo.whatsapp !== undefined)
           updateData.whatsapp = updates.contactInfo.whatsapp;
         if (updates.contactInfo.preferredContactMethod)
-          updateData.preferred_contact_method = updates.contactInfo.preferredContactMethod;
+          updateData.preferred_contact_method =
+            updates.contactInfo.preferredContactMethod;
 
         if (updates.contactInfo.address) {
           if (updates.contactInfo.address.street)
@@ -422,7 +459,8 @@ export class PatientService {
             updateData.complement = updates.contactInfo.address.complement;
           if (updates.contactInfo.address.neighborhood)
             updateData.neighborhood = updates.contactInfo.address.neighborhood;
-          if (updates.contactInfo.address.city) updateData.city = updates.contactInfo.address.city;
+          if (updates.contactInfo.address.city)
+            updateData.city = updates.contactInfo.address.city;
           if (updates.contactInfo.address.state)
             updateData.state = updates.contactInfo.address.state;
           if (updates.contactInfo.address.zipCode)
@@ -436,7 +474,8 @@ export class PatientService {
       if (updates.medicalInfo) {
         if (updates.medicalInfo.bloodType !== undefined)
           updateData.blood_type = updates.medicalInfo.bloodType;
-        if (updates.medicalInfo.allergies) updateData.allergies = updates.medicalInfo.allergies;
+        if (updates.medicalInfo.allergies)
+          updateData.allergies = updates.medicalInfo.allergies;
         if (updates.medicalInfo.medications)
           updateData.medications = updates.medicalInfo.medications;
         if (updates.medicalInfo.medicalConditions)
@@ -446,7 +485,8 @@ export class PatientService {
         if (updates.medicalInfo.smokingStatus)
           updateData.smoking_status = updates.medicalInfo.smokingStatus;
         if (updates.medicalInfo.alcoholConsumption)
-          updateData.alcohol_consumption = updates.medicalInfo.alcoholConsumption;
+          updateData.alcohol_consumption =
+            updates.medicalInfo.alcoholConsumption;
         if (updates.medicalInfo.exerciseFrequency)
           updateData.exercise_frequency = updates.medicalInfo.exerciseFrequency;
         if (updates.medicalInfo.notes !== undefined)
@@ -458,7 +498,8 @@ export class PatientService {
         if (updates.emergencyContact.name !== undefined)
           updateData.emergency_contact_name = updates.emergencyContact.name;
         if (updates.emergencyContact.relationship !== undefined)
-          updateData.emergency_contact_relationship = updates.emergencyContact.relationship;
+          updateData.emergency_contact_relationship =
+            updates.emergencyContact.relationship;
         if (updates.emergencyContact.phone !== undefined)
           updateData.emergency_contact_phone = updates.emergencyContact.phone;
         if (updates.emergencyContact.email !== undefined)
@@ -467,8 +508,10 @@ export class PatientService {
 
       // Preferences updates
       if (updates.preferences) {
-        if (updates.preferences.language) updateData.language = updates.preferences.language;
-        if (updates.preferences.timezone) updateData.timezone = updates.preferences.timezone;
+        if (updates.preferences.language)
+          updateData.language = updates.preferences.language;
+        if (updates.preferences.timezone)
+          updateData.timezone = updates.preferences.timezone;
         if (updates.preferences.communicationPreferences) {
           updateData.communication_preferences = {
             ...currentPatient.preferences.communicationPreferences,
@@ -501,9 +544,14 @@ export class PatientService {
         .single();
 
       if (error) {
-        monitoring.error('Patient update failed', 'patient-service', new Error(error.message), {
-          patientId,
-        });
+        monitoring.error(
+          'Patient update failed',
+          'patient-service',
+          new Error(error.message),
+          {
+            patientId,
+          }
+        );
         throw new Error(error.message);
       }
 
@@ -519,11 +567,18 @@ export class PatientService {
         userId
       );
 
-      monitoring.info('Patient updated successfully', 'patient-service', { patientId });
+      monitoring.info('Patient updated successfully', 'patient-service', {
+        patientId,
+      });
 
       return updatedPatient;
     } catch (error) {
-      monitoring.error('Patient update error', 'patient-service', error as Error, { patientId });
+      monitoring.error(
+        'Patient update error',
+        'patient-service',
+        error as Error,
+        { patientId }
+      );
       throw error;
     }
   }
@@ -553,20 +608,39 @@ export class PatientService {
         .eq('id', patientId);
 
       if (error) {
-        monitoring.error('Patient deletion failed', 'patient-service', new Error(error.message), {
-          patientId,
-        });
+        monitoring.error(
+          'Patient deletion failed',
+          'patient-service',
+          new Error(error.message),
+          {
+            patientId,
+          }
+        );
         throw new Error(error.message);
       }
 
       // Log patient deletion
-      await this.logPatientHistory(patientId, 'deleted', undefined, undefined, undefined, userId);
+      await this.logPatientHistory(
+        patientId,
+        'deleted',
+        undefined,
+        undefined,
+        undefined,
+        userId
+      );
 
-      monitoring.info('Patient deleted successfully', 'patient-service', { patientId });
+      monitoring.info('Patient deleted successfully', 'patient-service', {
+        patientId,
+      });
 
       return true;
     } catch (error) {
-      monitoring.error('Patient deletion error', 'patient-service', error as Error, { patientId });
+      monitoring.error(
+        'Patient deletion error',
+        'patient-service',
+        error as Error,
+        { patientId }
+      );
       throw error;
     }
   }
@@ -587,7 +661,9 @@ export class PatientService {
         await this.validateTenantAccess(userId, filters.tenantId);
       }
 
-      let query = this.supabase.from('patients').select('*', { count: 'exact' });
+      let query = this.supabase
+        .from('patients')
+        .select('*', { count: 'exact' });
 
       // Apply filters
       if (filters.tenantId) {
@@ -607,7 +683,9 @@ export class PatientService {
       }
 
       if (filters.phone) {
-        query = query.or(`phone.ilike.%${filters.phone}%,whatsapp.ilike.%${filters.phone}%`);
+        query = query.or(
+          `phone.ilike.%${filters.phone}%,whatsapp.ilike.%${filters.phone}%`
+        );
       }
 
       if (filters.cpf) {
@@ -623,7 +701,10 @@ export class PatientService {
       }
 
       if (filters.dateOfBirthFrom) {
-        query = query.gte('date_of_birth', filters.dateOfBirthFrom.toISOString());
+        query = query.gte(
+          'date_of_birth',
+          filters.dateOfBirthFrom.toISOString()
+        );
       }
 
       if (filters.dateOfBirthTo) {
@@ -659,9 +740,14 @@ export class PatientService {
       const { data, error, count } = await query;
 
       if (error) {
-        monitoring.error('Patient search failed', 'patient-service', new Error(error.message), {
-          filters,
-        });
+        monitoring.error(
+          'Patient search failed',
+          'patient-service',
+          new Error(error.message),
+          {
+            filters,
+          }
+        );
         throw new Error(error.message);
       }
 
@@ -674,18 +760,35 @@ export class PatientService {
 
       return { patients, total: count || 0 };
     } catch (error) {
-      monitoring.error('Patient search error', 'patient-service', error as Error, { filters });
+      monitoring.error(
+        'Patient search error',
+        'patient-service',
+        error as Error,
+        { filters }
+      );
       throw error;
     }
   }
 
-  async getPatientsByClinic(clinicId: string, userId: string): Promise<Patient[]> {
-    const { patients } = await this.searchPatients({ clinicId, limit: 1000 }, userId);
+  async getPatientsByClinic(
+    clinicId: string,
+    userId: string
+  ): Promise<Patient[]> {
+    const { patients } = await this.searchPatients(
+      { clinicId, limit: 1000 },
+      userId
+    );
     return patients;
   }
 
-  async getPatientsByTenant(tenantId: string, userId: string): Promise<Patient[]> {
-    const { patients } = await this.searchPatients({ tenantId, limit: 1000 }, userId);
+  async getPatientsByTenant(
+    tenantId: string,
+    userId: string
+  ): Promise<Patient[]> {
+    const { patients } = await this.searchPatients(
+      { tenantId, limit: 1000 },
+      userId
+    );
     return patients;
   }
 
@@ -693,9 +796,14 @@ export class PatientService {
   // PATIENT HISTORY AND AUDIT
   // ================================================
 
-  async getPatientHistory(patientId: string, userId: string): Promise<PatientHistory[]> {
+  async getPatientHistory(
+    patientId: string,
+    userId: string
+  ): Promise<PatientHistory[]> {
     try {
-      monitoring.debug('Getting patient history', 'patient-service', { patientId });
+      monitoring.debug('Getting patient history', 'patient-service', {
+        patientId,
+      });
 
       // Validate access to patient
       const patient = await this.getPatient(patientId, userId);
@@ -715,9 +823,14 @@ export class PatientService {
 
       return data.map(this.mapPatientHistoryFromDb);
     } catch (error) {
-      monitoring.error('Get patient history error', 'patient-service', error as Error, {
-        patientId,
-      });
+      monitoring.error(
+        'Get patient history error',
+        'patient-service',
+        error as Error,
+        {
+          patientId,
+        }
+      );
       throw error;
     }
   }
@@ -787,15 +900,23 @@ export class PatientService {
 
       return consent;
     } catch (error) {
-      monitoring.error('Record consent error', 'patient-service', error as Error, {
-        patientId,
-        consentType,
-      });
+      monitoring.error(
+        'Record consent error',
+        'patient-service',
+        error as Error,
+        {
+          patientId,
+          consentType,
+        }
+      );
       throw error;
     }
   }
 
-  async getPatientConsents(patientId: string, userId: string): Promise<PatientConsent[]> {
+  async getPatientConsents(
+    patientId: string,
+    userId: string
+  ): Promise<PatientConsent[]> {
     try {
       // Validate access to patient
       const patient = await this.getPatient(patientId, userId);
@@ -815,9 +936,14 @@ export class PatientService {
 
       return data.map(this.mapPatientConsentFromDb);
     } catch (error) {
-      monitoring.error('Get patient consents error', 'patient-service', error as Error, {
-        patientId,
-      });
+      monitoring.error(
+        'Get patient consents error',
+        'patient-service',
+        error as Error,
+        {
+          patientId,
+        }
+      );
       throw error;
     }
   }
@@ -839,7 +965,9 @@ export class PatientService {
     genderDistribution: Record<string, number>;
   }> {
     try {
-      monitoring.debug('Getting patient statistics', 'patient-service', { tenantId });
+      monitoring.debug('Getting patient statistics', 'patient-service', {
+        tenantId,
+      });
 
       // Validate tenant access
       await this.validateTenantAccess(userId, tenantId);
@@ -897,10 +1025,14 @@ export class PatientService {
       // Calculate average age
       const currentYear = new Date().getFullYear();
       const ages =
-        patients?.map((patient) => currentYear - new Date(patient.date_of_birth).getFullYear()) ||
-        [];
+        patients?.map(
+          (patient) =>
+            currentYear - new Date(patient.date_of_birth).getFullYear()
+        ) || [];
       const averageAge =
-        ages.length > 0 ? ages.reduce((sum, age) => sum + age, 0) / ages.length : 0;
+        ages.length > 0
+          ? ages.reduce((sum, age) => sum + age, 0) / ages.length
+          : 0;
 
       // Analyze gender distribution
       const genderDistribution =
@@ -922,7 +1054,12 @@ export class PatientService {
         genderDistribution,
       };
     } catch (error) {
-      monitoring.error('Get patient stats error', 'patient-service', error as Error, { tenantId });
+      monitoring.error(
+        'Get patient stats error',
+        'patient-service',
+        error as Error,
+        { tenantId }
+      );
       throw error;
     }
   }
@@ -931,12 +1068,17 @@ export class PatientService {
   // PRIVATE HELPER METHODS
   // ================================================
 
-  private async validateTenantAccess(userId: string, tenantId: string): Promise<void> {
+  private async validateTenantAccess(
+    userId: string,
+    tenantId: string
+  ): Promise<void> {
     // Implementation would validate user has access to tenant
     // For now, we'll assume the auth service handles this
   }
 
-  private async findDuplicatePatient(request: PatientCreateRequest): Promise<Patient | null> {
+  private async findDuplicatePatient(
+    request: PatientCreateRequest
+  ): Promise<Patient | null> {
     try {
       let query = this.supabase
         .from('patients')
@@ -985,10 +1127,15 @@ export class PatientService {
         reason,
       });
     } catch (error) {
-      monitoring.error('Log patient history error', 'patient-service', error as Error, {
-        patientId,
-        action,
-      });
+      monitoring.error(
+        'Log patient history error',
+        'patient-service',
+        error as Error,
+        {
+          patientId,
+          action,
+        }
+      );
     }
   }
 

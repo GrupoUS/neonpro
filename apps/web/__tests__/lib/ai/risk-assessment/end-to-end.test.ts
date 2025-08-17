@@ -50,15 +50,12 @@ describe('Patient Risk Assessment System - End-to-End Workflow', () => {
       );
 
       // Validate low-risk classification
-      expect(result.scoreBreakdown.riskLevel).toBeOneOf(['LOW', 'MEDIUM']);
+      expect(['LOW', 'MEDIUM']).toContain(result.scoreBreakdown.riskLevel);
       expect(result.scoreBreakdown.overallScore).toBeLessThan(50);
 
       // Professional oversight should be minimal
       expect(result.professionalOversight.timeframe).toBeGreaterThanOrEqual(30);
-      expect(result.professionalOversight.reviewLevel).toBeOneOf([
-        'NURSE',
-        'PHYSICIAN',
-      ]);
+      expect(['NURSE', 'PHYSICIAN']).toContain(result.professionalOversight.reviewLevel);
 
       // No emergency escalation
       expect(result.emergencyEscalation?.triggered).toBeFalsy();
@@ -86,30 +83,18 @@ describe('Patient Risk Assessment System - End-to-End Workflow', () => {
       );
 
       // Validate high-risk classification
-      expect(result.scoreBreakdown.riskLevel).toBeOneOf(['HIGH', 'CRITICAL']);
+      expect(['HIGH', 'CRITICAL']).toContain(result.scoreBreakdown.riskLevel);
       expect(result.scoreBreakdown.overallScore).toBeGreaterThan(60);
 
       // Professional oversight should be intensive
       expect(result.professionalOversight.requiredReview).toBe(true);
       expect(result.professionalOversight.timeframe).toBeLessThanOrEqual(30);
-      expect(result.professionalOversight.reviewLevel).toBeOneOf([
-        'PHYSICIAN',
-        'SPECIALIST',
-        'SENIOR_PHYSICIAN',
-      ]);
+      expect(['PHYSICIAN', 'SPECIALIST', 'SENIOR_PHYSICIAN']).toContain(result.professionalOversight.reviewLevel);
 
       // May trigger emergency escalation
       if (result.emergencyEscalation?.triggered) {
-        expect(result.emergencyEscalation.alertLevel).toBeOneOf([
-          'ORANGE',
-          'RED',
-          'BLACK',
-        ]);
-        expect(result.emergencyEscalation.escalationPriority).toBeOneOf([
-          'URGENT',
-          'IMMEDIATE',
-          'EMERGENCY',
-        ]);
+        expect(['ORANGE', 'RED', 'BLACK']).toContain(result.emergencyEscalation.alertLevel);
+        expect(['URGENT', 'IMMEDIATE', 'EMERGENCY']).toContain(result.emergencyEscalation.escalationPriority);
       }
 
       // Should have multiple recommendations
@@ -153,10 +138,7 @@ describe('Patient Risk Assessment System - End-to-End Workflow', () => {
         'RED',
         'BLACK',
       ]);
-      expect(result.emergencyEscalation?.escalationPriority).toBeOneOf([
-        'IMMEDIATE',
-        'EMERGENCY',
-      ]);
+      expect(['IMMEDIATE', 'EMERGENCY']).toContain(result.emergencyEscalation?.escalationPriority);
 
       // Should have critical recommendations
       const criticalRecommendations = result.recommendations.filter(
@@ -255,12 +237,7 @@ describe('Patient Risk Assessment System - End-to-End Workflow', () => {
         expect(treatment.riskAdjustedOutcome).toBeLessThanOrEqual(
           treatment.name === 'Procedimento Estético Simples' ? 85 : 75,
         );
-        expect(treatment.riskLevel).toBeOneOf([
-          'LOW',
-          'MEDIUM',
-          'HIGH',
-          'CRITICAL',
-        ]);
+        expect(['LOW', 'MEDIUM', 'HIGH', 'CRITICAL']).toContain(treatment.riskLevel);
         expect(treatment.riskFactors).toBeInstanceOf(Array);
         expect(treatment.recommendations).toBeInstanceOf(Array);
       });
@@ -321,7 +298,7 @@ describe('Patient Risk Assessment System - End-to-End Workflow', () => {
 
       // Should trigger risk update
       expect(result.riskUpdate).toBe(true);
-      expect(result.newRiskLevel).toBeOneOf(['HIGH', 'CRITICAL']);
+      expect(['HIGH', 'CRITICAL']).toContain(result.newRiskLevel);
       expect(result.alerts.length).toBeGreaterThan(0);
       expect(result.recommendations.length).toBeGreaterThan(0);
 

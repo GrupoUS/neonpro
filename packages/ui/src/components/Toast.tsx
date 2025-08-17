@@ -1,14 +1,17 @@
 import React from 'react';
 
 // Placeholder import for @neonpro/utils
-const cn = (...classes: (string | undefined)[]) => classes.filter(Boolean).join(' ');
+const cn = (...classes: (string | undefined)[]) =>
+  classes.filter(Boolean).join(' ');
 
 // Toast context and provider
 type ToastContextType = {
   toast: (props: ToastProps) => void;
 };
 
-const ToastContext = React.createContext<ToastContextType | undefined>(undefined);
+const ToastContext = React.createContext<ToastContextType | undefined>(
+  undefined
+);
 
 export function useToast() {
   const context = React.useContext(ToastContext);
@@ -31,12 +34,19 @@ type ToastProps = {
 
 export type { ToastProps };
 
-export function Toast({ title, description, variant = 'default', ...props }: ToastProps) {
+export function Toast({
+  title,
+  description,
+  variant = 'default',
+  ...props
+}: ToastProps) {
   return (
     <div
       className={cn(
         'group pointer-events-auto relative flex w-full items-center justify-between space-x-4 overflow-hidden rounded-md border p-6 pr-8 shadow-lg transition-all',
-        variant === 'destructive' ? 'border-red-500 bg-red-50' : 'border-gray-200 bg-white'
+        variant === 'destructive'
+          ? 'border-red-500 bg-red-50'
+          : 'border-gray-200 bg-white'
       )}
       {...props}
     >
@@ -69,7 +79,9 @@ export function Toast({ title, description, variant = 'default', ...props }: Toa
 export function ToastProvider({ children }: { children: React.ReactNode }) {
   const toast = React.useCallback((_props: ToastProps) => {}, []);
 
-  return <ToastContext.Provider value={{ toast }}>{children}</ToastContext.Provider>;
+  return (
+    <ToastContext.Provider value={{ toast }}>{children}</ToastContext.Provider>
+  );
 }
 
 // Additional exports to avoid conflicts

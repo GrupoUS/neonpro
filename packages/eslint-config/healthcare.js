@@ -116,8 +116,14 @@ module.exports = {
     // Code Quality Rules (Healthcare Grade)
     complexity: ['error', { max: 10 }], // Reduce complexity for medical software
     'max-depth': ['error', 4],
-    'max-lines': ['error', { max: 300, skipBlankLines: true, skipComments: true }],
-    'max-lines-per-function': ['error', { max: 50, skipBlankLines: true, skipComments: true }],
+    'max-lines': [
+      'error',
+      { max: 300, skipBlankLines: true, skipComments: true },
+    ],
+    'max-lines-per-function': [
+      'error',
+      { max: 50, skipBlankLines: true, skipComments: true },
+    ],
     'max-params': ['error', 4],
     'no-magic-numbers': ['error', { ignore: [0, 1, -1, 100] }],
 
@@ -148,7 +154,11 @@ module.exports = {
   overrides: [
     // Healthcare API Routes
     {
-      files: ['**/api/**/*.{js,ts}', '**/pages/api/**/*.{js,ts}', '**/app/api/**/*.{js,ts}'],
+      files: [
+        '**/api/**/*.{js,ts}',
+        '**/pages/api/**/*.{js,ts}',
+        '**/app/api/**/*.{js,ts}',
+      ],
       rules: {
         'healthcare/require-audit-logging': 'error',
         'healthcare/validate-patient-data': 'error',
@@ -182,7 +192,11 @@ module.exports = {
 
     // Database/ORM Files
     {
-      files: ['**/db/**/*.{js,ts}', '**/database/**/*.{js,ts}', '**/models/**/*.{js,ts}'],
+      files: [
+        '**/db/**/*.{js,ts}',
+        '**/database/**/*.{js,ts}',
+        '**/models/**/*.{js,ts}',
+      ],
       rules: {
         'healthcare/secure-medical-records': 'error',
         'security/detect-non-literal-fs-filename': 'error',
@@ -192,7 +206,10 @@ module.exports = {
 
     // Test Files
     {
-      files: ['**/*.{test,spec}.{js,ts,jsx,tsx}', '**/tests/**/*.{js,ts,jsx,tsx}'],
+      files: [
+        '**/*.{test,spec}.{js,ts,jsx,tsx}',
+        '**/tests/**/*.{js,ts,jsx,tsx}',
+      ],
       rules: {
         'no-magic-numbers': 'off',
         'max-lines-per-function': 'off',

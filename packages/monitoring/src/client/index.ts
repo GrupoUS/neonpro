@@ -7,7 +7,15 @@
 
 'use client';
 
-import { getCLS, getFCP, getFID, getINP, getLCP, getTTFB, type Metric } from 'web-vitals';
+import {
+  getCLS,
+  getFCP,
+  getFID,
+  getINP,
+  getLCP,
+  getTTFB,
+  type Metric,
+} from 'web-vitals';
 import type {
   CustomMetric,
   HealthcareContext,
@@ -73,7 +81,10 @@ export class PerformanceMonitor {
   private readonly sessionId: string;
   private isInitialized = false;
 
-  constructor(config: Partial<MonitoringConfig> = {}, hooks: MonitoringHooks = {}) {
+  constructor(
+    config: Partial<MonitoringConfig> = {},
+    hooks: MonitoringHooks = {}
+  ) {
     this.config = { ...DEFAULT_CONFIG, ...config };
     this.hooks = hooks;
     this.sessionId = this.generateSessionId();
@@ -139,7 +150,11 @@ export class PerformanceMonitor {
   /**
    * Track patient search performance
    */
-  trackPatientSearch(searchType: string, resultCount: number, startTime: number): void {
+  trackPatientSearch(
+    searchType: string,
+    resultCount: number,
+    startTime: number
+  ): void {
     const duration = performance.now() - startTime;
     this.trackCustomMetric('patient_search_time', duration, {
       searchType,
@@ -185,7 +200,11 @@ export class PerformanceMonitor {
   /**
    * Track report generation performance
    */
-  trackReportGeneration(reportType: string, recordCount: number, startTime: number): void {
+  trackReportGeneration(
+    reportType: string,
+    recordCount: number,
+    startTime: number
+  ): void {
     const duration = performance.now() - startTime;
     this.trackCustomMetric('report_generation_time', duration, {
       reportType,
@@ -226,7 +245,10 @@ export class PerformanceMonitor {
     performance.measure(label, `${label}-start`, `${label}-end`);
 
     const duration = performance.now() - startTime;
-    this.trackCustomMetric(metricName, duration, { operation: label, ...context });
+    this.trackCustomMetric(metricName, duration, {
+      operation: label,
+      ...context,
+    });
   }
 
   /**
@@ -421,7 +443,9 @@ export class PerformanceMonitor {
   /**
    * Send navigation metrics
    */
-  private async sendNavigationMetrics(metrics: Record<string, number>): Promise<void> {
+  private async sendNavigationMetrics(
+    metrics: Record<string, number>
+  ): Promise<void> {
     try {
       await fetch(this.config.endpoints.metrics, {
         method: 'POST',

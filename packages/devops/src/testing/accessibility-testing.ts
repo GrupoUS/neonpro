@@ -61,11 +61,19 @@ export class AccessibilityTester {
   }
 
   private async validateScreenReaderCompatibility(): Promise<boolean> {
-    return this.checkAriaLabels() && this.checkSemanticHTML() && this.checkScreenReaderFlow();
+    return (
+      this.checkAriaLabels() &&
+      this.checkSemanticHTML() &&
+      this.checkScreenReaderFlow()
+    );
   }
 
   private async validateKeyboardNavigation(): Promise<boolean> {
-    return this.checkTabOrder() && this.checkKeyboardShortcuts() && this.checkFocusTrapping();
+    return (
+      this.checkTabOrder() &&
+      this.checkKeyboardShortcuts() &&
+      this.checkFocusTrapping()
+    );
   }
 
   private async validateColorContrast(): Promise<boolean> {
@@ -74,11 +82,19 @@ export class AccessibilityTester {
   }
 
   private async validateTextScaling(): Promise<boolean> {
-    return this.checkTextScaling200() && this.checkLayoutReflow() && this.checkContentVisibility();
+    return (
+      this.checkTextScaling200() &&
+      this.checkLayoutReflow() &&
+      this.checkContentVisibility()
+    );
   }
 
   private async validateFocusManagement(): Promise<boolean> {
-    return this.checkFocusIndicators() && this.checkFocusOrder() && this.checkFocusReturn();
+    return (
+      this.checkFocusIndicators() &&
+      this.checkFocusOrder() &&
+      this.checkFocusReturn()
+    );
   }
 
   private async validatePerceivable(): Promise<boolean> {
@@ -100,11 +116,19 @@ export class AccessibilityTester {
   }
 
   private async validateUnderstandable(): Promise<boolean> {
-    return this.checkReadable() && this.checkPredictable() && this.checkInputAssistance();
+    return (
+      this.checkReadable() &&
+      this.checkPredictable() &&
+      this.checkInputAssistance()
+    );
   }
 
   private async validateRobust(): Promise<boolean> {
-    return this.checkCompatible() && this.checkValidHTML() && this.checkAccessibilityAPI();
+    return (
+      this.checkCompatible() &&
+      this.checkValidHTML() &&
+      this.checkAccessibilityAPI()
+    );
   }
 
   private calculateAccessibilityScore(checks: Record<string, boolean>): number {
@@ -224,7 +248,10 @@ export class AccessibilityTester {
   }
 }
 
-export function createAccessibilityTestSuite(testName: string, testFn: () => void | Promise<void>) {
+export function createAccessibilityTestSuite(
+  testName: string,
+  testFn: () => void | Promise<void>
+) {
   return describe(`Accessibility: ${testName}`, () => {
     let accessibilityTester: AccessibilityTester;
 
@@ -233,7 +260,8 @@ export function createAccessibilityTestSuite(testName: string, testFn: () => voi
     });
 
     test('Healthcare Accessibility Validation', async () => {
-      const result = await accessibilityTester.validateHealthcareAccessibility();
+      const result =
+        await accessibilityTester.validateHealthcareAccessibility();
       expect(result.passed).toBe(true);
       expect(result.score).toBeGreaterThanOrEqual(9.9);
     });

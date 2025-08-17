@@ -120,8 +120,12 @@ function displayNextSteps() {
   console.log('3. pnpm test:e2e         - Run E2E tests');
   console.log('4. pnpm claude:test-dashboard - Healthcare test dashboard');
   console.log('\n🏥 Healthcare Commands:');
-  console.log('• pnpm claude:healthcare-compliance - LGPD+ANVISA+CFM validation');
-  console.log('• pnpm claude:patient-data-security - Patient data security tests');
+  console.log(
+    '• pnpm claude:healthcare-compliance - LGPD+ANVISA+CFM validation'
+  );
+  console.log(
+    '• pnpm claude:patient-data-security - Patient data security tests'
+  );
   console.log('• pnpm claude:biome-quality-check   - Code quality validation');
   console.log('\n⚖️ Compliance Status: All healthcare requirements configured');
   console.log('🎯 Quality Threshold: ≥9.9/10 healthcare standards');

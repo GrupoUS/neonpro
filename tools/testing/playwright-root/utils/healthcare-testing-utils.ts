@@ -70,7 +70,10 @@ export class HealthcareWorkflowHelper {
       doctor: { email: 'doctor.test@neonpro.com', password: 'TestPass123!' },
       admin: { email: 'admin.test@neonpro.com', password: 'TestPass123!' },
       nurse: { email: 'nurse.test@neonpro.com', password: 'TestPass123!' },
-      receptionist: { email: 'receptionist.test@neonpro.com', password: 'TestPass123!' },
+      receptionist: {
+        email: 'receptionist.test@neonpro.com',
+        password: 'TestPass123!',
+      },
     };
 
     await page.goto('/login');
@@ -139,7 +142,9 @@ export class LGPDComplianceHelper {
 
     // Test consent withdrawal
     await page.getByTestId('withdraw-consent-button').click();
-    await expect(page.getByText('Consent withdrawn successfully')).toBeVisible();
+    await expect(
+      page.getByText('Consent withdrawn successfully')
+    ).toBeVisible();
   }
 
   /**
@@ -159,7 +164,9 @@ export class HealthcareAccessibilityHelper {
   static async validateAccessibility(page: Page) {
     // Test keyboard navigation
     await page.keyboard.press('Tab');
-    const focusedElement = await page.evaluate(() => document.activeElement?.tagName);
+    const focusedElement = await page.evaluate(
+      () => document.activeElement?.tagName
+    );
     expect(['BUTTON', 'INPUT', 'SELECT', 'A']).toContain(focusedElement);
 
     // Test screen reader compatibility
@@ -200,17 +207,24 @@ export class HealthcarePerformanceHelper {
    */
   static async validatePerformanceRequirements(page: Page) {
     const performanceEntries = await page.evaluate(() => {
-      return JSON.parse(JSON.stringify(performance.getEntriesByType('navigation')));
+      return JSON.parse(
+        JSON.stringify(performance.getEntriesByType('navigation'))
+      );
     });
 
-    const loadTime = performanceEntries[0]?.loadEventEnd - performanceEntries[0]?.navigationStart;
+    const loadTime =
+      performanceEntries[0]?.loadEventEnd -
+      performanceEntries[0]?.navigationStart;
     expect(loadTime).toBeLessThan(2000); // <2s page load
   }
 
   /**
    * Test routine operations performance (<500ms requirement)
    */
-  static async validateRoutineOperationPerformance(page: Page, operation: () => Promise<void>) {
+  static async validateRoutineOperationPerformance(
+    page: Page,
+    operation: () => Promise<void>
+  ) {
     const startTime = Date.now();
     await operation();
     const operationTime = Date.now() - startTime;

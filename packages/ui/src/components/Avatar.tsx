@@ -3,20 +3,23 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import * as React from 'react';
 import { cn } from '../utils/cn';
 
-const avatarVariants = cva('relative flex shrink-0 overflow-hidden rounded-full', {
-  variants: {
-    size: {
-      sm: 'h-8 w-8',
-      default: 'h-10 w-10',
-      lg: 'h-12 w-12',
-      xl: 'h-16 w-16',
-      '2xl': 'h-20 w-20',
+const avatarVariants = cva(
+  'relative flex shrink-0 overflow-hidden rounded-full',
+  {
+    variants: {
+      size: {
+        sm: 'h-8 w-8',
+        default: 'h-10 w-10',
+        lg: 'h-12 w-12',
+        xl: 'h-16 w-16',
+        '2xl': 'h-20 w-20',
+      },
     },
-  },
-  defaultVariants: {
-    size: 'default',
-  },
-});
+    defaultVariants: {
+      size: 'default',
+    },
+  }
+);
 
 export interface AvatarProps
   extends React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Root>,
@@ -47,8 +50,14 @@ export interface AvatarProps
   statusColor?: 'green' | 'yellow' | 'red' | 'gray';
 }
 
-const Avatar = React.forwardRef<React.ElementRef<typeof AvatarPrimitive.Root>, AvatarProps>(
-  ({ className, size, src, alt, fallback, online, statusColor, ...props }, ref) => {
+const Avatar = React.forwardRef<
+  React.ElementRef<typeof AvatarPrimitive.Root>,
+  AvatarProps
+>(
+  (
+    { className, size, src, alt, fallback, online, statusColor, ...props },
+    ref
+  ) => {
     return (
       <div className="relative">
         <AvatarPrimitive.Root

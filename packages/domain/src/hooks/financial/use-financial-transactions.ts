@@ -42,10 +42,21 @@ export type UseFinancialTransactionsReturn = {
   createTransaction: (
     transaction: Omit<FinancialTransaction, 'id' | 'created_at' | 'updated_at'>
   ) => Promise<string | null>;
-  updateTransaction: (id: string, updates: Partial<FinancialTransaction>) => Promise<boolean>;
-  processPayment: (transactionId: string, paymentMethodId: string) => Promise<boolean>;
-  processRefund: (transactionId: string, amount?: number) => Promise<string | null>;
-  addPaymentMethod: (method: Omit<PaymentMethod, 'id'>) => Promise<string | null>;
+  updateTransaction: (
+    id: string,
+    updates: Partial<FinancialTransaction>
+  ) => Promise<boolean>;
+  processPayment: (
+    transactionId: string,
+    paymentMethodId: string
+  ) => Promise<boolean>;
+  processRefund: (
+    transactionId: string,
+    amount?: number
+  ) => Promise<string | null>;
+  addPaymentMethod: (
+    method: Omit<PaymentMethod, 'id'>
+  ) => Promise<string | null>;
   removePaymentMethod: (methodId: string) => Promise<boolean>;
   refreshData: () => Promise<void>;
 };
@@ -80,7 +91,8 @@ export function useFinancialTransactions(): UseFinancialTransactionsReturn {
 
       setTransactions(mockTransactions);
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to refresh data';
+      const errorMessage =
+        err instanceof Error ? err.message : 'Failed to refresh data';
       setError(errorMessage);
     } finally {
       setIsLoading(false);
@@ -89,12 +101,17 @@ export function useFinancialTransactions(): UseFinancialTransactionsReturn {
 
   const createTransaction = useCallback(
     async (
-      _transaction: Omit<FinancialTransaction, 'id' | 'created_at' | 'updated_at'>
+      _transaction: Omit<
+        FinancialTransaction,
+        'id' | 'created_at' | 'updated_at'
+      >
     ): Promise<string | null> => {
       try {
         return `trans-${Date.now()}`;
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to create transaction');
+        setError(
+          err instanceof Error ? err.message : 'Failed to create transaction'
+        );
         return null;
       }
     },
@@ -102,11 +119,16 @@ export function useFinancialTransactions(): UseFinancialTransactionsReturn {
   );
 
   const updateTransaction = useCallback(
-    async (_id: string, _updates: Partial<FinancialTransaction>): Promise<boolean> => {
+    async (
+      _id: string,
+      _updates: Partial<FinancialTransaction>
+    ): Promise<boolean> => {
       try {
         return true;
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to update transaction');
+        setError(
+          err instanceof Error ? err.message : 'Failed to update transaction'
+        );
         return false;
       }
     },
@@ -114,11 +136,16 @@ export function useFinancialTransactions(): UseFinancialTransactionsReturn {
   );
 
   const processPayment = useCallback(
-    async (_transactionId: string, _paymentMethodId: string): Promise<boolean> => {
+    async (
+      _transactionId: string,
+      _paymentMethodId: string
+    ): Promise<boolean> => {
       try {
         return true;
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to process payment');
+        setError(
+          err instanceof Error ? err.message : 'Failed to process payment'
+        );
         return false;
       }
     },
@@ -126,11 +153,16 @@ export function useFinancialTransactions(): UseFinancialTransactionsReturn {
   );
 
   const processRefund = useCallback(
-    async (_transactionId: string, _amount?: number): Promise<string | null> => {
+    async (
+      _transactionId: string,
+      _amount?: number
+    ): Promise<string | null> => {
       try {
         return `refund-${Date.now()}`;
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to process refund');
+        setError(
+          err instanceof Error ? err.message : 'Failed to process refund'
+        );
         return null;
       }
     },
@@ -142,21 +174,28 @@ export function useFinancialTransactions(): UseFinancialTransactionsReturn {
       try {
         return `method-${Date.now()}`;
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to add payment method');
+        setError(
+          err instanceof Error ? err.message : 'Failed to add payment method'
+        );
         return null;
       }
     },
     []
   );
 
-  const removePaymentMethod = useCallback(async (_methodId: string): Promise<boolean> => {
-    try {
-      return true;
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to remove payment method');
-      return false;
-    }
-  }, []);
+  const removePaymentMethod = useCallback(
+    async (_methodId: string): Promise<boolean> => {
+      try {
+        return true;
+      } catch (err) {
+        setError(
+          err instanceof Error ? err.message : 'Failed to remove payment method'
+        );
+        return false;
+      }
+    },
+    []
+  );
 
   // Computed values
   const totalAmount = transactions.reduce((sum, transaction) => {

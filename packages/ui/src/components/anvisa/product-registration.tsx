@@ -21,10 +21,22 @@ import { cn } from '../../lib/utils';
 import { Alert, AlertDescription } from '../Alert';
 import { Badge } from '../Badge';
 import { Button } from '../Button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../Card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '../Card';
 import { Input } from '../Input';
 import { Label } from '../Label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../Select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '../Select';
 import { Textarea } from '../Textarea';
 
 type Product = {
@@ -54,7 +66,9 @@ type ANVISAProductRegistrationProps = {
   clinicId: string;
 };
 
-export function ANVISAProductRegistration({ clinicId }: ANVISAProductRegistrationProps) {
+export function ANVISAProductRegistration({
+  clinicId,
+}: ANVISAProductRegistrationProps) {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -79,7 +93,9 @@ export function ANVISAProductRegistration({ clinicId }: ANVISAProductRegistratio
   const fetchProducts = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`/api/anvisa/products?clinic_id=${clinicId}`);
+      const response = await fetch(
+        `/api/anvisa/products?clinic_id=${clinicId}`
+      );
       if (response.ok) {
         const data = await response.json();
         setProducts(data.data);
@@ -191,7 +207,9 @@ export function ANVISAProductRegistration({ clinicId }: ANVISAProductRegistratio
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="font-bold text-2xl tracking-tight">Registro de Produtos ANVISA</h3>
+          <h3 className="font-bold text-2xl tracking-tight">
+            Registro de Produtos ANVISA
+          </h3>
           <p className="text-muted-foreground">
             Gerencie produtos estéticos e sua conformidade regulatória
           </p>
@@ -213,7 +231,9 @@ export function ANVISAProductRegistration({ clinicId }: ANVISAProductRegistratio
       {success && (
         <Alert className="border-green-200 bg-green-50">
           <CheckCircle className="h-4 w-4 text-green-600" />
-          <AlertDescription className="text-green-800">{success}</AlertDescription>
+          <AlertDescription className="text-green-800">
+            {success}
+          </AlertDescription>
         </Alert>
       )}
 
@@ -243,7 +263,9 @@ export function ANVISAProductRegistration({ clinicId }: ANVISAProductRegistratio
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="registration_number">Número de Registro ANVISA</Label>
+                  <Label htmlFor="registration_number">
+                    Número de Registro ANVISA
+                  </Label>
                   <Input
                     id="registration_number"
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
@@ -274,18 +296,30 @@ export function ANVISAProductRegistration({ clinicId }: ANVISAProductRegistratio
                 <div className="space-y-2">
                   <Label htmlFor="category">Categoria</Label>
                   <Select
-                    onValueChange={(value: string) => setFormData({ ...formData, category: value })}
+                    onValueChange={(value: string) =>
+                      setFormData({ ...formData, category: value })
+                    }
                     value={formData.category}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Selecione a categoria" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="dermal_filler">Preenchedor Dérmico</SelectItem>
-                      <SelectItem value="botulinum_toxin">Toxina Botulínica</SelectItem>
-                      <SelectItem value="laser_equipment">Equipamento a Laser</SelectItem>
-                      <SelectItem value="topical_treatment">Tratamento Tópico</SelectItem>
-                      <SelectItem value="medical_device">Dispositivo Médico</SelectItem>
+                      <SelectItem value="dermal_filler">
+                        Preenchedor Dérmico
+                      </SelectItem>
+                      <SelectItem value="botulinum_toxin">
+                        Toxina Botulínica
+                      </SelectItem>
+                      <SelectItem value="laser_equipment">
+                        Equipamento a Laser
+                      </SelectItem>
+                      <SelectItem value="topical_treatment">
+                        Tratamento Tópico
+                      </SelectItem>
+                      <SelectItem value="medical_device">
+                        Dispositivo Médico
+                      </SelectItem>
                       <SelectItem value="other">Outros</SelectItem>
                     </SelectContent>
                   </Select>
@@ -348,7 +382,11 @@ export function ANVISAProductRegistration({ clinicId }: ANVISAProductRegistratio
               </div>
 
               <div className="flex justify-end space-x-2">
-                <Button onClick={() => setShowForm(false)} type="button" variant="outline">
+                <Button
+                  onClick={() => setShowForm(false)}
+                  type="button"
+                  variant="outline"
+                >
                   <X className="mr-2 h-4 w-4" />
                   Cancelar
                 </Button>
@@ -370,7 +408,9 @@ export function ANVISAProductRegistration({ clinicId }: ANVISAProductRegistratio
               <div className="flex items-start justify-between">
                 <div className="space-y-1">
                   <CardTitle className="text-lg">{product.name}</CardTitle>
-                  <CardDescription className="text-sm">{product.manufacturer}</CardDescription>
+                  <CardDescription className="text-sm">
+                    {product.manufacturer}
+                  </CardDescription>
                 </div>
                 <Button size="sm" variant="ghost">
                   <Edit className="h-4 w-4" />
@@ -385,11 +425,15 @@ export function ANVISAProductRegistration({ clinicId }: ANVISAProductRegistratio
 
               <div className="flex items-center justify-between">
                 <span className="text-muted-foreground text-sm">Registro:</span>
-                <span className="font-mono text-sm">{product.registration_number}</span>
+                <span className="font-mono text-sm">
+                  {product.registration_number}
+                </span>
               </div>
 
               <div className="flex items-center justify-between">
-                <span className="text-muted-foreground text-sm">Conformidade:</span>
+                <span className="text-muted-foreground text-sm">
+                  Conformidade:
+                </span>
                 <span
                   className={cn(
                     'font-semibold text-sm',
@@ -416,8 +460,11 @@ export function ANVISAProductRegistration({ clinicId }: ANVISAProductRegistratio
                     {product.status === 'active' && (
                       <CheckCircle className="h-4 w-4 text-green-500" />
                     )}
-                    {product.status === 'pending' && <Clock className="h-4 w-4 text-yellow-500" />}
-                    {(product.status === 'expired' || product.status === 'suspended') && (
+                    {product.status === 'pending' && (
+                      <Clock className="h-4 w-4 text-yellow-500" />
+                    )}
+                    {(product.status === 'expired' ||
+                      product.status === 'suspended') && (
                       <XCircle className="h-4 w-4 text-red-500" />
                     )}
                   </div>
@@ -432,9 +479,12 @@ export function ANVISAProductRegistration({ clinicId }: ANVISAProductRegistratio
         <Card>
           <CardContent className="flex flex-col items-center justify-center py-12">
             <Package className="mb-4 h-12 w-12 text-muted-foreground" />
-            <h3 className="mb-2 font-semibold text-lg">Nenhum produto registrado</h3>
+            <h3 className="mb-2 font-semibold text-lg">
+              Nenhum produto registrado
+            </h3>
             <p className="mb-4 text-center text-muted-foreground">
-              Comece registrando seus produtos estéticos para garantir conformidade com a ANVISA
+              Comece registrando seus produtos estéticos para garantir
+              conformidade com a ANVISA
             </p>
             <Button onClick={() => setShowForm(true)}>
               <Plus className="mr-2 h-4 w-4" />

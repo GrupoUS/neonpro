@@ -97,7 +97,8 @@ export class LGPDAuditLogger {
     const logId = `lgpd_audit_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
     // Constitutional impact assessment
-    const constitutionalImpact = await this.assessConstitutionalImpact(activity);
+    const constitutionalImpact =
+      await this.assessConstitutionalImpact(activity);
 
     // Compliance validation
     const complianceValidation = await this.validateCompliance(activity);
@@ -138,7 +139,10 @@ export class LGPDAuditLogger {
     await this.storeAuditLog(logEntry);
 
     // Real-time monitoring alerts
-    if (this.config.real_time_monitoring && !complianceValidation.lgpd_compliant) {
+    if (
+      this.config.real_time_monitoring &&
+      !complianceValidation.lgpd_compliant
+    ) {
       await this.triggerComplianceAlert(logEntry);
     }
 
@@ -204,7 +208,9 @@ export class LGPDAuditLogger {
 
     return {
       privacy_rights_affected: privacyRightsAffected,
-      fundamental_rights_impact: privacyRightsAffected ? 'privacy_and_data_protection' : undefined,
+      fundamental_rights_impact: privacyRightsAffected
+        ? 'privacy_and_data_protection'
+        : undefined,
       constitutional_basis: 'Art. 5º, X e XII CF/88',
     };
   }
@@ -231,7 +237,8 @@ export class LGPDAuditLogger {
     }
 
     const lgpdCompliant = violations.length === 0;
-    const constitutionalCompliant = lgpdCompliant && this.config.constitutional_validation;
+    const constitutionalCompliant =
+      lgpdCompliant && this.config.constitutional_validation;
 
     return {
       lgpd_compliant: lgpdCompliant,
@@ -265,7 +272,9 @@ export class LGPDAuditLogger {
   /**
    * Trigger compliance alert
    */
-  private async triggerComplianceAlert(_logEntry: LGPDAuditLogEntry): Promise<void> {
+  private async triggerComplianceAlert(
+    _logEntry: LGPDAuditLogEntry
+  ): Promise<void> {
     if (this.config.automated_alerts) {
     }
   }
@@ -288,7 +297,10 @@ export class LGPDAuditLogger {
   /**
    * Generate audit report
    */
-  async generateAuditReport(period: { start_date: string; end_date: string }): Promise<{
+  async generateAuditReport(period: {
+    start_date: string;
+    end_date: string;
+  }): Promise<{
     report_id: string;
     period: typeof period;
     total_events: number;
@@ -319,14 +331,19 @@ export class LGPDAuditLogger {
 /**
  * Create LGPD Audit Logger service
  */
-export function createLGPDAuditLogger(config: LGPDAuditConfig, db: Database): LGPDAuditLogger {
+export function createLGPDAuditLogger(
+  config: LGPDAuditConfig,
+  db: Database
+): LGPDAuditLogger {
   return new LGPDAuditLogger(config, db);
 }
 
 /**
  * Validate LGPD audit configuration
  */
-export async function validateLGPDAuditConfig(config: LGPDAuditConfig): Promise<{
+export async function validateLGPDAuditConfig(
+  config: LGPDAuditConfig
+): Promise<{
   valid: boolean;
   violations: string[];
 }> {
@@ -336,7 +353,9 @@ export async function validateLGPDAuditConfig(config: LGPDAuditConfig): Promise<
     LGPDAuditConfigSchema.parse(config);
   } catch (error) {
     if (error instanceof z.ZodError) {
-      violations.push(...error.errors.map((e) => `${e.path.join('.')}: ${e.message}`));
+      violations.push(
+        ...error.errors.map((e) => `${e.path.join('.')}: ${e.message}`)
+      );
     }
   }
 
@@ -354,7 +373,9 @@ export async function validateLGPDAuditConfig(config: LGPDAuditConfig): Promise<
   }
 
   if (config.retention_period_days < 2555) {
-    violations.push('Retention period must be at least 7 years (2555 days) as per LGPD');
+    violations.push(
+      'Retention period must be at least 7 years (2555 days) as per LGPD'
+    );
   }
 
   return {

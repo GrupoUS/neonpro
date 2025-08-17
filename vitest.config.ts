@@ -55,6 +55,9 @@ export default defineConfig({
       '@neonpro/ui': path.resolve(__dirname, './packages/ui/src'),
       '@neonpro/utils': path.resolve(__dirname, './packages/utils/src'),
       '@neonpro/types': path.resolve(__dirname, './packages/types/src'),
+      '@neonpro/auth': path.resolve(__dirname, './packages/auth/src'),
+      '@neonpro/db': path.resolve(__dirname, './packages/db/src'),
+      '@neonpro/domain': path.resolve(__dirname, './packages/domain/src'),
     },
 
     // Pool de workers otimizado
@@ -74,7 +77,17 @@ export default defineConfig({
 
     // Otimização de deps
     deps: {
-      inline: ['@testing-library/react', '@testing-library/jest-dom'],
+      inline: [
+        '@testing-library/react', 
+        '@testing-library/jest-dom',
+        '@testing-library/user-event',
+        'sonner'
+      ],
+      external: [
+        'next',
+        'next/navigation',
+        'next/router'
+      ]
     },
 
     // Configuração de coverage apenas para arquivos válidos

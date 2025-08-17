@@ -28,7 +28,13 @@ type AppointmentData = {
   description?: string;
   startTime: Date;
   endTime: Date;
-  status: 'scheduled' | 'confirmed' | 'in-progress' | 'completed' | 'cancelled' | 'no-show';
+  status:
+    | 'scheduled'
+    | 'confirmed'
+    | 'in-progress'
+    | 'completed'
+    | 'cancelled'
+    | 'no-show';
   type: 'consultation' | 'procedure' | 'follow-up' | 'emergency';
   location?: string;
   notes?: string;
@@ -65,7 +71,10 @@ type AppointmentCalendarProps = {
   className?: string;
 };
 
-export const AppointmentCalendar = React.forwardRef<HTMLDivElement, AppointmentCalendarProps>(
+export const AppointmentCalendar = React.forwardRef<
+  HTMLDivElement,
+  AppointmentCalendarProps
+>(
   (
     {
       appointments = [],
@@ -161,7 +170,9 @@ export const AppointmentCalendar = React.forwardRef<HTMLDivElement, AppointmentC
     // Generate time slots
     const generateTimeSlots = (): CalendarTimeSlot[] => {
       const slots: CalendarTimeSlot[] = [];
-      const [startHour, startMinute] = workingHours.start.split(':').map(Number);
+      const [startHour, startMinute] = workingHours.start
+        .split(':')
+        .map(Number);
       const [endHour, endMinute] = workingHours.end.split(':').map(Number);
 
       const startTime = startHour * 60 + startMinute;
@@ -174,7 +185,8 @@ export const AppointmentCalendar = React.forwardRef<HTMLDivElement, AppointmentC
 
         const dayAppointments = appointments.filter(
           (apt) =>
-            isSameDay(apt.startTime, currentDate) && format(apt.startTime, 'HH:mm') === timeString
+            isSameDay(apt.startTime, currentDate) &&
+            format(apt.startTime, 'HH:mm') === timeString
         );
 
         slots.push({
@@ -189,7 +201,10 @@ export const AppointmentCalendar = React.forwardRef<HTMLDivElement, AppointmentC
 
     // Navigation functions
     const navigateMonth = (direction: 'prev' | 'next') => {
-      const newDate = direction === 'prev' ? subMonths(currentDate, 1) : addMonths(currentDate, 1);
+      const newDate =
+        direction === 'prev'
+          ? subMonths(currentDate, 1)
+          : addMonths(currentDate, 1);
       setCurrentDate(newDate);
       onDateSelect?.(newDate);
     };
@@ -232,19 +247,21 @@ export const AppointmentCalendar = React.forwardRef<HTMLDivElement, AppointmentC
       return (
         <div className="grid grid-cols-7 gap-px overflow-hidden rounded-lg bg-muted">
           {/* Days of week header */}
-          {['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'].map((day, index) => {
-            if (!showWeekends && (index === 0 || index === 6)) {
-              return null;
+          {['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'].map(
+            (day, index) => {
+              if (!showWeekends && (index === 0 || index === 6)) {
+                return null;
+              }
+              return (
+                <div
+                  className="bg-background p-2 text-center font-medium text-muted-foreground text-sm"
+                  key={day}
+                >
+                  {day}
+                </div>
+              );
             }
-            return (
-              <div
-                className="bg-background p-2 text-center font-medium text-muted-foreground text-sm"
-                key={day}
-              >
-                {day}
-              </div>
-            );
-          })}
+          )}
 
           {/* Calendar days */}
           {days.map((day) => {
@@ -252,7 +269,9 @@ export const AppointmentCalendar = React.forwardRef<HTMLDivElement, AppointmentC
               return null;
             }
 
-            const dayAppointments = appointments.filter((apt) => isSameDay(apt.startTime, day));
+            const dayAppointments = appointments.filter((apt) =>
+              isSameDay(apt.startTime, day)
+            );
             const isCurrentMonth = isSameMonth(day, currentDate);
             const isSelected = isSameDay(day, selectedDate);
             const isToday = isSameDay(day, new Date());
@@ -268,7 +287,9 @@ export const AppointmentCalendar = React.forwardRef<HTMLDivElement, AppointmentC
                 key={day.toString()}
                 onClick={() => handleDateClick(day)}
               >
-                <div className="mb-1 font-medium text-sm">{format(day, 'd')}</div>
+                <div className="mb-1 font-medium text-sm">
+                  {format(day, 'd')}
+                </div>
                 <div className="space-y-1">
                   {dayAppointments.slice(0, 2).map((appointment, _index) => (
                     <div
@@ -289,7 +310,8 @@ export const AppointmentCalendar = React.forwardRef<HTMLDivElement, AppointmentC
                         onAppointmentSelect?.(appointment);
                       }}
                     >
-                      {format(appointment.startTime, 'HH:mm')} {appointment.patientName}
+                      {format(appointment.startTime, 'HH:mm')}{' '}
+                      {appointment.patientName}
                     </div>
                   ))}
                   {dayAppointments.length > 2 && (
@@ -329,7 +351,9 @@ export const AppointmentCalendar = React.forwardRef<HTMLDivElement, AppointmentC
                 key={slot.time}
                 onClick={() => handleTimeSlotClick(slot)}
               >
-                <div className="w-16 font-medium text-muted-foreground text-sm">{slot.time}</div>
+                <div className="w-16 font-medium text-muted-foreground text-sm">
+                  {slot.time}
+                </div>
 
                 {slot.available ? (
                   <div className="flex items-center gap-2 text-muted-foreground text-sm">
@@ -347,10 +371,16 @@ export const AppointmentCalendar = React.forwardRef<HTMLDivElement, AppointmentC
                           onAppointmentSelect?.(appointment);
                         }}
                       >
-                        <div className="text-lg">{getTypeIcon(appointment.type)}</div>
+                        <div className="text-lg">
+                          {getTypeIcon(appointment.type)}
+                        </div>
                         <div className="flex-1">
-                          <div className="font-medium">{appointment.patientName}</div>
-                          <div className="text-muted-foreground text-sm">{appointment.title}</div>
+                          <div className="font-medium">
+                            {appointment.patientName}
+                          </div>
+                          <div className="text-muted-foreground text-sm">
+                            {appointment.title}
+                          </div>
                         </div>
                         <Badge variant={getStatusVariant(appointment.status)}>
                           {getStatusLabel(appointment.status)}
@@ -374,7 +404,11 @@ export const AppointmentCalendar = React.forwardRef<HTMLDivElement, AppointmentC
               {format(currentDate, "MMMM 'de' yyyy", { locale: ptBR })}
             </h2>
             <div className="flex items-center">
-              <Button onClick={() => navigateMonth('prev')} size="sm" variant="outline">
+              <Button
+                onClick={() => navigateMonth('prev')}
+                size="sm"
+                variant="outline"
+              >
                 <ChevronLeft className="h-4 w-4" />
               </Button>
               <Button
@@ -385,7 +419,11 @@ export const AppointmentCalendar = React.forwardRef<HTMLDivElement, AppointmentC
               >
                 Hoje
               </Button>
-              <Button onClick={() => navigateMonth('next')} size="sm" variant="outline">
+              <Button
+                onClick={() => navigateMonth('next')}
+                size="sm"
+                variant="outline"
+              >
                 <ChevronRight className="h-4 w-4" />
               </Button>
             </div>
@@ -419,7 +457,9 @@ export const AppointmentCalendar = React.forwardRef<HTMLDivElement, AppointmentC
           <div className="flex items-center justify-center py-12">
             <div className="flex items-center gap-2">
               <Calendar className="h-4 w-4 animate-pulse" />
-              <span className="text-muted-foreground text-sm">Carregando agenda...</span>
+              <span className="text-muted-foreground text-sm">
+                Carregando agenda...
+              </span>
             </div>
           </div>
         ) : (
@@ -434,7 +474,12 @@ export const AppointmentCalendar = React.forwardRef<HTMLDivElement, AppointmentC
           <div className="flex items-center gap-4">
             <span>{appointments.length} agendamentos total</span>
             <span>
-              {appointments.filter((apt) => isSameDay(apt.startTime, currentDate)).length} hoje
+              {
+                appointments.filter((apt) =>
+                  isSameDay(apt.startTime, currentDate)
+                ).length
+              }{' '}
+              hoje
             </span>
           </div>
           <div className="flex items-center gap-2">
@@ -458,4 +503,9 @@ export const AppointmentCalendar = React.forwardRef<HTMLDivElement, AppointmentC
 );
 AppointmentCalendar.displayName = 'AppointmentCalendar';
 
-export type { AppointmentCalendarProps, AppointmentData, CalendarTimeSlot, CalendarView };
+export type {
+  AppointmentCalendarProps,
+  AppointmentData,
+  CalendarTimeSlot,
+  CalendarView,
+};

@@ -228,8 +228,10 @@ export default defineConfig({
       ANVISA_VALIDATION: 'true',
       CFM_STANDARDS: 'true',
       // Test database configuration
-      NEXT_PUBLIC_SUPABASE_URL: process.env.TEST_SUPABASE_URL || 'https://test.supabase.co',
-      NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.TEST_SUPABASE_ANON_KEY || 'test_anon_key',
+      NEXT_PUBLIC_SUPABASE_URL:
+        process.env.TEST_SUPABASE_URL || 'https://test.supabase.co',
+      NEXT_PUBLIC_SUPABASE_ANON_KEY:
+        process.env.TEST_SUPABASE_ANON_KEY || 'test_anon_key',
       SUPABASE_SERVICE_ROLE_KEY:
         process.env.TEST_SUPABASE_SERVICE_ROLE_KEY || 'test_service_role_key',
     },
@@ -268,7 +270,9 @@ export const healthcareE2EConfig = {
   },
 
   // Healthcare user authentication
-  authenticateHealthcareUser: async (role: 'patient' | 'professional' | 'admin') => {
+  authenticateHealthcareUser: async (
+    role: 'patient' | 'professional' | 'admin'
+  ) => {
     // Implementation in test utilities
   },
 

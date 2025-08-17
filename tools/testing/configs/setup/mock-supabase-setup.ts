@@ -27,7 +27,10 @@ export type MockQueryBuilder = {
   like: (column: string, pattern: string) => MockQueryBuilder;
   ilike: (column: string, pattern: string) => MockQueryBuilder;
   in: (column: string, values: any[]) => MockQueryBuilder;
-  order: (column: string, options?: { ascending?: boolean }) => MockQueryBuilder;
+  order: (
+    column: string,
+    options?: { ascending?: boolean }
+  ) => MockQueryBuilder;
   limit: (count: number) => MockQueryBuilder;
   range: (from: number, to: number) => MockQueryBuilder;
   single: () => MockQueryBuilder;
@@ -89,7 +92,9 @@ class HealthcareMockDataStore {
 
   addRecord(tableName: string, record: any): any {
     const table = this.getTable(tableName);
-    const id = record.id || `${tableName}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    const id =
+      record.id ||
+      `${tableName}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
     const tenantRecord = {
       ...record,
       id,
@@ -270,7 +275,10 @@ class MockQueryBuilderImpl implements MockQueryBuilder {
           return { data, error: null };
 
         case 'insert': {
-          const insertedRecord = this.dataStore.addRecord(this.tableName, this.query.data);
+          const insertedRecord = this.dataStore.addRecord(
+            this.tableName,
+            this.query.data
+          );
           return { data: insertedRecord, error: null };
         }
 
@@ -286,24 +294,33 @@ class MockQueryBuilderImpl implements MockQueryBuilder {
               });
 
             if (matches) {
-              return { ...record, ...this.query.data, updated_at: new Date().toISOString() };
+              return {
+                ...record,
+                ...this.query.data,
+                updated_at: new Date().toISOString(),
+              };
             }
             return record;
           });
 
           this.dataStore.setTable(this.tableName, updatedRecords);
-          return { data: updatedRecords.filter((_, i) => data.includes(table[i])), error: null };
+          return {
+            data: updatedRecords.filter((_, i) => data.includes(table[i])),
+            error: null,
+          };
         }
 
         case 'delete': {
-          const remainingRecords = this.dataStore.getTable(this.tableName).filter((record) => {
-            return this.query.filters
-              ? !this.query.filters.every((filter: any) => {
-                  const value = record[filter.column];
-                  return filter.type === 'eq' ? value === filter.value : true;
-                })
-              : false;
-          });
+          const remainingRecords = this.dataStore
+            .getTable(this.tableName)
+            .filter((record) => {
+              return this.query.filters
+                ? !this.query.filters.every((filter: any) => {
+                    const value = record[filter.column];
+                    return filter.type === 'eq' ? value === filter.value : true;
+                  })
+                : false;
+            });
 
           this.dataStore.setTable(this.tableName, remainingRecords);
           return { data: null, error: null };
@@ -355,11 +372,17 @@ export class MockSupabaseClientImpl implements MockSupabaseClient {
     },
 
     async signUp(credentials: any) {
-      return { data: { user: { id: 'new-user-id', ...credentials } }, error: null };
+      return {
+        data: { user: { id: 'new-user-id', ...credentials } },
+        error: null,
+      };
     },
 
     async signInWithPassword(credentials: any) {
-      return { data: { user: { id: 'test-user-id', email: credentials.email } }, error: null };
+      return {
+        data: { user: { id: 'test-user-id', email: credentials.email } },
+        error: null,
+      };
     },
 
     async signOut() {
@@ -399,9 +422,15 @@ export class MockSupabaseClientImpl implements MockSupabaseClient {
     // Mock RPC calls for healthcare functions
     switch (fn) {
       case 'get_patient_analytics':
-        return { data: { total_patients: 100, active_patients: 85 }, error: null };
+        return {
+          data: { total_patients: 100, active_patients: 85 },
+          error: null,
+        };
       case 'validate_lgpd_compliance':
-        return { data: { compliant: true, last_check: new Date().toISOString() }, error: null };
+        return {
+          data: { compliant: true, last_check: new Date().toISOString() },
+          error: null,
+        };
       default:
         return { data: null, error: new Error(`Unknown RPC function: ${fn}`) };
     }

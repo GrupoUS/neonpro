@@ -124,7 +124,10 @@ function scanDirectory(dirPath) {
 
       if (item.isDirectory()) {
         violations.push(...scanDirectory(fullPath));
-      } else if (item.isFile() && CHECK_EXTENSIONS.some((ext) => item.name.endsWith(ext))) {
+      } else if (
+        item.isFile() &&
+        CHECK_EXTENSIONS.some((ext) => item.name.endsWith(ext))
+      ) {
         violations.push(...scanFile(fullPath));
       }
     }
@@ -146,7 +149,9 @@ function main() {
     console.log('🎯 Projeto seguro para commit.');
     process.exit(0);
   } else {
-    console.log(`🚨 VULNERABILIDADES CRÍTICAS DETECTADAS: ${violations.length}`);
+    console.log(
+      `🚨 VULNERABILIDADES CRÍTICAS DETECTADAS: ${violations.length}`
+    );
     violations.forEach((violation, index) => {
       console.log(`${index + 1}. 📁 ${violation.file}`);
       console.log(`   🔑 ${violation.pattern}`);
@@ -155,7 +160,9 @@ function main() {
     });
 
     console.log('❌ COMMIT BLOQUEADO - API KEYS REAIS EXPOSTAS!');
-    console.log('💡 AÇÃO: Mova as keys para .env.local ou use variáveis de ambiente');
+    console.log(
+      '💡 AÇÃO: Mova as keys para .env.local ou use variáveis de ambiente'
+    );
     process.exit(1);
   }
 }

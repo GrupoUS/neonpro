@@ -76,7 +76,12 @@ const HealthcareUserSchema = z.object({
   assigned_roles: z.array(z.string().uuid()),
   clinic_assignments: z.array(z.string().uuid()),
   tenant_id: z.string().uuid(),
-  access_level: z.enum(['restricted', 'standard', 'elevated', 'administrative']),
+  access_level: z.enum([
+    'restricted',
+    'standard',
+    'elevated',
+    'administrative',
+  ]),
   security_clearance: z.object({
     background_check_completed: z.boolean(),
     lgpd_training_completed: z.boolean(),
@@ -229,17 +234,22 @@ export class HealthcareRbacService {
       constitutional_validation_result: {
         patient_autonomy_considered:
           validatedRole.constitutional_compliance.patient_autonomy_respected,
-        medical_secrecy_enforced: validatedRole.constitutional_compliance.medical_secrecy_enforced,
+        medical_secrecy_enforced:
+          validatedRole.constitutional_compliance.medical_secrecy_enforced,
         role_permissions_validated: true,
         hierarchy_level_appropriate: validatedRole.hierarchy_level >= 1,
       },
       patient_privacy_impact: {
         patient_data_access_level: validatedRole.data_access_level,
-        anonymized_access_only: validatedRole.patient_data_access.anonymized_access_only,
-        consent_required: validatedRole.patient_data_access.consent_required_for_access,
+        anonymized_access_only:
+          validatedRole.patient_data_access.anonymized_access_only,
+        consent_required:
+          validatedRole.patient_data_access.consent_required_for_access,
       },
-      cfm_ethics_compliance: validatedRole.constitutional_compliance.cfm_ethics_approved,
-      lgpd_compliance_verified: validatedRole.constitutional_compliance.lgpd_compliance_validated,
+      cfm_ethics_compliance:
+        validatedRole.constitutional_compliance.cfm_ethics_approved,
+      lgpd_compliance_verified:
+        validatedRole.constitutional_compliance.lgpd_compliance_validated,
       session_details: {},
       created_at: now,
     };
@@ -297,8 +307,10 @@ export class HealthcareRbacService {
       resource_id: validatedUser.user_id,
       access_granted: true,
       constitutional_validation_result: {
-        professional_credentials_validated: this.hasProfessionalCredentials(validatedUser),
-        security_clearance_completed: validatedUser.security_clearance.background_check_completed,
+        professional_credentials_validated:
+          this.hasProfessionalCredentials(validatedUser),
+        security_clearance_completed:
+          validatedUser.security_clearance.background_check_completed,
         training_requirements_met: this.allTrainingCompleted(validatedUser),
       },
       patient_privacy_impact: {
@@ -306,8 +318,10 @@ export class HealthcareRbacService {
         patient_data_access_potential: validatedUser.assigned_roles.length > 0,
         constitutional_protections_applied: true,
       },
-      cfm_ethics_compliance: validatedUser.security_clearance.cfm_ethics_training_completed,
-      lgpd_compliance_verified: validatedUser.security_clearance.lgpd_training_completed,
+      cfm_ethics_compliance:
+        validatedUser.security_clearance.cfm_ethics_training_completed,
+      lgpd_compliance_verified:
+        validatedUser.security_clearance.lgpd_training_completed,
       session_details: validatedUser.session_management,
       created_at: now,
     };
@@ -365,9 +379,19 @@ export class HealthcareRbacService {
     const permissions = await this.getUserPermissions(userRoles);
 
     // Check basic permission
-    const hasPermission = this.checkBasicPermission(permissions, resourceType, action);
+    const hasPermission = this.checkBasicPermission(
+      permissions,
+      resourceType,
+      action
+    );
     if (!hasPermission) {
-      return this.denyAccess(userId, resourceType, resourceId, action, 'Insufficient permissions');
+      return this.denyAccess(
+        userId,
+        resourceType,
+        resourceId,
+        action,
+        'Insufficient permissions'
+      );
     }
 
     // Constitutional validation for patient data access
@@ -412,7 +436,14 @@ export class HealthcareRbacService {
     }
 
     // Grant access with constitutional basis
-    return this.grantAccess(userId, resourceType, resourceId, action, userRoles, context);
+    return this.grantAccess(
+      userId,
+      resourceType,
+      resourceId,
+      action,
+      userRoles,
+      context
+    );
   }
 
   /**
@@ -420,7 +451,10 @@ export class HealthcareRbacService {
    */
   async requestAccess(
     userId: string,
-    accessRequest: Omit<AccessRequest, 'request_id' | 'approval_status' | 'created_at'>
+    accessRequest: Omit<
+      AccessRequest,
+      'request_id' | 'approval_status' | 'created_at'
+    >
   ): Promise<{
     success: boolean;
     request_id: string;
@@ -446,8 +480,12 @@ export class HealthcareRbacService {
     await this.validateAccessRequestConstitutional(validatedRequest, user);
 
     // Set expiry based on urgency
-    const expiryHours = this.getRequestExpiryHours(validatedRequest.urgency_level);
-    const expiresAt = new Date(Date.now() + expiryHours * 60 * 60 * 1000).toISOString();
+    const expiryHours = this.getRequestExpiryHours(
+      validatedRequest.urgency_level
+    );
+    const expiresAt = new Date(
+      Date.now() + expiryHours * 60 * 60 * 1000
+    ).toISOString();
     validatedRequest.expires_at = expiresAt;
 
     // Store request
@@ -463,16 +501,20 @@ export class HealthcareRbacService {
       access_granted: false,
       constitutional_validation_result: {
         justification_provided: validatedRequest.justification.length >= 10,
-        constitutional_basis_valid: validatedRequest.constitutional_basis.legal_basis.length > 0,
-        patient_rights_considered: validatedRequest.constitutional_basis.patient_rights_considered,
-        privacy_impact_assessed: validatedRequest.constitutional_basis.privacy_impact_assessed,
+        constitutional_basis_valid:
+          validatedRequest.constitutional_basis.legal_basis.length > 0,
+        patient_rights_considered:
+          validatedRequest.constitutional_basis.patient_rights_considered,
+        privacy_impact_assessed:
+          validatedRequest.constitutional_basis.privacy_impact_assessed,
       },
       patient_privacy_impact: {
         patient_consent_obtained: validatedRequest.patient_consent_obtained,
         medical_necessity: validatedRequest.medical_necessity,
         urgency_level: validatedRequest.urgency_level,
       },
-      cfm_ethics_compliance: validatedRequest.constitutional_basis.cfm_ethics_reviewed,
+      cfm_ethics_compliance:
+        validatedRequest.constitutional_basis.cfm_ethics_reviewed,
       lgpd_compliance_verified: true,
       session_details: {},
       created_at: now,
@@ -481,7 +523,9 @@ export class HealthcareRbacService {
     this.auditTrail.push(auditEntry);
 
     // Estimate approval time based on urgency
-    const estimatedApprovalTime = this.getEstimatedApprovalTime(validatedRequest.urgency_level);
+    const estimatedApprovalTime = this.getEstimatedApprovalTime(
+      validatedRequest.urgency_level
+    );
 
     return {
       success: true,
@@ -543,7 +587,8 @@ export class HealthcareRbacService {
       },
       patient_privacy_impact: {
         access_granted_for_patient_data:
-          this.isPatientDataResource(request.resource_type) && decision === 'approved',
+          this.isPatientDataResource(request.resource_type) &&
+          decision === 'approved',
         constitutional_protections_maintained: true,
       },
       cfm_ethics_compliance: true,
@@ -570,7 +615,11 @@ export class HealthcareRbacService {
         role_name: 'Patient',
         role_type: 'patient' as const,
         hierarchy_level: 10,
-        permissions: ['view_own_data', 'update_own_profile', 'consent_management'],
+        permissions: [
+          'view_own_data',
+          'update_own_profile',
+          'consent_management',
+        ],
         restrictions: ['no_other_patient_access', 'no_system_administration'],
         data_access_level: 'basic' as const,
         patient_data_access: {
@@ -629,7 +678,11 @@ export class HealthcareRbacService {
         role_type: 'nurse' as const,
         hierarchy_level: 4,
         cfm_professional_type: 'enfermeiro' as const,
-        permissions: ['view_patient_data', 'update_patient_records', 'schedule_appointments'],
+        permissions: [
+          'view_patient_data',
+          'update_patient_records',
+          'schedule_appointments',
+        ],
         restrictions: ['no_prescription_authority', 'no_diagnosis_authority'],
         data_access_level: 'enhanced' as const,
         patient_data_access: {
@@ -655,7 +708,11 @@ export class HealthcareRbacService {
         role_name: 'Receptionist',
         role_type: 'receptionist' as const,
         hierarchy_level: 6,
-        permissions: ['schedule_appointments', 'view_basic_patient_info', 'manage_appointments'],
+        permissions: [
+          'schedule_appointments',
+          'view_basic_patient_info',
+          'manage_appointments',
+        ],
         restrictions: ['no_medical_records_access', 'no_sensitive_data_access'],
         data_access_level: 'basic' as const,
         patient_data_access: {
@@ -717,7 +774,9 @@ export class HealthcareRbacService {
 
   // Helper methods for access control validation
 
-  private async validateRoleConstitutionalCompliance(role: HealthcareRole): Promise<void> {
+  private async validateRoleConstitutionalCompliance(
+    role: HealthcareRole
+  ): Promise<void> {
     if (!this.config.constitutional_validation) {
       return;
     }
@@ -734,11 +793,15 @@ export class HealthcareRbacService {
 
     // Validate data access level appropriateness
     if (role.data_access_level === 'full' && role.hierarchy_level > 3) {
-      throw new Error('Full data access not appropriate for low hierarchy roles');
+      throw new Error(
+        'Full data access not appropriate for low hierarchy roles'
+      );
     }
   }
 
-  private async validateCfmProfessionalRole(role: HealthcareRole): Promise<void> {
+  private async validateCfmProfessionalRole(
+    role: HealthcareRole
+  ): Promise<void> {
     if (!this.config.cfm_ethics_validation) {
       return;
     }
@@ -748,15 +811,22 @@ export class HealthcareRbacService {
       role.cfm_professional_type === 'medico' &&
       !role.permissions.includes('prescribe_treatments')
     ) {
-      throw new Error('Medical professional roles must include prescription authority');
+      throw new Error(
+        'Medical professional roles must include prescription authority'
+      );
     }
 
-    if (role.cfm_professional_type && !role.constitutional_compliance.cfm_ethics_approved) {
+    if (
+      role.cfm_professional_type &&
+      !role.constitutional_compliance.cfm_ethics_approved
+    ) {
       throw new Error('CFM professional roles require ethics approval');
     }
   }
 
-  private async validateRoleLgpdCompliance(role: HealthcareRole): Promise<void> {
+  private async validateRoleLgpdCompliance(
+    role: HealthcareRole
+  ): Promise<void> {
     if (!this.config.lgpd_compliance_mode) {
       return;
     }
@@ -767,7 +837,9 @@ export class HealthcareRbacService {
       !role.patient_data_access.consent_required_for_access &&
       role.role_type !== 'patient'
     ) {
-      throw new Error('Non-patient roles accessing medical records must require consent');
+      throw new Error(
+        'Non-patient roles accessing medical records must require consent'
+      );
     }
 
     // Validate anonymization for non-medical roles
@@ -776,33 +848,45 @@ export class HealthcareRbacService {
       !['physician', 'nurse', 'admin'].includes(role.role_type) &&
       !role.patient_data_access.anonymized_access_only
     ) {
-      throw new Error('Non-medical roles with full access must use anonymized data only');
+      throw new Error(
+        'Non-medical roles with full access must use anonymized data only'
+      );
     }
   }
 
-  private async validateProfessionalCredentials(user: HealthcareUser): Promise<void> {
+  private async validateProfessionalCredentials(
+    user: HealthcareUser
+  ): Promise<void> {
     if (!this.config.credential_verification_required) {
       return;
     }
 
     // Check for required professional credentials based on assigned roles
     const userRoles = await this.getUserRoles(user.user_id);
-    const requiresCfm = userRoles.some((role) => role.cfm_professional_type === 'medico');
+    const requiresCfm = userRoles.some(
+      (role) => role.cfm_professional_type === 'medico'
+    );
 
     if (requiresCfm && !user.professional_credentials.cfm_registration) {
-      throw new Error('CFM registration required for medical professional roles');
+      throw new Error(
+        'CFM registration required for medical professional roles'
+      );
     }
 
     // Check license expiry
     if (user.professional_credentials.license_expiry_date) {
-      const expiryDate = new Date(user.professional_credentials.license_expiry_date);
+      const expiryDate = new Date(
+        user.professional_credentials.license_expiry_date
+      );
       if (expiryDate <= new Date()) {
         throw new Error('Professional license expired');
       }
     }
   }
 
-  private async validateUserRoleAssignments(user: HealthcareUser): Promise<void> {
+  private async validateUserRoleAssignments(
+    user: HealthcareUser
+  ): Promise<void> {
     // Validate all assigned roles exist
     for (const roleId of user.assigned_roles) {
       const role = this.roles.get(roleId);
@@ -812,7 +896,9 @@ export class HealthcareRbacService {
     }
 
     // Validate role hierarchy conflicts
-    const userRoles = user.assigned_roles.map((roleId) => this.roles.get(roleId)!);
+    const userRoles = user.assigned_roles.map(
+      (roleId) => this.roles.get(roleId)!
+    );
     const hierarchyLevels = userRoles.map((role) => role.hierarchy_level);
 
     // Check for inappropriate hierarchy combinations
@@ -830,7 +916,8 @@ export class HealthcareRbacService {
 
     // Require background check for elevated access
     if (
-      (user.access_level === 'elevated' || user.access_level === 'administrative') &&
+      (user.access_level === 'elevated' ||
+        user.access_level === 'administrative') &&
       !clearance.background_check_completed
     ) {
       throw new Error('Background check required for elevated access');
@@ -850,7 +937,9 @@ export class HealthcareRbacService {
     }
   }
 
-  private async validateUserConstitutionalCompliance(user: HealthcareUser): Promise<void> {
+  private async validateUserConstitutionalCompliance(
+    user: HealthcareUser
+  ): Promise<void> {
     if (!this.config.constitutional_validation) {
       return;
     }
@@ -865,13 +954,20 @@ export class HealthcareRbacService {
         user.access_level === 'administrative' &&
         user.session_management.max_concurrent_sessions > 2
       ) {
-        throw new Error('Administrative users limited to 2 concurrent sessions');
+        throw new Error(
+          'Administrative users limited to 2 concurrent sessions'
+        );
       }
     }
 
     // Validate MFA requirement
-    if (this.config.multi_factor_required && !user.session_management.require_mfa) {
-      throw new Error('Multi-factor authentication required for healthcare access');
+    if (
+      this.config.multi_factor_required &&
+      !user.session_management.require_mfa
+    ) {
+      throw new Error(
+        'Multi-factor authentication required for healthcare access'
+      );
     }
   }
 
@@ -892,16 +988,23 @@ export class HealthcareRbacService {
       return false;
     }
 
-    const timeoutMs = user.session_management.session_timeout_minutes * 60 * 1000;
+    const timeoutMs =
+      user.session_management.session_timeout_minutes * 60 * 1000;
     if (sessionAge > timeoutMs) {
       this.activeSessions.delete(userId);
       return false;
     }
 
     // Check IP restrictions if enabled
-    if (this.config.ip_restriction_enabled && user.session_management.allowed_ip_ranges) {
+    if (
+      this.config.ip_restriction_enabled &&
+      user.session_management.allowed_ip_ranges
+    ) {
       const clientIp = context?.ip_address;
-      if (clientIp && !this.isIpAllowed(clientIp, user.session_management.allowed_ip_ranges)) {
+      if (
+        clientIp &&
+        !this.isIpAllowed(clientIp, user.session_management.allowed_ip_ranges)
+      ) {
         return false;
       }
     }
@@ -979,12 +1082,17 @@ export class HealthcareRbacService {
       (role) => role.patient_data_access.consent_required_for_access
     );
     if (requiresConsent && !context?.patient_consent_obtained) {
-      return { access_granted: false, reason: 'Patient consent required for data access' };
+      return {
+        access_granted: false,
+        reason: 'Patient consent required for data access',
+      };
     }
 
     // Check if user is accessing their own data (patient autonomy)
     if (
-      user.assigned_roles.some((roleId) => this.roles.get(roleId)?.role_type === 'patient') &&
+      user.assigned_roles.some(
+        (roleId) => this.roles.get(roleId)?.role_type === 'patient'
+      ) &&
       resourceId === user.user_id
     ) {
       return { access_granted: true }; // Patients can access their own data
@@ -999,7 +1107,10 @@ export class HealthcareRbacService {
       action === 'read' &&
       !(context?.medical_necessity || context?.emergency_access)
     ) {
-      return { access_granted: false, reason: 'Medical necessity or emergency access required' };
+      return {
+        access_granted: false,
+        reason: 'Medical necessity or emergency access required',
+      };
     }
 
     return { access_granted: true };
@@ -1016,7 +1127,10 @@ export class HealthcareRbacService {
     }
 
     // Validate emergency justification
-    if (!context.emergency_justification || context.emergency_justification.length < 20) {
+    if (
+      !context.emergency_justification ||
+      context.emergency_justification.length < 20
+    ) {
       return { valid: false, reason: 'Insufficient emergency justification' };
     }
 
@@ -1024,7 +1138,8 @@ export class HealthcareRbacService {
     const userRoles = await this.getUserRoles(user.user_id);
     const hasEmergencyAuthority = userRoles.some(
       (role) =>
-        ['physician', 'nurse', 'admin'].includes(role.role_type) && role.hierarchy_level <= 5
+        ['physician', 'nurse', 'admin'].includes(role.role_type) &&
+        role.hierarchy_level <= 5
     );
 
     if (!hasEmergencyAuthority) {
@@ -1076,12 +1191,17 @@ export class HealthcareRbacService {
     this.auditTrail.push(auditEntry);
 
     // Generate restrictions based on role hierarchy and permissions
-    const restrictions = this.generateAccessRestrictions(roles, resourceType, action);
+    const restrictions = this.generateAccessRestrictions(
+      roles,
+      resourceType,
+      action
+    );
 
     return {
       access_granted: true,
       constitutional_basis: {
-        legal_basis: 'Constitutional healthcare access with patient privacy protection',
+        legal_basis:
+          'Constitutional healthcare access with patient privacy protection',
         patient_rights_protected: true,
         cfm_ethics_compliant: true,
         lgpd_compliant: true,
@@ -1129,7 +1249,8 @@ export class HealthcareRbacService {
     return {
       access_granted: false,
       constitutional_basis: {
-        legal_basis: 'Access denied to protect constitutional healthcare rights',
+        legal_basis:
+          'Access denied to protect constitutional healthcare rights',
         patient_rights_protected: true,
         denial_reason: reason,
       },
@@ -1185,7 +1306,9 @@ export class HealthcareRbacService {
       this.isPatientDataResource(request.resource_type) &&
       !request.constitutional_basis.patient_rights_considered
     ) {
-      throw new Error('Patient rights consideration required for patient data access requests');
+      throw new Error(
+        'Patient rights consideration required for patient data access requests'
+      );
     }
 
     // Validate privacy impact assessment
@@ -1221,7 +1344,9 @@ export class HealthcareRbacService {
     const approverRoles = await this.getUserRoles(approver.user_id);
 
     // Check if approver has sufficient hierarchy level
-    const minHierarchyLevel = Math.min(...approverRoles.map((role) => role.hierarchy_level));
+    const minHierarchyLevel = Math.min(
+      ...approverRoles.map((role) => role.hierarchy_level)
+    );
     if (minHierarchyLevel > 3) {
       throw new Error('Insufficient authority to approve access requests');
     }
@@ -1229,10 +1354,14 @@ export class HealthcareRbacService {
     // Check if approver has appropriate role for request type
     if (this.isPatientDataResource(request.resource_type)) {
       const hasMedicalAuthority = approverRoles.some((role) =>
-        ['physician', 'data_protection_officer', 'admin'].includes(role.role_type)
+        ['physician', 'data_protection_officer', 'admin'].includes(
+          role.role_type
+        )
       );
       if (!hasMedicalAuthority) {
-        throw new Error('Medical authority required to approve patient data access requests');
+        throw new Error(
+          'Medical authority required to approve patient data access requests'
+        );
       }
     }
   }
@@ -1258,7 +1387,9 @@ export class HealthcareRbacService {
 
   private isIpAllowed(clientIp: string, allowedRanges: string[]): boolean {
     // Simplified IP range check - in production, use proper CIDR matching
-    return allowedRanges.some((range) => clientIp.startsWith(range.split('/')[0]));
+    return allowedRanges.some((range) =>
+      clientIp.startsWith(range.split('/')[0])
+    );
   }
 
   /**
@@ -1310,13 +1441,17 @@ export class HealthcareRbacService {
 
     // Check constitutional validation
     if (!this.config.constitutional_validation) {
-      issues.push('Constitutional validation not enabled - compliance violation');
+      issues.push(
+        'Constitutional validation not enabled - compliance violation'
+      );
       score -= 0.3;
     }
 
     // Check patient consent enforcement
     if (!this.config.patient_consent_enforcement) {
-      issues.push('Patient consent enforcement not enabled - constitutional violation');
+      issues.push(
+        'Patient consent enforcement not enabled - constitutional violation'
+      );
       score -= 0.3;
     }
 
@@ -1355,7 +1490,9 @@ export class HealthcareRbacService {
 /**
  * Factory function to create healthcare RBAC service
  */
-export function createHealthcareRbacService(config: RbacConfig): HealthcareRbacService {
+export function createHealthcareRbacService(
+  config: RbacConfig
+): HealthcareRbacService {
   return new HealthcareRbacService(config);
 }
 
@@ -1374,32 +1511,44 @@ export async function validateHealthcareRbac(
 
   // Validate constitutional validation requirement
   if (!config.constitutional_validation) {
-    violations.push('Constitutional validation must be enabled for healthcare compliance');
+    violations.push(
+      'Constitutional validation must be enabled for healthcare compliance'
+    );
   }
 
   // Validate patient consent enforcement
   if (!config.patient_consent_enforcement) {
-    violations.push('Patient consent enforcement must be enabled for constitutional compliance');
+    violations.push(
+      'Patient consent enforcement must be enabled for constitutional compliance'
+    );
   }
 
   // Validate CFM ethics validation
   if (!config.cfm_ethics_validation) {
-    violations.push('CFM ethics validation must be enabled for medical professional compliance');
+    violations.push(
+      'CFM ethics validation must be enabled for medical professional compliance'
+    );
   }
 
   // Validate LGPD compliance mode
   if (!config.lgpd_compliance_mode) {
-    violations.push('LGPD compliance mode must be enabled for Brazilian healthcare');
+    violations.push(
+      'LGPD compliance mode must be enabled for Brazilian healthcare'
+    );
   }
 
   // Validate audit requirements
   if (!config.audit_all_access) {
-    violations.push('Complete access auditing must be enabled for healthcare compliance');
+    violations.push(
+      'Complete access auditing must be enabled for healthcare compliance'
+    );
   }
 
   // Validate MFA requirement
   if (!config.multi_factor_required) {
-    violations.push('Multi-factor authentication should be required for healthcare access');
+    violations.push(
+      'Multi-factor authentication should be required for healthcare access'
+    );
   }
 
   return {

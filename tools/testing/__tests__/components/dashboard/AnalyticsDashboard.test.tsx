@@ -58,8 +58,10 @@ const createWrapper = () => {
 };
 
 describe('AnalyticsDashboard', () => {
-  const mockUseAnalyticsData = require('@/hooks/analytics/useAnalyticsData').useAnalyticsData;
-  const mockUseExportData = require('@/hooks/analytics/useExportData').useExportData;
+  const mockUseAnalyticsData =
+    require('@/hooks/analytics/useAnalyticsData').useAnalyticsData;
+  const mockUseExportData =
+    require('@/hooks/analytics/useExportData').useExportData;
 
   beforeEach(() => {
     mockUseAnalyticsData.mockReturnValue({

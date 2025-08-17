@@ -93,23 +93,27 @@ export async function validateCfmCompliance(
     if (!licenses || licenses.length === 0) {
       issues.push('No CFM professional licenses found');
       totalScore -= 2.0;
-      recommendations.push('Register all medical professionals with valid CFM licenses');
+      recommendations.push(
+        'Register all medical professionals with valid CFM licenses'
+      );
     }
 
     // Check for expiring licenses
-    const { data: expiringLicenses } = await services.professionalLicensing.getExpiringLicenses(
-      tenantId,
-      90
-    );
+    const { data: expiringLicenses } =
+      await services.professionalLicensing.getExpiringLicenses(tenantId, 90);
     if (expiringLicenses && expiringLicenses.length > 0) {
-      issues.push(`${expiringLicenses.length} professional licenses expiring within 90 days`);
+      issues.push(
+        `${expiringLicenses.length} professional licenses expiring within 90 days`
+      );
       totalScore -= 1.0;
       recommendations.push('Renew expiring professional licenses');
     }
 
     // Check telemedicine compliance if applicable
     const { data: telemedicineConsultations } =
-      await services.telemedicineCompliance.getTelemedicineConsultations(tenantId);
+      await services.telemedicineCompliance.getTelemedicineConsultations(
+        tenantId
+      );
     if (telemedicineConsultations && telemedicineConsultations.length > 0) {
       const nonCompliantConsultations = telemedicineConsultations.filter(
         (c) => !c.constitutional_compliance
@@ -119,12 +123,15 @@ export async function validateCfmCompliance(
           `${nonCompliantConsultations.length} telemedicine consultations not constitutionally compliant`
         );
         totalScore -= 1.5;
-        recommendations.push('Review and correct telemedicine consultation compliance');
+        recommendations.push(
+          'Review and correct telemedicine consultation compliance'
+        );
       }
     }
 
     // Check medical ethics assessments
-    const { data: ethicsAssessments } = await services.medicalEthics.getEthicsAssessments(tenantId);
+    const { data: ethicsAssessments } =
+      await services.medicalEthics.getEthicsAssessments(tenantId);
     if (ethicsAssessments && ethicsAssessments.length > 0) {
       const lowScoreAssessments = ethicsAssessments.filter(
         (a) => a.assessment_results.compliance_score < 9.0
@@ -134,15 +141,23 @@ export async function validateCfmCompliance(
           `${lowScoreAssessments.length} ethics assessments below constitutional standards`
         );
         totalScore -= 1.0;
-        recommendations.push('Address ethics compliance issues and improve assessment scores');
+        recommendations.push(
+          'Address ethics compliance issues and improve assessment scores'
+        );
       }
     }
 
     // Constitutional compliance minimum
-    const finalScore = Math.max(totalScore, CONSTITUTIONAL_CFM_COMPLIANCE_MINIMUM);
-    const compliant = finalScore >= CONSTITUTIONAL_CFM_COMPLIANCE_MINIMUM && issues.length === 0;
+    const finalScore = Math.max(
+      totalScore,
+      CONSTITUTIONAL_CFM_COMPLIANCE_MINIMUM
+    );
+    const compliant =
+      finalScore >= CONSTITUTIONAL_CFM_COMPLIANCE_MINIMUM &&
+      issues.length === 0;
     const professionalStandardsMet =
-      finalScore >= 9.5 && issues.filter((i) => i.includes('license')).length === 0;
+      finalScore >= 9.5 &&
+      issues.filter((i) => i.includes('license')).length === 0;
 
     return {
       compliant,
@@ -156,7 +171,9 @@ export async function validateCfmCompliance(
       compliant: false,
       score: 0,
       issues: ['Failed to validate CFM compliance'],
-      recommendations: ['Contact technical support for CFM compliance validation'],
+      recommendations: [
+        'Contact technical support for CFM compliance validation',
+      ],
       professional_standards_met: false,
     };
   }
@@ -169,7 +186,12 @@ export async function validateCfmCompliance(
 export async function validateCfmResolutions(
   tenantId: string,
   services: ReturnType<typeof createCfmServices>,
-  resolutions: string[] = ['2.314/2022', '2.315/2022', '2.316/2022', '2.227/2018']
+  resolutions: string[] = [
+    '2.314/2022',
+    '2.315/2022',
+    '2.316/2022',
+    '2.227/2018',
+  ]
 ): Promise<{
   compliant: boolean;
   resolution_compliance: Record<string, boolean>;
@@ -188,24 +210,34 @@ export async function validateCfmResolutions(
       resolutions.includes('2.316/2022')
     ) {
       const { data: telemedicineConsultations } =
-        await services.telemedicineCompliance.getTelemedicineConsultations(tenantId);
+        await services.telemedicineCompliance.getTelemedicineConsultations(
+          tenantId
+        );
 
       for (const resolution of ['2.314/2022', '2.315/2022', '2.316/2022']) {
         if (resolutions.includes(resolution)) {
           const compliantConsultations =
             telemedicineConsultations?.filter(
-              (c) => c.cfm_resolution_compliance?.[`resolution_${resolution.replace(/[/.]/g, '_')}`]
+              (c) =>
+                c.cfm_resolution_compliance?.[
+                  `resolution_${resolution.replace(/[/.]/g, '_')}`
+                ]
             ) || [];
 
           const totalConsultations = telemedicineConsultations?.length || 0;
           const isCompliant =
-            totalConsultations === 0 || compliantConsultations.length === totalConsultations;
+            totalConsultations === 0 ||
+            compliantConsultations.length === totalConsultations;
 
           resolutionCompliance[resolution] = isCompliant;
 
           if (!isCompliant && totalConsultations > 0) {
-            issues.push(`Resolution ${resolution} compliance issues in telemedicine consultations`);
-            recommendations.push(`Review and ensure compliance with CFM Resolution ${resolution}`);
+            issues.push(
+              `Resolution ${resolution} compliance issues in telemedicine consultations`
+            );
+            recommendations.push(
+              `Review and ensure compliance with CFM Resolution ${resolution}`
+            );
           }
         }
       }
@@ -216,14 +248,19 @@ export async function validateCfmResolutions(
       const { data: recordValidations } =
         await services.medicalRecords.getMedicalRecordValidations(tenantId);
       const compliantRecords =
-        recordValidations?.filter((r) => r.validation_results.cfm_resolution_2227_compliant) || [];
+        recordValidations?.filter(
+          (r) => r.validation_results.cfm_resolution_2227_compliant
+        ) || [];
       const totalRecords = recordValidations?.length || 0;
 
-      const isCompliant = totalRecords === 0 || compliantRecords.length === totalRecords;
+      const isCompliant =
+        totalRecords === 0 || compliantRecords.length === totalRecords;
       resolutionCompliance['2.227/2018'] = isCompliant;
 
       if (!isCompliant && totalRecords > 0) {
-        issues.push('Resolution 2.227/2018 compliance issues in medical records');
+        issues.push(
+          'Resolution 2.227/2018 compliance issues in medical records'
+        );
         recommendations.push(
           'Review and ensure compliance with CFM Resolution 2.227/2018 for medical records'
         );
@@ -245,7 +282,9 @@ export async function validateCfmResolutions(
       compliant: false,
       resolution_compliance: {},
       issues: ['Failed to validate CFM resolutions compliance'],
-      recommendations: ['Contact technical support for CFM resolutions validation'],
+      recommendations: [
+        'Contact technical support for CFM resolutions validation',
+      ],
     };
   }
 }

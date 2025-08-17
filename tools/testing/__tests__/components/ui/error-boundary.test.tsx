@@ -1,4 +1,11 @@
-import { fireEvent, fireEvent, render, render, screen, screen } from '@testing-library/react';
+import {
+  fireEvent,
+  fireEvent,
+  render,
+  render,
+  screen,
+  screen,
+} from '@testing-library/react';
 import { vi } from 'vitest';
 import '@testing-library/jest-dom';
 import {
@@ -45,7 +52,9 @@ describe('ErrorBoundary', () => {
 
     expect(screen.getByText('Oops! Algo deu errado')).toBeInTheDocument();
     expect(
-      screen.getByText('Ocorreu um erro inesperado. Nossa equipe foi notificada.')
+      screen.getByText(
+        'Ocorreu um erro inesperado. Nossa equipe foi notificada.'
+      )
     ).toBeInTheDocument();
   });
 
@@ -149,7 +158,9 @@ describe('withErrorBoundary HOC', () => {
   });
 
   it('passes props to wrapped component', () => {
-    const TestComponent = ({ message }: { message: string }) => <div>{message}</div>;
+    const TestComponent = ({ message }: { message: string }) => (
+      <div>{message}</div>
+    );
     const WrappedComponent = withErrorBoundary(TestComponent);
 
     render(<WrappedComponent message="Hello World" />);
@@ -163,7 +174,9 @@ describe('withErrorBoundary HOC', () => {
 
     const WrappedComponent = withErrorBoundary(TestComponent);
 
-    expect(WrappedComponent.displayName).toBe('withErrorBoundary(TestComponent)');
+    expect(WrappedComponent.displayName).toBe(
+      'withErrorBoundary(TestComponent)'
+    );
   });
 });
 

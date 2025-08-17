@@ -392,7 +392,12 @@ export function useBreachManagement() {
   const [error, setError] = useState<Error | null>(null);
 
   const fetchBreaches = useCallback(
-    async (filters?: { severity?: string; status?: string; page?: number; limit?: number }) => {
+    async (filters?: {
+      severity?: string;
+      status?: string;
+      page?: number;
+      limit?: number;
+    }) => {
       try {
         setIsLoading(true);
         setError(null);
@@ -559,41 +564,44 @@ export function useAuditTrail() {
     []
   );
 
-  const exportEvents = useCallback(async (format: 'json' | 'csv', filters?: any) => {
-    try {
-      const params = new URLSearchParams();
-      params.append('export', format);
+  const exportEvents = useCallback(
+    async (format: 'json' | 'csv', filters?: any) => {
+      try {
+        const params = new URLSearchParams();
+        params.append('export', format);
 
-      if (filters) {
-        Object.entries(filters).forEach(([key, value]) => {
-          if (value !== undefined && value !== null) {
-            params.append(key, value.toString());
-          }
-        });
+        if (filters) {
+          Object.entries(filters).forEach(([key, value]) => {
+            if (value !== undefined && value !== null) {
+              params.append(key, value.toString());
+            }
+          });
+        }
+
+        const response = await fetch(`/api/lgpd/audit?${params}`);
+        if (!response.ok) {
+          throw new Error('Failed to export audit events');
+        }
+
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `audit-trail-${new Date().toISOString().split('T')[0]}.${format}`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+
+        toast.success('Exportação concluída com sucesso');
+      } catch (err) {
+        setError(err as Error);
+        toast.error('Erro ao exportar eventos');
+        throw err;
       }
-
-      const response = await fetch(`/api/lgpd/audit?${params}`);
-      if (!response.ok) {
-        throw new Error('Failed to export audit events');
-      }
-
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `audit-trail-${new Date().toISOString().split('T')[0]}.${format}`;
-      document.body.appendChild(a);
-      a.click();
-      window.URL.revokeObjectURL(url);
-      document.body.removeChild(a);
-
-      toast.success('Exportação concluída com sucesso');
-    } catch (err) {
-      setError(err as Error);
-      toast.error('Erro ao exportar eventos');
-      throw err;
-    }
-  }, []);
+    },
+    []
+  );
 
   return {
     events,
@@ -788,7 +796,9 @@ export function useConsentBanner() {
         // Refresh user consents
         await fetchUserConsents();
 
-        toast.success(granted ? 'Consentimento concedido' : 'Consentimento retirado');
+        toast.success(
+          granted ? 'Consentimento concedido' : 'Consentimento retirado'
+        );
       } catch (err) {
         setError(err as Error);
         toast.error('Erro ao atualizar consentimento');

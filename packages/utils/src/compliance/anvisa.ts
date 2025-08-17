@@ -78,7 +78,11 @@ export class ANVISACompliance {
       }
 
       // Log compliance action
-      await this.logComplianceAction('product_registration', product.name, data.id);
+      await this.logComplianceAction(
+        'product_registration',
+        product.name,
+        data.id
+      );
 
       return data;
     } catch (_error) {
@@ -144,7 +148,11 @@ export class ANVISACompliance {
       }
 
       // Log compliance action
-      await this.logComplianceAction('procedure_classification', procedure.name, data.id);
+      await this.logComplianceAction(
+        'procedure_classification',
+        procedure.name,
+        data.id
+      );
 
       return data;
     } catch (_error) {
@@ -192,7 +200,10 @@ export class ANVISACompliance {
       }
 
       // Auto-determine if ANVISA reporting is required
-      const requiresANVISAReport = this.requiresANVISAReporting(event.event_type, event.outcome);
+      const requiresANVISAReport = this.requiresANVISAReporting(
+        event.event_type,
+        event.outcome
+      );
 
       if (requiresANVISAReport && !event.anvisa_reported) {
         await this.scheduleANVISAReport(data.id);
@@ -301,32 +312,52 @@ export class ANVISACompliance {
         products: {
           total: products.data?.length || 0,
           approved:
-            products.data?.filter((p: any) => p.regulatory_status === 'approved').length || 0,
+            products.data?.filter(
+              (p: any) => p.regulatory_status === 'approved'
+            ).length || 0,
           expiring_soon: expiringSoon.length,
           suspended:
-            products.data?.filter((p: any) => p.regulatory_status === 'suspended').length || 0,
+            products.data?.filter(
+              (p: any) => p.regulatory_status === 'suspended'
+            ).length || 0,
         },
         procedures: {
           total: procedures.data?.length || 0,
           by_risk: {
             low_risk:
-              procedures.data?.filter((p: any) => p.classification === 'low_risk').length || 0,
+              procedures.data?.filter(
+                (p: any) => p.classification === 'low_risk'
+              ).length || 0,
             medium_risk:
-              procedures.data?.filter((p: any) => p.classification === 'medium_risk').length || 0,
+              procedures.data?.filter(
+                (p: any) => p.classification === 'medium_risk'
+              ).length || 0,
             high_risk:
-              procedures.data?.filter((p: any) => p.classification === 'high_risk').length || 0,
+              procedures.data?.filter(
+                (p: any) => p.classification === 'high_risk'
+              ).length || 0,
             surgical:
-              procedures.data?.filter((p: any) => p.classification === 'surgical').length || 0,
+              procedures.data?.filter(
+                (p: any) => p.classification === 'surgical'
+              ).length || 0,
           },
         },
         adverse_events: {
           total: events.data?.length || 0,
           by_severity: {
-            mild: events.data?.filter((e: any) => e.event_type === 'mild').length || 0,
-            moderate: events.data?.filter((e: any) => e.event_type === 'moderate').length || 0,
-            severe: events.data?.filter((e: any) => e.event_type === 'severe').length || 0,
+            mild:
+              events.data?.filter((e: any) => e.event_type === 'mild').length ||
+              0,
+            moderate:
+              events.data?.filter((e: any) => e.event_type === 'moderate')
+                .length || 0,
+            severe:
+              events.data?.filter((e: any) => e.event_type === 'severe')
+                .length || 0,
             life_threatening:
-              events.data?.filter((e: any) => e.event_type === 'life_threatening').length || 0,
+              events.data?.filter(
+                (e: any) => e.event_type === 'life_threatening'
+              ).length || 0,
           },
           pending_anvisa_reports: pendingReports.length,
         },
@@ -356,7 +387,8 @@ export class ANVISACompliance {
     const suspendedProducts =
       products?.filter((p) => p.regulatory_status === 'suspended').length || 0;
     const overduePendingReports =
-      pendingReports?.filter((r) => new Date(r.due_date) < new Date()).length || 0;
+      pendingReports?.filter((r) => new Date(r.due_date) < new Date()).length ||
+      0;
 
     score -= expiredProducts * 5;
     score -= suspendedProducts * 10;
@@ -382,14 +414,18 @@ export class ANVISACompliance {
   }
 
   // Utility methods
-  async validateANVISARegistrationNumber(registrationNumber: string): Promise<boolean> {
+  async validateANVISARegistrationNumber(
+    registrationNumber: string
+  ): Promise<boolean> {
     // Brazilian ANVISA registration numbers follow specific patterns
     // This is a simplified validation - real implementation would call ANVISA API
     const anvisaPattern = /^[0-9]{13}$/; // 13-digit number
     return anvisaPattern.test(registrationNumber);
   }
 
-  async getProductByRegistration(registrationNumber: string): Promise<ANVISAProduct | null> {
+  async getProductByRegistration(
+    registrationNumber: string
+  ): Promise<ANVISAProduct | null> {
     try {
       const { data, error } = await this.supabase
         .from('anvisa_products')

@@ -161,7 +161,9 @@ export class LGPDDataSubjectRights {
     }
   }
 
-  async getDataSubjectRequest(_requestId: string): Promise<DataSubjectRequest | null> {
+  async getDataSubjectRequest(
+    _requestId: string
+  ): Promise<DataSubjectRequest | null> {
     // Implementation would query database
     return null;
   }
@@ -178,9 +180,13 @@ export class LGPDDataSubjectRights {
     return `LGPD-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
   }
 
-  private async storeDataSubjectRequest(_request: DataSubjectRequest): Promise<void> {}
+  private async storeDataSubjectRequest(
+    _request: DataSubjectRequest
+  ): Promise<void> {}
 
-  private async notifyDataProtectionOfficer(_request: DataSubjectRequest): Promise<void> {}
+  private async notifyDataProtectionOfficer(
+    _request: DataSubjectRequest
+  ): Promise<void> {}
 
   // Data export methods
   private async exportProfileData(userId: string): Promise<any> {

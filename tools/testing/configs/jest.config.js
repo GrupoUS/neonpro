@@ -179,10 +179,17 @@ const config = {
   resetMocks: true,
 
   // Module Path Ignore Patterns
-  modulePathIgnorePatterns: ['<rootDir>/dist/', '<rootDir>/.next/', '<rootDir>/node_modules/'],
+  modulePathIgnorePatterns: [
+    '<rootDir>/dist/',
+    '<rootDir>/.next/',
+    '<rootDir>/node_modules/',
+  ],
 
   // Watch Plugins for Development
-  watchPlugins: ['jest-watch-typeahead/filename', 'jest-watch-typeahead/testname'],
+  watchPlugins: [
+    'jest-watch-typeahead/filename',
+    'jest-watch-typeahead/testname',
+  ],
 };
 
 module.exports = config;

@@ -128,7 +128,9 @@ describe('ProfessionalManagement', () => {
 
       expect(screen.getByText('Gestão de Profissionais')).toBeInTheDocument();
       expect(
-        screen.getByText('Gerencie perfis profissionais, credenciais e especialidades')
+        screen.getByText(
+          'Gerencie perfis profissionais, credenciais e especialidades'
+        )
       ).toBeInTheDocument();
     });
 
@@ -146,8 +148,12 @@ describe('ProfessionalManagement', () => {
     it('should render search and filter controls', () => {
       render(<ProfessionalManagement />);
 
-      expect(screen.getByPlaceholderText('Buscar profissionais...')).toBeInTheDocument();
-      expect(screen.getByRole('combobox', { name: /status/i })).toBeInTheDocument();
+      expect(
+        screen.getByPlaceholderText('Buscar profissionais...')
+      ).toBeInTheDocument();
+      expect(
+        screen.getByRole('combobox', { name: /status/i })
+      ).toBeInTheDocument();
     });
 
     it('should render professionals table', async () => {
@@ -157,7 +163,9 @@ describe('ProfessionalManagement', () => {
         expect(screen.getByText('Dr. Ana Silva')).toBeInTheDocument();
         expect(screen.getByText('Dr. Carlos Oliveira')).toBeInTheDocument();
         expect(screen.getByText('ana.silva@email.com')).toBeInTheDocument();
-        expect(screen.getByText('carlos.oliveira@email.com')).toBeInTheDocument();
+        expect(
+          screen.getByText('carlos.oliveira@email.com')
+        ).toBeInTheDocument();
       });
     });
   });
@@ -172,12 +180,16 @@ describe('ProfessionalManagement', () => {
     });
 
     it('should handle loading error', async () => {
-      (getProfessionals as vi.Mock).mockRejectedValue(new Error('Failed to load'));
+      (getProfessionals as vi.Mock).mockRejectedValue(
+        new Error('Failed to load')
+      );
 
       render(<ProfessionalManagement />);
 
       await waitFor(() => {
-        expect(toast.error).toHaveBeenCalledWith('Erro ao carregar profissionais');
+        expect(toast.error).toHaveBeenCalledWith(
+          'Erro ao carregar profissionais'
+        );
       });
     });
 
@@ -200,12 +212,16 @@ describe('ProfessionalManagement', () => {
         expect(screen.getByText('Dr. Carlos Oliveira')).toBeInTheDocument();
       });
 
-      const searchInput = screen.getByPlaceholderText('Buscar profissionais...');
+      const searchInput = screen.getByPlaceholderText(
+        'Buscar profissionais...'
+      );
       fireEvent.change(searchInput, { target: { value: 'Ana' } });
 
       await waitFor(() => {
         expect(screen.getByText('Dr. Ana Silva')).toBeInTheDocument();
-        expect(screen.queryByText('Dr. Carlos Oliveira')).not.toBeInTheDocument();
+        expect(
+          screen.queryByText('Dr. Carlos Oliveira')
+        ).not.toBeInTheDocument();
       });
     });
 
@@ -225,7 +241,9 @@ describe('ProfessionalManagement', () => {
     it('should clear search results when search term is empty', async () => {
       render(<ProfessionalManagement />);
 
-      const searchInput = screen.getByPlaceholderText('Buscar profissionais...');
+      const searchInput = screen.getByPlaceholderText(
+        'Buscar profissionais...'
+      );
       fireEvent.change(searchInput, { target: { value: 'Ana' } });
       fireEvent.change(searchInput, { target: { value: '' } });
 
@@ -308,17 +326,23 @@ describe('ProfessionalManagement', () => {
 
   describe('Error Handling', () => {
     it('should handle professional loading errors', async () => {
-      (getProfessionals as vi.Mock).mockRejectedValue(new Error('Network error'));
+      (getProfessionals as vi.Mock).mockRejectedValue(
+        new Error('Network error')
+      );
 
       render(<ProfessionalManagement />);
 
       await waitFor(() => {
-        expect(toast.error).toHaveBeenCalledWith('Erro ao carregar profissionais');
+        expect(toast.error).toHaveBeenCalledWith(
+          'Erro ao carregar profissionais'
+        );
       });
     });
 
     it('should handle credential loading errors', async () => {
-      (getProfessionalCredentials as vi.Mock).mockRejectedValue(new Error('Credential error'));
+      (getProfessionalCredentials as vi.Mock).mockRejectedValue(
+        new Error('Credential error')
+      );
 
       render(<ProfessionalManagement />);
 
@@ -334,12 +358,16 @@ describe('ProfessionalManagement', () => {
       fireEvent.click(viewDetailsButton);
 
       await waitFor(() => {
-        expect(toast.error).toHaveBeenCalledWith('Erro ao carregar detalhes do profissional');
+        expect(toast.error).toHaveBeenCalledWith(
+          'Erro ao carregar detalhes do profissional'
+        );
       });
     });
 
     it('should handle delete errors', async () => {
-      (deleteProfessional as vi.Mock).mockRejectedValue(new Error('Delete error'));
+      (deleteProfessional as vi.Mock).mockRejectedValue(
+        new Error('Delete error')
+      );
 
       render(<ProfessionalManagement />);
 
@@ -365,7 +393,9 @@ describe('ProfessionalManagement', () => {
       fireEvent.click(viewDetailsButton);
 
       await waitFor(() => {
-        expect(screen.getByText('Detalhes do Profissional')).toBeInTheDocument();
+        expect(
+          screen.getByText('Detalhes do Profissional')
+        ).toBeInTheDocument();
       });
     });
 
@@ -398,7 +428,9 @@ describe('ProfessionalManagement', () => {
 
       // This would require more complex dialog testing
       // For now, ensuring the dialog structure is correct
-      expect(screen.queryByText('Detalhes do Profissional')).not.toBeInTheDocument();
+      expect(
+        screen.queryByText('Detalhes do Profissional')
+      ).not.toBeInTheDocument();
     });
   });
 
@@ -444,7 +476,9 @@ describe('ProfessionalManagement', () => {
     it('should support keyboard navigation', () => {
       render(<ProfessionalManagement />);
 
-      const searchInput = screen.getByPlaceholderText('Buscar profissionais...');
+      const searchInput = screen.getByPlaceholderText(
+        'Buscar profissionais...'
+      );
       expect(searchInput).toBeInTheDocument();
 
       fireEvent.focus(searchInput);
@@ -459,7 +493,9 @@ describe('ProfessionalManagement', () => {
       render(<ProfessionalManagement />);
 
       await waitFor(() => {
-        expect(screen.getByText('Nenhum profissional encontrado')).toBeInTheDocument();
+        expect(
+          screen.getByText('Nenhum profissional encontrado')
+        ).toBeInTheDocument();
       });
     });
 

@@ -31,7 +31,13 @@ async function validateWebVitals() {
   };
 
   // Check if Web Vitals monitoring is implemented
-  const webVitalsPath = path.join(process.cwd(), 'packages', 'performance', 'src', 'web-vitals');
+  const webVitalsPath = path.join(
+    process.cwd(),
+    'packages',
+    'performance',
+    'src',
+    'web-vitals'
+  );
   const webVitalsExists = fs.existsSync(webVitalsPath);
 
   return {
@@ -58,11 +64,15 @@ async function validateBundleOptimization() {
     const nextConfig = fs.readFileSync(nextConfigPath, 'utf8');
     bundleChecks.codeSplitting =
       nextConfig.includes('splitChunks') || nextConfig.includes('chunks:');
-    bundleChecks.dynamicImports = nextConfig.includes('dynamic') || nextConfig.includes('import(');
+    bundleChecks.dynamicImports =
+      nextConfig.includes('dynamic') || nextConfig.includes('import(');
   }
 
   // Check for webpack optimization
-  const webpackOptPath = path.join(process.cwd(), 'webpack.healthcare-optimization.js');
+  const webpackOptPath = path.join(
+    process.cwd(),
+    'webpack.healthcare-optimization.js'
+  );
   if (fs.existsSync(webpackOptPath)) {
     bundleChecks.healthcareModulesSeparated = true;
   }
@@ -98,7 +108,13 @@ async function validateDatabasePerformance() {
   };
 
   // Check for database monitoring implementation
-  const dbMonitorPath = path.join(process.cwd(), 'packages', 'performance', 'src', 'database');
+  const dbMonitorPath = path.join(
+    process.cwd(),
+    'packages',
+    'performance',
+    'src',
+    'database'
+  );
   dbChecks.queryProfiling = fs.existsSync(dbMonitorPath);
 
   // Check for Supabase optimizations
@@ -149,7 +165,13 @@ async function validateInfrastructureSetup() {
   };
 
   // Check for infrastructure optimization implementation
-  const infraPath = path.join(process.cwd(), 'packages', 'performance', 'src', 'infrastructure');
+  const infraPath = path.join(
+    process.cwd(),
+    'packages',
+    'performance',
+    'src',
+    'infrastructure'
+  );
   infraChecks.cacheStrategies = fs.existsSync(infraPath);
   infraChecks.healthcareCompliantCaching = fs.existsSync(infraPath);
 
@@ -159,7 +181,8 @@ async function validateInfrastructureSetup() {
     const nextConfig = fs.readFileSync(nextConfigPath, 'utf8');
     infraChecks.cdnConfiguration =
       nextConfig.includes('headers') || nextConfig.includes('Cache-Control');
-    infraChecks.edgeCaching = nextConfig.includes('edge') || nextConfig.includes('revalidate');
+    infraChecks.edgeCaching =
+      nextConfig.includes('edge') || nextConfig.includes('revalidate');
   }
 
   // Check for service worker
@@ -248,11 +271,17 @@ async function validateHealthcareCompliance() {
   if (fs.existsSync(infraPath)) {
     const cacheManager = fs.readFileSync(infraPath, 'utf8');
     complianceChecks.dataPrivacyInCache =
-      cacheManager.includes('healthcareSensitive') || cacheManager.includes('patient-data');
+      cacheManager.includes('healthcareSensitive') ||
+      cacheManager.includes('patient-data');
   }
 
   // Check for accessibility (ESLint config)
-  const eslintPath = path.join(process.cwd(), 'packages', 'eslint-config', 'healthcare.js');
+  const eslintPath = path.join(
+    process.cwd(),
+    'packages',
+    'eslint-config',
+    'healthcare.js'
+  );
   complianceChecks.accessibilityOptimization = fs.existsSync(eslintPath);
 
   // Clinical workflow optimization (healthcare-specific thresholds)
@@ -282,9 +311,13 @@ async function validateHealthcareCompliance() {
 
 function generateValidationReport(results) {
   const overallScores = Object.values(results).map((r) => r.score || 0);
-  const averageScore = Math.round(overallScores.reduce((a, b) => a + b, 0) / overallScores.length);
+  const averageScore = Math.round(
+    overallScores.reduce((a, b) => a + b, 0) / overallScores.length
+  );
 
-  const passedCategories = Object.values(results).filter((r) => r.status === 'PASS').length;
+  const passedCategories = Object.values(results).filter(
+    (r) => r.status === 'PASS'
+  ).length;
   const totalCategories = Object.keys(results).length;
 
   const report = `
@@ -364,7 +397,10 @@ ${
 `;
 
   // Save validation report
-  const reportPath = path.join(process.cwd(), 'healthcare-performance-validation.md');
+  const reportPath = path.join(
+    process.cwd(),
+    'healthcare-performance-validation.md'
+  );
   fs.writeFileSync(reportPath, report);
 
   // Exit with appropriate code
@@ -374,7 +410,8 @@ ${
 function formatChecks(checks) {
   return Object.entries(checks)
     .map(
-      ([key, value]) => `   ${value ? '✅' : '❌'} ${key.replace(/([A-Z])/g, ' $1').toLowerCase()}`
+      ([key, value]) =>
+        `   ${value ? '✅' : '❌'} ${key.replace(/([A-Z])/g, ' $1').toLowerCase()}`
     )
     .join('\n');
 }

@@ -11,8 +11,14 @@ async function testSupabaseConnection() {
 
   if (!(supabaseUrl && supabaseKey)) {
     console.error('❌ Variáveis de ambiente não configuradas:');
-    console.log('NEXT_PUBLIC_SUPABASE_URL:', supabaseUrl ? '✅ Configurada' : '❌ Ausente');
-    console.log('NEXT_PUBLIC_SUPABASE_ANON_KEY:', supabaseKey ? '✅ Configurada' : '❌ Ausente');
+    console.log(
+      'NEXT_PUBLIC_SUPABASE_URL:',
+      supabaseUrl ? '✅ Configurada' : '❌ Ausente'
+    );
+    console.log(
+      'NEXT_PUBLIC_SUPABASE_ANON_KEY:',
+      supabaseKey ? '✅ Configurada' : '❌ Ausente'
+    );
     return;
   }
 
@@ -74,7 +80,9 @@ async function testSupabaseConnection() {
 
     // Teste 4: RLS Status
     console.log('🔒 Teste 4: Verificando RLS...');
-    const { data: rlsData, error: rlsError } = await supabase.rpc('get_table_rls_status');
+    const { data: rlsData, error: rlsError } = await supabase.rpc(
+      'get_table_rls_status'
+    );
     if (rlsError) {
       console.log('⚠️  Não foi possível verificar RLS automaticamente');
     } else {
