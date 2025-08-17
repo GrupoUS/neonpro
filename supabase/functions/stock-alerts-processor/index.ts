@@ -408,6 +408,5 @@ async function updatePerformanceMetrics(supabase: any, clinicIds: string[]) {
  *   name: 'stock-alerts-processor',
  *   cron: '0 */ 6 * * *', // Every 6 hours
  *   function: 'stock-alerts-processor'
- *
-}
+ * }
  */
