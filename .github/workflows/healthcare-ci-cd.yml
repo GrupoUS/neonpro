@@ -1,0 +1,133 @@
+# Healthcare CI/CD Pipeline with Constitutional Compliance
+# Story 05.02: CI/CD Pipeline with Healthcare Validation Gates
+name: Healthcare CI/CD Pipeline
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+env:
+  NODE_VERSION: '20'
+  PNPM_VERSION: '9'
+
+jobs:
+  # Healthcare Validation Gates
+  healthcare-validation:
+    name: Healthcare Compliance Validation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Setup PNPM
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Install Dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: LGPD Compliance Check
+        run: pnpm test:lgpd-compliance
+
+      - name: CFM Ethics Validation
+        run: pnpm test:cfm-compliance
+
+      - name: ANVISA Standards Check
+        run: pnpm test:anvisa-compliance
+
+      - name: Medical Accuracy Validation
+        run: pnpm test:medical-accuracy
+
+  # Comprehensive Testing (≥95% coverage)
+  testing:
+    name: Comprehensive Testing Suite
+    runs-on: ubuntu-latest
+    needs: healthcare-validation
+    strategy:
+      matrix:
+        test-type: [unit, integration, e2e, accessibility, performance]
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Test Environment
+        uses: ./.github/actions/setup-test-env
+
+      - name: Run ${{ matrix.test-type }} Tests
+        run: pnpm test:${{ matrix.test-type }}
+
+      - name: Upload Coverage Reports
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          flags: ${{ matrix.test-type }}  # Security & Performance Validation
+  security-performance:
+    name: Security & Performance Validation
+    runs-on: ubuntu-latest
+    needs: testing
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Security Vulnerability Scan
+        run: pnpm audit --audit-level high
+
+      - name: LGPD Data Protection Scan
+        run: pnpm test:data-protection
+
+      - name: Lighthouse Performance Audit
+        run: pnpm test:lighthouse
+
+      - name: Core Web Vitals Validation
+        run: pnpm test:core-web-vitals
+
+  # Healthcare Database Migration
+  database-migration:
+    name: Healthcare Database Migration
+    runs-on: ubuntu-latest
+    needs: security-performance
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Validate Migration Scripts
+        run: pnpm db:validate-migrations
+
+      - name: Run Database Migrations
+        run: pnpm db:migrate
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+
+      - name: Verify Data Integrity
+        run: pnpm db:verify-integrity
+
+  # Production Deployment
+  deploy:
+    name: Production Deployment
+    runs-on: ubuntu-latest
+    needs: [healthcare-validation, testing, security-performance, database-migration]
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Deploy to Vercel
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          vercel-args: '--prod'
+
+      - name: Healthcare Production Validation
+        run: pnpm test:production-health-checks
+
+      - name: Notify Healthcare Team
+        run: pnpm notify:deployment-success
