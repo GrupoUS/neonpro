@@ -115,39 +115,39 @@ export default function PricingPage() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-green-50">
       {/* Header */}
       <div className="container mx-auto px-4 py-16">
-        <div className="text-center mb-16">
-          <h1 className="text-4xl font-bold tracking-tight mb-4">Planos e Preços</h1>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+        <div className="mb-16 text-center">
+          <h1 className="mb-4 font-bold text-4xl tracking-tight">Planos e Preços</h1>
+          <p className="mx-auto max-w-2xl text-muted-foreground text-xl">
             Escolha o plano ideal para sua clínica ou organização de saúde. Todos os planos incluem
             compliance LGPD e segurança de dados.
           </p>
         </div>
 
         {/* Pricing Cards */}
-        <div className="grid md:grid-cols-3 gap-8 mb-16">
+        <div className="mb-16 grid gap-8 md:grid-cols-3">
           {PRICING_PLANS.map((plan) => (
             <Card
               key={plan.id}
-              className={`relative ${plan.popular ? "border-blue-500 shadow-lg scale-105" : ""}`}
+              className={`relative ${plan.popular ? "scale-105 border-blue-500 shadow-lg" : ""}`}
             >
               {plan.popular && (
-                <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                  <Badge className="bg-blue-500 text-white px-3 py-1">
-                    <Star className="h-3 w-3 mr-1" />
+                <div className="-top-3 -translate-x-1/2 absolute left-1/2 transform">
+                  <Badge className="bg-blue-500 px-3 py-1 text-white">
+                    <Star className="mr-1 h-3 w-3" />
                     Mais Popular
                   </Badge>
                 </div>
               )}
 
               <CardHeader className="text-center">
-                <div className="mx-auto mb-4 p-3 bg-blue-100 rounded-full w-fit">
+                <div className="mx-auto mb-4 w-fit rounded-full bg-blue-100 p-3">
                   <PlanIcon icon={plan.icon} />
                 </div>
                 <CardTitle className="text-2xl">{plan.name}</CardTitle>
                 <CardDescription>{plan.description}</CardDescription>
 
                 <div className="mt-4">
-                  <span className="text-4xl font-bold">R$ {plan.price}</span>
+                  <span className="font-bold text-4xl">R$ {plan.price}</span>
                   <span className="text-muted-foreground">
                     /{plan.billingPeriod === "month" ? "mês" : "ano"}
                   </span>
@@ -156,7 +156,7 @@ export default function PricingPage() {
 
               <CardContent>
                 <Button
-                  className="w-full mb-6"
+                  className="mb-6 w-full"
                   variant={plan.popular ? "default" : "outline"}
                   onClick={() => handleSelectPlan(plan.id)}
                 >
@@ -191,11 +191,11 @@ export default function PricingPage() {
                   <Separator />
 
                   <div>
-                    <h4 className="font-medium mb-3">Recursos inclusos:</h4>
+                    <h4 className="mb-3 font-medium">Recursos inclusos:</h4>
                     <ul className="space-y-2">
                       {plan.features.map((feature, index) => (
                         <li key={index} className="flex items-start">
-                          <Check className="h-4 w-4 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                          <Check className="mt-0.5 mr-2 h-4 w-4 flex-shrink-0 text-green-500" />
                           <span className="text-sm">{feature}</span>
                         </li>
                       ))}
@@ -220,49 +220,49 @@ export default function PricingPage() {
               <table className="w-full">
                 <thead>
                   <tr className="border-b">
-                    <th className="text-left py-3 px-4">Recurso</th>
-                    <th className="text-center py-3 px-4">Básico</th>
-                    <th className="text-center py-3 px-4">Profissional</th>
-                    <th className="text-center py-3 px-4">Enterprise</th>
+                    <th className="px-4 py-3 text-left">Recurso</th>
+                    <th className="px-4 py-3 text-center">Básico</th>
+                    <th className="px-4 py-3 text-center">Profissional</th>
+                    <th className="px-4 py-3 text-center">Enterprise</th>
                   </tr>
                 </thead>
                 <tbody className="text-sm">
                   <tr className="border-b">
-                    <td className="py-3 px-4">Gestão de Pacientes</td>
-                    <td className="text-center py-3 px-4">
-                      <Check className="h-4 w-4 text-green-500 mx-auto" />
+                    <td className="px-4 py-3">Gestão de Pacientes</td>
+                    <td className="px-4 py-3 text-center">
+                      <Check className="mx-auto h-4 w-4 text-green-500" />
                     </td>
-                    <td className="text-center py-3 px-4">
-                      <Check className="h-4 w-4 text-green-500 mx-auto" />
+                    <td className="px-4 py-3 text-center">
+                      <Check className="mx-auto h-4 w-4 text-green-500" />
                     </td>
-                    <td className="text-center py-3 px-4">
-                      <Check className="h-4 w-4 text-green-500 mx-auto" />
+                    <td className="px-4 py-3 text-center">
+                      <Check className="mx-auto h-4 w-4 text-green-500" />
                     </td>
                   </tr>
                   <tr className="border-b">
-                    <td className="py-3 px-4">Agendamentos</td>
-                    <td className="text-center py-3 px-4">Básico</td>
-                    <td className="text-center py-3 px-4">Avançado</td>
-                    <td className="text-center py-3 px-4">Completo</td>
+                    <td className="px-4 py-3">Agendamentos</td>
+                    <td className="px-4 py-3 text-center">Básico</td>
+                    <td className="px-4 py-3 text-center">Avançado</td>
+                    <td className="px-4 py-3 text-center">Completo</td>
                   </tr>
                   <tr className="border-b">
-                    <td className="py-3 px-4">Relatórios</td>
-                    <td className="text-center py-3 px-4">Essenciais</td>
-                    <td className="text-center py-3 px-4">Detalhados</td>
-                    <td className="text-center py-3 px-4">Customizados</td>
+                    <td className="px-4 py-3">Relatórios</td>
+                    <td className="px-4 py-3 text-center">Essenciais</td>
+                    <td className="px-4 py-3 text-center">Detalhados</td>
+                    <td className="px-4 py-3 text-center">Customizados</td>
                   </tr>
                   <tr className="border-b">
-                    <td className="py-3 px-4">API Access</td>
-                    <td className="text-center py-3 px-4">-</td>
-                    <td className="text-center py-3 px-4">Básico</td>
-                    <td className="text-center py-3 px-4">Completo</td>
+                    <td className="px-4 py-3">API Access</td>
+                    <td className="px-4 py-3 text-center">-</td>
+                    <td className="px-4 py-3 text-center">Básico</td>
+                    <td className="px-4 py-3 text-center">Completo</td>
                   </tr>
                   <tr className="border-b">
-                    <td className="py-3 px-4">Suporte 24/7</td>
-                    <td className="text-center py-3 px-4">-</td>
-                    <td className="text-center py-3 px-4">-</td>
-                    <td className="text-center py-3 px-4">
-                      <Check className="h-4 w-4 text-green-500 mx-auto" />
+                    <td className="px-4 py-3">Suporte 24/7</td>
+                    <td className="px-4 py-3 text-center">-</td>
+                    <td className="px-4 py-3 text-center">-</td>
+                    <td className="px-4 py-3 text-center">
+                      <Check className="mx-auto h-4 w-4 text-green-500" />
                     </td>
                   </tr>
                 </tbody>
@@ -283,45 +283,45 @@ export default function PricingPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="grid md:grid-cols-2 gap-6">
+            <div className="grid gap-6 md:grid-cols-2">
               <div>
-                <h4 className="font-medium mb-3">Segurança de Dados</h4>
+                <h4 className="mb-3 font-medium">Segurança de Dados</h4>
                 <ul className="space-y-2 text-sm">
                   <li className="flex items-center">
-                    <Check className="h-4 w-4 text-green-500 mr-2" />
+                    <Check className="mr-2 h-4 w-4 text-green-500" />
                     Criptografia AES-256
                   </li>
                   <li className="flex items-center">
-                    <Check className="h-4 w-4 text-green-500 mr-2" />
+                    <Check className="mr-2 h-4 w-4 text-green-500" />
                     SSL/TLS em todas as conexões
                   </li>
                   <li className="flex items-center">
-                    <Check className="h-4 w-4 text-green-500 mr-2" />
+                    <Check className="mr-2 h-4 w-4 text-green-500" />
                     Backup automatizado
                   </li>
                   <li className="flex items-center">
-                    <Check className="h-4 w-4 text-green-500 mr-2" />
+                    <Check className="mr-2 h-4 w-4 text-green-500" />
                     Autenticação de dois fatores
                   </li>
                 </ul>
               </div>
               <div>
-                <h4 className="font-medium mb-3">Compliance</h4>
+                <h4 className="mb-3 font-medium">Compliance</h4>
                 <ul className="space-y-2 text-sm">
                   <li className="flex items-center">
-                    <Check className="h-4 w-4 text-green-500 mr-2" />
+                    <Check className="mr-2 h-4 w-4 text-green-500" />
                     LGPD (Lei Geral de Proteção de Dados)
                   </li>
                   <li className="flex items-center">
-                    <Check className="h-4 w-4 text-green-500 mr-2" />
+                    <Check className="mr-2 h-4 w-4 text-green-500" />
                     ISO 27001 certified
                   </li>
                   <li className="flex items-center">
-                    <Check className="h-4 w-4 text-green-500 mr-2" />
+                    <Check className="mr-2 h-4 w-4 text-green-500" />
                     HIPAA compliance ready
                   </li>
                   <li className="flex items-center">
-                    <Check className="h-4 w-4 text-green-500 mr-2" />
+                    <Check className="mr-2 h-4 w-4 text-green-500" />
                     Auditoria de acesso completa
                   </li>
                 </ul>
@@ -332,8 +332,8 @@ export default function PricingPage() {
 
         {/* FAQ */}
         <div className="mt-16 text-center">
-          <h2 className="text-2xl font-bold mb-4">Perguntas Frequentes</h2>
-          <p className="text-muted-foreground mb-8">
+          <h2 className="mb-4 font-bold text-2xl">Perguntas Frequentes</h2>
+          <p className="mb-8 text-muted-foreground">
             Não encontrou o que procura? Entre em contato conosco.
           </p>
           <Button variant="outline">Falar com Vendas</Button>

@@ -56,7 +56,7 @@ export async function POST(request: NextRequest) {
     const { credential_id, public_key, name, transports, attestation_type } = body;
 
     // Validate required fields
-    if (!credential_id || !public_key) {
+    if (!(credential_id && public_key)) {
       return NextResponse.json(
         {
           error: "Missing required fields: credential_id, public_key",

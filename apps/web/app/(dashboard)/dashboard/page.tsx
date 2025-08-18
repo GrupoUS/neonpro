@@ -272,7 +272,7 @@ function DashboardContent() {
               >
                 <div className="flex items-center gap-4">
                   <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-pink-500 to-purple-500">
-                    <span className="font-semibold text-white text-sm">
+                    <span className="font-semibold text-sm text-white">
                       {patient.name.charAt(0)}
                     </span>
                   </div>
@@ -440,8 +440,8 @@ const DashboardPage = () => {
           })}
         </div>
 
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-          {/* Recent Patients */}
+        <div className={/* Recent Patients */}<
+          "grid grid-cols-1 gap-6 lg:grid-cols-3" 
           <motion.div
             animate={{ opacity: 1, x: 0 }}
             className="lg:col-span-2"
@@ -466,7 +466,7 @@ const DashboardPage = () => {
                   >
                     <div className="flex items-center gap-4">
                       <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-pink-500 to-purple-500">
-                        <span className="font-semibold text-white text-sm">
+                        <span className="font-semibold text-sm text-white">
                           {patient.name.charAt(0)}
                         </span>
                       </div>

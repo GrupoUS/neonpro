@@ -40,11 +40,11 @@
   "scripts": {
     "build": "tsc",
     "dev": "tsup --watch",
-    "lint": "eslint src/",
+    "lint": "biome check src/",
     "typecheck": "tsc --noEmit",
-    "test": "jest",
-    "test:watch": "jest --watch",
-    "test:coverage": "jest --coverage"
+    "test": "vitest",
+    "test:watch": "vitest --watch",
+    "test:coverage": "vitest --coverage"
   },
   "dependencies": {
     "@neonpro/db": "workspace:*",

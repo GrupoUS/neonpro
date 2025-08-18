@@ -159,7 +159,7 @@ export const useAIScheduling = (options: UseAISchedulingOptions): UseAISchedulin
     };
 
     loadAnalytics();
-    const interval = setInterval(loadAnalytics, 30000); // Update every 30 seconds
+    const interval = setInterval(loadAnalytics, 30_000); // Update every 30 seconds
 
     return () => clearInterval(interval);
   }, [tenantId, analyticsEnabled]);
@@ -354,7 +354,7 @@ export const useAIScheduling = (options: UseAISchedulingOptions): UseAISchedulin
 
   // Forecast demand for upcoming days
   const forecastDemand = useCallback(
-    async (days: number = 14) => {
+    async (days = 14) => {
       try {
         const response = await fetch(`/api/scheduling/forecast/${tenantId}?days=${days}`);
         return await response.json();

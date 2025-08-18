@@ -64,7 +64,7 @@ const SERVICE_ROUTES: ServiceRoute[] = [
     baseUrl: process.env.PATIENTS_SERVICE_URL || "http://localhost:3002",
     requiresAuth: true,
     rateLimit: { windowMs: 60 * 1000, max: 1000 }, // 1000 requests per minute
-    timeout: 10000,
+    timeout: 10_000,
   },
 
   // Financial Service
@@ -74,7 +74,7 @@ const SERVICE_ROUTES: ServiceRoute[] = [
     baseUrl: process.env.FINANCIAL_SERVICE_URL || "http://localhost:3003",
     requiresAuth: true,
     rateLimit: { windowMs: 60 * 1000, max: 500 }, // 500 requests per minute
-    timeout: 15000,
+    timeout: 15_000,
   },
 
   // Compliance Service
@@ -84,7 +84,7 @@ const SERVICE_ROUTES: ServiceRoute[] = [
     baseUrl: process.env.COMPLIANCE_SERVICE_URL || "http://localhost:3004",
     requiresAuth: true,
     rateLimit: { windowMs: 60 * 1000, max: 200 }, // 200 requests per minute
-    timeout: 20000,
+    timeout: 20_000,
   },
 
   // Notification Service
@@ -104,7 +104,7 @@ const SERVICE_ROUTES: ServiceRoute[] = [
     baseUrl: process.env.ANALYTICS_SERVICE_URL || "http://localhost:3006",
     requiresAuth: true,
     rateLimit: { windowMs: 60 * 1000, max: 100 }, // 100 requests per minute
-    timeout: 30000,
+    timeout: 30_000,
   },
 ];
 
@@ -134,7 +134,7 @@ const speedLimiter = slowDown({
   windowMs: 15 * 60 * 1000, // 15 minutes
   delayAfter: 100, // Allow 100 requests per 15 minutes at full speed
   delayMs: 500, // Add 500ms delay after delayAfter requests
-  maxDelayMs: 20000, // Maximum delay of 20 seconds
+  maxDelayMs: 20_000, // Maximum delay of 20 seconds
 });
 
 // ================================================
@@ -213,8 +213,8 @@ interface CircuitBreakerState {
 export class CircuitBreaker {
   private states: Map<string, CircuitBreakerState> = new Map();
   private readonly failureThreshold = 5;
-  private readonly timeout = 60000; // 1 minute
-  private readonly retryTimeout = 30000; // 30 seconds
+  private readonly timeout = 60_000; // 1 minute
+  private readonly retryTimeout = 30_000; // 30 seconds
 
   async execute<T>(serviceKey: string, operation: () => Promise<T>): Promise<T> {
     const state = this.getState(serviceKey);
@@ -361,7 +361,7 @@ export class RequestRouter {
 
   private async authenticate(request: NextRequest): Promise<AuthContext | NextResponse> {
     const authHeader = request.headers.get("Authorization");
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    if (!(authHeader && authHeader.startsWith("Bearer "))) {
       return NextResponse.json({ error: "Authentication required" }, { status: 401 });
     }
 

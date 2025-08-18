@@ -171,8 +171,8 @@ export default function PatientPortalPage() {
 
   if (!isLoaded) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="h-8 w-8 animate-spin rounded-full border-blue-600 border-b-2" />
       </div>
     );
   }
@@ -182,7 +182,7 @@ export default function PatientPortalPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Portal do Paciente</h1>
+          <h1 className="font-bold text-3xl tracking-tight">Portal do Paciente</h1>
           <p className="text-muted-foreground">
             Bem-vindo, {user?.firstName}! Gerencie sua saúde de forma digital.
           </p>
@@ -197,16 +197,16 @@ export default function PatientPortalPage() {
       </div>
 
       {/* Quick Actions */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card className="hover:shadow-md transition-shadow">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
+        <Card className="transition-shadow hover:shadow-md">
           <CardContent className="p-4">
             <div className="flex items-center space-x-3">
-              <div className="p-2 bg-blue-100 rounded-full">
+              <div className="rounded-full bg-blue-100 p-2">
                 <CalendarIcon className="h-5 w-5 text-blue-600" />
               </div>
               <div>
-                <p className="text-sm font-medium">Próxima Consulta</p>
-                <p className="text-xs text-muted-foreground">
+                <p className="font-medium text-sm">Próxima Consulta</p>
+                <p className="text-muted-foreground text-xs">
                   {nextAppointment
                     ? `${new Date(nextAppointment.date).toLocaleDateString("pt-BR")} às ${nextAppointment.time}`
                     : "Nenhuma agendada"}
@@ -216,43 +216,43 @@ export default function PatientPortalPage() {
           </CardContent>
         </Card>
 
-        <Card className="hover:shadow-md transition-shadow">
+        <Card className="transition-shadow hover:shadow-md">
           <CardContent className="p-4">
             <div className="flex items-center space-x-3">
-              <div className="p-2 bg-green-100 rounded-full">
+              <div className="rounded-full bg-green-100 p-2">
                 <FileText className="h-5 w-5 text-green-600" />
               </div>
               <div>
-                <p className="text-sm font-medium">Prontuários</p>
-                <p className="text-xs text-muted-foreground">{records.length} registro(s)</p>
+                <p className="font-medium text-sm">Prontuários</p>
+                <p className="text-muted-foreground text-xs">{records.length} registro(s)</p>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="hover:shadow-md transition-shadow">
+        <Card className="transition-shadow hover:shadow-md">
           <CardContent className="p-4">
             <div className="flex items-center space-x-3">
-              <div className="p-2 bg-purple-100 rounded-full">
+              <div className="rounded-full bg-purple-100 p-2">
                 <Activity className="h-5 w-5 text-purple-600" />
               </div>
               <div>
-                <p className="text-sm font-medium">Exames</p>
-                <p className="text-xs text-muted-foreground">{testResults.length} resultado(s)</p>
+                <p className="font-medium text-sm">Exames</p>
+                <p className="text-muted-foreground text-xs">{testResults.length} resultado(s)</p>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="hover:shadow-md transition-shadow">
+        <Card className="transition-shadow hover:shadow-md">
           <CardContent className="p-4">
             <div className="flex items-center space-x-3">
-              <div className="p-2 bg-orange-100 rounded-full">
+              <div className="rounded-full bg-orange-100 p-2">
                 <Pill className="h-5 w-5 text-orange-600" />
               </div>
               <div>
-                <p className="text-sm font-medium">Medicações</p>
-                <p className="text-xs text-muted-foreground">2 ativa(s)</p>
+                <p className="font-medium text-sm">Medicações</p>
+                <p className="text-muted-foreground text-xs">2 ativa(s)</p>
               </div>
             </div>
           </CardContent>
@@ -267,7 +267,7 @@ export default function PatientPortalPage() {
             <strong>Próxima consulta:</strong> {nextAppointment.doctor} ({nextAppointment.specialty}
             ) - {new Date(nextAppointment.date).toLocaleDateString("pt-BR")} às{" "}
             {nextAppointment.time}
-            <Button variant="link" className="ml-2 p-0 h-auto">
+            <Button variant="link" className="ml-2 h-auto p-0">
               Ver detalhes
             </Button>
           </AlertDescription>
@@ -294,25 +294,25 @@ export default function PatientPortalPage() {
                 {appointments.map((appointment) => (
                   <div
                     key={appointment.id}
-                    className="flex items-center justify-between p-4 border rounded-lg"
+                    className="flex items-center justify-between rounded-lg border p-4"
                   >
                     <div className="flex items-center space-x-4">
-                      <div className="p-2 bg-blue-100 rounded-full">
+                      <div className="rounded-full bg-blue-100 p-2">
                         <Stethoscope className="h-5 w-5 text-blue-600" />
                       </div>
                       <div>
                         <h4 className="font-medium">{appointment.doctor}</h4>
-                        <p className="text-sm text-muted-foreground">{appointment.specialty}</p>
-                        <div className="flex items-center space-x-4 mt-1">
-                          <div className="flex items-center text-xs text-muted-foreground">
+                        <p className="text-muted-foreground text-sm">{appointment.specialty}</p>
+                        <div className="mt-1 flex items-center space-x-4">
+                          <div className="flex items-center text-muted-foreground text-xs">
                             <CalendarIcon className="mr-1 h-3 w-3" />
                             {new Date(appointment.date).toLocaleDateString("pt-BR")}
                           </div>
-                          <div className="flex items-center text-xs text-muted-foreground">
+                          <div className="flex items-center text-muted-foreground text-xs">
                             <Clock className="mr-1 h-3 w-3" />
                             {appointment.time}
                           </div>
-                          <div className="flex items-center text-xs text-muted-foreground">
+                          <div className="flex items-center text-muted-foreground text-xs">
                             <MapPin className="mr-1 h-3 w-3" />
                             {appointment.location}
                           </div>
@@ -322,7 +322,7 @@ export default function PatientPortalPage() {
                     <div className="flex items-center space-x-2">
                       {getStatusBadge(appointment.status)}
                       <Button variant="outline" size="sm">
-                        <Eye className="h-4 w-4 mr-1" />
+                        <Eye className="mr-1 h-4 w-4" />
                         Detalhes
                       </Button>
                     </div>
@@ -343,29 +343,29 @@ export default function PatientPortalPage() {
             <CardContent>
               <div className="space-y-4">
                 {records.map((record) => (
-                  <div key={record.id} className="border rounded-lg p-4">
-                    <div className="flex items-center justify-between mb-3">
+                  <div key={record.id} className="rounded-lg border p-4">
+                    <div className="mb-3 flex items-center justify-between">
                       <div>
                         <h4 className="font-medium">{record.doctor}</h4>
-                        <p className="text-sm text-muted-foreground">
+                        <p className="text-muted-foreground text-sm">
                           {new Date(record.date).toLocaleDateString("pt-BR")}
                         </p>
                       </div>
                       <Button variant="outline" size="sm">
-                        <Download className="h-4 w-4 mr-1" />
+                        <Download className="mr-1 h-4 w-4" />
                         Baixar
                       </Button>
                     </div>
 
                     <div className="space-y-2">
                       <div>
-                        <span className="text-sm font-medium">Diagnóstico:</span>
+                        <span className="font-medium text-sm">Diagnóstico:</span>
                         <p className="text-sm">{record.diagnosis}</p>
                       </div>
 
                       <div>
-                        <span className="text-sm font-medium">Prescrição:</span>
-                        <ul className="text-sm list-disc list-inside">
+                        <span className="font-medium text-sm">Prescrição:</span>
+                        <ul className="list-inside list-disc text-sm">
                           {record.prescription.map((item, index) => (
                             <li key={index}>{item}</li>
                           ))}
@@ -374,18 +374,18 @@ export default function PatientPortalPage() {
 
                       {record.notes && (
                         <div>
-                          <span className="text-sm font-medium">Observações:</span>
+                          <span className="font-medium text-sm">Observações:</span>
                           <p className="text-sm">{record.notes}</p>
                         </div>
                       )}
 
                       {record.attachments && record.attachments.length > 0 && (
                         <div>
-                          <span className="text-sm font-medium">Anexos:</span>
-                          <div className="flex space-x-2 mt-1">
+                          <span className="font-medium text-sm">Anexos:</span>
+                          <div className="mt-1 flex space-x-2">
                             {record.attachments.map((attachment, index) => (
                               <Button key={index} variant="outline" size="sm">
-                                <FileText className="h-4 w-4 mr-1" />
+                                <FileText className="mr-1 h-4 w-4" />
                                 {attachment}
                               </Button>
                             ))}
@@ -429,7 +429,7 @@ export default function PatientPortalPage() {
                       <TableCell>{test.doctor}</TableCell>
                       <TableCell>
                         <Button variant="outline" size="sm">
-                          <Eye className="h-4 w-4 mr-1" />
+                          <Eye className="mr-1 h-4 w-4" />
                           Ver
                         </Button>
                       </TableCell>
@@ -450,39 +450,39 @@ export default function PatientPortalPage() {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                <div className="flex items-center justify-between p-4 border rounded-lg">
+                <div className="flex items-center justify-between rounded-lg border p-4">
                   <div className="flex items-center space-x-4">
-                    <div className="p-2 bg-green-100 rounded-full">
+                    <div className="rounded-full bg-green-100 p-2">
                       <Pill className="h-5 w-5 text-green-600" />
                     </div>
                     <div>
                       <h4 className="font-medium">Losartana 50mg</h4>
-                      <p className="text-sm text-muted-foreground">1 comprimido ao dia - Manhã</p>
-                      <p className="text-xs text-muted-foreground">Prescrito por Dr. João Santos</p>
+                      <p className="text-muted-foreground text-sm">1 comprimido ao dia - Manhã</p>
+                      <p className="text-muted-foreground text-xs">Prescrito por Dr. João Santos</p>
                     </div>
                   </div>
                   <div className="text-right">
                     <Badge className="bg-green-100 text-green-800">Ativo</Badge>
-                    <p className="text-xs text-muted-foreground mt-1">Próxima dose: 08:00</p>
+                    <p className="mt-1 text-muted-foreground text-xs">Próxima dose: 08:00</p>
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between p-4 border rounded-lg">
+                <div className="flex items-center justify-between rounded-lg border p-4">
                   <div className="flex items-center space-x-4">
-                    <div className="p-2 bg-blue-100 rounded-full">
+                    <div className="rounded-full bg-blue-100 p-2">
                       <Pill className="h-5 w-5 text-blue-600" />
                     </div>
                     <div>
                       <h4 className="font-medium">Complexo B</h4>
-                      <p className="text-sm text-muted-foreground">
+                      <p className="text-muted-foreground text-sm">
                         1 cápsula ao dia - Após café da manhã
                       </p>
-                      <p className="text-xs text-muted-foreground">Prescrição própria</p>
+                      <p className="text-muted-foreground text-xs">Prescrição própria</p>
                     </div>
                   </div>
                   <div className="text-right">
                     <Badge className="bg-green-100 text-green-800">Ativo</Badge>
-                    <p className="text-xs text-muted-foreground mt-1">Próxima dose: 09:00</p>
+                    <p className="mt-1 text-muted-foreground text-xs">Próxima dose: 09:00</p>
                   </div>
                 </div>
               </div>

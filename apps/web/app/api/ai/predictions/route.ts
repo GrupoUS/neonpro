@@ -152,7 +152,7 @@ async function handleTreatmentRecommendation(body: unknown) {
           },
         },
       });
-    } else {
+    }
       return NextResponse.json(
         {
           success: false,
@@ -160,7 +160,6 @@ async function handleTreatmentRecommendation(body: unknown) {
         },
         { status: 400 },
       );
-    }
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
@@ -204,7 +203,7 @@ async function handleBotoxOptimization(body: unknown) {
           },
         },
       });
-    } else {
+    }
       return NextResponse.json(
         {
           success: false,
@@ -212,7 +211,6 @@ async function handleBotoxOptimization(body: unknown) {
         },
         { status: 400 },
       );
-    }
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
@@ -269,7 +267,7 @@ async function handleRiskAssessment(body: unknown) {
           },
         },
       });
-    } else {
+    }
       return NextResponse.json(
         {
           success: false,
@@ -277,7 +275,6 @@ async function handleRiskAssessment(body: unknown) {
         },
         { status: 400 },
       );
-    }
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(

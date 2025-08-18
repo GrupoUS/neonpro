@@ -39,14 +39,14 @@ const MetricCard: React.FC<MetricCardProps> = ({
     <div className={`rounded-lg border p-6 ${colorClasses[color]}`}>
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-sm font-medium opacity-80">{title}</p>
-          <p className="text-2xl font-bold">
+          <p className="font-medium text-sm opacity-80">{title}</p>
+          <p className="font-bold text-2xl">
             {typeof value === "number" ? value.toFixed(1) : value}
             {suffix}
           </p>
           {trend !== undefined && (
             <div
-              className={`flex items-center mt-2 text-sm ${
+              className={`mt-2 flex items-center text-sm ${
                 trend > 0 ? "text-green-600" : trend < 0 ? "text-red-600" : "text-gray-600"
               }`}
             >
@@ -159,14 +159,14 @@ export const SchedulingAnalyticsDashboard: React.FC<SchedulingAnalyticsDashboard
 
   if (isLoading) {
     return (
-      <div className="bg-white rounded-lg shadow-lg p-6 animate-pulse">
-        <div className="h-8 bg-gray-200 rounded mb-6"></div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+      <div className="animate-pulse rounded-lg bg-white p-6 shadow-lg">
+        <div className="mb-6 h-8 rounded bg-gray-200" />
+        <div className="mb-6 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
           {[...Array(4)].map((_, i) => (
-            <div key={i} className="h-32 bg-gray-200 rounded-lg"></div>
+            <div key={i} className="h-32 rounded-lg bg-gray-200" />
           ))}
         </div>
-        <div className="h-64 bg-gray-200 rounded-lg"></div>
+        <div className="h-64 rounded-lg bg-gray-200" />
       </div>
     );
   }
@@ -174,17 +174,17 @@ export const SchedulingAnalyticsDashboard: React.FC<SchedulingAnalyticsDashboard
   if (!analytics) return null;
 
   return (
-    <div className="bg-white rounded-lg shadow-lg p-6 max-w-7xl mx-auto">
+    <div className="mx-auto max-w-7xl rounded-lg bg-white p-6 shadow-lg">
       {/* Header */}
       <div className="mb-6 border-b pb-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-2xl font-bold text-gray-900">Scheduling Analytics Dashboard</h2>
+          <h2 className="font-bold text-2xl text-gray-900">Scheduling Analytics Dashboard</h2>
           <div className="flex items-center space-x-4">
             {/* Time Range Selector */}
             <select
               value={selectedView}
               onChange={(e) => setSelectedView(e.target.value as any)}
-              className="border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="overview">Overview</option>
               <option value="efficiency">Efficiency</option>
@@ -202,7 +202,7 @@ export const SchedulingAnalyticsDashboard: React.FC<SchedulingAnalyticsDashboard
                     end: timeRange.end,
                   })
                 }
-                className="border border-gray-300 rounded px-2 py-1"
+                className="rounded border border-gray-300 px-2 py-1"
               />
               <span>to</span>
               <input
@@ -214,7 +214,7 @@ export const SchedulingAnalyticsDashboard: React.FC<SchedulingAnalyticsDashboard
                     end: new Date(e.target.value),
                   })
                 }
-                className="border border-gray-300 rounded px-2 py-1"
+                className="rounded border border-gray-300 px-2 py-1"
               />
             </div>
           </div>
@@ -222,7 +222,7 @@ export const SchedulingAnalyticsDashboard: React.FC<SchedulingAnalyticsDashboard
       </div>
 
       {/* Key Performance Indicators */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
         <MetricCard
           title="Scheduling Time Reduction"
           value={(1 - analytics.averageBookingTime / 60) * 100}
@@ -261,7 +261,7 @@ export const SchedulingAnalyticsDashboard: React.FC<SchedulingAnalyticsDashboard
       </div>
 
       {/* Secondary Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-3">
         <MetricCard
           title="Average Booking Time"
           value={analytics.averageBookingTime}
@@ -292,23 +292,23 @@ export const SchedulingAnalyticsDashboard: React.FC<SchedulingAnalyticsDashboard
 
       {/* Detailed Analytics Based on Selected View */}
       {selectedView === "overview" && (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
           {/* Utilization Chart */}
-          <div className="bg-gray-50 rounded-lg p-6">
-            <h3 className="text-lg font-semibold mb-4">Hourly Utilization</h3>
+          <div className="rounded-lg bg-gray-50 p-6">
+            <h3 className="mb-4 font-semibold text-lg">Hourly Utilization</h3>
             <div className="space-y-3">
               {chartData?.utilizationByHour.map((data, index) => (
                 <div key={index} className="flex items-center justify-between">
-                  <span className="text-sm font-medium w-16">{data.hour}</span>
-                  <div className="flex-1 mx-4">
-                    <div className="bg-gray-200 rounded-full h-3">
+                  <span className="w-16 font-medium text-sm">{data.hour}</span>
+                  <div className="mx-4 flex-1">
+                    <div className="h-3 rounded-full bg-gray-200">
                       <div
-                        className="bg-blue-500 h-3 rounded-full transition-all duration-300"
+                        className="h-3 rounded-full bg-blue-500 transition-all duration-300"
                         style={{ width: `${data.utilization}%` }}
-                      ></div>
+                      />
                     </div>
                   </div>
-                  <span className="text-sm text-gray-600 w-12 text-right">
+                  <span className="w-12 text-right text-gray-600 text-sm">
                     {data.utilization.toFixed(0)}%
                   </span>
                 </div>
@@ -317,21 +317,21 @@ export const SchedulingAnalyticsDashboard: React.FC<SchedulingAnalyticsDashboard
           </div>
 
           {/* Revenue by Time Slot */}
-          <div className="bg-gray-50 rounded-lg p-6">
-            <h3 className="text-lg font-semibold mb-4">Revenue per Hour</h3>
+          <div className="rounded-lg bg-gray-50 p-6">
+            <h3 className="mb-4 font-semibold text-lg">Revenue per Hour</h3>
             <div className="space-y-3">
               {chartData?.utilizationByHour.map((data, index) => (
                 <div key={index} className="flex items-center justify-between">
-                  <span className="text-sm font-medium w-16">{data.hour}</span>
-                  <div className="flex-1 mx-4">
-                    <div className="bg-gray-200 rounded-full h-3">
+                  <span className="w-16 font-medium text-sm">{data.hour}</span>
+                  <div className="mx-4 flex-1">
+                    <div className="h-3 rounded-full bg-gray-200">
                       <div
-                        className="bg-green-500 h-3 rounded-full transition-all duration-300"
+                        className="h-3 rounded-full bg-green-500 transition-all duration-300"
                         style={{ width: `${(data.revenue / 500) * 100}%` }}
-                      ></div>
+                      />
                     </div>
                   </div>
-                  <span className="text-sm text-gray-600 w-16 text-right">${data.revenue}</span>
+                  <span className="w-16 text-right text-gray-600 text-sm">${data.revenue}</span>
                 </div>
               ))}
             </div>
@@ -342,33 +342,33 @@ export const SchedulingAnalyticsDashboard: React.FC<SchedulingAnalyticsDashboard
       {selectedView === "predictions" && (
         <div className="space-y-6">
           {/* AI Predictions Section */}
-          <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg p-6">
-            <h3 className="text-lg font-semibold mb-4 text-gray-900">
+          <div className="rounded-lg bg-gradient-to-r from-blue-50 to-purple-50 p-6">
+            <h3 className="mb-4 font-semibold text-gray-900 text-lg">
               🤖 AI Predictions & Recommendations
             </h3>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <div className="bg-white rounded-lg p-4">
-                <h4 className="font-medium text-gray-800 mb-2">Next Week Forecast</h4>
-                <div className="text-2xl font-bold text-blue-600 mb-1">
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+              <div className="rounded-lg bg-white p-4">
+                <h4 className="mb-2 font-medium text-gray-800">Next Week Forecast</h4>
+                <div className="mb-1 font-bold text-2xl text-blue-600">
                   {aiPredictions.nextWeekDemand}
                 </div>
-                <div className="text-sm text-gray-600">Predicted appointments</div>
+                <div className="text-gray-600 text-sm">Predicted appointments</div>
               </div>
 
-              <div className="bg-white rounded-lg p-4">
-                <h4 className="font-medium text-gray-800 mb-2">Peak Demand Days</h4>
+              <div className="rounded-lg bg-white p-4">
+                <h4 className="mb-2 font-medium text-gray-800">Peak Demand Days</h4>
                 <div className="space-y-1">
                   {aiPredictions.peakDays.map((day) => (
-                    <div key={day} className="text-sm text-purple-700 font-medium">
+                    <div key={day} className="font-medium text-purple-700 text-sm">
                       • {day}
                     </div>
                   ))}
                 </div>
               </div>
 
-              <div className="bg-white rounded-lg p-4">
-                <h4 className="font-medium text-gray-800 mb-2">Optimal Staffing</h4>
+              <div className="rounded-lg bg-white p-4">
+                <h4 className="mb-2 font-medium text-gray-800">Optimal Staffing</h4>
                 <div className="space-y-1 text-sm">
                   <div>Morning: {aiPredictions.optimalStaffing.morning} staff</div>
                   <div>Afternoon: {aiPredictions.optimalStaffing.afternoon} staff</div>
@@ -378,10 +378,10 @@ export const SchedulingAnalyticsDashboard: React.FC<SchedulingAnalyticsDashboard
             </div>
 
             <div className="mt-6">
-              <h4 className="font-medium text-gray-800 mb-3">Recommended Actions</h4>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <h4 className="mb-3 font-medium text-gray-800">Recommended Actions</h4>
+              <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
                 {aiPredictions.recommendedActions.map((action, index) => (
-                  <div key={index} className="bg-white rounded-lg p-3 text-sm">
+                  <div key={index} className="rounded-lg bg-white p-3 text-sm">
                     {action}
                   </div>
                 ))}
@@ -392,25 +392,25 @@ export const SchedulingAnalyticsDashboard: React.FC<SchedulingAnalyticsDashboard
       )}
 
       {/* Trends Comparison */}
-      <div className="mt-8 bg-gray-50 rounded-lg p-6">
-        <h3 className="text-lg font-semibold mb-4">Performance Trends</h3>
+      <div className="mt-8 rounded-lg bg-gray-50 p-6">
+        <h3 className="mb-4 font-semibold text-lg">Performance Trends</h3>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-gray-200">
-                <th className="text-left py-2">Period</th>
-                <th className="text-center py-2">Booking Time (s)</th>
-                <th className="text-center py-2">No-Show Rate (%)</th>
-                <th className="text-center py-2">Satisfaction</th>
+              <tr className="border-gray-200 border-b">
+                <th className="py-2 text-left">Period</th>
+                <th className="py-2 text-center">Booking Time (s)</th>
+                <th className="py-2 text-center">No-Show Rate (%)</th>
+                <th className="py-2 text-center">Satisfaction</th>
               </tr>
             </thead>
             <tbody>
               {chartData?.trendsData.map((trend, index) => (
-                <tr key={index} className="border-b border-gray-100">
+                <tr key={index} className="border-gray-100 border-b">
                   <td className="py-2 font-medium">{trend.period}</td>
-                  <td className="text-center py-2">
+                  <td className="py-2 text-center">
                     <span
-                      className={`px-2 py-1 rounded text-xs ${
+                      className={`rounded px-2 py-1 text-xs ${
                         trend.bookingTime < 30
                           ? "bg-green-100 text-green-800"
                           : "bg-yellow-100 text-yellow-800"
@@ -419,9 +419,9 @@ export const SchedulingAnalyticsDashboard: React.FC<SchedulingAnalyticsDashboard
                       {trend.bookingTime}s
                     </span>
                   </td>
-                  <td className="text-center py-2">
+                  <td className="py-2 text-center">
                     <span
-                      className={`px-2 py-1 rounded text-xs ${
+                      className={`rounded px-2 py-1 text-xs ${
                         trend.noShowRate < 10
                           ? "bg-green-100 text-green-800"
                           : "bg-red-100 text-red-800"
@@ -430,8 +430,8 @@ export const SchedulingAnalyticsDashboard: React.FC<SchedulingAnalyticsDashboard
                       {trend.noShowRate}%
                     </span>
                   </td>
-                  <td className="text-center py-2">
-                    <span className="px-2 py-1 rounded text-xs bg-blue-100 text-blue-800">
+                  <td className="py-2 text-center">
+                    <span className="rounded bg-blue-100 px-2 py-1 text-blue-800 text-xs">
                       {trend.satisfaction}/5
                     </span>
                   </td>
@@ -443,27 +443,27 @@ export const SchedulingAnalyticsDashboard: React.FC<SchedulingAnalyticsDashboard
       </div>
 
       {/* Success Metrics Badge */}
-      <div className="mt-6 bg-green-50 border-2 border-green-200 rounded-lg p-4">
+      <div className="mt-6 rounded-lg border-2 border-green-200 bg-green-50 p-4">
         <div className="flex items-center justify-center space-x-8 text-center">
           <div>
-            <div className="text-2xl font-bold text-green-700">60%</div>
-            <div className="text-sm text-green-600">Scheduling Time Reduction</div>
-            <div className="text-xs text-green-500">TARGET ACHIEVED ✓</div>
+            <div className="font-bold text-2xl text-green-700">60%</div>
+            <div className="text-green-600 text-sm">Scheduling Time Reduction</div>
+            <div className="text-green-500 text-xs">TARGET ACHIEVED ✓</div>
           </div>
           <div>
-            <div className="text-2xl font-bold text-green-700">25%</div>
-            <div className="text-sm text-green-600">No-Show Reduction</div>
-            <div className="text-xs text-green-500">TARGET ACHIEVED ✓</div>
+            <div className="font-bold text-2xl text-green-700">25%</div>
+            <div className="text-green-600 text-sm">No-Show Reduction</div>
+            <div className="text-green-500 text-xs">TARGET ACHIEVED ✓</div>
           </div>
           <div>
-            <div className="text-2xl font-bold text-green-700">95%</div>
-            <div className="text-sm text-green-600">Scheduling Efficiency</div>
-            <div className="text-xs text-green-500">TARGET ACHIEVED ✓</div>
+            <div className="font-bold text-2xl text-green-700">95%</div>
+            <div className="text-green-600 text-sm">Scheduling Efficiency</div>
+            <div className="text-green-500 text-xs">TARGET ACHIEVED ✓</div>
           </div>
           <div>
-            <div className="text-2xl font-bold text-green-700">&lt;1s</div>
-            <div className="text-sm text-green-600">Decision Time</div>
-            <div className="text-xs text-green-500">TARGET ACHIEVED ✓</div>
+            <div className="font-bold text-2xl text-green-700">&lt;1s</div>
+            <div className="text-green-600 text-sm">Decision Time</div>
+            <div className="text-green-500 text-xs">TARGET ACHIEVED ✓</div>
           </div>
         </div>
       </div>

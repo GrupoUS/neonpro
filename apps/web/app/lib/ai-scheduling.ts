@@ -227,7 +227,7 @@ export class AISchedulingEngine {
       const patient = patients.find(p => p.id === request.patientId);
       const treatment = treatments.find(t => t.id === request.treatmentTypeId);
 
-      if (!staffMember || !patient || !treatment) {
+      if (!((staffMember && patient ) && treatment)) {
         return { ...slot, optimizationScore: 0 };
       }
 

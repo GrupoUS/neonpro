@@ -15,15 +15,16 @@ import {
   pbkdf2Sync,
   randomBytes,
   timingSafeEqual,
-} from "node:crypto";
+} from 'node:crypto';
 
 // Encryption configuration
-const ALGORITHM = "aes-256-gcm";
+const ALGORITHM = 'aes-256-gcm';
 const KEY_LENGTH = 32; // 256 bits
 const IV_LENGTH = 12; // 96 bits for GCM
 const _TAG_LENGTH = 16; // 128 bits
 const SALT_LENGTH = 32; // 256 bits
 const PBKDF2_ITERATIONS = 100_000; // OWASP recommendation
+const HASH_OUTPUT_LENGTH = 64; // 64 bytes = 512 bits for SHA-512
 
 /**
  * Encryption result structure
@@ -48,13 +49,16 @@ export type DecryptionOptions = {
 /**
  * Healthcare data classification for encryption
  */
-export enum DataClassification {
-  PUBLIC = "PUBLIC", // No encryption needed
-  INTERNAL = "INTERNAL", // Basic encryption
-  CONFIDENTIAL = "CONFIDENTIAL", // Strong encryption
-  RESTRICTED = "RESTRICTED", // Maximum encryption + audit
-  MEDICAL = "MEDICAL", // Healthcare-specific encryption
-}
+export const DataClassification = {
+  PUBLIC: 'PUBLIC',
+  INTERNAL: 'INTERNAL',
+  CONFIDENTIAL: 'CONFIDENTIAL',
+  RESTRICTED: 'RESTRICTED',
+  MEDICAL: 'MEDICAL',
+} as const;
+
+export type DataClassification =
+  (typeof DataClassification)[keyof typeof DataClassification];
 
 /**
  * Healthcare-grade encryption service
@@ -74,10 +78,10 @@ export class HealthcareEncryption {
   /**
    * Encrypt sensitive data with AES-256-GCM
    */
-  async encrypt(
+  encrypt(
     plaintext: string,
-    classification: DataClassification = DataClassification.CONFIDENTIAL,
-  ): Promise<EncryptionResult> {
+    classification: DataClassification = DataClassification.CONFIDENTIAL
+  ): EncryptionResult {
     try {
       // Generate random IV and salt
       const iv = randomBytes(IV_LENGTH);
@@ -90,8 +94,8 @@ export class HealthcareEncryption {
       const cipher = createCipheriv(ALGORITHM, key, iv);
 
       // Encrypt data
-      let encrypted = cipher.update(plaintext, "utf8", "base64");
-      encrypted += cipher.final("base64");
+      let encrypted = cipher.update(plaintext, 'utf8', 'base64');
+      encrypted += cipher.final('base64');
 
       // Get authentication tag
       const tag = cipher.getAuthTag();
@@ -101,19 +105,19 @@ export class HealthcareEncryption {
         classification === DataClassification.MEDICAL ||
         classification === DataClassification.RESTRICTED
       ) {
-        await this.auditEncryption("ENCRYPT", classification, plaintext.length);
+        this.auditEncryption('ENCRYPT', classification, plaintext.length);
       }
 
       return {
         encrypted,
-        iv: iv.toString("base64"),
-        tag: tag.toString("base64"),
-        salt: salt.toString("base64"),
+        iv: iv.toString('base64'),
+        tag: tag.toString('base64'),
+        salt: salt.toString('base64'),
       };
     } catch (error) {
-      await this.auditEncryption("ENCRYPT_FAILED", classification, 0, error);
+      this.auditEncryption('ENCRYPT_FAILED', classification, 0, error);
       throw new Error(
-        `Encryption failed: ${error instanceof Error ? error.message : "Unknown error"}`,
+        `Encryption failed: ${error instanceof Error ? error.message : 'Unknown error'}`
       );
     }
   }
@@ -121,15 +125,17 @@ export class HealthcareEncryption {
   /**
    * Decrypt sensitive data with AES-256-GCM
    */
-  async decrypt(
+  decrypt(
     options: DecryptionOptions,
-    classification: DataClassification = DataClassification.CONFIDENTIAL,
-  ): Promise<string> {
+    classification: DataClassification = DataClassification.CONFIDENTIAL
+  ): string {
     try {
       // Parse components
-      const iv = Buffer.from(options.iv, "base64");
-      const tag = Buffer.from(options.tag, "base64");
-      const salt = options.salt ? Buffer.from(options.salt, "base64") : Buffer.alloc(0);
+      const iv = Buffer.from(options.iv, 'base64');
+      const tag = Buffer.from(options.tag, 'base64');
+      const salt = options.salt
+        ? Buffer.from(options.salt, 'base64')
+        : Buffer.alloc(0);
 
       // Derive decryption key
       const key = this.deriveEncryptionKey(classification, salt);
@@ -139,22 +145,22 @@ export class HealthcareEncryption {
       decipher.setAuthTag(tag);
 
       // Decrypt data
-      let decrypted = decipher.update(options.encrypted, "base64", "utf8");
-      decrypted += decipher.final("utf8");
+      let decrypted = decipher.update(options.encrypted, 'base64', 'utf8');
+      decrypted += decipher.final('utf8');
 
       // Create audit log for sensitive data decryption
       if (
         classification === DataClassification.MEDICAL ||
         classification === DataClassification.RESTRICTED
       ) {
-        await this.auditEncryption("DECRYPT", classification, decrypted.length);
+        this.auditEncryption('DECRYPT', classification, decrypted.length);
       }
 
       return decrypted;
     } catch (error) {
-      await this.auditEncryption("DECRYPT_FAILED", classification, 0, error);
+      this.auditEncryption('DECRYPT_FAILED', classification, 0, error);
       throw new Error(
-        `Decryption failed: ${error instanceof Error ? error.message : "Unknown error"}`,
+        `Decryption failed: ${error instanceof Error ? error.message : 'Unknown error'}`
       );
     }
   }
@@ -164,17 +170,23 @@ export class HealthcareEncryption {
    */
   generateHash(
     data: string,
-    salt?: Buffer,
+    salt?: Buffer
   ): {
     hash: string;
     salt: string;
   } {
     const actualSalt = salt || randomBytes(SALT_LENGTH);
-    const hash = pbkdf2Sync(data, actualSalt, PBKDF2_ITERATIONS, 64, "sha512");
+    const hash = pbkdf2Sync(
+      data,
+      actualSalt,
+      PBKDF2_ITERATIONS,
+      HASH_OUTPUT_LENGTH,
+      'sha512'
+    );
 
     return {
-      hash: hash.toString("base64"),
-      salt: actualSalt.toString("base64"),
+      hash: hash.toString('base64'),
+      salt: actualSalt.toString('base64'),
     };
   }
 
@@ -182,9 +194,15 @@ export class HealthcareEncryption {
    * Verify data integrity using secure hash
    */
   verifyHash(data: string, hash: string, salt: string): boolean {
-    const saltBuffer = Buffer.from(salt, "base64");
-    const expectedHash = pbkdf2Sync(data, saltBuffer, PBKDF2_ITERATIONS, 64, "sha512");
-    const actualHash = Buffer.from(hash, "base64");
+    const saltBuffer = Buffer.from(salt, 'base64');
+    const expectedHash = pbkdf2Sync(
+      data,
+      saltBuffer,
+      PBKDF2_ITERATIONS,
+      HASH_OUTPUT_LENGTH,
+      'sha512'
+    );
+    const actualHash = Buffer.from(hash, 'base64');
 
     return timingSafeEqual(expectedHash, actualHash);
   }
@@ -193,30 +211,45 @@ export class HealthcareEncryption {
 
   private deriveKeyFromEnvironment(): Buffer {
     // In production, this would use a proper key management system (HSM, AWS KMS, etc.)
-    const envKey = process.env.ENCRYPTION_MASTER_KEY || "default-dev-key-change-in-production";
+    const envKey =
+      process.env.ENCRYPTION_MASTER_KEY ||
+      'default-dev-key-change-in-production';
 
     // Derive key from environment variable
-    const salt = Buffer.from("neonpro-healthcare-encryption", "utf8");
-    return pbkdf2Sync(envKey, salt, PBKDF2_ITERATIONS, KEY_LENGTH, "sha256");
+    const salt = Buffer.from('neonpro-healthcare-encryption', 'utf8');
+    return pbkdf2Sync(envKey, salt, PBKDF2_ITERATIONS, KEY_LENGTH, 'sha256');
   }
 
-  private deriveEncryptionKey(classification: DataClassification, salt: Buffer): Buffer {
+  private deriveEncryptionKey(
+    classification: DataClassification,
+    salt: Buffer
+  ): Buffer {
     // Use different key derivation for different classifications
     const context = `neonpro-${classification.toLowerCase()}`;
-    const contextBuffer = Buffer.from(context, "utf8");
+    const contextBuffer = Buffer.from(context, 'utf8');
 
     // Combine master key with classification context and salt
-    const derivationInput = Buffer.concat([this.masterKey, contextBuffer, salt]);
+    const derivationInput = Buffer.concat([
+      this.masterKey,
+      contextBuffer,
+      salt,
+    ]);
 
-    return pbkdf2Sync(derivationInput, salt, PBKDF2_ITERATIONS, KEY_LENGTH, "sha256");
+    return pbkdf2Sync(
+      derivationInput,
+      salt,
+      PBKDF2_ITERATIONS,
+      KEY_LENGTH,
+      'sha256'
+    );
   }
 
-  private async auditEncryption(
+  private auditEncryption(
     action: string,
     classification: DataClassification,
     dataSize: number,
-    error?: unknown,
-  ): Promise<void> {
+    error?: unknown
+  ): void {
     // Store in audit log - would use actual audit service
     const _auditData = {
       action: `ENCRYPTION_${action}`,
@@ -231,7 +264,9 @@ export class HealthcareEncryption {
 /**
  * Factory function to create encryption service
  */
-export function createHealthcareEncryption(masterKey?: Buffer): HealthcareEncryption {
+export function createHealthcareEncryption(
+  masterKey?: Buffer
+): HealthcareEncryption {
   return new HealthcareEncryption(masterKey);
 }
 
@@ -242,7 +277,7 @@ export const encryptionUtils = {
   /**
    * Encrypt CPF with maximum security
    */
-  async encryptCPF(cpf: string): Promise<EncryptionResult> {
+  encryptCPF(cpf: string): EncryptionResult {
     const encryption = createHealthcareEncryption();
     return encryption.encrypt(cpf, DataClassification.RESTRICTED);
   },
@@ -250,7 +285,7 @@ export const encryptionUtils = {
   /**
    * Encrypt medical record number
    */
-  async encryptMedicalRecordNumber(recordNumber: string): Promise<EncryptionResult> {
+  encryptMedicalRecordNumber(recordNumber: string): EncryptionResult {
     const encryption = createHealthcareEncryption();
     return encryption.encrypt(recordNumber, DataClassification.MEDICAL);
   },
@@ -258,7 +293,7 @@ export const encryptionUtils = {
   /**
    * Encrypt sensitive medical notes
    */
-  async encryptMedicalNotes(notes: string): Promise<EncryptionResult> {
+  encryptMedicalNotes(notes: string): EncryptionResult {
     const encryption = createHealthcareEncryption();
     return encryption.encrypt(notes, DataClassification.MEDICAL);
   },
@@ -267,8 +302,9 @@ export const encryptionUtils = {
    * Generate secure random password for key derivation
    */
   generateSecurePassword(length = 32): string {
-    const charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*";
-    let password = "";
+    const charset =
+      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*';
+    let password = '';
 
     for (let i = 0; i < length; i++) {
       const randomIndex = randomBytes(1)[0] % charset.length;

@@ -88,8 +88,8 @@ export default function ProfilePage() {
 
   if (!isLoaded) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="h-8 w-8 animate-spin rounded-full border-blue-600 border-b-2" />
       </div>
     );
   }
@@ -99,7 +99,7 @@ export default function ProfilePage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Perfil</h1>
+          <h1 className="font-bold text-3xl tracking-tight">Perfil</h1>
           <p className="text-muted-foreground">Gerencie suas informações pessoais e preferências</p>
         </div>
         <Button
@@ -146,10 +146,10 @@ export default function ProfilePage() {
                   </AvatarFallback>
                 </Avatar>
                 <div>
-                  <h3 className="text-lg font-medium">
+                  <h3 className="font-medium text-lg">
                     {user?.firstName} {user?.lastName}
                   </h3>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-muted-foreground text-sm">
                     {user?.emailAddresses?.[0]?.emailAddress}
                   </p>
                   <Button variant="outline" size="sm" className="mt-2">
@@ -162,7 +162,7 @@ export default function ProfilePage() {
               <Separator />
 
               {/* Form Fields */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <div className="space-y-2">
                   <Label htmlFor="firstName">Nome</Label>
                   <Input
@@ -194,7 +194,7 @@ export default function ProfilePage() {
                     disabled
                     className="bg-muted"
                   />
-                  <p className="text-xs text-muted-foreground">
+                  <p className="text-muted-foreground text-xs">
                     Para alterar o email, use as configurações de conta
                   </p>
                 </div>
@@ -221,7 +221,7 @@ export default function ProfilePage() {
                 />
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
                 <div className="space-y-2">
                   <Label htmlFor="city">Cidade</Label>
                   <Input
@@ -264,7 +264,7 @@ export default function ProfilePage() {
               <CardDescription>Dados relacionados à sua atividade profissional</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <div className="space-y-2">
                   <Label htmlFor="specialty">Especialidade</Label>
                   <Select value={profileData.specialty} disabled={!isEditing}>
@@ -327,7 +327,7 @@ export default function ProfilePage() {
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
                   <Label>Notificações por Email</Label>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-muted-foreground text-sm">
                     Receber notificações importantes por email
                   </p>
                 </div>
@@ -342,7 +342,7 @@ export default function ProfilePage() {
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
                   <Label>Notificações por SMS</Label>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-muted-foreground text-sm">
                     Receber notificações urgentes por SMS
                   </p>
                 </div>
@@ -355,7 +355,7 @@ export default function ProfilePage() {
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
                   <Label>Emails de Marketing</Label>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-muted-foreground text-sm">
                     Receber novidades e atualizações do produto
                   </p>
                 </div>
@@ -376,7 +376,7 @@ export default function ProfilePage() {
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
                   <Label>Modo Escuro</Label>
-                  <p className="text-sm text-muted-foreground">Usar tema escuro na interface</p>
+                  <p className="text-muted-foreground text-sm">Usar tema escuro na interface</p>
                 </div>
                 <Switch
                   checked={preferences.darkMode}
@@ -411,7 +411,7 @@ export default function ProfilePage() {
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
                   <Label>Autenticação de Dois Fatores</Label>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-muted-foreground text-sm">
                     Adicione uma camada extra de segurança
                   </p>
                 </div>
@@ -434,7 +434,7 @@ export default function ProfilePage() {
                 <div className="flex items-center justify-between">
                   <div>
                     <Label>Senha</Label>
-                    <p className="text-sm text-muted-foreground">Última alteração: há 2 meses</p>
+                    <p className="text-muted-foreground text-sm">Última alteração: há 2 meses</p>
                   </div>
                   <Button variant="outline">
                     <Lock className="mr-2 h-4 w-4" />
@@ -445,7 +445,7 @@ export default function ProfilePage() {
                 <div className="flex items-center justify-between">
                   <div>
                     <Label>Sessões Ativas</Label>
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-muted-foreground text-sm">
                       Gerencie dispositivos conectados
                     </p>
                   </div>

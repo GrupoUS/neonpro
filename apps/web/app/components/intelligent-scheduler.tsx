@@ -79,7 +79,7 @@ export const IntelligentScheduler: React.FC<IntelligentSchedulerProps> = ({
 
   // Real-time slot loading with AI pre-filtering
   const loadAvailableSlots = useCallback(async () => {
-    if (!selectedTreatment || !selectedPatient) return;
+    if (!(selectedTreatment && selectedPatient)) return;
 
     setIsScheduling(true);
     const startTime = performance.now();
@@ -127,7 +127,7 @@ export const IntelligentScheduler: React.FC<IntelligentSchedulerProps> = ({
   // AI-powered appointment scheduling
   const scheduleAppointment = useCallback(
     async (slot: AppointmentSlot) => {
-      if (!selectedTreatment || !selectedPatient) return;
+      if (!(selectedTreatment && selectedPatient)) return;
 
       setIsScheduling(true);
       const startTime = performance.now();
@@ -229,37 +229,37 @@ export const IntelligentScheduler: React.FC<IntelligentSchedulerProps> = ({
     return slots;
   }
   return (
-    <div className="intelligent-scheduler bg-white rounded-lg shadow-lg p-6 max-w-6xl mx-auto">
+    <div className="intelligent-scheduler mx-auto max-w-6xl rounded-lg bg-white p-6 shadow-lg">
       {/* Header with AI Status */}
       <div className="mb-6 border-b pb-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-2xl font-bold text-gray-900">AI-Powered Scheduling</h2>
+          <h2 className="font-bold text-2xl text-gray-900">AI-Powered Scheduling</h2>
           <div className="flex items-center space-x-4">
-            <div className="flex items-center text-sm text-gray-600">
+            <div className="flex items-center text-gray-600 text-sm">
               <div
-                className={`w-2 h-2 rounded-full mr-2 ${isScheduling ? "bg-yellow-400 animate-pulse" : "bg-green-400"}`}
+                className={`mr-2 h-2 w-2 rounded-full ${isScheduling ? "animate-pulse bg-yellow-400" : "bg-green-400"}`}
               />
               {isScheduling ? "Processing..." : "Ready"}
             </div>
             {processingTime > 0 && (
-              <div className="text-sm text-gray-500">Last query: {processingTime.toFixed(0)}ms</div>
+              <div className="text-gray-500 text-sm">Last query: {processingTime.toFixed(0)}ms</div>
             )}
           </div>
         </div>
       </div>
 
       {/* Scheduling Form */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+      <div className="mb-6 grid grid-cols-1 gap-6 lg:grid-cols-3">
         {/* Patient Selection */}
         <div className="space-y-4">
           <h3 className="font-semibold text-gray-900">Patient & Treatment</h3>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Patient</label>
+            <label className="mb-2 block font-medium text-gray-700 text-sm">Patient</label>
             <select
               value={selectedPatient}
               onChange={(e) => setSelectedPatient(e.target.value)}
-              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
               disabled={!!patientId}
             >
               <option value="">Select Patient</option>
@@ -272,11 +272,11 @@ export const IntelligentScheduler: React.FC<IntelligentSchedulerProps> = ({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Treatment Type</label>
+            <label className="mb-2 block font-medium text-gray-700 text-sm">Treatment Type</label>
             <select
               value={selectedTreatment}
               onChange={(e) => setSelectedTreatment(e.target.value)}
-              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="">Select Treatment</option>
               {treatmentTypes.map((treatment) => (
@@ -293,21 +293,21 @@ export const IntelligentScheduler: React.FC<IntelligentSchedulerProps> = ({
           <h3 className="font-semibold text-gray-900">Preferences</h3>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Preferred Date</label>
+            <label className="mb-2 block font-medium text-gray-700 text-sm">Preferred Date</label>
             <input
               type="date"
               value={preferredDate.toISOString().split("T")[0]}
               onChange={(e) => setPreferredDate(new Date(e.target.value))}
-              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Urgency Level</label>
+            <label className="mb-2 block font-medium text-gray-700 text-sm">Urgency Level</label>
             <select
               value={urgencyLevel}
               onChange={(e) => setUrgencyLevel(e.target.value as any)}
-              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="low">Low Priority</option>
               <option value="medium">Medium Priority</option>
@@ -317,7 +317,7 @@ export const IntelligentScheduler: React.FC<IntelligentSchedulerProps> = ({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="mb-2 block font-medium text-gray-700 text-sm">
               Flexibility (days)
             </label>
             <input
@@ -325,10 +325,10 @@ export const IntelligentScheduler: React.FC<IntelligentSchedulerProps> = ({
               min="0"
               max="14"
               value={flexibilityDays}
-              onChange={(e) => setFlexibilityDays(parseInt(e.target.value))}
+              onChange={(e) => setFlexibilityDays(Number.parseInt(e.target.value))}
               className="w-full"
             />
-            <div className="text-sm text-gray-500 text-center">±{flexibilityDays} days</div>
+            <div className="text-center text-gray-500 text-sm">±{flexibilityDays} days</div>
           </div>
         </div>
 
@@ -337,11 +337,11 @@ export const IntelligentScheduler: React.FC<IntelligentSchedulerProps> = ({
           <h3 className="font-semibold text-gray-900">AI Insights</h3>
 
           {selectedPatient && selectedTreatment && (
-            <div className="bg-blue-50 rounded-lg p-4 space-y-2">
+            <div className="space-y-2 rounded-lg bg-blue-50 p-4">
               <div className="text-sm">
                 <span className="font-medium">No-show Risk:</span>
                 <span
-                  className={`ml-2 px-2 py-1 rounded text-xs ${
+                  className={`ml-2 rounded px-2 py-1 text-xs ${
                     patients.find((p) => p.id === selectedPatient)?.noShowProbability > 0.3
                       ? "bg-red-100 text-red-800"
                       : "bg-green-100 text-green-800"
@@ -374,8 +374,8 @@ export const IntelligentScheduler: React.FC<IntelligentSchedulerProps> = ({
           )}
 
           {conflicts.length > 0 && (
-            <div className="bg-yellow-50 rounded-lg p-4">
-              <h4 className="font-medium text-yellow-800 mb-2">Potential Conflicts</h4>
+            <div className="rounded-lg bg-yellow-50 p-4">
+              <h4 className="mb-2 font-medium text-yellow-800">Potential Conflicts</h4>
               <div className="space-y-1">
                 {conflicts.slice(0, 3).map((conflict, index) => (
                   <div key={index} className="text-sm text-yellow-700">
@@ -391,9 +391,9 @@ export const IntelligentScheduler: React.FC<IntelligentSchedulerProps> = ({
       {/* Available Slots - Real-time Visualization */}
       {availableSlots.length > 0 && (
         <div className="mb-6">
-          <h3 className="font-semibold text-gray-900 mb-4">Available Slots (AI-Optimized)</h3>
+          <h3 className="mb-4 font-semibold text-gray-900">Available Slots (AI-Optimized)</h3>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
             {availableSlots.slice(0, 9).map((slot) => {
               const staffMember = staff.find((s) => s.id === slot.staffId);
               const isRecommended = slot.optimizationScore > 0.8;
@@ -401,14 +401,14 @@ export const IntelligentScheduler: React.FC<IntelligentSchedulerProps> = ({
               return (
                 <div
                   key={slot.id}
-                  className={`border rounded-lg p-4 cursor-pointer transition-all hover:shadow-md ${
+                  className={`cursor-pointer rounded-lg border p-4 transition-all hover:shadow-md ${
                     isRecommended
                       ? "border-green-400 bg-green-50 ring-2 ring-green-200"
                       : "border-gray-200 hover:border-blue-300"
                   }`}
                   onClick={() => scheduleAppointment(slot)}
                 >
-                  <div className="flex items-center justify-between mb-2">
+                  <div className="mb-2 flex items-center justify-between">
                     <div className="font-medium text-gray-900">
                       {slot.start.toLocaleDateString("en-US", {
                         weekday: "short",
@@ -417,27 +417,27 @@ export const IntelligentScheduler: React.FC<IntelligentSchedulerProps> = ({
                       })}
                     </div>
                     {isRecommended && (
-                      <div className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">
+                      <div className="rounded-full bg-green-100 px-2 py-1 text-green-800 text-xs">
                         AI Recommended
                       </div>
                     )}
                   </div>
 
-                  <div className="text-lg font-semibold text-gray-900 mb-1">
+                  <div className="mb-1 font-semibold text-gray-900 text-lg">
                     {slot.start.toLocaleTimeString("en-US", {
                       hour: "numeric",
                       minute: "2-digit",
                     })}
                   </div>
 
-                  <div className="text-sm text-gray-600 mb-2">
+                  <div className="mb-2 text-gray-600 text-sm">
                     {staffMember?.name || "Staff Member"}
                   </div>
 
                   <div className="flex items-center justify-between text-xs">
                     <div className="text-gray-500">Duration: {slot.duration}min</div>
                     <div
-                      className={`px-2 py-1 rounded ${
+                      className={`rounded px-2 py-1 ${
                         slot.conflictScore < 0.2
                           ? "bg-green-100 text-green-700"
                           : "bg-yellow-100 text-yellow-700"
@@ -452,8 +452,8 @@ export const IntelligentScheduler: React.FC<IntelligentSchedulerProps> = ({
           </div>
 
           {availableSlots.length > 9 && (
-            <div className="text-center mt-4">
-              <button className="text-blue-600 hover:text-blue-800 text-sm font-medium">
+            <div className="mt-4 text-center">
+              <button className="font-medium text-blue-600 text-sm hover:text-blue-800">
                 View {availableSlots.length - 9} more slots
               </button>
             </div>
@@ -467,11 +467,11 @@ export const IntelligentScheduler: React.FC<IntelligentSchedulerProps> = ({
           <div
             className={`rounded-lg p-4 ${
               schedulingResult.success
-                ? "bg-green-50 border border-green-200"
-                : "bg-red-50 border border-red-200"
+                ? "border border-green-200 bg-green-50"
+                : "border border-red-200 bg-red-50"
             }`}
           >
-            <div className="flex items-center justify-between mb-2">
+            <div className="mb-2 flex items-center justify-between">
               <h3
                 className={`font-semibold ${
                   schedulingResult.success ? "text-green-800" : "text-red-800"
@@ -489,7 +489,7 @@ export const IntelligentScheduler: React.FC<IntelligentSchedulerProps> = ({
             </div>
 
             {schedulingResult.success && schedulingResult.appointmentSlot && (
-              <div className="text-sm space-y-1">
+              <div className="space-y-1 text-sm">
                 <div>
                   <span className="font-medium">Date:</span>{" "}
                   {schedulingResult.appointmentSlot.start.toLocaleDateString("en-US", {
@@ -515,11 +515,11 @@ export const IntelligentScheduler: React.FC<IntelligentSchedulerProps> = ({
 
             {/* Optimization Recommendations */}
             {recommendations.length > 0 && (
-              <div className="mt-4 pt-4 border-t border-gray-200">
-                <h4 className="font-medium text-gray-800 mb-2">AI Recommendations</h4>
+              <div className="mt-4 border-gray-200 border-t pt-4">
+                <h4 className="mb-2 font-medium text-gray-800">AI Recommendations</h4>
                 <div className="space-y-1">
                   {recommendations.slice(0, 3).map((rec, index) => (
-                    <div key={index} className="text-sm text-gray-600">
+                    <div key={index} className="text-gray-600 text-sm">
                       • {rec.description} (+{rec.expectedImprovement.toFixed(1)}% efficiency)
                     </div>
                   ))}
@@ -532,9 +532,9 @@ export const IntelligentScheduler: React.FC<IntelligentSchedulerProps> = ({
 
       {/* Loading State */}
       {isScheduling && (
-        <div className="text-center py-8">
+        <div className="py-8 text-center">
           <div className="inline-flex items-center">
-            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600 mr-3"></div>
+            <div className="mr-3 h-6 w-6 animate-spin rounded-full border-blue-600 border-b-2" />
             <span className="text-gray-600">AI is optimizing your schedule...</span>
           </div>
         </div>

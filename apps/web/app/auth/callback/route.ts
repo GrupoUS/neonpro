@@ -90,10 +90,9 @@ export async function GET(request: NextRequest) {
             default:
               return NextResponse.redirect(`${requestUrl.origin}/complete-profile`);
           }
-        } else {
+        }
           // New user - redirect to profile setup
           return NextResponse.redirect(`${requestUrl.origin}/complete-profile`);
-        }
       }
     } catch (error) {
       console.error("Critical healthcare auth error:", error);

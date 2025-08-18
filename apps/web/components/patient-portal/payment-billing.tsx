@@ -235,7 +235,7 @@ function PaymentMethodCard({ method, onSelect, isSelected }: any) {
       className={cn(
         "cursor-pointer transition-all hover:shadow-md",
         isSelected ? "border-pink-500 bg-pink-50 dark:bg-pink-950/20" : "",
-        !method.available ? "opacity-50 cursor-not-allowed" : "",
+        method.available ? "" : "cursor-not-allowed opacity-50",
       )}
       onClick={() => method.available && onSelect(method)}
     >
@@ -252,8 +252,8 @@ function PaymentMethodCard({ method, onSelect, isSelected }: any) {
                   </Badge>
                 )}
               </div>
-              <p className="text-sm text-muted-foreground">{method.description}</p>
-              <div className="flex items-center space-x-4 text-xs text-muted-foreground mt-1">
+              <p className="text-muted-foreground text-sm">{method.description}</p>
+              <div className="mt-1 flex items-center space-x-4 text-muted-foreground text-xs">
                 <span>Taxa: {method.fee}%</span>
                 <span>{method.processingTime}</span>
               </div>
@@ -276,10 +276,10 @@ function PaymentForm({ payment, selectedMethod }: any) {
       case "pix":
         return (
           <div className="space-y-4">
-            <div className="p-4 bg-green-50 dark:bg-green-950/20 rounded-lg text-center">
-              <QrCode className="h-24 w-24 mx-auto mb-4 text-green-600" />
-              <p className="text-sm text-green-700 mb-2">Escaneie o QR Code ou copie a chave PIX</p>
-              <div className="flex items-center space-x-2 bg-white dark:bg-green-900/20 p-3 rounded border">
+            <div className="rounded-lg bg-green-50 p-4 text-center dark:bg-green-950/20">
+              <QrCode className="mx-auto mb-4 h-24 w-24 text-green-600" />
+              <p className="mb-2 text-green-700 text-sm">Escaneie o QR Code ou copie a chave PIX</p>
+              <div className="flex items-center space-x-2 rounded border bg-white p-3 dark:bg-green-900/20">
                 <code className="flex-1 text-sm">{pixKey}</code>
                 <Button size="sm" variant="outline">
                   <Copy className="h-4 w-4" />
@@ -287,10 +287,10 @@ function PaymentForm({ payment, selectedMethod }: any) {
               </div>
             </div>
             <div className="text-center">
-              <p className="text-sm text-muted-foreground">
+              <p className="text-muted-foreground text-sm">
                 Valor: <span className="font-bold text-lg">R$ {payment.amount.toFixed(2)}</span>
               </p>
-              <p className="text-xs text-muted-foreground">Pagamento instantâneo • Sem taxas</p>
+              <p className="text-muted-foreground text-xs">Pagamento instantâneo • Sem taxas</p>
             </div>
           </div>
         );
@@ -309,9 +309,9 @@ function PaymentForm({ payment, selectedMethod }: any) {
 
             {payment.amount > 300 && (
               <div className="space-y-2">
-                <label className="text-sm font-medium">Parcelamento</label>
+                <label className="font-medium text-sm">Parcelamento</label>
                 <select
-                  className="w-full p-2 border rounded-md"
+                  className="w-full rounded-md border p-2"
                   value={installments}
                   onChange={(e) => setInstallments(Number(e.target.value))}
                 >
@@ -334,8 +334,8 @@ function PaymentForm({ payment, selectedMethod }: any) {
       case "bank_transfer":
         return (
           <div className="space-y-4">
-            <div className="p-4 bg-blue-50 dark:bg-blue-950/20 rounded-lg">
-              <h4 className="font-medium mb-2">Dados para Transferência</h4>
+            <div className="rounded-lg bg-blue-50 p-4 dark:bg-blue-950/20">
+              <h4 className="mb-2 font-medium">Dados para Transferência</h4>
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
                   <span>Banco:</span>
@@ -359,7 +359,7 @@ function PaymentForm({ payment, selectedMethod }: any) {
                 </div>
               </div>
             </div>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-muted-foreground text-xs">
               Envie o comprovante para financeiro@neonpro.com.br
             </p>
           </div>
@@ -367,8 +367,8 @@ function PaymentForm({ payment, selectedMethod }: any) {
 
       default:
         return (
-          <div className="text-center text-muted-foreground py-8">
-            <DollarSign className="h-12 w-12 mx-auto mb-4" />
+          <div className="py-8 text-center text-muted-foreground">
+            <DollarSign className="mx-auto mb-4 h-12 w-12" />
             <p>Selecione um método de pagamento</p>
           </div>
         );
@@ -428,18 +428,18 @@ function PaymentHistoryTable({ payments }: any) {
   return (
     <div className="space-y-4">
       {payments.map((payment: any) => (
-        <Card key={payment.id} className="hover:shadow-md transition-shadow">
+        <Card key={payment.id} className="transition-shadow hover:shadow-md">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-pink-100 rounded-full flex items-center justify-center">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-pink-100">
                   <Receipt className="h-5 w-5 text-pink-600" />
                 </div>
 
                 <div>
                   <h3 className="font-medium text-sm">{payment.description}</h3>
-                  <p className="text-xs text-muted-foreground">{payment.treatment}</p>
-                  <div className="flex items-center space-x-4 text-xs text-muted-foreground mt-1">
+                  <p className="text-muted-foreground text-xs">{payment.treatment}</p>
+                  <div className="mt-1 flex items-center space-x-4 text-muted-foreground text-xs">
                     <span>{new Date(payment.paidDate).toLocaleDateString("pt-BR")}</span>
                     <span>{payment.method}</span>
                     <span>{payment.invoice}</span>
@@ -447,7 +447,7 @@ function PaymentHistoryTable({ payments }: any) {
                 </div>
               </div>
 
-              <div className="text-right space-y-2">
+              <div className="space-y-2 text-right">
                 <p className="font-bold">R$ {payment.amount.toFixed(2)}</p>
                 <div className="flex items-center space-x-2">
                   <Badge
@@ -483,9 +483,9 @@ function FinancialSummary({ summary }: any) {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">Gasto no Ano</p>
-                <p className="text-2xl font-bold">R$ {summary.thisYear.spent.toFixed(2)}</p>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-muted-foreground text-sm">Gasto no Ano</p>
+                <p className="font-bold text-2xl">R$ {summary.thisYear.spent.toFixed(2)}</p>
+                <p className="text-muted-foreground text-xs">
                   {summary.thisYear.treatments} tratamentos
                 </p>
               </div>
@@ -498,9 +498,9 @@ function FinancialSummary({ summary }: any) {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">Gasto no Mês</p>
-                <p className="text-2xl font-bold">R$ {summary.thisMonth.spent.toFixed(2)}</p>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-muted-foreground text-sm">Gasto no Mês</p>
+                <p className="font-bold text-2xl">R$ {summary.thisMonth.spent.toFixed(2)}</p>
+                <p className="text-muted-foreground text-xs">
                   {summary.thisMonth.treatments} tratamentos
                 </p>
               </div>
@@ -513,11 +513,11 @@ function FinancialSummary({ summary }: any) {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">Média por Tratamento</p>
-                <p className="text-2xl font-bold">
+                <p className="text-muted-foreground text-sm">Média por Tratamento</p>
+                <p className="font-bold text-2xl">
                   R$ {summary.thisYear.averagePerTreatment.toFixed(2)}
                 </p>
-                <p className="text-xs text-muted-foreground">Nos últimos 12 meses</p>
+                <p className="text-muted-foreground text-xs">Nos últimos 12 meses</p>
               </div>
               <Calculator className="h-8 w-8 text-purple-500" />
             </div>
@@ -528,9 +528,9 @@ function FinancialSummary({ summary }: any) {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">Economia no Mês</p>
-                <p className="text-2xl font-bold">R$ {summary.thisMonth.savings.toFixed(2)}</p>
-                <p className="text-xs text-muted-foreground">Em promoções</p>
+                <p className="text-muted-foreground text-sm">Economia no Mês</p>
+                <p className="font-bold text-2xl">R$ {summary.thisMonth.savings.toFixed(2)}</p>
+                <p className="text-muted-foreground text-xs">Em promoções</p>
               </div>
               <Star className="h-8 w-8 text-yellow-500" />
             </div>
@@ -622,7 +622,7 @@ export function PaymentBilling() {
       {/* Header */}
       <div className="flex flex-col space-y-4 lg:flex-row lg:items-center lg:justify-between lg:space-y-0">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight lg:text-3xl">
+          <h1 className="font-bold text-2xl tracking-tight lg:text-3xl">
             Pagamentos e Faturamento
           </h1>
           <p className="text-muted-foreground">
@@ -648,11 +648,11 @@ export function PaymentBilling() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">Valor Pendente</p>
-                <p className="text-2xl font-bold text-red-600">
+                <p className="text-muted-foreground text-sm">Valor Pendente</p>
+                <p className="font-bold text-2xl text-red-600">
                   R$ {mockPaymentData.summary.pendingAmount.toFixed(2)}
                 </p>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-muted-foreground text-xs">
                   Vence em{" "}
                   {new Date(mockPaymentData.summary.nextPaymentDate).toLocaleDateString("pt-BR")}
                 </p>
@@ -666,11 +666,11 @@ export function PaymentBilling() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">Total Gasto</p>
-                <p className="text-2xl font-bold">
+                <p className="text-muted-foreground text-sm">Total Gasto</p>
+                <p className="font-bold text-2xl">
                   R$ {mockPaymentData.summary.totalSpent.toFixed(2)}
                 </p>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-muted-foreground text-xs">
                   {mockPaymentData.summary.completedPayments} pagamentos
                 </p>
               </div>
@@ -683,9 +683,9 @@ export function PaymentBilling() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">Métodos Ativos</p>
-                <p className="text-2xl font-bold">{mockPaymentData.summary.paymentMethods}</p>
-                <p className="text-xs text-muted-foreground">Cartões e contas</p>
+                <p className="text-muted-foreground text-sm">Métodos Ativos</p>
+                <p className="font-bold text-2xl">{mockPaymentData.summary.paymentMethods}</p>
+                <p className="text-muted-foreground text-xs">Cartões e contas</p>
               </div>
               <CreditCard className="h-8 w-8 text-blue-500" />
             </div>
@@ -696,9 +696,9 @@ export function PaymentBilling() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">Próximo Vencimento</p>
-                <p className="text-lg font-bold">01/09</p>
-                <p className="text-xs text-muted-foreground">Em 2 semanas</p>
+                <p className="text-muted-foreground text-sm">Próximo Vencimento</p>
+                <p className="font-bold text-lg">01/09</p>
+                <p className="text-muted-foreground text-xs">Em 2 semanas</p>
               </div>
               <Calendar className="h-8 w-8 text-purple-500" />
             </div>
@@ -723,9 +723,9 @@ export function PaymentBilling() {
           {mockPaymentData.upcomingPayments.length === 0 ? (
             <Card>
               <CardContent className="flex flex-col items-center justify-center py-12">
-                <CheckCircle className="h-12 w-12 text-green-500 mb-4" />
-                <h3 className="text-lg font-medium mb-2">Nenhum pagamento pendente</h3>
-                <p className="text-muted-foreground text-center">
+                <CheckCircle className="mb-4 h-12 w-12 text-green-500" />
+                <h3 className="mb-2 font-medium text-lg">Nenhum pagamento pendente</h3>
+                <p className="text-center text-muted-foreground">
                   Todos os seus pagamentos estão em dia!
                 </p>
               </CardContent>
@@ -738,8 +738,8 @@ export function PaymentBilling() {
                     <div className="flex items-center justify-between">
                       <div className="space-y-2">
                         <h3 className="font-semibold">{payment.description}</h3>
-                        <p className="text-sm text-muted-foreground">{payment.treatment}</p>
-                        <div className="flex items-center space-x-4 text-sm text-muted-foreground">
+                        <p className="text-muted-foreground text-sm">{payment.treatment}</p>
+                        <div className="flex items-center space-x-4 text-muted-foreground text-sm">
                           <div className="flex items-center space-x-1">
                             <Calendar className="h-4 w-4" />
                             <span>
@@ -750,8 +750,8 @@ export function PaymentBilling() {
                         </div>
                       </div>
 
-                      <div className="text-right space-y-3">
-                        <p className="text-2xl font-bold">R$ {payment.amount.toFixed(2)}</p>
+                      <div className="space-y-3 text-right">
+                        <p className="font-bold text-2xl">R$ {payment.amount.toFixed(2)}</p>
                         <div className="flex space-x-2">
                           {payment.canPay ? (
                             <Button
@@ -780,7 +780,7 @@ export function PaymentBilling() {
         <TabsContent value="history" className="space-y-6">
           <div className="flex flex-col space-y-4 sm:flex-row sm:items-center sm:space-x-4 sm:space-y-0">
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Search className="-translate-y-1/2 absolute top-1/2 left-3 h-4 w-4 text-muted-foreground" />
               <Input
                 placeholder="Buscar por tratamento, valor ou data..."
                 value={searchTerm}
@@ -809,18 +809,18 @@ export function PaymentBilling() {
               <CardContent className="space-y-4">
                 <div className="grid gap-4 md:grid-cols-3">
                   <div className="text-center">
-                    <p className="text-sm text-muted-foreground">Valor Total</p>
-                    <p className="text-xl font-bold">R$ {pkg.totalValue.toFixed(2)}</p>
+                    <p className="text-muted-foreground text-sm">Valor Total</p>
+                    <p className="font-bold text-xl">R$ {pkg.totalValue.toFixed(2)}</p>
                   </div>
                   <div className="text-center">
-                    <p className="text-sm text-muted-foreground">Valor Pago</p>
-                    <p className="text-xl font-bold text-green-600">
+                    <p className="text-muted-foreground text-sm">Valor Pago</p>
+                    <p className="font-bold text-green-600 text-xl">
                       R$ {pkg.paidValue.toFixed(2)}
                     </p>
                   </div>
                   <div className="text-center">
-                    <p className="text-sm text-muted-foreground">Restante</p>
-                    <p className="text-xl font-bold text-red-600">
+                    <p className="text-muted-foreground text-sm">Restante</p>
+                    <p className="font-bold text-red-600 text-xl">
                       R$ {pkg.remainingValue.toFixed(2)}
                     </p>
                   </div>
@@ -832,7 +832,7 @@ export function PaymentBilling() {
                     <span>{pkg.progress}%</span>
                   </div>
                   <Progress value={pkg.progress} className="h-3" />
-                  <p className="text-xs text-muted-foreground">
+                  <p className="text-muted-foreground text-xs">
                     {pkg.installments.paid} de {pkg.installments.total} parcelas pagas
                   </p>
                 </div>

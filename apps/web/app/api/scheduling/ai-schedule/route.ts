@@ -127,7 +127,7 @@ export async function POST(request: NextRequest) {
         processingTime,
         aiInsights,
       });
-    } else {
+    }
       // Failed scheduling with detailed feedback
       return NextResponse.json<AISchedulingResponse>(
         {
@@ -139,7 +139,6 @@ export async function POST(request: NextRequest) {
         },
         { status: 422 },
       );
-    }
   } catch (error) {
     const processingTime = performance.now() - startTime;
 
@@ -179,7 +178,7 @@ export async function GET(request: NextRequest) {
     const patientId = searchParams.get("patientId");
     const treatmentTypeId = searchParams.get("treatmentTypeId");
 
-    if (!tenantId || !patientId || !treatmentTypeId) {
+    if (!((tenantId && patientId ) && treatmentTypeId)) {
       return NextResponse.json(
         { success: false, error: "Missing required parameters" },
         { status: 400 },

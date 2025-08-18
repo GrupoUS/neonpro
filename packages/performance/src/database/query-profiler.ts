@@ -8,27 +8,11 @@ import type {
   DatabasePerformanceMetric,
 } from '../types';
 
-type QueryExecutionPlan = {
-  nodeType: string;
-  totalCost: number;
-  rows: number;
-  width: number;
-  startupCost: number;
-  plans?: QueryExecutionPlan[];
-};
-
-type SupabaseQueryLog = {
-  timestamp: string;
-  query: string;
-  executionTime: number;
-  rowsAffected?: number;
-  queryPlan?: string;
-  error?: string;
-};
+// Removed unused type declarations QueryExecutionPlan and SupabaseQueryLog
 
 export class HealthcareDatabaseMonitor {
   private metrics: DatabasePerformanceMetric[] = [];
-  private readonly slowQueryThreshold = 1000; // 1 second
+  private readonly slowQueryThreshold: number; // 1 second
   private readonly healthcareTableMap = new Map([
     ['patients', 'patient'],
     ['patient_records', 'patient'],
@@ -63,8 +47,8 @@ export class HealthcareDatabaseMonitor {
       queryType,
       table,
       executionTime,
-      rowsAffected,
-      queryPlan,
+      rowsAffected: rowsAffected ?? 0,
+      queryPlan: queryPlan ?? '',
       timestamp: Date.now(),
       isSlowQuery: executionTime > this.slowQueryThreshold,
       healthcareDataType: this.healthcareTableMap.get(table) as any,

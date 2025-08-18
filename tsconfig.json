@@ -1,7 +1,11 @@
 {
   "compilerOptions": {
     "target": "ES2020",
-    "lib": ["dom", "dom.iterable", "ES6"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "ES6"
+    ],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -15,25 +19,62 @@
     "jsx": "preserve",
     "incremental": true,
     "baseUrl": ".",
-    "types": ["vitest/globals"],
+    "types": [
+      "vitest/globals"
+    ],
     "paths": {
-      "@neonpro/ui": ["./packages/ui/src"],
-      "@neonpro/ui/*": ["./packages/ui/src/*"],
-      "@neonpro/utils": ["./packages/utils/src"],
-      "@neonpro/utils/*": ["./packages/utils/src/*"],
-      "@neonpro/domain": ["./packages/domain/src"],
-      "@neonpro/domain/*": ["./packages/domain/src/*"],
-      "@neonpro/db": ["./packages/db/src"],
-      "@neonpro/db/*": ["./packages/db/src/*"],
-      "@neonpro/types": ["./packages/types/src"],
-      "@neonpro/types/*": ["./packages/types/src/*"],
-      "@neonpro/config": ["./packages/config"],
-      "@neonpro/config/*": ["./packages/config/*"]
+      "@neonpro/ui": [
+        "./packages/ui/src"
+      ],
+      "@neonpro/ui/*": [
+        "./packages/ui/src/*"
+      ],
+      "@neonpro/utils": [
+        "./packages/utils/src"
+      ],
+      "@neonpro/utils/*": [
+        "./packages/utils/src/*"
+      ],
+      "@neonpro/domain": [
+        "./packages/domain/src"
+      ],
+      "@neonpro/domain/*": [
+        "./packages/domain/src/*"
+      ],
+      "@neonpro/db": [
+        "./packages/db/src"
+      ],
+      "@neonpro/db/*": [
+        "./packages/db/src/*"
+      ],
+      "@neonpro/types": [
+        "./packages/types/src"
+      ],
+      "@neonpro/types/*": [
+        "./packages/types/src/*"
+      ],
+      "@neonpro/config": [
+        "./packages/config"
+      ],
+      "@neonpro/config/*": [
+        "./packages/config/*"
+      ]
     },
     "strictNullChecks": true
   },
-  "include": ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx", "vitest.d.ts"],
-  "exclude": ["node_modules", ".next", "dist", "out"],
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    "**/*.js",
+    "**/*.jsx",
+    "vitest.d.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    ".next",
+    "dist",
+    "out"
+  ],
   "references": [
     {
       "path": "./apps/web"

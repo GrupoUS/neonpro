@@ -89,7 +89,7 @@ export class InMemoryMetricsStorage implements MetricsStorage {
 
     if (filters.endDate) {
       filtered = filtered.filter(
-        (m) => (m.timestamp || 0) <= filters.endDate?.getTime()
+        (m) => (m.timestamp || 0) <= (filters.endDate?.getTime() || 0)
       );
     }
 
@@ -230,7 +230,7 @@ export class InMemoryMetricsStorage implements MetricsStorage {
     }
     const sorted = values.sort((a, b) => a - b);
     const index = Math.ceil((percentile / 100) * sorted.length) - 1;
-    return sorted[index];
+    return sorted[index] || 0;
   }
 
   private getTopIssues(errors: ErrorEvent[]): string[] {

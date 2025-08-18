@@ -17,7 +17,7 @@ import {
 const mockRequest = (method: string, url: string, body?: any) =>
   ({
     method,
-    url,
+    url: `http://localhost:3000${url}`, // Make sure URL is complete
     json: () => Promise.resolve(body),
     headers: new Headers(),
   }) as any;
@@ -29,7 +29,35 @@ const mockSession = {
   },
 };
 
-// Mock Supabase client
+// Mock Supabase client with proper chaining
+const createMockQueryChain = () => {
+  const queryChain = {
+    select: vi.fn(),
+    eq: vi.fn(),
+    order: vi.fn(),
+    range: vi.fn().mockResolvedValue({
+      data: [mockAlert],
+      error: null,
+      count: 1,
+    }),
+    insert: vi.fn(),
+    single: vi.fn().mockResolvedValue({
+      data: mockProfile,
+      error: null,
+    }),
+    update: vi.fn(),
+  };
+  
+  // Set up the chaining after the object is created
+  queryChain.select.mockReturnValue(queryChain);
+  queryChain.eq.mockReturnValue(queryChain);
+  queryChain.order.mockReturnValue(queryChain);
+  queryChain.insert.mockReturnValue(queryChain);
+  queryChain.update.mockReturnValue(queryChain);
+  
+  return queryChain;
+};
+
 const mockSupabaseClient = {
   auth: {
     getSession: vi.fn().mockResolvedValue({
@@ -37,18 +65,11 @@ const mockSupabaseClient = {
       error: null,
     }),
   },
-  from: vi.fn().mockReturnThis(),
-  select: vi.fn().mockReturnThis(),
-  insert: vi.fn().mockReturnThis(),
-  update: vi.fn().mockReturnThis(),
-  eq: vi.fn().mockReturnThis(),
-  single: vi.fn(),
-  order: vi.fn().mockReturnThis(),
-  range: vi.fn().mockReturnThis(),
+  from: vi.fn(() => createMockQueryChain()),
 };
 
 // Mock the Supabase import
-vi.mock('@/app/utils/supabase/server', () => ({
+vi.mock('@/lib/supabase/server', () => ({
   createClient: vi.fn(() => Promise.resolve(mockSupabaseClient)),
 }));
 
@@ -126,12 +147,6 @@ afterAll(() => {
 beforeEach(() => {
   // Reset mocks before each test
   vi.clearAllMocks();
-
-  // Setup default successful responses
-  mockSupabaseClient.single.mockResolvedValue({
-    data: mockProfile,
-    error: null,
-  });
 });
 
 afterEach(() => {
@@ -145,20 +160,8 @@ afterEach(() => {
 
 describe('GET /api/stock/alerts', () => {
   beforeEach(() => {
-    // Mock the chain of Supabase query methods
-    mockSupabaseClient.from.mockReturnValue({
-      select: vi.fn().mockReturnValue({
-        eq: vi.fn().mockReturnValue({
-          order: vi.fn().mockReturnValue({
-            range: vi.fn().mockResolvedValue({
-              data: [mockAlert],
-              error: null,
-              count: 1,
-            }),
-          }),
-        }),
-      }),
-    });
+    // Reset mocks - the mockSupabaseClient is already set up with proper chaining
+    vi.clearAllMocks();
   });
 
   it('should return alerts with proper pagination', async () => {
@@ -166,6 +169,11 @@ describe('GET /api/stock/alerts', () => {
 
     const response = await GET(request);
     const responseData = await response.json();
+
+    if (response.status !== 200) {
+      // Throw the response data as an error so we can see it
+      throw new Error(`Status ${response.status}: ${JSON.stringify(responseData, null, 2)}`);
+    }
 
     expect(response.status).toBe(200);
     expect(responseData.success).toBe(true);

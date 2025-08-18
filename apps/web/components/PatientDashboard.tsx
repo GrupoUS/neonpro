@@ -258,7 +258,7 @@ export default function PatientDashboard() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Meu Dashboard</h1>
+          <h1 className="font-bold text-3xl tracking-tight">Meu Dashboard</h1>
           <p className="text-muted-foreground">Bem-vindo de volta, {patient.name.split(" ")[0]}!</p>
         </div>
         <Avatar className="h-16 w-16">
@@ -273,16 +273,16 @@ export default function PatientDashboard() {
       </div>
 
       {/* Quick Info */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center space-x-3">
-              <div className="p-2 bg-blue-100 rounded-full">
+              <div className="rounded-full bg-blue-100 p-2">
                 <User className="h-5 w-5 text-blue-600" />
               </div>
               <div>
-                <p className="text-sm font-medium">Idade</p>
-                <p className="text-xl font-bold">{calculateAge(patient.dateOfBirth)} anos</p>
+                <p className="font-medium text-sm">Idade</p>
+                <p className="font-bold text-xl">{calculateAge(patient.dateOfBirth)} anos</p>
               </div>
             </div>
           </CardContent>
@@ -291,12 +291,12 @@ export default function PatientDashboard() {
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center space-x-3">
-              <div className="p-2 bg-green-100 rounded-full">
+              <div className="rounded-full bg-green-100 p-2">
                 <Heart className="h-5 w-5 text-green-600" />
               </div>
               <div>
-                <p className="text-sm font-medium">Pressão Arterial</p>
-                <p className="text-xl font-bold">
+                <p className="font-medium text-sm">Pressão Arterial</p>
+                <p className="font-bold text-xl">
                   {healthMetrics.bloodPressure.systolic}/{healthMetrics.bloodPressure.diastolic}
                 </p>
               </div>
@@ -307,12 +307,12 @@ export default function PatientDashboard() {
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center space-x-3">
-              <div className="p-2 bg-purple-100 rounded-full">
+              <div className="rounded-full bg-purple-100 p-2">
                 <Activity className="h-5 w-5 text-purple-600" />
               </div>
               <div>
-                <p className="text-sm font-medium">Frequência Cardíaca</p>
-                <p className="text-xl font-bold">{healthMetrics.heartRate.value} bpm</p>
+                <p className="font-medium text-sm">Frequência Cardíaca</p>
+                <p className="font-bold text-xl">{healthMetrics.heartRate.value} bpm</p>
               </div>
             </div>
           </CardContent>
@@ -321,12 +321,12 @@ export default function PatientDashboard() {
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center space-x-3">
-              <div className="p-2 bg-orange-100 rounded-full">
+              <div className="rounded-full bg-orange-100 p-2">
                 <TrendingUp className="h-5 w-5 text-orange-600" />
               </div>
               <div>
-                <p className="text-sm font-medium">IMC</p>
-                <p className={`text-xl font-bold ${getBMIColor(healthMetrics.bmi.category)}`}>
+                <p className="font-medium text-sm">IMC</p>
+                <p className={`font-bold text-xl ${getBMIColor(healthMetrics.bmi.category)}`}>
                   {healthMetrics.bmi.value}
                 </p>
               </div>
@@ -357,7 +357,7 @@ export default function PatientDashboard() {
 
         {/* Health Tab */}
         <TabsContent value="health" className="space-y-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
             <Card>
               <CardHeader>
                 <CardTitle>Métricas de Saúde</CardTitle>
@@ -367,7 +367,7 @@ export default function PatientDashboard() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-2">
                     <Heart className="h-4 w-4 text-red-500" />
-                    <span className="text-sm font-medium">Pressão Arterial</span>
+                    <span className="font-medium text-sm">Pressão Arterial</span>
                   </div>
                   <div className="flex items-center space-x-2">
                     <span className="font-medium">
@@ -381,7 +381,7 @@ export default function PatientDashboard() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-2">
                     <Activity className="h-4 w-4 text-blue-500" />
-                    <span className="text-sm font-medium">Frequência Cardíaca</span>
+                    <span className="font-medium text-sm">Frequência Cardíaca</span>
                   </div>
                   <div className="flex items-center space-x-2">
                     <span className="font-medium">{healthMetrics.heartRate.value} bpm</span>
@@ -392,7 +392,7 @@ export default function PatientDashboard() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-2">
                     <TrendingUp className="h-4 w-4 text-green-500" />
-                    <span className="text-sm font-medium">Peso</span>
+                    <span className="font-medium text-sm">Peso</span>
                   </div>
                   <div className="flex items-center space-x-2">
                     <span className="font-medium">{healthMetrics.weight.value} kg</span>
@@ -410,13 +410,13 @@ export default function PatientDashboard() {
 
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium">Índice de Massa Corporal (IMC)</span>
+                    <span className="font-medium text-sm">Índice de Massa Corporal (IMC)</span>
                     <span className={`font-bold ${getBMIColor(healthMetrics.bmi.category)}`}>
                       {healthMetrics.bmi.value}
                     </span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-xs text-muted-foreground">Classificação</span>
+                    <span className="text-muted-foreground text-xs">Classificação</span>
                     <span className={`text-sm ${getBMIColor(healthMetrics.bmi.category)}`}>
                       {getBMILabel(healthMetrics.bmi.category)}
                     </span>
@@ -431,7 +431,7 @@ export default function PatientDashboard() {
                 <CardDescription>Evolução nos últimos 6 meses</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="h-64 flex items-center justify-center text-muted-foreground">
+                <div className="flex h-64 items-center justify-center text-muted-foreground">
                   <Activity className="h-16 w-16" />
                   <span className="ml-2">Gráfico de evolução do peso</span>
                 </div>
@@ -452,21 +452,21 @@ export default function PatientDashboard() {
                 {appointments.map((appointment) => (
                   <div
                     key={appointment.id}
-                    className="flex items-center justify-between p-4 border rounded-lg"
+                    className="flex items-center justify-between rounded-lg border p-4"
                   >
                     <div className="flex items-center space-x-4">
-                      <div className="p-2 bg-blue-100 rounded-full">
+                      <div className="rounded-full bg-blue-100 p-2">
                         <Calendar className="h-5 w-5 text-blue-600" />
                       </div>
                       <div>
                         <h4 className="font-medium">{appointment.doctor}</h4>
-                        <p className="text-sm text-muted-foreground">{appointment.specialty}</p>
-                        <p className="text-sm text-muted-foreground">{appointment.type}</p>
-                        <div className="flex items-center space-x-4 mt-1">
-                          <span className="text-xs text-muted-foreground">
+                        <p className="text-muted-foreground text-sm">{appointment.specialty}</p>
+                        <p className="text-muted-foreground text-sm">{appointment.type}</p>
+                        <div className="mt-1 flex items-center space-x-4">
+                          <span className="text-muted-foreground text-xs">
                             {appointment.date.toLocaleDateString("pt-BR")}
                           </span>
-                          <span className="text-xs text-muted-foreground">{appointment.time}</span>
+                          <span className="text-muted-foreground text-xs">{appointment.time}</span>
                         </div>
                       </div>
                     </div>
@@ -495,21 +495,21 @@ export default function PatientDashboard() {
                 {medications.map((medication) => (
                   <div
                     key={medication.id}
-                    className="flex items-center justify-between p-4 border rounded-lg"
+                    className="flex items-center justify-between rounded-lg border p-4"
                   >
                     <div className="flex items-center space-x-4">
-                      <div className="p-2 bg-green-100 rounded-full">
+                      <div className="rounded-full bg-green-100 p-2">
                         <Pill className="h-5 w-5 text-green-600" />
                       </div>
                       <div>
                         <h4 className="font-medium">
                           {medication.name} {medication.dosage}
                         </h4>
-                        <p className="text-sm text-muted-foreground">{medication.frequency}</p>
-                        <p className="text-xs text-muted-foreground">
+                        <p className="text-muted-foreground text-sm">{medication.frequency}</p>
+                        <p className="text-muted-foreground text-xs">
                           Prescrito por {medication.prescribedBy}
                         </p>
-                        <p className="text-xs text-muted-foreground">
+                        <p className="text-muted-foreground text-xs">
                           Desde {medication.startDate.toLocaleDateString("pt-BR")}
                         </p>
                       </div>
@@ -543,33 +543,33 @@ export default function PatientDashboard() {
               <CardDescription>Seus dados cadastrais</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <div className="flex items-center space-x-2">
                   <User className="h-4 w-4 text-muted-foreground" />
                   <div>
-                    <p className="text-sm font-medium">Nome</p>
-                    <p className="text-sm text-muted-foreground">{patient.name}</p>
+                    <p className="font-medium text-sm">Nome</p>
+                    <p className="text-muted-foreground text-sm">{patient.name}</p>
                   </div>
                 </div>
                 <div className="flex items-center space-x-2">
                   <Mail className="h-4 w-4 text-muted-foreground" />
                   <div>
-                    <p className="text-sm font-medium">Email</p>
-                    <p className="text-sm text-muted-foreground">{patient.email}</p>
+                    <p className="font-medium text-sm">Email</p>
+                    <p className="text-muted-foreground text-sm">{patient.email}</p>
                   </div>
                 </div>
                 <div className="flex items-center space-x-2">
                   <Phone className="h-4 w-4 text-muted-foreground" />
                   <div>
-                    <p className="text-sm font-medium">Telefone</p>
-                    <p className="text-sm text-muted-foreground">{patient.phone}</p>
+                    <p className="font-medium text-sm">Telefone</p>
+                    <p className="text-muted-foreground text-sm">{patient.phone}</p>
                   </div>
                 </div>
                 <div className="flex items-center space-x-2">
                   <Calendar className="h-4 w-4 text-muted-foreground" />
                   <div>
-                    <p className="text-sm font-medium">Data de Nascimento</p>
-                    <p className="text-sm text-muted-foreground">
+                    <p className="font-medium text-sm">Data de Nascimento</p>
+                    <p className="text-muted-foreground text-sm">
                       {new Date(patient.dateOfBirth).toLocaleDateString("pt-BR")}
                     </p>
                   </div>
@@ -580,10 +580,10 @@ export default function PatientDashboard() {
 
               <div className="space-y-2">
                 <div className="flex items-start space-x-2">
-                  <MapPin className="h-4 w-4 text-muted-foreground mt-0.5" />
+                  <MapPin className="mt-0.5 h-4 w-4 text-muted-foreground" />
                   <div>
-                    <p className="text-sm font-medium">Endereço</p>
-                    <p className="text-sm text-muted-foreground">{patient.address}</p>
+                    <p className="font-medium text-sm">Endereço</p>
+                    <p className="text-muted-foreground text-sm">{patient.address}</p>
                   </div>
                 </div>
               </div>
@@ -591,20 +591,20 @@ export default function PatientDashboard() {
               <Separator />
 
               <div className="space-y-2">
-                <h4 className="text-sm font-medium">Contato de Emergência</h4>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <h4 className="font-medium text-sm">Contato de Emergência</h4>
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                   <div className="flex items-center space-x-2">
                     <User className="h-4 w-4 text-muted-foreground" />
                     <div>
-                      <p className="text-sm font-medium">Nome</p>
-                      <p className="text-sm text-muted-foreground">{patient.emergencyContact}</p>
+                      <p className="font-medium text-sm">Nome</p>
+                      <p className="text-muted-foreground text-sm">{patient.emergencyContact}</p>
                     </div>
                   </div>
                   <div className="flex items-center space-x-2">
                     <Phone className="h-4 w-4 text-muted-foreground" />
                     <div>
-                      <p className="text-sm font-medium">Telefone</p>
-                      <p className="text-sm text-muted-foreground">{patient.emergencyPhone}</p>
+                      <p className="font-medium text-sm">Telefone</p>
+                      <p className="text-muted-foreground text-sm">{patient.emergencyPhone}</p>
                     </div>
                   </div>
                 </div>

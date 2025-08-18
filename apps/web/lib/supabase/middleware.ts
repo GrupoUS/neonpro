@@ -56,7 +56,7 @@ export async function updateSession(request: NextRequest) {
   );
 
   // Redirect unauthenticated users from protected routes
-  if (!user && !isAuthRoute && !isPublicRoute) {
+  if (!((user || isAuthRoute ) || isPublicRoute)) {
     const url = request.nextUrl.clone();
     url.pathname = "/auth/login";
     url.searchParams.set("redirectTo", request.nextUrl.pathname);

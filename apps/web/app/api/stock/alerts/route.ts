@@ -1,4 +1,4 @@
-import { createClient } from '@/app/utils/supabase/server';
+import { createClient } from '@/lib/supabase/server';
 import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
@@ -118,7 +118,7 @@ export async function POST(request: NextRequest) {
     const validatedData = createStockAlertSchema.parse(body);
 
     // Validate that either productId or categoryId is provided
-    if (!validatedData.productId && !validatedData.categoryId) {
+    if (!(validatedData.productId || validatedData.categoryId)) {
       return NextResponse.json(
         { success: false, error: 'Either productId or categoryId must be provided' },
         { status: 400 }

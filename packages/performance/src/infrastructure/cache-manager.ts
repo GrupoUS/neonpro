@@ -694,9 +694,16 @@ export default HealthcarePerformanceMonitor;
     }
 
     // Return closest compliant region
-    return this.edgeRegions
+    const compliantRegions = this.edgeRegions
       .filter((region) => region.healthcareCompliant)
-      .sort((a, b) => a.latency - b.latency)[0];
+      .sort((a, b) => a.latency - b.latency);
+    
+    return compliantRegions[0] || this.edgeRegions[0] || {
+      region: 'us-east-1',
+      latency: 100,
+      healthcareCompliant: true,
+      dataResidency: false
+    };
   }
 
   /**

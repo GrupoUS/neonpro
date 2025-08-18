@@ -131,7 +131,7 @@ async function checkCompliance(): Promise<HealthStatus> {
     const anvisaCompliant = checkANVISAIntegration();
     const cfmCompliant = checkCFMValidation();
 
-    if (!lgpdCompliant || !anvisaCompliant || !cfmCompliant) {
+    if (!((lgpdCompliant && anvisaCompliant ) && cfmCompliant)) {
       return {
         status: "unhealthy",
         message: "Healthcare compliance validation failed",

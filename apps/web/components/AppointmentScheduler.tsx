@@ -137,7 +137,7 @@ export default function AppointmentScheduler() {
     const selectedDoctor = MOCK_DOCTORS.find((d) => d.id === formData.doctor);
     const appointmentType = APPOINTMENT_TYPES.find((t) => t.value === formData.type);
 
-    if (!selectedDoctor || !appointmentType) return;
+    if (!(selectedDoctor && appointmentType)) return;
 
     const newAppointment: Appointment = {
       id: Date.now().toString(),
@@ -227,7 +227,7 @@ export default function AppointmentScheduler() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Agendamentos</h1>
+          <h1 className="font-bold text-3xl tracking-tight">Agendamentos</h1>
           <p className="text-muted-foreground">Gerencie consultas e horários disponíveis</p>
         </div>
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
@@ -245,7 +245,7 @@ export default function AppointmentScheduler() {
               </DialogDescription>
             </DialogHeader>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <div className="space-y-2">
                 <Label htmlFor="patientName">Nome do Paciente</Label>
                 <Input
@@ -369,7 +369,7 @@ export default function AppointmentScheduler() {
         </Dialog>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         {/* Calendar */}
         <Card>
           <CardHeader>
@@ -396,10 +396,10 @@ export default function AppointmentScheduler() {
           </CardHeader>
           <CardContent>
             {filteredAppointments.length === 0 ? (
-              <div className="text-center py-8">
+              <div className="py-8 text-center">
                 <CalendarIcon className="mx-auto h-12 w-12 text-gray-400" />
-                <h3 className="mt-2 text-sm font-medium text-gray-900">Nenhum agendamento</h3>
-                <p className="mt-1 text-sm text-gray-500">
+                <h3 className="mt-2 font-medium text-gray-900 text-sm">Nenhum agendamento</h3>
+                <p className="mt-1 text-gray-500 text-sm">
                   Não há consultas agendadas para esta data.
                 </p>
               </div>
@@ -408,14 +408,14 @@ export default function AppointmentScheduler() {
                 {filteredAppointments.map((appointment) => (
                   <div
                     key={appointment.id}
-                    className="flex items-center justify-between p-4 border rounded-lg"
+                    className="flex items-center justify-between rounded-lg border p-4"
                   >
                     <div className="flex items-center space-x-4">
                       <div className="flex items-center space-x-2">
                         {getStatusIcon(appointment.status)}
                         <div>
                           <h4 className="font-medium">{appointment.patientName}</h4>
-                          <div className="flex items-center space-x-4 text-sm text-muted-foreground">
+                          <div className="flex items-center space-x-4 text-muted-foreground text-sm">
                             <span className="flex items-center">
                               <Clock className="mr-1 h-3 w-3" />
                               {appointment.time}
@@ -462,14 +462,14 @@ export default function AppointmentScheduler() {
       </div>
 
       {/* Quick Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center space-x-2">
               <CalendarIcon className="h-5 w-5 text-blue-600" />
               <div>
-                <p className="text-sm font-medium">Hoje</p>
-                <p className="text-2xl font-bold">
+                <p className="font-medium text-sm">Hoje</p>
+                <p className="font-bold text-2xl">
                   {
                     appointments.filter(
                       (apt) => apt.date.toDateString() === new Date().toDateString(),
@@ -486,8 +486,8 @@ export default function AppointmentScheduler() {
             <div className="flex items-center space-x-2">
               <CheckCircle className="h-5 w-5 text-green-600" />
               <div>
-                <p className="text-sm font-medium">Confirmados</p>
-                <p className="text-2xl font-bold">
+                <p className="font-medium text-sm">Confirmados</p>
+                <p className="font-bold text-2xl">
                   {appointments.filter((apt) => apt.status === "confirmed").length}
                 </p>
               </div>
@@ -500,8 +500,8 @@ export default function AppointmentScheduler() {
             <div className="flex items-center space-x-2">
               <XCircle className="h-5 w-5 text-red-600" />
               <div>
-                <p className="text-sm font-medium">Cancelados</p>
-                <p className="text-2xl font-bold">
+                <p className="font-medium text-sm">Cancelados</p>
+                <p className="font-bold text-2xl">
                   {appointments.filter((apt) => apt.status === "cancelled").length}
                 </p>
               </div>
@@ -514,8 +514,8 @@ export default function AppointmentScheduler() {
             <div className="flex items-center space-x-2">
               <AlertCircle className="h-5 w-5 text-orange-600" />
               <div>
-                <p className="text-sm font-medium">Faltas</p>
-                <p className="text-2xl font-bold">
+                <p className="font-medium text-sm">Faltas</p>
+                <p className="font-bold text-2xl">
                   {appointments.filter((apt) => apt.status === "no-show").length}
                 </p>
               </div>

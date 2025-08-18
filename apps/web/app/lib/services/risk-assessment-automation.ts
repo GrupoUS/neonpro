@@ -115,7 +115,7 @@ export function createRiskAssessmentService(config: RiskAssessmentConfig): RiskA
       .fn()
       .mockImplementation(async (patientData: any, doctorId: string, options?: any) => {
         // Validate input integrity first
-        if (!patientData || !patientData.id) {
+        if (!(patientData && patientData.id)) {
           throw new Error("Invalid patient data: missing required fields");
         }
 

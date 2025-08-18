@@ -93,7 +93,7 @@ export function LoginForm() {
                 type="button"
                 variant="ghost"
                 size="sm"
-                className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                className="absolute top-0 right-0 h-full px-3 py-2 hover:bg-transparent"
                 onClick={() => setShowPassword(!showPassword)}
                 disabled={isLoading}
               >
@@ -110,7 +110,7 @@ export function LoginForm() {
           <div className="text-center">
             <a
               href="/signup"
-              className="text-sm text-muted-foreground hover:text-primary underline underline-offset-4"
+              className="text-muted-foreground text-sm underline underline-offset-4 hover:text-primary"
             >
               Não tem uma conta? Cadastre-se
             </a>
@@ -119,7 +119,7 @@ export function LoginForm() {
           <div className="text-center">
             <a
               href="/forgot-password"
-              className="text-sm text-muted-foreground hover:text-primary underline underline-offset-4"
+              className="text-muted-foreground text-sm underline underline-offset-4 hover:text-primary"
             >
               Esqueceu sua senha?
             </a>

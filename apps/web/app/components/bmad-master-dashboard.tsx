@@ -1089,8 +1089,8 @@ const MOCK_METRICS: Metric[] = [
   {
     id: "revenue",
     label: "Receita Mensal",
-    value: 125000,
-    previousValue: 115000,
+    value: 125_000,
+    previousValue: 115_000,
     change: 8.7,
     trend: "up",
     format: "currency",
@@ -1198,10 +1198,10 @@ export default function BMadMasterDashboard({ userId, tenantId }: BMadDashboardP
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="flex min-h-screen items-center justify-center">
         <div className="flex flex-col items-center space-y-4">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-          <p className="text-sm text-gray-600">Carregando dashboard...</p>
+          <div className="h-12 w-12 animate-spin rounded-full border-blue-600 border-b-2" />
+          <p className="text-gray-600 text-sm">Carregando dashboard...</p>
         </div>
       </div>
     )
@@ -1210,7 +1210,7 @@ export default function BMadMasterDashboard({ userId, tenantId }: BMadDashboardP
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b">
+      <header className="border-b bg-white shadow-sm">
         <div className="flex items-center justify-between px-6 py-4">
           <div className="flex items-center space-x-4">
             <Button
@@ -1221,17 +1221,17 @@ export default function BMadMasterDashboard({ userId, tenantId }: BMadDashboardP
             >
               <Menu className="h-5 w-5" />
             </Button>
-            <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
+            <h1 className="font-bold text-2xl text-gray-900">Dashboard</h1>
           </div>
           
           <div className="flex items-center space-x-4">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <Search className="-translate-y-1/2 absolute top-1/2 left-3 h-4 w-4 transform text-gray-400" />
               <Input
                 placeholder="Buscar..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 w-64"
+                className="w-64 pl-10"
               />
             </div>
             
@@ -1256,7 +1256,7 @@ export default function BMadMasterDashboard({ userId, tenantId }: BMadDashboardP
               animate={{ x: 0, opacity: 1 }}
               exit={{ x: -300, opacity: 0 }}
               transition={{ duration: 0.3 }}
-              className="w-64 bg-white shadow-lg min-h-screen"
+              className="min-h-screen w-64 bg-white shadow-lg"
             >
               <nav className="p-6">
                 <div className="space-y-2">
@@ -1320,17 +1320,17 @@ export default function BMadMasterDashboard({ userId, tenantId }: BMadDashboardP
             {/* Overview Tab */}
             <TabsContent value="overview" className="space-y-6">
               {/* Metrics Cards */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
                 {MOCK_METRICS.map((metric) => (
                   <Card key={metric.id}>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                      <CardTitle className="text-sm font-medium">
+                      <CardTitle className="font-medium text-sm">
                         {metric.label}
                       </CardTitle>
                       {getMetricIcon(metric)}
                     </CardHeader>
                     <CardContent>
-                      <div className="text-2xl font-bold">
+                      <div className="font-bold text-2xl">
                         {metric.format === "currency" && formatCurrency(metric.value)}
                         {metric.format === "percentage" && formatPercentage(metric.value)}
                         {metric.format === "number" && metric.value.toLocaleString()}
@@ -1344,7 +1344,7 @@ export default function BMadMasterDashboard({ userId, tenantId }: BMadDashboardP
               </div>
 
               {/* Charts Row */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
                 <Card>
                   <CardHeader>
                     <CardTitle>Receita por Período</CardTitle>
@@ -1353,7 +1353,7 @@ export default function BMadMasterDashboard({ userId, tenantId }: BMadDashboardP
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <div className="h-80 flex items-center justify-center text-gray-400">
+                    <div className="flex h-80 items-center justify-center text-gray-400">
                       <BarChart3 className="h-12 w-12" />
                       <span className="ml-2">Gráfico de receita</span>
                     </div>
@@ -1368,7 +1368,7 @@ export default function BMadMasterDashboard({ userId, tenantId }: BMadDashboardP
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <div className="h-80 flex items-center justify-center text-gray-400">
+                    <div className="flex h-80 items-center justify-center text-gray-400">
                       <PieChart className="h-12 w-12" />
                       <span className="ml-2">Gráfico de pizza</span>
                     </div>
@@ -1395,7 +1395,7 @@ export default function BMadMasterDashboard({ userId, tenantId }: BMadDashboardP
                           <p className="text-sm">
                             Usuário {i} executou uma ação importante
                           </p>
-                          <p className="text-xs text-gray-500">
+                          <p className="text-gray-500 text-xs">
                             há {i} minuto{i > 1 ? "s" : ""}
                           </p>
                         </div>
@@ -1410,7 +1410,7 @@ export default function BMadMasterDashboard({ userId, tenantId }: BMadDashboardP
             {/* Analytics Tab */}
             <TabsContent value="analytics" className="space-y-6">
               <div className="flex items-center justify-between">
-                <h2 className="text-3xl font-bold">Analytics</h2>
+                <h2 className="font-bold text-3xl">Analytics</h2>
                 <div className="flex items-center space-x-2">
                   <Select value={filterStatus} onValueChange={setFilterStatus}>
                     <SelectTrigger className="w-40">
@@ -1424,19 +1424,19 @@ export default function BMadMasterDashboard({ userId, tenantId }: BMadDashboardP
                     </SelectContent>
                   </Select>
                   <Button variant="outline">
-                    <Download className="h-4 w-4 mr-2" />
+                    <Download className="mr-2 h-4 w-4" />
                     Exportar
                   </Button>
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
                 <Card className="lg:col-span-2">
                   <CardHeader>
                     <CardTitle>Tendências de Crescimento</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="h-96 flex items-center justify-center text-gray-400">
+                    <div className="flex h-96 items-center justify-center text-gray-400">
                       <LineChart className="h-16 w-16" />
                       <span className="ml-2">Gráfico de linha</span>
                     </div>
@@ -1469,11 +1469,11 @@ export default function BMadMasterDashboard({ userId, tenantId }: BMadDashboardP
             {/* Projects Tab */}
             <TabsContent value="projects" className="space-y-6">
               <div className="flex items-center justify-between">
-                <h2 className="text-3xl font-bold">Projetos</h2>
+                <h2 className="font-bold text-3xl">Projetos</h2>
                 <Dialog>
                   <DialogTrigger asChild>
                     <Button>
-                      <Plus className="h-4 w-4 mr-2" />
+                      <Plus className="mr-2 h-4 w-4" />
                       Novo Projeto
                     </Button>
                   </DialogTrigger>
@@ -1512,7 +1512,7 @@ export default function BMadMasterDashboard({ userId, tenantId }: BMadDashboardP
                 </Dialog>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
                 {[1, 2, 3, 4, 5, 6].map((i) => (
                   <Card key={i}>
                     <CardHeader>
@@ -1529,7 +1529,7 @@ export default function BMadMasterDashboard({ userId, tenantId }: BMadDashboardP
                     <CardContent>
                       <div className="space-y-4">
                         <div>
-                          <div className="flex justify-between text-sm mb-2">
+                          <div className="mb-2 flex justify-between text-sm">
                             <span>Progresso</span>
                             <span>{Math.floor(Math.random() * 100)}%</span>
                           </div>
@@ -1537,7 +1537,7 @@ export default function BMadMasterDashboard({ userId, tenantId }: BMadDashboardP
                         </div>
                         
                         <div className="flex items-center justify-between">
-                          <div className="flex -space-x-2">
+                          <div className="-space-x-2 flex">
                             {[1, 2, 3].map((j) => (
                               <Avatar key={j} className="h-6 w-6 border-2 border-white">
                                 <AvatarFallback className="text-xs">U{j}</AvatarFallback>
@@ -1547,7 +1547,7 @@ export default function BMadMasterDashboard({ userId, tenantId }: BMadDashboardP
                           {getStatusBadge(["planning", "active", "on-hold", "completed"][Math.floor(Math.random() * 4)])}
                         </div>
                         
-                        <div className="text-sm text-gray-500">
+                        <div className="text-gray-500 text-sm">
                           Entrega: {format(new Date(Date.now() + Math.random() * 30 * 24 * 60 * 60 * 1000), "dd/MM/yyyy", { locale: ptBR })}
                         </div>
                       </div>
@@ -1560,7 +1560,7 @@ export default function BMadMasterDashboard({ userId, tenantId }: BMadDashboardP
             {/* Tasks Tab */}
             <TabsContent value="tasks" className="space-y-6">
               <div className="flex items-center justify-between">
-                <h2 className="text-3xl font-bold">Tarefas</h2>
+                <h2 className="font-bold text-3xl">Tarefas</h2>
                 <div className="flex items-center space-x-2">
                   <Select value={filterStatus} onValueChange={setFilterStatus}>
                     <SelectTrigger className="w-40">
@@ -1574,7 +1574,7 @@ export default function BMadMasterDashboard({ userId, tenantId }: BMadDashboardP
                     </SelectContent>
                   </Select>
                   <Button>
-                    <Plus className="h-4 w-4 mr-2" />
+                    <Plus className="mr-2 h-4 w-4" />
                     Nova Tarefa
                   </Button>
                 </div>
@@ -1602,7 +1602,7 @@ export default function BMadMasterDashboard({ userId, tenantId }: BMadDashboardP
                           <TableCell>
                             <div>
                               <p className="font-medium">Tarefa {i}</p>
-                              <p className="text-sm text-gray-500">Descrição da tarefa {i}</p>
+                              <p className="text-gray-500 text-sm">Descrição da tarefa {i}</p>
                             </div>
                           </TableCell>
                           <TableCell>
@@ -1643,14 +1643,14 @@ export default function BMadMasterDashboard({ userId, tenantId }: BMadDashboardP
             {/* Team Tab */}
             <TabsContent value="team" className="space-y-6">
               <div className="flex items-center justify-between">
-                <h2 className="text-3xl font-bold">Equipe</h2>
+                <h2 className="font-bold text-3xl">Equipe</h2>
                 <Button>
-                  <UserPlus className="h-4 w-4 mr-2" />
+                  <UserPlus className="mr-2 h-4 w-4" />
                   Convidar Membro
                 </Button>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
                 {MOCK_USERS.map((user) => (
                   <Card key={user.id}>
                     <CardHeader>
@@ -1668,26 +1668,26 @@ export default function BMadMasterDashboard({ userId, tenantId }: BMadDashboardP
                     <CardContent>
                       <div className="space-y-2">
                         <div className="flex items-center justify-between">
-                          <span className="text-sm text-gray-500">Status</span>
+                          <span className="text-gray-500 text-sm">Status</span>
                           {getStatusBadge(user.status)}
                         </div>
                         <div className="flex items-center justify-between">
-                          <span className="text-sm text-gray-500">Departamento</span>
+                          <span className="text-gray-500 text-sm">Departamento</span>
                           <span className="text-sm">{user.department}</span>
                         </div>
                         <div className="flex items-center justify-between">
-                          <span className="text-sm text-gray-500">Último acesso</span>
+                          <span className="text-gray-500 text-sm">Último acesso</span>
                           <span className="text-sm">
                             {format(user.lastSeen, "dd/MM HH:mm", { locale: ptBR })}
                           </span>
                         </div>
                         <div className="flex items-center space-x-2 pt-2">
                           <Button variant="outline" size="sm" className="flex-1">
-                            <Mail className="h-4 w-4 mr-1" />
+                            <Mail className="mr-1 h-4 w-4" />
                             Email
                           </Button>
                           <Button variant="outline" size="sm" className="flex-1">
-                            <MessageSquare className="h-4 w-4 mr-1" />
+                            <MessageSquare className="mr-1 h-4 w-4" />
                             Chat
                           </Button>
                         </div>
@@ -1700,9 +1700,9 @@ export default function BMadMasterDashboard({ userId, tenantId }: BMadDashboardP
 
             {/* Settings Tab */}
             <TabsContent value="settings" className="space-y-6">
-              <h2 className="text-3xl font-bold">Configurações</h2>
+              <h2 className="font-bold text-3xl">Configurações</h2>
               
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
                 <Card>
                   <CardHeader>
                     <CardTitle>Preferências Gerais</CardTitle>
@@ -1714,7 +1714,7 @@ export default function BMadMasterDashboard({ userId, tenantId }: BMadDashboardP
                     <div className="flex items-center justify-between">
                       <div>
                         <Label htmlFor="notifications">Notificações</Label>
-                        <p className="text-sm text-gray-500">Receber notificações em tempo real</p>
+                        <p className="text-gray-500 text-sm">Receber notificações em tempo real</p>
                       </div>
                       <Switch id="notifications" />
                     </div>
@@ -1722,7 +1722,7 @@ export default function BMadMasterDashboard({ userId, tenantId }: BMadDashboardP
                     <div className="flex items-center justify-between">
                       <div>
                         <Label htmlFor="dark-mode">Modo Escuro</Label>
-                        <p className="text-sm text-gray-500">Usar tema escuro</p>
+                        <p className="text-gray-500 text-sm">Usar tema escuro</p>
                       </div>
                       <Switch id="dark-mode" />
                     </div>
@@ -1730,7 +1730,7 @@ export default function BMadMasterDashboard({ userId, tenantId }: BMadDashboardP
                     <div className="flex items-center justify-between">
                       <div>
                         <Label htmlFor="auto-save">Salvamento Automático</Label>
-                        <p className="text-sm text-gray-500">Salvar alterações automaticamente</p>
+                        <p className="text-gray-500 text-sm">Salvar alterações automaticamente</p>
                       </div>
                       <Switch id="auto-save" defaultChecked />
                     </div>
@@ -1748,7 +1748,7 @@ export default function BMadMasterDashboard({ userId, tenantId }: BMadDashboardP
                     <div className="flex items-center justify-between">
                       <div>
                         <Label htmlFor="2fa">Autenticação em Duas Etapas</Label>
-                        <p className="text-sm text-gray-500">Adicionar camada extra de segurança</p>
+                        <p className="text-gray-500 text-sm">Adicionar camada extra de segurança</p>
                       </div>
                       <Switch id="2fa" />
                     </div>
@@ -1756,7 +1756,7 @@ export default function BMadMasterDashboard({ userId, tenantId }: BMadDashboardP
                     <div className="flex items-center justify-between">
                       <div>
                         <Label htmlFor="session-timeout">Timeout de Sessão</Label>
-                        <p className="text-sm text-gray-500">Deslogar automaticamente após inatividade</p>
+                        <p className="text-gray-500 text-sm">Deslogar automaticamente após inatividade</p>
                       </div>
                       <Switch id="session-timeout" defaultChecked />
                     </div>
@@ -1764,7 +1764,7 @@ export default function BMadMasterDashboard({ userId, tenantId }: BMadDashboardP
                     <div className="space-y-2">
                       <Label htmlFor="password-change">Alterar Senha</Label>
                       <Button variant="outline" size="sm">
-                        <Key className="h-4 w-4 mr-2" />
+                        <Key className="mr-2 h-4 w-4" />
                         Alterar Senha
                       </Button>
                     </div>

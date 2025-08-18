@@ -43,7 +43,7 @@ export async function GET(
 
     // Create comprehensive insight request
     const insightRequest: PatientInsightRequest = {
-      patientId: patientId,
+      patientId,
       requestedInsights: requestedInsights.length > 0 ? (requestedInsights as any[]) : undefined,
       treatmentContext,
       timestamp: new Date(),
@@ -86,7 +86,7 @@ export async function POST(
 
     // Create detailed insight request from body
     const insightRequest: PatientInsightRequest = {
-      patientId: patientId,
+      patientId,
       requestedInsights: body.requestedInsights || [],
       treatmentContext: body.treatmentContext,
       treatmentId: body.treatmentId,

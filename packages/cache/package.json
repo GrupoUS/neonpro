@@ -16,7 +16,7 @@
     "build": "npx tsc",
     "dev": "npx tsc --watch",
     "type-check": "npx tsc --noEmit",
-    "lint": "eslint src/",
+    "lint": "biome check src/",
     "clean": "if exist dist rmdir /s /q dist"
   },
   "dependencies": {

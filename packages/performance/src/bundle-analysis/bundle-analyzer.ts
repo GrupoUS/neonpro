@@ -42,7 +42,7 @@ type WebpackStats = {
 };
 
 export class HealthcareBundleAnalyzer {
-  private readonly stats: WebpackStats | null = null;
+  private stats: WebpackStats | null = null;
   private readonly healthcareModules = new Set([
     'medical-form',
     'patient-data',
@@ -120,7 +120,7 @@ export class HealthcareBundleAnalyzer {
    */
   private isHealthcareCritical(chunk: any): boolean {
     return chunk.modules.some((module: any) =>
-      this.healthcareModules.some((healthcareModule) =>
+      Array.from(this.healthcareModules).some((healthcareModule: string) =>
         module.name.toLowerCase().includes(healthcareModule)
       )
     );

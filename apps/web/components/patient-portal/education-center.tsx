@@ -262,26 +262,26 @@ function ContentCard({ content, onView }: { content: any; onView: () => void }) 
   return (
     <Card
       className={cn(
-        "hover:shadow-md transition-all cursor-pointer border-l-4",
+        "cursor-pointer border-l-4 transition-all hover:shadow-md",
         getPriorityColor(content.priority),
       )}
     >
       <CardContent className="p-4" onClick={onView}>
-        <div className="flex items-start justify-between mb-3">
+        <div className="mb-3 flex items-start justify-between">
           <div className="flex-1">
-            <div className="flex items-center space-x-2 mb-2">
+            <div className="mb-2 flex items-center space-x-2">
               <Badge className={cn("flex items-center space-x-1", getTypeColor(content.type))}>
                 {getTypeIcon(content.type)}
                 <span className="capitalize">{content.type}</span>
               </Badge>
               {content.completed && <CheckCircle className="h-4 w-4 text-green-600" />}
-              {content.featured && <Star className="h-4 w-4 text-yellow-500 fill-yellow-500" />}
+              {content.featured && <Star className="h-4 w-4 fill-yellow-500 text-yellow-500" />}
             </div>
 
-            <h3 className="font-semibold text-sm mb-1">{content.title}</h3>
-            <p className="text-xs text-muted-foreground mb-2">{content.description}</p>
+            <h3 className="mb-1 font-semibold text-sm">{content.title}</h3>
+            <p className="mb-2 text-muted-foreground text-xs">{content.description}</p>
 
-            <div className="flex items-center space-x-4 text-xs text-muted-foreground">
+            <div className="flex items-center space-x-4 text-muted-foreground text-xs">
               <div className="flex items-center space-x-1">
                 <Clock className="h-3 w-3" />
                 <span>{content.duration || content.readTime}</span>
@@ -316,7 +316,7 @@ function ContentCard({ content, onView }: { content: any; onView: () => void }) 
         {/* Tags */}
         <div className="flex flex-wrap gap-1">
           {content.tags?.slice(0, 3).map((tag: string) => (
-            <Badge key={tag} variant="outline" className="text-xs py-0">
+            <Badge key={tag} variant="outline" className="py-0 text-xs">
               {tag}
             </Badge>
           ))}
@@ -365,13 +365,13 @@ function CareInstructionsWidget() {
               />
               <div className="flex-1">
                 <div className="flex items-center justify-between">
-                  <h4 className="text-sm font-medium">{instruction.title}</h4>
+                  <h4 className="font-medium text-sm">{instruction.title}</h4>
                   <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
                     <CheckCircle className="h-4 w-4" />
                   </Button>
                 </div>
-                <p className="text-xs text-muted-foreground">{instruction.description}</p>
-                <p className="text-xs text-muted-foreground font-medium">{instruction.timeframe}</p>
+                <p className="text-muted-foreground text-xs">{instruction.description}</p>
+                <p className="font-medium text-muted-foreground text-xs">{instruction.timeframe}</p>
               </div>
             </div>
           ))}
@@ -408,22 +408,22 @@ function VideoPlayer({ content }: { content: any }) {
     <Card>
       <CardContent className="p-0">
         {/* Video Player */}
-        <div className="relative aspect-video bg-black rounded-t-lg overflow-hidden">
+        <div className="relative aspect-video overflow-hidden rounded-t-lg bg-black">
           <div className="absolute inset-0 flex items-center justify-center">
-            <div className="text-white text-center">
-              <Play className="h-16 w-16 mx-auto mb-4 opacity-80" />
-              <p className="text-lg font-medium">{content.title}</p>
+            <div className="text-center text-white">
+              <Play className="mx-auto mb-4 h-16 w-16 opacity-80" />
+              <p className="font-medium text-lg">{content.title}</p>
               <p className="text-sm opacity-80">{content.duration}</p>
             </div>
           </div>
 
           {/* Video Controls */}
-          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4">
+          <div className="absolute right-0 bottom-0 left-0 bg-gradient-to-t from-black/80 to-transparent p-4">
             <div className="space-y-2">
               {/* Progress Bar */}
-              <div className="w-full bg-white/20 rounded-full h-1">
+              <div className="h-1 w-full rounded-full bg-white/20">
                 <div
-                  className="bg-pink-500 h-1 rounded-full transition-all"
+                  className="h-1 rounded-full bg-pink-500 transition-all"
                   style={{ width: `${(currentTime / duration) * 100}%` }}
                 />
               </div>
@@ -468,14 +468,14 @@ function VideoPlayer({ content }: { content: any }) {
         </div>
 
         {/* Video Info */}
-        <div className="p-4 space-y-4">
+        <div className="space-y-4 p-4">
           <div>
-            <h3 className="font-semibold text-lg mb-2">{content.title}</h3>
+            <h3 className="mb-2 font-semibold text-lg">{content.title}</h3>
             <p className="text-muted-foreground text-sm">{content.description}</p>
           </div>
 
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4 text-sm text-muted-foreground">
+            <div className="flex items-center space-x-4 text-muted-foreground text-sm">
               <div className="flex items-center space-x-1">
                 <Clock className="h-4 w-4" />
                 <span>{content.duration}</span>
@@ -524,12 +524,12 @@ function EmergencyContacts() {
         {mockEducationalContent.emergencyContacts.map((contact) => (
           <div
             key={contact.id}
-            className="flex items-center justify-between p-3 bg-red-50 dark:bg-red-950/20 rounded-lg"
+            className="flex items-center justify-between rounded-lg bg-red-50 p-3 dark:bg-red-950/20"
           >
             <div>
               <h4 className="font-medium text-sm">{contact.title}</h4>
-              <p className="text-xs text-muted-foreground">{contact.description}</p>
-              <p className="text-xs text-red-600 font-medium">{contact.available}</p>
+              <p className="text-muted-foreground text-xs">{contact.description}</p>
+              <p className="font-medium text-red-600 text-xs">{contact.available}</p>
             </div>
             <Button size="sm" className="bg-red-600 hover:bg-red-700">
               <MessageCircle className="h-4 w-4" />
@@ -586,7 +586,7 @@ export function EducationCenter() {
       {/* Header */}
       <div className="flex flex-col space-y-4 lg:flex-row lg:items-center lg:justify-between lg:space-y-0">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight lg:text-3xl">Centro Educacional</h1>
+          <h1 className="font-bold text-2xl tracking-tight lg:text-3xl">Centro Educacional</h1>
           <p className="text-muted-foreground">
             Aprenda sobre seus tratamentos e cuidados essenciais
           </p>
@@ -606,7 +606,7 @@ export function EducationCenter() {
 
       {/* Search */}
       <div className="relative">
-        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+        <Search className="-translate-y-1/2 absolute top-1/2 left-3 h-4 w-4 text-muted-foreground" />
         <Input
           placeholder="Buscar por tratamento, cuidado ou palavra-chave..."
           value={searchTerm}
@@ -634,7 +634,7 @@ export function EducationCenter() {
             <div key={treatment.id} className="space-y-4">
               <div className="flex items-center space-x-2">
                 <Heart className="h-5 w-5 text-pink-600" />
-                <h2 className="text-lg font-semibold">{treatment.treatment}</h2>
+                <h2 className="font-semibold text-lg">{treatment.treatment}</h2>
                 <Badge variant="secondary">{treatment.content.length} itens</Badge>
               </div>
 
@@ -668,15 +668,15 @@ export function EducationCenter() {
             {mockEducationalContent.categories.map((category) => (
               <Card
                 key={category.id}
-                className="hover:shadow-md transition-shadow cursor-pointer"
+                className="cursor-pointer transition-shadow hover:shadow-md"
                 onClick={() => setSelectedCategory(category.id)}
               >
                 <CardContent className="p-6 text-center">
-                  <div className="mx-auto w-12 h-12 bg-pink-100 dark:bg-pink-900/20 rounded-lg flex items-center justify-center mb-4">
+                  <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-pink-100 dark:bg-pink-900/20">
                     <category.icon className="h-6 w-6 text-pink-600" />
                   </div>
-                  <h3 className="font-semibold mb-2">{category.name}</h3>
-                  <p className="text-sm text-muted-foreground">
+                  <h3 className="mb-2 font-semibold">{category.name}</h3>
+                  <p className="text-muted-foreground text-sm">
                     {category.count} conteúdos disponíveis
                   </p>
                 </CardContent>

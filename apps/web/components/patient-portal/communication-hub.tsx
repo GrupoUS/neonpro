@@ -237,9 +237,8 @@ function ConversationList({ conversations, onSelectConversation, selectedId }: a
 
     if (diffInHours < 24) {
       return date.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
-    } else {
-      return date.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" });
     }
+      return date.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" });
   };
 
   const getPriorityColor = (priority: string) => {
@@ -261,9 +260,9 @@ function ConversationList({ conversations, onSelectConversation, selectedId }: a
         <Card
           key={conversation.id}
           className={cn(
-            "cursor-pointer transition-all hover:shadow-md border-l-4",
+            "cursor-pointer border-l-4 transition-all hover:shadow-md",
             selectedId === conversation.id
-              ? "bg-pink-50 border-pink-500"
+              ? "border-pink-500 bg-pink-50"
               : getPriorityColor(conversation.priority),
           )}
           onClick={() => onSelectConversation(conversation)}
@@ -272,37 +271,37 @@ function ConversationList({ conversations, onSelectConversation, selectedId }: a
             <div className="flex items-center space-x-3">
               {/* Avatar */}
               <div className="relative">
-                <div className="w-10 h-10 bg-pink-100 rounded-full flex items-center justify-center">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-pink-100">
                   <User className="h-5 w-5 text-pink-600" />
                 </div>
                 {conversation.participant.isOnline && (
-                  <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-white" />
+                  <div className="-bottom-1 -right-1 absolute h-3 w-3 rounded-full border-2 border-white bg-green-500" />
                 )}
               </div>
 
               {/* Content */}
-              <div className="flex-1 min-w-0">
+              <div className="min-w-0 flex-1">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-2">
-                    <h3 className="font-medium text-sm truncate">
+                    <h3 className="truncate font-medium text-sm">
                       {conversation.participant.name}
                     </h3>
                     {conversation.isPinned && <Pin className="h-3 w-3 text-muted-foreground" />}
                   </div>
                   <div className="flex items-center space-x-1">
-                    <span className="text-xs text-muted-foreground">
+                    <span className="text-muted-foreground text-xs">
                       {formatTime(conversation.lastMessage.timestamp)}
                     </span>
                     {conversation.unreadCount > 0 && (
-                      <Badge className="bg-pink-600 text-white text-xs h-5 w-5 rounded-full p-0 flex items-center justify-center">
+                      <Badge className="flex h-5 w-5 items-center justify-center rounded-full bg-pink-600 p-0 text-white text-xs">
                         {conversation.unreadCount}
                       </Badge>
                     )}
                   </div>
                 </div>
 
-                <p className="text-xs text-muted-foreground">{conversation.participant.role}</p>
-                <p className="text-sm text-muted-foreground truncate mt-1">
+                <p className="text-muted-foreground text-xs">{conversation.participant.role}</p>
+                <p className="mt-1 truncate text-muted-foreground text-sm">
                   {conversation.lastMessage.text}
                 </p>
               </div>
@@ -346,26 +345,26 @@ function ChatWindow({ conversation }: any) {
   };
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex h-full flex-col">
       {/* Chat Header */}
       <div className="border-b p-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <div className="relative">
-              <div className="w-10 h-10 bg-pink-100 rounded-full flex items-center justify-center">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-pink-100">
                 <User className="h-5 w-5 text-pink-600" />
               </div>
               {conversation.participant.isOnline && (
-                <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-white" />
+                <div className="-bottom-1 -right-1 absolute h-3 w-3 rounded-full border-2 border-white bg-green-500" />
               )}
             </div>
 
             <div>
               <h3 className="font-medium">{conversation.participant.name}</h3>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-muted-foreground text-sm">
                 {conversation.participant.role} • {conversation.participant.clinic}
               </p>
-              <p className="text-xs text-green-600">
+              <p className="text-green-600 text-xs">
                 {conversation.participant.isOnline ? "Online" : "Offline"}
               </p>
             </div>
@@ -386,7 +385,7 @@ function ChatWindow({ conversation }: any) {
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+      <div className="flex-1 space-y-4 overflow-y-auto p-4">
         {conversation.messages.map((msg: any) => (
           <div
             key={msg.id}
@@ -394,7 +393,7 @@ function ChatWindow({ conversation }: any) {
           >
             <div
               className={cn(
-                "max-w-xs lg:max-w-md px-4 py-2 rounded-lg space-y-1",
+                "max-w-xs space-y-1 rounded-lg px-4 py-2 lg:max-w-md",
                 msg.from === "patient" ? "bg-pink-600 text-white" : "bg-gray-100 dark:bg-gray-800",
               )}
             >
@@ -428,7 +427,7 @@ function ChatWindow({ conversation }: any) {
             </Button>
           </div>
 
-          <div className="flex-1 flex space-x-2">
+          <div className="flex flex-1 space-x-2">
             <Input
               placeholder="Digite sua mensagem..."
               value={message}
@@ -473,11 +472,10 @@ function NotificationsList({ notifications }: any) {
 
     if (diffInMinutes < 60) {
       return `${Math.floor(diffInMinutes)} min atrás`;
-    } else if (diffInMinutes < 1440) {
+    }if (diffInMinutes < 1440) {
       return `${Math.floor(diffInMinutes / 60)} horas atrás`;
-    } else {
-      return date.toLocaleDateString("pt-BR");
     }
+      return date.toLocaleDateString("pt-BR");
   };
 
   return (
@@ -486,26 +484,26 @@ function NotificationsList({ notifications }: any) {
         <Card
           key={notification.id}
           className={cn(
-            "cursor-pointer hover:shadow-md transition-all",
-            !notification.read ? "border-l-4 border-l-pink-500 bg-pink-50/50" : "",
+            "cursor-pointer transition-all hover:shadow-md",
+            notification.read ? "" : "border-l-4 border-l-pink-500 bg-pink-50/50",
           )}
         >
           <CardContent className="p-4">
             <div className="flex items-start space-x-3">
               <div className="flex-shrink-0">{getNotificationIcon(notification.type)}</div>
 
-              <div className="flex-1 min-w-0">
+              <div className="min-w-0 flex-1">
                 <div className="flex items-center justify-between">
                   <h3
-                    className={cn("font-medium text-sm", !notification.read ? "font-semibold" : "")}
+                    className={cn("font-medium text-sm", notification.read ? "" : "font-semibold")}
                   >
                     {notification.title}
                   </h3>
-                  <span className="text-xs text-muted-foreground">
+                  <span className="text-muted-foreground text-xs">
                     {formatNotificationTime(notification.timestamp)}
                   </span>
                 </div>
-                <p className="text-sm text-muted-foreground mt-1">{notification.message}</p>
+                <p className="mt-1 text-muted-foreground text-sm">{notification.message}</p>
 
                 {notification.priority === "high" && (
                   <Badge variant="secondary" className="mt-2 bg-red-100 text-red-800">
@@ -515,7 +513,7 @@ function NotificationsList({ notifications }: any) {
               </div>
 
               <div className="flex items-center space-x-1">
-                {!notification.read && <div className="w-2 h-2 bg-pink-600 rounded-full" />}
+                {!notification.read && <div className="h-2 w-2 rounded-full bg-pink-600" />}
                 <Button variant="ghost" size="sm">
                   <MoreVertical className="h-4 w-4" />
                 </Button>
@@ -536,12 +534,12 @@ function EmergencyContacts({ contacts }: any) {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div className="space-y-1">
-                <h3 className="font-medium text-sm flex items-center space-x-2">
+                <h3 className="flex items-center space-x-2 font-medium text-sm">
                   <AlertTriangle className="h-4 w-4 text-red-600" />
                   <span>{contact.name}</span>
                 </h3>
-                <p className="text-xs text-muted-foreground">{contact.description}</p>
-                <p className="text-xs text-red-600 font-medium">{contact.available}</p>
+                <p className="text-muted-foreground text-xs">{contact.description}</p>
+                <p className="font-medium text-red-600 text-xs">{contact.available}</p>
               </div>
 
               <div className="flex space-x-2">
@@ -574,7 +572,7 @@ export function CommunicationHub() {
       {/* Header */}
       <div className="flex flex-col space-y-4 lg:flex-row lg:items-center lg:justify-between lg:space-y-0">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight lg:text-3xl">Central de Comunicação</h1>
+          <h1 className="font-bold text-2xl tracking-tight lg:text-3xl">Central de Comunicação</h1>
           <p className="text-muted-foreground">Mantenha-se conectado com sua equipe médica</p>
         </div>
 
@@ -596,8 +594,8 @@ export function CommunicationHub() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">Mensagens Não Lidas</p>
-                <p className="text-2xl font-bold">3</p>
+                <p className="text-muted-foreground text-sm">Mensagens Não Lidas</p>
+                <p className="font-bold text-2xl">3</p>
               </div>
               <MessageCircle className="h-8 w-8 text-blue-500" />
             </div>
@@ -608,8 +606,8 @@ export function CommunicationHub() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">Médicos Online</p>
-                <p className="text-2xl font-bold">2</p>
+                <p className="text-muted-foreground text-sm">Médicos Online</p>
+                <p className="font-bold text-2xl">2</p>
               </div>
               <User className="h-8 w-8 text-green-500" />
             </div>
@@ -620,8 +618,8 @@ export function CommunicationHub() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">Notificações</p>
-                <p className="text-2xl font-bold">2</p>
+                <p className="text-muted-foreground text-sm">Notificações</p>
+                <p className="font-bold text-2xl">2</p>
               </div>
               <Bell className="h-8 w-8 text-yellow-500" />
             </div>
@@ -632,8 +630,8 @@ export function CommunicationHub() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">Suporte 24h</p>
-                <p className="text-sm font-bold">Disponível</p>
+                <p className="text-muted-foreground text-sm">Suporte 24h</p>
+                <p className="font-bold text-sm">Disponível</p>
               </div>
               <Shield className="h-8 w-8 text-red-500" />
             </div>
@@ -661,7 +659,7 @@ export function CommunicationHub() {
                 <CardHeader>
                   <CardTitle className="text-lg">Conversas</CardTitle>
                   <div className="relative">
-                    <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                    <Search className="-translate-y-1/2 absolute top-1/2 left-3 h-4 w-4 text-muted-foreground" />
                     <Input
                       placeholder="Buscar conversas..."
                       value={searchTerm}
@@ -686,9 +684,9 @@ export function CommunicationHub() {
                 {selectedConversation ? (
                   <ChatWindow conversation={selectedConversation} />
                 ) : (
-                  <CardContent className="flex items-center justify-center h-full">
+                  <CardContent className="flex h-full items-center justify-center">
                     <div className="text-center text-muted-foreground">
-                      <MessageCircle className="h-12 w-12 mx-auto mb-4" />
+                      <MessageCircle className="mx-auto mb-4 h-12 w-12" />
                       <p>Selecione uma conversa para começar</p>
                     </div>
                   </CardContent>
@@ -736,11 +734,11 @@ export function CommunicationHub() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  <div className="p-4 bg-red-50 dark:bg-red-950/20 rounded-lg">
-                    <h4 className="font-medium text-red-700 mb-2">
+                  <div className="rounded-lg bg-red-50 p-4 dark:bg-red-950/20">
+                    <h4 className="mb-2 font-medium text-red-700">
                       Emergências Médicas (Ligue Imediatamente)
                     </h4>
-                    <ul className="space-y-1 text-sm text-red-600">
+                    <ul className="space-y-1 text-red-600 text-sm">
                       <li>• Dificuldade para respirar ou engolir</li>
                       <li>• Reação alérgica grave (urticária, inchaço facial)</li>
                       <li>• Dor intensa e persistente</li>
@@ -748,8 +746,8 @@ export function CommunicationHub() {
                     </ul>
                   </div>
 
-                  <div className="p-4 bg-yellow-50 dark:bg-yellow-950/20 rounded-lg">
-                    <h4 className="font-medium text-yellow-700 mb-2">
+                  <div className="rounded-lg bg-yellow-50 p-4 dark:bg-yellow-950/20">
+                    <h4 className="mb-2 font-medium text-yellow-700">
                       Situações Urgentes (Contate em 24h)
                     </h4>
                     <ul className="space-y-1 text-sm text-yellow-600">

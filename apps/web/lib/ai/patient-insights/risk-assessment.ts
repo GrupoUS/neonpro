@@ -230,8 +230,8 @@ export class RiskAssessmentIntegration {
       adjustedOutcome: Math.max(0, Math.min(100, treatment.estimatedOutcome * riskMultiplier)),
       treatmentRiskLevel,
       applicableRiskFactors: riskFactors,
-      recommendations: recommendations,
-      contraindications: contraindications,
+      recommendations,
+      contraindications,
     };
   }
 

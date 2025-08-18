@@ -403,7 +403,7 @@ export class PatientService {
   async searchPatients(
     tenantId: string,
     searchTerm: string,
-    limit: number = 10,
+    limit = 10,
   ): Promise<{ patients?: Patient[]; error?: string }> {
     try {
       const { data, error } = await supabase
@@ -461,23 +461,23 @@ export class PatientService {
     // Calculate check digits
     let sum = 0;
     for (let i = 0; i < 9; i++) {
-      sum += parseInt(cleanCPF.charAt(i), 10) * (10 - i);
+      sum += Number.parseInt(cleanCPF.charAt(i), 10) * (10 - i);
     }
 
     let checkDigit1 = 11 - (sum % 11);
     if (checkDigit1 >= 10) checkDigit1 = 0;
 
-    if (parseInt(cleanCPF.charAt(9), 10) !== checkDigit1) return false;
+    if (Number.parseInt(cleanCPF.charAt(9), 10) !== checkDigit1) return false;
 
     sum = 0;
     for (let i = 0; i < 10; i++) {
-      sum += parseInt(cleanCPF.charAt(i), 10) * (11 - i);
+      sum += Number.parseInt(cleanCPF.charAt(i), 10) * (11 - i);
     }
 
     let checkDigit2 = 11 - (sum % 11);
     if (checkDigit2 >= 10) checkDigit2 = 0;
 
-    return parseInt(cleanCPF.charAt(10), 10) === checkDigit2;
+    return Number.parseInt(cleanCPF.charAt(10), 10) === checkDigit2;
   }
 
   async exportPatientData(

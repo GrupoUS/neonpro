@@ -73,7 +73,7 @@ const MOCK_METRICS: ClinicMetrics = {
   totalPatients: 1247,
   appointmentsToday: 18,
   pendingResults: 7,
-  revenue: 45780,
+  revenue: 45_780,
   patientSatisfaction: 4.8,
   occupancyRate: 87,
   averageWaitTime: 12,
@@ -220,7 +220,7 @@ export default function ClinicDashboard() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Dashboard da Clínica</h1>
+          <h1 className="font-bold text-3xl tracking-tight">Dashboard da Clínica</h1>
           <p className="text-muted-foreground">
             Visão geral das operações e métricas em tempo real
           </p>
@@ -232,16 +232,16 @@ export default function ClinicDashboard() {
       </div>
 
       {/* Key Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Pacientes Total</CardTitle>
+            <CardTitle className="font-medium text-sm">Pacientes Total</CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{metrics.totalPatients.toLocaleString()}</div>
-            <p className="text-xs text-muted-foreground">
-              <TrendingUp className="inline h-3 w-3 mr-1" />
+            <div className="font-bold text-2xl">{metrics.totalPatients.toLocaleString()}</div>
+            <p className="text-muted-foreground text-xs">
+              <TrendingUp className="mr-1 inline h-3 w-3" />
               +12% desde o mês passado
             </p>
           </CardContent>
@@ -249,12 +249,12 @@ export default function ClinicDashboard() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Consultas Hoje</CardTitle>
+            <CardTitle className="font-medium text-sm">Consultas Hoje</CardTitle>
             <Calendar className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{metrics.appointmentsToday}</div>
-            <p className="text-xs text-muted-foreground">
+            <div className="font-bold text-2xl">{metrics.appointmentsToday}</div>
+            <p className="text-muted-foreground text-xs">
               {metrics.completedAppointments} concluídas este mês
             </p>
           </CardContent>
@@ -262,13 +262,13 @@ export default function ClinicDashboard() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Receita Mensal</CardTitle>
+            <CardTitle className="font-medium text-sm">Receita Mensal</CardTitle>
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{formatCurrency(metrics.revenue)}</div>
-            <p className="text-xs text-muted-foreground">
-              <TrendingUp className="inline h-3 w-3 mr-1" />
+            <div className="font-bold text-2xl">{formatCurrency(metrics.revenue)}</div>
+            <p className="text-muted-foreground text-xs">
+              <TrendingUp className="mr-1 inline h-3 w-3" />
               +8% desde o mês passado
             </p>
           </CardContent>
@@ -276,18 +276,18 @@ export default function ClinicDashboard() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Satisfação</CardTitle>
+            <CardTitle className="font-medium text-sm">Satisfação</CardTitle>
             <Star className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{metrics.patientSatisfaction}/5.0</div>
-            <p className="text-xs text-muted-foreground">Baseado em 127 avaliações</p>
+            <div className="font-bold text-2xl">{metrics.patientSatisfaction}/5.0</div>
+            <p className="text-muted-foreground text-xs">Baseado em 127 avaliações</p>
           </CardContent>
         </Card>
       </div>
 
       {/* Charts and Analytics */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <Card>
           <CardHeader>
             <CardTitle>Ocupação da Clínica</CardTitle>
@@ -295,9 +295,9 @@ export default function ClinicDashboard() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium">Taxa de Ocupação</span>
-                <span className="text-sm text-muted-foreground">{metrics.occupancyRate}%</span>
+              <div className="mb-2 flex items-center justify-between">
+                <span className="font-medium text-sm">Taxa de Ocupação</span>
+                <span className="text-muted-foreground text-sm">{metrics.occupancyRate}%</span>
               </div>
               <Progress value={metrics.occupancyRate} className="h-2" />
             </div>
@@ -307,7 +307,7 @@ export default function ClinicDashboard() {
                 <Clock className="h-4 w-4 text-muted-foreground" />
                 <span className="text-sm">Tempo médio de espera</span>
               </div>
-              <span className="text-sm font-medium">{metrics.averageWaitTime} min</span>
+              <span className="font-medium text-sm">{metrics.averageWaitTime} min</span>
             </div>
 
             <Alert>
@@ -328,10 +328,10 @@ export default function ClinicDashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-center">
-              <div className="text-3xl font-bold text-orange-600 mb-2">
+              <div className="mb-2 font-bold text-3xl text-orange-600">
                 {metrics.pendingResults}
               </div>
-              <p className="text-sm text-muted-foreground mb-4">exames pendentes de análise</p>
+              <p className="mb-4 text-muted-foreground text-sm">exames pendentes de análise</p>
               <Button variant="outline" className="w-full">
                 <FileText className="mr-2 h-4 w-4" />
                 Ver Todos os Resultados
@@ -360,7 +360,7 @@ export default function ClinicDashboard() {
                 {doctors.map((doctor) => (
                   <div
                     key={doctor.id}
-                    className="flex items-center justify-between p-4 border rounded-lg"
+                    className="flex items-center justify-between rounded-lg border p-4"
                   >
                     <div className="flex items-center space-x-4">
                       <Avatar>
@@ -374,16 +374,16 @@ export default function ClinicDashboard() {
                       </Avatar>
                       <div>
                         <h4 className="font-medium">{doctor.name}</h4>
-                        <p className="text-sm text-muted-foreground">{doctor.specialty}</p>
-                        <div className="flex items-center space-x-4 mt-1">
-                          <span className="text-xs text-muted-foreground">
+                        <p className="text-muted-foreground text-sm">{doctor.specialty}</p>
+                        <div className="mt-1 flex items-center space-x-4">
+                          <span className="text-muted-foreground text-xs">
                             {doctor.appointmentsToday} consultas hoje
                           </span>
-                          <span className="text-xs text-muted-foreground">
+                          <span className="text-muted-foreground text-xs">
                             {doctor.patientsSeen} pacientes atendidos
                           </span>
                           <div className="flex items-center">
-                            <Star className="h-3 w-3 text-yellow-500 mr-1" />
+                            <Star className="mr-1 h-3 w-3 text-yellow-500" />
                             <span className="text-xs">{doctor.rating}</span>
                           </div>
                         </div>
@@ -414,13 +414,13 @@ export default function ClinicDashboard() {
                 {activities.map((activity) => (
                   <div key={activity.id} className="flex items-start space-x-4">
                     <div
-                      className={`p-2 rounded-full ${getActivityStatusColor(activity.status)} bg-opacity-10`}
+                      className={`rounded-full p-2 ${getActivityStatusColor(activity.status)} bg-opacity-10`}
                     >
                       {getActivityIcon(activity.type)}
                     </div>
                     <div className="flex-1">
                       <p className="text-sm">{activity.description}</p>
-                      <p className="text-xs text-muted-foreground">
+                      <p className="text-muted-foreground text-xs">
                         {formatRelativeTime(activity.timestamp)}
                       </p>
                     </div>
@@ -433,14 +433,14 @@ export default function ClinicDashboard() {
 
         {/* Analytics Tab */}
         <TabsContent value="analytics" className="space-y-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
             <Card>
               <CardHeader>
                 <CardTitle>Distribuição de Consultas</CardTitle>
                 <CardDescription>Por especialidade médica</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="h-64 flex items-center justify-center text-muted-foreground">
+                <div className="flex h-64 items-center justify-center text-muted-foreground">
                   <PieChart className="h-16 w-16" />
                   <span className="ml-2">Gráfico de distribuição</span>
                 </div>
@@ -453,7 +453,7 @@ export default function ClinicDashboard() {
                 <CardDescription>Últimos 6 meses</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="h-64 flex items-center justify-center text-muted-foreground">
+                <div className="flex h-64 items-center justify-center text-muted-foreground">
                   <BarChart3 className="h-16 w-16" />
                   <span className="ml-2">Gráfico de tendência</span>
                 </div>

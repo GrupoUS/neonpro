@@ -60,12 +60,12 @@ export function createRiskAssessmentService(config: RiskAssessmentConfig): RiskA
         patientId,
         history: [
           {
-            assessmentDate: new Date(Date.now() - 86400000).toISOString(), // 1 day ago
+            assessmentDate: new Date(Date.now() - 86_400_000).toISOString(), // 1 day ago
             riskLevel: "medium",
             score: 0.5,
           },
           {
-            assessmentDate: new Date(Date.now() - 172800000).toISOString(), // 2 days ago
+            assessmentDate: new Date(Date.now() - 172_800_000).toISOString(), // 2 days ago
             riskLevel: "low",
             score: 0.3,
           },
@@ -161,7 +161,7 @@ export function createRiskAssessmentService(config: RiskAssessmentConfig): RiskA
       .fn()
       .mockImplementation(async (patientData: any, doctorId: string, options?: any) => {
         // Validate input integrity first
-        if (!patientData || !patientData.id) {
+        if (!(patientData && patientData.id)) {
           throw new Error("Invalid patient data: missing required fields");
         }
 

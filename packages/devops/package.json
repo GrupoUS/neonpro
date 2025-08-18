@@ -8,9 +8,9 @@
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",
-    "lint": "eslint src/",
+    "lint": "biome check src/",
     "typecheck": "tsc --noEmit",
-    "test": "jest"
+    "test": "vitest"
   },
   "dependencies": {
     "@neonpro/database": "workspace:*",

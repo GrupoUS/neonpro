@@ -513,7 +513,7 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 export type RLSPolicyConfig = {
   tableName: string;
   policyName: string;
-  operation: "SELECT" | "INSERT" | "UPDATE" | "DELETE";
+  operation: 'SELECT' | 'INSERT' | 'UPDATE' | 'DELETE';
   using?: string;
   withCheck?: string;
   description: string;
@@ -532,7 +532,7 @@ export const rlsUtils = {
         policy.policyName &&
         policy.operation &&
         policy.description &&
-        (policy.using || policy.withCheck),
+        (policy.using || policy.withCheck)
     );
   },
 
@@ -551,7 +551,7 @@ export const rlsUtils = {
       sql += ` WITH CHECK (\n    ${policy.withCheck}\n  )`;
     }
 
-    sql += ";";
+    sql += ';';
 
     return sql;
   },

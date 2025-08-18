@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    // NEONPRO HEALTHCARE - Strict TypeScript for Medical Accuracy
     "strict": true,
     "noImplicitAny": true,
     "strictNullChecks": true,

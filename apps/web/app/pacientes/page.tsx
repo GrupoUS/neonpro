@@ -185,7 +185,7 @@ export default function PacientesPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Pacientes</h1>
+          <h1 className="font-bold text-3xl tracking-tight">Pacientes</h1>
           <p className="text-muted-foreground">Gerencie os pacientes da sua clínica</p>
         </div>
         <Button onClick={handleAddPatient}>
@@ -203,7 +203,7 @@ export default function PacientesPage() {
           <div className="flex space-x-4">
             <div className="flex-1">
               <div className="relative">
-                <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                <Search className="absolute top-2.5 left-2 h-4 w-4 text-muted-foreground" />
                 <Input
                   placeholder="Buscar pacientes..."
                   value={searchQuery}
@@ -260,7 +260,7 @@ export default function PacientesPage() {
                       </Avatar>
                       <div>
                         <p className="font-medium">{patient.name}</p>
-                        <p className="text-sm text-muted-foreground">
+                        <p className="text-muted-foreground text-sm">
                           {patient.gender === "M"
                             ? "Masculino"
                             : patient.gender === "F"

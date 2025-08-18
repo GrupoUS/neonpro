@@ -187,15 +187,15 @@ function AppointmentCard({ appointment, isPast = false }: { appointment: any; is
   };
 
   return (
-    <Card className="hover:shadow-md transition-shadow">
+    <Card className="transition-shadow hover:shadow-md">
       <CardContent className="p-6">
         <div className="flex flex-col space-y-4 lg:flex-row lg:items-center lg:justify-between lg:space-y-0">
-          <div className="space-y-3 flex-1">
+          <div className="flex-1 space-y-3">
             {/* Header */}
             <div className="flex items-start justify-between">
               <div>
                 <h3 className="font-semibold text-lg">{appointment.treatment}</h3>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-muted-foreground text-sm">
                   {formatDate(appointment.date)} às {appointment.time}
                 </p>
               </div>
@@ -246,22 +246,22 @@ function AppointmentCard({ appointment, isPast = false }: { appointment: any; is
 
             {/* Notes */}
             {appointment.notes && (
-              <p className="text-sm text-muted-foreground italic">{appointment.notes}</p>
+              <p className="text-muted-foreground text-sm italic">{appointment.notes}</p>
             )}
 
             {/* Preparation (for upcoming appointments) */}
             {!isPast && appointment.preparation && (
-              <div className="bg-blue-50 dark:bg-blue-950/20 p-3 rounded-lg">
-                <h4 className="text-sm font-medium mb-2 text-blue-900 dark:text-blue-100">
+              <div className="rounded-lg bg-blue-50 p-3 dark:bg-blue-950/20">
+                <h4 className="mb-2 font-medium text-blue-900 text-sm dark:text-blue-100">
                   Preparação para o procedimento:
                 </h4>
                 <ul className="space-y-1">
                   {appointment.preparation.map((item: string, index: number) => (
                     <li
                       key={index}
-                      className="text-xs text-blue-800 dark:text-blue-200 flex items-start space-x-2"
+                      className="flex items-start space-x-2 text-blue-800 text-xs dark:text-blue-200"
                     >
-                      <span className="mt-1 h-1 w-1 bg-blue-600 rounded-full flex-shrink-0"></span>
+                      <span className="mt-1 h-1 w-1 flex-shrink-0 rounded-full bg-blue-600" />
                       <span>{item}</span>
                     </li>
                   ))}
@@ -289,7 +289,7 @@ function AppointmentCard({ appointment, isPast = false }: { appointment: any; is
                   </div>
                 </div>
                 {appointment.feedback && (
-                  <p className="text-sm text-muted-foreground italic">"{appointment.feedback}"</p>
+                  <p className="text-muted-foreground text-sm italic">"{appointment.feedback}"</p>
                 )}
               </div>
             )}
@@ -321,7 +321,7 @@ function AppointmentCard({ appointment, isPast = false }: { appointment: any; is
                 <Button
                   variant="outline"
                   size="sm"
-                  className="text-red-600 border-red-200 hover:bg-red-50"
+                  className="border-red-200 text-red-600 hover:bg-red-50"
                 >
                   <Trash2 className="h-4 w-4" />
                   Cancelar
@@ -362,7 +362,7 @@ function NewAppointmentForm() {
       <CardContent className="space-y-6">
         {/* Treatment Selection */}
         <div className="space-y-2">
-          <label className="text-sm font-medium">Tipo de Tratamento</label>
+          <label className="font-medium text-sm">Tipo de Tratamento</label>
           <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
             {treatmentTypes.map((treatment) => (
               <Card
@@ -377,7 +377,7 @@ function NewAppointmentForm() {
               >
                 <CardContent className="p-4">
                   <h4 className="font-medium">{treatment.name}</h4>
-                  <div className="flex items-center justify-between text-sm text-muted-foreground mt-1">
+                  <div className="mt-1 flex items-center justify-between text-muted-foreground text-sm">
                     <span>{treatment.duration}min</span>
                     <span>R$ {treatment.price}</span>
                   </div>
@@ -391,8 +391,8 @@ function NewAppointmentForm() {
         {selectedTreatment && (
           <div className="space-y-4">
             <div className="space-y-2">
-              <label className="text-sm font-medium">Horários Disponíveis</label>
-              <p className="text-sm text-muted-foreground">
+              <label className="font-medium text-sm">Horários Disponíveis</label>
+              <p className="text-muted-foreground text-sm">
                 Baseado na sua localização e preferências
               </p>
             </div>
@@ -422,7 +422,7 @@ function NewAppointmentForm() {
                           month: "short",
                         })}
                       </div>
-                      <div className="text-lg font-bold text-pink-600">{slot.time}</div>
+                      <div className="font-bold text-lg text-pink-600">{slot.time}</div>
                     </CardContent>
                   </Card>
                 ))}
@@ -433,9 +433,9 @@ function NewAppointmentForm() {
         {/* Additional Notes */}
         {selectedDate && selectedTime && (
           <div className="space-y-2">
-            <label className="text-sm font-medium">Observações (opcional)</label>
+            <label className="font-medium text-sm">Observações (opcional)</label>
             <textarea
-              className="w-full min-h-[80px] px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500"
+              className="min-h-[80px] w-full rounded-md border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500"
               placeholder="Alguma observação especial ou dúvida sobre o procedimento..."
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
@@ -445,11 +445,11 @@ function NewAppointmentForm() {
 
         {/* Confirmation */}
         {selectedTreatment && selectedDate && selectedTime && (
-          <div className="bg-green-50 dark:bg-green-950/20 p-4 rounded-lg">
-            <h4 className="font-medium text-green-900 dark:text-green-100 mb-2">
+          <div className="rounded-lg bg-green-50 p-4 dark:bg-green-950/20">
+            <h4 className="mb-2 font-medium text-green-900 dark:text-green-100">
               Resumo do Agendamento
             </h4>
-            <div className="space-y-1 text-sm text-green-800 dark:text-green-200">
+            <div className="space-y-1 text-green-800 text-sm dark:text-green-200">
               <p>
                 <strong>Tratamento:</strong>{" "}
                 {treatmentTypes.find((t) => t.id === selectedTreatment)?.name}
@@ -482,7 +482,7 @@ function NewAppointmentForm() {
         <div className="flex space-x-3">
           <Button
             className="flex-1 bg-pink-600 hover:bg-pink-700"
-            disabled={!selectedTreatment || !selectedDate || !selectedTime}
+            disabled={!((selectedTreatment && selectedDate ) && selectedTime)}
           >
             Confirmar Agendamento
           </Button>
@@ -505,7 +505,7 @@ export function AppointmentManagement() {
       {/* Header */}
       <div className="flex flex-col space-y-4 lg:flex-row lg:items-center lg:justify-between lg:space-y-0">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight lg:text-3xl">
+          <h1 className="font-bold text-2xl tracking-tight lg:text-3xl">
             Gerenciamento de Agendamentos
           </h1>
           <p className="text-muted-foreground">
@@ -531,7 +531,7 @@ export function AppointmentManagement() {
       {/* Search and Filters */}
       <div className="flex flex-col space-y-4 sm:flex-row sm:items-center sm:space-x-4 sm:space-y-0">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Search className="-translate-y-1/2 absolute top-1/2 left-3 h-4 w-4 text-muted-foreground" />
           <Input
             placeholder="Buscar por tratamento, médico ou data..."
             value={searchTerm}
@@ -557,9 +557,9 @@ export function AppointmentManagement() {
           {mockAppointments.upcoming.length === 0 ? (
             <Card>
               <CardContent className="flex flex-col items-center justify-center py-12">
-                <Calendar className="h-12 w-12 text-muted-foreground mb-4" />
-                <h3 className="text-lg font-medium mb-2">Nenhuma consulta agendada</h3>
-                <p className="text-muted-foreground text-center mb-4">
+                <Calendar className="mb-4 h-12 w-12 text-muted-foreground" />
+                <h3 className="mb-2 font-medium text-lg">Nenhuma consulta agendada</h3>
+                <p className="mb-4 text-center text-muted-foreground">
                   Que tal agendar sua próxima sessão de tratamento?
                 </p>
                 <Button
@@ -582,9 +582,9 @@ export function AppointmentManagement() {
           {mockAppointments.past.length === 0 ? (
             <Card>
               <CardContent className="flex flex-col items-center justify-center py-12">
-                <CheckCircle className="h-12 w-12 text-muted-foreground mb-4" />
-                <h3 className="text-lg font-medium mb-2">Nenhuma consulta anterior</h3>
-                <p className="text-muted-foreground text-center">
+                <CheckCircle className="mb-4 h-12 w-12 text-muted-foreground" />
+                <h3 className="mb-2 font-medium text-lg">Nenhuma consulta anterior</h3>
+                <p className="text-center text-muted-foreground">
                   Seu histórico de consultas aparecerá aqui
                 </p>
               </CardContent>
@@ -604,27 +604,27 @@ export function AppointmentManagement() {
         </CardHeader>
         <CardContent>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            <Button variant="outline" className="h-auto p-4 flex flex-col items-center space-y-2">
+            <Button variant="outline" className="flex h-auto flex-col items-center space-y-2 p-4">
               <Calendar className="h-6 w-6 text-pink-600" />
               <div className="text-center">
                 <div className="font-medium">Reagendar Consulta</div>
-                <div className="text-xs text-muted-foreground">Alterar data/horário</div>
+                <div className="text-muted-foreground text-xs">Alterar data/horário</div>
               </div>
             </Button>
 
-            <Button variant="outline" className="h-auto p-4 flex flex-col items-center space-y-2">
+            <Button variant="outline" className="flex h-auto flex-col items-center space-y-2 p-4">
               <Bell className="h-6 w-6 text-blue-600" />
               <div className="text-center">
                 <div className="font-medium">Configurar Lembretes</div>
-                <div className="text-xs text-muted-foreground">SMS, email, push</div>
+                <div className="text-muted-foreground text-xs">SMS, email, push</div>
               </div>
             </Button>
 
-            <Button variant="outline" className="h-auto p-4 flex flex-col items-center space-y-2">
+            <Button variant="outline" className="flex h-auto flex-col items-center space-y-2 p-4">
               <Phone className="h-6 w-6 text-green-600" />
               <div className="text-center">
                 <div className="font-medium">Contatar Clínica</div>
-                <div className="text-xs text-muted-foreground">Suporte direto</div>
+                <div className="text-muted-foreground text-xs">Suporte direto</div>
               </div>
             </Button>
           </div>

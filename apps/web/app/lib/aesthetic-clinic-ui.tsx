@@ -411,7 +411,7 @@ export function TreatmentPlanningInterface() {
   const [areaNotes, setAreaNotes] = useState("");
 
   const addTreatmentArea = () => {
-    if (!selectedArea || !areaUnits) return;
+    if (!(selectedArea && areaUnits)) return;
 
     const newArea: TreatmentArea = {
       id: Date.now().toString(),
@@ -473,7 +473,7 @@ export function TreatmentPlanningInterface() {
         </CardHeader>
         <CardContent className="space-y-6">
           {/* Patient and Treatment Selection */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
             <div className="space-y-2">
               <Label htmlFor="patient-name">Nome do Paciente</Label>
               <Input
@@ -528,13 +528,13 @@ export function TreatmentPlanningInterface() {
           <Separator />
 
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold flex items-center gap-2">
+            <h3 className="flex items-center gap-2 font-semibold text-lg">
               <MapPin className="h-5 w-5" />
               Áreas de Tratamento
             </h3>
 
             {/* Add Area Form */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+            <div className="grid grid-cols-1 gap-4 rounded-lg bg-gray-50 p-4 md:grid-cols-4 dark:bg-gray-800">
               <div className="space-y-2">
                 <Label htmlFor="area-select">Área</Label>
                 <Select value={selectedArea} onValueChange={setSelectedArea}>
@@ -542,14 +542,14 @@ export function TreatmentPlanningInterface() {
                     <SelectValue placeholder="Selecione a área" />
                   </SelectTrigger>
                   <SelectContent>
-                    <div className="font-semibold px-2 py-1 text-blue-600">Face</div>
+                    <div className="px-2 py-1 font-semibold text-blue-600">Face</div>
                     {commonAreas.face.map((area) => (
                       <SelectItem key={area} value={area}>
                         {area}
                       </SelectItem>
                     ))}
                     <Separator className="my-1" />
-                    <div className="font-semibold px-2 py-1 text-orange-600">Corpo</div>
+                    <div className="px-2 py-1 font-semibold text-orange-600">Corpo</div>
                     {commonAreas.body.map((area) => (
                       <SelectItem key={area} value={area}>
                         {area}
@@ -586,7 +586,7 @@ export function TreatmentPlanningInterface() {
 
               <div className="flex items-end">
                 <Button onClick={addTreatmentArea} className="w-full">
-                  <Plus className="h-4 w-4 mr-2" />
+                  <Plus className="mr-2 h-4 w-4" />
                   Adicionar
                 </Button>
               </div>
@@ -598,7 +598,7 @@ export function TreatmentPlanningInterface() {
                 {plan.areas.map((area) => (
                   <div
                     key={area.id}
-                    className="flex items-center justify-between p-3 bg-white dark:bg-gray-800 border rounded-lg shadow-sm"
+                    className="flex items-center justify-between rounded-lg border bg-white p-3 shadow-sm dark:bg-gray-800"
                   >
                     <div className="flex-1">
                       <div className="flex items-center gap-2">
@@ -610,7 +610,7 @@ export function TreatmentPlanningInterface() {
                         </span>
                       </div>
                       {area.notes && (
-                        <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                        <p className="mt-1 text-gray-600 text-sm dark:text-gray-400">
                           {area.notes}
                         </p>
                       )}
@@ -626,9 +626,9 @@ export function TreatmentPlanningInterface() {
                   </div>
                 ))}
 
-                <div className="flex justify-between items-center p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                <div className="flex items-center justify-between rounded-lg bg-blue-50 p-3 dark:bg-blue-900/20">
                   <span className="font-semibold">Total:</span>
-                  <span className="text-lg font-bold text-blue-600">
+                  <span className="font-bold text-blue-600 text-lg">
                     {plan.totalUnits} {selectedTreatmentType?.unitType || "un"}
                   </span>
                 </div>
@@ -640,12 +640,12 @@ export function TreatmentPlanningInterface() {
           <Separator />
 
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold flex items-center gap-2">
+            <h3 className="flex items-center gap-2 font-semibold text-lg">
               <Calendar className="h-5 w-5" />
               Planejamento de Sessões
             </h3>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
               <div className="space-y-2">
                 <Label htmlFor="session-count">Número de Sessões</Label>
                 <Input
@@ -689,12 +689,12 @@ export function TreatmentPlanningInterface() {
           <Separator />
 
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold flex items-center gap-2">
+            <h3 className="flex items-center gap-2 font-semibold text-lg">
               <AlertCircle className="h-5 w-5 text-yellow-600" />
               Contraindicações e Precauções
             </h3>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
               {contraindications.map((contraindication) => (
                 <div key={contraindication} className="flex items-center space-x-2">
                   <input
@@ -706,7 +706,7 @@ export function TreatmentPlanningInterface() {
                   />
                   <Label
                     htmlFor={`contraindication-${contraindication}`}
-                    className="text-sm cursor-pointer"
+                    className="cursor-pointer text-sm"
                   >
                     {contraindication}
                   </Label>
@@ -715,7 +715,7 @@ export function TreatmentPlanningInterface() {
             </div>
 
             {plan.contraindications.length > 0 && (
-              <Alert className="bg-yellow-50 border-yellow-200 dark:bg-yellow-900/20 dark:border-yellow-800">
+              <Alert className="border-yellow-200 bg-yellow-50 dark:border-yellow-800 dark:bg-yellow-900/20">
                 <AlertCircle className="h-4 w-4 text-yellow-600" />
                 <div className="ml-2">
                   <h4 className="font-semibold text-yellow-800 dark:text-yellow-200">
@@ -733,14 +733,14 @@ export function TreatmentPlanningInterface() {
           {/* Action Buttons */}
           <Separator />
 
-          <div className="flex gap-3 justify-end">
+          <div className="flex justify-end gap-3">
             <Button variant="outline">
-              <Download className="h-4 w-4 mr-2" />
+              <Download className="mr-2 h-4 w-4" />
               Exportar PDF
             </Button>
             <Button variant="outline">Salvar como Rascunho</Button>
             <Button>
-              <Save className="h-4 w-4 mr-2" />
+              <Save className="mr-2 h-4 w-4" />
               Salvar Plano de Tratamento
             </Button>
           </div>
@@ -788,7 +788,7 @@ export function BeforeAfterGallery() {
         </CardHeader>
         <CardContent>
           {/* Filters */}
-          <div className="flex gap-4 mb-6">
+          <div className="mb-6 flex gap-4">
             <Select value={selectedTreatment} onValueChange={setSelectedTreatment}>
               <SelectTrigger className="w-[200px]">
                 <SelectValue placeholder="Filtrar por tratamento" />
@@ -804,17 +804,17 @@ export function BeforeAfterGallery() {
             </Select>
 
             <Button variant="outline" size="sm">
-              <Plus className="h-4 w-4 mr-2" />
+              <Plus className="mr-2 h-4 w-4" />
               Adicionar Fotos
             </Button>
           </div>
 
           {viewMode === "grid" ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
               {mockTreatments.map((treatment) => (
                 <Card
                   key={treatment.id}
-                  className="overflow-hidden hover:shadow-lg transition-shadow"
+                  className="overflow-hidden transition-shadow hover:shadow-lg"
                 >
                   <CardHeader className="pb-3">
                     <div className="flex items-center justify-between">
@@ -829,16 +829,16 @@ export function BeforeAfterGallery() {
                     <div className="space-y-4">
                       {/* Photo Grid */}
                       <div className="grid grid-cols-2 gap-2">
-                        <div className="aspect-square bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-700 rounded-lg flex items-center justify-center">
+                        <div className="flex aspect-square items-center justify-center rounded-lg bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-700">
                           <div className="text-center">
-                            <Camera className="h-6 w-6 text-gray-400 mx-auto mb-1" />
-                            <span className="text-xs text-gray-500">Antes</span>
+                            <Camera className="mx-auto mb-1 h-6 w-6 text-gray-400" />
+                            <span className="text-gray-500 text-xs">Antes</span>
                           </div>
                         </div>
-                        <div className="aspect-square bg-gradient-to-br from-blue-100 to-blue-200 dark:from-blue-900 dark:to-blue-800 rounded-lg flex items-center justify-center">
+                        <div className="flex aspect-square items-center justify-center rounded-lg bg-gradient-to-br from-blue-100 to-blue-200 dark:from-blue-900 dark:to-blue-800">
                           <div className="text-center">
-                            <Camera className="h-6 w-6 text-blue-400 mx-auto mb-1" />
-                            <span className="text-xs text-blue-500">Depois</span>
+                            <Camera className="mx-auto mb-1 h-6 w-6 text-blue-400" />
+                            <span className="text-blue-500 text-xs">Depois</span>
                           </div>
                         </div>
                       </div>
@@ -854,11 +854,11 @@ export function BeforeAfterGallery() {
 
                       <div className="flex gap-2">
                         <Button variant="outline" size="sm" className="flex-1">
-                          <Eye className="h-4 w-4 mr-1" />
+                          <Eye className="mr-1 h-4 w-4" />
                           Visualizar
                         </Button>
                         <Button variant="outline" size="sm" className="flex-1">
-                          <Camera className="h-4 w-4 mr-1" />
+                          <Camera className="mr-1 h-4 w-4" />
                           Adicionar
                         </Button>
                       </div>
@@ -884,23 +884,23 @@ export function BeforeAfterGallery() {
                     </div>
                   </CardHeader>
                   <CardContent>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                       <div className="text-center">
-                        <h4 className="font-semibold mb-3 text-red-600">Antes</h4>
-                        <div className="aspect-video bg-gradient-to-br from-red-50 to-red-100 dark:from-red-900/20 dark:to-red-800/20 rounded-lg flex items-center justify-center mb-3 border-2 border-red-200 dark:border-red-800">
+                        <h4 className="mb-3 font-semibold text-red-600">Antes</h4>
+                        <div className="mb-3 flex aspect-video items-center justify-center rounded-lg border-2 border-red-200 bg-gradient-to-br from-red-50 to-red-100 dark:border-red-800 dark:from-red-900/20 dark:to-red-800/20">
                           <Camera className="h-8 w-8 text-red-400" />
                         </div>
-                        <p className="text-sm text-gray-600 dark:text-gray-400">
+                        <p className="text-gray-600 text-sm dark:text-gray-400">
                           {new Date(treatment.date).toLocaleDateString("pt-BR")}
                         </p>
                       </div>
 
                       <div className="text-center">
-                        <h4 className="font-semibold mb-3 text-green-600">Depois</h4>
-                        <div className="aspect-video bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 rounded-lg flex items-center justify-center mb-3 border-2 border-green-200 dark:border-green-800">
+                        <h4 className="mb-3 font-semibold text-green-600">Depois</h4>
+                        <div className="mb-3 flex aspect-video items-center justify-center rounded-lg border-2 border-green-200 bg-gradient-to-br from-green-50 to-green-100 dark:border-green-800 dark:from-green-900/20 dark:to-green-800/20">
                           <Camera className="h-8 w-8 text-green-400" />
                         </div>
-                        <p className="text-sm text-gray-600 dark:text-gray-400">
+                        <p className="text-gray-600 text-sm dark:text-gray-400">
                           {treatment.nextSession
                             ? new Date(treatment.nextSession).toLocaleDateString("pt-BR")
                             : "Aguardando"}
@@ -912,7 +912,7 @@ export function BeforeAfterGallery() {
 
                     <div className="text-center">
                       <Button variant="outline">
-                        <Download className="h-4 w-4 mr-2" />
+                        <Download className="mr-2 h-4 w-4" />
                         Baixar Comparação
                       </Button>
                     </div>
@@ -945,12 +945,12 @@ export function TreatmentSessionTracker() {
             {mockTreatments.map((treatment) => (
               <div
                 key={treatment.id}
-                className="border rounded-lg p-4 hover:shadow-md transition-shadow"
+                className="rounded-lg border p-4 transition-shadow hover:shadow-md"
               >
-                <div className="flex items-center justify-between mb-4">
+                <div className="mb-4 flex items-center justify-between">
                   <div>
                     <h3 className="font-semibold text-lg">{treatment.patientName}</h3>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                    <p className="text-gray-600 text-sm dark:text-gray-400">
                       {treatment.type.toUpperCase()} - {treatment.area}
                     </p>
                   </div>
@@ -964,7 +964,7 @@ export function TreatmentSessionTracker() {
 
                 {/* Progress Bar */}
                 <div className="mb-4">
-                  <div className="flex justify-between text-sm mb-2">
+                  <div className="mb-2 flex justify-between text-sm">
                     <span>Progresso do Tratamento</span>
                     <span>
                       {treatment.sessionsCompleted}/{treatment.totalSessions} sessões
@@ -976,57 +976,57 @@ export function TreatmentSessionTracker() {
                   />
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
-                  <div className="text-center p-3 bg-blue-50 dark:bg-blue-900/20 rounded border border-blue-200 dark:border-blue-800">
-                    <div className="text-2xl font-bold text-blue-600">
+                <div className="mb-4 grid grid-cols-1 gap-4 md:grid-cols-4">
+                  <div className="rounded border border-blue-200 bg-blue-50 p-3 text-center dark:border-blue-800 dark:bg-blue-900/20">
+                    <div className="font-bold text-2xl text-blue-600">
                       {treatment.units || "--"}
                     </div>
-                    <div className="text-sm text-gray-600 dark:text-gray-400">
+                    <div className="text-gray-600 text-sm dark:text-gray-400">
                       Unidades aplicadas
                     </div>
                   </div>
 
-                  <div className="text-center p-3 bg-green-50 dark:bg-green-900/20 rounded border border-green-200 dark:border-green-800">
-                    <div className="text-2xl font-bold text-green-600">
+                  <div className="rounded border border-green-200 bg-green-50 p-3 text-center dark:border-green-800 dark:bg-green-900/20">
+                    <div className="font-bold text-2xl text-green-600">
                       {new Date(treatment.date).toLocaleDateString("pt-BR")}
                     </div>
-                    <div className="text-sm text-gray-600 dark:text-gray-400">Última sessão</div>
+                    <div className="text-gray-600 text-sm dark:text-gray-400">Última sessão</div>
                   </div>
 
-                  <div className="text-center p-3 bg-purple-50 dark:bg-purple-900/20 rounded border border-purple-200 dark:border-purple-800">
-                    <div className="text-2xl font-bold text-purple-600">
+                  <div className="rounded border border-purple-200 bg-purple-50 p-3 text-center dark:border-purple-800 dark:bg-purple-900/20">
+                    <div className="font-bold text-2xl text-purple-600">
                       {treatment.nextSession
                         ? new Date(treatment.nextSession).toLocaleDateString("pt-BR")
                         : "--"}
                     </div>
-                    <div className="text-sm text-gray-600 dark:text-gray-400">Próxima sessão</div>
+                    <div className="text-gray-600 text-sm dark:text-gray-400">Próxima sessão</div>
                   </div>
 
-                  <div className="text-center p-3 bg-orange-50 dark:bg-orange-900/20 rounded border border-orange-200 dark:border-orange-800">
-                    <div className="text-2xl font-bold text-orange-600">
+                  <div className="rounded border border-orange-200 bg-orange-50 p-3 text-center dark:border-orange-800 dark:bg-orange-900/20">
+                    <div className="font-bold text-2xl text-orange-600">
                       {treatment.photos || 0}
                     </div>
-                    <div className="text-sm text-gray-600 dark:text-gray-400">
+                    <div className="text-gray-600 text-sm dark:text-gray-400">
                       Fotos registradas
                     </div>
                   </div>
                 </div>
 
-                <div className="flex gap-2 flex-wrap">
+                <div className="flex flex-wrap gap-2">
                   <Button variant="outline" size="sm">
-                    <FileText className="h-4 w-4 mr-2" />
+                    <FileText className="mr-2 h-4 w-4" />
                     Histórico Completo
                   </Button>
                   <Button variant="outline" size="sm">
-                    <Camera className="h-4 w-4 mr-2" />
+                    <Camera className="mr-2 h-4 w-4" />
                     Galeria de Fotos
                   </Button>
                   <Button variant="outline" size="sm">
-                    <Calendar className="h-4 w-4 mr-2" />
+                    <Calendar className="mr-2 h-4 w-4" />
                     Agendar Próxima
                   </Button>
                   <Button variant="outline" size="sm">
-                    <Settings className="h-4 w-4 mr-2" />
+                    <Settings className="mr-2 h-4 w-4" />
                     Ajustar Plano
                   </Button>
                 </div>
@@ -1069,7 +1069,7 @@ export function ProductInventoryManagement() {
         </CardHeader>
         <CardContent>
           {/* Search and Filters */}
-          <div className="flex gap-4 mb-6">
+          <div className="mb-6 flex gap-4">
             <div className="flex-1">
               <Input
                 placeholder="Buscar produtos..."
@@ -1092,20 +1092,20 @@ export function ProductInventoryManagement() {
               </SelectContent>
             </Select>
             <Button>
-              <Plus className="h-4 w-4 mr-2" />
+              <Plus className="mr-2 h-4 w-4" />
               Novo Produto
             </Button>
           </div>
 
           {/* Stock Alert Summary */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+          <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-4">
             <Card className="border-red-200 bg-red-50 dark:bg-red-900/20">
               <CardContent className="pt-6">
                 <div className="flex items-center">
                   <AlertCircle className="h-8 w-8 text-red-600" />
                   <div className="ml-4">
-                    <p className="text-sm font-medium text-red-600">Estoque Baixo</p>
-                    <p className="text-2xl font-bold text-red-700">2</p>
+                    <p className="font-medium text-red-600 text-sm">Estoque Baixo</p>
+                    <p className="font-bold text-2xl text-red-700">2</p>
                   </div>
                 </div>
               </CardContent>
@@ -1116,8 +1116,8 @@ export function ProductInventoryManagement() {
                 <div className="flex items-center">
                   <Clock className="h-8 w-8 text-yellow-600" />
                   <div className="ml-4">
-                    <p className="text-sm font-medium text-yellow-600">Próximo ao Vencimento</p>
-                    <p className="text-2xl font-bold text-yellow-700">1</p>
+                    <p className="font-medium text-sm text-yellow-600">Próximo ao Vencimento</p>
+                    <p className="font-bold text-2xl text-yellow-700">1</p>
                   </div>
                 </div>
               </CardContent>
@@ -1128,8 +1128,8 @@ export function ProductInventoryManagement() {
                 <div className="flex items-center">
                   <Package className="h-8 w-8 text-green-600" />
                   <div className="ml-4">
-                    <p className="text-sm font-medium text-green-600">Em Estoque</p>
-                    <p className="text-2xl font-bold text-green-700">{mockProducts.length}</p>
+                    <p className="font-medium text-green-600 text-sm">Em Estoque</p>
+                    <p className="font-bold text-2xl text-green-700">{mockProducts.length}</p>
                   </div>
                 </div>
               </CardContent>
@@ -1140,8 +1140,8 @@ export function ProductInventoryManagement() {
                 <div className="flex items-center">
                   <TrendingUp className="h-8 w-8 text-blue-600" />
                   <div className="ml-4">
-                    <p className="text-sm font-medium text-blue-600">Valor Total</p>
-                    <p className="text-2xl font-bold text-blue-700">R$ 23.400</p>
+                    <p className="font-medium text-blue-600 text-sm">Valor Total</p>
+                    <p className="font-bold text-2xl text-blue-700">R$ 23.400</p>
                   </div>
                 </div>
               </CardContent>
@@ -1149,16 +1149,16 @@ export function ProductInventoryManagement() {
           </div>
 
           {/* Products Table */}
-          <div className="border rounded-lg overflow-hidden">
+          <div className="overflow-hidden rounded-lg border">
             <table className="w-full">
               <thead className="bg-gray-50 dark:bg-gray-800">
                 <tr>
-                  <th className="text-left p-4 font-medium">Produto</th>
-                  <th className="text-left p-4 font-medium">Categoria</th>
-                  <th className="text-left p-4 font-medium">Estoque Atual</th>
-                  <th className="text-left p-4 font-medium">Status</th>
-                  <th className="text-left p-4 font-medium">Validade</th>
-                  <th className="text-left p-4 font-medium">Ações</th>
+                  <th className="p-4 text-left font-medium">Produto</th>
+                  <th className="p-4 text-left font-medium">Categoria</th>
+                  <th className="p-4 text-left font-medium">Estoque Atual</th>
+                  <th className="p-4 text-left font-medium">Status</th>
+                  <th className="p-4 text-left font-medium">Validade</th>
+                  <th className="p-4 text-left font-medium">Ações</th>
                 </tr>
               </thead>
               <tbody>
@@ -1172,7 +1172,7 @@ export function ProductInventoryManagement() {
                       <td className="p-4">
                         <div>
                           <div className="font-medium">{product.name}</div>
-                          <div className="text-sm text-gray-500">{product.brand}</div>
+                          <div className="text-gray-500 text-sm">{product.brand}</div>
                         </div>
                       </td>
                       <td className="p-4">
@@ -1184,7 +1184,7 @@ export function ProductInventoryManagement() {
                         <div className="font-medium">
                           {product.currentStock} {product.unit}
                         </div>
-                        <div className="text-sm text-gray-500">
+                        <div className="text-gray-500 text-sm">
                           Min: {product.minStock} {product.unit}
                         </div>
                       </td>
@@ -1203,7 +1203,7 @@ export function ProductInventoryManagement() {
                             className={
                               new Date(product.expiryDate) <
                               new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
-                                ? "text-red-600 font-medium"
+                                ? "font-medium text-red-600"
                                 : "text-gray-600"
                             }
                           >
@@ -1216,11 +1216,11 @@ export function ProductInventoryManagement() {
                       <td className="p-4">
                         <div className="flex gap-2">
                           <Button variant="outline" size="sm">
-                            <Settings className="h-3 w-3 mr-1" />
+                            <Settings className="mr-1 h-3 w-3" />
                             Editar
                           </Button>
                           <Button variant="outline" size="sm">
-                            <Plus className="h-3 w-3 mr-1" />
+                            <Plus className="mr-1 h-3 w-3" />
                             Repor
                           </Button>
                         </div>
@@ -1291,7 +1291,7 @@ export function PatientConsultationForm() {
             </TabsList>
 
             <TabsContent value="personal" className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <div className="space-y-2">
                   <Label htmlFor="name">Nome Completo</Label>
                   <Input
@@ -1536,7 +1536,7 @@ export function PatientConsultationForm() {
             </TabsContent>
 
             <TabsContent value="preferences" className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <div className="space-y-2">
                   <Label htmlFor="communication">Forma de Comunicação Preferida</Label>
                   <Select
@@ -1611,10 +1611,10 @@ export function PatientConsultationForm() {
 
           <Separator className="my-6" />
 
-          <div className="flex gap-3 justify-end">
+          <div className="flex justify-end gap-3">
             <Button variant="outline">Salvar Rascunho</Button>
             <Button>
-              <Save className="h-4 w-4 mr-2" />
+              <Save className="mr-2 h-4 w-4" />
               Enviar Formulário
             </Button>
           </div>
@@ -1663,7 +1663,7 @@ export function AppointmentBookingSystem() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
             {/* Booking Form */}
             <div className="space-y-6">
               <div className="space-y-4">
@@ -1721,7 +1721,7 @@ export function AppointmentBookingSystem() {
               </div>
 
               <Button className="w-full">
-                <Calendar className="h-4 w-4 mr-2" />
+                <Calendar className="mr-2 h-4 w-4" />
                 Confirmar Agendamento
               </Button>
             </div>
@@ -1735,8 +1735,8 @@ export function AppointmentBookingSystem() {
                 <CardContent>
                   <div className="space-y-4">
                     {mockAppointments.map((appointment) => (
-                      <div key={appointment.id} className="border rounded-lg p-3">
-                        <div className="flex items-center justify-between mb-2">
+                      <div key={appointment.id} className="rounded-lg border p-3">
+                        <div className="mb-2 flex items-center justify-between">
                           <div className="font-medium">{appointment.patientName}</div>
                           <Badge
                             className={
@@ -1748,7 +1748,7 @@ export function AppointmentBookingSystem() {
                             {appointment.status}
                           </Badge>
                         </div>
-                        <div className="text-sm text-gray-600 dark:text-gray-400">
+                        <div className="text-gray-600 text-sm dark:text-gray-400">
                           <p>{appointment.treatmentType}</p>
                           <p>
                             {new Date(appointment.date).toLocaleDateString("pt-BR")} às{" "}
@@ -1776,7 +1776,7 @@ export function AppointmentBookingSystem() {
                     {availableTimes.slice(0, 9).map((time) => (
                       <div
                         key={time}
-                        className="text-center p-2 border rounded text-sm hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer"
+                        className="cursor-pointer rounded border p-2 text-center text-sm hover:bg-gray-50 dark:hover:bg-gray-800"
                       >
                         {time}
                       </div>
@@ -1805,14 +1805,14 @@ export function ProfessionalDashboard() {
   return (
     <div className="space-y-6">
       {/* Revenue and KPI Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card className="border-green-200 bg-green-50 dark:bg-green-900/20">
           <CardContent className="pt-6">
             <div className="flex items-center">
               <BarChart3 className="h-8 w-8 text-green-600" />
               <div className="ml-4">
-                <p className="text-sm font-medium text-green-600">Receita Total</p>
-                <p className="text-2xl font-bold text-green-700">
+                <p className="font-medium text-green-600 text-sm">Receita Total</p>
+                <p className="font-bold text-2xl text-green-700">
                   R$ {totalRevenue.toLocaleString("pt-BR")}
                 </p>
               </div>
@@ -1825,8 +1825,8 @@ export function ProfessionalDashboard() {
             <div className="flex items-center">
               <Users className="h-8 w-8 text-blue-600" />
               <div className="ml-4">
-                <p className="text-sm font-medium text-blue-600">Pacientes Ativos</p>
-                <p className="text-2xl font-bold text-blue-700">{mockPatients.length * 52}</p>
+                <p className="font-medium text-blue-600 text-sm">Pacientes Ativos</p>
+                <p className="font-bold text-2xl text-blue-700">{mockPatients.length * 52}</p>
               </div>
             </div>
           </CardContent>
@@ -1837,8 +1837,8 @@ export function ProfessionalDashboard() {
             <div className="flex items-center">
               <Activity className="h-8 w-8 text-purple-600" />
               <div className="ml-4">
-                <p className="text-sm font-medium text-purple-600">Tratamentos Ativos</p>
-                <p className="text-2xl font-bold text-purple-700">{activeTreatments}</p>
+                <p className="font-medium text-purple-600 text-sm">Tratamentos Ativos</p>
+                <p className="font-bold text-2xl text-purple-700">{activeTreatments}</p>
               </div>
             </div>
           </CardContent>
@@ -1849,8 +1849,8 @@ export function ProfessionalDashboard() {
             <div className="flex items-center">
               <Calendar className="h-8 w-8 text-orange-600" />
               <div className="ml-4">
-                <p className="text-sm font-medium text-orange-600">Agendamentos Hoje</p>
-                <p className="text-2xl font-bold text-orange-700">{todayAppointments}</p>
+                <p className="font-medium text-orange-600 text-sm">Agendamentos Hoje</p>
+                <p className="font-bold text-2xl text-orange-700">{todayAppointments}</p>
               </div>
             </div>
           </CardContent>
@@ -1870,17 +1870,17 @@ export function ProfessionalDashboard() {
             {mockAppointments.map((appointment) => (
               <div
                 key={appointment.id}
-                className="flex items-center justify-between p-4 border rounded-lg hover:shadow-md transition-shadow"
+                className="flex items-center justify-between rounded-lg border p-4 transition-shadow hover:shadow-md"
               >
                 <div className="flex items-center space-x-4">
                   <div className="text-center">
-                    <div className="text-lg font-bold text-blue-600">{appointment.time}</div>
-                    <div className="text-sm text-gray-500">{appointment.duration}min</div>
+                    <div className="font-bold text-blue-600 text-lg">{appointment.time}</div>
+                    <div className="text-gray-500 text-sm">{appointment.duration}min</div>
                   </div>
                   <div>
                     <div className="font-medium">{appointment.patientName}</div>
-                    <div className="text-sm text-gray-600">{appointment.treatmentType}</div>
-                    <div className="text-sm text-gray-500">{appointment.practitioner}</div>
+                    <div className="text-gray-600 text-sm">{appointment.treatmentType}</div>
+                    <div className="text-gray-500 text-sm">{appointment.practitioner}</div>
                   </div>
                 </div>
                 <div className="flex items-center space-x-2">
@@ -1895,7 +1895,7 @@ export function ProfessionalDashboard() {
                     {appointment.status}
                   </Badge>
                   <Button variant="outline" size="sm">
-                    <Eye className="h-4 w-4 mr-1" />
+                    <Eye className="mr-1 h-4 w-4" />
                     Detalhes
                   </Button>
                 </div>
@@ -1906,7 +1906,7 @@ export function ProfessionalDashboard() {
       </Card>
 
       {/* Treatment Analytics */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <Card>
           <CardHeader>
             <CardTitle>Tratamentos por Tipo</CardTitle>
@@ -1919,8 +1919,8 @@ export function ProfessionalDashboard() {
                 return (
                   <div key={type.value} className="space-y-2">
                     <div className="flex justify-between">
-                      <span className="text-sm font-medium">{type.label}</span>
-                      <span className="text-sm text-gray-500">
+                      <span className="font-medium text-sm">{type.label}</span>
+                      <span className="text-gray-500 text-sm">
                         {count} ({percentage.toFixed(0)}%)
                       </span>
                     </div>
@@ -1944,11 +1944,11 @@ export function ProfessionalDashboard() {
                 return (
                   <div
                     key={type.value}
-                    className="flex justify-between items-center p-3 border rounded-lg"
+                    className="flex items-center justify-between rounded-lg border p-3"
                   >
                     <div>
                       <div className="font-medium">{type.label}</div>
-                      <div className="text-sm text-gray-500">{treatments.length} tratamentos</div>
+                      <div className="text-gray-500 text-sm">{treatments.length} tratamentos</div>
                     </div>
                     <div className="text-right">
                       <div className="font-bold text-green-600">
@@ -1975,23 +1975,23 @@ export function AestheticClinicManagementSystem() {
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between mb-8">
+        <div className="mb-8 flex flex-col justify-between lg:flex-row lg:items-center">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+            <h1 className="font-bold text-3xl text-gray-900 dark:text-white">
               Sistema de Gestão para Clínicas Estéticas
             </h1>
-            <p className="text-gray-600 dark:text-gray-300 mt-2">
+            <p className="mt-2 text-gray-600 dark:text-gray-300">
               Plataforma completa para gerenciar todos os aspectos da sua clínica estética
             </p>
           </div>
 
-          <div className="flex gap-3 mt-4 lg:mt-0">
+          <div className="mt-4 flex gap-3 lg:mt-0">
             <Button variant="outline" size="sm">
-              <Settings className="h-4 w-4 mr-2" />
+              <Settings className="mr-2 h-4 w-4" />
               Configurações
             </Button>
             <Button size="sm">
-              <Plus className="h-4 w-4 mr-2" />
+              <Plus className="mr-2 h-4 w-4" />
               Novo Paciente
             </Button>
           </div>
@@ -2039,9 +2039,9 @@ export function AestheticClinicManagementSystem() {
           </TabsContent>
 
           <TabsContent value="patients">
-            <div className="text-center py-12">
-              <Users className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-300">
+            <div className="py-12 text-center">
+              <Users className="mx-auto mb-4 h-12 w-12 text-gray-400" />
+              <h3 className="font-semibold text-gray-700 text-lg dark:text-gray-300">
                 Gestão de Pacientes
               </h3>
               <p className="text-gray-600 dark:text-gray-400">

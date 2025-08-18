@@ -47,8 +47,8 @@
     "build": "tsup",
     "clean": "rm -rf dist",
     "dev": "tsup --watch",
-    "lint": "eslint src",
-    "lint:fix": "eslint src --fix",
+    "lint": "biome check src",
+    "lint:fix": "biome check src --write",
     "test": "vitest",
     "test:coverage": "vitest --coverage",
     "typecheck": "tsc --noEmit"
@@ -67,7 +67,7 @@
     "eslint": "^8.56.0",
     "tsup": "^8.0.1",
     "typescript": "^5.3.3",
-    "vitest": "^1.2.0"
+    "vitest": "^3.2.4"
   },
   "peerDependencies": {
     "typescript": ">=5.0.0"

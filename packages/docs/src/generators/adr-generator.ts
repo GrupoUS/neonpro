@@ -166,19 +166,19 @@ export class ADRGenerator {
       const adrContent: ADRContent = {
         metadata: {
           number: nextNumber,
-          title: answers.title || 'Untitled',
-          status: answers.status as ADRMetadata['status'],
-          author: answers.author || 'Unknown',
-          date: new Date().toISOString().split('T')[0],
+          title: String(answers.title || 'Untitled'),
+          status: (answers.status || 'Proposed') as ADRMetadata['status'],
+          author: String(answers.author || 'Unknown'),
+          date: new Date().toISOString().split('T')[0] || new Date().toISOString().substring(0, 10),
         },
-        context: answers.context || '',
-        decision: answers.decision || '',
-        consequences: answers.consequences || '',
-        alternatives: answers.alternatives || '',
-        implementation: answers.implementation || '',
-        healthcareCompliance: answers.healthcareCompliance ?? '',
-        securityImplications: answers.securityImplications ?? '',
-        performanceImpact: answers.performanceImpact ?? '',
+        context: (answers.context || '') as string,
+        decision: (answers.decision || '') as string,
+        consequences: (answers.consequences || '') as string,
+        alternatives: (answers.alternatives || '') as string,
+        implementation: (answers.implementation || '') as string,
+        healthcareCompliance: (answers.healthcareCompliance || '') as string,
+        securityImplications: (answers.securityImplications || '') as string,
+        performanceImpact: (answers.performanceImpact || '') as string,
       };
 
       // Generate and save ADR
@@ -328,15 +328,17 @@ export class ADRGenerator {
       return null;
     }
 
-    const [, numberStr, titleSlug = ''] = match;
-    const number = Number.parseInt(numberStr, 10);
+    const [, numberStr, titleSlug] = match;
+    const safeTitleSlug = titleSlug || '';
+    const number = Number.parseInt(numberStr || '0', 10);
 
     try {
       const filepath = join(this.adrDirectory, filename);
       const content = readFileSync(filepath, 'utf-8');
 
       // Extract metadata from content
-      const title = this.extractTitle(content) ?? ((titleSlug ?? '').replace(/-/g, ' ') || 'Untitled');
+      const extractedTitle = this.extractTitle(content);
+      const title = extractedTitle ?? (safeTitleSlug ? String(safeTitleSlug).replace(/-/g, ' ') : 'Untitled');
       const status = (this.extractStatus(content) as ADRMetadata['status']) || 'Proposed';
       const date = this.extractDate(content) ?? '1970-01-01';
       const author = this.extractAuthor(content) ?? 'Unknown';
@@ -346,7 +348,7 @@ export class ADRGenerator {
         number,
         title,
         status,
-        author,
+        author: author || 'Unknown',
         date,
         supersededBy: supersededBy || undefined,
       };

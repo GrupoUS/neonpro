@@ -1,9 +1,16 @@
-import type { NextRequest } from "next/server";
+import type { NextRequest } from 'next/server';
 
 /**
  * Rate limiting configuration for healthcare API endpoints
  * Implements different limits based on endpoint sensitivity and user type
  */
+// Constants for rate limiting calculations
+const MILLISECONDS_PER_SECOND = 1000;
+const BEARER_TOKEN_PREFIX_LENGTH = 7;
+const TOKEN_DISPLAY_LENGTH = 8;
+const PERCENTAGE_MULTIPLIER = 100;
+const WARNING_THRESHOLD_PERCENTAGE = 80;
+const CRITICAL_THRESHOLD_PERCENTAGE = 95;
 export type RateLimitConfig = {
   /** Maximum requests per window */
   maxRequests: number;
@@ -31,7 +38,7 @@ export type RateLimitConfig = {
 export type RateLimitStore = {
   increment(
     key: string,
-    windowSeconds: number,
+    windowSeconds: number
   ): Promise<{ count: number; remaining: number; resetTime: number }>;
   reset(key: string): Promise<void>;
 };
@@ -41,14 +48,17 @@ export type RateLimitStore = {
  * For production, use Redis or database-backed store
  */
 export class MemoryRateLimitStore implements RateLimitStore {
-  private readonly store = new Map<string, { count: number; resetTime: number }>();
+  private readonly store = new Map<
+    string,
+    { count: number; resetTime: number }
+  >();
 
-  async increment(
+  increment(
     key: string,
-    windowSeconds: number,
+    windowSeconds: number
   ): Promise<{ count: number; remaining: number; resetTime: number }> {
     const now = Date.now();
-    const windowMs = windowSeconds * 1000;
+    const windowMs = windowSeconds * MILLISECONDS_PER_SECOND;
 
     const existing = this.store.get(key);
 
@@ -56,22 +66,26 @@ export class MemoryRateLimitStore implements RateLimitStore {
       // Create new window
       const resetTime = now + windowMs;
       this.store.set(key, { count: 1, resetTime });
-      return { count: 1, remaining: 0, resetTime };
+      return Promise.resolve({ count: 1, remaining: 0, resetTime });
     }
 
     // Increment existing window
     existing.count++;
     this.store.set(key, existing);
 
-    return {
+    return Promise.resolve({
       count: existing.count,
-      remaining: Math.max(0, windowMs - (now - (existing.resetTime - windowMs))),
+      remaining: Math.max(
+        0,
+        windowMs - (now - (existing.resetTime - windowMs))
+      ),
       resetTime: existing.resetTime,
-    };
+    });
   }
 
-  async reset(key: string): Promise<void> {
+  reset(key: string): Promise<void> {
     this.store.delete(key);
+    return Promise.resolve();
   }
 
   /**
@@ -96,7 +110,7 @@ export const RATE_LIMIT_CONFIGS = {
     maxRequests: 5,
     windowSeconds: 300, // 5 minutes
     includeIpAddress: true,
-    keySuffix: "auth",
+    keySuffix: 'auth',
   } as RateLimitConfig,
 
   // Patient data access - moderate limits
@@ -105,15 +119,15 @@ export const RATE_LIMIT_CONFIGS = {
     windowSeconds: 60, // 1 minute
     includeUserId: true,
     includeIpAddress: true,
-    keySuffix: "patient-data",
+    keySuffix: 'patient-data',
   } as RateLimitConfig,
 
   // General API endpoints - generous limits
   api: {
-    maxRequests: 1000,
+    maxRequests: 1_000,
     windowSeconds: 60, // 1 minute
     includeUserId: true,
-    keySuffix: "api",
+    keySuffix: 'api',
   } as RateLimitConfig,
 
   // File uploads - very strict limits
@@ -122,7 +136,7 @@ export const RATE_LIMIT_CONFIGS = {
     windowSeconds: 60, // 1 minute
     includeUserId: true,
     includeIpAddress: true,
-    keySuffix: "uploads",
+    keySuffix: 'uploads',
   } as RateLimitConfig,
 
   // Password reset - very strict limits
@@ -130,7 +144,7 @@ export const RATE_LIMIT_CONFIGS = {
     maxRequests: 3,
     windowSeconds: 3600, // 1 hour
     includeIpAddress: true,
-    keySuffix: "password-reset",
+    keySuffix: 'password-reset',
   } as RateLimitConfig,
 
   // LGPD data requests - strict limits
@@ -139,7 +153,7 @@ export const RATE_LIMIT_CONFIGS = {
     windowSeconds: 3600, // 1 hour
     includeUserId: true,
     includeIpAddress: true,
-    keySuffix: "lgpd-requests",
+    keySuffix: 'lgpd-requests',
   } as RateLimitConfig,
 } as const;
 
@@ -159,7 +173,11 @@ export type RateLimitResult = {
  * Implements sliding window rate limiting with healthcare-specific configurations
  */
 export class RateLimiter {
-  constructor(private readonly store: RateLimitStore = new MemoryRateLimitStore()) {}
+  private readonly store: RateLimitStore;
+
+  constructor(store: RateLimitStore = new MemoryRateLimitStore()) {
+    this.store = store;
+  }
 
   /**
    * Check if request is within rate limits
@@ -168,14 +186,17 @@ export class RateLimiter {
    * @param config - Rate limiting configuration
    * @returns Rate limiting result with allowed status and metadata
    */
-  async checkRateLimit(request: NextRequest, config: RateLimitConfig): Promise<RateLimitResult> {
+  async checkRateLimit(
+    request: NextRequest,
+    config: RateLimitConfig
+  ): Promise<RateLimitResult> {
     // Check skip condition
     if (config.skipCondition?.(request)) {
       return {
         allowed: true,
         count: 0,
         remaining: config.maxRequests,
-        resetTime: Date.now() + config.windowSeconds * 1000,
+        resetTime: Date.now() + config.windowSeconds * MILLISECONDS_PER_SECOND,
       };
     }
 
@@ -183,7 +204,10 @@ export class RateLimiter {
     const key = this.buildRateLimitKey(request, config);
 
     // Check current count
-    const { count, resetTime } = await this.store.increment(key, config.windowSeconds);
+    const { count, resetTime } = await this.store.increment(
+      key,
+      config.windowSeconds
+    );
 
     const remaining = Math.max(0, config.maxRequests - count);
     const allowed = count <= config.maxRequests;
@@ -197,7 +221,9 @@ export class RateLimiter {
 
     // Add retry-after header for exceeded limits
     if (!allowed) {
-      result.retryAfter = Math.ceil((resetTime - Date.now()) / 1000);
+      result.retryAfter = Math.ceil(
+        (resetTime - Date.now()) / MILLISECONDS_PER_SECOND
+      );
     }
 
     return result;
@@ -206,7 +232,10 @@ export class RateLimiter {
   /**
    * Reset rate limit for a specific key
    */
-  async resetRateLimit(request: NextRequest, config: RateLimitConfig): Promise<void> {
+  async resetRateLimit(
+    request: NextRequest,
+    config: RateLimitConfig
+  ): Promise<void> {
     const key = this.buildRateLimitKey(request, config);
     await this.store.reset(key);
   }
@@ -214,8 +243,11 @@ export class RateLimiter {
   /**
    * Build unique rate limit key based on request and configuration
    */
-  private buildRateLimitKey(request: NextRequest, config: RateLimitConfig): string {
-    const keyParts = ["rate-limit"];
+  private buildRateLimitKey(
+    request: NextRequest,
+    config: RateLimitConfig
+  ): string {
+    const keyParts = ['rate-limit'];
 
     // Add key suffix if specified
     if (config.keySuffix) {
@@ -236,7 +268,7 @@ export class RateLimiter {
       }
     }
 
-    return keyParts.join(":");
+    return keyParts.join(':');
   }
 
   /**
@@ -245,26 +277,26 @@ export class RateLimiter {
    */
   private getClientIP(request: NextRequest): string {
     // Check for Cloudflare CF-Connecting-IP
-    const cfConnectingIP = request.headers.get("cf-connecting-ip");
+    const cfConnectingIP = request.headers.get('cf-connecting-ip');
     if (cfConnectingIP) {
       return cfConnectingIP;
     }
 
     // Check for X-Forwarded-For (proxy chain)
-    const xForwardedFor = request.headers.get("x-forwarded-for");
+    const xForwardedFor = request.headers.get('x-forwarded-for');
     if (xForwardedFor) {
-      const ips = xForwardedFor.split(",");
+      const ips = xForwardedFor.split(',');
       return ips[0].trim();
     }
 
     // Check for X-Real-IP
-    const xRealIP = request.headers.get("x-real-ip");
+    const xRealIP = request.headers.get('x-real-ip');
     if (xRealIP) {
       return xRealIP;
     }
 
     // Fallback to unknown if no IP headers are present
-    return "unknown";
+    return 'unknown';
   }
 
   /**
@@ -273,22 +305,22 @@ export class RateLimiter {
    */
   private getUserId(request: NextRequest): string | null {
     // Try to get from Authorization header (JWT)
-    const authHeader = request.headers.get("authorization");
-    if (authHeader?.startsWith("Bearer ")) {
+    const authHeader = request.headers.get('authorization');
+    if (authHeader?.startsWith('Bearer ')) {
       try {
-        const token = authHeader.substring(7);
+        const token = authHeader.substring(BEARER_TOKEN_PREFIX_LENGTH);
         // In a real implementation, decode and validate JWT here
         // For now, return a placeholder
-        return `jwt:${token.substring(0, 8)}`;
+        return `jwt:${token.substring(0, TOKEN_DISPLAY_LENGTH)}`;
       } catch {
         return null;
       }
     }
 
     // Try to get from session cookie
-    const sessionCookie = request.cookies.get("session");
+    const sessionCookie = request.cookies.get('session');
     if (sessionCookie) {
-      return `session:${sessionCookie.value.substring(0, 8)}`;
+      return `session:${sessionCookie.value.substring(0, TOKEN_DISPLAY_LENGTH)}`;
     }
 
     return null;
@@ -304,33 +336,36 @@ export const defaultRateLimiter = new RateLimiter();
 /**
  * Rate limit enforcement levels for different alert thresholds
  */
-export enum RateLimitLevel {
+export const RateLimitLevel = {
   /** Normal operation - no alerts */
-  NORMAL = "normal",
-
+  NORMAL: 'normal',
   /** Warning level - 80% of limit reached */
-  WARNING = "warning",
-
+  WARNING: 'warning',
   /** Critical level - 95% of limit reached */
-  CRITICAL = "critical",
-
+  CRITICAL: 'critical',
   /** Exceeded - limit has been exceeded */
-  EXCEEDED = "exceeded",
-}
+  EXCEEDED: 'exceeded',
+} as const;
+
+export type RateLimitLevel =
+  (typeof RateLimitLevel)[keyof typeof RateLimitLevel];
 
 /**
  * Determine alert level based on current usage
  */
-export function getRateLimitLevel(count: number, maxRequests: number): RateLimitLevel {
-  const percentage = (count / maxRequests) * 100;
+export function getRateLimitLevel(
+  count: number,
+  maxRequests: number
+): RateLimitLevel {
+  const percentage = (count / maxRequests) * PERCENTAGE_MULTIPLIER;
 
   if (count > maxRequests) {
     return RateLimitLevel.EXCEEDED;
   }
-  if (percentage >= 95) {
+  if (percentage >= CRITICAL_THRESHOLD_PERCENTAGE) {
     return RateLimitLevel.CRITICAL;
   }
-  if (percentage >= 80) {
+  if (percentage >= WARNING_THRESHOLD_PERCENTAGE) {
     return RateLimitLevel.WARNING;
   }
   return RateLimitLevel.NORMAL;

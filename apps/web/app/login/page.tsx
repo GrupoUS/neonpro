@@ -12,7 +12,7 @@ export default function LoginPage() {
     <div className="container relative hidden h-screen flex-col items-center justify-center md:grid lg:max-w-none lg:grid-cols-2 lg:px-0">
       <div className="relative hidden h-full flex-col bg-muted p-10 text-white lg:flex dark:border-r">
         <div className="absolute inset-0 bg-zinc-900" />
-        <div className="relative z-20 flex items-center text-lg font-medium">
+        <div className="relative z-20 flex items-center font-medium text-lg">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
@@ -39,11 +39,11 @@ export default function LoginPage() {
       <div className="lg:p-8">
         <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
           <div className="flex flex-col space-y-2 text-center">
-            <h1 className="text-2xl font-semibold tracking-tight">Acesse sua conta</h1>
-            <p className="text-sm text-muted-foreground">Digite suas credenciais para continuar</p>
+            <h1 className="font-semibold text-2xl tracking-tight">Acesse sua conta</h1>
+            <p className="text-muted-foreground text-sm">Digite suas credenciais para continuar</p>
           </div>
           <LoginForm />
-          <p className="px-8 text-center text-sm text-muted-foreground">
+          <p className="px-8 text-center text-muted-foreground text-sm">
             Ao clicar em continuar, você concorda com nossos{" "}
             <a href="/terms" className="underline underline-offset-4 hover:text-primary">
               Termos de Serviço

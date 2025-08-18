@@ -163,7 +163,7 @@ export default function SignUpPage() {
     <div className="container relative flex h-screen flex-col items-center justify-center md:grid lg:max-w-none lg:grid-cols-2 lg:px-0">
       <div className="relative hidden h-full flex-col bg-muted p-10 text-white lg:flex dark:border-r">
         <div className="absolute inset-0 bg-zinc-900" />
-        <div className="relative z-20 flex items-center text-lg font-medium">
+        <div className="relative z-20 flex items-center font-medium text-lg">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
@@ -192,8 +192,8 @@ export default function SignUpPage() {
       <div className="lg:p-8">
         <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[400px]">
           <div className="flex flex-col space-y-2 text-center">
-            <h1 className="text-2xl font-semibold tracking-tight">Criar conta</h1>
-            <p className="text-sm text-muted-foreground">Preencha os dados para começar</p>
+            <h1 className="font-semibold text-2xl tracking-tight">Criar conta</h1>
+            <p className="text-muted-foreground text-sm">Preencha os dados para começar</p>
           </div>
 
           <Card>
@@ -289,7 +289,7 @@ export default function SignUpPage() {
                       type="button"
                       variant="ghost"
                       size="sm"
-                      className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                      className="absolute top-0 right-0 h-full px-3 py-2 hover:bg-transparent"
                       onClick={() => setShowPassword(!showPassword)}
                       disabled={isLoading}
                     >
@@ -314,7 +314,7 @@ export default function SignUpPage() {
                       type="button"
                       variant="ghost"
                       size="sm"
-                      className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                      className="absolute top-0 right-0 h-full px-3 py-2 hover:bg-transparent"
                       onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                       disabled={isLoading}
                     >
@@ -360,7 +360,7 @@ export default function SignUpPage() {
                     />
                     <div className="text-sm">
                       <Label htmlFor="lgpd" className="cursor-pointer">
-                        <Shield className="inline h-4 w-4 mr-1" />
+                        <Shield className="mr-1 inline h-4 w-4" />
                         Consinto com o tratamento dos meus dados pessoais conforme a{" "}
                         <a href="/lgpd" className="underline hover:text-primary">
                           Lei Geral de Proteção de Dados (LGPD)
@@ -382,7 +382,7 @@ export default function SignUpPage() {
                 <div className="text-center">
                   <a
                     href="/login"
-                    className="text-sm text-muted-foreground hover:text-primary underline underline-offset-4"
+                    className="text-muted-foreground text-sm underline underline-offset-4 hover:text-primary"
                   >
                     Já tem uma conta? Entre aqui
                   </a>
@@ -391,10 +391,10 @@ export default function SignUpPage() {
             </CardContent>
           </Card>
 
-          <div className="bg-green-50 border border-green-200 rounded-lg p-3">
+          <div className="rounded-lg border border-green-200 bg-green-50 p-3">
             <div className="flex items-center space-x-2 text-green-800">
               <Check className="h-4 w-4" />
-              <span className="text-sm font-medium">Ambiente seguro e compatível com LGPD</span>
+              <span className="font-medium text-sm">Ambiente seguro e compatível com LGPD</span>
             </div>
           </div>
         </div>

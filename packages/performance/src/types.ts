@@ -111,7 +111,7 @@ export type DatabasePerformanceMetric = {
   table: string;
   executionTime: number;
   rowsAffected?: number;
-  queryPlan?: string;
+  queryPlan: string;
   timestamp: number;
   isSlowQuery: boolean;
   healthcareDataType?:

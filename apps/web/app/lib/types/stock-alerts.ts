@@ -70,7 +70,7 @@ export const stockAlertConfigSchema = baseStockAlertConfigSchema.refine(
     return (
       (data.productId && !data.categoryId) ||
       (!data.productId && data.categoryId) ||
-      (!data.productId && !data.categoryId)
+      (!(data.productId || data.categoryId))
     );
   },
   {
@@ -94,7 +94,7 @@ export const createStockAlertConfigSchema = baseStockAlertConfigSchema
       return (
         (data.productId && !data.categoryId) ||
         (!data.productId && data.categoryId) ||
-        (!data.productId && !data.categoryId)
+        (!(data.productId || data.categoryId))
       );
     },
     {
